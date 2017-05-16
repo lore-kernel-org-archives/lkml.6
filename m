@@ -1,107 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id O+6tDcFHGVuDPwAAmS7hNA
-	; Thu, 07 Jun 2018 14:57:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YW9CLXMBGFswbwAAmS7hNA
+	; Wed, 06 Jun 2018 15:45:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A01856074D; Thu,  7 Jun 2018 14:57:20 +0000 (UTC)
+	id 3B54D60764; Wed,  6 Jun 2018 15:45:08 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 18EC6601C3;
-	Thu,  7 Jun 2018 14:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18EC6601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id B3816607E1;
+	Wed,  6 Jun 2018 15:45:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3816607E1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=s-opensource.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934034AbeFGO5S (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:57:18 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41118 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932889AbeFGO5Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:57:16 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbk-0005hJ-4K; Thu, 07 Jun 2018 15:09:44 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb4-0002xg-Q6; Thu, 07 Jun 2018 15:09:02 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Alex Deucher" <alexander.deucher@amd.com>,
-        "Christian =?UTF-8?Q?K=C3=B6nig?=" <christian.koenig@amd.com>,
-        "Julia Lawall" <Julia.Lawall@lip6.fr>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.213765143@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 178/410] drm/radeon: adjust tested variable
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S932137AbeFFPpF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:45:05 -0400
+Received: from osg.samsung.com ([64.30.133.232]:53420 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752975AbeFFPpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:45:03 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by osg.samsung.com (Postfix) with ESMTP id 7B7C23B804;
+        Wed,  6 Jun 2018 08:45:02 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+Received: from osg.samsung.com ([127.0.0.1])
+        by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id iu59dCkwZ-Wc; Wed,  6 Jun 2018 08:45:01 -0700 (PDT)
+Received: from smtp.s-opensource.com (177.43.29.180.dynamic.adsl.gvt.net.br [177.43.29.180])
+        by osg.samsung.com (Postfix) with ESMTPSA id 4BBED3B7FB;
+        Wed,  6 Jun 2018 08:45:01 -0700 (PDT)
+Received: from mchehab by smtp.s-opensource.com with local (Exim 4.87)
+        (envelope-from <mchehab@smtp.s-opensource.com>)
+        id 1dAbPD-0000yb-5f; Tue, 16 May 2017 09:16:47 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+        linux-mtd@lists.infradead.org, Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH v2 52/53] docs-rst: get rid of Documentation/sphinx/tmplcvt script
+Date: Tue, 16 May 2017 09:16:44 -0300
+Message-Id:
+ <fd74809e73be1192f2455d39932a94dfa6fb0e83.1494935649.git.mchehab@s-opensource.com>
+X-Mailer: git-send-email 2.9.3
+In-Reply-To: <cover.1494935649.git.mchehab@s-opensource.com>
+References: <cover.1494935649.git.mchehab@s-opensource.com>
+In-Reply-To: <cover.1494935649.git.mchehab@s-opensource.com>
+References: <cover.1494935649.git.mchehab@s-opensource.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20170516121644.i9AZOJ2rSZJ0cQ03lA2oxdvtVIz0yf_mYph-qEzC8ss@z>
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+As everything was converted to ReST, we don't need this
+script anymore.
 
-------------------
-
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-
-commit 3a61b527b4e1f285d21b6e9e623dc45cf8bb391f upstream.
-
-Check the variable that was most recently initialized.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x, y, f, g, e, m;
-statement S1,S2,S3,S4;
-@@
-
-x = f(...);
-if (\(<+...x...+>\&e\)) S1 else S2
-(
-x = g(...);
-|
-m = g(...,&x,...);
-|
-y = g(...);
-*if (e)
- S3 else S4
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 ---
- drivers/gpu/drm/radeon/radeon_uvd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/sphinx/tmplcvt | 28 ----------------------------
+ 1 file changed, 28 deletions(-)
+ delete mode 100755 Documentation/sphinx/tmplcvt
 
---- a/drivers/gpu/drm/radeon/radeon_uvd.c
-+++ b/drivers/gpu/drm/radeon/radeon_uvd.c
-@@ -950,7 +950,7 @@ int radeon_uvd_calc_upll_dividers(struct
- 		/* calc dclk divider with current vco freq */
- 		dclk_div = radeon_uvd_calc_upll_post_div(vco_freq, dclk,
- 							 pd_min, pd_even);
--		if (vclk_div > pd_max)
-+		if (dclk_div > pd_max)
- 			break; /* vco is too big, it has to stop */
- 
- 		/* calc score with current vco freq */
+diff --git a/Documentation/sphinx/tmplcvt b/Documentation/sphinx/tmplcvt
+deleted file mode 100755
+index 6848f0a26fa5..000000000000
+--- a/Documentation/sphinx/tmplcvt
++++ /dev/null
+@@ -1,28 +0,0 @@
+-#!/bin/bash
+-#
+-# Convert a template file into something like RST
+-#
+-# fix <function>
+-# feed to pandoc
+-# fix \_
+-# title line?
+-#
+-set -eu
+-
+-if [ "$#" != "2" ]; then
+-	echo "$0 <docbook file> <rst file>"
+-	exit
+-fi
+-
+-DIR=$(dirname $0)
+-
+-in=$1
+-rst=$2
+-tmp=$rst.tmp
+-
+-cp $in $tmp
+-sed --in-place -f $DIR/convert_template.sed $tmp
+-pandoc -s -S -f docbook -t rst -o $rst $tmp
+-sed --in-place -f $DIR/post_convert.sed $rst
+-rm $tmp
+-echo "book writen to $rst"
+-- 
+2.9.3
