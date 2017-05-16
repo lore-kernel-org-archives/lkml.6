@@ -1,233 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7926C6070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
+Received: from smtp.codeaurora.org
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KPcHOnkBGFsJbwAAmS7hNA
+	; Wed, 06 Jun 2018 15:45:20 +0000
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+	id BD961607CF; Wed,  6 Jun 2018 15:45:20 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+	pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2BFEF60555;
+	Wed,  6 Jun 2018 15:45:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2BFEF60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=s-opensource.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932359AbeFFGNI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:13:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52475 "EHLO mx2.suse.de"
+        id S932270AbeFFPpO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:45:14 -0400
+Received: from osg.samsung.com ([64.30.133.232]:51040 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932090AbeFFGMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:12:42 -0400
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>,
+        id S932148AbeFFPpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:45:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by osg.samsung.com (Postfix) with ESMTP id 9318F3B81B;
+        Wed,  6 Jun 2018 08:45:07 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+Received: from osg.samsung.com ([127.0.0.1])
+        by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3dhTDWgG7A_g; Wed,  6 Jun 2018 08:45:03 -0700 (PDT)
+Received: from smtp.s-opensource.com (177.43.29.180.dynamic.adsl.gvt.net.br [177.43.29.180])
+        by osg.samsung.com (Postfix) with ESMTPSA id 90F503B807;
+        Wed,  6 Jun 2018 08:45:03 -0700 (PDT)
+Received: from mchehab by smtp.s-opensource.com with local (Exim 4.87)
+        (envelope-from <mchehab@smtp.s-opensource.com>)
+        id 1dAbPD-0000yW-5A; Tue, 16 May 2017 09:16:47 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+        linux-mtd@lists.infradead.org, Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Simmons <jsimmons@infradead.org>,
-        Andreas Dilger <andreas.dilger@intel.com>
-Date: Wed, 06 Jun 2018 16:05:19 +1000
-Subject: [PATCH 11/11] staging: lustre: centralize setting of
- subdir-ccflags-y
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152826511930.16761.12770722873423628004.stgit@noble>
-In-Reply-To: <152826510267.16761.14361003167157833896.stgit@noble>
-References: <152826510267.16761.14361003167157833896.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        linux-usb@vger.kernel.org
+Subject: [PATCH v2 51/53] usb: fix the comment with regards to DocBook
+Date: Tue, 16 May 2017 09:16:43 -0300
+Message-Id:
+ <ce4a23cca5f809a588bd53c3289e6b953bb7ccc3.1494935649.git.mchehab@s-opensource.com>
+X-Mailer: git-send-email 2.9.3
+In-Reply-To: <cover.1494935649.git.mchehab@s-opensource.com>
+References: <cover.1494935649.git.mchehab@s-opensource.com>
+In-Reply-To: <cover.1494935649.git.mchehab@s-opensource.com>
+References: <cover.1494935649.git.mchehab@s-opensource.com>
 Sender: linux-kernel-owner@vger.kernel.org
+Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20170516121643.7yY2t-5Lu7tdiG__zcjX1IeK1-8YDxMZMKVb7zt-sYc@z>
 
-We don't need to set subdir-ccflags-y in every Makefile.
-The whole point of the "subdir-" bit is that the setting
-can go once in the top-level Makefile.
+The USB gadget documentation is not at DocBook anymore.
+The main file was converted to ReST, and stored at
+Documentation/driver-api/usb/gadget.rst, but there are
+still several plain text files related to gadget under
+Documentation/usb.
 
-Signed-off-by: NeilBrown <neilb@suse.com>
+So, be generic and just mention documentation
+without specifying where it is.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 ---
- drivers/staging/lustre/Makefile                    |    3 +++
- drivers/staging/lustre/lnet/klnds/o2iblnd/Makefile |    2 --
- drivers/staging/lustre/lnet/klnds/socklnd/Makefile |    2 --
- drivers/staging/lustre/lnet/libcfs/Makefile        |    2 --
- drivers/staging/lustre/lnet/lnet/Makefile          |    2 --
- drivers/staging/lustre/lnet/selftest/Makefile      |    2 --
- drivers/staging/lustre/lustre/fid/Makefile         |    2 --
- drivers/staging/lustre/lustre/fld/Makefile         |    2 --
- drivers/staging/lustre/lustre/llite/Makefile       |    2 --
- drivers/staging/lustre/lustre/lmv/Makefile         |    2 --
- drivers/staging/lustre/lustre/lov/Makefile         |    2 --
- drivers/staging/lustre/lustre/mdc/Makefile         |    2 --
- drivers/staging/lustre/lustre/mgc/Makefile         |    2 --
- drivers/staging/lustre/lustre/obdclass/Makefile    |    2 --
- drivers/staging/lustre/lustre/obdecho/Makefile     |    2 --
- drivers/staging/lustre/lustre/osc/Makefile         |    2 --
- drivers/staging/lustre/lustre/ptlrpc/Makefile      |    2 --
- 17 files changed, 3 insertions(+), 32 deletions(-)
+ drivers/usb/gadget/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/Makefile b/drivers/staging/lustre/Makefile
-index 95ffe337a80a..a44086fa8668 100644
---- a/drivers/staging/lustre/Makefile
-+++ b/drivers/staging/lustre/Makefile
-@@ -1,2 +1,5 @@
-+subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
-+subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
-+
- obj-$(CONFIG_LNET)		+= lnet/
- obj-$(CONFIG_LUSTRE_FS)		+= lustre/
-diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/Makefile b/drivers/staging/lustre/lnet/klnds/o2iblnd/Makefile
-index 4affe1d79948..e1a05ece130c 100644
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/Makefile
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
+diff --git a/drivers/usb/gadget/Kconfig b/drivers/usb/gadget/Kconfig
+index c164d6b788c3..b3c879b75a39 100644
+--- a/drivers/usb/gadget/Kconfig
++++ b/drivers/usb/gadget/Kconfig
+@@ -41,7 +41,7 @@ menuconfig USB_GADGET
+ 	   don't have this kind of hardware (except maybe inside Linux PDAs).
  
- obj-$(CONFIG_LNET_XPRT_IB) += ko2iblnd.o
- ko2iblnd-y := o2iblnd.o o2iblnd_cb.o o2iblnd_modparams.o
-diff --git a/drivers/staging/lustre/lnet/klnds/socklnd/Makefile b/drivers/staging/lustre/lnet/klnds/socklnd/Makefile
-index a7da1abfc804..4d03cad997c1 100644
---- a/drivers/staging/lustre/lnet/klnds/socklnd/Makefile
-+++ b/drivers/staging/lustre/lnet/klnds/socklnd/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
+ 	   For more information, see <http://www.linux-usb.org/gadget> and
+-	   the kernel DocBook documentation for this API.
++	   the kernel documentation for this API.
  
- obj-$(CONFIG_LNET) += ksocklnd.o
+ if USB_GADGET
  
-diff --git a/drivers/staging/lustre/lnet/libcfs/Makefile b/drivers/staging/lustre/lnet/libcfs/Makefile
-index 6a1b232da495..3d6b99c6e883 100644
---- a/drivers/staging/lustre/lnet/libcfs/Makefile
-+++ b/drivers/staging/lustre/lnet/libcfs/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LNET) += libcfs.o
- 
-diff --git a/drivers/staging/lustre/lnet/lnet/Makefile b/drivers/staging/lustre/lnet/lnet/Makefile
-index 0a9d70924fe0..ba33e90e47ec 100644
---- a/drivers/staging/lustre/lnet/lnet/Makefile
-+++ b/drivers/staging/lustre/lnet/lnet/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LNET) += lnet.o
- 
-diff --git a/drivers/staging/lustre/lnet/selftest/Makefile b/drivers/staging/lustre/lnet/selftest/Makefile
-index 3ccc8966b566..16f8efcd1531 100644
---- a/drivers/staging/lustre/lnet/selftest/Makefile
-+++ b/drivers/staging/lustre/lnet/selftest/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LNET_SELFTEST) := lnet_selftest.o
- 
-diff --git a/drivers/staging/lustre/lustre/fid/Makefile b/drivers/staging/lustre/lustre/fid/Makefile
-index 77b65b92667d..11f6e4046e61 100644
---- a/drivers/staging/lustre/lustre/fid/Makefile
-+++ b/drivers/staging/lustre/lustre/fid/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include/
- 
- obj-$(CONFIG_LUSTRE_FS) += fid.o
- fid-y := fid_request.o fid_lib.o lproc_fid.o
-diff --git a/drivers/staging/lustre/lustre/fld/Makefile b/drivers/staging/lustre/lustre/fld/Makefile
-index 426deba8b815..e7843d7aac9d 100644
---- a/drivers/staging/lustre/lustre/fld/Makefile
-+++ b/drivers/staging/lustre/lustre/fld/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include/
- 
- obj-$(CONFIG_LUSTRE_FS) += fld.o
- fld-y := fld_request.o fld_cache.o lproc_fld.o
-diff --git a/drivers/staging/lustre/lustre/llite/Makefile b/drivers/staging/lustre/lustre/llite/Makefile
-index 5200924182ae..f46b61770254 100644
---- a/drivers/staging/lustre/lustre/llite/Makefile
-+++ b/drivers/staging/lustre/lustre/llite/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LUSTRE_FS) += lustre.o
- lustre-y := dcache.o dir.o file.o llite_lib.o llite_nfs.o \
-diff --git a/drivers/staging/lustre/lustre/lmv/Makefile b/drivers/staging/lustre/lustre/lmv/Makefile
-index 91c99114aa13..7a392c31c508 100644
---- a/drivers/staging/lustre/lustre/lmv/Makefile
-+++ b/drivers/staging/lustre/lustre/lmv/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LUSTRE_FS) += lmv.o
- lmv-y := lmv_obd.o lmv_intent.o lmv_fld.o lproc_lmv.o
-diff --git a/drivers/staging/lustre/lustre/lov/Makefile b/drivers/staging/lustre/lustre/lov/Makefile
-index 1ebf0193f61a..6294769aca95 100644
---- a/drivers/staging/lustre/lustre/lov/Makefile
-+++ b/drivers/staging/lustre/lustre/lov/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LUSTRE_FS) += lov.o
- lov-y := lov_obd.o lov_pack.o lov_offset.o lov_merge.o \
-diff --git a/drivers/staging/lustre/lustre/mdc/Makefile b/drivers/staging/lustre/lustre/mdc/Makefile
-index c7bc3351ccb0..c3bc71f6596d 100644
---- a/drivers/staging/lustre/lustre/mdc/Makefile
-+++ b/drivers/staging/lustre/lustre/mdc/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LUSTRE_FS) += mdc.o
- mdc-y := mdc_request.o mdc_reint.o mdc_lib.o mdc_locks.o lproc_mdc.o
-diff --git a/drivers/staging/lustre/lustre/mgc/Makefile b/drivers/staging/lustre/lustre/mgc/Makefile
-index 8abf108dbcf7..301cd7a1fa25 100644
---- a/drivers/staging/lustre/lustre/mgc/Makefile
-+++ b/drivers/staging/lustre/lustre/mgc/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LUSTRE_FS) += mgc.o
- mgc-y := mgc_request.o lproc_mgc.o
-diff --git a/drivers/staging/lustre/lustre/obdclass/Makefile b/drivers/staging/lustre/lustre/obdclass/Makefile
-index e36ba2167d10..be118391b402 100644
---- a/drivers/staging/lustre/lustre/obdclass/Makefile
-+++ b/drivers/staging/lustre/lustre/obdclass/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LUSTRE_FS) += obdclass.o
- 
-diff --git a/drivers/staging/lustre/lustre/obdecho/Makefile b/drivers/staging/lustre/lustre/obdecho/Makefile
-index 6be66fbab872..4ae346f5ddcd 100644
---- a/drivers/staging/lustre/lustre/obdecho/Makefile
-+++ b/drivers/staging/lustre/lustre/obdecho/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LUSTRE_FS) += obdecho.o
- obdecho-y := echo_client.o
-diff --git a/drivers/staging/lustre/lustre/osc/Makefile b/drivers/staging/lustre/lustre/osc/Makefile
-index 30dec90e64e8..ecdf07e925c7 100644
---- a/drivers/staging/lustre/lustre/osc/Makefile
-+++ b/drivers/staging/lustre/lustre/osc/Makefile
-@@ -1,5 +1,3 @@
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LUSTRE_FS) += osc.o
- osc-y := osc_request.o osc_dev.o osc_object.o \
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/Makefile b/drivers/staging/lustre/lustre/ptlrpc/Makefile
-index aa152e652002..0fae7de09de2 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/Makefile
-+++ b/drivers/staging/lustre/lustre/ptlrpc/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/include
--subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
- 
- obj-$(CONFIG_LUSTRE_FS) += ptlrpc.o
- 
+-- 
+2.9.3
