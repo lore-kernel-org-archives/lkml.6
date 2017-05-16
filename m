@@ -1,88 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OjNsIPtIGVuPTAAAmS7hNA
-	; Thu, 07 Jun 2018 15:04:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bW9CLXMBGFswbwAAmS7hNA
+	; Wed, 06 Jun 2018 15:45:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id ABDD6608BA; Thu,  7 Jun 2018 15:04:07 +0000 (UTC)
+	id 60EEC60767; Wed,  6 Jun 2018 15:45:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 18C6D601C3;
-	Thu,  7 Jun 2018 15:04:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18C6D601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id DB01860555;
+	Wed,  6 Jun 2018 15:45:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB01860555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=s-opensource.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936028AbeFGPEE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:04:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41554 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S936013AbeFGPEA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:04:00 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbk-0005hL-4B; Thu, 07 Jun 2018 15:09:44 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb4-0002xb-OW; Thu, 07 Jun 2018 15:09:02 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Jason Dillaman" <dillaman@redhat.com>,
-        "Ilya Dryomov" <idryomov@gmail.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.391853158@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 177/410] rbd: whitelist RBD_FEATURE_OPERATIONS
- feature bit
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S1752793AbeFFPpv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:45:51 -0400
+Received: from osg.samsung.com ([64.30.133.232]:62585 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932158AbeFFPpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:45:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by osg.samsung.com (Postfix) with ESMTP id A8A2B3B829;
+        Wed,  6 Jun 2018 08:45:09 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+Received: from osg.samsung.com ([127.0.0.1])
+        by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 7K_G58LmZn8v; Wed,  6 Jun 2018 08:45:08 -0700 (PDT)
+Received: from smtp.s-opensource.com (177.43.29.180.dynamic.adsl.gvt.net.br [177.43.29.180])
+        by osg.samsung.com (Postfix) with ESMTPSA id 8CD013B81F;
+        Wed,  6 Jun 2018 08:45:08 -0700 (PDT)
+Received: from mchehab by smtp.s-opensource.com with local (Exim 4.87)
+        (envelope-from <mchehab@smtp.s-opensource.com>)
+        id 1dAbPD-0000yR-4T; Tue, 16 May 2017 09:16:47 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+        linux-mtd@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v2 50/53] fs: fix the location of the kernel-api book
+Date: Tue, 16 May 2017 09:16:42 -0300
+Message-Id:
+ <e1511a840a33f84bfbcfa00029fa841c211d32bf.1494935649.git.mchehab@s-opensource.com>
+X-Mailer: git-send-email 2.9.3
+In-Reply-To: <cover.1494935649.git.mchehab@s-opensource.com>
+References: <cover.1494935649.git.mchehab@s-opensource.com>
+In-Reply-To: <cover.1494935649.git.mchehab@s-opensource.com>
+References: <cover.1494935649.git.mchehab@s-opensource.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20170516121642.aQ3drsdzpjt29kuP7hFy4ZXhvP14ukqX1e10Grdn-Cw@z>
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+The kernel-api book is now part of the core-api. Update its
+location.
 
-------------------
-
-From: Ilya Dryomov <idryomov@gmail.com>
-
-commit e573427a440fd67d3f522357d7ac901d59281948 upstream.
-
-This feature bit restricts older clients from performing certain
-maintenance operations against an image (e.g. clone, snap create).
-krbd does not perform maintenance operations.
-
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: Jason Dillaman <dillaman@redhat.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 ---
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -117,8 +117,11 @@ static int atomic_dec_return_safe(atomic
+ fs/debugfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index e892ae7d89f8..77440e4aa9d4 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -9,7 +9,7 @@
+  *	2 as published by the Free Software Foundation.
+  *
+  *  debugfs is for people to use instead of /proc or /sys.
+- *  See Documentation/DocBook/kernel-api for more details.
++ *  See ./Documentation/core-api/kernel-api.rst for more details.
+  *
+  */
  
- #define RBD_FEATURE_LAYERING	(1<<0)
- #define RBD_FEATURE_STRIPINGV2	(1<<1)
--#define RBD_FEATURES_ALL \
--	    (RBD_FEATURE_LAYERING | RBD_FEATURE_STRIPINGV2)
-+#define RBD_FEATURE_OPERATIONS		(1<<8)
-+
-+#define RBD_FEATURES_ALL	(RBD_FEATURE_LAYERING |		\
-+				 RBD_FEATURE_STRIPINGV2 |	\
-+				 RBD_FEATURE_OPERATIONS)
- 
- /* Features supported by this (client software) implementation. */
- 
+-- 
+2.9.3
