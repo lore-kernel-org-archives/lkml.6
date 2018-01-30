@@ -1,29 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753553AbeA3Wkf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:40:35 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:55153 "EHLO
+        id S1753594AbeA3Wkz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 17:40:55 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:48863 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753159AbeA3Wkd (ORCPT
+        with ESMTP id S1751567AbeA3Wk0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:40:33 -0500
-Date: Tue, 30 Jan 2018 14:36:24 -0800
-From: tip-bot for Dan Williams <tipbot@zytor.com>
-Message-ID: <tip-304ec1b050310548db33063e567123fae8fd0301@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        keescook@chromium.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        ak@linux.intel.com, hpa@zytor.com
-Reply-To: mingo@kernel.org, ak@linux.intel.com, viro@zeniv.linux.org.uk,
-        keescook@chromium.org, hpa@zytor.com, dan.j.williams@intel.com,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de
-In-Reply-To: <151727416953.33451.10508284228526170604.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151727416953.33451.10508284228526170604.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Tue, 30 Jan 2018 17:40:26 -0500
+Date: Tue, 30 Jan 2018 14:39:20 -0800
+From: tip-bot for David Woodhouse <tipbot@zytor.com>
+Message-ID: <tip-7fcae1118f5fd44a862aa5c3525248e35ee67c3b@git.kernel.org>
+Cc: mingo@kernel.org, hpa@zytor.com, dwmw@amazon.co.uk, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, dwmw@amazon.co.uk,
+        hpa@zytor.com, mingo@kernel.org
+In-Reply-To: <1517322623-15261-1-git-send-email-dwmw@amazon.co.uk>
+References: <1517322623-15261-1-git-send-email-dwmw@amazon.co.uk>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/uaccess: Use __uaccess_begin_nospec() and
- uaccess_try_nospec
-Git-Commit-ID: 304ec1b050310548db33063e567123fae8fd0301
+Subject: [tip:x86/pti] x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature
+ bits on Intel
+Git-Commit-ID: 7fcae1118f5fd44a862aa5c3525248e35ee67c3b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,179 +32,127 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  304ec1b050310548db33063e567123fae8fd0301
-Gitweb:     https://git.kernel.org/tip/304ec1b050310548db33063e567123fae8fd0301
-Author:     Dan Williams <dan.j.williams@intel.com>
-AuthorDate: Mon, 29 Jan 2018 17:02:49 -0800
+Commit-ID:  7fcae1118f5fd44a862aa5c3525248e35ee67c3b
+Gitweb:     https://git.kernel.org/tip/7fcae1118f5fd44a862aa5c3525248e35ee67c3b
+Author:     David Woodhouse <dwmw@amazon.co.uk>
+AuthorDate: Tue, 30 Jan 2018 14:30:23 +0000
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 30 Jan 2018 21:54:31 +0100
+CommitDate: Tue, 30 Jan 2018 22:35:05 +0100
 
-x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
+x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature bits on Intel
 
-Quoting Linus:
+Despite the fact that all the other code there seems to be doing it, just
+using set_cpu_cap() in early_intel_init() doesn't actually work.
 
-    I do think that it would be a good idea to very expressly document
-    the fact that it's not that the user access itself is unsafe. I do
-    agree that things like "get_user()" want to be protected, but not
-    because of any direct bugs or problems with get_user() and friends,
-    but simply because get_user() is an excellent source of a pointer
-    that is obviously controlled from a potentially attacking user
-    space. So it's a prime candidate for then finding _subsequent_
-    accesses that can then be used to perturb the cache.
+For CPUs with PKU support, setup_pku() calls get_cpu_cap() after
+c->c_init() has set those feature bits. That resets those bits back to what
+was queried from the hardware.
 
-__uaccess_begin_nospec() covers __get_user() and copy_from_iter() where the
-limit check is far away from the user pointer de-reference. In those cases
-a barrier_nospec() prevents speculation with a potential pointer to
-privileged memory. uaccess_try_nospec covers get_user_try.
+Turning the bits off for bad microcode is easy to fix. That can just use
+setup_clear_cpu_cap() to force them off for all CPUs.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+I was less keen on forcing the feature bits *on* that way, just in case
+of inconsistencies. I appreciate that the kernel is going to get this
+utterly wrong if CPU features are not consistent, because it has already
+applied alternatives by the time secondary CPUs are brought up.
+
+But at least if setup_force_cpu_cap() isn't being used, we might have a
+chance of *detecting* the lack of the corresponding bit and either
+panicking or refusing to bring the offending CPU online.
+
+So ensure that the appropriate feature bits are set within get_cpu_cap()
+regardless of how many extra times it's called.
+
+Fixes: 2961298e ("x86/cpufeatures: Clean up Spectre v2 related CPUID flags")
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727416953.33451.10508284228526170604.stgit@dwillia2-desk3.amr.corp.intel.com
+Cc: karahmed@amazon.de
+Cc: peterz@infradead.org
+Cc: bp@alien8.de
+Link: https://lkml.kernel.org/r/1517322623-15261-1-git-send-email-dwmw@amazon.co.uk
 
 ---
- arch/x86/include/asm/uaccess.h    |  6 +++---
- arch/x86/include/asm/uaccess_32.h |  6 +++---
- arch/x86/include/asm/uaccess_64.h | 12 ++++++------
- arch/x86/lib/usercopy_32.c        |  4 ++--
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ arch/x86/kernel/cpu/common.c | 21 +++++++++++++++++++++
+ arch/x86/kernel/cpu/intel.c  | 27 ++++++++-------------------
+ 2 files changed, 29 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 663e9bd..aae77eb 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -450,7 +450,7 @@ do {									\
- ({									\
- 	int __gu_err;							\
- 	__inttype(*(ptr)) __gu_val;					\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
- 	__uaccess_end();						\
- 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-@@ -557,7 +557,7 @@ struct __large_struct { unsigned long buf[100]; };
-  *	get_user_ex(...);
-  * } get_user_catch(err)
-  */
--#define get_user_try		uaccess_try
-+#define get_user_try		uaccess_try_nospec
- #define get_user_catch(err)	uaccess_catch(err)
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index c7c996a..dd09270 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -750,6 +750,26 @@ static void apply_forced_caps(struct cpuinfo_x86 *c)
+ 	}
+ }
  
- #define get_user_ex(x, ptr)	do {					\
-@@ -591,7 +591,7 @@ extern void __cmpxchg_wrong_size(void)
- 	__typeof__(ptr) __uval = (uval);				\
- 	__typeof__(*(ptr)) __old = (old);				\
- 	__typeof__(*(ptr)) __new = (new);				\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	switch (size) {							\
- 	case 1:								\
- 	{								\
-diff --git a/arch/x86/include/asm/uaccess_32.h b/arch/x86/include/asm/uaccess_32.h
-index 7295040..ba2dc19 100644
---- a/arch/x86/include/asm/uaccess_32.h
-+++ b/arch/x86/include/asm/uaccess_32.h
-@@ -29,21 +29,21 @@ raw_copy_from_user(void *to, const void __user *from, unsigned long n)
- 		switch (n) {
- 		case 1:
- 			ret = 0;
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_asm_nozero(*(u8 *)to, from, ret,
- 					      "b", "b", "=q", 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
- 			ret = 0;
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_asm_nozero(*(u16 *)to, from, ret,
- 					      "w", "w", "=r", 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
- 			ret = 0;
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_asm_nozero(*(u32 *)to, from, ret,
- 					      "l", "k", "=r", 4);
- 			__uaccess_end();
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index f07ef3c..62546b3 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -55,31 +55,31 @@ raw_copy_from_user(void *dst, const void __user *src, unsigned long size)
- 		return copy_user_generic(dst, (__force void *)src, size);
- 	switch (size) {
- 	case 1:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u8 *)dst, (u8 __user *)src,
- 			      ret, "b", "b", "=q", 1);
- 		__uaccess_end();
- 		return ret;
- 	case 2:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u16 *)dst, (u16 __user *)src,
- 			      ret, "w", "w", "=r", 2);
- 		__uaccess_end();
- 		return ret;
- 	case 4:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u32 *)dst, (u32 __user *)src,
- 			      ret, "l", "k", "=r", 4);
- 		__uaccess_end();
- 		return ret;
- 	case 8:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
- 			      ret, "q", "", "=r", 8);
- 		__uaccess_end();
- 		return ret;
- 	case 10:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 10);
- 		if (likely(!ret))
-@@ -89,7 +89,7 @@ raw_copy_from_user(void *dst, const void __user *src, unsigned long size)
- 		__uaccess_end();
- 		return ret;
- 	case 16:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 16);
- 		if (likely(!ret))
-diff --git a/arch/x86/lib/usercopy_32.c b/arch/x86/lib/usercopy_32.c
-index de34367..7add8ba 100644
---- a/arch/x86/lib/usercopy_32.c
-+++ b/arch/x86/lib/usercopy_32.c
-@@ -331,7 +331,7 @@ do {									\
++static void init_speculation_control(struct cpuinfo_x86 *c)
++{
++	/*
++	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
++	 * and they also have a different bit for STIBP support. Also,
++	 * a hypervisor might have set the individual AMD bits even on
++	 * Intel CPUs, for finer-grained selection of what's available.
++	 *
++	 * We use the AMD bits in 0x8000_0008 EBX as the generic hardware
++	 * features, which are visible in /proc/cpuinfo and used by the
++	 * kernel. So set those accordingly from the Intel bits.
++	 */
++	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
++		set_cpu_cap(c, X86_FEATURE_IBRS);
++		set_cpu_cap(c, X86_FEATURE_IBPB);
++	}
++	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
++		set_cpu_cap(c, X86_FEATURE_STIBP);
++}
++
+ void get_cpu_cap(struct cpuinfo_x86 *c)
+ {
+ 	u32 eax, ebx, ecx, edx;
+@@ -844,6 +864,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
  
- unsigned long __copy_user_ll(void *to, const void *from, unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user(to, from, n);
- 	else
-@@ -344,7 +344,7 @@ EXPORT_SYMBOL(__copy_user_ll);
- unsigned long __copy_from_user_ll_nocache_nozero(void *to, const void __user *from,
- 					unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- #ifdef CONFIG_X86_INTEL_USERCOPY
- 	if (n > 64 && static_cpu_has(X86_FEATURE_XMM2))
- 		n = __copy_user_intel_nocache(to, from, n);
+ 	init_scattered_cpuid_features(c);
++	init_speculation_control(c);
+ 
+ 	/*
+ 	 * Clear/Set all flags overridden by options, after probe.
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 6936d14..319bf98 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -175,28 +175,17 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+ 	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64))
+ 		c->microcode = intel_get_microcode_revision();
+ 
+-	/*
+-	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
+-	 * and they also have a different bit for STIBP support. Also,
+-	 * a hypervisor might have set the individual AMD bits even on
+-	 * Intel CPUs, for finer-grained selection of what's available.
+-	 */
+-	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
+-		set_cpu_cap(c, X86_FEATURE_IBRS);
+-		set_cpu_cap(c, X86_FEATURE_IBPB);
+-	}
+-	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
+-		set_cpu_cap(c, X86_FEATURE_STIBP);
+-
+ 	/* Now if any of them are set, check the blacklist and clear the lot */
+-	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
++	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
++	     cpu_has(c, X86_FEATURE_INTEL_STIBP) ||
++	     cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
+ 	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
+ 		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
+-		clear_cpu_cap(c, X86_FEATURE_IBRS);
+-		clear_cpu_cap(c, X86_FEATURE_IBPB);
+-		clear_cpu_cap(c, X86_FEATURE_STIBP);
+-		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
+-		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_IBRS);
++		setup_clear_cpu_cap(X86_FEATURE_IBPB);
++		setup_clear_cpu_cap(X86_FEATURE_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
++		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
+ 	}
+ 
+ 	/*
