@@ -1,50 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752459AbeA3NV4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 08:21:56 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:38250 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752112AbeA3NVt (ORCPT
+        id S1752496AbeA3NWs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 08:22:48 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33714 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751464AbeA3NWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 08:21:49 -0500
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Jonathan Cameron <jic23@kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
+        Tue, 30 Jan 2018 08:22:46 -0500
+Subject: Re: [PATCH v1 0/2] Kconfig changes to enable Graphics Support for
+ S390
+To: Farhan Ali <alifm@linux.vnet.ibm.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] iio: adc: STM32_DFSDM_ADC should depend on HAS_DMA
-Date: Tue, 30 Jan 2018 14:21:46 +0100
-Message-Id: <1517318506-14664-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+References: <cover.1516892845.git.alifm@linux.vnet.ibm.com>
+ <CAMuHMdW7jR2Oa6dsameR76FLhSnX+kZ7jXqpfQC+oHy_uaMJaQ@mail.gmail.com>
+ <19306e74-7c9b-5644-6f08-bbaef226afd8@linux.vnet.ibm.com>
+ <CAMuHMdUFCKtdAHHt6SwBSQXiRgSKvnqFXUvrQ1jFkb8J0nuSMw@mail.gmail.com>
+ <85ab024b-6af2-8b58-f9e8-7920d132cefb@linux.vnet.ibm.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Tue, 30 Jan 2018 14:22:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <85ab024b-6af2-8b58-f9e8-7920d132cefb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18013013-0012-0000-0000-000005A967D4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18013013-0013-0000-0000-00001925056F
+Message-Id: <cb4c884b-9334-325c-0c2d-0f93fae9f1cc@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1801300169
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If NO_DMA=y:
+Yes, merging sounds good.
+Farhan, can you maybe resend t whole series together with your CONFIG_VT rework?
 
-    ERROR: "bad_dma_ops" [drivers/iio/adc/stm32-dfsdm-adc.ko] undefined!
 
-Add a dependency on HAS_DMA to fix this.
 
-Fixes: e2e6771c64625165 ("IIO: ADC: add STM32 DFSDM sigma delta ADC support")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- drivers/iio/adc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 39e3b345a6c84033..d976c64107c8e9fd 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -683,6 +683,7 @@ config STM32_DFSDM_CORE
- config STM32_DFSDM_ADC
- 	tristate "STMicroelectronics STM32 dfsdm adc"
- 	depends on (ARCH_STM32 && OF) || COMPILE_TEST
-+	depends on HAS_DMA
- 	select STM32_DFSDM_CORE
- 	select REGMAP_MMIO
- 	select IIO_BUFFER_HW_CONSUMER
--- 
-2.7.4
+On 01/26/2018 05:26 PM, Farhan Ali wrote:
+> 
+> 
+> On 01/26/2018 10:06 AM, Geert Uytterhoeven wrote:
+>>> Hi Geert,
+>>>
+>>> I wasn't sure what would be the best ordering since we would never hit the
+>>> issue if patch 1 didn't exist. But if the preference is to invert the
+>>> ordering of patches, then I will change the ordering.
+>> Alternatively, you can combine two patches into a single patch, which
+>> moves the dependency from the whole subsystem to the driver that needs
+>> it (are there more?).
+>>
+>> Gr{oetje,eeting}s,
+>>
+>>                          Geert
+> 
+> 
+> I like the idea of combining both patches into one.
+> 
+> There are other fbdev drivers that use iomem (found by grepping for "devm_ioremap_resource"):
+> 
+> CONFIG_FB_S3C (s3c-fb.c)
+> 
+> CONFIG_FB_CLPS711X (clps711x-fb.c)
+> 
+> CONFIG_FB_JZ4740 (jz4740_fb.c)
+> 
+> CONFIG_FB_DA8XX (da8xx-fb.c)
+> 
+> CONFIG_FB_WM8505 (wm8505fb.c)
+> 
+> CONFIG_OMAP2_VRFB (omap2/omapfb/vrfb.c)
+> 
+> CONFIG_FB_OMAP2 (omap2/omapfb/dss/*
+> 
+> CONFIG_FB_MXS (mxsfb.c)
+> 
+> CONFIG_PXA3XX_GCU (pxa3xx-gcu.c)
+> 
+> CONFIG_FB_XILINX (xilinxfb.c)
+> 
+> 
+> All of these are already fenced off by architecture dependencies (which I am assuming enables CONFIG_HAS_IOMEM by default). If we want to be cautious I can add HAS_IOMEM dependency for all of them.
+> 
+> Thanks
+> Farhan
