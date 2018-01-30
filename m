@@ -1,102 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751836AbeA3Ivo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 03:51:44 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.253]:28769 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751496AbeA3Ivn (ORCPT
+        id S1751769AbeA3IxT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 03:53:19 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47349 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751273AbeA3IxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:51:43 -0500
-Date: Tue, 30 Jan 2018 02:51:41 -0600
-Message-ID: <20180130025141.Horde.h4aoQSwrqdPlpFtSKtB9DuS@gator4166.hostgator.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] platform: vivid-cec: fix potential integer overflow
- in vivid_cec_pin_adap_events
-References: <cover.1517268667.git.gustavo@embeddedor.com>
- <00eea53890802b679c138fc7f68a0f162261d95c.1517268668.git.gustavo@embeddedor.com>
- <2e1afa55-d214-f932-4ba7-2e21f6a2cd3d@xs4all.nl>
-In-Reply-To: <2e1afa55-d214-f932-4ba7-2e21f6a2cd3d@xs4all.nl>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        Tue, 30 Jan 2018 03:53:16 -0500
+Date: Tue, 30 Jan 2018 09:53:14 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
+        bhumirks@gmail.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pali.rohar@gmail.com, sre@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
+        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
+        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
+        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
+Subject: Re: [PATCH] sound/tlv320dac33: Add device tree support
+Message-ID: <20180130085314.GA4585@amd>
+References: <20180129230539.GA18280@amd>
+ <20180129232031.GA7695@lenoch>
+ <20180129233301.GA18104@amd>
+ <20180130083446.GA13498@lenoch>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
 Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 108.167.133.22
-X-Source-L: Yes
-X-Exim-ID: 1egRdm-000PJ9-7H
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:51843
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 1
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180130083446.GA13498@lenoch>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
 
-Quoting Hans Verkuil <hverkuil@xs4all.nl>:
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Gustavo,
->
-> On 01/30/2018 01:33 AM, Gustavo A. R. Silva wrote:
->> Cast len to const u64 in order to avoid a potential integer
->> overflow. This variable is being used in a context that expects
->> an expression of type const u64.
->>
->> Addresses-Coverity-ID: 1454996 ("Unintentional integer overflow")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/media/platform/vivid/vivid-cec.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/platform/vivid/vivid-cec.c  
->> b/drivers/media/platform/vivid/vivid-cec.c
->> index b55d278..30240ab 100644
->> --- a/drivers/media/platform/vivid/vivid-cec.c
->> +++ b/drivers/media/platform/vivid/vivid-cec.c
->> @@ -83,7 +83,7 @@ static void vivid_cec_pin_adap_events(struct  
->> cec_adapter *adap, ktime_t ts,
->>  	if (adap == NULL)
->>  		return;
->>  	ts = ktime_sub_us(ts, (CEC_TIM_START_BIT_TOTAL +
->> -			       len * 10 * CEC_TIM_DATA_BIT_TOTAL));
->> +			       (const u64)len * 10 * CEC_TIM_DATA_BIT_TOTAL));
->
-> This makes no sense. Certainly the const part is pointless. And given that
-> len is always <= 16 there definitely is no overflow.
->
+On Tue 2018-01-30 09:34:46, Ladislav Michl wrote:
+> On Tue, Jan 30, 2018 at 12:33:01AM +0100, Pavel Machek wrote:
+> > On Tue 2018-01-30 00:20:31, Ladislav Michl wrote:
+> > > On Tue, Jan 30, 2018 at 12:05:39AM +0100, Pavel Machek wrote:
+> > > >=20
+> > > > This adds device tree support to tlv320dac33.c.
+> > > >=20
+> > > > Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/sound/tlv320dac33.tx=
+t b/Documentation/devicetree/bindings/sound/tlv320dac33.txt
+> > > > new file mode 100644
+> > > > index 0000000..6cbd311
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/sound/tlv320dac33.txt
+> > > > @@ -0,0 +1,32 @@
+> > > > +Texas Instruments - tlv320dac33 Codec module
+> > > > +
+> > > > +The tlv320dac33 serial control bus communicates through I2C protoc=
+ols.
+> > > > +
+> > > > +Required properties:
+> > > > +
+> > > > +- compatible - "ti,tlv320dac33"
+> > > > +- reg - I2C slave address
+> > > > +
+> > > > +Optional properties:
+> > > > +
+> > > > +- power-gpios - gpio pin to power the device, active high
+> > >=20
+> > > While driver used gpio in platform data, isn't it more likely
+> > > regulator which powers device?
+> >=20
+> >                 power-gpios =3D <&gpio2 28 0>; /* gpio_60 */
+> >=20
+> > Looks like GPIO to me -- example is from Nokia N9. So this appears to
+> > be correct.
+>=20
+> Device datasheet doesn't list any pin which looks like "power-gpio"
+> http://www.ti.com/lit/ds/symlink/tlv320dac32.pdf
+> Unfortunately I do not know much about N9, but was able to find Nokia 5610
+> scheme to get clue how could be tlv320dac33 hardwired (see page 2):
+> http://mastermobile.spb.ru/service/nokia_5610_rm-242_service_schematics.p=
+df
+> Here AVDD is powered by LP3985 voltage regulator which is enabled using
+> VEN pin which might be connected to gpio. Or there could be completely
+> different voltage regulator with different controls. And since Linux
+> already has voltage regulator class, lets not limit ourselves to gpio
+> pins.
 
-Yeah, I understand your point and I know there is no chance of an  
-overflow in this particular case.
+Well, notice I'm converting existing driver to device tree. And that
+one already has GPIO dependency. It is possible that more work needs
+to be done there, but that should not be a reason to delay this. Feel
+free to help.
 
-> I don't really want this cast in the code.
->
-> Sorry,
->
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-I'm working through all the Linux kernel Coverity reports, and I  
-thought of sending a patch for this because IMHO it doesn't hurt to  
-give the compiler complete information about the arithmetic in which  
-an expression is intended to be evaluated.
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-I agree that the _const_ part is a bit odd. What do you think about  
-the cast to u64 alone?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-I appreciate your feedback.
+iEYEARECAAYFAlpwMnoACgkQMOfwapXb+vIKPwCdG8H/ZWOTQRjFZjbnChEVSYks
+82YAoIXPhu/in6U7iXC9VjAC/JRVGBOe
+=ne5K
+-----END PGP SIGNATURE-----
 
-Thanks
---
-Gustavo
+--a8Wt8u1KmwUX3Y2C--
