@@ -1,66 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753799AbeA3VUc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:20:32 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:35518 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752324AbeA3VUa (ORCPT
+        id S1752988AbeA3VWX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:22:23 -0500
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:44624 "EHLO
+        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752256AbeA3VWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:20:30 -0500
-X-Google-Smtp-Source: AH8x226aR62bQ0TZhouiYWbyXpueJtaQMTKuVxFYwhBbMLhxW2vCHvOpvk9goiNq+8EJ1QukliJzkx+HCJI+oYUxR1Q=
+        Tue, 30 Jan 2018 16:22:16 -0500
+X-Google-Smtp-Source: AH8x227Uto2iOiB3lbgvrxS3teeq103iy0GqiwHq9lWOTQblq1bP44+Tlsejn8TlVLy9TN16rLDWWQ==
+Date: Tue, 30 Jan 2018 13:22:13 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+        syzbot
+        <bot+427f0a9138719ba183c0d37d8c2d070567f7761a@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: WARNING in xfrm_state_fini
+Message-ID: <20180130212213.gvskfv3afboqp4uy@gmail.com>
+References: <001a11352f4a2b4fca055e7b441e@google.com>
+ <CAM_iQpXBDfdZe4bUu-taidaC1djz7N=AOizEjCpzCeDxuEjPBA@mail.gmail.com>
+ <20171127115535.mlsjbrj7pt3d4jvo@gauss3.secunet.de>
+ <CAM_iQpVigHJX6hWDGCiJJD0-UouXd3f164e9u6zNCH6+OoNeCg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeVuS51Z7U2P+t3YnfitUtVVAa_8oSbnXCHTY7rqrJUEQ@mail.gmail.com>
-References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
- <20171210182152.70ad8fbf@archlinux> <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
- <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
- <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
- <20180130160107.000006df@huawei.com> <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
- <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
- <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
- <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
- <f42f6acc-cb30-e36d-0c98-42b7e3d40457@pressers.name> <CAHp75VfmH5aNPzBLvm-GrQ-49uyJNNwdjbte3uh_kmaC91bz6A@mail.gmail.com>
- <197f448e-322f-dae4-aa4b-3cc2bd5b16bb@pressers.name> <CAHp75VeVuS51Z7U2P+t3YnfitUtVVAa_8oSbnXCHTY7rqrJUEQ@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 30 Jan 2018 23:20:28 +0200
-Message-ID: <CAHp75VfPBP0TVt-==0wjcK6Oxg1kVN4mQf5Ji50RBy=SXf6yFw@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for BOSC0200
-To: Steven Presser <steve@pressers.name>
-Cc: Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
-        Jeremy Cline <jeremy@jcline.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        Lars Kellogg-Stedman <lars@oddbit.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAM_iQpVigHJX6hWDGCiJJD0-UouXd3f164e9u6zNCH6+OoNeCg@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:12 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Tue, Jan 30, 2018 at 9:27 PM, Steven Presser <steve@pressers.name> wrote:
->> On 01/30/2018 02:05 PM, Andy Shevchenko wrote:
->>> On Tue, Jan 30, 2018 at 8:34 PM, Steven Presser <steve@pressers.name>
->>> wrote:
+On Mon, Nov 27, 2017 at 09:37:07AM -0800, Cong Wang wrote:
+> On Mon, Nov 27, 2017 at 3:55 AM, Steffen Klassert
+> <steffen.klassert@secunet.com> wrote:
+> > On Tue, Nov 21, 2017 at 06:44:04PM -0800, Cong Wang wrote:
+> >> User-space uses proto==0 as a wildcard, but xfrm_id_proto_match()
+> >> doesn't consider it as a match with IPSEC_PROTO_ANY, in this case
+> >> it should match all. Not sure if the following patch is the best way to
+> >> fix it, or perhaps x->id.proto should be initialized to some of these 3
+> >> values, but looking into ->init_temprop() it is not the case.
+> >
+> > x->id is copied from the policy template and it seems that we don't
+> > validate the id of the template when inserting the policy. iproute2
+> > checks for a valid IPsec proto but the kernel does not do so. I think
+> > we should check the policy template and reject inserting if the proto
+> > is invalid.
+> >
+> 
+> Oh, I thought 0 is used as wildcard, so it is not.
+> 
+> Something like below?
+> 
+> @@ -1445,6 +1446,15 @@ static int validate_tmpl(int nr, struct
+> xfrm_user_tmpl *ut, u16 family)
+>                 default:
+>                         return -EINVAL;
+>                 }
+> +               switch (ut[i].id.proto) {
+> +               case IPPROTO_AH:
+> +               case IPPROTO_ESP:
+> +               case IPPROTO_COMP:
+> +                       break;
+> +               default:
+> +                       return -EINVAL;
+> +               }
+> +
+>         }
+> 
+>         return 0;
+> 
 
-> Let's do this way. Create a bug on kernel bugzilla, attach output of
->
-> % acpidump -o tables.dat # tables.dat file
-> % grep -H 15 /sys/bus/acpi/devices/*/status
-> % dmidecode
->
-> and share the number here. I will take it.
+I assume this is supposed to be fixed by the following, so marking it closed for
+syzbot:
 
-Here [1] is the branch with another approach. Can you test it and tell
-if it fixes the issue?
+#syz fix: xfrm: check id proto in validate_tmpl()
 
-[1]: https://bitbucket.org/andy-shev/linux/branch/topic/iio-acpi
-It's based on linux-next + compiletest branch of IIO subsystem.
-
--- 
-With Best Regards,
-Andy Shevchenko
+But syzbot has been hitting a WARN_ON() in xfrm_state_fini() even after that
+fix, so it should get reported as a new bug.
