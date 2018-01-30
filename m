@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753071AbeA3UgY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 15:36:24 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56264 "EHLO
+        id S1753404AbeA3Ugt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:36:49 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56132 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752596AbeA3U3p (ORCPT
+        with ESMTP id S1752521AbeA3U3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:29:45 -0500
+        Tue, 30 Jan 2018 15:29:41 -0500
 From: Thierry Escande <thierry.escande@collabora.com>
 To: Archit Taneja <architt@codeaurora.org>,
         Inki Dae <inki.dae@samsung.com>,
@@ -21,9 +21,9 @@ Cc: Haixia Shi <hshi@chromium.org>,
         Douglas Anderson <dianders@chromium.org>,
         Mark Yao <mark.yao@rock-chips.com>, linux-kernel@vger.kernel.org,
         linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v3 20/43] drm/bridge: analogix_dp: Extend hpd check time to 100ms
-Date: Tue, 30 Jan 2018 21:28:50 +0100
-Message-Id: <20180130202913.28724-21-thierry.escande@collabora.com>
+Subject: [PATCH v3 17/43] drm/bridge: analogix_dp: Wait for HPD signal before configuring link
+Date: Tue, 30 Jan 2018 21:28:47 +0100
+Message-Id: <20180130202913.28724-18-thierry.escande@collabora.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180130202913.28724-1-thierry.escande@collabora.com>
 References: <20180130202913.28724-1-thierry.escande@collabora.com>
@@ -36,33 +36,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lin Huang <hl@rock-chips.com>
+From: zain wang <wzz@rock-chips.com>
 
-There was a 1ms delay to detect the hpd signal, which is too short to
-detect a short pulse. This patch extends this delay to 100ms.
+According to DP spec v1.3 chap 3.5.1.2 Link Training, Link Policy Maker
+must first detect that the HPD signal is asserted high by the Downstream
+Device before establishing a link with it.
 
 Cc: Stéphane Marchesin <marcheu@chromium.org>
-Cc: 征增 王 <wzz@rock-chips.com>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index fa4ef28e286f..9df92dc54dbe 100644
+index ba2506e17f6d..c940a5bb80ac 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -76,7 +76,7 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
- 			return 0;
+@@ -1170,6 +1170,17 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 	if (ret)
+ 		goto out_dp_init;
  
- 		timeout_loop++;
--		usleep_range(10, 11);
-+		usleep_range(1000, 1100);
- 	}
- 
- 	/*
++	/*
++	 * According to DP spec v1.3 chap 3.5.1.2 Link Training,
++	 * We should first make sure the HPD signal is asserted high by device
++	 * when we want to establish a link with it.
++	 */
++	ret = analogix_dp_detect_hpd(dp);
++	if (ret) {
++		DRM_ERROR("failed to get hpd single ret = %d\n", ret);
++		goto out_dp_init;
++	}
++
+ 	ret = analogix_dp_commit(dp);
+ 	if (ret)
+ 		goto out_dp_init;
 -- 
 2.14.1
