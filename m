@@ -1,376 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752052AbeA3Mjt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:39:49 -0500
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:35075 "EHLO
+        id S1752028AbeA3Mjq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:39:46 -0500
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:59237 "EHLO
         mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752005AbeA3Mjm (ORCPT
+        by vger.kernel.org with ESMTP id S1752009AbeA3Mjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:39:42 -0500
+        Tue, 30 Jan 2018 07:39:43 -0500
 From: Klaus Goger <klaus.goger@theobroma-systems.com>
 To: linux-rockchip@lists.infradead.org
 Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
         Klaus Goger <klaus.goger@theobroma-systems.com>
-Subject: [PATCH 2/4] arm64: dts: rockchip: add RK3368-uQ7 (Lion) SoM
-Date: Tue, 30 Jan 2018 13:39:29 +0100
-Message-Id: <20180130123931.50781-3-klaus.goger@theobroma-systems.com>
+Subject: [PATCH 3/4] arm64: dts: rockchip: add Haikou baseboard with RK3368-uQ7 SoM
+Date: Tue, 30 Jan 2018 13:39:30 +0100
+Message-Id: <20180130123931.50781-4-klaus.goger@theobroma-systems.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180130123931.50781-1-klaus.goger@theobroma-systems.com>
 References: <20180130123931.50781-1-klaus.goger@theobroma-systems.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RK3368-uQ7 SoM is a uQseven-compatible (40mm x 70mm, MXM-230
-connector) system-on-module from Theobroma Systems, featuring the
-Rockchip RK3368.
-
-It provides the following feature set:
- * up to 4GB DDR3
- * on-module SPI-NOR flash
- * on-module eMMC (with 8-bit 1.8V interface)
- * SD card (on a baseboad) via edge connector
- * Gigabit Ethernet with on-module Micrel KSZ9031 GbE PHY
- * HDMI/eDP/MIPI-DSI/LVDS
- * MIPI-CSI
- * USB
-   - 1x USB 2.0 dual-role
-   - 1x USB 2.0 host
- * on-module STM32 Cortex-M0 companion controller, implementing:
-   - low-power RTC functionality (ISL1208 emulation)
-   - fan controller (AMC6821 emulation)
-   - USB<->CAN bridge controller
+Haikou is a Qseven and μQseven baseboard used in Theobroma Systems
+evaluation kits. This dts adds a version for use with a RK3368-uQ7 SoM
+called Lion.
 
 Signed-off-by: Klaus Goger <klaus.goger@theobroma-systems.com>
 ---
 
- arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi | 317 ++++++++++++++++++++++++++
- 1 file changed, 317 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi
+ .../arm64/boot/dts/rockchip/rk3368-lion-haikou.dts | 146 +++++++++++++++++++++
+ 1 file changed, 146 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3368-lion-haikou.dts
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi b/arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi
+diff --git a/arch/arm64/boot/dts/rockchip/rk3368-lion-haikou.dts b/arch/arm64/boot/dts/rockchip/rk3368-lion-haikou.dts
 new file mode 100644
-index 000000000000..72be1ae0854f
+index 000000000000..795f5f5eeaf4
 --- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi
-@@ -0,0 +1,317 @@
++++ b/arch/arm64/boot/dts/rockchip/rk3368-lion-haikou.dts
+@@ -0,0 +1,146 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2018 Theobroma Systems Design und Consulting GmbH
 + */
 +
 +/dts-v1/;
-+#include "rk3368.dtsi"
++#include "rk3368-lion.dtsi"
 +
 +/ {
++	model = "Theobroma Systems RK3368-uQ7 Baseboard";
++	compatible = "tsd,rk3368-lion-haikou", "rockchip,rk3368";
++
 +	chosen {
 +		stdout-path = "serial0:115200n8";
 +	};
 +
-+	ext_gmac: gmac-clk {
-+		compatible = "fixed-clock";
-+		clock-frequency = <125000000>;
-+		clock-output-names = "ext_gmac";
-+		#clock-cells = <0>;
-+	};
-+
-+	i2cmux1 {
-+		compatible = "i2c-mux-gpio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		mux-gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_HIGH>;
-+		i2c-parent = <&i2c1>;
-+
-+		/* Q7_GPO_I2C */
-+		i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		/* Q7_SMB */
-+		i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+
 +	i2cmux2 {
-+		compatible = "i2c-mux-gpio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		mux-gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_HIGH>;
-+		i2c-parent = <&i2c2>;
-+
-+		/* Q7_LVDS_BLC_I2C */
 +		i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+				fan: fan@18 {
-+					compatible = "ti,amc6821";
-+					reg = <0x18>;
-+					cooling-min-state = <0>;
-+					cooling-max-state = <9>;
-+					#cooling-cells = <2>;
-+				};
-+
-+				rtc_twi: rtc@6f {
-+					compatible = "isil,isl1208";
-+					reg = <0x6f>;
-+				};
-+		};
-+
-+		/* Q7_GP2_I2C */
-+		i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++			eeprom: eeprom@50 {
++				compatible = "atmel,24c01";
++				pagesize = <8>;
++				reg = <0x50>;
++			};
 +		};
 +	};
 +
 +	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&led_pins_module>;
++		pinctrl-0 = <&led_pins_module>, <&led_sd_haikou>;
 +
-+		module_led1 {
-+			label = "module_led1";
-+			gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			panic-indicator;
-+		};
-+
-+		module_led2 {
-+			label = "module_led2";
-+			gpios = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
++		sd-card-led {
++			label = "sd_card_led";
++			gpios = <&gpio0 RK_PD2 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "mmc0";
 +		};
 +	};
 +
-+	vcc_sys: vcc-sys-regulator {
++	dc_12v: dc-12v {
 +		compatible = "regulator-fixed";
-+		regulator-name = "vcc_sys";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
++		regulator-name = "dc_12v";
 +		regulator-always-on;
 +		regulator-boot-on;
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
 +	};
-+};
 +
-+&emmc {
-+	bus-width = <8>;
-+	mmc-hs200-1_8v;
-+	clock-frequency = <150000000>;
-+	disable-wp;
-+	non-removable;
-+	vmmc-supply = <&vcc33_io>;
-+	vqmmc-supply = <&vcc18_io>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&emmc_clk>, <&emmc_cmd>, <&emmc_bus8>;
-+	status = "okay";
-+};
++	vcc3v3_baseboard: vcc3v3-baseboard {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc3v3_baseboard";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&dc_12v>;
++	};
 +
-+&gmac {
-+	phy-supply = <&vcc33_io>;
-+	phy-mode = "rgmii";
-+	clock_in_out = "input";
-+	assigned-clocks = <&cru SCLK_MAC>;
-+	assigned-clock-parents = <&ext_gmac>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_pins>;
-+	snps,reset-gpio = <&gpio3 RK_PB3 GPIO_ACTIVE_HIGH>;
-+	snps,reset-active-low;
-+	snps,reset-delays-us = <0 10000 50000>;
-+	tx_delay = <0x10>;
-+	rx_delay = <0x10>;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	rk808: pmic@1b {
-+		compatible = "rockchip,rk808";
-+		reg = <0x1b>;
++	vcc5v0_otg: vcc5v0-otg-regulator {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpio = <&gpio0 RK_PD4 GPIO_ACTIVE_HIGH>;
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_int_l>, <&pmic_sleep>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PA5 IRQ_TYPE_LEVEL_LOW>;
-+		rockchip,system-power-controller;
-+		vcc1-supply = <&vcc_sys>;
-+		vcc2-supply = <&vcc_sys>;
-+		vcc3-supply = <&vcc_sys>;
-+		vcc4-supply = <&vcc_sys>;
-+		vcc6-supply = <&vcc_sys>;
-+		vcc7-supply = <&vcc_sys>;
-+		vcc8-supply = <&vcc_sys>;
-+		vcc9-supply = <&vcc_sys>;
-+		vcc10-supply = <&vcc_sys>;
-+		vcc11-supply = <&vcc_sys>;
-+		vcc12-supply = <&vcc_sys>;
-+		clock-output-names = "xin32k", "rk808-clkout2";
-+		#clock-cells = <1>;
-+
-+		regulators {
-+			vdd_cpu: DCDC_REG1 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-name = "vdd_cpu";
-+			};
-+
-+			vdd_log: DCDC_REG2 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-name = "vdd_log";
-+			};
-+
-+			vcc_ddr: DCDC_REG3 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-name = "vcc_ddr";
-+			};
-+
-+			vcc33_io: DCDC_REG4 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vcc33_io";
-+			};
-+
-+			vcc33_video: LDO_REG2 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vcc33_video";
-+			};
-+
-+			vdd10_pll: LDO_REG3 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd10_pll";
-+			};
-+
-+			vcc18_io: LDO_REG4 {
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vcc18_io";
-+			};
-+
-+			vdd10_video: LDO_REG6 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd10_video";
-+			};
-+
-+			vcc18_video: LDO_REG8 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vcc18_video";
-+			};
-+		};
++		pinctrl-0 = <&otg_vbus_drv>;
++		regulator-name = "vcc5v0_otg";
++		regulator-always-on;
 +	};
 +};
 +
-+&i2c1 {
++&sdmmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	cap-sd-highspeed;
++	cd-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
++	disable-wp;
++	max-frequency = <25000000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
++	rockchip,default-sample-phase = <90>;
++	vmmc-supply = <&vcc3v3_baseboard>;
 +	status = "okay";
 +};
 +
-+&i2c2 {
++&spi2 {
++		cs-gpios = <0>, <&gpio2 RK_PC3 GPIO_ACTIVE_LOW>;
++		status = "okay";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
 +	status = "okay";
 +};
 +
-+&cpu_l0 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu_l1 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu_l2 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu_l3 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu_b0 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu_b1 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu_b2 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu_b3 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&pinctrl {
-+	leds {
-+		led_pins_module: led-module-gpio {
-+			rockchip,pins =
-+				<RK_GPIO2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>,
-+				<RK_GPIO3 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+	pmic {
-+		pmic_int_l: pmic-int-l {
-+			rockchip,pins = <RK_GPIO0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+
-+		pmic_sleep: pmic-sleep {
-+			rockchip,pins = <RK_GPIO0 RK_PA0 RK_FUNC_2 &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&spi1 {
++&usb_otg {
++	dr_mode = "otg";
 +	status = "okay";
++};
 +
-+	norflash: flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+	};
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
++	status = "okay";
 +};
 +
 +&uart1 {
-+	status = "okay";
++	/* alternate function of GPIO5/6 */
++	status = "disabled";
 +};
 +
-+&uart3 {
-+	status = "okay";
-+};
++&pinctrl {
++	pinctrl-names = "default";
++	pinctrl-0 = <&haikou_pin_hog>;
 +
-+&usb_host0_ehci {
-+	status = "okay";
-+};
++	hog {
++		haikou_pin_hog: haikou-pin-hog {
++			rockchip,pins =
++			  /* LID_BTN */
++			  <RK_GPIO3 RK_PA6 RK_FUNC_GPIO &pcfg_pull_up>,
++			  /* BATLOW# */
++			  <RK_GPIO0 RK_PD6 RK_FUNC_GPIO &pcfg_pull_up>,
++			  /* SLP_BTN# */
++			  <RK_GPIO3 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>,
++			  /* BIOS_DISABLE# */
++			  <RK_GPIO3 RK_PA0 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
 +
-+&wdt {
-+	status = "okay";
++	leds {
++		led_sd_haikou: led-sd-gpio {
++			rockchip,pins =
++			  <RK_GPIO0 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	sdmmc {
++		sdmmc_cd_gpio: sdmmc-cd-gpio {
++			rockchip,pins =
++			  <RK_GPIO2 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	usb_otg {
++		otg_vbus_drv: otg-vbus-drv {
++			rockchip,pins =
++			  <RK_GPIO0 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
 +};
 -- 
 2.11.0
