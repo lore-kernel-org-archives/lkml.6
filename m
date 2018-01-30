@@ -1,38 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752204AbeA3A7z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 19:59:55 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:37545 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751417AbeA3A7y (ORCPT
+        id S1752519AbeA3BA0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 20:00:26 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43612 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752405AbeA3BAX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 19:59:54 -0500
-X-Google-Smtp-Source: AH8x224IJ4mZikaxnpxZfcxHcP0uFqq2mVIQs1uCwhmh9p5ftm6lf0uQ9WkLcavt1k8ROCRV/EuqsfkH7XXUgvjiMBg=
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1801290935160.1849@nanos>
-References: <alpine.DEB.2.20.1801290935160.1849@nanos>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 29 Jan 2018 16:59:53 -0800
-X-Google-Sender-Auth: Ef7Nxe_h-ewM-gXgKWu5TucXb54
-Message-ID: <CA+55aFy6FX6Ewg9exGH12PWnzSNKBfmc--v6H6UYpcSAEWUR8A@mail.gmail.com>
-Subject: Re: [GIT pull] Timer core updates for 4.16
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 29 Jan 2018 20:00:23 -0500
+X-Google-Smtp-Source: AH8x224K3JTDsVhe3ArE3r3nuHxyG1JvfkycueUU2J4RADcPNYhG8+GkvOrBlO4OJRawIpsOvTz0nA==
+From: Derek Basehore <dbasehore@chromium.org>
+To: linux-kernel@vger.kernel.org
+Cc: Soby.Mathew@arm.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de,
+        briannorris@chromium.org, marc.zyngier@arm.com,
+        Derek Basehore <dbasehore@chromium.org>
+Subject: [PATCH v3 5/5] DT/arm,gic-v3: add collections-reset-on-suspend property
+Date: Mon, 29 Jan 2018 17:00:07 -0800
+Message-Id: <20180130010007.256564-6-dbasehore@chromium.org>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
+In-Reply-To: <20180130010007.256564-1-dbasehore@chromium.org>
+References: <20180130010007.256564-1-dbasehore@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 12:48 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->
->   - A rather large rework of the hrtimer infrastructure which introduces
->     softirq based hrtimers to replace the spread of hrtimer/tasklet combos
->     which force the actual callback execution into softirq context.
+This boolean property for the GIC-V3-ITS enables resending the MAP
+COLLECTIONS commands when resuming for when the state is reset on
+suspend.
 
-I really would have liked to see more of the rationale for this - now
-I'm left with just two example drivers, and a "you'll see the cleanups
-this allows in future driver pulls".
+Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+---
+ Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-But pulled, since the code doesn't look disgusting.
-
-              Linus
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+index a470147d4f14..adb958e046d2 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+@@ -81,6 +81,10 @@ Optional:
+ - reset-on-suspend: Boolean property. Indicates that the ITS state is
+   reset on suspend. The state is then saved on suspend and restored on
+   resume.
++- collections-reset-on-suspend : Boolean property. If the collections for the
++  ITS are stored internally instead of externally, the state will be lost if the
++  GIC loses power. Setting this enables the kernel to reset the collections
++  state on resume for this ITS node.
+ 
+ The main GIC node must contain the appropriate #address-cells,
+ #size-cells and ranges properties for the reg property of all ITS
+-- 
+2.16.0.rc1.238.g530d649a79-goog
