@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753435AbeA3TH4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 14:07:56 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34485 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752112AbeA3THx (ORCPT
+        id S1753463AbeA3TIC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:08:02 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42369 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752112AbeA3TH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:07:53 -0500
-X-Google-Smtp-Source: AH8x224f5KnxDPSEIaup6rz0yelCDPxYsEcSuhmHRk3JxqZQXlN6UnEoB4n2HY4LEa/2bv0ZzlWBtA==
+        Tue, 30 Jan 2018 14:07:58 -0500
+X-Google-Smtp-Source: AH8x227gnVGDloHHCs9l98voC7hEKfgVlU6JCWjUa8we923hKVkPuurctrBSoGquuHBRAeSaxLIanw==
 From: Ulf Magnusson <ulfalizer@gmail.com>
 To: linux-kbuild@vger.kernel.org
 Cc: yamada.masahiro@socionext.com, mcgrof@kernel.org,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Tony Prisk <linux@prisktech.co.nz>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/10] arm: vt8500: kconfig: Remove empty help text
-Date: Tue, 30 Jan 2018 20:05:31 +0100
-Message-Id: <20180130190555.6577-10-ulfalizer@gmail.com>
+        Ulf Magnusson <ulfalizer@gmail.com>, Ley Foon Tan <lftan@altera.com>,
+        nios2-dev@lists.rocketboards.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 10/10] nios2: kconfig: Remove empty help text
+Date: Tue, 30 Jan 2018 20:05:32 +0100
+Message-Id: <20180130190555.6577-11-ulfalizer@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180130190555.6577-1-ulfalizer@gmail.com>
 References: <20180130190555.6577-1-ulfalizer@gmail.com>
@@ -30,20 +28,20 @@ blank"): https://lkml.org/lkml/2018/1/30/516
 
 Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- arch/arm/mach-vt8500/Kconfig | 1 -
+ arch/nios2/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/mach-vt8500/Kconfig b/arch/arm/mach-vt8500/Kconfig
-index 1156a585dafc..8841199058ea 100644
---- a/arch/arm/mach-vt8500/Kconfig
-+++ b/arch/arm/mach-vt8500/Kconfig
-@@ -13,7 +13,6 @@ config ARCH_WM8505
-  	depends on ARCH_MULTI_V5
-  	select ARCH_VT8500
-  	select CPU_ARM926T
-- 	help
+diff --git a/arch/nios2/Kconfig b/arch/nios2/Kconfig
+index 60fae03dac79..3d4ec88f1db1 100644
+--- a/arch/nios2/Kconfig
++++ b/arch/nios2/Kconfig
+@@ -152,7 +152,6 @@ menu "Advanced setup"
  
- config ARCH_WM8750
- 	bool "WonderMedia WM8750"
+ config ADVANCED_OPTIONS
+ 	bool "Prompt for advanced kernel configuration options"
+-	help
+ 
+ comment "Default settings for advanced configuration options are used"
+ 	depends on !ADVANCED_OPTIONS
 -- 
 2.14.1
