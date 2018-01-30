@@ -1,220 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753512AbeA3Sqd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:46:33 -0500
-Received: from vern.gendns.com ([206.190.152.46]:56786 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753294AbeA3Sqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:46:30 -0500
-Subject: Re: [PATCH v6 01/41] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-To: Rob Herring <robh@kernel.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-2-git-send-email-david@lechnology.com>
- <20180129195315.bjanym7pmeh7bhaa@rob-hp-laptop>
- <ffec7cac-22cd-f19b-8c1b-ce3223606d20@lechnology.com>
- <CAL_JsqK+c-C9VJnEOr0Em3Y-dtvE+CSbsc6m-0JoWJSZxKeR_g@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <7064a0d6-0969-81a0-00af-84cca339b813@lechnology.com>
-Date: Tue, 30 Jan 2018 12:46:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1753229AbeA3Sq3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:46:29 -0500
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:54908 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751410AbeA3Sq1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 13:46:27 -0500
+Date: Tue, 30 Jan 2018 18:46:25 +0000
+From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Steve Presser <steve@pressers.name>,
+        Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Jeremy Cline <jeremy@jcline.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Lars Kellogg-Stedman <lars@oddbit.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device
+ for BOSC0200
+Message-ID: <20180130184625.3ca09e82@archlinux>
+In-Reply-To: <20180130183343.2bf379d0@archlinux>
+References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
+        <20171210182152.70ad8fbf@archlinux>
+        <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
+        <20180114104330.2aa7c1fd@archlinux>
+        <20180128094021.572ab366@archlinux>
+        <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
+        <20180130160107.000006df@huawei.com>
+        <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
+        <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
+        <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
+        <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
+        <CAHp75Vd3pDFk5NnJrak_smS-AeHh+d-GXaOwp-8mHtyaK+y0jg@mail.gmail.com>
+        <20180130183343.2bf379d0@archlinux>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqK+c-C9VJnEOr0Em3Y-dtvE+CSbsc6m-0JoWJSZxKeR_g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/30/2018 08:50 AM, Rob Herring wrote:
-> On Mon, Jan 29, 2018 at 3:14 PM, David Lechner <david@lechnology.com> wrote:
->> On 01/29/2018 01:53 PM, Rob Herring wrote:
->>>
->>> On Sat, Jan 20, 2018 at 11:13:40AM -0600, David Lechner wrote:
->>>>
->>>> This adds a new binding for the PLL IP blocks in the mach-davinci
->>>> family of processors. Currently, only da850 has device tree support
->>>> but these bindings can also work for other SoCs in this family just
->>>> by adding new compatible strings.
->>>>
->>>> Note: Although these PLL controllers are very similar to the TI Keystone
->>>> SoCs, we are not re-using those bindings. The Keystone bindings use a
->>>> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
->>>> have a slightly different PLL register layout and a number of quirks
->>>> that can't be handled by the existing bindings, so the keystone bindings
->>>> could not be used as-is anyway.
->>>>
->>>> Signed-off-by: David Lechner <david@lechnology.com>
->>>> ---
->>>>
->>>> v6 changes:
->>>> - Added clock-names property
->>>> - Added ti,clkmode-square-wave property
->>>> - Added pllout child node
->>>> - Added obsclk child node
->>>> - Expanded examples
->>>>
->>>>    .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96
->>>> ++++++++++++++++++++++
->>>>    1 file changed, 96 insertions(+)
->>>>    create mode 100644
->>>> Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>> b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>> new file mode 100644
->>>> index 0000000..36998e1
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>> @@ -0,0 +1,96 @@
->>>> +Binding for TI DaVinci PLL Controllers
->>>> +
->>>> +The PLL provides clocks to most of the components on the SoC. In
->>>> addition
->>>> +to the PLL itself, this controller also contains bypasses, gates,
->>>> dividers,
->>>> +an multiplexers for various clock signals.
->>>> +
->>>> +Required properties:
->>>> +- compatible: shall be one of:
->>>> +       - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
->>>> +       - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
->>>> +- reg: physical base address and size of the controller's register area.
->>>> +- clocks: phandles corresponding to the clock names
->>>> +- clock-names: names of the clock sources - depends on compatible string
->>>> +       - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
->>>> +       - for "ti,da850-pll1", shall be "clksrc"
->>>> +
->>>> +Optional properties:
->>>> +- ti,clkmode-square-wave: Indicates that the the board is supplying a
->>>> square
->>>> +       wave input on the OSCIN pin instead of using a crystal
->>>> oscillator.
->>>> +       This property is only valid when compatible = "ti,da850-pll0".
->>>> +
->>>> +
->>>> +Optional child nodes:
->>>> +
->>>> +pllout
->>>> +       Describes the main PLL clock output (before POSTDIV). The node
->>>> name must
->>>> +       be "pllout".
->>>> +
->>>> +       Required properties:
->>>> +       - #clock-cells: shall be 0
->>>> +
->>>> +sysclk
->>>> +       Describes the PLLDIVn divider clocks that provide the SYSCLKn
->>>> clock
->>>> +       domains. The node name must be "sysclk". Consumers of this node
->>>> should
->>>> +       use "n" in "SYSCLKn" as the index parameter for the clock cell.
->>>> +
->>>> +       Required properties:
->>>> +       - #clock-cells: shall be 1
->>>> +
->>>> +auxclk
->>>> +       Describes the AUXCLK output of the PLL. The node name must be
->>>> "auxclk".
->>>> +       This child node is only valid when compatible = "ti,da850-pll0".
->>>> +
->>>> +       Required properties:
->>>> +       - #clock-cells: shall be 0
->>>> +
->>>> +obsclk
->>>> +       Describes the OBSCLK output of the PLL. The node name must be
->>>> "obsclk".
->>>> +
->>>> +       Required properties:
->>>> +       - #clock-cells: shall be 0
->>>
->>>
->>> So why have all these child nodes vs. just defining a single number
->>> space of clock ids?
->>>
->>> Rob
->>>
->>
->> I think that it makes the bindings more self-documenting. Not all PLLs have
->> all of possible types of output clocks, so the presence or absence of a
->> child node indicates if a PLL actually has that output or not.
-> 
-> Doesn't the compatible string do that?
+On Tue, 30 Jan 2018 18:33:43 +0000
+Jonathan Cameron <jic23@jic23.retrosnub.co.uk> wrote:
 
-Sure.
+> On Tue, 30 Jan 2018 20:08:19 +0200
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> 
+> > On Tue, Jan 30, 2018 at 7:38 PM, Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:  
+> > > On Tue, Jan 30, 2018 at 7:25 PM, Steve Presser <steve@pressers.name> wrote:    
+> > >> Andy,
+> > >>
+> > >> Where did the assertion the second device is a magnetometer come from? Just
+> > >> the data sheet?    
+> > >
+> > > Yep. See chapter 8.2. Isn't enough proof? Or you believe in two
+> > > accelerometers with off-by-one conflicting address on a cheap laptop
+> > > with left unused two magnetometers on the same time?
+> > >
+> > > And we have a driver for magnetometer separately.
+> > >
+> > > So, it looks like we need to move ACPI ID to a new "kinda I2C mfd" IIO
+> > > driver under drivers/iio/imu/bmc150_i2c.c    
+> > 
+> > Even Kconfig for one of the driver states so.
+> > 
+> > Looking more to it, I think the patch should be reverted and new
+> > driver is created instead.  
+> 
+> Whilst the question is still open I have dropped the patch.
+> Was not yet in a non rebasing tree (just in a build test one)
+> so fine to drop it.
+
+Should have said this isn't the final decision or anything, but
+whilst there are open questions we should take the time to sure
+of the answer!
 
 > 
->> It is also complicated by the fact that one of the child nodes (sysclk)
->> is  already an array of clocks.
->>
->> To do what you are suggesting might look something like this...
->>
->> ---
->>
->> Required properties:
->> - compatible: shall be one of:
->>          - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
->>          - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
->> - reg: physical base address and size of the controller's register area.
->> - clocks: phandles corresponding to the clock names
->> - clock-names: names of the clock sources - depends on compatible string
->>          - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
->>          - for "ti,da850-pll1", shall be "clksrc"
->> - #clock-cells: shall be set to <2>.
->>
->> Consumers:
->>
->> The clock cell values for consumers work as follows...
->>
->> The first index is one of the constants defined in ti-davinci-pll.h
->>
->> The second index is 0 unless the first index is TI_DAVINCI_SYSCLK. In the
->> case
->> of TI_DAVINCI_SYSCLK the second index the SYSCLK domain ID (n in SYSCLKn).
->>
->> For compatible = "ti,da850-pll0":
->>          - <&pll0 TI_DAVINCI_PLLOUT 0> is the PLLOUT clock
->>          - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
->> where n is 1 to 7
->>          - <&pll0 TI_DAVINCI_AUXCLK 0> is the AUXCLK clock domain
->>          - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
->>          - all other index combinations are invalid
->>
->> For compatible = "ti,da850-pll1":
->>          - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
->> where n is 1 to 3
->>          - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
->>          - all other index combinations are invalid
+> > 
+> > I'm on it.
+> >   
+> > >> Steve
+> > >>
+> > >>
+> > >> On Tue, Jan 30, 2018, 12:05 PM Andy Shevchenko <andy.shevchenko@gmail.com>
+> > >> wrote:    
+> > >>>
+> > >>> On Tue, Jan 30, 2018 at 6:40 PM, Andy Shevchenko
+> > >>> <andy.shevchenko@gmail.com> wrote:    
+> > >>> > On Tue, Jan 30, 2018 at 6:01 PM, Jonathan Cameron
+> > >>> > <Jonathan.Cameron@huawei.com> wrote:    
+> > >>> >> On Mon, 29 Jan 2018 16:07:02 +0200
+> > >>> >> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:    
+> > >>> >    
+> > >>> >>> > But that would take much longer.  Feel free to propose it and a
+> > >>> >>> > patch
+> > >>> >>> > removing the ifdef fun if you like!    
+> > >>> >    
+> > >>> >>> Where can I see the patch?    
+> > >>> >    
+> > >>> >> Doh. I clearly forgot to push out.  Should be able to push to
+> > >>> >> iio.git on kernel.org later.    
+> > >>> >
+> > >>> > Thanks, I can see it now.
+> > >>> >
+> > >>> > This patch almost wrong. Not by functionality it brings, but by style.    
+> > >>>
+> > >>> Oy vey, the second device is *not* accelerometer, it is a magnetometer
+> > >>> [1].
+> > >>>
+> > >>> [1]: https://www.mouser.com/ds/2/783/BST-BMC150-DS000-04-786477.pdf
+> > >>>    
+> > >>> > I'll send soon a series of fixes to the driver (compile tested only)
+> > >>> > to provide my view on the matters.
+> > >>> >
+> > >>> > P.S. In the future (I have some kind of deja vu I have told this
+> > >>> > already to someone), please, Cc one or more of Rafael, Mika and/or me
+> > >>> > for ACPI matters.    
+> > >>>
+> > >>> --
+> > >>> With Best Regards,
+> > >>> Andy Shevchenko    
+> > >
+> > >
+> > >
+> > > --
+> > > With Best Regards,
+> > > Andy Shevchenko    
+> > 
+> > 
+> >   
 > 
-> You don't really need 2 cells here. I guess if you want to keep the
-> child nodes, that is fine.
-
-OK, I can see how it could work with one cell.
-
-Since this is already implemented and working, I'm inclined to leave it
-as-is if it is "good enough". But, I am fine going either way if there
-are other opinions on the matter.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
