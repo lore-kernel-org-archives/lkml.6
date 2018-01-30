@@ -1,73 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752161AbeA3NEl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 08:04:41 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:55613 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751821AbeA3NEj (ORCPT
+        id S1752068AbeA3NGP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 08:06:15 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:35138 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751577AbeA3NGO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 08:04:39 -0500
-Date: Tue, 30 Jan 2018 14:04:32 +0100
+        Tue, 30 Jan 2018 08:06:14 -0500
+Date: Tue, 30 Jan 2018 14:06:06 +0100
 From: Peter Zijlstra <peterz@infradead.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH v3 1/3] sched/fair: add util_est on top of PELT
-Message-ID: <20180130130432.GC2269@hirez.programming.kicks-ass.net>
-References: <20180123180847.4477-1-patrick.bellasi@arm.com>
- <20180123180847.4477-2-patrick.bellasi@arm.com>
- <20180129163642.GF2228@hirez.programming.kicks-ass.net>
- <20180130124632.GC5739@e110439-lin>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
+ candidate and the basis for SIS
+Message-ID: <20180130130606.GH2295@hirez.programming.kicks-ass.net>
+References: <20180130104555.4125-1-mgorman@techsingularity.net>
+ <20180130104555.4125-5-mgorman@techsingularity.net>
+ <20180130115349.GB2269@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180130124632.GC5739@e110439-lin>
+In-Reply-To: <20180130115349.GB2269@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 12:46:33PM +0000, Patrick Bellasi wrote:
-> > Aside from that being whitespace challenged, did you also try:
-> > 
-> > 	if ((unsigned)((util_est - util_last) + LIM - 1) < (2 * LIM - 1))
+On Tue, Jan 30, 2018 at 12:53:49PM +0100, Peter Zijlstra wrote:
+> On Tue, Jan 30, 2018 at 10:45:55AM +0000, Mel Gorman wrote:
+> > The results can be less dramatic on NUMA where automatic balancing interferes
+> > with the test. It's also known that network benchmarks running on localhost
+> > also benefit quite a bit from this patch (roughly 10% on netperf RR for UDP
+> > and TCP depending on the machine). Hackbench also seens small improvements
+> > (6-11% depending on machine and thread count). The facebook schbench was also
+> > tested but in most cases showed little or no different to wakeup latencies.
 > 
-> No, since the above code IMO is so much "easy to parse for humans" :)
+> What cpufreq setting were you using for these tests?
 
-Heh, true. Although that's fixable by wrapping it in some helper with a
-comment.
-
-> But, mainly because since the cache alignment update, also while testing on a
-> "big" Intel machine I cannot see regressions on hackbench.
-> 
-> This is the code I get on my Xeon E5-2690 v2:
-> 
->        if (abs(util_est - util_last) <= (SCHED_CAPACITY_SCALE / 100))
->    6ba0:       8b 86 7c 02 00 00       mov    0x27c(%rsi),%eax
->    6ba6:       48 29 c8                sub    %rcx,%rax
->    6ba9:       48 99                   cqto
->    6bab:       48 31 d0                xor    %rdx,%rax
->    6bae:       48 29 d0                sub    %rdx,%rax
->    6bb1:       48 83 f8 0a             cmp    $0xa,%rax
->    6bb5:       7e 1d                   jle    6bd4 <dequeue_task_fair+0x7e4>
-> 
-> Does it look so bad?
-
-Its not terrible, and I think your GCC is far more clever than the one I
-used at the time. But that's 4 dependent instructions (cqto,xor,sub,cmp)
-whereas the one I proposed uses only 2 (add,cmp).
-
-Now, my proposal is, as you say, somewhat hard to read, and it also
-doesn't work right when our values are 'big' (which they will not be in
-our case, because util has a very definite bound), and I suspect you're
-right that ~2 cycles here will not be measurable.
-
-So yeah.... whatever ;-)
+I cannot measure any hackbench variation one way or the other with these
+patches using 'performance' mode. So I'll assume you've been running
+things with HWP or something.
