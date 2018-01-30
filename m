@@ -1,332 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751802AbeA3LCy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 06:02:54 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36955 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751709AbeA3LCv (ORCPT
+        id S1751522AbeA3LQC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 06:16:02 -0500
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:40621 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751219AbeA3LQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 06:02:51 -0500
-X-Google-Smtp-Source: AH8x225mCG5daRVjFG6iZS5oh8CfBgSQ21x8RW26iL2xwN5eiuVEIIfdh0BlB30yyOTUt42bIa9qtQ==
-Date: Tue, 30 Jan 2018 12:02:47 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Mario Limonciello <mario.limonciello@dell.com>
-Cc: dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: dell-laptop: Guard SMBIOS calls with a
- mutex
-Message-ID: <20180130110247.5w4qreycdp2o5pjw@pali>
-References: <1517267756-29878-1-git-send-email-mario.limonciello@dell.com>
+        Tue, 30 Jan 2018 06:16:01 -0500
+Subject: Re: [PATCH 8/8] platform: vivid-cec: fix potential integer overflow
+ in vivid_cec_pin_adap_events
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1517268667.git.gustavo@embeddedor.com>
+ <00eea53890802b679c138fc7f68a0f162261d95c.1517268668.git.gustavo@embeddedor.com>
+ <2e1afa55-d214-f932-4ba7-2e21f6a2cd3d@xs4all.nl>
+ <20180130025141.Horde.h4aoQSwrqdPlpFtSKtB9DuS@gator4166.hostgator.com>
+ <43652014-30af-1e4b-c0a9-c23f9633fb2f@xs4all.nl>
+ <20180130045545.Horde.1SSKgcFKaDeoUtmczJ8SRH1@gator4166.hostgator.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <3efaaf36-8edb-d899-b89d-902ba1bc63a6@xs4all.nl>
+Date: Tue, 30 Jan 2018 12:15:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <20180130045545.Horde.1SSKgcFKaDeoUtmczJ8SRH1@gator4166.hostgator.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1517267756-29878-1-git-send-email-mario.limonciello@dell.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfB05/CVbpujCYMsrCkdV0rAUrLGY5X/amHkJANBjskNKQor8baENMJYK5jy7lT1OLLgLTHAKWgQY8HhVr1ec6g9qhMXYdlvafes/oH2pFBUjRxaZ61JA
+ +hWvG99h/jxdbZLLrE8RSzD23UMid1sRkknFPbxw5eb4e9IerNHcgsm56qv6Yauar37JzGeCZIMDqhly+mApaC8jEnSyGyp2JnpthhYMr6JGWBe38uOf1LWS
+ 4BCm66YE0eP+oYfyzDCNWsJ20krAwRfkm6D7IaO+3E6xvXMYtLDh+pG3T6jTRbzgABkTG6a7SiLAKCHd62e6RPinxreFBvHCvK8F7YX+vav+Sb5xhTq6WTM1
+ FQVLm99m/T+neeaUTZG0t7HC5Vb825vOeFt7O7+b4Bc08Gzx0VoAmK3G2v1Zx72LmeUV0pbw
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0UB2v2s010917
 
-On Monday 29 January 2018 17:15:56 Mario Limonciello wrote:
-> Suggested-by: Pali Rohar <pali.rohar@gmail.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> ---
->  drivers/platform/x86/dell-laptop.c | 67 ++++++++++++++++++++++++++++++--------
->  1 file changed, 53 insertions(+), 14 deletions(-)
+On 01/30/18 11:55, Gustavo A. R. Silva wrote:
 > 
-> diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-> index fc2dfc8..f8e2bd8 100644
-> --- a/drivers/platform/x86/dell-laptop.c
-> +++ b/drivers/platform/x86/dell-laptop.c
-> @@ -85,6 +85,7 @@ static struct rfkill *wifi_rfkill;
->  static struct rfkill *bluetooth_rfkill;
->  static struct rfkill *wwan_rfkill;
->  static bool force_rfkill;
-> +static DEFINE_MUTEX(buffer_mutex);
->  
->  module_param(force_rfkill, bool, 0444);
->  MODULE_PARM_DESC(force_rfkill, "enable rfkill on non whitelisted models");
-> @@ -472,16 +473,17 @@ static int dell_rfkill_set(void *data, bool blocked)
->  	int status;
->  	int ret;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(0, 0, 0, 0);
->  	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  	status = buffer->output[1];
->  
->  	dell_set_arguments(0x2, 0, 0, 0);
->  	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
+> Quoting Hans Verkuil <hverkuil@xs4all.nl>:
+> 
+>> On 01/30/2018 09:51 AM, Gustavo A. R. Silva wrote:
+>>> Hi Hans,
+>>>
+>>> Quoting Hans Verkuil <hverkuil@xs4all.nl>:
+>>>
+>>>> Hi Gustavo,
+>>>>
+>>>> On 01/30/2018 01:33 AM, Gustavo A. R. Silva wrote:
+>>>>> Cast len to const u64 in order to avoid a potential integer
+>>>>> overflow. This variable is being used in a context that expects
+>>>>> an expression of type const u64.
+>>>>>
+>>>>> Addresses-Coverity-ID: 1454996 ("Unintentional integer overflow")
+>>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>>>> ---
+>>>>>  drivers/media/platform/vivid/vivid-cec.c | 2 +-
+>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/media/platform/vivid/vivid-cec.c
+>>>>> b/drivers/media/platform/vivid/vivid-cec.c
+>>>>> index b55d278..30240ab 100644
+>>>>> --- a/drivers/media/platform/vivid/vivid-cec.c
+>>>>> +++ b/drivers/media/platform/vivid/vivid-cec.c
+>>>>> @@ -83,7 +83,7 @@ static void vivid_cec_pin_adap_events(struct
+>>>>> cec_adapter *adap, ktime_t ts,
+>>>>>  	if (adap == NULL)
+>>>>>  		return;
+>>>>>  	ts = ktime_sub_us(ts, (CEC_TIM_START_BIT_TOTAL +
+>>>>> -			       len * 10 * CEC_TIM_DATA_BIT_TOTAL));
+>>>>> +			       (const u64)len * 10 * CEC_TIM_DATA_BIT_TOTAL));
+>>>>
+>>>> This makes no sense. Certainly the const part is pointless. And given that
+>>>> len is always <= 16 there definitely is no overflow.
+>>>>
+>>>
+>>> Yeah, I understand your point and I know there is no chance of an
+>>> overflow in this particular case.
+>>>
+>>>> I don't really want this cast in the code.
+>>>>
+>>>> Sorry,
+>>>>
+>>>
+>>> I'm working through all the Linux kernel Coverity reports, and I
+>>> thought of sending a patch for this because IMHO it doesn't hurt to
+>>> give the compiler complete information about the arithmetic in which
+>>> an expression is intended to be evaluated.
+>>>
+>>> I agree that the _const_ part is a bit odd. What do you think about
+>>> the cast to u64 alone?
+>>
+>> What happens if you do: ((u64)CEC_TIM_START_BIT_TOTAL +
+>>
+>> I think that forces everything else in the expression to be evaluated
+>> as u64.
+>>
+> 
+> Well, in this case the operator precedence takes place and the  
+> expression len * 10 * CEC_TIM_DATA_BIT_TOTAL is computed first. So the  
+> issue remains the same.
+> 
+> I can switch the expressions as follows:
+> 
+> (u64)len * 10 * CEC_TIM_DATA_BIT_TOTAL + CEC_TIM_START_BIT_TOTAL
 
-Hi! I'm looking at this code, and do we need shared global buffer with
-mutex protection at all? Is not buffer allocated on stack enough?
+What about:
 
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  	hwswitch = buffer->output[1];
->  
->  	/* If the hardware switch controls this radio, and the hardware
-> @@ -492,6 +494,9 @@ static int dell_rfkill_set(void *data, bool blocked)
->  
->  	dell_set_arguments(1 | (radio<<8) | (disable << 16), 0, 0, 0);
->  	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
-> +
-> +out:
-> +	mutex_unlock(&buffer_mutex);
->  	return ret;
->  }
->  
-> @@ -501,8 +506,10 @@ static void dell_rfkill_update_sw_state(struct rfkill *rfkill, int radio,
->  	if (status & BIT(0)) {
->  		/* Has hw-switch, sync sw_state to BIOS */
->  		int block = rfkill_blocked(rfkill);
-> +		mutex_lock(&buffer_mutex);
->  		dell_set_arguments(1 | (radio << 8) | (block << 16), 0, 0, 0);
->  		dell_send_request(CLASS_INFO, SELECT_RFKILL);
-> +		mutex_unlock(&buffer_mutex);
->  	} else {
->  		/* No hw-switch, sync BIOS state to sw_state */
->  		rfkill_set_sw_state(rfkill, !!(status & BIT(radio + 16)));
-> @@ -523,22 +530,24 @@ static void dell_rfkill_query(struct rfkill *rfkill, void *data)
->  	int status;
->  	int ret;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(0, 0, 0, 0);
->  	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
->  	status = buffer->output[1];
->  
-> -	if (ret != 0 || !(status & BIT(0))) {
-> -		return;
-> -	}
-> +	if (ret != 0 || !(status & BIT(0)))
-> +		goto out;
->  
->  	dell_set_arguments(0, 0x2, 0, 0);
->  	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
->  	hwswitch = buffer->output[1];
->  
->  	if (ret != 0)
-> -		return;
-> +		goto out;
->  
->  	dell_rfkill_update_hw_state(rfkill, radio, status, hwswitch);
-> +out:
-> +	mutex_unlock(&buffer_mutex);
->  }
->  
->  static const struct rfkill_ops dell_rfkill_ops = {
-> @@ -555,16 +564,19 @@ static int dell_debugfs_show(struct seq_file *s, void *data)
->  	int status;
->  	int ret;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(0, 0, 0, 0);
->  	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  	status = buffer->output[1];
->  
->  	dell_set_arguments(0, 0x2, 0, 0);
->  	hwswitch_ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
-> -	if (hwswitch_ret)
-> -		return hwswitch_ret;
-> +	if (hwswitch_ret) {
-> +		ret = hwswitch_ret;
-> +		goto out;
-> +	}
->  	hwswitch_state = buffer->output[1];
->  
->  	seq_printf(s, "return:\t%d\n", ret);
-> @@ -628,7 +640,9 @@ static int dell_debugfs_show(struct seq_file *s, void *data)
->  	seq_printf(s, "Bit 15: Wifi locator setting locked:    %lu\n",
->  		   (hwswitch_state & BIT(15)) >> 15);
->  
-> -	return 0;
-> +out:
-> +	mutex_unlock(&buffer_mutex);
-> +	return ret;
->  }
->  
->  static int dell_debugfs_open(struct inode *inode, struct file *file)
-> @@ -650,12 +664,13 @@ static void dell_update_rfkill(struct work_struct *ignored)
->  	int status;
->  	int ret;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(0, 0, 0, 0);
->  	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
->  	status = buffer->output[1];
->  
->  	if (ret != 0)
-> -		return;
-> +		goto out;
->  
->  	dell_set_arguments(0, 0x2, 0, 0);
->  	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
-> @@ -676,6 +691,8 @@ static void dell_update_rfkill(struct work_struct *ignored)
->  		dell_rfkill_update_hw_state(wwan_rfkill, 3, status, hwswitch);
->  		dell_rfkill_update_sw_state(wwan_rfkill, 3, status);
->  	}
-> +out:
-> +	mutex_unlock(&buffer_mutex);
->  }
->  static DECLARE_DELAYED_WORK(dell_rfkill_work, dell_update_rfkill);
->  
-> @@ -734,9 +751,11 @@ static int __init dell_setup_rfkill(void)
->  	if (!force_rfkill && !whitelisted)
->  		return 0;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(0, 0, 0, 0);
->  	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
->  	status = buffer->output[1];
-> +	mutex_unlock(&buffer_mutex);
->  
->  	/* dell wireless info smbios call is not supported */
->  	if (ret != 0)
-> @@ -896,11 +915,13 @@ static int dell_send_intensity(struct backlight_device *bd)
->  	if (!token)
->  		return -ENODEV;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(token->location, bd->props.brightness, 0, 0);
->  	if (power_supply_is_system_supplied() > 0)
->  		ret = dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_AC);
->  	else
->  		ret = dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_BAT);
-> +	mutex_unlock(&buffer_mutex);
->  
->  	return ret;
->  }
-> @@ -914,6 +935,7 @@ static int dell_get_intensity(struct backlight_device *bd)
->  	if (!token)
->  		return -ENODEV;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(token->location, 0, 0, 0);
->  	if (power_supply_is_system_supplied() > 0)
->  		ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_AC);
-> @@ -922,6 +944,8 @@ static int dell_get_intensity(struct backlight_device *bd)
->  
->  	if (ret == 0)
->  		ret = buffer->output[1];
-> +	mutex_unlock(&buffer_mutex);
-> +
->  	return ret;
->  }
->  
-> @@ -1189,10 +1213,11 @@ static int kbd_get_info(struct kbd_info *info)
->  	u8 units;
->  	int ret;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(0, 0, 0, 0);
->  	ret = dell_send_request(CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  
->  	info->modes = buffer->output[1] & 0xFFFF;
->  	info->type = (buffer->output[1] >> 24) & 0xFF;
-> @@ -1212,6 +1237,8 @@ static int kbd_get_info(struct kbd_info *info)
->  	if (units & BIT(3))
->  		info->days = (buffer->output[3] >> 24) & 0xFF;
->  
-> +out:
-> +	mutex_unlock(&buffer_mutex);
->  	return ret;
->  }
->  
-> @@ -1272,10 +1299,11 @@ static int kbd_get_state(struct kbd_state *state)
->  {
->  	int ret;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(0x1, 0, 0, 0);
->  	ret = dell_send_request(CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  
->  	state->mode_bit = ffs(buffer->output[1] & 0xFFFF);
->  	if (state->mode_bit != 0)
-> @@ -1289,7 +1317,8 @@ static int kbd_get_state(struct kbd_state *state)
->  	state->level = (buffer->output[2] >> 16) & 0xFF;
->  	state->timeout_value_ac = (buffer->output[2] >> 24) & 0x3F;
->  	state->timeout_unit_ac = (buffer->output[2] >> 30) & 0x3;
-> -
-> +out:
-> +	mutex_unlock(&buffer_mutex);
->  	return ret;
->  }
->  
-> @@ -1307,8 +1336,10 @@ static int kbd_set_state(struct kbd_state *state)
->  	input2 |= (state->level & 0xFF) << 16;
->  	input2 |= (state->timeout_value_ac & 0x3F) << 24;
->  	input2 |= (state->timeout_unit_ac & 0x3) << 30;
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(0x2, input1, input2, 0);
->  	ret = dell_send_request(CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
-> +	mutex_unlock(&buffer_mutex);
->  
->  	return ret;
->  }
-> @@ -1345,8 +1376,10 @@ static int kbd_set_token_bit(u8 bit)
->  	if (!token)
->  		return -EINVAL;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(token->location, token->value, 0, 0);
->  	ret = dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
-> +	mutex_unlock(&buffer_mutex);
->  
->  	return ret;
->  }
-> @@ -1364,9 +1397,11 @@ static int kbd_get_token_bit(u8 bit)
->  	if (!token)
->  		return -EINVAL;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(token->location, 0, 0, 0);
->  	ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_STD);
->  	val = buffer->output[1];
-> +	mutex_unlock(&buffer_mutex);
->  
->  	if (ret)
->  		return ret;
-> @@ -2114,8 +2149,10 @@ int dell_micmute_led_set(int state)
->  	if (!token)
->  		return -ENODEV;
->  
-> +	mutex_lock(&buffer_mutex);
->  	dell_set_arguments(token->location, token->value, 0, 0);
->  	dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
-> +	mutex_unlock(&buffer_mutex);
->  
->  	return state;
->  }
-> @@ -2177,10 +2214,12 @@ static int __init dell_init(void)
->  
->  	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
->  	if (token) {
-> +		mutex_lock(&buffer_mutex);
->  		dell_set_arguments(token->location, 0, 0, 0);
->  		ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_AC);
->  		if (ret)
->  			max_intensity = buffer->output[3];
-> +		mutex_unlock(&buffer_mutex);
->  	}
->  
->  	if (max_intensity) {
+10ULL * len * ...
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+> 
+> and avoid the cast in the middle.
+> 
+> What do you think?
+
+My problem is that (u64)len suggests that there is some problem with len
+specifically, which isn't true.
+
+> 
+>> It definitely needs a comment that this fixes a bogus Coverity report.
+>>
+> 
+> I actually added the following line to the message changelog:
+> Addresses-Coverity-ID: 1454996 ("Unintentional integer overflow")
+
+That needs to be in the source, otherwise someone will remove the
+cast (or ULL) at some time in the future since it isn't clear why
+it is done. And nobody reads commit logs from X years back :-)
+
+> 
+> Certainly, I've run across multiple false positives as in this case,  
+> but I have also fixed many actual bugs thanks to the Coverity reports.  
+> So I think in general it is valuable to take a look into these  
+> reports, either if they spot actual bugs or promote code correctness.
+
+Regards,
+
+	Hans
