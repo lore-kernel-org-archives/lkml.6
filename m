@@ -1,84 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753197AbeA3P2T (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:28:19 -0500
-Received: from mga03.intel.com ([134.134.136.65]:8255 "EHLO mga03.intel.com"
+        id S1753199AbeA3P3H (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:29:07 -0500
+Received: from mga09.intel.com ([134.134.136.24]:10600 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752933AbeA3P2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:28:17 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1752127AbeA3P3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 10:29:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,435,1511856000";
-   d="scan'208";a="27470291"
-Date: Tue, 30 Jan 2018 17:28:08 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Morris <jmorris@namei.org>
-Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-security-module@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>, David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20180130152808.2egxs2ki657eyxe3@linux.intel.com>
-References: <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
- <20171106022704.GD26011@ziepe.ca>
- <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
- <20171107160404.GG21466@ziepe.ca>
- <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
- <20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
- <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
- <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
- <20180129220612.ifk7r4md5tynlvz4@linux.intel.com>
- <alpine.LRH.2.21.1801302252020.20741@namei.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.1801302252020.20741@namei.org>
+   d="scan'208";a="26654562"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        dri-devel@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Mickael Reulier <mickael.reulier@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: Re: [PATCH v2] drm/stm: drv: Improve data transfers
+In-Reply-To: <9032382.xZ397EfsLU@avalon>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20170609 (1.8.3)
+References: <20180130104200.21602-1-philippe.cornu@st.com> <CA+M3ks7ao2ZUefn5VZ1POC45rq1dTmZr4v8Gy+zXue=gRx6=pg@mail.gmail.com> <9032382.xZ397EfsLU@avalon>
+Date: Tue, 30 Jan 2018 17:28:57 +0200
+Message-ID: <878tcfwekm.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:52:13PM +1100, James Morris wrote:
-> On Tue, 30 Jan 2018, Jarkko Sakkinen wrote:
-> 
-> > On Sat, Jan 27, 2018 at 12:20:18PM +0530, PrasannaKumar Muralidharan wrote:
-> > > Hi Jarkko,
-> > > 
-> > > On 17 November 2017 at 19:27, Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > > On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
-> > > >
-> > > > At least signed-off-by from PrassanaKumar is missing from the 2nd
-> > > > commit. I'll add it.
-> > > 
-> > > I had the impression that my signed-off-by will be present in this
-> > > change. But it is missing in [1]. Is it supposed to be that way?
-> > > 
-> > > 1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
-> > > 
-> > > Thanks,
-> > > PrasannaKumar
-> > 
-> > Yes, it would be senseful.
-> > 
-> > James, would it still be possible to amend this tag to security tree?
-> 
-> Nope, it's been pushed to Linus.
+On Tue, 30 Jan 2018, Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+> Hi Benjamin,
+>
+> On Tuesday, 30 January 2018 12:51:25 EET Benjamin Gaignard wrote:
+>> 2018-01-30 11:42 GMT+01:00 Philippe Cornu <philippe.cornu@st.com>:
+>> > To optimize data transfers, align pitch on 128 bytes & height
+>> > on 4 bytes. This optimization is not applicable on hw without MMU.
+>> > 
+>> > Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
+>> > Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
+>> > Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>> 
+>> Applied on drm-misc-next.
+>
+> A 9 minutes review window is pretty small... I've been told before that I 
+> should then review v1 instead of complaining about short review times for v2, 
+> but in this case v2 introduces a bug that wasn't present in v1.
 
-Damn. Well, good that Tested-by is there. I'm sorry about this.
+IMO no patch ever needs to be applied this fast. Give more eyeballs a
+chance.
 
-/Jarkko
+BR,
+Jani.
+
+
+>
+>> > ---
+>> > Changes in v2: Rename stm_dumb_create() to stm_gem_cma_dumb_create() and
+>> > 
+>> >   move CONFIG_MMU inside the function following comments from Benjamin
+>> >   Gaignard.
+>> >  
+>> >  drivers/gpu/drm/stm/drv.c | 20 +++++++++++++++++++-
+>> >  1 file changed, 19 insertions(+), 1 deletion(-)
+>> > 
+>> > diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
+>> > index 8fe954c27fba..8bc7e8418b8d 100644
+>> > --- a/drivers/gpu/drm/stm/drv.c
+>> > +++ b/drivers/gpu/drm/stm/drv.c
+>> > @@ -31,6 +31,24 @@ static const struct drm_mode_config_funcs
+>> > drv_mode_config_funcs = {> 
+>> >         .atomic_commit = drm_atomic_helper_commit,
+>> >  
+>> >  };
+>> > 
+>> > +static int stm_gem_cma_dumb_create(struct drm_file *file,
+>> > +                                  struct drm_device *dev,
+>> > +                                  struct drm_mode_create_dumb *args)
+>> > +{
+>> > +#ifdef CONFIG_MMU
+>> > +       unsigned int min_pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
+>> > +
+>> > +       /*
+>> > +        * in order to optimize data transfer, pitch is aligned on
+>> > +        * 128 bytes, height is aligned on 4 bytes
+>> > +        */
+>> > +       args->pitch = roundup(min_pitch, 128);
+>> > +       args->height = roundup(args->height, 4);
+>> > +#endif
+>> > +
+>> > +       return drm_gem_cma_dumb_create_internal(file, dev, args);
+>> > +}
+>> > +
+>> > 
+>> >  DEFINE_DRM_GEM_CMA_FOPS(drv_driver_fops);
+>> >  
+>> >  static struct drm_driver drv_driver = {
+>> > 
+>> > @@ -44,7 +62,7 @@ static struct drm_driver drv_driver = {
+>> > 
+>> >         .minor = 0,
+>> >         .patchlevel = 0,
+>> >         .fops = &drv_driver_fops,
+>> > 
+>> > -       .dumb_create = drm_gem_cma_dumb_create,
+>> > +       .dumb_create = stm_gem_cma_dumb_create,
+>> > 
+>> >         .prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+>> >         .prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+>> >         .gem_free_object_unlocked = drm_gem_cma_free_object,
+>> > 
+>> > --
+>> > 2.15.1
+
+-- 
+Jani Nikula, Intel Open Source Technology Center
