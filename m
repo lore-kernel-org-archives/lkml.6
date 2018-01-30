@@ -1,206 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752943AbeA3Qgs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 11:36:48 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34863 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751829AbeA3Qgr (ORCPT
+        id S1753406AbeA3QhB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 11:37:01 -0500
+Received: from mail-io0-f178.google.com ([209.85.223.178]:43670 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753379AbeA3Qg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 11:36:47 -0500
-X-Google-Smtp-Source: AH8x226+cv8XCzvEyWDcI2DV7kbLKIl4lVHB+dQfZ0rRg5Ii/9mWv9n5ouU+xzDOidVKEi70FI0gpHzMbStj24sthjY=
+        Tue, 30 Jan 2018 11:36:58 -0500
+X-Google-Smtp-Source: AH8x226ZXr47g2aYXofO1uCydKsKLOPzbij8xn+9ylA7x/dKAlYCv0UibKAtglTHoge23R5yuKeOMgFPPIqjsKJRT4I=
 MIME-Version: 1.0
-In-Reply-To: <35090c62-466a-aec8-b1a3-69def959c1c6@linux.intel.com>
-References: <1517243373-355481-1-git-send-email-kan.liang@linux.intel.com>
- <CABPqkBRjQp62ArVZzuH=TRU3mDPkS93D8_cNev6M=eXTCpBLkA@mail.gmail.com>
- <20180130133917.GC29098@krava> <6d708c09-52a7-a906-b651-b133a7b4f189@linux.intel.com>
- <20180130150454.GE29098@krava> <35090c62-466a-aec8-b1a3-69def959c1c6@linux.intel.com>
-From: Stephane Eranian <eranian@google.com>
-Date: Tue, 30 Jan 2018 08:36:45 -0800
-Message-ID: <CABPqkBRWtSsKEM7ycPs0HYSKLsYDmZhr4ztUmMMqsytYamPGsw@mail.gmail.com>
-Subject: Re: [PATCH V3 0/5] bugs fix for large PEBS mmap read and rdpmc read
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>
+In-Reply-To: <1517313948.3658.8.camel@redhat.com>
+References: <1517228795.5965.24.camel@redhat.com> <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
+ <1517313948.3658.8.camel@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 30 Jan 2018 08:36:56 -0800
+X-Google-Sender-Auth: H5rEy-tTCWqbSozBsrbAF76MP1w
+Message-ID: <CA+55aFwD-=YNXQTOSNZE9SQwsin=ay56GOt4gekYe1U0qPeksQ@mail.gmail.com>
+Subject: Re: [GIT PULL] inode->i_version rework for v4.16
+To: Jeff Layton <jlayton@redhat.com>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, xfs <linux-xfs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 7:25 AM, Liang, Kan <kan.liang@linux.intel.com> wrote:
+On Tue, Jan 30, 2018 at 4:05 AM, Jeff Layton <jlayton@redhat.com> wrote:
 >
->
-> On 1/30/2018 10:04 AM, Jiri Olsa wrote:
->>
->> On Tue, Jan 30, 2018 at 09:59:15AM -0500, Liang, Kan wrote:
->>>
->>>
->>>
->>> On 1/30/2018 8:39 AM, Jiri Olsa wrote:
->>>>
->>>> On Tue, Jan 30, 2018 at 01:16:39AM -0800, Stephane Eranian wrote:
->>>>>
->>>>> Hi,
->>>>>
->>>>> On Mon, Jan 29, 2018 at 8:29 AM, <kan.liang@linux.intel.com> wrote:
->>>>>>
->>>>>>
->>>>>> From: Kan Liang <kan.liang@linux.intel.com>
->>>>>>
->>>>>> ------
->>>>>>
->>>>>> Changes since V2:
->>>>>>    - Refined the changelog
->>>>>>    - Introduced specific read function for large PEBS.
->>>>>>      The previous generic PEBS read function is confusing.
->>>>>>      Disabled PMU in pmu::read() path for large PEBS.
->>>>>>      Handled the corner case when reload_times == 0.
->>>>>>    - Modified the parameter of intel_pmu_save_and_restart_reload()
->>>>>>      Discarded local64_cmpxchg
->>>>>>    - Added fixes tag
->>>>>>    - Added WARN to handle reload_times == 0 || reload_val == 0
->>>>>>
->>>>>> Changes since V1:
->>>>>>    - Check PERF_X86_EVENT_AUTO_RELOAD before call
->>>>>>      intel_pmu_save_and_restore()
->>>>>
->>>>>
->>>>> It is not yet clear to me why PERF_SAMPLE_PERIOD is not allowed
->>>>> with large PEBS. Large PEBS requires fixed period. So the kernel could
->>>>> make up the period from the event and store it in the sampling buffer.
->>>>>
->>>>> I tried using large PEBS recently, and despite trying different option
->>>>> combination of perf record, I was not able to get it to work.
->>>>>
->>>>> $ perf record  -c 1  -e cpu/event=0xd1,umask=0x10,period=19936/pp
->>>>> --no-timestamp --no-period -a -C 0
->>>>>
->>>>> But I was able to make this work with a much older kernel.
->>>>>
->>>>> Another annoyance I ran into is with perf record requiring -c period
->>>>> in order not to set
->>>>> PERF_SAMPLE_PERIOD in the event.
->>>>>
->>>>> If I do:
->>>>> perf record  -c 1  -e cpu/event=0xd1,umask=0x10,period=19936/pp
->>>>> --no-timestamp --no-period -a -C 0
->>>>>
->>>>> I get
->>>>>
->>>>> perf_event_attr:
->>>>>     type                             4
->>>>>     size                             112
->>>>>     config                           0x10d1
->>>>>     { sample_period, sample_freq }   199936
->>>>>     sample_type                      IP|TID|CPU
->>>>>
->>>>> But if I do:
->>>>> perf record  -e cpu/event=0xd1,umask=0x10,period=19936/pp
->>>>> --no-timestamp --no-period -a -C 0
->>>>>
->>>>> I get
->>>>>
->>>>> perf_event_attr:
->>>>>     type                             4
->>>>>     size                             112
->>>>>     config                           0x10d1
->>>>>     { sample_period, sample_freq }   199936
->>>>>     sample_type                      IP|TID|CPU|PERIOD
->>>>>
->>>>> Perf should check if all events have a period=, then it should not
->>>>> pass PERF_SAMPLE_PERIOD, even
->>>>> more so when only one event is defined.
->>>>>
->>>>> Also it does not seem to honor --no-period.
->>>>
->>>>
->>>> yep, there's a bug in period=x term handling
->>>> we did not re/set the sample_type based on that
->>>>
->>>> attached patch fixes that for me, also takes into account
->>>> the --no/-period options
->>>>
->>>> jirka
->>>>
->>>>
->>>> ---
->>>> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
->>>> index f251e824edac..907267206973 100644
->>>> --- a/tools/perf/builtin-record.c
->>>> +++ b/tools/perf/builtin-record.c
->>>> @@ -1566,7 +1566,8 @@ static struct option __record_options[] = {
->>>>         OPT_BOOLEAN_SET('T', "timestamp", &record.opts.sample_time,
->>>>                         &record.opts.sample_time_set,
->>>>                         "Record the sample timestamps"),
->>>> -       OPT_BOOLEAN('P', "period", &record.opts.period, "Record the
->>>> sample period"),
->>>> +       OPT_BOOLEAN_SET('P', "period", &record.opts.period,
->>>> &record.opts.period_set,
->>>> +                       "Record the sample period"),
->>>>         OPT_BOOLEAN('n', "no-samples", &record.opts.no_samples,
->>>>                     "don't sample"),
->>>>         OPT_BOOLEAN_SET('N', "no-buildid-cache",
->>>> &record.no_buildid_cache,
->>>> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
->>>> index 2357f4ccc9c7..cfe46236a5e5 100644
->>>> --- a/tools/perf/perf.h
->>>> +++ b/tools/perf/perf.h
->>>> @@ -50,6 +50,7 @@ struct record_opts {
->>>>         bool         sample_time_set;
->>>>         bool         sample_cpu;
->>>>         bool         period;
->>>> +       bool         period_set;
->>>>         bool         running_time;
->>>>         bool         full_auxtrace;
->>>>         bool         auxtrace_snapshot_mode;
->>>> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->>>> index 66fa45198a11..ff359c9ece2e 100644
->>>> --- a/tools/perf/util/evsel.c
->>>> +++ b/tools/perf/util/evsel.c
->>>> @@ -745,12 +745,14 @@ static void apply_config_terms(struct perf_evsel
->>>> *evsel,
->>>>                         if (!(term->weak && opts->user_interval !=
->>>> ULLONG_MAX)) {
->>>>                                 attr->sample_period = term->val.period;
->>>>                                 attr->freq = 0;
->>>> +                               perf_evsel__reset_sample_bit(evsel,
->>>> PERIOD);
->>>>                         }
->>>>                         break;
->>>>                 case PERF_EVSEL__CONFIG_TERM_FREQ:
->>>>                         if (!(term->weak && opts->user_freq !=
->>>> UINT_MAX)) {
->>>>                                 attr->sample_freq = term->val.freq;
->>>>                                 attr->freq = 1;
->>>> +                               perf_evsel__set_sample_bit(evsel,
->>>> PERIOD);
->>>>                         }
->>>
->>>
->>> If we do so, some events could be in fixed mode without PERIOD set. Other
->>> events could be in freq mode with PERIOD set.
->>
->>
->> it also sets the attr->freq, so it's not in fixed mode
->>
->
-> I mean the TERM_PERIOD. It probably enable the large PEBS.
->>>>                             attr->freq = 0;
->>>> +                           perf_evsel__reset_sample_bit(evsel, PERIOD);
->
-> The events in fixed mode could enable large PEBS. Events in freq mode should
-> not enable large PEBS.
-> I think that could be a problem if some events try to enable large PEBS,
-> while others not.
->
-You only enable large PEBS if 100% of the events use fixed periods,
-either via -c period
-or because they all use individual period=p. The --no-period could
-also be used to remove
-the period for measurements where the period is not needed.
+> My intent here was to have this handle wraparound using the same sort of
+> method that the time_before/time_after macros do. Obviously, I didn't
+> document that well.
 
-> Thanks,
-> Kan
->
->
+Oh, the intent was clear. The implementation was wrong.
+
+Note that "time_before()" returns a _boolean_.
+
+So yes, the time comparison functions do a 64-bit subtraction, exactly
+like yours do. BUT THEY DO NOT RETURN THAT DIFFERENCE. They test the
+sign in 64 bits and return that boolean single-bit value.
+
+> I want to make sure I understand what's actually broken here thoug. Is
+> it only broken when the two values are more than 2**63 apart, or is
+> there something else more fundamentally wrong here?
+
+There's something fundamentally wrong. The _intent_ is to allow
+numbers up to 2**63 apart, but if somebody does that
+
+     int cmp = inode_cmp_iversion(inode, old);
+
+     if (cmp < 0 ...
+
+then it actually only ever tests numbers 2**31 apart, because the high
+32 bits will have been thrown away when the 64-bit difference is cast
+to "int".
+
+And what used to be a sign bit (in 64 bits) no longer exists, and the
+above tests the *new* sign bit that is bit #31, not #63.
+
+So you are a factor of four billion off.
+
+And while 2**63 is a big number and perfectly ok for a filesystem
+event difference, a difference of 2**31 is a "this can actually
+happen".
+
+Yes, even 2**31 is still a big difference, and it will take a very
+unusual situation, and quite a long time to trigger: something that
+does a thousand filesystem ops per second will not see the problem for
+24 days. So you'll never see it in a test. But 24 days happens in real
+life..
+
+That's why you need to do the comparison against zero inside the
+actual helper functions like the time comparisons do. Because if you
+return the 64-bit difference, it will be trivially lost, and the code
+will _look_ right, but not work right.
+
+The fact that you didn't even seem to see the problem in my example
+calling sequence just proves that point.
+
+                   Linus
