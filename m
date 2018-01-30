@@ -1,79 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752136AbeA3Av4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 19:51:56 -0500
-Received: from gateway23.websitewelcome.com ([192.185.49.184]:37989 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751448AbeA3Avz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 19:51:55 -0500
-Date: Mon, 29 Jan 2018 18:30:56 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH 1/8] rtl2832: fix potential integer overflow in
- rtl2832_set_frontend
-Message-ID: <1c57e607fbde1e598b2ca9380889e9fc1be6daa4.1517268667.git.gustavo@embeddedor.com>
-References: <cover.1517268667.git.gustavo@embeddedor.com>
+        id S1752223AbeA3AzG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 19:55:06 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45299 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751417AbeA3AzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jan 2018 19:55:06 -0500
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <rostedt@goodmis.org>, <mingo@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, Yisheng Xie <xieyisheng1@huawei.com>
+Subject: [PATCH] ftrace: use helper function clear_ftrace_function
+Date: Tue, 30 Jan 2018 08:46:01 +0800
+Message-ID: <1517273161-36355-1-git-send-email-xieyisheng1@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1517268667.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.57.174
-X-Source-L: No
-X-Exim-ID: 1egJpB-001dPz-Ki
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (training) [189.145.57.174]:35448
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 14
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cast dev->pdata->clk to u64 in order to avoid a potential integer
-overflow. This variable is being used in a context that expects
-an expression of type u64.
+We have helper function clear_ftrace_function(), use it instead of hard
+code. And this should not have any functional change.
 
-Addresses-Coverity-ID: 1271223 ("Unintentional integer overflow")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/media/dvb-frontends/rtl2832.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/ftrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/rtl2832.c b/drivers/media/dvb-frontends/rtl2832.c
-index 94bf5b7..eefc301 100644
---- a/drivers/media/dvb-frontends/rtl2832.c
-+++ b/drivers/media/dvb-frontends/rtl2832.c
-@@ -498,7 +498,7 @@ static int rtl2832_set_frontend(struct dvb_frontend *fe)
- 	* RSAMP_RATIO = floor(CrystalFreqHz * 7 * pow(2, 22)
- 	*	/ ConstWithBandwidthMode)
- 	*/
--	num = dev->pdata->clk * 7;
-+	num = (u64)dev->pdata->clk * 7;
- 	num *= 0x400000;
- 	num = div_u64(num, bw_mode);
- 	resamp_ratio =  num & 0x3ffffff;
-@@ -511,7 +511,7 @@ static int rtl2832_set_frontend(struct dvb_frontend *fe)
- 	*	/ (CrystalFreqHz * 7))
- 	*/
- 	num = bw_mode << 20;
--	num2 = dev->pdata->clk * 7;
-+	num2 = (u64)dev->pdata->clk * 7;
- 	num = div_u64(num, num2);
- 	num = -num;
- 	cfreq_off_ratio = num & 0xfffff;
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 554b517..ba78e03 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -6779,7 +6779,7 @@ int unregister_ftrace_function(struct ftrace_ops *ops)
+ 
+ 	} else {
+ 		/* stopping ftrace calls (just send to ftrace_stub) */
+-		ftrace_trace_function = ftrace_stub;
++		clear_ftrace_function();
+ 
+ 		ftrace_shutdown_sysctl();
+ 	}
 -- 
-2.7.4
+1.7.12.4
