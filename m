@@ -1,63 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752117AbeA3KAP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 05:00:15 -0500
-Received: from mga05.intel.com ([192.55.52.43]:7213 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751391AbeA3KAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 05:00:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,434,1511856000";
-   d="scan'208";a="199748904"
-Date: Tue, 30 Jan 2018 15:34:45 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-Cc: "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Re: [PATCH 1/2] dmaengine: dmatest: change symbolic permissions
- to octal values
-Message-ID: <20180130100444.GU18649@localhost>
-References: <1516617881-30044-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <20180129044801.GL18649@localhost>
- <1517207190.2845.6.camel@hxt-semitech.com>
+        id S1752134AbeA3KA2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 05:00:28 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49686 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751391AbeA3KAZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 05:00:25 -0500
+Date: Tue, 30 Jan 2018 11:00:23 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
+        bhumirks@gmail.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pali.rohar@gmail.com, sre@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
+        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
+        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
+        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com
+Subject: Re: [PATCH] sound/tlv320dac33: Add device tree support
+Message-ID: <20180130100023.GB18104@amd>
+References: <20180129230539.GA18280@amd>
+ <20180129232031.GA7695@lenoch>
+ <20180129233301.GA18104@amd>
+ <20180130083446.GA13498@lenoch>
+ <20180130085314.GA4585@amd>
+ <1141b126-b883-a246-85ad-c5a69acb90bb@gmail.com>
+ <20180130093838.GA15195@lenoch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1517207190.2845.6.camel@hxt-semitech.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180130093838.GA15195@lenoch>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 06:26:40AM +0000, Yang, Shunyong wrote:
-> Hi, Vinod
-> 
-> On Mon, 2018-01-29 at 10:18 +0530, Vinod Koul wrote:
-> > On Mon, Jan 22, 2018 at 06:44:40PM +0800, Yang Shunyong wrote:
-> > > 
-> > > Current coding style prefers octal permissions values. This patch
-> > > changes symbolic permissions to octal values.
-> > Is this preference documented anywhere?
-> > 
-> 
-> When using symbolic permissions like "S_IRUGO | S_IWUSR". The
-> checkpatch.pl will output some warnings to suggest to use octal values.
-> I quote following lines from checkpatch.pl,
-> 
-> # check for uses of S_<PERMS> that could be octal for readability
-> ...
-> if (WARN("SYMBOLIC_PERMS",
->                                  "Symbolic permissions '$oval' are not
-> preferred. Consider using octal permissions '$octal'.\n" . $herecurr)
-> &&
 
-It is a warning and a preference. And I don't prefer changing code for no
-benefit. Sorry but I am not considering this change
+--dTy3Mrz/UPE2dbVg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-~Vinod
+On Tue 2018-01-30 10:38:38, Ladislav Michl wrote:
+> On Tue, Jan 30, 2018 at 10:11:02AM +0100, Filip Matijevi=C4=87 wrote:
+> > Hi,
+> >=20
+
+> > > Well, notice I'm converting existing driver to device tree. And that
+> > > one already has GPIO dependency. It is possible that more work needs
+> > > to be done there, but that should not be a reason to delay this. Feel
+> > > free to help.
+>=20
+> Adding DT properties that need to be maintained for compatibility reasons
+> is a bad idea and very good reason to delay merging unfinished stuff.
+> And meanwhile it turned out it is not power-gpio :)
+
+I believe reset-gpios and power-gpios are commonly used like
+this... and that's what the old code does.
+
+You are not helping.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--dTy3Mrz/UPE2dbVg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlpwQjcACgkQMOfwapXb+vKkTACgkNTAPlrFaYM1KRwWZe+QSlUZ
+EnwAoLP4x3zT5zTZ+/efNUlHJTeJzQVr
+=N3vk
+-----END PGP SIGNATURE-----
+
+--dTy3Mrz/UPE2dbVg--
