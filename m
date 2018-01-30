@@ -1,215 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753554AbeA3U4v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 15:56:51 -0500
-Received: from home.regit.org ([37.187.126.138]:37342 "EHLO home.regit.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753315AbeA3Uz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:55:28 -0500
-From: Eric Leblond <eric@regit.org>
-To: daniel@iogearbox.net
-Cc: alexei.starovoitov@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Leblond <eric@regit.org>
-Subject: [PATCH bpf-next v8 2/5] libbpf: add function to setup XDP
-Date: Tue, 30 Jan 2018 21:55:01 +0100
-Message-Id: <20180130205504.20826-2-eric@regit.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180130205504.20826-1-eric@regit.org>
-References: <a26f90e9-5028-f8a9-a1e6-83a6c46b4e0b@iogearbox.net>
- <20180130205504.20826-1-eric@regit.org>
-X-Spam-Score: -1.0 (-)
+        id S1753572AbeA3U5l (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:57:41 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:42498 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752711AbeA3U5k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 15:57:40 -0500
+X-Google-Smtp-Source: AH8x224ygjpVzwI4vKWItF12Fr/ukFkQbE1ogYLHzeqqActmw1IwWB4EqxZASaPta0z40igux+np5g==
+Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
+To: Daniel Borkmann <daniel@iogearbox.net>,
+        Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>, David Miller <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Streetman <ddstreet@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
+ <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
+ <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net>
+From: David Ahern <dsahern@gmail.com>
+Message-ID: <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
+Date: Tue, 30 Jan 2018 13:57:35 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most of the code is taken from set_link_xdp_fd() in bpf_load.c and
-slightly modified to be library compliant.
+On 1/30/18 1:08 PM, Daniel Borkmann wrote:
+> On 01/30/2018 07:32 PM, Cong Wang wrote:
+>> On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>>> Hello,
+>>>
+>>> The following program creates a hang in unregister_netdevice.
+>>> cleanup_net work hangs there forever periodically printing
+>>> "unregister_netdevice: waiting for lo to become free. Usage count = 3"
+>>> and creation of any new network namespaces hangs forever.
+>>
+>> Interestingly, this is not reproducible on net-next.
+> 
+> The most recent change on netns refcnt was 4ee806d51176 ("net: tcp: close
+> sock if net namespace is exiting") in net/net-next from 5 days ago, maybe
+> fixed due to that?
+> 
 
-Signed-off-by: Eric Leblond <eric@regit.org>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
----
- tools/lib/bpf/bpf.c    | 122 +++++++++++++++++++++++++++++++++++++++++++++++++
- tools/lib/bpf/libbpf.c |   2 +
- tools/lib/bpf/libbpf.h |   4 ++
- 3 files changed, 128 insertions(+)
+This appears to be the commit introducing the refcnt leak:
 
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 5128677e4117..bf2772566240 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -25,6 +25,12 @@
- #include <asm/unistd.h>
- #include <linux/bpf.h>
- #include "bpf.h"
-+#include "libbpf.h"
-+#include "nlattr.h"
-+#include <linux/rtnetlink.h>
-+#include <linux/if_link.h>
-+#include <sys/socket.h>
-+#include <errno.h>
- 
- /*
-  * When building perf, unistd.h is overridden. __NR_bpf is
-@@ -46,7 +52,9 @@
- # endif
- #endif
- 
-+#ifndef min
- #define min(x, y) ((x) < (y) ? (x) : (y))
-+#endif
- 
- static inline __u64 ptr_to_u64(const void *ptr)
- {
-@@ -413,3 +421,117 @@ int bpf_obj_get_info_by_fd(int prog_fd, void *info, __u32 *info_len)
- 
- 	return err;
- }
-+
-+int bpf_set_link_xdp_fd(int ifindex, int fd, __u32 flags)
-+{
-+	struct sockaddr_nl sa;
-+	int sock, seq = 0, len, ret = -1;
-+	char buf[4096];
-+	struct nlattr *nla, *nla_xdp;
-+	struct {
-+		struct nlmsghdr  nh;
-+		struct ifinfomsg ifinfo;
-+		char             attrbuf[64];
-+	} req;
-+	struct nlmsghdr *nh;
-+	struct nlmsgerr *err;
-+	socklen_t addrlen;
-+
-+	memset(&sa, 0, sizeof(sa));
-+	sa.nl_family = AF_NETLINK;
-+
-+	sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
-+	if (sock < 0) {
-+		return -errno;
-+	}
-+
-+	if (bind(sock, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
-+		ret = -errno;
-+		goto cleanup;
-+	}
-+
-+	addrlen = sizeof(sa);
-+	if (getsockname(sock, (struct sockaddr *)&sa, &addrlen) < 0) {
-+		ret = -errno;
-+		goto cleanup;
-+	}
-+
-+	if (addrlen != sizeof(sa)) {
-+		ret = -LIBBPF_ERRNO__INTERNAL;
-+		goto cleanup;
-+	}
-+
-+	memset(&req, 0, sizeof(req));
-+	req.nh.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg));
-+	req.nh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
-+	req.nh.nlmsg_type = RTM_SETLINK;
-+	req.nh.nlmsg_pid = 0;
-+	req.nh.nlmsg_seq = ++seq;
-+	req.ifinfo.ifi_family = AF_UNSPEC;
-+	req.ifinfo.ifi_index = ifindex;
-+
-+	/* started nested attribute for XDP */
-+	nla = (struct nlattr *)(((char *)&req)
-+				+ NLMSG_ALIGN(req.nh.nlmsg_len));
-+	nla->nla_type = NLA_F_NESTED | IFLA_XDP;
-+	nla->nla_len = NLA_HDRLEN;
-+
-+	/* add XDP fd */
-+	nla_xdp = (struct nlattr *)((char *)nla + nla->nla_len);
-+	nla_xdp->nla_type = IFLA_XDP_FD;
-+	nla_xdp->nla_len = NLA_HDRLEN + sizeof(int);
-+	memcpy((char *)nla_xdp + NLA_HDRLEN, &fd, sizeof(fd));
-+	nla->nla_len += nla_xdp->nla_len;
-+
-+	/* if user passed in any flags, add those too */
-+	if (flags) {
-+		nla_xdp = (struct nlattr *)((char *)nla + nla->nla_len);
-+		nla_xdp->nla_type = IFLA_XDP_FLAGS;
-+		nla_xdp->nla_len = NLA_HDRLEN + sizeof(flags);
-+		memcpy((char *)nla_xdp + NLA_HDRLEN, &flags, sizeof(flags));
-+		nla->nla_len += nla_xdp->nla_len;
-+	}
-+
-+	req.nh.nlmsg_len += NLA_ALIGN(nla->nla_len);
-+
-+	if (send(sock, &req, req.nh.nlmsg_len, 0) < 0) {
-+		ret = -errno;
-+		goto cleanup;
-+	}
-+
-+	len = recv(sock, buf, sizeof(buf), 0);
-+	if (len < 0) {
-+		ret = -errno;
-+		goto cleanup;
-+	}
-+
-+	for (nh = (struct nlmsghdr *)buf; NLMSG_OK(nh, len);
-+	     nh = NLMSG_NEXT(nh, len)) {
-+		if (nh->nlmsg_pid != sa.nl_pid) {
-+			ret = -LIBBPF_ERRNO__WRNGPID;
-+			goto cleanup;
-+		}
-+		if (nh->nlmsg_seq != seq) {
-+			ret = -LIBBPF_ERRNO__INVSEQ;
-+			goto cleanup;
-+		}
-+		switch (nh->nlmsg_type) {
-+		case NLMSG_ERROR:
-+			err = (struct nlmsgerr *)NLMSG_DATA(nh);
-+			if (!err->error)
-+				continue;
-+			ret = err->error;
-+			goto cleanup;
-+		case NLMSG_DONE:
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
-+	ret = 0;
-+
-+cleanup:
-+	close(sock);
-+	return ret;
-+}
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 30c776375118..c60122d3ea85 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -106,6 +106,8 @@ static const char *libbpf_strerror_table[NR_ERRNO] = {
- 	[ERRCODE_OFFSET(PROG2BIG)]	= "Program too big",
- 	[ERRCODE_OFFSET(KVER)]		= "Incorrect kernel version",
- 	[ERRCODE_OFFSET(PROGTYPE)]	= "Kernel doesn't support this program type",
-+	[ERRCODE_OFFSET(WRNGPID)]	= "Wrong pid in netlink message",
-+	[ERRCODE_OFFSET(INVSEQ)]	= "Invalid netlink sequence",
- };
- 
- int libbpf_strerror(int err, char *buf, size_t size)
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index 6e20003109e0..e42f96900318 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -42,6 +42,8 @@ enum libbpf_errno {
- 	LIBBPF_ERRNO__PROG2BIG,	/* Program too big */
- 	LIBBPF_ERRNO__KVER,	/* Incorrect kernel version */
- 	LIBBPF_ERRNO__PROGTYPE,	/* Kernel doesn't support this program type */
-+	LIBBPF_ERRNO__WRNGPID,	/* Wrong pid in netlink message */
-+	LIBBPF_ERRNO__INVSEQ,	/* Invalid netlink sequence */
- 	__LIBBPF_ERRNO__END,
- };
- 
-@@ -246,4 +248,6 @@ long libbpf_get_error(const void *ptr);
- 
- int bpf_prog_load(const char *file, enum bpf_prog_type type,
- 		  struct bpf_object **pobj, int *prog_fd);
-+
-+int bpf_set_link_xdp_fd(int ifindex, int fd, __u32 flags);
- #endif
--- 
-2.15.1
+$ git bisect bad
+dbc2b5e9a09e9a6664679a667ff81cff6e5f2641 is the first bad commit
+commit dbc2b5e9a09e9a6664679a667ff81cff6e5f2641
+Author: Xin Long <lucien.xin@gmail.com>
+Date:   Fri May 12 14:39:52 2017 +0800
+
+    sctp: fix src address selection if using secondary addresses for ipv6
+
+
+v4.14 is bad. Running bisect in the background while doing other things....
