@@ -1,89 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752566AbeA3DFD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 22:05:03 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54416 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752076AbeA3DFC (ORCPT
+        id S1752618AbeA3DHX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 22:07:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41010 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752076AbeA3DHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 22:05:02 -0500
-X-Google-Smtp-Source: AH8x226QpLiKGZTbAaevG0t5np8/bDFKFhygmyleaWiPArjqevCN7ZOAHS0Xtui+8H4emLEMDE5Mndozb0iHotXn56U=
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+apdswWOB1XW6HsG+AUowVhozhO1ZeHDeCRBCkY8gkYfg@mail.gmail.com>
-References: <001a1144d6e854b3c90562668d74@google.com> <20180124174723.25289-1-joelaf@google.com>
- <CACT4Y+apdswWOB1XW6HsG+AUowVhozhO1ZeHDeCRBCkY8gkYfg@mail.gmail.com>
-From: Joel Fernandes <joelaf@google.com>
-Date: Mon, 29 Jan 2018 19:05:00 -0800
-Message-ID: <CAJWu+opxXDJ8FHHeuTZHeRRR9LJa65P2xk2F24w=9F+hEyVdXw@mail.gmail.com>
-Subject: Re: possible deadlock in shmem_file_llseek
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com>,
-        Hugh Dickins <hughd@google.com>, Linux-MM <linux-mm@kvack.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="94eb2c0af81ae4641f0563f5a026"
+        Mon, 29 Jan 2018 22:07:22 -0500
+From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, mhocko@suse.com
+Subject: [RFC] mm/migrate: Add new migration reason MR_HUGETLB
+Date: Tue, 30 Jan 2018 08:37:14 +0530
+X-Mailer: git-send-email 2.9.3
+X-TM-AS-GCONF: 00
+x-cbid: 18013003-0012-0000-0000-000005A932F4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18013003-0013-0000-0000-00001924CED2
+Message-Id: <20180130030714.6790-1-khandual@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1801300038
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---94eb2c0af81ae4641f0563f5a026
-Content-Type: text/plain; charset="UTF-8"
+alloc_contig_range() initiates compaction and eventual migration for
+the purpose of either CMA or HugeTLB allocation. At present, reason
+code remains the same MR_CMA for either of those cases. Lets add a
+new reason code which will differentiate the purpose of migration
+as HugeTLB allocation instead.
 
-On Wed, Jan 24, 2018 at 10:40 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Wed, Jan 24, 2018 at 6:47 PM, Joel Fernandes <joelaf@google.com> wrote:
->>
->> #syz test: https://github.com/joelagnel/linux.git test-ashmem
+Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+---
+ include/linux/migrate.h        |  1 +
+ include/trace/events/migrate.h |  3 ++-
+ mm/page_alloc.c                | 14 ++++++++++----
+ 3 files changed, 13 insertions(+), 5 deletions(-)
 
-Here's an updated patch. Just wanted to test it once more.
-
-thanks,
-
-- Joel
-
---94eb2c0af81ae4641f0563f5a026
-Content-Type: text/x-patch; charset="US-ASCII";
-	name="0001-ashmem-Fix-lockdep-issue-during-llseek.patch"
-Content-Disposition: attachment;
-	filename="0001-ashmem-Fix-lockdep-issue-during-llseek.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jd127f2q1
-
-RnJvbSBlN2Q3MzM2MmVkMzc4NDk5Nzk1ZjI3ZTJkYTYxODRkMGIyNDJiODljIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBKb2VsIEZlcm5hbmRlcyA8am9lbGFmQGdvb2dsZS5jb20+CkRh
-dGU6IFdlZCwgMjQgSmFuIDIwMTggMDk6NDc6MjMgLTA4MDAKU3ViamVjdDogW1BBVENIXSBhc2ht
-ZW06IEZpeCBsb2NrZGVwIGlzc3VlIGR1cmluZyBsbHNlZWsKCmFzaG1lbV9tdXRleCBjcmVhdGUg
-YSBjaGFpbiBvZiBkZXBlbmRlbmNpZXMgbGlrZSBzbzoKCigxKQptbWFwIHN5c2NhbGwgLT4KICBt
-bWFwX3NlbSAtPiAgKGFjcXVpcmVkKQogIGFzaG1lbV9tbWFwCiAgYXNobWVtX211dGV4ICh0cnkg
-dG8gYWNxdWlyZSkKICAoYmxvY2spCgooMikKbGxzZWVrIHN5c2NhbGwgLT4KICBhc2htZW1fbGxz
-ZWVrIC0+CiAgYXNobWVtX211dGV4IC0+ICAoYWNxdWlyZWQpCiAgaW5vZGVfbG9jayAtPgogIGlu
-b2RlLT5pX3J3c2VtICh0cnkgdG8gYWNxdWlyZSkKICAoYmxvY2spCgooMykKZ2V0ZGVudHMgLT4K
-ICBpdGVyYXRlX2RpciAtPgogIGlub2RlX2xvY2sgLT4KICBpbm9kZS0+aV9yd3NlbSAgIChhY3F1
-aXJlZCkKICBjb3B5X3RvX3VzZXIgLT4KICBtbWFwX3NlbSAgICAgICAgICh0cnkgdG8gYWNxdWly
-ZSkKClRoZXJlIGlzIGEgbG9jayBvcmRlcmluZyBjcmVhdGVkIGJldHdlZW4gbW1hcF9zZW0gYW5k
-IGlub2RlLT5pX3J3c2VtIGNhdXNpbmcgYQpsb2NrZGVwIHNwbGF0IFsyXSBkdXJpbmcgYSBzeXpj
-YWxsZXIgdGVzdCwgdGhpcyBwYXRjaCBmaXhlcyB0aGUgaXNzdWUgYnkKcmVtb3ZpbmcgdGhlIHVz
-ZSBvZiB0aGUgbXV0ZXguCgpUaGUgbXV0ZXggaXNuJ3QgbmVlZGVkIGFzIGxsc2Vla3MgYXJlIHN5
-bmNocm9uaXplZCB3aXRoIG90aGVyIGxsc2Vla3MKYW5kIHJlYWRzIGR1ZSB0byBmZGdldF9wb3Mg
-YXMgQWwgbWVudGlvbmVkIFsxXS4gRnVydGhlciBhc21hLT5maWxlCmFuZCBhc21hLT5zaXplIGRv
-bid0IGNoYW5nZSBvbmNlIHRoZXkncmUgc2V0dXAsIGFuZCB0aGVyZSdzIGEgdW5pcXVlCmFzbWEt
-PmZpbGUgcGVyIGZpbGUuCgpbMV0gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8x
-MDE4NTAzMS8KWzJdIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE4LzEvMTAvNDgKCkNjOiBUb2Rk
-IEtqb3MgPHRram9zQGdvb2dsZS5jb20+CkNjOiBBcnZlIEhqb25uZXZhZyA8YXJ2ZUBhbmRyb2lk
-LmNvbT4KQ2M6IEFsIFZpcm8gPHZpcm9AemVuaXYubGludXgub3JnLnVrPgpDYzogR3JlZyBLcm9h
-aC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4KUmVwb3J0ZWQtYnk6IHN5emJv
-dCs4ZWMzMGJiN2JmMWE5ODFhMjAxMkBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tClNpZ25lZC1v
-ZmYtYnk6IEpvZWwgRmVybmFuZGVzIDxqb2VsYWZAZ29vZ2xlLmNvbT4KLS0tCiBkcml2ZXJzL3N0
-YWdpbmcvYW5kcm9pZC9hc2htZW0uYyB8IDMgLS0tCiAxIGZpbGUgY2hhbmdlZCwgMyBkZWxldGlv
-bnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9hc2htZW0uYyBiL2Ry
-aXZlcnMvc3RhZ2luZy9hbmRyb2lkL2FzaG1lbS5jCmluZGV4IDBmNjk1ZGYxNGM5ZC4uOGM5YzY5
-YTkzZmE0IDEwMDY0NAotLS0gYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9hc2htZW0uYworKysg
-Yi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9hc2htZW0uYwpAQCAtMzMxLDggKzMzMSw2IEBAIHN0
-YXRpYyBsb2ZmX3QgYXNobWVtX2xsc2VlayhzdHJ1Y3QgZmlsZSAqZmlsZSwgbG9mZl90IG9mZnNl
-dCwgaW50IG9yaWdpbikKIAlzdHJ1Y3QgYXNobWVtX2FyZWEgKmFzbWEgPSBmaWxlLT5wcml2YXRl
-X2RhdGE7CiAJaW50IHJldDsKIAotCW11dGV4X2xvY2soJmFzaG1lbV9tdXRleCk7Ci0KIAlpZiAo
-YXNtYS0+c2l6ZSA9PSAwKSB7CiAJCXJldCA9IC1FSU5WQUw7CiAJCWdvdG8gb3V0OwpAQCAtMzUx
-LDcgKzM0OSw2IEBAIHN0YXRpYyBsb2ZmX3QgYXNobWVtX2xsc2VlayhzdHJ1Y3QgZmlsZSAqZmls
-ZSwgbG9mZl90IG9mZnNldCwgaW50IG9yaWdpbikKIAlmaWxlLT5mX3BvcyA9IGFzbWEtPmZpbGUt
-PmZfcG9zOwogCiBvdXQ6Ci0JbXV0ZXhfdW5sb2NrKCZhc2htZW1fbXV0ZXgpOwogCXJldHVybiBy
-ZXQ7CiB9CiAKLS0gCjIuMTYuMC5yYzEuMjM4Lmc1MzBkNjQ5YTc5LWdvb2cKCg==
---94eb2c0af81ae4641f0563f5a026--
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index a732598fcf83..44381c33a2bd 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -26,6 +26,7 @@ enum migrate_reason {
+ 	MR_MEMPOLICY_MBIND,
+ 	MR_NUMA_MISPLACED,
+ 	MR_CMA,
++	MR_HUGETLB,
+ 	MR_TYPES
+ };
+ 
+diff --git a/include/trace/events/migrate.h b/include/trace/events/migrate.h
+index bcf4daccd6be..61474c93f8f3 100644
+--- a/include/trace/events/migrate.h
++++ b/include/trace/events/migrate.h
+@@ -20,7 +20,8 @@
+ 	EM( MR_SYSCALL,		"syscall_or_cpuset")		\
+ 	EM( MR_MEMPOLICY_MBIND,	"mempolicy_mbind")		\
+ 	EM( MR_NUMA_MISPLACED,	"numa_misplaced")		\
+-	EMe(MR_CMA,		"cma")
++	EM( MR_CMA,		"cma")				\
++	EMe(MR_HUGETLB,		"hugetlb")
+ 
+ /*
+  * First define the enums in the above macros to be exported to userspace
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 242565855d05..ce8a2f2d4994 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7588,13 +7588,14 @@ static unsigned long pfn_max_align_up(unsigned long pfn)
+ 
+ /* [start, end) must belong to a single zone. */
+ static int __alloc_contig_migrate_range(struct compact_control *cc,
+-					unsigned long start, unsigned long end)
++					unsigned long start, unsigned long end,
++					unsigned migratetype)
+ {
+ 	/* This function is based on compact_zone() from compaction.c. */
+ 	unsigned long nr_reclaimed;
+ 	unsigned long pfn = start;
+ 	unsigned int tries = 0;
+-	int ret = 0;
++	int ret = 0, migrate_reason = 0;
+ 
+ 	migrate_prep();
+ 
+@@ -7621,8 +7622,13 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
+ 							&cc->migratepages);
+ 		cc->nr_migratepages -= nr_reclaimed;
+ 
++		if (migratetype == MIGRATE_CMA)
++			migrate_reason = MR_CMA;
++		else
++			migrate_reason = MR_HUGETLB;
++
+ 		ret = migrate_pages(&cc->migratepages, new_page_alloc_contig,
+-				    NULL, 0, cc->mode, MR_CMA);
++				    NULL, 0, cc->mode, migrate_reason);
+ 	}
+ 	if (ret < 0) {
+ 		putback_movable_pages(&cc->migratepages);
+@@ -7710,7 +7716,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+ 	 * allocated.  So, if we fall through be sure to clear ret so that
+ 	 * -EBUSY is not accidentally used or returned to caller.
+ 	 */
+-	ret = __alloc_contig_migrate_range(&cc, start, end);
++	ret = __alloc_contig_migrate_range(&cc, start, end, migratetype);
+ 	if (ret && ret != -EBUSY)
+ 		goto done;
+ 	ret =0;
+-- 
+2.11.0
