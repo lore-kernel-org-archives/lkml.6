@@ -1,120 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753459AbeA3QwR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 11:52:17 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:42520 "EHLO
+        id S1753492AbeA3Q5S (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 11:57:18 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:46525 "EHLO
         mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751761AbeA3QwO (ORCPT
+        with ESMTP id S1752104AbeA3Q5Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 11:52:14 -0500
-X-Google-Smtp-Source: AH8x226ZFlPBz913867uxVRReW9yC6Lx7SVcdJplkbzogst7a9a+erq7R6tahKjZlT8SwmQsuGVfe60gknexF1P7yAM=
+        Tue, 30 Jan 2018 11:57:16 -0500
+X-Google-Smtp-Source: AH8x224EFMZ7swjKkVeNOB0dbD5gldkerLNkoXW4fJu3aQnDjitL5juaBXmTXk/DDGehdeBTABuQrg==
+Date: Tue, 30 Jan 2018 10:57:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: richard.gong@linux.intel.com
+Cc: mark.rutland@arm.com, richard.gong@intel.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv1] dt-bindings: misc: add Intel Stratix10 service layer
+ binding
+Message-ID: <20180130165713.nbib54mbj6fhofnt@rob-hp-laptop>
+References: <1516735502-16745-1-git-send-email-richard.gong@linux.intel.com>
+ <1516735502-16745-2-git-send-email-richard.gong@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFy1Lue+txzoCDJF9XR2bCvWz0W5s0tB+XXQkyf2KaxiOg@mail.gmail.com>
-References: <20180122020426.2988-1-deepa.kernel@gmail.com> <20180122020426.2988-4-deepa.kernel@gmail.com>
- <CA+55aFyNbcS8k3x1WrZ1-Ymtr6OpnCJ8NUZXBUCfacwWXYzC+g@mail.gmail.com>
- <CABeXuvogBWfTzteb8RFAGnW_HGLQX=hVUj0_SZ-TP1ZeNj=OHA@mail.gmail.com>
- <CAK8P3a2+WO70nUW4xAAW-Lmc9OzcjERhKm8zZiBTcscKWzocdg@mail.gmail.com> <CA+55aFy1Lue+txzoCDJF9XR2bCvWz0W5s0tB+XXQkyf2KaxiOg@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 30 Jan 2018 17:52:13 +0100
-X-Google-Sender-Auth: 2QlphgA8gVUwYTCZAkY5YzI4FNw
-Message-ID: <CAK8P3a35yrUoN8jYaPfNYUWb45DPsKvGTMXnLPF1ut+mKmQVVw@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] vfs: Add timestamp_truncate() api
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Deepa Dinamani <deepa.kernel@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516735502-16745-2-git-send-email-richard.gong@linux.intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 7:00 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Wed, Jan 24, 2018 at 3:56 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Tue, Jan 23, 2018 at 5:25 PM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->>>
->>> I checked POSIX again. There is no mention of tv_nsec being positive
->>> always for utimes.
->>> And, the long term plan is to replace all the callers of
->>> timespec_trunc() to use this new api instead for filesystems.
->>> So this will need to be fixed. I will fix this and post an update.
->>
->> I found this on
->> http://pubs.opengroup.org/onlinepubs/9699919799/functions/utimes.html
->>
->> ERRORS
->> These functions shall fail if:
->> ...
->> [EINVAL]
->>  Either of the times argument structures specified a tv_nsec value that was
->>  neither UTIME_NOW nor UTIME_OMIT, and was a value less than zero or
->>  greater than or equal to 1000 million.
->
-> The thing is, we shouldn't check the standards, we should check what
-> we actually _do_.
+On Tue, Jan 23, 2018 at 01:25:02PM -0600, richard.gong@linux.intel.com wrote:
+> From: Richard Gong <richard.gong@intel.com>
+> 
+> Add a device tree binding for the Intel Stratix10 service layer driver
+> 
+> Signed-off-by: Richard Gong <richard.gong@intel.com>
+> ---
+>  .../devicetree/bindings/misc/intel-service.txt     | 56 ++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/intel-service.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/misc/intel-service.txt b/Documentation/devicetree/bindings/misc/intel-service.txt
+> new file mode 100644
+> index 0000000..254e4a1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/intel-service.txt
+> @@ -0,0 +1,56 @@
+> +Intel Service Layer Driver for Stratix10 SoC
+> +============================================
+> +Intel Stratix10 SoC is composed of a 64 bit quad-core ARM Cortex A53 hard
+> +processor system (HPS) and Secure Device Manager (SDM). When the FPGA is
+> +configured from HPS, there needs to be a way for HPS to notify SDM the
+> +location and size of the configuration data. Then SDM will get the
+> +configuration data from that location and perform the FPGA configuration.
+> +
+> +To meet the whole system security needs and support virtual machine requesting
+> +communication with SDM, only the secure world of software (EL3, Exception
+> +Layer 3) can interface with SDM. All software entities running on other
+> +exception layers must channel through the EL3 software whenever it needs
+> +service from SDM.
+> +
+> +Intel Stratix10 service layer driver, running at privileged exception level
+> +(EL1, Exception Layer 1), interfaces with the service providers and provides
+> +the services for FPGA configuration, QSPI, Crypto and warm reset. Service layer
+> +driver also manages secure monitor call (SMC) to communicate with secure monitor
+> +code running in EL3.
+> +
+> +Required properties:
+> +--------------------
+> +The following are the mandatory properties:
+> +
+> +- compatible:
+> +		"intc,svc-1.0"
+> +- method:
+> +		smc or hvc
+> +			smc - Secure Monitor Call
+> +			hvc - Hypervisor Call
 
-The issue for tv_sec is that we don't do anything interesting
-at the moment, and that's bad.
+Do you really need to support hvc or you are just copying and pasting 
+from other implementations?
 
-- The Linux man page says we return -EINVAL for an out-of-range
-  tv_sec, but the VFS code at the moment ends up running into an
-  integer overflow, resulting in an arbitrary (i.e. file system specific)
-  tv_sec when we read back a number that was set out of range.
+> +- memory-region:
+> +		phandle to the reserved memory node. See
+> +		Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+> +		for details
 
-- POSIX (IEEE Std 1003.1-2008) appears to say we should cap the
-  tv_sec to the maximum supported value to update the inode /and/
-  return -EINVAL, which seems better than what we do today, but
-  would be surprising behavior, as -EINVAL usually indicates that we
-  did not do anything.
-  My best guess is that this is not intentional in the spec and should
-  not be done like that.
+Please also put the svc node under the /firmware node and state that in 
+the binding.
 
-- Deepa's patch implements a third option, which is to cap to the
-  maximum (or minimum for times before the fs specific epoch)
-  and keep always returning success for utimensat() etc.
-  This seems the most reasonable behavior.
-
-Between these three, we really need to make a decision.
-
-> And what we actually _do_ is to have a tv_nsec that is of type "long",
-> and while we do have a
->
->   timespec64_valid(const struct timespec64 *ts)
->
-> and fs/utimes.c has a 'nsec_valid()' that apparently the utimes*
-> family of system calls all do end up using, I'm more worried about
-> something where we don't.
->
-> Because I'm almost certain that we've had cases where we just
-> normalize things after-the-fact.
->
-> This all likely isn't a big deal, but it does end up worrying me if we
-> then _depend_ on that granularity thing actually giving the proper
-> granularity even for odd inputs. If they can happen.
->
-> Maybe we don't care?
-
-This part seems easy, while there are two aspects here, I think they
-each have just one answer:
-
-- truncating the nanoseconds in the in-memory inode to the resolution
-  supported by the file system is currently done by Linux (since 2.6.10).
-  This behavior matches the Linux and POSIX documentation and
-  is sensible, so there is no reason to change it. Before 2.6.10, we could
-  end up with a timestamp moving backwards when an inode got
-  evicted from the icache and loaded back from disk.
-
-- the range nsec validation is currently correct, I double-checked
-  the relevant corner cases. We have to be careful when we introduce
-  the 64-bit time_t based system call to make sure we can deal
-  with glibc using 32-bit padding in the upper bits. For 64-bit user
-  space, we must keep returning -EINVAL when those bits are
-  nonzero, but for 32-bit tasks (compat or native), the current plan
-  is to ignore the padding and instead take only the lower 32-bit
-  before performing the range check. Deepa has posted patches
-  for this in the past,  but that's a differnent series.
-
-      Arnd
+> +
+> +Example:
+> +--------
+> +
+> +	reserved-memory {
+> +                #address-cells = <2>;
+> +                #size-cells = <2>;
+> +                ranges;
+> +
+> +                service_reserved: svcbuffer@0 {
+> +                        compatible = "shared-dma-pool";
+> +                        reg = <0x0 0x0 0x0 0x1000000>;
+> +                        alignment = <0x1000>;
+> +                        no-map;
+> +                };
+> +        };
+> +
+> +	svc {
+> +		compatible = "intc,svc-1.0";
+> +		method = "smc";
+> +		memory-region = <&service_reserved>
+> +	};
+> -- 
+> 2.7.4
+> 
