@@ -1,44 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752807AbeA3Fvd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 00:51:33 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39061 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752293AbeA3Fvb (ORCPT
+        id S1752836AbeA3Fvm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 00:51:42 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39152 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752293AbeA3Fvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 00:51:31 -0500
-X-Google-Smtp-Source: AH8x226PrnN0v1KSNzN3qm1Q3BtyWN7zBu4lWPwarOp34ajxlFIvHch4UPsQNdTCoWYqztKq2ApUog==
+        Tue, 30 Jan 2018 00:51:39 -0500
+X-Google-Smtp-Source: AH8x2277LB9tAqX8SF5QFvaX5vK0mGtw5y8C9eMqjUouDc4DW6q3qXjHclyZf4jz6mH/ShbQNMmt6A==
 From: Joel Stanley <joel@jms.id.au>
 To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org
-Cc: Jeremy Kerr <jk@ozlabs.org>,
-        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
-        Eddie James <eajames@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] fsi: add property to avoid scanning at boot
-Date: Tue, 30 Jan 2018 16:21:14 +1030
-Message-Id: <20180130055116.17411-1-joel@jms.id.au>
+Cc: Christopher Bostic <cbostic@linux.vnet.ibm.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Eddie James <eajames@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: fsi: Add optional property no-scan-on-init
+Date: Tue, 30 Jan 2018 16:21:15 +1030
+Message-Id: <20180130055116.17411-2-joel@jms.id.au>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180130055116.17411-1-joel@jms.id.au>
+References: <20180130055116.17411-1-joel@jms.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These two patches from Chris add an optional property that says the
-FSI attached hardware cannot cope with being probed unless the state of
-that hardware is known.
+From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
 
-This allows the driver to eg. defer to userspace which can make this
-decision.
+Add an optional FSI master property 'no-scan-on-init.  This
+can be specified to indicate that a master should not be
+automatically scanned at init time.  This is required in cases
+where a scan could interfere with another FSI master on the same
+bus.
 
-I am collecting patches for a FSI tree to send to Greg, so I am just after
-review from the device tree people.
-
-Christopher Bostic (2):
-  dt-bindings: fsi: Add optional property no-scan-on-init
-  fsi: core: Add check for master property no-scan-on-init
-
+Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+Acked-by: Jeremy Kerr <jk@ozlabs.org>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
  Documentation/devicetree/bindings/fsi/fsi.txt | 7 +++++++
- drivers/fsi/fsi-core.c                        | 5 ++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ 1 file changed, 7 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/fsi/fsi.txt b/Documentation/devicetree/bindings/fsi/fsi.txt
+index 4eaf488d4015..ab516c673a4b 100644
+--- a/Documentation/devicetree/bindings/fsi/fsi.txt
++++ b/Documentation/devicetree/bindings/fsi/fsi.txt
+@@ -56,6 +56,13 @@ addresses (link index and slave ID), and no size:
+     #address-cells = <2>;
+     #size-cells = <0>;
+ 
++An optional boolean property can be added to indicate that a particular master
++should not scan for connected devices at initialization time.  This is
++necessary in cases where a scan could cause arbitration issues with other
++masters that may be present on the bus.
++
++    no-scan-on-init;
++
+ FSI slaves
+ ----------
+ 
 -- 
 2.15.1
