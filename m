@@ -1,103 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751815AbeA3LmY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 06:42:24 -0500
-Received: from mail.netline.ch ([148.251.143.178]:44292 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751718AbeA3LmX (ORCPT
+        id S1751643AbeA3Lnx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 06:43:53 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.179]:28767 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751434AbeA3Lnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 06:42:23 -0500
-Subject: Re: [RFC] Per file OOM badness
-To: =?UTF-8?Q?Nicolai_H=c3=a4hnle?= <nhaehnle@gmail.com>,
-        christian.koenig@amd.com, Michal Hocko <mhocko@kernel.org>,
-        Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
-References: <20180118170006.GG6584@dhcp22.suse.cz>
- <20180123152659.GA21817@castle.DHCP.thefacebook.com>
- <20180123153631.GR1526@dhcp22.suse.cz>
- <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
- <20180124092847.GI1526@dhcp22.suse.cz>
- <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
- <20180124110141.GA28465@dhcp22.suse.cz>
- <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
- <20180124115059.GC28465@dhcp22.suse.cz>
- <381a868c-78fd-d0d1-029e-a2cf4ab06d37@gmail.com>
- <20180130093145.GE25930@phenom.ffwll.local>
- <3db43c1a-59b8-af86-2b87-c783c629f512@daenzer.net>
- <3026d8c5-9313-cb8b-91ef-09c02baf27db@amd.com>
- <445628d3-677c-a9f8-171f-7d74a603c61d@daenzer.net>
- <dce6d244-36c7-7452-97f5-7437bd78cfcc@gmail.com>
- <e511ba10-7032-36cc-f22c-2f6bb05f9f6e@daenzer.net>
- <82d5894f-f4ea-98cc-068a-5d470f5267df@gmail.com>
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <aef7f1f3-f7dc-21d5-bf0d-3145e10e2226@daenzer.net>
-Date: Tue, 30 Jan 2018 12:42:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 30 Jan 2018 06:43:50 -0500
+Date: Tue, 30 Jan 2018 05:43:48 -0600
+Message-ID: <20180130054348.Horde.dj9qH83FlLTXD4Y59GxgcMB@gator4166.hostgator.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/8] platform: vivid-cec: fix potential integer overflow
+ in vivid_cec_pin_adap_events
+References: <cover.1517268667.git.gustavo@embeddedor.com>
+ <00eea53890802b679c138fc7f68a0f162261d95c.1517268668.git.gustavo@embeddedor.com>
+ <2e1afa55-d214-f932-4ba7-2e21f6a2cd3d@xs4all.nl>
+ <20180130025141.Horde.h4aoQSwrqdPlpFtSKtB9DuS@gator4166.hostgator.com>
+ <43652014-30af-1e4b-c0a9-c23f9633fb2f@xs4all.nl>
+ <20180130045545.Horde.1SSKgcFKaDeoUtmczJ8SRH1@gator4166.hostgator.com>
+ <3efaaf36-8edb-d899-b89d-902ba1bc63a6@xs4all.nl>
+In-Reply-To: <3efaaf36-8edb-d899-b89d-902ba1bc63a6@xs4all.nl>
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-In-Reply-To: <82d5894f-f4ea-98cc-068a-5d470f5267df@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 108.167.133.22
+X-Source-L: Yes
+X-Exim-ID: 1egUKL-00344M-Rj
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:34986
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 1
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-01-30 12:36 PM, Nicolai Hähnle wrote:
-> On 30.01.2018 12:34, Michel Dänzer wrote:
->> On 2018-01-30 12:28 PM, Christian König wrote:
->>> Am 30.01.2018 um 12:02 schrieb Michel Dänzer:
->>>> On 2018-01-30 11:40 AM, Christian König wrote:
->>>>> Am 30.01.2018 um 10:43 schrieb Michel Dänzer:
->>>>>> [SNIP]
->>>>>>> Would it be ok to hang onto potentially arbitrary mmget references
->>>>>>> essentially forever? If that's ok I think we can do your process
->>>>>>> based
->>>>>>> account (minus a few minor inaccuracies for shared stuff perhaps,
->>>>>>> but no
->>>>>>> one cares about that).
->>>>>> Honestly, I think you and Christian are overthinking this. Let's try
->>>>>> charging the memory to every process which shares a buffer, and go
->>>>>> from
->>>>>> there.
->>>>> My problem is that this needs to be bullet prove.
->>>>>
->>>>> For example imagine an application which allocates a lot of BOs, then
->>>>> calls fork() and let the parent process die. The file descriptor lives
->>>>> on in the child process, but the memory is not accounted against the
->>>>> child.
->>>> What exactly are you referring to by "the file descriptor" here?
+
+Quoting Hans Verkuil <hverkuil@xs4all.nl>:
+
+[...]
+
+>>> What happens if you do: ((u64)CEC_TIM_START_BIT_TOTAL +
 >>>
->>> The file descriptor used to identify the connection to the driver. In
->>> other words our drm_file structure in the kernel.
+>>> I think that forces everything else in the expression to be evaluated
+>>> as u64.
 >>>
->>>> What happens to BO handles in general in this case? If both parent and
->>>> child process keep the same handle for the same BO, one of them
->>>> destroying the handle will result in the other one not being able to
->>>> use
->>>> it anymore either, won't it?
->>> Correct.
->>>
->>> That usage is actually not useful at all, but we already had
->>> applications which did exactly that by accident.
->>>
->>> Not to mention that somebody could do it on purpose.
 >>
->> Can we just prevent child processes from using their parent's DRM file
->> descriptors altogether? Allowing it seems like a bad idea all around.
-> 
-> Existing protocols pass DRM fds between processes though, don't they?
-> 
-> Not child processes perhaps, but special-casing that seems like awful
-> design.
+>> Well, in this case the operator precedence takes place and the
+>> expression len * 10 * CEC_TIM_DATA_BIT_TOTAL is computed first. So the
+>> issue remains the same.
+>>
+>> I can switch the expressions as follows:
+>>
+>> (u64)len * 10 * CEC_TIM_DATA_BIT_TOTAL + CEC_TIM_START_BIT_TOTAL
+>
+> What about:
+>
+> 10ULL * len * ...
+>
 
-Fair enough.
+Yeah, I like it.
 
-Can we disallow passing DRM file descriptors which have any buffers
-allocated? :)
+>>
+>> and avoid the cast in the middle.
+>>
+>> What do you think?
+>
+> My problem is that (u64)len suggests that there is some problem with len
+> specifically, which isn't true.
+>
 
+That's a good point. Actually, I think the same applies for the rest  
+of the patch series. Maybe it is a good idea to send a v2 of the whole  
+patchset with that update.
 
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+>>
+>>> It definitely needs a comment that this fixes a bogus Coverity report.
+>>>
+>>
+>> I actually added the following line to the message changelog:
+>> Addresses-Coverity-ID: 1454996 ("Unintentional integer overflow")
+>
+> That needs to be in the source, otherwise someone will remove the
+> cast (or ULL) at some time in the future since it isn't clear why
+> it is done. And nobody reads commit logs from X years back :-)
+>
+
+You're right. I thought you were talking about the changelog.
+
+And unless you think otherwise, I think there is no need for any  
+additional code comment if the update you suggest is applied:
+
+len * 10ULL * CEC_TIM_DATA_BIT_TOTAL
+
+Thanks
+--
+Gustavo
