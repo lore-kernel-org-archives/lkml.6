@@ -1,57 +1,235 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752425AbeA3OyB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:54:01 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:49123 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751404AbeA3Ox7 (ORCPT
+        id S1752554AbeA3OyI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:54:08 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:41455 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752453AbeA3OyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:53:59 -0500
-From: Colin King <colin.king@canonical.com>
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] esp4: remove redundant initialization of pointer esph
-Date: Tue, 30 Jan 2018 14:53:48 +0000
-Message-Id: <20180130145348.32202-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Tue, 30 Jan 2018 09:54:04 -0500
+Date: Tue, 30 Jan 2018 06:49:44 -0800
+From: tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-21d375b6b34ff511a507de27bf316b3dde6938d9@git.kernel.org>
+Cc: mingo@kernel.org, luto@kernel.org, bp@alien8.de, hpa@zytor.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        kernel-hardening@lists.openwall.com, hpa@zytor.com,
+        torvalds@linux-foundation.org, bp@alien8.de, luto@kernel.org,
+        mingo@kernel.org
+In-Reply-To: <462dff8d4d64dfbfc851fbf3130641809d980ecd.1517164461.git.luto@kernel.org>
+References: <462dff8d4d64dfbfc851fbf3130641809d980ecd.1517164461.git.luto@kernel.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/entry/64: Remove the SYSCALL64 fast path
+Git-Commit-ID: 21d375b6b34ff511a507de27bf316b3dde6938d9
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit-ID:  21d375b6b34ff511a507de27bf316b3dde6938d9
+Gitweb:     https://git.kernel.org/tip/21d375b6b34ff511a507de27bf316b3dde6938d9
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Sun, 28 Jan 2018 10:38:49 -0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 30 Jan 2018 15:30:36 +0100
 
-Pointer esph is being assigned a value that is never read, esph is
-re-assigned and only read inside an if statement, hence the
-initialization is redundant and can be removed.
+x86/entry/64: Remove the SYSCALL64 fast path
 
-Cleans up clang warning:
-net/ipv4/esp4.c:657:21: warning: Value stored to 'esph' during
-its initialization is never read
+The SYCALLL64 fast path was a nice, if small, optimization back in the good
+old days when syscalls were actually reasonably fast.  Now there is PTI to
+slow everything down, and indirect branches are verboten, making everything
+messier.  The retpoline code in the fast path is particularly nasty.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Just get rid of the fast path. The slow path is barely slower.
+
+[ tglx: Split out the 'push all extra regs' part ]
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
+Link: https://lkml.kernel.org/r/462dff8d4d64dfbfc851fbf3130641809d980ecd.1517164461.git.luto@kernel.org
+
 ---
- net/ipv4/esp4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/entry/entry_64.S   | 117 --------------------------------------------
+ arch/x86/entry/syscall_64.c |   7 +--
+ 2 files changed, 2 insertions(+), 122 deletions(-)
 
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index 296d0b956bfe..97689012b357 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -654,7 +654,7 @@ static void esp_input_restore_header(struct sk_buff *skb)
- static void esp_input_set_header(struct sk_buff *skb, __be32 *seqhi)
- {
- 	struct xfrm_state *x = xfrm_input_state(skb);
--	struct ip_esp_hdr *esph = (struct ip_esp_hdr *)skb->data;
-+	struct ip_esp_hdr *esph;
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index a835704..c46c755 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -241,86 +241,11 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
  
- 	/* For ESN we move the header forward by 4 bytes to
- 	 * accomodate the high bits.  We will move it back after
--- 
-2.15.1
+ 	TRACE_IRQS_OFF
+ 
+-	/*
+-	 * If we need to do entry work or if we guess we'll need to do
+-	 * exit work, go straight to the slow path.
+-	 */
+-	movq	PER_CPU_VAR(current_task), %r11
+-	testl	$_TIF_WORK_SYSCALL_ENTRY|_TIF_ALLWORK_MASK, TASK_TI_flags(%r11)
+-	jnz	entry_SYSCALL64_slow_path
+-
+-entry_SYSCALL_64_fastpath:
+-	/*
+-	 * Easy case: enable interrupts and issue the syscall.  If the syscall
+-	 * needs pt_regs, we'll call a stub that disables interrupts again
+-	 * and jumps to the slow path.
+-	 */
+-	TRACE_IRQS_ON
+-	ENABLE_INTERRUPTS(CLBR_NONE)
+-#if __SYSCALL_MASK == ~0
+-	cmpq	$__NR_syscall_max, %rax
+-#else
+-	andl	$__SYSCALL_MASK, %eax
+-	cmpl	$__NR_syscall_max, %eax
+-#endif
+-	ja	1f				/* return -ENOSYS (already in pt_regs->ax) */
+-	movq	%r10, %rcx
+-
+-	/*
+-	 * This call instruction is handled specially in stub_ptregs_64.
+-	 * It might end up jumping to the slow path.  If it jumps, RAX
+-	 * and all argument registers are clobbered.
+-	 */
+-#ifdef CONFIG_RETPOLINE
+-	movq	sys_call_table(, %rax, 8), %rax
+-	call	__x86_indirect_thunk_rax
+-#else
+-	call	*sys_call_table(, %rax, 8)
+-#endif
+-.Lentry_SYSCALL_64_after_fastpath_call:
+-
+-	movq	%rax, RAX(%rsp)
+-1:
+-
+-	/*
+-	 * If we get here, then we know that pt_regs is clean for SYSRET64.
+-	 * If we see that no exit work is required (which we are required
+-	 * to check with IRQs off), then we can go straight to SYSRET64.
+-	 */
+-	DISABLE_INTERRUPTS(CLBR_ANY)
+-	TRACE_IRQS_OFF
+-	movq	PER_CPU_VAR(current_task), %r11
+-	testl	$_TIF_ALLWORK_MASK, TASK_TI_flags(%r11)
+-	jnz	1f
+-
+-	LOCKDEP_SYS_EXIT
+-	TRACE_IRQS_ON		/* user mode is traced as IRQs on */
+-	movq	RIP(%rsp), %rcx
+-	movq	EFLAGS(%rsp), %r11
+-	addq	$6*8, %rsp	/* skip extra regs -- they were preserved */
+-	UNWIND_HINT_EMPTY
+-	jmp	.Lpop_c_regs_except_rcx_r11_and_sysret
+-
+-1:
+-	/*
+-	 * The fast path looked good when we started, but something changed
+-	 * along the way and we need to switch to the slow path.  Calling
+-	 * raise(3) will trigger this, for example.  IRQs are off.
+-	 */
+-	TRACE_IRQS_ON
+-	ENABLE_INTERRUPTS(CLBR_ANY)
+-	SAVE_EXTRA_REGS
+-	movq	%rsp, %rdi
+-	call	syscall_return_slowpath	/* returns with IRQs disabled */
+-	jmp	return_from_SYSCALL_64
+-
+-entry_SYSCALL64_slow_path:
+ 	/* IRQs are off. */
+ 	SAVE_EXTRA_REGS
+ 	movq	%rsp, %rdi
+ 	call	do_syscall_64		/* returns with IRQs disabled */
+ 
+-return_from_SYSCALL_64:
+ 	TRACE_IRQS_IRETQ		/* we're about to change IF */
+ 
+ 	/*
+@@ -393,7 +318,6 @@ syscall_return_via_sysret:
+ 	/* rcx and r11 are already restored (see code above) */
+ 	UNWIND_HINT_EMPTY
+ 	POP_EXTRA_REGS
+-.Lpop_c_regs_except_rcx_r11_and_sysret:
+ 	popq	%rsi	/* skip r11 */
+ 	popq	%r10
+ 	popq	%r9
+@@ -424,47 +348,6 @@ syscall_return_via_sysret:
+ 	USERGS_SYSRET64
+ END(entry_SYSCALL_64)
+ 
+-ENTRY(stub_ptregs_64)
+-	/*
+-	 * Syscalls marked as needing ptregs land here.
+-	 * If we are on the fast path, we need to save the extra regs,
+-	 * which we achieve by trying again on the slow path.  If we are on
+-	 * the slow path, the extra regs are already saved.
+-	 *
+-	 * RAX stores a pointer to the C function implementing the syscall.
+-	 * IRQs are on.
+-	 */
+-	cmpq	$.Lentry_SYSCALL_64_after_fastpath_call, (%rsp)
+-	jne	1f
+-
+-	/*
+-	 * Called from fast path -- disable IRQs again, pop return address
+-	 * and jump to slow path
+-	 */
+-	DISABLE_INTERRUPTS(CLBR_ANY)
+-	TRACE_IRQS_OFF
+-	popq	%rax
+-	UNWIND_HINT_REGS extra=0
+-	jmp	entry_SYSCALL64_slow_path
+-
+-1:
+-	JMP_NOSPEC %rax				/* Called from C */
+-END(stub_ptregs_64)
+-
+-.macro ptregs_stub func
+-ENTRY(ptregs_\func)
+-	UNWIND_HINT_FUNC
+-	leaq	\func(%rip), %rax
+-	jmp	stub_ptregs_64
+-END(ptregs_\func)
+-.endm
+-
+-/* Instantiate ptregs_stub for each ptregs-using syscall */
+-#define __SYSCALL_64_QUAL_(sym)
+-#define __SYSCALL_64_QUAL_ptregs(sym) ptregs_stub sym
+-#define __SYSCALL_64(nr, sym, qual) __SYSCALL_64_QUAL_##qual(sym)
+-#include <asm/syscalls_64.h>
+-
+ /*
+  * %rdi: prev task
+  * %rsi: next task
+diff --git a/arch/x86/entry/syscall_64.c b/arch/x86/entry/syscall_64.c
+index 9c09775..c176d2f 100644
+--- a/arch/x86/entry/syscall_64.c
++++ b/arch/x86/entry/syscall_64.c
+@@ -7,14 +7,11 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/syscall.h>
+ 
+-#define __SYSCALL_64_QUAL_(sym) sym
+-#define __SYSCALL_64_QUAL_ptregs(sym) ptregs_##sym
+-
+-#define __SYSCALL_64(nr, sym, qual) extern asmlinkage long __SYSCALL_64_QUAL_##qual(sym)(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
++#define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+ #include <asm/syscalls_64.h>
+ #undef __SYSCALL_64
+ 
+-#define __SYSCALL_64(nr, sym, qual) [nr] = __SYSCALL_64_QUAL_##qual(sym),
++#define __SYSCALL_64(nr, sym, qual) [nr] = sym,
+ 
+ extern long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+ 
