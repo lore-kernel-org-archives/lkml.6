@@ -1,188 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751993AbeA3IFd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 03:05:33 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:46664 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751831AbeA3IFb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:05:31 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name C00CD2E1A16
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        id S1751815AbeA3IO2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 03:14:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56073 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751608AbeA3IO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 03:14:27 -0500
+Date: Tue, 30 Jan 2018 09:14:15 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Zi Yan <zi.yan@sent.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Zi Yan <zi.yan@cs.rutgers.edu>
+Subject: Re: [PATCH] Lock mmap_sem when calling migrate_pages() in
+ do_move_pages_to_node()
+Message-ID: <20180130081415.GO21609@dhcp22.suse.cz>
+References: <20180130030011.4310-1-zi.yan@sent.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 30 Jan 2018 09:05:26 +0100
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: paolo.valente@linaro.org
-Cc: Ivan Kozik <ivan@ludios.org>, Ming Lei <ming.lei@redhat.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bfq-iosched@googlegroups.com, Jens Axboe <axboe@kernel.dk>,
-        linus.walleij@linaro.org
-Subject: v4.15 and I/O hang with BFQ
-Message-ID: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.3
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1517299526;
-        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding;
-        bh=6rYAv1lf+HJQXeaM9miBssf2qkM2tRDmoC/g7kFC0H8=;
-        b=TV1E59mH7bCm+lvWQDyPg1e2snoaqyIhtcBtOUAK4iqnDpvgmJ9LhKlLD/8jRJM+VQjITF
-        hT18R3teuoKMqkRY+UwhQ5ep9/Qdr6PBf4G5oVP0jWqaWdjhaAFGc1LowGCM0811q9djYc
-        w1JpmN5miBZ2TpGNxrgUsM6Ddlrj6iU=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1517299526; a=rsa-sha256;
-        cv=none;
-        b=jJo4nfnyfBdY5+04ZmCXQrg2Di/fdvsGrw7/2FPhzbJtNmzrXVr1fXYAKUra3cNcaxDQNPNtdZmQkSz8kG25FklRUaWDp8zsceFwm7//n0uY8C0prm4lnPx+WPunmwq92itjBXle/x9vs+ANxDDksm8oUqajxbbkCFkj9OGRhC8=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180130030011.4310-1-zi.yan@sent.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Paolo, Ivan, Ming et al.
+On Mon 29-01-18 22:00:11, Zi Yan wrote:
+> From: Zi Yan <zi.yan@cs.rutgers.edu>
+> 
+> migrate_pages() requires at least down_read(mmap_sem) to protect
+> related page tables and VMAs from changing. Let's do it in
+> do_page_moves() for both do_move_pages_to_node() and
+> add_page_for_migration().
+> 
+> Also add this lock requirement in the comment of migrate_pages().
 
-It looks like I've just encountered the issue Ivan has already described 
-in [1]. Since I'm able to reproduce it reliably in a VM, I'd like to 
-draw more attention to it.
+This doesn't make much sense to me, to be honest. We are holding
+mmap_sem for _read_ so we allow parallel updates like page faults
+or unmaps. Therefore we are isolating pages prior to the migration.
 
-First, I'm using v4.15 kernel with all pending BFQ fixes:
+The sole purpose of the mmap_sem in add_page_for_migration is to protect
+from vma going away _while_ need it to get the proper page.
 
-===
-2ad909a300c4 bfq-iosched: don't call bfqg_and_blkg_put for 
-!CONFIG_BFQ_GROUP_IOSCHED
-83c97a310f83 block, bfq: release oom-queue ref to root group on exit
-5b9eb4716af1 block, bfq: put async queues for root bfq groups too
-3c5529454a27 block, bfq: limit sectors served with interactive weight 
-raising
-e6c72be3486b block, bfq: limit tags for writes and async I/O
-e579b91d96ce block, bfq: increase threshold to deem I/O as random
-f6cbc16aac88 block, bfq: remove superfluous check in queue-merging setup
-8045d8575183 block, bfq: let a queue be merged only shortly after 
-starting I/O
-242954975f5e block, bfq: check low_latency flag in bfq_bfqq_save_state()
-8349c1bddd95 block, bfq: add missing rq_pos_tree update on rq removal
-558200440cb9 block, bfq: fix occurrences of request finish method's old 
-name
-6ed2f47ee870 block, bfq: consider also past I/O in soft real-time 
-detection
-e5f295dd18f2 block, bfq: remove batches of confusing ifdefs
-===
+Moving the lock up is just wrong because it allows caller to hold the
+lock for way too long if a lot of pages is migrated. Not only that,
+it is even incorrect because we are doing get_user() (aka page fault)
+and while read lock recursion is OK, we might block and deadlock when
+there is a writer pending. I haven't checked the current implementation
+of semaphores but I believe we do not allow recursive locking.
 
-Next, I boot an Arch VM with this kernel and emulated USB stick 
-attached:
+> Signed-off-by: Zi Yan <zi.yan@cs.rutgers.edu>
+> ---
+>  mm/migrate.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 5d0dc7b85f90..52d029953c32 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -1354,6 +1354,9 @@ static int unmap_and_move_huge_page(new_page_t get_new_page,
+>   * or free list only if ret != 0.
+>   *
+>   * Returns the number of pages that were not migrated, or an error code.
+> + *
+> + * The caller must hold at least down_read(mmap_sem) for to-be-migrated pages
+> + * to protect related page tables and VMAs from changing.
+>   */
+>  int migrate_pages(struct list_head *from, new_page_t get_new_page,
+>  		free_page_t put_new_page, unsigned long private,
+> @@ -1457,6 +1460,12 @@ static int store_status(int __user *status, int start, int value, int nr)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Migrates the pages from pagelist and put back those not migrated.
+> + *
+> + * The caller must at least hold down_read(mmap_sem), which is required
+> + * for migrate_pages()
+> + */
+>  static int do_move_pages_to_node(struct mm_struct *mm,
+>  		struct list_head *pagelist, int node)
+>  {
+> @@ -1487,7 +1496,6 @@ static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
+>  	unsigned int follflags;
+>  	int err;
+>  
+> -	down_read(&mm->mmap_sem);
+>  	err = -EFAULT;
+>  	vma = find_vma(mm, addr);
+>  	if (!vma || addr < vma->vm_start || !vma_migratable(vma))
+> @@ -1540,7 +1548,6 @@ static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
+>  	 */
+>  	put_page(page);
+>  out:
+> -	up_read(&mm->mmap_sem);
+>  	return err;
+>  }
+>  
+> @@ -1561,6 +1568,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+>  
+>  	migrate_prep();
+>  
+> +	down_read(&mm->mmap_sem);
+>  	for (i = start = 0; i < nr_pages; i++) {
+>  		const void __user *p;
+>  		unsigned long addr;
+> @@ -1628,6 +1636,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+>  	if (!err)
+>  		err = err1;
+>  out:
+> +	up_read(&mm->mmap_sem);
+>  	return err;
+>  }
+>  
+> -- 
+> 2.15.1
 
-===
-qemu-system-x86_64 -display gtk,gl=on -machine q35,accel=kvm -cpu 
-host,+vmx -enable-kvm -drive 
-if=pflash,format=raw,readonly,file=/mnt/vms/ovmf/code.img -drive 
-if=pflash,format=raw,file=/mnt/vms/ovmf/vars.img -cdrom 
-/mnt/vms/ovmf/shell.iso -netdev user,id=user.0 -device 
-virtio-net,netdev=user.0 -usb -device nec-usb-xhci,id=xhci -device 
-usb-tablet,bus=xhci.0 -serial stdio -m 512 -hda sda.img -hdb sdb.img 
--smp 4 -drive if=none,id=stick,file=usb.img -device 
-usb-storage,bus=xhci.0,drive=stick
-===
-
-Within the VM itself I use udev rule to set the I/O scheduler:
-
-===
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/scheduler}="bfq"
-===
-
-Things boot and work fine until I try to create a partition on the 
-emulated USB stick with cfdisk. On writing a new partition table it 
-blocks, and I get the following stacktrace:
-
-===
-[  225.670702] INFO: task cfdisk:416 blocked for more than 20 seconds.
-[  225.681427]       Not tainted 4.15.0-pf1 #1
-[  225.685341] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
-disables this message.
-[  225.691910] cfdisk          D    0   416    407 0x00000000
-[  225.700777] Call Trace:
-[  225.703654]  ? __schedule+0x35f/0x1000
-[  225.706990]  ? __switch_to_asm+0x40/0x70
-[  225.709943]  ? __switch_to_asm+0x34/0x70
-[  225.712224]  ? __switch_to_asm+0x40/0x70
-[  225.714225]  ? __switch_to_asm+0x40/0x70
-[  225.716790]  schedule+0x32/0xc0
-[  225.718355]  io_schedule+0x12/0x40
-[  225.719747]  wait_on_page_bit+0xea/0x130
-[  225.721266]  ? add_to_page_cache_lru+0xe0/0xe0
-[  225.722622]  __filemap_fdatawait_range+0xbf/0x110
-[  225.724625]  ? preempt_count_sub+0x50/0x90
-[  225.726591]  ? sync_inodes_one_sb+0x20/0x20
-[  225.727507]  filemap_fdatawait_keep_errors+0x1a/0x40
-[  225.728491]  iterate_bdevs+0xa7/0x140
-[  225.729304]  sys_sync+0x7c/0xb0
-[  225.730095]  entry_SYSCALL_64_fastpath+0x20/0x83
-[  225.732420] RIP: 0033:0x7f2631cf4a17
-===
-
-I've tried it several times with the same result. Next, I reboot the 
-system, change the scheduler to Kyber, and then I can create a new 
-partition successfully.
-
-I also went further. While having Kyber activated to work with an 
-emulated USB stick properly, I create RAID10 on it, then I create LVM 
-PV, then VG, then LV, then XFS on top of that, then I set I/O scheduler 
-back to BFQ, then reboot, and on reboot mdadm gets blocked while 
-discovering things, producing the following stacktrace:
-
-===
-[   41.350763] INFO: task mdadm:354 blocked for more than 20 seconds.
-[   41.356154]       Not tainted 4.15.0-pf1 #1
-[   41.358674] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
-disables this message.
-[   41.363046] mdadm           D    0   354    352 0x00000100
-[   41.368700] Call Trace:
-[   41.370417]  ? __schedule+0x35f/0x1000
-[   41.372668]  ? blk_queue_exit+0x3e/0x60
-[   41.374816]  ? generic_make_request+0x12f/0x2d0
-[   41.377363]  schedule+0x32/0xc0
-[   41.380416]  io_schedule+0x12/0x40
-[   41.382698]  __blkdev_direct_IO_simple+0x206/0x360
-[   41.382707]  ? bdget+0x120/0x120
-[   41.382714]  ? blkdev_direct_IO+0x3a5/0x3f0
-[   41.382718]  blkdev_direct_IO+0x3a5/0x3f0
-[   41.382724]  ? current_time+0x18/0x70
-[   41.382731]  ? __atime_needs_update+0x7f/0x190
-[   41.382743]  ? generic_file_read_iter+0x8c/0x9d0
-[   41.382747]  generic_file_read_iter+0x8c/0x9d0
-[   41.382759]  ? __seccomp_filter+0x3b/0x260
-[   41.382765]  __vfs_read+0xf5/0x170
-[   41.382772]  vfs_read+0x91/0x130
-[   41.382778]  SyS_read+0x52/0xc0
-[   41.382819]  do_syscall_64+0x67/0x1a0
-[   41.382828]  entry_SYSCALL64_slow_path+0x25/0x25
-[   41.382833] RIP: 0033:0x7f4b8088a3a1
-[   41.382836] RSP: 002b:00007ffdd681def8 EFLAGS: 00000246 ORIG_RAX: 
-0000000000000000
-[   41.382841] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 
-00007f4b8088a3a1
-[   41.382844] RDX: 0000000000001000 RSI: 00000000007f0000 RDI: 
-0000000000000003
-[   41.382846] RBP: 0000000000000003 R08: 0000000000000003 R09: 
-00007f4b80b55050
-[   41.382848] R10: 000000000000038b R11: 0000000000000246 R12: 
-00000000007eeb10
-[   41.382850] R13: 0000000000000000 R14: 00000000007f0000 R15: 
-00000000007eeb10
-===
-
-If I change I/O scheduler back to Kyber, the system boots okay.
-
-Again, since I'm able to reproduce the issue reliably, let me now what 
-information I should also provide, and as usual I'm ready to test any 
-patches or suggestions.
-
-Important note: I was unable to reproduce this on v4.14 with the same 
-set of BFQ patches (exactly the same case as Ivan has already 
-described).
-
-Thanks.
-
-Regards,
-   Oleksandr
-
-[1] https://lkml.org/lkml/2017/12/1/80
+-- 
+Michal Hocko
+SUSE Labs
