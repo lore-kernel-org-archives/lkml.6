@@ -1,528 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752235AbeA3NNI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 08:13:08 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:59270 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751391AbeA3NNG (ORCPT
+        id S1752303AbeA3NOe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 08:14:34 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:44483 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751816AbeA3NOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 08:13:06 -0500
-Subject: Re: [v2,3/3] KVM: VMX: make MSR bitmaps per-VCPU
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <1517043027-7655-4-git-send-email-pbonzini@redhat.com>
-From: Mihai Carabas <mihai.carabas@oracle.com>
-Message-ID: <ce1d5f6f-eb8d-9827-630c-c9f8793cfb48@oracle.com>
-Date: Tue, 30 Jan 2018 15:07:58 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Tue, 30 Jan 2018 08:14:31 -0500
+X-Google-Smtp-Source: AH8x224kFTMgdwH1ZsQZ9JD67CJ0wIXICpbgFIryFaEvFQ/jhK9RsYbklAzFeKRHPlbWE3uzu2xQWPRqhv9bQBI/1rA=
 MIME-Version: 1.0
-In-Reply-To: <1517043027-7655-4-git-send-email-pbonzini@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8789 signatures=668655
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1801300168
+In-Reply-To: <1565457.zQ5DZdIQMY@amdc3058>
+References: <1479153557-20849-1-git-send-email-malat@debian.org>
+ <CGME20171221220824epcas3p1cd1ac40219c9b8bf7be52bc104e31918@epcas3p1.samsung.com>
+ <20171221220757.24672-1-malat@debian.org> <1565457.zQ5DZdIQMY@amdc3058>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Tue, 30 Jan 2018 14:14:10 +0100
+X-Google-Sender-Auth: PCxmYGzxBvGRPJ3lfMrfK3gExC8
+Message-ID: <CA+7wUsxXE=QDsGvYOPzW+kdd1OjHnEikUjusQXNNFUuTbdbQTQ@mail.gmail.com>
+Subject: Re: [PATCH v3] Fix loading of module radeonfb on PowerMac
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Paolo,
+Bartlomiej,
 
-On 27.01.2018 10:50, Paolo Bonzini wrote:
-> Place the MSR bitmap in struct loaded_vmcs, and update it in place
-> every time the x2apic or APICv state can change.  This is rare and
-> the loop can handle 64 MSRs per iteration, in a similar fashion as
-> nested_vmx_prepare_msr_bitmap.
+On Wed, Jan 3, 2018 at 3:47 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+> On Thursday, December 21, 2017 11:07:56 PM Mathieu Malaterre wrote:
+>> When the linux kernel is build with (typical kernel ship with Debian
+>> installer):
+>>
+>> CONFIG_FB_OF=y
+>> CONFIG_VT_HW_CONSOLE_BINDING=y
+>> CONFIG_FB_RADEON=m
+>>
+>> The offb driver takes precedence over module radeonfb. It is then
+>> impossible to load the module, error reported is:
+>>
+>> [   96.551486] radeonfb 0000:00:10.0: enabling device (0006 -> 0007)
+>> [   96.551526] radeonfb 0000:00:10.0: BAR 0: can't reserve [mem 0x98000000-0x9fffffff pref]
+>> [   96.551531] radeonfb (0000:00:10.0): cannot request region 0.
+>> [   96.551545] radeonfb: probe of 0000:00:10.0 failed with error -16
+>>
+>> This patch reproduce the behavior of the module radeon, so as to make it
+>> possible to load radeonfb when offb is first loaded.
+>>
+>> It should be noticed that `offb_destroy` is never called which explain the
+>> need to skip error detection on the radeon side.
+>
+> This still needs to be explained more, from my last mail:
+>
+> "The last put_fb_info() on fb_info should call ->fb_destroy
+> (offb_destroy in our case) and remove_conflicting_framebuffers()
+> is calling put_fb_info() so there is some extra reference on
+> fb_info somewhere preventing it from going away.
+>
+> Please look into fixing this."
 
-I've back-ported this patch set on 4.1 and made some successful tests.
+I am not familiar with the fb stuff internals but here is what I see:
 
-Reviewed-by: Mihai Carabas <mihai.carabas@oracle.com>
+# modprobe radeonfb
 
-> 
-> This prepares for choosing, on a per-VM basis, whether to intercept
-> the SPEC_CTRL and PRED_CMD MSRs.
-> 
-> Suggested-by: Jim Mattson <jmattson@google.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> ---
->   arch/x86/kvm/vmx.c | 267 +++++++++++++++++++++++++++++------------------------
->   1 file changed, 144 insertions(+), 123 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index ab4b9bc99a52..34551f293881 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -111,6 +111,14 @@
->   static bool __read_mostly enable_pml = 1;
->   module_param_named(pml, enable_pml, bool, S_IRUGO);
->   
-> +#define MSR_TYPE_R	1
-> +#define MSR_TYPE_W	2
-> +#define MSR_TYPE_RW	3
-> +
-> +#define MSR_BITMAP_MODE_X2APIC		1
-> +#define MSR_BITMAP_MODE_X2APIC_APICV	2
-> +#define MSR_BITMAP_MODE_LM		4
-> +
->   #define KVM_VMX_TSC_MULTIPLIER_MAX     0xffffffffffffffffULL
->   
->   /* Guest_tsc -> host_tsc conversion requires 64-bit division.  */
-> @@ -209,6 +217,7 @@ struct loaded_vmcs {
->   	int soft_vnmi_blocked;
->   	ktime_t entry_time;
->   	s64 vnmi_blocked_time;
-> +	unsigned long *msr_bitmap;
->   	struct list_head loaded_vmcss_on_cpu_link;
->   };
->   
-> @@ -449,8 +458,6 @@ struct nested_vmx {
->   	bool pi_pending;
->   	u16 posted_intr_nv;
->   
-> -	unsigned long *msr_bitmap;
-> -
->   	struct hrtimer preemption_timer;
->   	bool preemption_timer_expired;
->   
-> @@ -573,6 +580,7 @@ struct vcpu_vmx {
->   	struct kvm_vcpu       vcpu;
->   	unsigned long         host_rsp;
->   	u8                    fail;
-> +	u8		      msr_bitmap_mode;
->   	u32                   exit_intr_info;
->   	u32                   idt_vectoring_info;
->   	ulong                 rflags;
-> @@ -927,6 +935,7 @@ static void vmx_get_segment(struct kvm_vcpu *vcpu,
->   static void vmx_set_nmi_mask(struct kvm_vcpu *vcpu, bool masked);
->   static bool nested_vmx_is_page_fault_vmexit(struct vmcs12 *vmcs12,
->   					    u16 error_code);
-> +static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu);
->   
->   static DEFINE_PER_CPU(struct vmcs *, vmxarea);
->   static DEFINE_PER_CPU(struct vmcs *, current_vmcs);
-> @@ -946,12 +955,6 @@ static bool nested_vmx_is_page_fault_vmexit(struct vmcs12 *vmcs12,
->   enum {
->   	VMX_IO_BITMAP_A,
->   	VMX_IO_BITMAP_B,
-> -	VMX_MSR_BITMAP_LEGACY,
-> -	VMX_MSR_BITMAP_LONGMODE,
-> -	VMX_MSR_BITMAP_LEGACY_X2APIC_APICV,
-> -	VMX_MSR_BITMAP_LONGMODE_X2APIC_APICV,
-> -	VMX_MSR_BITMAP_LEGACY_X2APIC,
-> -	VMX_MSR_BITMAP_LONGMODE_X2APIC,
->   	VMX_VMREAD_BITMAP,
->   	VMX_VMWRITE_BITMAP,
->   	VMX_BITMAP_NR
-> @@ -961,12 +964,6 @@ enum {
->   
->   #define vmx_io_bitmap_a                      (vmx_bitmap[VMX_IO_BITMAP_A])
->   #define vmx_io_bitmap_b                      (vmx_bitmap[VMX_IO_BITMAP_B])
-> -#define vmx_msr_bitmap_legacy                (vmx_bitmap[VMX_MSR_BITMAP_LEGACY])
-> -#define vmx_msr_bitmap_longmode              (vmx_bitmap[VMX_MSR_BITMAP_LONGMODE])
-> -#define vmx_msr_bitmap_legacy_x2apic_apicv   (vmx_bitmap[VMX_MSR_BITMAP_LEGACY_X2APIC_APICV])
-> -#define vmx_msr_bitmap_longmode_x2apic_apicv (vmx_bitmap[VMX_MSR_BITMAP_LONGMODE_X2APIC_APICV])
-> -#define vmx_msr_bitmap_legacy_x2apic         (vmx_bitmap[VMX_MSR_BITMAP_LEGACY_X2APIC])
-> -#define vmx_msr_bitmap_longmode_x2apic       (vmx_bitmap[VMX_MSR_BITMAP_LONGMODE_X2APIC])
->   #define vmx_vmread_bitmap                    (vmx_bitmap[VMX_VMREAD_BITMAP])
->   #define vmx_vmwrite_bitmap                   (vmx_bitmap[VMX_VMWRITE_BITMAP])
->   
-> @@ -2564,36 +2561,6 @@ static void move_msr_up(struct vcpu_vmx *vmx, int from, int to)
->   	vmx->guest_msrs[from] = tmp;
->   }
->   
-> -static void vmx_set_msr_bitmap(struct kvm_vcpu *vcpu)
-> -{
-> -	unsigned long *msr_bitmap;
-> -
-> -	if (is_guest_mode(vcpu))
-> -		msr_bitmap = to_vmx(vcpu)->nested.msr_bitmap;
-> -	else if (cpu_has_secondary_exec_ctrls() &&
-> -		 (vmcs_read32(SECONDARY_VM_EXEC_CONTROL) &
-> -		  SECONDARY_EXEC_VIRTUALIZE_X2APIC_MODE)) {
-> -		if (enable_apicv && kvm_vcpu_apicv_active(vcpu)) {
-> -			if (is_long_mode(vcpu))
-> -				msr_bitmap = vmx_msr_bitmap_longmode_x2apic_apicv;
-> -			else
-> -				msr_bitmap = vmx_msr_bitmap_legacy_x2apic_apicv;
-> -		} else {
-> -			if (is_long_mode(vcpu))
-> -				msr_bitmap = vmx_msr_bitmap_longmode_x2apic;
-> -			else
-> -				msr_bitmap = vmx_msr_bitmap_legacy_x2apic;
-> -		}
-> -	} else {
-> -		if (is_long_mode(vcpu))
-> -			msr_bitmap = vmx_msr_bitmap_longmode;
-> -		else
-> -			msr_bitmap = vmx_msr_bitmap_legacy;
-> -	}
-> -
-> -	vmcs_write64(MSR_BITMAP, __pa(msr_bitmap));
-> -}
-> -
->   /*
->    * Set up the vmcs to automatically save and restore system
->    * msrs.  Don't touch the 64-bit msrs if the guest is in legacy
-> @@ -2634,7 +2601,7 @@ static void setup_msrs(struct vcpu_vmx *vmx)
->   	vmx->save_nmsrs = save_nmsrs;
->   
->   	if (cpu_has_vmx_msr_bitmap())
-> -		vmx_set_msr_bitmap(&vmx->vcpu);
-> +		vmx_update_msr_bitmap(&vmx->vcpu);
->   }
->   
->   /*
-> @@ -3844,6 +3811,8 @@ static void free_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
->   	loaded_vmcs_clear(loaded_vmcs);
->   	free_vmcs(loaded_vmcs->vmcs);
->   	loaded_vmcs->vmcs = NULL;
-> +	if (loaded_vmcs->msr_bitmap)
-> +		free_page((unsigned long)loaded_vmcs->msr_bitmap);
->   	WARN_ON(loaded_vmcs->shadow_vmcs != NULL);
->   }
->   
-> @@ -3860,7 +3829,18 @@ static int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
->   
->   	loaded_vmcs->shadow_vmcs = NULL;
->   	loaded_vmcs_init(loaded_vmcs);
-> +
-> +	if (cpu_has_vmx_msr_bitmap()) {
-> +		loaded_vmcs->msr_bitmap = (unsigned long *)__get_free_page(GFP_KERNEL);
-> +		if (!loaded_vmcs->msr_bitmap)
-> +			goto out_vmcs;
-> +		memset(loaded_vmcs->msr_bitmap, 0xff, PAGE_SIZE);
-> +	}
->   	return 0;
-> +
-> +out_vmcs:
-> +	free_loaded_vmcs(loaded_vmcs);
-> +	return -ENOMEM;
->   }
->   
->   static void free_kvm_area(void)
-> @@ -4921,10 +4901,8 @@ static void free_vpid(int vpid)
->   	spin_unlock(&vmx_vpid_lock);
->   }
->   
-> -#define MSR_TYPE_R	1
-> -#define MSR_TYPE_W	2
-> -static void __vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
-> -						u32 msr, int type)
-> +static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
-> +							  u32 msr, int type)
->   {
->   	int f = sizeof(unsigned long);
->   
-> @@ -4958,6 +4936,50 @@ static void __vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
->   	}
->   }
->   
-> +static void __always_inline vmx_enable_intercept_for_msr(unsigned long *msr_bitmap,
-> +							 u32 msr, int type)
-> +{
-> +	int f = sizeof(unsigned long);
-> +
-> +	if (!cpu_has_vmx_msr_bitmap())
-> +		return;
-> +
-> +	/*
-> +	 * See Intel PRM Vol. 3, 20.6.9 (MSR-Bitmap Address). Early manuals
-> +	 * have the write-low and read-high bitmap offsets the wrong way round.
-> +	 * We can control MSRs 0x00000000-0x00001fff and 0xc0000000-0xc0001fff.
-> +	 */
-> +	if (msr <= 0x1fff) {
-> +		if (type & MSR_TYPE_R)
-> +			/* read-low */
-> +			__set_bit(msr, msr_bitmap + 0x000 / f);
-> +
-> +		if (type & MSR_TYPE_W)
-> +			/* write-low */
-> +			__set_bit(msr, msr_bitmap + 0x800 / f);
-> +
-> +	} else if ((msr >= 0xc0000000) && (msr <= 0xc0001fff)) {
-> +		msr &= 0x1fff;
-> +		if (type & MSR_TYPE_R)
-> +			/* read-high */
-> +			__set_bit(msr, msr_bitmap + 0x400 / f);
-> +
-> +		if (type & MSR_TYPE_W)
-> +			/* write-high */
-> +			__set_bit(msr, msr_bitmap + 0xc00 / f);
-> +
-> +	}
-> +}
-> +
-> +static void __always_inline vmx_set_intercept_for_msr(unsigned long *msr_bitmap,
-> +			     			      u32 msr, int type, bool value)
-> +{
-> +	if (value)
-> +		vmx_enable_intercept_for_msr(msr_bitmap, msr, type);
-> +	else
-> +		vmx_disable_intercept_for_msr(msr_bitmap, msr, type);
-> +}
-> +
->   /*
->    * If a msr is allowed by L0, we should check whether it is allowed by L1.
->    * The corresponding bit will be cleared unless both of L0 and L1 allow it.
-> @@ -5004,28 +5026,68 @@ static void nested_vmx_disable_intercept_for_msr(unsigned long *msr_bitmap_l1,
->   	}
->   }
->   
-> -static void vmx_disable_intercept_for_msr(u32 msr, bool longmode_only)
-> +static u8 vmx_msr_bitmap_mode(struct kvm_vcpu *vcpu)
->   {
-> -	if (!longmode_only)
-> -		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_legacy,
-> -						msr, MSR_TYPE_R | MSR_TYPE_W);
-> -	__vmx_disable_intercept_for_msr(vmx_msr_bitmap_longmode,
-> -						msr, MSR_TYPE_R | MSR_TYPE_W);
-> +	u8 mode = 0;
-> +
-> +	if (cpu_has_secondary_exec_ctrls() &&
-> +	    (vmcs_read32(SECONDARY_VM_EXEC_CONTROL) &
-> +	     SECONDARY_EXEC_VIRTUALIZE_X2APIC_MODE)) {
-> +		mode |= MSR_BITMAP_MODE_X2APIC;
-> +		if (enable_apicv && kvm_vcpu_apicv_active(vcpu))
-> +			mode |= MSR_BITMAP_MODE_X2APIC_APICV;
-> +	}
-> +
-> +	if (is_long_mode(vcpu))
-> +		mode |= MSR_BITMAP_MODE_LM;
-> +
-> +	return mode;
->   }
->   
-> -static void vmx_disable_intercept_msr_x2apic(u32 msr, int type, bool apicv_active)
-> +#define X2APIC_MSR(r) (APIC_BASE_MSR + ((r) >> 4))
-> +
-> +static void vmx_update_msr_bitmap_x2apic(unsigned long *msr_bitmap,
-> +					 u8 mode)
->   {
-> -	if (apicv_active) {
-> -		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_legacy_x2apic_apicv,
-> -				msr, type);
-> -		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_longmode_x2apic_apicv,
-> -				msr, type);
-> -	} else {
-> -		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_legacy_x2apic,
-> -				msr, type);
-> -		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_longmode_x2apic,
-> -				msr, type);
-> +	int msr;
-> +
-> +	for (msr = 0x800; msr <= 0x8ff; msr += BITS_PER_LONG) {
-> +		unsigned word = msr / BITS_PER_LONG;
-> +		msr_bitmap[word] = (mode & MSR_BITMAP_MODE_X2APIC_APICV) ? 0 : ~0;
-> +		msr_bitmap[word + (0x800 / sizeof(long))] = ~0;
->   	}
-> +
-> +	if (mode & MSR_BITMAP_MODE_X2APIC) {
-> +		/*
-> +		 * TPR reads and writes can be virtualized even if virtual interrupt
-> +		 * delivery is not in use.
-> +		 */
-> +		vmx_disable_intercept_for_msr(msr_bitmap, X2APIC_MSR(APIC_TASKPRI), MSR_TYPE_RW);
-> +		if (mode & MSR_BITMAP_MODE_X2APIC_APICV) {
-> +			vmx_enable_intercept_for_msr(msr_bitmap, X2APIC_MSR(APIC_TMCCT), MSR_TYPE_R);
-> +			vmx_disable_intercept_for_msr(msr_bitmap, X2APIC_MSR(APIC_EOI), MSR_TYPE_W);
-> +			vmx_disable_intercept_for_msr(msr_bitmap, X2APIC_MSR(APIC_SELF_IPI), MSR_TYPE_W);
-> +		}
-> +	}
-> +}
-> +
-> +static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu)
-> +{
-> +	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> +	unsigned long *msr_bitmap = vmx->vmcs01.msr_bitmap;
-> +	u8 mode = vmx_msr_bitmap_mode(vcpu);
-> +	u8 changed = mode ^ vmx->msr_bitmap_mode;
-> +
-> +	if (!changed)
-> +		return;
-> +
-> +	vmx_set_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW,
-> +				  !(mode & MSR_BITMAP_MODE_LM));
-> +
-> +	if (changed & (MSR_BITMAP_MODE_X2APIC | MSR_BITMAP_MODE_X2APIC_APICV))
-> +		vmx_update_msr_bitmap_x2apic(msr_bitmap, mode);
-> +
-> +	vmx->msr_bitmap_mode = mode;
->   }
->   
->   static bool vmx_get_enable_apicv(struct kvm_vcpu *vcpu)
-> @@ -5277,7 +5339,7 @@ static void vmx_refresh_apicv_exec_ctrl(struct kvm_vcpu *vcpu)
->   	}
->   
->   	if (cpu_has_vmx_msr_bitmap())
-> -		vmx_set_msr_bitmap(vcpu);
-> +		vmx_update_msr_bitmap(vcpu);
->   }
->   
->   static u32 vmx_exec_control(struct vcpu_vmx *vmx)
-> @@ -5464,7 +5526,7 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
->   		vmcs_write64(VMWRITE_BITMAP, __pa(vmx_vmwrite_bitmap));
->   	}
->   	if (cpu_has_vmx_msr_bitmap())
-> -		vmcs_write64(MSR_BITMAP, __pa(vmx_msr_bitmap_legacy));
-> +		vmcs_write64(MSR_BITMAP, __pa(vmx->vmcs01.msr_bitmap));
->   
->   	vmcs_write64(VMCS_LINK_POINTER, -1ull); /* 22.3.1.5 */
->   
-> @@ -6747,7 +6809,7 @@ void vmx_enable_tdp(void)
->   
->   static __init int hardware_setup(void)
->   {
-> -	int r = -ENOMEM, i, msr;
-> +	int r = -ENOMEM, i;
->   
->   	rdmsrl_safe(MSR_EFER, &host_efer);
->   
-> @@ -6767,9 +6829,6 @@ static __init int hardware_setup(void)
->   
->   	memset(vmx_io_bitmap_b, 0xff, PAGE_SIZE);
->   
-> -	memset(vmx_msr_bitmap_legacy, 0xff, PAGE_SIZE);
-> -	memset(vmx_msr_bitmap_longmode, 0xff, PAGE_SIZE);
-> -
->   	if (setup_vmcs_config(&vmcs_config) < 0) {
->   		r = -EIO;
->   		goto out;
-> @@ -6838,42 +6897,8 @@ static __init int hardware_setup(void)
->   		kvm_tsc_scaling_ratio_frac_bits = 48;
->   	}
->   
-> -	vmx_disable_intercept_for_msr(MSR_FS_BASE, false);
-> -	vmx_disable_intercept_for_msr(MSR_GS_BASE, false);
-> -	vmx_disable_intercept_for_msr(MSR_KERNEL_GS_BASE, true);
-> -	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_CS, false);
-> -	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_ESP, false);
-> -	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_EIP, false);
-> -
-> -	memcpy(vmx_msr_bitmap_legacy_x2apic_apicv,
-> -			vmx_msr_bitmap_legacy, PAGE_SIZE);
-> -	memcpy(vmx_msr_bitmap_longmode_x2apic_apicv,
-> -			vmx_msr_bitmap_longmode, PAGE_SIZE);
-> -	memcpy(vmx_msr_bitmap_legacy_x2apic,
-> -			vmx_msr_bitmap_legacy, PAGE_SIZE);
-> -	memcpy(vmx_msr_bitmap_longmode_x2apic,
-> -			vmx_msr_bitmap_longmode, PAGE_SIZE);
-> -
->   	set_bit(0, vmx_vpid_bitmap); /* 0 is reserved for host */
->   
-> -	for (msr = 0x800; msr <= 0x8ff; msr++) {
-> -		if (msr == 0x839 /* TMCCT */)
-> -			continue;
-> -		vmx_disable_intercept_msr_x2apic(msr, MSR_TYPE_R, true);
-> -	}
-> -
-> -	/*
-> -	 * TPR reads and writes can be virtualized even if virtual interrupt
-> -	 * delivery is not in use.
-> -	 */
-> -	vmx_disable_intercept_msr_x2apic(0x808, MSR_TYPE_W, true);
-> -	vmx_disable_intercept_msr_x2apic(0x808, MSR_TYPE_R | MSR_TYPE_W, false);
-> -
-> -	/* EOI */
-> -	vmx_disable_intercept_msr_x2apic(0x80b, MSR_TYPE_W, true);
-> -	/* SELF-IPI */
-> -	vmx_disable_intercept_msr_x2apic(0x83f, MSR_TYPE_W, true);
-> -
->   	if (enable_ept)
->   		vmx_enable_tdp();
->   	else
-> @@ -7162,13 +7187,6 @@ static int enter_vmx_operation(struct kvm_vcpu *vcpu)
->   	if (r < 0)
->   		goto out_vmcs02;
->   
-> -	if (cpu_has_vmx_msr_bitmap()) {
-> -		vmx->nested.msr_bitmap =
-> -				(unsigned long *)__get_free_page(GFP_KERNEL);
-> -		if (!vmx->nested.msr_bitmap)
-> -			goto out_msr_bitmap;
-> -	}
-> -
->   	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
->   	if (!vmx->nested.cached_vmcs12)
->   		goto out_cached_vmcs12;
-> @@ -7195,9 +7213,6 @@ static int enter_vmx_operation(struct kvm_vcpu *vcpu)
->   	kfree(vmx->nested.cached_vmcs12);
->   
->   out_cached_vmcs12:
-> -	free_page((unsigned long)vmx->nested.msr_bitmap);
-> -
-> -out_msr_bitmap:
->   	free_loaded_vmcs(&vmx->nested.vmcs02);
->   
->   out_vmcs02:
-> @@ -7343,10 +7358,6 @@ static void free_nested(struct vcpu_vmx *vmx)
->   	free_vpid(vmx->nested.vpid02);
->   	vmx->nested.posted_intr_nv = -1;
->   	vmx->nested.current_vmptr = -1ull;
-> -	if (vmx->nested.msr_bitmap) {
-> -		free_page((unsigned long)vmx->nested.msr_bitmap);
-> -		vmx->nested.msr_bitmap = NULL;
-> -	}
->   	if (enable_shadow_vmcs) {
->   		vmx_disable_shadow_vmcs(vmx);
->   		vmcs_clear(vmx->vmcs01.shadow_vmcs);
-> @@ -8862,7 +8873,7 @@ static void vmx_set_virtual_x2apic_mode(struct kvm_vcpu *vcpu, bool set)
->   	}
->   	vmcs_write32(SECONDARY_VM_EXEC_CONTROL, sec_exec_control);
->   
-> -	vmx_set_msr_bitmap(vcpu);
-> +	vmx_update_msr_bitmap(vcpu);
->   }
->   
->   static void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu, hpa_t hpa)
-> @@ -9523,6 +9534,7 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
->   {
->   	int err;
->   	struct vcpu_vmx *vmx = kmem_cache_zalloc(kvm_vcpu_cache, GFP_KERNEL);
-> +	unsigned long *msr_bitmap;
->   	int cpu;
->   
->   	if (!vmx)
-> @@ -9559,6 +9571,15 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
->   	if (err < 0)
->   		goto free_msrs;
->   
-> +	msr_bitmap = vmx->vmcs01.msr_bitmap;
-> +	vmx_disable_intercept_for_msr(msr_bitmap, MSR_FS_BASE, MSR_TYPE_RW);
-> +	vmx_disable_intercept_for_msr(msr_bitmap, MSR_GS_BASE, MSR_TYPE_RW);
-> +	vmx_disable_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
-> +	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
-> +	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
-> +	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
-> +	vmx->msr_bitmap_mode = 0;
-> +
->   	vmx->loaded_vmcs = &vmx->vmcs01;
->   	cpu = get_cpu();
->   	vmx_vcpu_load(&vmx->vcpu, cpu);
-> @@ -10022,7 +10043,7 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
->   	int msr;
->   	struct page *page;
->   	unsigned long *msr_bitmap_l1;
-> -	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.msr_bitmap;
-> +	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
->   
->   	/* This shortcut is ok because we support only x2APIC MSRs so far. */
->   	if (!nested_cpu_has_virt_x2apic_mode(vmcs12))
-> @@ -11397,7 +11418,7 @@ static void load_vmcs12_host_state(struct kvm_vcpu *vcpu,
->   	vmcs_write64(GUEST_IA32_DEBUGCTL, 0);
->   
->   	if (cpu_has_vmx_msr_bitmap())
-> -		vmx_set_msr_bitmap(vcpu);
-> +		vmx_update_msr_bitmap(vcpu);
->   
->   	if (nested_vmx_load_msr(vcpu, vmcs12->vm_exit_msr_load_addr,
->   				vmcs12->vm_exit_msr_load_count))
-> 
+leads to:
+
+[   52.058546] bus: 'pci': add driver radeonfb
+[   52.058588] bus: 'pci': driver_probe_device: matched device
+0000:00:10.0 with driver radeonfb
+[   52.058595] bus: 'pci': really_probe: probing driver radeonfb with
+device 0000:00:10.0
+[   52.058608] devices_kset: Moving 0000:00:10.0 to end of list
+[   52.058613] radeonfb_pci_register BEGIN
+[   52.058634] radeonfb 0000:00:10.0: enabling device (0006 -> 0007)
+<at this point radeon_kick_out_firmware_fb is called>
+[   52.058666] checking generic (9c008000 96000) vs hw (98000000 8000000)
+[   52.058667] fb: switching to radeonfb from OFfb ATY,RockHo
+[   52.058844] Console: switching to colour dummy device 80x25
+[   52.058860] device: 'fb0': device_unregister
+[   52.058956] PM: Removing info for No Bus:fb0
+[   52.059014] device: 'fb0': device_create_release
+<a call to do_unregister_framebuffer is done>
+<put_fb_info is done with a count=2 and dev=NULL>
+[   52.059048] device: 'vtcon1': device_unregister
+[   52.059076] PM: Removing info for No Bus:vtcon1
+[   52.059091] device: 'vtcon1': device_create_release
+[   52.059107] radeonfb 0000:00:10.0: BAR 0: can't reserve [mem
+0x98000000-0x9fffffff pref]
+[   52.256151] aper_base: 98000000 MC_FB_LOC to: 9bff9800, MC_AGP_LOC
+to: ffffa000
+[   52.256157] radeonfb (0000:00:10.0): Found 32768k of DDR 64 bits
+wide videoram
+
+I can confirm that offb_destroy is never called (not sure exactly
+why), but in any case the call to radeon_kick_out_firmware_fb happen
+much earlier, at least before the put_fb_info.
+
+Could you describe a bit more the chain of calls you were thinking of ?
+
+>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>> Link: https://bugs.debian.org/826629#57
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=119741
+>> Suggested-by: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
+>> ---
+>> v2: Only fails when CONFIG_PCC is not set
+>> v3: Only fails when CONFIG_FB_OF is not set, CONFIG_PCC was too broad. Since the conflicts in region is due to OFfb explicitly refers to it.
+>
+> It seems that there may still be configurations when this is
+> incorrect -> when offb drives primary (non-radeon) card and radeonfb
+> drives secondary (radeon) card..
+>
+>>  drivers/video/fbdev/aty/radeon_base.c | 26 ++++++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>>
+>> diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
+>> index 4d77daeecf99..221879196531 100644
+>> --- a/drivers/video/fbdev/aty/radeon_base.c
+>> +++ b/drivers/video/fbdev/aty/radeon_base.c
+>> @@ -2259,6 +2259,22 @@ static const struct bin_attribute edid2_attr = {
+>>       .read   = radeon_show_edid2,
+>>  };
+>>
+>> +static int radeon_kick_out_firmware_fb(struct pci_dev *pdev)
+>> +{
+>> +     struct apertures_struct *ap;
+>> +
+>> +     ap = alloc_apertures(1);
+>> +     if (!ap)
+>> +             return -ENOMEM;
+>> +
+>> +     ap->ranges[0].base = pci_resource_start(pdev, 0);
+>> +     ap->ranges[0].size = pci_resource_len(pdev, 0);
+>> +
+>> +     remove_conflicting_framebuffers(ap, KBUILD_MODNAME, false);
+>> +     kfree(ap);
+>> +
+>> +     return 0;
+>> +}
+>>
+>>  static int radeonfb_pci_register(struct pci_dev *pdev,
+>>                                const struct pci_device_id *ent)
+>> @@ -2312,19 +2328,27 @@ static int radeonfb_pci_register(struct pci_dev *pdev,
+>>       rinfo->fb_base_phys = pci_resource_start (pdev, 0);
+>>       rinfo->mmio_base_phys = pci_resource_start (pdev, 2);
+>>
+>> +     ret = radeon_kick_out_firmware_fb(pdev);
+>> +     if (ret)
+>> +             return ret;
+>> +
+>>       /* request the mem regions */
+>>       ret = pci_request_region(pdev, 0, "radeonfb framebuffer");
+>>       if (ret < 0) {
+>> +#ifndef CONFIG_FB_OF
+>>               printk( KERN_ERR "radeonfb (%s): cannot request region 0.\n",
+>>                       pci_name(rinfo->pdev));
+>>               goto err_release_fb;
+>> +#endif
+>>       }
+>>
+>>       ret = pci_request_region(pdev, 2, "radeonfb mmio");
+>>       if (ret < 0) {
+>> +#ifndef CONFIG_FB_OF
+>>               printk( KERN_ERR "radeonfb (%s): cannot request region 2.\n",
+>>                       pci_name(rinfo->pdev));
+>>               goto err_release_pci0;
+>> +#endif
+>>       }
+>>
+>>       /* map the regions */
+>> @@ -2509,10 +2533,12 @@ static int radeonfb_pci_register(struct pci_dev *pdev,
+>>       iounmap(rinfo->mmio_base);
+>>  err_release_pci2:
+>>       pci_release_region(pdev, 2);
+>> +#ifndef CONFIG_FB_OF
+>>  err_release_pci0:
+>>       pci_release_region(pdev, 0);
+>>  err_release_fb:
+>>          framebuffer_release(info);
+>> +#endif
+>>  err_disable:
+>>  err_out:
+>>       return ret;
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+
+Thanks,
+-M
