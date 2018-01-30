@@ -1,52 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeA3OEV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:04:21 -0500
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:41510 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751914AbeA3OET (ORCPT
+        id S1752348AbeA3OF1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:05:27 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:42736 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751219AbeA3OF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:04:19 -0500
-Date: Tue, 30 Jan 2018 15:01:11 +0100
-From: Florian Westphal <fw@strlen.de>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Florian Westphal <fw@strlen.de>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        David Miller <davem@davemloft.net>, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev <netdev@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Yang Shi <yang.s@alibaba-inc.com>, syzkaller-bugs@googlegroups.com,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, guro@fb.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [netfilter-core] kernel panic: Out of memory and no killable
- processes... (2)
-Message-ID: <20180130140111.GM5906@breakpoint.cc>
-References: <20180129082649.sysf57wlp7i7ltb2@node.shutemov.name>
- <20180129165722.GF5906@breakpoint.cc>
- <20180129182811.fze4vrb5zd5cojmr@node.shutemov.name>
- <20180129223522.GG5906@breakpoint.cc>
- <20180130075226.GL21609@dhcp22.suse.cz>
- <20180130081127.GH5906@breakpoint.cc>
- <20180130082817.cbax5qj4mxancx4b@node.shutemov.name>
- <CACT4Y+bFKwoxopr1dwnc7OHUoHy28ksVguqtMY6tD=aRh-7LyQ@mail.gmail.com>
- <20180130095739.GV21609@dhcp22.suse.cz>
- <20180130140104.GE21609@dhcp22.suse.cz>
+        Tue, 30 Jan 2018 09:05:26 -0500
+Date: Tue, 30 Jan 2018 15:05:14 +0100
+From: Miquel Raynal <miquel.raynal@free-electrons.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: nand: MTD_NAND_MARVELL should depend on HAS_DMA
+Message-ID: <20180130150514.290bf0e9@xps13>
+In-Reply-To: <CAMuHMdVZSBdGxRZfYRaNGH5Aygf3avuCu86dMJ0NsxxVp_yifg@mail.gmail.com>
+References: <1517318601-14793-1-git-send-email-geert@linux-m68k.org>
+        <20180130144647.73a44b8d@xps13>
+        <20180130145626.7a108c64@bbrezillon>
+        <CAMuHMdVZSBdGxRZfYRaNGH5Aygf3avuCu86dMJ0NsxxVp_yifg@mail.gmail.com>
+Organization: Free Electrons
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180130140104.GE21609@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From d48e950f1b04f234b57b9e34c363bdcfec10aeee Mon Sep 17 00:00:00 2001
-> From: Michal Hocko <mhocko@suse.com>
-> Date: Tue, 30 Jan 2018 14:51:07 +0100
-> Subject: [PATCH] net/netfilter/x_tables.c: make allocation less aggressive
+On Tue, 30 Jan 2018 14:59:37 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Acked-by: Florian Westphal <fw@strlen.de>
+> On Tue, Jan 30, 2018 at 2:56 PM, Boris Brezillon
+> <boris.brezillon@free-electrons.com> wrote:
+> > On Tue, 30 Jan 2018 14:46:47 +0100
+> > Miquel Raynal <miquel.raynal@free-electrons.com> wrote:  
+> >> On Tue, 30 Jan 2018 14:23:21 +0100
+> >> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >>  
+> >> > If NO_DMA=y:
+> >> >
+> >> >     ERROR: "bad_dma_ops" [drivers/mtd/nand/marvell_nand.ko] undefined!
+> >> >
+> >> > Add a dependency on HAS_DMA to fix this.
+> >> >
+> >> > Fixes: 02f26ecf8c772751 ("mtd: nand: add reworked Marvell NAND controller driver")
+> >> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >> > ---
+> >> >  drivers/mtd/nand/Kconfig | 2 +-
+> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> >
+> >> > diff --git a/drivers/mtd/nand/Kconfig b/drivers/mtd/nand/Kconfig
+> >> > index e6b8c59f2c0da7c0..736ac887303c88ba 100644
+> >> > --- a/drivers/mtd/nand/Kconfig
+> >> > +++ b/drivers/mtd/nand/Kconfig
+> >> > @@ -328,7 +328,7 @@ config MTD_NAND_MARVELL
+> >> >     tristate "NAND controller support on Marvell boards"
+> >> >     depends on PXA3xx || ARCH_MMP || PLAT_ORION || ARCH_MVEBU || \
+> >> >                COMPILE_TEST
+> >> > -   depends on HAS_IOMEM
+> >> > +   depends on HAS_IOMEM && HAS_DMA  
+> >>
+> >> I think this is more a coding issue than a Kconfig issue. AFAIR, none
+> >> of the ARCH_MVEBU SoCs use DMA in conjunction with the NAND controller.
+> >> PXA SoCs may use DMA (NFCv1 only) but this is not a hard requirement and
+> >> the driver is supposed to support PIO mode in all situations.
+> >>
+> >> Can you please share your setup, the SoC, the configuration,
+> >> maybe also the DT?  
+> >
+> > I don't think Geert is testing on a real board. He's just enabling
+> > COMPILE_TEST and can then select your driver. Which means you really
+> > need this depends on HAS_DMA.  
+> 
+> Correct.
+
+My bad.
+
+Ok then, it looks like this is the right fix.
+
+Thanks Geert for reporting it.
+Miquèl
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
+
+
+-- 
+Miquel Raynal, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
