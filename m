@@ -1,117 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753124AbeA3PQw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:16:52 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55084 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751377AbeA3PQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:16:49 -0500
-Date: Tue, 30 Jan 2018 15:16:44 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
-        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 13/16] arm64: Add support for checking errata based on a
- list of MIDRS
-Message-ID: <20180130151644.GG5862@e103592.cambridge.arm.com>
-References: <20180123122809.16269-1-suzuki.poulose@arm.com>
- <20180123122809.16269-14-suzuki.poulose@arm.com>
- <20180126141610.GU5862@e103592.cambridge.arm.com>
- <0558db28-b1f1-b249-6098-99e1071f613f@arm.com>
+        id S1752749AbeA3PTv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:19:51 -0500
+Received: from mga18.intel.com ([134.134.136.126]:32965 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751433AbeA3PTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 10:19:50 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,435,1511856000";
+   d="scan'208";a="27468696"
+Date: Tue, 30 Jan 2018 17:19:46 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH v2] drm/edid: use true and false for boolean values
+Message-ID: <20180130151946.GC5453@intel.com>
+References: <20180130100528.GA7154@training>
+ <20180130150927.3fm5kotyp6vqugaf@art_vandelay>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <0558db28-b1f1-b249-6098-99e1071f613f@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180130150927.3fm5kotyp6vqugaf@art_vandelay>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 03:57:44PM +0000, Suzuki K Poulose wrote:
-> On 26/01/18 14:16, Dave Martin wrote:
-> >On Tue, Jan 23, 2018 at 12:28:06PM +0000, Suzuki K Poulose wrote:
-> >>Add helpers for detecting an errata on list of midr ranges
-> >>of affected CPUs.
-> >
-> >This doesn't describe what the patch does: instead, helpers are being
-> >added for checking whether an MIDR falls in one of multiple affected
-> >model(s) and or revision(s).
-> >
-> >Doing this makes sense, but is it really worth it?
+On Tue, Jan 30, 2018 at 10:09:27AM -0500, Sean Paul wrote:
+> On Tue, Jan 30, 2018 at 04:05:28AM -0600, Gustavo A. R. Silva wrote:
+> > Assign true or false to boolean variables instead of an integer value.
+> > 
+> > This issue was detected with the help of Coccinelle.
 > 
-> Well, we need th MIDR list helpers anyway for other things:
->   - White list of CPUs where we know KPTI is not needed
->   - Black list of CPUs where DBM shouldn't be enabled.
+> I suppose you could also fix up the other preferred assignment by adding !!
+> to the bitwise & operation.
+
+Assigning >1 to a bool is well defined. No need to clutter the code with
+!! imo.
+
 > 
-> So all we do is add a new type which could reduce the number of entries.
+> It's also helpful to post the spatch in the commit message so others can
+> replicate your result (this case is pretty trivial, so less important).
 > 
-> >
-> >We might save 100-200 bytes in the kernel image for now, but a common
-> >workaround for errata on multiple unrelated cpus is surely a rare case.
-> >
-> >Only if there are many such lists, or if the lists become large does
-> >this start to seem a clear win.
-> >
-> >>
-> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>---
-> >>  arch/arm64/include/asm/cpufeature.h |  1 +
-> >>  arch/arm64/kernel/cpu_errata.c      | 40 ++++++++++++++++++++++---------------
-> >>  2 files changed, 25 insertions(+), 16 deletions(-)
-> >>
-> >>diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> >>index a3d54c2c411f..70712de687c7 100644
-> >>--- a/arch/arm64/include/asm/cpufeature.h
-> >>+++ b/arch/arm64/include/asm/cpufeature.h
-> >
-> >[...]
-> >
-> >>@@ -330,22 +353,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
-> >>  #ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-> >>  	{
-> >>  		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-> >>-		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
-> >>-		.enable = enable_psci_bp_hardening,
-> >>-	},
-> >>-	{
-> >>-		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-> >>-		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
-> >>-		.enable = enable_psci_bp_hardening,
-> >>-	},
-> >>-	{
-> >>-		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-> >>-		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
-> >>-		.enable = enable_psci_bp_hardening,
-> >>-	},
-> >>-	{
-> >>-		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-> >>-		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
-> >>+		ERRATA_MIDR_RANGE_LIST(cortex_bp_harden_cpus),
-> >
-> >Could we just use a macro to generate multiple structs, instead of
-> >inventing a new type of struct?
+> Sean
 > 
-> We could. Somehow, I don't think we are over engineering much here.
+> > 
+> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > ---
+> > Changes in v2:
+> >  - Use true for boolean value in add_detailed_mode as suggested by Daniel
+> >    Vetter.
+> >  - Update subject.
+> > 
+> >  drivers/gpu/drm/drm_edid.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+> > index ddd5379..b1cb262 100644
+> > --- a/drivers/gpu/drm/drm_edid.c
+> > +++ b/drivers/gpu/drm/drm_edid.c
+> > @@ -2767,7 +2767,7 @@ do_detailed_mode(struct detailed_timing *timing, void *c)
+> >  
+> >  		drm_mode_probed_add(closure->connector, newmode);
+> >  		closure->modes++;
+> > -		closure->preferred = 0;
+> > +		closure->preferred = false;
+> >  	}
+> >  }
+> >  
+> > @@ -2784,7 +2784,7 @@ add_detailed_modes(struct drm_connector *connector, struct edid *edid,
+> >  	struct detailed_mode_closure closure = {
+> >  		.connector = connector,
+> >  		.edid = edid,
+> > -		.preferred = 1,
+> > +		.preferred = true,
+> >  		.quirks = quirks,
+> >  	};
+> >  
+> > -- 
+> > 2.7.4
+> > 
+> 
+> -- 
+> Sean Paul, Software Engineer, Google / Chromium OS
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-There is a flipside to this: I commented elsewhere that not allowing
-mutiple match criteria per capability struct complicates verification
-for late CPUs and/or makes it more costly.
-
-Your changes here do implement support for multiple match criteria,
-albeit only for the specific case of MIDR matching.
-
-It could be worth generalising this in the future, but that's
-probably not for this series.
-
-OTOH, if MIDR matching is the only scenario where we have duplicate
-cap structs with different match criteria and this patch allows all
-those duplicates to be removed, then is there still a need to walk
-the whole list in verify_local_cpu_features(), as introduced in
-67948af41f2e ("arm64: capabilities: Handle duplicate entries for a
-capability")?  Or can that now be simplified?
-
-Cheers
----Dave
+-- 
+Ville Syrjälä
+Intel OTC
