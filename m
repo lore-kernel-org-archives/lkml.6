@@ -1,497 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753503AbeA3Sjt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:39:49 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60336 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753310AbeA3Sjl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:39:41 -0500
-Date: Tue, 30 Jan 2018 18:39:39 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: [git pull] vfs.git: poll annotations
-Message-ID: <20180130183939.GB29051@ZenIV.linux.org.uk>
+        id S1753512AbeA3Sqd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:46:33 -0500
+Received: from vern.gendns.com ([206.190.152.46]:56786 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753294AbeA3Sqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 13:46:30 -0500
+Subject: Re: [PATCH v6 01/41] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: Rob Herring <robh@kernel.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-2-git-send-email-david@lechnology.com>
+ <20180129195315.bjanym7pmeh7bhaa@rob-hp-laptop>
+ <ffec7cac-22cd-f19b-8c1b-ce3223606d20@lechnology.com>
+ <CAL_JsqK+c-C9VJnEOr0Em3Y-dtvE+CSbsc6m-0JoWJSZxKeR_g@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <7064a0d6-0969-81a0-00af-84cca339b813@lechnology.com>
+Date: Tue, 30 Jan 2018 12:46:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAL_JsqK+c-C9VJnEOr0Em3Y-dtvE+CSbsc6m-0JoWJSZxKeR_g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Introduces a __bitwise type for POLL... bitmap, propagates
-the annotations through the tree.  Most of that stuff is as simple
-as "make ->poll() instances return __poll_t and do the same to local
-variables used to hold the future return value".
+On 01/30/2018 08:50 AM, Rob Herring wrote:
+> On Mon, Jan 29, 2018 at 3:14 PM, David Lechner <david@lechnology.com> wrote:
+>> On 01/29/2018 01:53 PM, Rob Herring wrote:
+>>>
+>>> On Sat, Jan 20, 2018 at 11:13:40AM -0600, David Lechner wrote:
+>>>>
+>>>> This adds a new binding for the PLL IP blocks in the mach-davinci
+>>>> family of processors. Currently, only da850 has device tree support
+>>>> but these bindings can also work for other SoCs in this family just
+>>>> by adding new compatible strings.
+>>>>
+>>>> Note: Although these PLL controllers are very similar to the TI Keystone
+>>>> SoCs, we are not re-using those bindings. The Keystone bindings use a
+>>>> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
+>>>> have a slightly different PLL register layout and a number of quirks
+>>>> that can't be handled by the existing bindings, so the keystone bindings
+>>>> could not be used as-is anyway.
+>>>>
+>>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>>> ---
+>>>>
+>>>> v6 changes:
+>>>> - Added clock-names property
+>>>> - Added ti,clkmode-square-wave property
+>>>> - Added pllout child node
+>>>> - Added obsclk child node
+>>>> - Expanded examples
+>>>>
+>>>>    .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96
+>>>> ++++++++++++++++++++++
+>>>>    1 file changed, 96 insertions(+)
+>>>>    create mode 100644
+>>>> Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>> b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>> new file mode 100644
+>>>> index 0000000..36998e1
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>> @@ -0,0 +1,96 @@
+>>>> +Binding for TI DaVinci PLL Controllers
+>>>> +
+>>>> +The PLL provides clocks to most of the components on the SoC. In
+>>>> addition
+>>>> +to the PLL itself, this controller also contains bypasses, gates,
+>>>> dividers,
+>>>> +an multiplexers for various clock signals.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible: shall be one of:
+>>>> +       - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+>>>> +       - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+>>>> +- reg: physical base address and size of the controller's register area.
+>>>> +- clocks: phandles corresponding to the clock names
+>>>> +- clock-names: names of the clock sources - depends on compatible string
+>>>> +       - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
+>>>> +       - for "ti,da850-pll1", shall be "clksrc"
+>>>> +
+>>>> +Optional properties:
+>>>> +- ti,clkmode-square-wave: Indicates that the the board is supplying a
+>>>> square
+>>>> +       wave input on the OSCIN pin instead of using a crystal
+>>>> oscillator.
+>>>> +       This property is only valid when compatible = "ti,da850-pll0".
+>>>> +
+>>>> +
+>>>> +Optional child nodes:
+>>>> +
+>>>> +pllout
+>>>> +       Describes the main PLL clock output (before POSTDIV). The node
+>>>> name must
+>>>> +       be "pllout".
+>>>> +
+>>>> +       Required properties:
+>>>> +       - #clock-cells: shall be 0
+>>>> +
+>>>> +sysclk
+>>>> +       Describes the PLLDIVn divider clocks that provide the SYSCLKn
+>>>> clock
+>>>> +       domains. The node name must be "sysclk". Consumers of this node
+>>>> should
+>>>> +       use "n" in "SYSCLKn" as the index parameter for the clock cell.
+>>>> +
+>>>> +       Required properties:
+>>>> +       - #clock-cells: shall be 1
+>>>> +
+>>>> +auxclk
+>>>> +       Describes the AUXCLK output of the PLL. The node name must be
+>>>> "auxclk".
+>>>> +       This child node is only valid when compatible = "ti,da850-pll0".
+>>>> +
+>>>> +       Required properties:
+>>>> +       - #clock-cells: shall be 0
+>>>> +
+>>>> +obsclk
+>>>> +       Describes the OBSCLK output of the PLL. The node name must be
+>>>> "obsclk".
+>>>> +
+>>>> +       Required properties:
+>>>> +       - #clock-cells: shall be 0
+>>>
+>>>
+>>> So why have all these child nodes vs. just defining a single number
+>>> space of clock ids?
+>>>
+>>> Rob
+>>>
+>>
+>> I think that it makes the bindings more self-documenting. Not all PLLs have
+>> all of possible types of output clocks, so the presence or absence of a
+>> child node indicates if a PLL actually has that output or not.
+> 
+> Doesn't the compatible string do that?
 
-	Some of the obvious brainos found in process are fixed (e.g.
-POLLIN misspelled as POLL_IN).  At that point the amount of sparse
-warnings is low and most of them are for genuine bugs - e.g. ->poll()
-instance deciding to return -EINVAL instead of a bitmap.  I hadn't
-touched those in this series - it's large enough as it is.
+Sure.
 
-	Another problem it has caught was eventpoll() ABI mess; select.c
-and eventpoll.c assumed that corresponding POLL... and EPOLL... were equal.
-That's true for some, but not all of them - EPOLL... are arch-independent,
-but POLL... are not.  The last commit in this series separates userland
-POLL... values from the (now arch-independent) kernel-side ones, converting
-between them in the few places where they are copied to/from userland.
-AFAICS, this is the least disruptive fix preserving poll(2) ABI and
-making epoll() work on all architectures.  As it is, it's simply broken
-on sparc - try to give it EPOLLWRNORM and it will trigger only on what
-would've triggered EPOLLWRBAND on other architectures.  EPOLLWRBAND
-and EPOLLRDHUP, OTOH, are never triggered at all on sparc.  With this
-patch they should work consistently on all architectures.
+> 
+>> It is also complicated by the fact that one of the child nodes (sysclk)
+>> is  already an array of clocks.
+>>
+>> To do what you are suggesting might look something like this...
+>>
+>> ---
+>>
+>> Required properties:
+>> - compatible: shall be one of:
+>>          - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+>>          - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+>> - reg: physical base address and size of the controller's register area.
+>> - clocks: phandles corresponding to the clock names
+>> - clock-names: names of the clock sources - depends on compatible string
+>>          - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
+>>          - for "ti,da850-pll1", shall be "clksrc"
+>> - #clock-cells: shall be set to <2>.
+>>
+>> Consumers:
+>>
+>> The clock cell values for consumers work as follows...
+>>
+>> The first index is one of the constants defined in ti-davinci-pll.h
+>>
+>> The second index is 0 unless the first index is TI_DAVINCI_SYSCLK. In the
+>> case
+>> of TI_DAVINCI_SYSCLK the second index the SYSCLK domain ID (n in SYSCLKn).
+>>
+>> For compatible = "ti,da850-pll0":
+>>          - <&pll0 TI_DAVINCI_PLLOUT 0> is the PLLOUT clock
+>>          - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
+>> where n is 1 to 7
+>>          - <&pll0 TI_DAVINCI_AUXCLK 0> is the AUXCLK clock domain
+>>          - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
+>>          - all other index combinations are invalid
+>>
+>> For compatible = "ti,da850-pll1":
+>>          - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
+>> where n is 1 to 3
+>>          - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
+>>          - all other index combinations are invalid
+> 
+> You don't really need 2 cells here. I guess if you want to keep the
+> child nodes, that is fine.
 
-	This branch has sat in -next for the last cycle; it has accumulated
-minor conflicts, but nothing non-trivial.
+OK, I can see how it could work with one cell.
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
-
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git misc.poll
-
-for you to fetch changes up to c71d227fc4133f949dae620ed5e3a250b43f2415:
-
-  make kernel-side POLL... arch-independent (2017-11-29 19:00:41 -0500)
-
-----------------------------------------------------------------
-Al Viro (37):
-      orangefs: fix a braino in ->poll()
-      um: make sure to have generated headers for target
-      switch wrapper poll.h instances to generic-y
-      define __poll_t, annotate constants
-      ->poll() methods should return __poll_t
-      anntotate the places where ->poll() return values go
-      annotate poll-related wait keys
-      annotate poll_table_struct ->_key
-      annotate poll_table_entry->key
-      scif: annotate scif_pollepd
-      vhost: annotate vhost_poll
-      dmabuf: annotate dma_buf->active
-      cris: annotate ->poll() instances
-      ia64: annotate ->poll() instances
-      mips: annotate ->poll() instances
-      ppc: annotate ->poll() instances
-      um: annotate ->poll() instances
-      x86: annotate ->poll() instances
-      block: annotate ->poll() instances
-      crypto: annotate ->poll() instances
-      acpi: annotate ->poll() instances
-      sound: annotate ->poll() instances
-      tomoyo: annotate ->poll() instances
-      apparmor: annotate ->poll() instances
-      net: annotate ->poll() instances
-      ipc, kernel, mm: annotate ->poll() instances
-      fs: annotate ->poll() instances
-      media: annotate ->poll() instances
-      the rest of drivers/*: annotate ->poll() instances
-      ring_buffer_poll_wait() return value used as return value of ->poll()
-      ->si_band gets POLL... bitmap stored into a user-visible long field
-      9p: untangle ->poll() mess
-      annotate poll(2) guts
-      debugging printk in sg_poll() uses %x to print POLL... bitmap
-      eventpoll: constify struct epoll_event pointers
-      eventpoll: no need to mask the result of epi_item_poll() again
-      make kernel-side POLL... arch-independent
-
- arch/alpha/include/uapi/asm/Kbuild                 |  2 +
- arch/alpha/include/uapi/asm/poll.h                 |  2 -
- arch/blackfin/include/uapi/asm/poll.h              | 21 +++++++-
- arch/cris/arch-v10/drivers/gpio.c                  |  6 +--
- arch/cris/arch-v10/drivers/sync_serial.c           |  8 +--
- arch/cris/arch-v32/drivers/sync_serial.c           |  8 +--
- arch/frv/include/uapi/asm/poll.h                   | 21 ++++++--
- arch/ia64/include/uapi/asm/Kbuild                  |  1 +
- arch/ia64/include/uapi/asm/poll.h                  |  2 -
- arch/ia64/kernel/perfmon.c                         |  4 +-
- arch/m32r/include/uapi/asm/Kbuild                  |  1 +
- arch/m32r/include/uapi/asm/poll.h                  |  2 -
- arch/m68k/include/uapi/asm/poll.h                  | 19 ++++++-
- arch/mips/include/uapi/asm/poll.h                  | 19 ++++++-
- arch/mips/kernel/rtlx.c                            |  4 +-
- arch/mn10300/include/uapi/asm/Kbuild               |  1 +
- arch/mn10300/include/uapi/asm/poll.h               |  2 -
- arch/powerpc/kernel/rtasd.c                        |  2 +-
- arch/powerpc/platforms/cell/spufs/backing_ops.c    |  6 +--
- arch/powerpc/platforms/cell/spufs/file.c           | 16 +++---
- arch/powerpc/platforms/cell/spufs/hw_ops.c         |  5 +-
- arch/powerpc/platforms/cell/spufs/spufs.h          |  3 +-
- arch/powerpc/platforms/powernv/opal-prd.c          |  2 +-
- arch/score/include/uapi/asm/Kbuild                 |  1 +
- arch/score/include/uapi/asm/poll.h                 |  7 ---
- arch/sparc/include/uapi/asm/poll.h                 | 28 ++++++++--
- arch/um/Makefile                                   |  7 +++
- arch/um/drivers/hostaudio_kern.c                   |  6 +--
- arch/x86/include/uapi/asm/Kbuild                   |  1 +
- arch/x86/include/uapi/asm/poll.h                   |  1 -
- arch/x86/kernel/apm_32.c                           |  2 +-
- arch/x86/kernel/cpu/mcheck/dev-mcelog.c            |  2 +-
- arch/xtensa/include/uapi/asm/poll.h                | 21 +++++++-
- block/bsg.c                                        |  4 +-
- crypto/af_alg.c                                    |  4 +-
- crypto/algif_skcipher.c                            |  1 -
- drivers/acpi/acpi_dbg.c                            |  4 +-
- drivers/android/binder.c                           |  2 +-
- drivers/bluetooth/hci_ldisc.c                      |  2 +-
- drivers/bluetooth/hci_vhci.c                       |  2 +-
- drivers/char/apm-emulation.c                       |  2 +-
- drivers/char/dsp56k.c                              |  2 +-
- drivers/char/dtlk.c                                |  6 +--
- drivers/char/hpet.c                                |  2 +-
- drivers/char/ipmi/bt-bmc.c                         |  4 +-
- drivers/char/ipmi/ipmi_devintf.c                   |  4 +-
- drivers/char/ipmi/ipmi_watchdog.c                  |  4 +-
- drivers/char/pcmcia/cm4040_cs.c                    |  4 +-
- drivers/char/ppdev.c                               |  4 +-
- drivers/char/random.c                              |  4 +-
- drivers/char/rtc.c                                 |  4 +-
- drivers/char/snsc.c                                |  4 +-
- drivers/char/sonypi.c                              |  2 +-
- drivers/char/tpm/tpm_vtpm_proxy.c                  |  4 +-
- drivers/char/virtio_console.c                      |  4 +-
- drivers/char/xillybus/xillybus_core.c              |  4 +-
- drivers/dma-buf/dma-buf.c                          |  6 +--
- drivers/dma-buf/sync_file.c                        |  2 +-
- drivers/firewire/core-cdev.c                       |  4 +-
- drivers/firewire/nosy.c                            |  4 +-
- drivers/gpio/gpiolib.c                             |  4 +-
- drivers/gpu/drm/drm_file.c                         |  4 +-
- drivers/gpu/drm/i915/i915_perf.c                   |  8 +--
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h                |  2 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_ioctl.c              |  2 +-
- drivers/gpu/vga/vgaarb.c                           |  2 +-
- drivers/hid/hid-debug.c                            |  2 +-
- drivers/hid/hid-roccat.c                           |  2 +-
- drivers/hid/hid-sensor-custom.c                    |  4 +-
- drivers/hid/hidraw.c                               |  2 +-
- drivers/hid/uhid.c                                 |  2 +-
- drivers/hid/usbhid/hiddev.c                        |  2 +-
- drivers/hsi/clients/cmt_speech.c                   |  4 +-
- drivers/hv/hv_utils_transport.c                    |  2 +-
- drivers/iio/iio_core.h                             |  2 +-
- drivers/iio/industrialio-buffer.c                  |  2 +-
- drivers/iio/industrialio-event.c                   |  4 +-
- drivers/infiniband/core/ucm.c                      |  4 +-
- drivers/infiniband/core/ucma.c                     |  4 +-
- drivers/infiniband/core/user_mad.c                 |  4 +-
- drivers/infiniband/core/uverbs_main.c              |  8 +--
- drivers/infiniband/hw/hfi1/file_ops.c              | 18 +++----
- drivers/infiniband/hw/qib/qib_file_ops.c           | 14 ++---
- drivers/input/evdev.c                              |  4 +-
- drivers/input/input.c                              |  2 +-
- drivers/input/joydev.c                             |  2 +-
- drivers/input/misc/hp_sdc_rtc.c                    |  2 +-
- drivers/input/misc/uinput.c                        |  2 +-
- drivers/input/mousedev.c                           |  4 +-
- drivers/input/serio/serio_raw.c                    |  4 +-
- drivers/input/serio/userio.c                       |  2 +-
- drivers/isdn/capi/capi.c                           |  4 +-
- drivers/isdn/divert/divert_procfs.c                |  4 +-
- drivers/isdn/hardware/eicon/divamnt.c              |  4 +-
- drivers/isdn/hardware/eicon/divasi.c               |  4 +-
- drivers/isdn/hardware/eicon/divasmain.c            |  2 +-
- drivers/isdn/hardware/eicon/divasproc.c            |  2 +-
- drivers/isdn/hysdn/hysdn_proclog.c                 |  4 +-
- drivers/isdn/i4l/isdn_common.c                     |  4 +-
- drivers/isdn/i4l/isdn_ppp.c                        |  4 +-
- drivers/isdn/i4l/isdn_ppp.h                        |  2 +-
- drivers/isdn/mISDN/timerdev.c                      |  4 +-
- drivers/leds/uleds.c                               |  2 +-
- drivers/macintosh/smu.c                            |  4 +-
- drivers/macintosh/via-pmu.c                        |  4 +-
- drivers/mailbox/mailbox-test.c                     |  2 +-
- drivers/md/dm-ioctl.c                              |  4 +-
- drivers/md/md.c                                    |  4 +-
- drivers/media/cec/cec-api.c                        |  4 +-
- drivers/media/common/saa7146/saa7146_fops.c        |  8 +--
- drivers/media/common/siano/smsdvb-debugfs.c        |  7 +--
- drivers/media/dvb-core/dmxdev.c                    |  8 +--
- drivers/media/dvb-core/dvb_ca_en50221.c            |  4 +-
- drivers/media/dvb-core/dvb_frontend.c              |  2 +-
- drivers/media/firewire/firedtv-ci.c                |  2 +-
- drivers/media/media-devnode.c                      |  2 +-
- drivers/media/pci/bt8xx/bttv-driver.c              | 12 ++---
- drivers/media/pci/cx18/cx18-fileops.c              |  8 +--
- drivers/media/pci/cx18/cx18-fileops.h              |  2 +-
- drivers/media/pci/ddbridge/ddbridge-core.c         |  4 +-
- drivers/media/pci/ivtv/ivtv-fileops.c              | 10 ++--
- drivers/media/pci/ivtv/ivtv-fileops.h              |  4 +-
- drivers/media/pci/meye/meye.c                      |  4 +-
- drivers/media/pci/saa7134/saa7134-video.c          |  4 +-
- drivers/media/pci/saa7164/saa7164-encoder.c        |  6 +--
- drivers/media/pci/saa7164/saa7164-vbi.c            |  4 +-
- drivers/media/pci/ttpci/av7110_av.c                |  8 +--
- drivers/media/pci/ttpci/av7110_ca.c                |  4 +-
- drivers/media/pci/zoran/zoran_driver.c             |  4 +-
- drivers/media/platform/davinci/vpfe_capture.c      |  2 +-
- drivers/media/platform/exynos-gsc/gsc-m2m.c        |  4 +-
- drivers/media/platform/fsl-viu.c                   |  6 +--
- drivers/media/platform/m2m-deinterlace.c           |  4 +-
- drivers/media/platform/mx2_emmaprp.c               |  4 +-
- drivers/media/platform/omap/omap_vout.c            |  2 +-
- drivers/media/platform/omap3isp/ispvideo.c         |  4 +-
- drivers/media/platform/s3c-camif/camif-capture.c   |  4 +-
- drivers/media/platform/s5p-mfc/s5p_mfc.c           |  4 +-
- drivers/media/platform/sh_veu.c                    |  2 +-
- .../platform/soc_camera/sh_mobile_ceu_camera.c     |  2 +-
- drivers/media/platform/soc_camera/soc_camera.c     |  4 +-
- drivers/media/platform/via-camera.c                |  2 +-
- drivers/media/platform/vivid/vivid-core.c          |  2 +-
- drivers/media/platform/vivid/vivid-radio-rx.c      |  2 +-
- drivers/media/platform/vivid/vivid-radio-rx.h      |  2 +-
- drivers/media/platform/vivid/vivid-radio-tx.c      |  2 +-
- drivers/media/platform/vivid/vivid-radio-tx.h      |  2 +-
- drivers/media/radio/radio-cadet.c                  |  6 +--
- drivers/media/radio/radio-si476x.c                 |  6 +--
- drivers/media/radio/radio-wl1273.c                 |  2 +-
- drivers/media/radio/si470x/radio-si470x-common.c   |  6 +--
- drivers/media/radio/wl128x/fmdrv_v4l2.c            |  2 +-
- drivers/media/rc/lirc_dev.c                        |  4 +-
- drivers/media/usb/cpia2/cpia2.h                    |  2 +-
- drivers/media/usb/cpia2/cpia2_core.c               |  4 +-
- drivers/media/usb/cpia2/cpia2_v4l.c                |  4 +-
- drivers/media/usb/cx231xx/cx231xx-417.c            |  6 +--
- drivers/media/usb/cx231xx/cx231xx-video.c          |  6 +--
- drivers/media/usb/gspca/gspca.c                    |  6 +--
- drivers/media/usb/hdpvr/hdpvr-video.c              |  6 +--
- drivers/media/usb/pvrusb2/pvrusb2-v4l2.c           |  4 +-
- drivers/media/usb/stkwebcam/stk-webcam.c           |  4 +-
- drivers/media/usb/tm6000/tm6000-video.c            | 10 ++--
- drivers/media/usb/uvc/uvc_queue.c                  |  4 +-
- drivers/media/usb/uvc/uvc_v4l2.c                   |  2 +-
- drivers/media/usb/uvc/uvcvideo.h                   |  2 +-
- drivers/media/usb/zr364xx/zr364xx.c                |  4 +-
- drivers/media/v4l2-core/v4l2-ctrls.c               |  2 +-
- drivers/media/v4l2-core/v4l2-dev.c                 |  4 +-
- drivers/media/v4l2-core/v4l2-mem2mem.c             | 10 ++--
- drivers/media/v4l2-core/v4l2-subdev.c              |  2 +-
- drivers/media/v4l2-core/videobuf-core.c            |  6 +--
- drivers/media/v4l2-core/videobuf2-core.c           |  4 +-
- drivers/media/v4l2-core/videobuf2-v4l2.c           | 10 ++--
- drivers/misc/cxl/api.c                             |  2 +-
- drivers/misc/cxl/cxl.h                             |  2 +-
- drivers/misc/cxl/file.c                            |  4 +-
- drivers/misc/hpilo.c                               |  2 +-
- drivers/misc/lis3lv02d/lis3lv02d.c                 |  2 +-
- drivers/misc/mei/main.c                            |  6 +--
- drivers/misc/mic/scif/scif_api.c                   |  7 +--
- drivers/misc/mic/scif/scif_epd.h                   |  2 +-
- drivers/misc/mic/scif/scif_fd.c                    |  2 +-
- drivers/misc/mic/vop/vop_vringh.c                  |  4 +-
- drivers/misc/phantom.c                             |  4 +-
- drivers/misc/vmw_vmci/vmci_host.c                  |  4 +-
- drivers/net/ieee802154/ca8210.c                    |  4 +-
- drivers/net/ppp/ppp_async.c                        |  2 +-
- drivers/net/ppp/ppp_generic.c                      |  4 +-
- drivers/net/ppp/ppp_synctty.c                      |  2 +-
- drivers/net/tap.c                                  |  4 +-
- drivers/net/tun.c                                  |  4 +-
- drivers/net/wan/cosa.c                             |  2 +-
- drivers/net/wireless/ralink/rt2x00/rt2x00debug.c   |  2 +-
- drivers/pci/switch/switchtec.c                     |  4 +-
- drivers/platform/chrome/cros_ec_debugfs.c          |  4 +-
- drivers/platform/goldfish/goldfish_pipe.c          |  4 +-
- drivers/platform/x86/sony-laptop.c                 |  2 +-
- drivers/pps/pps.c                                  |  2 +-
- drivers/ptp/ptp_chardev.c                          |  2 +-
- drivers/ptp/ptp_private.h                          |  2 +-
- drivers/rapidio/devices/rio_mport_cdev.c           |  2 +-
- drivers/rpmsg/qcom_smd.c                           |  4 +-
- drivers/rpmsg/rpmsg_char.c                         |  4 +-
- drivers/rpmsg/rpmsg_core.c                         |  2 +-
- drivers/rpmsg/rpmsg_internal.h                     |  2 +-
- drivers/rtc/rtc-dev.c                              |  2 +-
- drivers/s390/block/dasd_eer.c                      |  4 +-
- drivers/s390/char/monreader.c                      |  2 +-
- drivers/scsi/megaraid/megaraid_sas_base.c          |  4 +-
- drivers/scsi/mpt3sas/mpt3sas_ctl.c                 |  2 +-
- drivers/scsi/sg.c                                  |  6 +--
- drivers/staging/comedi/comedi_fops.c               |  4 +-
- drivers/staging/comedi/drivers/serial2002.c        |  2 +-
- drivers/staging/irda/net/af_irda.c                 |  4 +-
- drivers/staging/irda/net/irnet/irnet_ppp.c         |  8 +--
- drivers/staging/irda/net/irnet/irnet_ppp.h         |  2 +-
- .../media/atomisp/pci/atomisp2/atomisp_fops.c      |  2 +-
- drivers/staging/media/bcm2048/radio-bcm2048.c      |  4 +-
- drivers/staging/media/davinci_vpfe/vpfe_video.c    |  2 +-
- drivers/staging/media/lirc/lirc_zilog.c            |  4 +-
- drivers/staging/media/omap4iss/iss_video.c         |  2 +-
- drivers/staging/most/aim-cdev/cdev.c               |  4 +-
- drivers/staging/most/aim-v4l2/video.c              |  4 +-
- drivers/staging/speakup/speakup_soft.c             |  4 +-
- drivers/tty/n_gsm.c                                |  4 +-
- drivers/tty/n_hdlc.c                               |  6 +--
- drivers/tty/n_r3964.c                              |  6 +--
- drivers/tty/n_tty.c                                |  4 +-
- drivers/tty/tty_io.c                               |  8 +--
- drivers/tty/vt/vc_screen.c                         |  4 +-
- drivers/uio/uio.c                                  |  2 +-
- drivers/usb/class/cdc-wdm.c                        |  4 +-
- drivers/usb/class/usblp.c                          |  4 +-
- drivers/usb/class/usbtmc.c                         |  4 +-
- drivers/usb/core/devices.c                         |  2 +-
- drivers/usb/core/devio.c                           |  4 +-
- drivers/usb/gadget/function/f_fs.c                 |  4 +-
- drivers/usb/gadget/function/f_hid.c                |  4 +-
- drivers/usb/gadget/function/f_printer.c            |  4 +-
- drivers/usb/gadget/function/uvc_queue.c            |  2 +-
- drivers/usb/gadget/function/uvc_queue.h            |  2 +-
- drivers/usb/gadget/function/uvc_v4l2.c             |  2 +-
- drivers/usb/gadget/legacy/inode.c                  |  4 +-
- drivers/usb/misc/iowarrior.c                       |  4 +-
- drivers/usb/misc/ldusb.c                           |  4 +-
- drivers/usb/misc/legousbtower.c                    |  6 +--
- drivers/usb/mon/mon_bin.c                          |  4 +-
- drivers/vfio/virqfd.c                              |  4 +-
- drivers/vhost/net.c                                |  2 +-
- drivers/vhost/vhost.c                              | 12 ++---
- drivers/vhost/vhost.h                              |  6 +--
- drivers/virt/fsl_hypervisor.c                      |  4 +-
- drivers/xen/evtchn.c                               |  4 +-
- drivers/xen/mcelog.c                               |  2 +-
- drivers/xen/pvcalls-front.c                        | 10 ++--
- drivers/xen/xenbus/xenbus_dev_frontend.c           |  2 +-
- fs/cachefiles/daemon.c                             |  6 +--
- fs/coda/psdev.c                                    |  4 +-
- fs/debugfs/file.c                                  |  4 +-
- fs/dlm/plock.c                                     |  4 +-
- fs/dlm/user.c                                      |  2 +-
- fs/ecryptfs/miscdev.c                              |  4 +-
- fs/eventfd.c                                       |  4 +-
- fs/eventpoll.c                                     | 28 +++++-----
- fs/fcntl.c                                         |  4 +-
- fs/fuse/dev.c                                      |  4 +-
- fs/fuse/file.c                                     |  6 +--
- fs/fuse/fuse_i.h                                   |  2 +-
- fs/kernfs/file.c                                   |  2 +-
- fs/notify/fanotify/fanotify_user.c                 |  4 +-
- fs/notify/inotify/inotify_user.c                   |  4 +-
- fs/ocfs2/dlmfs/dlmfs.c                             |  4 +-
- fs/orangefs/devorangefs-req.c                      |  6 +--
- fs/pipe.c                                          |  4 +-
- fs/proc/inode.c                                    |  6 +--
- fs/proc/kmsg.c                                     |  2 +-
- fs/proc/proc_sysctl.c                              |  4 +-
- fs/proc_namespace.c                                |  4 +-
- fs/select.c                                        | 27 ++++++----
- fs/signalfd.c                                      |  4 +-
- fs/timerfd.c                                       |  4 +-
- fs/userfaultfd.c                                   |  4 +-
- include/crypto/if_alg.h                            |  2 +-
- include/drm/drm_file.h                             |  2 +-
- include/linux/dma-buf.h                            |  2 +-
- include/linux/fs.h                                 |  2 +-
- include/linux/net.h                                |  2 +-
- include/linux/poll.h                               | 10 ++--
- include/linux/posix-clock.h                        |  2 +-
- include/linux/ring_buffer.h                        |  2 +-
- include/linux/rpmsg.h                              |  4 +-
- include/linux/scif.h                               |  4 +-
- include/linux/skbuff.h                             |  2 +-
- include/linux/tty_ldisc.h                          |  2 +-
- include/linux/wait.h                               | 10 ++--
- include/media/lirc_dev.h                           |  2 +-
- include/media/media-devnode.h                      |  2 +-
- include/media/soc_camera.h                         |  2 +-
- include/media/v4l2-ctrls.h                         |  2 +-
- include/media/v4l2-dev.h                           |  2 +-
- include/media/v4l2-mem2mem.h                       |  4 +-
- include/media/videobuf-core.h                      |  2 +-
- include/media/videobuf2-core.h                     |  2 +-
- include/media/videobuf2-v4l2.h                     |  5 +-
- include/misc/cxl.h                                 |  2 +-
- include/net/bluetooth/bluetooth.h                  |  2 +-
- include/net/inet_connection_sock.h                 |  2 +-
- include/net/iucv/af_iucv.h                         |  2 +-
- include/net/sctp/sctp.h                            |  2 +-
- include/net/sock.h                                 |  2 +-
- include/net/tcp.h                                  |  2 +-
- include/net/udp.h                                  |  2 +-
- include/sound/hwdep.h                              |  2 +-
- include/sound/info.h                               |  2 +-
- include/uapi/asm-generic/poll.h                    | 44 ++++++++++------
- include/uapi/linux/types.h                         |  6 +++
- ipc/mqueue.c                                       |  4 +-
- kernel/events/core.c                               |  4 +-
- kernel/printk/printk.c                             |  4 +-
- kernel/relay.c                                     |  4 +-
- kernel/time/posix-clock.c                          |  4 +-
- kernel/trace/ring_buffer.c                         |  2 +-
- kernel/trace/trace.c                               |  6 +--
- mm/memcontrol.c                                    |  2 +-
- mm/swapfile.c                                      |  2 +-
- net/9p/trans_fd.c                                  | 60 +++++++++++-----------
- net/atm/common.c                                   |  4 +-
- net/atm/common.h                                   |  2 +-
- net/batman-adv/icmp_socket.c                       |  2 +-
- net/batman-adv/log.c                               |  2 +-
- net/bluetooth/af_bluetooth.c                       |  6 +--
- net/caif/caif_socket.c                             |  4 +-
- net/core/datagram.c                                |  8 ++-
- net/core/sock.c                                    |  2 +-
- net/dccp/dccp.h                                    |  2 +-
- net/dccp/proto.c                                   |  4 +-
- net/decnet/af_decnet.c                             |  4 +-
- net/ipv4/tcp.c                                     |  4 +-
- net/ipv4/udp.c                                     |  4 +-
- net/iucv/af_iucv.c                                 |  6 +--
- net/nfc/llcp_sock.c                                |  6 +--
- net/nfc/nci/uart.c                                 |  2 +-
- net/packet/af_packet.c                             |  4 +-
- net/phonet/socket.c                                |  4 +-
- net/rds/af_rds.c                                   |  4 +-
- net/rfkill/core.c                                  |  4 +-
- net/rxrpc/af_rxrpc.c                               |  4 +-
- net/sctp/socket.c                                  |  4 +-
- net/smc/af_smc.c                                   |  6 +--
- net/socket.c                                       |  6 +--
- net/sunrpc/cache.c                                 |  8 +--
- net/sunrpc/rpc_pipe.c                              |  4 +-
- net/tipc/socket.c                                  |  4 +-
- net/unix/af_unix.c                                 | 15 +++---
- net/vmw_vsock/af_vsock.c                           |  4 +-
- security/apparmor/apparmorfs.c                     |  4 +-
- security/tomoyo/audit.c                            |  2 +-
- security/tomoyo/common.c                           |  4 +-
- security/tomoyo/common.h                           |  6 +--
- security/tomoyo/securityfs_if.c                    |  2 +-
- sound/core/compress_offload.c                      |  6 +--
- sound/core/control.c                               |  4 +-
- sound/core/hwdep.c                                 |  2 +-
- sound/core/info.c                                  |  4 +-
- sound/core/init.c                                  |  2 +-
- sound/core/oss/pcm_oss.c                           |  4 +-
- sound/core/pcm_native.c                            |  8 +--
- sound/core/rawmidi.c                               |  4 +-
- sound/core/seq/oss/seq_oss.c                       |  4 +-
- sound/core/seq/oss/seq_oss_device.h                |  2 +-
- sound/core/seq/oss/seq_oss_rw.c                    |  4 +-
- sound/core/seq/seq_clientmgr.c                     |  4 +-
- sound/core/timer.c                                 |  4 +-
- sound/firewire/bebob/bebob_hwdep.c                 |  4 +-
- sound/firewire/dice/dice-hwdep.c                   |  4 +-
- sound/firewire/digi00x/digi00x-hwdep.c             |  4 +-
- sound/firewire/fireface/ff-hwdep.c                 |  4 +-
- sound/firewire/fireworks/fireworks_hwdep.c         |  4 +-
- sound/firewire/motu/motu-hwdep.c                   |  4 +-
- sound/firewire/oxfw/oxfw-hwdep.c                   |  4 +-
- sound/firewire/tascam/tascam-hwdep.c               |  4 +-
- sound/oss/dmasound/dmasound_core.c                 |  4 +-
- sound/usb/mixer_quirks.c                           |  2 +-
- sound/usb/usx2y/us122l.c                           |  4 +-
- sound/usb/usx2y/usX2Yhwdep.c                       |  4 +-
- virt/kvm/eventfd.c                                 |  4 +-
- 387 files changed, 929 insertions(+), 810 deletions(-)
- delete mode 100644 arch/alpha/include/uapi/asm/poll.h
- delete mode 100644 arch/ia64/include/uapi/asm/poll.h
- delete mode 100644 arch/m32r/include/uapi/asm/poll.h
- delete mode 100644 arch/mn10300/include/uapi/asm/poll.h
- delete mode 100644 arch/score/include/uapi/asm/poll.h
- delete mode 100644 arch/x86/include/uapi/asm/poll.h
+Since this is already implemented and working, I'm inclined to leave it
+as-is if it is "good enough". But, I am fine going either way if there
+are other opinions on the matter.
