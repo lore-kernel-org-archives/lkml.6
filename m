@@ -1,92 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751660AbeA3Jbv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:31:51 -0500
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:39726 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeA3Jbt (ORCPT
+        id S1751541AbeA3Jey (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:34:54 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52877 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751219AbeA3Jeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:31:49 -0500
-X-Google-Smtp-Source: AH8x227WmfL5iiFl5vyid9hpYvggfq/AM7J/MA7xNnFevbeg5xMQJcEW5UDP1eWJqaR1H1rb9s3SCA==
-Date: Tue, 30 Jan 2018 10:31:45 +0100
+        Tue, 30 Jan 2018 04:34:50 -0500
+X-Google-Smtp-Source: AH8x224FPLpvr9MSVqSHIHZhPldzjAlb9KzkKWq6MRCrj0oJXBh2R6nxNnz/mmb2Ec3R8zsOOAIchA==
+Date: Tue, 30 Jan 2018 10:34:47 +0100
 From: Daniel Vetter <daniel@ffwll.ch>
-To: christian.koenig@amd.com
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, amd-gfx@lists.freedesktop.org,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [RFC] Per file OOM badness
-Message-ID: <20180130093145.GE25930@phenom.ffwll.local>
-Mail-Followup-To: christian.koenig@amd.com,
-        Michal Hocko <mhocko@kernel.org>,
-        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, amd-gfx@lists.freedesktop.org,
-        Roman Gushchin <guro@fb.com>
-References: <20180118170006.GG6584@dhcp22.suse.cz>
- <20180123152659.GA21817@castle.DHCP.thefacebook.com>
- <20180123153631.GR1526@dhcp22.suse.cz>
- <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
- <20180124092847.GI1526@dhcp22.suse.cz>
- <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
- <20180124110141.GA28465@dhcp22.suse.cz>
- <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
- <20180124115059.GC28465@dhcp22.suse.cz>
- <381a868c-78fd-d0d1-029e-a2cf4ab06d37@gmail.com>
+To: Keith Packard <keithp@keithp.com>
+Cc: linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm: Check for lessee in DROP_MASTER ioctl
+Message-ID: <20180130093447.GG25930@phenom.ffwll.local>
+Mail-Followup-To: Keith Packard <keithp@keithp.com>,
+        linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
+        dri-devel@lists.freedesktop.org
+References: <20180119015159.1606-1-keithp@keithp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <381a868c-78fd-d0d1-029e-a2cf4ab06d37@gmail.com>
+In-Reply-To: <20180119015159.1606-1-keithp@keithp.com>
 X-Operating-System: Linux phenom 4.14.0-1-amd64 
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 01:11:09PM +0100, Christian König wrote:
-> Am 24.01.2018 um 12:50 schrieb Michal Hocko:
-> > On Wed 24-01-18 12:23:10, Michel Dänzer wrote:
-> > > On 2018-01-24 12:01 PM, Michal Hocko wrote:
-> > > > On Wed 24-01-18 11:27:15, Michel Dänzer wrote:
-> > [...]
-> > > > > 2. If the OOM killer kills a process which is sharing BOs with another
-> > > > > process, this should result in the other process dropping its references
-> > > > > to the BOs as well, at which point the memory is released.
-> > > > OK. How exactly are those BOs mapped to the userspace?
-> > > I'm not sure what you're asking. Userspace mostly uses a GEM handle to
-> > > refer to a BO. There can also be userspace CPU mappings of the BO's
-> > > memory, but userspace doesn't need CPU mappings for all BOs and only
-> > > creates them as needed.
-> > OK, I guess you have to bear with me some more. This whole stack is a
-> > complete uknonwn. I am mostly after finding a boundary where you can
-> > charge the allocated memory to the process so that the oom killer can
-> > consider it. Is there anything like that? Except for the proposed file
-> > handle hack?
+On Thu, Jan 18, 2018 at 05:51:59PM -0800, Keith Packard wrote:
+> Don't let a lessee control what the current DRM master is set to;
+> that's the job of the "real" master. Otherwise, the lessee would
+> disable all access to master operations for the owner and all lessees
+> under it.
 > 
-> Not that I knew of.
+> This matches the same check made in the SET_MASTER ioctl.
 > 
-> As I said before we need some kind of callback that a process now starts to
-> use a file descriptor, but without anything from that file descriptor mapped
-> into the address space.
+> Signed-off-by: Keith Packard <keithp@keithp.com>
 
-For more context: With DRI3 and wayland the compositor opens the DRM fd
-and then passes it to the client, which then starts allocating stuff. That
-makes book-keeping rather annoying.
+Similar check for setmaster already exists, so looks all good. Do we have
+an igt for all this? Iirc there was one floating around, but no idea
+what's the status. Might also be good to resubmit them so i915 CI can run
+the tests (now that the code has landed).
 
-I guess a good first order approximation would be if we simply charge any
-newly allocated buffers to the process that created them, but that means
-hanging onto lots of mm_struct pointers since we want to make sure we then
-release those pages to the right mm again (since the process that drops
-the last ref might be a totally different one, depending upon how the
-buffers or DRM fd have been shared).
+On the patch itself, minus lack of testcases:
 
-Would it be ok to hang onto potentially arbitrary mmget references
-essentially forever? If that's ok I think we can do your process based
-account (minus a few minor inaccuracies for shared stuff perhaps, but no
-one cares about that).
--Daniel
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+> ---
+>  drivers/gpu/drm/drm_auth.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_auth.c b/drivers/gpu/drm/drm_auth.c
+> index aad468d170a7..d9c0f7573905 100644
+> --- a/drivers/gpu/drm/drm_auth.c
+> +++ b/drivers/gpu/drm/drm_auth.c
+> @@ -230,6 +230,12 @@ int drm_dropmaster_ioctl(struct drm_device *dev, void *data,
+>  	if (!dev->master)
+>  		goto out_unlock;
+>  
+> +	if (file_priv->master->lessor != NULL) {
+> +		DRM_DEBUG_LEASE("Attempt to drop lessee %d as master\n", file_priv->master->lessee_id);
+> +		ret = -EINVAL;
+> +		goto out_unlock;
+> +	}
+> +
+>  	ret = 0;
+>  	drm_drop_master(dev, file_priv);
+>  out_unlock:
+> -- 
+> 2.15.1
+> 
+
 -- 
 Daniel Vetter
 Software Engineer, Intel Corporation
