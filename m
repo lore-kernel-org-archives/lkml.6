@@ -1,111 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752862AbeA3O3p (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:29:45 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:19633 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751856AbeA3O3n (ORCPT
+        id S1752871AbeA3Oad (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:30:33 -0500
+Received: from vulcan.natalenko.name ([104.207.131.136]:13098 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751457AbeA3Oab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:29:43 -0500
-From: Philippe CORNU <philippe.cornu@st.com>
-To: Archit Taneja <architt@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "linux-rockchip@lists.infradead.org"
-        <linux-rockchip@lists.infradead.org>,
-        David Airlie <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Yannick FERTRE" <yannick.fertre@st.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Ludovic BARRE <ludovic.barre@st.com>,
-        Mickael REULIER <mickael.reulier@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH v2 1/2] drm/bridge/synopsys: dsi: Add a warning msg on dsi
- read requests
-Thread-Topic: [PATCH v2 1/2] drm/bridge/synopsys: dsi: Add a warning msg on
- dsi read requests
-Thread-Index: AQHTmdQIzFeMMEzU0kGM6fXU9VNaqaOMaPkA
-Date: Tue, 30 Jan 2018 14:29:13 +0000
-Message-ID: <75fe97b4-ff59-e7cf-3f0c-085b281ead80@st.com>
-References: <20180125103800.1999-1-philippe.cornu@st.com>
- <20180125103800.1999-2-philippe.cornu@st.com>
- <20180126004441.k4pymmsr6brcdzmq@ban.mtv.corp.google.com>
- <18888350-d764-f6bd-5285-a7fac3d300e0@codeaurora.org>
-In-Reply-To: <18888350-d764-f6bd-5285-a7fac3d300e0@codeaurora.org>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.45]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BB24A99D0D1E8C408EFB8C663B84AB31@st.com>
+        Tue, 30 Jan 2018 09:30:31 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 48E2C2E1DCB
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_07:,,
- signatures=0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 30 Jan 2018 15:30:28 +0100
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: paolo.valente@linaro.org, Ivan Kozik <ivan@ludios.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bfq-iosched@googlegroups.com, Jens Axboe <axboe@kernel.dk>,
+        linus.walleij@linaro.org
+Subject: Re: v4.15 and I/O hang with BFQ
+In-Reply-To: <20180130081925.GA25183@ming.t460p>
+References: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
+ <20180130081925.GA25183@ming.t460p>
+Message-ID: <38bd4dbe280bd0934abde764fe0916cd@natalenko.name>
+User-Agent: Roundcube Webmail/1.3.3
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1517322628;
+        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
+        bh=C76jafenx1grKqM/SOUeE7VKhdfeP1+QymKeayVHZx4=;
+        b=PxuZEmApnuPYlkqPktL5qYkKxSwCBQi//60VLJGTLK7MT7BxDxx316rE+Cjcj3F2Tbu8U+
+        nY2pVtu+si/MVoCeYDFH03hIhIg77j0Ss/Xcwp+rgg83RMGng+1ZCK4kAMWfvjaqaZoJcK
+        h2A40W8/sK6XE8gxtDYExmPilTyakEQ=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1517322628; a=rsa-sha256;
+        cv=none;
+        b=hnkRFdS/h9t/buRGfdq6Y6ll7QcywA5sg80rgOWk74ToKrimp3HwTkPjwl9FRSTS2SU+t5ps9xy+v1jWda6qQRRJ9KquuBPcCzcqktXuK10JmfGfaeFOrHp6Ex16Oh/p2t+7WGfXcu0mWEz5pMJVG7+JwXlTQi3bCKf5q6rbDbQ=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w0UETnHw009624
 
-Hi Archit,
+Hi.
 
-And many thanks,
-Philippe :-)
+30.01.2018 09:19, Ming Lei wrote:
+> Hi,
+> We knew there is IO hang issue on BFQ over USB-storage wrt. blk-mq, and
+> last time I found it is inside BFQ. You can try the debug patch in the
+> following link[1] to see if it is same with the previous report[1][2]:
+> 
+> [1] https://marc.info/?l=linux-block&m=151214241518562&w=2
+> [2] https://bugzilla.kernel.org/show_bug.cgi?id=198023
+> 
+> If you aren't sure if they are same, please post the trace somewhere,
+> then I can check if it is a new bug.
 
-On 01/30/2018 03:09 PM, Archit Taneja wrote:
-> 
-> 
-> On 01/26/2018 06:14 AM, Brian Norris wrote:
->> On Thu, Jan 25, 2018 at 11:37:59AM +0100, Philippe Cornu wrote:
->>> The dcs/generic dsi read feature is not yet implemented so it
->>> is important to warn the host_transfer() caller in case of
->>> read operation requests.
->>>
->>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
->>
->> Awesome, thanks.
->>
->> Reviewed-by: Brian Norris <briannorris@chromium.org>
->>
-> 
-> Queued to drm-misc-next.
-> 
-> Thanks,
-> Archit
-> 
->>> ---
->>>   drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 6 ++++++
->>>   1 file changed, 6 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c 
->>> b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
->>> index daec7881be6d..72ecaeb40822 100644
->>> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
->>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
->>> @@ -405,6 +405,12 @@ static ssize_t dw_mipi_dsi_host_transfer(struct 
->>> mipi_dsi_host *host,
->>>       struct mipi_dsi_packet packet;
->>>       int ret;
->>> +    if (msg->rx_buf || msg->rx_len) {
->>> +        /* TODO dw drv improvements: implement read feature */
->>> +        dev_warn(dsi->dev, "read operations not yet implemented\n");
->>> +        return -EINVAL;
->>> +    }
->>> +
->>>       ret = mipi_dsi_create_packet(&packet, msg);
->>>       if (ret) {
->>>           dev_err(dsi->dev, "failed to create packet: %d\n", ret);
->>> -- 
->>> 2.15.1
->>>
-> 
+OK, first, I got 2 more stacktraces without tracing, then I've rebooted 
+with your patch and checked tracing.
+
+Before reboot, cfdisk:
+
+===
+[  266.630386] INFO: task cfdisk:437 blocked for more than 20 seconds.
+[  266.640950]       Not tainted 4.15.0-pf1 #1
+[  266.645131] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[  266.651789] cfdisk          D    0   437    410 0x00000000
+[  266.661331] Call Trace:
+[  266.664517]  ? __schedule+0x35f/0x1000
+[  266.668660]  ? bio_alloc_bioset+0xc7/0x1e0
+[  266.672330]  ? submit_bh_wbc+0x162/0x190
+[  266.678034]  schedule+0x32/0xc0
+[  266.681293]  io_schedule+0x12/0x40
+[  266.685230]  wait_on_page_bit+0xea/0x130
+[  266.689015]  ? add_to_page_cache_lru+0xe0/0xe0
+[  266.693456]  ? blkdev_writepages+0x30/0x30
+[  266.695521]  do_read_cache_page+0x167/0x350
+[  266.697160]  read_dev_sector+0x28/0xc0
+[  266.698685]  scsi_bios_ptable+0x4e/0x120 [scsi_mod]
+[  266.700156]  scsicam_bios_param+0x16/0x1a0 [scsi_mod]
+[  266.701868]  sd_getgeo+0xbf/0xd0 [sd_mod]
+[  266.703388]  blkdev_ioctl+0x178/0x990
+[  266.704818]  block_ioctl+0x39/0x40
+[  266.706381]  do_vfs_ioctl+0xa4/0x630
+[  266.708584]  ? __fput+0x131/0x1e0
+[  266.710184]  ? preempt_count_add+0x68/0xa0
+[  266.711762]  ? _raw_spin_unlock_irq+0x1d/0x30
+[  266.713304]  SyS_ioctl+0x74/0x80
+[  266.714502]  ? exit_to_usermode_loop+0x39/0xa0
+[  266.717352]  entry_SYSCALL_64_fastpath+0x20/0x83
+[  266.718857] RIP: 0033:0x7fc482064d87
+===
+
+Blocked kworker:
+
+===
+[  389.511083] INFO: task kworker/u8:5:178 blocked for more than 20 
+seconds.
+[  389.516454]       Not tainted 4.15.0-pf1 #1
+[  389.520091] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this
+message.
+[  389.524726] kworker/u8:5    D    0   178      2 0x80000000
+[  389.528321] Workqueue: events_freezable_power_ disk_events_workfn
+[  389.532228] Call Trace:
+[  389.534909]  ? __schedule+0x35f/0x1000
+[  389.541906]  ? blk_mq_sched_dispatch_requests+0x116/0x190
+[  389.546561]  ? __sbitmap_get_word+0x2a/0x80
+[  389.551167]  ? sbitmap_get_shallow+0x5c/0xa0
+[  389.555633]  schedule+0x32/0xc0
+[  389.559803]  io_schedule+0x12/0x40
+[  389.564504]  blk_mq_get_tag+0x181/0x2a0
+[  389.572541]  ? wait_woken+0x80/0x80
+[  389.576008]  blk_mq_get_request+0xf9/0x410
+[  389.579998]  blk_mq_alloc_request+0x7e/0xe0
+[  389.584824]  blk_get_request_flags+0x40/0x160
+[  389.588917]  scsi_execute+0x38/0x1e0 [scsi_mod]
+[  389.593079]  scsi_test_unit_ready+0x5d/0xd0 [scsi_mod]
+[  389.596966]  sd_check_events+0xf5/0x1a0 [sd_mod]
+[  389.602558]  disk_check_events+0x69/0x150
+[  389.604822]  process_one_work+0x1df/0x420
+[  389.606584]  worker_thread+0x2b/0x3d0
+[  389.608175]  ? process_one_work+0x420/0x420
+[  389.609833]  kthread+0x113/0x130
+[  389.611327]  ? kthread_create_on_node+0x70/0x70
+[  389.612852]  ret_from_fork+0x35/0x40
+===
+
+After reboot, tracing info:
+
+===
+    systemd-udevd-269   [000] ...1     4.309198: 
+blk_mq_do_dispatch_sched: get rq->0, 1
+     kworker/0:1H-174   [000] ....     4.309380: 
+blk_mq_do_dispatch_sched: not get rq, 1
+     kworker/u8:2-167   [000] ....     4.309562: bfq_insert_requests: 
+insert rq->0
+     kworker/u8:2-167   [000] ...1     4.309563: 
+blk_mq_do_dispatch_sched: get rq->0, 1
+     kworker/0:1H-174   [000] ....     4.309694: 
+blk_mq_do_dispatch_sched: not get rq, 1
+     kworker/u8:2-167   [000] ....     4.309879: bfq_insert_requests: 
+insert rq->0
+     kworker/u8:2-167   [000] ...1     4.309880: 
+blk_mq_do_dispatch_sched: get rq->0, 1
+     kworker/0:1H-174   [000] ....     4.310001: 
+blk_mq_do_dispatch_sched: not get rq, 1
+    systemd-udevd-271   [000] ....     4.311033: bfq_insert_requests: 
+insert rq->0
+    systemd-udevd-271   [000] ...1     4.311037: 
+blk_mq_do_dispatch_sched: not get rq, 1
+           cfdisk-408   [000] ....    13.484220: bfq_insert_requests: 
+insert rq->1
+     kworker/0:1H-174   [000] ....    13.484253: 
+blk_mq_do_dispatch_sched: not get rq, 1
+===
+
+Looks the same, right?
+
+> Or Paolo should know if the issue is fixed or not in V4.15.
+
+So, Paolo :)?
+
+Regards,
+   Oleksandr
