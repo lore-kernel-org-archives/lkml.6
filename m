@@ -1,54 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752400AbeA3NTC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 08:19:02 -0500
-Received: from outbound-smtp27.blacknight.com ([81.17.249.195]:56607 "EHLO
-        outbound-smtp27.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752143AbeA3NTB (ORCPT
+        id S1752447AbeA3NTy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 08:19:54 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:37032 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752383AbeA3NTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 08:19:01 -0500
-Date: Tue, 30 Jan 2018 13:18:59 +0000
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
- candidate and the basis for SIS
-Message-ID: <20180130131859.rvhobozd5lvt6hs5@techsingularity.net>
-References: <20180130104555.4125-1-mgorman@techsingularity.net>
- <20180130104555.4125-5-mgorman@techsingularity.net>
- <20180130115349.GB2269@hirez.programming.kicks-ass.net>
- <20180130130606.GH2295@hirez.programming.kicks-ass.net>
+        Tue, 30 Jan 2018 08:19:52 -0500
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 2/2] ASoC: rt5514: Fix uninitialized calibration value
+Date: Tue, 30 Jan 2018 14:19:43 +0100
+Message-Id: <1517318383-14420-2-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517318383-14420-1-git-send-email-geert@linux-m68k.org>
+References: <1517318383-14420-1-git-send-email-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20180130130606.GH2295@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 02:06:06PM +0100, Peter Zijlstra wrote:
-> On Tue, Jan 30, 2018 at 12:53:49PM +0100, Peter Zijlstra wrote:
-> > On Tue, Jan 30, 2018 at 10:45:55AM +0000, Mel Gorman wrote:
-> > > The results can be less dramatic on NUMA where automatic balancing interferes
-> > > with the test. It's also known that network benchmarks running on localhost
-> > > also benefit quite a bit from this patch (roughly 10% on netperf RR for UDP
-> > > and TCP depending on the machine). Hackbench also seens small improvements
-> > > (6-11% depending on machine and thread count). The facebook schbench was also
-> > > tested but in most cases showed little or no different to wakeup latencies.
-> > 
-> > What cpufreq setting were you using for these tests?
-> 
-> I cannot measure any hackbench variation one way or the other with these
-> patches using 'performance' mode. So I'll assume you've been running
-> things with HWP or something.
+With gcc-4.1.2, if CONFIG_SND_SOC_RT5514_SPI is not set:
 
-Correct, I am not using the performance governor as it's not the default and
-not necessarily desirable as a default.  HWP in some cases is enabled but
-even machines using the intel_pstate driver on machines without HWP benefit.
+    sound/soc/codecs/rt5514.c: In function ‘rt5514_dsp_voice_wake_up_put’:
+    sound/soc/codecs/rt5514.c:363: warning: ‘buf[0]’ is used uninitialized in this function
+    sound/soc/codecs/rt5514.c:363: warning: ‘buf[1]’ is used uninitialized in this function
+    sound/soc/codecs/rt5514.c:363: warning: ‘buf[2]’ is used uninitialized in this function
+    sound/soc/codecs/rt5514.c:363: warning: ‘buf[3]’ is used uninitialized in this function
 
+Fix this by initializing the buffer with zeroes, to avoid random bits
+being written to the calibration register later.
+
+Fixes: fc9cab05837639ce ("ASoC: rt5514: The DSP clock can be calibrated by the other clock source")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ sound/soc/codecs/rt5514.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/codecs/rt5514.c b/sound/soc/codecs/rt5514.c
+index 19f01558fbca677f..e5fd0114b1fd4d85 100644
+--- a/sound/soc/codecs/rt5514.c
++++ b/sound/soc/codecs/rt5514.c
+@@ -358,6 +358,7 @@ static int rt5514_dsp_voice_wake_up_put(struct snd_kcontrol *kcontrol,
+ #else
+ 				dev_err(codec->dev, "There is no SPI driver for"
+ 					" loading the firmware\n");
++				memset(buf, 0, sizeof(buf));
+ #endif
+ 				rt5514->pll3_cal_value = buf[0] | buf[1] << 8 |
+ 					buf[2] << 16 | buf[3] << 24;
 -- 
-Mel Gorman
-SUSE Labs
+2.7.4
