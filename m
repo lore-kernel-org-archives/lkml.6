@@ -1,90 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752472AbeA3CbA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 21:31:00 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:38391 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752076AbeA3Ca7 (ORCPT
+        id S1752507AbeA3Cg6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 21:36:58 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:56446 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752076AbeA3Cgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 21:30:59 -0500
-Subject: Re: [PATCH v19 03/10] video: backlight: Add of_find_backlight helper
- in backlight.c
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Meghana Madhyastha <meghana.madhyastha@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sean Paul <seanpaul@chromium.org>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1516810725.git.meghana.madhyastha@gmail.com>
- <116d160ba78be2e6dcbdcb6855622bce67da9472.1516810725.git.meghana.madhyastha@gmail.com>
- <20180126094839.iksjiw4xj2n62yzn@dell>
- <b9221c2e-590e-405b-349f-908b7f89e6b9@infradead.org>
- <20180129091120.xs74nu75fype2amq@dell>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e7d888c0-03db-94e2-0e2f-25a864a306aa@infradead.org>
-Date: Mon, 29 Jan 2018 18:30:55 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 29 Jan 2018 21:36:55 -0500
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>
+References: <87372oph61.fsf@xmission.com>
+Date: Mon, 29 Jan 2018 20:36:49 -0600
+In-Reply-To: <87372oph61.fsf@xmission.com> (Eric W. Biederman's message of
+        "Mon, 29 Jan 2018 14:02:30 -0600")
+Message-ID: <87a7wwnkce.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180129091120.xs74nu75fype2amq@dell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1egLn3-0005Rl-Vj;;;mid=<87a7wwnkce.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+B4nZSAFLRvmLBNRXqba2+xOEWFVn+4f0=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.0 XMSubMetaSx_00 1+ Sexy Words
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 569 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.6 (0.5%), b_tie_ro: 1.81 (0.3%), parse: 0.86 (0.2%),
+        extract_message_metadata: 13 (2.4%), get_uri_detail_list: 5 (0.9%),
+        tests_pri_-1000: 5 (0.9%), tests_pri_-950: 1.15 (0.2%), tests_pri_-900: 0.97
+        (0.2%), tests_pri_-400: 45 (7.9%), check_bayes: 44 (7.7%), b_tokenize: 17
+        (3.1%), b_tok_get_all: 16 (2.8%), b_comp_prob: 4.0 (0.7%), b_tok_touch_all:
+        4.1 (0.7%), b_finish: 0.79 (0.1%), tests_pri_0: 491 (86.4%),
+        check_dkim_signature: 0.95 (0.2%), check_dkim_adsp: 3.6 (0.6%),
+        tests_pri_500: 6 (1.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [GIT PULL] siginfo cleanups for 4.16-rc1
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/29/2018 01:11 AM, Lee Jones wrote:
-> On Fri, 26 Jan 2018, Randy Dunlap wrote:
-> 
->> On 01/26/2018 01:48 AM, Lee Jones wrote:
->>> On Wed, 24 Jan 2018, Meghana Madhyastha wrote:
->>>
->>>> Add of_find_backlight, a helper function which is a generic version
->>>> of tinydrm_of_find_backlight that can be used by other drivers to avoid
->>>> repetition of code and simplify things.
->>>>
->>>> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
->>>> Reviewed-by: Noralf Trønnes <noralf@tronnes.org>
->>>> Reviewed-by: Sean Paul<seanpaul@chromium.org>
->>>> Signed-off-by: Meghana Madhyastha <meghana.madhyastha@gmail.com>
->>>
->>> Nit: These should be in chronological order.
->>
->> Where does that tidbit of information come from?
->> I have never heard or read that.
-> 
-> Not sure it is documented anywhere.  It appeared to be the widely
-> used, most sensible approach, so I adopted it a few years ago.
-> 
-> This method provides us with information which would otherwise be
-> absent; including description of the patch submission/acceptance path
-> and an idea of who did what, when.
-> 
-> For example:
-> 
-> Original Author sign-off
-> Original Co-author sign-off
-> [Additional contributions: rebase, API changes, fix-ups]
-> Re-worker's sign-off
-> Tester's tested-by
-> Reviewer's acked-by/reviewed-by
-> Level-2 Maintainer sign-off
-> Level-1 Maintainer sign-off
-> 
-> Are you aware of a more functional/practical/useful method?
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-No, I'm not.
+> Linus,
+>
+> Please pull the siginfo-linus branch from the git tree:
+>
+>    git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git siginfo-linus
+>
+>    HEAD: c0f45555b82450a56c0da11866163b764aeb1a21 signal/memory-failure: Use force_sig_mceerr and send_sig_mceerr
+>
+> Long ago when 2.4 was just a testing release copy_siginfo_to_user was
+> made to copy individual fields to userspace, possibly for efficiency and
+> to ensure initialized values were not copied to userspace.
+> Unfortunately the design was complex, it's assumptions unstated, and
+> humans are failible and so while work much of the time that design
+> failed to ensure unitialized memory is not copied to userspace.
+>
+> This set of changes is part of a new design to clean up siginfo
+> and simplify things, and hopefully make the siginfo handling robust
+> enough that a simple inspection of the code can be made to ensure we
+> don't copy any unitializied fields to userspace.
+>
+> The design is to unifiy struct siginfo and struct compat_siginfo
+> into a single definition that is shared between all architectures so
+> that anyone adding to the set of information shared with struct siginfo
+> can see the whole picture.  Hopefully ensuring all future si_code
+> assignments are arch independent.
+>
+> The design is to unify copy_siginfo_to_user32 and
+> copy_siginfo_from_user32 so that those function are complete and cope
+> with all of the different cases documented in signinfo_layout.  I don't
+> think there was a single implementation of either of those functions
+> that was complete and correct before my changes unified them.
+>
+> The design is to introduce a series of helpers including
+> force_siginfo_fault that take the values that are needed in struct
+> siginfo and build the siginfo structure for their callers.  Ensuring
+> struct siginfo is built correctly.
+>
+> The remaining work for 4.17 (unless someone thinks it is post -rc1
+> material) is to push usage of those helpers down into the architectures
+> so that architecture specific code will not need to deal with the fiddly
+> work of intializing struct siginfo, and then when struct siginfo is
+> guaranteed to be fully initialized change copy siginfo_to_user into
+> a simple wrapper around copy_to_user.
+>
+> Further there is work in progress on the issues that have been
+> documented requires arch specific knowledge to sort out.
+>
+> The changes below fix or at least document all of the issues that have
+> been found with siginfo generation.  Then proceed to unify struct
+> siginfo the 32 bit helpers that copy siginfo to and from userspace,
+> and generally clean up anything that is not arch specific with
+> regards to siginfo generation.
+>
+> It is a lot but with the unification you can of siginfo you can
+> already see the code reduction in the kernel.
 
-Do you do anything else with this chronological order?  E.g., do you verify
-that someone actually did Ack or Test or Review a patch?
+I should add there is a trivial conflict with powerpc.  The powerpc
+branch in linux-next adds a new use of the memory_failure function,
+while this code removes the unused trapno argument from the
+memory_failure function.   Conflict resolution just remove
+the middle argument to memory_failure from the powerpc branch.
 
-Sean: that dim tool looks interesting. I'll check it out.
-
-thanks,
--- 
-~Randy
+> Al Viro (3):
+>       signal/mips: switch mips to generic siginfo
+>       signal: kill __ARCH_SI_UID_T
+>       signal: unify compat_siginfo_t
+>
+> Eric W. Biederman (42):
+>       signal: Simplify and fix kdb_send_sig
+>       signal/sh: Ensure si_signo is initialized in do_divide_error
+>       signal/openrisc: Fix do_unaligned_access to send the proper signal
+>       signal/parisc: Document a conflict with SI_USER with SIGFPE
+>       signal/metag: Document a conflict with SI_USER with SIGFPE
+>       signal/powerpc: Document conflicts with SI_USER and SIGFPE and SIGTRAP
+>       signal/arm64: Document conflicts with SI_USER and SIGFPE,SIGTRAP,SIGBUS
+>       signal/arm: Document conflicts with SI_USER and SIGFPE
+>       signal: Reduce copy_siginfo to just a memcpy
+>       signal: Introduce clear_siginfo
+>       signal: Ensure generic siginfos the kernel sends have all bits initialized
+>       mn10300/misalignment: Use SIGSEGV SEGV_MAPERR to report a failed user copy
+>       x86/mm/pkeys: Fix fill_sig_info_pkey
+>       signal: Document all of the signals that use the _sigfault union member
+>       signal: Document the strange si_codes used by ptrace event stops
+>       signal: Document glibc's si_code of SI_ASYNCNL
+>       signal: Ensure no siginfo union member increases the size of struct siginfo
+>       signal: Clear si_sys_private before copying siginfo to userspace
+>       signal: Remove _sys_private and _overrun_incr from struct compat_siginfo
+>       ia64/signal: switch to generic struct siginfo
+>       signal/ia64: switch the last arch-specific copy_siginfo_to_user() to generic version
+>       signal: Remove unnecessary ifdefs now that there is only one struct siginfo
+>       signal: Move addr_lsb into the _sigfault union for clarity
+>       signal/powerpc: Remove redefinition of NSIGTRAP on powerpc
+>       signal/ia64: Move the ia64 specific si_codes to asm-generic/siginfo.h
+>       signal/frv: Move the frv specific si_codes to asm-generic/siginfo.h
+>       signal/tile: Move the tile specific si_codes to asm-generic/siginfo.h
+>       signal/blackfin: Move the blackfin specific si_codes to asm-generic/siginfo.h
+>       signal/blackfin: Remove pointless UID16_SIGINFO_COMPAT_NEEDED
+>       signal: Unify and correct copy_siginfo_from_user32
+>       signal: Remove the code to clear siginfo before calling copy_siginfo_from_user32
+>       signal: Unify and correct copy_siginfo_to_user32
+>       ptrace: Use copy_siginfo in setsiginfo and getsiginfo
+>       signal/arm64: Better isolate the COMPAT_TASK portion of ptrace_hbptriggered
+>       signal: Don't use structure initializers for struct siginfo
+>       signal: Replace memset(info,...) with clear_siginfo for clarity
+>       signal: Add send_sig_fault and force_sig_fault
+>       signal: Helpers for faults with specialized siginfo layouts
+>       signal/powerpc: Remove unnecessary signal_code parameter of do_send_trap
+>       signal/ptrace: Add force_sig_ptrace_errno_trap and use it where needed
+>       mm/memory_failure: Remove unused trapno from memory_failure
+>       signal/memory-failure: Use force_sig_mceerr and send_sig_mceerr
+>
+>  arch/arc/kernel/traps.c                            |  14 +-
+>  arch/arm/include/uapi/asm/siginfo.h                |  13 +
+>  arch/arm/kernel/ptrace.c                           |   8 +-
+>  arch/arm/vfp/vfpmodule.c                           |   2 +-
+>  arch/arm64/include/asm/compat.h                    |  64 ----
+>  arch/arm64/include/uapi/asm/siginfo.h              |  21 ++
+>  arch/arm64/kernel/debug-monitors.c                 |  13 +-
+>  arch/arm64/kernel/fpsimd.c                         |   2 +-
+>  arch/arm64/kernel/ptrace.c                         |  42 +--
+>  arch/arm64/kernel/signal32.c                       |  80 -----
+>  arch/arm64/mm/fault.c                              | 114 +++----
+>  arch/blackfin/include/uapi/asm/siginfo.h           |  34 --
+>  arch/frv/include/uapi/asm/Kbuild                   |   1 +
+>  arch/frv/include/uapi/asm/siginfo.h                |  13 -
+>  arch/ia64/include/uapi/asm/siginfo.h               |  96 ------
+>  arch/ia64/kernel/signal.c                          |  52 ---
+>  arch/m68k/mm/fault.c                               |   3 +-
+>  arch/metag/include/uapi/asm/siginfo.h              |   7 +
+>  arch/metag/kernel/traps.c                          |   2 +-
+>  arch/mips/include/asm/compat.h                     |  73 -----
+>  arch/mips/include/uapi/asm/siginfo.h               |  86 +----
+>  arch/mips/kernel/signal32.c                        |  67 ----
+>  arch/mips/kernel/traps.c                           |  29 +-
+>  arch/mn10300/mm/misalignment.c                     |   2 +-
+>  arch/openrisc/kernel/traps.c                       |  10 +-
+>  arch/parisc/include/asm/compat.h                   |  64 ----
+>  arch/parisc/include/uapi/asm/siginfo.h             |   7 +
+>  arch/parisc/kernel/pdt.c                           |   2 +-
+>  arch/parisc/kernel/signal32.c                      | 106 -------
+>  arch/parisc/kernel/signal32.h                      |   3 -
+>  arch/parisc/kernel/traps.c                         |   2 +-
+>  arch/powerpc/include/asm/compat.h                  |  65 ----
+>  arch/powerpc/include/asm/debug.h                   |   2 +-
+>  arch/powerpc/include/uapi/asm/siginfo.h            |  16 +-
+>  arch/powerpc/kernel/process.c                      |  13 +-
+>  arch/powerpc/kernel/signal_32.c                    |  66 ----
+>  arch/powerpc/kernel/traps.c                        |  22 +-
+>  .../powerpc/platforms/powernv/opal-memory-errors.c |   2 +-
+>  arch/s390/include/asm/compat.h                     |  73 -----
+>  arch/s390/kernel/compat_signal.c                   | 100 ------
+>  arch/sh/kernel/traps_32.c                          |   3 +-
+>  arch/sparc/include/asm/compat.h                    |  59 ----
+>  arch/sparc/kernel/signal32.c                       |  69 ----
+>  arch/tile/include/asm/compat.h                     |  62 ----
+>  arch/tile/include/uapi/asm/siginfo.h               |   8 -
+>  arch/tile/kernel/compat_signal.c                   |  73 -----
+>  arch/tile/kernel/single_step.c                     |  24 +-
+>  arch/tile/kernel/traps.c                           |   4 +-
+>  arch/tile/kernel/unaligned.c                       |  46 +--
+>  arch/um/kernel/trap.c                              |   2 +-
+>  arch/x86/include/asm/compat.h                      |  86 +----
+>  arch/x86/include/asm/fpu/signal.h                  |   6 -
+>  arch/x86/kernel/cpu/mcheck/mce.c                   |   6 +-
+>  arch/x86/kernel/signal_compat.c                    | 123 +-------
+>  arch/x86/mm/fault.c                                |   7 +-
+>  arch/xtensa/kernel/ptrace.c                        |   8 +-
+>  drivers/acpi/apei/ghes.c                           |   2 +-
+>  drivers/base/memory.c                              |   2 +-
+>  drivers/ras/cec.c                                  |   2 +-
+>  drivers/usb/core/devio.c                           |   4 +-
+>  fs/fcntl.c                                         |   1 +
+>  include/linux/compat.h                             | 100 +++++-
+>  include/linux/mm.h                                 |   4 +-
+>  include/linux/sched/signal.h                       |  28 ++
+>  include/linux/signal.h                             |  15 +-
+>  include/uapi/asm-generic/siginfo.h                 | 109 +++++--
+>  ipc/mqueue.c                                       |   1 +
+>  kernel/debug/kdb/kdb_main.c                        |  10 +-
+>  kernel/debug/kdb/kdb_private.h                     |   2 +-
+>  kernel/ptrace.c                                    |   5 +-
+>  kernel/seccomp.c                                   |   2 +-
+>  kernel/signal.c                                    | 350 +++++++++++++++++++--
+>  kernel/time/posix-timers.c                         |   2 +-
+>  mm/hwpoison-inject.c                               |   2 +-
+>  mm/madvise.c                                       |   2 +-
+>  mm/memory-failure.c                                |  48 ++-
+>  76 files changed, 858 insertions(+), 1810 deletions(-)
