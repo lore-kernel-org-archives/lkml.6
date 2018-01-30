@@ -1,60 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752521AbeA3NYo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 08:24:44 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:33734 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751881AbeA3NYn (ORCPT
+        id S1752547AbeA3NZa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 08:25:30 -0500
+Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:50948 "EHLO
+        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752053AbeA3NZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 08:24:43 -0500
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] mmc: MMC_SDHI_{SYS,INTERNAL}_DMAC should depend on HAS_DMA
-Date: Tue, 30 Jan 2018 14:24:40 +0100
-Message-Id: <1517318680-14918-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 30 Jan 2018 08:25:29 -0500
+Date: Tue, 30 Jan 2018 13:25:27 +0000
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net,
+        srinivas.pandruvada@linux.intel.com
+Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
+ candidate and the basis for SIS
+Message-ID: <20180130132527.tjc6vea76sm5zm76@techsingularity.net>
+References: <20180130104555.4125-1-mgorman@techsingularity.net>
+ <20180130104555.4125-5-mgorman@techsingularity.net>
+ <20180130115054.GA2269@hirez.programming.kicks-ass.net>
+ <20180130125718.iwntjuvcp3yplvdx@techsingularity.net>
+ <20180130131531.GD2269@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20180130131531.GD2269@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If NO_DMA=y:
+On Tue, Jan 30, 2018 at 02:15:31PM +0100, Peter Zijlstra wrote:
+> On Tue, Jan 30, 2018 at 12:57:18PM +0000, Mel Gorman wrote:
+> > On Tue, Jan 30, 2018 at 12:50:54PM +0100, Peter Zijlstra wrote:
+> 
+> > > Not saying this patch is bad; but Rafael / Srinivas we really should do
+> > > better. Why isn't cpufreq (esp. sugov) fixing this? HWP or not, we can
+> > > still give it hints, and it looks like we're not doing that.
+> > > 
+> > 
+> > I'm not sure if HWP can fix it because of the per-cpu nature of its
+> > decisions. I believe it can only give the most basic of hints to hardware
+> > like an energy performance profile or bias (EPP and EPB respectively).
+> > Of course HWP can be turned off but not many people can detect that it's
+> > an appropriate decision, or even desirable, and there is always the caveat
+> > that disabling it increases the system CPU footprint.
+> 
+> IA32_HWP_REQUEST has "Minimum_Performance", "Maximum_Performance" and
+> "Desired_Performance" fields which can be used to give explicit
+> frequency hints. And we really _should_ be doing that.
+> 
 
-    ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
-    ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_internal_dmac.ko] undefined!
+They can be although these are usually set by the bios or setup early
+in boot and then left alone. It's not clear how or if these should be
+tuned on the fly or what variables would drive dynamic tuning. The data
+collected would still be per-cpu so if all CPUs have low utilisation,
+the decisions will still be poor except maybe for things like IO boosting.
 
-Add dependencies on HAS_DMA to fix this.
+> Because, esp. in this scenario; a task migrating; the hardware really
+> can't do anything sensible, whereas the OS _knows_.
+> 
 
-Fixes: e578afab6e5f57e7 ("mmc: renesas_sdhi: remove wrong depends on to enable compile test")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- drivers/mmc/host/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Potentially yes. One option without HWP would be to track utilisation
+for a task or artifically boost it for a short period after migration so
+a higher p-state is potentially selected. With HWP, a hint would have to
+be given to the hardware to try select a higher frequency but I've no idea
+how expensive that is or how it would behave on different implementations
+of HWP. It may also be a game of whack-a-mole trying to get every cpufreq
+configuration correct. One advantage of using fewer cores is that it should
+work regardless of cpufreq driver.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 67bd3344dd03a1ae..0eae619419d9ddeb 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -605,7 +605,7 @@ config MMC_SDHI
- 
- config MMC_SDHI_SYS_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
--	depends on MMC_SDHI
-+	depends on MMC_SDHI && HAS_DMA
- 	default MMC_SDHI if (SUPERH || ARM)
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
-@@ -615,7 +615,7 @@ config MMC_SDHI_SYS_DMAC
- config MMC_SDHI_INTERNAL_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
- 	depends on ARM64 || COMPILE_TEST
--	depends on MMC_SDHI
-+	depends on MMC_SDHI && HAS_DMA
- 	default MMC_SDHI if ARM64
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
+
 -- 
-2.7.4
+Mel Gorman
+SUSE Labs
