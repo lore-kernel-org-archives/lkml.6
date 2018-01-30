@@ -1,48 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754073AbeA3XuV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:50:21 -0500
-Received: from mga07.intel.com ([134.134.136.100]:5971 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751842AbeA3XuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:50:19 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,437,1511856000";
-   d="scan'208";a="170438908"
-Date: Tue, 30 Jan 2018 16:50:18 -0700
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] libnvdimm, namespace: remove redundant initialization of
- 'nd_mapping'
-Message-ID: <20180130235018.GE23836@linux.intel.com>
-References: <20180130174707.4921-1-colin.king@canonical.com>
+        id S1753781AbeA3XyC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:54:02 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35061 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751647AbeA3Xx7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 18:53:59 -0500
+X-Google-Smtp-Source: AH8x224o+QRp1XSDPkTXVbZE4KLdKZw5Kfmbnb/9PR8qZ8KeCRz5YcfvVwp1YKwA8/drfygCwlx6yg==
+From: Kevin Hilman <khilman@baylibre.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>,
+        Jian Hu <jian.hu@amlogic.com>, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5]  i2c: meson-axg: add I2C controller driver
+Organization: BayLibre
+References: <20171120145415.6581-1-yixun.lan@amlogic.com>
+        <7ho9ltba6c.fsf@baylibre.com>
+        <20180124063019.mzq7egwotn2uakr5@ninjato>
+Date: Tue, 30 Jan 2018 15:53:54 -0800
+In-Reply-To: <20180124063019.mzq7egwotn2uakr5@ninjato> (Wolfram Sang's message
+        of "Wed, 24 Jan 2018 07:30:19 +0100")
+Message-ID: <7hzi4uc38t.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180130174707.4921-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 05:47:07PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer nd_mapping is being initialized to a value that is never read,
-> instead it is being updated to a new value in all the cases where it
-> is being read afterwards, hence the initialization is redundant and
-> can be removed.
-> 
-> Cleans up clang warning:
-> drivers/nvdimm/namespace_devs.c:2411:21: warning: Value stored to
-> 'nd_mapping' during its initialization is never rea
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Wolfram Sang <wsa@the-dreams.de> writes:
 
-Sure, this looks good.  Thanks.
+>> >   ARM64: dts: meson-axg: add I2C DT info for Meson-AXG SoC
+>> >   ARM64: dts: meson-axg: describe pin DT info for I2C controller
+>> >   ARM64: dts: meson-axg: enable I2C Master-1 for the audio speaker
+>> 
+>> Once you've merged, I'll take the DT patches through my amlogic tree.
+>
+> Done now! Have fun with the patches...
 
-Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Thanks!
+
+The DT patches are now queued in the amlogic tree (branch: v4.17/dt64)
+
+Kevin
