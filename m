@@ -1,189 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753184AbeA3SAW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:00:22 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56708 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751584AbeA3SAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:00:21 -0500
-Date: Tue, 30 Jan 2018 18:00:13 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Cc: Neil Leeder <nleeder@codeaurora.org>,
-        Mark Langsdorf <mlangsdo@redhat.com>, Jon Masters <jcm@redhat.com>,
-        Timur Tabi <timur@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>, Mark Salter <msalter@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH 1/2] acpi: arm64: add iort support for PMCG
-Message-ID: <20180130180013.GA16154@e107981-ln.cambridge.arm.com>
-References: <1501876754-1064-1-git-send-email-nleeder@codeaurora.org>
- <1501876754-1064-2-git-send-email-nleeder@codeaurora.org>
- <5FC3163CFD30C246ABAA99954A238FA8386400F7@FRAEML521-MBX.china.huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA8386400F7@FRAEML521-MBX.china.huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1753289AbeA3SFg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:05:36 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35709 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753012AbeA3SFa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 13:05:30 -0500
+X-Google-Smtp-Source: AH8x224K4tnc4itxgoFoMGepgZg4+cwdlRuIO0mtFCpMoO6s7hsU7PeTeH1dpQNGCeychqG6Z1Y2/A==
+From: Dongsu Park <dongsu@kinvolk.io>
+To: linux-kernel@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
+        Dongsu Park <dongsu@kinvolk.io>, Miklos Szeredi <mszeredi@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag FS_IMA_NO_CACHE
+Date: Tue, 30 Jan 2018 19:06:31 +0100
+Message-Id: <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1517314847.git.dongsu@kinvolk.io>
+References: <cover.1517314847.git.dongsu@kinvolk.io>
+In-Reply-To: <cover.1517314847.git.dongsu@kinvolk.io>
+References: <cover.1517314847.git.dongsu@kinvolk.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:39:20AM +0000, Shameerali Kolothum Thodi wrote:
-> Hi Neil/Lorenzo,
-> 
-> > -----Original Message-----
-> > From: linux-arm-kernel [mailto:linux-arm-kernel-bounces@lists.infradead.org]
-> > On Behalf Of Neil Leeder
-> > Sent: Friday, August 04, 2017 8:59 PM
-> > To: Will Deacon <will.deacon@arm.com>; Mark Rutland
-> > <mark.rutland@arm.com>
-> > Cc: Mark Langsdorf <mlangsdo@redhat.com>; Jon Masters
-> > <jcm@redhat.com>; Timur Tabi <timur@codeaurora.org>; linux-
-> > kernel@vger.kernel.org; Mark Brown <broonie@kernel.org>; Mark Salter
-> > <msalter@redhat.com>; nleeder@codeaurora.org; linux-arm-
-> > kernel@lists.infradead.org
-> > Subject: [PATCH 1/2] acpi: arm64: add iort support for PMCG
-> > 
-> > Add support for the SMMU Performance Monitor Counter Group
-> > information from ACPI. This is in preparation for its use
-> > in the SMMU v3 PMU driver.
-> 
-> [...]
-> 
-> >  static __init
-> >  const struct iort_iommu_config *iort_get_iommu_cfg(struct acpi_iort_node
-> > *node)
-> >  {
-> > @@ -1001,6 +1041,8 @@ const struct iort_iommu_config
-> > *iort_get_iommu_cfg(struct acpi_iort_node *node)
-> >  		return &iort_arm_smmu_v3_cfg;
-> >  	case ACPI_IORT_NODE_SMMU:
-> >  		return &iort_arm_smmu_cfg;
-> > +	case ACPI_IORT_NODE_PMCG:
-> > +		return &iort_arm_smmu_pmcg_cfg;
-> 
-> I understand this series will be revised based on the iort spec update.
-> 
-> This Is to clarify few queries we have with respect to one of our hisilicon 
-> platform which has support for SMMU v3 PMCG. In our implementation
-> the base address for the PMCG is defined at a IMP DEF address offset
-> within the SMMUv3 page 0 address space. And as per SMMU spec, 
-> 
-> " The Performance Monitor Counter Groups are standalone monitoring 
-> facilities  and, as such, can be implemented in separate components that
-> are all associated with (but not necessarily part of) an SMMU"
-> 
-> It looks like PMCG can be part of SMMU,  it is not clear whether this kind
-> of address mapping is forbidden or not. If this is an accepted  scenario, then
-> the devm_ioremap_resource() call in SMMv3 probe will fail as it reports conflict.
-> 
-> As far as I can see, the above code just checks the iort node type is PMCG
-> and assumes that its SMMU PMCG. As per IORT spec, it make sense to check
-> the node reference filed and make that call. 
-> 
-> And to fix the resource conflict issue we have, is it possible to treat the PMCG
-> node as the child of the SMMU and call the platform_device_add() appropriately
-> to avoid the conflict? I am not sure this will fix the issue and also about the order
-> in which SMMU and PMCG devices will be populated will have an impact on this.
-> 
-> Please let me know your thoughts on this.
+From: Alban Crequy <alban@kinvolk.io>
 
-I went back and re-read the patches, I think the point here is that the
-perf driver (ie PATCH 2 that, by the way, is not maiinline) uses
-devm_ioremap_resource() to map the counters and that's what is causing
-failures when PMCG is part of SMMUv3 registers.
+This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
+re-appraised and re-audited each time. Cached integrity results should
+not be used.
 
-It is the resources hierarchy that is wrong and in turn, I do not think
-devm_request_mem_region() is the right way of requesting it for the
-PMCG driver.
+It is useful in FUSE because the userspace FUSE process can change the
+underlying files at any time without notifying the kernel.
 
-I need to look into this but I suspect that's something that should
-be handled in the PMCG driver, that has to request the memory region
-_differently_ (ie ioremap copes with this overlap - it is the
-devm_request_mem_region() in devm_ioremap_resource() that fails, correct
-?).
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
+Acked-by: Seth Forshee <seth.forshee@canonical.com>
+Tested-by: Dongsu Park <dongsu@kinvolk.io>
+Signed-off-by: Alban Crequy <alban@kinvolk.io>
+---
+ fs/fuse/inode.c    | 2 +-
+ include/linux/fs.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Certainly we need to create in IORT the resources with the correct
-hierarchy (I reckon DT does it already if the right device hierarchy is
-specified).
-
-Lorenzo
-
-> 
-> Thanks,
-> Shameer
->   
-> >  	default:
-> >  		return NULL;
-> >  	}
-> > @@ -1056,6 +1098,15 @@ static int __init
-> > iort_add_smmu_platform_device(struct acpi_iort_node *node)
-> >  	if (ret)
-> >  		goto dev_put;
-> > 
-> > +	/* End of init for PMCG */
-> > +	if (node->type == ACPI_IORT_NODE_PMCG) {
-> > +		ret = platform_device_add(pdev);
-> > +		if (ret)
-> > +			goto dev_put;
-> > +
-> > +		return 0;
-> > +	}
-> > +
-> >  	/*
-> >  	 * We expect the dma masks to be equivalent for
-> >  	 * all SMMUs set-ups
-> > @@ -1131,6 +1182,9 @@ static void __init iort_init_platform_devices(void)
-> >  				acpi_free_fwnode_static(fwnode);
-> >  				return;
-> >  			}
-> > +		} else if (iort_node->type == ACPI_IORT_NODE_PMCG) {
-> > +			if (iort_add_smmu_platform_device(iort_node))
-> > +				return;
-> >  		}
-> > 
-> >  		iort_node = ACPI_ADD_PTR(struct acpi_iort_node, iort_node,
-> > diff --git a/include/acpi/actbl2.h b/include/acpi/actbl2.h
-> > index 707dda74..2169b6f 100644
-> > --- a/include/acpi/actbl2.h
-> > +++ b/include/acpi/actbl2.h
-> > @@ -695,7 +695,8 @@ enum acpi_iort_node_type {
-> >  	ACPI_IORT_NODE_NAMED_COMPONENT = 0x01,
-> >  	ACPI_IORT_NODE_PCI_ROOT_COMPLEX = 0x02,
-> >  	ACPI_IORT_NODE_SMMU = 0x03,
-> > -	ACPI_IORT_NODE_SMMU_V3 = 0x04
-> > +	ACPI_IORT_NODE_SMMU_V3 = 0x04,
-> > +	ACPI_IORT_NODE_PMCG = 0x05
-> >  };
-> > 
-> >  struct acpi_iort_id_mapping {
-> > @@ -811,6 +812,12 @@ struct acpi_iort_smmu_v3 {
-> >  #define ACPI_IORT_SMMU_V3_COHACC_OVERRIDE   (1)
-> >  #define ACPI_IORT_SMMU_V3_HTTU_OVERRIDE     (1<<1)
-> > 
-> > +struct acpi_iort_pmcg {
-> > +	u64 base_address;	/* PMCG base address */
-> > +	u32 overflow_gsiv;
-> > +	u32 node_reference;
-> > +};
-> > +
-> > 
-> > /****************************************************************
-> > ***************
-> >   *
-> >   * IVRS - I/O Virtualization Reporting Structure
-> > --
-> > Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-> > Technologies Inc.
-> > Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-> > a Linux Foundation Collaborative Project.
-> > 
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 624f18bb..0a9e5164 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
+ static struct file_system_type fuse_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "fuse",
+-	.fs_flags	= FS_HAS_SUBTYPE,
++	.fs_flags	= FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
+ 	.mount		= fuse_mount,
+ 	.kill_sb	= fuse_kill_sb_anon,
+ };
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 511fbaab..ced841ba 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2075,6 +2075,7 @@ struct file_system_type {
+ #define FS_BINARY_MOUNTDATA	2
+ #define FS_HAS_SUBTYPE		4
+ #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
++#define FS_IMA_NO_CACHE		16	/* Force IMA to re-measure, re-appraise, re-audit files */
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	struct dentry *(*mount) (struct file_system_type *, int,
+ 		       const char *, void *);
+-- 
+2.13.6
