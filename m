@@ -1,52 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752545AbeA3SOV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:14:21 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:53982 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752122AbeA3SOU (ORCPT
+        id S1753190AbeA3SOa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:14:30 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:45223 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751475AbeA3SO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:14:20 -0500
-Date: Tue, 30 Jan 2018 19:14:16 +0100
-From: Lukas Senger <lukas@fridolin.com>
-To: giometti@enneenne.com
-Cc: linux-kernel@vger.kernel.org
-Subject: pps-gpio falsely reporting echo capability?
-Message-ID: <20180130191416.175d4550@dinghy.localdomain>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 30 Jan 2018 13:14:27 -0500
+X-Google-Smtp-Source: AH8x224BW9NE99WkQVSu5zosrtit0FV7I+867s+KzNsGuzXMVu9F3vmoAEV/y6rMOY00im65K5DmrPBeuoiYkMYzBoA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K0:oWM4XWSVtquVxoHOGfQ+rVv/RqyTfGGoxjRwiosRU0glMbkczHs
- ukh0XioospcNYE3IGXgZ0IM2SlgB8w+f00FG2RSMbDyTeaEFVMjEl3mc2PJWc4X11lbQdPb
- HUY+GJDcipASVPlO2CQu2zCBK7H04dBIiMouFfrsEVopEssq8OWZzpxX2KjcS3dMJLZ3jje
- lwh7ULk3q7oDCJ53jrBLg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:/asgbUfy7+M=:DOMhJDHapTx1fjwqQAtkA5
- EFUaNNM4t8mjB+VXIqR8OnNrHEhDYybMTFNFVJRT4niXIPyKsBxg6kj1TIz/W/MVZD2KBNmq7
- BRgU+JsWqBfmohsJq3kXCTiaTa7m5GLpebtYEYIe+TdR5grt1IfcTdULjgnLsceu3Xv0Lz81T
- pY9VKhUwTTdsGpnvg0v5Uip/HHqDKN9FJqA9zydjLh8nyTbAgIs64E/zgfTtUteIGX4htuxAB
- 33G/eQaQ3CmVKR12pEho6vZ/ac0XFtZ6uN5aJHvVwgxA0wqbF2JSU4DDuQzVPGBcLw54BCSH5
- y49+7R7N2lAXIMIkGhEt3anyOFdlYmwx/RXgZ8S54jks5W6ZCNJIoGDB1WEYsdzMTxIJybDLs
- jbCvdDv+ypflUlvQJTCAzh6xPDM2QedoAVEi49khTm/fFFAubSYBmMLV+3kv89xFI1VYDrmIh
- HOdbm3A8yPkr0Z97MOUmgRSzOD/gHhwjNv6IlqzT4UbR0VnTRQT7gJVAm/zZr0JGjKthqOdy1
- RVlMeR39pdFGSdPpAZ1pa3iuImW+iElur7mIPGXavqHSjsqpi2Wjn6cmkSSK4aszlK8ELhoRX
- wNTdH0GtWHI9AeeeMbp79ztCaZ93MaqD5A9z8VT+WxEwCjc3yrx+XIrXukvlgfx0Nua51wof4
- HUfiWxRRXF5u/9zUtUE+YdDmVhYVB+gNbg9q9w9M5JyQCHeBCZXRLuwS6iDQxrxe0CmyU+3B7
- +CcgcxaNvGgaplyRnYrRNDkllb2S6iNd7LN2c59buuuYtvNRedZxc2SjWTQ=
+In-Reply-To: <20180130171745.i5wwcwr4qdbcoxhm@pali>
+References: <1517331540-13266-1-git-send-email-mario.limonciello@dell.com> <20180130171745.i5wwcwr4qdbcoxhm@pali>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 30 Jan 2018 20:14:26 +0200
+Message-ID: <CAHp75VcqCdEQjUCoSGz87Mb3HFomfOwKWxC7S2CjtqSAZQEpsA@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: dell-laptop: Allocate buffer on heap rather
+ than globally
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc: Mario Limonciello <mario.limonciello@dell.com>,
+        Darren Hart <dvhart@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0UIEYwJ015890
 
-Hi,
+On Tue, Jan 30, 2018 at 7:17 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+> On Tuesday 30 January 2018 10:59:00 Mario Limonciello wrote:
+>> There may be race conditions with multiple different functions working
+>> on a module wide buffer causing one function to get the wrong results.
+>
+> Yes, this is better. We really do not need to allocate shared buffer in
+> dell-laptop anymore. Before this buffer was specially allocated in first
+> 4GB addresses space because its physical addresses was passed into SMM.
 
-I'm trying to use PPS_ECHOASSERT with the GPIO pins on a Raspberry
-Pi. /sys/class/pps/pps0/echo reports 1, however looking at pps-gpio.c,
-no echo-callback is registered. Am I missing something or should either
-sysfs report 0 or pps echo be implemented in the client?
++1.
 
->From a quick glance at the other clients, the same might be true for
-pps-ktimer and pps_parport. They both report PPS_ECHO* in info.mode but
-never define info.echo.
+>> -static void dell_set_arguments(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
+>> +static void dell_set_arguments(struct calling_interface_buffer *buffer,
+>> +                            u32 arg0, u32 arg1, u32 arg2, u32 arg3)
+>
+> Hm... this function has too many parameters :-(
+>
+> What about following API?
+>
+> static struct calling_interface_buffer dell_set_arguments(u32 arg0, u32 arg1, u32 arg2, u32 arg3);
+>
+> It would return filled structure (not a pointer !)
 
-Cheers,
-Lukas
+I do not think it's a good idea. Either we allocate request on a heap
+and return a pointer, or we fill the struct with some data on spot.
+
+To naming:
+
+for allocation: ..._alloc_request()
+for filling: _fill_request() / _prepare_request()
+
+or alike.
+
+_set_arguments() not good enough to me.
+
+> and caller would be
+> able to use it as:
+>
+>   struct calling_interface_buffer buffer;
+>   buffer = dell_set_arguments(0x2, 0, 0, 0);
+>   ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+
+See above.
+
+> And maybe after this change, function dell_set_arguments() could have
+> better name, e.g. dell_prepare_request() (or dell_prepare_request_buffer)
+> as "set arguments" is not really what would function do (as it return
+> something).
+
+Agree.
+
+>
+>   struct calling_interface_buffer buffer;
+>   buffer = dell_prepare_request_buffer(0x2, 0, 0, 0);
+>   ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+>
+> Andy, any suggestion or opinion?
+
+See above.
+
+-- 
+With Best Regards,
+Andy Shevchenko
