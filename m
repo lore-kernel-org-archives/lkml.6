@@ -1,74 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753756AbeA3VAZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:00:25 -0500
-Received: from 3.mo179.mail-out.ovh.net ([178.33.251.175]:49573 "EHLO
-        3.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751451AbeA3VAY (ORCPT
+        id S1753780AbeA3VAt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:00:49 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:60221 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752083AbeA3VAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:00:24 -0500
-From: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-To: bhelgaas@google.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
-        linux-pci@vger.kernel.org
-Cc: adouglas@cadence.com, stelford@cadence.com, dgary@cadence.com,
-        kgopi@cadence.com, eandrews@cadence.com,
-        thomas.petazzoni@free-electrons.com, sureshp@cadence.com,
-        nsekhar@ti.com, linux-kernel@vger.kernel.org, robh@kernel.org,
-        devicetree@vger.kernel.org,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-Subject: [PATCH v6 10/11] dt-bindings: PCI: cadence: Add DT bindings for Cadence PCIe endpoint controller
-Date: Tue, 30 Jan 2018 21:56:58 +0100
-Message-Id: <ea57d2ffbf426d3fbaf5af8a90d6664d06fd617b.1517343502.git.cyrille.pitchen@free-electrons.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
-References: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
-In-Reply-To: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
-References: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
-X-Ovh-Tracer-Id: 15913187809797101569
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 25
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrtddtgdduvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucgotffhvedqqdfjughrqdfuuhhsphgvtghtqdhlohifucdlhedmnegotffhvedqqdfjughrqdfuuhhsphgvtghtucdlvddtmd
+        Tue, 30 Jan 2018 16:00:47 -0500
+Subject: Re: [PATCH v2 00/10] Remove empty help texts from Kconfig files
+To: Ulf Magnusson <ulfalizer@gmail.com>, linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com,
+        mcgrof@kernel.org
+References: <20180130192349.8420-1-ulfalizer@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9cbe668e-fe6b-d525-176d-a1e07541f789@infradead.org>
+Date: Tue, 30 Jan 2018 13:00:45 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180130192349.8420-1-ulfalizer@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch documents the DT bindings for the Cadence PCIe controller
-when configured in endpoint mode.
+On 01/30/2018 11:22 AM, Ulf Magnusson wrote:
+> Empty help texts are probably either a typo, a Kconfig misunderstanding, or
+> some kind of half-committing to adding a help text (in which case a TODO
+> comment would be clearer, if the help text really can't be added right away).
+> Best to flag them, IMO.
+> 
+> Changes since v1:
+> 
+> Forgot to send the cover letter to linux-kbuild.
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/pci/cdns,cdns-pcie-ep.txt  | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
-new file mode 100644
-index 000000000000..9a305237fa6e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
-@@ -0,0 +1,22 @@
-+* Cadence PCIe endpoint controller
-+
-+Required properties:
-+- compatible: Should contain "cdns,cdns-pcie-ep" to identify the IP used.
-+- reg: Should contain the controller register base address and AXI interface
-+  region base address respectively.
-+- reg-names: Must be "reg" and "mem" respectively.
-+- cdns,max-outbound-regions: Set to maximum number of outbound regions
-+
-+Optional properties:
-+- max-functions: Maximum number of functions that can be configured (default 1).
-+
-+Example:
-+
-+pcie@fc000000 {
-+	compatible = "cdns,cdns-pcie-ep";
-+	reg = <0x0 0xfc000000 0x0 0x01000000>,
-+	      <0x0 0x80000000 0x0 0x40000000>;
-+	reg-names = "reg", "mem";
-+	cdns,max-outbound-regions = <16>;
-+	max-functions = /bits/ 8 <8>;
-+};
+Thanks.
+
+> Ulf Magnusson (10):
+>   net/sched: kconfig: Remove empty help texts
+>   video: fbdev: kconfig: Remove empty help text
+>   mmc: kconfig: Remove empty help text
+>   Staging: rtl8192u: kconfig: Remove empty help text
+>   Staging: rtl8192e: kconfig: Remove empty help text
+>   lib/Kconfig.debug: Remove empty help text
+>   MIPS: BCM63XX: kconfig: Remove empty help text
+>   MIPS: kconfig: Remove empty help text
+>   arm: vt8500: kconfig: Remove empty help text
+>   nios2: kconfig: Remove empty help text
+> 
+>  arch/arm/mach-vt8500/Kconfig              | 1 -
+>  arch/mips/Kconfig                         | 1 -
+>  arch/mips/bcm63xx/boards/Kconfig          | 1 -
+>  arch/nios2/Kconfig                        | 1 -
+>  drivers/mmc/host/Kconfig                  | 1 -
+>  drivers/staging/rtl8192e/rtl8192e/Kconfig | 1 -
+>  drivers/staging/rtl8192u/Kconfig          | 1 -
+>  drivers/video/fbdev/Kconfig               | 1 -
+>  lib/Kconfig.debug                         | 1 -
+>  net/sched/Kconfig                         | 3 ---
+>  10 files changed, 12 deletions(-)
+> 
+
+
 -- 
-2.11.0
+~Randy
