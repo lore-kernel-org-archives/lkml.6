@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752380AbeA3A4E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 19:56:04 -0500
-Received: from gateway21.websitewelcome.com ([192.185.46.109]:46199 "EHLO
+        id S1752339AbeA3A4D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 19:56:03 -0500
+Received: from gateway21.websitewelcome.com ([192.185.46.109]:32573 "EHLO
         gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752280AbeA3A4B (ORCPT
+        by vger.kernel.org with ESMTP id S1752251AbeA3A4B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 29 Jan 2018 19:56:01 -0500
-Date: Mon, 29 Jan 2018 18:32:01 -0600
+Date: Mon, 29 Jan 2018 18:32:21 -0600
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH 4/8] i2c: ov9650: fix potential integer overflow in
- __ov965x_set_frame_interval
-Message-ID: <8ccf6acf10745fd1b9f33a7cacd5365e125633bf.1517268668.git.gustavo@embeddedor.com>
+Subject: [PATCH 5/8] pci: cx88-input: fix potential integer overflow
+Message-ID: <7958c3115b5727c2272ce9cf7454cea8e6f4cc50.1517268668.git.gustavo@embeddedor.com>
 References: <cover.1517268667.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -29,41 +28,51 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.145.57.174
 X-Source-L: No
-X-Exim-ID: 1egJqD-001eKX-N9
+X-Exim-ID: 1egJqY-001eaY-AI
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (training) [189.145.57.174]:35456
+X-Source-Sender: (training) [189.145.57.174]:35460
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 24
+X-Email-Count: 27
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cast fi->interval.numerator to u64 in order to avoid a potential integer
-overflow. This variable is being used in a context that expects an
-expression of type u64.
+Cast ir->polling to ktime_t in order to avoid a potential integer
+overflow. This variable is being used in a context that expects
+an expression of type ktime_t (s64).
 
-Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1392628 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1392630 ("Unintentional integer overflow")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/media/i2c/ov9650.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/pci/cx88/cx88-input.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
-index e519f27..c674a49 100644
---- a/drivers/media/i2c/ov9650.c
-+++ b/drivers/media/i2c/ov9650.c
-@@ -1130,7 +1130,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
- 	if (fi->interval.denominator == 0)
- 		return -EINVAL;
+diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
+index 4e9953e..096b350 100644
+--- a/drivers/media/pci/cx88/cx88-input.c
++++ b/drivers/media/pci/cx88/cx88-input.c
+@@ -180,7 +180,7 @@ static enum hrtimer_restart cx88_ir_work(struct hrtimer *timer)
+ 	struct cx88_IR *ir = container_of(timer, struct cx88_IR, timer);
  
--	req_int = (u64)(fi->interval.numerator * 10000) /
-+	req_int = (u64)fi->interval.numerator * 10000 /
- 		fi->interval.denominator;
+ 	cx88_ir_handle_key(ir);
+-	missed = hrtimer_forward_now(&ir->timer, ir->polling * 1000000);
++	missed = hrtimer_forward_now(&ir->timer, (ktime_t)ir->polling * 1000000);
+ 	if (missed > 1)
+ 		ir_dprintk("Missed ticks %ld\n", missed - 1);
  
- 	for (i = 0; i < ARRAY_SIZE(ov965x_intervals); i++) {
+@@ -200,7 +200,7 @@ static int __cx88_ir_start(void *priv)
+ 	if (ir->polling) {
+ 		hrtimer_init(&ir->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ 		ir->timer.function = cx88_ir_work;
+-		hrtimer_start(&ir->timer, ir->polling * 1000000,
++		hrtimer_start(&ir->timer, (ktime_t)ir->polling * 1000000,
+ 			      HRTIMER_MODE_REL);
+ 	}
+ 	if (ir->sampling) {
 -- 
 2.7.4
