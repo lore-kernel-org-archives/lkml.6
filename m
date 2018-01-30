@@ -1,79 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752817AbeA3OA4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:00:56 -0500
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:36884 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbeA3OAy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:00:54 -0500
-X-Google-Smtp-Source: AH8x226l6VTmWvlKJyBKmnT4UygZw0F8fC7cbGWlVtxi3qK6oqH/Ey1159f/TnhlV8PE9k1f7lXGMri2DNpccm/IQIY=
+        id S1752840AbeA3OBJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:01:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37814 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751786AbeA3OBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 09:01:07 -0500
+Date: Tue, 30 Jan 2018 15:01:04 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Florian Westphal <fw@strlen.de>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        David Miller <davem@davemloft.net>, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, netdev <netdev@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Yang Shi <yang.s@alibaba-inc.com>, syzkaller-bugs@googlegroups.com,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, guro@fb.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [netfilter-core] kernel panic: Out of memory and no killable
+ processes... (2)
+Message-ID: <20180130140104.GE21609@dhcp22.suse.cz>
+References: <20180129072357.GD5906@breakpoint.cc>
+ <20180129082649.sysf57wlp7i7ltb2@node.shutemov.name>
+ <20180129165722.GF5906@breakpoint.cc>
+ <20180129182811.fze4vrb5zd5cojmr@node.shutemov.name>
+ <20180129223522.GG5906@breakpoint.cc>
+ <20180130075226.GL21609@dhcp22.suse.cz>
+ <20180130081127.GH5906@breakpoint.cc>
+ <20180130082817.cbax5qj4mxancx4b@node.shutemov.name>
+ <CACT4Y+bFKwoxopr1dwnc7OHUoHy28ksVguqtMY6tD=aRh-7LyQ@mail.gmail.com>
+ <20180130095739.GV21609@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a36Kqh-qscU0vsKH00ReXKk8HOYzzhbt6SxAoEBvPYuig@mail.gmail.com>
-References: <a2a6bf12-529c-cb20-c69f-106d34e1204a@st.com> <e804928d-deb9-668a-7012-2843ba85285e@st.com>
- <CAK8P3a36Kqh-qscU0vsKH00ReXKk8HOYzzhbt6SxAoEBvPYuig@mail.gmail.com>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Tue, 30 Jan 2018 15:00:51 +0100
-Message-ID: <CA+M3ks4up-Xqwi8_HWn60O-iZsi4G8nX7TTfbOx32A2GN-rXOQ@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_Compilation_error_report_for=3A_drivers=2Ffirmware=2Fq?=
-        =?UTF-8?Q?com=5Fscm=2Ec=3A469=3A47=3A_error=3A_passing_argument_3_of_=E2=80=98dma=5Falloc=5F?=
-        =?UTF-8?Q?coherent=E2=80=99_from_incompatible_pointer_type?=
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        "Andy Gross <andy.gross@linaro.org> , David Brown"
-        <david.brown@linaro.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-soc@vger.kernel.org" <linux-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180130095739.GV21609@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-01-30 14:25 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
-> On Tue, Jan 30, 2018 at 11:11 AM, Benjamin GAIGNARD
-> <benjamin.gaignard@st.com> wrote:
->>
->> On 01/12/2018 05:11 PM, Arnaud Pouliquen wrote:
->>> Hello Andy,David,
->> + Arnd
->>
->> I have the same issue on drm-misc-next.
->> Does Arnaud's fix make sense or should we update/change the way of how
->> we compile the kernel ?
->
-> We've hit a couple of bugs with qcom drivers confusing physical addresses
-> and DMA addresses in the past, usually the drivers were buggy in
-> some form, and tried to use dma_alloc_coherent() to get a buffer
-> that gets passed into a firmware interface taking a physical address,
-> which is of course completely wrong.
->
->>> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
->>> index af4c752..8dfbe61 100644
->>> --- a/drivers/firmware/qcom_scm.c
->>> +++ b/drivers/firmware/qcom_scm.c
->>> @@ -448,7 +448,7 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t
->>> mem_sz,
->>>       struct qcom_scm_mem_map_info *mem_to_map;
->>>       phys_addr_t mem_to_map_phys;
->>>       phys_addr_t dest_phys;
->>> -     phys_addr_t ptr_phys;
->>> +     dma_addr_t ptr_phys;
->>>       size_t mem_to_map_sz;
->>>       size_t dest_sz;
->>>       size_t src_sz;
->
-> This would be bad: you can basically never have a 'dma_addr_t ptr_phys': it can
-> be exactly one of 'dma address',  'physical address' or a pointer,
-> this claims that the
-> struct member is all three of them.
->
-> The proper fix here is to stop using dma_alloc_coherent.
+On Tue 30-01-18 10:57:39, Michal Hocko wrote:
+> On Tue 30-01-18 10:02:34, Dmitry Vyukov wrote:
+> > On Tue, Jan 30, 2018 at 9:28 AM, Kirill A. Shutemov
+> > <kirill@shutemov.name> wrote:
+> > > On Tue, Jan 30, 2018 at 09:11:27AM +0100, Florian Westphal wrote:
+> > >> Michal Hocko <mhocko@kernel.org> wrote:
+> > >> > On Mon 29-01-18 23:35:22, Florian Westphal wrote:
+> > >> > > Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > >> > [...]
+> > >> > > > I hate what I'm saying, but I guess we need some tunable here.
+> > >> > > > Not sure what exactly.
+> > >> > >
+> > >> > > Would memcg help?
+> > >> >
+> > >> > That really depends. I would have to check whether vmalloc path obeys
+> > >> > __GFP_ACCOUNT (I suspect it does except for page tables allocations but
+> > >> > that shouldn't be a big deal). But then the other potential problem is
+> > >> > the life time of the xt_table_info (or other potentially large) data
+> > >> > structures. Are they bound to any process life time.
+> > >>
+> > >> No.
+> > >
+> > > Well, IIUC they bound to net namespace life time, so killing all
+> > > proccesses in the namespace would help to get memory back. :)
+> > 
+> > ... unless the namespace is mounted into file system.
+> > 
+> > Let's start with NOWARN as that's what kernel generally uses for
+> > allocations with user-controllable size. ENOMEM is roughly as
+> > informative as the WARNING message in this case.
+> 
+> You want __GFP_NORETRY but that is not _fully_ supported by kvmalloc
+> right now. More specifically kvmalloc doesn't guanratee that the request
+> will not trigger the OOM killer (like regular __GFP_NORETRY). This is
+> because of internal vmalloc restrictions. If you are however OK to
+> simply bail out in most cases then __GFP_NORETRY should work reasonably
+> fine.
+> 
+> > I think we also need to consider setting up memory cgroup for
+> > syzkaller test processes (we do RLIMIT_AS, but that's weak).
+> 
+> Well, this is not about syzkaller, it merely pointed out a potential
+> DoS... And that has to be addressed somehow.
 
-Okay but that doesn't explain why we are the only ones to get an issue
-while the parameter
-doesn't match function prototype
+So how about this?
+---
+>From d48e950f1b04f234b57b9e34c363bdcfec10aeee Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Tue, 30 Jan 2018 14:51:07 +0100
+Subject: [PATCH] net/netfilter/x_tables.c: make allocation less aggressive
 
->
->      Arnd
+syzbot has noticed that xt_alloc_table_info can allocate a lot of
+memory. This is an admin only interface but an admin in a namespace
+is sufficient as well. eacd86ca3b03 ("net/netfilter/x_tables.c: use
+kvmalloc() in xt_alloc_table_info()") has changed the opencoded
+kmalloc->vmalloc fallback into kvmalloc. It has dropped __GFP_NORETRY on
+the way because vmalloc has simply never fully supported __GFP_NORETRY
+semantic. This is still the case because e.g. page tables backing the
+vmalloc area are hardcoded GFP_KERNEL.
+
+Revert back to __GFP_NORETRY as a poors man defence against excessively
+large allocation request here. We will not rule out the OOM killer
+completely but __GFP_NORETRY should at least stop the large request
+in most cases.
+
+Fixes: eacd86ca3b03 ("net/netfilter/x_tables.c: use kvmalloc() in xt_alloc_table_info()")
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ net/netfilter/x_tables.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
+index d8571f414208..a5f5c29bcbdc 100644
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -1003,7 +1003,13 @@ struct xt_table_info *xt_alloc_table_info(unsigned int size)
+ 	if ((SMP_ALIGN(size) >> PAGE_SHIFT) + 2 > totalram_pages)
+ 		return NULL;
+ 
+-	info = kvmalloc(sz, GFP_KERNEL);
++	/*
++	 * __GFP_NORETRY is not fully supported by kvmalloc but it should
++	 * work reasonably well if sz is too large and bail out rather
++	 * than shoot all processes down before realizing there is nothing
++	 * more to reclaim.
++	 */
++	info = kvmalloc(sz, GFP_KERNEL | __GFP_NORETRY);
+ 	if (!info)
+ 		return NULL;
+ 
+-- 
+2.15.1
+
+-- 
+Michal Hocko
+SUSE Labs
