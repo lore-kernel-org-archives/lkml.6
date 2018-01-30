@@ -1,167 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752871AbeA3Oad (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:30:33 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:13098 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751457AbeA3Oab (ORCPT
+        id S1752899AbeA3Oaq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:30:46 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:17169 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752495AbeA3Oan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:30:31 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 48E2C2E1DCB
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 30 Jan 2018 15:30:28 +0100
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: paolo.valente@linaro.org, Ivan Kozik <ivan@ludios.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bfq-iosched@googlegroups.com, Jens Axboe <axboe@kernel.dk>,
-        linus.walleij@linaro.org
-Subject: Re: v4.15 and I/O hang with BFQ
-In-Reply-To: <20180130081925.GA25183@ming.t460p>
-References: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
- <20180130081925.GA25183@ming.t460p>
-Message-ID: <38bd4dbe280bd0934abde764fe0916cd@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.3
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1517322628;
-        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
-        bh=C76jafenx1grKqM/SOUeE7VKhdfeP1+QymKeayVHZx4=;
-        b=PxuZEmApnuPYlkqPktL5qYkKxSwCBQi//60VLJGTLK7MT7BxDxx316rE+Cjcj3F2Tbu8U+
-        nY2pVtu+si/MVoCeYDFH03hIhIg77j0Ss/Xcwp+rgg83RMGng+1ZCK4kAMWfvjaqaZoJcK
-        h2A40W8/sK6XE8gxtDYExmPilTyakEQ=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1517322628; a=rsa-sha256;
-        cv=none;
-        b=hnkRFdS/h9t/buRGfdq6Y6ll7QcywA5sg80rgOWk74ToKrimp3HwTkPjwl9FRSTS2SU+t5ps9xy+v1jWda6qQRRJ9KquuBPcCzcqktXuK10JmfGfaeFOrHp6Ex16Oh/p2t+7WGfXcu0mWEz5pMJVG7+JwXlTQi3bCKf5q6rbDbQ=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+        Tue, 30 Jan 2018 09:30:43 -0500
+X-IronPort-AV: E=Sophos;i="5.46,435,1511827200";
+   d="scan'208";a="591283487"
+From: David Woodhouse <dwmw@amazon.co.uk>
+To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
+        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org
+Subject: [PATCH v2] x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature bits on Intel
+Date: Tue, 30 Jan 2018 14:30:23 +0000
+Message-Id: <1517322623-15261-1-git-send-email-dwmw@amazon.co.uk>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+Despite the fact that all the other code there seems to be doing it,
+just using set_cpu_cap() in early_intel_init() doesn't actually work.
 
-30.01.2018 09:19, Ming Lei wrote:
-> Hi,
-> We knew there is IO hang issue on BFQ over USB-storage wrt. blk-mq, and
-> last time I found it is inside BFQ. You can try the debug patch in the
-> following link[1] to see if it is same with the previous report[1][2]:
-> 
-> [1] https://marc.info/?l=linux-block&m=151214241518562&w=2
-> [2] https://bugzilla.kernel.org/show_bug.cgi?id=198023
-> 
-> If you aren't sure if they are same, please post the trace somewhere,
-> then I can check if it is a new bug.
+For CPUs with PKU support, setup_pku() calls get_cpu_cap() after
+c->c_init() has set those feature bits. That resets those bits back
+to what was queried from the hardware.
 
-OK, first, I got 2 more stacktraces without tracing, then I've rebooted 
-with your patch and checked tracing.
+Turning the bits off for bad microcode is easy to fix. That can just use
+setup_clear_cpu_cap() to force them off for all CPUs.
 
-Before reboot, cfdisk:
+I was less keen on forcing the feature bits *on* that way, just in case
+of inconsistencies. I appreciate that the kernel is going to get this
+utterly wrong if CPU features are not consistent, because it has already
+applied alternatives by the time secondary CPUs are brought up.
 
-===
-[  266.630386] INFO: task cfdisk:437 blocked for more than 20 seconds.
-[  266.640950]       Not tainted 4.15.0-pf1 #1
-[  266.645131] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
-disables this message.
-[  266.651789] cfdisk          D    0   437    410 0x00000000
-[  266.661331] Call Trace:
-[  266.664517]  ? __schedule+0x35f/0x1000
-[  266.668660]  ? bio_alloc_bioset+0xc7/0x1e0
-[  266.672330]  ? submit_bh_wbc+0x162/0x190
-[  266.678034]  schedule+0x32/0xc0
-[  266.681293]  io_schedule+0x12/0x40
-[  266.685230]  wait_on_page_bit+0xea/0x130
-[  266.689015]  ? add_to_page_cache_lru+0xe0/0xe0
-[  266.693456]  ? blkdev_writepages+0x30/0x30
-[  266.695521]  do_read_cache_page+0x167/0x350
-[  266.697160]  read_dev_sector+0x28/0xc0
-[  266.698685]  scsi_bios_ptable+0x4e/0x120 [scsi_mod]
-[  266.700156]  scsicam_bios_param+0x16/0x1a0 [scsi_mod]
-[  266.701868]  sd_getgeo+0xbf/0xd0 [sd_mod]
-[  266.703388]  blkdev_ioctl+0x178/0x990
-[  266.704818]  block_ioctl+0x39/0x40
-[  266.706381]  do_vfs_ioctl+0xa4/0x630
-[  266.708584]  ? __fput+0x131/0x1e0
-[  266.710184]  ? preempt_count_add+0x68/0xa0
-[  266.711762]  ? _raw_spin_unlock_irq+0x1d/0x30
-[  266.713304]  SyS_ioctl+0x74/0x80
-[  266.714502]  ? exit_to_usermode_loop+0x39/0xa0
-[  266.717352]  entry_SYSCALL_64_fastpath+0x20/0x83
-[  266.718857] RIP: 0033:0x7fc482064d87
-===
+But at least if setup_force_cpu_cap() isn't being used, we might have a
+chance of *detecting* the lack of the corresponding bit and either
+panicking or refusing to bring the offending CPU online.
 
-Blocked kworker:
+So ensure that the appropriate feature bits are set within get_cpu_cap()
+regardless of how many extra times it's called.
 
-===
-[  389.511083] INFO: task kworker/u8:5:178 blocked for more than 20 
-seconds.
-[  389.516454]       Not tainted 4.15.0-pf1 #1
-[  389.520091] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
-disables this
-message.
-[  389.524726] kworker/u8:5    D    0   178      2 0x80000000
-[  389.528321] Workqueue: events_freezable_power_ disk_events_workfn
-[  389.532228] Call Trace:
-[  389.534909]  ? __schedule+0x35f/0x1000
-[  389.541906]  ? blk_mq_sched_dispatch_requests+0x116/0x190
-[  389.546561]  ? __sbitmap_get_word+0x2a/0x80
-[  389.551167]  ? sbitmap_get_shallow+0x5c/0xa0
-[  389.555633]  schedule+0x32/0xc0
-[  389.559803]  io_schedule+0x12/0x40
-[  389.564504]  blk_mq_get_tag+0x181/0x2a0
-[  389.572541]  ? wait_woken+0x80/0x80
-[  389.576008]  blk_mq_get_request+0xf9/0x410
-[  389.579998]  blk_mq_alloc_request+0x7e/0xe0
-[  389.584824]  blk_get_request_flags+0x40/0x160
-[  389.588917]  scsi_execute+0x38/0x1e0 [scsi_mod]
-[  389.593079]  scsi_test_unit_ready+0x5d/0xd0 [scsi_mod]
-[  389.596966]  sd_check_events+0xf5/0x1a0 [sd_mod]
-[  389.602558]  disk_check_events+0x69/0x150
-[  389.604822]  process_one_work+0x1df/0x420
-[  389.606584]  worker_thread+0x2b/0x3d0
-[  389.608175]  ? process_one_work+0x420/0x420
-[  389.609833]  kthread+0x113/0x130
-[  389.611327]  ? kthread_create_on_node+0x70/0x70
-[  389.612852]  ret_from_fork+0x35/0x40
-===
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Fixes: 2961298e ("x86/cpufeatures: Clean up Spectre v2 related CPUID flags")
+---
 
-After reboot, tracing info:
+So...
 
-===
-    systemd-udevd-269   [000] ...1     4.309198: 
-blk_mq_do_dispatch_sched: get rq->0, 1
-     kworker/0:1H-174   [000] ....     4.309380: 
-blk_mq_do_dispatch_sched: not get rq, 1
-     kworker/u8:2-167   [000] ....     4.309562: bfq_insert_requests: 
-insert rq->0
-     kworker/u8:2-167   [000] ...1     4.309563: 
-blk_mq_do_dispatch_sched: get rq->0, 1
-     kworker/0:1H-174   [000] ....     4.309694: 
-blk_mq_do_dispatch_sched: not get rq, 1
-     kworker/u8:2-167   [000] ....     4.309879: bfq_insert_requests: 
-insert rq->0
-     kworker/u8:2-167   [000] ...1     4.309880: 
-blk_mq_do_dispatch_sched: get rq->0, 1
-     kworker/0:1H-174   [000] ....     4.310001: 
-blk_mq_do_dispatch_sched: not get rq, 1
-    systemd-udevd-271   [000] ....     4.311033: bfq_insert_requests: 
-insert rq->0
-    systemd-udevd-271   [000] ...1     4.311037: 
-blk_mq_do_dispatch_sched: not get rq, 1
-           cfdisk-408   [000] ....    13.484220: bfq_insert_requests: 
-insert rq->1
-     kworker/0:1H-174   [000] ....    13.484253: 
-blk_mq_do_dispatch_sched: not get rq, 1
-===
+We now understand why this didn't show up in my initial testing. It's not
+*just* that I'm incompetent; it's setup_pku() which stomps on the bits
+when it calls get_cpu_cap() again.
 
-Looks the same, right?
+So Boris was right, and it would have been nicer if we hadn't been 
+(ab)using the AMD bits as our generic visible feature bits for these.
+Then they wouldn't have been stomped on again by get_cpu_cap() reading
+the corresponding words from the hardware. Except...
 
-> Or Paolo should know if the issue is fixed or not in V4.15.
+Boris proposes that we introduce three new bits for IBRS/IBPB/STIBP and
+make the AMD bits "hidden" too. So we'd need to set those new virtual
+bits when *either* the AMD or the Intel feature bits are set.
 
-So, Paolo :)?
+That means we'd still have to add some code *somewhere* to set those
+virtual bits. The AMD hardware bits, in particular, might be set even
+by a hypervisor running on Intel CPUs since they allow combinations
+like "IBPB only" to be advertised while the Intel-defined bits don't.
 
-Regards,
-   Oleksandr
+So we'd have to add code in a generic code path *anyway* to do that.
+
+And since the main objection to my v1 patch was that it was adding the
+code in a generic code path, it doesn't seem to be much of an improvement.
+
+This v2 patch moves said code from scattered.c, which wasn't really
+the right place, to a subfunction called from get_cpu_cap() directly.
+You could do the shift to a separate three virtual feature bits on
+top of this if you *really* wanted. I just don't see the point. 
+
+We are, of course, still utterly hosed if the CPU capabilities are
+inconsistent. But at least I didn't make things worse by making that
+harder to detect by using setup_force_cpu_cap().
+
+ arch/x86/kernel/cpu/common.c | 21 +++++++++++++++++++++
+ arch/x86/kernel/cpu/intel.c  | 27 ++++++++-------------------
+ 2 files changed, 29 insertions(+), 19 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 970ee06..f9d8460 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -726,6 +726,26 @@ static void apply_forced_caps(struct cpuinfo_x86 *c)
+ 	}
+ }
+ 
++static void init_speculation_control(struct cpuinfo_x86 *c)
++{
++	/*
++	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
++	 * and they also have a different bit for STIBP support. Also,
++	 * a hypervisor might have set the individual AMD bits even on
++	 * Intel CPUs, for finer-grained selection of what's available.
++	 *
++	 * We use the AMD bits in 0x8000_0008 EBX as the generic hardware
++	 * features, which are visible in /proc/cpuinfo and used by the
++	 * kernel. So set those accordingly from the Intel bits.
++	 */
++	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
++		set_cpu_cap(c, X86_FEATURE_IBRS);
++		set_cpu_cap(c, X86_FEATURE_IBPB);
++	}
++	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
++		set_cpu_cap(c, X86_FEATURE_STIBP);
++}
++
+ void get_cpu_cap(struct cpuinfo_x86 *c)
+ {
+ 	u32 eax, ebx, ecx, edx;
+@@ -820,6 +840,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
+ 
+ 	init_scattered_cpuid_features(c);
++	init_speculation_control(c);
+ 
+ 	/*
+ 	 * Clear/Set all flags overridden by options, after probe.
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 0c8b916..4cf4f8c 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -175,28 +175,17 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+ 	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64))
+ 		c->microcode = intel_get_microcode_revision();
+ 
+-	/*
+-	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
+-	 * and they also have a different bit for STIBP support. Also,
+-	 * a hypervisor might have set the individual AMD bits even on
+-	 * Intel CPUs, for finer-grained selection of what's available.
+-	 */
+-	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
+-		set_cpu_cap(c, X86_FEATURE_IBRS);
+-		set_cpu_cap(c, X86_FEATURE_IBPB);
+-	}
+-	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
+-		set_cpu_cap(c, X86_FEATURE_STIBP);
+-
+ 	/* Now if any of them are set, check the blacklist and clear the lot */
+-	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
++	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
++	     cpu_has(c, X86_FEATURE_INTEL_STIBP) ||
++	     cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
+ 	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
+ 		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
+-		clear_cpu_cap(c, X86_FEATURE_IBRS);
+-		clear_cpu_cap(c, X86_FEATURE_IBPB);
+-		clear_cpu_cap(c, X86_FEATURE_STIBP);
+-		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
+-		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_IBRS);
++		setup_clear_cpu_cap(X86_FEATURE_IBPB);
++		setup_clear_cpu_cap(X86_FEATURE_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
++		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
+ 	}
+ 
+ 	/*
+-- 
+2.7.4
