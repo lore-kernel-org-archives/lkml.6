@@ -1,79 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751541AbeA3Jey (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:34:54 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52877 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbeA3Jeu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:34:50 -0500
-X-Google-Smtp-Source: AH8x224FPLpvr9MSVqSHIHZhPldzjAlb9KzkKWq6MRCrj0oJXBh2R6nxNnz/mmb2Ec3R8zsOOAIchA==
-Date: Tue, 30 Jan 2018 10:34:47 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Keith Packard <keithp@keithp.com>
-Cc: linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm: Check for lessee in DROP_MASTER ioctl
-Message-ID: <20180130093447.GG25930@phenom.ffwll.local>
-Mail-Followup-To: Keith Packard <keithp@keithp.com>,
-        linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        dri-devel@lists.freedesktop.org
-References: <20180119015159.1606-1-keithp@keithp.com>
+        id S1751634AbeA3Jgp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:36:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36520 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751262AbeA3Jgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 04:36:42 -0500
+Date: Tue, 30 Jan 2018 10:36:40 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Andi Kleen <ak@linux.intel.com>,
+        sergey.senozhatsky@gmail.com, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, kexec@lists.infradead.org
+Subject: Re: [PATCH V2] print kdump kernel loaded status in stack dump
+Message-ID: <20180130093640.r4a45m6eicmyeljc@pathway.suse.cz>
+References: <20180127041129.GA29016@dhcp-128-65.nay.redhat.com>
+ <20180130085055.GA569@jagdpanzerIV>
+ <20180130090729.GA2558@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180119015159.1606-1-keithp@keithp.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180130090729.GA2558@dhcp-128-65.nay.redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 18, 2018 at 05:51:59PM -0800, Keith Packard wrote:
-> Don't let a lessee control what the current DRM master is set to;
-> that's the job of the "real" master. Otherwise, the lessee would
-> disable all access to master operations for the owner and all lessees
-> under it.
+On Tue 2018-01-30 17:07:29, Dave Young wrote:
+> On 01/30/18 at 05:50pm, Sergey Senozhatsky wrote:
+> > On (01/27/18 12:11), Dave Young wrote:
+> > > It is useful to print kdump kernel loaded status in dump_stack() 
+> > > especially when panic happens so that we can differenciate 
+> > > kdump kernel early hang and a normal panic in a bug report.
+> > > 
+> > > Signed-off-by: Dave Young <dyoung@redhat.com>
+> > 
+> > Looks OK to me.
+> > 
+> > Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+
+Same here:
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+> > I agree with Steven, would be better to move the whole thing
+> > to lib/dump_stack.c
 > 
-> This matches the same check made in the SET_MASTER ioctl.
-> 
-> Signed-off-by: Keith Packard <keithp@keithp.com>
+> If nobody has plan I can put it in my todo list, probably do it next
+> week.
 
-Similar check for setmaster already exists, so looks all good. Do we have
-an igt for all this? Iirc there was one floating around, but no idea
-what's the status. Might also be good to resubmit them so i915 CI can run
-the tests (now that the code has landed).
+Sounds good.
 
-On the patch itself, minus lack of testcases:
+JFYI, I would target these changes for 4.17. There was some discussion
+about where and how to show the new information. IMHO, it would deserve
+some gurgling in linux-next.
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-> ---
->  drivers/gpu/drm/drm_auth.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_auth.c b/drivers/gpu/drm/drm_auth.c
-> index aad468d170a7..d9c0f7573905 100644
-> --- a/drivers/gpu/drm/drm_auth.c
-> +++ b/drivers/gpu/drm/drm_auth.c
-> @@ -230,6 +230,12 @@ int drm_dropmaster_ioctl(struct drm_device *dev, void *data,
->  	if (!dev->master)
->  		goto out_unlock;
->  
-> +	if (file_priv->master->lessor != NULL) {
-> +		DRM_DEBUG_LEASE("Attempt to drop lessee %d as master\n", file_priv->master->lessee_id);
-> +		ret = -EINVAL;
-> +		goto out_unlock;
-> +	}
-> +
->  	ret = 0;
->  	drm_drop_master(dev, file_priv);
->  out_unlock:
-> -- 
-> 2.15.1
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Best Regards,
+Petr
