@@ -1,107 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752513AbeA3NYC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 08:24:02 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:41853 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeA3NYA (ORCPT
+        id S1752521AbeA3NYo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 08:24:44 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:33734 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751881AbeA3NYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 08:24:00 -0500
-Date: Tue, 30 Jan 2018 14:23:48 +0100
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: han.xu@nxp.com, max.oss.09@gmail.com, richard@nod.at,
-        linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
-        dwmw2@infradead.org
-Subject: Re: [PATCH] mtd: nand: gpmi: fall back to legacy mode if no ECC
- information present
-Message-ID: <20180130142348.35f1bce3@bbrezillon>
-In-Reply-To: <20180129144440.13648-1-stefan@agner.ch>
-References: <20180129144440.13648-1-stefan@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 30 Jan 2018 08:24:43 -0500
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] mmc: MMC_SDHI_{SYS,INTERNAL}_DMAC should depend on HAS_DMA
+Date: Tue, 30 Jan 2018 14:24:40 +0100
+Message-Id: <1517318680-14918-1-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+If NO_DMA=y:
 
-On Mon, 29 Jan 2018 15:44:40 +0100
-Stefan Agner <stefan@agner.ch> wrote:
+    ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
+    ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_internal_dmac.ko] undefined!
 
-> In case fsl,use-minimum-ecc is set, the driver tries to determine
-> ECC layout by using the ECC information provided by the MTD stack.
-> However, in case the NAND chip does not provide any information,
-> the driver currently fails with:
->   nand: device found, Manufacturer ID: 0xc2, Chip ID: 0xf1
->   nand: Macronix NAND 128MiB 3,3V 8-bit
->   nand: 128 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
->   gpmi-nand 1806000.gpmi-nand: Error setting BCH geometry : 1
->   gpmi-nand: probe of 1806000.gpmi-nand failed with error 1
-> 
-> Fall back to implementation specific default mode if no ECC
-> information are provided by the NAND chip and fsl,use-minimum-ecc
-> is specified.
+Add dependencies on HAS_DMA to fix this.
 
-Hm, this sounds a bit fragile: if we ever fix the Macronix driver
-(which should be done BTW) to set the appropriate ECC requirements, it
-will break all platforms that were relying on this 'fall back to legacy
-logic'.
-So, if what you really want is legacy_set_geometry(), don't specify
-"fsl,use-minimum-ecc" in your DT and you should be good. Otherwise, fix
-the Macronix driver to initialize ->ecc_{strength,step_size}_ds
-appropriately.
+Fixes: e578afab6e5f57e7 ("mmc: renesas_sdhi: remove wrong depends on to enable compile test")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/mmc/host/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-
-Boris
-
-> 
-> This is more in line with what the device tree binding documentation
-> promises:
->   "However, note that if this strength is not
->   discoverable or this property is not enabled,
->   the software may chooses an implementation-defined
->   ECC scheme."
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  drivers/mtd/nand/gpmi-nand/gpmi-nand.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> index 50f8d4a1b983..7b8e8c629081 100644
-> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> @@ -206,7 +206,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->  	unsigned int block_mark_bit_offset;
->  
->  	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> -		return -EINVAL;
-> +		return -ENOTSUPP;
->  
->  	switch (chip->ecc_step_ds) {
->  	case SZ_512:
-> @@ -423,11 +423,15 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
->  
->  int common_nfc_set_geometry(struct gpmi_nand_data *this)
->  {
-> -	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
-> -				|| legacy_set_geometry(this))
-> -		return set_geometry_by_ecc_info(this);
-> +	int ret = -ENOTSUPP;
->  
-> -	return 0;
-> +	if (of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
-> +		ret = set_geometry_by_ecc_info(this);
-> +
-> +	if (ret == -ENOTSUPP)
-> +		return legacy_set_geometry(this);
-> +
-> +	return ret;
->  }
->  
->  struct dma_chan *get_dma_chan(struct gpmi_nand_data *this)
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 67bd3344dd03a1ae..0eae619419d9ddeb 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -605,7 +605,7 @@ config MMC_SDHI
+ 
+ config MMC_SDHI_SYS_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
+-	depends on MMC_SDHI
++	depends on MMC_SDHI && HAS_DMA
+ 	default MMC_SDHI if (SUPERH || ARM)
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+@@ -615,7 +615,7 @@ config MMC_SDHI_SYS_DMAC
+ config MMC_SDHI_INTERNAL_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+ 	depends on ARM64 || COMPILE_TEST
+-	depends on MMC_SDHI
++	depends on MMC_SDHI && HAS_DMA
+ 	default MMC_SDHI if ARM64
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+-- 
+2.7.4
