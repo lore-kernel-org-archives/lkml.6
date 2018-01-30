@@ -1,99 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752159AbeA3S7c (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:59:32 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37012 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751475AbeA3S7a (ORCPT
+        id S1752575AbeA3TAd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:00:33 -0500
+Received: from mail-io0-f169.google.com ([209.85.223.169]:39673 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751756AbeA3TAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:59:30 -0500
-X-Google-Smtp-Source: AH8x2276wMben1MIOiKmxMHV6RfU2YLoBfSobUbFoPj1Tew8ObJ/FcQz/1wyKB5iarXFVB5d+W63cA==
-Subject: Re: [PATCH v2] of: use hash based search in of_find_node_by_phandle
-To: Chintan Pandya <cpandya@codeaurora.org>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <1516955496-17236-1-git-send-email-cpandya@codeaurora.org>
- <2d877704-47c5-c1fc-1b89-976cd9b1ccaa@gmail.com>
- <7ebd275d-07ba-1972-011a-d05e53233a01@codeaurora.org>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <b97a5447-eb1c-ab35-a0c2-487275b3f3d2@gmail.com>
-Date: Tue, 30 Jan 2018 10:59:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Tue, 30 Jan 2018 14:00:31 -0500
+X-Google-Smtp-Source: AH8x226qgCDwT/Qmj41kfOUS0hIeG7cSzcMBucolj2JcyHKu0ER5qr47JEnS5XwA+h+2VTk8J9WrCZ6UE5pBfPm91IA=
 MIME-Version: 1.0
-In-Reply-To: <7ebd275d-07ba-1972-011a-d05e53233a01@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACdnJuuGdM-9ZUNybHuQzEhtb2wUxYktPt+Fu9kyjzKdGfnOTA@mail.gmail.com>
+References: <20170804180751.14896-1-mjg59@google.com> <20170810204328.kk4lbj4hvednmofw@redbean>
+ <CACdnJusrO0rThxt0ikapFVWtJZVaiYj8AJ_oFOczskRKS4fVpA@mail.gmail.com>
+ <20170829175647.ej5fqszss2mbpc5i@redbean> <CACdnJutWdHi5YOG1Mn0vZwTmZyQHyyABeZ0caNn2rJCYehCGhg@mail.gmail.com>
+ <1504044122.4448.24.camel@decadent.org.uk> <CACdnJuuGdM-9ZUNybHuQzEhtb2wUxYktPt+Fu9kyjzKdGfnOTA@mail.gmail.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Tue, 30 Jan 2018 11:00:30 -0800
+Message-ID: <CACdnJuuw9Sav7G=mMm4LnL2RBYABJvQuP5PkHexoMndxRmw1hw@mail.gmail.com>
+Subject: Re: Allow automatic kernel taint on unsigned module load to be disabled
+To: Ben Hutchings <ben@decadent.org.uk>
+Cc: Jessica Yu <jeyu@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rusty Russell <rusty@rustcorp.com.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/30/18 00:04, Chintan Pandya wrote:
->> (1)
->>
->> Can you point me to the driver code that is invoking
->> the search?
-> There are many locations. Few of them being,
-> https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/of/irq.c?h=msm-4.9#n214
-> https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/irqchip/irq-gic-v3.c?h=msm-4.9#n1107
-> https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/clk/msm/msm-clock-controller.c?h=msm-4.9#n492
->>
->> (2)
->>
->> And also the .dts devicetree source file that you are seeing
->> large overhead with.
-> SDM670 DTS tree starts here.
-> https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/arch/arm64/boot/dts/qcom/sdm670.dtsi?h=msm-4.9
+On Wed, Oct 18, 2017 at 11:27 AM, Matthew Garrett <mjg59@google.com> wrote:
+> Hi Jessica,
+>
+> It seems that there's distribution interest in this - any feedback?
 
-Thanks, I'm starting to get a picture of what you are facing.
+Hi,
 
-The file you point at is a .dtsi, not a .dts.  There are quite a
-few sdm670*.dts files in that tree.  Which one corresponds to
-the system you are working on?
-
-I picked a random one (sdm670-cdp.dts), but I need to be looking
-at the .dts that you are using to be able to ask reasonable
-questions instead of poking around in the dark.
-
-Also, when I clone that git tree there is not a valid HEAD.  I
-picked what looked like a reasonable commit to checkout, but I
-would prefer to be looking at the same exact source that you
-are working with.  Can you give me the commit id  of the branch
-that you are working on?
-
--Frank
-
-
->>
->>
->> (3) -- this one is less important, but if the info is easily
->>         available to you
->>
->> Sorry about dribbling out questions instead of all at once....
->>
->> What is the hardware you are testing this on?
-> SDM670
->> Processor?
-> Kryo-300 Silver
->> Cache size?
-> From DT,
-> L1 32KB (per CPU)
-> L2 128KB (per CPU)
-> L3 1MB (total)
->> Memory size?
-> 6GB
->> Processor frequency?
-> Max 1.7GHz for core 0. Not sure about boot time frequency.
->> Any other attribute of the system that will help me understand
->> the boot performance you are seeing?
-> I'm not able to profile of_find_node_by_phandle specifically as timers are
-> not up by then. So, just observing overall boot time for comparison.
-> 
-> My recent results were taken on debug_defconfig which has many performance
-> slowing code. So, gap between base-build and w/ the test patches would be
-> more than the actual production build.
-> 
-> Thanks,
-> Chintan
-> 
+I think we'd still benefit from this being available, so just checking
+whether you had any further feelings on it.
