@@ -1,63 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752270AbeA3Oow (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:44:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40616 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751360AbeA3Oou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:44:50 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AACD12178E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x22531ZOuHL3AkqSvg6lMJiaP+v+V0MAJPkWyMzVCD646IuPXQ5+SDzqavpgMSW8YKu+5rM+uYd200oXcH2cNHDY=
+        id S1751451AbeA3OuD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:50:03 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:39781 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751197AbeA3OuC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 09:50:02 -0500
+Date: Tue, 30 Jan 2018 06:48:54 -0800
+From: tip-bot for William Grant <tipbot@zytor.com>
+Message-ID: <tip-55f49fcb879fbeebf2a8c1ac7c9e6d90df55f798@git.kernel.org>
+Cc: hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
+        william.grant@canonical.com, linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, william.grant@canonical.com
+In-Reply-To: <7041d181-a019-e8b9-4e4e-48215f841e2c@canonical.com>
+References: <7041d181-a019-e8b9-4e4e-48215f841e2c@canonical.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/mm: Fix overlap of i386 CPU_ENTRY_AREA with
+ FIX_BTMAP
+Git-Commit-ID: 55f49fcb879fbeebf2a8c1ac7c9e6d90df55f798
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKEXtL0hvEgFALKaCgW2Go==wj14_dDomdK_hPU23oXLQ@mail.gmail.com>
-References: <20180123121801.4214-1-m.grzeschik@pengutronix.de>
- <20180123121801.4214-5-m.grzeschik@pengutronix.de> <20180129234146.73hvclxohhme5i2w@rob-hp-laptop>
- <1517302582.5307.16.camel@diehl.com> <CAL_JsqKEXtL0hvEgFALKaCgW2Go==wj14_dDomdK_hPU23oXLQ@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 30 Jan 2018 08:44:28 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLqDGeY6o4wJV6wkr+=W0_cMf5motA1RWwDtCKjYJ51CQ@mail.gmail.com>
-Message-ID: <CAL_JsqLqDGeY6o4wJV6wkr+=W0_cMf5motA1RWwDtCKjYJ51CQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] rtc: isl1208: add support for isl1219 with hwmon for
- tamper detection
-To: Denis OSTERLAND <denis.osterland@diehl.com>
-Cc: "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "alexandre.belloni@free-electrons.com"
-        <alexandre.belloni@free-electrons.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 8:41 AM, Rob Herring <robh@kernel.org> wrote:
-> On Tue, Jan 30, 2018 at 2:56 AM, Denis OSTERLAND
-> <denis.osterland@diehl.com> wrote:
->> Am Montag, den 29.01.2018, 17:41 -0600 schrieb Rob Herring:
->>> On Tue, Jan 23, 2018 at 01:18:01PM +0100, Michael Grzeschik wrote:
->>> >
->>> > We add support for the ISL1219 chip that got an integrated tamper
->>> > detection function. This patch implements the feature by using an hwmon
->>> > interface.
+Commit-ID:  55f49fcb879fbeebf2a8c1ac7c9e6d90df55f798
+Gitweb:     https://git.kernel.org/tip/55f49fcb879fbeebf2a8c1ac7c9e6d90df55f798
+Author:     William Grant <william.grant@canonical.com>
+AuthorDate: Tue, 30 Jan 2018 22:22:55 +1100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 30 Jan 2018 15:30:35 +0100
 
-[...]
+x86/mm: Fix overlap of i386 CPU_ENTRY_AREA with FIX_BTMAP
 
->>> There's not much point in having an example for every compatible. This
->>> binding is simple enough, one should be enough.
->> Shell we remove the example without an interrupt?
->
-> The existing example has a single interrupt, right? That should be
-> enough. You just need to document for the interrupts property which
-> devices have 2 interrupts and what the order is.
+Since commit 92a0f81d8957 ("x86/cpu_entry_area: Move it out of the
+fixmap"), i386's CPU_ENTRY_AREA has been mapped to the memory area just
+below FIXADDR_START. But already immediately before FIXADDR_START is the
+FIX_BTMAP area, which means that early_ioremap can collide with the entry
+area.
 
-Looking at the first patch now, yes you can drop the 1st example and
-just keep the 2nd example.
+It's especially bad on PAE where FIX_BTMAP_BEGIN gets aligned to exactly
+match CPU_ENTRY_AREA_BASE, so the first early_ioremap slot clobbers the
+IDT and causes interrupts during early boot to reset the system.
 
-Rob
+The overlap wasn't a problem before the CPU entry area was introduced,
+as the fixmap has classically been preceded by the pkmap or vmalloc
+areas, neither of which is used until early_ioremap is out of the
+picture.
+
+Relocate CPU_ENTRY_AREA to below FIX_BTMAP, not just below the permanent
+fixmap area.
+
+Fixes: commit 92a0f81d8957 ("x86/cpu_entry_area: Move it out of the fixmap")
+Signed-off-by: William Grant <william.grant@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/7041d181-a019-e8b9-4e4e-48215f841e2c@canonical.com
+
+---
+ arch/x86/include/asm/fixmap.h           | 6 ++++--
+ arch/x86/include/asm/pgtable_32_types.h | 5 +++--
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+index 64c4a30..e203169 100644
+--- a/arch/x86/include/asm/fixmap.h
++++ b/arch/x86/include/asm/fixmap.h
+@@ -137,8 +137,10 @@ enum fixed_addresses {
+ 
+ extern void reserve_top_address(unsigned long reserve);
+ 
+-#define FIXADDR_SIZE	(__end_of_permanent_fixed_addresses << PAGE_SHIFT)
+-#define FIXADDR_START	(FIXADDR_TOP - FIXADDR_SIZE)
++#define FIXADDR_SIZE		(__end_of_permanent_fixed_addresses << PAGE_SHIFT)
++#define FIXADDR_START		(FIXADDR_TOP - FIXADDR_SIZE)
++#define FIXADDR_TOT_SIZE	(__end_of_fixed_addresses << PAGE_SHIFT)
++#define FIXADDR_TOT_START	(FIXADDR_TOP - FIXADDR_TOT_SIZE)
+ 
+ extern int fixmaps_set;
+ 
+diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
+index ce245b0..0777e18 100644
+--- a/arch/x86/include/asm/pgtable_32_types.h
++++ b/arch/x86/include/asm/pgtable_32_types.h
+@@ -44,8 +44,9 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
+  */
+ #define CPU_ENTRY_AREA_PAGES	(NR_CPUS * 40)
+ 
+-#define CPU_ENTRY_AREA_BASE				\
+-	((FIXADDR_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1)) & PMD_MASK)
++#define CPU_ENTRY_AREA_BASE						\
++	((FIXADDR_TOT_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1))   \
++	 & PMD_MASK)
+ 
+ #define PKMAP_BASE		\
+ 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
