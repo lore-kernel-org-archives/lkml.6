@@ -1,15 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752107AbeA3Mzx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:55:53 -0500
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:35733 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751609AbeA3Mzv (ORCPT
+        id S1752126AbeA3M5R (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:57:17 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33946 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751932AbeA3M5P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:55:51 -0500
-X-Google-Smtp-Source: AH8x224od1/9ArMDTGR1TXDTSF9HWWxVakgTp65cBAQjUk0PlmKDXslexXF/zLZUhWUViiBHEL46pw==
-Subject: Re: [PATCH v2 3/5] soc: mediatek: pwrap: add int1_en_all and
- capability flag
+        Tue, 30 Jan 2018 07:57:15 -0500
+X-Google-Smtp-Source: AH8x227J13Pw1VZNiIvRBFbTW2ww2528z/3YuxpO3+1pWCXx5mxI4sdg4tWnmRWo7WRsaF3HVGILnQ==
+Subject: Re: [PATCH v2 2/5] arm64: dts: mt6797: add pwrap support for mt6797
 To: argus.lin@mediatek.com, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -24,14 +23,14 @@ Cc: Chenglin Xu <chenglin.xu@mediatek.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <20180129090944.28687-1-argus.lin@mediatek.com>
- <20180129090944.28687-3-argus.lin@mediatek.com>
+ <20180129090944.28687-2-argus.lin@mediatek.com>
 From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <3f4ce745-32e0-2ae6-1463-af041d608d8c@gmail.com>
-Date: Tue, 30 Jan 2018 13:55:47 +0100
+Message-ID: <dcb5d00a-2239-b214-70a2-cef2e66570fa@gmail.com>
+Date: Tue, 30 Jan 2018 13:57:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <20180129090944.28687-3-argus.lin@mediatek.com>
+In-Reply-To: <20180129090944.28687-2-argus.lin@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -44,67 +43,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 01/29/2018 10:09 AM, argus.lin@mediatek.com wrote:
 > From: Argus Lin <argus.lin@mediatek.com>
 > 
-> New pwrap support int1_en flag for starvation and channel
-> request exception. We need to register it for interrupt
-> handler.
-> We also add pwrap capability flag used to declare if we
-
-"We also" wording is nearly always a hint, that this should be done
-in two independent patches.
-
-> support BRIDGE, RESET, DCM, PRIORITY_SEL and INT1_EN
-> or not.
+> mt6797 is a highly integrated SoCs, and it uses
+> mt6351 as Power Management IC.
+> We need to add pwrap device to communicate with
+> mt6351 by SPI.
+> The base address of pwrap is 0x1000d000, and IRQ
+> number is 178. It also using fixed 26Mhz clock
+> as SPI CLK.
 > 
 > Signed-off-by: Argus Lin <argus.lin@mediatek.com>
 > ---
->  drivers/soc/mediatek/mtk-pmic-wrap.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+
+For the next round, can you put the dts patch at the end of the series. Binding
+description should be the first patch, but actual dts(i) inclusion should be the
+last one. It's bike shedding I know, but as you need a new series anyway.
+
+Thanks.
+
+>  arch/arm64/boot/dts/mediatek/mt6797.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> index e9e054a15b7d..9f924d3f8645 100644
-> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> @@ -76,6 +76,13 @@
->  #define PWRAP_SLV_CAP_SECURITY	BIT(2)
->  #define HAS_CAP(_c, _x)	(((_c) & (_x)) == (_x))
+> diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+> index 4beaa71107d7..485546efc9bf 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+> @@ -161,6 +161,20 @@
+>  		      <0 0x10220690 0 0x10>;
+>  	};
 >  
-> +/* Group of bits used for shown pwrap capability */
-> +#define PWRAP_CAP_BRIDGE	BIT(0)
-> +#define PWRAP_CAP_RESET		BIT(1)
-> +#define PWRAP_CAP_DCM		BIT(2)
-
-As you told me the driver will be upstreamed in April, please add this flag when
-you upstream the driver, as this will be in a different kernel version.
-
-> +#define PWRAP_CAP_PRIORITY_SEL	BIT(3)
-> +#define PWRAP_CAP_INT1_EN	BIT(4)
+> +	pwrap: pwrap@1000d000 {
+> +		compatible = "mediatek,mt6797-pwrap";
+> +		reg = <0 0x1000d000 0 0x1000>;
+> +		reg-names = "pwrap";
+> +		interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&clk26m>, <&clk26m>;
+> +		clock-names = "spi", "wrap";
 > +
-
-Add each flag when you add the user of the flag.
-
->  /* defines for slave device wrapper registers */
->  enum dew_regs {
->  	PWRAP_DEW_BASE,
-> @@ -681,9 +688,11 @@ struct pmic_wrapper_type {
->  	enum pwrap_type type;
->  	u32 arb_en_all;
->  	u32 int_en_all;
-> +	u32 int1_en_all;
->  	u32 spi_w;
->  	u32 wdt_src;
-> -	unsigned int has_bridge:1;
-> +	/* Flags indicating the capability for the target pwrap */
-> +	u32 caps;
-
-NAK, this will not compile. Please make sure that every patch on it's own does
-not break compilation.
-
-Regards,
-Matthias
-
->  	int (*init_reg_clock)(struct pmic_wrapper *wrp);
->  	int (*init_soc_specific)(struct pmic_wrapper *wrp);
->  };
+> +		pmic: mt6351 {
+> +			compatible = "mediatek,mt6351";
+> +			interrupt-controller;
+> +		};
+> +	};
+> +
+>  	uart0: serial@11002000 {
+>  		compatible = "mediatek,mt6797-uart",
+>  			     "mediatek,mt6577-uart";
 > -- 
 > 2.12.5
 > 
