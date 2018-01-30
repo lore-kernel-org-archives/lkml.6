@@ -1,55 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752982AbeA3PLc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:11:32 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:41382 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751662AbeA3PLa (ORCPT
+        id S1753061AbeA3PP4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:15:56 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:45820 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753038AbeA3PPx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:11:30 -0500
-X-Google-Smtp-Source: AH8x226XY8dkkpFCeD+3ra2YiJ2p5DHZHoDa7/CS+LfOiRatFSqMAFBcMHbLeOXJVnYEzLYKzIVbvA==
-Date: Tue, 30 Jan 2018 09:11:27 -0600
-From: Rob Herring <robh@kernel.org>
-To: John Garry <john.garry@huawei.com>
-Cc: mika.westerberg@linux.intel.com, rafael@kernel.org,
-        lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, bhelgaas@google.com,
-        arnd@arndb.de, mark.rutland@arm.com, olof@lixom.net,
-        hanjun.guo@linaro.org, dann.frazier@canonical.com,
-        benh@kernel.crashing.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linuxarm@huawei.com,
-        linux-pci@vger.kernel.org, minyard@acm.org, devicetree@vger.kernel.org,
-        linux-arch@vger.kernel.org, rdunlap@infradead.org,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Subject: Re: [PATCH v12 3/9] PCI: Add fwnode handler as input param of
- pci_register_io_range()
-Message-ID: <20180130151127.tqklt7o6zrv3ddqq@rob-hp-laptop>
-References: <1516725385-24535-1-git-send-email-john.garry@huawei.com>
- <1516725385-24535-4-git-send-email-john.garry@huawei.com>
+        Tue, 30 Jan 2018 10:15:53 -0500
+X-Google-Smtp-Source: AH8x227YMv71s9q6/lLTGF1gXs9lfDpF3d24BSGcxgSGEcprKDy4YagaZSHUQAtTP1RX7jT8gXMzkA==
+Date: Tue, 30 Jan 2018 07:15:49 -0800
+From: Tejun Heo <tj@kernel.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch -mm v2 2/3] mm, memcg: replace cgroup aware oom killer
+ mount option with tunable
+Message-ID: <20180130151549.GE1121507@devbig577.frc2.facebook.com>
+References: <20180126143950.719912507bd993d92188877f@linux-foundation.org>
+ <alpine.DEB.2.10.1801261441340.20954@chino.kir.corp.google.com>
+ <20180126161735.b999356fbe96c0acd33aaa66@linux-foundation.org>
+ <20180129104657.GC21609@dhcp22.suse.cz>
+ <20180129191139.GA1121507@devbig577.frc2.facebook.com>
+ <20180130085445.GQ21609@dhcp22.suse.cz>
+ <20180130115846.GA4720@castle.DHCP.thefacebook.com>
+ <20180130120852.GA21609@dhcp22.suse.cz>
+ <20180130121315.GA5888@castle.DHCP.thefacebook.com>
+ <20180130122011.GB21609@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1516725385-24535-4-git-send-email-john.garry@huawei.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180130122011.GB21609@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 12:36:19AM +0800, John Garry wrote:
-> From: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+On Tue, Jan 30, 2018 at 01:20:11PM +0100, Michal Hocko wrote:
+> From 361275a05ad7026b8f721f8aa756a4975a2c42b1 Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Tue, 30 Jan 2018 09:54:15 +0100
+> Subject: [PATCH] oom, memcg: clarify root memcg oom accounting
 > 
-> In preparation for having the PCI MMIO helpers to use the new generic
-> I/O space management(LOGIC_PIO) we need to add the fwnode handler as
-> extra input parameter.
-> This patch changes the signature of pci_register_io_range() and of
-> its callers as needed.
+> David Rientjes has pointed out that the current way how the root memcg
+> is accounted for the cgroup aware OOM killer is undocumented. Unlike
+> regular cgroups there is no accounting going on in the root memcg
+> (mostly for performance reasons). Therefore we are suming up oom_badness
+> of its tasks. This might result in an over accounting because of the
+> oom_score_adj setting. Document this for now.
 > 
-> Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/acpi/pci_root.c | 8 +++++---
->  drivers/of/address.c    | 4 +++-
->  drivers/pci/pci.c       | 3 ++-
->  include/linux/pci.h     | 3 ++-
->  4 files changed, 12 insertions(+), 6 deletions(-)
+> Acked-by: Roman Gushchin <guro@fb.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks, Michal.
+
+-- 
+tejun
