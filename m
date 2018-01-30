@@ -1,102 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752652AbeA3WYw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:24:52 -0500
-Received: from mail-io0-f171.google.com ([209.85.223.171]:46169 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751606AbeA3WYt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:24:49 -0500
-X-Google-Smtp-Source: AH8x225gHACkomSq2UEDFA5HUKdQdIdIwHXD7ZggU1N6w8vJEpw1cT/0o05v6oOa+XADijC58QoF6g==
-Date: Tue, 30 Jan 2018 14:24:46 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+4d8b9d4de3fb89b15eb7f8b5c30d004f1836ee02@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: BUG: unable to handle kernel paging request in
- aead_accept_parent_nokey
-Message-ID: <20180130222446.4aim3hgarhlv5a2v@gmail.com>
-References: <001a1143fd0067065e056096ef90@google.com>
+        id S1752800AbeA3W0M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 17:26:12 -0500
+Received: from mail-by2nam01on0082.outbound.protection.outlook.com ([104.47.34.82]:51949
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752529AbeA3W0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 17:26:10 -0500
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com;
+Subject: Re: [PATCHv3 1/3] x86/mm/encrypt: Move page table helpers into
+ separate translation unit
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@suse.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20180124163623.61765-1-kirill.shutemov@linux.intel.com>
+ <20180124163623.61765-2-kirill.shutemov@linux.intel.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Message-ID: <f1005ed5-c245-b64f-fe4b-64fff5790172@amd.com>
+Date: Tue, 30 Jan 2018 16:26:03 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a1143fd0067065e056096ef90@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180124163623.61765-2-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [165.204.78.1]
+X-ClientProxiedBy: MWHPR1601CA0012.namprd16.prod.outlook.com (10.172.93.22) To
+ DM5PR12MB1147.namprd12.prod.outlook.com (10.168.236.142)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 439e8bf0-665f-469f-dc68-08d5683075e6
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1147;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1147;3:4ii5XwZc2OoYJCPOy3l/BNap75em5xNoyoB5GwPsKozoOOVSkIjWfoEDTMLZNamRZVbGKFFYegUIJ04xbIzbg6iRZHwEbPeTCYSQYxT16gnN+qyQI68kE8ejUXIxWeNjXqN+106zTtfpcegc8Y+mUot1j2GWhFzqdXz5hfkdXhWVPhQ0eN8CPlmYOPr5dziIdHywT/tTYZaDqNqWKUdEs7u3faAcobpOOF4Yc4eANk96OHwV/9ao6QC1vWxEZZFc;25:ZIRvidsZ19rTCWNHT5L5SDkXNrsMDeeamORLO3Q3dKcsq4C1+/mHrcfYSuCGsDiKUTwoV3K8BRA2uQQmoTmGRwzK5irSm52MLF3BlSJtmfovq5tesTYGRdSJ/M9b8YcO/cOWTTAgGXVErOWDstv2YgR5YV8NTSUKK7CKNQFLFKZwAac1qaVpoBgxO81GdlU0UjrJT5d33vc7ODxebpe7sOlMCcaucrUxL7rZxEB7UL863NyCEUvDqoUHR89pRQKP7inHwfE/YXTgKseO+Kc37k8pK0RpT/ORvR2LaqEf5W13tdhOUyFSQinaZ/ODlbK+2hCLXoSoZ/TFtNveqrY8ng==;31:KmSWEVh5dAoH7NcqniBcLt1psYh+X8LyQO0YqyO06ngaSVfsmaTQOWg9j/LHSwje+r3oCInIFZWyc2C0cj/GQ5aS5JMNMIydHsuANXPoEmqaOxZmTtGGwiRc63CNOGYmkz/9q1vdjrIzA7mqCwUrlAAQHS3fpA3mguTFFmhGaDNowghN1JNmC2mYE7+BQ5/b7WqwGziIrDt7Sbt+NmrItLBqnCPnp3apcFrVCUbYsEY=
+X-MS-TrafficTypeDiagnostic: DM5PR12MB1147:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1147;20:1TTAnGzPlEEyYSJmN8s5tYBQBpl5e4Q8DW1oa7ClYtWj8hKiAzWo26TCG8c+PrmgjSjwpo1OLJ+4A/Y/1LtodAN1kNXFKXJZlQeLAL82rLF9HK/P2GZ1kxuUhgLwblIpixdfKYz5F0s/nNKL7eKFQOH+HmMnsPZmJ36RB31KlDOvn/I4dsWKq1GC0o1gVyTNy66WQ+5myk8s6cDNlciqlCDZ++Sp7x7VapRzq7l/gifpXYZIQAidxn7WsdJPj6xL27+/shFAVvXv+K8o5LH32caf6hJIwUNqiQ9PKJtfO5rEFCXgwZFRU1C6efYeAs17qzC1B25pnBBpc6J7jZndEQM8nLKjXNxXGUFOl0pDVuLoiKPvSaCVeVYwewjVyzTd9NLFQ462qLqH0K92f/TvquBZ8o36g5ulFjUPbFp1QwxdicwUupHV/PqcfOoFtNWqmg6OCLGtajNfSuDHHDcsjL+K5RiXsy8/Ym1o/Kg+3ACfGC+UwD1VmLRxOIXCPRtD;4:TAriFrvHLDBWarr75OdlFnXlHhLvDH7PbNT/SdMDre5lr1wi4MccYdPxz2zbsXVpQxUj+b1T8TVeV0d/R6EGR3cYoRQMbHKycGMh5s/2lHcHwXGN/p+seAwrnuxInYpA+vTgE0hJUvzc5T8VKP/A1J+vJr9zaLPykQWoYxoI2nadS3qjoEfWKQVYgeAa8irVQE9oVKF8z4oMFJClHs33T1GQ366xwmmD0N8Vl0whbKbkSKRtVuqri4vYR/0J05zgtyFq61FrYWMkSKD3TxSL8v1Vx99ahUH9tDanqT5ESX3HiBjejEQma18JJtLhbV0jaqRe690Wf3tQur/dpo2+Kg==
+X-Microsoft-Antispam-PRVS: <DM5PR12MB1147A02971F665BE1AAFF935ECE40@DM5PR12MB1147.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(228905959029699);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231101)(944501161)(10201501046)(3002001)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR12MB1147;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1147;
+X-Forefront-PRVS: 0568F32D91
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(376002)(39860400002)(346002)(396003)(39380400002)(366004)(189003)(199004)(3846002)(229853002)(53936002)(8676002)(81156014)(53546011)(97736004)(8936002)(66066001)(386003)(65956001)(6116002)(81166006)(2906002)(47776003)(105586002)(6666003)(50466002)(230700001)(2950100002)(31686004)(5660300001)(305945005)(65806001)(65826007)(86362001)(478600001)(4326008)(68736007)(7736002)(36756003)(16526019)(26005)(52146003)(72206003)(6486002)(106356001)(16576012)(31696002)(23676004)(6246003)(186003)(316002)(3260700006)(83506002)(59450400001)(64126003)(90366009)(2486003)(54906003)(77096007)(52116002)(25786009)(76176011)(110136005)(58126008);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1147;H:[10.236.65.116];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxMTQ3OzIzOjJIbTZlbkh6V1FnR2hTb2NPTzRxZGd1KzVW?=
+ =?utf-8?B?RFlRRURINTNyNEFUZUhwWk9NK3dMSzE2YnFETnptNnBCN2loMXNzYUlMSjBx?=
+ =?utf-8?B?MDA3QjZ2RXYzQXhMSkJQanR1b0V5RDk4LzA1MS9mYzlkbU9MUGJxSVY1b0xH?=
+ =?utf-8?B?Q1pHZk84K1JBL3N3N01aTzQ2UWNkS0RMbHF4YXpOWmV6K1FCOC8veU81SFlB?=
+ =?utf-8?B?UTlVZmo0d1JvT1diK2wxRlZlMzh4akhyeUlTSlVPMVNjUWRhL3huS0dvKzJM?=
+ =?utf-8?B?WGZKbTFxcnE3ZmxNYkNkUFd4ZVQ1VFFZbEt1U3FiczdIaUN3VjhhUXpYTkVF?=
+ =?utf-8?B?RWNhQlhMelAwNnJFOGRvUzl6d0pLL21aYVF5MkVxOU5PZXQ5M1NQWUF1eDBB?=
+ =?utf-8?B?YUYzc011MGFYU2JadEZ3Qkl1NGQ1MmRKdFVGbkxuZVZDdXArakZkeERSWnhM?=
+ =?utf-8?B?LzBZbnhLWTVPcTFoNkF6L2ZXVjJEcEIzbVdqZ2FhQnlncXEyRzY5R2prT3dW?=
+ =?utf-8?B?NnJQeHFXME1ZbmxoRnUvSmIyVmdaYmVGNmd4VFlEWU9YTGpxd0hXMjJhMFlD?=
+ =?utf-8?B?ZHhDK0wvOTVDM3dxWm5BbE1ZNnZJZGY4MW1rY053NmVtNG9ieTU2eVd1dmpO?=
+ =?utf-8?B?OWJqcjFMTnpHeVlEM1hNZlRJbkt1aWJlVUJ3MU9MakJ3b0tCVjB6VXJ3bmo0?=
+ =?utf-8?B?MTJ5Q1pIS3FPWkdrNm0vcjZ1a0NyQXZzMC92Rm83QzdhdDJzRlZtZ3ZpdTY5?=
+ =?utf-8?B?QXFBdFlqTml1R2lUTGRHUUY0aGNkQVNGU1ZZbUlvU3hKd1docEJBa0pOS0o3?=
+ =?utf-8?B?MzAvUTBOVE5RWkh6K293T2JwRTZvaTIwU2RlSzJRK0NrdWNoeVo5WmhmeS9h?=
+ =?utf-8?B?Tlpqb1BGSmpRUG9SamFueEs1WXpuY3hJcUdJZDBsZVlYQzlnejJGbjRvWVZE?=
+ =?utf-8?B?YkRCUWQ1VUZhM3kwbytqdzZlTXNRM1hieHN4ZllsMWliRHNTdzgvNTNYOFlS?=
+ =?utf-8?B?RnRxMGtNRDRVbUpYMi9WWktvSFhaMmNTa1FpRzlFd3FITTQ0UjhBdmVEVjVZ?=
+ =?utf-8?B?YmZLZk9zK29OZzBLRytGWXlKN2I0UjlwUWUyVk1HdFZQOHdzMHkzM2lqZGZh?=
+ =?utf-8?B?YktWR3lzYkFBM0NkcUVJZ1hSU0ErbWtJTGFPVkxuZi9nTkZUV085ZjJWRldj?=
+ =?utf-8?B?K1p2NUFaaTQrRlJlWGhXbDNWN05jd211T3FPZEsrR0JsV09DS1k3Rjdrdmpw?=
+ =?utf-8?B?RkJWWjlrV3U2bU0xRkQvem8waU9rRmlnTUdubklsUHRadDVueDM2UzQxMmNX?=
+ =?utf-8?B?YnJVa0RCT0NDaU1HMURrdmpjVXU4T2FHbmlYTE1qNkp4K0hCR2FONit4QkZa?=
+ =?utf-8?B?RGZxZWhGR2pMOUFWdm9CcmJKYitaWTk1cXRSVG9ML1BGRU5aZE4zT3h3OFBn?=
+ =?utf-8?B?ODhuSkk4ZURWaWZXVWI2bE05cDI2enVmalJabi83c0V2MU91N3liZC9RL0hU?=
+ =?utf-8?B?Rm1lTEJGQjg1dUJmT0lwOHE0YlFDa2ZOUTdqTDFUVU5pQ2svSGxSMURyTzZU?=
+ =?utf-8?B?REF0c3QyNWI3b25JVThLV3RJYUdadWZVZURWcjc2WW1SdzRjUzdTYlgyRHY3?=
+ =?utf-8?B?UUVxdFh6TFlmeXRhamdjREhJaGlDVEpIMW1Cd1E3WjI0WFNUSmNNSk12Q0U5?=
+ =?utf-8?B?d2g5RWwwQ25Kc1dSYmF0dmExOFVNY1Nyd1RvMlNOUnZ3c004ZWZyK0hmNkY0?=
+ =?utf-8?B?VmVLZlNNaGZHYUtVVVBtaWlER3d4cUdJS20va2hmWkp5QUFMM2Jvd3VRaDdW?=
+ =?utf-8?B?b2diS0dSQW1oVGxTSmhHaFFlaVkrU0pRTEs1clRWK2hocDNWcXRWQjZxSVV2?=
+ =?utf-8?B?cDUrNENoMXc1OWoySHFYRVIxNGJvU1M0KzlQbmQ5UzNBRzZLbzFBMURWWnpt?=
+ =?utf-8?B?ZkI0WWMwNnZ1K3FmN2xHekc0Ni92YTZxbWEzQStEK09UVkpmM0s5VWxyaTNH?=
+ =?utf-8?Q?in+9DD?=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1147;6:3zoaZszpu7GS8qnn+JKxhlfEUL3/DmmEwdWKXeYWIYWWYxAEM9Yj7fFV/cnVtwOylPEirK8ii4/pN3Lrc4okAZL06gCHDpc4+xnZ+Y0MnteqogaJzwLzebOdI1FJEh6EmgZ99RRa/+M3Z2KDsV9InkebQyzN2DlMCx0cy8htkRRU33IedDjaUOfqibX81xyXDJRFPWm3oIe7AIjLkCqOsMxYzDLJxoHicSELPgf2UMSkZ7eYYvbapuvkouphdZBGII07J5txg8+I+fJRJq1a/9FuLzJrQRzOqylPf0bSJxFY4KVo65uZmfeaQshaCn7RsdFlfw2p7AsBi0v6mRJFGueVcmxQQn2TDpaR/w1FXvg=;5:AW/63gGojyZO/hwmXXl2raorkTlhrtAkO3IdTIvxFN+aBE3CR9BhdgjhuG5XUeNfioYGFBQkxG7EPMiNYc/RQVwIgw/hXNPoxjXu7+Ux/1yjJmMWHhftKEl95cZYhREylye6NklS7x7UndQG+8fKND8BfrI/aY09sUPf8G+RzTs=;24:9NQfMZSQ9bexgyJo4UDp21Sg789dGoId3v2F/fxUgKAhm/mMgCok78NMZ9r7UUHtjWOpTEFUNG3hCqMt2cwDXG/eIYNVRf4sYEwXpyfqAB8=;7:8WrVqmeYZj7HCUkrybKCyu7iOaHtiBM78sTU2ywPiD4Is3/WzVuSV0VpMP757W7kuqbNvjPsP2eoC7ZoH0cPiN/Yrq9YuuD436i2ApGP8mUM4CZEKvP9NABz0Zn8IBNSHJJEpK6BS6fDW7YG9guwwx1DWd6B/DHxoPJHUqLdSqUS3oywIQc7VaSGTTj43SoB4NEgkLOJ6adO1o+TQ0JqcNqBmDJ0chgjCB/5S7s4lq2YpIXVh7kyJjboOzoFJGmq
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1147;20:PLNpYz2dnQLYzPeVN7EXw0KRTBW/yS32gVR2IYXocyiYfnJ5SSCHWt0vPAd7b/ct2fYCoT3Rl3/wRZ4rYlKCJ6HE5n/qyeI59pZ/417Brj4kyiEmvRY1hs2QiV9z509PoEcaiCDWJukKN24J4wVnB2+tNQViqTB4kA6f3sOsLL7R1s6AuhbS8fFEe5oLpJzt7BlwsWEE3qWBvCUT9sTli3JQXekHsrTZFHBvPsOX1MzUdTC3H5KQtOCUAYAVf3fc
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2018 22:26:07.6076 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 439e8bf0-665f-469f-dc68-08d5683075e6
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1147
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 17, 2017 at 09:51:01PM -0800, syzbot wrote:
-> Hello,
+On 1/24/2018 10:36 AM, Kirill A. Shutemov wrote:
+> There are bunch of functions in mem_encrypt.c that operate on the
+> identity mapping, which means they want virtual addresses to be equal to
+> physical one, without PAGE_OFFSET shift.
 > 
-> syzkaller hit the following crash on
-> 41d8c16909ebda40f7b4982a7f5e2ad102705ade
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
+> We also need to avoid paravirtualizaion call there.
 > 
-> Unfortunately, I don't have any reproducer for this bug yet.
+> Getting this done is tricky. We cannot use usual page table helpers.
+> It forces us to open-code a lot of things. It makes code ugly and hard
+> to modify.
 > 
+> We can get it work with the page table helpers, but it requires few
+> preprocessor tricks. These tricks may have side effects for the rest of
+> the file.
 > 
-> device lo entered promiscuous mode
-> BUG: unable to handle kernel paging request at fffffffffffffff0
-> Bearer <> rejected, not supported in standalone mode
-> IP: aead_accept_parent_nokey+0x2a/0x150 crypto/algif_aead.c:559
-> PGD 3021067 P4D 3021067 PUD 3023067 PMD 0
-> Oops: 0000 [#1] SMP
-> Bearer <> rejected, not supported in standalone mode
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 5971 Comm: syz-executor1 Not tainted 4.15.0-rc3-next-20171213+
-> #66
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:aead_accept_parent_nokey+0x2a/0x150 crypto/algif_aead.c:559
-> RSP: 0018:ffffc90000d7bda8 EFLAGS: 00010216
-> RAX: 0000000000000000 RBX: ffff88020ab17540 RCX: ffffffff816ca746
-> RDX: 00000000014000c0 RSI: 0000000000000090 RDI: ffff8801e2c0e800
-> RBP: ffffc90000d7bdc8 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801e2c0e800
-> R13: ffffffff82a95520 R14: ffff880213fd5400 R15: 0000000000000000
-> FS:  00007f60fba0c700(0000) GS:ffff88021fd00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: fffffffffffffff0 CR3: 00000001e10a4000 CR4: 00000000001426e0
-> Call Trace:
->  aead_accept_parent+0x28/0x40 crypto/algif_aead.c:595
->  af_alg_accept+0x9c/0x1f0 crypto/af_alg.c:294
->  alg_accept+0x25/0x30 crypto/af_alg.c:330
->  SYSC_accept4+0x114/0x260 net/socket.c:1551
->  SyS_accept4 net/socket.c:1502 [inline]
->  SYSC_accept net/socket.c:1585 [inline]
->  SyS_accept+0x26/0x30 net/socket.c:1582
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> RIP: 0033:0x452a39
-> RSP: 002b:00007f60fba0bc58 EFLAGS: 00000212 ORIG_RAX: 000000000000002b
-> RAX: ffffffffffffffda RBX: 0000000000758020 RCX: 0000000000452a39
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000016
-> RBP: 000000000000001a R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006ee310
-> R13: 00000000ffffffff R14: 00007f60fba0c6d4 R15: 0000000000000000
-> Code: 00 55 48 89 e5 41 56 41 55 41 54 53 48 89 fb 49 89 f4 e8 2a fc be ff
-> 48 8b 03 ba c0 00 40 01 be 90 00 00 00 4c 89 e7 48 8b 40 40 <44> 8b 68 f0 e8
-> 7d a7 9d 00 48 85 c0 0f 84 ed 00 00 00 48 89 c3
-> RIP: aead_accept_parent_nokey+0x2a/0x150 crypto/algif_aead.c:559 RSP:
-> ffffc90000d7bda8
-> CR2: fffffffffffffff0
-> ---[ end trace 1608f1470cd99fdb ]---
-> Kernel panic - not syncing: Fatal exception
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
+> Let's isolate such functions into own translation unit.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Invalidating this bug since it hasn't been seen again, and it was reported while
-KASAN was accidentally disabled in the syzbot kconfig due to a change to the
-kconfig menus in linux-next (so this crash was possibly caused by slab
-corruption elsewhere).
+Just one minor comment at the end.  With that change:
 
-#syz invalid
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+
+> ---
+>  arch/x86/mm/Makefile               |  14 +-
+>  arch/x86/mm/mem_encrypt.c          | 578 +----------------------------------
+>  arch/x86/mm/mem_encrypt_identity.c | 596 +++++++++++++++++++++++++++++++++++++
+>  arch/x86/mm/mm_internal.h          |   1 +
+>  4 files changed, 607 insertions(+), 582 deletions(-)
+>  create mode 100644 arch/x86/mm/mem_encrypt_identity.c
+> 
+
+...
+
+> diff --git a/arch/x86/mm/mm_internal.h b/arch/x86/mm/mm_internal.h
+> index 4e1f6e1b8159..7b4fc4386d90 100644
+> --- a/arch/x86/mm/mm_internal.h
+> +++ b/arch/x86/mm/mm_internal.h
+> @@ -19,4 +19,5 @@ extern int after_bootmem;
+>  
+>  void update_cache_mode_entry(unsigned entry, enum page_cache_mode cache);
+>  
+> +extern bool sev_enabled __section(.data);
+
+Lets move this into arch/x86/include/asm/mem_encrypt.h and then add
+#include <linux/mem_encrypt.h> to mem_encrypt_identity.c.
+
+Thanks,
+Tom
+
+>  #endif	/* __X86_MM_INTERNAL_H */
+> 
