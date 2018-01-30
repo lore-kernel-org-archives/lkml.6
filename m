@@ -1,126 +1,536 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751671AbeA3LkR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 06:40:17 -0500
-Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:62383 "EHLO
-        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751378AbeA3LkP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 06:40:15 -0500
-X-$ESA-Groupmapping: true
-X-IronPort-AV: E=Sophos;i="5.46,434,1511823600";
-   d="scan'208";a="27625178"
-From: Denis OSTERLAND <denis.osterland@diehl.com>
-To: "linux@roeck-us.net" <linux@roeck-us.net>,
-        "alexandre.belloni@free-electrons.com"
-        <alexandre.belloni@free-electrons.com>
-CC: "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "mgr@pengutronix.de" <mgr@pengutronix.de>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] rtc: isl1208: add support for isl1219 with hwmon for
- tamper detection
-Thread-Topic: [PATCH 4/4] rtc: isl1208: add support for isl1219 with hwmon for
- tamper detection
-Thread-Index: AQHTlERFJ9rR3DV/NEGUfbSKRuIBAKOBtRIAgAD2DYCACLRngIAA0RcAgAAUQIA=
-Date: Tue, 30 Jan 2018 11:40:10 +0000
-Message-ID: <1517312409.5307.22.camel@diehl.com>
-References: <20180123121801.4214-1-m.grzeschik@pengutronix.de>
-         <20180123121801.4214-5-m.grzeschik@pengutronix.de>
-         <20180123182254.GA27379@roeck-us.net>
-         <20180124090333.r5o2mzpm4q536w4r@pengutronix.de>
-         <20180129215919.GA17988@roeck-us.net> <20180130102740.GD2809@piout.net>
-In-Reply-To: <20180130102740.GD2809@piout.net>
-Accept-Language: de-DE, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.153.3.249]
+        id S1751582AbeA3Lli (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 06:41:38 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52592 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751378AbeA3Llh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 06:41:37 -0500
+Subject: Re: [RFC PATCH 2/5] sched: Add NOHZ_STATS_KICK
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+References: <20171222075934.f6yenvcb2zkf2ysd@hirez.programming.kicks-ass.net>
+ <CAKfTPtC0+5zjvgNXMyVcvnnyJh0giQgJHtx+5p-GEpjUW1x8eg@mail.gmail.com>
+ <20171222082915.4lcb7xyyooqyjpia@hirez.programming.kicks-ass.net>
+ <20171222091221.ow5vn3ydx3hj4nht@hirez.programming.kicks-ass.net>
+ <CAKfTPtAzutuyA7D2qOErKPwdFaRK082YAtVn4ci8hAOUvL3zMQ@mail.gmail.com>
+ <20171222185629.lysjebfifgdwvvhu@hirez.programming.kicks-ass.net>
+ <20171222204247.kyc6ugyyu3ei7zhs@hirez.programming.kicks-ass.net>
+ <CAKfTPtD13p-n9otxq23rQZZKUfA1r03bxYBSDtSdm5HbWX7H6Q@mail.gmail.com>
+ <20180115082609.GA6320@linaro.org>
+ <20180118103807.GD28799@e105550-lin.cambridge.arm.com>
+ <20180124082536.GA32318@linaro.org>
+ <b1efd041-2faa-76e0-7d9b-3d2917e03012@arm.com>
+ <CAKfTPtCmFC2mmR9SBTjjuuzPS8tFNmmrSRMmKrOrkh3uPkYYoA@mail.gmail.com>
+From: Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <4fb17712-3f98-c407-42b3-4601a4f294d9@arm.com>
+Date: Tue, 30 Jan 2018 11:41:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-X-GBS-PROC: PkB65aL1SqtESF35r/jQnyKwu3BnHvZ+4gDQVggCyZQw1vhJEIIjR/w0iV2VNe+i
-X-MIMETrack: Itemize by SMTP Server on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP9 HF139|October
- 06, 2017) at 30.01.2018 12:40:12,
-        Serialize by ntm_grab.EXE on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP9 HF139|October
- 06, 2017) at 30.01.2018 12:40:12,
-        Serialize complete at 30.01.2018 12:40:12,
-        Itemize by ntm_grab.EXE on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP9 HF139|October
- 06, 2017) at 30.01.2018 12:40:12,
-        Serialize by Router on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP9 HF139|October
- 06, 2017) at 30.01.2018 12:40:12
-X-TNEFEvaluated: 1
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAKfTPtCmFC2mmR9SBTjjuuzPS8tFNmmrSRMmKrOrkh3uPkYYoA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-ID: <5A4D96A557CE6B4089A5DBBCE3B01A53@diehl.internal>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w0UBeMfY014629
 
-Am Dienstag, den 30.01.2018, 11:27 +0100 schrieb Alexandre Belloni:
-> On 29/01/2018 at 13:59:19 -0800, Guenter Roeck wrote:
-> > 
-> > On Wed, Jan 24, 2018 at 10:03:33AM +0100, Michael Grzeschik wrote:
-> > [ ... ]
-> > > 
-> > > > 
-> > > > > 
-> > > > > +
-> > > > > diff --git a/Documentation/hwmon/sysfs-interface b/Documentation/hwmon/sysfs-interface
-> > > > > index fc337c317c673..a12b3c2b2a18c 100644
-> > > > > --- a/Documentation/hwmon/sysfs-interface
-> > > > > +++ b/Documentation/hwmon/sysfs-interface
-> > > > > @@ -702,6 +702,13 @@ intrusion[0-*]_alarm
-> > > > >  		the user. This is done by writing 0 to the file. Writing
-> > > > >  		other values is unsupported.
-> > > > >  
-> > > > > +intrusion[0-*]_timestamp
-> > > > > +		Chassis intrusion detection
-> > > > > +		YYYY-MM-DD HH:MM:SS UTC (ts.sec): intrusion detected
-> > > > > +		RO
-> > > > > +		The corresponding timestamp on which the intrustion
-> > > > > +		was detected.
-> > > > > +
-> > > > Sneaky. Nack. You don't just add attributes to the ABI because you want it,
-> > > > without serious discussion, and much less so hidden in an RTC driver
-> > > > (and even less as unparseable attribute).
-> > > Right; but it was not meant to be sneaky. I should have stick to my first
-> > > thought and label this patch RFC. Sorry for that.
-> > > 
-> > > > 
-> > > > In addition to that, I consider the attribute unnecessary. The intrusion
-> > > > already generates an event which should be sufficient for all practical
-> > > > purposes.
-> > > Would it make sense in between the other sysfs attributes of this driver?
-> > > 
-> > I don't understand what you mean with that, sorry.
-> > 
-> > From an ABI perspective, the attibute doesn't add value since it is
-> > highly device specific (or at least it is the only chip I am aware of
-> > which reports such a time stamp). Feel free to add the attribute to the
-> > driver and document it, but not as part of the hwmon ABI. In that
-> > case I would be inclined to accept it. However, keep in mind that
-> > your version, reporting a human readable date/time, would effectively
-> > preclude it from ever making it into the ABI.
-> > 
-> Actually, there are many RTCs that are able to register one or more
-> timestamps. My plan was to add support for that soon but I was not
-> planning to do so in the hwmon ABI as this may be used for something
-> that is not intrusion detection (interval timers for example).
-What would you suggest?
-I think about something like this:
-event[0-*]_timestamp: timestamp in seconds since epoch or empty if not triggered
-event[0-*]_alarm: 1 if event was triggered, else 0; write 0 to clear event
+(Resending because I snuck in some HTML... Apologies)
+
+On 01/30/2018 08:32 AM, Vincent Guittot wrote:
+> On 29 January 2018 at 20:31, Valentin Schneider
+> <valentin.schneider@arm.com> wrote:
+>> Hi Vincent, Peter,
+>>
+>> I've been running some tests on your patches (Peter's base + the 2 from
+>> Vincent). The results themselves are hosted at [1].
+>> The base of those tests is the same: a task ("accumulator") is ran for 5
+>> seconds (arbitrary value) to accumulate some load, then goes to sleep for .5
+>> seconds.
+>>
+>> I've set up 3 test scenarios:
+>>
+>> Update by nohz_balance_kick()
+>> -----------------------------
+>> Right before the "accumulator" task goes to sleep, a CPU-hogging task (100%
+>> utilization) is spawned on another CPU. It won't go idle so the only way to
+>> update the blocked load generated by "accumulator" is to kick an ILB
+>> (NOHZ_STATS_KICK).
+>>
+>> The test shows that this is behaving nicely - we keep kicking an ILB every
+>> ~36ms (see next test for comments on that) until there is no more blocked
+>> load. I did however notice some interesting scenarios: after the load has
+>> been fully decayed, a tiny background task can spawn and end in less than a
+>> scheduling period. However, it still goes through nohz_balance_enter_idle(),
+>> and thus sets nohz.stats_state, which will later cause an ILB kick.
+>>
+>> This makes me wonder if it's worth kicking ILBs for such tiny load values -
+>> perhaps it could be worth having a margin to set rq->has_blocked_load ?
 > 
+> So it's difficult to know what will be the load/utilization on the
+> cfs_rq once the cpu wakes up. Even if it's for a really short time,
+> that's doesn't mean that the load/utilization is small because it can
+> be the migration of a big task that just have a very short wakes up
+> this time.
+> That's why I don't make any assumption on the utilization/load value
+> when a cpu goes to sleep
 > 
-Diehl AKO Stiftung & Co. KG, Pfannerstraße 75-83, 88239 Wangen im Allgäu
-Bereichsvorstand: Dr.-Ing. Michael Siedentop (Sprecher), Josef Fellner (Mitglied)
-Sitz der Gesellschaft: Wangen i.A. – Registergericht: Amtsgericht Ulm HRA 620609 – Persönlich haftende Gesellschafterin: Diehl Verwaltungs-Stiftung – Sitz: Nürnberg – Registergericht: Amtsgericht Nürnberg HRA 11756 –
-Vorstand: Dr.-Ing. E.h. Thomas Diehl (†) (Vorsitzender), Herr Dipl.-Wirtsch.-Ing. Wolfgang Weggen (stellvertretender Vorsitzender), Dipl.-Kfm. Claus Günther, Dipl.-Kfm. Frank Gutzeit, Dr.-Ing. Heinrich Schunk, Dr.-Ing. Michael Siedentop , Dipl.-Kfm. Dr.-Ing. Martin Sommer, Dipl.-Ing. (FH) Rainer von Borstel, Vorsitzender des Aufsichtsrates: Dr. Klaus Maier
-___________________________________________________________________________________________________
-Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
-Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhalten haben. Bitte loeschen Sie in diesem Fall die Nachricht. Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung und/oder Publikation dieser E-Mail ist strengstens untersagt.
-The contents of the above mentioned e-mail is not legally binding. This e-mail contains confidential and/or legally protected information. Please inform us if you have received this e-mail by mistake and delete it in such a case. Each unauthorized reproduction, disclosure, alteration, distribution and/or publication of this e-mail is strictly prohibited.
+
+Right, hadn't thought about those kind of migrations.
+
+>>
+>> Furthermore, this tiny task will cause the ILB to iterate over all of the
+>> idle CPUs, although only one has stale load. For load update via NEWLY_IDLE
+>> load_balance() we use:
+>>
+>> static bool update_nohz_stats(struct rq *rq)
+>> {
+>>      if (!rq->has_blocked_load)
+>>       return false;
+>>      [...]
+>> }
+>>
+>> But for load update via _nohz_idle_balance(), we iterate through all of the
+>> nohz CPUS and unconditionally call update_blocked_averages(). This could be
+>> avoided by remembering which CPUs have stale load before going idle.
+>> Initially I thought that was what nohz.stats_state was for, but it isn't.
+>> With Vincent's patches it's only ever set to either 0 or 1, but we could use
+>> it as a CPU mask, and use it to skip nohz CPUs that don't have stale load in
+>> _nohz_idle_balance() (when NOHZ_STATS_KICK).
+> 
+> I have studied a way to keep track of how many cpus still have blocked
+> load to try to minimize the number of useless ilb kick but this add
+> more atomic operations which can impact the system throughput with
+> heavy load and lot of very small wake up. that's why i have propose
+> this solution which is more simple. But it's probably just a matter of
+> where we want to "waste" time. Either we accept to spent a bit more
+> time to check the state of idle CPUs or we accept to kick ilb from
+> time to time for no good reason.
+> 
+
+Agreed. I have the feeling that spending more time doing atomic ops 
+could be worth it - I'll try to test this out and see if it's actually 
+relevant.
+
+>>
+>> Update by idle_balance()
+>> ------------------------
+>> Right before the "accumulator" task goes to sleep, a tiny periodic
+>> (period=32ms) task is spawned on another CPU. It's expected that it will
+>> update the blocked load in idle_balance(), either by running
+>> _nohz_idle_balance() locally or kicking an ILB (The overload flag shouldn't
+>> be set in this test case, so we shouldn't go through the NEWLY_IDLE
+>> load_balance()).
+>>
+>> This also seems to be working fine, but I'm noticing a delay between load
+>> updates that is closer to 64ms than 32ms. After digging into it I found out
+>> that the time checks done in idle_balance() and nohz_balancer_kick() are
+>> time_after(jiffies, next_stats), but IMHO they should be
+>> time_after_eq(jiffies, next_stats) to have 32ms-based updates. This also
+>> explains the 36ms periodicity of the updates in the test above.
+> 
+> I have use the 32ms as a minimum value between update. We must use the
+> time_after()  if we want to have at least 32ms between each update. We
+> will have a 36ms period if the previous update was triggered by the
+> tick (just after in fact) but there will be only 32ms if the last
+> update was done during an idle_balance that happens just before the
+> tick. With  time_after_eq,  the update period will between 28 and
+> 32ms.
+> 
+> Then, I mention a possible optimization by using time_after_eq in the
+> idle_balance() so a newly_idle cpu will have more chance (between 0
+> and 4ms for hz250) to do the update before a ilb is kicked
+> 
+
+IIUC with time_after() the update period should be within ]32, 36] ms, 
+but it looks like I'm always on that upper bound in my tests.
+
+When evaluating whether we need to kick_ilb() for load updates, we'll 
+always be right after the tick (excluding the case in idle_balance), 
+which explains why we wait for an extra tick in the "update by 
+nohz_balancer_kick()" test case.
+
+The tricky part is that, as you say, the update by idle_balance() can 
+happen anywhere between [0-4[ ms after a tick (or before, depending on 
+how you see it), so using time_after_eq could make the update period < 
+32ms - and this also impacts a load update by nohz_balance_kick() if the 
+previous update was done by idle_balance()... This is what causes the 
+update period to be closer to 64ms in my test case, but it's somewhat 
+artificial because I only have a 32ms-periodic task running - if there 
+was any other task running the period could remain in that ]32, 36] ms 
+interval.
+
+Did I get that right ?
+
+> Thanks,
+> Vincent
+> 
+>>
+>>
+>> No update (idle system)
+>> -----------------------
+>> Nothing special here, just making sure nothing happens when the system is
+>> fully idle. On a sidenote, that's relatively hard to achieve - I had to
+>> switch over to Juno because my HiKey960 gets interrupts every 16ms. The Juno
+>> still gets woken up every now and then but it's a bit quieter.
+>>
+>>
+>> [1]: https://gist.github.com/valschneider/a8da7bb8e11fb1ec63a419710f56c0a0
+>>
+>>
+>>
+>> On 01/24/2018 08:25 AM, Vincent Guittot wrote:
+>>>
+>>> Hi,
+>>>
+>>> Le Thursday 18 Jan 2018 à 10:38:07 (+0000), Morten Rasmussen a écrit :
+>>>>
+>>>> On Mon, Jan 15, 2018 at 09:26:09AM +0100, Vincent Guittot wrote:
+>>>>>
+>>>>> Le Wednesday 03 Jan 2018 à 10:16:00 (+0100), Vincent Guittot a écrit :
+>>>>>>
+>>>>>> Hi Peter,
+>>>>>>
+>>>>>> On 22 December 2017 at 21:42, Peter Zijlstra <peterz@infradead.org>
+>>>>>> wrote:
+>>>>>>>
+>>>>>>> On Fri, Dec 22, 2017 at 07:56:29PM +0100, Peter Zijlstra wrote:
+>>>>>>>>
+>>>>>>>> Right; but I figured we'd try and do it 'right' and see how horrible
+>>>>>>>> it
+>>>>>>>> is before we try and do funny things.
+>>>>>>>
+>>>>>>> So now it should have a 32ms tick for up to .5s when the system goes
+>>>>>>> completely idle.
+>>>>>>>
+>>>>>>> No idea how bad that is..
+>>>>>>
+>>>>>> I have tested your branch but the timer doesn't seem to fire correctly
+>>>>>> because i can still see blocked load in the use case i have run.
+>>>>>> I haven't found the reason yet
+>>>>>
+>>>>> Hi Peter,
+>>>>>
+>>>>> With the patch below on top of your branch, the blocked loads are
+>>>>> updated and
+>>>>> decayed regularly. The main differences are:
+>>>>> - It doesn't use a timer to trig ilb but the tick and when a cpu becomes
+>>>>> idle.
+>>>>>     The main drawback of this solution is that the load is blocked when
+>>>>> the
+>>>>>     system is fully idle with the advantage of not waking up a fully idle
+>>>>>     system. We have to wait for the next tick or newly idle event for
+>>>>> updating
+>>>>>     blocked load when the system leaves idle stat which can be up to a
+>>>>> tick long.
+>>>>>     If this is too long, we can check for kicking ilb when task wakes up
+>>>>> so the
+>>>>>     blocked load will be updated as soon as the system leaves idle state.
+>>>>>     The main advantage is that we don't wake up a fully idle system every
+>>>>> 32ms to
+>>>>>     update blocked load that will be not used.
+>>>>> - I'm working on one more improvement to use nohz_idle_balance in the
+>>>>> newly
+>>>>>     idle case when the system is not overloaded and
+>>>>>     (this_rq->avg_idle > sysctl_sched_migration_cost). In this case, we
+>>>>> can try to
+>>>>>     use nohz_idle_balance with NOHZ_STATS_KICK and abort as soon as it
+>>>>> exceed
+>>>>>     this_rq->avg_idle. This will remove some calls to kick_ilb and some
+>>>>> wake up
+>>>>>     of an idle cpus.
+>>>>
+>>>> This sound like what I meant in my other reply :-)
+>>>>
+>>>> It seems pointless to have a timer to update PELT if the system is
+>>>> completely idle, and when it isn't we can piggy back other events to
+>>>> make the updates happen.
+>>>
+>>> The patch below implements what has been described above. It calls part of
+>>> nohz_idle_balance when a cpu becomes idle and kick a ilb if it takes too
+>>> much
+>>> time. This removes part of ilb that are kicked on an idle cpu for updating
+>>> the blocked load but the ratio really depends on when the tick happens
+>>> compared
+>>> to a cpu becoming idle and the 32ms boundary. I have an additionnal patch
+>>> that
+>>> enables to update the blocked loads when a cpu becomes idle 1 period
+>>> before
+>>> kicking an ilb and there is far less ilb because we give more chance to
+>>> the
+>>> newly idle case (time_after is replaced by time_after_eq in
+>>> idle_balance()).
+>>>
+>>> The patch also uses a function cfs_rq_has_blocked, which only checks the
+>>> util/load_avg, instead of the cfs_rq_is_decayed which check *_sum too.
+>>> This
+>>> reduce significantly the number of update of blocked load. the *_avg will
+>>> be
+>>> fully decayed in around 300~400ms but it's far longer for the *_sum which
+>>> have
+>>> a higher resolution and we can easily reach almost seconds. But only the
+>>> *_avg
+>>> are used to make decision so keeping some blocked *_sum is acceptable.
+>>>
+>>> ---
+>>>    kernel/sched/fair.c | 121
+>>> +++++++++++++++++++++++++++++++++++++++-------------
+>>>    1 file changed, 92 insertions(+), 29 deletions(-)
+>>>
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index 898785d..ed90303 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -7356,6 +7356,17 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq
+>>> *cfs_rq)
+>>>          return true;
+>>>    }
+>>>    +static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
+>>> +{
+>>> +       if (cfs_rq->avg.load_avg)
+>>> +               return true;
+>>> +
+>>> +       if (cfs_rq->avg.util_avg)
+>>> +               return true;
+>>> +
+>>> +       return false;
+>>> +}
+>>> +
+>>>    #ifdef CONFIG_FAIR_GROUP_SCHED
+>>>      static void update_blocked_averages(int cpu)
+>>> @@ -7393,7 +7404,9 @@ static void update_blocked_averages(int cpu)
+>>>                   */
+>>>                  if (cfs_rq_is_decayed(cfs_rq))
+>>>                          list_del_leaf_cfs_rq(cfs_rq);
+>>> -               else
+>>> +
+>>> +               /* Don't need periodic decay once load/util_avg are null
+>>> */
+>>> +               if (cfs_rq_has_blocked(cfs_rq))
+>>>                          done = false;
+>>>          }
+>>>    @@ -7463,7 +7476,7 @@ static inline void update_blocked_averages(int
+>>> cpu)
+>>>          update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
+>>>    #ifdef CONFIG_NO_HZ_COMMON
+>>>          rq->last_blocked_load_update_tick = jiffies;
+>>> -       if (cfs_rq_is_decayed(cfs_rq))
+>>> +       if (cfs_rq_has_blocked(cfs_rq))
+>>>                  rq->has_blocked_load = 0;
+>>>    #endif
+>>>          rq_unlock_irqrestore(rq, &rf);
+>>> @@ -8818,6 +8831,7 @@ update_next_balance(struct sched_domain *sd,
+>>> unsigned long *next_balance)
+>>>                  *next_balance = next;
+>>>    }
+>>>    +static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags,
+>>> enum cpu_idle_type idle);
+>>>    static void kick_ilb(unsigned int flags);
+>>>      /*
+>>> @@ -8861,7 +8875,14 @@ static int idle_balance(struct rq *this_rq, struct
+>>> rq_flags *rf)
+>>>                          update_next_balance(sd, &next_balance);
+>>>                  rcu_read_unlock();
+>>>    -             if (time_after(jiffies, next) &&
+>>> atomic_read(&nohz.stats_state))
+>>> +               /*
+>>> +                * Update blocked idle load if it has not been done for a
+>>> +                * while. Try to do it locally before entering idle but
+>>> kick a
+>>> +                * ilb if it takes too much time and might delay next
+>>> local
+>>> +                * wake up
+>>> +                */
+>>> +               if (time_after(jiffies, next) &&
+>>> atomic_read(&nohz.stats_state) &&
+>>> +                               !_nohz_idle_balance(this_rq,
+>>> NOHZ_STATS_KICK, CPU_NEWLY_IDLE))
+>>>                          kick_ilb(NOHZ_STATS_KICK);
+>>>                  goto out;
+>>> @@ -9237,6 +9258,7 @@ void nohz_balance_enter_idle(int cpu)
+>>>          if (!housekeeping_cpu(cpu, HK_FLAG_SCHED))
+>>>                  return;
+>>>    +     rq->has_blocked_load = 1;
+>>>          if (rq->nohz_tick_stopped)
+>>>                  return;
+>>>    @@ -9247,7 +9269,6 @@ void nohz_balance_enter_idle(int cpu)
+>>>                  return;
+>>>          rq->nohz_tick_stopped = 1;
+>>> -       rq->has_blocked_load = 1;
+>>>          cpumask_set_cpu(cpu, nohz.idle_cpus_mask);
+>>>          atomic_inc(&nohz.nr_cpus);
+>>> @@ -9259,7 +9280,6 @@ void nohz_balance_enter_idle(int cpu)
+>>>           * enable the periodic update of the load of idle cpus
+>>>           */
+>>>          atomic_set(&nohz.stats_state, 1);
+>>> -
+>>>    }
+>>>    #else
+>>>    static inline void nohz_balancer_kick(struct rq *rq) { }
+>>> @@ -9385,10 +9405,13 @@ static void rebalance_domains(struct rq *rq, enum
+>>> cpu_idle_type idle)
+>>>      #ifdef CONFIG_NO_HZ_COMMON
+>>>    /*
+>>> - * In CONFIG_NO_HZ_COMMON case, the idle balance kickee will do the
+>>> - * rebalancing for all the cpus for whom scheduler ticks are stopped.
+>>> + * Internal function that runs load balance for all idle cpus. The load
+>>> balance
+>>> + * can be a simple update of blocked load or a complete load balance with
+>>> + * tasks movement depending of flags.
+>>> + * For newly idle mode, we abort the loop if it takes too much time and
+>>> return
+>>> + * false to notify that the loop has not be completed and a ilb shoud be
+>>> kick.
+>>>     */
+>>> -static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type
+>>> idle)
+>>> +static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags,
+>>> enum cpu_idle_type idle)
+>>>    {
+>>>          /* Earliest time when we have to do rebalance again */
+>>>          unsigned long now = jiffies;
+>>> @@ -9396,24 +9419,10 @@ static bool nohz_idle_balance(struct rq *this_rq,
+>>> enum cpu_idle_type idle)
+>>>          bool has_blocked_load = false;
+>>>          int update_next_balance = 0;
+>>>          int this_cpu = this_rq->cpu;
+>>> -       unsigned int flags;
+>>>          int balance_cpu;
+>>> +       int ret = false;
+>>>          struct rq *rq;
+>>> -
+>>> -       if (!(atomic_read(nohz_flags(this_cpu)) & NOHZ_KICK_MASK))
+>>> -               return false;
+>>> -
+>>> -       if (idle != CPU_IDLE) {
+>>> -               atomic_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
+>>> -               return false;
+>>> -       }
+>>> -
+>>> -       /*
+>>> -        * barrier, pairs with nohz_balance_enter_idle(), ensures ...
+>>> -        */
+>>> -       flags = atomic_fetch_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
+>>> -       if (!(flags & NOHZ_KICK_MASK))
+>>> -               return false;
+>>> +       u64 curr_cost = 0;
+>>>          SCHED_WARN_ON((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
+>>>    @@ -9428,6 +9437,10 @@ static bool nohz_idle_balance(struct rq *this_rq,
+>>> enum cpu_idle_type idle)
+>>>          atomic_set(&nohz.stats_state, 0);
+>>>          for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
+>>> +               u64 t0, domain_cost;
+>>> +
+>>> +               t0 = sched_clock_cpu(this_cpu);
+>>> +
+>>>                  if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
+>>>                          continue;
+>>>    @@ -9438,7 +9451,17 @@ static bool nohz_idle_balance(struct rq *this_rq,
+>>> enum cpu_idle_type idle)
+>>>                   */
+>>>                  if (need_resched()) {
+>>>                          has_blocked_load = true;
+>>> -                       break;
+>>> +                       goto abort;
+>>> +               }
+>>> +
+>>> +               /*
+>>> +                * If the update is done while CPU becomes idle, we abort
+>>> +                * the update when its cost is higher than the average
+>>> idle
+>>> +                * time in orde to not delay a possible wake up.
+>>> +                */
+>>> +               if (idle == CPU_NEWLY_IDLE && this_rq->avg_idle <
+>>> curr_cost) {
+>>> +                       has_blocked_load = true;
+>>> +                       goto abort;
+>>>                  }
+>>>                  rq = cpu_rq(balance_cpu);
+>>> @@ -9453,10 +9476,10 @@ static bool nohz_idle_balance(struct rq *this_rq,
+>>> enum cpu_idle_type idle)
+>>>                  if (time_after_eq(jiffies, rq->next_balance)) {
+>>>                          struct rq_flags rf;
+>>>    -                     rq_lock_irq(rq, &rf);
+>>> +                       rq_lock_irqsave(rq, &rf);
+>>>                          update_rq_clock(rq);
+>>>                          cpu_load_update_idle(rq);
+>>> -                       rq_unlock_irq(rq, &rf);
+>>> +                       rq_unlock_irqrestore(rq, &rf);
+>>>                          if (flags & NOHZ_BALANCE_KICK)
+>>>                                  rebalance_domains(rq, CPU_IDLE);
+>>> @@ -9466,10 +9489,17 @@ static bool nohz_idle_balance(struct rq *this_rq,
+>>> enum cpu_idle_type idle)
+>>>                          next_balance = rq->next_balance;
+>>>                          update_next_balance = 1;
+>>>                  }
+>>> +
+>>> +               domain_cost = sched_clock_cpu(this_cpu) - t0;
+>>> +               curr_cost += domain_cost;
+>>> +
+>>>          }
+>>>    -     update_blocked_averages(this_cpu);
+>>> -       has_blocked_load |= this_rq->has_blocked_load;
+>>> +       /* Newly idle CPU doesn't need an update */
+>>> +       if (idle != CPU_NEWLY_IDLE) {
+>>> +               update_blocked_averages(this_cpu);
+>>> +               has_blocked_load |= this_rq->has_blocked_load;
+>>> +       }
+>>>          if (flags & NOHZ_BALANCE_KICK)
+>>>                  rebalance_domains(this_rq, CPU_IDLE);
+>>> @@ -9477,6 +9507,10 @@ static bool nohz_idle_balance(struct rq *this_rq,
+>>> enum cpu_idle_type idle)
+>>>          WRITE_ONCE(nohz.next_stats,
+>>>                  now + msecs_to_jiffies(LOAD_AVG_PERIOD));
+>>>    +     /* The full idle balance loop has been done */
+>>> +       ret = true;
+>>> +
+>>> +abort:
+>>>          /* There is still blocked load, enable periodic update */
+>>>          if (has_blocked_load)
+>>>                  atomic_set(&nohz.stats_state, 1);
+>>> @@ -9489,6 +9523,35 @@ static bool nohz_idle_balance(struct rq *this_rq,
+>>> enum cpu_idle_type idle)
+>>>          if (likely(update_next_balance))
+>>>                  nohz.next_balance = next_balance;
+>>>    +     return ret;
+>>> +}
+>>> +
+>>> +/*
+>>> + * In CONFIG_NO_HZ_COMMON case, the idle balance kickee will do the
+>>> + * rebalancing for all the cpus for whom scheduler ticks are stopped.
+>>> + */
+>>> +static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type
+>>> idle)
+>>> +{
+>>> +       int this_cpu = this_rq->cpu;
+>>> +       unsigned int flags;
+>>> +
+>>> +       if (!(atomic_read(nohz_flags(this_cpu)) & NOHZ_KICK_MASK))
+>>> +               return false;
+>>> +
+>>> +       if (idle != CPU_IDLE) {
+>>> +               atomic_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
+>>> +               return false;
+>>> +       }
+>>> +
+>>> +       /*
+>>> +        * barrier, pairs with nohz_balance_enter_idle(), ensures ...
+>>> +        */
+>>> +       flags = atomic_fetch_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
+>>> +       if (!(flags & NOHZ_KICK_MASK))
+>>> +               return false;
+>>> +
+>>> +       _nohz_idle_balance(this_rq, flags, idle);
+>>> +
+>>>          return true;
+>>>    }
+>>>    #else
+>>
+>>
