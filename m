@@ -1,60 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753246AbeA3UbQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 15:31:16 -0500
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:43807 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752298AbeA3UbN (ORCPT
+        id S1753279AbeA3Ubn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:31:43 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56612 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752995AbeA3UaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:31:13 -0500
-Message-ID: <1517344262.2230.27.camel@tiscali.nl>
-Subject: Re: [PATCH] kconfig: Warn if help text is blank
-From: Paul Bolle <pebolle@tiscali.nl>
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Date: Tue, 30 Jan 2018 21:31:02 +0100
-In-Reply-To: <CAFkk2KSUpEvCCt0fUzCN+r7Lz9CuyN3jKV6atpPR92zPRK4f-w@mail.gmail.com>
-References: <20180130181853.32512-1-ulfalizer@gmail.com>
-         <1517337292.2230.15.camel@tiscali.nl>
-         <CAFkk2KSUpEvCCt0fUzCN+r7Lz9CuyN3jKV6atpPR92zPRK4f-w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfEAnD93OMt0DtXVP+uiKtYnxDhbg2ay+QjVNdy6mrIfm9yjc/LZjUTap7ktEzC3pf2KKxXBWfv+7CiEVLFKEwoO3dKiY5FwC+SbNrlPU1VggfpWKkArR
- NpgK3sk+j3mDdawkVLdngX3LjmbgE/jqwK7Z1CtBkKKPyYn0PBlkmV3wfL7LZ9EqC387poAZmMXlBMbQAqnSLwmEiZWdnZ0m8CeDN5rAgJ0p2N9Uu00tSwS5
- ny8fVHJ6xnAmqYTCvzQhqXZsNmPp7BmWGskG7naIUyCjFuGNt7OdSQtuwmyCLH4RZSm8793Fs3V/JoYls1KN02T/gx4Hh9ezQoiFoKwCrs0=
+        Tue, 30 Jan 2018 15:30:03 -0500
+From: Thierry Escande <thierry.escande@collabora.com>
+To: Archit Taneja <architt@codeaurora.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Haixia Shi <hshi@chromium.org>,
+        =?UTF-8?q?=C3=98rjan=20Eide?= <orjan.eide@arm.com>,
+        Zain Wang <wzz@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
+        Lin Huang <hl@rock-chips.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Mark Yao <mark.yao@rock-chips.com>, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH v3 38/43] drm/rockchip: Cancel PSR enable work before changing the state
+Date: Tue, 30 Jan 2018 21:29:08 +0100
+Message-Id: <20180130202913.28724-39-thierry.escande@collabora.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180130202913.28724-1-thierry.escande@collabora.com>
+References: <20180130202913.28724-1-thierry.escande@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset = "utf-8"
+Content-Transfert-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-01-30 at 20:33 +0100, Ulf Magnusson wrote:
-> I agree that this shouldn't go in until/unless a significant portion
-> of those empty help texts get removed first.
+From: Tomasz Figa <tfiga@chromium.org>
 
-Not a significant portion, but all, I'd say.
+If we change the state first and reschedule later, we might have the
+work executed according to previous scheduled time and end up with PSR
+re-enabled instantly. Let's cancel the work before changing the state.
 
-> The patchset that removes the empty help texts is at
-> https://lkml.org/lkml/2018/1/30/574. I could make another one if you'd
-> prefer that.
+While at it, consolidate psr_disable_handler() to just call
+rockchip_drm_do_flush(), as they are both supposed to do the same.
 
-I'm fine with anything that doesn't add warnings just to appease pet peeves.
+Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-> I haven't even checked how they are rendered to be honest. I was more
-> concerned with the Kconfig mess.
-
-Well, if you could make empty help texts disappear somehow (either during the
-Kconfig parse phase - which requires a jump into the yacc horror - or during
-the rendering phase) that would be much better than adding a warning for
-something that you yourself described as a pet peeve.
-
-And after that's done you're free to send cleanup patches for this whenever
-you feel like doing so.
-
-Thanks,
-
-
-Paul Bolle
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+index a107845ba97c..c8655e625ba2 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+@@ -138,18 +138,6 @@ static void psr_flush_handler(struct work_struct *work)
+ 	mutex_unlock(&psr->lock);
+ }
+ 
+-static void psr_disable_handler(struct work_struct *work)
+-{
+-	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
+-
+-	/* If the state has changed since we initiated the flush, do nothing */
+-	mutex_lock(&psr->lock);
+-	if (psr->state == PSR_ENABLE)
+-		psr_set_state_locked(psr, PSR_FLUSH);
+-	mutex_unlock(&psr->lock);
+-	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
+-}
+-
+ /**
+  * rockchip_drm_psr_activate - activate PSR on the given pipe
+  * @encoder: encoder to obtain the PSR encoder
+@@ -198,6 +186,7 @@ EXPORT_SYMBOL(rockchip_drm_psr_deactivate);
+ 
+ static void rockchip_drm_do_flush(struct psr_drv *psr)
+ {
++	cancel_delayed_work_sync(&psr->flush_work);
+ 	psr_set_state(psr, PSR_FLUSH);
+ 	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
+ }
+@@ -244,6 +233,13 @@ void rockchip_drm_psr_flush_all(struct drm_device *dev)
+ }
+ EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
+ 
++static void psr_disable_handler(struct work_struct *work)
++{
++	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
++
++	rockchip_drm_do_flush(psr);
++}
++
+ static void psr_input_event(struct input_handle *handle,
+ 			    unsigned int type, unsigned int code,
+ 			    int value)
+-- 
+2.14.1
