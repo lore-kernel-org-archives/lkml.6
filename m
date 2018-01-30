@@ -1,84 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753257AbeA3QBh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 11:01:37 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4711 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751858AbeA3QBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 11:01:36 -0500
-Date: Tue, 30 Jan 2018 16:01:07 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        Jeremy Cline <jeremy@jcline.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "Hans de Goede" <hdegoede@redhat.com>,
-        Lars Kellogg-Stedman <lars@oddbit.com>,
-        "Steven Presser" <steve@pressers.name>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, <linux-iio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device
- for BOSC0200
-Message-ID: <20180130160107.000006df@huawei.com>
-In-Reply-To: <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
-References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
-        <20171210182152.70ad8fbf@archlinux>
-        <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
-        <20180114104330.2aa7c1fd@archlinux>
-        <20180128094021.572ab366@archlinux>
-        <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.15.0 (GTK+ 2.24.31; x86_64-w64-mingw32)
+        id S1753286AbeA3QCr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 11:02:47 -0500
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:40102 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751452AbeA3QCq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 11:02:46 -0500
+X-Google-Smtp-Source: AH8x224Agw8i2zNh6EVRnkAiXvh8ZXwy20pBHJlK67nx+7zDUHxtBM+FNB9t5wr87CxU8PlNPt2w0Q==
+Date: Tue, 30 Jan 2018 11:02:44 -0500
+From: Sean Paul <seanpaul@chromium.org>
+To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc: Sean Paul <seanpaul@chromium.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH v2] drm/edid: use true and false for boolean values
+Message-ID: <20180130160244.p24of44jgib3botq@art_vandelay>
+References: <20180130100528.GA7154@training>
+ <20180130150927.3fm5kotyp6vqugaf@art_vandelay>
+ <20180130151946.GC5453@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.206.48.115]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180130151946.GC5453@intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Jan 2018 16:07:02 +0200
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Tue, Jan 30, 2018 at 05:19:46PM +0200, Ville Syrjälä wrote:
+> On Tue, Jan 30, 2018 at 10:09:27AM -0500, Sean Paul wrote:
+> > On Tue, Jan 30, 2018 at 04:05:28AM -0600, Gustavo A. R. Silva wrote:
+> > > Assign true or false to boolean variables instead of an integer value.
+> > > 
+> > > This issue was detected with the help of Coccinelle.
+> > 
+> > I suppose you could also fix up the other preferred assignment by adding !!
+> > to the bitwise & operation.
+> 
+> Assigning >1 to a bool is well defined. No need to clutter the code with
+> !! imo.
 
-> On Sun, Jan 28, 2018 at 11:40 AM, Jonathan Cameron
-> <jic23@jic23.retrosnub.co.uk> wrote:
-> > On Sun, 14 Jan 2018 10:43:30 +0000
-> > Jonathan Cameron <jic23@kernel.org> wrote:  
-> >> On Tue, 9 Jan 2018 21:24:01 +0000
-> >> Jeremy Cline <jeremy@jcline.org> wrote:  
-> >> > On 12/10/2017 12:21 PM, Jonathan Cameron wrote:  
-> >> > > On Wed, 6 Dec 2017 17:52:34 +0000
-> >> > > Jeremy Cline <jeremy@jcline.org> wrote:  
-> 
-> >> > >> Some BOSC0200 acpi_device-s describe two accelerometers in a single ACPI
-> >> > >> device. Check for a companion device and handle a second i2c_client
-> >> > >> if it is present.  
-> 
-> >> > I didn't see this land anywhere (I was looking in
-> >> > git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git, maybe that's not
-> >> > the right place?) and I just wanted to make sure this didn't get lost in
-> >> > the holiday shuffle.  
-> >> It did indeed get lost - thanks for the reminder.  Now applied to the
-> >> togreg branch of iio.git.  However, unfortunately we may be too near
-> >> to the merge window opening for it to make it.  Depends on what Linus
-> >> says later today when rc8 comes out.  
-> >
-> > I've added some #ifdef CONFIG_ACPI defenses against the case
-> > of no ACPI support being compiled in.  Alternative would be to add
-> > stubs for those functions that don't have them...
-> >
-> > probably just acpi_device_hid.
-> >
-> > But that would take much longer.  Feel free to propose it and a patch
-> > removing the ifdef fun if you like!  
-> 
-> Where can I see the patch?
-> 
+There are examples of both in the file already. I don't have strong feelings
+either way.
 
-Doh. I clearly forgot to push out.  Should be able to push to
-iio.git on kernel.org later.
+Sea
 
-Jonathan
+> 
+> > 
+> > It's also helpful to post the spatch in the commit message so others can
+> > replicate your result (this case is pretty trivial, so less important).
+> > 
+> > Sean
+> > 
+> > > 
+> > > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > > ---
+> > > Changes in v2:
+> > >  - Use true for boolean value in add_detailed_mode as suggested by Daniel
+> > >    Vetter.
+> > >  - Update subject.
+> > > 
+> > >  drivers/gpu/drm/drm_edid.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+> > > index ddd5379..b1cb262 100644
+> > > --- a/drivers/gpu/drm/drm_edid.c
+> > > +++ b/drivers/gpu/drm/drm_edid.c
+> > > @@ -2767,7 +2767,7 @@ do_detailed_mode(struct detailed_timing *timing, void *c)
+> > >  
+> > >  		drm_mode_probed_add(closure->connector, newmode);
+> > >  		closure->modes++;
+> > > -		closure->preferred = 0;
+> > > +		closure->preferred = false;
+> > >  	}
+> > >  }
+> > >  
+> > > @@ -2784,7 +2784,7 @@ add_detailed_modes(struct drm_connector *connector, struct edid *edid,
+> > >  	struct detailed_mode_closure closure = {
+> > >  		.connector = connector,
+> > >  		.edid = edid,
+> > > -		.preferred = 1,
+> > > +		.preferred = true,
+> > >  		.quirks = quirks,
+> > >  	};
+> > >  
+> > > -- 
+> > > 2.7.4
+> > > 
+> > 
+> > -- 
+> > Sean Paul, Software Engineer, Google / Chromium OS
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> -- 
+> Ville Syrjälä
+> Intel OTC
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
