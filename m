@@ -1,131 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752895AbeA3TSd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 14:18:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751699AbeA3TSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:18:32 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 616892173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Tue, 30 Jan 2018 13:18:27 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: =?utf-8?B?5Yav6ZSQ?= <rui_feng@realsil.com.cn>
-Cc: "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>, Dave Jiang <dave.jiang@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?= =?utf-8?B?5aSNOg==?=
- [PATCH v6] mfd: Add support for RTS5250S power saving
-Message-ID: <20180130191827.GI232763@bhelgaas-glaptop.roam.corp.google.com>
-References: <1504772799-15173-1-git-send-email-rui_feng@realsil.com.cn>
- <20171214222522.GL30595@bhelgaas-glaptop.roam.corp.google.com>
- <2A308283684ECD4B896628E09AF5361E01A8150B@RS-MBS01.realsil.com.cn>
- <20171215151522.GT30595@bhelgaas-glaptop.roam.corp.google.com>
- <2A308283684ECD4B896628E09AF5361E01A8193C@RS-MBS01.realsil.com.cn>
- <20171227233750.GB79892@bhelgaas-glaptop.roam.corp.google.com>
- <20180117210121.GD7039@bhelgaas-glaptop.roam.corp.google.com>
- <2A308283684ECD4B896628E09AF5361E01A8A102@RS-MBS01.realsil.com.cn>
+        id S1752658AbeA3TVr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:21:47 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57610 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751559AbeA3TVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 14:21:45 -0500
+Message-ID: <5A70C536.7040208@arm.com>
+Date: Tue, 30 Jan 2018 19:19:18 +0000
+From: James Morse <james.morse@arm.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2A308283684ECD4B896628E09AF5361E01A8A102@RS-MBS01.realsil.com.cn>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+To: Xie XiuQi <xiexiuqi@huawei.com>
+CC: catalin.marinas@arm.com, will.deacon@arm.com, mingo@redhat.com,
+        mark.rutland@arm.com, ard.biesheuvel@linaro.org, Dave.Martin@arm.com,
+        takahiro.akashi@linaro.org, tbaicar@codeaurora.org,
+        stephen.boyd@linaro.org, bp@suse.de, julien.thierry@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, wangxiongfeng2@huawei.com,
+        zhengqiang10@huawei.com, gengdongjiu@huawei.com,
+        huawei.libin@huawei.com, wangkefeng.wang@huawei.com,
+        lijinyue@huawei.com, guohanjun@huawei.com, hanjun.guo@linaro.org,
+        cj.chengjian@huawei.com
+Subject: Re: [PATCH v5 1/3] arm64/ras: support sea error recovery
+References: <1516969885-150532-1-git-send-email-xiexiuqi@huawei.com> <1516969885-150532-2-git-send-email-xiexiuqi@huawei.com>
+In-Reply-To: <1516969885-150532-2-git-send-email-xiexiuqi@huawei.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 19, 2018 at 07:38:22AM +0000, 冯锐 wrote:
-> > On Wed, Dec 27, 2017 at 05:37:50PM -0600, Bjorn Helgaas wrote:
-> > > On Tue, Dec 19, 2017 at 08:15:24AM +0000, 冯锐 wrote:
-> > > > > On Fri, Dec 15, 2017 at 09:42:45AM +0000, 冯锐 wrote:
-> > > > > > > [+cc Hans, Dave, linux-pci]
-> > > > > > >
-> > > > > > > On Thu, Sep 07, 2017 at 04:26:39PM +0800,
-> > > > > > > rui_feng@realsil.com.cn
-> > > > > wrote:
-> > > > > > > > From: Rui Feng <rui_feng@realsil.com.cn>
-> > > > > > >
-> > > > > > > I wish this had been posted to linux-pci before being merged.
-> > > > > > >
-> > > > > > > I'm concerned because some of this appears to overlap and
-> > > > > > > conflict with PCI core management of ASPM.
-> > > > > > >
-> > > > > > > I assume these devices advertise ASPM support in their Link
-> > > > > > > Capabilites registers, right?  If so, why isn't the existing
-> > > > > > > PCI core ASPM support sufficient?
-> > > > > > >
-> > > > > > When L1SS is configured, the device(hardware) can't enter L1SS
-> > > > > > status automatically, it need driver(software) to do some work
-> > > > > > to achieve the
-> > > > > function.
-> > > > >
-> > > > > So this is a hardware defect in the device?  As far as I know,
-> > > > > ASPM and L1SS are specified such that they should work without special
-> > driver support.
-> > > > >
-> > > > Yes, you can say that.
-> > > >
-> > > > > > > > Enable power saving for RTS5250S as following steps:
-> > > > > > > > 1.Set 0xFE58 to enable clock power management.
-> > > > > > >
-> > > > > > > Is this clock power management something specific to RTS5250S,
-> > > > > > > or is it standard PCIe architected stuff?
-> > > > > > >
-> > > > > > 0xFE58 is specific register to RTS5250S not standard PCIe architected
-> > stuff.
-> > > > >
-> > > > > OK.  I asked because devices often mirror architected PCIe config
-> > > > > things in device-specific MMIO space, and if I squint just right,
-> > > > > I can sort of match up the register bits you used with things in the PCIe
-> > spec.
-> > > > >
-> > > > > > > > 2.Check cfg space whether support L1SS or not.
-> > > > > > >
-> > > > > > > This sounds like standard PCIe ASPM L1 Substates, right?
-> > > > > > >
-> > > > > > Yes.
-> > > > > >
-> > > > > > > > 3.If support L1SS, set 0xFF03 to free clkreq.
-> > > > > > > > 4.When entering idle status, enable aspm
-> > > > > > > >   and set parameters for L1SS and LTR.
-> > > > > > > > 5.Wnen entering run status, disable aspm
-> > > > > > > >   and set parameters for L1SS and LTR.
-> > > > > > >
-> > > > > > > In general, drivers should not configure ASPM, L1SS, and LTR
-> > > > > > > themselves; the PCI core should do that.
-> > > > > > >
-> > > > > > > If a driver needs to tweak ASPM at run-time, it should use
-> > > > > > > interfaces exported by the PCI core to do so.
-> > > > > > >
-> > > > > > Which interface I can use to set ASPM? I use "pci_write_config_byte"
-> > now.
-> > > > >
-> > > > > What do you need to do?  include/linux/pci-aspm.h exports
-> > > > > pci_disable_link_state(), which is mainly used to avoid ASPM
-> > > > > states that have hardware errata.
-> > > > >
-> > > > I want to enable ASPM(L0 -> L1) and disable ASPM(L1 -> L0), which
-> > > > interface can I use?
-> > >
-> > > You can use pci_disable_link_state() to disable usage of L1.
-> > >
-> > > Currently there is no corresponding pci_enable_link_state().  What if
-> > > we added something like the following (untested)?  Would that work for
-> > > you?
-> > 
-> > Hi Rui,
-> > 
-> > Any thoughts on the patch below?
+Hi Xie XiuQi,
+
+On 26/01/18 12:31, Xie XiuQi wrote:
+> With ARM v8.2 RAS Extension, SEA are usually triggered when memory errors
+> are consumed. According to the existing process, errors occurred in the
+> kernel, leading to direct panic, if it occurred the user-space, we should
+> just kill process.
 > 
-> I'm busy with other work, the patch seems ok, I will test it later.
+> But there is a class of error, in fact, is not necessary to kill
+> process, you can recover and continue to run the process. Such as
+> the instruction data corrupted, where the memory page might be
+> read-only, which is has not been modified, the disk might have the
+> correct data, so you can directly drop the page, ant reload it when
+> necessary.
 
-Any idea when you might get back to this?
+With firmware-first support, we do all this...
 
-If you can't do it, I can try doing it myself, but of course, I don't
-know the details about the device errata and I wouldn't be able to
-test it.
 
-Bjorn
+> So this patchset is just try to solve such problem: if the error is
+> consumed in user-space and the error occurs on a clean page, you can
+> directly drop the memory page without killing process.
+> 
+> If the corrupted page is clean, just dropped it and return to user-space
+> without side effects. And if corrupted page is dirty, memory_failure()
+> will send SIGBUS with code=BUS_MCEERR_AR. While without this patchset,
+> do_sea() will just send SIGBUS, so the process was killed in the same place.
+
+... but this happens too. I agree its something we should fix, but I don't think
+this is the best way to do it.
+
+This series is pulling the memory-failure-queue details back into the arch-code
+to build a second list, that gets processed as extra work when we return to
+user-space.
+
+
+The root of the issue is ghes_notify_sea() claims the notification as something
+APEI has dealt with, ... but it hasn't done it yet. The signals will be
+generated by something currently stuck in a queue. (Evidently x86 doesn't handle
+synchronous errors like this using firmware-first).
+
+I think a smaller fix is to give the queues that may be holding the
+memory_failure() work a kick as part of the code that calls ghes_notify_sea().
+This means that by the time we return to do_sea() ghes_notify_sea()'s claim that
+APEI has dealt with it is true as any generated signals are pending. We can then
+skip the existing SIGBUS generation code.
+
+
+> Because memory_failure() may sleep, we can not call it directly in SEA
+
+(this one is more serious, I've attempted to fix it by moving all NMI-like
+GHES-notifications to use the estatus queue).
+
+
+> exception context. So we saved faulting physical address associated with
+> a process in the ghes handler and set __TIF_SEA_NOTIFY. When we return
+> from SEA exception context and get into do_notify_resume() before the
+> process running, we could check it and call memory_failure() to do
+> recovery.
+
+> It's safe, because we are in process context.
+
+I think this is the trick. When we take a Synchronous-external-abort out of
+userspace, we're in process context too. We can add helpers to drain the
+memory_failure_queue which can be called when do_sea() when we know we're
+preemptible and interrupts-et-al are unmasked.
+
+
+Thanks,
+
+James
+
+
+[0] https://www.spinics.net/lists/linux-acpi/msg80149.html
+
+> ---
+>  arch/arm64/Kconfig                   |  11 +++
+>  arch/arm64/include/asm/ras.h         |  23 ++++++
+>  arch/arm64/include/asm/thread_info.h |   4 +-
+>  arch/arm64/kernel/Makefile           |   1 +
+>  arch/arm64/kernel/ras.c              | 142 +++++++++++++++++++++++++++++++++++
+>  arch/arm64/kernel/signal.c           |   7 ++
+>  arch/arm64/mm/fault.c                |  27 +++++--
+>  drivers/acpi/apei/ghes.c             |   8 +-
+>  include/acpi/ghes.h                  |   3 +
+>  9 files changed, 216 insertions(+), 10 deletions(-)
+>  create mode 100644 arch/arm64/include/asm/ras.h
+>  create mode 100644 arch/arm64/kernel/ras.c
