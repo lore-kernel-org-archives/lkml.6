@@ -1,50 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751666AbeA3Gn0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 01:43:26 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:37707 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751322AbeA3GnX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 01:43:23 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0SxLmNSb_1517294582;
-From: Jia Zhang <zhang.jia@linux.alibaba.com>
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: [PATCH 2/2] x86/mm/64: Add vsyscall page to /proc/kcore conditionally
-Date: Tue, 30 Jan 2018 14:42:59 +0800
-Message-Id: <1517294579-117473-2-git-send-email-zhang.jia@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1517294579-117473-1-git-send-email-zhang.jia@linux.alibaba.com>
-References: <1517294579-117473-1-git-send-email-zhang.jia@linux.alibaba.com>
+        id S1751643AbeA3Guw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 01:50:52 -0500
+Received: from mga05.intel.com ([192.55.52.43]:61561 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751482AbeA3Guu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 01:50:50 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,433,1511856000";
+   d="scan'208";a="14486373"
+Date: Tue, 30 Jan 2018 12:25:23 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Yang Shunyong <shunyong.yang@hxt-semitech.com>
+Cc: dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yu.zheng@hxt-semitch.com
+Subject: Re: [PATCH v2] dmaengine: dmatest: fix container_of member in
+ dmatest_callback
+Message-ID: <20180130065522.GO18649@localhost>
+References: <1517208011-7640-1-git-send-email-shunyong.yang@hxt-semitech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517208011-7640-1-git-send-email-shunyong.yang@hxt-semitech.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vsyscall page should be visible only if
-vsyscall=emulate/native when dumping /proc/kcore.
+On Mon, Jan 29, 2018 at 02:40:11PM +0800, Yang Shunyong wrote:
+> The type of arg passed to dmatest_callback is struct dmatest_done.
+> It refers to test_done in struct dmatest_thread, not done_wait.
 
-Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
----
- arch/x86/mm/init_64.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Applied, thanks
 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index dab78f6..3d4cf33 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1186,8 +1186,9 @@ void __init mem_init(void)
- 	register_page_bootmem_info();
- 
- 	/* Register memory areas for /proc/kcore */
--	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
--		   PAGE_SIZE, KCORE_USER);
-+	if (get_gate_vma(&init_mm))
-+		kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
-+			   PAGE_SIZE, KCORE_USER);
- 
- 	mem_init_print_info(NULL);
- }
 -- 
-1.8.3.1
+~Vinod
