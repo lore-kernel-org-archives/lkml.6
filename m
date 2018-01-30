@@ -1,83 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752742AbeA3O4n (ORCPT <rfc822;w@1wt.eu>);
+        id S1752838AbeA3O4q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:56:46 -0500
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:42739 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752295AbeA3O4n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jan 2018 09:56:43 -0500
-Received: from foss.arm.com ([217.140.101.70]:54836 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752295AbeA3O4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:56:41 -0500
-Date: Tue, 30 Jan 2018 14:56:37 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
-        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 05/16] arm64: Add flags to check the safety of a
- capability for late CPU
-Message-ID: <20180130145636.GE5862@e103592.cambridge.arm.com>
-References: <20180123122809.16269-1-suzuki.poulose@arm.com>
- <20180123122809.16269-6-suzuki.poulose@arm.com>
- <20180126101020.GM5862@e103592.cambridge.arm.com>
- <6313a0f1-ed3c-b5b3-7bbd-5f98862a74c6@arm.com>
+X-Google-Smtp-Source: AH8x225iDjubnZ6kHdgHy8TKaRJCWpZTYAB2xUhEI3xokLpLJzpBkw/XsepmOxSibWc4MF5sa6O+0A==
+Date: Tue, 30 Jan 2018 06:56:39 -0800
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH v4.15-rc9] sched, cgroup: Don't reject lower cpu.max on
+ ancestors
+Message-ID: <20180130145639.GD1121507@devbig577.frc2.facebook.com>
+References: <20180122192618.GA1771050@devbig577.frc2.facebook.com>
+ <20180130102156.GS2249@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6313a0f1-ed3c-b5b3-7bbd-5f98862a74c6@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180130102156.GS2249@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 11:17:38AM +0000, Suzuki K Poulose wrote:
-> On 26/01/18 10:10, Dave Martin wrote:
-> >On Tue, Jan 23, 2018 at 12:27:58PM +0000, Suzuki K Poulose wrote:
-> >>Add two different flags to indicate if the conflict of a capability
-> >>on a late CPU with the current system state
-> >>
-> >>  1) Can a CPU have a capability when the system doesn't have it ?
-> >>
-> >>     Most arm64 features could have this set. While erratum work arounds
-> >>     cannot have this, as we may miss work arounds.
-> >>
-> >>  2) Can a CPU miss a capability when the system has it ?
-> >>     This could be set for arm64 erratum work arounds as we don't
-> >>     care if a CPU doesn't need the work around. However it should
-> >>     be clear for features.
-> >>
-> >>These flags could be added to certain entries based on their nature.
-> >>
-> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>---
-> >>  arch/arm64/include/asm/cpufeature.h | 35 +++++++++++++++++++++++++++++++----
-> >>  1 file changed, 31 insertions(+), 4 deletions(-)
-> >>
-> >>diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> >>index 4fd5de8ef33e..27d037bb0451 100644
-> >>--- a/arch/arm64/include/asm/cpufeature.h
-> >>+++ b/arch/arm64/include/asm/cpufeature.h
-> >>@@ -94,10 +94,25 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-> >>  #define SCOPE_SYSTEM				ARM64_CPUCAP_SCOPE_SYSTEM
-> >>  #define SCOPE_LOCAL_CPU				ARM64_CPUCAP_SCOPE_LOCAL_CPU
-> >>-/* CPU errata detected at boot time based on feature of one or more CPUs */
-> >>-#define ARM64_CPUCAP_STRICT_CPU_LOCAL_ERRATUM	(ARM64_CPUCAP_SCOPE_LOCAL_CPU)
-> >>-/* CPU feature detected at boot time based on system-wide value of a feature */
-> >>-#define ARM64_CPUCAP_BOOT_SYSTEM_FEATURE	(ARM64_CPUCAP_SCOPE_SYSTEM)
-> >>+/* Is it safe for a late CPU to have this capability when system doesn't already have */
-> >>+#define ARM64_CPUCAP_LATE_CPU_SAFE_TO_HAVE	BIT(2)
-> >>+/* Is it safe for a late CPU to miss this capability when system has it */
-> >>+#define ARM64_CPUCAP_LATE_CPU_SAFE_TO_MISS	BIT(3)
-> >
-> >Maybe _OPTIONAL and _PERMITTED would be a bit less verbose?
-> >
-> >Alternatively,
-> >	ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU
-> >	ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU
+Hello,
+
+On Tue, Jan 30, 2018 at 11:21:56AM +0100, Peter Zijlstra wrote:
+> afaiu the existing code does exactly the opposite, it forces the
+> descendants to configure less than the parent allows.
 > 
-> Sounds better than what I have. I have picked them up.
+> You're taking out an error condition and silently allowing descentant
+> misconfiguration. How does that make sense?
 
-Cool, I had resigned myself to probably not winning that one ;)
+Well, they're upper limits, not strict allocations.  The current
+behavior implemented by cpu isn't either a strict allocation or upper
+limits.  It disallows a child from having a value higher than the
+parent (allocation-ish) but the sum of the children is allowed to
+exceed the parent's (limit-ish).
 
-Cheers
----Dave
+The combination is rather arbitrary and makes it impossible to
+delegate safely (a delegatee can block the delegator from reducing the
+amount resource allocated to the delegatee) while not really
+protecting against overcommit from descendants either.
+
+We had this sort of input validations in different controllers all in
+their own ways.  In most cases, these aren't well thought out and we
+can't support things like delegation without aligning controller
+behaviors.
+
+Thanks.
+
+-- 
+tejun
