@@ -1,203 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751796AbeA3JZ1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:25:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35201 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751429AbeA3JZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:25:24 -0500
-Date: Tue, 30 Jan 2018 10:25:21 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] printk for 4.16
-Message-ID: <20180130092521.bjbl3ylbglmzx3r2@pathway.suse.cz>
+        id S1751496AbeA3J1f (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:27:35 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33280 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750959AbeA3J1d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 04:27:33 -0500
+X-Google-Smtp-Source: AH8x226G2hpd862eVmVM1V5a9n5m3/x7EFuOslD+edZV3+AT4t3kNC23nGcR+hBC/w+c36+sS8uGhmz3uN32i4iAt0Q=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CACT4Y+YYyw8bz8TgCJPF3mvDuipzs53gsAcj+8rgC42H2y58vw@mail.gmail.com>
+References: <cover.1517246437.git.dvyukov@google.com> <CACT4Y+YYyw8bz8TgCJPF3mvDuipzs53gsAcj+8rgC42H2y58vw@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 30 Jan 2018 10:27:11 +0100
+Message-ID: <CACT4Y+YFZFeyy1UUvy1ab3xGF-scGdvxs8VoKKMqB3nzxf+9rg@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] x86, kasan: add KASAN checks to atomic operations
+To: Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Tue, Jan 30, 2018 at 10:23 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Mon, Jan 29, 2018 at 6:26 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> KASAN uses compiler instrumentation to intercept all memory accesses.
+>> But it does not see memory accesses done in assembly code.
+>> One notable user of assembly code is atomic operations. Frequently,
+>> for example, an atomic reference decrement is the last access to an
+>> object and a good candidate for a racy use-after-free.
+>>
+>> Atomic operations are defined in arch files, but KASAN instrumentation
+>> is required for several archs that support KASAN. Later we will need
+>> similar hooks for KMSAN (uninit use detector) and KTSAN (data race
+>> detector).
+>>
+>> This change introduces wrappers around atomic operations that can be
+>> used to add KASAN/KMSAN/KTSAN instrumentation across several archs,
+>> and adds KASAN checks to them.
+>>
+>> This patch uses the wrappers only for x86 arch. Arm64 will be switched
+>> later. And we also plan to instrument bitops in a similar way.
+>>
+>> Within a day it has found its first bug:
+>>
+>> BUG: KASAN: use-after-free in atomic_dec_and_test
+>> arch/x86/include/asm/atomic.h:123 [inline] at addr ffff880079c30158
+>> Write of size 4 by task syz-executor6/25698
+>> CPU: 2 PID: 25698 Comm: syz-executor6 Not tainted 4.10.0+ #302
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+>> Call Trace:
+>>  kasan_check_write+0x14/0x20 mm/kasan/kasan.c:344
+>>  atomic_dec_and_test arch/x86/include/asm/atomic.h:123 [inline]
+>>  put_task_struct include/linux/sched/task.h:93 [inline]
+>>  put_ctx+0xcf/0x110 kernel/events/core.c:1131
+>>  perf_event_release_kernel+0x3ad/0xc90 kernel/events/core.c:4322
+>>  perf_release+0x37/0x50 kernel/events/core.c:4338
+>>  __fput+0x332/0x800 fs/file_table.c:209
+>>  ____fput+0x15/0x20 fs/file_table.c:245
+>>  task_work_run+0x197/0x260 kernel/task_work.c:116
+>>  exit_task_work include/linux/task_work.h:21 [inline]
+>>  do_exit+0xb38/0x29c0 kernel/exit.c:880
+>>  do_group_exit+0x149/0x420 kernel/exit.c:984
+>>  get_signal+0x7e0/0x1820 kernel/signal.c:2318
+>>  do_signal+0xd2/0x2190 arch/x86/kernel/signal.c:808
+>>  exit_to_usermode_loop+0x200/0x2a0 arch/x86/entry/common.c:157
+>>  syscall_return_slowpath arch/x86/entry/common.c:191 [inline]
+>>  do_syscall_64+0x6fc/0x930 arch/x86/entry/common.c:286
+>>  entry_SYSCALL64_slow_path+0x25/0x25
+>> RIP: 0033:0x4458d9
+>> RSP: 002b:00007f3f07187cf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+>> RAX: fffffffffffffe00 RBX: 00000000007080c8 RCX: 00000000004458d9
+>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000007080c8
+>> RBP: 00000000007080a8 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+>> R13: 0000000000000000 R14: 00007f3f071889c0 R15: 00007f3f07188700
+>> Object at ffff880079c30140, in cache task_struct size: 5376
+>> Allocated:
+>> PID = 25681
+>>  kmem_cache_alloc_node+0x122/0x6f0 mm/slab.c:3662
+>>  alloc_task_struct_node kernel/fork.c:153 [inline]
+>>  dup_task_struct kernel/fork.c:495 [inline]
+>>  copy_process.part.38+0x19c8/0x4aa0 kernel/fork.c:1560
+>>  copy_process kernel/fork.c:1531 [inline]
+>>  _do_fork+0x200/0x1010 kernel/fork.c:1994
+>>  SYSC_clone kernel/fork.c:2104 [inline]
+>>  SyS_clone+0x37/0x50 kernel/fork.c:2098
+>>  do_syscall_64+0x2e8/0x930 arch/x86/entry/common.c:281
+>>  return_from_SYSCALL_64+0x0/0x7a
+>> Freed:
+>> PID = 25681
+>>  __cache_free mm/slab.c:3514 [inline]
+>>  kmem_cache_free+0x71/0x240 mm/slab.c:3774
+>>  free_task_struct kernel/fork.c:158 [inline]
+>>  free_task+0x151/0x1d0 kernel/fork.c:370
+>>  copy_process.part.38+0x18e5/0x4aa0 kernel/fork.c:1931
+>>  copy_process kernel/fork.c:1531 [inline]
+>>  _do_fork+0x200/0x1010 kernel/fork.c:1994
+>>  SYSC_clone kernel/fork.c:2104 [inline]
+>>  SyS_clone+0x37/0x50 kernel/fork.c:2098
+>>  do_syscall_64+0x2e8/0x930 arch/x86/entry/common.c:281
+>>  return_from_SYSCALL_64+0x0/0x7a
+>>
+>> Changes since v1:
+>>  - dropped "x86: remove unused atomic_inc_short()" patch
+>>    it is mailed separately
+>>  - rebased on top of tip/locking/core head
+>>  - other changes noted within individual patches
+>>
+>> Changes since v2:
+>>  - rebased on top of tip/locking/core head
+>>  - dropped a pervasive "x86: use long long for 64-bit atomic ops" commit,
+>>    instead use s64 type in wrappers
+>>  - added "x86: use s64* for old arg of atomic64_try_cmpxchg()" commit
+>>
+>> Changes since v3 are noted in individual commits.
+>>
+>> Changes since v4:
+>>  - rebased on tip/locking/core HEAD
+>>
+>> Changes since v5:
+>>  - rework cmpxchg* implementations so that we have less
+>>    code in macros and more code in functions
+>
+> Some context.
+> This revives a half-year old patch. v5 of this was applied to
+> tip/locking/core, but then reverted due to a reported crash:
+> https://groups.google.com/d/msg/kasan-dev/ZJl66N7smmk/lJY99HmmAgAJ
+>
+> The root cause was in the cmpxchg macros:
+>
+> #define cmpxchg64(ptr, old, new)                       \
+> ({                                                     \
+>        __typeof__(ptr) ____ptr = (ptr);                \
+>        kasan_check_write(____ptr, sizeof(*____ptr));   \
+>        arch_cmpxchg64(____ptr, (old), (new));          \
+> })
+>
+> I had to introduce the new ____ptr variable, so that
+> kasan_check_write() and arch_cmpxchg64() don't evaluate ptr twice. But
+> there are multiple layers of macros and ____ptr ended up referring to
+> something else (to itself).
+>
+> v6 changes cmpxchg macros to (as was suggested by Mark and Thomas):
+>
+> static __always_inline unsigned long
+> cmpxchg_size(volatile void *ptr, unsigned long old, unsigned long new, int size)
+> {
+>         kasan_check_write(ptr, size);
+>         switch (size) {
+>         case 1:
+>                 return arch_cmpxchg((u8 *)ptr, (u8)old, (u8)new);
+>         case 2:
+>                 return arch_cmpxchg((u16 *)ptr, (u16)old, (u16)new);
+>         case 4:
+>                 return arch_cmpxchg((u32 *)ptr, (u32)old, (u32)new);
+>         case 8:
+>                 BUILD_BUG_ON(sizeof(unsigned long) != 8);
+>                 return arch_cmpxchg((u64 *)ptr, (u64)old, (u64)new);
+>         }
+>         BUILD_BUG();
+>         return 0;
+> }
+>
+> #define cmpxchg(ptr, old, new)                                                \
+> ({                                                                        \
+>         ((__typeof__(*(ptr)))cmpxchg_size((ptr), (unsigned long)(old),        \
+>                 (unsigned long)(new), sizeof(*(ptr))));                        \
+> })
+>
+> Otherwise the patch series were rebased without any conflicts (surprisingly).
+>
+> There is now some duplication between cmpxchg_size, cmpxchg_local_size
+> and sync_cmpxchg_size, but I thought that employing more macros while
+> trying to resolve macro mess bugs is not the best idea.
 
-please pull the latest printk changes from
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git for-linus
-
-=============
-
-- Add console_msg_format command line option. The value "default" keeps
-  the old "[time stamp] text\n" format. The value "syslog" allows to see
-  the syslog-like "<log level>[timestamp] text" format.
-
-  This feature was requested by people doing regression tests, for example,
-  0day robot. They want to have both filtered and full logs at hands.
-
-
-- Reduce the risk of softlockup by passing the console owner in a busy loop.
-
-  This is a new approach to the old problem. It was first proposed
-  by Steven Rostedt on Kernel Summit 2017. It marks a context in which
-  the console_lock owner calls console drivers and could not sleep.
-  On the other side, printk() callers could detect this state and
-  use a busy wait instead of a simple console_trylock(). Finally,
-  the console_lock owner checks if there is a busy waiter at
-  the end of the special context and eventually passes
-  the console_lock to the waiter.
-
-  The hand-off works surprisingly well and helps in many situations.
-  Well, there is still a possibility of the softlockup, for example,
-  when the flood of messages stops and the last owner still has too
-  much to flush.
-
-  There is increasing number of people having problems with
-  printk-related softlockups. We might eventually need to get
-  better solution. Anyway, this looks like a good start and
-  promising direction.
-
-
-- Do not allow to schedule in console_unlock() called from
-  printk().
-
-  This reverts an older controversial commit. The reschedule
-  helped to avoid softlockups. But it also slowed down the console
-  output. This patch is obsoleted by the new console waiter logic
-  described above. In fact, the reschedule made the hand-off
-  less effective.
-
-
-- Deprecate "%pf" and "%pF" format specifier. It was needed on
-  ia64, ppc64 and parisc64 to dereference function descriptors
-  and show the real function address. It is done transparently
-  by "%ps" and "pS" format specifier now.
-
-  Sergey Senozhatsky found that all the function descriptors
-  were in a special elf section and could be easily detected.
-
-
-- Remove printk_symbol() API. It has been obsoleted by "%pS" format
-  specifier.
-
-  This change helped to remove few continuous lines and a less
-  intuitive old API.
-
-
-- Sergey removed unnecessary memset when processing printk.devkmsg
-  command line option.
-
-===========
-
-There will be few merge conflicts:
-
-- in Documentation/printk-formats.txt:
-
-   - This merge commit removes the obsolete examples for "%pf"
-     format specifier.
-
-   - The commit 553d8e8b107159088cc4 ("docs: correct documentation for
-     %pK") removed empty line right below this paragraph.
-
-
-- scripts/checkpatch.pl:
-
-   - This merge commit removes "fF" from the list of valid specifiers.
-     checkpatch.pl is going to suggests "%ps" or "%pS" instead.
-
-   - the commit 7b1924a1d930eb27fc ("vsprintf: add printk specifier %px")
-     added the "x" specifier to the list.
-
-
-- one more in Documentation/printk-formats.txt:
-
-   - Jonathan Corbet is going to send conversion of this file to the .rst
-     format.
-
-
-Just in case, you might find the first two conflicts resolved
-in
-git://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git tmp
-
-
-----------------------------------------------------------------
-Joel Stanley (1):
-      openrisc: Fix conflicting types for _exext and _stext
-
-Petr Mladek (4):
-      printk: Hide console waiter logic into helpers
-      Merge branch 'for-4.16-deprecate-printk-pf' into for-4.16
-      Merge branch 'for-4.16-print-symbol' into for-4.16
-      Merge branch 'for-4.16-console-waiter-logic' into for-4.16
-
-Sergey Senozhatsky (24):
-      sched/autogroup: remove unneeded kallsyms include
-      sched/autogroup: move sched.h include
-      printk: add console_msg_format command line option
-      arm: do not use print_symbol()
-      arm64: do not use print_symbol()
-      c6x: do not use print_symbol()
-      ia64: do not use print_symbol()
-      mn10300: do not use print_symbol()
-      sh: do not use print_symbol()
-      unicore32: do not use print_symbol()
-      x86: do not use print_symbol()
-      drivers: do not use print_symbol()
-      sysfs: do not use print_symbol()
-      irq debug: do not use print_symbol()
-      lib: do not use print_symbol()
-      sections: split dereference_function_descriptor()
-      ia64: Add .opd based function descriptor dereference
-      powerpc64: Add .opd based function descriptor dereference
-      parisc64: Add .opd based function descriptor dereference
-      symbol lookup: introduce dereference_symbol_descriptor()
-      checkpatch: add pF/pf deprecation warning
-      kallsyms: remove print_symbol() function
-      printk: Never set console_may_schedule in console_trylock()
-      printk: drop redundant devkmsg_log_str memsets
-
-Steven Rostedt (VMware) (1):
-      printk: Add console owner and waiter logic to load balance console writes
-
- Documentation/admin-guide/kernel-parameters.txt    |  14 ++
- Documentation/filesystems/sysfs.txt                |   4 +-
- Documentation/printk-formats.txt                   |  35 ++--
- .../translations/zh_CN/filesystems/sysfs.txt       |   4 +-
- arch/arm/kernel/process.c                          |   5 +-
- arch/arm64/kernel/process.c                        |   5 +-
- arch/c6x/kernel/traps.c                            |   4 +-
- arch/ia64/include/asm/sections.h                   |  10 +-
- arch/ia64/kernel/module.c                          |  12 ++
- arch/ia64/kernel/process.c                         |  10 +-
- arch/ia64/kernel/vmlinux.lds.S                     |   2 +
- arch/mn10300/kernel/traps.c                        |   4 +-
- arch/openrisc/kernel/traps.c                       |   3 +-
- arch/parisc/boot/compressed/vmlinux.lds.S          |   2 +
- arch/parisc/include/asm/sections.h                 |   6 +
- arch/parisc/kernel/module.c                        |  16 ++
- arch/parisc/kernel/process.c                       |   9 +
- arch/parisc/kernel/vmlinux.lds.S                   |   2 +
- arch/powerpc/include/asm/module.h                  |   3 +
- arch/powerpc/include/asm/sections.h                |  12 ++
- arch/powerpc/kernel/module_64.c                    |  14 ++
- arch/powerpc/kernel/vmlinux.lds.S                  |   2 +
- arch/sh/kernel/process_32.c                        |   5 +-
- arch/unicore32/kernel/process.c                    |   5 +-
- arch/x86/kernel/cpu/mcheck/mce.c                   |   3 +-
- arch/x86/mm/mmio-mod.c                             |   5 +-
- drivers/base/core.c                                |   5 +-
- fs/sysfs/file.c                                    |   5 +-
- include/asm-generic/sections.h                     |   8 +-
- include/linux/kallsyms.h                           |  72 +++++--
- include/linux/module.h                             |  10 +
- kernel/irq/debug.h                                 |  14 +-
- kernel/kallsyms.c                                  |  46 -----
- kernel/module.c                                    |   6 +
- kernel/printk/printk.c                             | 215 ++++++++++++++++++---
- kernel/sched/autogroup.c                           |   5 +-
- lib/smp_processor_id.c                             |   3 +-
- lib/vsprintf.c                                     |   5 +-
- scripts/checkpatch.pl                              |  11 +-
- 39 files changed, 428 insertions(+), 173 deletions(-)
+Why I am reviving this patch now: besides the fact that it needs to be
+done sooner or later anyway (also useful for KMSAN/KTSAN), now there
+is another reason. Any silent heap corruptions produce very negative
+effect on syzbot. If we miss a corruption on atomic access, syzbot can
+report a dozen of induced crashes in random places. These look broken,
+unexplainable, non-reproducible and cause complaints. It's better to
+proactively prevent at this this known source of silent corruptions.
