@@ -1,48 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752451AbeA3WV7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:21:59 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:55597 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751475AbeA3WV5 (ORCPT
+        id S1752785AbeA3WWf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 17:22:35 -0500
+Received: from mail-io0-f175.google.com ([209.85.223.175]:43208 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752535AbeA3WWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:21:57 -0500
-Date: Tue, 30 Jan 2018 23:21:45 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        nicolas.ferre@microchip.com, linux-kernel@vger.kernel.org,
-        Santiago Esteban <Santiago.Esteban@microchip.com>
-Subject: Re: [PATCH] ARM: dts: at91: sama5d4: fix pinctrl compatible string
-Message-ID: <20180130222145.GO2809@piout.net>
-References: <20180118143847.15309-1-ludovic.desroches@microchip.com>
+        Tue, 30 Jan 2018 17:22:32 -0500
+X-Google-Smtp-Source: AH8x224ZgoJ5USy8gW01zBu4PTr1nJ5nxE12lMxcekISGgto/x3FXFC0FmdrcF3cwVkMWlB5R6D4GA==
+Date: Tue, 30 Jan 2018 14:22:28 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: David Miller <davem@davemloft.net>, santosh.shilimkar@oracle.com,
+        rds-devel@oss.oracle.com,
+        bot+aaf54a8c644d559d34dedcf3126aac68a20c9e63@syzkaller.appspotmail.com,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [rds-devel] BUG: unable to handle kernel NULL pointer
+ dereference in rds_send_xmit
+Message-ID: <20180130222228.q23csjr5l666v3o5@gmail.com>
+References: <001a1145ac5480242305609956b3@google.com>
+ <5ba83a68-0103-d514-1b22-900f755f5aa4@oracle.com>
+ <20171218.121213.289437104214632276.davem@davemloft.net>
+ <20171218172251.GD26203@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180118143847.15309-1-ludovic.desroches@microchip.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20171218172251.GD26203@oracle.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/01/2018 at 15:38:47 +0100, Ludovic Desroches wrote:
-> From: Santiago Esteban <Santiago.Esteban@microchip.com>
+On Mon, Dec 18, 2017 at 12:22:51PM -0500, Sowmini Varadhan wrote:
+> > From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+> > Date: Mon, 18 Dec 2017 08:28:05 -0800
+>   :
+> > > Looks like another one tripping on empty transport. Mostly below
+> > > should
+> > > address it but we will test it if it does.
 > 
-> The compatible string is incorrect. Add atmel,sama5d3-pinctrl since
-> it's the appropriate compatible string. Remove the
-> atmel,at91rm9200-pinctrl compatible string, this fallback is
-> useless, there are too many changes.
+> that was my first thought, but it cannot be the case here: rds_sendmsg
+> etc itself would have bombed if that were the case, and the packet
+> would never have gotten queued.
 > 
-> Signed-off-by: Santiago Esteban <Santiago.Esteban@microchip.com>
-> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> Cc: stable@vger.kernel.org #v3.18
-> ---
->  arch/arm/boot/dts/sama5d4.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This is unlike f3069c6d33, where an applications skips the transport
+> binding (either misses the explicit bind, or gets the wrong transport
+> due to an implicit bind) before it triggers the setsockopt.
 > 
-Applied, thanks.
+> I suspect that the problems is that the conn (and thus c_trans)
+> have gotten destroyed, but the cp_send_w work got incorrectly 
+> re-queued. For example, rds_cong_queue_updates() (because the
+> peer sent a congestion update) can happen in softirq context, 
+> and would end up requeing work in the middle of rds_conn_destroy, 
+> after we have assumed that everything is quisced.
+> 
+> On (12/18/17 12:12), David Miller wrote:
+> > 
+> > We're seeming to accumulate a lot of checks like this, maybe there
+> > is a more general way to deal with this problem?
+> 
+> Yeah, I was thinking about this..  let me try to reprodcue this in-house
+> and get back with a patchset.  
+> 
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+I assume you weren't able to reproduce this?  This crash hasn't been seen again,
+and it was reported while KASAN was accidentally disabled in the syzbot kconfig
+due to a change to the kconfig menus in linux-next.  So this crash was possibly
+caused by slab corruption elsewhere.
+
+I am invalidating the bug for syzbot so it will report the same crash signature
+again if it occurs, but if you think there is a real bug feel free to keep
+looking into it.
+
+#syz invalid
+
+Thanks,
+
+Eric
