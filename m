@@ -1,57 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932067AbeA3SLQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:11:16 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:52421 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752595AbeA3SLM (ORCPT
+        id S1753464AbeA3SLl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:11:41 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:44670 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752595AbeA3SLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:11:12 -0500
-X-Google-Smtp-Source: AH8x22454wxmYqyNJcOBzQa67ZdQM6mRc+ckVa2+hOtlg4RmiWdKL74l9vkdruAaJedIttesW9nfkDISAQmpAiaxxsA=
+        Tue, 30 Jan 2018 13:11:39 -0500
+X-Google-Smtp-Source: AH8x226Om5oHTbPr1/UoaVAqfpr+03ENSBoU0hL+tWNskK5Etl42mfWzHHfp5ofL3gRI4Wb6gmWN2A==
+Date: Tue, 30 Jan 2018 10:11:35 -0800
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [GIT PULL] workqueue changes for v4.16-rc1
+Message-ID: <20180130181135.GG1121507@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <20180130063002.gxmruvxcqsfp5hv4@gmail.com>
-References: <alpine.DEB.2.20.1801290935160.1849@nanos> <CA+55aFy6FX6Ewg9exGH12PWnzSNKBfmc--v6H6UYpcSAEWUR8A@mail.gmail.com>
- <20180130063002.gxmruvxcqsfp5hv4@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 30 Jan 2018 10:11:10 -0800
-X-Google-Sender-Auth: PdFB6zxEo2DxUo47Be6TDhCOsMw
-Message-ID: <CA+55aFxzm6fY396+Nh3mZm5BroW4ZQmh3gj0YLvg7nKs5qzQKg@mail.gmail.com>
-Subject: Re: [GIT pull] Timer core updates for 4.16
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 10:30 PM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> These are in cases significant driver simplifications, but they also enable the
-> real deal, the elimination of the hrtimer tasklet:
->
->  softirq: Remove tasklet_hrtimer
->
->    include/linux/interrupt.h | 25 -----------------------
->    kernel/softirq.c          | 51 -----------------------------------------------
->    2 files changed, 76 deletions(-)
->
-> ... which is a pretty nice thing in itself even without the driver
-> simplifications!
->
-> Plus the _real_ secret motivation behind it all is the -rt kernel and
-> CONFIG_PREEMPT_RT=y and the ability to push most of the hrtimer processing into
-> softirq context - while it still keeps the main hrtimer machinery capable to run
-> in hard-RT hardirq domain. Turns out it was possible to implement this duality via
-> the softirq-hrtimers, with a good chunk of benefits to non-rt upstream as well.
+Hello, Linus.
 
-So this is the kind of explanation that I would have liked in the
-"please pull" (and that would have been great in the merge message).
-Explaining not just the "what", but very much the "why".
+Workqueue changes for v4.16-rc1.  Two patches for the following.
 
-Anyway, it's obviously pulled regardless, and I'm just pointing this
-out for "maybe next time".
+* Workqueue has an early init trick where workqueues can be created
+  and work items queued on them before the workqueue subsystem is
+  online.  This helps simplifying early init and operation of low
+  level subsystems which use workqueues for managerial things which
+  aren't depended upon early during boot.
 
-                  Linus
+  Out of laziness, the early init didn't cover workqueues with
+  WQ_MEM_RECLAIM, which is inconsistent and confusing because adding
+  the flag simply makes the system fail to boot.  Cover WQ_MEM_RECLAIM
+  too.
+
+  This was originally brought up for RCU but RCU didn't actually need
+  this.  I still think it's a good idea to cover it.
+
+Thanks.
+
+The following changes since commit b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d:
+
+  Linux 4.15-rc7 (2018-01-07 14:22:41 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-4.16
+
+for you to fetch changes up to 40c17f75dfa9ec163478efd3f7443fd6af9992c9:
+
+  workqueue: allow WQ_MEM_RECLAIM on early init workqueues (2018-01-08 05:38:37 -0800)
+
+----------------------------------------------------------------
+Tejun Heo (2):
+      workqueue: separate out init_rescuer()
+      workqueue: allow WQ_MEM_RECLAIM on early init workqueues
+
+ kernel/workqueue.c | 64 ++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 40 insertions(+), 24 deletions(-)
+
+-- 
+tejun
