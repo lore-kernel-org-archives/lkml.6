@@ -1,34 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753535AbeA3WPy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:15:54 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54764 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751904AbeA3WPv (ORCPT
+        id S1752270AbeA3WRa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 17:17:30 -0500
+Received: from mail-it0-f43.google.com ([209.85.214.43]:40140 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751653AbeA3WR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:15:51 -0500
-X-Google-Smtp-Source: AH8x2266Xh/kQZNu20kJ26R1S4gJgkiS1un1KlqcSLahKfsEGOqABR0Mm/8ZGbteWOfuE52eLjs0ig==
-Date: Tue, 30 Jan 2018 14:15:46 -0800
+        Tue, 30 Jan 2018 17:17:29 -0500
+X-Google-Smtp-Source: AH8x227QqL1yp5fZo3VacQoEBucyOZFMXh/yXgL3WWl1P41f24hoFKObxeWw8VH9zj6ieof66D8JMA==
+Date: Tue, 30 Jan 2018 14:17:25 -0800
 From: Eric Biggers <ebiggers3@gmail.com>
 To: syzbot
-        <bot+ab9e73b97e9844a785a757eca96e6990a101a00d@syzkaller.appspotmail.com>
+        <bot+08fe8c108447c50502fb24ece28b71ebd8bd4f4f@syzkaller.appspotmail.com>
 Cc: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
 Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
- snmp6_unregister_dev
-Message-ID: <20180130221546.n4fy54qfwydj7zuh@gmail.com>
-References: <001a113f861ed0a2a50560ad576a@google.com>
+ inet6_fill_ifinfo
+Message-ID: <20180130221725.ctui7i3xtr7sna2o@gmail.com>
+References: <94eb2c19de601695020560acc57d@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <001a113f861ed0a2a50560ad576a@google.com>
+In-Reply-To: <94eb2c19de601695020560acc57d@google.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 19, 2017 at 12:35:02AM -0800, syzbot wrote:
+On Mon, Dec 18, 2017 at 11:54:00PM -0800, syzbot wrote:
 > Hello,
 > 
 > syzkaller hit the following crash on
@@ -41,60 +41,59 @@ On Tue, Dec 19, 2017 at 12:35:02AM -0800, syzbot wrote:
 > Unfortunately, I don't have any reproducer for this bug yet.
 > 
 > 
-> BUG: unable to handle kernel NULL pointer dereference at 0000000000000578
-> IP: read_pnet include/net/net_namespace.h:270 [inline]
-> IP: dev_net include/linux/netdevice.h:2041 [inline]
-> IP: snmp6_unregister_dev+0x12/0x70 net/ipv6/proc.c:308
-> PGD 1e261e067 P4D 1e261e067 PUD 1dc92e067 PMD 0
+> BUG: unable to handle kernel NULL pointer dereference at 000000000000022c
+> IP: inet6_fill_ifinfo+0x8e/0x2c0 net/ipv6/addrconf.c:5357
+> PGD 1dffd8067 P4D 1dffd8067 PUD 1dc705067 PMD 0
 > Oops: 0000 [#1] SMP
 > Dumping ftrace buffer:
 >    (ftrace buffer empty)
 > Modules linked in:
-> CPU: 1 PID: 1259 Comm: kworker/u4:3 Not tainted 4.15.0-rc3-next-20171214+
+> CPU: 0 PID: 27870 Comm: syz-executor2 Not tainted 4.15.0-rc3-next-20171214+
 > #67
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
-> Workqueue: netns cleanup_net
-> RIP: 0010:read_pnet include/net/net_namespace.h:270 [inline]
-> RIP: 0010:dev_net include/linux/netdevice.h:2041 [inline]
-> RIP: 0010:snmp6_unregister_dev+0x12/0x70 net/ipv6/proc.c:308
-> RSP: 0018:ffffc90002cd3b28 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff8801e0a90800 RCX: ffffffff822a18ef
-> RDX: 0000000000000000 RSI: ffffffff83164ac0 RDI: ffff8801e0a90800
-> RBP: ffffc90002cd3b38 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000001 R11: 0000000000000000 R12: ffff8801e0a90800
-> R13: ffff8801e0a90800 R14: ffffc90002cd3ce8 R15: ffff8801dc936000
-> FS:  0000000000000000(0000) GS:ffff88021fd00000(0000) knlGS:0000000000000000
+> RIP: 0010:inet6_fill_ifinfo+0x8e/0x2c0 net/ipv6/addrconf.c:5357
+> RSP: 0018:ffffc90000f53ae0 EFLAGS: 00010216
+> RAX: 000000000000000a RBX: ffff88021433b300 RCX: ffffffff8224ba71
+> RDX: 0000000000000818 RSI: ffffc9000457f000 RDI: 0000000000000000
+> RBP: ffffc90000f53b18 R08: 0000000000000010 R09: ffff8801dac27ae0
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: ffff8801dfaf5c00 R14: ffff8801dac27ac0 R15: 0000000000000002
+> FS:  00007f0fb6e3b700(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
 > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000578 CR3: 00000001dc8f1000 CR4: 00000000001426e0
+> CR2: 000000000000022c CR3: 0000000213560000 CR4: 00000000001406f0
+> DR0: 0000000020000000 DR1: 0000000020000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
 > Call Trace:
->  addrconf_ifdown+0x70e/0x780 net/ipv6/addrconf.c:3607
->  addrconf_notify+0x86/0xd50 net/ipv6/addrconf.c:3514
->  notifier_call_chain+0x41/0xc0 kernel/notifier.c:93
->  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
->  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
->  call_netdevice_notifiers_info+0x32/0x60 net/core/dev.c:1679
->  call_netdevice_notifiers net/core/dev.c:1697 [inline]
->  rollback_registered_many+0x330/0x490 net/core/dev.c:7288
->  unregister_netdevice_many.part.117+0x17/0x90 net/core/dev.c:8330
->  unregister_netdevice_many+0x22/0x30 net/core/dev.c:8329
->  ip6_tnl_exit_batch_net+0x276/0x380 net/ipv6/ip6_tunnel.c:2240
->  ops_exit_list.isra.6+0x70/0x80 net/core/net_namespace.c:145
->  cleanup_net+0x210/0x350 net/core/net_namespace.c:484
->  process_one_work+0x288/0x7a0 kernel/workqueue.c:2112
->  worker_thread+0x43/0x4d0 kernel/workqueue.c:2246
->  kthread+0x149/0x170 kernel/kthread.c:238
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
-> Code: fe ff ff ff eb e4 bb f4 ff ff ff eb dd 66 90 66 2e 0f 1f 84 00 00 00
-> 00 00 55 48 89 e5 41 54 53 48 89 fb e8 51 8a 01 ff 48 8b 03 <48> 8b 80 78 05
-> 00 00 48 83 b8 18 02 00 00 00 74 3e e8 38 8a 01
-> RIP: read_pnet include/net/net_namespace.h:270 [inline] RSP:
-> ffffc90002cd3b28
-> RIP: dev_net include/linux/netdevice.h:2041 [inline] RSP: ffffc90002cd3b28
-> RIP: snmp6_unregister_dev+0x12/0x70 net/ipv6/proc.c:308 RSP:
-> ffffc90002cd3b28
-> CR2: 0000000000000578
-> ---[ end trace b3ddb42264b96238 ]---
+>  inet6_dump_ifinfo+0x1ea/0x2d0 net/ipv6/addrconf.c:5411
+>  netlink_dump+0x14e/0x360 net/netlink/af_netlink.c:2222
+>  __netlink_dump_start+0x1bb/0x210 net/netlink/af_netlink.c:2319
+>  netlink_dump_start include/linux/netlink.h:214 [inline]
+>  rtnetlink_rcv_msg+0x44f/0x5d0 net/core/rtnetlink.c:4485
+>  netlink_rcv_skb+0x92/0x160 net/netlink/af_netlink.c:2441
+>  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4540
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1308 [inline]
+>  netlink_unicast+0x1d4/0x290 net/netlink/af_netlink.c:1334
+>  netlink_sendmsg+0x345/0x470 net/netlink/af_netlink.c:1897
+>  sock_sendmsg_nosec net/socket.c:636 [inline]
+>  sock_sendmsg+0x51/0x70 net/socket.c:646
+>  SYSC_sendto+0x17f/0x1d0 net/socket.c:1727
+>  SyS_sendto+0x40/0x50 net/socket.c:1695
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> RIP: 0033:0x452a39
+> RSP: 002b:00007f0fb6e3ac58 EFLAGS: 00000212 ORIG_RAX: 000000000000002c
+> RAX: ffffffffffffffda RBX: 0000000000758020 RCX: 0000000000452a39
+> RDX: 0000000000000012 RSI: 0000000020919000 RDI: 0000000000000013
+> RBP: 0000000000000553 R08: 0000000020000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006f6068
+> R13: 00000000ffffffff R14: 00007f0fb6e3b6d4 R15: 0000000000000000
+> Code: b8 10 00 00 00 48 89 df e8 d0 b2 ee ff 48 85 c0 49 89 c6 0f 84 c5 01
+> 00 00 e8 cf e8 06 ff b8 0a 00 00 00 4c 89 e7 66 41 89 46 10 <41> 0f b7 84 24
+> 2c 02 00 00 66 41 89 46 12 41 8b 84 24 08 01 00
+> RIP: inet6_fill_ifinfo+0x8e/0x2c0 net/ipv6/addrconf.c:5357 RSP:
+> ffffc90000f53ae0
+> CR2: 000000000000022c
+> ---[ end trace bb449c11e1e11a3c ]---
 
 Invalidating this bug since it hasn't been seen again, and it was reported while
 KASAN was accidentally disabled in the syzbot kconfig due to a change to the
