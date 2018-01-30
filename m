@@ -1,68 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751916AbeA3K26 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 05:28:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42400 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751474AbeA3K25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 05:28:57 -0500
-Date: Tue, 30 Jan 2018 11:28:55 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Christian.Koenig@amd.com, linux-mm@kvack.org,
-        amd-gfx@lists.freedesktop.org, Roman Gushchin <guro@fb.com>
-Subject: Re: [RFC] Per file OOM badness
-Message-ID: <20180130102855.GY21609@dhcp22.suse.cz>
-References: <20180118170006.GG6584@dhcp22.suse.cz>
- <20180123152659.GA21817@castle.DHCP.thefacebook.com>
- <20180123153631.GR1526@dhcp22.suse.cz>
- <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
- <20180124092847.GI1526@dhcp22.suse.cz>
- <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
- <20180124110141.GA28465@dhcp22.suse.cz>
- <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
- <20180124115059.GC28465@dhcp22.suse.cz>
- <60e18da8-4d6e-dec9-7aef-ff003605d513@daenzer.net>
+        id S1751937AbeA3K3r (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 05:29:47 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.234]:35259 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751360AbeA3K3p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 05:29:45 -0500
+Date: Tue, 30 Jan 2018 04:05:28 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH v2] drm/edid: use true and false for boolean values
+Message-ID: <20180130100528.GA7154@training>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <60e18da8-4d6e-dec9-7aef-ff003605d513@daenzer.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.201.65
+X-Source-L: No
+X-Exim-ID: 1egSnC-001c6V-D5
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (training) [189.152.201.65]:39924
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 30-01-18 10:29:10, Michel Dänzer wrote:
-> On 2018-01-24 12:50 PM, Michal Hocko wrote:
-> > On Wed 24-01-18 12:23:10, Michel Dänzer wrote:
-> >> On 2018-01-24 12:01 PM, Michal Hocko wrote:
-> >>> On Wed 24-01-18 11:27:15, Michel Dänzer wrote:
-> > [...]
-> >>>> 2. If the OOM killer kills a process which is sharing BOs with another
-> >>>> process, this should result in the other process dropping its references
-> >>>> to the BOs as well, at which point the memory is released.
-> >>>
-> >>> OK. How exactly are those BOs mapped to the userspace?
-> >>
-> >> I'm not sure what you're asking. Userspace mostly uses a GEM handle to
-> >> refer to a BO. There can also be userspace CPU mappings of the BO's
-> >> memory, but userspace doesn't need CPU mappings for all BOs and only
-> >> creates them as needed.
-> > 
-> > OK, I guess you have to bear with me some more. This whole stack is a
-> > complete uknonwn. I am mostly after finding a boundary where you can
-> > charge the allocated memory to the process so that the oom killer can
-> > consider it. Is there anything like that? Except for the proposed file
-> > handle hack?
-> 
-> How about the other way around: what APIs can we use to charge /
-> "uncharge" memory to a process? If we have those, we can experiment with
-> different places to call them.
+Assign true or false to boolean variables instead of an integer value.
 
-add_mm_counter() and I would add a new counter e.g. MM_KERNEL_PAGES.
+This issue was detected with the help of Coccinelle.
 
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Use true for boolean value in add_detailed_mode as suggested by Daniel
+   Vetter.
+ - Update subject.
+
+ drivers/gpu/drm/drm_edid.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index ddd5379..b1cb262 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -2767,7 +2767,7 @@ do_detailed_mode(struct detailed_timing *timing, void *c)
+ 
+ 		drm_mode_probed_add(closure->connector, newmode);
+ 		closure->modes++;
+-		closure->preferred = 0;
++		closure->preferred = false;
+ 	}
+ }
+ 
+@@ -2784,7 +2784,7 @@ add_detailed_modes(struct drm_connector *connector, struct edid *edid,
+ 	struct detailed_mode_closure closure = {
+ 		.connector = connector,
+ 		.edid = edid,
+-		.preferred = 1,
++		.preferred = true,
+ 		.quirks = quirks,
+ 	};
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
