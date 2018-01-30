@@ -1,469 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752773AbeA3FGv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 00:06:51 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60332 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752076AbeA3FGt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 00:06:49 -0500
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, mhocko@suse.com
-Subject: [RFC] mm/migrate: Consolidate page allocation helper functions
-Date: Tue, 30 Jan 2018 10:36:42 +0530
-X-Mailer: git-send-email 2.9.3
-X-TM-AS-GCONF: 00
-x-cbid: 18013005-0020-0000-0000-000003F0298F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18013005-0021-0000-0000-0000428288DF
-Message-Id: <20180130050642.19834-1-khandual@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=10 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1801300064
+        id S1752742AbeA3FNi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 00:13:38 -0500
+Received: from mail-bl2nam02on0071.outbound.protection.outlook.com ([104.47.38.71]:1248
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752385AbeA3FNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 00:13:36 -0500
+From: "He, Roger" <Hongbo.He@amd.com>
+To: "He, Roger" <Hongbo.He@amd.com>, Michal Hocko <mhocko@kernel.org>
+CC: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>
+Subject: RE: [PATCH] mm/swap: add function get_total_swap_pages to expose
+ total_swap_pages
+Thread-Topic: [PATCH] mm/swap: add function get_total_swap_pages to expose
+ total_swap_pages
+Thread-Index: AQHTmNtYoBUw/9kRPkGbswRNbnupYaOLC3EAgAClcwCAAClJEA==
+Date: Tue, 30 Jan 2018 05:13:32 +0000
+Message-ID: <MWHPR1201MB0127401481BC5F7424B41B6BFDE40@MWHPR1201MB0127.namprd12.prod.outlook.com>
+References: <1517214582-30880-1-git-send-email-Hongbo.He@amd.com>
+ <20180129163114.GH21609@dhcp22.suse.cz>
+ <MWHPR1201MB01278542F6EE848ABD187BDBFDE40@MWHPR1201MB0127.namprd12.prod.outlook.com>
+In-Reply-To: <MWHPR1201MB01278542F6EE848ABD187BDBFDE40@MWHPR1201MB0127.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Hongbo.He@amd.com;
+x-originating-ip: [116.228.147.241]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR1201MB0207;7:dP0SIPPiA3dC99Ylkyb/k4OghObpEa4K4HqVfxpj2KmRO6Nbx86BWMBFn7ymd2zuie6SkvAX1j8ElFyGysxCkxDKLQcQTOSf80mbbC3YM+uXGs5jL/isFZgDUkNyYmoSf7kX/BC8mJcQ68AXEjjWdQWiu60g+TanMCNeDL9yMR4xk5ehlVTcS8wV55MPJ06r8aiZQLo3XLAceHSnLHlXW1yd169kknuXyb3PUm6KcWkJZ2Qrw7ZlQ0J8HLfNZhC8;20:u6ooYzXiT62M+m0bN3jhj6tTcuKUd9OGjOocuvf8ZcssZEkFMnRjpOT5bXXPtHhvXu//RF+Nr+pbYZhqcpQACXZR58jZoUtvdONl7mcWhp127xF9cthR+HpkGYclCGfuxN6MU9BqbtjAaXl6ZmkPPKN8U808uNUAx8W2LXZAkB2Y3sVcVrm+nGi1e5iM+bdKvhhyqzsSMPU9o865KtQLaSaegsuD958Q4QG3ChuPaNaswF7tpqq0U6crVCWTzDf0
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(376002)(396003)(39860400002)(39380400002)(346002)(366004)(377424004)(13464003)(199004)(189003)(478600001)(2906002)(81166006)(7736002)(8676002)(8936002)(97736004)(53936002)(9686003)(6506007)(6246003)(4326008)(53546011)(76176011)(3846002)(7696005)(59450400001)(2950100002)(102836004)(305945005)(33656002)(81156014)(26005)(6306002)(25786009)(6116002)(77096007)(6436002)(3280700002)(316002)(74316002)(3660700001)(68736007)(54906003)(5660300001)(229853002)(55016002)(2940100002)(110136005)(66066001)(2900100001)(86362001)(966005)(72206003)(14454004)(105586002)(106356001)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR1201MB0207;H:MWHPR1201MB0127.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 1a2da653-3bb7-4973-39f2-08d567a0353d
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:MWHPR1201MB0207;
+x-ms-traffictypediagnostic: MWHPR1201MB0207:
+x-microsoft-antispam-prvs: <MWHPR1201MB02079898F6EED9A252BBC6DEFDE40@MWHPR1201MB0207.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(217544274631240);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231101)(944501161)(10201501046)(3002001)(6055026)(6041288)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MWHPR1201MB0207;BCL:0;PCL:0;RULEID:;SRVR:MWHPR1201MB0207;
+x-forefront-prvs: 0568F32D91
+x-microsoft-antispam-message-info: UcU580Bup1lEdpvE4XP/zea/xIx7zXK33FZqY5hp2PpY+fruiQ3TAudTMGNWLT4V/mLQaYNHrAM2eW7CRSnJjw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a2da653-3bb7-4973-39f2-08d567a0353d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2018 05:13:32.7020
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0207
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w0U5DhET001970
 
-Allocation helper functions for migrate_pages() remmain scattered with
-similar names making them really confusing. Rename these functions based
-on the context for the migration and move them all into common migration
-header. Functionality remains unchanged.
+	get_nr_swap_pages is the only API we can accessed from other module now.
+	It can't cover the case of the dynamic swap size increment.
+	I mean: user can use "swapon" to enable new swap file or swap disk dynamically or "swapoff" to disable swap space.
 
-Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
----
-- Based on earlier discussion (https://lkml.org/lkml/2018/1/3/128)
-- Wondering if we can still further factorize these helpers functions
+Above is why we always to get swap cache size rather than getting it once at module initialization time.
+That is internal in TTM. Please ignore that.
 
- include/linux/migrate.h        | 112 ++++++++++++++++++++++++++++++++++++++++-
- include/linux/page-isolation.h |   2 -
- mm/internal.h                  |   1 -
- mm/memory-failure.c            |  11 +---
- mm/memory_hotplug.c            |  19 +------
- mm/mempolicy.c                 |  69 +------------------------
- mm/migrate.c                   |  19 +------
- mm/page_alloc.c                |   2 +-
- mm/page_isolation.c            |   4 --
- 9 files changed, 119 insertions(+), 120 deletions(-)
+And why TTM needs get_total_swap_pages instead of using get_nr_swap_pages directly. That because
+even though the TTM buffer has been swapped out, at the start they also stay in system memory by shmem. Later at some point when
+Under high memory pressure, Those buffers all are flushed into swap disk and used more swap disk size or even use up all swap size. That is not what we want and still has random OOM. So we need a API to get total swap size and control the swap size used by TTM very accurately.
 
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 0c6fe904bc97..a732598fcf83 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -3,6 +3,7 @@
- #define _LINUX_MIGRATE_H
- 
- #include <linux/mm.h>
-+#include <linux/rmap.h>
- #include <linux/mempolicy.h>
- #include <linux/migrate_mode.h>
- #include <linux/hugetlb.h>
-@@ -31,6 +32,84 @@ enum migrate_reason {
- /* In mm/debug.c; also keep sync with include/trace/events/migrate.h */
- extern char *migrate_reason_names[MR_TYPES];
- 
-+#ifdef CONFIG_MIGRATION
-+/*
-+ * Allocate a new page for page migration based on vma policy.
-+ * Start by assuming the page is mapped by the same vma as contains @start.
-+ * Search forward from there, if not.  N.B., this assumes that the
-+ * list of pages handed to migrate_pages()--which is how we get here--
-+ * is in virtual address order.
-+ */
-+static inline struct page *new_page_alloc_mbind(struct page *page, unsigned long start)
-+{
-+	struct vm_area_struct *vma;
-+	unsigned long uninitialized_var(address);
-+
-+	vma = find_vma(current->mm, start);
-+	while (vma) {
-+		address = page_address_in_vma(page, vma);
-+		if (address != -EFAULT)
-+			break;
-+		vma = vma->vm_next;
-+	}
-+
-+	if (PageHuge(page)) {
-+		return alloc_huge_page_vma(page_hstate(compound_head(page)),
-+				vma, address);
-+	} else if (PageTransHuge(page)) {
-+		struct page *thp;
-+
-+		thp = alloc_hugepage_vma(GFP_TRANSHUGE, vma, address,
-+					 HPAGE_PMD_ORDER);
-+		if (!thp)
-+			return NULL;
-+		prep_transhuge_page(thp);
-+		return thp;
-+	}
-+	/*
-+	 * if !vma, alloc_page_vma() will use task or system default policy
-+	 */
-+	return alloc_page_vma(GFP_HIGHUSER_MOVABLE | __GFP_RETRY_MAYFAIL,
-+			vma, address);
-+}
-+
-+/* page allocation callback for NUMA node migration */
-+static inline struct page *new_page_alloc_syscall(struct page *page, unsigned long node)
-+{
-+	if (PageHuge(page))
-+		return alloc_huge_page_node(page_hstate(compound_head(page)),
-+					node);
-+	else if (PageTransHuge(page)) {
-+		struct page *thp;
-+
-+		thp = alloc_pages_node(node,
-+			(GFP_TRANSHUGE | __GFP_THISNODE),
-+			HPAGE_PMD_ORDER);
-+		if (!thp)
-+			return NULL;
-+		prep_transhuge_page(thp);
-+		return thp;
-+	} else
-+		return __alloc_pages_node(node, GFP_HIGHUSER_MOVABLE |
-+						    __GFP_THISNODE, 0);
-+}
-+
-+
-+static inline struct page *new_page_alloc_misplaced(struct page *page,
-+					   unsigned long data)
-+{
-+	int nid = (int) data;
-+	struct page *newpage;
-+
-+	newpage = __alloc_pages_node(nid,
-+					 (GFP_HIGHUSER_MOVABLE |
-+					  __GFP_THISNODE | __GFP_NOMEMALLOC |
-+					  __GFP_NORETRY | __GFP_NOWARN) &
-+					 ~__GFP_RECLAIM, 0);
-+
-+	return newpage;
-+}
-+
- static inline struct page *new_page_nodemask(struct page *page,
- 				int preferred_nid, nodemask_t *nodemask)
- {
-@@ -59,7 +138,34 @@ static inline struct page *new_page_nodemask(struct page *page,
- 	return new_page;
- }
- 
--#ifdef CONFIG_MIGRATION
-+static inline struct page *new_page_alloc_failure(struct page *p, unsigned long private)
-+{
-+	int nid = page_to_nid(p);
-+
-+	return new_page_nodemask(p, nid, &node_states[N_MEMORY]);
-+}
-+
-+/*
-+ * Try to allocate from a different node but reuse this node if there
-+ * are no other online nodes to be used (e.g. we are offlining a part
-+ * of the only existing node).
-+ */
-+static inline struct page *new_page_alloc_hotplug(struct page *page, unsigned long private)
-+{
-+	int nid = page_to_nid(page);
-+	nodemask_t nmask = node_states[N_MEMORY];
-+
-+	node_clear(nid, nmask);
-+	if (nodes_empty(nmask))
-+		node_set(nid, nmask);
-+
-+	return new_page_nodemask(page, nid, &nmask);
-+}
-+
-+static inline struct page *new_page_alloc_contig(struct page *page, unsigned long private)
-+{
-+	return new_page_nodemask(page, numa_node_id(), &node_states[N_MEMORY]);
-+}
- 
- extern void putback_movable_pages(struct list_head *l);
- extern int migrate_page(struct address_space *mapping,
-@@ -81,6 +187,10 @@ extern int migrate_page_move_mapping(struct address_space *mapping,
- 		struct buffer_head *head, enum migrate_mode mode,
- 		int extra_count);
- #else
-+static inline struct page *new_page_alloc_mbind(struct page *page, unsigned long start)
-+{
-+	return NULL;
-+}
- 
- static inline void putback_movable_pages(struct list_head *l) {}
- static inline int migrate_pages(struct list_head *l, new_page_t new,
-diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
-index 4ae347cbc36d..8e816995ba04 100644
---- a/include/linux/page-isolation.h
-+++ b/include/linux/page-isolation.h
-@@ -63,6 +63,4 @@ undo_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
- int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
- 			bool skip_hwpoisoned_pages);
- 
--struct page *alloc_migrate_target(struct page *page, unsigned long private);
--
- #endif
-diff --git a/mm/internal.h b/mm/internal.h
-index 62d8c34e63d5..3e5dc95dc259 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -540,5 +540,4 @@ static inline bool is_migrate_highatomic_page(struct page *page)
- }
- 
- void setup_zone_pageset(struct zone *zone);
--extern struct page *alloc_new_node_page(struct page *page, unsigned long node);
- #endif	/* __MM_INTERNAL_H */
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index d530ac1db680..adab1a57f3c3 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1483,13 +1483,6 @@ int unpoison_memory(unsigned long pfn)
- }
- EXPORT_SYMBOL(unpoison_memory);
- 
--static struct page *new_page(struct page *p, unsigned long private)
--{
--	int nid = page_to_nid(p);
--
--	return new_page_nodemask(p, nid, &node_states[N_MEMORY]);
--}
--
- /*
-  * Safely get reference count of an arbitrary page.
-  * Returns 0 for a free page, -EIO for a zero refcount page
-@@ -1584,7 +1577,7 @@ static int soft_offline_huge_page(struct page *page, int flags)
- 		return -EBUSY;
- 	}
- 
--	ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
-+	ret = migrate_pages(&pagelist, new_page_alloc_failure, NULL, MPOL_MF_MOVE_ALL,
- 				MIGRATE_SYNC, MR_MEMORY_FAILURE);
- 	if (ret) {
- 		pr_info("soft offline: %#lx: hugepage migration failed %d, type %lx (%pGp)\n",
-@@ -1662,7 +1655,7 @@ static int __soft_offline_page(struct page *page, int flags)
- 			inc_node_page_state(page, NR_ISOLATED_ANON +
- 						page_is_file_cache(page));
- 		list_add(&page->lru, &pagelist);
--		ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
-+		ret = migrate_pages(&pagelist, new_page_alloc_failure, NULL, MPOL_MF_MOVE_ALL,
- 					MIGRATE_SYNC, MR_MEMORY_FAILURE);
- 		if (ret) {
- 			if (!list_empty(&pagelist))
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 25060b0184e9..d3e4263acdd6 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1344,23 +1344,6 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
- 	return 0;
- }
- 
--static struct page *new_node_page(struct page *page, unsigned long private)
--{
--	int nid = page_to_nid(page);
--	nodemask_t nmask = node_states[N_MEMORY];
--
--	/*
--	 * try to allocate from a different node but reuse this node if there
--	 * are no other online nodes to be used (e.g. we are offlining a part
--	 * of the only existing node)
--	 */
--	node_clear(nid, nmask);
--	if (nodes_empty(nmask))
--		node_set(nid, nmask);
--
--	return new_page_nodemask(page, nid, &nmask);
--}
--
- #define NR_OFFLINE_AT_ONCE_PAGES	(256)
- static int
- do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
-@@ -1431,7 +1414,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- 		}
- 
- 		/* Allocate a new page from the nearest neighbor node */
--		ret = migrate_pages(&source, new_node_page, NULL, 0,
-+		ret = migrate_pages(&source, new_page_alloc_hotplug, NULL, 0,
- 					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
- 		if (ret)
- 			putback_movable_pages(&source);
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index a8b7d59002e8..0344a412c5e5 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -917,27 +917,6 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
- 	}
- }
- 
--/* page allocation callback for NUMA node migration */
--struct page *alloc_new_node_page(struct page *page, unsigned long node)
--{
--	if (PageHuge(page))
--		return alloc_huge_page_node(page_hstate(compound_head(page)),
--					node);
--	else if (PageTransHuge(page)) {
--		struct page *thp;
--
--		thp = alloc_pages_node(node,
--			(GFP_TRANSHUGE | __GFP_THISNODE),
--			HPAGE_PMD_ORDER);
--		if (!thp)
--			return NULL;
--		prep_transhuge_page(thp);
--		return thp;
--	} else
--		return __alloc_pages_node(node, GFP_HIGHUSER_MOVABLE |
--						    __GFP_THISNODE, 0);
--}
--
- /*
-  * Migrate pages from one node to a target node.
-  * Returns error or the number of pages not migrated.
-@@ -962,7 +941,7 @@ static int migrate_to_node(struct mm_struct *mm, int source, int dest,
- 			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
- 
- 	if (!list_empty(&pagelist)) {
--		err = migrate_pages(&pagelist, alloc_new_node_page, NULL, dest,
-+		err = migrate_pages(&pagelist, new_page_alloc_syscall, NULL, dest,
- 					MIGRATE_SYNC, MR_SYSCALL);
- 		if (err)
- 			putback_movable_pages(&pagelist);
-@@ -1076,45 +1055,6 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
- 
- }
- 
--/*
-- * Allocate a new page for page migration based on vma policy.
-- * Start by assuming the page is mapped by the same vma as contains @start.
-- * Search forward from there, if not.  N.B., this assumes that the
-- * list of pages handed to migrate_pages()--which is how we get here--
-- * is in virtual address order.
-- */
--static struct page *new_page(struct page *page, unsigned long start)
--{
--	struct vm_area_struct *vma;
--	unsigned long uninitialized_var(address);
--
--	vma = find_vma(current->mm, start);
--	while (vma) {
--		address = page_address_in_vma(page, vma);
--		if (address != -EFAULT)
--			break;
--		vma = vma->vm_next;
--	}
--
--	if (PageHuge(page)) {
--		return alloc_huge_page_vma(page_hstate(compound_head(page)),
--				vma, address);
--	} else if (PageTransHuge(page)) {
--		struct page *thp;
--
--		thp = alloc_hugepage_vma(GFP_TRANSHUGE, vma, address,
--					 HPAGE_PMD_ORDER);
--		if (!thp)
--			return NULL;
--		prep_transhuge_page(thp);
--		return thp;
--	}
--	/*
--	 * if !vma, alloc_page_vma() will use task or system default policy
--	 */
--	return alloc_page_vma(GFP_HIGHUSER_MOVABLE | __GFP_RETRY_MAYFAIL,
--			vma, address);
--}
- #else
- 
- static void migrate_page_add(struct page *page, struct list_head *pagelist,
-@@ -1127,11 +1067,6 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
- {
- 	return -ENOSYS;
- }
--
--static struct page *new_page(struct page *page, unsigned long start)
--{
--	return NULL;
--}
- #endif
- 
- static long do_mbind(unsigned long start, unsigned long len,
-@@ -1213,7 +1148,7 @@ static long do_mbind(unsigned long start, unsigned long len,
- 
- 		if (!list_empty(&pagelist)) {
- 			WARN_ON_ONCE(flags & MPOL_MF_LAZY);
--			nr_failed = migrate_pages(&pagelist, new_page, NULL,
-+			nr_failed = migrate_pages(&pagelist, new_page_alloc_mbind, NULL,
- 				start, MIGRATE_SYNC, MR_MEMPOLICY_MBIND);
- 			if (nr_failed)
- 				putback_movable_pages(&pagelist);
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 5d0dc7b85f90..8685fb384139 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1465,7 +1465,7 @@ static int do_move_pages_to_node(struct mm_struct *mm,
- 	if (list_empty(pagelist))
- 		return 0;
- 
--	err = migrate_pages(pagelist, alloc_new_node_page, NULL, node,
-+	err = migrate_pages(pagelist, new_page_alloc_syscall, NULL, node,
- 			MIGRATE_SYNC, MR_SYSCALL);
- 	if (err)
- 		putback_movable_pages(pagelist);
-@@ -1796,21 +1796,6 @@ static bool migrate_balanced_pgdat(struct pglist_data *pgdat,
- 	return false;
- }
- 
--static struct page *alloc_misplaced_dst_page(struct page *page,
--					   unsigned long data)
--{
--	int nid = (int) data;
--	struct page *newpage;
--
--	newpage = __alloc_pages_node(nid,
--					 (GFP_HIGHUSER_MOVABLE |
--					  __GFP_THISNODE | __GFP_NOMEMALLOC |
--					  __GFP_NORETRY | __GFP_NOWARN) &
--					 ~__GFP_RECLAIM, 0);
--
--	return newpage;
--}
--
- /*
-  * page migration rate limiting control.
-  * Do not migrate more than @pages_to_migrate in a @migrate_interval_millisecs
-@@ -1929,7 +1914,7 @@ int migrate_misplaced_page(struct page *page, struct vm_area_struct *vma,
- 		goto out;
- 
- 	list_add(&page->lru, &migratepages);
--	nr_remaining = migrate_pages(&migratepages, alloc_misplaced_dst_page,
-+	nr_remaining = migrate_pages(&migratepages, new_page_alloc_misplaced,
- 				     NULL, node, MIGRATE_ASYNC,
- 				     MR_NUMA_MISPLACED);
- 	if (nr_remaining) {
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 6129f989223a..242565855d05 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7621,7 +7621,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
- 							&cc->migratepages);
- 		cc->nr_migratepages -= nr_reclaimed;
- 
--		ret = migrate_pages(&cc->migratepages, alloc_migrate_target,
-+		ret = migrate_pages(&cc->migratepages, new_page_alloc_contig,
- 				    NULL, 0, cc->mode, MR_CMA);
- 	}
- 	if (ret < 0) {
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index 53d801235e22..276e180272f0 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -293,7 +293,3 @@ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
- 	return pfn < end_pfn ? -EBUSY : 0;
- }
- 
--struct page *alloc_migrate_target(struct page *page, unsigned long private)
--{
--	return new_page_nodemask(page, numa_node_id(), &node_states[N_MEMORY]);
--}
--- 
-2.11.0
+Thanks
+Roger(Hongbo.He)
+-----Original Message-----
+From: dri-devel [mailto:dri-devel-bounces@lists.freedesktop.org] On Behalf Of He, Roger
+Sent: Tuesday, January 30, 2018 10:57 AM
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-mm@kvack.org; linux-kernel@vger.kernel.org; dri-devel@lists.freedesktop.org; Koenig, Christian <Christian.Koenig@amd.com>
+Subject: RE: [PATCH] mm/swap: add function get_total_swap_pages to expose total_swap_pages
+
+Hi Michal:
+
+We need a API to tell TTM module the system totally has how many swap cache.
+Then TTM module can use it to restrict how many the swap cache it can use to prevent triggering OOM.
+For Now we set the threshold of swap size TTM used as 1/2 * total size and leave the rest for others use.
+
+
+get_nr_swap_pages is the only API we can accessed from other module now.
+	It can't cover the case of the dynamic swap size increment.
+	I mean: user can use "swapon" to enable new swap file or swap disk dynamically or "swapoff" to disable swap space.
+
+Thanks
+Roger(Hongbo.He)
+
+-----Original Message-----
+From: dri-devel [mailto:dri-devel-bounces@lists.freedesktop.org] On Behalf Of Michal Hocko
+Sent: Tuesday, January 30, 2018 12:31 AM
+To: He, Roger <Hongbo.He@amd.com>
+Cc: linux-mm@kvack.org; linux-kernel@vger.kernel.org; dri-devel@lists.freedesktop.org; Koenig, Christian <Christian.Koenig@amd.com>
+Subject: Re: [PATCH] mm/swap: add function get_total_swap_pages to expose total_swap_pages
+
+On Mon 29-01-18 16:29:42, Roger He wrote:
+> ttm module needs it to determine its internal parameter setting.
+
+Could you be more specific why?
+
+> Signed-off-by: Roger He <Hongbo.He@amd.com>
+> ---
+>  include/linux/swap.h |  6 ++++++
+>  mm/swapfile.c        | 15 +++++++++++++++
+>  2 files changed, 21 insertions(+)
+> 
+> diff --git a/include/linux/swap.h b/include/linux/swap.h index 
+> c2b8128..708d66f 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -484,6 +484,7 @@ extern int try_to_free_swap(struct page *); struct 
+> backing_dev_info;  extern int init_swap_address_space(unsigned int 
+> type, unsigned long nr_pages);  extern void 
+> exit_swap_address_space(unsigned int type);
+> +extern long get_total_swap_pages(void);
+>  
+>  #else /* CONFIG_SWAP */
+>  
+> @@ -516,6 +517,11 @@ static inline void show_swap_cache_info(void)  { 
+> }
+>  
+> +long get_total_swap_pages(void)
+> +{
+> +	return 0;
+> +}
+> +
+>  #define free_swap_and_cache(e) ({(is_migration_entry(e) ||
+> is_device_private_entry(e));})  #define swapcache_prepare(e)
+> ({(is_migration_entry(e) || is_device_private_entry(e));})
+>  
+> diff --git a/mm/swapfile.c b/mm/swapfile.c index 3074b02..a0062eb
+> 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -98,6 +98,21 @@ static atomic_t proc_poll_event = ATOMIC_INIT(0);
+>  
+>  atomic_t nr_rotate_swap = ATOMIC_INIT(0);
+>  
+> +/*
+> + * expose this value for others use
+> + */
+> +long get_total_swap_pages(void)
+> +{
+> +	long ret;
+> +
+> +	spin_lock(&swap_lock);
+> +	ret = total_swap_pages;
+> +	spin_unlock(&swap_lock);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(get_total_swap_pages);
+> +
+>  static inline unsigned char swap_count(unsigned char ent)  {
+>  	return ent & ~SWAP_HAS_CACHE;	/* may include SWAP_HAS_CONT flag */
+> --
+> 2.7.4
+
+--
+Michal Hocko
+SUSE Labs
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+https://lists.freedesktop.org/mailman/listinfo/dri-devel
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+https://lists.freedesktop.org/mailman/listinfo/dri-devel
