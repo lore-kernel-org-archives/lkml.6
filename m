@@ -1,34 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753798AbeA3WAU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:00:20 -0500
-Received: from mail-it0-f44.google.com ([209.85.214.44]:52143 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753738AbeA3WAS (ORCPT
+        id S1752846AbeA3WCs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 17:02:48 -0500
+Received: from mail-io0-f180.google.com ([209.85.223.180]:40182 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752053AbeA3WCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:00:18 -0500
-X-Google-Smtp-Source: AH8x224vn4s05WmtXcBjDy5ydtpp6bWyZwmoFivlVE4H3Y2Q7SzzYF+VNSrI6Pxl/69kkQVd2b6dtA==
-Date: Tue, 30 Jan 2018 14:00:14 -0800
+        Tue, 30 Jan 2018 17:02:41 -0500
+X-Google-Smtp-Source: AH8x224yWEvf94io72HcaPKvYFFiICl08K9B3RAvKC12BGyI6Z9pGRsg2YhhJrKHCX2J906fm1dFYg==
+Date: Tue, 30 Jan 2018 14:02:38 -0800
 From: Eric Biggers <ebiggers3@gmail.com>
 To: syzbot
-        <bot+cfb122c1b99a24b6336a748a8adf89afc80902fc@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        <bot+6a425d205c027ee88b47080736e77c7816897f57@syzkaller.appspotmail.com>
+Cc: adobriyan@gmail.com, davem@davemloft.net, dsa@cumulusnetworks.com,
+        elena.reshetova@intel.com, fw@strlen.de, idosch@mellanox.com,
+        ihrachys@redhat.com, ishkamiel@gmail.com, keescook@chromium.org,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+        roopa@cumulusnetworks.com, sowmini.varadhan@oracle.com,
+        syzkaller-bugs@googlegroups.com
 Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
- addrconf_notify
-Message-ID: <20180130220014.qbbstyxkab2crtn5@gmail.com>
-References: <001a113fae289562e00560b6be13@google.com>
+ neigh_fill_info
+Message-ID: <20180130220238.7xdwtyh27a5uywjw@gmail.com>
+References: <001a1149750af26eec0560b5ce78@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <001a113fae289562e00560b6be13@google.com>
+In-Reply-To: <001a1149750af26eec0560b5ce78@google.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 19, 2017 at 11:48:01AM -0800, syzbot wrote:
+On Tue, Dec 19, 2017 at 10:41:00AM -0800, syzbot wrote:
 > Hello,
 > 
 > syzkaller hit the following crash on
@@ -41,66 +44,70 @@ On Tue, Dec 19, 2017 at 11:48:01AM -0800, syzbot wrote:
 > Unfortunately, I don't have any reproducer for this bug yet.
 > 
 > 
-> ALSA: seq fatal error: cannot create timer (-22)
-> device syz2 entered promiscuous mode
-> BUG: unable to handle kernel NULL pointer dereference at           (null)
-> IP: addrconf_permanent_addr net/ipv6/addrconf.c:3351 [inline]
-> IP: addrconf_notify+0x7df/0xd50 net/ipv6/addrconf.c:3422
-> PGD 1fad11067 P4D 1fad11067 PUD 1fad7a067 PMD 0
+> netlink: 3 bytes leftover after parsing attributes in process
+> `syz-executor5'.
+> netlink: 3 bytes leftover after parsing attributes in process
+> `syz-executor5'.
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+> sock: process `syz-executor4' is using obsolete getsockopt SO_BSDCOMPAT
+> IP: neigh_fill_info+0xe6/0x460 net/core/neighbour.c:2218
+> PGD 1dece0067 P4D 1dece0067 PUD 1dc5b9067 PMD 0
 > Oops: 0000 [#1] SMP
 > Dumping ftrace buffer:
 >    (ftrace buffer empty)
 > Modules linked in:
-> CPU: 0 PID: 15171 Comm: syz-executor2 Not tainted 4.15.0-rc3-next-20171214+
+> CPU: 0 PID: 25561 Comm: syz-executor5 Not tainted 4.15.0-rc3-next-20171214+
 > #67
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
-> RIP: 0010:addrconf_permanent_addr net/ipv6/addrconf.c:3351 [inline]
-> RIP: 0010:addrconf_notify+0x7df/0xd50 net/ipv6/addrconf.c:3422
-> RSP: 0018:ffffc90000d63b80 EFLAGS: 00010282
-> RAX: 0000000000000000 RBX: ffff8801fa41a000 RCX: ffff8801faddd808
-> RDX: 00000000000000ff RSI: 000000002811d9a2 RDI: ffff8801faddd968
-> RBP: ffffc90000d63c00 R08: 0000000000000001 R09: 0000000000000004
-> R10: ffffc90000d63af0 R11: 0000000000000004 R12: 0000000000000001
-> R13: ffff8801faddd800 R14: 0000000000000000 R15: ffff8801faddd800
-> FS:  00007f4373896700(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
+> RIP: 0010:neigh_fill_info+0xe6/0x460 net/core/neighbour.c:2218
+> RSP: 0018:ffffc90000eaf9d0 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: ffff88021568b000 RCX: ffff88021568b288
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff880215753800
+> RBP: ffffc90000eafa40 R08: 000000000000000c R09: ffff88020ff500b4
+> R10: ffffc90000eaf9d8 R11: 0000000000000002 R12: ffff88020ff50098
+> R13: 0000000093fffff7 R14: 000000000000001c R15: ffff880215753800
+> FS:  00007f91a7086700(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
 > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 00000002143c4001 CR4: 00000000001606f0
-> DR0: 0000000020000008 DR1: 0000000020000000 DR2: 0000000020000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+> CR2: 0000000000000008 CR3: 00000001df751000 CR4: 00000000001426f0
+> DR0: 0000000020000008 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000030602
 > Call Trace:
->  notifier_call_chain+0x41/0xc0 kernel/notifier.c:93
->  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
->  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
->  call_netdevice_notifiers_info+0x32/0x60 net/core/dev.c:1679
->  call_netdevice_notifiers net/core/dev.c:1697 [inline]
->  __dev_notify_flags+0x75/0x130 net/core/dev.c:6874
->  dev_change_flags+0x5e/0x70 net/core/dev.c:6910
->  devinet_ioctl+0x77b/0x930 net/ipv4/devinet.c:1083
->  inet_ioctl+0xda/0x130 net/ipv4/af_inet.c:902
->  sock_do_ioctl+0x2c/0x60 net/socket.c:964
->  sock_ioctl+0x211/0x320 net/socket.c:1061
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  do_vfs_ioctl+0xaf/0x840 fs/ioctl.c:686
->  SYSC_ioctl fs/ioctl.c:701 [inline]
->  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+>  neigh_dump_table net/core/neighbour.c:2350 [inline]
+>  neigh_dump_info+0x532/0x9d0 net/core/neighbour.c:2438
+>  netlink_dump+0x14e/0x360 net/netlink/af_netlink.c:2222
+>  __netlink_dump_start+0x1bb/0x210 net/netlink/af_netlink.c:2319
+>  netlink_dump_start include/linux/netlink.h:214 [inline]
+>  rtnetlink_rcv_msg+0x44f/0x5d0 net/core/rtnetlink.c:4485
+>  netlink_rcv_skb+0x92/0x160 net/netlink/af_netlink.c:2441
+>  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4540
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1308 [inline]
+>  netlink_unicast+0x1d4/0x290 net/netlink/af_netlink.c:1334
+>  netlink_sendmsg+0x345/0x470 net/netlink/af_netlink.c:1897
+>  sock_sendmsg_nosec net/socket.c:636 [inline]
+>  sock_sendmsg+0x51/0x70 net/socket.c:646
+>  sock_write_iter+0xa4/0x100 net/socket.c:915
+>  call_write_iter include/linux/fs.h:1776 [inline]
+>  new_sync_write fs/read_write.c:469 [inline]
+>  __vfs_write+0x15b/0x1e0 fs/read_write.c:482
+>  vfs_write+0xf0/0x230 fs/read_write.c:544
+>  SYSC_write fs/read_write.c:589 [inline]
+>  SyS_write+0x57/0xd0 fs/read_write.c:581
 >  entry_SYSCALL_64_fastpath+0x1f/0x96
-> RIP: 0033:0x452a09
-> RSP: 002b:00007f4373895c58 EFLAGS: 00000212 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 000000000071bea0 RCX: 0000000000452a09
-> RDX: 000000002062ffe0 RSI: 0000000000008914 RDI: 0000000000000013
-> RBP: 00000000000002eb R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006f16a8
-> R13: 00000000ffffffff R14: 00007f43738966d4 R15: 0000000000000000
-> Code: 85 ed 0f 84 f4 00 00 00 e8 ff 3a 06 ff 49 8d 85 68 01 00 00 48 89 c7
-> 48 89 45 a8 e8 0c 9f 37 00 49 8b 45 08 4c 89 e9 48 83 c1 08 <48> 8b 38 48 39
-> c1 4c 8d a8 c8 fe ff ff 4c 8d a7 c8 fe ff ff 0f
-> RIP: addrconf_permanent_addr net/ipv6/addrconf.c:3351 [inline] RSP:
-> ffffc90000d63b80
-> RIP: addrconf_notify+0x7df/0xd50 net/ipv6/addrconf.c:3422 RSP:
-> ffffc90000d63b80
-> CR2: 0000000000000000
-> ---[ end trace ebbf2e3971cab1b5 ]---
+> RIP: 0033:0x452a39
+> RSP: 002b:00007f91a7085c58 EFLAGS: 00000212 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00007f91a7086700 RCX: 0000000000452a39
+> RDX: 000000000000001f RSI: 000000002083a000 RDI: 0000000000000017
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000212 R12: 0000000000000000
+> R13: 0000000000a6f7ff R14: 00007f91a70869c0 R15: 0000000000000000
+> Code: 14 01 00 00 41 88 44 24 1a 0f b6 83 16 01 00 00 41 88 44 24 1b 48 8b
+> 83 80 02 00 00 8b 80 08 01 00 00 41 89 44 24 14 48 8b 43 08 <8b> 50 08 e8 c2
+> e3 68 ff 85 c0 0f 85 5d 02 00 00 4c 8d 73 28 e8
+> RIP: neigh_fill_info+0xe6/0x460 net/core/neighbour.c:2218 RSP:
+> ffffc90000eaf9d0
+> CR2: 0000000000000008
+> ---[ end trace fd0910621fa1f590 ]---
 
 Invalidating this bug since it hasn't been seen again, and it was reported while
 KASAN was accidentally disabled in the syzbot kconfig due to a change to the
