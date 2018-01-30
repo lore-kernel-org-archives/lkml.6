@@ -1,155 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754029AbeA3Xg4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:36:56 -0500
-Received: from mga07.intel.com ([134.134.136.100]:5423 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753965AbeA3Xgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:36:55 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,436,1511856000";
-   d="scan'208";a="30748102"
-Date: Wed, 31 Jan 2018 07:49:04 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: kbuild-all@01.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@gmail.com>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH 3/3] mm: memfd: remove memfd code from shmem files and
- use new memfd files
-Message-ID: <201801310705.HNIeJce6%fengguang.wu@intel.com>
-References: <20180130000101.7329-4-mike.kravetz@oracle.com>
+        id S932127AbeA3Xnb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:43:31 -0500
+Received: from mail-io0-f180.google.com ([209.85.223.180]:35516 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932100AbeA3Xn2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 18:43:28 -0500
+X-Google-Smtp-Source: AH8x224KyF9Ozr1jrXqOgSYLL4UpX1Z1RmUbT3BoHuTEGeXwF4cBJcKLxuw+g6tFBbRahEOW8ltS6g==
+Date: Tue, 30 Jan 2018 15:43:25 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <bot+68bc3783dd1308d8cc40f5fcc4ba145a01d680d1@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Subject: Re: WARNING in _copy_to_user
+Message-ID: <20180130234325.hvdmtkzwfniy5kno@gmail.com>
+References: <001a1143fd0075461c055f45b0ab@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180130000101.7329-4-mike.kravetz@oracle.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <001a1143fd0075461c055f45b0ab@google.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
+On Fri, Dec 01, 2017 at 03:30:01AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzkaller hit the following crash on
+> df8ba95c572a187ed2aa7403e97a7a7f58c01f00
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> 
+> Unfortunately, I don't have any reproducer for this bug yet.
+> 
+> 
+> 
+> =====================================
+> WARNING: bad unlock balance detected!
+> 4.15.0-rc1+ #202 Not tainted
+> -------------------------------------
+> syz-executor4/28722 is trying to release lock (mrt_lock) at:
+> [<00000000c358606b>] ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
+> but there are no more locks to release!
+> 
+> other info that might help us debug this:
+> 2 locks held by syz-executor4/28722:
+>  #0:  (sb_writers#6){.+.+}, at: [<000000003332d098>] file_start_write
+> include/linux/fs.h:2715 [inline]
+>  #0:  (sb_writers#6){.+.+}, at: [<000000003332d098>] do_sendfile+0xaec/0xe90
+> fs/read_write.c:1412
+>  #1:  (&p->lock){+.+.}, at: [<000000001572c807>] seq_read+0xd5/0x13d0
+> fs/seq_file.c:165
+> 
+> stack backtrace:
+> CPU: 0 PID: 28722 Comm: syz-executor4 Not tainted 4.15.0-rc1+ #202
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  print_unlock_imbalance_bug+0x12f/0x140 kernel/locking/lockdep.c:3561
+>  __lock_release kernel/locking/lockdep.c:3775 [inline]
+>  lock_release+0x5f9/0xda0 kernel/locking/lockdep.c:4023
+>  __raw_read_unlock include/linux/rwlock_api_smp.h:225 [inline]
+>  _raw_read_unlock+0x1a/0x30 kernel/locking/spinlock.c:255
+>  ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
+>  seq_read+0xc42/0x13d0 fs/seq_file.c:277
+>  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
+>  do_loop_readv_writev fs/read_write.c:673 [inline]
+>  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
+>  vfs_readv+0x121/0x1c0 fs/read_write.c:959
+>  kernel_readv fs/splice.c:361 [inline]
+>  default_file_splice_read+0x508/0xae0 fs/splice.c:416
+>  do_splice_to+0x110/0x170 fs/splice.c:880
+>  splice_direct_to_actor+0x242/0x820 fs/splice.c:952
+>  do_splice_direct+0x2a7/0x3d0 fs/splice.c:1061
+>  do_sendfile+0x5d5/0xe90 fs/read_write.c:1413
+>  SYSC_sendfile64 fs/read_write.c:1468 [inline]
+>  SyS_sendfile64+0xbd/0x160 fs/read_write.c:1460
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> RIP: 0033:0x4529d9
+> RSP: 002b:00007f225b206c58 EFLAGS: 00000212 ORIG_RAX: 0000000000000028
+> RAX: ffffffffffffffda RBX: 0000000000758020 RCX: 00000000004529d9
+> RDX: 0000000020360ff8 RSI: 0000000000000014 RDI: 0000000000000014
+> RBP: 0000000000000561 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000008 R11: 0000000000000212 R12: 00000000006f51b8
+> R13: 00000000ffffffff R14: 00007f225b2076d4 R15: 0000000000000000
+> WARNING: CPU: 0 PID: 28722 at lib/usercopy.c:26 _copy_to_user+0xb5/0xc0
+> lib/usercopy.c:26
+> 
+> 
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
+> 
+> syzbot will keep track of this bug report.
+> Once a fix for this bug is committed, please reply to this email with:
+> #syz fix: exact-commit-title
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
 
-Thank you for the patch! Perhaps something to improve:
+Duplicate of "WARNING: bad unlock balance in ipmr_mfc_seq_stop" which syzbot is
+detecting under that crash signature now, so just invalidating this one:
 
-[auto build test WARNING on mmotm/master]
-[also build test WARNING on next-20180126]
-[cannot apply to linus/master v4.15]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Mike-Kravetz/restructure-memfd-code/20180131-023405
-base:   git://git.cmpxchg.org/linux-mmotm.git master
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> mm/memfd.c:40:9: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:40:9: expected void
-   mm/memfd.c:40:9: got void
->> mm/memfd.c:40:9: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:40:9: expected void
-   mm/memfd.c:40:9: got void
->> mm/memfd.c:41:46: sparse: incorrect type in argument 1 (different address spaces) @@ expected void @@ got @@
-   mm/memfd.c:41:46: expected void
-   mm/memfd.c:41:46: got void
-   mm/memfd.c:44:38: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:44:38: expected void
-   mm/memfd.c:44:38: got void
-   mm/memfd.c:55:55: sparse: incorrect type in argument 1 (different address spaces) @@ expected void @@ got @@
-   mm/memfd.c:55:55: expected void
-   mm/memfd.c:55:55: got void
-   mm/memfd.c:55:30: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:55:30: expected void
-   mm/memfd.c:55:30: got void
-   mm/memfd.c:40:9: sparse: incorrect type in argument 1 (different address spaces) @@ expected void @@ got @@
-   mm/memfd.c:40:9: expected void
-   mm/memfd.c:40:9: got void
->> mm/memfd.c:40:9: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:40:9: expected void
-   mm/memfd.c:40:9: got void
-   mm/memfd.c:93:17: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:93:17: expected void
-   mm/memfd.c:93:17: got void
-   mm/memfd.c:93:17: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:93:17: expected void
-   mm/memfd.c:93:17: got void
-   mm/memfd.c:96:54: sparse: incorrect type in argument 1 (different address spaces) @@ expected void @@ got @@
-   mm/memfd.c:96:54: expected void
-   mm/memfd.c:96:54: got void
-   mm/memfd.c:99:46: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:99:46: expected void
-   mm/memfd.c:99:46: got void
-   mm/memfd.c:125:63: sparse: incorrect type in argument 1 (different address spaces) @@ expected void @@ got @@
-   mm/memfd.c:125:63: expected void
-   mm/memfd.c:125:63: got void
-   mm/memfd.c:125:38: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:125:38: expected void
-   mm/memfd.c:125:38: got void
-   mm/memfd.c:93:17: sparse: incorrect type in argument 1 (different address spaces) @@ expected void @@ got @@
-   mm/memfd.c:93:17: expected void
-   mm/memfd.c:93:17: got void
-   mm/memfd.c:93:17: sparse: incorrect type in assignment (different address spaces) @@ expected void @@ got void <avoid @@
-   mm/memfd.c:93:17: expected void
-   mm/memfd.c:93:17: got void
-
-vim +40 mm/memfd.c
-
-6df4ed2a41 Mike Kravetz 2018-01-29  28  
-6df4ed2a41 Mike Kravetz 2018-01-29  29  static void shmem_tag_pins(struct address_space *mapping)
-6df4ed2a41 Mike Kravetz 2018-01-29  30  {
-6df4ed2a41 Mike Kravetz 2018-01-29  31  	struct radix_tree_iter iter;
-6df4ed2a41 Mike Kravetz 2018-01-29  32  	void **slot;
-6df4ed2a41 Mike Kravetz 2018-01-29  33  	pgoff_t start;
-6df4ed2a41 Mike Kravetz 2018-01-29  34  	struct page *page;
-6df4ed2a41 Mike Kravetz 2018-01-29  35  
-6df4ed2a41 Mike Kravetz 2018-01-29  36  	lru_add_drain();
-6df4ed2a41 Mike Kravetz 2018-01-29  37  	start = 0;
-6df4ed2a41 Mike Kravetz 2018-01-29  38  	rcu_read_lock();
-6df4ed2a41 Mike Kravetz 2018-01-29  39  
-6df4ed2a41 Mike Kravetz 2018-01-29 @40  	radix_tree_for_each_slot(slot, &mapping->page_tree, &iter, start) {
-6df4ed2a41 Mike Kravetz 2018-01-29 @41  		page = radix_tree_deref_slot(slot);
-6df4ed2a41 Mike Kravetz 2018-01-29  42  		if (!page || radix_tree_exception(page)) {
-6df4ed2a41 Mike Kravetz 2018-01-29  43  			if (radix_tree_deref_retry(page)) {
-6df4ed2a41 Mike Kravetz 2018-01-29  44  				slot = radix_tree_iter_retry(&iter);
-6df4ed2a41 Mike Kravetz 2018-01-29  45  				continue;
-6df4ed2a41 Mike Kravetz 2018-01-29  46  			}
-6df4ed2a41 Mike Kravetz 2018-01-29  47  		} else if (page_count(page) - page_mapcount(page) > 1) {
-6df4ed2a41 Mike Kravetz 2018-01-29  48  			spin_lock_irq(&mapping->tree_lock);
-6df4ed2a41 Mike Kravetz 2018-01-29  49  			radix_tree_tag_set(&mapping->page_tree, iter.index,
-6df4ed2a41 Mike Kravetz 2018-01-29  50  					   SHMEM_TAG_PINNED);
-6df4ed2a41 Mike Kravetz 2018-01-29  51  			spin_unlock_irq(&mapping->tree_lock);
-6df4ed2a41 Mike Kravetz 2018-01-29  52  		}
-6df4ed2a41 Mike Kravetz 2018-01-29  53  
-6df4ed2a41 Mike Kravetz 2018-01-29  54  		if (need_resched()) {
-6df4ed2a41 Mike Kravetz 2018-01-29  55  			slot = radix_tree_iter_resume(slot, &iter);
-6df4ed2a41 Mike Kravetz 2018-01-29  56  			cond_resched_rcu();
-6df4ed2a41 Mike Kravetz 2018-01-29  57  		}
-6df4ed2a41 Mike Kravetz 2018-01-29  58  	}
-6df4ed2a41 Mike Kravetz 2018-01-29  59  	rcu_read_unlock();
-6df4ed2a41 Mike Kravetz 2018-01-29  60  }
-6df4ed2a41 Mike Kravetz 2018-01-29  61  
-
-:::::: The code at line 40 was first introduced by commit
-:::::: 6df4ed2a410bc04f1ec04dce16ccd236707f7f32 mm: memfd: split out memfd for use by multiple filesystems
-
-:::::: TO: Mike Kravetz <mike.kravetz@oracle.com>
-:::::: CC: 0day robot <fengguang.wu@intel.com>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+#syz invalid
