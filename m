@@ -1,81 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751611AbeA3LRn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 06:17:43 -0500
-Received: from foss.arm.com ([217.140.101.70]:52324 "EHLO foss.arm.com"
+        id S1751547AbeA3LWA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 06:22:00 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40820 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751219AbeA3LRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 06:17:42 -0500
-Subject: Re: [PATCH 05/16] arm64: Add flags to check the safety of a
- capability for late CPU
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180123122809.16269-1-suzuki.poulose@arm.com>
- <20180123122809.16269-6-suzuki.poulose@arm.com>
- <20180126101020.GM5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <6313a0f1-ed3c-b5b3-7bbd-5f98862a74c6@arm.com>
-Date: Tue, 30 Jan 2018 11:17:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751219AbeA3LV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 06:21:59 -0500
+Date: Tue, 30 Jan 2018 12:21:54 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com
+Subject: Re: [PATCH 2/2] perf tools: Skip read of kernel maps once it failed
+Message-ID: <20180130112154.GA29098@krava>
+References: <20180119161103.15035-1-jolsa@kernel.org>
+ <20180119161103.15035-3-jolsa@kernel.org>
+ <20180126064830.GC22737@sejong>
 MIME-Version: 1.0
-In-Reply-To: <20180126101020.GM5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180126064830.GC22737@sejong>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/01/18 10:10, Dave Martin wrote:
-> On Tue, Jan 23, 2018 at 12:27:58PM +0000, Suzuki K Poulose wrote:
->> Add two different flags to indicate if the conflict of a capability
->> on a late CPU with the current system state
->>
->>   1) Can a CPU have a capability when the system doesn't have it ?
->>
->>      Most arm64 features could have this set. While erratum work arounds
->>      cannot have this, as we may miss work arounds.
->>
->>   2) Can a CPU miss a capability when the system has it ?
->>      This could be set for arm64 erratum work arounds as we don't
->>      care if a CPU doesn't need the work around. However it should
->>      be clear for features.
->>
->> These flags could be added to certain entries based on their nature.
->>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/include/asm/cpufeature.h | 35 +++++++++++++++++++++++++++++++----
->>   1 file changed, 31 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
->> index 4fd5de8ef33e..27d037bb0451 100644
->> --- a/arch/arm64/include/asm/cpufeature.h
->> +++ b/arch/arm64/include/asm/cpufeature.h
->> @@ -94,10 +94,25 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
->>   #define SCOPE_SYSTEM				ARM64_CPUCAP_SCOPE_SYSTEM
->>   #define SCOPE_LOCAL_CPU				ARM64_CPUCAP_SCOPE_LOCAL_CPU
->>   
->> -/* CPU errata detected at boot time based on feature of one or more CPUs */
->> -#define ARM64_CPUCAP_STRICT_CPU_LOCAL_ERRATUM	(ARM64_CPUCAP_SCOPE_LOCAL_CPU)
->> -/* CPU feature detected at boot time based on system-wide value of a feature */
->> -#define ARM64_CPUCAP_BOOT_SYSTEM_FEATURE	(ARM64_CPUCAP_SCOPE_SYSTEM)
->> +/* Is it safe for a late CPU to have this capability when system doesn't already have */
->> +#define ARM64_CPUCAP_LATE_CPU_SAFE_TO_HAVE	BIT(2)
->> +/* Is it safe for a late CPU to miss this capability when system has it */
->> +#define ARM64_CPUCAP_LATE_CPU_SAFE_TO_MISS	BIT(3)
+On Fri, Jan 26, 2018 at 03:48:30PM +0900, Namhyung Kim wrote:
+> On Fri, Jan 19, 2018 at 05:11:03PM +0100, Jiri Olsa wrote:
+> > Current perf report is real slow on newer kernels,
+> > with following commit:
+> >   c0f3ea158939 ("stop using '%pK' for /proc/kallsyms pointer values")
+> > 
+> > which prevent pointers in /proc/kallsyms, in case
+> > kernel.perf_event_paranoid=2.
+> > 
+> > That makes perf to fail in finding kernel map details,
+> > and keep parsing it again for every kernel sample.
+> > 
+> > Adding and setting a new machine::vmlinux_maps_failed
+> > flag after first failed parsing attempt and using it
+> > to prevent new pointless parsing.
 > 
-> Maybe _OPTIONAL and _PERMITTED would be a bit less verbose?
+> Hmm.. is it because it's called from machine__resolve() right?
 > 
-> Alternatively,
-> 	ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU
-> 	ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU
+> 	/*
+> 	 * Have we already created the kernel maps for this machine?
+> 	 *
+> 	 * This should have happened earlier, when we processed the kernel MMAP
+> 	 * events, but for older perf.data files there was no such thing, so do
+> 	 * it now.
+> 	 */
+> 
+> It seems that it's only to be compatible with ancient versions.
+> 
+> Do we still need it?  I guess they are recorded many years ago (with
+> the ancient version) so using addresses of current kernel is just
+> meaningless.  If one still uses the ancient version, [s]he really
+> needs to update it.
 
-Sounds better than what I have. I have picked them up.
+right, I think we can remove it.. the reason I see is
+that we actualy lookup the kernel maps via the map_group
+in machine::kmap, which is static.. so always there
 
-Cheers
-Suzuki
+if there were no kernel maps events for some reason,
+the map group wil be empty and the search will correctly
+fail..
+
+I will send it together with some other fixes later this week
+
+thanks,
+jirka
