@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752645AbeA3TpI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 14:45:08 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:41659 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751677AbeA3TpE (ORCPT
+        id S1752724AbeA3TpN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:45:13 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:44765 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751677AbeA3TpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:45:04 -0500
-X-Google-Smtp-Source: AH8x227VYZIugkQ0MaeETADSlVasuPEeN/kAfVG4u9SwkNC7aU4D8Nx38olICv9PLckqqBuZ/2pwTQ==
+        Tue, 30 Jan 2018 14:45:10 -0500
+X-Google-Smtp-Source: AH8x225//qHH9jKOCHlEC+STZaXLjL7EpAIrP8VSNrih+srZ6n6uiusNbhZ3kdqfCmZ6U/fjowl7Ew==
 From: Ram Pai <linuxram@us.ibm.com>
 To: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org
 Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
@@ -18,9 +18,9 @@ Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
         bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
         linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de, fweimer@redhat.com,
         msuchanek@suse.com
-Subject: [PATCH v11 1/3] mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS is enabled
-Date: Tue, 30 Jan 2018 11:44:10 -0800
-Message-Id: <1517341452-11924-2-git-send-email-linuxram@us.ibm.com>
+Subject: [PATCH v11 3/3] mm, x86: display pkey in smaps only if arch supports pkeys
+Date: Tue, 30 Jan 2018 11:44:12 -0800
+Message-Id: <1517341452-11924-4-git-send-email-linuxram@us.ibm.com>
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1517341452-11924-1-git-send-email-linuxram@us.ibm.com>
 References: <1517341452-11924-1-git-send-email-linuxram@us.ibm.com>
@@ -28,61 +28,131 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VM_PKEY_BITx are defined only if CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-is enabled. Powerpc also needs these bits. Hence lets define the
-VM_PKEY_BITx bits for any architecture that enables
-CONFIG_ARCH_HAS_PKEYS.
+Currently the  architecture  specific code is expected to
+display  the  protection  keys  in  smap  for a given vma.
+This can lead to redundant code and possibly to divergent
+formats in which the key gets displayed.
+
+This  patch  changes  the implementation. It displays the
+pkey only if the architecture support pkeys, i.e
+arch_pkeys_enabled() returns true.  This patch
+provides x86 implementation for arch_pkeys_enabled().
+
+x86 arch_show_smap() function is not needed anymore.
+Deleting it.
 
 Signed-off-by: Ram Pai <linuxram@us.ibm.com>
 ---
- fs/proc/task_mmu.c |    4 ++--
- include/linux/mm.h |    9 +++++----
- 2 files changed, 7 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/pkeys.h |    1 +
+ arch/x86/kernel/fpu/xstate.c |    5 +++++
+ arch/x86/kernel/setup.c      |    8 --------
+ fs/proc/task_mmu.c           |    9 ++++-----
+ include/linux/pkeys.h        |    6 ++++++
+ 5 files changed, 16 insertions(+), 13 deletions(-)
 
+diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
+index a0ba1ff..f6c287b 100644
+--- a/arch/x86/include/asm/pkeys.h
++++ b/arch/x86/include/asm/pkeys.h
+@@ -6,6 +6,7 @@
+ 
+ extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 		unsigned long init_val);
++extern bool arch_pkeys_enabled(void);
+ 
+ /*
+  * Try to dedicate one of the protection keys to be used as an
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 87a57b7..4f566e9 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -945,6 +945,11 @@ int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 
+ 	return 0;
+ }
++
++bool arch_pkeys_enabled(void)
++{
++	return boot_cpu_has(X86_FEATURE_OSPKE);
++}
+ #endif /* ! CONFIG_ARCH_HAS_PKEYS */
+ 
+ /*
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 8af2e8d..ddf945a 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1326,11 +1326,3 @@ static int __init register_kernel_offset_dumper(void)
+ 	return 0;
+ }
+ __initcall(register_kernel_offset_dumper);
+-
+-void arch_show_smap(struct seq_file *m, struct vm_area_struct *vma)
+-{
+-	if (!boot_cpu_has(X86_FEATURE_OSPKE))
+-		return;
+-
+-	seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
+-}
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 339e4c1..b139617 100644
+index 0edd4da..6f9fbde 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -674,13 +674,13 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- 		[ilog2(VM_MERGEABLE)]	= "mg",
- 		[ilog2(VM_UFFD_MISSING)]= "um",
- 		[ilog2(VM_UFFD_WP)]	= "uw",
--#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-+#ifdef CONFIG_ARCH_HAS_PKEYS
- 		/* These come out via ProtectionKey: */
- 		[ilog2(VM_PKEY_BIT0)]	= "",
- 		[ilog2(VM_PKEY_BIT1)]	= "",
- 		[ilog2(VM_PKEY_BIT2)]	= "",
- 		[ilog2(VM_PKEY_BIT3)]	= "",
--#endif
-+#endif /* CONFIG_ARCH_HAS_PKEYS */
- 	};
- 	size_t i;
+@@ -18,6 +18,7 @@
+ #include <linux/page_idle.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/uaccess.h>
++#include <linux/pkeys.h>
  
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ea818ff..01381d3 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -228,15 +228,16 @@ extern int overcommit_kbytes_handler(struct ctl_table *, int, void __user *,
- #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
- #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+ #include <asm/elf.h>
+ #include <asm/tlb.h>
+@@ -728,10 +729,6 @@ static int smaps_hugetlb_range(pte_t *pte, unsigned long hmask,
+ }
+ #endif /* HUGETLB_PAGE */
  
--#if defined(CONFIG_X86)
--# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
--#if defined (CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)
-+#ifdef CONFIG_ARCH_HAS_PKEYS
- # define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
- # define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
- # define VM_PKEY_BIT1	VM_HIGH_ARCH_1
- # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
- # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
--#endif
-+#endif /* CONFIG_ARCH_HAS_PKEYS */
+-void __weak arch_show_smap(struct seq_file *m, struct vm_area_struct *vma)
+-{
+-}
+-
+ static int show_smap(struct seq_file *m, void *v, int is_pid)
+ {
+ 	struct proc_maps_private *priv = m->private;
+@@ -851,9 +848,11 @@ static int show_smap(struct seq_file *m, void *v, int is_pid)
+ 			   (unsigned long)(mss->pss >> (10 + PSS_SHIFT)));
+ 
+ 	if (!rollup_mode) {
+-		arch_show_smap(m, vma);
++		if (arch_pkeys_enabled())
++			seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
+ 		show_smap_vma_flags(m, vma);
+ 	}
 +
-+#if defined(CONFIG_X86)
-+# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
- #elif defined(CONFIG_PPC)
- # define VM_SAO		VM_ARCH_1	/* Strong Access Ordering (powerpc) */
- #elif defined(CONFIG_PARISC)
+ 	m_cache_vma(m, vma);
+ 	return ret;
+ }
+diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
+index 0794ca7..dfdc609 100644
+--- a/include/linux/pkeys.h
++++ b/include/linux/pkeys.h
+@@ -13,6 +13,7 @@
+ #define arch_override_mprotect_pkey(vma, prot, pkey) (0)
+ #define PKEY_DEDICATED_EXECUTE_ONLY 0
+ #define ARCH_VM_PKEY_FLAGS 0
++#define vma_pkey(vma) 0
+ 
+ static inline bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
+ {
+@@ -35,6 +36,11 @@ static inline int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 	return 0;
+ }
+ 
++static inline bool arch_pkeys_enabled(void)
++{
++	return false;
++}
++
+ static inline void copy_init_pkru_to_fpregs(void)
+ {
+ }
 -- 
 1.7.1
