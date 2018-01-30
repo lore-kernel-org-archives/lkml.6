@@ -1,68 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752781AbeA3TRe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 14:17:34 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:39969 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752299AbeA3TRd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:17:33 -0500
-X-Google-Smtp-Source: AH8x224RorlfIBCRK1FPWncsK3YxjumHP+JAdOzz03XZGGN9afKehD7ZUpGb2XJTWC9Y35pcXyft/cvEncBRKK0It8M=
+        id S1752895AbeA3TSd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:18:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751699AbeA3TSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 14:18:32 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 616892173F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 30 Jan 2018 13:18:27 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: =?utf-8?B?5Yav6ZSQ?= <rui_feng@realsil.com.cn>
+Cc: "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>, Dave Jiang <dave.jiang@intel.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?= =?utf-8?B?5aSNOg==?=
+ [PATCH v6] mfd: Add support for RTS5250S power saving
+Message-ID: <20180130191827.GI232763@bhelgaas-glaptop.roam.corp.google.com>
+References: <1504772799-15173-1-git-send-email-rui_feng@realsil.com.cn>
+ <20171214222522.GL30595@bhelgaas-glaptop.roam.corp.google.com>
+ <2A308283684ECD4B896628E09AF5361E01A8150B@RS-MBS01.realsil.com.cn>
+ <20171215151522.GT30595@bhelgaas-glaptop.roam.corp.google.com>
+ <2A308283684ECD4B896628E09AF5361E01A8193C@RS-MBS01.realsil.com.cn>
+ <20171227233750.GB79892@bhelgaas-glaptop.roam.corp.google.com>
+ <20180117210121.GD7039@bhelgaas-glaptop.roam.corp.google.com>
+ <2A308283684ECD4B896628E09AF5361E01A8A102@RS-MBS01.realsil.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <20180130053708.GA3741@linux.vnet.ibm.com>
-References: <20180129182309.3869-1-devix84@gmail.com> <20180130053708.GA3741@linux.vnet.ibm.com>
-From: Ildar Ismagilov <devix84@gmail.com>
-Date: Tue, 30 Jan 2018 22:17:32 +0300
-Message-ID: <CADCZxWcTSaWGFi67Ruwyof_=PtZNO-ph7JQF2ZbAbnLpdudE8w@mail.gmail.com>
-Subject: Re: [PATCH] srcu: fix misprint in srcu_funnel_exp_start
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2A308283684ECD4B896628E09AF5361E01A8A102@RS-MBS01.realsil.com.cn>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I didn't check the performance, because this misprint has been found
-accidentally, during studying of a RCU/SRCU code.
+On Fri, Jan 19, 2018 at 07:38:22AM +0000, 冯锐 wrote:
+> > On Wed, Dec 27, 2017 at 05:37:50PM -0600, Bjorn Helgaas wrote:
+> > > On Tue, Dec 19, 2017 at 08:15:24AM +0000, 冯锐 wrote:
+> > > > > On Fri, Dec 15, 2017 at 09:42:45AM +0000, 冯锐 wrote:
+> > > > > > > [+cc Hans, Dave, linux-pci]
+> > > > > > >
+> > > > > > > On Thu, Sep 07, 2017 at 04:26:39PM +0800,
+> > > > > > > rui_feng@realsil.com.cn
+> > > > > wrote:
+> > > > > > > > From: Rui Feng <rui_feng@realsil.com.cn>
+> > > > > > >
+> > > > > > > I wish this had been posted to linux-pci before being merged.
+> > > > > > >
+> > > > > > > I'm concerned because some of this appears to overlap and
+> > > > > > > conflict with PCI core management of ASPM.
+> > > > > > >
+> > > > > > > I assume these devices advertise ASPM support in their Link
+> > > > > > > Capabilites registers, right?  If so, why isn't the existing
+> > > > > > > PCI core ASPM support sufficient?
+> > > > > > >
+> > > > > > When L1SS is configured, the device(hardware) can't enter L1SS
+> > > > > > status automatically, it need driver(software) to do some work
+> > > > > > to achieve the
+> > > > > function.
+> > > > >
+> > > > > So this is a hardware defect in the device?  As far as I know,
+> > > > > ASPM and L1SS are specified such that they should work without special
+> > driver support.
+> > > > >
+> > > > Yes, you can say that.
+> > > >
+> > > > > > > > Enable power saving for RTS5250S as following steps:
+> > > > > > > > 1.Set 0xFE58 to enable clock power management.
+> > > > > > >
+> > > > > > > Is this clock power management something specific to RTS5250S,
+> > > > > > > or is it standard PCIe architected stuff?
+> > > > > > >
+> > > > > > 0xFE58 is specific register to RTS5250S not standard PCIe architected
+> > stuff.
+> > > > >
+> > > > > OK.  I asked because devices often mirror architected PCIe config
+> > > > > things in device-specific MMIO space, and if I squint just right,
+> > > > > I can sort of match up the register bits you used with things in the PCIe
+> > spec.
+> > > > >
+> > > > > > > > 2.Check cfg space whether support L1SS or not.
+> > > > > > >
+> > > > > > > This sounds like standard PCIe ASPM L1 Substates, right?
+> > > > > > >
+> > > > > > Yes.
+> > > > > >
+> > > > > > > > 3.If support L1SS, set 0xFF03 to free clkreq.
+> > > > > > > > 4.When entering idle status, enable aspm
+> > > > > > > >   and set parameters for L1SS and LTR.
+> > > > > > > > 5.Wnen entering run status, disable aspm
+> > > > > > > >   and set parameters for L1SS and LTR.
+> > > > > > >
+> > > > > > > In general, drivers should not configure ASPM, L1SS, and LTR
+> > > > > > > themselves; the PCI core should do that.
+> > > > > > >
+> > > > > > > If a driver needs to tweak ASPM at run-time, it should use
+> > > > > > > interfaces exported by the PCI core to do so.
+> > > > > > >
+> > > > > > Which interface I can use to set ASPM? I use "pci_write_config_byte"
+> > now.
+> > > > >
+> > > > > What do you need to do?  include/linux/pci-aspm.h exports
+> > > > > pci_disable_link_state(), which is mainly used to avoid ASPM
+> > > > > states that have hardware errata.
+> > > > >
+> > > > I want to enable ASPM(L0 -> L1) and disable ASPM(L1 -> L0), which
+> > > > interface can I use?
+> > >
+> > > You can use pci_disable_link_state() to disable usage of L1.
+> > >
+> > > Currently there is no corresponding pci_enable_link_state().  What if
+> > > we added something like the following (untested)?  Would that work for
+> > > you?
+> > 
+> > Hi Rui,
+> > 
+> > Any thoughts on the patch below?
+> 
+> I'm busy with other work, the patch seems ok, I will test it later.
 
-2018-01-30 8:37 GMT+03:00 Paul E. McKenney <paulmck@linux.vnet.ibm.com>:
-> On Mon, Jan 29, 2018 at 09:23:09PM +0300, Ildar Ismagilov wrote:
->> Signed-off-by: Ildar Ismagilov <devix84@gmail.com>
->
-> The original does look backwards, now that you mention it, thank you
-> for sending it.
->
-> Did you see any performance differences from this patch?
->
->                                                         Thanx, Paul
->
->> ---
->>  kernel/rcu/srcutree.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
->> index 6d5880089ff6..1798d1aa60fa 100644
->> --- a/kernel/rcu/srcutree.c
->> +++ b/kernel/rcu/srcutree.c
->> @@ -599,7 +599,7 @@ static void srcu_funnel_exp_start(struct srcu_struct *sp, struct srcu_node *snp,
->>               raw_spin_unlock_irqrestore_rcu_node(snp, flags);
->>       }
->>       raw_spin_lock_irqsave_rcu_node(sp, flags);
->> -     if (!ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
->> +     if (ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
->>               sp->srcu_gp_seq_needed_exp = s;
->>       raw_spin_unlock_irqrestore_rcu_node(sp, flags);
->>  }
->> --
->> 2.11.0
->>
->
+Any idea when you might get back to this?
 
+If you can't do it, I can try doing it myself, but of course, I don't
+know the details about the device errata and I wouldn't be able to
+test it.
 
-
--- 
-Best regards
-Ildar
+Bjorn
