@@ -1,126 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752937AbeA3R46 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 12:56:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44736 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751761AbeA3R44 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 12:56:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1391F601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Tue, 30 Jan 2018 17:56:54 +0000
-From: Lina Iyer <ilina@codeaurora.org>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: tglx@linutronix.de, jason@lakedaemon.net, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org,
-        rnayak@codeaurora.org, asathyak@codeaurora.org
-Subject: Re: [PATCH RFC 1/4] drivers: irqchip: pdc: add support for PDC
- interrupt controller
-Message-ID: <20180130175654.GC20815@codeaurora.org>
-References: <20180123175656.11942-1-ilina@codeaurora.org>
- <20180123175656.11942-2-ilina@codeaurora.org>
- <9dd8307c-4906-4707-d4d7-2ef0fc8307b6@arm.com>
+        id S1753184AbeA3SAW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:00:22 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56708 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751584AbeA3SAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 13:00:21 -0500
+Date: Tue, 30 Jan 2018 18:00:13 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Cc: Neil Leeder <nleeder@codeaurora.org>,
+        Mark Langsdorf <mlangsdo@redhat.com>, Jon Masters <jcm@redhat.com>,
+        Timur Tabi <timur@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Mark Salter <msalter@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Linuxarm <linuxarm@huawei.com>
+Subject: Re: [PATCH 1/2] acpi: arm64: add iort support for PMCG
+Message-ID: <20180130180013.GA16154@e107981-ln.cambridge.arm.com>
+References: <1501876754-1064-1-git-send-email-nleeder@codeaurora.org>
+ <1501876754-1064-2-git-send-email-nleeder@codeaurora.org>
+ <5FC3163CFD30C246ABAA99954A238FA8386400F7@FRAEML521-MBX.china.huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9dd8307c-4906-4707-d4d7-2ef0fc8307b6@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA8386400F7@FRAEML521-MBX.china.huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+On Tue, Jan 30, 2018 at 10:39:20AM +0000, Shameerali Kolothum Thodi wrote:
+> Hi Neil/Lorenzo,
+> 
+> > -----Original Message-----
+> > From: linux-arm-kernel [mailto:linux-arm-kernel-bounces@lists.infradead.org]
+> > On Behalf Of Neil Leeder
+> > Sent: Friday, August 04, 2017 8:59 PM
+> > To: Will Deacon <will.deacon@arm.com>; Mark Rutland
+> > <mark.rutland@arm.com>
+> > Cc: Mark Langsdorf <mlangsdo@redhat.com>; Jon Masters
+> > <jcm@redhat.com>; Timur Tabi <timur@codeaurora.org>; linux-
+> > kernel@vger.kernel.org; Mark Brown <broonie@kernel.org>; Mark Salter
+> > <msalter@redhat.com>; nleeder@codeaurora.org; linux-arm-
+> > kernel@lists.infradead.org
+> > Subject: [PATCH 1/2] acpi: arm64: add iort support for PMCG
+> > 
+> > Add support for the SMMU Performance Monitor Counter Group
+> > information from ACPI. This is in preparation for its use
+> > in the SMMU v3 PMU driver.
+> 
+> [...]
+> 
+> >  static __init
+> >  const struct iort_iommu_config *iort_get_iommu_cfg(struct acpi_iort_node
+> > *node)
+> >  {
+> > @@ -1001,6 +1041,8 @@ const struct iort_iommu_config
+> > *iort_get_iommu_cfg(struct acpi_iort_node *node)
+> >  		return &iort_arm_smmu_v3_cfg;
+> >  	case ACPI_IORT_NODE_SMMU:
+> >  		return &iort_arm_smmu_cfg;
+> > +	case ACPI_IORT_NODE_PMCG:
+> > +		return &iort_arm_smmu_pmcg_cfg;
+> 
+> I understand this series will be revised based on the iort spec update.
+> 
+> This Is to clarify few queries we have with respect to one of our hisilicon 
+> platform which has support for SMMU v3 PMCG. In our implementation
+> the base address for the PMCG is defined at a IMP DEF address offset
+> within the SMMUv3 page 0 address space. And as per SMMU spec, 
+> 
+> " The Performance Monitor Counter Groups are standalone monitoring 
+> facilities  and, as such, can be implemented in separate components that
+> are all associated with (but not necessarily part of) an SMMU"
+> 
+> It looks like PMCG can be part of SMMU,  it is not clear whether this kind
+> of address mapping is forbidden or not. If this is an accepted  scenario, then
+> the devm_ioremap_resource() call in SMMv3 probe will fail as it reports conflict.
+> 
+> As far as I can see, the above code just checks the iort node type is PMCG
+> and assumes that its SMMU PMCG. As per IORT spec, it make sense to check
+> the node reference filed and make that call. 
+> 
+> And to fix the resource conflict issue we have, is it possible to treat the PMCG
+> node as the child of the SMMU and call the platform_device_add() appropriately
+> to avoid the conflict? I am not sure this will fix the issue and also about the order
+> in which SMMU and PMCG devices will be populated will have an impact on this.
+> 
+> Please let me know your thoughts on this.
 
-On Wed, Jan 24 2018 at 14:20 +0000, Marc Zyngier wrote:
->Hi Lina, Archana,
->
->On 23/01/18 17:56, Lina Iyer wrote:
->> From : Archana Sathyakumar <asathyak@codeaurora.org>
->>
->> The Power Domain Controller (PDC) hardware block on Qualcomm SoCs houses
->> an interrupt controller along with other domain control functions to
->> handle interrupt related functions like handle falling edge or active
->> low which are not detected at the GIC and handle wakeup interrupts.
->>
->> The interrupt controller is on an always-on domain for the purpose of
->> waking up the processor, but only a subset of the processor's interrupts
->> are routed through the PDC to the GIC. The PDC powers on the processor's
->> domain, bringing the domain out of low power mode and replays the
->> pending interrupts so the GIC may wake up the processor.
->>
->> Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> [Lina: Split out DT bindings target data and initialization changes]
->> ---
+I went back and re-read the patches, I think the point here is that the
+perf driver (ie PATCH 2 that, by the way, is not maiinline) uses
+devm_ioremap_resource() to map the counters and that's what is causing
+failures when PMCG is part of SMMUv3 registers.
 
-[...]
+It is the resources hierarchy that is wrong and in turn, I do not think
+devm_request_mem_region() is the right way of requesting it for the
+PMCG driver.
 
->> +
->> +static int qcom_pdc_translate(struct irq_domain *d,
->> +	struct irq_fwspec *fwspec, unsigned long *hwirq, unsigned int *type)
->> +{
->> +	return d->parent->ops->translate(d->parent, fwspec, hwirq, type);
->
->No way. The translate operation is local to your domain. You don't go
->and fish in another domain's private stuff. Please implement your own.
->The reason you're getting away with it is because you're in the DT by
->providing the GIC SPI instead of the pin into the PDC.
->
-I am looking into this approach. Was hoping to get some clarifications
-from you.
+I need to look into this but I suspect that's something that should
+be handled in the PMCG driver, that has to request the memory region
+_differently_ (ie ioremap copes with this overlap - it is the
+devm_request_mem_region() in devm_ioremap_resource() that fails, correct
+?).
 
-The PDC sits between the device and the the GIC. Platform drivers
-receive their interrupts from GIC. They are not aware of the fact that
-the GIC may lose power and hand over its job to PDC. The platform
-drivers may configure an interrupt as a wakeup interrupt, in which case,
-we would wake up the CPU even if we are in system sleep or suspend mode.
-Platform driver don't know about the PDC pin or its configuration
-information. It makes it easier to keep that information contained
-within the PDC driver. Instead of getting the pin-hwirq map from the
-table as in patch #4, I can get that information cleanly from DT.
+Certainly we need to create in IORT the resources with the correct
+hierarchy (I reckon DT does it already if the right device hierarchy is
+specified).
 
->Don't do that. Expose the pin in the DT, use the alloc method to map the
->PDC pin into the GIC pin.
->
-I would like to understand how you mean by this. I am thinking something
-like this in the dts -
+Lorenzo
 
-/ {
-	interrupt-controller = <&pdc>;
-	soc {
-		intc: interrupt-controller@176000 {
-			[...]
-			interrupt-controller;
-			interrupt-parent = <&intc>;
-		};
-
-		pdc: interrupt-controller@210000 {
-			[...]
-			interrupt-controller;
-			interrupt-parent = <&intc>;
-			qcm,pdc-ranges = <0 512 94>, <94 641 15>, <115 662 7>;
-		};
-
-		foo-device {
-			interrupts = <GIC_SPI 481 IRQ_TYPE_NONE>;
-		};
-	};
- };
-
-Where the qcom,pdc-ranges is defined as -
-	<pdc-pin-start interrupt-vector size-of-sequence>.
-
-For this example, the PDC map is established for pin0-pin93 using 94
-interrupts in sequence starting from 512 and so on. This allows for
-holes in the map per the hardware interrupt topology.
-
-I am not sure if you were asking to specify the pin in the 'interrupts'
-property in each device. I would like to avoid that as this may be an
-information that the device author may care less about. Would you agree?
-
-If I completely missed your point, would you please care to elaborate?
-
-Thanks,
-Lina
+> 
+> Thanks,
+> Shameer
+>   
+> >  	default:
+> >  		return NULL;
+> >  	}
+> > @@ -1056,6 +1098,15 @@ static int __init
+> > iort_add_smmu_platform_device(struct acpi_iort_node *node)
+> >  	if (ret)
+> >  		goto dev_put;
+> > 
+> > +	/* End of init for PMCG */
+> > +	if (node->type == ACPI_IORT_NODE_PMCG) {
+> > +		ret = platform_device_add(pdev);
+> > +		if (ret)
+> > +			goto dev_put;
+> > +
+> > +		return 0;
+> > +	}
+> > +
+> >  	/*
+> >  	 * We expect the dma masks to be equivalent for
+> >  	 * all SMMUs set-ups
+> > @@ -1131,6 +1182,9 @@ static void __init iort_init_platform_devices(void)
+> >  				acpi_free_fwnode_static(fwnode);
+> >  				return;
+> >  			}
+> > +		} else if (iort_node->type == ACPI_IORT_NODE_PMCG) {
+> > +			if (iort_add_smmu_platform_device(iort_node))
+> > +				return;
+> >  		}
+> > 
+> >  		iort_node = ACPI_ADD_PTR(struct acpi_iort_node, iort_node,
+> > diff --git a/include/acpi/actbl2.h b/include/acpi/actbl2.h
+> > index 707dda74..2169b6f 100644
+> > --- a/include/acpi/actbl2.h
+> > +++ b/include/acpi/actbl2.h
+> > @@ -695,7 +695,8 @@ enum acpi_iort_node_type {
+> >  	ACPI_IORT_NODE_NAMED_COMPONENT = 0x01,
+> >  	ACPI_IORT_NODE_PCI_ROOT_COMPLEX = 0x02,
+> >  	ACPI_IORT_NODE_SMMU = 0x03,
+> > -	ACPI_IORT_NODE_SMMU_V3 = 0x04
+> > +	ACPI_IORT_NODE_SMMU_V3 = 0x04,
+> > +	ACPI_IORT_NODE_PMCG = 0x05
+> >  };
+> > 
+> >  struct acpi_iort_id_mapping {
+> > @@ -811,6 +812,12 @@ struct acpi_iort_smmu_v3 {
+> >  #define ACPI_IORT_SMMU_V3_COHACC_OVERRIDE   (1)
+> >  #define ACPI_IORT_SMMU_V3_HTTU_OVERRIDE     (1<<1)
+> > 
+> > +struct acpi_iort_pmcg {
+> > +	u64 base_address;	/* PMCG base address */
+> > +	u32 overflow_gsiv;
+> > +	u32 node_reference;
+> > +};
+> > +
+> > 
+> > /****************************************************************
+> > ***************
+> >   *
+> >   * IVRS - I/O Virtualization Reporting Structure
+> > --
+> > Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+> > Technologies Inc.
+> > Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+> > a Linux Foundation Collaborative Project.
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
