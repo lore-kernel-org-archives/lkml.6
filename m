@@ -1,86 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751786AbeA3Ouj (ORCPT <rfc822;w@1wt.eu>);
+        id S1751992AbeA3Oun (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:50:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751698AbeA3Ouj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jan 2018 09:50:39 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:36547 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751698AbeA3Ouh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:50:37 -0500
-Date: Tue, 30 Jan 2018 06:49:19 -0800
-From: tip-bot for Dou Liyang <tipbot@zytor.com>
-Message-ID: <tip-9471eee9186a46893726e22ebb54cade3f9bc043@git.kernel.org>
-Cc: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        misono.tomohiro@jp.fujitsu.com, douly.fnst@cn.fujitsu.com,
-        tglx@linutronix.de
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        douly.fnst@cn.fujitsu.com, misono.tomohiro@jp.fujitsu.com,
-        hpa@zytor.com
-In-Reply-To: <f5892721-7528-3647-08fb-f8d10e65ad87@cn.fujitsu.com>
-References: <f5892721-7528-3647-08fb-f8d10e65ad87@cn.fujitsu.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/spectre: Check CONFIG_RETPOLINE in command line
- parser
-Git-Commit-ID: 9471eee9186a46893726e22ebb54cade3f9bc043
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D605217A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AH8x225S4TC2NciyrrhZbaOUUWWUAWnf8mtTD6VZF0kjeWmlAn4mke4EsQYTj6JviqtyhJ77Ey+Lor0PX0H1iIBBabE=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <ffec7cac-22cd-f19b-8c1b-ce3223606d20@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-2-git-send-email-david@lechnology.com> <20180129195315.bjanym7pmeh7bhaa@rob-hp-laptop>
+ <ffec7cac-22cd-f19b-8c1b-ce3223606d20@lechnology.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 30 Jan 2018 08:50:17 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK+c-C9VJnEOr0Em3Y-dtvE+CSbsc6m-0JoWJSZxKeR_g@mail.gmail.com>
+Message-ID: <CAL_JsqK+c-C9VJnEOr0Em3Y-dtvE+CSbsc6m-0JoWJSZxKeR_g@mail.gmail.com>
+Subject: Re: [PATCH v6 01/41] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9471eee9186a46893726e22ebb54cade3f9bc043
-Gitweb:     https://git.kernel.org/tip/9471eee9186a46893726e22ebb54cade3f9bc043
-Author:     Dou Liyang <douly.fnst@cn.fujitsu.com>
-AuthorDate: Tue, 30 Jan 2018 14:13:50 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 30 Jan 2018 15:30:35 +0100
+On Mon, Jan 29, 2018 at 3:14 PM, David Lechner <david@lechnology.com> wrote:
+> On 01/29/2018 01:53 PM, Rob Herring wrote:
+>>
+>> On Sat, Jan 20, 2018 at 11:13:40AM -0600, David Lechner wrote:
+>>>
+>>> This adds a new binding for the PLL IP blocks in the mach-davinci
+>>> family of processors. Currently, only da850 has device tree support
+>>> but these bindings can also work for other SoCs in this family just
+>>> by adding new compatible strings.
+>>>
+>>> Note: Although these PLL controllers are very similar to the TI Keystone
+>>> SoCs, we are not re-using those bindings. The Keystone bindings use a
+>>> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
+>>> have a slightly different PLL register layout and a number of quirks
+>>> that can't be handled by the existing bindings, so the keystone bindings
+>>> could not be used as-is anyway.
+>>>
+>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>> ---
+>>>
+>>> v6 changes:
+>>> - Added clock-names property
+>>> - Added ti,clkmode-square-wave property
+>>> - Added pllout child node
+>>> - Added obsclk child node
+>>> - Expanded examples
+>>>
+>>>   .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96
+>>> ++++++++++++++++++++++
+>>>   1 file changed, 96 insertions(+)
+>>>   create mode 100644
+>>> Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>> b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>> new file mode 100644
+>>> index 0000000..36998e1
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>> @@ -0,0 +1,96 @@
+>>> +Binding for TI DaVinci PLL Controllers
+>>> +
+>>> +The PLL provides clocks to most of the components on the SoC. In
+>>> addition
+>>> +to the PLL itself, this controller also contains bypasses, gates,
+>>> dividers,
+>>> +an multiplexers for various clock signals.
+>>> +
+>>> +Required properties:
+>>> +- compatible: shall be one of:
+>>> +       - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+>>> +       - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+>>> +- reg: physical base address and size of the controller's register area.
+>>> +- clocks: phandles corresponding to the clock names
+>>> +- clock-names: names of the clock sources - depends on compatible string
+>>> +       - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
+>>> +       - for "ti,da850-pll1", shall be "clksrc"
+>>> +
+>>> +Optional properties:
+>>> +- ti,clkmode-square-wave: Indicates that the the board is supplying a
+>>> square
+>>> +       wave input on the OSCIN pin instead of using a crystal
+>>> oscillator.
+>>> +       This property is only valid when compatible = "ti,da850-pll0".
+>>> +
+>>> +
+>>> +Optional child nodes:
+>>> +
+>>> +pllout
+>>> +       Describes the main PLL clock output (before POSTDIV). The node
+>>> name must
+>>> +       be "pllout".
+>>> +
+>>> +       Required properties:
+>>> +       - #clock-cells: shall be 0
+>>> +
+>>> +sysclk
+>>> +       Describes the PLLDIVn divider clocks that provide the SYSCLKn
+>>> clock
+>>> +       domains. The node name must be "sysclk". Consumers of this node
+>>> should
+>>> +       use "n" in "SYSCLKn" as the index parameter for the clock cell.
+>>> +
+>>> +       Required properties:
+>>> +       - #clock-cells: shall be 1
+>>> +
+>>> +auxclk
+>>> +       Describes the AUXCLK output of the PLL. The node name must be
+>>> "auxclk".
+>>> +       This child node is only valid when compatible = "ti,da850-pll0".
+>>> +
+>>> +       Required properties:
+>>> +       - #clock-cells: shall be 0
+>>> +
+>>> +obsclk
+>>> +       Describes the OBSCLK output of the PLL. The node name must be
+>>> "obsclk".
+>>> +
+>>> +       Required properties:
+>>> +       - #clock-cells: shall be 0
+>>
+>>
+>> So why have all these child nodes vs. just defining a single number
+>> space of clock ids?
+>>
+>> Rob
+>>
+>
+> I think that it makes the bindings more self-documenting. Not all PLLs have
+> all of possible types of output clocks, so the presence or absence of a
+> child node indicates if a PLL actually has that output or not.
 
-x86/spectre: Check CONFIG_RETPOLINE in command line parser
+Doesn't the compatible string do that?
 
-The spectre_v2 option 'auto' does not check whether CONFIG_RETPOLINE is
-enabled. As a consequence it fails to emit the appropriate warning and sets
-feature flags which have no effect at all.
+> It is also complicated by the fact that one of the child nodes (sysclk)
+> is  already an array of clocks.
+>
+> To do what you are suggesting might look something like this...
+>
+> ---
+>
+> Required properties:
+> - compatible: shall be one of:
+>         - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+>         - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+> - reg: physical base address and size of the controller's register area.
+> - clocks: phandles corresponding to the clock names
+> - clock-names: names of the clock sources - depends on compatible string
+>         - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
+>         - for "ti,da850-pll1", shall be "clksrc"
+> - #clock-cells: shall be set to <2>.
+>
+> Consumers:
+>
+> The clock cell values for consumers work as follows...
+>
+> The first index is one of the constants defined in ti-davinci-pll.h
+>
+> The second index is 0 unless the first index is TI_DAVINCI_SYSCLK. In the
+> case
+> of TI_DAVINCI_SYSCLK the second index the SYSCLK domain ID (n in SYSCLKn).
+>
+> For compatible = "ti,da850-pll0":
+>         - <&pll0 TI_DAVINCI_PLLOUT 0> is the PLLOUT clock
+>         - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
+> where n is 1 to 7
+>         - <&pll0 TI_DAVINCI_AUXCLK 0> is the AUXCLK clock domain
+>         - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
+>         - all other index combinations are invalid
+>
+> For compatible = "ti,da850-pll1":
+>         - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
+> where n is 1 to 3
+>         - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
+>         - all other index combinations are invalid
 
-Add the missing IS_ENABLED() check.
+You don't really need 2 cells here. I guess if you want to keep the
+child nodes, that is fine.
 
-Fixes: da285121560e ("x86/spectre: Add boot time option to select Spectre v2 mitigation")
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: ak@linux.intel.com
-Cc: peterz@infradead.org
-Cc: Tomohiro" <misono.tomohiro@jp.fujitsu.com>
-Cc: dave.hansen@intel.com
-Cc: bp@alien8.de
-Cc: arjan@linux.intel.com
-Cc: dwmw@amazon.co.uk
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/f5892721-7528-3647-08fb-f8d10e65ad87@cn.fujitsu.com
-
----
- arch/x86/kernel/cpu/bugs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 3bfb2b2..400c34e 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -213,10 +213,10 @@ static void __init spectre_v2_select_mitigation(void)
- 		return;
- 
- 	case SPECTRE_V2_CMD_FORCE:
--		/* FALLTRHU */
- 	case SPECTRE_V2_CMD_AUTO:
--		goto retpoline_auto;
--
-+		if (IS_ENABLED(CONFIG_RETPOLINE))
-+			goto retpoline_auto;
-+		break;
- 	case SPECTRE_V2_CMD_RETPOLINE_AMD:
- 		if (IS_ENABLED(CONFIG_RETPOLINE))
- 			goto retpoline_amd;
+Rob
