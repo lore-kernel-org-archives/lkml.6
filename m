@@ -1,79 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753967AbeA3Wyt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:54:49 -0500
-Received: from ozlabs.org ([103.22.144.67]:56979 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752570AbeA3Wys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:54:48 -0500
-Date: Wed, 31 Jan 2018 09:54:46 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux F2FS Dev Mailing List
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
-Message-ID: <20180131095446.443670dc@canb.auug.org.au>
-In-Reply-To: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
+        id S1753876AbeA3XAF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:00:05 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45000 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752212AbeA3XAE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 18:00:04 -0500
+X-Google-Smtp-Source: AH8x2259ipycLsokPCYq8myeNbDkeXjjy6RF8sn4BqBFqn+3yQnJ+xSGJ5vSTuCCpbJmGVmGwtkrSw==
+Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
+To: Xin Long <lucien.xin@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>, David Miller <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Streetman <ddstreet@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
+ <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
+ <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net>
+ <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
+From: David Ahern <dsahern@gmail.com>
+Message-ID: <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com>
+Date: Tue, 30 Jan 2018 15:59:59 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
-
-On Tue, 30 Jan 2018 14:32:20 -0800 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->
-> Could you please consider the below pull request?
+On 1/30/18 1:57 PM, David Ahern wrote:
+> On 1/30/18 1:08 PM, Daniel Borkmann wrote:
+>> On 01/30/2018 07:32 PM, Cong Wang wrote:
+>>> On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>>>> Hello,
+>>>>
+>>>> The following program creates a hang in unregister_netdevice.
+>>>> cleanup_net work hangs there forever periodically printing
+>>>> "unregister_netdevice: waiting for lo to become free. Usage count = 3"
+>>>> and creation of any new network namespaces hangs forever.
+>>>
+>>> Interestingly, this is not reproducible on net-next.
+>>
+>> The most recent change on netns refcnt was 4ee806d51176 ("net: tcp: close
+>> sock if net namespace is exiting") in net/net-next from 5 days ago, maybe
+>> fixed due to that?
+>>
 > 
-> Thanks,
+> This appears to be the commit introducing the refcnt leak:
 > 
-> The following changes since commit ace52288edf0cb5e7a52b681f057f86224c49c27:
+> $ git bisect bad
+> dbc2b5e9a09e9a6664679a667ff81cff6e5f2641 is the first bad commit
+> commit dbc2b5e9a09e9a6664679a667ff81cff6e5f2641
+> Author: Xin Long <lucien.xin@gmail.com>
+> Date:   Fri May 12 14:39:52 2017 +0800
 > 
->   Merge tag 'for-linus-20171218' of git://git.infradead.org/linux-mtd (2017-12-18 16:18:01 -0800)
+>     sctp: fix src address selection if using secondary addresses for ipv6
 > 
-> are available in the Git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-4.16-rc1
+> v4.14 is bad. Running bisect in the background while doing other things....
 > 
-> for you to fetch changes up to 1c1d35df71104c76a4a2e25862926f22c334c9d6:
-> 
->   f2fs: support inode creation time (2018-01-25 14:10:39 -0800)
 
-This has an interesting conflict with the btrfs tree:
+Interesting. The commit that avoids the refcnt leak is
 
------------------------------------------------------------------------
-After merging the f2fs tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+commit 955ec4cb3b54c7c389a9f830be7d3ae2056b9212
+Author: David Ahern <dsahern@gmail.com>
+Date:   Wed Jan 24 19:45:29 2018 -0800
 
-/home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_fill_super':
-/home/sfr/next/next/fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPWB' undeclared (first use in this function); did you mean 'S_CGROUPWB'?
-  sb->s_iflags |= SB_I_CGROUPWB;
-                  ^~~~~~~~~~~~~
-                  S_CGROUPWB
+    net/ipv6: Do not allow route add with a device that is down
 
-Caused by commit
-
-  578c647879f7 ("f2fs: implement cgroup writeback support")
-
-interacting with commit
-
-  34934189a3dd ("cgroup, writeback: replace SB_I_CGROUPWB with per-inode S_CGROUPWB"
-
-from the btrfs tree.
-
-I have reverted the f2fs tree commit for today, but a better resolution
-would be appreciated.
------------------------------------------------------------------------
-
-I have seen no response to the above email and have been reverting that
-commit since Jan 18.
--- 
-Cheers,
-Stephen Rothwell
+That commit does not intentionally address the problem so it is just
+masking the problematic code introduced by the commit above.
