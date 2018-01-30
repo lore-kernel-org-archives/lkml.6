@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752339AbeA3A4D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 19:56:03 -0500
-Received: from gateway21.websitewelcome.com ([192.185.46.109]:32573 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752251AbeA3A4B (ORCPT
+        id S1752464AbeA3A40 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 19:56:26 -0500
+Received: from gateway30.websitewelcome.com ([192.185.194.16]:26015 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752437AbeA3A4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 19:56:01 -0500
-Date: Mon, 29 Jan 2018 18:32:21 -0600
+        Mon, 29 Jan 2018 19:56:24 -0500
+Date: Mon, 29 Jan 2018 18:33:18 -0600
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH 5/8] pci: cx88-input: fix potential integer overflow
-Message-ID: <7958c3115b5727c2272ce9cf7454cea8e6f4cc50.1517268668.git.gustavo@embeddedor.com>
+Subject: [PATCH 8/8] platform: vivid-cec: fix potential integer overflow in
+ vivid_cec_pin_adap_events
+Message-ID: <00eea53890802b679c138fc7f68a0f162261d95c.1517268668.git.gustavo@embeddedor.com>
 References: <cover.1517268667.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -28,51 +30,41 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.145.57.174
 X-Source-L: No
-X-Exim-ID: 1egJqY-001eaY-AI
+X-Exim-ID: 1egJrT-001fNG-En
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (training) [189.145.57.174]:35460
+X-Source-Sender: (training) [189.145.57.174]:35468
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 27
+X-Email-Count: 41
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cast ir->polling to ktime_t in order to avoid a potential integer
+Cast len to const u64 in order to avoid a potential integer
 overflow. This variable is being used in a context that expects
-an expression of type ktime_t (s64).
+an expression of type const u64.
 
-Addresses-Coverity-ID: 1392628 ("Unintentional integer overflow")
-Addresses-Coverity-ID: 1392630 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1454996 ("Unintentional integer overflow")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/media/pci/cx88/cx88-input.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/vivid/vivid-cec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
-index 4e9953e..096b350 100644
---- a/drivers/media/pci/cx88/cx88-input.c
-+++ b/drivers/media/pci/cx88/cx88-input.c
-@@ -180,7 +180,7 @@ static enum hrtimer_restart cx88_ir_work(struct hrtimer *timer)
- 	struct cx88_IR *ir = container_of(timer, struct cx88_IR, timer);
- 
- 	cx88_ir_handle_key(ir);
--	missed = hrtimer_forward_now(&ir->timer, ir->polling * 1000000);
-+	missed = hrtimer_forward_now(&ir->timer, (ktime_t)ir->polling * 1000000);
- 	if (missed > 1)
- 		ir_dprintk("Missed ticks %ld\n", missed - 1);
- 
-@@ -200,7 +200,7 @@ static int __cx88_ir_start(void *priv)
- 	if (ir->polling) {
- 		hrtimer_init(&ir->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 		ir->timer.function = cx88_ir_work;
--		hrtimer_start(&ir->timer, ir->polling * 1000000,
-+		hrtimer_start(&ir->timer, (ktime_t)ir->polling * 1000000,
- 			      HRTIMER_MODE_REL);
- 	}
- 	if (ir->sampling) {
+diff --git a/drivers/media/platform/vivid/vivid-cec.c b/drivers/media/platform/vivid/vivid-cec.c
+index b55d278..30240ab 100644
+--- a/drivers/media/platform/vivid/vivid-cec.c
++++ b/drivers/media/platform/vivid/vivid-cec.c
+@@ -83,7 +83,7 @@ static void vivid_cec_pin_adap_events(struct cec_adapter *adap, ktime_t ts,
+ 	if (adap == NULL)
+ 		return;
+ 	ts = ktime_sub_us(ts, (CEC_TIM_START_BIT_TOTAL +
+-			       len * 10 * CEC_TIM_DATA_BIT_TOTAL));
++			       (const u64)len * 10 * CEC_TIM_DATA_BIT_TOTAL));
+ 	cec_queue_pin_cec_event(adap, false, ts);
+ 	ts = ktime_add_us(ts, CEC_TIM_START_BIT_LOW);
+ 	cec_queue_pin_cec_event(adap, true, ts);
 -- 
 2.7.4
