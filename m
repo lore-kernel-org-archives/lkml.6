@@ -1,42 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753118AbeA3Sct (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:32:49 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33851 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752546AbeA3Scr (ORCPT
+        id S1753206AbeA3Sdx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:33:53 -0500
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:54752 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751584AbeA3Sdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:32:47 -0500
-X-Google-Smtp-Source: AH8x225aRAzw/43ena+LsJsq7vxhYXCAkaGIBbih/t+AT8/AyQhsczwGxbsMX5oz3bg83pLx3glhg1RAPKKo60rY5Lw=
+        Tue, 30 Jan 2018 13:33:50 -0500
+Date: Tue, 30 Jan 2018 18:33:43 +0000
+From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Steve Presser <steve@pressers.name>,
+        Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Jeremy Cline <jeremy@jcline.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Lars Kellogg-Stedman <lars@oddbit.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device
+ for BOSC0200
+Message-ID: <20180130183343.2bf379d0@archlinux>
+In-Reply-To: <CAHp75Vd3pDFk5NnJrak_smS-AeHh+d-GXaOwp-8mHtyaK+y0jg@mail.gmail.com>
+References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
+        <20171210182152.70ad8fbf@archlinux>
+        <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
+        <20180114104330.2aa7c1fd@archlinux>
+        <20180128094021.572ab366@archlinux>
+        <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
+        <20180130160107.000006df@huawei.com>
+        <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
+        <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
+        <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
+        <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
+        <CAHp75Vd3pDFk5NnJrak_smS-AeHh+d-GXaOwp-8mHtyaK+y0jg@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
-References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Tue, 30 Jan 2018 10:32:26 -0800
-Message-ID: <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
-Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: David Miller <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> Hello,
->
-> The following program creates a hang in unregister_netdevice.
-> cleanup_net work hangs there forever periodically printing
-> "unregister_netdevice: waiting for lo to become free. Usage count = 3"
-> and creation of any new network namespaces hangs forever.
+On Tue, 30 Jan 2018 20:08:19 +0200
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Interestingly, this is not reproducible on net-next.
+> On Tue, Jan 30, 2018 at 7:38 PM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Tue, Jan 30, 2018 at 7:25 PM, Steve Presser <steve@pressers.name> wrote:  
+> >> Andy,
+> >>
+> >> Where did the assertion the second device is a magnetometer come from? Just
+> >> the data sheet?  
+> >
+> > Yep. See chapter 8.2. Isn't enough proof? Or you believe in two
+> > accelerometers with off-by-one conflicting address on a cheap laptop
+> > with left unused two magnetometers on the same time?
+> >
+> > And we have a driver for magnetometer separately.
+> >
+> > So, it looks like we need to move ACPI ID to a new "kinda I2C mfd" IIO
+> > driver under drivers/iio/imu/bmc150_i2c.c  
+> 
+> Even Kconfig for one of the driver states so.
+> 
+> Looking more to it, I think the patch should be reverted and new
+> driver is created instead.
+
+Whilst the question is still open I have dropped the patch.
+Was not yet in a non rebasing tree (just in a build test one)
+so fine to drop it.
+
+
+> 
+> I'm on it.
+> 
+> >> Steve
+> >>
+> >>
+> >> On Tue, Jan 30, 2018, 12:05 PM Andy Shevchenko <andy.shevchenko@gmail.com>
+> >> wrote:  
+> >>>
+> >>> On Tue, Jan 30, 2018 at 6:40 PM, Andy Shevchenko
+> >>> <andy.shevchenko@gmail.com> wrote:  
+> >>> > On Tue, Jan 30, 2018 at 6:01 PM, Jonathan Cameron
+> >>> > <Jonathan.Cameron@huawei.com> wrote:  
+> >>> >> On Mon, 29 Jan 2018 16:07:02 +0200
+> >>> >> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:  
+> >>> >  
+> >>> >>> > But that would take much longer.  Feel free to propose it and a
+> >>> >>> > patch
+> >>> >>> > removing the ifdef fun if you like!  
+> >>> >  
+> >>> >>> Where can I see the patch?  
+> >>> >  
+> >>> >> Doh. I clearly forgot to push out.  Should be able to push to
+> >>> >> iio.git on kernel.org later.  
+> >>> >
+> >>> > Thanks, I can see it now.
+> >>> >
+> >>> > This patch almost wrong. Not by functionality it brings, but by style.  
+> >>>
+> >>> Oy vey, the second device is *not* accelerometer, it is a magnetometer
+> >>> [1].
+> >>>
+> >>> [1]: https://www.mouser.com/ds/2/783/BST-BMC150-DS000-04-786477.pdf
+> >>>  
+> >>> > I'll send soon a series of fixes to the driver (compile tested only)
+> >>> > to provide my view on the matters.
+> >>> >
+> >>> > P.S. In the future (I have some kind of deja vu I have told this
+> >>> > already to someone), please, Cc one or more of Rafael, Mika and/or me
+> >>> > for ACPI matters.  
+> >>>
+> >>> --
+> >>> With Best Regards,
+> >>> Andy Shevchenko  
+> >
+> >
+> >
+> > --
+> > With Best Regards,
+> > Andy Shevchenko  
+> 
+> 
+> 
