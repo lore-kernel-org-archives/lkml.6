@@ -1,162 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932101AbeA3XE2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:04:28 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:54713 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753615AbeA3XE1 (ORCPT
+        id S1754002AbeA3XHE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:07:04 -0500
+Received: from mail-it0-f50.google.com ([209.85.214.50]:38680 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753620AbeA3XHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:04:27 -0500
-Date: Tue, 30 Jan 2018 15:03:17 -0800
-From: tip-bot for Vitaly Kuznetsov <tipbot@zytor.com>
-Message-ID: <tip-0092e4346f49558e5fe5a927c6d78d401dc4ed73@git.kernel.org>
-Cc: vkuznets@redhat.com, linux-kernel@vger.kernel.org,
-        sthemmin@microsoft.com, mmorsy@redhat.com, kys@microsoft.com,
-        tglx@linutronix.de, pbonzini@redhat.com, hpa@zytor.com,
-        rkrcmar@redhat.com, Michael.H.Kelley@microsoft.com,
-        rkagan@virtuozzo.com, haiyangz@microsoft.com, mingo@kernel.org,
-        cavery@redhat.com, luto@kernel.org
-Reply-To: vkuznets@redhat.com, sthemmin@microsoft.com,
-        linux-kernel@vger.kernel.org, mmorsy@redhat.com, kys@microsoft.com,
-        pbonzini@redhat.com, hpa@zytor.com, tglx@linutronix.de,
-        rkrcmar@redhat.com, Michael.H.Kelley@microsoft.com,
-        rkagan@virtuozzo.com, haiyangz@microsoft.com, mingo@kernel.org,
-        cavery@redhat.com, luto@kernel.org
-In-Reply-To: <20180124132337.30138-8-vkuznets@redhat.com>
-References: <20180124132337.30138-8-vkuznets@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/hyperv] x86/kvm: Support Hyper-V reenlightenment
-Git-Commit-ID: 0092e4346f49558e5fe5a927c6d78d401dc4ed73
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 30 Jan 2018 18:07:02 -0500
+X-Google-Smtp-Source: AH8x2244gytsRwkVU1VSeK6HWMuDX+T/PfG2fXJdf0wa5DV5uQv0ASpOSueOH0xze3++6UAjPTkGhQ==
+Date: Tue, 30 Jan 2018 15:06:59 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <bot+257773a84d5b2bfc2dfad2f945e773bd96d66aa9@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
+ crypto_destroy_tfm
+Message-ID: <20180130230659.nnmcdbma4yewr3cs@gmail.com>
+References: <001a1143d742f280a50560fef72a@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <001a1143d742f280a50560fef72a@google.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0092e4346f49558e5fe5a927c6d78d401dc4ed73
-Gitweb:     https://git.kernel.org/tip/0092e4346f49558e5fe5a927c6d78d401dc4ed73
-Author:     Vitaly Kuznetsov <vkuznets@redhat.com>
-AuthorDate: Wed, 24 Jan 2018 14:23:37 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 30 Jan 2018 23:55:34 +0100
+On Sat, Dec 23, 2017 at 01:58:01AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzkaller hit the following crash on
+> 6084b576dca2e898f5c101baef151f7bfdbb606d
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> 
+> Unfortunately, I don't have any reproducer for this bug yet.
+> 
+> 
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000188
+> IP: crypto_destroy_tfm+0x9f/0xf0 crypto/api.c:577
+> PGD 0 P4D 0
+> Oops: 0000 [#1] SMP
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 0 PID: 21787 Comm: syz-executor4 Not tainted 4.15.0-rc3-next-20171214+
+> #67
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:crypto_destroy_tfm+0x9f/0xf0 crypto/api.c:577
+> RSP: 0018:ffffc90000df7c40 EFLAGS: 00010293
+> RAX: ffff8801f8518040 RBX: 0000000000000000 RCX: ffffffff8167415f
+> RDX: 0000000000000000 RSI: ffff8801f8586c08 RDI: ffff8801f8586c00
+> RBP: ffffc90000df7c60 R08: 0000000000000000 R09: 0000000000000000
+> R10: ffffc90000df7d20 R11: 0000000000000002 R12: ffff8801f8586c08
+> R13: ffff8801f8586c00 R14: 0000000000000000 R15: ffff880213fc0030
+> FS:  0000000002991940(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000188 CR3: 000000000301e002 CR4: 00000000001626f0
+> Call Trace:
+>  crypto_free_aead include/crypto/aead.h:193 [inline]
+>  crypto_rfc4106_exit_tfm+0x1a/0x20 crypto/gcm.c:895
+>  crypto_aead_exit_tfm+0x18/0x20 crypto/aead.c:88
+>  crypto_exit_ops crypto/api.c:315 [inline]
+>  crypto_destroy_tfm+0x49/0xf0 crypto/api.c:579
+>  crypto_free_aead include/crypto/aead.h:193 [inline]
+>  aead_release+0x19/0x30 crypto/algif_aead.c:511
+>  alg_do_release crypto/af_alg.c:119 [inline]
+>  alg_sock_destruct+0x2d/0x40 crypto/af_alg.c:360
+>  __sk_destruct+0x2e/0x250 net/core/sock.c:1558
+>  sk_destruct+0x2f/0x60 net/core/sock.c:1593
+>  __sk_free+0xbe/0xf0 net/core/sock.c:1601
+>  sk_free+0x2a/0x40 net/core/sock.c:1612
+>  sock_put include/net/sock.h:1653 [inline]
+>  af_alg_release+0x42/0x50 crypto/af_alg.c:126
+>  sock_release+0x2c/0xc0 net/socket.c:600
+>  sock_close+0x16/0x20 net/socket.c:1129
+>  __fput+0x120/0x270 fs/file_table.c:209
+>  ____fput+0x15/0x20 fs/file_table.c:243
+>  task_work_run+0xa3/0xe0 kernel/task_work.c:113
+>  exit_task_work include/linux/task_work.h:22 [inline]
+>  do_exit+0x3e6/0x1050 kernel/exit.c:869
+>  do_group_exit+0x60/0x100 kernel/exit.c:972
+>  SYSC_exit_group kernel/exit.c:983 [inline]
+>  SyS_exit_group+0x18/0x20 kernel/exit.c:981
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> RIP: 0033:0x452a09
+> RSP: 002b:0000000000a2fa08 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
+> RAX: ffffffffffffffda RBX: 000000000071bec8 RCX: 0000000000452a09
+> RDX: 0000000000000000 RSI: 0000000000722750 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000852
+> R10: 000000000000000c R11: 0000000000000202 R12: 0000000000a2f9b0
+> R13: 000000000071bea0 R14: 0000000000000519 R15: 000000000000000c
+> Code: 41 ff d6 e8 04 62 c4 ff 4c 89 e7 e8 4c 8d c0 ff 4c 89 ef e8 54 fa d0
+> ff e8 ef 61 c4 ff 5b 41 5c 41 5d 41 5e 5d c3 e8 e1 61 c4 ff <4c> 8b b3 88 01
+> 00 00 4d 85 f6 74 32 e8 d0 61 c4 ff 4c 89 e7 41
+> RIP: crypto_destroy_tfm+0x9f/0xf0 crypto/api.c:577 RSP: ffffc90000df7c40
+> CR2: 0000000000000188
+> ---[ end trace 51087c3b0b04438f ]---
 
-x86/kvm: Support Hyper-V reenlightenment
+Invalidating this bug since it hasn't been seen again, and it was reported while
+KASAN was accidentally disabled in the syzbot kconfig due to a change to the
+kconfig menus in linux-next (so this crash was possibly caused by slab
+corruption elsewhere).
 
-When running nested KVM on Hyper-V guests its required to update
-masterclocks for all guests when L1 migrates to a host with different TSC
-frequency.
-
-Implement the procedure in the following way:
-  - Pause all guests.
-  - Tell the host (Hyper-V) to stop emulating TSC accesses.
-  - Update the gtod copy, recompute clocks.
-  - Unpause all guests.
-
-This is somewhat similar to cpufreq but there are two important differences:
- - TSC emulation can only be disabled globally (on all CPUs)
- - The new TSC frequency is not known until emulation is turned off so
-   there is no way to 'prepare' for the event upfront.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: kvm@vger.kernel.org
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-Cc: Roman Kagan <rkagan@virtuozzo.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: devel@linuxdriverproject.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Cathy Avery <cavery@redhat.com>
-Cc: Mohammed Gamal <mmorsy@redhat.com>
-Link: https://lkml.kernel.org/r/20180124132337.30138-8-vkuznets@redhat.com
-
----
- arch/x86/kvm/x86.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b1ce368..879a999 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -68,6 +68,7 @@
- #include <asm/div64.h>
- #include <asm/irq_remapping.h>
- #include <asm/mshyperv.h>
-+#include <asm/hypervisor.h>
- 
- #define CREATE_TRACE_POINTS
- #include "trace.h"
-@@ -5932,6 +5933,43 @@ static void tsc_khz_changed(void *data)
- 	__this_cpu_write(cpu_tsc_khz, khz);
- }
- 
-+static void kvm_hyperv_tsc_notifier(void)
-+{
-+#ifdef CONFIG_X86_64
-+	struct kvm *kvm;
-+	struct kvm_vcpu *vcpu;
-+	int cpu;
-+
-+	spin_lock(&kvm_lock);
-+	list_for_each_entry(kvm, &vm_list, vm_list)
-+		kvm_make_mclock_inprogress_request(kvm);
-+
-+	hyperv_stop_tsc_emulation();
-+
-+	/* TSC frequency always matches when on Hyper-V */
-+	for_each_present_cpu(cpu)
-+		per_cpu(cpu_tsc_khz, cpu) = tsc_khz;
-+	kvm_max_guest_tsc_khz = tsc_khz;
-+
-+	list_for_each_entry(kvm, &vm_list, vm_list) {
-+		struct kvm_arch *ka = &kvm->arch;
-+
-+		spin_lock(&ka->pvclock_gtod_sync_lock);
-+
-+		pvclock_update_vm_gtod_copy(kvm);
-+
-+		kvm_for_each_vcpu(cpu, vcpu, kvm)
-+			kvm_make_request(KVM_REQ_CLOCK_UPDATE, vcpu);
-+
-+		kvm_for_each_vcpu(cpu, vcpu, kvm)
-+			kvm_clear_request(KVM_REQ_MCLOCK_INPROGRESS, vcpu);
-+
-+		spin_unlock(&ka->pvclock_gtod_sync_lock);
-+	}
-+	spin_unlock(&kvm_lock);
-+#endif
-+}
-+
- static int kvmclock_cpufreq_notifier(struct notifier_block *nb, unsigned long val,
- 				     void *data)
- {
-@@ -6217,6 +6255,9 @@ int kvm_arch_init(void *opaque)
- 	kvm_lapic_init();
- #ifdef CONFIG_X86_64
- 	pvclock_gtod_register_notifier(&pvclock_gtod_notifier);
-+
-+	if (x86_hyper_type == X86_HYPER_MS_HYPERV)
-+		set_hv_tscchange_cb(kvm_hyperv_tsc_notifier);
- #endif
- 
- 	return 0;
-@@ -6229,6 +6270,10 @@ out:
- 
- void kvm_arch_exit(void)
- {
-+#ifdef CONFIG_X86_64
-+	if (x86_hyper_type == X86_HYPER_MS_HYPERV)
-+		clear_hv_tscchange_cb();
-+#endif
- 	kvm_lapic_exit();
- 	perf_unregister_guest_info_callbacks(&kvm_guest_cbs);
- 
+#syz invalid
