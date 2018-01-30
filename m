@@ -1,101 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752193AbeA3AoC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 19:44:02 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:32778 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751853AbeA3AoA (ORCPT
+        id S1752136AbeA3Av4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 19:51:56 -0500
+Received: from gateway23.websitewelcome.com ([192.185.49.184]:37989 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751448AbeA3Avz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 19:44:00 -0500
-To: Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2] mm/swap.c: make functions and their kernel-doc agree
-Message-ID: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
-Date: Mon, 29 Jan 2018 16:43:55 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 29 Jan 2018 19:51:55 -0500
+Date: Mon, 29 Jan 2018 18:30:56 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH 1/8] rtl2832: fix potential integer overflow in
+ rtl2832_set_frontend
+Message-ID: <1c57e607fbde1e598b2ca9380889e9fc1be6daa4.1517268667.git.gustavo@embeddedor.com>
+References: <cover.1517268667.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1517268667.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.57.174
+X-Source-L: No
+X-Exim-ID: 1egJpB-001dPz-Ki
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (training) [189.145.57.174]:35448
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Cast dev->pdata->clk to u64 in order to avoid a potential integer
+overflow. This variable is being used in a context that expects
+an expression of type u64.
 
-Fix some basic kernel-doc notation in mm/swap.c:
-- for function lru_cache_add_anon(), make its kernel-doc function name
-  match its function name and change colon to hyphen following the
-  function name
-- for function pagevec_lookup_entries(), change the function parameter
-  name from nr_pages to nr_entries since that is more descriptive of
-  what the parameter actually is and then it matches the kernel-doc
-  comments also
-
-Fix function kernel-doc to match the change in commit 67fd707f4681:
-- drop the kernel-doc notation for @nr_pages from pagevec_lookup_range()
-  and correct the function description for that change
-
-Fixes: 67fd707f4681
-    ("mm: remove nr_pages argument from pagevec_lookup_{,range}_tag()")
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Matthew Wilcox <willy@infradead.org>
+Addresses-Coverity-ID: 1271223 ("Unintentional integer overflow")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- mm/swap.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/media/dvb-frontends/rtl2832.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v2 changes:
-- leave kernel-doc for lru_cache_add_anon() where it is but fix its
-  kernel-doc notation
-- change pagevec_lookup_entries() parameter from nr_pages to nr_entries
-
---- lnx-415.orig/mm/swap.c
-+++ lnx-415/mm/swap.c
-@@ -411,7 +411,7 @@ static void __lru_cache_add(struct page
- }
- 
- /**
-- * lru_cache_add: add a page to the page lists
-+ * lru_cache_add_anon - add a page to the page lists
-  * @page: the page to add
-  */
- void lru_cache_add_anon(struct page *page)
-@@ -930,10 +930,10 @@ EXPORT_SYMBOL(__pagevec_lru_add);
-  */
- unsigned pagevec_lookup_entries(struct pagevec *pvec,
- 				struct address_space *mapping,
--				pgoff_t start, unsigned nr_pages,
-+				pgoff_t start, unsigned nr_entries,
- 				pgoff_t *indices)
- {
--	pvec->nr = find_get_entries(mapping, start, nr_pages,
-+	pvec->nr = find_get_entries(mapping, start, nr_entries,
- 				    pvec->pages, indices);
- 	return pagevec_count(pvec);
- }
-@@ -965,9 +965,8 @@ void pagevec_remove_exceptionals(struct
-  * @mapping:	The address_space to search
-  * @start:	The starting page index
-  * @end:	The final page index
-- * @nr_pages:	The maximum number of pages
-  *
-- * pagevec_lookup_range() will search for and return a group of up to @nr_pages
-+ * pagevec_lookup_range() will search for & return a group of up to PAGEVEC_SIZE
-  * pages in the mapping starting from index @start and upto index @end
-  * (inclusive).  The pages are placed in @pvec.  pagevec_lookup() takes a
-  * reference against the pages in @pvec.
-@@ -977,7 +976,7 @@ void pagevec_remove_exceptionals(struct
-  * also update @start to index the next page for the traversal.
-  *
-  * pagevec_lookup_range() returns the number of pages which were found. If this
-- * number is smaller than @nr_pages, the end of specified range has been
-+ * number is smaller than PAGEVEC_SIZE, the end of specified range has been
-  * reached.
-  */
- unsigned pagevec_lookup_range(struct pagevec *pvec,
+diff --git a/drivers/media/dvb-frontends/rtl2832.c b/drivers/media/dvb-frontends/rtl2832.c
+index 94bf5b7..eefc301 100644
+--- a/drivers/media/dvb-frontends/rtl2832.c
++++ b/drivers/media/dvb-frontends/rtl2832.c
+@@ -498,7 +498,7 @@ static int rtl2832_set_frontend(struct dvb_frontend *fe)
+ 	* RSAMP_RATIO = floor(CrystalFreqHz * 7 * pow(2, 22)
+ 	*	/ ConstWithBandwidthMode)
+ 	*/
+-	num = dev->pdata->clk * 7;
++	num = (u64)dev->pdata->clk * 7;
+ 	num *= 0x400000;
+ 	num = div_u64(num, bw_mode);
+ 	resamp_ratio =  num & 0x3ffffff;
+@@ -511,7 +511,7 @@ static int rtl2832_set_frontend(struct dvb_frontend *fe)
+ 	*	/ (CrystalFreqHz * 7))
+ 	*/
+ 	num = bw_mode << 20;
+-	num2 = dev->pdata->clk * 7;
++	num2 = (u64)dev->pdata->clk * 7;
+ 	num = div_u64(num, num2);
+ 	num = -num;
+ 	cfreq_off_ratio = num & 0xfffff;
+-- 
+2.7.4
