@@ -1,57 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751635AbeA3KNf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 05:13:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44152 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751378AbeA3KNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 05:13:33 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED0D21789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 30 Jan 2018 05:13:25 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ftrace: use helper function clear_ftrace_function
-Message-ID: <20180130051306.15f47965@vmware.local.home>
-In-Reply-To: <1517273161-36355-1-git-send-email-xieyisheng1@huawei.com>
-References: <1517273161-36355-1-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751677AbeA3KQC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 05:16:02 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:42568 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeA3KQA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 05:16:00 -0500
+X-Google-Smtp-Source: AH8x225tblFAgpkEc9P6xcLS8gHfzYYB3Jarfyi+5KKeBbHDxm9qJufTt+9h1uQafd8KCooJezlduX1QRzRjZq9uAhM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1516979499-3665-1-git-send-email-fabrice.gasnier@st.com>
+References: <1516979499-3665-1-git-send-email-fabrice.gasnier@st.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date: Tue, 30 Jan 2018 11:15:58 +0100
+Message-ID: <CA+M3ks7Z+A--e5MTkARkHoDmAEhTyzE-_QaJ4HPd7O6CJrWm+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] Add support for PWM input capture on STM32
+To: Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0UAG7W2002800
 
-On Tue, 30 Jan 2018 08:46:01 +0800
-Yisheng Xie <xieyisheng1@huawei.com> wrote:
-
-> We have helper function clear_ftrace_function(), use it instead of hard
-> code. And this should not have any functional change.
-> 
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+2018-01-26 16:11 GMT+01:00 Fabrice Gasnier <fabrice.gasnier@st.com>:
+> This series adds support for capture to stm32-pwm driver.
+> Capture is based on DMAs.
+> - First two patches are precursor patches
+> - Subsequent two patches add support for requesting DMAs to MFD core
+> - Next three patches add support for capture to stm32-pwm driver
+> - This has been tested on stm32429i-eval board.
+>
 > ---
->  kernel/trace/ftrace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 554b517..ba78e03 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -6779,7 +6779,7 @@ int unregister_ftrace_function(struct ftrace_ops *ops)
->  
->  	} else {
->  		/* stopping ftrace calls (just send to ftrace_stub) */
-> -		ftrace_trace_function = ftrace_stub;
-> +		clear_ftrace_function();
->  
->  		ftrace_shutdown_sysctl();
->  	}
+> Changes in v2:
+> - Abstract DMA handling from child driver: move it to MFD core
+> - Rework pwm capture routines to adopt this change
+> - Comment on optional dma support, beautify DMAs probe
 
-Honestly, I rather nuke that function and clear_ftrace_function_probe()
-along with it. They are not used outside of ftrace.c and they don't
-actually help.
+For this series:
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 
--- Steve
+>
+> Fabrice Gasnier (8):
+>   pwm: stm32: fix, remove unused struct device
+>   pwm: stm32: protect common prescaler for all channels
+>   dt-bindings: mfd: stm32-timers: add support for dmas
+>   mfd: stm32-timers: add support for dmas
+>   pwm: stm32: add capture support
+>   pwm: stm32: improve capture by tuning counter prescaler
+>   pwm: stm32: use input prescaler to improve period capture
+>   ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
+>
+>  .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
+>  arch/arm/boot/dts/stm32429i-eval.dts               |   3 +
+>  drivers/mfd/stm32-timers.c                         | 215 +++++++++++++++-
+>  drivers/pwm/pwm-stm32.c                            | 276 ++++++++++++++++++++-
+>  include/linux/mfd/stm32-timers.h                   |  39 +++
+>  5 files changed, 547 insertions(+), 6 deletions(-)
+>
+> --
+> 1.9.1
+>
+
+
+
+-- 
+Benjamin Gaignard
+
+Graphic Study Group
+
+Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro: Facebook | Twitter | Blog
