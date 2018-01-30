@@ -1,95 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753531AbeA3SQW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:16:22 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:42558 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752867AbeA3SQU (ORCPT
+        id S1753391AbeA3SSA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:18:00 -0500
+Received: from mail-qk0-f182.google.com ([209.85.220.182]:36479 "EHLO
+        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751410AbeA3SR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:16:20 -0500
-X-Google-Smtp-Source: AH8x2272MG4lCbjFaCEIaoHqH04u/ASbdWPHEA04HX0ZFtyuPm0w2wGeT3pSg7/Uo8CUfct92nVzAA==
-Date: Tue, 30 Jan 2018 10:16:16 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] libata changes for v4.16-rc1
-Message-ID: <20180130181616.GH1121507@devbig577.frc2.facebook.com>
+        Tue, 30 Jan 2018 13:17:57 -0500
+X-Google-Smtp-Source: AH8x224/WrI99ZHeX2MhNFe5BAJsHnmEXfY2d74uvzGty8Itez4EyUl41xIT0bhkzSk39pvYpBScciSMuGD26h5PaJg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180130060744.19049-1-kai.heng.feng@canonical.com>
+References: <20180130060744.19049-1-kai.heng.feng@canonical.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 30 Jan 2018 20:17:55 +0200
+Message-ID: <CAHp75VdPQuEwNOOakvZpC1gzWB9p5yx+CHUjRgMDZ9ZDvxGckQ@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: Parse entire table as a term_list for Dell XPS 9570
+ and Precision M5530
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Linus.
+On Tue, Jan 30, 2018 at 8:07 AM, Kai-Heng Feng
+<kai.heng.feng@canonical.com> wrote:
+> The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
+> of box.
+>
+> The touchpad relies on its _INI method to update its _HID value from
+> XXXX0000 to SYNA2393.
+> Also, the _STA relies on value of I2CN to report correct status.
+>
+> Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
+> correctly set up, and _INI can get run. The ACPI table in this machine
+> is designed to get parsed this way.
+>
+> Also, change the quirk table to a more generic name.
 
-Nothing too interesting.  Several patches to convert mdelay() to
-usleep_range(), removal of unused pata_at32, and other low level
-driver specific changes.
+> +static int set_gbl_term_list(const struct dmi_system_id *id)
+> +{
+> +       pr_notice("%s detected - parse the entire table as a term_list\n",
+> +                 id->ident);
+> +       acpi_gbl_parse_table_as_term_list = 1;
+> +       return 0;
+> +}
+>  #endif
 
-Thanks.
+The above should be outside of another #ifdef. Basically after the above #endif.
 
-The following changes since commit 2dc0b46b5ea30f169b0b272253ea846a5a281731:
+>  #else
 
-  libata: sata_down_spd_limit should return if driver has not recorded sstatus speed (2017-12-04 13:57:03 -0800)
+>  #endif
 
-are available in the git repository at:
+> @@ -1005,7 +1034,7 @@ void __init acpi_early_init(void)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git for-4.16
+>          * If the machine falls into the DMI check table,
+>          * DSDT will be copied to memory
+>          */
 
-for you to fetch changes up to b3506c7ed216dd2db1f06c2845da45018e2c508d:
+It might make sense to adjust comment above that it's about quirks in
+general. And, if needed, move current content to actual DMI group of
+records.
 
-  ata: pata_pdc2027x: Replace mdelay with msleep (2018-01-25 07:28:31 -0800)
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      phy: brcm-sata: remove unused variable
-
-Arvind Yadav (1):
-      ata_piix: constify pci_bits
-
-Corentin Labbe (1):
-      ata: remove pata_at32
-
-Darren Stevens (1):
-      libata:pata_atiixp: Don't use unconnected secondary port on SB600
-
-Fengguang Wu (1):
-      phy: brcm-sata: fix semicolon.cocci warnings
-
-Florian Fainelli (3):
-      ata: ahci_brcm: Avoid clobbering SATA_TOP_CTRL_BUS_CTRL
-      phy: brcm-sata: Implement calibrate callback
-      ata: ahci_brcm: Recover from failures to identify devices
-
-Hans de Goede (3):
-      ahci: Annotate PCI ids for mobile Intel chipsets as such
-      ahci: Add PCI ids for Intel Bay Trail, Cherry Trail and Apollo Lake AHCI
-      ahci: Allow setting a default LPM policy for mobile chipsets
-
-Jia-Ju Bai (3):
-      ata: sata_mv: Replace mdelay with usleep_range in mv_reset_channel
-      ata: pata_it821x: Replace mdelay with usleep_range in it821x_firmware_command
-      ata: pata_pdc2027x: Replace mdelay with msleep
-
-Mika Westerberg (1):
-      ahci: Add Intel Cannon Lake PCH-H PCI ID
-
- drivers/ata/Kconfig                  |  28 ++-
- drivers/ata/Makefile                 |   1 -
- drivers/ata/ahci.c                   |  94 ++++----
- drivers/ata/ahci.h                   |   3 +
- drivers/ata/ahci_brcm.c              | 120 +++++++++--
- drivers/ata/ata_piix.c               |   2 +-
- drivers/ata/pata_at32.c              | 400 -----------------------------------
- drivers/ata/pata_atiixp.c            |   4 +
- drivers/ata/pata_it821x.c            |   2 +-
- drivers/ata/pata_pdc2027x.c          |   4 +-
- drivers/ata/sata_mv.c                |   2 +-
- drivers/phy/broadcom/phy-brcm-sata.c |  31 +++
- 12 files changed, 221 insertions(+), 470 deletions(-)
- delete mode 100644 drivers/ata/pata_at32.c
+> -       dmi_check_system(dsdt_dmi_table);
+> +       dmi_check_system(acpi_quirks_dmi_table);
 
 -- 
-tejun
+With Best Regards,
+Andy Shevchenko
