@@ -1,77 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752792AbeA3S27 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:28:59 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:39082 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751452AbeA3S26 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:28:58 -0500
-X-Google-Smtp-Source: AH8x226ZdyzCMHIc6RQS5iXmUQchpdbrLplzFUgWVTX62vtDO3ThdwFdt5DqGqxUdz/w50zRCymjWw==
-Date: Tue, 30 Jan 2018 10:28:55 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>
-Subject: [GIT PULL] percpu changes for v4.16-rc1
-Message-ID: <20180130182855.GI1121507@devbig577.frc2.facebook.com>
+        id S1752886AbeA3S3u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:29:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43089 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752023AbeA3S3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 13:29:49 -0500
+Date: Tue, 30 Jan 2018 19:29:47 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Bharata B Rao <bharata@linux.vnet.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Memory hotplug not increasing the total RAM
+Message-ID: <20180130182947.GK21609@dhcp22.suse.cz>
+References: <20180130083006.GB1245@in.ibm.com>
+ <20180130091600.GA26445@dhcp22.suse.cz>
+ <20180130092815.GR21609@dhcp22.suse.cz>
+ <20180130095345.GC1245@in.ibm.com>
+ <20180130101141.GW21609@dhcp22.suse.cz>
+ <CAOAebxvAwuQfAErNJa2fwdWCe+yToCLn-vr0+SuyUcdb5corAw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAOAebxvAwuQfAErNJa2fwdWCe+yToCLn-vr0+SuyUcdb5corAw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Linus.
+On Tue 30-01-18 13:11:06, Pavel Tatashin wrote:
+> Hi Michal,
+> 
+> Thank you for taking care of the problem. The patch may introduce a
+> small performance regression during normal boot, as we add a branch
+> into a hot initialization path. But, it fixes a current problem, so:
+> 
+> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-One trivial patch to convert the return type from int to bool.
+Thanks!
 
-Thanks.
+> However, I think we should change the hotplug code to also not to
+> touch the map area until struct pages are initialized.
+> 
+> Currently, we loop through "struct page"s several times during memory hotplug:
+> 
+> 1. memset(0) in sparse_add_one_section()
+> 2. loop in __add_section() to set do: set_page_node(page, nid); and
+> SetPageReserved(page);
+> 3. loop in pages_correctly_reserved() to check that SetPageReserved is set.
+> 4. loop in memmap_init_zone() to call __init_single_pfn()
 
-The following changes since commit 032b4cc8ff84490c4bc7c4ef8c91e6d83a637538:
-
-  Merge tag 'pm-4.15-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm (2017-12-14 18:25:03 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git for-4.16
-
-for you to fetch changes up to 85dcbba3b8b15c17d3237695440d09d12825184d:
-
-  percpu: percpu_counter_initialized can be boolean (2017-12-15 05:28:06 -0800)
-
-----------------------------------------------------------------
-guoyayun (1):
-      percpu: percpu_counter_initialized can be boolean
-
- include/linux/percpu_counter.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/percpu_counter.h b/include/linux/percpu_counter.h
-index 73a7bf3..4f05249 100644
---- a/include/linux/percpu_counter.h
-+++ b/include/linux/percpu_counter.h
-@@ -86,7 +86,7 @@ static inline s64 percpu_counter_read_positive(struct percpu_counter *fbc)
- 	return 0;
- }
- 
--static inline int percpu_counter_initialized(struct percpu_counter *fbc)
-+static inline bool percpu_counter_initialized(struct percpu_counter *fbc)
- {
- 	return (fbc->counters != NULL);
- }
-@@ -167,9 +167,9 @@ static inline s64 percpu_counter_sum(struct percpu_counter *fbc)
- 	return percpu_counter_read(fbc);
- }
- 
--static inline int percpu_counter_initialized(struct percpu_counter *fbc)
-+static inline bool percpu_counter_initialized(struct percpu_counter *fbc)
- {
--	return 1;
-+	return true;
- }
- 
- #endif	/* CONFIG_SMP */
-
+You might be very well correct but the hotplug code is quite subtle and
+we do depend on PageReserved at some unexpected places so it is not that
+easy I am afraid. My TODO list in the hotplug is quite long. If you feel
+like you want to work on that I would be more than happy.
 -- 
-tejun
+Michal Hocko
+SUSE Labs
