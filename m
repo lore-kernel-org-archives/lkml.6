@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752631AbeA3ClA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 21:41:00 -0500
-Received: from regular1.263xmail.com ([211.150.99.132]:46807 "EHLO
+        id S1752554AbeA3Cmp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 21:42:45 -0500
+Received: from regular1.263xmail.com ([211.150.99.140]:46902 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752599AbeA3Ck7 (ORCPT
+        with ESMTP id S1752076AbeA3Cmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 21:40:59 -0500
+        Mon, 29 Jan 2018 21:42:44 -0500
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -16,10 +16,11 @@ X-RL-SENDER: hjc@rock-chips.com
 X-FST-TO: sandy.huang@rock-chips.com
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: hjc@rock-chips.com
-X-UNIQUE-TAG: <1e326803f5b443e85db1d27211f1a0c2>
+X-UNIQUE-TAG: <38ad6620a96b165e97f627aeb8e1d508>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
-Subject: Re: [PATCH v2 02/43] drm/rockchip: support prime import sg table
+Subject: Re: [PATCH v2 03/43] drm/rockchip: Respect page offset for PRIME mmap
+ calls
 To: Thierry Escande <thierry.escande@collabora.com>,
         Archit Taneja <architt@codeaurora.org>,
         Inki Dae <inki.dae@samsung.com>,
@@ -33,15 +34,15 @@ Cc: Zain Wang <wzz@rock-chips.com>, Lin Huang <hl@rock-chips.com>,
         =?UTF-8?Q?=c3=98rjan_Eide?= <orjan.eide@arm.com>,
         Haixia Shi <hshi@chromium.org>
 References: <20180126131710.7622-1-thierry.escande@collabora.com>
- <20180126131710.7622-3-thierry.escande@collabora.com>
+ <20180126131710.7622-4-thierry.escande@collabora.com>
 From: Sandy Huang <hjc@rock-chips.com>
-Message-ID: <0898ce3d-0f22-7063-7179-a4a7f942eaeb@rock-chips.com>
-Date: Tue, 30 Jan 2018 10:40:49 +0800
+Message-ID: <8c3724a2-868d-8dad-6ba7-a66e30cc94f0@rock-chips.com>
+Date: Tue, 30 Jan 2018 10:42:41 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180126131710.7622-3-thierry.escande@collabora.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+In-Reply-To: <20180126131710.7622-4-thierry.escande@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,212 +50,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-ÔÚ 2018/1/26 21:16, Thierry Escande Ð´µÀ:
-> From: Haixia Shi <hshi@chromium.org>
+åœ¨ 2018/1/26 21:16, Thierry Escande å†™é“:
+> From: Ã˜rjan Eide <orjan.eide@arm.com>
 > 
-> The prime fd to handle ioctl was not used with rockchip before. Support
-> was added in order to pass graphics_Gbm and to support potential uses
-> within Chrome OS (e.g. zero-copy video decode, camera).
+> When mapping external DMA-bufs through the PRIME mmap call, we might be
+> given an offset which has to be respected. However for the internal DRM
+> GEM mmap path, we have to ignore the fake mmap offset used to identify
+> the buffer only. Currently the code always zeroes out vma->vm_pgoff,
+> which breaks the former.
 > 
-> Signed-off-by: Haixia Shi <hshi@chromium.org>
+> This patch fixes the problem by moving the vm_pgoff assignment to a
+> function that is used only for GEM mmap path, so that the PRIME path
+> retains the original offset.
+> 
+> Cc: Daniel Kurtz <djkurtz@chromium.org>
+> Signed-off-by: Ã˜rjan Eide <orjan.eide@arm.com>
+> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
 > Signed-off-by: Sean Paul <seanpaul@chromium.org>
 > Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 > Tested-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->   drivers/gpu/drm/rockchip/rockchip_drm_drv.c |   1 +
->   drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 118 ++++++++++++++++++++++++++--
->   drivers/gpu/drm/rockchip/rockchip_drm_gem.h |   5 +-
->   3 files changed, 115 insertions(+), 9 deletions(-)
+>   drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> index d85431400a0d..88084ca15115 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> @@ -230,6 +230,7 @@ static struct drm_driver rockchip_drm_driver = {
->   	.gem_prime_import	= drm_gem_prime_import,
->   	.gem_prime_export	= drm_gem_prime_export,
->   	.gem_prime_get_sg_table	= rockchip_gem_prime_get_sg_table,
-> +	.gem_prime_import_sg_table	= rockchip_gem_prime_import_sg_table,
->   	.gem_prime_vmap		= rockchip_gem_prime_vmap,
->   	.gem_prime_vunmap	= rockchip_gem_prime_vunmap,
->   	.gem_prime_mmap		= rockchip_gem_mmap_buf,
 > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-> index 1d9655576b6e..5d52020deca1 100644
+> index 5d52020deca1..074db7a92809 100644
 > --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
 > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-> @@ -16,6 +16,8 @@
->   #include <drm/drmP.h>
->   #include <drm/drm_gem.h>
->   #include <drm/drm_vma_manager.h>
-> +
-> +#include <linux/dma-buf.h>
->   #include <linux/iommu.h>
+> @@ -264,7 +264,6 @@ static int rockchip_drm_gem_object_mmap(struct drm_gem_object *obj,
+>   	 * VM_PFNMAP flag that was set by drm_gem_mmap_obj()/drm_gem_mmap().
+>   	 */
+>   	vma->vm_flags &= ~VM_PFNMAP;
+> -	vma->vm_pgoff = 0;
 >   
->   #include "rockchip_drm_drv.h"
-> @@ -309,12 +311,10 @@ static void rockchip_gem_release_object(struct rockchip_gem_object *rk_obj)
->   }
->   
->   struct rockchip_gem_object *
-> -	rockchip_gem_create_object(struct drm_device *drm, unsigned int size,
-> -				   bool alloc_kmap)
-> +	rockchip_gem_alloc_object(struct drm_device *drm, unsigned int size)
->   {
->   	struct rockchip_gem_object *rk_obj;
->   	struct drm_gem_object *obj;
-> -	int ret;
->   
->   	size = round_up(size, PAGE_SIZE);
->   
-> @@ -326,6 +326,20 @@ struct rockchip_gem_object *
->   
->   	drm_gem_object_init(drm, obj, size);
->   
-> +	return rk_obj;
-> +}
-> +
-> +struct rockchip_gem_object *
-> +rockchip_gem_create_object(struct drm_device *drm, unsigned int size,
-> +			   bool alloc_kmap)
-> +{
-> +	struct rockchip_gem_object *rk_obj;
-> +	int ret;
-> +
-> +	rk_obj = rockchip_gem_alloc_object(drm, size);
-> +	if (IS_ERR(rk_obj))
-> +		return rk_obj;
-> +
->   	ret = rockchip_gem_alloc_buf(rk_obj, alloc_kmap);
+>   	if (rk_obj->pages)
+>   		ret = rockchip_drm_gem_object_mmap_iommu(obj, vma);
+> @@ -299,6 +298,12 @@ int rockchip_gem_mmap(struct file *filp, struct vm_area_struct *vma)
 >   	if (ret)
->   		goto err_free_rk_obj;
-> @@ -343,11 +357,21 @@ struct rockchip_gem_object *
->    */
->   void rockchip_gem_free_object(struct drm_gem_object *obj)
->   {
-> -	struct rockchip_gem_object *rk_obj;
-> -
-> -	rk_obj = to_rockchip_obj(obj);
-> +	struct drm_device *drm = obj->dev;
-> +	struct rockchip_drm_private *private = drm->dev_private;
-> +	struct rockchip_gem_object *rk_obj = to_rockchip_obj(obj);
+>   		return ret;
 >   
-> -	rockchip_gem_free_buf(rk_obj);
-> +	if (obj->import_attach) {
-> +		if (private->domain) {
-> +			rockchip_gem_iommu_unmap(rk_obj);
-> +		} else {
-> +			dma_unmap_sg(drm->dev, rk_obj->sgt->sgl,
-> +				     rk_obj->sgt->nents, DMA_BIDIRECTIONAL);
-> +		}
-> +		drm_prime_gem_destroy(obj, rk_obj->sgt);
-> +	} else {
-> +		rockchip_gem_free_buf(rk_obj);
-> +	}
+> +	/*
+> +	 * Set vm_pgoff (used as a fake buffer offset by DRM) to 0 and map the
+> +	 * whole buffer from the start.
+> +	 */
+> +	vma->vm_pgoff = 0;
+> +
+>   	obj = vma->vm_private_data;
 >   
->   	rockchip_gem_release_object(rk_obj);
->   }
-> @@ -451,6 +475,86 @@ struct sg_table *rockchip_gem_prime_get_sg_table(struct drm_gem_object *obj)
->   	return sgt;
->   }
->   
-> +static unsigned long rockchip_sg_get_contiguous_size(struct sg_table *sgt,
-> +						     int count)
-> +{
-> +	struct scatterlist *s;
-> +	dma_addr_t expected = sg_dma_address(sgt->sgl);
-> +	unsigned int i;
-> +	unsigned long size = 0;
-> +
-> +	for_each_sg(sgt->sgl, s, count, i) {
-> +		if (sg_dma_address(s) != expected)
-> +			break;
-> +		expected = sg_dma_address(s) + sg_dma_len(s);
-> +		size += sg_dma_len(s);
-> +	}
-> +	return size;
-> +}
-> +
-> +static int
-> +rockchip_gem_iommu_map_sg(struct drm_device *drm,
-> +			  struct dma_buf_attachment *attach,
-> +			  struct sg_table *sg,
-> +			  struct rockchip_gem_object *rk_obj)
-> +{
-> +	rk_obj->sgt = sg;
-> +	return rockchip_gem_iommu_map(rk_obj);
-> +}
-> +
-> +static int
-> +rockchip_gem_dma_map_sg(struct drm_device *drm,
-> +			struct dma_buf_attachment *attach,
-> +			struct sg_table *sg,
-> +			struct rockchip_gem_object *rk_obj)
-> +{
-> +	int count = dma_map_sg(drm->dev, sg->sgl, sg->nents,
-> +			       DMA_BIDIRECTIONAL);
-> +	if (!count)
-> +		return -EINVAL;
-> +
-> +	if (rockchip_sg_get_contiguous_size(sg, count) < attach->dmabuf->size) {
-> +		DRM_ERROR("failed to map sg_table to contiguous linear address.\n");
-> +		dma_unmap_sg(drm->dev, sg->sgl, sg->nents,
-> +			     DMA_BIDIRECTIONAL);
-> +		return -EINVAL;
-> +	}
-> +
-> +	rk_obj->dma_addr = sg_dma_address(sg->sgl);
-> +	rk_obj->sgt = sg;
-> +	return 0;
-> +}
-> +
-> +struct drm_gem_object *
-> +rockchip_gem_prime_import_sg_table(struct drm_device *drm,
-> +				   struct dma_buf_attachment *attach,
-> +				   struct sg_table *sg)
-> +{
-> +	struct rockchip_drm_private *private = drm->dev_private;
-> +	struct rockchip_gem_object *rk_obj;
-> +	int ret;
-> +
-> +	rk_obj = rockchip_gem_alloc_object(drm, attach->dmabuf->size);
-> +	if (IS_ERR(rk_obj))
-> +		return ERR_CAST(rk_obj);
-> +
-> +	if (private->domain)
-> +		ret = rockchip_gem_iommu_map_sg(drm, attach, sg, rk_obj);
-> +	else
-> +		ret = rockchip_gem_dma_map_sg(drm, attach, sg, rk_obj);
-> +
-> +	if (ret < 0) {
-> +		DRM_ERROR("failed to import sg table: %d\n", ret);
-> +		goto err_free_rk_obj;
-> +	}
-> +
-> +	return &rk_obj->base;
-> +
-> +err_free_rk_obj:
-> +	rockchip_gem_release_object(rk_obj);
-> +	return ERR_PTR(ret);
-> +}
-> +
->   void *rockchip_gem_prime_vmap(struct drm_gem_object *obj)
->   {
->   	struct rockchip_gem_object *rk_obj = to_rockchip_obj(obj);
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.h b/drivers/gpu/drm/rockchip/rockchip_drm_gem.h
-> index f237375582fb..d41fa65219d2 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.h
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.h
-> @@ -36,8 +36,9 @@ struct rockchip_gem_object {
->   
->   struct sg_table *rockchip_gem_prime_get_sg_table(struct drm_gem_object *obj);
->   struct drm_gem_object *
-> -rockchip_gem_prime_import_sg_table(struct drm_device *dev, size_t size,
-> -				   struct sg_table *sgt);
-> +rockchip_gem_prime_import_sg_table(struct drm_device *dev,
-> +				   struct dma_buf_attachment *attach,
-> +				   struct sg_table *sg);
->   void *rockchip_gem_prime_vmap(struct drm_gem_object *obj);
->   void rockchip_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
->   
+>   	return rockchip_drm_gem_object_mmap(obj, vma);
 > 
 
 Reviewed-by: Sandy huang <hjc@rock-chips.com>
