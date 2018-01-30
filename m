@@ -1,112 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751735AbeA3MFy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:05:54 -0500
-Received: from mail-qk0-f171.google.com ([209.85.220.171]:33374 "EHLO
-        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751451AbeA3MFv (ORCPT
+        id S1751713AbeA3MHk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:07:40 -0500
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:37465 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751444AbeA3MHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:05:51 -0500
-X-Google-Smtp-Source: AH8x226IKQ6WWYH4TEj3i6FevJo2hEEl6vL6jTJg5crxpvS4M3GYpjCWe8h1ZYwznDVNs7Jgxx2BCA==
-Message-ID: <1517313948.3658.8.camel@redhat.com>
-Subject: Re: [GIT PULL] inode->i_version rework for v4.16
-From: Jeff Layton <jlayton@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, xfs <linux-xfs@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
-Date: Tue, 30 Jan 2018 07:05:48 -0500
-In-Reply-To: <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
-References: <1517228795.5965.24.camel@redhat.com>
-         <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
+        Tue, 30 Jan 2018 07:07:35 -0500
+X-Google-Smtp-Source: AH8x225oP9621Vu6DVEGdcOuzqWu/d1QUpXQ3+UwB8sKqIPl9RY24KBynBICj0VpLA4UmobKjCJsqZqicYQ4x0A6G4s=
+MIME-Version: 1.0
+In-Reply-To: <80377ECBC5453840BA8C7155328B5377D340AC54@RTITMBSV06.realtek.com.tw>
+References: <CAB4CAweXip+hDprJc6biwR=UtGF1xu-06HdB4ddzg9UZGL+Ngw@mail.gmail.com>
+ <CAB4CAwf8zFc8DtzjceATaZbrHJakioPHp7MPb+h7Sa1ySB-_RQ@mail.gmail.com>
+ <CAB4CAwfXF3RSiAMsjOe5RkAT8dh__A3677XuDwxwrarxdrZpZQ@mail.gmail.com> <80377ECBC5453840BA8C7155328B5377D340AC54@RTITMBSV06.realtek.com.tw>
+From: Chris Chiu <chiu@endlessm.com>
+Date: Tue, 30 Jan 2018 20:07:33 +0800
+Message-ID: <CAB4CAwdRgjT+rk9WJbZzu7Ltw8CL3oAM1VeWvNz_uWYvY1Pmrg@mail.gmail.com>
+Subject: Re: r8169 take too long to complete driver initialization
+To: Hau <hau@realtek.com>
+Cc: nic_swsd <nic_swsd@realtek.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-01-29 at 13:50 -0800, Linus Torvalds wrote:
-> On Mon, Jan 29, 2018 at 4:26 AM, Jeff Layton <jlayton@redhat.com> wrote:
-> > 
-> > This pile of patches is a rework of the inode->i_version field. We have
-> > traditionally incremented that field on every inode data or metadata
-> > change. Typically this increment needs to be logged on disk even when
-> > nothing else has changed, which is rather expensive.
-> 
-> Hmm. I have pulled this, but it is really really broken in one place,
-> to the degree that I always went "no, I won't pull this garbage".
-> 
-> But the breakage is potential, not actual, and can be fixed trivially,
-> so I'll let it slide - but I do require it to be fixed. And I require
-> people to *think* about it.
-> 
-> So what's to horribly horribly wrong?
-> 
-> The inode_cmp_iversion{+raw}() functions are pure and utter crap.
-> 
-> Why?
-> 
-> You say that they return 0/negative/positive, but they do so in a
-> completely broken manner. They return that ternary value as the
-> sequence number difference in a 's64', which means that if you
-> actually care about that ternary value, and do the *sane* thing that
-> the kernel-doc of the function implies is the right thing, you would
-> do
-> 
->     int cmp = inode_cmp_iversion(inode, old);
-> 
->     if (cmp < 0 ...
-> 
-> and as a result you get code that looks sane, but that doesn't
-> actually *WORK* right.
-> 
+On Mon, Jan 29, 2018 at 11:24 PM, Hau <hau@realtek.com> wrote:
+> Hi Chris,
+>
+> Could you test following patch?
+>
+>  DECLARE_RTL_COND(rtl_ocp_tx_cond)
+>  {
+>         void __iomem *ioaddr = tp->mmio_addr;
+>
+> -       return RTL_R8(IBISR0) & 0x02;
+> +       return RTL_R8(IBISR0) & 0x20;
+>  }
+>
+>  static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)
+>  {
+>         void __iomem *ioaddr = tp->mmio_addr;
+>
+>         RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
+> -       rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
+> +       rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
+>         RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
+>         RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);
+>  }
+>
+> Thanks.
+>
 
-My intent here was to have this handle wraparound using the same sort of
-method that the time_before/time_after macros do. Obviously, I didn't
-document that well.
+Yes. It completes the initialization in 70 ms. So it means the rtl_ocp_tx_cond
+are waiting for incorrect register bit? Can you help work out a patch for this?
 
-I want to make sure I understand what's actually broken here thoug. Is
-it only broken when the two values are more than 2**63 apart, or is
-there something else more fundamentally wrong here?
+Chris
 
-> To make it even worse, it will actually work in practice by accident
-> in 99.99999% of all cases, so now you have
-> 
->  (a) subtly buggy code
->  (b) that looks fine
->  (c) and that works in testing
-> 
-> which is just about the worst possible case for any code. The
-> interface is simply garbage that encourages bugs.
-> 
-> And the bug wouldn't be in the user, the bug would be in this code you
-> just sent me. The interface is simply wrong.
-> 
-> So this absolutely needs to be fixed. I see two fixes:
-> 
->  - just return a boolean. That's all that any current user actually
-> wants, so the ternary value seems pointless.
-> 
->  - make it return an 'int', and not just any int, but -1/0/1. That way
-> there is no worry about uses, and if somebody *really* cares about the
-> ternary value, they can now use a "switch" statement to get it
-> (alternatively, make it return an enum, but whatever).
-> 
-> That "ternary" function that has 18446744069414584320 incorrect return
-> values really is unacceptable.
-> 
 
-I think I'll just make it return a boolean value like you suggested
-first. I'll send a patch to fix it once I've done some basic testing
-with it.
-
-Many thanks,
---
-Jeff Layton <jlayton@redhat.com>
+>> -----Original Message-----
+>> From: Chris Chiu [mailto:chiu@endlessm.com]
+>> Sent: Monday, January 29, 2018 6:12 PM
+>> To: nic_swsd <nic_swsd@realtek.com>; netdev@vger.kernel.org; Linux
+>> Kernel <linux-kernel@vger.kernel.org>; Linux Upstreaming Team
+>> <linux@endlessm.com>
+>> Subject: Re: r8169 take too long to complete driver initialization
+>>
+>> On Fri, Jan 5, 2018 at 10:17 AM, Chris Chiu <chiu@endlessm.com> wrote:
+>> > On Wed, Dec 20, 2017 at 4:41 PM, Chris Chiu <chiu@endlessm.com> wrote:
+>> >> Hi,
+>> >>     We've hit a suspend/resume issue on a Acer desktop caused by
+>> >> r8169 driver. The dmseg
+>> >> https://gist.github.com/mschiu77/b741849b5070281daaead8dfee312d1a
+>> >> shows it's still in msleep() within a mutex lock.
+>> >>     After looking into the code, it's caused by the
+>> >> rtl8168ep_stop_cmac() which is waiting 100 seconds for
+>> >> rtl_ocp_tx_cond. The following dmesg states that the r8169 driver is
+>> >> loaded.
+>> >>
+>> >> [   20.270526] r8169 Gigabit Ethernet driver 2.3LK-NAPI loaded
+>> >>
+>> >> But it takes > 100 seconds to get the following messages
+>> >>
+>> >> [  140.400223] r8169 0000:02:00.0 (unnamed net_device)
+>> >> (uninitialized): rtl_ocp_tx_cond == 1 (loop: 2000, delay: 50).
+>> >> [  140.413294] r8169 0000:02:00.0 eth0: RTL8168ep/8111ep at
+>> >> 0xffffb16c80db1000, f8:0f:41:ea:74:0d, XID 10200800 IRQ 46 [
+>> >> 140.413297] r8169 0000:02:00.0 eth0: jumbo features [frames: 9200
+>> >> bytes, tx checksumming: ko]
+>> >>
+>> >> So any trial to suspend the machine during this period would always
+>> >> get device/resource busy message then abort. Is this  rtl_ocp_tx_cond
+>> >> necessary? Because the ethernet is still working and I don't see any
+>> >> problem. I don't know it should be considered normal or not. Please
+>> >> let me know if any more information required. Thanks
+>> >>
+>> >> Chris
+>> >
+>> > gentle ping,
+>> >
+>> > cheers.
+>>
+>> Hi,
+>>     Just found a r8168 driver which seems to be authrized by realtek for cross
+>> comparison. I tried applying the patch to latest 4.15 kernel and the driver
+>> done it's initialization in faily short time. The patch file is here
+>>     https://gist.github.com/mschiu77/fcf406e64a1a437f46cf2be643f1057d.
+>>
+>>     In mainline r8169.c, the IBISR0 register need to be polled in the
+>> rtl8168ep_stop_cmac().
+>> In the patch file, there's also the same IBISR0 polling code in
+>> Dash2DisableTx(), but it's been bypassed since the chipset maches
+>> HW_DASH_SUPPORT_TYPE_2.
+>> Per the rtl_chip_info[] in r8168_n.c, CFG_METHOD_23/27/28 are
+>> HW_DASH_SUPPORT_TYPE_2, and they happens to be the only 3 named
+>> RTL8168EP/8111EP in the rtl_chip_info[].
+>>
+>>     To find the same matches in r8169.c, RTL_GIGA_MAC_VER_49/50/51
+>> seems share the same config. Can anyone clarify if the rtl_ocp_tx_cond()
+>> really necessary for 8168EP/8111EP?
+>> Or we can just ignore the condition check for RTL_GIGA_MAC_VER_49/50/51?
+>>
+>> Chris
+>>
+>> ------Please consider the environment before printing this e-mail.
