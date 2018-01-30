@@ -1,119 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751940AbeA3IFB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 03:05:01 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:60599 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751511AbeA3IE7 (ORCPT
+        id S1751993AbeA3IFd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 03:05:33 -0500
+Received: from vulcan.natalenko.name ([104.207.131.136]:46664 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751831AbeA3IFb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:04:59 -0500
-Date: Tue, 30 Jan 2018 09:04:46 +0100
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
-Cc: richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v3 1/2] mtd: nand: toshiba: Retrieve ECC
- requirements from extended ID
-Message-ID: <20180130090446.1ace92b3@bbrezillon>
-In-Reply-To: <0cf2e0f7-e61b-2cae-f216-e616aecf3e76@toshiba.co.jp>
-References: <1512569098-30038-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
-        <1512569098-30038-2-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
-        <20171206160805.2435094b@bbrezillon>
-        <3e11d966-0801-96f2-8417-194b36a0b775@toshiba.co.jp>
-        <20171219125624.58e3e8f8@bbrezillon>
-        <b9e62f60-770b-89c3-a2e2-c05767cfd16a@toshiba.co.jp>
-        <0cf2e0f7-e61b-2cae-f216-e616aecf3e76@toshiba.co.jp>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 30 Jan 2018 03:05:31 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name C00CD2E1A16
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Tue, 30 Jan 2018 09:05:26 +0100
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: paolo.valente@linaro.org
+Cc: Ivan Kozik <ivan@ludios.org>, Ming Lei <ming.lei@redhat.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bfq-iosched@googlegroups.com, Jens Axboe <axboe@kernel.dk>,
+        linus.walleij@linaro.org
+Subject: v4.15 and I/O hang with BFQ
+Message-ID: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
+User-Agent: Roundcube Webmail/1.3.3
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1517299526;
+        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding;
+        bh=6rYAv1lf+HJQXeaM9miBssf2qkM2tRDmoC/g7kFC0H8=;
+        b=TV1E59mH7bCm+lvWQDyPg1e2snoaqyIhtcBtOUAK4iqnDpvgmJ9LhKlLD/8jRJM+VQjITF
+        hT18R3teuoKMqkRY+UwhQ5ep9/Qdr6PBf4G5oVP0jWqaWdjhaAFGc1LowGCM0811q9djYc
+        w1JpmN5miBZ2TpGNxrgUsM6Ddlrj6iU=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1517299526; a=rsa-sha256;
+        cv=none;
+        b=jJo4nfnyfBdY5+04ZmCXQrg2Di/fdvsGrw7/2FPhzbJtNmzrXVr1fXYAKUra3cNcaxDQNPNtdZmQkSz8kG25FklRUaWDp8zsceFwm7//n0uY8C0prm4lnPx+WPunmwq92itjBXle/x9vs+ANxDDksm8oUqajxbbkCFkj9OGRhC8=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Jan 2018 08:44:30 +0900
-KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> wrote:
+Hi, Paolo, Ivan, Ming et al.
 
-> On 2017/12/27 15:06, KOBAYASHI Yoshitake wrote:
-> > On 2017/12/19 20:56, Boris Brezillon wrote:  
-> >> On Tue, 19 Dec 2017 20:42:36 +0900
-> >> KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> wrote:
-> >>  
-> >>> On 2017/12/07 0:08, Boris Brezillon wrote:  
-> >>>> On Wed,  6 Dec 2017 23:04:57 +0900
-> >>>> KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> wrote:
-> >>>>     
-> >>>>> This patch enables support to read the ECC strength and size from the
-> >>>>> NAND flash using Toshiba Memory SLC NAND extended-ID. This patch is
-> >>>>> based on the information of the 6th ID byte of the Toshiba Memory SLC
-> >>>>> NAND.
-> >>>>>
-> >>>>> Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
-> >>>>> ---
-> >>>>>  drivers/mtd/nand/nand_toshiba.c | 28 ++++++++++++++++++++++++++++
-> >>>>>  1 file changed, 28 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/mtd/nand/nand_toshiba.c b/drivers/mtd/nand/nand_toshiba.c
-> >>>>> index 57df857..c2c141b 100644
-> >>>>> --- a/drivers/mtd/nand/nand_toshiba.c
-> >>>>> +++ b/drivers/mtd/nand/nand_toshiba.c
-> >>>>> @@ -35,6 +35,34 @@ static void toshiba_nand_decode_id(struct nand_chip *chip)
-> >>>>>  	    (chip->id.data[5] & 0x7) == 0x6 /* 24nm */ &&
-> >>>>>  	    !(chip->id.data[4] & 0x80) /* !BENAND */)
-> >>>>>  		mtd->oobsize = 32 * mtd->writesize >> 9;
-> >>>>> +
-> >>>>> +	/*
-> >>>>> +	 * Extract ECC requirements from 6th id byte.
-> >>>>> +	 * For Toshiba SLC, ecc requrements are as follows:
-> >>>>> +	 *  - 43nm: 1 bit ECC for each 512Byte is required.
-> >>>>> +	 *  - 32nm: 4 bit ECC for each 512Byte is required.
-> >>>>> +	 *  - 24nm: 8 bit ECC for each 512Byte is required.
-> >>>>> +	 */
-> >>>>> +	if (chip->id.len >= 6 && nand_is_slc(chip)) {
-> >>>>> +		chip->ecc_step_ds = 512;
-> >>>>> +		switch (chip->id.data[5] & 0x7) {
-> >>>>> +		case 0x4:
-> >>>>> +			chip->ecc_strength_ds = 1;
-> >>>>> +			break;
-> >>>>> +		case 0x5:
-> >>>>> +			chip->ecc_strength_ds = 4;
-> >>>>> +			break;
-> >>>>> +		case 0x6:
-> >>>>> +			chip->ecc_strength_ds = 8;
-> >>>>> +			break;
-> >>>>> +		default:
-> >>>>> +			WARN(1, "Could not get ECC info");
-> >>>>> +			chip->ecc_step_ds = 0;
-> >>>>> +			break;
-> >>>>> +		}
-> >>>>> +	} else if (chip->id.len < 6 && nand_is_slc(chip)) {
-> >>>>> +		WARN(1, "Could not get ECC info, 6th nand id byte does not exist.");    
-> >>>>
-> >>>> I'm pretty sure you have old NAND chips that do not have 6bytes ids
-> >>>> (see the table here [1]), and printing a huge backtrace in this case is
-> >>>> probably not what you want.
-> >>>>
-> >>>> If you're okay with dropping this else block, I'll do the change when
-> >>>> applying, no need to send a new version.    
-> >>>
-> >>> Some controllers may have limitation in reading ids beyond 5 bytes, 
-> >>> considering such scenario we think it is better to keep this warning.
-> >>> However if you feel huge backtrace is an issue, how about we using pr_warn() instead?
-> >>>  
-> >>
-> >> Toshiba NANDs with an id smaller than 6 bytes exist, so no, we should
-> >> not complain at all. If the controller is broken and can't read the 8 id
-> >> bytes the core is asking for, then it should be detected at the core
-> >> level not in the NAND manufacturer driver.  
-> > 
-> > I understood your opinion. Please apply this patch with dropping the else block.  
-> 
-> Should I repost patch with else block dropped? Please let me know if that is necessary.
+It looks like I've just encountered the issue Ivan has already described 
+in [1]. Since I'm able to reproduce it reliably in a VM, I'd like to 
+draw more attention to it.
 
-I forgot to apply it :-/. Please, send a new version so I can track
-it in patchwork.
+First, I'm using v4.15 kernel with all pending BFQ fixes:
 
-Thanks,
+===
+2ad909a300c4 bfq-iosched: don't call bfqg_and_blkg_put for 
+!CONFIG_BFQ_GROUP_IOSCHED
+83c97a310f83 block, bfq: release oom-queue ref to root group on exit
+5b9eb4716af1 block, bfq: put async queues for root bfq groups too
+3c5529454a27 block, bfq: limit sectors served with interactive weight 
+raising
+e6c72be3486b block, bfq: limit tags for writes and async I/O
+e579b91d96ce block, bfq: increase threshold to deem I/O as random
+f6cbc16aac88 block, bfq: remove superfluous check in queue-merging setup
+8045d8575183 block, bfq: let a queue be merged only shortly after 
+starting I/O
+242954975f5e block, bfq: check low_latency flag in bfq_bfqq_save_state()
+8349c1bddd95 block, bfq: add missing rq_pos_tree update on rq removal
+558200440cb9 block, bfq: fix occurrences of request finish method's old 
+name
+6ed2f47ee870 block, bfq: consider also past I/O in soft real-time 
+detection
+e5f295dd18f2 block, bfq: remove batches of confusing ifdefs
+===
 
-Boris
+Next, I boot an Arch VM with this kernel and emulated USB stick 
+attached:
+
+===
+qemu-system-x86_64 -display gtk,gl=on -machine q35,accel=kvm -cpu 
+host,+vmx -enable-kvm -drive 
+if=pflash,format=raw,readonly,file=/mnt/vms/ovmf/code.img -drive 
+if=pflash,format=raw,file=/mnt/vms/ovmf/vars.img -cdrom 
+/mnt/vms/ovmf/shell.iso -netdev user,id=user.0 -device 
+virtio-net,netdev=user.0 -usb -device nec-usb-xhci,id=xhci -device 
+usb-tablet,bus=xhci.0 -serial stdio -m 512 -hda sda.img -hdb sdb.img 
+-smp 4 -drive if=none,id=stick,file=usb.img -device 
+usb-storage,bus=xhci.0,drive=stick
+===
+
+Within the VM itself I use udev rule to set the I/O scheduler:
+
+===
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/scheduler}="bfq"
+===
+
+Things boot and work fine until I try to create a partition on the 
+emulated USB stick with cfdisk. On writing a new partition table it 
+blocks, and I get the following stacktrace:
+
+===
+[  225.670702] INFO: task cfdisk:416 blocked for more than 20 seconds.
+[  225.681427]       Not tainted 4.15.0-pf1 #1
+[  225.685341] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[  225.691910] cfdisk          D    0   416    407 0x00000000
+[  225.700777] Call Trace:
+[  225.703654]  ? __schedule+0x35f/0x1000
+[  225.706990]  ? __switch_to_asm+0x40/0x70
+[  225.709943]  ? __switch_to_asm+0x34/0x70
+[  225.712224]  ? __switch_to_asm+0x40/0x70
+[  225.714225]  ? __switch_to_asm+0x40/0x70
+[  225.716790]  schedule+0x32/0xc0
+[  225.718355]  io_schedule+0x12/0x40
+[  225.719747]  wait_on_page_bit+0xea/0x130
+[  225.721266]  ? add_to_page_cache_lru+0xe0/0xe0
+[  225.722622]  __filemap_fdatawait_range+0xbf/0x110
+[  225.724625]  ? preempt_count_sub+0x50/0x90
+[  225.726591]  ? sync_inodes_one_sb+0x20/0x20
+[  225.727507]  filemap_fdatawait_keep_errors+0x1a/0x40
+[  225.728491]  iterate_bdevs+0xa7/0x140
+[  225.729304]  sys_sync+0x7c/0xb0
+[  225.730095]  entry_SYSCALL_64_fastpath+0x20/0x83
+[  225.732420] RIP: 0033:0x7f2631cf4a17
+===
+
+I've tried it several times with the same result. Next, I reboot the 
+system, change the scheduler to Kyber, and then I can create a new 
+partition successfully.
+
+I also went further. While having Kyber activated to work with an 
+emulated USB stick properly, I create RAID10 on it, then I create LVM 
+PV, then VG, then LV, then XFS on top of that, then I set I/O scheduler 
+back to BFQ, then reboot, and on reboot mdadm gets blocked while 
+discovering things, producing the following stacktrace:
+
+===
+[   41.350763] INFO: task mdadm:354 blocked for more than 20 seconds.
+[   41.356154]       Not tainted 4.15.0-pf1 #1
+[   41.358674] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[   41.363046] mdadm           D    0   354    352 0x00000100
+[   41.368700] Call Trace:
+[   41.370417]  ? __schedule+0x35f/0x1000
+[   41.372668]  ? blk_queue_exit+0x3e/0x60
+[   41.374816]  ? generic_make_request+0x12f/0x2d0
+[   41.377363]  schedule+0x32/0xc0
+[   41.380416]  io_schedule+0x12/0x40
+[   41.382698]  __blkdev_direct_IO_simple+0x206/0x360
+[   41.382707]  ? bdget+0x120/0x120
+[   41.382714]  ? blkdev_direct_IO+0x3a5/0x3f0
+[   41.382718]  blkdev_direct_IO+0x3a5/0x3f0
+[   41.382724]  ? current_time+0x18/0x70
+[   41.382731]  ? __atime_needs_update+0x7f/0x190
+[   41.382743]  ? generic_file_read_iter+0x8c/0x9d0
+[   41.382747]  generic_file_read_iter+0x8c/0x9d0
+[   41.382759]  ? __seccomp_filter+0x3b/0x260
+[   41.382765]  __vfs_read+0xf5/0x170
+[   41.382772]  vfs_read+0x91/0x130
+[   41.382778]  SyS_read+0x52/0xc0
+[   41.382819]  do_syscall_64+0x67/0x1a0
+[   41.382828]  entry_SYSCALL64_slow_path+0x25/0x25
+[   41.382833] RIP: 0033:0x7f4b8088a3a1
+[   41.382836] RSP: 002b:00007ffdd681def8 EFLAGS: 00000246 ORIG_RAX: 
+0000000000000000
+[   41.382841] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 
+00007f4b8088a3a1
+[   41.382844] RDX: 0000000000001000 RSI: 00000000007f0000 RDI: 
+0000000000000003
+[   41.382846] RBP: 0000000000000003 R08: 0000000000000003 R09: 
+00007f4b80b55050
+[   41.382848] R10: 000000000000038b R11: 0000000000000246 R12: 
+00000000007eeb10
+[   41.382850] R13: 0000000000000000 R14: 00000000007f0000 R15: 
+00000000007eeb10
+===
+
+If I change I/O scheduler back to Kyber, the system boots okay.
+
+Again, since I'm able to reproduce the issue reliably, let me now what 
+information I should also provide, and as usual I'm ready to test any 
+patches or suggestions.
+
+Important note: I was unable to reproduce this on v4.14 with the same 
+set of BFQ patches (exactly the same case as Ivan has already 
+described).
+
+Thanks.
+
+Regards,
+   Oleksandr
+
+[1] https://lkml.org/lkml/2017/12/1/80
