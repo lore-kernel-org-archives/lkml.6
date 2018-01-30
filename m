@@ -1,180 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752078AbeA3Njl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 08:39:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51444 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751674AbeA3Njk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 08:39:40 -0500
-Date: Tue, 30 Jan 2018 14:39:17 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Stephane Eranian <eranian@google.com>
-Cc: kan.liang@linux.intel.com, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH V3 0/5] bugs fix for large PEBS mmap read and rdpmc read
-Message-ID: <20180130133917.GC29098@krava>
-References: <1517243373-355481-1-git-send-email-kan.liang@linux.intel.com>
- <CABPqkBRjQp62ArVZzuH=TRU3mDPkS93D8_cNev6M=eXTCpBLkA@mail.gmail.com>
+        id S1752134AbeA3Nk4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 08:40:56 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:47605 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751674AbeA3Nkz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 08:40:55 -0500
+Date: Tue, 30 Jan 2018 14:40:49 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net,
+        srinivas.pandruvada@linux.intel.com
+Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
+ candidate and the basis for SIS
+Message-ID: <20180130134049.GU2249@hirez.programming.kicks-ass.net>
+References: <20180130104555.4125-1-mgorman@techsingularity.net>
+ <20180130104555.4125-5-mgorman@techsingularity.net>
+ <20180130115054.GA2269@hirez.programming.kicks-ass.net>
+ <20180130125718.iwntjuvcp3yplvdx@techsingularity.net>
+ <20180130131531.GD2269@hirez.programming.kicks-ass.net>
+ <20180130132527.tjc6vea76sm5zm76@techsingularity.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CABPqkBRjQp62ArVZzuH=TRU3mDPkS93D8_cNev6M=eXTCpBLkA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180130132527.tjc6vea76sm5zm76@techsingularity.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 01:16:39AM -0800, Stephane Eranian wrote:
-> Hi,
+On Tue, Jan 30, 2018 at 01:25:27PM +0000, Mel Gorman wrote:
+> > Because, esp. in this scenario; a task migrating; the hardware really
+> > can't do anything sensible, whereas the OS _knows_.
 > 
-> On Mon, Jan 29, 2018 at 8:29 AM, <kan.liang@linux.intel.com> wrote:
-> >
-> > From: Kan Liang <kan.liang@linux.intel.com>
-> >
-> > ------
-> >
-> > Changes since V2:
-> >  - Refined the changelog
-> >  - Introduced specific read function for large PEBS.
-> >    The previous generic PEBS read function is confusing.
-> >    Disabled PMU in pmu::read() path for large PEBS.
-> >    Handled the corner case when reload_times == 0.
-> >  - Modified the parameter of intel_pmu_save_and_restart_reload()
-> >    Discarded local64_cmpxchg
-> >  - Added fixes tag
-> >  - Added WARN to handle reload_times == 0 || reload_val == 0
-> >
-> > Changes since V1:
-> >  - Check PERF_X86_EVENT_AUTO_RELOAD before call
-> >    intel_pmu_save_and_restore()
-> 
-> It is not yet clear to me why PERF_SAMPLE_PERIOD is not allowed
-> with large PEBS. Large PEBS requires fixed period. So the kernel could
-> make up the period from the event and store it in the sampling buffer.
-> 
-> I tried using large PEBS recently, and despite trying different option
-> combination of perf record, I was not able to get it to work.
-> 
-> $ perf record  -c 1  -e cpu/event=0xd1,umask=0x10,period=19936/pp
-> --no-timestamp --no-period -a -C 0
-> 
-> But I was able to make this work with a much older kernel.
-> 
-> Another annoyance I ran into is with perf record requiring -c period
-> in order not to set
-> PERF_SAMPLE_PERIOD in the event.
-> 
-> If I do:
-> perf record  -c 1  -e cpu/event=0xd1,umask=0x10,period=19936/pp
-> --no-timestamp --no-period -a -C 0
-> 
-> I get
-> 
-> perf_event_attr:
->   type                             4
->   size                             112
->   config                           0x10d1
->   { sample_period, sample_freq }   199936
->   sample_type                      IP|TID|CPU
-> 
-> But if I do:
-> perf record  -e cpu/event=0xd1,umask=0x10,period=19936/pp
-> --no-timestamp --no-period -a -C 0
-> 
-> I get
-> 
-> perf_event_attr:
->   type                             4
->   size                             112
->   config                           0x10d1
->   { sample_period, sample_freq }   199936
->   sample_type                      IP|TID|CPU|PERIOD
-> 
-> Perf should check if all events have a period=, then it should not
-> pass PERF_SAMPLE_PERIOD, even
-> more so when only one event is defined.
-> 
-> Also it does not seem to honor --no-period.
+> Potentially yes. One option without HWP would be to track utilisation
+> for a task or artifically boost it for a short period after migration so
+> a higher p-state is potentially selected. With HWP, a hint would have to
+> be given to the hardware to try select a higher frequency but I've no idea
+> how expensive that is or how it would behave on different implementations
+> of HWP. It may also be a game of whack-a-mole trying to get every cpufreq
+> configuration correct.
 
-yep, there's a bug in period=x term handling
-we did not re/set the sample_type based on that
+We have much of this infrastructure and have been working on improving
+it [1]. We already track per task utilization and feed it into a cpufreq
+governor (schedutil).
 
-attached patch fixes that for me, also takes into account
-the --no/-period options
+> One advantage of using fewer cores is that it should
+> work regardless of cpufreq driver.
 
-jirka
+Sure, and I started out by saying this patch isn't necessarily bad; but
+I think our 'use' [2] of HWP _is_.
 
 
----
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index f251e824edac..907267206973 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1566,7 +1566,8 @@ static struct option __record_options[] = {
- 	OPT_BOOLEAN_SET('T', "timestamp", &record.opts.sample_time,
- 			&record.opts.sample_time_set,
- 			"Record the sample timestamps"),
--	OPT_BOOLEAN('P', "period", &record.opts.period, "Record the sample period"),
-+	OPT_BOOLEAN_SET('P', "period", &record.opts.period, &record.opts.period_set,
-+			"Record the sample period"),
- 	OPT_BOOLEAN('n', "no-samples", &record.opts.no_samples,
- 		    "don't sample"),
- 	OPT_BOOLEAN_SET('N', "no-buildid-cache", &record.no_buildid_cache,
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 2357f4ccc9c7..cfe46236a5e5 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -50,6 +50,7 @@ struct record_opts {
- 	bool	     sample_time_set;
- 	bool	     sample_cpu;
- 	bool	     period;
-+	bool	     period_set;
- 	bool	     running_time;
- 	bool	     full_auxtrace;
- 	bool	     auxtrace_snapshot_mode;
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 66fa45198a11..ff359c9ece2e 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -745,12 +745,14 @@ static void apply_config_terms(struct perf_evsel *evsel,
- 			if (!(term->weak && opts->user_interval != ULLONG_MAX)) {
- 				attr->sample_period = term->val.period;
- 				attr->freq = 0;
-+				perf_evsel__reset_sample_bit(evsel, PERIOD);
- 			}
- 			break;
- 		case PERF_EVSEL__CONFIG_TERM_FREQ:
- 			if (!(term->weak && opts->user_freq != UINT_MAX)) {
- 				attr->sample_freq = term->val.freq;
- 				attr->freq = 1;
-+				perf_evsel__set_sample_bit(evsel, PERIOD);
- 			}
- 			break;
- 		case PERF_EVSEL__CONFIG_TERM_TIME:
-@@ -969,9 +971,6 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 	if (target__has_cpu(&opts->target) || opts->sample_cpu)
- 		perf_evsel__set_sample_bit(evsel, CPU);
- 
--	if (opts->period)
--		perf_evsel__set_sample_bit(evsel, PERIOD);
--
- 	/*
- 	 * When the user explicitly disabled time don't force it here.
- 	 */
-@@ -1073,6 +1072,14 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 	apply_config_terms(evsel, opts, track);
- 
- 	evsel->ignore_missing_thread = opts->ignore_missing_thread;
-+
-+	/* The --period option takes the precedence. */
-+	if (opts->period_set) {
-+		if (opts->period)
-+			perf_evsel__set_sample_bit(evsel, PERIOD);
-+		else
-+			perf_evsel__reset_sample_bit(evsel, PERIOD);
-+	}
- }
- 
- static int perf_evsel__alloc_fd(struct perf_evsel *evsel, int ncpus, int nthreads)
+[1] https://lkml.kernel.org/r/20180123180847.4477-1-patrick.bellasi@arm.com
+[2] IIRC we basically don't do _anything_ when HWP.
