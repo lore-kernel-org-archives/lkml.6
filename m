@@ -1,83 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752988AbeA3VWX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:22:23 -0500
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:44624 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752256AbeA3VWQ (ORCPT
+        id S1752237AbeA3V2O (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:28:14 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43208 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751653AbeA3V2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:22:16 -0500
-X-Google-Smtp-Source: AH8x227Uto2iOiB3lbgvrxS3teeq103iy0GqiwHq9lWOTQblq1bP44+Tlsejn8TlVLy9TN16rLDWWQ==
-Date: Tue, 30 Jan 2018 13:22:13 -0800
+        Tue, 30 Jan 2018 16:28:12 -0500
+X-Google-Smtp-Source: AH8x224pH1hQYGXEeCrAsVxx9OD6IrZP2aAlduEv8HVXaxrCsMAw55QAZ6vgxVTxGvbP6fAjKKJmjQ==
+Date: Tue, 30 Jan 2018 13:28:09 -0800
 From: Eric Biggers <ebiggers3@gmail.com>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-        syzbot
-        <bot+427f0a9138719ba183c0d37d8c2d070567f7761a@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: syzbot
+        <bot+68bf59b49142965d6454163d7341e617a90139dc@syzkaller.appspotmail.com>,
+        davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING in xfrm_state_fini
-Message-ID: <20180130212213.gvskfv3afboqp4uy@gmail.com>
-References: <001a11352f4a2b4fca055e7b441e@google.com>
- <CAM_iQpXBDfdZe4bUu-taidaC1djz7N=AOizEjCpzCeDxuEjPBA@mail.gmail.com>
- <20171127115535.mlsjbrj7pt3d4jvo@gauss3.secunet.de>
- <CAM_iQpVigHJX6hWDGCiJJD0-UouXd3f164e9u6zNCH6+OoNeCg@mail.gmail.com>
+Subject: Re: KASAN: stack-out-of-bounds Read in xfrm_state_find (3)
+Message-ID: <20180130212809.36egyijbeamelmtv@gmail.com>
+References: <089e082d0cb803507c055e6d5318@google.com>
+ <001a11445ed4514b28055e947b48@google.com>
+ <20171201072743.47ztbmrql7ub327u@gauss3.secunet.de>
+ <20171212210031.GC185376@gmail.com>
+ <20171213051805.7z74wh7sglaflo4j@gauss3.secunet.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAM_iQpVigHJX6hWDGCiJJD0-UouXd3f164e9u6zNCH6+OoNeCg@mail.gmail.com>
+In-Reply-To: <20171213051805.7z74wh7sglaflo4j@gauss3.secunet.de>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 27, 2017 at 09:37:07AM -0800, Cong Wang wrote:
-> On Mon, Nov 27, 2017 at 3:55 AM, Steffen Klassert
-> <steffen.klassert@secunet.com> wrote:
-> > On Tue, Nov 21, 2017 at 06:44:04PM -0800, Cong Wang wrote:
-> >> User-space uses proto==0 as a wildcard, but xfrm_id_proto_match()
-> >> doesn't consider it as a match with IPSEC_PROTO_ANY, in this case
-> >> it should match all. Not sure if the following patch is the best way to
-> >> fix it, or perhaps x->id.proto should be initialized to some of these 3
-> >> values, but looking into ->init_temprop() it is not the case.
-> >
-> > x->id is copied from the policy template and it seems that we don't
-> > validate the id of the template when inserting the policy. iproute2
-> > checks for a valid IPsec proto but the kernel does not do so. I think
-> > we should check the policy template and reject inserting if the proto
-> > is invalid.
-> >
+On Wed, Dec 13, 2017 at 06:18:05AM +0100, Steffen Klassert wrote:
+> On Tue, Dec 12, 2017 at 01:00:31PM -0800, Eric Biggers wrote:
+> > Hi Steffen,
+> > 
+> > On Fri, Dec 01, 2017 at 08:27:43AM +0100, Steffen Klassert wrote:
+> > > On Wed, Nov 22, 2017 at 08:05:00AM -0800, syzbot wrote:
+> > > > syzkaller has found reproducer for the following crash on
+> > > > 0c86a6bd85ff0629cd2c5141027fc1c8bb6cde9c
+> > > > git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
+> > > > compiler: gcc (GCC) 7.1.1 20170620
+> > > > .config is attached
+> > > > Raw console output is attached.
+> > > > C reproducer is attached
+> > > > syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> > > > for information about syzkaller reproducers
+> > > > 
+> > > > 
+> > > > BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x30fc/0x3230
+> > > > net/xfrm/xfrm_state.c:1051
+> > > > Read of size 4 at addr ffff8801ccaa7af8 by task syzkaller231684/3045
+> > > 
+> > > The patch below should fix this. I plan to apply it to the ipsec tree
+> > > after some advanced testing.
+> > > 
+> > > Subject: [PATCH RFC] xfrm: Fix stack-out-of-bounds with misconfigured transport
+> > >  mode policies.
+> > > 
+> > 
+> > Are you still planning to apply this?  syzbot is still hitting this bug.
 > 
-> Oh, I thought 0 is used as wildcard, so it is not.
-> 
-> Something like below?
-> 
-> @@ -1445,6 +1446,15 @@ static int validate_tmpl(int nr, struct
-> xfrm_user_tmpl *ut, u16 family)
->                 default:
->                         return -EINVAL;
->                 }
-> +               switch (ut[i].id.proto) {
-> +               case IPPROTO_AH:
-> +               case IPPROTO_ESP:
-> +               case IPPROTO_COMP:
-> +                       break;
-> +               default:
-> +                       return -EINVAL;
-> +               }
-> +
->         }
-> 
->         return 0;
-> 
+> It is already applied to the ipsec tree, will go upstream by the end of
+> this week.
+>
 
-I assume this is supposed to be fixed by the following, so marking it closed for
-syzbot:
+Marking this fixed for syzbot:
 
-#syz fix: xfrm: check id proto in validate_tmpl()
-
-But syzbot has been hitting a WARN_ON() in xfrm_state_fini() even after that
-fix, so it should get reported as a new bug.
+#syz fix: xfrm: Fix stack-out-of-bounds with misconfigured transport mode policies.
