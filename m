@@ -1,128 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751846AbeA3KE7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 05:04:59 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:54111 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751562AbeA3J6s (ORCPT
+        id S1751934AbeA3KGj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 05:06:39 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:36173 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751925AbeA3KGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:58:48 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 01/11] dt-bindings: media: Add Renesas CEU bindings
-Date: Tue, 30 Jan 2018 10:58:12 +0100
-Message-Id: <1517306302-27957-2-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 30 Jan 2018 05:06:34 -0500
+Date: Tue, 30 Jan 2018 11:06:21 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: a.zummo@towertech.it, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux@roeck-us.net, jdelvare@suse.com, kernel@pengutronix.de,
+        Denis.Osterland@diehl.com
+Subject: Re: [PATCH 2/4] rtc: isl1208: Add device tree binding documentation
+Message-ID: <20180130100621.GC2809@piout.net>
+References: <20180123121801.4214-1-m.grzeschik@pengutronix.de>
+ <20180123121801.4214-3-m.grzeschik@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180123121801.4214-3-m.grzeschik@pengutronix.de>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings documentation for Renesas Capture Engine Unit (CEU).
+Hi,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- .../devicetree/bindings/media/renesas,ceu.txt      | 81 ++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
+On 23/01/2018 at 13:17:59 +0100, Michael Grzeschik wrote:
+> From: Denis Osterland <Denis.Osterland@diehl.com>
+> 
+> Wrote documentation for ISL1208, ISL1218 device tree
+> binding with short examples.
+> 
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-new file mode 100644
-index 0000000..3fc66df
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-@@ -0,0 +1,81 @@
-+Renesas Capture Engine Unit (CEU)
-+----------------------------------------------
-+
-+The Capture Engine Unit is the image capture interface found in the Renesas
-+SH Mobile and RZ SoCs.
-+
-+The interface supports a single parallel input with data bus width of 8 or 16
-+bits.
-+
-+Required properties:
-+- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
-+  and RZ/A1M SoCs.
-+- reg: Registers address base and size.
-+- interrupts: The interrupt specifier.
-+
-+The CEU supports a single parallel input and should contain a single 'port'
-+subnode with a single 'endpoint'. Connection to input devices are modeled
-+according to the video interfaces OF bindings specified in:
-+Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Optional endpoint properties applicable to parallel input bus described in
-+the above mentioned "video-interfaces.txt" file are supported.
-+
-+- hsync-active: Active state of the HSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+- vsync-active: Active state of the VSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+
-+Example:
-+
-+The example describes the connection between the Capture Engine Unit and an
-+OV7670 image sensor connected to i2c1 interface.
-+
-+ceu: ceu@e8210000 {
-+	reg = <0xe8210000 0x209c>;
-+	compatible = "renesas,r7s72100-ceu";
-+	interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vio_pins>;
-+
-+	status = "okay";
-+
-+	port {
-+		ceu_in: endpoint {
-+			remote-endpoint = <&ov7670_out>;
-+
-+			hsync-active = <1>;
-+			vsync-active = <0>;
-+		};
-+	};
-+};
-+
-+i2c1: i2c@fcfee400 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
-+
-+	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	ov7670: camera@21 {
-+		compatible = "ovti,ov7670";
-+		reg = <0x21>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vio_pins>;
-+
-+		reset-gpios = <&port3 11 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&port3 12 GPIO_ACTIVE_HIGH>;
-+
-+		port {
-+			ov7670_out: endpoint {
-+				remote-endpoint = <&ceu_in>;
-+
-+				hsync-active = <1>;
-+				vsync-active = <0>;
-+			};
-+		};
-+	};
-+};
+This binding is already in
+Documentation/devicetree/bindings/trivial-devices.txt, no need to
+duplicate.
+
+> Signed-off-by: Denis Osterland <Denis.Osterland@diehl.com>
+> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+> ---
+>  .../devicetree/bindings/rtc/intersil,isl1208.txt   | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/intersil,isl1208.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/intersil,isl1208.txt b/Documentation/devicetree/bindings/rtc/intersil,isl1208.txt
+> new file mode 100644
+> index 0000000000000..a54e99feae1ca
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/intersil,isl1208.txt
+> @@ -0,0 +1,35 @@
+> +Intersil ISL1208, ISL1218 I2C RTC/Alarm chip
+> +
+> +ISL1208 is a trivial I2C device (it has simple device tree bindings,
+> +consisting of a compatible field, an address and possibly an interrupt
+> +line).
+> +
+> +Required properties supported by the device:
+> +
+> + - "compatible": must be one of
+> +	"isil,isl1208"
+> +	"isil,isl1218"
+> + - "reg": I2C bus address of the device
+> +
+> +Optional properties:
+> +
+> + - "interrupt-parent", "interrupts", "interrupts-extended":
+> +   for passing the interrupt line of the SoC connected to #IRQ pin
+> +   of the RTC chip.
+> +
+> +
+> +Example isl1208 node without #IRQ pin connected:
+> +
+> +	isl1208: isl1208@68 {
+> +		compatible = "isil,isl1208";
+> +		reg = <0x68>;
+> +	};
+> +
+> +Example isl1208 node with #IRQ pin connected to SoC gpio1 pin 12:
+> +
+> +	isl1208: isl1208@68 {
+> +		compatible = "isil,isl1208";
+> +		reg = <0x68>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <12 IRQ_TYPE_EDGE_FALLING>;
+> +	};
+> -- 
+> 2.11.0
+> 
+
 -- 
-2.7.4
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
