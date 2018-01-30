@@ -1,112 +1,343 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754067AbeA3XCt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:02:49 -0500
-Received: from mail-it0-f50.google.com ([209.85.214.50]:36189 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753745AbeA3XCq (ORCPT
+        id S1754044AbeA3XCr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:02:47 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:49781 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753473AbeA3XCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:02:46 -0500
-X-Google-Smtp-Source: AH8x224kaoXO4lZZ2B7Xm8qHav66X2QXXU6BUMVm6f0ZlX6QWzLa4U6oDPL1F2jzYxjYduKjD7982Q==
-Date: Tue, 30 Jan 2018 15:02:42 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+caf00b3331869268c9a4b8ec22b28127a3f3b306@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
-        vyasevich@gmail.com
-Subject: Re: general protection fault in sctp_stream_free
-Message-ID: <20180130230242.lpbkdweq3c2ov2x2@gmail.com>
-References: <001a113a6750ca1607055d3836d8@google.com>
+        Tue, 30 Jan 2018 18:02:45 -0500
+Date: Tue, 30 Jan 2018 15:01:36 -0800
+From: tip-bot for Vitaly Kuznetsov <tipbot@zytor.com>
+Message-ID: <tip-93286261de1b46339aa27cd4c639b21778f6cade@git.kernel.org>
+Cc: hpa@zytor.com, mingo@kernel.org, kys@microsoft.com, luto@kernel.org,
+        rkagan@virtuozzo.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, vkuznets@redhat.com,
+        cavery@redhat.com, rkrcmar@redhat.com, mmorsy@redhat.com,
+        Michael.H.Kelley@microsoft.com, pbonzini@redhat.com
+Reply-To: haiyangz@microsoft.com, sthemmin@microsoft.com, luto@kernel.org,
+        rkagan@virtuozzo.com, hpa@zytor.com, mingo@kernel.org,
+        kys@microsoft.com, Michael.H.Kelley@microsoft.com, pbonzini@redhat.com,
+        mmorsy@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, vkuznets@redhat.com, cavery@redhat.com
+In-Reply-To: <20180124132337.30138-4-vkuznets@redhat.com>
+References: <20180124132337.30138-4-vkuznets@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/hyperv] x86/hyperv: Reenlightenment notifications support
+Git-Commit-ID: 93286261de1b46339aa27cd4c639b21778f6cade
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <001a113a6750ca1607055d3836d8@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 05, 2017 at 01:35:02AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzkaller hit the following crash on
-> 2a171788ba7bb61995e98e8163204fc7880f63b2
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> 
-> 
-> 
-> 
-> R13: 00007ff7d3281b58 R14: 00000000004b7560 R15: 0000000000000000
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 17823 Comm: syz-executor4 Not tainted 4.14.0-rc7+ #109
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> task: ffff8801c6002380 task.stack: ffff8801c5fe0000
-> RIP: 0010:sctp_stream_free+0xc3/0x1b0 net/sctp/stream.c:209
-> RSP: 0018:ffff8801c5fe6fa0 EFLAGS: 00010202
-> RAX: 0000000000000000 RBX: ffff8801c33fd0b0 RCX: ffffc90003989000
-> RDX: 0000000000000001 RSI: ffffffff84837f78 RDI: 0000000000000008
-> RBP: ffff8801c5fe6fe0 R08: 0000000000000000 R09: 1ffff10038bfcd69
-> R10: 000000009cb59878 R11: 00000000f5f9e5c7 R12: 0000000000000000
-> R13: 0000000000000000 R14: dffffc0000000000 R15: ffffed003867fa16
-> FS:  00007ff7d3282700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020b50ffc CR3: 00000001c4a5c000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  sctp_association_free+0x301/0x930 net/sctp/associola.c:367
->  sctp_sf_do_unexpected_init.isra.28+0x67e/0x13b0
-> net/sctp/sm_statefuns.c:1589
->  sctp_sf_do_5_2_1_siminit+0x35/0x40 net/sctp/sm_statefuns.c:1645
->  sctp_do_sm+0x18a/0x6a30 net/sctp/sm_sideeffect.c:1190
->  sctp_assoc_bh_rcv+0x283/0x4b0 net/sctp/associola.c:1065
->  sctp_inq_push+0x23b/0x300 net/sctp/inqueue.c:95
->  sctp_backlog_rcv+0x177/0xaa0 net/sctp/input.c:350
->  sk_backlog_rcv include/net/sock.h:912 [inline]
->  __release_sock+0x124/0x360 net/core/sock.c:2266
->  release_sock+0xa4/0x2a0 net/core/sock.c:2778
->  sctp_sendmsg+0x18d1/0x32b0 net/sctp/socket.c:2051
->  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
->  sock_sendmsg_nosec net/socket.c:633 [inline]
->  sock_sendmsg+0xca/0x110 net/socket.c:643
->  SYSC_sendto+0x352/0x5a0 net/socket.c:1750
->  SyS_sendto+0x40/0x50 net/socket.c:1718
->  entry_SYSCALL_64_fastpath+0x1f/0xbe
-> RIP: 0033:0x452869
-> RSP: 002b:00007ff7d3281be8 EFLAGS: 00000212 ORIG_RAX: 000000000000002c
-> RAX: ffffffffffffffda RBX: 00000000007580d8 RCX: 0000000000452869
-> RDX: 0000000000000001 RSI: 00000000206a6000 RDI: 0000000000000013
-> RBP: 00007ff7d3281a20 R08: 000000002064b000 R09: 000000000000001c
-> R10: 0000000020000040 R11: 0000000000000212 R12: 00000000004b7550
-> R13: 00007ff7d3281b58 R14: 00000000004b7560 R15: 0000000000000000
-> Code: 48 c1 e8 03 4c 01 f0 48 89 45 d0 e8 d8 b4 ea fc 41 80 3f 00 0f 85 f1
-> 00 00 00 48 8b 03 4c 01 e8 48 8d 78 08 48 89 fa 48 c1 ea 03 <42> 80 3c 32 00
-> 0f 85 c3 00 00 00 48 8b 78 08 41 83 c4 01 e8 85
-> RIP: sctp_stream_free+0xc3/0x1b0 net/sctp/stream.c:209 RSP: ffff8801c5fe6fa0
-> ---[ end trace cf03319dc427fb51 ]---
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
-> 
-> syzbot will keep track of this bug report.
-> Once a fix for this bug is committed, please reply to this email with:
-> #syz fix: exact-commit-title
+Commit-ID:  93286261de1b46339aa27cd4c639b21778f6cade
+Gitweb:     https://git.kernel.org/tip/93286261de1b46339aa27cd4c639b21778f6cade
+Author:     Vitaly Kuznetsov <vkuznets@redhat.com>
+AuthorDate: Wed, 24 Jan 2018 14:23:33 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 30 Jan 2018 23:55:32 +0100
 
-This crash seems to have stopped occurring now.  I presume it was fixed by:
+x86/hyperv: Reenlightenment notifications support
 
-#syz fix: sctp: fix error path in sctp_stream_init
+Hyper-V supports Live Migration notification. This is supposed to be used
+in conjunction with TSC emulation: when a VM is migrated to a host with
+different TSC frequency for some short period the host emulates the
+accesses to TSC and sends an interrupt to notify about the event. When the
+guest is done updating everything it can disable TSC emulation and
+everything will start working fast again.
+
+These notifications weren't required until now as Hyper-V guests are not
+supposed to use TSC as a clocksource: in Linux the TSC is even marked as
+unstable on boot. Guests normally use 'tsc page' clocksource and host
+updates its values on migrations automatically.
+
+Things change when with nested virtualization: even when the PV
+clocksources (kvm-clock or tsc page) are passed through to the nested
+guests the TSC frequency and frequency changes need to be know..
+
+Hyper-V Top Level Functional Specification (as of v5.0b) wrongly specifies
+EAX:BIT(12) of CPUID:0x40000009 as the feature identification bit. The
+right one to check is EAX:BIT(13) of CPUID:0x40000003. I was assured that
+the fix in on the way.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: kvm@vger.kernel.org
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+Cc: Roman Kagan <rkagan@virtuozzo.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: devel@linuxdriverproject.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Cathy Avery <cavery@redhat.com>
+Cc: Mohammed Gamal <mmorsy@redhat.com>
+Link: https://lkml.kernel.org/r/20180124132337.30138-4-vkuznets@redhat.com
+
+---
+ arch/x86/entry/entry_32.S          |  3 ++
+ arch/x86/entry/entry_64.S          |  3 ++
+ arch/x86/hyperv/hv_init.c          | 89 ++++++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/irq_vectors.h |  7 ++-
+ arch/x86/include/asm/mshyperv.h    |  9 ++++
+ arch/x86/include/uapi/asm/hyperv.h | 27 ++++++++++++
+ arch/x86/kernel/cpu/mshyperv.c     |  6 +++
+ 7 files changed, 143 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2a35b1e..7a796eed 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -895,6 +895,9 @@ BUILD_INTERRUPT3(xen_hvm_callback_vector, HYPERVISOR_CALLBACK_VECTOR,
+ BUILD_INTERRUPT3(hyperv_callback_vector, HYPERVISOR_CALLBACK_VECTOR,
+ 		 hyperv_vector_handler)
+ 
++BUILD_INTERRUPT3(hyperv_reenlightenment_vector, HYPERV_REENLIGHTENMENT_VECTOR,
++		 hyperv_reenlightenment_intr)
++
+ #endif /* CONFIG_HYPERV */
+ 
+ ENTRY(page_fault)
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index a835704..553aa49 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1245,6 +1245,9 @@ apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
+ #if IS_ENABLED(CONFIG_HYPERV)
+ apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
+ 	hyperv_callback_vector hyperv_vector_handler
++
++apicinterrupt3 HYPERV_REENLIGHTENMENT_VECTOR \
++	hyperv_reenlightenment_vector hyperv_reenlightenment_intr
+ #endif /* CONFIG_HYPERV */
+ 
+ idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 1a6c63f..712ac40 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -18,6 +18,8 @@
+  */
+ 
+ #include <linux/types.h>
++#include <asm/apic.h>
++#include <asm/desc.h>
+ #include <asm/hypervisor.h>
+ #include <asm/hyperv.h>
+ #include <asm/mshyperv.h>
+@@ -102,6 +104,93 @@ static int hv_cpu_init(unsigned int cpu)
+ 	return 0;
+ }
+ 
++static void (*hv_reenlightenment_cb)(void);
++
++static void hv_reenlightenment_notify(struct work_struct *dummy)
++{
++	struct hv_tsc_emulation_status emu_status;
++
++	rdmsrl(HV_X64_MSR_TSC_EMULATION_STATUS, *(u64 *)&emu_status);
++
++	/* Don't issue the callback if TSC accesses are not emulated */
++	if (hv_reenlightenment_cb && emu_status.inprogress)
++		hv_reenlightenment_cb();
++}
++static DECLARE_DELAYED_WORK(hv_reenlightenment_work, hv_reenlightenment_notify);
++
++void hyperv_stop_tsc_emulation(void)
++{
++	u64 freq;
++	struct hv_tsc_emulation_status emu_status;
++
++	rdmsrl(HV_X64_MSR_TSC_EMULATION_STATUS, *(u64 *)&emu_status);
++	emu_status.inprogress = 0;
++	wrmsrl(HV_X64_MSR_TSC_EMULATION_STATUS, *(u64 *)&emu_status);
++
++	rdmsrl(HV_X64_MSR_TSC_FREQUENCY, freq);
++	tsc_khz = div64_u64(freq, 1000);
++}
++EXPORT_SYMBOL_GPL(hyperv_stop_tsc_emulation);
++
++static inline bool hv_reenlightenment_available(void)
++{
++	/*
++	 * Check for required features and priviliges to make TSC frequency
++	 * change notifications work.
++	 */
++	return ms_hyperv.features & HV_X64_ACCESS_FREQUENCY_MSRS &&
++		ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE &&
++		ms_hyperv.features & HV_X64_ACCESS_REENLIGHTENMENT;
++}
++
++__visible void __irq_entry hyperv_reenlightenment_intr(struct pt_regs *regs)
++{
++	entering_ack_irq();
++
++	schedule_delayed_work(&hv_reenlightenment_work, HZ/10);
++
++	exiting_irq();
++}
++
++void set_hv_tscchange_cb(void (*cb)(void))
++{
++	struct hv_reenlightenment_control re_ctrl = {
++		.vector = HYPERV_REENLIGHTENMENT_VECTOR,
++		.enabled = 1,
++		.target_vp = hv_vp_index[smp_processor_id()]
++	};
++	struct hv_tsc_emulation_control emu_ctrl = {.enabled = 1};
++
++	if (!hv_reenlightenment_available()) {
++		pr_warn("Hyper-V: reenlightenment support is unavailable\n");
++		return;
++	}
++
++	hv_reenlightenment_cb = cb;
++
++	/* Make sure callback is registered before we write to MSRs */
++	wmb();
++
++	wrmsrl(HV_X64_MSR_REENLIGHTENMENT_CONTROL, *((u64 *)&re_ctrl));
++	wrmsrl(HV_X64_MSR_TSC_EMULATION_CONTROL, *((u64 *)&emu_ctrl));
++}
++EXPORT_SYMBOL_GPL(set_hv_tscchange_cb);
++
++void clear_hv_tscchange_cb(void)
++{
++	struct hv_reenlightenment_control re_ctrl;
++
++	if (!hv_reenlightenment_available())
++		return;
++
++	rdmsrl(HV_X64_MSR_REENLIGHTENMENT_CONTROL, *(u64 *)&re_ctrl);
++	re_ctrl.enabled = 0;
++	wrmsrl(HV_X64_MSR_REENLIGHTENMENT_CONTROL, *(u64 *)&re_ctrl);
++
++	hv_reenlightenment_cb = NULL;
++}
++EXPORT_SYMBOL_GPL(clear_hv_tscchange_cb);
++
+ /*
+  * This function is to be invoked early in the boot sequence after the
+  * hypervisor has been detected.
+diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_vectors.h
+index 67421f6..e71c112 100644
+--- a/arch/x86/include/asm/irq_vectors.h
++++ b/arch/x86/include/asm/irq_vectors.h
+@@ -103,7 +103,12 @@
+ #endif
+ 
+ #define MANAGED_IRQ_SHUTDOWN_VECTOR	0xef
+-#define LOCAL_TIMER_VECTOR		0xee
++
++#if IS_ENABLED(CONFIG_HYPERV)
++#define HYPERV_REENLIGHTENMENT_VECTOR	0xee
++#endif
++
++#define LOCAL_TIMER_VECTOR		0xed
+ 
+ #define NR_VECTORS			 256
+ 
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 6b1d4ea..1790002a 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -160,6 +160,7 @@ static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
+ #define hv_set_synint_state(int_num, val) wrmsrl(int_num, val)
+ 
+ void hyperv_callback_vector(void);
++void hyperv_reenlightenment_vector(void);
+ #ifdef CONFIG_TRACING
+ #define trace_hyperv_callback_vector hyperv_callback_vector
+ #endif
+@@ -316,11 +317,19 @@ void hyper_alloc_mmu(void);
+ void hyperv_report_panic(struct pt_regs *regs, long err);
+ bool hv_is_hypercall_page_setup(void);
+ void hyperv_cleanup(void);
++
++void hyperv_reenlightenment_intr(struct pt_regs *regs);
++void set_hv_tscchange_cb(void (*cb)(void));
++void clear_hv_tscchange_cb(void);
++void hyperv_stop_tsc_emulation(void);
+ #else /* CONFIG_HYPERV */
+ static inline void hyperv_init(void) {}
+ static inline bool hv_is_hypercall_page_setup(void) { return false; }
+ static inline void hyperv_cleanup(void) {}
+ static inline void hyperv_setup_mmu_ops(void) {}
++static inline void set_hv_tscchange_cb(void (*cb)(void)) {}
++static inline void clear_hv_tscchange_cb(void) {}
++static inline void hyperv_stop_tsc_emulation(void) {};
+ #endif /* CONFIG_HYPERV */
+ 
+ #ifdef CONFIG_HYPERV_TSCPAGE
+diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
+index 1a5bfea..197c2e6 100644
+--- a/arch/x86/include/uapi/asm/hyperv.h
++++ b/arch/x86/include/uapi/asm/hyperv.h
+@@ -40,6 +40,9 @@
+  */
+ #define HV_X64_ACCESS_FREQUENCY_MSRS		(1 << 11)
+ 
++/* AccessReenlightenmentControls privilege */
++#define HV_X64_ACCESS_REENLIGHTENMENT		BIT(13)
++
+ /*
+  * Basic SynIC MSRs (HV_X64_MSR_SCONTROL through HV_X64_MSR_EOM
+  * and HV_X64_MSR_SINT0 through HV_X64_MSR_SINT15) available
+@@ -234,6 +237,30 @@
+ #define HV_X64_MSR_CRASH_PARAMS		\
+ 		(1 + (HV_X64_MSR_CRASH_P4 - HV_X64_MSR_CRASH_P0))
+ 
++/* TSC emulation after migration */
++#define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
++
++struct hv_reenlightenment_control {
++	u64 vector:8;
++	u64 reserved1:8;
++	u64 enabled:1;
++	u64 reserved2:15;
++	u64 target_vp:32;
++};
++
++#define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
++#define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
++
++struct hv_tsc_emulation_control {
++	u64 enabled:1;
++	u64 reserved:63;
++};
++
++struct hv_tsc_emulation_status {
++	u64 inprogress:1;
++	u64 reserved:63;
++};
++
+ #define HV_X64_MSR_HYPERCALL_ENABLE		0x00000001
+ #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT	12
+ #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_MASK	\
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index 85eb5fc..9340f41 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -251,6 +251,12 @@ static void __init ms_hyperv_init_platform(void)
+ 	hyperv_setup_mmu_ops();
+ 	/* Setup the IDT for hypervisor callback */
+ 	alloc_intr_gate(HYPERVISOR_CALLBACK_VECTOR, hyperv_callback_vector);
++
++	/* Setup the IDT for reenlightenment notifications */
++	if (ms_hyperv.features & HV_X64_ACCESS_REENLIGHTENMENT)
++		alloc_intr_gate(HYPERV_REENLIGHTENMENT_VECTOR,
++				hyperv_reenlightenment_vector);
++
+ #endif
+ }
+ 
