@@ -1,61 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752919AbeA3Rsy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 12:48:54 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40887 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752154AbeA3RrB (ORCPT
+        id S1752396AbeA3RwP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 12:52:15 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:38447 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752027AbeA3RwO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 12:47:01 -0500
-X-Google-Smtp-Source: AH8x226Wq1i2y4leH96aCKWeifXjAlqlyR01o8oNMQZpxtcuHamw3PbL8laNRdXINgFc1top+gLqag==
-From: Philipp Rossak <embed3d@gmail.com>
-To: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@free-electrons.com, wens@csie.org, linux@armlinux.org.uk,
-        sean@mess.org, p.zabel@pengutronix.de, andi.shyti@samsung.com
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v5 2/6] media: dt: bindings: Update binding documentation for sunxi IR controller
-Date: Tue, 30 Jan 2018 18:46:52 +0100
-Message-Id: <20180130174656.10657-3-embed3d@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180130174656.10657-1-embed3d@gmail.com>
-References: <20180130174656.10657-1-embed3d@gmail.com>
+        Tue, 30 Jan 2018 12:52:14 -0500
+Subject: Re: [PATCH v2] mm/swap.c: make functions and their kernel-doc agree
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
+References: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
+ <20180130123400.GD26445@dhcp22.suse.cz>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <958aa51a-e497-795f-1482-2e6b18143209@infradead.org>
+Date: Tue, 30 Jan 2018 09:52:10 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180130123400.GD26445@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch updates documentation for Device-Tree bindings for sunxi IR
-controller and adds the new optional property for the base clock
-frequency.
+On 01/30/2018 04:34 AM, Michal Hocko wrote:
+> On Mon 29-01-18 16:43:55, Randy Dunlap wrote:
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> Fix some basic kernel-doc notation in mm/swap.c:
+>> - for function lru_cache_add_anon(), make its kernel-doc function name
+>>   match its function name and change colon to hyphen following the
+>>   function name
+> 
+> This is pretty much an internal function to the MM. It shouldn't have
+> any external callers. Why do we need a kernel doc at all?
+> 
+>> - for function pagevec_lookup_entries(), change the function parameter
+>>   name from nr_pages to nr_entries since that is more descriptive of
+>>   what the parameter actually is and then it matches the kernel-doc
+>>   comments also
+> 
+> I know what is nr_pages because I do expect pages to be returned. What
+> are entries? Can it be something different from pages?
 
-Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/media/sunxi-ir.txt | 3 +++
- 1 file changed, 3 insertions(+)
+OK, never mind.  I'll revisit this some other day.
 
-diff --git a/Documentation/devicetree/bindings/media/sunxi-ir.txt b/Documentation/devicetree/bindings/media/sunxi-ir.txt
-index 91648c569b1e..278098987edb 100644
---- a/Documentation/devicetree/bindings/media/sunxi-ir.txt
-+++ b/Documentation/devicetree/bindings/media/sunxi-ir.txt
-@@ -11,6 +11,8 @@ Required properties:
- Optional properties:
- - linux,rc-map-name: see rc.txt file in the same directory.
- - resets : phandle + reset specifier pair
-+- clock-frequency  : IR Receiver clock frequency, in Hertz. Defaults to 8 MHz
-+		     if missing.
- 
- Example:
- 
-@@ -18,6 +20,7 @@ ir0: ir@1c21800 {
- 	compatible = "allwinner,sun4i-a10-ir";
- 	clocks = <&apb0_gates 6>, <&ir0_clk>;
- 	clock-names = "apb", "ir";
-+	clock-frequency = <3000000>;
- 	resets = <&apb0_rst 1>;
- 	interrupts = <0 5 1>;
- 	reg = <0x01C21800 0x40>;
+later,
 -- 
-2.11.0
+~Randy
