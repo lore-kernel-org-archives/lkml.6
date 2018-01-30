@@ -1,50 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752665AbeA3C5H (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 21:57:07 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42174 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752221AbeA3C5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 21:57:06 -0500
-From: fangxiang <fangxiang3@huawei.com>
-To: <tglx@linutronix.de>, <ljason@lakedaemon.net>, <marc.zyngier@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <gengyanping@hisilicon.com>
-Subject: [PATCH] irqchip/gic-v3: Fix gic_chip specific flag
-Date: Tue, 30 Jan 2018 10:56:45 +0800
-Message-ID: <1517281005-18993-1-git-send-email-fangxiang3@huawei.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.167.7]
-X-CFilter-Loop: Reflected
+        id S1752638AbeA3DAP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 22:00:15 -0500
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:59019 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752566AbeA3DAN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jan 2018 22:00:13 -0500
+X-ME-Sender: <xms:vd9vWjM9zEW-pe_KK0XwMPDZrWArBa8OoJML27aDC56pJaU7uyn3Dw>
+From: Zi Yan <zi.yan@sent.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Zi Yan <zi.yan@cs.rutgers.edu>
+Subject: [PATCH] Lock mmap_sem when calling migrate_pages() in do_move_pages_to_node()
+Date: Mon, 29 Jan 2018 22:00:11 -0500
+Message-Id: <20180130030011.4310-1-zi.yan@sent.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both IRQCHIP_SKIP_SET_WAKE and .irq_set_wake() is
-not set in gic_chip V3. This causes
-set_irq_wake_real() return -ENXIO and a
-WARN(Unbalanced IRQ ... wake disable ...) in
-irq_set_irq_wake().
+From: Zi Yan <zi.yan@cs.rutgers.edu>
 
-Signed-off-by: fangxiang <fangxiang3@huawei.com>
+migrate_pages() requires at least down_read(mmap_sem) to protect
+related page tables and VMAs from changing. Let's do it in
+do_page_moves() for both do_move_pages_to_node() and
+add_page_for_migration().
+
+Also add this lock requirement in the comment of migrate_pages().
+
+Signed-off-by: Zi Yan <zi.yan@cs.rutgers.edu>
 ---
- drivers/irqchip/irq-gic-v3.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/migrate.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index b56c3e2..e8104b8 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -800,7 +800,8 @@ static inline void gic_cpu_pm_init(void) { }
- 	.irq_set_affinity	= gic_set_affinity,
- 	.irq_get_irqchip_state	= gic_irq_get_irqchip_state,
- 	.irq_set_irqchip_state	= gic_irq_set_irqchip_state,
--	.flags			= IRQCHIP_SET_TYPE_MASKED,
-+	.flags			= IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE,
- };
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 5d0dc7b85f90..52d029953c32 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1354,6 +1354,9 @@ static int unmap_and_move_huge_page(new_page_t get_new_page,
+  * or free list only if ret != 0.
+  *
+  * Returns the number of pages that were not migrated, or an error code.
++ *
++ * The caller must hold at least down_read(mmap_sem) for to-be-migrated pages
++ * to protect related page tables and VMAs from changing.
+  */
+ int migrate_pages(struct list_head *from, new_page_t get_new_page,
+ 		free_page_t put_new_page, unsigned long private,
+@@ -1457,6 +1460,12 @@ static int store_status(int __user *status, int start, int value, int nr)
+ 	return 0;
+ }
  
- static struct irq_chip gic_eoimode1_chip = {
++/*
++ * Migrates the pages from pagelist and put back those not migrated.
++ *
++ * The caller must at least hold down_read(mmap_sem), which is required
++ * for migrate_pages()
++ */
+ static int do_move_pages_to_node(struct mm_struct *mm,
+ 		struct list_head *pagelist, int node)
+ {
+@@ -1487,7 +1496,6 @@ static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
+ 	unsigned int follflags;
+ 	int err;
+ 
+-	down_read(&mm->mmap_sem);
+ 	err = -EFAULT;
+ 	vma = find_vma(mm, addr);
+ 	if (!vma || addr < vma->vm_start || !vma_migratable(vma))
+@@ -1540,7 +1548,6 @@ static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
+ 	 */
+ 	put_page(page);
+ out:
+-	up_read(&mm->mmap_sem);
+ 	return err;
+ }
+ 
+@@ -1561,6 +1568,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+ 
+ 	migrate_prep();
+ 
++	down_read(&mm->mmap_sem);
+ 	for (i = start = 0; i < nr_pages; i++) {
+ 		const void __user *p;
+ 		unsigned long addr;
+@@ -1628,6 +1636,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+ 	if (!err)
+ 		err = err1;
+ out:
++	up_read(&mm->mmap_sem);
+ 	return err;
+ }
+ 
 -- 
-1.7.9.5
+2.15.1
