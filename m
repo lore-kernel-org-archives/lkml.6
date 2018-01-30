@@ -1,86 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751677AbeA3KQC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 05:16:02 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:42568 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbeA3KQA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 05:16:00 -0500
-X-Google-Smtp-Source: AH8x225tblFAgpkEc9P6xcLS8gHfzYYB3Jarfyi+5KKeBbHDxm9qJufTt+9h1uQafd8KCooJezlduX1QRzRjZq9uAhM=
+        id S1751625AbeA3KS1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 05:18:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41480 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751273AbeA3KS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 05:18:26 -0500
+Date: Tue, 30 Jan 2018 11:18:23 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: "He, Roger" <Hongbo.He@amd.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] mm/swap: add function get_total_swap_pages to expose
+ total_swap_pages
+Message-ID: <20180130101823.GX21609@dhcp22.suse.cz>
+References: <1517214582-30880-1-git-send-email-Hongbo.He@amd.com>
+ <20180129163114.GH21609@dhcp22.suse.cz>
+ <MWHPR1201MB01278542F6EE848ABD187BDBFDE40@MWHPR1201MB0127.namprd12.prod.outlook.com>
+ <20180130075553.GM21609@dhcp22.suse.cz>
+ <9060281e-62dd-8775-2903-339ff836b436@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <1516979499-3665-1-git-send-email-fabrice.gasnier@st.com>
-References: <1516979499-3665-1-git-send-email-fabrice.gasnier@st.com>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Tue, 30 Jan 2018 11:15:58 +0100
-Message-ID: <CA+M3ks7Z+A--e5MTkARkHoDmAEhTyzE-_QaJ4HPd7O6CJrWm+Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] Add support for PWM input capture on STM32
-To: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9060281e-62dd-8775-2903-339ff836b436@amd.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0UAG7W2002800
 
-2018-01-26 16:11 GMT+01:00 Fabrice Gasnier <fabrice.gasnier@st.com>:
-> This series adds support for capture to stm32-pwm driver.
-> Capture is based on DMAs.
-> - First two patches are precursor patches
-> - Subsequent two patches add support for requesting DMAs to MFD core
-> - Next three patches add support for capture to stm32-pwm driver
-> - This has been tested on stm32429i-eval board.
->
-> ---
-> Changes in v2:
-> - Abstract DMA handling from child driver: move it to MFD core
-> - Rework pwm capture routines to adopt this change
-> - Comment on optional dma support, beautify DMAs probe
+On Tue 30-01-18 10:00:07, Christian König wrote:
+> Am 30.01.2018 um 08:55 schrieb Michal Hocko:
+> > On Tue 30-01-18 02:56:51, He, Roger wrote:
+> > > Hi Michal:
+> > > 
+> > > We need a API to tell TTM module the system totally has how many swap
+> > > cache.  Then TTM module can use it to restrict how many the swap cache
+> > > it can use to prevent triggering OOM.  For Now we set the threshold of
+> > > swap size TTM used as 1/2 * total size and leave the rest for others
+> > > use.
+> > Why do you so much memory? Are you going to use TB of memory on large
+> > systems? What about memory hotplug when the memory is added/released?
+> 
+> For graphics and compute applications on GPUs it isn't unusual to use large
+> amounts of system memory.
+> 
+> Our standard policy in TTM is to allow 50% of system memory to be pinned for
+> use with GPUs (the hardware can't do page faults).
+> 
+> When that limit is exceeded (or the shrinker callbacks tell us to make room)
+> we wait for any GPU work to finish and copy buffer content into a shmem
+> file.
+> 
+> This copy into a shmem file can easily trigger the OOM killer if there isn't
+> any swap space left and that is something we want to avoid.
+> 
+> So what we want to do is to apply this 50% rule to swap space as well and
+> deny allocation of buffer objects when it is exceeded.
 
-For this series:
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+How does that help when the rest of the system might eat swap?
 
->
-> Fabrice Gasnier (8):
->   pwm: stm32: fix, remove unused struct device
->   pwm: stm32: protect common prescaler for all channels
->   dt-bindings: mfd: stm32-timers: add support for dmas
->   mfd: stm32-timers: add support for dmas
->   pwm: stm32: add capture support
->   pwm: stm32: improve capture by tuning counter prescaler
->   pwm: stm32: use input prescaler to improve period capture
->   ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
->
->  .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
->  arch/arm/boot/dts/stm32429i-eval.dts               |   3 +
->  drivers/mfd/stm32-timers.c                         | 215 +++++++++++++++-
->  drivers/pwm/pwm-stm32.c                            | 276 ++++++++++++++++++++-
->  include/linux/mfd/stm32-timers.h                   |  39 +++
->  5 files changed, 547 insertions(+), 6 deletions(-)
->
-> --
-> 1.9.1
->
+> > > But get_nr_swap_pages is the only API we can accessed from other
+> > > module now.  It can't cover the case of the dynamic swap size
+> > > increment.  I mean: user can use "swapon" to enable new swap file or
+> > > swap disk dynamically or "swapoff" to disable swap space.
+> > Exactly. Your scaling configuration based on get_nr_swap_pages or the
+> > available memory simply sounds wrong.
+> 
+> Why? That is pretty much exactly what we are doing with buffer objects and
+> system memory for years.
 
-
+Could you be more specific? What kind of buffer objects you have in
+mind?
 
 -- 
-Benjamin Gaignard
-
-Graphic Study Group
-
-Linaro.org â”‚ Open source software for ARM SoCs
-
-Follow Linaro: Facebook | Twitter | Blog
+Michal Hocko
+SUSE Labs
