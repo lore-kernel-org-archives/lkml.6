@@ -1,60 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753696AbeA3ReN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 12:34:13 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:59424 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752426AbeA3Rcv (ORCPT
+        id S1751937AbeA3RiX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 12:38:23 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:34461 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751448AbeA3RiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 12:32:51 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w0UHWm4h001883, This message is accepted by code: ctloc85258
-From: Chunhao Lin <hau@realtek.com>
-To: <netdev@vger.kernel.org>
-CC: <nic_swsd@realtek.com>, <linux-kernel@vger.kernel.org>,
-        Chunhao Lin <hau@realtek.com>
-Subject: [PATCH net] r8169: fix RTL8168EP take too long to complete driver initialization.
-Date: Wed, 31 Jan 2018 01:32:36 +0800
-Message-ID: <1517333556-4378-1-git-send-email-hau@realtek.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 30 Jan 2018 12:38:21 -0500
+X-Google-Smtp-Source: AH8x224DMS7qqStz2TC2VGbNW+dEXN5sLJAsyecf4+n5KkJW4zBiH7dkOE28fSWrZlkU/x/xL5031n5vdOtUf8xNnmM=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.21.177.216]
+In-Reply-To: <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
+References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
+ <20171210182152.70ad8fbf@archlinux> <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
+ <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
+ <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
+ <20180130160107.000006df@huawei.com> <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
+ <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com> <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 30 Jan 2018 19:38:19 +0200
+Message-ID: <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
+Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for BOSC0200
+To: Steve Presser <steve@pressers.name>
+Cc: Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Jeremy Cline <jeremy@jcline.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
+        Lars Kellogg-Stedman <lars@oddbit.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Driver check the wrong register bit in rtl_ocp_tx_cond() that keep driver
-waiting until timeout.
+On Tue, Jan 30, 2018 at 7:25 PM, Steve Presser <steve@pressers.name> wrote:
+> Andy,
+>
+> Where did the assertion the second device is a magnetometer come from? Just
+> the data sheet?
 
-Fix this by waiting for the right register bit.
+Yep. See chapter 8.2. Isn't enough proof? Or you believe in two
+accelerometers with off-by-one conflicting address on a cheap laptop
+with left unused two magnetometers on the same time?
 
-Signed-off-by: Chunhao Lin <hau@realtek.com>
----
- drivers/net/ethernet/realtek/r8169.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+And we have a driver for magnetometer separately.
 
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index 734286e..dd713df 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -1395,7 +1395,7 @@ DECLARE_RTL_COND(rtl_ocp_tx_cond)
- {
- 	void __iomem *ioaddr = tp->mmio_addr;
- 
--	return RTL_R8(IBISR0) & 0x02;
-+	return RTL_R8(IBISR0) & 0x20;
- }
- 
- static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)
-@@ -1403,7 +1403,7 @@ static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)
- 	void __iomem *ioaddr = tp->mmio_addr;
- 
- 	RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
--	rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
-+	rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
- 	RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
- 	RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);
- }
+So, it looks like we need to move ACPI ID to a new "kinda I2C mfd" IIO
+driver under drivers/iio/imu/bmc150_i2c.c
+
+
+> Steve
+>
+>
+> On Tue, Jan 30, 2018, 12:05 PM Andy Shevchenko <andy.shevchenko@gmail.com>
+> wrote:
+>>
+>> On Tue, Jan 30, 2018 at 6:40 PM, Andy Shevchenko
+>> <andy.shevchenko@gmail.com> wrote:
+>> > On Tue, Jan 30, 2018 at 6:01 PM, Jonathan Cameron
+>> > <Jonathan.Cameron@huawei.com> wrote:
+>> >> On Mon, 29 Jan 2018 16:07:02 +0200
+>> >> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>> >
+>> >>> > But that would take much longer.  Feel free to propose it and a
+>> >>> > patch
+>> >>> > removing the ifdef fun if you like!
+>> >
+>> >>> Where can I see the patch?
+>> >
+>> >> Doh. I clearly forgot to push out.  Should be able to push to
+>> >> iio.git on kernel.org later.
+>> >
+>> > Thanks, I can see it now.
+>> >
+>> > This patch almost wrong. Not by functionality it brings, but by style.
+>>
+>> Oy vey, the second device is *not* accelerometer, it is a magnetometer
+>> [1].
+>>
+>> [1]: https://www.mouser.com/ds/2/783/BST-BMC150-DS000-04-786477.pdf
+>>
+>> > I'll send soon a series of fixes to the driver (compile tested only)
+>> > to provide my view on the matters.
+>> >
+>> > P.S. In the future (I have some kind of deja vu I have told this
+>> > already to someone), please, Cc one or more of Rafael, Mika and/or me
+>> > for ACPI matters.
+>>
+>> --
+>> With Best Regards,
+>> Andy Shevchenko
+
+
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
