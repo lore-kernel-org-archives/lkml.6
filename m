@@ -1,85 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753876AbeA3XAF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:00:05 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:45000 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752212AbeA3XAE (ORCPT
+        id S1753995AbeA3XBF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:01:05 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:54514 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753861AbeA3XBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:00:04 -0500
-X-Google-Smtp-Source: AH8x2259ipycLsokPCYq8myeNbDkeXjjy6RF8sn4BqBFqn+3yQnJ+xSGJ5vSTuCCpbJmGVmGwtkrSw==
-Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
-To: Xin Long <lucien.xin@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>, David Miller <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Dan Streetman <ddstreet@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
- <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
- <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net>
- <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
-From: David Ahern <dsahern@gmail.com>
-Message-ID: <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com>
-Date: Tue, 30 Jan 2018 15:59:59 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.5.2
+        Tue, 30 Jan 2018 18:01:04 -0500
+X-Google-Smtp-Source: AH8x224/njKvmOSDZay+a1poDnL3bo/vNccEt8jtj7Ym3xFbnn6SfdK/AtHRbDBhVmOmpkf9cGHoVQ==
+Date: Tue, 30 Jan 2018 15:01:01 -0800 (PST)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Vladimir Davydov <vdavydov@virtuozzo.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [patch] tools, vm: new option to specify kpageflags file
+Message-ID: <alpine.DEB.2.10.1801301458180.153857@chino.kir.corp.google.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/18 1:57 PM, David Ahern wrote:
-> On 1/30/18 1:08 PM, Daniel Borkmann wrote:
->> On 01/30/2018 07:32 PM, Cong Wang wrote:
->>> On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
->>>> Hello,
->>>>
->>>> The following program creates a hang in unregister_netdevice.
->>>> cleanup_net work hangs there forever periodically printing
->>>> "unregister_netdevice: waiting for lo to become free. Usage count = 3"
->>>> and creation of any new network namespaces hangs forever.
->>>
->>> Interestingly, this is not reproducible on net-next.
->>
->> The most recent change on netns refcnt was 4ee806d51176 ("net: tcp: close
->> sock if net namespace is exiting") in net/net-next from 5 days ago, maybe
->> fixed due to that?
->>
-> 
-> This appears to be the commit introducing the refcnt leak:
-> 
-> $ git bisect bad
-> dbc2b5e9a09e9a6664679a667ff81cff6e5f2641 is the first bad commit
-> commit dbc2b5e9a09e9a6664679a667ff81cff6e5f2641
-> Author: Xin Long <lucien.xin@gmail.com>
-> Date:   Fri May 12 14:39:52 2017 +0800
-> 
->     sctp: fix src address selection if using secondary addresses for ipv6
-> 
-> 
-> v4.14 is bad. Running bisect in the background while doing other things....
-> 
+page-types currently hardcodes /proc/kpageflags as the file to parse.  
+This works when using the tool to examine the state of pageflags on the 
+same system, but does not allow storing a snapshot of pageflags at a given 
+time to debug issues nor on a different system.
 
-Interesting. The commit that avoids the refcnt leak is
+This allows the user to specify a saved version of kpageflags with a new 
+page-types -F option.
 
-commit 955ec4cb3b54c7c389a9f830be7d3ae2056b9212
-Author: David Ahern <dsahern@gmail.com>
-Date:   Wed Jan 24 19:45:29 2018 -0800
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ tools/vm/page-types.c | 26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
-    net/ipv6: Do not allow route add with a device that is down
-
-That commit does not intentionally address the problem so it is just
-masking the problematic code introduced by the commit above.
+diff --git a/tools/vm/page-types.c b/tools/vm/page-types.c
+--- a/tools/vm/page-types.c
++++ b/tools/vm/page-types.c
+@@ -172,6 +172,7 @@ static pid_t		opt_pid;	/* process to walk */
+ const char *		opt_file;	/* file or directory path */
+ static uint64_t		opt_cgroup;	/* cgroup inode */
+ static int		opt_list_cgroup;/* list page cgroup */
++static const char *	opt_kpageflags;	/* kpageflags file to parse */
+ 
+ #define MAX_ADDR_RANGES	1024
+ static int		nr_addr_ranges;
+@@ -258,7 +259,7 @@ static int checked_open(const char *pathname, int flags)
+  * pagemap/kpageflags routines
+  */
+ 
+-static unsigned long do_u64_read(int fd, char *name,
++static unsigned long do_u64_read(int fd, const char *name,
+ 				 uint64_t *buf,
+ 				 unsigned long index,
+ 				 unsigned long count)
+@@ -283,7 +284,7 @@ static unsigned long kpageflags_read(uint64_t *buf,
+ 				     unsigned long index,
+ 				     unsigned long pages)
+ {
+-	return do_u64_read(kpageflags_fd, PROC_KPAGEFLAGS, buf, index, pages);
++	return do_u64_read(kpageflags_fd, opt_kpageflags, buf, index, pages);
+ }
+ 
+ static unsigned long kpagecgroup_read(uint64_t *buf,
+@@ -293,7 +294,7 @@ static unsigned long kpagecgroup_read(uint64_t *buf,
+ 	if (kpagecgroup_fd < 0)
+ 		return pages;
+ 
+-	return do_u64_read(kpagecgroup_fd, PROC_KPAGEFLAGS, buf, index, pages);
++	return do_u64_read(kpagecgroup_fd, opt_kpageflags, buf, index, pages);
+ }
+ 
+ static unsigned long pagemap_read(uint64_t *buf,
+@@ -743,7 +744,7 @@ static void walk_addr_ranges(void)
+ {
+ 	int i;
+ 
+-	kpageflags_fd = checked_open(PROC_KPAGEFLAGS, O_RDONLY);
++	kpageflags_fd = checked_open(opt_kpageflags, O_RDONLY);
+ 
+ 	if (!nr_addr_ranges)
+ 		add_addr_range(0, ULONG_MAX);
+@@ -790,6 +791,7 @@ static void usage(void)
+ "            -N|--no-summary            Don't show summary info\n"
+ "            -X|--hwpoison              hwpoison pages\n"
+ "            -x|--unpoison              unpoison pages\n"
++"            -F|--kpageflags            kpageflags file to parse\n"
+ "            -h|--help                  Show this usage message\n"
+ "flags:\n"
+ "            0x10                       bitfield format, e.g.\n"
+@@ -1013,7 +1015,7 @@ static void walk_page_cache(void)
+ {
+ 	struct stat st;
+ 
+-	kpageflags_fd = checked_open(PROC_KPAGEFLAGS, O_RDONLY);
++	kpageflags_fd = checked_open(opt_kpageflags, O_RDONLY);
+ 	pagemap_fd = checked_open("/proc/self/pagemap", O_RDONLY);
+ 	sigaction(SIGBUS, &sigbus_action, NULL);
+ 
+@@ -1164,6 +1166,11 @@ static void parse_bits_mask(const char *optarg)
+ 	add_bits_filter(mask, bits);
+ }
+ 
++static void parse_kpageflags(const char *name)
++{
++	opt_kpageflags = name;
++}
++
+ static void describe_flags(const char *optarg)
+ {
+ 	uint64_t flags = parse_flag_names(optarg, 0);
+@@ -1188,6 +1195,7 @@ static const struct option opts[] = {
+ 	{ "no-summary", 0, NULL, 'N' },
+ 	{ "hwpoison"  , 0, NULL, 'X' },
+ 	{ "unpoison"  , 0, NULL, 'x' },
++	{ "kpageflags", 0, NULL, 'F' },
+ 	{ "help"      , 0, NULL, 'h' },
+ 	{ NULL        , 0, NULL, 0 }
+ };
+@@ -1199,7 +1207,7 @@ int main(int argc, char *argv[])
+ 	page_size = getpagesize();
+ 
+ 	while ((c = getopt_long(argc, argv,
+-				"rp:f:a:b:d:c:ClLNXxh", opts, NULL)) != -1) {
++				"rp:f:a:b:d:c:ClLNXxF:h", opts, NULL)) != -1) {
+ 		switch (c) {
+ 		case 'r':
+ 			opt_raw = 1;
+@@ -1242,6 +1250,9 @@ int main(int argc, char *argv[])
+ 			opt_unpoison = 1;
+ 			prepare_hwpoison_fd();
+ 			break;
++		case 'F':
++			parse_kpageflags(optarg);
++			break;
+ 		case 'h':
+ 			usage();
+ 			exit(0);
+@@ -1251,6 +1262,9 @@ int main(int argc, char *argv[])
+ 		}
+ 	}
+ 
++	if (!opt_kpageflags)
++		opt_kpageflags = PROC_KPAGEFLAGS;
++
+ 	if (opt_cgroup || opt_list_cgroup)
+ 		kpagecgroup_fd = checked_open(PROC_KPAGECGROUP, O_RDONLY);
+ 
