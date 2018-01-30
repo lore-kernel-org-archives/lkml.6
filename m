@@ -1,27 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753266AbeA3Wis (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:38:48 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:52983 "EHLO
+        id S1753318AbeA3Wi4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 17:38:56 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:33073 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753169AbeA3Wip (ORCPT
+        with ESMTP id S1753169AbeA3Wix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:38:45 -0500
-Date: Tue, 30 Jan 2018 14:37:38 -0800
+        Tue, 30 Jan 2018 17:38:53 -0500
+Date: Tue, 30 Jan 2018 14:35:34 -0800
 From: tip-bot for Dan Williams <tipbot@zytor.com>
-Message-ID: <tip-56c30ba7b348b90484969054d561f711ba196507@git.kernel.org>
-Cc: tglx@linutronix.de, viro@zeniv.linux.org.uk, dan.j.williams@intel.com,
-        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        elena.reshetova@intel.com
-Reply-To: linux-kernel@vger.kernel.org, elena.reshetova@intel.com,
-        mingo@kernel.org, hpa@zytor.com, dan.j.williams@intel.com,
-        viro@zeniv.linux.org.uk, tglx@linutronix.de
-In-Reply-To: <151727418500.33451.17392199002892248656.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151727418500.33451.17392199002892248656.stgit@dwillia2-desk3.amr.corp.intel.com>
+Message-ID: <tip-b3bbfb3fb5d25776b8e3f361d2eedaabb0b496cd@git.kernel.org>
+Cc: thomas.lendacky@amd.com, dan.j.williams@intel.com,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        keescook@chromium.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, ak@linux.intel.com, mingo@kernel.org,
+        mingo@redhat.com
+Reply-To: tglx@linutronix.de, ak@linux.intel.com, mingo@kernel.org,
+        mingo@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, dan.j.williams@intel.com,
+        thomas.lendacky@amd.com
+In-Reply-To: <151727415922.33451.5796614273104346583.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <151727415922.33451.5796614273104346583.stgit@dwillia2-desk3.amr.corp.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] vfs, fdtable: Prevent bounds-check bypass via
- speculative execution
-Git-Commit-ID: 56c30ba7b348b90484969054d561f711ba196507
+Subject: [tip:x86/pti] x86: Introduce __uaccess_begin_nospec() and
+ uaccess_try_nospec
+Git-Commit-ID: b3bbfb3fb5d25776b8e3f361d2eedaabb0b496cd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,57 +38,83 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  56c30ba7b348b90484969054d561f711ba196507
-Gitweb:     https://git.kernel.org/tip/56c30ba7b348b90484969054d561f711ba196507
+Commit-ID:  b3bbfb3fb5d25776b8e3f361d2eedaabb0b496cd
+Gitweb:     https://git.kernel.org/tip/b3bbfb3fb5d25776b8e3f361d2eedaabb0b496cd
 Author:     Dan Williams <dan.j.williams@intel.com>
-AuthorDate: Mon, 29 Jan 2018 17:03:05 -0800
+AuthorDate: Mon, 29 Jan 2018 17:02:39 -0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 30 Jan 2018 21:54:32 +0100
+CommitDate: Tue, 30 Jan 2018 21:54:30 +0100
 
-vfs, fdtable: Prevent bounds-check bypass via speculative execution
+x86: Introduce __uaccess_begin_nospec() and uaccess_try_nospec
 
-'fd' is a user controlled value that is used as a data dependency to
-read from the 'fdt->fd' array.  In order to avoid potential leaks of
-kernel memory values, block speculative execution of the instruction
-stream that could issue reads based on an invalid 'file *' returned from
-__fcheck_files.
+For __get_user() paths, do not allow the kernel to speculate on the value
+of a user controlled pointer. In addition to the 'stac' instruction for
+Supervisor Mode Access Protection (SMAP), a barrier_nospec() causes the
+access_ok() result to resolve in the pipeline before the CPU might take any
+speculative action on the pointer value. Given the cost of 'stac' the
+speculation barrier is placed after 'stac' to hopefully overlap the cost of
+disabling SMAP with the cost of flushing the instruction pipeline.
 
-Co-developed-by: Elena Reshetova <elena.reshetova@intel.com>
+Since __get_user is a major kernel interface that deals with user
+controlled pointers, the __uaccess_begin_nospec() mechanism will prevent
+speculative execution past an access_ok() permission check. While
+speculative execution past access_ok() is not enough to lead to a kernel
+memory leak, it is a necessary precondition.
+
+To be clear, __uaccess_begin_nospec() is addressing a class of potential
+problems near __get_user() usages.
+
+Note, that while the barrier_nospec() in __uaccess_begin_nospec() is used
+to protect __get_user(), pointer masking similar to array_index_nospec()
+will be used for get_user() since it incorporates a bounds check near the
+usage.
+
+uaccess_try_nospec provides the same mechanism for get_user_try.
+
+No functional changes.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Suggested-by: Ingo Molnar <mingo@redhat.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-arch@vger.kernel.org
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Kees Cook <keescook@chromium.org>
 Cc: kernel-hardening@lists.openwall.com
 Cc: gregkh@linuxfoundation.org
 Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: torvalds@linux-foundation.org
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727418500.33451.17392199002892248656.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727415922.33451.5796614273104346583.stgit@dwillia2-desk3.amr.corp.intel.com
 
 ---
- include/linux/fdtable.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/uaccess.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index 1c65817..41615f3 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -10,6 +10,7 @@
- #include <linux/compiler.h>
- #include <linux/spinlock.h>
- #include <linux/rcupdate.h>
-+#include <linux/nospec.h>
- #include <linux/types.h>
- #include <linux/init.h>
- #include <linux/fs.h>
-@@ -82,8 +83,10 @@ static inline struct file *__fcheck_files(struct files_struct *files, unsigned i
- {
- 	struct fdtable *fdt = rcu_dereference_raw(files->fdt);
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index 574dff4..663e9bd 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -124,6 +124,11 @@ extern int __get_user_bad(void);
  
--	if (fd < fdt->max_fds)
-+	if (fd < fdt->max_fds) {
-+		fd = array_index_nospec(fd, fdt->max_fds);
- 		return rcu_dereference_raw(fdt->fd[fd]);
-+	}
- 	return NULL;
- }
+ #define __uaccess_begin() stac()
+ #define __uaccess_end()   clac()
++#define __uaccess_begin_nospec()	\
++({					\
++	stac();				\
++	barrier_nospec();		\
++})
  
+ /*
+  * This is a type: either unsigned long, if the argument fits into
+@@ -487,6 +492,10 @@ struct __large_struct { unsigned long buf[100]; };
+ 	__uaccess_begin();						\
+ 	barrier();
+ 
++#define uaccess_try_nospec do {						\
++	current->thread.uaccess_err = 0;				\
++	__uaccess_begin_nospec();					\
++
+ #define uaccess_catch(err)						\
+ 	__uaccess_end();						\
+ 	(err) |= (current->thread.uaccess_err ? -EFAULT : 0);		\
