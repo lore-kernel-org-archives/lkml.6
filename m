@@ -1,84 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752723AbeA3QTd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 11:19:33 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56724 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752093AbeA3QTb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 11:19:31 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: Fix suspend to idle" to the regulator tree
-In-Reply-To: <20180130120340.GB10525@sirena.org.uk>
-Message-Id: <E1egYd5-0000f8-9h@debutante>
-Date: Tue, 30 Jan 2018 16:19:27 +0000
+        id S1752608AbeA3QYO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 11:24:14 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38150 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751651AbeA3QYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 11:24:12 -0500
+Date: Tue, 30 Jan 2018 17:23:57 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>
+Subject: Re: [PATCH v2 3/3] KVM: VMX: make MSR bitmaps per-VCPU
+Message-ID: <20180130162357.GE22015@flask>
+References: <1517043027-7655-1-git-send-email-pbonzini@redhat.com>
+ <1517043027-7655-4-git-send-email-pbonzini@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517043027-7655-4-git-send-email-pbonzini@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+2018-01-27 09:50+0100, Paolo Bonzini:
+> Place the MSR bitmap in struct loaded_vmcs, and update it in place
+> every time the x2apic or APICv state can change.  This is rare and
+> the loop can handle 64 MSRs per iteration, in a similar fashion as
+> nested_vmx_prepare_msr_bitmap.
+> 
+> This prepares for choosing, on a per-VM basis, whether to intercept
+> the SPEC_CTRL and PRED_CMD MSRs.
+> 
+> Suggested-by: Jim Mattson <jmattson@google.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> @@ -10022,7 +10043,7 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
+>  	int msr;
+>  	struct page *page;
+>  	unsigned long *msr_bitmap_l1;
+> -	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.msr_bitmap;
+> +	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
 
-   regulator: Fix suspend to idle
+The physical address of the nested msr_bitmap is never loaded into vmcs.
 
-has been applied to the regulator tree at
+The resolution you provided had extra hunk in prepare_vmcs02_full():
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
++	vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+I have queued that as:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
++	if (cpu_has_vmx_msr_bitmap())
++		vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+but it should be a part of the patch or a followup fix.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Is the branch already merged into PTI?
 
-Thanks,
-Mark
+Thanks.
 
->From 57a0dd187956ea04870f4bbbf25a63c425ee7cad Mon Sep 17 00:00:00 2001
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 30 Jan 2018 12:16:31 +0000
-Subject: [PATCH] regulator: Fix suspend to idle
-
-When suspending to idle with the new suspend mode configuration support
-we go through the suspend callbacks with a state of PM_SUSPEND_TO_IDLE
-which we don't have regulator constraints for, causing an error.  Avoid
-this and similar errors by treating missing constraints as a noop.
-
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 42681c10cbe4..dd4708c58480 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -758,7 +758,7 @@ static int suspend_set_state(struct regulator_dev *rdev,
- 
- 	rstate = regulator_get_suspend_state(rdev, state);
- 	if (rstate == NULL)
--		return -EINVAL;
-+		return 0;
- 
- 	/* If we have no suspend mode configration don't set anything;
- 	 * only warn if the driver implements set_suspend_voltage or
--- 
-2.15.1
+>  
+>  	/* This shortcut is ok because we support only x2APIC MSRs so far. */
+>  	if (!nested_cpu_has_virt_x2apic_mode(vmcs12))
+> @@ -11397,7 +11418,7 @@ static void load_vmcs12_host_state(struct kvm_vcpu *vcpu,
+>  	vmcs_write64(GUEST_IA32_DEBUGCTL, 0);
+>  
+>  	if (cpu_has_vmx_msr_bitmap())
+> -		vmx_set_msr_bitmap(vcpu);
+> +		vmx_update_msr_bitmap(vcpu);
+>  
+>  	if (nested_vmx_load_msr(vcpu, vmcs12->vm_exit_msr_load_addr,
+>  				vmcs12->vm_exit_msr_load_count))
+> -- 
+> 1.8.3.1
+> 
