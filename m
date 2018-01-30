@@ -1,95 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751774AbeA3Lgr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 06:36:47 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39085 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751574AbeA3Lgp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 06:36:45 -0500
-X-Google-Smtp-Source: AH8x226MOqPqsvx/dSZRfHO1X7oM24iQzO/+N1sFVy3KiP5FZZ4fw36fJRs9yYLfPdeUCh71qcd38Q==
-Subject: Re: [RFC] Per file OOM badness
-To: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>,
-        christian.koenig@amd.com, Michal Hocko <mhocko@kernel.org>,
-        Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20180118170006.GG6584@dhcp22.suse.cz>
- <20180123152659.GA21817@castle.DHCP.thefacebook.com>
- <20180123153631.GR1526@dhcp22.suse.cz>
- <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
- <20180124092847.GI1526@dhcp22.suse.cz>
- <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
- <20180124110141.GA28465@dhcp22.suse.cz>
- <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
- <20180124115059.GC28465@dhcp22.suse.cz>
- <381a868c-78fd-d0d1-029e-a2cf4ab06d37@gmail.com>
- <20180130093145.GE25930@phenom.ffwll.local>
- <3db43c1a-59b8-af86-2b87-c783c629f512@daenzer.net>
- <3026d8c5-9313-cb8b-91ef-09c02baf27db@amd.com>
- <445628d3-677c-a9f8-171f-7d74a603c61d@daenzer.net>
- <dce6d244-36c7-7452-97f5-7437bd78cfcc@gmail.com>
- <e511ba10-7032-36cc-f22c-2f6bb05f9f6e@daenzer.net>
-From: =?UTF-8?Q?Nicolai_H=c3=a4hnle?= <nhaehnle@gmail.com>
-Message-ID: <82d5894f-f4ea-98cc-068a-5d470f5267df@gmail.com>
-Date: Tue, 30 Jan 2018 12:36:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1751547AbeA3Ljg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 06:39:36 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:36910 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751391AbeA3Lje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 06:39:34 -0500
+Subject: Re: [PATCH] ftrace: use helper function clear_ftrace_function
+To: Steven Rostedt <rostedt@goodmis.org>
+References: <1517273161-36355-1-git-send-email-xieyisheng1@huawei.com>
+ <20180130051306.15f47965@vmware.local.home>
+CC: <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <17da0ae7-32dc-fc7f-0a87-24d243510e88@huawei.com>
+Date: Tue, 30 Jan 2018 19:39:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-In-Reply-To: <e511ba10-7032-36cc-f22c-2f6bb05f9f6e@daenzer.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180130051306.15f47965@vmware.local.home>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.01.2018 12:34, Michel Dänzer wrote:
-> On 2018-01-30 12:28 PM, Christian König wrote:
->> Am 30.01.2018 um 12:02 schrieb Michel Dänzer:
->>> On 2018-01-30 11:40 AM, Christian König wrote:
->>>> Am 30.01.2018 um 10:43 schrieb Michel Dänzer:
->>>>> [SNIP]
->>>>>> Would it be ok to hang onto potentially arbitrary mmget references
->>>>>> essentially forever? If that's ok I think we can do your process based
->>>>>> account (minus a few minor inaccuracies for shared stuff perhaps,
->>>>>> but no
->>>>>> one cares about that).
->>>>> Honestly, I think you and Christian are overthinking this. Let's try
->>>>> charging the memory to every process which shares a buffer, and go from
->>>>> there.
->>>> My problem is that this needs to be bullet prove.
->>>>
->>>> For example imagine an application which allocates a lot of BOs, then
->>>> calls fork() and let the parent process die. The file descriptor lives
->>>> on in the child process, but the memory is not accounted against the
->>>> child.
->>> What exactly are you referring to by "the file descriptor" here?
->>
->> The file descriptor used to identify the connection to the driver. In
->> other words our drm_file structure in the kernel.
->>
->>> What happens to BO handles in general in this case? If both parent and
->>> child process keep the same handle for the same BO, one of them
->>> destroying the handle will result in the other one not being able to use
->>> it anymore either, won't it?
->> Correct.
->>
->> That usage is actually not useful at all, but we already had
->> applications which did exactly that by accident.
->>
->> Not to mention that somebody could do it on purpose.
+Hi Steve,
+
+On 2018/1/30 18:13, Steven Rostedt wrote:
+> On Tue, 30 Jan 2018 08:46:01 +0800
+> Yisheng Xie <xieyisheng1@huawei.com> wrote:
 > 
-> Can we just prevent child processes from using their parent's DRM file
-> descriptors altogether? Allowing it seems like a bad idea all around.
+>> We have helper function clear_ftrace_function(), use it instead of hard
+>> code. And this should not have any functional change.
+>>
+>> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+>> ---
+>>  kernel/trace/ftrace.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+>> index 554b517..ba78e03 100644
+>> --- a/kernel/trace/ftrace.c
+>> +++ b/kernel/trace/ftrace.c
+>> @@ -6779,7 +6779,7 @@ int unregister_ftrace_function(struct ftrace_ops *ops)
+>>  
+>>  	} else {
+>>  		/* stopping ftrace calls (just send to ftrace_stub) */
+>> -		ftrace_trace_function = ftrace_stub;
+>> +		clear_ftrace_function();
+>>  
+>>  		ftrace_shutdown_sysctl();
+>>  	}
+> 
+> Honestly, I rather nuke that function and clear_ftrace_function_probe()
 
-Existing protocols pass DRM fds between processes though, don't they?
+Do you means clear_ftrace_function_probes() ? I do not find clear_ftrace_function_probe
+in mainline or trace tree:
+  https://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git/
 
-Not child processes perhaps, but special-casing that seems like awful 
-design.
+clear_ftrace_function_probes() is used in trace.c instead of ftrace.c, and meanwhile it
+has a local variable:
 
-Cheers,
-Nicolai
--- 
-Lerne, wie die Welt wirklich ist,
-Aber vergiss niemals, wie sie sein sollte.
+	struct ftrace_func_probe *probe, *n;
+
+which defined in ftrace.c. So I am a litter puzzle about how to nuke it without moving
+struct ftrace_func_probe 's definition to first class.
+
+I'm not sure whether I am missing anything.
+
+> along with it. They are not used outside of ftrace.c and they don't
+> actually help.
+
+For clear_ftrace_function it really can be nuked, for it's only used in ftrace.c.
+
+Thanks
+Yisheng
+
+> 
+> -- Steve
+> 
+> 
