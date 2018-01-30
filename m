@@ -1,99 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751677AbeA3LXD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 06:23:03 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:45117 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751505AbeA3LXC (ORCPT
+        id S1751755AbeA3LXJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 06:23:09 -0500
+Received: from mail.parknet.co.jp ([210.171.160.6]:44961 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751711AbeA3LXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 06:23:02 -0500
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+        Tue, 30 Jan 2018 06:23:06 -0500
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: chenchacha <chen.chenchacha@foxmail.com>
 Cc: linux-kernel@vger.kernel.org,
-        William Grant <william.grant@canonical.com>
-From: William Grant <william.grant@canonical.com>
-Subject: [PATCH] x86: Fix overlap of i386 CPU_ENTRY_AREA with FIX_BTMAP
-Message-ID: <7041d181-a019-e8b9-4e4e-48215f841e2c@canonical.com>
-Date: Tue, 30 Jan 2018 22:22:55 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Andy Shevchenko <andy.shevchenko@gmail.com>, pali.rohar@gmail.com
+Subject: Re: [PATCH 3/3] fs: fat: add ioctl method in fat filesystem driver
+References: <20180117104355.889-1-chen.chenchacha@foxmail.com>
+        <20180117104355.889-4-chen.chenchacha@foxmail.com>
+        <87r2q8n7gs.fsf@mail.parknet.co.jp>
+        <0464dacb-b8f1-4bb2-3e05-e5f35ebf6e8e@foxmail.com>
+Date: Tue, 30 Jan 2018 20:23:03 +0900
+In-Reply-To: <0464dacb-b8f1-4bb2-3e05-e5f35ebf6e8e@foxmail.com>+BB9432B15A982F74
+        (chenchacha's message of "Tue, 30 Jan 2018 09:52:20 +0800")
+Message-ID: <87bmhbmvzc.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 92a0f81d8957 ("x86/cpu_entry_area: Move it out of the
-fixmap"), i386's CPU_ENTRY_AREA has been mapped to the memory area just
-below FIXADDR_START. But already immediately before FIXADDR_START is the
-FIX_BTMAP area, which means that early_ioremap can collide with the
-entry area.
+chenchacha <chen.chenchacha@foxmail.com> writes:
 
-It's especially bad on PAE where FIX_BTMAP_BEGIN gets aligned to exactly
-match CPU_ENTRY_AREA_BASE, so the first early_ioremap slot clobbers the
-IDT and causes interrupts during early boot to reset the system.
+> On 01/29/2018 09:02 PM, OGAWA Hirofumi wrote:
+>> ChenGuanqiao <chen.chenchacha@foxmail.com> writes:
+>>
+>>> +static int fat_check_d_characters(char *label, unsigned long len)
+>>> +{
+>>> +	int i;
+>>> +
+>>> +	for (i = 0; i < len; ++i) {
+>>> +		switch (label[i]) {
+>>> +		case 'a' ... 'z':
+>>> +			label[i] = __toupper(label[i]);
+>>> +		case 'A' ... 'Z':
+>>> +		case '0' ... '9':
+>>> +		case '_':
+>>> +		case 0x20:
+>>> +			continue;
+>>> +		default:
+>>> +			return -EINVAL;
+>>> +		}
+>> Same question with previous though, what windows do if label = "a b c"?
+>> (this is including space other than end of name or extension.)
+> In win7, the volume label will be capitalized, and leaving spaces.
+> Or, you mean I need to fill the rest of the space with "0x20"?
 
-The overlap wasn't a problem before the CPU entry area was introduced,
-as the fixmap has classically been preceded by the pkmap or vmalloc
-areas, neither of which is used until early_ioremap is out of the
-picture.
+I see. However, what win7 stored, BTW? It was "A B C      ", or anything
+other?
 
-Relocate CPU_ENTRY_AREA to below FIX_BTMAP, not just below the permanent
-fixmap area.
+>>> +static int fat_ioctl_set_volume_label(struct file *file,
+>>> +				      u8 __user *vol_label)
+>>> +{
+>>> +	int err = 0;
+>>> +	u8 label[MSDOS_NAME];
+>>> +	struct timespec ts;
+>>> +	struct buffer_head *boot_bh;
+>>> +	struct buffer_head *vol_bh;
+>>> +	struct msdos_dir_entry *de;
+>>> +	struct fat_boot_sector *b;
+>>> +	struct inode *inode = file_inode(file);
+>>> +	struct super_block *sb = inode->i_sb;
+>>> +	struct msdos_sb_info *sbi = MSDOS_SB(sb);
+>>> +
+>> [...]
+> I need remove "struct msdos_sb_info *sbi"?
 
-Signed-off-by: William Grant <william.grant@canonical.com>
----
-This fixes a triple fault during early boot of 4.15 with PAE on x86 when
-an Intel IOMMU is present. The ACPI table retrieval inside pci_iommu_alloc()
-called early_ioremap and unmapped the IDT, and so the exception inside
-test_wp_bit triple faulted.
+If you didn't use sbi anymore, you should remove.
 
-2MiB of i386 kernel address space is wasted in the FIX_BTMAP area that
-isn't used after boot, but I couldn't see a better place to put
-CPU_ENTRY_AREA. We can't stick it just before the pkmap, since pkmap
-doesn't exist when highmem is disabled. We could potentially shift fixmap
-down from the top of the address space, but that's already variable due to
-reserve_top_address. The only other option would be to shuffle it in
-between lowmem and vmalloc, which looks messy due to their variable sizes.
+>>> +	err = mnt_want_write_file(file);
+>>> +	if (err)
+>>> +		goto out;
+>>> +
+>>> +	down_write(&sb->s_umount);
+>> Looks like inode_lock() for rootdir is gone. It is necessary to
+>> traverse+modify.
+> Is it wrong for me to use the inode_lock() in patch v7? I need to lock 
+> inode here, and turn off immediately after
 
- arch/x86/include/asm/fixmap.h           | 6 ++++--
- arch/x86/include/asm/pgtable_32_types.h | 5 +++--
- 2 files changed, 7 insertions(+), 4 deletions(-)
+inode_lock() is necessary to protect race with other dir operations.
 
-diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
-index 64c4a30e0d39..987020a28534 100644
---- a/arch/x86/include/asm/fixmap.h
-+++ b/arch/x86/include/asm/fixmap.h
-@@ -137,8 +137,10 @@ enum fixed_addresses {
- 
- extern void reserve_top_address(unsigned long reserve);
- 
--#define FIXADDR_SIZE	(__end_of_permanent_fixed_addresses << PAGE_SHIFT)
--#define FIXADDR_START	(FIXADDR_TOP - FIXADDR_SIZE)
-+#define FIXADDR_SIZE        (__end_of_permanent_fixed_addresses << PAGE_SHIFT)
-+#define FIXADDR_START       (FIXADDR_TOP - FIXADDR_SIZE)
-+#define FIXADDR_ALL_SIZE    (__end_of_fixed_addresses << PAGE_SHIFT)
-+#define FIXADDR_ALL_START   (FIXADDR_TOP - FIXADDR_ALL_SIZE)
- 
- extern int fixmaps_set;
- 
-diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
-index ce245b0cdfca..01973e9fd269 100644
---- a/arch/x86/include/asm/pgtable_32_types.h
-+++ b/arch/x86/include/asm/pgtable_32_types.h
-@@ -44,8 +44,9 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
-  */
- #define CPU_ENTRY_AREA_PAGES	(NR_CPUS * 40)
- 
--#define CPU_ENTRY_AREA_BASE				\
--	((FIXADDR_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1)) & PMD_MASK)
-+#define CPU_ENTRY_AREA_BASE						\
-+	((FIXADDR_ALL_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1))   \
-+	 & PMD_MASK)
- 
- #define PKMAP_BASE		\
- 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
+I asked at v7, locking order to prevent the AB locking order bug.
+
+I.e.
+	mnt_want_write_file => down_write => inode_lock()
+vs
+	down_write => mnt_want_write_file => inode_lock()
+
+Which is right one?
+
+> mark_buffer_dirty(vol_bh)?
+
+What is this asking?
 -- 
-2.15.1
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
