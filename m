@@ -1,59 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753837AbeA3VDb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:03:31 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45207 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752067AbeA3VD1 (ORCPT
+        id S1753161AbeA3VFH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:05:07 -0500
+Received: from 8.mo179.mail-out.ovh.net ([46.105.75.26]:52312 "EHLO
+        8.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752637AbeA3VFF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:03:27 -0500
-Date: Tue, 30 Jan 2018 22:03:17 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: Sebastian Sewior <bigeasy@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] hrtimer: Reset hrtimer cpu base proper on CPU hotplug
-In-Reply-To: <20180129234347.GA26365@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1801302202510.2293@nanos>
-References: <alpine.DEB.2.20.1801261447590.2067@nanos> <20180126220917.GI3741@linux.vnet.ibm.com> <20180129082047.hash3pnhpztzcg22@linutronix.de> <20180129095738.GU3741@linux.vnet.ibm.com> <20180129234347.GA26365@linux.vnet.ibm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Tue, 30 Jan 2018 16:05:05 -0500
+From: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+To: bhelgaas@google.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
+        linux-pci@vger.kernel.org
+Cc: adouglas@cadence.com, stelford@cadence.com, dgary@cadence.com,
+        kgopi@cadence.com, eandrews@cadence.com,
+        thomas.petazzoni@free-electrons.com, sureshp@cadence.com,
+        nsekhar@ti.com, linux-kernel@vger.kernel.org, robh@kernel.org,
+        devicetree@vger.kernel.org,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+Subject: [PATCH v6 04/11] PCI: Add generic function to probe PCI host controllers
+Date: Tue, 30 Jan 2018 21:56:52 +0100
+Message-Id: <397a5919b77a2b1ed9f0fe46e830e4fbd355e869.1517343502.git.cyrille.pitchen@free-electrons.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
+References: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
+In-Reply-To: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
+References: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
+X-Ovh-Tracer-Id: 15884477361629779969
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 25
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrtddtgdduvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucgotffhvedqqdfjughrqdfuuhhsphgvtghtqdhlohifucdlhedmnegotffhvedqqdfjughrqdfuuhhsphgvtghtucdlvddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Jan 2018, Paul E. McKenney wrote:
+This patchs moves generic source code from
+drivers/pci/host/pci-host-common.c into drivers/pci/probe.c.
 
-> On Mon, Jan 29, 2018 at 01:57:38AM -0800, Paul E. McKenney wrote:
-> > On Mon, Jan 29, 2018 at 09:20:48AM +0100, Sebastian Sewior wrote:
-> > > On 2018-01-26 14:09:17 [-0800], Paul E. McKenney wrote:
-> > > > find this one.  ;-)  But it did pass rcutorture testing for a great many
-> > > > years, didn't it?  :-/
-> > > 
-> > > It started to trigger better (or at all) on our test box with
-> > > 	modprobe kvm_intel preemption_timer=n
-> > > 
-> > > on the host kernel so maybe a completely unrelated change helped to
-> > > trigger this.
-> > 
-> > Good point!
-> > 
-> > And testing continues, currently at 108 hours of TREE01 without any
-> > waylayed timers, so looking good!  ;-)
-> > 
-> > Just kicked off another 70 hours worth.
-> 
-> And those completed without incident for a total of 178 hours.  I believe
-> we can call this one fixed.  Thank you all!!!
-> 
-> One question...  Is the patch shown below needed, or is this just yet
-> another case of me being confused?  (The lack of it is not triggering,
-> but...)
+Indeed the extracted lines of code were duplicated by many host
+controller drivers. Regrouping them into a generic function gives a
+change to properly share this code without introducing a useless
+dependency to PCI_HOST_COMMON, which selects PCI_ECAM when not needed by
+most host controller drivers.
 
-See commit 26456f87aca7
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+---
+ drivers/pci/host/pci-host-common.c | 22 +---------------------
+ drivers/pci/probe.c                | 33 +++++++++++++++++++++++++++++++++
+ include/linux/pci.h                |  1 +
+ 3 files changed, 35 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/pci/host/pci-host-common.c b/drivers/pci/host/pci-host-common.c
+index 10e3f5b39499..160b3c1cb5a0 100644
+--- a/drivers/pci/host/pci-host-common.c
++++ b/drivers/pci/host/pci-host-common.c
+@@ -72,7 +72,6 @@ int pci_host_common_probe(struct platform_device *pdev,
+ 	const char *type;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	struct pci_bus *bus, *child;
+ 	struct pci_host_bridge *bridge;
+ 	struct pci_config_window *cfg;
+ 	struct list_head resources;
+@@ -107,30 +106,11 @@ int pci_host_common_probe(struct platform_device *pdev,
+ 	bridge->map_irq = of_irq_parse_and_map_pci;
+ 	bridge->swizzle_irq = pci_common_swizzle;
+ 
+-	ret = pci_scan_root_bus_bridge(bridge);
++	ret = pci_host_probe(bridge);
+ 	if (ret < 0) {
+-		dev_err(dev, "Scanning root bridge failed");
+ 		pci_free_resource_list(&resources);
+ 		return ret;
+ 	}
+ 
+-	bus = bridge->bus;
+-
+-	/*
+-	 * We insert PCI resources into the iomem_resource and
+-	 * ioport_resource trees in either pci_bus_claim_resources()
+-	 * or pci_bus_assign_resources().
+-	 */
+-	if (pci_has_flag(PCI_PROBE_ONLY)) {
+-		pci_bus_claim_resources(bus);
+-	} else {
+-		pci_bus_size_bridges(bus);
+-		pci_bus_assign_resources(bus);
+-
+-		list_for_each_entry(child, &bus->children, node)
+-			pcie_bus_configure_settings(child);
+-	}
+-
+-	pci_bus_add_devices(bus);
+ 	return 0;
+ }
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 14e0ea1ff38b..a42bbfc5f2ec 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2620,6 +2620,39 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+ }
+ EXPORT_SYMBOL_GPL(pci_create_root_bus);
+ 
++int pci_host_probe(struct pci_host_bridge *bridge)
++{
++	struct pci_bus *bus, *child;
++	int ret;
++
++	ret = pci_scan_root_bus_bridge(bridge);
++	if (ret < 0) {
++		dev_err(bridge->dev.parent, "Scanning root bridge failed");
++		return ret;
++	}
++
++	bus = bridge->bus;
++
++	/*
++	 * We insert PCI resources into the iomem_resource and
++	 * ioport_resource trees in either pci_bus_claim_resources()
++	 * or pci_bus_assign_resources().
++	 */
++	if (pci_has_flag(PCI_PROBE_ONLY)) {
++		pci_bus_claim_resources(bus);
++	} else {
++		pci_bus_size_bridges(bus);
++		pci_bus_assign_resources(bus);
++
++		list_for_each_entry(child, &bus->children, node)
++			pcie_bus_configure_settings(child);
++	}
++
++	pci_bus_add_devices(bus);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pci_host_probe);
++
+ int pci_bus_insert_busn_res(struct pci_bus *b, int bus, int bus_max)
+ {
+ 	struct resource *res = &b->busn_res;
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index c7a701abbf17..db6700137bd2 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -887,6 +887,7 @@ struct pci_bus *pci_scan_bus(int bus, struct pci_ops *ops, void *sysdata);
+ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+ 				    struct pci_ops *ops, void *sysdata,
+ 				    struct list_head *resources);
++int pci_host_probe(struct pci_host_bridge *bridge);
+ int pci_bus_insert_busn_res(struct pci_bus *b, int bus, int busmax);
+ int pci_bus_update_busn_res_end(struct pci_bus *b, int busmax);
+ void pci_bus_release_busn_res(struct pci_bus *b);
+-- 
+2.11.0
