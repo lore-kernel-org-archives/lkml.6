@@ -1,102 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752824AbeA3P1V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:27:21 -0500
-Received: from foss.arm.com ([217.140.101.70]:55234 "EHLO foss.arm.com"
+        id S1753197AbeA3P2T (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:28:19 -0500
+Received: from mga03.intel.com ([134.134.136.65]:8255 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753129AbeA3P1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:27:19 -0500
-Date: Tue, 30 Jan 2018 15:27:14 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
-        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 16/16] arm64: Add work around for Arm Cortex-A55 Erratum
- 1024718
-Message-ID: <20180130152714.GI5862@e103592.cambridge.arm.com>
-References: <20180123122809.16269-1-suzuki.poulose@arm.com>
- <20180123122809.16269-17-suzuki.poulose@arm.com>
- <20180126153314.GW5862@e103592.cambridge.arm.com>
- <58d36133-4f83-99f3-0423-7a80f3dd82f8@arm.com>
+        id S1752933AbeA3P2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 10:28:17 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,435,1511856000";
+   d="scan'208";a="27470291"
+Date: Tue, 30 Jan 2018 17:28:08 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: James Morris <jmorris@namei.org>
+Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
+        <linux-security-module@vger.kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Matt Mackall <mpm@selenic.com>, David Safford <safford@us.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+Message-ID: <20180130152808.2egxs2ki657eyxe3@linux.intel.com>
+References: <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
+ <20171106022704.GD26011@ziepe.ca>
+ <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+ <20171107160404.GG21466@ziepe.ca>
+ <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
+ <20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
+ <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
+ <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
+ <20180129220612.ifk7r4md5tynlvz4@linux.intel.com>
+ <alpine.LRH.2.21.1801302252020.20741@namei.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <58d36133-4f83-99f3-0423-7a80f3dd82f8@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <alpine.LRH.2.21.1801302252020.20741@namei.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 04:29:53PM +0000, Suzuki K Poulose wrote:
-> On 26/01/18 15:33, Dave Martin wrote:
-> >On Tue, Jan 23, 2018 at 12:28:09PM +0000, Suzuki K Poulose wrote:
-> >>Some variants of the Arm Cortex-55 cores (r0p0, r0p1, r1p0) suffer
-> >>from an erratum 1024718, which causes incorrect updates when DBM/AP
-> >>bits in a page table entry is modified without a break-before-make
-> >>sequence. The work around is to skip enabling the hardware DBM feature
-> >>on the affected cores. The hardware Access Flag management features
-> >>is not affected.
-> >>
-> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>---
-> >>  Documentation/arm64/silicon-errata.txt |  1 +
-> >>  arch/arm64/Kconfig                     | 14 ++++++++++++++
-> >>  arch/arm64/kernel/cpufeature.c         | 14 +++++++++++++-
-> >>  3 files changed, 28 insertions(+), 1 deletion(-)
-> >
-> >[...]
-> >
-> >>diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> >>index 8af755b8219d..64f1e911c6af 100644
-> >>--- a/arch/arm64/kernel/cpufeature.c
-> >>+++ b/arch/arm64/kernel/cpufeature.c
-> >>@@ -914,9 +914,21 @@ static inline void __cpu_enable_hw_dbm(void)
-> >>  	isb();
-> >>  }
-> >>+static bool cpu_has_erratum_1024718(void)
-> >>+{
-> >>+	static const struct midr_range __maybe_unused cpus[] = {
-> >
-> >Do you need __maybe_unused?  If #ifdef were used here then
-> >__maybe_unused would be needed, but I thought that if code is optimised
-> >out instead of conditionally copiled, this didn't apply.
+On Tue, Jan 30, 2018 at 10:52:13PM +1100, James Morris wrote:
+> On Tue, 30 Jan 2018, Jarkko Sakkinen wrote:
 > 
-> Yep. I don't know if the compiler could optimise the array itself with
-> the tag as a hint. I will double check.
-
-I think the compiler should optimise cpus[] out as appropriate here,
-even without the annotation.  It's scoped to this function and nothing
-is done with it in the !IS_ENABLED() case.
-
-I've relied heavily on this in the SVE code -- it massively reduces the
-amount of #ifdefs and annotations required, which would otherwise clutter
-the code a lot.
-
-Since the kernel in general does rely on dead code elimination (and
-presumably dead object elimination too) in order to avoid link failures,
-I considered this reasonable.  The compiler did seem to do the right
-thing for my code.
-
+> > On Sat, Jan 27, 2018 at 12:20:18PM +0530, PrasannaKumar Muralidharan wrote:
+> > > Hi Jarkko,
+> > > 
+> > > On 17 November 2017 at 19:27, Jarkko Sakkinen
+> > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
+> > > >
+> > > > At least signed-off-by from PrassanaKumar is missing from the 2nd
+> > > > commit. I'll add it.
+> > > 
+> > > I had the impression that my signed-off-by will be present in this
+> > > change. But it is missing in [1]. Is it supposed to be that way?
+> > > 
+> > > 1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
+> > > 
+> > > Thanks,
+> > > PrasannaKumar
+> > 
+> > Yes, it would be senseful.
+> > 
+> > James, would it still be possible to amend this tag to security tree?
 > 
-> >
-> >>+		MIDR_RANGE(MIDR_CORTEX_A55, 0, 0, 1, 0),	// A55 r0p0 -r1p0
-> >>+		{},
-> >>+	};
-> >>+
-> >>+	return IS_ENABLED(CONFIG_ARM64_ERRATUM_1024718) &&
-> >>+	       is_midr_in_range_list(read_cpuid_id(), cpus);
-> >
-> >Why have a list with just one entry?  Do you expect more entries over
-> >time?
-> 
-> Yes. I should have mentioned it here. See [1]
-> 
-> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/554516.html
+> Nope, it's been pushed to Linus.
 
-Right, that seemed the likely explanation!
+Damn. Well, good that Tested-by is there. I'm sorry about this.
 
-Cheers
----Dave
+/Jarkko
