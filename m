@@ -1,71 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752738AbeA3Tpa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 14:45:30 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:44756 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752586AbeA3TpH (ORCPT
+        id S1752785AbeA3TqP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:46:15 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44671 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751955AbeA3TqO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:45:07 -0500
-X-Google-Smtp-Source: AH8x224HROmwwlqc6XmyH/LJkhbbX+ODclLQjLd9gO6MnaGdnvSxaWjTrtw6HqoMUZjeV6JbbLZoiA==
-From: Ram Pai <linuxram@us.ibm.com>
-To: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
-        linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de, fweimer@redhat.com,
-        msuchanek@suse.com
-Subject: [PATCH v11 2/3] mm, powerpc, x86: introduce an additional vma bit for powerpc pkey
-Date: Tue, 30 Jan 2018 11:44:11 -0800
-Message-Id: <1517341452-11924-3-git-send-email-linuxram@us.ibm.com>
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1517341452-11924-1-git-send-email-linuxram@us.ibm.com>
-References: <1517341452-11924-1-git-send-email-linuxram@us.ibm.com>
+        Tue, 30 Jan 2018 14:46:14 -0500
+X-Google-Smtp-Source: AH8x2249jeLe9gXn1mKVTgEtJMNdggQKQPufQw4pBoxH/p6w0I22w6Y+cTBA+/H30jBLYRSjo35vXe4dhJMaEfmA5rI=
+MIME-Version: 1.0
+In-Reply-To: <20180118065054.29844-1-bpoirier@suse.com>
+References: <20180118065054.29844-1-bpoirier@suse.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Tue, 30 Jan 2018 11:46:12 -0800
+Message-ID: <CAKgT0Uc+sSREnAvF=TTDp2FFxGcro6JmDpE2KdnEYk5rDE3Tpw@mail.gmail.com>
+Subject: Re: [Intel-wired-lan] [RFC PATCH] e1000e: Remove Other from EIAC.
+To: Benjamin Poirier <bpoirier@suse.com>
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Netdev <netdev@vger.kernel.org>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently only 4bits are allocated in the vma flags to hold 16
-keys. This is sufficient for x86. PowerPC  supports  32  keys,
-which needs 5bits. This patch allocates an  additional bit.
+On Wed, Jan 17, 2018 at 10:50 PM, Benjamin Poirier <bpoirier@suse.com> wrote:
+> It was reported that emulated e1000e devices in vmware esxi 6.5 Build
+> 7526125 do not link up after commit 4aea7a5c5e94 ("e1000e: Avoid receiver
+> overrun interrupt bursts", v4.15-rc1). Some tracing shows that after
+> e1000e_trigger_lsc() is called, ICR reads out as 0x0 in e1000_msix_other()
+> on emulated e1000e devices. In comparison, on real e1000e 82574 hardware,
+> icr=0x80000004 (_INT_ASSERTED | _OTHER) in the same situation.
+>
+> Some experimentation showed that this flaw in vmware e1000e emulation can
+> be worked around by not setting Other in EIAC. This is how it was before
+> 16ecba59bc33 ("e1000e: Do not read ICR in Other interrupt", v4.5-rc1).
+>
+> Fixes: 4aea7a5c5e94 ("e1000e: Avoid receiver overrun interrupt bursts")
+> Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+> ---
 
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
----
- fs/proc/task_mmu.c |    1 +
- include/linux/mm.h |    3 ++-
- 2 files changed, 3 insertions(+), 1 deletions(-)
+Hi Benjamin,
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index b139617..0edd4da 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -680,6 +680,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- 		[ilog2(VM_PKEY_BIT1)]	= "",
- 		[ilog2(VM_PKEY_BIT2)]	= "",
- 		[ilog2(VM_PKEY_BIT3)]	= "",
-+		[ilog2(VM_PKEY_BIT4)]	= "",
- #endif /* CONFIG_ARCH_HAS_PKEYS */
- 	};
- 	size_t i;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 01381d3..ebcb997 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -231,9 +231,10 @@ extern int overcommit_kbytes_handler(struct ctl_table *, int, void __user *,
- #ifdef CONFIG_ARCH_HAS_PKEYS
- # define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
- # define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
--# define VM_PKEY_BIT1	VM_HIGH_ARCH_1
-+# define VM_PKEY_BIT1	VM_HIGH_ARCH_1	/* on x86 and 5-bit value on ppc64   */
- # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
- # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
-+# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
- #endif /* CONFIG_ARCH_HAS_PKEYS */
- 
- #if defined(CONFIG_X86)
--- 
-1.7.1
+How would you feel about resubmitting this patch for net?
+
+We have some issues that have come up and it would be useful to have
+this fixed in the kernel sooner rather than later. I would be okay
+with us applying it for now while we work on coming up with a more
+complete solution.
+
+Thanks.
+
+- Alex
