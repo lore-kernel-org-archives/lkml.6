@@ -1,130 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753057AbeA3PUQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:20:16 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:41403 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751531AbeA3PUN (ORCPT
+        id S1752946AbeA3PWV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:22:21 -0500
+Received: from a8-61.smtp-out.amazonses.com ([54.240.8.61]:35560 "EHLO
+        a8-61.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751559AbeA3PWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:20:13 -0500
-X-Google-Smtp-Source: AH8x224mWuUjEDNZCUs6vS/loQKlaBDuiAFhR6U1WS7u957OYUYisiwDPjJymqEp6PMD+VmDbSwSEg==
-Date: Tue, 30 Jan 2018 09:20:12 -0600
-From: Rob Herring <robh@kernel.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        sboyd@codeaurora.org, rnayak@codeaurora.org, asathyak@codeaurora.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC 2/4] dt-bindings/interrupt-controller: pdc: descibe
- PDC device binding
-Message-ID: <20180130152012.ucjmaw3nlim4d4fr@rob-hp-laptop>
-References: <20180123175656.11942-1-ilina@codeaurora.org>
- <20180123175656.11942-3-ilina@codeaurora.org>
+        Tue, 30 Jan 2018 10:22:19 -0500
+Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for
+ BOSC0200
+To: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Lars Kellogg-Stedman <lars@oddbit.com>,
+        Steven Presser <steve@pressers.name>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
+ <20171210182152.70ad8fbf@archlinux>
+ <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
+ <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
+From: Jeremy Cline <jeremy@jcline.org>
+Message-ID: <0100016147a95d33-f8348740-cd78-4221-8612-116ef66afc66-000000@email.amazonses.com>
+Date: Tue, 30 Jan 2018 15:22:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180123175656.11942-3-ilina@codeaurora.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180128094021.572ab366@archlinux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SES-Outgoing: 2018.01.30-54.240.8.61
+Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 23, 2018 at 10:56:54AM -0700, Lina Iyer wrote:
-> From: Archana Sathyakumar <asathyak@codeaurora.org>
+On 01/28/2018 03:40 AM, Jonathan Cameron wrote:
+> On Sun, 14 Jan 2018 10:43:30 +0000
+> Jonathan Cameron <jic23@kernel.org> wrote:
 > 
-> Add device binding documentation for the PDC Interrupt controller on
-> QCOM SoC's like the SDM845. The interrupt-controller can be used to
-> sense edge low interrupts and wakeup interrupts when the GIC is
-> non-operational.
+>> On Tue, 9 Jan 2018 21:24:01 +0000
+>> Jeremy Cline <jeremy@jcline.org> wrote:
+>>
+>>> On 12/10/2017 12:21 PM, Jonathan Cameron wrote:  
+>>>> On Wed, 6 Dec 2017 17:52:34 +0000
+>>>> Jeremy Cline <jeremy@jcline.org> wrote:
+>>>>     
+>>>>> Some BOSC0200 acpi_device-s describe two accelerometers in a single ACPI
+>>>>> device. Check for a companion device and handle a second i2c_client
+>>>>> if it is present.
+>>>>>
+>>>>> Signed-off-by: Jeremy Cline <jeremy@jcline.org>    
+>>>> The requirement for this is still horrible, but you have done a nice
+>>>> clean job on implementing it.
+>>>>
+>>>> I'll let this sit for a few more days though before applying it.
+>>>> Probably next weekend if we don't get any feedback before then.    
+>>>
+>>> Hey,
+>>>
+>>> I didn't see this land anywhere (I was looking in
+>>> git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git, maybe that's not
+>>> the right place?) and I just wanted to make sure this didn't get lost in
+>>> the holiday shuffle.  
+>> It did indeed get lost - thanks for the reminder.  Now applied to the
+>> togreg branch of iio.git.  However, unfortunately we may be too near
+>> to the merge window opening for it to make it.  Depends on what Linus
+>> says later today when rc8 comes out.
 > 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
->  .../bindings/interrupt-controller/qcom,pdc.txt     | 55 ++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+> I've added some #ifdef CONFIG_ACPI defenses against the case
+> of no ACPI support being compiled in.  Alternative would be to add
+> stubs for those functions that don't have them...
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> new file mode 100644
-> index 000000000000..c4592bbf678d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> @@ -0,0 +1,55 @@
-> +PDC interrupt controller
-> +
-> +Qualcomm Technologies Inc. SoCs based on the RPM Hardened archicture have a
-> +Power Domain Controller (PDC) that is on always-on domain. In addition to
-> +providing power control for the power domains, the hardware also has an
-> +interrupt controller that can be used to help detect edge low interrupts as
-> +well detect interrupts when the GIC is non-operational.
-> +
-> +GIC is parent interrupt controller at the highest level. Platform interrupt
-> +controller PDC is next in hierarchy, followed by others. This driver only
-> +configures the interrupts, does not handle them.
-> +
-> +Properties:
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: Should contain "qcom,pdc" and "qcom,pdc-<target>"
-> +		    - "qcom,pdc-sdm845": For sdm845 pin data
-
-pin data?
-
-Convention is <soc>-<ip block>
-
-Need to make the order of compatibles clear. Generally that is done with 
-'followed by "qcom,pdc"' after the list of compatibles. But then, do you 
-really need a fallback. This seems like a block that would change 
-frequently. If there's not more than 2 or 3 chips with the same block, 
-don't do a fallback.
-
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: Specifies the base physical address for PDC hardware.
-> +
-> +- interrupt-cells:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: Specifies the number of cells needed to encode an interrupt
-> +		    source.
-> +		    Value must be 3.
-> +		    The encoding of these cells are same as described in [1].
-> +
-> +- interrupt-parent:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: Specifies the interrupt parent necessary for hierarchical
-> +		    domain to operate.
-> +
-> +- interrupt-controller:
-> +	Usage: required
-> +	Value type: <bool>
-> +	Definition: Identifies the node as an interrupt controller.
-> +
-> +Example:
-> +
-> +	pdc: interrupt-controller@b220000 {
-> +		compatible = "qcom,pdc", "qcom,pdc-sdm845";
-
-This is backwards.
-
-> +		reg = <0xb220000 0x30000>;
-> +		#interrupt-cells = <3>;
-> +		interrupt-parent = <&intc>;
-> +		interrupt-controller;
-> +	};
-> +
-> +[1]. Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> probably just acpi_device_hid.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> But that would take much longer.  Feel free to propose it and a patch
+> removing the ifdef fun if you like!
+
+Great, thanks for handling that. I'll look at taking care of the stubs
+and whatnot.
+
+
+Regards,
+Jeremy
