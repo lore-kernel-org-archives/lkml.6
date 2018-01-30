@@ -1,70 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932085AbeA3RFa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 12:05:30 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:45594 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932065AbeA3RF2 (ORCPT
+        id S1752312AbeA3RLN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 12:11:13 -0500
+Received: from mx0b-00191d01.pphosted.com ([67.231.157.136]:33625 "EHLO
+        mx0a-00191d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751544AbeA3RLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 12:05:28 -0500
-X-Google-Smtp-Source: AH8x226XLILbfo4Zeuj20iOYrreP4x/O6hKwiTdV+V8ANQJcsJ2XLwQTzrYzxAbo7O7J3XOoxE2xRtDeaFFmkk7VSGA=
+        Tue, 30 Jan 2018 12:11:12 -0500
+From: "Brown, Nicholas" <nb930b@intl.att.com>
+To: "joe@perches.com" <joe@perches.com>,
+        "apw@canonical.com" <apw@canonical.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] checkpatch: warn if changed lines exceeds a maximum size
+Thread-Topic: [PATCH] checkpatch: warn if changed lines exceeds a maximum
+ size
+Thread-Index: AQHTmduyixAH6djPzEKCm2jJvngSdA==
+Date: Tue, 30 Jan 2018 15:04:59 +0000
+Message-ID: <1517324698.3063.16.camel@intl.att.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.156.48.128]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <97AF22C200EC384C8A9965980AD355BF@intl.att.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
-References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
- <20171210182152.70ad8fbf@archlinux> <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
- <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
- <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
- <20180130160107.000006df@huawei.com> <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 30 Jan 2018 19:05:27 +0200
-Message-ID: <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for BOSC0200
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        Jeremy Cline <jeremy@jcline.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Lars Kellogg-Stedman <lars@oddbit.com>,
-        Steven Presser <steve@pressers.name>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-RSA-Inspected: yes
+X-RSA-Classifications: public
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_policy_notspam policy=outbound_policy score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=977 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1711220000 definitions=main-1801300188
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w0UHBJHZ003601
 
-On Tue, Jan 30, 2018 at 6:40 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Tue, Jan 30, 2018 at 6:01 PM, Jonathan Cameron
-> <Jonathan.Cameron@huawei.com> wrote:
->> On Mon, 29 Jan 2018 16:07:02 +0200
->> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->
->>> > But that would take much longer.  Feel free to propose it and a patch
->>> > removing the ifdef fun if you like!
->
->>> Where can I see the patch?
->
->> Doh. I clearly forgot to push out.  Should be able to push to
->> iio.git on kernel.org later.
->
-> Thanks, I can see it now.
->
-> This patch almost wrong. Not by functionality it brings, but by style.
+Changed lines is the total of inserted and deleted lines.
+By default there is no limit, --max-changed-lines may be used to set a
+value. Some users may wish to encourage that patches are split into
+smaller parts using this.
+See Documentation/process/submitting-patches.rst#split-changes
 
-Oy vey, the second device is *not* accelerometer, it is a magnetometer [1].
+Signed-off-by: Nicholas Brown <nick.brown@att.com>
+---
+ scripts/checkpatch.pl | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-[1]: https://www.mouser.com/ds/2/783/BST-BMC150-DS000-04-786477.pdf
-
-> I'll send soon a series of fixes to the driver (compile tested only)
-> to provide my view on the matters.
->
-> P.S. In the future (I have some kind of deja vu I have told this
-> already to someone), please, Cc one or more of Rafael, Mika and/or me
-> for ACPI matters.
-
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 31031f10fe56..1217d782b6bb 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -49,6 +49,7 @@ my @ignore = ();
+ my $help = 0;
+ my $configuration_file = ".checkpatch.conf";
+ my $max_line_length = 80;
++my $max_changed_lines; # undef = no max
+ my $ignore_perl_version = 0;
+ my $minimum_perl_version = 5.10.0;
+ my $min_conf_desc_length = 4;
+@@ -209,6 +210,7 @@ GetOptions(
+ 	'show-types!'	=> \$show_types,
+ 	'list-types!'	=> \$list_types,
+ 	'max-line-length=i' => \$max_line_length,
++	'max-changed-lines=i' => \$max_changed_lines,
+ 	'min-conf-desc-length=i' => \$min_conf_desc_length,
+ 	'root=s'	=> \$root,
+ 	'summary!'	=> \$summary,
+@@ -2165,6 +2167,8 @@ sub process {
+ 	my $filename = shift;
+ 
+ 	my $linenr=0;
++	my $inserted_lines_total=0;
++	my $deleted_lines_total=0;
+ 	my $prevline="";
+ 	my $prevrawline="";
+ 	my $stashline="";
+@@ -2233,6 +2237,14 @@ sub process {
+ 
+ 		push(@fixed, $rawline) if ($fix);
+ 
++		if ($rawline=~/^\+/) {
++		  $inserted_lines_total++
++		}
++
++		if ($rawline=~/^-/) {
++		  $deleted_lines_total++
++		}
++
+ 		if ($rawline=~/^\+\+\+\s+(\S+)/) {
+ 			$setup_docs = 0;
+ 			if ($1 =~ m@Documentation/admin-guide/kernel-parameters.rst$@) {
+@@ -2306,6 +2318,11 @@ sub process {
+ 
+ 	$prefix = '';
+ 
++	if (defined $max_changed_lines &&
++	    ($inserted_lines_total+$deleted_lines_total > $max_changed_lines)) {
++	  WARN("MAX_CHANGED_LINES", "please split the change into smaller parts\n");
++	}
++
+ 	$realcnt = 0;
+ 	$linenr = 0;
+ 	$fixlinenr = -1;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.14.1
