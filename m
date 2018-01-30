@@ -1,115 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752531AbeA3TXc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 14:23:32 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57670 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751662AbeA3TXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:23:30 -0500
-Message-ID: <5A70C5A0.1050600@arm.com>
-Date: Tue, 30 Jan 2018 19:21:04 +0000
-From: James Morse <james.morse@arm.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
+        id S1752767AbeA3TXm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:23:42 -0500
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:38629 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752140AbeA3TXb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 14:23:31 -0500
+X-Google-Smtp-Source: AH8x225Evhmh2wTVPYKPUkq7wvJHT8QTxON9aAlS2DUciEkyuZUPeJrGj6MsmditMN7gqHDNykPliyzTih5WIcFrQY8=
 MIME-Version: 1.0
-To: gengdongjiu <gengdongjiu@huawei.com>
-CC: "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "bp@alien8.de" <bp@alien8.de>,
-        "robert.moore@intel.com" <robert.moore@intel.com>,
-        "lv.zheng@intel.com" <lv.zheng@intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        Huangshaoyu <huangshaoyu@huawei.com>
-Subject: Re: [PATCH v9 5/7] arm64: kvm: Introduce KVM_ARM_SET_SERROR_ESR ioctl
-References: <0184EA26B2509940AA629AE1405DD7F201A9E8EA@DGGEMA503-MBS.china.huawei.com>
-In-Reply-To: <0184EA26B2509940AA629AE1405DD7F201A9E8EA@DGGEMA503-MBS.china.huawei.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180117182241.14688-1-luisbg@kernel.org>
+References: <20180117182241.14688-1-luisbg@kernel.org>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 30 Jan 2018 14:23:30 -0500
+Message-ID: <CADnq5_NxTYR=09z6UyQ9TqRyfhrLDYCUz8TGoUD3jiqWwOKuLQ@mail.gmail.com>
+Subject: Re: [PATCH] drm: Fix trailing semicolon
+To: Luis de Bethencourt <luisbg@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Andres Rodriguez <andresx7@gmail.com>, Joe Perches <joe@perches.com>,
+        Christian Konig <christian.koenig@amd.com>,
+        Monk Liu <Monk.Liu@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi gengdongjiu,
+On Wed, Jan 17, 2018 at 1:22 PM, Luis de Bethencourt <luisbg@kernel.org> wrote:
+> The trailing semicolon is an empty statement that does no operation.
+> Removing it since it doesn't do anything.
+>
+> Signed-off-by: Luis de Bethencourt <luisbg@kernel.org>
 
-On 24/01/18 20:06, gengdongjiu wrote:
->> On 06/01/18 16:02, Dongjiu Geng wrote:
->>> The ARM64 RAS SError Interrupt(SEI) syndrome value is specific to the
->>> guest and user space needs a way to tell KVM this value. So we add a
->>> new ioctl. Before user space specifies the Exception Syndrome Register
->>> ESR(ESR), it firstly checks that whether KVM has the capability to set
->>> the guest ESR, If has, will set it. Otherwise, nothing to do.
->>>
->>> For this ESR specifying, Only support for AArch64, not support AArch32.
->>
->> After this patch user-space can trigger an SError in the guest. If it wants to migrate the guest, how does the pending SError get migrated?
->>
->> I think we need to fix migration first. Andrew Jones suggested using
->> KVM_GET/SET_VCPU_EVENTS:
->> https://www.spinics.net/lists/arm-kernel/msg616846.html
->>
->> Given KVM uses kvm_inject_vabt() on v8.0 hardware too, we should cover systems without the v8.2 RAS Extensions with the same API. I
->> think this means a bit to read/write whether SError is pending, and another to indicate the ESR should be set/read.
->> CPUs without the v8.2 RAS Extensions can reject pending-SError that had an ESR.
-> 
-> For the CPUs without the v8.2 RAS Extensions, its ESR is always 0, 
-> we only can inject a SError with ESR 0 to guest, cannot set its ESR.
+Applied.  thanks!
 
-0? It's always implementation-defined. On Juno it seems to be always-0, but
-other systems may behave differently. (Juno may generate another ESR value when
-I'm not watching it...)
+Alex
 
-Just because we can't control the ESR doesn't mean injecting an SError isn't
-something user-space may want to do.
-If we tackle migration of pending-SError first, I think that will give us the
-API to create a new pending SError with/without an ESR as appropriate.
-
-
-> About how about to use the KVM_GET/SET_VCPU_EVENTS, I will check the code, and
-> consider your suggestion at the same time.
-
-(Not my suggestion, It was Andrew Jones idea.)
-
-> The IOCTL KVM_GET/SET_VCPU_EVENTS has been used by X86.
-
-We would be re-using the struct to have values with slightly different meanings.
-But for migration the upshot is the same, call KVM_GET_VCPU_EVENTS on one
-system, and pass the struct to KVM_SET_VCPU_EVENTS on the new system. If we're
-lucky Qemu may be able to do this in shared x86/arm64 code.
-
-
->>> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c index
->>> 5c7f657..738ae90 100644
->>> --- a/arch/arm64/kvm/guest.c
->>> +++ b/arch/arm64/kvm/guest.c
->>> @@ -277,6 +277,11 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
->>>  	return -EINVAL;
->>>  }
->>>
->>> +int kvm_arm_set_sei_esr(struct kvm_vcpu *vcpu, u32 *syndrome) {
->>> +	return -EINVAL;
->>> +}
->>
->> Does nothing in the patch that adds the support? This is a bit odd.
->> (oh, its hiding in patch 6...)
-> 
-> To make this patch simple and small, I add it in patch 6.
-
-But that made the functionality of this patch: A new API to return -EINVAL from
-the kernel.
-
-Swapping the patches round would have avoided this.
-Regardless, I think this will fold out in a rebase.
-
-
-Thanks,
-
-James
+> ---
+>
+> Hi,
+>
+> After fixing the same thing in drivers/staging/rtl8723bs/, Joe Perches
+> suggested I fix it treewide [0].
+>
+> Best regards
+> Luis
+>
+>
+> [0] http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-January/115410.html
+> [1] http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-January/115390.html
+>
+>  drivers/gpu/drm/scheduler/gpu_scheduler.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler.c b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> index 2c18996d59c5..0d95888ccc3e 100644
+> --- a/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> @@ -461,7 +461,7 @@ void drm_sched_hw_job_reset(struct drm_gpu_scheduler *sched, struct drm_sched_jo
+>  {
+>         struct drm_sched_job *s_job;
+>         struct drm_sched_entity *entity, *tmp;
+> -       int i;;
+> +       int i;
+>
+>         spin_lock(&sched->job_list_lock);
+>         list_for_each_entry_reverse(s_job, &sched->ring_mirror_list, node) {
+> --
+> 2.15.1
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
