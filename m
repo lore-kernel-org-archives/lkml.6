@@ -1,48 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751960AbeA3MeD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:34:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56072 "EHLO mx2.suse.de"
+        id S1751861AbeA3Mik (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:38:40 -0500
+Received: from foss.arm.com ([217.140.101.70]:53188 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751725AbeA3MeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:34:02 -0500
-Date: Tue, 30 Jan 2018 13:34:00 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] mm/swap.c: make functions and their kernel-doc agree
-Message-ID: <20180130123400.GD26445@dhcp22.suse.cz>
-References: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
+        id S1751451AbeA3Mij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 07:38:39 -0500
+Subject: Re: [PATCH v2 10/16] arm64: KVM: Report SMCCC_ARCH_WORKAROUND_1 BP
+ hardening support
+To: Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jon Masters <jcm@redhat.com>
+References: <20180129174559.1866-1-marc.zyngier@arm.com>
+ <20180129174559.1866-11-marc.zyngier@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <748db3f9-bf6c-17d6-ff92-e814ec06aa20@arm.com>
+Date: Tue, 30 Jan 2018 12:38:35 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180129174559.1866-11-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 29-01-18 16:43:55, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
+On 29/01/18 17:45, Marc Zyngier wrote:
+> A new feature of SMCCC 1.1 is that it offers firmware-based CPU
+> workarounds. In particular, SMCCC_ARCH_WORKAROUND_1 provides
+> BP hardening for CVE-2017-5715.
 > 
-> Fix some basic kernel-doc notation in mm/swap.c:
-> - for function lru_cache_add_anon(), make its kernel-doc function name
->   match its function name and change colon to hyphen following the
->   function name
+> If the host has some mitigation for this issue, report that
+> we deal with it using SMCCC_ARCH_WORKAROUND_1, as we apply the
+> host workaround on every guest exit.
+> 
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>   include/linux/arm-smccc.h |  5 +++++
+>   virt/kvm/arm/psci.c       | 17 +++++++++++++++--
+>   2 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+> index dc68aa5a7261..e1ef944ef1da 100644
+> --- a/include/linux/arm-smccc.h
+> +++ b/include/linux/arm-smccc.h
+> @@ -73,6 +73,11 @@
+>   			   ARM_SMCCC_SMC_32,				\
+>   			   0, 1)
+>   
+> +#define ARM_SMCCC_ARCH_WORKAROUND_1					\
+> +	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
+> +			   ARM_SMCCC_SMC_32,				\
+> +			   0, 0x8000)
+> +
+>   #ifndef __ASSEMBLY__
+>   
+>   #include <linux/linkage.h>
+> diff --git a/virt/kvm/arm/psci.c b/virt/kvm/arm/psci.c
+> index a021b62ed762..5677d16abc71 100644
+> --- a/virt/kvm/arm/psci.c
+> +++ b/virt/kvm/arm/psci.c
+> @@ -407,14 +407,27 @@ static int kvm_psci_call(struct kvm_vcpu *vcpu)
+>   int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
+>   {
+>   	u32 func_id = smccc_get_function(vcpu);
+> -	u32 val;
+> +	u32 val, feature;
+>   
+>   	switch (func_id) {
+>   	case ARM_SMCCC_VERSION_FUNC_ID:
+>   		val = ARM_SMCCC_VERSION_1_1;
+>   		break;
+>   	case ARM_SMCCC_ARCH_FEATURES_FUNC_ID:
+> -		val = -1;	/* Nothing supported yet */
 
-This is pretty much an internal function to the MM. It shouldn't have
-any external callers. Why do we need a kernel doc at all?
+Conceptually, might it still make sense to initialise val to 
+NOT_SUPPORTED here, then overwrite it if and when a feature actually is 
+present? It would in this case save a few lines as well, but I know 
+multiple assignment can be one of those religious issues, so I'm not too 
+fussed either way.
 
-> - for function pagevec_lookup_entries(), change the function parameter
->   name from nr_pages to nr_entries since that is more descriptive of
->   what the parameter actually is and then it matches the kernel-doc
->   comments also
+Robin.
 
-I know what is nr_pages because I do expect pages to be returned. What
-are entries? Can it be something different from pages?
--- 
-Michal Hocko
-SUSE Labs
+> +		feature = smccc_get_arg1(vcpu);
+> +		switch(feature) {
+> +#ifdef CONFIG_ARM64
+> +		case ARM_SMCCC_ARCH_WORKAROUND_1:
+> +			if (cpus_have_const_cap(ARM64_HARDEN_BRANCH_PREDICTOR))
+> +				val = 0;
+> +			else
+> +				val = -1;
+> +			break;
+> +#endif
+> +		default:
+> +			val = -1;
+> +			break;
+> +		}
+>   		break;
+>   	default:
+>   		return kvm_psci_call(vcpu);
+> 
