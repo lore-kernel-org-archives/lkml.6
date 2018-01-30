@@ -1,75 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753194AbeA3Pb2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:31:28 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:41933 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753165AbeA3Pb0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:31:26 -0500
-X-Google-Smtp-Source: AH8x2242ODzQsoxCc/N64YLuDPTfJRI8LIwL+eg8j6xHjua60RQ275r6efB98UCa3/2uqI/6RULJ7cvoLDQ9uhKyL50=
+        id S1753208AbeA3PcM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:32:12 -0500
+Received: from mga01.intel.com ([192.55.52.88]:61264 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751531AbeA3PcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 10:32:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,435,1511856000";
+   d="scan'208";a="26655597"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH v2] drm/edid: use true and false for boolean values
+In-Reply-To: <20180130151946.GC5453@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180130100528.GA7154@training> <20180130150927.3fm5kotyp6vqugaf@art_vandelay> <20180130151946.GC5453@intel.com>
+Date: Tue, 30 Jan 2018 17:31:59 +0200
+Message-ID: <87607jwefk.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180130150337.GC10525@sirena.org.uk>
-References: <1517318506-14664-1-git-send-email-geert@linux-m68k.org> <20180130150337.GC10525@sirena.org.uk>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Jan 2018 16:31:24 +0100
-X-Google-Sender-Auth: ZwqaKmeJWC_hn5jRSVXPMvr_BTM
-Message-ID: <CAMuHMdWhADAPSnj_34R04Oh_H_puyc0vzx--tpihAaUM4NDMQg@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: STM32_DFSDM_ADC should depend on HAS_DMA
-To: Mark Brown <broonie@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-iio@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-On Tue, Jan 30, 2018 at 4:03 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Jan 30, 2018 at 02:21:46PM +0100, Geert Uytterhoeven wrote:
->> If NO_DMA=y:
->>
->>     ERROR: "bad_dma_ops" [drivers/iio/adc/stm32-dfsdm-adc.ko] undefined!
->>
->> Add a dependency on HAS_DMA to fix this.
+On Tue, 30 Jan 2018, Ville Syrjälä <ville.syrjala@linux.intel.com> wrote:
+> On Tue, Jan 30, 2018 at 10:09:27AM -0500, Sean Paul wrote:
+>> On Tue, Jan 30, 2018 at 04:05:28AM -0600, Gustavo A. R. Silva wrote:
+>> > Assign true or false to boolean variables instead of an integer value.
+>> > 
+>> > This issue was detected with the help of Coccinelle.
+>> 
+>> I suppose you could also fix up the other preferred assignment by adding !!
+>> to the bitwise & operation.
 >
-> Once again I have to ask why we're doing this per driver and not having
-> the few architectures that have this issue set something up.
+> Assigning >1 to a bool is well defined. No need to clutter the code with
+> !! imo.
 
-Because doing so would lead us to
+Agreed.
 
-    depends on COMPILE_TEST || HAS_DMA
+BR,
+Jani.
 
-in many places. Is that any better?
+>
+>> 
+>> It's also helpful to post the spatch in the commit message so others can
+>> replicate your result (this case is pretty trivial, so less important).
+>> 
+>> Sean
+>> 
+>> > 
+>> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> > ---
+>> > Changes in v2:
+>> >  - Use true for boolean value in add_detailed_mode as suggested by Daniel
+>> >    Vetter.
+>> >  - Update subject.
+>> > 
+>> >  drivers/gpu/drm/drm_edid.c | 4 ++--
+>> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>> > 
+>> > diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+>> > index ddd5379..b1cb262 100644
+>> > --- a/drivers/gpu/drm/drm_edid.c
+>> > +++ b/drivers/gpu/drm/drm_edid.c
+>> > @@ -2767,7 +2767,7 @@ do_detailed_mode(struct detailed_timing *timing, void *c)
+>> >  
+>> >  		drm_mode_probed_add(closure->connector, newmode);
+>> >  		closure->modes++;
+>> > -		closure->preferred = 0;
+>> > +		closure->preferred = false;
+>> >  	}
+>> >  }
+>> >  
+>> > @@ -2784,7 +2784,7 @@ add_detailed_modes(struct drm_connector *connector, struct edid *edid,
+>> >  	struct detailed_mode_closure closure = {
+>> >  		.connector = connector,
+>> >  		.edid = edid,
+>> > -		.preferred = 1,
+>> > +		.preferred = true,
+>> >  		.quirks = quirks,
+>> >  	};
+>> >  
+>> > -- 
+>> > 2.7.4
+>> > 
+>> 
+>> -- 
+>> Sean Paul, Software Engineer, Google / Chromium OS
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-I agree we could indeed use DMA dummies in cases where a driver uses:
-
-   depends on ARCH_FOO || ARCH_BAR || COMPILE_TEST
-   depends on HAS_DMA
-
-But we also have generic options like:
-
-    config ATA_BMDMA
-            bool "ATA BMDMA support"
-            depends on HAS_DMA
-
-And even architecture-specific drivers for SoCs that may or not have DMA:
-
-config HASH_DEV_STM32
-        tristate "Support for STM32 hash accelerators"
-        depends on ARCH_STM32
-        depends on HAS_DMA
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Jani Nikula, Intel Open Source Technology Center
