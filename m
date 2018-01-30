@@ -1,92 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753590AbeA3Tdy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 14:33:54 -0500
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:41847 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752346AbeA3Tdw (ORCPT
+        id S1753359AbeA3Tjy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:39:54 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53776 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbeA3Tjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:33:52 -0500
-X-Google-Smtp-Source: AH8x226t1WAUCsglXQ7FUikzhPsdyRlC4BgPbUPJO03dE4v6j7/wiSW8GfPT9QBirafNFiyDqwoal1UndAAH8qq3wq0=
-MIME-Version: 1.0
-In-Reply-To: <1517337292.2230.15.camel@tiscali.nl>
-References: <20180130181853.32512-1-ulfalizer@gmail.com> <1517337292.2230.15.camel@tiscali.nl>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Tue, 30 Jan 2018 20:33:51 +0100
-Message-ID: <CAFkk2KSUpEvCCt0fUzCN+r7Lz9CuyN3jKV6atpPR92zPRK4f-w@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: Warn if help text is blank
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 30 Jan 2018 14:39:52 -0500
+Date: Tue, 30 Jan 2018 11:39:50 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>, Tejun Heo <tj@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch -mm v2 2/3] mm, memcg: replace cgroup aware oom killer
+ mount option with tunable
+Message-Id: <20180130113950.f462c4575a9d8a008162a874@linux-foundation.org>
+In-Reply-To: <20180130122011.GB21609@dhcp22.suse.cz>
+References: <alpine.DEB.2.10.1801261415090.15318@chino.kir.corp.google.com>
+        <20180126143950.719912507bd993d92188877f@linux-foundation.org>
+        <alpine.DEB.2.10.1801261441340.20954@chino.kir.corp.google.com>
+        <20180126161735.b999356fbe96c0acd33aaa66@linux-foundation.org>
+        <20180129104657.GC21609@dhcp22.suse.cz>
+        <20180129191139.GA1121507@devbig577.frc2.facebook.com>
+        <20180130085445.GQ21609@dhcp22.suse.cz>
+        <20180130115846.GA4720@castle.DHCP.thefacebook.com>
+        <20180130120852.GA21609@dhcp22.suse.cz>
+        <20180130121315.GA5888@castle.DHCP.thefacebook.com>
+        <20180130122011.GB21609@dhcp22.suse.cz>
+X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 7:34 PM, Paul Bolle <pebolle@tiscali.nl> wrote:
-> On Tue, 2018-01-30 at 19:18 +0100, Ulf Magnusson wrote:
->> Print a warning if a 'help' token is given but the help text is blank.
->> Personal pet peeve.
->>
->> Example warnings:
->>
->>       net/sched/Kconfig:860: warning: 'NET_IFE_SKBMARK' defined with blank help text
->>       net/sched/Kconfig:865: warning: 'NET_IFE_SKBPRIO' defined with blank help text
->>       net/sched/Kconfig:870: warning: 'NET_IFE_SKBTCINDEX' defined with blank help text
->>       drivers/video/fbdev/Kconfig:1159: warning: 'FB_I810_I2C' defined with blank help text
->>       drivers/mmc/host/Kconfig:877: warning: 'MMC_TOSHIBA_PCI' defined with blank help text
->>       drivers/staging/rtl8192u/Kconfig:8: warning: 'RTL8192U' defined with blank help text
->>       drivers/staging/rtl8192e/rtl8192e/Kconfig:9: warning: 'RTL8192E' defined with blank help text
->>       lib/Kconfig.debug:354: warning: 'ARCH_WANT_FRAME_POINTERS' defined with blank help text
->>
->> A separate patchset will be sent to fix all current instances of blank
->> help texts for all arches. I added the same warning to Kconfiglib.
->
-> If you do this it would be better to first fix or remove those help texts
+On Tue, 30 Jan 2018 13:20:11 +0100 Michal Hocko <mhocko@kernel.org> wrote:
 
-I agree that this shouldn't go in until/unless a significant portion
-of those empty help texts get removed first.
+> Subject: [PATCH] oom, memcg: clarify root memcg oom accounting
+> 
+> David Rientjes has pointed out that the current way how the root memcg
+> is accounted for the cgroup aware OOM killer is undocumented. Unlike
+> regular cgroups there is no accounting going on in the root memcg
+> (mostly for performance reasons). Therefore we are suming up oom_badness
+> of its tasks. This might result in an over accounting because of the
+> oom_score_adj setting. Document this for now.
 
-> and only then add this warning. Ie, add the warning in the last patch of a cleanup
-> series.
+Thanks.  Some tweakage:
 
-Might have been better to arrange it like that, yeah. The patchset
-that removes the empty help texts is at
-https://lkml.org/lkml/2018/1/30/574. I could make another one if you'd
-prefer that.
-
->
->> --- a/scripts/kconfig/zconf.y
->> +++ b/scripts/kconfig/zconf.y
->> @@ -436,6 +436,12 @@ help: help_start T_HELPTEXT
->>               zconfprint("warning: '%s' defined with more than one help text -- only the last one will be used",
->>                          current_entry->sym->name ?: "<choice>");
->>       }
->> +
->> +     /* Is the help text empty or all whitespace? */
->> +     if ($2[strspn($2, " \f\n\r\t\v")] == '\0')
->> +             zconfprint("warning: '%s' defined with blank help text",
->> +                        current_entry->sym->name ?: "<choice>");
->> +
->
-> Does this go to stderr?
-
-Yep - goes to stderr. zconfprint() is the standard error reporting
-function during parsing, and also prints the parsing location.
-
->
-> Another fix would be to ignore empty help texts and not render them at all. Is
-> that possible?
-
-I haven't even checked how they are rendered to be honest. I was more
-concerned with the Kconfig mess.
-
-> Thanks,
->
->
-> Paul Bolle
-
-Cheers,
-Ulf
+--- a/Documentation/cgroup-v2.txt~mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix
++++ a/Documentation/cgroup-v2.txt
+@@ -1292,13 +1292,13 @@ of the OOM'ing cgroup.
+ 
+ Leaf cgroups and cgroups with oom_group option set are compared based
+ on their cumulative memory usage. The root cgroup is treated as a
+-leaf memory cgroup as well, so it's compared with other leaf memory
++leaf memory cgroup as well, so it is compared with other leaf memory
+ cgroups. Due to internal implementation restrictions the size of
+-the root cgroup is a cumulative sum of oom_badness of all its tasks
++the root cgroup is the cumulative sum of oom_badness of all its tasks
+ (in other words oom_score_adj of each task is obeyed). Relying on
+-oom_score_adj (appart from OOM_SCORE_ADJ_MIN) can lead to over or
+-underestimating of the root cgroup consumption and it is therefore
+-discouraged. This might change in the future, though.
++oom_score_adj (apart from OOM_SCORE_ADJ_MIN) can lead to over- or
++underestimation of the root cgroup consumption and it is therefore
++discouraged. This might change in the future, however.
+ 
+ If there are no cgroups with the enabled memory controller,
+ the OOM killer is using the "traditional" process-based approach.
+_
