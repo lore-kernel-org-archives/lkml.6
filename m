@@ -1,62 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeAaAPt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 19:15:49 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:45280 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751629AbeAaAPs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 19:15:48 -0500
-X-Google-Smtp-Source: AH8x2279pj4ySzbmM9johKj4D6oMggdEkLMbwyMgDqSDHceBzflbGKj29PhrpiQM8a0+A1DwZ7rS1A==
-From: Erik Mansson <erik@mansson.xyz>
-To: lgirdwood@gmail.com
-Cc: linux-kernel@vger.kernel.org, Erik Mansson <erik@mansson.xyz>
-Subject: [PATCH] drivers: regulator: fan53555: fixed a coding style issue
-Date: Wed, 31 Jan 2018 01:14:25 +0100
-Message-Id: <20180131001425.22510-1-erik@mansson.xyz>
-X-Mailer: git-send-email 2.14.1
+        id S1753561AbeAaASR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 19:18:17 -0500
+Received: from anholt.net ([50.246.234.109]:55826 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752303AbeAaASQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 19:18:16 -0500
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
+Subject: [PATCH] drm: Print the pid when debug logging an ioctl error.
+Date: Tue, 30 Jan 2018 13:56:43 -0800
+Message-Id: <20180130215643.11016-1-eric@anholt.net>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed a couple of badly formatted comments.
+When we debug print what ioctl we're calling into, we include the pid.
+If you have multiple processes rendering simulataneously, the error
+return also needs the pid so you can see which of the ioctl calls was
+the one to fail.
 
-Signed-off-by: Erik Mansson <erik@mansson.xyz>
+Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- drivers/regulator/fan53555.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/fan53555.c b/drivers/regulator/fan53555.c
-index a3bc8037153e..78f98e679fbf 100644
---- a/drivers/regulator/fan53555.c
-+++ b/drivers/regulator/fan53555.c
-@@ -114,8 +114,10 @@ static int fan53555_set_suspend_voltage(struct regulator_dev *rdev, int uV)
- 					VSEL_NSEL_MASK, ret);
- 	if (ret < 0)
- 		return ret;
--	/* Cache the sleep voltage setting.
--	 * Might not be the real voltage which is rounded */
-+	/*
-+	 * Cache the sleep voltage setting.
-+	 * Might not be the real voltage which is rounded
-+	 */
- 	di->sleep_vol_cache = uV;
- 
- 	return 0;
-@@ -277,11 +279,12 @@ static int fan53555_voltages_setup_silergy(struct fan53555_device_info *di)
- 	return 0;
+diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+index a9ae6dd2d593..38c302607738 100644
+--- a/drivers/gpu/drm/drm_ioctl.c
++++ b/drivers/gpu/drm/drm_ioctl.c
+@@ -842,7 +842,7 @@ long drm_ioctl(struct file *filp,
+ 	if (kdata != stack_kdata)
+ 		kfree(kdata);
+ 	if (retcode)
+-		DRM_DEBUG("ret = %d\n", retcode);
++		DRM_DEBUG("pid=%d, ret = %d\n", task_pid_nr(current), retcode);
+ 	return retcode;
  }
- 
--/* For 00,01,03,05 options:
-+/*
-+ * For 00,01,03,05 options:
-  * VOUT = 0.60V + NSELx * 10mV, from 0.60 to 1.23V.
-  * For 04 option:
-  * VOUT = 0.603V + NSELx * 12.826mV, from 0.603 to 1.411V.
-- * */
-+ */
- static int fan53555_device_setup(struct fan53555_device_info *di,
- 				struct fan53555_platform_data *pdata)
- {
+ EXPORT_SYMBOL(drm_ioctl);
 -- 
-2.14.1
+2.15.0
