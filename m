@@ -1,166 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeA3QoA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 11:44:00 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:52712 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751554AbeA3Qn6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 11:43:58 -0500
-Subject: Re: [9/8] KVM: x86: limit MSR_IA32_SPEC_CTRL access based on CPUID
- availability
-To: Jim Mattson <jmattson@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Anthony Liguori <aliguori@amazon.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw@amazon.co.uk>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <20180109120311.27565-10-pbonzini@redhat.com>
- <6dc02278-7004-1794-3705-69c8cad86be4@oracle.com>
- <CALMp9eSVC=LO-SrPkA3m6eSpgJ6X4rNCRCf3uvtJEdMG_B72cQ@mail.gmail.com>
-From: Mihai Carabas <mihai.carabas@oracle.com>
-Message-ID: <beb9f9b4-7bc0-4a3a-73c2-0828febbd06c@oracle.com>
-Date: Tue, 30 Jan 2018 18:43:35 +0200
+        id S1753445AbeA3Qs2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 11:48:28 -0500
+Received: from mga01.intel.com ([192.55.52.88]:2019 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751422AbeA3QsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 11:48:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,435,1511856000";
+   d="scan'208";a="197373732"
+Subject: Re: [PATCH V3 0/5] bugs fix for large PEBS mmap read and rdpmc read
+To: Stephane Eranian <eranian@google.com>
+Cc: Jiri Olsa <jolsa@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>
+References: <1517243373-355481-1-git-send-email-kan.liang@linux.intel.com>
+ <CABPqkBRjQp62ArVZzuH=TRU3mDPkS93D8_cNev6M=eXTCpBLkA@mail.gmail.com>
+ <20180130133917.GC29098@krava>
+ <6d708c09-52a7-a906-b651-b133a7b4f189@linux.intel.com>
+ <20180130150454.GE29098@krava>
+ <35090c62-466a-aec8-b1a3-69def959c1c6@linux.intel.com>
+ <CABPqkBRWtSsKEM7ycPs0HYSKLsYDmZhr4ztUmMMqsytYamPGsw@mail.gmail.com>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <24210bcb-0e4b-58fe-bcda-da30019f6e7e@linux.intel.com>
+Date: Tue, 30 Jan 2018 11:48:18 -0500
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <CALMp9eSVC=LO-SrPkA3m6eSpgJ6X4rNCRCf3uvtJEdMG_B72cQ@mail.gmail.com>
+In-Reply-To: <CABPqkBRWtSsKEM7ycPs0HYSKLsYDmZhr4ztUmMMqsytYamPGsw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8790 signatures=668657
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=986
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1801300208
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.01.2018 18:33, Jim Mattson wrote:
-> All MSR intercepts are enabled by default, so I don't think this patch
-> does anything at all, unless I'm missing some context.
-> 
-
-Currently on upstream some MSR are intercepted: 
-https://github.com/torvalds/linux/blob/master/arch/x86/kvm/vmx.c#L6838
-
-In particular to this patch, the MSR_IA32_SPEC_CTRL intercept is 
-disabled in 3/8: https://patchwork.kernel.org/patch/10151889/
 
 
-> On Tue, Jan 30, 2018 at 5:21 AM, Mihai Carabas <mihai.carabas@oracle.com> wrote:
->> Hello Paolo,
->>
->> I've back ported this patch on 4.1, after adding the per-vcpu MSR bitmap.
->> Also enabled the SPEC_CTRL_MSR intercept if qemu instructed so [1].
->>
->> Reviewed-by: Mihai Carabas <mihai.carabas@oracle.com>
->>
->> [1]
->> +++ b/arch/x86/kvm/vmx.c
->> @@ -8391,6 +8391,16 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm
->> *kvm, unsigned int id)
->>          vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PRED_CMD,
->> MSR_TYPE_R | MSR_TYPE_W);
->>          vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_BNDCFGS,
->> MSR_TYPE_R | MSR_TYPE_W);
->>
->> +       /*
->> +        * If the physical CPU or the vCPU of this VM doesn't
->> +        * support SPEC_CTRL feature, catch each access to it.
->> +        */
->> +       if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->> +            !guest_cpuid_has_spec_ctrl(&vmx->vcpu))
->> +               vmx_enable_intercept_for_msr(
->> +                       msr_bitmap,
->> +                       MSR_IA32_SPEC_CTRL,
->> +                       MSR_TYPE_R | MSR_TYPE_W);
->>
->>          /*
->>           * If PML is turned on, failure on enabling PML just results in
->> failure
+On 1/30/2018 11:36 AM, Stephane Eranian wrote:
+> On Tue, Jan 30, 2018 at 7:25 AM, Liang, Kan <kan.liang@linux.intel.com> wrote:
 >>
 >>
->>
->> On 09.01.2018 14:03, Paolo Bonzini wrote:
+>> On 1/30/2018 10:04 AM, Jiri Olsa wrote:
 >>>
->>> MSR_IA32_SPEC_CTRL is not available unless CPU[7,0].EDX[26] is 1.
->>> Check that against host CPUID or guest CPUID, respectively for
->>> host-initiated and guest-initiated accesses.
+>>> On Tue, Jan 30, 2018 at 09:59:15AM -0500, Liang, Kan wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 1/30/2018 8:39 AM, Jiri Olsa wrote:
+>>>>>
+>>>>> On Tue, Jan 30, 2018 at 01:16:39AM -0800, Stephane Eranian wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> On Mon, Jan 29, 2018 at 8:29 AM, <kan.liang@linux.intel.com> wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> From: Kan Liang <kan.liang@linux.intel.com>
+>>>>>>>
+>>>>>>> ------
+>>>>>>>
+>>>>>>> Changes since V2:
+>>>>>>>     - Refined the changelog
+>>>>>>>     - Introduced specific read function for large PEBS.
+>>>>>>>       The previous generic PEBS read function is confusing.
+>>>>>>>       Disabled PMU in pmu::read() path for large PEBS.
+>>>>>>>       Handled the corner case when reload_times == 0.
+>>>>>>>     - Modified the parameter of intel_pmu_save_and_restart_reload()
+>>>>>>>       Discarded local64_cmpxchg
+>>>>>>>     - Added fixes tag
+>>>>>>>     - Added WARN to handle reload_times == 0 || reload_val == 0
+>>>>>>>
+>>>>>>> Changes since V1:
+>>>>>>>     - Check PERF_X86_EVENT_AUTO_RELOAD before call
+>>>>>>>       intel_pmu_save_and_restore()
+>>>>>>
+>>>>>>
+>>>>>> It is not yet clear to me why PERF_SAMPLE_PERIOD is not allowed
+>>>>>> with large PEBS. Large PEBS requires fixed period. So the kernel could
+>>>>>> make up the period from the event and store it in the sampling buffer.
+>>>>>>
+>>>>>> I tried using large PEBS recently, and despite trying different option
+>>>>>> combination of perf record, I was not able to get it to work.
+>>>>>>
+>>>>>> $ perf record  -c 1  -e cpu/event=0xd1,umask=0x10,period=19936/pp
+>>>>>> --no-timestamp --no-period -a -C 0
+>>>>>>
+>>>>>> But I was able to make this work with a much older kernel.
+>>>>>>
+>>>>>> Another annoyance I ran into is with perf record requiring -c period
+>>>>>> in order not to set
+>>>>>> PERF_SAMPLE_PERIOD in the event.
+>>>>>>
+>>>>>> If I do:
+>>>>>> perf record  -c 1  -e cpu/event=0xd1,umask=0x10,period=19936/pp
+>>>>>> --no-timestamp --no-period -a -C 0
+>>>>>>
+>>>>>> I get
+>>>>>>
+>>>>>> perf_event_attr:
+>>>>>>      type                             4
+>>>>>>      size                             112
+>>>>>>      config                           0x10d1
+>>>>>>      { sample_period, sample_freq }   199936
+>>>>>>      sample_type                      IP|TID|CPU
+>>>>>>
+>>>>>> But if I do:
+>>>>>> perf record  -e cpu/event=0xd1,umask=0x10,period=19936/pp
+>>>>>> --no-timestamp --no-period -a -C 0
+>>>>>>
+>>>>>> I get
+>>>>>>
+>>>>>> perf_event_attr:
+>>>>>>      type                             4
+>>>>>>      size                             112
+>>>>>>      config                           0x10d1
+>>>>>>      { sample_period, sample_freq }   199936
+>>>>>>      sample_type                      IP|TID|CPU|PERIOD
+>>>>>>
+>>>>>> Perf should check if all events have a period=, then it should not
+>>>>>> pass PERF_SAMPLE_PERIOD, even
+>>>>>> more so when only one event is defined.
+>>>>>>
+>>>>>> Also it does not seem to honor --no-period.
+>>>>>
+>>>>>
+>>>>> yep, there's a bug in period=x term handling
+>>>>> we did not re/set the sample_type based on that
+>>>>>
+>>>>> attached patch fixes that for me, also takes into account
+>>>>> the --no/-period options
+>>>>>
+>>>>> jirka
+>>>>>
+>>>>>
+>>>>> ---
+>>>>> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+>>>>> index f251e824edac..907267206973 100644
+>>>>> --- a/tools/perf/builtin-record.c
+>>>>> +++ b/tools/perf/builtin-record.c
+>>>>> @@ -1566,7 +1566,8 @@ static struct option __record_options[] = {
+>>>>>          OPT_BOOLEAN_SET('T', "timestamp", &record.opts.sample_time,
+>>>>>                          &record.opts.sample_time_set,
+>>>>>                          "Record the sample timestamps"),
+>>>>> -       OPT_BOOLEAN('P', "period", &record.opts.period, "Record the
+>>>>> sample period"),
+>>>>> +       OPT_BOOLEAN_SET('P', "period", &record.opts.period,
+>>>>> &record.opts.period_set,
+>>>>> +                       "Record the sample period"),
+>>>>>          OPT_BOOLEAN('n', "no-samples", &record.opts.no_samples,
+>>>>>                      "don't sample"),
+>>>>>          OPT_BOOLEAN_SET('N', "no-buildid-cache",
+>>>>> &record.no_buildid_cache,
+>>>>> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+>>>>> index 2357f4ccc9c7..cfe46236a5e5 100644
+>>>>> --- a/tools/perf/perf.h
+>>>>> +++ b/tools/perf/perf.h
+>>>>> @@ -50,6 +50,7 @@ struct record_opts {
+>>>>>          bool         sample_time_set;
+>>>>>          bool         sample_cpu;
+>>>>>          bool         period;
+>>>>> +       bool         period_set;
+>>>>>          bool         running_time;
+>>>>>          bool         full_auxtrace;
+>>>>>          bool         auxtrace_snapshot_mode;
+>>>>> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+>>>>> index 66fa45198a11..ff359c9ece2e 100644
+>>>>> --- a/tools/perf/util/evsel.c
+>>>>> +++ b/tools/perf/util/evsel.c
+>>>>> @@ -745,12 +745,14 @@ static void apply_config_terms(struct perf_evsel
+>>>>> *evsel,
+>>>>>                          if (!(term->weak && opts->user_interval !=
+>>>>> ULLONG_MAX)) {
+>>>>>                                  attr->sample_period = term->val.period;
+>>>>>                                  attr->freq = 0;
+>>>>> +                               perf_evsel__reset_sample_bit(evsel,
+>>>>> PERIOD);
+>>>>>                          }
+>>>>>                          break;
+>>>>>                  case PERF_EVSEL__CONFIG_TERM_FREQ:
+>>>>>                          if (!(term->weak && opts->user_freq !=
+>>>>> UINT_MAX)) {
+>>>>>                                  attr->sample_freq = term->val.freq;
+>>>>>                                  attr->freq = 1;
+>>>>> +                               perf_evsel__set_sample_bit(evsel,
+>>>>> PERIOD);
+>>>>>                          }
+>>>>
+>>>>
+>>>> If we do so, some events could be in fixed mode without PERIOD set. Other
+>>>> events could be in freq mode with PERIOD set.
 >>>
->>> Suggested-by: Jim Mattson <jmattson@google.com>
->>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->>> ---
->>>          This is for after X86_FEATURE_SPEC_CTRL is added to Linux, but
->>>          I still wanted to ack Jim's improvement.
 >>>
->>>    arch/x86/kvm/svm.c | 8 ++++++++
->>>    arch/x86/kvm/vmx.c | 8 ++++++++
->>>    2 files changed, 16 insertions(+)
->>>
->>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
->>> index 97126c2bd663..3a646580d7c5 100644
->>> --- a/arch/x86/kvm/svm.c
->>> +++ b/arch/x86/kvm/svm.c
->>> @@ -3648,6 +3648,10 @@ static int svm_get_msr(struct kvm_vcpu *vcpu,
->>> struct msr_data *msr_info)
->>>                  msr_info->data = svm->nested.vm_cr_msr;
->>>                  break;
->>>          case MSR_IA32_SPEC_CTRL:
->>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->>> +                   (!msr_info->host_initiated &&
->>> +                            !guest_cpuid_has(vcpu,
->>> X86_FEATURE_SPEC_CTRL)))
->>> +                       return 1;
->>>                  msr_info->data = svm->spec_ctrl;
->>>                  break;
->>>          case MSR_IA32_UCODE_REV:
->>> @@ -3806,6 +3810,10 @@ static int svm_set_msr(struct kvm_vcpu *vcpu,
->>> struct msr_data *msr)
->>>                  vcpu_unimpl(vcpu, "unimplemented wrmsr: 0x%x data
->>> 0x%llx\n", ecx, data);
->>>                  break;
->>>          case MSR_IA32_SPEC_CTRL:
->>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->>> +                   (!msr_info->host_initiated &&
->>> +                            !guest_cpuid_has(vcpu,
->>> X86_FEATURE_SPEC_CTRL)))
->>> +                       return 1;
->>>                  svm->spec_ctrl = data;
->>>                  break;
->>>          case MSR_IA32_APICBASE:
->>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
->>> index 49b4a2d61603..42bc7ee293e4 100644
->>> --- a/arch/x86/kvm/vmx.c
->>> +++ b/arch/x86/kvm/vmx.c
->>> @@ -3368,6 +3368,10 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu,
->>> struct msr_data *msr_info)
->>>                  msr_info->data = guest_read_tsc(vcpu);
->>>                  break;
->>>          case MSR_IA32_SPEC_CTRL:
->>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->>> +                   (!msr_info->host_initiated &&
->>> +                    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL)))
->>> +                       return 1;
->>>                  msr_info->data = to_vmx(vcpu)->spec_ctrl;
->>>                  break;
->>>          case MSR_IA32_SYSENTER_CS:
->>> @@ -3510,6 +3514,10 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu,
->>> struct msr_data *msr_info)
->>>                  kvm_write_tsc(vcpu, msr_info);
->>>                  break;
->>>          case MSR_IA32_SPEC_CTRL:
->>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->>> +                   (!msr_info->host_initiated &&
->>> +                    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL)))
->>> +                       return 1;
->>>                  to_vmx(vcpu)->spec_ctrl = data;
->>>                  break;
->>>          case MSR_IA32_CR_PAT:
+>>> it also sets the attr->freq, so it's not in fixed mode
 >>>
 >>
+>> I mean the TERM_PERIOD. It probably enable the large PEBS.
+>>>>>                              attr->freq = 0;
+>>>>> +                           perf_evsel__reset_sample_bit(evsel, PERIOD);
+>>
+>> The events in fixed mode could enable large PEBS. Events in freq mode should
+>> not enable large PEBS.
+>> I think that could be a problem if some events try to enable large PEBS,
+>> while others not.
+>>
+> You only enable large PEBS if 100% of the events use fixed periods,
+> either via -c period
+> or because they all use individual period=p. The --no-period could
+> also be used to remove
+> the period for measurements where the period is not needed.
+
+
+Oh, right, the kernel has already guaranteed that.
+	if (cpuc->n_pebs == cpuc->n_large_pebs) {
+		threshold = ds->pebs_absolute_maximum -
+			x86_pmu.max_pebs_events * x86_pmu.pebs_record_size;
+	} else {
+
+Sorry for the noise.
+
+jirka's patch looks good to me.
+
+Thanks,
+Kan
