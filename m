@@ -1,80 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753049AbeA3UMi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 15:12:38 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35327 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752027AbeA3UMg (ORCPT
+        id S1752266AbeA3UZn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:25:43 -0500
+Received: from mx0a-00191d01.pphosted.com ([67.231.149.140]:37270 "EHLO
+        mx0a-00191d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751728AbeA3UZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:12:36 -0500
-X-Google-Smtp-Source: AH8x226r68uavjwpY1DooIT6EAC3gPiOnyy+172ODWE0oasZT4QrbLLbBdeqEd7xoj7UeK6KDRiPNQTcSN0xKsQuwrc=
+        Tue, 30 Jan 2018 15:25:41 -0500
+From: "Brown, Nicholas" <nb930b@intl.att.com>
+To: "joe@perches.com" <joe@perches.com>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "nickbroon@gmail.com" <nickbroon@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] checkpatch: warn if changed lines exceeds a maximum size
+Thread-Topic: [PATCH] checkpatch: warn if changed lines exceeds a maximum
+ size
+Thread-Index: AQHTmeMGAPsYZkfslkm5Wnly+K55WaOMldQAgAAf4ICAAA/2gIAAAlYAgAAVDAA=
+Date: Tue, 30 Jan 2018 20:25:05 +0000
+Message-ID: <1517343904.3063.33.camel@intl.att.com>
+References: <1517335455.3063.28.camel@intl.att.com>
+         <20180130190123.9669-1-nick.brown@att.com>
+         <1517339384.765.31.camel@perches.com>
+In-Reply-To: <1517339384.765.31.camel@perches.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.156.48.128]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <79609E0CAA28EE4A9CDD30519D347531@intl.att.com>
 MIME-Version: 1.0
-In-Reply-To: <197f448e-322f-dae4-aa4b-3cc2bd5b16bb@pressers.name>
-References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
- <20171210182152.70ad8fbf@archlinux> <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
- <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
- <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
- <20180130160107.000006df@huawei.com> <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
- <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
- <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
- <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
- <f42f6acc-cb30-e36d-0c98-42b7e3d40457@pressers.name> <CAHp75VfmH5aNPzBLvm-GrQ-49uyJNNwdjbte3uh_kmaC91bz6A@mail.gmail.com>
- <197f448e-322f-dae4-aa4b-3cc2bd5b16bb@pressers.name>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 30 Jan 2018 22:12:35 +0200
-Message-ID: <CAHp75VeVuS51Z7U2P+t3YnfitUtVVAa_8oSbnXCHTY7rqrJUEQ@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for BOSC0200
-To: Steven Presser <steve@pressers.name>
-Cc: Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
-        Jeremy Cline <jeremy@jcline.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        Lars Kellogg-Stedman <lars@oddbit.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-RSA-Inspected: yes
+X-RSA-Classifications: public
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_policy_notspam policy=outbound_policy score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=710 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1711220000 definitions=main-1801300246
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w0UKPmXC032427
 
-On Tue, Jan 30, 2018 at 9:27 PM, Steven Presser <steve@pressers.name> wrote:
-> On 01/30/2018 02:05 PM, Andy Shevchenko wrote:
->> On Tue, Jan 30, 2018 at 8:34 PM, Steven Presser <steve@pressers.name>
->> wrote:
+On Tue, 2018-01-30 at 11:09 -0800, Joe Perches wrote:
+> On Tue, 2018-01-30 at 19:01 +0000, Nicholas Brown wrote:
+> > Changed lines is the total of inserted and deleted lines.
+> > By default there is no limit, --max-changed-lines may be used to
+> > set a
+> > value. Some users may wish to encourage that patches are split into
+> > smaller parts using this.
+> > See Documentation/process/submitting-patches.rst#split-changes
+> 
+> Still whitespace damaged.
+> Indentations use tabs not 2 spaces.
 
->>> First, I believe the "bmc150" in the subject line is in some way a
->>> misnomer.
->>> You'd have to ask Jeremy for more details on what he intended it to refer
->>> to.  However, I believe the device in question is actually the bma250[1],
->>> which does not have a magnetometer component.  I'm unfortunately away
->>> from
->>> my notes, but I can check later if you need me to verify the exact chip.
->>
->> Please do, I would really be on the safe side here.
->
-> Will do.  My digital notes indicate I worked from what was exposed back to
-> what chip matched.  If you can give me through Friday evening, I'll crack it
-> and do a visual verification.  (Alas, I'm traveling and won't be back to it
-> until then).
+Hopefully editor set correctly now, so follow-up should fix this.
 
-We are in the merge window anyway, so, no hurry.
+> 
+> and another issue below
+> 
+> > 
+> > @@ -2233,6 +2239,14 @@ sub process {
+> >  
+> >  		push(@fixed, $rawline) if ($fix);
+> >  
+> > +		if ($rawline=~/^\+/) {
+> > +		  $inserted_lines_total++
+> 
+> This counts patch header blocks with \+\+\+
 
-I'm looking right now in the clean solution. Looks promising.
+Good catch. Will fix.
 
->> Bad, bad Lenovo. (DMI strings might help here)
-> What particular DMI strings would be helpful?  All of them?
+> 
+> > +		}
+> > +
+> > +		if ($rawline=~/^-/) {
+> > +		  $deleted_lines_total++
+> > +		}
+> 
+> and \-\-\-
 
-Let's do this way. Create a bug on kernel bugzilla, attach output of
+Ditto.
 
-% acpidump -o tables.dat # tables.dat file
-% grep -H 15 /sys/bus/acpi/devices/*/status
-% dmidecode
-
-and share the number here. I will take it.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks, Nick
