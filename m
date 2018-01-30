@@ -1,89 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751602AbeA3JsW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:48:22 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53488 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751338AbeA3JsT (ORCPT
+        id S1751765AbeA3Js4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:48:56 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33683 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751671AbeA3Jsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:48:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E49796053B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sboyd@codeaurora.org
-Date: Tue, 30 Jan 2018 01:48:16 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: andy.gross@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: sdm845: Add minimal dts/dtsi files for
- sdm845 SoC and MTP
-Message-ID: <20180130094816.GJ28313@codeaurora.org>
-References: <20180125163216.29018-1-rnayak@codeaurora.org>
- <20180125163216.29018-2-rnayak@codeaurora.org>
- <20180126221501.GD28313@codeaurora.org>
- <514c49cc-71f9-ee21-250a-04f8fab151c0@codeaurora.org>
+        Tue, 30 Jan 2018 04:48:45 -0500
+X-Google-Smtp-Source: AH8x2250jpEZ9IwoXgG6p4Pb5IfrrDcFPjLAvQG+0Ubr7r4R20ZAarG3HkeZYfiv8f0ufyG9sMQGaQ==
+Date: Tue, 30 Jan 2018 09:48:41 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: jason.wessel@windriver.com, mingo@kernel.org, arnd@arndb.de,
+        broonie@kernel.org, kgdb-bugreport@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kdb: use ktime_get_mono_fast_ns() instead of
+ ktime_get_ts()
+Message-ID: <20180130094841.x47uqbb5co3pe5zi@oak.lan>
+References: <3f15868475cb4b32353885ee03c983209279fa81.1517192387.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <514c49cc-71f9-ee21-250a-04f8fab151c0@codeaurora.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <3f15868475cb4b32353885ee03c983209279fa81.1517192387.git.baolin.wang@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/29, Rajendra Nayak wrote:
+On Mon, Jan 29, 2018 at 10:22:51AM +0800, Baolin Wang wrote:
+> The kdb code will print the monotonic time by ktime_get_ts(), but
+> the ktime_get_ts() will be protected by a sequence lock, that will
+> introduce one deadlock risk if the lock was already held in the
+> context from which we entered the debugger.
 > 
+> Thus we can use the ktime_get_mono_fast_ns() to get the monotonic
+> time, which is NMI safe access to clock monotonic. Moreover we can
+> remove the 'struct timespec', which is not y2038 safe.
 > 
-> On 01/27/2018 03:45 AM, Stephen Boyd wrote:
-> > On 01/25, Rajendra Nayak wrote:
-> >>  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> >>  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dtsi
-> > 
-> > Do we really need two files? Maybe collapse the two?
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+
+> ---
+> Changes since v1:
+>  - Use ktime_get_mono_fast_ns() instead of ktime_get_seconds().
+> ---
+>  kernel/debug/kdb/kdb_main.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> will do. Not sure why, but this is how all other qualcomm
-> boards are structured with an almost empty .dts file.
-
-I think it's because we have v1, v2, v3, etc. when we're sorting
-out the versions of silicon, but then those are all dropped when
-everything is done. Upstream we probably never care.
-
-> >> +
-> >> +				core2 {
-> >> +					cpu = <&CPU6>;
-> >> +				};
-> >> +
-> >> +				core3 {
-> >> +					cpu = <&CPU7>;
-> >> +				};
-> >> +			};
-> >> +		};
-> > 
-> > From what I recall, this layout causes the kernel to spew
-> > warnings? I mean to say this is the power/performance view, but
-> > not the architectural view.
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index 69e70f4..bf1d0e0 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -2486,10 +2486,10 @@ static int kdb_kill(int argc, const char **argv)
+>   */
+>  static void kdb_sysinfo(struct sysinfo *val)
+>  {
+> -	struct timespec uptime;
+> -	ktime_get_ts(&uptime);
+> +	u64 uptime = ktime_get_mono_fast_ns();
+> +
+>  	memset(val, 0, sizeof(*val));
+> -	val->uptime = uptime.tv_sec;
+> +	val->uptime = div_u64(uptime, NSEC_PER_SEC);
+>  	val->loads[0] = avenrun[0];
+>  	val->loads[1] = avenrun[1];
+>  	val->loads[2] = avenrun[2];
+> -- 
+> 1.7.9.5
 > 
-> hmm, I haven't seen any warnings with this when I boot up on my sdm845
-> MTP. Will recheck.
-
-Ok! I will recheck as well.
-
-> 
-> > 
-> >> +	};
-> >> +
-> >> +	timer {
-> >> +		compatible = "arm,armv8-timer";
-> >> +		interrupts = <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> > 
-> > Are we supposed to use the GIC_CPU_MASK_SIMPLE macros still?
-> 
-> Not sure, is there another way?
-
-Me either. See this thread from Marc[1]. I guess just drop them?
-
-[1] http://lkml.iu.edu/hypermail/linux/kernel/1702.0/03522.html
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
