@@ -1,116 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932127AbeA3Xnb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:43:31 -0500
-Received: from mail-io0-f180.google.com ([209.85.223.180]:35516 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932100AbeA3Xn2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:43:28 -0500
-X-Google-Smtp-Source: AH8x224KyF9Ozr1jrXqOgSYLL4UpX1Z1RmUbT3BoHuTEGeXwF4cBJcKLxuw+g6tFBbRahEOW8ltS6g==
-Date: Tue, 30 Jan 2018 15:43:25 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+68bc3783dd1308d8cc40f5fcc4ba145a01d680d1@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Subject: Re: WARNING in _copy_to_user
-Message-ID: <20180130234325.hvdmtkzwfniy5kno@gmail.com>
-References: <001a1143fd0075461c055f45b0ab@google.com>
+        id S1754068AbeA3Xo1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:44:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42028 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753532AbeA3XoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 18:44:25 -0500
+Date: Wed, 31 Jan 2018 01:44:14 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Wei Wang <wei.w.wang@intel.com>
+Cc: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com
+Subject: Re: [virtio-dev] Re: [PATCH v25 2/2] virtio-balloon:
+ VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Message-ID: <20180131011423-mutt-send-email-mst@kernel.org>
+References: <1516871646-22741-1-git-send-email-wei.w.wang@intel.com>
+ <1516871646-22741-3-git-send-email-wei.w.wang@intel.com>
+ <20180125154708-mutt-send-email-mst@kernel.org>
+ <5A6A871C.6040408@intel.com>
+ <20180126042649-mutt-send-email-mst@kernel.org>
+ <5A6AA107.3000607@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <001a1143fd0075461c055f45b0ab@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <5A6AA107.3000607@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 01, 2017 at 03:30:01AM -0800, syzbot wrote:
-> Hello,
+On Fri, Jan 26, 2018 at 11:31:19AM +0800, Wei Wang wrote:
+> On 01/26/2018 10:42 AM, Michael S. Tsirkin wrote:
+> > On Fri, Jan 26, 2018 at 09:40:44AM +0800, Wei Wang wrote:
+> > > On 01/25/2018 09:49 PM, Michael S. Tsirkin wrote:
+> > > > On Thu, Jan 25, 2018 at 05:14:06PM +0800, Wei Wang wrote:
+> > > > 
 > 
-> syzkaller hit the following crash on
-> df8ba95c572a187ed2aa7403e97a7a7f58c01f00
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
+> > > The controversy is that the free list is not static
+> > > once the lock is dropped, so everything is dynamically changing, including
+> > > the state that was recorded. The method we are using is more prudent, IMHO.
+> > > How about taking the fundamental solution, and seek to improve incrementally
+> > > in the future?
+> > > 
+> > > 
+> > > Best,
+> > > Wei
+> > I'd like to see kicks happen outside the spinlock. kick with a spinlock
+> > taken looks like a scalability issue that won't be easy to
+> > reproduce but hurt workloads at random unexpected times.
+> > 
 > 
-> Unfortunately, I don't have any reproducer for this bug yet.
-> 
-> 
-> 
-> =====================================
-> WARNING: bad unlock balance detected!
-> 4.15.0-rc1+ #202 Not tainted
-> -------------------------------------
-> syz-executor4/28722 is trying to release lock (mrt_lock) at:
-> [<00000000c358606b>] ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
-> but there are no more locks to release!
-> 
-> other info that might help us debug this:
-> 2 locks held by syz-executor4/28722:
->  #0:  (sb_writers#6){.+.+}, at: [<000000003332d098>] file_start_write
-> include/linux/fs.h:2715 [inline]
->  #0:  (sb_writers#6){.+.+}, at: [<000000003332d098>] do_sendfile+0xaec/0xe90
-> fs/read_write.c:1412
->  #1:  (&p->lock){+.+.}, at: [<000000001572c807>] seq_read+0xd5/0x13d0
-> fs/seq_file.c:165
-> 
-> stack backtrace:
-> CPU: 0 PID: 28722 Comm: syz-executor4 Not tainted 4.15.0-rc1+ #202
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  print_unlock_imbalance_bug+0x12f/0x140 kernel/locking/lockdep.c:3561
->  __lock_release kernel/locking/lockdep.c:3775 [inline]
->  lock_release+0x5f9/0xda0 kernel/locking/lockdep.c:4023
->  __raw_read_unlock include/linux/rwlock_api_smp.h:225 [inline]
->  _raw_read_unlock+0x1a/0x30 kernel/locking/spinlock.c:255
->  ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
->  seq_read+0xc42/0x13d0 fs/seq_file.c:277
->  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
->  do_loop_readv_writev fs/read_write.c:673 [inline]
->  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
->  vfs_readv+0x121/0x1c0 fs/read_write.c:959
->  kernel_readv fs/splice.c:361 [inline]
->  default_file_splice_read+0x508/0xae0 fs/splice.c:416
->  do_splice_to+0x110/0x170 fs/splice.c:880
->  splice_direct_to_actor+0x242/0x820 fs/splice.c:952
->  do_splice_direct+0x2a7/0x3d0 fs/splice.c:1061
->  do_sendfile+0x5d5/0xe90 fs/read_write.c:1413
->  SYSC_sendfile64 fs/read_write.c:1468 [inline]
->  SyS_sendfile64+0xbd/0x160 fs/read_write.c:1460
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> RIP: 0033:0x4529d9
-> RSP: 002b:00007f225b206c58 EFLAGS: 00000212 ORIG_RAX: 0000000000000028
-> RAX: ffffffffffffffda RBX: 0000000000758020 RCX: 00000000004529d9
-> RDX: 0000000020360ff8 RSI: 0000000000000014 RDI: 0000000000000014
-> RBP: 0000000000000561 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000008 R11: 0000000000000212 R12: 00000000006f51b8
-> R13: 00000000ffffffff R14: 00007f225b2076d4 R15: 0000000000000000
-> WARNING: CPU: 0 PID: 28722 at lib/usercopy.c:26 _copy_to_user+0xb5/0xc0
-> lib/usercopy.c:26
+> Is that "kick inside the spinlock" the only concern you have? I think we can
+> remove the kick actually. If we check how the host side works, it is
+> worthwhile to let the host poll the virtqueue after it receives the cmd id
+> from the guest (kick for cmd id isn't within the lock).
 > 
 > 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
-> 
-> syzbot will keep track of this bug report.
-> Once a fix for this bug is committed, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
+> Best,
+> Wei
 
-Duplicate of "WARNING: bad unlock balance in ipmr_mfc_seq_stop" which syzbot is
-detecting under that crash signature now, so just invalidating this one:
+So really there are different ways to put free page hints to use.
 
-#syz invalid
+The current interface requires host to do dirty tracking
+for all memory, and it's more or less useless for
+things like freeing host memory.
+
+So while your project's needs seem to be addressed, I'm
+still a bit disappointed that so little collaboration
+happened with e.g. Nitesh's project, to the point where
+you don't even CC him on patches.
+
+So I'm kind of trying to bridge this a bit - I would
+like the interfaces that we build to at least superficially
+look like they might be reusable for other uses of hinting.
+
+Imagine that you don't have dirty tracking on the host.
+What would it take to still use hinting information,
+e.g. to call MADV_FREE on the pages guest gives us?
+
+I think you need to kick and you need to wait for
+host to consume the hint before page is reused.
+And we know madvise takes a lot of time sometimes,
+so locking out the free list does not sound like a
+good idea.
+
+That's why I was talking about kick out of lock,
+so that eventually we can reuse that for hinting
+and actually wait for an interrupt.
+
+So how about we take a bunch of pages out of the free list, move them to
+the balloon, kick (and optionally wait for host to consume), them move
+them back? Preferably to end of the list? This will also make things
+like sorting them much easier as you can just put them in a binary tree
+or something.
+
+For when we need to be careful to make sure we don't
+create an OOM situation with this out of thin air,
+and for when you can't give everything to host in one go,
+you might want some kind of notifier that tells you
+that you need to return pages to the free list ASAP.
+
+How'd this sound?
+
+-- 
+MST
