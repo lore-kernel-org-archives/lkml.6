@@ -1,89 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753815AbeA3VBq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:01:46 -0500
-Received: from mail.efficios.com ([167.114.142.141]:40645 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752419AbeA3VBo (ORCPT
+        id S1753837AbeA3VDb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:03:31 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45207 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752067AbeA3VD1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:01:44 -0500
-Date: Tue, 30 Jan 2018 21:02:17 +0000 (UTC)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: lttng-dev@lists.lttng.org, diamon-discuss@lists.linuxfoundation.org
-Cc: linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1016989198.12891.1517346137739.JavaMail.zimbra@efficios.com>
-Subject: [RELEASE] LTTng-modules 2.9.8 and 2.10.5 (Linux kernel tracer)
+        Tue, 30 Jan 2018 16:03:27 -0500
+Date: Tue, 30 Jan 2018 22:03:17 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: Sebastian Sewior <bigeasy@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] hrtimer: Reset hrtimer cpu base proper on CPU hotplug
+In-Reply-To: <20180129234347.GA26365@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1801302202510.2293@nanos>
+References: <alpine.DEB.2.20.1801261447590.2067@nanos> <20180126220917.GI3741@linux.vnet.ibm.com> <20180129082047.hash3pnhpztzcg22@linutronix.de> <20180129095738.GU3741@linux.vnet.ibm.com> <20180129234347.GA26365@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.141]
-X-Mailer: Zimbra 8.7.11_GA_1854 (ZimbraWebClient - FF52 (Linux)/8.7.11_GA_1854)
-Thread-Index: fAK6C91RSiTUWKSXUdSFQWLXrUE80Q==
-Thread-Topic: LTTng-modules 2.9.8 and 2.10.5 (Linux kernel tracer)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The stable releases 2.9.8 and 2.10.5 of the LTTng-modules kernel tracer
-introduces support for the 4.15 Linux kernel, updates support for currently
-maintained Linux kernel stable branches, and contains bugfixes.
+On Mon, 29 Jan 2018, Paul E. McKenney wrote:
 
-The LTTng modules provide Linux kernel tracing capability to the LTTng
-tracer toolset.
+> On Mon, Jan 29, 2018 at 01:57:38AM -0800, Paul E. McKenney wrote:
+> > On Mon, Jan 29, 2018 at 09:20:48AM +0100, Sebastian Sewior wrote:
+> > > On 2018-01-26 14:09:17 [-0800], Paul E. McKenney wrote:
+> > > > find this one.  ;-)  But it did pass rcutorture testing for a great many
+> > > > years, didn't it?  :-/
+> > > 
+> > > It started to trigger better (or at all) on our test box with
+> > > 	modprobe kvm_intel preemption_timer=n
+> > > 
+> > > on the host kernel so maybe a completely unrelated change helped to
+> > > trigger this.
+> > 
+> > Good point!
+> > 
+> > And testing continues, currently at 108 hours of TREE01 without any
+> > waylayed timers, so looking good!  ;-)
+> > 
+> > Just kicked off another 70 hours worth.
+> 
+> And those completed without incident for a total of 178 hours.  I believe
+> we can call this one fixed.  Thank you all!!!
+> 
+> One question...  Is the patch shown below needed, or is this just yet
+> another case of me being confused?  (The lack of it is not triggering,
+> but...)
 
-Project website: http://lttng.org
-Documentation: http://lttng.org/docs
-Download link: http://lttng.org/download
-
-Changelog:
-
-2018-01-30 (National Croissant Day) LTTng modules 2.9.8
-        * Fix: network instrumentation protocol enum
-        * Fix: update btrfs instrumentation for SuSE 4.4.103-6
-        * Fix: update block instrumentation for SuSE 4.4.73-5
-        * Fix: global_dirty_limit for kernel v4.2 and up
-        * Fix: network instrumentation handling of corrupted TCP headers
-        * Fix: add missing uaccess.h include from kstrtox.h wrapper
-        * Update: kvm instrumentation for 4.14.14+, 4.9.77+, 4.4.112+
-        * Fix: btrfs_delayed_ref_head was unwired since v3.12
-        * Update kvm instrumentation for debian kernel 4.9.65-3
-        * Fix: debian kernel version parsing
-        * Fix: block instrumentation 4.14+ NULL pointer dereference
-        * Update: kvm instrumentation for 3.16.52 and 3.2.97
-        * Fix: kvm instrumentation for 4.15
-        * Update sock instrumentation for 4.15
-        * Update kvm instrumentation for 4.15
-        * Fix: ACCESS_ONCE() removed in kernel 4.15
-        * Fix: sched instrumentation on stable RT kernels
-        * timer API transition for kernel 4.15
-        * Fix: Don't nest get online cpus
-        * Fix: lttng_channel_syscall_mask() bool use in bitfield
-        * Fix: update kmem instrumentation for kernel 4.15
-
-2018-01-30 (National Croissant Day) LTTng modules 2.10.5
-        * Fix: network instrumentation protocol enum
-        * Fix: update btrfs instrumentation for SuSE 4.4.103-6
-        * Fix: update block instrumentation for SuSE 4.4.73-5
-        * Fix: global_dirty_limit for kernel v4.2 and up
-        * Fix: network instrumentation handling of corrupted TCP headers
-        * Fix: add missing uaccess.h include from kstrtox.h wrapper
-        * Update: kvm instrumentation for 4.14.14+, 4.9.77+, 4.4.112+
-        * Fix: btrfs_delayed_ref_head was unwired since v3.12
-        * Update kvm instrumentation for debian kernel 4.9.65-3
-        * Fix: debian kernel version parsing
-        * Fix: block instrumentation 4.14+ NULL pointer dereference
-        * Update: kvm instrumentation for 3.16.52 and 3.2.97
-        * Fix: kvm instrumentation for 4.15
-        * Update sock instrumentation for 4.15
-        * Update kvm instrumentation for 4.15
-        * Fix: ACCESS_ONCE() removed in kernel 4.15
-        * Fix: sched instrumentation on stable RT kernels
-        * timer API transition for kernel 4.15
-        * Fix: Don't nest get online cpus
-        * Fix: lttng_channel_syscall_mask() bool use in bitfield
-        * Fix: update kmem instrumentation for kernel 4.15
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+See commit 26456f87aca7
