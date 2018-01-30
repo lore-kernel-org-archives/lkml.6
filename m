@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753856AbeA3VFN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:05:13 -0500
-Received: from 2.mo179.mail-out.ovh.net ([178.33.250.45]:45189 "EHLO
-        2.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753317AbeA3VFK (ORCPT
+        id S1753887AbeA3VFp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:05:45 -0500
+Received: from 3.mo179.mail-out.ovh.net ([178.33.251.175]:55170 "EHLO
+        3.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752429AbeA3VFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:05:10 -0500
+        Tue, 30 Jan 2018 16:05:11 -0500
 From: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
 To: bhelgaas@google.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
         linux-pci@vger.kernel.org
@@ -16,15 +16,15 @@ Cc: adouglas@cadence.com, stelford@cadence.com, dgary@cadence.com,
         nsekhar@ti.com, linux-kernel@vger.kernel.org, robh@kernel.org,
         devicetree@vger.kernel.org,
         Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-Subject: [PATCH v6 01/11] PCI: Regroup all PCI related entries into drivers/pci/Makefile
-Date: Tue, 30 Jan 2018 21:56:49 +0100
-Message-Id: <e74b20f039a4df71752801d4ff1e372585ea764a.1517343502.git.cyrille.pitchen@free-electrons.com>
+Subject: [PATCH v6 02/11] PCI: OF: Add generic function to parse and allocate PCI resources
+Date: Tue, 30 Jan 2018 21:56:50 +0100
+Message-Id: <ff9faac9cbe41c6c96dd6dabaa581d446ab782b6.1517343502.git.cyrille.pitchen@free-electrons.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
 References: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
 In-Reply-To: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
 References: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
-X-Ovh-Tracer-Id: 15870122140431898625
+X-Ovh-Tracer-Id: 15874907214661965825
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 25
 X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrtddtgdduvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucgotffhvedqqdfjughrqdfuuhhsphgvtghtqdhlohifucdlhedmnegotffhvedqqdfjughrqdfuuhhsphgvtghtucdlvddtmd
@@ -32,120 +32,177 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clean up drivers/Makefile by moving the pci/endpoint and pci/dwc entries
-from drivers/Makefile into drivers/pci/Makefile.
-
-Since we don't want to introduce any dependency between CONFIG_PCI and
-CONFIG_PCI_ENDPOINT, we now always execute drivers/pci/Makefile.
-
-Hence all Makefiles in drivers/pci/ were updated accordingly so no file is
-compiled when CONFIG_PCI is not defined.
-
-Also, we add a comment to reinforce that EPC and EPF libraries must be
-initialized before their users. Hence built-in EPC drivers, such as
-those of Designware, are linked after the endpoint core libraries.
-
-Finally, we add another comment to explain why obj-y has been chosen
-instead of obj-$(CONFIG_PCIE_DW) to parse the dwc/ sub-folder.
+The patch moves the gen_pci_parse_request_of_pci_ranges() function from
+drivers/pci/host/pci-host-common.c into drivers/pci/of.c to easily share
+common source code between PCI host drivers.
 
 Signed-off-by: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
 ---
- drivers/Makefile          |  5 +----
- drivers/pci/Kconfig       |  1 +
- drivers/pci/Makefile      | 13 ++++++++++---
- drivers/pci/dwc/Makefile  |  2 ++
- drivers/pci/host/Makefile |  2 ++
- 5 files changed, 16 insertions(+), 7 deletions(-)
+ drivers/pci/host/pci-host-common.c | 49 ++----------------------------------
+ drivers/pci/of.c                   | 51 ++++++++++++++++++++++++++++++++++++++
+ include/linux/pci.h                |  9 +++++++
+ 3 files changed, 62 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/Makefile b/drivers/Makefile
-index e06f7f633f73..8189b1edec00 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -16,10 +16,7 @@ obj-$(CONFIG_PINCTRL)		+= pinctrl/
- obj-$(CONFIG_GPIOLIB)		+= gpio/
- obj-y				+= pwm/
+diff --git a/drivers/pci/host/pci-host-common.c b/drivers/pci/host/pci-host-common.c
+index 44a47d4f0b8f..efd904d93562 100644
+--- a/drivers/pci/host/pci-host-common.c
++++ b/drivers/pci/host/pci-host-common.c
+@@ -24,50 +24,6 @@
+ #include <linux/pci-ecam.h>
+ #include <linux/platform_device.h>
  
--obj-$(CONFIG_PCI)		+= pci/
--obj-$(CONFIG_PCI_ENDPOINT)	+= pci/endpoint/
--# PCI dwc controller drivers
--obj-y				+= pci/dwc/
-+obj-y				+= pci/
- 
- obj-$(CONFIG_PARISC)		+= parisc/
- obj-$(CONFIG_RAPIDIO)		+= rapidio/
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index bda151788f3f..7eeb969ab86a 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -125,6 +125,7 @@ config PCI_PASID
- 
- config PCI_LABEL
- 	def_bool y if (DMI || ACPI)
-+	depends on PCI
- 	select NLS
- 
- config PCI_HYPERV
-diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-index c7819b973df7..ddb5aa6640d7 100644
---- a/drivers/pci/Makefile
-+++ b/drivers/pci/Makefile
-@@ -3,12 +3,15 @@
- # Makefile for the PCI bus specific drivers.
- #
- 
--obj-y		+= access.o bus.o probe.o host-bridge.o remove.o pci.o \
-+obj-$(CONFIG_PCI)	+= access.o bus.o probe.o host-bridge.o remove.o pci.o \
- 			pci-driver.o search.o pci-sysfs.o rom.o setup-res.o \
- 			irq.o vpd.o setup-bus.o vc.o mmap.o setup-irq.o
- 
-+ifdef CONFIG_PCI
- obj-$(CONFIG_PROC_FS) += proc.o
- obj-$(CONFIG_SYSFS) += slot.o
-+obj-$(CONFIG_OF) += of.o
-+endif
- 
- obj-$(CONFIG_PCI_QUIRKS) += quirks.o
- 
-@@ -44,10 +47,14 @@ obj-$(CONFIG_PCI_ECAM) += ecam.o
- 
- obj-$(CONFIG_XEN_PCIDEV_FRONTEND) += xen-pcifront.o
- 
--obj-$(CONFIG_OF) += of.o
+-static int gen_pci_parse_request_of_pci_ranges(struct device *dev,
+-		       struct list_head *resources, struct resource **bus_range)
+-{
+-	int err, res_valid = 0;
+-	struct device_node *np = dev->of_node;
+-	resource_size_t iobase;
+-	struct resource_entry *win, *tmp;
 -
- ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
+-	err = of_pci_get_host_bridge_resources(np, 0, 0xff, resources, &iobase);
+-	if (err)
+-		return err;
+-
+-	err = devm_request_pci_bus_resources(dev, resources);
+-	if (err)
+-		return err;
+-
+-	resource_list_for_each_entry_safe(win, tmp, resources) {
+-		struct resource *res = win->res;
+-
+-		switch (resource_type(res)) {
+-		case IORESOURCE_IO:
+-			err = pci_remap_iospace(res, iobase);
+-			if (err) {
+-				dev_warn(dev, "error %d: failed to map resource %pR\n",
+-					 err, res);
+-				resource_list_destroy_entry(win);
+-			}
+-			break;
+-		case IORESOURCE_MEM:
+-			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
+-			break;
+-		case IORESOURCE_BUS:
+-			*bus_range = res;
+-			break;
+-		}
+-	}
+-
+-	if (res_valid)
+-		return 0;
+-
+-	dev_err(dev, "non-prefetchable memory resource required\n");
+-	return -EINVAL;
+-}
+-
+ static void gen_pci_unmap_cfg(void *ptr)
+ {
+ 	pci_ecam_free((struct pci_config_window *)ptr);
+@@ -82,9 +38,9 @@ static struct pci_config_window *gen_pci_init(struct device *dev,
+ 	struct pci_config_window *cfg;
  
- # PCI host controller drivers
- obj-y += host/
- obj-y += switch/
+ 	/* Parse our PCI ranges and request their resources */
+-	err = gen_pci_parse_request_of_pci_ranges(dev, resources, &bus_range);
++	err = pci_parse_request_of_pci_ranges(dev, resources, &bus_range);
+ 	if (err)
+-		goto err_out;
++		return ERR_PTR(err);
+ 
+ 	err = of_address_to_resource(dev->of_node, 0, &cfgres);
+ 	if (err) {
+@@ -135,7 +91,6 @@ int pci_host_common_probe(struct platform_device *pdev,
+ 	of_pci_check_probe_only();
+ 
+ 	/* Parse and map our Configuration Space windows */
+-	INIT_LIST_HEAD(&resources);
+ 	cfg = gen_pci_init(dev, &resources, ops);
+ 	if (IS_ERR(cfg))
+ 		return PTR_ERR(cfg);
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index e112da11630e..54e210501b73 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -88,3 +88,54 @@ struct irq_domain *pci_host_bridge_of_msi_domain(struct pci_bus *bus)
+ 	return NULL;
+ #endif
+ }
 +
-+obj-$(CONFIG_PCI_ENDPOINT)	+= endpoint/
++int pci_parse_request_of_pci_ranges(struct device *dev,
++				    struct list_head *resources,
++				    struct resource **bus_range)
++{
++	int err, res_valid = 0;
++	struct device_node *np = dev->of_node;
++	resource_size_t iobase;
++	struct resource_entry *win, *tmp;
 +
-+# Endpoint library must be initialized before its users
-+# pcie-hisi.o quirks are needed even without CONFIG_PCIE_DW
-+obj-y				+= dwc/
-diff --git a/drivers/pci/dwc/Makefile b/drivers/pci/dwc/Makefile
-index 41ba499c96ee..cb35e45cd186 100644
---- a/drivers/pci/dwc/Makefile
-+++ b/drivers/pci/dwc/Makefile
-@@ -27,4 +27,6 @@ obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
- # ARM64 and use internal ifdefs to only build the pieces we need
- # depending on whether ACPI, the DT driver, or both are enabled.
++	INIT_LIST_HEAD(resources);
++	err = of_pci_get_host_bridge_resources(np, 0, 0xff, resources, &iobase);
++	if (err)
++		return err;
++
++	err = devm_request_pci_bus_resources(dev, resources);
++	if (err)
++		goto out_release_res;
++
++	resource_list_for_each_entry_safe(win, tmp, resources) {
++		struct resource *res = win->res;
++
++		switch (resource_type(res)) {
++		case IORESOURCE_IO:
++			err = pci_remap_iospace(res, iobase);
++			if (err) {
++				dev_warn(dev, "error %d: failed to map resource %pR\n",
++					 err, res);
++				resource_list_destroy_entry(win);
++			}
++			break;
++		case IORESOURCE_MEM:
++			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
++			break;
++		case IORESOURCE_BUS:
++			if (bus_range)
++				*bus_range = res;
++			break;
++		}
++	}
++
++	if (res_valid)
++		return 0;
++
++	dev_err(dev, "non-prefetchable memory resource required\n");
++	err = -EINVAL;
++
++ out_release_res:
++	pci_free_resource_list(resources);
++	return err;
++}
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index c170c9250c8b..c7a701abbf17 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -2182,6 +2182,9 @@ void pci_release_of_node(struct pci_dev *dev);
+ void pci_set_bus_of_node(struct pci_bus *bus);
+ void pci_release_bus_of_node(struct pci_bus *bus);
+ struct irq_domain *pci_host_bridge_of_msi_domain(struct pci_bus *bus);
++int pci_parse_request_of_pci_ranges(struct device *dev,
++				    struct list_head *resources,
++				    struct resource **bus_range);
  
-+ifdef CONFIG_PCI
- obj-$(CONFIG_ARM64) += pcie-hisi.o
-+endif
-diff --git a/drivers/pci/host/Makefile b/drivers/pci/host/Makefile
-index 34ec1d88f961..3b1059190867 100644
---- a/drivers/pci/host/Makefile
-+++ b/drivers/pci/host/Makefile
-@@ -34,6 +34,8 @@ obj-$(CONFIG_VMD) += vmd.o
- # ARM64 and use internal ifdefs to only build the pieces we need
- # depending on whether ACPI, the DT driver, or both are enabled.
+ /* Arch may override this (weak) */
+ struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus);
+@@ -2206,6 +2209,12 @@ static inline struct device_node *
+ pci_device_to_OF_node(const struct pci_dev *pdev) { return NULL; }
+ static inline struct irq_domain *
+ pci_host_bridge_of_msi_domain(struct pci_bus *bus) { return NULL; }
++static inline int pci_parse_request_of_pci_ranges(struct device *dev,
++						  struct list_head *resources,
++						  struct resource **bus_range)
++{
++	return -EINVAL;
++}
+ #endif  /* CONFIG_OF */
  
-+ifdef CONFIG_PCI
- obj-$(CONFIG_ARM64) += pci-thunder-ecam.o
- obj-$(CONFIG_ARM64) += pci-thunder-pem.o
- obj-$(CONFIG_ARM64) += pci-xgene.o
-+endif
+ #ifdef CONFIG_ACPI
 -- 
 2.11.0
