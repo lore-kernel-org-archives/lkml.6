@@ -1,94 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752855AbeA3GaI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 01:30:08 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35941 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752501AbeA3GaG (ORCPT
+        id S1752846AbeA3Gbu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 01:31:50 -0500
+Received: from mail-io0-f178.google.com ([209.85.223.178]:41973 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752385AbeA3Gbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 01:30:06 -0500
-X-Google-Smtp-Source: AH8x226KGgNgi3GKwYO4ASEF/shygjWGZIQ71yJxwyKub/lswo2TxW4XXzl6Q4fpvCa0CNihPnuDUA==
-Date: Tue, 30 Jan 2018 07:30:02 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: Re: [GIT pull] Timer core updates for 4.16
-Message-ID: <20180130063002.gxmruvxcqsfp5hv4@gmail.com>
-References: <alpine.DEB.2.20.1801290935160.1849@nanos>
- <CA+55aFy6FX6Ewg9exGH12PWnzSNKBfmc--v6H6UYpcSAEWUR8A@mail.gmail.com>
+        Tue, 30 Jan 2018 01:31:48 -0500
+X-Google-Smtp-Source: AH8x226s9bFcSmvvHuSx3i1bbVnPLP2KEDiQ8p9+l+7sfVO1pUtE9JYPg2K6cyfV/F3evqGv9ZjDJw==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFy6FX6Ewg9exGH12PWnzSNKBfmc--v6H6UYpcSAEWUR8A@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <ced425a2-8b66-05c6-367d-46a0a40b1873@xs4all.nl>
+References: <20180126060216.147918-1-acourbot@chromium.org> <ced425a2-8b66-05c6-367d-46a0a40b1873@xs4all.nl>
+From: Alexandre Courbot <acourbot@chromium.org>
+Date: Tue, 30 Jan 2018 15:31:25 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MU5Ph=_rH_TOQi5mstujAPMTWqC_1d-8_TcuGx25sOJvg@mail.gmail.com>
+Message-ID: <CAPBb6MU5Ph=_rH_TOQi5mstujAPMTWqC_1d-8_TcuGx25sOJvg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/8] [media] Request API, take three
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Hans,
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Mon, Jan 29, 2018 at 8:21 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 01/26/2018 07:02 AM, Alexandre Courbot wrote:
+>> Howdy. Here is your bi-weekly request API redesign! ;)
+>>
+>> Again, this is a simple version that only implements the flow of requests,
+>> without applying controls. The intent is to get an agreement on a base to work
+>> on, since the previous versions went straight back to the redesign board.
+>>
+>> Highlights of this version:
+>>
+>> * As requested by Hans, request-bound buffers are now passed earlier to drivers,
+>> as early as the request itself is submitted. Doing it earlier is not be useful
+>> since the driver would not know the state of the request, and thus cannot do
+>> anything with the buffer. Drivers are now responsible for applying request
+>> parameters themselves.
+>>
+>> * As a consequence, there is no such thing as a "request queue" anymore. The
+>> flow of buffers decides the order in which requests are processed. Individual
+>> devices of the same pipeline can implement synchronization if needed, but this
+>> is beyond this first version.
+>>
+>> * VB2 code is still a bit shady. Some of it will interfere with the fences
+>> series, so I am waiting for the latter to land to do it properly.
+>>
+>> * Requests that are not yet submitted effectively act as fences on the buffers
+>> they own, resulting in the buffer queue being blocked until the request is
+>> submitted. An alternate design would be to only block the
+>> not-submitted-request's buffer and let further buffers pass before it, but since
+>> buffer order is becoming increasingly important I have decided to just block the
+>> queue. This is open to discussion though.
+>
+> I don't think we should mess with the order.
 
-> On Mon, Jan 29, 2018 at 12:48 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> >   - A rather large rework of the hrtimer infrastructure which introduces
-> >     softirq based hrtimers to replace the spread of hrtimer/tasklet combos
-> >     which force the actual callback execution into softirq context.
-> 
-> I really would have liked to see more of the rationale for this - now
-> I'm left with just two example drivers, and a "you'll see the cleanups
-> this allows in future driver pulls".
-> 
-> But pulled, since the code doesn't look disgusting.
+Agreed, let's keep it that way then.
 
-Sorry, this is my fault: from Anna-Maria's original, full softirq-hrtimers series 
-I didn't apply many of the usecases, because we didn't get any review feedback 
-from the networking folks:
+>
+>>
+>> * Documentation! Also described usecases for codec and simple (i.e. not part of
+>> a complex pipeline) capture device.
+>
+> I'll concentrate on reviewing that.
+>
+>>
+>> Still remaining to do:
+>>
+>> * As pointed out by Hans on the previous revision, do not assume that drivers
+>> using v4l2_fh have a per-handle state. I have not yet found a good way to
+>> differenciate both usages.
+>
+> I suspect we need to add a flag or something for this.
 
- can/bcm: Replace hrtimer_tasklet with softirq based hrtimer
+I hope we don't need to, let's see if I can find a pattern...
 
-   net/can/bcm.c | 156 ++++++++++++++++++++--------------------------------------
-   1 file changed, 52 insertions(+), 104 deletions(-)
+>
+>> * Integrate Hans' patchset for control handling: as said above, this is futile
+>> unless we can agree on the basic design, which I hope we can do this time.
+>> Chrome OS needs this really badly now and will have to move forward no matter
+>> what, so I hope this will be considered good enough for a common base of work.
+>
+> I am not sure there is any reason to not move forward with the control handling.
+> You need this anyway IMHO, regardless of any public API considerations.
 
- mac80211_hwsim: Replace hrtimer tasklet with softirq hrtimer
+Only reasons are my lazyness and because I wanted to focus on the
+request flow first. But you're right. I have a version with your
+control framework changes integrated (they worked on the first attempt
+btw! :)), let me create a clean patchset from this and send another
+RFC.
 
-   drivers/net/wireless/mac80211_hwsim.c | 44 ++++++++++++++++-------------------
-   1 file changed, 20 insertions(+), 24 deletions(-)
+>
+>> A few thoughts/questions that emerged when writing this patchset:
+>>
+>> * Since requests are exposed as file descriptors, we could easily move the
+>> MEDIA_REQ_CMD_SUBMIT and MEDIA_REQ_CMD_REININT commands as ioctls on the
+>> requests themselves, instead of having to perform them on the media device that
+>> provided the request in the first place. That would add a bit more flexibility
+>> if/when passing requests around and means the media device only needs to handle
+>> MEDIA_REQ_CMD_ALLOC. Conceptually speaking, this seems to make sense to me.
+>> Any comment for/against that?
+>
+> Makes sense IMHO.
 
- xfrm: Replace hrtimer tasklet with softirq hrtimer
+Glad to hear it, that was my preferred design. :)
 
-   include/net/xfrm.h    |  2 +-
-   net/xfrm/xfrm_state.c | 30 ++++++++++++++++++------------
-   2 files changed, 19 insertions(+), 13 deletions(-)
+>
+>> * For the codec usecase, I have experimented a bit marking CAPTURE buffers with
+>> the request FD that produced them (vim2m acts that way). This seems to work
+>> well, however FDs are process-local and could be closed before the CAPTURE
+>> buffer is dequeued, rendering that information less meaningful, if not
+>> dangerous.
+>
+> I don't follow this. Once the fd is passed to the kernel its refcount should be
+> increased so the data it represents won't be released if userspace closes the fd.
 
- net/mvpp2: Replace tasklet with softirq hrtimer
+The refcount of the request is increased. The refcount of the FD is
+not, since it is only a userspace reference to the request.
 
-   drivers/net/ethernet/marvell/mvpp2.c | 62 +++++++++++++++---------------------
-   1 file changed, 25 insertions(+), 37 deletions(-)
+>
+> Obviously if userspace closes the fd it cannot do anything with it anymore, but
+> it shouldn't be 'dangerous' AFAICT.
 
-And I felt uneasy about applying this in one go, so we decided to apply it in two 
-phases.
+It userspace later gets that closed FD back from a DQBUF call, and
+decides to use it again, then we would have a problem. I agree that it
+is userspace responsibility to be careful here, but making things
+foolproof never hurts.
 
-These are in cases significant driver simplifications, but they also enable the 
-real deal, the elimination of the hrtimer tasklet:
+>
+>> Wouldn't it be better/safer to use a global request ID for
+>> such information instead? That ID would be returned upon MEDIA_REQ_CMD_ALLOC so
+>> user-space knows which request ID a FD refers to.
+>
+> I think it is not a good idea to have both an fd and an ID to refer to the
+> same object. That's going to be very confusing I think.
 
- softirq: Remove tasklet_hrtimer
+IDs would not refer to the object, they would just be a way to
+identify it. FDs would be the actual reference.
 
-   include/linux/interrupt.h | 25 -----------------------
-   kernel/softirq.c          | 51 -----------------------------------------------
-   2 files changed, 76 deletions(-)
+If we drop the idea of returning request FDs to userspace after the
+initial allocation (which is the only time we can be sure that a
+returned FD is valid), then this is not a problem anymore, but I think
+it may be useful to mark CAPTURE buffers with the request that
+generated them.
 
-... which is a pretty nice thing in itself even without the driver 
-simplifications!
+>
+>> * Using the media node to provide requests makes absolute sense for complex
+>> camera devices, but is tedious for codec devices which work on one node and
+>> require to protect request/media related code with #ifdef
+>> CONFIG_MEDIA_CONTROLLER.
+>
+> Why? They would now depend on MEDIA_CONTROLLER (i.e. they won't appear in the
+> menuconfig unless MEDIA_CONTROLLER is set). No need for an #ifdef.
 
-Plus the _real_ secret motivation behind it all is the -rt kernel and 
-CONFIG_PREEMPT_RT=y and the ability to push most of the hrtimer processing into 
-softirq context - while it still keeps the main hrtimer machinery capable to run 
-in hard-RT hardirq domain. Turns out it was possible to implement this duality via 
-the softirq-hrtimers, with a good chunk of benefits to non-rt upstream as well.
+Ah, if we make them depend on MEDIA_CONTROLLER, then indeed. But do we
+want to do this for e.g. vim2m and vivid?
+
+>
+>  For these devices, the sole role of the media node is
+>> to produce the request, and that's it (since request submission could be moved
+>> to the request FD as explained above). That's a modest use that hardly justifies
+>> bringing in the whole media framework IMHO. With a bit of extra abstraction, it
+>> should be possible to decouple the base requests from the media controller
+>> altogether, and propose two kinds of requests implementations: one simpler
+>> implementation that works directly with a single V4L2 node (useful for codecs),
+>> and another one that works on a media node and can control all its entities
+>> (good for camera). This would allow codecs to use the request API without
+>> forcing the media controller, and would considerably simplify the use-case. Any
+>> objection to that? IIRC the earlier design documents mentioned this possibility.
+>
+> I think this is an interesting idea, but I would postpone making a decision on
+> this until later. We need this MC support regardless, so let's start off with that.
+>
+> Once that's working we can discuss if we should or should not create a shortcut
+> for codecs. Trying to decide this now would only confuse the process.
+
+Sounds good, as long as we make a decision before merging.
 
 Thanks,
-
-	Ingo
+Alex.
