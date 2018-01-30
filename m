@@ -1,96 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751845AbeA3Ima (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 03:42:30 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:33426 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751712AbeA3Ik2 (ORCPT
+        id S1751711AbeA3Isc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 03:48:32 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:43054 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751219AbeA3Isb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:40:28 -0500
-Date: Tue, 30 Jan 2018 09:40:16 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        wens@csie.org, linux@armlinux.org.uk, sean@mess.org,
-        p.zabel@pengutronix.de, andi.shyti@samsung.com,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 5/6] arm: dts: sun8i: a83t: bananapi-m3: Enable IR
- controller
-Message-ID: <20180130084016.4uyrd425qpzyiyql@flea.lan>
-References: <20180129155810.7867-1-embed3d@gmail.com>
- <20180129155810.7867-6-embed3d@gmail.com>
+        Tue, 30 Jan 2018 03:48:31 -0500
+X-Google-Smtp-Source: AH8x225evsIzkLsVRzxYGyO4JTqZYF48at2GKrOB7yT7Ao5JYEYqelYokb5FC/W7hgqnOFv8xWIlaQ==
+Date: Tue, 30 Jan 2018 09:48:27 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Chen Guanqiao <chen.chenchacha@foxmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] fs: fat: add ioctl method in fat filesystem driver
+Message-ID: <20180130084827.g6iegq4rsqnji76s@pali>
+References: <20180117104355.889-1-chen.chenchacha@foxmail.com>
+ <20180117104355.889-4-chen.chenchacha@foxmail.com>
+ <CAHp75Vcxz-6vREpMVBUGNR0kyNUYt3xJDaGPaSYnx9sj4cxX3Q@mail.gmail.com>
+ <20180129164304.44on6tdlhpzcwarv@pali>
+ <5a7011dd.ca40650a.885bf.f16eSMTPIN_ADDED_BROKEN@mx.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q22bqurpyklj4yxv"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180129155810.7867-6-embed3d@gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <5a7011dd.ca40650a.885bf.f16eSMTPIN_ADDED_BROKEN@mx.google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0U8mau7022954
 
+On Tuesday 30 January 2018 14:33:49 Chen Guanqiao wrote:
+> On Mon, 2018-01-29 at 17:43 +0100, Pali Rohár wrote:
+> > On Monday 29 January 2018 15:18:42 Andy Shevchenko wrote:
+> > > +Cc: Pali, who AFAIRC is interested in FAT labeling mess.
+> > 
+> > Yes, please CC me for FAT labeling discussing in future.
+> > 
+> > > On Wed, Jan 17, 2018 at 12:43 PM, ChenGuanqiao
+> > > <chen.chenchacha@foxmail.com> wrote:
+> > > 
+> > > Commit message?
+> > > 
+> > > > Signed-off-by: ChenGuanqiao <chen.chenchacha@foxmail.com>
+> > > >  #include <linux/fsnotify.h>
+> > > >  #include <linux/security.h>
+> > > >  #include <linux/falloc.h>
+> > > > +#include <linux/ctype.h>
+> > > 
+> > > It would be better to squeeze it to have order (to some extent)
+> > > preserved.
+> > > 
+> > > > +static int fat_check_d_characters(char *label, unsigned long
+> > > > len)
+> > > > +{
+> > > > +       int i;
+> > > > +
+> > > > +       for (i = 0; i < len; ++i) {
+> > > 
+> > > Oy vey, unsigned long len vs. int i.
+> > > 
+> > > > +               switch (label[i]) {
+> > > > +               case 'a' ... 'z':
+> > > > +                       label[i] = __toupper(label[i]);
+> > 
+> > Why only lower a..z? á or ó are also valid (according to some OEM
+> > codepage) and are lower case.
+> > 
+> > Also please look at my testing results. Even old DOS versions are
+> > able
+> > to correctly read lower case label. Therefore I do not see any reason
+> > why to have such "force" code in kernel.
+> > 
+> > https://www.spinics.net/lists/kernel/msg2645732.html
+> > 
+> > Here I proposed how should be linux tools unified which manipulates
+> > with
+> > fat label.
+> In character detection, I refer to the FAT standard document "Ecma-
+> 107".
 
---q22bqurpyklj4yxv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So please stick with implementation which is already used in kernel
+driver or refer to one of two MS documentations for FAT12/16/32. We do
+not want to have part of kernel fs driver to be written according one
+documentation, other parts according to another documentation and
+remaining parts according to guess or something else. We already have
+compatibility with MS FAT, so inventing something new does not make
+sense. Also in past there was found mistakes in MS documentation (like
+incorrect formulas for counting clusters, etc.), so beware of facts that
+documentation/specification does not have to be 100% correct.
 
-On Mon, Jan 29, 2018 at 04:58:09PM +0100, Philipp Rossak wrote:
-> The Bananapi M3 has an onboard IR receiver.
-> This enables the onboard IR receiver subnode.
-> Unlike the other IR receivers this one needs a base clock frequency
-> of 3000000 Hz (3 MHz), to be able to work.
->=20
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot=
-/dts/sun8i-a83t-bananapi-m3.dts
-> index 6550bf0e594b..ffc6445fd281 100644
-> --- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
-> +++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
-> @@ -82,6 +82,13 @@
->  	};
->  };
-> =20
-> +&cir {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&cir_pins>;
+In above email I did investigation for FAT labels and come to the
+conclusion which seems to make sense. So if you disagree with it, please
+open discussion what is wrong with proposed solution for unifying
+handling label on Linux. Instead of inventing fully new way how to
+handle FAT label in Linux. It really does not make any sense to use
+fully different way how to handle FAT label which is incompatible with
+existing Linux and Windows implementations.
 
-If this is the only muxing option (like your node name suggests), you
-can put it directly in the DTSI to remove boilerplate from all the
-DTS.
+In namei_msdos.c you can find already used functions. Others should be
+available in dir.c.
 
-Maxime
+> The document limits the volume label to a range of characters
+> called "d-characters". The "d-characters" only includes uppercase
+> letter, '-' and numbers.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+msdos.ko and vfat.ko already handles also other characters.
 
---q22bqurpyklj4yxv
-Content-Type: application/pgp-signature; name="signature.asc"
+> And I have found the volume label can be written as extended ASCII,
+> double-byte characters in Windows. such as Chinese characters, Arabic
+> characters, and others are not all characters that control characters
+> and punctuation mark in ASCII. This is obviously no correct if we copy
+> the implementation of windows completely, let the maximum length of
+> volume label is variable?
 
------BEGIN PGP SIGNATURE-----
+Label is stored in two locations: boot sector and as entry in root
+directory structure. For directory entry there are strict rules which
+msdos.ko/vfat.ko uses and which are verified by years of usage. Maximum
+length is fixed to 11 bytes due to length of directory entry. Also note
+that label cannot be stored as LFN entry.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpwL28ACgkQ0rTAlCFN
-r3T2bw/9FDXJX9fqsxvDAQ+/QTBJvEaexiIHZbqe1RLTQY4dXSAHocmLE1ZaJfXi
-GokcTKZQp2Uy7oLnGlP00V8Hp12CSu5nA6XFVNg2xZN4k9rpsm6DjYFE5xy5ks0A
-wv+b5dc9c4fouJYtP8xatYBcWXCRhxCFrmiMFNCefU7MLtu2r3Z6c8/adWxNhjI4
-tgSSPh2FRAPB8bjUZgHm0WPE+rYDK2yoVN/Cebnk0jl4I1EqLfcly95nFIcaiyBR
-y99A9wjuNSlLvl/e6c26ZZ04hjHMKu+iQyL/iNu/1kKG2pqnwnXIeYJQYGjNm6xm
-S104zJK92rYs9CWhItbxXAompsH3cce9dCtm+zPukEh8hjCRnGKxqnrCTrNltVBr
-/oq2emDXBtgz0iLrddzAuLP3LnYtUL0l5UbCqyZ7lvzXatVd3TxBHI9kFsN3FgkJ
-EA+nPZEYKyQlFWK3Q8c4IUAZNG0OlS9hhWaNeQx/N9I9QELlXO8CiJPUj0VsJcpZ
-EkxXJyy+0DE5NqI4L0BD4Qa9mPUe0d6/YtyksMcn7YAT25uEsgRSBdhWPD3MsrId
-iBy+PYjY0QMloHGRbul+gyznjGfjSxemrRmumXp1r56VbA1voVMCg+oOrRbM1nPH
-ZkeCBdfgCl94ggiaixQreHlJqYxl+d1jFspC0PR6jb1/yQUbuBM=
-=+1fN
------END PGP SIGNATURE-----
-
---q22bqurpyklj4yxv--
+-- 
+Pali Rohár
+pali.rohar@gmail.com
