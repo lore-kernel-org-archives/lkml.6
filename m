@@ -1,109 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751574AbeA3J5Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:57:24 -0500
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:55153 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751249AbeA3J5W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:57:22 -0500
-Subject: Re: [PATCH 8/8] platform: vivid-cec: fix potential integer overflow
- in vivid_cec_pin_adap_events
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1517268667.git.gustavo@embeddedor.com>
- <00eea53890802b679c138fc7f68a0f162261d95c.1517268668.git.gustavo@embeddedor.com>
- <2e1afa55-d214-f932-4ba7-2e21f6a2cd3d@xs4all.nl>
- <20180130025141.Horde.h4aoQSwrqdPlpFtSKtB9DuS@gator4166.hostgator.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <43652014-30af-1e4b-c0a9-c23f9633fb2f@xs4all.nl>
-Date: Tue, 30 Jan 2018 10:57:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1751725AbeA3J5p (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:57:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38721 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751296AbeA3J5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 04:57:42 -0500
+Date: Tue, 30 Jan 2018 10:57:39 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Florian Westphal <fw@strlen.de>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        David Miller <davem@davemloft.net>, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, netdev <netdev@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Yang Shi <yang.s@alibaba-inc.com>, syzkaller-bugs@googlegroups.com,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, guro@fb.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [netfilter-core] kernel panic: Out of memory and no killable
+ processes... (2)
+Message-ID: <20180130095739.GV21609@dhcp22.suse.cz>
+References: <201801290020.w0T0KK8V015938@www262.sakura.ne.jp>
+ <20180129072357.GD5906@breakpoint.cc>
+ <20180129082649.sysf57wlp7i7ltb2@node.shutemov.name>
+ <20180129165722.GF5906@breakpoint.cc>
+ <20180129182811.fze4vrb5zd5cojmr@node.shutemov.name>
+ <20180129223522.GG5906@breakpoint.cc>
+ <20180130075226.GL21609@dhcp22.suse.cz>
+ <20180130081127.GH5906@breakpoint.cc>
+ <20180130082817.cbax5qj4mxancx4b@node.shutemov.name>
+ <CACT4Y+bFKwoxopr1dwnc7OHUoHy28ksVguqtMY6tD=aRh-7LyQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180130025141.Horde.h4aoQSwrqdPlpFtSKtB9DuS@gator4166.hostgator.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfLW4g3B2XMo2+dfcc55TivQkWj5Nkrdy19dYmpGCReWRiXDMYx65lDlSHIpgQojWSvoXN4vbdg0ij+FThwc+LktV5r+443j4hwBnuX9kivYStFyXrvcF
- ExWgqtSxo5T6S1PsTHH3TW2Tq0cH++3XkwZQlZ7gK9iHfjM3Pf7xCr19xkCeivsrq/Jt0qRZIrKZsYOrUFb13MLrCgIay7HFfQMsxTl05GLLh6SnN2gp6IDn
- 8y6xerEzkiI61H9saqHHk66jk7YIue0pX56fwmt6q4PwiwWCZHQq7c3syl2I2O1JOrInymurCHuD+kdZKxon/A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+bFKwoxopr1dwnc7OHUoHy28ksVguqtMY6tD=aRh-7LyQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/30/2018 09:51 AM, Gustavo A. R. Silva wrote:
-> Hi Hans,
+On Tue 30-01-18 10:02:34, Dmitry Vyukov wrote:
+> On Tue, Jan 30, 2018 at 9:28 AM, Kirill A. Shutemov
+> <kirill@shutemov.name> wrote:
+> > On Tue, Jan 30, 2018 at 09:11:27AM +0100, Florian Westphal wrote:
+> >> Michal Hocko <mhocko@kernel.org> wrote:
+> >> > On Mon 29-01-18 23:35:22, Florian Westphal wrote:
+> >> > > Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> >> > [...]
+> >> > > > I hate what I'm saying, but I guess we need some tunable here.
+> >> > > > Not sure what exactly.
+> >> > >
+> >> > > Would memcg help?
+> >> >
+> >> > That really depends. I would have to check whether vmalloc path obeys
+> >> > __GFP_ACCOUNT (I suspect it does except for page tables allocations but
+> >> > that shouldn't be a big deal). But then the other potential problem is
+> >> > the life time of the xt_table_info (or other potentially large) data
+> >> > structures. Are they bound to any process life time.
+> >>
+> >> No.
+> >
+> > Well, IIUC they bound to net namespace life time, so killing all
+> > proccesses in the namespace would help to get memory back. :)
 > 
-> Quoting Hans Verkuil <hverkuil@xs4all.nl>:
+> ... unless the namespace is mounted into file system.
 > 
->> Hi Gustavo,
->>
->> On 01/30/2018 01:33 AM, Gustavo A. R. Silva wrote:
->>> Cast len to const u64 in order to avoid a potential integer
->>> overflow. This variable is being used in a context that expects
->>> an expression of type const u64.
->>>
->>> Addresses-Coverity-ID: 1454996 ("Unintentional integer overflow")
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> ---
->>>  drivers/media/platform/vivid/vivid-cec.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/media/platform/vivid/vivid-cec.c  
->>> b/drivers/media/platform/vivid/vivid-cec.c
->>> index b55d278..30240ab 100644
->>> --- a/drivers/media/platform/vivid/vivid-cec.c
->>> +++ b/drivers/media/platform/vivid/vivid-cec.c
->>> @@ -83,7 +83,7 @@ static void vivid_cec_pin_adap_events(struct  
->>> cec_adapter *adap, ktime_t ts,
->>>  	if (adap == NULL)
->>>  		return;
->>>  	ts = ktime_sub_us(ts, (CEC_TIM_START_BIT_TOTAL +
->>> -			       len * 10 * CEC_TIM_DATA_BIT_TOTAL));
->>> +			       (const u64)len * 10 * CEC_TIM_DATA_BIT_TOTAL));
->>
->> This makes no sense. Certainly the const part is pointless. And given that
->> len is always <= 16 there definitely is no overflow.
->>
-> 
-> Yeah, I understand your point and I know there is no chance of an  
-> overflow in this particular case.
-> 
->> I don't really want this cast in the code.
->>
->> Sorry,
->>
-> 
-> I'm working through all the Linux kernel Coverity reports, and I  
-> thought of sending a patch for this because IMHO it doesn't hurt to  
-> give the compiler complete information about the arithmetic in which  
-> an expression is intended to be evaluated.
-> 
-> I agree that the _const_ part is a bit odd. What do you think about  
-> the cast to u64 alone?
+> Let's start with NOWARN as that's what kernel generally uses for
+> allocations with user-controllable size. ENOMEM is roughly as
+> informative as the WARNING message in this case.
 
-What happens if you do: ((u64)CEC_TIM_START_BIT_TOTAL +
+You want __GFP_NORETRY but that is not _fully_ supported by kvmalloc
+right now. More specifically kvmalloc doesn't guanratee that the request
+will not trigger the OOM killer (like regular __GFP_NORETRY). This is
+because of internal vmalloc restrictions. If you are however OK to
+simply bail out in most cases then __GFP_NORETRY should work reasonably
+fine.
 
-I think that forces everything else in the expression to be evaluated
-as u64.
+> I think we also need to consider setting up memory cgroup for
+> syzkaller test processes (we do RLIMIT_AS, but that's weak).
 
-It definitely needs a comment that this fixes a bogus Coverity report.
+Well, this is not about syzkaller, it merely pointed out a potential
+DoS... And that has to be addressed somehow.
 
-Regards,
-
-	Hans
-
-> 
-> I appreciate your feedback.
-> 
-> Thanks
-> --
-> Gustavo
-> 
-> 
-> 
-> 
-> 
+-- 
+Michal Hocko
+SUSE Labs
