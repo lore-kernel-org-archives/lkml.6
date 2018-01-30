@@ -1,52 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753219AbeA3PkC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:40:02 -0500
-Received: from mail-qt0-f179.google.com ([209.85.216.179]:37023 "EHLO
-        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751934AbeA3PkA (ORCPT
+        id S1753245AbeA3PkI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:40:08 -0500
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:37279 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753070AbeA3PkF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:40:00 -0500
-X-Google-Smtp-Source: AH8x226z5Ir4b2AkSnRtlp2SB/92mhF2ymGQeeASpVR89spGC+gHBCUE1923vhfXW2ZdfbPGTeFVdtjwvzEyIMjBTeE=
-MIME-Version: 1.0
-In-Reply-To: <30071dd5d1574ef9bf85eb34fda1277f@ausx13mpc120.AMER.DELL.COM>
-References: <1517267756-29878-1-git-send-email-mario.limonciello@dell.com>
- <20180130110247.5w4qreycdp2o5pjw@pali> <30071dd5d1574ef9bf85eb34fda1277f@ausx13mpc120.AMER.DELL.COM>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 30 Jan 2018 17:39:58 +0200
-Message-ID: <CAHp75Vd4N2DNpnFgE-k85Kz7_sZ=SH=-L8sagLkFx=WMj8xW=Q@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: dell-laptop: Guard SMBIOS calls with a mutex
-To: Mario Limonciello <Mario.Limonciello@dell.com>
-Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
+        Tue, 30 Jan 2018 10:40:05 -0500
+X-Google-Smtp-Source: AH8x225qYshnfTxpgovY8s3hC/U7cywDv/7ltugDZeBqTlQAxH5PIqxxsCnjOirAA2MHpw2BNiZxTA==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: v4.15 and I/O hang with BFQ
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <20180130144002.GA14401@ming.t460p>
+Date: Tue, 30 Jan 2018 16:40:01 +0100
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Ivan Kozik <ivan@ludios.org>,
+        linux-block <linux-block@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Jens Axboe <axboe@kernel.dk>, Linus Walleij <linus.walleij@linaro.org>,
+        SERENA ZIVIANI <169364@studenti.unimore.it>
+Message-Id: <3E34D175-88F9-4114-B627-A11262A7B470@linaro.org>
+References: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
+ <20180130081925.GA25183@ming.t460p>
+ <38bd4dbe280bd0934abde764fe0916cd@natalenko.name>
+ <20180130144002.GA14401@ming.t460p>
+To: Ming Lei <ming.lei@redhat.com>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0UFeCCu020161
 
-On Tue, Jan 30, 2018 at 5:35 PM,  <Mario.Limonciello@dell.com> wrote:
 
->> >     dell_set_arguments(0x2, 0, 0, 0);
->> >     ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
->>
->> Hi! I'm looking at this code, and do we need shared global buffer with
->> mutex protection at all? Is not buffer allocated on stack enough?
->
-> Oh you mean rather than create buffer mutex to just remove global
-> buffer and allocate in each function?  That seems like a workable
-> approach to me too.
->
-> I'm fine with either way.
->
-> Andy or Darren, what's your preference in this area?
 
-It reminds me USB stuff where buffer for transfer is allocated on heap
-before performing communication.
-So, it looks similar to some extent and I have no objection on that
-kind of approach.
+> Il giorno 30 gen 2018, alle ore 15:40, Ming Lei <ming.lei@redhat.com> ha scritto:
+> 
+> On Tue, Jan 30, 2018 at 03:30:28PM +0100, Oleksandr Natalenko wrote:
+>> Hi.
+>> 
+> ...
+>>   systemd-udevd-271   [000] ....     4.311033: bfq_insert_requests: insert
+>> rq->0
+>>   systemd-udevd-271   [000] ...1     4.311037: blk_mq_do_dispatch_sched:
+>> not get rq, 1
+>>          cfdisk-408   [000] ....    13.484220: bfq_insert_requests: insert
+>> rq->1
+>>    kworker/0:1H-174   [000] ....    13.484253: blk_mq_do_dispatch_sched:
+>> not get rq, 1
+>> ===
+>> 
+>> Looks the same, right?
+> 
+> Yeah, same with before.
+> 
 
--- 
-With Best Regards,
-Andy Shevchenko
+Hi guys,
+sorry for the delay with this fix.  We are proceeding very slowly on
+this, because I'm super busy.  Anyway, now I can at least explain in
+more detail the cause that leads to this hang.  Commit 'a6a252e64914
+("blk-mq-sched: decide how to handle flush rq via RQF_FLUSH_SEQ")'
+makes all non-flush re-prepared requests be re-inserted into the I/O
+scheduler.  With this change, I/O schedulers may get the same request
+inserted again, even several times, without a finish_request invoked
+on the request before each re-insertion.
+
+For the I/O scheduler, every such re-prepared request is equivalent
+to the insertion of a new request. For schedulers like mq-deadline
+or kyber this fact causes no problems. In contrast, it confuses a stateful
+scheduler like BFQ, which preserves states for an I/O request until
+finish_request is invoked on it. In particular, BFQ has no way
+to know that the above re-insertions concerns the same, already dispatched
+request. So it may get stuck waiting for the completion of these
+re-inserted requests forever, thus preventing any other queue of
+requests to be served.
+
+We are trying to address this issue by adding the hook requeue_request
+to bfq interface.
+
+Unfortunately, with our current implementation of requeue_request in
+place, bfq eventually gets to an incoherent state.  This is apparently
+caused by a requeue of an I/O request, immediately followed by a
+completion of the same request.  This seems rather absurd, and drives
+bfq crazy.  But this is something for which we don't have definite
+results yet.
+
+We're working on it, sorry again for the delay.
+
+Thanks,
+Paolo
+
+> -- 
+> Ming
