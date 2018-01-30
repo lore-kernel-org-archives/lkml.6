@@ -1,153 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753995AbeA3XBF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:01:05 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54514 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753861AbeA3XBE (ORCPT
+        id S1754012AbeA3XCA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:02:00 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:56431 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753642AbeA3XB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:01:04 -0500
-X-Google-Smtp-Source: AH8x224/njKvmOSDZay+a1poDnL3bo/vNccEt8jtj7Ym3xFbnn6SfdK/AtHRbDBhVmOmpkf9cGHoVQ==
-Date: Tue, 30 Jan 2018 15:01:01 -0800 (PST)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Vladimir Davydov <vdavydov@virtuozzo.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [patch] tools, vm: new option to specify kpageflags file
-Message-ID: <alpine.DEB.2.10.1801301458180.153857@chino.kir.corp.google.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        Tue, 30 Jan 2018 18:01:58 -0500
+Date: Tue, 30 Jan 2018 15:00:45 -0800
+From: tip-bot for Vitaly Kuznetsov <tipbot@zytor.com>
+Message-ID: <tip-89a8f6d4904c8cf3ff8fee9fdaff392a6bbb8bf6@git.kernel.org>
+Cc: vkuznets@redhat.com, luto@kernel.org, hpa@zytor.com, mmorsy@redhat.com,
+        pbonzini@redhat.com, sthemmin@microsoft.com, rkagan@virtuozzo.com,
+        Michael.H.Kelley@microsoft.com, mingo@kernel.org,
+        haiyangz@microsoft.com, cavery@redhat.com, tglx@linutronix.de,
+        kys@microsoft.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, kys@microsoft.com, linux-kernel@vger.kernel.org,
+        rkrcmar@redhat.com, haiyangz@microsoft.com,
+        Michael.H.Kelley@microsoft.com, mingo@kernel.org, cavery@redhat.com,
+        mmorsy@redhat.com, rkagan@virtuozzo.com, pbonzini@redhat.com,
+        sthemmin@microsoft.com, luto@kernel.org, vkuznets@redhat.com,
+        hpa@zytor.com
+In-Reply-To: <20180124132337.30138-2-vkuznets@redhat.com>
+References: <20180124132337.30138-2-vkuznets@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/hyperv] x86/hyperv: Check for required priviliges in
+ hyperv_init()
+Git-Commit-ID: 89a8f6d4904c8cf3ff8fee9fdaff392a6bbb8bf6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-page-types currently hardcodes /proc/kpageflags as the file to parse.  
-This works when using the tool to examine the state of pageflags on the 
-same system, but does not allow storing a snapshot of pageflags at a given 
-time to debug issues nor on a different system.
+Commit-ID:  89a8f6d4904c8cf3ff8fee9fdaff392a6bbb8bf6
+Gitweb:     https://git.kernel.org/tip/89a8f6d4904c8cf3ff8fee9fdaff392a6bbb8bf6
+Author:     Vitaly Kuznetsov <vkuznets@redhat.com>
+AuthorDate: Wed, 24 Jan 2018 14:23:31 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 30 Jan 2018 23:55:32 +0100
 
-This allows the user to specify a saved version of kpageflags with a new 
-page-types -F option.
+x86/hyperv: Check for required priviliges in hyperv_init()
 
-Signed-off-by: David Rientjes <rientjes@google.com>
+In hyperv_init() its presumed that it always has access to VP index and
+hypercall MSRs while according to the specification it should be checked if
+it's allowed to access the corresponding MSRs before accessing them.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: kvm@vger.kernel.org
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+Cc: Roman Kagan <rkagan@virtuozzo.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: devel@linuxdriverproject.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Cathy Avery <cavery@redhat.com>
+Cc: Mohammed Gamal <mmorsy@redhat.com>
+Link: https://lkml.kernel.org/r/20180124132337.30138-2-vkuznets@redhat.com
+
 ---
- tools/vm/page-types.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+ arch/x86/hyperv/hv_init.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/tools/vm/page-types.c b/tools/vm/page-types.c
---- a/tools/vm/page-types.c
-+++ b/tools/vm/page-types.c
-@@ -172,6 +172,7 @@ static pid_t		opt_pid;	/* process to walk */
- const char *		opt_file;	/* file or directory path */
- static uint64_t		opt_cgroup;	/* cgroup inode */
- static int		opt_list_cgroup;/* list page cgroup */
-+static const char *	opt_kpageflags;	/* kpageflags file to parse */
- 
- #define MAX_ADDR_RANGES	1024
- static int		nr_addr_ranges;
-@@ -258,7 +259,7 @@ static int checked_open(const char *pathname, int flags)
-  * pagemap/kpageflags routines
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 189a398..21f9d53 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -110,12 +110,19 @@ static int hv_cpu_init(unsigned int cpu)
   */
- 
--static unsigned long do_u64_read(int fd, char *name,
-+static unsigned long do_u64_read(int fd, const char *name,
- 				 uint64_t *buf,
- 				 unsigned long index,
- 				 unsigned long count)
-@@ -283,7 +284,7 @@ static unsigned long kpageflags_read(uint64_t *buf,
- 				     unsigned long index,
- 				     unsigned long pages)
+ void hyperv_init(void)
  {
--	return do_u64_read(kpageflags_fd, PROC_KPAGEFLAGS, buf, index, pages);
-+	return do_u64_read(kpageflags_fd, opt_kpageflags, buf, index, pages);
- }
+-	u64 guest_id;
++	u64 guest_id, required_msrs;
+ 	union hv_x64_msr_hypercall_contents hypercall_msr;
  
- static unsigned long kpagecgroup_read(uint64_t *buf,
-@@ -293,7 +294,7 @@ static unsigned long kpagecgroup_read(uint64_t *buf,
- 	if (kpagecgroup_fd < 0)
- 		return pages;
+ 	if (x86_hyper_type != X86_HYPER_MS_HYPERV)
+ 		return;
  
--	return do_u64_read(kpagecgroup_fd, PROC_KPAGEFLAGS, buf, index, pages);
-+	return do_u64_read(kpagecgroup_fd, opt_kpageflags, buf, index, pages);
- }
- 
- static unsigned long pagemap_read(uint64_t *buf,
-@@ -743,7 +744,7 @@ static void walk_addr_ranges(void)
- {
- 	int i;
- 
--	kpageflags_fd = checked_open(PROC_KPAGEFLAGS, O_RDONLY);
-+	kpageflags_fd = checked_open(opt_kpageflags, O_RDONLY);
- 
- 	if (!nr_addr_ranges)
- 		add_addr_range(0, ULONG_MAX);
-@@ -790,6 +791,7 @@ static void usage(void)
- "            -N|--no-summary            Don't show summary info\n"
- "            -X|--hwpoison              hwpoison pages\n"
- "            -x|--unpoison              unpoison pages\n"
-+"            -F|--kpageflags            kpageflags file to parse\n"
- "            -h|--help                  Show this usage message\n"
- "flags:\n"
- "            0x10                       bitfield format, e.g.\n"
-@@ -1013,7 +1015,7 @@ static void walk_page_cache(void)
- {
- 	struct stat st;
- 
--	kpageflags_fd = checked_open(PROC_KPAGEFLAGS, O_RDONLY);
-+	kpageflags_fd = checked_open(opt_kpageflags, O_RDONLY);
- 	pagemap_fd = checked_open("/proc/self/pagemap", O_RDONLY);
- 	sigaction(SIGBUS, &sigbus_action, NULL);
- 
-@@ -1164,6 +1166,11 @@ static void parse_bits_mask(const char *optarg)
- 	add_bits_filter(mask, bits);
- }
- 
-+static void parse_kpageflags(const char *name)
-+{
-+	opt_kpageflags = name;
-+}
++	/* Absolutely required MSRs */
++	required_msrs = HV_X64_MSR_HYPERCALL_AVAILABLE |
++		HV_X64_MSR_VP_INDEX_AVAILABLE;
 +
- static void describe_flags(const char *optarg)
- {
- 	uint64_t flags = parse_flag_names(optarg, 0);
-@@ -1188,6 +1195,7 @@ static const struct option opts[] = {
- 	{ "no-summary", 0, NULL, 'N' },
- 	{ "hwpoison"  , 0, NULL, 'X' },
- 	{ "unpoison"  , 0, NULL, 'x' },
-+	{ "kpageflags", 0, NULL, 'F' },
- 	{ "help"      , 0, NULL, 'h' },
- 	{ NULL        , 0, NULL, 0 }
- };
-@@ -1199,7 +1207,7 @@ int main(int argc, char *argv[])
- 	page_size = getpagesize();
- 
- 	while ((c = getopt_long(argc, argv,
--				"rp:f:a:b:d:c:ClLNXxh", opts, NULL)) != -1) {
-+				"rp:f:a:b:d:c:ClLNXxF:h", opts, NULL)) != -1) {
- 		switch (c) {
- 		case 'r':
- 			opt_raw = 1;
-@@ -1242,6 +1250,9 @@ int main(int argc, char *argv[])
- 			opt_unpoison = 1;
- 			prepare_hwpoison_fd();
- 			break;
-+		case 'F':
-+			parse_kpageflags(optarg);
-+			break;
- 		case 'h':
- 			usage();
- 			exit(0);
-@@ -1251,6 +1262,9 @@ int main(int argc, char *argv[])
- 		}
- 	}
- 
-+	if (!opt_kpageflags)
-+		opt_kpageflags = PROC_KPAGEFLAGS;
++	if ((ms_hyperv.features & required_msrs) != required_msrs)
++		return;
 +
- 	if (opt_cgroup || opt_list_cgroup)
- 		kpagecgroup_fd = checked_open(PROC_KPAGECGROUP, O_RDONLY);
- 
+ 	/* Allocate percpu VP index */
+ 	hv_vp_index = kmalloc_array(num_possible_cpus(), sizeof(*hv_vp_index),
+ 				    GFP_KERNEL);
