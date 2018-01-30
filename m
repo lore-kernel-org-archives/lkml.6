@@ -1,74 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeA3Vd3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:33:29 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:36398 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751988AbeA3Vd2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:33:28 -0500
-Date: Tue, 30 Jan 2018 21:33:26 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [git pull] reducing kernel_recvmsg() use
-Message-ID: <20180130213326.GD29051@ZenIV.linux.org.uk>
+        id S1752649AbeA3Vek (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:34:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751717AbeA3Vej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 16:34:39 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D46B21738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shli@kernel.org
+Date: Tue, 30 Jan 2018 13:34:35 -0800
+From: Shaohua Li <shli@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org
+Subject: [GIT PULL] MD update for 4.16-rc1
+Message-ID: <20180130213435.m2c4x7m6csnp5ls5@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	kernel_recvmsg() is a set_fs()-using wrapper for
-sock_recvmsg().  In all but one case that is not needed -
-use of ITER_KVEC for ->msg_iter takes care of the data
-and does not care about set_fs().  The only exception is
-svc_udp_recvfrom() where we want cmsg to be store into
-kernel object; everything else can just use sock_recvmsg()
-and be done with that.
+Hi,
+Some small fixes for MD 4.16:
+- Fix raid5-cache potential problems if raid5 cache isn't fully recovered
+- Fix a wait-within-wait warning in raid1/10
+- Make raid5-PPL support disks with writeback cache enabled
+Please pull!
 
-	A followup converting svc_udp_recvfrom() away
-from set_fs() (and killing kernel_recvmsg() off) is *NOT*
-in that one - I'd like to hear what netdev folks think
-of the approach proposed in that followup.
+Thanks,
+Shaohua
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+The following changes since commit 50c4c4e268a2d7a3e58ebb698ac74da0de40ae36:
 
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+  Linux 4.15-rc3 (2017-12-10 17:56:26 -0800)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.sock_recvmsg
+  git://git.kernel.org/pub/scm/linux/kernel/git/shli/md.git for-next
 
-for you to fetch changes up to bc4802736d8b17eddde52e00838c348770f67c19:
+for you to fetch changes up to 1532d9e87e8b2377f12929f9e40724d5fbe6ecc5:
 
-  tipc: switch to sock_recvmsg() (2017-12-02 20:38:10 -0500)
+  raid5-ppl: PPL support for disks with write-back cache enabled (2018-01-15 14:29:42 -0800)
 
 ----------------------------------------------------------------
-Al Viro (10):
-      svc_recvfrom(): switch to sock_recvmsg()
-      dlm: switch to sock_recvmsg()
-      ncpfs: switch to sock_recvmsg()
-      cfs2: switch to sock_recvmsg()
-      lustre lnet_sock_read(): switch to sock_recvmsg()
-      drbd: switch to sock_recvmsg()
-      mISDN: switch to sock_recvmsg()
-      ipvs: switch to sock_recvmsg()
-      smc: switch to sock_recvmsg()
-      tipc: switch to sock_recvmsg()
+NeilBrown (1):
+      md/raid1,raid10: silence warning about wait-within-wait
 
- drivers/block/drbd/drbd_main.c                |  8 +-------
- drivers/block/drbd/drbd_receiver.c            |  3 ++-
- drivers/isdn/mISDN/l1oip_core.c               | 22 +++++++++-------------
- drivers/staging/lustre/lnet/lnet/lib-socket.c | 24 +++++++++++-------------
- fs/dlm/lowcomms.c                             |  4 ++--
- fs/ncpfs/sock.c                               |  3 ++-
- fs/ocfs2/cluster/tcp.c                        |  3 ++-
- net/netfilter/ipvs/ip_vs_sync.c               |  9 +++------
- net/smc/smc_clc.c                             | 18 ++++++++++--------
- net/sunrpc/svcsock.c                          |  4 ++--
- net/tipc/server.c                             |  4 ++--
- 11 files changed, 46 insertions(+), 56 deletions(-)
+Song Liu (2):
+      md: introduce new personality funciton start()
+      md/r5cache: print more info of log recovery
+
+Tomasz Majchrzak (1):
+      raid5-ppl: PPL support for disks with write-back cache enabled
+
+ Documentation/md/raid5-ppl.txt |   7 +-
+ drivers/md/dm-raid.c           |   9 +++
+ drivers/md/md.c                |  31 ++++++--
+ drivers/md/md.h                |   9 +++
+ drivers/md/raid1.c             |  11 +++
+ drivers/md/raid10.c            |  12 +++
+ drivers/md/raid5-cache.c       |  31 +++++---
+ drivers/md/raid5-log.h         |  30 ++++++++
+ drivers/md/raid5-ppl.c         | 167 ++++++++++++++++++++++++++++++++++++++---
+ drivers/md/raid5.c             |  16 +++-
+ 10 files changed, 285 insertions(+), 38 deletions(-)
