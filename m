@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeA3Ugt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 15:36:49 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56132 "EHLO
+        id S1753334AbeA3Ugr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:36:47 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56148 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752521AbeA3U3l (ORCPT
+        with ESMTP id S1751378AbeA3U3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jan 2018 15:29:41 -0500
 From: Thierry Escande <thierry.escande@collabora.com>
@@ -21,9 +21,9 @@ Cc: Haixia Shi <hshi@chromium.org>,
         Douglas Anderson <dianders@chromium.org>,
         Mark Yao <mark.yao@rock-chips.com>, linux-kernel@vger.kernel.org,
         linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v3 17/43] drm/bridge: analogix_dp: Wait for HPD signal before configuring link
-Date: Tue, 30 Jan 2018 21:28:47 +0100
-Message-Id: <20180130202913.28724-18-thierry.escande@collabora.com>
+Subject: [PATCH v3 18/43] drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
+Date: Tue, 30 Jan 2018 21:28:48 +0100
+Message-Id: <20180130202913.28724-19-thierry.escande@collabora.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180130202913.28724-1-thierry.escande@collabora.com>
 References: <20180130202913.28724-1-thierry.escande@collabora.com>
@@ -38,39 +38,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zain wang <wzz@rock-chips.com>
 
-According to DP spec v1.3 chap 3.5.1.2 Link Training, Link Policy Maker
-must first detect that the HPD signal is asserted high by the Downstream
-Device before establishing a link with it.
+Following the correct power up sequence:
+dp_pd=ff => dp_pd=7f => wait 10us => dp_pd=00
 
 Cc: Stéphane Marchesin <marcheu@chromium.org>
 Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 10 ++++++++--
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |  3 +++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index ba2506e17f6d..c940a5bb80ac 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1170,6 +1170,17 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 	if (ret)
- 		goto out_dp_init;
- 
-+	/*
-+	 * According to DP spec v1.3 chap 3.5.1.2 Link Training,
-+	 * We should first make sure the HPD signal is asserted high by device
-+	 * when we want to establish a link with it.
-+	 */
-+	ret = analogix_dp_detect_hpd(dp);
-+	if (ret) {
-+		DRM_ERROR("failed to get hpd single ret = %d\n", ret);
-+		goto out_dp_init;
-+	}
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index b47c5af43560..bb72f8b0e603 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -321,10 +321,16 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+ 		break;
+ 	case POWER_ALL:
+ 		if (enable) {
+-			reg = DP_PHY_PD | AUX_PD | CH3_PD | CH2_PD |
+-				CH1_PD | CH0_PD;
++			reg = DP_ALL_PD;
+ 			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
++			reg = DP_ALL_PD;
++			writel(reg, dp->reg_base + phy_pd_addr);
++			usleep_range(10, 15);
++			reg &= ~DP_INC_BG;
++			writel(reg, dp->reg_base + phy_pd_addr);
++			usleep_range(10, 15);
 +
- 	ret = analogix_dp_commit(dp);
- 	if (ret)
- 		goto out_dp_init;
+ 			writel(0x00, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+index 40200c652533..9602668669f4 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+@@ -342,12 +342,15 @@
+ #define DP_PLL_REF_BIT_1_2500V			(0x7 << 0)
+ 
+ /* ANALOGIX_DP_PHY_PD */
++#define DP_INC_BG				(0x1 << 7)
++#define DP_EXP_BG				(0x1 << 6)
+ #define DP_PHY_PD				(0x1 << 5)
+ #define AUX_PD					(0x1 << 4)
+ #define CH3_PD					(0x1 << 3)
+ #define CH2_PD					(0x1 << 2)
+ #define CH1_PD					(0x1 << 1)
+ #define CH0_PD					(0x1 << 0)
++#define DP_ALL_PD				(0xff)
+ 
+ /* ANALOGIX_DP_PHY_TEST */
+ #define MACRO_RST				(0x1 << 5)
 -- 
 2.14.1
