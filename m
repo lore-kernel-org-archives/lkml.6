@@ -1,96 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751639AbeA3LZ5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 06:25:57 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52414 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751219AbeA3LZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 06:25:55 -0500
-Subject: Re: [PATCH 09/16] arm64: capabilities: Introduce strict features
- based on local CPU
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180123122809.16269-1-suzuki.poulose@arm.com>
- <20180123122809.16269-10-suzuki.poulose@arm.com>
- <20180126121219.GQ5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <d12c2c77-8813-75ed-1011-7ba42bff663e@arm.com>
-Date: Tue, 30 Jan 2018 11:25:51 +0000
+        id S1751713AbeA3L2m (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 06:28:42 -0500
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:39654 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751619AbeA3L2k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 06:28:40 -0500
+X-Google-Smtp-Source: AH8x2276rdrkMo5I+bcmypCaHKu5Qo76+cepeDLNDv2nSOWG1fto+dCmHr0cuZVkKHNXit2vGxBCFQ==
+Reply-To: christian.koenig@amd.com
+Subject: Re: [RFC] Per file OOM badness
+To: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Michal Hocko <mhocko@kernel.org>, Roman Gushchin <guro@fb.com>
+Cc: linux-mm@kvack.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20180118170006.GG6584@dhcp22.suse.cz>
+ <20180123152659.GA21817@castle.DHCP.thefacebook.com>
+ <20180123153631.GR1526@dhcp22.suse.cz>
+ <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
+ <20180124092847.GI1526@dhcp22.suse.cz>
+ <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
+ <20180124110141.GA28465@dhcp22.suse.cz>
+ <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
+ <20180124115059.GC28465@dhcp22.suse.cz>
+ <381a868c-78fd-d0d1-029e-a2cf4ab06d37@gmail.com>
+ <20180130093145.GE25930@phenom.ffwll.local>
+ <3db43c1a-59b8-af86-2b87-c783c629f512@daenzer.net>
+ <3026d8c5-9313-cb8b-91ef-09c02baf27db@amd.com>
+ <445628d3-677c-a9f8-171f-7d74a603c61d@daenzer.net>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <dce6d244-36c7-7452-97f5-7437bd78cfcc@gmail.com>
+Date: Tue, 30 Jan 2018 12:28:37 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180126121219.GQ5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <445628d3-677c-a9f8-171f-7d74a603c61d@daenzer.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/01/18 12:12, Dave Martin wrote:
-> On Tue, Jan 23, 2018 at 12:28:02PM +0000, Suzuki K Poulose wrote:
->> Add type for features that are detected on individual CPUs,
->> rather than on a system wide safe features. This behavior
-> 
-> feature
-> 
->> is similar to that of a strict cpu erratum, where a later
->> CPU is not allowed to boot if the system doesn't posses it.
+Am 30.01.2018 um 12:02 schrieb Michel Dänzer:
+> On 2018-01-30 11:40 AM, Christian König wrote:
+>> Am 30.01.2018 um 10:43 schrieb Michel Dänzer:
+>>> [SNIP]
+>>>> Would it be ok to hang onto potentially arbitrary mmget references
+>>>> essentially forever? If that's ok I think we can do your process based
+>>>> account (minus a few minor inaccuracies for shared stuff perhaps, but no
+>>>> one cares about that).
+>>> Honestly, I think you and Christian are overthinking this. Let's try
+>>> charging the memory to every process which shares a buffer, and go from
+>>> there.
+>> My problem is that this needs to be bullet prove.
 >>
->> Use this for software prefetching capability.
->>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/include/asm/cpufeature.h | 7 +++++++
->>   arch/arm64/kernel/cpufeature.c      | 2 +-
->>   2 files changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
->> index a621d2184227..4c3d6987acfc 100644
->> --- a/arch/arm64/include/asm/cpufeature.h
->> +++ b/arch/arm64/include/asm/cpufeature.h
->> @@ -118,6 +118,13 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
->>    */
->>   #define ARM64_CPUCAP_BOOT_SYSTEM_FEATURE	\
->>   	(ARM64_CPUCAP_SCOPE_SYSTEM | ARM64_CPUCAP_LATE_CPU_SAFE_TO_HAVE)
->> +/*
->> + * CPU feature detected at boot time based on feature of one or more CPUs.
->> + * It is not safe for a late CPU to have this feature, when the system doesn't
->> + * have it. But it is safe to miss the feature if the system has it.
->> + */
->> +#define ARM64_CPUCAP_STRICT_CPU_LOCAL_FEATURE	\
->> +	(ARM64_CPUCAP_SCOPE_LOCAL_CPU | ARM64_CPUCAP_LATE_CPU_SAFE_TO_MISS)
-> 
-> "STRICT" seem quite odd here, since we never require all CPUs to have
-> the feature.  The case we forbid is when the boot-time decision is that
-> the system doesn't tolerate this feature.  So this feels erratum-like.
-> 
->>   struct arm64_cpu_capabilities {
->>   	const char *desc;
->> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> index 7ae5cf9092d0..111f6c4b4cd7 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -951,7 +951,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->>   	{
->>   		.desc = "Software prefetching using PRFM",
->>   		.capability = ARM64_HAS_NO_HW_PREFETCH,
->> -		.type = ARM64_CPUCAP_BOOT_SYSTEM_FEATURE,
->> +		.type = ARM64_CPUCAP_STRICT_CPU_LOCAL_FEATURE,
->>   		.matches = has_no_hw_prefetch,
-> 
-> For ARM64_HAS_NO_HW_PREFETCH this is more describing an implementation
-> option that only affects performance -- in that case it's not obvious
-> that we should be strict at all.
-> 
-> This suggests ARM64_CPUCAP_SCOPE_LOCAL_CPU |
-> 	ARM64_CPUCAP_LATE_CPU_SAFE_TO_HAVE |
-> 	ARM64_CPUCAP_LATE_CPU_SAFE_TO_MISS.
+>> For example imagine an application which allocates a lot of BOs, then
+>> calls fork() and let the parent process die. The file descriptor lives
+>> on in the child process, but the memory is not accounted against the child.
+> What exactly are you referring to by "the file descriptor" here?
 
-You're right. This is more like a WEAK feature we add for DBM. I will switch it.
+The file descriptor used to identify the connection to the driver. In 
+other words our drm_file structure in the kernel.
 
-Cheers
-Suzuki
+> What happens to BO handles in general in this case? If both parent and
+> child process keep the same handle for the same BO, one of them
+> destroying the handle will result in the other one not being able to use
+> it anymore either, won't it?
+Correct.
+
+That usage is actually not useful at all, but we already had 
+applications which did exactly that by accident.
+
+Not to mention that somebody could do it on purpose.
+
+Regards,
+Christian.
