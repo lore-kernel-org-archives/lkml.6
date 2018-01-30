@@ -1,30 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753001AbeA3Wib (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:38:31 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:37101 "EHLO
+        id S1753266AbeA3Wis (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 17:38:48 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:52983 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752869AbeA3Wi2 (ORCPT
+        with ESMTP id S1753169AbeA3Wip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:38:28 -0500
-Date: Tue, 30 Jan 2018 14:35:10 -0800
+        Tue, 30 Jan 2018 17:38:45 -0500
+Date: Tue, 30 Jan 2018 14:37:38 -0800
 From: tip-bot for Dan Williams <tipbot@zytor.com>
-Message-ID: <tip-b3d7ad85b80bbc404635dca80f5b129f6242bc7a@git.kernel.org>
-Cc: mingo@redhat.com, torvalds@linux-foundation.org,
-        thomas.lendacky@amd.com, keescook@chromium.org,
-        dan.j.williams@intel.com, mingo@kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        ak@linux.intel.com
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, hpa@zytor.com, tglx@linutronix.de,
-        ak@linux.intel.com, mingo@redhat.com, torvalds@linux-foundation.org,
-        thomas.lendacky@amd.com, dan.j.williams@intel.com,
-        keescook@chromium.org
-In-Reply-To: <151727415361.33451.9049453007262764675.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151727415361.33451.9049453007262764675.stgit@dwillia2-desk3.amr.corp.intel.com>
+Message-ID: <tip-56c30ba7b348b90484969054d561f711ba196507@git.kernel.org>
+Cc: tglx@linutronix.de, viro@zeniv.linux.org.uk, dan.j.williams@intel.com,
+        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        elena.reshetova@intel.com
+Reply-To: linux-kernel@vger.kernel.org, elena.reshetova@intel.com,
+        mingo@kernel.org, hpa@zytor.com, dan.j.williams@intel.com,
+        viro@zeniv.linux.org.uk, tglx@linutronix.de
+In-Reply-To: <151727418500.33451.17392199002892248656.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <151727418500.33451.17392199002892248656.stgit@dwillia2-desk3.amr.corp.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86: Introduce barrier_nospec
-Git-Commit-ID: b3d7ad85b80bbc404635dca80f5b129f6242bc7a
+Subject: [tip:x86/pti] vfs, fdtable: Prevent bounds-check bypass via
+ speculative execution
+Git-Commit-ID: 56c30ba7b348b90484969054d561f711ba196507
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,71 +34,57 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b3d7ad85b80bbc404635dca80f5b129f6242bc7a
-Gitweb:     https://git.kernel.org/tip/b3d7ad85b80bbc404635dca80f5b129f6242bc7a
+Commit-ID:  56c30ba7b348b90484969054d561f711ba196507
+Gitweb:     https://git.kernel.org/tip/56c30ba7b348b90484969054d561f711ba196507
 Author:     Dan Williams <dan.j.williams@intel.com>
-AuthorDate: Mon, 29 Jan 2018 17:02:33 -0800
+AuthorDate: Mon, 29 Jan 2018 17:03:05 -0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 30 Jan 2018 21:54:29 +0100
+CommitDate: Tue, 30 Jan 2018 21:54:32 +0100
 
-x86: Introduce barrier_nospec
+vfs, fdtable: Prevent bounds-check bypass via speculative execution
 
-Rename the open coded form of this instruction sequence from
-rdtsc_ordered() into a generic barrier primitive, barrier_nospec().
+'fd' is a user controlled value that is used as a data dependency to
+read from the 'fdt->fd' array.  In order to avoid potential leaks of
+kernel memory values, block speculative execution of the instruction
+stream that could issue reads based on an invalid 'file *' returned from
+__fcheck_files.
 
-One of the mitigations for Spectre variant1 vulnerabilities is to fence
-speculative execution after successfully validating a bounds check. I.e.
-force the result of a bounds check to resolve in the instruction pipeline
-to ensure speculative execution honors that result before potentially
-operating on out-of-bounds data.
-
-No functional changes.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Suggested-by: Ingo Molnar <mingo@redhat.com>
+Co-developed-by: Elena Reshetova <elena.reshetova@intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-arch@vger.kernel.org
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Kees Cook <keescook@chromium.org>
 Cc: kernel-hardening@lists.openwall.com
 Cc: gregkh@linuxfoundation.org
 Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: torvalds@linux-foundation.org
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727415361.33451.9049453007262764675.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727418500.33451.17392199002892248656.stgit@dwillia2-desk3.amr.corp.intel.com
 
 ---
- arch/x86/include/asm/barrier.h | 4 ++++
- arch/x86/include/asm/msr.h     | 3 +--
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ include/linux/fdtable.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/barrier.h b/arch/x86/include/asm/barrier.h
-index 173b38f..30d4061 100644
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -48,6 +48,10 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- /* Override the default implementation from linux/nospec.h. */
- #define array_index_mask_nospec array_index_mask_nospec
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index 1c65817..41615f3 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -10,6 +10,7 @@
+ #include <linux/compiler.h>
+ #include <linux/spinlock.h>
+ #include <linux/rcupdate.h>
++#include <linux/nospec.h>
+ #include <linux/types.h>
+ #include <linux/init.h>
+ #include <linux/fs.h>
+@@ -82,8 +83,10 @@ static inline struct file *__fcheck_files(struct files_struct *files, unsigned i
+ {
+ 	struct fdtable *fdt = rcu_dereference_raw(files->fdt);
  
-+/* Prevent speculative execution past this barrier. */
-+#define barrier_nospec() alternative_2("", "mfence", X86_FEATURE_MFENCE_RDTSC, \
-+					   "lfence", X86_FEATURE_LFENCE_RDTSC)
-+
- #ifdef CONFIG_X86_PPRO_FENCE
- #define dma_rmb()	rmb()
- #else
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index 07962f5..30df295 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -214,8 +214,7 @@ static __always_inline unsigned long long rdtsc_ordered(void)
- 	 * that some other imaginary CPU is updating continuously with a
- 	 * time stamp.
- 	 */
--	alternative_2("", "mfence", X86_FEATURE_MFENCE_RDTSC,
--			  "lfence", X86_FEATURE_LFENCE_RDTSC);
-+	barrier_nospec();
- 	return rdtsc();
+-	if (fd < fdt->max_fds)
++	if (fd < fdt->max_fds) {
++		fd = array_index_nospec(fd, fdt->max_fds);
+ 		return rcu_dereference_raw(fdt->fd[fd]);
++	}
+ 	return NULL;
  }
  
