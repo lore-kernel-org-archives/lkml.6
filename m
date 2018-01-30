@@ -1,171 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753519AbeA3Q5m (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 11:57:42 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34325 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753502AbeA3Q5j (ORCPT
+        id S1753522AbeA3Q7E (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 11:59:04 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:36113 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751559AbeA3Q7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 11:57:39 -0500
-X-Google-Smtp-Source: AH8x224LTc7jl4DHDoDoMzIogdnE2RFpn34cqfsXY9GOgIfmvq/x73j4IclAJFGzHwdSsieLcWrZnot7OER/A3iImzs=
+        Tue, 30 Jan 2018 11:59:02 -0500
+X-Google-Smtp-Source: AH8x227JoWkLdJvDUD+bcselZDAOskk9madM4YrcleKfZY3Pg0b0Zq1u84uVhl/TeOAYwyW5mWalVQ==
+Date: Tue, 30 Jan 2018 10:59:01 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: corbet@lwn.net, mchehab@kernel.org, sakari.ailus@iki.fi,
+        mark.rutland@arm.com, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] media: dt-bindings: Add OF properties to ov7670
+Message-ID: <20180130165901.bx6myeeospv55tgo@rob-hp-laptop>
+References: <1516786250-3750-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1516786250-3750-2-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <beb9f9b4-7bc0-4a3a-73c2-0828febbd06c@oracle.com>
-References: <20180109120311.27565-10-pbonzini@redhat.com> <6dc02278-7004-1794-3705-69c8cad86be4@oracle.com>
- <CALMp9eSVC=LO-SrPkA3m6eSpgJ6X4rNCRCf3uvtJEdMG_B72cQ@mail.gmail.com> <beb9f9b4-7bc0-4a3a-73c2-0828febbd06c@oracle.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Tue, 30 Jan 2018 08:57:37 -0800
-Message-ID: <CALMp9eT6i9bhG005S5sqV-Y1RUhsc+AXE42ww8Ej+TXSjD6tEg@mail.gmail.com>
-Subject: Re: [9/8] KVM: x86: limit MSR_IA32_SPEC_CTRL access based on CPUID availability
-To: Mihai Carabas <mihai.carabas@oracle.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Anthony Liguori <aliguori@amazon.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw@amazon.co.uk>, Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516786250-3750-2-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's really hard to tell which patches are being proposed for which
-repositories, but assuming that everything else is correct, I don't
-think your condition is adequate. What if the physical CPU and the
-virtual CPU both have CPUID.(EAX=7H,ECX=0):EDX[26], but only the
-physical CPU has CPUID.(EAX=7H,ECX=0):EDX[27]? If the guest has write
-access to MSR_IA32_SPEC_CTRL, it can set MSR_IA32_SPEC_CTRL[1]
-(STIBP), even though setting that bit in the guest should raise #GP.
+On Wed, Jan 24, 2018 at 10:30:49AM +0100, Jacopo Mondi wrote:
+> Describe newly introduced OF properties for ov7670 image sensor.
+> The driver supports two standard properties to configure synchronism
+> signals polarities and one custom property already supported as
+> platform data options to suppress pixel clock during horizontal
+> blankings.
+> 
+> Re-phrase child nodes description while at there.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  Documentation/devicetree/bindings/media/i2c/ov7670.txt | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
 
-On Tue, Jan 30, 2018 at 8:43 AM, Mihai Carabas <mihai.carabas@oracle.com> wrote:
-> On 30.01.2018 18:33, Jim Mattson wrote:
->>
->> All MSR intercepts are enabled by default, so I don't think this patch
->> does anything at all, unless I'm missing some context.
->>
->
-> Currently on upstream some MSR are intercepted:
-> https://github.com/torvalds/linux/blob/master/arch/x86/kvm/vmx.c#L6838
->
-> In particular to this patch, the MSR_IA32_SPEC_CTRL intercept is disabled in
-> 3/8: https://patchwork.kernel.org/patch/10151889/
->
->
->
->> On Tue, Jan 30, 2018 at 5:21 AM, Mihai Carabas <mihai.carabas@oracle.com>
->> wrote:
->>>
->>> Hello Paolo,
->>>
->>> I've back ported this patch on 4.1, after adding the per-vcpu MSR bitmap.
->>> Also enabled the SPEC_CTRL_MSR intercept if qemu instructed so [1].
->>>
->>> Reviewed-by: Mihai Carabas <mihai.carabas@oracle.com>
->>>
->>> [1]
->>> +++ b/arch/x86/kvm/vmx.c
->>> @@ -8391,6 +8391,16 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm
->>> *kvm, unsigned int id)
->>>          vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PRED_CMD,
->>> MSR_TYPE_R | MSR_TYPE_W);
->>>          vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_BNDCFGS,
->>> MSR_TYPE_R | MSR_TYPE_W);
->>>
->>> +       /*
->>> +        * If the physical CPU or the vCPU of this VM doesn't
->>> +        * support SPEC_CTRL feature, catch each access to it.
->>> +        */
->>> +       if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->>> +            !guest_cpuid_has_spec_ctrl(&vmx->vcpu))
->>> +               vmx_enable_intercept_for_msr(
->>> +                       msr_bitmap,
->>> +                       MSR_IA32_SPEC_CTRL,
->>> +                       MSR_TYPE_R | MSR_TYPE_W);
->>>
->>>          /*
->>>           * If PML is turned on, failure on enabling PML just results in
->>> failure
->>>
->>>
->>>
->>> On 09.01.2018 14:03, Paolo Bonzini wrote:
->>>>
->>>>
->>>> MSR_IA32_SPEC_CTRL is not available unless CPU[7,0].EDX[26] is 1.
->>>> Check that against host CPUID or guest CPUID, respectively for
->>>> host-initiated and guest-initiated accesses.
->>>>
->>>> Suggested-by: Jim Mattson <jmattson@google.com>
->>>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->>>> ---
->>>>          This is for after X86_FEATURE_SPEC_CTRL is added to Linux, but
->>>>          I still wanted to ack Jim's improvement.
->>>>
->>>>    arch/x86/kvm/svm.c | 8 ++++++++
->>>>    arch/x86/kvm/vmx.c | 8 ++++++++
->>>>    2 files changed, 16 insertions(+)
->>>>
->>>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
->>>> index 97126c2bd663..3a646580d7c5 100644
->>>> --- a/arch/x86/kvm/svm.c
->>>> +++ b/arch/x86/kvm/svm.c
->>>> @@ -3648,6 +3648,10 @@ static int svm_get_msr(struct kvm_vcpu *vcpu,
->>>> struct msr_data *msr_info)
->>>>                  msr_info->data = svm->nested.vm_cr_msr;
->>>>                  break;
->>>>          case MSR_IA32_SPEC_CTRL:
->>>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->>>> +                   (!msr_info->host_initiated &&
->>>> +                            !guest_cpuid_has(vcpu,
->>>> X86_FEATURE_SPEC_CTRL)))
->>>> +                       return 1;
->>>>                  msr_info->data = svm->spec_ctrl;
->>>>                  break;
->>>>          case MSR_IA32_UCODE_REV:
->>>> @@ -3806,6 +3810,10 @@ static int svm_set_msr(struct kvm_vcpu *vcpu,
->>>> struct msr_data *msr)
->>>>                  vcpu_unimpl(vcpu, "unimplemented wrmsr: 0x%x data
->>>> 0x%llx\n", ecx, data);
->>>>                  break;
->>>>          case MSR_IA32_SPEC_CTRL:
->>>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->>>> +                   (!msr_info->host_initiated &&
->>>> +                            !guest_cpuid_has(vcpu,
->>>> X86_FEATURE_SPEC_CTRL)))
->>>> +                       return 1;
->>>>                  svm->spec_ctrl = data;
->>>>                  break;
->>>>          case MSR_IA32_APICBASE:
->>>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
->>>> index 49b4a2d61603..42bc7ee293e4 100644
->>>> --- a/arch/x86/kvm/vmx.c
->>>> +++ b/arch/x86/kvm/vmx.c
->>>> @@ -3368,6 +3368,10 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu,
->>>> struct msr_data *msr_info)
->>>>                  msr_info->data = guest_read_tsc(vcpu);
->>>>                  break;
->>>>          case MSR_IA32_SPEC_CTRL:
->>>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->>>> +                   (!msr_info->host_initiated &&
->>>> +                    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL)))
->>>> +                       return 1;
->>>>                  msr_info->data = to_vmx(vcpu)->spec_ctrl;
->>>>                  break;
->>>>          case MSR_IA32_SYSENTER_CS:
->>>> @@ -3510,6 +3514,10 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu,
->>>> struct msr_data *msr_info)
->>>>                  kvm_write_tsc(vcpu, msr_info);
->>>>                  break;
->>>>          case MSR_IA32_SPEC_CTRL:
->>>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
->>>> +                   (!msr_info->host_initiated &&
->>>> +                    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL)))
->>>> +                       return 1;
->>>>                  to_vmx(vcpu)->spec_ctrl = data;
->>>>                  break;
->>>>          case MSR_IA32_CR_PAT:
->>>>
->>>
->
+Reviewed-by: Rob Herring <robh@kernel.org>
