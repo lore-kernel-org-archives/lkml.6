@@ -1,77 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751931AbeA3IOl convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 03:14:41 -0500
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:40482 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751822AbeA3IOj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:14:39 -0500
-Date: Tue, 30 Jan 2018 09:11:27 +0100
-From: Florian Westphal <fw@strlen.de>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Florian Westphal <fw@strlen.de>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, davem@davemloft.net,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, aarcange@redhat.com, yang.s@alibaba-inc.com,
-        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, linux-mm@kvack.org, rientjes@google.com,
-        akpm@linux-foundation.org, guro@fb.com,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [netfilter-core] kernel panic: Out of memory and no killable
- processes... (2)
-Message-ID: <20180130081127.GH5906@breakpoint.cc>
-References: <001a1144b0caee2e8c0563d9de0a@google.com>
- <201801290020.w0T0KK8V015938@www262.sakura.ne.jp>
- <20180129072357.GD5906@breakpoint.cc>
- <20180129082649.sysf57wlp7i7ltb2@node.shutemov.name>
- <20180129165722.GF5906@breakpoint.cc>
- <20180129182811.fze4vrb5zd5cojmr@node.shutemov.name>
- <20180129223522.GG5906@breakpoint.cc>
- <20180130075226.GL21609@dhcp22.suse.cz>
+        id S1751871AbeA3ITs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 03:19:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50850 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751631AbeA3ITq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 03:19:46 -0500
+Date: Tue, 30 Jan 2018 16:19:30 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: paolo.valente@linaro.org, Ivan Kozik <ivan@ludios.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bfq-iosched@googlegroups.com, Jens Axboe <axboe@kernel.dk>,
+        linus.walleij@linaro.org
+Subject: Re: v4.15 and I/O hang with BFQ
+Message-ID: <20180130081925.GA25183@ming.t460p>
+References: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180130075226.GL21609@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko <mhocko@kernel.org> wrote:
-> On Mon 29-01-18 23:35:22, Florian Westphal wrote:
-> > Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> [...]
-> > > I hate what I'm saying, but I guess we need some tunable here.
-> > > Not sure what exactly.
-> > 
-> > Would memcg help?
+Hi,
+
+On Tue, Jan 30, 2018 at 09:05:26AM +0100, Oleksandr Natalenko wrote:
+> Hi, Paolo, Ivan, Ming et al.
 > 
-> That really depends. I would have to check whether vmalloc path obeys
-> __GFP_ACCOUNT (I suspect it does except for page tables allocations but
-> that shouldn't be a big deal). But then the other potential problem is
-> the life time of the xt_table_info (or other potentially large) data
-> structures. Are they bound to any process life time.
+> It looks like I've just encountered the issue Ivan has already described in
+> [1]. Since I'm able to reproduce it reliably in a VM, I'd like to draw more
+> attention to it.
+> 
+> First, I'm using v4.15 kernel with all pending BFQ fixes:
+> 
+> ===
+> 2ad909a300c4 bfq-iosched: don't call bfqg_and_blkg_put for
+> !CONFIG_BFQ_GROUP_IOSCHED
+> 83c97a310f83 block, bfq: release oom-queue ref to root group on exit
+> 5b9eb4716af1 block, bfq: put async queues for root bfq groups too
+> 3c5529454a27 block, bfq: limit sectors served with interactive weight
+> raising
+> e6c72be3486b block, bfq: limit tags for writes and async I/O
+> e579b91d96ce block, bfq: increase threshold to deem I/O as random
+> f6cbc16aac88 block, bfq: remove superfluous check in queue-merging setup
+> 8045d8575183 block, bfq: let a queue be merged only shortly after starting
+> I/O
+> 242954975f5e block, bfq: check low_latency flag in bfq_bfqq_save_state()
+> 8349c1bddd95 block, bfq: add missing rq_pos_tree update on rq removal
+> 558200440cb9 block, bfq: fix occurrences of request finish method's old name
+> 6ed2f47ee870 block, bfq: consider also past I/O in soft real-time detection
+> e5f295dd18f2 block, bfq: remove batches of confusing ifdefs
+> ===
+> 
+> Next, I boot an Arch VM with this kernel and emulated USB stick attached:
+> 
+> ===
+> qemu-system-x86_64 -display gtk,gl=on -machine q35,accel=kvm -cpu host,+vmx
+> -enable-kvm -drive if=pflash,format=raw,readonly,file=/mnt/vms/ovmf/code.img
+> -drive if=pflash,format=raw,file=/mnt/vms/ovmf/vars.img -cdrom
+> /mnt/vms/ovmf/shell.iso -netdev user,id=user.0 -device
+> virtio-net,netdev=user.0 -usb -device nec-usb-xhci,id=xhci -device
+> usb-tablet,bus=xhci.0 -serial stdio -m 512 -hda sda.img -hdb sdb.img -smp 4
+> -drive if=none,id=stick,file=usb.img -device
+> usb-storage,bus=xhci.0,drive=stick
+> ===
+> 
+> Within the VM itself I use udev rule to set the I/O scheduler:
+> 
+> ===
+> ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/scheduler}="bfq"
+> ===
 
-No.
+We knew there is IO hang issue on BFQ over USB-storage wrt. blk-mq, and
+last time I found it is inside BFQ. You can try the debug patch in the
+following link[1] to see if it is same with the previous report[1][2]:
 
-> Because if they are
-> not then the OOM killer will not help. The OOM panic earlier in this
-> thread suggests it doesn't because the test case managed to eat all the
-> available memory and killed all the eligible tasks which didn't help.
+[1] https://marc.info/?l=linux-block&m=151214241518562&w=2
+[2] https://bugzilla.kernel.org/show_bug.cgi?id=198023
 
-Yes, which is why we do not want any OOM killer invocation in first
-place...
+If you aren't sure if they are same, please post the trace somewhere,
+then I can check if it is a new bug.
 
-> So in some sense the memcg would help to stop the excessive allocation,
-> but it wouldn't resolve it other than kill all tasks in the affected
-> memcg/container. Whether this is sufficient or not, I dunno. It sounds
-> quite suboptimal to me. But it is true this would be less tricky then
-> adding a global knob...
+Or Paolo should know if the issue is fixed or not in V4.15.
 
-Global knob doesn't really help at all, I can add multiple large
-iptables rulesets (so we would have to account), and we have same issue
-in virtually all of networking, so we need limits for interface count,
-tunnel count, ipsec policies/SAs, nftables, tc, etc etc.
+Thanks,
+Ming
