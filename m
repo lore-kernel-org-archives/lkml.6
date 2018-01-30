@@ -1,74 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753391AbeA3SSA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:18:00 -0500
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:36479 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751410AbeA3SR5 (ORCPT
+        id S1753542AbeA3STO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:19:14 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33159 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752167AbeA3STM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:17:57 -0500
-X-Google-Smtp-Source: AH8x224/WrI99ZHeX2MhNFe5BAJsHnmEXfY2d74uvzGty8Itez4EyUl41xIT0bhkzSk39pvYpBScciSMuGD26h5PaJg=
-MIME-Version: 1.0
-In-Reply-To: <20180130060744.19049-1-kai.heng.feng@canonical.com>
-References: <20180130060744.19049-1-kai.heng.feng@canonical.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 30 Jan 2018 20:17:55 +0200
-Message-ID: <CAHp75VdPQuEwNOOakvZpC1gzWB9p5yx+CHUjRgMDZ9ZDvxGckQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: Parse entire table as a term_list for Dell XPS 9570
- and Precision M5530
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mario Limonciello <mario.limonciello@dell.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 30 Jan 2018 13:19:12 -0500
+X-Google-Smtp-Source: AH8x2245Tag4Y2oQgxDpg6CHCordkj4I7NhJ5B9tW2ikcn+8f2UbCm+js3OGDizHauSw9F06oNjcdA==
+From: Ulf Magnusson <ulfalizer@gmail.com>
+To: linux-kbuild@vger.kernel.org
+Cc: yamada.masahiro@socionext.com, mcgrof@kernel.org,
+        linux-kernel@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>
+Subject: [PATCH] kconfig: Warn if help text is blank
+Date: Tue, 30 Jan 2018 19:18:53 +0100
+Message-Id: <20180130181853.32512-1-ulfalizer@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 8:07 AM, Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
-> The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
-> of box.
->
-> The touchpad relies on its _INI method to update its _HID value from
-> XXXX0000 to SYNA2393.
-> Also, the _STA relies on value of I2CN to report correct status.
->
-> Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
-> correctly set up, and _INI can get run. The ACPI table in this machine
-> is designed to get parsed this way.
->
-> Also, change the quirk table to a more generic name.
+Print a warning if a 'help' token is given but the help text is blank.
+Personal pet peeve.
 
-> +static int set_gbl_term_list(const struct dmi_system_id *id)
-> +{
-> +       pr_notice("%s detected - parse the entire table as a term_list\n",
-> +                 id->ident);
-> +       acpi_gbl_parse_table_as_term_list = 1;
-> +       return 0;
-> +}
->  #endif
+Example warnings:
 
-The above should be outside of another #ifdef. Basically after the above #endif.
+	net/sched/Kconfig:860: warning: 'NET_IFE_SKBMARK' defined with blank help text
+	net/sched/Kconfig:865: warning: 'NET_IFE_SKBPRIO' defined with blank help text
+	net/sched/Kconfig:870: warning: 'NET_IFE_SKBTCINDEX' defined with blank help text
+	drivers/video/fbdev/Kconfig:1159: warning: 'FB_I810_I2C' defined with blank help text
+	drivers/mmc/host/Kconfig:877: warning: 'MMC_TOSHIBA_PCI' defined with blank help text
+	drivers/staging/rtl8192u/Kconfig:8: warning: 'RTL8192U' defined with blank help text
+	drivers/staging/rtl8192e/rtl8192e/Kconfig:9: warning: 'RTL8192E' defined with blank help text
+	lib/Kconfig.debug:354: warning: 'ARCH_WANT_FRAME_POINTERS' defined with blank help text
 
->  #else
+A separate patchset will be sent to fix all current instances of blank
+help texts for all arches. I added the same warning to Kconfiglib.
 
->  #endif
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+---
+ scripts/kconfig/zconf.y | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> @@ -1005,7 +1034,7 @@ void __init acpi_early_init(void)
-
->          * If the machine falls into the DMI check table,
->          * DSDT will be copied to memory
->          */
-
-It might make sense to adjust comment above that it's about quirks in
-general. And, if needed, move current content to actual DMI group of
-records.
-
-> -       dmi_check_system(dsdt_dmi_table);
-> +       dmi_check_system(acpi_quirks_dmi_table);
-
+diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
+index 21ce883e5d9e..4be98050b961 100644
+--- a/scripts/kconfig/zconf.y
++++ b/scripts/kconfig/zconf.y
+@@ -436,6 +436,12 @@ help: help_start T_HELPTEXT
+ 		zconfprint("warning: '%s' defined with more than one help text -- only the last one will be used",
+ 			   current_entry->sym->name ?: "<choice>");
+ 	}
++
++	/* Is the help text empty or all whitespace? */
++	if ($2[strspn($2, " \f\n\r\t\v")] == '\0')
++		zconfprint("warning: '%s' defined with blank help text",
++			   current_entry->sym->name ?: "<choice>");
++
+ 	current_entry->help = $2;
+ };
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.14.1
