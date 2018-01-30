@@ -1,110 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751653AbeA3Jir (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:38:47 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:42754 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751398AbeA3Jin (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:38:43 -0500
-Date: Tue, 30 Jan 2018 10:38:38 +0100
-From: Ladislav Michl <ladis@linux-mips.org>
-To: Filip =?iso-8859-2?Q?Matijevi=E6?= <filip.matijevic.pz@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, lgirdwood@gmail.com, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
-        tiwai@suse.com, bhumirks@gmail.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pali.rohar@gmail.com, sre@kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
-        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
-        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com
-Subject: Re: [PATCH] sound/tlv320dac33: Add device tree support
-Message-ID: <20180130093838.GA15195@lenoch>
-References: <20180129230539.GA18280@amd>
- <20180129232031.GA7695@lenoch>
- <20180129233301.GA18104@amd>
- <20180130083446.GA13498@lenoch>
- <20180130085314.GA4585@amd>
- <1141b126-b883-a246-85ad-c5a69acb90bb@gmail.com>
+        id S1751639AbeA3JmL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:42:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37081 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751408AbeA3JmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 04:42:08 -0500
+Date: Tue, 30 Jan 2018 10:42:05 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
+Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
+Message-ID: <20180130094205.GS21609@dhcp22.suse.cz>
+References: <ef63c070-dcd7-3f26-f6ec-d95404007ae2@linux.vnet.ibm.com>
+ <20180123160653.GU1526@dhcp22.suse.cz>
+ <2a05eaf2-20fd-57a8-d4bd-5a1fbf57686c@linux.vnet.ibm.com>
+ <20180124090539.GH1526@dhcp22.suse.cz>
+ <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
+ <20180126140415.GD5027@dhcp22.suse.cz>
+ <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
+ <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
+ <20180129132235.GE21609@dhcp22.suse.cz>
+ <87k1w081e7.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1141b126-b883-a246-85ad-c5a69acb90bb@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <87k1w081e7.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:11:02AM +0100, Filip Matijeviæ wrote:
-> Hi,
+On Tue 30-01-18 14:35:12, Michael Ellerman wrote:
+> Michal Hocko <mhocko@kernel.org> writes:
 > 
-> On 01/30/2018 09:53 AM, Pavel Machek wrote:
-> > On Tue 2018-01-30 09:34:46, Ladislav Michl wrote:
-> >> On Tue, Jan 30, 2018 at 12:33:01AM +0100, Pavel Machek wrote:
-> >>> On Tue 2018-01-30 00:20:31, Ladislav Michl wrote:
-> >>>> On Tue, Jan 30, 2018 at 12:05:39AM +0100, Pavel Machek wrote:
-> >>>>>
-> >>>>> This adds device tree support to tlv320dac33.c.
-> >>>>>
-> >>>>> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> >>>>>
-> >>>>> diff --git a/Documentation/devicetree/bindings/sound/tlv320dac33.txt b/Documentation/devicetree/bindings/sound/tlv320dac33.txt
-> >>>>> new file mode 100644
-> >>>>> index 0000000..6cbd311
-> >>>>> --- /dev/null
-> >>>>> +++ b/Documentation/devicetree/bindings/sound/tlv320dac33.txt
-> >>>>> @@ -0,0 +1,32 @@
-> >>>>> +Texas Instruments - tlv320dac33 Codec module
-> >>>>> +
-> >>>>> +The tlv320dac33 serial control bus communicates through I2C protocols.
-> >>>>> +
-> >>>>> +Required properties:
-> >>>>> +
-> >>>>> +- compatible - "ti,tlv320dac33"
-> >>>>> +- reg - I2C slave address
-> >>>>> +
-> >>>>> +Optional properties:
-> >>>>> +
-> >>>>> +- power-gpios - gpio pin to power the device, active high
-> >>>>
-> >>>> While driver used gpio in platform data, isn't it more likely
-> >>>> regulator which powers device?
-> >>>
-> >>>                 power-gpios = <&gpio2 28 0>; /* gpio_60 */
-> >>>
-> >>> Looks like GPIO to me -- example is from Nokia N9. So this appears to
-> >>> be correct.
-> >>
-> >> Device datasheet doesn't list any pin which looks like "power-gpio"
-> >> http://www.ti.com/lit/ds/symlink/tlv320dac32.pdf
-> >> Unfortunately I do not know much about N9, but was able to find Nokia 5610
-> >> scheme to get clue how could be tlv320dac33 hardwired (see page 2):
-> >> http://mastermobile.spb.ru/service/nokia_5610_rm-242_service_schematics.pdf
-> >> Here AVDD is powered by LP3985 voltage regulator which is enabled using
-> >> VEN pin which might be connected to gpio. Or there could be completely
-> >> different voltage regulator with different controls. And since Linux
-> >> already has voltage regulator class, lets not limit ourselves to gpio
-> >> pins.
-> > 
-> > Well, notice I'm converting existing driver to device tree. And that
-> > one already has GPIO dependency. It is possible that more work needs
-> > to be done there, but that should not be a reason to delay this. Feel
-> > free to help.
+> > On Mon 29-01-18 11:02:09, Anshuman Khandual wrote:
+> >> On 01/29/2018 08:17 AM, Anshuman Khandual wrote:
+> >> > On 01/26/2018 07:34 PM, Michal Hocko wrote:
+> >> >> On Fri 26-01-18 18:04:27, Anshuman Khandual wrote:
+> >> >> [...]
+> >> >>> I tried to instrument mmap_region() for a single instance of 'sed'
+> >> >>> binary and traced all it's VMA creation. But there is no trace when
+> >> >>> that 'anon' VMA got created which suddenly shows up during subsequent
+> >> >>> elf_map() call eventually failing it. Please note that the following
+> >> >>> VMA was never created through call into map_region() in the process
+> >> >>> which is strange.
+> ...
+> >> 
+> >> Okay, this colliding VMA seems to be getting loaded from load_elf_binary()
+> >> function as well.
+> >> 
+> >> [    9.422410] vma c000001fceedbc40 start 0000000010030000 end 0000000010040000
+> >> next c000001fceedbe80 prev c000001fceedb700 mm c000001fceea8200
+> >> prot 8000000000000104 anon_vma           (null) vm_ops           (null)
+> >> pgoff 1003 file           (null) private_data           (null)
+> >> flags: 0x100073(read|write|mayread|maywrite|mayexec|account)
+> >> [    9.422576] CPU: 46 PID: 7457 Comm: sed Not tainted 4.14.0-dirty #158
+> >> [    9.422610] Call Trace:
+> >> [    9.422623] [c000001fdc4f79b0] [c000000000b17ac0] dump_stack+0xb0/0xf0 (unreliable)
+> >> [    9.422670] [c000001fdc4f79f0] [c0000000002dafb8] do_brk_flags+0x2d8/0x440
+> >> [    9.422708] [c000001fdc4f7ac0] [c0000000002db3d0] vm_brk_flags+0x80/0x130
+> >> [    9.422747] [c000001fdc4f7b20] [c0000000003d23a4] set_brk+0x80/0xdc
+> >> [    9.422785] [c000001fdc4f7b60] [c0000000003d1f24] load_elf_binary+0x1304/0x158c
+> >> [    9.422830] [c000001fdc4f7c80] [c00000000035d3e0] search_binary_handler+0xd0/0x270
+> >> [    9.422881] [c000001fdc4f7d10] [c00000000035f338] do_execveat_common.isra.31+0x658/0x890
+> >> [    9.422926] [c000001fdc4f7df0] [c00000000035f980] SyS_execve+0x40/0x50
+> >> [    9.423588] [c000001fdc4f7e30] [c00000000000b220] system_call+0x58/0x6c
+> >> 
+> >> which is getting hit after adding some more debug.
+> >
+> > Voila! So your binary simply overrides brk by elf segments. That sounds
+> > like the exactly the thing that the patch is supposed to protect from.
+> > Why this is the case I dunno. It is just clear that either brk or
+> > elf base are not put to the proper place. Something to get fixed. You
+> > are probably just lucky that brk allocations do not spil over to elf
+> > mappings.
+> 
+> It is something to get fixed, but we can't retrospectively fix the
+> existing binaries sitting on peoples' systems.
 
-Adding DT properties that need to be maintained for compatibility reasons
-is a bad idea and very good reason to delay merging unfinished stuff.
-And meanwhile it turned out it is not power-gpio :)
+Yeah. Can we identify those somehow? Are they something people can
+easily come across?
 
-> According to N9 schematics
-> http://www.s-manuals.com/manuals/phone/nokia/nokia_n9_rm-696_service_schematics_v1.pdf
-> it's in fact GPIO pin that is connected to reset line (labeled
-> CODEC_RST). So calling it "power" might be misleading, but the driver
-> code is quite clear as it labels that GPIO as "tlv320dac33 reset"
+> Possibly powerpc arch code is doing something with the mmap layout or
+> something else that is confusing the ELF loader, in which case we should
+> fix that.
 
-Thanks a lot! So now it is clear that gpio is connected to codec's nRESET pin,
-therefore "reset-gpios" property seems reasonable here.
+Yes this definitely should be fixed. How can elf loader completely
+overlap brk mapping?
 
-	ladis
+> But if not then the only solution is for the ELF loader to be more
+> tolerant of this situation.
+> 
+> So for 4.16 this patch either needs to be dropped, or reworked such that
+> powerpc can opt out of it.
+
+Yeah, let's hold on merging this until we understand what the heck is
+going on here. If this turnes to be unfixable I will think of a way for
+ppc to opt out.
+
+Anshuman, could you try to run
+sed 's@^@@' /proc/self/smaps
+on a system with MAP_FIXED_NOREPLACE reverted?
+-- 
+Michal Hocko
+SUSE Labs
