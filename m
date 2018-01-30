@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753413AbeA3Uhm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 15:37:42 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56168 "EHLO
+        id S1753470AbeA3UiB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:38:01 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56132 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752450AbeA3U3k (ORCPT
+        with ESMTP id S1752445AbeA3U3i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:29:40 -0500
+        Tue, 30 Jan 2018 15:29:38 -0500
 From: Thierry Escande <thierry.escande@collabora.com>
 To: Archit Taneja <architt@codeaurora.org>,
         Inki Dae <inki.dae@samsung.com>,
@@ -21,9 +21,9 @@ Cc: Haixia Shi <hshi@chromium.org>,
         Douglas Anderson <dianders@chromium.org>,
         Mark Yao <mark.yao@rock-chips.com>, linux-kernel@vger.kernel.org,
         linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v3 15/43] drm/bridge: analogix_dp: Don't use fast link training when panel just powered up
-Date: Tue, 30 Jan 2018 21:28:45 +0100
-Message-Id: <20180130202913.28724-16-thierry.escande@collabora.com>
+Subject: [PATCH v3 13/43] drm/bridge: analogix_dp: Move enable video into config_video()
+Date: Tue, 30 Jan 2018 21:28:43 +0100
+Message-Id: <20180130202913.28724-14-thierry.escande@collabora.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180130202913.28724-1-thierry.escande@collabora.com>
 References: <20180130202913.28724-1-thierry.escande@collabora.com>
@@ -36,73 +36,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zain wang <wzz@rock-chips.com>
+From: Lin Huang <hl@rock-chips.com>
 
-Panel would reset its setting when it powers down. It would forget the last
-succeeded link training setting. So we can't use the last successful link
-training setting to do fast link training. Let's reset fast_train_enable in
-analogix_dp_bridge_disable();
+We need to enable video before analogix_dp_is_video_stream_on(), so
+we can get the right video stream status.
 
+Cc: 征增 王 <wzz@rock-chips.com>
 Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: zain wang <wzz@rock-chips.com>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 9 +++++----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 2 +-
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 8ef9e31c6713..179c2106b8a2 100644
+index 49a05eac41c1..8ef9e31c6713 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -579,14 +579,14 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- 		if (retval != 1) {
- 			dev_err(dp->dev, "failed to read downspread %d\n",
- 				retval);
--			dp->fast_train_support = false;
-+			dp->fast_train_enable = false;
- 		} else {
--			dp->fast_train_support =
-+			dp->fast_train_enable =
- 				(spread & DP_NO_AUX_HANDSHAKE_LINK_TRAINING) ?
- 					true : false;
+@@ -820,11 +820,10 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+ 		if (analogix_dp_is_slave_video_stream_clock_on(dp) == 0)
+ 			break;
+ 		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
+-			dev_err(dp->dev, "Timeout of video streamclk ok\n");
++			dev_err(dp->dev, "Timeout of slave video streamclk ok\n");
+ 			return -ETIMEDOUT;
  		}
- 		dev_dbg(dp->dev, "fast link training %s\n",
--			dp->fast_train_support ? "supported" : "unsupported");
-+			dp->fast_train_enable ? "supported" : "unsupported");
+-
+-		usleep_range(1, 2);
++		usleep_range(1000, 1001);
+ 	}
  
- 		/* set enhanced mode if available */
- 		analogix_dp_set_enhanced_mode(dp);
-@@ -793,7 +793,7 @@ static int analogix_dp_fast_link_train(struct analogix_dp_device *dp)
+ 	/* Set to use the register calculated M/N video */
+@@ -839,6 +838,9 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+ 	/* Configure video slave mode */
+ 	analogix_dp_enable_video_master(dp, 0);
  
- static int analogix_dp_train_link(struct analogix_dp_device *dp)
- {
--	if (dp->fast_train_support)
-+	if (dp->fast_train_enable)
- 		return analogix_dp_fast_link_train(dp);
++	/* Enable video */
++	analogix_dp_start_video(dp);
++
+ 	timeout_loop = 0;
  
- 	return analogix_dp_full_link_train(dp, dp->video_info.max_lane_count,
-@@ -1198,6 +1198,7 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 		DRM_ERROR("failed to setup the panel ret = %d\n", ret);
+ 	for (;;) {
+@@ -952,9 +954,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 			DRM_ERROR("failed to enable the panel\n");
+ 	}
  
- 	dp->psr_enable = false;
-+	dp->fast_train_enable = false;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
- }
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 6a96ef7e6934..403ff853464b 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -173,7 +173,7 @@ struct analogix_dp_device {
- 	int			hpd_gpio;
- 	bool                    force_hpd;
- 	bool			psr_enable;
--	bool			fast_train_support;
-+	bool			fast_train_enable;
- 
- 	struct mutex		panel_lock;
- 	bool			panel_is_modeset;
+-	/* Enable video */
+-	analogix_dp_start_video(dp);
+-
+ 	dp->psr_enable = analogix_dp_detect_sink_psr(dp);
+ 	if (dp->psr_enable)
+ 		analogix_dp_enable_sink_psr(dp);
 -- 
 2.14.1
