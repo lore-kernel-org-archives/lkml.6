@@ -1,31 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932080AbeA3XEH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:04:07 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:37339 "EHLO
+        id S932101AbeA3XE2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:04:28 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:54713 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753738AbeA3XEB (ORCPT
+        with ESMTP id S1753615AbeA3XE1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:04:01 -0500
-Date: Tue, 30 Jan 2018 15:02:52 -0800
+        Tue, 30 Jan 2018 18:04:27 -0500
+Date: Tue, 30 Jan 2018 15:03:17 -0800
 From: tip-bot for Vitaly Kuznetsov <tipbot@zytor.com>
-Message-ID: <tip-b0c39dc68e3b3d22bf9d2984f62f6c86788a49e7@git.kernel.org>
-Cc: mmorsy@redhat.com, sthemmin@microsoft.com, luto@kernel.org,
-        kys@microsoft.com, tglx@linutronix.de, Michael.H.Kelley@microsoft.com,
-        vkuznets@redhat.com, hpa@zytor.com, rkrcmar@redhat.com,
-        pbonzini@redhat.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        rkagan@virtuozzo.com, haiyangz@microsoft.com, cavery@redhat.com
-Reply-To: tglx@linutronix.de, luto@kernel.org, kys@microsoft.com,
-        sthemmin@microsoft.com, mmorsy@redhat.com, rkrcmar@redhat.com,
-        hpa@zytor.com, vkuznets@redhat.com, Michael.H.Kelley@microsoft.com,
-        pbonzini@redhat.com, cavery@redhat.com, haiyangz@microsoft.com,
-        rkagan@virtuozzo.com, linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20180124132337.30138-7-vkuznets@redhat.com>
-References: <20180124132337.30138-7-vkuznets@redhat.com>
+Message-ID: <tip-0092e4346f49558e5fe5a927c6d78d401dc4ed73@git.kernel.org>
+Cc: vkuznets@redhat.com, linux-kernel@vger.kernel.org,
+        sthemmin@microsoft.com, mmorsy@redhat.com, kys@microsoft.com,
+        tglx@linutronix.de, pbonzini@redhat.com, hpa@zytor.com,
+        rkrcmar@redhat.com, Michael.H.Kelley@microsoft.com,
+        rkagan@virtuozzo.com, haiyangz@microsoft.com, mingo@kernel.org,
+        cavery@redhat.com, luto@kernel.org
+Reply-To: vkuznets@redhat.com, sthemmin@microsoft.com,
+        linux-kernel@vger.kernel.org, mmorsy@redhat.com, kys@microsoft.com,
+        pbonzini@redhat.com, hpa@zytor.com, tglx@linutronix.de,
+        rkrcmar@redhat.com, Michael.H.Kelley@microsoft.com,
+        rkagan@virtuozzo.com, haiyangz@microsoft.com, mingo@kernel.org,
+        cavery@redhat.com, luto@kernel.org
+In-Reply-To: <20180124132337.30138-8-vkuznets@redhat.com>
+References: <20180124132337.30138-8-vkuznets@redhat.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/hyperv] x86/kvm: Pass stable clocksource to guests when
- running nested on Hyper-V
-Git-Commit-ID: b0c39dc68e3b3d22bf9d2984f62f6c86788a49e7
+Subject: [tip:x86/hyperv] x86/kvm: Support Hyper-V reenlightenment
+Git-Commit-ID: 0092e4346f49558e5fe5a927c6d78d401dc4ed73
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,25 +39,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b0c39dc68e3b3d22bf9d2984f62f6c86788a49e7
-Gitweb:     https://git.kernel.org/tip/b0c39dc68e3b3d22bf9d2984f62f6c86788a49e7
+Commit-ID:  0092e4346f49558e5fe5a927c6d78d401dc4ed73
+Gitweb:     https://git.kernel.org/tip/0092e4346f49558e5fe5a927c6d78d401dc4ed73
 Author:     Vitaly Kuznetsov <vkuznets@redhat.com>
-AuthorDate: Wed, 24 Jan 2018 14:23:36 +0100
+AuthorDate: Wed, 24 Jan 2018 14:23:37 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Tue, 30 Jan 2018 23:55:34 +0100
 
-x86/kvm: Pass stable clocksource to guests when running nested on Hyper-V
+x86/kvm: Support Hyper-V reenlightenment
 
-Currently, KVM is able to work in 'masterclock' mode passing
-PVCLOCK_TSC_STABLE_BIT to guests when the clocksource which is used on the
-host is TSC.
+When running nested KVM on Hyper-V guests its required to update
+masterclocks for all guests when L1 migrates to a host with different TSC
+frequency.
 
-When running nested on Hyper-V the guest normally uses a different one: TSC
-page which is resistant to TSC frequency changes on events like L1
-migration. Add support for it in KVM.
+Implement the procedure in the following way:
+  - Pause all guests.
+  - Tell the host (Hyper-V) to stop emulating TSC accesses.
+  - Update the gtod copy, recompute clocks.
+  - Unpause all guests.
 
-The only non-trivial change is in vgettsc(): when updating the gtod copy
-both the clock readout and tsc value have to be updated now.
+This is somewhat similar to cpufreq but there are two important differences:
+ - TSC emulation can only be disabled globally (on all CPUs)
+ - The new TSC frequency is not known until emulation is turned off so
+   there is no way to 'prepare' for the event upfront.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -72,232 +77,86 @@ Cc: devel@linuxdriverproject.org
 Cc: "K. Y. Srinivasan" <kys@microsoft.com>
 Cc: Cathy Avery <cavery@redhat.com>
 Cc: Mohammed Gamal <mmorsy@redhat.com>
-Link: https://lkml.kernel.org/r/20180124132337.30138-7-vkuznets@redhat.com
+Link: https://lkml.kernel.org/r/20180124132337.30138-8-vkuznets@redhat.com
 
 ---
- arch/x86/kvm/x86.c | 93 +++++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 68 insertions(+), 25 deletions(-)
+ arch/x86/kvm/x86.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index c53298d..b1ce368 100644
+index b1ce368..879a999 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -67,6 +67,7 @@
- #include <asm/pvclock.h>
+@@ -68,6 +68,7 @@
  #include <asm/div64.h>
  #include <asm/irq_remapping.h>
-+#include <asm/mshyperv.h>
+ #include <asm/mshyperv.h>
++#include <asm/hypervisor.h>
  
  #define CREATE_TRACE_POINTS
  #include "trace.h"
-@@ -1377,6 +1378,11 @@ static u64 compute_guest_tsc(struct kvm_vcpu *vcpu, s64 kernel_ns)
- 	return tsc;
+@@ -5932,6 +5933,43 @@ static void tsc_khz_changed(void *data)
+ 	__this_cpu_write(cpu_tsc_khz, khz);
  }
  
-+static inline int gtod_is_based_on_tsc(int mode)
-+{
-+	return mode == VCLOCK_TSC || mode == VCLOCK_HVCLOCK;
-+}
-+
- static void kvm_track_tsc_matching(struct kvm_vcpu *vcpu)
- {
- #ifdef CONFIG_X86_64
-@@ -1396,7 +1402,7 @@ static void kvm_track_tsc_matching(struct kvm_vcpu *vcpu)
- 	 * perform request to enable masterclock.
- 	 */
- 	if (ka->use_master_clock ||
--	    (gtod->clock.vclock_mode == VCLOCK_TSC && vcpus_matched))
-+	    (gtod_is_based_on_tsc(gtod->clock.vclock_mode) && vcpus_matched))
- 		kvm_make_request(KVM_REQ_MASTERCLOCK_UPDATE, vcpu);
- 
- 	trace_kvm_track_tsc(vcpu->vcpu_id, ka->nr_vcpus_matched_tsc,
-@@ -1459,6 +1465,19 @@ static void kvm_vcpu_write_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
- 	vcpu->arch.tsc_offset = offset;
- }
- 
-+static inline bool kvm_check_tsc_unstable(void)
++static void kvm_hyperv_tsc_notifier(void)
 +{
 +#ifdef CONFIG_X86_64
-+	/*
-+	 * TSC is marked unstable when we're running on Hyper-V,
-+	 * 'TSC page' clocksource is good.
-+	 */
-+	if (pvclock_gtod_data.clock.vclock_mode == VCLOCK_HVCLOCK)
-+		return false;
++	struct kvm *kvm;
++	struct kvm_vcpu *vcpu;
++	int cpu;
++
++	spin_lock(&kvm_lock);
++	list_for_each_entry(kvm, &vm_list, vm_list)
++		kvm_make_mclock_inprogress_request(kvm);
++
++	hyperv_stop_tsc_emulation();
++
++	/* TSC frequency always matches when on Hyper-V */
++	for_each_present_cpu(cpu)
++		per_cpu(cpu_tsc_khz, cpu) = tsc_khz;
++	kvm_max_guest_tsc_khz = tsc_khz;
++
++	list_for_each_entry(kvm, &vm_list, vm_list) {
++		struct kvm_arch *ka = &kvm->arch;
++
++		spin_lock(&ka->pvclock_gtod_sync_lock);
++
++		pvclock_update_vm_gtod_copy(kvm);
++
++		kvm_for_each_vcpu(cpu, vcpu, kvm)
++			kvm_make_request(KVM_REQ_CLOCK_UPDATE, vcpu);
++
++		kvm_for_each_vcpu(cpu, vcpu, kvm)
++			kvm_clear_request(KVM_REQ_MCLOCK_INPROGRESS, vcpu);
++
++		spin_unlock(&ka->pvclock_gtod_sync_lock);
++	}
++	spin_unlock(&kvm_lock);
 +#endif
-+	return check_tsc_unstable();
 +}
 +
- void kvm_write_tsc(struct kvm_vcpu *vcpu, struct msr_data *msr)
+ static int kvmclock_cpufreq_notifier(struct notifier_block *nb, unsigned long val,
+ 				     void *data)
  {
- 	struct kvm *kvm = vcpu->kvm;
-@@ -1504,7 +1523,7 @@ void kvm_write_tsc(struct kvm_vcpu *vcpu, struct msr_data *msr)
-          */
- 	if (synchronizing &&
- 	    vcpu->arch.virtual_tsc_khz == kvm->arch.last_tsc_khz) {
--		if (!check_tsc_unstable()) {
-+		if (!kvm_check_tsc_unstable()) {
- 			offset = kvm->arch.cur_tsc_offset;
- 			pr_debug("kvm: matched tsc offset for %llu\n", data);
- 		} else {
-@@ -1604,18 +1623,43 @@ static u64 read_tsc(void)
- 	return last;
- }
- 
--static inline u64 vgettsc(u64 *cycle_now)
-+static inline u64 vgettsc(u64 *tsc_timestamp, int *mode)
- {
- 	long v;
- 	struct pvclock_gtod_data *gtod = &pvclock_gtod_data;
-+	u64 tsc_pg_val;
+@@ -6217,6 +6255,9 @@ int kvm_arch_init(void *opaque)
+ 	kvm_lapic_init();
+ #ifdef CONFIG_X86_64
+ 	pvclock_gtod_register_notifier(&pvclock_gtod_notifier);
 +
-+	switch (gtod->clock.vclock_mode) {
-+	case VCLOCK_HVCLOCK:
-+		tsc_pg_val = hv_read_tsc_page_tsc(hv_get_tsc_page(),
-+						  tsc_timestamp);
-+		if (tsc_pg_val != U64_MAX) {
-+			/* TSC page valid */
-+			*mode = VCLOCK_HVCLOCK;
-+			v = (tsc_pg_val - gtod->clock.cycle_last) &
-+				gtod->clock.mask;
-+		} else {
-+			/* TSC page invalid */
-+			*mode = VCLOCK_NONE;
-+		}
-+		break;
-+	case VCLOCK_TSC:
-+		*mode = VCLOCK_TSC;
-+		*tsc_timestamp = read_tsc();
-+		v = (*tsc_timestamp - gtod->clock.cycle_last) &
-+			gtod->clock.mask;
-+		break;
-+	default:
-+		*mode = VCLOCK_NONE;
-+	}
- 
--	*cycle_now = read_tsc();
-+	if (*mode == VCLOCK_NONE)
-+		*tsc_timestamp = v = 0;
- 
--	v = (*cycle_now - gtod->clock.cycle_last) & gtod->clock.mask;
- 	return v * gtod->clock.mult;
- }
- 
--static int do_monotonic_boot(s64 *t, u64 *cycle_now)
-+static int do_monotonic_boot(s64 *t, u64 *tsc_timestamp)
- {
- 	struct pvclock_gtod_data *gtod = &pvclock_gtod_data;
- 	unsigned long seq;
-@@ -1624,9 +1668,8 @@ static int do_monotonic_boot(s64 *t, u64 *cycle_now)
- 
- 	do {
- 		seq = read_seqcount_begin(&gtod->seq);
--		mode = gtod->clock.vclock_mode;
- 		ns = gtod->nsec_base;
--		ns += vgettsc(cycle_now);
-+		ns += vgettsc(tsc_timestamp, &mode);
- 		ns >>= gtod->clock.shift;
- 		ns += gtod->boot_ns;
- 	} while (unlikely(read_seqcount_retry(&gtod->seq, seq)));
-@@ -1635,7 +1678,7 @@ static int do_monotonic_boot(s64 *t, u64 *cycle_now)
- 	return mode;
- }
- 
--static int do_realtime(struct timespec *ts, u64 *cycle_now)
-+static int do_realtime(struct timespec *ts, u64 *tsc_timestamp)
- {
- 	struct pvclock_gtod_data *gtod = &pvclock_gtod_data;
- 	unsigned long seq;
-@@ -1644,10 +1687,9 @@ static int do_realtime(struct timespec *ts, u64 *cycle_now)
- 
- 	do {
- 		seq = read_seqcount_begin(&gtod->seq);
--		mode = gtod->clock.vclock_mode;
- 		ts->tv_sec = gtod->wall_time_sec;
- 		ns = gtod->nsec_base;
--		ns += vgettsc(cycle_now);
-+		ns += vgettsc(tsc_timestamp, &mode);
- 		ns >>= gtod->clock.shift;
- 	} while (unlikely(read_seqcount_retry(&gtod->seq, seq)));
- 
-@@ -1657,25 +1699,26 @@ static int do_realtime(struct timespec *ts, u64 *cycle_now)
- 	return mode;
- }
- 
--/* returns true if host is using tsc clocksource */
--static bool kvm_get_time_and_clockread(s64 *kernel_ns, u64 *cycle_now)
-+/* returns true if host is using TSC based clocksource */
-+static bool kvm_get_time_and_clockread(s64 *kernel_ns, u64 *tsc_timestamp)
- {
- 	/* checked again under seqlock below */
--	if (pvclock_gtod_data.clock.vclock_mode != VCLOCK_TSC)
-+	if (!gtod_is_based_on_tsc(pvclock_gtod_data.clock.vclock_mode))
- 		return false;
- 
--	return do_monotonic_boot(kernel_ns, cycle_now) == VCLOCK_TSC;
-+	return gtod_is_based_on_tsc(do_monotonic_boot(kernel_ns,
-+						      tsc_timestamp));
- }
- 
--/* returns true if host is using tsc clocksource */
-+/* returns true if host is using TSC based clocksource */
- static bool kvm_get_walltime_and_clockread(struct timespec *ts,
--					   u64 *cycle_now)
-+					   u64 *tsc_timestamp)
- {
- 	/* checked again under seqlock below */
--	if (pvclock_gtod_data.clock.vclock_mode != VCLOCK_TSC)
-+	if (!gtod_is_based_on_tsc(pvclock_gtod_data.clock.vclock_mode))
- 		return false;
- 
--	return do_realtime(ts, cycle_now) == VCLOCK_TSC;
-+	return gtod_is_based_on_tsc(do_realtime(ts, tsc_timestamp));
- }
++	if (x86_hyper_type == X86_HYPER_MS_HYPERV)
++		set_hv_tscchange_cb(kvm_hyperv_tsc_notifier);
  #endif
  
-@@ -2869,13 +2912,13 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 		kvm_make_request(KVM_REQ_CLOCK_UPDATE, vcpu);
- 	}
+ 	return 0;
+@@ -6229,6 +6270,10 @@ out:
  
--	if (unlikely(vcpu->cpu != cpu) || check_tsc_unstable()) {
-+	if (unlikely(vcpu->cpu != cpu) || kvm_check_tsc_unstable()) {
- 		s64 tsc_delta = !vcpu->arch.last_host_tsc ? 0 :
- 				rdtsc() - vcpu->arch.last_host_tsc;
- 		if (tsc_delta < 0)
- 			mark_tsc_unstable("KVM discovered backwards TSC");
- 
--		if (check_tsc_unstable()) {
-+		if (kvm_check_tsc_unstable()) {
- 			u64 offset = kvm_compute_tsc_offset(vcpu,
- 						vcpu->arch.last_guest_tsc);
- 			kvm_vcpu_write_tsc_offset(vcpu, offset);
-@@ -6110,9 +6153,9 @@ static int pvclock_gtod_notify(struct notifier_block *nb, unsigned long unused,
- 	update_pvclock_gtod(tk);
- 
- 	/* disable master clock if host does not trust, or does not
--	 * use, TSC clocksource
-+	 * use, TSC based clocksource.
- 	 */
--	if (gtod->clock.vclock_mode != VCLOCK_TSC &&
-+	if (!gtod_is_based_on_tsc(gtod->clock.vclock_mode) &&
- 	    atomic_read(&kvm_guest_has_master_clock) != 0)
- 		queue_work(system_long_wq, &pvclock_gtod_work);
- 
-@@ -7767,7 +7810,7 @@ struct kvm_vcpu *kvm_arch_vcpu_create(struct kvm *kvm,
+ void kvm_arch_exit(void)
  {
- 	struct kvm_vcpu *vcpu;
++#ifdef CONFIG_X86_64
++	if (x86_hyper_type == X86_HYPER_MS_HYPERV)
++		clear_hv_tscchange_cb();
++#endif
+ 	kvm_lapic_exit();
+ 	perf_unregister_guest_info_callbacks(&kvm_guest_cbs);
  
--	if (check_tsc_unstable() && atomic_read(&kvm->online_vcpus) != 0)
-+	if (kvm_check_tsc_unstable() && atomic_read(&kvm->online_vcpus) != 0)
- 		printk_once(KERN_WARNING
- 		"kvm: SMP vm created on host with unstable TSC; "
- 		"guest TSC will not be reliable\n");
-@@ -7924,7 +7967,7 @@ int kvm_arch_hardware_enable(void)
- 		return ret;
- 
- 	local_tsc = rdtsc();
--	stable = !check_tsc_unstable();
-+	stable = !kvm_check_tsc_unstable();
- 	list_for_each_entry(kvm, &vm_list, vm_list) {
- 		kvm_for_each_vcpu(i, vcpu, kvm) {
- 			if (!stable && vcpu->cpu == smp_processor_id())
