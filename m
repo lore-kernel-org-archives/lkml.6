@@ -1,32 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752205AbeA3Afg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 19:35:36 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38598 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751448AbeA3Afe (ORCPT
+        id S1752193AbeA3AoC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 19:44:02 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:32778 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751853AbeA3AoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 19:35:34 -0500
-X-Google-Smtp-Source: AH8x224gwcrESOUHUqR9jbFqZwz26lmMGw8s3u/tdQm5lgZXd7iW/eI7WPJeiE6cESqO1Csf1H33nQ==
-Subject: Re: [PATCH 0/2] of: change overlay apply input data from EDT to FDT
-From: Frank Rowand <frowand.list@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Alan Tull <atull@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1517194414-19932-1-git-send-email-frowand.list@gmail.com>
- <CAMuHMdWrhgvLv6syjFxfN42ah7pkO9Ye9SJYDTCwRMQCFrJAeg@mail.gmail.com>
- <df065acc-2479-2513-ac3d-63d065d2ffa1@gmail.com>
-Message-ID: <d009592b-ee82-7706-29ff-2749cd0e3c20@gmail.com>
-Date: Mon, 29 Jan 2018 16:35:31 -0800
+        Mon, 29 Jan 2018 19:44:00 -0500
+To: Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v2] mm/swap.c: make functions and their kernel-doc agree
+Message-ID: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
+Date: Mon, 29 Jan 2018 16:43:55 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <df065acc-2479-2513-ac3d-63d065d2ffa1@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -34,85 +25,77 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alan,
+From: Randy Dunlap <rdunlap@infradead.org>
 
-In this patch series one of the changes was to change some
-devicetree unittest overlay source to use the new sugar syntax to
-specify overlay nodes instead of hand coding the fragment nodes.
+Fix some basic kernel-doc notation in mm/swap.c:
+- for function lru_cache_add_anon(), make its kernel-doc function name
+  match its function name and change colon to hyphen following the
+  function name
+- for function pagevec_lookup_entries(), change the function parameter
+  name from nr_pages to nr_entries since that is more descriptive of
+  what the parameter actually is and then it matches the kernel-doc
+  comments also
 
-One reviewer reminded me to update Documentation/ files that
-show the hand coding of overlay fragment nodes.  One of those
-files is Documentation/devicetree/bindings/fpga/fpga-region.txt.
-I plan to submit a patch to update the example devicetree source
-to use the sugar syntax.  There is one place where I can not
-make that change, which is the "Overlay DTS Format" section.
-In this section, the use of 'target-path="/path" is shown as
-one of two ways to specify the target of the fragment.  The
-sugar syntax creates a fragment using the 'target=<phandle>'
-form instead of 'target-path="/path"' form.  With sugar
-syntax, there is no way to specify target-path.  Is the
-target-path form needed by the fpga subsystem, or can this
-be removed?
+Fix function kernel-doc to match the change in commit 67fd707f4681:
+- drop the kernel-doc notation for @nr_pages from pagevec_lookup_range()
+  and correct the function description for that change
 
--Frank
+Fixes: 67fd707f4681
+    ("mm: remove nr_pages argument from pagevec_lookup_{,range}_tag()")
 
-On 01/29/18 16:22, Frank Rowand wrote:
-> On 01/29/18 06:08, Geert Uytterhoeven wrote:
->> Hi Frank,
->>
->> On Mon, Jan 29, 2018 at 3:53 AM,  <frowand.list@gmail.com> wrote:
->>> From: Frank Rowand <frank.rowand@sony.com>
->>>
->>> Move duplicating and unflattening of an overlay flattened devicetree
->>> (FDT) into the overlay application code.  To accomplish this,
->>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
->>>
->>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
->>> code, which is thus responsible for freeing the duplicate FDT.  The
->>> caller of of_overlay_fdt_apply() remains responsible for freeing the
->>> original FDT.
->>>
->>> The unflattened device tree (aka expanded device tree, EDT) now
->>> belongs to devicetree code, which is thus responsible for freeing
->>> the EDT.
->>>
->>> These ownership changes prevent early freeing of the duplicated FDT
->>> or the EDT, which could result in use after free errors.
->>>
->>> These changes led to migrating some unittest overlay data into
->>> their own devicetree source files, and then converting most of
->>> them to use sugar syntax instead of hand coding fragments.
->>
->> Thanks for your series!
->>
->>> Frank Rowand (2):
->>>   of: change overlay apply input data from EDT to FDT
->>>   of: convert unittest overlay devicetree source to sugar syntax
->>
->> Do you plan to update Documentation/devicetree/overlay-notes.txt
->> and Documentation/devicetree/bindings/fpga/fpga-region.txt, too?
-> 
-> Thanks for the pointers.
-> 
-> I will add updates to Documentation/devicetree/overlay-notes.txt in
-> this series.
-> 
-> The changes to Documentation/devicetree/bindings/fpga/fpga-region.txt
-> are related to the relatively new sugar syntax in dtc, not to the
-> changes introduced by this patch series.  I'll create a patch outside
-> this series to update this documentation.
-> 
-> 
->> Gr{oetje,eeting}s,
->>
->>                         Geert
->>
->> --
->> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->>
->> In personal conversations with technical people, I call myself a hacker. But
->> when I'm talking to journalists I just say "programmer" or something like that.
->>                                 -- Linus Torvalds
->>
-> 
-> 
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>
+---
+ mm/swap.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+v2 changes:
+- leave kernel-doc for lru_cache_add_anon() where it is but fix its
+  kernel-doc notation
+- change pagevec_lookup_entries() parameter from nr_pages to nr_entries
+
+--- lnx-415.orig/mm/swap.c
++++ lnx-415/mm/swap.c
+@@ -411,7 +411,7 @@ static void __lru_cache_add(struct page
+ }
+ 
+ /**
+- * lru_cache_add: add a page to the page lists
++ * lru_cache_add_anon - add a page to the page lists
+  * @page: the page to add
+  */
+ void lru_cache_add_anon(struct page *page)
+@@ -930,10 +930,10 @@ EXPORT_SYMBOL(__pagevec_lru_add);
+  */
+ unsigned pagevec_lookup_entries(struct pagevec *pvec,
+ 				struct address_space *mapping,
+-				pgoff_t start, unsigned nr_pages,
++				pgoff_t start, unsigned nr_entries,
+ 				pgoff_t *indices)
+ {
+-	pvec->nr = find_get_entries(mapping, start, nr_pages,
++	pvec->nr = find_get_entries(mapping, start, nr_entries,
+ 				    pvec->pages, indices);
+ 	return pagevec_count(pvec);
+ }
+@@ -965,9 +965,8 @@ void pagevec_remove_exceptionals(struct
+  * @mapping:	The address_space to search
+  * @start:	The starting page index
+  * @end:	The final page index
+- * @nr_pages:	The maximum number of pages
+  *
+- * pagevec_lookup_range() will search for and return a group of up to @nr_pages
++ * pagevec_lookup_range() will search for & return a group of up to PAGEVEC_SIZE
+  * pages in the mapping starting from index @start and upto index @end
+  * (inclusive).  The pages are placed in @pvec.  pagevec_lookup() takes a
+  * reference against the pages in @pvec.
+@@ -977,7 +976,7 @@ void pagevec_remove_exceptionals(struct
+  * also update @start to index the next page for the traversal.
+  *
+  * pagevec_lookup_range() returns the number of pages which were found. If this
+- * number is smaller than @nr_pages, the end of specified range has been
++ * number is smaller than PAGEVEC_SIZE, the end of specified range has been
+  * reached.
+  */
+ unsigned pagevec_lookup_range(struct pagevec *pvec,
