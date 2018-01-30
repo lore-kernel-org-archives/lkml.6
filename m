@@ -1,165 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753340AbeA3SGH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:06:07 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51713 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753140AbeA3SFb (ORCPT
+        id S1753319AbeA3SGE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:06:04 -0500
+Received: from mx0b-00191d01.pphosted.com ([67.231.157.136]:35805 "EHLO
+        mx0a-00191d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753085AbeA3SGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:05:31 -0500
-X-Google-Smtp-Source: AH8x2262LXshfUAnWP+umbDX1q22Z87xJJhAV7aoB8EKG6ChVptTPHw5Vf/ccQepl6Pw7CQvly20qw==
-From: Dongsu Park <dongsu@kinvolk.io>
-To: linux-kernel@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
-        Dongsu Park <dongsu@kinvolk.io>, Miklos Szeredi <mszeredi@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: [RFC PATCH v4 2/2] ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
-Date: Tue, 30 Jan 2018 19:06:32 +0100
-Message-Id: <10ef27e369ce46652ee7b2b6238aa4551de2be8b.1517314847.git.dongsu@kinvolk.io>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1517314847.git.dongsu@kinvolk.io>
-References: <cover.1517314847.git.dongsu@kinvolk.io>
-In-Reply-To: <cover.1517314847.git.dongsu@kinvolk.io>
-References: <cover.1517314847.git.dongsu@kinvolk.io>
+        Tue, 30 Jan 2018 13:06:02 -0500
+From: "Brown, Nicholas" <nb930b@intl.att.com>
+To: "joe@perches.com" <joe@perches.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "apw@canonical.com" <apw@canonical.com>
+Subject: Re: [PATCH] checkpatch: warn if changed lines exceeds a maximum size
+Thread-Topic: [PATCH] checkpatch: warn if changed lines exceeds a maximum
+ size
+Thread-Index: AQHTmeMGAPsYZkfslkm5Wnly+K55WaOMldQAgAAf4IA=
+Date: Tue, 30 Jan 2018 18:04:18 +0000
+Message-ID: <1517335455.3063.28.camel@intl.att.com>
+References: <1517327844.3063.19.camel@intl.att.com>
+         <1517328610.765.22.camel@perches.com>
+In-Reply-To: <1517328610.765.22.camel@perches.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.156.48.128]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BC3DF20CC1A4F543B9BC4264056186DD@intl.att.com>
+MIME-Version: 1.0
+X-RSA-Inspected: yes
+X-RSA-Classifications: public
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_policy_notspam policy=outbound_policy score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1711220000 definitions=main-1801300221
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w0UI6SDv013364
 
-From: Alban Crequy <alban@kinvolk.io>
+On Tue, 2018-01-30 at 08:10 -0800, Joe Perches wrote:
+> On Tue, 2018-01-30 at 15:57 +0000, Brown, Nicholas wrote:
+> > Changed lines is the total of inserted and deleted lines.
+> > By default there is no limit, --max-changed-lines may be used to
+> > set a
+> > value. Some users may wish to encourage that patches are split into
+> > smaller parts using this.
+> > See Documentation/process/submitting-patches.rst#split-changes
+> 
+> (This patch seems whitespace damaged)
+> 
+> I don't care for this much as is either.
+> 
+> This patch doesn't add help text and it
 
-This patch forces files to be re-measured, re-appraised and re-audited
-on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
-cached integrity results won't be used.
+I'll look to add some help text.
 
-How to test this:
+> should probably add a check for
+> 	"if (!$file"
+> so new files aren't size limited.
+> 
+> Also, it double counts lines that are
+> added and deleted so doing things like
+> refactoring a block of code into a new
+> separate function would potentially trip
+> this.
 
-The test I did was using a patched version of the memfs FUSE driver
-[1][2] and two very simple "hello-world" programs [4] (prog1 prints
-"hello world: 1" and prog2 prints "hello world: 2").
+These were both intentional. Large new files are just as equal a
+potential target for splitting as a large change to a file, and could
+for example add basic infra/stubs in an initial patch, and then flesh
+out implementation in follow up patches.
+Similarly it counts both insertions and deletions, as it's the
+cumulative total that's a better measure of change, as compared
+(insertions - deletions) which could be for example 0 while cumulative
+total is large.
+By making the --max-changed-lines completely user defined, with no
+default, it's left to individual developers/maintainers to determine
+what they consider a meaningful value is to represent a "large change"
+to warn on for splitting a patch.
 
-I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
-check the sha1 hash in
-"/sys/kernel/security/ima/ascii_runtime_measurements".
+Thanks,
+Nick
 
-My patch on the memfs FUSE driver added a backdoor command to serve
-prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
-exec prog1 and get it to print "hello world: 2" without ever replacing
-the file via the VFS, so the kernel is not aware of the change.
 
-The test was done using the branch "dongsu/fuse-flag-ima-nocache-v4" [3].
-
-Step by step test procedure:
-
-1. Mount the memfs FUSE using [2]:
-rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
-
-2. Copy prog1 and prog2 using [4]
-cp prog1 /mnt/memfs/prog1
-cp prog2 /mnt/memfs/prog2
-
-3. Lookup the files and let the FUSE driver to keep the handles open:
-dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
-dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
-
-4. Check the 2 programs work correctly:
-$ /mnt/memfs/prog1
-hello world: 1
-$ /mnt/memfs/prog2
-hello world: 2
-
-5. Check the measurements for prog1 and prog2:
-$ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
-                | grep /mnt/memfs/prog
-10 [...] ima-ng sha1:ac14c9268cd2[...] /mnt/memfs/prog1
-10 [...] ima-ng sha1:799cb5d1e06d[...] /mnt/memfs/prog2
-
-6. Use the backdoor command in my patched memfs to redirect file
-operations on file handle 3 to file handle 2:
-rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
-
-7. Check how the FUSE driver serves different content for the files:
-$ /mnt/memfs/prog1
-hello world: 2
-$ /mnt/memfs/prog2
-hello world: 2
-
-8. Check the measurements:
-sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
-                | grep /mnt/memfs/prog
-
-Without the patch, there are no new measurements, despite the FUSE
-driver having served different executables.
-
-With the patch, I can see additional measurements for prog1 and prog2
-with the hashes reversed when the FUSE driver served the alternative
-content.
-
-[1] https://github.com/bbengfort/memfs
-[2] https://github.com/kinvolk/memfs/commits/alban/switch-files
-[3] https://github.com/kinvolk/linux/commits/dongsu/fuse-flag-ima-nocache-v4
-[4] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
-
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
-Acked-by: Seth Forshee <seth.forshee@canonical.com>
-Tested-by: Dongsu Park <dongsu@kinvolk.io>
-Signed-off-by: Alban Crequy <alban@kinvolk.io>
-[dongsu: optimized code to address review comments by Mimi]
-Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
----
- security/integrity/ima/ima_main.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 6d78cb26..83edbad8 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -24,6 +24,7 @@
- #include <linux/slab.h>
- #include <linux/xattr.h>
- #include <linux/ima.h>
-+#include <linux/fs.h>
- 
- #include "ima.h"
- 
-@@ -228,9 +229,19 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
- 				 IMA_ACTION_FLAGS);
- 
--	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
--		/* reset all flags if ima_inode_setxattr was called */
-+	/*
-+	 * Reset the measure, appraise and audit cached flags either if:
-+	 * - ima_inode_setxattr was called, or
-+	 * - based on filesystem feature flag
-+	 * forcing the file to be re-evaluated.
-+	 */
-+	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
- 		iint->flags &= ~IMA_DONE_MASK;
-+	} else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
-+		iint->flags &= ~IMA_DONE_MASK;
-+		if (action & IMA_MEASURE)
-+			iint->measured_pcrs = 0;
-+	}
- 
- 	/* Determine if already appraised/measured based on bitmask
- 	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
--- 
-2.13.6
+> 
+> > Signed-off-by: Nicholas Brown <nick.brown@att.com>
+> > ---
+> >  scripts/checkpatch.pl | 17 +++++++++++++++++
+> >  1 file changed, 17 insertions(+)
+> > 
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > index 31031f10fe56..1217d782b6bb 100755
+> > --- a/scripts/checkpatch.pl
+> > +++ b/scripts/checkpatch.pl
+> > @@ -49,6 +49,7 @@ my @ignore = ();
+> >  my $help = 0;
+> >  my $configuration_file = ".checkpatch.conf";
+> >  my $max_line_length = 80;
+> > +my $max_changed_lines; # undef = no max
+> >  my $ignore_perl_version = 0;
+> >  my $minimum_perl_version = 5.10.0;
+> >  my $min_conf_desc_length = 4;
+> > @@ -209,6 +210,7 @@ GetOptions(
+> >         'show-types!'   => \$show_types,
+> >         'list-types!'   => \$list_types,
+> >         'max-line-length=i' => \$max_line_length,
+> > +       'max-changed-lines=i' => \$max_changed_lines,
+> >         'min-conf-desc-length=i' => \$min_conf_desc_length,
+> >         'root=s'        => \$root,
+> >         'summary!'      => \$summary,
+> > @@ -2165,6 +2167,8 @@ sub process {
+> >         my $filename = shift;
+> >  
+> >         my $linenr=0;
+> > +       my $inserted_lines_total=0;
+> > +       my $deleted_lines_total=0;
+> >         my $prevline="";
+> >         my $prevrawline="";
+> >         my $stashline="";
+> > @@ -2233,6 +2237,14 @@ sub process {
+> >  
+> >                 push(@fixed, $rawline) if ($fix);
+> >  
+> > +               if ($rawline=~/^\+/) {
+> > +                 $inserted_lines_total++
+> > +               }
+> > +
+> > +               if ($rawline=~/^-/) {
+> > +                 $deleted_lines_total++
+> > +               }
+> > +
+> >                 if ($rawline=~/^\+\+\+\s+(\S+)/) {
+> >                         $setup_docs = 0;
+> >                         if ($1 =~ m@Documentation/admin-
+> > guide/kernel-parameters.rst$@) {
+> > @@ -2306,6 +2318,11 @@ sub process {
+> >  
+> >         $prefix = '';
+> >  
+> > +       if (defined $max_changed_lines &&
+> > +           ($inserted_lines_total+$deleted_lines_total >
+> > $max_changed_lines)) {
+> > +         WARN("MAX_CHANGED_LINES", "please split the change into
+> > smaller parts\n");
+> > +       }
+> > +
+> >         $realcnt = 0;
+> >         $linenr = 0;
+> >         $fixlinenr = -1;
+> > -- 
+> > 2.14.1
