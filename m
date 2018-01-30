@@ -1,40 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752527AbeA3N4O (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 08:56:14 -0500
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:33313 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbeA3N4N (ORCPT
+        id S1752757AbeA3N4i (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 08:56:38 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:42550 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752565AbeA3N4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 08:56:13 -0500
-X-Google-Smtp-Source: AH8x224mKy1+rrZLaJ3qZR+BPm6KWzFdcNLgx3dNxE0xBOIGlSJMMIb/TGHLpD0tI0e1MeMg9eBkOQ==
-Date: Tue, 30 Jan 2018 16:56:10 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv7 5/4] x86/boot/compressed/64: Support switching from 5-
- to 4-level paging
-Message-ID: <20180130135610.yco6voevctehgwg5@node.shutemov.name>
-References: <20180130135239.72244-1-kirill.shutemov@linux.intel.com>
- <20180130135239.72244-3-kirill.shutemov@linux.intel.com>
+        Tue, 30 Jan 2018 08:56:37 -0500
+Date: Tue, 30 Jan 2018 14:56:26 +0100
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Miquel Raynal <miquel.raynal@free-electrons.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: nand: MTD_NAND_MARVELL should depend on HAS_DMA
+Message-ID: <20180130145626.7a108c64@bbrezillon>
+In-Reply-To: <20180130144647.73a44b8d@xps13>
+References: <1517318601-14793-1-git-send-email-geert@linux-m68k.org>
+        <20180130144647.73a44b8d@xps13>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180130135239.72244-3-kirill.shutemov@linux.intel.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is sent by mistake. Forgot to delete it.
+On Tue, 30 Jan 2018 14:46:47 +0100
+Miquel Raynal <miquel.raynal@free-electrons.com> wrote:
 
-Please look at the rest of the patchset.
+> Hi Geert,
+> 
+> On Tue, 30 Jan 2018 14:23:21 +0100
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> 
+> > If NO_DMA=y:
+> > 
+> >     ERROR: "bad_dma_ops" [drivers/mtd/nand/marvell_nand.ko] undefined!
+> > 
+> > Add a dependency on HAS_DMA to fix this.
+> > 
+> > Fixes: 02f26ecf8c772751 ("mtd: nand: add reworked Marvell NAND controller driver")
+> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > ---
+> >  drivers/mtd/nand/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/mtd/nand/Kconfig b/drivers/mtd/nand/Kconfig
+> > index e6b8c59f2c0da7c0..736ac887303c88ba 100644
+> > --- a/drivers/mtd/nand/Kconfig
+> > +++ b/drivers/mtd/nand/Kconfig
+> > @@ -328,7 +328,7 @@ config MTD_NAND_MARVELL
+> >  	tristate "NAND controller support on Marvell boards"
+> >  	depends on PXA3xx || ARCH_MMP || PLAT_ORION || ARCH_MVEBU || \
+> >  		   COMPILE_TEST
+> > -	depends on HAS_IOMEM
+> > +	depends on HAS_IOMEM && HAS_DMA  
+> 
+> I think this is more a coding issue than a Kconfig issue. AFAIR, none
+> of the ARCH_MVEBU SoCs use DMA in conjunction with the NAND controller.
+> PXA SoCs may use DMA (NFCv1 only) but this is not a hard requirement and
+> the driver is supposed to support PIO mode in all situations.
+> 
+> Can you please share your setup, the SoC, the configuration,
+> maybe also the DT?
 
--- 
- Kirill A. Shutemov
+I don't think Geert is testing on a real board. He's just enabling
+COMPILE_TEST and can then select your driver. Which means you really
+need this depends on HAS_DMA.
