@@ -1,195 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753654AbeA3VPo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:15:44 -0500
-Received: from 4.mo179.mail-out.ovh.net ([46.105.36.149]:42949 "EHLO
-        4.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753605AbeA3VPm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:15:42 -0500
-From: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-To: bhelgaas@google.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
-        linux-pci@vger.kernel.org
-Cc: adouglas@cadence.com, stelford@cadence.com, dgary@cadence.com,
-        kgopi@cadence.com, eandrews@cadence.com,
-        thomas.petazzoni@free-electrons.com, sureshp@cadence.com,
-        nsekhar@ti.com, linux-kernel@vger.kernel.org, robh@kernel.org,
-        devicetree@vger.kernel.org,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-Subject: [PATCH v6 00/11] PCI: Add support to the Cadence PCIe controller
-Date: Tue, 30 Jan 2018 21:56:48 +0100
-Message-Id: <cover.1517343502.git.cyrille.pitchen@free-electrons.com>
+        id S1752581AbeA3VSx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:18:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751251AbeA3VSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 16:18:52 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6727D21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH v2 0/4] ARM/arm64: exynos: Fix missing missing reg warning for syscon restart nodes
+Date: Tue, 30 Jan 2018 22:18:15 +0100
+Message-Id: <20180130211819.17139-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.11.0
-X-Ovh-Tracer-Id: 15865337065448495105
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrtddtgdduvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenuc
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
 
-this series of patches adds support to the Cadence PCIe controller.
-It was tested on a ARM64 platform emulated by a Palladium running the
-pci-next kernel.
+Hi,
 
-The host mode was tested with some PCIe devices connected to the Palladium
-through a speed-bridge. Some of those devices were a USB host controller
-and a SATA controller. The PCIe host controller was also tested with a
-second controller configured in endpoint mode and connected back to back
-to the first controller.
-
-The EndPoint Controller (EPC) driver was tested with 2 PCI functions, both
-handled by the pci-epf-test driver, using the pcitest userspace program.
-I used the "-D" optional command line parameter to select the proper PCI
-function.
-
-For linux-pci/master, I applied this series on top of Kishon's patch
-("PCI: endpoint: Use EPC's device in dma_alloc_coherent/dma_free_coherent")
-otherwise dma_alloc_coherent() fails when called by pci_epf_alloc_space().
+Changes since v1:
+1. New patch (1/4) calling devm_of_platform_populate() in PMU driver,
+   following Rob's advice.
+2. The DTS patches moving reboot/poweroff nodes (3/4 and 4/4) now depend
+   on this.
 
 Best regards,
-
-Cyrille
-
-ChangeLog
-
-v5 -> v6:
-- rebase on linux-pci/master (v4.15-rc4) + Kishon's patch from linux-pci/next:
-"PCI: endpoint: Use EPC's device in dma_alloc_coherent()/dma_free_coherent()"
-- all patches unchanged
-
-v4 -> v5:
-- rebase on today's (20180128) linux-pci/next
-- add again the endpoint driver
-
-- Patch 7:
- move host driver from drivers/pci/cadence into drivers/pci/host and remove
- all references to the endpoint mode, as requested by Lorenzo.
- The host driver will be moved back into drivers/pci/cadence by Patch 11
-
-- Patch 8:
- fix comparison of func_no to BAR5: compare to epc->max_functions
-
-- Patch 9:
- add new patch to fix support of PCI multi-function devices
-
-- Patch 10:
- change the 'cdns,max-outbound-regions' from optional to mandatory as requested
- by Kishon.
-
-- Patch 11:
- take Kishon's comments into account as much as I could.
-
-- Other patches: unchanged
+Krzysztof
 
 
-v3 -> v4:
-- split patch 3 from v3 into patches 3 and 4.
-- remove unused cdns_pcie_reset_outbound_region() from old patch 6
-  (new patch 7).
-- other patches are unchanged.
+Krzysztof Kozlowski (4):
+  soc: samsung: pmu: Populate children syscon nodes
+  ARM: dts: exynos: Remove duplicated inclusion of syscon restart nodes
+    on Exynos5410
+  ARM: dts: exynos: Fix missing missing reg warning for syscon restart
+    nodes
+  arm64: dts: exynos: Fix missing missing reg warning for syscon restart
+    nodes
 
-v2 -> v3:
-
-- rebase on today's linux-pci/next (20180110) 
-
-patch1:
-- rework the commit message of patch 1 and add two new comments on why endpoint
-  library users must be linked after the endpoint library itself and why
-  the dwc rule uses obj-y instead of obj-$(CONFIG_PCIE_CONFIG_DW).
-- update patch 1 to add missing ifdef CONFIG_PCI / endif in
-  drivers/pci/dwc/Makefile around the obj-$(CONFIG_ARM64) += pcie-hisi.o rule,
-  like for the other obj-$(CONFIG_ARM64) rules in drivers/pci/host/Makefile.
-
-patch2: unchanged
-
-patch3:
-- update patch 3 so the bridge hooks/members initialization is left to the
-  host bridges probe routines.
-
-patch4: unchanged
-
-patch5:
-- collect 'Reviewed-by' tag from Rob Herring for the DT bindings.
-
-patch6:
-- remove explanation in the commit message on why obj-$(CONFIG_PCIE_CANDENCE) is
-  placed after obj-$(CONFIG_PCI_ENDPOINT) in drivers/pci/Makefile since a
-  comment on it has been added into patch1.
-- remove menuconfig PCI_CADENCE in drivers/pci/cadence/Kconfig to match
-  drivers/pci/dwc/Kconfig.
-- adapt patch6 to the changes done in patch3 for the pci_host_probe() function.
-
-v1 -> v2:
-- add new properties in the device-tree bindings: 'cdns,max-outbound-regions'
-  and 'cdns,no-bar-match-nbits'.
-- add a new patch to regroup all makefile rules in drivers/pci/Makefile, hence
-  cleaning drivers/Makefile up.
-- change the license text to use the recommanded format:
-  // SPDX-License-Identifier: GPL-2.0
-- add a new patch updating the API of the EPC library to add support to
-  multi-function devices.
-- add a 2 new patches to share more common code between host controller drivers
-- remove some useless tests
-- add more comments in both drivers.
-- fix DT bindings examples
-- remove useless init of the primary, secondary and sub-ordinate bus numbers in
-  the PCI configuration space of the root port.
-- remove cdns_pcie_ep_stop() function and rework cdns_pcie_ep_start() function
-
-Cyrille Pitchen (10):
-  PCI: Regroup all PCI related entries into drivers/pci/Makefile
-  PCI: OF: Add generic function to parse and allocate PCI resources
-  PCI: generic: fix missing call of pci_free_resource_list()
-  PCI: Add generic function to probe PCI host controllers
-  PCI: Add vendor ID for Cadence
-  PCI: cadence: Add host driver for Cadence PCIe controller
-  PCI: endpoint: Add the function number as argument to EPC ops
-  PCI: endpoint: Fix EPF device name to support multi-function devices
-  dt-bindings: PCI: cadence: Add DT bindings for Cadence PCIe endpoint
-    controller
-  PCI: cadence: Add EndPoint Controller driver for Cadence PCIe
-    controller
-
-Scott Telford (1):
-  dt-bindings: PCI: cadence: Add DT bindings for Cadence PCIe host
-    controller
-
- .../devicetree/bindings/pci/cdns,cdns-pcie-ep.txt  |  22 +
- .../bindings/pci/cdns,cdns-pcie-host.txt           |  60 +++
- MAINTAINERS                                        |   7 +
- drivers/Makefile                                   |   5 +-
- drivers/pci/Kconfig                                |   2 +
- drivers/pci/Makefile                               |  14 +-
- drivers/pci/cadence/Kconfig                        |  27 +
- drivers/pci/cadence/Makefile                       |   4 +
- drivers/pci/cadence/pcie-cadence-ep.c              | 542 +++++++++++++++++++++
- drivers/pci/cadence/pcie-cadence-host.c            | 336 +++++++++++++
- drivers/pci/cadence/pcie-cadence.c                 | 126 +++++
- drivers/pci/cadence/pcie-cadence.h                 | 311 ++++++++++++
- drivers/pci/dwc/Makefile                           |   2 +
- drivers/pci/dwc/pcie-designware-ep.c               |  20 +-
- drivers/pci/endpoint/functions/pci-epf-test.c      |  41 +-
- drivers/pci/endpoint/pci-ep-cfs.c                  |  46 +-
- drivers/pci/endpoint/pci-epc-core.c                |  62 ++-
- drivers/pci/host/Makefile                          |   2 +
- drivers/pci/host/pci-host-common.c                 |  72 +--
- drivers/pci/of.c                                   |  51 ++
- drivers/pci/probe.c                                |  33 ++
- include/linux/pci-epc.h                            |  43 +-
- include/linux/pci.h                                |  10 +
- include/linux/pci_ids.h                            |   2 +
- 24 files changed, 1693 insertions(+), 147 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
- create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
- create mode 100644 drivers/pci/cadence/Kconfig
- create mode 100644 drivers/pci/cadence/Makefile
- create mode 100644 drivers/pci/cadence/pcie-cadence-ep.c
- create mode 100644 drivers/pci/cadence/pcie-cadence-host.c
- create mode 100644 drivers/pci/cadence/pcie-cadence.c
- create mode 100644 drivers/pci/cadence/pcie-cadence.h
+ .../devicetree/bindings/arm/samsung/pmu.txt        |  6 +++++
+ arch/arm/boot/dts/exynos-syscon-restart.dtsi       | 28 ++++++++++------------
+ arch/arm/boot/dts/exynos3250.dtsi                  |  2 +-
+ arch/arm/boot/dts/exynos4.dtsi                     |  3 ++-
+ arch/arm/boot/dts/exynos5.dtsi                     |  1 -
+ arch/arm/boot/dts/exynos5250.dtsi                  |  1 +
+ arch/arm/boot/dts/exynos5410.dtsi                  |  2 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |  1 +
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 14 +++++------
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            | 12 +++++-----
+ drivers/soc/samsung/exynos-pmu.c                   |  3 +++
+ 11 files changed, 40 insertions(+), 33 deletions(-)
 
 -- 
 2.11.0
