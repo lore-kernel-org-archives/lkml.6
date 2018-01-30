@@ -1,75 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752716AbeA3OGu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:06:50 -0500
-Received: from outbound-smtp20.blacknight.com ([46.22.139.247]:33358 "EHLO
-        outbound-smtp20.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752676AbeA3OGt (ORCPT
+        id S1752412AbeA3OJg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:09:36 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40858 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751603AbeA3OJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:06:49 -0500
-Date: Tue, 30 Jan 2018 14:06:47 +0000
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net,
-        srinivas.pandruvada@linux.intel.com
-Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
- candidate and the basis for SIS
-Message-ID: <20180130140647.6uv7gwdvf3o67su2@techsingularity.net>
-References: <20180130104555.4125-1-mgorman@techsingularity.net>
- <20180130104555.4125-5-mgorman@techsingularity.net>
- <20180130115054.GA2269@hirez.programming.kicks-ass.net>
- <20180130125718.iwntjuvcp3yplvdx@techsingularity.net>
- <20180130131531.GD2269@hirez.programming.kicks-ass.net>
- <20180130132527.tjc6vea76sm5zm76@techsingularity.net>
- <20180130134049.GU2249@hirez.programming.kicks-ass.net>
+        Tue, 30 Jan 2018 09:09:35 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D2415601A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
+Subject: Re: [PATCH v2 2/2] drm/bridge/synopsys: dsi: Fix dsi_host_transfer()
+ return value
+To: Brian Norris <briannorris@chromium.org>,
+        Philippe Cornu <philippe.cornu@st.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Bhumika Goyal <bhumirks@gmail.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
+        Heiko Stubner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Mickael Reulier <mickael.reulier@st.com>
+References: <20180125103800.1999-1-philippe.cornu@st.com>
+ <20180125103800.1999-3-philippe.cornu@st.com>
+ <20180126004628.fbrady7twf7ys2qx@ban.mtv.corp.google.com>
+From: Archit Taneja <architt@codeaurora.org>
+Message-ID: <70cae8dd-ee9e-0313-6518-504ee5ec32ca@codeaurora.org>
+Date: Tue, 30 Jan 2018 19:39:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20180130134049.GU2249@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180126004628.fbrady7twf7ys2qx@ban.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 02:40:49PM +0100, Peter Zijlstra wrote:
-> On Tue, Jan 30, 2018 at 01:25:27PM +0000, Mel Gorman wrote:
-> > > Because, esp. in this scenario; a task migrating; the hardware really
-> > > can't do anything sensible, whereas the OS _knows_.
-> > 
-> > Potentially yes. One option without HWP would be to track utilisation
-> > for a task or artifically boost it for a short period after migration so
-> > a higher p-state is potentially selected. With HWP, a hint would have to
-> > be given to the hardware to try select a higher frequency but I've no idea
-> > how expensive that is or how it would behave on different implementations
-> > of HWP. It may also be a game of whack-a-mole trying to get every cpufreq
-> > configuration correct.
-> 
-> We have much of this infrastructure and have been working on improving
-> it [1]. We already track per task utilization and feed it into a cpufreq
-> governor (schedutil).
-> 
 
-Which is potentially great without HWP but ...
 
-> > One advantage of using fewer cores is that it should
-> > work regardless of cpufreq driver.
+On 01/26/2018 06:16 AM, Brian Norris wrote:
+> On Thu, Jan 25, 2018 at 11:38:00AM +0100, Philippe Cornu wrote:
+>> The dw_mipi_dsi_host_transfer() must return the number of
+>> bytes transmitted/received on success instead of 0.
+>> Note: As the read feature is not implemented, only the
+>> transmitted number of bytes is returned for the moment.
+>>
+>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 > 
-> Sure, and I started out by saying this patch isn't necessarily bad; but
-> I think our 'use' [2] of HWP _is_.
+> Assuming we're going with the current documented semantics (where we
+> return # of TX bytes for writes), then:
 > 
+> Reviewed-by: Brian Norris <briannorris@chromium.org>
+> 
+> I believe Archit was suggesting maybe changing that sometime, but that's
+> no excuse for not matching documentation now.
 
-This is where we get caught -- HWP means we had full responsibility to
-the hardware with limited feedback options. As far as I can tell, any
-recent intel CPU is going to have HWP and we've enabled it by default if
-available since 4.6. 
+Queued to drm-misc-next.
 
-Even if further hints can be given from the OS, it does not necessarily
-mean this patch is unhelpful. On low utilisation, it's still somewhat
-sensible to use the minimum number of CPUs necessary (less cache traffic,
-higher p-states, maybe beneficial to turbo boost etc).
+Thanks,
+Archit
+
+> 
+>> ---
+>>   drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 11 ++++++++++-
+>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>> index 72ecaeb40822..090bf62d1ea8 100644
+>> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>> @@ -419,7 +419,16 @@ static ssize_t dw_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
+>>   
+>>   	dw_mipi_message_config(dsi, msg);
+>>   
+>> -	return dw_mipi_dsi_write(dsi, &packet);
+>> +	ret = dw_mipi_dsi_write(dsi, &packet);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * TODO Only transmitted size is returned as actual driver does
+>> +	 * not support dcs/generic reads. Please update return value when
+>> +	 * delivering the read feature.
+>> +	 */
+>> +	return packet.size;
+> 
+> You're really holding my hand here, I see :) Thanks I guess.
+> 
+>>   }
+>>   
+>>   static const struct mipi_dsi_host_ops dw_mipi_dsi_host_ops = {
+>> -- 
+>> 2.15.1
+>>
 
 -- 
-Mel Gorman
-SUSE Labs
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
