@@ -1,156 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753319AbeA3SGE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:06:04 -0500
-Received: from mx0b-00191d01.pphosted.com ([67.231.157.136]:35805 "EHLO
-        mx0a-00191d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753085AbeA3SGC (ORCPT
+        id S1753029AbeA3SHl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:07:41 -0500
+Received: from mail-pf0-f178.google.com ([209.85.192.178]:46402 "EHLO
+        mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751452AbeA3SHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:06:02 -0500
-From: "Brown, Nicholas" <nb930b@intl.att.com>
-To: "joe@perches.com" <joe@perches.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "apw@canonical.com" <apw@canonical.com>
-Subject: Re: [PATCH] checkpatch: warn if changed lines exceeds a maximum size
-Thread-Topic: [PATCH] checkpatch: warn if changed lines exceeds a maximum
- size
-Thread-Index: AQHTmeMGAPsYZkfslkm5Wnly+K55WaOMldQAgAAf4IA=
-Date: Tue, 30 Jan 2018 18:04:18 +0000
-Message-ID: <1517335455.3063.28.camel@intl.att.com>
-References: <1517327844.3063.19.camel@intl.att.com>
-         <1517328610.765.22.camel@perches.com>
-In-Reply-To: <1517328610.765.22.camel@perches.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.156.48.128]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BC3DF20CC1A4F543B9BC4264056186DD@intl.att.com>
+        Tue, 30 Jan 2018 13:07:39 -0500
+X-Google-Smtp-Source: AH8x227ack8bAvm0ZGlpqtAY1JPDywreo9P01y+KI+WzWjh7p7N7BUZvXgq0Nlxj0PW2aa2kNmW/kg==
+Date: Tue, 30 Jan 2018 10:07:36 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Paul Menzel <pmenzel+linux-input@molgen.mpg.de>
+Cc: linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        it+linux-input@molgen.mpg.de
+Subject: Re: i8042 AUX port [serio1] suspend takes a second on Dell XPS 13
+ 9360 and TUXEDO Book 1406
+Message-ID: <20180130180736.ehucqywbz7zdl4v7@dtor-ws>
+References: <5a74e1a7-2083-c6b2-f51a-f44908ac8bc4@molgen.mpg.de>
+ <20180130175017.72inurhk5l7tcvae@dtor-ws>
 MIME-Version: 1.0
-X-RSA-Inspected: yes
-X-RSA-Classifications: public
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_policy_notspam policy=outbound_policy score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1711220000 definitions=main-1801300221
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180130175017.72inurhk5l7tcvae@dtor-ws>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w0UI6SDv013364
 
-On Tue, 2018-01-30 at 08:10 -0800, Joe Perches wrote:
-> On Tue, 2018-01-30 at 15:57 +0000, Brown, Nicholas wrote:
-> > Changed lines is the total of inserted and deleted lines.
-> > By default there is no limit, --max-changed-lines may be used to
-> > set a
-> > value. Some users may wish to encourage that patches are split into
-> > smaller parts using this.
-> > See Documentation/process/submitting-patches.rst#split-changes
+On Tue, Jan 30, 2018 at 09:52:45AM -0800, Dmitry Torokhov wrote:
+> Hi Paul,
 > 
-> (This patch seems whitespace damaged)
-> 
-> I don't care for this much as is either.
-> 
-> This patch doesn't add help text and it
-
-I'll look to add some help text.
-
-> should probably add a check for
-> 	"if (!$file"
-> so new files aren't size limited.
-> 
-> Also, it double counts lines that are
-> added and deleted so doing things like
-> refactoring a block of code into a new
-> separate function would potentially trip
-> this.
-
-These were both intentional. Large new files are just as equal a
-potential target for splitting as a large change to a file, and could
-for example add basic infra/stubs in an initial patch, and then flesh
-out implementation in follow up patches.
-Similarly it counts both insertions and deletions, as it's the
-cumulative total that's a better measure of change, as compared
-(insertions - deletions) which could be for example 0 while cumulative
-total is large.
-By making the --max-changed-lines completely user defined, with no
-default, it's left to individual developers/maintainers to determine
-what they consider a meaningful value is to represent a "large change"
-to warn on for splitting a patch.
-
-Thanks,
-Nick
-
-
-> 
-> > Signed-off-by: Nicholas Brown <nick.brown@att.com>
-> > ---
-> >  scripts/checkpatch.pl | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
+> On Tue, Jan 30, 2018 at 06:36:34PM +0100, Paul Menzel wrote:
+> > Dear Linux folks,
 > > 
-> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> > index 31031f10fe56..1217d782b6bb 100755
-> > --- a/scripts/checkpatch.pl
-> > +++ b/scripts/checkpatch.pl
-> > @@ -49,6 +49,7 @@ my @ignore = ();
-> >  my $help = 0;
-> >  my $configuration_file = ".checkpatch.conf";
-> >  my $max_line_length = 80;
-> > +my $max_changed_lines; # undef = no max
-> >  my $ignore_perl_version = 0;
-> >  my $minimum_perl_version = 5.10.0;
-> >  my $min_conf_desc_length = 4;
-> > @@ -209,6 +210,7 @@ GetOptions(
-> >         'show-types!'   => \$show_types,
-> >         'list-types!'   => \$list_types,
-> >         'max-line-length=i' => \$max_line_length,
-> > +       'max-changed-lines=i' => \$max_changed_lines,
-> >         'min-conf-desc-length=i' => \$min_conf_desc_length,
-> >         'root=s'        => \$root,
-> >         'summary!'      => \$summary,
-> > @@ -2165,6 +2167,8 @@ sub process {
-> >         my $filename = shift;
-> >  
-> >         my $linenr=0;
-> > +       my $inserted_lines_total=0;
-> > +       my $deleted_lines_total=0;
-> >         my $prevline="";
-> >         my $prevrawline="";
-> >         my $stashline="";
-> > @@ -2233,6 +2237,14 @@ sub process {
-> >  
-> >                 push(@fixed, $rawline) if ($fix);
-> >  
-> > +               if ($rawline=~/^\+/) {
-> > +                 $inserted_lines_total++
-> > +               }
-> > +
-> > +               if ($rawline=~/^-/) {
-> > +                 $deleted_lines_total++
-> > +               }
-> > +
-> >                 if ($rawline=~/^\+\+\+\s+(\S+)/) {
-> >                         $setup_docs = 0;
-> >                         if ($1 =~ m@Documentation/admin-
-> > guide/kernel-parameters.rst$@) {
-> > @@ -2306,6 +2318,11 @@ sub process {
-> >  
-> >         $prefix = '';
-> >  
-> > +       if (defined $max_changed_lines &&
-> > +           ($inserted_lines_total+$deleted_lines_total >
-> > $max_changed_lines)) {
-> > +         WARN("MAX_CHANGED_LINES", "please split the change into
-> > smaller parts\n");
-> > +       }
-> > +
-> >         $realcnt = 0;
-> >         $linenr = 0;
-> >         $fixlinenr = -1;
-> > -- 
-> > 2.14.1
+> > 
+> > I do not know, when it started, but with Linux 4.14-rc8 and 4.15,
+> > benchmarking suspend and resume time with `sleepgraph.py` [1][2], there is a
+> > regression, that i8042 AUX port [serio1] suspend takes a second on Dell XPS
+> > 13 9360 and TUXEDO Book 1406.
+> 
+> It would be really helpful to know when the regression started.
+
+So the reason it takes longer is because the touchpad does not want to
+talk to us for some reason and we wait until commands time out:
+
+[   94.591636] calling  serio1+ @ 2299, parent: i8042
+[   94.794292] psmouse serio1: Failed to disable mouse on isa0060/serio1
+[   95.593303] call serio1+ returned 0 after 974280 usecs
+
+but it is not clear why it happens, I do not think we changed anything
+in that path for a while, so it might be some other change affecting
+things indirectly. I'm afraid you'll have to narrow the scope, and
+ideally bisect.
+
+Thanks.
+
+-- 
+Dmitry
