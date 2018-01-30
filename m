@@ -1,115 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751598AbeA3Jam (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:30:42 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:44372 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751360AbeA3Jai (ORCPT
+        id S1751660AbeA3Jbv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:31:51 -0500
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:39726 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751405AbeA3Jbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:30:38 -0500
-X-Google-Smtp-Source: AH8x225UajiOD4769PVdA6rQfo/xNuteTOn2ZjJRTZTipDYjIHZYhTuh9gmCDhG+FRe9/Fe4P7qMlbobtmcFjjRu/GQ=
+        Tue, 30 Jan 2018 04:31:49 -0500
+X-Google-Smtp-Source: AH8x227WmfL5iiFl5vyid9hpYvggfq/AM7J/MA7xNnFevbeg5xMQJcEW5UDP1eWJqaR1H1rb9s3SCA==
+Date: Tue, 30 Jan 2018 10:31:45 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: christian.koenig@amd.com
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-mm@kvack.org, amd-gfx@lists.freedesktop.org,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [RFC] Per file OOM badness
+Message-ID: <20180130093145.GE25930@phenom.ffwll.local>
+Mail-Followup-To: christian.koenig@amd.com,
+        Michal Hocko <mhocko@kernel.org>,
+        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-mm@kvack.org, amd-gfx@lists.freedesktop.org,
+        Roman Gushchin <guro@fb.com>
+References: <20180118170006.GG6584@dhcp22.suse.cz>
+ <20180123152659.GA21817@castle.DHCP.thefacebook.com>
+ <20180123153631.GR1526@dhcp22.suse.cz>
+ <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
+ <20180124092847.GI1526@dhcp22.suse.cz>
+ <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
+ <20180124110141.GA28465@dhcp22.suse.cz>
+ <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
+ <20180124115059.GC28465@dhcp22.suse.cz>
+ <381a868c-78fd-d0d1-029e-a2cf4ab06d37@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20171201120651.29633-1-enric.balletbo@collabora.com>
-References: <20171201120651.29633-1-enric.balletbo@collabora.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Tue, 30 Jan 2018 10:30:36 +0100
-Message-ID: <CAFqH_531DL3DYp4kn_Gjxprp7NNoAnP4MMD4-PRN=yJ+mXJNnA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] pwm-backlight: enable/disable the PWM before/after
- LCD enable toggle.
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <381a868c-78fd-d0d1-029e-a2cf4ab06d37@gmail.com>
+X-Operating-System: Linux phenom 4.14.0-1-amd64 
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jan 24, 2018 at 01:11:09PM +0100, Christian König wrote:
+> Am 24.01.2018 um 12:50 schrieb Michal Hocko:
+> > On Wed 24-01-18 12:23:10, Michel Dänzer wrote:
+> > > On 2018-01-24 12:01 PM, Michal Hocko wrote:
+> > > > On Wed 24-01-18 11:27:15, Michel Dänzer wrote:
+> > [...]
+> > > > > 2. If the OOM killer kills a process which is sharing BOs with another
+> > > > > process, this should result in the other process dropping its references
+> > > > > to the BOs as well, at which point the memory is released.
+> > > > OK. How exactly are those BOs mapped to the userspace?
+> > > I'm not sure what you're asking. Userspace mostly uses a GEM handle to
+> > > refer to a BO. There can also be userspace CPU mappings of the BO's
+> > > memory, but userspace doesn't need CPU mappings for all BOs and only
+> > > creates them as needed.
+> > OK, I guess you have to bear with me some more. This whole stack is a
+> > complete uknonwn. I am mostly after finding a boundary where you can
+> > charge the allocated memory to the process so that the oom killer can
+> > consider it. Is there anything like that? Except for the proposed file
+> > handle hack?
+> 
+> Not that I knew of.
+> 
+> As I said before we need some kind of callback that a process now starts to
+> use a file descriptor, but without anything from that file descriptor mapped
+> into the address space.
 
-2017-12-01 13:06 GMT+01:00 Enric Balletbo i Serra
-<enric.balletbo@collabora.com>:
-> Before this patch the enable signal was set before the PWM signal and
-> vice-versa on power off. This sequence is wrong, at least, it is on
-> the different panels datasheets that I checked, so I inverted the sequence
-> to follow the specs.
->
-> For reference the following panels have the mentioned sequence:
->   - N133HSE-EA1 (Innolux)
->   - N116BGE (Innolux)
->   - N156BGE-L21 (Innolux)
->   - B101EAN0 (Auo)
->   - B101AW03 (Auo)
->   - LTN101NT05 (Samsung)
->   - CLAA101WA01A (Chunghwa)
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Acked-by: Jingoo Han <jingoohan1@gmail.com>
-> ---
-> Changes since v4:
->  - Rebase on top of mainline.
->  - Add the acks from Daniel Thompson and Jingoo Han.
-> Changes since v3:
->  - List the part numbers for the panel checked (Daniel Thompson)
-> Changes since v2:
->  - Add this as a separate patch (Thierry Reding)
-> Changes since v1:
->  - None
->
->  drivers/video/backlight/pwm_bl.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> index 1c2289d..698ec68 100644
-> --- a/drivers/video/backlight/pwm_bl.c
-> +++ b/drivers/video/backlight/pwm_bl.c
-> @@ -54,10 +54,11 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
->         if (err < 0)
->                 dev_err(pb->dev, "failed to enable power supply\n");
->
-> +       pwm_enable(pb->pwm);
-> +
->         if (pb->enable_gpio)
->                 gpiod_set_value_cansleep(pb->enable_gpio, 1);
->
-> -       pwm_enable(pb->pwm);
->         pb->enabled = true;
->  }
->
-> @@ -66,12 +67,12 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
->         if (!pb->enabled)
->                 return;
->
-> -       pwm_config(pb->pwm, 0, pb->period);
-> -       pwm_disable(pb->pwm);
-> -
->         if (pb->enable_gpio)
->                 gpiod_set_value_cansleep(pb->enable_gpio, 0);
->
-> +       pwm_config(pb->pwm, 0, pb->period);
-> +       pwm_disable(pb->pwm);
-> +
->         regulator_disable(pb->power_supply);
->         pb->enabled = false;
->  }
-> --
-> 2.9.3
->
+For more context: With DRI3 and wayland the compositor opens the DRM fd
+and then passes it to the client, which then starts allocating stuff. That
+makes book-keeping rather annoying.
 
-A gentle ping, It's been nearly two months since I sent this patchset,
-there is anything else that prevents these patches to land or
-incorporate in linux-next?
+I guess a good first order approximation would be if we simply charge any
+newly allocated buffers to the process that created them, but that means
+hanging onto lots of mm_struct pointers since we want to make sure we then
+release those pages to the right mm again (since the process that drops
+the last ref might be a totally different one, depending upon how the
+buffers or DRM fd have been shared).
 
-Thanks,
- Enric
+Would it be ok to hang onto potentially arbitrary mmget references
+essentially forever? If that's ok I think we can do your process based
+account (minus a few minor inaccuracies for shared stuff perhaps, but no
+one cares about that).
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
