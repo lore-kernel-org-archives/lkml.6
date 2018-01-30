@@ -1,92 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752867AbeA3Vnf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:43:35 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44644 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbeA3Vnd (ORCPT
+        id S1753033AbeA3Vq0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:46:26 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38534 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751741AbeA3VqY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:43:33 -0500
-X-Google-Smtp-Source: AH8x2258E/vxDzcMXqjUZObz7ZVICjXjSG4AWAhtAUNNgQXFtrPnO7jxVIB32dBwabBZZIGMS1yUFQ==
-Date: Tue, 30 Jan 2018 13:43:29 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot
-        <bot+eb13811afcefe99cfe45081054e7883f569f949d@syzkaller.appspotmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
-        "Theodore Ts'o" <tytso@mit.edu>
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
- rb_insert_color
-Message-ID: <20180130214329.7tsk24bia2xplfc3@gmail.com>
-References: <94eb2c1170ce36bd770560ad6d3a@google.com>
- <20171219215906.GA12465@gmail.com>
- <CACT4Y+Y1ZP=q1DUDxWG4jLyLXGs5XkyTz=H+ozd3V6Az6Npjng@mail.gmail.com>
- <20171220075947.GA6565@zzz.localdomain>
- <CACT4Y+Y9SRDEZA5sbOAQ5NAbmMT=ae-uPQ2np4s+Eug9-b-MHw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+Y9SRDEZA5sbOAQ5NAbmMT=ae-uPQ2np4s+Eug9-b-MHw@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Tue, 30 Jan 2018 16:46:24 -0500
+Subject: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: initramfs <initramfs@vger.kernel.org>
+Cc: Taras Kondratiuk <takondra@cisco.com>,
+        Victor Kamensky <kamensky@cisco.com>, Rob Landley <rob@landley.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Tue, 30 Jan 2018 16:46:17 -0500
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18013021-0008-0000-0000-000004C7A200
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18013021-0009-0000-0000-00001E5B39A2
+Message-Id: <1517348777.3469.5.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1801300265
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 20, 2017 at 09:05:39AM +0100, Dmitry Vyukov wrote:
-> On Wed, Dec 20, 2017 at 8:59 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> > On Wed, Dec 20, 2017 at 08:50:40AM +0100, Dmitry Vyukov wrote:
-> >> >
-> >> > The line number in lib/rbtree.c seems to be slightly off.  Looking at the
-> >> > disassembly:
-> >> >
-> >> >         ffffffff825b5ea0 <rb_insert_color>:
-> >> >         ffffffff825b5ea0:       55                      push   %rbp
-> >> >         ffffffff825b5ea1:       48 8b 17                mov    (%rdi),%rdx
-> >> >         ffffffff825b5ea4:       48 89 e5                mov    %rsp,%rbp
-> >> >         ffffffff825b5ea7:       48 85 d2                test   %rdx,%rdx
-> >> >         ffffffff825b5eaa:       0f 84 4c 01 00 00       je     ffffffff825b5ffc <rb_insert_color+0x15c>
-> >> >         ffffffff825b5eb0:       48 8b 02                mov    (%rdx),%rax
-> >> >         ffffffff825b5eb3:       a8 01                   test   $0x1,%al
-> >> >         ffffffff825b5eb5:       75 5e                   jne    ffffffff825b5f15 <rb_insert_color+0x75>
-> >> >         ffffffff825b5eb7:       48 8b 48 08             mov    0x8(%rax),%rcx
-> >> >
-> >> > It crashed on 'mov 0x8(%rax),%rcx' which corresponds to
-> >> > 'tmp = gparent->rb_right;' at lib/rbtree.c:131.  So 'parent' was the root node,
-> >> > but its color was red, while it is supposed to be black.
-> >> >
-> >> > No idea how that happened, but it's almost certainly not an ext4 bug.  In fact
-> >> > there is another report of this same crash that has a different call trace:
-> >> >
-> >> >         Call Trace:
-> >> >          key_alloc_serial security/keys/key.c:170 [inline]
-> >> >          key_alloc+0x54c/0x5b0 security/keys/key.c:319
-> >> >          keyring_alloc+0x4d/0xb0 security/keys/keyring.c:503
-> >> >          install_process_keyring_to_cred.part.3+0x38/0x80 security/keys/process_keys.c:192
-> >> >          install_process_keyring_to_cred security/keys/process_keys.c:634 [inline]
-> >> >          install_process_keyring security/keys/process_keys.c:217 [inline]
-> >> >          lookup_user_key+0x4ed/0x7c0 security/keys/process_keys.c:574
-> >> >          SYSC_add_key security/keys/keyctl.c:114 [inline]
-> >> >          SyS_add_key+0xec/0x260 security/keys/keyctl.c:62
-> >> >          entry_SYSCALL_64_fastpath+0x1f/0x96
-> >>
-> >>
-> >> My first hypothesis for an non-explainable, non-reproducible
-> >> corruption would be a data race. Is there all locking in place?
-> >
-> > It doesn't seem to be a locking problem.  In the ext4 case the rbtree is
-> > associated with a struct file's dir_private_info, which is protected by
-> > ->f_pos_lock (taken early in sys_getdents()).
-> 
-> But this won't prevent somebody else to mess with the struct without
-> taking the lock.
-> 
-> > And in the keyrings case, the
-> > rbtree is protected by key_serial_lock.
+Commit 16203a7a9422 ("initmpfs: make rootfs use tmpfs when CONFIG_TMPFS
+enabled") introduced using tmpfs as the rootfs filesystem.  The use of
+tmpfs is limited to systems that do not specify "root=" on the boot
+command line.
 
-Invalidating this bug since it hasn't been seen again, and it was reported while
-KASAN was accidentally disabled in the syzbot config due to a change to the
-kconfig menus in linux-next (so this crash was probably caused by slab
-corruption elsewhere).
+Without the check "!saved_root_name[0]", rootfs uses tmpfs.  As there
+must be a valid reason for this check, this patch introduces a new boot
+command line option named "noramfs" to force rootfs to use tmpfs.
 
-#syz invalid
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  2 ++
+ init/do_mounts.c                                | 15 +++++++++++++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 6571fbfdb2a1..fd82df2ff150 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2733,6 +2733,8 @@
+ 
+ 	nopcid		[X86-64] Disable the PCID cpu feature.
+ 
++	noramfs		Don't use ramfs for rootfs, use tmpfs.
++
+ 	norandmaps	Don't use address space randomization.  Equivalent to
+ 			echo 0 > /proc/sys/kernel/randomize_va_space
+ 
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 7cf4f6dafd5f..74d8bfcd1294 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -315,6 +315,16 @@ static int __init root_data_setup(char *str)
+ 	return 1;
+ }
+ 
++static bool force_tmpfs;
++static int __init force_tmpfs_setup(char *str)
++{
++	if (*str)
++		return 0;
++	force_tmpfs = true;
++	return 1;
++
++}
++
+ static char * __initdata root_fs_names;
+ static int __init fs_names_setup(char *str)
+ {
+@@ -332,6 +342,7 @@ static int __init root_delay_setup(char *str)
+ __setup("rootflags=", root_data_setup);
+ __setup("rootfstype=", fs_names_setup);
+ __setup("rootdelay=", root_delay_setup);
++__setup("noramfs", force_tmpfs_setup);
+ 
+ static void __init get_fs_names(char *page)
+ {
+@@ -632,8 +643,8 @@ int __init init_rootfs(void)
+ 	if (err)
+ 		return err;
+ 
+-	if (IS_ENABLED(CONFIG_TMPFS) && !saved_root_name[0] &&
+-		(!root_fs_names || strstr(root_fs_names, "tmpfs"))) {
++	if (IS_ENABLED(CONFIG_TMPFS) && (force_tmpfs || (!saved_root_name[0] &&
++		(!root_fs_names || strstr(root_fs_names, "tmpfs"))))) {
+ 		err = shmem_init();
+ 		is_tmpfs = true;
+ 	} else {
+-- 
+2.7.5
