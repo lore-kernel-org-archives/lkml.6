@@ -1,109 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752126AbeA3M5R (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:57:17 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:33946 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751932AbeA3M5P (ORCPT
+        id S1752145AbeA3M5W (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:57:22 -0500
+Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:50700 "EHLO
+        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751932AbeA3M5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:57:15 -0500
-X-Google-Smtp-Source: AH8x227J13Pw1VZNiIvRBFbTW2ww2528z/3YuxpO3+1pWCXx5mxI4sdg4tWnmRWo7WRsaF3HVGILnQ==
-Subject: Re: [PATCH v2 2/5] arm64: dts: mt6797: add pwrap support for mt6797
-To: argus.lin@mediatek.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Chenglin Xu <chenglin.xu@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>, wsd_upstream@mediatek.com,
-        henryc.chen@mediatek.com, flora.fu@mediatek.com,
-        Chen Zhong <chen.zhong@mediatek.com>,
-        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        "shailendra . v" <shailendra.v@samsung.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20180129090944.28687-1-argus.lin@mediatek.com>
- <20180129090944.28687-2-argus.lin@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <dcb5d00a-2239-b214-70a2-cef2e66570fa@gmail.com>
-Date: Tue, 30 Jan 2018 13:57:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Tue, 30 Jan 2018 07:57:20 -0500
+Date: Tue, 30 Jan 2018 12:57:18 +0000
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net,
+        srinivas.pandruvada@linux.intel.com
+Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
+ candidate and the basis for SIS
+Message-ID: <20180130125718.iwntjuvcp3yplvdx@techsingularity.net>
+References: <20180130104555.4125-1-mgorman@techsingularity.net>
+ <20180130104555.4125-5-mgorman@techsingularity.net>
+ <20180130115054.GA2269@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180129090944.28687-2-argus.lin@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20180130115054.GA2269@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 30, 2018 at 12:50:54PM +0100, Peter Zijlstra wrote:
+> On Tue, Jan 30, 2018 at 10:45:55AM +0000, Mel Gorman wrote:
+> > The select_idle_sibling (SIS) rewrite in commit 10e2f1acd010 ("sched/core:
+> > Rewrite and improve select_idle_siblings()") replaced a domain iteration
+> > with a search that broadly speaking does a wrapped walk of the scheduler
+> > domain sharing a last-level-cache. While this had a number of improvements,
+> > one consequence is that two tasks that share a waker/wakee relationship push
+> > each other around a socket. Even though two tasks may be active, all cores
+> > are evenly used. This is great from a search perspective and spreads a load
+> > across individual cores but it has adverse consequences for cpufreq. As each
+> > CPU has relatively low utilisation, cpufreq may decide the utilisation is
+> > too low to used a higher P-state and overall computation throughput suffers.
+> 
+> > While individual cpufreq and cpuidle drivers may compensate by artifically
+> > boosting P-state (at c0) or avoiding lower C-states (during idle), it does
+> > not help if hardware-based cpufreq (e.g. HWP) is used.
+> 
+> Not saying this patch is bad; but Rafael / Srinivas we really should do
+> better. Why isn't cpufreq (esp. sugov) fixing this? HWP or not, we can
+> still give it hints, and it looks like we're not doing that.
+> 
+
+I'm not sure if HWP can fix it because of the per-cpu nature of its
+decisions. I believe it can only give the most basic of hints to hardware
+like an energy performance profile or bias (EPP and EPB respectively).
+Of course HWP can be turned off but not many people can detect that it's
+an appropriate decision, or even desirable, and there is always the caveat
+that disabling it increases the system CPU footprint.
+
+> Mel, what hardware are you testing this on?
+
+The primary one was a single socket skylake machine with 8 threads (HT
+enabled). However, 11 machines were used in total across multiple
+generations to reduce the chance of a regression slipping in that was
+machine-specific.
 
 
-On 01/29/2018 10:09 AM, argus.lin@mediatek.com wrote:
-> From: Argus Lin <argus.lin@mediatek.com>
-> 
-> mt6797 is a highly integrated SoCs, and it uses
-> mt6351 as Power Management IC.
-> We need to add pwrap device to communicate with
-> mt6351 by SPI.
-> The base address of pwrap is 0x1000d000, and IRQ
-> number is 178. It also using fixed 26Mhz clock
-> as SPI CLK.
-> 
-> Signed-off-by: Argus Lin <argus.lin@mediatek.com>
-> ---
-
-For the next round, can you put the dts patch at the end of the series. Binding
-description should be the first patch, but actual dts(i) inclusion should be the
-last one. It's bike shedding I know, but as you need a new series anyway.
-
-Thanks.
-
->  arch/arm64/boot/dts/mediatek/mt6797.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> index 4beaa71107d7..485546efc9bf 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> @@ -161,6 +161,20 @@
->  		      <0 0x10220690 0 0x10>;
->  	};
->  
-> +	pwrap: pwrap@1000d000 {
-> +		compatible = "mediatek,mt6797-pwrap";
-> +		reg = <0 0x1000d000 0 0x1000>;
-> +		reg-names = "pwrap";
-> +		interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&clk26m>, <&clk26m>;
-> +		clock-names = "spi", "wrap";
-> +
-> +		pmic: mt6351 {
-> +			compatible = "mediatek,mt6351";
-> +			interrupt-controller;
-> +		};
-> +	};
-> +
->  	uart0: serial@11002000 {
->  		compatible = "mediatek,mt6797-uart",
->  			     "mediatek,mt6577-uart";
-> -- 
-> 2.12.5
-> 
-> ************* Email Confidentiality Notice
->  ********************
-> The information contained in this e-mail message (including any 
-> attachments) may be confidential, proprietary, privileged, or otherwise
-> exempt from disclosure under applicable laws. It is intended to be 
-> conveyed only to the designated recipient(s). Any use, dissemination, 
-> distribution, printing, retaining or copying of this e-mail (including its 
-> attachments) by unintended recipient(s) is strictly prohibited and may 
-> be unlawful. If you are not an intended recipient of this e-mail, or believe
->  
-> that you have received this e-mail in error, please notify the sender 
-> immediately (by replying to this e-mail), delete any and all copies of 
-> this e-mail (including any attachments) from your system, and do not
-> disclose the content of this e-mail to any other person. Thank
->  you!
-> 
+-- 
+Mel Gorman
+SUSE Labs
