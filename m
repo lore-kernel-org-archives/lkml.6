@@ -1,121 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeA3U3m (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 15:29:42 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56114 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752408AbeA3U3h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:29:37 -0500
-From: Thierry Escande <thierry.escande@collabora.com>
-To: Archit Taneja <architt@codeaurora.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Haixia Shi <hshi@chromium.org>,
-        =?UTF-8?q?=C3=98rjan=20Eide?= <orjan.eide@arm.com>,
-        Zain Wang <wzz@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
-        Lin Huang <hl@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Mark Yao <mark.yao@rock-chips.com>, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v3 12/43] drm/rockchip: Only wait for panel ACK on PSR entry
-Date: Tue, 30 Jan 2018 21:28:42 +0100
-Message-Id: <20180130202913.28724-13-thierry.escande@collabora.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180130202913.28724-1-thierry.escande@collabora.com>
-References: <20180130202913.28724-1-thierry.escande@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Type: text/plain; charset = "utf-8"
-Content-Transfert-Encoding: 8bit
-Content-Transfer-Encoding: 8bit
+        id S1752749AbeA3U3t (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:29:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752620AbeA3U3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 15:29:46 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7846A217A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Subject: [PATCH] ARM: dts: exynos: Add SPDX license identifiers
+Date: Tue, 30 Jan 2018 21:29:19 +0100
+Message-Id: <20180130202919.30026-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zain wang <wzz@rock-chips.com>
+Few files missed recent conversion of GPL v2.0 license statements to
+SPDX identifiers
 
-We currently wait for the panel to mirror our intended PSR state
-before continuing on both PSR enter and PSR exit. This is really
-only important to do when we're entering PSR, since we want to
-be sure the last frame we pushed is being served from the panel's
-internal fb before shutting down the soc blocks (vop/analogix).
-
-This patch changes the behavior such that we only wait for the
-panel to complete the PSR transition when we're entering PSR, and
-to skip verification when we're exiting.
-
-Cc: Stéphane Marchesin <marcheu@chromium.org>
-Cc: Sonny Rao <sonnyrao@chromium.org>
-Signed-off-by: zain wang <wzz@rock-chips.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 2 +-
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 5 ++++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi | 5 +----
+ arch/arm/boot/dts/exynos-syscon-restart.dtsi      | 5 +----
+ arch/arm/boot/dts/exynos5800-peach-pi.dts         | 5 +----
+ arch/arm/boot/dts/exynos5800.dtsi                 | 5 +----
+ 4 files changed, 4 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index e0775adf80b3..49a05eac41c1 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -125,7 +125,7 @@ int analogix_dp_enable_psr(struct analogix_dp_device *dp)
- 	psr_vsc.DB0 = 0;
- 	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
+diff --git a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
+index 25186ac4188d..1dbf3bbff8d3 100644
+--- a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
++++ b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Samsung's Exynos SoC MFC (Video Codec) reserved memory common definition.
+  *
+  * Copyright (c) 2016 Samsung Electronics Co., Ltd
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
  
--	return analogix_dp_send_psr_spd(dp, &psr_vsc);
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
+ / {
+diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+index 09a2040054ed..4b3dd0549a54 100644
+--- a/arch/arm/boot/dts/exynos-syscon-restart.dtsi
++++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+@@ -1,9 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Samsung's Exynos SoC syscon reboot/poweroff nodes common definition.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
  
-@@ -151,7 +151,7 @@ int analogix_dp_disable_psr(struct analogix_dp_device *dp)
- 	if (ret != 1)
- 		dev_err(dp->dev, "Failed to set DP Power0 %d\n", ret);
+ / {
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 0029ec27819c..c8a66a12dbeb 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Google Peach Pi Rev 10+ board device tree source
+  *
+  * Copyright (c) 2014 Google, Inc
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
  
--	return analogix_dp_send_psr_spd(dp, &psr_vsc);
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc, false);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+index 9ddb6bacac5a..57d3b319fd65 100644
+--- a/arch/arm/boot/dts/exynos5800.dtsi
++++ b/arch/arm/boot/dts/exynos5800.dtsi
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * SAMSUNG EXYNOS5800 SoC device tree source
+  *
+@@ -7,10 +8,6 @@
+  * SAMSUNG EXYNOS5800 SoC device nodes are listed in this file.
+  * EXYNOS5800 based board files can include this file and provide
+  * values for board specfic bindings.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
  
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 920607d7eb3e..6a96ef7e6934 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -253,7 +253,7 @@ void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
- int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
--			     struct edp_vsc_psr *vsc);
-+			     struct edp_vsc_psr *vsc, bool blocking);
- ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 			     struct drm_dp_aux_msg *msg);
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 005a3f7005d2..9df2f3ef000c 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -1007,7 +1007,7 @@ static ssize_t analogix_dp_get_psr_status(struct analogix_dp_device *dp)
- }
- 
- int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
--			     struct edp_vsc_psr *vsc)
-+			     struct edp_vsc_psr *vsc, bool blocking)
- {
- 	unsigned int val;
- 	int ret;
-@@ -1053,6 +1053,9 @@ int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
- 	val |= IF_EN;
- 	writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
- 
-+	if (!blocking)
-+		return 0;
-+
- 	ret = readx_poll_timeout(analogix_dp_get_psr_status, dp, psr_status,
- 		psr_status >= 0 &&
- 		((vsc->DB1 && psr_status == DP_PSR_SINK_ACTIVE_RFB) ||
+ #include "exynos5420.dtsi"
 -- 
-2.14.1
+2.11.0
