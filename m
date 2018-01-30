@@ -1,167 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752596AbeA3PF2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:05:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:26090 "EHLO mx1.redhat.com"
+        id S1752825AbeA3PGa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:06:30 -0500
+Received: from foss.arm.com ([217.140.101.70]:54928 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751256AbeA3PF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:05:27 -0500
-Date: Tue, 30 Jan 2018 16:04:54 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Stephane Eranian <eranian@google.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH V3 0/5] bugs fix for large PEBS mmap read and rdpmc read
-Message-ID: <20180130150454.GE29098@krava>
-References: <1517243373-355481-1-git-send-email-kan.liang@linux.intel.com>
- <CABPqkBRjQp62ArVZzuH=TRU3mDPkS93D8_cNev6M=eXTCpBLkA@mail.gmail.com>
- <20180130133917.GC29098@krava>
- <6d708c09-52a7-a906-b651-b133a7b4f189@linux.intel.com>
+        id S1751360AbeA3PG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 10:06:28 -0500
+Date: Tue, 30 Jan 2018 15:06:24 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
+        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 08/16] arm64: capabilities: Group handling of features
+ and errata
+Message-ID: <20180130150623.GF5862@e103592.cambridge.arm.com>
+References: <20180123122809.16269-1-suzuki.poulose@arm.com>
+ <20180123122809.16269-9-suzuki.poulose@arm.com>
+ <20180126114708.GP5862@e103592.cambridge.arm.com>
+ <cdd7ab66-9d9e-286d-cb39-c1684bde9c19@arm.com>
+ <20180129171410.GB5862@e103592.cambridge.arm.com>
+ <b52a705d-67b3-5d46-007e-3eb48d824ec0@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6d708c09-52a7-a906-b651-b133a7b4f189@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <b52a705d-67b3-5d46-007e-3eb48d824ec0@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 09:59:15AM -0500, Liang, Kan wrote:
+On Mon, Jan 29, 2018 at 05:22:26PM +0000, Suzuki K Poulose wrote:
+> On 29/01/18 17:14, Dave Martin wrote:
+> >On Fri, Jan 26, 2018 at 12:31:18PM +0000, Suzuki K Poulose wrote:
+> >>On 26/01/18 11:47, Dave Martin wrote:
+> >>>On Tue, Jan 23, 2018 at 12:28:01PM +0000, Suzuki K Poulose wrote:
+> >>>>So far we have had separate routes for triggering errata and feature
+> >>>
+> >>>"triggering errata" ? ;)
+> >>>
+> >>
+> >>:-). Should have been "triggering errata and feature capability *checks*.
+> >>
+> >>>Maybe "[...] for determining whether to activate errata workarounds and
+> >>>whether to enable feature capabilities."
+> >>>
+> >>
+> >>
+> >>>>capabilities. Also, we never allowed "features" based on local CPU
+> >>>>and "errata" based on System wide safe registers. This patch
+> >>>>groups the handling of errata and features and also allows them
+> >>>>to have all the possible scopes.
+> >>>>
+> >>>>So, we now run through the arm64_features and arm64_errata:
+> >>>
+> >>>when?
+> >>
+> >>with this patch.
+> >
+> >I mean, when at runtime?
 > 
-> 
-> On 1/30/2018 8:39 AM, Jiri Olsa wrote:
-> > On Tue, Jan 30, 2018 at 01:16:39AM -0800, Stephane Eranian wrote:
-> > > Hi,
-> > > 
-> > > On Mon, Jan 29, 2018 at 8:29 AM, <kan.liang@linux.intel.com> wrote:
-> > > > 
-> > > > From: Kan Liang <kan.liang@linux.intel.com>
-> > > > 
-> > > > ------
-> > > > 
-> > > > Changes since V2:
-> > > >   - Refined the changelog
-> > > >   - Introduced specific read function for large PEBS.
-> > > >     The previous generic PEBS read function is confusing.
-> > > >     Disabled PMU in pmu::read() path for large PEBS.
-> > > >     Handled the corner case when reload_times == 0.
-> > > >   - Modified the parameter of intel_pmu_save_and_restart_reload()
-> > > >     Discarded local64_cmpxchg
-> > > >   - Added fixes tag
-> > > >   - Added WARN to handle reload_times == 0 || reload_val == 0
-> > > > 
-> > > > Changes since V1:
-> > > >   - Check PERF_X86_EVENT_AUTO_RELOAD before call
-> > > >     intel_pmu_save_and_restore()
-> > > 
-> > > It is not yet clear to me why PERF_SAMPLE_PERIOD is not allowed
-> > > with large PEBS. Large PEBS requires fixed period. So the kernel could
-> > > make up the period from the event and store it in the sampling buffer.
-> > > 
-> > > I tried using large PEBS recently, and despite trying different option
-> > > combination of perf record, I was not able to get it to work.
-> > > 
-> > > $ perf record  -c 1  -e cpu/event=0xd1,umask=0x10,period=19936/pp
-> > > --no-timestamp --no-period -a -C 0
-> > > 
-> > > But I was able to make this work with a much older kernel.
-> > > 
-> > > Another annoyance I ran into is with perf record requiring -c period
-> > > in order not to set
-> > > PERF_SAMPLE_PERIOD in the event.
-> > > 
-> > > If I do:
-> > > perf record  -c 1  -e cpu/event=0xd1,umask=0x10,period=19936/pp
-> > > --no-timestamp --no-period -a -C 0
-> > > 
-> > > I get
-> > > 
-> > > perf_event_attr:
-> > >    type                             4
-> > >    size                             112
-> > >    config                           0x10d1
-> > >    { sample_period, sample_freq }   199936
-> > >    sample_type                      IP|TID|CPU
-> > > 
-> > > But if I do:
-> > > perf record  -e cpu/event=0xd1,umask=0x10,period=19936/pp
-> > > --no-timestamp --no-period -a -C 0
-> > > 
-> > > I get
-> > > 
-> > > perf_event_attr:
-> > >    type                             4
-> > >    size                             112
-> > >    config                           0x10d1
-> > >    { sample_period, sample_freq }   199936
-> > >    sample_type                      IP|TID|CPU|PERIOD
-> > > 
-> > > Perf should check if all events have a period=, then it should not
-> > > pass PERF_SAMPLE_PERIOD, even
-> > > more so when only one event is defined.
-> > > 
-> > > Also it does not seem to honor --no-period.
-> > 
-> > yep, there's a bug in period=x term handling
-> > we did not re/set the sample_type based on that
-> > 
-> > attached patch fixes that for me, also takes into account
-> > the --no/-period options
-> > 
-> > jirka
-> > 
-> > 
-> > ---
-> > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> > index f251e824edac..907267206973 100644
-> > --- a/tools/perf/builtin-record.c
-> > +++ b/tools/perf/builtin-record.c
-> > @@ -1566,7 +1566,8 @@ static struct option __record_options[] = {
-> >   	OPT_BOOLEAN_SET('T', "timestamp", &record.opts.sample_time,
-> >   			&record.opts.sample_time_set,
-> >   			"Record the sample timestamps"),
-> > -	OPT_BOOLEAN('P', "period", &record.opts.period, "Record the sample period"),
-> > +	OPT_BOOLEAN_SET('P', "period", &record.opts.period, &record.opts.period_set,
-> > +			"Record the sample period"),
-> >   	OPT_BOOLEAN('n', "no-samples", &record.opts.no_samples,
-> >   		    "don't sample"),
-> >   	OPT_BOOLEAN_SET('N', "no-buildid-cache", &record.no_buildid_cache,
-> > diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-> > index 2357f4ccc9c7..cfe46236a5e5 100644
-> > --- a/tools/perf/perf.h
-> > +++ b/tools/perf/perf.h
-> > @@ -50,6 +50,7 @@ struct record_opts {
-> >   	bool	     sample_time_set;
-> >   	bool	     sample_cpu;
-> >   	bool	     period;
-> > +	bool	     period_set;
-> >   	bool	     running_time;
-> >   	bool	     full_auxtrace;
-> >   	bool	     auxtrace_snapshot_mode;
-> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> > index 66fa45198a11..ff359c9ece2e 100644
-> > --- a/tools/perf/util/evsel.c
-> > +++ b/tools/perf/util/evsel.c
-> > @@ -745,12 +745,14 @@ static void apply_config_terms(struct perf_evsel *evsel,
-> >   			if (!(term->weak && opts->user_interval != ULLONG_MAX)) {
-> >   				attr->sample_period = term->val.period;
-> >   				attr->freq = 0;
-> > +				perf_evsel__reset_sample_bit(evsel, PERIOD);
-> >   			}
-> >   			break;
-> >   		case PERF_EVSEL__CONFIG_TERM_FREQ:
-> >   			if (!(term->weak && opts->user_freq != UINT_MAX)) {
-> >   				attr->sample_freq = term->val.freq;
-> >   				attr->freq = 1;
-> > +				perf_evsel__set_sample_bit(evsel, PERIOD);
-> >   			}
-> 
-> If we do so, some events could be in fixed mode without PERIOD set. Other
-> events could be in freq mode with PERIOD set.
+> Sorry, I thought that was evident from the comment below :
 
-it also sets the attr->freq, so it's not in fixed mode
+Sort of, but you talk about things being done on boot-time enabled CPUs,
+rather than saying the check actually happens at boot time.  The
+description isn't wrong, but I just ended up a bit unsure about exactly
+what was being guaranteed.
 
-jirka
+My confusion was partly due to my understanding of the code still being
+incomplete when I responsed to this patch.
+
+
+Maybe say "we run through arm64_features and arm64_errata in two phases
+during the boot process"
+
+> 
+> >
+> >>>What about late cpus?
+> >>>
+> >>
+> >>We don't detect any new capabilities on them. They continue to get
+> >>verified against the enabled capabilities.
+
+If this patch doesn't intentionally change what happens for late CPUs
+after kernel boot, but nonetheless does unifiy the errata/feature
+verification code for late CPUs then this may also be worth noting here.
+
+> >>
+> >>>>  1) with SCOPE_LOCAL_CPU filter on each boot time enabeld CPUs,
+> >>>>     via update_cpu_local_capabilities().
+> 
+> Here ^^.  Earlier we ran only through the errata list. But now, we
+> run through errata and the features, using a type filter of SCOPE_LOCAL_CPU.
+> 
+> It also said :
+> 
+>   2) with SCOPE_SYSTEM filter only once after all boot time enabled
+>     CPUs are active.
+> 
+> (2) happens from setup_cpu_features(), just like it was done earlier, but
+> with a filter of SCOPE_SYSTEM.
+> 
+> >>>
+> >>>"each [...] enabeld CPUs" -> "each [...] enabled CPU"
+> >>>
+> >>>Also, changing "boot time" -> "boot-time" helps avoid this being misread
+> >>>as "on each boot", which could be taken to mean "each time a CPU comes
+> >>>online".  I'm guessing that's not the intended meaning here.
+> >>
+> 
+> >>>
+> >>>   }
+> >>>>  DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
+> >>>>@@ -1422,9 +1435,7 @@ void __init setup_cpu_features(void)
+> >>>>  	u32 cwg;
+> >>>>  	int cls;
+> >>>>-	/* Set the CPU feature capabilies */
+> >>>>-	setup_feature_capabilities();
+> >>>>-	enable_errata_workarounds();
+> >>>>+	setup_system_capabilities();
+> >>>>  	mark_const_caps_ready();
+> >>>>  	setup_elf_hwcaps(arm64_elf_hwcaps);
+> >>>
+> >>>I wonder whether we could unify the elf hwcaps handling too.
+> >>
+> >>I was thinking about it today. The only catch is how do we know
+> >>if we have "the capability", as it is spread across multiple bitmasks.
+> >>(HWCAP, COMPAT_HWCAP, COMPAT_HWCAP2).
+> >
+> >An easy-ish solution might be to maintain our own bitmap in the style
+> >of cpu_hwcaps, and set bits in parallel with the elf_hwcap etc. bits.
+> >Or, add a method that knows how to set/query the appropriate bit.
+> >
+> >I guess we could do this later.  It's certainly not urgent.
+> 
+> Yes, I understand.
+
+OK, cool
+
+Cheers
+---Dave
