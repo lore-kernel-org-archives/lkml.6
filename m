@@ -1,100 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeA3PTv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:19:51 -0500
-Received: from mga18.intel.com ([134.134.136.126]:32965 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751433AbeA3PTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:19:50 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,435,1511856000";
-   d="scan'208";a="27468696"
-Date: Tue, 30 Jan 2018 17:19:46 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH v2] drm/edid: use true and false for boolean values
-Message-ID: <20180130151946.GC5453@intel.com>
-References: <20180130100528.GA7154@training>
- <20180130150927.3fm5kotyp6vqugaf@art_vandelay>
+        id S1753057AbeA3PUQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:20:16 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:41403 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeA3PUN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 10:20:13 -0500
+X-Google-Smtp-Source: AH8x224mWuUjEDNZCUs6vS/loQKlaBDuiAFhR6U1WS7u957OYUYisiwDPjJymqEp6PMD+VmDbSwSEg==
+Date: Tue, 30 Jan 2018 09:20:12 -0600
+From: Rob Herring <robh@kernel.org>
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        sboyd@codeaurora.org, rnayak@codeaurora.org, asathyak@codeaurora.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 2/4] dt-bindings/interrupt-controller: pdc: descibe
+ PDC device binding
+Message-ID: <20180130152012.ucjmaw3nlim4d4fr@rob-hp-laptop>
+References: <20180123175656.11942-1-ilina@codeaurora.org>
+ <20180123175656.11942-3-ilina@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180130150927.3fm5kotyp6vqugaf@art_vandelay>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180123175656.11942-3-ilina@codeaurora.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:09:27AM -0500, Sean Paul wrote:
-> On Tue, Jan 30, 2018 at 04:05:28AM -0600, Gustavo A. R. Silva wrote:
-> > Assign true or false to boolean variables instead of an integer value.
-> > 
-> > This issue was detected with the help of Coccinelle.
+On Tue, Jan 23, 2018 at 10:56:54AM -0700, Lina Iyer wrote:
+> From: Archana Sathyakumar <asathyak@codeaurora.org>
 > 
-> I suppose you could also fix up the other preferred assignment by adding !!
-> to the bitwise & operation.
+> Add device binding documentation for the PDC Interrupt controller on
+> QCOM SoC's like the SDM845. The interrupt-controller can be used to
+> sense edge low interrupts and wakeup interrupts when the GIC is
+> non-operational.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> ---
+>  .../bindings/interrupt-controller/qcom,pdc.txt     | 55 ++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+> new file mode 100644
+> index 000000000000..c4592bbf678d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+> @@ -0,0 +1,55 @@
+> +PDC interrupt controller
+> +
+> +Qualcomm Technologies Inc. SoCs based on the RPM Hardened archicture have a
+> +Power Domain Controller (PDC) that is on always-on domain. In addition to
+> +providing power control for the power domains, the hardware also has an
+> +interrupt controller that can be used to help detect edge low interrupts as
+> +well detect interrupts when the GIC is non-operational.
+> +
+> +GIC is parent interrupt controller at the highest level. Platform interrupt
+> +controller PDC is next in hierarchy, followed by others. This driver only
+> +configures the interrupts, does not handle them.
+> +
+> +Properties:
+> +
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: Should contain "qcom,pdc" and "qcom,pdc-<target>"
+> +		    - "qcom,pdc-sdm845": For sdm845 pin data
 
-Assigning >1 to a bool is well defined. No need to clutter the code with
-!! imo.
+pin data?
 
-> 
-> It's also helpful to post the spatch in the commit message so others can
-> replicate your result (this case is pretty trivial, so less important).
-> 
-> Sean
-> 
-> > 
-> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > ---
-> > Changes in v2:
-> >  - Use true for boolean value in add_detailed_mode as suggested by Daniel
-> >    Vetter.
-> >  - Update subject.
-> > 
-> >  drivers/gpu/drm/drm_edid.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> > index ddd5379..b1cb262 100644
-> > --- a/drivers/gpu/drm/drm_edid.c
-> > +++ b/drivers/gpu/drm/drm_edid.c
-> > @@ -2767,7 +2767,7 @@ do_detailed_mode(struct detailed_timing *timing, void *c)
-> >  
-> >  		drm_mode_probed_add(closure->connector, newmode);
-> >  		closure->modes++;
-> > -		closure->preferred = 0;
-> > +		closure->preferred = false;
-> >  	}
-> >  }
-> >  
-> > @@ -2784,7 +2784,7 @@ add_detailed_modes(struct drm_connector *connector, struct edid *edid,
-> >  	struct detailed_mode_closure closure = {
-> >  		.connector = connector,
-> >  		.edid = edid,
-> > -		.preferred = 1,
-> > +		.preferred = true,
-> >  		.quirks = quirks,
-> >  	};
-> >  
-> > -- 
-> > 2.7.4
-> > 
-> 
+Convention is <soc>-<ip block>
+
+Need to make the order of compatibles clear. Generally that is done with 
+'followed by "qcom,pdc"' after the list of compatibles. But then, do you 
+really need a fallback. This seems like a block that would change 
+frequently. If there's not more than 2 or 3 chips with the same block, 
+don't do a fallback.
+
+> +
+> +- reg:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: Specifies the base physical address for PDC hardware.
+> +
+> +- interrupt-cells:
+> +	Usage: required
+> +	Value type: <u32>
+> +	Definition: Specifies the number of cells needed to encode an interrupt
+> +		    source.
+> +		    Value must be 3.
+> +		    The encoding of these cells are same as described in [1].
+> +
+> +- interrupt-parent:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: Specifies the interrupt parent necessary for hierarchical
+> +		    domain to operate.
+> +
+> +- interrupt-controller:
+> +	Usage: required
+> +	Value type: <bool>
+> +	Definition: Identifies the node as an interrupt controller.
+> +
+> +Example:
+> +
+> +	pdc: interrupt-controller@b220000 {
+> +		compatible = "qcom,pdc", "qcom,pdc-sdm845";
+
+This is backwards.
+
+> +		reg = <0xb220000 0x30000>;
+> +		#interrupt-cells = <3>;
+> +		interrupt-parent = <&intc>;
+> +		interrupt-controller;
+> +	};
+> +
+> +[1]. Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
 > -- 
-> Sean Paul, Software Engineer, Google / Chromium OS
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Ville Syrjälä
-Intel OTC
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
