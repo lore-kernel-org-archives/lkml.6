@@ -1,84 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752201AbeA3SyQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 13:54:16 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36719 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeA3SyO (ORCPT
+        id S1752159AbeA3S7c (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 13:59:32 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:37012 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751475AbeA3S7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:54:14 -0500
-X-Google-Smtp-Source: AH8x227co2Jf1I2sDCZsvUeZGD5V0uFRRezgsRIUOLmBJAelP30GnDbgDtW2TDM1h+BSyAQJw3CMBg==
-Date: Tue, 30 Jan 2018 19:54:11 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Liu Xiang <liu.xiang6@zte.com.cn>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, sre@kernel.org,
-        afd@ti.com
-Subject: Re: [PATCH] power: supply: bq27xxx: Update comments
-Message-ID: <20180130185411.rsu7o56xw26n6xmq@pali>
-References: <1517063261-23296-1-git-send-email-liu.xiang6@zte.com.cn>
+        Tue, 30 Jan 2018 13:59:30 -0500
+X-Google-Smtp-Source: AH8x2276wMben1MIOiKmxMHV6RfU2YLoBfSobUbFoPj1Tew8ObJ/FcQz/1wyKB5iarXFVB5d+W63cA==
+Subject: Re: [PATCH v2] of: use hash based search in of_find_node_by_phandle
+To: Chintan Pandya <cpandya@codeaurora.org>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <1516955496-17236-1-git-send-email-cpandya@codeaurora.org>
+ <2d877704-47c5-c1fc-1b89-976cd9b1ccaa@gmail.com>
+ <7ebd275d-07ba-1972-011a-d05e53233a01@codeaurora.org>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <b97a5447-eb1c-ab35-a0c2-487275b3f3d2@gmail.com>
+Date: Tue, 30 Jan 2018 10:59:27 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="dflhfnjqup2r7sfm"
-Content-Disposition: inline
-In-Reply-To: <1517063261-23296-1-git-send-email-liu.xiang6@zte.com.cn>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <7ebd275d-07ba-1972-011a-d05e53233a01@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/30/18 00:04, Chintan Pandya wrote:
+>> (1)
+>>
+>> Can you point me to the driver code that is invoking
+>> the search?
+> There are many locations. Few of them being,
+> https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/of/irq.c?h=msm-4.9#n214
+> https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/irqchip/irq-gic-v3.c?h=msm-4.9#n1107
+> https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/clk/msm/msm-clock-controller.c?h=msm-4.9#n492
+>>
+>> (2)
+>>
+>> And also the .dts devicetree source file that you are seeing
+>> large overhead with.
+> SDM670 DTS tree starts here.
+> https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/arch/arm64/boot/dts/qcom/sdm670.dtsi?h=msm-4.9
 
---dflhfnjqup2r7sfm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, I'm starting to get a picture of what you are facing.
 
-On Saturday 27 January 2018 22:27:41 Liu Xiang wrote:
-> The URL of bq27441-g1 is missing and bq27520-g4 is duplicated.
->=20
-> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
-> ---
->  drivers/power/supply/bq27xxx_battery.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/suppl=
-y/bq27xxx_battery.c
-> index 2de378a..c0e7c5b 100644
-> --- a/drivers/power/supply/bq27xxx_battery.c
-> +++ b/drivers/power/supply/bq27xxx_battery.c
-> @@ -26,7 +26,6 @@
->   * http://www.ti.com/product/bq27510-g1
->   * http://www.ti.com/product/bq27510-g2
->   * http://www.ti.com/product/bq27510-g3
-> - * http://www.ti.com/product/bq27520-g4
->   * http://www.ti.com/product/bq27520-g1
->   * http://www.ti.com/product/bq27520-g2
->   * http://www.ti.com/product/bq27520-g3
-> @@ -40,8 +39,9 @@
->   * http://www.ti.com/product/bq27545-g1
->   * http://www.ti.com/product/bq27421-g1
->   * http://www.ti.com/product/bq27425-g1
-> - * http://www.ti.com/product/bq27411-g1
-> + * http://www.ti.com/product/bq27441-g1
->   * http://www.ti.com/product/bq27621-g1
-> + * http://www.ti.com/product/bq27411-g1
->   */
-> =20
->  #include <linux/device.h>
+The file you point at is a .dtsi, not a .dts.  There are quite a
+few sdm670*.dts files in that tree.  Which one corresponds to
+the system you are working on?
 
-Acked-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
+I picked a random one (sdm670-cdp.dts), but I need to be looking
+at the .dts that you are using to be able to ask reasonable
+questions instead of poking around in the dark.
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+Also, when I clone that git tree there is not a valid HEAD.  I
+picked what looked like a reasonable commit to checkout, but I
+would prefer to be looking at the same exact source that you
+are working with.  Can you give me the commit id  of the branch
+that you are working on?
 
---dflhfnjqup2r7sfm
-Content-Type: application/pgp-signature; name="signature.asc"
+-Frank
 
------BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWnC/UAAKCRCL8Mk9A+RD
-Us/CAJ9GFx8+Pl6HKg3ni9OluLEDJ/+wdQCghqko+I/oNxYqTtkJ/8qR8TjP/sw=
-=S1Ih
------END PGP SIGNATURE-----
-
---dflhfnjqup2r7sfm--
+>>
+>>
+>> (3) -- this one is less important, but if the info is easily
+>>         available to you
+>>
+>> Sorry about dribbling out questions instead of all at once....
+>>
+>> What is the hardware you are testing this on?
+> SDM670
+>> Processor?
+> Kryo-300 Silver
+>> Cache size?
+> From DT,
+> L1 32KB (per CPU)
+> L2 128KB (per CPU)
+> L3 1MB (total)
+>> Memory size?
+> 6GB
+>> Processor frequency?
+> Max 1.7GHz for core 0. Not sure about boot time frequency.
+>> Any other attribute of the system that will help me understand
+>> the boot performance you are seeing?
+> I'm not able to profile of_find_node_by_phandle specifically as timers are
+> not up by then. So, just observing overall boot time for comparison.
+> 
+> My recent results were taken on debug_defconfig which has many performance
+> slowing code. So, gap between base-build and w/ the test patches would be
+> more than the actual production build.
+> 
+> Thanks,
+> Chintan
+> 
