@@ -1,65 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753061AbeA3PP4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:15:56 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:45820 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753038AbeA3PPx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:15:53 -0500
-X-Google-Smtp-Source: AH8x227YMv71s9q6/lLTGF1gXs9lfDpF3d24BSGcxgSGEcprKDy4YagaZSHUQAtTP1RX7jT8gXMzkA==
-Date: Tue, 30 Jan 2018 07:15:49 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, kernel-team@fb.com,
-        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch -mm v2 2/3] mm, memcg: replace cgroup aware oom killer
- mount option with tunable
-Message-ID: <20180130151549.GE1121507@devbig577.frc2.facebook.com>
-References: <20180126143950.719912507bd993d92188877f@linux-foundation.org>
- <alpine.DEB.2.10.1801261441340.20954@chino.kir.corp.google.com>
- <20180126161735.b999356fbe96c0acd33aaa66@linux-foundation.org>
- <20180129104657.GC21609@dhcp22.suse.cz>
- <20180129191139.GA1121507@devbig577.frc2.facebook.com>
- <20180130085445.GQ21609@dhcp22.suse.cz>
- <20180130115846.GA4720@castle.DHCP.thefacebook.com>
- <20180130120852.GA21609@dhcp22.suse.cz>
- <20180130121315.GA5888@castle.DHCP.thefacebook.com>
- <20180130122011.GB21609@dhcp22.suse.cz>
+        id S1753124AbeA3PQw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:16:52 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55084 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751377AbeA3PQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 10:16:49 -0500
+Date: Tue, 30 Jan 2018 15:16:44 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
+        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 13/16] arm64: Add support for checking errata based on a
+ list of MIDRS
+Message-ID: <20180130151644.GG5862@e103592.cambridge.arm.com>
+References: <20180123122809.16269-1-suzuki.poulose@arm.com>
+ <20180123122809.16269-14-suzuki.poulose@arm.com>
+ <20180126141610.GU5862@e103592.cambridge.arm.com>
+ <0558db28-b1f1-b249-6098-99e1071f613f@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180130122011.GB21609@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <0558db28-b1f1-b249-6098-99e1071f613f@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 01:20:11PM +0100, Michal Hocko wrote:
-> From 361275a05ad7026b8f721f8aa756a4975a2c42b1 Mon Sep 17 00:00:00 2001
-> From: Michal Hocko <mhocko@suse.com>
-> Date: Tue, 30 Jan 2018 09:54:15 +0100
-> Subject: [PATCH] oom, memcg: clarify root memcg oom accounting
+On Fri, Jan 26, 2018 at 03:57:44PM +0000, Suzuki K Poulose wrote:
+> On 26/01/18 14:16, Dave Martin wrote:
+> >On Tue, Jan 23, 2018 at 12:28:06PM +0000, Suzuki K Poulose wrote:
+> >>Add helpers for detecting an errata on list of midr ranges
+> >>of affected CPUs.
+> >
+> >This doesn't describe what the patch does: instead, helpers are being
+> >added for checking whether an MIDR falls in one of multiple affected
+> >model(s) and or revision(s).
+> >
+> >Doing this makes sense, but is it really worth it?
 > 
-> David Rientjes has pointed out that the current way how the root memcg
-> is accounted for the cgroup aware OOM killer is undocumented. Unlike
-> regular cgroups there is no accounting going on in the root memcg
-> (mostly for performance reasons). Therefore we are suming up oom_badness
-> of its tasks. This might result in an over accounting because of the
-> oom_score_adj setting. Document this for now.
+> Well, we need th MIDR list helpers anyway for other things:
+>   - White list of CPUs where we know KPTI is not needed
+>   - Black list of CPUs where DBM shouldn't be enabled.
 > 
-> Acked-by: Roman Gushchin <guro@fb.com>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> So all we do is add a new type which could reduce the number of entries.
+> 
+> >
+> >We might save 100-200 bytes in the kernel image for now, but a common
+> >workaround for errata on multiple unrelated cpus is surely a rare case.
+> >
+> >Only if there are many such lists, or if the lists become large does
+> >this start to seem a clear win.
+> >
+> >>
+> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>---
+> >>  arch/arm64/include/asm/cpufeature.h |  1 +
+> >>  arch/arm64/kernel/cpu_errata.c      | 40 ++++++++++++++++++++++---------------
+> >>  2 files changed, 25 insertions(+), 16 deletions(-)
+> >>
+> >>diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> >>index a3d54c2c411f..70712de687c7 100644
+> >>--- a/arch/arm64/include/asm/cpufeature.h
+> >>+++ b/arch/arm64/include/asm/cpufeature.h
+> >
+> >[...]
+> >
+> >>@@ -330,22 +353,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+> >>  #ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
+> >>  	{
+> >>  		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+> >>-		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
+> >>-		.enable = enable_psci_bp_hardening,
+> >>-	},
+> >>-	{
+> >>-		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+> >>-		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
+> >>-		.enable = enable_psci_bp_hardening,
+> >>-	},
+> >>-	{
+> >>-		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+> >>-		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
+> >>-		.enable = enable_psci_bp_hardening,
+> >>-	},
+> >>-	{
+> >>-		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+> >>-		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
+> >>+		ERRATA_MIDR_RANGE_LIST(cortex_bp_harden_cpus),
+> >
+> >Could we just use a macro to generate multiple structs, instead of
+> >inventing a new type of struct?
+> 
+> We could. Somehow, I don't think we are over engineering much here.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+There is a flipside to this: I commented elsewhere that not allowing
+mutiple match criteria per capability struct complicates verification
+for late CPUs and/or makes it more costly.
 
-Thanks, Michal.
+Your changes here do implement support for multiple match criteria,
+albeit only for the specific case of MIDR matching.
 
--- 
-tejun
+It could be worth generalising this in the future, but that's
+probably not for this series.
+
+OTOH, if MIDR matching is the only scenario where we have duplicate
+cap structs with different match criteria and this patch allows all
+those duplicates to be removed, then is there still a need to walk
+the whole list in verify_local_cpu_features(), as introduced in
+67948af41f2e ("arm64: capabilities: Handle duplicate entries for a
+capability")?  Or can that now be simplified?
+
+Cheers
+---Dave
