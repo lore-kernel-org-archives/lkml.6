@@ -1,77 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751530AbeA3MDp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:03:45 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51086 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751360AbeA3MDn (ORCPT
+        id S1751735AbeA3MFy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:05:54 -0500
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:33374 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751451AbeA3MFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:03:43 -0500
-Date: Tue, 30 Jan 2018 12:03:40 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH] regulator: core: Fix s2idle
-Message-ID: <20180130120340.GB10525@sirena.org.uk>
-References: <1517308346-25299-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wzJLGUyc3ArbnUjN"
-Content-Disposition: inline
-In-Reply-To: <1517308346-25299-1-git-send-email-geert+renesas@glider.be>
-X-Cookie: Try
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 30 Jan 2018 07:05:51 -0500
+X-Google-Smtp-Source: AH8x226IKQ6WWYH4TEj3i6FevJo2hEEl6vL6jTJg5crxpvS4M3GYpjCWe8h1ZYwznDVNs7Jgxx2BCA==
+Message-ID: <1517313948.3658.8.camel@redhat.com>
+Subject: Re: [GIT PULL] inode->i_version rework for v4.16
+From: Jeff Layton <jlayton@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, xfs <linux-xfs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+Date: Tue, 30 Jan 2018 07:05:48 -0500
+In-Reply-To: <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
+References: <1517228795.5965.24.camel@redhat.com>
+         <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2018-01-29 at 13:50 -0800, Linus Torvalds wrote:
+> On Mon, Jan 29, 2018 at 4:26 AM, Jeff Layton <jlayton@redhat.com> wrote:
+> > 
+> > This pile of patches is a rework of the inode->i_version field. We have
+> > traditionally incremented that field on every inode data or metadata
+> > change. Typically this increment needs to be logged on disk even when
+> > nothing else has changed, which is rather expensive.
+> 
+> Hmm. I have pulled this, but it is really really broken in one place,
+> to the degree that I always went "no, I won't pull this garbage".
+> 
+> But the breakage is potential, not actual, and can be fixed trivially,
+> so I'll let it slide - but I do require it to be fixed. And I require
+> people to *think* about it.
+> 
+> So what's to horribly horribly wrong?
+> 
+> The inode_cmp_iversion{+raw}() functions are pure and utter crap.
+> 
+> Why?
+> 
+> You say that they return 0/negative/positive, but they do so in a
+> completely broken manner. They return that ternary value as the
+> sequence number difference in a 's64', which means that if you
+> actually care about that ternary value, and do the *sane* thing that
+> the kernel-doc of the function implies is the right thing, you would
+> do
+> 
+>     int cmp = inode_cmp_iversion(inode, old);
+> 
+>     if (cmp < 0 ...
+> 
+> and as a result you get code that looks sane, but that doesn't
+> actually *WORK* right.
+> 
 
---wzJLGUyc3ArbnUjN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My intent here was to have this handle wraparound using the same sort of
+method that the time_before/time_after macros do. Obviously, I didn't
+document that well.
 
-On Tue, Jan 30, 2018 at 11:32:26AM +0100, Geert Uytterhoeven wrote:
+I want to make sure I understand what's actually broken here thoug. Is
+it only broken when the two values are more than 2**63 apart, or is
+there something else more fundamentally wrong here?
 
-> But I have no idea what impact it has.  So far it doesn't seem to hurt,
-> though.
+> To make it even worse, it will actually work in practice by accident
+> in 99.99999% of all cases, so now you have
+> 
+>  (a) subtly buggy code
+>  (b) that looks fine
+>  (c) and that works in testing
+> 
+> which is just about the worst possible case for any code. The
+> interface is simply garbage that encourages bugs.
+> 
+> And the bug wouldn't be in the user, the bug would be in this code you
+> just sent me. The interface is simply wrong.
+> 
+> So this absolutely needs to be fixed. I see two fixes:
+> 
+>  - just return a boolean. That's all that any current user actually
+> wants, so the ternary value seems pointless.
+> 
+>  - make it return an 'int', and not just any int, but -1/0/1. That way
+> there is no worry about uses, and if somebody *really* cares about the
+> ternary value, they can now use a "switch" statement to get it
+> (alternatively, make it return an enum, but whatever).
+> 
+> That "ternary" function that has 18446744069414584320 incorrect return
+> values really is unacceptable.
+> 
 
-I suspect that instead what we should be doing is changing the
-set_suspend_state() check to the below - if we don't have any
-constraints or there's otherwise nothing to do just let the suspend
-proceed.
+I think I'll just make it return a boolean value like you suggested
+first. I'll send a patch to fix it once I've done some basic testing
+with it.
 
-Can you give this a spin and confirm if it fixes things?
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 42681c10cbe4..dd4708c58480 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -758,7 +758,7 @@ static int suspend_set_state(struct regulator_dev *rdev,
-=20
- 	rstate =3D regulator_get_suspend_state(rdev, state);
- 	if (rstate =3D=3D NULL)
--		return -EINVAL;
-+		return 0;
-=20
- 	/* If we have no suspend mode configration don't set anything;
- 	 * only warn if the driver implements set_suspend_voltage or
-
---wzJLGUyc3ArbnUjN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpwXxsACgkQJNaLcl1U
-h9Br/wf/VJSb0WDJbvRZhKgS99sXW57lkEju5+lHVsIW3h9eiHnkVMT50hw/ZDUp
-/olvormQdYrqdP800lfpUJGIPpMt3p+tdsWFP+AYgORVxoBGLDC3dpCwTGSglP0o
-bem9Z3y9eKbP3v/8Q3fF0MN06KUsafDbOqzO3IpqdRp1RKYQdhYCmugN+9LP6DwG
-HIp225jxbLy7bfQ03CkZCf/uFj5gYE63tnJydeOMO0Ld6DE5ZVJRPDs9oeDgsA0c
-PdAd2DeZrtf5Bav3bzDVM5F0iW4R7O4umglzi8a8NkhwDuoYNsYcyIY0cVoeAWBv
-NJRA4W9OnThy6ql2JNQIIhsF5Nhjcg==
-=iS9K
------END PGP SIGNATURE-----
-
---wzJLGUyc3ArbnUjN--
+Many thanks,
+--
+Jeff Layton <jlayton@redhat.com>
