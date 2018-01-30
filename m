@@ -1,111 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751639AbeA3JmL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:42:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37081 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751408AbeA3JmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:42:08 -0500
-Date: Tue, 30 Jan 2018 10:42:05 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
-Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-Message-ID: <20180130094205.GS21609@dhcp22.suse.cz>
-References: <ef63c070-dcd7-3f26-f6ec-d95404007ae2@linux.vnet.ibm.com>
- <20180123160653.GU1526@dhcp22.suse.cz>
- <2a05eaf2-20fd-57a8-d4bd-5a1fbf57686c@linux.vnet.ibm.com>
- <20180124090539.GH1526@dhcp22.suse.cz>
- <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
- <20180126140415.GD5027@dhcp22.suse.cz>
- <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
- <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
- <20180129132235.GE21609@dhcp22.suse.cz>
- <87k1w081e7.fsf@concordia.ellerman.id.au>
+        id S1751628AbeA3Jmx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:42:53 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43908 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751391AbeA3Jmt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 04:42:49 -0500
+Date: Mon, 29 Jan 2018 21:37:08 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Ildar Ismagilov <devix84@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] srcu: fix misprint in srcu_funnel_exp_start
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180129182309.3869-1-devix84@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87k1w081e7.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180129182309.3869-1-devix84@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18013009-0008-0000-0000-000002C91236
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008452; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000248; SDB=6.00982457; UDB=6.00498173; IPR=6.00761739;
+ BA=6.00005802; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019285; XFM=3.00000015;
+ UTC=2018-01-30 09:42:45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18013009-0009-0000-0000-00003816C3EF
+Message-Id: <20180130053708.GA3741@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1801300124
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 30-01-18 14:35:12, Michael Ellerman wrote:
-> Michal Hocko <mhocko@kernel.org> writes:
+On Mon, Jan 29, 2018 at 09:23:09PM +0300, Ildar Ismagilov wrote:
+> Signed-off-by: Ildar Ismagilov <devix84@gmail.com>
+
+The original does look backwards, now that you mention it, thank you
+for sending it.
+
+Did you see any performance differences from this patch?
+
+							Thanx, Paul
+
+> ---
+>  kernel/rcu/srcutree.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > On Mon 29-01-18 11:02:09, Anshuman Khandual wrote:
-> >> On 01/29/2018 08:17 AM, Anshuman Khandual wrote:
-> >> > On 01/26/2018 07:34 PM, Michal Hocko wrote:
-> >> >> On Fri 26-01-18 18:04:27, Anshuman Khandual wrote:
-> >> >> [...]
-> >> >>> I tried to instrument mmap_region() for a single instance of 'sed'
-> >> >>> binary and traced all it's VMA creation. But there is no trace when
-> >> >>> that 'anon' VMA got created which suddenly shows up during subsequent
-> >> >>> elf_map() call eventually failing it. Please note that the following
-> >> >>> VMA was never created through call into map_region() in the process
-> >> >>> which is strange.
-> ...
-> >> 
-> >> Okay, this colliding VMA seems to be getting loaded from load_elf_binary()
-> >> function as well.
-> >> 
-> >> [    9.422410] vma c000001fceedbc40 start 0000000010030000 end 0000000010040000
-> >> next c000001fceedbe80 prev c000001fceedb700 mm c000001fceea8200
-> >> prot 8000000000000104 anon_vma           (null) vm_ops           (null)
-> >> pgoff 1003 file           (null) private_data           (null)
-> >> flags: 0x100073(read|write|mayread|maywrite|mayexec|account)
-> >> [    9.422576] CPU: 46 PID: 7457 Comm: sed Not tainted 4.14.0-dirty #158
-> >> [    9.422610] Call Trace:
-> >> [    9.422623] [c000001fdc4f79b0] [c000000000b17ac0] dump_stack+0xb0/0xf0 (unreliable)
-> >> [    9.422670] [c000001fdc4f79f0] [c0000000002dafb8] do_brk_flags+0x2d8/0x440
-> >> [    9.422708] [c000001fdc4f7ac0] [c0000000002db3d0] vm_brk_flags+0x80/0x130
-> >> [    9.422747] [c000001fdc4f7b20] [c0000000003d23a4] set_brk+0x80/0xdc
-> >> [    9.422785] [c000001fdc4f7b60] [c0000000003d1f24] load_elf_binary+0x1304/0x158c
-> >> [    9.422830] [c000001fdc4f7c80] [c00000000035d3e0] search_binary_handler+0xd0/0x270
-> >> [    9.422881] [c000001fdc4f7d10] [c00000000035f338] do_execveat_common.isra.31+0x658/0x890
-> >> [    9.422926] [c000001fdc4f7df0] [c00000000035f980] SyS_execve+0x40/0x50
-> >> [    9.423588] [c000001fdc4f7e30] [c00000000000b220] system_call+0x58/0x6c
-> >> 
-> >> which is getting hit after adding some more debug.
-> >
-> > Voila! So your binary simply overrides brk by elf segments. That sounds
-> > like the exactly the thing that the patch is supposed to protect from.
-> > Why this is the case I dunno. It is just clear that either brk or
-> > elf base are not put to the proper place. Something to get fixed. You
-> > are probably just lucky that brk allocations do not spil over to elf
-> > mappings.
+> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> index 6d5880089ff6..1798d1aa60fa 100644
+> --- a/kernel/rcu/srcutree.c
+> +++ b/kernel/rcu/srcutree.c
+> @@ -599,7 +599,7 @@ static void srcu_funnel_exp_start(struct srcu_struct *sp, struct srcu_node *snp,
+>  		raw_spin_unlock_irqrestore_rcu_node(snp, flags);
+>  	}
+>  	raw_spin_lock_irqsave_rcu_node(sp, flags);
+> -	if (!ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
+> +	if (ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
+>  		sp->srcu_gp_seq_needed_exp = s;
+>  	raw_spin_unlock_irqrestore_rcu_node(sp, flags);
+>  }
+> -- 
+> 2.11.0
 > 
-> It is something to get fixed, but we can't retrospectively fix the
-> existing binaries sitting on peoples' systems.
-
-Yeah. Can we identify those somehow? Are they something people can
-easily come across?
-
-> Possibly powerpc arch code is doing something with the mmap layout or
-> something else that is confusing the ELF loader, in which case we should
-> fix that.
-
-Yes this definitely should be fixed. How can elf loader completely
-overlap brk mapping?
-
-> But if not then the only solution is for the ELF loader to be more
-> tolerant of this situation.
-> 
-> So for 4.16 this patch either needs to be dropped, or reworked such that
-> powerpc can opt out of it.
-
-Yeah, let's hold on merging this until we understand what the heck is
-going on here. If this turnes to be unfixable I will think of a way for
-ppc to opt out.
-
-Anshuman, could you try to run
-sed 's@^@@' /proc/self/smaps
-on a system with MAP_FIXED_NOREPLACE reverted?
--- 
-Michal Hocko
-SUSE Labs
