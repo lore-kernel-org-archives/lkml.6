@@ -1,75 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752716AbeA3GDl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 01:03:41 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46424 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752325AbeA3GDj (ORCPT
+        id S1752772AbeA3GHy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 01:07:54 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:40057 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752385AbeA3GHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 01:03:39 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F28EC6024C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH 1/1] scsi: ufs-qcom: remove broken hci version quirk
-To: Asutosh Das <asutoshd@codeaurora.org>, subhashj@codeaurora.org,
-        cang@codeaurora.org, rnayak@codeaurora.org, vinholikatti@gmail.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-References: <1517287281-8622-1-git-send-email-asutoshd@codeaurora.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <1cbfdeb0-084d-8f8b-ed66-d00fbed4a968@codeaurora.org>
-Date: Tue, 30 Jan 2018 11:33:32 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <1517287281-8622-1-git-send-email-asutoshd@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 30 Jan 2018 01:07:53 -0500
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: rjw@rjwysocki.net
+Cc: lenb@kernel.org, andy.shevchenko@gmail.com, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [PATCH] ACPI: Parse entire table as a term_list for Dell XPS 9570 and Precision M5530
+Date: Tue, 30 Jan 2018 14:07:44 +0800
+Message-Id: <20180130060744.19049-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Asutosh,
+The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
+of box.
 
+The touchpad relies on its _INI method to update its _HID value from
+XXXX0000 to SYNA2393.
+Also, the _STA relies on value of I2CN to report correct status.
 
-On 1/30/2018 10:11 AM, Asutosh Das wrote:
-> From: Subhash Jadavani <subhashj@codeaurora.org>
->
-> UFSHCD_QUIRK_BROKEN_UFS_HCI_VERSION is only applicable for QCOM UFS host
-> controller version 2.x.y and this has been fixed from version 3.x.y
-> onwards, hence this change removes this quirk for version 3.x.y onwards.
->
-> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-> ---
+Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
+correctly set up, and _INI can get run. The ACPI table in this machine
+is designed to get parsed this way.
 
-This patch and all other ufs patches that you have posted recently,
-do they all fall under one 'ufs-qcom fixes' patch series for fixes that
-we would want to do?
-If it is so, then please club them together in a series, so that
-it's easy for reviewers and maintainers to review, and keep track
-of all the patches that can get-in after the reviews.
-If they belong to two or more separate patch-series then please
-create such patch series.
-It's difficult to read through a lot of [PATCH 1/1] ... patch.
+Also, change the quirk table to a more generic name.
 
-Regards
-Vivek
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198515
+Cc: Mario Limonciello <mario.limonciello@dell.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+v2: Andy's suggestion, merge to a single quirk table.
 
->   drivers/scsi/ufs/ufs-qcom.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-> index 2b38db2..221820a 100644
-> --- a/drivers/scsi/ufs/ufs-qcom.c
-> +++ b/drivers/scsi/ufs/ufs-qcom.c
-> @@ -1098,7 +1098,7 @@ static void ufs_qcom_advertise_quirks(struct ufs_hba *hba)
->   		hba->quirks |= UFSHCD_QUIRK_BROKEN_LCC;
->   	}
->   
-> -	if (host->hw_ver.major >= 0x2) {
-> +	if (host->hw_ver.major == 0x2) {
->   		hba->quirks |= UFSHCD_QUIRK_BROKEN_UFS_HCI_VERSION;
->   
->   		if (!ufs_qcom_cap_qunipro(host))
+ drivers/acpi/bus.c | 35 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 32 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index 4d0979e02a28..3999e175b6f4 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -65,9 +65,38 @@ static int set_copy_dsdt(const struct dmi_system_id *id)
+ 	acpi_gbl_copy_dsdt_locally = 1;
+ 	return 0;
+ }
++
++static int set_gbl_term_list(const struct dmi_system_id *id)
++{
++	pr_notice("%s detected - parse the entire table as a term_list\n",
++		  id->ident);
++	acpi_gbl_parse_table_as_term_list = 1;
++	return 0;
++}
+ #endif
+ 
+-static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
++static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
++	/*
++	 * Touchpad on Dell XPS 9570/Precision M5530 doesn't work under I2C
++	 * mode.
++	 * https://bugzilla.kernel.org/show_bug.cgi?id=198515
++	 */
++	{
++		.callback = set_gbl_term_list,
++		.ident = "Dell Precision M5530",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Precision M5530"),
++		},
++	},
++	{
++		.callback = set_gbl_term_list,
++		.ident = "Dell XPS 15 9570",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "XPS 15 9570"),
++		},
++	},
+ 	/*
+ 	 * Invoke DSDT corruption work-around on all Toshiba Satellite.
+ 	 * https://bugzilla.kernel.org/show_bug.cgi?id=14679
+@@ -83,7 +112,7 @@ static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
+ 	{}
+ };
+ #else
+-static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
++static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
+ 	{}
+ };
+ #endif
+@@ -1005,7 +1034,7 @@ void __init acpi_early_init(void)
+ 	 * If the machine falls into the DMI check table,
+ 	 * DSDT will be copied to memory
+ 	 */
+-	dmi_check_system(dsdt_dmi_table);
++	dmi_check_system(acpi_quirks_dmi_table);
+ 
+ 	status = acpi_reallocate_root_table();
+ 	if (ACPI_FAILURE(status)) {
+-- 
+2.15.1
