@@ -1,59 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752838AbeA3O4q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:56:46 -0500
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:42739 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752295AbeA3O4n (ORCPT
+        id S1752865AbeA3O5x (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:57:53 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:45492 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752786AbeA3O5w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:56:43 -0500
-X-Google-Smtp-Source: AH8x225iDjubnZ6kHdgHy8TKaRJCWpZTYAB2xUhEI3xokLpLJzpBkw/XsepmOxSibWc4MF5sa6O+0A==
-Date: Tue, 30 Jan 2018 06:56:39 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH v4.15-rc9] sched, cgroup: Don't reject lower cpu.max on
- ancestors
-Message-ID: <20180130145639.GD1121507@devbig577.frc2.facebook.com>
-References: <20180122192618.GA1771050@devbig577.frc2.facebook.com>
- <20180130102156.GS2249@hirez.programming.kicks-ass.net>
+        Tue, 30 Jan 2018 09:57:52 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Philippe Cornu <philippe.cornu@st.com>
+Cc: Yannick Fertre <yannick.fertre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Mickael Reulier <mickael.reulier@st.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2] drm/stm: drv: Improve data transfers
+Date: Tue, 30 Jan 2018 16:58:07 +0200
+Message-ID: <3365044.AohtTD8A6l@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180130104200.21602-1-philippe.cornu@st.com>
+References: <20180130104200.21602-1-philippe.cornu@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180130102156.GS2249@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Philippe,
 
-On Tue, Jan 30, 2018 at 11:21:56AM +0100, Peter Zijlstra wrote:
-> afaiu the existing code does exactly the opposite, it forces the
-> descendants to configure less than the parent allows.
+Thank you for the patch.
+
+On Tuesday, 30 January 2018 12:42:00 EET Philippe Cornu wrote:
+> To optimize data transfers, align pitch on 128 bytes & height
+> on 4 bytes. This optimization is not applicable on hw without MMU.
 > 
-> You're taking out an error condition and silently allowing descentant
-> misconfiguration. How does that make sense?
+> Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
+> Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
+> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> ---
+> Changes in v2: Rename stm_dumb_create() to stm_gem_cma_dumb_create() and
+>   move CONFIG_MMU inside the function following comments from Benjamin
+>   Gaignard.
+> 
+>  drivers/gpu/drm/stm/drv.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
+> index 8fe954c27fba..8bc7e8418b8d 100644
+> --- a/drivers/gpu/drm/stm/drv.c
+> +++ b/drivers/gpu/drm/stm/drv.c
+> @@ -31,6 +31,24 @@ static const struct drm_mode_config_funcs
+> drv_mode_config_funcs = { .atomic_commit = drm_atomic_helper_commit,
+>  };
+> 
+> +static int stm_gem_cma_dumb_create(struct drm_file *file,
+> +				   struct drm_device *dev,
+> +				   struct drm_mode_create_dumb *args)
+> +{
+> +#ifdef CONFIG_MMU
+> +	unsigned int min_pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
+> +
+> +	/*
+> +	 * in order to optimize data transfer, pitch is aligned on
+> +	 * 128 bytes, height is aligned on 4 bytes
+> +	 */
+> +	args->pitch = roundup(min_pitch, 128);
+> +	args->height = roundup(args->height, 4);
+> +#endif
+> +
+> +	return drm_gem_cma_dumb_create_internal(file, dev, args);
 
-Well, they're upper limits, not strict allocations.  The current
-behavior implemented by cpu isn't either a strict allocation or upper
-limits.  It disallows a child from having a value higher than the
-parent (allocation-ish) but the sum of the children is allowed to
-exceed the parent's (limit-ish).
+In the !CONFIG_MMU case you now bypass the pitch and size calculations 
+performed by drm_gem_cma_dumb_create(), allowing userspace to allocate 
+arbitrarily large buffers. Is that intentional ?
 
-The combination is rather arbitrary and makes it impossible to
-delegate safely (a delegatee can block the delegator from reducing the
-amount resource allocated to the delegatee) while not really
-protecting against overcommit from descendants either.
-
-We had this sort of input validations in different controllers all in
-their own ways.  In most cases, these aren't well thought out and we
-can't support things like delegation without aligning controller
-behaviors.
-
-Thanks.
+> +}
+> +
+>  DEFINE_DRM_GEM_CMA_FOPS(drv_driver_fops);
+> 
+>  static struct drm_driver drv_driver = {
+> @@ -44,7 +62,7 @@ static struct drm_driver drv_driver = {
+>  	.minor = 0,
+>  	.patchlevel = 0,
+>  	.fops = &drv_driver_fops,
+> -	.dumb_create = drm_gem_cma_dumb_create,
+> +	.dumb_create = stm_gem_cma_dumb_create,
+>  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+>  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+>  	.gem_free_object_unlocked = drm_gem_cma_free_object,
 
 -- 
-tejun
+Regards,
+
+Laurent Pinchart
