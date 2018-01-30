@@ -1,69 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752649AbeA3Vek (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:34:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36516 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751717AbeA3Vej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:34:39 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D46B21738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shli@kernel.org
-Date: Tue, 30 Jan 2018 13:34:35 -0800
-From: Shaohua Li <shli@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org
-Subject: [GIT PULL] MD update for 4.16-rc1
-Message-ID: <20180130213435.m2c4x7m6csnp5ls5@kernel.org>
+        id S1752742AbeA3VgN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:36:13 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33316 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751986AbeA3VgL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 16:36:11 -0500
+X-Google-Smtp-Source: AH8x227yNm1fDFtpyOyfDOB4irdgEwX/pLqCSrnA2QOlN07RfcjBErBB1g8f8veIT2HpR1zEnjduvg==
+Date: Tue, 30 Jan 2018 13:36:07 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: keescook@chromium.org
+Cc: james.morse@arm.com, keun-o.park@darkmatter.ae,
+        syzbot <syzbot+e2d6cfb305e9f3911dea@syzkaller.appspotmail.com>,
+        labbott@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mingo@kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: WARNING in usercopy_warn
+Message-ID: <20180130213607.i4oybskvoxpzxqxd@gmail.com>
+References: <94eb2c05551289ffff0563224e41@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <94eb2c05551289ffff0563224e41@google.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-Some small fixes for MD 4.16:
-- Fix raid5-cache potential problems if raid5 cache isn't fully recovered
-- Fix a wait-within-wait warning in raid1/10
-- Make raid5-PPL support disks with writeback cache enabled
-Please pull!
+On Fri, Jan 19, 2018 at 06:58:01AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot hit the following crash on linux-next commit
+> b625c1ff82272e26c76570d3c7123419ec345b20
+> 
+> So far this crash happened 5 times on linux-next, mmots.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+e2d6cfb305e9f3911dea@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+> 
+> device syz0 entered promiscuous mode
+> ------------[ cut here ]------------
+> Bad or missing usercopy whitelist? Kernel memory exposure attempt detected
+> from SLAB object 'skbuff_head_cache' (offset 64, size 16)!
+> WARNING: CPU: 0 PID: 3663 at mm/usercopy.c:81 usercopy_warn+0xdb/0x100
+> mm/usercopy.c:76
+> Kernel panic - not syncing: panic_on_warn set ...
+> 
+> CPU: 0 PID: 3663 Comm: syzkaller694156 Not tainted 4.15.0-rc7-next-20180115+
+> #97
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  panic+0x1e4/0x41c kernel/panic.c:183
+>  __warn+0x1dc/0x200 kernel/panic.c:547
+>  report_bug+0x211/0x2d0 lib/bug.c:184
+>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1085
+> RIP: 0010:usercopy_warn+0xdb/0x100 mm/usercopy.c:76
+> RSP: 0018:ffff8801d99df548 EFLAGS: 00010282
+> RAX: dffffc0000000008 RBX: ffffffff865cf19f RCX: ffffffff815aba6e
+> RDX: 0000000000000000 RSI: 1ffff1003b33be2e RDI: 1ffff1003b33be64
+> RBP: ffff8801d99df5a0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000000003e6 R11: 0000000000000000 R12: ffffffff86200d00
+> R13: ffffffff85d2cfc0 R14: 0000000000000040 R15: 0000000000000010
+>  __check_heap_object+0x89/0xc0 mm/slab.c:4426
+>  check_heap_object mm/usercopy.c:236 [inline]
+>  __check_object_size+0x272/0x530 mm/usercopy.c:259
+>  check_object_size include/linux/thread_info.h:112 [inline]
+>  check_copy_size include/linux/thread_info.h:143 [inline]
+>  copy_to_user include/linux/uaccess.h:154 [inline]
+>  put_cmsg+0x233/0x3f0 net/core/scm.c:242
+>  sock_recv_errqueue+0x200/0x3e0 net/core/sock.c:2913
+>  packet_recvmsg+0xb2e/0x17a0 net/packet/af_packet.c:3296
+>  sock_recvmsg_nosec net/socket.c:803 [inline]
+>  sock_recvmsg+0xc9/0x110 net/socket.c:810
+>  ___sys_recvmsg+0x2a4/0x640 net/socket.c:2179
+>  __sys_recvmmsg+0x2a9/0xaf0 net/socket.c:2287
+>  SYSC_recvmmsg net/socket.c:2368 [inline]
+>  SyS_recvmmsg+0xc4/0x160 net/socket.c:2352
+>  entry_SYSCALL_64_fastpath+0x29/0xa0
+> RIP: 0033:0x444339
+> RSP: 002b:00007ffdb359d7d8 EFLAGS: 00000203 ORIG_RAX: 000000000000012b
+> RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000444339
+> RDX: 0000000000000001 RSI: 0000000020ef7fc4 RDI: 0000000000000005
+> RBP: 00000000006ce018 R08: 0000000020000000 R09: 0000000000000001
+> R10: 0000000000002000 R11: 0000000000000203 R12: 0000000000402020
+> R13: 00000000004020b0 R14: 0000000000000000 R15: 0000000000000000
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
 
-Thanks,
-Shaohua
-
-The following changes since commit 50c4c4e268a2d7a3e58ebb698ac74da0de40ae36:
-
-  Linux 4.15-rc3 (2017-12-10 17:56:26 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shli/md.git for-next
-
-for you to fetch changes up to 1532d9e87e8b2377f12929f9e40724d5fbe6ecc5:
-
-  raid5-ppl: PPL support for disks with write-back cache enabled (2018-01-15 14:29:42 -0800)
-
-----------------------------------------------------------------
-NeilBrown (1):
-      md/raid1,raid10: silence warning about wait-within-wait
-
-Song Liu (2):
-      md: introduce new personality funciton start()
-      md/r5cache: print more info of log recovery
-
-Tomasz Majchrzak (1):
-      raid5-ppl: PPL support for disks with write-back cache enabled
-
- Documentation/md/raid5-ppl.txt |   7 +-
- drivers/md/dm-raid.c           |   9 +++
- drivers/md/md.c                |  31 ++++++--
- drivers/md/md.h                |   9 +++
- drivers/md/raid1.c             |  11 +++
- drivers/md/raid10.c            |  12 +++
- drivers/md/raid5-cache.c       |  31 +++++---
- drivers/md/raid5-log.h         |  30 ++++++++
- drivers/md/raid5-ppl.c         | 167 ++++++++++++++++++++++++++++++++++++++---
- drivers/md/raid5.c             |  16 +++-
- 10 files changed, 285 insertions(+), 38 deletions(-)
+Kees, has this been fixed yet?
