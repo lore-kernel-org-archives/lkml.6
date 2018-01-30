@@ -1,170 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751725AbeA3K6R (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 05:58:17 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:48503 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751378AbeA3K6Q (ORCPT
+        id S1751858AbeA3K61 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 05:58:27 -0500
+Received: from www62.your-server.de ([213.133.104.62]:50859 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751764AbeA3K6Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 05:58:16 -0500
-From: Philippe CORNU <philippe.cornu@st.com>
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-CC: Yannick FERTRE <yannick.fertre@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        David Airlie <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        Mickael REULIER <mickael.reulier@st.com>,
-        "Ludovic BARRE" <ludovic.barre@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH] drm/stm: dsi: Add 1.31 version support
-Thread-Topic: [PATCH] drm/stm: dsi: Add 1.31 version support
-Thread-Index: AQHTmbh4u/+luY3SjUC18BvZ9Db/YKOMLiiA
-Date: Tue, 30 Jan 2018 10:57:56 +0000
-Message-ID: <aa0bb416-a9ed-7e88-adf6-54a65e0f0eff@st.com>
-References: <20180122164628.24728-1-philippe.cornu@st.com>
- <CA+M3ks4UvJWOpNsqzL6RVUCJY15EC5vuCSkfw=mkbiSO2xRgEw@mail.gmail.com>
-In-Reply-To: <CA+M3ks4UvJWOpNsqzL6RVUCJY15EC5vuCSkfw=mkbiSO2xRgEw@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0EB9E62015479F4CB086B24B053DAF36@st.com>
+        Tue, 30 Jan 2018 05:58:25 -0500
+Subject: Re: [PATCH bpf-next v7 3/5] libbpf: add error reporting in XDP
+To: Eric Leblond <eric@regit.org>
+Cc: alexei.starovoitov@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <4dc597a1-5046-3805-eb81-03a23bf0acbb@iogearbox.net>
+ <20180125000548.12320-1-eric@regit.org>
+ <20180125000548.12320-4-eric@regit.org>
+ <0291c0fe-d8c6-1072-3069-4b3000d290fe@iogearbox.net>
+ <1517049126.24241.19.camel@regit.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <a26f90e9-5028-f8a9-a1e6-83a6c46b4e0b@iogearbox.net>
+Date: Tue, 30 Jan 2018 11:58:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-30_06:,,
- signatures=0
+In-Reply-To: <1517049126.24241.19.camel@regit.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w0UAwLh4010452
 
-Hi Benjamin,
+Hi Eric,
 
-and many thanks
-Philippe :-)
+On 01/27/2018 11:32 AM, Eric Leblond wrote:
+> On Sat, 2018-01-27 at 02:28 +0100, Daniel Borkmann wrote:
+>> On 01/25/2018 01:05 AM, Eric Leblond wrote:
+>>> Parse netlink ext attribute to get the error message returned by
+>>> the card. Code is partially take from libnl.
+>>>
+>>> We add netlink.h to the uapi include of tools. And we need to
+>>> avoid include of userspace netlink header to have a successful
+>>> build of sample so nlattr.h has a define to avoid
+>>> the inclusion. Using a direct define could have been an issue
+>>> as NLMSGERR_ATTR_MAX can change in the future.
+>>>
+>>> We also define SOL_NETLINK if not defined to avoid to have to
+>>> copy socket.h for a fixed value.
+>>>
+>>> Signed-off-by: Eric Leblond <eric@regit.org>
+>>> Acked-by: Alexei Starovoitov <ast@kernel.org>
+>>>
+>>> remote rtne
+>>>
+>>> Signed-off-by: Eric Leblond <eric@regit.org>
+>>
+>> Some leftover artifact from squashing commits?
+> 
+> Outch
+> 
+>>>  samples/bpf/Makefile   |   2 +-
+>>>  tools/lib/bpf/Build    |   2 +-
+>>>  tools/lib/bpf/bpf.c    |  13 +++-
+>>>  tools/lib/bpf/nlattr.c | 187
+>>> +++++++++++++++++++++++++++++++++++++++++++++++++
+>>>  tools/lib/bpf/nlattr.h |  72 +++++++++++++++++++
+>>>  5 files changed, 273 insertions(+), 3 deletions(-)
+>>>  create mode 100644 tools/lib/bpf/nlattr.c
+>>>  create mode 100644 tools/lib/bpf/nlattr.h
+>>>
+>>> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+>>> index 7f61a3d57fa7..5c4cd3745282 100644
+>>> --- a/samples/bpf/Makefile
+>>> +++ b/samples/bpf/Makefile
+>>> @@ -45,7 +45,7 @@ hostprogs-y += xdp_rxq_info
+>>>  hostprogs-y += syscall_tp
+>>>  
+>>>  # Libbpf dependencies
+>>> -LIBBPF := ../../tools/lib/bpf/bpf.o
+>>> +LIBBPF := ../../tools/lib/bpf/bpf.o ../../tools/lib/bpf/nlattr.o
+>>>  CGROUP_HELPERS :=
+>>> ../../tools/testing/selftests/bpf/cgroup_helpers.o
+>>>  
+>>>  test_lru_dist-objs := test_lru_dist.o $(LIBBPF)
+>>> diff --git a/tools/lib/bpf/Build b/tools/lib/bpf/Build
+>>> index d8749756352d..64c679d67109 100644
+>>> --- a/tools/lib/bpf/Build
+>>> +++ b/tools/lib/bpf/Build
+>>> @@ -1 +1 @@
+>>> -libbpf-y := libbpf.o bpf.o
+>>> +libbpf-y := libbpf.o bpf.o nlattr.o
+>>> diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+>>> index 749a447ec9ed..765fd95b0657 100644
+>>> --- a/tools/lib/bpf/bpf.c
+>>> +++ b/tools/lib/bpf/bpf.c
+>>> @@ -27,7 +27,7 @@
+>>>  #include "bpf.h"
+>>>  #include "libbpf.h"
+>>>  #include "nlattr.h"
+>>> -#include <uapi/linux/rtnetlink.h>
+>>> +#include <linux/rtnetlink.h>
+>>
+>> Okay, so here it's put back from prior added uapi/linux/rtnetlink.h
+>> into linux/rtnetlink.h. Could you add this properly in the first
+>> commit rather than relative adjustment/fix within the same set?
+> 
+> Yes, sure.
+> 
+>>>  #include <sys/socket.h>
+>>>  #include <errno.h>
+>>>  
+>>> @@ -37,6 +37,10 @@
+>>>  #define IFLA_XDP_FLAGS	3
+>>>  #endif
+>>>  
+>>> +#ifndef SOL_NETLINK
+>>> +#define SOL_NETLINK 270
+>>> +#endif
+>>
+>> This would need include/linux/socket.h into tools/ include infra
+>> as well, no?
+> 
+> Yes, and I fear a lot of dependencies.
 
-On 01/30/2018 11:52 AM, Benjamin Gaignard wrote:
-> 2018-01-22 17:46 GMT+01:00 Philippe Cornu <philippe.cornu@st.com>:
->> Add support for the stm dsi phy/wrapper version 1.31.
->> Only lane capabilities need to be modified.
->>
->> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-> 
-> Applied on drm-misc-next.
-> 
-> Regards,
-> Benjamin
-> 
->> ---
->>   drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 39 +++++++++++++++++++++++++++--------
->>   1 file changed, 30 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
->> index 0ba8635d738a..a514b593f37c 100644
->> --- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
->> +++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
->> @@ -14,7 +14,14 @@
->>   #include <drm/bridge/dw_mipi_dsi.h>
->>   #include <video/mipi_display.h>
->>
->> -/* DSI wrapper register & bit definitions */
->> +#define HWVER_130                      0x31333000      /* IP version 1.30 */
->> +#define HWVER_131                      0x31333100      /* IP version 1.31 */
->> +
->> +/* DSI digital registers & bit definitions */
->> +#define DSI_VERSION                    0x00
->> +#define VERSION                                GENMASK(31, 8)
->> +
->> +/* DSI wrapper registers & bit definitions */
->>   /* Note: registers are named as in the Reference Manual */
->>   #define DSI_WCFGR      0x0400          /* Wrapper ConFiGuration Reg */
->>   #define WCFGR_DSIM     BIT(0)          /* DSI Mode */
->> @@ -66,6 +73,9 @@ struct dw_mipi_dsi_stm {
->>          void __iomem *base;
->>          struct clk *pllref_clk;
->>          struct dw_mipi_dsi *dsi;
->> +       u32 hw_version;
->> +       int lane_min_kbps;
->> +       int lane_max_kbps;
->>   };
->>
->>   static inline void dsi_write(struct dw_mipi_dsi_stm *dsi, u32 reg, u32 val)
->> @@ -122,7 +132,8 @@ static int dsi_pll_get_clkout_khz(int clkin_khz, int idf, int ndiv, int odf)
->>          return DIV_ROUND_CLOSEST(clkin_khz * ndiv, divisor);
->>   }
->>
->> -static int dsi_pll_get_params(int clkin_khz, int clkout_khz,
->> +static int dsi_pll_get_params(struct dw_mipi_dsi_stm *dsi,
->> +                             int clkin_khz, int clkout_khz,
->>                                int *idf, int *ndiv, int *odf)
->>   {
->>          int i, o, n, n_min, n_max;
->> @@ -132,8 +143,8 @@ static int dsi_pll_get_params(int clkin_khz, int clkout_khz,
->>          if (clkin_khz <= 0 || clkout_khz <= 0)
->>                  return -EINVAL;
->>
->> -       fvco_min = LANE_MIN_KBPS * 2 * ODF_MAX;
->> -       fvco_max = LANE_MAX_KBPS * 2 * ODF_MIN;
->> +       fvco_min = dsi->lane_min_kbps * 2 * ODF_MAX;
->> +       fvco_max = dsi->lane_max_kbps * 2 * ODF_MIN;
->>
->>          best_delta = 1000000; /* big started value (1000000khz) */
->>
->> @@ -213,6 +224,15 @@ dw_mipi_dsi_get_lane_mbps(void *priv_data, struct drm_display_mode *mode,
->>          int ret, bpp;
->>          u32 val;
->>
->> +       /* Update lane capabilities according to hw version */
->> +       dsi->hw_version = dsi_read(dsi, DSI_VERSION) & VERSION;
->> +       dsi->lane_min_kbps = LANE_MIN_KBPS;
->> +       dsi->lane_max_kbps = LANE_MAX_KBPS;
->> +       if (dsi->hw_version == HWVER_131) {
->> +               dsi->lane_min_kbps *= 2;
->> +               dsi->lane_max_kbps *= 2;
->> +       }
->> +
->>          pll_in_khz = (unsigned int)(clk_get_rate(dsi->pllref_clk) / 1000);
->>
->>          /* Compute requested pll out */
->> @@ -220,12 +240,12 @@ dw_mipi_dsi_get_lane_mbps(void *priv_data, struct drm_display_mode *mode,
->>          pll_out_khz = mode->clock * bpp / lanes;
->>          /* Add 20% to pll out to be higher than pixel bw (burst mode only) */
->>          pll_out_khz = (pll_out_khz * 12) / 10;
->> -       if (pll_out_khz > LANE_MAX_KBPS) {
->> -               pll_out_khz = LANE_MAX_KBPS;
->> +       if (pll_out_khz > dsi->lane_max_kbps) {
->> +               pll_out_khz = dsi->lane_max_kbps;
->>                  DRM_WARN("Warning max phy mbps is used\n");
->>          }
->> -       if (pll_out_khz < LANE_MIN_KBPS) {
->> -               pll_out_khz = LANE_MIN_KBPS;
->> +       if (pll_out_khz < dsi->lane_min_kbps) {
->> +               pll_out_khz = dsi->lane_min_kbps;
->>                  DRM_WARN("Warning min phy mbps is used\n");
->>          }
->>
->> @@ -233,7 +253,8 @@ dw_mipi_dsi_get_lane_mbps(void *priv_data, struct drm_display_mode *mode,
->>          idf = 0;
->>          ndiv = 0;
->>          odf = 0;
->> -       ret = dsi_pll_get_params(pll_in_khz, pll_out_khz, &idf, &ndiv, &odf);
->> +       ret = dsi_pll_get_params(dsi, pll_in_khz, pll_out_khz,
->> +                                &idf, &ndiv, &odf);
->>          if (ret)
->>                  DRM_WARN("Warning dsi_pll_get_params(): bad params\n");
->>
->> --
->> 2.15.1
->>
+Sorry for the delay! So, once you pull these two headers in, are there more
+follow-up dependencies with other headers required on your old test system?
+I'd also be fine with keeping SOL_NETLINK here as is, but I would try to
+have the if_link.h in the tools/ include infra, so we have all XDP definitions
+available and up to date from the lib's pov. The dependency for if_link.h
+seems minimal and probably enough to to only get in this single header. Could
+you give that a try?
+
+Thanks a lot,
+Daniel
