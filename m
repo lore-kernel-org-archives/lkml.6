@@ -1,107 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751983AbeA3IyY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 03:54:24 -0500
-Received: from foss.arm.com ([217.140.101.70]:50908 "EHLO foss.arm.com"
+        id S1751991AbeA3Iy7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 03:54:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60543 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751563AbeA3IyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:54:22 -0500
-Subject: Re: [PATCH v2 15/16] arm/arm64: smccc: Implement SMCCC v1.1 inline
- primitive
-To: Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jon Masters <jcm@redhat.com>
-References: <20180129174559.1866-1-marc.zyngier@arm.com>
- <20180129174559.1866-16-marc.zyngier@arm.com>
- <04d16ecd-044c-fe56-f9be-78d0cb591e71@arm.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <84eaa3ee-6838-466a-9974-98b6092b9e6c@arm.com>
-Date: Tue, 30 Jan 2018 08:54:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751457AbeA3Iyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 03:54:49 -0500
+Date: Tue, 30 Jan 2018 09:54:45 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>, Roman Gushchin <guro@fb.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch -mm v2 2/3] mm, memcg: replace cgroup aware oom killer
+ mount option with tunable
+Message-ID: <20180130085445.GQ21609@dhcp22.suse.cz>
+References: <alpine.DEB.2.10.1801161812550.28198@chino.kir.corp.google.com>
+ <alpine.DEB.2.10.1801251552320.161808@chino.kir.corp.google.com>
+ <alpine.DEB.2.10.1801251553030.161808@chino.kir.corp.google.com>
+ <20180125160016.30e019e546125bb13b5b6b4f@linux-foundation.org>
+ <alpine.DEB.2.10.1801261415090.15318@chino.kir.corp.google.com>
+ <20180126143950.719912507bd993d92188877f@linux-foundation.org>
+ <alpine.DEB.2.10.1801261441340.20954@chino.kir.corp.google.com>
+ <20180126161735.b999356fbe96c0acd33aaa66@linux-foundation.org>
+ <20180129104657.GC21609@dhcp22.suse.cz>
+ <20180129191139.GA1121507@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <04d16ecd-044c-fe56-f9be-78d0cb591e71@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180129191139.GA1121507@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/01/18 19:07, Robin Murphy wrote:
-> On 29/01/18 17:45, Marc Zyngier wrote:
->> One of the major improvement of SMCCC v1.1 is that it only clobbers
->> the first 4 registers, both on 32 and 64bit. This means that it
->> becomes very easy to provide an inline version of the SMC call
->> primitive, and avoid performing a function call to stash the
->> registers that would otherwise be clobbered by SMCCC v1.0.
+On Mon 29-01-18 11:11:39, Tejun Heo wrote:
+> Hello, Michal.
 > 
-> This is disgusting... I love it :D
-
-I expected nothing less from you! ;-)
-
+> On Mon, Jan 29, 2018 at 11:46:57AM +0100, Michal Hocko wrote:
+> > @@ -1292,7 +1292,11 @@ the memory controller considers only cgroups belonging to the sub-tree
+> >  of the OOM'ing cgroup.
+> >  
+> >  The root cgroup is treated as a leaf memory cgroup, so it's compared
+> > -with other leaf memory cgroups and cgroups with oom_group option set.
+> > +with other leaf memory cgroups and cgroups with oom_group option
+> > +set. Due to internal implementation restrictions the size of the root
+> > +cgroup is a cumulative sum of oom_badness of all its tasks (in other
+> > +words oom_score_adj of each task is obeyed). This might change in the
+> > +future.
 > 
->> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>   include/linux/arm-smccc.h | 157 ++++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 157 insertions(+)
->>
->> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
->> index dd44d8458c04..bc5843728909 100644
->> --- a/include/linux/arm-smccc.h
->> +++ b/include/linux/arm-smccc.h
->> @@ -150,5 +150,162 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
->>   
->>   #define arm_smccc_hvc_quirk(...) __arm_smccc_hvc(__VA_ARGS__)
->>   
->> +/* SMCCC v1.1 implementation madness follows */
->> +#ifdef CONFIG_ARM64
->> +
->> +#define SMCCC_SMC_INST	"smc	#0"
->> +#define SMCCC_HVC_INST	"hvc	#0"
->> +
->> +#define __arm_smccc_1_1_prologue(inst)					\
->> +	inst "\n"							\
->> +	"cbz	%[ptr], 1f\n"						\
->> +	"stp	%x[r0], %x[r1], %[ra0]\n"				\
->> +	"stp	%x[r2], %x[r3], %[ra2]\n"				\
->> +	"1:\n"								\
->> +	: [ra0] "=Ump" (*(&___res->a0)),				\
->> +	  [ra2] "=Ump" (*(&___res->a2)),
-> 
-> Rather than embedding a guaranteed spill to memory, I wonder if there's 
-> money in just always declaring r0-r3 as in-out operands, and propagating 
-> them by value afterwards, i.e.:
-> 
-> 	asm(...);
-> 	if (___res)
-> 		*___res = (struct arm_smccc_res){ r0, r1, r2, r3 };
-> 
-> In theory, for sufficiently simple callers that might allow res to stay 
-> in registers for its entire lifetime and give nicer codegen. It *might* 
-> also simplify some of this macro machinery too, although at this point 
-> in the evening I can't really tell...
+> Thanks, we can definitely use more documentation.  However, it's a bit
+> difficult to follow.  Maybe expand it to a separate paragraph on the
+> current behavior with a clear warning that the default OOM heuristics
+> is subject to changes?
 
-I just implemented it, and this is indeed much better. In most cases,
-the store gets optimized away, mostly because we either pass NULL (and
-the condition is dropped) or the store doesn't need to take place as we
-evaluate a condition and discard the structure, like in
-check_smccc_arch_workaround_1.
+Does this sound any better?
 
-In all cases, this allows for slightly reduced levels of cpp madness,
-and better codegen. I also suspect it will solve Ard's register
-allocation issue.
+>From ea4fa9c36d3ec2cf13d1949169924a1a54b9fcd6 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Tue, 30 Jan 2018 09:54:15 +0100
+Subject: [PATCH] oom, memcg: clarify root memcg oom accounting
 
-Thanks,
+David Rientjes has pointed out that the current way how the root memcg
+is accounted for the cgroup aware OOM killer is undocumented. Unlike
+regular cgroups there is no accounting going on in the root memcg
+(mostly for performance reasons). Therefore we are suming up oom_badness
+of its tasks. This might result in an over accounting because of the
+oom_score_adj setting. Document this for now.
 
-	M.
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ Documentation/cgroup-v2.txt | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+index 2eaed1e2243d..67bdf19f8e5b 100644
+--- a/Documentation/cgroup-v2.txt
++++ b/Documentation/cgroup-v2.txt
+@@ -1291,8 +1291,14 @@ This affects both system- and cgroup-wide OOMs. For a cgroup-wide OOM
+ the memory controller considers only cgroups belonging to the sub-tree
+ of the OOM'ing cgroup.
+ 
+-The root cgroup is treated as a leaf memory cgroup, so it's compared
+-with other leaf memory cgroups and cgroups with oom_group option set.
++Leaf cgroups are compared based on their cumulative memory usage. The
++root cgroup is treated as a leaf memory cgroup as well, so it's
++compared with other leaf memory cgroups. Due to internal implementation
++restrictions the size of the root cgroup is a cumulative sum of
++oom_badness of all its tasks (in other words oom_score_adj of each task
++is obeyed). Relying on oom_score_adj (appart from OOM_SCORE_ADJ_MIN)
++can lead to overestimating of the root cgroup consumption and it is
++therefore discouraged. This might change in the future, though.
+ 
+ If there are no cgroups with the enabled memory controller,
+ the OOM killer is using the "traditional" process-based approach.
 -- 
-Jazz is not dead. It just smells funny...
+2.15.1
+-- 
+Michal Hocko
+SUSE Labs
