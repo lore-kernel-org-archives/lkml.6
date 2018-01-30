@@ -1,90 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751871AbeA3ITs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 03:19:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50850 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751631AbeA3ITq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:19:46 -0500
-Date: Tue, 30 Jan 2018 16:19:30 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: paolo.valente@linaro.org, Ivan Kozik <ivan@ludios.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bfq-iosched@googlegroups.com, Jens Axboe <axboe@kernel.dk>,
-        linus.walleij@linaro.org
-Subject: Re: v4.15 and I/O hang with BFQ
-Message-ID: <20180130081925.GA25183@ming.t460p>
-References: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
+        id S1751963AbeA3IXT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 03:23:19 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33337 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751594AbeA3IXS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 03:23:18 -0500
+X-Google-Smtp-Source: AH8x224NVQapb4dcIo19LbH4G7vDxMXcRXIz7NKm+F16RYkcdYh1cz1y3YQ8t+07DQxE76poSXrocw==
+Date: Tue, 30 Jan 2018 09:23:14 +0100
+From: LABBE Corentin <clabbe@baylibre.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Joe Perches <joe@perches.com>, dledford@redhat.com,
+        hal.rosenstock@gmail.com, sean.hefty@intel.com, swise@chelsio.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] IB/cxgb3: remove cxio_dbg.c
+Message-ID: <20180130082314.GA12047@Red>
+References: <1517152289-25052-1-git-send-email-clabbe@baylibre.com>
+ <1517156662.765.10.camel@perches.com>
+ <20180128210903.GL23869@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180128210903.GL23869@ziepe.ca>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sun, Jan 28, 2018 at 02:09:03PM -0700, Jason Gunthorpe wrote:
+> On Sun, Jan 28, 2018 at 08:24:22AM -0800, Joe Perches wrote:
+> > On Sun, 2018-01-28 at 15:11 +0000, Corentin Labbe wrote:
+> > > cxio_dbg.c is uncompiled since commit 2b540355cd2f ("RDMA/cxgb3: cleanups")
+> > > 10 years after, we could remove it.
+> > 
+> > OK, now you could remove the prototypes and probably
+> > CONFIG_INFINIBAND_CXGB3_DEBUG too.
+> > 
+> > There is a DEBUG test and many uses of pr_debug
+> > that would have modified behavior.
+> > 
+> > The pr_debug uses would only be emitted via a
+> > dynamic_debug enable and the #ifdef DEBUG is
+> > probably not necessary or useful as it guards
+> > a BUG_ON.
+> > 
+> >  drivers/infiniband/hw/cxgb3/Kconfig    | 9 ---------
+> >  drivers/infiniband/hw/cxgb3/Makefile   | 2 --
+> >  drivers/infiniband/hw/cxgb3/cxio_hal.h | 9 ---------
+> >  drivers/infiniband/hw/cxgb3/iwch_cq.c  | 7 -------
+> >  4 files changed, 27 deletions(-)
+> 
+> Yes, can you resend the patch with Joe's hunks as well?
+> 
 
-On Tue, Jan 30, 2018 at 09:05:26AM +0100, Oleksandr Natalenko wrote:
-> Hi, Paolo, Ivan, Ming et al.
-> 
-> It looks like I've just encountered the issue Ivan has already described in
-> [1]. Since I'm able to reproduce it reliably in a VM, I'd like to draw more
-> attention to it.
-> 
-> First, I'm using v4.15 kernel with all pending BFQ fixes:
-> 
-> ===
-> 2ad909a300c4 bfq-iosched: don't call bfqg_and_blkg_put for
-> !CONFIG_BFQ_GROUP_IOSCHED
-> 83c97a310f83 block, bfq: release oom-queue ref to root group on exit
-> 5b9eb4716af1 block, bfq: put async queues for root bfq groups too
-> 3c5529454a27 block, bfq: limit sectors served with interactive weight
-> raising
-> e6c72be3486b block, bfq: limit tags for writes and async I/O
-> e579b91d96ce block, bfq: increase threshold to deem I/O as random
-> f6cbc16aac88 block, bfq: remove superfluous check in queue-merging setup
-> 8045d8575183 block, bfq: let a queue be merged only shortly after starting
-> I/O
-> 242954975f5e block, bfq: check low_latency flag in bfq_bfqq_save_state()
-> 8349c1bddd95 block, bfq: add missing rq_pos_tree update on rq removal
-> 558200440cb9 block, bfq: fix occurrences of request finish method's old name
-> 6ed2f47ee870 block, bfq: consider also past I/O in soft real-time detection
-> e5f295dd18f2 block, bfq: remove batches of confusing ifdefs
-> ===
-> 
-> Next, I boot an Arch VM with this kernel and emulated USB stick attached:
-> 
-> ===
-> qemu-system-x86_64 -display gtk,gl=on -machine q35,accel=kvm -cpu host,+vmx
-> -enable-kvm -drive if=pflash,format=raw,readonly,file=/mnt/vms/ovmf/code.img
-> -drive if=pflash,format=raw,file=/mnt/vms/ovmf/vars.img -cdrom
-> /mnt/vms/ovmf/shell.iso -netdev user,id=user.0 -device
-> virtio-net,netdev=user.0 -usb -device nec-usb-xhci,id=xhci -device
-> usb-tablet,bus=xhci.0 -serial stdio -m 512 -hda sda.img -hdb sdb.img -smp 4
-> -drive if=none,id=stick,file=usb.img -device
-> usb-storage,bus=xhci.0,drive=stick
-> ===
-> 
-> Within the VM itself I use udev rule to set the I/O scheduler:
-> 
-> ===
-> ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/scheduler}="bfq"
-> ===
+Yes I will do
 
-We knew there is IO hang issue on BFQ over USB-storage wrt. blk-mq, and
-last time I found it is inside BFQ. You can try the debug patch in the
-following link[1] to see if it is same with the previous report[1][2]:
-
-[1] https://marc.info/?l=linux-block&m=151214241518562&w=2
-[2] https://bugzilla.kernel.org/show_bug.cgi?id=198023
-
-If you aren't sure if they are same, please post the trace somewhere,
-then I can check if it is a new bug.
-
-Or Paolo should know if the issue is fixed or not in V4.15.
-
-Thanks,
-Ming
+Regards
