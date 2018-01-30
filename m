@@ -1,41 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753152AbeA3TNB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 14:13:01 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45008 "EHLO
+        id S1752781AbeA3TRe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:17:34 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:39969 "EHLO
         mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752080AbeA3TM6 (ORCPT
+        with ESMTP id S1752299AbeA3TRd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:12:58 -0500
-X-Google-Smtp-Source: AH8x225XjrlL1C3MikQgVA0fK4YlzvgQklLTBDr57fwpnNyfLhEgfD6TS2NLfBDJJ/xscpQD81cwTg==
-Message-ID: <1517339575.3153.11.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson: add axg misc bit to the mpll driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 30 Jan 2018 20:12:55 +0100
-In-Reply-To: <20180119154236.9797-1-jbrunet@baylibre.com>
-References: <20180119154236.9797-1-jbrunet@baylibre.com>
+        Tue, 30 Jan 2018 14:17:33 -0500
+X-Google-Smtp-Source: AH8x224RorlfIBCRK1FPWncsK3YxjumHP+JAdOzz03XZGGN9afKehD7ZUpGb2XJTWC9Y35pcXyft/cvEncBRKK0It8M=
+MIME-Version: 1.0
+In-Reply-To: <20180130053708.GA3741@linux.vnet.ibm.com>
+References: <20180129182309.3869-1-devix84@gmail.com> <20180130053708.GA3741@linux.vnet.ibm.com>
+From: Ildar Ismagilov <devix84@gmail.com>
+Date: Tue, 30 Jan 2018 22:17:32 +0300
+Message-ID: <CADCZxWcTSaWGFi67Ruwyof_=PtZNO-ph7JQF2ZbAbnLpdudE8w@mail.gmail.com>
+Subject: Re: [PATCH] srcu: fix misprint in srcu_funnel_exp_start
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-01-19 at 16:42 +0100, Jerome Brunet wrote:
-> On axg, the rate of the mpll is stuck as if sdm value was 4 and could not
-> change (expect for mpll2 strangely). Looking at the vendor kernel, it
-> turns out a new magic bit from the undocumented HHI_PLL_TOP_MISC register
-> is required.
-> 
-> Setting this bit solves the problem and the mpll rates are back to normal
-> 
-> Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+I didn't check the performance, because this misprint has been found
+accidentally, during studying of a RCU/SRCU code.
 
-Applied to clk-meson next/drivers
+2018-01-30 8:37 GMT+03:00 Paul E. McKenney <paulmck@linux.vnet.ibm.com>:
+> On Mon, Jan 29, 2018 at 09:23:09PM +0300, Ildar Ismagilov wrote:
+>> Signed-off-by: Ildar Ismagilov <devix84@gmail.com>
+>
+> The original does look backwards, now that you mention it, thank you
+> for sending it.
+>
+> Did you see any performance differences from this patch?
+>
+>                                                         Thanx, Paul
+>
+>> ---
+>>  kernel/rcu/srcutree.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+>> index 6d5880089ff6..1798d1aa60fa 100644
+>> --- a/kernel/rcu/srcutree.c
+>> +++ b/kernel/rcu/srcutree.c
+>> @@ -599,7 +599,7 @@ static void srcu_funnel_exp_start(struct srcu_struct *sp, struct srcu_node *snp,
+>>               raw_spin_unlock_irqrestore_rcu_node(snp, flags);
+>>       }
+>>       raw_spin_lock_irqsave_rcu_node(sp, flags);
+>> -     if (!ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
+>> +     if (ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
+>>               sp->srcu_gp_seq_needed_exp = s;
+>>       raw_spin_unlock_irqrestore_rcu_node(sp, flags);
+>>  }
+>> --
+>> 2.11.0
+>>
+>
+
+
+
+-- 
+Best regards
+Ildar
