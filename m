@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752836AbeA3Fvm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 00:51:42 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39152 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752293AbeA3Fvj (ORCPT
+        id S1752867AbeA3Fvv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 00:51:51 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36647 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752293AbeA3Fvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 00:51:39 -0500
-X-Google-Smtp-Source: AH8x2277LB9tAqX8SF5QFvaX5vK0mGtw5y8C9eMqjUouDc4DW6q3qXjHclyZf4jz6mH/ShbQNMmt6A==
+        Tue, 30 Jan 2018 00:51:47 -0500
+X-Google-Smtp-Source: AH8x226bpY7AnWbbvtmtIu2R6TWGREqzQCHB/+u8MSqO/hZhaD7GIdmUmJDRdiqDTJwk6AX59XBxJQ==
 From: Joel Stanley <joel@jms.id.au>
 To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org
 Cc: Christopher Bostic <cbostic@linux.vnet.ibm.com>,
         Jeremy Kerr <jk@ozlabs.org>, Eddie James <eajames@linux.vnet.ibm.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: fsi: Add optional property no-scan-on-init
-Date: Tue, 30 Jan 2018 16:21:15 +1030
-Message-Id: <20180130055116.17411-2-joel@jms.id.au>
+Subject: [PATCH 2/2] fsi: core: Add check for master property no-scan-on-init
+Date: Tue, 30 Jan 2018 16:21:16 +1030
+Message-Id: <20180130055116.17411-3-joel@jms.id.au>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180130055116.17411-1-joel@jms.id.au>
 References: <20180130055116.17411-1-joel@jms.id.au>
@@ -26,36 +26,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
 
-Add an optional FSI master property 'no-scan-on-init.  This
-can be specified to indicate that a master should not be
-automatically scanned at init time.  This is required in cases
-where a scan could interfere with another FSI master on the same
-bus.
+Prior to scanning a master check if the optional property
+no-scan-on-init is present.  If it is then avoid scanning.  This is
+necessary in cases where a master scan could interfere with another
+FSI master on the same bus.
 
 Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
 Acked-by: Jeremy Kerr <jk@ozlabs.org>
 Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- Documentation/devicetree/bindings/fsi/fsi.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/fsi/fsi-core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/fsi/fsi.txt b/Documentation/devicetree/bindings/fsi/fsi.txt
-index 4eaf488d4015..ab516c673a4b 100644
---- a/Documentation/devicetree/bindings/fsi/fsi.txt
-+++ b/Documentation/devicetree/bindings/fsi/fsi.txt
-@@ -56,6 +56,13 @@ addresses (link index and slave ID), and no size:
-     #address-cells = <2>;
-     #size-cells = <0>;
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index 8d8b25809452..4c03d6933646 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -901,6 +901,7 @@ static DEVICE_ATTR(break, 0200, NULL, master_break_store);
+ int fsi_master_register(struct fsi_master *master)
+ {
+ 	int rc;
++	struct device_node *np;
  
-+An optional boolean property can be added to indicate that a particular master
-+should not scan for connected devices at initialization time.  This is
-+necessary in cases where a scan could cause arbitration issues with other
-+masters that may be present on the bus.
-+
-+    no-scan-on-init;
-+
- FSI slaves
- ----------
+ 	if (!master)
+ 		return -EINVAL;
+@@ -928,7 +929,9 @@ int fsi_master_register(struct fsi_master *master)
+ 		return rc;
+ 	}
  
+-	fsi_master_scan(master);
++	np = dev_of_node(&master->dev);
++	if (!of_property_read_bool(np, "no-scan-on-init"))
++		fsi_master_scan(master);
+ 
+ 	return 0;
+ }
 -- 
 2.15.1
