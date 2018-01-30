@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeA3Ijl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 03:39:41 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:33334 "EHLO
+        id S1751845AbeA3Ima (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 03:42:30 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:33426 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751628AbeA3Iji (ORCPT
+        with ESMTP id S1751712AbeA3Ik2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:39:38 -0500
-Date: Tue, 30 Jan 2018 09:39:27 +0100
+        Tue, 30 Jan 2018 03:40:28 -0500
+Date: Tue, 30 Jan 2018 09:40:16 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Philipp Rossak <embed3d@gmail.com>
 Cc: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -16,54 +16,55 @@ Cc: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 4/6] arm: dts: sun8i: a83t: Add support for the cir
- interface
-Message-ID: <20180130083927.z4jcilqm3aludncb@flea.lan>
+Subject: Re: [PATCH v5 5/6] arm: dts: sun8i: a83t: bananapi-m3: Enable IR
+ controller
+Message-ID: <20180130084016.4uyrd425qpzyiyql@flea.lan>
 References: <20180129155810.7867-1-embed3d@gmail.com>
- <20180129155810.7867-5-embed3d@gmail.com>
+ <20180129155810.7867-6-embed3d@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rkwxsw3xptbos3il"
+        protocol="application/pgp-signature"; boundary="q22bqurpyklj4yxv"
 Content-Disposition: inline
-In-Reply-To: <20180129155810.7867-5-embed3d@gmail.com>
+In-Reply-To: <20180129155810.7867-6-embed3d@gmail.com>
 User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---rkwxsw3xptbos3il
+--q22bqurpyklj4yxv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-hi,
-
-On Mon, Jan 29, 2018 at 04:58:08PM +0100, Philipp Rossak wrote:
-> The cir interface is like on the H3 located at 0x01f02000 and is exactly
-> the same. This patch adds support for the ir interface on the A83T.
+On Mon, Jan 29, 2018 at 04:58:09PM +0100, Philipp Rossak wrote:
+> The Bananapi M3 has an onboard IR receiver.
+> This enables the onboard IR receiver subnode.
+> Unlike the other IR receivers this one needs a base clock frequency
+> of 3000000 Hz (3 MHz), to be able to work.
 >=20
 > Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  arch/arm/boot/dts/sun8i-a83t.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >=20
-> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-=
-a83t.dtsi
-> index 06e96db7c41a..ddc0d592107f 100644
-> --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> @@ -605,6 +605,16 @@
->  			#reset-cells =3D <1>;
->  		};
+> diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot=
+/dts/sun8i-a83t-bananapi-m3.dts
+> index 6550bf0e594b..ffc6445fd281 100644
+> --- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+> +++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+> @@ -82,6 +82,13 @@
+>  	};
+>  };
 > =20
-> +		cir: cir@01f02000 {
+> +&cir {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&cir_pins>;
 
-r_cir: ir@1f02000
-
-> +			compatible =3D "allwinner,sun5i-a13-ir";
-
-You should have an A83t compatible there first.
+If this is the only muxing option (like your node name suggests), you
+can put it directly in the DTSI to remove boilerplate from all the
+DTS.
 
 Maxime
 
@@ -72,24 +73,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---rkwxsw3xptbos3il
+--q22bqurpyklj4yxv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpwLz4ACgkQ0rTAlCFN
-r3QUTQ/+K2G0LlAJyeSazKoN1KZt64PQ8gZUXOIONSBiR4hsfnIpFgPwF3v1VAel
-jZDHmFgK+yadwIcbCiNR8C9XTd+yDhafsenkTuieZhFz4WYNVjO9qg+BLvb5ZceI
-gjrhQreyXKbUuIhJqqH4Ed6+zTEDfC6Gxr4EMV9Zqw/nvgBX0DB0gvmtuC2sxf+e
-aY8y4mh5GlNl8X1/iTkYNtetaipoBpc0/klqFPemxqy1RvPwYFjQeqq/QII3zKbL
-ySNskN9nXCW9rRr6kQXPfy5NLxgCYt23uUglEjfRSNUebTAvOQIIoE6kqSqIaLQ9
-vmglu7jfi9gWsl8LBZd7BjcP4aSjCj048OIRSA4cEoDIugsVFKPyZ9g6app+W9Gd
-ASE3Xc1hxDU1G2+Hsl5XWxbtMZPNq6+F9H/MpvTonF28tBS6e1A0Qtxjp3RmUYG4
-pKsZZSVZlnvQfs9XlOCEp11DIIPsyx0YnAJnZ+VgfBCG0x9kzL+ioDJc8UU8fWiv
-q5Ec0g1ae2YHZdOPIZJ6uly9t8hyLfrGlf4e4kjOXTR7+EqYj/ub/1F1D60UZxE9
-9kBlv/hW0d0s4LMfaWw6g7WCalDz0wkUq5/hlU/0cOyR0koNzndG96OehiMgfj70
-w7SWoJ2TIjS7mXd7TP5MA/ScfJE6uL5TiHGJ5SHYchNefNtzXBs=
-=m2gq
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpwL28ACgkQ0rTAlCFN
+r3T2bw/9FDXJX9fqsxvDAQ+/QTBJvEaexiIHZbqe1RLTQY4dXSAHocmLE1ZaJfXi
+GokcTKZQp2Uy7oLnGlP00V8Hp12CSu5nA6XFVNg2xZN4k9rpsm6DjYFE5xy5ks0A
+wv+b5dc9c4fouJYtP8xatYBcWXCRhxCFrmiMFNCefU7MLtu2r3Z6c8/adWxNhjI4
+tgSSPh2FRAPB8bjUZgHm0WPE+rYDK2yoVN/Cebnk0jl4I1EqLfcly95nFIcaiyBR
+y99A9wjuNSlLvl/e6c26ZZ04hjHMKu+iQyL/iNu/1kKG2pqnwnXIeYJQYGjNm6xm
+S104zJK92rYs9CWhItbxXAompsH3cce9dCtm+zPukEh8hjCRnGKxqnrCTrNltVBr
+/oq2emDXBtgz0iLrddzAuLP3LnYtUL0l5UbCqyZ7lvzXatVd3TxBHI9kFsN3FgkJ
+EA+nPZEYKyQlFWK3Q8c4IUAZNG0OlS9hhWaNeQx/N9I9QELlXO8CiJPUj0VsJcpZ
+EkxXJyy+0DE5NqI4L0BD4Qa9mPUe0d6/YtyksMcn7YAT25uEsgRSBdhWPD3MsrId
+iBy+PYjY0QMloHGRbul+gyznjGfjSxemrRmumXp1r56VbA1voVMCg+oOrRbM1nPH
+ZkeCBdfgCl94ggiaixQreHlJqYxl+d1jFspC0PR6jb1/yQUbuBM=
+=+1fN
 -----END PGP SIGNATURE-----
 
---rkwxsw3xptbos3il--
+--q22bqurpyklj4yxv--
