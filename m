@@ -1,96 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751712AbeA3Kv2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 05:51:28 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:38224 "EHLO
+        id S1751826AbeA3Kv6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 05:51:58 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:38291 "EHLO
         mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751556AbeA3Kv1 (ORCPT
+        with ESMTP id S1751509AbeA3Kvz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 05:51:27 -0500
-X-Google-Smtp-Source: AH8x225W8wM81QLECKFNetyvDusIaVzmb0lgv9gvp4CqkSp8gIRJBG1MvbbAnToJrbwUcEiWS+ouKguM0Trs8fykqBY=
+        Tue, 30 Jan 2018 05:51:55 -0500
+X-Google-Smtp-Source: AH8x226OoYJ1zgAL7PF4peDcPmDkl1MjS8auR0beLPulCIChXa+v9GoDiCaqRP/hyU2yTPR5FPwdFBBYVcR4tY5fIEk=
 MIME-Version: 1.0
-In-Reply-To: <20180130104200.21602-1-philippe.cornu@st.com>
-References: <20180130104200.21602-1-philippe.cornu@st.com>
+In-Reply-To: <20180129231518.mocdpegeagbs4z5n@rob-hp-laptop>
+References: <20180122153547.23470-1-philippe.cornu@st.com> <20180129231518.mocdpegeagbs4z5n@rob-hp-laptop>
 From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Tue, 30 Jan 2018 11:51:25 +0100
-Message-ID: <CA+M3ks7ao2ZUefn5VZ1POC45rq1dTmZr4v8Gy+zXue=gRx6=pg@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/stm: drv: Improve data transfers
-To: Philippe Cornu <philippe.cornu@st.com>
-Cc: Yannick Fertre <yannick.fertre@st.com>,
+Date: Tue, 30 Jan 2018 11:51:54 +0100
+Message-ID: <CA+M3ks78kufDB4QSd38Ah15zidbuHnY3kHMHXB_0iQFFg1VVkA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: display: stm32: correct clock-names in dsi
+ panel example
+To: Rob Herring <robh@kernel.org>
+Cc: Philippe Cornu <philippe.cornu@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
         Vincent Abriou <vincent.abriou@st.com>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Mickael Reulier <mickael.reulier@st.com>,
-        Ludovic Barre <ludovic.barre@st.com>,
+        David Airlie <airlied@linux.ie>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mickael Reulier <mickael.reulier@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        Ludovic Barre <ludovic.barre@st.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-01-30 11:42 GMT+01:00 Philippe Cornu <philippe.cornu@st.com>:
-> To optimize data transfers, align pitch on 128 bytes & height
-> on 4 bytes. This optimization is not applicable on hw without MMU.
+2018-01-30 0:15 GMT+01:00 Rob Herring <robh@kernel.org>:
+> On Mon, Jan 22, 2018 at 04:35:47PM +0100, Philippe Cornu wrote:
+>> In the dsi panel example, clock names in the "clock-names"
+>> field have been swapped:
+>> * "pclk" (peripheral clock) is <&rcc 1 CLK_F469_DSI> on stm32f4
+>> * "ref" (dsi phy pll ref clock) is <&clk_hse> on stm32f4
+>>
+>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>> ---
+>>  Documentation/devicetree/bindings/display/st,stm32-ltdc.txt | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
-> Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-
+> Reviewed-by: Rob Herring <robh@kernel.org>
+>
 Applied on drm-misc-next.
 
 Regards,
 Benjamin
-> ---
-> Changes in v2: Rename stm_dumb_create() to stm_gem_cma_dumb_create() and
->   move CONFIG_MMU inside the function following comments from Benjamin
->   Gaignard.
->
->  drivers/gpu/drm/stm/drv.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
-> index 8fe954c27fba..8bc7e8418b8d 100644
-> --- a/drivers/gpu/drm/stm/drv.c
-> +++ b/drivers/gpu/drm/stm/drv.c
-> @@ -31,6 +31,24 @@ static const struct drm_mode_config_funcs drv_mode_config_funcs = {
->         .atomic_commit = drm_atomic_helper_commit,
->  };
->
-> +static int stm_gem_cma_dumb_create(struct drm_file *file,
-> +                                  struct drm_device *dev,
-> +                                  struct drm_mode_create_dumb *args)
-> +{
-> +#ifdef CONFIG_MMU
-> +       unsigned int min_pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
-> +
-> +       /*
-> +        * in order to optimize data transfer, pitch is aligned on
-> +        * 128 bytes, height is aligned on 4 bytes
-> +        */
-> +       args->pitch = roundup(min_pitch, 128);
-> +       args->height = roundup(args->height, 4);
-> +#endif
-> +
-> +       return drm_gem_cma_dumb_create_internal(file, dev, args);
-> +}
-> +
->  DEFINE_DRM_GEM_CMA_FOPS(drv_driver_fops);
->
->  static struct drm_driver drv_driver = {
-> @@ -44,7 +62,7 @@ static struct drm_driver drv_driver = {
->         .minor = 0,
->         .patchlevel = 0,
->         .fops = &drv_driver_fops,
-> -       .dumb_create = drm_gem_cma_dumb_create,
-> +       .dumb_create = stm_gem_cma_dumb_create,
->         .prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->         .prime_fd_to_handle = drm_gem_prime_fd_to_handle,
->         .gem_free_object_unlocked = drm_gem_cma_free_object,
-> --
-> 2.15.1
->
