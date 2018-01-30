@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751541AbeA3J7u (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:59:50 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:49202 "EHLO
+        id S1752082AbeA3J76 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:59:58 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39284 "EHLO
         relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751582AbeA3J7q (ORCPT
+        with ESMTP id S1752064AbeA3J7w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:59:46 -0500
+        Tue, 30 Jan 2018 04:59:52 -0500
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
         geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
@@ -16,9 +16,9 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v8 09/11] media: i2c: tw9910: Remove soc_camera dependencies
-Date: Tue, 30 Jan 2018 10:58:20 +0100
-Message-Id: <1517306302-27957-10-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v8 10/11] arch: sh: migor: Use new renesas-ceu camera driver
+Date: Tue, 30 Jan 2018 10:58:21 +0100
+Message-Id: <1517306302-27957-11-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -26,359 +26,386 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove soc_camera framework dependencies from tw9910 sensor driver.
-- Handle clock and gpios
-- Register async subdevice
-- Remove soc_camera specific g/s_mbus_config operations
-- Add kernel doc to driver interface header file
-- Adjust build system
+Migo-R platform uses sh_mobile_ceu camera driver, which is now being
+replaced by a proper V4L2 camera driver named 'renesas-ceu'.
 
-This commit does not remove the original soc_camera based driver as long
-as other platforms depends on soc_camera-based CEU driver.
+Move Migo-R platform to use the v4l2 renesas-ceu camera driver
+interface and get rid of soc_camera defined components used to register
+sensor drivers and of platform specific enable/disable routines.
+
+Register clock source and GPIOs for sensor drivers, so they can use
+clock and gpio APIs.
+
+Also, memory for CEU video buffers is now reserved with membocks APIs,
+and need to be declared as dma_coherent during machine initialization to
+remove that architecture specific part from CEU driver.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- drivers/media/i2c/Kconfig  |   9 +++
- drivers/media/i2c/Makefile |   1 +
- drivers/media/i2c/tw9910.c | 162 ++++++++++++++++++++++++++++-----------------
- include/media/i2c/tw9910.h |   9 +++
- 4 files changed, 120 insertions(+), 61 deletions(-)
+ arch/sh/boards/mach-migor/setup.c      | 225 +++++++++++++++------------------
+ arch/sh/kernel/cpu/sh4a/clock-sh7722.c |   2 +-
+ 2 files changed, 101 insertions(+), 126 deletions(-)
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index e71e968..0460613 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -423,6 +423,15 @@ config VIDEO_TW9906
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called tw9906.
- 
-+config VIDEO_TW9910
-+	tristate "Techwell TW9910 video decoder"
-+	depends on VIDEO_V4L2 && I2C
-+	---help---
-+	  Support for Techwell TW9910 NTSC/PAL/SECAM video decoder.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called tw9910.
-+
- config VIDEO_VPX3220
- 	tristate "vpx3220a, vpx3216b & vpx3214c video decoders"
- 	depends on VIDEO_V4L2 && I2C
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index b0489a1..23c3ac6 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -48,6 +48,7 @@ obj-$(CONFIG_VIDEO_TVP7002) += tvp7002.o
- obj-$(CONFIG_VIDEO_TW2804) += tw2804.o
- obj-$(CONFIG_VIDEO_TW9903) += tw9903.o
- obj-$(CONFIG_VIDEO_TW9906) += tw9906.o
-+obj-$(CONFIG_VIDEO_TW9910) += tw9910.o
- obj-$(CONFIG_VIDEO_CS3308) += cs3308.o
- obj-$(CONFIG_VIDEO_CS5345) += cs5345.o
- obj-$(CONFIG_VIDEO_CS53L32A) += cs53l32a.o
-diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
-index bdb5e0a..96792df 100644
---- a/drivers/media/i2c/tw9910.c
-+++ b/drivers/media/i2c/tw9910.c
-@@ -1,6 +1,9 @@
+diff --git a/arch/sh/boards/mach-migor/setup.c b/arch/sh/boards/mach-migor/setup.c
+index 0bcbe58..271dfc2 100644
+--- a/arch/sh/boards/mach-migor/setup.c
++++ b/arch/sh/boards/mach-migor/setup.c
+@@ -1,17 +1,16 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * tw9910 Video Driver
+  * Renesas System Solutions Asia Pte. Ltd - Migo-R
   *
-+ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ *
-  * Copyright (C) 2008 Renesas Solutions Corp.
-  * Kuninori Morimoto <morimoto.kuninori@renesas.com>
-  *
-@@ -10,12 +13,10 @@
-  * Copyright 2006-7 Jonathan Corbet <corbet@lwn.net>
   * Copyright (C) 2008 Magnus Damm
-  * Copyright (C) 2008, Guennadi Liakhovetski <kernel@pengutronix.de>
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
++#include <linux/clkdev.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/interrupt.h>
+ #include <linux/input.h>
+ #include <linux/input/sh_keysc.h>
++#include <linux/memblock.h>
+ #include <linux/mmc/host.h>
+ #include <linux/mtd/physmap.h>
+ #include <linux/mfd/tmio.h>
+@@ -23,10 +22,11 @@
+ #include <linux/delay.h>
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/machine.h>
+ #include <linux/videodev2.h>
+ #include <linux/sh_intc.h>
+ #include <video/sh_mobile_lcdc.h>
+-#include <media/drv-intf/sh_mobile_ceu.h>
++#include <media/drv-intf/renesas-ceu.h>
+ #include <media/i2c/ov772x.h>
+ #include <media/soc_camera.h>
+ #include <media/i2c/tw9910.h>
+@@ -45,6 +45,9 @@
+  * 0x18000000       8GB    8   NAND Flash (K9K8G08U0A)
   */
  
-+#include <linux/clk.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-@@ -25,9 +26,7 @@
- #include <linux/v4l2-mediabus.h>
- #include <linux/videodev2.h>
++#define CEU_BUFFER_MEMORY_SIZE		(4 << 20)
++static phys_addr_t ceu_dma_membase;
++
+ static struct smc91x_platdata smc91x_info = {
+ 	.flags = SMC91X_USE_16BIT | SMC91X_NOWAIT,
+ };
+@@ -301,65 +304,24 @@ static struct platform_device migor_lcdc_device = {
+ 	},
+ };
  
--#include <media/soc_camera.h>
- #include <media/i2c/tw9910.h>
--#include <media/v4l2-clk.h>
- #include <media/v4l2-subdev.h>
- 
- #define GET_ID(val)  ((val & 0xF8) >> 3)
-@@ -228,8 +227,10 @@ struct tw9910_scale_ctrl {
- 
- struct tw9910_priv {
- 	struct v4l2_subdev		subdev;
--	struct v4l2_clk			*clk;
-+	struct clk			*clk;
- 	struct tw9910_video_info	*info;
-+	struct gpio_desc		*pdn_gpio;
-+	struct gpio_desc		*rstb_gpio;
- 	const struct tw9910_scale_ctrl	*scale;
- 	v4l2_std_id			norm;
- 	u32				revision;
-@@ -582,13 +583,66 @@ static int tw9910_s_register(struct v4l2_subdev *sd,
- }
- #endif
- 
-+static int tw9910_power_on(struct tw9910_priv *priv)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
-+	int ret;
-+
-+	if (priv->clk) {
-+		ret = clk_prepare_enable(priv->clk);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (priv->pdn_gpio) {
-+		gpiod_set_value(priv->pdn_gpio, 0);
-+		usleep_range(500, 1000);
-+	}
-+
-+	/*
-+	 * FIXME: The reset signal is connected to a shared GPIO on some
-+	 * platforms (namely the SuperH Migo-R). Until a framework becomes
-+	 * available to handle this cleanly, request the GPIO temporarily
-+	 * to avoid conflicts.
-+	 */
-+	priv->rstb_gpio = gpiod_get_optional(&client->dev, "rstb",
-+					     GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->rstb_gpio)) {
-+		dev_info(&client->dev, "Unable to get GPIO \"rstb\"");
-+		return PTR_ERR(priv->rstb_gpio);
-+	}
-+
-+	if (priv->rstb_gpio) {
-+		gpiod_set_value(priv->rstb_gpio, 1);
-+		usleep_range(500, 1000);
-+		gpiod_set_value(priv->rstb_gpio, 0);
-+		usleep_range(500, 1000);
-+
-+		gpiod_put(priv->rstb_gpio);
-+	}
-+
-+	return 0;
-+}
-+
-+static int tw9910_power_off(struct tw9910_priv *priv)
-+{
-+	clk_disable_unprepare(priv->clk);
-+
-+	if (priv->pdn_gpio) {
-+		gpiod_set_value(priv->pdn_gpio, 1);
-+		usleep_range(500, 1000);
-+	}
-+
-+	return 0;
-+}
-+
- static int tw9910_s_power(struct v4l2_subdev *sd, int on)
- {
- 	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
- 	struct tw9910_priv *priv = to_tw9910(client);
- 
--	return soc_camera_set_power(&client->dev, ssdd, priv->clk, on);
-+	return on ? tw9910_power_on(priv) :
-+		    tw9910_power_off(priv);
- }
- 
- static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
-@@ -614,7 +668,7 @@ static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
- 	 * set bus width
- 	 */
- 	val = 0x00;
--	if (SOCAM_DATAWIDTH_16 == priv->info->buswidth)
-+	if (priv->info->buswidth == 16)
- 		val = LEN;
- 
- 	ret = tw9910_mask_set(client, OPFORM, LEN, val);
-@@ -799,8 +853,7 @@ static int tw9910_video_probe(struct i2c_client *client)
- 	/*
- 	 * tw9910 only use 8 or 16 bit bus width
- 	 */
--	if (SOCAM_DATAWIDTH_16 != priv->info->buswidth &&
--	    SOCAM_DATAWIDTH_8  != priv->info->buswidth) {
-+	if (priv->info->buswidth != 16 && priv->info->buswidth != 8) {
- 		dev_err(&client->dev, "bus width error\n");
- 		return -ENODEV;
- 	}
-@@ -856,45 +909,6 @@ static int tw9910_enum_mbus_code(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
--static int tw9910_g_mbus_config(struct v4l2_subdev *sd,
--				struct v4l2_mbus_config *cfg)
--{
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+-static struct clk *camera_clk;
+-static DEFINE_MUTEX(camera_lock);
 -
--	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
--		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_VSYNC_ACTIVE_LOW |
--		V4L2_MBUS_HSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_LOW |
--		V4L2_MBUS_DATA_ACTIVE_HIGH;
--	cfg->type = V4L2_MBUS_PARALLEL;
--	cfg->flags = soc_camera_apply_board_flags(ssdd, cfg);
+-static void camera_power_on(int is_tw)
+-{
+-	mutex_lock(&camera_lock);
+-
+-	/* Use 10 MHz VIO_CKO instead of 24 MHz to work
+-	 * around signal quality issues on Panel Board V2.1.
+-	 */
+-	camera_clk = clk_get(NULL, "video_clk");
+-	clk_set_rate(camera_clk, 10000000);
+-	clk_enable(camera_clk);	/* start VIO_CKO */
+-
+-	/* use VIO_RST to take camera out of reset */
+-	mdelay(10);
+-	if (is_tw) {
+-		gpio_set_value(GPIO_PTT2, 0);
+-		gpio_set_value(GPIO_PTT0, 0);
+-	} else {
+-		gpio_set_value(GPIO_PTT0, 1);
+-	}
+-	gpio_set_value(GPIO_PTT3, 0);
+-	mdelay(10);
+-	gpio_set_value(GPIO_PTT3, 1);
+-	mdelay(10); /* wait to let chip come out of reset */
+-}
+-
+-static void camera_power_off(void)
+-{
+-	clk_disable(camera_clk); /* stop VIO_CKO */
+-	clk_put(camera_clk);
+-
+-	gpio_set_value(GPIO_PTT3, 0);
+-	mutex_unlock(&camera_lock);
+-}
+-
+-static int ov7725_power(struct device *dev, int mode)
+-{
+-	if (mode)
+-		camera_power_on(0);
+-	else
+-		camera_power_off();
 -
 -	return 0;
 -}
 -
--static int tw9910_s_mbus_config(struct v4l2_subdev *sd,
--				const struct v4l2_mbus_config *cfg)
+-static int tw9910_power(struct device *dev, int mode)
 -{
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
--	u8 val = VSSL_VVALID | HSSL_DVALID;
--	unsigned long flags = soc_camera_apply_board_flags(ssdd, cfg);
+-	if (mode)
+-		camera_power_on(1);
+-	else
+-		camera_power_off();
 -
--	/*
--	 * set OUTCTR1
--	 *
--	 * We use VVALID and DVALID signals to control VSYNC and HSYNC
--	 * outputs, in this mode their polarity is inverted.
--	 */
--	if (flags & V4L2_MBUS_HSYNC_ACTIVE_LOW)
--		val |= HSP_HI;
--
--	if (flags & V4L2_MBUS_VSYNC_ACTIVE_LOW)
--		val |= VSP_HI;
--
--	return i2c_smbus_write_byte_data(client, OUTCTR1, val);
+-	return 0;
 -}
 -
- static int tw9910_g_tvnorms(struct v4l2_subdev *sd, v4l2_std_id *norm)
- {
- 	*norm = V4L2_STD_NTSC | V4L2_STD_PAL;
-@@ -905,8 +919,6 @@ static const struct v4l2_subdev_video_ops tw9910_subdev_video_ops = {
- 	.s_std		= tw9910_s_std,
- 	.g_std		= tw9910_g_std,
- 	.s_stream	= tw9910_s_stream,
--	.g_mbus_config	= tw9910_g_mbus_config,
--	.s_mbus_config	= tw9910_s_mbus_config,
- 	.g_tvnorms	= tw9910_g_tvnorms,
+-static struct sh_mobile_ceu_info sh_mobile_ceu_info = {
+-	.flags = SH_CEU_FLAG_USE_8BIT_BUS,
++static struct ceu_platform_data ceu_pdata = {
++	.num_subdevs			= 2,
++	.subdevs = {
++		{ /* [0] = ov772x */
++			.flags		= 0,
++			.bus_width	= 8,
++			.bus_shift	= 0,
++			.i2c_adapter_id	= 0,
++			.i2c_address	= 0x21,
++		},
++		{ /* [1] = tw9910 */
++			.flags		= 0,
++			.bus_width	= 8,
++			.bus_shift	= 0,
++			.i2c_adapter_id	= 0,
++			.i2c_address	= 0x45,
++		},
++	},
  };
  
-@@ -935,15 +947,14 @@ static int tw9910_probe(struct i2c_client *client,
- 	struct tw9910_video_info	*info;
- 	struct i2c_adapter		*adapter =
- 		to_i2c_adapter(client->dev.parent);
--	struct soc_camera_subdev_desc	*ssdd = soc_camera_i2c_to_desc(client);
- 	int ret;
- 
--	if (!ssdd || !ssdd->drv_priv) {
-+	if (!client->dev.platform_data) {
- 		dev_err(&client->dev, "TW9910: missing platform data!\n");
- 		return -EINVAL;
- 	}
- 
--	info = ssdd->drv_priv;
-+	info = client->dev.platform_data;
- 
- 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
- 		dev_err(&client->dev,
-@@ -959,13 +970,37 @@ static int tw9910_probe(struct i2c_client *client,
- 
- 	v4l2_i2c_subdev_init(&priv->subdev, client, &tw9910_subdev_ops);
- 
--	priv->clk = v4l2_clk_get(&client->dev, "mclk");
--	if (IS_ERR(priv->clk))
-+	priv->clk = clk_get(&client->dev, "xti");
-+	if (PTR_ERR(priv->clk) == -ENOENT) {
-+		priv->clk = NULL;
-+	} else if (IS_ERR(priv->clk)) {
-+		dev_err(&client->dev, "Unable to get xti clock\n");
- 		return PTR_ERR(priv->clk);
-+	}
-+
-+	priv->pdn_gpio = gpiod_get_optional(&client->dev, "pdn",
-+					    GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->pdn_gpio)) {
-+		dev_info(&client->dev, "Unable to get GPIO \"pdn\"");
-+		ret = PTR_ERR(priv->pdn_gpio);
-+		goto error_clk_put;
-+	}
- 
- 	ret = tw9910_video_probe(client);
- 	if (ret < 0)
--		v4l2_clk_put(priv->clk);
-+		goto error_gpio_put;
-+
-+	ret = v4l2_async_register_subdev(&priv->subdev);
-+	if (ret)
-+		goto error_gpio_put;
-+
-+	return ret;
-+
-+error_gpio_put:
-+	if (priv->pdn_gpio)
-+		gpiod_put(priv->pdn_gpio);
-+error_clk_put:
-+	clk_put(priv->clk);
- 
- 	return ret;
- }
-@@ -973,7 +1008,12 @@ static int tw9910_probe(struct i2c_client *client,
- static int tw9910_remove(struct i2c_client *client)
- {
- 	struct tw9910_priv *priv = to_tw9910(client);
--	v4l2_clk_put(priv->clk);
-+
-+	if (priv->pdn_gpio)
-+		gpiod_put(priv->pdn_gpio);
-+	clk_put(priv->clk);
-+	v4l2_device_unregister_subdev(&priv->subdev);
-+
- 	return 0;
- }
- 
-@@ -994,6 +1034,6 @@ static struct i2c_driver tw9910_i2c_driver = {
- 
- module_i2c_driver(tw9910_i2c_driver);
- 
--MODULE_DESCRIPTION("SoC Camera driver for tw9910");
-+MODULE_DESCRIPTION("V4L2 driver for TW9910 video decoder");
- MODULE_AUTHOR("Kuninori Morimoto");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/media/i2c/tw9910.h b/include/media/i2c/tw9910.h
-index 90bcf1f..bec8f7b 100644
---- a/include/media/i2c/tw9910.h
-+++ b/include/media/i2c/tw9910.h
-@@ -18,6 +18,9 @@
- 
- #include <media/soc_camera.h>
- 
-+/**
-+ * tw9910_mpout_pin - MPOUT (multi-purpose output) pin functions
-+ */
- enum tw9910_mpout_pin {
- 	TW9910_MPO_VLOSS,
- 	TW9910_MPO_HLOCK,
-@@ -29,6 +32,12 @@ enum tw9910_mpout_pin {
- 	TW9910_MPO_RTCO,
+ static struct resource migor_ceu_resources[] = {
+@@ -373,18 +335,32 @@ static struct resource migor_ceu_resources[] = {
+ 		.start  = evt2irq(0x880),
+ 		.flags  = IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* place holder for contiguous memory */
+-	},
  };
  
-+/**
-+ * tw9910_video_info -	tw9910 driver interface structure
-+ * @buswidth:		Parallel data bus width (8 or 16).
-+ * @mpout:		Selected function of MPOUT (multi-purpose output) pin.
-+ *			See &enum tw9910_mpout_pin
-+ */
- struct tw9910_video_info {
- 	unsigned long		buswidth;
- 	enum tw9910_mpout_pin	mpout;
+ static struct platform_device migor_ceu_device = {
+-	.name		= "sh_mobile_ceu",
+-	.id             = 0, /* "ceu0" clock */
++	.name		= "renesas-ceu",
++	.id             = 0, /* ceu.0 */
+ 	.num_resources	= ARRAY_SIZE(migor_ceu_resources),
+ 	.resource	= migor_ceu_resources,
+ 	.dev	= {
+-		.platform_data	= &sh_mobile_ceu_info,
++		.platform_data	= &ceu_pdata,
++	},
++};
++
++/* Powerdown/reset gpios for CEU image sensors */
++static struct gpiod_lookup_table ov7725_gpios = {
++	.dev_id		= "0-0021",
++	.table		= {
++		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT0, "pwdn", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT3, "rstb", GPIO_ACTIVE_LOW),
++	},
++};
++
++static struct gpiod_lookup_table tw9910_gpios = {
++	.dev_id		= "0-0045",
++	.table		= {
++		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT2, "pdn", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT3, "rstb", GPIO_ACTIVE_LOW),
+ 	},
+ };
+ 
+@@ -423,6 +399,15 @@ static struct platform_device sdhi_cn9_device = {
+ 	},
+ };
+ 
++static struct ov772x_camera_info ov7725_info = {
++	.flags		= 0,
++};
++
++static struct tw9910_video_info tw9910_info = {
++	.buswidth       = 8,
++	.mpout          = TW9910_MPO_FIELD,
++};
++
+ static struct i2c_board_info migor_i2c_devices[] = {
+ 	{
+ 		I2C_BOARD_INFO("rs5c372b", 0x32),
+@@ -434,51 +419,13 @@ static struct i2c_board_info migor_i2c_devices[] = {
+ 	{
+ 		I2C_BOARD_INFO("wm8978", 0x1a),
+ 	},
+-};
+-
+-static struct i2c_board_info migor_i2c_camera[] = {
+ 	{
+ 		I2C_BOARD_INFO("ov772x", 0x21),
++		.platform_data = &ov7725_info,
+ 	},
+ 	{
+ 		I2C_BOARD_INFO("tw9910", 0x45),
+-	},
+-};
+-
+-static struct ov772x_camera_info ov7725_info;
+-
+-static struct soc_camera_link ov7725_link = {
+-	.power		= ov7725_power,
+-	.board_info	= &migor_i2c_camera[0],
+-	.i2c_adapter_id	= 0,
+-	.priv		= &ov7725_info,
+-};
+-
+-static struct tw9910_video_info tw9910_info = {
+-	.buswidth	= SOCAM_DATAWIDTH_8,
+-	.mpout		= TW9910_MPO_FIELD,
+-};
+-
+-static struct soc_camera_link tw9910_link = {
+-	.power		= tw9910_power,
+-	.board_info	= &migor_i2c_camera[1],
+-	.i2c_adapter_id	= 0,
+-	.priv		= &tw9910_info,
+-};
+-
+-static struct platform_device migor_camera[] = {
+-	{
+-		.name	= "soc-camera-pdrv",
+-		.id	= 0,
+-		.dev	= {
+-			.platform_data = &ov7725_link,
+-		},
+-	}, {
+-		.name	= "soc-camera-pdrv",
+-		.id	= 1,
+-		.dev	= {
+-			.platform_data = &tw9910_link,
+-		},
++		.platform_data = &tw9910_info,
+ 	},
+ };
+ 
+@@ -486,12 +433,9 @@ static struct platform_device *migor_devices[] __initdata = {
+ 	&smc91x_eth_device,
+ 	&sh_keysc_device,
+ 	&migor_lcdc_device,
+-	&migor_ceu_device,
+ 	&migor_nor_flash_device,
+ 	&migor_nand_flash_device,
+ 	&sdhi_cn9_device,
+-	&migor_camera[0],
+-	&migor_camera[1],
+ };
+ 
+ extern char migor_sdram_enter_start;
+@@ -501,6 +445,8 @@ extern char migor_sdram_leave_end;
+ 
+ static int __init migor_devices_setup(void)
+ {
++	struct clk *video_clk;
++
+ 	/* register board specific self-refresh code */
+ 	sh_mobile_register_self_refresh(SUSP_SH_STANDBY | SUSP_SH_SF,
+ 					&migor_sdram_enter_start,
+@@ -620,20 +566,8 @@ static int __init migor_devices_setup(void)
+ 	gpio_request(GPIO_FN_VIO_D9, NULL);
+ 	gpio_request(GPIO_FN_VIO_D8, NULL);
+ 
+-	gpio_request(GPIO_PTT3, NULL); /* VIO_RST */
+-	gpio_direction_output(GPIO_PTT3, 0);
+-	gpio_request(GPIO_PTT2, NULL); /* TV_IN_EN */
+-	gpio_direction_output(GPIO_PTT2, 1);
+-	gpio_request(GPIO_PTT0, NULL); /* CAM_EN */
+-#ifdef CONFIG_SH_MIGOR_RTA_WVGA
+-	gpio_direction_output(GPIO_PTT0, 0);
+-#else
+-	gpio_direction_output(GPIO_PTT0, 1);
+-#endif
+ 	__raw_writew(__raw_readw(PORT_MSELCRB) | 0x2000, PORT_MSELCRB); /* D15->D8 */
+ 
+-	platform_resource_setup_memory(&migor_ceu_device, "ceu", 4 << 20);
+-
+ 	/* SIU: Port B */
+ 	gpio_request(GPIO_FN_SIUBOLR, NULL);
+ 	gpio_request(GPIO_FN_SIUBOBT, NULL);
+@@ -647,9 +581,36 @@ static int __init migor_devices_setup(void)
+ 	 */
+ 	__raw_writew(__raw_readw(PORT_MSELCRA) | 1, PORT_MSELCRA);
+ 
++	 /*
++	  * Use 10 MHz VIO_CKO instead of 24 MHz to work around signal quality
++	  * issues on Panel Board V2.1.
++	  */
++	video_clk = clk_get(NULL, "video_clk");
++	if (!IS_ERR(video_clk)) {
++		clk_set_rate(video_clk, clk_round_rate(video_clk, 10000000));
++		clk_put(video_clk);
++	}
++
++	/* Add a clock alias for ov7725 xclk source. */
++	clk_add_alias("xclk", "0-0021", "video_clk", NULL);
++
++	/* Register GPIOs for video sources. */
++	gpiod_add_lookup_table(&ov7725_gpios);
++	gpiod_add_lookup_table(&tw9910_gpios);
++
+ 	i2c_register_board_info(0, migor_i2c_devices,
+ 				ARRAY_SIZE(migor_i2c_devices));
+ 
++	/* Initialize CEU platform device separately to map memory first */
++	device_initialize(&migor_ceu_device.dev);
++	arch_setup_pdev_archdata(&migor_ceu_device);
++	dma_declare_coherent_memory(&migor_ceu_device.dev,
++				    ceu_dma_membase, ceu_dma_membase,
++				    ceu_dma_membase + CEU_BUFFER_MEMORY_SIZE - 1,
++				    DMA_MEMORY_EXCLUSIVE);
++
++	platform_device_add(&migor_ceu_device);
++
+ 	return platform_add_devices(migor_devices, ARRAY_SIZE(migor_devices));
+ }
+ arch_initcall(migor_devices_setup);
+@@ -665,10 +626,24 @@ static int migor_mode_pins(void)
+ 	return MODE_PIN0 | MODE_PIN1 | MODE_PIN5;
+ }
+ 
++/* Reserve a portion of memory for CEU buffers */
++static void __init migor_mv_mem_reserve(void)
++{
++	phys_addr_t phys;
++	phys_addr_t size = CEU_BUFFER_MEMORY_SIZE;
++
++	phys = memblock_alloc_base(size, PAGE_SIZE, MEMBLOCK_ALLOC_ANYWHERE);
++	memblock_free(phys, size);
++	memblock_remove(phys, size);
++
++	ceu_dma_membase = phys;
++}
++
+ /*
+  * The Machine Vector
+  */
+ static struct sh_machine_vector mv_migor __initmv = {
+ 	.mv_name		= "Migo-R",
+ 	.mv_mode_pins		= migor_mode_pins,
++	.mv_mem_reserve		= migor_mv_mem_reserve,
+ };
+diff --git a/arch/sh/kernel/cpu/sh4a/clock-sh7722.c b/arch/sh/kernel/cpu/sh4a/clock-sh7722.c
+index 8f07a1a..d85091e 100644
+--- a/arch/sh/kernel/cpu/sh4a/clock-sh7722.c
++++ b/arch/sh/kernel/cpu/sh4a/clock-sh7722.c
+@@ -223,7 +223,7 @@ static struct clk_lookup lookups[] = {
+ 	CLKDEV_DEV_ID("sh-vou.0", &mstp_clks[HWBLK_VOU]),
+ 	CLKDEV_CON_ID("jpu0", &mstp_clks[HWBLK_JPU]),
+ 	CLKDEV_CON_ID("beu0", &mstp_clks[HWBLK_BEU]),
+-	CLKDEV_DEV_ID("sh_mobile_ceu.0", &mstp_clks[HWBLK_CEU]),
++	CLKDEV_DEV_ID("renesas-ceu.0", &mstp_clks[HWBLK_CEU]),
+ 	CLKDEV_CON_ID("veu0", &mstp_clks[HWBLK_VEU]),
+ 	CLKDEV_CON_ID("vpu0", &mstp_clks[HWBLK_VPU]),
+ 	CLKDEV_DEV_ID("sh_mobile_lcdc_fb.0", &mstp_clks[HWBLK_LCDC]),
 -- 
 2.7.4
