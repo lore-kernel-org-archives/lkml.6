@@ -1,89 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752903AbeA3PHB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 10:07:01 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54960 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752175AbeA3PG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:06:59 -0500
-Subject: Re: [PATCH 05/16] arm64: Add flags to check the safety of a
- capability for late CPU
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
-        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20180123122809.16269-1-suzuki.poulose@arm.com>
- <20180123122809.16269-6-suzuki.poulose@arm.com>
- <20180126101020.GM5862@e103592.cambridge.arm.com>
- <6313a0f1-ed3c-b5b3-7bbd-5f98862a74c6@arm.com>
- <20180130145636.GE5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <50b0c175-0474-e3d7-cdd3-ed2349b4426a@arm.com>
-Date: Tue, 30 Jan 2018 15:06:56 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752785AbeA3PIv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 10:08:51 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:40929 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751256AbeA3PIt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 10:08:49 -0500
+X-Google-Smtp-Source: AH8x224asGGKHdNw2op5Hx80AGT9opYpMjmKWVKhBqgUemyKSio3WpS/JtZr9lRYH7B3JJz15LuDaUJtIZdrz5PLzqU=
 MIME-Version: 1.0
-In-Reply-To: <20180130145636.GE5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3365044.AohtTD8A6l@avalon>
+References: <20180130104200.21602-1-philippe.cornu@st.com> <3365044.AohtTD8A6l@avalon>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date: Tue, 30 Jan 2018 16:08:48 +0100
+Message-ID: <CA+M3ks4C99czUrth3p0WRtWZ87egk3sXV9zmST5vVXUf-XSDLA@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/stm: drv: Improve data transfers
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Philippe Cornu <philippe.cornu@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Mickael Reulier <mickael.reulier@st.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/01/18 14:56, Dave Martin wrote:
-> On Tue, Jan 30, 2018 at 11:17:38AM +0000, Suzuki K Poulose wrote:
->> On 26/01/18 10:10, Dave Martin wrote:
->>> On Tue, Jan 23, 2018 at 12:27:58PM +0000, Suzuki K Poulose wrote:
->>>> Add two different flags to indicate if the conflict of a capability
->>>> on a late CPU with the current system state
->>>>
->>>>   1) Can a CPU have a capability when the system doesn't have it ?
->>>>
->>>>      Most arm64 features could have this set. While erratum work arounds
->>>>      cannot have this, as we may miss work arounds.
->>>>
->>>>   2) Can a CPU miss a capability when the system has it ?
->>>>      This could be set for arm64 erratum work arounds as we don't
->>>>      care if a CPU doesn't need the work around. However it should
->>>>      be clear for features.
->>>>
->>>> These flags could be added to certain entries based on their nature.
->>>>
->>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>> ---
->>>>   arch/arm64/include/asm/cpufeature.h | 35 +++++++++++++++++++++++++++++++----
->>>>   1 file changed, 31 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
->>>> index 4fd5de8ef33e..27d037bb0451 100644
->>>> --- a/arch/arm64/include/asm/cpufeature.h
->>>> +++ b/arch/arm64/include/asm/cpufeature.h
->>>> @@ -94,10 +94,25 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
->>>>   #define SCOPE_SYSTEM				ARM64_CPUCAP_SCOPE_SYSTEM
->>>>   #define SCOPE_LOCAL_CPU				ARM64_CPUCAP_SCOPE_LOCAL_CPU
->>>> -/* CPU errata detected at boot time based on feature of one or more CPUs */
->>>> -#define ARM64_CPUCAP_STRICT_CPU_LOCAL_ERRATUM	(ARM64_CPUCAP_SCOPE_LOCAL_CPU)
->>>> -/* CPU feature detected at boot time based on system-wide value of a feature */
->>>> -#define ARM64_CPUCAP_BOOT_SYSTEM_FEATURE	(ARM64_CPUCAP_SCOPE_SYSTEM)
->>>> +/* Is it safe for a late CPU to have this capability when system doesn't already have */
->>>> +#define ARM64_CPUCAP_LATE_CPU_SAFE_TO_HAVE	BIT(2)
->>>> +/* Is it safe for a late CPU to miss this capability when system has it */
->>>> +#define ARM64_CPUCAP_LATE_CPU_SAFE_TO_MISS	BIT(3)
->>>
->>> Maybe _OPTIONAL and _PERMITTED would be a bit less verbose?
->>>
->>> Alternatively,
->>> 	ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU
->>> 	ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU
+2018-01-30 15:58 GMT+01:00 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
+> Hi Philippe,
+>
+> Thank you for the patch.
+>
+> On Tuesday, 30 January 2018 12:42:00 EET Philippe Cornu wrote:
+>> To optimize data transfers, align pitch on 128 bytes & height
+>> on 4 bytes. This optimization is not applicable on hw without MMU.
 >>
->> Sounds better than what I have. I have picked them up.
-> 
-> Cool, I had resigned myself to probably not winning that one ;)
+>> Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
+>> Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
+>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>> ---
+>> Changes in v2: Rename stm_dumb_create() to stm_gem_cma_dumb_create() and
+>>   move CONFIG_MMU inside the function following comments from Benjamin
+>>   Gaignard.
+>>
+>>  drivers/gpu/drm/stm/drv.c | 20 +++++++++++++++++++-
+>>  1 file changed, 19 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
+>> index 8fe954c27fba..8bc7e8418b8d 100644
+>> --- a/drivers/gpu/drm/stm/drv.c
+>> +++ b/drivers/gpu/drm/stm/drv.c
+>> @@ -31,6 +31,24 @@ static const struct drm_mode_config_funcs
+>> drv_mode_config_funcs = { .atomic_commit = drm_atomic_helper_commit,
+>>  };
+>>
+>> +static int stm_gem_cma_dumb_create(struct drm_file *file,
+>> +                                struct drm_device *dev,
+>> +                                struct drm_mode_create_dumb *args)
+>> +{
+>> +#ifdef CONFIG_MMU
+>> +     unsigned int min_pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
+>> +
+>> +     /*
+>> +      * in order to optimize data transfer, pitch is aligned on
+>> +      * 128 bytes, height is aligned on 4 bytes
+>> +      */
+>> +     args->pitch = roundup(min_pitch, 128);
+>> +     args->height = roundup(args->height, 4);
+>> +#endif
+>> +
+>> +     return drm_gem_cma_dumb_create_internal(file, dev, args);
+>
+> In the !CONFIG_MMU case you now bypass the pitch and size calculations
+> performed by drm_gem_cma_dumb_create(), allowing userspace to allocate
+> arbitrarily large buffers. Is that intentional ?
 
-Well, you have won almost all in this series :-)
+My bad, I will send a fix
 
-Cheers
-Suzuki
+>
+>> +}
+>> +
+>>  DEFINE_DRM_GEM_CMA_FOPS(drv_driver_fops);
+>>
+>>  static struct drm_driver drv_driver = {
+>> @@ -44,7 +62,7 @@ static struct drm_driver drv_driver = {
+>>       .minor = 0,
+>>       .patchlevel = 0,
+>>       .fops = &drv_driver_fops,
+>> -     .dumb_create = drm_gem_cma_dumb_create,
+>> +     .dumb_create = stm_gem_cma_dumb_create,
+>>       .prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+>>       .prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+>>       .gem_free_object_unlocked = drm_gem_cma_free_object,
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
