@@ -1,117 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752717AbeA3DjS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 22:39:18 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37114 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752131AbeA3DjR (ORCPT
+        id S1752619AbeA3Dlu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 22:41:50 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:42362 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752186AbeA3Dlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 22:39:17 -0500
-X-Google-Smtp-Source: AH8x224nKgYyBzPo5ShoWne/RaJU53x8z9zNHDwZ3aLOUWNMXzaGKHRUAGCiqs44Fj0q6mXBuQEhFzWF2W8uYE6g2Io=
+        Mon, 29 Jan 2018 22:41:49 -0500
+Subject: Re: [PATCH] nvme-pci: use NOWAIT flag for nvme_set_host_mem
+To: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>
+Cc: axboe@fb.com, hch@lst.de, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1517195255-21832-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180129160145.GA25515@localhost.localdomain>
+ <1b7d3700-945f-9272-b6aa-d2ebeaf0cb1e@grimberg.me>
+ <20180129201716.GB25515@localhost.localdomain>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <c3116e1b-481a-1b3f-b29c-7de95929ecb8@oracle.com>
+Date: Tue, 30 Jan 2018 11:41:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
-References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
-From: Joel Fernandes <joelaf@google.com>
-Date: Mon, 29 Jan 2018 19:39:15 -0800
-Message-ID: <CAJWu+opnNgfVxhgHwLft_qcLMeikEAbNY0zci0WtgQiFkVVjhg@mail.gmail.com>
-Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in select_idle_sibling
-To: Rohit Jain <rohit.k.jain@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, steven.sistare@oracle.com,
-        dhaval.giani@oracle.com, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        "Cc: EAS Dev" <eas-dev@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180129201716.GB25515@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8789 signatures=668655
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=854
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1801300046
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rohit,
+Hi Keith and Sagi
 
-On Mon, Jan 29, 2018 at 3:27 PM, Rohit Jain <rohit.k.jain@oracle.com> wrote:
-> Currently fast path in the scheduler looks for an idle CPU to schedule
-> threads on. Capacity is taken into account in the function
-> 'select_task_rq_fair' when it calls 'wake_cap', however it ignores the
-> instantaneous capacity and looks at the original capacity. Furthermore
-> select_idle_sibling path of the code, ignores the RT/IRQ threads which
-> are also running on the CPUs it is looking to schedule fair threads on.
->
-> We don't necessarily have to force the code to go to slow path (by
-> modifying wake_cap), instead we could do a better selection of the CPU
-> in the current domain itself (i.e. in the fast path).
->
-> This patch makes the fast path aware of capacity, resulting in overall
-> performance improvements as shown in the test results.
->
-[...]
->
-> I also ran uperf and sysbench MySQL workloads but I see no statistically
-> significant change.
->
-> Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
-> ---
->  kernel/sched/fair.c | 38 ++++++++++++++++++++++++++++----------
->  1 file changed, 28 insertions(+), 10 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 26a71eb..ce5ccf8 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5625,6 +5625,11 @@ static unsigned long capacity_orig_of(int cpu)
->         return cpu_rq(cpu)->cpu_capacity_orig;
->  }
->
-> +static inline bool full_capacity(int cpu)
-> +{
-> +       return capacity_of(cpu) >= (capacity_orig_of(cpu)*3)/4;
-> +}
-> +
->  static unsigned long cpu_avg_load_per_task(int cpu)
->  {
->         struct rq *rq = cpu_rq(cpu);
-> @@ -6081,7 +6086,7 @@ static int select_idle_core(struct task_struct *p, struct sched_domain *sd, int
->
->                 for_each_cpu(cpu, cpu_smt_mask(core)) {
->                         cpumask_clear_cpu(cpu, cpus);
-> -                       if (!idle_cpu(cpu))
-> +                       if (!idle_cpu(cpu) || !full_capacity(cpu))
->                                 idle = false;
->                 }
+Thanks for your kindly response. :)
 
-There's some difference in logic between select_idle_core and
-select_idle_cpu as far as the full_capacity stuff you're adding goes.
-In select_idle_core, if all CPUs are !full_capacity, you're returning
--1. But in select_idle_cpu you're returning the best idle CPU that's
-the most cap among the !full_capacity ones. Why there is this
-different in logic? Did I miss something?
+On 01/30/2018 04:17 AM, Keith Busch wrote:
+> On Mon, Jan 29, 2018 at 09:55:41PM +0200, Sagi Grimberg wrote:
+>>> Thanks for the fix. It looks like we still have a problem, though.
+>>> Commands submitted with the "shutdown_lock" held need to be able to make
+>>> forward progress without relying on a completion, but this one could
+>>> block indefinitely.
+>>
+>> Can you explain to me why is the shutdown_lock needed to synchronize
+>> nvme_dev_disable? More concretely, how is nvme_dev_disable different
+>> from other places where we rely on the ctrl state to serialize stuff?
+>>
+>> The only reason I see would be to protect against completion-after-abort
+>> scenario but I think the block layer should protect against it (checks
+>> if the request timeout timer fired).
+> 
+> We can probably find a way to use the state machine for this. Disabling
+> the controller pre-dates the state machine, and the mutex is there to
+> protect against two actors shutting the controller down at the same
+> time, like a hot removal at the same time as a timeout handling reset.
+> 
 
->
-> @@ -6102,7 +6107,8 @@ static int select_idle_core(struct task_struct *p, struct sched_domain *sd, int
->   */
->  static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int target)
->  {
-> -       int cpu;
-> +       int cpu, rcpu = -1;
-> +       unsigned long max_cap = 0;
->
->         if (!static_branch_likely(&sched_smt_present))
->                 return -1;
-> @@ -6110,11 +6116,13 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
->         for_each_cpu(cpu, cpu_smt_mask(target)) {
->                 if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
->                         continue;
-> -               if (idle_cpu(cpu))
-> -                       return cpu;
-> +               if (idle_cpu(cpu) && (capacity_of(cpu) > max_cap)) {
-> +                       max_cap = capacity_of(cpu);
-> +                       rcpu = cpu;
+Another point that confuses me is that whether nvme_set_host_mem is necessary
+in nvme_dev_disable ?
+As the comment:
+----
+		/*
+		 * If the controller is still alive tell it to stop using the
+		 * host memory buffer.  In theory the shutdown / reset should
+		 * make sure that it doesn't access the host memoery anymore,
+		 * but I'd rather be safe than sorry..
+		 */
+		if (dev->host_mem_descs)
+			nvme_set_host_mem(dev, 0);
+----
+It is to avoid accessing to host memory from controller. But the host memory is just
+freed when nvme_remove. It looks like we just need to do this in nvme_remove.
+For example:
+-----
+@@ -2553,6 +2545,14 @@ static void nvme_remove(struct pci_dev *pdev)
+        flush_work(&dev->ctrl.reset_work);
+        nvme_stop_ctrl(&dev->ctrl);
+        nvme_remove_namespaces(&dev->ctrl);
++       /*
++        * If the controller is still alive tell it to stop using the
++        * host memory buffer.  In theory the shutdown / reset should
++        * make sure that it doesn't access the host memoery anymore,
++        * but I'd rather be safe than sorry..
++        */
++       if (dev->host_mem_descs)
++               nvme_set_host_mem(dev, 0);
+        nvme_dev_disable(dev, true);
+        nvme_free_host_mem(dev);
+----
 
-At the SMT level, do you need to bother with choosing best capacity
-among threads? If RT is eating into one of the SMT thread's underlying
-capacity, it would eat into the other's. Wondering what's the benefit
-of doing this here.
+If anything missed, please point out.
+That's really appreciated.
 
-thanks,
-
-- Joel
+Sincerely
+Jianchao
