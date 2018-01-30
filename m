@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752240AbeA3Acv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 19:32:51 -0500
-Received: from gateway31.websitewelcome.com ([192.185.144.29]:25418 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751546AbeA3Acu (ORCPT
+        id S1752330AbeA3AdF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 19:33:05 -0500
+Received: from gateway34.websitewelcome.com ([192.185.150.114]:12501 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752282AbeA3AdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 19:32:50 -0500
-Date: Mon, 29 Jan 2018 18:32:47 -0600
+        Mon, 29 Jan 2018 19:33:04 -0500
+Date: Mon, 29 Jan 2018 18:33:01 -0600
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Jacob chen <jacob2.chen@rock-chips.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH 6/8] rockchip/rga: fix potential integer overflow in
- rga_buf_map
-Message-ID: <715937d1ae955d5e5d531ef93d503177865f4083.1517268668.git.gustavo@embeddedor.com>
+Subject: [PATCH 7/8] platform: sh_veu: fix potential integer overflow in
+ sh_veu_colour_offset
+Message-ID: <81bc1c8fa08d1643fa9b7b6630fdd42baed7d225.1517268668.git.gustavo@embeddedor.com>
 References: <cover.1517268667.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -32,41 +29,44 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.145.57.174
 X-Source-L: No
-X-Exim-ID: 1egJqz-001euF-6X
+X-Exim-ID: 1egJrB-001f7L-RO
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (training) [189.145.57.174]:35462
+X-Source-Sender: (training) [189.145.57.174]:35466
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 34
+X-Email-Count: 37
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cast p to dma_addr_t in order to avoid a potential integer overflow.
-This variable is being used in a context that expects an expression
-of type dma_addr_t (u64).
+Cast left and top to dma_addr_t in order to avoid a potential integer
+overflow. This variable is being used in a context that expects an
+expression of type dma_addr_t (u64).
 
-Addresses-Coverity-ID: 1458347 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1056807 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1056808 ("Unintentional integer overflow")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/media/platform/rockchip/rga/rga-buf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/sh_veu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rockchip/rga/rga-buf.c b/drivers/media/platform/rockchip/rga/rga-buf.c
-index 49cacc7..3dd29b2 100644
---- a/drivers/media/platform/rockchip/rga/rga-buf.c
-+++ b/drivers/media/platform/rockchip/rga/rga-buf.c
-@@ -140,7 +140,7 @@ void rga_buf_map(struct vb2_buffer *vb)
- 		address = sg_phys(sgl);
+diff --git a/drivers/media/platform/sh_veu.c b/drivers/media/platform/sh_veu.c
+index 976ea0b..e2795d0 100644
+--- a/drivers/media/platform/sh_veu.c
++++ b/drivers/media/platform/sh_veu.c
+@@ -520,8 +520,8 @@ static void sh_veu_colour_offset(struct sh_veu_dev *veu, struct sh_veu_vfmt *vfm
+ 	/* dst_left and dst_top validity will be verified in CROP / COMPOSE */
+ 	unsigned int left = vfmt->frame.left & ~0x03;
+ 	unsigned int top = vfmt->frame.top;
+-	dma_addr_t offset = ((left * veu->vfmt_out.fmt->depth) >> 3) +
+-		top * veu->vfmt_out.bytesperline;
++	dma_addr_t offset = (((dma_addr_t)left * veu->vfmt_out.fmt->depth) >> 3) +
++			    (dma_addr_t)top * veu->vfmt_out.bytesperline;
+ 	unsigned int y_line;
  
- 		for (p = 0; p < len; p++) {
--			dma_addr_t phys = address + (p << PAGE_SHIFT);
-+			dma_addr_t phys = address + ((dma_addr_t)p << PAGE_SHIFT);
- 
- 			pages[mapped_size + p] = phys;
- 		}
+ 	vfmt->offset_y = offset;
 -- 
 2.7.4
