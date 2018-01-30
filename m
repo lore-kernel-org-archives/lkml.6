@@ -1,80 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752785AbeA3WWf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:22:35 -0500
-Received: from mail-io0-f175.google.com ([209.85.223.175]:43208 "EHLO
-        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752535AbeA3WWc (ORCPT
+        id S1752652AbeA3WYw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 17:24:52 -0500
+Received: from mail-io0-f171.google.com ([209.85.223.171]:46169 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751606AbeA3WYt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:22:32 -0500
-X-Google-Smtp-Source: AH8x224ZgoJ5USy8gW01zBu4PTr1nJ5nxE12lMxcekISGgto/x3FXFC0FmdrcF3cwVkMWlB5R6D4GA==
-Date: Tue, 30 Jan 2018 14:22:28 -0800
+        Tue, 30 Jan 2018 17:24:49 -0500
+X-Google-Smtp-Source: AH8x225gHACkomSq2UEDFA5HUKdQdIdIwHXD7ZggU1N6w8vJEpw1cT/0o05v6oOa+XADijC58QoF6g==
+Date: Tue, 30 Jan 2018 14:24:46 -0800
 From: Eric Biggers <ebiggers3@gmail.com>
-To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: David Miller <davem@davemloft.net>, santosh.shilimkar@oracle.com,
-        rds-devel@oss.oracle.com,
-        bot+aaf54a8c644d559d34dedcf3126aac68a20c9e63@syzkaller.appspotmail.com,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [rds-devel] BUG: unable to handle kernel NULL pointer
- dereference in rds_send_xmit
-Message-ID: <20180130222228.q23csjr5l666v3o5@gmail.com>
-References: <001a1145ac5480242305609956b3@google.com>
- <5ba83a68-0103-d514-1b22-900f755f5aa4@oracle.com>
- <20171218.121213.289437104214632276.davem@davemloft.net>
- <20171218172251.GD26203@oracle.com>
+To: syzbot
+        <bot+4d8b9d4de3fb89b15eb7f8b5c30d004f1836ee02@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: unable to handle kernel paging request in
+ aead_accept_parent_nokey
+Message-ID: <20180130222446.4aim3hgarhlv5a2v@gmail.com>
+References: <001a1143fd0067065e056096ef90@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20171218172251.GD26203@oracle.com>
+In-Reply-To: <001a1143fd0067065e056096ef90@google.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 18, 2017 at 12:22:51PM -0500, Sowmini Varadhan wrote:
-> > From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-> > Date: Mon, 18 Dec 2017 08:28:05 -0800
->   :
-> > > Looks like another one tripping on empty transport. Mostly below
-> > > should
-> > > address it but we will test it if it does.
+On Sun, Dec 17, 2017 at 09:51:01PM -0800, syzbot wrote:
+> Hello,
 > 
-> that was my first thought, but it cannot be the case here: rds_sendmsg
-> etc itself would have bombed if that were the case, and the packet
-> would never have gotten queued.
+> syzkaller hit the following crash on
+> 41d8c16909ebda40f7b4982a7f5e2ad102705ade
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
 > 
-> This is unlike f3069c6d33, where an applications skips the transport
-> binding (either misses the explicit bind, or gets the wrong transport
-> due to an implicit bind) before it triggers the setsockopt.
+> Unfortunately, I don't have any reproducer for this bug yet.
 > 
-> I suspect that the problems is that the conn (and thus c_trans)
-> have gotten destroyed, but the cp_send_w work got incorrectly 
-> re-queued. For example, rds_cong_queue_updates() (because the
-> peer sent a congestion update) can happen in softirq context, 
-> and would end up requeing work in the middle of rds_conn_destroy, 
-> after we have assumed that everything is quisced.
 > 
-> On (12/18/17 12:12), David Miller wrote:
-> > 
-> > We're seeming to accumulate a lot of checks like this, maybe there
-> > is a more general way to deal with this problem?
-> 
-> Yeah, I was thinking about this..  let me try to reprodcue this in-house
-> and get back with a patchset.  
-> 
+> device lo entered promiscuous mode
+> BUG: unable to handle kernel paging request at fffffffffffffff0
+> Bearer <> rejected, not supported in standalone mode
+> IP: aead_accept_parent_nokey+0x2a/0x150 crypto/algif_aead.c:559
+> PGD 3021067 P4D 3021067 PUD 3023067 PMD 0
+> Oops: 0000 [#1] SMP
+> Bearer <> rejected, not supported in standalone mode
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 1 PID: 5971 Comm: syz-executor1 Not tainted 4.15.0-rc3-next-20171213+
+> #66
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:aead_accept_parent_nokey+0x2a/0x150 crypto/algif_aead.c:559
+> RSP: 0018:ffffc90000d7bda8 EFLAGS: 00010216
+> RAX: 0000000000000000 RBX: ffff88020ab17540 RCX: ffffffff816ca746
+> RDX: 00000000014000c0 RSI: 0000000000000090 RDI: ffff8801e2c0e800
+> RBP: ffffc90000d7bdc8 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801e2c0e800
+> R13: ffffffff82a95520 R14: ffff880213fd5400 R15: 0000000000000000
+> FS:  00007f60fba0c700(0000) GS:ffff88021fd00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: fffffffffffffff0 CR3: 00000001e10a4000 CR4: 00000000001426e0
+> Call Trace:
+>  aead_accept_parent+0x28/0x40 crypto/algif_aead.c:595
+>  af_alg_accept+0x9c/0x1f0 crypto/af_alg.c:294
+>  alg_accept+0x25/0x30 crypto/af_alg.c:330
+>  SYSC_accept4+0x114/0x260 net/socket.c:1551
+>  SyS_accept4 net/socket.c:1502 [inline]
+>  SYSC_accept net/socket.c:1585 [inline]
+>  SyS_accept+0x26/0x30 net/socket.c:1582
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> RIP: 0033:0x452a39
+> RSP: 002b:00007f60fba0bc58 EFLAGS: 00000212 ORIG_RAX: 000000000000002b
+> RAX: ffffffffffffffda RBX: 0000000000758020 RCX: 0000000000452a39
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000016
+> RBP: 000000000000001a R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006ee310
+> R13: 00000000ffffffff R14: 00007f60fba0c6d4 R15: 0000000000000000
+> Code: 00 55 48 89 e5 41 56 41 55 41 54 53 48 89 fb 49 89 f4 e8 2a fc be ff
+> 48 8b 03 ba c0 00 40 01 be 90 00 00 00 4c 89 e7 48 8b 40 40 <44> 8b 68 f0 e8
+> 7d a7 9d 00 48 85 c0 0f 84 ed 00 00 00 48 89 c3
+> RIP: aead_accept_parent_nokey+0x2a/0x150 crypto/algif_aead.c:559 RSP:
+> ffffc90000d7bda8
+> CR2: fffffffffffffff0
+> ---[ end trace 1608f1470cd99fdb ]---
+> Kernel panic - not syncing: Fatal exception
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
 
-I assume you weren't able to reproduce this?  This crash hasn't been seen again,
-and it was reported while KASAN was accidentally disabled in the syzbot kconfig
-due to a change to the kconfig menus in linux-next.  So this crash was possibly
-caused by slab corruption elsewhere.
-
-I am invalidating the bug for syzbot so it will report the same crash signature
-again if it occurs, but if you think there is a real bug feel free to keep
-looking into it.
+Invalidating this bug since it hasn't been seen again, and it was reported while
+KASAN was accidentally disabled in the syzbot kconfig due to a change to the
+kconfig menus in linux-next (so this crash was possibly caused by slab
+corruption elsewhere).
 
 #syz invalid
-
-Thanks,
-
-Eric
