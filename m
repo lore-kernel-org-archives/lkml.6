@@ -1,96 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752277AbeA3B2D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 29 Jan 2018 20:28:03 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.33]:42139 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751539AbeA3B2C (ORCPT
+        id S1752391AbeA3Bkt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 29 Jan 2018 20:40:49 -0500
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:58842 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751787AbeA3Bks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jan 2018 20:28:02 -0500
-Date: Mon, 29 Jan 2018 19:07:42 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Jacob chen <jacob2.chen@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, Antti Palosaari <crope@iki.fi>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH resend 0/8] fix potential integer overflows
-Message-ID: <cover.1517268667.git.gustavo@embeddedor.com>
+        Mon, 29 Jan 2018 20:40:48 -0500
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To: Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Subject: Re: [PATCH v1] mm: hwpoison: disable memory error handling on 1GB
+ hugepage
+Thread-Topic: [PATCH v1] mm: hwpoison: disable memory error handling on 1GB
+ hugepage
+Thread-Index: AQHTmMpafO+oGbhFhEWyr7Ktre49Y6OJzPgAgAA43YCAAIongIAAfdyA
+Date: Tue, 30 Jan 2018 01:39:22 +0000
+Message-ID: <20180130013919.GA19959@hori1.linux.bs1.fc.nec.co.jp>
+References: <1517207283-15769-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20180129063054.GA5205@hori1.linux.bs1.fc.nec.co.jp>
+ <20180129095425.GA21609@dhcp22.suse.cz>
+ <a1a921dc-3095-41f7-a4db-0de79bf65f8b@oracle.com>
+In-Reply-To: <a1a921dc-3095-41f7-a4db-0de79bf65f8b@oracle.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.128.101.9]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <9FBD24293E15124980E3ED3C8E001CC3@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.57.174
-X-Source-L: No
-X-Exim-ID: 1egKOm-0028F3-EJ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (training) [189.145.57.174]:36224
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Michal, Mike,
 
-I'm resending this cover letter due to a typo in the ARM and LKML
-addresses in the previous e-mail.
+On Mon, Jan 29, 2018 at 10:08:53AM -0800, Mike Kravetz wrote:
+> On 01/29/2018 01:54 AM, Michal Hocko wrote:
+> > On Mon 29-01-18 06:30:55, Naoya Horiguchi wrote:
+> >> My apology, I forgot to CC to the mailing lists.
+> >>
+> >> On Mon, Jan 29, 2018 at 03:28:03PM +0900, Naoya Horiguchi wrote:
+> >>> Recently the following BUG was reported:
+> >>>
+> >>>     Injecting memory failure for pfn 0x3c0000 at process virtual address 0x7fe300000000
+> >>>     Memory failure: 0x3c0000: recovery action for huge page: Recovered
+> >>>     BUG: unable to handle kernel paging request at ffff8dfcc0003000
+> >>>     IP: gup_pgd_range+0x1f0/0xc20
+> >>>     PGD 17ae72067 P4D 17ae72067 PUD 0
+> >>>     Oops: 0000 [#1] SMP PTI
+> >>>     ...
+> >>>     CPU: 3 PID: 5467 Comm: hugetlb_1gb Not tainted 4.15.0-rc8-mm1-abc+ #3
+> >>>     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.9.3-1.fc25 04/01/2014
+> >>>
+> >>> You can easily reproduce this by calling madvise(MADV_HWPOISON) twice on
+> >>> a 1GB hugepage. This happens because get_user_pages_fast() is not aware
+> >>> of a migration entry on pud that was created in the 1st madvise() event.
+> > 
+> > Do pgd size pages work properly?
 
-This patchset aims to fix potential integer overflows reported
-by Coverity.
+PGD size is unsupported now too, and this patch is also disabling that size.
 
-In all cases the potential overflowing expressions are evaluated
-using 32-bit arithmetic before being used in contexts that expect
-a 64-bit arithmetic. So a cast to the proper type was added to each
-of those expressions in order to avoid any potential integer overflow.
+> 
+> Adding Anshuman and Aneesh as they added pgd support for power.  And,
+> this patch will disable that as well IIUC.
 
-This also gives the compiler complete information about the proper
-arithmetic for each expression and improves code quality.
+Thanks Mike, I want to have some feedback from PowerPC developers too.
 
-Addresses the following Coverity IDs reported as
-"Unintentional integer overflow" issues:
+> 
+> This patch makes sense for x86.  My only concern/question is for other
+> archs which may have huge page sizes defined which are > MAX_ORDER and
+> < PUD_SIZE.  These would also be classified as gigantic and impacted
+> by this patch.  Do these also have the same issue?
 
-200604, 1056807, 1056808, 1271223,
-1324146, 1392628, 1392630, 1446589,
-1454996, 1458347.
+Maybe one clearer way is to use more explicit condition like "page size > PMD_SIZE".
 
-Thank you
+> 
+> -- 
+> Mike Kravetz
+> 
+> >>> I think that conversion to pud-aligned migration entry is working,
+> >>> but other MM code walking over page table isn't prepared for it.
+> >>> We need some time and effort to make all this work properly, so
+> >>> this patch avoids the reported bug by just disabling error handling
+> >>> for 1GB hugepage.
+> > 
+> > Can we also get some documentation which would describe all requirements
+> > for HWPoison pages to work properly please?
 
-Gustavo A. R. Silva (8):
-  rtl2832: fix potential integer overflow
-  dvb-frontends: ves1820: fix potential integer overflow
-  i2c: max2175: fix potential integer overflow in max2175_set_nco_freq
-  i2c: ov9650: fix potential integer overflow in
-    __ov965x_set_frame_interval
-  pci: cx88-input: fix potential integer overflow
-  rockchip/rga: fix potential integer overflow in rga_buf_map
-  platform: sh_veu: fix potential integer overflow in
-    sh_veu_colour_offset
-  platform: vivid-cec: fix potential integer overflow in
-    vivid_cec_pin_adap_events
+OK, I'll add this.
 
- drivers/media/dvb-frontends/rtl2832.c         | 4 ++--
- drivers/media/dvb-frontends/ves1820.c         | 2 +-
- drivers/media/i2c/max2175.c                   | 2 +-
- drivers/media/i2c/ov9650.c                    | 2 +-
- drivers/media/pci/cx88/cx88-input.c           | 4 ++--
- drivers/media/platform/rockchip/rga/rga-buf.c | 2 +-
- drivers/media/platform/sh_veu.c               | 4 ++--
- drivers/media/platform/vivid/vivid-cec.c      | 2 +-
- 8 files changed, 11 insertions(+), 11 deletions(-)
+> > 
+> >>> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > 
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> > 
+> > We probably want a backport to stable as well. Although regular process
+> > cannot get giga pages easily without admin help it is still not nice to
+> > oops like this.
 
--- 
-2.7.4
+I'll add CC to stable.
+
+Thanks,
+Naoya Horiguchi
