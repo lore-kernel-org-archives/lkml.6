@@ -1,108 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeA3U3t (ORCPT <rfc822;w@1wt.eu>);
+        id S1752832AbeA3U3y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:29:54 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56370 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752741AbeA3U3t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jan 2018 15:29:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752620AbeA3U3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:29:46 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7846A217A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Subject: [PATCH] ARM: dts: exynos: Add SPDX license identifiers
-Date: Tue, 30 Jan 2018 21:29:19 +0100
-Message-Id: <20180130202919.30026-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.11.0
+From: Thierry Escande <thierry.escande@collabora.com>
+To: Archit Taneja <architt@codeaurora.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Haixia Shi <hshi@chromium.org>,
+        =?UTF-8?q?=C3=98rjan=20Eide?= <orjan.eide@arm.com>,
+        Zain Wang <wzz@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
+        Lin Huang <hl@rock-chips.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Mark Yao <mark.yao@rock-chips.com>, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH v3 25/43] drm/rockchip: Restore psr->state when enable/disable psr failed
+Date: Tue, 30 Jan 2018 21:28:55 +0100
+Message-Id: <20180130202913.28724-26-thierry.escande@collabora.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180130202913.28724-1-thierry.escande@collabora.com>
+References: <20180130202913.28724-1-thierry.escande@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset = "utf-8"
+Content-Transfert-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Few files missed recent conversion of GPL v2.0 license statements to
-SPDX identifiers
+From: zain wang <wzz@rock-chips.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+If we failed disable psr, it would hang the display until next psr
+cycle coming. So we should restore psr->state when it failed.
+
+Cc: Tomasz Figa <tfiga@chromium.org>
+Signed-off-by: zain wang <wzz@rock-chips.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 ---
- arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi | 5 +----
- arch/arm/boot/dts/exynos-syscon-restart.dtsi      | 5 +----
- arch/arm/boot/dts/exynos5800-peach-pi.dts         | 5 +----
- arch/arm/boot/dts/exynos5800.dtsi                 | 5 +----
- 4 files changed, 4 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  4 +++-
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 10 +++++-----
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c        | 20 +++++++++++++-------
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.h        |  2 +-
+ 4 files changed, 22 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
-index 25186ac4188d..1dbf3bbff8d3 100644
---- a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
-+++ b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Samsung's Exynos SoC MFC (Video Codec) reserved memory common definition.
-  *
-  * Copyright (c) 2016 Samsung Electronics Co., Ltd
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 082b4e024052..e925c62eaadb 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -153,8 +153,10 @@ int analogix_dp_disable_psr(struct analogix_dp_device *dp)
+ 	psr_vsc.DB1 = 0;
  
- / {
-diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-index 09a2040054ed..4b3dd0549a54 100644
---- a/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-+++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-@@ -1,9 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Samsung's Exynos SoC syscon reboot/poweroff nodes common definition.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
+ 	ret = drm_dp_dpcd_writeb(&dp->aux, DP_SET_POWER, DP_SET_POWER_D0);
+-	if (ret != 1)
++	if (ret != 1) {
+ 		dev_err(dp->dev, "Failed to set DP Power0 %d\n", ret);
++		return ret;
++	}
  
- / {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 0029ec27819c..c8a66a12dbeb 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Google Peach Pi Rev 10+ board device tree source
-  *
-  * Copyright (c) 2014 Google, Inc
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
+ 	return analogix_dp_send_psr_spd(dp, &psr_vsc, false);
+ }
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 3e8bf79bea58..8c884f9ce713 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -77,13 +77,13 @@ struct rockchip_dp_device {
+ 	struct analogix_dp_plat_data plat_data;
+ };
  
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-index 9ddb6bacac5a..57d3b319fd65 100644
---- a/arch/arm/boot/dts/exynos5800.dtsi
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SAMSUNG EXYNOS5800 SoC device tree source
-  *
-@@ -7,10 +8,6 @@
-  * SAMSUNG EXYNOS5800 SoC device nodes are listed in this file.
-  * EXYNOS5800 based board files can include this file and provide
-  * values for board specfic bindings.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
+-static void analogix_dp_psr_set(struct drm_encoder *encoder, bool enabled)
++static int analogix_dp_psr_set(struct drm_encoder *encoder, bool enabled)
+ {
+ 	struct rockchip_dp_device *dp = to_dp(encoder);
+ 	int ret;
  
- #include "exynos5420.dtsi"
+ 	if (!analogix_dp_psr_enabled(dp->adp))
+-		return;
++		return 0;
+ 
+ 	DRM_DEV_DEBUG(dp->dev, "%s PSR...\n", enabled ? "Entry" : "Exit");
+ 
+@@ -91,13 +91,13 @@ static void analogix_dp_psr_set(struct drm_encoder *encoder, bool enabled)
+ 					 PSR_WAIT_LINE_FLAG_TIMEOUT_MS);
+ 	if (ret) {
+ 		DRM_DEV_ERROR(dp->dev, "line flag interrupt did not arrive\n");
+-		return;
++		return -ETIMEDOUT;
+ 	}
+ 
+ 	if (enabled)
+-		analogix_dp_enable_psr(dp->adp);
++		return analogix_dp_enable_psr(dp->adp);
+ 	else
+-		analogix_dp_disable_psr(dp->adp);
++		return analogix_dp_disable_psr(dp->adp);
+ }
+ 
+ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+index b339ca943139..9376f4396b6b 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+@@ -36,7 +36,7 @@ struct psr_drv {
+ 
+ 	struct delayed_work	flush_work;
+ 
+-	void (*set)(struct drm_encoder *encoder, bool enable);
++	int (*set)(struct drm_encoder *encoder, bool enable);
+ };
+ 
+ static struct psr_drv *find_psr_by_crtc(struct drm_crtc *crtc)
+@@ -93,19 +93,25 @@ static void psr_set_state_locked(struct psr_drv *psr, enum psr_state state)
+ 		return;
+ 	}
+ 
+-	psr->state = state;
+-
+ 	/* Actually commit the state change to hardware */
+-	switch (psr->state) {
++	switch (state) {
+ 	case PSR_ENABLE:
+-		psr->set(psr->encoder, true);
++		if (psr->set(psr->encoder, true))
++			return;
+ 		break;
+ 
+ 	case PSR_DISABLE:
+ 	case PSR_FLUSH:
+-		psr->set(psr->encoder, false);
++		if (psr->set(psr->encoder, false))
++			return;
+ 		break;
++
++	default:
++		pr_err("%s: Unknown state %d\n", __func__, state);
++		return;
+ 	}
++
++	psr->state = state;
+ }
+ 
+ static void psr_set_state(struct psr_drv *psr, enum psr_state state)
+@@ -229,7 +235,7 @@ EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
+  * Zero on success, negative errno on failure.
+  */
+ int rockchip_drm_psr_register(struct drm_encoder *encoder,
+-			void (*psr_set)(struct drm_encoder *, bool enable))
++			int (*psr_set)(struct drm_encoder *, bool enable))
+ {
+ 	struct rockchip_drm_private *drm_drv = encoder->dev->dev_private;
+ 	struct psr_drv *psr;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+index b1ea0155e57c..06537ee27565 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+@@ -22,7 +22,7 @@ int rockchip_drm_psr_activate(struct drm_encoder *encoder);
+ int rockchip_drm_psr_deactivate(struct drm_encoder *encoder);
+ 
+ int rockchip_drm_psr_register(struct drm_encoder *encoder,
+-			void (*psr_set)(struct drm_encoder *, bool enable));
++			int (*psr_set)(struct drm_encoder *, bool enable));
+ void rockchip_drm_psr_unregister(struct drm_encoder *encoder);
+ 
+ #endif /* __ROCKCHIP_DRM_PSR__ */
 -- 
-2.11.0
+2.14.1
