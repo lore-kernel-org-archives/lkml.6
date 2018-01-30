@@ -1,97 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753251AbeA3XRy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:17:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44946 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751717AbeA3XRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:17:52 -0500
-Subject: Re: [PATCH v3 1/4] KVM: x86: Update the reverse_cpuid list to include
- CPUID_7_EDX
-To: KarimAllah Ahmed <karahmed@amazon.de>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>
-References: <1517271028-15916-1-git-send-email-karahmed@amazon.de>
- <1517271028-15916-2-git-send-email-karahmed@amazon.de>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <91a5b0d3-37cc-2af3-a598-f3918697f91e@redhat.com>
-Date: Tue, 30 Jan 2018 18:17:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1753453AbeA3XTS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:19:18 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36696 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751902AbeA3XTR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 18:19:17 -0500
+X-Google-Smtp-Source: AH8x227aJFe1dBa0pCXLIOtljU0pX2eKAx1KD39koYxBsJj/ik8GENeGfbkMmHyPaYzc/p7DJMa+7A==
+Date: Tue, 30 Jan 2018 15:19:13 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <bot+368be9c49d7964232801d2a4576c6cf50cf934ab@syzkaller.appspotmail.com>
+Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org,
+        yu-cheng.yu@intel.com
+Subject: Re: WARNING in fpu__copy
+Message-ID: <20180130231913.ilzz7t2zoffcmqhq@gmail.com>
+References: <f403045fbfa02429c90560c0d157@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1517271028-15916-2-git-send-email-karahmed@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f403045fbfa02429c90560c0d157@google.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/01/2018 19:10, KarimAllah Ahmed wrote:
-> [dwmw2: Stop using KF() for bits in it, too]
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: kvm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-
+On Tue, Dec 19, 2017 at 11:49:02PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzkaller hit the following crash on
+> 6084b576dca2e898f5c101baef151f7bfdbb606d
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> 
+> Unfortunately, I don't have any reproducer for this bug yet.
+> 
+> 
+> netlink: 'syz-executor4': attribute type 2 has an invalid length.
+> device gre0 entered promiscuous mode
+> WARNING: CPU: 1 PID: 7913 at ./arch/x86/include/asm/fpu/internal.h:340
+> copy_xregs_to_kernel arch/x86/include/asm/fpu/internal.h:340 [inline]
+> WARNING: CPU: 1 PID: 7913 at ./arch/x86/include/asm/fpu/internal.h:340
+> copy_fpregs_to_fpstate arch/x86/include/asm/fpu/internal.h:413 [inline]
+> WARNING: CPU: 1 PID: 7913 at ./arch/x86/include/asm/fpu/internal.h:340
+> fpu__copy+0x385/0x390 arch/x86/kernel/fpu/core.c:212
+> Kernel panic - not syncing: panic_on_warn set ...
+> 
+> CPU: 1 PID: 7913 Comm: syz-executor2 Not tainted 4.15.0-rc3-next-20171214+
+> #67
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0xe9/0x14b lib/dump_stack.c:53
+>  panic+0x10e/0x2f8 kernel/panic.c:183
+>  __warn+0x14e/0x150 kernel/panic.c:547
+>  report_bug+0x11e/0x1a0 lib/bug.c:184
+>  fixup_bug.part.11+0x17/0x30 arch/x86/kernel/traps.c:177
+>  fixup_bug arch/x86/kernel/traps.c:246 [inline]
+>  do_error_trap+0x14a/0x180 arch/x86/kernel/traps.c:295
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:314
+>  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1079
+> RIP: 0010:copy_xregs_to_kernel arch/x86/include/asm/fpu/internal.h:340
+> [inline]
+> RIP: 0010:copy_fpregs_to_fpstate arch/x86/include/asm/fpu/internal.h:413
+> [inline]
+> RIP: 0010:fpu__copy+0x385/0x390 arch/x86/kernel/fpu/core.c:212
+> RSP: 0018:ffffc90000dc7d18 EFLAGS: 00010293
+> RAX: ffff88021516c380 RBX: ffff8801e1735580 RCX: ffffffff810d6e85
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8801e17355c0
+> RBP: ffffc90000dc7d38 R08: 000000000002dd38 R09: ffff8801e17355c0
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff88021516d780
+> R13: ffff8801e17355c0 R14: ffffc90000d94000 R15: ffff8801de73ea00
+>  arch_dup_task_struct+0x27/0x30 arch/x86/kernel/process.c:100
+>  dup_task_struct kernel/fork.c:786 [inline]
+>  copy_process.part.35+0x161/0x2240 kernel/fork.c:1639
+>  copy_process kernel/fork.c:1614 [inline]
+>  _do_fork+0x122/0x880 kernel/fork.c:2095
+>  SYSC_clone kernel/fork.c:2202 [inline]
+>  SyS_clone+0x37/0x50 kernel/fork.c:2196
+>  do_syscall_64+0x7f/0x270 arch/x86/entry/common.c:285
+>  entry_SYSCALL64_slow_path+0x25/0x25
+> RIP: 0033:0x455399
+> RSP: 002b:0000000000a2f748 EFLAGS: 00000202 ORIG_RAX: 0000000000000038
+> RAX: ffffffffffffffda RBX: 00007fcf3c9d9700 RCX: 0000000000455399
+> RDX: 00007fcf3c9d99d0 RSI: 00007fcf3c9d8db0 RDI: 00000000003d0f00
+> RBP: 0000000000a2f880 R08: 00007fcf3c9d9700 R09: 00007fcf3c9d9700
+> R10: 00007fcf3c9d99d0 R11: 0000000000000202 R12: 0000000000000000
+> R13: 0000000000a2f7ff R14: 00007fcf3c9d99c0 R15: 0000000000000002
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+> 
+> 
 > ---
->  arch/x86/kvm/cpuid.c | 8 +++-----
->  arch/x86/kvm/cpuid.h | 1 +
->  2 files changed, 4 insertions(+), 5 deletions(-)
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
 > 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 0099e10..c0eb337 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -67,9 +67,7 @@ u64 kvm_supported_xcr0(void)
->  
->  #define F(x) bit(X86_FEATURE_##x)
->  
-> -/* These are scattered features in cpufeatures.h. */
-> -#define KVM_CPUID_BIT_AVX512_4VNNIW     2
-> -#define KVM_CPUID_BIT_AVX512_4FMAPS     3
-> +/* For scattered features from cpufeatures.h; we currently expose none */
->  #define KF(x) bit(KVM_CPUID_BIT_##x)
->  
->  int kvm_update_cpuid(struct kvm_vcpu *vcpu)
-> @@ -392,7 +390,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
->  
->  	/* cpuid 7.0.edx*/
->  	const u32 kvm_cpuid_7_0_edx_x86_features =
-> -		KF(AVX512_4VNNIW) | KF(AVX512_4FMAPS);
-> +		F(AVX512_4VNNIW) | F(AVX512_4FMAPS);
->  
->  	/* all calls to cpuid_count() should be made on the same cpu */
->  	get_cpu();
-> @@ -477,7 +475,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
->  			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
->  				entry->ecx &= ~F(PKU);
->  			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
-> -			entry->edx &= get_scattered_cpuid_leaf(7, 0, CPUID_EDX);
-> +			cpuid_mask(&entry->edx, CPUID_7_EDX);
->  		} else {
->  			entry->ebx = 0;
->  			entry->ecx = 0;
-> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> index cdc70a3..dcfe227 100644
-> --- a/arch/x86/kvm/cpuid.h
-> +++ b/arch/x86/kvm/cpuid.h
-> @@ -54,6 +54,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
->  	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
->  	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
->  	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
-> +	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
->  };
->  
->  static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
-> 
+> syzbot will keep track of this bug report.
+> Once a fix for this bug is merged into any tree, reply to this email with:
+> #syz fix: exact-commit-title
+
+This last occurred on 10a7e9d849150a2879efc0b04d8a51068c9dd0c5 which was missing
+commit 5663d8f9bbe4, so I'm guessing that fixed it:
+
+#syz fix: kvm: x86: fix WARN due to uninitialized guest FPU state
