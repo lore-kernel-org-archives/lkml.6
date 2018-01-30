@@ -1,220 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752267AbeA3Oyy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:54:54 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:50957 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751197AbeA3Oyx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:54:53 -0500
-Date: Tue, 30 Jan 2018 06:50:34 -0800
-From: tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-37a8f7c38339b22b69876d6f5a0ab851565284e3@git.kernel.org>
-Cc: mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, bp@alien8.de, luto@kernel.org
-Reply-To: kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, mingo@kernel.org, luto@kernel.org, bp@alien8.de,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-In-Reply-To: <03148bcc1b217100e6e8ecf6a5468c45cf4304b6.1517164461.git.luto@kernel.org>
-References: <03148bcc1b217100e6e8ecf6a5468c45cf4304b6.1517164461.git.luto@kernel.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/asm: Move 'status' from thread_struct to
- thread_info
-Git-Commit-ID: 37a8f7c38339b22b69876d6f5a0ab851565284e3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752742AbeA3O4n (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:56:43 -0500
+Received: from foss.arm.com ([217.140.101.70]:54836 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752295AbeA3O4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 09:56:41 -0500
+Date: Tue, 30 Jan 2018 14:56:37 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
+        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/16] arm64: Add flags to check the safety of a
+ capability for late CPU
+Message-ID: <20180130145636.GE5862@e103592.cambridge.arm.com>
+References: <20180123122809.16269-1-suzuki.poulose@arm.com>
+ <20180123122809.16269-6-suzuki.poulose@arm.com>
+ <20180126101020.GM5862@e103592.cambridge.arm.com>
+ <6313a0f1-ed3c-b5b3-7bbd-5f98862a74c6@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <6313a0f1-ed3c-b5b3-7bbd-5f98862a74c6@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  37a8f7c38339b22b69876d6f5a0ab851565284e3
-Gitweb:     https://git.kernel.org/tip/37a8f7c38339b22b69876d6f5a0ab851565284e3
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Sun, 28 Jan 2018 10:38:50 -0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 30 Jan 2018 15:30:36 +0100
+On Tue, Jan 30, 2018 at 11:17:38AM +0000, Suzuki K Poulose wrote:
+> On 26/01/18 10:10, Dave Martin wrote:
+> >On Tue, Jan 23, 2018 at 12:27:58PM +0000, Suzuki K Poulose wrote:
+> >>Add two different flags to indicate if the conflict of a capability
+> >>on a late CPU with the current system state
+> >>
+> >>  1) Can a CPU have a capability when the system doesn't have it ?
+> >>
+> >>     Most arm64 features could have this set. While erratum work arounds
+> >>     cannot have this, as we may miss work arounds.
+> >>
+> >>  2) Can a CPU miss a capability when the system has it ?
+> >>     This could be set for arm64 erratum work arounds as we don't
+> >>     care if a CPU doesn't need the work around. However it should
+> >>     be clear for features.
+> >>
+> >>These flags could be added to certain entries based on their nature.
+> >>
+> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>---
+> >>  arch/arm64/include/asm/cpufeature.h | 35 +++++++++++++++++++++++++++++++----
+> >>  1 file changed, 31 insertions(+), 4 deletions(-)
+> >>
+> >>diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> >>index 4fd5de8ef33e..27d037bb0451 100644
+> >>--- a/arch/arm64/include/asm/cpufeature.h
+> >>+++ b/arch/arm64/include/asm/cpufeature.h
+> >>@@ -94,10 +94,25 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+> >>  #define SCOPE_SYSTEM				ARM64_CPUCAP_SCOPE_SYSTEM
+> >>  #define SCOPE_LOCAL_CPU				ARM64_CPUCAP_SCOPE_LOCAL_CPU
+> >>-/* CPU errata detected at boot time based on feature of one or more CPUs */
+> >>-#define ARM64_CPUCAP_STRICT_CPU_LOCAL_ERRATUM	(ARM64_CPUCAP_SCOPE_LOCAL_CPU)
+> >>-/* CPU feature detected at boot time based on system-wide value of a feature */
+> >>-#define ARM64_CPUCAP_BOOT_SYSTEM_FEATURE	(ARM64_CPUCAP_SCOPE_SYSTEM)
+> >>+/* Is it safe for a late CPU to have this capability when system doesn't already have */
+> >>+#define ARM64_CPUCAP_LATE_CPU_SAFE_TO_HAVE	BIT(2)
+> >>+/* Is it safe for a late CPU to miss this capability when system has it */
+> >>+#define ARM64_CPUCAP_LATE_CPU_SAFE_TO_MISS	BIT(3)
+> >
+> >Maybe _OPTIONAL and _PERMITTED would be a bit less verbose?
+> >
+> >Alternatively,
+> >	ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU
+> >	ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU
+> 
+> Sounds better than what I have. I have picked them up.
 
-x86/asm: Move 'status' from thread_struct to thread_info
+Cool, I had resigned myself to probably not winning that one ;)
 
-The TS_COMPAT bit is very hot and is accessed from code paths that mostly
-also touch thread_info::flags.  Move it into struct thread_info to improve
-cache locality.
-
-The only reason it was in thread_struct is that there was a brief period
-during which arch-specific fields were not allowed in struct thread_info.
-
-Linus suggested further changing:
-
-  ti->status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
-
-to:
-
-  if (unlikely(ti->status & (TS_COMPAT|TS_I386_REGS_POKED)))
-          ti->status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
-
-on the theory that frequently dirtying the cacheline even in pure 64-bit
-code that never needs to modify status hurts performance.  That could be a
-reasonable followup patch, but I suspect it matters less on top of this
-patch.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
-Link: https://lkml.kernel.org/r/03148bcc1b217100e6e8ecf6a5468c45cf4304b6.1517164461.git.luto@kernel.org
-
----
- arch/x86/entry/common.c            | 4 ++--
- arch/x86/include/asm/processor.h   | 2 --
- arch/x86/include/asm/syscall.h     | 6 +++---
- arch/x86/include/asm/thread_info.h | 3 ++-
- arch/x86/kernel/process_64.c       | 4 ++--
- arch/x86/kernel/ptrace.c           | 2 +-
- arch/x86/kernel/signal.c           | 2 +-
- 7 files changed, 11 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index d7d3cc2..9908134 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -206,7 +206,7 @@ __visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
- 	 * special case only applies after poking regs and before the
- 	 * very next return to user mode.
- 	 */
--	current->thread.status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
-+	ti->status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
- #endif
- 
- 	user_enter_irqoff();
-@@ -304,7 +304,7 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
- 	unsigned int nr = (unsigned int)regs->orig_ax;
- 
- #ifdef CONFIG_IA32_EMULATION
--	current->thread.status |= TS_COMPAT;
-+	ti->status |= TS_COMPAT;
- #endif
- 
- 	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY) {
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index efbde08..513f960 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -460,8 +460,6 @@ struct thread_struct {
- 	unsigned short		gsindex;
- #endif
- 
--	u32			status;		/* thread synchronous flags */
--
- #ifdef CONFIG_X86_64
- 	unsigned long		fsbase;
- 	unsigned long		gsbase;
-diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
-index e3c95e8..03eedc2 100644
---- a/arch/x86/include/asm/syscall.h
-+++ b/arch/x86/include/asm/syscall.h
-@@ -60,7 +60,7 @@ static inline long syscall_get_error(struct task_struct *task,
- 	 * TS_COMPAT is set for 32-bit syscall entries and then
- 	 * remains set until we return to user mode.
- 	 */
--	if (task->thread.status & (TS_COMPAT|TS_I386_REGS_POKED))
-+	if (task->thread_info.status & (TS_COMPAT|TS_I386_REGS_POKED))
- 		/*
- 		 * Sign-extend the value so (int)-EFOO becomes (long)-EFOO
- 		 * and will match correctly in comparisons.
-@@ -116,7 +116,7 @@ static inline void syscall_get_arguments(struct task_struct *task,
- 					 unsigned long *args)
- {
- # ifdef CONFIG_IA32_EMULATION
--	if (task->thread.status & TS_COMPAT)
-+	if (task->thread_info.status & TS_COMPAT)
- 		switch (i) {
- 		case 0:
- 			if (!n--) break;
-@@ -177,7 +177,7 @@ static inline void syscall_set_arguments(struct task_struct *task,
- 					 const unsigned long *args)
- {
- # ifdef CONFIG_IA32_EMULATION
--	if (task->thread.status & TS_COMPAT)
-+	if (task->thread_info.status & TS_COMPAT)
- 		switch (i) {
- 		case 0:
- 			if (!n--) break;
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 0022333..eda3b68 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -55,6 +55,7 @@ struct task_struct;
- 
- struct thread_info {
- 	unsigned long		flags;		/* low level flags */
-+	u32			status;		/* thread synchronous flags */
- };
- 
- #define INIT_THREAD_INFO(tsk)			\
-@@ -221,7 +222,7 @@ static inline int arch_within_stack_frames(const void * const stack,
- #define in_ia32_syscall() true
- #else
- #define in_ia32_syscall() (IS_ENABLED(CONFIG_IA32_EMULATION) && \
--			   current->thread.status & TS_COMPAT)
-+			   current_thread_info()->status & TS_COMPAT)
- #endif
- 
- /*
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index c754662..9eb448c 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -557,7 +557,7 @@ static void __set_personality_x32(void)
- 	 * Pretend to come from a x32 execve.
- 	 */
- 	task_pt_regs(current)->orig_ax = __NR_x32_execve | __X32_SYSCALL_BIT;
--	current->thread.status &= ~TS_COMPAT;
-+	current_thread_info()->status &= ~TS_COMPAT;
- #endif
- }
- 
-@@ -571,7 +571,7 @@ static void __set_personality_ia32(void)
- 	current->personality |= force_personality32;
- 	/* Prepare the first "return" to user space */
- 	task_pt_regs(current)->orig_ax = __NR_ia32_execve;
--	current->thread.status |= TS_COMPAT;
-+	current_thread_info()->status |= TS_COMPAT;
- #endif
- }
- 
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index f37d181..ed5c4cd 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -935,7 +935,7 @@ static int putreg32(struct task_struct *child, unsigned regno, u32 value)
- 		 */
- 		regs->orig_ax = value;
- 		if (syscall_get_nr(child, regs) >= 0)
--			child->thread.status |= TS_I386_REGS_POKED;
-+			child->thread_info.status |= TS_I386_REGS_POKED;
- 		break;
- 
- 	case offsetof(struct user32, regs.eflags):
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index b9e00e8..4cdc0b2 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -787,7 +787,7 @@ static inline unsigned long get_nr_restart_syscall(const struct pt_regs *regs)
- 	 * than the tracee.
- 	 */
- #ifdef CONFIG_IA32_EMULATION
--	if (current->thread.status & (TS_COMPAT|TS_I386_REGS_POKED))
-+	if (current_thread_info()->status & (TS_COMPAT|TS_I386_REGS_POKED))
- 		return __NR_ia32_restart_syscall;
- #endif
- #ifdef CONFIG_X86_X32_ABI
+Cheers
+---Dave
