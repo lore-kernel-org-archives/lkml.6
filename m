@@ -1,49 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeA3MbF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:31:05 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4744 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751590AbeA3MbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:31:04 -0500
-From: John Garry <john.garry@huawei.com>
-To: <xuwei5@hisilicon.com>
-CC: <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <arnd@arndb.de>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH] arm64: defconfig: enable IOSCHED_DEADLINE
-Date: Tue, 30 Jan 2018 21:22:57 +0800
-Message-ID: <1517318577-56430-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751960AbeA3MeD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:34:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56072 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751725AbeA3MeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 07:34:02 -0500
+Date: Tue, 30 Jan 2018 13:34:00 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] mm/swap.c: make functions and their kernel-doc agree
+Message-ID: <20180130123400.GD26445@dhcp22.suse.cz>
+References: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For certain workloads the deadline IO scheduler offers
-particular advantages over other schedulers and has shown
-to perform better, so enable it.
+On Mon 29-01-18 16:43:55, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix some basic kernel-doc notation in mm/swap.c:
+> - for function lru_cache_add_anon(), make its kernel-doc function name
+>   match its function name and change colon to hyphen following the
+>   function name
 
-The default IO scheduler is unaffected by this change, and
-currently is CFQ.
+This is pretty much an internal function to the MM. It shouldn't have
+any external callers. Why do we need a kernel doc at all?
 
-Signed-off-by: John Garry <john.garry@huawei.com>
+> - for function pagevec_lookup_entries(), change the function parameter
+>   name from nr_pages to nr_entries since that is more descriptive of
+>   what the parameter actually is and then it matches the kernel-doc
+>   comments also
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 634b373..40c72e6 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -31,7 +31,6 @@ CONFIG_PROFILING=y
- CONFIG_JUMP_LABEL=y
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
--# CONFIG_IOSCHED_DEADLINE is not set
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_ALPINE=y
- CONFIG_ARCH_BCM2835=y
+I know what is nr_pages because I do expect pages to be returned. What
+are entries? Can it be something different from pages?
 -- 
-1.9.1
+Michal Hocko
+SUSE Labs
