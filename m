@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeA3U4P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 15:56:15 -0500
-Received: from home.regit.org ([37.187.126.138]:37358 "EHLO home.regit.org"
+        id S1753554AbeA3U4v (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:56:51 -0500
+Received: from home.regit.org ([37.187.126.138]:37342 "EHLO home.regit.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752866AbeA3Uzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:55:32 -0500
+        id S1753315AbeA3Uz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 15:55:28 -0500
 From: Eric Leblond <eric@regit.org>
 To: daniel@iogearbox.net
 Cc: alexei.starovoitov@gmail.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, Eric Leblond <eric@regit.org>
-Subject: [PATCH bpf-next v8 4/5] libbpf: add missing SPDX-License-Identifier
-Date: Tue, 30 Jan 2018 21:55:03 +0100
-Message-Id: <20180130205504.20826-4-eric@regit.org>
+Subject: [PATCH bpf-next v8 2/5] libbpf: add function to setup XDP
+Date: Tue, 30 Jan 2018 21:55:01 +0100
+Message-Id: <20180130205504.20826-2-eric@regit.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180130205504.20826-1-eric@regit.org>
 References: <a26f90e9-5028-f8a9-a1e6-83a6c46b4e0b@iogearbox.net>
@@ -22,54 +22,194 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Most of the code is taken from set_link_xdp_fd() in bpf_load.c and
+slightly modified to be library compliant.
+
 Signed-off-by: Eric Leblond <eric@regit.org>
 Acked-by: Alexei Starovoitov <ast@kernel.org>
 ---
- tools/lib/bpf/bpf.c    | 2 ++
- tools/lib/bpf/bpf.h    | 2 ++
- tools/lib/bpf/libbpf.c | 2 ++
- tools/lib/bpf/libbpf.h | 2 ++
- 4 files changed, 8 insertions(+)
+ tools/lib/bpf/bpf.c    | 122 +++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/lib/bpf/libbpf.c |   2 +
+ tools/lib/bpf/libbpf.h |   4 ++
+ 3 files changed, 128 insertions(+)
 
 diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 9c88f6e4156d..592a58a2b681 100644
+index 5128677e4117..bf2772566240 100644
 --- a/tools/lib/bpf/bpf.c
 +++ b/tools/lib/bpf/bpf.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+
+@@ -25,6 +25,12 @@
+ #include <asm/unistd.h>
+ #include <linux/bpf.h>
+ #include "bpf.h"
++#include "libbpf.h"
++#include "nlattr.h"
++#include <linux/rtnetlink.h>
++#include <linux/if_link.h>
++#include <sys/socket.h>
++#include <errno.h>
+ 
  /*
-  * common eBPF ELF operations.
-  *
-diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-index 9f44c196931e..8d18fb73d7fb 100644
---- a/tools/lib/bpf/bpf.h
-+++ b/tools/lib/bpf/bpf.h
-@@ -1,3 +1,5 @@
-+/* SPDX-License-Identifier: LGPL-2.1 */
+  * When building perf, unistd.h is overridden. __NR_bpf is
+@@ -46,7 +52,9 @@
+ # endif
+ #endif
+ 
++#ifndef min
+ #define min(x, y) ((x) < (y) ? (x) : (y))
++#endif
+ 
+ static inline __u64 ptr_to_u64(const void *ptr)
+ {
+@@ -413,3 +421,117 @@ int bpf_obj_get_info_by_fd(int prog_fd, void *info, __u32 *info_len)
+ 
+ 	return err;
+ }
 +
- /*
-  * common eBPF ELF operations.
-  *
++int bpf_set_link_xdp_fd(int ifindex, int fd, __u32 flags)
++{
++	struct sockaddr_nl sa;
++	int sock, seq = 0, len, ret = -1;
++	char buf[4096];
++	struct nlattr *nla, *nla_xdp;
++	struct {
++		struct nlmsghdr  nh;
++		struct ifinfomsg ifinfo;
++		char             attrbuf[64];
++	} req;
++	struct nlmsghdr *nh;
++	struct nlmsgerr *err;
++	socklen_t addrlen;
++
++	memset(&sa, 0, sizeof(sa));
++	sa.nl_family = AF_NETLINK;
++
++	sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
++	if (sock < 0) {
++		return -errno;
++	}
++
++	if (bind(sock, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
++		ret = -errno;
++		goto cleanup;
++	}
++
++	addrlen = sizeof(sa);
++	if (getsockname(sock, (struct sockaddr *)&sa, &addrlen) < 0) {
++		ret = -errno;
++		goto cleanup;
++	}
++
++	if (addrlen != sizeof(sa)) {
++		ret = -LIBBPF_ERRNO__INTERNAL;
++		goto cleanup;
++	}
++
++	memset(&req, 0, sizeof(req));
++	req.nh.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg));
++	req.nh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
++	req.nh.nlmsg_type = RTM_SETLINK;
++	req.nh.nlmsg_pid = 0;
++	req.nh.nlmsg_seq = ++seq;
++	req.ifinfo.ifi_family = AF_UNSPEC;
++	req.ifinfo.ifi_index = ifindex;
++
++	/* started nested attribute for XDP */
++	nla = (struct nlattr *)(((char *)&req)
++				+ NLMSG_ALIGN(req.nh.nlmsg_len));
++	nla->nla_type = NLA_F_NESTED | IFLA_XDP;
++	nla->nla_len = NLA_HDRLEN;
++
++	/* add XDP fd */
++	nla_xdp = (struct nlattr *)((char *)nla + nla->nla_len);
++	nla_xdp->nla_type = IFLA_XDP_FD;
++	nla_xdp->nla_len = NLA_HDRLEN + sizeof(int);
++	memcpy((char *)nla_xdp + NLA_HDRLEN, &fd, sizeof(fd));
++	nla->nla_len += nla_xdp->nla_len;
++
++	/* if user passed in any flags, add those too */
++	if (flags) {
++		nla_xdp = (struct nlattr *)((char *)nla + nla->nla_len);
++		nla_xdp->nla_type = IFLA_XDP_FLAGS;
++		nla_xdp->nla_len = NLA_HDRLEN + sizeof(flags);
++		memcpy((char *)nla_xdp + NLA_HDRLEN, &flags, sizeof(flags));
++		nla->nla_len += nla_xdp->nla_len;
++	}
++
++	req.nh.nlmsg_len += NLA_ALIGN(nla->nla_len);
++
++	if (send(sock, &req, req.nh.nlmsg_len, 0) < 0) {
++		ret = -errno;
++		goto cleanup;
++	}
++
++	len = recv(sock, buf, sizeof(buf), 0);
++	if (len < 0) {
++		ret = -errno;
++		goto cleanup;
++	}
++
++	for (nh = (struct nlmsghdr *)buf; NLMSG_OK(nh, len);
++	     nh = NLMSG_NEXT(nh, len)) {
++		if (nh->nlmsg_pid != sa.nl_pid) {
++			ret = -LIBBPF_ERRNO__WRNGPID;
++			goto cleanup;
++		}
++		if (nh->nlmsg_seq != seq) {
++			ret = -LIBBPF_ERRNO__INVSEQ;
++			goto cleanup;
++		}
++		switch (nh->nlmsg_type) {
++		case NLMSG_ERROR:
++			err = (struct nlmsgerr *)NLMSG_DATA(nh);
++			if (!err->error)
++				continue;
++			ret = err->error;
++			goto cleanup;
++		case NLMSG_DONE:
++			break;
++		default:
++			break;
++		}
++	}
++
++	ret = 0;
++
++cleanup:
++	close(sock);
++	return ret;
++}
 diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index c60122d3ea85..71ddc481f349 100644
+index 30c776375118..c60122d3ea85 100644
 --- a/tools/lib/bpf/libbpf.c
 +++ b/tools/lib/bpf/libbpf.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+
- /*
-  * Common eBPF ELF object loading operations.
-  *
+@@ -106,6 +106,8 @@ static const char *libbpf_strerror_table[NR_ERRNO] = {
+ 	[ERRCODE_OFFSET(PROG2BIG)]	= "Program too big",
+ 	[ERRCODE_OFFSET(KVER)]		= "Incorrect kernel version",
+ 	[ERRCODE_OFFSET(PROGTYPE)]	= "Kernel doesn't support this program type",
++	[ERRCODE_OFFSET(WRNGPID)]	= "Wrong pid in netlink message",
++	[ERRCODE_OFFSET(INVSEQ)]	= "Invalid netlink sequence",
+ };
+ 
+ int libbpf_strerror(int err, char *buf, size_t size)
 diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index e42f96900318..f85906533cdd 100644
+index 6e20003109e0..e42f96900318 100644
 --- a/tools/lib/bpf/libbpf.h
 +++ b/tools/lib/bpf/libbpf.h
-@@ -1,3 +1,5 @@
-+/* SPDX-License-Identifier: LGPL-2.1 */
+@@ -42,6 +42,8 @@ enum libbpf_errno {
+ 	LIBBPF_ERRNO__PROG2BIG,	/* Program too big */
+ 	LIBBPF_ERRNO__KVER,	/* Incorrect kernel version */
+ 	LIBBPF_ERRNO__PROGTYPE,	/* Kernel doesn't support this program type */
++	LIBBPF_ERRNO__WRNGPID,	/* Wrong pid in netlink message */
++	LIBBPF_ERRNO__INVSEQ,	/* Invalid netlink sequence */
+ 	__LIBBPF_ERRNO__END,
+ };
+ 
+@@ -246,4 +248,6 @@ long libbpf_get_error(const void *ptr);
+ 
+ int bpf_prog_load(const char *file, enum bpf_prog_type type,
+ 		  struct bpf_object **pobj, int *prog_fd);
 +
- /*
-  * Common eBPF ELF object loading operations.
-  *
++int bpf_set_link_xdp_fd(int ifindex, int fd, __u32 flags);
+ #endif
 -- 
 2.15.1
