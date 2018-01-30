@@ -1,90 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751725AbeA3J5p (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:57:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38721 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751296AbeA3J5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:57:42 -0500
-Date: Tue, 30 Jan 2018 10:57:39 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Florian Westphal <fw@strlen.de>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        David Miller <davem@davemloft.net>, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev <netdev@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Yang Shi <yang.s@alibaba-inc.com>, syzkaller-bugs@googlegroups.com,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, guro@fb.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [netfilter-core] kernel panic: Out of memory and no killable
- processes... (2)
-Message-ID: <20180130095739.GV21609@dhcp22.suse.cz>
-References: <201801290020.w0T0KK8V015938@www262.sakura.ne.jp>
- <20180129072357.GD5906@breakpoint.cc>
- <20180129082649.sysf57wlp7i7ltb2@node.shutemov.name>
- <20180129165722.GF5906@breakpoint.cc>
- <20180129182811.fze4vrb5zd5cojmr@node.shutemov.name>
- <20180129223522.GG5906@breakpoint.cc>
- <20180130075226.GL21609@dhcp22.suse.cz>
- <20180130081127.GH5906@breakpoint.cc>
- <20180130082817.cbax5qj4mxancx4b@node.shutemov.name>
- <CACT4Y+bFKwoxopr1dwnc7OHUoHy28ksVguqtMY6tD=aRh-7LyQ@mail.gmail.com>
+        id S1751822AbeA3J6l (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:58:41 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:34194 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751707AbeA3J6j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 04:58:39 -0500
+Date: Tue, 30 Jan 2018 10:58:31 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 4/4] objtool: Don't print '.tmp_' prefix for .o files
+Message-ID: <20180130095831.GJ2228@hirez.programming.kicks-ass.net>
+References: <cover.1517284349.git.jpoimboe@redhat.com>
+ <3788b5aec1c279184b78cdbd8b520903c0fb8a80.1517284349.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+bFKwoxopr1dwnc7OHUoHy28ksVguqtMY6tD=aRh-7LyQ@mail.gmail.com>
+In-Reply-To: <3788b5aec1c279184b78cdbd8b520903c0fb8a80.1517284349.git.jpoimboe@redhat.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 30-01-18 10:02:34, Dmitry Vyukov wrote:
-> On Tue, Jan 30, 2018 at 9:28 AM, Kirill A. Shutemov
-> <kirill@shutemov.name> wrote:
-> > On Tue, Jan 30, 2018 at 09:11:27AM +0100, Florian Westphal wrote:
-> >> Michal Hocko <mhocko@kernel.org> wrote:
-> >> > On Mon 29-01-18 23:35:22, Florian Westphal wrote:
-> >> > > Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> >> > [...]
-> >> > > > I hate what I'm saying, but I guess we need some tunable here.
-> >> > > > Not sure what exactly.
-> >> > >
-> >> > > Would memcg help?
-> >> >
-> >> > That really depends. I would have to check whether vmalloc path obeys
-> >> > __GFP_ACCOUNT (I suspect it does except for page tables allocations but
-> >> > that shouldn't be a big deal). But then the other potential problem is
-> >> > the life time of the xt_table_info (or other potentially large) data
-> >> > structures. Are they bound to any process life time.
-> >>
-> >> No.
-> >
-> > Well, IIUC they bound to net namespace life time, so killing all
-> > proccesses in the namespace would help to get memory back. :)
+On Mon, Jan 29, 2018 at 10:00:42PM -0600, Josh Poimboeuf wrote:
+> With the following commit:
 > 
-> ... unless the namespace is mounted into file system.
+>   2a0098d70640 ("objtool: Fix seg fault with gold linker")
 > 
-> Let's start with NOWARN as that's what kernel generally uses for
-> allocations with user-controllable size. ENOMEM is roughly as
-> informative as the WARNING message in this case.
+> ... objtool warnings started showing the modversions '.tmp_' prefix in
+> the .o file name, like:
+> 
+>   arch/x86/mm/.tmp_mem_encrypt_boot.o: warning: objtool: sme_encrypt_execute()+0x48: indirect call found in RETPOLINE build
+> 
+> The prefix is confusing.  Remove it from the printed 'objname' variable.
 
-You want __GFP_NORETRY but that is not _fully_ supported by kvmalloc
-right now. More specifically kvmalloc doesn't guanratee that the request
-will not trigger the OOM killer (like regular __GFP_NORETRY). This is
-because of internal vmalloc restrictions. If you are however OK to
-simply bail out in most cases then __GFP_NORETRY should work reasonably
-fine.
+This patch actually tripped me up today. Turns out I have both:
 
-> I think we also need to consider setting up memory cgroup for
-> syzkaller test processes (we do RLIMIT_AS, but that's weak).
+ build/kernel/sched/core.o
+ build/kernel/sched/.tmp_core.o
 
-Well, this is not about syzkaller, it merely pointed out a potential
-DoS... And that has to be addressed somehow.
+and ended up staring at the wrong file and going WTF because the offsets
+didn't match.
 
--- 
-Michal Hocko
-SUSE Labs
+I much prefer the actual real filename printed. Yes the .tmp_ crud is
+weird, but at least its the real file.
