@@ -1,119 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751769AbeA3IxT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 03:53:19 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47349 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751273AbeA3IxQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:53:16 -0500
-Date: Tue, 30 Jan 2018 09:53:14 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Ladislav Michl <ladis@linux-mips.org>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
-        bhumirks@gmail.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pali.rohar@gmail.com, sre@kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
-        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
-        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
-Subject: Re: [PATCH] sound/tlv320dac33: Add device tree support
-Message-ID: <20180130085314.GA4585@amd>
-References: <20180129230539.GA18280@amd>
- <20180129232031.GA7695@lenoch>
- <20180129233301.GA18104@amd>
- <20180130083446.GA13498@lenoch>
+        id S1751983AbeA3IyY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 03:54:24 -0500
+Received: from foss.arm.com ([217.140.101.70]:50908 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751563AbeA3IyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 03:54:22 -0500
+Subject: Re: [PATCH v2 15/16] arm/arm64: smccc: Implement SMCCC v1.1 inline
+ primitive
+To: Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jon Masters <jcm@redhat.com>
+References: <20180129174559.1866-1-marc.zyngier@arm.com>
+ <20180129174559.1866-16-marc.zyngier@arm.com>
+ <04d16ecd-044c-fe56-f9be-78d0cb591e71@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <84eaa3ee-6838-466a-9974-98b6092b9e6c@arm.com>
+Date: Tue, 30 Jan 2018 08:54:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-In-Reply-To: <20180130083446.GA13498@lenoch>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <04d16ecd-044c-fe56-f9be-78d0cb591e71@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 29/01/18 19:07, Robin Murphy wrote:
+> On 29/01/18 17:45, Marc Zyngier wrote:
+>> One of the major improvement of SMCCC v1.1 is that it only clobbers
+>> the first 4 registers, both on 32 and 64bit. This means that it
+>> becomes very easy to provide an inline version of the SMC call
+>> primitive, and avoid performing a function call to stash the
+>> registers that would otherwise be clobbered by SMCCC v1.0.
+> 
+> This is disgusting... I love it :D
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I expected nothing less from you! ;-)
 
-On Tue 2018-01-30 09:34:46, Ladislav Michl wrote:
-> On Tue, Jan 30, 2018 at 12:33:01AM +0100, Pavel Machek wrote:
-> > On Tue 2018-01-30 00:20:31, Ladislav Michl wrote:
-> > > On Tue, Jan 30, 2018 at 12:05:39AM +0100, Pavel Machek wrote:
-> > > >=20
-> > > > This adds device tree support to tlv320dac33.c.
-> > > >=20
-> > > > Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/sound/tlv320dac33.tx=
-t b/Documentation/devicetree/bindings/sound/tlv320dac33.txt
-> > > > new file mode 100644
-> > > > index 0000000..6cbd311
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/sound/tlv320dac33.txt
-> > > > @@ -0,0 +1,32 @@
-> > > > +Texas Instruments - tlv320dac33 Codec module
-> > > > +
-> > > > +The tlv320dac33 serial control bus communicates through I2C protoc=
-ols.
-> > > > +
-> > > > +Required properties:
-> > > > +
-> > > > +- compatible - "ti,tlv320dac33"
-> > > > +- reg - I2C slave address
-> > > > +
-> > > > +Optional properties:
-> > > > +
-> > > > +- power-gpios - gpio pin to power the device, active high
-> > >=20
-> > > While driver used gpio in platform data, isn't it more likely
-> > > regulator which powers device?
-> >=20
-> >                 power-gpios =3D <&gpio2 28 0>; /* gpio_60 */
-> >=20
-> > Looks like GPIO to me -- example is from Nokia N9. So this appears to
-> > be correct.
->=20
-> Device datasheet doesn't list any pin which looks like "power-gpio"
-> http://www.ti.com/lit/ds/symlink/tlv320dac32.pdf
-> Unfortunately I do not know much about N9, but was able to find Nokia 5610
-> scheme to get clue how could be tlv320dac33 hardwired (see page 2):
-> http://mastermobile.spb.ru/service/nokia_5610_rm-242_service_schematics.p=
-df
-> Here AVDD is powered by LP3985 voltage regulator which is enabled using
-> VEN pin which might be connected to gpio. Or there could be completely
-> different voltage regulator with different controls. And since Linux
-> already has voltage regulator class, lets not limit ourselves to gpio
-> pins.
+> 
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>   include/linux/arm-smccc.h | 157 ++++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 157 insertions(+)
+>>
+>> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+>> index dd44d8458c04..bc5843728909 100644
+>> --- a/include/linux/arm-smccc.h
+>> +++ b/include/linux/arm-smccc.h
+>> @@ -150,5 +150,162 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
+>>   
+>>   #define arm_smccc_hvc_quirk(...) __arm_smccc_hvc(__VA_ARGS__)
+>>   
+>> +/* SMCCC v1.1 implementation madness follows */
+>> +#ifdef CONFIG_ARM64
+>> +
+>> +#define SMCCC_SMC_INST	"smc	#0"
+>> +#define SMCCC_HVC_INST	"hvc	#0"
+>> +
+>> +#define __arm_smccc_1_1_prologue(inst)					\
+>> +	inst "\n"							\
+>> +	"cbz	%[ptr], 1f\n"						\
+>> +	"stp	%x[r0], %x[r1], %[ra0]\n"				\
+>> +	"stp	%x[r2], %x[r3], %[ra2]\n"				\
+>> +	"1:\n"								\
+>> +	: [ra0] "=Ump" (*(&___res->a0)),				\
+>> +	  [ra2] "=Ump" (*(&___res->a2)),
+> 
+> Rather than embedding a guaranteed spill to memory, I wonder if there's 
+> money in just always declaring r0-r3 as in-out operands, and propagating 
+> them by value afterwards, i.e.:
+> 
+> 	asm(...);
+> 	if (___res)
+> 		*___res = (struct arm_smccc_res){ r0, r1, r2, r3 };
+> 
+> In theory, for sufficiently simple callers that might allow res to stay 
+> in registers for its entire lifetime and give nicer codegen. It *might* 
+> also simplify some of this macro machinery too, although at this point 
+> in the evening I can't really tell...
 
-Well, notice I'm converting existing driver to device tree. And that
-one already has GPIO dependency. It is possible that more work needs
-to be done there, but that should not be a reason to delay this. Feel
-free to help.
+I just implemented it, and this is indeed much better. In most cases,
+the store gets optimized away, mostly because we either pass NULL (and
+the condition is dropped) or the store doesn't need to take place as we
+evaluate a condition and discard the structure, like in
+check_smccc_arch_workaround_1.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+In all cases, this allows for slightly reduced levels of cpp madness,
+and better codegen. I also suspect it will solve Ard's register
+allocation issue.
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlpwMnoACgkQMOfwapXb+vIKPwCdG8H/ZWOTQRjFZjbnChEVSYks
-82YAoIXPhu/in6U7iXC9VjAC/JRVGBOe
-=ne5K
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
