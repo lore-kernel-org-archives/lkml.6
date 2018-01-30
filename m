@@ -1,102 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751812AbeA3MI5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:08:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53911 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751519AbeA3MIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:08:55 -0500
-Date: Tue, 30 Jan 2018 13:08:52 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, kernel-team@fb.com,
-        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch -mm v2 2/3] mm, memcg: replace cgroup aware oom killer
- mount option with tunable
-Message-ID: <20180130120852.GA21609@dhcp22.suse.cz>
-References: <alpine.DEB.2.10.1801251553030.161808@chino.kir.corp.google.com>
- <20180125160016.30e019e546125bb13b5b6b4f@linux-foundation.org>
- <alpine.DEB.2.10.1801261415090.15318@chino.kir.corp.google.com>
- <20180126143950.719912507bd993d92188877f@linux-foundation.org>
- <alpine.DEB.2.10.1801261441340.20954@chino.kir.corp.google.com>
- <20180126161735.b999356fbe96c0acd33aaa66@linux-foundation.org>
- <20180129104657.GC21609@dhcp22.suse.cz>
- <20180129191139.GA1121507@devbig577.frc2.facebook.com>
- <20180130085445.GQ21609@dhcp22.suse.cz>
- <20180130115846.GA4720@castle.DHCP.thefacebook.com>
+        id S1751736AbeA3MJj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:09:39 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52834 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751457AbeA3MJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 07:09:37 -0500
+Subject: Re: [PATCH v2 13/16] firmware/psci: Expose SMCCC version through
+ psci_ops
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jon Masters <jcm@redhat.com>
+References: <20180129174559.1866-1-marc.zyngier@arm.com>
+ <20180129174559.1866-14-marc.zyngier@arm.com>
+ <20180129183933.GB24577@e107981-ln.cambridge.arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <8a19a20a-1d4f-8d34-91a3-f1838d41bee7@arm.com>
+Date: Tue, 30 Jan 2018 12:09:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180130115846.GA4720@castle.DHCP.thefacebook.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180129183933.GB24577@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 30-01-18 11:58:51, Roman Gushchin wrote:
-> On Tue, Jan 30, 2018 at 09:54:45AM +0100, Michal Hocko wrote:
-> > On Mon 29-01-18 11:11:39, Tejun Heo wrote:
+On 29/01/18 18:39, Lorenzo Pieralisi wrote:
+> On Mon, Jan 29, 2018 at 05:45:56PM +0000, Marc Zyngier wrote:
+>> Since PSCI 1.0 allows the SMCCC version to be (indirectly) probed,
+>> let's do that at boot time, and expose the version of the calling
+>> convention as part of the psci_ops structure.
+>>
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>  drivers/firmware/psci.c | 21 +++++++++++++++++++++
+>>  include/linux/psci.h    |  6 ++++++
+>>  2 files changed, 27 insertions(+)
+>>
+>> diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+>> index e9493da2b111..dd035aaa1c33 100644
+>> --- a/drivers/firmware/psci.c
+>> +++ b/drivers/firmware/psci.c
+>> @@ -511,6 +511,26 @@ static void __init psci_init_migrate(void)
+>>  	pr_info("Trusted OS resident on physical CPU 0x%lx\n", cpuid);
+>>  }
+>>  
+>> +static void __init psci_init_smccc(u32 ver)
+>> +{
+>> +	int feature = PSCI_RET_NOT_SUPPORTED;
+>> +
+>> +	if (PSCI_VERSION_MAJOR(ver) >= 1)
+>> +		feature = psci_features(ARM_SMCCC_VERSION_FUNC_ID);
+>> +
+>> +	if (feature == PSCI_RET_NOT_SUPPORTED) {
+>> +		psci_ops.variant = SMCCC_VARIANT_1_0;
+>> +	} else {
+>> +		ver = invoke_psci_fn(ARM_SMCCC_VERSION_FUNC_ID, 0, 0, 0);
+>> +		if (ver != ARM_SMCCC_VERSION_1_1)
+>> +			psci_ops.variant = SMCCC_VARIANT_1_0;
+>> +		else
+>> +			psci_ops.variant = SMCCC_VARIANT_1_1;
+>> +	}
+>> +
+>> +	pr_info("SMC Calling Convention v1.%d\n", psci_ops.variant);
+>> +}
+>> +
+>>  static void __init psci_0_2_set_functions(void)
+>>  {
+>>  	pr_info("Using standard PSCI v0.2 function IDs\n");
+>> @@ -557,6 +577,7 @@ static int __init psci_probe(void)
+>>  	psci_0_2_set_functions();
+>>  
+>>  	psci_init_migrate();
+>> +	psci_init_smccc(ver);
 > 
-> Hello, Michal!
-> 
-> > diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
-> > index 2eaed1e2243d..67bdf19f8e5b 100644
-> > --- a/Documentation/cgroup-v2.txt
-> > +++ b/Documentation/cgroup-v2.txt
-> > @@ -1291,8 +1291,14 @@ This affects both system- and cgroup-wide OOMs. For a cgroup-wide OOM
-> >  the memory controller considers only cgroups belonging to the sub-tree
-> >  of the OOM'ing cgroup.
-> >  
-> > -The root cgroup is treated as a leaf memory cgroup, so it's compared
-> > -with other leaf memory cgroups and cgroups with oom_group option set.
->                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> IMO, this statement is important. Isn't it?
-> 
-> > +Leaf cgroups are compared based on their cumulative memory usage. The
-> > +root cgroup is treated as a leaf memory cgroup as well, so it's
-> > +compared with other leaf memory cgroups. Due to internal implementation
-> > +restrictions the size of the root cgroup is a cumulative sum of
-> > +oom_badness of all its tasks (in other words oom_score_adj of each task
-> > +is obeyed). Relying on oom_score_adj (appart from OOM_SCORE_ADJ_MIN)
-> > +can lead to overestimating of the root cgroup consumption and it is
-> 
-> Hm, and underestimating too. Also OOM_SCORE_ADJ_MIN isn't any different
-> in this case. Say, all tasks except a small one have OOM_SCORE_ADJ set to
-> -999, this means the root croup has extremely low chances to be elected.
-> 
-> > +therefore discouraged. This might change in the future, though.
-> 
-> Other than that looks very good to me.
+> Given that SMCCC_VARIANT_1_0 is already the default value (unless you do
+> the same we did with the conduit) we can move psci_init_smccc() call
+> inside the if below (that is there to detect a callable psci_features())
+> and remove the check in psci_init_smccc(), up to you.
 
-This?
+Yes, this makes sense.
 
-diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
-index 2eaed1e2243d..34ad80ee90f2 100644
---- a/Documentation/cgroup-v2.txt
-+++ b/Documentation/cgroup-v2.txt
-@@ -1291,8 +1291,15 @@ This affects both system- and cgroup-wide OOMs. For a cgroup-wide OOM
- the memory controller considers only cgroups belonging to the sub-tree
- of the OOM'ing cgroup.
- 
--The root cgroup is treated as a leaf memory cgroup, so it's compared
--with other leaf memory cgroups and cgroups with oom_group option set.
-+Leaf cgroups and cgroups with oom_group option set are compared based
-+on their cumulative memory usage. The root cgroup is treated as a
-+leaf memory cgroup as well, so it's compared with other leaf memory
-+cgroups. Due to internal implementation restrictions the size of
-+the root cgroup is a cumulative sum of oom_badness of all its tasks
-+(in other words oom_score_adj of each task is obeyed). Relying on
-+oom_score_adj (appart from OOM_SCORE_ADJ_MIN) can lead to over or
-+underestimating of the root cgroup consumption and it is therefore
-+discouraged. This might change in the future, though.
- 
- If there are no cgroups with the enabled memory controller,
- the OOM killer is using the "traditional" process-based approach.
+> 
+>>  
+>>  	if (PSCI_VERSION_MAJOR(ver) >= 1) {
+>>  		psci_init_cpu_suspend();
+>> diff --git a/include/linux/psci.h b/include/linux/psci.h
+>> index f2679e5faa4f..83fd16a37be3 100644
+>> --- a/include/linux/psci.h
+>> +++ b/include/linux/psci.h
+>> @@ -31,6 +31,11 @@ enum psci_conduit {
+>>  	PSCI_CONDUIT_HVC,
+>>  };
+>>  
+>> +enum smccc_variant {
+>> +	SMCCC_VARIANT_1_0,
+>> +	SMCCC_VARIANT_1_1,
+>> +};
+>> +
+>>  struct psci_operations {
+>>  	u32 (*get_version)(void);
+>>  	int (*cpu_suspend)(u32 state, unsigned long entry_point);
+>> @@ -41,6 +46,7 @@ struct psci_operations {
+>>  			unsigned long lowest_affinity_level);
+>>  	int (*migrate_info_type)(void);
+>>  	enum psci_conduit conduit;
+>> +	enum smccc_variant variant;
+> 
+> Nit: I would add an smccc_ prefix to the variant field (or rename it
+> to smccc_version).
+
+I've renamed both the field and the enum to smccc_version (as well as
+the members of the enum). This is definitely more consistent with the
+symbols exposed by arm-smccc.h.
+
+> 
+> You can add my:
+> 
+> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> 
+
+Thanks,
+
+	M.
 -- 
-Michal Hocko
-SUSE Labs
+Jazz is not dead. It just smells funny...
