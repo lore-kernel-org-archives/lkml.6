@@ -1,87 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751724AbeA3K2Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 05:28:24 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:36721 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751273AbeA3K2X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 05:28:23 -0500
-Date: Tue, 30 Jan 2018 11:27:40 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Michael Grzeschik <mgr@pengutronix.de>, a.zummo@towertech.it,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, jdelvare@suse.com, kernel@pengutronix.de,
-        Denis.Osterland@diehl.com
-Subject: Re: [PATCH 4/4] rtc: isl1208: add support for isl1219 with hwmon for
- tamper detection
-Message-ID: <20180130102740.GD2809@piout.net>
-References: <20180123121801.4214-1-m.grzeschik@pengutronix.de>
- <20180123121801.4214-5-m.grzeschik@pengutronix.de>
- <20180123182254.GA27379@roeck-us.net>
- <20180124090333.r5o2mzpm4q536w4r@pengutronix.de>
- <20180129215919.GA17988@roeck-us.net>
+        id S1751916AbeA3K26 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 05:28:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42400 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751474AbeA3K25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 05:28:57 -0500
+Date: Tue, 30 Jan 2018 11:28:55 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Christian.Koenig@amd.com, linux-mm@kvack.org,
+        amd-gfx@lists.freedesktop.org, Roman Gushchin <guro@fb.com>
+Subject: Re: [RFC] Per file OOM badness
+Message-ID: <20180130102855.GY21609@dhcp22.suse.cz>
+References: <20180118170006.GG6584@dhcp22.suse.cz>
+ <20180123152659.GA21817@castle.DHCP.thefacebook.com>
+ <20180123153631.GR1526@dhcp22.suse.cz>
+ <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
+ <20180124092847.GI1526@dhcp22.suse.cz>
+ <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
+ <20180124110141.GA28465@dhcp22.suse.cz>
+ <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
+ <20180124115059.GC28465@dhcp22.suse.cz>
+ <60e18da8-4d6e-dec9-7aef-ff003605d513@daenzer.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180129215919.GA17988@roeck-us.net>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <60e18da8-4d6e-dec9-7aef-ff003605d513@daenzer.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/01/2018 at 13:59:19 -0800, Guenter Roeck wrote:
-> On Wed, Jan 24, 2018 at 10:03:33AM +0100, Michael Grzeschik wrote:
-> [ ... ]
-> > > > +
-> > > > diff --git a/Documentation/hwmon/sysfs-interface b/Documentation/hwmon/sysfs-interface
-> > > > index fc337c317c673..a12b3c2b2a18c 100644
-> > > > --- a/Documentation/hwmon/sysfs-interface
-> > > > +++ b/Documentation/hwmon/sysfs-interface
-> > > > @@ -702,6 +702,13 @@ intrusion[0-*]_alarm
-> > > >  		the user. This is done by writing 0 to the file. Writing
-> > > >  		other values is unsupported.
-> > > >  
-> > > > +intrusion[0-*]_timestamp
-> > > > +		Chassis intrusion detection
-> > > > +		YYYY-MM-DD HH:MM:SS UTC (ts.sec): intrusion detected
-> > > > +		RO
-> > > > +		The corresponding timestamp on which the intrustion
-> > > > +		was detected.
-> > > > +
-> > > 
-> > > Sneaky. Nack. You don't just add attributes to the ABI because you want it,
-> > > without serious discussion, and much less so hidden in an RTC driver
-> > > (and even less as unparseable attribute).
+On Tue 30-01-18 10:29:10, Michel Dänzer wrote:
+> On 2018-01-24 12:50 PM, Michal Hocko wrote:
+> > On Wed 24-01-18 12:23:10, Michel Dänzer wrote:
+> >> On 2018-01-24 12:01 PM, Michal Hocko wrote:
+> >>> On Wed 24-01-18 11:27:15, Michel Dänzer wrote:
+> > [...]
+> >>>> 2. If the OOM killer kills a process which is sharing BOs with another
+> >>>> process, this should result in the other process dropping its references
+> >>>> to the BOs as well, at which point the memory is released.
+> >>>
+> >>> OK. How exactly are those BOs mapped to the userspace?
+> >>
+> >> I'm not sure what you're asking. Userspace mostly uses a GEM handle to
+> >> refer to a BO. There can also be userspace CPU mappings of the BO's
+> >> memory, but userspace doesn't need CPU mappings for all BOs and only
+> >> creates them as needed.
 > > 
-> > Right; but it was not meant to be sneaky. I should have stick to my first
-> > thought and label this patch RFC. Sorry for that.
-> > 
-> > > In addition to that, I consider the attribute unnecessary. The intrusion
-> > > already generates an event which should be sufficient for all practical
-> > > purposes.
-> > 
-> > Would it make sense in between the other sysfs attributes of this driver?
-> > 
-> I don't understand what you mean with that, sorry.
+> > OK, I guess you have to bear with me some more. This whole stack is a
+> > complete uknonwn. I am mostly after finding a boundary where you can
+> > charge the allocated memory to the process so that the oom killer can
+> > consider it. Is there anything like that? Except for the proposed file
+> > handle hack?
 > 
-> From an ABI perspective, the attibute doesn't add value since it is
-> highly device specific (or at least it is the only chip I am aware of
-> which reports such a time stamp). Feel free to add the attribute to the
-> driver and document it, but not as part of the hwmon ABI. In that
-> case I would be inclined to accept it. However, keep in mind that
-> your version, reporting a human readable date/time, would effectively
-> preclude it from ever making it into the ABI.
-> 
+> How about the other way around: what APIs can we use to charge /
+> "uncharge" memory to a process? If we have those, we can experiment with
+> different places to call them.
 
-Actually, there are many RTCs that are able to register one or more
-timestamps. My plan was to add support for that soon but I was not
-planning to do so in the hwmon ABI as this may be used for something
-that is not intrusion detection (interval timers for example).
-
+add_mm_counter() and I would add a new counter e.g. MM_KERNEL_PAGES.
 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Michal Hocko
+SUSE Labs
