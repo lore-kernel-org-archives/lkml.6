@@ -1,71 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeA3M5W (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:57:22 -0500
-Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:50700 "EHLO
-        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751932AbeA3M5U (ORCPT
+        id S1752174AbeA3M6g (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:58:36 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33706 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751577AbeA3M6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:57:20 -0500
-Date: Tue, 30 Jan 2018 12:57:18 +0000
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net,
-        srinivas.pandruvada@linux.intel.com
-Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
- candidate and the basis for SIS
-Message-ID: <20180130125718.iwntjuvcp3yplvdx@techsingularity.net>
-References: <20180130104555.4125-1-mgorman@techsingularity.net>
- <20180130104555.4125-5-mgorman@techsingularity.net>
- <20180130115054.GA2269@hirez.programming.kicks-ass.net>
+        Tue, 30 Jan 2018 07:58:33 -0500
+X-Google-Smtp-Source: AH8x225SuvdLRqz3V5gRpaiiBzs+3zE0MxGpql1q7VWITK4voK0Z/961u3wndCQAR3MhVJqUo7rr6g==
+Subject: Re: [PATCH v2 1/5] dt-bindings: pwrap: mediatek: add pwrap support
+ for MT6797
+To: argus.lin@mediatek.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Chenglin Xu <chenglin.xu@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>, wsd_upstream@mediatek.com,
+        henryc.chen@mediatek.com, flora.fu@mediatek.com,
+        Chen Zhong <chen.zhong@mediatek.com>,
+        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+        "shailendra . v" <shailendra.v@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20180129090944.28687-1-argus.lin@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <ffcadc29-c6f2-eb8c-b662-1c0016648cbc@gmail.com>
+Date: Tue, 30 Jan 2018 13:58:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20180130115054.GA2269@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180129090944.28687-1-argus.lin@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 12:50:54PM +0100, Peter Zijlstra wrote:
-> On Tue, Jan 30, 2018 at 10:45:55AM +0000, Mel Gorman wrote:
-> > The select_idle_sibling (SIS) rewrite in commit 10e2f1acd010 ("sched/core:
-> > Rewrite and improve select_idle_siblings()") replaced a domain iteration
-> > with a search that broadly speaking does a wrapped walk of the scheduler
-> > domain sharing a last-level-cache. While this had a number of improvements,
-> > one consequence is that two tasks that share a waker/wakee relationship push
-> > each other around a socket. Even though two tasks may be active, all cores
-> > are evenly used. This is great from a search perspective and spreads a load
-> > across individual cores but it has adverse consequences for cpufreq. As each
-> > CPU has relatively low utilisation, cpufreq may decide the utilisation is
-> > too low to used a higher P-state and overall computation throughput suffers.
+
+
+On 01/29/2018 10:09 AM, argus.lin@mediatek.com wrote:
+> From: Argus Lin <argus.lin@mediatek.com>
 > 
-> > While individual cpufreq and cpuidle drivers may compensate by artifically
-> > boosting P-state (at c0) or avoiding lower C-states (during idle), it does
-> > not help if hardware-based cpufreq (e.g. HWP) is used.
+> We add pwrap support for MT6797 SoCs.
 > 
-> Not saying this patch is bad; but Rafael / Srinivas we really should do
-> better. Why isn't cpufreq (esp. sugov) fixing this? HWP or not, we can
-> still give it hints, and it looks like we're not doing that.
+> Signed-off-by: Argus Lin <argus.lin@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> index bf80e3f96f8c..f9987c30f0d5 100644
+> --- a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> +++ b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> @@ -19,6 +19,7 @@ IP Pairing
+>  Required properties in pwrap device node.
+>  - compatible:
+>  	"mediatek,mt2701-pwrap" for MT2701/7623 SoCs
+> +	"mediatek,mt6797-pwrap" for MT6797 SoCs
 
-I'm not sure if HWP can fix it because of the per-cpu nature of its
-decisions. I believe it can only give the most basic of hints to hardware
-like an energy performance profile or bias (EPP and EPB respectively).
-Of course HWP can be turned off but not many people can detect that it's
-an appropriate decision, or even desirable, and there is always the caveat
-that disabling it increases the system CPU footprint.
+Looks good to me. When you send the new series, would you mind to add a cover
+letter in which you describe which changes you made in every version of the
+patch series? That makes the reviewing for me much easier :)
 
-> Mel, what hardware are you testing this on?
+Thanks!
 
-The primary one was a single socket skylake machine with 8 threads (HT
-enabled). However, 11 machines were used in total across multiple
-generations to reduce the chance of a regression slipping in that was
-machine-specific.
-
-
--- 
-Mel Gorman
-SUSE Labs
+>  	"mediatek,mt7622-pwrap" for MT7622 SoCs
+>  	"mediatek,mt8135-pwrap" for MT8135 SoCs
+>  	"mediatek,mt8173-pwrap" for MT8173 SoCs
+> -- 
+> 2.12.5
+> 
+> ************* Email Confidentiality Notice
+>  ********************
+> The information contained in this e-mail message (including any 
+> attachments) may be confidential, proprietary, privileged, or otherwise
+> exempt from disclosure under applicable laws. It is intended to be 
+> conveyed only to the designated recipient(s). Any use, dissemination, 
+> distribution, printing, retaining or copying of this e-mail (including its 
+> attachments) by unintended recipient(s) is strictly prohibited and may 
+> be unlawful. If you are not an intended recipient of this e-mail, or believe
+>  
+> that you have received this e-mail in error, please notify the sender 
+> immediately (by replying to this e-mail), delete any and all copies of 
+> this e-mail (including any attachments) from your system, and do not
+> disclose the content of this e-mail to any other person. Thank
+>  you!
+> 
