@@ -1,113 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753492AbeA3Q5S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 11:57:18 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:46525 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752104AbeA3Q5Q (ORCPT
+        id S1753519AbeA3Q5m (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 11:57:42 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34325 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753502AbeA3Q5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 11:57:16 -0500
-X-Google-Smtp-Source: AH8x224EFMZ7swjKkVeNOB0dbD5gldkerLNkoXW4fJu3aQnDjitL5juaBXmTXk/DDGehdeBTABuQrg==
-Date: Tue, 30 Jan 2018 10:57:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: richard.gong@linux.intel.com
-Cc: mark.rutland@arm.com, richard.gong@intel.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv1] dt-bindings: misc: add Intel Stratix10 service layer
- binding
-Message-ID: <20180130165713.nbib54mbj6fhofnt@rob-hp-laptop>
-References: <1516735502-16745-1-git-send-email-richard.gong@linux.intel.com>
- <1516735502-16745-2-git-send-email-richard.gong@linux.intel.com>
+        Tue, 30 Jan 2018 11:57:39 -0500
+X-Google-Smtp-Source: AH8x224LTc7jl4DHDoDoMzIogdnE2RFpn34cqfsXY9GOgIfmvq/x73j4IclAJFGzHwdSsieLcWrZnot7OER/A3iImzs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1516735502-16745-2-git-send-email-richard.gong@linux.intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <beb9f9b4-7bc0-4a3a-73c2-0828febbd06c@oracle.com>
+References: <20180109120311.27565-10-pbonzini@redhat.com> <6dc02278-7004-1794-3705-69c8cad86be4@oracle.com>
+ <CALMp9eSVC=LO-SrPkA3m6eSpgJ6X4rNCRCf3uvtJEdMG_B72cQ@mail.gmail.com> <beb9f9b4-7bc0-4a3a-73c2-0828febbd06c@oracle.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Tue, 30 Jan 2018 08:57:37 -0800
+Message-ID: <CALMp9eT6i9bhG005S5sqV-Y1RUhsc+AXE42ww8Ej+TXSjD6tEg@mail.gmail.com>
+Subject: Re: [9/8] KVM: x86: limit MSR_IA32_SPEC_CTRL access based on CPUID availability
+To: Mihai Carabas <mihai.carabas@oracle.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Anthony Liguori <aliguori@amazon.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Woodhouse <dwmw@amazon.co.uk>, Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 23, 2018 at 01:25:02PM -0600, richard.gong@linux.intel.com wrote:
-> From: Richard Gong <richard.gong@intel.com>
-> 
-> Add a device tree binding for the Intel Stratix10 service layer driver
-> 
-> Signed-off-by: Richard Gong <richard.gong@intel.com>
-> ---
->  .../devicetree/bindings/misc/intel-service.txt     | 56 ++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/misc/intel-service.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/misc/intel-service.txt b/Documentation/devicetree/bindings/misc/intel-service.txt
-> new file mode 100644
-> index 0000000..254e4a1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/misc/intel-service.txt
-> @@ -0,0 +1,56 @@
-> +Intel Service Layer Driver for Stratix10 SoC
-> +============================================
-> +Intel Stratix10 SoC is composed of a 64 bit quad-core ARM Cortex A53 hard
-> +processor system (HPS) and Secure Device Manager (SDM). When the FPGA is
-> +configured from HPS, there needs to be a way for HPS to notify SDM the
-> +location and size of the configuration data. Then SDM will get the
-> +configuration data from that location and perform the FPGA configuration.
-> +
-> +To meet the whole system security needs and support virtual machine requesting
-> +communication with SDM, only the secure world of software (EL3, Exception
-> +Layer 3) can interface with SDM. All software entities running on other
-> +exception layers must channel through the EL3 software whenever it needs
-> +service from SDM.
-> +
-> +Intel Stratix10 service layer driver, running at privileged exception level
-> +(EL1, Exception Layer 1), interfaces with the service providers and provides
-> +the services for FPGA configuration, QSPI, Crypto and warm reset. Service layer
-> +driver also manages secure monitor call (SMC) to communicate with secure monitor
-> +code running in EL3.
-> +
-> +Required properties:
-> +--------------------
-> +The following are the mandatory properties:
-> +
-> +- compatible:
-> +		"intc,svc-1.0"
-> +- method:
-> +		smc or hvc
-> +			smc - Secure Monitor Call
-> +			hvc - Hypervisor Call
+It's really hard to tell which patches are being proposed for which
+repositories, but assuming that everything else is correct, I don't
+think your condition is adequate. What if the physical CPU and the
+virtual CPU both have CPUID.(EAX=7H,ECX=0):EDX[26], but only the
+physical CPU has CPUID.(EAX=7H,ECX=0):EDX[27]? If the guest has write
+access to MSR_IA32_SPEC_CTRL, it can set MSR_IA32_SPEC_CTRL[1]
+(STIBP), even though setting that bit in the guest should raise #GP.
 
-Do you really need to support hvc or you are just copying and pasting 
-from other implementations?
-
-> +- memory-region:
-> +		phandle to the reserved memory node. See
-> +		Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-> +		for details
-
-Please also put the svc node under the /firmware node and state that in 
-the binding.
-
-> +
-> +Example:
-> +--------
-> +
-> +	reserved-memory {
-> +                #address-cells = <2>;
-> +                #size-cells = <2>;
-> +                ranges;
-> +
-> +                service_reserved: svcbuffer@0 {
-> +                        compatible = "shared-dma-pool";
-> +                        reg = <0x0 0x0 0x0 0x1000000>;
-> +                        alignment = <0x1000>;
-> +                        no-map;
-> +                };
-> +        };
-> +
-> +	svc {
-> +		compatible = "intc,svc-1.0";
-> +		method = "smc";
-> +		memory-region = <&service_reserved>
-> +	};
-> -- 
-> 2.7.4
-> 
+On Tue, Jan 30, 2018 at 8:43 AM, Mihai Carabas <mihai.carabas@oracle.com> wrote:
+> On 30.01.2018 18:33, Jim Mattson wrote:
+>>
+>> All MSR intercepts are enabled by default, so I don't think this patch
+>> does anything at all, unless I'm missing some context.
+>>
+>
+> Currently on upstream some MSR are intercepted:
+> https://github.com/torvalds/linux/blob/master/arch/x86/kvm/vmx.c#L6838
+>
+> In particular to this patch, the MSR_IA32_SPEC_CTRL intercept is disabled in
+> 3/8: https://patchwork.kernel.org/patch/10151889/
+>
+>
+>
+>> On Tue, Jan 30, 2018 at 5:21 AM, Mihai Carabas <mihai.carabas@oracle.com>
+>> wrote:
+>>>
+>>> Hello Paolo,
+>>>
+>>> I've back ported this patch on 4.1, after adding the per-vcpu MSR bitmap.
+>>> Also enabled the SPEC_CTRL_MSR intercept if qemu instructed so [1].
+>>>
+>>> Reviewed-by: Mihai Carabas <mihai.carabas@oracle.com>
+>>>
+>>> [1]
+>>> +++ b/arch/x86/kvm/vmx.c
+>>> @@ -8391,6 +8391,16 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm
+>>> *kvm, unsigned int id)
+>>>          vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PRED_CMD,
+>>> MSR_TYPE_R | MSR_TYPE_W);
+>>>          vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_BNDCFGS,
+>>> MSR_TYPE_R | MSR_TYPE_W);
+>>>
+>>> +       /*
+>>> +        * If the physical CPU or the vCPU of this VM doesn't
+>>> +        * support SPEC_CTRL feature, catch each access to it.
+>>> +        */
+>>> +       if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
+>>> +            !guest_cpuid_has_spec_ctrl(&vmx->vcpu))
+>>> +               vmx_enable_intercept_for_msr(
+>>> +                       msr_bitmap,
+>>> +                       MSR_IA32_SPEC_CTRL,
+>>> +                       MSR_TYPE_R | MSR_TYPE_W);
+>>>
+>>>          /*
+>>>           * If PML is turned on, failure on enabling PML just results in
+>>> failure
+>>>
+>>>
+>>>
+>>> On 09.01.2018 14:03, Paolo Bonzini wrote:
+>>>>
+>>>>
+>>>> MSR_IA32_SPEC_CTRL is not available unless CPU[7,0].EDX[26] is 1.
+>>>> Check that against host CPUID or guest CPUID, respectively for
+>>>> host-initiated and guest-initiated accesses.
+>>>>
+>>>> Suggested-by: Jim Mattson <jmattson@google.com>
+>>>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+>>>> ---
+>>>>          This is for after X86_FEATURE_SPEC_CTRL is added to Linux, but
+>>>>          I still wanted to ack Jim's improvement.
+>>>>
+>>>>    arch/x86/kvm/svm.c | 8 ++++++++
+>>>>    arch/x86/kvm/vmx.c | 8 ++++++++
+>>>>    2 files changed, 16 insertions(+)
+>>>>
+>>>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+>>>> index 97126c2bd663..3a646580d7c5 100644
+>>>> --- a/arch/x86/kvm/svm.c
+>>>> +++ b/arch/x86/kvm/svm.c
+>>>> @@ -3648,6 +3648,10 @@ static int svm_get_msr(struct kvm_vcpu *vcpu,
+>>>> struct msr_data *msr_info)
+>>>>                  msr_info->data = svm->nested.vm_cr_msr;
+>>>>                  break;
+>>>>          case MSR_IA32_SPEC_CTRL:
+>>>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
+>>>> +                   (!msr_info->host_initiated &&
+>>>> +                            !guest_cpuid_has(vcpu,
+>>>> X86_FEATURE_SPEC_CTRL)))
+>>>> +                       return 1;
+>>>>                  msr_info->data = svm->spec_ctrl;
+>>>>                  break;
+>>>>          case MSR_IA32_UCODE_REV:
+>>>> @@ -3806,6 +3810,10 @@ static int svm_set_msr(struct kvm_vcpu *vcpu,
+>>>> struct msr_data *msr)
+>>>>                  vcpu_unimpl(vcpu, "unimplemented wrmsr: 0x%x data
+>>>> 0x%llx\n", ecx, data);
+>>>>                  break;
+>>>>          case MSR_IA32_SPEC_CTRL:
+>>>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
+>>>> +                   (!msr_info->host_initiated &&
+>>>> +                            !guest_cpuid_has(vcpu,
+>>>> X86_FEATURE_SPEC_CTRL)))
+>>>> +                       return 1;
+>>>>                  svm->spec_ctrl = data;
+>>>>                  break;
+>>>>          case MSR_IA32_APICBASE:
+>>>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>>>> index 49b4a2d61603..42bc7ee293e4 100644
+>>>> --- a/arch/x86/kvm/vmx.c
+>>>> +++ b/arch/x86/kvm/vmx.c
+>>>> @@ -3368,6 +3368,10 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu,
+>>>> struct msr_data *msr_info)
+>>>>                  msr_info->data = guest_read_tsc(vcpu);
+>>>>                  break;
+>>>>          case MSR_IA32_SPEC_CTRL:
+>>>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
+>>>> +                   (!msr_info->host_initiated &&
+>>>> +                    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL)))
+>>>> +                       return 1;
+>>>>                  msr_info->data = to_vmx(vcpu)->spec_ctrl;
+>>>>                  break;
+>>>>          case MSR_IA32_SYSENTER_CS:
+>>>> @@ -3510,6 +3514,10 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu,
+>>>> struct msr_data *msr_info)
+>>>>                  kvm_write_tsc(vcpu, msr_info);
+>>>>                  break;
+>>>>          case MSR_IA32_SPEC_CTRL:
+>>>> +               if (!static_cpu_has(X86_FEATURE_SPEC_CTRL) ||
+>>>> +                   (!msr_info->host_initiated &&
+>>>> +                    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL)))
+>>>> +                       return 1;
+>>>>                  to_vmx(vcpu)->spec_ctrl = data;
+>>>>                  break;
+>>>>          case MSR_IA32_CR_PAT:
+>>>>
+>>>
+>
