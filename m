@@ -1,44 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752068AbeA3NGP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 08:06:15 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:35138 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751577AbeA3NGO (ORCPT
+        id S1752189AbeA3NGY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 08:06:24 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:38745 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751831AbeA3NGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 08:06:14 -0500
-Date: Tue, 30 Jan 2018 14:06:06 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mel Gorman <mgorman@techsingularity.net>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
- candidate and the basis for SIS
-Message-ID: <20180130130606.GH2295@hirez.programming.kicks-ass.net>
-References: <20180130104555.4125-1-mgorman@techsingularity.net>
- <20180130104555.4125-5-mgorman@techsingularity.net>
- <20180130115349.GB2269@hirez.programming.kicks-ass.net>
+        Tue, 30 Jan 2018 08:06:20 -0500
+X-Google-Smtp-Source: AH8x227XYOqKxEQ7nmWFH8Wae+cOthy/FinepR/NW9udDyxtVsA4+gYLO9jzh1ltfEaqYzlVgwL28CEgDWfVGxPw9Ls=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180130115349.GB2269@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <4fb17712-3f98-c407-42b3-4601a4f294d9@arm.com>
+References: <20171222075934.f6yenvcb2zkf2ysd@hirez.programming.kicks-ass.net>
+ <CAKfTPtC0+5zjvgNXMyVcvnnyJh0giQgJHtx+5p-GEpjUW1x8eg@mail.gmail.com>
+ <20171222082915.4lcb7xyyooqyjpia@hirez.programming.kicks-ass.net>
+ <20171222091221.ow5vn3ydx3hj4nht@hirez.programming.kicks-ass.net>
+ <CAKfTPtAzutuyA7D2qOErKPwdFaRK082YAtVn4ci8hAOUvL3zMQ@mail.gmail.com>
+ <20171222185629.lysjebfifgdwvvhu@hirez.programming.kicks-ass.net>
+ <20171222204247.kyc6ugyyu3ei7zhs@hirez.programming.kicks-ass.net>
+ <CAKfTPtD13p-n9otxq23rQZZKUfA1r03bxYBSDtSdm5HbWX7H6Q@mail.gmail.com>
+ <20180115082609.GA6320@linaro.org> <20180118103807.GD28799@e105550-lin.cambridge.arm.com>
+ <20180124082536.GA32318@linaro.org> <b1efd041-2faa-76e0-7d9b-3d2917e03012@arm.com>
+ <CAKfTPtCmFC2mmR9SBTjjuuzPS8tFNmmrSRMmKrOrkh3uPkYYoA@mail.gmail.com> <4fb17712-3f98-c407-42b3-4601a4f294d9@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 30 Jan 2018 14:05:59 +0100
+Message-ID: <CAKfTPtApSFMNEQTzBjRRrHES2ZT=kCuc7SSZuk5Et1jTvGBv4g@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/5] sched: Add NOHZ_STATS_KICK
+To: Valentin Schneider <valentin.schneider@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 12:53:49PM +0100, Peter Zijlstra wrote:
-> On Tue, Jan 30, 2018 at 10:45:55AM +0000, Mel Gorman wrote:
-> > The results can be less dramatic on NUMA where automatic balancing interferes
-> > with the test. It's also known that network benchmarks running on localhost
-> > also benefit quite a bit from this patch (roughly 10% on netperf RR for UDP
-> > and TCP depending on the machine). Hackbench also seens small improvements
-> > (6-11% depending on machine and thread count). The facebook schbench was also
-> > tested but in most cases showed little or no different to wakeup latencies.
-> 
-> What cpufreq setting were you using for these tests?
+On 30 January 2018 at 12:41, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+> (Resending because I snuck in some HTML... Apologies)
+>
+> On 01/30/2018 08:32 AM, Vincent Guittot wrote:
+>>
+>> On 29 January 2018 at 20:31, Valentin Schneider
+>> <valentin.schneider@arm.com> wrote:
+>>>
+>>> Hi Vincent, Peter,
+>>>
+>>> I've been running some tests on your patches (Peter's base + the 2 from
+>>> Vincent). The results themselves are hosted at [1].
+>>> The base of those tests is the same: a task ("accumulator") is ran for 5
+>>> seconds (arbitrary value) to accumulate some load, then goes to sleep for
+>>> .5
+>>> seconds.
+>>>
+>>> I've set up 3 test scenarios:
+>>>
+>>> Update by nohz_balance_kick()
+>>> -----------------------------
+>>> Right before the "accumulator" task goes to sleep, a CPU-hogging task
+>>> (100%
+>>> utilization) is spawned on another CPU. It won't go idle so the only way
+>>> to
+>>> update the blocked load generated by "accumulator" is to kick an ILB
+>>> (NOHZ_STATS_KICK).
+>>>
+>>> The test shows that this is behaving nicely - we keep kicking an ILB
+>>> every
+>>> ~36ms (see next test for comments on that) until there is no more blocked
+>>> load. I did however notice some interesting scenarios: after the load has
+>>> been fully decayed, a tiny background task can spawn and end in less than
+>>> a
+>>> scheduling period. However, it still goes through
+>>> nohz_balance_enter_idle(),
+>>> and thus sets nohz.stats_state, which will later cause an ILB kick.
+>>>
+>>> This makes me wonder if it's worth kicking ILBs for such tiny load values
+>>> -
+>>> perhaps it could be worth having a margin to set rq->has_blocked_load ?
+>>
+>>
+>> So it's difficult to know what will be the load/utilization on the
+>> cfs_rq once the cpu wakes up. Even if it's for a really short time,
+>> that's doesn't mean that the load/utilization is small because it can
+>> be the migration of a big task that just have a very short wakes up
+>> this time.
+>> That's why I don't make any assumption on the utilization/load value
+>> when a cpu goes to sleep
+>>
+>
+> Right, hadn't thought about those kind of migrations.
+>
+>>>
+>>> Furthermore, this tiny task will cause the ILB to iterate over all of the
+>>> idle CPUs, although only one has stale load. For load update via
+>>> NEWLY_IDLE
+>>> load_balance() we use:
+>>>
+>>> static bool update_nohz_stats(struct rq *rq)
+>>> {
+>>>      if (!rq->has_blocked_load)
+>>>       return false;
+>>>      [...]
+>>> }
+>>>
+>>> But for load update via _nohz_idle_balance(), we iterate through all of
+>>> the
+>>> nohz CPUS and unconditionally call update_blocked_averages(). This could
+>>> be
+>>> avoided by remembering which CPUs have stale load before going idle.
+>>> Initially I thought that was what nohz.stats_state was for, but it isn't.
+>>> With Vincent's patches it's only ever set to either 0 or 1, but we could
+>>> use
+>>> it as a CPU mask, and use it to skip nohz CPUs that don't have stale load
+>>> in
+>>> _nohz_idle_balance() (when NOHZ_STATS_KICK).
+>>
+>>
+>> I have studied a way to keep track of how many cpus still have blocked
+>> load to try to minimize the number of useless ilb kick but this add
+>> more atomic operations which can impact the system throughput with
+>> heavy load and lot of very small wake up. that's why i have propose
+>> this solution which is more simple. But it's probably just a matter of
+>> where we want to "waste" time. Either we accept to spent a bit more
+>> time to check the state of idle CPUs or we accept to kick ilb from
+>> time to time for no good reason.
+>>
+>
+> Agreed. I have the feeling that spending more time doing atomic ops could be
+> worth it - I'll try to test this out and see if it's actually relevant.
+>
+>>>
+>>> Update by idle_balance()
+>>> ------------------------
+>>> Right before the "accumulator" task goes to sleep, a tiny periodic
+>>> (period=32ms) task is spawned on another CPU. It's expected that it will
+>>> update the blocked load in idle_balance(), either by running
+>>> _nohz_idle_balance() locally or kicking an ILB (The overload flag
+>>> shouldn't
+>>> be set in this test case, so we shouldn't go through the NEWLY_IDLE
+>>> load_balance()).
+>>>
+>>> This also seems to be working fine, but I'm noticing a delay between load
+>>> updates that is closer to 64ms than 32ms. After digging into it I found
+>>> out
+>>> that the time checks done in idle_balance() and nohz_balancer_kick() are
+>>> time_after(jiffies, next_stats), but IMHO they should be
+>>> time_after_eq(jiffies, next_stats) to have 32ms-based updates. This also
+>>> explains the 36ms periodicity of the updates in the test above.
+>>
+>>
+>> I have use the 32ms as a minimum value between update. We must use the
+>> time_after()  if we want to have at least 32ms between each update. We
+>> will have a 36ms period if the previous update was triggered by the
+>> tick (just after in fact) but there will be only 32ms if the last
+>> update was done during an idle_balance that happens just before the
+>> tick. With  time_after_eq,  the update period will between 28 and
+>> 32ms.
+>>
+>> Then, I mention a possible optimization by using time_after_eq in the
+>> idle_balance() so a newly_idle cpu will have more chance (between 0
+>> and 4ms for hz250) to do the update before a ilb is kicked
+>>
+>
+> IIUC with time_after() the update period should be within ]32, 36] ms, but
+> it looks like I'm always on that upper bound in my tests.
+>
+> When evaluating whether we need to kick_ilb() for load updates, we'll always
+> be right after the tick (excluding the case in idle_balance), which explains
+> why we wait for an extra tick in the "update by nohz_balancer_kick()" test
+> case.
+>
+> The tricky part is that, as you say, the update by idle_balance() can happen
+> anywhere between [0-4[ ms after a tick (or before, depending on how you see
+> it), so using time_after_eq could make the update period < 32ms - and this
+> also impacts a load update by nohz_balance_kick() if the previous update was
+> done by idle_balance()... This is what causes the update period to be closer
+> to 64ms in my test case, but it's somewhat artificial because I only have a
+> 32ms-periodic task running - if there was any other task running the period
+> could remain in that ]32, 36] ms interval.
+>
+> Did I get that right ?
 
-I cannot measure any hackbench variation one way or the other with these
-patches using 'performance' mode. So I'll assume you've been running
-things with HWP or something.
+yes
+
+>
+>> Thanks,
+>> Vincent
+>>
+>>>
+>>>
+>>> No update (idle system)
+>>> -----------------------
+>>> Nothing special here, just making sure nothing happens when the system is
+>>> fully idle. On a sidenote, that's relatively hard to achieve - I had to
+>>> switch over to Juno because my HiKey960 gets interrupts every 16ms. The
+>>> Juno
+>>> still gets woken up every now and then but it's a bit quieter.
+>>>
+>>>
+>>> [1]:
+>>> https://gist.github.com/valschneider/a8da7bb8e11fb1ec63a419710f56c0a0
+>>>
+>>>
+>>>
+
+
+[snip]
