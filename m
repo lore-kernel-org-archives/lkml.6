@@ -1,71 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752331AbeA3Ow4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 09:52:56 -0500
-Received: from foss.arm.com ([217.140.101.70]:54752 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751423AbeA3Owy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 09:52:54 -0500
-Subject: Re: [PATCH v2 04/16] arm/arm64: KVM: Add PSCI_VERSION helper
-To: Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jon Masters <jcm@redhat.com>
-References: <20180129174559.1866-1-marc.zyngier@arm.com>
- <20180129174559.1866-5-marc.zyngier@arm.com>
- <818aa8cd-9fa3-3234-297b-dea8540e1bb2@arm.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <09b4dff2-4c8b-e9c5-a238-a10a9bce4f45@arm.com>
-Date: Tue, 30 Jan 2018 14:52:50 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752425AbeA3OyB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 09:54:01 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49123 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751404AbeA3Ox7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 09:53:59 -0500
+From: Colin King <colin.king@canonical.com>
+To: Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] esp4: remove redundant initialization of pointer esph
+Date: Tue, 30 Jan 2018 14:53:48 +0000
+Message-Id: <20180130145348.32202-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <818aa8cd-9fa3-3234-297b-dea8540e1bb2@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/01/18 13:15, Robin Murphy wrote:
-> On 29/01/18 17:45, Marc Zyngier wrote:
->> As we're about to trigger a PSCI version explosion, it doesn't
->> hurt to introduce a PSCI_VERSION helper that is going to be
->> used everywhere.
->>
->> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>   include/kvm/arm_psci.h | 5 +++--
->>   virt/kvm/arm/psci.c    | 2 +-
->>   2 files changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/kvm/arm_psci.h b/include/kvm/arm_psci.h
->> index 2042bb909474..3a408c846c09 100644
->> --- a/include/kvm/arm_psci.h
->> +++ b/include/kvm/arm_psci.h
->> @@ -18,8 +18,9 @@
->>   #ifndef __KVM_ARM_PSCI_H__
->>   #define __KVM_ARM_PSCI_H__
->>   
->> -#define KVM_ARM_PSCI_0_1	1
->> -#define KVM_ARM_PSCI_0_2	2
->> +#define PSCI_VERSION(x,y)	((((x) & 0x7fff) << 16) | ((y) & 0xffff))
-> 
-> I see virt/kvm/arm/psci.c already pulls in uapi/linux/psci.h, so maybe 
-> this guy could go in there alongside the other PSCI_VERSION_* gubbins?
+From: Colin Ian King <colin.king@canonical.com>
 
-Good point. Moved.
+Pointer esph is being assigned a value that is never read, esph is
+re-assigned and only read inside an if statement, hence the
+initialization is redundant and can be removed.
 
-Thanks,
+Cleans up clang warning:
+net/ipv4/esp4.c:657:21: warning: Value stored to 'esph' during
+its initialization is never read
 
-	M.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv4/esp4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
+index 296d0b956bfe..97689012b357 100644
+--- a/net/ipv4/esp4.c
++++ b/net/ipv4/esp4.c
+@@ -654,7 +654,7 @@ static void esp_input_restore_header(struct sk_buff *skb)
+ static void esp_input_set_header(struct sk_buff *skb, __be32 *seqhi)
+ {
+ 	struct xfrm_state *x = xfrm_input_state(skb);
+-	struct ip_esp_hdr *esph = (struct ip_esp_hdr *)skb->data;
++	struct ip_esp_hdr *esph;
+ 
+ 	/* For ESN we move the header forward by 4 bytes to
+ 	 * accomodate the high bits.  We will move it back after
 -- 
-Jazz is not dead. It just smells funny...
+2.15.1
