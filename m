@@ -1,65 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752867AbeA3Fvv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 00:51:51 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36647 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752293AbeA3Fvr (ORCPT
+        id S1752716AbeA3GDl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 01:03:41 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46424 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752325AbeA3GDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 00:51:47 -0500
-X-Google-Smtp-Source: AH8x226bpY7AnWbbvtmtIu2R6TWGREqzQCHB/+u8MSqO/hZhaD7GIdmUmJDRdiqDTJwk6AX59XBxJQ==
-From: Joel Stanley <joel@jms.id.au>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org
-Cc: Christopher Bostic <cbostic@linux.vnet.ibm.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Eddie James <eajames@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] fsi: core: Add check for master property no-scan-on-init
-Date: Tue, 30 Jan 2018 16:21:16 +1030
-Message-Id: <20180130055116.17411-3-joel@jms.id.au>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180130055116.17411-1-joel@jms.id.au>
-References: <20180130055116.17411-1-joel@jms.id.au>
+        Tue, 30 Jan 2018 01:03:39 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F28EC6024C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH 1/1] scsi: ufs-qcom: remove broken hci version quirk
+To: Asutosh Das <asutoshd@codeaurora.org>, subhashj@codeaurora.org,
+        cang@codeaurora.org, rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+References: <1517287281-8622-1-git-send-email-asutoshd@codeaurora.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <1cbfdeb0-084d-8f8b-ed66-d00fbed4a968@codeaurora.org>
+Date: Tue, 30 Jan 2018 11:33:32 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <1517287281-8622-1-git-send-email-asutoshd@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+Hi Asutosh,
 
-Prior to scanning a master check if the optional property
-no-scan-on-init is present.  If it is then avoid scanning.  This is
-necessary in cases where a master scan could interfere with another
-FSI master on the same bus.
 
-Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
-Acked-by: Jeremy Kerr <jk@ozlabs.org>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/fsi/fsi-core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+On 1/30/2018 10:11 AM, Asutosh Das wrote:
+> From: Subhash Jadavani <subhashj@codeaurora.org>
+>
+> UFSHCD_QUIRK_BROKEN_UFS_HCI_VERSION is only applicable for QCOM UFS host
+> controller version 2.x.y and this has been fixed from version 3.x.y
+> onwards, hence this change removes this quirk for version 3.x.y onwards.
+>
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
 
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index 8d8b25809452..4c03d6933646 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -901,6 +901,7 @@ static DEVICE_ATTR(break, 0200, NULL, master_break_store);
- int fsi_master_register(struct fsi_master *master)
- {
- 	int rc;
-+	struct device_node *np;
- 
- 	if (!master)
- 		return -EINVAL;
-@@ -928,7 +929,9 @@ int fsi_master_register(struct fsi_master *master)
- 		return rc;
- 	}
- 
--	fsi_master_scan(master);
-+	np = dev_of_node(&master->dev);
-+	if (!of_property_read_bool(np, "no-scan-on-init"))
-+		fsi_master_scan(master);
- 
- 	return 0;
- }
--- 
-2.15.1
+This patch and all other ufs patches that you have posted recently,
+do they all fall under one 'ufs-qcom fixes' patch series for fixes that
+we would want to do?
+If it is so, then please club them together in a series, so that
+it's easy for reviewers and maintainers to review, and keep track
+of all the patches that can get-in after the reviews.
+If they belong to two or more separate patch-series then please
+create such patch series.
+It's difficult to read through a lot of [PATCH 1/1] ... patch.
+
+Regards
+Vivek
+
+>   drivers/scsi/ufs/ufs-qcom.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> index 2b38db2..221820a 100644
+> --- a/drivers/scsi/ufs/ufs-qcom.c
+> +++ b/drivers/scsi/ufs/ufs-qcom.c
+> @@ -1098,7 +1098,7 @@ static void ufs_qcom_advertise_quirks(struct ufs_hba *hba)
+>   		hba->quirks |= UFSHCD_QUIRK_BROKEN_LCC;
+>   	}
+>   
+> -	if (host->hw_ver.major >= 0x2) {
+> +	if (host->hw_ver.major == 0x2) {
+>   		hba->quirks |= UFSHCD_QUIRK_BROKEN_UFS_HCI_VERSION;
+>   
+>   		if (!ufs_qcom_cap_qunipro(host))
