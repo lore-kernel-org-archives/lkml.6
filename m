@@ -1,72 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751765AbeA3Js4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 04:48:56 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33683 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751671AbeA3Jsp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:48:45 -0500
-X-Google-Smtp-Source: AH8x2250jpEZ9IwoXgG6p4Pb5IfrrDcFPjLAvQG+0Ubr7r4R20ZAarG3HkeZYfiv8f0ufyG9sMQGaQ==
-Date: Tue, 30 Jan 2018 09:48:41 +0000
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: jason.wessel@windriver.com, mingo@kernel.org, arnd@arndb.de,
-        broonie@kernel.org, kgdb-bugreport@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kdb: use ktime_get_mono_fast_ns() instead of
- ktime_get_ts()
-Message-ID: <20180130094841.x47uqbb5co3pe5zi@oak.lan>
-References: <3f15868475cb4b32353885ee03c983209279fa81.1517192387.git.baolin.wang@linaro.org>
+        id S1751582AbeA3Jvj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 04:51:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38045 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751249AbeA3Jvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 04:51:37 -0500
+Date: Tue, 30 Jan 2018 10:51:34 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Florian Westphal <fw@strlen.de>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, davem@davemloft.net,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, aarcange@redhat.com, yang.s@alibaba-inc.com,
+        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, linux-mm@kvack.org, rientjes@google.com,
+        akpm@linux-foundation.org, guro@fb.com,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [netfilter-core] kernel panic: Out of memory and no killable
+ processes... (2)
+Message-ID: <20180130095134.GU21609@dhcp22.suse.cz>
+References: <001a1144b0caee2e8c0563d9de0a@google.com>
+ <201801290020.w0T0KK8V015938@www262.sakura.ne.jp>
+ <20180129072357.GD5906@breakpoint.cc>
+ <20180129082649.sysf57wlp7i7ltb2@node.shutemov.name>
+ <20180129165722.GF5906@breakpoint.cc>
+ <20180129182811.fze4vrb5zd5cojmr@node.shutemov.name>
+ <20180129223522.GG5906@breakpoint.cc>
+ <20180130075226.GL21609@dhcp22.suse.cz>
+ <20180130081127.GH5906@breakpoint.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3f15868475cb4b32353885ee03c983209279fa81.1517192387.git.baolin.wang@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180130081127.GH5906@breakpoint.cc>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 10:22:51AM +0800, Baolin Wang wrote:
-> The kdb code will print the monotonic time by ktime_get_ts(), but
-> the ktime_get_ts() will be protected by a sequence lock, that will
-> introduce one deadlock risk if the lock was already held in the
-> context from which we entered the debugger.
+On Tue 30-01-18 09:11:27, Florian Westphal wrote:
+> Michal Hocko <mhocko@kernel.org> wrote:
+> > On Mon 29-01-18 23:35:22, Florian Westphal wrote:
+> > > Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > [...]
+> > > > I hate what I'm saying, but I guess we need some tunable here.
+> > > > Not sure what exactly.
+> > > 
+> > > Would memcg help?
+> > 
+> > That really depends. I would have to check whether vmalloc path obeys
+> > __GFP_ACCOUNT (I suspect it does except for page tables allocations but
+> > that shouldn't be a big deal). But then the other potential problem is
+> > the life time of the xt_table_info (or other potentially large) data
+> > structures. Are they bound to any process life time.
 > 
-> Thus we can use the ktime_get_mono_fast_ns() to get the monotonic
-> time, which is NMI safe access to clock monotonic. Moreover we can
-> remove the 'struct timespec', which is not y2038 safe.
+> No.
 > 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > Because if they are
+> > not then the OOM killer will not help. The OOM panic earlier in this
+> > thread suggests it doesn't because the test case managed to eat all the
+> > available memory and killed all the eligible tasks which didn't help.
+> 
+> Yes, which is why we do not want any OOM killer invocation in first
+> place...
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-
-
-> ---
-> Changes since v1:
->  - Use ktime_get_mono_fast_ns() instead of ktime_get_seconds().
-> ---
->  kernel/debug/kdb/kdb_main.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> index 69e70f4..bf1d0e0 100644
-> --- a/kernel/debug/kdb/kdb_main.c
-> +++ b/kernel/debug/kdb/kdb_main.c
-> @@ -2486,10 +2486,10 @@ static int kdb_kill(int argc, const char **argv)
->   */
->  static void kdb_sysinfo(struct sysinfo *val)
->  {
-> -	struct timespec uptime;
-> -	ktime_get_ts(&uptime);
-> +	u64 uptime = ktime_get_mono_fast_ns();
-> +
->  	memset(val, 0, sizeof(*val));
-> -	val->uptime = uptime.tv_sec;
-> +	val->uptime = div_u64(uptime, NSEC_PER_SEC);
->  	val->loads[0] = avenrun[0];
->  	val->loads[1] = avenrun[1];
->  	val->loads[2] = avenrun[2];
-> -- 
-> 1.7.9.5
-> 
+The problem is that as soon as you eat that memory and ask for more
+until you fail with ENOMEM then the OOM is simply unavoidable.
+-- 
+Michal Hocko
+SUSE Labs
