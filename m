@@ -1,85 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752943AbeA3U37 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 15:29:59 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56482 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752741AbeA3U3z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:29:55 -0500
-From: Thierry Escande <thierry.escande@collabora.com>
-To: Archit Taneja <architt@codeaurora.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Haixia Shi <hshi@chromium.org>,
-        =?UTF-8?q?=C3=98rjan=20Eide?= <orjan.eide@arm.com>,
-        Zain Wang <wzz@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
-        Lin Huang <hl@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Mark Yao <mark.yao@rock-chips.com>, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v3 32/43] drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
-Date: Tue, 30 Jan 2018 21:29:02 +0100
-Message-Id: <20180130202913.28724-33-thierry.escande@collabora.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180130202913.28724-1-thierry.escande@collabora.com>
-References: <20180130202913.28724-1-thierry.escande@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Type: text/plain; charset = "utf-8"
-Content-Transfert-Encoding: 8bit
-Content-Transfer-Encoding: 8bit
+        id S1753335AbeA3Uca (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 15:32:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753049AbeA3UcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 15:32:25 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A86021748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
+From: Jeff Layton <jlayton@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, tytso@mit.edu, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        trondmy@primarydata.com
+Subject: [PATCH v2] iversion: make inode_cmp_iversion{+raw} return bool instead of s64
+Date: Tue, 30 Jan 2018 15:32:21 -0500
+Message-Id: <20180130203221.29310-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180130173126.2806-1-jlayton@kernel.org>
+References: <20180130173126.2806-1-jlayton@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Jeff Layton <jlayton@redhat.com>
 
-The comments in analogix_dp_init_aux() claim that we're disabling aux
-channel retries, but then right below it for Rockchip it sets them to
-3.  If we actually need 3 retries for Rockchip then we could adjust
-the comment, but it seems more likely that we want the same retry
-behavior across all platforms.
+As Linus points out:
 
-Cc: Stéphane Marchesin <marcheu@chromium.org>
-Cc: 征增 王 <wzz@rock-chips.com>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+    The inode_cmp_iversion{+raw}() functions are pure and utter crap.
+
+    Why?
+
+    You say that they return 0/negative/positive, but they do so in a
+    completely broken manner. They return that ternary value as the
+    sequence number difference in a 's64', which means that if you
+    actually care about that ternary value, and do the *sane* thing that
+    the kernel-doc of the function implies is the right thing, you would
+    do
+
+        int cmp = inode_cmp_iversion(inode, old);
+        if (cmp < 0 ...
+
+    and as a result you get code that looks sane, but that doesn't
+    actually *WORK* right.
+
+Since none of the callers actually care about the ternary value here,
+convert the inode_cmp_iversion{+raw} functions to just return a boolean
+value (false for matching, true for non-matching).
+
+This matches the existing use of these functions just fine, and makes it
+simple to convert them to return a ternary value in the future if we
+grow callers that need it.
+
+With this change we can also reimplement inode_cmp_iversion in a simpler
+way using inode_peek_iversion.
+
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ include/linux/iversion.h | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 58e8a28e99aa..a5f2763d72e4 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -481,15 +481,16 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
+diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+index 858463fca249..3d2fd06495ec 100644
+--- a/include/linux/iversion.h
++++ b/include/linux/iversion.h
+@@ -309,13 +309,13 @@ inode_query_iversion(struct inode *inode)
+  * @inode: inode to check
+  * @old: old value to check against its i_version
+  *
+- * Compare the current raw i_version counter with a previous one. Returns 0 if
+- * they are the same or non-zero if they are different.
++ * Compare the current raw i_version counter with a previous one. Returns false
++ * if they are the same or true if they are different.
+  */
+-static inline s64
++static inline bool
+ inode_cmp_iversion_raw(const struct inode *inode, u64 old)
+ {
+-	return (s64)inode_peek_iversion_raw(inode) - (s64)old;
++	return inode_peek_iversion_raw(inode) != old;
+ }
  
- 	analogix_dp_reset_aux(dp);
- 
--	/* Disable AUX transaction H/W retry */
-+	/* AUX_BIT_PERIOD_EXPECTED_DELAY doesn't apply to Rockchip IP */
- 	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
--		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(0) |
--		      AUX_HW_RETRY_COUNT_SEL(3) |
--		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-+		reg = 0;
- 	else
--		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) |
--		      AUX_HW_RETRY_COUNT_SEL(0) |
--		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-+		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3);
-+
-+	/* Disable AUX transaction H/W retry */
-+	reg |= AUX_HW_RETRY_COUNT_SEL(0) |
-+	       AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-+
- 	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_HW_RETRY_CTL);
- 
- 	/* Receive AUX Channel DEFER commands equal to DEFFER_COUNT*64 */
+ /**
+@@ -323,19 +323,15 @@ inode_cmp_iversion_raw(const struct inode *inode, u64 old)
+  * @inode: inode to check
+  * @old: old value to check against its i_version
+  *
+- * Compare an i_version counter with a previous one. Returns 0 if they are
+- * the same, a positive value if the one in the inode appears newer than @old,
+- * and a negative value if @old appears to be newer than the one in the
+- * inode.
++ * Compare an i_version counter with a previous one. Returns false if they are
++ * the same, and true if they are different.
+  *
+  * Note that we don't need to set the QUERIED flag in this case, as the value
+  * in the inode is not being recorded for later use.
+  */
+-
+-static inline s64
++static inline bool
+ inode_cmp_iversion(const struct inode *inode, u64 old)
+ {
+-	return (s64)(inode_peek_iversion_raw(inode) & ~I_VERSION_QUERIED) -
+-	       (s64)(old << I_VERSION_QUERIED_SHIFT);
++	return inode_peek_iversion(inode) != old;
+ }
+ #endif
 -- 
-2.14.1
+2.14.3
