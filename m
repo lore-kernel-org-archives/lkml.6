@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752771AbeA3RsF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 12:48:05 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45252 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752317AbeA3RrD (ORCPT
+        id S1752863AbeA3RsX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 12:48:23 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50823 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752228AbeA3RrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 12:47:03 -0500
-X-Google-Smtp-Source: AH8x2260AIpDx3md7d8S67D733Ggp7KYUaInAn/MowlV3Legct0q2vhK+5jSWly+HLNza1jV2thcmg==
+        Tue, 30 Jan 2018 12:47:02 -0500
+X-Google-Smtp-Source: AH8x225074tevAVgxzPd18k5R2Om3UiNQhL5FdCm3RGPtTos/4xxALtK5mRxPJEbHKtP6/IGyo3QmA==
 From: Philipp Rossak <embed3d@gmail.com>
 To: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         maxime.ripard@free-electrons.com, wens@csie.org, linux@armlinux.org.uk,
@@ -15,9 +15,9 @@ To: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v5 4/6] arm: dts: sun8i: a83t: Add support for the cir interface
-Date: Tue, 30 Jan 2018 18:46:54 +0100
-Message-Id: <20180130174656.10657-5-embed3d@gmail.com>
+Subject: [PATCH v5 3/6] arm: dts: sun8i: a83t: Add the cir pin for the A83T
+Date: Tue, 30 Jan 2018 18:46:53 +0100
+Message-Id: <20180130174656.10657-4-embed3d@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180130174656.10657-1-embed3d@gmail.com>
 References: <20180130174656.10657-1-embed3d@gmail.com>
@@ -25,37 +25,28 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cir interface is like on the H3 located at 0x01f02000 and is exactly
-the same. This patch adds support for the ir interface on the A83T.
+The CIR Pin of the A83T is located at PL12.
 
 Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index f7f78a27e21d..1e04a5cfd32d 100644
+index 7f4955a5fab7..f7f78a27e21d 100644
 --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
 +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -704,6 +704,19 @@
- 			#reset-cells = <1>;
- 		};
+@@ -716,6 +716,11 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
  
-+		r_cir: ir@1f02000 {
-+			compatible = "allwinner,sun8i-a83t-ir",
-+				     "allwinner,sun5i-a13-ir";
-+			clocks = <&r_ccu CLK_APB0_IR>, <&r_ccu CLK_IR>;
-+			clock-names = "apb", "ir";
-+			resets = <&r_ccu RST_APB0_IR>;
-+			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x01f02000 0x400>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_cir_pin>;
-+			status = "disabled";
-+		};
++			r_cir_pin: r-cir-pin {
++				pins = "PL12";
++				function = "s_cir_rx";
++			};
 +
- 		r_pio: pinctrl@1f02c00 {
- 			compatible = "allwinner,sun8i-a83t-r-pinctrl";
- 			reg = <0x01f02c00 0x400>;
+ 			r_rsb_pins: r-rsb-pins {
+ 				pins = "PL0", "PL1";
+ 				function = "s_rsb";
 -- 
 2.11.0
