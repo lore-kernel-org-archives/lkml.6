@@ -1,111 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751861AbeA3Mik (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 07:38:40 -0500
-Received: from foss.arm.com ([217.140.101.70]:53188 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751451AbeA3Mij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 07:38:39 -0500
-Subject: Re: [PATCH v2 10/16] arm64: KVM: Report SMCCC_ARCH_WORKAROUND_1 BP
- hardening support
-To: Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jon Masters <jcm@redhat.com>
-References: <20180129174559.1866-1-marc.zyngier@arm.com>
- <20180129174559.1866-11-marc.zyngier@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <748db3f9-bf6c-17d6-ff92-e814ec06aa20@arm.com>
-Date: Tue, 30 Jan 2018 12:38:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1752006AbeA3Mjm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 07:39:42 -0500
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:36666 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751974AbeA3Mjl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 07:39:41 -0500
+From: Klaus Goger <klaus.goger@theobroma-systems.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>
+Subject: [PATCH 0/4] add RK3368-uQ7 SoM
+Date: Tue, 30 Jan 2018 13:39:27 +0100
+Message-Id: <20180130123931.50781-1-klaus.goger@theobroma-systems.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <20180129174559.1866-11-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/01/18 17:45, Marc Zyngier wrote:
-> A new feature of SMCCC 1.1 is that it offers firmware-based CPU
-> workarounds. In particular, SMCCC_ARCH_WORKAROUND_1 provides
-> BP hardening for CVE-2017-5715.
-> 
-> If the host has some mitigation for this issue, report that
-> we deal with it using SMCCC_ARCH_WORKAROUND_1, as we apply the
-> host workaround on every guest exit.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->   include/linux/arm-smccc.h |  5 +++++
->   virt/kvm/arm/psci.c       | 17 +++++++++++++++--
->   2 files changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-> index dc68aa5a7261..e1ef944ef1da 100644
-> --- a/include/linux/arm-smccc.h
-> +++ b/include/linux/arm-smccc.h
-> @@ -73,6 +73,11 @@
->   			   ARM_SMCCC_SMC_32,				\
->   			   0, 1)
->   
-> +#define ARM_SMCCC_ARCH_WORKAROUND_1					\
-> +	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
-> +			   ARM_SMCCC_SMC_32,				\
-> +			   0, 0x8000)
-> +
->   #ifndef __ASSEMBLY__
->   
->   #include <linux/linkage.h>
-> diff --git a/virt/kvm/arm/psci.c b/virt/kvm/arm/psci.c
-> index a021b62ed762..5677d16abc71 100644
-> --- a/virt/kvm/arm/psci.c
-> +++ b/virt/kvm/arm/psci.c
-> @@ -407,14 +407,27 @@ static int kvm_psci_call(struct kvm_vcpu *vcpu)
->   int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
->   {
->   	u32 func_id = smccc_get_function(vcpu);
-> -	u32 val;
-> +	u32 val, feature;
->   
->   	switch (func_id) {
->   	case ARM_SMCCC_VERSION_FUNC_ID:
->   		val = ARM_SMCCC_VERSION_1_1;
->   		break;
->   	case ARM_SMCCC_ARCH_FEATURES_FUNC_ID:
-> -		val = -1;	/* Nothing supported yet */
+This patch series adds devicetree files for Theobroma Systems RK3368-uQ
+module and the corresponding evaluation kit baseboard.
 
-Conceptually, might it still make sense to initialise val to 
-NOT_SUPPORTED here, then overwrite it if and when a feature actually is 
-present? It would in this case save a few lines as well, but I know 
-multiple assignment can be one of those religious issues, so I'm not too 
-fussed either way.
+See https://www.theobroma-systems.com/rk3368-uq7/ for more information
+about the module and devkit.
 
-Robin.
+@Heiko: I added the OPP points I use as a seperate patch so you
+can decide if you want to merge it or not as i noticed your reverts
+in the last cycle.
 
-> +		feature = smccc_get_arg1(vcpu);
-> +		switch(feature) {
-> +#ifdef CONFIG_ARM64
-> +		case ARM_SMCCC_ARCH_WORKAROUND_1:
-> +			if (cpus_have_const_cap(ARM64_HARDEN_BRANCH_PREDICTOR))
-> +				val = 0;
-> +			else
-> +				val = -1;
-> +			break;
-> +#endif
-> +		default:
-> +			val = -1;
-> +			break;
-> +		}
->   		break;
->   	default:
->   		return kvm_psci_call(vcpu);
-> 
+
+Klaus Goger (4):
+  dt-bindings: add RK3368-uQ7 SoM and EVK base board
+  arm64: dts: rockchip: add RK3368-uQ7 (Lion) SoM
+  arm64: dts: rockchip: add Haikou baseboard with RK3368-uQ7 SoM
+  arm64: dts: rockchip: add OPPs for rk3368-lion
+
+ Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
+ .../arm64/boot/dts/rockchip/rk3368-lion-haikou.dts | 146 ++++++++
+ arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi      | 397 +++++++++++++++++++++
+ 3 files changed, 547 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3368-lion-haikou.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi
+
+-- 
+2.11.0
