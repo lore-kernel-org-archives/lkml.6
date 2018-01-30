@@ -1,178 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752330AbeA3VTc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 16:19:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35822 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753109AbeA3VTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 16:19:03 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B94A21780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH v2 3/4] ARM: dts: exynos: Fix missing missing reg warning for syscon restart nodes
-Date: Tue, 30 Jan 2018 22:18:18 +0100
-Message-Id: <20180130211819.17139-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180130211819.17139-1-krzk@kernel.org>
-References: <20180130211819.17139-1-krzk@kernel.org>
+        id S1753799AbeA3VUc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 16:20:32 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:35518 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752324AbeA3VUa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 16:20:30 -0500
+X-Google-Smtp-Source: AH8x226aR62bQ0TZhouiYWbyXpueJtaQMTKuVxFYwhBbMLhxW2vCHvOpvk9goiNq+8EJ1QukliJzkx+HCJI+oYUxR1Q=
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VeVuS51Z7U2P+t3YnfitUtVVAa_8oSbnXCHTY7rqrJUEQ@mail.gmail.com>
+References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
+ <20171210182152.70ad8fbf@archlinux> <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
+ <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
+ <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
+ <20180130160107.000006df@huawei.com> <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
+ <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
+ <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
+ <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
+ <f42f6acc-cb30-e36d-0c98-42b7e3d40457@pressers.name> <CAHp75VfmH5aNPzBLvm-GrQ-49uyJNNwdjbte3uh_kmaC91bz6A@mail.gmail.com>
+ <197f448e-322f-dae4-aa4b-3cc2bd5b16bb@pressers.name> <CAHp75VeVuS51Z7U2P+t3YnfitUtVVAa_8oSbnXCHTY7rqrJUEQ@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 30 Jan 2018 23:20:28 +0200
+Message-ID: <CAHp75VfPBP0TVt-==0wjcK6Oxg1kVN4mQf5Ji50RBy=SXf6yFw@mail.gmail.com>
+Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for BOSC0200
+To: Steven Presser <steve@pressers.name>
+Cc: Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Jeremy Cline <jeremy@jcline.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
+        Lars Kellogg-Stedman <lars@oddbit.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix DTC warnings like:
+On Tue, Jan 30, 2018 at 10:12 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Tue, Jan 30, 2018 at 9:27 PM, Steven Presser <steve@pressers.name> wrote:
+>> On 01/30/2018 02:05 PM, Andy Shevchenko wrote:
+>>> On Tue, Jan 30, 2018 at 8:34 PM, Steven Presser <steve@pressers.name>
+>>> wrote:
 
-    arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
-        Node /soc/syscon-poweroff missing or empty reg/ranges property
-    arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
-        Node /soc/syscon-reboot missing or empty reg/ranges property
+> Let's do this way. Create a bug on kernel bugzilla, attach output of
+>
+> % acpidump -o tables.dat # tables.dat file
+> % grep -H 15 /sys/bus/acpi/devices/*/status
+> % dmidecode
+>
+> and share the number here. I will take it.
 
-by moving the syscon poweroff and restart nodes into the PMU (Power
-Management Unit) node.  The PMU node is the actual block responsible for
-power management, including typical Exynos on/off/restart procedures.
-Therefore the syscon poweroff and restart nodes logically belong to it.
+Here [1] is the branch with another approach. Can you test it and tell
+if it fixes the issue?
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+[1]: https://bitbucket.org/andy-shev/linux/branch/topic/iio-acpi
+It's based on linux-next + compiletest branch of IIO subsystem.
 
----
-
-Tested on Exynos5410, Exynos5420 and Exynos4412. Other tests are welcomed.
----
- arch/arm/boot/dts/exynos-syscon-restart.dtsi | 28 ++++++++++++----------------
- arch/arm/boot/dts/exynos3250.dtsi            |  2 +-
- arch/arm/boot/dts/exynos4.dtsi               |  3 ++-
- arch/arm/boot/dts/exynos5.dtsi               |  1 -
- arch/arm/boot/dts/exynos5250.dtsi            |  1 +
- arch/arm/boot/dts/exynos5410.dtsi            |  1 +
- arch/arm/boot/dts/exynos5420.dtsi            |  1 +
- 7 files changed, 18 insertions(+), 19 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-index 09a2040054ed..279ea09f4fe2 100644
---- a/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-+++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-@@ -6,22 +6,18 @@
-  * published by the Free Software Foundation.
-  */
- 
--/ {
--	soc {
--		compatible = "simple-bus";
--
--		poweroff: syscon-poweroff {
--			compatible = "syscon-poweroff";
--			regmap = <&pmu_system_controller>;
--			offset = <0x330C>; /* PS_HOLD_CONTROL */
--			mask = <0x5200>; /* reset value */
--		};
-+&pmu_system_controller {
-+	poweroff: syscon-poweroff {
-+		compatible = "syscon-poweroff";
-+		regmap = <&pmu_system_controller>;
-+		offset = <0x330C>; /* PS_HOLD_CONTROL */
-+		mask = <0x5200>; /* reset value */
-+	};
- 
--		reboot: syscon-reboot {
--			compatible = "syscon-reboot";
--			regmap = <&pmu_system_controller>;
--			offset = <0x0400>; /* SWRESET */
--			mask = <0x1>;
--		};
-+	reboot: syscon-reboot {
-+		compatible = "syscon-reboot";
-+		regmap = <&pmu_system_controller>;
-+		offset = <0x0400>; /* SWRESET */
-+		mask = <0x1>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index b8fb94f5daa8..df76624fd382 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -15,7 +15,6 @@
-  */
- 
- #include "exynos4-cpu-thermal.dtsi"
--#include "exynos-syscon-restart.dtsi"
- #include <dt-bindings/clock/exynos3250.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-@@ -914,3 +913,4 @@
- };
- 
- #include "exynos3250-pinctrl.dtsi"
-+#include "exynos-syscon-restart.dtsi"
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 6d59cc827649..98af5592cc6d 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -20,7 +20,6 @@
- #include <dt-bindings/clock/exynos-audss-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
--#include "exynos-syscon-restart.dtsi"
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -1010,3 +1009,5 @@
- 		clock-names = "secss";
- 	};
- };
-+
-+#include "exynos-syscon-restart.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index f8d7de1144f1..359f49bdd4e2 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -12,7 +12,6 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
--#include "exynos-syscon-restart.dtsi"
- 
- / {
- 	interrupt-parent = <&gic>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 56626d1a4235..037aceee5959 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -1114,3 +1114,4 @@
- };
- 
- #include "exynos5250-pinctrl.dtsi"
-+#include "exynos-syscon-restart.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 1e6b57d013c4..fb7fa217a05b 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -439,3 +439,4 @@
- };
- 
- #include "exynos5410-pinctrl.dtsi"
-+#include "exynos-syscon-restart.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 2f3cb2a97f71..71e2b154a244 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1531,3 +1531,4 @@
- };
- 
- #include "exynos5420-pinctrl.dtsi"
-+#include "exynos-syscon-restart.dtsi"
 -- 
-2.11.0
+With Best Regards,
+Andy Shevchenko
