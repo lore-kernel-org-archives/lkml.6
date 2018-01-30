@@ -1,111 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754002AbeA3XHE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:07:04 -0500
-Received: from mail-it0-f50.google.com ([209.85.214.50]:38680 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753620AbeA3XHC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:07:02 -0500
-X-Google-Smtp-Source: AH8x2244gytsRwkVU1VSeK6HWMuDX+T/PfG2fXJdf0wa5DV5uQv0ASpOSueOH0xze3++6UAjPTkGhQ==
-Date: Tue, 30 Jan 2018 15:06:59 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+257773a84d5b2bfc2dfad2f945e773bd96d66aa9@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
- crypto_destroy_tfm
-Message-ID: <20180130230659.nnmcdbma4yewr3cs@gmail.com>
-References: <001a1143d742f280a50560fef72a@google.com>
+        id S932075AbeA3XLk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 18:11:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41776 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753610AbeA3XLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 18:11:38 -0500
+Subject: Re: [9/8] KVM: x86: limit MSR_IA32_SPEC_CTRL access based on CPUID
+ availability
+To: Thomas Gleixner <tglx@linutronix.de>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc: Jim Mattson <jmattson@google.com>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Anthony Liguori <aliguori@amazon.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <20180109120311.27565-10-pbonzini@redhat.com>
+ <6dc02278-7004-1794-3705-69c8cad86be4@oracle.com>
+ <CALMp9eSVC=LO-SrPkA3m6eSpgJ6X4rNCRCf3uvtJEdMG_B72cQ@mail.gmail.com>
+ <beb9f9b4-7bc0-4a3a-73c2-0828febbd06c@oracle.com>
+ <CALMp9eT6i9bhG005S5sqV-Y1RUhsc+AXE42ww8Ej+TXSjD6tEg@mail.gmail.com>
+ <1517332457.18619.132.camel@infradead.org>
+ <alpine.DEB.2.20.1801301842310.1797@nanos>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <75049dca-3389-9cc7-44e3-a487a797c605@redhat.com>
+Date: Tue, 30 Jan 2018 18:11:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a1143d742f280a50560fef72a@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <alpine.DEB.2.20.1801301842310.1797@nanos>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 23, 2017 at 01:58:01AM -0800, syzbot wrote:
-> Hello,
+On 30/01/2018 12:45, Thomas Gleixner wrote:
+> On Tue, 30 Jan 2018, David Woodhouse wrote:
 > 
-> syzkaller hit the following crash on
-> 6084b576dca2e898f5c101baef151f7bfdbb606d
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
+>> On Tue, 2018-01-30 at 08:57 -0800, Jim Mattson wrote:
+>>> It's really hard to tell which patches are being proposed for which
+>>> repositories, but assuming that everything else is correct, I don't
+>>> think your condition is adequate. What if the physical CPU and the
+>>> virtual CPU both have CPUID.(EAX=7H,ECX=0):EDX[26], but only the
+>>> physical CPU has CPUID.(EAX=7H,ECX=0):EDX[27]? If the guest has write
+>>> access to MSR_IA32_SPEC_CTRL, it can set MSR_IA32_SPEC_CTRL[1]
+>>> (STIBP), even though setting that bit in the guest should raise #GP.
+>>
+>> Everything we're talking about here is for tip/x86/pti. Which I note
+>> has just updated to be 4.15-based, although I thought it was going to
+>> stay on 4.14 for now. So I've updated my tree at
+>> http://git.infradead.org/linux-retpoline.git/shortlog/refs/heads/ibpb
+>> accordingly.
 > 
-> Unfortunately, I don't have any reproducer for this bug yet.
-> 
-> 
-> BUG: unable to handle kernel NULL pointer dereference at 0000000000000188
-> IP: crypto_destroy_tfm+0x9f/0xf0 crypto/api.c:577
-> PGD 0 P4D 0
-> Oops: 0000 [#1] SMP
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 0 PID: 21787 Comm: syz-executor4 Not tainted 4.15.0-rc3-next-20171214+
-> #67
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:crypto_destroy_tfm+0x9f/0xf0 crypto/api.c:577
-> RSP: 0018:ffffc90000df7c40 EFLAGS: 00010293
-> RAX: ffff8801f8518040 RBX: 0000000000000000 RCX: ffffffff8167415f
-> RDX: 0000000000000000 RSI: ffff8801f8586c08 RDI: ffff8801f8586c00
-> RBP: ffffc90000df7c60 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffffc90000df7d20 R11: 0000000000000002 R12: ffff8801f8586c08
-> R13: ffff8801f8586c00 R14: 0000000000000000 R15: ffff880213fc0030
-> FS:  0000000002991940(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000188 CR3: 000000000301e002 CR4: 00000000001626f0
-> Call Trace:
->  crypto_free_aead include/crypto/aead.h:193 [inline]
->  crypto_rfc4106_exit_tfm+0x1a/0x20 crypto/gcm.c:895
->  crypto_aead_exit_tfm+0x18/0x20 crypto/aead.c:88
->  crypto_exit_ops crypto/api.c:315 [inline]
->  crypto_destroy_tfm+0x49/0xf0 crypto/api.c:579
->  crypto_free_aead include/crypto/aead.h:193 [inline]
->  aead_release+0x19/0x30 crypto/algif_aead.c:511
->  alg_do_release crypto/af_alg.c:119 [inline]
->  alg_sock_destruct+0x2d/0x40 crypto/af_alg.c:360
->  __sk_destruct+0x2e/0x250 net/core/sock.c:1558
->  sk_destruct+0x2f/0x60 net/core/sock.c:1593
->  __sk_free+0xbe/0xf0 net/core/sock.c:1601
->  sk_free+0x2a/0x40 net/core/sock.c:1612
->  sock_put include/net/sock.h:1653 [inline]
->  af_alg_release+0x42/0x50 crypto/af_alg.c:126
->  sock_release+0x2c/0xc0 net/socket.c:600
->  sock_close+0x16/0x20 net/socket.c:1129
->  __fput+0x120/0x270 fs/file_table.c:209
->  ____fput+0x15/0x20 fs/file_table.c:243
->  task_work_run+0xa3/0xe0 kernel/task_work.c:113
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0x3e6/0x1050 kernel/exit.c:869
->  do_group_exit+0x60/0x100 kernel/exit.c:972
->  SYSC_exit_group kernel/exit.c:983 [inline]
->  SyS_exit_group+0x18/0x20 kernel/exit.c:981
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> RIP: 0033:0x452a09
-> RSP: 002b:0000000000a2fa08 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
-> RAX: ffffffffffffffda RBX: 000000000071bec8 RCX: 0000000000452a09
-> RDX: 0000000000000000 RSI: 0000000000722750 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000852
-> R10: 000000000000000c R11: 0000000000000202 R12: 0000000000a2f9b0
-> R13: 000000000071bea0 R14: 0000000000000519 R15: 000000000000000c
-> Code: 41 ff d6 e8 04 62 c4 ff 4c 89 e7 e8 4c 8d c0 ff 4c 89 ef e8 54 fa d0
-> ff e8 ef 61 c4 ff 5b 41 5c 41 5d 41 5e 5d c3 e8 e1 61 c4 ff <4c> 8b b3 88 01
-> 00 00 4d 85 f6 74 32 e8 d0 61 c4 ff 4c 89 e7 41
-> RIP: crypto_destroy_tfm+0x9f/0xf0 crypto/api.c:577 RSP: ffffc90000df7c40
-> CR2: 0000000000000188
-> ---[ end trace 51087c3b0b04438f ]---
+> Yes, we tried to stay on 4.14 base but this started to created nasty merge
+> conflicts for no value. Merging in v4.15 turned out to resolve those issues
+> while still serving as the feed branch for Gregs stable work. For the time
+> being we try to make stable backporting at least for 4.14/15 as painless as
+> possible.
 
-Invalidating this bug since it hasn't been seen again, and it was reported while
-KASAN was accidentally disabled in the syzbot kconfig due to a change to the
-kconfig menus in linux-next (so this crash was possibly caused by slab
-corruption elsewhere).
+Great, then the "per-VCPU MSR bitmaps" branch
+(git://git.kernel.org/pub/scm/virt/kvm/kvm.git refs/heads/msr-bitmaps)
+that I created last weekend can be pulled directly in tip/x86/pti.
 
-#syz invalid
+It cherry-picks directly to both 4.14 so it will be fine for Greg too.
+
+Paolo
