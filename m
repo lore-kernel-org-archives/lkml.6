@@ -1,25 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753563AbeA3Wkx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 17:40:53 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:56789 "EHLO
+        id S1753686AbeA3WlR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 17:41:17 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:49751 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753009AbeA3Wkv (ORCPT
+        with ESMTP id S1753637AbeA3WlN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 17:40:51 -0500
-Date: Tue, 30 Jan 2018 14:39:45 -0800
-From: tip-bot for Tim Chen <tipbot@zytor.com>
-Message-ID: <tip-18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7@git.kernel.org>
-Cc: tim.c.chen@linux.intel.com, dwmw@amazon.co.uk, hpa@zytor.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, hpa@zytor.com, tim.c.chen@linux.intel.com,
-        dwmw@amazon.co.uk, linux-kernel@vger.kernel.org, tglx@linutronix.de
-In-Reply-To: <1517263487-3708-1-git-send-email-dwmw@amazon.co.uk>
-References: <1517263487-3708-1-git-send-email-dwmw@amazon.co.uk>
+        Tue, 30 Jan 2018 17:41:13 -0500
+Date: Tue, 30 Jan 2018 14:38:03 -0800
+From: tip-bot for Dan Williams <tipbot@zytor.com>
+Message-ID: <tip-259d8c1e984318497c84eef547bbb6b1d9f4eb05@git.kernel.org>
+Cc: chunkeey@gmail.com, johannes@sipsolutions.net, tglx@linutronix.de,
+        davem@davemloft.net, mingo@kernel.org, elena.reshetova@intel.com,
+        hpa@zytor.com, dan.j.williams@intel.com, linux-kernel@vger.kernel.org
+Reply-To: davem@davemloft.net, tglx@linutronix.de, chunkeey@gmail.com,
+        johannes@sipsolutions.net, linux-kernel@vger.kernel.org,
+        dan.j.williams@intel.com, mingo@kernel.org, hpa@zytor.com,
+        elena.reshetova@intel.com
+In-Reply-To: <151727419584.33451.7700736761686184303.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <151727419584.33451.7700736761686184303.stgit@dwillia2-desk3.amr.corp.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Use Indirect Branch Prediction
- Barrier in context switch
-Git-Commit-ID: 18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
+Subject: [tip:x86/pti] nl80211: Sanitize array index in parse_txq_params
+Git-Commit-ID: 259d8c1e984318497c84eef547bbb6b1d9f4eb05
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -32,143 +34,75 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
-Gitweb:     https://git.kernel.org/tip/18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
-Author:     Tim Chen <tim.c.chen@linux.intel.com>
-AuthorDate: Mon, 29 Jan 2018 22:04:47 +0000
+Commit-ID:  259d8c1e984318497c84eef547bbb6b1d9f4eb05
+Gitweb:     https://git.kernel.org/tip/259d8c1e984318497c84eef547bbb6b1d9f4eb05
+Author:     Dan Williams <dan.j.williams@intel.com>
+AuthorDate: Mon, 29 Jan 2018 17:03:15 -0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 30 Jan 2018 23:09:21 +0100
+CommitDate: Tue, 30 Jan 2018 21:54:32 +0100
 
-x86/speculation: Use Indirect Branch Prediction Barrier in context switch
+nl80211: Sanitize array index in parse_txq_params
 
-Flush indirect branches when switching into a process that marked itself
-non dumpable. This protects high value processes like gpg better,
-without having too high performance overhead.
+Wireless drivers rely on parse_txq_params to validate that txq_params->ac
+is less than NL80211_NUM_ACS by the time the low-level driver's ->conf_tx()
+handler is called. Use a new helper, array_index_nospec(), to sanitize
+txq_params->ac with respect to speculation. I.e. ensure that any
+speculation into ->conf_tx() handlers is done with a value of
+txq_params->ac that is within the bounds of [0, NL80211_NUM_ACS).
 
-If done naïvely, we could switch to a kernel idle thread and then back
-to the original process, such as:
-
-    process A -> idle -> process A
-
-In such scenario, we do not have to do IBPB here even though the process
-is non-dumpable, as we are switching back to the same process after a
-hiatus.
-
-To avoid the redundant IBPB, which is expensive, we track the last mm
-user context ID. The cost is to have an extra u64 mm context id to track
-the last mm we were using before switching to the init_mm used by idle.
-Avoiding the extra IBPB is probably worth the extra memory for this
-common scenario.
-
-For those cases where tlb_defer_switch_to_init_mm() returns true (non
-PCID), lazy tlb will defer switch to init_mm, so we will not be changing
-the mm for the process A -> idle -> process A switch. So IBPB will be
-skipped for this case.
-
-Thanks to the reviewers and Andy Lutomirski for the suggestion of
-using ctx_id which got rid of the problem of mm pointer recycling.
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reported-by: Christian Lamparter <chunkeey@gmail.com>
+Reported-by: Elena Reshetova <elena.reshetova@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: ak@linux.intel.com
-Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
+Acked-by: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-arch@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com
+Cc: gregkh@linuxfoundation.org
+Cc: linux-wireless@vger.kernel.org
 Cc: torvalds@linux-foundation.org
-Cc: linux@dominikbrodowski.net
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: luto@kernel.org
-Cc: pbonzini@redhat.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1517263487-3708-1-git-send-email-dwmw@amazon.co.uk
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: alan@linux.intel.com
+Link: https://lkml.kernel.org/r/151727419584.33451.7700736761686184303.stgit@dwillia2-desk3.amr.corp.intel.com
 
 ---
- arch/x86/include/asm/tlbflush.h |  2 ++
- arch/x86/mm/tlb.c               | 33 ++++++++++++++++++++++++++++++++-
- 2 files changed, 34 insertions(+), 1 deletion(-)
+ net/wireless/nl80211.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index d33e4a2..2b8f18c 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -174,6 +174,8 @@ struct tlb_state {
- 	struct mm_struct *loaded_mm;
- 	u16 loaded_mm_asid;
- 	u16 next_asid;
-+	/* last user mm's ctx id */
-+	u64 last_ctx_id;
- 
- 	/*
- 	 * We can be in one of several states:
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 5bfe61a..012d026 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -6,13 +6,14 @@
- #include <linux/interrupt.h>
- #include <linux/export.h>
- #include <linux/cpu.h>
-+#include <linux/debugfs.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-+#include <asm/nospec-branch.h>
- #include <asm/cache.h>
- #include <asm/apic.h>
- #include <asm/uv/uv.h>
--#include <linux/debugfs.h>
- 
- /*
-  *	TLB flushing, formerly SMP-only
-@@ -247,6 +248,27 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 	} else {
- 		u16 new_asid;
- 		bool need_flush;
-+		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 542a4fc..4bbcfc1 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -16,6 +16,7 @@
+ #include <linux/nl80211.h>
+ #include <linux/rtnetlink.h>
+ #include <linux/netlink.h>
++#include <linux/nospec.h>
+ #include <linux/etherdevice.h>
+ #include <net/net_namespace.h>
+ #include <net/genetlink.h>
+@@ -2056,20 +2057,22 @@ static const struct nla_policy txq_params_policy[NL80211_TXQ_ATTR_MAX + 1] = {
+ static int parse_txq_params(struct nlattr *tb[],
+ 			    struct ieee80211_txq_params *txq_params)
+ {
++	u8 ac;
 +
-+		/*
-+		 * Avoid user/user BTB poisoning by flushing the branch
-+		 * predictor when switching between processes. This stops
-+		 * one process from doing Spectre-v2 attacks on another.
-+		 *
-+		 * As an optimization, flush indirect branches only when
-+		 * switching into processes that disable dumping. This
-+		 * protects high value processes like gpg, without having
-+		 * too high performance overhead. IBPB is *expensive*!
-+		 *
-+		 * This will not flush branches when switching into kernel
-+		 * threads. It will also not flush if we switch to idle
-+		 * thread and back to the same process. It will flush if we
-+		 * switch to a different non-dumpable process.
-+		 */
-+		if (tsk && tsk->mm &&
-+		    tsk->mm->context.ctx_id != last_ctx_id &&
-+		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
-+			indirect_branch_prediction_barrier();
+ 	if (!tb[NL80211_TXQ_ATTR_AC] || !tb[NL80211_TXQ_ATTR_TXOP] ||
+ 	    !tb[NL80211_TXQ_ATTR_CWMIN] || !tb[NL80211_TXQ_ATTR_CWMAX] ||
+ 	    !tb[NL80211_TXQ_ATTR_AIFS])
+ 		return -EINVAL;
  
- 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
- 			/*
-@@ -292,6 +314,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
- 		}
+-	txq_params->ac = nla_get_u8(tb[NL80211_TXQ_ATTR_AC]);
++	ac = nla_get_u8(tb[NL80211_TXQ_ATTR_AC]);
+ 	txq_params->txop = nla_get_u16(tb[NL80211_TXQ_ATTR_TXOP]);
+ 	txq_params->cwmin = nla_get_u16(tb[NL80211_TXQ_ATTR_CWMIN]);
+ 	txq_params->cwmax = nla_get_u16(tb[NL80211_TXQ_ATTR_CWMAX]);
+ 	txq_params->aifs = nla_get_u8(tb[NL80211_TXQ_ATTR_AIFS]);
  
-+		/*
-+		 * Record last user mm's context id, so we can avoid
-+		 * flushing branch buffer with IBPB if we switch back
-+		 * to the same user.
-+		 */
-+		if (next != &init_mm)
-+			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
-+
- 		this_cpu_write(cpu_tlbstate.loaded_mm, next);
- 		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
- 	}
-@@ -369,6 +399,7 @@ void initialize_tlbstate_and_flush(void)
- 	write_cr3(build_cr3(mm->pgd, 0));
+-	if (txq_params->ac >= NL80211_NUM_ACS)
++	if (ac >= NL80211_NUM_ACS)
+ 		return -EINVAL;
+-
++	txq_params->ac = array_index_nospec(ac, NL80211_NUM_ACS);
+ 	return 0;
+ }
  
- 	/* Reinitialize tlbstate. */
-+	this_cpu_write(cpu_tlbstate.last_ctx_id, mm->context.ctx_id);
- 	this_cpu_write(cpu_tlbstate.loaded_mm_asid, 0);
- 	this_cpu_write(cpu_tlbstate.next_asid, 1);
- 	this_cpu_write(cpu_tlbstate.ctxs[0].ctx_id, mm->context.ctx_id);
