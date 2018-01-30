@@ -1,121 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752658AbeA3TVr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 14:21:47 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57610 "EHLO
+        id S1752531AbeA3TXc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 14:23:32 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57670 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751559AbeA3TVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:21:45 -0500
-Message-ID: <5A70C536.7040208@arm.com>
-Date: Tue, 30 Jan 2018 19:19:18 +0000
+        id S1751662AbeA3TXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 14:23:30 -0500
+Message-ID: <5A70C5A0.1050600@arm.com>
+Date: Tue, 30 Jan 2018 19:21:04 +0000
 From: James Morse <james.morse@arm.com>
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
 MIME-Version: 1.0
-To: Xie XiuQi <xiexiuqi@huawei.com>
-CC: catalin.marinas@arm.com, will.deacon@arm.com, mingo@redhat.com,
-        mark.rutland@arm.com, ard.biesheuvel@linaro.org, Dave.Martin@arm.com,
-        takahiro.akashi@linaro.org, tbaicar@codeaurora.org,
-        stephen.boyd@linaro.org, bp@suse.de, julien.thierry@arm.com,
-        shiju.jose@huawei.com, zjzhang@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, wangxiongfeng2@huawei.com,
-        zhengqiang10@huawei.com, gengdongjiu@huawei.com,
-        huawei.libin@huawei.com, wangkefeng.wang@huawei.com,
-        lijinyue@huawei.com, guohanjun@huawei.com, hanjun.guo@linaro.org,
-        cj.chengjian@huawei.com
-Subject: Re: [PATCH v5 1/3] arm64/ras: support sea error recovery
-References: <1516969885-150532-1-git-send-email-xiexiuqi@huawei.com> <1516969885-150532-2-git-send-email-xiexiuqi@huawei.com>
-In-Reply-To: <1516969885-150532-2-git-send-email-xiexiuqi@huawei.com>
+To: gengdongjiu <gengdongjiu@huawei.com>
+CC: "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "bp@alien8.de" <bp@alien8.de>,
+        "robert.moore@intel.com" <robert.moore@intel.com>,
+        "lv.zheng@intel.com" <lv.zheng@intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        Huangshaoyu <huangshaoyu@huawei.com>
+Subject: Re: [PATCH v9 5/7] arm64: kvm: Introduce KVM_ARM_SET_SERROR_ESR ioctl
+References: <0184EA26B2509940AA629AE1405DD7F201A9E8EA@DGGEMA503-MBS.china.huawei.com>
+In-Reply-To: <0184EA26B2509940AA629AE1405DD7F201A9E8EA@DGGEMA503-MBS.china.huawei.com>
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xie XiuQi,
+Hi gengdongjiu,
 
-On 26/01/18 12:31, Xie XiuQi wrote:
-> With ARM v8.2 RAS Extension, SEA are usually triggered when memory errors
-> are consumed. According to the existing process, errors occurred in the
-> kernel, leading to direct panic, if it occurred the user-space, we should
-> just kill process.
+On 24/01/18 20:06, gengdongjiu wrote:
+>> On 06/01/18 16:02, Dongjiu Geng wrote:
+>>> The ARM64 RAS SError Interrupt(SEI) syndrome value is specific to the
+>>> guest and user space needs a way to tell KVM this value. So we add a
+>>> new ioctl. Before user space specifies the Exception Syndrome Register
+>>> ESR(ESR), it firstly checks that whether KVM has the capability to set
+>>> the guest ESR, If has, will set it. Otherwise, nothing to do.
+>>>
+>>> For this ESR specifying, Only support for AArch64, not support AArch32.
+>>
+>> After this patch user-space can trigger an SError in the guest. If it wants to migrate the guest, how does the pending SError get migrated?
+>>
+>> I think we need to fix migration first. Andrew Jones suggested using
+>> KVM_GET/SET_VCPU_EVENTS:
+>> https://www.spinics.net/lists/arm-kernel/msg616846.html
+>>
+>> Given KVM uses kvm_inject_vabt() on v8.0 hardware too, we should cover systems without the v8.2 RAS Extensions with the same API. I
+>> think this means a bit to read/write whether SError is pending, and another to indicate the ESR should be set/read.
+>> CPUs without the v8.2 RAS Extensions can reject pending-SError that had an ESR.
 > 
-> But there is a class of error, in fact, is not necessary to kill
-> process, you can recover and continue to run the process. Such as
-> the instruction data corrupted, where the memory page might be
-> read-only, which is has not been modified, the disk might have the
-> correct data, so you can directly drop the page, ant reload it when
-> necessary.
+> For the CPUs without the v8.2 RAS Extensions, its ESR is always 0, 
+> we only can inject a SError with ESR 0 to guest, cannot set its ESR.
 
-With firmware-first support, we do all this...
+0? It's always implementation-defined. On Juno it seems to be always-0, but
+other systems may behave differently. (Juno may generate another ESR value when
+I'm not watching it...)
+
+Just because we can't control the ESR doesn't mean injecting an SError isn't
+something user-space may want to do.
+If we tackle migration of pending-SError first, I think that will give us the
+API to create a new pending SError with/without an ESR as appropriate.
 
 
-> So this patchset is just try to solve such problem: if the error is
-> consumed in user-space and the error occurs on a clean page, you can
-> directly drop the memory page without killing process.
+> About how about to use the KVM_GET/SET_VCPU_EVENTS, I will check the code, and
+> consider your suggestion at the same time.
+
+(Not my suggestion, It was Andrew Jones idea.)
+
+> The IOCTL KVM_GET/SET_VCPU_EVENTS has been used by X86.
+
+We would be re-using the struct to have values with slightly different meanings.
+But for migration the upshot is the same, call KVM_GET_VCPU_EVENTS on one
+system, and pass the struct to KVM_SET_VCPU_EVENTS on the new system. If we're
+lucky Qemu may be able to do this in shared x86/arm64 code.
+
+
+>>> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c index
+>>> 5c7f657..738ae90 100644
+>>> --- a/arch/arm64/kvm/guest.c
+>>> +++ b/arch/arm64/kvm/guest.c
+>>> @@ -277,6 +277,11 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+>>>  	return -EINVAL;
+>>>  }
+>>>
+>>> +int kvm_arm_set_sei_esr(struct kvm_vcpu *vcpu, u32 *syndrome) {
+>>> +	return -EINVAL;
+>>> +}
+>>
+>> Does nothing in the patch that adds the support? This is a bit odd.
+>> (oh, its hiding in patch 6...)
 > 
-> If the corrupted page is clean, just dropped it and return to user-space
-> without side effects. And if corrupted page is dirty, memory_failure()
-> will send SIGBUS with code=BUS_MCEERR_AR. While without this patchset,
-> do_sea() will just send SIGBUS, so the process was killed in the same place.
+> To make this patch simple and small, I add it in patch 6.
 
-... but this happens too. I agree its something we should fix, but I don't think
-this is the best way to do it.
+But that made the functionality of this patch: A new API to return -EINVAL from
+the kernel.
 
-This series is pulling the memory-failure-queue details back into the arch-code
-to build a second list, that gets processed as extra work when we return to
-user-space.
-
-
-The root of the issue is ghes_notify_sea() claims the notification as something
-APEI has dealt with, ... but it hasn't done it yet. The signals will be
-generated by something currently stuck in a queue. (Evidently x86 doesn't handle
-synchronous errors like this using firmware-first).
-
-I think a smaller fix is to give the queues that may be holding the
-memory_failure() work a kick as part of the code that calls ghes_notify_sea().
-This means that by the time we return to do_sea() ghes_notify_sea()'s claim that
-APEI has dealt with it is true as any generated signals are pending. We can then
-skip the existing SIGBUS generation code.
-
-
-> Because memory_failure() may sleep, we can not call it directly in SEA
-
-(this one is more serious, I've attempted to fix it by moving all NMI-like
-GHES-notifications to use the estatus queue).
-
-
-> exception context. So we saved faulting physical address associated with
-> a process in the ghes handler and set __TIF_SEA_NOTIFY. When we return
-> from SEA exception context and get into do_notify_resume() before the
-> process running, we could check it and call memory_failure() to do
-> recovery.
-
-> It's safe, because we are in process context.
-
-I think this is the trick. When we take a Synchronous-external-abort out of
-userspace, we're in process context too. We can add helpers to drain the
-memory_failure_queue which can be called when do_sea() when we know we're
-preemptible and interrupts-et-al are unmasked.
+Swapping the patches round would have avoided this.
+Regardless, I think this will fold out in a rebase.
 
 
 Thanks,
 
 James
-
-
-[0] https://www.spinics.net/lists/linux-acpi/msg80149.html
-
-> ---
->  arch/arm64/Kconfig                   |  11 +++
->  arch/arm64/include/asm/ras.h         |  23 ++++++
->  arch/arm64/include/asm/thread_info.h |   4 +-
->  arch/arm64/kernel/Makefile           |   1 +
->  arch/arm64/kernel/ras.c              | 142 +++++++++++++++++++++++++++++++++++
->  arch/arm64/kernel/signal.c           |   7 ++
->  arch/arm64/mm/fault.c                |  27 +++++--
->  drivers/acpi/apei/ghes.c             |   8 +-
->  include/acpi/ghes.h                  |   3 +
->  9 files changed, 216 insertions(+), 10 deletions(-)
->  create mode 100644 arch/arm64/include/asm/ras.h
->  create mode 100644 arch/arm64/kernel/ras.c
