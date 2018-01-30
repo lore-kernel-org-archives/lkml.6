@@ -1,67 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751647AbeA3LcM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 06:32:12 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:32802 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751475AbeA3LcL (ORCPT
+        id S1751764AbeA3Ld1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 06:33:27 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56642 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751714AbeA3LdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 06:32:11 -0500
-X-Google-Smtp-Source: AH8x227/8N0pSNGyNB8NVHBz1o1oFA4GzsCZubVBK5ITV+04McU1L3lmUY6HlXxzLLv+H8ypiayauQ==
-Date: Tue, 30 Jan 2018 12:32:08 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: chenchacha <chen.chenchacha@foxmail.com>, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 3/3] fs: fat: add ioctl method in fat filesystem driver
-Message-ID: <20180130113208.glmvabsx54yth5dl@pali>
-References: <20180117104355.889-1-chen.chenchacha@foxmail.com>
- <20180117104355.889-4-chen.chenchacha@foxmail.com>
- <87r2q8n7gs.fsf@mail.parknet.co.jp>
- <0464dacb-b8f1-4bb2-3e05-e5f35ebf6e8e@foxmail.com>
- <87bmhbmvzc.fsf@mail.parknet.co.jp>
+        Tue, 30 Jan 2018 06:33:25 -0500
+Date: Tue, 30 Jan 2018 11:32:38 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Ladislav Michl <ladis@linux-mips.org>, lgirdwood@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
+        tiwai@suse.com, bhumirks@gmail.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pali.rohar@gmail.com, sre@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
+        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
+        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
+        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
+Subject: Re: [PATCH] sound/tlv320dac33: Add device tree support
+Message-ID: <20180130113238.GA10525@sirena.org.uk>
+References: <20180129230539.GA18280@amd>
+ <20180129232031.GA7695@lenoch>
+ <20180129233301.GA18104@amd>
+ <20180130083446.GA13498@lenoch>
+ <20180130085314.GA4585@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87bmhbmvzc.fsf@mail.parknet.co.jp>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180130085314.GA4585@amd>
+X-Cookie: Try
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 30 January 2018 20:23:03 OGAWA Hirofumi wrote:
-> chenchacha <chen.chenchacha@foxmail.com> writes:
-> 
-> > On 01/29/2018 09:02 PM, OGAWA Hirofumi wrote:
-> >> ChenGuanqiao <chen.chenchacha@foxmail.com> writes:
-> >>
-> >>> +static int fat_check_d_characters(char *label, unsigned long len)
-> >>> +{
-> >>> +	int i;
-> >>> +
-> >>> +	for (i = 0; i < len; ++i) {
-> >>> +		switch (label[i]) {
-> >>> +		case 'a' ... 'z':
-> >>> +			label[i] = __toupper(label[i]);
-> >>> +		case 'A' ... 'Z':
-> >>> +		case '0' ... '9':
-> >>> +		case '_':
-> >>> +		case 0x20:
-> >>> +			continue;
-> >>> +		default:
-> >>> +			return -EINVAL;
-> >>> +		}
-> >> Same question with previous though, what windows do if label = "a b c"?
-> >> (this is including space other than end of name or extension.)
-> > In win7, the volume label will be capitalized, and leaving spaces.
-> > Or, you mean I need to fill the rest of the space with "0x20"?
-> 
-> I see. However, what win7 stored, BTW? It was "A B C      ", or anything
-> other?
 
-Yes, as in FAT, all directory entries are padded by spaces.
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+On Tue, Jan 30, 2018 at 09:53:14AM +0100, Pavel Machek wrote:
+
+> Well, notice I'm converting existing driver to device tree. And that
+> one already has GPIO dependency. It is possible that more work needs
+> to be done there, but that should not be a reason to delay this. Feel
+> free to help.
+
+No, it's a very good reason to delay merging something.  A DT binding is
+an ABI so we need to sort out interface issues and describe things as
+well as we can, with board files it's not an ABI so we can just do any
+old thing that happens to work and while it might not be ideal it
+doesn't really matter since we can change it later if we need to.
+
+--6TrnltStXW4iwmi0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpwV9QACgkQJNaLcl1U
+h9AjzAf+MrrqV6SDQoxsxACv09qGVntDjrDp1/5iroH/gHKjWTCPSLlkmJacyyY/
+ewMq30TKUotIusAtO/8gWWP6HBgr8TZcPq5BEUWgUNC76b6sO4fqPII90ZUnpW8I
+f0wYTe6M5yfTWtO8BXC3vs5x8pJFCp7iypIb3Gacwh3aoYIUauVLZCJ4F+St9Dcy
+df4dUX1PM/d4PcFCwxC7gUwFjmELexcOvVM2+BfBzVlvNeqTnKu//WqmrUEEy13s
+Q94EmPZXyqrVpb4LaLFz1mSB+yegCxz+4otJh9QNAtARCf5TZo8aptT5o3HQd1xl
++GYlt/Pvh4LNea30lyvyMbjQwLMFnA==
+=zGsm
+-----END PGP SIGNATURE-----
+
+--6TrnltStXW4iwmi0--
