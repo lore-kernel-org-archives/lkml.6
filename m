@@ -1,103 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751755AbeA3LXJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 06:23:09 -0500
-Received: from mail.parknet.co.jp ([210.171.160.6]:44961 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751711AbeA3LXG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 06:23:06 -0500
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: chenchacha <chen.chenchacha@foxmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>, pali.rohar@gmail.com
-Subject: Re: [PATCH 3/3] fs: fat: add ioctl method in fat filesystem driver
-References: <20180117104355.889-1-chen.chenchacha@foxmail.com>
-        <20180117104355.889-4-chen.chenchacha@foxmail.com>
-        <87r2q8n7gs.fsf@mail.parknet.co.jp>
-        <0464dacb-b8f1-4bb2-3e05-e5f35ebf6e8e@foxmail.com>
-Date: Tue, 30 Jan 2018 20:23:03 +0900
-In-Reply-To: <0464dacb-b8f1-4bb2-3e05-e5f35ebf6e8e@foxmail.com>+BB9432B15A982F74
-        (chenchacha's message of "Tue, 30 Jan 2018 09:52:20 +0800")
-Message-ID: <87bmhbmvzc.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        id S1751639AbeA3LZ5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 06:25:57 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52414 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751219AbeA3LZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 06:25:55 -0500
+Subject: Re: [PATCH 09/16] arm64: capabilities: Introduce strict features
+ based on local CPU
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
+References: <20180123122809.16269-1-suzuki.poulose@arm.com>
+ <20180123122809.16269-10-suzuki.poulose@arm.com>
+ <20180126121219.GQ5862@e103592.cambridge.arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <d12c2c77-8813-75ed-1011-7ba42bff663e@arm.com>
+Date: Tue, 30 Jan 2018 11:25:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180126121219.GQ5862@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-chenchacha <chen.chenchacha@foxmail.com> writes:
-
-> On 01/29/2018 09:02 PM, OGAWA Hirofumi wrote:
->> ChenGuanqiao <chen.chenchacha@foxmail.com> writes:
+On 26/01/18 12:12, Dave Martin wrote:
+> On Tue, Jan 23, 2018 at 12:28:02PM +0000, Suzuki K Poulose wrote:
+>> Add type for features that are detected on individual CPUs,
+>> rather than on a system wide safe features. This behavior
+> 
+> feature
+> 
+>> is similar to that of a strict cpu erratum, where a later
+>> CPU is not allowed to boot if the system doesn't posses it.
 >>
->>> +static int fat_check_d_characters(char *label, unsigned long len)
->>> +{
->>> +	int i;
->>> +
->>> +	for (i = 0; i < len; ++i) {
->>> +		switch (label[i]) {
->>> +		case 'a' ... 'z':
->>> +			label[i] = __toupper(label[i]);
->>> +		case 'A' ... 'Z':
->>> +		case '0' ... '9':
->>> +		case '_':
->>> +		case 0x20:
->>> +			continue;
->>> +		default:
->>> +			return -EINVAL;
->>> +		}
->> Same question with previous though, what windows do if label = "a b c"?
->> (this is including space other than end of name or extension.)
-> In win7, the volume label will be capitalized, and leaving spaces.
-> Or, you mean I need to fill the rest of the space with "0x20"?
+>> Use this for software prefetching capability.
+>>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   arch/arm64/include/asm/cpufeature.h | 7 +++++++
+>>   arch/arm64/kernel/cpufeature.c      | 2 +-
+>>   2 files changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+>> index a621d2184227..4c3d6987acfc 100644
+>> --- a/arch/arm64/include/asm/cpufeature.h
+>> +++ b/arch/arm64/include/asm/cpufeature.h
+>> @@ -118,6 +118,13 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+>>    */
+>>   #define ARM64_CPUCAP_BOOT_SYSTEM_FEATURE	\
+>>   	(ARM64_CPUCAP_SCOPE_SYSTEM | ARM64_CPUCAP_LATE_CPU_SAFE_TO_HAVE)
+>> +/*
+>> + * CPU feature detected at boot time based on feature of one or more CPUs.
+>> + * It is not safe for a late CPU to have this feature, when the system doesn't
+>> + * have it. But it is safe to miss the feature if the system has it.
+>> + */
+>> +#define ARM64_CPUCAP_STRICT_CPU_LOCAL_FEATURE	\
+>> +	(ARM64_CPUCAP_SCOPE_LOCAL_CPU | ARM64_CPUCAP_LATE_CPU_SAFE_TO_MISS)
+> 
+> "STRICT" seem quite odd here, since we never require all CPUs to have
+> the feature.  The case we forbid is when the boot-time decision is that
+> the system doesn't tolerate this feature.  So this feels erratum-like.
+> 
+>>   struct arm64_cpu_capabilities {
+>>   	const char *desc;
+>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>> index 7ae5cf9092d0..111f6c4b4cd7 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -951,7 +951,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   	{
+>>   		.desc = "Software prefetching using PRFM",
+>>   		.capability = ARM64_HAS_NO_HW_PREFETCH,
+>> -		.type = ARM64_CPUCAP_BOOT_SYSTEM_FEATURE,
+>> +		.type = ARM64_CPUCAP_STRICT_CPU_LOCAL_FEATURE,
+>>   		.matches = has_no_hw_prefetch,
+> 
+> For ARM64_HAS_NO_HW_PREFETCH this is more describing an implementation
+> option that only affects performance -- in that case it's not obvious
+> that we should be strict at all.
+> 
+> This suggests ARM64_CPUCAP_SCOPE_LOCAL_CPU |
+> 	ARM64_CPUCAP_LATE_CPU_SAFE_TO_HAVE |
+> 	ARM64_CPUCAP_LATE_CPU_SAFE_TO_MISS.
 
-I see. However, what win7 stored, BTW? It was "A B C      ", or anything
-other?
+You're right. This is more like a WEAK feature we add for DBM. I will switch it.
 
->>> +static int fat_ioctl_set_volume_label(struct file *file,
->>> +				      u8 __user *vol_label)
->>> +{
->>> +	int err = 0;
->>> +	u8 label[MSDOS_NAME];
->>> +	struct timespec ts;
->>> +	struct buffer_head *boot_bh;
->>> +	struct buffer_head *vol_bh;
->>> +	struct msdos_dir_entry *de;
->>> +	struct fat_boot_sector *b;
->>> +	struct inode *inode = file_inode(file);
->>> +	struct super_block *sb = inode->i_sb;
->>> +	struct msdos_sb_info *sbi = MSDOS_SB(sb);
->>> +
->> [...]
-> I need remove "struct msdos_sb_info *sbi"?
-
-If you didn't use sbi anymore, you should remove.
-
->>> +	err = mnt_want_write_file(file);
->>> +	if (err)
->>> +		goto out;
->>> +
->>> +	down_write(&sb->s_umount);
->> Looks like inode_lock() for rootdir is gone. It is necessary to
->> traverse+modify.
-> Is it wrong for me to use the inode_lock() in patch v7? I need to lock 
-> inode here, and turn off immediately after
-
-inode_lock() is necessary to protect race with other dir operations.
-
-I asked at v7, locking order to prevent the AB locking order bug.
-
-I.e.
-	mnt_want_write_file => down_write => inode_lock()
-vs
-	down_write => mnt_want_write_file => inode_lock()
-
-Which is right one?
-
-> mark_buffer_dirty(vol_bh)?
-
-What is this asking?
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cheers
+Suzuki
