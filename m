@@ -1,98 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753650AbeAaJuc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 04:50:32 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56126 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753459AbeAaJu0 (ORCPT
+        id S1753587AbeAaJxU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 04:53:20 -0500
+Received: from mail-vk0-f50.google.com ([209.85.213.50]:42172 "EHLO
+        mail-vk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752237AbeAaJxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 04:50:26 -0500
-X-Google-Smtp-Source: AH8x224CgtMO9K9tRYXmb+TVknAUEW2YeDpwb6k9UlTkqNlX4rhS43cgYNe11aiCyANmxZeml4Rhnw==
-Subject: Re: [PATCH 5/8] thermal/drivers/cpu_cooling: Introduce the cpu idle
- cooling driver
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>, Leo Yan <leo.yan@linaro.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Javi Merino <javi.merino@kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-6-git-send-email-daniel.lezcano@linaro.org>
- <CAKfTPtD-cUYoAJfhtuTr-E1=rttZvWxVv1Qv7b+Si4vSBy0JVg@mail.gmail.com>
- <11334876-ef8c-58fa-5e32-ab8499eebd7e@linaro.org>
- <CAKfTPtBXcLHNHEObpttCGtfCWXmR+kwmOW5aD+G23bnYTJi6Yg@mail.gmail.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <6e776e6c-6f1e-b33b-58b7-b95410ca1f95@linaro.org>
-Date: Wed, 31 Jan 2018 10:50:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Wed, 31 Jan 2018 04:53:17 -0500
+X-Google-Smtp-Source: AH8x226gHztb78Luke+sdMYXhSo7VayRtkxsCHrBU2dqZq94FlHlkhNABnMxdxtyZZCul9NrTIC+nLEfrySsPbuDGEk=
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBXcLHNHEObpttCGtfCWXmR+kwmOW5aD+G23bnYTJi6Yg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1517344262.2230.27.camel@tiscali.nl>
+References: <20180130181853.32512-1-ulfalizer@gmail.com> <1517337292.2230.15.camel@tiscali.nl>
+ <CAFkk2KSUpEvCCt0fUzCN+r7Lz9CuyN3jKV6atpPR92zPRK4f-w@mail.gmail.com> <1517344262.2230.27.camel@tiscali.nl>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Wed, 31 Jan 2018 10:53:15 +0100
+Message-ID: <CAFkk2KTCcDH8c5BVzAZHykH3jRmPxt36wqr0PHSw1Hhr3DUoBw@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: Warn if help text is blank
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2018 10:46, Vincent Guittot wrote:
-> On 31 January 2018 at 10:33, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->> On 31/01/2018 10:01, Vincent Guittot wrote:
->>> Hi Daniel,
->>>
->>> On 23 January 2018 at 16:34, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->>
->> [ ... ] (please trim :)
->>
->>>> +               /*
->>>> +                * Each cooling device is per package. Each package
->>>> +                * has a set of cpus where the physical number is
->>>> +                * duplicate in the kernel namespace. We need a way to
->>>> +                * address the waitq[] and tsk[] arrays with index
->>>> +                * which are not Linux cpu numbered.
->>>> +                *
->>>> +                * One solution is to use the
->>>> +                * topology_core_id(cpu). Other solution is to use the
->>>> +                * modulo.
->>>> +                *
->>>> +                * eg. 2 x cluster - 4 cores.
->>>> +                *
->>>> +                * Physical numbering -> Linux numbering -> % nr_cpus
->>>> +                *
->>>> +                * Pkg0 - Cpu0 -> 0 -> 0
->>>> +                * Pkg0 - Cpu1 -> 1 -> 1
->>>> +                * Pkg0 - Cpu2 -> 2 -> 2
->>>> +                * Pkg0 - Cpu3 -> 3 -> 3
->>>> +                *
->>>> +                * Pkg1 - Cpu0 -> 4 -> 0
->>>> +                * Pkg1 - Cpu1 -> 5 -> 1
->>>> +                * Pkg1 - Cpu2 -> 6 -> 2
->>>> +                * Pkg1 - Cpu3 -> 7 -> 3
->>>
->>>
->>> I'm not sure that the assumption above for the CPU numbering is safe.
->>> Can't you use a per cpu structure to point to resources that are per
->>> cpu instead ? so you will not have to rely on CPU ordering
->>
->> Can you elaborate ? I don't get the part with the percpu structure.
-> 
-> Something like:
-> 
-> struct cpuidle_cooling_cpu {
->        struct task_struct *tsk;
->        wait_queue_head_t waitq;
-> };
-> 
-> DECLARE_PER_CPU(struct cpuidle_cooling_cpu *, cpu_data);
+On Tue, Jan 30, 2018 at 9:31 PM, Paul Bolle <pebolle@tiscali.nl> wrote:
+> On Tue, 2018-01-30 at 20:33 +0100, Ulf Magnusson wrote:
+>> I agree that this shouldn't go in until/unless a significant portion
+>> of those empty help texts get removed first.
+>
+> Not a significant portion, but all, I'd say.
+>
+>> The patchset that removes the empty help texts is at
+>> https://lkml.org/lkml/2018/1/30/574. I could make another one if you'd
+>> prefer that.
+>
+> I'm fine with anything that doesn't add warnings just to appease pet peeves.
+>
+>> I haven't even checked how they are rendered to be honest. I was more
+>> concerned with the Kconfig mess.
+>
+> Well, if you could make empty help texts disappear somehow (either during the
+> Kconfig parse phase - which requires a jump into the yacc horror - or during
+> the rendering phase) that would be much better than adding a warning for
+> something that you yourself described as a pet peeve.
+>
+> And after that's done you're free to send cleanup patches for this whenever
+> you feel like doing so.
+>
+> Thanks,
+>
+>
+> Paul Bolle
 
-I got this part but I don't get how that fixes the ordering thing.
+I rolled a new patchset which adds the warning at the end and makes
+the commits that remove the blank help texts more freestanding:
+https://lkml.org/lkml/2018/1/31/137
 
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Cheers,
+Ulf
