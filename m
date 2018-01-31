@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751575AbeAaUDf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 15:03:35 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:39343 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751190AbeAaUDd (ORCPT
+        id S1751516AbeAaUGY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 15:06:24 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37825 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751326AbeAaUGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 15:03:33 -0500
-X-Google-Smtp-Source: AH8x225LhJpdxdzAdSQhrQ/KWhdOKjHBTi6acFApONRVfm1TJQyBGxzefm9nFwYgs0f8jUlyUW2G6w==
+        Wed, 31 Jan 2018 15:06:23 -0500
+X-Google-Smtp-Source: AH8x226Fjg9tXRE6yRmBkeS6ZdFjHo9ePZoxejIO723WTzS6HmPM/3I51u+yWt0pQuShHaFhckXxFQ==
 From: frowand.list@gmail.com
 To: Rob Herring <robh+dt@kernel.org>, cpandya@codeaurora.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: [PATCH] of: cache phandle nodes to decrease cost of of_find_node_by_phandle()
-Date: Wed, 31 Jan 2018 12:02:57 -0800
-Message-Id: <1517428977-25653-1-git-send-email-frowand.list@gmail.com>
+Date: Wed, 31 Jan 2018 12:05:42 -0800
+Message-Id: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -31,6 +31,7 @@ The cache is initialized in of_core_init().
 
 The cache is freed via a late_initcall_sync().
 
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
 
 Some of_find_by_phandle() calls may occur before the cache is
@@ -38,8 +39,7 @@ initialized or after it is freed.  For example, for the qualcomm
 qcom-apq8074-dragonboard, 11 calls occur before the initialization
 and 80 occur after the cache is freed (out of 516 total calls.)
 
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
+
  drivers/of/base.c       | 85 ++++++++++++++++++++++++++++++++++++++++++++++---
  drivers/of/of_private.h |  5 +++
  drivers/of/resolver.c   | 21 ------------
