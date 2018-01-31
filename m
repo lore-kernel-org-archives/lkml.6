@@ -1,253 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932112AbeAaHm7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:42:59 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:45290 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753205AbeAaHmy (ORCPT
+        id S1753320AbeAaHnZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 02:43:25 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53199 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752765AbeAaHnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:42:54 -0500
-X-UUID: e8ad76bbcb024efaaa9bbe705ca8a797-20180131
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v2 3/5] clk: mediatek: add audsys support for MT2701
-Date: Wed, 31 Jan 2018 15:42:43 +0800
-Message-ID: <99afcd2aeb87ad30dd565cb9bf86ee3239142e08.1515639336.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1515639336.git.ryder.lee@mediatek.com>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+        Wed, 31 Jan 2018 02:43:22 -0500
+X-Google-Smtp-Source: AH8x225P5qOp5hWAzRxRgms5b+nGiREk3t46JhzVap06Q/AxpTQM9NE3Ta652fvWx64DsR5XY9aQzw==
+From: Mathieu Malaterre <malat@debian.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
+        Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] Fix loading of module radeonfb on PowerMac
+Date: Wed, 31 Jan 2018 08:42:45 +0100
+Message-Id: <20180131074245.7306-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20171221220757.24672-1-malat@debian.org>
+References: <20171221220757.24672-1-malat@debian.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add clock driver support for MT2701 audsys.
+When the linux kernel is build with (typical kernel ship with Debian
+installer):
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+CONFIG_FB_OF=y
+CONFIG_VT_HW_CONSOLE_BINDING=y
+CONFIG_FB_RADEON=m
+
+The offb driver takes precedence over module radeonfb. It is then
+impossible to load the module, error reported is:
+
+[   96.551486] radeonfb 0000:00:10.0: enabling device (0006 -> 0007)
+[   96.551526] radeonfb 0000:00:10.0: BAR 0: can't reserve [mem 0x98000000-0x9fffffff pref]
+[   96.551531] radeonfb (0000:00:10.0): cannot request region 0.
+[   96.551545] radeonfb: probe of 0000:00:10.0 failed with error -16
+
+This patch reproduce the behavior of the module radeon, so as to make it
+possible to load radeonfb when offb is first loaded, see commit a56f7428d753
+("drm/radeon: Add early unregister of firmware fb's").
+
+It should be noticed that `offb_destroy` is never called which explain the
+need to skip error detection on the radeon side.
+
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Link: https://bugs.debian.org/826629#57
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=119741
+Suggested-by: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
 ---
- drivers/clk/mediatek/Kconfig          |   6 ++
- drivers/clk/mediatek/Makefile         |   1 +
- drivers/clk/mediatek/clk-mt2701-aud.c | 175 ++++++++++++++++++++++++++++++++++
- 3 files changed, 182 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
+v2: Only fails when CONFIG_PCC is not set
+v3: Only fails when CONFIG_FB_OF is not set, CONFIG_PCC was too broad. Since the conflicts in region is due to OFfb explicitly refers to it.
+v4: Use drm_fb_helper_remove_conflicting_framebuffers from drm_fb_helper
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 59dc0aa..efb6f58 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -50,6 +50,12 @@ config COMMON_CLK_MT2701_BDPSYS
- 	---help---
- 	  This driver supports Mediatek MT2701 bdpsys clocks.
+ drivers/video/fbdev/aty/radeon_base.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
+index 4d77daeecf99..ae669f424537 100644
+--- a/drivers/video/fbdev/aty/radeon_base.c
++++ b/drivers/video/fbdev/aty/radeon_base.c
+@@ -70,6 +70,7 @@
+ #include <linux/pci.h>
+ #include <linux/vmalloc.h>
+ #include <linux/device.h>
++#include <drm/drm_fb_helper.h>
  
-+config COMMON_CLK_MT2701_AUDSYS
-+	bool "Clock driver for Mediatek MT2701 audsys"
-+	depends on COMMON_CLK_MT2701
-+	---help---
-+	  This driver supports Mediatek MT2701 audsys clocks.
-+
- config COMMON_CLK_MT2712
- 	bool "Clock driver for Mediatek MT2712"
- 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index c421ffc..c4ab7d3 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
- obj-$(CONFIG_COMMON_CLK_MT6797_VDECSYS) += clk-mt6797-vdec.o
- obj-$(CONFIG_COMMON_CLK_MT6797_VENCSYS) += clk-mt6797-venc.o
- obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
-+obj-$(CONFIG_COMMON_CLK_MT2701_AUDSYS) += clk-mt2701-aud.o
- obj-$(CONFIG_COMMON_CLK_MT2701_BDPSYS) += clk-mt2701-bdp.o
- obj-$(CONFIG_COMMON_CLK_MT2701_ETHSYS) += clk-mt2701-eth.o
- obj-$(CONFIG_COMMON_CLK_MT2701_HIFSYS) += clk-mt2701-hif.o
-diff --git a/drivers/clk/mediatek/clk-mt2701-aud.c b/drivers/clk/mediatek/clk-mt2701-aud.c
-new file mode 100644
-index 0000000..d8005b3
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt2701-aud.c
-@@ -0,0 +1,175 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018 MediaTek Inc.
-+ * Author: Ryder Lee <ryder.lee@mediatek.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-gate.h"
-+
-+#include <dt-bindings/clock/mt2701-clk.h>
-+
-+#define GATE_AUDIO0(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &audio0_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr,	\
-+	}
-+
-+#define GATE_AUDIO1(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &audio1_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr,	\
-+	}
-+
-+#define GATE_AUDIO2(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &audio2_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr,	\
-+	}
-+
-+#define GATE_AUDIO3(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &audio3_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr,	\
-+	}
-+
-+static const struct mtk_gate_regs audio0_cg_regs = {
-+	.set_ofs = 0x0,
-+	.clr_ofs = 0x0,
-+	.sta_ofs = 0x0,
-+};
-+
-+static const struct mtk_gate_regs audio1_cg_regs = {
-+	.set_ofs = 0x10,
-+	.clr_ofs = 0x10,
-+	.sta_ofs = 0x10,
-+};
-+
-+static const struct mtk_gate_regs audio2_cg_regs = {
-+	.set_ofs = 0x14,
-+	.clr_ofs = 0x14,
-+	.sta_ofs = 0x14,
-+};
-+
-+static const struct mtk_gate_regs audio3_cg_regs = {
-+	.set_ofs = 0x634,
-+	.clr_ofs = 0x634,
-+	.sta_ofs = 0x634,
-+};
-+
-+static const struct mtk_gate audio_clks[] = {
-+	/* AUDIO0 */
-+	GATE_AUDIO0(CLK_AUD_AFE, "audio_afe", "aud_intbus_sel", 2),
-+	GATE_AUDIO0(CLK_AUD_HDMI, "audio_hdmi", "audpll_sel", 20),
-+	GATE_AUDIO0(CLK_AUD_SPDF, "audio_spdf", "audpll_sel", 21),
-+	GATE_AUDIO0(CLK_AUD_SPDF2, "audio_spdf2", "audpll_sel", 22),
-+	GATE_AUDIO0(CLK_AUD_APLL, "audio_apll", "audpll_sel", 23),
-+	/* AUDIO1 */
-+	GATE_AUDIO1(CLK_AUD_I2SIN1, "audio_i2sin1", "aud_mux1_sel", 0),
-+	GATE_AUDIO1(CLK_AUD_I2SIN2, "audio_i2sin2", "aud_mux1_sel", 1),
-+	GATE_AUDIO1(CLK_AUD_I2SIN3, "audio_i2sin3", "aud_mux1_sel", 2),
-+	GATE_AUDIO1(CLK_AUD_I2SIN4, "audio_i2sin4", "aud_mux1_sel", 3),
-+	GATE_AUDIO1(CLK_AUD_I2SIN5, "audio_i2sin5", "aud_mux1_sel", 4),
-+	GATE_AUDIO1(CLK_AUD_I2SIN6, "audio_i2sin6", "aud_mux1_sel", 5),
-+	GATE_AUDIO1(CLK_AUD_I2SO1, "audio_i2so1", "aud_mux1_sel", 6),
-+	GATE_AUDIO1(CLK_AUD_I2SO2, "audio_i2so2", "aud_mux1_sel", 7),
-+	GATE_AUDIO1(CLK_AUD_I2SO3, "audio_i2so3", "aud_mux1_sel", 8),
-+	GATE_AUDIO1(CLK_AUD_I2SO4, "audio_i2so4", "aud_mux1_sel", 9),
-+	GATE_AUDIO1(CLK_AUD_I2SO5, "audio_i2so5", "aud_mux1_sel", 10),
-+	GATE_AUDIO1(CLK_AUD_I2SO6, "audio_i2so6", "aud_mux1_sel", 11),
-+	GATE_AUDIO1(CLK_AUD_ASRCI1, "audio_asrci1", "asm_h_sel", 12),
-+	GATE_AUDIO1(CLK_AUD_ASRCI2, "audio_asrci2", "asm_h_sel", 13),
-+	GATE_AUDIO1(CLK_AUD_ASRCO1, "audio_asrco1", "asm_h_sel", 14),
-+	GATE_AUDIO1(CLK_AUD_ASRCO2, "audio_asrco2", "asm_h_sel", 15),
-+	GATE_AUDIO1(CLK_AUD_INTDIR, "audio_intdir", "intdir_sel", 20),
-+	GATE_AUDIO1(CLK_AUD_A1SYS, "audio_a1sys", "aud_mux1_sel", 21),
-+	GATE_AUDIO1(CLK_AUD_A2SYS, "audio_a2sys", "aud_mux2_sel", 22),
-+	GATE_AUDIO1(CLK_AUD_AFE_CONN, "audio_afe_conn", "aud_mux1_sel", 23),
-+	GATE_AUDIO1(CLK_AUD_AFE_MRGIF, "audio_afe_mrgif", "aud_mux1_sel", 25),
-+	/* AUDIO2 */
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL1, "audio_ul1", "aud_mux1_sel", 0),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL2, "audio_ul2", "aud_mux1_sel", 1),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL3, "audio_ul3", "aud_mux1_sel", 2),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL4, "audio_ul4", "aud_mux1_sel", 3),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL5, "audio_ul5", "aud_mux1_sel", 4),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL6, "audio_ul6", "aud_mux1_sel", 5),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL1, "audio_dl1", "aud_mux1_sel", 6),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL2, "audio_dl2", "aud_mux1_sel", 7),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL3, "audio_dl3", "aud_mux1_sel", 8),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL4, "audio_dl4", "aud_mux1_sel", 9),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL5, "audio_dl5", "aud_mux1_sel", 10),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL6, "audio_dl6", "aud_mux1_sel", 11),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DLMCH, "audio_dlmch", "aud_mux1_sel", 12),
-+	GATE_AUDIO2(CLK_AUD_MMIF_ARB1, "audio_arb1", "aud_mux1_sel", 13),
-+	GATE_AUDIO2(CLK_AUD_MMIF_AWB1, "audio_awb", "aud_mux1_sel", 14),
-+	GATE_AUDIO2(CLK_AUD_MMIF_AWB2, "audio_awb2", "aud_mux1_sel", 15),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DAI, "audio_dai", "aud_mux1_sel", 16),
-+	/* AUDIO3 */
-+	GATE_AUDIO3(CLK_AUD_ASRCI3, "audio_asrci3", "asm_h_sel", 2),
-+	GATE_AUDIO3(CLK_AUD_ASRCI4, "audio_asrci4", "asm_h_sel", 3),
-+	GATE_AUDIO3(CLK_AUD_ASRCI5, "audio_asrci5", "asm_h_sel", 4),
-+	GATE_AUDIO3(CLK_AUD_ASRCI6, "audio_asrci6", "asm_h_sel", 5),
-+	GATE_AUDIO3(CLK_AUD_ASRCO3, "audio_asrco3", "asm_h_sel", 6),
-+	GATE_AUDIO3(CLK_AUD_ASRCO4, "audio_asrco4", "asm_h_sel", 7),
-+	GATE_AUDIO3(CLK_AUD_ASRCO5, "audio_asrco5", "asm_h_sel", 8),
-+	GATE_AUDIO3(CLK_AUD_ASRCO6, "audio_asrco6", "asm_h_sel", 9),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC1, "audio_mem_asrc1", "asm_h_sel", 10),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC2, "audio_mem_asrc2", "asm_h_sel", 11),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC3, "audio_mem_asrc3", "asm_h_sel", 12),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC4, "audio_mem_asrc4", "asm_h_sel", 13),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC5, "audio_mem_asrc5", "asm_h_sel", 14),
-+};
-+
-+static const struct of_device_id of_match_clk_mt2701_aud[] = {
-+	{ .compatible = "mediatek,mt2701-audsys", },
-+	{}
-+};
-+
-+static int clk_mt2701_aud_probe(struct platform_device *pdev)
+ #include <asm/io.h>
+ #include <linux/uaccess.h>
+@@ -2259,6 +2260,23 @@ static const struct bin_attribute edid2_attr = {
+ 	.read	= radeon_show_edid2,
+ };
+ 
++static int radeon_kick_out_firmware_fb(struct pci_dev *pdev)
 +{
-+	struct clk_onecell_data *clk_data;
-+	struct device_node *node = pdev->dev.of_node;
-+	struct device_node *pnode = pdev->dev.parent->of_node;
-+	int r;
++	struct apertures_struct *ap;
 +
-+	clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
++	ap = alloc_apertures(1);
++	if (!ap)
++		return -ENOMEM;
 +
-+	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
-+			       clk_data);
++	ap->ranges[0].base = pci_resource_start(pdev, 0);
++	ap->ranges[0].size = pci_resource_len(pdev, 0);
 +
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		dev_err(&pdev->dev,
-+			"could not register clock provider: %s: %d\n",
-+			pdev->name, r);
++	drm_fb_helper_remove_conflicting_framebuffers(ap, KBUILD_MODNAME, false);
 +
-+	return r;
++	kfree(ap);
++
++	return 0;
 +}
+ 
+ static int radeonfb_pci_register(struct pci_dev *pdev,
+ 				 const struct pci_device_id *ent)
+@@ -2312,19 +2330,27 @@ static int radeonfb_pci_register(struct pci_dev *pdev,
+ 	rinfo->fb_base_phys = pci_resource_start (pdev, 0);
+ 	rinfo->mmio_base_phys = pci_resource_start (pdev, 2);
+ 
++	ret = radeon_kick_out_firmware_fb(pdev);
++	if (ret)
++		return ret;
 +
-+static struct platform_driver clk_mt2701_aud_drv = {
-+	.probe = clk_mt2701_aud_probe,
-+	.driver = {
-+		.name = "clk-mt2701-aud",
-+		.of_match_table = of_match_clk_mt2701_aud,
-+	},
-+};
-+
-+builtin_platform_driver(clk_mt2701_aud_drv);
+ 	/* request the mem regions */
+ 	ret = pci_request_region(pdev, 0, "radeonfb framebuffer");
+ 	if (ret < 0) {
++#ifndef CONFIG_FB_OF
+ 		printk( KERN_ERR "radeonfb (%s): cannot request region 0.\n",
+ 			pci_name(rinfo->pdev));
+ 		goto err_release_fb;
++#endif
+ 	}
+ 
+ 	ret = pci_request_region(pdev, 2, "radeonfb mmio");
+ 	if (ret < 0) {
++#ifndef CONFIG_FB_OF
+ 		printk( KERN_ERR "radeonfb (%s): cannot request region 2.\n",
+ 			pci_name(rinfo->pdev));
+ 		goto err_release_pci0;
++#endif
+ 	}
+ 
+ 	/* map the regions */
+@@ -2509,10 +2535,12 @@ static int radeonfb_pci_register(struct pci_dev *pdev,
+ 	iounmap(rinfo->mmio_base);
+ err_release_pci2:
+ 	pci_release_region(pdev, 2);
++#ifndef CONFIG_FB_OF
+ err_release_pci0:
+ 	pci_release_region(pdev, 0);
+ err_release_fb:
+         framebuffer_release(info);
++#endif
+ err_disable:
+ err_out:
+ 	return ret;
 -- 
-1.9.1
+2.11.0
