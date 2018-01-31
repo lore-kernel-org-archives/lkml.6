@@ -1,80 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753198AbeAaRGG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:06:06 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:36174 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752360AbeAaRGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:06:05 -0500
-Date: Wed, 31 Jan 2018 18:05:55 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: X86 ML <x86@kernel.org>, Jiri Kosina <jkosina@suse.cz>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] x86/vdso: Remove retpoline flags
-Message-ID: <20180131170555.f6aboqitcvmgvhso@pd.tnic>
-References: <20180131163312.7144-1-bp@alien8.de>
- <CALCETrVsZWL7ZDnGMyoN8V4mmL5NO+SARQBV1U2OzrVscMsoig@mail.gmail.com>
+        id S1753435AbeAaRGo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:06:44 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35792 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752840AbeAaRGm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:06:42 -0500
+X-Google-Smtp-Source: AH8x224Qkf7E6Xw40/pCAd6W5O0WzSU3mU8FtCzJJjUD0V8N8HDdAPaQOQcSBoQXESlby56ahPuHpA==
+Date: Wed, 31 Jan 2018 18:06:39 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Mario Limonciello <Mario.Limonciello@dell.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: dell-laptop: Allocate buffer on heap
+ rather than globally
+Message-ID: <20180131170639.fhmodmamu4mi6ubw@pali>
+References: <1517331540-13266-1-git-send-email-mario.limonciello@dell.com>
+ <20180130171745.i5wwcwr4qdbcoxhm@pali>
+ <CAHp75VcqCdEQjUCoSGz87Mb3HFomfOwKWxC7S2CjtqSAZQEpsA@mail.gmail.com>
+ <20180131090758.v6eyj35gymlfyzhk@pali>
+ <bb29662337484ad8bd2350e6b68133d3@ausx13mpc120.AMER.DELL.COM>
+ <CAHp75VcqYgDCTPqjn9F1SpAbamgPk8B7s4zYAb8csD8oFpLihw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zmcmku37yuvk4ibo"
 Content-Disposition: inline
-In-Reply-To: <CALCETrVsZWL7ZDnGMyoN8V4mmL5NO+SARQBV1U2OzrVscMsoig@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAHp75VcqYgDCTPqjn9F1SpAbamgPk8B7s4zYAb8csD8oFpLihw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 08:35:30AM -0800, Andy Lutomirski wrote:
-> Hmm.  I'm okay with this, but I'd also be okay doing nothing and
-> figuring out WTF happened if an upstream kernel fails to build like
-> this.
 
-Oh sure, I'm sending it only as an FYI to show that something like this
-*might* happen so that we're aware. I've taken it into our trees where
-the 3.0 vdso code generates an indirect call to the thunk:
+--zmcmku37yuvk4ibo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-        .loc 1 41 0
-        movq    -10489696, %rax # MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.vread, MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.vread
-        call    __x86_indirect_thunk_rax
+On Wednesday 31 January 2018 18:53:19 Andy Shevchenko wrote:
+> On Wed, Jan 31, 2018 at 6:46 PM,  <Mario.Limonciello@dell.com> wrote:
+>=20
+> >> > for allocation: ..._alloc_request()
+> >> > for filling: _fill_request() / _prepare_request()
+> >> >
+> >> > or alike.
+> >> >
+> >> > _set_arguments() not good enough to me.
+> >>
+> >> Ok. Then we need to stick with 5 arguments... What about name
+> >> dell_fill_request()? E.g.
+> >>
+> >>   struct calling_interface_buffer buffer;
+> >>   dell_fill_request(&buffer, 0x2, 0, 0, 0);
+> >>   ret =3D dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+> >>
+> >
+> > The other alternative is to just define the input of the structure imme=
+diately with
+> > an initializer, no multi argument filler function.  Like this:
+>=20
+> Either would work for me, though one comment below.
+>=20
+> > -       struct calling_interface_buffer buffer;
+>=20
+>=20
+> > +       struct calling_interface_buffer buffer =3D {CLASS_INFO,
+> > +                                                 SELECT_RFKILL,
+> > +                                                 {0, 0, 0, 0},
+> > +                                                 {0, 0, 0, 0}};
+>=20
+> Looking to this approach I would rather provide a macro then.
+>=20
+> #define FILL_REQUEST(a,b,c,d,...) \ // variant FILL_RFKILL_REQUEST(a,b,c,=
+d)
+> (struct calling_interface_buffer) { \
+>  ... \
+> }
+>=20
+> But then it is macro(s) vs. function(s) debate.
 
-Without the retpoline flags, the code looks like this:
+Does not matter, I'm fine with either macro or function.
 
- 170:   4c 8b 34 25 88 f0 5f    mov    0xffffffffff5ff088,%r14
- 177:   ff 
- 178:   44 8b 2c 25 90 f0 5f    mov    0xffffffffff5ff090,%r13d
- 17f:   ff 
- 180:   ff 14 25 a0 f0 5f ff    callq  *0xffffffffff5ff0a0		<---
- 187:   4c 8b 0c 25 a8 f0 5f    mov    0xffffffffff5ff0a8,%r9
- 18e:   ff 
- 18f:   4c 8b 04 25 b0 f0 5f    mov    0xffffffffff5ff0b0,%r8
+>=20
+> > -       dell_set_arguments(&buffer, 0, 0, 0, 0);
+> > -       ret =3D dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+> > +       ret =3D dell_send_request(&buffer);
+>=20
 
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
-which is:
+--zmcmku37yuvk4ibo
+Content-Type: application/pgp-signature; name="signature.asc"
 
-        movl    -10489712, %r12d        # MEM[(const struct vsyscall_gtod_data *)-10489728B].wall_time_nsec,
-.LVL46:
-.LBB125:
-.LBB126:
-        .loc 1 41 0
-        call    *-10489696      # MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.vread		<---
-.LVL47:
-        movq    -10489688, %r9  # MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.cycle_last, D.23457
-        movq    -10489680, %r8  # MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.mask, D.23457
+-----BEGIN PGP SIGNATURE-----
 
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWnH3nQAKCRCL8Mk9A+RD
+Ukw5AKCeM9CnuEE8G6Nwv+vYrCYHPOtq4QCgu7hC/v93/fhplaiVR1WUY4+Foiw=
+=Ymjo
+-----END PGP SIGNATURE-----
 
-notrace static inline long vgetns(void)
-{
-        long v;
-        cycles_t (*vread)(void);
-        vread = gtod->clock.vread;
-        v = (vread() - gtod->clock.cycle_last) & gtod->clock.mask;
-	^^^^^^^^^^^^
-
-so it has been converted to an absolute memory reference in that CALL -
-nothing funky through a register.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+--zmcmku37yuvk4ibo--
