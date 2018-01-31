@@ -1,52 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753859AbeAaQun (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 11:50:43 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:29688 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753352AbeAaQuU (ORCPT
+        id S1753348AbeAaQxC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 11:53:02 -0500
+Received: from mail-ua0-f180.google.com ([209.85.217.180]:35316 "EHLO
+        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751842AbeAaQxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 11:50:20 -0500
-From: Olivier Moysan <olivier.moysan@st.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
-CC: <arnaud.pouliquen@st.com>, <benjamin.gaignard@st.com>
-Subject: [PATCH 2/2] ASoC: stm32: spdifrx: Use default dai name
-Date: Wed, 31 Jan 2018 17:47:03 +0100
-Message-ID: <1517417223-21899-3-git-send-email-olivier.moysan@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1517417223-21899-1-git-send-email-olivier.moysan@st.com>
-References: <1517417223-21899-1-git-send-email-olivier.moysan@st.com>
+        Wed, 31 Jan 2018 11:53:01 -0500
+X-Google-Smtp-Source: AH8x22639tL9UuKdOwwiLz1nuY/EhUHoY7voi2fphj7R+zEfkDXUVkxfBIKFGz3hnZO0oA3/GLc0yCBhm3TZbfKL3l0=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.16]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-31_08:,,
- signatures=0
+In-Reply-To: <CAOw6vbKsG=B7vV5_NcwgeAc-=guRN1Xh-dCxKytkDeOjayatLw@mail.gmail.com>
+References: <20180130202913.28724-1-thierry.escande@collabora.com>
+ <20180130202913.28724-34-thierry.escande@collabora.com> <1517403243.14302.1.camel@pengutronix.de>
+ <CAOw6vbKsG=B7vV5_NcwgeAc-=guRN1Xh-dCxKytkDeOjayatLw@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 31 Jan 2018 08:52:59 -0800
+X-Google-Sender-Auth: o5ocRZlgLtz0ByLp4uYQFsxc3LQ
+Message-ID: <CAD=FV=UB+ovYFSi2aB_qe3igX3K7BxMWaEEoNPx1UMdscKwQtQ@mail.gmail.com>
+Subject: Re: [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Lucas Stach <l.stach@pengutronix.de>,
+        Thierry Escande <thierry.escande@collabora.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandy Huang <hjc@rock-chips.com>, David Airlie <airlied@linux.ie>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Zain Wang <wzz@rock-chips.com>, Lin Huang <hl@rock-chips.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Yakir Yang <ykk@rock-chips.com>,
+        =?UTF-8?Q?=C3=98rjan_Eide?= <orjan.eide@arm.com>,
+        Mark Yao <mark.yao@rock-chips.com>, Haixia Shi <hshi@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use dai name provided by framework from dev_name() function.
+Hi,
 
-Signed-off-by: olivier moysan <olivier.moysan@st.com>
----
- sound/soc/stm/stm32_spdifrx.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/stm/stm32_spdifrx.c b/sound/soc/stm/stm32_spdifrx.c
-index 42ad2ae..373df4f 100644
---- a/sound/soc/stm/stm32_spdifrx.c
-+++ b/sound/soc/stm/stm32_spdifrx.c
-@@ -819,7 +819,6 @@ static void stm32_spdifrx_shutdown(struct snd_pcm_substream *substream,
- 
- static struct snd_soc_dai_driver stm32_spdifrx_dai[] = {
- 	{
--		.name = "spdifrx-capture-cpu-dai",
- 		.probe = stm32_spdifrx_dai_probe,
- 		.capture = {
- 			.stream_name = "CPU-Capture",
--- 
-1.9.1
+On Wed, Jan 31, 2018 at 7:16 AM, Sean Paul <seanpaul@chromium.org> wrote:
+> On Wed, Jan 31, 2018 at 7:54 AM, Lucas Stach <l.stach@pengutronix.de> wrote:
+>> Am Dienstag, den 30.01.2018, 21:29 +0100 schrieb Thierry Escande:
+>>> From: Sean Paul <seanpaul@chromium.org>
+>>>
+>>> Change the mode for Sharp lq123p1jx31 panel to something more
+>>> rockchip-friendly such that we can use the fixed PLLs to
+>>> generate the pixel clock
+>>
+>> This should really switch to a display timing instead of exposing a
+>> single mode. The display timing has min, typical, max tuples for all
+>> the timings values, which would allow the attached driver to vary the
+>> timings inside the allowed bounds if it makes sense.
+>>
+>> Trying to hit a specific pixel clock to free up a PLL is exactly one of
+>> the use cases envisioned for the display timings stuff.
+>>
+>
+> Agreed, I think we had this discussion the first time around. We
+> should drop this patch.
+>
+> Thanks for catching this!
+
+Are you sure we should drop this?  In order for things to work
+properly (not generate noise on the digitizer or other EMI), this
+needs to run at a very specific pixel clock with very specific
+blanking times.  I know that earlier we had slightly different
+blanking times and Samsung came back and said that there was noise on
+the digitizer.  I could be wrong, but I don't think there's any way
+currently to be able to specify exactly what timings should be used on
+a particular board.
+
+Don't get be wrong--I think a patch such as this one that claims a
+single board's timings as the "right" ones for a generic panel is a
+bit of a hack.  ...but at the same time there are no other users of
+this panel (that I know of) in mainline and the timings presented here
+are certainly sane timings for this panel.
+
+In any case, previous discussion at: https://patchwork.kernel.org/patch/9614603/
+
+
+...oh, and looking at the previous discussion reminds me that the
+timings presented in this here patch are actually not the right ones
+(they have the right PLL, but the wrong blankings to avoid the noise
+issues).  See <//chromium-review.googlesource.com/381015>
+
+
+
+-Doug
