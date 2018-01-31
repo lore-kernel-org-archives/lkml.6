@@ -1,84 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752974AbeAaDuL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 22:50:11 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:45524 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751598AbeAaDuJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 22:50:09 -0500
-Subject: Re: BUG: spinlock bad magic (2)
-To: Eric Biggers <ebiggers3@gmail.com>, Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot
-        <bot+d3f5d339869eb8cd834d2c9f0a88bf4f05c29781@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
-        syzkaller-bugs@googlegroups.com
-References: <001a113fae28c2fd6605609c97a2@google.com>
- <6dbd4f85-f3f2-97f3-5b82-451276fbf877@oracle.com>
- <CACT4Y+Zoat=3j7B--D=pLK=SU0zhNA2yw0O0cEwj_p6vSBfM7g@mail.gmail.com>
- <20180130222811.yxfiqnlx3la3vyyw@gmail.com>
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <24ea899d-d541-0274-c5bf-8a6e35473ca5@oracle.com>
-Date: Tue, 30 Jan 2018 19:49:51 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180130222811.yxfiqnlx3la3vyyw@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1753148AbeAaDvm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 22:51:42 -0500
+Received: from mout.gmx.net ([212.227.17.21]:50673 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753046AbeAaDvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 22:51:41 -0500
+Message-ID: <1517370670.7130.2.camel@gmx.de>
+Subject: Re: crash binary for latest unreleased kernel
+From: Mike Galbraith <efault@gmx.de>
+To: Joe Smith <codesoldier1@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Date: Wed, 31 Jan 2018 04:51:10 +0100
+In-Reply-To: <CABGNeczUC8nt3PYSjSRUr-j_sxEA=k9cbwBaygA=WPwq-3jLFQ@mail.gmail.com>
+References: <CABGNecyRGfSrrTH99Jps7KaDO3G3GuRErUDGixt4fueX467UBQ@mail.gmail.com>
+         <1517027565.10239.61.camel@gmx.de>
+         <b7b94e75-8052-738d-cc18-5aa1d0b4afde@infradead.org>
+         <1517028522.10239.66.camel@gmx.de>
+         <CABGNecydtsBT070SoVNRGbnmBdGNHAkEaAzJdoHd_ogyUn=ayw@mail.gmail.com>
+         <1517131246.6669.11.camel@gmx.de> <1517133624.6669.22.camel@gmx.de>
+         <CABGNeczUC8nt3PYSjSRUr-j_sxEA=k9cbwBaygA=WPwq-3jLFQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8790 signatures=668657
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=356
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1801310047
+X-Provags-ID: V03:K0:ApSTLJNGQc2ncShJkGd9ZCyJzF0TD07/NS7d48UlwR8mDLfymaT
+ E4Flwl7w7Ut7tIkHuPPDbq9ISyGwik0iZH3DDZa1zwgo7cu3Uwm3nhnHRCBrIo0QnzofZOA
+ boWVgudjjoTHZejcxTzfUbImBYTB562GmNxUblCRwCgXOvjB0SBAXeD+m8d4asrMzSXt8uI
+ l2VO55a2lLHSXB60fFzGg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:vGIna+QpXnw=:ml9RwDiwyN4f7cvFRkLhVk
+ nLBzP2+YUkw0NNQ5aAY3Hq35rVdFTr3RrtDh2+b/p6jjCB6l9IEYQ0UmkyI8EXl150PErO+IZ
+ 5Cs+H5Se5Mzb7Uk5INNeC80qFc5GTneoVWqezlSJwcAMMLr78KCmEjAru4TAFOjG+V4DI3Xgx
+ uIe0c2SI8EOTitQi3pGl1zMdBvOUoZidv8JVKEFBylcOcduu20uRrvc+Ig80v4lIwKCTbNpMZ
+ zDOy7a0JyPdODWIavcAvUgUkpJfRpVLtHkt6doiYSzYbuxN0lPWTuj63BpMJlaxU+7FU2eSBc
+ 3Ymrid5pwgieE84ixSXZnWhg/W9/YQusHInTRuEQWoUUbeZY1w7d8SK3UfYZys2fD/J64DiDJ
+ 08BkRvvRashXCsqmyiRgLm81ds7+gvWmTCavNkgHG1141UjvGMtr37uBi3jypGHzW5hhTcJWg
+ VuHbRXaS8avZxMB+m9ocha/d/ZwtaMUM8smHqr6SMJKzoU93uxCrJadtj/fxVH028WZ+CH2Hh
+ WHNCsFkp1beJgSqEPsIiFsUo1osl+fCZrcLws6OckmS7kYf7Q7RzjqEJdfXBwPRTgFzM5AMys
+ xPebDFS8t3vM3A89spcbIp6g0f+rv4pqLs1jOHNnUvWB27l9AAr8eOzV9EdmfGmpxLEXyH2hP
+ IhQ/UVI1aMVjidIC3X0BBiD6ncAEcPbt5r7ehSUtY4RHe1DkZ0/+nX6/ymnIuAz6NtaaNr9Ep
+ wZh+H5cqJXdKXEswK16b0F/lOHxHqt76fXoR4NBBsCwCeZrBVTa9hbcJ861vdjE5NOfaG/QK9
+ n0933FciA3fW0vbHbaXUyVHNlEXEUBMmGb8sEtcuB0musmis0nR0rJu/LoD9ZNxbCYNCqv9X1
+ ZVKmr8I/f4FC6sf5xCqx80OWfcRGyvJ8Ha1V6HyhiXNq6HuMOv50ZruymkO1umfFkGPerhK3N
+ /LlkZs/FaGA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 2018-01-28 at 12:19 -0800, Joe Smith wrote:
+> Thanks a lot, Mike. Following your suggestions worked !!!!
 
+Until Monday happened :)
 
-On 1/30/18 2:28 PM, Eric Biggers wrote:
-> On Mon, Dec 18, 2017 at 06:01:30PM +0100, 'Dmitry Vyukov' via syzkaller-bugs wrote:
->> On Mon, Dec 18, 2017 at 5:46 PM, Santosh Shilimkar
->> <santosh.shilimkar@oracle.com> wrote:
->>> On 12/18/2017 4:36 AM, syzbot wrote:
->>>>
->>>> Hello,
->>>>
->>>> syzkaller hit the following crash on
->>>> 6084b576dca2e898f5c101baef151f7bfdbb606d
->>>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
->>>> compiler: gcc (GCC) 7.1.1 20170620
->>>> .config is attached
->>>> Raw console output is attached.
->>>>
->>>> Unfortunately, I don't have any reproducer for this bug yet.
->>>>
->>> [...]
->>>
->>>> BUG: unable to handle kernel NULL pointer dereference at 0000000000000028
->>>> IP: rds_send_xmit+0x80/0x930 net/rds/send.c:186
->>>
->>>
->>> This one seems to be same bug as reported as below.
->>>
->>> BUG: unable to handle kernel NULL pointer dereference in rds_send_xmit
->>
->> Hi Santosh,
->>
->> The proper syntax to tell syzbot about dups is this (from email footer):
->>
->>> See https://goo.gl/tpsmEJ for details.
->>> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
->>> syzbot will keep track of this bug report.
->>> To mark this as a duplicate of another syzbot report, please reply with:
->>> #syz dup: exact-subject-of-another-report
->>> Note: all commands must start from beginning of the line in the email body.
-> 
-> #syz dup: BUG: unable to handle kernel NULL pointer dereference in rds_send_xmit
-
-Ok. Noted.
+	-Mike
