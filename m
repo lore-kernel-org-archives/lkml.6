@@ -1,67 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752506AbeAaCQn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:16:43 -0500
-Received: from mail-it0-f51.google.com ([209.85.214.51]:32985 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751635AbeAaCQl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:16:41 -0500
-X-Google-Smtp-Source: AH8x224b/35utyMsx/VdhE3Y7qTeL65jmCKI4DSP1AOtIK63HQ/nBUHWe1bnhKNlwuNpbfQLOHRhDw==
-Date: Tue, 30 Jan 2018 18:16:38 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Cc: syzkaller-bugs@googlegroups.com,
-        Avinash Repaka <avinash.repaka@oracle.com>,
-        syzbot
-        <bot+9461c9b9d340854a404b46c42cbfc91ded1232d8@syzkaller.appspotmail.com>,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com
-Subject: Re: KASAN: stack-out-of-bounds Read in rds_sendmsg
-Message-ID: <20180131021638.6h5fukvzzakzu5g2@gmail.com>
-References: <089e08263e589121d90560d610a5@google.com>
- <9deaf3c4-227f-f6f0-9ccb-3ad05fc32a0c@oracle.com>
+        id S1752761AbeAaCSm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 21:18:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34056 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752690AbeAaCSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 21:18:40 -0500
+Date: Wed, 31 Jan 2018 10:18:35 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Luiz Capitulino <lcapitulino@redhat.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, yasu.isimatu@gmail.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: Re: KASLR may break some kernel features (was Re: [PATCH v5 1/4]
+ kaslr: add immovable_mem=nn[KMG]@ss[KMG] to specify extracting memory)
+Message-ID: <20180131021835.GA1873@localhost.localdomain>
+References: <20180104080219.23893-1-fanc.fnst@cn.fujitsu.com>
+ <20180104080219.23893-2-fanc.fnst@cn.fujitsu.com>
+ <20180104103057.GC7235@x1>
+ <20180104112104.67b88e2d@redhat.com>
+ <20180111090006.GA9648@localhost.localdomain>
+ <CAGXu5jJvN52-Zi_meU86G7sbzQDNRqi-6jHxz-aPfkq4vXcKoA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9deaf3c4-227f-f6f0-9ccb-3ad05fc32a0c@oracle.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAGXu5jJvN52-Zi_meU86G7sbzQDNRqi-6jHxz-aPfkq4vXcKoA@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 21, 2017 at 08:44:32AM -0800, Santosh Shilimkar wrote:
-> +Avinash
-> 
-> On 12/21/2017 1:10 AM, syzbot wrote:
-> > syzkaller has found reproducer for the following crash on
-> 
-> [..]
-> 
-> > 
-> > audit: type=1400 audit(1513847224.110:7): avc:  denied  { map } for
-> > pid=3157 comm="syzkaller455006" path="/root/syzkaller455006870"
-> > dev="sda1" ino=16481
-> > scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
-> > tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-> > ==================================================================
-> > BUG: KASAN: stack-out-of-bounds in rds_rdma_bytes net/rds/send.c:1013
-> > [inline]
-> 
-> Could you please post the discussed fix if you are ready with it ?
-> This new report is same as last one and cmesg length check should
-> address it.
-> 
-> Regards,
-> Santosh
-> 
+Hi Kees,
 
-This crash seems to have stopped occurring.  I assume it was fixed by commit
-14e138a86f63 (thanks Avinash!), so let's tell syzbot so that it can start
-reporting crashes in the same place again:
+On 01/11/18 at 10:04am, Kees Cook wrote:
+> On Thu, Jan 11, 2018 at 1:00 AM, Baoquan He <bhe@redhat.com> wrote:
+> > Hi Luiz,
+> >
+> > On 01/04/18 at 11:21am, Luiz Capitulino wrote:
+> >> Having a generic kaslr parameter to control where the kernel is extracted
+> >> is one solution for this problem.
+> >>
+> >> The general problem statement is that KASLR may break some kernel features
+> >> depending on where the kernel is extracted. Two examples are hot-plugged
+> >> memory (this series) and 1GB HugeTLB pages.
+> >>
+> >> The 1GB HugeTLB page issue is not specific to KVM guests. It just happens
+> >> that there's a bunch of people running guests with up to 5GB of memory and
+> >> with that amount of memory you have one or two 1GB pages and is easier for
+> >> KASLR to extract the kernel into a 1GB region and split a 1GB page. So,
+> >> you may not get any 1GB pages at all when this happens. However, I can also
+> >> reproduce this on bare-metal with lots of memory where I can loose a 1GB
+> >> page from time to time.
+> >>
+> >> Having a kaslr_range= parameter solves both issues, but two major drawbacks
+> >> is that it breaks existing setups and I guess users will have a very hard
+> >> time choosing good ranges.
+> >>
+> >> Another idea would be to have a CONFIG_KASLR_RANGES, where each arch
+> >> could have a list of ranges known to contain holes and/or immovable
+> >> memory and only extract the kernel into those ranges.
+> >
+> > If add CONFIG_KASLR_RANGES, then a distro like RHEL will have this range
+> > always, whether people need hugetlb or not.
+> >
+> > So in this case, what range do we need to avoid? Only [1G, 2G]?
+> 
+> Any ranges like that that need to be avoided should be known at build
+> time, so they should simply be added to the mem_avoid list that is
+> already present in the KASLR code...
 
-#syz fix: RDS: Check cmsg_len before dereferencing CMSG_DATA
+Sorry, I might misunderstand your suggestion before. Are you suggesting to
+add a specific range to mem_avoid[] by hardcoding?
 
-- Eric
+I may not make the situation stated clearly, sorry for that. For this
+hugepage issue, Luiz tested in a kvm guest with 4G memory. And the
+hugetlb need allocate 1G with 1G aligned, so only [1G, 2G] area is good
+1G huge page for allocation. The other area has no good 1G page for
+usage:
+[0, 1G]: BIOS reserved several pages;
+[2G, 3G]: the top is reserved by system, 0x00000000bffe0000-0x00000000bfffffff
+[3G, 4G]: no ram deployed by firmware
+[4G, 5G]: system allocate from top to bottom
+
+dmesg output snippet of kvm guest:
+[  +0.000000] e820: BIOS-provided physical RAM map:
+[  +0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[  +0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000bffdffff] usable
+[  +0.000000] BIOS-e820: [mem 0x00000000bffe0000-0x00000000bfffffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000013fffffff] usable
+
+However, this only failed in this system. If Luiz setup kvm with 5G or
+larger memory, you can see, there will be more than one good 1G page.
+While kernel randomization can only occupy one. So if more than one good
+1G page, the 1G huge page allocation failure won't occur. So it's a very
+corner case, that's why I don't want to hardcode it into mem_avoid[].
+Code sounds not reasonable with the change which we need avoid [1G, 2G]
+area, and the code comments have to tell that we do this because system
+with 4G memory can't allocate 1G huge page successfully. Other than that,
+those system which don't need hugetlb feature, or have more memory, don't
+have this issue at all.
+
+These are my thinking about the current fixing way, not sure if it's
+peruasive or make sense. Would like to hear any suggestion or different
+idea to solve the encountered problems.
+
+Thanks
+Baoquan
