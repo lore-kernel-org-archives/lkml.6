@@ -1,179 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753616AbeAaRqC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:46:02 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40734 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752497AbeAaRqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:46:01 -0500
-Subject: Re: [PATCH v2 07/16] arm/arm64: KVM: Add PSCI version selection API
-To: Andrew Jones <drjones@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Jon Masters <jcm@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <20180129174559.1866-1-marc.zyngier@arm.com>
- <20180129174559.1866-8-marc.zyngier@arm.com>
- <20180131173824.leyfy4vlqq3vmd37@kamzik.brq.redhat.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <1de5a7a8-8118-597f-d1a3-14c406b57b0e@arm.com>
-Date: Wed, 31 Jan 2018 17:45:56 +0000
+        id S932307AbeAaRqu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:46:50 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:47196 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932286AbeAaRqt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:46:49 -0500
+Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in
+ select_idle_sibling
+To: Joel Fernandes <joelaf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        "Cc: EAS Dev" <eas-dev@lists.linaro.org>
+References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
+ <CAJWu+opnNgfVxhgHwLft_qcLMeikEAbNY0zci0WtgQiFkVVjhg@mail.gmail.com>
+ <6967b972-129a-a7f0-06ab-c48dc9709726@oracle.com>
+ <CAJWu+orYPDy3H2TCtB_FZWrMx18F_ePnD=Gdfj=pKg4HVaLjTQ@mail.gmail.com>
+From: Rohit Jain <rohit.k.jain@oracle.com>
+Message-ID: <c78b1dab-95fb-ed88-30de-b4d489a5fc17@oracle.com>
+Date: Wed, 31 Jan 2018 09:50:56 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180131173824.leyfy4vlqq3vmd37@kamzik.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <CAJWu+orYPDy3H2TCtB_FZWrMx18F_ePnD=Gdfj=pKg4HVaLjTQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8791 signatures=668659
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1801310227
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/18 17:38, Andrew Jones wrote:
-> On Mon, Jan 29, 2018 at 05:45:50PM +0000, Marc Zyngier wrote:
->> Although we've implemented PSCI 1.0 and 1.1, nothing can select them
->> Since all the new PSCI versions are backward compatible, we decide to
->> default to the latest version of the PSCI implementation. This is no
->> different from doing a firmware upgrade on KVM.
->>
->> But in order to give a chance to hypothetical badly implemented guests
->> that would have a fit by discovering something other than PSCI 0.2,
->> let's provide a new API that allows userspace to pick one particular
->> version of the API.
->>
->> This is implemented as a new class of "firmware" registers, where
->> we expose the PSCI version. This allows the PSCI version to be
->> save/restored as part of a guest migration, and also set to
->> any supported version if the guest requires it.
->>
->> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>  Documentation/virtual/kvm/api.txt      |  3 +-
->>  Documentation/virtual/kvm/arm/psci.txt | 28 ++++++++++++++
->>  arch/arm/include/asm/kvm_host.h        |  3 ++
->>  arch/arm/include/uapi/asm/kvm.h        |  6 +++
->>  arch/arm/kvm/guest.c                   | 13 +++++++
->>  arch/arm64/include/asm/kvm_host.h      |  3 ++
->>  arch/arm64/include/uapi/asm/kvm.h      |  6 +++
->>  arch/arm64/kvm/guest.c                 | 14 ++++++-
->>  include/kvm/arm_psci.h                 |  9 +++++
->>  virt/kvm/arm/psci.c                    | 68 +++++++++++++++++++++++++++++++++-
->>  10 files changed, 149 insertions(+), 4 deletions(-)
->>  create mode 100644 Documentation/virtual/kvm/arm/psci.txt
->>
->> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
->> index 57d3ee9e4bde..334905202141 100644
->> --- a/Documentation/virtual/kvm/api.txt
->> +++ b/Documentation/virtual/kvm/api.txt
->> @@ -2493,7 +2493,8 @@ Possible features:
->>  	  and execute guest code when KVM_RUN is called.
->>  	- KVM_ARM_VCPU_EL1_32BIT: Starts the CPU in a 32bit mode.
->>  	  Depends on KVM_CAP_ARM_EL1_32BIT (arm64 only).
->> -	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 for the CPU.
->> +	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 (or a future revision
->> +          backward compatible with v0.2) for the CPU.
->>  	  Depends on KVM_CAP_ARM_PSCI_0_2.
->>  	- KVM_ARM_VCPU_PMU_V3: Emulate PMUv3 for the CPU.
->>  	  Depends on KVM_CAP_ARM_PMU_V3.
->> diff --git a/Documentation/virtual/kvm/arm/psci.txt b/Documentation/virtual/kvm/arm/psci.txt
->> new file mode 100644
->> index 000000000000..2e49a4e9f084
->> --- /dev/null
->> +++ b/Documentation/virtual/kvm/arm/psci.txt
->> @@ -0,0 +1,28 @@
->> +KVM implements the PSCI (Power State Coordination Interface)
->> +specification in order to provide services such as CPU on/off, reset
->> +and power-off to the guest.
->> +
->> +The PSCI specification is regularly updated to provide new features,
->> +and KVM implements these updates if they make sense from a virtualization
->> +point of view.
->> +
->> +This means that a guest booted on two different versions of KVM can
->> +observe two different "firmware" revisions. This could cause issues if
->> +a given guest is tied to a particular PSCI revision (unlikely), or if
->> +a migration causes a different PSCI version to be exposed out of the
->> +blue to an unsuspecting guest.
->> +
->> +In order to remedy this situation, KVM exposes a set of "firmware
->> +pseuodo-registers" that can be manipulated using the GET/SET_ONE_REG
->> +interface. These registers can be saved/restored by userspace, and set
->> +to a convenient value if required.
-> 
-> Userspace can save/restore any state it deems necessary. 
+On 01/30/2018 05:57 PM, Joel Fernandes wrote:
 
-Only if it has access to it. Until now, that wasn't an option.
+<snip>
+>>>> Signed-off-by: Rohit Jain<rohit.k.jain@oracle.com>
+>>>> ---
+>>>>    kernel/sched/fair.c | 38 ++++++++++++++++++++++++++++----------
+>>>>    1 file changed, 28 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>> index 26a71eb..ce5ccf8 100644
+>>>> --- a/kernel/sched/fair.c
+>>>> +++ b/kernel/sched/fair.c
+>>>> @@ -5625,6 +5625,11 @@ static unsigned long capacity_orig_of(int cpu)
+>>>>           return cpu_rq(cpu)->cpu_capacity_orig;
+>>>>    }
+>>>>
+>>>> +static inline bool full_capacity(int cpu)
+>>>> +{
+>>>> +       return capacity_of(cpu) >= (capacity_orig_of(cpu)*3)/4;
+>>>> +}
+>>>> +
+>>>>    static unsigned long cpu_avg_load_per_task(int cpu)
+>>>>    {
+>>>>           struct rq *rq = cpu_rq(cpu);
+>>>> @@ -6081,7 +6086,7 @@ static int select_idle_core(struct task_struct *p,
+>>>> struct sched_domain *sd, int
+>>>>
+>>>>                   for_each_cpu(cpu, cpu_smt_mask(core)) {
+>>>>                           cpumask_clear_cpu(cpu, cpus);
+>>>> -                       if (!idle_cpu(cpu))
+>>>> +                       if (!idle_cpu(cpu) || !full_capacity(cpu))
+>>>>                                   idle = false;
+>>>>                   }
+>>> There's some difference in logic between select_idle_core and
+>>> select_idle_cpu as far as the full_capacity stuff you're adding goes.
+>>> In select_idle_core, if all CPUs are !full_capacity, you're returning
+>>> -1. But in select_idle_cpu you're returning the best idle CPU that's
+>>> the most cap among the !full_capacity ones. Why there is this
+>>> different in logic? Did I miss something?
+>>>
 
-> Is there another
-> reason to invent a pseudo register? Considering the PSCI version is VM
-> state, then maybe a VM "device" attribute[*], like s390 use, would fit
-> better. 
+<snip>
 
-Possibly. But that means current userspace won't engage the mitigation
-by default, and that's pretty bad.
+> Dude :) That is hardly an answer to the question I asked. Hint:
+> *different in logic*.
 
-> Or, if keeping it VCPU state has some benefit, then we already
-> have VCPU device attribute support for ARM that we could extend with
-> another attribute. An advantage of using the device-attr API is that it
-> has KVM_HAS_DEVICE_ATTR, allowing the new attribute support to be probed.
-> How should userspace check if the pseudo register is supported? Maybe
-> by just failing with NOT_SUPPORTED to get/set it?
-> 
-> [*] Documentation/virtual/kvm/devices/vm.txt
+Let me re-try :)
 
-Frankly, I have no opinion on the way to implement it. My only
-requirement is that it becomes enabled by default, without any userspace
-change.
+For select_idle_core, we are doing a search for a fully idle and full
+capacity core, the fail-safe is select_idle_cpu because we will re-scan
+the CPUs. The notion is to select an idle CPU no matter what, because
+being on an idle CPU is better than waiting on a non-idle one. In
+select_idle_core you can be slightly picky about the core because
+select_idle_cpu is a fail safe. I measured the performance impact of
+choosing the "best among low cap" vs the code changes I have (for
+select_idle_core) and could not find a statistically significant impact,
+hence went with the simpler code changes.
 
-> 
->> +
->> +The following register is defined:
->> +
->> +* KVM_REG_ARM_PSCI_VERSION:
->> +
->> +  - Only valid if the vcpu has KVM_ARM_VCPU_PSCI_0_2 feature set
->> +  - Returns the current PSCI version on GET_ONE_REG
->> +  - Allows any supported PSCI version compatible with v0.2 to be set
->> +    with SET_ONE_REG
->> +  - Affects the whole VM (even if the register view is per-vcpu)
-> 
-> 
->> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
->> index acbf9ec7b396..e9d57060d88c 100644
->> --- a/arch/arm/include/asm/kvm_host.h
->> +++ b/arch/arm/include/asm/kvm_host.h
->> @@ -75,6 +75,9 @@ struct kvm_arch {
->>  	/* Interrupt controller */
->>  	struct vgic_dist	vgic;
->>  	int max_vcpus;
->> +
->> +	/* Mandated version of PSCI */
->> +	u32 psci_version;
->>  };
->>  
->>  #define KVM_NR_MEM_OBJS     40
->> diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
->> index 6edd177bb1c7..47dfc99f5cd0 100644
->> --- a/arch/arm/include/uapi/asm/kvm.h
->> +++ b/arch/arm/include/uapi/asm/kvm.h
->> @@ -186,6 +186,12 @@ struct kvm_arch_memory_slot {
->>  #define KVM_REG_ARM_VFP_FPINST		0x1009
->>  #define KVM_REG_ARM_VFP_FPINST2		0x100A
->>  
->> +/* KVM-as-firmware specific pseudo-registers */
->> +#define KVM_REG_ARM_FW			(0x0014 << KVM_REG_ARM_COPROC_SHIFT)
-> 
-> Is this 0x14 documented somewhere? I'm just curious how the space for
-> pseudo registers is reserved. Is there a common place that we should
-> document that 0x14 is for the firmware (if it's not documented there
-> already)?
+Hope I answered your question.
 
-No. First come, first served.
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks,
+Rohit
