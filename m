@@ -1,54 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932277AbeAaPd5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 10:33:57 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40642 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932162AbeAaPdn (ORCPT
+        id S932252AbeAaPdx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 10:33:53 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:49731 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752337AbeAaPdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 10:33:43 -0500
-X-Google-Smtp-Source: AH8x224sGZbhhPq+khhBMj90lWYW6cJIMvbOX9abwajre8Z1B/LAxTN8NfJxM5ssQ/CxPmpeCnSQzQ==
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: linux-mips@linux-mips.org
-Cc: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] MIPS: use generic GCC library routines from lib/
-Date: Wed, 31 Jan 2018 18:33:35 +0300
-Message-Id: <20180131153337.29021-1-antonynpavlov@gmail.com>
-X-Mailer: git-send-email 2.15.1
+        Wed, 31 Jan 2018 10:33:45 -0500
+Date: Wed, 31 Jan 2018 16:33:43 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stefan Mavrodiev <stefan@olimex.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 2/2] ARM: dts: sunxi: Add Olimex A20-SOM204-EVB-eMMC
+ board
+Message-ID: <20180131153343.nwuii3pmybn4t7dk@flea.lan>
+References: <1517234202-1892-1-git-send-email-stefan@olimex.com>
+ <1517234202-1892-2-git-send-email-stefan@olimex.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z66ymui2c44h2uaf"
+Content-Disposition: inline
+In-Reply-To: <1517234202-1892-2-git-send-email-stefan@olimex.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v2 patch series (https://www.linux-mips.org/archives/linux-mips/2018-01/msg00567.html):
 
-  * sort the CONFIG_GENERIC_* options in arch/mips/Kconfig alphabetically (v2).
+--z66ymui2c44h2uaf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since v1 patch series (https://www.linux-mips.org/archives/linux-mips/2018-01/msg00394.html):
+On Mon, Jan 29, 2018 at 03:56:40PM +0200, Stefan Mavrodiev wrote:
+> A20-SOM204 board has option with onboard 16GB eMMC.
+> The chip is wired to MMC2 slot.
+>=20
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
 
-  * sort the CONFIG_* options in arch/mips/Kconfig alphabetically;
-  * add notrace to lib/ucmpdi2.c.
+Queued both in 4.17, thanks!
+Maxime
 
-Antony Pavlov (1):
-  MIPS: use generic GCC library routines from lib/
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Palmer Dabbelt (1):
-  Add notrace to lib/ucmpdi2.c
+--z66ymui2c44h2uaf
+Content-Type: application/pgp-signature; name="signature.asc"
 
- arch/mips/Kconfig       |  5 +++++
- arch/mips/lib/Makefile  |  2 +-
- arch/mips/lib/ashldi3.c | 30 ------------------------------
- arch/mips/lib/ashrdi3.c | 32 --------------------------------
- arch/mips/lib/cmpdi2.c  | 28 ----------------------------
- arch/mips/lib/lshrdi3.c | 30 ------------------------------
- arch/mips/lib/ucmpdi2.c | 22 ----------------------
- lib/ucmpdi2.c           |  2 +-
- 8 files changed, 7 insertions(+), 144 deletions(-)
- delete mode 100644 arch/mips/lib/ashldi3.c
- delete mode 100644 arch/mips/lib/ashrdi3.c
- delete mode 100644 arch/mips/lib/cmpdi2.c
- delete mode 100644 arch/mips/lib/lshrdi3.c
- delete mode 100644 arch/mips/lib/ucmpdi2.c
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.15.1
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpx4dYACgkQ0rTAlCFN
+r3QSsg/+IQT7EN4RoIeNUHSlAeqs/txXuYOj5QDjBcya6nXbUzd0rwEA5M4FQD1A
+dzTneH0mXed1JZJMOYE7sr2toE39P6B0gankdyE+hv7YwWfybkBNI68oQN+kuajd
+S845FyTbSINZxtnJ2oUXErxoHPaNJy9SVqQSV21j1CeNDYfkp3gIziju8wLGplOP
+e9RpRLnpozxqVOhZ7CZlASA19YGxUzuAq+dTLW0BCA7Phc+690QeAtH8PNVgFZ40
+pzCkta/40YmpHKuYExflaGyDtOP3RdP6RHwnU9TO1dG3H+qcPwh65D5jq4ub+CRs
+BVz8a5bTS9LAkBt6pv16P12/eM7KJWMwtNrg4awwHYar7gFlLxayM0PbEasoT7f/
+x6dUgbAD+wnwx5PXj0VAu/LksKzuXNWUO658Le3kDFwdijlgmYUU4TV5BAVnVYg3
+175EZ4+OKLxpK5t5vGQKiE0H6aj0U98iW50pD7SE8wYh6tzTIYoAtAJLjvh2CWtn
+VNDLFYhFUnVsEvPuYtrZUqISeVdiHNNk22ZFgL2XE0KheXwhcXq+I2YTxRAuWKoQ
+VqYphVPhJ0Tw3Kvlo8XnpU7LNe9d6HMDI8u99ha6OZ3AhnvwfKPsVLhG+6Nr5ksb
+sF+08gOtAOBu4f2/FUsXj/4LXJTH+Q0PU6HetgbvbCNSXkWsBuo=
+=ayBZ
+-----END PGP SIGNATURE-----
+
+--z66ymui2c44h2uaf--
