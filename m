@@ -1,370 +1,418 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753320AbeAaMM2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 07:12:28 -0500
-Received: from mga02.intel.com ([134.134.136.20]:27853 "EHLO mga02.intel.com"
+        id S1752510AbeAaMTN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 07:19:13 -0500
+Received: from mga12.intel.com ([192.55.52.136]:1235 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752179AbeAaMM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 07:12:27 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1751025AbeAaMTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 07:19:12 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,440,1511856000";
-   d="gz'50?scan'50,208,50";a="23836105"
-Date: Wed, 31 Jan 2018 20:12:11 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: kbuild-all@01.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk, arnd@arndb.de,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH] arch/arm/Kconfig: enable ARM_MODULE_PLTS when LOCKDEP=y
-Message-ID: <201801312036.gXYpKLF3%fengguang.wu@intel.com>
-References: <20180129234900.11121-1-anders.roxell@linaro.org>
+   d="scan'208";a="26181517"
+Date: Wed, 31 Jan 2018 14:19:06 +0200
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Alexandre Courbot <acourbot@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/8] media: videobuf2: add support for requests
+Message-ID: <20180131121906.h25fll5whpk3cxsb@paasikivi.fi.intel.com>
+References: <20180126060216.147918-1-acourbot@chromium.org>
+ <20180126060216.147918-4-acourbot@chromium.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="tKW2IUtsqtDRztdT"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180129234900.11121-1-anders.roxell@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180126060216.147918-4-acourbot@chromium.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Alexandre,
 
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Jan 26, 2018 at 03:02:11PM +0900, Alexandre Courbot wrote:
+> Make vb2 aware of requests. Drivers can specify whether a given queue
+> can accept requests or not. Queues that accept requests will block on a
+> buffer that is part of a request until that request is submitted.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> ---
+>  drivers/media/v4l2-core/videobuf2-core.c | 125 +++++++++++++++++++++++++++++--
+>  drivers/media/v4l2-core/videobuf2-v4l2.c |  28 ++++++-
+>  include/media/videobuf2-core.h           |  15 +++-
+>  3 files changed, 160 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+> index cb115ba6a1d2..f6d013b141f1 100644
+> --- a/drivers/media/v4l2-core/videobuf2-core.c
+> +++ b/drivers/media/v4l2-core/videobuf2-core.c
+> @@ -26,6 +26,7 @@
+>  
+>  #include <media/videobuf2-core.h>
+>  #include <media/v4l2-mc.h>
+> +#include <media/media-request.h>
+>  
+>  #include <trace/events/vb2.h>
+>  
+> @@ -922,6 +923,17 @@ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
+>  		vb->state = state;
+>  	}
+>  	atomic_dec(&q->owned_by_drv_count);
+> +	if (vb->request) {
+> +		struct media_request *req = vb->request;
+> +
+> +		if (atomic_dec_and_test(&req->buf_cpt))
+> +			media_request_complete(vb->request);
+> +
+> +		/* release reference acquired during qbuf */
+> +		vb->request = NULL;
+> +		media_request_put(req);
+> +	}
+> +
+>  	spin_unlock_irqrestore(&q->done_lock, flags);
+>  
+>  	trace_vb2_buf_done(q, vb);
+> @@ -1298,6 +1310,53 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb)
+>  }
+>  EXPORT_SYMBOL_GPL(vb2_core_prepare_buf);
+>  
+> +/**
+> + * vb2_check_buf_req_status() - Validate request state of a buffer
+> + * @vb:		buffer to check
+> + *
+> + * Returns true if a buffer is ready to be passed to the driver request-wise.
+> + * This means that neither this buffer nor any previously-queued buffer is
+> + * associated to a request that is not yet submitted.
+> + *
+> + * If this function returns false, then the buffer shall not be passed to its
+> + * driver since the request state is not completely built yet. In that case,
+> + * this function will register a notifier to be called when the request is
+> + * submitted and the queue can be unblocked.
+> + *
+> + * This function must be called with req_lock held.
+> + */
+> +static bool vb2_check_buf_req_status(struct vb2_buffer *vb)
+> +{
+> +	struct media_request *req = vb->request;
+> +	struct vb2_queue *q = vb->vb2_queue;
+> +	int ret = false;
+> +
+> +	mutex_lock(&q->req_lock);
+> +
+> +	if (!req) {
+> +		ret = !q->waiting_req;
+> +		goto done;
+> +	}
+> +
+> +	mutex_lock(&req->lock);
+> +	if (req->state == MEDIA_REQUEST_STATE_SUBMITTED) {
 
-Hi Anders,
+Would it make sense to serialise access to request state using the queue
+lock instead? The queue and the state are often accessed together.
 
-Thank you for the patch! Yet something to improve:
+The function itself seems weird. The VB2 framework does not have enough
+information to determine whether a request is complete; this is something a
+driver must evaluate at the time of queueing the request.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.15 next-20180126]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> +		mutex_unlock(&req->lock);
+> +		ret = !q->waiting_req;
+> +		goto done;
+> +	}
+> +
+> +	if (!q->waiting_req) {
+> +		q->waiting_req = true;
+> +		atomic_notifier_chain_register(&req->submit_notif,
+> +					       &q->req_blk);
+> +	}
+> +	mutex_unlock(&req->lock);
+> +
+> +done:
+> +	mutex_unlock(&q->req_lock);
+> +	return ret;
+> +}
+> +
+>  /**
+>   * vb2_start_streaming() - Attempt to start streaming.
+>   * @q:		videobuf2 queue
+> @@ -1318,8 +1377,11 @@ static int vb2_start_streaming(struct vb2_queue *q)
+>  	 * If any buffers were queued before streamon,
+>  	 * we can now pass them to driver for processing.
+>  	 */
+> -	list_for_each_entry(vb, &q->queued_list, queued_entry)
+> +	list_for_each_entry(vb, &q->queued_list, queued_entry) {
+> +		if (!vb2_check_buf_req_status(vb))
+> +			break;
+>  		__enqueue_in_driver(vb);
 
-url:    https://github.com/0day-ci/linux/commits/Anders-Roxell/arch-arm-Kconfig-enable-ARM_MODULE_PLTS-when-LOCKDEP-y/20180131-115917
-config: arm-moxart_defconfig (attached as .config)
-compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=arm 
+Queueing buffers to drivers this way hardly makes sense with requests. The
+driver has no use for it, all it cares about is the request.
 
-All errors (new ones prefixed by >>):
+VB2 could manage its own state of the buffer this way but that's only
+useful from V4L2 API point of view, it has no functional purpose. This
+suggests we need an overhaul of the existing buffer management for
+requests.
 
-   arch/arm/kernel/module-plts.c: In function 'in_init':
->> arch/arm/kernel/module-plts.c:36:23: error: dereferencing pointer to incomplete type 'const struct module'
-     return loc - (u32)mod->init_layout.base < mod->init_layout.size;
-                          ^~
-   arch/arm/kernel/module-plts.c: In function 'get_module_plt':
->> arch/arm/kernel/module-plts.c:41:56: error: dereferencing pointer to incomplete type 'struct module'
-     struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
-                                                           ^~
+> +	}
+>  
+>  	/* Tell the driver to start streaming */
+>  	q->start_streaming_called = 1;
+> @@ -1361,7 +1423,46 @@ static int vb2_start_streaming(struct vb2_queue *q)
+>  	return ret;
+>  }
+>  
+> -int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+> +/**
+> + * vb2_unblock_requests() - unblock a queue waiting for a request submission
+> + * @nb:		notifier block that has been registered
+> + * @action:	unused
+> + * @data:	request that has been submitted
+> + *
+> + * This is a callback function that is registered when
+> + * vb2_check_buf_req_status() returns false. It is invoked when the request
+> + * blocking the queue has been submitted. This means its buffers (and all
+> + * following valid buffers) can be passed to drivers.
 
-vim +36 arch/arm/kernel/module-plts.c
+This is a perplexing one. Why would you not queue the request to the driver
+at the time of... it is queued, by the user? The VB2 framework (nor the
+media or V4L2 frameworks to that matter) does not have enough information
+in order to help the driver here.
 
-7d485f64 Ard Biesheuvel 2014-11-24  33  
-b7ede5a1 Ard Biesheuvel 2017-02-22  34  static bool in_init(const struct module *mod, unsigned long loc)
-b7ede5a1 Ard Biesheuvel 2017-02-22  35  {
-b7ede5a1 Ard Biesheuvel 2017-02-22 @36  	return loc - (u32)mod->init_layout.base < mod->init_layout.size;
-b7ede5a1 Ard Biesheuvel 2017-02-22  37  }
-b7ede5a1 Ard Biesheuvel 2017-02-22  38  
-7d485f64 Ard Biesheuvel 2014-11-24  39  u32 get_module_plt(struct module *mod, unsigned long loc, Elf32_Addr val)
-7d485f64 Ard Biesheuvel 2014-11-24  40  {
-b7ede5a1 Ard Biesheuvel 2017-02-22 @41  	struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
-b7ede5a1 Ard Biesheuvel 2017-02-22  42  							  &mod->arch.init;
-b7ede5a1 Ard Biesheuvel 2017-02-22  43  
-b7ede5a1 Ard Biesheuvel 2017-02-22  44  	struct plt_entries *plt = (struct plt_entries *)pltsec->plt->sh_addr;
-66e94ba3 Ard Biesheuvel 2016-08-18  45  	int idx = 0;
-35fa91ee Ard Biesheuvel 2016-08-16  46  
-66e94ba3 Ard Biesheuvel 2016-08-18  47  	/*
-66e94ba3 Ard Biesheuvel 2016-08-18  48  	 * Look for an existing entry pointing to 'val'. Given that the
-66e94ba3 Ard Biesheuvel 2016-08-18  49  	 * relocations are sorted, this will be the last entry we allocated.
-66e94ba3 Ard Biesheuvel 2016-08-18  50  	 * (if one exists).
-66e94ba3 Ard Biesheuvel 2016-08-18  51  	 */
-b7ede5a1 Ard Biesheuvel 2017-02-22  52  	if (pltsec->plt_count > 0) {
-b7ede5a1 Ard Biesheuvel 2017-02-22  53  		plt += (pltsec->plt_count - 1) / PLT_ENT_COUNT;
-b7ede5a1 Ard Biesheuvel 2017-02-22  54  		idx = (pltsec->plt_count - 1) % PLT_ENT_COUNT;
-7d485f64 Ard Biesheuvel 2014-11-24  55  
-66e94ba3 Ard Biesheuvel 2016-08-18  56  		if (plt->lit[idx] == val)
-66e94ba3 Ard Biesheuvel 2016-08-18  57  			return (u32)&plt->ldr[idx];
-66e94ba3 Ard Biesheuvel 2016-08-18  58  
-66e94ba3 Ard Biesheuvel 2016-08-18  59  		idx = (idx + 1) % PLT_ENT_COUNT;
-66e94ba3 Ard Biesheuvel 2016-08-18  60  		if (!idx)
-66e94ba3 Ard Biesheuvel 2016-08-18  61  			plt++;
-66e94ba3 Ard Biesheuvel 2016-08-18  62  	}
-66e94ba3 Ard Biesheuvel 2016-08-18  63  
-b7ede5a1 Ard Biesheuvel 2017-02-22  64  	pltsec->plt_count++;
-b7ede5a1 Ard Biesheuvel 2017-02-22  65  	BUG_ON(pltsec->plt_count * PLT_ENT_SIZE > pltsec->plt->sh_size);
-7d485f64 Ard Biesheuvel 2014-11-24  66  
-66e94ba3 Ard Biesheuvel 2016-08-18  67  	if (!idx)
-7d485f64 Ard Biesheuvel 2014-11-24  68  		/* Populate a new set of entries */
-7d485f64 Ard Biesheuvel 2014-11-24  69  		*plt = (struct plt_entries){
-7d485f64 Ard Biesheuvel 2014-11-24  70  			{ [0 ... PLT_ENT_COUNT - 1] = PLT_ENT_LDR, },
-7d485f64 Ard Biesheuvel 2014-11-24  71  			{ val, }
-7d485f64 Ard Biesheuvel 2014-11-24  72  		};
-66e94ba3 Ard Biesheuvel 2016-08-18  73  	else
-66e94ba3 Ard Biesheuvel 2016-08-18  74  		plt->lit[idx] = val;
-66e94ba3 Ard Biesheuvel 2016-08-18  75  
-66e94ba3 Ard Biesheuvel 2016-08-18  76  	return (u32)&plt->ldr[idx];
-7d485f64 Ard Biesheuvel 2014-11-24  77  }
-7d485f64 Ard Biesheuvel 2014-11-24  78  
+> + */
+> +static int vb2_unblock_requests(struct notifier_block *nb, unsigned long action,
+> +				void *data)
+> +{
+> +	struct vb2_queue *q = container_of(nb, struct vb2_queue, req_blk);
+> +	struct media_request *req = data;
+> +	struct vb2_buffer *vb;
+> +	bool found_request = false;
+> +
+> +	mutex_lock(&q->req_lock);
+> +	atomic_notifier_chain_unregister(&req->submit_notif, &q->req_blk);
+> +	q->waiting_req = false;
+> +	mutex_unlock(&q->req_lock);
+> +
+> +	list_for_each_entry(vb, &q->queued_list, queued_entry) {
+> +		/* All buffers before our request are already passed to the driver */
+> +		if (!found_request && vb->request != req)
+> +			continue;
+> +		found_request = true;
+> +
+> +		if (!vb2_check_buf_req_status(vb))
+> +			break;
+> +		__enqueue_in_driver(vb);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int vb2_core_qbuf(struct vb2_queue *q, unsigned int index,
+> +		  struct media_request *req, void *pb)
+>  {
+>  	struct vb2_buffer *vb;
+>  	int ret;
+> @@ -1398,11 +1499,21 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+>  
+>  	trace_vb2_qbuf(q, vb);
+>  
+> +	vb->request = req;
+> +	if (req) {
+> +		if (!q->allow_requests)
+> +			return -EINVAL;
+> +
+> +		/* make sure the request stays alive as long as we need */
+> +		media_request_get(req);
+> +		atomic_inc(&req->buf_cpt);
+> +	}
+> +
+>  	/*
+>  	 * If already streaming, give the buffer to driver for processing.
+>  	 * If not, the buffer will be given to driver on next streamon.
+>  	 */
+> -	if (q->start_streaming_called)
+> +	if (q->start_streaming_called && vb2_check_buf_req_status(vb))
+>  		__enqueue_in_driver(vb);
+>  
+>  	/* Fill buffer information for the userspace */
+> @@ -1993,6 +2104,8 @@ int vb2_core_queue_init(struct vb2_queue *q)
+>  	spin_lock_init(&q->done_lock);
+>  	mutex_init(&q->mmap_lock);
+>  	init_waitqueue_head(&q->done_wq);
+> +	mutex_init(&q->req_lock);
+> +	q->req_blk.notifier_call = vb2_unblock_requests;
+>  
+>  	if (q->buf_struct_size == 0)
+>  		q->buf_struct_size = sizeof(struct vb2_buffer);
+> @@ -2242,7 +2355,7 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
+>  		 * Queue all buffers.
+>  		 */
+>  		for (i = 0; i < q->num_buffers; i++) {
+> -			ret = vb2_core_qbuf(q, i, NULL);
+> +			ret = vb2_core_qbuf(q, i, NULL, NULL);
+>  			if (ret)
+>  				goto err_reqbufs;
+>  			fileio->bufs[i].queued = 1;
+> @@ -2421,7 +2534,7 @@ static size_t __vb2_perform_fileio(struct vb2_queue *q, char __user *data, size_
+>  
+>  		if (copy_timestamp)
+>  			b->timestamp = ktime_get_ns();
+> -		ret = vb2_core_qbuf(q, index, NULL);
+> +		ret = vb2_core_qbuf(q, index, NULL, NULL);
+>  		dprintk(5, "vb2_dbuf result: %d\n", ret);
+>  		if (ret)
+>  			return ret;
+> @@ -2524,7 +2637,7 @@ static int vb2_thread(void *data)
+>  		if (copy_timestamp)
+>  			vb->timestamp = ktime_get_ns();;
+>  		if (!threadio->stop)
+> -			ret = vb2_core_qbuf(q, vb->index, NULL);
+> +			ret = vb2_core_qbuf(q, vb->index, NULL, NULL);
+>  		call_void_qop(q, wait_prepare, q);
+>  		if (ret || threadio->stop)
+>  			break;
+> diff --git a/drivers/media/v4l2-core/videobuf2-v4l2.c b/drivers/media/v4l2-core/videobuf2-v4l2.c
+> index 0f8edbdebe30..267fe2d669b2 100644
+> --- a/drivers/media/v4l2-core/videobuf2-v4l2.c
+> +++ b/drivers/media/v4l2-core/videobuf2-v4l2.c
+> @@ -30,6 +30,7 @@
+>  #include <media/v4l2-common.h>
+>  
+>  #include <media/videobuf2-v4l2.h>
+> +#include <media/media-request.h>
 
-:::::: The code at line 36 was first introduced by commit
-:::::: b7ede5a1f5905ac394cc8e61712a13e3c5cb7b8f ARM: 8662/1: module: split core and init PLT sections
+Alphabetical order, please.
 
-:::::: TO: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-:::::: CC: Russell King <rmk+kernel@armlinux.org.uk>
+>  
+>  static int debug;
+>  module_param(debug, int, 0644);
+> @@ -561,6 +562,7 @@ EXPORT_SYMBOL_GPL(vb2_create_bufs);
+>  
+>  int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
+>  {
+> +	struct media_request *req = NULL;
+>  	int ret;
+>  
+>  	if (vb2_fileio_is_active(q)) {
+> @@ -568,8 +570,32 @@ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
+>  		return -EBUSY;
+>  	}
+>  
+> +	/*
+> +	 * The caller should have validated that the request is valid,
+> +	 * so we just need to look it up without further checking
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Why? This would mean you'll need to look up a request twice per IOCTL.
 
---tKW2IUtsqtDRztdT
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+> +	 */
+> +	if (b->request_fd > 0) {
+> +		req = media_request_get_from_fd(b->request_fd);
+> +		if (!req)
+> +			return -EINVAL;
+> +
+> +		mutex_lock(&req->lock);
+> +		if (req->state != MEDIA_REQUEST_STATE_IDLE) {
+> +			mutex_unlock(&req->lock);
+> +			media_request_put(req);
+> +			return -EINVAL;
+> +		}
+> +		mutex_unlock(&req->lock);
+> +	}
+> +
+>  	ret = vb2_queue_or_prepare_buf(q, b, "qbuf");
+> -	return ret ? ret : vb2_core_qbuf(q, b->index, b);
+> +	if (!ret)
+> +		ret = vb2_core_qbuf(q, b->index, req, b);
+> +
+> +	if (req)
+> +		media_request_put(req);
+> +
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(vb2_qbuf);
+>  
+> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+> index ef9b64398c8c..7bb17c842ab4 100644
+> --- a/include/media/videobuf2-core.h
+> +++ b/include/media/videobuf2-core.h
+> @@ -237,6 +237,7 @@ struct vb2_queue;
+>   *			on an internal driver queue
+>   * @planes:		private per-plane information; do not change
+>   * @timestamp:		frame timestamp in ns
+> + * @request:		request the buffer belongs to, if any
+>   */
+>  struct vb2_buffer {
+>  	struct vb2_queue	*vb2_queue;
+> @@ -246,6 +247,7 @@ struct vb2_buffer {
+>  	unsigned int		num_planes;
+>  	struct vb2_plane	planes[VB2_MAX_PLANES];
+>  	u64			timestamp;
+> +	struct media_request	*request;
+>  
+>  	/* private: internal use only
+>  	 *
+> @@ -443,6 +445,7 @@ struct vb2_buf_ops {
+>   * @quirk_poll_must_check_waiting_for_buffers: Return POLLERR at poll when QBUF
+>   *              has not been called. This is a vb1 idiom that has been adopted
+>   *              also by vb2.
+> + * @allow_requests:	whether requests are supported on this queue.
+>   * @lock:	pointer to a mutex that protects the vb2_queue struct. The
+>   *		driver can set this to a mutex to let the v4l2 core serialize
+>   *		the queuing ioctls. If the driver wants to handle locking
+> @@ -500,6 +503,9 @@ struct vb2_buf_ops {
+>   *		when a buffer with the V4L2_BUF_FLAG_LAST is dequeued.
+>   * @fileio:	file io emulator internal data, used only if emulator is active
+>   * @threadio:	thread io internal data, used only if thread is active
+> + * @req_lock:	protects req_blk and waiting_req
+> + * @req_blk:	notifier to be called when waiting for a request to be submitted
+> + * @waiting_req:whether this queue is currently waiting on a request submission
+>   */
+>  struct vb2_queue {
+>  	unsigned int			type;
+> @@ -511,6 +517,7 @@ struct vb2_queue {
+>  	unsigned			fileio_write_immediately:1;
+>  	unsigned			allow_zero_bytesused:1;
+>  	unsigned		   quirk_poll_must_check_waiting_for_buffers:1;
+> +	unsigned			allow_requests:1;
+>  
+>  	struct mutex			*lock;
+>  	void				*owner;
+> @@ -554,6 +561,10 @@ struct vb2_queue {
+>  	struct vb2_fileio_data		*fileio;
+>  	struct vb2_threadio_data	*threadio;
+>  
+> +	struct mutex			req_lock;
+> +	struct notifier_block		req_blk;
+> +	bool				waiting_req;
+> +
+>  #ifdef CONFIG_VIDEO_ADV_DEBUG
+>  	/*
+>  	 * Counters for how often these queue-related ops are
+> @@ -724,6 +735,7 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb);
+>   *
+>   * @q:		videobuf2 queue
+>   * @index:	id number of the buffer
+> + * @req:	request this buffer belongs to, if any
+>   * @pb:		buffer structure passed from userspace to vidioc_qbuf handler
+>   *		in driver
+>   *
+> @@ -740,7 +752,8 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb);
+>   * The return values from this function are intended to be directly returned
+>   * from vidioc_qbuf handler in driver.
+>   */
+> -int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb);
+> +int vb2_core_qbuf(struct vb2_queue *q, unsigned int index,
+> +		  struct media_request *req, void *pb);
+>  
+>  /**
+>   * vb2_core_dqbuf() - Dequeue a buffer to the userspace
 
-H4sICFaucVoAAy5jb25maWcAlDxdc9u2su/9FZz0zp32oY0/krSZO34AQVBCRRIMAEqyXziK
-rbSaypKPJLfNvz+7ICkCJKD0dqYTE7tcAIv9XlDff/d9RF5P++fVafO42m6/Rr+vd+vD6rR+
-ir5stuv/ixIRFUJHLOH6Z0DONrvXf96uDs/Ru5+v3/98Fc3Wh916G9H97svm91d4c7Pffff9
-d1QUKZ/UROZ3X62HekpUrSY1nRJe9JCcT6YaYHNWl5T34+oesKuyFFKrmpR5zfIqI5oL693m
-LSloTcvKelUTOtOSUNZR6GGZoLOElWNAg8/lpzQjEzWGy4Vieb2k0wlJkppkEyG5nlpbTPmy
-ZkRm9/Bc58yCTFjBJKf1dMFws2MAJRmPJdGsTlhG7nuEgrGkTnJS56TEbWlms5ROew5VwIaY
-KZfjJdGAU06BlXMuPRPH1aQfLCeaxBmrMzZnmbq76cYTlnbM40rfvXm73Xx++7x/et2uj2//
-pypIzmrJMkYUe/vzoxGGN927wM96IeSsnyWueJZoDu+wZTOfavgMkvN9NDEiuI2O69PrSy9L
-sRQzVtTAWJWXPS1ecF2zYg6bxcXlXN/dnpdNpVCqpiIvecbu3rwB6h2kGas1UzraHKPd/oQT
-WiJCsjmTCmXNfs8G1KTSwvOyEckZkwXL6skDLwfC2kKyh5z4IcuH0BsiBHjXA9yJzwu3ZrWX
-PIQvHy5BYQWXwe887ADZIVUG+i2URkG5e/PDbr9b/2hxVS1I6XkT9H/OS+oYBBzAf6nO7O2V
-QoHu5Z8qVjEPpUYQQCOFvK+JBuMwtd+uFAPt826NVGD6Qods9M9g4IpIlnUyDDIfHV8/H78e
-T+vnXoY7nUOVMMo6VkcEqalYhCGNctqSIBOAgb1agA4qViSWdsA7icgdazslRQKS3wwjhs2J
-/gU4NzANnp0jSiokBbOkp5KRhBeWBVElkYoNydp7MHRT5aFs2EnRPCtRwQR1QjTxmErEAB4U
-WnX81pvn9eHoY7nmdAZGgwHnLONXiHr6gEYgN77kvE4YLGEOkXDqWV/zFgfuDSg5JMC+4znU
-aOCks02zVHBTb/Xq+Gd0gjVHq91TdDytTsdo9fi4f92dNrvfB4uHF2pCqagK3XD6PBUa9AEY
-meSVY+S8Mbk9rhcvVolxpwz0BVC1F0kTNUNXNN6dpFWkxqdQSsbyUtcAtjcAj+ACgOM+DVMN
-8tk3MzYcwlXUzhAShIVlWX+2FsS4UsUmNDZezPVHdcyLG8vW8Fnzx3jE8McOJ5BCCrrJU313
-/Uu/Z17oWa1IyoY4t0ORVnQKSzOCbfOHTqSoSuU9AzSloGxwUF5wQxE9lKHhx7lXqQJ9hNOh
-EFckXiSJ4YhfVLIZvDw3LlgmPqtLa1GC0PEHhhYDVQv+yUlBmbPLAZqCP/zeoDH6nbUowAXz
-QiR2yGPMcsWT6w/W8ZZp/9CIW/88wIUAU3NwB9JeoJownYOw1a2V9y8OWNl7AWfN4/G0McJW
-4GX8V2MyrFEjQsPnusi5LbyOTWBZCrIvmf/EID6r08q7g7TSbGmtEB/r0pqIlSJzfK7ik4Jk
-qV9szFYCMGO7U5/EqGkTNfful/siLJLMOeykZavFMHg7JlJy9/xAFeisFMA7NMx6wJ0uhkFK
-97lFrBupibvvfjxWIgM+oWCDGb5AtOE8qpLmc0f4QTh9YmWHJtLET15+wXZZkrBkoACoaPXZ
-Q3bCg4NArp7nMJmxYH34RK+v3o2MeZvclevDl/3hebV7XEfsr/UOnBUBt0XRXYHXbbyaNUcz
-sXc387yB1sYHDdxjL1hZFY/DDyd2JxoSglngbRL7RAuIOtKbCT8aiUGM5IR1gav7EkBTcEXo
-QGoJSizy4CJ6RAzRwNL7tQFOX0NaibFODZkFTzk1Oa4XGVxPyrOB87aPXjQYjoz9VuVlDQti
-ARFr8kYvzND88C6GJAsS1EmBPoVicBAK31DA0J9CgAGxBMT1w5RlmKQ2o5JpLwAcg3fcMYF9
-LG4y+KkQswEQ82d41nxSicqidfa/wCCM69qI1hN8IxANIMQPurI2ZaY1ZQ2m2wRjMLdkEzAV
-RdLUJFr21aQcboBmvlUDXqMKPhVH0r5xNBrtdEmVD4/ALLmXicFeFgTUE5OsJpDvkmAPCcUo
-qmIN4qaNwbUxJuDVy6ya8EI5iUA/HJJgwDBLh3PXjIK1HsQKLtAfdrg4EKQXw4hjgAGcrDIi
-/fZmhK20FF4V1FMQe2QOWPnhyaD8saU2MjpzciYDDgTzAyxPGD/AyEXSHk/JKBoTyzuKpMog
-M0EdxThBjg4fBdlAjGWDOMx37jlWomSBEbMebpItwVIMlWj8Vp1DRvrrJThZ3l1/CCPAy66N
-6pY/9Wc/ioBVMlrnE5gM5ANcNJ0twFBbWxKQFkCUoyrgZZHcjgCEusVIPD5ICFkKbOfo5tLU
-kf5+pfO2mkdnIUOKIbGA+KorrsjF0gmMAjid1wqRNaZKg0nTAcIj4L+g1AjWkJLEomGFXBhE
-nE2Zj4r5T59Xx/VT9GcTZ7wc9l822yYBtgyGmLeLubQQg9a6vtoJtRtr1Jrxxg9MmYTDsXJD
-2AGGu7bKmoBNYaR0d92vptUgz0riYe6WxQlJL+ZNsQqk4D08VJXqUy/NJpLrywnagwjFHohB
-8wQCCtbYe78FRLRF7JOpZgpwT7Ur6TiuIFgQJRkffbk6nDbYKYj015e1G0ASqbk2xdVkjomi
-L+rNVSJUj2qlKCl3hptanIjU4x9rrFWbYLUzCaJJkQshnEJpN56ACUO++CpgLQpNP/Vzd2XO
-ZvBMrhvGaS4UR1uSd28ev/znXDnPP41WYxnzHji7j92EpwPE6SfPnFXBC3PiqgRvVRWt5Noq
-1XddNLgBWst8YdPHwPbBlRXDamXKPuZUe0bneTV0BZhkl5ALYTVgZNRYrMj19ZW/GmsQyo+3
-y2UYngqhY8mTiT8JNjgF0xcocFFeX5wCEG5vvgG/vQRflu8u0U/E/MLiZ+rXDx/fh+GLj1fL
-j1cXOJiVFJZ/Yf5y6e8SGKAsaRhozu7C1OqW3lzeOpnzgvIwggDXeT0Svfx1e9q8bNfRy3Z1
-wnQVQNv1Y9uP7CqvkLQe1tGX1fNm+9VBGIlnPX83kswO4C+K2ijvPWrnkACUEPkP36T+y7cw
-TBg5aE65eBMGEZgvFmqoiCWxi2Q5wcyO/nJ9fZONo5B8eUEeCjAybr2lcQGH/eP6eNwfBsYC
-V56S9zcf3KDq9uavd+4IicFrs/lgtDTDGYPI7N6FUNgCBtlz7RtPyWBUlPejQZ3FY8Ty+v14
-xLV5OIohd9NXOfcsehak69Xp9eA6wkYNsW1LkkTWuknC/fkJ0OfNPhIIdOPMbzoQLfl/oS0g
-smAQzItq4g+rETcuJUswCPQQbdFM3X1mktIpy0qnxDkc7mmbJWQ3yyuvlOZ1dt3iNEX19zbM
-9MtZjjX3lElc1qDEaxKppggruwOJX7GD9PKyP5yckCRgjGC8O9IuvgzieSp8Zopkfdz8vlus
-wCjhNMY6qfMSGjGBcbZ7etlvdsNl1ZCUmLJmYF5K3LK8XdSzZK7Fn+eqzCB7u3V7TOdRzDYC
-Rb0G5cYfznbga1/CXJIJqwWkSUzfXf1Dr5r/HGNUyHpScnF3ZVfBmnYS5vWBMlmDMBcZJCBE
-3vumbnDs6nrzkklarATiAe91QGx2ZY2Ajxv0DW8CXg9B74Og2/Bb78MgmN2nFdOHO4AMe0BT
-iW1EnxIxEnN7FwKe2+rqBQdu8gRULk+mOUBlGaNdVQxzJ28O1yfFZVrUc5LxZNhPBQq+tB2s
-j1p07eqSFIMw01SyjGZChjytJgwMuI2Sd3lrmdl1jBQCU+fuDg7U2GcyJiUflTSx6eDG0IWo
-YwhCB70Mg9yOQ+aWCkPUV4M2+lJqJIq7VHcfzX/njeMRDUoPOZ/I7mpUrwb/yn/MlI+7XWZi
-yi45lrWAzt27q48fhtEmsFnVelqGrnEY8w/m3RzYzGEJzRgkeWjF/f4lcFnloRTCX8t+iCt/
-pvugmq6HZ31dccDc3ILQXbLmjPt0yhR/0VJ1tTu/0TFdoHrUGO9rGVVZx6yg05xIn0KaWxVY
-+jIZu5AJ+Kbr67PAYv09x6oSrMJZX9XWlBdcT1EaaemvB7QFW5/ELbhwtIMLCGFat+xIFJEE
-K5V+BrTASxcNGk+7h6f9C8belgPCGEmkTnipycRXbHlALaqlyGusqPaGuR+Plbq7slWdlFjC
-w0xaO20gA4NpcNxj+86C2GTf9lWwGVsyv8enkqipqbz7rC7E5fUDtgJRn+zObcpHjMKUpdz/
-vT5E+Wq3+n39vN6d7HQmPaz/87rePUIy87gals5MLC3ZJy9V/rRdD5FRzi+lzCxRZzz0kmXG
-xvFFut2v8BZLZCKWaP38ul3ZWRg5Rdv16gjnv1v30Oj5FYY+r9ukbP3UoVfH9eH4snpcR583
-u9Xha2RakSdLbGIwpbnGsrVTgDqP1mlScp/eAww75VbNr3lHUclL7SGGjiDcJSOi8kPbt3Ou
-fKvAJbRNmibeM8f9fD5uS096RfM3HZ0rsl5DfL5kWaxPf+8Pf+I5jfQQfMuMaVfrcQQifOKL
-4aqCO0khPo9wz1Cd+Y3jMgVNrEIVSFg6KJwvjOPNrrqnsonvKVHODmC8KyiCfag08zWOAKks
-SocYPNfJlJYDWjiMtsZ/r6ZFkET64bgZXvJLwInE/nNe+QslDU6tq6II9HSRD2afgZZzAXIn
-ZjzQ9UX6VXJxAkRJReWfHIEk0IlBGFMBxjUbGzopF24E5dLWEelbcEMEI1J0poXCYue/Qv7X
-ZGPGLlAMawctsVE4uVT+PuPQKrbbe13E1sHv3jy+ft48vnGp58l7xf2T8zJQfIIl4w1uDCCG
-oYsjEKWGmTOiFE/9EUhHCAJTEyRArJSXoXgKkJvWckjCE0qDCqhoQDll4pd5zUNlTe23ttlN
-YIZx7dl2E+b4FbENSjvkz54zUtS/Xt1cf/KCE0aLgKBlGb0JcCdQftUk85/t8sZfbc5I6e9P
-lVMRWhZnjOF+3r8LipHJW/3bpf75kkLh1S6BV/P9ZwKnSExTyQsWEBzOIQjW1G+15gqvHAfC
-elgyBIezsFLnZcDn4WaLQMt6qsKesFlpwvybQYzsFvIIBbpTX8IqqPLVgBEkl9gwv6/bS38d
-Gz9lgwgiOq2Pp0HgaUzBTIeuIk9JLknC/dVpSvwvxYE6QworDTYk0npGA/eztGQkv9TzXHD8
-oEX5D27BIUvzm5d0xgNX+ZAtH/0mgxLu7xVTVk7rUBe4SAMVRwVWNRDKGw+b+mHZ4oJ/S5Su
-w5n6RApYa3ZBzkEOUUs84paT+6Y+3mAMb5TgDcnf+DlyTdZ/bSAbSA6bv5p+bv/R0OaxHY7E
-KLdsrh2eE1rfMH4rNb178/YImcbbP/anl+1r/xUTLE7nZapsd9uMgL936oXg04qEZIMrR6Vs
-pkq5zBdENpfk/EYuXdSZIIk3RMUaxsI09a28wfIG2IlPJA+ZwRaBzWUg8msQ8KuolgyY1TzU
-jMTv86b3wLk5V8I/4fmbDewqsDmn3ssTNhbmx4NvYySbOFW35rnOcy6c3eekVlPgbdLW/cd1
-h9dj9GTkx0mnYklzBen/hKsYcl2/ss3ZEs7QfE6Gz35tFaA+gVtpuXbKmvAI+0hMwQKvLPiP
-A7Gs+xkXsEiqxhgWXKQNeLgGIn8Zvze4pfGyOhwtXcOUPMqbj//MTWB9WO2ObR6frb461yxw
-jjibwdnb17TN4ODCTKoDZjME4EGITJMgOaXSxG82VR58yXBQBL7EQOD51gkIX+N4R/yUJH8r
-Rf423a6Of0SPf2xeoqezEbPPO+XDQ/qNQZxnlCJwuqBAww/KWlIY8rT3xNQYWIj2iq4rcQCJ
-wULdazaq6Y4QswDiAG3CRM60fTkWIajGMYHYacETPa2vL0JvLkLfDXcxgP8a3MVwEf4cyIN5
-e3Nhw/x6zG5+42M190fCZ3B45YMCxPDFQkMEs9S+OUkO/tzvfjoU8GPkAvVK82xk0Ig/2jKw
-wE15Y4RiBb5xpDH56uUFK1StmmDpr9Gb1SN2zgdqIzDmWeIZYUY5EHbshORjSW+Hw4VfG8mt
-TbsQc0+aAEv8nnKAPL594WBiu9O0W8K0MqIvMTszX30PSTR3tNbbLz897nen1Wa3fooAu3WJ
-ljVyaKns0kzl9BIU/r8ENj7gJtfjKnKyOf75k9j9RPG4RyGfQyQRdHIbnKKAYCysPwUbwg31
-rETO/W/z701UQhLxvH7eH76GeNS8EDwNQ6Yu5mFOqBKNcZhEFfsStURb5R9XPEHKqoLrwPft
-AMViNn5UaRNoW2Be0EzEvzkDKF0QDzljzWe//bNTm4XnPOHCGcAPluUcnabbKwUQRJ1y8Olh
-FwSbW0f2j0ag/21/q6GPuJshz/vtvdjhfVWMqosqy/DBn4O2SBRC8Ob70oto2eDK5wghkXH4
-Wq5ZzTfgId2iCfbAIAWnydxPAT82QgbXTPvLD+cp4rF6gCAz65pKH6nBeB3ISQ1MEzlhHju/
-OT764nJwCpBXKPzNidtsfnUTqAlVeX6PkueFsoJmQlWQcKGgDfOPfqogK2+GQmRWyFiJDs1z
-XaiB1B9v6fLD6DW9/md1jPjueDq8Ppsv6Y5/rA5ghk8YQiOpaAtmOXoCjmxe8E+btEanPKJJ
-tqf1YRWl5YREXzaH57/xNtHT/u/ddr96ipof6Yh+wEbh5gABO7+hP3aRPN+d1tso5xRs3WG9
-Nb/7cnSvH/UomDw1JriDKcpTz/AcxH482hOa7o+nIJCuDk++aYL4+5fzPTp1gh1YndLoBypU
-/uOwVoDrO5Prz41OAxWpZWa+BggCSVp1yXIoRUC0QRWn3ZrinfvtGd/JJACxmeB8U0F4gj9g
-EfpyclDQcwCYIIeBbRUzZC38nsnXngBCbaZvXYhhum57rb2FEUUSKv0bnfbr86eKZPzhQptQ
-s1DEQShW0/3Z/TIEgbcU8/4aBNPwlxLOr0Gcx+rkviC53Z4BmFtMNWVSYX6roNAS/nCvWujK
-vyAYr+eGoeZHTQIR5zxk2Its4LcaJcACZG+EnlyNgWjsdNh8fkX7oP7enB7/iMgBIvHT+hEv
-EY7zWJgcP9nR7mbnrEiErElGKN4sdX+DhWCnh9Ra+W+Q9m/n5MG++GSDQDYKzUe9lQ4sA67J
-QqmkkH5ZNxwnCfiTcGG1pRJLQRIayHcsPMqlrAJ1uPzjVeD+XzLorIzpsgc6dX/9pxmpixK/
-rCsI5B9Yi2ShHo1FKyWSJN4ozEKacsUzTge/pcKX76fJTT0BDfL3AeCtOmVhcHn1LhifTIvA
-B8uFwl6av5qOwOGmPbupyILxgBCZpPpbTMsJxLQXugAdGqfSeyXSxhlcxW+uLeJYo2SBZRYE
-FCkPNXc6JIbfsYrcMctA1XtLznoPTTDGv/Zrn2Dgv4192XLbONPoq6jmKlN1JmPJm3KRC4qL
-hJibCdKSfMNybMVWxbZcsl3/N29/ugGQIsFuKFOTOEY3QRBLo/eu2bUskqOzXsDCSE+SB7tA
-61tBgqSXyKqfFkeu5rOQ3TjdZ8OQio/qYmSxV4A41L+5ugiJPEpUZIkLTTMXHbQbwRMeg7IU
-t0fnUa5T4ELWPUVvsPTrVWwfxPYSF5nRzXd0Jtg4q/rqYtXmJyhYcgutcUQ585ibvem4TqqV
-UnQcx0I9fxE6uqMJSRfDPkX5Yg3sWMdms4SW7rfGmN2qEPM5moUWPfKnRRYhRtjOq068JLCf
-PMDMRcUjlNOT0xULhkW4XK2c8OmlC24uKBbBF3DV8cMDVq4UKQ/HGC5X90E+PZ1OJm742dQN
-v7i04QaqvPVra0GFn8ewn7geFVmvV0tvzaLEsMnCcnwyHvs8zqpkYeZSOAofn8x5HHVjOMGZ
-uumdGHgzsBipZ2LKOYRr6vGGzofIxl3Zk29oO9sl0nfnsJHM8sAyHJ+saFUL8pRAHIXPv/wG
-WFEpQxa+wnwrQKvgyE8K/JvEynMmx1bc9/NTJAIl4H/etw+bUSVnjeCnsDabB8y9CsIsQhof
-C+/h7g2EfErdsLTkFq2deL37CUL/coteCl+Gvp5/jz52gL0ZfTw1WAQFWzISkZDB8JXi9e3z
-gxVlRZpXXS9N/BVpbO9+0a1RhLpA1vNCI6HYxDm2aAwdpnKVMNYrjZR4QONXNlJr5HzG7Hxb
-THL0685STZnns0qG7nH8yNYWQg8c3mhFpNWo8710JnagAu89cBWuZ5lX9DQFTRvcJVeMGrFF
-ia+OorBXdQ9DLQzju9Ui6ll346ThsmTUqy0OOm2hUoHeKC2a4RCPIJXZ0lsyie4OWFV6dKIw
-PJk26LUoq+MrMmP8ljr7zr3ppB30ZaGovLuch6pCyCp/IeG64RJK6pEIhv8tEnE2SESnid/d
-/kHpKMW/2QjJhKXzLZiNNveSkNTF+k93+7t7pI8HHXJD/svePXRD8c7orv4NeI2yzzPrIGLV
-TBN2GCjckmmWaoefgl7RtJ5LeilNdmraJwqogmURgZYrKw7O2PP227vnoQrGjK9JR93hdTVg
-Ojk/IRs7CSE7jgP2dyvMCNkmavhdJN9WkvXe1U2C3AWkRV0pf5UxBS0wsCgJXSjhqlQBP9zY
-Ey9F70bOp6aL6skcQ9hu8G1HPlb5H9nZb/uTizmkWHNF7yMlZX/vzb+M2fcsj/YfMq6R3SGU
-k+mUygBkkNCr6JDHQxuHdq//4LOArTamYm0IxsXan0qxgZwlpol2jQsXIRYlGTepMfpBPZ3G
-zla0e5W+nzIspMEAinzB5QQxKEaF+aP05vZWYVCPoRneM5dHMTnlpgHDTqnj/Fgn8Fu4wqjZ
-QMxBgIsZg3QzZyWcDOdbVRYjRsMJpNnkM6VVdTc++vfTV08OAogJ3qcfXrpyMxan3y7oG7rw
-li7vydKHP0zsFaxUvLa+VfNvE5/a/thMzlzOGHDyhAYsGItPnhMufWU+un/e3f8m8xyUeT0+
-n051GmJOptCaE5W3mg3m6AgXdw8PyocQCIF68fvX3itF6peFI7EXps2rgDdLNHe5OBxr/L2n
-wkG3mrzrXWAwkNTa6nDt5cqytOpdKqMvMTIFNA6rDc1LtHPIy93bG0hvql9CnlJPXp6ttEaL
-f7OmDTw8WFphF11gVOKPk3EvPUF3zC3B5l8wL9xTk8ymF/KSJoUaATYQk3Naw3N/umJoaTP5
-PsP+K7imizz8Nrzpf4BepijQi7P53xtsYGt5FqVfh+yHL8f0KcuWYVF7N9RO0TD0cOn7pRya
-lefxVZbSi20jypJa9S6WOQBkD2peMP0xdwd0kePSn3w7p8OHunh/2p/bO66L6Vj5IZpuyiLa
-2mNwilA5WSd0rgXdKeY7i9fDqdPtjlzEOWpJEZXRPsnSAZ55JZx06F5OLqe0sa+HQm/BBmV2
-PbnkDpW/QM8bNEytpt9OaG+5Boc9Ag0CbI7Ti3N6MIsl5xWFxqrEo2j9Ep0Vg6yTyLRpsVi5
-tjkFYX2ddTVKLchUt1BLHqYo5PYkgBZvQN4VKVjefdw/PeweHS6HMovKthueAjkxDFvnxDG2
-ZjdSsHTDYb2RaSWRGhRtTFwGfT/hEDjyyRib+UnK9xssYrH7/BjNdzBPrztbgWgmG+RJZBBg
-xep5RinDpJxhCnwpdKYmLdjuXrf37yO5fd7e715Hs7v732/Pd32PKHiO6A1Yda/b3eGoWAlF
-Dpnjfn2+qlRwLl/YKOAz6yMQ08YApx2HK872f8BaxD4ThaBeU2SyZpJLqD6k8BmXV4AuxMUZ
-LF2O7lHkGS3RX9LZxVWY5Ex0EoKT8uL0G52FDsF5wt7uCJbJ+QlNPbzZ6vzkZDDL3WcVTe/t
-VGgt0aH99PR8VZcSzg0/cSXHeCngZXxxsaKjfxTcvzidXh5B+HbKIOgM0yUjUhW+Y2+FgfCa
-lJyD7Tvf37094UGhhIxkBcJSdXPKdx4UQ5WS5+ejL97nw3Y38ndtmrq/B1XeNHISjOLtzz3m
-5tgDKdi+9jXlPpuUOcAkbsCgD0U1nUhkf/eyGf38/PVrszf0uNdxxKTG9fyrWPkGwxGjZu2g
-DZx7qp4azTxkFeEYvhDB0LixsBNWBe2djGGm6ZxzYREBCJwkqMIXDU8Adm2JHvJtc49qFnyA
-IFr4hHeGvlbcEGrPL5g0Ewqac5GkCioZ6V4BKzQHsuBZGF8JJkIYwD7wCwWtj9dg9DdywNWp
-4cFrFczHwmFl5llaCEbNjihhImuG81TgOOSuAQW+tdKZ9KDzMJkJRqOs4BEjvyEQOlbKex5h
-zX/VEqRPxm1dvXhd8MUpEAEdB/jeBXPaEFYuRbpgTI76s1Ip4DA5Xh77PLOt4IxpSsPS7Ia+
-HBQ4mwvnMUq8ufB5w4xGWUcxRw0VgrLOA4PJY2RYNsWxc1T2G/fypyWjSQIY0MqQUcgJjHJM
-kY2PM8fWzMPSi9eMcK4QULPoOzqIPXSHTYXPH8+8YAPwESw94foMl0VQwVHdzzpDK4wyDGNU
-cnJlU4QyFqLLCQsvOIUeHjM0uwGLxhMwmQDX/iNbO19RCseOhmMuQ8eBwFoWc57KlIuikuUw
-1rWHVOENV+eS5jQVvREiyRxUYSXShP+GW5D+nTNwuw7gfnOQDB1jUi8qmptQ91icU+qdCmSW
-bOEL4GHKEkTOMIULp2NnQ/ighGylIsxN0YKF32McKjkMEMA2yiMb2/On/96xbK+OuaZuf3wb
-6+eT5Qq+8kNBOzAgVMmyN5wOHzGqmNFYq8e9YM5Ymct1zkg4+GDjf+d8LWtbqJaUWJgkHW/8
-fFnI8BoucaJRCgwl7ThDJn5tZfhsmzA1Zlb06pFI9DhkTS34pB2Vp+XQxP9XBv/i0zpEBtjt
-j/3u+RnZX0IchX64Ep0Ik8GiW0u5bcJsp1HPsnwAYVRf4UkuEqKHV36jZbgDlstb/oAV4c9T
-Kp0t4rSOm/3vprlmBFXQm7gospjWp6k+GZPTYUwr4AWOzgHnWpQAY8hk3E3DZeP1ZFpilVMR
-U2ZZ3qemteYZBoU0K1DUSTEvxWKJslY6J3IyIt9DkAfdA9o1J3SM+QHhfEp8jgLbOmfVGJen
-599OHeNQLm4/n7evv7+M/1bUrJjPRoY/+0TdPCXZjL4cLqa/B1/iUB0ruJ1csB1Sud8+Pvac
-JxS+8f+1V6txC1YVDhnYoeBsfwgN3Ap5plAWIWz8WejxnbSSLv/JDapVnZBGwpTCN1wtmR6m
-rSKmcJpsdIdCLNu3DzQhvo8+9HwfljrdfPzaYhjjSNcOH33BZfm42z9uPobr3C4AZu4TVuIA
-5vu9hDOp9fCAwRVMLimVYlfMRMzNkIC/UzGz4skNMAQ2pCmmIkHg7hguFWhYa7706559Exsa
-QtFpWvhlpr39h42NV/9f+4/7k7+6CFhzEHiX/lOm0XrqoKIq+QsHYanxWNLJTkq/7znZQRRp
-GWn9e//9qr1fW7dttsK1u+11JUKV9pRWrOGoixv6ykUjPI7UYq7QBs80o92beSpvCo/0YYOR
-gJBIcy0NQiDHkymdhKSDcj6m798uyjnNd3dQLqbndeQlImYcsw+Yl2e0OfCAMjk7YdwqDIos
-r8aXpUffNQ1ScjYtj3w9opzSGQm7KOff3CgyuZgc+ajZ9dn0xI1S5Oc+o85uUG5OTyY0O9Jg
-3K7T62TohLx7/Qcp95ENFZXwrxOmYlI79ylpo24nY8Bntd93eXoyLLeDl7LcvGLUdX905ukg
-8Q5BwG2fh9YhJdGBponXUfUengLhat6rfoVtmGq8Qq8l4HrSsFsGGKFWJnHtb5XIORcEjR5S
-IQfU4SECwH3PoYbl0zY07cx4kLBmeeSt+LBrFTK3EKpWyTyhb7EDDgkOlti7T86j/7zFDAO9
-mCS5TkH6WLFDgnaSUEL7rIqoVNSqx4iz7HvVKhAy5yqIV4w1RiWR145YQxvtzXYPo6AOBD6G
-3iUJ5fuxvd/v3ne/PkaL/942+39uRo+fGxCyCKuJTmmHpiTM+U8OUJbenItdn2dxEAmGafcX
-RZaErQ8OdSR9lS0Ns4dcVXapCYChMTX3umZxnYrE1I/VH7J7edm9wg5AVy9lR8EAkJ5VBjpa
-yIAWhBB4nRWCdlE9vK7mXCY7KFwlsS6K8E9pGrtYYok60h1Nf5vcfe7vifhzxZtrEtBrsXKk
-wdtl4TeJBBtCUJZJAeS0ZfAPuxkTT6t+ZD5l7jpt3s2ZUhtyYTrwmfPeIiRlRc9Ji1EmNE8f
-toNk9LyJJ+JZRmtPdd0HztZYbF52HxtMuEHeRyFq8pCBGz749vL+SD6TA0k2B3fwlISevpia
-ghls56ft29+jdxQLf7WpPlv2y3t53j1Cs9wNOLPZfnf3cL97sWCHKc18ysFKCy1fkxXV5/Xn
-3TN0yfdZpUD62bQy+EpmeXKsrHNjF244LO+q5KRcXWiHXleG0ubLoeEVfdNVmrVhGFfrStk5
-EXMQabBmSVp0K6U2kJvTWpBJKU1iAThucLn6lsOiwIoDrHpPu4DBLyZrBn2fJ8NtiLpQ+fnz
-XW2pnmtm4xvJB9TW6KeHqkc+bBUdYYHe1ZNpmqBfLpOdt4uF/dFYaMjyORUTkwa78IbXpff6
-sN9tH3psQBoUmWCyKXmUu39qR6NIJim6ZpQYg7dKUWSPL5KCuoQjOayGEjXZjQh1aJtXFwbK
-aeaiZe1HhOtX5+rO5nHY9jUYQLl53N91kiz1chJF2+fNSG+tzk0USaSp/cyDcIQnNelcDJBT
-q5KuaUJ/JrGqPZ8WcxssGfqVXQ/4gHJWd2Vu1YCJlyPMGQJjsl579kevPeNe20cKU79Y56zp
-WOFw2oUfs6A3NvydRcaEzDOVqLofgSxkWACMWfkfPCjzI2kv14EwlI5OUxE7Ho0m/JPcxLez
-hdezvU90mzFLZKTNSpXHRnivbnyC8Wsl1miz4N3x0AvYwtOsFFEnu2tgNwjdoLSwva49DaDF
-nypjUk8piM+k68Uc0pE8Y2dXbXpmtXXWwZpwDvXv7p8sFyQ5yIiuwcE/mOkXk+8hVTgQhQOd
-lNm3i4sTbhRVEFEjCDL5b+SV/6Yl168ujc30egPPsnu1HOxGfWW+bz4fdkDzuq9r7ihg9XoU
-RTWgGr6MrUZVPQ0YfgHbrOdmjUDgKeKgCKmNhZXfu2+w1IZNSva2P52R3U20NM4Ks6jRUocu
-FVjb0l8rueAPNVudIySkFoNRiRomvTFlBVpl+MPuBQ5YxMNCdSA56IJ/EEAqGQZH0xxjnTmG
-MwC1tFVTwcNsNS2aiB8KtbXtqvKsTuLeI/wtHGAYVMDRDY0oK2AFGIa47YrfBxoFUwOjqxjW
-pDfhsOw33mqNvdVDfEsZSzSsQFFt+EhRzRjXOB8kCmYB5HXlyQV39lf8ymEy4hVLEBPHRsp5
-2HW6OnNCL3ho4XppLkvOmRUO3w1LUrnt2YSxMac3ddzvkaSZaFW1g3nIF1xvfs4+kwUeTyH4
-8THlOIJ4KPSZssBPd/e/dTUX1fq2375+/FZWj4eXzTtVLE6FcNZmGx9IpMqBGCM7fRPGjTHw
-+2VLL+FE4ZUwwDjr0BpVG0H3H4ScDtHkWWQUyv7u5Q2urn8wTgGE2s3973f1Nfe6fU+pNHV0
-IBZopemciiqpQUBIO6HyLtSkwtopi5D0CYjgQOvevo9PJp3Pl2WBVetkAts6Yc5JCCI0vsFj
-cgxUKSYowQ5mGbMZdAXmZUqWG9FT0SXdixArk0j9OcOYShAEkETifZh4VjWl5rssFD2TWdqP
-vzJvVhVRl6F31RSQZTRaqGqAw1tQ+dx0V8hJhG31IhOxGWx+fj4+6g3fnQ+VPED2CuzqXhCq
-6sgOx9qCmmUn6iN335FnwASmFqPdh2AhYemlnGBlIaMzHPv52ewHzLscDtsAsFhzZOv+GdSo
-CJlggh6a0kK6ysw0iEh+/wCt8Cu1/f4A1ZTiVQVoHRu7Qe8vWFeNJeNqNqzo25wFVMmb3aVy
-FnlX9n451m4yrscYkSZuw+9n3frdFmrrUdH3Ou+fvxIVZxXS1uFS9/PPN/dH441ocLRRjXhY
-A9g3myrfwEqU9sfKhU6IoWUYPHKjeHf/+/NN0+LF3evjIMQuViHEJl0GWVDHZNJYVLD1S0/2
-plhPVAuqTfTZ9/HkpH+/YMnipIOY2w4gx3CxYHkVdovTL6/dMXn6MeQmaRm9B2+77wGbzxnU
-eucDVTWcvdQUmK9crZ/WmytMg+FlZm0WHOBVGLKlHQ3FBDqS5EMzA26OA2kefXl/276q5AH/
-b/Ty+bH53wb+sfm4//r1698dK7Hqsijhti3DVTf5tNmExpJktx/QrdEtlxoGNCBbYmkwdusr
-hUtzKxwE2xtC1YINwDT0fLrwaZx6x0yZxxwYjW9RHDrRzIBqLxctxaeXXA0LTl6JufPZi+Ew
-ScT10cjbKtERkIAo9rp1WdR2UsB+hC5wAzCZwLugezrW6+VTeRgKqek4uz7wB2TFWSYJmhgL
-55WXi2MY0rXDlWpLuG9Bv4CvxGygfQZN2838iuRR1OYCYE/1cWyt8P6EizFyY3DddFBMlXtY
-o4YQTcZWJ7iq7CvCa8L/wz5914b5K3i2z6yu2qnAsamKfLQgZJahDotC5XD+oXlQWjuo7g43
-Tgwsf+qvrUipLlsQValmc9VUdPxE+9B54YGoSOI0gk3UHBEeWC9FucAIU2m/R4MTxQgBgp+p
-JIFdFFTXqaVETGAm09LuxDcP6l46yjd4AmnJwHcxGhxqazbIOQUCARd/5EIxF4YLRd9UDoTF
-EhbPhdBnBg0mo0g2Odz0FDJ5jtTztUy9HF2CKd4CCBzwYHColfo9HVSO1O1eCttYZWXTDzCh
-Ry06FrJxIerb3DERTQkYkTnOs/KoqFVtS8f3q31Vz+DMLOwC0tZm0j1ZqXzQRQpvLK0ubFxM
-P1+VVF8OC9DGVwFjn1QZOZCiA5PJBGgoFBY6a+4sdeM5SOkMKyjxcDSUFsDc1W40fa1fnLnF
-MzXkRbjCeqCObyoLnGFd7JRZLMS7AsSS8Q/RGU1QJ0NHvir4TJScCVbBq4oxPitogQHjKj2l
-41u5oAgFjQSwqDPGBUdPhbJROEbI65tAzmHXQcmUaR1gdSWgmEXFGzx1iV5WqlRS2dU86DiA
-m9/aHvD3muffFPgqoB0FVPdLD09aNZNeiooGLH1FK5FmVkTQUHJE94BaSF2e1sq5CLvOLw0O
-M5ikzkt773aAVbqEFR3ybnZAR5+xI2RY4YdcTrlGfaUTEFpyi9WxCu5qEmja/KSB5vHJmPKk
-aLFE6sewzb7/9YD83b/Y21f51+ATmzexXem3Ldby+8n/vk0nJ/gfgYHiO2D8MigEhslfKSJg
-59hhoK7GpYA5IOZenKCz0B8hR7EqqaYcelwPpI01hpiOA9Ce289XVPfuN+/vX5/aMAiteNHq
-5e4yqozCdlSNybR6/7nffvw3VIJfhf3csUhf4Y7BGisAQqrLWNPMswwfoux7YcCjAKAOFpgI
-WUflc6lMtXMGXKOhVN5T6kg6cZ1A0oyiyNbCK0CWgSHj0fSzfK3FYs+y+g7QOAalFL7CweRd
-+t4iz4Hm1A7f6flDZVAD/f5XuwXU/Gat0+z+v7eP3eh+t9+MdvvR0+b5TTn39JDhe+bAiXRM
-Hd3mybA99AKycYgK7JYv8kVYDEF43ZGNQ9Siq204tJGIrcJzMEB2JFd5TnwkHryeh07zDsk4
-/2pwwPhIa2joB5TKxUB1GaNiMBbTTo2GuS76D9aBkIr/Vzcr0cs8Gk+mVrRRHwMv0sG4sHE4
-c6j5vq7CKiRepH4w9kUz5OMoXlUugJAMaJn3+fG0Af75XtX8C1/vcfNj/qv/2348jbz39939
-VoGCu4+7nuO4GRyTn7yZJDfYX3jw/+Qkz+L1+PSEDuUxuDK8FlTKsHaXLDyRipvmFM+UX/jL
-7sHKQmRePKNv/wbMeAK0YMY82wyFZrYMOC7oqGUDzo+MbeV+OVwFy4KoY7DAYuPsdNAlcxoC
-k3g+sS9XRwZ6QwakbB9BTBtQU7/wTyfUSxTAuRaFX45PAkGLIc02ZOWEZtL/YAMmAe3p34Ld
-TwvYoGFcc8nYGkqZBGMmCLuDcUHHeB0wJud05NwB45SJRGtO28Ib8zsCoPAGYrkAcD52rhdg
-MGknDTxxgst5Mf7mfMEyt0ag9/v27akXGdJewRRth1bOK7/BSKuZcB5EkIqc+2UGrC4fHmQ2
-t5eEccxkf2lxZOnceYjg3A0Boxgy4Ej9dNKchXfLmGObVfVi6bl3XHMXuO8AxsGihRc5Fwfe
-bKDQOZvlMrMXpfUfQcFBJ7wbziCWymYqwxqqf8skU9XgKROA2j7t3EsAXhDBNnevD7uXUfr5
-8nOzH803r5s2Y99wO0tR+3lBirvNRxYzlQ+0GnAvCsLcEhpmkd8hyqDPH1izvAhREszXDBOn
-dIHHSHuLKA0z+0fIBWOwtPE8yw/BujmX1IyENyrI1Pe8pJ1/pdRkkuh7cp0kIcpqStDDhDnD
-/bnZf2A0FPBq7yqnxvv28fVOFWVV3k6WYlT7twENUqkjZCuesnoZPU5GeE29Yk0oA7UNd5gS
-sn2uLEKM7Az7ImGj9TrAiQkuTHWyw75pQndAqE19EDgjrL5tnMwJlDhMGSjWUKxK0Y0jbsOC
-fNFGcbSTA0NFP3I/yVf+QttLizDqL7wPjDJsaHKn+OMLG9nJ0fi1KKua6evUEnigwa0yNiix
-8MPZmmM8OigcHVIoXrH0yIocGj4TpTU6tjc6qWwsZppT5B6jP8CrAlHqlUIJ1SubBaU19srM
-zMybwblVBQVSRfUPe0G1mrug+6GrW2ilX6ZB9cz/Qbyl2XZd3UlLE2TmCzgE6rQUXifAAjWx
-sElVnFavCY1zdW/zKqVtP1gdTSxpluVsCfMm4p6JLAmuu5WtY3SqHp6jxpph6dsCZkWCgLUU
-qkJjxDBgJaJ+JmuJrh8xF4+LgXaZowCFRBQlYnb8FrR9w1ZyoyXUdeKMA5W4HSTQ/P8Z/r3p
-h8UAAA==
-
---tKW2IUtsqtDRztdT--
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
