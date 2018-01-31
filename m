@@ -1,237 +1,641 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751217AbeAaFBj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 00:01:39 -0500
-Received: from mail-dm3nam03on0065.outbound.protection.outlook.com ([104.47.41.65]:12560
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750705AbeAaFBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 00:01:37 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Suravee.Suthikulpanit@amd.com;
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: joro@8bytes.org, jroedel@suse.de,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH v3] iommu/amd: Add support for fast IOTLB flushing
-Date: Wed, 31 Jan 2018 00:01:14 -0500
-Message-Id: <1517374874-93978-1-git-send-email-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1751984AbeAaFFx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 00:05:53 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60034 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751553AbeAaFFu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 00:05:50 -0500
+Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
+To: Michal Hocko <mhocko@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>
+References: <ef63c070-dcd7-3f26-f6ec-d95404007ae2@linux.vnet.ibm.com>
+ <20180123160653.GU1526@dhcp22.suse.cz>
+ <2a05eaf2-20fd-57a8-d4bd-5a1fbf57686c@linux.vnet.ibm.com>
+ <20180124090539.GH1526@dhcp22.suse.cz>
+ <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
+ <20180126140415.GD5027@dhcp22.suse.cz>
+ <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
+ <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
+ <20180129132235.GE21609@dhcp22.suse.cz>
+ <87k1w081e7.fsf@concordia.ellerman.id.au>
+ <20180130094205.GS21609@dhcp22.suse.cz>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
+From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date: Wed, 31 Jan 2018 10:35:38 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [114.109.128.54]
-X-ClientProxiedBy: HK2PR02CA0161.apcprd02.prod.outlook.com (10.171.30.21) To
- CY4PR12MB1734.namprd12.prod.outlook.com (10.175.62.144)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: ccf1091c-18e6-40c6-965e-08d56867b40c
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:CY4PR12MB1734;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1734;3:OSnCbdyO8b5uuEVaaTGghBqznNLlNy/IKG+c8EibxVimbig56CiNxG9PQWDY+yNEB7BWzDRVdpN6hocjxFjxi5xojHn1FSi98crXZ5u8FrhiYIvSLTVsH6gstRGYveIngbdgBmrFe6DwwabpyvMksS4afxl8GA7VUKK0O3ieQhZMlmg4zhppJXCM9QpqZXnEFBj2C5zl452jjg2rl2JW+aafdd+PCo19FtijulnuB/9YzQ6KGzm/lBHQEPXZhYmx;25:qEQ0Nw3GHNn5o/UyOI6x+0M1YfYjBD8J3163VX94orDR9mtEntILmG3fU0XIdUUL0xj085QYxJISnGpcUm56RNISJWPCwSr0krjHivdQrV48xph4AQqwceNHxE5fmVW3i2qFWl6hPA3lBnFAhxkrROGuVuY/89ZOMzuuseq0gqvnhrXQqqJQkSY1qnhhaFBsxB4qi2lTA9igwHbDtOGhcy2NufmectbMufUc4tU3HGbe+667hV07qotoZKOQyyfmQJkqpuMZnXZJByIasUCwSZj3tehkkuWmcRE+hGQ8zhXrIrLVBUdoMBTEAyk+AiBSIp/Blc0GwsSCWofZBjr6hw==;31:dYN2M4vXto2X+qCx5QnzgxMEJAA6v4H0uFP62B3r5MMscJ+B56MwD1jbpEoGeMQHfwEAh7tFM6hf2alf9NxHdNSNsqTuNyBuAn+AqKetbi04bAQjN9mR0bnZzKIippNLZ1WpinmAvKyV6cQ17PFeOF8SVUrRZt2fRgr6iX5YxsLFhgvERgyK1jD9vrNkCEsPGLUx0vd6EWgK99O0EMQB9LmdggajJ9938kGMoUwy6LU=
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1734:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1734;20:or3DJbWqj4Yt/MdcXlRl+CIgTmppDKO1qFoqKnGege1MSJfDMFPMU+hL6q12j49/vxNheD3BTmSQkg+9R7NO+jUxwKt9XoACr4IglOnh1mGAPBYtU+AvA3K1mM/zCbrO3LX8XJr/6I27Uzz5YEm/mc8ZvEJwUteujOHrhM74bDLrnBUaJ90buRxkuHlFqB/lm5yAGxFxUcmQSdGeb2/vFHNxTHWb52cEeLtJ0RaRI2MpIo6psK8MIBObuYJ7htVdhdyCl8zSnhLGI0OYgjXmdFxUGjc5802+EJwxkgGW0YjjW2SjafZ/ppz2fLrSDUY+s1wqPPtKkzC6rbVOSul0IyGXxFfl3nzueV+gYFiOpLmqL8SW7k5MaGFx/VdL9bxm91FDnUzIB4yMpo0rZ1gNVvxJUshSabKFwO8q3TwVAuOhEBLTc2+KqEdWft5BFCyECpTTN0tYEBDxHRy1c8fXWRjXu23GfbYUExzxf0kX34dfnaV5BYfpjoKP+S4HYfVD;4:cHFqtyzzyDWa2u0ufVqmUP3Zg6f/xXq8YSG9vfgK+F0MA1DacaFWrnYKvs5xWylrewAaS26h0X8xxXZt0N25aBc7l55Dlz3CZnAIZT1IlrQM/gFUvuo/uK5dkrOB16CrLIQ8+2OtxZvr/Gc1xMS4hIqeNonnJqkTpnG4pDTO2IS/NEb3ZkxZmVQ1uGGRvzBE6V2i/23tc3eqpj3nrpk8iupkQA4K0OWmpnMJrW7xA28BbZkIYL6s9d6bCG+QP7+65NdlB1fZ14xoVzqhFLGdYjBAlAeAi1PX/sbfdQU0knUJnJkz/CqYJ/9pxlhgfDHT
-X-Microsoft-Antispam-PRVS: <CY4PR12MB173469EB1399D4BE99B7DF3AF3FB0@CY4PR12MB1734.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3231101)(2400082)(944501161)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:CY4PR12MB1734;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1734;
-X-Forefront-PRVS: 056929CBB8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(396003)(39380400002)(366004)(199004)(189003)(7736002)(26005)(59450400001)(5890100001)(386003)(50226002)(6506007)(186003)(48376002)(105586002)(86362001)(305945005)(2906002)(4326008)(50466002)(6116002)(16526019)(25786009)(3846002)(53936002)(5660300001)(68736007)(36756003)(51416003)(6512007)(72206003)(97736004)(6666003)(66066001)(4720700003)(478600001)(81166006)(8676002)(81156014)(106356001)(47776003)(16586007)(8936002)(316002)(6486002)(52116002)(6306002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1734;H:ssuthiku-rhel74.localdomain;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR12MB1734;23:P1B0M0bAyILrFyWZUpBFRo0dfTJPbet2a198O1670?=
- =?us-ascii?Q?H2w/tfB9xCd+HfTkI8h36E90phCWbOO+ky1j0pvRZ8BERKkNdP2IiNcVTD4S?=
- =?us-ascii?Q?XBMONv8i+u280i8qhvU96vd5H6QEoasiYmG7b1BMx3JVCcShuD9gB5v/3ekB?=
- =?us-ascii?Q?BqpIbtTbMCyqWSfG1UdkYo0J32jGstExT4YS8AKgjHsOZLAINz3OiXL4Hl2J?=
- =?us-ascii?Q?A+szGmVLg2Xu8Acv0565TM5IFDQ4t4+ZTPNyGM9LvgGIw+Ldvcexm8TcORrg?=
- =?us-ascii?Q?JdVj9Ooyx8br4rqC5ACHdH3qn/ChjD29XwIqzFIeW03TiJ5rhVvpNXgfBZU9?=
- =?us-ascii?Q?wfB8Hyan9oWe58+ucFHfEe6BBky8Yu7ZLrFNAsYHDM4Glh6gFo8QN161jZzp?=
- =?us-ascii?Q?dpoApY7mGl+NsW4E9bc4jxqvgta9Nu7WzhS1blh6kCy3vMlaV7gtvwfvxPmw?=
- =?us-ascii?Q?Hle2Zt3jJeatmM7e9CDXoaivCNwhNNpmiFF19ioYySkF/YHXUXwXvBDouxJD?=
- =?us-ascii?Q?VXI5FvtrKmjDZCbcmDDRk0bR5v0mKMvaK68KAkY/Hxyas2HD17Fld3DjrE3i?=
- =?us-ascii?Q?A0OxX5EPQB49SVOMuYLjmY0rAA0+JxTedE2eO6N8zoAF5rBenZC1Jh7+uamE?=
- =?us-ascii?Q?r+Em6gQxg0v8PjJia6yIRScotZa5tc/ZzL2TobkrJq1t828Iw/oH/PwxDrlE?=
- =?us-ascii?Q?W/PygcUvvxXOFlkeFbJstegWVjMyNLndBS1ObcSFKSAzzBl4KajDpHJlgsoE?=
- =?us-ascii?Q?FDiGqI+M4tsPRkEaDR7xjBSOqtY4pjqWtYljJXhRM7/hbpFsaM9yTfuImTJE?=
- =?us-ascii?Q?pw3p7/io2WqgUHCzzFyvOZUG99h4zOgLy3YR51DF3FZyzake752vvkuPkYPY?=
- =?us-ascii?Q?crxVt34fL1Lw8qg2tcz7kGgZjiQy9yCb4yuZOOBOXBt6aMydmBg2tHME+3vy?=
- =?us-ascii?Q?VKVF7oLXie6IwU4pCUSxa1AWWE2J1r15HvN9SkqcN2UB3Vy9+zs1anW86zhS?=
- =?us-ascii?Q?Vc5o0sKxnIt3EaQBKvB7VHxq0FHkb/hw93GFO+CZJSB7GfTLARZePPyQ6A7P?=
- =?us-ascii?Q?pwjkSAT3X9BynmVePlJtuP22KxTfYz2vVImCyXFjQuQVmDFb2QYeinI0wVIB?=
- =?us-ascii?Q?iNi112whbns0EfG3GwgIeFSYcOe3MFOFXKxdxj33K6JdQsvGbebYQ=3D=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1734;6:EMhExZmdGNtOvjCqI1aMctEAvQOQqtmzaFOtp5C7shyiVPCNKlqgsXgTiMzvWNHOLhZw0nHtl7F/K3/W7LmymqIbGkuqNC8yH8BAIjv0X6o1KqsnPxNzTu2TPK625zjhQVH3l0/GyPlu8Cpm5m7SpY8B5gOaqTuDWXjJ7BrEWYvSobWElASJ/PZyEYs/gRIqfcX3zY55uJgKaEtPvRGqO1jm5m5bWI21TVsDi8pp26xna9r6zlYxh+oaebGBnWbmmkQEi8g6T2ftcG0falbmsKIL3cdXH1U5IEVMQoJsjK03y3FlLzhwHB3UHPKMx7/AqePhn3Hzfir8Hke5KL7j3c6FhfqEeHs4n3FQnGaoTP0=;5:DrSn/xlX88xhgnokRB6QebcLe82OUUEG9iYTasmz6JJUor6WfPwj58uNn/sgf5pbg6O55LakAnyOfSW/II4NlOCCwpp4uUdZK/9/hoiNX7PhhTOX0OQkHnGA+ZCQncpdzis+BnrJ7+bmPPGmCZHtK/x42ThPEUou7DbMkJkP/Do=;24:imoGY7fen0FXbVn43QyOzCPATZ3BCgRYgAblk19G5GwHvHhpQ/3574kYc5SVv48FtU3DmT80ZlnBwZ0nN02yi+aP+aR8V3LwxB2OWX12MNM=;7:2My1V+VQkK4lkKMW2tJMrvPuuJ2cFoMGsY85AYatBvYSzYTZRaZoc2ionNGNsOe3kEAIIKKxQKYcSNsDP0EB42dEbm7Y8ng+dtqPahhc5r1vmGtPC07gbaw4BwEsMdFpMSIQjPyI3v/BgMyyz4JCaFo4nfCPtJmWvzSY1RCmet7XdaXGmlzerGMazhMr9WI1tAsJjB/7dHF5ENajwv45CIIWU/cY9gWOjtm8LS5EE86TjzQ1PW9RT2gV3x7qbIDq
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1734;20:4L8fa7MGo+FOx3hjA95KEFqHIyscEihhYGpZq+IJASxDUz7JLOrSnIfcot68XXwOpPJpB2FImrT8KwzoQY4bn19YGMmKlCEM9soH6tiM2i38mzQfL8EeDXyCkipbbSGkeG6cIhh4hYk2Ey5gaAYzuYO1AyFAxLsyG42tUb9mKuXzDAzN2GzQtMF8sVPeO5hKS9b6hlyjlm7uhbv6LJE7Mkg78OKg+/9F8tcTs82sQv1jrsZR4PXfs7gfktbVS1l7
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2018 05:01:33.5218 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ccf1091c-18e6-40c6-965e-08d56867b40c
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1734
+In-Reply-To: <20180130094205.GS21609@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18013105-0012-0000-0000-000005A9ACB1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18013105-0013-0000-0000-000019254C26
+Message-Id: <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-31_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1801310065
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement the newly added IOTLB flushing interface for AMD IOMMU.
+On 01/30/2018 03:12 PM, Michal Hocko wrote:
+> On Tue 30-01-18 14:35:12, Michael Ellerman wrote:
+>> Michal Hocko <mhocko@kernel.org> writes:
+>>
+>>> On Mon 29-01-18 11:02:09, Anshuman Khandual wrote:
+>>>> On 01/29/2018 08:17 AM, Anshuman Khandual wrote:
+>>>>> On 01/26/2018 07:34 PM, Michal Hocko wrote:
+>>>>>> On Fri 26-01-18 18:04:27, Anshuman Khandual wrote:
+>>>>>> [...]
+>>>>>>> I tried to instrument mmap_region() for a single instance of 'sed'
+>>>>>>> binary and traced all it's VMA creation. But there is no trace when
+>>>>>>> that 'anon' VMA got created which suddenly shows up during subsequent
+>>>>>>> elf_map() call eventually failing it. Please note that the following
+>>>>>>> VMA was never created through call into map_region() in the process
+>>>>>>> which is strange.
+>> ...
+>>>>
+>>>> Okay, this colliding VMA seems to be getting loaded from load_elf_binary()
+>>>> function as well.
+>>>>
+>>>> [    9.422410] vma c000001fceedbc40 start 0000000010030000 end 0000000010040000
+>>>> next c000001fceedbe80 prev c000001fceedb700 mm c000001fceea8200
+>>>> prot 8000000000000104 anon_vma           (null) vm_ops           (null)
+>>>> pgoff 1003 file           (null) private_data           (null)
+>>>> flags: 0x100073(read|write|mayread|maywrite|mayexec|account)
+>>>> [    9.422576] CPU: 46 PID: 7457 Comm: sed Not tainted 4.14.0-dirty #158
+>>>> [    9.422610] Call Trace:
+>>>> [    9.422623] [c000001fdc4f79b0] [c000000000b17ac0] dump_stack+0xb0/0xf0 (unreliable)
+>>>> [    9.422670] [c000001fdc4f79f0] [c0000000002dafb8] do_brk_flags+0x2d8/0x440
+>>>> [    9.422708] [c000001fdc4f7ac0] [c0000000002db3d0] vm_brk_flags+0x80/0x130
+>>>> [    9.422747] [c000001fdc4f7b20] [c0000000003d23a4] set_brk+0x80/0xdc
+>>>> [    9.422785] [c000001fdc4f7b60] [c0000000003d1f24] load_elf_binary+0x1304/0x158c
+>>>> [    9.422830] [c000001fdc4f7c80] [c00000000035d3e0] search_binary_handler+0xd0/0x270
+>>>> [    9.422881] [c000001fdc4f7d10] [c00000000035f338] do_execveat_common.isra.31+0x658/0x890
+>>>> [    9.422926] [c000001fdc4f7df0] [c00000000035f980] SyS_execve+0x40/0x50
+>>>> [    9.423588] [c000001fdc4f7e30] [c00000000000b220] system_call+0x58/0x6c
+>>>>
+>>>> which is getting hit after adding some more debug.
+>>>
+>>> Voila! So your binary simply overrides brk by elf segments. That sounds
+>>> like the exactly the thing that the patch is supposed to protect from.
+>>> Why this is the case I dunno. It is just clear that either brk or
+>>> elf base are not put to the proper place. Something to get fixed. You
+>>> are probably just lucky that brk allocations do not spil over to elf
+>>> mappings.
+>>
+>> It is something to get fixed, but we can't retrospectively fix the
+>> existing binaries sitting on peoples' systems.
+> 
+> Yeah. Can we identify those somehow? Are they something people can
+> easily come across?
+> 
+>> Possibly powerpc arch code is doing something with the mmap layout or
+>> something else that is confusing the ELF loader, in which case we should
+>> fix that.
+> 
+> Yes this definitely should be fixed. How can elf loader completely
+> overlap brk mapping?
+> 
+>> But if not then the only solution is for the ELF loader to be more
+>> tolerant of this situation.
+>>
+>> So for 4.16 this patch either needs to be dropped, or reworked such that
+>> powerpc can opt out of it.
+> 
+> Yeah, let's hold on merging this until we understand what the heck is
+> going on here. If this turnes to be unfixable I will think of a way for
+> ppc to opt out.
+> 
+> Anshuman, could you try to run
+> sed 's@^@@' /proc/self/smaps
+> on a system with MAP_FIXED_NOREPLACE reverted?
+> 
 
-Cc: Joerg Roedel <joro@8bytes.org>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
-Changes from v2 (https://lkml.org/lkml/2017/12/27/44)
- * Call domain_flush_complete() after domain_flush_tlb_pde().
+After reverting the following commits from mmotm-2018-01-25-16-20 tag.
 
- drivers/iommu/amd_iommu.c       | 77 +++++++++++++++++++++++++++++++++++++++--
- drivers/iommu/amd_iommu_init.c  |  7 ++++
- drivers/iommu/amd_iommu_types.h |  7 ++++
- 3 files changed, 88 insertions(+), 3 deletions(-)
+67caea694ba5965a52a61fdad495d847f03c4025 ("mm-introduce-map_fixed_safe-fix")
+64da2e0c134ecf3936a4c36b949bcf2cdc98977e ("fs-elf-drop-map_fixed-usage-from-elf_map-fix-fix")
+645983ab6ca7fd644f52b4c55462b91940012595 ("mm: don't use the same value for MAP_FIXED_NOREPLACE and MAP_SYNC")
+d77bab291ac435aab91fa214b85efa74a26c9c22 ("fs-elf-drop-map_fixed-usage-from-elf_map-checkpatch-fixes")
+a75c5f92d9ecb21d3299cc7db48e401cbf335c34 ("fs, elf: drop MAP_FIXED usage from elf_map")
+00906d029ffe515221e3939b222c237026af2903 ("mm: introduce MAP_FIXED_NOREPLACE")
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 3609f51..6c7ac3f 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -129,6 +129,12 @@ struct dma_ops_domain {
- static struct iova_domain reserved_iova_ranges;
- static struct lock_class_key reserved_rbtree_key;
- 
-+struct amd_iommu_flush_entries {
-+	struct list_head list;
-+	unsigned long iova;
-+	size_t size;
-+};
-+
- /****************************************************************************
-  *
-  * Helper functions
-@@ -3043,9 +3049,6 @@ static ssize_t amd_iommu_unmap(struct iommu_domain *dom, unsigned long iova,
- 	unmap_size = iommu_unmap_page(domain, iova, page_size);
- 	mutex_unlock(&domain->api_lock);
- 
--	domain_flush_tlb_pde(domain);
--	domain_flush_complete(domain);
--
- 	return unmap_size;
- }
- 
-@@ -3163,6 +3166,71 @@ static bool amd_iommu_is_attach_deferred(struct iommu_domain *domain,
- 	return dev_data->defer_attach;
- }
- 
-+static void amd_iommu_flush_iotlb_all(struct iommu_domain *domain)
-+{
-+	struct protection_domain *dom = to_pdomain(domain);
-+
-+	domain_flush_tlb_pde(dom);
-+	domain_flush_complete(dom);
-+}
-+
-+static void amd_iommu_iotlb_range_add(struct iommu_domain *domain,
-+				      unsigned long iova, size_t size)
-+{
-+	struct amd_iommu_flush_entries *entry, *p;
-+	unsigned long flags;
-+	bool found = false;
-+
-+	spin_lock_irqsave(&amd_iommu_flush_list_lock, flags);
-+	list_for_each_entry(p, &amd_iommu_flush_list, list) {
-+		if (iova != p->iova)
-+			continue;
-+
-+		if (size > p->size) {
-+			p->size = size;
-+			pr_debug("%s: update range: iova=%#lx, size = %#lx\n",
-+				 __func__, p->iova, p->size);
-+		}
-+		found = true;
-+		break;
-+	}
-+
-+	if (!found) {
-+		entry = kzalloc(sizeof(struct amd_iommu_flush_entries),
-+				GFP_KERNEL);
-+		if (entry) {
-+			pr_debug("%s: new range: iova=%lx, size=%#lx\n",
-+				 __func__, iova, size);
-+
-+			entry->iova = iova;
-+			entry->size = size;
-+			list_add(&entry->list, &amd_iommu_flush_list);
-+		}
-+	}
-+	spin_unlock_irqrestore(&amd_iommu_flush_list_lock, flags);
-+}
-+
-+static void amd_iommu_iotlb_sync(struct iommu_domain *domain)
-+{
-+	struct protection_domain *pdom = to_pdomain(domain);
-+	struct amd_iommu_flush_entries *entry, *next;
-+	unsigned long flags;
-+
-+	/* Note:
-+	 * Currently, IOMMU driver just flushes the whole IO/TLB for
-+	 * a given domain. So, just remove entries from the list here.
-+	 */
-+	spin_lock_irqsave(&amd_iommu_flush_list_lock, flags);
-+	list_for_each_entry_safe(entry, next, &amd_iommu_flush_list, list) {
-+		list_del(&entry->list);
-+		kfree(entry);
-+	}
-+	spin_unlock_irqrestore(&amd_iommu_flush_list_lock, flags);
-+
-+	domain_flush_tlb_pde(pdom);
-+	domain_flush_complete(pdom);
-+}
-+
- const struct iommu_ops amd_iommu_ops = {
- 	.capable = amd_iommu_capable,
- 	.domain_alloc = amd_iommu_domain_alloc,
-@@ -3181,6 +3249,9 @@ static bool amd_iommu_is_attach_deferred(struct iommu_domain *domain,
- 	.apply_resv_region = amd_iommu_apply_resv_region,
- 	.is_attach_deferred = amd_iommu_is_attach_deferred,
- 	.pgsize_bitmap	= AMD_IOMMU_PGSIZES,
-+	.flush_iotlb_all = amd_iommu_flush_iotlb_all,
-+	.iotlb_range_add = amd_iommu_iotlb_range_add,
-+	.iotlb_sync = amd_iommu_iotlb_sync,
- };
- 
- /*****************************************************************************
-diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-index 6fe2d03..e8f8cee 100644
---- a/drivers/iommu/amd_iommu_init.c
-+++ b/drivers/iommu/amd_iommu_init.c
-@@ -185,6 +185,12 @@ struct ivmd_header {
- bool amd_iommu_force_isolation __read_mostly;
- 
- /*
-+ * IOTLB flush list
-+ */
-+LIST_HEAD(amd_iommu_flush_list);
-+spinlock_t amd_iommu_flush_list_lock;
-+
-+/*
-  * List of protection domains - used during resume
-  */
- LIST_HEAD(amd_iommu_pd_list);
-@@ -2490,6 +2496,7 @@ static int __init early_amd_iommu_init(void)
- 	__set_bit(0, amd_iommu_pd_alloc_bitmap);
- 
- 	spin_lock_init(&amd_iommu_pd_lock);
-+	spin_lock_init(&amd_iommu_flush_list_lock);
- 
- 	/*
- 	 * now the data structures are allocated and basically initialized
-diff --git a/drivers/iommu/amd_iommu_types.h b/drivers/iommu/amd_iommu_types.h
-index f6b24c7..c3f4a7e 100644
---- a/drivers/iommu/amd_iommu_types.h
-+++ b/drivers/iommu/amd_iommu_types.h
-@@ -668,6 +668,13 @@ struct iommu_dev_data {
- extern struct list_head amd_iommu_pd_list;
- 
- /*
-+ * Declarations for the global flush list to support
-+ * iotlb_range_add() and iotlb_sync.
-+ */
-+extern spinlock_t amd_iommu_flush_list_lock;
-+extern struct list_head amd_iommu_flush_list;
-+
-+/*
-  * Structure defining one entry in the device table
-  */
- struct dev_table_entry {
--- 
-1.8.3.1
+$sed 's@^@@' /proc/self/smaps
+-------------------------------------------
+10000000-10020000 r-xp 00000000 fd:00 10558                              /usr/bin/sed
+Size:                128 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                 128 kB
+Pss:                 128 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:       128 kB
+Private_Dirty:         0 kB
+Referenced:          128 kB
+Anonymous:             0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:              128 kB
+VmFlags: rd ex mr mw me dw 
+10020000-10030000 r--p 00010000 fd:00 10558                              /usr/bin/sed
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd mr mw me dw ac 
+10030000-10040000 rw-p 00020000 fd:00 10558                              /usr/bin/sed
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd wr mr mw me dw ac 
+2cbb0000-2cbe0000 rw-p 00000000 00:00 0                                  [heap]
+Size:                192 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd wr mr mw me ac 
+7fff7f9c0000-7fff7f9e0000 rw-p 00000000 00:00 0 
+Size:                128 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                 128 kB
+Pss:                 128 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:       128 kB
+Referenced:          128 kB
+Anonymous:           128 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:              128 kB
+VmFlags: rd wr mr mw me ac 
+7fff7f9e0000-7fff86280000 r--p 00000000 fd:00 33660156                   /usr/lib/locale/locale-archive
+Size:             107136 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                 384 kB
+Pss:                  37 kB
+Shared_Clean:        384 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:          384 kB
+Anonymous:             0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               37 kB
+VmFlags: rd mr mw me 
+7fff86280000-7fff86290000 r-xp 00000000 fd:00 33660115                   /usr/lib64/libdl-2.17.so
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                   2 kB
+Shared_Clean:         64 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:           64 kB
+Anonymous:             0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                2 kB
+VmFlags: rd ex mr mw me 
+7fff86290000-7fff862a0000 r--p 00000000 fd:00 33660115                   /usr/lib64/libdl-2.17.so
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd mr mw me ac 
+7fff862a0000-7fff862b0000 rw-p 00010000 fd:00 33660115                   /usr/lib64/libdl-2.17.so
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd wr mr mw me ac 
+7fff862b0000-7fff86300000 r-xp 00000000 fd:00 33594504                   /usr/lib64/libpcre.so.1.2.0
+Size:                320 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                   2 kB
+Shared_Clean:         64 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:           64 kB
+Anonymous:             0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                2 kB
+VmFlags: rd ex mr mw me 
+7fff86300000-7fff86310000 r--p 00040000 fd:00 33594504                   /usr/lib64/libpcre.so.1.2.0
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd mr mw me ac 
+7fff86310000-7fff86320000 rw-p 00050000 fd:00 33594504                   /usr/lib64/libpcre.so.1.2.0
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd wr mr mw me ac 
+7fff86320000-7fff864f0000 r-xp 00000000 fd:00 33660109                   /usr/lib64/libc-2.17.so
+Size:               1856 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                1280 kB
+Pss:                  45 kB
+Shared_Clean:       1280 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:         1280 kB
+Anonymous:             0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               45 kB
+VmFlags: rd ex mr mw me 
+7fff864f0000-7fff86500000 r--p 001c0000 fd:00 33660109                   /usr/lib64/libc-2.17.so
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd mr mw me ac 
+7fff86500000-7fff86510000 rw-p 001d0000 fd:00 33660109                   /usr/lib64/libc-2.17.so
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd wr mr mw me ac 
+7fff86510000-7fff86540000 r-xp 00000000 fd:00 33594516                   /usr/lib64/libselinux.so.1
+Size:                192 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                 192 kB
+Pss:                   8 kB
+Shared_Clean:        192 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:          192 kB
+Anonymous:             0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                8 kB
+VmFlags: rd ex mr mw me 
+7fff86540000-7fff86550000 r--p 00020000 fd:00 33594516                   /usr/lib64/libselinux.so.1
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd mr mw me ac 
+7fff86550000-7fff86560000 rw-p 00030000 fd:00 33594516                   /usr/lib64/libselinux.so.1
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd wr mr mw me ac 
+7fff86560000-7fff86570000 r--s 00000000 fd:00 67194934                   /usr/lib64/gconv/gconv-modules.cache
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  12 kB
+Shared_Clean:         64 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:           64 kB
+Anonymous:             0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               12 kB
+VmFlags: rd mr me ms 
+7fff86570000-7fff86590000 r-xp 00000000 00:00 0                          [vdso]
+Size:                128 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                   1 kB
+Shared_Clean:         64 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:           64 kB
+Anonymous:             0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                1 kB
+VmFlags: rd ex mr mw me de 
+7fff86590000-7fff865c0000 r-xp 00000000 fd:00 33660102                   /usr/lib64/ld-2.17.so
+Size:                192 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                 192 kB
+Pss:                   6 kB
+Shared_Clean:        192 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:          192 kB
+Anonymous:             0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                6 kB
+VmFlags: rd ex mr mw me dw 
+7fff865c0000-7fff865d0000 r--p 00020000 fd:00 33660102                   /usr/lib64/ld-2.17.so
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd mr mw me dw ac 
+7fff865d0000-7fff865e0000 rw-p 00030000 fd:00 33660102                   /usr/lib64/ld-2.17.so
+Size:                 64 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd wr mr mw me dw ac 
+7fffd27a0000-7fffd27d0000 rw-p 00000000 00:00 0                          [stack]
+Size:                192 kB
+KernelPageSize:       64 kB
+MMUPageSize:          64 kB
+Rss:                  64 kB
+Pss:                  64 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:        64 kB
+Referenced:           64 kB
+Anonymous:            64 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:               64 kB
+VmFlags: rd wr mr mw me gd ac 
