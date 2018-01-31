@@ -1,85 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753047AbeAaJuP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 04:50:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48856 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751764AbeAaJuL (ORCPT
+        id S1753650AbeAaJuc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 04:50:32 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:56126 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753459AbeAaJu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 04:50:11 -0500
-Date: Tue, 30 Jan 2018 16:52:16 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sebastian Sewior <bigeasy@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] hrtimer: Reset hrtimer cpu base proper on CPU hotplug
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <alpine.DEB.2.20.1801261447590.2067@nanos>
- <20180126220917.GI3741@linux.vnet.ibm.com>
- <20180129082047.hash3pnhpztzcg22@linutronix.de>
- <20180129095738.GU3741@linux.vnet.ibm.com>
- <20180129234347.GA26365@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1801302202510.2293@nanos>
+        Wed, 31 Jan 2018 04:50:26 -0500
+X-Google-Smtp-Source: AH8x224CgtMO9K9tRYXmb+TVknAUEW2YeDpwb6k9UlTkqNlX4rhS43cgYNe11aiCyANmxZeml4Rhnw==
+Subject: Re: [PATCH 5/8] thermal/drivers/cpu_cooling: Introduce the cpu idle
+ cooling driver
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>, Leo Yan <leo.yan@linaro.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Javi Merino <javi.merino@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>
+References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
+ <1516721671-16360-6-git-send-email-daniel.lezcano@linaro.org>
+ <CAKfTPtD-cUYoAJfhtuTr-E1=rttZvWxVv1Qv7b+Si4vSBy0JVg@mail.gmail.com>
+ <11334876-ef8c-58fa-5e32-ab8499eebd7e@linaro.org>
+ <CAKfTPtBXcLHNHEObpttCGtfCWXmR+kwmOW5aD+G23bnYTJi6Yg@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <6e776e6c-6f1e-b33b-58b7-b95410ca1f95@linaro.org>
+Date: Wed, 31 Jan 2018 10:50:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1801302202510.2293@nanos>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18013109-0036-0000-0000-000002B63CDB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008455; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000248; SDB=6.00982938; UDB=6.00498462; IPR=6.00762221;
- BA=6.00005804; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019302; XFM=3.00000015;
- UTC=2018-01-31 09:50:08
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18013109-0037-0000-0000-0000432D80CA
-Message-Id: <20180131005216.GE3741@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1801310130
+In-Reply-To: <CAKfTPtBXcLHNHEObpttCGtfCWXmR+kwmOW5aD+G23bnYTJi6Yg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:03:17PM +0100, Thomas Gleixner wrote:
-> On Mon, 29 Jan 2018, Paul E. McKenney wrote:
+On 31/01/2018 10:46, Vincent Guittot wrote:
+> On 31 January 2018 at 10:33, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>> On 31/01/2018 10:01, Vincent Guittot wrote:
+>>> Hi Daniel,
+>>>
+>>> On 23 January 2018 at 16:34, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>
+>> [ ... ] (please trim :)
+>>
+>>>> +               /*
+>>>> +                * Each cooling device is per package. Each package
+>>>> +                * has a set of cpus where the physical number is
+>>>> +                * duplicate in the kernel namespace. We need a way to
+>>>> +                * address the waitq[] and tsk[] arrays with index
+>>>> +                * which are not Linux cpu numbered.
+>>>> +                *
+>>>> +                * One solution is to use the
+>>>> +                * topology_core_id(cpu). Other solution is to use the
+>>>> +                * modulo.
+>>>> +                *
+>>>> +                * eg. 2 x cluster - 4 cores.
+>>>> +                *
+>>>> +                * Physical numbering -> Linux numbering -> % nr_cpus
+>>>> +                *
+>>>> +                * Pkg0 - Cpu0 -> 0 -> 0
+>>>> +                * Pkg0 - Cpu1 -> 1 -> 1
+>>>> +                * Pkg0 - Cpu2 -> 2 -> 2
+>>>> +                * Pkg0 - Cpu3 -> 3 -> 3
+>>>> +                *
+>>>> +                * Pkg1 - Cpu0 -> 4 -> 0
+>>>> +                * Pkg1 - Cpu1 -> 5 -> 1
+>>>> +                * Pkg1 - Cpu2 -> 6 -> 2
+>>>> +                * Pkg1 - Cpu3 -> 7 -> 3
+>>>
+>>>
+>>> I'm not sure that the assumption above for the CPU numbering is safe.
+>>> Can't you use a per cpu structure to point to resources that are per
+>>> cpu instead ? so you will not have to rely on CPU ordering
+>>
+>> Can you elaborate ? I don't get the part with the percpu structure.
 > 
-> > On Mon, Jan 29, 2018 at 01:57:38AM -0800, Paul E. McKenney wrote:
-> > > On Mon, Jan 29, 2018 at 09:20:48AM +0100, Sebastian Sewior wrote:
-> > > > On 2018-01-26 14:09:17 [-0800], Paul E. McKenney wrote:
-> > > > > find this one.  ;-)  But it did pass rcutorture testing for a great many
-> > > > > years, didn't it?  :-/
-> > > > 
-> > > > It started to trigger better (or at all) on our test box with
-> > > > 	modprobe kvm_intel preemption_timer=n
-> > > > 
-> > > > on the host kernel so maybe a completely unrelated change helped to
-> > > > trigger this.
-> > > 
-> > > Good point!
-> > > 
-> > > And testing continues, currently at 108 hours of TREE01 without any
-> > > waylayed timers, so looking good!  ;-)
-> > > 
-> > > Just kicked off another 70 hours worth.
-> > 
-> > And those completed without incident for a total of 178 hours.  I believe
-> > we can call this one fixed.  Thank you all!!!
-> > 
-> > One question...  Is the patch shown below needed, or is this just yet
-> > another case of me being confused?  (The lack of it is not triggering,
-> > but...)
+> Something like:
 > 
-> See commit 26456f87aca7
+> struct cpuidle_cooling_cpu {
+>        struct task_struct *tsk;
+>        wait_queue_head_t waitq;
+> };
+> 
+> DECLARE_PER_CPU(struct cpuidle_cooling_cpu *, cpu_data);
 
-Got it, thank you!  I will remove my patch from my queue.
+I got this part but I don't get how that fixes the ordering thing.
 
-							Thanx, Paul
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
