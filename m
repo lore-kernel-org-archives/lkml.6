@@ -1,95 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752882AbeAaMU5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 07:20:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:37426 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751662AbeAaMU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 07:20:56 -0500
-From: Will Deacon <will.deacon@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH] locking/qspinlock: Ensure node is initialised before updating prev->next
-Date: Wed, 31 Jan 2018 12:20:46 +0000
-Message-Id: <1517401246-2750-1-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
+        id S1752913AbeAaMZG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 07:25:06 -0500
+Received: from gateway30.websitewelcome.com ([192.185.179.30]:17661 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752061AbeAaMZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 07:25:05 -0500
+Date: Wed, 31 Jan 2018 06:02:53 -0600
+Message-ID: <20180131060253.Horde.vxLJv9n9JFz_lxqApXvdkZX@gator4166.hostgator.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] libceph: use 64-bit arithmetic instead of 32-bit
+References: <20180131052948.GA16419@embeddedgus>
+ <CAOi1vP_weac6BzPbpcqAiaC1Mfxr-83=3XKLpv8+aZCsPGObAw@mail.gmail.com>
+In-Reply-To: <CAOi1vP_weac6BzPbpcqAiaC1Mfxr-83=3XKLpv8+aZCsPGObAw@mail.gmail.com>
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+MIME-Version: 1.0
+Content-Disposition: inline
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 108.167.133.22
+X-Source-L: Yes
+X-Exim-ID: 1egr6L-000sYZ-EG
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:28785
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 1
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a locker ends up queuing on the qspinlock locking slowpath, we
-initialise the relevant mcs node and publish it indirectly by updating
-the tail portion of the lock word using xchg_tail. If we find that there
-was a pre-existing locker in the queue, we subsequently update their
-->next field to point at our node so that we are notified when it's our
-turn to take the lock.
+Hello Ilya,
 
-This can be roughly illustrated as follows:
+Quoting Ilya Dryomov <idryomov@gmail.com>:
 
-  /* Initialise the fields in node and encode a pointer to node in tail */
-  tail = initialise_node(node);
+> On Wed, Jan 31, 2018 at 6:29 AM, Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>> Cast objsetno to u64 in order to give the compiler complete
+>> information about the proper arithmetic to use. Notice
+>> that this variable is used in a context that expects an
+>> expression of type u64 (64 bits, unsigned).
+>>
+>> The expression objsetno * sc + stripepos is currently
+>> being evaluated using 32-bit arithmetic.
+>>
+>> In general, the use of incorrect arithmetic has security
+>> implications.
+>>
+>> Addresses-Coverity-ID: 200686
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  net/ceph/osdmap.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+>> index 0da27c6..58dc965 100644
+>> --- a/net/ceph/osdmap.c
+>> +++ b/net/ceph/osdmap.c
+>> @@ -2183,7 +2183,7 @@ int ceph_calc_file_object_mapping(struct  
+>> ceph_file_layout *layout,
+>>         stripepos = bl % sc;
+>>         objsetno = stripeno / su_per_object;
+>>
+>> -       *ono = objsetno * sc + stripepos;
+>> +       *ono = (u64)objsetno * sc + stripepos;
+>>         dout("objset %u * sc %u = ono %u\n", objsetno, sc,  
+>> (unsigned int)*ono);
+>>
+>>         /* *oxoff = *off % layout->fl_stripe_unit;  # offset in su */
+>
+> Hi Gustavo,
+>
+> This (and other u32/u64 issues in this function, is this the only
+> warning?) is fixed in my striping v2 work branch.  I wasn't going to
+> push that patch separately, but I guess I should post it.
+>
 
-  /*
-   * Exchange tail into the lockword using an atomic read-modify-write
-   * operation with release semantics
-   */
-  old = xchg_tail(lock, tail);
+Yeah, this was the only one warning reported by Coverity in this  
+particular module.
 
-  /* If there was a pre-existing waiter ... */
-  if (old & _Q_TAIL_MASK) {
-	prev = decode_tail(old);
-	smp_read_barrier_depends();
-
-	/* ... then update their ->next field to point to node.
-	WRITE_ONCE(prev->next, node);
-  }
-
-The conditional update of prev->next therefore relies on the address
-dependency from the result of xchg_tail ensuring order against the
-prior initialisation of node. However, since the release semantics of
-the xchg_tail operation apply only to the write portion of the RmW,
-then this ordering is not guaranteed and it is possible for the CPU
-to return old before the writes to node have been published, consequently
-allowing us to point prev->next to an uninitialised node.
-
-This patch fixes the problem by making the update of prev->next a RELEASE
-operation, which also removes the reliance on dependency ordering.
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- kernel/locking/qspinlock.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index 294294c71ba4..1ebbc366a31d 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -408,16 +408,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 	 */
- 	if (old & _Q_TAIL_MASK) {
- 		prev = decode_tail(old);
-+
- 		/*
--		 * The above xchg_tail() is also a load of @lock which generates,
--		 * through decode_tail(), a pointer.
--		 *
--		 * The address dependency matches the RELEASE of xchg_tail()
--		 * such that the access to @prev must happen after.
-+		 * We must ensure that the stores to @node are observed before
-+		 * the write to prev->next. The address dependency on xchg_tail
-+		 * is not sufficient to ensure this because the read component
-+		 * of xchg_tail is unordered with respect to the initialisation
-+		 * of node.
- 		 */
--		smp_read_barrier_depends();
--
--		WRITE_ONCE(prev->next, node);
-+		smp_store_release(prev->next, node);
- 
- 		pv_wait_node(node, prev);
- 		arch_mcs_spin_lock_contended(&node->locked);
--- 
-2.1.4
+Thanks
+--
+Gustavo
