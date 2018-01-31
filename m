@@ -1,79 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752853AbeAaLZh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 06:25:37 -0500
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:41476 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751001AbeAaLZf (ORCPT
+        id S1753296AbeAaLiV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 06:38:21 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33739 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752798AbeAaLiT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 06:25:35 -0500
-X-Google-Smtp-Source: AH8x224S1FJJusBDooiDn1Cu/HCtHALbcVJZJAYUn5iCzLtM8+ZQxXQrv2Z8Ul71WJOQTr2mfyIltT/HEeTSL+0lxtI=
+        Wed, 31 Jan 2018 06:38:19 -0500
+X-Google-Smtp-Source: AH8x225luhN/Gi/2QNYRveZZYud6KC05vR8m7eYxr1lahAwyKL/xEp0z7KIXADM906WVP6YiT139UQ==
+Date: Wed, 31 Jan 2018 19:38:07 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, eas-dev@lists.linaro.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH] samples/bpf: Add program for CPU state statistics
+Message-ID: <20180131113807.GB12768@leoy-linaro>
+References: <1517336999-5731-1-git-send-email-leo.yan@linaro.org>
+ <20180131101427.4c55fc21@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180129235710.GA9418@n2100.armlinux.org.uk>
-References: <20180129234900.11121-1-anders.roxell@linaro.org> <20180129235710.GA9418@n2100.armlinux.org.uk>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 31 Jan 2018 12:25:33 +0100
-X-Google-Sender-Auth: z81cbHvh66_hpwwNuKFXTBu0L_8
-Message-ID: <CAK8P3a1aN0M0hoOB4QJeyMD9zdT-G8Ap5-jV9M2-WpjC4Jo6Vw@mail.gmail.com>
-Subject: Re: [PATCH] arch/arm/Kconfig: enable ARM_MODULE_PLTS when LOCKDEP=y
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Anders Roxell <anders.roxell@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131101427.4c55fc21@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 12:57 AM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
-> On Tue, Jan 30, 2018 at 12:49:00AM +0100, Anders Roxell wrote:
->> While testing multi_v7_defconfig with LOCKDEP enabled, the kernel
->> fails to load simple modules, as reported by kselftest:
->>
->> [   34.107620] test_printf: section 4 reloc 2 sym 'memset': relocation
->> 28 out of range (0xbf046044 -> 0xc109f720)
->> selftests: printf.sh [FAIL]
->>
->> The problem that is seen when LOCKDEP is enabled without
->> ARM_MODULE_PLTS, is that LOCKDEP eats so much memory that the top of the
->> kernel gets out of reach from the bottom of the module area.
->
-> This really doesn't follow IMHO - enabling various features can cause
-> this, and we're not going to end up stuffing the Kconfig full of these
-> select statements each time we find a combination of Kconfig symbols
-> that cause it.
->
-> lockdep isn't that special - I can (and do) build kernels with lockdep
-> enabled, with modules, and I do not run into this problem.  So it's
-> not as simple as you make out in this commit description.
->
-> It's likely that you have either a fairly full kernel configuration (it
-> must be to place memset() more than 16MB) or you are not placing the
-> kernel at 0xc0008000 due to memory reservations in the low memory.
->
->> Suggested-by: Arnd Bergmann <arnd@arndb.de>
->
-> I guess this was discussed privately with Arnd, since there's no record
-> of the discussion on the lists - which is even more reason why the
-> commit message needs to describe better why you need this change.
+Hi Jesper,
 
-I don't remember the original discussion exactly, but it's clear that
-the addition of LOCKDEP to the build is what caused the size to
-grow dramatically and prevent module loading.
+On Wed, Jan 31, 2018 at 10:14:27AM +0100, Jesper Dangaard Brouer wrote:
+> On Wed, 31 Jan 2018 02:29:59 +0800
+> Leo Yan <leo.yan@linaro.org> wrote:
+> 
+> > CPU 0
+> > State    : Duration(ms)  Distribution
+> > cstate 0 : 47555        |*********************************       |
+> > cstate 1 : 0            |                                        |
+> > cstate 2 : 0            |                                        |
+> > pstate 0 : 15239        |*********                               |
+> > pstate 1 : 1521         |                                        |
+> > pstate 2 : 3188         |*                                       |
+> > pstate 3 : 1836         |                                        |
+> > pstate 4 : 94           |                                        |
+> > 
+> > CPU 1
+> > State    : Duration(ms)  Distribution
+> > cstate 0 : 87           |                                        |
+> > cstate 1 : 16264        |**********                              |
+> > cstate 2 : 50458        |***********************************     |
+> > pstate 0 : 832          |                                        |
+> > pstate 1 : 131          |                                        |
+> > pstate 2 : 825          |                                        |
+> > pstate 3 : 787          |                                        |
+> > pstate 4 : 4            |                                        |
+> > 
+> > CPU 2
+> > State    : Duration(ms)  Distribution
+> > cstate 0 : 177          |                                        |
+> > cstate 1 : 9363         |*****                                   |
+> > cstate 2 : 55835        |*************************************** |
+> > pstate 0 : 1468         |                                        |
+> > pstate 1 : 350          |                                        |
+> > pstate 2 : 1062         |                                        |
+> > pstate 3 : 1164         |                                        |
+> > pstate 4 : 7            |                                        |
+> 
+> The output gets very long as the number of CPUs grow...
+> What about using the following output:
+> 
+> state(ms)  cstate-0  cstate-1  cstate-2  pstate-0  pstate-1  pstate-2  pstate-3  pstate-4
+> CPU-0        47,555         0         0    15,239     1,521     1,836     1,836        94
+> CPU-1            87    16,264    50,458       832       131       825       787         4
+> CPU-2           177     9,363    55,835     1,468       350     1,062     1,164         7
+> 
+> Look at the code samples/bpf/xdp_redirect_cpu_user.c for an examples of
+> howto align the columns, and the trick to get printf to pretty print
+> with thousands separators use %' and setlocale(LC_NUMERIC, "en_US").
 
-There are two alternative ways to do this without forcing
-ARM_MODULE_PLTS on all the time (which also triggered
-the 0day bot warning):
+Thanks a lot for suggestion.  Using row/columns looks good for me,
+will change code for this way.
 
-a) we could make ARM_MODULE_PLTS default to 'y' when
-LOCKDEP is anbled, making it a more reasonable default while
-also letting users turn it off when the lockdep-enabled kernel
-is still small enough
+> P.S. net-next and bpf-next is closed at the moment.
+>  Next time you submit read[1] and [2], especially howto indicate which
+> tree (bpf vs. bpf-next) the patch is against, as this helps the
+> workflow of the maintainers.
 
-b) The Kconfig fragment that Anders uses which turns on LOCKDEP
-could simply enable ARM_MODULE_PLTS as well. That would
-be the easiest solution for him. I assume he already does it, but
-it's likely that others run into the same issue with kselftest testing.
+Yeah, will read the docs and follow up the workflow and send new patch
+to target next merge window.
 
-       Arnd
+Thanks,
+Leo Yan
+
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/Documentation/bpf/bpf_devel_QA.txt
+> [2] Documentation/networking/netdev-FAQ.txt 
+> -- 
+> Best regards,
+>   Jesper Dangaard Brouer
+>   MSc.CS, Principal Kernel Engineer at Red Hat
+>   LinkedIn: http://www.linkedin.com/in/brouer
