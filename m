@@ -1,87 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752733AbeAaOLN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 09:11:13 -0500
-Received: from foss.arm.com ([217.140.101.70]:38574 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752172AbeAaOLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 09:11:12 -0500
-Subject: Re: [PATCH v2 16/16] arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
- hardening support
-To: Hanjun Guo <guohanjun@huawei.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jon Masters <jcm@redhat.com>
-References: <20180129174559.1866-1-marc.zyngier@arm.com>
- <20180129174559.1866-17-marc.zyngier@arm.com>
- <476d111e-6fb0-9bef-2448-a94d0cc03f45@huawei.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <49853e5e-f093-2e79-1cfb-182f51fcd6a0@arm.com>
-Date: Wed, 31 Jan 2018 14:11:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1753035AbeAaOLu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 09:11:50 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40087 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752296AbeAaOLt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 09:11:49 -0500
+X-Google-Smtp-Source: AH8x226lgO+G2it6iwfCmBCnESYFtR7eB35T8VpRr/tOyaRlRCc3fhRmVpcdekzbhaEkX3lQCAKY5w==
+Date: Wed, 31 Jan 2018 15:11:40 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH] locking/qspinlock: Ensure node is initialised before
+ updating prev->next
+Message-ID: <20180131141140.GA9450@andrea>
+References: <1517401246-2750-1-git-send-email-will.deacon@arm.com>
+ <20180131123859.GQ2269@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <476d111e-6fb0-9bef-2448-a94d0cc03f45@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131123859.GQ2269@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/18 13:56, Hanjun Guo wrote:
-> Hi Marc,
+On Wed, Jan 31, 2018 at 01:38:59PM +0100, Peter Zijlstra wrote:
+> On Wed, Jan 31, 2018 at 12:20:46PM +0000, Will Deacon wrote:
+> > diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+> > index 294294c71ba4..1ebbc366a31d 100644
+> > --- a/kernel/locking/qspinlock.c
+> > +++ b/kernel/locking/qspinlock.c
+> > @@ -408,16 +408,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+> >  	 */
+> >  	if (old & _Q_TAIL_MASK) {
+> >  		prev = decode_tail(old);
+> > +
+> >  		/*
+> > -		 * The above xchg_tail() is also a load of @lock which generates,
+> > -		 * through decode_tail(), a pointer.
+> > -		 *
+> > -		 * The address dependency matches the RELEASE of xchg_tail()
+> > -		 * such that the access to @prev must happen after.
+> > +		 * We must ensure that the stores to @node are observed before
+> > +		 * the write to prev->next. The address dependency on xchg_tail
+> > +		 * is not sufficient to ensure this because the read component
+> > +		 * of xchg_tail is unordered with respect to the initialisation
+> > +		 * of node.
+> >  		 */
+> > -		smp_read_barrier_depends();
 > 
-> On 2018/1/30 1:45, Marc Zyngier wrote:
->>  static int enable_psci_bp_hardening(void *data)
->>  {
->>  	const struct arm64_cpu_capabilities *entry = data;
->>  
->> -	if (psci_ops.get_version)
->> +	if (psci_ops.get_version) {
->> +		if (check_smccc_arch_workaround_1(entry))
->> +			return 0;
+> Right, except you're patching old code here, please try again on a tree
+> that includes commit:
 > 
-> If I'm using the new version SMCCC, the firmware have the choice to decide
-> whether this machine needs the workaround, even if the CPU is vulnerable
-> for CVE-2017-5715, but..
+>   548095dea63f ("locking: Remove smp_read_barrier_depends() from queued_spin_lock_slowpath()")
+
+BTW, which loads was/is the smp_read_barrier_depends() supposed to order? ;)
+
+I was somehow guessing that this barrier was/is there to "order" the load
+from xchg_tail() with the address-dependent loads from pv_wait_node(); is
+this true? (Does Will's patch really remove the reliance on the barrier?)
+
+  Andrea
+
+
 > 
->> +
->>  		install_bp_hardening_cb(entry,
->>  				       (bp_hardening_cb_t)psci_ops.get_version,
->>  				       __psci_hyp_bp_inval_start,
->>  				       __psci_hyp_bp_inval_end);
-> 
-> ..the code above seems will enable get_psci_version() for CPU and will
-> trap to trust firmware even the new version of firmware didn't say
-> we need the workaround, did I understand it correctly?
-
-Well, you only get there if we've established that your CPU is affected
-(it has an entry matching its MIDR with the HARDEN_BRANCH_PREDICTOR
-capability), and that entry points to enable_psci_bp_hardening. It is
-not the firmware that decides whether we need hardening, but the kernel.
-The firmware merely provides a facility to apply the hardening.
-
-> I'm ask this because some platform will not expose to users to
-> take advantage of CVE-2017-5715, and we can use different firmware
-> to report we need such workaround or not, then use a single kernel
-> image for both vulnerable platforms and no vulnerable ones.
-
-You cannot have your cake and eat it. If you don't want to workaround
-the issue, you can disable the hardening. But asking for the same kernel
-to do both depending on what the firmware reports doesn't make much
-sense to me.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> > -
+> > -		WRITE_ONCE(prev->next, node);
+> > +		smp_store_release(prev->next, node);
+> >  
+> >  		pv_wait_node(node, prev);
+> >  		arch_mcs_spin_lock_contended(&node->locked);
+> > -- 
+> > 2.1.4
+> > 
