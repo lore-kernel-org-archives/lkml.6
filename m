@@ -1,73 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751712AbeAaSve (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 13:51:34 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:44149 "EHLO
+        id S1751677AbeAaSyy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 13:54:54 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:43861 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751656AbeAaSvd (ORCPT
+        with ESMTP id S1751405AbeAaSyx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 13:51:33 -0500
-Date: Wed, 31 Jan 2018 10:51:30 -0800
+        Wed, 31 Jan 2018 13:54:53 -0500
+Date: Wed, 31 Jan 2018 10:54:48 -0800
 From: Darren Hart <dvhart@infradead.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org,
-        AceLan Kao <acelan.kao@canonical.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] platform/x86: intel-vbtn: Replace License by SDPX
- identifier
-Message-ID: <20180131185130.GD8676@fury>
-References: <20180131175407.18301-1-andriy.shevchenko@linux.intel.com>
- <20180131175407.18301-2-andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Mario Limonciello <Mario.Limonciello@dell.com>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: dell-laptop: Guard SMBIOS calls with a
+ mutex
+Message-ID: <20180131185448.GE8676@fury>
+References: <1517267756-29878-1-git-send-email-mario.limonciello@dell.com>
+ <20180130110247.5w4qreycdp2o5pjw@pali>
+ <30071dd5d1574ef9bf85eb34fda1277f@ausx13mpc120.AMER.DELL.COM>
+ <CAHp75Vd4N2DNpnFgE-k85Kz7_sZ=SH=-L8sagLkFx=WMj8xW=Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180131175407.18301-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <CAHp75Vd4N2DNpnFgE-k85Kz7_sZ=SH=-L8sagLkFx=WMj8xW=Q@mail.gmail.com>
 User-Agent: Mutt/1.8.0 (2017-02-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 07:54:07PM +0200, Andy Shevchenko wrote:
-> Replace License short header by SPDX identifier.
+On Tue, Jan 30, 2018 at 05:39:58PM +0200, Andy Shevchenko wrote:
+> On Tue, Jan 30, 2018 at 5:35 PM,  <Mario.Limonciello@dell.com> wrote:
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-
-Reviewed-by: Darren Hart (VMware) <dvhart@infradead.org>
-
-
-> ---
->  drivers/platform/x86/intel-vbtn.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
+> >> >     dell_set_arguments(0x2, 0, 0, 0);
+> >> >     ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
+> >>
+> >> Hi! I'm looking at this code, and do we need shared global buffer with
+> >> mutex protection at all? Is not buffer allocated on stack enough?
+> >
+> > Oh you mean rather than create buffer mutex to just remove global
+> > buffer and allocate in each function?  That seems like a workable
+> > approach to me too.
+> >
+> > I'm fine with either way.
+> >
+> > Andy or Darren, what's your preference in this area?
 > 
-> diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/intel-vbtn.c
-> index 69bc39f8d61d..b703d6f5b099 100644
-> --- a/drivers/platform/x86/intel-vbtn.c
-> +++ b/drivers/platform/x86/intel-vbtn.c
-> @@ -1,19 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   *  Intel Virtual Button driver for Windows 8.1+
->   *
->   *  Copyright (C) 2016 AceLan Kao <acelan.kao@canonical.com>
->   *  Copyright (C) 2016 Alex Hung <alex.hung@canonical.com>
-> - *
-> - *  This program is free software; you can redistribute it and/or modify
-> - *  it under the terms of the GNU General Public License as published by
-> - *  the Free Software Foundation; either version 2 of the License, or
-> - *  (at your option) any later version.
-> - *
-> - *  This program is distributed in the hope that it will be useful,
-> - *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - *  GNU General Public License for more details.
-> - *
->   */
->  
->  #include <linux/acpi.h>
-> -- 
-> 2.15.1
-> 
-> 
+> It reminds me USB stuff where buffer for transfer is allocated on heap
+> before performing communication.
+> So, it looks similar to some extent and I have no objection on that
+> kind of approach.
+
+Late to the party it seems, but FWIW:
+
+I don't see a significant advantage of a global buffer. It doesn't *need* to be
+global, and the locking just adds complexity. The heap solution seems much
+preferable to me.
 
 -- 
 Darren Hart
