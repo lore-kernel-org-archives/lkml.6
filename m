@@ -1,146 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeAaDtQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 22:49:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38614 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751923AbeAaDtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 22:49:15 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3230C21748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Tue, 30 Jan 2018 19:49:14 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        chao@kernel.org
-Subject: Re: [PATCH] f2fs: add sanity check for quota sysfile ino
-Message-ID: <20180131034914.GA93573@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180129082933.64556-1-yuchao0@huawei.com>
- <20180131013556.GE65489@jaegeuk-macbookpro.roam.corp.google.com>
- <f27cbf43-eb34-5e21-8016-c1a17203cf0b@huawei.com>
- <20180131023607.GA87929@jaegeuk-macbookpro.roam.corp.google.com>
- <edc49b65-2f18-26a2-a97d-ee89143e7ece@huawei.com>
+        id S1752974AbeAaDuL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 22:50:11 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:45524 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751598AbeAaDuJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 22:50:09 -0500
+Subject: Re: BUG: spinlock bad magic (2)
+To: Eric Biggers <ebiggers3@gmail.com>, Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot
+        <bot+d3f5d339869eb8cd834d2c9f0a88bf4f05c29781@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
+        syzkaller-bugs@googlegroups.com
+References: <001a113fae28c2fd6605609c97a2@google.com>
+ <6dbd4f85-f3f2-97f3-5b82-451276fbf877@oracle.com>
+ <CACT4Y+Zoat=3j7B--D=pLK=SU0zhNA2yw0O0cEwj_p6vSBfM7g@mail.gmail.com>
+ <20180130222811.yxfiqnlx3la3vyyw@gmail.com>
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <24ea899d-d541-0274-c5bf-8a6e35473ca5@oracle.com>
+Date: Tue, 30 Jan 2018 19:49:51 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <edc49b65-2f18-26a2-a97d-ee89143e7ece@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20180130222811.yxfiqnlx3la3vyyw@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8790 signatures=668657
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=356
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1801310047
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/31, Chao Yu wrote:
-> On 2018/1/31 10:36, Jaegeuk Kim wrote:
-> > On 01/31, Chao Yu wrote:
-> >> On 2018/1/31 9:35, Jaegeuk Kim wrote:
-> >>> On 01/29, Chao Yu wrote:
-> >>>> Add missing sanity check for quota sysfile ino.
-> >>>
-> >>> We don't need to limit the specific inode numbers for quota files, since
-> >>> we may be able to set any inode numbers later. How about checkint the
-> >>> numbers are allocated as quota?
-> > 
-> > If quota_ino is set, f2fs_enable_quotas() will be failed, if its ino is invalid.
-> > It'd be also fine, if we have no inode numbers there. What I mean was we may need
-> > to consider reallocating or deallocating inode numbers later.
-> 
-> Oh, so that it will be better to do more check & repair in fsck tools, right?
 
-What is the rule that you're considering? We're already checking quota inodes
-in fsck.f2fs.
 
+On 1/30/18 2:28 PM, Eric Biggers wrote:
+> On Mon, Dec 18, 2017 at 06:01:30PM +0100, 'Dmitry Vyukov' via syzkaller-bugs wrote:
+>> On Mon, Dec 18, 2017 at 5:46 PM, Santosh Shilimkar
+>> <santosh.shilimkar@oracle.com> wrote:
+>>> On 12/18/2017 4:36 AM, syzbot wrote:
+>>>>
+>>>> Hello,
+>>>>
+>>>> syzkaller hit the following crash on
+>>>> 6084b576dca2e898f5c101baef151f7bfdbb606d
+>>>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+>>>> compiler: gcc (GCC) 7.1.1 20170620
+>>>> .config is attached
+>>>> Raw console output is attached.
+>>>>
+>>>> Unfortunately, I don't have any reproducer for this bug yet.
+>>>>
+>>> [...]
+>>>
+>>>> BUG: unable to handle kernel NULL pointer dereference at 0000000000000028
+>>>> IP: rds_send_xmit+0x80/0x930 net/rds/send.c:186
+>>>
+>>>
+>>> This one seems to be same bug as reported as below.
+>>>
+>>> BUG: unable to handle kernel NULL pointer dereference in rds_send_xmit
+>>
+>> Hi Santosh,
+>>
+>> The proper syntax to tell syzbot about dups is this (from email footer):
+>>
+>>> See https://goo.gl/tpsmEJ for details.
+>>> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
+>>> syzbot will keep track of this bug report.
+>>> To mark this as a duplicate of another syzbot report, please reply with:
+>>> #syz dup: exact-subject-of-another-report
+>>> Note: all commands must start from beginning of the line in the email body.
 > 
-> Thanks,
-> 
-> > 
-> >>
-> >> Do you mean:
-> >>
-> >> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >> 		if (!le32_to_cpu(raw_super->qf_ino[0]) ||
-> >> 			!le32_to_cpu(raw_super->qf_ino[1])) {
-> >> 			f2fs_msg(sb, KERN_INFO,
-> >> 				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
-> >> 				le32_to_cpu(raw_super->qf_ino[0]),
-> >> 				le32_to_cpu(raw_super->qf_ino[1]));
-> >> 			return 1;
-> >> 		}
-> >> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
-> >> 			!le32_to_cpu(raw_super->qf_ino[2])) {
-> >> 			f2fs_msg(sb, KERN_INFO,
-> >> 				"Invalid Quota Ino: prj_ino(%u)",
-> >> 				le32_to_cpu(raw_super->qf_ino[2]));
-> >> 			return 1;
-> >> 		}
-> >> 	}
-> >>
-> >> I think it's equal to:
-> >>
-> >> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >> 		unsigned int qf_cnt = 0;
-> >> 		if (qf_ino[0])
-> >> 			qf_cnt++;
-> >> 		if (qf_ino[1])
-> >> 			qf_cnt++;
-> >> 		if (qf_cnt != 2) {
-> >> 			f2fs_msg();
-> >> 			return 1;
-> >> 		}
-> >> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
-> >> 			if (qf_ino[2])
-> >> 				qf_cnt++;
-> >> 			if (qf_cnt != 3) {
-> >> 				f2fs_msg();
-> >> 				return 1;
-> >> 			}
-> >> 		}
-> >> 	}
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>
-> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>> ---
-> >>>>  fs/f2fs/super.c | 19 +++++++++++++++++++
-> >>>>  1 file changed, 19 insertions(+)
-> >>>>
-> >>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>>> index 368f63d7bad2..6011071688ca 100644
-> >>>> --- a/fs/f2fs/super.c
-> >>>> +++ b/fs/f2fs/super.c
-> >>>> @@ -2116,6 +2116,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
-> >>>>  		return 1;
-> >>>>  	}
-> >>>>  
-> >>>> +	/* check quota sysfile ino info */
-> >>>> +	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >>>> +		if (le32_to_cpu(raw_super->qf_ino[0]) != 4 ||
-> >>>> +			le32_to_cpu(raw_super->qf_ino[1]) != 5) {
-> >>>> +			f2fs_msg(sb, KERN_INFO,
-> >>>> +				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
-> >>>> +				le32_to_cpu(raw_super->qf_ino[0]),
-> >>>> +				le32_to_cpu(raw_super->qf_ino[1]));
-> >>>> +			return 1;
-> >>>> +		}
-> >>>> +		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
-> >>>> +			le32_to_cpu(raw_super->qf_ino[2]) != 6) {
-> >>>> +			f2fs_msg(sb, KERN_INFO,
-> >>>> +				"Invalid Quota Ino: prj_ino(%u)",
-> >>>> +				le32_to_cpu(raw_super->qf_ino[2]));
-> >>>> +			return 1;
-> >>>> +		}
-> >>>> +	}
-> >>>> +
-> >>>>  	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
-> >>>>  		f2fs_msg(sb, KERN_INFO,
-> >>>>  			"Invalid segment count (%u)",
-> >>>> -- 
-> >>>> 2.15.0.55.gc2ece9dc4de6
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
+> #syz dup: BUG: unable to handle kernel NULL pointer dereference in rds_send_xmit
+
+Ok. Noted.
