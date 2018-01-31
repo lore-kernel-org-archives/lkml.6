@@ -1,72 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753484AbeAaNYw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 08:24:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58484 "EHLO mx1.redhat.com"
+        id S1753423AbeAaN0B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 08:26:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52910 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751662AbeAaNYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 08:24:51 -0500
-Date: Wed, 31 Jan 2018 07:24:49 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: mingo@kernel.org, hpa@zytor.com, tim.c.chen@linux.intel.com,
-        dwmw@amazon.co.uk, linux-kernel@vger.kernel.org, tglx@linutronix.de
-Subject: Re: [tip:x86/pti] x86/speculation: Use Indirect Branch Prediction
- Barrier in context switch
-Message-ID: <20180131132449.qnfj32gufhgjc262@treble>
-References: <1517263487-3708-1-git-send-email-dwmw@amazon.co.uk>
- <tip-18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7@git.kernel.org>
- <20180131070300.GA28206@light.dominikbrodowski.net>
+        id S1751662AbeAaN0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 08:26:00 -0500
+Date: Wed, 31 Jan 2018 14:25:58 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] mm/swap.c: make functions and their kernel-doc agree
+Message-ID: <20180131132558.GU21609@dhcp22.suse.cz>
+References: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
+ <20180130123400.GD26445@dhcp22.suse.cz>
+ <20180131075848.GB28275@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180131070300.GA28206@light.dominikbrodowski.net>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <20180131075848.GB28275@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 08:03:00AM +0100, Dominik Brodowski wrote:
-> On Tue, Jan 30, 2018 at 02:39:45PM -0800, tip-bot for Tim Chen wrote:
-> > Commit-ID:  18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
-> > Gitweb:     https://git.kernel.org/tip/18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
-> > Author:     Tim Chen <tim.c.chen@linux.intel.com>
-> > AuthorDate: Mon, 29 Jan 2018 22:04:47 +0000
-> > Committer:  Thomas Gleixner <tglx@linutronix.de>
-> > CommitDate: Tue, 30 Jan 2018 23:09:21 +0100
+On Tue 30-01-18 23:58:48, Matthew Wilcox wrote:
+> On Tue, Jan 30, 2018 at 01:34:00PM +0100, Michal Hocko wrote:
+> > On Mon 29-01-18 16:43:55, Randy Dunlap wrote:
+> > > - for function pagevec_lookup_entries(), change the function parameter
+> > >   name from nr_pages to nr_entries since that is more descriptive of
+> > >   what the parameter actually is and then it matches the kernel-doc
+> > >   comments also
 > > 
-> > x86/speculation: Use Indirect Branch Prediction Barrier in context switch
-> > 
-> > Flush indirect branches when switching into a process that marked itself
-> > non dumpable. This protects high value processes like gpg better,
-> > without having too high performance overhead.
+> > I know what is nr_pages because I do expect pages to be returned. What
+> > are entries? Can it be something different from pages?
 > 
-> For the record, I am still opposed to limit this to non-dumpable processes.
-> Whether a process needs protection by IBPB on context switches is a
-> different question to whether a process should be allowed to be dumped,
-> though the former may be a superset of the latter. In my opinion, IBPB
-> should be enabled on all context switches to userspace processes, until we
-> have a clear mitigation strategy for userspace against Spectre-v2 designed
-> and implemented.
-> 
-> Thanks,
-> 	Dominik
-> 
-> --------------------------
-> From: Dominik Brodowski <linux@dominikbrodowski.net>
-> Date: Wed, 31 Jan 2018 07:43:12 +0100
-> Subject: [PATCH] x86/speculation: Do not limit Indirect Branch Prediction Barrier to non-dumpable processes
-> 
-> Whether a process needs protection by IBPB on context switches is a
-> different question to whether a process should be allowed to be dumped,
-> though the former may be a superset of the latter. Enable IBPB on all
-> context switches to a different userspace process, until we have a clear
-> mitigation strategy for userspace against Spectre-v2 designed and
-> implemented.
-> 
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> entries are any page cache entries -- pages or exceptional entries.
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Fair point.
+
+> calling this parameter nr_pages tricks you into thinking that you'll
+> only get pages back.
+
+Well, the data structure we are using is a pagevec and that operates on
+top of struct pages. It is true that this is quite confusing especially
+for those who are not familiar with exceptional entries. Hopefully the
+associated documentation helps.
 
 -- 
-Josh
+Michal Hocko
+SUSE Labs
