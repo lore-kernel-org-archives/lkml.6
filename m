@@ -1,111 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752366AbeAaCFn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:05:43 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35796 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751635AbeAaCFl (ORCPT
+        id S1752428AbeAaCHF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 21:07:05 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37266 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751786AbeAaCHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:05:41 -0500
-X-Google-Smtp-Source: AH8x225tmt8ePAoG8XAxMZxO6gCl3r1Pz2TPW3LFFVRw9ONRyYGMnlmwOvUL/3x7ozR0SZQz7/oubQ==
-Date: Tue, 30 Jan 2018 18:05:37 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+c5b4138ce94ed34698659e1f70566b4ecaac6120@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com,
-        Florian Westphal <fw@strlen.de>
-Subject: Re: KASAN: use-after-free Read in __xfrm_state_lookup
-Message-ID: <20180131020537.sdptwvz6okho4kef@gmail.com>
-References: <94eb2c05815016ca9c055cef9236@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94eb2c05815016ca9c055cef9236@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Tue, 30 Jan 2018 21:07:02 -0500
+X-Google-Smtp-Source: AH8x225OC9ieE4xeQ3HjPKJGkfjO10Ek5mggai6aDShZ60uZoJ9Oz1Iz1PaIgvMSGHKo5E7owzV4sA==
+From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To: mb@lightnvm.io
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: [PATCH 1/5] lightnvm: pblk: handle bad sectors in the emeta area correctly
+Date: Wed, 31 Jan 2018 03:06:47 +0100
+Message-Id: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 01, 2017 at 10:55:01AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzkaller hit the following crash on
-> 33ad61d0f799656e8987e9c80e6e15151bb857f3
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> C reproducer is attached
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
-> 
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in __xfrm_state_lookup+0x695/0x6b0
-> net/xfrm/xfrm_state.c:833
-> Read of size 4 at addr ffff8801d434e538 by task syzkaller647520/2991
-> 
-> CPU: 1 PID: 2991 Comm: syzkaller647520 Not tainted 4.14.0-rc5+ #89
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:16 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:52
->  print_address_description+0x73/0x250 mm/kasan/report.c:252
->  kasan_report_error mm/kasan/report.c:351 [inline]
->  kasan_report+0x25b/0x340 mm/kasan/report.c:409
->  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:429
->  __xfrm_state_lookup+0x695/0x6b0 net/xfrm/xfrm_state.c:833
->  xfrm_state_lookup+0x8a/0x160 net/xfrm/xfrm_state.c:1592
->  xfrm_input+0x8e5/0x22f0 net/xfrm/xfrm_input.c:302
->  xfrm6_rcv_spi net/ipv6/xfrm6_input.c:30 [inline]
->  xfrm6_rcv_tnl+0x168/0x1d0 net/ipv6/xfrm6_input.c:64
->  xfrm6_rcv+0x17/0x20 net/ipv6/xfrm6_input.c:71
->  xfrm6_ah_rcv+0x166/0x300 net/ipv6/xfrm6_protocol.c:101
->  ip6_input_finish+0x36f/0x1700 net/ipv6/ip6_input.c:284
->  NF_HOOK include/linux/netfilter.h:249 [inline]
->  ip6_input+0xe9/0x560 net/ipv6/ip6_input.c:327
->  dst_input include/net/dst.h:465 [inline]
->  ip6_rcv_finish+0x1a9/0x7a0 net/ipv6/ip6_input.c:71
->  NF_HOOK include/linux/netfilter.h:249 [inline]
->  ipv6_rcv+0xf28/0x1f80 net/ipv6/ip6_input.c:208
->  __netif_receive_skb_core+0x1a3e/0x34b0 net/core/dev.c:4477
->  __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4542
->  process_backlog+0x203/0x740 net/core/dev.c:5221
->  napi_poll net/core/dev.c:5619 [inline]
->  net_rx_action+0x792/0x1910 net/core/dev.c:5685
->  __do_softirq+0x2d7/0xb85 kernel/softirq.c:284
->  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:957
->  </IRQ>
->  do_softirq.part.22+0x14d/0x190 kernel/softirq.c:328
->  do_softirq kernel/softirq.c:176 [inline]
->  __local_bh_enable_ip+0x135/0x160 kernel/softirq.c:181
->  local_bh_enable include/linux/bottom_half.h:31 [inline]
->  rcu_read_unlock_bh include/linux/rcupdate.h:727 [inline]
->  ip6_finish_output2+0xb26/0x22a0 net/ipv6/ip6_output.c:121
->  ip6_finish_output+0x2f9/0x920 net/ipv6/ip6_output.c:146
->  NF_HOOK_COND include/linux/netfilter.h:238 [inline]
->  ip6_output+0x1f4/0x850 net/ipv6/ip6_output.c:163
->  dst_output include/net/dst.h:459 [inline]
->  ip6_local_out+0x95/0x160 net/ipv6/output_core.c:176
->  ip6_send_skb+0xa1/0x330 net/ipv6/ip6_output.c:1658
->  ip6_push_pending_frames+0xb3/0xe0 net/ipv6/ip6_output.c:1678
->  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
->  rawv6_sendmsg+0x2eb9/0x3e40 net/ipv6/raw.c:935
->  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
->  sock_sendmsg_nosec net/socket.c:633 [inline]
->  sock_sendmsg+0xca/0x110 net/socket.c:643
->  SYSC_sendto+0x352/0x5a0 net/socket.c:1750
->  SyS_sendto+0x40/0x50 net/socket.c:1718
->  entry_SYSCALL_64_fastpath+0x1f/0xbe
-[...]
-> syzbot will keep track of this bug report.
-> Once a fix for this bug is committed, please reply to this email with:
-> #syz fix: exact-commit-title
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Crash is no longer occurring, thanks Florian!
+Unless we check if there are bad sectors in the entire emeta-area
+we risk ending up with valid bitmap / available sector count inconsistency.
+This results in lines with a bad chunk at the last LUN marked as bad,
+so go through the whole emeta area and mark up the invalid sectors.
 
-#syz fix: xfrm: defer daddr pointer assignment after spi parsing
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+---
+ drivers/lightnvm/pblk-core.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 0487b9340c1d..9027cf2ed1d8 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1021,6 +1021,7 @@ static int pblk_line_init_bb(struct pblk *pblk, struct pblk_line *line,
+ 	int nr_bb = 0;
+ 	u64 off;
+ 	int bit = -1;
++	int emeta_secs;
+ 
+ 	line->sec_in_line = lm->sec_per_line;
+ 
+@@ -1055,18 +1056,18 @@ static int pblk_line_init_bb(struct pblk *pblk, struct pblk_line *line,
+ 	/* Mark emeta metadata sectors as bad sectors. We need to consider bad
+ 	 * blocks to make sure that there are enough sectors to store emeta
+ 	 */
+-	off = lm->sec_per_line - lm->emeta_sec[0];
+-	bitmap_set(line->invalid_bitmap, off, lm->emeta_sec[0]);
+-	while (nr_bb) {
++	emeta_secs = lm->emeta_sec[0];
++	off = lm->sec_per_line;
++	while (emeta_secs) {
+ 		off -= geo->sec_per_pl;
+ 		if (!test_bit(off, line->invalid_bitmap)) {
+ 			bitmap_set(line->invalid_bitmap, off, geo->sec_per_pl);
+-			nr_bb--;
++			emeta_secs -= geo->sec_per_pl;
+ 		}
+ 	}
+ 
+-	line->sec_in_line -= lm->emeta_sec[0];
+ 	line->emeta_ssec = off;
++	line->sec_in_line -= lm->emeta_sec[0];
+ 	line->nr_valid_lbas = 0;
+ 	line->left_msecs = line->sec_in_line;
+ 	*line->vsc = cpu_to_le32(line->sec_in_line);
+-- 
+2.7.4
