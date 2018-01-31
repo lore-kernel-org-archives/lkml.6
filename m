@@ -1,75 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751772AbeAaGCF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 01:02:05 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38060 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750904AbeAaGCE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 01:02:04 -0500
-X-Google-Smtp-Source: AH8x227XTXSs4KFeRVYTBqVlX9biF7zZ0IeLwHar54kPLFEAq4508XnPGcZK2iFGtnY+2BgUQd7aUw==
-X-Google-Original-Sender: <johan@kernel.org>
-From: Johan Hovold <johan@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Johan Hovold <johan@kernel.org>, PC Liao <pc.liao@mediatek.com>
-Subject: [PATCH] ASoC: mt8173-rt5650: fix child-node lookup
-Date: Wed, 31 Jan 2018 16:59:21 +1100
-Message-Id: <20180131055921.25574-1-johan@kernel.org>
-X-Mailer: git-send-email 2.13.6
+        id S1752061AbeAaGC5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 01:02:57 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52866 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751842AbeAaGCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 01:02:55 -0500
+Subject: Re: [PATCH] f2fs: add sanity check for quota sysfile ino
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180129082933.64556-1-yuchao0@huawei.com>
+ <20180131013556.GE65489@jaegeuk-macbookpro.roam.corp.google.com>
+ <f27cbf43-eb34-5e21-8016-c1a17203cf0b@huawei.com>
+ <20180131023607.GA87929@jaegeuk-macbookpro.roam.corp.google.com>
+ <edc49b65-2f18-26a2-a97d-ee89143e7ece@huawei.com>
+ <20180131034914.GA93573@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <6afe7ac1-904a-49e6-69f2-7de487936731@huawei.com>
+Date: Wed, 31 Jan 2018 14:02:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180131034914.GA93573@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver used the wrong OF-helper when looking up the optional
-capture-codec child node during probe. Instead of searching just
-children of the sound node, a tree-wide depth-first search starting at
-the unrelated platform node was done. Not only could this end up
-matching an unrelated node or no node at all; the platform node could
-also be prematurely freed since of_find_node_by_name() drops a reference
-to its first argument. This particular pattern has been observed leading
-to crashes after probe deferrals in other drivers.
+On 2018/1/31 11:49, Jaegeuk Kim wrote:
+> On 01/31, Chao Yu wrote:
+>> On 2018/1/31 10:36, Jaegeuk Kim wrote:
+>>> On 01/31, Chao Yu wrote:
+>>>> On 2018/1/31 9:35, Jaegeuk Kim wrote:
+>>>>> On 01/29, Chao Yu wrote:
+>>>>>> Add missing sanity check for quota sysfile ino.
+>>>>>
+>>>>> We don't need to limit the specific inode numbers for quota files, since
+>>>>> we may be able to set any inode numbers later. How about checkint the
+>>>>> numbers are allocated as quota?
+>>>
+>>> If quota_ino is set, f2fs_enable_quotas() will be failed, if its ino is invalid.
+>>> It'd be also fine, if we have no inode numbers there. What I mean was we may need
+>>> to consider reallocating or deallocating inode numbers later.
+>>
+>> Oh, so that it will be better to do more check & repair in fsck tools, right?
+> 
+> What is the rule that you're considering? We're already checking quota inodes
+> in fsck.f2fs.
 
-Fix this by dropping the broken call to of_find_node_by_name() and
-keeping only the second, correct lookup using of_get_child_by_name()
-while taking care not to bail out if the optional node is missing.
+The case that qf_ino[] is corrupted, I didn't see it can be relinked to
+corresponding quota inode by fsck, am I missing something?
 
-Note that this also addresses two capture-codec node-reference leaks
-(one for each of the original helper calls).
+Thanks,
 
-Compile tested only.
-
-Fixes: d349caeb0510 ("ASoC: mediatek: Add second I2S on mt8173-rt5650 machine driver")
-Cc: PC Liao <pc.liao@mediatek.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- sound/soc/mediatek/mt8173/mt8173-rt5650.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650.c b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
-index 40ebefd625c1..679fc8bea0a3 100644
---- a/sound/soc/mediatek/mt8173/mt8173-rt5650.c
-+++ b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
-@@ -272,15 +272,10 @@ static int mt8173_rt5650_dev_probe(struct platform_device *pdev)
- 	}
- 	mt8173_rt5650_codecs[1].of_node = mt8173_rt5650_codecs[0].of_node;
- 
--	if (of_find_node_by_name(platform_node, "codec-capture")) {
--		np = of_get_child_by_name(pdev->dev.of_node, "codec-capture");
--		if (!np) {
--			dev_err(&pdev->dev,
--				"%s: Can't find codec-capture DT node\n",
--				__func__);
--			return -EINVAL;
--		}
-+	np = of_get_child_by_name(pdev->dev.of_node, "codec-capture");
-+	if (np) {
- 		ret = snd_soc_of_get_dai_name(np, &codec_capture_dai);
-+		of_node_put(np);
- 		if (ret < 0) {
- 			dev_err(&pdev->dev,
- 				"%s codec_capture_dai name fail %d\n",
--- 
-2.13.6
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Do you mean:
+>>>>
+>>>> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+>>>> 		if (!le32_to_cpu(raw_super->qf_ino[0]) ||
+>>>> 			!le32_to_cpu(raw_super->qf_ino[1])) {
+>>>> 			f2fs_msg(sb, KERN_INFO,
+>>>> 				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
+>>>> 				le32_to_cpu(raw_super->qf_ino[0]),
+>>>> 				le32_to_cpu(raw_super->qf_ino[1]));
+>>>> 			return 1;
+>>>> 		}
+>>>> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
+>>>> 			!le32_to_cpu(raw_super->qf_ino[2])) {
+>>>> 			f2fs_msg(sb, KERN_INFO,
+>>>> 				"Invalid Quota Ino: prj_ino(%u)",
+>>>> 				le32_to_cpu(raw_super->qf_ino[2]));
+>>>> 			return 1;
+>>>> 		}
+>>>> 	}
+>>>>
+>>>> I think it's equal to:
+>>>>
+>>>> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+>>>> 		unsigned int qf_cnt = 0;
+>>>> 		if (qf_ino[0])
+>>>> 			qf_cnt++;
+>>>> 		if (qf_ino[1])
+>>>> 			qf_cnt++;
+>>>> 		if (qf_cnt != 2) {
+>>>> 			f2fs_msg();
+>>>> 			return 1;
+>>>> 		}
+>>>> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
+>>>> 			if (qf_ino[2])
+>>>> 				qf_cnt++;
+>>>> 			if (qf_cnt != 3) {
+>>>> 				f2fs_msg();
+>>>> 				return 1;
+>>>> 			}
+>>>> 		}
+>>>> 	}
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>>>
+>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>>> ---
+>>>>>>  fs/f2fs/super.c | 19 +++++++++++++++++++
+>>>>>>  1 file changed, 19 insertions(+)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>>> index 368f63d7bad2..6011071688ca 100644
+>>>>>> --- a/fs/f2fs/super.c
+>>>>>> +++ b/fs/f2fs/super.c
+>>>>>> @@ -2116,6 +2116,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+>>>>>>  		return 1;
+>>>>>>  	}
+>>>>>>  
+>>>>>> +	/* check quota sysfile ino info */
+>>>>>> +	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+>>>>>> +		if (le32_to_cpu(raw_super->qf_ino[0]) != 4 ||
+>>>>>> +			le32_to_cpu(raw_super->qf_ino[1]) != 5) {
+>>>>>> +			f2fs_msg(sb, KERN_INFO,
+>>>>>> +				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
+>>>>>> +				le32_to_cpu(raw_super->qf_ino[0]),
+>>>>>> +				le32_to_cpu(raw_super->qf_ino[1]));
+>>>>>> +			return 1;
+>>>>>> +		}
+>>>>>> +		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
+>>>>>> +			le32_to_cpu(raw_super->qf_ino[2]) != 6) {
+>>>>>> +			f2fs_msg(sb, KERN_INFO,
+>>>>>> +				"Invalid Quota Ino: prj_ino(%u)",
+>>>>>> +				le32_to_cpu(raw_super->qf_ino[2]));
+>>>>>> +			return 1;
+>>>>>> +		}
+>>>>>> +	}
+>>>>>> +
+>>>>>>  	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
+>>>>>>  		f2fs_msg(sb, KERN_INFO,
+>>>>>>  			"Invalid segment count (%u)",
+>>>>>> -- 
+>>>>>> 2.15.0.55.gc2ece9dc4de6
+>>>>>
+>>>>> .
+>>>>>
+>>>
+>>> .
+>>>
+> 
+> .
+> 
