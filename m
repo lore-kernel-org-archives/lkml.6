@@ -1,302 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753556AbeAaIo6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 03:44:58 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45461 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753021AbeAaIoz (ORCPT
+        id S1753569AbeAaIsA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 03:48:00 -0500
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:56887 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751822AbeAaIr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 03:44:55 -0500
-X-Google-Smtp-Source: AH8x226M1VLPcwf9/JDVzGnZJNIioyPEtFwFU0qTjffAqeIxKJ6jLn4IREZW3/TtSxsODjiR9OZFLw==
-Subject: Re: [PATCH 4/5] lightnvm: pblk: add padding distribution sysfs
- attribute
-To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
-References: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
- <1517364411-22386-4-git-send-email-javier@cnexlabs.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <bf06b0c0-b188-68ba-737b-f42d33c0d5dc@lightnvm.io>
-Date: Wed, 31 Jan 2018 09:44:52 +0100
+        Wed, 31 Jan 2018 03:47:59 -0500
+Subject: Re: [RFC PATCH 0/8] [media] Request API, take three
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20180126060216.147918-1-acourbot@chromium.org>
+ <ced425a2-8b66-05c6-367d-46a0a40b1873@xs4all.nl>
+ <CAPBb6MU5Ph=_rH_TOQi5mstujAPMTWqC_1d-8_TcuGx25sOJvg@mail.gmail.com>
+ <307f58dd-ce7e-b6f5-092a-f8679349be73@xs4all.nl>
+ <CAAFQd5AbdAGteHOfKH4EoHUNSmsfCYtExVX9TSK8aWsQZ4HVJg@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <e75c24da-4856-ae50-6dc9-604c885e4040@xs4all.nl>
+Date: Wed, 31 Jan 2018 09:47:54 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1517364411-22386-4-git-send-email-javier@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAFQd5AbdAGteHOfKH4EoHUNSmsfCYtExVX9TSK8aWsQZ4HVJg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGwAP2SJ5zhDVLEa378PtUdVlMni1yL79DDJ/d5c8kQjZRBhdksQd8UizSGlI1yp0tJnVXkznax+DRlXQ95LFCnvRx5eAvwd2kG6siIqH1S5wqRbd6A6
+ tXwjn1zln2BsWGiTOWQtjIjyrlES5tZZuod1uQbi+h+VaWKlLzI0dPb1mGiD8vMK7m1zk4axHN5b/np5dS2cCRbQ1TUNzqgDiSjYPE15vqZ2IjkWxu3QKie8
+ vmblWT/6KrMf025maR5egNvZ9Vq74SWs0pSphBh4/ZbQ75Z0jcLYis8yzUDNejm/m6qAFoiC7TkSZaTm+kWEvusK/OkP/e4hmyLSITL1OAy2k58DglfgA1HB
+ AiXwPn1Ihsz2E4rzd9rOhedSOsAES9wzltAghUf+xtAlwkDJNNg/hIxYU1BKij0PkUJA8CJnk92Y5jSYD4B/yTUYgMu/ng==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/31/2018 03:06 AM, Javier González wrote:
-> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+On 01/31/2018 09:10 AM, Tomasz Figa wrote:
+> Hi Hans,
 > 
-> When pblk receives a sync, all data up to that point in the write buffer
-> must be comitted to persistent storage, and as flash memory comes with a
-> minimal write size there is a significant cost involved both in terms
-> of time for completing the sync and in terms of write amplification
-> padded sectors for filling up to the minimal write size.
+> Sorry for joining the party late.
 > 
-> In order to get a better understanding of the costs involved for syncs,
-> Add a sysfs attribute to pblk: padded_dist, showing a normalized
-> distribution of sectors padded. In order to facilitate measurements of
-> specific workloads during the lifetime of the pblk instance, the
-> distribution can be reset by writing 0 to the attribute.
+> On Wed, Jan 31, 2018 at 4:50 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>> On 01/30/2018 07:31 AM, Alexandre Courbot wrote:
+>>> Hi Hans,
+>>>
+>>> On Mon, Jan 29, 2018 at 8:21 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>>> On 01/26/2018 07:02 AM, Alexandre Courbot wrote:
+>>>>> Howdy. Here is your bi-weekly request API redesign! ;)
+>>>>>
+>>>>> Again, this is a simple version that only implements the flow of requests,
+>>>>> without applying controls. The intent is to get an agreement on a base to work
+>>>>> on, since the previous versions went straight back to the redesign board.
+>>>>>
+>>>>> Highlights of this version:
+>>>>>
+>>>>> * As requested by Hans, request-bound buffers are now passed earlier to drivers,
+>>>>> as early as the request itself is submitted. Doing it earlier is not be useful
+>>>>> since the driver would not know the state of the request, and thus cannot do
+>>>>> anything with the buffer. Drivers are now responsible for applying request
+>>>>> parameters themselves.
+>>>>>
+>>>>> * As a consequence, there is no such thing as a "request queue" anymore. The
+>>>>> flow of buffers decides the order in which requests are processed. Individual
+>>>>> devices of the same pipeline can implement synchronization if needed, but this
+>>>>> is beyond this first version.
+>>>>>
+>>>>> * VB2 code is still a bit shady. Some of it will interfere with the fences
+>>>>> series, so I am waiting for the latter to land to do it properly.
+>>>>>
+>>>>> * Requests that are not yet submitted effectively act as fences on the buffers
+>>>>> they own, resulting in the buffer queue being blocked until the request is
+>>>>> submitted. An alternate design would be to only block the
+>>>>> not-submitted-request's buffer and let further buffers pass before it, but since
+>>>>> buffer order is becoming increasingly important I have decided to just block the
+>>>>> queue. This is open to discussion though.
+>>>>
+>>>> I don't think we should mess with the order.
+>>>
+>>> Agreed, let's keep it that way then.
+>>>
 > 
-> Do this by introducing counters for each possible padding:
-> {0..(minimal write size - 1)} and calculate the normalized distribution
-> when showing the attribute.
+> I'm not sure I'm following here. Does it mean (quoting Alex):
 > 
-> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> Signed-off-by: Javier González <javier@cnexlabs.com>
-> ---
->   drivers/lightnvm/pblk-init.c  | 16 ++++++++--
->   drivers/lightnvm/pblk-rb.c    | 15 +++++-----
->   drivers/lightnvm/pblk-sysfs.c | 68 +++++++++++++++++++++++++++++++++++++++++++
->   drivers/lightnvm/pblk.h       |  6 +++-
->   4 files changed, 95 insertions(+), 10 deletions(-)
+> a) "Requests that are not yet submitted effectively act as fences on the buffers
+>     they own, resulting in the buffer queue being blocked until the request is
+>     submitted."
 > 
-> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-> index 7eedc5daebc8..a5e3510c0f38 100644
-> --- a/drivers/lightnvm/pblk-init.c
-> +++ b/drivers/lightnvm/pblk-init.c
-> @@ -921,6 +921,7 @@ static void pblk_free(struct pblk *pblk)
->   {
->   	pblk_luns_free(pblk);
->   	pblk_lines_free(pblk);
-> +	kfree(pblk->pad_dist);
->   	pblk_line_meta_free(pblk);
->   	pblk_core_free(pblk);
->   	pblk_l2p_free(pblk);
-> @@ -998,11 +999,13 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
->   	pblk->pad_rst_wa = 0;
->   	pblk->gc_rst_wa = 0;
->   
-> +	atomic_long_set(&pblk->nr_flush, 0);
-> +	pblk->nr_flush_rst = 0;
-> +
->   #ifdef CONFIG_NVM_DEBUG
->   	atomic_long_set(&pblk->inflight_writes, 0);
->   	atomic_long_set(&pblk->padded_writes, 0);
->   	atomic_long_set(&pblk->padded_wb, 0);
-> -	atomic_long_set(&pblk->nr_flush, 0);
->   	atomic_long_set(&pblk->req_writes, 0);
->   	atomic_long_set(&pblk->sub_writes, 0);
->   	atomic_long_set(&pblk->sync_writes, 0);
-> @@ -1034,10 +1037,17 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
->   		goto fail_free_luns;
->   	}
->   
-> +	pblk->pad_dist = kzalloc((pblk->min_write_pgs - 1) * sizeof(atomic64_t),
-> +				 GFP_KERNEL);
-> +	if (!pblk->pad_dist) {
-> +		ret = -ENOMEM;
-> +		goto fail_free_line_meta;
-> +	}
-> +
->   	ret = pblk_core_init(pblk);
->   	if (ret) {
->   		pr_err("pblk: could not initialize core\n");
-> -		goto fail_free_line_meta;
-> +		goto fail_free_pad_dist;
->   	}
->   
->   	ret = pblk_l2p_init(pblk);
-> @@ -1097,6 +1107,8 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
->   	pblk_l2p_free(pblk);
->   fail_free_core:
->   	pblk_core_free(pblk);
-> +fail_free_pad_dist:
-> +	kfree(pblk->pad_dist);
->   fail_free_line_meta:
->   	pblk_line_meta_free(pblk);
->   fail_free_luns:
-> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-> index 7044b5599cc4..264372d7b537 100644
-> --- a/drivers/lightnvm/pblk-rb.c
-> +++ b/drivers/lightnvm/pblk-rb.c
-> @@ -437,9 +437,7 @@ static int pblk_rb_may_write_flush(struct pblk_rb *rb, unsigned int nr_entries,
->   	if (bio->bi_opf & REQ_PREFLUSH) {
->   		struct pblk *pblk = container_of(rb, struct pblk, rwb);
->   
-> -#ifdef CONFIG_NVM_DEBUG
->   		atomic_long_inc(&pblk->nr_flush);
-> -#endif
->   		if (pblk_rb_flush_point_set(&pblk->rwb, bio, mem))
->   			*io_ret = NVM_IO_OK;
->   	}
-> @@ -620,14 +618,17 @@ unsigned int pblk_rb_read_to_bio(struct pblk_rb *rb, struct nvm_rq *rqd,
->   			pr_err("pblk: could not pad page in write bio\n");
->   			return NVM_IO_ERR;
->   		}
-> +
-> +		if (pad < pblk->min_write_pgs)
-> +			atomic64_inc(&pblk->pad_dist[pad - 1]);
-> +		else
-> +			pr_warn("pblk: padding more than min. sectors\n");
-
-Curious, when would this happen? Would it be an implementation error or 
-something a user did wrong?
-
-> +
-> +		atomic64_add(pad, &pblk->pad_wa);
->   	}
->   
-> -	atomic64_add(pad, &((struct pblk *)
-> -			(container_of(rb, struct pblk, rwb)))->pad_wa);
-> -
->   #ifdef CONFIG_NVM_DEBUG
-> -	atomic_long_add(pad, &((struct pblk *)
-> -			(container_of(rb, struct pblk, rwb)))->padded_writes);
-> +	atomic_long_add(pad, &pblk->padded_writes);
->   #endif
->   
->   	return NVM_IO_OK;
-> diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-> index 4804bbd32d5f..f902ac00d071 100644
-> --- a/drivers/lightnvm/pblk-sysfs.c
-> +++ b/drivers/lightnvm/pblk-sysfs.c
-> @@ -341,6 +341,38 @@ static ssize_t pblk_sysfs_get_write_amp_trip(struct pblk *pblk, char *page)
->   		atomic64_read(&pblk->pad_wa) - pblk->pad_rst_wa, page);
->   }
->   
-> +static ssize_t pblk_sysfs_get_padding_dist(struct pblk *pblk, char *page)
-> +{
-> +	int sz = 0;
-> +	unsigned long long total;
-> +	unsigned long long total_buckets = 0;
-> +	int buckets = pblk->min_write_pgs - 1;
-> +	int i;
-> +
-> +	total = atomic64_read(&pblk->nr_flush) - pblk->nr_flush_rst;
-> +
-> +	for (i = 0; i < buckets; i++)
-> +		total_buckets += atomic64_read(&pblk->pad_dist[i]);
-> +
-
-total_buckets are first used later. The calculation could be moved below 
-the next statement.
-
-> +	if (!total) {
-> +		for (i = 0; i < (buckets + 1); i++)
-> +			sz += snprintf(page + sz, PAGE_SIZE - sz,
-> +				"%d:0 ", i);
-> +		sz += snprintf(page + sz, PAGE_SIZE - sz, "\n");
-> +
-> +		return sz;
-> +	}
-> +
-> +	sz += snprintf(page + sz, PAGE_SIZE - sz, "0:%lld%% ",
-> +		((total - total_buckets) * 100) / total);
-> +	for (i = 0; i < buckets; i++)
-> +		sz += snprintf(page + sz, PAGE_SIZE - sz, "%d:%lld%% ", i + 1,
-> +			(atomic64_read(&pblk->pad_dist[i]) * 100) / total);
-> +	sz += snprintf(page + sz, PAGE_SIZE - sz, "\n");
-> +
-> +	return sz;
-> +}
-> +
->   #ifdef CONFIG_NVM_DEBUG
->   static ssize_t pblk_sysfs_stats_debug(struct pblk *pblk, char *page)
->   {
-> @@ -427,6 +459,32 @@ static ssize_t pblk_sysfs_set_write_amp_trip(struct pblk *pblk,
->   }
->   
->   
-> +static ssize_t pblk_sysfs_set_padding_dist(struct pblk *pblk,
-> +			const char *page, size_t len)
-> +{
-> +	size_t c_len;
-> +	int reset_value;
-> +	int buckets = pblk->min_write_pgs - 1;
-> +	int i;
-> +
-> +	c_len = strcspn(page, "\n");
-> +	if (c_len >= len)
-> +		return -EINVAL;
-> +
-> +	if (kstrtouint(page, 0, &reset_value))
-> +		return -EINVAL;
-> +
-> +	if (reset_value !=  0)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < buckets; i++)
-> +		atomic64_set(&pblk->pad_dist[i], 0);
-> +
-> +	pblk->nr_flush_rst = atomic64_read(&pblk->nr_flush);
-> +
-> +	return len;
-> +}
-> +
->   static struct attribute sys_write_luns = {
->   	.name = "write_luns",
->   	.mode = 0444,
-> @@ -487,6 +545,11 @@ static struct attribute sys_write_amp_trip = {
->   	.mode = 0644,
->   };
->   
-> +static struct attribute sys_padding_dist = {
-> +	.name = "padding_dist",
-> +	.mode = 0644,
-> +};
-> +
->   #ifdef CONFIG_NVM_DEBUG
->   static struct attribute sys_stats_debug_attr = {
->   	.name = "stats",
-> @@ -507,6 +570,7 @@ static struct attribute *pblk_attrs[] = {
->   	&sys_lines_info_attr,
->   	&sys_write_amp_mileage,
->   	&sys_write_amp_trip,
-> +	&sys_padding_dist,
->   #ifdef CONFIG_NVM_DEBUG
->   	&sys_stats_debug_attr,
->   #endif
-> @@ -540,6 +604,8 @@ static ssize_t pblk_sysfs_show(struct kobject *kobj, struct attribute *attr,
->   		return pblk_sysfs_get_write_amp_mileage(pblk, buf);
->   	else if (strcmp(attr->name, "write_amp_trip") == 0)
->   		return pblk_sysfs_get_write_amp_trip(pblk, buf);
-> +	else if (strcmp(attr->name, "padding_dist") == 0)
-> +		return pblk_sysfs_get_padding_dist(pblk, buf);
->   #ifdef CONFIG_NVM_DEBUG
->   	else if (strcmp(attr->name, "stats") == 0)
->   		return pblk_sysfs_stats_debug(pblk, buf);
-> @@ -558,6 +624,8 @@ static ssize_t pblk_sysfs_store(struct kobject *kobj, struct attribute *attr,
->   		return pblk_sysfs_set_sec_per_write(pblk, buf, len);
->   	else if (strcmp(attr->name, "write_amp_trip") == 0)
->   		return pblk_sysfs_set_write_amp_trip(pblk, buf, len);
-> +	else if (strcmp(attr->name, "padding_dist") == 0)
-> +		return pblk_sysfs_set_padding_dist(pblk, buf, len);
->   	return 0;
->   }
->   
-> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-> index 4b7d8618631f..88720e2441c0 100644
-> --- a/drivers/lightnvm/pblk.h
-> +++ b/drivers/lightnvm/pblk.h
-> @@ -626,12 +626,16 @@ struct pblk {
->   	u64 gc_rst_wa;
->   	u64 pad_rst_wa;
->   
-> +	/* Counters used for calculating padding distribution */
-> +	atomic64_t *pad_dist;		/* Padding distribution buckets */
-> +	u64 nr_flush_rst;		/* Flushes reset value for pad dist.*/
-> +	atomic_long_t nr_flush;		/* Number of flush/fua I/O */
-> +
->   #ifdef CONFIG_NVM_DEBUG
->   	/* Non-persistent debug counters, 4kb sector I/Os */
->   	atomic_long_t inflight_writes;	/* Inflight writes (user and gc) */
->   	atomic_long_t padded_writes;	/* Sectors padded due to flush/fua */
->   	atomic_long_t padded_wb;	/* Sectors padded in write buffer */
-> -	atomic_long_t nr_flush;		/* Number of flush/fua I/O */
->   	atomic_long_t req_writes;	/* Sectors stored on write buffer */
->   	atomic_long_t sub_writes;	/* Sectors submitted from buffer */
->   	atomic_long_t sync_writes;	/* Sectors synced to media */
+> b) "block the not-submitted-request's buffer and let further buffers
+> pass before it"
 > 
+> or neither?
+> 
+> Hans, could you clarify what you think is the right behavior here?
 
-Looks good to me. Let me know if you want to send a new patch, or if I 
-may make the change when I pick it up.
+I think I misread the text. Alexandre, buffers in not-yet-submitted requests
+should not act as fences. They are similar to buffers that are prepared
+through the VIDIOC_PREPARE_BUF call. They are just sitting there and won't
+be in the queue until someone calls QBUF.
 
-Also, should the padding be stored in the on-disk metadata as well?
+It's the same for not-yet-submitted requests: the buffers don't act as
+fences until the request is submitted.
+
+Interesting related questions: how does VIDIOC_PREPARE_BUF interact with
+a request? What happens if a buffer is added to a non-yet-submitted request
+and userspace calls VIDIOC_QBUF with that same buffer but with no request?
+
+This all needs to be defined.
+
+> 
+>>>>> * For the codec usecase, I have experimented a bit marking CAPTURE buffers with
+>>>>> the request FD that produced them (vim2m acts that way). This seems to work
+>>>>> well, however FDs are process-local and could be closed before the CAPTURE
+>>>>> buffer is dequeued, rendering that information less meaningful, if not
+>>>>> dangerous.
+>>>>
+>>>> I don't follow this. Once the fd is passed to the kernel its refcount should be
+>>>> increased so the data it represents won't be released if userspace closes the fd.
+>>>
+>>> The refcount of the request is increased. The refcount of the FD is
+>>> not, since it is only a userspace reference to the request.
+>>
+>> I don't think that's right. Looking at how dma-buf does this (dma_buf_get in
+>> dma-buf.c) it calls fget(fd) which increases the fd refcount. In fact, as far as
+>> I can see the struct dma_buf doesn't have a refcount, it is solely refcounted
+>> through the fd. That's probably the model you want to follow.
+> 
+> As far as I can see from the code, fget() on an fd increases a
+> reference count on the struct file backing the fd. I don't think there
+> is another level of reference counting of fds themselves - that's why
+> dup(fd) gives you another fd and you can't call close(fd) on the same
+> fd two times.
+> 
+>>
+>>>
+>>>>
+>>>> Obviously if userspace closes the fd it cannot do anything with it anymore, but
+>>>> it shouldn't be 'dangerous' AFAICT.
+>>>
+>>> It userspace later gets that closed FD back from a DQBUF call, and
+>>> decides to use it again, then we would have a problem. I agree that it
+>>> is userspace responsibility to be careful here, but making things
+>>> foolproof never hurts.
+>>
+>> I think all the issues will go away if you refcount the fd instead of the
+>> request. It worked well for dma-buf for years.
+> 
+> I'm confused here. The kernel never returns the same FD for the same
+> DMA-buf twice. Every time an ioctl is called, which returns a DMA-buf
+> FD, it creates a new FD.
+
+Sorry, where I say 'refcount the fd' I indeed meant 'refcount the file struct'.
+
+Looking at the code in the patch series I see:
+
++struct media_request *
++media_request_get_from_fd(int fd)
++{
++	struct file *f;
++	struct media_request *req;
++
++	f = fget(fd);
++	if (!f)
++		return NULL;
++
++	/* Not a request FD? */
++	if (f->f_op != &request_fops) {
++		fput(f);
++		return NULL;
++	}
++
++	req = f->private_data;
++	media_request_get(req);
++	fput(f);
++
++	return req;
++}
++EXPORT_SYMBOL_GPL(media_request_get_from_fd);
+
+So this does not refcount the file struct but the request struct, and I think
+that's wrong. The file struct represents the request struct, and it is the
+file struct that should be refcounted. So when you give a request_fd to
+VIDIOC_QBUF, then the refcount should be increased since vb2 now needs to
+hold on to it. It's what dma-buf does.
+
+Now, I agree that if userspace closes the fd before kernelspace is finished
+with it, then the request_fd returned by VIDIOC_DQBUF is no longer valid.
+But so what? It's the same with the dma-buf fd. I don't think this is a problem
+at all.
+
+Regards,
+
+	Hans
