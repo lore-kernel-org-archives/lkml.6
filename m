@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753854AbeAaXOP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 18:14:15 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:58602 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754286AbeAaXEk (ORCPT
+        id S1755964AbeAaXPd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 18:15:33 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:44944 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754068AbeAaXEe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 18:04:40 -0500
+        Wed, 31 Jan 2018 18:04:34 -0500
 From: daniel.m.jordan@oracle.com
 To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
@@ -14,14 +14,14 @@ Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
         ldufour@linux.vnet.ibm.com, mgorman@suse.de, mhocko@kernel.org,
         pasha.tatashin@oracle.com, steven.sistare@oracle.com,
         yossi.lev@oracle.com
-Subject: [RFC PATCH v1 07/13] mm: convert to-be-refactored lru_lock callsites to lock-all API
-Date: Wed, 31 Jan 2018 18:04:07 -0500
-Message-Id: <20180131230413.27653-8-daniel.m.jordan@oracle.com>
+Subject: [RFC PATCH v1 01/13] mm: add a percpu_pagelist_batch sysctl interface
+Date: Wed, 31 Jan 2018 18:04:01 -0500
+Message-Id: <20180131230413.27653-2-daniel.m.jordan@oracle.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
 References: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8791 signatures=668659
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1801310283
@@ -29,331 +29,118 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the heavy locking API for now to allow us to focus on the path we're
-measuring to prove the concept--the release_pages path.  In that path,
-LRU batch locking will be used, but everywhere else will be heavy.
+From: Aaron Lu <aaron.lu@intel.com>
 
-For now, exclude compaction since this would be a nontrivial
-refactoring.  We can deal with that in a future series.
-
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- mm/huge_memory.c |  6 +++---
- mm/memcontrol.c  |  4 ++--
- mm/mlock.c       | 10 +++++-----
- mm/page_idle.c   |  4 ++--
- mm/swap.c        | 10 +++++-----
- mm/vmscan.c      | 38 +++++++++++++++++++-------------------
- 6 files changed, 36 insertions(+), 36 deletions(-)
+ include/linux/mmzone.h |  2 ++
+ kernel/sysctl.c        |  9 +++++++++
+ mm/page_alloc.c        | 40 +++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 50 insertions(+), 1 deletion(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 0e7ded98d114..787ad5ba55bb 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2461,7 +2461,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 		spin_unlock(&head->mapping->tree_lock);
- 	}
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 67f2e3c38939..c05529473b80 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -891,6 +891,8 @@ int lowmem_reserve_ratio_sysctl_handler(struct ctl_table *, int,
+ 					void __user *, size_t *, loff_t *);
+ int percpu_pagelist_fraction_sysctl_handler(struct ctl_table *, int,
+ 					void __user *, size_t *, loff_t *);
++int percpu_pagelist_batch_sysctl_handler(struct ctl_table *, int,
++					void __user *, size_t *, loff_t *);
+ int sysctl_min_unmapped_ratio_sysctl_handler(struct ctl_table *, int,
+ 			void __user *, size_t *, loff_t *);
+ int sysctl_min_slab_ratio_sysctl_handler(struct ctl_table *, int,
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 557d46728577..1602bc14bf0d 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -108,6 +108,7 @@ extern unsigned int core_pipe_limit;
+ extern int pid_max;
+ extern int pid_max_min, pid_max_max;
+ extern int percpu_pagelist_fraction;
++extern int percpu_pagelist_batch;
+ extern int latencytop_enabled;
+ extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
+ #ifndef CONFIG_MMU
+@@ -1458,6 +1459,14 @@ static struct ctl_table vm_table[] = {
+ 		.proc_handler	= percpu_pagelist_fraction_sysctl_handler,
+ 		.extra1		= &zero,
+ 	},
++	{
++		.procname	= "percpu_pagelist_batch",
++		.data		= &percpu_pagelist_batch,
++		.maxlen		= sizeof(percpu_pagelist_batch),
++		.mode		= 0644,
++		.proc_handler	= percpu_pagelist_batch_sysctl_handler,
++		.extra1		= &zero,
++	},
+ #ifdef CONFIG_MMU
+ 	{
+ 		.procname	= "max_map_count",
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 76c9688b6a0a..d7078ed68b01 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -130,6 +130,7 @@ unsigned long totalreserve_pages __read_mostly;
+ unsigned long totalcma_pages __read_mostly;
  
--	spin_unlock_irqrestore(zone_lru_lock(page_zone(head)), flags);
-+	lru_unlock_all(page_zone(head)->zone_pgdat, &flags);
+ int percpu_pagelist_fraction;
++int percpu_pagelist_batch;
+ gfp_t gfp_allowed_mask __read_mostly = GFP_BOOT_MASK;
  
- 	unfreeze_page(head);
- 
-@@ -2661,7 +2661,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 		lru_add_drain();
- 
- 	/* prevent PageLRU to go away from under us, and freeze lru stats */
--	spin_lock_irqsave(zone_lru_lock(page_zone(head)), flags);
-+	lru_lock_all(page_zone(head)->zone_pgdat, &flags);
- 
- 	if (mapping) {
- 		void **pslot;
-@@ -2709,7 +2709,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 		spin_unlock(&pgdata->split_queue_lock);
- fail:		if (mapping)
- 			spin_unlock(&mapping->tree_lock);
--		spin_unlock_irqrestore(zone_lru_lock(page_zone(head)), flags);
-+		lru_unlock_all(page_zone(head)->zone_pgdat, &flags);
- 		unfreeze_page(head);
- 		ret = -EBUSY;
- 	}
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index ac2ffd5e02b9..99a54df760e3 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2071,7 +2071,7 @@ static void lock_page_lru(struct page *page, int *isolated)
- {
- 	struct zone *zone = page_zone(page);
- 
--	spin_lock_irq(zone_lru_lock(zone));
-+	lru_lock_all(zone->zone_pgdat, NULL);
- 	if (PageLRU(page)) {
- 		struct lruvec *lruvec;
- 
-@@ -2095,7 +2095,7 @@ static void unlock_page_lru(struct page *page, int isolated)
- 		SetPageLRU(page);
- 		add_page_to_lru_list(page, lruvec, page_lru(page));
- 	}
--	spin_unlock_irq(zone_lru_lock(zone));
-+	lru_unlock_all(zone->zone_pgdat, NULL);
+ /*
+@@ -5544,7 +5545,8 @@ static void pageset_set_high_and_batch(struct zone *zone,
+ 			(zone->managed_pages /
+ 				percpu_pagelist_fraction));
+ 	else
+-		pageset_set_batch(pcp, zone_batchsize(zone));
++		pageset_set_batch(pcp, percpu_pagelist_batch ?
++				percpu_pagelist_batch : zone_batchsize(zone));
  }
  
- static void commit_charge(struct page *page, struct mem_cgroup *memcg,
-diff --git a/mm/mlock.c b/mm/mlock.c
-index 30472d438794..6ba6a5887aeb 100644
---- a/mm/mlock.c
-+++ b/mm/mlock.c
-@@ -188,7 +188,7 @@ unsigned int munlock_vma_page(struct page *page)
- 	 * might otherwise copy PageMlocked to part of the tail pages before
- 	 * we clear it in the head page. It also stabilizes hpage_nr_pages().
- 	 */
--	spin_lock_irq(zone_lru_lock(zone));
-+	lru_lock_all(zone->zone_pgdat, NULL);
- 
- 	if (!TestClearPageMlocked(page)) {
- 		/* Potentially, PTE-mapped THP: do not skip the rest PTEs */
-@@ -200,14 +200,14 @@ unsigned int munlock_vma_page(struct page *page)
- 	__mod_zone_page_state(zone, NR_MLOCK, -nr_pages);
- 
- 	if (__munlock_isolate_lru_page(page, true)) {
--		spin_unlock_irq(zone_lru_lock(zone));
-+		lru_unlock_all(zone->zone_pgdat, NULL);
- 		__munlock_isolated_page(page);
- 		goto out;
- 	}
- 	__munlock_isolation_failed(page);
- 
- unlock_out:
--	spin_unlock_irq(zone_lru_lock(zone));
-+	lru_unlock_all(zone->zone_pgdat, NULL);
- 
- out:
- 	return nr_pages - 1;
-@@ -292,7 +292,7 @@ static void __munlock_pagevec(struct pagevec *pvec, struct zone *zone)
- 	pagevec_init(&pvec_putback);
- 
- 	/* Phase 1: page isolation */
--	spin_lock_irq(zone_lru_lock(zone));
-+	lru_lock_all(zone->zone_pgdat, NULL);
- 	for (i = 0; i < nr; i++) {
- 		struct page *page = pvec->pages[i];
- 
-@@ -319,7 +319,7 @@ static void __munlock_pagevec(struct pagevec *pvec, struct zone *zone)
- 		pvec->pages[i] = NULL;
- 	}
- 	__mod_zone_page_state(zone, NR_MLOCK, delta_munlocked);
--	spin_unlock_irq(zone_lru_lock(zone));
-+	lru_unlock_all(zone->zone_pgdat, NULL);
- 
- 	/* Now we can release pins of pages that we are not munlocking */
- 	pagevec_release(&pvec_putback);
-diff --git a/mm/page_idle.c b/mm/page_idle.c
-index 0a49374e6931..3324527c1c34 100644
---- a/mm/page_idle.c
-+++ b/mm/page_idle.c
-@@ -42,12 +42,12 @@ static struct page *page_idle_get_page(unsigned long pfn)
- 		return NULL;
- 
- 	zone = page_zone(page);
--	spin_lock_irq(zone_lru_lock(zone));
-+	lru_lock_all(zone->zone_pgdat, NULL);
- 	if (unlikely(!PageLRU(page))) {
- 		put_page(page);
- 		page = NULL;
- 	}
--	spin_unlock_irq(zone_lru_lock(zone));
-+	lru_unlock_all(zone->zone_pgdat, NULL);
- 	return page;
+ static void __meminit zone_pageset_init(struct zone *zone, int cpu)
+@@ -7266,6 +7268,42 @@ int percpu_pagelist_fraction_sysctl_handler(struct ctl_table *table, int write,
+ 	return ret;
  }
  
-diff --git a/mm/swap.c b/mm/swap.c
-index 67eb89fc9435..c4ca7e1c7c03 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -200,16 +200,16 @@ static void pagevec_lru_move_fn(struct pagevec *pvec,
++int percpu_pagelist_batch_sysctl_handler(struct ctl_table *table, int write,
++	void __user *buffer, size_t *length, loff_t *ppos)
++{
++	struct zone *zone;
++	int old_percpu_pagelist_batch;
++	int ret;
++
++	mutex_lock(&pcp_batch_high_lock);
++	old_percpu_pagelist_batch = percpu_pagelist_batch;
++
++	ret = proc_dointvec_minmax(table, write, buffer, length, ppos);
++	if (!write || ret < 0)
++		goto out;
++
++	/* Sanity checking to avoid pcp imbalance */
++	if (percpu_pagelist_batch <= 0) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* No change? */
++	if (percpu_pagelist_batch == old_percpu_pagelist_batch)
++		goto out;
++
++	for_each_populated_zone(zone) {
++		unsigned int cpu;
++
++		for_each_possible_cpu(cpu)
++			pageset_set_high_and_batch(zone,
++					per_cpu_ptr(zone->pageset, cpu));
++	}
++out:
++	mutex_unlock(&pcp_batch_high_lock);
++	return ret;
++}
++
+ #ifdef CONFIG_NUMA
+ int hashdist = HASHDIST_DEFAULT;
  
- 		if (pagepgdat != pgdat) {
- 			if (pgdat)
--				spin_unlock_irqrestore(&pgdat->lru_lock, flags);
-+				lru_unlock_all(pgdat, &flags);
- 			pgdat = pagepgdat;
--			spin_lock_irqsave(&pgdat->lru_lock, flags);
-+			lru_lock_all(pgdat, &flags);
- 		}
- 
- 		lruvec = mem_cgroup_page_lruvec(page, pgdat);
- 		(*move_fn)(page, lruvec, arg);
- 	}
- 	if (pgdat)
--		spin_unlock_irqrestore(&pgdat->lru_lock, flags);
-+		lru_unlock_all(pgdat, &flags);
- 	release_pages(pvec->pages, pvec->nr);
- 	pagevec_reinit(pvec);
- }
-@@ -330,9 +330,9 @@ void activate_page(struct page *page)
- 	struct zone *zone = page_zone(page);
- 
- 	page = compound_head(page);
--	spin_lock_irq(zone_lru_lock(zone));
-+	lru_lock_all(zone->zone_pgdat, NULL);
- 	__activate_page(page, mem_cgroup_page_lruvec(page, zone->zone_pgdat), NULL);
--	spin_unlock_irq(zone_lru_lock(zone));
-+	lru_unlock_all(zone->zone_pgdat, NULL);
- }
- #endif
- 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index b4c32a65a40f..b893200a397d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1691,9 +1691,9 @@ putback_inactive_pages(struct lruvec *lruvec, struct list_head *page_list)
- 		VM_BUG_ON_PAGE(PageLRU(page), page);
- 		list_del(&page->lru);
- 		if (unlikely(!page_evictable(page))) {
--			spin_unlock_irq(&pgdat->lru_lock);
-+			lru_unlock_all(pgdat, NULL);
- 			putback_lru_page(page);
--			spin_lock_irq(&pgdat->lru_lock);
-+			lru_lock_all(pgdat, NULL);
- 			continue;
- 		}
- 
-@@ -1714,10 +1714,10 @@ putback_inactive_pages(struct lruvec *lruvec, struct list_head *page_list)
- 			del_page_from_lru_list(page, lruvec, lru);
- 
- 			if (unlikely(PageCompound(page))) {
--				spin_unlock_irq(&pgdat->lru_lock);
-+				lru_unlock_all(pgdat, NULL);
- 				mem_cgroup_uncharge(page);
- 				(*get_compound_page_dtor(page))(page);
--				spin_lock_irq(&pgdat->lru_lock);
-+				lru_lock_all(pgdat, NULL);
- 			} else
- 				list_add(&page->lru, &pages_to_free);
- 		}
-@@ -1779,7 +1779,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
- 	if (!sc->may_unmap)
- 		isolate_mode |= ISOLATE_UNMAPPED;
- 
--	spin_lock_irq(&pgdat->lru_lock);
-+	lru_lock_all(pgdat, NULL);
- 
- 	nr_taken = isolate_lru_pages(nr_to_scan, lruvec, &page_list,
- 				     &nr_scanned, sc, isolate_mode, lru);
-@@ -1798,7 +1798,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
- 		count_memcg_events(lruvec_memcg(lruvec), PGSCAN_DIRECT,
- 				   nr_scanned);
- 	}
--	spin_unlock_irq(&pgdat->lru_lock);
-+	lru_unlock_all(pgdat, NULL);
- 
- 	if (nr_taken == 0)
- 		return 0;
-@@ -1806,7 +1806,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
- 	nr_reclaimed = shrink_page_list(&page_list, pgdat, sc, 0,
- 				&stat, false);
- 
--	spin_lock_irq(&pgdat->lru_lock);
-+	lru_lock_all(pgdat, NULL);
- 
- 	if (current_is_kswapd()) {
- 		if (global_reclaim(sc))
-@@ -1824,7 +1824,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
- 
- 	__mod_node_page_state(pgdat, NR_ISOLATED_ANON + file, -nr_taken);
- 
--	spin_unlock_irq(&pgdat->lru_lock);
-+	lru_unlock_all(pgdat, NULL);
- 
- 	mem_cgroup_uncharge_list(&page_list);
- 	free_unref_page_list(&page_list);
-@@ -1951,10 +1951,10 @@ static unsigned move_active_pages_to_lru(struct lruvec *lruvec,
- 			del_page_from_lru_list(page, lruvec, lru);
- 
- 			if (unlikely(PageCompound(page))) {
--				spin_unlock_irq(&pgdat->lru_lock);
-+				lru_unlock_all(pgdat, NULL);
- 				mem_cgroup_uncharge(page);
- 				(*get_compound_page_dtor(page))(page);
--				spin_lock_irq(&pgdat->lru_lock);
-+				lru_lock_all(pgdat, NULL);
- 			} else
- 				list_add(&page->lru, pages_to_free);
- 		} else {
-@@ -1995,7 +1995,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
- 	if (!sc->may_unmap)
- 		isolate_mode |= ISOLATE_UNMAPPED;
- 
--	spin_lock_irq(&pgdat->lru_lock);
-+	lru_lock_all(pgdat, NULL);
- 
- 	nr_taken = isolate_lru_pages(nr_to_scan, lruvec, &l_hold,
- 				     &nr_scanned, sc, isolate_mode, lru);
-@@ -2006,7 +2006,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
- 	__count_vm_events(PGREFILL, nr_scanned);
- 	count_memcg_events(lruvec_memcg(lruvec), PGREFILL, nr_scanned);
- 
--	spin_unlock_irq(&pgdat->lru_lock);
-+	lru_unlock_all(pgdat, NULL);
- 
- 	while (!list_empty(&l_hold)) {
- 		cond_resched();
-@@ -2051,7 +2051,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
- 	/*
- 	 * Move pages back to the lru list.
- 	 */
--	spin_lock_irq(&pgdat->lru_lock);
-+	lru_lock_all(pgdat, NULL);
- 	/*
- 	 * Count referenced pages from currently used mappings as rotated,
- 	 * even though only some of them are actually re-activated.  This
-@@ -2063,7 +2063,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
- 	nr_activate = move_active_pages_to_lru(lruvec, &l_active, &l_hold, lru);
- 	nr_deactivate = move_active_pages_to_lru(lruvec, &l_inactive, &l_hold, lru - LRU_ACTIVE);
- 	__mod_node_page_state(pgdat, NR_ISOLATED_ANON + file, -nr_taken);
--	spin_unlock_irq(&pgdat->lru_lock);
-+	lru_unlock_all(pgdat, NULL);
- 
- 	mem_cgroup_uncharge_list(&l_hold);
- 	free_unref_page_list(&l_hold);
-@@ -2306,7 +2306,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 	file  = lruvec_lru_size(lruvec, LRU_ACTIVE_FILE, MAX_NR_ZONES) +
- 		lruvec_lru_size(lruvec, LRU_INACTIVE_FILE, MAX_NR_ZONES);
- 
--	spin_lock_irq(&pgdat->lru_lock);
-+	lru_lock_all(pgdat, NULL);
- 	if (unlikely(reclaim_stat->recent_scanned[0] > anon / 4)) {
- 		reclaim_stat->recent_scanned[0] /= 2;
- 		reclaim_stat->recent_rotated[0] /= 2;
-@@ -2327,7 +2327,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 
- 	fp = file_prio * (reclaim_stat->recent_scanned[1] + 1);
- 	fp /= reclaim_stat->recent_rotated[1] + 1;
--	spin_unlock_irq(&pgdat->lru_lock);
-+	lru_unlock_all(pgdat, NULL);
- 
- 	fraction[0] = ap;
- 	fraction[1] = fp;
-@@ -3978,9 +3978,9 @@ void check_move_unevictable_pages(struct page **pages, int nr_pages)
- 		pgscanned++;
- 		if (pagepgdat != pgdat) {
- 			if (pgdat)
--				spin_unlock_irq(&pgdat->lru_lock);
-+				lru_unlock_all(pgdat, NULL);
- 			pgdat = pagepgdat;
--			spin_lock_irq(&pgdat->lru_lock);
-+			lru_lock_all(pgdat, NULL);
- 		}
- 		lruvec = mem_cgroup_page_lruvec(page, pgdat);
- 
-@@ -4001,7 +4001,7 @@ void check_move_unevictable_pages(struct page **pages, int nr_pages)
- 	if (pgdat) {
- 		__count_vm_events(UNEVICTABLE_PGRESCUED, pgrescued);
- 		__count_vm_events(UNEVICTABLE_PGSCANNED, pgscanned);
--		spin_unlock_irq(&pgdat->lru_lock);
-+		lru_unlock_all(pgdat, NULL);
- 	}
- }
- #endif /* CONFIG_SHMEM */
 -- 
 2.16.1
