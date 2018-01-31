@@ -1,130 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754205AbeA3X7y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 18:59:54 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:45850 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753315AbeA3X7w (ORCPT
+        id S1754223AbeAaAAL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 19:00:11 -0500
+Received: from mail-pf0-f179.google.com ([209.85.192.179]:35664 "EHLO
+        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753811AbeAaAAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 18:59:52 -0500
-Subject: Re: [PATCH v2] mm: hwpoison: disable memory error handling on 1GB
- hugepage
-To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org
-References: <20180130013919.GA19959@hori1.linux.bs1.fc.nec.co.jp>
- <1517284444-18149-1-git-send-email-n-horiguchi@ah.jp.nec.com>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <82efe26e-e217-6124-0d88-d4f25d12386d@oracle.com>
-Date: Tue, 30 Jan 2018 15:56:37 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Tue, 30 Jan 2018 19:00:09 -0500
+X-Google-Smtp-Source: AH8x226pMMyYpHWz5gfYWmu5H9py3Q9DjDcWcMaS6/EbsrG6aVWOMXZnTWNtZPC070+uOonFTIjRcA==
+From: Kevin Hilman <khilman@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Yixun Lan <yixun.lan@amlogic.com>,
+        Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM64: dts: meson-axg: add RMII pins for ethernet controller
+Organization: BayLibre
+References: <20180111030411.197054-1-yixun.lan@amlogic.com>
+        <1515659863.5048.112.camel@baylibre.com>
+        <2fa28259-cce9-37fc-3bcd-6017a35a052a@amlogic.com>
+        <593cbb66-7040-b27d-5109-702fb43dc18e@baylibre.com>
+Date: Tue, 30 Jan 2018 16:00:06 -0800
+In-Reply-To: <593cbb66-7040-b27d-5109-702fb43dc18e@baylibre.com> (Neil
+        Armstrong's message of "Thu, 11 Jan 2018 10:33:27 +0100")
+Message-ID: <7hvafic2yh.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1517284444-18149-1-git-send-email-n-horiguchi@ah.jp.nec.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8790 signatures=668657
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1801300293
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0V00EtX000662
 
-On 01/29/2018 07:54 PM, Naoya Horiguchi wrote:
-> Recently the following BUG was reported:
-> 
->     Injecting memory failure for pfn 0x3c0000 at process virtual address 0x7fe300000000
->     Memory failure: 0x3c0000: recovery action for huge page: Recovered
->     BUG: unable to handle kernel paging request at ffff8dfcc0003000
->     IP: gup_pgd_range+0x1f0/0xc20
->     PGD 17ae72067 P4D 17ae72067 PUD 0
->     Oops: 0000 [#1] SMP PTI
->     ...
->     CPU: 3 PID: 5467 Comm: hugetlb_1gb Not tainted 4.15.0-rc8-mm1-abc+ #3
->     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.9.3-1.fc25 04/01/2014
-> 
-> You can easily reproduce this by calling madvise(MADV_HWPOISON) twice on
-> a 1GB hugepage. This happens because get_user_pages_fast() is not aware
-> of a migration entry on pud that was created in the 1st madvise() event.
-> 
-> I think that conversion to pud-aligned migration entry is working,
-> but other MM code walking over page table isn't prepared for it.
-> We need some time and effort to make all this work properly, so
-> this patch avoids the reported bug by just disabling error handling
-> for 1GB hugepage.
-> 
-> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Acked-by: Michal Hocko <mhocko@suse.com> // for v1
-> Cc: <stable@vger.kernel.org>
-> ---
-> ChangeLog v1 -> v2:
-> - add comment about what we need to support hwpoision for pud-sized hugetlb
-> - use "page size > PMD_SIZE" condition instead of hstate_is_gigantic()
-> ---
->  include/linux/mm.h  |  1 +
->  mm/memory-failure.c | 16 ++++++++++++++++
->  2 files changed, 17 insertions(+)
-> 
-> diff --git v4.15-rc8-mmotm-2018-01-18-16-31/include/linux/mm.h v4.15-rc8-mmotm-2018-01-18-16-31_patched/include/linux/mm.h
-> index 63f7ba1..6b3df81 100644
-> --- v4.15-rc8-mmotm-2018-01-18-16-31/include/linux/mm.h
-> +++ v4.15-rc8-mmotm-2018-01-18-16-31_patched/include/linux/mm.h
-> @@ -2607,6 +2607,7 @@ enum mf_action_page_type {
->  	MF_MSG_POISONED_HUGE,
->  	MF_MSG_HUGE,
->  	MF_MSG_FREE_HUGE,
-> +	MF_MSG_NON_PMD_HUGE,
->  	MF_MSG_UNMAP_FAILED,
->  	MF_MSG_DIRTY_SWAPCACHE,
->  	MF_MSG_CLEAN_SWAPCACHE,
-> diff --git v4.15-rc8-mmotm-2018-01-18-16-31/mm/memory-failure.c v4.15-rc8-mmotm-2018-01-18-16-31_patched/mm/memory-failure.c
-> index d530ac1..264e020 100644
-> --- v4.15-rc8-mmotm-2018-01-18-16-31/mm/memory-failure.c
-> +++ v4.15-rc8-mmotm-2018-01-18-16-31_patched/mm/memory-failure.c
-> @@ -508,6 +508,7 @@ static const char * const action_page_types[] = {
->  	[MF_MSG_POISONED_HUGE]		= "huge page already hardware poisoned",
->  	[MF_MSG_HUGE]			= "huge page",
->  	[MF_MSG_FREE_HUGE]		= "free huge page",
-> +	[MF_MSG_NON_PMD_HUGE]		= "non-pmd-sized huge page",
->  	[MF_MSG_UNMAP_FAILED]		= "unmapping failed page",
->  	[MF_MSG_DIRTY_SWAPCACHE]	= "dirty swapcache page",
->  	[MF_MSG_CLEAN_SWAPCACHE]	= "clean swapcache page",
-> @@ -1090,6 +1091,21 @@ static int memory_failure_hugetlb(unsigned long pfn, int trapno, int flags)
->  		return 0;
->  	}
->  
-> +	/*
-> +	 * TODO: hwpoison for pud-sized hugetlb doesn't work right now, so
-> +	 * simply disable it. In order to make it work properly, we need
-> +	 * make sure that:
-> +	 *  - conversion of a pud that maps an error hugetlb into hwpoison
-> +	 *    entry properly works, and
-> +	 *  - other mm code walking over page table is aware of pud-aligned
-> +	 *    hwpoison entries.
-> +	 */
-> +	if (huge_page_size(page_hstate(head)) > PMD_SIZE) {
-> +		action_result(pfn, MF_MSG_NON_PMD_HUGE, MF_IGNORED);
-> +		res = -EBUSY;
-> +		goto out;
-> +	}
-> +
->  	if (!hwpoison_user_mappings(p, pfn, trapno, flags, &head)) {
->  		action_result(pfn, MF_MSG_UNMAP_FAILED, MF_IGNORED);
->  		res = -EBUSY;
-> 
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-Thanks, that does catch all those other huge page sizes.
+> On 11/01/2018 10:11, Yixun Lan wrote:
+>> Hi Jerome：
+>> 
+>> On 01/11/18 16:37, Jerome Brunet wrote:
+>>> On Thu, 2018-01-11 at 11:04 +0800, Yixun Lan wrote:
+>>>> Comparing to RGMII interface, the RMII interface require few pins.
+>>>> So it's worth describing them here.
+>>>>
+>>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>>>
+>>> The only axg platform we have upstream is the s400 and is using rgmii.
+>>> May I ask how this was tested ?
+>>>
+>> It's true that S400 using RGMII interface.
+>> 
+>> but, we have customer using RTL8201FR-VB/VD which is a RMII PHY,
+>> 
+>> This is actually tested with the 'eth_rmii_x_pins' group.
+>> 
+>> Yixun
+>> 
+>
+> I pushed the same for GXBB,
+>
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Applied to v4.17/dt64 with Neil's ack.
 
-It would really be helpful to get some comments from the powerpc folks
-as this does seem to impact them most.  Perhaps arm64 as well?
-
--- 
-Mike Kravetz
+Kevin
