@@ -1,77 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753845AbeAaJrI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 04:47:08 -0500
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:42195 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753603AbeAaJq5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 04:46:57 -0500
-X-Google-Smtp-Source: AH8x2256U3V3bdG8lGvOn0dUtE0njBCVYcRseOFQ2wdZBD9HqXUdvcdzHkVZbAn5SHzhDumaNdHYwGMgMAfddZkhkzE=
+        id S1753871AbeAaJrY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 04:47:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58826 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753430AbeAaJrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 04:47:21 -0500
+Date: Wed, 31 Jan 2018 10:47:17 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch -mm v2 1/3] mm, memcg: introduce per-memcg oom policy
+ tunable
+Message-ID: <20180131094717.GR21609@dhcp22.suse.cz>
+References: <alpine.DEB.2.10.1801161812550.28198@chino.kir.corp.google.com>
+ <alpine.DEB.2.10.1801251552320.161808@chino.kir.corp.google.com>
+ <alpine.DEB.2.10.1801251552490.161808@chino.kir.corp.google.com>
+ <20180126171548.GB16763@dhcp22.suse.cz>
+ <alpine.DEB.2.10.1801291418150.29670@chino.kir.corp.google.com>
+ <20180130085013.GP21609@dhcp22.suse.cz>
+ <alpine.DEB.2.10.1801301413080.148885@chino.kir.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <9cbe668e-fe6b-d525-176d-a1e07541f789@infradead.org>
-References: <20180130192349.8420-1-ulfalizer@gmail.com> <9cbe668e-fe6b-d525-176d-a1e07541f789@infradead.org>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Wed, 31 Jan 2018 10:46:56 +0100
-Message-ID: <CAFkk2KSJCDjP6e+XyXES9-zRD_2FUbR3T3sCnMhm73ei2mwJvg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] Remove empty help texts from Kconfig files
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.10.1801301413080.148885@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:00 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 01/30/2018 11:22 AM, Ulf Magnusson wrote:
->> Empty help texts are probably either a typo, a Kconfig misunderstanding, or
->> some kind of half-committing to adding a help text (in which case a TODO
->> comment would be clearer, if the help text really can't be added right away).
->> Best to flag them, IMO.
->>
->> Changes since v1:
->>
->> Forgot to send the cover letter to linux-kbuild.
->
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
->
-> Thanks.
->
->> Ulf Magnusson (10):
->>   net/sched: kconfig: Remove empty help texts
->>   video: fbdev: kconfig: Remove empty help text
->>   mmc: kconfig: Remove empty help text
->>   Staging: rtl8192u: kconfig: Remove empty help text
->>   Staging: rtl8192e: kconfig: Remove empty help text
->>   lib/Kconfig.debug: Remove empty help text
->>   MIPS: BCM63XX: kconfig: Remove empty help text
->>   MIPS: kconfig: Remove empty help text
->>   arm: vt8500: kconfig: Remove empty help text
->>   nios2: kconfig: Remove empty help text
->>
->>  arch/arm/mach-vt8500/Kconfig              | 1 -
->>  arch/mips/Kconfig                         | 1 -
->>  arch/mips/bcm63xx/boards/Kconfig          | 1 -
->>  arch/nios2/Kconfig                        | 1 -
->>  drivers/mmc/host/Kconfig                  | 1 -
->>  drivers/staging/rtl8192e/rtl8192e/Kconfig | 1 -
->>  drivers/staging/rtl8192u/Kconfig          | 1 -
->>  drivers/video/fbdev/Kconfig               | 1 -
->>  lib/Kconfig.debug                         | 1 -
->>  net/sched/Kconfig                         | 3 ---
->>  10 files changed, 12 deletions(-)
->>
->
->
-> --
-> ~Randy
+On Tue 30-01-18 14:38:40, David Rientjes wrote:
+> On Tue, 30 Jan 2018, Michal Hocko wrote:
+> 
+> > > > So what is the actual semantic and scope of this policy. Does it apply
+> > > > only down the hierarchy. Also how do you compare cgroups with different
+> > > > policies? Let's say you have
+> > > >           root
+> > > >          / |  \
+> > > >         A  B   C
+> > > >        / \    / \
+> > > >       D   E  F   G
+> > > > 
+> > > > Assume A: cgroup, B: oom_group=1, C: tree, G: oom_group=1
+> > > > 
+> > > 
+> > > At each level of the hierarchy, memory.oom_policy compares immediate 
+> > > children, it's the only way that an admin can lock in a specific oom 
+> > > policy like "tree" and then delegate the subtree to the user.  If you've 
+> > > configured it as above, comparing A and C should be the same based on the 
+> > > cumulative usage of their child mem cgroups.
+> > 
+> > So cgroup == tree if we are memcg aware OOM killing, right? Why do we
+> > need both then? Just to make memcg aware OOM killing possible?
+> > 
+> 
+> We need "tree" to account the usage of the subtree rather than simply the 
+> cgroup alone, but "cgroup" and "tree" are accounted with the same units.  
+> In your example, D and E are treated as individual memory consumers and C 
+> is treated as the sum of all subtree memory consumers.
 
-This patchset has been superseded by
-https://lkml.org/lkml/2018/1/31/137, which rolls the removal of the
-blank help texts and adding the new warning into a single patchset.
+It seems I am still not clear with my question. What kind of difference
+does policy=cgroup vs. none on A? Also what kind of different does it
+make when a leaf node has cgroup policy?
 
-Cheers,
-Ulf
+[...]
+
+> > So now you have a killable cgroup selected by process criterion? That
+> > just doesn't make any sense. So I guess it would at least require to
+> > enforce (cgroup || tree) to allow oom_group.
+> > 
+> 
+> Hmm, I'm not sure why we would limit memory.oom_group to any policy.  Even 
+> if we are selecting a process, even without selecting cgroups as victims, 
+> killing a process may still render an entire cgroup useless and it makes 
+> sense to kill all processes in that cgroup.  If an unlucky process is 
+> selected with today's heursitic of oom_badness() or with a "none" policy 
+> with my patchset, I don't see why we can't enable the user to kill all 
+> other processes in the cgroup.  It may not make sense for some trees, but 
+> but I think it could be useful for others.
+
+My intuition screams here. I will think about this some more but I would
+be really curious about any sensible usecase when you want sacrifice the
+whole gang just because of one process compared to other processes or
+cgroups is too large. Do you see how you are mixing entities here?
+
+> > > Right, a policy of "none" reverts its subtree back to per-process 
+> > > comparison if you are either not using the cgroup aware oom killer or your 
+> > > subtree is not using the cgroup aware oom killer.
+> > 
+> > So how are you going to compare none cgroups with those that consider
+> > full memcg or hierarchy (cgroup, tree)? Are you going to consider
+> > oom_score_adj?
+> > 
+> 
+> No, I think it would make sense to make the restriction that to set 
+> "none", the ancestor mem cgroups would also need the same policy,
+
+I do not understand. Get back to our example. Are you saying that G
+with none will enforce the none policy to C and root? If yes then this
+doesn't make any sense because you are not really able to delegate the
+oom policy down the tree at all. It would effectively make tree policy
+pointless.
+
+I am skipping the rest of the following text because it is picking
+on details and the whole design is not clear to me. So could you start
+over documenting semantic and requirements. Ideally by describing:
+- how does the policy on the root of the OOM hierarchy controls the
+  selection policy
+- how does the per-memcg policy act during the tree walk - for both
+  intermediate nodes and leafs
+- how does the oom killer act based on the selected memcg
+- how do you compare tasks with memcgs
+
+[...]
+
+-- 
+Michal Hocko
+SUSE Labs
