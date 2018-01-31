@@ -1,95 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753466AbeAaNK6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 08:10:58 -0500
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:63313 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752492AbeAaNK4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 08:10:56 -0500
-X-IronPort-AV: E=Sophos;i="5.46,440,1511827200";
-   d="scan'208";a="329959907"
-From: KarimAllah Ahmed <karahmed@amazon.de>
-To: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: KarimAllah Ahmed <karahmed@amazon.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH v4 1/5] KVM: x86: Update the reverse_cpuid list to include CPUID_7_EDX
-Date: Wed, 31 Jan 2018 14:10:27 +0100
-Message-Id: <1517404231-22406-2-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517404231-22406-1-git-send-email-karahmed@amazon.de>
-References: <1517404231-22406-1-git-send-email-karahmed@amazon.de>
+        id S1752731AbeAaNPK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 08:15:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53276 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751587AbeAaNPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 08:15:09 -0500
+Date: Wed, 31 Jan 2018 14:15:05 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Stephane Eranian <eranian@google.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH V3 0/5] bugs fix for large PEBS mmap read and rdpmc read
+Message-ID: <20180131131505.GB31614@krava>
+References: <20180130133917.GC29098@krava>
+ <6d708c09-52a7-a906-b651-b133a7b4f189@linux.intel.com>
+ <20180130150454.GE29098@krava>
+ <35090c62-466a-aec8-b1a3-69def959c1c6@linux.intel.com>
+ <CABPqkBRWtSsKEM7ycPs0HYSKLsYDmZhr4ztUmMMqsytYamPGsw@mail.gmail.com>
+ <24210bcb-0e4b-58fe-bcda-da30019f6e7e@linux.intel.com>
+ <20180130185212.GA16806@krava>
+ <CABPqkBRp9bDmGECStbAHA5Ja0SjJmDQ2SOceat=qXno707MuAA@mail.gmail.com>
+ <20180131035941.GW26209@tassilo.jf.intel.com>
+ <20180131091539.GA3313@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131091539.GA3313@krava>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[dwmw2: Stop using KF() for bits in it, too]
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/kvm/cpuid.c | 8 +++-----
- arch/x86/kvm/cpuid.h | 1 +
- 2 files changed, 4 insertions(+), 5 deletions(-)
+On Wed, Jan 31, 2018 at 10:15:39AM +0100, Jiri Olsa wrote:
+> On Tue, Jan 30, 2018 at 07:59:41PM -0800, Andi Kleen wrote:
+> > > Still, the part I am missing here, is why asking for
+> > > PERF_SAMPLE_PERIOD voids large PEBS.
+> > 
+> > I think it was disabled together with frequency mode
+> > (which we could support too, but it's a bit more work)
+> > 
+> > But yes PERIOD could probably be allowed.
+> 
+> looks like it's just a matter of adding PERF_SAMPLE_PERIOD
+> into PEBS_FREERUNNING_FLAGS, we already populate period
+> in setup_pebs_sample_data
+> 
+> jirka
+> 
+> 
+> ---
+> diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+> index 8e4ea143ed96..78f91ec1056e 100644
+> --- a/arch/x86/events/perf_event.h
+> +++ b/arch/x86/events/perf_event.h
+> @@ -93,7 +93,8 @@ struct amd_nb {
+>  	PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_STREAM_ID | \
+>  	PERF_SAMPLE_DATA_SRC | PERF_SAMPLE_IDENTIFIER | \
+>  	PERF_SAMPLE_TRANSACTION | PERF_SAMPLE_PHYS_ADDR | \
+> -	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER)
+> +	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER | \
+> +	PERF_SAMPLE_PERIOD)
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 0099e10..c0eb337 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -67,9 +67,7 @@ u64 kvm_supported_xcr0(void)
- 
- #define F(x) bit(X86_FEATURE_##x)
- 
--/* These are scattered features in cpufeatures.h. */
--#define KVM_CPUID_BIT_AVX512_4VNNIW     2
--#define KVM_CPUID_BIT_AVX512_4FMAPS     3
-+/* For scattered features from cpufeatures.h; we currently expose none */
- #define KF(x) bit(KVM_CPUID_BIT_##x)
- 
- int kvm_update_cpuid(struct kvm_vcpu *vcpu)
-@@ -392,7 +390,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--		KF(AVX512_4VNNIW) | KF(AVX512_4FMAPS);
-+		F(AVX512_4VNNIW) | F(AVX512_4FMAPS);
- 
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
-@@ -477,7 +475,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
- 				entry->ecx &= ~F(PKU);
- 			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
--			entry->edx &= get_scattered_cpuid_leaf(7, 0, CPUID_EDX);
-+			cpuid_mask(&entry->edx, CPUID_7_EDX);
- 		} else {
- 			entry->ebx = 0;
- 			entry->ecx = 0;
-diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-index c2cea66..9a327d5 100644
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -54,6 +54,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
- 	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
- 	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
- 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
-+	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
- };
- 
- static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
--- 
-2.7.4
+seems to work, getting large PEBS event for following command line:
+
+  perf record -e cycles:P -c 100 --no-timestamp -C 0 --period
+
+
+jirka
