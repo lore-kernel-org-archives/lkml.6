@@ -1,418 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752510AbeAaMTN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 07:19:13 -0500
-Received: from mga12.intel.com ([192.55.52.136]:1235 "EHLO mga12.intel.com"
+        id S1752882AbeAaMU5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 07:20:57 -0500
+Received: from foss.arm.com ([217.140.101.70]:37426 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751025AbeAaMTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 07:19:12 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,440,1511856000";
-   d="scan'208";a="26181517"
-Date: Wed, 31 Jan 2018 14:19:06 +0200
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Alexandre Courbot <acourbot@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/8] media: videobuf2: add support for requests
-Message-ID: <20180131121906.h25fll5whpk3cxsb@paasikivi.fi.intel.com>
-References: <20180126060216.147918-1-acourbot@chromium.org>
- <20180126060216.147918-4-acourbot@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180126060216.147918-4-acourbot@chromium.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1751662AbeAaMU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 07:20:56 -0500
+From: Will Deacon <will.deacon@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH] locking/qspinlock: Ensure node is initialised before updating prev->next
+Date: Wed, 31 Jan 2018 12:20:46 +0000
+Message-Id: <1517401246-2750-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+When a locker ends up queuing on the qspinlock locking slowpath, we
+initialise the relevant mcs node and publish it indirectly by updating
+the tail portion of the lock word using xchg_tail. If we find that there
+was a pre-existing locker in the queue, we subsequently update their
+->next field to point at our node so that we are notified when it's our
+turn to take the lock.
 
-On Fri, Jan 26, 2018 at 03:02:11PM +0900, Alexandre Courbot wrote:
-> Make vb2 aware of requests. Drivers can specify whether a given queue
-> can accept requests or not. Queues that accept requests will block on a
-> buffer that is part of a request until that request is submitted.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> ---
->  drivers/media/v4l2-core/videobuf2-core.c | 125 +++++++++++++++++++++++++++++--
->  drivers/media/v4l2-core/videobuf2-v4l2.c |  28 ++++++-
->  include/media/videobuf2-core.h           |  15 +++-
->  3 files changed, 160 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
-> index cb115ba6a1d2..f6d013b141f1 100644
-> --- a/drivers/media/v4l2-core/videobuf2-core.c
-> +++ b/drivers/media/v4l2-core/videobuf2-core.c
-> @@ -26,6 +26,7 @@
->  
->  #include <media/videobuf2-core.h>
->  #include <media/v4l2-mc.h>
-> +#include <media/media-request.h>
->  
->  #include <trace/events/vb2.h>
->  
-> @@ -922,6 +923,17 @@ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
->  		vb->state = state;
->  	}
->  	atomic_dec(&q->owned_by_drv_count);
-> +	if (vb->request) {
-> +		struct media_request *req = vb->request;
-> +
-> +		if (atomic_dec_and_test(&req->buf_cpt))
-> +			media_request_complete(vb->request);
-> +
-> +		/* release reference acquired during qbuf */
-> +		vb->request = NULL;
-> +		media_request_put(req);
-> +	}
-> +
->  	spin_unlock_irqrestore(&q->done_lock, flags);
->  
->  	trace_vb2_buf_done(q, vb);
-> @@ -1298,6 +1310,53 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb)
->  }
->  EXPORT_SYMBOL_GPL(vb2_core_prepare_buf);
->  
-> +/**
-> + * vb2_check_buf_req_status() - Validate request state of a buffer
-> + * @vb:		buffer to check
-> + *
-> + * Returns true if a buffer is ready to be passed to the driver request-wise.
-> + * This means that neither this buffer nor any previously-queued buffer is
-> + * associated to a request that is not yet submitted.
-> + *
-> + * If this function returns false, then the buffer shall not be passed to its
-> + * driver since the request state is not completely built yet. In that case,
-> + * this function will register a notifier to be called when the request is
-> + * submitted and the queue can be unblocked.
-> + *
-> + * This function must be called with req_lock held.
-> + */
-> +static bool vb2_check_buf_req_status(struct vb2_buffer *vb)
-> +{
-> +	struct media_request *req = vb->request;
-> +	struct vb2_queue *q = vb->vb2_queue;
-> +	int ret = false;
-> +
-> +	mutex_lock(&q->req_lock);
-> +
-> +	if (!req) {
-> +		ret = !q->waiting_req;
-> +		goto done;
-> +	}
-> +
-> +	mutex_lock(&req->lock);
-> +	if (req->state == MEDIA_REQUEST_STATE_SUBMITTED) {
+This can be roughly illustrated as follows:
 
-Would it make sense to serialise access to request state using the queue
-lock instead? The queue and the state are often accessed together.
+  /* Initialise the fields in node and encode a pointer to node in tail */
+  tail = initialise_node(node);
 
-The function itself seems weird. The VB2 framework does not have enough
-information to determine whether a request is complete; this is something a
-driver must evaluate at the time of queueing the request.
+  /*
+   * Exchange tail into the lockword using an atomic read-modify-write
+   * operation with release semantics
+   */
+  old = xchg_tail(lock, tail);
 
-> +		mutex_unlock(&req->lock);
-> +		ret = !q->waiting_req;
-> +		goto done;
-> +	}
-> +
-> +	if (!q->waiting_req) {
-> +		q->waiting_req = true;
-> +		atomic_notifier_chain_register(&req->submit_notif,
-> +					       &q->req_blk);
-> +	}
-> +	mutex_unlock(&req->lock);
-> +
-> +done:
-> +	mutex_unlock(&q->req_lock);
-> +	return ret;
-> +}
-> +
->  /**
->   * vb2_start_streaming() - Attempt to start streaming.
->   * @q:		videobuf2 queue
-> @@ -1318,8 +1377,11 @@ static int vb2_start_streaming(struct vb2_queue *q)
->  	 * If any buffers were queued before streamon,
->  	 * we can now pass them to driver for processing.
->  	 */
-> -	list_for_each_entry(vb, &q->queued_list, queued_entry)
-> +	list_for_each_entry(vb, &q->queued_list, queued_entry) {
-> +		if (!vb2_check_buf_req_status(vb))
-> +			break;
->  		__enqueue_in_driver(vb);
+  /* If there was a pre-existing waiter ... */
+  if (old & _Q_TAIL_MASK) {
+	prev = decode_tail(old);
+	smp_read_barrier_depends();
 
-Queueing buffers to drivers this way hardly makes sense with requests. The
-driver has no use for it, all it cares about is the request.
+	/* ... then update their ->next field to point to node.
+	WRITE_ONCE(prev->next, node);
+  }
 
-VB2 could manage its own state of the buffer this way but that's only
-useful from V4L2 API point of view, it has no functional purpose. This
-suggests we need an overhaul of the existing buffer management for
-requests.
+The conditional update of prev->next therefore relies on the address
+dependency from the result of xchg_tail ensuring order against the
+prior initialisation of node. However, since the release semantics of
+the xchg_tail operation apply only to the write portion of the RmW,
+then this ordering is not guaranteed and it is possible for the CPU
+to return old before the writes to node have been published, consequently
+allowing us to point prev->next to an uninitialised node.
 
-> +	}
->  
->  	/* Tell the driver to start streaming */
->  	q->start_streaming_called = 1;
-> @@ -1361,7 +1423,46 @@ static int vb2_start_streaming(struct vb2_queue *q)
->  	return ret;
->  }
->  
-> -int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
-> +/**
-> + * vb2_unblock_requests() - unblock a queue waiting for a request submission
-> + * @nb:		notifier block that has been registered
-> + * @action:	unused
-> + * @data:	request that has been submitted
-> + *
-> + * This is a callback function that is registered when
-> + * vb2_check_buf_req_status() returns false. It is invoked when the request
-> + * blocking the queue has been submitted. This means its buffers (and all
-> + * following valid buffers) can be passed to drivers.
+This patch fixes the problem by making the update of prev->next a RELEASE
+operation, which also removes the reliance on dependency ordering.
 
-This is a perplexing one. Why would you not queue the request to the driver
-at the time of... it is queued, by the user? The VB2 framework (nor the
-media or V4L2 frameworks to that matter) does not have enough information
-in order to help the driver here.
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ kernel/locking/qspinlock.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-> + */
-> +static int vb2_unblock_requests(struct notifier_block *nb, unsigned long action,
-> +				void *data)
-> +{
-> +	struct vb2_queue *q = container_of(nb, struct vb2_queue, req_blk);
-> +	struct media_request *req = data;
-> +	struct vb2_buffer *vb;
-> +	bool found_request = false;
-> +
-> +	mutex_lock(&q->req_lock);
-> +	atomic_notifier_chain_unregister(&req->submit_notif, &q->req_blk);
-> +	q->waiting_req = false;
-> +	mutex_unlock(&q->req_lock);
-> +
-> +	list_for_each_entry(vb, &q->queued_list, queued_entry) {
-> +		/* All buffers before our request are already passed to the driver */
-> +		if (!found_request && vb->request != req)
-> +			continue;
-> +		found_request = true;
-> +
-> +		if (!vb2_check_buf_req_status(vb))
-> +			break;
-> +		__enqueue_in_driver(vb);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int vb2_core_qbuf(struct vb2_queue *q, unsigned int index,
-> +		  struct media_request *req, void *pb)
->  {
->  	struct vb2_buffer *vb;
->  	int ret;
-> @@ -1398,11 +1499,21 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
->  
->  	trace_vb2_qbuf(q, vb);
->  
-> +	vb->request = req;
-> +	if (req) {
-> +		if (!q->allow_requests)
-> +			return -EINVAL;
-> +
-> +		/* make sure the request stays alive as long as we need */
-> +		media_request_get(req);
-> +		atomic_inc(&req->buf_cpt);
-> +	}
-> +
->  	/*
->  	 * If already streaming, give the buffer to driver for processing.
->  	 * If not, the buffer will be given to driver on next streamon.
->  	 */
-> -	if (q->start_streaming_called)
-> +	if (q->start_streaming_called && vb2_check_buf_req_status(vb))
->  		__enqueue_in_driver(vb);
->  
->  	/* Fill buffer information for the userspace */
-> @@ -1993,6 +2104,8 @@ int vb2_core_queue_init(struct vb2_queue *q)
->  	spin_lock_init(&q->done_lock);
->  	mutex_init(&q->mmap_lock);
->  	init_waitqueue_head(&q->done_wq);
-> +	mutex_init(&q->req_lock);
-> +	q->req_blk.notifier_call = vb2_unblock_requests;
->  
->  	if (q->buf_struct_size == 0)
->  		q->buf_struct_size = sizeof(struct vb2_buffer);
-> @@ -2242,7 +2355,7 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
->  		 * Queue all buffers.
->  		 */
->  		for (i = 0; i < q->num_buffers; i++) {
-> -			ret = vb2_core_qbuf(q, i, NULL);
-> +			ret = vb2_core_qbuf(q, i, NULL, NULL);
->  			if (ret)
->  				goto err_reqbufs;
->  			fileio->bufs[i].queued = 1;
-> @@ -2421,7 +2534,7 @@ static size_t __vb2_perform_fileio(struct vb2_queue *q, char __user *data, size_
->  
->  		if (copy_timestamp)
->  			b->timestamp = ktime_get_ns();
-> -		ret = vb2_core_qbuf(q, index, NULL);
-> +		ret = vb2_core_qbuf(q, index, NULL, NULL);
->  		dprintk(5, "vb2_dbuf result: %d\n", ret);
->  		if (ret)
->  			return ret;
-> @@ -2524,7 +2637,7 @@ static int vb2_thread(void *data)
->  		if (copy_timestamp)
->  			vb->timestamp = ktime_get_ns();;
->  		if (!threadio->stop)
-> -			ret = vb2_core_qbuf(q, vb->index, NULL);
-> +			ret = vb2_core_qbuf(q, vb->index, NULL, NULL);
->  		call_void_qop(q, wait_prepare, q);
->  		if (ret || threadio->stop)
->  			break;
-> diff --git a/drivers/media/v4l2-core/videobuf2-v4l2.c b/drivers/media/v4l2-core/videobuf2-v4l2.c
-> index 0f8edbdebe30..267fe2d669b2 100644
-> --- a/drivers/media/v4l2-core/videobuf2-v4l2.c
-> +++ b/drivers/media/v4l2-core/videobuf2-v4l2.c
-> @@ -30,6 +30,7 @@
->  #include <media/v4l2-common.h>
->  
->  #include <media/videobuf2-v4l2.h>
-> +#include <media/media-request.h>
-
-Alphabetical order, please.
-
->  
->  static int debug;
->  module_param(debug, int, 0644);
-> @@ -561,6 +562,7 @@ EXPORT_SYMBOL_GPL(vb2_create_bufs);
->  
->  int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
->  {
-> +	struct media_request *req = NULL;
->  	int ret;
->  
->  	if (vb2_fileio_is_active(q)) {
-> @@ -568,8 +570,32 @@ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
->  		return -EBUSY;
->  	}
->  
-> +	/*
-> +	 * The caller should have validated that the request is valid,
-> +	 * so we just need to look it up without further checking
-
-Why? This would mean you'll need to look up a request twice per IOCTL.
-
-> +	 */
-> +	if (b->request_fd > 0) {
-> +		req = media_request_get_from_fd(b->request_fd);
-> +		if (!req)
-> +			return -EINVAL;
-> +
-> +		mutex_lock(&req->lock);
-> +		if (req->state != MEDIA_REQUEST_STATE_IDLE) {
-> +			mutex_unlock(&req->lock);
-> +			media_request_put(req);
-> +			return -EINVAL;
-> +		}
-> +		mutex_unlock(&req->lock);
-> +	}
-> +
->  	ret = vb2_queue_or_prepare_buf(q, b, "qbuf");
-> -	return ret ? ret : vb2_core_qbuf(q, b->index, b);
-> +	if (!ret)
-> +		ret = vb2_core_qbuf(q, b->index, req, b);
-> +
-> +	if (req)
-> +		media_request_put(req);
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(vb2_qbuf);
->  
-> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-> index ef9b64398c8c..7bb17c842ab4 100644
-> --- a/include/media/videobuf2-core.h
-> +++ b/include/media/videobuf2-core.h
-> @@ -237,6 +237,7 @@ struct vb2_queue;
->   *			on an internal driver queue
->   * @planes:		private per-plane information; do not change
->   * @timestamp:		frame timestamp in ns
-> + * @request:		request the buffer belongs to, if any
->   */
->  struct vb2_buffer {
->  	struct vb2_queue	*vb2_queue;
-> @@ -246,6 +247,7 @@ struct vb2_buffer {
->  	unsigned int		num_planes;
->  	struct vb2_plane	planes[VB2_MAX_PLANES];
->  	u64			timestamp;
-> +	struct media_request	*request;
->  
->  	/* private: internal use only
->  	 *
-> @@ -443,6 +445,7 @@ struct vb2_buf_ops {
->   * @quirk_poll_must_check_waiting_for_buffers: Return POLLERR at poll when QBUF
->   *              has not been called. This is a vb1 idiom that has been adopted
->   *              also by vb2.
-> + * @allow_requests:	whether requests are supported on this queue.
->   * @lock:	pointer to a mutex that protects the vb2_queue struct. The
->   *		driver can set this to a mutex to let the v4l2 core serialize
->   *		the queuing ioctls. If the driver wants to handle locking
-> @@ -500,6 +503,9 @@ struct vb2_buf_ops {
->   *		when a buffer with the V4L2_BUF_FLAG_LAST is dequeued.
->   * @fileio:	file io emulator internal data, used only if emulator is active
->   * @threadio:	thread io internal data, used only if thread is active
-> + * @req_lock:	protects req_blk and waiting_req
-> + * @req_blk:	notifier to be called when waiting for a request to be submitted
-> + * @waiting_req:whether this queue is currently waiting on a request submission
->   */
->  struct vb2_queue {
->  	unsigned int			type;
-> @@ -511,6 +517,7 @@ struct vb2_queue {
->  	unsigned			fileio_write_immediately:1;
->  	unsigned			allow_zero_bytesused:1;
->  	unsigned		   quirk_poll_must_check_waiting_for_buffers:1;
-> +	unsigned			allow_requests:1;
->  
->  	struct mutex			*lock;
->  	void				*owner;
-> @@ -554,6 +561,10 @@ struct vb2_queue {
->  	struct vb2_fileio_data		*fileio;
->  	struct vb2_threadio_data	*threadio;
->  
-> +	struct mutex			req_lock;
-> +	struct notifier_block		req_blk;
-> +	bool				waiting_req;
-> +
->  #ifdef CONFIG_VIDEO_ADV_DEBUG
->  	/*
->  	 * Counters for how often these queue-related ops are
-> @@ -724,6 +735,7 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb);
->   *
->   * @q:		videobuf2 queue
->   * @index:	id number of the buffer
-> + * @req:	request this buffer belongs to, if any
->   * @pb:		buffer structure passed from userspace to vidioc_qbuf handler
->   *		in driver
->   *
-> @@ -740,7 +752,8 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb);
->   * The return values from this function are intended to be directly returned
->   * from vidioc_qbuf handler in driver.
->   */
-> -int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb);
-> +int vb2_core_qbuf(struct vb2_queue *q, unsigned int index,
-> +		  struct media_request *req, void *pb);
->  
->  /**
->   * vb2_core_dqbuf() - Dequeue a buffer to the userspace
-
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index 294294c71ba4..1ebbc366a31d 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -408,16 +408,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	 */
+ 	if (old & _Q_TAIL_MASK) {
+ 		prev = decode_tail(old);
++
+ 		/*
+-		 * The above xchg_tail() is also a load of @lock which generates,
+-		 * through decode_tail(), a pointer.
+-		 *
+-		 * The address dependency matches the RELEASE of xchg_tail()
+-		 * such that the access to @prev must happen after.
++		 * We must ensure that the stores to @node are observed before
++		 * the write to prev->next. The address dependency on xchg_tail
++		 * is not sufficient to ensure this because the read component
++		 * of xchg_tail is unordered with respect to the initialisation
++		 * of node.
+ 		 */
+-		smp_read_barrier_depends();
+-
+-		WRITE_ONCE(prev->next, node);
++		smp_store_release(prev->next, node);
+ 
+ 		pv_wait_node(node, prev);
+ 		arch_mcs_spin_lock_contended(&node->locked);
 -- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+2.1.4
