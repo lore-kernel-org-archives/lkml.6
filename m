@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752987AbeAaKZK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 05:25:10 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:33630 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752658AbeAaKZF (ORCPT
+        id S1752936AbeAaKZQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 05:25:16 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41850 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752946AbeAaKZK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 05:25:05 -0500
-X-Google-Smtp-Source: AH8x225vjk7QwMLTCXJ5AJxJPpFSHVQSCOcoXtcB++X75wRcnM5+Vc/eLqWDcxiWMB77mNxnchUa8w==
+        Wed, 31 Jan 2018 05:25:10 -0500
+X-Google-Smtp-Source: AH8x226nAdIFP5gNjb0Rbcq/rowVn4TcwM4sT6rkIBKNvPWscqTQ6SOTuOB2QLG9qTCNTIInoxTRmg==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -19,9 +19,9 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Gustavo Padovan <gustavo.padovan@collabora.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv2 01/17] media: add request API core and UAPI
-Date: Wed, 31 Jan 2018 19:24:19 +0900
-Message-Id: <20180131102427.207721-2-acourbot@chromium.org>
+Subject: [RFCv2 03/17] media: videobuf2: add support for requests
+Date: Wed, 31 Jan 2018 19:24:21 +0900
+Message-Id: <20180131102427.207721-4-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 In-Reply-To: <20180131102427.207721-1-acourbot@chromium.org>
 References: <20180131102427.207721-1-acourbot@chromium.org>
@@ -29,870 +29,360 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The request API provides a way to group buffers and device parameters
-into units of work to be queued and executed. This patch introduces the
-UAPI and core framework.
-
-This patch is based on the previous work by Laurent Pinchart. The core
-has changed considerably, but the UAPI is mostly untouched.
+Make vb2 aware of requests. Drivers can specify whether a given queue
+can accept requests or not. Queues that accept requests will block on a
+buffer that is part of a request until that request is submitted.
 
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/Makefile               |   3 +-
- drivers/media/media-device.c         |   7 +
- drivers/media/media-request-mgr.c    | 105 ++++++++++++
- drivers/media/media-request.c        | 311 +++++++++++++++++++++++++++++++++++
- drivers/media/v4l2-core/v4l2-ioctl.c |   2 +-
- include/media/media-device.h         |   3 +
- include/media/media-entity.h         |   9 +
- include/media/media-request-mgr.h    |  73 ++++++++
- include/media/media-request.h        | 186 +++++++++++++++++++++
- include/uapi/linux/media.h           |  10 ++
- 10 files changed, 707 insertions(+), 2 deletions(-)
- create mode 100644 drivers/media/media-request-mgr.c
- create mode 100644 drivers/media/media-request.c
- create mode 100644 include/media/media-request-mgr.h
- create mode 100644 include/media/media-request.h
+ drivers/media/v4l2-core/videobuf2-core.c | 133 +++++++++++++++++++++++++++++--
+ drivers/media/v4l2-core/videobuf2-v4l2.c |  28 ++++++-
+ include/media/videobuf2-core.h           |  15 +++-
+ 3 files changed, 168 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/Makefile b/drivers/media/Makefile
-index 594b462ddf0e..06c43ddb52ea 100644
---- a/drivers/media/Makefile
-+++ b/drivers/media/Makefile
-@@ -3,7 +3,8 @@
- # Makefile for the kernel multimedia device drivers.
- #
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index cb115ba6a1d2..4a69ac12ee88 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -26,6 +26,7 @@
  
--media-objs	:= media-device.o media-devnode.o media-entity.o
-+media-objs	:= media-device.o media-devnode.o media-entity.o \
-+		   media-request.o media-request-mgr.o
- 
- #
- # I2C drivers should come before other drivers, otherwise they'll fail
-diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-index e79f72b8b858..024ee81a8334 100644
---- a/drivers/media/media-device.c
-+++ b/drivers/media/media-device.c
-@@ -32,6 +32,8 @@
- #include <media/media-device.h>
- #include <media/media-devnode.h>
- #include <media/media-entity.h>
+ #include <media/videobuf2-core.h>
+ #include <media/v4l2-mc.h>
 +#include <media/media-request.h>
-+#include <media/media-request-mgr.h>
  
- #ifdef CONFIG_MEDIA_CONTROLLER
+ #include <trace/events/vb2.h>
  
-@@ -407,6 +409,7 @@ static const struct media_ioctl_info ioctl_info[] = {
- 	MEDIA_IOC(ENUM_LINKS, media_device_enum_links, MEDIA_IOC_FL_GRAPH_MUTEX),
- 	MEDIA_IOC(SETUP_LINK, media_device_setup_link, MEDIA_IOC_FL_GRAPH_MUTEX),
- 	MEDIA_IOC(G_TOPOLOGY, media_device_get_topology, MEDIA_IOC_FL_GRAPH_MUTEX),
-+	MEDIA_IOC(REQUEST_CMD, media_device_request_cmd, 0),
- };
- 
- static long media_device_ioctl(struct file *filp, unsigned int cmd,
-@@ -688,6 +691,10 @@ EXPORT_SYMBOL_GPL(media_device_init);
- 
- void media_device_cleanup(struct media_device *mdev)
- {
-+	if (mdev->req_mgr) {
-+		media_request_mgr_free(mdev->req_mgr);
-+		mdev->req_mgr = NULL;
+@@ -922,6 +923,17 @@ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
+ 		vb->state = state;
+ 	}
+ 	atomic_dec(&q->owned_by_drv_count);
++	if (vb->request) {
++		struct media_request *req = vb->request;
++
++		if (atomic_dec_and_test(&req->buf_cpt))
++			media_request_complete(vb->request);
++
++		/* release reference acquired during qbuf */
++		vb->request = NULL;
++		media_request_put(req);
 +	}
- 	ida_destroy(&mdev->entity_internal_idx);
- 	mdev->entity_internal_idx_max = 0;
- 	media_graph_walk_cleanup(&mdev->pm_count_walk);
-diff --git a/drivers/media/media-request-mgr.c b/drivers/media/media-request-mgr.c
-new file mode 100644
-index 000000000000..686e877a884b
---- /dev/null
-+++ b/drivers/media/media-request-mgr.c
-@@ -0,0 +1,105 @@
-+/*
-+ * Generic request manager implementation.
++
+ 	spin_unlock_irqrestore(&q->done_lock, flags);
+ 
+ 	trace_vb2_buf_done(q, vb);
+@@ -1298,6 +1310,53 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb)
+ }
+ EXPORT_SYMBOL_GPL(vb2_core_prepare_buf);
+ 
++/**
++ * vb2_check_buf_req_status() - Validate request state of a buffer
++ * @vb:		buffer to check
 + *
-+ * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
++ * Returns true if a buffer is ready to be passed to the driver request-wise.
++ * This means that neither this buffer nor any previously-queued buffer is
++ * associated to a request that is not yet submitted.
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * If this function returns false, then the buffer shall not be passed to its
++ * driver since the request state is not completely built yet. In that case,
++ * this function will register a notifier to be called when the request is
++ * submitted and the queue can be unblocked.
 + *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * This function must be called with req_lock held.
 + */
-+
-+#include <linux/device.h>
-+#include <linux/slab.h>
-+
-+#include <media/media-device.h>
-+#include <media/media-request.h>
-+#include <media/media-request-mgr.h>
-+
-+static struct media_request *
-+media_request_alloc(struct media_request_mgr *mgr)
++static bool vb2_check_buf_req_status(struct vb2_buffer *vb)
 +{
-+	struct media_request *req;
++	struct media_request *req = vb->request;
++	struct vb2_queue *q = vb->vb2_queue;
++	int ret = false;
 +
-+	req = kzalloc(sizeof(*req), GFP_KERNEL);
-+	if (!req)
-+		return ERR_PTR(-ENOMEM);
++	mutex_lock(&q->req_lock);
 +
-+	req->mgr = mgr;
-+	req->state = MEDIA_REQUEST_STATE_IDLE;
-+	kref_init(&req->kref);
-+	INIT_LIST_HEAD(&req->data);
-+	init_waitqueue_head(&req->complete_wait);
-+	ATOMIC_INIT_NOTIFIER_HEAD(&req->submit_notif);
-+	mutex_init(&req->lock);
-+
-+	mutex_lock(&mgr->mutex);
-+	req->id = ++mgr->req_id;
-+	list_add_tail(&req->list, &mgr->requests);
-+	mutex_unlock(&mgr->mutex);
-+
-+	return req;
-+}
-+
-+static void media_request_free(struct media_request *req)
-+{
-+	struct media_request_mgr *mgr = req->mgr;
-+	struct media_request_entity_data *data, *next;
-+
-+	mutex_lock(&mgr->mutex);
-+	list_del(&req->list);
-+	mutex_unlock(&mgr->mutex);
-+
-+	list_for_each_entry_safe(data, next, &req->data, list) {
-+		list_del(&data->list);
-+		data->entity->req_ops->data_free(data);
++	if (!req) {
++		ret = !q->waiting_req;
++		goto done;
 +	}
-+
-+	kfree(req);
-+}
-+
-+void media_request_mgr_free(struct media_request_mgr *mgr)
-+{
-+	struct media_device *mdev = mgr->mdev;
-+
-+	/* Just a sanity check - we should have no remaining requests */
-+	while (!list_empty(&mgr->requests)) {
-+		struct media_request *req;
-+
-+		req = list_first_entry(&mgr->requests, typeof(*req), list);
-+		dev_warn(mdev->dev,
-+			"%s: request %u still referenced, deleting forcibly!\n",
-+			__func__, req->id);
-+		mgr->ops->req_free(req);
-+	}
-+
-+	kfree(mgr);
-+}
-+EXPORT_SYMBOL_GPL(media_request_mgr_free);
-+
-+static const struct media_request_mgr_ops request_mgr_generic_ops = {
-+	.req_alloc = media_request_alloc,
-+	.req_free = media_request_free,
-+};
-+
-+struct media_request_mgr *
-+media_request_mgr_alloc(struct media_device *mdev)
-+{
-+	struct media_request_mgr *mgr;
-+
-+	mgr = kzalloc(sizeof(*mgr), GFP_KERNEL);
-+	if (!mgr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mgr->mdev = mdev;
-+	mutex_init(&mgr->mutex);
-+	INIT_LIST_HEAD(&mgr->requests);
-+	mgr->ops = &request_mgr_generic_ops;
-+
-+	return mgr;
-+}
-+EXPORT_SYMBOL_GPL(media_request_mgr_alloc);
-diff --git a/drivers/media/media-request.c b/drivers/media/media-request.c
-new file mode 100644
-index 000000000000..30a23235b019
---- /dev/null
-+++ b/drivers/media/media-request.c
-@@ -0,0 +1,311 @@
-+/*
-+ * Request base implementation
-+ *
-+ * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/anon_inodes.h>
-+#include <linux/media.h>
-+#include <linux/fs.h>
-+#include <linux/file.h>
-+#include <linux/slab.h>
-+#include <linux/list.h>
-+
-+#include <media/media-device.h>
-+#include <media/media-request.h>
-+#include <media/media-request-mgr.h>
-+
-+const struct file_operations request_fops;
-+
-+struct media_request *media_request_get(struct media_request *req)
-+{
-+	kref_get(&req->kref);
-+	return req;
-+}
-+EXPORT_SYMBOL_GPL(media_request_get);
-+
-+struct media_request *
-+media_request_get_from_fd(int fd)
-+{
-+	struct file *f;
-+	struct media_request *req;
-+
-+	f = fget(fd);
-+	if (!f)
-+		return NULL;
-+
-+	/* Not a request FD? */
-+	if (f->f_op != &request_fops) {
-+		fput(f);
-+		return NULL;
-+	}
-+
-+	req = f->private_data;
-+	media_request_get(req);
-+	fput(f);
-+
-+	return req;
-+}
-+EXPORT_SYMBOL_GPL(media_request_get_from_fd);
-+
-+static void media_request_release(struct kref *kref)
-+{
-+	struct media_request *req =
-+		container_of(kref, typeof(*req), kref);
-+
-+	req->mgr->ops->req_free(req);
-+}
-+
-+void media_request_put(struct media_request *req)
-+{
-+	if (WARN_ON(req == NULL))
-+		return;
-+
-+	kref_put(&req->kref, media_request_release);
-+}
-+EXPORT_SYMBOL_GPL(media_request_put);
-+
-+struct media_request_entity_data *
-+media_request_get_entity_data(struct media_request *req,
-+			      struct media_entity *entity, void *fh)
-+{
-+	struct media_request_entity_data *data;
 +
 +	mutex_lock(&req->lock);
-+
-+	/* First look whether we already have entity data */
-+	list_for_each_entry(data, &req->data, list) {
-+		if (data->entity == entity) {
-+			/*
-+			 * If so, then the fh must match otherwise this means
-+			 * we are trying to set the same entity through
-+			 * different handles
-+			 */
-+			if (data->fh != fh)
-+				data = ERR_PTR(-EINVAL);
-+			goto done;
-+		}
++	if (req->state == MEDIA_REQUEST_STATE_SUBMITTED) {
++		mutex_unlock(&req->lock);
++		ret = !q->waiting_req;
++		goto done;
 +	}
 +
-+	/* No entity data found, let's create it */
-+	data = entity->req_ops->data_alloc(entity, fh);
-+	if (IS_ERR(data))
-+		goto done;
-+	data->fh = fh;
-+	data->entity = entity;
-+	list_add_tail(&data->list, &req->data);
++	if (!q->waiting_req) {
++		q->waiting_req = true;
++		atomic_notifier_chain_register(&req->submit_notif,
++					       &q->req_blk);
++	}
++	mutex_unlock(&req->lock);
 +
 +done:
-+	mutex_unlock(&req->lock);
-+	return data;
-+}
-+EXPORT_SYMBOL_GPL(media_request_get_entity_data);
-+
-+static const char * const media_request_states[] __maybe_unused = {
-+	"IDLE",
-+	"SUBMITTED",
-+	"COMPLETED",
-+	"DELETED",
-+};
-+
-+static const char *media_request_state(enum media_request_state state)
-+{
-+	return state < ARRAY_SIZE(media_request_states) ?
-+		media_request_states[state] : "INVALID";
++	mutex_unlock(&q->req_lock);
++	return ret;
 +}
 +
-+static int media_device_request_close(struct inode *inode, struct file *filp)
-+{
-+	struct media_request *req = filp->private_data;
-+
-+	if (req == NULL)
-+		return 0;
-+
-+	media_request_put(req);
-+
-+	return 0;
-+}
-+
-+static unsigned int media_request_poll(struct file *file, poll_table *wait)
-+{
-+	struct media_request *req = file->private_data;
-+
-+	poll_wait(file, &req->complete_wait, wait);
-+
-+	if (req->state == MEDIA_REQUEST_STATE_COMPLETED)
-+		return POLLIN | POLLRDNORM;
-+
-+	return 0;
-+}
-+
-+const struct file_operations request_fops = {
-+	.owner = THIS_MODULE,
-+	.poll = media_request_poll,
-+	.release = media_device_request_close,
-+};
-+
-+void media_request_complete(struct media_request *req)
-+{
-+	struct media_request_mgr *mgr = req->mgr;
-+	struct media_device *mdev = mgr->mdev;
-+
-+	mutex_lock(&req->lock);
-+
-+	if (WARN_ON(req->state != MEDIA_REQUEST_STATE_SUBMITTED)) {
-+		dev_dbg(mdev->dev, "%s: can't complete %u, state %s\n",
-+			__func__, req->id, media_request_state(req->state));
-+		mutex_unlock(&req->lock);
-+		return;
+ /**
+  * vb2_start_streaming() - Attempt to start streaming.
+  * @q:		videobuf2 queue
+@@ -1318,8 +1377,11 @@ static int vb2_start_streaming(struct vb2_queue *q)
+ 	 * If any buffers were queued before streamon,
+ 	 * we can now pass them to driver for processing.
+ 	 */
+-	list_for_each_entry(vb, &q->queued_list, queued_entry)
++	list_for_each_entry(vb, &q->queued_list, queued_entry) {
++		if (!vb2_check_buf_req_status(vb))
++			break;
+ 		__enqueue_in_driver(vb);
 +	}
-+
-+	req->state = MEDIA_REQUEST_STATE_COMPLETED;
-+
-+	if (mgr->ops->req_complete)
-+		mgr->ops->req_complete(req);
-+
-+	wake_up_interruptible(&req->complete_wait);
-+
-+	mutex_unlock(&req->lock);
-+
-+	/* Release the reference acquired when we submitted the request */
-+	media_request_put(req);
-+}
-+EXPORT_SYMBOL_GPL(media_request_complete);
-+
-+/*
-+ * Process the MEDIA_REQ_CMD_ALLOC command
+ 
+ 	/* Tell the driver to start streaming */
+ 	q->start_streaming_called = 1;
+@@ -1361,7 +1423,46 @@ static int vb2_start_streaming(struct vb2_queue *q)
+ 	return ret;
+ }
+ 
+-int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
++/**
++ * vb2_unblock_requests() - unblock a queue waiting for a request submission
++ * @nb:		notifier block that has been registered
++ * @action:	unused
++ * @data:	request that has been submitted
++ *
++ * This is a callback function that is registered when
++ * vb2_check_buf_req_status() returns false. It is invoked when the request
++ * blocking the queue has been submitted. This means its buffers (and all
++ * following valid buffers) can be passed to drivers.
 + */
-+static int media_request_cmd_alloc(struct media_request_mgr *mgr,
-+				   struct media_request_cmd *cmd)
++static int vb2_unblock_requests(struct notifier_block *nb, unsigned long action,
++				void *data)
 +{
-+	struct media_request *req;
-+	int fd;
++	struct vb2_queue *q = container_of(nb, struct vb2_queue, req_blk);
++	struct media_request *req = data;
++	struct vb2_buffer *vb;
++	bool found_request = false;
 +
-+	req = mgr->ops->req_alloc(mgr);
-+	if (!req)
-+		return -ENOMEM;
++	mutex_lock(&q->req_lock);
++	atomic_notifier_chain_unregister(&req->submit_notif, &q->req_blk);
++	q->waiting_req = false;
++	mutex_unlock(&q->req_lock);
 +
-+	fd = anon_inode_getfd("media_request", &request_fops, req, O_CLOEXEC);
-+	if (fd < 0)
-+		return fd;
++	list_for_each_entry(vb, &q->queued_list, queued_entry) {
++		/* All buffers before our request are already passed to the driver */
++		if (!found_request && vb->request != req)
++			continue;
++		found_request = true;
 +
-+	cmd->fd = fd;
++		if (!vb2_check_buf_req_status(vb))
++			break;
++		__enqueue_in_driver(vb);
++	}
 +
 +	return 0;
 +}
 +
-+/*
-+ * Process the MEDIA_REQ_CMD_SUBMIT command
-+ */
-+static int media_request_cmd_submit(struct media_request *req)
-+{
-+	mutex_lock(&req->lock);
++int vb2_core_qbuf(struct vb2_queue *q, unsigned int index,
++		  struct media_request *req, void *pb)
+ {
+ 	struct vb2_buffer *vb;
+ 	int ret;
+@@ -1384,6 +1485,24 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+ 		return -EINVAL;
+ 	}
+ 
++	vb->request = req;
++	if (req) {
++		struct vb2_buffer *_vb;
 +
-+	if (req->state != MEDIA_REQUEST_STATE_IDLE) {
-+		dev_dbg(req->mgr->mdev->dev,
-+			"%s: unable to submit request in state %s\n",
-+			__func__, media_request_state(req->state));
-+		mutex_unlock(&req->lock);
-+		return -EINVAL;
++		/* does the queue support requests? */
++		if (!q->allow_requests)
++			return -EINVAL;
++
++		/* do we already have a buffer for this request in the queue? */
++		list_for_each_entry(_vb, &q->queued_list, queued_entry)
++			if (_vb->request == req)
++				return -EBUSY;
++
++		/* make sure the request stays alive as long as we need */
++		media_request_get(req);
++		atomic_inc(&req->buf_cpt);
 +	}
 +
-+	if (atomic_read(&req->buf_cpt) == 0) {
-+		dev_dbg(req->mgr->mdev->dev,
-+			"%s: request has no buffers!\n", __func__);
-+		mutex_unlock(&req->lock);
-+		return -EINVAL;
-+	}
-+
-+	req->state = MEDIA_REQUEST_STATE_SUBMITTED;
-+
-+	/* Hold a reference to the request until it is completed */
-+	media_request_get(req);
-+
-+	mutex_unlock(&req->lock);
-+
-+	atomic_notifier_call_chain(&req->submit_notif, req->state, req);
-+
-+	return 0;
-+}
-+
-+static int media_request_cmd_reinit(struct media_request *req)
-+{
-+	struct media_request_entity_data *data, *next;
-+
-+	mutex_lock(&req->lock);
-+
-+	if (req->state == MEDIA_REQUEST_STATE_SUBMITTED) {
-+		dev_dbg(req->mgr->mdev->dev,
-+			"%s: unable to reinit submitted request\n", __func__);
-+		mutex_unlock(&req->lock);
-+		return -EINVAL;
-+	}
-+
-+	/* delete all entity data */
-+	list_for_each_entry_safe(data, next, &req->data, list) {
-+		list_del(&data->list);
-+		data->entity->req_ops->data_free(data);
-+	}
-+
-+	/* reinitialize request to idle state */
-+	req->state = MEDIA_REQUEST_STATE_IDLE;
-+	atomic_set(&req->buf_cpt, 0);
-+
-+	mutex_unlock(&req->lock);
-+
-+	return 0;
-+}
-+
-+long media_device_request_cmd(struct media_device *mdev,
-+			      struct media_request_cmd *cmd)
-+{
+ 	/*
+ 	 * Add to the queued buffers list, a buffer will stay on it until
+ 	 * dequeued in dqbuf.
+@@ -1402,7 +1521,7 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+ 	 * If already streaming, give the buffer to driver for processing.
+ 	 * If not, the buffer will be given to driver on next streamon.
+ 	 */
+-	if (q->start_streaming_called)
++	if (q->start_streaming_called && vb2_check_buf_req_status(vb))
+ 		__enqueue_in_driver(vb);
+ 
+ 	/* Fill buffer information for the userspace */
+@@ -1993,6 +2112,8 @@ int vb2_core_queue_init(struct vb2_queue *q)
+ 	spin_lock_init(&q->done_lock);
+ 	mutex_init(&q->mmap_lock);
+ 	init_waitqueue_head(&q->done_wq);
++	mutex_init(&q->req_lock);
++	q->req_blk.notifier_call = vb2_unblock_requests;
+ 
+ 	if (q->buf_struct_size == 0)
+ 		q->buf_struct_size = sizeof(struct vb2_buffer);
+@@ -2242,7 +2363,7 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
+ 		 * Queue all buffers.
+ 		 */
+ 		for (i = 0; i < q->num_buffers; i++) {
+-			ret = vb2_core_qbuf(q, i, NULL);
++			ret = vb2_core_qbuf(q, i, NULL, NULL);
+ 			if (ret)
+ 				goto err_reqbufs;
+ 			fileio->bufs[i].queued = 1;
+@@ -2421,7 +2542,7 @@ static size_t __vb2_perform_fileio(struct vb2_queue *q, char __user *data, size_
+ 
+ 		if (copy_timestamp)
+ 			b->timestamp = ktime_get_ns();
+-		ret = vb2_core_qbuf(q, index, NULL);
++		ret = vb2_core_qbuf(q, index, NULL, NULL);
+ 		dprintk(5, "vb2_dbuf result: %d\n", ret);
+ 		if (ret)
+ 			return ret;
+@@ -2524,7 +2645,7 @@ static int vb2_thread(void *data)
+ 		if (copy_timestamp)
+ 			vb->timestamp = ktime_get_ns();;
+ 		if (!threadio->stop)
+-			ret = vb2_core_qbuf(q, vb->index, NULL);
++			ret = vb2_core_qbuf(q, vb->index, NULL, NULL);
+ 		call_void_qop(q, wait_prepare, q);
+ 		if (ret || threadio->stop)
+ 			break;
+diff --git a/drivers/media/v4l2-core/videobuf2-v4l2.c b/drivers/media/v4l2-core/videobuf2-v4l2.c
+index 0f8edbdebe30..267fe2d669b2 100644
+--- a/drivers/media/v4l2-core/videobuf2-v4l2.c
++++ b/drivers/media/v4l2-core/videobuf2-v4l2.c
+@@ -30,6 +30,7 @@
+ #include <media/v4l2-common.h>
+ 
+ #include <media/videobuf2-v4l2.h>
++#include <media/media-request.h>
+ 
+ static int debug;
+ module_param(debug, int, 0644);
+@@ -561,6 +562,7 @@ EXPORT_SYMBOL_GPL(vb2_create_bufs);
+ 
+ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
+ {
 +	struct media_request *req = NULL;
-+	int ret;
+ 	int ret;
+ 
+ 	if (vb2_fileio_is_active(q)) {
+@@ -568,8 +570,32 @@ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
+ 		return -EBUSY;
+ 	}
+ 
++	/*
++	 * The caller should have validated that the request is valid,
++	 * so we just need to look it up without further checking
++	 */
++	if (b->request_fd > 0) {
++		req = media_request_get_from_fd(b->request_fd);
++		if (!req)
++			return -EINVAL;
 +
-+	if (!mdev->req_mgr)
-+		return -ENOTTY;
-+
-+	if (cmd->cmd != MEDIA_REQ_CMD_ALLOC) {
-+		req = media_request_get_from_fd(cmd->fd);
-+		if (IS_ERR(req))
-+			return PTR_ERR(req);
-+
-+		/* requests must belong to this media device's manager */
-+		if (req->mgr != mdev->req_mgr) {
++		mutex_lock(&req->lock);
++		if (req->state != MEDIA_REQUEST_STATE_IDLE) {
++			mutex_unlock(&req->lock);
 +			media_request_put(req);
 +			return -EINVAL;
 +		}
++		mutex_unlock(&req->lock);
 +	}
 +
-+	switch (cmd->cmd) {
-+	case MEDIA_REQ_CMD_ALLOC:
-+		ret = media_request_cmd_alloc(mdev->req_mgr, cmd);
-+		break;
-+
-+	case MEDIA_REQ_CMD_SUBMIT:
-+		ret = media_request_cmd_submit(req);
-+		break;
-+
-+	case MEDIA_REQ_CMD_REINIT:
-+		ret = media_request_cmd_reinit(req);
-+		break;
-+
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
+ 	ret = vb2_queue_or_prepare_buf(q, b, "qbuf");
+-	return ret ? ret : vb2_core_qbuf(q, b->index, b);
++	if (!ret)
++		ret = vb2_core_qbuf(q, b->index, req, b);
 +
 +	if (req)
 +		media_request_put(req);
 +
 +	return ret;
-+}
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index b60a6b0841d1..ec4ecd5aa8bf 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -867,7 +867,7 @@ static int check_ext_ctrls(struct v4l2_ext_controls *c, int allow_priv)
- 	__u32 i;
+ }
+ EXPORT_SYMBOL_GPL(vb2_qbuf);
  
- 	/* zero the reserved fields */
--	c->reserved[0] = c->reserved[1] = 0;
-+	c->reserved[0] = 0;
- 	for (i = 0; i < c->count; i++)
- 		c->controls[i].reserved2[0] = 0;
+diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+index ef9b64398c8c..7bb17c842ab4 100644
+--- a/include/media/videobuf2-core.h
++++ b/include/media/videobuf2-core.h
+@@ -237,6 +237,7 @@ struct vb2_queue;
+  *			on an internal driver queue
+  * @planes:		private per-plane information; do not change
+  * @timestamp:		frame timestamp in ns
++ * @request:		request the buffer belongs to, if any
+  */
+ struct vb2_buffer {
+ 	struct vb2_queue	*vb2_queue;
+@@ -246,6 +247,7 @@ struct vb2_buffer {
+ 	unsigned int		num_planes;
+ 	struct vb2_plane	planes[VB2_MAX_PLANES];
+ 	u64			timestamp;
++	struct media_request	*request;
  
-diff --git a/include/media/media-device.h b/include/media/media-device.h
-index bcc6ec434f1f..f2d471b8a53f 100644
---- a/include/media/media-device.h
-+++ b/include/media/media-device.h
-@@ -27,6 +27,7 @@
+ 	/* private: internal use only
+ 	 *
+@@ -443,6 +445,7 @@ struct vb2_buf_ops {
+  * @quirk_poll_must_check_waiting_for_buffers: Return POLLERR at poll when QBUF
+  *              has not been called. This is a vb1 idiom that has been adopted
+  *              also by vb2.
++ * @allow_requests:	whether requests are supported on this queue.
+  * @lock:	pointer to a mutex that protects the vb2_queue struct. The
+  *		driver can set this to a mutex to let the v4l2 core serialize
+  *		the queuing ioctls. If the driver wants to handle locking
+@@ -500,6 +503,9 @@ struct vb2_buf_ops {
+  *		when a buffer with the V4L2_BUF_FLAG_LAST is dequeued.
+  * @fileio:	file io emulator internal data, used only if emulator is active
+  * @threadio:	thread io internal data, used only if thread is active
++ * @req_lock:	protects req_blk and waiting_req
++ * @req_blk:	notifier to be called when waiting for a request to be submitted
++ * @waiting_req:whether this queue is currently waiting on a request submission
+  */
+ struct vb2_queue {
+ 	unsigned int			type;
+@@ -511,6 +517,7 @@ struct vb2_queue {
+ 	unsigned			fileio_write_immediately:1;
+ 	unsigned			allow_zero_bytesused:1;
+ 	unsigned		   quirk_poll_must_check_waiting_for_buffers:1;
++	unsigned			allow_requests:1;
  
- struct ida;
- struct device;
-+struct media_request_mgr;
+ 	struct mutex			*lock;
+ 	void				*owner;
+@@ -554,6 +561,10 @@ struct vb2_queue {
+ 	struct vb2_fileio_data		*fileio;
+ 	struct vb2_threadio_data	*threadio;
  
- /**
-  * struct media_entity_notify - Media Entity Notify
-@@ -158,6 +159,8 @@ struct media_device {
- 	void (*disable_source)(struct media_entity *entity);
- 
- 	const struct media_device_ops *ops;
++	struct mutex			req_lock;
++	struct notifier_block		req_blk;
++	bool				waiting_req;
 +
-+	struct media_request_mgr *req_mgr;
- };
- 
- /* We don't need to include pci.h or usb.h here */
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 222d379960b7..0aa7549eb154 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -170,6 +170,8 @@ struct media_pad {
- 	unsigned long flags;
- };
- 
-+struct media_request;
-+struct v4l2_ext_controls;
- /**
-  * struct media_entity_operations - Media entity operations
-  * @get_fwnode_pad:	Return the pad number based on a fwnode endpoint or
-@@ -195,6 +197,11 @@ struct media_entity_operations {
- 	int (*link_validate)(struct media_link *link);
- };
- 
-+struct media_entity_request_ops {
-+	struct media_request_entity_data *(*data_alloc)(struct media_entity *entity, void *fh);
-+	void (*data_free)(struct media_request_entity_data *data);
-+};
-+
- /**
-  * enum media_entity_type - Media entity type
+ #ifdef CONFIG_VIDEO_ADV_DEBUG
+ 	/*
+ 	 * Counters for how often these queue-related ops are
+@@ -724,6 +735,7 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb);
   *
-@@ -276,6 +283,8 @@ struct media_entity {
+  * @q:		videobuf2 queue
+  * @index:	id number of the buffer
++ * @req:	request this buffer belongs to, if any
+  * @pb:		buffer structure passed from userspace to vidioc_qbuf handler
+  *		in driver
+  *
+@@ -740,7 +752,8 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb);
+  * The return values from this function are intended to be directly returned
+  * from vidioc_qbuf handler in driver.
+  */
+-int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb);
++int vb2_core_qbuf(struct vb2_queue *q, unsigned int index,
++		  struct media_request *req, void *pb);
  
- 	const struct media_entity_operations *ops;
- 
-+	const struct media_entity_request_ops *req_ops;
-+
- 	int stream_count;
- 	int use_count;
- 
-diff --git a/include/media/media-request-mgr.h b/include/media/media-request-mgr.h
-new file mode 100644
-index 000000000000..a3161fa2add0
---- /dev/null
-+++ b/include/media/media-request-mgr.h
-@@ -0,0 +1,73 @@
-+/*
-+ * Generic request manager.
-+ *
-+ * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _MEDIA_REQUEST_MGR_H
-+#define _MEDIA_REQUEST_MGR_H
-+
-+#include <linux/mutex.h>
-+
-+struct media_request_mgr;
-+
-+/**
-+ * struct media_request_mgr_ops - request manager operations
-+ *
-+ * @req_alloc:	allocate a request
-+ * @req_free:	free a previously allocated request
-+ * @req_complete: callback invoked when a request has completed
-+ *
-+ */
-+struct media_request_mgr_ops {
-+	struct media_request *(*req_alloc)(struct media_request_mgr *mgr);
-+	void (*req_free)(struct media_request *req);
-+	void (*req_complete)(struct media_request *req);
-+};
-+
-+/**
-+ * struct media_request_mgr - requests manager
-+ *
-+ * @mdev:	media_device owning this manager
-+ * @ops:	implementation of the manager
-+ * @mutex:	protects requests, active_request, req_id, and all members of
-+ *		struct media_request
-+ * @requests:	list of alive requests produced by this manager
-+ * @req_id:	counter used to identify requests for debugging purposes
-+ */
-+struct media_request_mgr {
-+	struct media_device *mdev;
-+	const struct media_request_mgr_ops *ops;
-+
-+	struct mutex mutex;
-+	struct list_head requests;
-+	u32 req_id;
-+};
-+
-+/**
-+ * media_request_mgr_alloc() - return an instance of the generic manager
-+ *
-+ * @mdev:	owning media device
-+ */
-+struct media_request_mgr *
-+media_request_mgr_alloc(struct media_device *mdev);
-+
-+/**
-+ * media_request_mgr_free() - free a media manager
-+ *
-+ * This should only be called when all requests produced by this manager
-+ * has been destroyed. Will warn if that is not the case.
-+ *
-+ */
-+void media_request_mgr_free(struct media_request_mgr *mgr);
-+
-+#endif
-diff --git a/include/media/media-request.h b/include/media/media-request.h
-new file mode 100644
-index 000000000000..817df13ef6e3
---- /dev/null
-+++ b/include/media/media-request.h
-@@ -0,0 +1,186 @@
-+/*
-+ * Media requests.
-+ *
-+ * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _MEDIA_REQUEST_H
-+#define _MEDIA_REQUEST_H
-+
-+#include <linux/kref.h>
-+#include <linux/list.h>
-+#include <linux/notifier.h>
-+#include <linux/wait.h>
-+
-+struct media_device;
-+struct media_entity;
-+struct media_request_cmd;
-+struct media_request_entity_data;
-+struct media_request_mgr;
-+
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+
-+enum media_request_state {
-+	MEDIA_REQUEST_STATE_IDLE,
-+	MEDIA_REQUEST_STATE_SUBMITTED,
-+	MEDIA_REQUEST_STATE_COMPLETED,
-+	MEDIA_REQUEST_STATE_DELETED,
-+};
-+
-+/**
-+ * struct media_request - Media request base structure
-+ * @id:		request id, used internally for debugging
-+ * @mgr:	manager this request belongs to
-+ * @kref:	reference count
-+ * @list:	list entry in the media device requests list
-+ * @lock:	protects internal state against concurrent accesses
-+ * @state:	current state of the request
-+ * @data:	per-entity data list
-+ * @complete_wait:	wait queue that signals once the request has completed
-+ * @submit_notif:	notification list to call when the request is submitted
-+ * @buf_cpt:	counter of queued/completed buffers used to decide when the
-+ *		request is completed
-+ */
-+struct media_request {
-+	u32 id;
-+	struct media_request_mgr *mgr;
-+	struct kref kref;
-+	struct list_head list;
-+
-+	struct mutex lock;
-+	enum media_request_state state;
-+	struct list_head data;
-+	wait_queue_head_t complete_wait;
-+	struct atomic_notifier_head submit_notif;
-+	atomic_t buf_cpt;
-+};
-+
-+/**
-+ * media_request_get() - increment the reference counter of a request
-+ *
-+ * The calling context must call media_request_put() once it does not need
-+ * the reference to the request anymore.
-+ *
-+ * Returns the request that has been passed as argument.
-+ *
-+ * @req:	request to acquire a reference of
-+ */
-+struct media_request *media_request_get(struct media_request *req);
-+
-+/**
-+ * media_request_get_from_fd() - lookup request by fd and acquire a reference.
-+ *
-+ * Look a request up from its fd, acquire a reference and return a pointer to
-+ * the request. As for media_request_get(), media_request_put() must be called
-+ * once the reference is not used anymore.
-+ *
-+ * @req:	request to lookup and acquire.
-+ *
-+ */
-+struct media_request *media_request_get_from_fd(int fd);
-+
-+/**
-+ * media_request_put() - decrement the reference counter of a request
-+ *
-+ * Mirror function of media_request_get() and media_request_get_from_fd(). Will
-+ * free the request if this was the last valid reference.
-+ *
-+ * @req:	request to release.
-+ */
-+void media_request_put(struct media_request *req);
-+
-+/**
-+ * media_request_get_entity_data() - get per-entity data for a request
-+ * @req:	request to get entity data from
-+ * @entity:	entity to get data of
-+ * @fh:		cookie identifying the handle from which the entity is accessed
-+ *
-+ * Search and return the entity data associated associated to the request. If no
-+ * such data exists, it is allocated as per the entity operations.
-+ *
-+ * The fh arguments serves as a cookie to make sure the same entity is not
-+ * accessed through different opened file handles. The same handle must be
-+ * passed to all calls of this function for the same entity. Failure to do so
-+ * will return an error.
-+ *
-+ * Returns the per-entity data, or an error code if a problem happened. -EINVAL
-+ * means that data for the entity already existed, but has been allocated under
-+ * a different cookie.
-+ */
-+struct media_request_entity_data *
-+media_request_get_entity_data(struct media_request *req,
-+			      struct media_entity *entity, void *fh);
-+
-+
-+/**
-+ * media_request_complete() - to be invoked when the request is complete
-+ *
-+ * @req:	request which has completed
-+ */
-+void media_request_complete(struct media_request *req);
-+
-+/**
-+ * struct media_request_entity_data - per-entity request data
-+ *
-+ * Base structure used to store request state data. To be extended by actual
-+ * implementation.
-+ *
-+ * @entity:	entity this data belongs to
-+ * @fh:		subsystem-dependent. For V4L2, the v4l2_fh of the opened device
-+ * @list:	entry in media_request::data
-+ * @applied:	whether this request has already been applied for this entity
-+ */
-+struct media_request_entity_data {
-+	struct media_entity *entity;
-+	void *fh;
-+	struct list_head list;
-+	bool applied;
-+};
-+
-+/**
-+ * media_device_request_cmd() - perform the REQUEST_CMD ioctl
-+ *
-+ * @mdev:	media device the ioctl has been called on
-+ * @cmd:	user-space request command structure
-+ */
-+long media_device_request_cmd(struct media_device *mdev,
-+			      struct media_request_cmd *cmd);
-+
-+#else /* CONFIG_MEDIA_CONTROLLER */
-+
-+static inline media_request_get(struct media_request *req)
-+{
-+}
-+
-+static inline struct media_request *media_request_get_from_fd(int fd)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
-+static inline void media_request_put(struct media_request *req)
-+{
-+}
-+
-+static inline struct media_request *media_request_get_entity_data(
-+					  struct media_request *req,
-+					  struct media_entity *entity, void *fh)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
-+static inline void media_request_entity_complete(struct media_request *req)
-+{
-+}
-+
-+#endif /* CONFIG_MEDIA_CONTROLLER */
-+
-+#endif
-diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
-index b9b9446095e9..6e20ac9848b5 100644
---- a/include/uapi/linux/media.h
-+++ b/include/uapi/linux/media.h
-@@ -406,6 +406,15 @@ struct media_v2_topology {
- 	__u64 ptr_links;
- } __attribute__ ((packed));
- 
-+#define MEDIA_REQ_CMD_ALLOC		0
-+#define MEDIA_REQ_CMD_SUBMIT		1
-+#define MEDIA_REQ_CMD_REINIT		2
-+
-+struct media_request_cmd {
-+	__u32 cmd;
-+	__s32 fd;
-+} __attribute__ ((packed));
-+
- /* ioctls */
- 
- #define MEDIA_IOC_DEVICE_INFO		_IOWR('|', 0x00, struct media_device_info)
-@@ -413,5 +422,6 @@ struct media_v2_topology {
- #define MEDIA_IOC_ENUM_LINKS		_IOWR('|', 0x02, struct media_links_enum)
- #define MEDIA_IOC_SETUP_LINK		_IOWR('|', 0x03, struct media_link_desc)
- #define MEDIA_IOC_G_TOPOLOGY		_IOWR('|', 0x04, struct media_v2_topology)
-+#define MEDIA_IOC_REQUEST_CMD		_IOWR('|', 0x05, struct media_request_cmd)
- 
- #endif /* __LINUX_MEDIA_H */
+ /**
+  * vb2_core_dqbuf() - Dequeue a buffer to the userspace
 -- 
 2.16.0.rc1.238.g530d649a79-goog
