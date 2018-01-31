@@ -1,65 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753386AbeAaRJE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:09:04 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43728 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752061AbeAaRJC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:09:02 -0500
-Date: Wed, 31 Jan 2018 17:08:59 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, alsa-devel@alsa-project.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        wakasugi.jb@om.asahi-kasei.co.jp, shengjiu.wang@nxp.com,
-        mihai.serban@gmail.com, cosmin.samoila@nxp.com, linux-imx@nxp.com,
-        Mihai Serban <mihai.serban@nxp.com>
-Subject: Re: [PATCH] ASoC: codecs: Add support for AK5558 ADC driver
-Message-ID: <20180131170859.GC7763@sirena.org.uk>
-References: <1517403459-6668-1-git-send-email-daniel.baluta@nxp.com>
- <CAOMZO5BToV0OKEc_f8M1=zSL-X=qSXnokFyEfEEX2tGTUO=a-A@mail.gmail.com>
+        id S1753508AbeAaRNr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:13:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39774 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753460AbeAaRNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:13:46 -0500
+From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH] KVM: nVMX: preserve SECONDARY_EXEC_DESC without UMIP
+Date: Wed, 31 Jan 2018 18:12:50 +0100
+Message-Id: <20180131171250.29568-1-rkrcmar@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
-Content-Disposition: inline
-In-Reply-To: <CAOMZO5BToV0OKEc_f8M1=zSL-X=qSXnokFyEfEEX2tGTUO=a-A@mail.gmail.com>
-X-Cookie: Disk crisis, please clean up!
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+L1 might want to use SECONDARY_EXEC_DESC, so we must not clear the VMCS
+bit if UMIP is not being emulated.
 
---oJ71EGRlYNjSvfq7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+We must still set the bit when emulating UMIP as the feature can be
+passed to L2 where L0 will do the emulation and because L2 can change
+CR4 without a VM exit, we should clear the bit if UMIP is disabled.
 
-On Wed, Jan 31, 2018 at 02:20:31PM -0200, Fabio Estevam wrote:
-> On Wed, Jan 31, 2018 at 10:57 AM, Daniel Baluta <daniel.baluta@nxp.com> wrote:
+Fixes: 0367f205a3b7 ("KVM: vmx: add support for emulating UMIP")
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+---
+ I haven't tested emulated UMIP (yet) nor machines with UMIP, but at
+ least kvm-unit-tests don't throw an error anymore.
 
-> > +       dev_err(&i2c->dev, "%s(%d)\n", __func__, __LINE__);
+ arch/x86/kvm/vmx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> You certainly do not want an error message on every probe :-)
-
-Sometimes you've just got to be honest with people about their hardware
-choices! :)
-
---oJ71EGRlYNjSvfq7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpx+CsACgkQJNaLcl1U
-h9B2iwf+JFWIP6EjUfINlZZ7JvpAr96cX3SyKanWXBU4N+9peL1zDbwXYNT8+KVw
-Mp03a2fClB7NgTqLR5xKF0vPecfKbKMzk0RUKaTBu/rsHTguEsen/EegKcn3s4Ix
-vBIWXhoGry3m/XMlL/EgaDqAHRMRnFVlCJkzcYhXbdnjmnH3jxj9N6CMAyz1tMXa
-KMzzMs7Y4PJOzG0eub5GzcxNmW9UKqUIkO0Hwheaxlzet41KB5Z0zCsbxOOM/y06
-wcml2/tT80ekc/5v8Ldo9sl9pZRRDiWdv8TNIzfLf4XaeGPeY5LyQkd2SIM0kY7g
-W2I6OBZ/gRuk80aTwXlohFxJL3iv2w==
-=Jhgu
------END PGP SIGNATURE-----
-
---oJ71EGRlYNjSvfq7--
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 438802d0b01d..b1e554a74b34 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4379,7 +4379,8 @@ static int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+ 		vmcs_set_bits(SECONDARY_VM_EXEC_CONTROL,
+ 			      SECONDARY_EXEC_DESC);
+ 		hw_cr4 &= ~X86_CR4_UMIP;
+-	} else
++	} else if (!is_guest_mode(vcpu) ||
++	           !nested_cpu_has2(get_vmcs12(vcpu), SECONDARY_EXEC_DESC))
+ 		vmcs_clear_bits(SECONDARY_VM_EXEC_CONTROL,
+ 				SECONDARY_EXEC_DESC);
+ 
+-- 
+2.15.0
