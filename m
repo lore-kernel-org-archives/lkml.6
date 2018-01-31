@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753885AbeAaK1P (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 05:27:15 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44533 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753569AbeAaK0t (ORCPT
+        id S1753690AbeAaK1N (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 05:27:13 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:41255 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751587AbeAaK0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 05:26:49 -0500
-X-Google-Smtp-Source: AH8x226t83+fjqMAQ25Y09CScKDC+oRP3egIcS/OH7d5Kes6xygWP+TTOVuLlk/yukIq/zY0QHmCOA==
+        Wed, 31 Jan 2018 05:26:53 -0500
+X-Google-Smtp-Source: AH8x225ErKzFcofnCUSaVq1aU1QpADAmWCROrQaWFtmce0z77Qit4j0ETwyARKZDhqOkpncNjFs1AA==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -19,9 +19,9 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Gustavo Padovan <gustavo.padovan@collabora.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv2 16/17] media: vim2m: add media device
-Date: Wed, 31 Jan 2018 19:26:24 +0900
-Message-Id: <20180131102625.208021-7-acourbot@chromium.org>
+Subject: [RFCv2 17/17] media: vim2m: add request support
+Date: Wed, 31 Jan 2018 19:26:25 +0900
+Message-Id: <20180131102625.208021-8-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 In-Reply-To: <20180131102625.208021-1-acourbot@chromium.org>
 References: <20180131102625.208021-1-acourbot@chromium.org>
@@ -29,69 +29,126 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Request API requires a media node. Add one to the vim2m driver so we can
-use requests with it.
+Set the necessary ops for supporting requests in vim2m.
 
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/platform/vim2m.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/media/platform/vim2m.c | 55 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
 diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
-index b01fba020d5f..a32e8a7950eb 100644
+index a32e8a7950eb..a5ac95f8832a 100644
 --- a/drivers/media/platform/vim2m.c
 +++ b/drivers/media/platform/vim2m.c
-@@ -140,6 +140,9 @@ static struct vim2m_fmt *find_format(struct v4l2_format *f)
- struct vim2m_dev {
- 	struct v4l2_device	v4l2_dev;
- 	struct video_device	vfd;
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	struct media_device	mdev;
-+#endif
+@@ -30,6 +30,9 @@
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-event.h>
+ #include <media/videobuf2-vmalloc.h>
++#include <media/media-request.h>
++#include <media/media-request-mgr.h>
++#include <media/v4l2-request.h>
  
- 	atomic_t		num_inst;
- 	struct mutex		dev_mutex;
-@@ -1001,6 +1004,13 @@ static int vim2m_probe(struct platform_device *pdev)
+ MODULE_DESCRIPTION("Virtual device for mem2mem framework testing");
+ MODULE_AUTHOR("Pawel Osciak, <pawel@osciak.com>");
+@@ -370,6 +373,28 @@ static void job_abort(void *priv)
+ 	ctx->aborting = 1;
+ }
  
- 	spin_lock_init(&dev->irqlock);
- 
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	dev->mdev.dev = &pdev->dev;
-+	strlcpy(dev->mdev.model, "vim2m", sizeof(dev->mdev.model));
-+	media_device_init(&dev->mdev);
-+	dev->v4l2_dev.mdev = &dev->mdev;
-+#endif
++static int apply_request_params(struct media_request *req,
++				 struct vim2m_ctx *ctx)
++{
++	struct media_request_entity_data *_data;
++	struct media_request_v4l2_entity_data *data;
 +
- 	ret = v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
++	if (!req)
++		return -EINVAL;
++
++	_data = media_request_get_entity_data(req, &ctx->dev->vfd.entity,
++					      &ctx->fh);
++	if (WARN_ON(!_data))
++		return -EINVAL;
++	data = container_of(_data, struct media_request_v4l2_entity_data, base);
++
++	v4l2_ctrl_request_setup(&data->ctrls);
++
++	data->base.applied = true;
++
++	return 0;
++}
++
+ /* device_run() - prepares and starts the device
+  *
+  * This simulates all the immediate preparations required before starting
+@@ -381,12 +406,22 @@ static void device_run(void *priv)
+ 	struct vim2m_ctx *ctx = priv;
+ 	struct vim2m_dev *dev = ctx->dev;
+ 	struct vb2_v4l2_buffer *src_buf, *dst_buf;
++	int ret;
+ 
+ 	src_buf = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
+ 	dst_buf = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+ 
++	WARN_ON(dst_buf->vb2_buf.request != NULL);
++
++	/* Apply request if needed */
++	ret = apply_request_params(src_buf->vb2_buf.request, ctx);
++	WARN_ON(ret);
++
+ 	device_process(ctx, src_buf, dst_buf);
+ 
++	/* Inform user about which request produced the destination buffer */
++	dst_buf->request_fd = src_buf->request_fd;
++
+ 	/* Run a timer, which simulates a hardware irq  */
+ 	schedule_irq(dev, ctx->transtime);
+ }
+@@ -841,6 +876,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
+ 	src_vq->mem_ops = &vb2_vmalloc_memops;
+ 	src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+ 	src_vq->lock = &ctx->dev->dev_mutex;
++	src_vq->allow_requests = true;
+ 
+ 	ret = vb2_queue_init(src_vq);
  	if (ret)
- 		return ret;
-@@ -1034,6 +1044,13 @@ static int vim2m_probe(struct platform_device *pdev)
- 		goto err_m2m;
+@@ -992,6 +1028,19 @@ static const struct v4l2_m2m_ops m2m_ops = {
+ 	.job_abort	= job_abort,
+ };
+ 
++struct media_request_entity_data *vim2m_entity_data_alloc(struct media_entity *entity,
++							  void *fh)
++{
++	struct vim2m_ctx *ctx = container_of(fh, struct vim2m_ctx, fh);
++
++	return media_request_v4l2_entity_data_alloc(&ctx->hdl);
++}
++
++static const struct media_entity_request_ops vim2m_entity_req_ops = {
++	.data_alloc	= vim2m_entity_data_alloc,
++	.data_free	= media_request_v4l2_entity_data_free,
++};
++
+ static int vim2m_probe(struct platform_device *pdev)
+ {
+ 	struct vim2m_dev *dev;
+@@ -1006,6 +1055,9 @@ static int vim2m_probe(struct platform_device *pdev)
+ 
+ #ifdef CONFIG_MEDIA_CONTROLLER
+ 	dev->mdev.dev = &pdev->dev;
++	dev->mdev.req_mgr = media_request_mgr_alloc(&dev->mdev);
++	if (IS_ERR(dev->mdev.req_mgr))
++		return PTR_ERR(dev->mdev.req_mgr);
+ 	strlcpy(dev->mdev.model, "vim2m", sizeof(dev->mdev.model));
+ 	media_device_init(&dev->mdev);
+ 	dev->v4l2_dev.mdev = &dev->mdev;
+@@ -1030,6 +1082,9 @@ static int vim2m_probe(struct platform_device *pdev)
  	}
  
+ 	video_set_drvdata(vfd, dev);
 +#ifdef CONFIG_MEDIA_CONTROLLER
-+	/* Register the media device node */
-+	ret = media_device_register(&dev->mdev);
-+	if (ret)
-+		goto err_m2m;
++	dev->vfd.entity.req_ops = &vim2m_entity_req_ops;
 +#endif
-+
- 	return 0;
- 
- err_m2m:
-@@ -1050,6 +1067,13 @@ static int vim2m_remove(struct platform_device *pdev)
- 	struct vim2m_dev *dev = platform_get_drvdata(pdev);
- 
- 	v4l2_info(&dev->v4l2_dev, "Removing " MEM2MEM_NAME);
-+
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	if (media_devnode_is_registered(dev->mdev.devnode))
-+		media_device_unregister(&dev->mdev);
-+	media_device_cleanup(&dev->mdev);
-+#endif
-+
- 	v4l2_m2m_release(dev->m2m_dev);
- 	del_timer_sync(&dev->timer);
- 	video_unregister_device(&dev->vfd);
+ 	snprintf(vfd->name, sizeof(vfd->name), "%s", vim2m_videodev.name);
+ 	v4l2_info(&dev->v4l2_dev,
+ 			"Device registered as /dev/video%d\n", vfd->num);
 -- 
 2.16.0.rc1.238.g530d649a79-goog
