@@ -1,93 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753202AbeAaVLX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 16:11:23 -0500
-Received: from mout.web.de ([212.227.15.14]:54978 "EHLO mout.web.de"
+        id S1753199AbeAaVPl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 16:15:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751910AbeAaVLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 16:11:21 -0500
-To: linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Philippe Reynes <tremyfr@yahoo.fr>,
-        Simran Singhal <singhalsimran0@gmail.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] iio/adc: Delete an error message for a failed memory
- allocation in two functions
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Message-ID: <0a3e6b48-f837-ce30-4adf-28ce5d885c24@users.sourceforge.net>
-Date: Wed, 31 Jan 2018 22:10:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753145AbeAaVPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 16:15:40 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2CB12178D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AH8x224Tvgh6Hjgu2vMqhBt434LkNYg915rW5qeSY82GU0U15USlSFmx7uDOKxaOKPfyPj4Z6680pLZ1BqGLoOISa14=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:g0/NI6b03TZYNm6U6xbd0V5Vp8r3MvL/4mqzE2XwHfGFqy/byH/
- N4lx00TmQMaG52qjuTlY0KZ0fT7IpqGBxlZHGAmmya7WHYTxBz+Dgx8I4kC1ACJQ2Ei1YV3
- LW3CmZsOHsueZ3Wpj4Ew60crMS9StURYlmmI262c+dnU+1nKkk3RtGYfCz8fpuL7nVYJ2qq
- SLVP3+n/ps2oIa1+//cgw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:4/NfD6kdT1M=:fmcqp0Aiwnw8uP9usov19i
- /Ijtge2UdZyfKT6BoTUiPYu0IS74tyyVmuY3hQ6lMNNs7lmHr2bAk0hmE0wqvjmPloBbO0qYw
- aeuW1Y2YCVw8xlQikHdUgc7k0MrYQqhBhlFdTDgvGOlxCwTthKecCXlMD32+YZWnGotQUaGKr
- IVvMzv4LQA7nDcGxolX1WyehxLlWsQuvOJSLEn6sxUlP+IR5f7U+P2YBU3FNyFeOQA9SsEHgK
- dFP9xGyiFMXoDgXZuaEEcM8M46EstxQxhXIO5UV9ZjMtQ/jODo06lfjqauCnrdQSxt2s1huyF
- qNGaQVIlVfUAaNGEHvWbm54CVhmhN+ket4SM9yolNaO8KpQLy/v847Ulm7CKajhNr3XaBHHiX
- JtK5fva3zaUlIc5RChz2jeM2oCgVzWZlu1Jt9uYkCWffE1oanOVz+t2bJKya+5T0ZXJH+VM7r
- WN8EZrbdmYUMgN1VgH5miOUZSRVU7xMRA+yk9RBNYkNoBOqJEj3K829O/5kdjMWsJsP4WFYvr
- gsfQclpypBrxKyUnnXzPFIEMQ7OhHYlXHHtE0Q49eBX4Q0fR/uakORxRXdnbgQR07rRUiiGAO
- Tbbwz8G5N97LVaOWMrh70q0KrdrIq369p0Fb78Z5ZpJe19/0WNinpp0xDTAa5zHItU1ZRtuOe
- /0rUwQ3YdK9tIKpgjW0VV2bpGjzhjJiTONxkfX9DXdQjpXGX3NjWiCN+a5vUsie4xPpl4TnP2
- 2cN+m/HMtB2lmDwg2p3XBErWTML7yeMzhmzjB8vnY7bSh7OVPNik5roh/+YO4aje1jrqog5SK
- msIvR6K1pxKKQol1HUtNOoag6r/EuplC1xxq97Uw/lo6yeKUK8=
+In-Reply-To: <0E65629C-0D7D-4602-A43D-B18E62F330A6@gmail.com>
+References: <20180131201118.1694-1-namit@vmware.com> <8bb352bc-4e1f-4e87-80e3-a8e65d618d2a@linux.intel.com>
+ <0E65629C-0D7D-4602-A43D-B18E62F330A6@gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 31 Jan 2018 13:15:19 -0800
+X-Gmail-Original-Message-ID: <CALCETrX-zmhoLgZzL_VJZqZF+XTS26o+HHA7=vA+E7T88yO_uA@mail.gmail.com>
+Message-ID: <CALCETrX-zmhoLgZzL_VJZqZF+XTS26o+HHA7=vA+E7T88yO_uA@mail.gmail.com>
+Subject: Re: [PATCH] x86: Align TLB invalidation info
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 31 Jan 2018 21:57:50 +0100
+On Wed, Jan 31, 2018 at 1:09 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+> Dave Hansen <dave.hansen@linux.intel.com> wrote:
+>
+>> On 01/31/2018 12:11 PM, Nadav Amit wrote:
+>>> The TLB invalidation info is allocated on the stack, which might cause
+>>> it to be unaligned. Since this information may be transferred to
+>>> different cores for TLB shootdown, this might result in an additional
+>>> cache-line bouncing between the cores.
+>>>
+>>> GCC provides a way to deal with it by using
+>>> __builtin_alloca_with_align(). Use it to avoid the bouncing cache lines.
+>>
+>> It doesn't really *bounce*, though, does it?  I don't see any writes on
+>> the remote side.  The remote use seems entirely read-only.
+>>
+>> You also don't have to exhaustively test this, but I'd love to see at
+>> least a sanity check with a microbenchmark (or something) that, yes,
+>> this does help *something*.  Maybe it makes the remote
+>> flush_tlb_func_common() run faster because it's pulling in fewer lines,
+>> or maybe you can even detect fewer misses in there.
+>
+> I agree that with the whole Meltdown/Spectre entry-cost it might not even be
+> measurable, at least on small ( < 2 sockets) machines. But I do not think it
+> worth profiling. Basically, AFAIK, all the data structures that are used for
+> inter-processor communication by the kernel are aligned, and this is an
+> exception.
+>
 
-Omit an extra message for a memory allocation failure in these functions.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/iio/adc/at91_adc.c | 1 -
- drivers/iio/adc/max1027.c  | 4 +---
- 2 files changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-index 3836d4222a3e..ce37cfeb8d1c 100644
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -912,7 +912,6 @@ static int at91_adc_probe_dt(struct at91_adc_state *st,
- 					sizeof(struct at91_adc_trigger),
- 					GFP_KERNEL);
- 	if (!st->trigger_list) {
--		dev_err(&idev->dev, "Could not allocate trigger list memory.\n");
- 		ret = -ENOMEM;
- 		goto error_ret;
- 	}
-diff --git a/drivers/iio/adc/max1027.c b/drivers/iio/adc/max1027.c
-index 375da6491499..74b305c775f2 100644
---- a/drivers/iio/adc/max1027.c
-+++ b/drivers/iio/adc/max1027.c
-@@ -425,10 +425,8 @@ static int max1027_probe(struct spi_device *spi)
- 	st->buffer = devm_kmalloc(&indio_dev->dev,
- 				  indio_dev->num_channels * 2,
- 				  GFP_KERNEL);
--	if (st->buffer == NULL) {
--		dev_err(&indio_dev->dev, "Can't allocate buffer\n");
-+	if (!st->buffer)
- 		return -ENOMEM;
--	}
- 
- 	ret = iio_triggered_buffer_setup(indio_dev, &iio_pollfunc_store_time,
- 					 &max1027_trigger_handler, NULL);
--- 
-2.16.1
+This is only going to be measurable at all on NUMA, I suspect.
