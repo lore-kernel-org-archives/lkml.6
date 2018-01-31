@@ -1,100 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751626AbeAaSgC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 13:36:02 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51726 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751163AbeAaSf7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 13:35:59 -0500
-X-Google-Smtp-Source: AH8x2260wwvEY5cg8V5cnChLIo7ZX5yMcGfF9/Axv9nhcJc7jUwnWG5T7piEAwdMslHe+2JTjC6YBw==
-Subject: Re: [PATCH v2 04/16] iio: adc: sun4i-gpadc-iio: rework: sampling
- start/end code readout reg
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@free-electrons.com, wens@csie.org, linux@armlinux.org.uk,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        davem@davemloft.net, hans.verkuil@cisco.com, mchehab@kernel.org,
-        rask@formelder.dk, clabbe.montjoie@gmail.com, sean@mess.org,
-        krzk@kernel.org, icenowy@aosc.io, edu.molinas@gmail.com,
-        singhalsimran0@gmail.com, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20180128232919.12639-1-embed3d@gmail.com>
- <20180128232919.12639-5-embed3d@gmail.com>
- <20180131175106.agrvwioaruioavqk@qschulz>
-From: Philipp Rossak <embed3d@gmail.com>
-Message-ID: <025fc383-8a54-cc22-bdf3-0919b8ca2507@gmail.com>
-Date: Wed, 31 Jan 2018 19:35:55 +0100
+        id S1751701AbeAaSgo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 13:36:44 -0500
+Received: from foss.arm.com ([217.140.101.70]:42098 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751378AbeAaSgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 13:36:42 -0500
+Subject: Re: [PATCH v2 07/16] arm/arm64: KVM: Add PSCI version selection API
+To: Andrew Jones <drjones@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Jon Masters <jcm@redhat.com>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20180129174559.1866-1-marc.zyngier@arm.com>
+ <20180129174559.1866-8-marc.zyngier@arm.com>
+ <20180131173824.leyfy4vlqq3vmd37@kamzik.brq.redhat.com>
+ <1de5a7a8-8118-597f-d1a3-14c406b57b0e@arm.com>
+ <20180131180330.ev5cypq5k5ai43wm@kamzik.brq.redhat.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <86dc5223-3fa9-688d-fb2d-8bc911356eba@arm.com>
+Date: Wed, 31 Jan 2018 18:36:38 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180131175106.agrvwioaruioavqk@qschulz>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180131180330.ev5cypq5k5ai43wm@kamzik.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 31.01.2018 18:51, Quentin Schulz wrote:
-> Hi Philipp,
-> 
-> On Mon, Jan 29, 2018 at 12:29:07AM +0100, Philipp Rossak wrote:
->> For adding newer sensor some basic rework of the code is necessary.
+On 31/01/18 18:03, Andrew Jones wrote:
+> On Wed, Jan 31, 2018 at 05:45:56PM +0000, Marc Zyngier wrote:
+>> On 31/01/18 17:38, Andrew Jones wrote:
+>>> On Mon, Jan 29, 2018 at 05:45:50PM +0000, Marc Zyngier wrote:
+>>>> Although we've implemented PSCI 1.0 and 1.1, nothing can select them
+>>>> Since all the new PSCI versions are backward compatible, we decide to
+>>>> default to the latest version of the PSCI implementation. This is no
+>>>> different from doing a firmware upgrade on KVM.
+>>>>
+>>>> But in order to give a chance to hypothetical badly implemented guests
+>>>> that would have a fit by discovering something other than PSCI 0.2,
+>>>> let's provide a new API that allows userspace to pick one particular
+>>>> version of the API.
+>>>>
+>>>> This is implemented as a new class of "firmware" registers, where
+>>>> we expose the PSCI version. This allows the PSCI version to be
+>>>> save/restored as part of a guest migration, and also set to
+>>>> any supported version if the guest requires it.
+>>>>
+>>>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>>>> ---
+>>>>  Documentation/virtual/kvm/api.txt      |  3 +-
+>>>>  Documentation/virtual/kvm/arm/psci.txt | 28 ++++++++++++++
+>>>>  arch/arm/include/asm/kvm_host.h        |  3 ++
+>>>>  arch/arm/include/uapi/asm/kvm.h        |  6 +++
+>>>>  arch/arm/kvm/guest.c                   | 13 +++++++
+>>>>  arch/arm64/include/asm/kvm_host.h      |  3 ++
+>>>>  arch/arm64/include/uapi/asm/kvm.h      |  6 +++
+>>>>  arch/arm64/kvm/guest.c                 | 14 ++++++-
+>>>>  include/kvm/arm_psci.h                 |  9 +++++
+>>>>  virt/kvm/arm/psci.c                    | 68 +++++++++++++++++++++++++++++++++-
+>>>>  10 files changed, 149 insertions(+), 4 deletions(-)
+>>>>  create mode 100644 Documentation/virtual/kvm/arm/psci.txt
+>>>>
+>>>> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+>>>> index 57d3ee9e4bde..334905202141 100644
+>>>> --- a/Documentation/virtual/kvm/api.txt
+>>>> +++ b/Documentation/virtual/kvm/api.txt
+>>>> @@ -2493,7 +2493,8 @@ Possible features:
+>>>>  	  and execute guest code when KVM_RUN is called.
+>>>>  	- KVM_ARM_VCPU_EL1_32BIT: Starts the CPU in a 32bit mode.
+>>>>  	  Depends on KVM_CAP_ARM_EL1_32BIT (arm64 only).
+>>>> -	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 for the CPU.
+>>>> +	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 (or a future revision
+>>>> +          backward compatible with v0.2) for the CPU.
+>>>>  	  Depends on KVM_CAP_ARM_PSCI_0_2.
+>>>>  	- KVM_ARM_VCPU_PMU_V3: Emulate PMUv3 for the CPU.
+>>>>  	  Depends on KVM_CAP_ARM_PMU_V3.
+>>>> diff --git a/Documentation/virtual/kvm/arm/psci.txt b/Documentation/virtual/kvm/arm/psci.txt
+>>>> new file mode 100644
+>>>> index 000000000000..2e49a4e9f084
+>>>> --- /dev/null
+>>>> +++ b/Documentation/virtual/kvm/arm/psci.txt
+>>>> @@ -0,0 +1,28 @@
+>>>> +KVM implements the PSCI (Power State Coordination Interface)
+>>>> +specification in order to provide services such as CPU on/off, reset
+>>>> +and power-off to the guest.
+>>>> +
+>>>> +The PSCI specification is regularly updated to provide new features,
+>>>> +and KVM implements these updates if they make sense from a virtualization
+>>>> +point of view.
+>>>> +
+>>>> +This means that a guest booted on two different versions of KVM can
+>>>> +observe two different "firmware" revisions. This could cause issues if
+>>>> +a given guest is tied to a particular PSCI revision (unlikely), or if
+>>>> +a migration causes a different PSCI version to be exposed out of the
+>>>> +blue to an unsuspecting guest.
+>>>> +
+>>>> +In order to remedy this situation, KVM exposes a set of "firmware
+>>>> +pseuodo-registers" that can be manipulated using the GET/SET_ONE_REG
+>>>> +interface. These registers can be saved/restored by userspace, and set
+>>>> +to a convenient value if required.
+>>>
+>>> Userspace can save/restore any state it deems necessary. 
 >>
->> This commit reworks the code and allows the sampling start/end code and
->> the position of value readout register to be altered. Later the start/end
->> functions will be used to configure the ths and start/stop the
->> sampling.
+>> Only if it has access to it. Until now, that wasn't an option.
 >>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
->> ---
->>   drivers/iio/adc/sun4i-gpadc-iio.c | 44 ++++++++++++++++++++++++++++++++++-----
->>   1 file changed, 39 insertions(+), 5 deletions(-)
+>>> Is there another
+>>> reason to invent a pseudo register? Considering the PSCI version is VM
+>>> state, then maybe a VM "device" attribute[*], like s390 use, would fit
+>>> better. 
 >>
->> diff --git a/drivers/iio/adc/sun4i-gpadc-iio.c b/drivers/iio/adc/sun4i-gpadc-iio.c
->> index 03804ff9c006..db57d9fffe48 100644
->> --- a/drivers/iio/adc/sun4i-gpadc-iio.c
->> +++ b/drivers/iio/adc/sun4i-gpadc-iio.c
->> @@ -49,6 +49,15 @@ static unsigned int sun6i_gpadc_chan_select(unsigned int chan)
->>   	return SUN6I_GPADC_CTRL1_ADC_CHAN_SELECT(chan);
->>   }
->>   
->> +struct sun4i_gpadc_iio;
->> +
->> +/*
->> + * Prototypes for these functions, which enable these functions to be
->> + * referenced in gpadc_data structures.
->> + */
+>> Possibly. But that means current userspace won't engage the mitigation
+>> by default, and that's pretty bad.
+>>
+>>> Or, if keeping it VCPU state has some benefit, then we already
+>>> have VCPU device attribute support for ARM that we could extend with
+>>> another attribute. An advantage of using the device-attr API is that it
+>>> has KVM_HAS_DEVICE_ATTR, allowing the new attribute support to be probed.
+>>> How should userspace check if the pseudo register is supported? Maybe
+>>> by just failing with NOT_SUPPORTED to get/set it?
+>>>
+>>> [*] Documentation/virtual/kvm/devices/vm.txt
+>>
+>> Frankly, I have no opinion on the way to implement it. My only
+>> requirement is that it becomes enabled by default, without any userspace
+>> change.
 > 
-> Comment not needed.
-> 
->> +static int sun4i_gpadc_sample_start(struct sun4i_gpadc_iio *info);
->> +static int sun4i_gpadc_sample_end(struct sun4i_gpadc_iio *info);
->> +
->>   struct gpadc_data {
->>   	int		temp_offset;
->>   	int		temp_scale;
->> @@ -56,6 +65,9 @@ struct gpadc_data {
->>   	unsigned int	tp_adc_select;
->>   	unsigned int	(*adc_chan_select)(unsigned int chan);
->>   	unsigned int	adc_chan_mask;
->> +	unsigned int	temp_data;
-> 
-> Does not really have anything to do with sample_start/end. I would have
-> made a different commit for it.
-> 
-> Otherwise,
-> Reviewed-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> 
-> Quentin
-> 
+> I think we can turn it on by default in KVM, no matter what API we choose,
+> and then enable userspace (with whatever API) to turn it off. Newer
+> machine types certainly wouldn't do that, and, as later PSCI is compatible
+> with older PSCI, we're probably safe (safer regarding the BTB) not using
+> the older PSCI with older machine types either - although that would be up
+> for debate and the whole point of adding the API.
 
-Ok I will split this.
+OK. At least we're aligned on this. As for your question about finding
+out about the register, here's what I have in kvmtool:
+
++       reg.addr = (u64)&data;
++       reg.id = KVM_REG_ARM_PSCI_VERSION;
++       err = ioctl(vcpu->vcpu_fd, KVM_GET_ONE_REG, &reg);
++       if (err < 0)
++               pr_info("Unable to get PSCI version\n");
++       else
++               pr_info("PSCI version %llx\n", data);
+
+If you get an error, the feature doesn't exist. One of the reasons for
+using a register is that migration works with today's QEMU. And if you
+try to restore a VM that's aware of the PSCI version (and possibly of
+the BTB invalidation) on a host that doesn't support it, you get a fail
+without any change of userspace.
+
+To me, that's a pretty good argument in favour of this method. But if
+you have strong feelings about it and would like me to implement
+something else, please let me know ASAP. We'd like this series to land
+in -rc1, so we only have a few days left...
+
+>>
+>>>
+>>>> +
+>>>> +The following register is defined:
+>>>> +
+>>>> +* KVM_REG_ARM_PSCI_VERSION:
+>>>> +
+>>>> +  - Only valid if the vcpu has KVM_ARM_VCPU_PSCI_0_2 feature set
+>>>> +  - Returns the current PSCI version on GET_ONE_REG
+>>>> +  - Allows any supported PSCI version compatible with v0.2 to be set
+>>>> +    with SET_ONE_REG
+>>>> +  - Affects the whole VM (even if the register view is per-vcpu)
+>>>
+>>>
+>>>> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+>>>> index acbf9ec7b396..e9d57060d88c 100644
+>>>> --- a/arch/arm/include/asm/kvm_host.h
+>>>> +++ b/arch/arm/include/asm/kvm_host.h
+>>>> @@ -75,6 +75,9 @@ struct kvm_arch {
+>>>>  	/* Interrupt controller */
+>>>>  	struct vgic_dist	vgic;
+>>>>  	int max_vcpus;
+>>>> +
+>>>> +	/* Mandated version of PSCI */
+>>>> +	u32 psci_version;
+>>>>  };
+>>>>  
+>>>>  #define KVM_NR_MEM_OBJS     40
+>>>> diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
+>>>> index 6edd177bb1c7..47dfc99f5cd0 100644
+>>>> --- a/arch/arm/include/uapi/asm/kvm.h
+>>>> +++ b/arch/arm/include/uapi/asm/kvm.h
+>>>> @@ -186,6 +186,12 @@ struct kvm_arch_memory_slot {
+>>>>  #define KVM_REG_ARM_VFP_FPINST		0x1009
+>>>>  #define KVM_REG_ARM_VFP_FPINST2		0x100A
+>>>>  
+>>>> +/* KVM-as-firmware specific pseudo-registers */
+>>>> +#define KVM_REG_ARM_FW			(0x0014 << KVM_REG_ARM_COPROC_SHIFT)
+>>>
+>>> Is this 0x14 documented somewhere? I'm just curious how the space for
+>>> pseudo registers is reserved. Is there a common place that we should
+>>> document that 0x14 is for the firmware (if it's not documented there
+>>> already)?
+>>
+>> No. First come, first served.
+> 
+> Should we document it in Documentation/ somewhere?
+We can. I tend to see the uapi/asm/kvm.h file as the reference (and I
+feel that a text file would simply be an English translation of that
+file), but I'm not opposed to it either. I'm not sure I have the
+bandwidth for that at the moment though.
 
 Thanks,
-Philipp
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
