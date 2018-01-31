@@ -1,313 +1,364 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753321AbeAaKcd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 05:32:33 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33082 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbeAaKc3 (ORCPT
+        id S1752597AbeAaKeq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 05:34:46 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48868 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbeAaKen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 05:32:29 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA88860251
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
-Subject: Re: [PATCH v2] clk: qcom: Add Global Clock controller (GCC) driver
- for SDM845
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-References: <1516610736-17088-1-git-send-email-anischal@codeaurora.org>
- <20180126235649.GF28313@codeaurora.org>
-From: "Nischal, Amit" <anischal@codeaurora.org>
-Message-ID: <998eeaf4-f680-3dc2-3132-708f4675d4df@codeaurora.org>
-Date: Wed, 31 Jan 2018 16:02:21 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Wed, 31 Jan 2018 05:34:43 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: magnus.damm@gmail.com, geert@glider.be, hverkuil@xs4all.nl,
+        mchehab@kernel.org, festevam@gmail.com, sakari.ailus@iki.fi,
+        robh+dt@kernel.org, mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 07/11] media: i2c: ov772x: Support frame interval handling
+Date: Wed, 31 Jan 2018 12:34:59 +0200
+Message-ID: <34502970.Ll86D7ehED@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1517306302-27957-8-git-send-email-jacopo+renesas@jmondi.org>
+References: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org> <1517306302-27957-8-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <20180126235649.GF28313@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jacopo,
 
+Thank you for the patch.
 
-On 1/27/2018 5:26 AM, Stephen Boyd wrote:
-> On 01/22, Amit Nischal wrote:
->> Add support for the global clock controller found on SDM845
->> based devices. This should allow most non-multimedia device
->> drivers to probe and control their clocks.
->>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Is Taniya the author? Should be a From: line then.
-Thanks for the review. I will change the author name.
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
->> ---
->>
->> This patch is dependent on below changes:
->> 1. https://patchwork.kernel.org/patch/10139991/
->> 2. https://patchwork.kernel.org/patch/10139987/
->> 3. https://patchwork.kernel.org/patch/10144621/
-> Ok. Next time you can send them all again in a series to make it
-> easier for me.
-Yes, I will post all the patches in a series after fixing review findings.
->
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index fbf4532..91e4557 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -226,3 +226,12 @@ config SPMI_PMIC_CLKDIV
->>   	  Technologies, Inc. SPMI PMIC. It configures the frequency of
->>   	  clkdiv outputs of the PMIC. These clocks are typically wired
->>   	  through alternate functions on GPIO pins.
->> +
->> +config SDM_GCC_845
->> +	tristate "SDM845 Global Clock Controller"
->> +	depends on COMMON_CLK_QCOM
->> +	help
->> +	  Support for the global clock controller on Qualcomm Technologies, Inc
->> +	  sdm845 devices.
->> +	  Say Y if you want to use peripheral devices such as UART, SPI,
->> +	  i2c, USB, UFS, SD/eMMC, PCIe, etc.
-> Put this in sorted order in the Kconfig? Or at least try to.  I
-> should go back and sort the rest later.
-ok sure. I will do that.
->
->> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
->> index 230332c..1aa23b3 100644
->> --- a/drivers/clk/qcom/Makefile
->> +++ b/drivers/clk/qcom/Makefile
->> @@ -29,6 +29,7 @@ obj-$(CONFIG_MSM_GCC_8960) += gcc-msm8960.o
->>   obj-$(CONFIG_MSM_GCC_8974) += gcc-msm8974.o
->>   obj-$(CONFIG_MSM_GCC_8994) += gcc-msm8994.o
->>   obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
->> +obj-$(CONFIG_SDM_GCC_845)  += gcc-sdm845.o
-> This should be sorted too.
-Done.
->
->>   obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
->>   obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
->>   obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
->> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
->> new file mode 100644
->> index 0000000..fe62d87
->> --- /dev/null
->> +++ b/drivers/clk/qcom/gcc-sdm845.c
->> @@ -0,0 +1,3633 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/bitops.h>
->> +#include <linux/err.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_device.h>
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/regmap.h>
->> +#include <linux/reset-controller.h>
->> +
->> +#include <dt-bindings/clock/qcom,gcc-sdm845.h>
->> +
->> +#include "common.h"
->> +#include "clk-regmap.h"
->> +#include "clk-pll.h"
->> +#include "clk-rcg.h"
->> +#include "clk-branch.h"
->> +#include "clk-alpha-pll.h"
->> +#include "gdsc.h"
->> +#include "reset.h"
->> +
->> +#define GCC_MMSS_MISC				0x09FFC
-> Please drop the onetime defines.
-ok. Will fix this in the next series.
->
->> +#define GCC_GPU_MISC				0x71028
->> +
->> +#define CXO_FREQUENCY				19200000
->> +
->> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
->> +
->> +static struct freq_tbl cxo_safe_src_f = {
-> const?
->
->> +	.freq = CXO_FREQUENCY,
->> +	.src = 0,
->> +	.pre_div = 1,
->> +	.m = 0,
->> +	.n = 0,
->> +};
-> All those = 0 are useless. But CXO may not always be 19.2 MHz so
-> that's a non-starter. Try and figure out how to get rid of this?
-Thanks for this finding. Will read the safe source's frequency inside 
-the probe
-of each CC driver and assign the rate to the 'freq' member variable of
-'cxo_safe_src_f' structure as we have 'bi_tcxo' fixed clock and its rate 
-is defined
-in SDM845's main device tree file.
->
->> +
->> +enum {
->> +	P_BI_TCXO,
->> +	P_AUD_REF_CLK,
->> +	P_CORE_BI_PLL_TEST_SE,
->> +	P_GPLL0_OUT_EVEN,
->> +	P_GPLL0_OUT_MAIN,
->> +	P_GPLL4_OUT_MAIN,
->> +	P_SLEEP_CLK,
->> +};
->> +
->> +static const struct parent_map gcc_parent_map_0[] = {
->> +	{ P_BI_TCXO, 0 },
->> +	{ P_GPLL0_OUT_MAIN, 1 },
->> +	{ P_GPLL0_OUT_EVEN, 6 },
->> +	{ P_CORE_BI_PLL_TEST_SE, 7 },
-> [...]
->> +
->> +static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
->> +	F(400000, P_BI_TCXO, 12, 1, 4),
->> +	F(9600000, P_BI_TCXO, 2, 0, 0),
->> +	F(19200000, P_BI_TCXO, 1, 0, 0),
->> +	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
->> +	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
->> +	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
->> +	F(201500000, P_GPLL4_OUT_MAIN, 4, 0, 0),
->> +	{ }
->> +};
->> +
->> +static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
->> +	.cmd_rcgr = 0x1400c,
->> +	.mnd_width = 8,
->> +	.hid_width = 5,
->> +	.parent_map = gcc_parent_map_10,
->> +	.freq_tbl = ftbl_gcc_sdcc2_apps_clk_src,
->> +	.safe_src_freq_tbl = &cxo_safe_src_f,
->> +	.clkr.hw.init = &(struct clk_init_data){
->> +		.name = "gcc_sdcc2_apps_clk_src",
->> +		.parent_names = gcc_parent_names_10,
->> +		.num_parents = 5,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +		.ops = &clk_rcg2_shared_ops,
->> +	},
->> +};
->> +
->> +static const struct freq_tbl ftbl_gcc_sdcc4_apps_clk_src[] = {
->> +	F(400000, P_BI_TCXO, 12, 1, 4),
->> +	F(9600000, P_BI_TCXO, 2, 0, 0),
->> +	F(19200000, P_BI_TCXO, 1, 0, 0),
->> +	F(25000000, P_GPLL0_OUT_MAIN, 12, 1, 2),
->> +	F(50000000, P_GPLL0_OUT_MAIN, 12, 0, 0),
->> +	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
->> +	{ }
->> +};
->> +
->> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
->> +	.cmd_rcgr = 0x1600c,
->> +	.mnd_width = 8,
->> +	.hid_width = 5,
->> +	.parent_map = gcc_parent_map_0,
->> +	.freq_tbl = ftbl_gcc_sdcc4_apps_clk_src,
->> +	.safe_src_freq_tbl = &cxo_safe_src_f,
-> Honestly, why do we need this other structure? Can't we point to
-> the entry in the frequency table for this clk and use that? Or
-> know that these are an RCG, and 99% of the time the "safe
-> frequency" is going to be source 0 and div 1?
-Actually for some of the clocks like 'gcc_usb30_prim_master_clk_src' , 
-there is
-no frequency table entry corresponding to CXO in the final frequency plan
-and that’s the reason, I have added the safe source 'freq_tbl' structure 
-at the
-top of file and this will help to make the "Configure the RCGs to a safe 
-source"
-logic as generic. https://patchwork.kernel.org/patch/10139985/
->
->> +	.clkr.hw.init = &(struct clk_init_data){
->> +		.name = "gcc_sdcc4_apps_clk_src",
->> +		.parent_names = gcc_parent_names_0,
->> +		.num_parents = 4,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +		.ops = &clk_rcg2_shared_ops,
-> [...]
->> +
->> +static const struct regmap_config gcc_sdm845_regmap_config = {
->> +	.reg_bits	= 32,
->> +	.reg_stride	= 4,
->> +	.val_bits	= 32,
->> +	.max_register	= 0x182090,
->> +	.fast_io	= true,
->> +};
->> +
->> +static const struct qcom_cc_desc gcc_sdm845_desc = {
->> +	.config = &gcc_sdm845_regmap_config,
->> +	.clks = gcc_sdm845_clocks,
->> +	.num_clks = ARRAY_SIZE(gcc_sdm845_clocks),
->> +	.resets = gcc_sdm845_resets,
->> +	.num_resets = ARRAY_SIZE(gcc_sdm845_resets),
->> +	.gdscs = gcc_sdm845_gdscs,
->> +	.num_gdscs = ARRAY_SIZE(gcc_sdm845_gdscs),
->> +};
->> +
->> +static const struct of_device_id gcc_sdm845_match_table[] = {
->> +	{ .compatible = "qcom,gcc-sdm845" },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
->> +
->> +static int gcc_sdm845_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct regmap *regmap;
->> +	int i, ret = 0;
-> Don't assign things and then reassign them without testing it
-> first.
-Thanks. Will fix this in next patch series.
->
->> +
->> +	regmap = qcom_cc_map(pdev, &gcc_sdm845_desc);
->> +	if (IS_ERR(regmap))
->> +		return PTR_ERR(regmap);
->> +
->> +	for (i = 0; i < ARRAY_SIZE(gcc_sdm845_hws); i++) {
->> +		ret = devm_clk_hw_register(dev, gcc_sdm845_hws[i]);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->> +	ret = qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "Failed to register GCC clocks\n");
-> Drop this error message.
-Thanks. Will fix this in next patch series.
->
->> +		return ret;
->> +	}
->> +
->> +	/* Disable the GPLL0 active input to MMSS and GPU via MISC registers */
->> +	regmap_update_bits(regmap, GCC_MMSS_MISC, 0x3, 0x3);
->> +	regmap_update_bits(regmap, GCC_GPU_MISC, 0x3, 0x3);
-> Can bootloaders do this? Or this can be a branch clk that we
-> expose in the tree as the "gpll0" source entry for the multimedia
-> clock controls? Do we ever turn these back on?
-We never enable the GPLL0 active input to MMSS and GPU via MISC 
-registers after this place
-and this is for one time only. So I think, we can do this inside the 
-probe for one time.
->> +
->> +	dev_info(&pdev->dev, "Registered GCC clocks\n");
-> Drop.
-Thanks. Will fix this in next patch series.
->
->> +
->> +	return ret;
->> +}
->> +
+On Tuesday, 30 January 2018 11:58:18 EET Jacopo Mondi wrote:
+> Add support to ov772x driver for frame intervals handling and enumeration.
+> Tested with 10MHz and 24MHz input clock at VGA and QVGA resolutions for
+> 10, 15 and 30 frame per second rates.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/i2c/ov772x.c | 210 ++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 193 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
+> index 23106d7..28de254 100644
+> --- a/drivers/media/i2c/ov772x.c
+> +++ b/drivers/media/i2c/ov772x.c
+
+[snip]
+
+> @@ -373,6 +378,19 @@
+>  #define VERSION(pid, ver) ((pid<<8)|(ver&0xFF))
+> 
+>  /*
+> + * Frame size (including blanking lines)
+> + */
+> +#define VGA_FRAME_SIZE		(510 * 748)
+> +#define QVGA_FRAME_SIZE		(278 * 576)
+
+Those two macros are not used, you can drop them.
+
+> +/*
+> + * Input clock frequencies
+> + */
+> +static const u8 ov772x_com4_vals[] = { PLL_BYPASS, PLL_4x, PLL_6x, PLL_8x
+> };
+> +static const unsigned int ov772x_pll_mult[] = { 1, 4, 6, 8 };
+> +#define OV772X_PLL_N_MULT ARRAY_SIZE(ov772x_pll_mult)
+
+I think it would be clearer if you used ARRAY_SIZE(ov772x_pll_mult) directly 
+in the code.
+
+Maybe nitpicking a bit, but I wouldgroup the com4 values and multipliers in a 
+structure:
+
+static const struct {
+	unsigned int mult;
+	u8 com4;
+} ov772x_pll_mult[] = {
+	{ 1, PLL_BYPASS },
+	{ 4, PLL_4x },
+	{ 6, PLL_6x },
+	{ 8, PLL_8x },
+};
+
+That ensures that the two arrays stay in sync as there's only one array left.
+
+> +/*
+>   * struct
+>   */
+> 
+> @@ -388,6 +406,7 @@ struct ov772x_color_format {
+>  struct ov772x_win_size {
+>  	char                     *name;
+>  	unsigned char             com7_bit;
+> +	unsigned int		  sizeimage;
+>  	struct v4l2_rect	  rect;
+>  };
+> 
+> @@ -404,6 +423,7 @@ struct ov772x_priv {
+>  	unsigned short                    flag_hflip:1;
+>  	/* band_filter = COM8[5] ? 256 - BDBASE : 0 */
+>  	unsigned short                    band_filter;
+> +	unsigned int			  fps;
+>  };
+> 
+>  /*
+> @@ -487,27 +507,35 @@ static const struct ov772x_color_format ov772x_cfmts[]
+> = {
+> 
+>  static const struct ov772x_win_size ov772x_win_sizes[] = {
+>  	{
+> -		.name     = "VGA",
+> -		.com7_bit = SLCT_VGA,
+> +		.name		= "VGA",
+> +		.com7_bit	= SLCT_VGA,
+> +		.sizeimage	= 381480,
+
+I'd write this 510 * 748.
+
+>  		.rect = {
+> -			.left = 140,
+> -			.top = 14,
+> -			.width = VGA_WIDTH,
+> -			.height = VGA_HEIGHT,
+> +			.left	= 140,
+> +			.top	= 14,
+> +			.width	= VGA_WIDTH,
+> +			.height	= VGA_HEIGHT,
+>  		},
+>  	}, {
+> -		.name     = "QVGA",
+> -		.com7_bit = SLCT_QVGA,
+> +		.name		= "QVGA",
+> +		.com7_bit	= SLCT_QVGA,
+> +		.sizeimage	= 160128,
+
+And this 278 * 576. It makes the value less magic.
+
+>  		.rect = {
+> -			.left = 252,
+> -			.top = 6,
+> -			.width = QVGA_WIDTH,
+> -			.height = QVGA_HEIGHT,
+> +			.left	= 252,
+> +			.top	= 6,
+> +			.width	= QVGA_WIDTH,
+> +			.height	= QVGA_HEIGHT,
+>  		},
+>  	},
+>  };
+> 
+>  /*
+> + * frame rate settings lists
+> + */
+> +unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
+> +#define OV772X_N_FRAME_INTERVALS ARRAY_SIZE(ov772x_frame_intervals)
+> +
+> +/*
+>   * general function
+>   */
+> 
+> @@ -574,6 +602,124 @@ static int ov772x_s_stream(struct v4l2_subdev *sd, int
+> enable) return 0;
+>  }
+> 
+> +static int ov772x_set_frame_rate(struct ov772x_priv *priv,
+> +				 struct v4l2_fract *tpf,
+> +				 const struct ov772x_color_format *cfmt,
+> +				 const struct ov772x_win_size *win)
+> +{
+> +	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
+> +	unsigned int fps = tpf->denominator / tpf->numerator;
+
+tpf->numerator could be 0.
+
+> +	unsigned int fin = clk_get_rate(priv->clk);
+
+Clock rates are unsigned long.
+
+> +	unsigned int rate_prev;
+> +	unsigned int fsize;
+> +	unsigned int pclk;
+> +	unsigned int rate;
+> +	unsigned int idx;
+> +	unsigned int i;
+> +	u8 clkrc = 0;
+> +	u8 com4 = 0;
+> +	int ret;
+> +
+> +	/* Approximate to the closest supported frame interval. */
+> +	rate_prev = ~0L;
+> +	for (i = 0, idx = 0; i < OV772X_N_FRAME_INTERVALS; i++) {
+> +		rate = abs(fps - ov772x_frame_intervals[i]);
+> +		if (rate < rate_prev) {
+> +			idx = i;
+> +			rate_prev = rate;
+
+I'd call the rate_prev and rate variables best_diff and diff respectively.
+
+> +		}
+> +	}
+> +	fps = ov772x_frame_intervals[idx];
+> +
+> +	/* Use image size (with blankings) to calculate desired pixel clock. */
+> +	if ((cfmt->com7 & OFMT_RGB) == OFMT_RGB ||
+> +	    (cfmt->com7 & OFMT_YUV) == OFMT_YUV)
+> +		fsize = win->sizeimage * 2;
+> +	else if ((cfmt->com7 & OFMT_BRAW) == OFMT_BRAW)
+
+I think all these should test (cfmt->com7 & OFMT_MASK) == ...
+
+> +		fsize = win->sizeimage;
+> +
+> +	pclk = fps * fsize;
+> +
+> +	/*
+> +	 * Pixel clock generation circuit is pretty simple:
+> +	 *
+> +	 * Fin -> [ / CLKRC_div] -> [ * PLL_mult] -> pclk
+> +	 *
+> +	 * Try to approximate the desired pixel clock testing all available
+> +	 * PLL multipliers (1x, 4x, 6x, 8x) and calculate corresponding
+> +	 * divisor with:
+> +	 *
+> +	 * div = PLL_mult * Fin / pclk
+> +	 *
+> +	 * and re-calculate the pixel clock using it:
+> +	 *
+> +	 * pclk = Fin * PLL_mult / CLKRC_div
+> +	 *
+> +	 * Choose the PLL_mult and CLKRC_div pair that gives a pixel clock
+> +	 * closer to the desired one.
+> +	 *
+> +	 * The desired pixel clock is calculated using a known frame size
+> +	 * (blanking included) and FPS.
+> +	 */
+> +	rate_prev = ~0L;
+> +	for (i = 0; i < OV772X_PLL_N_MULT; i++) {
+> +		unsigned int pll_mult = ov772x_pll_mult[i];
+> +		unsigned int pll_out = pll_mult * fin;
+> +		unsigned int t_pclk;
+> +		unsigned int div;
+> +
+> +		if (pll_out < pclk)
+> +			continue;
+> +
+> +		div = DIV_ROUND_CLOSEST(pll_out, pclk);
+> +		t_pclk = DIV_ROUND_CLOSEST((fin * pll_mult), div);
+
+No need for the inner parentheses.
+
+> +		rate = abs(pclk - t_pclk);
+> +		if (rate < rate_prev) {
+> +			rate_prev = rate;
+> +			clkrc = CLKRC_DIV(div);
+> +			com4 = ov772x_com4_vals[i];
+> +		}
+> +	}
+> +
+> +	ret = ov772x_write(client, COM4, com4 | COM4_RESERVED);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = ov772x_write(client, CLKRC, clkrc | CLKRC_RESERVED);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	tpf->numerator = 1;
+> +	tpf->denominator = fps;
+> +	priv->fps = tpf->denominator;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ov772x_g_frame_interval(struct v4l2_subdev *sd,
+> +				   struct v4l2_subdev_frame_interval *ival)
+> +{
+> +	struct ov772x_priv *priv = to_ov772x(sd);
+> +	struct v4l2_fract *tpf = &ival->interval;
+> +
+> +	memset(ival->reserved, 0, sizeof(ival->reserved));
+> +	tpf->numerator = 1;
+> +	tpf->denominator = priv->fps;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ov772x_s_frame_interval(struct v4l2_subdev *sd,
+> +				   struct v4l2_subdev_frame_interval *ival)
+> +{
+> +	struct ov772x_priv *priv = to_ov772x(sd);
+> +	struct v4l2_fract *tpf = &ival->interval;
+> +
+> +	memset(ival->reserved, 0, sizeof(ival->reserved));
+> +
+> +	return ov772x_set_frame_rate(priv, tpf, priv->cfmt, priv->win);
+> +}
+> +
+>  static int ov772x_s_ctrl(struct v4l2_ctrl *ctrl)
+>  {
+>  	struct ov772x_priv *priv = container_of(ctrl->handler,
+> @@ -757,6 +903,7 @@ static int ov772x_set_params(struct ov772x_priv *priv,
+>  			     const struct ov772x_win_size *win)
+>  {
+>  	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
+> +	struct v4l2_fract tpf;
+>  	int ret;
+>  	u8  val;
+> 
+> @@ -885,6 +1032,13 @@ static int ov772x_set_params(struct ov772x_priv *priv,
+> if (ret < 0)
+>  		goto ov772x_set_fmt_error;
+> 
+> +	/* COM4, CLKRC: Set pixel clock and framerate. */
+> +	tpf.numerator = 1;
+> +	tpf.denominator = priv->fps;
+> +	ret = ov772x_set_frame_rate(priv, &tpf, cfmt, win);
+> +	if (ret < 0)
+> +		goto ov772x_set_fmt_error;
+> +
+>  	/*
+>  	 * set COM8
+>  	 */
+> @@ -1043,6 +1197,24 @@ static const struct v4l2_subdev_core_ops
+> ov772x_subdev_core_ops = { .s_power	= ov772x_s_power,
+>  };
+> 
+> +static int ov772x_enum_frame_interval(struct v4l2_subdev *sd,
+> +				      struct v4l2_subdev_pad_config *cfg,
+> +				      struct v4l2_subdev_frame_interval_enum *fie)
+> +{
+> +	if (fie->pad || fie->index >= OV772X_N_FRAME_INTERVALS)
+> +		return -EINVAL;
+> +
+> +	if (fie->width != VGA_WIDTH && fie->width != QVGA_WIDTH)
+> +		return -EINVAL;
+> +	if (fie->height != VGA_HEIGHT && fie->height != QVGA_HEIGHT)
+> +		return -EINVAL;
+> +
+> +	fie->interval.numerator = 1;
+> +	fie->interval.denominator = ov772x_frame_intervals[fie->index];
+> +
+> +	return 0;
+> +}
+
+The more I think about it, the more I believe that the subdev frame interval 
+enumeration operation is nonsense. This particular sensor is not restricted to 
+a fixed list of frame intervals. Sensors should really expose the pixel clock 
+and blanking as controls, and higher level parameters such as frame intervals 
+should then be handled by the bridge driver.
+
+I won't nack this patch due to this as I want to see this series merged, so 
+with the above small issues fixed you have my
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+but we're going in the wrong direction. 
+
+-- 
+Regards,
+
+Laurent Pinchart
