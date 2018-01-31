@@ -1,724 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752176AbeAaBDB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 20:03:01 -0500
-Received: from mga17.intel.com ([192.55.52.151]:46626 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751606AbeAaBDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 20:03:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,437,1511856000";
-   d="scan'208";a="200100991"
-Subject: Re: [PATCH arm/aspeed/ast2500 v2] ipmi: add an Aspeed KCS IPMI BMC
- driver
-To: minyard@acm.org, joel@jms.id.au, avifishman70@gmail.com,
-        openbmc@lists.ozlabs.org, openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Cc: andriy.shevchenko@intel.com
-References: <1516810009-16353-1-git-send-email-haiyue.wang@linux.intel.com>
- <f20da565-6644-3ea4-823b-a808cf613958@gmail.com>
- <76454c8b-b8ab-06a5-297c-83bab32c86a7@linux.intel.com>
- <f6a94b94-da37-7dee-afab-85ec83afb92c@acm.org>
- <d12b53d2-9364-bc60-565f-a07a9dd138bc@linux.intel.com>
- <68373e92-8c8b-73b4-094d-dfe51d07b04c@acm.org>
- <96bc417d-8a34-e693-a3aa-9400e6a3437d@linux.intel.com>
- <0e412f6b-240e-0210-50c2-3b8e8d2ee0e4@acm.org>
-From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-Message-ID: <b705f117-58e8-c001-cf25-dfcd56a88f7c@linux.intel.com>
-Date: Wed, 31 Jan 2018 09:02:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752444AbeAaBEf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 20:04:35 -0500
+Received: from mail-dm3nam03on0065.outbound.protection.outlook.com ([104.47.41.65]:34912
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751429AbeAaBEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 20:04:33 -0500
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Gary.Hook@amd.com;
+Subject: [PATCH] iommu/amd - Use dev_err to send events to the system log
+From: Gary R Hook <gary.hook@amd.com>
+To: iommu@lists.linux-foundation.org
+Cc: joro@8bytes.org, linux-kernel@vger.kernel.org
+Date: Tue, 30 Jan 2018 19:04:27 -0600
+Message-ID: <151736066756.21649.4739957712713863861.stgit@sosam4>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <0e412f6b-240e-0210-50c2-3b8e8d2ee0e4@acm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [165.204.78.1]
+X-ClientProxiedBy: BN6PR21CA0002.namprd21.prod.outlook.com (10.173.197.12) To
+ DM5PR12MB1212.namprd12.prod.outlook.com (10.168.237.15)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: b07bd58c-f10c-47df-bfb0-08d5684695ff
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1212;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1212;3:huN/gKm8nHDZo8wQ32DHCxScYQZg6bSPby8lMsVT5bm5sntovb/vnqS27m2hVVlu7PlPDfFJdeWibS/DpCSJYLNR/q/P62yemwZL2itiV5dx4FehVGFdYaYopHpnymtfdC64Fg3b/uo6Rd0NQsKcv067LhQw6+u7sESowzKHd8jhH8AhY7xAWmFn9YN03Vu48OLixLiYwo1me6zrB9NfnjE/6WiZnXc4kHzGm5Ys0qOtIv7axIVuZAJAoQBA9tNk;25:6AI+GyS9HE4pXnpIagG7MC77av/LPtpz0vPULji3SUiejWQITuqGkxtF6lGwSUBgdBwGCaR6EzNrWAjMIbQe7ry7sDXPapPUi5VdmyUcQZwEdG3qAIoCeJSSK1e7WT69/FWK+Bt6Zjax8DUvvtyQ5JgogP/yyetoukfY1HwiGQ7ucPWbKJ9xP7HjclIN2X0MFUmG2B3D7n5c3tRk3coqVdER+0/caEov0SxblO0VfUlOq2qYKwbPRameCYE+MxfJK4md+6ar21RefFeYzqiYJAESl3yO7NTWlnYV66IT/8997K3swSThEU/REO9X1q//4ICGsMAXO6mywz/ygsbHXQ==;31:bOIc/9JbGqgQyEG9YIzk5jGXERnNP2m5Afg/jr+puyv7UjN6W7cx8lWGmGGDnF9yE8+IXQ/pTPPq0kiCLp3uRWQujfhvt3LqTqMKhEeQcnvz1yhw9zJYnlseeR2hF0F3PNEb7aGLonWM1yDpgtGqpBUBfWp0lavjn/oHZhFvSDAjA+eMKmmTMj56HNcHGDBR8rex/2xua3SBk1iHu+lPcNopizjWdwIqN/XWFTt6TjA=
+X-MS-TrafficTypeDiagnostic: DM5PR12MB1212:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1212;20:YVbaQtNBtxKpBtj2PkXqk7G8vnxhJh8xppCvqZTq2T6B2oZtVSmKjBuEjb73rskVzlWlrmIbysmTWGo/M8xrW0ChU2Tsk36xgfFGbyzuplRi3RHoGijGCVfDFudNMU/RuH/2ewk8XabkmPt/XNn/w9eH17YGvP8Ohg9msAHuw2v5eDqi7aQ35tvgRySN5TGJFMI2wmusUfUzCEZwfaubnHDb+YLeS3D/tRN+Rv9ZzxpoXfItSVdKmvrZwO5wCkq967q49sCCpwBFG3jrUCQUu2sYTZjF+zv/zb2OXWrx4m37Hllq3E2RNLY4yxt5DAi5ABJPFH1wU8lr7GB7heNZN+CoPegryW0ZLclcKOAmBP9yg5gWKMRVuIIh0q+ZKcRCdP3wef0dYhJb7XnMb3XHUV/kwpSIYfYuvuXnsK8FuE9ExIALtncY6EtlKqyXc9LbhBseqGIOcijl95Ddp0GPSFlqDiLMoaA7nvVFLk6HvH168Y+YG764+QQfZBpQi7H8;4:GSfqb37Y4CE+mNzbNmgNWYH1XIsPoT9ZWZqAlgnl46lHAe64Gsevr8wcp0iISYKirMkED4eCIPxescBnJxBKhByeOkXU3kE7HIKKci3g+GZKpjkFT0p7zw3qNJKhEikw57KsyOBNJAf5So6/FnwBFyjhQnO74b/ewOoF/maK3byy3mIMI8Tlu+Go0GHSdEx5q8Q+JXH4vQk7ItZ/5tFkGw6RGuY2uwraBk8ecfQuguFaRlmE+vRlBzXN9MzlBWO6Z0FkMd2kCpBO4AVRPDWYz0kJ7kA6MvL17ftarCkH4YUWCbTFbyRwKZlT8reM4I45
+X-Microsoft-Antispam-PRVS: <DM5PR12MB1212C382793A3F323CE641A9FDFB0@DM5PR12MB1212.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3231101)(2400082)(944501161)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041288)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR12MB1212;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1212;
+X-Forefront-PRVS: 056929CBB8
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(7916004)(346002)(376002)(366004)(39380400002)(396003)(39860400002)(199004)(189003)(16526019)(47776003)(83506002)(16576012)(77096007)(66066001)(8676002)(105586002)(186003)(72206003)(386003)(6666003)(59450400001)(230700001)(2486003)(86362001)(23676004)(26005)(6916009)(33896004)(81166006)(8936002)(50466002)(575784001)(6486002)(106356001)(4326008)(5660300001)(68736007)(305945005)(90366009)(103116003)(7736002)(2361001)(2906002)(58126008)(97736004)(33716001)(53936002)(52116002)(478600001)(25786009)(3846002)(316002)(9686003)(6116002)(81156014)(2351001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1212;H:[127.0.1.1];FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxMjEyOzIzOlR5aExFajE1djRRVC9sR1NpSzB5S3lDQXZI?=
+ =?utf-8?B?ejFvdkZqZ1NCNjhkdE9hTS9mWXhtd0g5SWN0WW5XQzhhbE9vNlBOdUN3NUhS?=
+ =?utf-8?B?d0lRVVhmdFJRRVkrL0xkdHMwNmJ5ck1pajRwclhaMnRqVWlIbzB6MEJMRVBt?=
+ =?utf-8?B?Y1FNTGo5RE8vTkszUlVybXBNSHYvVThKcTB3RTQ1NzZyQUtoMmVXWEtDUEFw?=
+ =?utf-8?B?eDhDM1RBTkJUejNGS294QUl4SnAycGlQalVXUUEwYXBXRHorc2pjc1JOTTZr?=
+ =?utf-8?B?UVExYWlFbnJHSCtOQndiczFRTGx2bU1CZDZOa05TTnoyeHBGcTFzRnorL2Ft?=
+ =?utf-8?B?T25FcURrVEtIRlJsUGVwVDBsU3dwemliME1OMnJNYzBiUVkzNnNnOVlNSGVS?=
+ =?utf-8?B?djVrczRjR3dkOUVGNS9wSE1FT2pPNUJPdk13emJBRkxwTVFNSGcxYktpdXh4?=
+ =?utf-8?B?OURsT1ZjU1VFRHRUNit3d05lQXpwNWN3YytNdG1ibWgwaUwzTUFmVzJ6aUdD?=
+ =?utf-8?B?N05nZWN0ejl6YUw5cWtLY3JTQzhnNG5Eejk1eERhSnJRckRSSU10WU0wQUJU?=
+ =?utf-8?B?UGkrQkFOTVYxRk5wNVI5UUhMcDFRbTJ5amVRVld6V0JCTjMzS2xtTGdGbmpo?=
+ =?utf-8?B?S2l6Skd2SlR5NUtJRklhNGE0cGpqUTE0UzhDemVDNVFkTXFncWpWVkhZRFha?=
+ =?utf-8?B?TE5IRjFvN0VWYXRGbGxnU3NJNFBwQXhDL0xWdFkxZ0I1Z2U1ckh4TVZGOG5s?=
+ =?utf-8?B?Nm5mVVpHZ3JqZE1pMW1FVDhIeVc1emwvRXhUYnlCNVZybDRJMXMvbVYvOHd5?=
+ =?utf-8?B?Z283aU5RTWczZGZBSUtHcEZIS1N6MXBSLzJNU1ZkVUNCajhXcTIxeTdqWVJa?=
+ =?utf-8?B?QnVZR2FJVThsd092K3l1ektROWUzc1ByQ1o1bHBBeEhkU0lKTFRqbGJtNTVn?=
+ =?utf-8?B?M3hER01lbGdCdHAvd2Q0ZWV3dSs5UWZWWEQyaHJWZjg4ejQzYlJZN2RHVzVT?=
+ =?utf-8?B?V0xzS2tWNFVHbS9XbFVBd2ZFaFVuM01ESjYrY21veCtrK2FwOGdqMXBuSWdE?=
+ =?utf-8?B?Mkd3ekp1TWVXbVhXbnN3THQxU0luMU1Jc2F1WXdQeVNKeWorY1hrbitoM252?=
+ =?utf-8?B?ZkNhREtGa2hhTk94bXJoUnFxN3Y0S2tJZUJzY2J4L3NGcE4vRDJEbGZiM0Zx?=
+ =?utf-8?B?NytjRncrVzNsRS9tRzNNT1orSmpnL3NOWWp5QTVEMkNXL01aOHRsclQrSzUz?=
+ =?utf-8?B?dEF6d3ZzbzY1bDRQWEphTDVVcWhRd3h3aDNjcmJlVzM4UmZPditLT3FmMG13?=
+ =?utf-8?B?b25Bc3o1cncyT2JyejdOckQ5NnEwaFBUWEdsTmJWZisvNVdXR1Rwc0FZNUJS?=
+ =?utf-8?B?VHExLzVYS2JweXhLWHhGSGJGdEYydjBqV05QK21sVmJDaUhicHJwYzNaZFU5?=
+ =?utf-8?B?OURONVRBTXFhS3Z6ek56Q2Jxa0ZHMFk2Wkc5Y2FJczhxQnYzSzVPekpyWnUx?=
+ =?utf-8?B?N2ZHeE1Tb1VyZzhaaW4xYmljNXQ4QkJJYW0wZ1o4ZFZQZ1VsN083STVrOE0r?=
+ =?utf-8?B?a1pIODhIYjViQm1DMWVsbTVBNGxWUmhDZ29PYXR4OTIxRmJ3WjgyTy9ZTHBo?=
+ =?utf-8?B?WjlhTTh1Yms4elU0ZzZTRUxBSlBoVm1rZHFCVWQxUEpBTnh5TWdaVUV4OEIz?=
+ =?utf-8?B?S2d2OGRwUTZWSmUrWFBGdmY2ZDAweWUxcVh0dTJvYlA1bnM2amFPNXA4Wm0r?=
+ =?utf-8?Q?PeA6Y6HEyWaBJs6p0Iq3ej/lD6LahU+6Ofqnw=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1212;6:tlyyp0ie6q7t6vsUrooVuCUDRqdx3miisqWMj/pInkAzxupK5XK286nHm9xrguUE8vMuFpAHv8P+sl6e8uDU7R8A+9iN57MckUYDoPIXEa9aA/IZ+bdX5zNqhNzU/8lIWLpL7TIjIHGfqdHamBskdZxvNnYS7ttepcrSxjcFro8HncqkEnaMN9Kh4Z++UiBIv8Afj2rvd3jCoGzyJnllr+WoUKcmWTc8hc1b5s9KG4pqAZGquSsJEig42kwgOSm1yAvxmkI05VlCi/ukzjHqJ5K1JthyAt8ttyBzHKPrRTMOtexRFG698kwa5SgGojYzs8REG5kIyRvQMfTXpCAMqlVuFfiEcWUPCnTu4LxdNas=;5:dXFPss1FpsMiecuvfePCdmaPo/iCC/2P1UJ0bXxelHWM1bZxd3veGFepXRv7P1AEPrNhdc0FS7MO24eqj2WDDAEzLR/ABbVijVURiPijFk6yue91TwGMyKai0jS2w12NtRHJBVaZ1MzIXkFoYvZBHUpsSRf900qgxWguKYBC5Xs=;24:g0byYeJOA+nydf5ZnzpV4y4n//Y2TOJSPMGt/SHjFE5+SnHyyPqJzw5Bgo71bE2LqaErSTr6/qrlYh49pixvBcVn/0f6ij2WUG3fKFwyT6M=;7:smDVzDphwZU+pv4oCoTgkY7wkQjjqUx5OPu0kSyI1+lzDlJ8hz+t0+BYFAaGgJ6hFUgpwtBzfmXUzuYeSlpHvkc1bJak1vus6Xn8lghS3ksYCppIFg7UQNoBuK2cWTm0BLHiKyawgxFtVZaEu0uLaRGs+7B5Xnc1KIuAcEyH8TGSmmVqSIgd6Y1EG4aXq5D1k3q73REFGCNnOJFst6jtqk+pOeqEikmGkYCbGV2N1+G2hoq9KU4d8WoccREFC6FM
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1212;20:WDZ1oHOkSe1HBCjJlxjF92mdIjHfBp1xPWdc9uO/uIIkEeXhP0LosjfU1sNkY4aiK41r5AK81zR34HhxNe5+VicMbQUYgd9eRYBAicrA5jnyiza4MdZmquOoXRteXT/J2G8msv5Xb+QI1Cd/MyHxyCUH3rQ+bS272Tyj+koV/n7y8oU7pZnQ1m+zUX/pKOksnXhgeHnWFSshXzVQZjTq9CMH5jDEbWNgoAL4HxlWJXhQ4lW9oXPOwXf7zuMHIXIq
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2018 01:04:31.0421 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b07bd58c-f10c-47df-bfb0-08d5684695ff
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1212
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Remove printk and use a more preferable error logging function.
 
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
+---
+ drivers/iommu/amd_iommu.c |   56 +++++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 27 deletions(-)
 
-On 2018-01-31 08:52, Corey Minyard wrote:
-> On 01/30/2018 06:02 PM, Wang, Haiyue wrote:
->>
->>
->> On 2018-01-30 21:49, Corey Minyard wrote:
->>> On 01/29/2018 07:57 AM, Wang, Haiyue wrote:
->>>>
->>>>
->>>> On 2018-01-26 22:48, Corey Minyard wrote:
->>>>> On 01/26/2018 12:08 AM, Wang, Haiyue wrote:
->>>>>>
->>>>>>
->>>>>> On 2018-01-25 01:48, Corey Minyard wrote:
->>>>>>> On 01/24/2018 10:06 AM, Haiyue Wang wrote:
->>>>>>>> The KCS (Keyboard Controller Style) interface is used to 
->>>>>>>> perform in-band
->>>>>>>> IPMI communication between a server host and its BMC (BaseBoard 
->>>>>>>> Management
->>>>>>>> Controllers).
->>>>>>>>
->>>>>>>> This driver exposes the KCS interface on ASpeed SOCs (AST2400 
->>>>>>>> and AST2500)
->>>>>>>> as a character device. Such SOCs are commonly used as BMCs and 
->>>>>>>> this driver
->>>>>>>> implements the BMC side of the KCS interface.
->>>>>>>>
->>>>>>>> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
->>>>>>>>
->>>>>>>> ---
->>>>>>>> v1->v2
->>>>>>>>
->>>>>>>> - Divide the driver into two parts, one handles the BMC KCS 
->>>>>>>> IPMI 2.0 state;
->>>>>>>>    the other handles the BMC KCS controller such as AST2500 IO 
->>>>>>>> accessing.
->>>>>>>> - Use the spin lock APIs to handle the device file operations 
->>>>>>>> and BMC chip
->>>>>>>>    IRQ inferface for accessing the same KCS BMC data structure.
->>>>>>>> - Enhanced the phases handling of the KCS BMC.
->>>>>>>> - Unified the IOCTL definition for IPMI BMC, it will be used by 
->>>>>>>> KCS and BT.
->>>>>>>>
->>>>>>>> ---
->>>>>>>>
->>>>>>>> +
->>>>>>>> +static void kcs_bmc_handle_data(struct kcs_bmc *kcs_bmc)
->>>>>>>> +{
->>>>>>>> +    u8 data;
->>>>>>>> +
->>>>>>>> +    switch (kcs_bmc->phase) {
->>>>>>>> +    case KCS_PHASE_WRITE:
->>>>>>>> +        set_state(kcs_bmc, WRITE_STATE);
->>>>>>>> +
->>>>>>>> +        /* set OBF before reading data */
->>>>>>>> +        write_data(kcs_bmc, KCS_ZERO_DATA);
->>>>>>>> +
->>>>>>>> +        if (kcs_bmc->data_in_idx < KCS_MSG_BUFSIZ)
->>>>>>>> + kcs_bmc->data_in[kcs_bmc->data_in_idx++] =
->>>>>>>> +                        read_data(kcs_bmc);
->>>>>
->>>>> I missed this earlier, you need to issue a length error if the 
->>>>> data is too large.
->>>>>
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    case KCS_PHASE_WRITE_END:
->>>>>>>> +        set_state(kcs_bmc, READ_STATE);
->>>>>>>> +
->>>>>>>> +        if (kcs_bmc->data_in_idx < KCS_MSG_BUFSIZ)
->>>>>>>> + kcs_bmc->data_in[kcs_bmc->data_in_idx++] =
->>>>>>>> +                        read_data(kcs_bmc);
->>>>>>>> +
->>>>>>>> +        kcs_bmc->phase = KCS_PHASE_WAIT_READ;
->>>>>>>> +        if (kcs_bmc->running) {
->>>>>>>
->>>>>>> Why do you only do this when running is set?  It won't hurt 
->>>>>>> anything if it's not
->>>>>>> set.  As it is, you have a race if something opens the device 
->>>>>>> while this code
->>>>>>> runs.
->>>>>>>
->>>>>>> Also, don't set the state to wait read until the "write" has 
->>>>>>> finished (userland has
->>>>>>> read the data out of the buffer.  More on that later.
->>>>>>>
->>>>>> Understood.
->>>>>>>> + kcs_bmc->data_in_avail = true;
->>>>>>>> + wake_up_interruptible(&kcs_bmc->queue);
->>>>>>>> +        }
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    case KCS_PHASE_READ:
->>>>>>>> +        if (kcs_bmc->data_out_idx == kcs_bmc->data_out_len)
->>>>>>>> +            set_state(kcs_bmc, IDLE_STATE);
->>>>>>>> +
->>>>>>>> +        data = read_data(kcs_bmc);
->>>>>>>> +        if (data != KCS_CMD_READ_BYTE) {
->>>>>>>> +            set_state(kcs_bmc, ERROR_STATE);
->>>>>>>> +            write_data(kcs_bmc, KCS_ZERO_DATA);
->>>>>>>> +            break;
->>>>>>>> +        }
->>>>>>>> +
->>>>>>>> +        if (kcs_bmc->data_out_idx == kcs_bmc->data_out_len) {
->>>>>>>> +            write_data(kcs_bmc, KCS_ZERO_DATA);
->>>>>>>> +            kcs_bmc->phase = KCS_PHASE_IDLE;
->>>>>>>> +            break;
->>>>>>>> +        }
->>>>>>>> +
->>>>>>>> +        write_data(kcs_bmc,
->>>>>>>> + kcs_bmc->data_out[kcs_bmc->data_out_idx++]);
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    case KCS_PHASE_ABORT_ERROR1:
->>>>>>>> +        set_state(kcs_bmc, READ_STATE);
->>>>>>>> +
->>>>>>>> +        /* Read the Dummy byte */
->>>>>>>> +        read_data(kcs_bmc);
->>>>>>>> +
->>>>>>>> +        write_data(kcs_bmc, kcs_bmc->error);
->>>>>>>> +        kcs_bmc->phase = KCS_PHASE_ABORT_ERROR2;
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    case KCS_PHASE_ABORT_ERROR2:
->>>>>>>> +        set_state(kcs_bmc, IDLE_STATE);
->>>>>>>> +
->>>>>>>> +        /* Read the Dummy byte */
->>>>>>>> +        read_data(kcs_bmc);
->>>>>>>> +
->>>>>>>> +        write_data(kcs_bmc, KCS_ZERO_DATA);
->>>>>>>> +        kcs_bmc->phase = KCS_PHASE_IDLE;
->>>>>>>> +
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    default:
->>>>>>>> +        set_state(kcs_bmc, ERROR_STATE);
->>>>>>>> +
->>>>>>>> +        /* Read the Dummy byte */
->>>>>>>> +        read_data(kcs_bmc);
->>>>>>>> +
->>>>>>>> +        write_data(kcs_bmc, KCS_ZERO_DATA);
->>>>>>>> +        break;
->>>>>>>> +    }
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static void kcs_bmc_handle_command(struct kcs_bmc *kcs_bmc)
->>>>>>>> +{
->>>>>>>> +    u8 cmd;
->>>>>>>> +
->>>>>>>> +    set_state(kcs_bmc, WRITE_STATE);
->>>>>>>> +
->>>>>>>> +    /* Dummy data to generate OBF */
->>>>>>>> +    write_data(kcs_bmc, KCS_ZERO_DATA);
->>>>>>>> +
->>>>>>>> +    cmd = read_data(kcs_bmc);
->>>>>>>
->>>>>>> Shouldn't you check the phase in all the cases below and do error
->>>>>>> handling if the phase isn't correct?
->>>>>>>
->>>>>>> Similar thing if the device here isn't open.  You need to handle
->>>>>>> that gracefully.
->>>>>>>
->>>>>>> Also, you should remove data_in_avail and data_in_idx setting from
->>>>>>> here, for reasons I will explain later.
->>>>>>>
->>>>>> If host software sends the data twice such as a retry before the 
->>>>>> BMC's IPMI service starts,
->>>>>> then the two IPMI requests will be merged into one, if not clear 
->>>>>> data_in_idx after receving
->>>>>> KCS_CMD_WRITE_START. Most of the states are driven by host 
->>>>>> software (SMS). :(
->>>>>
->>>>> True, but what if the host issues WRITE_START or a WRITE_END while 
->>>>> this driver is in read
->>>>> state?  The spec is unclear on this, but it really only makes 
->>>>> sense for the host to issue
->>>>> WRITE_START in idle stat and WRITE_END in write state. IMHO it 
->>>>> should go to error
->>>>> state.  You might make the case that a WRITE_START anywhere 
->>>>> restarts the transaction,
->>>>> but the feel of the error state machine kind of goes against that. 
->>>>> WRITE_END is definitely
->>>>> wrong anywhere but write state.
->>>>>
->>>>> I just found the following in the spec (section 9.12):
->>>>>
->>>>>    Thus, since the interface will allow a command transfer to be
->>>>>    started or restarted
->>>>>    at any time when the input buffer is empty, software could 
->>>>> elect to
->>>>>    simply retry
->>>>>    the command upon detecting an error condition, or issue a 
->>>>> ‘known good’
->>>>>    command in order to clear ERROR_STATE
->>>>>
->>>>> So a WRITE_START anywhere is ok.  A WRITE_END in the wrong state 
->>>>> should probably
->>>>> still go to error state.  This means the user needs to be able to 
->>>>> handle a write error at
->>>>> any time.  It also means it's very important to make sure the user 
->>>>> does a read before
->>>>> doing a write.  If the host re-issues a WRITE_START and writes a 
->>>>> new command
->>>>> between the time the use reads the data and writes the response, 
->>>>> the response would
->>>>> be for the wrong command.
->>>>>
->>>>>>>> +    switch (cmd) {
->>>>>>>> +    case KCS_CMD_WRITE_START:
->>>>>>>> +        kcs_bmc->data_in_avail = false;
->>>>>>>> +        kcs_bmc->data_in_idx   = 0;
->>>>>>>> +        kcs_bmc->phase         = KCS_PHASE_WRITE;
->>>>>>>> +        kcs_bmc->error         = KCS_NO_ERROR;
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    case KCS_CMD_WRITE_END:
->>>>>>>> +        kcs_bmc->phase = KCS_PHASE_WRITE_END;
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    case KCS_CMD_ABORT:
->>>>>>>> +        if (kcs_bmc->error == KCS_NO_ERROR)
->>>>>>>> +            kcs_bmc->error = KCS_ABORTED_BY_COMMAND;
->>>>>>>> +
->>>>>>>> +        kcs_bmc->phase = KCS_PHASE_ABORT_ERROR1;
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    default:
->>>>>>>> +        kcs_bmc->error = KCS_ILLEGAL_CONTROL_CODE;
->>>>>>>> +        set_state(kcs_bmc, ERROR_STATE);
->>>>>>>> +        write_data(kcs_bmc, kcs_bmc->error);
->>>>>>>> +        kcs_bmc->phase = KCS_PHASE_ERROR;
->>>>>>>> +        break;
->>>>>>>> +    }
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +int kcs_bmc_handle_event(struct kcs_bmc *kcs_bmc)
->>>>>>>> +{
->>>>>>>> +    unsigned long flags;
->>>>>>>> +    int ret = 0;
->>>>>>>> +    u8 status;
->>>>>>>> +
->>>>>>>> +    spin_lock_irqsave(&kcs_bmc->lock, flags);
->>>>>>>> +
->>>>>>>> +    status = read_status(kcs_bmc) & (KCS_STATUS_IBF | 
->>>>>>>> KCS_STATUS_CMD_DAT);
->>>>>>>> +
->>>>>>>> +    switch (status) {
->>>>>>>> +    case KCS_STATUS_IBF | KCS_STATUS_CMD_DAT:
->>>>>>>> +        kcs_bmc_handle_command(kcs_bmc);
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    case KCS_STATUS_IBF:
->>>>>>>> +        kcs_bmc_handle_data(kcs_bmc);
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    default:
->>>>>>>> +        ret = -1;
->>>>>>>> +        break;
->>>>>>>> +    }
->>>>>>>> +
->>>>>>>> +    spin_unlock_irqrestore(&kcs_bmc->lock, flags);
->>>>>>>> +
->>>>>>>> +    return ret;
->>>>>>>> +}
->>>>>>>> +EXPORT_SYMBOL(kcs_bmc_handle_event);
->>>>>>>> +
->>>>>>>> +static inline struct kcs_bmc *file_kcs_bmc(struct file *filp)
->>>>>>>> +{
->>>>>>>> +    return container_of(filp->private_data, struct kcs_bmc, 
->>>>>>>> miscdev);
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static int kcs_bmc_open(struct inode *inode, struct file *filp)
->>>>>>>> +{
->>>>>>>> +    struct kcs_bmc *kcs_bmc = file_kcs_bmc(filp);
->>>>>>>> +    int ret = 0;
->>>>>>>> +
->>>>>>>> +    spin_lock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    if (!kcs_bmc->running) {
->>>>>>>> +        kcs_bmc->running       = 1;
->>>>>>>> +        kcs_bmc->phase         = KCS_PHASE_IDLE;
->>>>>>>> +        kcs_bmc->data_in_avail = false;
->>>>>>>
->>>>>>> If you do everything right, setting the phase and data_in_avail 
->>>>>>> should not
->>>>>>> be necessary here.
->>>>>>>
->>>>>>>> +    } else {
->>>>>>>> +        ret = -EBUSY;
->>>>>>>> +    }
->>>>>>>> +
->>>>>>>> +    spin_unlock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    return ret;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static unsigned int kcs_bmc_poll(struct file *filp, poll_table 
->>>>>>>> *wait)
->>>>>>>> +{
->>>>>>>> +    struct kcs_bmc *kcs_bmc = file_kcs_bmc(filp);
->>>>>>>> +    unsigned int mask = 0;
->>>>>>>> +
->>>>>>>> +    poll_wait(filp, &kcs_bmc->queue, wait);
->>>>>>>> +
->>>>>>>> +    spin_lock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    if (kcs_bmc->data_in_avail)
->>>>>>>> +        mask |= POLLIN;
->>>>>>>> +
->>>>>>>> +    spin_unlock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    return mask;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static ssize_t kcs_bmc_read(struct file *filp, char *buf,
->>>>>>>> +                size_t count, loff_t *offset)
->>>>>>>> +{
->>>>>>>> +    struct kcs_bmc *kcs_bmc = file_kcs_bmc(filp);
->>>>>>>> +    ssize_t ret = -EAGAIN;
->>>>>>>> +
->>>>>>>
->>>>>>> This function still has some issues.
->>>>>>>
->>>>>>> You can't call copy_to_user() with a spinlock held or interrupts 
->>>>>>> disabled.
->>>>>>> To handle readers, you probably need a separate mutex.
->>>>>>>
->>>>>>> Also, this function can return -EAGAIN even if O_NONBLOCK is not 
->>>>>>> set if
->>>>>>> kcs_bmc->data_in_avail changes between when you wait on the event
->>>>>>> and when you check it under the lock.
->>>>>>>
->>>>>>> You also clear data_in_avail even if the copy_to_user() fails, 
->>>>>>> which is
->>>>>>> wrong.
->>>>>>>
->>>>>>> I believe the best way to handle this would be to have the spinlock
->>>>>>> protect the inner workings of the state machine and a mutex handle
->>>>>>> copying data out, setting/clearing the running flag (thus a mutex
->>>>>>> instead of spinlock in open and release) and the ioctl settings 
->>>>>>> (except
->>>>>>> for abort where you will need to grab the spinlock).
->>>>>>>
->>>>>>> After the wait event below, grab the mutex.  If data is not 
->>>>>>> available
->>>>>>> and O_NONBLOCK is not set, drop the mutex and retry. Otherwise
->>>>>>> this is the only place (besides release) that sets data_in_avail 
->>>>>>> to false.
->>>>>>> Do the copy_to_user(), grab the spinlock, clear data_in_avail and
->>>>>>> data_in_idx, then release the lock and mutex.  If you are really
->>>>>>> adventurous you can do this without grabbing the lock using
->>>>>>> barriers, but it's probably not necessary here.
->>>>>>>
->>>>>
->>>>> With the state machine being able to be restarted at any time, you 
->>>>> need
->>>>> something a little different here.  You still need the mutex to 
->>>>> handle
->>>>> multiple readers and the copy.  I think the function should be 
->>>>> something
->>>>> like:
->>>>>
->>>> Since KCS is not a multi-reader protocol from BMC's view, you makes 
->>>> things complex. :-)
->>>
->>> No, I don't think you understand.  The primary purpose of the 
->>> complexity
->>> here is to protect the driver from the host system (on the other 
->>> side of
->>> the KCS interface).  Without this protection, it is possible for the 
->>> host
->>> system to start a new write while the user on the BMC side is reading
->>> data out, resulting in corrupt data being read.
->>>
->>> I haven't thought too much about this.  There may be a simpler way,
->>> but the protection needs to be there.
->>>
->>> And you may not think you need to protect the driver against a
->>> malicious BMC side user code, but you would be wrong.  You can
->>> only have one opener, but with threads or a fork you can have
->>> multiple readers.  And you don't know if a malicious piece of
->>> code has taken over userland.  You always need to protect the
->>> kernel.
->>>
->> Sure, the read/write have protected the critical data area with IRQ, 
->> and also, these
->> functions should be thread local safe I believe.
->>
->> spin_lock_irq(&kcs_bmc->lock);
->> ...
->> spin_unlock_irq(&kcs_bmc->lock);
->>
->
-> But remember, you can't call copy_to_user() when IRQs are off or when 
-> you are holding
-> a spinlock.  That is an absolute no.  It can crash the kernel.
->
-> So you need a design that takes this into account, but will not result 
-> in the possibility
-> of bad data being read.
->
-Yes, sure, as I said before: access_ok(VERIFY_WRITE, to, n), then memcpy 
-in spin_lock.
->>>>>    static ssize_t kcs_bmc_read(struct file *filp, char *buf,
->>>>>                     size_t count, loff_t *offset)
->>>>>    {
->>>>>         struct kcs_bmc *kcs_bmc = file_kcs_bmc(filp);
->>>>>         ssize_t ret;
->>>>>         bool avail;
->>>>>         size_t data_size;
->>>>>         u8 *data;
->>>>>
->>>>>         data = kmalloc(KCS_MSG_BUFSIZ, GFP_KERNEL);
->>>>>         if (!data)
->>>>>             return -ENOMEM;
->>>>>
->>>>>    retry:
->>>>>         ret = -EAGAIN;
->>>>>         if (!(filp->f_flags & O_NONBLOCK))
->>>>>             wait_event_interruptible(kcs_bmc->queue,
->>>>>                          kcs_bmc->data_in_avail);
->>>>>
->>>>>         mutex_lock(&kcs_bmc->read_mutex);
->>>>>
->>>>>         spin_lock_irq(&kcs_bmc->lock);
->>>>>         avail = kcs_bmc->data_in_avail;
->>>>>         if (avail) {
->>>>>             memcpy(data, kcs_bmc->data_in, kcs_bmc->data_in_idx);
->>>>>             data_size = kcs_bmc->data_in_idx;
->>>>>         }
->>>>>         spin_unlock_irq(&kcs_bmc->lock);
->>>>>
->>>>>         if (!avail) {
->>>>>             if (filp->f_flags & O_NONBLOCK)
->>>>>                 goto out_mutex_unlock;
->>>>>             mutex_unlock(&kcs_bmc->read_mutex);
->>>>>             goto retry;
->>>>>         }
->>>>>
->>>>>         if (count < data_size) {
->>>>>             ret = -EOVERFLOW;
->>>>>              ? I'm not sure about the error, but userspace needs 
->>>>> to know.
->>>>>             goto out_mutex_unlock;
->>>
->>> Maybe a length error to the host side here?
->
-> You didn't comment on this or the other length error.  That needs to be
-> handled.
->
-Yes, will send a length error by following KCS spec.
->>>
->>>>>         }
->>>>>
->>>>>         if (!copy_to_user(buf, data, data_size)) {
->>>>>             ret = -EFAULT;
->>>>>             goto out_mutex_unlock;
->>>>>         }
->>>>>
->>>>>         ret = data_size;
->>>>>
->>>>>         spin_lock_irq(&kcs_bmc->lock);
->>>>>
->>>>>         if (kcs_bmc->phase != KCS_PHASE_WRITE_END_DONE)
->>>>>             /* Something aborted or restarted the state machine. */
->>>>>             ? Maybe restart if O_NONBLOCK is not set and -EAGAIN 
->>>>> if it is?
->>>>>             ret = -EIO;
->>>>>         } else {
->>>>>             kcs_bmc->phase = KCS_PHASE_WAIT_READ;
->>>>>             kcs_bmc->data_in_avail = false;
->>>>>             kcs_bmc->data_in_idx = 0;
->>>>>         }
->>>>>
->>>>>         spin_unlock_irq(&kcs_bmc->lock);
->>>>>
->>>>>    out_mutex_unlock:
->>>>>         mutex_unlock(&kcs_bmc->read_mutex);
->>>>>
->>>>>         kfree(data);
->>>>>
->>>>>         return ret;
->>>>>    }
->>>>> Note that I added a state, KCS_PHASE_WRITE_END_DONE, which would be
->>>>> set after the final byte from the host is received.  You want the 
->>>>> read here
->>>>> done before you can do the write below to avoid the race I talked 
->>>>> about.
->>>>>
->>>>> There is a local copy made of the data.  What you *never* want to 
->>>>> happen
->>>>> here is for the state machine to start processing a new write command
->>>>> while the data is being copied.  It could result in corrupt data 
->>>>> being read
->>>>> and some random operation being done by the BMC.
->>>>>
->>>>> If you want to avoid the local copy, it could be done, but it's 
->>>>> more complex.
->>>>>
->>>>>>>> +    if (!(filp->f_flags & O_NONBLOCK))
->>>>>>>> +        wait_event_interruptible(kcs_bmc->queue,
->>>>>>>> +                     kcs_bmc->data_in_avail);
->>>>>>>> +
->>>>>>>> +    spin_lock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    if (kcs_bmc->data_in_avail) {
->>>>>>>> +        kcs_bmc->data_in_avail = false;
->>>>>>>> +
->>>>>>>> +        if (count > kcs_bmc->data_in_idx)
->>>>>>>> +            count = kcs_bmc->data_in_idx;
->>>>>>>> +
->>>>>>>> +        if (!copy_to_user(buf, kcs_bmc->data_in, count))
->>>>>>>> +            ret = count;
->>>>>>>> +        else
->>>>>>>> +            ret = -EFAULT;
->>>>>>>> +    }
->>>>>>>> +
->>>>>>>> +    spin_unlock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    return ret;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static ssize_t kcs_bmc_write(struct file *filp, const char *buf,
->>>>>>>> +                 size_t count, loff_t *offset)
->>>>>>>> +{
->>>>>>>> +    struct kcs_bmc *kcs_bmc = file_kcs_bmc(filp);
->>>>>>>> +    ssize_t ret = count;
->>>>>>>> +
->>>>>>>> +    if (count < 1 || count > KCS_MSG_BUFSIZ)
->>>>>>>> +        return -EINVAL;
->>>>>>>> +
->>>>>>>> +    spin_lock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    if (kcs_bmc->phase == KCS_PHASE_WAIT_READ) {
->>>>>>>> +        if (copy_from_user(kcs_bmc->data_out, buf, count)) {
->>>>>>>> +            spin_unlock_irq(&kcs_bmc->lock);
->>>>>>>> +            return -EFAULT;
->>>>>>>> +        }
->>>>>>>> +
->>>>>>>> +        kcs_bmc->phase = KCS_PHASE_READ;
->>>>>>>> +        kcs_bmc->data_out_idx = 1;
->>>>>>>> +        kcs_bmc->data_out_len = count;
->>>>>>>> +        write_data(kcs_bmc, kcs_bmc->data_out[0]);
->>>>>>>> +    } else if (kcs_bmc->phase == KCS_PHASE_READ) {
->>>>>>>> +        ret = -EBUSY;
->>>>>>>> +    } else {
->>>>>>>> +        ret = -EINVAL;
->>>>>>>
->>>>>>> Is there a reason you return -EINVAL here?  Why not just -EBUSY 
->>>>>>> in all
->>>>>>> cases?  Is there something that userland will need to do 
->>>>>>> differently?
->>>>>>>
->>>>>>>> +    }
->>>>>>>> +
->>>>>>>> +    spin_unlock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    return ret;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static long kcs_bmc_ioctl(struct file *filp, unsigned int cmd,
->>>>>>>> +              unsigned long arg)
->>>>>>>> +{
->>>>>>>> +    struct kcs_bmc *kcs_bmc = file_kcs_bmc(filp);
->>>>>>>> +    long ret = 0;
->>>>>>>> +
->>>>>>>> +    spin_lock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    switch (cmd) {
->>>>>>>> +    case IPMI_BMC_IOCTL_SET_SMS_ATN:
->>>>>>>> +        update_status_bits(kcs_bmc, KCS_STATUS_SMS_ATN,
->>>>>>>> +                        KCS_STATUS_SMS_ATN);
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    case IPMI_BMC_IOCTL_CLEAR_SMS_ATN:
->>>>>>>> +        update_status_bits(kcs_bmc, KCS_STATUS_SMS_ATN,
->>>>>>>> +                        0);
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    case IPMI_BMC_IOCTL_FORCE_ABORT:
->>>>>>>> +        set_state(kcs_bmc, ERROR_STATE);
->>>>>>>> +        read_data(kcs_bmc);
->>>>>>>> +        write_data(kcs_bmc, KCS_ZERO_DATA);
->>>>>>>> +
->>>>>>>> +        kcs_bmc->phase = KCS_PHASE_ERROR;
->>>>>>>> +        kcs_bmc->data_in_avail = false;
->>>>>>>> +        break;
->>>>>>>> +
->>>>>>>> +    default:
->>>>>>>> +        ret = -EINVAL;
->>>>>>>> +        break;
->>>>>>>> +    }
->>>>>>>> +
->>>>>>>> +    spin_unlock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    return ret;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static int kcs_bmc_release(struct inode *inode, struct file 
->>>>>>>> *filp)
->>>>>>>> +{
->>>>>>>> +    struct kcs_bmc *kcs_bmc = file_kcs_bmc(filp);
->>>>>>>> +
->>>>>>>
->>>>>>> What happens if the device gets closed in the middle of a 
->>>>>>> transaction?  That's
->>>>>>> an important case to handle.  If something is in process, you 
->>>>>>> need to abort it.
->>>>>>>
->>>>>> The device just provides the read & write data, the transaction 
->>>>>> is handled in the KCS
->>>>>> controller's IRQ handler.
->>>>>
->>>>> From the spec, section 9.14:
->>>>>
->>>>>    The BMC must change the status to ERROR_STATE on any condition 
->>>>> where it
->>>>>    aborts a command transfer in progress.
->>>>>
->>>>> So you need to do something here.
->>>>>
->>>> In practice, we do this as spec said in ipmid, NOT in driver, 
->>>> driver can't handle anything, let's
->>>> make it simple, thanks!
->>>
->>> If ipmid crashes or is killed, how does it accomplish this?
->>>
->> Every time ipmids (or kcsd) crashed or killed, it needs start to call 
->> FORCE_ARBORT firstly, to sync with
->> host side software.
->>>>
->>>> Whenever the BMC is reset (from power-on or a hard reset), the 
->>>> State Bits are initialized to “11 - Error State”. Doing so
->>>> allows SMS to detect that the BMC has been reset and that any 
->>>> message in process has been terminated by the BMC.
->>>
->>> Right, that's fine, like it should be.  But we are not talking about 
->>> a reset.
->>>
->> I think the final error handling solution is that kcsd (user land) 
->> runs, otherwise, the host software side still got stuck. We meet
->> this kind of issue, so in general, we just doesn't handle some mirror 
->> errors in driver, then in kcsd, when it can provide the real
->> IPMI service, it will reset the channel firstly to sync with host 
->> side software.
->
-> "Userland will do the right thing" is not very convincing to a kernel 
-> developer.
->
-> Plus if the above is true, I would think that you would just want to 
-> hold the device
-> in an error state when it wasn't opened.
->
-I understand your concern, of course, driver need handles things well. 
-But in fact, if a user app is truly a bad boy, it still can hang
-the host side: set SMS_ATN, but no message returned when software host 
-side requests, then host open-ipmi driver will hang, we
-meet this kind of error to hang the customer's host. :) In my 
-understanding, kcs-bmc should do the right thing about read and write,
-the real transaction should be handled correctly by the kcsd.
-
-And if no kcsd starts, then this kind of BMC can't be sold out. :)
-> -corey
->
->>> -corey
->>>
->>>>>>>> + spin_lock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    kcs_bmc->running = 0;
->>>>>>>> +
->>>>>>>> +    spin_unlock_irq(&kcs_bmc->lock);
->>>>>>>> +
->>>>>>>> +    return 0;
->>>>>>>> +}
->>>>>>>> +
->>>>>
->>>>>
->>>>
->>>
->>
->
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index b58e0a745b7f..90a61f546bac 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -546,6 +546,8 @@ static void amd_iommu_report_page_fault(u16 devid, u16 domain_id,
+ 
+ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ {
++	struct pci_dev *pdev = iommu->dev;
++	struct device *dev = &pdev->dev;
+ 	int type, devid, domid, flags;
+ 	volatile u32 *event = __evt;
+ 	int count = 0;
+@@ -572,53 +574,53 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ 		amd_iommu_report_page_fault(devid, domid, address, flags);
+ 		return;
+ 	} else {
+-		printk(KERN_ERR "AMD-Vi: Event logged [");
++		dev_err(dev, "AMD-Vi: Event logged [");
+ 	}
+ 
+ 	switch (type) {
+ 	case EVENT_TYPE_ILL_DEV:
+-		printk("ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x "
+-		       "address=0x%016llx flags=0x%04x]\n",
+-		       PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+-		       address, flags);
++		dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x "
++			"address=0x%016llx flags=0x%04x]\n",
++			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
++			address, flags);
+ 		dump_dte_entry(devid);
+ 		break;
+ 	case EVENT_TYPE_DEV_TAB_ERR:
+-		printk("DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
+-		       "address=0x%016llx flags=0x%04x]\n",
+-		       PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+-		       address, flags);
++		dev_err(dev, "DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
++			"address=0x%016llx flags=0x%04x]\n",
++			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
++			address, flags);
+ 		break;
+ 	case EVENT_TYPE_PAGE_TAB_ERR:
+-		printk("PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
+-		       "domain=0x%04x address=0x%016llx flags=0x%04x]\n",
+-		       PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+-		       domid, address, flags);
++		dev_err(dev, "PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
++			"domain=0x%04x address=0x%016llx flags=0x%04x]\n",
++			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
++			domid, address, flags);
+ 		break;
+ 	case EVENT_TYPE_ILL_CMD:
+-		printk("ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
++		dev_err(dev, "ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
+ 		dump_command(address);
+ 		break;
+ 	case EVENT_TYPE_CMD_HARD_ERR:
+-		printk("COMMAND_HARDWARE_ERROR address=0x%016llx "
+-		       "flags=0x%04x]\n", address, flags);
++		dev_err(dev, "COMMAND_HARDWARE_ERROR address=0x%016llx "
++			"flags=0x%04x]\n", address, flags);
+ 		break;
+ 	case EVENT_TYPE_IOTLB_INV_TO:
+-		printk("IOTLB_INV_TIMEOUT device=%02x:%02x.%x "
+-		       "address=0x%016llx]\n",
+-		       PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+-		       address);
++		dev_err(dev, "IOTLB_INV_TIMEOUT device=%02x:%02x.%x "
++			"address=0x%016llx]\n",
++			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
++			address);
+ 		break;
+ 	case EVENT_TYPE_INV_DEV_REQ:
+-		printk("INVALID_DEVICE_REQUEST device=%02x:%02x.%x "
+-		       "address=0x%016llx flags=0x%04x]\n",
+-		       PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+-		       address, flags);
++		dev_err(dev, "INVALID_DEVICE_REQUEST device=%02x:%02x.%x "
++			"address=0x%016llx flags=0x%04x]\n",
++			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
++			address, flags);
+ 		break;
+ 	default:
+-		printk(KERN_ERR "UNKNOWN type=0x%02x event[0]=0x%08x "
+-		       "event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
+-		       type, event[0], event[1], event[2], event[3]);
++		dev_err(dev, KERN_ERR "UNKNOWN event[0]=0x%08x event[1]=0x%08x "
++			"event[2]=0x%08x event[3]=0x%08x\n",
++			event[0], event[1], event[2], event[3]);
+ 	}
+ 
+ 	memset(__evt, 0, 4 * sizeof(u32));
