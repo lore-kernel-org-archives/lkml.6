@@ -1,74 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755117AbeAaXHp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 18:07:45 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47510 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755435AbeAaXHi (ORCPT
+        id S1754447AbeAaXFu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 18:05:50 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:60126 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754417AbeAaXFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 18:07:38 -0500
-Date: Wed, 31 Jan 2018 15:07:36 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: don't expose page to fast gup before it's ready
-Message-Id: <20180131150736.9703ab0826121f2e9e23cb8e@linux-foundation.org>
-In-Reply-To: <20180109101050.GA83229@google.com>
-References: <20180108225632.16332-1-yuzhao@google.com>
-        <20180109084622.GF1732@dhcp22.suse.cz>
-        <20180109101050.GA83229@google.com>
-X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 31 Jan 2018 18:05:44 -0500
+From: daniel.m.jordan@oracle.com
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
+        Dave.Dice@oracle.com, dave@stgolabs.net, khandual@linux.vnet.ibm.com,
+        ldufour@linux.vnet.ibm.com, mgorman@suse.de, mhocko@kernel.org,
+        pasha.tatashin@oracle.com, steven.sistare@oracle.com,
+        yossi.lev@oracle.com
+Subject: [RFC PATCH v1 12/13] mm: split up release_pages into non-sentinel and sentinel passes
+Date: Wed, 31 Jan 2018 18:04:12 -0500
+Message-Id: <20180131230413.27653-13-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
+References: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8791 signatures=668659
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1801310283
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 9 Jan 2018 02:10:50 -0800 Yu Zhao <yuzhao@google.com> wrote:
+A common case in release_pages is for the 'pages' list to be in roughly
+the same order as they are in their LRU.  With LRU batch locking, when a
+sentinel page is removed, an adjacent non-sentinel page must be promoted
+to a sentinel page to follow the locking scheme.  So we can get behavior
+where nearly every page in the 'pages' array is treated as a sentinel
+page, hurting the scalability of this approach.
 
-> On Tue, Jan 09, 2018 at 09:46:22AM +0100, Michal Hocko wrote:
-> > On Mon 08-01-18 14:56:32, Yu Zhao wrote:
-> > > We don't want to expose page before it's properly setup. During
-> > > page setup, we may call page_add_new_anon_rmap() which uses non-
-> > > atomic bit op. If page is exposed before it's done, we could
-> > > overwrite page flags that are set by get_user_pages_fast() or
-> > > it's callers. Here is a non-fatal scenario (there might be other
-> > > fatal problems that I didn't look into):
-> > > 
-> > > 	CPU 1				CPU1
-> > > set_pte_at()			get_user_pages_fast()
-> > > page_add_new_anon_rmap()		gup_pte_range()
-> > > 	__SetPageSwapBacked()			SetPageReferenced()
-> > > 
-> > > Fix the problem by delaying set_pte_at() until page is ready.
-> > 
-> > Have you seen this race happening in real workloads or this is a code
-> > review based fix or a theoretical issue? I am primarily asking because
-> > the code is like that at least throughout git era and I do not remember
-> > any issue like this. If you can really trigger this tiny race window
-> > then we should mark the fix for stable.
-> 
-> I didn't observe the race directly. But I did get few crashes when
-> trying to access mem_cgroup of pages returned by get_user_pages_fast().
-> Those page were charged and they showed valid mem_cgroup in kdumps.
-> So this led me to think the problem came from premature set_pte_at().
-> 
-> I think the fact that nobody complained about this problem is because
-> the race only happens when using ksm+swap, and it might not cause
-> any fatal problem even so. Nevertheless, it's nice to have set_pte_at()
-> done consistently after rmap is added and page is charged.
-> 
-> > Also what prevents reordering here? There do not seem to be any barriers
-> > to prevent __SetPageSwapBacked leak after set_pte_at with your patch.
-> 
-> I assumed mem_cgroup_commit_charge() acted as full barrier. Since you
-> explicitly asked the question, I realized my assumption doesn't hold
-> when memcg is disabled. So we do need something to prevent reordering
-> in my patch. And it brings up the question whether we want to add more
-> barrier to other places that call page_add_new_anon_rmap() and
-> set_pte_at().
+To address this, split up release_pages into non-sentinel and sentinel
+passes so that the non-sentinel pages can be locked with an LRU batch
+lock before the sentinel pages are removed.
 
-No progress here?  I have the patch marked "to be updated", hence it is
-stuck.  Please let's get it finished off for 4.17-rc1.
+For the prototype, just use a bitmap and a temporary outer loop to
+implement this.
+
+Performance numbers from a single microbenchmark at this point in the
+series are included in the next patch.
+
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+---
+ mm/swap.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/mm/swap.c b/mm/swap.c
+index fae766e035a4..a302224293ad 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -731,6 +731,7 @@ void lru_add_drain_all(void)
+ 	put_online_cpus();
+ }
+ 
++#define LRU_BITMAP_SIZE	512
+ /**
+  * release_pages - batched put_page()
+  * @pages: array of pages to release
+@@ -742,16 +743,32 @@ void lru_add_drain_all(void)
+  */
+ void release_pages(struct page **pages, int nr)
+ {
+-	int i;
++	int h, i;
+ 	LIST_HEAD(pages_to_free);
+ 	struct pglist_data *locked_pgdat = NULL;
+ 	spinlock_t *locked_lru_batch = NULL;
+ 	struct lruvec *lruvec;
+ 	unsigned long uninitialized_var(flags);
++	DECLARE_BITMAP(lru_bitmap, LRU_BITMAP_SIZE);
++
++	VM_BUG_ON(nr > LRU_BITMAP_SIZE);
+ 
++	bitmap_zero(lru_bitmap, nr);
++
++	for (h = 0; h < 2; h++) {
+ 	for (i = 0; i < nr; i++) {
+ 		struct page *page = pages[i];
+ 
++		if (h == 0) {
++			if (PageLRU(page) && page->lru_sentinel) {
++				bitmap_set(lru_bitmap, i, 1);
++				continue;
++			}
++		} else {
++			if (!test_bit(i, lru_bitmap))
++				continue;
++		}
++
+ 		if (is_huge_zero_page(page))
+ 			continue;
+ 
+@@ -798,6 +815,7 @@ void release_pages(struct page **pages, int nr)
+ 
+ 		list_add(&page->lru, &pages_to_free);
+ 	}
++	}
+ 	if (locked_lru_batch) {
+ 		lru_batch_unlock(NULL, &locked_lru_batch, &locked_pgdat,
+ 				 &flags);
+-- 
+2.16.1
