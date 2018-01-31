@@ -1,68 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753467AbeAaRdM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:33:12 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52134 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752543AbeAaRdK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:33:10 -0500
-From: Colin King <colin.king@canonical.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: cx25821: prevent out-of-bounds read on array card
-Date: Wed, 31 Jan 2018 17:33:09 +0000
-Message-Id: <20180131173309.16377-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S1753508AbeAaRhO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:37:14 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43708 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753158AbeAaRhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:37:13 -0500
+Subject: Re: [PATCH v2 3/3] KVM: VMX: make MSR bitmaps per-VCPU
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>
+References: <1517043027-7655-1-git-send-email-pbonzini@redhat.com>
+ <1517043027-7655-4-git-send-email-pbonzini@redhat.com>
+ <20180130162357.GE22015@flask>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <fc794c7a-dec4-34dd-d7ac-6c0d49f138f1@redhat.com>
+Date: Wed, 31 Jan 2018 12:37:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180130162357.GE22015@flask>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 30/01/2018 11:23, Radim Krčmář wrote:
+> 2018-01-27 09:50+0100, Paolo Bonzini:
+>> Place the MSR bitmap in struct loaded_vmcs, and update it in place
+>> every time the x2apic or APICv state can change.  This is rare and
+>> the loop can handle 64 MSRs per iteration, in a similar fashion as
+>> nested_vmx_prepare_msr_bitmap.
+>>
+>> This prepares for choosing, on a per-VM basis, whether to intercept
+>> the SPEC_CTRL and PRED_CMD MSRs.
+>>
+>> Suggested-by: Jim Mattson <jmattson@google.com>
+>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+>> ---
+>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>> @@ -10022,7 +10043,7 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
+>>  	int msr;
+>>  	struct page *page;
+>>  	unsigned long *msr_bitmap_l1;
+>> -	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.msr_bitmap;
+>> +	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
+> 
+> The physical address of the nested msr_bitmap is never loaded into vmcs.
+> 
+> The resolution you provided had extra hunk in prepare_vmcs02_full():
+> 
+> +	vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
+> 
+> I have queued that as:
+> 
+> +	if (cpu_has_vmx_msr_bitmap())
+> +		vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
 
-Currently an out of range dev->nr is detected by just reporting the
-issue and later on an out-of-bounds read on array card occurs because
-of this. Fix this by checking the upper range of dev->nr with the size
-of array card (removes the hard coded size), move this check earlier
-and also exit with the error -ENOSYS to avoid the later out-of-bounds
-array read.
+Hmm you're right, it should be in prepare_vmcs02() here (4.15-based),
+and then moved to prepare_vmcs02_full() as part of the conflict resolution.
 
-Detected by CoverityScan, CID#711191 ("Out-of-bounds-read")
+I'll send a v3.
 
-Fixes: commit 02b20b0b4cde ("V4L/DVB (12730): Add conexant cx25821 driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/pci/cx25821/cx25821-core.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/pci/cx25821/cx25821-core.c b/drivers/media/pci/cx25821/cx25821-core.c
-index 04aa4a68a0ae..c1184e73cb2d 100644
---- a/drivers/media/pci/cx25821/cx25821-core.c
-+++ b/drivers/media/pci/cx25821/cx25821-core.c
-@@ -867,6 +867,10 @@ static int cx25821_dev_setup(struct cx25821_dev *dev)
- 	dev->nr = ++cx25821_devcount;
- 	sprintf(dev->name, "cx25821[%d]", dev->nr);
- 
-+	if (dev->nr >= ARRAY_SIZE(card)) {
-+		CX25821_INFO("dev->nr >= %ld", ARRAY_SIZE(card));
-+		return -ENODEV;
-+	}
- 	if (dev->pci->device != 0x8210) {
- 		pr_info("%s(): Exiting. Incorrect Hardware device = 0x%02x\n",
- 			__func__, dev->pci->device);
-@@ -882,9 +886,6 @@ static int cx25821_dev_setup(struct cx25821_dev *dev)
- 		dev->channels[i].sram_channels = &cx25821_sram_channels[i];
- 	}
- 
--	if (dev->nr > 1)
--		CX25821_INFO("dev->nr > 1!");
--
- 	/* board config */
- 	dev->board = 1;		/* card[dev->nr]; */
- 	dev->_max_num_decoders = MAX_DECODERS;
--- 
-2.15.1
+Paolo
