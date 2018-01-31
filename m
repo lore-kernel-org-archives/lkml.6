@@ -1,176 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752965AbeAaIh3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 03:37:29 -0500
-Received: from mout.gmx.net ([212.227.17.21]:60558 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752006AbeAaIh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 03:37:27 -0500
-Date: Wed, 31 Jan 2018 09:37:17 +0100
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT"
-        <linuxppc-dev@lists.ozlabs.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Albert Herranz <albert_herranz@yahoo.es>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/6] gpio: Add GPIO driver for Nintendo Wii
-Message-ID: <20180131083717.xhwaepwd6qxeqncv@latitude>
-References: <20180122050411.32460-1-j.neuschaefer@gmx.net>
- <20180122050411.32460-4-j.neuschaefer@gmx.net>
- <CAHp75VcWshngZFuUp4hzYdD43HF7TZ1sRE3Dh+HckB5do1=gGw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4afc2a2wktuivren"
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcWshngZFuUp4hzYdD43HF7TZ1sRE3Dh+HckB5do1=gGw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Provags-ID: V03:K0:4qH1iDHxP2wgd0CPGWWv9OLYheSsvaBgwdmtFc7KphRE3W+WYB9
- Am8YBvQOyZDbb5jvqh63VyOP8Fk1FwLE8Osr21SFr6pSSWk9d+Ba2et1gsQaDPfoW2aEWNz
- 1JR4R2bTwqPsznyLayHOm6HEdWYrI6V7GUNs6zBdKsVqdjuiobS4krKzWu5yvQb21VI7hcT
- Vd6D50HVSTHuPvynqZPOQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:RLjTi2SjzGk=:PL2K7NnyosrGGy4lLYhN02
- ERnE+JfrhSFUuTysIXGqwkQf28wJU/hzCCGL+IGa6KKX1wV7OIWIahcqxYgJbDDdnWTWVGVGZ
- nz/BruPgWSlxbN7ZiUuO4NzoIcSqXlupvpdZO1kUf+CV5ihWfAdh3ehEDJDtfjDDvrzErGMfT
- DrwsZ9jWX4iMfwqtMsj4vAhu4wwgbLuNefogxO8hTZih4p+57M+IDwlw7PtEu1Kzdxx1d8nvn
- RV5WWOlhYjFXCDgMBb+Smdg75ZnAnzAutmP/WgaRD7lFFVbrsjDUenZwvMQI37UA3rXoI0hUK
- CS0c4EfaSWrOxqCqkP+qmEj8GVntnKAE4PAfZrdDSHU51wMiNNVymHbPYwSCO/52b/lIIkgfx
- /wRnPbLu9njNHHeZi33Z12IaSo+meUQWWJcibefzU9RA1nF12IuoLGfy/fS/En+K/PTIdtsZc
- aezgt54a65TV1F9y/4znp3uloRJIv4avRv0mWpntek3HlZLVRFHQQOwhmV3K0dNW4sEmrwSbw
- ZuF6P9uN0QX+2W9omvJJZXSgo9CelSk1we4o+EaU8sxD8Z8nFdgljFs7WMNAcktYD3EY4ResH
- vFBcXombaV15BTAznzUqccc0ij0tVJViBkqub9A2BM50GwVj/2WQniVALEWZGtyBy4KBzSAOZ
- OsJAY7tybnLSS39UOEFxy4xwlHa0JDfSXF6cZxTHOnoDrQe56D1Kyuel7+udDd513kk4D2Fp4
- bM4ffm5vqkoSeWpDmJrXTaCj0G4CQmYoYEZStySljh02hOW08x1jgqIRuOTJqvTlzIZJC0wRp
- bGg7tiVMnuI+tGfPGyqmg4lHdzqJA==
+        id S1753221AbeAaIiQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 03:38:16 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:45811 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751966AbeAaIiO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 03:38:14 -0500
+X-Google-Smtp-Source: AH8x227HV7hcJePXJZh16UVQAmsAGwYmHSksvDF7rgkXk928lrGniYzf+RngGXkZfXJdOGKpEy/rLw==
+From: linxiulei@gmail.com
+To: peterz@infradead.org, jolsa@redhat.com, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, eranian@gmail.com,
+        torvalds@linux-foundation.org, linux-perf-users@vger.kernel.org,
+        brendan.d.gregg@gmail.com
+Cc: yang_oliver@hotmail.com, jinli.zjl@alibaba-inc.com,
+        "leilei.lin" <leilei.lin@alibaba-inc.com>
+Subject: [PATCH RESEND v3] perf/core: Fix installing cgroup event into cpu
+Date: Wed, 31 Jan 2018 16:35:27 +0800
+Message-Id: <20180131083527.76989-1-linxiulei@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "leilei.lin" <leilei.lin@alibaba-inc.com>
 
---4afc2a2wktuivren
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Do not install cgroup event into the CPU context and schedule it
+if the cgroup is not running on this CPU
 
-Hi,
+While there is no task of cgroup running specified CPU, current
+kernel still install cgroup event into CPU context that causes
+another cgroup event can't be installed into this CPU.
 
-On Sun, Jan 28, 2018 at 07:31:58PM +0200, Andy Shevchenko wrote:
-> On Mon, Jan 22, 2018 at 7:04 AM, Jonathan Neusch=C3=A4fer
-> <j.neuschaefer@gmx.net> wrote:
->=20
-> Style issues below.
->=20
-> > +#define HW_GPIO_OWNER          0x3c
-> > +
-> > +
-> > +struct hlwd_gpio {
->=20
-> No need extra empty line in between.
+This patch prevent scheduling events at __perf_install_in_context()
+and installing events at list_update_cgroup_event() if cgroup isn't
+running on specified CPU.
 
-Ok.
+Signed-off-by: leilei.lin <leilei.lin@alibaba-inc.com>
+---
+ v2: Set cpuctx->cgrp only if the same cgroup is running on this
+   CPU otherwise following events couldn't be activated immediately
+ v3: Enhance the comments and commit message
 
-> > +       struct gpio_chip gpioc;
-> > +       void __iomem *regs;
-> > +       struct device *dev;
-> > +};
-> > +
-> > +static int hlwd_gpio_probe(struct platform_device *pdev)
-> > +{
-> > +       struct hlwd_gpio *hlwd;
-> > +       struct resource *regs_resource;
-> > +       u32 ngpios;
-> > +       int res;
-> > +
-> > +       hlwd =3D devm_kzalloc(&pdev->dev, sizeof(*hlwd), GFP_KERNEL);
-> > +       if (!hlwd)
-> > +               return -ENOMEM;
-> > +
->=20
-> > +       /* Save the struct device pointer so dev_info, etc. can be used=
-=2E */
->=20
-> Useless.
+ kernel/events/core.c | 49 ++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 36 insertions(+), 13 deletions(-)
 
-Ok
-
-> > +       hlwd->dev =3D &pdev->dev;
-> > +
->=20
-> > +       regs_resource =3D platform_get_resource(pdev, IORESOURCE_MEM, 0=
-);
->=20
-> > +       if (IS_ERR(regs_resource))
-> > +               return PTR_ERR(regs_resource);
-> > +
->=20
-> This is redundant. Below does it for ya.
-
-devm_ioremap_resource does not check if the resource argument is a
-negative error (which is what I'm trying to catch in the above code).
-But it seems that platform_get_resource can't return a negative error,
-so you're right. Thanks.
-
->=20
-> > +       hlwd->regs =3D devm_ioremap_resource(&pdev->dev, regs_resource);
-> > +       if (IS_ERR(hlwd->regs))
-> > +               return PTR_ERR(hlwd->regs);
->=20
->=20
-> > +       res =3D bgpio_init(&hlwd->gpioc, &pdev->dev, 4,
-> > +                       hlwd->regs + HW_GPIOB_IN, hlwd->regs + HW_GPIOB=
-_OUT,
-> > +                       NULL, hlwd->regs + HW_GPIOB_DIR, NULL,
-> > +                       BGPIOF_BIG_ENDIAN_BYTE_ORDER);
->=20
-> > +
->=20
-> Remove this extra line.
-
-Ok.
-
->=20
-> > +       if (res < 0) {
-> > +               dev_warn(hlwd->dev, "bgpio_init failed: %d\n", res);
-> > +               return res;
-> > +       }
->=20
-> > +       if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios))
-> > +               ngpios =3D 32;
->=20
-> A nit: I would rather go with
-> res =3D of_property_read(...);
-> if (res)
->   ngpios =3D 32;
-
-Ok, I have no strong opinion on this, so I'll do what you suggest.
-
-
-Thanks,
-Jonathan Neusch=C3=A4fer
-
---4afc2a2wktuivren
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAABAgAGBQJacYAtAAoJEAgwRJqO81/bVJgQAL1/2rgESM4tkvX4NJOLl1yv
-g01sSRRpfTSazmyCfLillW1n+cYVx2PVG0RWtwWUIqFUjqhQvkLETQGAhL2OUaWW
-1K3UmpGnlJy2Yp/lqunk5VVKUt8N5CAxl3uABoiq9voryacDoA5qC7YoOwaGvpAl
-6xGdL9HtHsRgziuSJrSl+bszeZnI2Q1k740t9TSwl14xGwUre3xjSDiXERlRupOM
-yQq6WvS/RsWkpW+AaYqMGacSuozT0dR3zIVGOGTc/onCNkDKLSasbzyY2/qmyx79
-zWINWza/AJnqWTuIZcUJPiODvYzBy9pg3l9hFJxrYwTpknbSC1vwFF9s3lh2Q9LI
-isyl5u/UKu1nuuSetNF7FHBMKooVakWKPyS1fJ4LDSv3qgSxWkqTC6PbYKsdgy4B
-oR7wy59l2hZLoShrpuF0ftTYeZ20Y7iBHG4o/Zu9PYBrKCS/sSLPBASV5ClfTyyd
-WrRmw84ovfMMLuYjoyumAaLCUzBurpt5VHjkKtIpkrNtc8TEoZvMqW5mjLeRD8Rg
-LMWfXi9jY8CAPsGfMU87jrd2Pdf1+QEOsROiFWIC7XpGs5wASEWySCI1+nylJkBE
-GKg3NVdIbHU1XdPH6LKXAwjpr/yUtqYCHF8dmzDtHCenf6VXETaZ5qq7HpdAzyGT
-21yVh2djBZ2XNXaucN+I
-=K7YI
------END PGP SIGNATURE-----
-
---4afc2a2wktuivren--
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 4df5b69..fb5b167 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -933,31 +933,41 @@ list_update_cgroup_event(struct perf_event *event,
+ {
+ 	struct perf_cpu_context *cpuctx;
+ 	struct list_head *cpuctx_entry;
++	struct perf_cgroup *cgrp;
+ 
+ 	if (!is_cgroup_event(event))
+ 		return;
+ 
+-	if (add && ctx->nr_cgroups++)
+-		return;
+-	else if (!add && --ctx->nr_cgroups)
+-		return;
+ 	/*
+ 	 * Because cgroup events are always per-cpu events,
+ 	 * this will always be called from the right CPU.
+ 	 */
+ 	cpuctx = __get_cpu_context(ctx);
+-	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
+-	/* cpuctx->cgrp is NULL unless a cgroup event is active in this CPU .*/
+-	if (add) {
+-		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
++	cgrp = perf_cgroup_from_task(current, ctx);
+ 
+-		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
+-		if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
++	/*
++	 * if only the cgroup is running on this cpu,
++	 * we put/remove this cgroup into cpu context.
++	 * Or it would case mismatch in following cgroup
++	 * events at event_filter_match()
++	 */
++	if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup)) {
++		if (add)
+ 			cpuctx->cgrp = cgrp;
+-	} else {
+-		list_del(cpuctx_entry);
+-		cpuctx->cgrp = NULL;
++		else
++			cpuctx->cgrp = NULL;
+ 	}
++
++	if (add && ctx->nr_cgroups++)
++		return;
++	else if (!add && --ctx->nr_cgroups)
++		return;
++
++	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
++	if (add)
++		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
++	else
++		list_del(cpuctx_entry);
+ }
+ 
+ #else /* !CONFIG_CGROUP_PERF */
+@@ -2284,6 +2294,7 @@ static int  __perf_install_in_context(void *info)
+ 	struct perf_event_context *ctx = event->ctx;
+ 	struct perf_cpu_context *cpuctx = __get_cpu_context(ctx);
+ 	struct perf_event_context *task_ctx = cpuctx->task_ctx;
++	struct perf_cgroup *cgrp;
+ 	bool reprogram = true;
+ 	int ret = 0;
+ 
+@@ -2311,6 +2322,18 @@ static int  __perf_install_in_context(void *info)
+ 		raw_spin_lock(&task_ctx->lock);
+ 	}
+ 
++	if (is_cgroup_event(event)) {
++		/*
++		 * Only care about cgroup events.
++		 *
++		 * If only the task belongs to cgroup of this event,
++		 * we will continue the installment
++		 */
++		cgrp = perf_cgroup_from_task(current, ctx);
++		reprogram = cgroup_is_descendant(cgrp->css.cgroup,
++					event->cgrp->css.cgroup);
++	}
++
+ 	if (reprogram) {
+ 		ctx_sched_out(ctx, cpuctx, EVENT_TIME);
+ 		add_event_to_ctx(event, ctx);
+-- 
+2.8.4.31.g9ed660f
