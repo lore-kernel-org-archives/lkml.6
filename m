@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753671AbeAaROE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:14:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36262 "EHLO mx1.redhat.com"
+        id S1753729AbeAaROM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:14:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33642 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753632AbeAaROB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:14:01 -0500
+        id S1753686AbeAaROK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:14:10 -0500
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: kvm@vger.kernel.org
 Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -16,136 +16,240 @@ Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
         Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] x86/hyper-v: allocate and use Virtual Processor Assist Pages
-Date: Wed, 31 Jan 2018 18:13:38 +0100
-Message-Id: <20180131171341.21478-3-vkuznets@redhat.com>
+Subject: [PATCH 3/5] x86/hyper-v: define struct hv_enlightened_vmcs and clean field bits
+Date: Wed, 31 Jan 2018 18:13:39 +0100
+Message-Id: <20180131171341.21478-4-vkuznets@redhat.com>
 In-Reply-To: <20180131171341.21478-1-vkuznets@redhat.com>
 References: <20180131171341.21478-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Virtual Processor Assist Pages usage allows us to do optimized EOI
-processing for APIC, enable Enlightened VMCS support in KVM and more.
-struct hv_vp_assist_page is defined according to the Hyper-V TLFS v5.0b.
+The definitions are according to the Hyper-V TLFS v5.0. KVM on Hyper-V will
+use these.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/hyperv/hv_init.c          | 33 +++++++++++++++++++++++++++++++++
- arch/x86/include/asm/mshyperv.h    | 10 ++++++++++
- arch/x86/include/uapi/asm/hyperv.h | 10 ++++++++++
- 3 files changed, 53 insertions(+)
+ arch/x86/include/uapi/asm/hyperv.h | 203 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 203 insertions(+)
 
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index a3adece392f1..103b9c986e14 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -88,6 +88,9 @@ EXPORT_SYMBOL_GPL(hyperv_cs);
- u32 *hv_vp_index;
- EXPORT_SYMBOL_GPL(hv_vp_index);
- 
-+struct hv_vp_assist_page **hv_vp_assist_page;
-+EXPORT_SYMBOL_GPL(hv_vp_assist_page);
-+
- u32 hv_max_vp_index;
- 
- static int hv_cpu_init(unsigned int cpu)
-@@ -101,6 +104,23 @@ static int hv_cpu_init(unsigned int cpu)
- 	if (msr_vp_index > hv_max_vp_index)
- 		hv_max_vp_index = msr_vp_index;
- 
-+	if (!hv_vp_assist_page)
-+		return 0;
-+
-+	if (!hv_vp_assist_page[smp_processor_id()])
-+		hv_vp_assist_page[smp_processor_id()] =
-+			__vmalloc(PAGE_SIZE, GFP_KERNEL, PAGE_KERNEL);
-+
-+	if (hv_vp_assist_page[smp_processor_id()]) {
-+		u64 val;
-+
-+		val = vmalloc_to_pfn(hv_vp_assist_page[smp_processor_id()]);
-+		val = (val << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) |
-+			HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
-+
-+		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, val);
-+	}
-+
- 	return 0;
- }
- 
-@@ -198,6 +218,12 @@ static int hv_cpu_die(unsigned int cpu)
- 	struct hv_reenlightenment_control re_ctrl;
- 	unsigned int new_cpu;
- 
-+	if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
-+		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
-+		vfree(hv_vp_assist_page[cpu]);
-+		hv_vp_assist_page[cpu] = NULL;
-+	}
-+
- 	if (hv_reenlightenment_cb == NULL)
- 		return 0;
- 
-@@ -241,6 +267,13 @@ void hyperv_init(void)
- 	if (!hv_vp_index)
- 		return;
- 
-+	hv_vp_assist_page = kcalloc(num_possible_cpus(),
-+				    sizeof(*hv_vp_assist_page), GFP_KERNEL);
-+	if (!hv_vp_assist_page) {
-+		ms_hyperv.hints &= ~HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
-+		return;
-+	}
-+
- 	if (cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/hyperv_init:online",
- 			      hv_cpu_init, hv_cpu_die) < 0)
- 		goto free_vp_index;
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 1790002a2052..ba8dc52a2c9b 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -294,6 +294,12 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
-  */
- extern u32 *hv_vp_index;
- extern u32 hv_max_vp_index;
-+extern struct hv_vp_assist_page **hv_vp_assist_page;
-+
-+static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
-+{
-+	return hv_vp_assist_page[cpu];
-+}
- 
- /**
-  * hv_cpu_number_to_vp_number() - Map CPU to VP.
-@@ -330,6 +336,10 @@ static inline void hyperv_setup_mmu_ops(void) {}
- static inline void set_hv_tscchange_cb(void (*cb)(void)) {}
- static inline void clear_hv_tscchange_cb(void) {}
- static inline void hyperv_stop_tsc_emulation(void) {};
-+static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
-+{
-+	return NULL;
-+}
- #endif /* CONFIG_HYPERV */
- 
- #ifdef CONFIG_HYPERV_TSCPAGE
 diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
-index 929036b22b4c..ffaad7c93bcc 100644
+index ffaad7c93bcc..230d0f31f3e3 100644
 --- a/arch/x86/include/uapi/asm/hyperv.h
 +++ b/arch/x86/include/uapi/asm/hyperv.h
-@@ -412,6 +412,16 @@ struct hv_timer_message_payload {
- 	__u64 delivery_time;	/* When the message was delivered */
+@@ -156,6 +156,9 @@
+ /* Recommend using the newer ExProcessorMasks interface */
+ #define HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED	(1 << 11)
+ 
++/* Recommend using enlightened VMCS */
++#define HV_X64_ENLIGHTENED_VMCS_RECOMMENDED    (1 << 14)
++
+ /*
+  * Crash notification flag.
+  */
+@@ -422,6 +425,206 @@ struct hv_vp_assist_page {
+ 	__u64 current_nested_vmcs;
  };
  
-+/* Define virtual processor assist page structure. */
-+struct hv_vp_assist_page {
-+	__u32 apic_assist;
-+	__u32 reserved;
-+	__u64 vtl_control[2];
-+	__u64 nested_enlightenments_control[2];
-+	__u32 enlighten_vmentry;
-+	__u64 current_nested_vmcs;
++struct hv_enlightened_vmcs {
++	u32 revision_id;
++	u32 abort;
++
++	u16 host_es_selector;
++	u16 host_cs_selector;
++	u16 host_ss_selector;
++	u16 host_ds_selector;
++	u16 host_fs_selector;
++	u16 host_gs_selector;
++	u16 host_tr_selector;
++
++	u64 host_ia32_pat;
++	u64 host_ia32_efer;
++
++	u64 host_cr0;
++	u64 host_cr3;
++	u64 host_cr4;
++
++	u64 host_ia32_sysenter_esp;
++	u64 host_ia32_sysenter_eip;
++	u64 host_rip;
++	u32 host_ia32_sysenter_cs;
++
++	u32 pin_based_vm_exec_control;
++	u32 vm_exit_controls;
++	u32 secondary_vm_exec_control;
++
++	u64 io_bitmap_a;
++	u64 io_bitmap_b;
++	u64 msr_bitmap;
++
++	u16 guest_es_selector;
++	u16 guest_cs_selector;
++	u16 guest_ss_selector;
++	u16 guest_ds_selector;
++	u16 guest_fs_selector;
++	u16 guest_gs_selector;
++	u16 guest_ldtr_selector;
++	u16 guest_tr_selector;
++
++	u32 guest_es_limit;
++	u32 guest_cs_limit;
++	u32 guest_ss_limit;
++	u32 guest_ds_limit;
++	u32 guest_fs_limit;
++	u32 guest_gs_limit;
++	u32 guest_ldtr_limit;
++	u32 guest_tr_limit;
++	u32 guest_gdtr_limit;
++	u32 guest_idtr_limit;
++
++	u32 guest_es_ar_bytes;
++	u32 guest_cs_ar_bytes;
++	u32 guest_ss_ar_bytes;
++	u32 guest_ds_ar_bytes;
++	u32 guest_fs_ar_bytes;
++	u32 guest_gs_ar_bytes;
++	u32 guest_ldtr_ar_bytes;
++	u32 guest_tr_ar_bytes;
++
++	u64 guest_es_base;
++	u64 guest_cs_base;
++	u64 guest_ss_base;
++	u64 guest_ds_base;
++	u64 guest_fs_base;
++	u64 guest_gs_base;
++	u64 guest_ldtr_base;
++	u64 guest_tr_base;
++	u64 guest_gdtr_base;
++	u64 guest_idtr_base;
++
++	u64 padding64_1[3];
++
++	u64 vm_exit_msr_store_addr;
++	u64 vm_exit_msr_load_addr;
++	u64 vm_entry_msr_load_addr;
++
++	u64 cr3_target_value0;
++	u64 cr3_target_value1;
++	u64 cr3_target_value2;
++	u64 cr3_target_value3;
++
++	u32 page_fault_error_code_mask;
++	u32 page_fault_error_code_match;
++
++	u32 cr3_target_count;
++	u32 vm_exit_msr_store_count;
++	u32 vm_exit_msr_load_count;
++	u32 vm_entry_msr_load_count;
++
++	u64 tsc_offset;
++	u64 virtual_apic_page_addr;
++	u64 vmcs_link_pointer;
++
++	u64 guest_ia32_debugctl;
++	u64 guest_ia32_pat;
++	u64 guest_ia32_efer;
++
++	u64 guest_pdptr0;
++	u64 guest_pdptr1;
++	u64 guest_pdptr2;
++	u64 guest_pdptr3;
++
++	u64 guest_pending_dbg_exceptions;
++	u64 guest_sysenter_esp;
++	u64 guest_sysenter_eip;
++
++	u32 guest_activity_state;
++	u32 guest_sysenter_cs;
++
++	u64 cr0_guest_host_mask;
++	u64 cr4_guest_host_mask;
++	u64 cr0_read_shadow;
++	u64 cr4_read_shadow;
++	u64 guest_cr0;
++	u64 guest_cr3;
++	u64 guest_cr4;
++	u64 guest_dr7;
++
++	u64 host_fs_base;
++	u64 host_gs_base;
++	u64 host_tr_base;
++	u64 host_gdtr_base;
++	u64 host_idtr_base;
++	u64 host_rsp;
++
++	u64 ept_pointer;
++
++	u16 virtual_processor_id;
++	u16 padding16[3];
++
++	u64 padding64_2[5];
++	u64 guest_physical_address;
++
++	u32 vm_instruction_error;
++	u32 vm_exit_reason;
++	u32 vm_exit_intr_info;
++	u32 vm_exit_intr_error_code;
++	u32 idt_vectoring_info_field;
++	u32 idt_vectoring_error_code;
++	u32 vm_exit_instruction_len;
++	u32 vmx_instruction_info;
++
++	u64 exit_qualification;
++	u64 exit_io_instruction_ecx;
++	u64 exit_io_instruction_esi;
++	u64 exit_io_instruction_edi;
++	u64 exit_io_instruction_eip;
++
++	u64 guest_linear_address;
++	u64 guest_rsp;
++	u64 guest_rflags;
++
++	u32 guest_interruptibility_info;
++	u32 cpu_based_vm_exec_control;
++	u32 exception_bitmap;
++	u32 vm_entry_controls;
++	u32 vm_entry_intr_info_field;
++	u32 vm_entry_exception_error_code;
++	u32 vm_entry_instruction_len;
++	u32 tpr_threshold;
++
++	u64 guest_rip;
++
++	u32 hv_clean_fields;
++	u32 hv_padding_32;
++	u32 hv_synthetic_controls;
++	u32 hv_enlightenments_control;
++	u32 hv_vp_id;
++
++	u64 hv_vm_id;
++	u64 partition_assist_page;
++	u64 padding64_4[4];
++	u64 guest_bndcfgs;
++	u64 padding64_5[7];
++	u64 xss_exit_bitmap;
++	u64 padding64_6[7];
 +};
++
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE			0
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP		BIT(0)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_MSR_BITMAP		BIT(1)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP2		BIT(2)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP1		BIT(3)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_PROC		BIT(4)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EVENT		BIT(5)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_ENTRY		BIT(6)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EXCPN		BIT(7)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR			BIT(8)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_XLAT		BIT(9)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_BASIC		BIT(10)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1		BIT(11)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2		BIT(12)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_POINTER		BIT(13)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1		BIT(14)
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_ENLIGHTENMENTSCONTROL	BIT(15)
++
++#define HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL			0xFFFF
 +
  #define HV_STIMER_ENABLE		(1ULL << 0)
  #define HV_STIMER_PERIODIC		(1ULL << 1)
