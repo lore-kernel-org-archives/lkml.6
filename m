@@ -1,78 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753031AbeAaRXs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:23:48 -0500
-Received: from mail-it0-f52.google.com ([209.85.214.52]:52437 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752097AbeAaRXq (ORCPT
+        id S1753383AbeAaRYO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:24:14 -0500
+Received: from mx.aristanetworks.com ([162.210.129.12]:13364 "EHLO
+        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753156AbeAaRYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:23:46 -0500
-X-Google-Smtp-Source: AH8x227wYc7Xndlo4vEPVXfNXpbDFqb01h0Yad9Pm2CkfG0/QD7KY5hoMs64XARRSw4RkG9xDR4etgj/zbumDYYiYMc=
+        Wed, 31 Jan 2018 12:24:11 -0500
+Date: Wed, 31 Jan 2018 09:16:53 -0800
+To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: mount stuck in infinite loop
+Cc: fruggeri@arista.com
+User-Agent: Heirloom mailx 12.5 7/5/10
 MIME-Version: 1.0
-From: Joel Fernandes <joelaf@google.com>
-Date: Wed, 31 Jan 2018 09:23:44 -0800
-Message-ID: <CAJWu+opcuaeBHJPTOc2N-UyCe9r+jvhbVhq4pTTYoYa9_YLABQ@mail.gmail.com>
-Subject: Re: possible deadlock in shmem_file_llseek
-To: Dmitry Vyukov <dvyukov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com>,
-        Hugh Dickins <hughd@google.com>, Linux-MM <linux-mm@kvack.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="001a1143f624d64363056415bd91"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-Id: <20180131171653.7C66C49841@fruggeri-Arora18_1.sjc.aristanetworks.com>
+From: fruggeri@arista.com (Francesco Ruggeri)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---001a1143f624d64363056415bd91
-Content-Type: text/plain; charset="UTF-8"
+I had a few cases of mount getting stuck in an infinite loop.
+This happens when bdev->bd_inode->i_blkbits gets modified (for
+example by bd_set_size()) while *_fill_super() is between
+sb_min_blocksize() and sb_bread(), and the new value is inconsistent
+with the block size used in fill_super().
+When this happens one can get into an infinite loop in
+__getblk_slow(), if grow_buffers() allocates/finds a page with a
+given index, but __find_get_block{_slow}() looks for (and does not
+find) a page with a different index.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-master
+I can reproduce it in 4.14.15 with the following script.
+I can also reproduce it in 4.9 and 3.18.
 
---001a1143f624d64363056415bd91
-Content-Type: text/x-patch; charset="US-ASCII";
-	name="0001-ashmem-Fix-lockdep-issue-during-llseek.patch"
-Content-Disposition: attachment;
-	filename="0001-ashmem-Fix-lockdep-issue-during-llseek.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jd127f2q1
+FILE=/tmp/fsfile
+MNT=/tmp/fsmnt
+LOOP=`losetup -f`
 
-RnJvbSBlN2Q3MzM2MmVkMzc4NDk5Nzk1ZjI3ZTJkYTYxODRkMGIyNDJiODljIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBKb2VsIEZlcm5hbmRlcyA8am9lbGFmQGdvb2dsZS5jb20+CkRh
-dGU6IFdlZCwgMjQgSmFuIDIwMTggMDk6NDc6MjMgLTA4MDAKU3ViamVjdDogW1BBVENIXSBhc2ht
-ZW06IEZpeCBsb2NrZGVwIGlzc3VlIGR1cmluZyBsbHNlZWsKCmFzaG1lbV9tdXRleCBjcmVhdGUg
-YSBjaGFpbiBvZiBkZXBlbmRlbmNpZXMgbGlrZSBzbzoKCigxKQptbWFwIHN5c2NhbGwgLT4KICBt
-bWFwX3NlbSAtPiAgKGFjcXVpcmVkKQogIGFzaG1lbV9tbWFwCiAgYXNobWVtX211dGV4ICh0cnkg
-dG8gYWNxdWlyZSkKICAoYmxvY2spCgooMikKbGxzZWVrIHN5c2NhbGwgLT4KICBhc2htZW1fbGxz
-ZWVrIC0+CiAgYXNobWVtX211dGV4IC0+ICAoYWNxdWlyZWQpCiAgaW5vZGVfbG9jayAtPgogIGlu
-b2RlLT5pX3J3c2VtICh0cnkgdG8gYWNxdWlyZSkKICAoYmxvY2spCgooMykKZ2V0ZGVudHMgLT4K
-ICBpdGVyYXRlX2RpciAtPgogIGlub2RlX2xvY2sgLT4KICBpbm9kZS0+aV9yd3NlbSAgIChhY3F1
-aXJlZCkKICBjb3B5X3RvX3VzZXIgLT4KICBtbWFwX3NlbSAgICAgICAgICh0cnkgdG8gYWNxdWly
-ZSkKClRoZXJlIGlzIGEgbG9jayBvcmRlcmluZyBjcmVhdGVkIGJldHdlZW4gbW1hcF9zZW0gYW5k
-IGlub2RlLT5pX3J3c2VtIGNhdXNpbmcgYQpsb2NrZGVwIHNwbGF0IFsyXSBkdXJpbmcgYSBzeXpj
-YWxsZXIgdGVzdCwgdGhpcyBwYXRjaCBmaXhlcyB0aGUgaXNzdWUgYnkKcmVtb3ZpbmcgdGhlIHVz
-ZSBvZiB0aGUgbXV0ZXguCgpUaGUgbXV0ZXggaXNuJ3QgbmVlZGVkIGFzIGxsc2Vla3MgYXJlIHN5
-bmNocm9uaXplZCB3aXRoIG90aGVyIGxsc2Vla3MKYW5kIHJlYWRzIGR1ZSB0byBmZGdldF9wb3Mg
-YXMgQWwgbWVudGlvbmVkIFsxXS4gRnVydGhlciBhc21hLT5maWxlCmFuZCBhc21hLT5zaXplIGRv
-bid0IGNoYW5nZSBvbmNlIHRoZXkncmUgc2V0dXAsIGFuZCB0aGVyZSdzIGEgdW5pcXVlCmFzbWEt
-PmZpbGUgcGVyIGZpbGUuCgpbMV0gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8x
-MDE4NTAzMS8KWzJdIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE4LzEvMTAvNDgKCkNjOiBUb2Rk
-IEtqb3MgPHRram9zQGdvb2dsZS5jb20+CkNjOiBBcnZlIEhqb25uZXZhZyA8YXJ2ZUBhbmRyb2lk
-LmNvbT4KQ2M6IEFsIFZpcm8gPHZpcm9AemVuaXYubGludXgub3JnLnVrPgpDYzogR3JlZyBLcm9h
-aC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4KUmVwb3J0ZWQtYnk6IHN5emJv
-dCs4ZWMzMGJiN2JmMWE5ODFhMjAxMkBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tClNpZ25lZC1v
-ZmYtYnk6IEpvZWwgRmVybmFuZGVzIDxqb2VsYWZAZ29vZ2xlLmNvbT4KLS0tCiBkcml2ZXJzL3N0
-YWdpbmcvYW5kcm9pZC9hc2htZW0uYyB8IDMgLS0tCiAxIGZpbGUgY2hhbmdlZCwgMyBkZWxldGlv
-bnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9hc2htZW0uYyBiL2Ry
-aXZlcnMvc3RhZ2luZy9hbmRyb2lkL2FzaG1lbS5jCmluZGV4IDBmNjk1ZGYxNGM5ZC4uOGM5YzY5
-YTkzZmE0IDEwMDY0NAotLS0gYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9hc2htZW0uYworKysg
-Yi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9hc2htZW0uYwpAQCAtMzMxLDggKzMzMSw2IEBAIHN0
-YXRpYyBsb2ZmX3QgYXNobWVtX2xsc2VlayhzdHJ1Y3QgZmlsZSAqZmlsZSwgbG9mZl90IG9mZnNl
-dCwgaW50IG9yaWdpbikKIAlzdHJ1Y3QgYXNobWVtX2FyZWEgKmFzbWEgPSBmaWxlLT5wcml2YXRl
-X2RhdGE7CiAJaW50IHJldDsKIAotCW11dGV4X2xvY2soJmFzaG1lbV9tdXRleCk7Ci0KIAlpZiAo
-YXNtYS0+c2l6ZSA9PSAwKSB7CiAJCXJldCA9IC1FSU5WQUw7CiAJCWdvdG8gb3V0OwpAQCAtMzUx
-LDcgKzM0OSw2IEBAIHN0YXRpYyBsb2ZmX3QgYXNobWVtX2xsc2VlayhzdHJ1Y3QgZmlsZSAqZmls
-ZSwgbG9mZl90IG9mZnNldCwgaW50IG9yaWdpbikKIAlmaWxlLT5mX3BvcyA9IGFzbWEtPmZpbGUt
-PmZfcG9zOwogCiBvdXQ6Ci0JbXV0ZXhfdW5sb2NrKCZhc2htZW1fbXV0ZXgpOwogCXJldHVybiBy
-ZXQ7CiB9CiAKLS0gCjIuMTYuMC5yYzEuMjM4Lmc1MzBkNjQ5YTc5LWdvb2cKCg==
---001a1143f624d64363056415bd91--
+rm -rf $FILE $MNT
+
+mkdir $MNT
+dd if=/dev/zero of=$FILE count=32 bs=1MiB
+losetup $LOOP $FILE
+mkfs -t ext4 $LOOP
+while true; do losetup -D $LOOP; losetup $LOOP $FILE; done \
+	2>/dev/null >/dev/null &
+for ((i=0; i<100; i++)); do echo ================== $i; \
+	mount $LOOP $MNT; umount $MNT; done
+
+The issue is that __find_get_block_slow() and grow_buffers() compute
+the page index in different ways.
+I am not sure what the correct solution should be here.
+
+Thanks,
+Francesco Ruggeri
