@@ -1,74 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752913AbeAaMDx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 07:03:53 -0500
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:41532 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752172AbeAaMDv (ORCPT
+        id S1753720AbeAaMFl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 07:05:41 -0500
+Received: from mail.micronovasrl.com ([212.103.203.10]:53816 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752451AbeAaMFj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 07:03:51 -0500
-X-Google-Smtp-Source: AH8x226qc+XiGSO3YAeIp124iz5ojJa/Zn0GwybxLO2GgQgj4W/ltvF67wYYGlXyZGxJVDnVCMmkgw==
-Date: Wed, 31 Jan 2018 13:03:48 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
-        =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
-        Steven Honeyman <stevenhoneyman@gmail.com>,
-        Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
-        Jochen Eisinger <jochen@penguin-breeder.org>,
-        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mario Limonciello <Mario_Limonciello@dell.com>,
-        Alex Hung <alex.hung@canonical.com>, Takashi Iwai <tiwai@suse.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Subject: Re: [PATCH v2] i2c: i801: Register optional lis3lv02d i2c device on
- Dell machines
-Message-ID: <20180131120348.azy25aqvn5wrdkeh@pali>
-References: <20180127133209.28995-1-pali.rohar@gmail.com>
- <CAHp75VdWA-0a_FeicHSi_FfWurQ9EvkdW0raqgoRVySTyxDJ0Q@mail.gmail.com>
- <20180128144509.pobnj7cayc4psgrj@pali>
- <CAHp75VdU1OMTqLcDuzhQMHuX9rMhjw6p3CkSWaW5Y4kOy8ggqg@mail.gmail.com>
+        Wed, 31 Jan 2018 07:05:39 -0500
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
+ frequency
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
+Date: Wed, 31 Jan 2018 13:05:38 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHp75VdU1OMTqLcDuzhQMHuX9rMhjw6p3CkSWaW5Y4kOy8ggqg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0VC3xoB003819
 
-On Sunday 28 January 2018 17:00:35 Andy Shevchenko wrote:
-> On Sun, Jan 28, 2018 at 4:45 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
-> > On Sunday 28 January 2018 16:39:25 Andy Shevchenko wrote:
-> >> On Sat, Jan 27, 2018 at 3:32 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
-> >> > +static bool is_dell_system_with_lis3lv02d(void)
-> >> > +{
-> >>
-> >> > +       /*
-> >> > +        * Check that ACPI device SMO88xx exists and is enabled. That ACPI
-> >> > +        * device represent our ST microelectronics lis3lv02d accelerometer but
-> >> > +        * unfortunately without any other information (like i2c address).
-> >> > +        */
-> >>
-> >> Isn't it simple
-> >>
-> >> return acpi_dev_present("SMO88", NULL, -1);
-> >>
-> >> call?
-> >
-> > ACPI device name is SMO8800, SMO8810, ... Will that acpi_dev_present
-> > function match only prefix and not exact string?
-> 
-> OK, fair enough.
-> 
-> Do we have more users of such pattern?
+Hi,
 
-I have not seen this ACPI pattern yet, so probably not.
+Il 31/01/2018 09:43, Maxime Ripard ha scritto:
+> Hi,
+> 
+> On Wed, Jan 31, 2018 at 12:23:59AM +0100, Giulio Benetti wrote:
+>> When mali.ko is inserted, it set default clocks and call all parent
+>> clocks to stay into range, causing pll-video0 to change and
+>> subsequently to change dclk to wrong frequencies.
+> 
+> This is what you should fix.
+
+Ok, so it must be patch title(shrinked of course), right?
+
+> 
+>> "gpu" clock has lot of parent plls inside driver, but on sun7i
+>> pll8-gpu does not depend on pll-video0, pll-ve, pll-video1.
+>>
+>> It only depends on 24Mhz main clock.
+> 
+> I don't really know why you are mentionning that. The GPU clock has
+> all the parents described in the driver. And the parents' parents are
+> irrelevant to this particular issue.
+> 
+>> Remove all pll parents from gpu_parents_sun7i except "pll-gpu".
+> 
+> However, this is not a proper fix for your issue.
+
+Yes, you're right, now I understand.
+
+It is more complex than I thought.
+I need to dig more and study better A20 CCU.
+
+So this patch can be dropped.
+
+> 
+> What kernel version did you use?
+
+Latest mainline.
+
+> 
+> Maxime
+> 
+
 
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+Giulio Benetti
+R&D Manager &
+Advanced Research
+
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale � 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
