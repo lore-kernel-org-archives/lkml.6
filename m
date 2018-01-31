@@ -1,223 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753890AbeAaJrv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 04:47:51 -0500
-Received: from mail-vk0-f47.google.com ([209.85.213.47]:38133 "EHLO
-        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754011AbeAaJqr (ORCPT
+        id S1753047AbeAaJuP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 04:50:15 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48856 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751764AbeAaJuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 04:46:47 -0500
-X-Google-Smtp-Source: AH8x225NlSswncia2QRDvx6Po1CS8SgFx6PtDomcS72MpfqTqtl+N8ALbwbaKIFwj2csRxAWNrr0HA==
+        Wed, 31 Jan 2018 04:50:11 -0500
+Date: Tue, 30 Jan 2018 16:52:16 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Sebastian Sewior <bigeasy@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] hrtimer: Reset hrtimer cpu base proper on CPU hotplug
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <alpine.DEB.2.20.1801261447590.2067@nanos>
+ <20180126220917.GI3741@linux.vnet.ibm.com>
+ <20180129082047.hash3pnhpztzcg22@linutronix.de>
+ <20180129095738.GU3741@linux.vnet.ibm.com>
+ <20180129234347.GA26365@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1801302202510.2293@nanos>
 MIME-Version: 1.0
-In-Reply-To: <e75c24da-4856-ae50-6dc9-604c885e4040@xs4all.nl>
-References: <20180126060216.147918-1-acourbot@chromium.org>
- <ced425a2-8b66-05c6-367d-46a0a40b1873@xs4all.nl> <CAPBb6MU5Ph=_rH_TOQi5mstujAPMTWqC_1d-8_TcuGx25sOJvg@mail.gmail.com>
- <307f58dd-ce7e-b6f5-092a-f8679349be73@xs4all.nl> <CAAFQd5AbdAGteHOfKH4EoHUNSmsfCYtExVX9TSK8aWsQZ4HVJg@mail.gmail.com>
- <e75c24da-4856-ae50-6dc9-604c885e4040@xs4all.nl>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Wed, 31 Jan 2018 18:46:23 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Dj+z_FUzsBorE3eNhrU-RBJ=HviRjAUF3f5_O8iDnkEw@mail.gmail.com>
-Message-ID: <CAAFQd5Dj+z_FUzsBorE3eNhrU-RBJ=HviRjAUF3f5_O8iDnkEw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/8] [media] Request API, take three
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1801302202510.2293@nanos>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18013109-0036-0000-0000-000002B63CDB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008455; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000248; SDB=6.00982938; UDB=6.00498462; IPR=6.00762221;
+ BA=6.00005804; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019302; XFM=3.00000015;
+ UTC=2018-01-31 09:50:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18013109-0037-0000-0000-0000432D80CA
+Message-Id: <20180131005216.GE3741@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1801310130
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 5:47 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On 01/31/2018 09:10 AM, Tomasz Figa wrote:
->> Hi Hans,
->>
->> Sorry for joining the party late.
->>
->> On Wed, Jan 31, 2018 at 4:50 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>> On 01/30/2018 07:31 AM, Alexandre Courbot wrote:
->>>> Hi Hans,
->>>>
->>>> On Mon, Jan 29, 2018 at 8:21 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>>> On 01/26/2018 07:02 AM, Alexandre Courbot wrote:
->>>>>> Howdy. Here is your bi-weekly request API redesign! ;)
->>>>>>
->>>>>> Again, this is a simple version that only implements the flow of requests,
->>>>>> without applying controls. The intent is to get an agreement on a base to work
->>>>>> on, since the previous versions went straight back to the redesign board.
->>>>>>
->>>>>> Highlights of this version:
->>>>>>
->>>>>> * As requested by Hans, request-bound buffers are now passed earlier to drivers,
->>>>>> as early as the request itself is submitted. Doing it earlier is not be useful
->>>>>> since the driver would not know the state of the request, and thus cannot do
->>>>>> anything with the buffer. Drivers are now responsible for applying request
->>>>>> parameters themselves.
->>>>>>
->>>>>> * As a consequence, there is no such thing as a "request queue" anymore. The
->>>>>> flow of buffers decides the order in which requests are processed. Individual
->>>>>> devices of the same pipeline can implement synchronization if needed, but this
->>>>>> is beyond this first version.
->>>>>>
->>>>>> * VB2 code is still a bit shady. Some of it will interfere with the fences
->>>>>> series, so I am waiting for the latter to land to do it properly.
->>>>>>
->>>>>> * Requests that are not yet submitted effectively act as fences on the buffers
->>>>>> they own, resulting in the buffer queue being blocked until the request is
->>>>>> submitted. An alternate design would be to only block the
->>>>>> not-submitted-request's buffer and let further buffers pass before it, but since
->>>>>> buffer order is becoming increasingly important I have decided to just block the
->>>>>> queue. This is open to discussion though.
->>>>>
->>>>> I don't think we should mess with the order.
->>>>
->>>> Agreed, let's keep it that way then.
->>>>
->>
->> I'm not sure I'm following here. Does it mean (quoting Alex):
->>
->> a) "Requests that are not yet submitted effectively act as fences on the buffers
->>     they own, resulting in the buffer queue being blocked until the request is
->>     submitted."
->>
->> b) "block the not-submitted-request's buffer and let further buffers
->> pass before it"
->>
->> or neither?
->>
->> Hans, could you clarify what you think is the right behavior here?
->
-> I think I misread the text. Alexandre, buffers in not-yet-submitted requests
-> should not act as fences. They are similar to buffers that are prepared
-> through the VIDIOC_PREPARE_BUF call. They are just sitting there and won't
-> be in the queue until someone calls QBUF.
->
-> It's the same for not-yet-submitted requests: the buffers don't act as
-> fences until the request is submitted.
+On Tue, Jan 30, 2018 at 10:03:17PM +0100, Thomas Gleixner wrote:
+> On Mon, 29 Jan 2018, Paul E. McKenney wrote:
+> 
+> > On Mon, Jan 29, 2018 at 01:57:38AM -0800, Paul E. McKenney wrote:
+> > > On Mon, Jan 29, 2018 at 09:20:48AM +0100, Sebastian Sewior wrote:
+> > > > On 2018-01-26 14:09:17 [-0800], Paul E. McKenney wrote:
+> > > > > find this one.  ;-)  But it did pass rcutorture testing for a great many
+> > > > > years, didn't it?  :-/
+> > > > 
+> > > > It started to trigger better (or at all) on our test box with
+> > > > 	modprobe kvm_intel preemption_timer=n
+> > > > 
+> > > > on the host kernel so maybe a completely unrelated change helped to
+> > > > trigger this.
+> > > 
+> > > Good point!
+> > > 
+> > > And testing continues, currently at 108 hours of TREE01 without any
+> > > waylayed timers, so looking good!  ;-)
+> > > 
+> > > Just kicked off another 70 hours worth.
+> > 
+> > And those completed without incident for a total of 178 hours.  I believe
+> > we can call this one fixed.  Thank you all!!!
+> > 
+> > One question...  Is the patch shown below needed, or is this just yet
+> > another case of me being confused?  (The lack of it is not triggering,
+> > but...)
+> 
+> See commit 26456f87aca7
 
-Thanks for explanation.
+Got it, thank you!  I will remove my patch from my queue.
 
-To be 100% sure, that would mean that a buffer is added into the vb2
-queue as soon as the request that includes related QBUF call is
-queued, right?
-
->
-> Interesting related questions: how does VIDIOC_PREPARE_BUF interact with
-> a request? What happens if a buffer is added to a non-yet-submitted request
-> and userspace calls VIDIOC_QBUF with that same buffer but with no request?
->
-> This all needs to be defined.
-
-That sounds like a failure to me. Actually very similar to trying to
-call QBUF twice on the same buffer, without dequeuing it. What would
-be the behavior in such case?
-
->
->>
->>>>>> * For the codec usecase, I have experimented a bit marking CAPTURE buffers with
->>>>>> the request FD that produced them (vim2m acts that way). This seems to work
->>>>>> well, however FDs are process-local and could be closed before the CAPTURE
->>>>>> buffer is dequeued, rendering that information less meaningful, if not
->>>>>> dangerous.
->>>>>
->>>>> I don't follow this. Once the fd is passed to the kernel its refcount should be
->>>>> increased so the data it represents won't be released if userspace closes the fd.
->>>>
->>>> The refcount of the request is increased. The refcount of the FD is
->>>> not, since it is only a userspace reference to the request.
->>>
->>> I don't think that's right. Looking at how dma-buf does this (dma_buf_get in
->>> dma-buf.c) it calls fget(fd) which increases the fd refcount. In fact, as far as
->>> I can see the struct dma_buf doesn't have a refcount, it is solely refcounted
->>> through the fd. That's probably the model you want to follow.
->>
->> As far as I can see from the code, fget() on an fd increases a
->> reference count on the struct file backing the fd. I don't think there
->> is another level of reference counting of fds themselves - that's why
->> dup(fd) gives you another fd and you can't call close(fd) on the same
->> fd two times.
->>
->>>
->>>>
->>>>>
->>>>> Obviously if userspace closes the fd it cannot do anything with it anymore, but
->>>>> it shouldn't be 'dangerous' AFAICT.
->>>>
->>>> It userspace later gets that closed FD back from a DQBUF call, and
->>>> decides to use it again, then we would have a problem. I agree that it
->>>> is userspace responsibility to be careful here, but making things
->>>> foolproof never hurts.
->>>
->>> I think all the issues will go away if you refcount the fd instead of the
->>> request. It worked well for dma-buf for years.
->>
->> I'm confused here. The kernel never returns the same FD for the same
->> DMA-buf twice. Every time an ioctl is called, which returns a DMA-buf
->> FD, it creates a new FD.
->
-> Sorry, where I say 'refcount the fd' I indeed meant 'refcount the file struct'.
->
-> Looking at the code in the patch series I see:
->
-> +struct media_request *
-> +media_request_get_from_fd(int fd)
-> +{
-> +       struct file *f;
-> +       struct media_request *req;
-> +
-> +       f = fget(fd);
-> +       if (!f)
-> +               return NULL;
-> +
-> +       /* Not a request FD? */
-> +       if (f->f_op != &request_fops) {
-> +               fput(f);
-> +               return NULL;
-> +       }
-> +
-> +       req = f->private_data;
-> +       media_request_get(req);
-> +       fput(f);
-> +
-> +       return req;
-> +}
-> +EXPORT_SYMBOL_GPL(media_request_get_from_fd);
->
-> So this does not refcount the file struct but the request struct, and I think
-> that's wrong. The file struct represents the request struct, and it is the
-> file struct that should be refcounted. So when you give a request_fd to
-> VIDIOC_QBUF, then the refcount should be increased since vb2 now needs to
-> hold on to it. It's what dma-buf does.
->
-> Now, I agree that if userspace closes the fd before kernelspace is finished
-> with it, then the request_fd returned by VIDIOC_DQBUF is no longer valid.
-> But so what? It's the same with the dma-buf fd. I don't think this is a problem
-> at all.
-
-Okay, I feel like we're much more on the same page now, thanks for
-clarification. ;)
-
-I'm still wondering if having the link from-buffer-to-request is the
-most convenient for userspace, though. One possible scenario where I
-think this might be problematic is when the request FD is shared with
-another process, e.g. one process creating the requests, filling them
-in and submitting and separate process dequeuing and handling
-completed requests. In this case, the FD used for queuing the request
-and the FD used for dequeuing the request would be different. Not sure
-how we could handle it.
-
-An alternative approach that would let us completely avoid this kind
-of unique identifier problem, would bo to have links
-from-request-to-buffers. The process that dequeues the requests would
-then query the dequeued request for the buffers related to it. For
-example, DQBUF could be made symmetric to QBUF with respect to the
-request FD and it would only dequeue buffers related to given request.
-
-Best regards,
-Tomasz
+							Thanx, Paul
