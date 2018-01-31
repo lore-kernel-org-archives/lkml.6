@@ -1,64 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753285AbeAaVTP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 16:19:15 -0500
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:58266 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752098AbeAaVTO (ORCPT
+        id S1753212AbeAaVVs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 16:21:48 -0500
+Received: from mail-it0-f46.google.com ([209.85.214.46]:32954 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753131AbeAaVVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 16:19:14 -0500
-From: Nadav Amit <namit@vmware.com>
-To: <x86@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH v3] x86: Align TLB invalidation info
-Date: Wed, 31 Jan 2018 13:19:12 -0800
-Message-ID: <20180131211912.52064-1-namit@vmware.com>
-X-Mailer: git-send-email 2.14.1
+        Wed, 31 Jan 2018 16:21:46 -0500
+X-Google-Smtp-Source: AH8x224WYbMLvZ2Aj+vvY9t6GCqI/iFnUogWE6pA8vNCjmSq/HZF33wHw/2+3iFxMgwQtSWXGjNvfVG/U0Kvri/dRm4=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <alpine.LRH.2.21.1801291040280.29680@namei.org>
+References: <alpine.LRH.2.21.1801291040280.29680@namei.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 31 Jan 2018 13:21:44 -0800
+X-Google-Sender-Auth: KzlnBzc2f7Kv_mY1OjPy0GuEkEc
+Message-ID: <CA+55aFw1vWWmv5Ebq9yWVDFm4SQUG_fNd3f5yoYkWRTfUNaL_Q@mail.gmail.com>
+Subject: Re: [GIT PULL] Security subsystem updates for v4.16
+To: James Morris <jmorris@namei.org>, Kees Cook <keescook@chromium.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TLB invalidation info is allocated on the stack, which might cause
-it to be unaligned. Since this information may be transferred to
-different cores for TLB shootdown, this may cause an additional cache
-line to become shared. While the overhead is likely to be small, the
-fix is simple.
+On Sun, Jan 28, 2018 at 3:41 PM, James Morris <jmorris@namei.org> wrote:
+>
+> Note that individual trees may also be pulled via:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+>         next-integrity
+>         next-smack
+>         next-tpm
 
-We do not use __cacheline_aligned() since it also defines the section,
-which is inappropriate for stack variables.
+So I did that, because it makes it easier and more controlled for me.
+But then when double-checking that the end result is identical to your
+full pull request, I end up missing the seccomp tree.
 
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Acked-by: Andy Lutomirski <luto@kernel.org>
+I can pull that separately too, but it was missing explanations and a
+real pull request, so I left it alone.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-
---
-v2 -> v3: rewording the commit message (Andy)
-v1 -> v2: use __aligned instead of all the mess (Andy)
----
- arch/x86/mm/tlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 5bfe61a5e8e3..9690112e3a82 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -576,7 +576,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- {
- 	int cpu;
- 
--	struct flush_tlb_info info = {
-+	struct flush_tlb_info info __aligned(SMP_CACHE_BYTES) = {
- 		.mm = mm,
- 	};
- 
--- 
-2.14.1
+           Linus
