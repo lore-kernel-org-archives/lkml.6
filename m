@@ -1,45 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753201AbeAaHaU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:30:20 -0500
-Received: from mga02.intel.com ([134.134.136.20]:15056 "EHLO mga02.intel.com"
+        id S1753266AbeAaHbQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 02:31:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44680 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753082AbeAaH3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:29:50 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,438,1511856000";
-   d="scan'208";a="14372802"
-Date: Wed, 31 Jan 2018 13:04:24 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Yang Shunyong <shunyong.yang@hxt-semitech.com>
-Cc: dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        id S1752664AbeAaHbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 02:31:14 -0500
+Date: Wed, 31 Jan 2018 16:31:05 +0900
+From: Benjamin Poirier <bpoirier@suse.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Netdev <netdev@vger.kernel.org>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] dmaengine: dmatest: add norandom option
-Message-ID: <20180131073424.GW18649@localhost>
-References: <1516617881-30044-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <1516617881-30044-2-git-send-email-shunyong.yang@hxt-semitech.com>
+Subject: Re: [Intel-wired-lan] [RFC PATCH] e1000e: Remove Other from EIAC.
+Message-ID: <20180131073105.7tqyzylc76wjyoav@f1.synalogic.ca>
+References: <20180118065054.29844-1-bpoirier@suse.com>
+ <CAKgT0Uc+sSREnAvF=TTDp2FFxGcro6JmDpE2KdnEYk5rDE3Tpw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1516617881-30044-2-git-send-email-shunyong.yang@hxt-semitech.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAKgT0Uc+sSREnAvF=TTDp2FFxGcro6JmDpE2KdnEYk5rDE3Tpw@mail.gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 22, 2018 at 06:44:41PM +0800, Yang Shunyong wrote:
-> Existing option noverify disables both random src/dst address offset
-> setup and data verification. Sometimes, we need to control random
-> src/dst address setup and verification separately, such as disabling
-> random to make sure that test covers addresses in all interleaving
-> banks in one run. This patch adds option norandom to disable random
-> offset setup. Option noverify has been changed to disable data
-> verification only.
+On 2018/01/30 11:46, Alexander Duyck wrote:
+> On Wed, Jan 17, 2018 at 10:50 PM, Benjamin Poirier <bpoirier@suse.com> wrote:
+> > It was reported that emulated e1000e devices in vmware esxi 6.5 Build
+> > 7526125 do not link up after commit 4aea7a5c5e94 ("e1000e: Avoid receiver
+> > overrun interrupt bursts", v4.15-rc1). Some tracing shows that after
+> > e1000e_trigger_lsc() is called, ICR reads out as 0x0 in e1000_msix_other()
+> > on emulated e1000e devices. In comparison, on real e1000e 82574 hardware,
+> > icr=0x80000004 (_INT_ASSERTED | _OTHER) in the same situation.
+> >
+> > Some experimentation showed that this flaw in vmware e1000e emulation can
+> > be worked around by not setting Other in EIAC. This is how it was before
+> > 16ecba59bc33 ("e1000e: Do not read ICR in Other interrupt", v4.5-rc1).
+> >
+> > Fixes: 4aea7a5c5e94 ("e1000e: Avoid receiver overrun interrupt bursts")
+> > Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+> > ---
+> 
+> Hi Benjamin,
+> 
+> How would you feel about resubmitting this patch for net?
+> 
+> We have some issues that have come up and it would be useful to have
+> this fixed in the kernel sooner rather than later. I would be okay
+> with us applying it for now while we work on coming up with a more
+> complete solution.
 
-This doesn't apply for me due to dependency on previous patch. Please rebase
-and resend.
-
--- 
-~Vinod
+Ok, I've resent it in its original form. Once it's in mainline I'll
+rebase the cleanups.
