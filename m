@@ -1,201 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751937AbeAaWty (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 17:49:54 -0500
-Received: from mga06.intel.com ([134.134.136.31]:58670 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751746AbeAaWtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 17:49:51 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,441,1511856000";
-   d="scan'208";a="15997596"
-Date: Thu, 1 Feb 2018 06:49:29 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: kbuild-all@01.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, maxime.ripard@free-electrons.com, wens@csie.org,
-        linux@armlinux.org.uk, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, davem@davemloft.net,
-        hans.verkuil@cisco.com, mchehab@kernel.org, rask@formelder.dk,
-        clabbe.montjoie@gmail.com, sean@mess.org, krzk@kernel.org,
-        quentin.schulz@free-electrons.com, icenowy@aosc.io,
-        edu.molinas@gmail.com, singhalsimran0@gmail.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 07/16] iio: adc: sun4i-gpadc-iio: rework: support
- nvmem calibration data
-Message-ID: <201802010647.sYlui5vv%fengguang.wu@intel.com>
-References: <20180128232919.12639-8-embed3d@gmail.com>
+        id S1751990AbeAaWxN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 17:53:13 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:40013 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751901AbeAaWxL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 17:53:11 -0500
+X-Google-Smtp-Source: AH8x225+YaATu4rFPGplIzMu0ulYGraWBru4/f63xJMIm4DtqgRST/h3d+3804R3s0kG7kyaqWLjOQ==
+Date: Wed, 31 Jan 2018 14:53:07 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Andi Shyti <andi.shyti@samsung.com>,
+        Simon Shields <simon@lineageos.org>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>,
+        jeesw@melfas.com
+Subject: Re: [PATCH 7/8] Input: mms114 - add SPDX identifier
+Message-ID: <20180131225307.i5meawlhkwwje4qb@dtor-ws>
+References: <20180129113323.18961-1-andi.shyti@samsung.com>
+ <CGME20180129113331epcas2p193a0a99f660793fbfcf2ec825fac0e2c@epcas2p1.samsung.com>
+ <20180129113323.18961-8-andi.shyti@samsung.com>
+ <20180129194659.df7nlhwx4demk6o6@dtor-ws>
+ <20180131060726.GB7575@gangnam.samsung>
+ <20180131073138.GA1499@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180128232919.12639-8-embed3d@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180131073138.GA1499@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+On Wed, Jan 31, 2018 at 08:31:38AM +0100, Marcus Folkesson wrote:
+> Hi Andy,
+> 
+> On Wed, Jan 31, 2018 at 03:07:26PM +0900, Andi Shyti wrote:
+> > Hi Dmitry,
+> > 
+> > > > -/*
+> > > > - * Copyright (C) 2012 Samsung Electronics Co.Ltd
+> > > > - * Author: Joonyoung Shim <jy0922.shim@samsung.com>
+> > > > - *
+> > > > - * This program is free software; you can redistribute it and/or modify
+> > > > - * it under the terms of the GNU General Public License version 2 as
+> > > > - * published by the Free Software Foundation.
+> > > > - */
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +// Samsung S6SY761 Touchscreen device driver
+> > 
+> > I'm very sorry, but my distrcation will kill me one day.
+> 
+> More coffee or sleep - your choice ;-)
+> 
+> > 
+> > Is it possible to revert this patch or do you want me to send a
+> > fix?
+> 
+> When you are on it;
+> 
+> Change
+> MODULE_LICENSE("GPL");
+> 
+> to 
+> MODULE_LICENSE("GPL v2");
+> To match the former license text and SPDX-identifier.
+> 
+> See include/linux/module.h:
+>  *	"GPL"				[GNU Public License v2 or later]
+>  *	"GPL v2"			[GNU Public License v2]
 
-Thank you for the patch! Perhaps something to improve:
+OK, I dropped the patch, please resend the correct version.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on v4.15 next-20180126]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Thanks.
 
-url:    https://github.com/0day-ci/linux/commits/Philipp-Rossak/IIO-based-thermal-sensor-driver-for-Allwinner-H3-and-A83T-SoC/20180201-043415
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/iio/adc/sun4i-gpadc-iio.c:608:53: sparse: cast to restricted __be32
->> drivers/iio/adc/sun4i-gpadc-iio.c:608:53: sparse: cast to restricted __be32
->> drivers/iio/adc/sun4i-gpadc-iio.c:608:53: sparse: cast to restricted __be32
->> drivers/iio/adc/sun4i-gpadc-iio.c:608:53: sparse: cast to restricted __be32
->> drivers/iio/adc/sun4i-gpadc-iio.c:608:53: sparse: cast to restricted __be32
->> drivers/iio/adc/sun4i-gpadc-iio.c:608:53: sparse: cast to restricted __be32
-   drivers/iio/adc/sun4i-gpadc-iio.c:613:53: sparse: cast to restricted __be32
-   drivers/iio/adc/sun4i-gpadc-iio.c:613:53: sparse: cast to restricted __be32
-   drivers/iio/adc/sun4i-gpadc-iio.c:613:53: sparse: cast to restricted __be32
-   drivers/iio/adc/sun4i-gpadc-iio.c:613:53: sparse: cast to restricted __be32
-   drivers/iio/adc/sun4i-gpadc-iio.c:613:53: sparse: cast to restricted __be32
-   drivers/iio/adc/sun4i-gpadc-iio.c:613:53: sparse: cast to restricted __be32
-
-vim +608 drivers/iio/adc/sun4i-gpadc-iio.c
-
-   564	
-   565	static int sun4i_gpadc_probe_dt(struct platform_device *pdev,
-   566					struct iio_dev *indio_dev)
-   567	{
-   568		struct sun4i_gpadc_iio *info = iio_priv(indio_dev);
-   569		struct resource *mem;
-   570		void __iomem *base;
-   571		int ret;
-   572		struct nvmem_cell *cell;
-   573		ssize_t cell_size;
-   574		u64 *cell_data;
-   575	
-   576		info->data = of_device_get_match_data(&pdev->dev);
-   577		if (!info->data)
-   578			return -ENODEV;
-   579	
-   580		info->no_irq = true;
-   581		indio_dev->num_channels = ARRAY_SIZE(sun8i_a33_gpadc_channels);
-   582		indio_dev->channels = sun8i_a33_gpadc_channels;
-   583	
-   584		mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-   585		base = devm_ioremap_resource(&pdev->dev, mem);
-   586		if (IS_ERR(base))
-   587			return PTR_ERR(base);
-   588	
-   589		info->has_calibration_data[0] = false;
-   590		info->has_calibration_data[1] = false;
-   591	
-   592		if (!info->data->supports_nvmem)
-   593			goto no_nvmem;
-   594	
-   595		cell = nvmem_cell_get(&pdev->dev, "calibration");
-   596		if (IS_ERR(cell)) {
-   597			if (PTR_ERR(cell) == -EPROBE_DEFER)
-   598				return PTR_ERR(cell);
-   599			goto no_nvmem;
-   600		}
-   601	
-   602		cell_data = (u64 *)nvmem_cell_read(cell, &cell_size);
-   603		nvmem_cell_put(cell);
-   604		switch (cell_size) {
-   605			case 8:
-   606			case 6:
-   607				info->has_calibration_data[1] = true;
- > 608				info->calibration_data[1] = be32_to_cpu(
-   609						upper_32_bits(cell_data[0]));
-   610			case 4:
-   611			case 2:
-   612				info->has_calibration_data[0] = true;
-   613				info->calibration_data[0] = be32_to_cpu(
-   614						lower_32_bits(cell_data[0]));
-   615				break;
-   616			default:
-   617				break;
-   618		}
-   619	
-   620	no_nvmem:
-   621	
-   622		info->regmap = devm_regmap_init_mmio(&pdev->dev, base,
-   623						     &sun4i_gpadc_regmap_config);
-   624		if (IS_ERR(info->regmap)) {
-   625			ret = PTR_ERR(info->regmap);
-   626			dev_err(&pdev->dev, "failed to init regmap: %d\n", ret);
-   627			return ret;
-   628		}
-   629	
-   630		if (info->data->has_bus_rst) {
-   631			info->reset = devm_reset_control_get(&pdev->dev, NULL);
-   632			if (IS_ERR(info->reset)) {
-   633				ret = PTR_ERR(info->reset);
-   634				return ret;
-   635			}
-   636	
-   637			ret = reset_control_deassert(info->reset);
-   638			if (ret)
-   639				return ret;
-   640		}
-   641	
-   642		if (info->data->has_bus_clk) {
-   643			info->bus_clk = devm_clk_get(&pdev->dev, "bus");
-   644			if (IS_ERR(info->bus_clk)) {
-   645				ret = PTR_ERR(info->bus_clk);
-   646				goto assert_reset;
-   647			}
-   648	
-   649			ret = clk_prepare_enable(info->bus_clk);
-   650			if (ret)
-   651				goto assert_reset;
-   652		}
-   653	
-   654		if (info->data->has_mod_clk) {
-   655			info->mod_clk = devm_clk_get(&pdev->dev, "mod");
-   656			if (IS_ERR(info->mod_clk)) {
-   657				ret = PTR_ERR(info->mod_clk);
-   658				goto disable_bus_clk;
-   659			}
-   660	
-   661			/* Running at 6MHz */
-   662			ret = clk_set_rate(info->mod_clk, 4000000);
-   663			if (ret)
-   664				goto disable_bus_clk;
-   665	
-   666			ret = clk_prepare_enable(info->mod_clk);
-   667			if (ret)
-   668				goto disable_bus_clk;
-   669		}
-   670	
-   671		if (IS_ENABLED(CONFIG_THERMAL_OF))
-   672			info->sensor_device = &pdev->dev;
-   673	
-   674		return 0;
-   675	
-   676	disable_bus_clk:
-   677		clk_disable_unprepare(info->bus_clk);
-   678	
-   679	assert_reset:
-   680		reset_control_assert(info->reset);
-   681	
-   682		return ret;
-   683	}
-   684	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+Dmitry
