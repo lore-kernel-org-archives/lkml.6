@@ -1,167 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeAaV5l (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 16:57:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753283AbeAaV5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 16:57:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9670721738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Wed, 31 Jan 2018 13:57:38 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        chao@kernel.org
-Subject: Re: [PATCH] f2fs: add sanity check for quota sysfile ino
-Message-ID: <20180131215738.GA12901@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180129082933.64556-1-yuchao0@huawei.com>
- <20180131013556.GE65489@jaegeuk-macbookpro.roam.corp.google.com>
- <f27cbf43-eb34-5e21-8016-c1a17203cf0b@huawei.com>
- <20180131023607.GA87929@jaegeuk-macbookpro.roam.corp.google.com>
- <edc49b65-2f18-26a2-a97d-ee89143e7ece@huawei.com>
- <20180131034914.GA93573@jaegeuk-macbookpro.roam.corp.google.com>
- <6afe7ac1-904a-49e6-69f2-7de487936731@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6afe7ac1-904a-49e6-69f2-7de487936731@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        id S1753437AbeAaWHP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 17:07:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37444 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753395AbeAaWHM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 17:07:12 -0500
+Subject: Re: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Rob Landley <rob@landley.net>, initramfs <initramfs@vger.kernel.org>
+Cc: Taras Kondratiuk <takondra@cisco.com>,
+        Victor Kamensky <kamensky@cisco.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Wed, 31 Jan 2018 17:07:03 -0500
+In-Reply-To: <1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
+References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
+         <1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18013122-0008-0000-0000-000004C81937
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18013122-0009-0000-0000-00001E5BB4E9
+Message-Id: <1517436423.3469.237.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-31_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1801310275
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/31, Chao Yu wrote:
-> On 2018/1/31 11:49, Jaegeuk Kim wrote:
-> > On 01/31, Chao Yu wrote:
-> >> On 2018/1/31 10:36, Jaegeuk Kim wrote:
-> >>> On 01/31, Chao Yu wrote:
-> >>>> On 2018/1/31 9:35, Jaegeuk Kim wrote:
-> >>>>> On 01/29, Chao Yu wrote:
-> >>>>>> Add missing sanity check for quota sysfile ino.
-> >>>>>
-> >>>>> We don't need to limit the specific inode numbers for quota files, since
-> >>>>> we may be able to set any inode numbers later. How about checkint the
-> >>>>> numbers are allocated as quota?
-> >>>
-> >>> If quota_ino is set, f2fs_enable_quotas() will be failed, if its ino is invalid.
-> >>> It'd be also fine, if we have no inode numbers there. What I mean was we may need
-> >>> to consider reallocating or deallocating inode numbers later.
-> >>
-> >> Oh, so that it will be better to do more check & repair in fsck tools, right?
+On Wed, 2018-01-31 at 13:32 -0600, Rob Landley wrote:
+> On 01/30/2018 03:46 PM, Mimi Zohar wrote:
+> > Commit 16203a7a9422 ("initmpfs: make rootfs use tmpfs when CONFIG_TMPFS
+> > enabled") introduced using tmpfs as the rootfs filesystem.  The use of
+> > tmpfs is limited to systems that do not specify "root=" on the boot
+> > command line.
 > > 
-> > What is the rule that you're considering? We're already checking quota inodes
-> > in fsck.f2fs.
+> > Without the check "!saved_root_name[0]", rootfs uses tmpfs.  As there
+> > must be a valid reason for this check, this patch introduces a new boot
+> > command line option named "noramfs" to force rootfs to use tmpfs.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > 
-> The case that qf_ino[] is corrupted, I didn't see it can be relinked to
-> corresponding quota inode by fsck, am I missing something?
+> How about just:
+> 
+> diff --git a/init/do_mounts.c b/init/do_mounts.c
+> index 7cf4f6d..af66ede 100644
+> --- a/init/do_mounts.c
+> +++ b/init/do_mounts.c
+> @@ -632,8 +632,8 @@ int __init init_rootfs(void)
+>  	if (err)
+>  		return err;
+> 
+> -	if (IS_ENABLED(CONFIG_TMPFS) && !saved_root_name[0] &&
+> -		(!root_fs_names || strstr(root_fs_names, "tmpfs"))) {
+> +	if (IS_ENABLED(CONFIG_TMPFS) && (!saved_root_name[0] ||
+> +		!strcmp(saved_root_name, "tmpfs"))) {
+>  		err = shmem_init();
+>  		is_tmpfs = true;
+>  	} else {
+> 
+> (Obviously-signed-off-by: Rob Landley <rob@landley.net>)
+> 
+> I.E. if you somehow just can't stop yourself from specifying root= when
+> using rootfs, have "root=tmpfs" do what you want.
 
-We can check its basic metadata such as i_mode? Or, in order to do that
-entirely, we need to add file truncation and creationg in fsck.f2fs, which
-was too complicated to add before.
-Any idea?
-
-Thanks,
+I tried overloading "rootfstype=tmpfs", before posting this work
+around, but for some reason that just doesn't work.
 
 > 
-> Thanks,
+> (The old "I configured in tmpfs and am using rootfs but I want that rootfs
+> to be ramfs, not tmpfs" code doesn't seem to be a real-world concern, does
+> it?)
+
+I must be missing something.  Which systems don't specify "root=" on
+the boot command line.  If we want to include and restore xattrs,
+there needs to be a way of using tmpfs.
+
+Mimi
+
 > 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>
-> >>>> Do you mean:
-> >>>>
-> >>>> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >>>> 		if (!le32_to_cpu(raw_super->qf_ino[0]) ||
-> >>>> 			!le32_to_cpu(raw_super->qf_ino[1])) {
-> >>>> 			f2fs_msg(sb, KERN_INFO,
-> >>>> 				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
-> >>>> 				le32_to_cpu(raw_super->qf_ino[0]),
-> >>>> 				le32_to_cpu(raw_super->qf_ino[1]));
-> >>>> 			return 1;
-> >>>> 		}
-> >>>> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
-> >>>> 			!le32_to_cpu(raw_super->qf_ino[2])) {
-> >>>> 			f2fs_msg(sb, KERN_INFO,
-> >>>> 				"Invalid Quota Ino: prj_ino(%u)",
-> >>>> 				le32_to_cpu(raw_super->qf_ino[2]));
-> >>>> 			return 1;
-> >>>> 		}
-> >>>> 	}
-> >>>>
-> >>>> I think it's equal to:
-> >>>>
-> >>>> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >>>> 		unsigned int qf_cnt = 0;
-> >>>> 		if (qf_ino[0])
-> >>>> 			qf_cnt++;
-> >>>> 		if (qf_ino[1])
-> >>>> 			qf_cnt++;
-> >>>> 		if (qf_cnt != 2) {
-> >>>> 			f2fs_msg();
-> >>>> 			return 1;
-> >>>> 		}
-> >>>> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
-> >>>> 			if (qf_ino[2])
-> >>>> 				qf_cnt++;
-> >>>> 			if (qf_cnt != 3) {
-> >>>> 				f2fs_msg();
-> >>>> 				return 1;
-> >>>> 			}
-> >>>> 		}
-> >>>> 	}
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>>>> ---
-> >>>>>>  fs/f2fs/super.c | 19 +++++++++++++++++++
-> >>>>>>  1 file changed, 19 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>>>>> index 368f63d7bad2..6011071688ca 100644
-> >>>>>> --- a/fs/f2fs/super.c
-> >>>>>> +++ b/fs/f2fs/super.c
-> >>>>>> @@ -2116,6 +2116,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
-> >>>>>>  		return 1;
-> >>>>>>  	}
-> >>>>>>  
-> >>>>>> +	/* check quota sysfile ino info */
-> >>>>>> +	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >>>>>> +		if (le32_to_cpu(raw_super->qf_ino[0]) != 4 ||
-> >>>>>> +			le32_to_cpu(raw_super->qf_ino[1]) != 5) {
-> >>>>>> +			f2fs_msg(sb, KERN_INFO,
-> >>>>>> +				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
-> >>>>>> +				le32_to_cpu(raw_super->qf_ino[0]),
-> >>>>>> +				le32_to_cpu(raw_super->qf_ino[1]));
-> >>>>>> +			return 1;
-> >>>>>> +		}
-> >>>>>> +		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
-> >>>>>> +			le32_to_cpu(raw_super->qf_ino[2]) != 6) {
-> >>>>>> +			f2fs_msg(sb, KERN_INFO,
-> >>>>>> +				"Invalid Quota Ino: prj_ino(%u)",
-> >>>>>> +				le32_to_cpu(raw_super->qf_ino[2]));
-> >>>>>> +			return 1;
-> >>>>>> +		}
-> >>>>>> +	}
-> >>>>>> +
-> >>>>>>  	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
-> >>>>>>  		f2fs_msg(sb, KERN_INFO,
-> >>>>>>  			"Invalid segment count (%u)",
-> >>>>>> -- 
-> >>>>>> 2.15.0.55.gc2ece9dc4de6
-> >>>>>
-> >>>>> .
-> >>>>>
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt |  2 ++
+> >  init/do_mounts.c                                | 15 +++++++++++++--
+> >  2 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> I suppose I should do a documentation update too. Lemme send a proper one
+> after work...
+> 
+> Rob
+> 
+> P.S. While I'm at it, I've meant to wire up rootflags= so you can specify
+> a memory limit other than 50% forever, I should do that too. And resend
+> my "make DEVTMPFS_MOUNT apply to initramfs" patch (with the debian bug
+> workaround)...
+> 
