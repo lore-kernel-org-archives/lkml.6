@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeAaS3K (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 13:29:10 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41588 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751931AbeAaS3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 13:29:07 -0500
+        id S1752099AbeAaS3U (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 13:29:20 -0500
+Received: from foss.arm.com ([217.140.101.70]:41648 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752079AbeAaS3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 13:29:18 -0500
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
         will.deacon@arm.com, mark.rutland@arm.com, marc.zyngier@arm.com,
         catalin.marinas@arm.com, ckadabi@codeaurora.org, dave.martin@arm.com,
         jnair@caviumnetworks.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 12/20] arm64: capabilities: Change scope of VHE to Boot CPU feature
-Date: Wed, 31 Jan 2018 18:27:59 +0000
-Message-Id: <20180131182807.32134-13-suzuki.poulose@arm.com>
+Subject: [PATCH v2 17/20] arm64: bp hardening: Allow late CPUs to enable work around
+Date: Wed, 31 Jan 2018 18:28:04 +0000
+Message-Id: <20180131182807.32134-18-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180131182807.32134-1-suzuki.poulose@arm.com>
 References: <20180131182807.32134-1-suzuki.poulose@arm.com>
@@ -22,137 +22,106 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We expect all CPUs to be running at the same EL inside the kernel
-with or without VHE enabled and we have strict checks to ensure
-that any mismatch triggers a kernel panic. If VHE is enabled,
-we use the feature based on the boot CPU and all other CPUs
-should follow. This makes it a perfect candidate for a cpability
-based on the boot CPU,  which should be matched by all the CPUs
-(both when is ON and OFF). This saves us some not-so-pretty
-hooks and special code, just for verifying the conflict.
+We defend against branch predictor training based exploits by
+taking specific actions (based on the CPU model) to invalidate
+the Branch predictor buffer (BPB). This is implemented by per-CPU
+ptr, which installs the specific actions for the CPU model.
+
+The core code can handle the following cases where:
+ 1) some CPUs doesn't need any work around
+ 2) a CPU can install the work around, when it is brought up,
+    irrespective of how late that happens.
+
+This concludes that it is safe to bring up a CPU which requires
+bp hardening defense. However, with the current settings, we
+reject a late CPU, if none of the active CPUs didn't need it.
+
+This patch solves issue by changing the flags for the capability
+to indicate that it is safe for a late CPU to turn up with the
+capability. This is not sufficient to get things working, as
+we cannot change the system wide state of the capability established
+at the kernel boot. So, we "set" the capability unconditionally
+and make sure that the call backs are only installed for those
+CPUs which actually needs them. This is done by adding a dummy
+entry at the end of the list of shared entries, which :
+ a) Always returns true for matches, to ensure we turn this on.
+ b) has an empty "cpu_enable" call back, so that we don't take
+    any action on the CPUs which weren't matched with the real
+    entries.
 
 Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Dave Martin <dave.martin@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
+Cc: Dave Martin <dave.martin@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/cpufeature.h |  7 +++++++
- arch/arm64/include/asm/virt.h       |  6 ------
- arch/arm64/kernel/cpufeature.c      |  3 +--
- arch/arm64/kernel/smp.c             | 38 -------------------------------------
- 4 files changed, 8 insertions(+), 46 deletions(-)
+ arch/arm64/include/asm/cpufeature.h | 10 ++++++++++
+ arch/arm64/kernel/cpu_errata.c      | 19 ++++++++++++++++++-
+ 2 files changed, 28 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 04161aac0f06..42292a0b93a4 100644
+index b73247c27f00..262fa213b1b1 100644
 --- a/arch/arm64/include/asm/cpufeature.h
 +++ b/arch/arm64/include/asm/cpufeature.h
-@@ -260,6 +260,13 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
- 	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
- 	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
+@@ -252,6 +252,16 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+ 	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU	|	\
+ 	 ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU)
  
 +/*
-+ * Critical CPU feature used early in the boot based on the boot CPU.
-+ * The feature should be matched by all booting CPU (both miss and hit
-+ * cases).
++ * CPU errata work around detected at boot time based on one or more CPUs.
++ * All conflicts are ignored. This implies any work around shouldn't
++ * depend when a CPU could be brought up.
 + */
-+#define ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE ARM64_CPUCAP_SCOPE_BOOT_CPU
++#define ARM64_CPUCAP_WEAK_LOCAL_CPU_ERRATUM		\
++	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
++	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU	|	\
++	 ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU)
 +
- struct arm64_cpu_capabilities {
- 	const char *desc;
- 	u16 capability;
-diff --git a/arch/arm64/include/asm/virt.h b/arch/arm64/include/asm/virt.h
-index c5f89442785c..9d1e24e030b3 100644
---- a/arch/arm64/include/asm/virt.h
-+++ b/arch/arm64/include/asm/virt.h
-@@ -102,12 +102,6 @@ static inline bool has_vhe(void)
- 	return false;
- }
- 
--#ifdef CONFIG_ARM64_VHE
--extern void verify_cpu_run_el(void);
--#else
--static inline void verify_cpu_run_el(void) {}
--#endif
--
- #endif /* __ASSEMBLY__ */
- 
- #endif /* ! __ASM__VIRT_H */
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 6d759f068de1..247d34ea6b5e 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -982,7 +982,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 	{
- 		.desc = "Virtualization Host Extensions",
- 		.capability = ARM64_HAS_VIRT_HOST_EXTN,
--		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.type = ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE,
- 		.matches = runs_at_el2,
- 		.cpu_enable = cpu_copy_el2regs,
- 	},
-@@ -1322,7 +1322,6 @@ static bool verify_local_cpu_caps(u16 scope_mask)
-  */
- static void check_early_cpu_features(void)
- {
--	verify_cpu_run_el();
- 	verify_cpu_asid_bits();
- 	/*
- 	 * Early features are used by the kernel already. If there
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index 5cef11450183..f3e2e3aec0b0 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -85,43 +85,6 @@ enum ipi_msg_type {
- 	IPI_WAKEUP
+ /*
+  * CPU feature detected at boot time, on one or more CPUs. A late CPU
+  * is not allowed to have the capability when the system doesn't have it.
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index b4f1c1c1f8ca..7f714a628480 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -259,6 +259,12 @@ static const struct midr_range arm64_bp_harden_psci_cpus[] = {
+ 	{},
  };
  
--#ifdef CONFIG_ARM64_VHE
--
--/* Whether the boot CPU is running in HYP mode or not*/
--static bool boot_cpu_hyp_mode;
--
--static inline void save_boot_cpu_run_el(void)
--{
--	boot_cpu_hyp_mode = is_kernel_in_hyp_mode();
--}
--
--static inline bool is_boot_cpu_in_hyp_mode(void)
--{
--	return boot_cpu_hyp_mode;
--}
--
--/*
-- * Verify that a secondary CPU is running the kernel at the same
-- * EL as that of the boot CPU.
-- */
--void verify_cpu_run_el(void)
--{
--	bool in_el2 = is_kernel_in_hyp_mode();
--	bool boot_cpu_el2 = is_boot_cpu_in_hyp_mode();
--
--	if (in_el2 ^ boot_cpu_el2) {
--		pr_crit("CPU%d: mismatched Exception Level(EL%d) with boot CPU(EL%d)\n",
--					smp_processor_id(),
--					in_el2 ? 2 : 1,
--					boot_cpu_el2 ? 2 : 1);
--		cpu_panic_kernel();
--	}
--}
--
--#else
--static inline void save_boot_cpu_run_el(void) {}
--#endif
--
- #ifdef CONFIG_HOTPLUG_CPU
- static int op_cpu_kill(unsigned int cpu);
- #else
-@@ -447,7 +410,6 @@ void __init smp_prepare_boot_cpu(void)
- 	 */
- 	jump_label_init();
- 	cpuinfo_store_boot_cpu();
--	save_boot_cpu_run_el();
- }
++static bool bp_hardening_always_on(const struct arm64_cpu_capabilities *cap,
++				   int scope)
++{
++	return true;
++}
++
+ static const struct arm64_cpu_capabilities arm64_bp_harden_list[] = {
+ 	{
+ 		CAP_MIDR_RANGE_LIST(arm64_bp_harden_psci_cpus),
+@@ -268,6 +274,17 @@ static const struct arm64_cpu_capabilities arm64_bp_harden_list[] = {
+ 		CAP_MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR_V1),
+ 		.cpu_enable = qcom_enable_link_stack_sanitization,
+ 	},
++	/*
++	 * Always enable the capability to make sure a late CPU can
++	 * safely use the BP hardening call backs. Since we use per-CPU
++	 * pointers for the call backs, the work around only affects the
++	 * CPUs which have some methods installed by any real matching entries
++	 * above. As such we don't have any specific cpu_enable() callback
++	 * for this entry, as it is just to make sure we always "detect" it.
++	 */
++	{
++		.matches = bp_hardening_always_on,
++	},
+ 	{},
+ };
  
- static u64 __init of_get_cpu_mpidr(struct device_node *dn)
+@@ -407,7 +424,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ #ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+-		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
++		.type = ARM64_CPUCAP_WEAK_LOCAL_CPU_ERRATUM,
+ 		.matches = multi_entry_cap_matches,
+ 		.cpu_enable = multi_entry_cap_cpu_enable,
+ 		.cap_list = arm64_bp_harden_list,
 -- 
 2.14.3
