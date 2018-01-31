@@ -1,153 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752949AbeAaHjM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:39:12 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:43144 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752616AbeAaHjJ (ORCPT
+        id S1752913AbeAaHmE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 02:42:04 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:18693 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752616AbeAaHmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:39:09 -0500
-X-IronPort-AV: E=Sophos;i="5.46,438,1511798400";
-   d="scan'208";a="70796737"
-From: Avri Altman <Avri.Altman@wdc.com>
-To: Asutosh Das <asutoshd@codeaurora.org>,
-        "subhashj@codeaurora.org" <subhashj@codeaurora.org>,
-        "cang@codeaurora.org" <cang@codeaurora.org>,
-        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
-        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
-        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/1] scsi: ufs: make sure all interrupts are processed
-Thread-Topic: [PATCH 1/1] scsi: ufs: make sure all interrupts are processed
-Thread-Index: AQHTmYaHcSUT5SYu3EOc2oEnVQ6gu6ONmZLw
-Date: Wed, 31 Jan 2018 07:39:06 +0000
-Message-ID: <DM5PR04MB1085C5039CA525D6FB77DBE3FCFB0@DM5PR04MB1085.namprd04.prod.outlook.com>
-References: <1517288066-13171-1-git-send-email-asutoshd@codeaurora.org>
-In-Reply-To: <1517288066-13171-1-git-send-email-asutoshd@codeaurora.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com;
-x-originating-ip: [212.25.79.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR04MB1002;7:06inITYU7H2K4fnJ6Mw1lIx9GPeQE0trJtqa+dWW7z32uiBRF3Wnz+ZpMOdk1Z1oZPYD+UPdsx/8Z/lPhyRE0yzgDJoMvKuTHcRDcSwOQD/1IwJVOouqLxZNFqd0zU75t4cT/F23qNHMPmdKvJgcFvHVWfrMyt4RnTjp6VMVFnhSft7Ep4IiNuP80YUqxQx445ueHkhbKWLD42pIePQni7Mjuh3sHMISsK2X+chvnQnmyrhUwIC4yiW0Xfjca41F;20:Ai7nRc14xwSkBkpg9YWf/Z2JF9O1bl90mKsWZOWAt9WbHQ9qgM4Ylslt818A1WncDRxRFdLSEP3B17N/l5QocobfFjXM0hx77Wn0BEw/6ALZTBOLEgisXyh4z8/TCjhbqH3mPhk5iaqkZbtTbZxzN24GR9VsWNBKqT72irJ4o2w=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 07a0d53b-9a6b-44c3-5d50-08d5687db53f
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:DM5PR04MB1002;
-x-ms-traffictypediagnostic: DM5PR04MB1002:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <DM5PR04MB10028C6E9A10D1B273D783AFFCFB0@DM5PR04MB1002.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(104084551191319)(146099531331640);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3231101)(2400082)(944501161)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041288)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR04MB1002;BCL:0;PCL:0;RULEID:;SRVR:DM5PR04MB1002;
-x-forefront-prvs: 056929CBB8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(346002)(396003)(39380400002)(376002)(13464003)(199004)(189003)(7736002)(86362001)(53936002)(9686003)(6436002)(55016002)(33656002)(74316002)(7416002)(229853002)(2900100001)(81156014)(81166006)(66066001)(106356001)(8936002)(8676002)(105586002)(2906002)(99286004)(110136005)(316002)(54906003)(97736004)(5660300001)(39060400002)(6116002)(14454004)(3660700001)(25786009)(68736007)(7696005)(76176011)(4326008)(2501003)(59450400001)(26005)(102836004)(478600001)(2201001)(3846002)(305945005)(6246003)(2950100002)(186003)(6506007)(53546011)(72206003)(3280700002)(77096007);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR04MB1002;H:DM5PR04MB1085.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: Eh9G8Otg6daIpPXu4PN7NkIuI/ghFHTd7SkEfjj8twyqFiMZuWNKHQgQ68zsTX5soDdKONkgkWcv1tKTir/RSQ==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 31 Jan 2018 02:42:01 -0500
+X-UUID: a0d32eb17ae54b5a908ed94a915d199b-20180131
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+CC: Frank Rowand <frowand.list@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH 2/2] dt-bindings: PCI: MediaTek: Correct the interrupt-map properties
+Date: Wed, 31 Jan 2018 15:41:50 +0800
+Message-ID: <9d247a4fba54ba90d07df32fd89a8bb2c8bdb0f9.1516961656.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
+References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07a0d53b-9a6b-44c3-5d50-08d5687db53f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2018 07:39:06.1478
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR04MB1002
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0V7dJfJ012272
 
-Hi,
-Can you elaborate how this can even happen?
-Isn't the interrupt aggregation capability should attend for those cases?
+Move the interrupt-map properties from the child nodes to the root node
+and update each entry accordingly.
 
-Thanks,
-Avri
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ .../devicetree/bindings/pci/mediatek-pcie.txt      | 28 ++++++++++++----------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-> -----Original Message-----
-> From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-
-> owner@vger.kernel.org] On Behalf Of Asutosh Das
-> Sent: Tuesday, January 30, 2018 6:54 AM
-> To: subhashj@codeaurora.org; cang@codeaurora.org;
-> vivek.gautam@codeaurora.org; rnayak@codeaurora.org;
-> vinholikatti@gmail.com; jejb@linux.vnet.ibm.com;
-> martin.petersen@oracle.com
-> Cc: linux-scsi@vger.kernel.org; Venkat Gopalakrishnan
-> <venkatg@codeaurora.org>; Asutosh Das <asutoshd@codeaurora.org>; open
-> list <linux-kernel@vger.kernel.org>
-> Subject: [PATCH 1/1] scsi: ufs: make sure all interrupts are processed
-> 
-> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
-> 
-> As multiple requests are submitted to the ufs host controller in parallel there
-> could be instances where the command completion interrupt arrives later for a
-> request that is already processed earlier as the corresponding doorbell was
-> cleared when handling the previous interrupt. Read the interrupt status in a
-> loop after processing the received interrupt to catch such interrupts and handle
-> it.
-> 
-> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
-> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 27 +++++++++++++++++++--------
->  1 file changed, 19 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index
-> 8af2af3..58d81de 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -5357,19 +5357,30 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
->  	u32 intr_status, enabled_intr_status;
->  	irqreturn_t retval = IRQ_NONE;
->  	struct ufs_hba *hba = __hba;
-> +	int retries = hba->nutrs;
-> 
->  	spin_lock(hba->host->host_lock);
->  	intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
-> -	enabled_intr_status =
-> -		intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
-> 
-> -	if (intr_status)
-> -		ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
-> +	/*
-> +	 * There could be max of hba->nutrs reqs in flight and in worst case
-> +	 * if the reqs get finished 1 by 1 after the interrupt status is
-> +	 * read, make sure we handle them by checking the interrupt status
-> +	 * again in a loop until we process all of the reqs before returning.
-> +	 */
-> +	do {
-> +		enabled_intr_status =
-> +			intr_status & ufshcd_readl(hba,
-> REG_INTERRUPT_ENABLE);
-> +		if (intr_status)
-> +			ufshcd_writel(hba, intr_status,
-> REG_INTERRUPT_STATUS);
-> +		if (enabled_intr_status) {
-> +			ufshcd_sl_intr(hba, enabled_intr_status);
-> +			retval = IRQ_HANDLED;
-> +		}
-> +
-> +		intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
-> +	} while (intr_status && --retries);
-> 
-> -	if (enabled_intr_status) {
-> -		ufshcd_sl_intr(hba, enabled_intr_status);
-> -		retval = IRQ_HANDLED;
-> -	}
->  	spin_unlock(hba->host->host_lock);
->  	return retval;
->  }
-> --
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-> Inc.
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux
-> Foundation Collaborative Project.
+diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.txt b/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
+index 3a6ce55..b15ea2d 100644
+--- a/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
+@@ -89,10 +89,21 @@ Examples for MT7623:
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+ 		#interrupt-cells = <1>;
+-		interrupt-map-mask = <0xf800 0 0 0>;
+-		interrupt-map = <0x0000 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>,
+-				<0x0800 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>,
+-				<0x1000 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-map-mask = <0xf800 0 0 7>;
++		interrupt-map = <0x0000 0 0 1 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW
++				0x0000 0 0 2 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW
++				0x0000 0 0 3 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW
++				0x0000 0 0 4 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW
++
++				0x0800 0 0 1 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW
++				0x0800 0 0 2 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW
++				0x0800 0 0 3 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW
++				0x0800 0 0 4 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW
++
++				0x1000 0 0 1 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW
++				0x1000 0 0 2 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW
++				0x1000 0 0 3 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW
++				0x1000 0 0 4 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
+ 		clocks = <&topckgen CLK_TOP_ETHIF_SEL>,
+ 			 <&hifsys CLK_HIFSYS_PCIE0>,
+ 			 <&hifsys CLK_HIFSYS_PCIE1>,
+@@ -115,9 +126,6 @@ Examples for MT7623:
+ 			reg = <0x0000 0 0 0 0>;
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+-			#interrupt-cells = <1>;
+-			interrupt-map-mask = <0 0 0 0>;
+-			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>;
+ 			ranges;
+ 			num-lanes = <1>;
+ 		};
+@@ -127,9 +135,6 @@ Examples for MT7623:
+ 			reg = <0x0800 0 0 0 0>;
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+-			#interrupt-cells = <1>;
+-			interrupt-map-mask = <0 0 0 0>;
+-			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
+ 			ranges;
+ 			num-lanes = <1>;
+ 		};
+@@ -139,9 +144,6 @@ Examples for MT7623:
+ 			reg = <0x1000 0 0 0 0>;
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+-			#interrupt-cells = <1>;
+-			interrupt-map-mask = <0 0 0 0>;
+-			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
+ 			ranges;
+ 			num-lanes = <1>;
+ 		};
+-- 
+1.9.1
