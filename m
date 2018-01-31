@@ -1,96 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753384AbeAaCef (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:34:35 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60612 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752529AbeAaCee (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:34:34 -0500
-From: Mike Kravetz <mike.kravetz@oracle.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@gmail.com>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v2 1/3] mm: hugetlbfs: move HUGETLBFS_I outside #ifdef CONFIG_HUGETLBFS
-Date: Tue, 30 Jan 2018 18:29:09 -0800
-Message-Id: <20180131022911.23947-2-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180131022911.23947-1-mike.kravetz@oracle.com>
-References: <20180131022911.23947-1-mike.kravetz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8790 signatures=668657
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1801310029
+        id S1753393AbeAaCgK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 21:36:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58176 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751296AbeAaCgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 21:36:09 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788B821780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Tue, 30 Jan 2018 18:36:07 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        chao@kernel.org
+Subject: Re: [PATCH] f2fs: add sanity check for quota sysfile ino
+Message-ID: <20180131023607.GA87929@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180129082933.64556-1-yuchao0@huawei.com>
+ <20180131013556.GE65489@jaegeuk-macbookpro.roam.corp.google.com>
+ <f27cbf43-eb34-5e21-8016-c1a17203cf0b@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f27cbf43-eb34-5e21-8016-c1a17203cf0b@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HUGETLBFS_I will be referenced (but not used) in code outside #ifdef
-CONFIG_HUGETLBFS.  Move the definition to prevent compiler errors.
+On 01/31, Chao Yu wrote:
+> On 2018/1/31 9:35, Jaegeuk Kim wrote:
+> > On 01/29, Chao Yu wrote:
+> >> Add missing sanity check for quota sysfile ino.
+> > 
+> > We don't need to limit the specific inode numbers for quota files, since
+> > we may be able to set any inode numbers later. How about checkint the
+> > numbers are allocated as quota?
 
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- include/linux/hugetlb.h | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+If quota_ino is set, f2fs_enable_quotas() will be failed, if its ino is invalid.
+It'd be also fine, if we have no inode numbers there. What I mean was we may need
+to consider reallocating or deallocating inode numbers later.
 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 36fa6a2a82e3..222d2a329f14 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -9,6 +9,7 @@
- #include <linux/cgroup.h>
- #include <linux/list.h>
- #include <linux/kref.h>
-+#include <linux/mempolicy.h>
- #include <asm/pgtable.h>
- 
- struct ctl_table;
-@@ -256,6 +257,21 @@ enum {
- 	HUGETLB_ANONHUGE_INODE  = 2,
- };
- 
-+/*
-+ * HUGETLBFS_I (and hugetlbfs_inode_info) referenced but not used by code
-+ * outside #ifdef CONFIG_HUGETLBFS.  Define here to prevent compiler errors.
-+ */
-+struct hugetlbfs_inode_info {
-+	struct shared_policy policy;
-+	struct inode vfs_inode;
-+	unsigned int seals;
-+};
-+
-+static inline struct hugetlbfs_inode_info *HUGETLBFS_I(struct inode *inode)
-+{
-+	return container_of(inode, struct hugetlbfs_inode_info, vfs_inode);
-+}
-+
- #ifdef CONFIG_HUGETLBFS
- struct hugetlbfs_sb_info {
- 	long	max_inodes;   /* inodes allowed */
-@@ -273,17 +289,6 @@ static inline struct hugetlbfs_sb_info *HUGETLBFS_SB(struct super_block *sb)
- 	return sb->s_fs_info;
- }
- 
--struct hugetlbfs_inode_info {
--	struct shared_policy policy;
--	struct inode vfs_inode;
--	unsigned int seals;
--};
--
--static inline struct hugetlbfs_inode_info *HUGETLBFS_I(struct inode *inode)
--{
--	return container_of(inode, struct hugetlbfs_inode_info, vfs_inode);
--}
--
- extern const struct file_operations hugetlbfs_file_operations;
- extern const struct vm_operations_struct hugetlb_vm_ops;
- struct file *hugetlb_file_setup(const char *name, size_t size, vm_flags_t acct,
--- 
-2.13.6
+> 
+> Do you mean:
+> 
+> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+> 		if (!le32_to_cpu(raw_super->qf_ino[0]) ||
+> 			!le32_to_cpu(raw_super->qf_ino[1])) {
+> 			f2fs_msg(sb, KERN_INFO,
+> 				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
+> 				le32_to_cpu(raw_super->qf_ino[0]),
+> 				le32_to_cpu(raw_super->qf_ino[1]));
+> 			return 1;
+> 		}
+> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
+> 			!le32_to_cpu(raw_super->qf_ino[2])) {
+> 			f2fs_msg(sb, KERN_INFO,
+> 				"Invalid Quota Ino: prj_ino(%u)",
+> 				le32_to_cpu(raw_super->qf_ino[2]));
+> 			return 1;
+> 		}
+> 	}
+> 
+> I think it's equal to:
+> 
+> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+> 		unsigned int qf_cnt = 0;
+> 		if (qf_ino[0])
+> 			qf_cnt++;
+> 		if (qf_ino[1])
+> 			qf_cnt++;
+> 		if (qf_cnt != 2) {
+> 			f2fs_msg();
+> 			return 1;
+> 		}
+> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
+> 			if (qf_ino[2])
+> 				qf_cnt++;
+> 			if (qf_cnt != 3) {
+> 				f2fs_msg();
+> 				return 1;
+> 			}
+> 		}
+> 	}
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/super.c | 19 +++++++++++++++++++
+> >>  1 file changed, 19 insertions(+)
+> >>
+> >> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >> index 368f63d7bad2..6011071688ca 100644
+> >> --- a/fs/f2fs/super.c
+> >> +++ b/fs/f2fs/super.c
+> >> @@ -2116,6 +2116,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+> >>  		return 1;
+> >>  	}
+> >>  
+> >> +	/* check quota sysfile ino info */
+> >> +	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+> >> +		if (le32_to_cpu(raw_super->qf_ino[0]) != 4 ||
+> >> +			le32_to_cpu(raw_super->qf_ino[1]) != 5) {
+> >> +			f2fs_msg(sb, KERN_INFO,
+> >> +				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
+> >> +				le32_to_cpu(raw_super->qf_ino[0]),
+> >> +				le32_to_cpu(raw_super->qf_ino[1]));
+> >> +			return 1;
+> >> +		}
+> >> +		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
+> >> +			le32_to_cpu(raw_super->qf_ino[2]) != 6) {
+> >> +			f2fs_msg(sb, KERN_INFO,
+> >> +				"Invalid Quota Ino: prj_ino(%u)",
+> >> +				le32_to_cpu(raw_super->qf_ino[2]));
+> >> +			return 1;
+> >> +		}
+> >> +	}
+> >> +
+> >>  	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
+> >>  		f2fs_msg(sb, KERN_INFO,
+> >>  			"Invalid segment count (%u)",
+> >> -- 
+> >> 2.15.0.55.gc2ece9dc4de6
+> > 
+> > .
+> > 
