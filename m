@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753619AbeAaRN4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:13:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39822 "EHLO mx1.redhat.com"
+        id S1753671AbeAaROE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:14:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36262 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753578AbeAaRNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:13:52 -0500
+        id S1753632AbeAaROB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:14:01 -0500
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: kvm@vger.kernel.org
 Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -16,117 +16,139 @@ Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
         Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to HV_X64_MSR_VP_ASSIST_PAGE
-Date: Wed, 31 Jan 2018 18:13:37 +0100
-Message-Id: <20180131171341.21478-2-vkuznets@redhat.com>
+Subject: [PATCH 2/5] x86/hyper-v: allocate and use Virtual Processor Assist Pages
+Date: Wed, 31 Jan 2018 18:13:38 +0100
+Message-Id: <20180131171341.21478-3-vkuznets@redhat.com>
 In-Reply-To: <20180131171341.21478-1-vkuznets@redhat.com>
 References: <20180131171341.21478-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ladi Prosek <lprosek@redhat.com>
+Virtual Processor Assist Pages usage allows us to do optimized EOI
+processing for APIC, enable Enlightened VMCS support in KVM and more.
+struct hv_vp_assist_page is defined according to the Hyper-V TLFS v5.0b.
 
-The assist page has been used only for the paravirtual EOI so far, hence
-the "APIC" in the MSR name. Renaming to match the Hyper-V TLFS where it's
-called "Virtual VP Assist MSR".
-
-Signed-off-by: Ladi Prosek <lprosek@redhat.com>
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/include/uapi/asm/hyperv.h | 10 +++++-----
- arch/x86/kvm/hyperv.c              |  8 ++++----
- arch/x86/kvm/lapic.h               |  2 +-
- arch/x86/kvm/x86.c                 |  2 +-
- 4 files changed, 11 insertions(+), 11 deletions(-)
+ arch/x86/hyperv/hv_init.c          | 33 +++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/mshyperv.h    | 10 ++++++++++
+ arch/x86/include/uapi/asm/hyperv.h | 10 ++++++++++
+ 3 files changed, 53 insertions(+)
 
-diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
-index 197c2e6c7376..929036b22b4c 100644
---- a/arch/x86/include/uapi/asm/hyperv.h
-+++ b/arch/x86/include/uapi/asm/hyperv.h
-@@ -189,7 +189,7 @@
- #define HV_X64_MSR_EOI				0x40000070
- #define HV_X64_MSR_ICR				0x40000071
- #define HV_X64_MSR_TPR				0x40000072
--#define HV_X64_MSR_APIC_ASSIST_PAGE		0x40000073
-+#define HV_X64_MSR_VP_ASSIST_PAGE		0x40000073
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index a3adece392f1..103b9c986e14 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -88,6 +88,9 @@ EXPORT_SYMBOL_GPL(hyperv_cs);
+ u32 *hv_vp_index;
+ EXPORT_SYMBOL_GPL(hv_vp_index);
  
- /* Define synthetic interrupt controller model specific registers. */
- #define HV_X64_MSR_SCONTROL			0x40000080
-@@ -275,10 +275,10 @@ struct hv_tsc_emulation_status {
- #define HVCALL_POST_MESSAGE			0x005c
- #define HVCALL_SIGNAL_EVENT			0x005d
++struct hv_vp_assist_page **hv_vp_assist_page;
++EXPORT_SYMBOL_GPL(hv_vp_assist_page);
++
+ u32 hv_max_vp_index;
  
--#define HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE		0x00000001
--#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT	12
--#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_MASK	\
--		(~((1ull << HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ENABLE	0x00000001
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT	12
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK	\
-+		(~((1ull << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
+ static int hv_cpu_init(unsigned int cpu)
+@@ -101,6 +104,23 @@ static int hv_cpu_init(unsigned int cpu)
+ 	if (msr_vp_index > hv_max_vp_index)
+ 		hv_max_vp_index = msr_vp_index;
  
- #define HV_X64_MSR_TSC_REFERENCE_ENABLE		0x00000001
- #define HV_X64_MSR_TSC_REFERENCE_ADDRESS_SHIFT	12
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index dc97f2544b6f..9fb0ed9b1670 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1009,17 +1009,17 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
- 			return 1;
- 		hv->vp_index = (u32)data;
- 		break;
--	case HV_X64_MSR_APIC_ASSIST_PAGE: {
-+	case HV_X64_MSR_VP_ASSIST_PAGE: {
- 		u64 gfn;
- 		unsigned long addr;
- 
--		if (!(data & HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE)) {
-+		if (!(data & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE)) {
- 			hv->hv_vapic = data;
- 			if (kvm_lapic_enable_pv_eoi(vcpu, 0))
- 				return 1;
- 			break;
- 		}
--		gfn = data >> HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT;
-+		gfn = data >> HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT;
- 		addr = kvm_vcpu_gfn_to_hva(vcpu, gfn);
- 		if (kvm_is_error_hva(addr))
- 			return 1;
-@@ -1129,7 +1129,7 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
- 		return kvm_hv_vapic_msr_read(vcpu, APIC_ICR, pdata);
- 	case HV_X64_MSR_TPR:
- 		return kvm_hv_vapic_msr_read(vcpu, APIC_TASKPRI, pdata);
--	case HV_X64_MSR_APIC_ASSIST_PAGE:
-+	case HV_X64_MSR_VP_ASSIST_PAGE:
- 		data = hv->hv_vapic;
- 		break;
- 	case HV_X64_MSR_VP_RUNTIME:
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index 56c36014f7b7..edce055e9fd7 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -109,7 +109,7 @@ int kvm_hv_vapic_msr_read(struct kvm_vcpu *vcpu, u32 msr, u64 *data);
- 
- static inline bool kvm_hv_vapic_assist_page_enabled(struct kvm_vcpu *vcpu)
- {
--	return vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE;
-+	return vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
++	if (!hv_vp_assist_page)
++		return 0;
++
++	if (!hv_vp_assist_page[smp_processor_id()])
++		hv_vp_assist_page[smp_processor_id()] =
++			__vmalloc(PAGE_SIZE, GFP_KERNEL, PAGE_KERNEL);
++
++	if (hv_vp_assist_page[smp_processor_id()]) {
++		u64 val;
++
++		val = vmalloc_to_pfn(hv_vp_assist_page[smp_processor_id()]);
++		val = (val << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) |
++			HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
++
++		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, val);
++	}
++
+ 	return 0;
  }
  
- int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d2b8d3fd3602..36eb4e7e25fc 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1031,7 +1031,7 @@ static u32 emulated_msrs[] = {
- 	HV_X64_MSR_VP_RUNTIME,
- 	HV_X64_MSR_SCONTROL,
- 	HV_X64_MSR_STIMER0_CONFIG,
--	HV_X64_MSR_APIC_ASSIST_PAGE, MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
-+	HV_X64_MSR_VP_ASSIST_PAGE, MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
- 	MSR_KVM_PV_EOI_EN,
+@@ -198,6 +218,12 @@ static int hv_cpu_die(unsigned int cpu)
+ 	struct hv_reenlightenment_control re_ctrl;
+ 	unsigned int new_cpu;
  
- 	MSR_IA32_TSC_ADJUST,
++	if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
++		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
++		vfree(hv_vp_assist_page[cpu]);
++		hv_vp_assist_page[cpu] = NULL;
++	}
++
+ 	if (hv_reenlightenment_cb == NULL)
+ 		return 0;
+ 
+@@ -241,6 +267,13 @@ void hyperv_init(void)
+ 	if (!hv_vp_index)
+ 		return;
+ 
++	hv_vp_assist_page = kcalloc(num_possible_cpus(),
++				    sizeof(*hv_vp_assist_page), GFP_KERNEL);
++	if (!hv_vp_assist_page) {
++		ms_hyperv.hints &= ~HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
++		return;
++	}
++
+ 	if (cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/hyperv_init:online",
+ 			      hv_cpu_init, hv_cpu_die) < 0)
+ 		goto free_vp_index;
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 1790002a2052..ba8dc52a2c9b 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -294,6 +294,12 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
+  */
+ extern u32 *hv_vp_index;
+ extern u32 hv_max_vp_index;
++extern struct hv_vp_assist_page **hv_vp_assist_page;
++
++static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
++{
++	return hv_vp_assist_page[cpu];
++}
+ 
+ /**
+  * hv_cpu_number_to_vp_number() - Map CPU to VP.
+@@ -330,6 +336,10 @@ static inline void hyperv_setup_mmu_ops(void) {}
+ static inline void set_hv_tscchange_cb(void (*cb)(void)) {}
+ static inline void clear_hv_tscchange_cb(void) {}
+ static inline void hyperv_stop_tsc_emulation(void) {};
++static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
++{
++	return NULL;
++}
+ #endif /* CONFIG_HYPERV */
+ 
+ #ifdef CONFIG_HYPERV_TSCPAGE
+diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
+index 929036b22b4c..ffaad7c93bcc 100644
+--- a/arch/x86/include/uapi/asm/hyperv.h
++++ b/arch/x86/include/uapi/asm/hyperv.h
+@@ -412,6 +412,16 @@ struct hv_timer_message_payload {
+ 	__u64 delivery_time;	/* When the message was delivered */
+ };
+ 
++/* Define virtual processor assist page structure. */
++struct hv_vp_assist_page {
++	__u32 apic_assist;
++	__u32 reserved;
++	__u64 vtl_control[2];
++	__u64 nested_enlightenments_control[2];
++	__u32 enlighten_vmentry;
++	__u64 current_nested_vmcs;
++};
++
+ #define HV_STIMER_ENABLE		(1ULL << 0)
+ #define HV_STIMER_PERIODIC		(1ULL << 1)
+ #define HV_STIMER_LAZY			(1ULL << 2)
 -- 
 2.14.3
