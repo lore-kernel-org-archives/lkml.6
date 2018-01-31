@@ -1,45 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753040AbeAaIKA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 03:10:00 -0500
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:46200 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeAaIJ7 (ORCPT
+        id S1753384AbeAaIK3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 03:10:29 -0500
+Received: from mail-vk0-f49.google.com ([209.85.213.49]:38184 "EHLO
+        mail-vk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753243AbeAaIK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 03:09:59 -0500
-X-Google-Smtp-Source: AH8x227xb8Y+buYr5lI9He53/k4Y1FDhS29okeOUWt62CSisfWqGCXf7i9wtmhkTypLf4eAYwmVH/w==
-Date: Wed, 31 Jan 2018 09:09:55 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Meelis Roos <mroos@linux.ee>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: 4.15: WARNING: CPU: 3 PID: 258 at kernel/irq/chip.c:244
- __irq_startup+0x80/0x100
-Message-ID: <20180131080955.ikdrrus6cotfnozs@gmail.com>
-References: <alpine.LRH.2.21.1801291809460.13788@math.ut.ee>
- <alpine.DEB.2.20.1801291732092.1849@nanos>
- <alpine.DEB.2.20.1801301935410.1797@nanos>
- <alpine.LRH.2.21.1801302127080.11640@math.ut.ee>
- <alpine.DEB.2.20.1801310856390.2293@nanos>
+        Wed, 31 Jan 2018 03:10:27 -0500
+X-Google-Smtp-Source: AH8x227/ZTcr1cUn2AdPOt9NhK/S4liZgmoffavE1fEtcr5Q4fcup/vXv3V5NnbFZCLOSnl8/7pW9A==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1801310856390.2293@nanos>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <307f58dd-ce7e-b6f5-092a-f8679349be73@xs4all.nl>
+References: <20180126060216.147918-1-acourbot@chromium.org>
+ <ced425a2-8b66-05c6-367d-46a0a40b1873@xs4all.nl> <CAPBb6MU5Ph=_rH_TOQi5mstujAPMTWqC_1d-8_TcuGx25sOJvg@mail.gmail.com>
+ <307f58dd-ce7e-b6f5-092a-f8679349be73@xs4all.nl>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 31 Jan 2018 17:10:04 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AbdAGteHOfKH4EoHUNSmsfCYtExVX9TSK8aWsQZ4HVJg@mail.gmail.com>
+Message-ID: <CAAFQd5AbdAGteHOfKH4EoHUNSmsfCYtExVX9TSK8aWsQZ4HVJg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/8] [media] Request API, take three
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Hans,
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
+Sorry for joining the party late.
 
-> > cures the warning and at least the first bootup was working otherwise 
-> > too.
-> 
-> I'll do a proper fix and queue it so your museum is kept alive.
+On Wed, Jan 31, 2018 at 4:50 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 01/30/2018 07:31 AM, Alexandre Courbot wrote:
+>> Hi Hans,
+>>
+>> On Mon, Jan 29, 2018 at 8:21 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>> On 01/26/2018 07:02 AM, Alexandre Courbot wrote:
+>>>> Howdy. Here is your bi-weekly request API redesign! ;)
+>>>>
+>>>> Again, this is a simple version that only implements the flow of requests,
+>>>> without applying controls. The intent is to get an agreement on a base to work
+>>>> on, since the previous versions went straight back to the redesign board.
+>>>>
+>>>> Highlights of this version:
+>>>>
+>>>> * As requested by Hans, request-bound buffers are now passed earlier to drivers,
+>>>> as early as the request itself is submitted. Doing it earlier is not be useful
+>>>> since the driver would not know the state of the request, and thus cannot do
+>>>> anything with the buffer. Drivers are now responsible for applying request
+>>>> parameters themselves.
+>>>>
+>>>> * As a consequence, there is no such thing as a "request queue" anymore. The
+>>>> flow of buffers decides the order in which requests are processed. Individual
+>>>> devices of the same pipeline can implement synchronization if needed, but this
+>>>> is beyond this first version.
+>>>>
+>>>> * VB2 code is still a bit shady. Some of it will interfere with the fences
+>>>> series, so I am waiting for the latter to land to do it properly.
+>>>>
+>>>> * Requests that are not yet submitted effectively act as fences on the buffers
+>>>> they own, resulting in the buffer queue being blocked until the request is
+>>>> submitted. An alternate design would be to only block the
+>>>> not-submitted-request's buffer and let further buffers pass before it, but since
+>>>> buffer order is becoming increasingly important I have decided to just block the
+>>>> queue. This is open to discussion though.
+>>>
+>>> I don't think we should mess with the order.
+>>
+>> Agreed, let's keep it that way then.
+>>
 
-Museum, space heater and ventilation system all in one? :-)
+I'm not sure I'm following here. Does it mean (quoting Alex):
 
-Thanks,
+a) "Requests that are not yet submitted effectively act as fences on the buffers
+    they own, resulting in the buffer queue being blocked until the request is
+    submitted."
 
-	Ingo
+b) "block the not-submitted-request's buffer and let further buffers
+pass before it"
+
+or neither?
+
+Hans, could you clarify what you think is the right behavior here?
+
+>>>> * For the codec usecase, I have experimented a bit marking CAPTURE buffers with
+>>>> the request FD that produced them (vim2m acts that way). This seems to work
+>>>> well, however FDs are process-local and could be closed before the CAPTURE
+>>>> buffer is dequeued, rendering that information less meaningful, if not
+>>>> dangerous.
+>>>
+>>> I don't follow this. Once the fd is passed to the kernel its refcount should be
+>>> increased so the data it represents won't be released if userspace closes the fd.
+>>
+>> The refcount of the request is increased. The refcount of the FD is
+>> not, since it is only a userspace reference to the request.
+>
+> I don't think that's right. Looking at how dma-buf does this (dma_buf_get in
+> dma-buf.c) it calls fget(fd) which increases the fd refcount. In fact, as far as
+> I can see the struct dma_buf doesn't have a refcount, it is solely refcounted
+> through the fd. That's probably the model you want to follow.
+
+As far as I can see from the code, fget() on an fd increases a
+reference count on the struct file backing the fd. I don't think there
+is another level of reference counting of fds themselves - that's why
+dup(fd) gives you another fd and you can't call close(fd) on the same
+fd two times.
+
+>
+>>
+>>>
+>>> Obviously if userspace closes the fd it cannot do anything with it anymore, but
+>>> it shouldn't be 'dangerous' AFAICT.
+>>
+>> It userspace later gets that closed FD back from a DQBUF call, and
+>> decides to use it again, then we would have a problem. I agree that it
+>> is userspace responsibility to be careful here, but making things
+>> foolproof never hurts.
+>
+> I think all the issues will go away if you refcount the fd instead of the
+> request. It worked well for dma-buf for years.
+
+I'm confused here. The kernel never returns the same FD for the same
+DMA-buf twice. Every time an ioctl is called, which returns a DMA-buf
+FD, it creates a new FD.
+
+Best regards,
+Tomasz
