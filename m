@@ -1,143 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753545AbeAaJQi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 04:16:38 -0500
-Received: from mga04.intel.com ([192.55.52.120]:14485 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752869AbeAaJPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 04:15:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,439,1511856000";
-   d="scan'208";a="26886366"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 2/3] x86/tme: Detect if TME and MKTME is activated by BIOS
-Date: Wed, 31 Jan 2018 12:15:08 +0300
-Message-Id: <20180131091509.26531-3-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
-References: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
+        id S1753319AbeAaJSI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 04:18:08 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:46135 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752089AbeAaJSE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 04:18:04 -0500
+Date: Wed, 31 Jan 2018 01:13:40 -0800
+From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-5bf30316991d5bcda046343ee77d823cf16fdd03@git.kernel.org>
+Cc: bp@suse.de, hpa@zytor.com, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, bhe@redhat.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org, mingo@kernel.org
+Reply-To: kirill.shutemov@linux.intel.com, hpa@zytor.com, bp@suse.de,
+        mingo@kernel.org, torvalds@linux-foundation.org, bhe@redhat.com,
+        tglx@linutronix.de, peterz@infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180129110845.26633-1-kirill.shutemov@linux.intel.com>
+References: <20180129110845.26633-1-kirill.shutemov@linux.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/kexec: Make kexec (mostly) work in 5-level
+ paging mode
+Git-Commit-ID: 5bf30316991d5bcda046343ee77d823cf16fdd03
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IA32_TME_ACTIVATE MSR (0x982) can be used to check if BIOS has enabled
-TME and MKTME. It includes which encryption policy/algorithm is selected
-for TME or available for MKTME. For MKTME, the MSR also enumerates how
-many KeyIDs are available.
+Commit-ID:  5bf30316991d5bcda046343ee77d823cf16fdd03
+Gitweb:     https://git.kernel.org/tip/5bf30316991d5bcda046343ee77d823cf16fdd03
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Mon, 29 Jan 2018 14:08:45 +0300
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 31 Jan 2018 08:39:40 +0100
 
+x86/kexec: Make kexec (mostly) work in 5-level paging mode
+
+Currently kexec() will crash when switching into a 5-level paging
+enabled kernel.
+
+I missed that we need to change relocate_kernel() to set CR4.LA57
+flag if the kernel has 5-level paging enabled.
+
+I avoided using #ifdef CONFIG_X86_5LEVEL here and inferred if we need to
+enable 5-level paging from previous CR4 value. This way the code is
+ready for boot-time switching between paging modes.
+
+With this patch applied, in addition to kexec 4-to-4 which always worked,
+we can kexec 4-to-5 and 5-to-5 - while 5-to-4 will need more work.
+
+Reported-by: Baoquan He <bhe@redhat.com>
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Tested-by: Baoquan He <bhe@redhat.com>
+Cc: <stable@vger.kernel.org> # v4.14+
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Fixes: 77ef56e4f0fb ("x86: Enable 5-level paging support via CONFIG_X86_5LEVEL=y")
+Link: http://lkml.kernel.org/r/20180129110845.26633-1-kirill.shutemov@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/cpu/intel.c | 83 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ arch/x86/kernel/relocate_kernel_64.S | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 6936d14d4c77..5b95fa484837 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -517,6 +517,86 @@ static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
- 	}
- }
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index 307d3ba..11eda21e 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -68,6 +68,9 @@ relocate_kernel:
+ 	movq	%cr4, %rax
+ 	movq	%rax, CR4(%r11)
  
-+#define MSR_IA32_TME_ACTIVATE		0x982
++	/* Save CR4. Required to enable the right paging mode later. */
++	movq	%rax, %r13
 +
-+#define TME_ACTIVATE_LOCKED(x)		(x & 0x1)
-+#define TME_ACTIVATE_ENABLED(x)		(x & 0x2)
-+
-+#define TME_ACTIVATE_POLICY(x)		((x >> 4) & 0xf)	/* Bits 7:4 */
-+#define TME_ACTIVATE_POLICY_AES_XTS	0
-+
-+#define TME_ACTIVATE_KEYID_BITS(x)	((x >> 32) & 0xf)	/* Bits 35:32 */
-+
-+#define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	/* Bits 63:48 */
-+#define TME_ACTIVATE_CRYPTO_AES_XTS	1
-+
-+#define MKTME_ENABLED		0
-+#define MKTME_DISABLED		1
-+#define MKTME_UNINITIALIZED	2
-+static int mktme_status = MKTME_UNINITIALIZED;
-+
-+static void detect_tme(struct cpuinfo_x86 *c)
-+{
-+	u64 tme_activate, tme_policy, tme_crypto_algs;
-+	int keyid_bits = 0, nr_keyids = 0;
-+	static u64 tme_activate_cpu0 = 0;
-+
-+	rdmsrl(MSR_IA32_TME_ACTIVATE, tme_activate);
-+
-+	if (mktme_status != MKTME_UNINITIALIZED) {
-+		/* Broken BIOS? */
-+		if (tme_activate != tme_activate_cpu0) {
-+			pr_err_once("TME: configuation is inconsistent between CPUs\n");
-+			mktme_status = MKTME_DISABLED;
-+		}
-+		goto out;
-+	}
-+
-+	tme_activate_cpu0 = tme_activate;
-+
-+	if (!TME_ACTIVATE_LOCKED(tme_activate) || !TME_ACTIVATE_ENABLED(tme_activate)) {
-+		pr_info("TME: not enabled by BIOS\n");
-+		mktme_status = MKTME_DISABLED;
-+		goto out;
-+	}
-+
-+	pr_info("TME: enabled by BIOS\n");
-+
-+	tme_policy = TME_ACTIVATE_POLICY(tme_activate);
-+	if (tme_policy != TME_ACTIVATE_POLICY_AES_XTS)
-+		pr_warn("TME: Unknown policy is active: %#llx\n", tme_policy);
-+
-+	tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
-+	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS)) {
-+		pr_err("MKTME: No known encryption algorithm is supported: %#llx\n",
-+				tme_crypto_algs);
-+		mktme_status = MKTME_DISABLED;
-+	}
-+out:
-+	keyid_bits = TME_ACTIVATE_KEYID_BITS(tme_activate);
-+	nr_keyids = (1UL << keyid_bits) - 1;
-+	if (nr_keyids) {
-+		pr_info_once("MKTME: enabled by BIOS\n");
-+		pr_info_once("MKTME: %d KeyIDs available\n", nr_keyids);
-+	} else {
-+		pr_info_once("MKTME: disabled by BIOS\n");
-+	}
-+
-+	if (mktme_status == MKTME_UNINITIALIZED) {
-+		/* MKTME is usable */
-+		mktme_status = MKTME_ENABLED;
-+	}
-+
-+	/*
-+	 * Exclude KeyID bits from physical address bits.
-+	 *
-+	 * We have to do this even if we are not going to use KeyID bits
-+	 * ourself. VM guests still have to know that these bits are not usable
-+	 * for physical address.
-+	 */
-+	c->x86_phys_bits -= keyid_bits;
-+}
-+
- static void init_intel_energy_perf(struct cpuinfo_x86 *c)
- {
- 	u64 epb;
-@@ -687,6 +767,9 @@ static void init_intel(struct cpuinfo_x86 *c)
- 	if (cpu_has(c, X86_FEATURE_VMX))
- 		detect_vmx_virtcap(c);
+ 	/* zero out flags, and disable interrupts */
+ 	pushq $0
+ 	popfq
+@@ -126,8 +129,13 @@ identity_mapped:
+ 	/*
+ 	 * Set cr4 to a known state:
+ 	 *  - physical address extension enabled
++	 *  - 5-level paging, if it was enabled before
+ 	 */
+ 	movl	$X86_CR4_PAE, %eax
++	testq	$X86_CR4_LA57, %r13
++	jz	1f
++	orl	$X86_CR4_LA57, %eax
++1:
+ 	movq	%rax, %cr4
  
-+	if (cpu_has(c, X86_FEATURE_TME))
-+		detect_tme(c);
-+
- 	init_intel_energy_perf(c);
- 
- 	init_intel_misc_features(c);
--- 
-2.15.1
+ 	jmp 1f
