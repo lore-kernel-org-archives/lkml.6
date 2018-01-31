@@ -1,144 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752824AbeAaPA3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 10:00:29 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:46599 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751001AbeAaPA1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 10:00:27 -0500
-X-Google-Smtp-Source: AH8x224wGtmWndkSPWDv8N11NKOTiZoB/oo8waX1g3XnzbNtoxSgyPHokL2ZiUWUeH+RuHDWT53S6w==
-Subject: Re: [Xen-devel] [PATCHv2] xen-netfront: remove warning when unloading
- module
-To: Eduardo Otubo <otubo@redhat.com>, xen-devel@lists.xenproject.org
-Cc: jgross@suse.com, wei.liu2@citrix.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, paul.durrant@citrix.com,
-        cheshi@redhat.com, vkuznets@redhat.com, mgamal@redhat.com,
-        cavery@redhat.com, boris.ostrovsky@oracle.com
-References: <20171123141835.5820-1-otubo@redhat.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <fcbb9d8a-85b4-5543-6ebc-cd34a66729ff@gmail.com>
-Date: Wed, 31 Jan 2018 17:00:23 +0200
+        id S1753224AbeAaPGA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 10:06:00 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39028 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751899AbeAaPF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 10:05:59 -0500
+Subject: Re: [PATCH v2 16/16] arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
+ hardening support
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Hanjun Guo <guohanjun@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>, Jon Masters <jcm@redhat.com>
+References: <20180129174559.1866-1-marc.zyngier@arm.com>
+ <20180129174559.1866-17-marc.zyngier@arm.com>
+ <476d111e-6fb0-9bef-2448-a94d0cc03f45@huawei.com>
+ <49853e5e-f093-2e79-1cfb-182f51fcd6a0@arm.com>
+ <CAKv+Gu-XidYPh0hi1nzG5m0AO7EfRE6bnKfxCToG+9zsmvzmNg@mail.gmail.com>
+ <CAKv+Gu-L0WOLSUbcHSTQ_FVDNSJoXQv25ExUmtv8ZEYhkCSQ-Q@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <501451b6-cc84-e8d3-b7b6-49a7de953976@arm.com>
+Date: Wed, 31 Jan 2018 15:05:53 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20171123141835.5820-1-otubo@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <CAKv+Gu-L0WOLSUbcHSTQ_FVDNSJoXQv25ExUmtv8ZEYhkCSQ-Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Eduardo!
+On 31/01/18 14:38, Ard Biesheuvel wrote:
+> On 31 January 2018 at 14:35, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>> On 31 January 2018 at 14:11, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>> On 31/01/18 13:56, Hanjun Guo wrote:
+>>>> Hi Marc,
+>>>>
+>>>> On 2018/1/30 1:45, Marc Zyngier wrote:
+>>>>>  static int enable_psci_bp_hardening(void *data)
+>>>>>  {
+>>>>>      const struct arm64_cpu_capabilities *entry = data;
+>>>>>
+>>>>> -    if (psci_ops.get_version)
+>>>>> +    if (psci_ops.get_version) {
+>>>>> +            if (check_smccc_arch_workaround_1(entry))
+>>>>> +                    return 0;
+>>>>
+>>>> If I'm using the new version SMCCC, the firmware have the choicARM_SMCCC_ARCH_WORKAROUND_1e to decide
+>>>> whether this machine needs the workaround, even if the CPU is vulnerable
+>>>> for CVE-2017-5715, but..
+>>>>
+>>>>> +
+>>>>>              install_bp_hardening_cb(entry,
+>>>>>                                     (bp_hardening_cb_t)psci_ops.get_version,
+>>>>>                                     __psci_hyp_bp_inval_start,
+>>>>>                                     __psci_hyp_bp_inval_end);
+>>>>
+>>>> ..the code above seems will enable get_psci_version() for CPU and will
+>>>> trap to trust firmware even the new version of firmware didn't say
+>>>> we need the workaround, did I understand it correctly?
+>>>
+>>> Well, you only get there if we've established that your CPU is affected
+>>> (it has an entry matching its MIDR with the HARDEN_BRANCH_PREDICTOR
+>>> capability), and that entry points to enable_psci_bp_hardening. It is
+>>> not the firmware that decides whether we need hardening, but the kernel.
+>>> The firmware merely provides a facility to apply the hardening.
+>>>
+>>>> I'm ask this because some platform will not expose to users to
+>>>> take advantage of CVE-2017-5715, and we can use different firmware
+>>>> to report we need such workaround or not, then use a single kernel
+>>>> image for both vulnerable platforms and no vulnerable ones.
+>>>
+>>> You cannot have your cake and eat it. If you don't want to workaround
+>>> the issue, you can disable the hardening. But asking for the same kernel
+>>> to do both depending on what the firmware reports doesn't make much
+>>> sense to me.
+>>
+>> The SMCCC v1.1. document does appear to imply that systems that
+>> implement SMCCC v1.1 but don't implement ARM_SMCCC_ARCH_WORKAROUND_1
+>> should be assumed to be unaffected.
+>>
+>> """
+>> If the discovery call returns NOT_SUPPORTED:
+>> • SMCCC_ARCH_WORKAROUND_1 must not be invoked on any PE in the system, and
+>> • none of the PEs in the system require firmware mitigation for CVE-2017-5715.
+>> """
+>>
+>> How to deal with conflicting information in this regard (quirk table
+>> vs firmware implementation) is a matter of policy, of course.
 
-I am working on a frontend driver (PV DRM) and also seeing some strange
+Yup. And the current approach fits the spec, I believe. The
+PSCI_GET_VERSION band-aid should normally be removed shortly after these
+patches hit mainline.
 
-things on driver unloading:
+> 
+> ... and actually, perhaps it makes sense for the
+> SMCCC_ARCH_WORKAROUND_1 check to be completely independent of MIDR
+> based errata matching?
+> 
+> I.e., if SMCCC v1.1 and SMCCC_ARCH_WORKAROUND_1 are both implemented,
+> we should probably invoke it even if the MIDR is not known to belong
+> to an affected implementation.
 
-xt# rmmod -f drm_xen_front.ko
-[ 3236.462497] [drm] Unregistering XEN PV vdispl
-[ 3236.485745] [drm:xen_drv_remove [drm_xen_front]] *ERROR* Backend 
-state is InitWait while removing driver
-[ 3236.486950] vdispl vdispl-0: 22 freeing event channel 11
-[ 3236.496123] vdispl vdispl-0: failed to write error node for 
-device/vdispl/0 (22 freeing event channel 11)
-[ 3236.496271] vdispl vdispl-0: 22 freeing event channel 12
-[ 3236.501633] vdispl vdispl-0: failed to write error node for 
-device/vdispl/0 (22 freeing event channel 12)
+This would have an impact on big-little systems, for which there is
+often a bunch of unaffected CPUs.
 
-These are somewhat different from your use-case with grant references, 
-but I have a question:
+Thanks,
 
-do you really see that XenbusStateClosed and XenbusStateClosing are
-
-called? In my driver I can't see those and once I tried to dig deeper 
-into the problem
-
-I saw that on driver removal it is disconnected from XenBus, so no 
-backend state
-
-change events come in via .otherend_changed callback.
-
-The only difference I see here is that the backend is a user-space 
-application
-
-Thank you,
-Oleksandr
-
-On 11/23/2017 04:18 PM, Eduardo Otubo wrote:
-> v2:
->   * Replace busy wait with wait_event()/wake_up_all()
->   * Cannot garantee that at the time xennet_remove is called, the
->     xen_netback state will not be XenbusStateClosed, so added a
->     condition for that
->   * There's a small chance for the xen_netback state is
->     XenbusStateUnknown by the time the xen_netfront switches to Closed,
->     so added a condition for that.
->
-> When unloading module xen_netfront from guest, dmesg would output
-> warning messages like below:
->
->    [  105.236836] xen:grant_table: WARNING: g.e. 0x903 still in use!
->    [  105.236839] deferring g.e. 0x903 (pfn 0x35805)
->
-> This problem relies on netfront and netback being out of sync. By the time
-> netfront revokes the g.e.'s netback didn't have enough time to free all of
-> them, hence displaying the warnings on dmesg.
->
-> The trick here is to make netfront to wait until netback frees all the g.e.'s
-> and only then continue to cleanup for the module removal, and this is done by
-> manipulating both device states.
->
-> Signed-off-by: Eduardo Otubo <otubo@redhat.com>
-> ---
->   drivers/net/xen-netfront.c | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
->
-> diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-> index 8b8689c6d887..391432e2725d 100644
-> --- a/drivers/net/xen-netfront.c
-> +++ b/drivers/net/xen-netfront.c
-> @@ -87,6 +87,8 @@ struct netfront_cb {
->   /* IRQ name is queue name with "-tx" or "-rx" appended */
->   #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
->   
-> +static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
-> +
->   struct netfront_stats {
->   	u64			packets;
->   	u64			bytes;
-> @@ -2021,10 +2023,12 @@ static void netback_changed(struct xenbus_device *dev,
->   		break;
->   
->   	case XenbusStateClosed:
-> +		wake_up_all(&module_unload_q);
->   		if (dev->state == XenbusStateClosed)
->   			break;
->   		/* Missed the backend's CLOSING state -- fallthrough */
->   	case XenbusStateClosing:
-> +		wake_up_all(&module_unload_q);
->   		xenbus_frontend_closed(dev);
->   		break;
->   	}
-> @@ -2130,6 +2134,20 @@ static int xennet_remove(struct xenbus_device *dev)
->   
->   	dev_dbg(&dev->dev, "%s\n", dev->nodename);
->   
-> +	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
-> +		xenbus_switch_state(dev, XenbusStateClosing);
-> +		wait_event(module_unload_q,
-> +			   xenbus_read_driver_state(dev->otherend) ==
-> +			   XenbusStateClosing);
-> +
-> +		xenbus_switch_state(dev, XenbusStateClosed);
-> +		wait_event(module_unload_q,
-> +			   xenbus_read_driver_state(dev->otherend) ==
-> +			   XenbusStateClosed ||
-> +			   xenbus_read_driver_state(dev->otherend) ==
-> +			   XenbusStateUnknown);
-> +	}
-> +
->   	xennet_disconnect_backend(info);
->   
->   	unregister_netdev(info->netdev);
+	M.
+-- 
+Jazz is not dead. It just smells funny...
