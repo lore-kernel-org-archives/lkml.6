@@ -1,65 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753010AbeAaIdt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 03:33:49 -0500
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:39541 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752366AbeAaIdn (ORCPT
+        id S1752772AbeAaIfw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 03:35:52 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39563 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751581AbeAaIfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 03:33:43 -0500
-X-Google-Smtp-Source: AH8x227bATzrZm/L6KLxIpbX9rS0XuBWxsfPxHNbrF0u7AEsdyiRYcWQzgw8lB4dTVVwlfXGBjAQpk74Hr4YrwjfBT8=
+        Wed, 31 Jan 2018 03:35:50 -0500
+X-Google-Smtp-Source: AH8x2250zCxnl9g20qo5DcTDE4a0MC+qE9605K6NtcRmkcq2RmeJgdyxbYGPtH0rBGjkSwCqBDDgKQ==
+Subject: Re: [PATCH 1/2] lightnvm: remove mlc pairs structure
+To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>,
+        =?UTF-8?Q?Matias_Bj=c3=b8rling?= <m@bjorling.me>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180130132605.28635-1-m@bjorling.me>
+ <E2E51BC8-63D4-40EC-9912-398BB73C9F16@lightnvm.io>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <e807b046-7d83-9cea-377c-03eb6fd1f662@lightnvm.io>
+Date: Wed, 31 Jan 2018 09:35:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180130203042.4797-1-peter.malone@gmail.com>
-References: <20180130203042.4797-1-peter.malone@gmail.com>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Wed, 31 Jan 2018 09:33:21 +0100
-X-Google-Sender-Auth: aJR5vf8MEtv5KLw921F6aTbSZu8
-Message-ID: <CA+7wUsyQhz2b437z0iYLOSo-35itALmGk39X4N0gR+HoCyod9A@mail.gmail.com>
-Subject: Re: [PATCH] Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
-To: Peter Malone <peter.malone@gmail.com>
-Cc: Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <E2E51BC8-63D4-40EC-9912-398BB73C9F16@lightnvm.io>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+On 01/31/2018 03:00 AM, Javier González wrote:
+>> On 30 Jan 2018, at 21.26, Matias Bjørling <m@bjorling.me> wrote:
+>>
+>> The known implementations of the 1.2 specification, and upcoming 2.0
+>> implementation all expose a sequential list of pages to write.
+>> Remove the data structure, as it is no longer needed.
+>>
+>> Signed-off-by: Matias Bjørling <m@bjorling.me>
+>> ---
+>> drivers/nvme/host/lightnvm.c | 14 +-------------
+>> 1 file changed, 1 insertion(+), 13 deletions(-)
+> 
+> Even though the current implementations does not use the MLC pairing
+> information, this is part of the on the 1.2 identification. Until we
+> eventually remove 1.2 support (if we do), the identify structure should
+> reflect the specification as is.
+> 
+> Javier
+> 
 
-On Tue, Jan 30, 2018 at 9:30 PM, Peter Malone <peter.malone@gmail.com> wrote:
-> Signed-off-by: Peter Malone <peter.malone@gmail.com>
-
-AFAIK empty commit message is not acceptable upstream
-
->  drivers/video/fbdev/sbuslib.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/video/fbdev/sbuslib.c b/drivers/video/fbdev/sbuslib.c
-> index af6fc97f4ba4..a436d44f1b7f 100644
-> --- a/drivers/video/fbdev/sbuslib.c
-> +++ b/drivers/video/fbdev/sbuslib.c
-> @@ -122,7 +122,7 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
->                 unsigned char __user *ured;
->                 unsigned char __user *ugreen;
->                 unsigned char __user *ublue;
-> -               int index, count, i;
-> +               unsigned int index, count, i;
->
->                 if (get_user(index, &c->index) ||
->                     __get_user(count, &c->count) ||
-> @@ -161,7 +161,7 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
->                 unsigned char __user *ugreen;
->                 unsigned char __user *ublue;
->                 struct fb_cmap *cmap = &info->cmap;
-> -               int index, count, i;
-> +               unsigned int index, count, i;
->                 u8 red, green, blue;
->
->                 if (get_user(index, &c->index) ||
-> --
-> 2.14.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I already started on removing the MLC bits in previous patches. These 
+two patches continue that trend. I don't know of any implementing either 
+multiple groups or MLC, and since it has not been implemented before, no 
+one is going to use it. No reason to have dead code hanging around. This 
+is similar to the NVMe device driver not having definitions for all that 
+is in the specification until it is used in the implementation.
