@@ -1,86 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751452AbeAaFU6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 00:20:58 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:36761 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750705AbeAaFU4 (ORCPT
+        id S1751619AbeAaF3y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 00:29:54 -0500
+Received: from gateway32.websitewelcome.com ([192.185.144.98]:15087 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751163AbeAaF3w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 00:20:56 -0500
-X-Google-Smtp-Source: AH8x226K4GTVtbkCoON6bd9PWpWq31OD2tpNHYoXcvDlzrhZcnIDk5N7vHLe6uuoqUcd9w2GinrERQ==
-Date: Wed, 31 Jan 2018 10:50:53 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, Javi Merino <javi.merino@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "open list:THERMAL/CPU_COOLING" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 3/8] thermal/drivers/cpu_cooling: Remove pointless field
-Message-ID: <20180131052053.GI13395@vireshk-i7>
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-4-git-send-email-daniel.lezcano@linaro.org>
+        Wed, 31 Jan 2018 00:29:52 -0500
+Date: Tue, 30 Jan 2018 23:29:48 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Ilya Dryomov <idryomov@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>, "David S. Miller" <davem@davemloft.net>
+Cc: ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] libceph: use 64-bit arithmetic instead of 32-bit
+Message-ID: <20180131052948.GA16419@embeddedgus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1516721671-16360-4-git-send-email-daniel.lezcano@linaro.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.201.65
+X-Source-L: No
+X-Exim-ID: 1egkxz-002zhY-J3
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.152.201.65]:56046
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-01-18, 16:34, Daniel Lezcano wrote:
-> The structure cpufreq_cooling_device provides a backpointer to the thermal
-> device but this one is used for a trace and to unregister. For the trace,
-> we don't really need this field and the unregister function as the same
-> pointer passed as parameter. Remove it.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/thermal/cpu_cooling.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> index e62be75..d05bb73 100644
-> --- a/drivers/thermal/cpu_cooling.c
-> +++ b/drivers/thermal/cpu_cooling.c
-> @@ -88,7 +88,6 @@ struct cpufreq_cooling_device {
->  	unsigned int clipped_freq;
->  	unsigned int max_level;
->  	struct freq_table *freq_table;	/* In descending order */
-> -	struct thermal_cooling_device *cdev;
->  	struct cpufreq_policy *policy;
->  	struct list_head node;
->  	struct time_in_idle *idle_time;
-> @@ -197,8 +196,7 @@ static int update_freq_table(struct cpufreq_cooling_device *cpufreq_cdev,
->  
->  	dev = get_cpu_device(cpu);
->  	if (unlikely(!dev)) {
-> -		dev_warn(&cpufreq_cdev->cdev->device,
-> -			 "No cpu device for cpu %d\n", cpu);
-> +		pr_warn("No cpu device for cpu %d\n", cpu);
->  		return -ENODEV;
->  	}
->  
-> @@ -762,7 +760,6 @@ __cpufreq_cooling_register(struct device_node *np,
->  		goto remove_ida;
->  
->  	cpufreq_cdev->clipped_freq = cpufreq_cdev->freq_table[0].frequency;
-> -	cpufreq_cdev->cdev = cdev;
->  
->  	mutex_lock(&cooling_list_lock);
->  	/* Register the notifier for first cpufreq cooling device */
-> @@ -922,7 +919,7 @@ void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
->  		cpufreq_unregister_notifier(&thermal_cpufreq_notifier_block,
->  					    CPUFREQ_POLICY_NOTIFIER);
->  
-> -	thermal_cooling_device_unregister(cpufreq_cdev->cdev);
-> +	thermal_cooling_device_unregister(cdev);
->  	ida_simple_remove(&cpufreq_ida, cpufreq_cdev->id);
->  	kfree(cpufreq_cdev->idle_time);
->  	kfree(cpufreq_cdev->freq_table);
+Cast objsetno to u64 in order to give the compiler complete
+information about the proper arithmetic to use. Notice
+that this variable is used in a context that expects an
+expression of type u64 (64 bits, unsigned).
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+The expression objsetno * sc + stripepos is currently
+being evaluated using 32-bit arithmetic.
 
+In general, the use of incorrect arithmetic has security
+implications.
+
+Addresses-Coverity-ID: 200686
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ net/ceph/osdmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+index 0da27c6..58dc965 100644
+--- a/net/ceph/osdmap.c
++++ b/net/ceph/osdmap.c
+@@ -2183,7 +2183,7 @@ int ceph_calc_file_object_mapping(struct ceph_file_layout *layout,
+ 	stripepos = bl % sc;
+ 	objsetno = stripeno / su_per_object;
+ 
+-	*ono = objsetno * sc + stripepos;
++	*ono = (u64)objsetno * sc + stripepos;
+ 	dout("objset %u * sc %u = ono %u\n", objsetno, sc, (unsigned int)*ono);
+ 
+ 	/* *oxoff = *off % layout->fl_stripe_unit;  # offset in su */
 -- 
-viresh
+2.7.4
