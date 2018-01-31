@@ -1,54 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752751AbeAaIdm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 03:33:42 -0500
-Received: from a.mx.secunet.com ([62.96.220.36]:58668 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752366AbeAaIdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 03:33:39 -0500
-Date: Wed, 31 Jan 2018 09:33:37 +0100
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: LABBE Corentin <clabbe@baylibre.com>, <davem@davemloft.net>,
-        <nhorman@tuxdriver.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <smueller@chronox.de>
-Subject: Re: [PATCH 1/2] crypto: Implement a generic crypto statistics
-Message-ID: <20180131083337.rvshu72x5xhh22ef@gauss3.secunet.de>
-References: <1515700617-3513-1-git-send-email-clabbe@baylibre.com>
- <3297958.ndliyBY1jk@tauon.chronox.de>
- <20180112090730.GA15630@Red>
- <16302559.hxlYq3rOsN@tauon.chronox.de>
- <20180118085813.GA1988@Red>
- <20180126154328.GA4002@gondor.apana.org.au>
+        id S1753010AbeAaIdt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 03:33:49 -0500
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:39541 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752366AbeAaIdn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 03:33:43 -0500
+X-Google-Smtp-Source: AH8x227bATzrZm/L6KLxIpbX9rS0XuBWxsfPxHNbrF0u7AEsdyiRYcWQzgw8lB4dTVVwlfXGBjAQpk74Hr4YrwjfBT8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180126154328.GA4002@gondor.apana.org.au>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 20C46AF6-745C-48E2-A5D6-4862710491AE
+In-Reply-To: <20180130203042.4797-1-peter.malone@gmail.com>
+References: <20180130203042.4797-1-peter.malone@gmail.com>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Wed, 31 Jan 2018 09:33:21 +0100
+X-Google-Sender-Auth: aJR5vf8MEtv5KLw921F6aTbSZu8
+Message-ID: <CA+7wUsyQhz2b437z0iYLOSo-35itALmGk39X4N0gR+HoCyod9A@mail.gmail.com>
+Subject: Re: [PATCH] Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
+To: Peter Malone <peter.malone@gmail.com>
+Cc: Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 11:43:28PM +0800, Herbert Xu wrote:
-> On Thu, Jan 18, 2018 at 09:58:13AM +0100, LABBE Corentin wrote:
-> >
-> > I have two way of adding a new netlink request
-> > - keep the current patch and simply add a new CRYPTO_MSG_GETSTAT which use the same function than CRYPTO_MSG_GETALG
-> > 	=> minimal changes, in fact CRYPTO_MSG_GETSTAT and CRYPTO_MSG_GETALG would be the same, but it is easy for userspace to test presence of stat.
-> > - Create a new CRYPTO_MSG_GETSTAT which imply lot of code and add a new crypto_user_stat.c
-> > 	=> this imply also to change makefile (rename crypto_user.c to crypto_user_base.c) since crypto_user.ko is made of two files.
-> > 
-> > Which one do you prefer ?
-> 
-> I think you should check with the crconf author, Steffen Klassert
-> since that will be affected by this change.
+Hi Peter,
 
-I still haven't had time to look into the details, but I'm
-fine with everything that does not break existing userspace.
-Everything else would be a 'no go'.
+On Tue, Jan 30, 2018 at 9:30 PM, Peter Malone <peter.malone@gmail.com> wrote:
+> Signed-off-by: Peter Malone <peter.malone@gmail.com>
+
+AFAIK empty commit message is not acceptable upstream
+
+>  drivers/video/fbdev/sbuslib.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/video/fbdev/sbuslib.c b/drivers/video/fbdev/sbuslib.c
+> index af6fc97f4ba4..a436d44f1b7f 100644
+> --- a/drivers/video/fbdev/sbuslib.c
+> +++ b/drivers/video/fbdev/sbuslib.c
+> @@ -122,7 +122,7 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+>                 unsigned char __user *ured;
+>                 unsigned char __user *ugreen;
+>                 unsigned char __user *ublue;
+> -               int index, count, i;
+> +               unsigned int index, count, i;
+>
+>                 if (get_user(index, &c->index) ||
+>                     __get_user(count, &c->count) ||
+> @@ -161,7 +161,7 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+>                 unsigned char __user *ugreen;
+>                 unsigned char __user *ublue;
+>                 struct fb_cmap *cmap = &info->cmap;
+> -               int index, count, i;
+> +               unsigned int index, count, i;
+>                 u8 red, green, blue;
+>
+>                 if (get_user(index, &c->index) ||
+> --
+> 2.14.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
