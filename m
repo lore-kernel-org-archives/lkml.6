@@ -1,215 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752680AbeAaBsq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 20:48:46 -0500
-Received: from mail-by2nam01on0060.outbound.protection.outlook.com ([104.47.34.60]:51968
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752530AbeAaBsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 20:48:39 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Suravee.Suthikulpanit@amd.com;
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: joro@8bytes.org, jroedel@suse.de, alex.williamson@redhat.com,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH 1/2] iommu: Fix iommu_unmap and iommu_unmap_fast return type
-Date: Tue, 30 Jan 2018 20:48:04 -0500
-Message-Id: <1517363285-89304-2-git-send-email-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1517363285-89304-1-git-send-email-suravee.suthikulpanit@amd.com>
-References: <1517363285-89304-1-git-send-email-suravee.suthikulpanit@amd.com>
+        id S1752768AbeAaBw3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 20:52:29 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:40163 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751647AbeAaBw1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 20:52:27 -0500
+X-Google-Smtp-Source: AH8x227ztVrbl8cGU3pUM2axn3x8bTN0X+4mzsDQG6/9eeHjuKUATs19qHDXNmzTw7l/Jw/sEZijpA==
+Date: Tue, 30 Jan 2018 17:52:23 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+d85bfb332db8f0794212@syzkaller.appspotmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in __bpf_prog_put
+Message-ID: <20180131015223.hvllx2tgfffryzl2@gmail.com>
+References: <001a1140bf605479be05627d75c7@google.com>
+ <CACT4Y+b-Pti9RT43BOa4+dx3mU4eQ+EuDpJva8okb2d10MJpFQ@mail.gmail.com>
+ <a8ff5d6c-594d-13eb-4b96-2becc8936a4e@iogearbox.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [114.109.128.54]
-X-ClientProxiedBy: SG2PR06CA0102.apcprd06.prod.outlook.com (10.170.138.28) To
- MWHPR12MB1742.namprd12.prod.outlook.com (10.175.55.13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 71fa8fc9-8d27-44ed-43ff-08d5684cbf06
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR12MB1742;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1742;3:XSjKMPaoTOAkh+T+Wwn2/JgaZ8yp1lyxeW/nNBqatKoNfuxJ1xk2QXPm3sjGpK2wk0RRGdHkcYLqCYg9D1JaSrIY/Kjz3Vhhu9me4Ok/qMzPDl3j/+uwhXrJNqH7nG7FFvz3z6iqXTHDGuZ70pRFQP0368xCo0gw9RFS1GsqngcIpKVYj3x11oZiRlsahoIOYc+aGAOVbwvOZuG0eoYq8195IRO4LdW/DqSXPg0J0MfNezMFpxALQGfXVbmjYZy/;25:do4cciu+noho3luz/apzO2SLrwUxMtU1mpvB8RCy4apqEKrylYBY2kRkkesHeB2PKCpHec2yEt5M6CnkE4xGEi8GJYDdn2DcoSuN+Qo+1PKF1AkSWR5Ws2c+gHqtivhEPE0BQ7+CM5/M4wfhYNJnpFHi9Q4NKUZhUCjhhgkYyjSR9DA5UUZkz4NpQwAXtHymTl79qzF+vTkgYZld/JBoO53zZqwhDNydgw+Z7lRtHn2fy/uYK+OBy6ZVjSq8kUhGz6kZ2H64D/dxb0/VMIbyoi5on8Qp1X3bXY0pGSKnMfmRLi8WeJ0xKwWzHGT2sy3poifogiM1EOGemO7/cE8fug==;31:vZxwuK66h8UMI1YgM9RPPUG9AiYJB0z4PNbgDmbtfCzXAcInswnD8y01QTHEgHxIOKIJQud+Uokn91rkDkNyot3u3vNE6xfd5ZKF8/Bhde9aVlau2ankhzPwe/qrVvVIzYWciStsJ3XQ2FO3XiHwfAy7YN/0UR6c4gAUNyb9k2dBELwWonPReofz9dL4k2RNfSxEm7uzPvXPMT215X1snV7qYWq+0QSibKGp1v3b91Y=
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1742:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1742;20:rjRr++I8viiMxA5VLsFJJVjt9rvL+axr8d/PL2jMDIAbuw4WTBtppReiUaWg1mT+WK/6c2Prg07PuUxEHNBwAkxfE9raPI+ZroNdJB2bFXXmAi9z7vsyHbwytjyJcVV8AENjNIGF3fywyML04n/Yd/UrWv7uK1Z+OcWX2jN9ZxSpg/PWmK5E9wQnGVvNIY2WMr0QfI0oxSqQq7rZr5BVwtwlXO2Gp2+E4N2UuITAECDNFoMPmd+qqT5q/pNQNrsGRTpKOmtKhRwTp6NEGP+skNEmekl67zV1O24zxkf5PJnjvpC8rvkEQUtuRibe/Wl1kage0Cg/RtrZlDZdb6n1vOSdfmjdtACXSsMZCk4syS69rRva4t7sFlGkYj2DnGh27H22xn9lmnY6C7k33MeQsFSFU5pGc79AJxEEper1O05l+aORRpzCqShO76buzv5HwF3ZYKBUR75xInEUPYJKrqbweL1cpi6AgisHxX4taPlFCcf6sqPXTrg34J+F88H9;4:i0kzpOMsa8elxFlgc9H/Wb9xEeJ9QmJIUKhFB7j1EMlPrWHxz6EkOBo78++4U/myuAyv2pHYSWIGLyYNgIwsWj2tmyX/rM656Cyl+/orfD8neKBQ1UBtpA1jrFW+eSYrJmUWpCH7XdgI3HPqGLOgLESFh8R/e22TGfhV6w8NV0O1XnKNCYxqxq40kv0SgvWWKrJ5ikvMDGgCAUAU8yoCTFgm04xWis1Z3Nrshy0zM2zWE8KXDDfxt3X0LkR9Ts86i5Ymfg6tHvK0BTe+WG8NM1w9axCLIH2MF8EoXwpLHK3R63Mnwc2IbcS0LtzR1t9I
-X-Microsoft-Antispam-PRVS: <MWHPR12MB174242B8544D8632E02D8DAAF3FB0@MWHPR12MB1742.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3231101)(2400082)(944501161)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041288)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR12MB1742;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1742;
-X-Forefront-PRVS: 056929CBB8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(396003)(39380400002)(366004)(189003)(199004)(106356001)(53936002)(575784001)(6666003)(86362001)(2950100002)(4326008)(25786009)(66066001)(2906002)(68736007)(4720700003)(26005)(52116002)(6506007)(316002)(59450400001)(47776003)(386003)(6486002)(3846002)(48376002)(305945005)(478600001)(36756003)(50226002)(97736004)(105586002)(76176011)(51416003)(50466002)(72206003)(186003)(7736002)(16586007)(5660300001)(8676002)(16526019)(6116002)(6512007)(8936002)(81156014)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1742;H:ssuthiku-rhel74.localdomain;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR12MB1742;23:fvyfXNlphWU9NLu5Y/NSyBNw30P1WAew2XgBRvqei?=
- =?us-ascii?Q?K00nlwvegCStbWi9LgsSD/QlbRRIhpgxE4IOMT3h+EFiH5Bv25o/M3vUyO5O?=
- =?us-ascii?Q?9is0CZ6Q0joylX6K66h2v9ig/rhS4rX5/cHfcnoknkRp+GjrgrHnR2QOrwRK?=
- =?us-ascii?Q?kenGNIDGvO2RPn+TnNID6tT852eujccgBAHX9u6aMmsWicQOxrf/gY+EIUQf?=
- =?us-ascii?Q?LQs+RbNkMK/bD95bFcPvTw9EJ2tM2sgZ00etN9GDmg6Q6azEBfaaLapDpW5d?=
- =?us-ascii?Q?8cSpNbUSq7/9lzQxccc8+7rLpuM+/pICouDNHAkvH5qYWKZKPqQrZdxZbNW0?=
- =?us-ascii?Q?3Wa0Dm4d/n+ddrn1/8nrRJvoNgERYiv+g6fQuOqErWEDGQsig2gtsR08PUiH?=
- =?us-ascii?Q?vmZNdHZkbDNmdVn/I9JkOB8RXt2LHzecq8gH/xN2XZMWNp25aw3V1veISqjy?=
- =?us-ascii?Q?Gx83TH/8ukeKYvQTKK2phy2W/llqbqSdNNrWJxvlFZcCxzTeXbLazrMk/Avu?=
- =?us-ascii?Q?bVi69x39O3lc/knW3Yk63ZdFlA98cANiZyizPr0e6DhXWRFYn9V1buz/yr6o?=
- =?us-ascii?Q?T6XhFEAJ/uL6tB4ETq2uWOUJca9izWb0txaJgmZ8FlZ+rwbPxVaHZCXZohRX?=
- =?us-ascii?Q?YmOtauxwGWSnZqm1DSDaUCgN6QtybLsjFp45ItEZuiIHZAi5aVSkc1HDMp55?=
- =?us-ascii?Q?b3auLaRl+B/W9ZATjeQbAeH0p2oREea5up5YA679IWm3Z8AOdIr0voBfftlX?=
- =?us-ascii?Q?n6wFdu2YpZvPy2qEtd1E9+sPJkVAkSXrEvdRnjEgQO+yQ/+TUmiPA68auLCg?=
- =?us-ascii?Q?8aiVODePV1QlK+E3sCejGgfVWHm8bs68Mt8WB9fYKpWi3qo3BTUSodCBczvd?=
- =?us-ascii?Q?MuGNQZA7M4fS5MDvh9+3MIANNNCP+WBZmCcfPCjZ0GlkE+8D4OvHzB7bY9cB?=
- =?us-ascii?Q?Fgik25EkZovoj3irh728cE+rLxig9VY5WdCBR1L5d3Uy1qCEX9hTGSvCpOqF?=
- =?us-ascii?Q?PXG1Dhwpcf1JYlBW84A9hk2Ua88XQraUBFhxJQ9x3LUQJta3FpPEdRNvs8+6?=
- =?us-ascii?Q?cSC2AtdAFTbRM6Yn97M14mzXEC0Cg7o9V6G46DTMiuDZyqtZfJ3gXUrqSrZX?=
- =?us-ascii?Q?A8KmUw62xjdPc9n2s6bUN7rUzd128h3hP6zbjMWW1aOTVd/NwKy6G3EwDfV9?=
- =?us-ascii?Q?tOfnHlfazSboKE=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1742;6:yDg4OKaFD3oxVfrZ9GfkW7qW6Ur9TUNRwLA9VPq0kaCsdie97D6Cmqa61x1nbKColO3UvoD96HN1MDCGAd4okG7EQiLVlfOAo7sSRaGP53t4OqW4Tg9Zg1BSMyMlAA3VWa3juQZER5m4SOsw3TSTUUQE6iw9uxtsm46VrHu1FuUo0shTS2VLJOR2jqr9H6PxVDV/W93H2ztWBYvOL+cREchyt6Vy8+sm5nY8GtwPJK21SGMjMcZAHlHibI42NE/d+rrozh2vbghS3ZIXyq1qo6ATf+wksJcRVYUeRRhbmC+YFh/uSCySwrW31h/iAMZ3vFbu/Vs/5EIV4bnL30OmtavSElwv1wP/5i5KpuuudJk=;5:sgzJym0ZRw3Ae+ftowifQRR9Sv/Rr1emKBEw/5wk+It5SoM045c62PdF61txOR6J2H5kjsVz7QV//ubZNCxIn8NpW//U4IWeZlhGhJHwzpL5HO3EdZNBanqX/4smznBtVe5mGJAffnSEK/AnP+7RWBbzRgZtiOqrwwxdo1PVXUY=;24:adyE7fDHjiHGIDIVt+To3gvD6fHMG11SwwPx/wyqvW8ThPqRlGpxzs1MMh9OYkxW3W6n343UnqZTVoNjZcuw48H4dkJA/wgnzF52wH1REKM=;7:AjS4NrX292ggbv37Q1gs620Y7XYhwEb+8sP76ZjpoYevrbGcTWIE3AR1nMxDBlrtswXWFeO3gBvsGEolIdmb0Piov4tzOqbeiKikt9tl/69lflHXYYOuyJFoRPSo92d5w+C23LTEZ8ayRFexwH7oVou2apu24Ut7+y39VMRwa8fUeMzCkg87rUgLvkI9LUAEQ2yJNKhurm0goNKmsVWWVSTqKBLkkPhGI7FB4fdZRtN3eCDM6tio+N4oCmunopZf
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1742;20:4f3ROStoORVjCaMmp6x8K4B+vGydSVKvB+j0pKGST4Ix0FfsZfHL7aB/n6DP9e1FITnWbDq/e1ng8iCBgs4lKjLenpPrDF9aFzd4ajcQGWvKe/I5wyO7JRW8mcGIEwJAe4FWM8j3nuEuUN3SOX1VRE1kpF7zdy9K0NOOZc/P0Kc/4ewLHgovfwFaO/ZBt6VvpB3nJdbmF+FF21pS2ifoyFVVLQVULtkwSC56UulM5VCvFEQmSx8oUG9fo0iihCZD
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2018 01:48:35.3986 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71fa8fc9-8d27-44ed-43ff-08d5684cbf06
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1742
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8ff5d6c-594d-13eb-4b96-2becc8936a4e@iogearbox.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, iommu_unmap and iommu_unmap_fast return unmapped
-pages with size_t.  However, the actual value returned could
-be error codes (< 0), which can be misinterpreted as large
-number of unmapped pages. Therefore, change the return type to ssize_t.
+On Thu, Jan 11, 2018 at 11:48:28AM +0100, Daniel Borkmann wrote:
+> Hi Dmitry,
+> 
+> On 01/11/2018 11:22 AM, Dmitry Vyukov wrote:
+> > On Thu, Jan 11, 2018 at 11:17 AM, syzbot
+> > <syzbot+d85bfb332db8f0794212@syzkaller.appspotmail.com> wrote:
+> >> Hello,
+> >>
+> >> syzkaller hit the following crash on
+> >> 4147d50978df60f34d444c647dde9e5b34a4315e
+> >> git://git.cmpxchg.org/linux-mmots.git/master
+> >> compiler: gcc (GCC) 7.1.1 20170620
+> >> .config is attached
+> >> Raw console output is attached.
+> >> Unfortunately, I don't have any reproducer for this bug yet.
+> >>
+> >>
+> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> Reported-by: syzbot+d85bfb332db8f0794212@syzkaller.appspotmail.com
+> >> It will help syzbot understand when the bug is fixed. See footer for
+> >> details.
+> >> If you forward the report, please keep this part and the footer.
+> >>
+> >> netlink: 3 bytes leftover after parsing attributes in process
+> >> `syz-executor5'.
+> >> ==================================================================
+> >> BUG: KASAN: use-after-free in __bpf_prog_put+0x5e8/0x640
+> >> kernel/bpf/syscall.c:944
+> >> netlink: 'syz-executor5': attribute type 5 has an invalid length.
+> >> Read of size 8 at addr ffff8801d3619658 by task syz-executor0/12398
+> >>
+> >> CPU: 1 PID: 12398 Comm: syz-executor0 Not tainted 4.15.0-rc7-mm1+ #53
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >> Google 01/01/2011
+> >> Call Trace:
+> >>  __dump_stack lib/dump_stack.c:17 [inline]
+> >>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+> >>  print_address_description+0x73/0x250 mm/kasan/report.c:256
+> >>  kasan_report_error mm/kasan/report.c:354 [inline]
+> >>  kasan_report+0x23b/0x360 mm/kasan/report.c:412
+> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> >>  __bpf_prog_put+0x5e8/0x640 kernel/bpf/syscall.c:944
+> >>  bpf_prog_put+0x1a/0x20 kernel/bpf/syscall.c:961
+> >>  prog_fd_array_put_ptr+0x15/0x20 kernel/bpf/arraymap.c:446
+> >>  fd_array_map_delete_elem+0xc8/0x110 kernel/bpf/arraymap.c:420
+> >>  map_delete_elem kernel/bpf/syscall.c:737 [inline]
+> >>  SYSC_bpf kernel/bpf/syscall.c:1814 [inline]
+> >>  SyS_bpf+0x22ea/0x4400 kernel/bpf/syscall.c:1782
+> >>  entry_SYSCALL_64_fastpath+0x29/0xa0
+> >> RIP: 0033:0x452ac9
+> >> RSP: 002b:00007fb70df60c58 EFLAGS: 00000212 ORIG_RAX: 0000000000000141
+> >> RAX: ffffffffffffffda RBX: 000000000071bea0 RCX: 0000000000452ac9
+> >> RDX: 0000000000000010 RSI: 0000000020f02ff0 RDI: 0000000000000003
+> >> RBP: 00000000000003aa R08: 0000000000000000 R09: 0000000000000000
+> >> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006f3890
+> >> R13: 00000000ffffffff R14: 00007fb70df616d4 R15: 0000000000000000
+> >>
+> >> Allocated by task 11996:
+> >>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+> >>  set_track mm/kasan/kasan.c:459 [inline]
+> >>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+> >>  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
+> >>  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3541
+> >>  kmem_cache_zalloc include/linux/slab.h:694 [inline]
+> >>  get_empty_filp+0xfb/0x4f0 fs/file_table.c:122
+> >>  path_openat+0xed/0x3530 fs/namei.c:3514
+> >>  do_filp_open+0x25b/0x3b0 fs/namei.c:3572
+> >>  do_sys_open+0x502/0x6d0 fs/open.c:1059
+> >>  SYSC_open fs/open.c:1077 [inline]
+> >>  SyS_open+0x2d/0x40 fs/open.c:1072
+> >>  entry_SYSCALL_64_fastpath+0x29/0xa0
+> >>
+> >> Freed by task 11994:
+> >>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+> >>  set_track mm/kasan/kasan.c:459 [inline]
+> >>  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+> >>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+> >>  __cache_free mm/slab.c:3485 [inline]
+> >>  kmem_cache_free+0x86/0x2b0 mm/slab.c:3743
+> >>  file_free_rcu+0x5c/0x70 fs/file_table.c:49
+> >>  __rcu_reclaim kernel/rcu/rcu.h:172 [inline]
+> >>  rcu_do_batch kernel/rcu/tree.c:2675 [inline]
+> >>  invoke_rcu_callbacks kernel/rcu/tree.c:2934 [inline]
+> >>  __rcu_process_callbacks kernel/rcu/tree.c:2901 [inline]
+> >>  rcu_process_callbacks+0xd6c/0x17f0 kernel/rcu/tree.c:2918
+> >>  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+> >>
+> >> The buggy address belongs to the object at ffff8801d36195c0
+> >>  which belongs to the cache filp of size 456
+> >> The buggy address is located 152 bytes inside of
+> >>  456-byte region [ffff8801d36195c0, ffff8801d3619788)
+> >> The buggy address belongs to the page:
+> >> page:ffffea00074d8640 count:1 mapcount:0 mapping:ffff8801d36190c0 index:0x0
+> >> flags: 0x2fffc0000000100(slab)
+> >> raw: 02fffc0000000100 ffff8801d36190c0 0000000000000000 0000000100000006
+> >> raw: ffffea00074c49a0 ffffea000747a160 ffff8801dae30180 0000000000000000
+> >> page dumped because: kasan: bad access detected
+> >>
+> >> Memory state around the buggy address:
+> >>  ffff8801d3619500: fb fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> >>  ffff8801d3619580: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+> >>>
+> >>> ffff8801d3619600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >>
+> >>                                                     ^
+> >>  ffff8801d3619680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >>  ffff8801d3619700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >> ==================================================================
+> > 
+> > 
+> > Is it the same as "general protection fault in __bpf_prog_put"?
+> > https://groups.google.com/forum/#!topic/syzkaller-bugs/jUsNMmVgms0
+> > 
+> > The first stack looks similar, but alloc/free stacks looks unrelated.
+> > What's the root cause of this? Is prog->aux an uninitialized pointer?
+> > I wonder if initializing memory in kmalloc would help to prevent this
+> > bug from duplicating? E.g. if we init memory to 0, it would always
+> > cause GPFs, or if we init to an invalid pointer, always cause a bad
+> > paging fault. Is it's the case, then I think we should do it to reduce
+> > number of failure modes and syzbot reports.
+> 
+> This one in bpf tree fixes it:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git/commit/?id=bbeb6e4323dad9b5e0ee9f60c223dd532e2403b1
+> 
+> Despite this one not having a reproducer, I'm pretty certain it's very
+> much related to all the ones coming in yesterday (which the above fixes).
+> 
+> >> This bug is generated by a dumb bot. It may contain errors.
+> >> See https://goo.gl/tpsmEJ for details.
+> >> Direct all questions to syzkaller@googlegroups.com.
+> >>
+> >> syzbot will keep track of this bug report.
+> >> If you forgot to add the Reported-by tag, once the fix for this bug is
+> >> merged
+> >> into any tree, please reply to this email with:
+> >> #syz fix: exact-commit-title
 
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- drivers/iommu/amd_iommu.c   |  6 +++---
- drivers/iommu/intel-iommu.c |  4 ++--
- drivers/iommu/iommu.c       | 16 ++++++++--------
- include/linux/iommu.h       | 20 ++++++++++----------
- 4 files changed, 23 insertions(+), 23 deletions(-)
+This particular crash has not re-occurred following the initial report, so I'll
+assume the above analysis is correct and it was indeed fixed by:
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 7d5eb00..3609f51 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -3030,11 +3030,11 @@ static int amd_iommu_map(struct iommu_domain *dom, unsigned long iova,
- 	return ret;
- }
- 
--static size_t amd_iommu_unmap(struct iommu_domain *dom, unsigned long iova,
--			   size_t page_size)
-+static ssize_t amd_iommu_unmap(struct iommu_domain *dom, unsigned long iova,
-+			       size_t page_size)
- {
- 	struct protection_domain *domain = to_pdomain(dom);
--	size_t unmap_size;
-+	ssize_t unmap_size;
- 
- 	if (domain->mode == PAGE_MODE_NONE)
- 		return -EINVAL;
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 4a2de34..15ba866 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5068,8 +5068,8 @@ static int intel_iommu_map(struct iommu_domain *domain,
- 	return ret;
- }
- 
--static size_t intel_iommu_unmap(struct iommu_domain *domain,
--				unsigned long iova, size_t size)
-+static ssize_t intel_iommu_unmap(struct iommu_domain *domain,
-+				 unsigned long iova, size_t size)
- {
- 	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
- 	struct page *freelist = NULL;
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 3de5c0b..8f7da8a 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1557,12 +1557,12 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
- }
- EXPORT_SYMBOL_GPL(iommu_map);
- 
--static size_t __iommu_unmap(struct iommu_domain *domain,
--			    unsigned long iova, size_t size,
--			    bool sync)
-+static ssize_t __iommu_unmap(struct iommu_domain *domain,
-+			     unsigned long iova, size_t size,
-+			     bool sync)
- {
- 	const struct iommu_ops *ops = domain->ops;
--	size_t unmapped_page, unmapped = 0;
-+	ssize_t unmapped_page, unmapped = 0;
- 	unsigned long orig_iova = iova;
- 	unsigned int min_pagesz;
- 
-@@ -1617,15 +1617,15 @@ static size_t __iommu_unmap(struct iommu_domain *domain,
- 	return unmapped;
- }
- 
--size_t iommu_unmap(struct iommu_domain *domain,
--		   unsigned long iova, size_t size)
-+ssize_t iommu_unmap(struct iommu_domain *domain,
-+		    unsigned long iova, size_t size)
- {
- 	return __iommu_unmap(domain, iova, size, true);
- }
- EXPORT_SYMBOL_GPL(iommu_unmap);
- 
--size_t iommu_unmap_fast(struct iommu_domain *domain,
--			unsigned long iova, size_t size)
-+ssize_t iommu_unmap_fast(struct iommu_domain *domain,
-+			 unsigned long iova, size_t size)
- {
- 	return __iommu_unmap(domain, iova, size, false);
- }
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 41b8c57..78df048 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -199,8 +199,8 @@ struct iommu_ops {
- 	void (*detach_dev)(struct iommu_domain *domain, struct device *dev);
- 	int (*map)(struct iommu_domain *domain, unsigned long iova,
- 		   phys_addr_t paddr, size_t size, int prot);
--	size_t (*unmap)(struct iommu_domain *domain, unsigned long iova,
--		     size_t size);
-+	ssize_t (*unmap)(struct iommu_domain *domain, unsigned long iova,
-+			 size_t size);
- 	size_t (*map_sg)(struct iommu_domain *domain, unsigned long iova,
- 			 struct scatterlist *sg, unsigned int nents, int prot);
- 	void (*flush_iotlb_all)(struct iommu_domain *domain);
-@@ -299,10 +299,10 @@ extern void iommu_detach_device(struct iommu_domain *domain,
- extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
- extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
- 		     phys_addr_t paddr, size_t size, int prot);
--extern size_t iommu_unmap(struct iommu_domain *domain, unsigned long iova,
--			  size_t size);
--extern size_t iommu_unmap_fast(struct iommu_domain *domain,
--			       unsigned long iova, size_t size);
-+extern ssize_t iommu_unmap(struct iommu_domain *domain, unsigned long iova,
-+			   size_t size);
-+extern ssize_t iommu_unmap_fast(struct iommu_domain *domain,
-+				unsigned long iova, size_t size);
- extern size_t default_iommu_map_sg(struct iommu_domain *domain, unsigned long iova,
- 				struct scatterlist *sg,unsigned int nents,
- 				int prot);
-@@ -465,14 +465,14 @@ static inline int iommu_map(struct iommu_domain *domain, unsigned long iova,
- 	return -ENODEV;
- }
- 
--static inline int iommu_unmap(struct iommu_domain *domain, unsigned long iova,
--			      size_t size)
-+static inline ssize_t iommu_unmap(struct iommu_domain *domain,
-+				  unsigned long iova, size_t size)
- {
- 	return -ENODEV;
- }
- 
--static inline int iommu_unmap_fast(struct iommu_domain *domain, unsigned long iova,
--				   int gfp_order)
-+static inline ssize_t iommu_unmap_fast(struct iommu_domain *domain,
-+				       unsigned long iova, int gfp_order)
- {
- 	return -ENODEV;
- }
--- 
-1.8.3.1
+#syz fix: bpf, array: fix overflow in max_entries and undefined behavior in index_mask
+
+- Eric
