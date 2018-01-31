@@ -1,50 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752142AbeAaBbx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 20:31:53 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60157 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752080AbeAaBbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 20:31:52 -0500
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to clear CP_TRIMMED_FLAG
-Date: Wed, 31 Jan 2018 09:30:34 +0800
-Message-ID: <20180131013034.107225-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
+        id S1752208AbeAaBf6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 20:35:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751450AbeAaBf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 20:35:57 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CF2D21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Tue, 30 Jan 2018 17:35:56 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        chao@kernel.org
+Subject: Re: [PATCH] f2fs: add sanity check for quota sysfile ino
+Message-ID: <20180131013556.GE65489@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180129082933.64556-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180129082933.64556-1-yuchao0@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Once CP_TRIMMED_FLAG is set, after a reboot, we will never issue discard
-before LBA becomes invalid again, fix it by clearing the flag in
-checkpoint without CP_TRIMMED reason.
+On 01/29, Chao Yu wrote:
+> Add missing sanity check for quota sysfile ino.
 
-Fixes: 1f43e2ad7bff ("f2fs: introduce CP_TRIMMED_FLAG to avoid unneeded discard")
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/checkpoint.c | 2 ++
- 1 file changed, 2 insertions(+)
+We don't need to limit the specific inode numbers for quota files, since
+we may be able to set any inode numbers later. How about checkint the
+numbers are allocated as quota?
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 998fe1d0213b..65becae99b84 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1166,6 +1166,8 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	if (cpc->reason & CP_TRIMMED)
- 		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
-+	else
-+		__clear_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
- 
- 	if (cpc->reason & CP_UMOUNT)
- 		__set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
--- 
-2.15.0.55.gc2ece9dc4de6
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/super.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 368f63d7bad2..6011071688ca 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2116,6 +2116,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+>  		return 1;
+>  	}
+>  
+> +	/* check quota sysfile ino info */
+> +	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+> +		if (le32_to_cpu(raw_super->qf_ino[0]) != 4 ||
+> +			le32_to_cpu(raw_super->qf_ino[1]) != 5) {
+> +			f2fs_msg(sb, KERN_INFO,
+> +				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
+> +				le32_to_cpu(raw_super->qf_ino[0]),
+> +				le32_to_cpu(raw_super->qf_ino[1]));
+> +			return 1;
+> +		}
+> +		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
+> +			le32_to_cpu(raw_super->qf_ino[2]) != 6) {
+> +			f2fs_msg(sb, KERN_INFO,
+> +				"Invalid Quota Ino: prj_ino(%u)",
+> +				le32_to_cpu(raw_super->qf_ino[2]));
+> +			return 1;
+> +		}
+> +	}
+> +
+>  	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
+>  		f2fs_msg(sb, KERN_INFO,
+>  			"Invalid segment count (%u)",
+> -- 
+> 2.15.0.55.gc2ece9dc4de6
