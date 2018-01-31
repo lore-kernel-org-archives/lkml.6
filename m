@@ -1,364 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752597AbeAaKeq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 05:34:46 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48868 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751454AbeAaKen (ORCPT
+        id S1752998AbeAaKmK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 05:42:10 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43726 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752346AbeAaKmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 05:34:43 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: magnus.damm@gmail.com, geert@glider.be, hverkuil@xs4all.nl,
-        mchehab@kernel.org, festevam@gmail.com, sakari.ailus@iki.fi,
-        robh+dt@kernel.org, mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 07/11] media: i2c: ov772x: Support frame interval handling
-Date: Wed, 31 Jan 2018 12:34:59 +0200
-Message-ID: <34502970.Ll86D7ehED@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1517306302-27957-8-git-send-email-jacopo+renesas@jmondi.org>
-References: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org> <1517306302-27957-8-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 31 Jan 2018 05:42:08 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-mediatek@lists.infradead.org, PC Liao <pc.liao@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: mt8173-rt5650: fix child-node lookup" to the asoc tree
+In-Reply-To: <20180131055921.25574-1-johan@kernel.org>
+Message-Id: <E1egpq6-0002zx-4O@debutante>
+Date: Wed, 31 Jan 2018 10:42:02 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+The patch
 
-Thank you for the patch.
+   ASoC: mt8173-rt5650: fix child-node lookup
 
-On Tuesday, 30 January 2018 11:58:18 EET Jacopo Mondi wrote:
-> Add support to ov772x driver for frame intervals handling and enumeration.
-> Tested with 10MHz and 24MHz input clock at VGA and QVGA resolutions for
-> 10, 15 and 30 frame per second rates.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/media/i2c/ov772x.c | 210 ++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 193 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
-> index 23106d7..28de254 100644
-> --- a/drivers/media/i2c/ov772x.c
-> +++ b/drivers/media/i2c/ov772x.c
+has been applied to the asoc tree at
 
-[snip]
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> @@ -373,6 +378,19 @@
->  #define VERSION(pid, ver) ((pid<<8)|(ver&0xFF))
-> 
->  /*
-> + * Frame size (including blanking lines)
-> + */
-> +#define VGA_FRAME_SIZE		(510 * 748)
-> +#define QVGA_FRAME_SIZE		(278 * 576)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Those two macros are not used, you can drop them.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> +/*
-> + * Input clock frequencies
-> + */
-> +static const u8 ov772x_com4_vals[] = { PLL_BYPASS, PLL_4x, PLL_6x, PLL_8x
-> };
-> +static const unsigned int ov772x_pll_mult[] = { 1, 4, 6, 8 };
-> +#define OV772X_PLL_N_MULT ARRAY_SIZE(ov772x_pll_mult)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-I think it would be clearer if you used ARRAY_SIZE(ov772x_pll_mult) directly 
-in the code.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Maybe nitpicking a bit, but I wouldgroup the com4 values and multipliers in a 
-structure:
+Thanks,
+Mark
 
-static const struct {
-	unsigned int mult;
-	u8 com4;
-} ov772x_pll_mult[] = {
-	{ 1, PLL_BYPASS },
-	{ 4, PLL_4x },
-	{ 6, PLL_6x },
-	{ 8, PLL_8x },
-};
+>From 06190937b9de9803e15a122762b5bbd442eaee31 Mon Sep 17 00:00:00 2001
+From: Johan Hovold <johan@kernel.org>
+Date: Wed, 31 Jan 2018 16:59:21 +1100
+Subject: [PATCH] ASoC: mt8173-rt5650: fix child-node lookup
 
-That ensures that the two arrays stay in sync as there's only one array left.
+This driver used the wrong OF-helper when looking up the optional
+capture-codec child node during probe. Instead of searching just
+children of the sound node, a tree-wide depth-first search starting at
+the unrelated platform node was done. Not only could this end up
+matching an unrelated node or no node at all; the platform node could
+also be prematurely freed since of_find_node_by_name() drops a reference
+to its first argument. This particular pattern has been observed leading
+to crashes after probe deferrals in other drivers.
 
-> +/*
->   * struct
->   */
-> 
-> @@ -388,6 +406,7 @@ struct ov772x_color_format {
->  struct ov772x_win_size {
->  	char                     *name;
->  	unsigned char             com7_bit;
-> +	unsigned int		  sizeimage;
->  	struct v4l2_rect	  rect;
->  };
-> 
-> @@ -404,6 +423,7 @@ struct ov772x_priv {
->  	unsigned short                    flag_hflip:1;
->  	/* band_filter = COM8[5] ? 256 - BDBASE : 0 */
->  	unsigned short                    band_filter;
-> +	unsigned int			  fps;
->  };
-> 
->  /*
-> @@ -487,27 +507,35 @@ static const struct ov772x_color_format ov772x_cfmts[]
-> = {
-> 
->  static const struct ov772x_win_size ov772x_win_sizes[] = {
->  	{
-> -		.name     = "VGA",
-> -		.com7_bit = SLCT_VGA,
-> +		.name		= "VGA",
-> +		.com7_bit	= SLCT_VGA,
-> +		.sizeimage	= 381480,
+Fix this by dropping the broken call to of_find_node_by_name() and
+keeping only the second, correct lookup using of_get_child_by_name()
+while taking care not to bail out if the optional node is missing.
 
-I'd write this 510 * 748.
+Note that this also addresses two capture-codec node-reference leaks
+(one for each of the original helper calls).
 
->  		.rect = {
-> -			.left = 140,
-> -			.top = 14,
-> -			.width = VGA_WIDTH,
-> -			.height = VGA_HEIGHT,
-> +			.left	= 140,
-> +			.top	= 14,
-> +			.width	= VGA_WIDTH,
-> +			.height	= VGA_HEIGHT,
->  		},
->  	}, {
-> -		.name     = "QVGA",
-> -		.com7_bit = SLCT_QVGA,
-> +		.name		= "QVGA",
-> +		.com7_bit	= SLCT_QVGA,
-> +		.sizeimage	= 160128,
+Compile tested only.
 
-And this 278 * 576. It makes the value less magic.
+Fixes: d349caeb0510 ("ASoC: mediatek: Add second I2S on mt8173-rt5650 machine driver")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/mediatek/mt8173/mt8173-rt5650.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
->  		.rect = {
-> -			.left = 252,
-> -			.top = 6,
-> -			.width = QVGA_WIDTH,
-> -			.height = QVGA_HEIGHT,
-> +			.left	= 252,
-> +			.top	= 6,
-> +			.width	= QVGA_WIDTH,
-> +			.height	= QVGA_HEIGHT,
->  		},
->  	},
->  };
-> 
->  /*
-> + * frame rate settings lists
-> + */
-> +unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
-> +#define OV772X_N_FRAME_INTERVALS ARRAY_SIZE(ov772x_frame_intervals)
-> +
-> +/*
->   * general function
->   */
-> 
-> @@ -574,6 +602,124 @@ static int ov772x_s_stream(struct v4l2_subdev *sd, int
-> enable) return 0;
->  }
-> 
-> +static int ov772x_set_frame_rate(struct ov772x_priv *priv,
-> +				 struct v4l2_fract *tpf,
-> +				 const struct ov772x_color_format *cfmt,
-> +				 const struct ov772x_win_size *win)
-> +{
-> +	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
-> +	unsigned int fps = tpf->denominator / tpf->numerator;
-
-tpf->numerator could be 0.
-
-> +	unsigned int fin = clk_get_rate(priv->clk);
-
-Clock rates are unsigned long.
-
-> +	unsigned int rate_prev;
-> +	unsigned int fsize;
-> +	unsigned int pclk;
-> +	unsigned int rate;
-> +	unsigned int idx;
-> +	unsigned int i;
-> +	u8 clkrc = 0;
-> +	u8 com4 = 0;
-> +	int ret;
-> +
-> +	/* Approximate to the closest supported frame interval. */
-> +	rate_prev = ~0L;
-> +	for (i = 0, idx = 0; i < OV772X_N_FRAME_INTERVALS; i++) {
-> +		rate = abs(fps - ov772x_frame_intervals[i]);
-> +		if (rate < rate_prev) {
-> +			idx = i;
-> +			rate_prev = rate;
-
-I'd call the rate_prev and rate variables best_diff and diff respectively.
-
-> +		}
-> +	}
-> +	fps = ov772x_frame_intervals[idx];
-> +
-> +	/* Use image size (with blankings) to calculate desired pixel clock. */
-> +	if ((cfmt->com7 & OFMT_RGB) == OFMT_RGB ||
-> +	    (cfmt->com7 & OFMT_YUV) == OFMT_YUV)
-> +		fsize = win->sizeimage * 2;
-> +	else if ((cfmt->com7 & OFMT_BRAW) == OFMT_BRAW)
-
-I think all these should test (cfmt->com7 & OFMT_MASK) == ...
-
-> +		fsize = win->sizeimage;
-> +
-> +	pclk = fps * fsize;
-> +
-> +	/*
-> +	 * Pixel clock generation circuit is pretty simple:
-> +	 *
-> +	 * Fin -> [ / CLKRC_div] -> [ * PLL_mult] -> pclk
-> +	 *
-> +	 * Try to approximate the desired pixel clock testing all available
-> +	 * PLL multipliers (1x, 4x, 6x, 8x) and calculate corresponding
-> +	 * divisor with:
-> +	 *
-> +	 * div = PLL_mult * Fin / pclk
-> +	 *
-> +	 * and re-calculate the pixel clock using it:
-> +	 *
-> +	 * pclk = Fin * PLL_mult / CLKRC_div
-> +	 *
-> +	 * Choose the PLL_mult and CLKRC_div pair that gives a pixel clock
-> +	 * closer to the desired one.
-> +	 *
-> +	 * The desired pixel clock is calculated using a known frame size
-> +	 * (blanking included) and FPS.
-> +	 */
-> +	rate_prev = ~0L;
-> +	for (i = 0; i < OV772X_PLL_N_MULT; i++) {
-> +		unsigned int pll_mult = ov772x_pll_mult[i];
-> +		unsigned int pll_out = pll_mult * fin;
-> +		unsigned int t_pclk;
-> +		unsigned int div;
-> +
-> +		if (pll_out < pclk)
-> +			continue;
-> +
-> +		div = DIV_ROUND_CLOSEST(pll_out, pclk);
-> +		t_pclk = DIV_ROUND_CLOSEST((fin * pll_mult), div);
-
-No need for the inner parentheses.
-
-> +		rate = abs(pclk - t_pclk);
-> +		if (rate < rate_prev) {
-> +			rate_prev = rate;
-> +			clkrc = CLKRC_DIV(div);
-> +			com4 = ov772x_com4_vals[i];
-> +		}
-> +	}
-> +
-> +	ret = ov772x_write(client, COM4, com4 | COM4_RESERVED);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ov772x_write(client, CLKRC, clkrc | CLKRC_RESERVED);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	tpf->numerator = 1;
-> +	tpf->denominator = fps;
-> +	priv->fps = tpf->denominator;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ov772x_g_frame_interval(struct v4l2_subdev *sd,
-> +				   struct v4l2_subdev_frame_interval *ival)
-> +{
-> +	struct ov772x_priv *priv = to_ov772x(sd);
-> +	struct v4l2_fract *tpf = &ival->interval;
-> +
-> +	memset(ival->reserved, 0, sizeof(ival->reserved));
-> +	tpf->numerator = 1;
-> +	tpf->denominator = priv->fps;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ov772x_s_frame_interval(struct v4l2_subdev *sd,
-> +				   struct v4l2_subdev_frame_interval *ival)
-> +{
-> +	struct ov772x_priv *priv = to_ov772x(sd);
-> +	struct v4l2_fract *tpf = &ival->interval;
-> +
-> +	memset(ival->reserved, 0, sizeof(ival->reserved));
-> +
-> +	return ov772x_set_frame_rate(priv, tpf, priv->cfmt, priv->win);
-> +}
-> +
->  static int ov772x_s_ctrl(struct v4l2_ctrl *ctrl)
->  {
->  	struct ov772x_priv *priv = container_of(ctrl->handler,
-> @@ -757,6 +903,7 @@ static int ov772x_set_params(struct ov772x_priv *priv,
->  			     const struct ov772x_win_size *win)
->  {
->  	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
-> +	struct v4l2_fract tpf;
->  	int ret;
->  	u8  val;
-> 
-> @@ -885,6 +1032,13 @@ static int ov772x_set_params(struct ov772x_priv *priv,
-> if (ret < 0)
->  		goto ov772x_set_fmt_error;
-> 
-> +	/* COM4, CLKRC: Set pixel clock and framerate. */
-> +	tpf.numerator = 1;
-> +	tpf.denominator = priv->fps;
-> +	ret = ov772x_set_frame_rate(priv, &tpf, cfmt, win);
-> +	if (ret < 0)
-> +		goto ov772x_set_fmt_error;
-> +
->  	/*
->  	 * set COM8
->  	 */
-> @@ -1043,6 +1197,24 @@ static const struct v4l2_subdev_core_ops
-> ov772x_subdev_core_ops = { .s_power	= ov772x_s_power,
->  };
-> 
-> +static int ov772x_enum_frame_interval(struct v4l2_subdev *sd,
-> +				      struct v4l2_subdev_pad_config *cfg,
-> +				      struct v4l2_subdev_frame_interval_enum *fie)
-> +{
-> +	if (fie->pad || fie->index >= OV772X_N_FRAME_INTERVALS)
-> +		return -EINVAL;
-> +
-> +	if (fie->width != VGA_WIDTH && fie->width != QVGA_WIDTH)
-> +		return -EINVAL;
-> +	if (fie->height != VGA_HEIGHT && fie->height != QVGA_HEIGHT)
-> +		return -EINVAL;
-> +
-> +	fie->interval.numerator = 1;
-> +	fie->interval.denominator = ov772x_frame_intervals[fie->index];
-> +
-> +	return 0;
-> +}
-
-The more I think about it, the more I believe that the subdev frame interval 
-enumeration operation is nonsense. This particular sensor is not restricted to 
-a fixed list of frame intervals. Sensors should really expose the pixel clock 
-and blanking as controls, and higher level parameters such as frame intervals 
-should then be handled by the bridge driver.
-
-I won't nack this patch due to this as I want to see this series merged, so 
-with the above small issues fixed you have my
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-but we're going in the wrong direction. 
-
+diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650.c b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
+index 40ebefd625c1..679fc8bea0a3 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-rt5650.c
++++ b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
+@@ -272,15 +272,10 @@ static int mt8173_rt5650_dev_probe(struct platform_device *pdev)
+ 	}
+ 	mt8173_rt5650_codecs[1].of_node = mt8173_rt5650_codecs[0].of_node;
+ 
+-	if (of_find_node_by_name(platform_node, "codec-capture")) {
+-		np = of_get_child_by_name(pdev->dev.of_node, "codec-capture");
+-		if (!np) {
+-			dev_err(&pdev->dev,
+-				"%s: Can't find codec-capture DT node\n",
+-				__func__);
+-			return -EINVAL;
+-		}
++	np = of_get_child_by_name(pdev->dev.of_node, "codec-capture");
++	if (np) {
+ 		ret = snd_soc_of_get_dai_name(np, &codec_capture_dai);
++		of_node_put(np);
+ 		if (ret < 0) {
+ 			dev_err(&pdev->dev,
+ 				"%s codec_capture_dai name fail %d\n",
 -- 
-Regards,
-
-Laurent Pinchart
+2.15.1
