@@ -1,62 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932360AbeAaRyX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:54:23 -0500
-Received: from mga12.intel.com ([192.55.52.136]:18760 "EHLO mga12.intel.com"
+        id S932372AbeAaRzc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:55:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753539AbeAaRyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:54:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,441,1511856000";
-   d="scan'208";a="27792557"
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        AceLan Kao <acelan.kao@canonical.com>, linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] platform/x86: intel-vbtn: Replace License by SDPX identifier
-Date: Wed, 31 Jan 2018 19:54:07 +0200
-Message-Id: <20180131175407.18301-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180131175407.18301-1-andriy.shevchenko@linux.intel.com>
-References: <20180131175407.18301-1-andriy.shevchenko@linux.intel.com>
+        id S1752840AbeAaRza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:55:30 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5A921748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
+Message-ID: <1517421324.32569.15.camel@kernel.org>
+Subject: Re: [PATCH v2] iversion: make inode_cmp_iversion{+raw} return bool
+ instead of s64
+From: Jeff Layton <jlayton@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Trond Myklebust <trondmy@primarydata.com>,
+        GoffredoBaroncelli <kreijack@libero.it>
+Date: Wed, 31 Jan 2018 12:55:24 -0500
+In-Reply-To: <CA+55aFxB6og=iRkRchiOrr8EW2=jgb_i4nUiPsvEa+8F64APxA@mail.gmail.com>
+References: <20180130173126.2806-1-jlayton@kernel.org>
+         <20180130203221.29310-1-jlayton@kernel.org>
+         <CA+55aFw5Xf4V-BF1JK+SpjXnmrgeMe-k0wLaFc_=6ojbhfWEtQ@mail.gmail.com>
+         <1517401762.3612.0.camel@kernel.org>
+         <CA+55aFxB6og=iRkRchiOrr8EW2=jgb_i4nUiPsvEa+8F64APxA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace License short header by SPDX identifier.
+On Wed, 2018-01-31 at 08:46 -0800, Linus Torvalds wrote:
+> On Wed, Jan 31, 2018 at 4:29 AM, Jeff Layton <jlayton@kernel.org> wrote:
+> > 
+> > Do you mind just taking it directly? I don't have anything else queued
+> > up for this cycle.
+> 
+> Done.
+> 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/platform/x86/intel-vbtn.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+Thanks...and also many thanks for spotting the original issue. I agree
+that this makes it much harder for the callers to get things wrong (and
+is probably much more efficient on some arches, as Ted pointed out).
 
-diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/intel-vbtn.c
-index 69bc39f8d61d..b703d6f5b099 100644
---- a/drivers/platform/x86/intel-vbtn.c
-+++ b/drivers/platform/x86/intel-vbtn.c
-@@ -1,19 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  *  Intel Virtual Button driver for Windows 8.1+
-  *
-  *  Copyright (C) 2016 AceLan Kao <acelan.kao@canonical.com>
-  *  Copyright (C) 2016 Alex Hung <alex.hung@canonical.com>
-- *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License as published by
-- *  the Free Software Foundation; either version 2 of the License, or
-- *  (at your option) any later version.
-- *
-- *  This program is distributed in the hope that it will be useful,
-- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *  GNU General Public License for more details.
-- *
-  */
- 
- #include <linux/acpi.h>
+> I wonder if "false for same, true for different" calling convention
+> makes much sense, but it matches the old "0 for same" so obviously
+> makes for a smaller diff.
+> 
+> If it ever ends up confusing people, maybe the sense of that function
+> should be reversed, and the name changed to something like
+> "same_inode_version()" or something.
+> 
+> But at least for now the situation seems ok to me,
+> 
+
+G. Baroncelli suggested changing the name too, so maybe we should just
+go ahead and do it. Let me think on what the best approach is and I may
+try to send another patch or PR before the end of the merge window.
+
+Cheers,
 -- 
-2.15.1
+Jeff Layton <jlayton@kernel.org>
