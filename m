@@ -1,72 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751744AbeAaUcp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 15:32:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39011 "EHLO mx2.suse.de"
+        id S1751898AbeAaUnn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 15:43:43 -0500
+Received: from mout.web.de ([212.227.15.3]:49865 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751580AbeAaUco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 15:32:44 -0500
-Date: Wed, 31 Jan 2018 21:32:42 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] mm/migrate: Add new migration reason MR_HUGETLB
-Message-ID: <20180131203242.GB21609@dhcp22.suse.cz>
-References: <20180130030714.6790-1-khandual@linux.vnet.ibm.com>
- <20180130075949.GN21609@dhcp22.suse.cz>
- <b4bd6cda-a3b7-96dd-b634-d9b3670c1ecf@linux.vnet.ibm.com>
- <20180131075852.GL21609@dhcp22.suse.cz>
- <20180131121217.4c80263d68a4ad4da7b170f0@linux-foundation.org>
+        id S1751737AbeAaUnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 15:43:40 -0500
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] hid-sensor-gyro-3d: Delete an error message for a failed
+ memory allocation in hid_gyro_3d_probe()
+Message-ID: <e3308896-dd91-1af0-912f-32cc0794361e@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 21:43:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180131121217.4c80263d68a4ad4da7b170f0@linux-foundation.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:bW8OlT1sFOuqBmOVquRWGsBcOjsGxz1FSz7/RoGL+d7Ui/qAP/D
+ 7/NEWOvrJG5i4Tiqgq9nDFsEN0PVbTCQlDHSCOaudt8rQ/2e9IQwOMeSZXnHTqxuOgTk49C
+ PLVeeZAJKhYoXCP3MoJBXTHxG4fuAc11jQUTSzUKByPzSqVSnq/w+WE2P4lb0Z/z1Ke5gKW
+ FODGextCo1hkGiOv/Br0g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:4BHnivZAgvo=:g5d5soyAUPrMFA0NNLxjha
+ Cx7WGekwsakFZhkguTNLRBANqdqElc9DHjhsyokO83DnFv/mHvkVEJ7WFZolfjLUSCF63SDC4
+ lyrp0CnUmNkuEihwtZ4jdn8NBi546cHo5TC3R3x6jTwR4mMWQ8ntZG/F9NAHd3HdUzcnJaS8d
+ V7riSAOfAOpEFon9LuDOW07LU3sM1Jw1aQLpwCwYZZkAkrG/qOsiKGv3vNsTDMK9pRLFyfhsp
+ Fy9rJ+UtqnCQL4FBb7A7a3krBz6kUe32OZmaLlWCE9D16WSSSqvAsUJkS8cnVe5POC/smtk7Q
+ 3cg/FgY4EIiSikz7AArfZh8DfpoLX7sXsvL5xj3qc+ViJfDCQD6YCIKrH41OChV+nydIaHljj
+ svP+oAvf0jlsfPE+8uSjMzmupDZV5YpP3d/Rq3YW3j5R1lhwTZOJtZK2itCHuZ27BEBYM5oRv
+ 4UqqXud5GaxYBcfCz1YfT6/Aj7NDubsvZK2JBh1dKQ5aPtAuruCdl1qM8kajM1xeGxJ5f2+eQ
+ Hx0vLDcSC29M0ZcJj+AacikCgP+ygG1BI91zPxIfqkvmCkYznI0Hr6XZDsGoiDzKnKE7CiBci
+ v+hkm2ILHFHbcPLFOBxxnmr0qyMZiYN9yQqoE/6uvIFr33YDXxiIhQJEU9ZMLWex3aG5F4vRA
+ 24gqzP1CVD7vckPH/w6j76UYn3q/APOldzBSWAuoWeE6wjy95v6ribau69VZamWwGYzTGhObL
+ ns5LEr4fyROnU/uCWNT+/ZoUXqRVHNzDqFx7GDuApTUSiGeOYXKLznqpSmzQVuBSlXa4EfBFO
+ 2wOmW8fYnL7sMARqFMplNX2JvuK2KflcaOvjxyCgJH449uH6xU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 31-01-18 12:12:17, Andrew Morton wrote:
-> On Wed, 31 Jan 2018 08:58:52 +0100 Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > On Wed 31-01-18 07:55:05, Anshuman Khandual wrote:
-> > > On 01/30/2018 01:29 PM, Michal Hocko wrote:
-> > > > On Tue 30-01-18 08:37:14, Anshuman Khandual wrote:
-> > > >> alloc_contig_range() initiates compaction and eventual migration for
-> > > >> the purpose of either CMA or HugeTLB allocation. At present, reason
-> > > >> code remains the same MR_CMA for either of those cases. Lets add a
-> > > >> new reason code which will differentiate the purpose of migration
-> > > >> as HugeTLB allocation instead.
-> > > > Why do we need it?
-> > > 
-> > > The same reason why we have MR_CMA (maybe some other ones as well) at
-> > > present, for reporting purpose through traces at the least. It just
-> > > seemed like same reason code is being used for two different purpose
-> > > of migration.
-> > 
-> > But do we have any real user asking for this kind of information?
-> 
-> It seems a reasonable cleanup: reusing MR_CMA for hugetlb just because
-> it happens to do the right thing is a bit hacky - the two things aren't
-> particularly related and a reader could be excused for feeling
-> confusion.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 21:36:53 +0100
 
-My bad! I thought this is a tracepoint thingy. But it seems to be only
-used as a migration reason for page_owner. Now it makes more sense.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/gyro/hid-sensor-gyro-3d.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/iio/gyro/hid-sensor-gyro-3d.c b/drivers/iio/gyro/hid-sensor-gyro-3d.c
+index f59995a90387..93465816c5c7 100644
+--- a/drivers/iio/gyro/hid-sensor-gyro-3d.c
++++ b/drivers/iio/gyro/hid-sensor-gyro-3d.c
+@@ -317,10 +317,8 @@ static int hid_gyro_3d_probe(struct platform_device *pdev)
  
-> But the change seems incomplete:
-> 
-> > +		if (migratetype == MIGRATE_CMA)
-> > +			migrate_reason = MR_CMA;
-> > +		else
-> > +			migrate_reason = MR_HUGETLB;
-> 
-> If we're going to do this cleanup then shouldn't we go all the way and
-> add MIGRATE_HUGETLB?
-
-Yes. We can expect more users of alloc_contig_range in future. Maybe we
-want to use MR_CONTIG_RANGE instead.
+ 	indio_dev->channels = kmemdup(gyro_3d_channels,
+ 				      sizeof(gyro_3d_channels), GFP_KERNEL);
+-	if (!indio_dev->channels) {
+-		dev_err(&pdev->dev, "failed to duplicate channels\n");
++	if (!indio_dev->channels)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ret = gyro_3d_parse_report(pdev, hsdev,
+ 				   (struct iio_chan_spec *)indio_dev->channels,
 -- 
-Michal Hocko
-SUSE Labs
+2.16.1
