@@ -1,268 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752437AbeAaD2X (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 22:28:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43874 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752237AbeAaD2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 22:28:21 -0500
-From: William Cohen <wcohen@redhat.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, William Cohen <wcohen@redhat.com>
-Subject: [PATCH] perf vendor events aarch64: Add JSON metrics for ARM Cortex-A53 Processor
-Date: Tue, 30 Jan 2018 22:28:13 -0500
-Message-Id: <20180131032813.9564-1-wcohen@redhat.com>
+        id S1752570AbeAaDjP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 22:39:15 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4712 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751970AbeAaDjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 22:39:13 -0500
+Subject: Re: [PATCH] f2fs: add sanity check for quota sysfile ino
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180129082933.64556-1-yuchao0@huawei.com>
+ <20180131013556.GE65489@jaegeuk-macbookpro.roam.corp.google.com>
+ <f27cbf43-eb34-5e21-8016-c1a17203cf0b@huawei.com>
+ <20180131023607.GA87929@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <edc49b65-2f18-26a2-a97d-ee89143e7ece@huawei.com>
+Date: Wed, 31 Jan 2018 11:38:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180131023607.GA87929@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add JSON metrics for ARM Cortex-A53 Processor
+On 2018/1/31 10:36, Jaegeuk Kim wrote:
+> On 01/31, Chao Yu wrote:
+>> On 2018/1/31 9:35, Jaegeuk Kim wrote:
+>>> On 01/29, Chao Yu wrote:
+>>>> Add missing sanity check for quota sysfile ino.
+>>>
+>>> We don't need to limit the specific inode numbers for quota files, since
+>>> we may be able to set any inode numbers later. How about checkint the
+>>> numbers are allocated as quota?
+> 
+> If quota_ino is set, f2fs_enable_quotas() will be failed, if its ino is invalid.
+> It'd be also fine, if we have no inode numbers there. What I mean was we may need
+> to consider reallocating or deallocating inode numbers later.
 
-Signed-off-by: William Cohen <wcohen@redhat.com>
----
- .../pmu-events/arch/arm64/cortex-a53/branch.json   | 27 +++++++++++
- .../perf/pmu-events/arch/arm64/cortex-a53/bus.json | 22 +++++++++
- .../pmu-events/arch/arm64/cortex-a53/cache.json    | 27 +++++++++++
- .../pmu-events/arch/arm64/cortex-a53/memory.json   | 22 +++++++++
- .../pmu-events/arch/arm64/cortex-a53/other.json    | 32 +++++++++++++
- .../pmu-events/arch/arm64/cortex-a53/pipeline.json | 52 ++++++++++++++++++++++
- tools/perf/pmu-events/arch/arm64/mapfile.csv       |  1 +
- 7 files changed, 183 insertions(+)
- create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
+Oh, so that it will be better to do more check & repair in fsck tools, right?
 
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
-new file mode 100644
-index 000000000000..3b6208763e50
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
-@@ -0,0 +1,27 @@
-+[
-+  {,
-+    "EventCode": "0x7A",
-+    "EventName": "BR_INDIRECT_SPEC",
-+    "BriefDescription": "Branch speculatively executed - Indirect branch"
-+  },
-+  {,
-+    "EventCode": "0xC9",
-+    "EventName": "BR_COND",
-+    "BriefDescription": "Conditional branch executed"
-+  },
-+  {,
-+    "EventCode": "0xCA",
-+    "EventName": "BR_INDIRECT_MISPRED",
-+    "BriefDescription": "Indirect branch mispredicted"
-+  },
-+  {,
-+    "EventCode": "0xCB",
-+    "EventName": "BR_INDIRECT_MISPRED_ADDR",
-+    "BriefDescription": "Indirect branch mispredicted because of address miscompare"
-+  },
-+  {,
-+    "EventCode": "0xCC",
-+    "EventName": "BR_COND_MISPRED",
-+    "BriefDescription": "Conditional branch mispredicted"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
-new file mode 100644
-index 000000000000..480d9f7460ab
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
-@@ -0,0 +1,22 @@
-+[
-+  {,
-+    "EventCode": "0x60",
-+    "EventName": "BUS_ACCESS_LD",
-+    "BriefDescription": "Bus access - Read"
-+  },
-+  {,
-+    "EventCode": "0x61",
-+    "EventName": "BUS_ACCESS_ST",
-+    "BriefDescription": "Bus access - Write"
-+  },
-+  {,
-+    "EventCode": "0xC0",
-+    "EventName": "EXT_MEM_REQ",
-+    "BriefDescription": "External memory request"
-+  },
-+  {,
-+    "EventCode": "0xC1",
-+    "EventName": "EXT_MEM_REQ_NC",
-+    "BriefDescription": "Non-cacheable external memory request"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
-new file mode 100644
-index 000000000000..11baad6344b9
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
-@@ -0,0 +1,27 @@
-+[
-+  {,
-+    "EventCode": "0xC2",
-+    "EventName": "PREFETCH_LINEFILL",
-+    "BriefDescription": "Linefill because of prefetch"
-+  },
-+  {,
-+    "EventCode": "0xC3",
-+    "EventName": "PREFETCH_LINEFILL_DROP",
-+    "BriefDescription": "Instruction Cache Throttle occurred"
-+  },
-+  {,
-+    "EventCode": "0xC4",
-+    "EventName": "READ_ALLOC_ENTER",
-+    "BriefDescription": "Entering read allocate mode"
-+  },
-+  {,
-+    "EventCode": "0xC5",
-+    "EventName": "READ_ALLOC",
-+    "BriefDescription": "Read allocate mode"
-+  },
-+  {,
-+    "EventCode": "0xC8",
-+    "EventName": "EXT_SNOOP",
-+    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
-new file mode 100644
-index 000000000000..480d9f7460ab
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
-@@ -0,0 +1,22 @@
-+[
-+  {,
-+    "EventCode": "0x60",
-+    "EventName": "BUS_ACCESS_LD",
-+    "BriefDescription": "Bus access - Read"
-+  },
-+  {,
-+    "EventCode": "0x61",
-+    "EventName": "BUS_ACCESS_ST",
-+    "BriefDescription": "Bus access - Write"
-+  },
-+  {,
-+    "EventCode": "0xC0",
-+    "EventName": "EXT_MEM_REQ",
-+    "BriefDescription": "External memory request"
-+  },
-+  {,
-+    "EventCode": "0xC1",
-+    "EventName": "EXT_MEM_REQ_NC",
-+    "BriefDescription": "Non-cacheable external memory request"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
-new file mode 100644
-index 000000000000..73a22402d003
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
-@@ -0,0 +1,32 @@
-+[
-+  {,
-+    "EventCode": "0x86",
-+    "EventName": "EXC_IRQ",
-+    "BriefDescription": "Exception taken, IRQ"
-+  },
-+  {,
-+    "EventCode": "0x87",
-+    "EventName": "EXC_FIQ",
-+    "BriefDescription": "Exception taken, FIQ"
-+  },
-+  {,
-+    "EventCode": "0xC6",
-+    "EventName": "PRE_DECODE_ERR",
-+    "BriefDescription": "Pre-decode error"
-+  },
-+  {,
-+    "EventCode": "0xD0",
-+    "EventName": "L1I_CACHE_ERR",
-+    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
-+  },
-+  {,
-+    "EventCode": "0xD1",
-+    "EventName": "L1D_CACHE_ERR",
-+    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
-+  },
-+  {,
-+    "EventCode": "0xD2",
-+    "EventName": "TLB_ERR",
-+    "BriefDescription": "TLB memory error"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
-new file mode 100644
-index 000000000000..3149fb90555a
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
-@@ -0,0 +1,52 @@
-+[
-+  {,
-+    "EventCode": "0xC7",
-+    "EventName": "STALL_SB_FULL",
-+    "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
-+  },
-+  {,
-+    "EventCode": "0xE0",
-+    "EventName": "OTHER_IQ_DEP_STALL",
-+    "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
-+  },
-+  {,
-+    "EventCode": "0xE1",
-+    "EventName": "IC_DEP_STALL",
-+    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
-+  },
-+  {,
-+    "EventCode": "0xE2",
-+    "EventName": "IUTLB_DEP_STALL",
-+    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
-+  },
-+  {,
-+    "EventCode": "0xE3",
-+    "EventName": "DECODE_DEP_STALL",
-+    "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
-+  },
-+  {,
-+    "EventCode": "0xE4",
-+    "EventName": "OTHER_INTERLOCK_STALL",
-+    "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
-+  },
-+  {,
-+    "EventCode": "0xE5",
-+    "EventName": "AGU_DEP_STALL",
-+    "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
-+  },
-+  {,
-+    "EventCode": "0xE6",
-+    "EventName": "SIMD_DEP_STALL",
-+    "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
-+  },
-+  {,
-+    "EventCode": "0xE7",
-+    "EventName": "LD_DEP_STALL",
-+    "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
-+  },
-+  {,
-+    "EventCode": "0xE8",
-+    "EventName": "ST_DEP_STALL",
-+    "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-index 219d6756134e..e61c9ca6cf9e 100644
---- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-@@ -13,3 +13,4 @@
- #
- #Family-model,Version,Filename,EventType
- 0x00000000420f5160,v1,cavium,core
-+0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
--- 
-2.14.3
+Thanks,
+
+> 
+>>
+>> Do you mean:
+>>
+>> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+>> 		if (!le32_to_cpu(raw_super->qf_ino[0]) ||
+>> 			!le32_to_cpu(raw_super->qf_ino[1])) {
+>> 			f2fs_msg(sb, KERN_INFO,
+>> 				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
+>> 				le32_to_cpu(raw_super->qf_ino[0]),
+>> 				le32_to_cpu(raw_super->qf_ino[1]));
+>> 			return 1;
+>> 		}
+>> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
+>> 			!le32_to_cpu(raw_super->qf_ino[2])) {
+>> 			f2fs_msg(sb, KERN_INFO,
+>> 				"Invalid Quota Ino: prj_ino(%u)",
+>> 				le32_to_cpu(raw_super->qf_ino[2]));
+>> 			return 1;
+>> 		}
+>> 	}
+>>
+>> I think it's equal to:
+>>
+>> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+>> 		unsigned int qf_cnt = 0;
+>> 		if (qf_ino[0])
+>> 			qf_cnt++;
+>> 		if (qf_ino[1])
+>> 			qf_cnt++;
+>> 		if (qf_cnt != 2) {
+>> 			f2fs_msg();
+>> 			return 1;
+>> 		}
+>> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
+>> 			if (qf_ino[2])
+>> 				qf_cnt++;
+>> 			if (qf_cnt != 3) {
+>> 				f2fs_msg();
+>> 				return 1;
+>> 			}
+>> 		}
+>> 	}
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/super.c | 19 +++++++++++++++++++
+>>>>  1 file changed, 19 insertions(+)
+>>>>
+>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>> index 368f63d7bad2..6011071688ca 100644
+>>>> --- a/fs/f2fs/super.c
+>>>> +++ b/fs/f2fs/super.c
+>>>> @@ -2116,6 +2116,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+>>>>  		return 1;
+>>>>  	}
+>>>>  
+>>>> +	/* check quota sysfile ino info */
+>>>> +	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
+>>>> +		if (le32_to_cpu(raw_super->qf_ino[0]) != 4 ||
+>>>> +			le32_to_cpu(raw_super->qf_ino[1]) != 5) {
+>>>> +			f2fs_msg(sb, KERN_INFO,
+>>>> +				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
+>>>> +				le32_to_cpu(raw_super->qf_ino[0]),
+>>>> +				le32_to_cpu(raw_super->qf_ino[1]));
+>>>> +			return 1;
+>>>> +		}
+>>>> +		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
+>>>> +			le32_to_cpu(raw_super->qf_ino[2]) != 6) {
+>>>> +			f2fs_msg(sb, KERN_INFO,
+>>>> +				"Invalid Quota Ino: prj_ino(%u)",
+>>>> +				le32_to_cpu(raw_super->qf_ino[2]));
+>>>> +			return 1;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>>  	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
+>>>>  		f2fs_msg(sb, KERN_INFO,
+>>>>  			"Invalid segment count (%u)",
+>>>> -- 
+>>>> 2.15.0.55.gc2ece9dc4de6
+>>>
+>>> .
+>>>
+> 
+> .
+> 
