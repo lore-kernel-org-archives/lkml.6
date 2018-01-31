@@ -1,69 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753437AbeAaJPo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 04:15:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45142 "EHLO mx1.redhat.com"
+        id S1753474AbeAaJQM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 04:16:12 -0500
+Received: from mga14.intel.com ([192.55.52.115]:40813 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751619AbeAaJPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 04:15:42 -0500
-Date: Wed, 31 Jan 2018 10:15:39 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Stephane Eranian <eranian@google.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH V3 0/5] bugs fix for large PEBS mmap read and rdpmc read
-Message-ID: <20180131091539.GA3313@krava>
-References: <CABPqkBRjQp62ArVZzuH=TRU3mDPkS93D8_cNev6M=eXTCpBLkA@mail.gmail.com>
- <20180130133917.GC29098@krava>
- <6d708c09-52a7-a906-b651-b133a7b4f189@linux.intel.com>
- <20180130150454.GE29098@krava>
- <35090c62-466a-aec8-b1a3-69def959c1c6@linux.intel.com>
- <CABPqkBRWtSsKEM7ycPs0HYSKLsYDmZhr4ztUmMMqsytYamPGsw@mail.gmail.com>
- <24210bcb-0e4b-58fe-bcda-da30019f6e7e@linux.intel.com>
- <20180130185212.GA16806@krava>
- <CABPqkBRp9bDmGECStbAHA5Ja0SjJmDQ2SOceat=qXno707MuAA@mail.gmail.com>
- <20180131035941.GW26209@tassilo.jf.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180131035941.GW26209@tassilo.jf.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1753014AbeAaJPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 04:15:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,439,1511856000";
+   d="scan'208";a="27684238"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH 1/3] x86/cpufeatures: Add Intel Total Memory Encryption cpufeature
+Date: Wed, 31 Jan 2018 12:15:07 +0300
+Message-Id: <20180131091509.26531-2-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
+References: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 07:59:41PM -0800, Andi Kleen wrote:
-> > Still, the part I am missing here, is why asking for
-> > PERF_SAMPLE_PERIOD voids large PEBS.
-> 
-> I think it was disabled together with frequency mode
-> (which we could support too, but it's a bit more work)
-> 
-> But yes PERIOD could probably be allowed.
+CPUID.0x7.0x0:ECX[13] indicates whether CPU supports Intel Total Memory
+Encryption.
 
-looks like it's just a matter of adding PERF_SAMPLE_PERIOD
-into PEBS_FREERUNNING_FLAGS, we already populate period
-in setup_pebs_sample_data
-
-jirka
-
-
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 8e4ea143ed96..78f91ec1056e 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -93,7 +93,8 @@ struct amd_nb {
- 	PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_STREAM_ID | \
- 	PERF_SAMPLE_DATA_SRC | PERF_SAMPLE_IDENTIFIER | \
- 	PERF_SAMPLE_TRANSACTION | PERF_SAMPLE_PHYS_ADDR | \
--	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER)
-+	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER | \
-+	PERF_SAMPLE_PERIOD)
- 
- #define PEBS_REGS \
- 	(PERF_REG_X86_AX | \
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 14c3aa2b5f90..d3702d9ac012 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -315,6 +315,7 @@
+ #define X86_FEATURE_VPCLMULQDQ		(16*32+10) /* Carry-Less Multiplication Double Quadword */
+ #define X86_FEATURE_AVX512_VNNI		(16*32+11) /* Vector Neural Network Instructions */
+ #define X86_FEATURE_AVX512_BITALG	(16*32+12) /* Support for VPOPCNT[B,W] and VPSHUF-BITQMB instructions */
++#define X86_FEATURE_TME			(16*32+13) /* Intel Total Memory Encryption */
+ #define X86_FEATURE_AVX512_VPOPCNTDQ	(16*32+14) /* POPCNT for vectors of DW/QW */
+ #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
+ #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
+-- 
+2.15.1
