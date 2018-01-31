@@ -1,87 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753259AbeAaEEf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 23:04:35 -0500
-Received: from mail-pg0-f48.google.com ([74.125.83.48]:41587 "EHLO
-        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752068AbeAaEEe (ORCPT
+        id S1752534AbeAaEUP convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 23:20:15 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35684 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751606AbeAaEUL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 23:04:34 -0500
-X-Google-Smtp-Source: AH8x224F2Gi7CxaN5J4A8BuxTWtGjMGXX0ewfZK9+16ie5MEG10+++y5Vc9HFkbeIJsXHAeEBfS92Q==
-Date: Tue, 30 Jan 2018 20:04:31 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Rob Herring <robh@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>, Michal Simek <monstr@monstr.eu>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Microblaze boot failure in -next due to 'of/fdt: use
- memblock_virt_alloc for early alloc'
-Message-ID: <20180131040431.GA27622@roeck-us.net>
-References: <20180109194412.GA15823@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180109194412.GA15823@roeck-us.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 30 Jan 2018 23:20:11 -0500
+X-Google-Smtp-Source: AH8x226Q0dNS9HOo5ZlpsIhPjAD0yjoWU7x2r9mJQ8pNS8sc1A3dn01n9ChJLte5mbukCl/xZoWfig==
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH] ACPI: Parse entire table as a term_list for Dell XPS 9570
+ and Precision M5530
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <CAHp75VdPQuEwNOOakvZpC1gzWB9p5yx+CHUjRgMDZ9ZDvxGckQ@mail.gmail.com>
+Date: Wed, 31 Jan 2018 12:20:04 +0800
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <C77D8F2F-285F-4627-9980-6EF94828EEFF@canonical.com>
+References: <20180130060744.19049-1-kai.heng.feng@canonical.com>
+ <CAHp75VdPQuEwNOOakvZpC1gzWB9p5yx+CHUjRgMDZ9ZDvxGckQ@mail.gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 09, 2018 at 11:44:12AM -0800, Guenter Roeck wrote:
-> Hi,
-> 
-> microblaze and microblazeel images fail to boot in -next.
 
-This still fails in in -next.
 
-Guenter
+> On 31 Jan 2018, at 2:17 AM, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> 
+> On Tue, Jan 30, 2018 at 8:07 AM, Kai-Heng Feng
+> <kai.heng.feng@canonical.com> wrote:
+>> The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
+>> of box.
+>> 
+>> The touchpad relies on its _INI method to update its _HID value from
+>> XXXX0000 to SYNA2393.
+>> Also, the _STA relies on value of I2CN to report correct status.
+>> 
+>> Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
+>> correctly set up, and _INI can get run. The ACPI table in this machine
+>> is designed to get parsed this way.
+>> 
+>> Also, change the quirk table to a more generic name.
+> 
+>> +static int set_gbl_term_list(const struct dmi_system_id *id)
+>> +{
+>> +       pr_notice("%s detected - parse the entire table as a term_list\n",
+>> +                 id->ident);
+>> +       acpi_gbl_parse_table_as_term_list = 1;
+>> +       return 0;
+>> +}
+>> #endif
+> 
+> The above should be outside of another #ifdef. Basically after the above #endif.
 
-> Error log is:
+Right, I overlooked that. Thanks.
+
 > 
-> Early console on uartlite at 0x84000000
-> bootconsole [earlyser0] enabled
-> Ramdisk addr 0x00000000, 
-> FDT at 0x9065323c
-> Linux version 4.15.0-rc7-next-20180109 (groeck@jupiter.roeck-us.net) (gcc
-> version 4.8.0 (GCC)) #1 Tue Jan 9 00:00:13 PST 2018
-> bootmem alloc of 12644 bytes failed!
-> Kernel panic - not syncing: Out of memory
-> ---[ end Kernel panic - not syncing: Out of memory
+>> #else
 > 
-> git bisect points to commit 0fa1c579349f ("of/fdt: use memblock_virt_alloc
-> for early alloc"). Reverting this commit fixes the problem. Bisect log is
-> attached.
+>> #endif
 > 
-> Guenter
+>> @@ -1005,7 +1034,7 @@ void __init acpi_early_init(void)
 > 
-> ---
-> # bad: [392a60393b9051d37534bbfd9c9275a3e3b93fd9] Revert "xdp: generic XDP handling of xdp_rxq_info"
-> 	[ this is on top of next-20180109 ]
-> # good: [b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d] Linux 4.15-rc7
-> git bisect start 'HEAD' 'v4.15-rc7'
-> # good: [9da4bdd3a63316ea34855132136f33c5b028a345] Merge remote-tracking branch 'crypto/master'
-> git bisect good 9da4bdd3a63316ea34855132136f33c5b028a345
-> # good: [82258c330b115f7155052cbf3b8fda7b13bc07ef] Merge remote-tracking branch 'security/next-testing'
-> git bisect good 82258c330b115f7155052cbf3b8fda7b13bc07ef
-> # bad: [d010115491f19e71169b880e2f8f314c177a4a67] Merge remote-tracking branch 'extcon/extcon-next'
-> git bisect bad d010115491f19e71169b880e2f8f314c177a4a67
-> # bad: [f94aedf26a459e4213625a74d481474b1582db4d] Merge remote-tracking branch 'clockevents/clockevents/next'
-> git bisect bad f94aedf26a459e4213625a74d481474b1582db4d
-> # good: [4181937ec3d18493339eda525c051fbaec49c639] Merge branch 'efi/core'
-> git bisect good 4181937ec3d18493339eda525c051fbaec49c639
-> # good: [93bb10a7f680548f381bf6a830636fe81bcfa375] Merge branch 'x86/pti'
-> git bisect good 93bb10a7f680548f381bf6a830636fe81bcfa375
-> # good: [3807a90ce7e01fa96a726968da299b902dee10e0] Merge remote-tracking branch 'vfio/next'
-> git bisect good 3807a90ce7e01fa96a726968da299b902dee10e0
-> # good: [a6111c81eafc86ebc8ba436c13b3cf0eb3d6c964] Merge remote-tracking branches 'spi/topic/sirf', 'spi/topic/sun6i' and 'spi/topic/xilinx' into spi-next
-> git bisect good a6111c81eafc86ebc8ba436c13b3cf0eb3d6c964
-> # good: [4df6da430da4db957ea51a6c30e404a751b0aed5] clocksource/drivers/stm32: Add the timer delay
-> git bisect good 4df6da430da4db957ea51a6c30e404a751b0aed5
-> # good: [d7e9ab3c6d76c6480d6b40525375995c0d8526fc] mmc: Don't reference Linux-specific OF_GPIO_ACTIVE_LOW flag in DT binding
-> git bisect good d7e9ab3c6d76c6480d6b40525375995c0d8526fc
-> # bad: [0fa1c579349fdd90173381712ad78aa99c09d38b] of/fdt: use memblock_virt_alloc for early alloc
-> git bisect bad 0fa1c579349fdd90173381712ad78aa99c09d38b
-> # good: [33314a1387009361e6cfcfaa772abe3b90d11321] dt-bindings: h8300 clocksource: correct spelling of pulse
-> git bisect good 33314a1387009361e6cfcfaa772abe3b90d11321
-> # good: [af6074fc9aa4b29517375634189ada1869eea598] of: Use SPDX license tag for DT files
-> git bisect good af6074fc9aa4b29517375634189ada1869eea598
-> # first bad commit: [0fa1c579349fdd90173381712ad78aa99c09d38b] of/fdt: use memblock_virt_alloc for early alloc
+>>         * If the machine falls into the DMI check table,
+>>         * DSDT will be copied to memory
+>>         */
+> 
+> It might make sense to adjust comment above that it's about quirks in
+> general. And, if needed, move current content to actual DMI group of
+> records.
+
+Thanks for the suggestions.
+
+I’ll address them in patch v3.
+
+Kai-Heng
+
+> 
+>> -       dmi_check_system(dsdt_dmi_table);
+>> +       dmi_check_system(acpi_quirks_dmi_table);
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
