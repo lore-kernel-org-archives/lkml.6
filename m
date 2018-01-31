@@ -1,95 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751602AbeAaTiO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 14:38:14 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:27467 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeAaTiN (ORCPT
+        id S1751664AbeAaTku (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 14:40:50 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:37056 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751433AbeAaTks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 14:38:13 -0500
-X-IronPort-AV: E=Sophos;i="5.46,441,1511827200";
-   d="scan'208";a="706176340"
-From: KarimAllah Ahmed <karahmed@amazon.de>
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: KarimAllah Ahmed <karahmed@amazon.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH v5 1/5] KVM: x86: Update the reverse_cpuid list to include CPUID_7_EDX
-Date: Wed, 31 Jan 2018 20:37:43 +0100
-Message-Id: <1517427467-28567-2-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517427467-28567-1-git-send-email-karahmed@amazon.de>
-References: <1517427467-28567-1-git-send-email-karahmed@amazon.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 31 Jan 2018 14:40:48 -0500
+X-Google-Smtp-Source: AH8x227J7zKXAnlFmEGbx8DXbiBfpA7Bk3KWgyhKbMcAf99ZHcfwLspfWZxLILi23yAvdgjJyW8rcw==
+From: Ildar Ismagilov <devix84@gmail.com>
+Cc: devix84@gmail.com, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] srcu: Prevent sdp->srcu_gp_seq_needed_exp counter wrap
+Date: Wed, 31 Jan 2018 22:39:53 +0300
+Message-Id: <20180131193954.28386-1-devix84@gmail.com>
+X-Mailer: git-send-email 2.11.0
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[dwmw2: Stop using KF() for bits in it, too]
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Ildar Ismagilov <devix84@gmail.com>
 ---
- arch/x86/kvm/cpuid.c | 8 +++-----
- arch/x86/kvm/cpuid.h | 1 +
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ kernel/rcu/srcutree.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 0099e10..c0eb337 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -67,9 +67,7 @@ u64 kvm_supported_xcr0(void)
- 
- #define F(x) bit(X86_FEATURE_##x)
- 
--/* These are scattered features in cpufeatures.h. */
--#define KVM_CPUID_BIT_AVX512_4VNNIW     2
--#define KVM_CPUID_BIT_AVX512_4FMAPS     3
-+/* For scattered features from cpufeatures.h; we currently expose none */
- #define KF(x) bit(KVM_CPUID_BIT_##x)
- 
- int kvm_update_cpuid(struct kvm_vcpu *vcpu)
-@@ -392,7 +390,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--		KF(AVX512_4VNNIW) | KF(AVX512_4FMAPS);
-+		F(AVX512_4VNNIW) | F(AVX512_4FMAPS);
- 
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
-@@ -477,7 +475,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
- 				entry->ecx &= ~F(PKU);
- 			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
--			entry->edx &= get_scattered_cpuid_leaf(7, 0, CPUID_EDX);
-+			cpuid_mask(&entry->edx, CPUID_7_EDX);
- 		} else {
- 			entry->ebx = 0;
- 			entry->ecx = 0;
-diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-index c2cea66..9a327d5 100644
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -54,6 +54,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
- 	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
- 	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
- 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
-+	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
- };
- 
- static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 1798d1aa60fa..c54617280245 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -552,6 +552,9 @@ static void srcu_gp_end(struct srcu_struct *sp)
+ 				if (ULONG_CMP_GE(gpseq,
+ 						 sdp->srcu_gp_seq_needed + 100))
+ 					sdp->srcu_gp_seq_needed = gpseq;
++				if (ULONG_CMP_GE(gpseq,
++						 sdp->srcu_gp_seq_needed_exp + 100))
++					sdp->srcu_gp_seq_needed_exp = gpseq;
+ 				raw_spin_unlock_irqrestore_rcu_node(sdp, flags);
+ 			}
+ 	}
 -- 
-2.7.4
+2.11.0
