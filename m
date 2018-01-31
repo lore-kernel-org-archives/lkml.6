@@ -1,53 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932230AbeAaQqp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 11:46:45 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52957 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753270AbeAaQqm (ORCPT
+        id S1753581AbeAaQtU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 11:49:20 -0500
+Received: from mail-it0-f45.google.com ([209.85.214.45]:50707 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752430AbeAaQtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 11:46:42 -0500
-X-Google-Smtp-Source: AH8x224y1LhIu8z+JJ/ysbqNL5rhWBz0axfsb2KIl+hX0cjqGDwbY/fex0k4qp4ghtWfivgw23/owXsi8zvPHSQEEkE=
+        Wed, 31 Jan 2018 11:49:17 -0500
+X-Google-Smtp-Source: AH8x225DJwjZorj0SUyFI4sjmHUl9q7+w188fd0E8yBj5c1M7W20U0SGxL3p2eUqDWZVMcU4/TVeefYOBjqif6fz0rM=
 MIME-Version: 1.0
-In-Reply-To: <1517401762.3612.0.camel@kernel.org>
-References: <20180130173126.2806-1-jlayton@kernel.org> <20180130203221.29310-1-jlayton@kernel.org>
- <CA+55aFw5Xf4V-BF1JK+SpjXnmrgeMe-k0wLaFc_=6ojbhfWEtQ@mail.gmail.com> <1517401762.3612.0.camel@kernel.org>
+In-Reply-To: <20180131084918.15267-1-ebiggers3@gmail.com>
+References: <94eb2c05a3807b84210560f4a1fd@google.com> <20180131084918.15267-1-ebiggers3@gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 31 Jan 2018 08:46:41 -0800
-X-Google-Sender-Auth: 8QCMiHulpD2YoWRhaSIClb_yn8o
-Message-ID: <CA+55aFxB6og=iRkRchiOrr8EW2=jgb_i4nUiPsvEa+8F64APxA@mail.gmail.com>
-Subject: Re: [PATCH v2] iversion: make inode_cmp_iversion{+raw} return bool
- instead of s64
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+Date: Wed, 31 Jan 2018 08:49:16 -0800
+X-Google-Sender-Auth: 2JwivGyXDhFlPgKJl5O8rOVAEBg
+Message-ID: <CA+55aFwU71orp9s6979j4XpOJ4Sdr2NSpe1b2xgKLy0v8q6vEw@mail.gmail.com>
+Subject: Re: [PATCH] devpts: fix error handling in devpts_mntget()
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Stefan Lippers-Hollmann <s.l-h@gmx.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Trond Myklebust <trondmy@primarydata.com>
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 4:29 AM, Jeff Layton <jlayton@kernel.org> wrote:
+On Wed, Jan 31, 2018 at 12:49 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
 >
-> Do you mind just taking it directly? I don't have anything else queued
-> up for this cycle.
+> If devpts_ptmx_path() returns an error code, then devpts_mntget()
+> dereferences an ERR_PTR():
 
-Done.
-
-I wonder if "false for same, true for different" calling convention
-makes much sense, but it matches the old "0 for same" so obviously
-makes for a smaller diff.
-
-If it ever ends up confusing people, maybe the sense of that function
-should be reversed, and the name changed to something like
-"same_inode_version()" or something.
-
-But at least for now the situation seems ok to me,
+Thanks, applied.
 
             Linus
