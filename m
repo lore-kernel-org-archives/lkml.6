@@ -1,27 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752324AbeAaCBS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:01:18 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34140 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752887AbeAaCAr (ORCPT
+        id S1752936AbeAaCAq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 21:00:46 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40157 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752874AbeAaCAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:00:47 -0500
-X-Google-Smtp-Source: AH8x227nF/6F/IzeXd1LOlBYw5dzk+kAKXnPr4HJ8GG9qKym11Px2V7NCgD7Ej5PPjXTg0gM5UQASA==
+        Tue, 30 Jan 2018 21:00:43 -0500
+X-Google-Smtp-Source: AH8x2241uoq355qUgWCCfEijfeKiXxv7aYbj0JNiw9lzyVpBNtzLPiUM9ay46ydkDThRLkOqY2s+vQ==
 From: "Bryan O'Donoghue" <pure.logic@nexus-software.ie>
 To: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: fabio.estevam@nxp.com, peng.fan@nxp.com, davem@davemloft.net,
         lukas.auer@aisec.fraunhofer.de, rui.silva@linaro.org,
-        ryan.harkin@linaro.org, Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        ryan.harkin@linaro.org,
         "Bryan O'Donoghue" <pure.logic@nexus-software.ie>
-Subject: [PATCH v3 4/5] clk: imx7d: add CAAM clock
-Date: Wed, 31 Jan 2018 02:00:39 +0000
-Message-Id: <1517364040-27607-5-git-send-email-pure.logic@nexus-software.ie>
+Subject: [PATCH v3 0/5] Enable CAAM on i.MX7s fix TrustZone issues
+Date: Wed, 31 Jan 2018 02:00:35 +0000
+Message-Id: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -29,50 +26,87 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rui Miguel Silva <rui.silva@linaro.org>
+V3:
+- Added Cc: clk driver maintainers - Fabio Estevam
+- Added Cc: i.MX arch maintainers - Fabio Estevam
+- Removed bouncing email address for Herbert Xu
 
-Add CAAM clock so that we could use the Cryptographic Acceleration and
-Assurance Module (CAAM) hardware block.
+V2-resend:
+- Patch 0005 lost in the ether - resending
 
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: "Horia Geantă" <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
----
- drivers/clk/imx/clk-imx7d.c             | 1 +
- include/dt-bindings/clock/imx7d-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+V2:
+- Endian detection is ok with TrustZone enabled Horia.
+  Endian detection logic tested with TrustZone enabled. The register that
+  this relies on though isn't affected by the lock-down in the first page.
+  Assuming set of affected registers is actually just the 'deco' registers
+  though there is no formal statement of that, that I am aware of.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 80dc211..52ab096 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
-+	clks[IMX7D_CAAM_CLK] = imx_clk_gate4("caam_clk", "ipg_root_clk", base + 0x4240, 0);
- 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
- 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
- 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index e2f99ae..2bc5618 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -452,5 +452,6 @@
- #define IMX7D_OCOTP_CLK			439
- #define IMX7D_NAND_RAWNAND_CLK		440
- #define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
--#define IMX7D_CLK_END			442
-+#define IMX7D_CAAM_CLK			442
-+#define IMX7D_CLK_END			443
- #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+- Moving of TrustZone work-around into u-boot
+  This set actually doesn't need to deal with TrustZone at all now but, for
+  the sake of consistency keeping thread title
+
+  https://patchwork.ozlabs.org/patch/866460/
+  https://patchwork.ozlabs.org/patch/866462/
+  https://patchwork.ozlabs.org/patch/865890/
+
+- Reworded endless loop fix to read a bit better
+
+- Fixes to DTS additions - Rui
+
+- Fixes to number of clocks declared - Rui
+
+V1:
+This patch-set enables CAAM on the i.MX7s and fixes a number of issues
+identified with the CAAM driver and hardware when TrustZone mode is
+enabled.
+
+The first block of patches are simple bug-fixes, followed by a second block
+of patches which are simple enabling patches for the i.MX7Solo - note we
+aren't enabling for the i.MX7Dual since we don't have hardware to test that
+out but it should be a 1:1 mapping for others to enable when appropriate.
+
+The final block in this series implements a fix for using the CAAM when
+OPTEE/TrustZone is enabled. The various details are logged in these
+threads.
+
+Link: https://github.com/OP-TEE/optee_os/issues/1408
+Link: https://tinyurl.com/yam5gv9a
+Link: https://patchwork.ozlabs.org/cover/865042
+
+In simple terms, when TrustZone is active the first page of the CAAM
+becomes inaccessible to Linux as it has a special 'TZ bit' associated with
+it that software cannot toggle or even view AFAIK.
+
+The patches here then
+
+1. Detect when TrustZone is active
+2. Detect if u-boot (or OPTEE) has already initialized the RNG
+
+and loads the CAAM driver in a different way - skipping over the RNG
+initialization that Linux now no-longer has permissions to carry out.
+
+Should #1 be true but #2 not be true, driver loading stops (and Rui's patch
+for the NULL pointer dereference fixes a cash on this path). If #2 is true
+but #1 is not then it's a NOP as Linux has full permission to rewrite the
+deco registers in the first page of CAAM registers.
+
+Finally then if #1 and #2 are true, the fixes here allow the CAAM to come
+up and for the RNG to be useable again.
+
+Bryan O'Donoghue (1):
+  crypto: caam: Fix endless loop when RNG is already initialized
+
+Rui Miguel Silva (4):
+  crypto: caam: Fix null dereference at error path
+  crypto: caam: do not use mem and emi_slow clock for imx7x
+  clk: imx7d: add CAAM clock
+  ARM: dts: imx7s: add CAAM device node
+
+ arch/arm/boot/dts/imx7s.dtsi            | 31 +++++++++++++++++++++++
+ drivers/clk/imx/clk-imx7d.c             |  1 +
+ drivers/crypto/caam/ctrl.c              | 45 ++++++++++++++++++++-------------
+ include/dt-bindings/clock/imx7d-clock.h |  3 ++-
+ 4 files changed, 61 insertions(+), 19 deletions(-)
+
 -- 
 2.7.4
