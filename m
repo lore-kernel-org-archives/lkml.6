@@ -1,129 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932325AbeAaQWH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 11:22:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:34140 "EHLO
+        id S932283AbeAaQYh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 11:24:37 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39944 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932283AbeAaQVs (ORCPT
+        with ESMTP id S1753401AbeAaQYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 11:21:48 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E191B607DC
+        Wed, 31 Jan 2018 11:24:34 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C6F2C601D9
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: andy.gross@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        sboyd@codeaurora.org, evgreen@chromium.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 3/3] arm64: dts: sdm845: Add serial console support
-Date: Wed, 31 Jan 2018 21:49:41 +0530
-Message-Id: <20180131161941.29865-4-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180131161941.29865-1-rnayak@codeaurora.org>
-References: <20180131161941.29865-1-rnayak@codeaurora.org>
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Wed, 31 Jan 2018 16:24:32 +0000
+From: Lina Iyer <ilina@codeaurora.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: tglx@linutronix.de, jason@lakedaemon.net, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org,
+        rnayak@codeaurora.org, asathyak@codeaurora.org
+Subject: Re: [PATCH RFC 1/4] drivers: irqchip: pdc: add support for PDC
+ interrupt controller
+Message-ID: <20180131162432.GA13231@codeaurora.org>
+References: <20180123175656.11942-1-ilina@codeaurora.org>
+ <20180123175656.11942-2-ilina@codeaurora.org>
+ <9dd8307c-4906-4707-d4d7-2ef0fc8307b6@arm.com>
+ <20180130175654.GC20815@codeaurora.org>
+ <619608bb-a9c5-27a1-2383-5f6b2f455499@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <619608bb-a9c5-27a1-2383-5f6b2f455499@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the qup uart node and geni se instance needed to
-support the serial console on the MTP.
+On Tue, Jan 30 2018 at 18:11 +0000, Marc Zyngier wrote:
+>On 30/01/18 17:56, Lina Iyer wrote:
+>> Hi Mark,
+>>
+>> On Wed, Jan 24 2018 at 14:20 +0000, Marc Zyngier wrote:
+>>> Hi Lina, Archana,
+>>>
+>>> On 23/01/18 17:56, Lina Iyer wrote:
+>>>> From : Archana Sathyakumar <asathyak@codeaurora.org>
+>>>>
+>>>> The Power Domain Controller (PDC) hardware block on Qualcomm SoCs houses
+>>>> an interrupt controller along with other domain control functions to
+>>>> handle interrupt related functions like handle falling edge or active
+>>>> low which are not detected at the GIC and handle wakeup interrupts.
+>>>>
+>>>> The interrupt controller is on an always-on domain for the purpose of
+>>>> waking up the processor, but only a subset of the processor's interrupts
+>>>> are routed through the PDC to the GIC. The PDC powers on the processor's
+>>>> domain, bringing the domain out of low power mode and replays the
+>>>> pending interrupts so the GIC may wake up the processor.
+>>>>
+>>>> Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
+>>>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>>>> [Lina: Split out DT bindings target data and initialization changes]
+>>>> ---
+>>
+>> [...]
+>>
+>>>> +
+>>>> +static int qcom_pdc_translate(struct irq_domain *d,
+>>>> +	struct irq_fwspec *fwspec, unsigned long *hwirq, unsigned int *type)
+>>>> +{
+>>>> +	return d->parent->ops->translate(d->parent, fwspec, hwirq, type);
+>>>
+>>> No way. The translate operation is local to your domain. You don't go
+>>> and fish in another domain's private stuff. Please implement your own.
+>>> The reason you're getting away with it is because you're in the DT by
+>>> providing the GIC SPI instead of the pin into the PDC.
+>>>
+>> I am looking into this approach. Was hoping to get some clarifications
+>> from you.
+>>
+>> The PDC sits between the device and the the GIC. Platform drivers
+>> receive their interrupts from GIC. They are not aware of the fact that
+>> the GIC may lose power and hand over its job to PDC. The platform
+>
+>I disagree here. If the PDC is between the device and the GIC, then the
+>device interrupt line is routed to the PDC, and nothing else. The PDC
+>itself is tied to the GIC, but that's none of the device's business.
+>
+>In general, the device shouldn't care about what interrupt controller it
+>is connected to. So please just describe the HW. There is about 10
+>similar configurations in the tree at the moment for the exact same
+>thing. They are simpler because their PDC equivalent has been designed
+>to exactly align with the GIC pins, but that's absolutely not a requirement.
+>
+This is exactly the case. The PDC is not aligned with GIC for all
+interrupts. To be a bit more clear than what I seem to conveyed, some
+interrupts are routed to the GIC and to the PDC and some are not.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 42 +++++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/sdm845.dtsi    | 21 +++++++++++++++++
- 2 files changed, 63 insertions(+)
+Interrupts like USB that need to be detected for a falling edge or level
+low (i.e., not detected at the GIC) are routed through the PDC as well.
+The PDC detects these and re-triggers the GIC interrupts with the
+correct polarity so the GIC may sense it.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-index 617c7bb25fb1..42fbf2ab9a2d 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-@@ -10,4 +10,46 @@
- / {
- 	model = "Qualcomm Technologies, Inc. SDM845 MTP";
- 	compatible = "qcom,sdm845-mtp";
-+
-+	aliases {
-+		serial0 = &qup_uart2;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0";
-+	};
-+
-+	soc {
-+		serial@a84000 {
-+			status = "okay";
-+		};
-+
-+		pinctrl@3400000 {
-+			qup_uart2_default: qup_uart2_default {
-+				pinmux {
-+					function = "qup9";
-+					pins = "gpio4", "gpio5";
-+				};
-+
-+				pinconf {
-+					pins = "gpio4", "gpio5";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+			};
-+
-+			qup_uart2_sleep: qup_uart2_sleep {
-+				pinmux {
-+					function = "gpio";
-+					pins = "gpio4", "gpio5";
-+				};
-+
-+				pinconf {
-+					pins = "gpio4", "gpio5";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+			};
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 02520f19e4ca..c4ce70840acf 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,gcc-sdm845.h>
- 
- / {
- 	model = "Qualcomm Technologies, Inc. SDM845";
-@@ -273,5 +274,25 @@
- 			cell-index = <0>;
- 		};
- 
-+		qup_1: qcom,geni_se@ac0000 {
-+			compatible = "qcom,geni-se-qup";
-+			reg = <0xac0000 0x6000>;
-+		};
-+
-+		qup_uart2: serial@a84000 {
-+			compatible = "qcom,geni-console", "qcom,geni-uart";
-+			reg = <0xa84000 0x4000>;
-+			reg-names = "se_phys";
-+			clock-names = "se-clk", "m-ahb", "s-ahb";
-+			clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>,
-+				 <&gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
-+				 <&gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
-+			pinctrl-names = "default", "sleep";
-+			pinctrl-0 = <&qup_uart2_default>;
-+			pinctrl-1 = <&qup_uart2_sleep>;
-+			interrupts = <GIC_SPI 354 IRQ_TYPE_NONE>;
-+			qcom,wrapper-core = <&qup_1>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+In another case, when the GIC is powered off, the PDC will continue to
+montior the interrupts routed through the PDC interrupt controller and
+if any of the enabled ones trigger, the PDC will wake up the GIC and
+replay the interrupts at the GIC.
+
+To the device the presence of PDC is transparent, nor it is aware if the
+GIC was powered off while the interrupt was enabled.
+
+>> drivers may configure an interrupt as a wakeup interrupt, in which case,
+>> we would wake up the CPU even if we are in system sleep or suspend mode.
+>> Platform driver don't know about the PDC pin or its configuration
+>> information. It makes it easier to keep that information contained
+>> within the PDC driver. Instead of getting the pin-hwirq map from the
+>> table as in patch #4, I can get that information cleanly from DT.
+>
+>That part is fine.
+>
+>>
+>>> Don't do that. Expose the pin in the DT, use the alloc method to map the
+>>> PDC pin into the GIC pin.
+>>>
+>> I would like to understand how you mean by this. I am thinking something
+>> like this in the dts -
+>>
+>> / {
+>> 	interrupt-controller = <&pdc>;
+>> 	soc {
+>> 		intc: interrupt-controller@176000 {
+>> 			[...]
+>> 			interrupt-controller;
+>> 			interrupt-parent = <&intc>;
+>> 		};
+>>
+>> 		pdc: interrupt-controller@210000 {
+>> 			[...]
+>> 			interrupt-controller;
+>> 			interrupt-parent = <&intc>;
+>> 			qcm,pdc-ranges = <0 512 94>, <94 641 15>, <115 662 7>;
+>> 		};
+>>
+>> 		foo-device {
+>> 			interrupts = <GIC_SPI 481 IRQ_TYPE_NONE>;
+>
+>Drop the GIC_SPI (you should only use it in the PDC driver itself when
+>requesting the GIC version of the interrupt), make sure 481 is a PDC pin
+>number (it looks like a GIC SPI to me), and *never* encode IRQ_TYPE_NONE
+>in DT (put the actual trigger type).
+>
+Sure, I just picked it up as an example.Yes, this is a GIC SPI and not a
+PDC port. This is what the platform drivers desire. They have an
+interrupt number assigned for their device and it would be preferrable
+for them to use this interrupt vector at the GIC in DT. They dont't want
+to know the PDC pin (even though the interrupt controller for the SoC
+may be the PDC in DT). This is because the devices that do not have their
+interrupt routed through the PDC, would anyways have only the GIC
+interrupt vector to provide. They have no PDC port available for them.
+The foo-device above is an example of one such device that does not have
+it's interrupt routed through the PDC (it doesn't fall in the
+pdc-ranges).
+
+The PDC behaves more like arch extn to the GIC than a stacked interrupt
+controller in the hierarchy.
+
+>> 		};
+>> 	};
+>>  };
+>>
+>> Where the qcom,pdc-ranges is defined as -
+>> 	<pdc-pin-start interrupt-vector size-of-sequence>.
+>>
+>> For this example, the PDC map is established for pin0-pin93 using 94
+>> interrupts in sequence starting from 512 and so on. This allows for
+>> holes in the map per the hardware interrupt topology.
+>>
+>> I am not sure if you were asking to specify the pin in the 'interrupts'
+>> property in each device. I would like to avoid that as this may be an
+>> information that the device author may care less about. Would you agree?
+>
+>The way we represent these stacked interrupt controllers is by tying the
+>device to the closest interrupt controller. Look at
+>
+Did you miss a reference here?
+
+We looked at tegra's implementation and it appears similar, thought they
+don't seemt to have the same complexity.
+
+Thanks,
+Lina
