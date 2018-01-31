@@ -1,77 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752768AbeAaEVx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 23:21:53 -0500
-Received: from gateway23.websitewelcome.com ([192.185.47.80]:33793 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752009AbeAaEVv (ORCPT
+        id S1752523AbeAaE0a (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 23:26:30 -0500
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:34734 "EHLO
+        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751635AbeAaE02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 23:21:51 -0500
-Date: Tue, 30 Jan 2018 22:21:48 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] tcp_nv: fix potential integer overflow in tcpnv_acked
-Message-ID: <20180131042147.GA13245@embeddedgus>
+        Tue, 30 Jan 2018 23:26:28 -0500
+X-Google-Smtp-Source: AH8x227w9yFeSGrhkDjEL7aK91/Cnl9sOuzuIsJp5ISelm9R7jsfT2H26+qmpKhXg9tEVD8OYoJ5Sg==
+Date: Tue, 30 Jan 2018 20:26:19 -0800 (PST)
+From: Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [RFC] mm/migrate: Consolidate page allocation helper functions
+In-Reply-To: <53cf5454-405b-a812-1389-af4fd7527122@linux.vnet.ibm.com>
+Message-ID: <alpine.LSU.2.11.1801302000200.8014@eggly.anvils>
+References: <20180130050642.19834-1-khandual@linux.vnet.ibm.com> <20180130143635.GF21609@dhcp22.suse.cz> <53cf5454-405b-a812-1389-af4fd7527122@linux.vnet.ibm.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.201.65
-X-Source-L: No
-X-Exim-ID: 1egju9-001pQP-IJ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.152.201.65]:55160
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix ULL to constant 80000 in order to avoid a potential integer
-overflow and give the compiler complete information about the proper
-arithmetic to use. Notice that this constant is used in a context that
-expects an expression of type u64.
+On Wed, 31 Jan 2018, Anshuman Khandual wrote:
+> On 01/30/2018 08:06 PM, Michal Hocko wrote:
+> > On Tue 30-01-18 10:36:42, Anshuman Khandual wrote:
+> >> Allocation helper functions for migrate_pages() remmain scattered with
+> >> similar names making them really confusing. Rename these functions based
+> >> on the context for the migration and move them all into common migration
+> >> header. Functionality remains unchanged.
 
-The current cast to u64 effectively applies to the whole expression
-as an argument of type u64 to be passed to div64_u64, but it does
-not prevent it from being evaluated using 32-bit arithmetic instead
-of 64-bit arithmetic.
+I agree that their names could be made less confusing (though didn't
+succeed very well when I tried); and maybe a couple of them are general
+enough to be used from more than one callsite, and could well live in
+mm/migrate.c.
 
-Also, once the expression is properly evaluated using 64-bit arithmentic,
-there is no need for the parentheses and the external cast to u64.
+But moving all of page migration's (currently static) new_page allocator
+functions away from the code that relies on their special characteristics
+(probably relayed to them through a private argument), and into a single
+header file, just seems perverse to me.  And likely to be a nuisance when
+adding more in future: private structures having to be made public just
+to make them visible in that shared header file.
 
-Addresses-Coverity-ID: 1357588 ("Unintentional integer overflow")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/ipv4/tcp_nv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Would it make sense to keep the various functions that may be called by
+rmap_walk() together in one rmap_walk.h?  The different filesystems'
+writepage methods together in one writepage.h?  I don't think so.
 
-diff --git a/net/ipv4/tcp_nv.c b/net/ipv4/tcp_nv.c
-index ddbce73..764298e 100644
---- a/net/ipv4/tcp_nv.c
-+++ b/net/ipv4/tcp_nv.c
-@@ -364,7 +364,7 @@ static void tcpnv_acked(struct sock *sk, const struct ack_sample *sample)
- 		 */
- 		cwnd_by_slope = (u32)
- 			div64_u64(((u64)ca->nv_rtt_max_rate) * ca->nv_min_rtt,
--				  (u64)(80000 * tp->mss_cache));
-+				  80000ULL * tp->mss_cache);
- 		max_win = cwnd_by_slope + nv_pad;
- 
- 		/* If cwnd > max_win, decrease cwnd
--- 
-2.7.4
+Hugh
