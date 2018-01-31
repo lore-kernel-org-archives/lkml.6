@@ -1,179 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752921AbeAaCH7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:07:59 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40374 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751716AbeAaCHD (ORCPT
+        id S1752530AbeAaCLl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 21:11:41 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36879 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751716AbeAaCLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:07:03 -0500
-X-Google-Smtp-Source: AH8x226RojRNWmqyDfrXYW7TIK0xrHbujx+Pl6SVcb0+JGm9kvIj3SQwBZHALXlJz2CFojJStXO/Dg==
-From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To: mb@lightnvm.io
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 2/5] lightnvm: pblk: check data lines version on recovery
-Date: Wed, 31 Jan 2018 03:06:48 +0100
-Message-Id: <1517364411-22386-2-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
-References: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
+        Tue, 30 Jan 2018 21:11:38 -0500
+X-Google-Smtp-Source: AH8x226DXIgNHuDfNdvmYzb8fZhPuN0QlU108Cg+bM+oFwe6nW/NafWBNhrZuIu94jODZSfdZZdEkA==
+Date: Tue, 30 Jan 2018 18:11:34 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Xin Long <lucien.xin@gmail.com>
+Cc: syzbot
+        <bot+df9412138a14678abd73a2b70a57241f63563ed1@syzkaller.appspotmail.com>,
+        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>, syzkaller-bugs@googlegroups.com,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        ChunYu Wang <chunwang@redhat.com>
+Subject: Re: KASAN: use-after-free Read in sctp_association_free
+Message-ID: <20180131021134.p5jt44mk4tzveo42@gmail.com>
+References: <001a114a7bc0111534055cef92a3@google.com>
+ <CADvbK_fyuKe4ehMD_Jb=5UMF8FpfEuiCG6-FEzBiM-r=FX_Y-Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_fyuKe4ehMD_Jb=5UMF8FpfEuiCG6-FEzBiM-r=FX_Y-Q@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+On Thu, Nov 02, 2017 at 08:07:27PM +0800, Xin Long wrote:
+> On Thu, Nov 2, 2017 at 1:55 AM, syzbot
+> <bot+df9412138a14678abd73a2b70a57241f63563ed1@syzkaller.appspotmail.com>
+> wrote:
+> > Hello,
+> >
+> > syzkaller hit the following crash on
+> > 25a5d23b47994cdb451dcd2bc8ac310a1492f71b
+> > git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+> > compiler: gcc (GCC) 7.1.1 20170620
+> > .config is attached
+> > Raw console output is attached.
+> > C reproducer is attached
+> > syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> > for information about syzkaller reproducers
+> >
+> >
+> > ==================================================================
+> > BUG: KASAN: use-after-free in sctp_association_free+0x7b7/0x930
+> > net/sctp/associola.c:333
+> > Read of size 8 at addr ffff8801d21d4720 by task syzkaller504854/3007
+> >
+> > CPU: 0 PID: 3007 Comm: syzkaller504854 Not tainted 4.14.0-rc6+ #62
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:16 [inline]
+> >  dump_stack+0x194/0x257 lib/dump_stack.c:52
+> >  print_address_description+0x73/0x250 mm/kasan/report.c:252
+> >  kasan_report_error mm/kasan/report.c:351 [inline]
+> >  kasan_report+0x25b/0x340 mm/kasan/report.c:409
+> >  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
+> >  sctp_association_free+0x7b7/0x930 net/sctp/associola.c:333
+> asoc  could have been freed by sctp_stop_t1_and_abort or elsewhere
+> when waiting for buf without holding sk lock.
+> 
+> One possible fix:
+> 
+> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> index c75acdf..e2ea12a 100644
+> --- a/net/sctp/socket.c
+> +++ b/net/sctp/socket.c
+> @@ -2015,7 +2015,7 @@ static int sctp_sendmsg(struct sock *sk, struct
+> msghdr *msg, size_t msg_len)
+>         goto out_unlock;
+> 
+>  out_free:
+> -       if (new_asoc)
+> +       if (new_asoc && err != -ESRCH)
+>                 sctp_association_free(asoc);
+>  out_unlock:
+>         release_sock(sk);
+> @@ -7976,10 +7976,11 @@ static int sctp_wait_for_sndbuf(struct
+> sctp_association *asoc, long *timeo_p,
+>         for (;;) {
+>                 prepare_to_wait_exclusive(&asoc->wait, &wait,
+>                                           TASK_INTERRUPTIBLE);
+> +               if (asoc->base.dead)
+> +                       goto do_dead;
+>                 if (!*timeo_p)
+>                         goto do_nonblock;
+> -               if (sk->sk_err || asoc->state >= SCTP_STATE_SHUTDOWN_PENDING ||
+> -                   asoc->base.dead)
+> +               if (sk->sk_err || asoc->state >= SCTP_STATE_SHUTDOWN_PENDING)
+>                         goto do_error;
+>                 if (signal_pending(current))
+>                         goto do_interrupted;
+> @@ -8004,6 +8005,10 @@ static int sctp_wait_for_sndbuf(struct
+> sctp_association *asoc, long *timeo_p,
+> 
+>         return err;
+> 
+> +do_dead:
+> +       err = -ESRCH;
+> +       goto out;
+> +
+>  do_error:
+>         err = -EPIPE;
+>         goto out;
+> 
+> will check for sure before posting. thanks.
+> 
+> >  sctp_sendmsg+0x2311/0x31f0 net/sctp/socket.c:2011
+> >  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:762
+> >  sock_sendmsg_nosec net/socket.c:633 [inline]
+> >  sock_sendmsg+0xca/0x110 net/socket.c:643
+> >  SYSC_sendto+0x352/0x5a0 net/socket.c:1750
+> >  SyS_sendto+0x40/0x50 net/socket.c:1718
+> >  do_syscall_32_irqs_on arch/x86/entry/common.c:329 [inline]
+> >  do_fast_syscall_32+0x3f2/0xf05 arch/x86/entry/common.c:391
+> >  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:124
+> > RIP: 0023:0xf7fd2c79
+> > RSP: 002b:00000000f5fca1ec EFLAGS: 00000292 ORIG_RAX: 0000000000000171
+> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000020925000
+> > RDX: 0000000000000002 RSI: 0000000000000000 RDI: 00000000209e1000
+> > RBP: 000000000000001c R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> >
 
-As a preparation for future bumps of data line persistent storage
-versions, we need to start checking the emeta line version during
-recovery. Also slit up the current emeta/smeta version into two
-bytes (major,minor).
+This crash has stopped occurring.  I assume it was fixed by commit ca3af4dd28cff
+(thanks Xin!), so let's tell syzbot so that it can continue to report crashes in
+the same place:
 
-Recovering lines with the same major number as the current pblk data
-line version must succeed. This means that any changes in the
-persistent format must be:
+#syz fix: sctp: do not free asoc when it is already dead in sctp_sendmsg
 
- (1) Backward compatible: if we switch back to and older
-     kernel, recovery of lines stored with major == current_major
-     and minor > current_minor must succeed.
-
- (2) Forward compatible: switching to a newer kernel,
-     recovery of lines stored with major=current_major and
-     minor < minor must handle the data format differences
-     gracefully(i.e. initialize new data structures to default values).
-
-If we detect lines that have a different major number than
-the current we must abort recovery. The user must manually
-migrate the data in this case.
-
-Previously the version stored in the emeta header was copied
-from smeta, which has version 1, so we need to set the minor
-version to 1.
-
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-core.c     |  9 ++++++++-
- drivers/lightnvm/pblk-recovery.c | 26 ++++++++++++++++++++++++--
- drivers/lightnvm/pblk.h          | 16 ++++++++++++++--
- 3 files changed, 46 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 9027cf2ed1d8..155e42a26293 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -975,7 +975,8 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
- 	memcpy(smeta_buf->header.uuid, pblk->instance_uuid, 16);
- 	smeta_buf->header.id = cpu_to_le32(line->id);
- 	smeta_buf->header.type = cpu_to_le16(line->type);
--	smeta_buf->header.version = SMETA_VERSION;
-+	smeta_buf->header.version_major = SMETA_VERSION_MAJOR;
-+	smeta_buf->header.version_minor = SMETA_VERSION_MINOR;
- 
- 	/* Start metadata */
- 	smeta_buf->seq_nr = cpu_to_le64(line->seq_nr);
-@@ -998,6 +999,12 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
- 	/* End metadata */
- 	memcpy(&emeta_buf->header, &smeta_buf->header,
- 						sizeof(struct line_header));
-+
-+	emeta_buf->header.version_major = EMETA_VERSION_MAJOR;
-+	emeta_buf->header.version_minor = EMETA_VERSION_MINOR;
-+	emeta_buf->header.crc = cpu_to_le32(
-+			pblk_calc_meta_header_crc(pblk, &emeta_buf->header));
-+
- 	emeta_buf->seq_nr = cpu_to_le64(line->seq_nr);
- 	emeta_buf->nr_lbas = cpu_to_le64(line->sec_in_line);
- 	emeta_buf->nr_valid_lbas = cpu_to_le64(0);
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 1d5e961bf5e0..a30fe203d454 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -826,6 +826,25 @@ static u64 pblk_line_emeta_start(struct pblk *pblk, struct pblk_line *line)
- 	return emeta_start;
- }
- 
-+static int pblk_recov_check_line_version(struct pblk *pblk,
-+					 struct line_emeta *emeta)
-+{
-+	struct line_header *header = &emeta->header;
-+
-+	if (header->version_major != EMETA_VERSION_MAJOR) {
-+		pr_err("pblk: line major version mismatch: %d, expected: %d\n",
-+		       header->version_major, EMETA_VERSION_MAJOR);
-+		return 1;
-+	}
-+
-+#ifdef NVM_DEBUG
-+	if (header->version_minor > EMETA_VERSION_MINOR)
-+		pr_info("pblk: newer line minor version found: %d\n", line_v);
-+#endif
-+
-+	return 0;
-+}
-+
- struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- {
- 	struct pblk_line_meta *lm = &pblk->lm;
-@@ -873,9 +892,9 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 		if (le32_to_cpu(smeta_buf->header.identifier) != PBLK_MAGIC)
- 			continue;
- 
--		if (smeta_buf->header.version != SMETA_VERSION) {
-+		if (smeta_buf->header.version_major != SMETA_VERSION_MAJOR) {
- 			pr_err("pblk: found incompatible line version %u\n",
--					le16_to_cpu(smeta_buf->header.version));
-+					smeta_buf->header.version_major);
- 			return ERR_PTR(-EINVAL);
- 		}
- 
-@@ -943,6 +962,9 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 			goto next;
- 		}
- 
-+		if (pblk_recov_check_line_version(pblk, line->emeta->buf))
-+			return ERR_PTR(-EINVAL);
-+
- 		if (pblk_recov_l2p_from_emeta(pblk, line))
- 			pblk_recov_l2p_from_oob(pblk, line);
- 
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 8c357fb6538e..fae2526f80b2 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -320,14 +320,26 @@ enum {
- };
- 
- #define PBLK_MAGIC 0x70626c6b /*pblk*/
--#define SMETA_VERSION cpu_to_le16(1)
-+
-+/* emeta/smeta persistent storage format versions:
-+ * Changes in major version requires offline migration.
-+ * Changes in minor version are handled automatically during
-+ * recovery.
-+ */
-+
-+#define SMETA_VERSION_MAJOR (0)
-+#define SMETA_VERSION_MINOR (1)
-+
-+#define EMETA_VERSION_MAJOR (0)
-+#define EMETA_VERSION_MINOR (1)
- 
- struct line_header {
- 	__le32 crc;
- 	__le32 identifier;	/* pblk identifier */
- 	__u8 uuid[16];		/* instance uuid */
- 	__le16 type;		/* line type */
--	__le16 version;		/* type version */
-+	__u8 version_major;	/* version major */
-+	__u8 version_minor;	/* version minor */
- 	__le32 id;		/* line id for current line */
- };
- 
--- 
-2.7.4
+- Eric
