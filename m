@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753236AbeAaK32 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 05:29:28 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:40902 "EHLO
+        id S1753545AbeAaK3y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 05:29:54 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:42797 "EHLO
         mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752658AbeAaKZN (ORCPT
+        with ESMTP id S1751744AbeAaKZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 05:25:13 -0500
-X-Google-Smtp-Source: AH8x226Us0Mitg3vn0l9zc6qbekJQsDic6rQJJi1WRAZIO5Z0SXxGn1/qL1jYwJM5U4J+VUMXrpLGQ==
+        Wed, 31 Jan 2018 05:25:07 -0500
+X-Google-Smtp-Source: AH8x226mJ7rZB0evbkaSrWLH0c+kZbggbOVM7UnzvH+3sa5B5qhB67dyKgwYExrx7Wt86/lgs40QIg==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -18,10 +18,11 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Gustavo Padovan <gustavo.padovan@collabora.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv2 04/17] media: vb2: add support for requests in QBUF ioctl
-Date: Wed, 31 Jan 2018 19:24:22 +0900
-Message-Id: <20180131102427.207721-5-acourbot@chromium.org>
+Subject: [RFCv2 02/17] videodev2.h: Add request_fd field to v4l2_buffer
+Date: Wed, 31 Jan 2018 19:24:20 +0900
+Message-Id: <20180131102427.207721-3-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 In-Reply-To: <20180131102427.207721-1-acourbot@chromium.org>
 References: <20180131102427.207721-1-acourbot@chromium.org>
@@ -29,123 +30,149 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support the request argument of the QBUF ioctl.
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
+When queuing buffers allow for passing the request that should
+be associated with this buffer.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+[acourbot@chromium.org: make request ID 32-bit]
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c | 83 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 82 insertions(+), 1 deletion(-)
+ drivers/media/usb/cpia2/cpia2_v4l.c           | 2 +-
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 7 ++++---
+ drivers/media/v4l2-core/v4l2-ioctl.c          | 4 ++--
+ drivers/media/v4l2-core/videobuf2-v4l2.c      | 3 ++-
+ include/media/videobuf2-v4l2.h                | 2 ++
+ include/uapi/linux/videodev2.h                | 3 ++-
+ 6 files changed, 13 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/media/usb/cpia2/cpia2_v4l.c b/drivers/media/usb/cpia2/cpia2_v4l.c
+index 3dedd83f0b19..7acb6807b306 100644
+--- a/drivers/media/usb/cpia2/cpia2_v4l.c
++++ b/drivers/media/usb/cpia2/cpia2_v4l.c
+@@ -948,7 +948,7 @@ static int cpia2_dqbuf(struct file *file, void *fh, struct v4l2_buffer *buf)
+ 	buf->sequence = cam->buffers[buf->index].seq;
+ 	buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
+ 	buf->length = cam->frame_size;
+-	buf->reserved2 = 0;
++	buf->request_fd = 0;
+ 	buf->reserved = 0;
+ 	memset(&buf->timecode, 0, sizeof(buf->timecode));
+ 
+diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+index 821f2aa299ae..7e4440950c76 100644
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -370,7 +370,7 @@ struct v4l2_buffer32 {
+ 		__s32		fd;
+ 	} m;
+ 	__u32			length;
+-	__u32			reserved2;
++	__u32			request_fd;
+ 	__u32			reserved;
+ };
+ 
+@@ -438,7 +438,8 @@ static int get_v4l2_buffer32(struct v4l2_buffer *kp, struct v4l2_buffer32 __user
+ 		get_user(kp->type, &up->type) ||
+ 		get_user(kp->flags, &up->flags) ||
+ 		get_user(kp->memory, &up->memory) ||
+-		get_user(kp->length, &up->length))
++		get_user(kp->length, &up->length) ||
++		get_user(kp->request_fd, &up->request_fd))
+ 			return -EFAULT;
+ 
+ 	if (V4L2_TYPE_IS_OUTPUT(kp->type))
+@@ -533,7 +534,7 @@ static int put_v4l2_buffer32(struct v4l2_buffer *kp, struct v4l2_buffer32 __user
+ 		put_user(kp->timestamp.tv_usec, &up->timestamp.tv_usec) ||
+ 		copy_to_user(&up->timecode, &kp->timecode, sizeof(struct v4l2_timecode)) ||
+ 		put_user(kp->sequence, &up->sequence) ||
+-		put_user(kp->reserved2, &up->reserved2) ||
++		put_user(kp->request_fd, &up->request_fd) ||
+ 		put_user(kp->reserved, &up->reserved) ||
+ 		put_user(kp->length, &up->length))
+ 			return -EFAULT;
 diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index fdd2f784c264..3b44f1fe4f23 100644
+index ec4ecd5aa8bf..fdd2f784c264 100644
 --- a/drivers/media/v4l2-core/v4l2-ioctl.c
 +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -29,6 +29,7 @@
- #include <media/v4l2-device.h>
- #include <media/videobuf2-v4l2.h>
- #include <media/v4l2-mc.h>
-+#include <media/media-request.h>
+@@ -437,13 +437,13 @@ static void v4l_print_buffer(const void *arg, bool write_only)
+ 	const struct v4l2_plane *plane;
+ 	int i;
  
- #include <trace/events/v4l2.h>
+-	pr_cont("%02ld:%02d:%02d.%08ld index=%d, type=%s, flags=0x%08x, field=%s, sequence=%d, memory=%s",
++	pr_cont("%02ld:%02d:%02d.%08ld index=%d, type=%s, request_fd=%u, flags=0x%08x, field=%s, sequence=%d, memory=%s",
+ 			p->timestamp.tv_sec / 3600,
+ 			(int)(p->timestamp.tv_sec / 60) % 60,
+ 			(int)(p->timestamp.tv_sec % 60),
+ 			(long)p->timestamp.tv_usec,
+ 			p->index,
+-			prt_names(p->type, v4l2_type_names),
++			prt_names(p->type, v4l2_type_names), p->request_fd,
+ 			p->flags, prt_names(p->field, v4l2_field_names),
+ 			p->sequence, prt_names(p->memory, v4l2_memory_names));
  
-@@ -965,6 +966,71 @@ static int check_fmt(struct file *file, enum v4l2_buf_type type)
- 	return -EINVAL;
- }
+diff --git a/drivers/media/v4l2-core/videobuf2-v4l2.c b/drivers/media/v4l2-core/videobuf2-v4l2.c
+index 0c0669976bdc..0f8edbdebe30 100644
+--- a/drivers/media/v4l2-core/videobuf2-v4l2.c
++++ b/drivers/media/v4l2-core/videobuf2-v4l2.c
+@@ -203,7 +203,7 @@ static void __fill_v4l2_buffer(struct vb2_buffer *vb, void *pb)
+ 	b->timestamp = ns_to_timeval(vb->timestamp);
+ 	b->timecode = vbuf->timecode;
+ 	b->sequence = vbuf->sequence;
+-	b->reserved2 = 0;
++	b->request_fd = vbuf->request_fd;
+ 	b->reserved = 0;
  
-+/*
-+ * Validate that a given request can be used during an ioctl.
-+ *
-+ * When using the request API, request file descriptors must be matched against
-+ * the actual request object. User-space can pass any file descriptor, so we
-+ * need to make sure the call is valid before going further.
-+ *
-+ * This function looks up the request and associated data and performs the
-+ * following sanity checks:
-+ *
-+ * * Make sure that the entity belongs to the media_device managing the passed
-+ *   request,
-+ * * Make sure that the entity data (if any) is associated to the current file
-+ *   handler.
-+ *
-+ * This function returns a pointer to the valid request, or and error code in
-+ * case of failure. When successful, a reference to the request is acquired and
-+ * must be properly released by the caller. If _data is not NULL, then it is
-+ * filled with a pointer to the corresponding entity data.
-+ */
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+static struct media_request *
-+check_request(int request, struct file *file, void *fh, struct media_request_entity_data **_data)
-+{
-+	struct media_request *req = NULL;
-+	struct video_device *vfd = video_devdata(file);
-+	struct v4l2_fh *vfh =
-+		test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags) ? fh : NULL;
-+	struct media_entity *entity = &vfd->entity;
-+	struct media_request_entity_data *data;
-+
-+	if (!entity)
-+		return ERR_PTR(-EINVAL);
-+
-+	req = media_request_get_from_fd(request);
-+	if (!req)
-+		return ERR_PTR(-EINVAL);
-+
-+	/* Validate that the entity belongs to the correct media_device */
-+	if (vfd->v4l2_dev->mdev->req_mgr != req->mgr) {
-+		media_request_put(req);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	/* Validate that the entity's data belongs to the correct fh */
-+	data = media_request_get_entity_data(req, entity, vfh);
-+	if (IS_ERR(data)) {
-+		media_request_put(req);
-+		return ERR_PTR(PTR_ERR(data));
-+	}
-+
-+	if (_data)
-+		*_data = data;
-+
-+	return req;
-+}
-+#else /* CONFIG_MEDIA_CONTROLLER */
-+static struct media_request *
-+check_request(int request, struct file *file, void *fh)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
-+#endif /* CONFIG_MEDIA_CONTROLLER */
-+
- static void v4l_sanitize_format(struct v4l2_format *fmt)
- {
- 	unsigned int offset;
-@@ -1902,10 +1968,25 @@ static int v4l_querybuf(const struct v4l2_ioctl_ops *ops,
- static int v4l_qbuf(const struct v4l2_ioctl_ops *ops,
- 				struct file *file, void *fh, void *arg)
- {
-+	struct media_request *req = NULL;
- 	struct v4l2_buffer *p = arg;
- 	int ret = check_fmt(file, p->type);
+ 	if (q->is_multiplanar) {
+@@ -320,6 +320,7 @@ static int __fill_vb2_buffer(struct vb2_buffer *vb,
+ 	}
+ 	vb->timestamp = 0;
+ 	vbuf->sequence = 0;
++	vbuf->request_fd = b->request_fd;
  
--	return ret ? ret : ops->vidioc_qbuf(file, fh, p);
-+	if (ret)
-+		return ret;
-+
-+	if (p->request_fd > 0) {
-+		req = check_request(p->request_fd, file, fh, NULL);
-+		if (IS_ERR(req))
-+			return PTR_ERR(req);
-+	}
-+
-+	ret = ops->vidioc_qbuf(file, fh, p);
-+
-+	if (req)
-+		media_request_put(req);
-+
-+	return ret;
- }
+ 	if (V4L2_TYPE_IS_MULTIPLANAR(b->type)) {
+ 		if (b->memory == VB2_MEMORY_USERPTR) {
+diff --git a/include/media/videobuf2-v4l2.h b/include/media/videobuf2-v4l2.h
+index 036127c54bbf..d7cf4c66db38 100644
+--- a/include/media/videobuf2-v4l2.h
++++ b/include/media/videobuf2-v4l2.h
+@@ -31,6 +31,7 @@
+  * @field:	enum v4l2_field; field order of the image in the buffer
+  * @timecode:	frame timecode
+  * @sequence:	sequence count of this frame
++ * @request_fd:	fd of the request used by the buffer
+  *
+  * Should contain enough information to be able to cover all the fields
+  * of struct v4l2_buffer at videodev2.h
+@@ -42,6 +43,7 @@ struct vb2_v4l2_buffer {
+ 	__u32			field;
+ 	struct v4l2_timecode	timecode;
+ 	__u32			sequence;
++	__u32			request_fd;
+ };
  
- static int v4l_dqbuf(const struct v4l2_ioctl_ops *ops,
+ /*
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 1c095b5a99c5..89bd716c66a6 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -902,6 +902,7 @@ struct v4l2_plane {
+  * @length:	size in bytes of the buffer (NOT its payload) for single-plane
+  *		buffers (when type != *_MPLANE); number of elements in the
+  *		planes array for multi-plane buffers
++ * @request_fd: fd of the request that this buffer should use
+  *
+  * Contains data exchanged by application and driver using one of the Streaming
+  * I/O methods.
+@@ -925,7 +926,7 @@ struct v4l2_buffer {
+ 		__s32		fd;
+ 	} m;
+ 	__u32			length;
+-	__u32			reserved2;
++	__s32			request_fd;
+ 	__u32			reserved;
+ };
+ 
 -- 
 2.16.0.rc1.238.g530d649a79-goog
