@@ -1,83 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753532AbeAaP2g (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 10:28:36 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:20651 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753356AbeAaP2d (ORCPT
+        id S1753485AbeAaPas (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 10:30:48 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:44864 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753325AbeAaPar (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 10:28:33 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w0VFSIpV030132
-X-Nifty-SrcIP: [209.85.217.170]
-X-Google-Smtp-Source: AH8x227JU+5yO77qQ3SzCvhKLySJkSOd6zY/8Sz5WXa3Bvj7h43itfB1QnlJcamc7eYAPJRFQmhn6/uMfeTH6QpaWzU=
-MIME-Version: 1.0
-In-Reply-To: <20180131093434.20050-1-ulfalizer@gmail.com>
-References: <20180131093434.20050-1-ulfalizer@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Feb 2018 00:27:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQYT2DuGkP1s+BP8OHChgqE_o6vCwhkU0ZEsFzveb-Bhg@mail.gmail.com>
-Message-ID: <CAK7LNAQYT2DuGkP1s+BP8OHChgqE_o6vCwhkU0ZEsFzveb-Bhg@mail.gmail.com>
-Subject: Re: [PATCH 00/11] Remove blank help texts from Kconfig files and add warning
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Paul Bolle <pebolle@tiscali.nl>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 31 Jan 2018 10:30:47 -0500
+Date: Wed, 31 Jan 2018 10:30:44 -0500 (EST)
+Message-Id: <20180131.103044.1805785714040464628.davem@davemloft.net>
+To: christian.brauner@ubuntu.com
+Cc: netdev@vger.kernel.org, ebiederm@xmission.com, dsahern@gmail.com,
+        fw@strlen.de, daniel@iogearbox.net, lucien.xin@gmail.com,
+        mschiffer@universe-factory.net, jakub.kicinski@netronome.com,
+        vyasevich@gmail.com, linux-kernel@vger.kernel.org, jbenc@redhat.com,
+        w.bumiller@proxmox.com, nicolas.dichtel@6wind.com
+Subject: Re: [PATCH net-next 1/1] rtnetlink: enable IFLA_IF_NETNSID for
+ RTM_NEWLINK
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180129170720.29724-2-christian.brauner@ubuntu.com>
+References: <20180129170720.29724-1-christian.brauner@ubuntu.com>
+        <20180129170720.29724-2-christian.brauner@ubuntu.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-01-31 18:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
-> This patchset first removes all blank help texts from Kconfig files for all
-> arches, and then makes Kconfig print a warning for blank help texts.
->
-> All patches can be applied independently, but to avoid warning spam, the blank
-> help texts ought to be removed before the warning is added.
->
-> Ulf Magnusson (11):
->   net/sched: kconfig: Remove blank help texts
->   video: fbdev: kconfig: Remove blank help text
->   mmc: kconfig: Remove blank help text
->   Staging: rtl8192u: kconfig: Remove blank help text
->   Staging: rtl8192e: kconfig: Remove blank help text
->   lib/Kconfig.debug: Remove blank help text
->   MIPS: BCM63XX: kconfig: Remove blank help text
->   MIPS: kconfig: Remove blank help text
->   arm: vt8500: kconfig: Remove blank help text
->   nios2: kconfig: Remove blank help text
->   kconfig: Warn if help text is blank
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Mon, 29 Jan 2018 18:07:20 +0100
 
+> - Backwards Compatibility:
+>   If userspace wants to determine whether RTM_NEWLINK supports the
+>   IFLA_IF_NETNSID property they should first send an RTM_GETLINK request
+>   with IFLA_IF_NETNSID on lo. If either EACCESS is returned or the reply
+>   does not include IFLA_IF_NETNSID userspace should assume that
+>   IFLA_IF_NETNSID is not supported on this kernel.
+>   If the reply does contain an IFLA_IF_NETNSID property userspace
+>   can send an RTM_NEWLINK with a IFLA_IF_NETNSID property. If they receive
+>   EOPNOTSUPP then the kernel does not support the IFLA_IF_NETNSID property
+>   with RTM_NEWLINK. Userpace should then fallback to other means.
+> 
+> - Security:
+>   Callers must have CAP_NET_ADMIN in the owning user namespace of the
+>   target network namespace.
+> 
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-Whole of the series, applied to linux-kbuild/kconfig.  Thanks!
-
-
-
->  arch/arm/mach-vt8500/Kconfig              | 1 -
->  arch/mips/Kconfig                         | 1 -
->  arch/mips/bcm63xx/boards/Kconfig          | 1 -
->  arch/nios2/Kconfig                        | 1 -
->  drivers/mmc/host/Kconfig                  | 1 -
->  drivers/staging/rtl8192e/rtl8192e/Kconfig | 1 -
->  drivers/staging/rtl8192u/Kconfig          | 1 -
->  drivers/video/fbdev/Kconfig               | 1 -
->  lib/Kconfig.debug                         | 1 -
->  net/sched/Kconfig                         | 3 ---
->  scripts/kconfig/zconf.y                   | 6 ++++++
->  11 files changed, 6 insertions(+), 12 deletions(-)
->
-> --
-> 2.14.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Applied.
