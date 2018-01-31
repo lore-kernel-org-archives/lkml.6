@@ -1,83 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751857AbeAaUrC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 15:47:02 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:43717 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751399AbeAaUrB (ORCPT
+        id S1752136AbeAaUsT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 15:48:19 -0500
+Received: from mail-pf0-f173.google.com ([209.85.192.173]:36921 "EHLO
+        mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751580AbeAaUsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 15:47:01 -0500
-Subject: Re: [PATCH 00/11] Remove blank help texts from Kconfig files and add
- warning
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Paul Bolle <pebolle@tiscali.nl>
-References: <20180131093434.20050-1-ulfalizer@gmail.com>
- <CAK7LNAQYT2DuGkP1s+BP8OHChgqE_o6vCwhkU0ZEsFzveb-Bhg@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8d57e878-2195-d59a-460b-1706889eab17@infradead.org>
-Date: Wed, 31 Jan 2018 12:46:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQYT2DuGkP1s+BP8OHChgqE_o6vCwhkU0ZEsFzveb-Bhg@mail.gmail.com>
+        Wed, 31 Jan 2018 15:48:17 -0500
+X-Google-Smtp-Source: AH8x224znBSoiZFCYJHTEeOJZycgTy98ZAPo/s2l6ie8KkPWYpplg8ulx8S548+yX674NftdqQ4vfw==
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH] x86: Align TLB invalidation info
+From: Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <BD28D2CF-CAD7-45A1-87D0-DE38F7B0EFE5@amacapital.net>
+Date: Wed, 31 Jan 2018 12:48:14 -0800
+Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Message-Id: <747E60F0-2315-4BEC-895E-0E29C57A0AF0@gmail.com>
+References: <20180131201118.1694-1-namit@vmware.com>
+ <BD28D2CF-CAD7-45A1-87D0-DE38F7B0EFE5@amacapital.net>
+To: Andy Lutomirski <luto@amacapital.net>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0VKmN6A031677
 
-On 01/31/2018 07:27 AM, Masahiro Yamada wrote:
-> 2018-01-31 18:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
->> This patchset first removes all blank help texts from Kconfig files for all
->> arches, and then makes Kconfig print a warning for blank help texts.
->>
->> All patches can be applied independently, but to avoid warning spam, the blank
->> help texts ought to be removed before the warning is added.
->>
->> Ulf Magnusson (11):
->>   net/sched: kconfig: Remove blank help texts
->>   video: fbdev: kconfig: Remove blank help text
->>   mmc: kconfig: Remove blank help text
->>   Staging: rtl8192u: kconfig: Remove blank help text
->>   Staging: rtl8192e: kconfig: Remove blank help text
->>   lib/Kconfig.debug: Remove blank help text
->>   MIPS: BCM63XX: kconfig: Remove blank help text
->>   MIPS: kconfig: Remove blank help text
->>   arm: vt8500: kconfig: Remove blank help text
->>   nios2: kconfig: Remove blank help text
->>   kconfig: Warn if help text is blank
-> 
-> 
-> Whole of the series, applied to linux-kbuild/kconfig.  Thanks!
-> 
-
-That probably means that I am too late, but anyway:
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # series of 11 patches
-
-Thanks.
+Andy Lutomirski <luto@amacapital.net> wrote:
 
 > 
 > 
->>  arch/arm/mach-vt8500/Kconfig              | 1 -
->>  arch/mips/Kconfig                         | 1 -
->>  arch/mips/bcm63xx/boards/Kconfig          | 1 -
->>  arch/nios2/Kconfig                        | 1 -
->>  drivers/mmc/host/Kconfig                  | 1 -
->>  drivers/staging/rtl8192e/rtl8192e/Kconfig | 1 -
->>  drivers/staging/rtl8192u/Kconfig          | 1 -
->>  drivers/video/fbdev/Kconfig               | 1 -
->>  lib/Kconfig.debug                         | 1 -
->>  net/sched/Kconfig                         | 3 ---
->>  scripts/kconfig/zconf.y                   | 6 ++++++
->>  11 files changed, 6 insertions(+), 12 deletions(-)
+>> On Jan 31, 2018, at 12:11 PM, Nadav Amit <namit@vmware.com> wrote:
+>> 
+>> The TLB invalidation info is allocated on the stack, which might cause
+>> it to be unaligned. Since this information may be transferred to
+>> different cores for TLB shootdown, this might result in an additional
+>> cache-line bouncing between the cores.
+>> 
+>> GCC provides a way to deal with it by using
+>> __builtin_alloca_with_align(). Use it to avoid the bouncing cache lines.
+> 
+> Eww.  How about __aligned?
 
-
--- 
-~Randy
+Err.. Stupid me. For some reason I remembered I tried it and it didn’t have
+the desired effect, which caused me to assume it does not work for variables
+on the stack. Anyhow, it does the work. I’ll submit v2.
