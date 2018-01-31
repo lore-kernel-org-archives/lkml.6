@@ -1,187 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753664AbeAaSDl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 13:03:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33376 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752716AbeAaSDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 13:03:37 -0500
-Date: Wed, 31 Jan 2018 19:03:30 +0100
-From: Andrew Jones <drjones@redhat.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Jon Masters <jcm@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v2 07/16] arm/arm64: KVM: Add PSCI version selection API
-Message-ID: <20180131180330.ev5cypq5k5ai43wm@kamzik.brq.redhat.com>
-References: <20180129174559.1866-1-marc.zyngier@arm.com>
- <20180129174559.1866-8-marc.zyngier@arm.com>
- <20180131173824.leyfy4vlqq3vmd37@kamzik.brq.redhat.com>
- <1de5a7a8-8118-597f-d1a3-14c406b57b0e@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1de5a7a8-8118-597f-d1a3-14c406b57b0e@arm.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+        id S1753843AbeAaSEA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 13:04:00 -0500
+Received: from serv1.kernkonzept.com ([88.99.87.17]:51890 "EHLO
+        mx.kernkonzept.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932373AbeAaSD2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 13:03:28 -0500
+From: Matthias Lange <matthias.lange@kernkonzept.com>
+To: linux@armlinux.org.uk
+Cc: linux-kernel@vger.kernel.org,
+        Matthias Lange <matthias.lange@kernkonzept.com>
+Subject: [PATCH] Fix copy and paste typo in documentation
+Date: Wed, 31 Jan 2018 18:35:34 +0100
+Message-Id: <1517420134-7665-1-git-send-email-matthias.lange@kernkonzept.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 05:45:56PM +0000, Marc Zyngier wrote:
-> On 31/01/18 17:38, Andrew Jones wrote:
-> > On Mon, Jan 29, 2018 at 05:45:50PM +0000, Marc Zyngier wrote:
-> >> Although we've implemented PSCI 1.0 and 1.1, nothing can select them
-> >> Since all the new PSCI versions are backward compatible, we decide to
-> >> default to the latest version of the PSCI implementation. This is no
-> >> different from doing a firmware upgrade on KVM.
-> >>
-> >> But in order to give a chance to hypothetical badly implemented guests
-> >> that would have a fit by discovering something other than PSCI 0.2,
-> >> let's provide a new API that allows userspace to pick one particular
-> >> version of the API.
-> >>
-> >> This is implemented as a new class of "firmware" registers, where
-> >> we expose the PSCI version. This allows the PSCI version to be
-> >> save/restored as part of a guest migration, and also set to
-> >> any supported version if the guest requires it.
-> >>
-> >> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> >> ---
-> >>  Documentation/virtual/kvm/api.txt      |  3 +-
-> >>  Documentation/virtual/kvm/arm/psci.txt | 28 ++++++++++++++
-> >>  arch/arm/include/asm/kvm_host.h        |  3 ++
-> >>  arch/arm/include/uapi/asm/kvm.h        |  6 +++
-> >>  arch/arm/kvm/guest.c                   | 13 +++++++
-> >>  arch/arm64/include/asm/kvm_host.h      |  3 ++
-> >>  arch/arm64/include/uapi/asm/kvm.h      |  6 +++
-> >>  arch/arm64/kvm/guest.c                 | 14 ++++++-
-> >>  include/kvm/arm_psci.h                 |  9 +++++
-> >>  virt/kvm/arm/psci.c                    | 68 +++++++++++++++++++++++++++++++++-
-> >>  10 files changed, 149 insertions(+), 4 deletions(-)
-> >>  create mode 100644 Documentation/virtual/kvm/arm/psci.txt
-> >>
-> >> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-> >> index 57d3ee9e4bde..334905202141 100644
-> >> --- a/Documentation/virtual/kvm/api.txt
-> >> +++ b/Documentation/virtual/kvm/api.txt
-> >> @@ -2493,7 +2493,8 @@ Possible features:
-> >>  	  and execute guest code when KVM_RUN is called.
-> >>  	- KVM_ARM_VCPU_EL1_32BIT: Starts the CPU in a 32bit mode.
-> >>  	  Depends on KVM_CAP_ARM_EL1_32BIT (arm64 only).
-> >> -	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 for the CPU.
-> >> +	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 (or a future revision
-> >> +          backward compatible with v0.2) for the CPU.
-> >>  	  Depends on KVM_CAP_ARM_PSCI_0_2.
-> >>  	- KVM_ARM_VCPU_PMU_V3: Emulate PMUv3 for the CPU.
-> >>  	  Depends on KVM_CAP_ARM_PMU_V3.
-> >> diff --git a/Documentation/virtual/kvm/arm/psci.txt b/Documentation/virtual/kvm/arm/psci.txt
-> >> new file mode 100644
-> >> index 000000000000..2e49a4e9f084
-> >> --- /dev/null
-> >> +++ b/Documentation/virtual/kvm/arm/psci.txt
-> >> @@ -0,0 +1,28 @@
-> >> +KVM implements the PSCI (Power State Coordination Interface)
-> >> +specification in order to provide services such as CPU on/off, reset
-> >> +and power-off to the guest.
-> >> +
-> >> +The PSCI specification is regularly updated to provide new features,
-> >> +and KVM implements these updates if they make sense from a virtualization
-> >> +point of view.
-> >> +
-> >> +This means that a guest booted on two different versions of KVM can
-> >> +observe two different "firmware" revisions. This could cause issues if
-> >> +a given guest is tied to a particular PSCI revision (unlikely), or if
-> >> +a migration causes a different PSCI version to be exposed out of the
-> >> +blue to an unsuspecting guest.
-> >> +
-> >> +In order to remedy this situation, KVM exposes a set of "firmware
-> >> +pseuodo-registers" that can be manipulated using the GET/SET_ONE_REG
-> >> +interface. These registers can be saved/restored by userspace, and set
-> >> +to a convenient value if required.
-> > 
-> > Userspace can save/restore any state it deems necessary. 
-> 
-> Only if it has access to it. Until now, that wasn't an option.
-> 
-> > Is there another
-> > reason to invent a pseudo register? Considering the PSCI version is VM
-> > state, then maybe a VM "device" attribute[*], like s390 use, would fit
-> > better. 
-> 
-> Possibly. But that means current userspace won't engage the mitigation
-> by default, and that's pretty bad.
-> 
-> > Or, if keeping it VCPU state has some benefit, then we already
-> > have VCPU device attribute support for ARM that we could extend with
-> > another attribute. An advantage of using the device-attr API is that it
-> > has KVM_HAS_DEVICE_ATTR, allowing the new attribute support to be probed.
-> > How should userspace check if the pseudo register is supported? Maybe
-> > by just failing with NOT_SUPPORTED to get/set it?
-> > 
-> > [*] Documentation/virtual/kvm/devices/vm.txt
-> 
-> Frankly, I have no opinion on the way to implement it. My only
-> requirement is that it becomes enabled by default, without any userspace
-> change.
+It's 'optional' instead of 'optinal'.
 
-I think we can turn it on by default in KVM, no matter what API we choose,
-and then enable userspace (with whatever API) to turn it off. Newer
-machine types certainly wouldn't do that, and, as later PSCI is compatible
-with older PSCI, we're probably safe (safer regarding the BTB) not using
-the older PSCI with older machine types either - although that would be up
-for debate and the whole point of adding the API.
+Signed-off-by: Matthias Lange <matthias.lange@kernkonzept.com>
+---
+ arch/arm/include/asm/dma-mapping.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> 
-> > 
-> >> +
-> >> +The following register is defined:
-> >> +
-> >> +* KVM_REG_ARM_PSCI_VERSION:
-> >> +
-> >> +  - Only valid if the vcpu has KVM_ARM_VCPU_PSCI_0_2 feature set
-> >> +  - Returns the current PSCI version on GET_ONE_REG
-> >> +  - Allows any supported PSCI version compatible with v0.2 to be set
-> >> +    with SET_ONE_REG
-> >> +  - Affects the whole VM (even if the register view is per-vcpu)
-> > 
-> > 
-> >> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
-> >> index acbf9ec7b396..e9d57060d88c 100644
-> >> --- a/arch/arm/include/asm/kvm_host.h
-> >> +++ b/arch/arm/include/asm/kvm_host.h
-> >> @@ -75,6 +75,9 @@ struct kvm_arch {
-> >>  	/* Interrupt controller */
-> >>  	struct vgic_dist	vgic;
-> >>  	int max_vcpus;
-> >> +
-> >> +	/* Mandated version of PSCI */
-> >> +	u32 psci_version;
-> >>  };
-> >>  
-> >>  #define KVM_NR_MEM_OBJS     40
-> >> diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
-> >> index 6edd177bb1c7..47dfc99f5cd0 100644
-> >> --- a/arch/arm/include/uapi/asm/kvm.h
-> >> +++ b/arch/arm/include/uapi/asm/kvm.h
-> >> @@ -186,6 +186,12 @@ struct kvm_arch_memory_slot {
-> >>  #define KVM_REG_ARM_VFP_FPINST		0x1009
-> >>  #define KVM_REG_ARM_VFP_FPINST2		0x100A
-> >>  
-> >> +/* KVM-as-firmware specific pseudo-registers */
-> >> +#define KVM_REG_ARM_FW			(0x0014 << KVM_REG_ARM_COPROC_SHIFT)
-> > 
-> > Is this 0x14 documented somewhere? I'm just curious how the space for
-> > pseudo registers is reserved. Is there a common place that we should
-> > document that 0x14 is for the firmware (if it's not documented there
-> > already)?
-> 
-> No. First come, first served.
-
-Should we document it in Documentation/ somewhere?
-
-Thanks,
-drew
+diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
+index daf8374..34d8d3e 100644
+--- a/arch/arm/include/asm/dma-mapping.h
++++ b/arch/arm/include/asm/dma-mapping.h
+@@ -147,7 +147,7 @@ static inline void dma_mark_clean(void *addr, size_t size) { }
+  * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
+  * @size: required memory size
+  * @handle: bus-specific DMA address
+- * @attrs: optinal attributes that specific mapping properties
++ * @attrs: optional attributes that specific mapping properties
+  *
+  * Allocate some memory for a device for performing DMA.  This function
+  * allocates pages, and will return the CPU-viewed address, and sets @handle
+@@ -162,7 +162,7 @@ extern void *arm_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+  * @size: size of memory originally requested in dma_alloc_coherent
+  * @cpu_addr: CPU-view address returned from dma_alloc_coherent
+  * @handle: device-view address returned from dma_alloc_coherent
+- * @attrs: optinal attributes that specific mapping properties
++ * @attrs: optional attributes that specific mapping properties
+  *
+  * Free (and unmap) a DMA buffer previously allocated by
+  * arm_dma_alloc().
+@@ -180,7 +180,7 @@ extern void arm_dma_free(struct device *dev, size_t size, void *cpu_addr,
+  * @cpu_addr: kernel CPU-view address returned from dma_alloc_coherent
+  * @handle: device-view address returned from dma_alloc_coherent
+  * @size: size of memory originally requested in dma_alloc_coherent
+- * @attrs: optinal attributes that specific mapping properties
++ * @attrs: optional attributes that specific mapping properties
+  *
+  * Map a coherent DMA buffer previously allocated by dma_alloc_coherent
+  * into user space.  The coherent DMA buffer must not be freed by the
+-- 
+2.7.4
