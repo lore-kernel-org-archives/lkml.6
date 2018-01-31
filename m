@@ -1,95 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752193AbeAaEqY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 23:46:24 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44376 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751635AbeAaEqW (ORCPT
+        id S1752354AbeAaEvM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 23:51:12 -0500
+Received: from mail-wr0-f173.google.com ([209.85.128.173]:40575 "EHLO
+        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751970AbeAaEvJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 23:46:22 -0500
-Date: Wed, 31 Jan 2018 04:46:20 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [git pull] vfs.git: poll annotations
-Message-ID: <20180131044620.GF29051@ZenIV.linux.org.uk>
-References: <20180130183939.GB29051@ZenIV.linux.org.uk>
- <CA+55aFz8UL883+rj0nYsU_gtX6jLhriPGncDb1XDteEu817HRQ@mail.gmail.com>
- <20180131031300.GE29051@ZenIV.linux.org.uk>
- <CA+55aFyMh_cHUb37X6=8=DU2Zm8Cz=mhXYJcGGWqiC8LKLAoFA@mail.gmail.com>
+        Tue, 30 Jan 2018 23:51:09 -0500
+X-Google-Smtp-Source: AH8x226+/EAYjQilfsq2cE+rfSgYng8e4TyD7IDF834+KPoK++Ad7v6QQdtvWeAtzkQxw1NosrVlXz4lzaFJsq4wU9E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFyMh_cHUb37X6=8=DU2Zm8Cz=mhXYJcGGWqiC8LKLAoFA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <517f8b12-e10e-1e8d-6d98-26f5fefe62b8@xs4all.nl>
+References: <1514491789-8697-1-git-send-email-tharvey@gateworks.com>
+ <1514491789-8697-5-git-send-email-tharvey@gateworks.com> <1e65ee61-f282-4b53-dd03-68a89a91da8e@xs4all.nl>
+ <CAJ+vNU1ysHuzqOnL4sf3hFZrU5kyGnQ0dFkRObVjCa=NyLsJug@mail.gmail.com> <517f8b12-e10e-1e8d-6d98-26f5fefe62b8@xs4all.nl>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Tue, 30 Jan 2018 20:51:07 -0800
+Message-ID: <CAJ+vNU1xnnmNZW5zmT8+0HfT3Xfg6zfdrbC8vFNH4wuah5AVTA@mail.gmail.com>
+Subject: Re: [PATCH v6 4/6] media: i2c: Add TDA1997x HDMI receiver driver
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 07:19:19PM -0800, Linus Torvalds wrote:
-> On Tue, Jan 30, 2018 at 7:13 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > As for the place for mangle/demangle... where would you prefer them?
-> 
-> If we can make gcc generate ok code for the generic case and not need
-> any arch-specific ones, why not just do in <linux/poll.h>?
+On Mon, Jan 29, 2018 at 4:00 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 01/25/2018 05:15 PM, Tim Harvey wrote:
+<snip>
+>>>
+>>> Hmm. This receiver supports multiple output formats, but you advertise only one.
+>>> That looks wrong. If nothing else, you should be able to switch between RGB and
+>>> YUV 4:4:4 since they use the same port config.
+>>>
+>>> It's a common use-case that you want to switch between RGB and YUV depending on
+>>> the source material (i.e. if you receive a desktop/graphics then RGB is best, if
+>>> you receive video then YUV 4:2:2 or 4:2:0 is best).
+>>>
+>>> Hardcoding just one format won't do.
+>>>
+>>
+>> I've been thinking about this a bit. I had hard-coded a single format
+>> for now because I haven't had any good ideas on how to deal with the
+>> fact that the port mappings would need to differ if you change from
+>> the RGB888/YUV444 (I think these are referred to as 'planar' formats?)
+>> to YUV422 (semi-planar) and BT656 formats. It is true though that the
+>> 36bit (TDA19973) RGB888/YUV444 and 24bit (TDA19971/2) formats can both
+>> be supported with the same port mappings / pinout.
+>
+> Regarding terminology:
+>
+> RGB and YUV are typically interleaved, i.e. the color components are
+> (for two pixels) either RGBRGB for RGB888, YUVYUV for YUV444 or YUYV
+> for YUV422.
+>
+> Planar formats are in practice only seen for YUV and will first output
+> all Y samples, and then the UV samples. This requires that the hardware
+> buffers the frame and that's not normally done by HDMI receivers.
+>
+> The DMA engine, however, is often able to split up the interleaved YUV
+> samples that it receives and DMA them to separate buffers, thus turning
+> an interleaved media bus format to a planar memory format.
+>
+> BT656 doesn't refer to how the samples are transferred, instead it
+> refers to how the hsync and vsync are reported. The enum v4l2_mbus_type
+> has various options, one of them being BT656.
+>
+> Which mbus type is used is board specific (and should come from the
+> device tree). Whether to transmit RGB888, YUV444 or YUV422 (or possibly
+> even YUV420) is dynamic and is up to userspace since it is use-case
+> dependent.
+>
+> So you'll never switch between BT656 and CSI, but you can switch between
+> BT656+RGB and BT656+YUV, or between CSI+RGB and CSI+YUV.
+>
+>>
+>> For example the GW5400 has a TDA19971 mapped to IMX6 CSI_DATA[19:4]
+>> (16bit) for YUV422. However if you want to use BT656 you have to shift
+>> the TDA19971 port mappings to get the YCbCr pins mapped to
+>> CSI_DATA[19:x] and those pin groups are at the bottom of the bus for
+>> the RGB888/YUV444 format.
+>
+> As mentioned above, you wouldn't switch between mbus types.
+>
+>>
+>> I suppose however that perhaps for the example above if I have a 16bit
+>> width required to support YUV422 there would never be a useful case
+>> for supporting 8-bit/10-bit/12-bit BT656 on the same board?
+>
+> You wouldn't switch between mbus types, but if the device tree configures
+> BT.656 with a bus width of 24 bits, then the application might very well
+> want to dynamically switch between 8, 10 and 12 bits per color component.
+>
 
-Umm...  I'll try and see how well does that work.
+Hans,
 
-> (And I guess POLLIN/OUT/ERR are standard, so it's only a couple that
-> need to have potential help translating? That would make the helper
-> inline smaller and simpler)
+I just submitted a v7 with multiple format support. Your point about
+bus_type being specified by dt is exactly what I needed to help make
+sense of the formats.
 
-To quote a mail from last July:
+That said, I'm unsure how to properly test the enum_mbus_code() pad op
+function. How do you obtain a list of valid formats on a subdev?
 
-||             common  bfin,frv,m68k,mips       xtensa  sparc
-||WRNORM bit      8       2                       2       2
-||WRBAND bit      9       8                       8       8
-||MSG bit         10      10                      10      9
-||REMOVE bit      12      12                      11      10
-||RDHUP bit       13      13                      13      11
-||
-||Now, POLLREMOVE doesn't have EPOLL... equivalent, but others
-||do.  As the result, blackfin, frv, m68k, mips and xtensa have
-||EPOLLWRNORM matching POLLWRBAND and EPOLLWRBAND not matching
-||anything.  sparc has EPOLLWRNORM matching POLLWRBAND, EPOLLWRBAND
-||matching POLLMSG (and never triggered), EPOLLMSG matching POLLREMOVE
-||(and also never triggered) and EPOLLRDHUP not matching anything.
-||
-||I don't believe that anything tries to use EPOLLMSG; EPOLLWRBAND
-||and EPOLLWRNORM might be used (even though our manpage doesn't
-||document either).  EPOLLRDHUP _is_ documented and flat-out does
-||not work on sparc; the only way to catch POLLRDHUP via epoll
-||there is to give it a value that is not any of EPOLL... constants.
-||Hell knows if anything tries to do it there...
+I tried the following:
+root@ventana:~# media-ctl -e 'tda19971 2-0048'
+/dev/v4l-subdev1
+root@ventana:~# media-ctl --get-v4l2 '"tda19971 2-0048":0'
+                [fmt:UYVY8_2X8/1280x720 field:none colorspace:srgb]
+^^^^ calls get_format and returns the 1 and only format available for
+my tda19971 with 16bit parallel bus
+root@ventana:~# v4l2-ctl -d /dev/v4l-subdev1 --get-fmt-video-out
+VIDIOC_G_FMT: failed: Inappropriate ioctl for device
+root@ventana:~# v4l2-ctl -d /dev/v4l-subdev1 --list-formats-out
+ioctl: VIDIOC_ENUM_FMT
 
-MSG and REMOVE are never triggered, so it's all down to {WR{NORM,BAND},RDHUP}.
+I'm thinking perhaps enumerating the list of possible formats is a
+missing feature in media-ctl?
 
-Logics for mangle should be uniform - lower 8 bits left as is,
-EPOLLWRBAND -> POLLWRBAND, EPOLLWRNORM -> POLLWRNORM, EPOLLRDHUP -> POLLRDHUP.
+Regards,
 
-For demangle it's
-if POLLOUT != POLLWRNORM
-	pass as is
-else
-	lower 8 bits left as-is,
-	if POLLOUT
-		add EPOLLWRNORM
-	POLLWRBAND -> EPOLLWRBAND
-	POLLRDHUP -> EPOLLRDHUP
-
-Frankly, it's a bloody mess - we either shouldn't have bothered with separate
-POLLRDNORM and POLLWRNORM at all (they should be equivalent to POLLIN and POLLOUT
-resp.) or kept them separate on all architectures.  What's more, we don't have
-only one instance of POLLRDNORM that would not be a part of POLLIN | POLLRDNORM | ...
-(modulo reordering).  Its definition, that is.  We do have a few instances of
-->poll() that raise POLLIN without POLLRDNORM, but AFAICS they have only one
-thing in common - "forgot to add POLLRDNORM or hadn't heard of it".  The set is
-pretty much random...
-
-It started in 2.1.23pre1; looks like the original braindamage came from SunOS compat
-(in 1.3.93) and got propagated into generic when poll(2) was implemented.  Probably
-we should've kept alpha and i386 POLL... definitions same as sparc ones...  Anyway,
-it's at least 20 years too late for that.
+Tim
