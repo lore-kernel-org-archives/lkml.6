@@ -1,107 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752068AbeAaBb3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 20:31:29 -0500
-Received: from mail-io0-f171.google.com ([209.85.223.171]:43257 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751899AbeAaBb1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 20:31:27 -0500
-X-Google-Smtp-Source: AH8x227YSep4Y5d/InwKtcUuRLtEQ49uXg6elxLTzoQ0+O/3jCNFvNiCf3Fgz91B2m/Z0v1qHHCglg==
-Date: Tue, 30 Jan 2018 17:31:24 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+83fec0ce1de1a860fbaa0774da1c839131b602a1@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: kernel BUG at fs/userfaultfd.c:LINE!
-Message-ID: <20180131013124.obz3tgo3to4qxgsg@gmail.com>
-References: <001a113a6870f5fed40560f49d0a@google.com>
+        id S1752142AbeAaBbx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 20:31:53 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60157 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752080AbeAaBbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 20:31:52 -0500
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to clear CP_TRIMMED_FLAG
+Date: Wed, 31 Jan 2018 09:30:34 +0800
+Message-ID: <20180131013034.107225-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a113a6870f5fed40560f49d0a@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 22, 2017 at 01:37:01PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzkaller hit the following crash on
-> 6084b576dca2e898f5c101baef151f7bfdbb606d
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> C reproducer is attached
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
-> 
-> 
-> ------------[ cut here ]------------
-> kernel BUG at fs/userfaultfd.c:142!
-> invalid opcode: 0000 [#1] SMP
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 0 PID: 3118 Comm: syzkaller879466 Not tainted 4.15.0-rc3-next-20171214+
-> #67
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:userfaultfd_ctx_get+0x6d/0x70 fs/userfaultfd.c:142
-> RSP: 0000:ffffc900012f7c30 EFLAGS: 00010293
-> RAX: ffff8802134420c0 RBX: 0000000000000000 RCX: ffffffff8147a98d
-> RDX: 0000000000000000 RSI: 0000000000000200 RDI: ffff880213659c40
-> RBP: ffffc900012f7c48 R08: 0000000000000000 R09: 0000000000000004
-> R10: ffffc900012f7cc0 R11: 0000000000000004 R12: ffff880213659c40
-> R13: ffff880214ed6000 R14: 0000000000000200 R15: 0000000000000000
-> FS:  00007fdf76164700(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020687000 CR3: 0000000211d48006 CR4: 00000000001606f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  handle_userfault+0xd3/0xa00 fs/userfaultfd.c:445
->  do_huge_pmd_anonymous_page+0x571/0x850 mm/huge_memory.c:707
->  create_huge_pmd mm/memory.c:3838 [inline]
->  __handle_mm_fault+0xc37/0x1930 mm/memory.c:4042
->  handle_mm_fault+0x215/0x450 mm/memory.c:4108
->  __do_page_fault+0x337/0x6b0 arch/x86/mm/fault.c:1429
->  do_page_fault+0x52/0x330 arch/x86/mm/fault.c:1504
->  page_fault+0x4c/0x60 arch/x86/entry/entry_64.S:1243
-> RIP: 0033:0x4453e5
-> RSP: 002b:0000000020687000 EFLAGS: 00010217
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00000000004453d9
-> RDX: 0000000020b4c000 RSI: 0000000020687000 RDI: 0000000000000600
-> RBP: 0000000000000000 R08: 00000000207a4f71 R09: 00007fdf76164700
-> R10: 0000000020552ffc R11: 0000000000000202 R12: 0000000000000000
-> R13: 00007ffc6b2b2c2f R14: 00007fdf761649c0 R15: 0000000000000000
-> Code: 5b 41 5c 41 5d 5d c3 e8 d2 f9 e3 ff 85 db 74 16 e8 c9 f9 e3 ff 8d 53
-> 01 89 d8 f0 41 0f b1 55 00 89 c3 74 d7 eb e1 e8 b3 f9 e3 ff <0f> 0b 90 55 48
-> 89 e5 53 48 89 fb e8 a3 f9 e3 ff 48 83 3d 73 bb
-> RIP: userfaultfd_ctx_get+0x6d/0x70 fs/userfaultfd.c:142 RSP:
-> ffffc900012f7c30
-> ---[ end trace c25da3c687899c5a ]---
-> Kernel panic - not syncing: Fatal exception
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
-> 
-> syzbot will keep track of this bug report.
-> Once a fix for this bug is merged into any tree, reply to this email with:
-> #syz fix: exact-commit-title
+Once CP_TRIMMED_FLAG is set, after a reboot, we will never issue discard
+before LBA becomes invalid again, fix it by clearing the flag in
+checkpoint without CP_TRIMMED reason.
 
-This crash is no longer occurring, presumably was fixed by the following commit
-so telling syzbot:
+Fixes: 1f43e2ad7bff ("f2fs: introduce CP_TRIMMED_FLAG to avoid unneeded discard")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-#syz fix: userfaultfd: clear the vma->vm_userfaultfd_ctx if UFFD_EVENT_FORK fails
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 998fe1d0213b..65becae99b84 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1166,6 +1166,8 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	if (cpc->reason & CP_TRIMMED)
+ 		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
++	else
++		__clear_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
+ 
+ 	if (cpc->reason & CP_UMOUNT)
+ 		__set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
+-- 
+2.15.0.55.gc2ece9dc4de6
