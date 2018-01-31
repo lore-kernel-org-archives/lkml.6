@@ -1,43 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753556AbeAaJcD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 04:32:03 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41693 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752494AbeAaJcB (ORCPT
+        id S1753588AbeAaJeC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 04:34:02 -0500
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:35603 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751662AbeAaJd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 04:32:01 -0500
-X-Google-Smtp-Source: AH8x226m6VwouQmo/lgGBYpgd0vHZnqlAfKT7nFY/xGM/cJwvvkDX26D9W63D8dojY6csxuxG7xNVA==
-From: Shannon Booth <shannon.ml.booth@gmail.com>
-To: paul.burton@mips.com
-Cc: linux-kernel@vger.kernel.org,
-        Shannon Booth <shannon.ml.booth@gmail.com>
-Subject: [PATCH] staging: auxdisplay: add missing MODULE_LICENSE()
-Date: Wed, 31 Jan 2018 22:31:11 +1300
-Message-Id: <1517391071-29042-1-git-send-email-shannon.ml.booth@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 31 Jan 2018 04:33:59 -0500
+X-Google-Smtp-Source: AH8x226s/lvF0cgHeN/hR0C07bAB/3HzYNWSlcbNjsKGzCeKCyC8OQRcAMbDQQPkJGmVut01J47Bag==
+Subject: Re: [PATCH 5/8] thermal/drivers/cpu_cooling: Introduce the cpu idle
+ cooling driver
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>, Leo Yan <leo.yan@linaro.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Javi Merino <javi.merino@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>
+References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
+ <1516721671-16360-6-git-send-email-daniel.lezcano@linaro.org>
+ <CAKfTPtD-cUYoAJfhtuTr-E1=rttZvWxVv1Qv7b+Si4vSBy0JVg@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <11334876-ef8c-58fa-5e32-ab8499eebd7e@linaro.org>
+Date: Wed, 31 Jan 2018 10:33:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <CAKfTPtD-cUYoAJfhtuTr-E1=rttZvWxVv1Qv7b+Si4vSBy0JVg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the compilation warning:
+On 31/01/2018 10:01, Vincent Guittot wrote:
+> Hi Daniel,
+> 
+> On 23 January 2018 at 16:34, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/auxdisplay/img-ascii-lcd.o
+[ ... ] (please trim :)
 
-Signed-off-by: Shannon Booth <shannon.ml.booth@gmail.com>
----
- drivers/auxdisplay/img-ascii-lcd.c | 2 ++
- 1 file changed, 2 insertions(+)
+>> +               /*
+>> +                * Each cooling device is per package. Each package
+>> +                * has a set of cpus where the physical number is
+>> +                * duplicate in the kernel namespace. We need a way to
+>> +                * address the waitq[] and tsk[] arrays with index
+>> +                * which are not Linux cpu numbered.
+>> +                *
+>> +                * One solution is to use the
+>> +                * topology_core_id(cpu). Other solution is to use the
+>> +                * modulo.
+>> +                *
+>> +                * eg. 2 x cluster - 4 cores.
+>> +                *
+>> +                * Physical numbering -> Linux numbering -> % nr_cpus
+>> +                *
+>> +                * Pkg0 - Cpu0 -> 0 -> 0
+>> +                * Pkg0 - Cpu1 -> 1 -> 1
+>> +                * Pkg0 - Cpu2 -> 2 -> 2
+>> +                * Pkg0 - Cpu3 -> 3 -> 3
+>> +                *
+>> +                * Pkg1 - Cpu0 -> 4 -> 0
+>> +                * Pkg1 - Cpu1 -> 5 -> 1
+>> +                * Pkg1 - Cpu2 -> 6 -> 2
+>> +                * Pkg1 - Cpu3 -> 7 -> 3
+> 
+> 
+> I'm not sure that the assumption above for the CPU numbering is safe.
+> Can't you use a per cpu structure to point to resources that are per
+> cpu instead ? so you will not have to rely on CPU ordering
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index db040b3..9222c88 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -441,3 +441,5 @@ static struct platform_driver img_ascii_lcd_driver = {
- 	.remove	= img_ascii_lcd_remove,
- };
- module_platform_driver(img_ascii_lcd_driver);
-+
-+MODULE_LICENSE("GPL v2");
+Can you elaborate ? I don't get the part with the percpu structure.
+
+
 -- 
-2.7.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
