@@ -1,102 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932214AbeAaP40 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 10:56:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54168 "EHLO mail.kernel.org"
+        id S1753591AbeAaP5p (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 10:57:45 -0500
+Received: from mga06.intel.com ([134.134.136.31]:36002 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932164AbeAaP4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 10:56:24 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D4B21737
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-From: Andy Lutomirski <luto@kernel.org>
-To: linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: linux-mm@kvack.org, Borislav Petkov <bp@alien8.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH] x86/debugfs: Add the EFI pagetable to the debugfs 'page_tables' directory
-Date: Wed, 31 Jan 2018 07:56:22 -0800
-Message-Id: <ba158a93f3250e6fca752cff2cfb1fcdd9f2b50c.1517414050.git.luto@kernel.org>
-X-Mailer: git-send-email 2.14.3
+        id S1752300AbeAaP5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 10:57:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,440,1511856000";
+   d="scan'208";a="14005602"
+From: changbin.du@intel.com
+To: rostedt@goodmis.org
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Changbin Du <changbin.du@intel.com>
+Subject: [PATCH] tracing/fgraph: Missed irq return mark for leaf entry
+Date: Wed, 31 Jan 2018 23:48:49 +0800
+Message-Id: <1517413729-20411-1-git-send-email-changbin.du@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EFI is complicated enough that being able to view its pagetables is
-quite helpful.  Rather than requiring users to fish it out of dmesg
-on an appropriately configured kernel, let users view it in debugfs
-as well.
+From: Changbin Du <changbin.du@intel.com>
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+The fgraph forget to print irq return mark for leaf entry. Then we can see
+unbalanced irq mark in the trace. This patch fix this.
+
+Before:
+ 1)               |  SyS_write() {
+ 1)               |    __fdget_pos() {
+ 1)   0.061 us    |      __fget_light();
+ 1)   0.289 us    |    }
+ 1)               |    vfs_write() {
+ 1)   0.049 us    |      rw_verify_area();
+ 1) + 15.424 us   |      __vfs_write();
+ 1)   ==========> |
+ 1)   6.003 us    |      smp_apic_timer_interrupt();
+ 1)   0.055 us    |      __fsnotify_parent();
+ 1)   0.073 us    |      fsnotify();
+ 1) + 23.665 us   |    }
+ 1) + 24.501 us   |  }
+
+After:
+ 0)               |  SyS_write() {
+ 0)               |    __fdget_pos() {
+ 0)   0.052 us    |      __fget_light();
+ 0)   0.328 us    |    }
+ 0)               |    vfs_write() {
+ 0)   0.057 us    |      rw_verify_area();
+ 0)               |      __vfs_write() {
+ 0)   ==========> |
+ 0)   8.548 us    |      smp_apic_timer_interrupt();
+ 0)   <========== |
+ 0) + 36.507 us   |      } /* __vfs_write */
+ 0)   0.049 us    |      __fsnotify_parent();
+ 0)   0.066 us    |      fsnotify();
+ 0) + 50.064 us   |    }
+ 0) + 50.952 us   |  }
+
+Signed-off-by: Changbin Du <changbin.du@intel.com>
 ---
- arch/x86/mm/debug_pagetables.c | 32 ++++++++++++++++++++++++++++++++
- arch/x86/platform/efi/efi_64.c |  2 +-
- 2 files changed, 33 insertions(+), 1 deletion(-)
+ kernel/trace/trace_functions_graph.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/debug_pagetables.c b/arch/x86/mm/debug_pagetables.c
-index 421f2664ffa0..9861797b1fd5 100644
---- a/arch/x86/mm/debug_pagetables.c
-+++ b/arch/x86/mm/debug_pagetables.c
-@@ -72,6 +72,31 @@ static const struct file_operations ptdump_curusr_fops = {
- };
- #endif
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 23c0b0c..169b3c4 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -831,6 +831,7 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+ 	struct ftrace_graph_ret *graph_ret;
+ 	struct ftrace_graph_ent *call;
+ 	unsigned long long duration;
++	int cpu = iter->cpu;
+ 	int i;
  
-+#if defined(CONFIG_EFI) && defined(CONFIG_X86_64)
-+extern pgd_t *efi_pgd;
-+static struct dentry *pe_efi;
-+
-+static int ptdump_show_efi(struct seq_file *m, void *v)
-+{
-+	if (efi_pgd)
-+		ptdump_walk_pgd_level_debugfs(m, efi_pgd, false);
-+	return 0;
-+}
-+
-+static int ptdump_open_efi(struct inode *inode, struct file *filp)
-+{
-+	return single_open(filp, ptdump_show_efi, NULL);
-+}
-+
-+static const struct file_operations ptdump_efi_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= ptdump_open_efi,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+#endif
-+
- static struct dentry *dir, *pe_knl, *pe_curknl;
+ 	graph_ret = &ret_entry->ret;
+@@ -839,7 +840,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
  
- static int __init pt_dump_debug_init(void)
-@@ -94,8 +119,15 @@ static int __init pt_dump_debug_init(void)
- 	pe_curusr = debugfs_create_file("current_user", 0400,
- 					dir, NULL, &ptdump_curusr_fops);
- 	if (!pe_curusr)
-+                goto err;
-+#endif
+ 	if (data) {
+ 		struct fgraph_cpu_data *cpu_data;
+-		int cpu = iter->cpu;
+ 
+ 		cpu_data = per_cpu_ptr(data->cpu_data, cpu);
+ 
+@@ -869,6 +869,9 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+ 
+ 	trace_seq_printf(s, "%ps();\n", (void *)call->func);
+ 
++	print_graph_irq(iter, graph_ret->func, TRACE_GRAPH_RET,
++			cpu, iter->ent->pid, flags);
 +
-+#if defined(CONFIG_EFI) && defined(CONFIG_X86_64)
-+	pe_efi = debugfs_create_file("efi", 0400, dir, NULL, &ptdump_efi_fops);
-+	if (!pe_efi)
- 		goto err;
- #endif
-+
- 	return 0;
- err:
- 	debugfs_remove_recursive(dir);
-diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
-index 2dd15e967c3f..a9734df2c1b7 100644
---- a/arch/x86/platform/efi/efi_64.c
-+++ b/arch/x86/platform/efi/efi_64.c
-@@ -191,7 +191,7 @@ void __init efi_call_phys_epilog(pgd_t *save_pgd)
- 	early_code_mapping_set_exec(0);
+ 	return trace_handle_return(s);
  }
  
--static pgd_t *efi_pgd;
-+pgd_t *efi_pgd;
- 
- /*
-  * We need our own copy of the higher levels of the page tables
 -- 
-2.14.3
+2.7.4
