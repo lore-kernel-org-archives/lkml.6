@@ -1,64 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752900AbeAaCVk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:21:40 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:53700 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752832AbeAaCVi (ORCPT
+        id S1752992AbeAaCWF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 21:22:05 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:36358 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752747AbeAaCWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:21:38 -0500
-X-Google-Smtp-Source: AH8x227niFCdFbr+JsaSZowFrab/RTTI63IrhFM72K31Qi2OaxjZBZRg/R90n63ecKOJk1ZtXjSV8TBFXLh/QDD33go=
+        Tue, 30 Jan 2018 21:22:03 -0500
+To: Asutosh Das <asutoshd@codeaurora.org>
+Cc: subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org,
+        Sujit Reddy Thumma <sthumma@codeaurora.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH 1/1] scsi: ufs: Enable quirk to ignore sending WRITE_SAME command
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1516767755-22855-1-git-send-email-asutoshd@codeaurora.org>
+Date: Tue, 30 Jan 2018 21:21:55 -0500
+In-Reply-To: <1516767755-22855-1-git-send-email-asutoshd@codeaurora.org>
+        (Asutosh Das's message of "Wed, 24 Jan 2018 09:52:35 +0530")
+Message-ID: <yq1wozyg43g.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180130183939.GB29051@ZenIV.linux.org.uk>
-References: <20180130183939.GB29051@ZenIV.linux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 30 Jan 2018 18:21:37 -0800
-X-Google-Sender-Auth: Gh5aMbMUQOLrO6e9utfOoD6BkYs
-Message-ID: <CA+55aFz8UL883+rj0nYsU_gtX6jLhriPGncDb1XDteEu817HRQ@mail.gmail.com>
-Subject: Re: [git pull] vfs.git: poll annotations
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8790 signatures=668657
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=485
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1801310026
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:39 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->         Introduces a __bitwise type for POLL... bitmap, propagates
-> the annotations through the tree.
 
-Ok, I'm not entirely happy with this.
+Asutosh,
 
-I don't think the mangle/demangle_poll() stuff should be in the uapi
-headers, and it really worries me that we use the same names - with
-different values - for the kernel and user versions of the POLLxyz
-macros.
+>  	/* WRITE_SAME command is not supported*/
+>  	sdev->no_write_same = 1;
+>  
+> +	/* WRITE_SAME command is not supported*/
+> +	sdev->no_write_same = 1;
+> +
 
-So honestly, like the structure translations we do (ie termios <->
-ktermios, stat <-> kstat), I really think we'd be better off having
-explicit naming when some kernel data is different from user data.
+Uhm...
 
-That could make the mangling be automated too, ie assuming gcc gets it
-right, maybe done with
+I applied this change to 4.16/scsi-fixes by hand.
 
-   #define pollmask_to_kernel(uval, UMASK, KMASK) \
-        ((force __poll_t)(((uval)&UMASK)/UMASK*KMASK))
-
-   static inline __poll_t unmangle_poll(unsigned int uval)
-   {
-        return pollmask_to_kernel(uval, POLLIN, KPOLLIN) |
-             pollmask_to_kernel(uval, POLLOUT, KPOLLOUT) |
-             pollmask_to_kernel(uval, POLLERR, KPOLLERR) |
-             ...
-
-or similar. With no arch-specific hardcoded bit knowledge except for
-the actual values of POLLIN/etc.
-
-I dunno. Maybe it ends up being too painful.
-
-So I've pulled this, but I just wanted to state that I'm not entirely
-happy about it all.
-
-                Linus
+-- 
+Martin K. Petersen	Oracle Linux Engineering
