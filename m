@@ -1,57 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932201AbeAaPnc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 10:43:32 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:45218 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932087AbeAaPna (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 10:43:30 -0500
-Date: Wed, 31 Jan 2018 10:43:28 -0500 (EST)
-Message-Id: <20180131.104328.1248759408605241628.davem@davemloft.net>
-To: yamada.masahiro@socionext.com
-Cc: ulfalizer@gmail.com, linux-kbuild@vger.kernel.org, mcgrof@kernel.org,
-        jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] net/sched: kconfig: Remove empty help texts
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <CAK7LNATA-5mjztcPed43ERLd3AvOh7Lg6yGmH4iqKhKMVP324A@mail.gmail.com>
-References: <20180130190555.6577-2-ulfalizer@gmail.com>
-        <20180131.103221.1934691300422846830.davem@davemloft.net>
-        <CAK7LNATA-5mjztcPed43ERLd3AvOh7Lg6yGmH4iqKhKMVP324A@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1753426AbeAaPst (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 10:48:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40248 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932066AbeAaPss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 10:48:48 -0500
+Date: Wed, 31 Jan 2018 16:48:46 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: [GIT PULL] livepatching for 4.16
+Message-ID: <nycvar.YFH.7.76.1801311638380.11852@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Feb 2018 00:37:27 +0900
+Linus,
 
-> 2018-02-01 0:32 GMT+09:00 David Miller <davem@davemloft.net>:
->> From: Ulf Magnusson <ulfalizer@gmail.com>
->> Date: Tue, 30 Jan 2018 20:05:23 +0100
->>
->>> In preparation for adding a warning ("kconfig: Warn if help text is
->>> blank"): https://lkml.org/lkml/2018/1/30/516
->>>
->>> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->>
->> Applied.
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> I had applied the whole series into linux-kbuild.
-> 
-> 
-> Do you want to apply it to your tree?
+please pull from
 
-I already did :-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/jikos/livepatching.git for-linus
 
-It won't cause any problems for it to be in both of our trees so let's
-just leave it this way.
+to receive livepatching updates for 4.16:
+
+=====
+- handling of 'infinitely'-long sleeping tasks, from Miroslav Benes
+- removal of 'immediate' feature, as it turns out it doesn't provide
+  the originally expected semantics, and brings more issues than value
+=====
+
+Thanks.
+
+----------------------------------------------------------------
+Miroslav Benes (4):
+      livepatch: send a fake signal to all blocking tasks
+      livepatch: force transition to finish
+      livepatch: Remove immediate feature
+      livepatch: add locking to force and signal functions
+
+ Documentation/ABI/testing/sysfs-kernel-livepatch |  26 +++++
+ Documentation/livepatch/livepatch.txt            | 114 ++++++++++------------
+ arch/powerpc/kernel/signal.c                     |   6 +-
+ arch/x86/entry/common.c                          |   6 +-
+ include/linux/livepatch.h                        |   4 -
+ kernel/livepatch/core.c                          |  76 ++++++++++++---
+ kernel/livepatch/transition.c                    | 116 +++++++++++++++--------
+ kernel/livepatch/transition.h                    |   2 +
+ kernel/signal.c                                  |   4 +-
+ samples/livepatch/livepatch-callbacks-demo.c     |  15 ---
+ samples/livepatch/livepatch-sample.c             |  15 ---
+ samples/livepatch/livepatch-shadow-fix1.c        |  15 ---
+ samples/livepatch/livepatch-shadow-fix2.c        |  15 ---
+ 13 files changed, 227 insertions(+), 187 deletions(-)
+
+-- 
+Jiri Kosina
+SUSE Labs
