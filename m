@@ -1,116 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752761AbeAaCSm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:18:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34056 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752690AbeAaCSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:18:40 -0500
-Date: Wed, 31 Jan 2018 10:18:35 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: Luiz Capitulino <lcapitulino@redhat.com>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, yasu.isimatu@gmail.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: Re: KASLR may break some kernel features (was Re: [PATCH v5 1/4]
- kaslr: add immovable_mem=nn[KMG]@ss[KMG] to specify extracting memory)
-Message-ID: <20180131021835.GA1873@localhost.localdomain>
-References: <20180104080219.23893-1-fanc.fnst@cn.fujitsu.com>
- <20180104080219.23893-2-fanc.fnst@cn.fujitsu.com>
- <20180104103057.GC7235@x1>
- <20180104112104.67b88e2d@redhat.com>
- <20180111090006.GA9648@localhost.localdomain>
- <CAGXu5jJvN52-Zi_meU86G7sbzQDNRqi-6jHxz-aPfkq4vXcKoA@mail.gmail.com>
+        id S1752826AbeAaCUI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 21:20:08 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:46127 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752367AbeAaCUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 21:20:07 -0500
+Subject: Re: [PATCH] f2fs: fix heap mode to reset it back
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: Yunlong Song <yunlong.song@huawei.com>, <chao@kernel.org>,
+        <yunlong.song@icloud.com>, <miaoxie@huawei.com>,
+        <bintian.wang@huawei.com>, <shengyong1@huawei.com>,
+        <heyunlei@huawei.com>, <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1517197065-156255-1-git-send-email-yunlong.song@huawei.com>
+ <f89279f2-f397-f8b6-57e7-2e5c39d6256f@huawei.com>
+ <607de57c-f5d8-2f22-b79d-4966a8516d1e@huawei.com>
+ <eeff0d39-b51e-a992-864a-b2e00c5c7135@huawei.com>
+ <20180131013946.GF65489@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <5a27e12a-bdbf-d69d-633d-d1be085b46e9@huawei.com>
+Date: Wed, 31 Jan 2018 10:19:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jJvN52-Zi_meU86G7sbzQDNRqi-6jHxz-aPfkq4vXcKoA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180131013946.GF65489@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kees,
-
-On 01/11/18 at 10:04am, Kees Cook wrote:
-> On Thu, Jan 11, 2018 at 1:00 AM, Baoquan He <bhe@redhat.com> wrote:
-> > Hi Luiz,
-> >
-> > On 01/04/18 at 11:21am, Luiz Capitulino wrote:
-> >> Having a generic kaslr parameter to control where the kernel is extracted
-> >> is one solution for this problem.
-> >>
-> >> The general problem statement is that KASLR may break some kernel features
-> >> depending on where the kernel is extracted. Two examples are hot-plugged
-> >> memory (this series) and 1GB HugeTLB pages.
-> >>
-> >> The 1GB HugeTLB page issue is not specific to KVM guests. It just happens
-> >> that there's a bunch of people running guests with up to 5GB of memory and
-> >> with that amount of memory you have one or two 1GB pages and is easier for
-> >> KASLR to extract the kernel into a 1GB region and split a 1GB page. So,
-> >> you may not get any 1GB pages at all when this happens. However, I can also
-> >> reproduce this on bare-metal with lots of memory where I can loose a 1GB
-> >> page from time to time.
-> >>
-> >> Having a kaslr_range= parameter solves both issues, but two major drawbacks
-> >> is that it breaks existing setups and I guess users will have a very hard
-> >> time choosing good ranges.
-> >>
-> >> Another idea would be to have a CONFIG_KASLR_RANGES, where each arch
-> >> could have a list of ranges known to contain holes and/or immovable
-> >> memory and only extract the kernel into those ranges.
-> >
-> > If add CONFIG_KASLR_RANGES, then a distro like RHEL will have this range
-> > always, whether people need hugetlb or not.
-> >
-> > So in this case, what range do we need to avoid? Only [1G, 2G]?
+On 2018/1/31 9:39, Jaegeuk Kim wrote:
+> On 01/29, Chao Yu wrote:
+>> On 2018/1/29 16:31, Yunlong Song wrote:
+>>> The old commit allocates hot data & nodes in the beginning of partition 
+>>> both for heap and
+>>> noheap mode. But from the commit message, the heap mode should be like 
+>>> before, i.e.,
+>>> allocate hot data & nodes from curseg to left.
+>>
+>> Let's ping Jaegeuk to check that, :)
 > 
-> Any ranges like that that need to be avoided should be known at build
-> time, so they should simply be added to the mem_avoid list that is
-> already present in the KASLR code...
+> Yup, I missed to add this condition. :)
 
-Sorry, I might misunderstand your suggestion before. Are you suggesting to
-add a specific range to mem_avoid[] by hardcoding?
+Alright, if so, it needs to Cc stable mailing list, as this patch should
+fix to reset back allocation policy of heap mode in old kernel too.
 
-I may not make the situation stated clearly, sorry for that. For this
-hugepage issue, Luiz tested in a kvm guest with 4G memory. And the
-hugetlb need allocate 1G with 1G aligned, so only [1G, 2G] area is good
-1G huge page for allocation. The other area has no good 1G page for
-usage:
-[0, 1G]: BIOS reserved several pages;
-[2G, 3G]: the top is reserved by system, 0x00000000bffe0000-0x00000000bfffffff
-[3G, 4G]: no ram deployed by firmware
-[4G, 5G]: system allocate from top to bottom
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-dmesg output snippet of kvm guest:
-[  +0.000000] e820: BIOS-provided physical RAM map:
-[  +0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
-[  +0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-[  +0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
-[  +0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000bffdffff] usable
-[  +0.000000] BIOS-e820: [mem 0x00000000bffe0000-0x00000000bfffffff] reserved
-[  +0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
-[  +0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
-[  +0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000013fffffff] usable
+Thanks,
 
-However, this only failed in this system. If Luiz setup kvm with 5G or
-larger memory, you can see, there will be more than one good 1G page.
-While kernel randomization can only occupy one. So if more than one good
-1G page, the 1G huge page allocation failure won't occur. So it's a very
-corner case, that's why I don't want to hardcode it into mem_avoid[].
-Code sounds not reasonable with the change which we need avoid [1G, 2G]
-area, and the code comments have to tell that we do this because system
-with 4G memory can't allocate 1G huge page successfully. Other than that,
-those system which don't need hugetlb feature, or have more memory, don't
-have this issue at all.
-
-These are my thinking about the current fixing way, not sure if it's
-peruasive or make sense. Would like to hear any suggestion or different
-idea to solve the encountered problems.
-
-Thanks
-Baoquan
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> On 2018/1/29 16:12, Chao Yu wrote:
+>>>> Hi Yunlong,
+>>>>
+>>>> On 2018/1/29 11:37, Yunlong Song wrote:
+>>>>> Commit 7a20b8a61eff81bdb7097a578752a74860e9d142 ("f2fs: allocate node
+>>>>> and hot data in the beginning of partition") introduces another mount
+>>>>> option, heap, to reset it back. But it does not do anything for heap
+>>>>> mode, so fix it.
+>>>> I think Jaegeuk did three things in that patch:
+>>>> a) add missing heap mount option handling in ->show_options.
+>>>> b) set noheap by default.
+>>>> c) change allocation policy to the one that allocate hotdata & nodes in the
+>>>> front of main are intensively.
+>>>>
+>>>> They could be separated, independent, and I don't see such intention that
+>>>> we can only use c) the new introduced allocation policy in noheap mode.
+>>>>
+>>>> Anyway, I think Jaegeuk can help to double check that.
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>>>> ---
+>>>>>   fs/f2fs/gc.c      | 5 +++--
+>>>>>   fs/f2fs/segment.c | 3 ++-
+>>>>>   2 files changed, 5 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>> index aa720cc..b9d93fd 100644
+>>>>> --- a/fs/f2fs/gc.c
+>>>>> +++ b/fs/f2fs/gc.c
+>>>>> @@ -191,8 +191,9 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+>>>>>   	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
+>>>>>   		p->max_search = sbi->max_victim_search;
+>>>>>   
+>>>>> -	/* let's select beginning hot/small space first */
+>>>>> -	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
+>>>>> +	/* let's select beginning hot/small space first in no_heap mode*/
+>>>>> +	if (test_opt(sbi, NOHEAP) &&
+>>>>> +		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+>>>>>   		p->offset = 0;
+>>>>>   	else
+>>>>>   		p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
+>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>> index e5739ce..77a48c4 100644
+>>>>> --- a/fs/f2fs/segment.c
+>>>>> +++ b/fs/f2fs/segment.c
+>>>>> @@ -2167,7 +2167,8 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+>>>>>   	if (sbi->segs_per_sec != 1)
+>>>>>   		return CURSEG_I(sbi, type)->segno;
+>>>>>   
+>>>>> -	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
+>>>>> +	if (test_opt(sbi, NOHEAP) &&
+>>>>> +		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+>>>>>   		return 0;
+>>>>>   
+>>>>>   	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
+>>>>>
+>>>>
+>>>> .
+>>>>
+>>>
+> 
+> .
+> 
