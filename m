@@ -1,76 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752715AbeAaH0s (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:26:48 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51731 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751454AbeAaH0q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:26:46 -0500
-Date: Wed, 31 Jan 2018 08:26:44 +0100
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: =?iso-8859-1?Q?Beno=EEt_Th=E9baudeau?=
-        <benoit.thebaudeau.dev@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Subject: Re: [PATCH v2 1/2] ARM: dts: imx25-pinfunc: Use consistent naming
- for eSDHC
-Message-ID: <20180131072644.nbr6t5rhx7yb4dhj@pengutronix.de>
-References: <20180131000514.5286-1-benoit.thebaudeau.dev@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180131000514.5286-1-benoit.thebaudeau.dev@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1752791AbeAaH0x (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 02:26:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44257 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751454AbeAaH0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 02:26:49 -0500
+From: Benjamin Poirier <bpoirier@suse.com>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net] e1000e: Remove Other from EIAC.
+Date: Wed, 31 Jan 2018 16:26:27 +0900
+Message-Id: <20180131072627.18305-1-bpoirier@suse.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+It was reported that emulated e1000e devices in vmware esxi 6.5 Build
+7526125 do not link up after commit 4aea7a5c5e94 ("e1000e: Avoid receiver
+overrun interrupt bursts", v4.15-rc1). Some tracing shows that after
+e1000e_trigger_lsc() is called, ICR reads out as 0x0 in e1000_msix_other()
+on emulated e1000e devices. In comparison, on real e1000e 82574 hardware,
+icr=0x80000004 (_INT_ASSERTED | _LSC) in the same situation.
 
-On Wed, Jan 31, 2018 at 01:05:13AM +0100, Benoît Thébaudeau wrote:
-> This file had several naming inconsistencies for eSDHC:
->  - the instances were named sometimes SDn, sometimes SDHCn, whereas they
->    are named ESDHCn in the reference manual, e.g.:
->      MX25_PAD_SD1_CMD__SD1_CMD
->      MX25_PAD_D15__SDHC1_DAT7
->  - the data ports were named sometimes DATAn, sometimes DATn like in the
->    reference manual, e.g.:
->      MX25_PAD_SD1_DATA0__SD1_DATA0
->      MX25_PAD_D15__SDHC1_DAT7
->  - in one case, the clock port was named DAT_CLK instead of CLK:
->      MX25_PAD_CSI_D7__SDHC2_DAT_CLK
-> 
-> This change:
->  - introduces new definitions using the naming from the reference
->    manual,
->  - keeps definitions using the legacy naming in order not to break
->    compatibility for out-of-tree users (they can be removed later),
->  - updates the in-tree files that were using the legacy naming.
-> 
-> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Benoît Thébaudeau <benoit.thebaudeau.dev@gmail.com>
-> ---
-> Changes v1 -> v2:
->  - New patch (suggested by Uwe).
-That's why I like it:
+Some experimentation showed that this flaw in vmware e1000e emulation can
+be worked around by not setting Other in EIAC. This is how it was before
+16ecba59bc33 ("e1000e: Do not read ICR in Other interrupt", v4.5-rc1).
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Fixes: 4aea7a5c5e94 ("e1000e: Avoid receiver overrun interrupt bursts")
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+---
+ drivers/net/ethernet/intel/e1000e/netdev.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-:-)
-Uwe
-
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index 9f18d39bdc8f..625a4c9a86a4 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -1918,6 +1918,8 @@ static irqreturn_t e1000_msix_other(int __always_unused irq, void *data)
+ 	bool enable = true;
+ 
+ 	icr = er32(ICR);
++	ew32(ICR, E1000_ICR_OTHER);
++
+ 	if (icr & E1000_ICR_RXO) {
+ 		ew32(ICR, E1000_ICR_RXO);
+ 		enable = false;
+@@ -2040,7 +2042,6 @@ static void e1000_configure_msix(struct e1000_adapter *adapter)
+ 		       hw->hw_addr + E1000_EITR_82574(vector));
+ 	else
+ 		writel(1, hw->hw_addr + E1000_EITR_82574(vector));
+-	adapter->eiac_mask |= E1000_IMS_OTHER;
+ 
+ 	/* Cause Tx interrupts on every write back */
+ 	ivar |= BIT(31);
+@@ -2265,7 +2266,7 @@ static void e1000_irq_enable(struct e1000_adapter *adapter)
+ 
+ 	if (adapter->msix_entries) {
+ 		ew32(EIAC_82574, adapter->eiac_mask & E1000_EIAC_MASK_82574);
+-		ew32(IMS, adapter->eiac_mask | E1000_IMS_LSC);
++		ew32(IMS, adapter->eiac_mask | E1000_IMS_OTHER | E1000_IMS_LSC);
+ 	} else if (hw->mac.type >= e1000_pch_lpt) {
+ 		ew32(IMS, IMS_ENABLE_MASK | E1000_IMS_ECCER);
+ 	} else {
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.15.1
