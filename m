@@ -1,91 +1,343 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753482AbeAaNTo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 08:19:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52150 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752009AbeAaNTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 08:19:42 -0500
-Date: Wed, 31 Jan 2018 14:19:37 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
-Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-Message-ID: <20180131131937.GA6740@dhcp22.suse.cz>
-References: <2a05eaf2-20fd-57a8-d4bd-5a1fbf57686c@linux.vnet.ibm.com>
- <20180124090539.GH1526@dhcp22.suse.cz>
- <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
- <20180126140415.GD5027@dhcp22.suse.cz>
- <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
- <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
- <20180129132235.GE21609@dhcp22.suse.cz>
- <87k1w081e7.fsf@concordia.ellerman.id.au>
- <20180130094205.GS21609@dhcp22.suse.cz>
- <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
+        id S1753436AbeAaNWU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 08:22:20 -0500
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:51071 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752490AbeAaNWR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 08:22:17 -0500
+Subject: Re: [PATCH v6 4/6] media: i2c: Add TDA1997x HDMI receiver driver
+From: Hans Verkuil <hverkuil@xs4all.nl>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1514491789-8697-1-git-send-email-tharvey@gateworks.com>
+ <1514491789-8697-5-git-send-email-tharvey@gateworks.com>
+ <1e65ee61-f282-4b53-dd03-68a89a91da8e@xs4all.nl>
+ <CAJ+vNU1ysHuzqOnL4sf3hFZrU5kyGnQ0dFkRObVjCa=NyLsJug@mail.gmail.com>
+ <517f8b12-e10e-1e8d-6d98-26f5fefe62b8@xs4all.nl>
+ <CAJ+vNU1xnnmNZW5zmT8+0HfT3Xfg6zfdrbC8vFNH4wuah5AVTA@mail.gmail.com>
+ <fa8cc2d1-b7ea-343e-5b5a-ba5f60b9c5d9@xs4all.nl>
+Message-ID: <83695d60-5052-14ba-4f7b-23f153a05a85@xs4all.nl>
+Date: Wed, 31 Jan 2018 14:22:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <fa8cc2d1-b7ea-343e-5b5a-ba5f60b9c5d9@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGlJ5M3gMsl0NIO8T3IVUQho3nFOvEM+EpZJeQw5P9S5ef6GCPh1//cy8i0DgaRACmELDRpvOmXrLWPkQV/wlaVTgamet+7xrlxPEb5LkjLv/jy2rYEt
+ fpW1XQIyZuVcGhP6KSsZdrDYGP+NfIXf6rIB0uapEgSeGobJEXiJQ0x5HZqg0tCpO4FfbFV5LJ8+45Eexf/BITfy0pgRnEMBe3uku2RduCrZNteJL2wE6TDO
+ sJQjzyXuYzztxDqa+nMCTs7dFk4cujY026pQVx5eQ8oBYwa9ZK8KI1+ZcJIWnb8WskX/fsPi8OMaeY5K/NtTHs6KrUA0fR3L6wF2qs4xrK80z5w4yN0SO6Si
+ avEHrBBAnOezyBjWGi11mS850/sCett5DkcmAr4fkPAempzNEEg99di8O2lE2b4/vD+Pu+HuUE2cUtIwhygsclE5kxULqg21vBycyVOP1wFZnAY+X1rF0IcZ
+ 3+7iiNYctXIJAzv2CDa5mArLhgimTNQ12eO/yoWevCjKLEdgOqPspDcHxMKubYHmuq5+J7+Z+XtF6kEPJCvonUXP9vITD7nODDxl93vyNqvbcPpzQFsJcJ4j
+ r2k=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 31-01-18 10:35:38, Anshuman Khandual wrote:
-> On 01/30/2018 03:12 PM, Michal Hocko wrote:
-[...]
-> > Anshuman, could you try to run
-> > sed 's@^@@' /proc/self/smaps
-> > on a system with MAP_FIXED_NOREPLACE reverted?
-> > 
+On 01/31/18 08:38, Hans Verkuil wrote:
+> On 01/31/2018 05:51 AM, Tim Harvey wrote:
+>> On Mon, Jan 29, 2018 at 4:00 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>> On 01/25/2018 05:15 PM, Tim Harvey wrote:
+>> <snip>
+>>>>>
+>>>>> Hmm. This receiver supports multiple output formats, but you advertise only one.
+>>>>> That looks wrong. If nothing else, you should be able to switch between RGB and
+>>>>> YUV 4:4:4 since they use the same port config.
+>>>>>
+>>>>> It's a common use-case that you want to switch between RGB and YUV depending on
+>>>>> the source material (i.e. if you receive a desktop/graphics then RGB is best, if
+>>>>> you receive video then YUV 4:2:2 or 4:2:0 is best).
+>>>>>
+>>>>> Hardcoding just one format won't do.
+>>>>>
+>>>>
+>>>> I've been thinking about this a bit. I had hard-coded a single format
+>>>> for now because I haven't had any good ideas on how to deal with the
+>>>> fact that the port mappings would need to differ if you change from
+>>>> the RGB888/YUV444 (I think these are referred to as 'planar' formats?)
+>>>> to YUV422 (semi-planar) and BT656 formats. It is true though that the
+>>>> 36bit (TDA19973) RGB888/YUV444 and 24bit (TDA19971/2) formats can both
+>>>> be supported with the same port mappings / pinout.
+>>>
+>>> Regarding terminology:
+>>>
+>>> RGB and YUV are typically interleaved, i.e. the color components are
+>>> (for two pixels) either RGBRGB for RGB888, YUVYUV for YUV444 or YUYV
+>>> for YUV422.
+>>>
+>>> Planar formats are in practice only seen for YUV and will first output
+>>> all Y samples, and then the UV samples. This requires that the hardware
+>>> buffers the frame and that's not normally done by HDMI receivers.
+>>>
+>>> The DMA engine, however, is often able to split up the interleaved YUV
+>>> samples that it receives and DMA them to separate buffers, thus turning
+>>> an interleaved media bus format to a planar memory format.
+>>>
+>>> BT656 doesn't refer to how the samples are transferred, instead it
+>>> refers to how the hsync and vsync are reported. The enum v4l2_mbus_type
+>>> has various options, one of them being BT656.
+>>>
+>>> Which mbus type is used is board specific (and should come from the
+>>> device tree). Whether to transmit RGB888, YUV444 or YUV422 (or possibly
+>>> even YUV420) is dynamic and is up to userspace since it is use-case
+>>> dependent.
+>>>
+>>> So you'll never switch between BT656 and CSI, but you can switch between
+>>> BT656+RGB and BT656+YUV, or between CSI+RGB and CSI+YUV.
+>>>
+>>>>
+>>>> For example the GW5400 has a TDA19971 mapped to IMX6 CSI_DATA[19:4]
+>>>> (16bit) for YUV422. However if you want to use BT656 you have to shift
+>>>> the TDA19971 port mappings to get the YCbCr pins mapped to
+>>>> CSI_DATA[19:x] and those pin groups are at the bottom of the bus for
+>>>> the RGB888/YUV444 format.
+>>>
+>>> As mentioned above, you wouldn't switch between mbus types.
+>>>
+>>>>
+>>>> I suppose however that perhaps for the example above if I have a 16bit
+>>>> width required to support YUV422 there would never be a useful case
+>>>> for supporting 8-bit/10-bit/12-bit BT656 on the same board?
+>>>
+>>> You wouldn't switch between mbus types, but if the device tree configures
+>>> BT.656 with a bus width of 24 bits, then the application might very well
+>>> want to dynamically switch between 8, 10 and 12 bits per color component.
+>>>
+>>
+>> Hans,
+>>
+>> I just submitted a v7 with multiple format support. Your point about
+>> bus_type being specified by dt is exactly what I needed to help make
+>> sense of the formats.
 > 
-> After reverting the following commits from mmotm-2018-01-25-16-20 tag.
+> Ah, good. It took me some time as well before I realized that the confusion
+> was in mixing up bus types and formats.
 > 
-> 67caea694ba5965a52a61fdad495d847f03c4025 ("mm-introduce-map_fixed_safe-fix")
-> 64da2e0c134ecf3936a4c36b949bcf2cdc98977e ("fs-elf-drop-map_fixed-usage-from-elf_map-fix-fix")
-> 645983ab6ca7fd644f52b4c55462b91940012595 ("mm: don't use the same value for MAP_FIXED_NOREPLACE and MAP_SYNC")
-> d77bab291ac435aab91fa214b85efa74a26c9c22 ("fs-elf-drop-map_fixed-usage-from-elf_map-checkpatch-fixes")
-> a75c5f92d9ecb21d3299cc7db48e401cbf335c34 ("fs, elf: drop MAP_FIXED usage from elf_map")
-> 00906d029ffe515221e3939b222c237026af2903 ("mm: introduce MAP_FIXED_NOREPLACE")
+>> That said, I'm unsure how to properly test the enum_mbus_code() pad op
+>> function. How do you obtain a list of valid formats on a subdev?
+>>
+>> I tried the following:
+>> root@ventana:~# media-ctl -e 'tda19971 2-0048'
+>> /dev/v4l-subdev1
+>> root@ventana:~# media-ctl --get-v4l2 '"tda19971 2-0048":0'
+>>                 [fmt:UYVY8_2X8/1280x720 field:none colorspace:srgb]
+>> ^^^^ calls get_format and returns the 1 and only format available for
+>> my tda19971 with 16bit parallel bus
+>> root@ventana:~# v4l2-ctl -d /dev/v4l-subdev1 --get-fmt-video-out
+>> VIDIOC_G_FMT: failed: Inappropriate ioctl for device
+>> root@ventana:~# v4l2-ctl -d /dev/v4l-subdev1 --list-formats-out
+>> ioctl: VIDIOC_ENUM_FMT
+>>
+>> I'm thinking perhaps enumerating the list of possible formats is a
+>> missing feature in media-ctl?
 > 
-> $sed 's@^@@' /proc/self/smaps
+> Yeah, it is. Surprising, really. Ditto for the SUBDEV_ENUM_FRAME_SIZE/INTERVAL
+> ioctls.
+> 
+> I wonder whether this should be added to v4l2-ctl, media-ctl or both. I always
+> felt that media-ctl is more about setting up the whole pipeline, whereas v4l2-ctl
+> is specific to a V4L2 device.
+> 
+> Regards,
+> 
+> 	Hans
+> 
 
-Interesting
+Here is a quick patch adding support for enumerating mbus codes to v4l2-ctl.
+You get some compile warnings, just ignore those.
 
-> -------------------------------------------
-> 10000000-10020000 r-xp 00000000 fd:00 10558                              /usr/bin/sed
-> 10020000-10030000 r--p 00010000 fd:00 10558                              /usr/bin/sed
-> 10030000-10040000 rw-p 00020000 fd:00 10558                              /usr/bin/sed
-> 2cbb0000-2cbe0000 rw-p 00000000 00:00 0                                  [heap]
+An example using vimc, listing the code for pad 1:
 
-We still have a brk and at a different offset. Could you confirm that we
-still try to map previous brk at the clashing address 0x10030000?
+$ ./v4l2-ctl -d /dev/v4l-subdev5 --list-subdev-mbus-codes=1
+ioctl: VIDIOC_SUBDEV_ENUM_MBUS_CODE
+        0x00001013: BGR888_1X24
+        0x0000100a: RGB888_1X24
+        0x0000100d: ARGB8888_1X32
 
-> 7fff7f9c0000-7fff7f9e0000 rw-p 00000000 00:00 0 
-> 7fff7f9e0000-7fff86280000 r--p 00000000 fd:00 33660156                   /usr/lib/locale/locale-archive
-> 7fff86280000-7fff86290000 r-xp 00000000 fd:00 33660115                   /usr/lib64/libdl-2.17.so
-> 7fff86290000-7fff862a0000 r--p 00000000 fd:00 33660115                   /usr/lib64/libdl-2.17.so
-> 7fff862a0000-7fff862b0000 rw-p 00010000 fd:00 33660115                   /usr/lib64/libdl-2.17.so
-> 7fff862b0000-7fff86300000 r-xp 00000000 fd:00 33594504                   /usr/lib64/libpcre.so.1.2.0
-> 7fff86300000-7fff86310000 r--p 00040000 fd:00 33594504                   /usr/lib64/libpcre.so.1.2.0
-> 7fff86310000-7fff86320000 rw-p 00050000 fd:00 33594504                   /usr/lib64/libpcre.so.1.2.0
-> 7fff86320000-7fff864f0000 r-xp 00000000 fd:00 33660109                   /usr/lib64/libc-2.17.so
-> 7fff864f0000-7fff86500000 r--p 001c0000 fd:00 33660109                   /usr/lib64/libc-2.17.so
-> 7fff86500000-7fff86510000 rw-p 001d0000 fd:00 33660109                   /usr/lib64/libc-2.17.so
-> 7fff86510000-7fff86540000 r-xp 00000000 fd:00 33594516                   /usr/lib64/libselinux.so.1
-> 7fff86540000-7fff86550000 r--p 00020000 fd:00 33594516                   /usr/lib64/libselinux.so.1
-> 7fff86550000-7fff86560000 rw-p 00030000 fd:00 33594516                   /usr/lib64/libselinux.so.1
-> 7fff86560000-7fff86570000 r--s 00000000 fd:00 67194934                   /usr/lib64/gconv/gconv-modules.cache
-> 7fff86570000-7fff86590000 r-xp 00000000 00:00 0                          [vdso]
-> 7fff86590000-7fff865c0000 r-xp 00000000 fd:00 33660102                   /usr/lib64/ld-2.17.so
-> 7fff865c0000-7fff865d0000 r--p 00020000 fd:00 33660102                   /usr/lib64/ld-2.17.so
-> 7fff865d0000-7fff865e0000 rw-p 00030000 fd:00 33660102                   /usr/lib64/ld-2.17.so
-> 7fffd27a0000-7fffd27d0000 rw-p 00000000 00:00 0                          [stack]
+Regards,
 
--- 
-Michal Hocko
-SUSE Labs
+	Hans
+
+---------------- cut here ------------------------
+diff --git a/utils/v4l2-ctl/Makefile.am b/utils/v4l2-ctl/Makefile.am
+index 83fa49a3..b3ccfc8b 100644
+--- a/utils/v4l2-ctl/Makefile.am
++++ b/utils/v4l2-ctl/Makefile.am
+@@ -6,9 +6,16 @@ v4l2_ctl_SOURCES = v4l2-ctl.cpp v4l2-ctl.h v4l2-ctl-common.cpp v4l2-ctl-tuner.cp
+ 	v4l2-ctl-io.cpp v4l2-ctl-stds.cpp v4l2-ctl-vidcap.cpp v4l2-ctl-vidout.cpp \
+ 	v4l2-ctl-overlay.cpp v4l2-ctl-vbi.cpp v4l2-ctl-selection.cpp v4l2-ctl-misc.cpp \
+ 	v4l2-ctl-streaming.cpp v4l2-ctl-sdr.cpp v4l2-ctl-edid.cpp v4l2-ctl-modes.cpp \
+-	v4l2-tpg-colors.c v4l2-tpg-core.c v4l-stream.c v4l2-ctl-meta.cpp
++	v4l2-ctl-subdev.cpp v4l2-tpg-colors.c v4l2-tpg-core.c v4l-stream.c v4l2-ctl-meta.cpp
+ v4l2_ctl_CPPFLAGS = -I$(top_srcdir)/utils/common
+
++media-bus-format-names.h: ../../include/linux/media-bus-format.h
++	sed -e '/#define MEDIA_BUS_FMT/ ! d; s/.*FMT_//; /FIXED/ d; s/\t.*//; s/.*/{ \"&\", MEDIA_BUS_FMT_& },/;' \
++	< $< > $@
++
++BUILT_SOURCES = media-bus-format-names.h
++CLEANFILES = $(BUILT_SOURCES)
++
+ if WITH_V4L2_CTL_LIBV4L
+ v4l2_ctl_LDADD = ../../lib/libv4l2/libv4l2.la ../../lib/libv4lconvert/libv4lconvert.la -lrt -lpthread
+ else
+diff --git a/utils/v4l2-ctl/v4l2-ctl-common.cpp b/utils/v4l2-ctl/v4l2-ctl-common.cpp
+index 46e621f7..2f521f5d 100644
+--- a/utils/v4l2-ctl/v4l2-ctl-common.cpp
++++ b/utils/v4l2-ctl/v4l2-ctl-common.cpp
+@@ -91,6 +91,8 @@ void common_usage(void)
+ #ifndef NO_LIBV4L2
+ 	       "  -w, --wrapper      use the libv4l2 wrapper library.\n"
+ #endif
++	       "  --which-is-try     set the 'which' argument to V4L2_SUBDEV_FORMAT_TRY instead of\n"
++	       "                     V4L2_SUBDEV_FORMAT_ACTIVE (the default)\n"
+ 	       "  --list-devices     list all v4l devices\n"
+ 	       "  --log-status       log the board status in the kernel log [VIDIOC_LOG_STATUS]\n"
+ 	       "  --get-priority     query the current access priority [VIDIOC_G_PRIORITY]\n"
+diff --git a/utils/v4l2-ctl/v4l2-ctl.cpp b/utils/v4l2-ctl/v4l2-ctl.cpp
+index e02dc756..9dced5b1 100644
+--- a/utils/v4l2-ctl/v4l2-ctl.cpp
++++ b/utils/v4l2-ctl/v4l2-ctl.cpp
+@@ -83,6 +83,7 @@ static struct option long_options[] = {
+ 	{"help-vbi", no_argument, 0, OptHelpVbi},
+ 	{"help-sdr", no_argument, 0, OptHelpSdr},
+ 	{"help-meta", no_argument, 0, OptHelpMeta},
++	{"help-subdev", no_argument, 0, OptHelpSubDev},
+ 	{"help-selection", no_argument, 0, OptHelpSelection},
+ 	{"help-misc", no_argument, 0, OptHelpMisc},
+ 	{"help-streaming", no_argument, 0, OptHelpStreaming},
+@@ -91,6 +92,7 @@ static struct option long_options[] = {
+ #ifndef NO_LIBV4L2
+ 	{"wrapper", no_argument, 0, OptUseWrapper},
+ #endif
++	{"which-is-try", no_argument, 0, OptWhichIsTry},
+ 	{"concise", no_argument, 0, OptConcise},
+ 	{"get-output", no_argument, 0, OptGetOutput},
+ 	{"set-output", required_argument, 0, OptSetOutput},
+@@ -115,6 +117,7 @@ static struct option long_options[] = {
+ 	{"list-formats-sdr-out", no_argument, 0, OptListSdrOutFormats},
+ 	{"list-formats-out", no_argument, 0, OptListOutFormats},
+ 	{"list-formats-meta", no_argument, 0, OptListMetaFormats},
++	{"list-subdev-mbus-codes", optional_argument, 0, OptListSubDevMBusCodes},
+ 	{"list-fields-out", no_argument, 0, OptListOutFields},
+ 	{"clear-clips", no_argument, 0, OptClearClips},
+ 	{"clear-bitmap", no_argument, 0, OptClearBitmap},
+@@ -1212,6 +1215,7 @@ int main(int argc, char **argv)
+ 	const char *wait_event_id = NULL;
+ 	__u32 poll_for_event = 0;	/* poll for this event */
+ 	const char *poll_event_id = NULL;
++	__u32 which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 	unsigned secs = 0;
+ 	char short_options[26 * 2 * 3 + 1];
+ 	int idx = 0;
+@@ -1274,6 +1278,9 @@ int main(int argc, char **argv)
+ 		case OptHelpMeta:
+ 			meta_usage();
+ 			return 0;
++		case OptHelpSubDev:
++			subdev_usage();
++			return 0;
+ 		case OptHelpSelection:
+ 			selection_usage();
+ 			return 0;
+@@ -1317,6 +1324,9 @@ int main(int argc, char **argv)
+ 			if (poll_for_event == 0)
+ 				return 1;
+ 			break;
++		case OptWhichIsTry:
++			which = V4L2_SUBDEV_FORMAT_TRY;
++			break;
+ 		case OptSleep:
+ 			secs = strtoul(optarg, 0L, 0);
+ 			break;
+@@ -1341,6 +1351,7 @@ int main(int argc, char **argv)
+ 			vbi_cmd(ch, optarg);
+ 			sdr_cmd(ch, optarg);
+ 			meta_cmd(ch, optarg);
++			subdev_cmd(ch, optarg);
+ 			selection_cmd(ch, optarg);
+ 			misc_cmd(ch, optarg);
+ 			streaming_cmd(ch, optarg);
+@@ -1480,6 +1491,7 @@ int main(int argc, char **argv)
+ 	vbi_set(fd);
+ 	sdr_set(fd);
+ 	meta_set(fd);
++	subdev_set(fd, which);
+ 	selection_set(fd);
+ 	streaming_set(fd, out_fd);
+ 	misc_set(fd);
+@@ -1497,6 +1509,7 @@ int main(int argc, char **argv)
+ 	vbi_get(fd);
+ 	sdr_get(fd);
+ 	meta_get(fd);
++	subdev_get(fd, which);
+ 	selection_get(fd);
+ 	misc_get(fd);
+ 	edid_get(fd);
+@@ -1512,6 +1525,7 @@ int main(int argc, char **argv)
+ 	vbi_list(fd);
+ 	sdr_list(fd);
+ 	meta_list(fd);
++	subdev_list(fd, which);
+ 	streaming_list(fd, out_fd);
+
+ 	if (options[OptWaitForEvent]) {
+diff --git a/utils/v4l2-ctl/v4l2-ctl.h b/utils/v4l2-ctl/v4l2-ctl.h
+index 3b56d8a6..2ac29268 100644
+--- a/utils/v4l2-ctl/v4l2-ctl.h
++++ b/utils/v4l2-ctl/v4l2-ctl.h
+@@ -10,6 +10,7 @@
+ #include <string>
+
+ #include <linux/videodev2.h>
++#include <linux/v4l2-subdev.h>
+
+ #ifndef NO_LIBV4L2
+ #include <libv4l2.h>
+@@ -58,6 +59,7 @@ enum Option {
+ 	OptGetVideoFormat = 'V',
+ 	OptSetVideoFormat = 'v',
+ 	OptUseWrapper = 'w',
++	OptWhichIsTry = 'W',
+
+ 	OptGetSlicedVbiOutFormat = 128,
+ 	OptGetOverlayFormat,
+@@ -97,6 +99,7 @@ enum Option {
+ 	OptListSdrOutFormats,
+ 	OptListOutFormats,
+ 	OptListMetaFormats,
++	OptListSubDevMBusCodes,
+ 	OptListOutFields,
+ 	OptClearClips,
+ 	OptClearBitmap,
+@@ -211,6 +214,7 @@ enum Option {
+ 	OptHelpVbi,
+ 	OptHelpSdr,
+ 	OptHelpMeta,
++	OptHelpSubDev,
+ 	OptHelpSelection,
+ 	OptHelpMisc,
+ 	OptHelpStreaming,
+@@ -345,6 +349,13 @@ void meta_set(int fd);
+ void meta_get(int fd);
+ void meta_list(int fd);
+
++// v4l2-ctl-subdev.cpp
++void subdev_usage(void);
++void subdev_cmd(int ch, char *optarg);
++void subdev_set(int fd, __u32 which);
++void subdev_get(int fd, __u32 which);
++void subdev_list(int fd, __u32 which);
++
+ // v4l2-ctl-selection.cpp
+ void selection_usage(void);
+ void selection_cmd(int ch, char *optarg);
