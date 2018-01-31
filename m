@@ -1,86 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752565AbeAaMeo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 07:34:44 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37544 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751662AbeAaMem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 07:34:42 -0500
-Date: Wed, 31 Jan 2018 12:34:34 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Cc: Neil Leeder <nleeder@codeaurora.org>,
-        Mark Langsdorf <mlangsdo@redhat.com>, Jon Masters <jcm@redhat.com>,
-        Timur Tabi <timur@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>, Mark Salter <msalter@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH 1/2] acpi: arm64: add iort support for PMCG
-Message-ID: <20180131123434.GA933@e107981-ln.cambridge.arm.com>
-References: <1501876754-1064-1-git-send-email-nleeder@codeaurora.org>
- <1501876754-1064-2-git-send-email-nleeder@codeaurora.org>
- <5FC3163CFD30C246ABAA99954A238FA8386400F7@FRAEML521-MBX.china.huawei.com>
- <20180130180013.GA16154@e107981-ln.cambridge.arm.com>
- <5FC3163CFD30C246ABAA99954A238FA838641882@FRAEML521-MBX.china.huawei.com>
+        id S1752765AbeAaMjt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 07:39:49 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:45094 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbeAaMjI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 07:39:08 -0500
+Date: Wed, 31 Jan 2018 13:38:59 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH] locking/qspinlock: Ensure node is initialised before
+ updating prev->next
+Message-ID: <20180131123859.GQ2269@hirez.programming.kicks-ass.net>
+References: <1517401246-2750-1-git-send-email-will.deacon@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA838641882@FRAEML521-MBX.china.huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1517401246-2750-1-git-send-email-will.deacon@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 12:10:47PM +0000, Shameerali Kolothum Thodi wrote:
+On Wed, Jan 31, 2018 at 12:20:46PM +0000, Will Deacon wrote:
+> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+> index 294294c71ba4..1ebbc366a31d 100644
+> --- a/kernel/locking/qspinlock.c
+> +++ b/kernel/locking/qspinlock.c
+> @@ -408,16 +408,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+>  	 */
+>  	if (old & _Q_TAIL_MASK) {
+>  		prev = decode_tail(old);
+> +
+>  		/*
+> -		 * The above xchg_tail() is also a load of @lock which generates,
+> -		 * through decode_tail(), a pointer.
+> -		 *
+> -		 * The address dependency matches the RELEASE of xchg_tail()
+> -		 * such that the access to @prev must happen after.
+> +		 * We must ensure that the stores to @node are observed before
+> +		 * the write to prev->next. The address dependency on xchg_tail
+> +		 * is not sufficient to ensure this because the read component
+> +		 * of xchg_tail is unordered with respect to the initialisation
+> +		 * of node.
+>  		 */
+> -		smp_read_barrier_depends();
 
-[...]
+Right, except you're patching old code here, please try again on a tree
+that includes commit:
 
-> > I went back and re-read the patches, I think the point here is that the
-> > perf driver (ie PATCH 2 that, by the way, is not maiinline) uses
-> > devm_ioremap_resource() to map the counters and that's what is causing
-> > failures when PMCG is part of SMMUv3 registers.
+  548095dea63f ("locking: Remove smp_read_barrier_depends() from queued_spin_lock_slowpath()")
+
+> -
+> -		WRITE_ONCE(prev->next, node);
+> +		smp_store_release(prev->next, node);
+>  
+>  		pv_wait_node(node, prev);
+>  		arch_mcs_spin_lock_contended(&node->locked);
+> -- 
+> 2.1.4
 > 
-> Thanks for going through this.  No, this is not where we are seeing the failure.
-> May be I was not clear in my earlier mail. The failure happens in SMMUv3
-> driver probe function when it calls devm_ioremap_resource().
-
-Understood - because the PMU PMCG driver calls it first, that's what
-I was referring to.
-
-My point is that:
-
-- the PMCG platform device resources should be built with the correct
-  resource hierarchy
-- and even then, I do not think that using devm_ioremap_resource() in
-  the PMCG PMU driver is the correct way of handling its resource
-  reservation (ie the kernel must be able to detect that a resource is
-  contained in a parent one but I am not sure devm_ioremap_resource()
-  is the way to handle this correctly)
-
-> > It is the resources hierarchy that is wrong and in turn, I do not think
-> > devm_request_mem_region() is the right way of requesting it for the
-> > PMCG driver.
-> > 
-> > I need to look into this but I suspect that's something that should
-> > be handled in the PMCG driver, that has to request the memory region
-> > _differently_ (ie ioremap copes with this overlap - it is the
-> > devm_request_mem_region() in devm_ioremap_resource() that fails, correct
-> > ?).
-> 
-> It looks like, in IORT code,
-> 
-> iort_add_platform_device()--> platform_device_add()-->insert_resource(), inserts
-> both SMMUv3 and PMCG resources into the resource tree and then when the probe
-> of SMMUv3 is called, it detects the conflict.
-> 
-> [   85.548749] arm-smmu-v3 arm-smmu-v3.0.auto: can't request region for resource [mem 0x148000000-0x14801ffff]                      
-> 
-> Of course, changing devm_ioremap_resource() to devm_ioremap() in SMMv3
-> driver probe solves the issue for us, but not sure that's the right approach or not.
-
-See above.
-
-Lorenzo
