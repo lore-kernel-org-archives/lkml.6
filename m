@@ -1,123 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753224AbeAaPGA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 10:06:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39028 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751899AbeAaPF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 10:05:59 -0500
-Subject: Re: [PATCH v2 16/16] arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
- hardening support
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Hanjun Guo <guohanjun@huawei.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>, Jon Masters <jcm@redhat.com>
-References: <20180129174559.1866-1-marc.zyngier@arm.com>
- <20180129174559.1866-17-marc.zyngier@arm.com>
- <476d111e-6fb0-9bef-2448-a94d0cc03f45@huawei.com>
- <49853e5e-f093-2e79-1cfb-182f51fcd6a0@arm.com>
- <CAKv+Gu-XidYPh0hi1nzG5m0AO7EfRE6bnKfxCToG+9zsmvzmNg@mail.gmail.com>
- <CAKv+Gu-L0WOLSUbcHSTQ_FVDNSJoXQv25ExUmtv8ZEYhkCSQ-Q@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <501451b6-cc84-e8d3-b7b6-49a7de953976@arm.com>
-Date: Wed, 31 Jan 2018 15:05:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1752858AbeAaPPh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 10:15:37 -0500
+Received: from mga18.intel.com ([134.134.136.126]:7443 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751447AbeAaPPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 10:15:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,440,1511856000";
+   d="scan'208";a="14856906"
+Subject: Re: [PATCH V3 0/5] bugs fix for large PEBS mmap read and rdpmc read
+To: Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>
+Cc: Stephane Eranian <eranian@google.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180130133917.GC29098@krava>
+ <6d708c09-52a7-a906-b651-b133a7b4f189@linux.intel.com>
+ <20180130150454.GE29098@krava>
+ <35090c62-466a-aec8-b1a3-69def959c1c6@linux.intel.com>
+ <CABPqkBRWtSsKEM7ycPs0HYSKLsYDmZhr4ztUmMMqsytYamPGsw@mail.gmail.com>
+ <24210bcb-0e4b-58fe-bcda-da30019f6e7e@linux.intel.com>
+ <20180130185212.GA16806@krava>
+ <CABPqkBRp9bDmGECStbAHA5Ja0SjJmDQ2SOceat=qXno707MuAA@mail.gmail.com>
+ <20180131035941.GW26209@tassilo.jf.intel.com> <20180131091539.GA3313@krava>
+ <20180131131505.GB31614@krava>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <b16cfe20-53e0-088b-f833-131e0e9e2210@linux.intel.com>
+Date: Wed, 31 Jan 2018 10:15:33 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-L0WOLSUbcHSTQ_FVDNSJoXQv25ExUmtv8ZEYhkCSQ-Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180131131505.GB31614@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/18 14:38, Ard Biesheuvel wrote:
-> On 31 January 2018 at 14:35, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->> On 31 January 2018 at 14:11, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>> On 31/01/18 13:56, Hanjun Guo wrote:
->>>> Hi Marc,
->>>>
->>>> On 2018/1/30 1:45, Marc Zyngier wrote:
->>>>>  static int enable_psci_bp_hardening(void *data)
->>>>>  {
->>>>>      const struct arm64_cpu_capabilities *entry = data;
->>>>>
->>>>> -    if (psci_ops.get_version)
->>>>> +    if (psci_ops.get_version) {
->>>>> +            if (check_smccc_arch_workaround_1(entry))
->>>>> +                    return 0;
->>>>
->>>> If I'm using the new version SMCCC, the firmware have the choicARM_SMCCC_ARCH_WORKAROUND_1e to decide
->>>> whether this machine needs the workaround, even if the CPU is vulnerable
->>>> for CVE-2017-5715, but..
->>>>
->>>>> +
->>>>>              install_bp_hardening_cb(entry,
->>>>>                                     (bp_hardening_cb_t)psci_ops.get_version,
->>>>>                                     __psci_hyp_bp_inval_start,
->>>>>                                     __psci_hyp_bp_inval_end);
->>>>
->>>> ..the code above seems will enable get_psci_version() for CPU and will
->>>> trap to trust firmware even the new version of firmware didn't say
->>>> we need the workaround, did I understand it correctly?
->>>
->>> Well, you only get there if we've established that your CPU is affected
->>> (it has an entry matching its MIDR with the HARDEN_BRANCH_PREDICTOR
->>> capability), and that entry points to enable_psci_bp_hardening. It is
->>> not the firmware that decides whether we need hardening, but the kernel.
->>> The firmware merely provides a facility to apply the hardening.
->>>
->>>> I'm ask this because some platform will not expose to users to
->>>> take advantage of CVE-2017-5715, and we can use different firmware
->>>> to report we need such workaround or not, then use a single kernel
->>>> image for both vulnerable platforms and no vulnerable ones.
->>>
->>> You cannot have your cake and eat it. If you don't want to workaround
->>> the issue, you can disable the hardening. But asking for the same kernel
->>> to do both depending on what the firmware reports doesn't make much
->>> sense to me.
->>
->> The SMCCC v1.1. document does appear to imply that systems that
->> implement SMCCC v1.1 but don't implement ARM_SMCCC_ARCH_WORKAROUND_1
->> should be assumed to be unaffected.
->>
->> """
->> If the discovery call returns NOT_SUPPORTED:
->> • SMCCC_ARCH_WORKAROUND_1 must not be invoked on any PE in the system, and
->> • none of the PEs in the system require firmware mitigation for CVE-2017-5715.
->> """
->>
->> How to deal with conflicting information in this regard (quirk table
->> vs firmware implementation) is a matter of policy, of course.
 
-Yup. And the current approach fits the spec, I believe. The
-PSCI_GET_VERSION band-aid should normally be removed shortly after these
-patches hit mainline.
 
+On 1/31/2018 8:15 AM, Jiri Olsa wrote:
+> On Wed, Jan 31, 2018 at 10:15:39AM +0100, Jiri Olsa wrote:
+>> On Tue, Jan 30, 2018 at 07:59:41PM -0800, Andi Kleen wrote:
+>>>> Still, the part I am missing here, is why asking for
+>>>> PERF_SAMPLE_PERIOD voids large PEBS.
+>>>
+>>> I think it was disabled together with frequency mode
+>>> (which we could support too, but it's a bit more work)
+>>>
+>>> But yes PERIOD could probably be allowed.
+>>
+>> looks like it's just a matter of adding PERF_SAMPLE_PERIOD
+>> into PEBS_FREERUNNING_FLAGS, we already populate period
+>> in setup_pebs_sample_data
+>>
+>> jirka
+>>
+>>
+>> ---
+>> diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+>> index 8e4ea143ed96..78f91ec1056e 100644
+>> --- a/arch/x86/events/perf_event.h
+>> +++ b/arch/x86/events/perf_event.h
+>> @@ -93,7 +93,8 @@ struct amd_nb {
+>>   	PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_STREAM_ID | \
+>>   	PERF_SAMPLE_DATA_SRC | PERF_SAMPLE_IDENTIFIER | \
+>>   	PERF_SAMPLE_TRANSACTION | PERF_SAMPLE_PHYS_ADDR | \
+>> -	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER)
+>> +	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER | \
+>> +	PERF_SAMPLE_PERIOD)
 > 
-> ... and actually, perhaps it makes sense for the
-> SMCCC_ARCH_WORKAROUND_1 check to be completely independent of MIDR
-> based errata matching?
+> seems to work, getting large PEBS event for following command line:
 > 
-> I.e., if SMCCC v1.1 and SMCCC_ARCH_WORKAROUND_1 are both implemented,
-> we should probably invoke it even if the MIDR is not known to belong
-> to an affected implementation.
+>    perf record -e cycles:P -c 100 --no-timestamp -C 0 --period
+> 
+> 
 
-This would have an impact on big-little systems, for which there is
-often a bunch of unaffected CPUs.
+Yes, I tried the patch. The large PEBS can be enabled with the PERIOD 
+flag. Everything looks good.
+
+Jirka, could you please post the patch as well?
 
 Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Kan
