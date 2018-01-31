@@ -1,78 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752830AbeAaBzb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 20:55:31 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:41330 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751639AbeAaBza (ORCPT
+        id S1752772AbeAaB5z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 20:57:55 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39371 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751251AbeAaB5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 20:55:30 -0500
-X-Google-Smtp-Source: AH8x225erobDwd7nM1WwDANR2UaiAGVxZWvmB0eN8fBQgkVZ2gpeXmnnT21UVACWxRShYADouxVRDA==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
-Message-Id: <0FC27C54-C199-4A6A-9948-E7AD9D3B86BD@lightnvm.io>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_DB1E0402-3C01-4D72-A1DD-86D2A5AFC2B2";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] lightnvm: remove chnl_offset in nvme_nvm_identity
-Date: Wed, 31 Jan 2018 09:55:11 +0800
-In-Reply-To: <20180130143050.18355-1-mb@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-References: <20180130143050.18355-1-mb@lightnvm.io>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Tue, 30 Jan 2018 20:57:54 -0500
+X-Google-Smtp-Source: AH8x226JOnkBFbRXhbUPxOpYGPn47W7/jhQfi6POYqrSkKGhqSi8Kpm8Tovk71ma3cJUKJmyaiiyI7adpCZZ04ccdgU=
+MIME-Version: 1.0
+In-Reply-To: <6967b972-129a-a7f0-06ab-c48dc9709726@oracle.com>
+References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
+ <CAJWu+opnNgfVxhgHwLft_qcLMeikEAbNY0zci0WtgQiFkVVjhg@mail.gmail.com> <6967b972-129a-a7f0-06ab-c48dc9709726@oracle.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Tue, 30 Jan 2018 17:57:52 -0800
+Message-ID: <CAJWu+orYPDy3H2TCtB_FZWrMx18F_ePnD=Gdfj=pKg4HVaLjTQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in select_idle_sibling
+To: Rohit Jain <rohit.k.jain@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        "Cc: EAS Dev" <eas-dev@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 30, 2018 at 11:47 AM, Rohit Jain <rohit.k.jain@oracle.com> wrote:
+[...]
+>>>
+>>> Currently fast path in the scheduler looks for an idle CPU to schedule
+>>> threads on. Capacity is taken into account in the function
+>>> 'select_task_rq_fair' when it calls 'wake_cap', however it ignores the
+>>> instantaneous capacity and looks at the original capacity. Furthermore
+>>> select_idle_sibling path of the code, ignores the RT/IRQ threads which
+>>> are also running on the CPUs it is looking to schedule fair threads on.
+>>>
+>>> We don't necessarily have to force the code to go to slow path (by
+>>> modifying wake_cap), instead we could do a better selection of the CPU
+>>> in the current domain itself (i.e. in the fast path).
+>>>
+>>> This patch makes the fast path aware of capacity, resulting in overall
+>>> performance improvements as shown in the test results.
+>>>
+>> [...]
+>>>
+>>> I also ran uperf and sysbench MySQL workloads but I see no statistically
+>>> significant change.
+>>>
+>>> Signed-off-by: Rohit Jain<rohit.k.jain@oracle.com>
+>>> ---
+>>>   kernel/sched/fair.c | 38 ++++++++++++++++++++++++++++----------
+>>>   1 file changed, 28 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index 26a71eb..ce5ccf8 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -5625,6 +5625,11 @@ static unsigned long capacity_orig_of(int cpu)
+>>>          return cpu_rq(cpu)->cpu_capacity_orig;
+>>>   }
+>>>
+>>> +static inline bool full_capacity(int cpu)
+>>> +{
+>>> +       return capacity_of(cpu) >= (capacity_orig_of(cpu)*3)/4;
+>>> +}
+>>> +
+>>>   static unsigned long cpu_avg_load_per_task(int cpu)
+>>>   {
+>>>          struct rq *rq = cpu_rq(cpu);
+>>> @@ -6081,7 +6086,7 @@ static int select_idle_core(struct task_struct *p,
+>>> struct sched_domain *sd, int
+>>>
+>>>                  for_each_cpu(cpu, cpu_smt_mask(core)) {
+>>>                          cpumask_clear_cpu(cpu, cpus);
+>>> -                       if (!idle_cpu(cpu))
+>>> +                       if (!idle_cpu(cpu) || !full_capacity(cpu))
+>>>                                  idle = false;
+>>>                  }
+>>
+>> There's some difference in logic between select_idle_core and
+>> select_idle_cpu as far as the full_capacity stuff you're adding goes.
+>> In select_idle_core, if all CPUs are !full_capacity, you're returning
+>> -1. But in select_idle_cpu you're returning the best idle CPU that's
+>> the most cap among the !full_capacity ones. Why there is this
+>> different in logic? Did I miss something?
+>
+>
+> This is the previous discussion on this same code. I measured the
+> performance difference and saw no statistically significant impact,
+> hence went with your suggestion of simpler code.
 
---Apple-Mail=_DB1E0402-3C01-4D72-A1DD-86D2A5AFC2B2
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+Dude :) That is hardly an answer to the question I asked. Hint:
+*different in logic*.
 
-> On 30 Jan 2018, at 22.30, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> The identity structure is initialized to zero in the beginning of
-> the nvme_nvm_identity function. The chnl_offset is separately set to
-> zero. Since both the variable and assignment is never changed, remove
-> them.
->=20
-> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
-> ---
-> drivers/nvme/host/lightnvm.c | 4 +---
-> 1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-
-Looks good.
-
-Reviewed-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
-
-
---Apple-Mail=_DB1E0402-3C01-4D72-A1DD-86D2A5AFC2B2
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlpxIgAACgkQYx8FO3WZ
-GMowKA/9F/+E7j9dKWNC3V3RclaZ16XB2kakTmFGQSObwC/Pir2jl4BJnhGlhkwU
-1CnLDyRA6M3fSHJ4mg6riwVcSJCQNsxBIUG+6tE4hHTdu85yvxNROXoMfq5dLHVW
-rb1wTaGULk5O3lJJS4xNd/l1GGxRhpM+r9rShSbJmHJlx7xVAWJAX39uKFT9YmOq
-jF2yd/i/ZF6+H/uXB9/nGOPdpoXCCzbbwAGIfQu7qhx8WVXdumDxwl8O+rvHf4M/
-dslgwInOZ3sRig+TNhhlDPHk57KxtA1Dkng7OYgEV++wmq8DpgWyljW4Gs2nvr2s
-OIyzsBF8P52y+TaovSxQn6+qL+ZGVWOAt2qzxNzCPm9k5Nv3UIblam39MMYTrw0V
-6RpxEdNW8kWzREb/R0hxKnkZWh2PhfJzwAEzNZ0QM2Ov2fFkfj0t+WHgnWCXmP5+
-UneRECK9z3bygjwDaGIkgTRwTP4O+z8QqiRtePfCPpCGWlysoRjBNlRBN19c+NJY
-5dllLKkVde7LW/2pGz6AJZynokjpSxUkeDrKmALvEw/zpW8JWPT5yna8qE1ZHAHI
-eUvz5Gx3aoji4if7r5fJbg6n6S1CkLOFRxCW1DRGYOCfgkNRmLg3ywsd/4oAZxGL
-b9qnMgXYLFANRaGjXeWWBxFMJ53mJODO+lKlsmqsgv6qYX/GG7s=
-=j6gu
------END PGP SIGNATURE-----
-
---Apple-Mail=_DB1E0402-3C01-4D72-A1DD-86D2A5AFC2B2--
+- Joel
