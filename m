@@ -1,126 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753871AbeAaJrY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 04:47:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58826 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753430AbeAaJrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 04:47:21 -0500
-Date: Wed, 31 Jan 2018 10:47:17 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Tejun Heo <tj@kernel.org>, kernel-team@fb.com, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch -mm v2 1/3] mm, memcg: introduce per-memcg oom policy
- tunable
-Message-ID: <20180131094717.GR21609@dhcp22.suse.cz>
-References: <alpine.DEB.2.10.1801161812550.28198@chino.kir.corp.google.com>
- <alpine.DEB.2.10.1801251552320.161808@chino.kir.corp.google.com>
- <alpine.DEB.2.10.1801251552490.161808@chino.kir.corp.google.com>
- <20180126171548.GB16763@dhcp22.suse.cz>
- <alpine.DEB.2.10.1801291418150.29670@chino.kir.corp.google.com>
- <20180130085013.GP21609@dhcp22.suse.cz>
- <alpine.DEB.2.10.1801301413080.148885@chino.kir.corp.google.com>
+        id S1753890AbeAaJrv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 04:47:51 -0500
+Received: from mail-vk0-f47.google.com ([209.85.213.47]:38133 "EHLO
+        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754011AbeAaJqr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 04:46:47 -0500
+X-Google-Smtp-Source: AH8x225NlSswncia2QRDvx6Po1CS8SgFx6PtDomcS72MpfqTqtl+N8ALbwbaKIFwj2csRxAWNrr0HA==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.10.1801301413080.148885@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <e75c24da-4856-ae50-6dc9-604c885e4040@xs4all.nl>
+References: <20180126060216.147918-1-acourbot@chromium.org>
+ <ced425a2-8b66-05c6-367d-46a0a40b1873@xs4all.nl> <CAPBb6MU5Ph=_rH_TOQi5mstujAPMTWqC_1d-8_TcuGx25sOJvg@mail.gmail.com>
+ <307f58dd-ce7e-b6f5-092a-f8679349be73@xs4all.nl> <CAAFQd5AbdAGteHOfKH4EoHUNSmsfCYtExVX9TSK8aWsQZ4HVJg@mail.gmail.com>
+ <e75c24da-4856-ae50-6dc9-604c885e4040@xs4all.nl>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 31 Jan 2018 18:46:23 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Dj+z_FUzsBorE3eNhrU-RBJ=HviRjAUF3f5_O8iDnkEw@mail.gmail.com>
+Message-ID: <CAAFQd5Dj+z_FUzsBorE3eNhrU-RBJ=HviRjAUF3f5_O8iDnkEw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/8] [media] Request API, take three
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 30-01-18 14:38:40, David Rientjes wrote:
-> On Tue, 30 Jan 2018, Michal Hocko wrote:
-> 
-> > > > So what is the actual semantic and scope of this policy. Does it apply
-> > > > only down the hierarchy. Also how do you compare cgroups with different
-> > > > policies? Let's say you have
-> > > >           root
-> > > >          / |  \
-> > > >         A  B   C
-> > > >        / \    / \
-> > > >       D   E  F   G
-> > > > 
-> > > > Assume A: cgroup, B: oom_group=1, C: tree, G: oom_group=1
-> > > > 
-> > > 
-> > > At each level of the hierarchy, memory.oom_policy compares immediate 
-> > > children, it's the only way that an admin can lock in a specific oom 
-> > > policy like "tree" and then delegate the subtree to the user.  If you've 
-> > > configured it as above, comparing A and C should be the same based on the 
-> > > cumulative usage of their child mem cgroups.
-> > 
-> > So cgroup == tree if we are memcg aware OOM killing, right? Why do we
-> > need both then? Just to make memcg aware OOM killing possible?
-> > 
-> 
-> We need "tree" to account the usage of the subtree rather than simply the 
-> cgroup alone, but "cgroup" and "tree" are accounted with the same units.  
-> In your example, D and E are treated as individual memory consumers and C 
-> is treated as the sum of all subtree memory consumers.
+On Wed, Jan 31, 2018 at 5:47 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 01/31/2018 09:10 AM, Tomasz Figa wrote:
+>> Hi Hans,
+>>
+>> Sorry for joining the party late.
+>>
+>> On Wed, Jan 31, 2018 at 4:50 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>> On 01/30/2018 07:31 AM, Alexandre Courbot wrote:
+>>>> Hi Hans,
+>>>>
+>>>> On Mon, Jan 29, 2018 at 8:21 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>>>> On 01/26/2018 07:02 AM, Alexandre Courbot wrote:
+>>>>>> Howdy. Here is your bi-weekly request API redesign! ;)
+>>>>>>
+>>>>>> Again, this is a simple version that only implements the flow of requests,
+>>>>>> without applying controls. The intent is to get an agreement on a base to work
+>>>>>> on, since the previous versions went straight back to the redesign board.
+>>>>>>
+>>>>>> Highlights of this version:
+>>>>>>
+>>>>>> * As requested by Hans, request-bound buffers are now passed earlier to drivers,
+>>>>>> as early as the request itself is submitted. Doing it earlier is not be useful
+>>>>>> since the driver would not know the state of the request, and thus cannot do
+>>>>>> anything with the buffer. Drivers are now responsible for applying request
+>>>>>> parameters themselves.
+>>>>>>
+>>>>>> * As a consequence, there is no such thing as a "request queue" anymore. The
+>>>>>> flow of buffers decides the order in which requests are processed. Individual
+>>>>>> devices of the same pipeline can implement synchronization if needed, but this
+>>>>>> is beyond this first version.
+>>>>>>
+>>>>>> * VB2 code is still a bit shady. Some of it will interfere with the fences
+>>>>>> series, so I am waiting for the latter to land to do it properly.
+>>>>>>
+>>>>>> * Requests that are not yet submitted effectively act as fences on the buffers
+>>>>>> they own, resulting in the buffer queue being blocked until the request is
+>>>>>> submitted. An alternate design would be to only block the
+>>>>>> not-submitted-request's buffer and let further buffers pass before it, but since
+>>>>>> buffer order is becoming increasingly important I have decided to just block the
+>>>>>> queue. This is open to discussion though.
+>>>>>
+>>>>> I don't think we should mess with the order.
+>>>>
+>>>> Agreed, let's keep it that way then.
+>>>>
+>>
+>> I'm not sure I'm following here. Does it mean (quoting Alex):
+>>
+>> a) "Requests that are not yet submitted effectively act as fences on the buffers
+>>     they own, resulting in the buffer queue being blocked until the request is
+>>     submitted."
+>>
+>> b) "block the not-submitted-request's buffer and let further buffers
+>> pass before it"
+>>
+>> or neither?
+>>
+>> Hans, could you clarify what you think is the right behavior here?
+>
+> I think I misread the text. Alexandre, buffers in not-yet-submitted requests
+> should not act as fences. They are similar to buffers that are prepared
+> through the VIDIOC_PREPARE_BUF call. They are just sitting there and won't
+> be in the queue until someone calls QBUF.
+>
+> It's the same for not-yet-submitted requests: the buffers don't act as
+> fences until the request is submitted.
 
-It seems I am still not clear with my question. What kind of difference
-does policy=cgroup vs. none on A? Also what kind of different does it
-make when a leaf node has cgroup policy?
+Thanks for explanation.
 
-[...]
+To be 100% sure, that would mean that a buffer is added into the vb2
+queue as soon as the request that includes related QBUF call is
+queued, right?
 
-> > So now you have a killable cgroup selected by process criterion? That
-> > just doesn't make any sense. So I guess it would at least require to
-> > enforce (cgroup || tree) to allow oom_group.
-> > 
-> 
-> Hmm, I'm not sure why we would limit memory.oom_group to any policy.  Even 
-> if we are selecting a process, even without selecting cgroups as victims, 
-> killing a process may still render an entire cgroup useless and it makes 
-> sense to kill all processes in that cgroup.  If an unlucky process is 
-> selected with today's heursitic of oom_badness() or with a "none" policy 
-> with my patchset, I don't see why we can't enable the user to kill all 
-> other processes in the cgroup.  It may not make sense for some trees, but 
-> but I think it could be useful for others.
+>
+> Interesting related questions: how does VIDIOC_PREPARE_BUF interact with
+> a request? What happens if a buffer is added to a non-yet-submitted request
+> and userspace calls VIDIOC_QBUF with that same buffer but with no request?
+>
+> This all needs to be defined.
 
-My intuition screams here. I will think about this some more but I would
-be really curious about any sensible usecase when you want sacrifice the
-whole gang just because of one process compared to other processes or
-cgroups is too large. Do you see how you are mixing entities here?
+That sounds like a failure to me. Actually very similar to trying to
+call QBUF twice on the same buffer, without dequeuing it. What would
+be the behavior in such case?
 
-> > > Right, a policy of "none" reverts its subtree back to per-process 
-> > > comparison if you are either not using the cgroup aware oom killer or your 
-> > > subtree is not using the cgroup aware oom killer.
-> > 
-> > So how are you going to compare none cgroups with those that consider
-> > full memcg or hierarchy (cgroup, tree)? Are you going to consider
-> > oom_score_adj?
-> > 
-> 
-> No, I think it would make sense to make the restriction that to set 
-> "none", the ancestor mem cgroups would also need the same policy,
+>
+>>
+>>>>>> * For the codec usecase, I have experimented a bit marking CAPTURE buffers with
+>>>>>> the request FD that produced them (vim2m acts that way). This seems to work
+>>>>>> well, however FDs are process-local and could be closed before the CAPTURE
+>>>>>> buffer is dequeued, rendering that information less meaningful, if not
+>>>>>> dangerous.
+>>>>>
+>>>>> I don't follow this. Once the fd is passed to the kernel its refcount should be
+>>>>> increased so the data it represents won't be released if userspace closes the fd.
+>>>>
+>>>> The refcount of the request is increased. The refcount of the FD is
+>>>> not, since it is only a userspace reference to the request.
+>>>
+>>> I don't think that's right. Looking at how dma-buf does this (dma_buf_get in
+>>> dma-buf.c) it calls fget(fd) which increases the fd refcount. In fact, as far as
+>>> I can see the struct dma_buf doesn't have a refcount, it is solely refcounted
+>>> through the fd. That's probably the model you want to follow.
+>>
+>> As far as I can see from the code, fget() on an fd increases a
+>> reference count on the struct file backing the fd. I don't think there
+>> is another level of reference counting of fds themselves - that's why
+>> dup(fd) gives you another fd and you can't call close(fd) on the same
+>> fd two times.
+>>
+>>>
+>>>>
+>>>>>
+>>>>> Obviously if userspace closes the fd it cannot do anything with it anymore, but
+>>>>> it shouldn't be 'dangerous' AFAICT.
+>>>>
+>>>> It userspace later gets that closed FD back from a DQBUF call, and
+>>>> decides to use it again, then we would have a problem. I agree that it
+>>>> is userspace responsibility to be careful here, but making things
+>>>> foolproof never hurts.
+>>>
+>>> I think all the issues will go away if you refcount the fd instead of the
+>>> request. It worked well for dma-buf for years.
+>>
+>> I'm confused here. The kernel never returns the same FD for the same
+>> DMA-buf twice. Every time an ioctl is called, which returns a DMA-buf
+>> FD, it creates a new FD.
+>
+> Sorry, where I say 'refcount the fd' I indeed meant 'refcount the file struct'.
+>
+> Looking at the code in the patch series I see:
+>
+> +struct media_request *
+> +media_request_get_from_fd(int fd)
+> +{
+> +       struct file *f;
+> +       struct media_request *req;
+> +
+> +       f = fget(fd);
+> +       if (!f)
+> +               return NULL;
+> +
+> +       /* Not a request FD? */
+> +       if (f->f_op != &request_fops) {
+> +               fput(f);
+> +               return NULL;
+> +       }
+> +
+> +       req = f->private_data;
+> +       media_request_get(req);
+> +       fput(f);
+> +
+> +       return req;
+> +}
+> +EXPORT_SYMBOL_GPL(media_request_get_from_fd);
+>
+> So this does not refcount the file struct but the request struct, and I think
+> that's wrong. The file struct represents the request struct, and it is the
+> file struct that should be refcounted. So when you give a request_fd to
+> VIDIOC_QBUF, then the refcount should be increased since vb2 now needs to
+> hold on to it. It's what dma-buf does.
+>
+> Now, I agree that if userspace closes the fd before kernelspace is finished
+> with it, then the request_fd returned by VIDIOC_DQBUF is no longer valid.
+> But so what? It's the same with the dma-buf fd. I don't think this is a problem
+> at all.
 
-I do not understand. Get back to our example. Are you saying that G
-with none will enforce the none policy to C and root? If yes then this
-doesn't make any sense because you are not really able to delegate the
-oom policy down the tree at all. It would effectively make tree policy
-pointless.
+Okay, I feel like we're much more on the same page now, thanks for
+clarification. ;)
 
-I am skipping the rest of the following text because it is picking
-on details and the whole design is not clear to me. So could you start
-over documenting semantic and requirements. Ideally by describing:
-- how does the policy on the root of the OOM hierarchy controls the
-  selection policy
-- how does the per-memcg policy act during the tree walk - for both
-  intermediate nodes and leafs
-- how does the oom killer act based on the selected memcg
-- how do you compare tasks with memcgs
+I'm still wondering if having the link from-buffer-to-request is the
+most convenient for userspace, though. One possible scenario where I
+think this might be problematic is when the request FD is shared with
+another process, e.g. one process creating the requests, filling them
+in and submitting and separate process dequeuing and handling
+completed requests. In this case, the FD used for queuing the request
+and the FD used for dequeuing the request would be different. Not sure
+how we could handle it.
 
-[...]
+An alternative approach that would let us completely avoid this kind
+of unique identifier problem, would bo to have links
+from-request-to-buffers. The process that dequeues the requests would
+then query the dequeued request for the buffers related to it. For
+example, DQBUF could be made symmetric to QBUF with respect to the
+request FD and it would only dequeue buffers related to given request.
 
--- 
-Michal Hocko
-SUSE Labs
+Best regards,
+Tomasz
