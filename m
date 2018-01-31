@@ -1,78 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752799AbeAaVDr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 16:03:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751886AbeAaVDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 16:03:46 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B405E21799
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AH8x227ic3CDwV/MPlJ4TnlF96if/KEYDeJhu9+rSS5a2KTJF/dC8PU19chGY06dnmPi8dWzlWIBrJH2OWekrA+4mAs=
+        id S1753160AbeAaVGQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 16:06:16 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:43742 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752711AbeAaVGN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 16:06:13 -0500
+X-Google-Smtp-Source: AH8x225czMaK+4wfILfqna65QKLqzAZ0246g7Dp1f2TvnLwbGpJbj7l97xnzoNSxzlmONJxDEcT8Rg==
+Date: Wed, 31 Jan 2018 13:06:09 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <bot+0665d43fa62276c7a5e3372929aa0bab96260979@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
+        vyasevich@gmail.com, lucien.xin@gmail.com
+Subject: Re: KASAN: slab-out-of-bounds Read in sctp_send_reset_streams
+Message-ID: <20180131210609.bdrbl3tblkcpvbvb@gmail.com>
+References: <001a1140b830592056055fe5ec80@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180131210039.18273-1-namit@vmware.com>
-References: <20180131210039.18273-1-namit@vmware.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Wed, 31 Jan 2018 13:03:24 -0800
-X-Gmail-Original-Message-ID: <CALCETrV+4Yri3hr5fSDSj7di+z3ZnBpQWQO7w7vfWVT+N_XrOg@mail.gmail.com>
-Message-ID: <CALCETrV+4Yri3hr5fSDSj7di+z3ZnBpQWQO7w7vfWVT+N_XrOg@mail.gmail.com>
-Subject: Re: [PATCH v2] x86: Align TLB invalidation info
-To: Nadav Amit <namit@vmware.com>
-Cc: X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>, Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <001a1140b830592056055fe5ec80@google.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 1:00 PM, Nadav Amit <namit@vmware.com> wrote:
-> The TLB invalidation info is allocated on the stack, which might cause
-> it to be unaligned. Since this information may be transferred to
-> different cores for TLB shootdown, this might result in an additional
-> cache-line bouncing between the cores.
->
-> We do not use __cacheline_aligned() since it also defines the section,
-> which is inappropriate for stack variables.
->
-> Signed-off-by: Nadav Amit <namit@vmware.com>
->
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-
-Acked-by: Andy Lutomirski <luto@kernel.org>
-
-This is basically free and adds no mess, so I think it's probably okay
-even in the absence that it's a huge win.
-
-But Dave is right, the commit message needs updating.  It will reduce
-the number of cachelines that become shared and then get exclusively
-owned by the originator from 2 to 1.  This isn't really "bouncing".
-
->
-> --
-> v1 -> v2: use __aligned instead of all the mess (Andy)
+On Sat, Dec 09, 2017 at 02:40:00AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzkaller hit the following crash on
+> 328b4ed93b69a6f2083d52f31a240a09e5de386a
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> C reproducer is attached
+> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> for information about syzkaller reproducers
+> 
+> 
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in sctp_send_reset_streams+0xadf/0xc10
+> net/sctp/stream.c:314
+> Read of size 2 at addr ffff8801d8a6c048 by task syzkaller104411/3085
+> 
+> CPU: 0 PID: 3085 Comm: syzkaller104411 Not tainted 4.15.0-rc2+ #119
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  print_address_description+0x73/0x250 mm/kasan/report.c:252
+>  kasan_report_error mm/kasan/report.c:351 [inline]
+>  kasan_report+0x25b/0x340 mm/kasan/report.c:409
+>  __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:428
+>  sctp_send_reset_streams+0xadf/0xc10 net/sctp/stream.c:314
+>  sctp_setsockopt_reset_streams net/sctp/socket.c:3905 [inline]
+>  sctp_setsockopt+0x70d/0x5d50 net/sctp/socket.c:4195
+>  compat_sock_common_setsockopt+0x104/0x140 net/core/sock.c:2981
+>  C_SYSC_setsockopt net/compat.c:403 [inline]
+>  compat_SyS_setsockopt+0x17c/0x410 net/compat.c:386
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
+>  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
+>  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
+> RIP: 0023:0xf7f1bc79
+> RSP: 002b:00000000ff9893bc EFLAGS: 00000282 ORIG_RAX: 000000000000016e
+> RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000000084
+> RDX: 0000000000000077 RSI: 000000002018b000 RDI: 0000000000000008
+> RBP: 000000000000001c R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> 
+> Allocated by task 3085:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
+>  __do_kmalloc mm/slab.c:3711 [inline]
+>  __kmalloc_track_caller+0x15e/0x760 mm/slab.c:3726
+>  memdup_user+0x2c/0x90 mm/util.c:164
+>  sctp_setsockopt_reset_streams net/sctp/socket.c:3897 [inline]
+>  sctp_setsockopt+0x6a6/0x5d50 net/sctp/socket.c:4195
+>  compat_sock_common_setsockopt+0x104/0x140 net/core/sock.c:2981
+>  C_SYSC_setsockopt net/compat.c:403 [inline]
+>  compat_SyS_setsockopt+0x17c/0x410 net/compat.c:386
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
+>  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
+>  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
+> 
+> Freed by task 16:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
+>  __cache_free mm/slab.c:3491 [inline]
+>  kfree+0xca/0x250 mm/slab.c:3806
+>  selinux_cred_free+0x48/0x70 security/selinux/hooks.c:3814
+>  security_cred_free+0x48/0x80 security/security.c:995
+>  put_cred_rcu+0x106/0x400 kernel/cred.c:117
+>  __rcu_reclaim kernel/rcu/rcu.h:195 [inline]
+>  rcu_do_batch kernel/rcu/tree.c:2758 [inline]
+>  invoke_rcu_callbacks kernel/rcu/tree.c:3012 [inline]
+>  __rcu_process_callbacks kernel/rcu/tree.c:2979 [inline]
+>  rcu_process_callbacks+0xd74/0x17d0 kernel/rcu/tree.c:2996
+>  __do_softirq+0x29d/0xbb2 kernel/softirq.c:285
+> 
+> The buggy address belongs to the object at ffff8801d8a6c040
+>  which belongs to the cache kmalloc-32 of size 32
+> The buggy address is located 8 bytes inside of
+>  32-byte region [ffff8801d8a6c040, ffff8801d8a6c060)
+> The buggy address belongs to the page:
+> page:000000006b05592a count:1 mapcount:0 mapping:000000001ca7267d
+> index:0xffff8801d8a6cfc1
+> flags: 0x2fffc0000000100(slab)
+> raw: 02fffc0000000100 ffff8801d8a6c000 ffff8801d8a6cfc1 000000010000003f
+> raw: ffffea000762f920 ffffea00076133e0 ffff8801db0001c0 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>  ffff8801d8a6bf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff8801d8a6bf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > ffff8801d8a6c000: fb fb fb fb fc fc fc fc 00 fc fc fc fc fc fc fc
+>                                               ^
+>  ffff8801d8a6c080: fb fb fb fb fc fc fc fc 00 00 00 00 fc fc fc fc
+>  ffff8801d8a6c100: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+> ==================================================================
+> 
+> 
 > ---
->  arch/x86/mm/tlb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 5bfe61a5e8e3..9690112e3a82 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -576,7 +576,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
->  {
->         int cpu;
->
-> -       struct flush_tlb_info info = {
-> +       struct flush_tlb_info info __aligned(SMP_CACHE_BYTES) = {
->                 .mm = mm,
->         };
->
-> --
-> 2.14.1
->
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
+> 
+> syzbot will keep track of this bug report.
+> Once a fix for this bug is merged into any tree, reply to this email with:
+> #syz fix: exact-commit-title
+
+This crash is no longer occurring.  I assume it was fixed by commit
+2342b8d95bcae5 (thanks Xin!), so let's tell syzbot:
+
+#syz fix: sctp: make sure stream nums can match optlen in sctp_setsockopt_reset_streams
+
+- Eric
