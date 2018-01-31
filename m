@@ -1,75 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751619AbeAaF3y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 00:29:54 -0500
-Received: from gateway32.websitewelcome.com ([192.185.144.98]:15087 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751163AbeAaF3w (ORCPT
+        id S1751842AbeAaFgU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 00:36:20 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:51712 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbeAaFgT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 00:29:52 -0500
-Date: Tue, 30 Jan 2018 23:29:48 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Ilya Dryomov <idryomov@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
-        Sage Weil <sage@redhat.com>, "David S. Miller" <davem@davemloft.net>
-Cc: ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] libceph: use 64-bit arithmetic instead of 32-bit
-Message-ID: <20180131052948.GA16419@embeddedgus>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.201.65
-X-Source-L: No
-X-Exim-ID: 1egkxz-002zhY-J3
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.152.201.65]:56046
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 31 Jan 2018 00:36:19 -0500
+From: Mike Kravetz <mike.kravetz@oracle.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Hugh Dickins <hughd@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@gmail.com>,
+        David Herrmann <dh.herrmann@gmail.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH v2 0/3] restructure memfd code
+Date: Tue, 30 Jan 2018 18:29:08 -0800
+Message-Id: <20180131022911.23947-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.13.6
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8790 signatures=668657
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=740
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1801310072
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cast objsetno to u64 in order to give the compiler complete
-information about the proper arithmetic to use. Notice
-that this variable is used in a context that expects an
-expression of type u64 (64 bits, unsigned).
+I've had these patches sitting around for a few months.  They are not
+critical, but might be desirable in some unusual configurations.  They
+depend on code in mmotm and linux-next that is not yet upstream, and
+apply to those repos.
 
-The expression objsetno * sc + stripepos is currently
-being evaluated using 32-bit arithmetic.
+With the addition of memfd hugetlbfs support, we now have the situation
+where memfd depends on TMPFS -or- HUGETLBFS.  Previously, memfd was only
+supported on tmpfs, so it made sense that the code resides in shmem.c.
 
-In general, the use of incorrect arithmetic has security
-implications.
+This patch series moves the memfd code to separate files (memfd.c and
+memfd.h).  It creates a new config option MEMFD_CREATE that is defined
+if either TMPFS or HUGETLBFS is defined.
 
-Addresses-Coverity-ID: 200686
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/ceph/osdmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In the current code, memfd is only functional if TMPFS is defined.  If
+HUGETLFS is defined and TMPFS is not defined, then memfd functionality
+will not be available for hugetlbfs.  This does not cause BUGs, just a
+potential lack of desired functionality.
 
-diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-index 0da27c6..58dc965 100644
---- a/net/ceph/osdmap.c
-+++ b/net/ceph/osdmap.c
-@@ -2183,7 +2183,7 @@ int ceph_calc_file_object_mapping(struct ceph_file_layout *layout,
- 	stripepos = bl % sc;
- 	objsetno = stripeno / su_per_object;
- 
--	*ono = objsetno * sc + stripepos;
-+	*ono = (u64)objsetno * sc + stripepos;
- 	dout("objset %u * sc %u = ono %u\n", objsetno, sc, (unsigned int)*ono);
- 
- 	/* *oxoff = *off % layout->fl_stripe_unit;  # offset in su */
+When this was sent as a RFC, one comment suggested combining patches 2
+and 3 so that we would not have 'new unused' files between patches.  If
+this is desired, I can make the change.  For me, it is easier to read
+as separate patches.
+
+v2:
+- Fixed sparse warnings inherited from existing code
+
+Mike Kravetz (3):
+  mm: hugetlbfs: move HUGETLBFS_I outside #ifdef CONFIG_HUGETLBFS
+  mm: memfd: split out memfd for use by multiple filesystems
+  mm: memfd: remove memfd code from shmem files and use new memfd files
+
+ fs/Kconfig               |   3 +
+ fs/fcntl.c               |   2 +-
+ include/linux/hugetlb.h  |  27 ++--
+ include/linux/memfd.h    |  16 +++
+ include/linux/shmem_fs.h |  13 --
+ mm/Makefile              |   1 +
+ mm/memfd.c               | 342 +++++++++++++++++++++++++++++++++++++++++++++++
+ mm/shmem.c               | 323 --------------------------------------------
+ 8 files changed, 379 insertions(+), 348 deletions(-)
+ create mode 100644 include/linux/memfd.h
+ create mode 100644 mm/memfd.c
+
 -- 
-2.7.4
+2.13.6
