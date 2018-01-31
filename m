@@ -1,81 +1,435 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753534AbeAaIuL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 03:50:11 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:38480 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751739AbeAaIuK (ORCPT
+        id S1753577AbeAaIv4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 03:51:56 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34843 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752373AbeAaIvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 03:50:10 -0500
-X-Google-Smtp-Source: AH8x227jE1e3A866WY3lFLm2pFWTV8Unab1Dx+bKeSsTGeXhs5qWrFbiKVno2uMMOBRS0dq2oCLW7w==
-From: Eric Biggers <ebiggers3@gmail.com>
-To: ebiederm@xmission.com, torvalds@linux-foundation.org
-Cc: Christian Brauner <christian.brauner@canonical.com>,
-        Stefan Lippers-Hollmann <s.l-h@gmx.de>, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org,
-        Eric Biggers <ebiggers@google.com>
-Subject: [PATCH] devpts: fix error handling in devpts_mntget()
-Date: Wed, 31 Jan 2018 00:49:18 -0800
-Message-Id: <20180131084918.15267-1-ebiggers3@gmail.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <94eb2c05a3807b84210560f4a1fd@google.com>
-References: <94eb2c05a3807b84210560f4a1fd@google.com>
+        Wed, 31 Jan 2018 03:51:53 -0500
+X-Google-Smtp-Source: AH8x227+ipsLktcEalvlYDJYZJH6hOPQr7u8pmDo6u7pFvPIE+B0cgV4lGWKOsvHg6syLpUX/2Qmew==
+Subject: Re: [PATCH 5/5] lightnvm: pblk: refactor bad block identification
+To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
+References: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
+ <1517364411-22386-5-git-send-email-javier@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <bdde0655-0904-0bf1-7029-51708fcff8b3@lightnvm.io>
+Date: Wed, 31 Jan 2018 09:51:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <1517364411-22386-5-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On 01/31/2018 03:06 AM, Javier González wrote:
+> In preparation for the OCSSD 2.0 spec. bad block identification,
+> refactor the current code to generalize bad block get/set functions and
+> structures.
+> 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/lightnvm/pblk-init.c | 213 +++++++++++++++++++++++--------------------
+>   drivers/lightnvm/pblk.h      |   6 --
+>   2 files changed, 112 insertions(+), 107 deletions(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+> index a5e3510c0f38..86a94a7faa96 100644
+> --- a/drivers/lightnvm/pblk-init.c
+> +++ b/drivers/lightnvm/pblk-init.c
+> @@ -365,7 +365,25 @@ static void pblk_luns_free(struct pblk *pblk)
+>   	kfree(pblk->luns);
+>   }
+>   
+> -static void pblk_free_line_bitmaps(struct pblk_line *line)
+> +static void pblk_line_mg_free(struct pblk *pblk)
+> +{
+> +	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+> +	int i;
+> +
+> +	kfree(l_mg->bb_template);
+> +	kfree(l_mg->bb_aux);
+> +	kfree(l_mg->vsc_list);
+> +
+> +	for (i = 0; i < PBLK_DATA_LINES; i++) {
+> +		kfree(l_mg->sline_meta[i]);
+> +		pblk_mfree(l_mg->eline_meta[i]->buf, l_mg->emeta_alloc_type);
+> +		kfree(l_mg->eline_meta[i]);
+> +	}
+> +
+> +	kfree(pblk->lines);
+> +}
+> +
+> +static void pblk_line_meta_free(struct pblk_line *line)
+>   {
+>   	kfree(line->blk_bitmap);
+>   	kfree(line->erase_bitmap);
+> @@ -382,40 +400,16 @@ static void pblk_lines_free(struct pblk *pblk)
+>   		line = &pblk->lines[i];
+>   
+>   		pblk_line_free(pblk, line);
+> -		pblk_free_line_bitmaps(line);
+> +		pblk_line_meta_free(line);
+>   	}
+>   	spin_unlock(&l_mg->free_lock);
+>   }
+>   
+> -static void pblk_line_meta_free(struct pblk *pblk)
+> +static int pblk_bb_get_tbl(struct nvm_tgt_dev *dev, struct pblk_lun *rlun,
+> +			   u8 *blks, int nr_blks)
+>   {
+> -	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+> -	int i;
+> -
+> -	kfree(l_mg->bb_template);
+> -	kfree(l_mg->bb_aux);
+> -	kfree(l_mg->vsc_list);
+> -
+> -	for (i = 0; i < PBLK_DATA_LINES; i++) {
+> -		kfree(l_mg->sline_meta[i]);
+> -		pblk_mfree(l_mg->eline_meta[i]->buf, l_mg->emeta_alloc_type);
+> -		kfree(l_mg->eline_meta[i]);
+> -	}
+> -
+> -	kfree(pblk->lines);
+> -}
+> -
+> -static int pblk_bb_discovery(struct nvm_tgt_dev *dev, struct pblk_lun *rlun)
+> -{
+> -	struct nvm_geo *geo = &dev->geo;
+>   	struct ppa_addr ppa;
+> -	u8 *blks;
+> -	int nr_blks, ret;
+> -
+> -	nr_blks = geo->nr_chks * geo->plane_mode;
+> -	blks = kmalloc(nr_blks, GFP_KERNEL);
+> -	if (!blks)
+> -		return -ENOMEM;
+> +	int ret;
+>   
+>   	ppa.ppa = 0;
+>   	ppa.g.ch = rlun->bppa.g.ch;
+> @@ -423,34 +417,56 @@ static int pblk_bb_discovery(struct nvm_tgt_dev *dev, struct pblk_lun *rlun)
+>   
+>   	ret = nvm_get_tgt_bb_tbl(dev, ppa, blks);
+>   	if (ret)
+> -		goto out;
+> +		return ret;
+>   
+>   	nr_blks = nvm_bb_tbl_fold(dev->parent, blks, nr_blks);
+> -	if (nr_blks < 0) {
+> -		ret = nr_blks;
+> -		goto out;
+> -	}
+> -
+> -	rlun->bb_list = blks;
+> +	if (nr_blks < 0)
+> +		return -EIO;
+>   
+>   	return 0;
+> -out:
+> -	kfree(blks);
+> -	return ret;
+> +}
+> +
+> +static void *pblk_bb_get_log(struct pblk *pblk)
+> +{
+> +	struct nvm_tgt_dev *dev = pblk->dev;
+> +	struct nvm_geo *geo = &dev->geo;
+> +	u8 *log;
+> +	int i, nr_blks, blk_per_lun;
+> +	int ret;
+> +
+> +	blk_per_lun = geo->nr_chks * geo->plane_mode;
+> +	nr_blks = blk_per_lun * geo->all_luns;
+> +
+> +	log = kmalloc(nr_blks, GFP_KERNEL);
+> +	if (!log)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	for (i = 0; i < geo->all_luns; i++) {
+> +		struct pblk_lun *rlun = &pblk->luns[i];
+> +		u8 *log_pos = log + i * blk_per_lun;
+> +
+> +		ret = pblk_bb_get_tbl(dev, rlun, log_pos, blk_per_lun);
+> +		if (ret) {
+> +			kfree(log);
+> +			return ERR_PTR(-EIO);
+> +		}
+> +	}
+> +
+> +	return log;
+>   }
+>   
+>   static int pblk_bb_line(struct pblk *pblk, struct pblk_line *line,
+> -			int blk_per_line)
+> +			u8 *bb_log, int blk_per_line)
+>   {
+>   	struct nvm_tgt_dev *dev = pblk->dev;
+>   	struct nvm_geo *geo = &dev->geo;
+> -	struct pblk_lun *rlun;
+> -	int bb_cnt = 0;
+> -	int i;
+> +	int i, bb_cnt = 0;
+>   
+>   	for (i = 0; i < blk_per_line; i++) {
+> -		rlun = &pblk->luns[i];
+> -		if (rlun->bb_list[line->id] == NVM_BLK_T_FREE)
+> +		struct pblk_lun *rlun = &pblk->luns[i];
+> +		u8 *lun_bb_log = bb_log + i * blk_per_line;
+> +
+> +		if (lun_bb_log[line->id] == NVM_BLK_T_FREE)
+>   			continue;
+>   
+>   		set_bit(pblk_ppa_to_pos(geo, rlun->bppa), line->blk_bitmap);
+> @@ -460,29 +476,12 @@ static int pblk_bb_line(struct pblk *pblk, struct pblk_line *line,
+>   	return bb_cnt;
+>   }
+>   
+> -static int pblk_alloc_line_bitmaps(struct pblk *pblk, struct pblk_line *line)
+> -{
+> -	struct pblk_line_meta *lm = &pblk->lm;
+> -
+> -	line->blk_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
+> -	if (!line->blk_bitmap)
+> -		return -ENOMEM;
+> -
+> -	line->erase_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
+> -	if (!line->erase_bitmap) {
+> -		kfree(line->blk_bitmap);
+> -		return -ENOMEM;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>   static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
+>   {
+>   	struct nvm_tgt_dev *dev = pblk->dev;
+>   	struct nvm_geo *geo = &dev->geo;
+>   	struct pblk_lun *rlun;
+> -	int i, ret;
+> +	int i;
+>   
+>   	/* TODO: Implement unbalanced LUN support */
+>   	if (geo->nr_luns < 0) {
+> @@ -505,13 +504,6 @@ static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
+>   		rlun->bppa = luns[lunid];
+>   
+>   		sema_init(&rlun->wr_sem, 1);
+> -
+> -		ret = pblk_bb_discovery(dev, rlun);
+> -		if (ret) {
+> -			while (--i >= 0)
+> -				kfree(pblk->luns[i].bb_list);
+> -			return ret;
+> -		}
+>   	}
+>   
+>   	return 0;
+> @@ -689,6 +681,26 @@ static int pblk_lines_alloc_metadata(struct pblk *pblk)
+>   	return -ENOMEM;
+>   }
+>   
+> +static int pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
+> +				void *chunk_log, long *nr_bad_blks)
+> +{
+> +	struct pblk_line_meta *lm = &pblk->lm;
+> +
+> +	line->blk_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
+> +	if (!line->blk_bitmap)
+> +		return -ENOMEM;
+> +
+> +	line->erase_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
+> +	if (!line->erase_bitmap) {
+> +		kfree(line->blk_bitmap);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	*nr_bad_blks = pblk_bb_line(pblk, line, chunk_log, lm->blk_per_line);
+> +
+> +	return 0;
+> +}
+> +
+>   static int pblk_lines_init(struct pblk *pblk)
+>   {
+>   	struct nvm_tgt_dev *dev = pblk->dev;
+> @@ -696,8 +708,9 @@ static int pblk_lines_init(struct pblk *pblk)
+>   	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+>   	struct pblk_line_meta *lm = &pblk->lm;
+>   	struct pblk_line *line;
+> +	void *chunk_log;
+>   	unsigned int smeta_len, emeta_len;
+> -	long nr_bad_blks, nr_free_blks;
+> +	long nr_bad_blks = 0, nr_free_blks = 0;
+>   	int bb_distance, max_write_ppas, mod;
+>   	int i, ret;
+>   
+> @@ -771,13 +784,12 @@ static int pblk_lines_init(struct pblk *pblk)
+>   	if (lm->min_blk_line > lm->blk_per_line) {
+>   		pr_err("pblk: config. not supported. Min. LUN in line:%d\n",
+>   							lm->blk_per_line);
+> -		ret = -EINVAL;
+> -		goto fail;
+> +		return -EINVAL;
+>   	}
+>   
+>   	ret = pblk_lines_alloc_metadata(pblk);
+>   	if (ret)
+> -		goto fail;
+> +		return ret;
+>   
+>   	l_mg->bb_template = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
+>   	if (!l_mg->bb_template) {
+> @@ -821,9 +833,16 @@ static int pblk_lines_init(struct pblk *pblk)
+>   		goto fail_free_bb_aux;
+>   	}
+>   
+> -	nr_free_blks = 0;
+> +	chunk_log = pblk_bb_get_log(pblk);
+> +	if (IS_ERR(chunk_log)) {
+> +		pr_err("pblk: could not get bad block log (%lu)\n",
+> +							PTR_ERR(chunk_log));
+> +		ret = PTR_ERR(chunk_log);
+> +		goto fail_free_lines;
+> +	}
+> +
+>   	for (i = 0; i < l_mg->nr_lines; i++) {
+> -		int blk_in_line;
+> +		int chk_in_line;
+>   
+>   		line = &pblk->lines[i];
+>   
+> @@ -835,26 +854,20 @@ static int pblk_lines_init(struct pblk *pblk)
+>   		line->vsc = &l_mg->vsc_list[i];
+>   		spin_lock_init(&line->lock);
+>   
+> -		ret = pblk_alloc_line_bitmaps(pblk, line);
+> +		ret = pblk_setup_line_meta(pblk, line, chunk_log, &nr_bad_blks);
+>   		if (ret)
+> -			goto fail_free_lines;
+> +			goto fail_free_chunk_log;
+>   
+> -		nr_bad_blks = pblk_bb_line(pblk, line, lm->blk_per_line);
+> -		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line) {
+> -			pblk_free_line_bitmaps(line);
+> -			ret = -EINVAL;
+> -			goto fail_free_lines;
+> -		}
+> -
+> -		blk_in_line = lm->blk_per_line - nr_bad_blks;
+> -		if (blk_in_line < lm->min_blk_line) {
+> +		chk_in_line = lm->blk_per_line - nr_bad_blks;
+> +		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line ||
+> +					chk_in_line < lm->min_blk_line) {
+>   			line->state = PBLK_LINESTATE_BAD;
+>   			list_add_tail(&line->list, &l_mg->bad_list);
+>   			continue;
+>   		}
+>   
+> -		nr_free_blks += blk_in_line;
+> -		atomic_set(&line->blk_in_line, blk_in_line);
+> +		nr_free_blks += chk_in_line;
+> +		atomic_set(&line->blk_in_line, chk_in_line);
+>   
+>   		l_mg->nr_free_lines++;
+>   		list_add_tail(&line->list, &l_mg->free_list);
+> @@ -862,23 +875,21 @@ static int pblk_lines_init(struct pblk *pblk)
+>   
+>   	pblk_set_provision(pblk, nr_free_blks);
+>   
+> -	/* Cleanup per-LUN bad block lists - managed within lines on run-time */
+> -	for (i = 0; i < geo->all_luns; i++)
+> -		kfree(pblk->luns[i].bb_list);
+> -
+> +	kfree(chunk_log);
+>   	return 0;
+> -fail_free_lines:
+> +
+> +fail_free_chunk_log:
+> +	kfree(chunk_log);
+>   	while (--i >= 0)
+> -		pblk_free_line_bitmaps(&pblk->lines[i]);
+> +		pblk_line_meta_free(&pblk->lines[i]);
+> +fail_free_lines:
+> +	kfree(pblk->lines);
+>   fail_free_bb_aux:
+>   	kfree(l_mg->bb_aux);
+>   fail_free_bb_template:
+>   	kfree(l_mg->bb_template);
+>   fail_free_meta:
+> -	pblk_line_meta_free(pblk);
+> -fail:
+> -	for (i = 0; i < geo->all_luns; i++)
+> -		kfree(pblk->luns[i].bb_list);
+> +	pblk_line_mg_free(pblk);
+>   
+>   	return ret;
+>   }
+> @@ -922,7 +933,7 @@ static void pblk_free(struct pblk *pblk)
+>   	pblk_luns_free(pblk);
+>   	pblk_lines_free(pblk);
+>   	kfree(pblk->pad_dist);
+> -	pblk_line_meta_free(pblk);
+> +	pblk_line_mg_free(pblk);
+>   	pblk_core_free(pblk);
+>   	pblk_l2p_free(pblk);
+>   
+> @@ -1110,7 +1121,7 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
+>   fail_free_pad_dist:
+>   	kfree(pblk->pad_dist);
+>   fail_free_line_meta:
+> -	pblk_line_meta_free(pblk);
+> +	pblk_line_mg_free(pblk);
+>   fail_free_luns:
+>   	pblk_luns_free(pblk);
+>   fail:
+> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+> index 88720e2441c0..282dfc8780e8 100644
+> --- a/drivers/lightnvm/pblk.h
+> +++ b/drivers/lightnvm/pblk.h
+> @@ -201,12 +201,6 @@ struct pblk_rb {
+>   
+>   struct pblk_lun {
+>   	struct ppa_addr bppa;
+> -
+> -	u8 *bb_list;			/* Bad block list for LUN. Only used on
+> -					 * bring up. Bad blocks are managed
+> -					 * within lines on run-time.
+> -					 */
+> -
+>   	struct semaphore wr_sem;
+>   };
+>   
+> 
 
-If devpts_ptmx_path() returns an error code, then devpts_mntget()
-dereferences an ERR_PTR():
+Looks good to me.
 
-    BUG: unable to handle kernel paging request at fffffffffffffff5
-    IP: devpts_mntget+0x13f/0x280 fs/devpts/inode.c:173
+With respect to the 2.0 implementation. I am thinking that get_bb and 
+set_bb should behave in the following way:
 
-Fix it by returning early in the error paths.
+For get_bb (in nvme/host/lightnvm.c)
+1.2: Keep the implementation as is.
+2.0: Use the report chunk command, and redo the get_bb format.
 
-Reproducer:
+For set_bb (in nvme/host/lightnvm.c)
+1.2: Business as usual
+2.0: Report error.
 
-    #define _GNU_SOURCE
-    #include <fcntl.h>
-    #include <sched.h>
-    #include <sys/ioctl.h>
-    #define TIOCGPTPEER _IO('T', 0x41)
+For 2.0, there will be added a function pointer for get report chunk 
+implementation, where the client can ask for full chunk information. 
+Similarly here, client will fail the function call if the drive is 1.2.
 
-    int main()
-    {
-        for (;;) {
-            int fd = open("/dev/ptmx", 0);
-            unshare(CLONE_NEWNS);
-            ioctl(fd, TIOCGPTPEER, 0);
-        }
-    }
+I hope to post the small 2.0 identify implementation Tomorrow or Friday, 
+and then you can post the report chunk implementation that you have done 
+if you like.
 
-Fixes: 311fc65c9fb9 ("pty: Repair TIOCGPTPEER")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: <stable@vger.kernel.org> # v4.13+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/devpts/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index 7eae33ffa3fcc..e31d6ed3ec327 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -168,11 +168,11 @@ struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
- 	dput(path.dentry);
- 	if (err) {
- 		mntput(path.mnt);
--		path.mnt = ERR_PTR(err);
-+		return ERR_PTR(err);
- 	}
- 	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
- 		mntput(path.mnt);
--		path.mnt = ERR_PTR(-ENODEV);
-+		return ERR_PTR(-ENODEV);
- 	}
- 	return path.mnt;
- }
--- 
-2.16.1
+We also need to take a look at the new error codes, which does not align 
+with the 1.2 specification (now that they actually follow the nvme 
+specification ;))
