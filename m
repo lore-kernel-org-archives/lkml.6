@@ -1,96 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756035AbeAaXZ7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 18:25:59 -0500
-Received: from ozlabs.org ([103.22.144.67]:42931 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756018AbeAaXZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 18:25:56 -0500
-Date: Thu, 1 Feb 2018 10:25:53 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NeilBrown <neilb@suse.com>
-Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs
- tree
-Message-ID: <20180201102553.73370fa6@canb.auug.org.au>
-In-Reply-To: <20180125143155.20b15b37@canb.auug.org.au>
-References: <20180125143155.20b15b37@canb.auug.org.au>
+        id S1754210AbeAaXs0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 18:48:26 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:46759 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753481AbeAaXsY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 18:48:24 -0500
+X-Google-Smtp-Source: AH8x2251npTA+6F4fB55RKPBcViX3nNO7dmBb972RgnLbUtqiGEdy376BdfKjO82oomiY4xus4Zfcw==
+Subject: Re: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        initramfs <initramfs@vger.kernel.org>
+Cc: Taras Kondratiuk <takondra@cisco.com>,
+        Victor Kamensky <kamensky@cisco.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
+ <1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
+ <1517436423.3469.237.camel@linux.vnet.ibm.com>
+From: Rob Landley <rob@landley.net>
+Message-ID: <a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
+Date: Wed, 31 Jan 2018 17:48:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1517436423.3469.237.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On 01/31/2018 04:07 PM, Mimi Zohar wrote:
+> On Wed, 2018-01-31 at 13:32 -0600, Rob Landley wrote:>> (The old "I configured in tmpfs and am using rootfs but I want that
+rootfs
+>> to be ramfs, not tmpfs" code doesn't seem to be a real-world concern, does
+>> it?)
+> 
+> I must be missing something.  Which systems don't specify "root=" on
+> the boot command line.
 
-On Thu, 25 Jan 2018 14:31:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the vfs tree got a conflict in:
-> 
->   fs/dcache.c
-> 
-> between commit:
-> 
->   f9c34674bc60 ("vfs: factor out helpers d_instantiate_anon() and d_alloc_anon()")
-> 
-> from the overlayfs tree and commit:
-> 
->   f1ee616214cb ("VFS: don't keep disconnected dentries on d_anon")
-> 
-> from the vfs tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc fs/dcache.c
-> index 99bce0ed0213,17e6b84b9656..000000000000
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@@ -1954,16 -1961,18 +1953,18 @@@ static struct dentry *__d_instantiate_a
->   	if (disconnected)
->   		add_flags |= DCACHE_DISCONNECTED;
->   
->  -	spin_lock(&tmp->d_lock);
->  -	__d_set_inode_and_type(tmp, inode, add_flags);
->  -	hlist_add_head(&tmp->d_u.d_alias, &inode->i_dentry);
->  +	spin_lock(&dentry->d_lock);
->  +	__d_set_inode_and_type(dentry, inode, add_flags);
->  +	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
-> - 	hlist_bl_lock(&dentry->d_sb->s_anon);
-> - 	hlist_bl_add_head(&dentry->d_hash, &dentry->d_sb->s_anon);
-> - 	hlist_bl_unlock(&dentry->d_sb->s_anon);
-> + 	if (!disconnected) {
->  -		hlist_bl_lock(&tmp->d_sb->s_roots);
->  -		hlist_bl_add_head(&tmp->d_hash, &tmp->d_sb->s_roots);
->  -		hlist_bl_unlock(&tmp->d_sb->s_roots);
-> ++		hlist_bl_lock(&dentry->d_sb->s_roots);
-> ++		hlist_bl_add_head(&dentry->d_hash, &tmp->d_sb->s_roots);
-> ++		hlist_bl_unlock(&dentry->d_sb->s_roots);
-> + 	}
->  -	spin_unlock(&tmp->d_lock);
->  +	spin_unlock(&dentry->d_lock);
->   	spin_unlock(&inode->i_lock);
->   
->  -	return tmp;
->  +	return dentry;
->   
->    out_iput:
->   	iput(inode);
+Any system using initrd or initramfs?
 
-This is now a conflict between the overlayfs tree and Linus' tree.
+I have one at https://github.com/landley/mkroot that doesn't, for
+example. It's 600 lines of bash that builds simple Linux systems for a
+bunch of different architectures, each with a qemu wrapper to boot it to
+a shell prompt. And yes, it's using tmpfs for its initramfs, you can
+tell because "grep rootfs /proc/mounts" gives a size. That's also where
+I tested the patch I sent you.
 
--- 
-Cheers,
-Stephen Rothwell
+The root= option specifies the filesystem to mount OVER rootfs. I.E.
+it's the fallback root filesystem to mount when initramfs doesn't
+contain an executable /init that can become PID 1. If you DO have an
+/init in rootfs which the kernel manages to launch as PID 1, the kernel
+code never reaches the part that uses the root= argument.
+
+(Look for the call to prepare_namespace() in init/main.c, notice how
+it's only called if it can't _already_ find "/init".)
+
+That's why the test I added for initramfs vs initmpfs was "did they
+specify root=", because if they did it means they're telling the kernel
+what to mount over rootfs, so they're not staying in rootfs. That's what
+that argument MEANS. They're telling init/main.c what fallback
+filesystem to mount over rootfs _after_ failing to find /init in rootfs,
+therefore they're not keeping rootfs as their root filesystem for userspace.
+
+That said, a lot of people don't understand how this works, and they set
+root= to things like /dev/ram when using initrd because "we must set
+this knob to something, this is something, therefore we must set this
+knob to it". The fact setting root=/dev/random would have the exact same
+effect doesn't seem to bother them, they had Done It and It Worked,
+therefore it was the Right Thing To Do. QED.
+
+The patch last message was me going "alright, if people can't NOT
+twiddle the knob, even when doing it breaks things in an immediate and
+obvious way, and a big DO NOT TOUCH sign won't dissuade them, just give
+the knob an explicit 'off' setting that literally does the same thing as
+not touching it at all would".
+
+Your solution was to add a safety catch for the knob, which is edging
+into Rube Goldberg territory if you ask me.
+
+> If we want to include and restore xattrs,
+> there needs to be a way of using tmpfs.
+
+Yes, using tmpfs for initramfs is useful, that's why I submitted patches
+to hook it up back in 2013.
+
+(Personally I find "cat /dev/zero > /filename" _not_ hard locking your
+system instantly the most compelling feature. Although I believe what
+motivated my initmpfs patches way back when was somebody wanting to
+install an rpm into intramfs and the installer failing because ramfs
+hasn't got a size so "df" always returns zero.)
+
+> Mimi
+
+Rob
