@@ -1,67 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753403AbeAaNA7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 08:00:59 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:45162 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752852AbeAaNA6 (ORCPT
+        id S1753466AbeAaNK6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 08:10:58 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:63313 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752492AbeAaNK4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 08:00:58 -0500
-Date: Wed, 31 Jan 2018 14:00:34 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Stafford Horne <shorne@gmail.com>, Will Deacon <will.deacon@arm.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-Cc: David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: asm-generic: Disallow no-op mb() for SMP systems
-Message-ID: <20180131130034.GR2269@hirez.programming.kicks-ass.net>
+        Wed, 31 Jan 2018 08:10:56 -0500
+X-IronPort-AV: E=Sophos;i="5.46,440,1511827200";
+   d="scan'208";a="329959907"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH v4 1/5] KVM: x86: Update the reverse_cpuid list to include CPUID_7_EDX
+Date: Wed, 31 Jan 2018 14:10:27 +0100
+Message-Id: <1517404231-22406-2-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517404231-22406-1-git-send-email-karahmed@amazon.de>
+References: <1517404231-22406-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-While looking through the qspinlock users, I stumbled upon openrisc and
-being curious, I wanted to have a look at its memory model.
-
-To my surprise it doesn't have asm/barrier.h. It does however support
-SMP. This lead me to wonder why it would compile, turns out we provide a
-no-op mb() if the architecture does not provide one.
-
-With the obvious exception of Sequentially Consistent SMP systems, this
-is terribly broken. And seeing how SC SMP is really rather unusual (and
-unlikely), change the asm-generic/barrier.h to not provide this.
-
-This _will_ break openrisc builds, they had better clarify their
-position by writing their own barrier.h with a comment in.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+[dwmw2: Stop using KF() for bits in it, too]
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- include/asm-generic/barrier.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/kvm/cpuid.c | 8 +++-----
+ arch/x86/kvm/cpuid.h | 1 +
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
-index fe297b599b0a..7a10748615ff 100644
---- a/include/asm-generic/barrier.h
-+++ b/include/asm-generic/barrier.h
-@@ -30,9 +30,15 @@
-  * Fall back to compiler barriers if nothing better is provided.
-  */
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 0099e10..c0eb337 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -67,9 +67,7 @@ u64 kvm_supported_xcr0(void)
  
-+#ifndef CONFIG_SMP
-+/*
-+ * If your SMP architecture really is Sequentially Consistent, you get
-+ * barrier.h to write a nice big comment about it.
-+ */
- #ifndef mb
- #define mb()	barrier()
- #endif
-+#endif
+ #define F(x) bit(X86_FEATURE_##x)
  
- #ifndef rmb
- #define rmb()	mb()
+-/* These are scattered features in cpufeatures.h. */
+-#define KVM_CPUID_BIT_AVX512_4VNNIW     2
+-#define KVM_CPUID_BIT_AVX512_4FMAPS     3
++/* For scattered features from cpufeatures.h; we currently expose none */
+ #define KF(x) bit(KVM_CPUID_BIT_##x)
+ 
+ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
+@@ -392,7 +390,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 
+ 	/* cpuid 7.0.edx*/
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+-		KF(AVX512_4VNNIW) | KF(AVX512_4FMAPS);
++		F(AVX512_4VNNIW) | F(AVX512_4FMAPS);
+ 
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
+@@ -477,7 +475,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
+ 				entry->ecx &= ~F(PKU);
+ 			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
+-			entry->edx &= get_scattered_cpuid_leaf(7, 0, CPUID_EDX);
++			cpuid_mask(&entry->edx, CPUID_7_EDX);
+ 		} else {
+ 			entry->ebx = 0;
+ 			entry->ecx = 0;
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index c2cea66..9a327d5 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -54,6 +54,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
+ 	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
+ 	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
+ 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
++	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
+ };
+ 
+ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+-- 
+2.7.4
