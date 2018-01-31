@@ -1,50 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752909AbeAaJPY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 04:15:24 -0500
-Received: from mga14.intel.com ([192.55.52.115]:40813 "EHLO mga14.intel.com"
+        id S1753437AbeAaJPo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 04:15:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45142 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751756AbeAaJPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 04:15:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,439,1511856000";
-   d="scan'208";a="14272964"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 0/3] Enumerate TME and PCONFIG
-Date: Wed, 31 Jan 2018 12:15:06 +0300
-Message-Id: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
+        id S1751619AbeAaJPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 04:15:42 -0500
+Date: Wed, 31 Jan 2018 10:15:39 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Stephane Eranian <eranian@google.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH V3 0/5] bugs fix for large PEBS mmap read and rdpmc read
+Message-ID: <20180131091539.GA3313@krava>
+References: <CABPqkBRjQp62ArVZzuH=TRU3mDPkS93D8_cNev6M=eXTCpBLkA@mail.gmail.com>
+ <20180130133917.GC29098@krava>
+ <6d708c09-52a7-a906-b651-b133a7b4f189@linux.intel.com>
+ <20180130150454.GE29098@krava>
+ <35090c62-466a-aec8-b1a3-69def959c1c6@linux.intel.com>
+ <CABPqkBRWtSsKEM7ycPs0HYSKLsYDmZhr4ztUmMMqsytYamPGsw@mail.gmail.com>
+ <24210bcb-0e4b-58fe-bcda-da30019f6e7e@linux.intel.com>
+ <20180130185212.GA16806@krava>
+ <CABPqkBRp9bDmGECStbAHA5Ja0SjJmDQ2SOceat=qXno707MuAA@mail.gmail.com>
+ <20180131035941.GW26209@tassilo.jf.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131035941.GW26209@tassilo.jf.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset enumerates two features required for Multi-Key Total Memory
-Encryption enabling[1].
+On Tue, Jan 30, 2018 at 07:59:41PM -0800, Andi Kleen wrote:
+> > Still, the part I am missing here, is why asking for
+> > PERF_SAMPLE_PERIOD voids large PEBS.
+> 
+> I think it was disabled together with frequency mode
+> (which we could support too, but it's a bit more work)
+> 
+> But yes PERIOD could probably be allowed.
 
-Apart from trivial cpufeatures bits, the patchset enumerates how many bits
-from physical address are claimed for encryption key ID. This may be
-critical as we or guest VM must not use these bits for physical address.
+looks like it's just a matter of adding PERF_SAMPLE_PERIOD
+into PEBS_FREERUNNING_FLAGS, we already populate period
+in setup_pebs_sample_data
 
-Please review and consider applying.
+jirka
 
-[1] https://software.intel.com/sites/default/files/managed/a5/16/Multi-Key-Total-Memory-Encryption-Spec.pdf
 
-Kirill A. Shutemov (3):
-  x86/cpufeatures: Add Intel Total Memory Encryption cpufeature
-  x86/tme: Detect if TME and MKTME is activated by BIOS
-  x86/cpufeatures: Add Intel PCONFIG cpufeature
-
- arch/x86/include/asm/cpufeatures.h |  2 +
- arch/x86/kernel/cpu/intel.c        | 83 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
-
--- 
-2.15.1
+---
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 8e4ea143ed96..78f91ec1056e 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -93,7 +93,8 @@ struct amd_nb {
+ 	PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_STREAM_ID | \
+ 	PERF_SAMPLE_DATA_SRC | PERF_SAMPLE_IDENTIFIER | \
+ 	PERF_SAMPLE_TRANSACTION | PERF_SAMPLE_PHYS_ADDR | \
+-	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER)
++	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER | \
++	PERF_SAMPLE_PERIOD)
+ 
+ #define PEBS_REGS \
+ 	(PERF_REG_X86_AX | \
