@@ -1,79 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752870AbeAaCAd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:00:33 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36618 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752135AbeAaCAc (ORCPT
+        id S1753016AbeAaCAw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 21:00:52 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52016 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752954AbeAaCAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:00:32 -0500
-X-Google-Smtp-Source: AH8x227T/RMB9BW+DpbaRaOYvlq5KwMJWGVK2FB92poWYhij23pwCg8ZBv7hxgVTdBKsHGJoKFDd1w==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
-Message-Id: <E2E51BC8-63D4-40EC-9912-398BB73C9F16@lightnvm.io>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_0AB1DACA-E6D0-488A-9479-142D26DA5A0F";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH 1/2] lightnvm: remove mlc pairs structure
-Date: Wed, 31 Jan 2018 10:00:12 +0800
-In-Reply-To: <20180130132605.28635-1-m@bjorling.me>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
-References: <20180130132605.28635-1-m@bjorling.me>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Tue, 30 Jan 2018 21:00:49 -0500
+X-Google-Smtp-Source: AH8x225tpylhnk8jVUiQfNU0CbN4uUMwGRMaDWdQrOWhwifXcFa6f7pYXfaJBu2vgdM5uDiIS0fpRw==
+From: "Bryan O'Donoghue" <pure.logic@nexus-software.ie>
+To: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: fabio.estevam@nxp.com, peng.fan@nxp.com, davem@davemloft.net,
+        lukas.auer@aisec.fraunhofer.de, rui.silva@linaro.org,
+        ryan.harkin@linaro.org, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>
+Subject: [PATCH v3 5/5] ARM: dts: imx7s: add CAAM device node
+Date: Wed, 31 Jan 2018 02:00:40 +0000
+Message-Id: <1517364040-27607-6-git-send-email-pure.logic@nexus-software.ie>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Rui Miguel Silva <rui.silva@linaro.org>
 
---Apple-Mail=_0AB1DACA-E6D0-488A-9479-142D26DA5A0F
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+Add CAAM device node to the i.MX7s device tree.
 
-> On 30 Jan 2018, at 21.26, Matias Bj=C3=B8rling <m@bjorling.me> wrote:
->=20
-> The known implementations of the 1.2 specification, and upcoming 2.0
-> implementation all expose a sequential list of pages to write.
-> Remove the data structure, as it is no longer needed.
->=20
-> Signed-off-by: Matias Bj=C3=B8rling <m@bjorling.me>
-> ---
-> drivers/nvme/host/lightnvm.c | 14 +-------------
-> 1 file changed, 1 insertion(+), 13 deletions(-)
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: "Horia Geantă" <horia.geanta@nxp.com>
+Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+---
+ arch/arm/boot/dts/imx7s.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-Even though the current implementations does not use the MLC pairing
-information, this is part of the on the 1.2 identification. Until we
-eventually remove 1.2 support (if we do), the identify structure should
-reflect the specification as is.
-
-Javier
-
-
---Apple-Mail=_0AB1DACA-E6D0-488A-9479-142D26DA5A0F
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlpxIywACgkQYx8FO3WZ
-GMrdshAAsfVoIhvzKR9ItlMXk+N4PD7Lkh5bKZy0xbMCkZ3/BS51Vck4dfTbAmOM
-MGqxwol/nWNjwACumr//RfNWEcd+chzxc9FE3s86wHrDJkKpRoHghPlL7cgR7MSt
-svV+HMS2ofs8V8qHg3VTCCx6d6JuM6h3zWZ43Aqf7wCG5XIfZHLKHo52lU0QFujV
-NAuf4VIzJ7plJt4uZLRM1G6hZ2PHHexToy+E20Ti4YkhZZpy8mYjxSzOP+Tbta+k
-OaPzAKXYZBWRjHP1b0zAz/97wuNakNHWZFXm3PyBx/gKSak+PcKSvuD9UwmSTRzK
-7hbMOPj6g9kk+PsMS6xUbyY0x37kT6DDtP+VRIj6/IIe0wc9TrO+bcCUsrxHOpXr
-HJnbAGL2Wxu4Yvzx2mkP+fCTFkAgfe7EiHYem9VR+VCAAWlSEUMUeGjhymi6arsv
-IUqbLeXsD81Ytm2wVgS77ymdzYalgXKHkRv3u55HWiuKGqJc2v8S45lMJgDoaMtw
-xm1vUW3X3S/GxsZ0s0jlVeXeU5sGg+dV086/TgHBWKRkzLEKhaTytuPzijnvS3V9
-ChtT2q//z7+nVRoPIvm0p800cxzV9abRK5ungKtVeUtT0ek5gJ9w62IZVAFVw7md
-muByKAXffo6XOooywhSrI3cC6VPgL1qNVW+SCP94dvzasYdObeE=
-=Clcy
------END PGP SIGNATURE-----
-
---Apple-Mail=_0AB1DACA-E6D0-488A-9479-142D26DA5A0F--
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index 82ad26e..e38c159 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -805,6 +805,37 @@
+ 				status = "disabled";
+ 			};
+ 
++			crypto: caam@30900000 {
++				compatible = "fsl,sec-v4.0";
++				fsl,sec-era = <4>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				reg = <0x30900000 0x40000>;
++				ranges = <0 0x30900000 0x40000>;
++				interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX7D_CAAM_CLK>,
++					 <&clks IMX7D_AHB_CHANNEL_ROOT_CLK>;
++				clock-names = "ipg", "aclk";
++
++				sec_jr0: jr0@1000 {
++					compatible = "fsl,sec-v4.0-job-ring";
++					reg = <0x1000 0x1000>;
++					interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++				};
++
++				sec_jr1: jr1@2000 {
++					compatible = "fsl,sec-v4.0-job-ring";
++					reg = <0x2000 0x1000>;
++					interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
++				};
++
++				sec_jr2: jr1@3000 {
++					compatible = "fsl,sec-v4.0-job-ring";
++					reg = <0x3000 0x1000>;
++					interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
++				};
++			};
++
+ 			flexcan1: can@30a00000 {
+ 				compatible = "fsl,imx7d-flexcan", "fsl,imx6q-flexcan";
+ 				reg = <0x30a00000 0x10000>;
+-- 
+2.7.4
