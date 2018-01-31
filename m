@@ -1,74 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeAaNPK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 08:15:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53276 "EHLO mx1.redhat.com"
+        id S1753440AbeAaNRi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 08:17:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:38010 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751587AbeAaNPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 08:15:09 -0500
-Date: Wed, 31 Jan 2018 14:15:05 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Stephane Eranian <eranian@google.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH V3 0/5] bugs fix for large PEBS mmap read and rdpmc read
-Message-ID: <20180131131505.GB31614@krava>
-References: <20180130133917.GC29098@krava>
- <6d708c09-52a7-a906-b651-b133a7b4f189@linux.intel.com>
- <20180130150454.GE29098@krava>
- <35090c62-466a-aec8-b1a3-69def959c1c6@linux.intel.com>
- <CABPqkBRWtSsKEM7ycPs0HYSKLsYDmZhr4ztUmMMqsytYamPGsw@mail.gmail.com>
- <24210bcb-0e4b-58fe-bcda-da30019f6e7e@linux.intel.com>
- <20180130185212.GA16806@krava>
- <CABPqkBRp9bDmGECStbAHA5Ja0SjJmDQ2SOceat=qXno707MuAA@mail.gmail.com>
- <20180131035941.GW26209@tassilo.jf.intel.com>
- <20180131091539.GA3313@krava>
+        id S1752436AbeAaNRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 08:17:37 -0500
+Date: Wed, 31 Jan 2018 13:17:37 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Stafford Horne <shorne@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: asm-generic: Disallow no-op mb() for SMP systems
+Message-ID: <20180131131737.GA5097@arm.com>
+References: <20180131130034.GR2269@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180131091539.GA3313@krava>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180131130034.GR2269@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 10:15:39AM +0100, Jiri Olsa wrote:
-> On Tue, Jan 30, 2018 at 07:59:41PM -0800, Andi Kleen wrote:
-> > > Still, the part I am missing here, is why asking for
-> > > PERF_SAMPLE_PERIOD voids large PEBS.
-> > 
-> > I think it was disabled together with frequency mode
-> > (which we could support too, but it's a bit more work)
-> > 
-> > But yes PERIOD could probably be allowed.
+On Wed, Jan 31, 2018 at 02:00:34PM +0100, Peter Zijlstra wrote:
 > 
-> looks like it's just a matter of adding PERF_SAMPLE_PERIOD
-> into PEBS_FREERUNNING_FLAGS, we already populate period
-> in setup_pebs_sample_data
+> While looking through the qspinlock users, I stumbled upon openrisc and
+> being curious, I wanted to have a look at its memory model.
 > 
-> jirka
+> To my surprise it doesn't have asm/barrier.h. It does however support
+> SMP. This lead me to wonder why it would compile, turns out we provide a
+> no-op mb() if the architecture does not provide one.
 > 
+> With the obvious exception of Sequentially Consistent SMP systems, this
+> is terribly broken. And seeing how SC SMP is really rather unusual (and
+> unlikely), change the asm-generic/barrier.h to not provide this.
 > 
+> This _will_ break openrisc builds, they had better clarify their
+> position by writing their own barrier.h with a comment in.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
-> diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-> index 8e4ea143ed96..78f91ec1056e 100644
-> --- a/arch/x86/events/perf_event.h
-> +++ b/arch/x86/events/perf_event.h
-> @@ -93,7 +93,8 @@ struct amd_nb {
->  	PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_STREAM_ID | \
->  	PERF_SAMPLE_DATA_SRC | PERF_SAMPLE_IDENTIFIER | \
->  	PERF_SAMPLE_TRANSACTION | PERF_SAMPLE_PHYS_ADDR | \
-> -	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER)
-> +	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER | \
-> +	PERF_SAMPLE_PERIOD)
+>  include/asm-generic/barrier.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-seems to work, getting large PEBS event for following command line:
+Acked-by: Will Deacon <will.deacon@arm.com>
 
-  perf record -e cycles:P -c 100 --no-timestamp -C 0 --period
+One comment below...
 
+> diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
+> index fe297b599b0a..7a10748615ff 100644
+> --- a/include/asm-generic/barrier.h
+> +++ b/include/asm-generic/barrier.h
+> @@ -30,9 +30,15 @@
+>   * Fall back to compiler barriers if nothing better is provided.
+>   */
+>  
+> +#ifndef CONFIG_SMP
+> +/*
+> + * If your SMP architecture really is Sequentially Consistent, you get
+> + * barrier.h to write a nice big comment about it.
+> + */
 
-jirka
+I couldn't find any documentation about the openrisc memory model other
+than:
+
+https://openrisc.io/or1k.html#__RefHeading__504775_595890882
+
+which talks about the WOM bit in the page table being used to select a weak
+memory model for the page being mapped as opposed to the strong memory
+model. Furthermore, the only fence instruction (l.msync) is permitted to
+be a NOP for the strong model, which implies that the strong model is SC
+and things like write buffers are forbidden. However, Google suggests that
+there are implementations of openrisc with write buffers so I'm not sure I
+understand what's going on here (maybe they force WOM and/or l.msync isn't
+actually a NOP?)
+
+Will
