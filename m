@@ -1,79 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753310AbeAaCCa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:02:30 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55612 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752356AbeAaCC1 (ORCPT
+        id S1753333AbeAaCCq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 21:02:46 -0500
+Received: from mail-it0-f49.google.com ([209.85.214.49]:37298 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752067AbeAaCCP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:02:27 -0500
-X-Google-Smtp-Source: AH8x226nnM1q9N7AGjAvQnGUimpc7Oj+kozzFHc6/zAQIQOAvW+PGJ8YtvC1lASqLARvUxoFdMoL5Q==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
-Message-Id: <6EDEF0FC-CCC6-4AC8-A816-76D5E8C68DEE@lightnvm.io>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_1CAA5DCF-306F-499D-8456-7D61885DC82A";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH 2/2] lightnvm: remove multiple groups in 1.2 data
- structure
-Date: Wed, 31 Jan 2018 10:02:10 +0800
-In-Reply-To: <20180130132605.28635-2-m@bjorling.me>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
-References: <20180130132605.28635-1-m@bjorling.me>
- <20180130132605.28635-2-m@bjorling.me>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Tue, 30 Jan 2018 21:02:15 -0500
+X-Google-Smtp-Source: AH8x226m0/GMEGlRbdgBlRXi/n/yawLDtjaE+lKjZSs18z7Fle2nU+CMi0sVm9fm5LNIqr5mrtAjoQ==
+Date: Tue, 30 Jan 2018 18:02:12 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <bot+c028095236fcb6f4348811565b75084c754dc729@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: slab-out-of-bounds Read in xfrm_hash_rebuild
+Message-ID: <20180131020212.setj66yw7nxgymwa@gmail.com>
+References: <089e0825eec8a9d078055d6a6961@google.com>
+ <001a1140f578d314ec0560d9f29a@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <001a1140f578d314ec0560d9f29a@google.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 21, 2017 at 05:48:01AM -0800, syzbot wrote:
+> syzkaller has found reproducer for the following crash on
+> 8f36e00065436412a02d1f50ad77375bdb506300
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> C reproducer is attached
+> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> for information about syzkaller reproducers
+> 
+> 
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in xfrm_hash_rebuild+0xdbe/0xf00
+> net/xfrm/xfrm_policy.c:618
+> Read of size 2 at addr ffff8801c8e92fe4 by task kworker/1:1/23
+> 
+> CPU: 1 PID: 23 Comm: kworker/1:1 Not tainted 4.15.0-rc3+ #161
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: events xfrm_hash_rebuild
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  print_address_description+0x73/0x250 mm/kasan/report.c:252
+>  kasan_report_error mm/kasan/report.c:351 [inline]
+>  kasan_report+0x25b/0x340 mm/kasan/report.c:409
+>  __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:428
+>  xfrm_hash_rebuild+0xdbe/0xf00 net/xfrm/xfrm_policy.c:618
+>  process_one_work+0xbbf/0x1b10 kernel/workqueue.c:2112
+>  worker_thread+0x223/0x1990 kernel/workqueue.c:2246
+>  kthread+0x33c/0x400 kernel/kthread.c:238
+>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:441
+> 
+> Allocated by task 3152:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
+>  __do_kmalloc mm/slab.c:3708 [inline]
+>  __kmalloc+0x162/0x760 mm/slab.c:3717
+>  kmalloc include/linux/slab.h:504 [inline]
+>  sk_prot_alloc+0x101/0x2a0 net/core/sock.c:1471
+>  sk_alloc+0x8c/0x730 net/core/sock.c:1525
+>  pfkey_create+0x2b2/0xae0 net/key/af_key.c:158
+>  __sock_create+0x4d4/0x850 net/socket.c:1257
+>  sock_create net/socket.c:1297 [inline]
+>  SYSC_socket net/socket.c:1327 [inline]
+>  SyS_socket+0xeb/0x1d0 net/socket.c:1307
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
 
---Apple-Mail=_1CAA5DCF-306F-499D-8456-7D61885DC82A
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
-
-> On 30 Jan 2018, at 21.26, Matias Bj=C3=B8rling <m@bjorling.me> wrote:
->=20
-> Only one id group from the 1.2 specification is supported. Make
-> sure that only the first group is accessible.
->=20
-> Signed-off-by: Matias Bj=C3=B8rling <m@bjorling.me>
-> ---
-> drivers/nvme/host/lightnvm.c | 5 +++--
-> 1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-
-Same as before. Even though current implementation only uses one group,
-the 1.2 specification relies on 4. At least, the identify structure
-should reflect this.
-
-Javier
-
---Apple-Mail=_1CAA5DCF-306F-499D-8456-7D61885DC82A
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlpxI6IACgkQYx8FO3WZ
-GMp3/hAAsh0KFV0zYCi3LzHBE6ZCzFGaV51q+CX5E2aF/G3DTkDMhp1d8p4Nbbyx
-W6xxFrthgC05apmIZY2y3CjAJObNGvTTvthpRpnCKlYPOjSnhF7nKW+DjcTBBQOv
-FK7e0vqlJ8yaNaHlvVTL2RWVpBwDd8L/YYWlhQ0S1jcgihQ533WuZsSJrVOzGc8o
-OloMm3l+Bzq1h22VNOm6OZ0EmPXjTaYapl74vvICxMXcojt+fdQ2iNkYMv5NfaEx
-o6GqDKwsT6PJxQ2gjkEM3m4pdCDc2WOmMdddiixUbCUUQowfpQJipSjnT2/Vpzv4
-155snVRpuiNj96auVRqnNXgI3KOdd7roVAPkxDATQaTvyuozKxEASHNICkEuPg0E
-AtQCrG9x7eY5aUxiTXqY2dYFNIBAIM6py3U6ZxqLi0rBCjY+80sHvUG+OUOoTWff
-EIDzwq3RM7FRztLAc0DDRIiPmjDju7JiJBR/qMrz7gCZwcgclyQhT7452xPxvaU4
-/o/DBWZ21QPayWj3mVJiyZLHeSGMOspCkR8Ucfh5nKNZysc59GLOpOOA4/O641tp
-UvDyoKrqiOOTIfTV6l0yuc+h2HznDRNMyTKmGhi5+UM/mHG1C+9Qg7w1aU9Yn4lB
-cuiIR5M3XZrJkFKjLgm9ygHvatm6RtkzeDjgtnxoUKz/AQGyFZk=
-=Faj3
------END PGP SIGNATURE-----
-
---Apple-Mail=_1CAA5DCF-306F-499D-8456-7D61885DC82A--
+#syz fix: xfrm: skip policies marked as dead while rehashing
