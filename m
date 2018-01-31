@@ -1,67 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932197AbeAaXYE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 18:24:04 -0500
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:44689 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932163AbeAaXYC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 18:24:02 -0500
-X-ME-Sender: <xms:ElByWlMNec56Oi7F5plBfEC91foVo1_OSaqNLC0BUXJXcdex89Cntw>
-Date: Thu, 1 Feb 2018 10:23:58 +1100
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Joe Perches <joe@perches.com>
-Cc: linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: checkpatch changes for 4.16
-Message-ID: <20180131232358.GA29988@eros>
-References: <20180131214630.GF11433@eros>
- <1517438936.7489.8.camel@perches.com>
+        id S1756035AbeAaXZ7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 18:25:59 -0500
+Received: from ozlabs.org ([103.22.144.67]:42931 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756018AbeAaXZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 18:25:56 -0500
+Date: Thu, 1 Feb 2018 10:25:53 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        NeilBrown <neilb@suse.com>
+Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs
+ tree
+Message-ID: <20180201102553.73370fa6@canb.auug.org.au>
+In-Reply-To: <20180125143155.20b15b37@canb.auug.org.au>
+References: <20180125143155.20b15b37@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517438936.7489.8.camel@perches.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 02:48:56PM -0800, Joe Perches wrote:
-> On Thu, 2018-02-01 at 08:46 +1100, Tobin C. Harding wrote:
-> > Hi Joe,
-> > 
-> > Can I please bother you with a maintainer question.  I know everyone is
-> > super busy right now, I'm asking for a smidgen of your time instead of
-> > doing it wrong and taking up some of Linus' time since it's merge window
-> > and all that.
-> > 
-> > I have the checkpatch set queued ready to do a GIT PULL to Linus.  My
-> > concern is that the subject line may not be unique if checkpatch changes
-> > are coming in from various trees this merge window. I have tagged the
-> > pull request with
+Hi all,
+
+On Thu, 25 Jan 2018 14:31:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next merge of the vfs tree got a conflict in:
 > 
-> Personally, I think you could let Andrew Morton pick them
-> up as very few patches for checkpatch go in any other way.
-
-ok no worries.  I'll leave it until a few rc's are out then send to Andrew.
-
-> What patches are you submitting again?
+>   fs/dcache.c
 > 
-> Is it just
+> between commit:
 > 
-> commit 7b1924a1d930 ("vsprintf: add printk specifier %px")
+>   f9c34674bc60 ("vfs: factor out helpers d_instantiate_anon() and d_alloc_anon()")
 > 
-> or is there something else?
+> from the overlayfs tree and commit:
+> 
+>   f1ee616214cb ("VFS: don't keep disconnected dentries on d_anon")
+> 
+> from the vfs tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc fs/dcache.c
+> index 99bce0ed0213,17e6b84b9656..000000000000
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@@ -1954,16 -1961,18 +1953,18 @@@ static struct dentry *__d_instantiate_a
+>   	if (disconnected)
+>   		add_flags |= DCACHE_DISCONNECTED;
+>   
+>  -	spin_lock(&tmp->d_lock);
+>  -	__d_set_inode_and_type(tmp, inode, add_flags);
+>  -	hlist_add_head(&tmp->d_u.d_alias, &inode->i_dentry);
+>  +	spin_lock(&dentry->d_lock);
+>  +	__d_set_inode_and_type(dentry, inode, add_flags);
+>  +	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
+> - 	hlist_bl_lock(&dentry->d_sb->s_anon);
+> - 	hlist_bl_add_head(&dentry->d_hash, &dentry->d_sb->s_anon);
+> - 	hlist_bl_unlock(&dentry->d_sb->s_anon);
+> + 	if (!disconnected) {
+>  -		hlist_bl_lock(&tmp->d_sb->s_roots);
+>  -		hlist_bl_add_head(&tmp->d_hash, &tmp->d_sb->s_roots);
+>  -		hlist_bl_unlock(&tmp->d_sb->s_roots);
+> ++		hlist_bl_lock(&dentry->d_sb->s_roots);
+> ++		hlist_bl_add_head(&dentry->d_hash, &tmp->d_sb->s_roots);
+> ++		hlist_bl_unlock(&dentry->d_sb->s_roots);
+> + 	}
+>  -	spin_unlock(&tmp->d_lock);
+>  +	spin_unlock(&dentry->d_lock);
+>   	spin_unlock(&inode->i_lock);
+>   
+>  -	return tmp;
+>  +	return dentry;
+>   
+>    out_iput:
+>   	iput(inode);
 
-d94e97bc9ede checkpatch: add sub routine get_stat_real()
-d0e27c47f5b9 checkpatch: add sub routine get_stat_here()
-986b3b5b7d7a checkpatch: warn for use of %px
-26c1cf882d79 checkpatch: add check for tag Co-Developed-by
+This is now a conflict between the overlayfs tree and Linus' tree.
 
-I thought it was odd when you said they could go in through _any_
-tree. Not to worry, it's not urgent. 
-
-Thanks for the responce.
-
-	Tobin
+-- 
+Cheers,
+Stephen Rothwell
