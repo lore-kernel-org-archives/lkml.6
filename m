@@ -1,64 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752934AbeAaH6e (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:58:34 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45711 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751826AbeAaH6d (ORCPT
+        id S1753146AbeAaH6x (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 02:58:53 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:41237 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753008AbeAaH6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:58:33 -0500
-Date: Wed, 31 Jan 2018 08:58:32 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Meelis Roos <mroos@linux.ee>
-cc: Linux Kernel list <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: 4.15: WARNING: CPU: 3 PID: 258 at kernel/irq/chip.c:244
- __irq_startup+0x80/0x100
-In-Reply-To: <alpine.LRH.2.21.1801302127080.11640@math.ut.ee>
-Message-ID: <alpine.DEB.2.20.1801310856390.2293@nanos>
-References: <alpine.LRH.2.21.1801291809460.13788@math.ut.ee> <alpine.DEB.2.20.1801291732092.1849@nanos> <alpine.DEB.2.20.1801301935410.1797@nanos> <alpine.LRH.2.21.1801302127080.11640@math.ut.ee>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Wed, 31 Jan 2018 02:58:51 -0500
+Date: Tue, 30 Jan 2018 23:58:48 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] mm/swap.c: make functions and their kernel-doc agree
+Message-ID: <20180131075848.GB28275@bombadil.infradead.org>
+References: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
+ <20180130123400.GD26445@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-26527525-1517385512=:2293"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180130123400.GD26445@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-26527525-1517385512=:2293
-Content-Type: text/plain; charset=ISO-8859-7
-Content-Transfer-Encoding: 8BIT
-
-On Wed, 31 Jan 2018, Meelis Roos wrote:
-> > > Your supply of vintage hardware is amazing.
+On Tue, Jan 30, 2018 at 01:34:00PM +0100, Michal Hocko wrote:
+> On Mon 29-01-18 16:43:55, Randy Dunlap wrote:
+> > - for function pagevec_lookup_entries(), change the function parameter
+> >   name from nr_pages to nr_entries since that is more descriptive of
+> >   what the parameter actually is and then it matches the kernel-doc
+> >   comments also
 > 
-> :-)
-> 
-> > Does the patch below fix the issue for you?
-> 
->   CC      kernel/irq/autoprobe.o
-> kernel/irq/autoprobe.c: In function ¡probe_irq_on¢:
-> kernel/irq/autoprobe.c:74:8: error: void value not ignored as it ought to be
->     if (irq_activate_and_startup(desc, IRQ_NORESEND))
->         ^~~~~~~~~~~~~~~~~~~~~~~~
+> I know what is nr_pages because I do expect pages to be returned. What
+> are entries? Can it be something different from pages?
 
-Duh.
-
-> Just 
-> irq_activate_and_startup(desc, IRQ_NORESEND);
-
-Indeed. 
-
-> cures the warning and at least the first bootup was working otherwise 
-> too.
-
-I'll do a proper fix and queue it so your museum is kept alive.
-
-Thanks,
-
-	tglx
---8323329-26527525-1517385512=:2293--
+entries are any page cache entries -- pages or exceptional entries.
+calling this parameter nr_pages tricks you into thinking that you'll
+only get pages back.
