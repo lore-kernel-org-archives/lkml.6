@@ -1,119 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932108AbeAaPZu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 10:25:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49344 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752841AbeAaPZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 10:25:45 -0500
-Date: Wed, 31 Jan 2018 17:25:37 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, willy@infradead.org, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH] virtio_balloon: use non-blocking allocation
-Message-ID: <20180131161429-mutt-send-email-mst@kernel.org>
-References: <1514904621-39186-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20180131015912-mutt-send-email-mst@kernel.org>
- <201801312013.FGI90108.OQFMtFLHFOOJSV@I-love.SAKURA.ne.jp>
+        id S932206AbeAaP1w (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 10:27:52 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53164 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752497AbeAaP1s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 10:27:48 -0500
+X-Google-Smtp-Source: AH8x224CMdHKBiFhtqZYx5WZaM3YgaCs32ESDgzH+3SF6OOyw8tVuiYIRqJJE+u73RKBJx1xiqtz4Q==
+Subject: Re: [PATCH 5/8] thermal/drivers/cpu_cooling: Introduce the cpu idle
+ cooling driver
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>, Leo Yan <leo.yan@linaro.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Javi Merino <javi.merino@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>
+References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
+ <1516721671-16360-6-git-send-email-daniel.lezcano@linaro.org>
+ <CAKfTPtD-cUYoAJfhtuTr-E1=rttZvWxVv1Qv7b+Si4vSBy0JVg@mail.gmail.com>
+ <11334876-ef8c-58fa-5e32-ab8499eebd7e@linaro.org>
+ <CAKfTPtBXcLHNHEObpttCGtfCWXmR+kwmOW5aD+G23bnYTJi6Yg@mail.gmail.com>
+ <6e776e6c-6f1e-b33b-58b7-b95410ca1f95@linaro.org>
+ <CAKfTPtAFNdOsNOBC8Qg3c=OB7P635gvePvfpDbc5QF10Tei-9Q@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <22f4c4fc-fd74-b635-6859-7e2f599695f7@linaro.org>
+Date: Wed, 31 Jan 2018 16:27:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201801312013.FGI90108.OQFMtFLHFOOJSV@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAKfTPtAFNdOsNOBC8Qg3c=OB7P635gvePvfpDbc5QF10Tei-9Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 08:13:26PM +0900, Tetsuo Handa wrote:
-> Michael S. Tsirkin wrote:
-> > On Tue, Jan 02, 2018 at 11:50:21PM +0900, Tetsuo Handa wrote:
-> > > Commit c7cdff0e864713a0 ("virtio_balloon: fix deadlock on OOM") tried to
-> > > avoid OOM lockup by moving memory allocations to outside of balloon_lock.
-> > > 
-> > > Now, Wei is trying to allocate far more pages outside of balloon_lock and
-> > > some more memory inside of balloon_lock in order to perform efficient
-> > > communication between host and guest using scatter-gather API.
-> > > 
-> > > Since pages allocated outside of balloon_lock are not visible to the OOM
-> > > notifier path until fill_balloon() holds balloon_lock (and enqueues the
-> > > pending pages), allocating more pages than now may lead to unacceptably
-> > > premature OOM killer invocation.
-> > > 
-> > > It would be possible to make the pending pages visible to the OOM notifier
-> > > path. But there is no need to try to allocate memory so hard from the
-> > > beginning. As of commit 18468d93e53b037e ("mm: introduce a common
-> > > interface for balloon pages mobility"), it made sense to try allocation
-> > > as hard as possible. But after commit 5a10b7dbf904bfe0 ("virtio_balloon:
-> > > free some memory from balloon on OOM"),
-> > 
-> > However, please not that this behavious is optional.
-> > Can you keep the current behaviour when deflate on OOM is disabled?
+On 31/01/2018 10:56, Vincent Guittot wrote:
+> On 31 January 2018 at 10:50, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>> On 31/01/2018 10:46, Vincent Guittot wrote:
+>>> On 31 January 2018 at 10:33, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>>> On 31/01/2018 10:01, Vincent Guittot wrote:
+>>>>> Hi Daniel,
+>>>>>
+>>>>> On 23 January 2018 at 16:34, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>>>
+>>>> [ ... ] (please trim :)
+>>>>
+>>>>>> +               /*
+>>>>>> +                * Each cooling device is per package. Each package
+>>>>>> +                * has a set of cpus where the physical number is
+>>>>>> +                * duplicate in the kernel namespace. We need a way to
+>>>>>> +                * address the waitq[] and tsk[] arrays with index
+>>>>>> +                * which are not Linux cpu numbered.
+>>>>>> +                *
+>>>>>> +                * One solution is to use the
+>>>>>> +                * topology_core_id(cpu). Other solution is to use the
+>>>>>> +                * modulo.
+>>>>>> +                *
+>>>>>> +                * eg. 2 x cluster - 4 cores.
+>>>>>> +                *
+>>>>>> +                * Physical numbering -> Linux numbering -> % nr_cpus
+>>>>>> +                *
+>>>>>> +                * Pkg0 - Cpu0 -> 0 -> 0
+>>>>>> +                * Pkg0 - Cpu1 -> 1 -> 1
+>>>>>> +                * Pkg0 - Cpu2 -> 2 -> 2
+>>>>>> +                * Pkg0 - Cpu3 -> 3 -> 3
+>>>>>> +                *
+>>>>>> +                * Pkg1 - Cpu0 -> 4 -> 0
+>>>>>> +                * Pkg1 - Cpu1 -> 5 -> 1
+>>>>>> +                * Pkg1 - Cpu2 -> 6 -> 2
+>>>>>> +                * Pkg1 - Cpu3 -> 7 -> 3
+>>>>>
+>>>>>
+>>>>> I'm not sure that the assumption above for the CPU numbering is safe.
+>>>>> Can't you use a per cpu structure to point to resources that are per
+>>>>> cpu instead ? so you will not have to rely on CPU ordering
+>>>>
+>>>> Can you elaborate ? I don't get the part with the percpu structure.
+>>>
+>>> Something like:
+>>>
+>>> struct cpuidle_cooling_cpu {
+>>>        struct task_struct *tsk;
+>>>        wait_queue_head_t waitq;
+>>> };
+>>>
+>>> DECLARE_PER_CPU(struct cpuidle_cooling_cpu *, cpu_data);
+>>
+>> I got this part but I don't get how that fixes the ordering thing.
 > 
-> I can, for passing a flag to balloon_page_alloc() will do it.
-> 
-> But do we really prefer behavior up to comment 27 of
-> https://bugzilla.redhat.com/show_bug.cgi?id=1525356 ?
+> Because you don't care of the CPU ordering to retrieve the data as
+> they are stored per cpu directly
+
+That's what I did initially, but for consistency reasons with the
+cpufreq cpu cooling device which is stored in a list and the combo cpu
+cooling device, the cpuidle cooling device must be per cluster and
+stored in a list.
+
+Alternatively I can do:
+
+struct cpuidle_cooling_device {
+	struct thermal_cooling_device *cdev;
+-	struct task_struct **tsk;
++	struct task_struct __percpu *tsk;
+	struct cpumask *cpumask;
+	struct list_head node;
+	struct hrtimer timer;
+	struct kref kref;
+-	wait_queue_head_t *waitq;
++	wait_queue_head_t __percpu waitq;
+	atomic_t count;
+	unsigned int idle_cycle;
+	unsigned int state;
+};
 
 
-You show a config where so much memory is taken that guest crashes, but
-hopefully in other situations it's just an application hogging memory.
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-So I'm sure current behaviour is not optimal for your config but the
-problem with deflate on OOM is it does not restart inflating when OOM
-condition goes away.  So if host *really* needs that memory it can't
-enable deflate on OOM.
-
-Crashing the kernel is of course not really useful, I wish
-there was a way to avoid that while still reliably
-giving as much as we can to the host.
-
-Ideally balloon flow looks like this:
-1. host needs some memory e.g. to start a new guest
-2. guest gets request from host to give it back some memory
-3. while request not satisfied:
-	a. try to get hold of free memory
-	b. free up some by flushing caches
-	c. free up some by killing memory hogs
-
-All this without crashing the guest.
-
-What we have implemented is a rough approximation.
-
-Deflate on OOM reduces the chance of a crash or hang but it makes the
-inflate unreliable: host can no longer use the memory for another guest,
-this one might request it back at any time.
-
-What is deflate on oom good for then?  I suspect that people use deflate
-on oom as poor man's page hinting.
-
-
-> > 
-> > 
-> > > it no longer makes sense to try
-> > > allocation as hard as possible, for fill_balloon() will after all have to
-> > > release just allocated memory if some allocation request hits the OOM
-> > > notifier path. Therefore, this patch disables __GFP_DIRECT_RECLAIM when
-> > > allocating memory for inflating the balloon. Then, memory for inflating
-> > > the balloon can be allocated inside balloon_lock, and we can release just
-> > > allocated memory as needed.
-> > > 
-> > > Also, this patch adds __GFP_NOWARN, for possibility of hitting memory
-> > > allocation failure is increased by removing __GFP_DIRECT_RECLAIM, which
-> > > might spam the kernel log buffer. At the same time, this patch moves
-> > > "puff" messages to outside of balloon_lock, for it is not a good thing to
-> > > block the OOM notifier path for 1/5 of a second. (Moreover, it is better
-> > > to release the workqueue and allow processing other pending items. But
-> > > that change is out of this patch's scope.)
-> > > 
-> > > __GFP_NOMEMALLOC is currently not required because workqueue context
-> > > which calls balloon_page_alloc() won't cause __gfp_pfmemalloc_flags()
-> > > to return ALLOC_OOM. But since some process context might start calling
-> > > balloon_page_alloc() in future, this patch does not remove
-> > > __GFP_NOMEMALLOC.
-> > > 
-> > > (Only compile tested. Please do runtime tests before committing.)
-> > 
-> > You will have to find someone to test it.
-> 
-> I don't have machines with much memory.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
