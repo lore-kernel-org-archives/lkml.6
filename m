@@ -1,119 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932318AbeAaRvM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:51:12 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:53057 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753112AbeAaRvK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:51:10 -0500
-Date: Wed, 31 Jan 2018 18:51:06 +0100
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@free-electrons.com, wens@csie.org, linux@armlinux.org.uk,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        davem@davemloft.net, hans.verkuil@cisco.com, mchehab@kernel.org,
-        rask@formelder.dk, clabbe.montjoie@gmail.com, sean@mess.org,
-        krzk@kernel.org, icenowy@aosc.io, edu.molinas@gmail.com,
-        singhalsimran0@gmail.com, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 04/16] iio: adc: sun4i-gpadc-iio: rework: sampling
- start/end code readout reg
-Message-ID: <20180131175106.agrvwioaruioavqk@qschulz>
-References: <20180128232919.12639-1-embed3d@gmail.com>
- <20180128232919.12639-5-embed3d@gmail.com>
+        id S932344AbeAaRx3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:53:29 -0500
+Received: from mout.web.de ([212.227.15.14]:63049 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932325AbeAaRx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:53:27 -0500
+Subject: =?UTF-8?Q?Re:_[v2]_Coccinelle:_zalloc-simple:_Delete_function_?=
+ =?UTF-8?B?4oCca21lbV9jYWNoZV9hbGxvY+KAnSBmcm9tIFNtUEwgcnVsZXM=?=
+To: Julia Lawall <julia.lawall@lip6.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Himanshu Jha <himanshujha199640@gmail.com>
+Cc: cocci@systeme.lip6.fr, LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
+ <243e83a2-ae0c-2dd2-7f8f-83ac0978cc0e@users.sourceforge.net>
+ <alpine.DEB.2.20.1801311836320.3707@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <f182b411-d378-56dd-1ab5-0e8f039d493e@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 18:53:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cjyxari4p6sh2f7e"
-Content-Disposition: inline
-In-Reply-To: <20180128232919.12639-5-embed3d@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <alpine.DEB.2.20.1801311836320.3707@hadrien>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:5iae4RoUQhQROTeI4WF2S/1oBHTWkyEckwBGAo8XOrb/SOsQsKH
+ FSAOSdfJ0CYhtVZhY1GV8deC5FOelMST71MLI5Bs/s/xMBZVk2A3okloVcCYGmjcSYL3l/c
+ XpQFocMu8w4APTNngKC59b7lgTyovsgvbqgskJzrYJFH6iG4kfrsKOU7mzwHd6u3QUbKB1p
+ bSCU/4t1OxI+BZTRZydUg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:CGL3MVnhfWc=:MEOzmhzKaGIppQp9tW0yL6
+ bdw0/pCd1kII3xzPxmLjfkcQt50mRe3xllDIclwh9aDRLO9jBPo2XaG6TW6lXsWYa7UGd/MNd
+ Jw1Yll0ddhQ5K3UAYTBcLk6yA9Tw7f/+FNIa49AaXZHK4FYTqf98LaMXxKomremOGvdQIoQO2
+ AYCSa4P+nYMiQTwBCXqO0laCPawk2yULXbAuzagCW+LDwKRJPaf19jFwZiF6LdLAecZwCfM0l
+ gJU99GOZca1h0OJZiGeTT7gcyH0rBTP9cp6O5y4uVUJpvQvxtcIvInobsP6KpkqOnkkA6qHO8
+ JHSMO3OFeTy5MYJ+zwbwF/FP/Ifi94BCN9LQtpHLBIddVdLYRNMuq1Wq9Q0cXtponPO1UCXT2
+ qhpaiPAQreULU7mN7fdW5ZQuR4/d+1D0wjn/nvmXaId57OswiiIRvX/laoKTwCquClmPadWLN
+ ROg105ssbGNrEMhmcPIswNvFKTwmXmjirX5nZwESIF0g6gGNIBzgbRMXpmm0UEopcHFWP3Ous
+ MVhRLgdfJTepm6d7L0a0Jfti/fFhbODBCMafyCbZiLfk2bDoBPRRWLGAm07o8FNEluU4LG0pF
+ 8t8UCEoVVo75OqTOhalkBHX5WjV8f1lcaPOip8MAEbbuCBKiaT2LrM5OyBG8q2n5MEsZ/YpTu
+ s1VSgj4kVS64/ZCo1g3hTKp9s2S9spEm6V4xOwRxTrU9+4TenyCcKhhRwgqYBnkZ6SqRvzq6R
+ BGdKe9kORKHp/eCN3+KURPVbQTBuTQwQzGKVvUfQIUq56Gd/6QaMff2X/wg9rEVCCFoVSAZ2/
+ IRWyD+InxivbrmsjWDa8ctFT81MWqYUYw6O4Vzf+WB4h2vVHcU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+>> Will the rule set be more consistent then?
+> 
+> If E1 is not bound by the kem_cache_alloc rule, then it will match anything.
 
---cjyxari4p6sh2f7e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+How much was such a software behaviour intended by the discussed SmPL script?
 
-Hi Philipp,
 
-On Mon, Jan 29, 2018 at 12:29:07AM +0100, Philipp Rossak wrote:
-> For adding newer sensor some basic rework of the code is necessary.
->=20
-> This commit reworks the code and allows the sampling start/end code and
-> the position of value readout register to be altered. Later the start/end
-> functions will be used to configure the ths and start/stop the
-> sampling.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> ---
->  drivers/iio/adc/sun4i-gpadc-iio.c | 44 +++++++++++++++++++++++++++++++++=
-+-----
->  1 file changed, 39 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/sun4i-gpadc-iio.c b/drivers/iio/adc/sun4i-gp=
-adc-iio.c
-> index 03804ff9c006..db57d9fffe48 100644
-> --- a/drivers/iio/adc/sun4i-gpadc-iio.c
-> +++ b/drivers/iio/adc/sun4i-gpadc-iio.c
-> @@ -49,6 +49,15 @@ static unsigned int sun6i_gpadc_chan_select(unsigned i=
-nt chan)
->  	return SUN6I_GPADC_CTRL1_ADC_CHAN_SELECT(chan);
->  }
-> =20
-> +struct sun4i_gpadc_iio;
-> +
-> +/*
-> + * Prototypes for these functions, which enable these functions to be
-> + * referenced in gpadc_data structures.
-> + */
+> The user can check if it is appropriate.
 
-Comment not needed.
+How does such an information fit to expectations for safe source code analysis?
 
-> +static int sun4i_gpadc_sample_start(struct sun4i_gpadc_iio *info);
-> +static int sun4i_gpadc_sample_end(struct sun4i_gpadc_iio *info);
-> +
->  struct gpadc_data {
->  	int		temp_offset;
->  	int		temp_scale;
-> @@ -56,6 +65,9 @@ struct gpadc_data {
->  	unsigned int	tp_adc_select;
->  	unsigned int	(*adc_chan_select)(unsigned int chan);
->  	unsigned int	adc_chan_mask;
-> +	unsigned int	temp_data;
 
-Does not really have anything to do with sample_start/end. I would have
-made a different commit for it.
+> Another option would be to use the type of the variable storing the result
+> of the call to compute the expected size.
 
-Otherwise,
-Reviewed-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+How would this suggestion help here?
 
-Quentin
-
---cjyxari4p6sh2f7e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJacgIHAAoJEIS4mnU+4PGjPToQAImlXWgWDfZ7cayr5+jvTa8K
-TF6aHRbAeVrYWFeuougtp3Tn9+JjevEWjNPk5u7rh1RvHqS2ElyGhbWmU2pGOUU+
-SL+off7E4dqyc+QkBbnEResZRlbqEa6LuP/3itxj73DANKhwM9sClh4lamFXh1BW
-COBuhVhRfchnytxrP+kbNeYaXk3sxs3mXAu2qjFTOhtT/c7lD35743oaa6wDOjI2
-K60F7NTSgn1UfeGtGS1GxNHE74+IEa1HuBkKvpnsoXYZxs8XVe16p76G6o0flax1
-e/shccmNP9c1Z8Uul5C70KGXOl6yTwdJcEbhwRuMyy/uUhedKc+2NXZewBvOVfmf
-eCG1Jt/o9wBeR2yDyInEwtAuee1629c3texMknhOZpGB/V7fBK0haUWvQll4hFgx
-/rWXtYYMwRilaP4nQ4UuQp8KdwV8qQmZp685CZVRWFhhIa5+d04G+SrM4lLpO9sy
-YdOCtc3EWZ3E1c/9omu+g06eH8lyO1AjgZsuYbmfDYTusPNnVT+Hwa1j82VRC60E
-pxx795vGyoyIDhjb16tNYsO4AqMrZleegTXirjM8imYihJmL/epscrIZPlOgGR8r
-JluW3NbTW+UyA/KUe8G8C9YpjMdSjczjJZdmH5Qoae7gSIppNOrm0qLGWDsOatex
-nlyBn9LhgFJCvoLT4jF8
-=CT+v
------END PGP SIGNATURE-----
-
---cjyxari4p6sh2f7e--
+Regards,
+Markus
