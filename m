@@ -1,80 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932075AbeAaPZs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 10:25:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752497AbeAaPZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 10:25:45 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4DA20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Wed, 31 Jan 2018 16:25:41 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hsi changes for hsi-4.16
-Message-ID: <20180131152541.hsxsa7yay2fwswn3@earth.universe>
+        id S1753532AbeAaP2g (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 10:28:36 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:20651 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753356AbeAaP2d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 10:28:33 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w0VFSIpV030132
+X-Nifty-SrcIP: [209.85.217.170]
+X-Google-Smtp-Source: AH8x227JU+5yO77qQ3SzCvhKLySJkSOd6zY/8Sz5WXa3Bvj7h43itfB1QnlJcamc7eYAPJRFQmhn6/uMfeTH6QpaWzU=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tndktocghdlklk2u"
-Content-Disposition: inline
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180131093434.20050-1-ulfalizer@gmail.com>
+References: <20180131093434.20050-1-ulfalizer@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 1 Feb 2018 00:27:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQYT2DuGkP1s+BP8OHChgqE_o6vCwhkU0ZEsFzveb-Bhg@mail.gmail.com>
+Message-ID: <CAK7LNAQYT2DuGkP1s+BP8OHChgqE_o6vCwhkU0ZEsFzveb-Bhg@mail.gmail.com>
+Subject: Re: [PATCH 00/11] Remove blank help texts from Kconfig files and add warning
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Paul Bolle <pebolle@tiscali.nl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-01-31 18:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+> This patchset first removes all blank help texts from Kconfig files for all
+> arches, and then makes Kconfig print a warning for blank help texts.
+>
+> All patches can be applied independently, but to avoid warning spam, the blank
+> help texts ought to be removed before the warning is added.
+>
+> Ulf Magnusson (11):
+>   net/sched: kconfig: Remove blank help texts
+>   video: fbdev: kconfig: Remove blank help text
+>   mmc: kconfig: Remove blank help text
+>   Staging: rtl8192u: kconfig: Remove blank help text
+>   Staging: rtl8192e: kconfig: Remove blank help text
+>   lib/Kconfig.debug: Remove blank help text
+>   MIPS: BCM63XX: kconfig: Remove blank help text
+>   MIPS: kconfig: Remove blank help text
+>   arm: vt8500: kconfig: Remove blank help text
+>   nios2: kconfig: Remove blank help text
+>   kconfig: Warn if help text is blank
 
---tndktocghdlklk2u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi Linus,
+Whole of the series, applied to linux-kbuild/kconfig.  Thanks!
 
-Just one simple patch this time for the HSI subsystem.
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
 
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+>  arch/arm/mach-vt8500/Kconfig              | 1 -
+>  arch/mips/Kconfig                         | 1 -
+>  arch/mips/bcm63xx/boards/Kconfig          | 1 -
+>  arch/nios2/Kconfig                        | 1 -
+>  drivers/mmc/host/Kconfig                  | 1 -
+>  drivers/staging/rtl8192e/rtl8192e/Kconfig | 1 -
+>  drivers/staging/rtl8192u/Kconfig          | 1 -
+>  drivers/video/fbdev/Kconfig               | 1 -
+>  lib/Kconfig.debug                         | 1 -
+>  net/sched/Kconfig                         | 3 ---
+>  scripts/kconfig/zconf.y                   | 6 ++++++
+>  11 files changed, 6 insertions(+), 12 deletions(-)
+>
+> --
+> 2.14.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-are available in the Git repository at:
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi.git tags/hsi-for-4.16
 
-for you to fetch changes up to b6dc80dbe6cdf4effd5a07bcd37f34cbf25eb07a:
-
-  HSI: cmt_speech: use timespec64 instead of timespec (2017-12-01 16:31:47 +0100)
-
-----------------------------------------------------------------
-HSI changes for the v4.16 series
-
-* Y2038 fix for cmt-speech
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      HSI: cmt_speech: use timespec64 instead of timespec
-
- drivers/hsi/clients/cmt_speech.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---tndktocghdlklk2u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlpx3/IACgkQ2O7X88g7
-+pq9WxAAkE9F8FNeaQ4jw2+cmHl0ty4m49wQUQk1YrjAniwtb5YOLOP877KUICW9
-xqJKl+hUt+YjWmRHM+mnabe9HpYJ7WnPelTGFKciFKGzvB2RDW2K5e/xCZjTYDM7
-caC6Qg6yQI5JW+KpWxF5jC0LxyNontrC7F/j2rAGdBo9m3IGKQY67Iz4HTBL0lPA
-xGwjSVCyMxgvriz081PlE69xZ9qHV7TyhqBx45XeNb1Y3hSYGKDydts63ya1qcvY
-tDJDo8L1+uhBtP97zHcpWeu61WEytCVBwqI/tangyUiUKQOWg3frgEI9WZzh4DwZ
-36ll+3oQRsSzD9DPWH2D169KD4C4F/2cWinqNnNI6looHbL7uXfncAw4EYQGabVl
-JiRFiI+9lDR7wQ3m/G9h2BSt8etqJ3EBe7NcN0LW4gJtaoNwT4G5xQKYXXwjLcTx
-PPTY8D3CABtTj1lN9dJHUX+viJkta+VoxkNnS/Fa4PDl1A1sQgCwlXSw1iKPymFo
-2I/JWIdpupk20A3y/fFJ8EmDkJsL95QRQftjh+Ft9pLpNHLfRzIUnyv45ZkgfUhY
-dhAxYMTsIIPWnK+RgBjnb7cwnYHO4HG2grvQF/rDvv3LqOJXoZpP83a964PRQK/2
-Y/Ika4cfXB+QamZuSX+my+tlX5AIDbh6NofryAENwtmRmjWmGj0=
-=KYmZ
------END PGP SIGNATURE-----
-
---tndktocghdlklk2u--
+-- 
+Best Regards
+Masahiro Yamada
