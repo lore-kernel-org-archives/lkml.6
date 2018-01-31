@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932093AbeAaHm6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:42:58 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:1873 "EHLO
+        id S932067AbeAaHm5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 02:42:57 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:45290 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752909AbeAaHmx (ORCPT
+        with ESMTP id S1753141AbeAaHmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:42:53 -0500
-X-UUID: b3268dfd2bf84bb9bc11a59175f993f2-20180131
+        Wed, 31 Jan 2018 02:42:52 -0500
+X-UUID: da0fefc8d3c84ce9878f66c82b619306-20180131
 From: Ryder Lee <ryder.lee@mediatek.com>
 To: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
 CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
@@ -16,9 +16,9 @@ CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
         <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-clk@vger.kernel.org>, Garlic Tseng <garlic.tseng@mediatek.com>,
         Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v2 4/5] dt-bindings: clock: mediatek: update audsys documentation to adapt MFD device
-Date: Wed, 31 Jan 2018 15:42:44 +0800
-Message-ID: <8651585c91ee40f6ab3e30b893bcfb90fe5c2c25.1515639336.git.ryder.lee@mediatek.com>
+Subject: [PATCH v2 1/5] clk: mediatek: update missing clock data for MT7622 audsys
+Date: Wed, 31 Jan 2018 15:42:41 +0800
+Message-ID: <ec2dfe750291a996c54cc8aaeafafa333b992c4f.1515639336.git.ryder.lee@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1515639336.git.ryder.lee@mediatek.com>
 References: <cover.1515639336.git.ryder.lee@mediatek.com>
@@ -29,74 +29,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the MediaTek audio hardware block that expose functionalities that are
-handled by separate subsystems in the kernel, and there are registers that
-are shared between related drivers.
-
-Switch the current device to an MFD device, add more descriptions about the
-subsystem and modify example accordingly.
+Add missing clock data 'CLK_AUDIO_AFE_CONN' for MT7622 audsys.
 
 Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- .../bindings/arm/mediatek/mediatek,audsys.txt      | 37 ++++++++++++++++++----
- 1 file changed, 30 insertions(+), 7 deletions(-)
+ drivers/clk/mediatek/clk-mt7622-aud.c  | 1 +
+ include/dt-bindings/clock/mt7622-clk.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-index 9b8f578..677af40 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-@@ -1,22 +1,45 @@
--MediaTek AUDSYS controller
-+MediaTek Audio Subsystem
- ============================
-+The audio subsystem is one of the multi-function blocks of MediaTek SoCs.
-+It contains a system controller, which provides a number registers giving
-+access to two features: AUDSYS clocks and Audio Front End (AFE) components.
+diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+index fad7d9f..13f752d 100644
+--- a/drivers/clk/mediatek/clk-mt7622-aud.c
++++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+@@ -106,6 +106,7 @@
+ 	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
+ 	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
+ 	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
++	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
+ 	/* AUDIO2 */
+ 	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
+ 	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
+diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
+index 3e514ed..e9d77f0 100644
+--- a/include/dt-bindings/clock/mt7622-clk.h
++++ b/include/dt-bindings/clock/mt7622-clk.h
+@@ -235,7 +235,8 @@
+ #define CLK_AUDIO_MEM_ASRC3		43
+ #define CLK_AUDIO_MEM_ASRC4		44
+ #define CLK_AUDIO_MEM_ASRC5		45
+-#define CLK_AUDIO_NR_CLK		46
++#define CLK_AUDIO_AFE_CONN		46
++#define CLK_AUDIO_NR_CLK		47
  
-+For the top level node:
-+- compatible: must be: "syscon", "simple-mfd";
-+- reg: register area of the Audio Subsystem
-+
-+Required sub-nodes:
-+
-+AUDSYS clocks:
-+-------
- The MediaTek AUDSYS controller provides various clocks to the system.
+ /* SSUSBSYS */
  
- Required Properties:
- 
- - compatible: Should be one of:
--	- "mediatek,mt7622-audsys", "syscon"
-+	- "mediatek,mt2701-audsys";
-+	- "mediatek,mt7622-audsys";
- - #clock-cells: Must be 1
- 
- The AUDSYS controller uses the common clk binding from
- Documentation/devicetree/bindings/clock/clock-bindings.txt
- The available clocks are defined in dt-bindings/clock/mt*-clk.h.
- 
-+AFE components:
-+-------
-+For common binding part and usage, refer to
-+../sonud/mt2701-afe-pcm.txt.
-+
- Example:
- 
--audsys: audsys@11220000 {
--	compatible = "mediatek,mt7622-audsys", "syscon";
--	reg = <0 0x11220000 0 0x1000>;
--	#clock-cells = <1>;
--};
-+	audio-subsystem@11220000 {
-+		compatible = "syscon", "simple-mfd";
-+		reg = <0 0x11220000 0 0x2000>;
-+
-+		audsys: clock {
-+			compatible = "mediatek,mt2701-audsys";
-+			#clock-cells = <1>;
-+		};
-+
-+		...
-+	};
 -- 
 1.9.1
