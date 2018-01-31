@@ -1,45 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932286AbeAaAWo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 19:22:44 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45406 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932270AbeAaAWn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 19:22:43 -0500
-X-Google-Smtp-Source: AH8x225L9i1p2muFK1X2kTxOHEvCX14STl6ZEC19G4+Fy3VeieTFrAH8Wp/fHLmGcV/K7lR49adXOM/7iPTFsr4pSnw=
+        id S1754374AbeAaAZi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 19:25:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754355AbeAaAZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 19:25:36 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E1902173F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Tue, 30 Jan 2018 16:25:35 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux F2FS Dev Mailing List
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
+Message-ID: <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180131095446.443670dc@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <7hr2q6c2r4.fsf@baylibre.com>
-References: <20180111023401.125658-1-yixun.lan@amlogic.com> <7hr2q6c2r4.fsf@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-Date: Tue, 30 Jan 2018 16:22:41 -0800
-Message-ID: <CAOi56cW4ufsegpy7heK1+pCxvZ2gz5Lf3dkUgxkZCgMq5oBzSA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] ARM64: dts: meson-axg: UART DT updates
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: devicetree <devicetree@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131095446.443670dc@canb.auug.org.au>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 4:04 PM, Kevin Hilman <khilman@baylibre.com> wrote:
-> Yixun Lan <yixun.lan@amlogic.com> writes:
->
->> HI Kevin
->>  These are the UART DT updates for the Meson-AXG platform.
->>
->>  The patch 1 is a general fix.
->> Other patches are about adding clock & pinctrl info, then using them.
->> Last patch enable UART_A which connect to a BT module on the S400 board.
->
-> Applied to v4.16/dt64,
+On 01/31, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Tue, 30 Jan 2018 14:32:20 -0800 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> >
+> > Could you please consider the below pull request?
+> > 
+> > Thanks,
+> > 
+> > The following changes since commit ace52288edf0cb5e7a52b681f057f86224c49c27:
+> > 
+> >   Merge tag 'for-linus-20171218' of git://git.infradead.org/linux-mtd (2017-12-18 16:18:01 -0800)
+> > 
+> > are available in the Git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-4.16-rc1
+> > 
+> > for you to fetch changes up to 1c1d35df71104c76a4a2e25862926f22c334c9d6:
+> > 
+> >   f2fs: support inode creation time (2018-01-25 14:10:39 -0800)
+> 
+> This has an interesting conflict with the btrfs tree:
+> 
+> -----------------------------------------------------------------------
+> After merging the f2fs tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> /home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_fill_super':
+> /home/sfr/next/next/fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPWB' undeclared (first use in this function); did you mean 'S_CGROUPWB'?
+>   sb->s_iflags |= SB_I_CGROUPWB;
+>                   ^~~~~~~~~~~~~
+>                   S_CGROUPWB
+> 
+> Caused by commit
+> 
+>   578c647879f7 ("f2fs: implement cgroup writeback support")
+> 
+> interacting with commit
+> 
+>   34934189a3dd ("cgroup, writeback: replace SB_I_CGROUPWB with per-inode S_CGROUPWB"
+> 
+> from the btrfs tree.
+> 
+> I have reverted the f2fs tree commit for today, but a better resolution
+> would be appreciated.
+> -----------------------------------------------------------------------
+> 
+> I have seen no response to the above email and have been reverting that
+> commit since Jan 18.
 
-Oops, I meant v4.17.
+I think this can be addressed by:
 
-Kevin
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 89c838bfb067..c743b73976d0 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
+                new_fl |= S_DIRSYNC;
+        if (f2fs_encrypted_inode(inode))
+                new_fl |= S_ENCRYPTED;
++       new_fl |= S_CGROUPWB;
+        inode_set_flags(inode, new_fl,
+                        S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
+-                       S_ENCRYPTED);
++                       S_ENCRYPTED|S_CGROUPWB);
+ }
+
+ static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 8173ae688814..ebcd58476fc7 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+        sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
+                (test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+        memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
+-       sb->s_iflags |= SB_I_CGROUPWB;
+
+        /* init f2fs-specific super block info */
+        sbi->valid_super_block = valid_super_block;
