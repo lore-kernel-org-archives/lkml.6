@@ -1,80 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753486AbeAaO03 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 09:26:29 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36840 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753383AbeAaO01 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 09:26:27 -0500
-X-Google-Smtp-Source: AH8x226hM0nXyjr3GHhUU2r3sFwOM0kKSTKiGUCI7YqWzujAD32kND9lobhfx9VOC+B3dJ3dMCcpiw==
-Reply-To: minyard@acm.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        "openipmi-developer@lists.sourceforge.net"
-        <openipmi-developer@lists.sourceforge.net>
-From: Corey Minyard <minyard@acm.org>
-Subject: [GIT PULL] IPMI updates for 4.16
-Message-ID: <55498064-43a1-5cda-6b67-dae6f8191a3b@acm.org>
-Date: Wed, 31 Jan 2018 08:26:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753383AbeAaOe2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 09:34:28 -0500
+Received: from mx1.mpynet.fi ([82.197.21.84]:53262 "EHLO mx1.mpynet.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752549AbeAaOe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 09:34:27 -0500
+From: Aapo Vienamo <aapo@tuxera.com>
+To: <devicetree@vger.kernel.org>
+CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Ilya Ledvich" <ilya@compulab.co.il>, Aapo Vienamo <aapo@tuxera.com>
+Subject: [RFC] ARM: dts: imx7d: cl-som-imx7: fix pinctrl_enet
+Date: Wed, 31 Jan 2018 14:34:07 +0000
+Message-ID: <20180131143407.8324-1-aapo@tuxera.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+Content-Type: text/plain
+X-ClientProxiedBy: tuxera-exch.ad.tuxera.com (10.20.48.11) To
+ tuxera-exch.ad.tuxera.com (10.20.48.11)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit a638349bf6c29433b938141f99225b160551ff48:
+The missing last digit of the CONFIG values is added. Looks like a typo
+of some sort when comparing to the downstream dt. This fixes
+intermittent behavior behaviour of the ethernet controllers.
 
-   Merge branch 'for-4.15-fixes' of 
-git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu (2017-12-11 
-17:13:03 -0800)
+Signed-off-by: Aapo Vienamo <aapo@tuxera.com>
+---
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 52 ++++++++++++++++-----------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
 
-are available in the git repository at:
-
-   https://github.com/cminyard/linux-ipmi.git tags/for-linus-4.16-1
-
-for you to fetch changes up to e45af3d372f1d4339663dcbef28665f5b15d448c:
-
-   ipmi_ssif: Remove duplicate NULL check (2018-01-22 08:10:38 -0600)
-
-----------------------------------------------------------------
-Small fixes for various things, been sitting in next for a
-while (some a long time).
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-       ipmi_ssif: Remove duplicate NULL check
-
-Corey Minyard (1):
-       ipmi_si: Fix error handling of platform device
-
-Jeremy Kerr (1):
-       ipmi/ipmi_powernv: remove outdated todo in powernv IPMI driver
-
-John Garry (1):
-       ipmi: use dynamic memory for DMI driver override
-
-Masamitsu Yamazaki (1):
-       ipmi: Clear smi_info->thread to prevent use-after-free during 
-module unload
-
-Wei Yongjun (3):
-       ipmi_si_platform: Fix typo in parameter description
-       ipmi watchdog: fix typo in parameter description
-       ipmi/powernv: Fix error return code in ipmi_powernv_probe()
-
-Xiongfeng Wang (1):
-       ipmi: use correct string length
-
-  drivers/char/ipmi/ipmi_dmi.c         |  5 ++++-
-  drivers/char/ipmi/ipmi_msghandler.c  |  2 +-
-  drivers/char/ipmi/ipmi_powernv.c     |  6 +++---
-  drivers/char/ipmi/ipmi_si_intf.c     | 13 +++++++++----
-  drivers/char/ipmi/ipmi_si_platform.c |  2 +-
-  drivers/char/ipmi/ipmi_ssif.c        |  3 +--
-  drivers/char/ipmi/ipmi_watchdog.c    |  4 ++--
-  7 files changed, 21 insertions(+), 14 deletions(-)
+diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+index ae45af1ad062..3cc1fb9ce441 100644
+--- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
++++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+@@ -213,37 +213,37 @@
+ &iomuxc {
+ 	pinctrl_enet1: enet1grp {
+ 		fsl,pins = <
+-			MX7D_PAD_SD2_CD_B__ENET1_MDIO			0x3
+-			MX7D_PAD_SD2_WP__ENET1_MDC			0x3
+-			MX7D_PAD_ENET1_RGMII_TXC__ENET1_RGMII_TXC	0x1
+-			MX7D_PAD_ENET1_RGMII_TD0__ENET1_RGMII_TD0	0x1
+-			MX7D_PAD_ENET1_RGMII_TD1__ENET1_RGMII_TD1	0x1
+-			MX7D_PAD_ENET1_RGMII_TD2__ENET1_RGMII_TD2	0x1
+-			MX7D_PAD_ENET1_RGMII_TD3__ENET1_RGMII_TD3	0x1
+-			MX7D_PAD_ENET1_RGMII_TX_CTL__ENET1_RGMII_TX_CTL	0x1
+-			MX7D_PAD_ENET1_RGMII_RXC__ENET1_RGMII_RXC	0x1
+-			MX7D_PAD_ENET1_RGMII_RD0__ENET1_RGMII_RD0	0x1
+-			MX7D_PAD_ENET1_RGMII_RD1__ENET1_RGMII_RD1	0x1
+-			MX7D_PAD_ENET1_RGMII_RD2__ENET1_RGMII_RD2	0x1
+-			MX7D_PAD_ENET1_RGMII_RD3__ENET1_RGMII_RD3	0x1
+-			MX7D_PAD_ENET1_RGMII_RX_CTL__ENET1_RGMII_RX_CTL	0x1
++			MX7D_PAD_SD2_CD_B__ENET1_MDIO			0x30
++			MX7D_PAD_SD2_WP__ENET1_MDC			0x30
++			MX7D_PAD_ENET1_RGMII_TXC__ENET1_RGMII_TXC	0x11
++			MX7D_PAD_ENET1_RGMII_TD0__ENET1_RGMII_TD0	0x11
++			MX7D_PAD_ENET1_RGMII_TD1__ENET1_RGMII_TD1	0x11
++			MX7D_PAD_ENET1_RGMII_TD2__ENET1_RGMII_TD2	0x11
++			MX7D_PAD_ENET1_RGMII_TD3__ENET1_RGMII_TD3	0x11
++			MX7D_PAD_ENET1_RGMII_TX_CTL__ENET1_RGMII_TX_CTL	0x11
++			MX7D_PAD_ENET1_RGMII_RXC__ENET1_RGMII_RXC	0x11
++			MX7D_PAD_ENET1_RGMII_RD0__ENET1_RGMII_RD0	0x11
++			MX7D_PAD_ENET1_RGMII_RD1__ENET1_RGMII_RD1	0x11
++			MX7D_PAD_ENET1_RGMII_RD2__ENET1_RGMII_RD2	0x11
++			MX7D_PAD_ENET1_RGMII_RD3__ENET1_RGMII_RD3	0x11
++			MX7D_PAD_ENET1_RGMII_RX_CTL__ENET1_RGMII_RX_CTL	0x11
+ 		>;
+ 	};
+ 
+ 	pinctrl_enet2: enet2grp {
+ 		fsl,pins = <
+-			MX7D_PAD_EPDC_GDSP__ENET2_RGMII_TXC		0x1
+-			MX7D_PAD_EPDC_SDCE2__ENET2_RGMII_TD0		0x1
+-			MX7D_PAD_EPDC_SDCE3__ENET2_RGMII_TD1		0x1
+-			MX7D_PAD_EPDC_GDCLK__ENET2_RGMII_TD2		0x1
+-			MX7D_PAD_EPDC_GDOE__ENET2_RGMII_TD3		0x1
+-			MX7D_PAD_EPDC_GDRL__ENET2_RGMII_TX_CTL		0x1
+-			MX7D_PAD_EPDC_SDCE1__ENET2_RGMII_RXC		0x1
+-			MX7D_PAD_EPDC_SDCLK__ENET2_RGMII_RD0		0x1
+-			MX7D_PAD_EPDC_SDLE__ENET2_RGMII_RD1		0x1
+-			MX7D_PAD_EPDC_SDOE__ENET2_RGMII_RD2		0x1
+-			MX7D_PAD_EPDC_SDSHR__ENET2_RGMII_RD3		0x1
+-			MX7D_PAD_EPDC_SDCE0__ENET2_RGMII_RX_CTL		0x1
++			MX7D_PAD_EPDC_GDSP__ENET2_RGMII_TXC		0x11
++			MX7D_PAD_EPDC_SDCE2__ENET2_RGMII_TD0		0x11
++			MX7D_PAD_EPDC_SDCE3__ENET2_RGMII_TD1		0x11
++			MX7D_PAD_EPDC_GDCLK__ENET2_RGMII_TD2		0x11
++			MX7D_PAD_EPDC_GDOE__ENET2_RGMII_TD3		0x11
++			MX7D_PAD_EPDC_GDRL__ENET2_RGMII_TX_CTL		0x11
++			MX7D_PAD_EPDC_SDCE1__ENET2_RGMII_RXC		0x11
++			MX7D_PAD_EPDC_SDCLK__ENET2_RGMII_RD0		0x11
++			MX7D_PAD_EPDC_SDLE__ENET2_RGMII_RD1		0x11
++			MX7D_PAD_EPDC_SDOE__ENET2_RGMII_RD2		0x11
++			MX7D_PAD_EPDC_SDSHR__ENET2_RGMII_RD3		0x11
++			MX7D_PAD_EPDC_SDCE0__ENET2_RGMII_RX_CTL		0x11
+ 		>;
+ 	};
+ 
+-- 
+2.11.0
