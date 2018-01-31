@@ -1,103 +1,510 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932307AbeAaRqu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:46:50 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:47196 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932286AbeAaRqt (ORCPT
+        id S1753700AbeAaRsZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:48:25 -0500
+Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:59610 "EHLO
+        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753618AbeAaRsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:46:49 -0500
-Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in
- select_idle_sibling
-To: Joel Fernandes <joelaf@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, steven.sistare@oracle.com,
-        dhaval.giani@oracle.com, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        "Cc: EAS Dev" <eas-dev@lists.linaro.org>
-References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
- <CAJWu+opnNgfVxhgHwLft_qcLMeikEAbNY0zci0WtgQiFkVVjhg@mail.gmail.com>
- <6967b972-129a-a7f0-06ab-c48dc9709726@oracle.com>
- <CAJWu+orYPDy3H2TCtB_FZWrMx18F_ePnD=Gdfj=pKg4HVaLjTQ@mail.gmail.com>
-From: Rohit Jain <rohit.k.jain@oracle.com>
-Message-ID: <c78b1dab-95fb-ed88-30de-b4d489a5fc17@oracle.com>
-Date: Wed, 31 Jan 2018 09:50:56 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAJWu+orYPDy3H2TCtB_FZWrMx18F_ePnD=Gdfj=pKg4HVaLjTQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8791 signatures=668659
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1801310227
+        Wed, 31 Jan 2018 12:48:23 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FBAQDPAHJah2Oa6ERcGwEBAQEDAQEBC?=
+ =?us-ascii?q?QEBAYUdKJwuixSQSwqFO4JRWBQBAQEBAQEBAQIBAhABAQEIDQkIKC+COCQBgnV?=
+ =?us-ascii?q?STzM8ARKKHQMVqR86hzcNgyQyhFuCFYFXiAFEBIRJDIMWBYpliHOQCD6CSo4ch?=
+ =?us-ascii?q?QYClCuOLok7gTw2gXNwgnyCBQFPEAwZggxZjCYBAQE?=
+X-IPAS-Result: =?us-ascii?q?A2FBAQDPAHJah2Oa6ERcGwEBAQEDAQEBCQEBAYUdKJwuixS?=
+ =?us-ascii?q?QSwqFO4JRWBQBAQEBAQEBAQIBAhABAQEIDQkIKC+COCQBgnVSTzM8ARKKHQMVq?=
+ =?us-ascii?q?R86hzcNgyQyhFuCFYFXiAFEBIRJDIMWBYpliHOQCD6CSo4chQYClCuOLok7gTw?=
+ =?us-ascii?q?2gXNwgnyCBQFPEAwZggxZjCYBAQE?=
+X-LoopCount0: from 10.208.86.39
+X-IronPort-AV: E=Sophos;i="5.46,441,1511848800";
+   d="scan'208";a="1091964028"
+X-DLP: DLP_GlobalPCIDSS
+From: Mario Limonciello <mario.limonciello@dell.com>
+To: dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: pali.rohar@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap rather than globally
+Date: Wed, 31 Jan 2018 11:47:35 -0600
+Message-Id: <1517420855-19374-1-git-send-email-mario.limonciello@dell.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/30/2018 05:57 PM, Joel Fernandes wrote:
+There is no longer a need for the buffer to be defined in
+first 4GB physical address space.
 
-<snip>
->>>> Signed-off-by: Rohit Jain<rohit.k.jain@oracle.com>
->>>> ---
->>>>    kernel/sched/fair.c | 38 ++++++++++++++++++++++++++++----------
->>>>    1 file changed, 28 insertions(+), 10 deletions(-)
->>>>
->>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>>> index 26a71eb..ce5ccf8 100644
->>>> --- a/kernel/sched/fair.c
->>>> +++ b/kernel/sched/fair.c
->>>> @@ -5625,6 +5625,11 @@ static unsigned long capacity_orig_of(int cpu)
->>>>           return cpu_rq(cpu)->cpu_capacity_orig;
->>>>    }
->>>>
->>>> +static inline bool full_capacity(int cpu)
->>>> +{
->>>> +       return capacity_of(cpu) >= (capacity_orig_of(cpu)*3)/4;
->>>> +}
->>>> +
->>>>    static unsigned long cpu_avg_load_per_task(int cpu)
->>>>    {
->>>>           struct rq *rq = cpu_rq(cpu);
->>>> @@ -6081,7 +6086,7 @@ static int select_idle_core(struct task_struct *p,
->>>> struct sched_domain *sd, int
->>>>
->>>>                   for_each_cpu(cpu, cpu_smt_mask(core)) {
->>>>                           cpumask_clear_cpu(cpu, cpus);
->>>> -                       if (!idle_cpu(cpu))
->>>> +                       if (!idle_cpu(cpu) || !full_capacity(cpu))
->>>>                                   idle = false;
->>>>                   }
->>> There's some difference in logic between select_idle_core and
->>> select_idle_cpu as far as the full_capacity stuff you're adding goes.
->>> In select_idle_core, if all CPUs are !full_capacity, you're returning
->>> -1. But in select_idle_cpu you're returning the best idle CPU that's
->>> the most cap among the !full_capacity ones. Why there is this
->>> different in logic? Did I miss something?
->>>
+Furthermore there may be race conditions with multiple different functions
+working on a module wide buffer causing incorrect results.
 
-<snip>
+Fixes: 549b4930f057658dc50d8010e66219233119a4d8
+Suggested-by: Pali Rohar <pali.rohar@gmail.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+---
+ drivers/platform/x86/dell-laptop.c | 188 ++++++++++++++++++++-----------------
+ 1 file changed, 103 insertions(+), 85 deletions(-)
 
-> Dude :) That is hardly an answer to the question I asked. Hint:
-> *different in logic*.
-
-Let me re-try :)
-
-For select_idle_core, we are doing a search for a fully idle and full
-capacity core, the fail-safe is select_idle_cpu because we will re-scan
-the CPUs. The notion is to select an idle CPU no matter what, because
-being on an idle CPU is better than waiting on a non-idle one. In
-select_idle_core you can be slightly picky about the core because
-select_idle_cpu is a fail safe. I measured the performance impact of
-choosing the "best among low cap" vs the code changes I have (for
-select_idle_core) and could not find a statistically significant impact,
-hence went with the simpler code changes.
-
-Hope I answered your question.
-
-Thanks,
-Rohit
+diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
+index fc2dfc8..a7b1419 100644
+--- a/drivers/platform/x86/dell-laptop.c
++++ b/drivers/platform/x86/dell-laptop.c
+@@ -78,7 +78,6 @@ static struct platform_driver platform_driver = {
+ 	}
+ };
+ 
+-static struct calling_interface_buffer *buffer;
+ static struct platform_device *platform_device;
+ static struct backlight_device *dell_backlight_device;
+ static struct rfkill *wifi_rfkill;
+@@ -322,7 +321,8 @@ static const struct dmi_system_id dell_quirks[] __initconst = {
+ 	{ }
+ };
+ 
+-static void dell_set_arguments(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
++static void dell_fill_request(struct calling_interface_buffer *buffer,
++			       u32 arg0, u32 arg1, u32 arg2, u32 arg3)
+ {
+ 	memset(buffer, 0, sizeof(struct calling_interface_buffer));
+ 	buffer->input[0] = arg0;
+@@ -331,7 +331,8 @@ static void dell_set_arguments(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
+ 	buffer->input[3] = arg3;
+ }
+ 
+-static int dell_send_request(u16 class, u16 select)
++static int dell_send_request(struct calling_interface_buffer *buffer,
++			     u16 class, u16 select)
+ {
+ 	int ret;
+ 
+@@ -468,21 +469,22 @@ static int dell_rfkill_set(void *data, bool blocked)
+ 	int disable = blocked ? 1 : 0;
+ 	unsigned long radio = (unsigned long)data;
+ 	int hwswitch_bit = (unsigned long)data - 1;
++	struct calling_interface_buffer buffer;
+ 	int hwswitch;
+ 	int status;
+ 	int ret;
+ 
+-	dell_set_arguments(0, 0, 0, 0);
+-	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
++	dell_fill_request(&buffer, 0, 0, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 	if (ret)
+ 		return ret;
+-	status = buffer->output[1];
++	status = buffer.output[1];
+ 
+-	dell_set_arguments(0x2, 0, 0, 0);
+-	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
++	dell_fill_request(&buffer, 0x2, 0, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 	if (ret)
+ 		return ret;
+-	hwswitch = buffer->output[1];
++	hwswitch = buffer.output[1];
+ 
+ 	/* If the hardware switch controls this radio, and the hardware
+ 	   switch is disabled, always disable the radio */
+@@ -490,8 +492,8 @@ static int dell_rfkill_set(void *data, bool blocked)
+ 	    (status & BIT(0)) && !(status & BIT(16)))
+ 		disable = 1;
+ 
+-	dell_set_arguments(1 | (radio<<8) | (disable << 16), 0, 0, 0);
+-	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
++	dell_fill_request(&buffer, 1 | (radio<<8) | (disable << 16), 0, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 	return ret;
+ }
+ 
+@@ -500,9 +502,11 @@ static void dell_rfkill_update_sw_state(struct rfkill *rfkill, int radio,
+ {
+ 	if (status & BIT(0)) {
+ 		/* Has hw-switch, sync sw_state to BIOS */
++		struct calling_interface_buffer buffer;
+ 		int block = rfkill_blocked(rfkill);
+-		dell_set_arguments(1 | (radio << 8) | (block << 16), 0, 0, 0);
+-		dell_send_request(CLASS_INFO, SELECT_RFKILL);
++		dell_fill_request(&buffer,
++				   1 | (radio << 8) | (block << 16), 0, 0, 0);
++		dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 	} else {
+ 		/* No hw-switch, sync BIOS state to sw_state */
+ 		rfkill_set_sw_state(rfkill, !!(status & BIT(radio + 16)));
+@@ -519,21 +523,22 @@ static void dell_rfkill_update_hw_state(struct rfkill *rfkill, int radio,
+ static void dell_rfkill_query(struct rfkill *rfkill, void *data)
+ {
+ 	int radio = ((unsigned long)data & 0xF);
++	struct calling_interface_buffer buffer;
+ 	int hwswitch;
+ 	int status;
+ 	int ret;
+ 
+-	dell_set_arguments(0, 0, 0, 0);
+-	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
+-	status = buffer->output[1];
++	dell_fill_request(&buffer, 0, 0, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
++	status = buffer.output[1];
+ 
+ 	if (ret != 0 || !(status & BIT(0))) {
+ 		return;
+ 	}
+ 
+-	dell_set_arguments(0, 0x2, 0, 0);
+-	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
+-	hwswitch = buffer->output[1];
++	dell_fill_request(&buffer, 0, 0x2, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
++	hwswitch = buffer.output[1];
+ 
+ 	if (ret != 0)
+ 		return;
+@@ -550,22 +555,23 @@ static struct dentry *dell_laptop_dir;
+ 
+ static int dell_debugfs_show(struct seq_file *s, void *data)
+ {
++	struct calling_interface_buffer buffer;
+ 	int hwswitch_state;
+ 	int hwswitch_ret;
+ 	int status;
+ 	int ret;
+ 
+-	dell_set_arguments(0, 0, 0, 0);
+-	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
++	dell_fill_request(&buffer, 0, 0, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 	if (ret)
+ 		return ret;
+-	status = buffer->output[1];
++	status = buffer.output[1];
+ 
+-	dell_set_arguments(0, 0x2, 0, 0);
+-	hwswitch_ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
++	dell_fill_request(&buffer, 0, 0x2, 0, 0);
++	hwswitch_ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 	if (hwswitch_ret)
+ 		return hwswitch_ret;
+-	hwswitch_state = buffer->output[1];
++	hwswitch_state = buffer.output[1];
+ 
+ 	seq_printf(s, "return:\t%d\n", ret);
+ 	seq_printf(s, "status:\t0x%X\n", status);
+@@ -646,22 +652,23 @@ static const struct file_operations dell_debugfs_fops = {
+ 
+ static void dell_update_rfkill(struct work_struct *ignored)
+ {
++	struct calling_interface_buffer buffer;
+ 	int hwswitch = 0;
+ 	int status;
+ 	int ret;
+ 
+-	dell_set_arguments(0, 0, 0, 0);
+-	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
+-	status = buffer->output[1];
++	dell_fill_request(&buffer, 0, 0, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
++	status = buffer.output[1];
+ 
+ 	if (ret != 0)
+ 		return;
+ 
+-	dell_set_arguments(0, 0x2, 0, 0);
+-	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
++	dell_fill_request(&buffer, 0, 0x2, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 
+ 	if (ret == 0 && (status & BIT(0)))
+-		hwswitch = buffer->output[1];
++		hwswitch = buffer.output[1];
+ 
+ 	if (wifi_rfkill) {
+ 		dell_rfkill_update_hw_state(wifi_rfkill, 1, status, hwswitch);
+@@ -719,6 +726,7 @@ static struct notifier_block dell_laptop_rbtn_notifier = {
+ 
+ static int __init dell_setup_rfkill(void)
+ {
++	struct calling_interface_buffer buffer;
+ 	int status, ret, whitelisted;
+ 	const char *product;
+ 
+@@ -734,9 +742,9 @@ static int __init dell_setup_rfkill(void)
+ 	if (!force_rfkill && !whitelisted)
+ 		return 0;
+ 
+-	dell_set_arguments(0, 0, 0, 0);
+-	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
+-	status = buffer->output[1];
++	dell_fill_request(&buffer, 0, 0, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
++	status = buffer.output[1];
+ 
+ 	/* dell wireless info smbios call is not supported */
+ 	if (ret != 0)
+@@ -889,6 +897,7 @@ static void dell_cleanup_rfkill(void)
+ 
+ static int dell_send_intensity(struct backlight_device *bd)
+ {
++	struct calling_interface_buffer buffer;
+ 	struct calling_interface_token *token;
+ 	int ret;
+ 
+@@ -896,17 +905,21 @@ static int dell_send_intensity(struct backlight_device *bd)
+ 	if (!token)
+ 		return -ENODEV;
+ 
+-	dell_set_arguments(token->location, bd->props.brightness, 0, 0);
++	dell_fill_request(&buffer,
++			   token->location, bd->props.brightness, 0, 0);
+ 	if (power_supply_is_system_supplied() > 0)
+-		ret = dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_AC);
++		ret = dell_send_request(&buffer,
++					CLASS_TOKEN_WRITE, SELECT_TOKEN_AC);
+ 	else
+-		ret = dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_BAT);
++		ret = dell_send_request(&buffer,
++					CLASS_TOKEN_WRITE, SELECT_TOKEN_BAT);
+ 
+ 	return ret;
+ }
+ 
+ static int dell_get_intensity(struct backlight_device *bd)
+ {
++	struct calling_interface_buffer buffer;
+ 	struct calling_interface_token *token;
+ 	int ret;
+ 
+@@ -914,14 +927,17 @@ static int dell_get_intensity(struct backlight_device *bd)
+ 	if (!token)
+ 		return -ENODEV;
+ 
+-	dell_set_arguments(token->location, 0, 0, 0);
++	dell_fill_request(&buffer, token->location, 0, 0, 0);
+ 	if (power_supply_is_system_supplied() > 0)
+-		ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_AC);
++		ret = dell_send_request(&buffer,
++					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
+ 	else
+-		ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_BAT);
++		ret = dell_send_request(&buffer,
++					CLASS_TOKEN_READ, SELECT_TOKEN_BAT);
+ 
+ 	if (ret == 0)
+-		ret = buffer->output[1];
++		ret = buffer.output[1];
++
+ 	return ret;
+ }
+ 
+@@ -1186,31 +1202,33 @@ static enum led_brightness kbd_led_level;
+ 
+ static int kbd_get_info(struct kbd_info *info)
+ {
++	struct calling_interface_buffer buffer;
+ 	u8 units;
+ 	int ret;
+ 
+-	dell_set_arguments(0, 0, 0, 0);
+-	ret = dell_send_request(CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
++	dell_fill_request(&buffer, 0, 0, 0, 0);
++	ret = dell_send_request(&buffer,
++				CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
+ 	if (ret)
+ 		return ret;
+ 
+-	info->modes = buffer->output[1] & 0xFFFF;
+-	info->type = (buffer->output[1] >> 24) & 0xFF;
+-	info->triggers = buffer->output[2] & 0xFF;
+-	units = (buffer->output[2] >> 8) & 0xFF;
+-	info->levels = (buffer->output[2] >> 16) & 0xFF;
++	info->modes = buffer.output[1] & 0xFFFF;
++	info->type = (buffer.output[1] >> 24) & 0xFF;
++	info->triggers = buffer.output[2] & 0xFF;
++	units = (buffer.output[2] >> 8) & 0xFF;
++	info->levels = (buffer.output[2] >> 16) & 0xFF;
+ 
+ 	if (quirks && quirks->kbd_led_levels_off_1 && info->levels)
+ 		info->levels--;
+ 
+ 	if (units & BIT(0))
+-		info->seconds = (buffer->output[3] >> 0) & 0xFF;
++		info->seconds = (buffer.output[3] >> 0) & 0xFF;
+ 	if (units & BIT(1))
+-		info->minutes = (buffer->output[3] >> 8) & 0xFF;
++		info->minutes = (buffer.output[3] >> 8) & 0xFF;
+ 	if (units & BIT(2))
+-		info->hours = (buffer->output[3] >> 16) & 0xFF;
++		info->hours = (buffer.output[3] >> 16) & 0xFF;
+ 	if (units & BIT(3))
+-		info->days = (buffer->output[3] >> 24) & 0xFF;
++		info->days = (buffer.output[3] >> 24) & 0xFF;
+ 
+ 	return ret;
+ }
+@@ -1270,31 +1288,34 @@ static int kbd_set_level(struct kbd_state *state, u8 level)
+ 
+ static int kbd_get_state(struct kbd_state *state)
+ {
++	struct calling_interface_buffer buffer;
+ 	int ret;
+ 
+-	dell_set_arguments(0x1, 0, 0, 0);
+-	ret = dell_send_request(CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
++	dell_fill_request(&buffer, 0, 0, 0, 0);
++	ret = dell_send_request(&buffer,
++				CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
+ 	if (ret)
+ 		return ret;
+ 
+-	state->mode_bit = ffs(buffer->output[1] & 0xFFFF);
++	state->mode_bit = ffs(buffer.output[1] & 0xFFFF);
+ 	if (state->mode_bit != 0)
+ 		state->mode_bit--;
+ 
+-	state->triggers = (buffer->output[1] >> 16) & 0xFF;
+-	state->timeout_value = (buffer->output[1] >> 24) & 0x3F;
+-	state->timeout_unit = (buffer->output[1] >> 30) & 0x3;
+-	state->als_setting = buffer->output[2] & 0xFF;
+-	state->als_value = (buffer->output[2] >> 8) & 0xFF;
+-	state->level = (buffer->output[2] >> 16) & 0xFF;
+-	state->timeout_value_ac = (buffer->output[2] >> 24) & 0x3F;
+-	state->timeout_unit_ac = (buffer->output[2] >> 30) & 0x3;
++	state->triggers = (buffer.output[1] >> 16) & 0xFF;
++	state->timeout_value = (buffer.output[1] >> 24) & 0x3F;
++	state->timeout_unit = (buffer.output[1] >> 30) & 0x3;
++	state->als_setting = buffer.output[2] & 0xFF;
++	state->als_value = (buffer.output[2] >> 8) & 0xFF;
++	state->level = (buffer.output[2] >> 16) & 0xFF;
++	state->timeout_value_ac = (buffer.output[2] >> 24) & 0x3F;
++	state->timeout_unit_ac = (buffer.output[2] >> 30) & 0x3;
+ 
+ 	return ret;
+ }
+ 
+ static int kbd_set_state(struct kbd_state *state)
+ {
++	struct calling_interface_buffer buffer;
+ 	int ret;
+ 	u32 input1;
+ 	u32 input2;
+@@ -1307,8 +1328,9 @@ static int kbd_set_state(struct kbd_state *state)
+ 	input2 |= (state->level & 0xFF) << 16;
+ 	input2 |= (state->timeout_value_ac & 0x3F) << 24;
+ 	input2 |= (state->timeout_unit_ac & 0x3) << 30;
+-	dell_set_arguments(0x2, input1, input2, 0);
+-	ret = dell_send_request(CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
++	dell_fill_request(&buffer, 0x2, input1, input2, 0);
++	ret = dell_send_request(&buffer,
++				CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
+ 
+ 	return ret;
+ }
+@@ -1335,6 +1357,7 @@ static int kbd_set_state_safe(struct kbd_state *state, struct kbd_state *old)
+ 
+ static int kbd_set_token_bit(u8 bit)
+ {
++	struct calling_interface_buffer buffer;
+ 	struct calling_interface_token *token;
+ 	int ret;
+ 
+@@ -1345,14 +1368,15 @@ static int kbd_set_token_bit(u8 bit)
+ 	if (!token)
+ 		return -EINVAL;
+ 
+-	dell_set_arguments(token->location, token->value, 0, 0);
+-	ret = dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
++	dell_fill_request(&buffer, token->location, token->value, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+ 
+ 	return ret;
+ }
+ 
+ static int kbd_get_token_bit(u8 bit)
+ {
++	struct calling_interface_buffer buffer;
+ 	struct calling_interface_token *token;
+ 	int ret;
+ 	int val;
+@@ -1364,9 +1388,9 @@ static int kbd_get_token_bit(u8 bit)
+ 	if (!token)
+ 		return -EINVAL;
+ 
+-	dell_set_arguments(token->location, 0, 0, 0);
+-	ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_STD);
+-	val = buffer->output[1];
++	dell_fill_request(&buffer, token->location, 0, 0, 0);
++	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
++	val = buffer.output[1];
+ 
+ 	if (ret)
+ 		return ret;
+@@ -2102,6 +2126,7 @@ static struct notifier_block dell_laptop_notifier = {
+ 
+ int dell_micmute_led_set(int state)
+ {
++	struct calling_interface_buffer buffer;
+ 	struct calling_interface_token *token;
+ 
+ 	if (state == 0)
+@@ -2114,8 +2139,8 @@ int dell_micmute_led_set(int state)
+ 	if (!token)
+ 		return -ENODEV;
+ 
+-	dell_set_arguments(token->location, token->value, 0, 0);
+-	dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
++	dell_fill_request(&buffer, token->location, token->value, 0, 0);
++	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+ 
+ 	return state;
+ }
+@@ -2146,13 +2171,6 @@ static int __init dell_init(void)
+ 	if (ret)
+ 		goto fail_platform_device2;
+ 
+-	buffer = kzalloc(sizeof(struct calling_interface_buffer), GFP_KERNEL);
+-	if (!buffer) {
+-		ret = -ENOMEM;
+-		goto fail_buffer;
+-	}
+-
+-
+ 	ret = dell_setup_rfkill();
+ 
+ 	if (ret) {
+@@ -2177,10 +2195,13 @@ static int __init dell_init(void)
+ 
+ 	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+ 	if (token) {
+-		dell_set_arguments(token->location, 0, 0, 0);
+-		ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_AC);
++		struct calling_interface_buffer buffer;
++
++		dell_fill_request(&buffer, token->location, 0, 0, 0);
++		ret = dell_send_request(&buffer,
++					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
+ 		if (ret)
+-			max_intensity = buffer->output[3];
++			max_intensity = buffer.output[3];
+ 	}
+ 
+ 	if (max_intensity) {
+@@ -2214,8 +2235,6 @@ static int __init dell_init(void)
+ fail_get_brightness:
+ 	backlight_device_unregister(dell_backlight_device);
+ fail_backlight:
+-	kfree(buffer);
+-fail_buffer:
+ 	dell_cleanup_rfkill();
+ fail_rfkill:
+ 	platform_device_del(platform_device);
+@@ -2235,7 +2254,6 @@ static void __exit dell_exit(void)
+ 		touchpad_led_exit();
+ 	kbd_led_exit();
+ 	backlight_device_unregister(dell_backlight_device);
+-	kfree(buffer);
+ 	dell_cleanup_rfkill();
+ 	if (platform_device) {
+ 		platform_device_unregister(platform_device);
+-- 
+2.7.4
