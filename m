@@ -1,126 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753297AbeAaQCC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 11:02:02 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:46568 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752378AbeAaQCA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 11:02:00 -0500
-Date: Wed, 31 Jan 2018 17:01:56 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-cc: longman@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2 v4] lib: debugobjects: handle objects free in a batch
- outside the loop
-In-Reply-To: <1516839468-3431-2-git-send-email-yang.shi@linux.alibaba.com>
-Message-ID: <alpine.DEB.2.21.1801311644120.9911@nanos.tec.linutronix.de>
-References: <1516839468-3431-1-git-send-email-yang.shi@linux.alibaba.com> <1516839468-3431-2-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1753732AbeAaQDH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 11:03:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753699AbeAaQDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 11:03:05 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28652178D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AH8x2277OTbQD95aGPM7/IOn+o38ZFz0wDkEQMJMlOHmoNO4WolEqwkpKUS/Eiu93EFMIGtaA8GQ36RondBMQbCbkXM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
+References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 31 Jan 2018 10:02:43 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
+Message-ID: <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
+ device tree parsing
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Jan 2018, Yang Shi wrote:
-
-> There are nested loops on debug objects free path, sometimes it may take
-> over hundred thousands of loops, then cause soft lockup with
-> !CONFIG_PREEMPT occasionally, like below:
-> 
-> NMI watchdog: BUG: soft lockup - CPU#15 stuck for 22s! [stress-ng-getde:110342]
-> 
->  CPU: 15 PID: 110342 Comm: stress-ng-getde Tainted: G
-> E   4.9.44-003.ali3000.alios7.x86_64.debug #1
->  Hardware name: Dell Inc. PowerEdge R720xd/0X6FFV, BIOS
-> 1.6.0 03/07/2013
->  task: ffff884cbb0d0000 task.stack: ffff884cabc70000
->  RIP: 0010:[<ffffffff817d647b>]  [<ffffffff817d647b>]
-> _raw_spin_unlock_irqrestore+0x3b/0x60
->  RSP: 0018:ffff884cabc77b78  EFLAGS: 00000292
->  RAX: ffff884cbb0d0000 RBX: 0000000000000292 RCX: 0000000000000000
->  RDX: ffff884cbb0d0000 RSI: 0000000000000001 RDI: 0000000000000292
->  RBP: ffff884cabc77b88 R08: 0000000000000000 R09: 0000000000000000
->  R10: 0000000000000001 R11: 0000000000000001 R12: ffffffff8357a0d8
->  R13: ffff884cabc77bc8 R14: ffffffff8357a0d0 R15: 00000000000000fc
->  FS:  00002aee845fd2c0(0000) GS:ffff8852bd400000(0000)
-> knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 0000000002991808 CR3: 0000005123abf000 CR4: 00000000000406e0
->  Stack:
->   ffff884ff4fe0000 ffff884ff4fd8000 ffff884cabc77c00 ffffffff8141177e
->   0000000000000202 ffff884cbb0d0000 ffff884cabc77bc8 0000000000000006
->   ffff884ff4fda000 ffffffff8357a0d8 0000000000000000 91f5d976f6020b6c
-
-Please trim that. The register content is not really interesting
-
-> @@ -186,11 +199,25 @@ static struct debug_obj *lookup_object(void *addr, struct debug_bucket *b)
->  static void free_obj_work(struct work_struct *work)
->  {
->  	struct debug_obj *objs[ODEBUG_FREE_BATCH];
-> +	struct hlist_node *tmp;
-> +	struct debug_obj *obj;
->  	unsigned long flags;
->  	int i;
->  
->  	if (!raw_spin_trylock_irqsave(&pool_lock, flags))
->  		return;
+On Wed, Jan 31, 2018 at 1:41 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> A root complex usually consist of a host bridge and multiple P2P bridges,
+> and someone may express that in the form of a root node with many subnodes
+> and list all four interrupts for each slot (child node) in the root node
+> like this:
+>
+>         pcie-controller {
+>                 ...
+>                 interrupt-map-mask = <0xf800 0 0 7>;
+>                 interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
+>                                  0x0800 0 0 {INTx} &{interrupt parent} ...>;
+>
+>                 pcie@0,0 {
+>                         reg = <0x0000 0 0 0 0>;
+>                         ...
+>                 };
+>
+>                 pcie@1,0 {
+>                         reg = <0x0800 0 0 0 0>;
+>                         ...
+>                 };
+>         };
+>
+> As shown above, we'd like to propagate IRQs from a root port to the devices
+> in the hierarchy below it in this way.  However, it seems that the current
+> parser couldn't handle such cases and will get something unexpected below:
+>
+>         pcieport 0000:00:01.0: assign IRQ: got 213
+>         igb 0000:01:00.0: assign IRQ: got 212
+>
+> There is a device which is connected to 2nd slot, but the port doesn't share
+> the same IRQ with its downstream devices.  The problem here is that, if the
+> loop found a P2P bridge, it wouldn't check whether the reg property exists
+> in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
+> thus the subsequent flow couldn't correctly resolve them.
+>
+> Fix this by adding a check to fallback to standard device tree parsing.
+>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+> Please refer to the previous discussion thread: https://patchwork.ozlabs.org/patch/829108/
+> ---
+>  drivers/of/of_pci_irq.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/of/of_pci_irq.c b/drivers/of/of_pci_irq.c
+> index 3a05568..e445866 100644
+> --- a/drivers/of/of_pci_irq.c
+> +++ b/drivers/of/of_pci_irq.c
+> @@ -86,8 +86,18 @@ int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *out_irq
+>         out_irq->np = ppnode;
+>         out_irq->args_count = 1;
+>         out_irq->args[0] = pin;
+> -       laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
+> -       laddr[1] = laddr[2] = cpu_to_be32(0);
 > +
-> +	/* Move free obj to pool list from global free list */
+> +       if (!dn && ppnode) {
 
-If the pool is full, why would you shuffle those objects to the pool list
-first just to free them 10 lines further down?
+I would think whether you have a child device in DT or not is
+irrelevant. If it's the bridge address you need to look at for
+resolving interrupts, that would be true regardless.
 
-> +	if (obj_free > 0) {
+> +               const __be32 *addr;
+> +
+> +               addr = of_get_property(ppnode, "reg", NULL);
+> +               if (addr)
+> +                       memcpy(laddr, addr, 3);
 
-  obj_nr_tofree might be a more descriptive name for this variable
+Can't you just adjust pdev to be ppdev in this case and then use the
+existing code to set laddr?
 
-> +		hlist_for_each_entry_safe(obj, tmp, &obj_to_free, node) {
-> +			hlist_del(&obj->node);
-> +			hlist_add_head(&obj->node, &obj_pool);
-> +			obj_pool_free++;
-> +			obj_pool_used--;
-> +			obj_free--;
-> +		}
-> +	}
+Please copy the powerpc list on this. I worry that touching this
+function will break something.
 
-The other thing here is that this whole list walk operation happens with
-the pool lock held and interrupts disabled. That's suboptimal at best.
+BTW, this code is moving to drivers/pci/ in 4.16.
 
-So the right thing to do here is:
-
-	HLIST_HEAD(tofree);
-		
-  	if (!raw_spin_trylock_irqsave(&pool_lock, flags))
-  		return;
-
-	while (obj_pool_free < debug_objects_pool_size) {
-		if (!obj_nr_tofree)
-			break:
-		hlist_del(...)
-		hlist_add(...)
-	}
-
-	if (obj_nr_tofree) {
-		hlist_move_list(&obj_to_free, &freelist);
-		....
-	}
-
-	while (obj_pool_free >= debug_objects_pool_size + ODEBUG_FREE_BATCH) {
-	      ....
-	}
-
-	raw_spin_unlock_irqrestore(&pool_lock, flags);
-
-	hlist_for_each_entry_safe(obj, tmp, &tofree, node) {
-		hlist_del();
-		kmem_cache_free(....);
-	}
-
-That way you minimize the lock held times and spare pointless list walks
-and shuffling.
-
-Thanks,
-
-	tglx
+> +       } else {
+> +               laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
+> +               laddr[1] = laddr[2] = cpu_to_be32(0);
+> +       }
+> +
+>         rc = of_irq_parse_raw(laddr, out_irq);
+>         if (rc)
+>                 goto err;
+> --
+> 1.9.1
+>
