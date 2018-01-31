@@ -1,42 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753003AbeAaC4j (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 21:56:39 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:50444 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752029AbeAaC4h (ORCPT
+        id S1753299AbeAaDNE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 22:13:04 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:42970 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752838AbeAaDNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 21:56:37 -0500
-To: Corentin Labbe <clabbe@baylibre.com>
-Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] scsi: remove dead makefile about oktagon files
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1517229016-1859-1-git-send-email-clabbe@baylibre.com>
-Date: Tue, 30 Jan 2018 21:56:32 -0500
-In-Reply-To: <1517229016-1859-1-git-send-email-clabbe@baylibre.com> (Corentin
-        Labbe's message of "Mon, 29 Jan 2018 12:30:16 +0000")
-Message-ID: <yq1372mg2hr.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Tue, 30 Jan 2018 22:13:02 -0500
+Date: Wed, 31 Jan 2018 03:13:00 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [git pull] vfs.git: poll annotations
+Message-ID: <20180131031300.GE29051@ZenIV.linux.org.uk>
+References: <20180130183939.GB29051@ZenIV.linux.org.uk>
+ <CA+55aFz8UL883+rj0nYsU_gtX6jLhriPGncDb1XDteEu817HRQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8790 signatures=668657
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=543
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1801310034
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFz8UL883+rj0nYsU_gtX6jLhriPGncDb1XDteEu817HRQ@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 30, 2018 at 06:21:37PM -0800, Linus Torvalds wrote:
+> On Tue, Jan 30, 2018 at 10:39 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >         Introduces a __bitwise type for POLL... bitmap, propagates
+> > the annotations through the tree.
+> 
+> Ok, I'm not entirely happy with this.
+> 
+> I don't think the mangle/demangle_poll() stuff should be in the uapi
+> headers, and it really worries me that we use the same names - with
+> different values - for the kernel and user versions of the POLLxyz
+> macros.
 
-Corentin,
+I'm not happy with that either, but the alternative would be to
+rename almost every instance of POLL... in the tree.  All of them
+except for poll.h, actually.  And then keep playing whack-a-mole
+for resurfacing POLL... in drivers.
 
-> Remove line using inexistant files which were removed in
-> commit 642978beb483 ("[SCSI] remove m68k NCR53C9x based drivers")
+Sure, we can do that, but at least let's do that as a single
+search-and-replace job in -rc1.  Too many conflicts otherwise.
+No need to invent KPOLLIN et.al. - we have perfectly usable
+EPOLLIN and friends.
 
-Applied to 4.16/scsi-fixes, thank you.
+A bit of a problem in places like
+                        mask & POLLOUT ? "POLLOUT" : "",
+but it's not too terrible.  I'll experiment a bit - should be able to
+post a script to run.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+As for the place for mangle/demangle... where would you prefer them?
