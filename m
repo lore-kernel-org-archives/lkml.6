@@ -1,41 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932306AbeAaAdf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 19:33:35 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:32847 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932288AbeAaAde (ORCPT
+        id S932319AbeAaAgC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 19:36:02 -0500
+Received: from www62.your-server.de ([213.133.104.62]:57316 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752466AbeAaAgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 19:33:34 -0500
-X-Google-Smtp-Source: AH8x226TSFVue1qUZ6vzhsjjVvDOpTTd24P/eQsnX4q6M0KSEVn3RNFBfGqZ1wA4SNU0R4UUT0dlFw==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jorge Ramirez-Ortiz <jramirez@baylibre.com>
-Cc: carlo@caione.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM64: dts: meson: accept MAC addr from u-boot  environment
-Organization: BayLibre
-References: <1516186587-22157-1-git-send-email-jramirez@baylibre.com>
-Date: Tue, 30 Jan 2018 16:33:28 -0800
-In-Reply-To: <1516186587-22157-1-git-send-email-jramirez@baylibre.com> (Jorge
-        Ramirez-Ortiz's message of "Wed, 17 Jan 2018 11:56:27 +0100")
-Message-ID: <7hd11qc1ev.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Tue, 30 Jan 2018 19:36:01 -0500
+Subject: Re: general protection fault in ___bpf_prog_run
+To: syzbot <syzbot+1eb094057b338eb1fc00@syzkaller.appspotmail.com>,
+        ast@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <001a1145708e44fca00564049e52@google.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <1ef4ac96-f409-5711-e8f7-2e7632ef618b@iogearbox.net>
+Date: Wed, 31 Jan 2018 01:35:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <001a1145708e44fca00564049e52@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jorge Ramirez-Ortiz <jramirez@baylibre.com> writes:
+On 01/30/2018 09:58 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot hit the following crash on bpf-next commit
+> 868c36dcc949c26bc74fa4661b670d9acc6489e4 (Mon Jan 29 03:00:16 2018 +0000)
+> Merge tag 'wireless-drivers-next-for-davem-2018-01-26' of git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next
+> 
+> So far this crash happened 2 times on bpf-next.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+1eb094057b338eb1fc00@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for details.
+> If you forward the report, please keep this part and the footer.
 
-> Extend configuring the MAC address from u-boot to all meson boards.
->
-> I didn't test this changeset but having checked libretech's u-boot
-> tree I believe it should just work.
->
-> Signed-off-by: Jorge Ramirez-Ortiz <jramirez@baylibre.com>
+Really great syzkaller report !
 
-Applied for v4.17, let's see we find any breakage in linux-next,
-
-Kevin
+Fixed by: http://patchwork.ozlabs.org/patch/867748/
