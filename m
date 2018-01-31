@@ -1,55 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753371AbeAaM7B (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 07:59:01 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:38783 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752273AbeAaM67 (ORCPT
+        id S1753403AbeAaNA7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 08:00:59 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:45162 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752852AbeAaNA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 07:58:59 -0500
-X-Google-Smtp-Source: AH8x225ggqScOU80PzkIrhLKFTjAiAe3XYGvN95dSR3Rtj146S2J2KD7JQQ6MGF8Vt+60DCXZWBNTh1k9REVD7Hmoi4=
+        Wed, 31 Jan 2018 08:00:58 -0500
+Date: Wed, 31 Jan 2018 14:00:34 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stafford Horne <shorne@gmail.com>, Will Deacon <will.deacon@arm.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+Cc: David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: asm-generic: Disallow no-op mb() for SMP systems
+Message-ID: <20180131130034.GR2269@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180130182537.5580-1-colin.king@canonical.com>
-References: <20180130182537.5580-1-colin.king@canonical.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 31 Jan 2018 14:58:57 +0200
-Message-ID: <CAHp75Vc_8v3qxWjtT4B3Kvz4dNZ8=-+uRPs-iTK3o8Taa4Swgw@mail.gmail.com>
-Subject: Re: [PATCH] wireless: zd1211rw: remove redundant assignment of
- pointer 'q'
-To: Colin King <colin.king@canonical.com>
-Cc: Daniel Drake <dsd@gentoo.org>, Ulrich Kunitz <kune@deine-taler.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 8:25 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Pointer q is initialized and then almost immediately afterwards being
-> re-assigned the same value. Remove the second redundant assignment.
->
 
-Don't you see strange that in the same context of the patch two users
-of q are present?
+While looking through the qspinlock users, I stumbled upon openrisc and
+being curious, I wanted to have a look at its memory model.
 
-How did you test this?
+To my surprise it doesn't have asm/barrier.h. It does however support
+SMP. This lead me to wonder why it would compile, turns out we provide a
+no-op mb() if the architecture does not provide one.
 
-> Cleans up clang warning:
-> drivers/net/wireless/zydas/zd1211rw/zd_mac.c:503:23: warning: Value
-> stored to 'q' during its initialization is never read
+With the obvious exception of Sequentially Consistent SMP systems, this
+is terribly broken. And seeing how SC SMP is really rather unusual (and
+unlikely), change the asm-generic/barrier.h to not provide this.
 
-> -       q = &mac->ack_wait_queue;
->         spin_lock_irqsave(&q->lock, flags);
->
->         skb_queue_walk(q, skb) {
+This _will_ break openrisc builds, they had better clarify their
+position by writing their own barrier.h with a comment in.
 
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/asm-generic/barrier.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
+index fe297b599b0a..7a10748615ff 100644
+--- a/include/asm-generic/barrier.h
++++ b/include/asm-generic/barrier.h
+@@ -30,9 +30,15 @@
+  * Fall back to compiler barriers if nothing better is provided.
+  */
+ 
++#ifndef CONFIG_SMP
++/*
++ * If your SMP architecture really is Sequentially Consistent, you get
++ * barrier.h to write a nice big comment about it.
++ */
+ #ifndef mb
+ #define mb()	barrier()
+ #endif
++#endif
+ 
+ #ifndef rmb
+ #define rmb()	mb()
