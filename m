@@ -1,66 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752876AbeAaM1z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 07:27:55 -0500
-Received: from mail-qt0-f177.google.com ([209.85.216.177]:39965 "EHLO
-        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751025AbeAaM1x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 07:27:53 -0500
-X-Google-Smtp-Source: AH8x225AN/L5UXWvzzQi4kOvyrHeoJ6pquOO0ye+MSJoVhcAqh8tjh3kAV9/8kJlvn+4V9XPDG1zoIybdvEi6WocIfA=
-MIME-Version: 1.0
-In-Reply-To: <20180131120348.azy25aqvn5wrdkeh@pali>
-References: <20180127133209.28995-1-pali.rohar@gmail.com> <CAHp75VdWA-0a_FeicHSi_FfWurQ9EvkdW0raqgoRVySTyxDJ0Q@mail.gmail.com>
- <20180128144509.pobnj7cayc4psgrj@pali> <CAHp75VdU1OMTqLcDuzhQMHuX9rMhjw6p3CkSWaW5Y4kOy8ggqg@mail.gmail.com>
- <20180131120348.azy25aqvn5wrdkeh@pali>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 31 Jan 2018 14:27:51 +0200
-Message-ID: <CAHp75Vf=-RQvCtS684Q5+X=YKmZXgP_1kr0to8BGZX0jQAsuZw@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: i801: Register optional lis3lv02d i2c device on
- Dell machines
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
-        Steven Honeyman <stevenhoneyman@gmail.com>,
-        Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
-        Jochen Eisinger <jochen@penguin-breeder.org>,
-        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mario Limonciello <Mario_Limonciello@dell.com>,
-        Alex Hung <alex.hung@canonical.com>, Takashi Iwai <tiwai@suse.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
+        id S1753180AbeAaM3a (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 07:29:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751025AbeAaM31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 07:29:27 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7C5621738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
+Message-ID: <1517401762.3612.0.camel@kernel.org>
+Subject: Re: [PATCH v2] iversion: make inode_cmp_iversion{+raw} return bool
+ instead of s64
+From: Jeff Layton <jlayton@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Trond Myklebust <trondmy@primarydata.com>
+Date: Wed, 31 Jan 2018 07:29:22 -0500
+In-Reply-To: <CA+55aFw5Xf4V-BF1JK+SpjXnmrgeMe-k0wLaFc_=6ojbhfWEtQ@mail.gmail.com>
+References: <20180130173126.2806-1-jlayton@kernel.org>
+         <20180130203221.29310-1-jlayton@kernel.org>
+         <CA+55aFw5Xf4V-BF1JK+SpjXnmrgeMe-k0wLaFc_=6ojbhfWEtQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0VCRw8g006217
 
-On Wed, Jan 31, 2018 at 2:03 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
-> On Sunday 28 January 2018 17:00:35 Andy Shevchenko wrote:
->> On Sun, Jan 28, 2018 at 4:45 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+On Tue, 2018-01-30 at 12:53 -0800, Linus Torvalds wrote:
+> Ack. Should I expect this in a future pull request, or take it directly?
+> 
+> There's no hurry about this, since none of the existing users of that
+> function actually do anything but test the return value against zero,
+> and nobody saves it into anything but a "bool" (which has magical
+> casting properties and does not lose upper bits).
+> 
+>               Linus
 
->> > ACPI device name is SMO8800, SMO8810, ... Will that acpi_dev_present
->> > function match only prefix and not exact string?
->>
->> OK, fair enough.
->>
->> Do we have more users of such pattern?
->
-> I have not seen this ACPI pattern yet, so probably not.
+Do you mind just taking it directly? I don't have anything else queued
+up for this cycle.
 
-I see. So, my  one concern is the implicit names of the devices. I
-would like rather to see
-
-... acpi_device_id ... []= {
- {"SMO8800"},
- {"SMO8810"},
-...
-{}
-};
-
+Thanks,
 -- 
-With Best Regards,
-Andy Shevchenko
+Jeff Layton <jlayton@kernel.org>
