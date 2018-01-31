@@ -1,87 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751544AbeAaT5j (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 14:57:39 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:56587 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750829AbeAaT5h (ORCPT
+        id S1751649AbeAaUCL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 15:02:11 -0500
+Received: from mail-it0-f54.google.com ([209.85.214.54]:51765 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751609AbeAaUCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 14:57:37 -0500
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-References: <87372oph61.fsf@xmission.com> <87a7wwnkce.fsf@xmission.com>
-        <87607im26i.fsf_-_@xmission.com>
-        <CA+55aFz+uhHRRDPHW_OU+MXmrpKdE3Eb=okczd5_0STaTDe8sQ@mail.gmail.com>
-Date: Wed, 31 Jan 2018 13:57:28 -0600
-In-Reply-To: <CA+55aFz+uhHRRDPHW_OU+MXmrpKdE3Eb=okczd5_0STaTDe8sQ@mail.gmail.com>
-        (Linus Torvalds's message of "Wed, 31 Jan 2018 11:30:58 -0800")
-Message-ID: <878tcdls2f.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 31 Jan 2018 15:02:09 -0500
+X-Google-Smtp-Source: AH8x224TlcgCjcEzlgghOQ7+Bpxw9ruK8s9AoBWugHjw+gz4pkb00FZFqQyAKv1yfZb83Zqwkn5e5w==
+Date: Wed, 31 Jan 2018 12:02:05 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <bot+529dcc7acae97863327261a275c516477f0f4595@syzkaller.appspotmail.com>
+Cc: ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: unable to handle kernel paging request in devpts_mntget
+Message-ID: <20180131200205.4bcxrc5wnpjwgaie@gmail.com>
+References: <001a11c14dda61f818055d136e3a@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1egyVi-0000gA-Jr;;;mid=<878tcdls2f.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18Z1C61og4of4R4hBUEBJvbJ/Mu/RTPXco=
-X-SA-Exim-Connect-IP: 174.19.85.160
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 200 ms - load_scoreonly_sql: 0.07 (0.0%),
-        signal_user_changed: 3.9 (2.0%), b_tie_ro: 2.6 (1.3%), parse: 1.39 (0.7%),
-        extract_message_metadata: 20 (10.0%), get_uri_detail_list: 1.67 (0.8%),
-        tests_pri_-1000: 12 (6.1%), tests_pri_-950: 1.80 (0.9%), tests_pri_-900: 1.40
-        (0.7%), tests_pri_-400: 23 (11.4%), check_bayes: 21 (10.7%), b_tokenize: 8
-        (4.0%), b_tok_get_all: 6 (2.9%), b_comp_prob: 2.5 (1.3%), b_tok_touch_all:
-        2.8 (1.4%), b_finish: 0.75 (0.4%), tests_pri_0: 124 (61.7%),
-        check_dkim_signature: 0.58 (0.3%), check_dkim_adsp: 3.1 (1.5%),
-        tests_pri_500: 9 (4.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [GIT PULL] siginfo fix for 4.16-rc1
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <001a11c14dda61f818055d136e3a@google.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On Fri, Nov 03, 2017 at 05:42:01AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzkaller hit the following crash on
+> 36ef71cae353f88fd6e095e2aaa3e5953af1685d
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> 
+> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> for information about syzkaller reproducers
+> 
+> 
+> IP: devpts_mntget+0x135/0x280 fs/devpts/inode.c:173
+> PGD 7fff4067 P4D 7fff4067 PUD 7fff3067 PMD 7fff2067 PTE 0
+> Oops: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 0 PID: 4725 Comm: syz-executor2 Not tainted 4.14.0-rc5-next-20171018+
+> #8
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+> task: ffff88006ba222c0 task.stack: ffff880068f00000
+> RIP: 0010:devpts_mntget+0x135/0x280 fs/devpts/inode.c:173
+> RSP: 0018:ffff880068f07a50 EFLAGS: 00010a03
+> RAX: dffffc0000000000 RBX: ffffffffffffffed RCX: ffffffff81ce4ac0
+> RDX: 1ffffffffffffffe RSI: 0000000000000001 RDI: fffffffffffffff5
+> RBP: ffff880068f07ae0 R08: 0000000000000001 R09: 1ffff1000d1e0f05
+> R10: ffff880068f07760 R11: 0000000000000000 R12: 1ffff1000d1e0f4a
+> R13: ffff880068f07a70 R14: ffff88006bc44700 R15: ffff880068f07b20
+> FS:  00007f907b47d700(0000) GS:ffff88003ec00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: fffffbfffffffffe CR3: 000000003e167000 CR4: 00000000000006f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  ptm_open_peer+0x11a/0x2f0 drivers/tty/pty.c:631
+>  tty_ioctl+0x50f/0x15f0 drivers/tty/tty_io.c:2621
+>  vfs_ioctl fs/ioctl.c:45 [inline]
+>  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:685
+>  SYSC_ioctl fs/ioctl.c:700 [inline]
+>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:691
+>  entry_SYSCALL_64_fastpath+0x1f/0xbe
+> RIP: 0033:0x447c89
+> RSP: 002b:00007f907b47cbd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f907b47d6cc RCX: 0000000000447c89
+> RDX: 00000000202c2000 RSI: 2000000000005441 RDI: 0000000000000000
+> RBP: 0000000000000082 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 0000000000008e08 R14: 00000000006ecea8 R15: 00007f907b47d700
+> Code: c1 ea 03 80 3c 02 00 0f 85 56 01 00 00 48 8b 5d 90 e8 e0 73 a0 ff 48
+> 8d 7b 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
+> 85 24 01 00 00 4c 8b 7b 08 48 b8 00 00 00 00 00
+> RIP: devpts_mntget+0x135/0x280 fs/devpts/inode.c:173 RSP: ffff880068f07a50
+> CR2: fffffbfffffffffe
+> ---[ end trace 47949eeac6e2cd68 ]---
+> Kernel panic - not syncing: Fatal exception
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+> 
+> 
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
+> 
+> syzbot will keep track of this bug report.
+> Once a fix for this bug is committed, please reply to this email with:
+> #syz fix: exact-commit-title
 
-> On Wed, Jan 31, 2018 at 8:19 AM, Eric W. Biederman
-> <ebiederm@xmission.com> wrote:
->>
->> I had a brain fart when I received Stephen email about a compile failure
->> in linux-next.  I thought the powerpc call to memory_failure had not
->> merged yet.  Instead it simply failed to compile :(
->>
->> Linus can you please pull Stephen's fix so that powerpc builds correctly.
->
-> I fixed this up in the merge already, afaik. Or is there some other failure?
+Fixed by commit c9cc8d01fb0411:
 
-My bad.  I missed you fixed it in the merge.
+#syz fix: devpts: fix error handling in devpts_mntget()
 
-I received a kbuild failure against linux-next this morning, and I
-realized the build failure was against code that was already in 2.15 so
-I should have patched and fixed that myself.
-
-At which point I assumed the failure was because my siginfo code had
-been merged into your tree.
-
-Looking again you definitely fixed this in the merge.  So I don't know
-the story of the broken kbuild of linux-next.  But I assume it will
-sort itself out when the dust clears.
-
-Apologies for the noise,
-Eric
+- Eric
