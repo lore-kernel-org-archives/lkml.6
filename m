@@ -1,100 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753372AbeAaRdJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:33:09 -0500
-Received: from mga07.intel.com ([134.134.136.100]:44822 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752543AbeAaRdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:33:06 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,440,1511856000";
-   d="scan'208";a="170641694"
-Date: Wed, 31 Jan 2018 22:57:47 +0530
-From: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [Patch v1 6/8] x86/cpu: Add Cannonlake to Intel family
-Message-ID: <20180131172747.GA9877@raj-desk2.iind.intel.com>
-References: <1516352307-20123-1-git-send-email-rajneesh.bhardwaj@intel.com>
- <1516352307-20123-7-git-send-email-rajneesh.bhardwaj@intel.com>
- <CAHp75VcsMzTtn-TD32Jyh6pennLWLjEuiAi_-LJMowENv=P2-Q@mail.gmail.com>
+        id S1753467AbeAaRdM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:33:12 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52134 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752543AbeAaRdK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:33:10 -0500
+From: Colin King <colin.king@canonical.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: cx25821: prevent out-of-bounds read on array card
+Date: Wed, 31 Jan 2018 17:33:09 +0000
+Message-Id: <20180131173309.16377-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcsMzTtn-TD32Jyh6pennLWLjEuiAi_-LJMowENv=P2-Q@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 02:39:47PM +0200, Andy Shevchenko wrote:
-> On Fri, Jan 19, 2018 at 10:58 AM, Rajneesh Bhardwaj
-> <rajneesh.bhardwaj@intel.com> wrote:
-> > Add CPUID of Cannonlake (CNL) processors to Intel family list.
-> >
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: x86@kernel.org
-> 
-> Thomas, can you Ack this patch?
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry to bug you again, MAINTAINERS. The series depends on this patch for
-enabling Cannonlake support. Requesting your ACK / Feedback for this one.
+Currently an out of range dev->nr is detected by just reporting the
+issue and later on an out-of-bounds read on array card occurs because
+of this. Fix this by checking the upper range of dev->nr with the size
+of array card (removes the hard coded size), move this check earlier
+and also exit with the error -ENOSYS to avoid the later out-of-bounds
+array read.
 
-Thank you.
+Detected by CoverityScan, CID#711191 ("Out-of-bounds-read")
 
-> 
-> > Suggested-by: Tony Luck <tony.luck@intel.com>
-> > Signed-off-by: Megha Dey <megha.dey@linux.intel.com>
-> > Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-> > ---
-> >  arch/x86/include/asm/intel-family.h | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-> > index 35a6bc4da8ad..cf090e584202 100644
-> > --- a/arch/x86/include/asm/intel-family.h
-> > +++ b/arch/x86/include/asm/intel-family.h
-> > @@ -10,6 +10,10 @@
-> >   *
-> >   * Things ending in "2" are usually because we have no better
-> >   * name for them.  There's no processor called "SILVERMONT2".
-> > + *
-> > + * While adding a new CPUID for a new microarchitecture, add a new
-> > + * group to keep logically sorted out in chronological order. Within
-> > + * that group keep the CPUID for the variants sorted by model number.
-> >   */
-> >
-> >  #define INTEL_FAM6_CORE_YONAH          0x0E
-> > @@ -49,6 +53,8 @@
-> >  #define INTEL_FAM6_KABYLAKE_MOBILE     0x8E
-> >  #define INTEL_FAM6_KABYLAKE_DESKTOP    0x9E
-> >
-> > +#define INTEL_FAM6_CANNONLAKE_MOBILE   0x66
-> > +
-> >  /* "Small Core" Processors (Atom) */
-> >
-> >  #define INTEL_FAM6_ATOM_PINEVIEW       0x1C
-> > --
-> > 2.7.4
-> >
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+Fixes: commit 02b20b0b4cde ("V4L/DVB (12730): Add conexant cx25821 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/pci/cx25821/cx25821-core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/media/pci/cx25821/cx25821-core.c b/drivers/media/pci/cx25821/cx25821-core.c
+index 04aa4a68a0ae..c1184e73cb2d 100644
+--- a/drivers/media/pci/cx25821/cx25821-core.c
++++ b/drivers/media/pci/cx25821/cx25821-core.c
+@@ -867,6 +867,10 @@ static int cx25821_dev_setup(struct cx25821_dev *dev)
+ 	dev->nr = ++cx25821_devcount;
+ 	sprintf(dev->name, "cx25821[%d]", dev->nr);
+ 
++	if (dev->nr >= ARRAY_SIZE(card)) {
++		CX25821_INFO("dev->nr >= %ld", ARRAY_SIZE(card));
++		return -ENODEV;
++	}
+ 	if (dev->pci->device != 0x8210) {
+ 		pr_info("%s(): Exiting. Incorrect Hardware device = 0x%02x\n",
+ 			__func__, dev->pci->device);
+@@ -882,9 +886,6 @@ static int cx25821_dev_setup(struct cx25821_dev *dev)
+ 		dev->channels[i].sram_channels = &cx25821_sram_channels[i];
+ 	}
+ 
+-	if (dev->nr > 1)
+-		CX25821_INFO("dev->nr > 1!");
+-
+ 	/* board config */
+ 	dev->board = 1;		/* card[dev->nr]; */
+ 	dev->_max_num_decoders = MAX_DECODERS;
 -- 
-Best Regards,
-Rajneesh
+2.15.1
