@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752913AbeAaHmE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:42:04 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:18693 "EHLO
+        id S1752825AbeAaHmD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 02:42:03 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:1495 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752616AbeAaHmB (ORCPT
+        with ESMTP id S1752534AbeAaHmA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:42:01 -0500
-X-UUID: a0d32eb17ae54b5a908ed94a915d199b-20180131
+        Wed, 31 Jan 2018 02:42:00 -0500
+X-UUID: 6e48e148906044f4b47da58a6c8b851e-20180131
 From: Ryder Lee <ryder.lee@mediatek.com>
 To: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
         Bjorn Helgaas <bhelgaas@google.com>
@@ -18,12 +18,10 @@ CC: Frank Rowand <frowand.list@gmail.com>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 2/2] dt-bindings: PCI: MediaTek: Correct the interrupt-map properties
-Date: Wed, 31 Jan 2018 15:41:50 +0800
-Message-ID: <9d247a4fba54ba90d07df32fd89a8bb2c8bdb0f9.1516961656.git.ryder.lee@mediatek.com>
+Subject: [PATCH 1/2] of_pci_irq: add a check to fallback to standard device tree parsing
+Date: Wed, 31 Jan 2018 15:41:49 +0800
+Message-ID: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK: N
@@ -31,73 +29,74 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the interrupt-map properties from the child nodes to the root node
-and update each entry accordingly.
+A root complex usually consist of a host bridge and multiple P2P bridges,
+and someone may express that in the form of a root node with many subnodes
+and list all four interrupts for each slot (child node) in the root node
+like this:
+
+	pcie-controller {
+		...
+		interrupt-map-mask = <0xf800 0 0 7>;
+		interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
+				 0x0800 0 0 {INTx} &{interrupt parent} ...>;
+
+		pcie@0,0 {
+			reg = <0x0000 0 0 0 0>;
+			...
+		};
+
+		pcie@1,0 {
+			reg = <0x0800 0 0 0 0>;
+			...
+		};
+	};
+
+As shown above, we'd like to propagate IRQs from a root port to the devices
+in the hierarchy below it in this way.  However, it seems that the current
+parser couldn't handle such cases and will get something unexpected below:
+
+	pcieport 0000:00:01.0: assign IRQ: got 213
+	igb 0000:01:00.0: assign IRQ: got 212
+
+There is a device which is connected to 2nd slot, but the port doesn't share
+the same IRQ with its downstream devices.  The problem here is that, if the
+loop found a P2P bridge, it wouldn't check whether the reg property exists
+in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
+thus the subsequent flow couldn't correctly resolve them.
+
+Fix this by adding a check to fallback to standard device tree parsing.
 
 Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- .../devicetree/bindings/pci/mediatek-pcie.txt      | 28 ++++++++++++----------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+Please refer to the previous discussion thread: https://patchwork.ozlabs.org/patch/829108/
+---
+ drivers/of/of_pci_irq.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.txt b/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
-index 3a6ce55..b15ea2d 100644
---- a/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
-@@ -89,10 +89,21 @@ Examples for MT7623:
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		#interrupt-cells = <1>;
--		interrupt-map-mask = <0xf800 0 0 0>;
--		interrupt-map = <0x0000 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>,
--				<0x0800 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>,
--				<0x1000 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-map-mask = <0xf800 0 0 7>;
-+		interrupt-map = <0x0000 0 0 1 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW
-+				0x0000 0 0 2 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW
-+				0x0000 0 0 3 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW
-+				0x0000 0 0 4 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW
+diff --git a/drivers/of/of_pci_irq.c b/drivers/of/of_pci_irq.c
+index 3a05568..e445866 100644
+--- a/drivers/of/of_pci_irq.c
++++ b/drivers/of/of_pci_irq.c
+@@ -86,8 +86,18 @@ int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *out_irq
+ 	out_irq->np = ppnode;
+ 	out_irq->args_count = 1;
+ 	out_irq->args[0] = pin;
+-	laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
+-	laddr[1] = laddr[2] = cpu_to_be32(0);
 +
-+				0x0800 0 0 1 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW
-+				0x0800 0 0 2 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW
-+				0x0800 0 0 3 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW
-+				0x0800 0 0 4 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW
++	if (!dn && ppnode) {
++		const __be32 *addr;
 +
-+				0x1000 0 0 1 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW
-+				0x1000 0 0 2 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW
-+				0x1000 0 0 3 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW
-+				0x1000 0 0 4 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&topckgen CLK_TOP_ETHIF_SEL>,
- 			 <&hifsys CLK_HIFSYS_PCIE0>,
- 			 <&hifsys CLK_HIFSYS_PCIE1>,
-@@ -115,9 +126,6 @@ Examples for MT7623:
- 			reg = <0x0000 0 0 0 0>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
--			#interrupt-cells = <1>;
--			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>;
- 			ranges;
- 			num-lanes = <1>;
- 		};
-@@ -127,9 +135,6 @@ Examples for MT7623:
- 			reg = <0x0800 0 0 0 0>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
--			#interrupt-cells = <1>;
--			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
- 			ranges;
- 			num-lanes = <1>;
- 		};
-@@ -139,9 +144,6 @@ Examples for MT7623:
- 			reg = <0x1000 0 0 0 0>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
--			#interrupt-cells = <1>;
--			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
- 			ranges;
- 			num-lanes = <1>;
- 		};
++		addr = of_get_property(ppnode, "reg", NULL);
++		if (addr)
++			memcpy(laddr, addr, 3);
++	} else {
++		laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
++		laddr[1] = laddr[2] = cpu_to_be32(0);
++	}
++
+ 	rc = of_irq_parse_raw(laddr, out_irq);
+ 	if (rc)
+ 		goto err;
 -- 
 1.9.1
