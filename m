@@ -1,54 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753198AbeAaOXk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 09:23:40 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33122 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752367AbeAaOXh (ORCPT
+        id S1753486AbeAaO03 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 09:26:29 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:36840 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753383AbeAaO01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 09:23:37 -0500
-X-Google-Smtp-Source: AH8x224NptaB03+47x2fXKCBkw85cGgQRwPh7VFTXrQbZe1/B+rEV2TfkxiB8kTYt3f6lg59jPTD0EXKoap4UmBQvQs=
+        Wed, 31 Jan 2018 09:26:27 -0500
+X-Google-Smtp-Source: AH8x226hM0nXyjr3GHhUU2r3sFwOM0kKSTKiGUCI7YqWzujAD32kND9lobhfx9VOC+B3dJ3dMCcpiw==
+Reply-To: minyard@acm.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        "openipmi-developer@lists.sourceforge.net"
+        <openipmi-developer@lists.sourceforge.net>
+From: Corey Minyard <minyard@acm.org>
+Subject: [GIT PULL] IPMI updates for 4.16
+Message-ID: <55498064-43a1-5cda-6b67-dae6f8191a3b@acm.org>
+Date: Wed, 31 Jan 2018 08:26:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg@mail.gmail.com>
-References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
- <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
- <CAHp75Vcig869pUQ5yK1b=GpXinhYkpw1q29OVKSs_7EqP4Hknw@mail.gmail.com> <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 31 Jan 2018 16:23:35 +0200
-Message-ID: <CAHp75VcYQMYNmW9-MkOKA5TWV2JgNfqnUB22s1qB4Z0ZZbTG2g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 4:01 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
-> On 31 January 2018 at 00:48, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->> On Tue, Jan 30, 2018 at 2:07 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
->>> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
->>> each group contains 16 GPIOs. Each GPIO can set input/output and has
->>> the interrupt capability.
->>
->>> +config GPIO_SPRD
->>
->>> +       bool "Spreadtrum GPIO support"
->>
->> Either you have to put tristate here, or remove all redundant
->> module_*() and MODULE_*() macros.
->
-> I will remove module_*() and MODULE_*() macros in next version. Thanks
-> for your comments.
+The following changes since commit a638349bf6c29433b938141f99225b160551ff48:
 
-In that case you need to explain why driver can't be module. (And
-don't forget to replace module.h with init.h).
+   Merge branch 'for-4.15-fixes' of 
+git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu (2017-12-11 
+17:13:03 -0800)
 
--- 
-With Best Regards,
-Andy Shevchenko
+are available in the git repository at:
+
+   https://github.com/cminyard/linux-ipmi.git tags/for-linus-4.16-1
+
+for you to fetch changes up to e45af3d372f1d4339663dcbef28665f5b15d448c:
+
+   ipmi_ssif: Remove duplicate NULL check (2018-01-22 08:10:38 -0600)
+
+----------------------------------------------------------------
+Small fixes for various things, been sitting in next for a
+while (some a long time).
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+       ipmi_ssif: Remove duplicate NULL check
+
+Corey Minyard (1):
+       ipmi_si: Fix error handling of platform device
+
+Jeremy Kerr (1):
+       ipmi/ipmi_powernv: remove outdated todo in powernv IPMI driver
+
+John Garry (1):
+       ipmi: use dynamic memory for DMI driver override
+
+Masamitsu Yamazaki (1):
+       ipmi: Clear smi_info->thread to prevent use-after-free during 
+module unload
+
+Wei Yongjun (3):
+       ipmi_si_platform: Fix typo in parameter description
+       ipmi watchdog: fix typo in parameter description
+       ipmi/powernv: Fix error return code in ipmi_powernv_probe()
+
+Xiongfeng Wang (1):
+       ipmi: use correct string length
+
+  drivers/char/ipmi/ipmi_dmi.c         |  5 ++++-
+  drivers/char/ipmi/ipmi_msghandler.c  |  2 +-
+  drivers/char/ipmi/ipmi_powernv.c     |  6 +++---
+  drivers/char/ipmi/ipmi_si_intf.c     | 13 +++++++++----
+  drivers/char/ipmi/ipmi_si_platform.c |  2 +-
+  drivers/char/ipmi/ipmi_ssif.c        |  3 +--
+  drivers/char/ipmi/ipmi_watchdog.c    |  4 ++--
+  7 files changed, 21 insertions(+), 14 deletions(-)
