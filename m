@@ -1,104 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753539AbeAaOiS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 09:38:18 -0500
-Received: from mail-it0-f49.google.com ([209.85.214.49]:38827 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751447AbeAaOiR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 09:38:17 -0500
-X-Google-Smtp-Source: AH8x224qV7Kzxz/FffdkzvYsZ6pD2N4C30a/Uif26o0Jc8nCSE7mi+4Is1jkq6VUQYpjxwTi3PYeZuo9qWUEh1a0vic=
+        id S1753781AbeAaOyK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 09:54:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58918 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752592AbeAaOyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 09:54:08 -0500
+Date: Wed, 31 Jan 2018 09:54:08 -0500 (EST)
+From: Bob Peterson <rpeterso@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: cluster-devel <cluster-devel@redhat.com>, linux-kernel@vger.kernel.org
+Message-ID: <1922986948.5567511.1517410448686.JavaMail.zimbra@redhat.com>
+In-Reply-To: <2035999397.5567269.1517410350526.JavaMail.zimbra@redhat.com>
+Subject: GFS2: Pull request (merge window)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-XidYPh0hi1nzG5m0AO7EfRE6bnKfxCToG+9zsmvzmNg@mail.gmail.com>
-References: <20180129174559.1866-1-marc.zyngier@arm.com> <20180129174559.1866-17-marc.zyngier@arm.com>
- <476d111e-6fb0-9bef-2448-a94d0cc03f45@huawei.com> <49853e5e-f093-2e79-1cfb-182f51fcd6a0@arm.com>
- <CAKv+Gu-XidYPh0hi1nzG5m0AO7EfRE6bnKfxCToG+9zsmvzmNg@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Wed, 31 Jan 2018 14:38:15 +0000
-Message-ID: <CAKv+Gu-L0WOLSUbcHSTQ_FVDNSJoXQv25ExUmtv8ZEYhkCSQ-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 16/16] arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
- hardening support
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Hanjun Guo <guohanjun@huawei.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>, Jon Masters <jcm@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.3.117.112, 10.4.195.5]
+Thread-Topic: GFS2: Pull request (merge window)
+Thread-Index: nVKcEu+8YCfCKb6lFB0CkZRpVBxktA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w0VEcOud026018
 
-On 31 January 2018 at 14:35, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> On 31 January 2018 at 14:11, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> On 31/01/18 13:56, Hanjun Guo wrote:
->>> Hi Marc,
->>>
->>> On 2018/1/30 1:45, Marc Zyngier wrote:
->>>>  static int enable_psci_bp_hardening(void *data)
->>>>  {
->>>>      const struct arm64_cpu_capabilities *entry = data;
->>>>
->>>> -    if (psci_ops.get_version)
->>>> +    if (psci_ops.get_version) {
->>>> +            if (check_smccc_arch_workaround_1(entry))
->>>> +                    return 0;
->>>
->>> If I'm using the new version SMCCC, the firmware have the choicARM_SMCCC_ARCH_WORKAROUND_1e to decide
->>> whether this machine needs the workaround, even if the CPU is vulnerable
->>> for CVE-2017-5715, but..
->>>
->>>> +
->>>>              install_bp_hardening_cb(entry,
->>>>                                     (bp_hardening_cb_t)psci_ops.get_version,
->>>>                                     __psci_hyp_bp_inval_start,
->>>>                                     __psci_hyp_bp_inval_end);
->>>
->>> ..the code above seems will enable get_psci_version() for CPU and will
->>> trap to trust firmware even the new version of firmware didn't say
->>> we need the workaround, did I understand it correctly?
->>
->> Well, you only get there if we've established that your CPU is affected
->> (it has an entry matching its MIDR with the HARDEN_BRANCH_PREDICTOR
->> capability), and that entry points to enable_psci_bp_hardening. It is
->> not the firmware that decides whether we need hardening, but the kernel.
->> The firmware merely provides a facility to apply the hardening.
->>
->>> I'm ask this because some platform will not expose to users to
->>> take advantage of CVE-2017-5715, and we can use different firmware
->>> to report we need such workaround or not, then use a single kernel
->>> image for both vulnerable platforms and no vulnerable ones.
->>
->> You cannot have your cake and eat it. If you don't want to workaround
->> the issue, you can disable the hardening. But asking for the same kernel
->> to do both depending on what the firmware reports doesn't make much
->> sense to me.
->
-> The SMCCC v1.1. document does appear to imply that systems that
-> implement SMCCC v1.1 but don't implement ARM_SMCCC_ARCH_WORKAROUND_1
-> should be assumed to be unaffected.
->
-> """
-> If the discovery call returns NOT_SUPPORTED:
-> • SMCCC_ARCH_WORKAROUND_1 must not be invoked on any PE in the system, and
-> • none of the PEs in the system require firmware mitigation for CVE-2017-5715.
-> """
->
-> How to deal with conflicting information in this regard (quirk table
-> vs firmware implementation) is a matter of policy, of course.
+Hi Linus,
 
-... and actually, perhaps it makes sense for the
-SMCCC_ARCH_WORKAROUND_1 check to be completely independent of MIDR
-based errata matching?
+Please consider pulling the following changes for the GFS2 file system.
 
-I.e., if SMCCC v1.1 and SMCCC_ARCH_WORKAROUND_1 are both implemented,
-we should probably invoke it even if the MIDR is not known to belong
-to an affected implementation.
+Regards,
+
+Bob Peterson
+----------------------------------------------------------------
+The following changes since commit 1291a0d5049dbc06baaaf66a9ff3f53db493b19b:
+
+  Linux 4.15-rc4 (2017-12-17 18:59:59 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-4.16.fixes
+
+for you to fetch changes up to af38816e4801d2868258085831172a003d1634ff:
+
+  gfs2: Add a few missing newlines in messages (2018-01-30 10:32:30 -0700)
+
+----------------------------------------------------------------
+We've got 30 patches for this merge window. These generally fall into
+five categories: (1) code cleanups, (2) patches related to adding
+PUNCH_HOLE support to GFS2, (3) support for new fields in resource group
+headers, (4) a few bug fixes, and (5) support for new fields in journal
+log headers. These new fields, which were previously unused, are designed
+to make it easier to track down file system corruption, and allow fsck.gfs2
+to make more intelligent decisions when finding and fixing file system
+corruption.
+
+1. Abhi Das contributed a patch to trim the ordered writes list, which
+   used to grow uncontrollably until unmount.
+2. Abhi also added a second patch to trim the ordered writes list.
+3. Andreas Gruenbacher removed an unused parameter from function
+   gfs2_write_jdata_pagevec.
+4. Andreas also removed a pointless BUG_ON.
+5. Andreas cleaned up an error patch in trunc_start.
+6. Andreas removed some unused parameters from truncate.
+7. Andreas made gfs2_journaled_truncate more efficient.
+8. Andreas cleaned up the support functions for truncate.
+9. Andreas fixed metadata read-ahead for truncate to make it faster.
+10. Andreas fixed up the non-recursive truncate code.
+11. Andreas reworked and renamed function gfs2_block_truncate_page.
+12. Andreas generalized the non-recursive truncate code so it can
+    take a range of values for punch_hole support.
+13. Andreas introduced new PUNCH_HOLE support that take advantage
+    of the previous patches.
+14. Andreas contributed a patch to add fallocate with PUNCH_HOLE.
+15. Andreas fixed some typos in the comments.
+16. Andreas added function gfs2_max_stuffed_size to replace a piece
+    of code that was needlessly repeated throughout GFS2.
+17. Andreas made a minor cleanup to function gfs2_page_add_databufs.
+18. Andreas got rid of function gfs2_log_header_in in preparation for
+    the new log header fields.
+19. Andreas also fixed up some missing newlines in kernel messages.
+20. Andy Price added a new field to resource groups to indicate where
+    the next one should be, to allow fsck.gfs2 to make better repairs.
+21. Andy also added new rindex fields for consistency checking.
+22. Andy added a crc field to resource group headers for consistency
+    checking.
+23. I added a patch to reduce redundancy in functions common to
+    freeing dinodes.
+24. I added a patch to reduce redundancy when writing log headers
+    between the journalling code and journal recovery code.
+25. I added a patch to add new fields to journal log headers based
+    on a prototype from Steve Whitehouse.
+26. I added a patch to log the source of journal log headers so we
+    can better track down journal corruption.
+27. I added a patch to fix a minor comment typo.
+28. I also added a patch to fix a BUG in an unlink error path.
+29. Steve Whitehouse contributed a patch to fix an incorrect use
+    of the gfs2_blk2rgrpd function.
+30. Tetsuo Handa contributed a patch that fixes incorrect error
+    handling in function init_gfs2_fs.
+
+----------------------------------------------------------------
+Abhi Das (2):
+      gfs2: Trim the ordered write list in gfs2_ordered_write()
+      gfs2: Remove inode from ordered write list in gfs2_write_inode()
+
+Andreas Gruenbacher (17):
+      gfs2: Remove unused gfs2_write_jdata_pagevec parameter
+      gfs2: Remove pointless BUG_ON
+      gfs2: Clean up trunc_start error path
+      gfs2: truncate: Remove unnecessary oldsize parameters
+      gfs2: Remove minor gfs2_journaled_truncate inefficiencies
+      gfs2: Clean up {lookup,fillup}_metapath
+      gfs2: Fix metadata read-ahead during truncate
+      gfs2: Improve non-recursive delete algorithm
+      Turn gfs2_block_truncate_page into gfs2_block_zero_range
+      gfs2: Generalize truncate code
+      gfs2: Turn trunc_dealloc into punch_hole
+      gfs2: Implement fallocate(FALLOC_FL_PUNCH_HOLE)
+      gfs2: Typo fixes
+      gfs2: Add gfs2_max_stuffed_size
+      gfs2: Minor gfs2_page_add_databufs cleanup
+      gfs2: Get rid of gfs2_log_header_in
+      gfs2: Add a few missing newlines in messages
+
+Andrew Price (3):
+      gfs2: Add a next-resource-group pointer to resource groups
+      gfs2: Add rindex fields to rgrp headers
+      gfs2: Add a crc field to resource group headers
+
+Bob Peterson (7):
+      GFS2: Combine gfs2_free_di with gfs2_free_uninit_di
+      GFS2: Reduce code redundancy writing log headers
+      Merge branch 'punch-hole' of git://git.kernel.org/.../gfs2/linux-gfs2.git
+      GFS2: Introduce new gfs2_log_header_v2
+      GFS2: Log the reason for log flushes in every log header
+      GFS2: Fix minor comment typo
+      GFS2: Don't try to end a non-existent transaction in unlink
+
+Steven Whitehouse (1):
+      gfs2: Add gfs2_blk2rgrpd comment and fix incorrect use
+
+Tetsuo Handa (1):
+      gfs2: Fix wrong error handling in init_gfs2_fs()
+
+ fs/gfs2/Kconfig                  |   2 +
+ fs/gfs2/aops.c                   |  35 +--
+ fs/gfs2/bmap.c                   | 583 +++++++++++++++++++++++++++------------
+ fs/gfs2/bmap.h                   |   1 +
+ fs/gfs2/dir.c                    |   3 +-
+ fs/gfs2/file.c                   |  23 +-
+ fs/gfs2/glops.c                  |  19 +-
+ fs/gfs2/incore.h                 |   6 +-
+ fs/gfs2/inode.c                  |  11 +-
+ fs/gfs2/lock_dlm.c               |   4 +-
+ fs/gfs2/log.c                    | 124 ++++++---
+ fs/gfs2/log.h                    |  10 +-
+ fs/gfs2/lops.c                   |  18 +-
+ fs/gfs2/lops.h                   |   3 +
+ fs/gfs2/main.c                   |  90 +++---
+ fs/gfs2/ops_fstype.c             |   2 +-
+ fs/gfs2/quota.c                  |   3 +-
+ fs/gfs2/recovery.c               | 110 +++-----
+ fs/gfs2/rgrp.c                   |  38 ++-
+ fs/gfs2/super.c                  |  19 +-
+ fs/gfs2/sys.c                    |   4 +-
+ fs/gfs2/trace_gfs2.h             |  11 +-
+ fs/gfs2/trans.c                  |   4 +-
+ include/uapi/linux/gfs2_ondisk.h |  62 ++++-
+ 24 files changed, 758 insertions(+), 427 deletions(-)
