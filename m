@@ -1,52 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753236AbeAaVXy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 16:23:54 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:37266 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753135AbeAaVXx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 16:23:53 -0500
-Date: Wed, 31 Jan 2018 21:23:51 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, arch@vger.kernel.org
-Subject: [git pull] asm/uaccess.h whack-a-mole
-Message-ID: <20180131212351.GC30522@ZenIV.linux.org.uk>
+        id S1753189AbeAaV0h (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 16:26:37 -0500
+Received: from mout.web.de ([212.227.15.4]:50414 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751674AbeAaV0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 16:26:35 -0500
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] hid-sensor-accel-3d: Delete an error message for a failed
+ memory allocation in hid_accel_3d_probe()
+Message-ID: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 22:26:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:GyNLTsejwyzRjMjVIBAhV7ueMdmMsQOPSQMWiJdnxoqcv7LcUR1
+ 8Vv6g9zLm6UBHZj9AsNMI1SG9n4vsND11HYWn+cxrzLVBtsg+8YSR7mBa+xanOqyiUsJ++T
+ iuLb326J3NRWdHN1X9QnGJD7LPHEsuYeUXk5zmMq2rslSRi1EmOKtljoyk0C8LaIqrio2MM
+ shAZysaCjy6Z216llp/Aw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:a0W/ES+goc8=:+gVpupWmIAQGsnc2ggft1F
+ kI2xrWJ0eYA1m/adRiis3Y4k3XP3SfotFhGn2n17vZfi8i8ZIn2F9GvmroGlXPnk7/K/tMtsk
+ LwykjQ2z+q3zio0DARz1SuG7jteJZtZIS2MozqfeU/NN+52dNibrZQhT32PipvS1CHNw4uZn9
+ dj53qPYrIIgeLNdrhUpfYwSGdUAgnBdcyUzGbX+DiMvuebv2gFn+AodSiAqlc0o8izbunfQ6S
+ QDMVzS87GGyErEvE0WdrccjuGZlYGVbCQCLQXwOZ07JcROmrlfLUxr+yUT/f3EuaKjIc9UHIt
+ HPQa26rsFs0bTGUAaVNOOcFymkGrZoHlD/ifttYpbZoWeO/4xiGs2oHo7fTMzCvPDVr4mq7YE
+ V+BQLTPgheUzh5QpfXnV/6Ib0kwx4uHBmE2l0oQQJmUYGHsEzfPfQViiQ6sIsG/auIvs6auX4
+ Fw0a9n/cZmTCONHPfGx46YMWDfAb6YqpRMEURcHKlASvK/TzXVucURzui+7qBNSj2tVQxqgda
+ zmK0/hQZBgp7TFeZpKzQrEC7ZWBi3hncaZD0tNhJ5OX1rYZmCMRXPVteOUzSRgZTW10fUq7h2
+ 791cNMKh98hlzWCHpzRlwmxdHbJ9/a0fRNbl2OZJ7Y0etCSMtZJdjLinwBa8/Jx8/8kNJhDys
+ IhYA4rcZEEhY/KpKdCep3I8+5ubOhLu+ykJkJmnLtSN02/GJrnrgyduc6QiirebGbOmmmHKNU
+ fTvc/uaHihKEy3Z+BWZHlm60UvF0C2v42MNv4TxacMWCuCNbH1qSYiWzQPxBvFgAKoQmFaNPd
+ NPfKnsxXER3ugi4tZwBcWlL7x2eK4QjQd9QTE6lY/Up9h7Fe6Q=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	It's linux/uaccess.h, damnit...  Oh, well - eventually they'll stop
-cropping up...
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 22:20:56 +0100
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+Omit an extra message for a memory allocation failure in this function.
 
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+This issue was detected by using the Coccinelle software.
 
-are available in the git repository at:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/accel/hid-sensor-accel-3d.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.whack-a-mole
-
-for you to fetch changes up to c68070d0408eb2297331a9c9ae538a7bec13fc81:
-
-  asm-prototypes.h: use linux/uaccess.h, not asm/uaccess.h (2017-12-04 18:03:39 -0500)
-
-----------------------------------------------------------------
-Al Viro (3):
-      ppc: for put_user() pull linux/uaccess.h, not asm/uaccess.h
-      riscv: use linux/uaccess.h, not asm/uaccess.h...
-      asm-prototypes.h: use linux/uaccess.h, not asm/uaccess.h
-
- arch/alpha/include/asm/asm-prototypes.h | 2 +-
- arch/ia64/include/asm/asm-prototypes.h  | 2 +-
- arch/mips/include/asm/asm-prototypes.h  | 2 +-
- arch/powerpc/kvm/book3s_xive.c          | 2 +-
- arch/riscv/kernel/process.c             | 2 +-
- arch/riscv/mm/fault.c                   | 1 -
- arch/sparc/include/asm/asm-prototypes.h | 2 +-
- 7 files changed, 6 insertions(+), 7 deletions(-)
+diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
+index c066a3bdbff7..3d0acde40285 100644
+--- a/drivers/iio/accel/hid-sensor-accel-3d.c
++++ b/drivers/iio/accel/hid-sensor-accel-3d.c
+@@ -383,11 +383,9 @@ static int hid_accel_3d_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 	indio_dev->channels = kmemdup(channel_spec, channel_size, GFP_KERNEL);
+-
+-	if (!indio_dev->channels) {
+-		dev_err(&pdev->dev, "failed to duplicate channels\n");
++	if (!indio_dev->channels)
+ 		return -ENOMEM;
+-	}
++
+ 	ret = accel_3d_parse_report(pdev, hsdev,
+ 				(struct iio_chan_spec *)indio_dev->channels,
+ 				hsdev->usage, accel_state);
+-- 
+2.16.1
