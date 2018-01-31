@@ -1,55 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752699AbeAaUTS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 15:19:18 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43244 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751745AbeAaUTQ (ORCPT
+        id S1752710AbeAaURF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 15:17:05 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:60530 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752171AbeAaUQh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 15:19:16 -0500
-X-Google-Smtp-Source: AH8x224NAOi1Lyfgrf/eMLOxLaG20GW+WdGlHTQ1J78XxI0xigBrkJQphQsazqupYCxakBCQSNSrsA==
-From: Anders Roxell <anders.roxell@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: linux@armlinux.org.uk, arnd@arndb.de,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCHv2] arch/arm/Kconfig: default ARM_MODULE_PLTS to 'y'
-Date: Wed, 31 Jan 2018 21:19:11 +0100
-Message-Id: <20180131201911.19253-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180129234900.11121-1-anders.roxell@linaro.org>
-References: <20180129234900.11121-1-anders.roxell@linaro.org>
+        Wed, 31 Jan 2018 15:16:37 -0500
+Message-ID: <1517429796.3344.10.camel@HansenPartnership.com>
+Subject: Re: [GIT PULL] first round of SCSI updates for the 4.14+ merge
+ window
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Wed, 31 Jan 2018 12:16:36 -0800
+In-Reply-To: <CA+55aFy4YfNEKiDipUXM_KYR5wen-8hmOp7B7t+=boq14EgdJA@mail.gmail.com>
+References: <1517420549.3937.67.camel@HansenPartnership.com>
+         <CA+55aFy4YfNEKiDipUXM_KYR5wen-8hmOp7B7t+=boq14EgdJA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While testing multi_v7_defconfig with LOCKDEP enabled, the kernel
-fails to load simple modules, as reported by kselftest:
+On Wed, 2018-01-31 at 11:29 -0800, Linus Torvalds wrote:
+> On Wed, Jan 31, 2018 at 9:42 AM, James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > 
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-
+> > misc
+> 
+> Ok, now I did indeed get that
+> 
+>   gpg: Can't check signature: unknown pubkey algorithm
+> 
+> because of your fancy new key. But making git use gpg2 indeed fixes
+> it, since I have a recent enough version.
+> 
+> Let's see if anybody else even notices. I don't think lots of people
+> look at the signatures.
 
-[   34.107620] test_printf: section 4 reloc 2 sym 'memset': relocation
-28 out of range (0xbf046044 -> 0xc109f720)
-selftests: printf.sh [FAIL]
+Great! thanks for being the guinea pig.  At least we know the theory is
+now tested.
 
-The problem that is seen when LOCKDEP is enabled without
-ARM_MODULE_PLTS, is that LOCKDEP eats so much memory that the top of the
-kernel gets out of reach from the bottom of the module area.
+Regards,
 
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- arch/arm/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 51c8df561077..8014c8c322df 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1702,6 +1702,7 @@ config ARCH_WANT_GENERAL_HUGETLB
- config ARM_MODULE_PLTS
- 	bool "Use PLTs to allow module memory to spill over into vmalloc area"
- 	depends on MODULES
-+	default y
- 	help
- 	  Allocate PLTs when loading modules so that jumps and calls whose
- 	  targets are too far away for their relative offsets to be encoded
--- 
-2.11.0
+James
