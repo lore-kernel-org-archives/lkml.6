@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755832AbeAaXMg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 18:12:36 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:52692 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754582AbeAaXFW (ORCPT
+        id S1755839AbeAaXNA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 18:13:00 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:51942 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754545AbeAaXFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 18:05:22 -0500
+        Wed, 31 Jan 2018 18:05:16 -0500
 From: daniel.m.jordan@oracle.com
 To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
@@ -14,105 +14,118 @@ Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
         ldufour@linux.vnet.ibm.com, mgorman@suse.de, mhocko@kernel.org,
         pasha.tatashin@oracle.com, steven.sistare@oracle.com,
         yossi.lev@oracle.com
-Subject: [RFC PATCH v1 10/13] mm: add LRU batch lock API's
-Date: Wed, 31 Jan 2018 18:04:10 -0500
-Message-Id: <20180131230413.27653-11-daniel.m.jordan@oracle.com>
+Subject: [RFC PATCH v1 11/13] mm: use lru_batch locking in release_pages
+Date: Wed, 31 Jan 2018 18:04:11 -0500
+Message-Id: <20180131230413.27653-12-daniel.m.jordan@oracle.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
 References: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8791 signatures=668659
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=931
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1801310283
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the LRU batch locking API's themselves.  This adds the final piece
-of infrastructure necessary for locking batches on an LRU list.
-
-The API's lock a specific page on the LRU list, taking only the
-appropriate LRU batch lock for a non-sentinel page and taking the
-node's/memcg's lru_lock in addition for a sentinel page.
-
-These interfaces are designed for performance: they minimize the number
-of times we needlessly drop and then reacquire the same lock(s) when
-used in a loop.  They're difficult to use but will do for a prototype.
+Introduce LRU batch locking in release_pages.  This is the code path
+where I see lru_lock contention most often, so this is the one I used in
+this prototype.
 
 Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- include/linux/mm_inline.h | 58 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ mm/swap.c | 45 +++++++++++++++++----------------------------
+ 1 file changed, 17 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 1f1657c75b1b..11d9fcf93f2b 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -210,6 +210,64 @@ static __always_inline void lru_unlock_all(struct pglist_data *pgdat,
- 		local_irq_enable();
- }
+diff --git a/mm/swap.c b/mm/swap.c
+index 2bb28fcb7cc0..fae766e035a4 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -745,31 +745,21 @@ void release_pages(struct page **pages, int nr)
+ 	int i;
+ 	LIST_HEAD(pages_to_free);
+ 	struct pglist_data *locked_pgdat = NULL;
++	spinlock_t *locked_lru_batch = NULL;
+ 	struct lruvec *lruvec;
+ 	unsigned long uninitialized_var(flags);
+-	unsigned int uninitialized_var(lock_batch);
  
-+static __always_inline spinlock_t *page_lru_batch_lock(struct page *page)
-+{
-+	return &page_pgdat(page)->lru_batch_locks[page->lru_batch].lock;
-+}
-+
-+/**
-+ * lru_batch_lock - lock an LRU list batch
-+ */
-+static __always_inline void lru_batch_lock(struct page *page,
-+					   spinlock_t **locked_lru_batch,
-+					   struct pglist_data **locked_pgdat,
-+					   unsigned long *flags)
-+{
-+	spinlock_t *lru_batch = page_lru_batch_lock(page);
-+	struct pglist_data *pgdat = page_pgdat(page);
-+
-+	VM_BUG_ON(*locked_pgdat && !page->lru_sentinel);
-+
-+	if (lru_batch != *locked_lru_batch) {
-+		VM_BUG_ON(*locked_pgdat);
-+		VM_BUG_ON(*locked_lru_batch);
-+		spin_lock_irqsave(lru_batch, *flags);
-+		*locked_lru_batch = lru_batch;
-+		if (page->lru_sentinel) {
-+			spin_lock(&pgdat->lru_lock);
-+			*locked_pgdat = pgdat;
-+		}
-+	} else if (!*locked_pgdat && page->lru_sentinel) {
-+		spin_lock(&pgdat->lru_lock);
-+		*locked_pgdat = pgdat;
+ 	for (i = 0; i < nr; i++) {
+ 		struct page *page = pages[i];
+ 
+-		/*
+-		 * Make sure the IRQ-safe lock-holding time does not get
+-		 * excessive with a continuous string of pages from the
+-		 * same pgdat. The lock is held only if pgdat != NULL.
+-		 */
+-		if (locked_pgdat && ++lock_batch == SWAP_CLUSTER_MAX) {
+-			lru_unlock_all(locked_pgdat, &flags);
+-			locked_pgdat = NULL;
+-		}
+-
+ 		if (is_huge_zero_page(page))
+ 			continue;
+ 
+ 		/* Device public page can not be huge page */
+ 		if (is_device_public_page(page)) {
+-			if (locked_pgdat) {
+-				lru_unlock_all(locked_pgdat, &flags);
+-				locked_pgdat = NULL;
++			if (locked_lru_batch) {
++				lru_batch_unlock(NULL, &locked_lru_batch,
++						 &locked_pgdat, &flags);
+ 			}
+ 			put_zone_device_private_or_public_page(page);
+ 			continue;
+@@ -780,26 +770,23 @@ void release_pages(struct page **pages, int nr)
+ 			continue;
+ 
+ 		if (PageCompound(page)) {
+-			if (locked_pgdat) {
+-				lru_unlock_all(locked_pgdat, &flags);
+-				locked_pgdat = NULL;
++			if (locked_lru_batch) {
++				lru_batch_unlock(NULL, &locked_lru_batch,
++						 &locked_pgdat, &flags);
+ 			}
+ 			__put_compound_page(page);
+ 			continue;
+ 		}
+ 
+ 		if (PageLRU(page)) {
+-			struct pglist_data *pgdat = page_pgdat(page);
+-
+-			if (pgdat != locked_pgdat) {
+-				if (locked_pgdat)
+-					lru_unlock_all(locked_pgdat, &flags);
+-				lock_batch = 0;
+-				locked_pgdat = pgdat;
+-				lru_lock_all(locked_pgdat, &flags);
++			if (locked_lru_batch) {
++				lru_batch_unlock(page, &locked_lru_batch,
++						 &locked_pgdat, &flags);
+ 			}
++			lru_batch_lock(page, &locked_lru_batch, &locked_pgdat,
++				       &flags);
+ 
+-			lruvec = mem_cgroup_page_lruvec(page, locked_pgdat);
++			lruvec = mem_cgroup_page_lruvec(page, page_pgdat(page));
+ 			VM_BUG_ON_PAGE(!PageLRU(page), page);
+ 			__ClearPageLRU(page);
+ 			del_page_from_lru_list(page, lruvec, page_off_lru(page));
+@@ -811,8 +798,10 @@ void release_pages(struct page **pages, int nr)
+ 
+ 		list_add(&page->lru, &pages_to_free);
+ 	}
+-	if (locked_pgdat)
+-		lru_unlock_all(locked_pgdat, &flags);
++	if (locked_lru_batch) {
++		lru_batch_unlock(NULL, &locked_lru_batch, &locked_pgdat,
++				 &flags);
 +	}
-+}
-+
-+/**
-+ * lru_batch_unlock - unlock an LRU list batch
-+ */
-+static __always_inline void lru_batch_unlock(struct page *page,
-+					     spinlock_t **locked_lru_batch,
-+					     struct pglist_data **locked_pgdat,
-+					     unsigned long *flags)
-+{
-+	spinlock_t *lru_batch = (page) ? page_lru_batch_lock(page) : NULL;
-+
-+	VM_BUG_ON(!*locked_lru_batch);
-+
-+	if (lru_batch != *locked_lru_batch) {
-+		if (*locked_pgdat) {
-+			spin_unlock(&(*locked_pgdat)->lru_lock);
-+			*locked_pgdat = NULL;
-+		}
-+		spin_unlock_irqrestore(*locked_lru_batch, *flags);
-+		*locked_lru_batch = NULL;
-+	} else if (*locked_pgdat && !page->lru_sentinel) {
-+		spin_unlock(&(*locked_pgdat)->lru_lock);
-+		*locked_pgdat = NULL;
-+	}
-+}
-+
- /**
-  * page_lru_base_type - which LRU list type should a page be on?
-  * @page: the page to test
+ 
+ 	mem_cgroup_uncharge_list(&pages_to_free);
+ 	free_unref_page_list(&pages_to_free);
 -- 
 2.16.1
