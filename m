@@ -1,68 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753508AbeAaRhO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:37:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43708 "EHLO mx1.redhat.com"
+        id S932120AbeAaRia (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:38:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59692 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753158AbeAaRhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:37:13 -0500
-Subject: Re: [PATCH v2 3/3] KVM: VMX: make MSR bitmaps per-VCPU
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>
-References: <1517043027-7655-1-git-send-email-pbonzini@redhat.com>
- <1517043027-7655-4-git-send-email-pbonzini@redhat.com>
- <20180130162357.GE22015@flask>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <fc794c7a-dec4-34dd-d7ac-6c0d49f138f1@redhat.com>
-Date: Wed, 31 Jan 2018 12:37:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1753158AbeAaRi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:38:29 -0500
+Date: Wed, 31 Jan 2018 18:38:24 +0100
+From: Andrew Jones <drjones@redhat.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Jon Masters <jcm@redhat.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v2 07/16] arm/arm64: KVM: Add PSCI version selection API
+Message-ID: <20180131173824.leyfy4vlqq3vmd37@kamzik.brq.redhat.com>
+References: <20180129174559.1866-1-marc.zyngier@arm.com>
+ <20180129174559.1866-8-marc.zyngier@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180130162357.GE22015@flask>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180129174559.1866-8-marc.zyngier@arm.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/01/2018 11:23, Radim Krčmář wrote:
-> 2018-01-27 09:50+0100, Paolo Bonzini:
->> Place the MSR bitmap in struct loaded_vmcs, and update it in place
->> every time the x2apic or APICv state can change.  This is rare and
->> the loop can handle 64 MSRs per iteration, in a similar fashion as
->> nested_vmx_prepare_msr_bitmap.
->>
->> This prepares for choosing, on a per-VM basis, whether to intercept
->> the SPEC_CTRL and PRED_CMD MSRs.
->>
->> Suggested-by: Jim Mattson <jmattson@google.com>
->> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->> ---
->> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
->> @@ -10022,7 +10043,7 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
->>  	int msr;
->>  	struct page *page;
->>  	unsigned long *msr_bitmap_l1;
->> -	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.msr_bitmap;
->> +	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
+On Mon, Jan 29, 2018 at 05:45:50PM +0000, Marc Zyngier wrote:
+> Although we've implemented PSCI 1.0 and 1.1, nothing can select them
+> Since all the new PSCI versions are backward compatible, we decide to
+> default to the latest version of the PSCI implementation. This is no
+> different from doing a firmware upgrade on KVM.
 > 
-> The physical address of the nested msr_bitmap is never loaded into vmcs.
+> But in order to give a chance to hypothetical badly implemented guests
+> that would have a fit by discovering something other than PSCI 0.2,
+> let's provide a new API that allows userspace to pick one particular
+> version of the API.
 > 
-> The resolution you provided had extra hunk in prepare_vmcs02_full():
+> This is implemented as a new class of "firmware" registers, where
+> we expose the PSCI version. This allows the PSCI version to be
+> save/restored as part of a guest migration, and also set to
+> any supported version if the guest requires it.
 > 
-> +	vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  Documentation/virtual/kvm/api.txt      |  3 +-
+>  Documentation/virtual/kvm/arm/psci.txt | 28 ++++++++++++++
+>  arch/arm/include/asm/kvm_host.h        |  3 ++
+>  arch/arm/include/uapi/asm/kvm.h        |  6 +++
+>  arch/arm/kvm/guest.c                   | 13 +++++++
+>  arch/arm64/include/asm/kvm_host.h      |  3 ++
+>  arch/arm64/include/uapi/asm/kvm.h      |  6 +++
+>  arch/arm64/kvm/guest.c                 | 14 ++++++-
+>  include/kvm/arm_psci.h                 |  9 +++++
+>  virt/kvm/arm/psci.c                    | 68 +++++++++++++++++++++++++++++++++-
+>  10 files changed, 149 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/virtual/kvm/arm/psci.txt
 > 
-> I have queued that as:
-> 
-> +	if (cpu_has_vmx_msr_bitmap())
-> +		vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> index 57d3ee9e4bde..334905202141 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -2493,7 +2493,8 @@ Possible features:
+>  	  and execute guest code when KVM_RUN is called.
+>  	- KVM_ARM_VCPU_EL1_32BIT: Starts the CPU in a 32bit mode.
+>  	  Depends on KVM_CAP_ARM_EL1_32BIT (arm64 only).
+> -	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 for the CPU.
+> +	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 (or a future revision
+> +          backward compatible with v0.2) for the CPU.
+>  	  Depends on KVM_CAP_ARM_PSCI_0_2.
+>  	- KVM_ARM_VCPU_PMU_V3: Emulate PMUv3 for the CPU.
+>  	  Depends on KVM_CAP_ARM_PMU_V3.
+> diff --git a/Documentation/virtual/kvm/arm/psci.txt b/Documentation/virtual/kvm/arm/psci.txt
+> new file mode 100644
+> index 000000000000..2e49a4e9f084
+> --- /dev/null
+> +++ b/Documentation/virtual/kvm/arm/psci.txt
+> @@ -0,0 +1,28 @@
+> +KVM implements the PSCI (Power State Coordination Interface)
+> +specification in order to provide services such as CPU on/off, reset
+> +and power-off to the guest.
+> +
+> +The PSCI specification is regularly updated to provide new features,
+> +and KVM implements these updates if they make sense from a virtualization
+> +point of view.
+> +
+> +This means that a guest booted on two different versions of KVM can
+> +observe two different "firmware" revisions. This could cause issues if
+> +a given guest is tied to a particular PSCI revision (unlikely), or if
+> +a migration causes a different PSCI version to be exposed out of the
+> +blue to an unsuspecting guest.
+> +
+> +In order to remedy this situation, KVM exposes a set of "firmware
+> +pseuodo-registers" that can be manipulated using the GET/SET_ONE_REG
+> +interface. These registers can be saved/restored by userspace, and set
+> +to a convenient value if required.
 
-Hmm you're right, it should be in prepare_vmcs02() here (4.15-based),
-and then moved to prepare_vmcs02_full() as part of the conflict resolution.
+Userspace can save/restore any state it deems necessary. Is there another
+reason to invent a pseudo register? Considering the PSCI version is VM
+state, then maybe a VM "device" attribute[*], like s390 use, would fit
+better. Or, if keeping it VCPU state has some benefit, then we already
+have VCPU device attribute support for ARM that we could extend with
+another attribute. An advantage of using the device-attr API is that it
+has KVM_HAS_DEVICE_ATTR, allowing the new attribute support to be probed.
+How should userspace check if the pseudo register is supported? Maybe
+by just failing with NOT_SUPPORTED to get/set it?
 
-I'll send a v3.
+[*] Documentation/virtual/kvm/devices/vm.txt
 
-Paolo
+> +
+> +The following register is defined:
+> +
+> +* KVM_REG_ARM_PSCI_VERSION:
+> +
+> +  - Only valid if the vcpu has KVM_ARM_VCPU_PSCI_0_2 feature set
+> +  - Returns the current PSCI version on GET_ONE_REG
+> +  - Allows any supported PSCI version compatible with v0.2 to be set
+> +    with SET_ONE_REG
+> +  - Affects the whole VM (even if the register view is per-vcpu)
+
+
+> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+> index acbf9ec7b396..e9d57060d88c 100644
+> --- a/arch/arm/include/asm/kvm_host.h
+> +++ b/arch/arm/include/asm/kvm_host.h
+> @@ -75,6 +75,9 @@ struct kvm_arch {
+>  	/* Interrupt controller */
+>  	struct vgic_dist	vgic;
+>  	int max_vcpus;
+> +
+> +	/* Mandated version of PSCI */
+> +	u32 psci_version;
+>  };
+>  
+>  #define KVM_NR_MEM_OBJS     40
+> diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
+> index 6edd177bb1c7..47dfc99f5cd0 100644
+> --- a/arch/arm/include/uapi/asm/kvm.h
+> +++ b/arch/arm/include/uapi/asm/kvm.h
+> @@ -186,6 +186,12 @@ struct kvm_arch_memory_slot {
+>  #define KVM_REG_ARM_VFP_FPINST		0x1009
+>  #define KVM_REG_ARM_VFP_FPINST2		0x100A
+>  
+> +/* KVM-as-firmware specific pseudo-registers */
+> +#define KVM_REG_ARM_FW			(0x0014 << KVM_REG_ARM_COPROC_SHIFT)
+
+Is this 0x14 documented somewhere? I'm just curious how the space for
+pseudo registers is reserved. Is there a common place that we should
+document that 0x14 is for the firmware (if it's not documented there
+already)?
+
+Thanks,
+drew
