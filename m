@@ -1,54 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753423AbeAaN0B (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 08:26:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52910 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751662AbeAaN0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 08:26:00 -0500
-Date: Wed, 31 Jan 2018 14:25:58 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] mm/swap.c: make functions and their kernel-doc agree
-Message-ID: <20180131132558.GU21609@dhcp22.suse.cz>
-References: <3b42ee3e-04a9-a6ca-6be4-f00752a114fe@infradead.org>
- <20180130123400.GD26445@dhcp22.suse.cz>
- <20180131075848.GB28275@bombadil.infradead.org>
+        id S1753505AbeAaN0Z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 08:26:25 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:57453 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751587AbeAaN0X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 08:26:23 -0500
+Date: Wed, 31 Jan 2018 14:26:10 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Stafford Horne <shorne@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: asm-generic: Disallow no-op mb() for SMP systems
+Message-ID: <20180131132610.GT2269@hirez.programming.kicks-ass.net>
+References: <20180131130034.GR2269@hirez.programming.kicks-ass.net>
+ <20180131131737.GA5097@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180131075848.GB28275@bombadil.infradead.org>
+In-Reply-To: <20180131131737.GA5097@arm.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 30-01-18 23:58:48, Matthew Wilcox wrote:
-> On Tue, Jan 30, 2018 at 01:34:00PM +0100, Michal Hocko wrote:
-> > On Mon 29-01-18 16:43:55, Randy Dunlap wrote:
-> > > - for function pagevec_lookup_entries(), change the function parameter
-> > >   name from nr_pages to nr_entries since that is more descriptive of
-> > >   what the parameter actually is and then it matches the kernel-doc
-> > >   comments also
+On Wed, Jan 31, 2018 at 01:17:37PM +0000, Will Deacon wrote:
+> On Wed, Jan 31, 2018 at 02:00:34PM +0100, Peter Zijlstra wrote:
 > > 
-> > I know what is nr_pages because I do expect pages to be returned. What
-> > are entries? Can it be something different from pages?
+> > While looking through the qspinlock users, I stumbled upon openrisc and
+> > being curious, I wanted to have a look at its memory model.
+> > 
+> > To my surprise it doesn't have asm/barrier.h. It does however support
+> > SMP. This lead me to wonder why it would compile, turns out we provide a
+> > no-op mb() if the architecture does not provide one.
+> > 
+> > With the obvious exception of Sequentially Consistent SMP systems, this
+> > is terribly broken. And seeing how SC SMP is really rather unusual (and
+> > unlikely), change the asm-generic/barrier.h to not provide this.
+> > 
+> > This _will_ break openrisc builds, they had better clarify their
+> > position by writing their own barrier.h with a comment in.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  include/asm-generic/barrier.h | 6 ++++++
+> >  1 file changed, 6 insertions(+)
 > 
-> entries are any page cache entries -- pages or exceptional entries.
+> Acked-by: Will Deacon <will.deacon@arm.com>
+> 
+> One comment below...
+> 
+> > diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
+> > index fe297b599b0a..7a10748615ff 100644
+> > --- a/include/asm-generic/barrier.h
+> > +++ b/include/asm-generic/barrier.h
+> > @@ -30,9 +30,15 @@
+> >   * Fall back to compiler barriers if nothing better is provided.
+> >   */
+> >  
+> > +#ifndef CONFIG_SMP
+> > +/*
+> > + * If your SMP architecture really is Sequentially Consistent, you get
+> > + * barrier.h to write a nice big comment about it.
+> > + */
+> 
+> I couldn't find any documentation about the openrisc memory model other
+> than:
+> 
+> https://openrisc.io/or1k.html#__RefHeading__504775_595890882
+> 
+> which talks about the WOM bit in the page table being used to select a weak
+> memory model for the page being mapped as opposed to the strong memory
+> model. Furthermore, the only fence instruction (l.msync) is permitted to
+> be a NOP for the strong model, which implies that the strong model is SC
+> and things like write buffers are forbidden. However, Google suggests that
+> there are implementations of openrisc with write buffers so I'm not sure I
+> understand what's going on here (maybe they force WOM and/or l.msync isn't
+> actually a NOP?)
 
-Fair point.
+Right, so by that document they need:
 
-> calling this parameter nr_pages tricks you into thinking that you'll
-> only get pages back.
+#define mb() asm volatile ("l.msync":::"memory)
 
-Well, the data structure we are using is a pagevec and that operates on
-top of struct pages. It is true that this is quite confusing especially
-for those who are not familiar with exceptional entries. Hopefully the
-associated documentation helps.
-
--- 
-Michal Hocko
-SUSE Labs
+but yes, that document raises more questions than it answers. It would
+be very good to get clarification on how strong their strong model
+really is. SMP without store buffers is, as I wrote above, 'unusual'.
