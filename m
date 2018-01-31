@@ -1,64 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753505AbeAaL7e (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 06:59:34 -0500
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:34828 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753426AbeAaL7d (ORCPT
+        id S1753536AbeAaL7p (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 06:59:45 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:32935 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753426AbeAaL7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 06:59:33 -0500
-X-Google-Smtp-Source: AH8x226iznurIUwWklPNovx8s5X5fy2A+PoS/eiSF7VcZiSZi8Tjyy5KUG3LHJTyMX61nI31F08Iiw==
-Date: Wed, 31 Jan 2018 12:59:29 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Meelis Roos <mroos@linux.ee>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: 4.15: WARNING: CPU: 3 PID: 258 at kernel/irq/chip.c:244
- __irq_startup+0x80/0x100
-Message-ID: <20180131115929.7axv64rggltlpg2h@gmail.com>
-References: <alpine.LRH.2.21.1801291809460.13788@math.ut.ee>
- <alpine.DEB.2.20.1801291732092.1849@nanos>
- <alpine.DEB.2.20.1801301935410.1797@nanos>
- <alpine.LRH.2.21.1801302127080.11640@math.ut.ee>
- <alpine.DEB.2.20.1801310856390.2293@nanos>
- <20180131080955.ikdrrus6cotfnozs@gmail.com>
- <alpine.LRH.2.21.1801311308060.31027@math.ut.ee>
+        Wed, 31 Jan 2018 06:59:43 -0500
+Subject: Re: [PATCH v2 1/2] Add notrace to lib/ucmpdi2.c
+To: Antony Pavlov <antonynpavlov@gmail.com>, <linux-mips@linux-mips.org>
+CC: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        <linux-kernel@vger.kernel.org>, Palmer Dabbelt <palmer@sifive.com>
+References: <20180130224202.7682-1-antonynpavlov@gmail.com>
+ <20180130224202.7682-2-antonynpavlov@gmail.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <aeb636ad-571e-104d-e180-8f60877de571@mips.com>
+Date: Wed, 31 Jan 2018 11:54:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.1801311308060.31027@math.ut.ee>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180130224202.7682-2-antonynpavlov@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.150.130.83]
+X-BESS-ID: 1517399973-321457-24928-39230-12
+X-BESS-VER: 2018.1-r1801290438
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.189548
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi
 
-* Meelis Roos <mroos@linux.ee> wrote:
+On 30/01/18 22:42, Antony Pavlov wrote:
+> From: Palmer Dabbelt <palmer@sifive.com>
+> 
+> As part of the MIPS conversion to use the generic GCC library routines,
+> Matt Redfearn discovered that I'd missed a notrace on __ucmpdi2().  This
+> patch rectifies the problem.
+> 
+> CC: Matt Redfearn <matt.redfearn@mips.com>
+> CC: Antony Pavlov <antonynpavlov@gmail.com>
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 
-> > > I'll do a proper fix and queue it so your museum is kept alive.
-> 
-> Thank you.
-> 
-> > Museum, space heater and ventilation system all in one? :-)
-> 
-> Actually, I do have a computer museum that is open for groups in Tartu, 
-> Estonia, at University of Tartu, Institute of Computer Science. But this 
-> museum displays older stuff than P3.
-> 
-> In the queue for the museum, I have lots of servers and desktops and 
-> laptops that look too similar for presentation but are interesting for 
-> testing kernels. This set includes 100+ machines that are ocassionally 
-> powered on and most test 1-2 RC-s and the release kernels - can not 
-> afford to run them 24x7.
-> 
-> Currently, there are 30+ sparc64 machines, 30 x86 towers (mostly 
-> desktop, mostly 32-bit), 7 laptops, 25 x86 rack servers, 6 ia64, 2 
-> powerpc, 4 alpha and 5 parisc machines. At any moment, at least some of 
-> them are out of order but the majority are alive.
 
-That's very, very impressive! :-)
+Looks good to me :-)
+Reviewed-by: Matt Redfearn <amtt.redfearn@mips.com>
 
-Thanks,
-
-	Ingo
+> ---
+>   lib/ucmpdi2.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/ucmpdi2.c b/lib/ucmpdi2.c
+> index 25ca2d4c1e19..597998169a96 100644
+> --- a/lib/ucmpdi2.c
+> +++ b/lib/ucmpdi2.c
+> @@ -17,7 +17,7 @@
+>   #include <linux/module.h>
+>   #include <linux/libgcc.h>
+>   
+> -word_type __ucmpdi2(unsigned long long a, unsigned long long b)
+> +word_type notrace __ucmpdi2(unsigned long long a, unsigned long long b)
+>   {
+>   	const DWunion au = {.ll = a};
+>   	const DWunion bu = {.ll = b};
+> 
