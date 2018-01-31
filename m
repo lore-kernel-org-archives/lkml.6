@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752811AbeAaNyY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 08:54:24 -0500
-Received: from mga07.intel.com ([134.134.136.100]:33577 "EHLO mga07.intel.com"
+        id S1752300AbeAaNyU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 08:54:20 -0500
+Received: from mga11.intel.com ([192.55.52.93]:57789 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752172AbeAaNyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 08:54:18 -0500
+        id S1751842AbeAaNyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 08:54:17 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,440,1511856000";
-   d="scan'208";a="170590362"
+   d="scan'208";a="200102931"
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
@@ -19,9 +19,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Borislav Petkov <bp@suse.de>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv4 3/3] x86/mm/encrypt: Rewrite sme_pgtable_calc()
-Date: Wed, 31 Jan 2018 16:54:04 +0300
-Message-Id: <20180131135404.40692-4-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv4 2/3] x86/mm/encrypt: Rewrite sme_populate_pgd() and sme_populate_pgd_large()
+Date: Wed, 31 Jan 2018 16:54:03 +0300
+Message-Id: <20180131135404.40692-3-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180131135404.40692-1-kirill.shutemov@linux.intel.com>
 References: <20180131135404.40692-1-kirill.shutemov@linux.intel.com>
@@ -29,86 +29,232 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sme_pgtable_calc() is unnecessary complex. It can be re-written in a
-more stream-lined way.
+sme_populate_pgd() and sme_populate_pgd_large() operate on the identity
+mapping, which means they want virtual addresses to be equal to physical
+one, without PAGE_OFFSET shift.
 
-As a side effect, we would get the code ready to boot-time switching
-between paging modes.
+We also need to avoid paravirtualization call there.
+
+Getting this done is tricky. We cannot use usual page table helpers.
+It forces us to open-code a lot of things. It makes code ugly and hard
+to modify.
+
+We can get it work with the page table helpers, but it requires few
+preprocessor tricks.
+
+  - Define __pa() and __va() to be compatible with identity mapping.
+
+  - Undef CONFIG_PARAVIRT and CONFIG_PARAVIRT_SPINLOCKS before including
+    any file. This way we can avoid paravirtualization calls.
+
+Now we can user normal page table helpers just fine.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
- arch/x86/mm/mem_encrypt_identity.c | 42 +++++++++++---------------------------
- 1 file changed, 12 insertions(+), 30 deletions(-)
+ arch/x86/mm/mem_encrypt_identity.c | 159 +++++++++++++++++--------------------
+ 1 file changed, 72 insertions(+), 87 deletions(-)
 
 diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index 4b6a2e3098c5..b4139c5ab972 100644
+index a28978a37bfa..4b6a2e3098c5 100644
 --- a/arch/x86/mm/mem_encrypt_identity.c
 +++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -231,8 +231,7 @@ static void __init sme_map_range_decrypted_wp(struct sme_populate_pgd_data *ppd)
+@@ -12,6 +12,24 @@
  
- static unsigned long __init sme_pgtable_calc(unsigned long len)
- {
--	unsigned long p4d_size, pud_size, pmd_size, pte_size;
--	unsigned long total;
-+	unsigned long entries = 0, tables = 0;
+ #define DISABLE_BRANCH_PROFILING
  
- 	/*
- 	 * Perform a relatively simplistic calculation of the pagetable
-@@ -246,42 +245,25 @@ static unsigned long __init sme_pgtable_calc(unsigned long len)
- 	 * Incrementing the count for each covers the case where the addresses
- 	 * cross entries.
- 	 */
--	if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
--		p4d_size = (ALIGN(len, PGDIR_SIZE) / PGDIR_SIZE) + 1;
--		p4d_size *= sizeof(p4d_t) * PTRS_PER_P4D;
--		pud_size = (ALIGN(len, P4D_SIZE) / P4D_SIZE) + 1;
--		pud_size *= sizeof(pud_t) * PTRS_PER_PUD;
--	} else {
--		p4d_size = 0;
--		pud_size = (ALIGN(len, PGDIR_SIZE) / PGDIR_SIZE) + 1;
--		pud_size *= sizeof(pud_t) * PTRS_PER_PUD;
--	}
--	pmd_size = (ALIGN(len, PUD_SIZE) / PUD_SIZE) + 1;
--	pmd_size *= sizeof(pmd_t) * PTRS_PER_PMD;
--	pte_size = 2 * sizeof(pte_t) * PTRS_PER_PTE;
++/*
++ * Since we're dealing with identity mappings, physical and virtual
++ * addresses are the same, so override these defines which are ultimately
++ * used by the headers in misc.h.
++ */
++#define __pa(x)  ((unsigned long)(x))
++#define __va(x)  ((void *)((unsigned long)(x)))
++
++/*
++ * Special hack: we have to be careful, because no indirections are
++ * allowed here, and paravirt_ops is a kind of one. As it will only run in
++ * baremetal anyway, we just keep it from happening. (This list needs to
++ * be extended when new paravirt and debugging variants are added.)
++ */
++#undef CONFIG_PARAVIRT
++#undef CONFIG_PARAVIRT_SPINLOCKS
++
++#include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/mem_encrypt.h>
  
--	total = p4d_size + pud_size + pmd_size + pte_size;
-+	/* PGDIR_SIZE is equal to P4D_SIZE on 4-level machine. */
-+	if (PTRS_PER_P4D > 1)
-+		entries += (DIV_ROUND_UP(len, PGDIR_SIZE) + 1) * sizeof(p4d_t) * PTRS_PER_P4D;
-+	entries += (DIV_ROUND_UP(len, P4D_SIZE) + 1) * sizeof(pud_t) * PTRS_PER_PUD;
-+	entries += (DIV_ROUND_UP(len, PUD_SIZE) + 1) * sizeof(pmd_t) * PTRS_PER_PMD;
-+	entries += 2 * sizeof(pte_t) * PTRS_PER_PTE;
- 
- 	/*
- 	 * Now calculate the added pagetable structures needed to populate
- 	 * the new pagetables.
- 	 */
--	if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
--		p4d_size = ALIGN(total, PGDIR_SIZE) / PGDIR_SIZE;
--		p4d_size *= sizeof(p4d_t) * PTRS_PER_P4D;
--		pud_size = ALIGN(total, P4D_SIZE) / P4D_SIZE;
--		pud_size *= sizeof(pud_t) * PTRS_PER_PUD;
--	} else {
--		p4d_size = 0;
--		pud_size = ALIGN(total, PGDIR_SIZE) / PGDIR_SIZE;
--		pud_size *= sizeof(pud_t) * PTRS_PER_PUD;
--	}
--	pmd_size = ALIGN(total, PUD_SIZE) / PUD_SIZE;
--	pmd_size *= sizeof(pmd_t) * PTRS_PER_PMD;
- 
--	total += p4d_size + pud_size + pmd_size;
-+	if (PTRS_PER_P4D > 1)
-+		tables += DIV_ROUND_UP(entries, PGDIR_SIZE) * sizeof(p4d_t) * PTRS_PER_P4D;
-+	tables += DIV_ROUND_UP(entries, P4D_SIZE) * sizeof(pud_t) * PTRS_PER_PUD;
-+	tables += DIV_ROUND_UP(entries, PUD_SIZE) * sizeof(pmd_t) * PTRS_PER_PMD;
- 
--	return total;
-+	return entries + tables;
+@@ -73,116 +91,83 @@ static void __init sme_clear_pgd(struct sme_populate_pgd_data *ppd)
+ 	memset(pgd_p, 0, pgd_size);
  }
  
- void __init __nostackprotector sme_encrypt_kernel(struct boot_params *bp)
+-static pmd_t __init *sme_prepare_pgd(struct sme_populate_pgd_data *ppd)
++static pud_t __init *sme_prepare_pgd(struct sme_populate_pgd_data *ppd)
+ {
+-	pgd_t *pgd_p;
+-	p4d_t *p4d_p;
+-	pud_t *pud_p;
+-	pmd_t *pmd_p;
+-
+-	pgd_p = ppd->pgd + pgd_index(ppd->vaddr);
+-	if (native_pgd_val(*pgd_p)) {
+-		if (IS_ENABLED(CONFIG_X86_5LEVEL))
+-			p4d_p = (p4d_t *)(native_pgd_val(*pgd_p) & ~PTE_FLAGS_MASK);
+-		else
+-			pud_p = (pud_t *)(native_pgd_val(*pgd_p) & ~PTE_FLAGS_MASK);
+-	} else {
+-		pgd_t pgd;
+-
+-		if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
+-			p4d_p = ppd->pgtable_area;
+-			memset(p4d_p, 0, sizeof(*p4d_p) * PTRS_PER_P4D);
+-			ppd->pgtable_area += sizeof(*p4d_p) * PTRS_PER_P4D;
+-
+-			pgd = native_make_pgd((pgdval_t)p4d_p + PGD_FLAGS);
+-		} else {
+-			pud_p = ppd->pgtable_area;
+-			memset(pud_p, 0, sizeof(*pud_p) * PTRS_PER_PUD);
+-			ppd->pgtable_area += sizeof(*pud_p) * PTRS_PER_PUD;
+-
+-			pgd = native_make_pgd((pgdval_t)pud_p + PGD_FLAGS);
+-		}
+-		native_set_pgd(pgd_p, pgd);
++	pgd_t *pgd;
++	p4d_t *p4d;
++	pud_t *pud;
++	pmd_t *pmd;
++
++	pgd = ppd->pgd + pgd_index(ppd->vaddr);
++	if (pgd_none(*pgd)) {
++		p4d = ppd->pgtable_area;
++		memset(p4d, 0, sizeof(*p4d) * PTRS_PER_P4D);
++		ppd->pgtable_area += sizeof(*p4d) * PTRS_PER_P4D;
++		set_pgd(pgd, __pgd(PGD_FLAGS | __pa(p4d)));
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
+-		p4d_p += p4d_index(ppd->vaddr);
+-		if (native_p4d_val(*p4d_p)) {
+-			pud_p = (pud_t *)(native_p4d_val(*p4d_p) & ~PTE_FLAGS_MASK);
+-		} else {
+-			p4d_t p4d;
+-
+-			pud_p = ppd->pgtable_area;
+-			memset(pud_p, 0, sizeof(*pud_p) * PTRS_PER_PUD);
+-			ppd->pgtable_area += sizeof(*pud_p) * PTRS_PER_PUD;
+-
+-			p4d = native_make_p4d((pudval_t)pud_p + P4D_FLAGS);
+-			native_set_p4d(p4d_p, p4d);
+-		}
++	p4d = p4d_offset(pgd, ppd->vaddr);
++	if (p4d_none(*p4d)) {
++		pud = ppd->pgtable_area;
++		memset(pud, 0, sizeof(*pud) * PTRS_PER_PUD);
++		ppd->pgtable_area += sizeof(*pud) * PTRS_PER_PUD;
++		set_p4d(p4d, __p4d(P4D_FLAGS | __pa(pud)));
+ 	}
+ 
+-	pud_p += pud_index(ppd->vaddr);
+-	if (native_pud_val(*pud_p)) {
+-		if (native_pud_val(*pud_p) & _PAGE_PSE)
+-			return NULL;
+-
+-		pmd_p = (pmd_t *)(native_pud_val(*pud_p) & ~PTE_FLAGS_MASK);
+-	} else {
+-		pud_t pud;
+-
+-		pmd_p = ppd->pgtable_area;
+-		memset(pmd_p, 0, sizeof(*pmd_p) * PTRS_PER_PMD);
+-		ppd->pgtable_area += sizeof(*pmd_p) * PTRS_PER_PMD;
+-
+-		pud = native_make_pud((pmdval_t)pmd_p + PUD_FLAGS);
+-		native_set_pud(pud_p, pud);
++	pud = pud_offset(p4d, ppd->vaddr);
++	if (pud_none(*pud)) {
++		pmd = ppd->pgtable_area;
++		memset(pmd, 0, sizeof(*pmd) * PTRS_PER_PMD);
++		ppd->pgtable_area += sizeof(*pmd) * PTRS_PER_PMD;
++		set_pud(pud, __pud(PUD_FLAGS | __pa(pmd)));
+ 	}
+ 
+-	return pmd_p;
++	if (pud_large(*pud))
++		return NULL;
++
++	return pud;
+ }
+ 
+ static void __init sme_populate_pgd_large(struct sme_populate_pgd_data *ppd)
+ {
+-	pmd_t *pmd_p;
++	pud_t *pud;
++	pmd_t *pmd;
+ 
+-	pmd_p = sme_prepare_pgd(ppd);
+-	if (!pmd_p)
++	pud = sme_prepare_pgd(ppd);
++	if (!pud)
+ 		return;
+ 
+-	pmd_p += pmd_index(ppd->vaddr);
+-	if (!native_pmd_val(*pmd_p) || !(native_pmd_val(*pmd_p) & _PAGE_PSE))
+-		native_set_pmd(pmd_p, native_make_pmd(ppd->paddr | ppd->pmd_flags));
++	pmd = pmd_offset(pud, ppd->vaddr);
++	if (pmd_large(*pmd))
++		return;
++
++	set_pmd(pmd, __pmd(ppd->paddr | ppd->pmd_flags));
+ }
+ 
+ static void __init sme_populate_pgd(struct sme_populate_pgd_data *ppd)
+ {
+-	pmd_t *pmd_p;
+-	pte_t *pte_p;
++	pud_t *pud;
++	pmd_t *pmd;
++	pte_t *pte;
+ 
+-	pmd_p = sme_prepare_pgd(ppd);
+-	if (!pmd_p)
++	pud = sme_prepare_pgd(ppd);
++	if (!pud)
+ 		return;
+ 
+-	pmd_p += pmd_index(ppd->vaddr);
+-	if (native_pmd_val(*pmd_p)) {
+-		if (native_pmd_val(*pmd_p) & _PAGE_PSE)
+-			return;
+-
+-		pte_p = (pte_t *)(native_pmd_val(*pmd_p) & ~PTE_FLAGS_MASK);
+-	} else {
+-		pmd_t pmd;
+-
+-		pte_p = ppd->pgtable_area;
+-		memset(pte_p, 0, sizeof(*pte_p) * PTRS_PER_PTE);
+-		ppd->pgtable_area += sizeof(*pte_p) * PTRS_PER_PTE;
+-
+-		pmd = native_make_pmd((pteval_t)pte_p + PMD_FLAGS);
+-		native_set_pmd(pmd_p, pmd);
++	pmd = pmd_offset(pud, ppd->vaddr);
++	if (pmd_none(*pmd)) {
++		pte = ppd->pgtable_area;
++		memset(pte, 0, sizeof(pte) * PTRS_PER_PTE);
++		ppd->pgtable_area += sizeof(pte) * PTRS_PER_PTE;
++		set_pmd(pmd, __pmd(PMD_FLAGS | __pa(pte)));
+ 	}
+ 
+-	pte_p += pte_index(ppd->vaddr);
+-	if (!native_pte_val(*pte_p))
+-		native_set_pte(pte_p, native_make_pte(ppd->paddr | ppd->pte_flags));
++	if (pmd_large(*pmd))
++		return;
++
++	pte = pte_offset_map(pmd, ppd->vaddr);
++	if (pte_none(*pte))
++		set_pte(pte, __pte(ppd->paddr | ppd->pte_flags));
+ }
+ 
+ static void __init __sme_map_range_pmd(struct sme_populate_pgd_data *ppd)
 -- 
 2.15.1
