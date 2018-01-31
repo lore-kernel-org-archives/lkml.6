@@ -1,73 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752078AbeAaHDs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:03:48 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34759 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751662AbeAaHDq (ORCPT
+        id S1752354AbeAaHFV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 02:05:21 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:47508 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751953AbeAaHFT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:03:46 -0500
-X-Google-Smtp-Source: AH8x227Smmb3gQfa+sEUHWB1xBL5C2Avhl2T1ApJdm09yCxHbRjXLI5kBFxHXkMWvC2JnF7xBVqAug==
-Subject: Re: [PATCH 1/8] thermal/drivers/cpu_cooling: Fixup the header and
- copyright
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, Javi Merino <javi.merino@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "open list:THERMAL/CPU_COOLING" <linux-pm@vger.kernel.org>
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-2-git-send-email-daniel.lezcano@linaro.org>
- <20180131051739.GG13395@vireshk-i7>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <9591e879-0d88-4d93-7a4c-f0dc7147f5c2@linaro.org>
-Date: Wed, 31 Jan 2018 08:03:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Wed, 31 Jan 2018 02:05:19 -0500
+Date: Wed, 31 Jan 2018 08:03:00 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: mingo@kernel.org, hpa@zytor.com, tim.c.chen@linux.intel.com,
+        dwmw@amazon.co.uk, linux-kernel@vger.kernel.org, tglx@linutronix.de
+Cc: jpoimboe@redhat.com
+Subject: Re: [tip:x86/pti] x86/speculation: Use Indirect Branch Prediction
+ Barrier in context switch
+Message-ID: <20180131070300.GA28206@light.dominikbrodowski.net>
+References: <1517263487-3708-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7@git.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180131051739.GG13395@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tip-18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7@git.kernel.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2018 06:17, Viresh Kumar wrote:
-> On 23-01-18, 16:34, Daniel Lezcano wrote:
->> The copyright format does not conform to the format requested by
->> Linaro: https://wiki.linaro.org/Copyright
->>
->> Fix it.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
->>  drivers/thermal/cpu_cooling.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
->> index dc63aba..988fc55 100644
->> --- a/drivers/thermal/cpu_cooling.c
->> +++ b/drivers/thermal/cpu_cooling.c
->> @@ -2,9 +2,11 @@
->>   *  linux/drivers/thermal/cpu_cooling.c
->>   *
->>   *  Copyright (C) 2012	Samsung Electronics Co., Ltd(http://www.samsung.com)
->> - *  Copyright (C) 2012  Amit Daniel <amit.kachhap@linaro.org>
->>   *
->> - *  Copyright (C) 2014  Viresh Kumar <viresh.kumar@linaro.org>
->> + *  Copyright (C) 2018 Linaro Limited.
->> + *
+On Tue, Jan 30, 2018 at 02:39:45PM -0800, tip-bot for Tim Chen wrote:
+> Commit-ID:  18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
+> Gitweb:     https://git.kernel.org/tip/18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
+> Author:     Tim Chen <tim.c.chen@linux.intel.com>
+> AuthorDate: Mon, 29 Jan 2018 22:04:47 +0000
+> Committer:  Thomas Gleixner <tglx@linutronix.de>
+> CommitDate: Tue, 30 Jan 2018 23:09:21 +0100
 > 
-> Shouldn't this be 2012-2018 ?
+> x86/speculation: Use Indirect Branch Prediction Barrier in context switch
+> 
+> Flush indirect branches when switching into a process that marked itself
+> non dumpable. This protects high value processes like gpg better,
+> without having too high performance overhead.
 
-Yes, you are right.
+For the record, I am still opposed to limit this to non-dumpable processes.
+Whether a process needs protection by IBPB on context switches is a
+different question to whether a process should be allowed to be dumped,
+though the former may be a superset of the latter. In my opinion, IBPB
+should be enabled on all context switches to userspace processes, until we
+have a clear mitigation strategy for userspace against Spectre-v2 designed
+and implemented.
 
+Thanks,
+	Dominik
 
+--------------------------
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+Date: Wed, 31 Jan 2018 07:43:12 +0100
+Subject: [PATCH] x86/speculation: Do not limit Indirect Branch Prediction Barrier to non-dumpable processes
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Whether a process needs protection by IBPB on context switches is a
+different question to whether a process should be allowed to be dumped,
+though the former may be a superset of the latter. Enable IBPB on all
+context switches to a different userspace process, until we have a clear
+mitigation strategy for userspace against Spectre-v2 designed and
+implemented.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 012d02624848..f54897b68b16 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -255,19 +255,13 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		 * predictor when switching between processes. This stops
+ 		 * one process from doing Spectre-v2 attacks on another.
+ 		 *
+-		 * As an optimization, flush indirect branches only when
+-		 * switching into processes that disable dumping. This
+-		 * protects high value processes like gpg, without having
+-		 * too high performance overhead. IBPB is *expensive*!
+-		 *
+ 		 * This will not flush branches when switching into kernel
+ 		 * threads. It will also not flush if we switch to idle
+ 		 * thread and back to the same process. It will flush if we
+-		 * switch to a different non-dumpable process.
++		 * switch to a different user process.
+ 		 */
+ 		if (tsk && tsk->mm &&
+-		    tsk->mm->context.ctx_id != last_ctx_id &&
+-		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
++		    tsk->mm->context.ctx_id != last_ctx_id)
+ 			indirect_branch_prediction_barrier();
+ 
+ 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
