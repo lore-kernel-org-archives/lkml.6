@@ -1,107 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751649AbeAaUCL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 15:02:11 -0500
-Received: from mail-it0-f54.google.com ([209.85.214.54]:51765 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751609AbeAaUCJ (ORCPT
+        id S1751575AbeAaUDf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 15:03:35 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:39343 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751190AbeAaUDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 15:02:09 -0500
-X-Google-Smtp-Source: AH8x224TlcgCjcEzlgghOQ7+Bpxw9ruK8s9AoBWugHjw+gz4pkb00FZFqQyAKv1yfZb83Zqwkn5e5w==
-Date: Wed, 31 Jan 2018 12:02:05 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+529dcc7acae97863327261a275c516477f0f4595@syzkaller.appspotmail.com>
-Cc: ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: BUG: unable to handle kernel paging request in devpts_mntget
-Message-ID: <20180131200205.4bcxrc5wnpjwgaie@gmail.com>
-References: <001a11c14dda61f818055d136e3a@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a11c14dda61f818055d136e3a@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Wed, 31 Jan 2018 15:03:33 -0500
+X-Google-Smtp-Source: AH8x225LhJpdxdzAdSQhrQ/KWhdOKjHBTi6acFApONRVfm1TJQyBGxzefm9nFwYgs0f8jUlyUW2G6w==
+From: frowand.list@gmail.com
+To: Rob Herring <robh+dt@kernel.org>, cpandya@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] of: cache phandle nodes to decrease cost of of_find_node_by_phandle()
+Date: Wed, 31 Jan 2018 12:02:57 -0800
+Message-Id: <1517428977-25653-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 03, 2017 at 05:42:01AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzkaller hit the following crash on
-> 36ef71cae353f88fd6e095e2aaa3e5953af1685d
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> 
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
-> 
-> 
-> IP: devpts_mntget+0x135/0x280 fs/devpts/inode.c:173
-> PGD 7fff4067 P4D 7fff4067 PUD 7fff3067 PMD 7fff2067 PTE 0
-> Oops: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 0 PID: 4725 Comm: syz-executor2 Not tainted 4.14.0-rc5-next-20171018+
-> #8
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-> task: ffff88006ba222c0 task.stack: ffff880068f00000
-> RIP: 0010:devpts_mntget+0x135/0x280 fs/devpts/inode.c:173
-> RSP: 0018:ffff880068f07a50 EFLAGS: 00010a03
-> RAX: dffffc0000000000 RBX: ffffffffffffffed RCX: ffffffff81ce4ac0
-> RDX: 1ffffffffffffffe RSI: 0000000000000001 RDI: fffffffffffffff5
-> RBP: ffff880068f07ae0 R08: 0000000000000001 R09: 1ffff1000d1e0f05
-> R10: ffff880068f07760 R11: 0000000000000000 R12: 1ffff1000d1e0f4a
-> R13: ffff880068f07a70 R14: ffff88006bc44700 R15: ffff880068f07b20
-> FS:  00007f907b47d700(0000) GS:ffff88003ec00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: fffffbfffffffffe CR3: 000000003e167000 CR4: 00000000000006f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  ptm_open_peer+0x11a/0x2f0 drivers/tty/pty.c:631
->  tty_ioctl+0x50f/0x15f0 drivers/tty/tty_io.c:2621
->  vfs_ioctl fs/ioctl.c:45 [inline]
->  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:685
->  SYSC_ioctl fs/ioctl.c:700 [inline]
->  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:691
->  entry_SYSCALL_64_fastpath+0x1f/0xbe
-> RIP: 0033:0x447c89
-> RSP: 002b:00007f907b47cbd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f907b47d6cc RCX: 0000000000447c89
-> RDX: 00000000202c2000 RSI: 2000000000005441 RDI: 0000000000000000
-> RBP: 0000000000000082 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 0000000000008e08 R14: 00000000006ecea8 R15: 00007f907b47d700
-> Code: c1 ea 03 80 3c 02 00 0f 85 56 01 00 00 48 8b 5d 90 e8 e0 73 a0 ff 48
-> 8d 7b 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
-> 85 24 01 00 00 4c 8b 7b 08 48 b8 00 00 00 00 00
-> RIP: devpts_mntget+0x135/0x280 fs/devpts/inode.c:173 RSP: ffff880068f07a50
-> CR2: fffffbfffffffffe
-> ---[ end trace 47949eeac6e2cd68 ]---
-> Kernel panic - not syncing: Fatal exception
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
-> 
-> syzbot will keep track of this bug report.
-> Once a fix for this bug is committed, please reply to this email with:
-> #syz fix: exact-commit-title
+From: Frank Rowand <frank.rowand@sony.com>
 
-Fixed by commit c9cc8d01fb0411:
+Create a cache of the nodes that contain a phandle property.  Use this
+cache to find the node for a given phandle value instead of scanning
+the devicetree to find the node.  If the phandle value is not found
+in the cache, of_find_node_by_phandle() will fall back to the tree
+scan algorithm.
 
-#syz fix: devpts: fix error handling in devpts_mntget()
+The cache is initialized in of_core_init().
 
-- Eric
+The cache is freed via a late_initcall_sync().
+
+---
+
+Some of_find_by_phandle() calls may occur before the cache is
+initialized or after it is freed.  For example, for the qualcomm
+qcom-apq8074-dragonboard, 11 calls occur before the initialization
+and 80 occur after the cache is freed (out of 516 total calls.)
+
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+---
+ drivers/of/base.c       | 85 ++++++++++++++++++++++++++++++++++++++++++++++---
+ drivers/of/of_private.h |  5 +++
+ drivers/of/resolver.c   | 21 ------------
+ 3 files changed, 86 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 26618ba8f92a..c3091d0e391f 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -95,10 +95,14 @@ int __weak of_node_to_nid(struct device_node *np)
+ }
+ #endif
+ 
++static void of_populate_phandle_cache(void);
++
+ void __init of_core_init(void)
+ {
+ 	struct device_node *np;
+ 
++	of_populate_phandle_cache();
++
+ 	/* Create the kset, and register existing nodes */
+ 	mutex_lock(&of_mutex);
+ 	of_kset = kset_create_and_add("devicetree", NULL, firmware_kobj);
+@@ -990,6 +994,72 @@ int of_modalias_node(struct device_node *node, char *modalias, int len)
+ }
+ EXPORT_SYMBOL_GPL(of_modalias_node);
+ 
++phandle live_tree_max_phandle(void)
++{
++	struct device_node *node;
++	phandle max_phandle;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&devtree_lock, flags);
++	max_phandle = 0;
++	for_each_of_allnodes(node) {
++		if (node->phandle != OF_PHANDLE_ILLEGAL &&
++		    node->phandle > max_phandle)
++			max_phandle = node->phandle;
++	}
++	raw_spin_unlock_irqrestore(&devtree_lock, flags);
++
++	return max_phandle;
++}
++
++static struct device_node **phandle_cache;
++static u32 max_phandle_cache;
++
++static int __init of_free_phandle_cache(void)
++{
++	max_phandle_cache = 0;
++	kfree(phandle_cache);
++	phandle_cache = NULL;
++
++	return 0;
++}
++late_initcall_sync(of_free_phandle_cache);
++
++static void of_populate_phandle_cache(void)
++{
++	unsigned long flags;
++	phandle max_phandle;
++	u32 nodes = 0;
++	struct device_node *np;
++
++	if (phandle_cache)
++		return;
++
++	max_phandle = live_tree_max_phandle();
++
++	raw_spin_lock_irqsave(&devtree_lock, flags);
++
++	for_each_of_allnodes(np)
++		nodes++;
++
++	/* sanity cap for malformed tree */
++	if (max_phandle > nodes)
++		max_phandle = nodes;
++
++	phandle_cache = kzalloc((max_phandle + 1) * sizeof(*phandle_cache),
++				GFP_KERNEL);
++
++	for_each_of_allnodes(np)
++		if (np->phandle != OF_PHANDLE_ILLEGAL  &&
++		    np->phandle <= max_phandle &&
++		    np->phandle)
++			phandle_cache[np->phandle] = np;
++
++	max_phandle_cache = max_phandle;
++
++	raw_spin_unlock_irqrestore(&devtree_lock, flags);
++}
++
+ /**
+  * of_find_node_by_phandle - Find a node given a phandle
+  * @handle:	phandle of the node to find
+@@ -999,16 +1069,23 @@ int of_modalias_node(struct device_node *node, char *modalias, int len)
+  */
+ struct device_node *of_find_node_by_phandle(phandle handle)
+ {
+-	struct device_node *np;
++	struct device_node *np = NULL;
+ 	unsigned long flags;
+ 
+ 	if (!handle)
+ 		return NULL;
+ 
+ 	raw_spin_lock_irqsave(&devtree_lock, flags);
+-	for_each_of_allnodes(np)
+-		if (np->phandle == handle)
+-			break;
++
++	if (handle <= max_phandle_cache)
++		np = phandle_cache[handle];
++
++	if (!np || np->phandle != handle) {
++		for_each_of_allnodes(np)
++			if (np->phandle == handle)
++				break;
++	}
++
+ 	of_node_get(np);
+ 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+ 	return np;
+diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+index 92a9a3687446..77005978d60a 100644
+--- a/drivers/of/of_private.h
++++ b/drivers/of/of_private.h
+@@ -135,6 +135,11 @@ extern void __of_update_property_sysfs(struct device_node *np,
+ extern void __of_sysfs_remove_bin_file(struct device_node *np,
+ 				       struct property *prop);
+ 
++/* illegal phandle value (set when unresolved) */
++#define OF_PHANDLE_ILLEGAL	0xdeadbeef
++
++extern phandle live_tree_max_phandle(void);
++
+ /* iterators for transactions, used for overlays */
+ /* forward iterator */
+ #define for_each_transaction_entry(_oft, _te) \
+diff --git a/drivers/of/resolver.c b/drivers/of/resolver.c
+index cfaeef5f6cb1..0384ce8fdc3b 100644
+--- a/drivers/of/resolver.c
++++ b/drivers/of/resolver.c
+@@ -22,27 +22,6 @@
+ 
+ #include "of_private.h"
+ 
+-/* illegal phandle value (set when unresolved) */
+-#define OF_PHANDLE_ILLEGAL	0xdeadbeef
+-
+-static phandle live_tree_max_phandle(void)
+-{
+-	struct device_node *node;
+-	phandle phandle;
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&devtree_lock, flags);
+-	phandle = 0;
+-	for_each_of_allnodes(node) {
+-		if (node->phandle != OF_PHANDLE_ILLEGAL &&
+-				node->phandle > phandle)
+-			phandle = node->phandle;
+-	}
+-	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+-
+-	return phandle;
+-}
+-
+ static void adjust_overlay_phandles(struct device_node *overlay,
+ 		int phandle_delta)
+ {
+-- 
+Frank Rowand <frank.rowand@sony.com>
