@@ -1,38 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932066AbeAaKE4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 05:04:56 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:54945 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753724AbeAaKEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 05:04:53 -0500
-Subject: Re: [PATCH v2 3/3] f2fs: Add the 'whint_mode' mount option to f2fs
- documentation
-To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <kernel-team@lge.com>, Hyunchul Lee <cheol.lee@lge.com>
-References: <1517366219-22166-1-git-send-email-hyc.lee@gmail.com>
- <1517366219-22166-4-git-send-email-hyc.lee@gmail.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <0926480a-2e87-b597-0c66-b32ace33e27d@huawei.com>
-Date: Wed, 31 Jan 2018 18:04:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S932067AbeAaKIk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 05:08:40 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:55695 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753141AbeAaKIi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 05:08:38 -0500
+Date: Wed, 31 Jan 2018 11:08:22 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        stern@rowland.harvard.edu, parri.andrea@gmail.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, boqun.feng@gmail.com, will.deacon@arm.com,
+        npiggin@gmail.com, dhowells@redhat.com, elena.reshetova@intel.com,
+        mhocko@suse.com, akiyks@gmail.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL tools] Linux kernel memory model
+Message-ID: <20180131100822.GL2269@hirez.programming.kicks-ass.net>
+References: <20180125093440.GA875@linux.vnet.ibm.com>
+ <20180129065724.ybrdsabvktq7fbqg@gmail.com>
+ <20180129095449.GT3741@linux.vnet.ibm.com>
+ <20180131090006.onaopgyqthppoysi@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1517366219-22166-4-git-send-email-hyc.lee@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131090006.onaopgyqthppoysi@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/1/31 10:36, Hyunchul Lee wrote:> Signed-off-by: Hyunchul Lee
-<cheol.lee@lge.com>
+On Wed, Jan 31, 2018 at 10:00:06AM +0100, Ingo Molnar wrote:
+> - Similary, some of the high level descriptions in tools/memory-model/README
+>   should probably propagated into the source code files as well: for example
+>   both tools/memory-model/lock.cat and linux-kernel.cat could be improved that
+>   way.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
+This is something both Will and me have on our todo list, sadly we've
+not had any time to work on this due to this pesky spectre crap.
