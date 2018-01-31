@@ -1,46 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753220AbeAaH65 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:58:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47166 "EHLO mx2.suse.de"
+        id S1752235AbeAaIBR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 03:01:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47307 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753149AbeAaH6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:58:54 -0500
-Date: Wed, 31 Jan 2018 08:58:52 +0100
+        id S1750983AbeAaIBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 03:01:16 -0500
+Date: Wed, 31 Jan 2018 09:01:14 +0100
 From: Michal Hocko <mhocko@kernel.org>
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org
-Subject: Re: [RFC] mm/migrate: Add new migration reason MR_HUGETLB
-Message-ID: <20180131075852.GL21609@dhcp22.suse.cz>
-References: <20180130030714.6790-1-khandual@linux.vnet.ibm.com>
- <20180130075949.GN21609@dhcp22.suse.cz>
- <b4bd6cda-a3b7-96dd-b634-d9b3670c1ecf@linux.vnet.ibm.com>
+To: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH] Lock mmap_sem when calling migrate_pages() in
+ do_move_pages_to_node()
+Message-ID: <20180131080114.GM21609@dhcp22.suse.cz>
+References: <20180130030011.4310-1-zi.yan@sent.com>
+ <20180130081415.GO21609@dhcp22.suse.cz>
+ <5A7094DA.4000804@cs.rutgers.edu>
+ <20180130161025.GH21609@dhcp22.suse.cz>
+ <F3D5C6AC-78B6-4443-9BE1-575831F238E2@cs.rutgers.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b4bd6cda-a3b7-96dd-b634-d9b3670c1ecf@linux.vnet.ibm.com>
+In-Reply-To: <F3D5C6AC-78B6-4443-9BE1-575831F238E2@cs.rutgers.edu>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 31-01-18 07:55:05, Anshuman Khandual wrote:
-> On 01/30/2018 01:29 PM, Michal Hocko wrote:
-> > On Tue 30-01-18 08:37:14, Anshuman Khandual wrote:
-> >> alloc_contig_range() initiates compaction and eventual migration for
-> >> the purpose of either CMA or HugeTLB allocation. At present, reason
-> >> code remains the same MR_CMA for either of those cases. Lets add a
-> >> new reason code which will differentiate the purpose of migration
-> >> as HugeTLB allocation instead.
-> > Why do we need it?
-> 
-> The same reason why we have MR_CMA (maybe some other ones as well) at
-> present, for reporting purpose through traces at the least. It just
-> seemed like same reason code is being used for two different purpose
-> of migration.
+On Tue 30-01-18 14:12:28, Zi Yan wrote:
+> On 30 Jan 2018, at 11:10, Michal Hocko wrote:
+[...]
+> I think the question is whether we need to hold mmap_sem for
+> migrate_pages(). Hugh also agrees it is not necessary on a separate
+> email. But it is held in the original code.
 
-But do we have any real user asking for this kind of information?
+I would be really surprised if we really needed the lock. If we do,
+however, then we really need a very good explanation why. The code used
+to do so is not a valid reason.
 
 -- 
 Michal Hocko
