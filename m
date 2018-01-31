@@ -1,167 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeAaBnQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 30 Jan 2018 20:43:16 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:41400 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752015AbeAaBnO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jan 2018 20:43:14 -0500
-X-Google-Smtp-Source: AH8x227CFIP7T3UOciug0JuAWqVLaPHgkCaNamco4+F0mHM782puQ+vMKNErI2u+gQ8dh2M0TnEO2hG7dxAq8242rJQ=
+        id S1752529AbeAaBsj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 30 Jan 2018 20:48:39 -0500
+Received: from mail-by2nam01on0070.outbound.protection.outlook.com ([104.47.34.70]:44736
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752146AbeAaBsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jan 2018 20:48:36 -0500
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Suravee.Suthikulpanit@amd.com;
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+To: iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: joro@8bytes.org, jroedel@suse.de, alex.williamson@redhat.com,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: [PATCH 0/2] iommu / vfio: Clean up iommu_map[_fast] interface
+Date: Tue, 30 Jan 2018 20:48:03 -0500
+Message-Id: <1517363285-89304-1-git-send-email-suravee.suthikulpanit@amd.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-In-Reply-To: <20180131011643.slqdqtfl25svbpue@gmail.com>
-References: <001a1145e85edcbf2d0561d3075c@google.com> <f54f53e7-593e-853d-9b52-fd296898c49c@gmail.com>
- <CAEA6p_Bfd4odvQ2bdObYpy8wNi2YcW70d5bMLMdnLK3+YnYjMg@mail.gmail.com> <20180131011643.slqdqtfl25svbpue@gmail.com>
-From: Wei Wang <weiwan@google.com>
-Date: Tue, 30 Jan 2018 17:43:12 -0800
-Message-ID: <CAEA6p_APT17czXFbjiM9gTmd94xAw-mz0yKjif9iN_VyXXS4xQ@mail.gmail.com>
-Subject: Re: general protection fault in fib6_add (2)
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: David Ahern <dsahern@gmail.com>,
-        syzbot <syzbot+0693adff3f83403dc5da@syzkaller.appspotmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [114.109.128.54]
+X-ClientProxiedBy: SG2PR06CA0102.apcprd06.prod.outlook.com (10.170.138.28) To
+ MWHPR12MB1742.namprd12.prod.outlook.com (10.175.55.13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 13739607-d0f0-4346-5655-08d5684cbd73
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR12MB1742;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1742;3:vHr3gOFeJz6JBYGw+AZXMfhpjwBWj7Qu/7Dk5XltuX0u5U8fAWwlk8IZiZiVYVN+hS48/0Uc+0d35ZqR2+lfjIy0S5YrBNAtMUPddWCHXa6wpoWqD0S75QF6lv+lsE9eubvGG/zIDY7lbeKr2szVEJlpaY5gShVn3Fz8guQAo8zVG/aEmIyH9cgWFTbB/00Uvp1rYkZz9FaLxdOWc5Fmt8wLhZUfjXhgtY38kFoLyzfUiz8Tk16eJs2ouPrOiIur;25:ZsqF8kaIUTZkaXAwxmFsowgezryY1h9mZ1JvTY0PeE1nxcFP9pnrVEXcbZt53KkbWGj+A4gHb75PsSmS1pSfAN6pGjEtS6HbuOnvHVve31DcZkKZvu1bl0OJflcuUvbrKoY8DHpWdDe7K++oQ/svrkV/jGhP/9r+tf2vMZ2ztdPkhappRPBcij9L3dw4GizX+NZRB1UnaO5V2s1rOsW1M2iHm0ud5APit+U5p6fR5wEMa+gvl+NRpSdt6W+grsAHs9eOaLAYGIjvpajqqI66GZ29tJw7Bqvw95Dz3mUJ/rLGkumYu6w5hg3QjhMK2L08P5hGzYi0bIRnZwX/hZphfQ==;31:dq014zXuGG4YpWaTpgCxISXKlfE0TF7ukrchuCgg0hfpSqMSYwl2o6UH1RxaQFdEujCJkIrSVpp72OzrXGILw49lhwk+SCaWRD0TKhPn+ikIHCDjMoZ7HqA5IkAwe/y9XqGD3pQPqtnSOtwrz0UHooNc69KKPDQxUe2z1YtP+CZiKhW5TZAwFORqv8kIZ/eJgOA/jXVMPC3iK+1I46RwXEpAf0LNIHL33vcTh0nQTQg=
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1742:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1742;20:0dl3BSbHdhI0BetmEA3HhqNpCFZDH+6AHlhV8D6vHNgyxb77MZ5627oEZLHrXz3DnDF0TfVGMRvhoCbl6zyjLlN7a/JSpyK1zEkFMQCRfg8QoaXzwIdxEKDABBoC9np2cAe7oKb8eeyXoJUWH60nO+HZzZg3XESDHFyuj2Wegnb5hO9ttVxoKgJjcVlz57nddL1tUJm99dsuN9SAmFlD6fJdlLM0zuy6td1IFE4d1f1gcAW+NE4KYrBRGiHFXKpwM+K3VHfKJllF81AO1aB5AVYoXUq/TPshP837nD8PXtEg6Lz+kBm1eejWEOyupSmkEmLT8Fy6goD+3BorDbG4zIYOW0enieLOyl2vIkSFMiUKdiWaD/0Jyzmo8O6P6rGcMhlgMFmAVOl2V9E6nScrxpuhZnKpFjawqdoKpfnUjA9tiRoA+XYDv/pha9OVi2BOQEwzENtxpx8Y7rDxxRYnFHWYM5MWEBMv79+H4lx50Cknm4cZGg0lXSP+toEoeI96;4:Cy4lIOmt1SFcl/ydixaJVRZAK4nrEbMVpaqvkCEQspWhFiXsHC0OetUtRn1XzcSUXERZlfk9xFjJSDWw2HEhwc7TRG0LeVGECsrfI1mZemYDphc7/iD7l7PVodH723ww3fRLHwnbtOnJO3V6XEHwO6QkW+z6KS8icy/0JwGJNqtcAf81mHXPaRNGvV6+4rT/n5JyO22k2MlWb+GkwI80VIhk7WB0JYxCzszyhSsAfNFc6CwWG80Hai2FXGqR6uM+yW/tXfmgrqgQSDq2AcnuDg==
+X-Microsoft-Antispam-PRVS: <MWHPR12MB1742F8F3518CEC2F777F43E2F3FB0@MWHPR12MB1742.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3231101)(2400082)(944501161)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041288)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR12MB1742;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1742;
+X-Forefront-PRVS: 056929CBB8
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(396003)(39380400002)(366004)(189003)(199004)(106356001)(53936002)(6666003)(86362001)(4326008)(25786009)(66066001)(2906002)(68736007)(4720700003)(26005)(52116002)(6506007)(316002)(47776003)(386003)(6486002)(3846002)(48376002)(305945005)(478600001)(36756003)(50226002)(97736004)(105586002)(51416003)(50466002)(72206003)(186003)(7736002)(16586007)(5660300001)(8676002)(16526019)(6116002)(6512007)(8936002)(81156014)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1742;H:ssuthiku-rhel74.localdomain;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR12MB1742;23:f9C+rfwkvAiV+Kb7L/cjpn60SAyh6aYeXKqiJiOsD?=
+ =?us-ascii?Q?EQfRUKzlRUiVXoqfBZMY6qOs2b3rXFr36csX2tmtOsyE+IUsdznEytnJfuT5?=
+ =?us-ascii?Q?fs7KT7JbaHXdb7pGD5YEa25S/8IrykPhg9/SkBnwHVAg3uW5akYUDQBRwbXd?=
+ =?us-ascii?Q?xzj9Q0fClj7l5GPKDWOhOQSqA26KHcDEuGfAbmwv98Ce7tPypM6mzp5OZLmM?=
+ =?us-ascii?Q?zt9lXra+dLXdcE2Ya4gD9Rgfp3hf1bW5RZpYU+m0AUCb2ZZYG+YdxoDBdZZ2?=
+ =?us-ascii?Q?bFdjEUDYNGws3cgEOWM+uTy9bjZ6vDhjXLQjzF8FmD3/7XroK0FzIJu9xClR?=
+ =?us-ascii?Q?FhC/KqIrnM6t02R1+JXPWH/MgEQSo5jRhbO+8n455Ju47p6ng7ND7L6baKuo?=
+ =?us-ascii?Q?1LgjxG5z8WazpPBgAcv2aK60qiLtraMaxgArb/EVscrThPMju+0ZTw2Ds+5B?=
+ =?us-ascii?Q?LWZTsX4Q+263eZQMMpXDfFvQn5R5DweCXqw7MK3quIR666fYfk6X7bR7LY0j?=
+ =?us-ascii?Q?Y7G5FCmJ35zS7lp3Xf/tadKTLxk2LRPjGhk8pzVmZr3xArsi2xLzYiZmH8zN?=
+ =?us-ascii?Q?WDyAeQH7HsEfZ/LP5y00+jJRylkkeOwXoOrZn8WnJynJ3GnhRZryyxDRVFTO?=
+ =?us-ascii?Q?Hu7nEZ5QW8oYWj67ve4pbcRy8GuC+DQvhj+yHSrKnm49bnAt5S0mwh3v0MlS?=
+ =?us-ascii?Q?YUOxl/cUpaD3/V+XC66AVt5fU/303uoKpYff7AFcNp8Hcq4jL1APmzWsZyt7?=
+ =?us-ascii?Q?OuRVXmr12dQRZBpHEWfnOz3ueJ8drobYX3DbNJoRw5gwirfhTdtf67VcRLKe?=
+ =?us-ascii?Q?cpy4nvGjaoNYT5Ylr9G3SiIP7ABtdRZhYOa1aXWORfi0WRH9Cs9g+2wRGnw4?=
+ =?us-ascii?Q?RqpPBwjayEZzfunhg2BrrXeu/ExEyEgAqTnA1yDBXGmgpYiTnSKZHGvTjeoJ?=
+ =?us-ascii?Q?ihkJuXIw5V5dO8QJ5K6bkPIuiSlptzYtc+h8HDEU15mBEnegA6gWjZZ65Nct?=
+ =?us-ascii?Q?wjzC7Z7PuFsmADT631Q8mZUop7v+HYWMPfiB94/szkSRyXgQLMtamRFo1GAT?=
+ =?us-ascii?Q?XwTroqEcsX0Mjh0niesVbXec1fz?=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1742;6:87qlpysJGLWWuPsOVM+9o1KpvIWBw/UYjuvQBqF5yAgc3y4vWkqapxjAmCLgBWgcKSfImRPvafoI0dyrHfy6w+rwUi9o5g0/l9K4f5CrstH5hnH5WtpYk//8beDYIjRlk4wipxDYaeWMOnPjXhuWkTD9Pv/dOnjib74YJmM9T9ASWO8fkQBGX+PdYCHI7S5RnPDzqDQ33M+CqxzJsaS5KAh6SEiemMBwvTz2R8ZU3T73FuPCCFV1l+XUgRwkIQM2GGPv0nouXqQ9+L9hZWJflm1ndecgArINpP5u08jhTnB4Pn9nHGhZg3gIEcPoKCLN8J+Vigzg5RCQMj744ahUd6g1b0ohq2cyCFIrdKgdhfQ=;5:2AOaqyjHC87N+7LHKylUqQq9Xmfln4nWOj6XCAultZE/31pifp1G/qLpEgRd8zTNoVqZGdWm92UdBwwvTJugtNXaUI3YL460hGRfKUCp6nyVU65JJDMHOKoA659lZUgbxBBpU3FCRCWxdaDR7uJaA21YOXjWNDC4sHs93Q2A954=;24:aGQJ/7LjJFuOVnhvZiBWx5zJzIZECsDoZAOfWzZf2NSicbuiZsCnx8xkx0BWQ+zd/f2QwlQcpxt1vksHethpH6YkYOCTa4dGAHN1g/4x4+k=;7:kZ0bODNlknepvet3UuRYzm9Y8z/A4AIZgYmBVO1tUUsRTEHUyx0kBvt8CNV0TYUOkme5G3gSo1CanK+V8FUNmzNWNIo2/hBf8HfFrpHQLQDlyw0pt7gx8h6mx0cl9UHwB3Le9Oie16y5usuRRvcDyIavfNUXLMTxR4BxlA+ys3PmRyMlW/U+EvOvWRi/QE0GwsKUbkJpB3kg6tbNDUA4e8Va4zILjRkXfQlZ9cEffUbEWh8slVXnZs7uYzpwDnT4
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1742;20:JSnp3hLjI4fSRD17wlQ3IpTeiVIRpT7J7nGymnyIJ56qA8cPVvDi07E5OPtvuZpHZzyxPPQpbiWSis8c0mYmeiP0qga+kLiNLZ1W4Q4XlTskIeWYzS45F5tw9sXfT7CBc9CU/jZnbNE0SMY30EfbLtSC4e1C0I1Oz5OZlazz8P3PxujYeoBrIr3Hkd41AITAymBdzx0BsJyYOP6jNGsfdJuQau1mfUOH6BEwBp75FBgWVr/pMfkmUUir8QdUobrA
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2018 01:48:32.7580 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13739607-d0f0-4346-5655-08d5684cbd73
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1742
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 5:16 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Wed, Jan 03, 2018 at 10:53:02AM -0800, 'Wei Wang' via syzkaller-bugs wrote:
->> On Wed, Jan 3, 2018 at 8:16 AM, David Ahern <dsahern@gmail.com> wrote:
->> > [ +weiwan@google.com ]
->> >
->> > On 1/2/18 3:58 PM, syzbot wrote:
->> >> Hello,
->> >>
->> >> syzkaller hit the following crash on
->> >> 61233580f1f33c50e159c50e24d80ffd2ba2e06b
->> >> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
->> >> compiler: gcc (GCC) 7.1.1 20170620
->> >> .config is attached
->> >> Raw console output is attached.
->> >> C reproducer is attached
->> >> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
->> >> for information about syzkaller reproducers
->> >>
->> >>
->> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> >> Reported-by: syzbot+0693adff3f83403dc5da@syzkaller.appspotmail.com
->> >> It will help syzbot understand when the bug is fixed. See footer for
->> >> details.
->> >> If you forward the report, please keep this part and the footer.
->
-> This crash seemed to stop occurring around Jan 8.  Wei, next time can you please
-> use the suggested Reported-by line so that syzbot knows which commit is meant to
-> fix the bug?  I assume it was this one:
-Noted. Will do.
+Change iommu_unmap[_fast] interfaces return type to ssize_t since
+it can also return error code.
 
->
-> #syz fix: ipv6: fix general protection fault in fib6_add()
->
-Yes. Correct.
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>
 
-> Thanks!
->
-> - Eric
->
->> >>
->> >> audit: type=1400 audit(1514594846.496:7): avc:  denied  { map } for
->> >> pid=3201 comm="syzkaller001778" path="/root/syzkaller001778299"
->> >> dev="sda1" ino=16481
->> >> scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
->> >> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
->> >> IPv6: Can't replace route, no match found
->> >> kasan: CONFIG_KASAN_INLINE enabled
->> >> kasan: GPF could be caused by NULL-ptr deref or user memory access
->> >> general protection fault: 0000 [#1] SMP KASAN
->> >> Dumping ftrace buffer:
->> >>    (ftrace buffer empty)
->> >> Modules linked in:
->> >> CPU: 0 PID: 3201 Comm: syzkaller001778 Not tainted 4.15.0-rc5+ #151
->> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> >> Google 01/01/2011
->> >> RIP: 0010:fib6_add+0x736/0x15a0 net/ipv6/ip6_fib.c:1244
->>
->> pn could be NULL if fib6_add_1() failed. Will submit a fix for this.
->>
->> >> RSP: 0018:ffff8801c7626a70 EFLAGS: 00010202
->> >> RAX: dffffc0000000000 RBX: 0000000000000020 RCX: ffffffff84794465
->> >> RDX: 0000000000000004 RSI: ffff8801d38935f0 RDI: 0000000000000282
->> >> RBP: ffff8801c7626da0 R08: 1ffff10038ec4c35 R09: 0000000000000000
->> >> R10: ffff8801c7626c68 R11: 0000000000000000 R12: 00000000fffffffe
->> >> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000009
->> >> FS:  0000000000000000(0000) GS:ffff8801db200000(0063)
->> >> knlGS:0000000009b70840
->> >> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
->> >> CR2: 0000000020be1000 CR3: 00000001d585a006 CR4: 00000000001606f0
->> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> >> Call Trace:
->> >>  __ip6_ins_rt+0x6c/0x90 net/ipv6/route.c:1006
->> >>  ip6_route_multipath_add+0xd14/0x16c0 net/ipv6/route.c:3833
->> >>  inet6_rtm_newroute+0xdc/0x160 net/ipv6/route.c:3957
->> >>  rtnetlink_rcv_msg+0x733/0x1020 net/core/rtnetlink.c:4411
->> >>  netlink_rcv_skb+0x21e/0x460 net/netlink/af_netlink.c:2408
->> >>  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4423
->> >>  netlink_unicast_kernel net/netlink/af_netlink.c:1275 [inline]
->> >>  netlink_unicast+0x4e8/0x6f0 net/netlink/af_netlink.c:1301
->> >>  netlink_sendmsg+0xa4a/0xe60 net/netlink/af_netlink.c:1864
->> >>  sock_sendmsg_nosec net/socket.c:636 [inline]
->> >>  sock_sendmsg+0xca/0x110 net/socket.c:646
->> >>  sock_write_iter+0x31a/0x5d0 net/socket.c:915
->> >>  call_write_iter include/linux/fs.h:1772 [inline]
->> >>  do_iter_readv_writev+0x525/0x7f0 fs/read_write.c:653
->> >>  do_iter_write+0x154/0x540 fs/read_write.c:932
->> >>  compat_writev+0x225/0x420 fs/read_write.c:1246
->> >>  do_compat_writev+0x115/0x220 fs/read_write.c:1267
->> >>  C_SYSC_writev fs/read_write.c:1278 [inline]
->> >>  compat_SyS_writev+0x26/0x30 fs/read_write.c:1274
->> >>  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
->> >>  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
->> >>  entry_SYSENTER_compat+0x54/0x63 arch/x86/entry/entry_64_compat.S:125
->> >> RIP: 0023:0xf7f1fc79
->> >> RSP: 002b:00000000ffb61bfc EFLAGS: 00000203 ORIG_RAX: 0000000000000092
->> >> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000204aaff0
->> >> RDX: 0000000000000001 RSI: 0000000000000167 RDI: 0000000000000010
->> >> RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
->> >> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
->> >> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->> >> Code: f1 a9 f6 fc e8 2c f2 e2 fc 85 c0 0f 85 d5 03 00 00 49 8d 5e 20 e8
->> >> db a9 f6 fc 48 89 da 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c
->> >> 02 00 0f 85 5a 0c 00 00 4d 39 ee 4d 8b 7e 20 0f 95 c0 4c
->> >> RIP: fib6_add+0x736/0x15a0 net/ipv6/ip6_fib.c:1244 RSP: ffff8801c7626a70
->> >> ---[ end trace 956c65133fcfff88 ]---
->> >>
->> >>
->> >> ---
->> >> This bug is generated by a dumb bot. It may contain errors.
->> >> See https://goo.gl/tpsmEJ for details.
->> >> Direct all questions to syzkaller@googlegroups.com.
->> >>
->> >> syzbot will keep track of this bug report.
->> >> If you forgot to add the Reported-by tag, once the fix for this bug is
->> >> merged
->> >> into any tree, please reply to this email with:
->> >> #syz fix: exact-commit-title
->> >> If you want to test a patch for this bug, please reply with:
->> >> #syz test: git://repo/address.git branch
->> >> and provide the patch inline or as an attachment.
->> >> To mark this as a duplicate of another syzbot report, please reply with:
->> >> #syz dup: exact-subject-of-another-report
->> >> If it's a one-off invalid bug report, please reply with:
->> >> #syz invalid
->> >> Note: if the crash happens again, it will cause creation of a new bug
->> >> report.
->> >> Note: all commands must start from beginning of the line in the email body.
->> >
->>
->> --
->> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
->> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
->> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/CAEA6p_Bfd4odvQ2bdObYpy8wNi2YcW70d5bMLMdnLK3%2BYnYjMg%40mail.gmail.com.
->> For more options, visit https://groups.google.com/d/optout.
+Suravee Suthikulpanit (2):
+  iommu: Fix iommu_unmap and iommu_unmap_fast return type
+  vfio/type1: Add iommu_unmap error check when vfio_unmap_unpin
+
+ drivers/iommu/amd_iommu.c       |  6 +++---
+ drivers/iommu/intel-iommu.c     |  4 ++--
+ drivers/iommu/iommu.c           | 16 ++++++++--------
+ drivers/vfio/vfio_iommu_type1.c |  5 +++--
+ include/linux/iommu.h           | 20 ++++++++++----------
+ 5 files changed, 26 insertions(+), 25 deletions(-)
+
+-- 
+1.8.3.1
