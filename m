@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753750AbeAaQuV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 11:50:21 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:33727 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752743AbeAaQuT (ORCPT
+        id S1753859AbeAaQun (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 11:50:43 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:29688 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753352AbeAaQuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 11:50:19 -0500
+        Wed, 31 Jan 2018 11:50:20 -0500
 From: Olivier Moysan <olivier.moysan@st.com>
 To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
@@ -14,10 +14,12 @@ To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
         <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
 CC: <arnaud.pouliquen@st.com>, <benjamin.gaignard@st.com>
-Subject: [PATCH 0/2] ASoC: stm32: spdifrx: change dai name
-Date: Wed, 31 Jan 2018 17:47:01 +0100
-Message-ID: <1517417223-21899-1-git-send-email-olivier.moysan@st.com>
+Subject: [PATCH 2/2] ASoC: stm32: spdifrx: Use default dai name
+Date: Wed, 31 Jan 2018 17:47:03 +0100
+Message-ID: <1517417223-21899-3-git-send-email-olivier.moysan@st.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1517417223-21899-1-git-send-email-olivier.moysan@st.com>
+References: <1517417223-21899-1-git-send-email-olivier.moysan@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.201.23.16]
@@ -27,14 +29,24 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset changes spdifrx dai name and fixes a typo issue.
+Use dai name provided by framework from dev_name() function.
 
-Olivier Moysan (2):
-  ASoC: stm32: spdifrx: fix typo in function name.
-  ASoC: stm32: spdifrx: Use default dai name
+Signed-off-by: olivier moysan <olivier.moysan@st.com>
+---
+ sound/soc/stm/stm32_spdifrx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- sound/soc/stm/stm32_spdifrx.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
+diff --git a/sound/soc/stm/stm32_spdifrx.c b/sound/soc/stm/stm32_spdifrx.c
+index 42ad2ae..373df4f 100644
+--- a/sound/soc/stm/stm32_spdifrx.c
++++ b/sound/soc/stm/stm32_spdifrx.c
+@@ -819,7 +819,6 @@ static void stm32_spdifrx_shutdown(struct snd_pcm_substream *substream,
+ 
+ static struct snd_soc_dai_driver stm32_spdifrx_dai[] = {
+ 	{
+-		.name = "spdifrx-capture-cpu-dai",
+ 		.probe = stm32_spdifrx_dai_probe,
+ 		.capture = {
+ 			.stream_name = "CPU-Capture",
 -- 
 1.9.1
