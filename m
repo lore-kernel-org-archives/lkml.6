@@ -1,109 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932079AbeAaHby (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 02:31:54 -0500
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:46298 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753139AbeAaHbv (ORCPT
+        id S1752811AbeAaHi0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 02:38:26 -0500
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:40593 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751826AbeAaHiY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 02:31:51 -0500
-X-Google-Smtp-Source: AH8x224hCwnYQfxAKvx32J36wV8iQjRcAWulqbA5bKs23KPQAwSPLj8xGpzzit0dSQXEVM29srVYHA==
-Date: Wed, 31 Jan 2018 08:31:38 +0100
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Simon Shields <simon@lineageos.org>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>,
-        jeesw@melfas.com
-Subject: Re: [PATCH 7/8] Input: mms114 - add SPDX identifier
-Message-ID: <20180131073138.GA1499@gmail.com>
-References: <20180129113323.18961-1-andi.shyti@samsung.com>
- <CGME20180129113331epcas2p193a0a99f660793fbfcf2ec825fac0e2c@epcas2p1.samsung.com>
- <20180129113323.18961-8-andi.shyti@samsung.com>
- <20180129194659.df7nlhwx4demk6o6@dtor-ws>
- <20180131060726.GB7575@gangnam.samsung>
+        Wed, 31 Jan 2018 02:38:24 -0500
+Subject: Re: [PATCH v6 4/6] media: i2c: Add TDA1997x HDMI receiver driver
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1514491789-8697-1-git-send-email-tharvey@gateworks.com>
+ <1514491789-8697-5-git-send-email-tharvey@gateworks.com>
+ <1e65ee61-f282-4b53-dd03-68a89a91da8e@xs4all.nl>
+ <CAJ+vNU1ysHuzqOnL4sf3hFZrU5kyGnQ0dFkRObVjCa=NyLsJug@mail.gmail.com>
+ <517f8b12-e10e-1e8d-6d98-26f5fefe62b8@xs4all.nl>
+ <CAJ+vNU1xnnmNZW5zmT8+0HfT3Xfg6zfdrbC8vFNH4wuah5AVTA@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <fa8cc2d1-b7ea-343e-5b5a-ba5f60b9c5d9@xs4all.nl>
+Date: Wed, 31 Jan 2018 08:38:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
-Content-Disposition: inline
-In-Reply-To: <20180131060726.GB7575@gangnam.samsung>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAJ+vNU1xnnmNZW5zmT8+0HfT3Xfg6zfdrbC8vFNH4wuah5AVTA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfD6aSr4QM3X1f6ykm0Y88Xeuh0hpWQx6gDFTG97vhjYDAamNDUsD/ZiqW+5RtYwPPwhrULyMeR8ykcLcBFQSVzU0tkx9XFycJaXCEegcJEr3y6u+KXSe
+ tsKZgQnx8lhSDEYnWGiJs1DfrSf/QUXJLkagUKgLK/t742VbnFZlzY2HfgR91ILRvGsM8zz3mZHIdVwq0afr/Pc5lRVM5dQ8qmY8jlxv3/+SLj5qyWLQDU//
+ TBefglUqkkzF35bU1asclqOKXZaYacNtBGW1ir9RSfhhlGwFny1cZhosnJveO5XAtbFTeSn5WbSXeuGV7PmKRcIdFHsb2m/hlIH8UeKk25dZqwqM71HxBCYp
+ YlreK2cYEKS+h4/TbFXuaZGb4iFCVyx9z6toIDyrWLWrhBofLbBW0NeGca0QzCcplaBLxTkVbot3dhbX9S1PpxDmVR4iLv73WEiGs+esh1OUlfzX6plu7RI/
+ gd82gnmk7rVBz9Fw
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/31/2018 05:51 AM, Tim Harvey wrote:
+> On Mon, Jan 29, 2018 at 4:00 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>> On 01/25/2018 05:15 PM, Tim Harvey wrote:
+> <snip>
+>>>>
+>>>> Hmm. This receiver supports multiple output formats, but you advertise only one.
+>>>> That looks wrong. If nothing else, you should be able to switch between RGB and
+>>>> YUV 4:4:4 since they use the same port config.
+>>>>
+>>>> It's a common use-case that you want to switch between RGB and YUV depending on
+>>>> the source material (i.e. if you receive a desktop/graphics then RGB is best, if
+>>>> you receive video then YUV 4:2:2 or 4:2:0 is best).
+>>>>
+>>>> Hardcoding just one format won't do.
+>>>>
+>>>
+>>> I've been thinking about this a bit. I had hard-coded a single format
+>>> for now because I haven't had any good ideas on how to deal with the
+>>> fact that the port mappings would need to differ if you change from
+>>> the RGB888/YUV444 (I think these are referred to as 'planar' formats?)
+>>> to YUV422 (semi-planar) and BT656 formats. It is true though that the
+>>> 36bit (TDA19973) RGB888/YUV444 and 24bit (TDA19971/2) formats can both
+>>> be supported with the same port mappings / pinout.
+>>
+>> Regarding terminology:
+>>
+>> RGB and YUV are typically interleaved, i.e. the color components are
+>> (for two pixels) either RGBRGB for RGB888, YUVYUV for YUV444 or YUYV
+>> for YUV422.
+>>
+>> Planar formats are in practice only seen for YUV and will first output
+>> all Y samples, and then the UV samples. This requires that the hardware
+>> buffers the frame and that's not normally done by HDMI receivers.
+>>
+>> The DMA engine, however, is often able to split up the interleaved YUV
+>> samples that it receives and DMA them to separate buffers, thus turning
+>> an interleaved media bus format to a planar memory format.
+>>
+>> BT656 doesn't refer to how the samples are transferred, instead it
+>> refers to how the hsync and vsync are reported. The enum v4l2_mbus_type
+>> has various options, one of them being BT656.
+>>
+>> Which mbus type is used is board specific (and should come from the
+>> device tree). Whether to transmit RGB888, YUV444 or YUV422 (or possibly
+>> even YUV420) is dynamic and is up to userspace since it is use-case
+>> dependent.
+>>
+>> So you'll never switch between BT656 and CSI, but you can switch between
+>> BT656+RGB and BT656+YUV, or between CSI+RGB and CSI+YUV.
+>>
+>>>
+>>> For example the GW5400 has a TDA19971 mapped to IMX6 CSI_DATA[19:4]
+>>> (16bit) for YUV422. However if you want to use BT656 you have to shift
+>>> the TDA19971 port mappings to get the YCbCr pins mapped to
+>>> CSI_DATA[19:x] and those pin groups are at the bottom of the bus for
+>>> the RGB888/YUV444 format.
+>>
+>> As mentioned above, you wouldn't switch between mbus types.
+>>
+>>>
+>>> I suppose however that perhaps for the example above if I have a 16bit
+>>> width required to support YUV422 there would never be a useful case
+>>> for supporting 8-bit/10-bit/12-bit BT656 on the same board?
+>>
+>> You wouldn't switch between mbus types, but if the device tree configures
+>> BT.656 with a bus width of 24 bits, then the application might very well
+>> want to dynamically switch between 8, 10 and 12 bits per color component.
+>>
+> 
+> Hans,
+> 
+> I just submitted a v7 with multiple format support. Your point about
+> bus_type being specified by dt is exactly what I needed to help make
+> sense of the formats.
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah, good. It took me some time as well before I realized that the confusion
+was in mixing up bus types and formats.
 
-Hi Andy,
+> That said, I'm unsure how to properly test the enum_mbus_code() pad op
+> function. How do you obtain a list of valid formats on a subdev?
+> 
+> I tried the following:
+> root@ventana:~# media-ctl -e 'tda19971 2-0048'
+> /dev/v4l-subdev1
+> root@ventana:~# media-ctl --get-v4l2 '"tda19971 2-0048":0'
+>                 [fmt:UYVY8_2X8/1280x720 field:none colorspace:srgb]
+> ^^^^ calls get_format and returns the 1 and only format available for
+> my tda19971 with 16bit parallel bus
+> root@ventana:~# v4l2-ctl -d /dev/v4l-subdev1 --get-fmt-video-out
+> VIDIOC_G_FMT: failed: Inappropriate ioctl for device
+> root@ventana:~# v4l2-ctl -d /dev/v4l-subdev1 --list-formats-out
+> ioctl: VIDIOC_ENUM_FMT
+> 
+> I'm thinking perhaps enumerating the list of possible formats is a
+> missing feature in media-ctl?
 
-On Wed, Jan 31, 2018 at 03:07:26PM +0900, Andi Shyti wrote:
-> Hi Dmitry,
->=20
-> > > -/*
-> > > - * Copyright (C) 2012 Samsung Electronics Co.Ltd
-> > > - * Author: Joonyoung Shim <jy0922.shim@samsung.com>
-> > > - *
-> > > - * This program is free software; you can redistribute it and/or mod=
-ify
-> > > - * it under the terms of the GNU General Public License version 2 as
-> > > - * published by the Free Software Foundation.
-> > > - */
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +// Samsung S6SY761 Touchscreen device driver
->=20
-> I'm very sorry, but my distrcation will kill me one day.
+Yeah, it is. Surprising, really. Ditto for the SUBDEV_ENUM_FRAME_SIZE/INTERVAL
+ioctls.
 
-More coffee or sleep - your choice ;-)
+I wonder whether this should be added to v4l2-ctl, media-ctl or both. I always
+felt that media-ctl is more about setting up the whole pipeline, whereas v4l2-ctl
+is specific to a V4L2 device.
 
->=20
-> Is it possible to revert this patch or do you want me to send a
-> fix?
+Regards,
 
-When you are on it;
-
-Change
-MODULE_LICENSE("GPL");
-
-to=20
-MODULE_LICENSE("GPL v2");
-To match the former license text and SPDX-identifier.
-
-See include/linux/module.h:
- *	"GPL"				[GNU Public License v2 or later]
- *	"GPL v2"			[GNU Public License v2]
-
-
-Thanks,
-
->=20
-> Sorry,
-> Andi
-
-Best regards
-Marcus Folkesson
-
---ikeVEW9yuYc//A+q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlpxcNQACgkQiIBOb1ld
-UjLkiBAAz3axi8vpqDvFexWxr2odDWF/j4YgRZ0dqltXKkPd6CIyb4EoAwxYBZ6S
-nro8MdGQp1k/x5Eg23RPrO6iCu+OY30qmRc/X6v+1FCN61S3ftKqYvXmuYCu+NDy
-2H1sbXQk1/w5wCNKwUV9BJHytssIPHY3ZCbwaseQTfQriu78X1adn0Bz0G9KMjnQ
-bS7kCW8PnTdZsw5kjwVuEG10XYNjTe+/13476FSSsPRwmIFVNcN6oFXASzc5fVs4
-UuIDU2SF62ayZbvaZfuDxa5W9gfcT8sS0Hb7rZpvYTzL43wxUvkkQiTTQbd4pWWi
-MZaNS3SzIEpWJxzxjWl+l7/tWETy3Qw51FAX6jeLgpLcyW8H8UzkR+pHsfWuufi6
-NEXymJxbZNw1POploSQTMnbWeBQUq1D956m8KOOe6gnP3JP4LMJvDXEX3fQFVHl4
-GKRdNp7lwVbdaOFCVP34SRPj9gtd49TXJyZnF5UBArzixW91BK9AZA/e/z5x5gFd
-K9Dme73mpCgG441wqDa9rYpb0x59ph0pypLBVkUe7g0jBe5Z62U1sdoE1kyB1wnK
-2PLPvcxSOrRy4QLVWHjBMZIrgig3Qfwcj/yW4E05boaMfPep2scF+1NaF0/ohh/F
-3Tnwz6Tgsp/UQpUgsHeq+0mi8ML3v2ViWFNnVjAUw0XnXb4OTXM=
-=kUeJ
------END PGP SIGNATURE-----
-
---ikeVEW9yuYc//A+q--
+	Hans
