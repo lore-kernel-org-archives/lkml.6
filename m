@@ -1,78 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751990AbeAaWxN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 17:53:13 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40013 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbeAaWxL (ORCPT
+        id S1755117AbeAaXHp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 18:07:45 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47510 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755435AbeAaXHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 17:53:11 -0500
-X-Google-Smtp-Source: AH8x225+YaATu4rFPGplIzMu0ulYGraWBru4/f63xJMIm4DtqgRST/h3d+3804R3s0kG7kyaqWLjOQ==
-Date: Wed, 31 Jan 2018 14:53:07 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Andi Shyti <andi.shyti@samsung.com>,
-        Simon Shields <simon@lineageos.org>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>,
-        jeesw@melfas.com
-Subject: Re: [PATCH 7/8] Input: mms114 - add SPDX identifier
-Message-ID: <20180131225307.i5meawlhkwwje4qb@dtor-ws>
-References: <20180129113323.18961-1-andi.shyti@samsung.com>
- <CGME20180129113331epcas2p193a0a99f660793fbfcf2ec825fac0e2c@epcas2p1.samsung.com>
- <20180129113323.18961-8-andi.shyti@samsung.com>
- <20180129194659.df7nlhwx4demk6o6@dtor-ws>
- <20180131060726.GB7575@gangnam.samsung>
- <20180131073138.GA1499@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180131073138.GA1499@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Wed, 31 Jan 2018 18:07:38 -0500
+Date: Wed, 31 Jan 2018 15:07:36 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: don't expose page to fast gup before it's ready
+Message-Id: <20180131150736.9703ab0826121f2e9e23cb8e@linux-foundation.org>
+In-Reply-To: <20180109101050.GA83229@google.com>
+References: <20180108225632.16332-1-yuzhao@google.com>
+        <20180109084622.GF1732@dhcp22.suse.cz>
+        <20180109101050.GA83229@google.com>
+X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 08:31:38AM +0100, Marcus Folkesson wrote:
-> Hi Andy,
-> 
-> On Wed, Jan 31, 2018 at 03:07:26PM +0900, Andi Shyti wrote:
-> > Hi Dmitry,
-> > 
-> > > > -/*
-> > > > - * Copyright (C) 2012 Samsung Electronics Co.Ltd
-> > > > - * Author: Joonyoung Shim <jy0922.shim@samsung.com>
-> > > > - *
-> > > > - * This program is free software; you can redistribute it and/or modify
-> > > > - * it under the terms of the GNU General Public License version 2 as
-> > > > - * published by the Free Software Foundation.
-> > > > - */
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +// Samsung S6SY761 Touchscreen device driver
-> > 
-> > I'm very sorry, but my distrcation will kill me one day.
-> 
-> More coffee or sleep - your choice ;-)
-> 
-> > 
-> > Is it possible to revert this patch or do you want me to send a
-> > fix?
-> 
-> When you are on it;
-> 
-> Change
-> MODULE_LICENSE("GPL");
-> 
-> to 
-> MODULE_LICENSE("GPL v2");
-> To match the former license text and SPDX-identifier.
-> 
-> See include/linux/module.h:
->  *	"GPL"				[GNU Public License v2 or later]
->  *	"GPL v2"			[GNU Public License v2]
+On Tue, 9 Jan 2018 02:10:50 -0800 Yu Zhao <yuzhao@google.com> wrote:
 
-OK, I dropped the patch, please resend the correct version.
+> On Tue, Jan 09, 2018 at 09:46:22AM +0100, Michal Hocko wrote:
+> > On Mon 08-01-18 14:56:32, Yu Zhao wrote:
+> > > We don't want to expose page before it's properly setup. During
+> > > page setup, we may call page_add_new_anon_rmap() which uses non-
+> > > atomic bit op. If page is exposed before it's done, we could
+> > > overwrite page flags that are set by get_user_pages_fast() or
+> > > it's callers. Here is a non-fatal scenario (there might be other
+> > > fatal problems that I didn't look into):
+> > > 
+> > > 	CPU 1				CPU1
+> > > set_pte_at()			get_user_pages_fast()
+> > > page_add_new_anon_rmap()		gup_pte_range()
+> > > 	__SetPageSwapBacked()			SetPageReferenced()
+> > > 
+> > > Fix the problem by delaying set_pte_at() until page is ready.
+> > 
+> > Have you seen this race happening in real workloads or this is a code
+> > review based fix or a theoretical issue? I am primarily asking because
+> > the code is like that at least throughout git era and I do not remember
+> > any issue like this. If you can really trigger this tiny race window
+> > then we should mark the fix for stable.
+> 
+> I didn't observe the race directly. But I did get few crashes when
+> trying to access mem_cgroup of pages returned by get_user_pages_fast().
+> Those page were charged and they showed valid mem_cgroup in kdumps.
+> So this led me to think the problem came from premature set_pte_at().
+> 
+> I think the fact that nobody complained about this problem is because
+> the race only happens when using ksm+swap, and it might not cause
+> any fatal problem even so. Nevertheless, it's nice to have set_pte_at()
+> done consistently after rmap is added and page is charged.
+> 
+> > Also what prevents reordering here? There do not seem to be any barriers
+> > to prevent __SetPageSwapBacked leak after set_pte_at with your patch.
+> 
+> I assumed mem_cgroup_commit_charge() acted as full barrier. Since you
+> explicitly asked the question, I realized my assumption doesn't hold
+> when memcg is disabled. So we do need something to prevent reordering
+> in my patch. And it brings up the question whether we want to add more
+> barrier to other places that call page_add_new_anon_rmap() and
+> set_pte_at().
 
-Thanks.
-
--- 
-Dmitry
+No progress here?  I have the patch marked "to be updated", hence it is
+stuck.  Please let's get it finished off for 4.17-rc1.
