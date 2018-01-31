@@ -1,125 +1,335 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753732AbeAaQDH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 11:03:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54724 "EHLO mail.kernel.org"
+        id S1753773AbeAaQDP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 11:03:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753699AbeAaQDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 11:03:05 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28652178D
+        id S1753742AbeAaQDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 11:03:12 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6C121798
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AH8x2277OTbQD95aGPM7/IOn+o38ZFz0wDkEQMJMlOHmoNO4WolEqwkpKUS/Eiu93EFMIGtaA8GQ36RondBMQbCbkXM=
-MIME-Version: 1.0
-In-Reply-To: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 31 Jan 2018 10:02:43 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-Message-ID: <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+From: Andy Lutomirski <luto@kernel.org>
+To: linux-kernel@vger.kernel.org, x86@kernel.org
+Cc: linux-mm@kvack.org, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bpetkov@suse.de>,
+        Kees Cook <keescook@google.com>, Hugh Dickins <hughd@google.com>,
+        Brian Gerst <brgerst@gmail.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Rik van Riel <riel@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, Eduardo Valentin <eduval@amazon.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH] x86/mm: Rename flush_tlb_single() and flush_tlb_one()
+Date: Wed, 31 Jan 2018 08:03:10 -0800
+Message-Id: <3303b02e3c3d049dc5235d5651e0ae6d29a34354.1517414378.git.luto@kernel.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 1:41 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> A root complex usually consist of a host bridge and multiple P2P bridges,
-> and someone may express that in the form of a root node with many subnodes
-> and list all four interrupts for each slot (child node) in the root node
-> like this:
->
->         pcie-controller {
->                 ...
->                 interrupt-map-mask = <0xf800 0 0 7>;
->                 interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
->                                  0x0800 0 0 {INTx} &{interrupt parent} ...>;
->
->                 pcie@0,0 {
->                         reg = <0x0000 0 0 0 0>;
->                         ...
->                 };
->
->                 pcie@1,0 {
->                         reg = <0x0800 0 0 0 0>;
->                         ...
->                 };
->         };
->
-> As shown above, we'd like to propagate IRQs from a root port to the devices
-> in the hierarchy below it in this way.  However, it seems that the current
-> parser couldn't handle such cases and will get something unexpected below:
->
->         pcieport 0000:00:01.0: assign IRQ: got 213
->         igb 0000:01:00.0: assign IRQ: got 212
->
-> There is a device which is connected to 2nd slot, but the port doesn't share
-> the same IRQ with its downstream devices.  The problem here is that, if the
-> loop found a P2P bridge, it wouldn't check whether the reg property exists
-> in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
-> thus the subsequent flow couldn't correctly resolve them.
->
-> Fix this by adding a check to fallback to standard device tree parsing.
->
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
-> Please refer to the previous discussion thread: https://patchwork.ozlabs.org/patch/829108/
-> ---
->  drivers/of/of_pci_irq.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/of/of_pci_irq.c b/drivers/of/of_pci_irq.c
-> index 3a05568..e445866 100644
-> --- a/drivers/of/of_pci_irq.c
-> +++ b/drivers/of/of_pci_irq.c
-> @@ -86,8 +86,18 @@ int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *out_irq
->         out_irq->np = ppnode;
->         out_irq->args_count = 1;
->         out_irq->args[0] = pin;
-> -       laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
-> -       laddr[1] = laddr[2] = cpu_to_be32(0);
-> +
-> +       if (!dn && ppnode) {
+flush_tlb_single() and flush_tlb_one() sound almost identical, but
+they really mean "flush one user translation" and "flush one kernel
+translation".  Rename them to flush_tlb_one_user() and
+flush_tlb_one_kernel() to make the semantics more obvious.
 
-I would think whether you have a child device in DT or not is
-irrelevant. If it's the bridge address you need to look at for
-resolving interrupts, that would be true regardless.
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bpetkov@suse.de>
+Cc: Kees Cook <keescook@google.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Linux-MM <linux-mm@kvack.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+---
 
-> +               const __be32 *addr;
-> +
-> +               addr = of_get_property(ppnode, "reg", NULL);
-> +               if (addr)
-> +                       memcpy(laddr, addr, 3);
+I was looking at some PTI-related code, and the flush-one-address code
+is unnecessarily hard to understand because the names of the helpers are
+uninformative.  This came up during PTI review, but no one got around to
+doing it.
 
-Can't you just adjust pdev to be ppdev in this case and then use the
-existing code to set laddr?
+ arch/x86/include/asm/paravirt.h       |  4 ++--
+ arch/x86/include/asm/paravirt_types.h |  2 +-
+ arch/x86/include/asm/pgtable_32.h     |  2 +-
+ arch/x86/include/asm/tlbflush.h       | 27 ++++++++++++++++++++-------
+ arch/x86/kernel/paravirt.c            |  6 +++---
+ arch/x86/mm/init_64.c                 |  2 +-
+ arch/x86/mm/ioremap.c                 |  2 +-
+ arch/x86/mm/kmmio.c                   |  2 +-
+ arch/x86/mm/pgtable_32.c              |  2 +-
+ arch/x86/mm/tlb.c                     |  6 +++---
+ arch/x86/platform/uv/tlb_uv.c         |  2 +-
+ arch/x86/xen/mmu_pv.c                 |  6 +++---
+ include/trace/events/xen.h            |  2 +-
+ 13 files changed, 39 insertions(+), 26 deletions(-)
 
-Please copy the powerpc list on this. I worry that touching this
-function will break something.
-
-BTW, this code is moving to drivers/pci/ in 4.16.
-
-> +       } else {
-> +               laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
-> +               laddr[1] = laddr[2] = cpu_to_be32(0);
-> +       }
-> +
->         rc = of_irq_parse_raw(laddr, out_irq);
->         if (rc)
->                 goto err;
-> --
-> 1.9.1
->
+diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+index 892df375b615..554841fab717 100644
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -297,9 +297,9 @@ static inline void __flush_tlb_global(void)
+ {
+ 	PVOP_VCALL0(pv_mmu_ops.flush_tlb_kernel);
+ }
+-static inline void __flush_tlb_single(unsigned long addr)
++static inline void __flush_tlb_one_user(unsigned long addr)
+ {
+-	PVOP_VCALL1(pv_mmu_ops.flush_tlb_single, addr);
++	PVOP_VCALL1(pv_mmu_ops.flush_tlb_one_user, addr);
+ }
+ 
+ static inline void flush_tlb_others(const struct cpumask *cpumask,
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 6ec54d01972d..f624f1f10316 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -217,7 +217,7 @@ struct pv_mmu_ops {
+ 	/* TLB operations */
+ 	void (*flush_tlb_user)(void);
+ 	void (*flush_tlb_kernel)(void);
+-	void (*flush_tlb_single)(unsigned long addr);
++	void (*flush_tlb_one_user)(unsigned long addr);
+ 	void (*flush_tlb_others)(const struct cpumask *cpus,
+ 				 const struct flush_tlb_info *info);
+ 
+diff --git a/arch/x86/include/asm/pgtable_32.h b/arch/x86/include/asm/pgtable_32.h
+index e67c0620aec2..e55466760ff8 100644
+--- a/arch/x86/include/asm/pgtable_32.h
++++ b/arch/x86/include/asm/pgtable_32.h
+@@ -61,7 +61,7 @@ void paging_init(void);
+ #define kpte_clear_flush(ptep, vaddr)		\
+ do {						\
+ 	pte_clear(&init_mm, (vaddr), (ptep));	\
+-	__flush_tlb_one((vaddr));		\
++	__flush_tlb_one_kernel((vaddr));		\
+ } while (0)
+ 
+ #endif /* !__ASSEMBLY__ */
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 2b8f18ca5874..783acd98a34c 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -140,7 +140,7 @@ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
+ #else
+ #define __flush_tlb() __native_flush_tlb()
+ #define __flush_tlb_global() __native_flush_tlb_global()
+-#define __flush_tlb_single(addr) __native_flush_tlb_single(addr)
++#define __flush_tlb_one_user(addr) __native_flush_tlb_one_user(addr)
+ #endif
+ 
+ static inline bool tlb_defer_switch_to_init_mm(void)
+@@ -400,7 +400,7 @@ static inline void __native_flush_tlb_global(void)
+ /*
+  * flush one page in the user mapping
+  */
+-static inline void __native_flush_tlb_single(unsigned long addr)
++static inline void __native_flush_tlb_one_user(unsigned long addr)
+ {
+ 	u32 loaded_mm_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
+ 
+@@ -437,18 +437,31 @@ static inline void __flush_tlb_all(void)
+ /*
+  * flush one page in the kernel mapping
+  */
+-static inline void __flush_tlb_one(unsigned long addr)
++static inline void __flush_tlb_one_kernel(unsigned long addr)
+ {
+ 	count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ONE);
+-	__flush_tlb_single(addr);
++
++	/*
++	 * If PTI is off, then __flush_tlb_one_user() is just INVLPG or its
++	 * paravirt equivalent.  Even with PCID, this is sufficient: we only
++	 * use PCID if we also use global PTEs for the kernel mapping, and
++	 * INVLPG flushes global translations across all address spaces.
++	 *
++	 * If PTI is on, then the kernel is mapped with non-global PTEs, and
++	 * __flush_tlb_one_user() will flush the given address for the current
++	 * kernel address space and for its usermode counterpart, but it goes
++	 * not flush it for other address spaces.
++	 */
++	__flush_tlb_one_user(addr);
+ 
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return;
+ 
+ 	/*
+-	 * __flush_tlb_single() will have cleared the TLB entry for this ASID,
+-	 * but since kernel space is replicated across all, we must also
+-	 * invalidate all others.
++	 * See above.  We need to propagate the flush to all other address
++	 * spaces.  In principle, we only need to propagate it to kernelmode
++	 * address spaces, but the extra bookkeeping we would need is not
++	 * worth it.
+ 	 */
+ 	invalidate_other_asid();
+ }
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 041096bdef86..99dc79e76bdc 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -200,9 +200,9 @@ static void native_flush_tlb_global(void)
+ 	__native_flush_tlb_global();
+ }
+ 
+-static void native_flush_tlb_single(unsigned long addr)
++static void native_flush_tlb_one_user(unsigned long addr)
+ {
+-	__native_flush_tlb_single(addr);
++	__native_flush_tlb_one_user(addr);
+ }
+ 
+ struct static_key paravirt_steal_enabled;
+@@ -401,7 +401,7 @@ struct pv_mmu_ops pv_mmu_ops __ro_after_init = {
+ 
+ 	.flush_tlb_user = native_flush_tlb,
+ 	.flush_tlb_kernel = native_flush_tlb_global,
+-	.flush_tlb_single = native_flush_tlb_single,
++	.flush_tlb_one_user = native_flush_tlb_one_user,
+ 	.flush_tlb_others = native_flush_tlb_others,
+ 
+ 	.pgd_alloc = __paravirt_pgd_alloc,
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 4a837289f2ad..60ae1fe3609f 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -256,7 +256,7 @@ static void __set_pte_vaddr(pud_t *pud, unsigned long vaddr, pte_t new_pte)
+ 	 * It's enough to flush this one mapping.
+ 	 * (PGE mappings get flushed as well)
+ 	 */
+-	__flush_tlb_one(vaddr);
++	__flush_tlb_one_kernel(vaddr);
+ }
+ 
+ void set_pte_vaddr_p4d(p4d_t *p4d_page, unsigned long vaddr, pte_t new_pte)
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index c45b6ec5357b..e2db83bebc3b 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -820,5 +820,5 @@ void __init __early_set_fixmap(enum fixed_addresses idx,
+ 		set_pte(pte, pfn_pte(phys >> PAGE_SHIFT, flags));
+ 	else
+ 		pte_clear(&init_mm, addr, pte);
+-	__flush_tlb_one(addr);
++	__flush_tlb_one_kernel(addr);
+ }
+diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
+index 58477ec3d66d..7c8686709636 100644
+--- a/arch/x86/mm/kmmio.c
++++ b/arch/x86/mm/kmmio.c
+@@ -168,7 +168,7 @@ static int clear_page_presence(struct kmmio_fault_page *f, bool clear)
+ 		return -1;
+ 	}
+ 
+-	__flush_tlb_one(f->addr);
++	__flush_tlb_one_kernel(f->addr);
+ 	return 0;
+ }
+ 
+diff --git a/arch/x86/mm/pgtable_32.c b/arch/x86/mm/pgtable_32.c
+index c3c5274410a9..9bb7f0ab9fe6 100644
+--- a/arch/x86/mm/pgtable_32.c
++++ b/arch/x86/mm/pgtable_32.c
+@@ -63,7 +63,7 @@ void set_pte_vaddr(unsigned long vaddr, pte_t pteval)
+ 	 * It's enough to flush this one mapping.
+ 	 * (PGE mappings get flushed as well)
+ 	 */
+-	__flush_tlb_one(vaddr);
++	__flush_tlb_one_kernel(vaddr);
+ }
+ 
+ unsigned long __FIXADDR_TOP = 0xfffff000;
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 012d02624848..0c936435ea93 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -492,7 +492,7 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
+ 	 *    flush that changes context.tlb_gen from 2 to 3.  If they get
+ 	 *    processed on this CPU in reverse order, we'll see
+ 	 *     local_tlb_gen == 1, mm_tlb_gen == 3, and end != TLB_FLUSH_ALL.
+-	 *    If we were to use __flush_tlb_single() and set local_tlb_gen to
++	 *    If we were to use __flush_tlb_one_user() and set local_tlb_gen to
+ 	 *    3, we'd be break the invariant: we'd update local_tlb_gen above
+ 	 *    1 without the full flush that's needed for tlb_gen 2.
+ 	 *
+@@ -513,7 +513,7 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
+ 
+ 		addr = f->start;
+ 		while (addr < f->end) {
+-			__flush_tlb_single(addr);
++			__flush_tlb_one_user(addr);
+ 			addr += PAGE_SIZE;
+ 		}
+ 		if (local)
+@@ -660,7 +660,7 @@ static void do_kernel_range_flush(void *info)
+ 
+ 	/* flush range by one by one 'invlpg' */
+ 	for (addr = f->start; addr < f->end; addr += PAGE_SIZE)
+-		__flush_tlb_one(addr);
++		__flush_tlb_one_kernel(addr);
+ }
+ 
+ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
+diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
+index 8538a6723171..7d5d53f36a7a 100644
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -299,7 +299,7 @@ static void bau_process_message(struct msg_desc *mdp, struct bau_control *bcp,
+ 		local_flush_tlb();
+ 		stat->d_alltlb++;
+ 	} else {
+-		__flush_tlb_single(msg->address);
++		__flush_tlb_one_user(msg->address);
+ 		stat->d_onetlb++;
+ 	}
+ 	stat->d_requestee++;
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index d85076223a69..aae88fec9941 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -1300,12 +1300,12 @@ static void xen_flush_tlb(void)
+ 	preempt_enable();
+ }
+ 
+-static void xen_flush_tlb_single(unsigned long addr)
++static void xen_flush_tlb_one_user(unsigned long addr)
+ {
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
+ 
+-	trace_xen_mmu_flush_tlb_single(addr);
++	trace_xen_mmu_flush_tlb_one_user(addr);
+ 
+ 	preempt_disable();
+ 
+@@ -2370,7 +2370,7 @@ static const struct pv_mmu_ops xen_mmu_ops __initconst = {
+ 
+ 	.flush_tlb_user = xen_flush_tlb,
+ 	.flush_tlb_kernel = xen_flush_tlb,
+-	.flush_tlb_single = xen_flush_tlb_single,
++	.flush_tlb_one_user = xen_flush_tlb_one_user,
+ 	.flush_tlb_others = xen_flush_tlb_others,
+ 
+ 	.pgd_alloc = xen_pgd_alloc,
+diff --git a/include/trace/events/xen.h b/include/trace/events/xen.h
+index b8adf05c534e..7dd8f34c37df 100644
+--- a/include/trace/events/xen.h
++++ b/include/trace/events/xen.h
+@@ -368,7 +368,7 @@ TRACE_EVENT(xen_mmu_flush_tlb,
+ 	    TP_printk("%s", "")
+ 	);
+ 
+-TRACE_EVENT(xen_mmu_flush_tlb_single,
++TRACE_EVENT(xen_mmu_flush_tlb_one_user,
+ 	    TP_PROTO(unsigned long addr),
+ 	    TP_ARGS(addr),
+ 	    TP_STRUCT__entry(
+-- 
+2.14.3
