@@ -1,62 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751918AbeAaWqB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 17:46:01 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33244 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751650AbeAaWp7 (ORCPT
+        id S1751837AbeAaWtB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 17:49:01 -0500
+Received: from smtprelay0252.hostedemail.com ([216.40.44.252]:60410 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751643AbeAaWtA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 17:45:59 -0500
-X-Google-Smtp-Source: AH8x227YDEBu5q2sLu24uefZzK0S0z9ze5CExG9rLqPolYPq577w4MTxgSFOsG/XW3NG2VvFj7so0Q==
-Message-ID: <1517438756.3715.108.camel@gmail.com>
-Subject: [PATCH] iommu/vt-d: add NUMA awareness to intel_alloc_coherent()
-From: Eric Dumazet <eric.dumazet@gmail.com>
-To: linux-kernel <linux-kernel@vger.kernel.org>
-Cc: Benjamin Serebrin <serebrin@google.com>,
-        David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, netdev <netdev@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>
-Date: Wed, 31 Jan 2018 14:45:56 -0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
+        Wed, 31 Jan 2018 17:49:00 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:7522:7974:10004:10400:10848:11232:11658:11914:12663:12740:12760:12895:13069:13311:13357:13439:14096:14097:14180:14659:21060:21080:21325:21326:21611:21627:30041:30054:30055:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: wire77_88947b251a82e
+X-Filterd-Recvd-Size: 1560
+Message-ID: <1517438936.7489.8.camel@perches.com>
+Subject: Re: checkpatch changes for 4.16
+From: Joe Perches <joe@perches.com>
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date: Wed, 31 Jan 2018 14:48:56 -0800
+In-Reply-To: <20180131214630.GF11433@eros>
+References: <20180131214630.GF11433@eros>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+On Thu, 2018-02-01 at 08:46 +1100, Tobin C. Harding wrote:
+> Hi Joe,
+> 
+> Can I please bother you with a maintainer question.  I know everyone is
+> super busy right now, I'm asking for a smidgen of your time instead of
+> doing it wrong and taking up some of Linus' time since it's merge window
+> and all that.
+> 
+> I have the checkpatch set queued ready to do a GIT PULL to Linus.  My
+> concern is that the subject line may not be unique if checkpatch changes
+> are coming in from various trees this merge window. I have tagged the
+> pull request with
 
-Some devices (like mlx4) try hard to allocate memory on selected
-NUMA node, but it turns out intel_alloc_coherent() is not NUMA
-aware yet.
+Personally, I think you could let Andrew Morton pick them
+up as very few patches for checkpatch go in any other way.
 
-Note that dma_generic_alloc_coherent() in arch/x86/kernel/pci-dma.c
-gets this right.
+What patches are you submitting again?
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Benjamin Serebrin <serebrin@google.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
----
- drivers/iommu/intel-iommu.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Is it just
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index a1373cf343269455808f66ad18dc0a2fb7aa73f2..0efef077abc099eb29ebc5cefdd1b996f025dffd 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3734,8 +3734,11 @@ static void *intel_alloc_coherent(struct device *dev, size_t size,
- 		}
- 	}
- 
--	if (!page)
--		page = alloc_pages(flags, order);
-+	if (!page) {
-+		page = alloc_pages_node(dev_to_node(dev), flags, order);
-+		if (!page)
-+			page = alloc_pages(flags, order);
-+	}
- 	if (!page)
- 		return NULL;
- 	memset(page_address(page), 0, size);
+commit 7b1924a1d930 ("vsprintf: add printk specifier %px")
+
+or is there something else?
