@@ -1,157 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeAaRDg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 12:03:36 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34588 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752300AbeAaRDf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 12:03:35 -0500
-Date: Wed, 31 Jan 2018 17:03:30 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wakasugi.jb@om.asahi-kasei.co.jp,
-        shengjiu.wang@nxp.com, daniel.baluta@nxp.com, mihai.serban@gmail.com,
-        linux-imx@nxp.com, Mihai Serban <mihai.serban@nxp.com>
-Subject: Re: [PATCH] ASoC: codecs: Add support for AK4458 DAC driver
-Message-ID: <20180131170330.GB7763@sirena.org.uk>
-References: <1517404809-25250-1-git-send-email-cosmin.samoila@nxp.com>
+        id S1753198AbeAaRGG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 12:06:06 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:36174 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752360AbeAaRGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 12:06:05 -0500
+Date: Wed, 31 Jan 2018 18:05:55 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: X86 ML <x86@kernel.org>, Jiri Kosina <jkosina@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] x86/vdso: Remove retpoline flags
+Message-ID: <20180131170555.f6aboqitcvmgvhso@pd.tnic>
+References: <20180131163312.7144-1-bp@alien8.de>
+ <CALCETrVsZWL7ZDnGMyoN8V4mmL5NO+SARQBV1U2OzrVscMsoig@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1517404809-25250-1-git-send-email-cosmin.samoila@nxp.com>
-X-Cookie: Disk crisis, please clean up!
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CALCETrVsZWL7ZDnGMyoN8V4mmL5NO+SARQBV1U2OzrVscMsoig@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 31, 2018 at 08:35:30AM -0800, Andy Lutomirski wrote:
+> Hmm.  I'm okay with this, but I'd also be okay doing nothing and
+> figuring out WTF happened if an upstream kernel fails to build like
+> this.
 
---wq9mPyueHGvFACwf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Oh sure, I'm sending it only as an FYI to show that something like this
+*might* happen so that we're aware. I've taken it into our trees where
+the 3.0 vdso code generates an indirect call to the thunk:
 
-On Wed, Jan 31, 2018 at 03:20:09PM +0200, Cosmin-Gabriel Samoila wrote:
+        .loc 1 41 0
+        movq    -10489696, %rax # MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.vread, MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.vread
+        call    __x86_indirect_thunk_rax
 
-This looks pretty good overall, I've got some issues below but nothing
-too major:
+Without the retpoline flags, the code looks like this:
 
-> +static int ak4458_i2c_remove(struct i2c_client *i2c)
-> +{
-> +	ak4458_remove(&i2c->dev);
-> +	pm_runtime_disable(&i2c->dev);
+ 170:   4c 8b 34 25 88 f0 5f    mov    0xffffffffff5ff088,%r14
+ 177:   ff 
+ 178:   44 8b 2c 25 90 f0 5f    mov    0xffffffffff5ff090,%r13d
+ 17f:   ff 
+ 180:   ff 14 25 a0 f0 5f ff    callq  *0xffffffffff5ff0a0		<---
+ 187:   4c 8b 0c 25 a8 f0 5f    mov    0xffffffffff5ff0a8,%r9
+ 18e:   ff 
+ 18f:   4c 8b 04 25 b0 f0 5f    mov    0xffffffffff5ff0b0,%r8
 
-It's weird that the runtime PM handling is here and not in the shared
-code, and that it only exists in the I2C version.  Why is this?
 
-> +static const struct soc_enum ak4458_dac_enum[] = {
-> +/*0*/	SOC_ENUM_SINGLE(AK4458_01_CONTROL2, 1,
-> +			ARRAY_SIZE(ak4458_dem_select_texts),
-> +			ak4458_dem_select_texts),
-> +/*1*/	SOC_ENUM_SINGLE(AK4458_0A_CONTROL6, 0,
+which is:
 
-The fact that you need these comments is why these arrays are a bad idea
-- just use individually named variables as other drivers do.
+        movl    -10489712, %r12d        # MEM[(const struct vsyscall_gtod_data *)-10489728B].wall_time_nsec,
+.LVL46:
+.LBB125:
+.LBB126:
+        .loc 1 41 0
+        call    *-10489696      # MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.vread		<---
+.LVL47:
+        movq    -10489688, %r9  # MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.cycle_last, D.23457
+        movq    -10489680, %r8  # MEM[(const struct vsyscall_gtod_data *)-10489728B].clock.mask, D.23457
 
-> +static const struct snd_kcontrol_new ak4458_snd_controls[] = {
-> +	SOC_SINGLE_TLV("AK4458 L1ch Digital Volume",
-> +		       AK4458_03_LCHATT, 0/*shift*/, 0xFF/*max value*/,
-> +		       0/*invert*/, latt_tlv),
-> +	SOC_SINGLE_TLV("AK4458 R1ch Digital Volume",
-> +		       AK4458_04_RCHATT, 0, 0xFF, 0, ratt_tlv),
 
-It'd be more idiomatic to combine these into stereo pairs than have them
-as single channel controls.
+notrace static inline long vgetns(void)
+{
+        long v;
+        cycles_t (*vread)(void);
+        vread = gtod->clock.vread;
+        v = (vread() - gtod->clock.cycle_last) & gtod->clock.mask;
+	^^^^^^^^^^^^
 
-> +static const char * const ak4458_dac_select_texts[] = { "OFF", "ON" };
+so it has been converted to an absolute memory reference in that CALL -
+nothing funky through a register.
 
-This looks like the users should be switch controls - what's the goal
-here?
+-- 
+Regards/Gruss,
+    Boris.
 
-> +	rstn = snd_soc_read(codec, AK4458_00_CONTROL1);
-> +	rstn &= ~AK4458_RSTN_MASK;
-> +
-> +	if (bit)
-> +		rstn |= AK4458_RSTN;
-> +
-> +	snd_soc_write(codec, AK4458_00_CONTROL1, rstn);
-
-This looks like an open coded snd_soc_update_bits()?
-
-> +static int ak4458_hw_params(struct snd_pcm_substream *substream,
-> +			    struct snd_pcm_hw_params *params,
-> +			    struct snd_soc_dai *dai)
-> +{
-> +	struct snd_soc_codec *codec = dai->codec;
-> +	struct ak4458_priv *ak4458 = snd_soc_codec_get_drvdata(codec);
-> +	u8 format;
-> +	int pcm_width = max(params_physical_width(params), ak4458->slot_width);
-> +
-> +#ifdef AK4458_ACKS_USE_MANUAL_MODE
-> +	u8 dfs1, dfs2;
-> +#endif
-
-What's this and why is it a compile time option?
-
-> +	case 32:
-> +		if (ak4458->fmt == SND_SOC_DAIFMT_I2S)
-> +			format |= AK4458_DIF_32BIT_I2S;
-> +		else if (ak4458->fmt == SND_SOC_DAIFMT_LEFT_J)
-> +			format |= AK4458_DIF_32BIT_MSB;
-> +		else if (ak4458->fmt == SND_SOC_DAIFMT_RIGHT_J)
-> +			format |= AK4458_DIF_32BIT_LSB;
-> +		else if (ak4458->fmt == SND_SOC_DAIFMT_DSP_B)
-> +			format |= AK4458_DIF_32BIT_MSB;
-> +		else
-> +			return -EINVAL;
-
-This should be a switch statement.
-
-> +	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-> +	case SND_SOC_DAIFMT_I2S:
-> +	case SND_SOC_DAIFMT_LEFT_J:
-> +	case SND_SOC_DAIFMT_RIGHT_J:
-> +		ak4458->fmt = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
-> +		break;
-> +	case SND_SOC_DAIFMT_DSP_B:
-> +		ak4458->fmt = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
-> +		break;
-
-All these cases seem to be the same?
-
-> +static int ak4458_trigger(struct snd_pcm_substream *substream, int cmd,
-> +			  struct snd_soc_dai *codec_dai)
-> +{
-> +	int ret = 0;
-> +
-> +	dev_dbg(codec_dai->dev, "%s(%d)\n", __func__, __LINE__);
-> +	return ret;
-> +}
-
-Remove empty functions.
-
-> +	ak4458->mute_gpio = of_get_named_gpio(np, "ak4458,mute_gpio", 0);
-> +	if (gpio_is_valid(ak4458->mute_gpio)) {
-
-Given that this is new code it'd be better to use GPIO descriptors, this
-will also allow support for non-DT systems - use devm_gpiod_get() and
-the matching APIs.
-
---wq9mPyueHGvFACwf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpx9uEACgkQJNaLcl1U
-h9Dplgf9ExkcH0EVVBV92qJzfdZ+BdQSH7X89xyHte5beAH/UqVUOcuYQp9rOkow
-4yE/xB3BxN2elwnkiSKa9fkLrH7pejZIn3KJxloPXwRcrlKawUl91i/yoBjvisqy
-yY6MKMcgHiqIUNcyfRv8nKaHPqMRiYQT4mIpOjkrsZFv/60rb5ZSpL5Mf9pYfy+S
-a+dsQGwZMS7YYKNrOKOy4dRP9HI70Edd2CJrTp3A2w88jBWSSjfJ0bU//0lNYWga
-glTz+r7QJfn6nQOaOL0SWGgWLMHsgqCM5l9IMh61J7CdUMLWKMz7hRUSJiIQuFir
-Qep7SjeJIq5aDmzdvofWCW5hnQcjuw==
-=gzQc
------END PGP SIGNATURE-----
-
---wq9mPyueHGvFACwf--
+Good mailing practices for 400: avoid top-posting and trim the reply.
