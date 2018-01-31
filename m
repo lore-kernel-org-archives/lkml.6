@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752053AbeAaFQ3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 00:16:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35021 "EHLO mx2.suse.de"
+        id S1752309AbeAaFQk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 00:16:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35047 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751728AbeAaFQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 00:16:28 -0500
+        id S1751728AbeAaFQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 00:16:35 -0500
 From: NeilBrown <neilb@suse.com>
 To: David Howells <dhowells@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
         Anna Schumaker <Anna.Schumaker@Netapp.com>
 Date: Wed, 31 Jan 2018 16:15:39 +1100
-Subject: [md PATCH 0/4] Minor 'cred' improvements prepare for NFS conversion
+Subject: [PATCH 1/4] cred: add cred_fscmp() for comparing creds.
 Cc: NFS <linux-nfs@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Message-ID: <151737571564.14845.2874586176125198504.stgit@noble>
+Message-ID: <151737573947.14845.5248732383783116263.stgit@noble>
+In-Reply-To: <151737571564.14845.2874586176125198504.stgit@noble>
+References: <151737571564.14845.2874586176125198504.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -23,35 +25,103 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
- NFS and SUNRPC have an internal "rpc_cred" which plays two distinct
- roles, one of which is much the same as 'struct cred' (which didn't
- exist when rpc_cred was created).
- I want to replace that usage of rpc_cred with 'struct cred'.
- Doing so requires some minor improvements to cred.c and cred.h as
- follows.
+NFS needs to compare to credentials, to see if they can
+be treated the same w.r.t. filesystem access.  Sometimes
+an ordering is needed when credentials are used as a key
+to an rbtree.
+NFS current has its own private credential management from
+before 'struct cred' existed.  To move it over to more consistent
+use of 'struct cred' we need a comparison function.
+This patch adds that function.
 
- It isn't clear to me who "maintains" cred.c and cred.h, so I'm hoping
- that Andrew Morton will take these (if no-one complains).
- Alternately if I got one or two credible "Acked-by"s, they could go
- upstream through the NFS tree when the rest of the patches are ready.
-
-Thanks,
-NeilBrown
-
-
+Signed-off-by: NeilBrown <neilb@suse.com>
 ---
+ include/linux/cred.h |    1 +
+ kernel/cred.c        |   55 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
 
-NeilBrown (4):
-      cred: add cred_fscmp() for comparing creds.
-      cred: add get_cred_rcu()
-      cred: export get_task_cred().
-      cred: allow get_cred() and put_cred() to be given NULL.
-
-
- include/linux/cred.h |   26 ++++++++++++++++++----
- kernel/cred.c        |   58 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 78 insertions(+), 6 deletions(-)
-
---
-Signature
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 631286535d0f..6dd51e503f23 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -164,6 +164,7 @@ extern int change_create_files_as(struct cred *, struct inode *);
+ extern int set_security_override(struct cred *, u32);
+ extern int set_security_override_from_ctx(struct cred *, const char *);
+ extern int set_create_files_as(struct cred *, struct inode *);
++extern int cred_fscmp(const struct cred *, const struct cred *);
+ extern void __init cred_init(void);
+ 
+ /*
+diff --git a/kernel/cred.c b/kernel/cred.c
+index ecf03657e71c..4ce75c6fb752 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -19,6 +19,7 @@
+ #include <linux/security.h>
+ #include <linux/binfmts.h>
+ #include <linux/cn_proc.h>
++#include <linux/uidgid.h>
+ 
+ #if 0
+ #define kdebug(FMT, ...)						\
+@@ -564,6 +565,60 @@ void revert_creds(const struct cred *old)
+ }
+ EXPORT_SYMBOL(revert_creds);
+ 
++/**
++ * cred_fscmp - Compare to credentials with respect to filesystem access.
++ * @a: The first credential
++ * @b: The second credential
++ *
++ * cred_cmp() will return zero if both credentials have the same
++ * fsuid, fsgid, and supplementary groups.  That is, if they will both
++ * provide the same access to files based on mode/uid/gid.
++ * If the credentials are different, then either -1 or 1 will
++ * be returned depending on whether @a comes before or after @b
++ * respectively in an arbitrary, but stable, ordering of credentials.
++ *
++ * Return: -1, 0, or 1 depending on comparison
++ */
++int cred_fscmp(const struct cred *a, const struct cred *b)
++{
++	struct group_info *ga, *gb;
++	int g;
++
++	if (a == b)
++		return 0;
++	if (uid_lt(a->fsuid, b->fsuid))
++		return -1;
++	if (uid_gt(a->fsuid, b->fsuid))
++		return 1;
++
++	if (gid_lt(a->fsgid, b->fsgid))
++		return -1;
++	if (gid_gt(a->fsgid, b->fsgid))
++		return 1;
++
++	ga = a->group_info;
++	gb = b->group_info;
++	if (ga == gb)
++		return 0;
++	if (ga == NULL)
++		return -1;
++	if (gb == NULL)
++		return 1;
++	if (ga->ngroups < gb->ngroups)
++		return -1;
++	if (ga->ngroups > gb->ngroups)
++		return 1;
++
++	for (g = 0; g < ga->ngroups; g++) {
++		if (gid_lt(ga->gid[g], gb->gid[g]))
++			return -1;
++		if (gid_gt(ga->gid[g], gb->gid[g]))
++			return 1;
++	}
++	return 0;
++}
++EXPORT_SYMBOL(cred_fscmp);
++
+ /*
+  * initialise the credentials stuff
+  */
