@@ -1,148 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751829AbeBAVSH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 16:18:07 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34698 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751701AbeBAVR7 (ORCPT
+        id S1751857AbeBAVWR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 16:22:17 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:18193 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751586AbeBAVWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 16:17:59 -0500
-X-Google-Smtp-Source: AH8x226KZh6CwSnEKZajEtbADz2cd7XFsdcv3hKdKVrxed6NC1Yg2wI8v2NXiUqQUiuElhnbF6Gr7M9iOPAE9/6fLN0=
-MIME-Version: 1.0
-In-Reply-To: <20180201202158.GA11477@castle.DHCP.thefacebook.com>
-References: <20180125001911.15597-1-guro@fb.com> <20180125.120302.1117695034222616751.davem@davemloft.net>
- <20180131215401.GA8956@castle> <20180201.101655.1316424669256047119.davem@davemloft.net>
- <20180201202158.GA11477@castle.DHCP.thefacebook.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 1 Feb 2018 13:17:56 -0800
-Message-ID: <CANn89iLBOUZNxNqrECvZ7ktX8uu0j3REiZaqTwr=SP-U=vAPpQ@mail.gmail.com>
-Subject: Re: [PATCH net] net: memcontrol: charge allocated memory after mem_cgroup_sk_alloc()
-To: Roman Gushchin <guro@fb.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Feb 2018 16:22:08 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180201212206epoutp0358d644ce416b33ad78c7c09ac8f90e72~PUIPNvtyy0845808458epoutp03Y
+X-AuditID: b6c32a37-44bff70000001029-1b-5a7384fdda33
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5A7384FC.8030400@samsung.com>
+Date: Fri, 02 Feb 2018 06:22:04 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: Hans de Goede <hdegoede@redhat.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert
+ "extcon: axp288: Redo charger type detection a couple of seconds after probe()"
+In-reply-to: <20180125171010.11169-1-hdegoede@redhat.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTmt7td76TVr/nosKjmDSHFrd05c5pKkcQgg0GEMQu96Y9pukf3
+        TunhH73IWNLLwBhqTyIqaNmSylJbpX/0pLICa5aV9CIle2hRtust6r/vnPN953x8HIbSvlbp
+        mAq3jwhuvoqlY5Vt11IMhp/bRIepvi7R+qGnUWF9cKmJtvZtPkFbx8J3FQuUtuDAKZVtqKOX
+        tu0KnUS2kdaZdqWD5JQTvowIeuIu9ZRVuJ257JJlxYuKM+aZOAOXZc1k9W7eRXLZ/AK7YXFF
+        VfQkq6/hq6qjLTsviuzcvBzBU+0j+nKP6MtlizjObORMmUaz2Wy0pK/KNmdEKSWkfPzTVso7
+        qF/3tvsztQmFdH6kZgBbYPxZA/KjWEaLLyBoa+xWSAMt/obg1nDhX1JwaJdKJrUjONp4AEkD
+        DZ4Kow0RpR8xDIVnwfX7lVKbwilwvv1MjMyPIGj+PkxJHA1OhR9Pl0scJU6G5qvtKgnT0Xbn
+        mye0hKfgJOgdfTmxPgGvgIsHv8ZIOB57YfNoGy3v18P3SOuENg674MflLxOe1TgLxpr6lbLn
+        EA29n5NlnA+Dj9ppGcfBu55QjGQH8HS4fyNXsgm4DkHdlRZKLvYjuPM4opAF6TB42K+QD0+G
+        j1/qVbJYAzu2a2WKDV71bVPJeCHcazj7J9B6BM9Gb6v2oJmB/+IK/Isr8F9chxB1EiUSr+hy
+        EpHzphtF3iVWu53GUo+rFU28WGrmBRS8UxBGmEHsJE3JDNGhVfE14npXGAFDsfGaDx2CQ6sp
+        49dvIIKnWKiuImIYZUTj3kvpEko90Yd1+4o5S5bJMs8cfa4sjmOnaez2fIcWO3kfqSTES4S/
+        OgWj1m1CdufxAm9XuMg3ktPfXXSO3DAGqGlL87YsGc/emVj5KgIJvzz7C1erDTvmpwR+mnbO
+        jvMFXyzq3l6TPkLv3lc6dXnX6p61x5JuDjw8XXjk+VDf1pbbte8+rtN1xmfnlTQmh4pCY0Hj
+        mpB6Y4MlzX9JjB3WpJwIv0+r4Gqdc2qFlWOsUiznuVRKEPnfp/CYkngDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsVy+t9jAd0/LcVRBi3z2C3eHJ/OZHF51xw2
+        i9uNK9gsfh46z+TA4rHh0WpWj/f7rrJ59G1ZxejxeZNcAEsUl01Kak5mWWqRvl0CV8b/T83M
+        Bc8UKl4e+8LcwLhFqouRk0NCwERiw/s+1i5GLg4hgZ2MEpM7FrOCJHgFBCV+TL7H0sXIwcEs
+        IC9x5FI2SJhZQF1i0rxFzBD1Dxglrm5exwZSwyugJfH7TihIDYuAqsTcg7vBxrABhfe/uMEG
+        YvMLKEpc/fGYEaRcVCBCovtEJYgpIlAg0fetEmK6gsSve5vAOoUFciV+7/nKBLGpj1Fi7YSf
+        7CAJTgFLiZ9z7rNMYBSYheTQWQiHzkJy6AJG5lWMkqkFxbnpucVGBYZ5qeV6xYm5xaV56XrJ
+        +bmbGIHhu+2wVt8OxvtL4g8xCnAwKvHwJsgWRwmxJpYVV+YeYpTgYFYS4X2zryhKiDclsbIq
+        tSg/vqg0J7X4EKM0B4uSOO/tvGORQgLpiSWp2ampBalFMFkmDk6pBsZ83/JHs2Z2ZOktK7p4
+        ZMc5HlfuNLGKVxVZ528tytRynL9K8cvEGK9lP+ZvzqlJ1p3BePSKd8f9X9ElR7ssj03e1MtR
+        GOG/M9ZkymW5qRd5lldteLpTICp8cTfbI5b3d/bpLzitPYl1d7w6+9Pit22rtlZ+W/eo9Pr2
+        kPVFlS8ytwY6lyvlyE5SYinOSDTUYi4qTgQAin8AylsCAAA=
+X-CMS-MailID: 20180201212204epcas1p100da53f7f908c919b49d5ea94332cc2a
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180125171023epcas4p2d0c38963b1155fd6bba3cdad3620fb46
+X-RootMTR: 20180125171023epcas4p2d0c38963b1155fd6bba3cdad3620fb46
+References: <CGME20180125171023epcas4p2d0c38963b1155fd6bba3cdad3620fb46@epcas4p2.samsung.com>
+        <20180125171010.11169-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 1, 2018 at 12:22 PM, Roman Gushchin <guro@fb.com> wrote:
-> On Thu, Feb 01, 2018 at 10:16:55AM -0500, David Miller wrote:
->> From: Roman Gushchin <guro@fb.com>
->> Date: Wed, 31 Jan 2018 21:54:08 +0000
->>
->> > So I really start thinking that reverting 9f1c2674b328
->> > ("net: memcontrol: defer call to mem_cgroup_sk_alloc()")
->> > and fixing the original issue differently might be easier
->> > and a proper way to go. Does it makes sense?
->>
->> You'll need to work that out with Eric Dumazet who added the
->> change in question which you think we should revert.
->
-> Eric,
->
-> can you, please, provide some details about the use-after-free problem
-> that you've fixed with commit 9f1c2674b328 ("net: memcontrol: defer call
-> to mem_cgroup_sk_alloc()" ? Do you know how to reproduce it?
->
-> Deferring mem_cgroup_sk_alloc() breaks socket memory accounting
-> and makes it much more fragile in general. So, I wonder, if there are
-> solutions for the use-after-free problem.
->
-> Thank you!
->
-> Roman
+Hi Hans,
 
-Unfortunately bug is not public (Google-Bug-Id 67556600 for Googlers
-following this thread )
+Why don't modify the extcon-axp288.c after revert it?
+Instead, you sent the patch[1]. Are you going to send other patch for extcon-axp288.c?
+[1] [PATCH] extcon: int3496: process id-pin first so that we start with the right status
 
-Our kernel has a debug feature on percpu_ref_get_many() which detects
-the typical use-after-free problem of
-doing atomic_long_add(nr, &ref->count); while ref->count is 0, or
-memory already freed.
 
-Bug was serious because css_put() will release the css a second time.
+On 2018년 01월 26일 02:10, Hans de Goede wrote:
+> Redoing the charger type detection to give the usb-role-switch code time
+> to properly set the role-switch is no good for mainline, since the
+> usb-role-switch code is not yet in mainline (my bad, sorry).
+> 
+> Also once we've that code there are better ways to fix this which are
+> not prone to racing as doing a retry after 2 seconds is.
+> 
+> This reverts commit 50082c17bb1455acacd376ae30dff92f2e1addbd.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/extcon/extcon-axp288.c | 32 ++------------------------------
+>  1 file changed, 2 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
+> index 9abc99e8c0a5..901eddd3994b 100644
+> --- a/drivers/extcon/extcon-axp288.c
+> +++ b/drivers/extcon/extcon-axp288.c
+> @@ -1,7 +1,6 @@
+>  /*
+>   * extcon-axp288.c - X-Power AXP288 PMIC extcon cable detection driver
+>   *
+> - * Copyright (C) 2016-2017 Hans de Goede <hdegoede@redhat.com>
+>   * Copyright (C) 2015 Intel Corporation
+>   * Author: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
+>   *
+> @@ -98,11 +97,9 @@ struct axp288_extcon_info {
+>  	struct device *dev;
+>  	struct regmap *regmap;
+>  	struct regmap_irq_chip_data *regmap_irqc;
+> -	struct delayed_work det_work;
+>  	int irq[EXTCON_IRQ_END];
+>  	struct extcon_dev *edev;
+>  	unsigned int previous_cable;
+> -	bool first_detect_done;
+>  };
+>  
+>  /* Power up/down reason string array */
+> @@ -140,25 +137,6 @@ static void axp288_extcon_log_rsi(struct axp288_extcon_info *info)
+>  	regmap_write(info->regmap, AXP288_PS_BOOT_REASON_REG, clear_mask);
+>  }
+>  
+> -static void axp288_chrg_detect_complete(struct axp288_extcon_info *info)
+> -{
+> -	/*
+> -	 * We depend on other drivers to do things like mux the data lines,
+> -	 * enable/disable vbus based on the id-pin, etc. Sometimes the BIOS has
+> -	 * not set these things up correctly resulting in the initial charger
+> -	 * cable type detection giving a wrong result and we end up not charging
+> -	 * or charging at only 0.5A.
+> -	 *
+> -	 * So we schedule a second cable type detection after 2 seconds to
+> -	 * give the other drivers time to load and do their thing.
+> -	 */
+> -	if (!info->first_detect_done) {
+> -		queue_delayed_work(system_wq, &info->det_work,
+> -				   msecs_to_jiffies(2000));
+> -		info->first_detect_done = true;
+> -	}
+> -}
+> -
+>  static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+>  {
+>  	int ret, stat, cfg, pwr_stat;
+> @@ -223,8 +201,6 @@ static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+>  		info->previous_cable = cable;
+>  	}
+>  
+> -	axp288_chrg_detect_complete(info);
+> -
+>  	return 0;
+>  
+>  dev_det_ret:
+> @@ -246,11 +222,8 @@ static irqreturn_t axp288_extcon_isr(int irq, void *data)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -static void axp288_extcon_det_work(struct work_struct *work)
+> +static void axp288_extcon_enable(struct axp288_extcon_info *info)
+>  {
+> -	struct axp288_extcon_info *info =
+> -		container_of(work, struct axp288_extcon_info, det_work.work);
+> -
+>  	regmap_update_bits(info->regmap, AXP288_BC_GLOBAL_REG,
+>  						BC_GLOBAL_RUN, 0);
+>  	/* Enable the charger detection logic */
+> @@ -272,7 +245,6 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+>  	info->regmap = axp20x->regmap;
+>  	info->regmap_irqc = axp20x->regmap_irqc;
+>  	info->previous_cable = EXTCON_NONE;
+> -	INIT_DELAYED_WORK(&info->det_work, axp288_extcon_det_work);
+>  
+>  	platform_set_drvdata(pdev, info);
+>  
+> @@ -315,7 +287,7 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	/* Start charger cable type detection */
+> -	queue_delayed_work(system_wq, &info->det_work, 0);
+> +	axp288_extcon_enable(info);
+>  
+>  	return 0;
+>  }
+> 
 
-Stack trace looked like :
-
-Oct  8 00:23:14 lphh23 kernel: [27239.568098]  <IRQ>
-[<ffffffff909d2fb1>] dump_stack+0x4d/0x6c
-Oct  8 00:23:14 lphh23 kernel: [27239.568108]  [<ffffffff906df6e3>] ?
-cgroup_get+0x43/0x50
-Oct  8 00:23:14 lphh23 kernel: [27239.568114]  [<ffffffff906f2f35>]
-warn_slowpath_common+0xac/0xc8
-Oct  8 00:23:14 lphh23 kernel: [27239.568117]  [<ffffffff906f2f6b>]
-warn_slowpath_null+0x1a/0x1c
-Oct  8 00:23:14 lphh23 kernel: [27239.568120]  [<ffffffff906df6e3>]
-cgroup_get+0x43/0x50
-Oct  8 00:23:14 lphh23 kernel: [27239.568123]  [<ffffffff906e07a4>]
-cgroup_sk_alloc+0x64/0x90
-Oct  8 00:23:14 lphh23 kernel: [27239.568128]  [<ffffffff90bd6e91>]
-sk_clone_lock+0x2d1/0x400
-Oct  8 00:23:14 lphh23 kernel: [27239.568134]  [<ffffffff90bf2d56>]
-inet_csk_clone_lock+0x16/0x100
-Oct  8 00:23:14 lphh23 kernel: [27239.568138]  [<ffffffff90bff163>]
-tcp_create_openreq_child+0x23/0x600
-Oct  8 00:23:14 lphh23 kernel: [27239.568143]  [<ffffffff90c1ba8a>]
-tcp_v6_syn_recv_sock+0x26a/0x8f0
-Oct  8 00:23:14 lphh23 kernel: [27239.568146]  [<ffffffff90bffbfe>]
-tcp_check_req+0x1ce/0x440
-Oct  8 00:23:14 lphh23 kernel: [27239.568152]  [<ffffffff90c6556c>]
-tcp_v6_rcv+0x9cc/0x22a0
-Oct  8 00:23:14 lphh23 kernel: [27239.568155]  [<ffffffff90c67cc2>] ?
-ip6table_mangle_hook+0x42/0x190
-Oct  8 00:23:14 lphh23 kernel: [27239.568158]  [<ffffffff90c61e5b>]
-ip6_input+0x1ab/0x400
-Oct  8 00:23:14 lphh23 kernel: [27239.568162]  [<ffffffff90cd8c0d>] ?
-ip6_rcv_finish+0x93/0x93
-Oct  8 00:23:14 lphh23 kernel: [27239.568165]  [<ffffffff90c61a2d>]
-ipv6_rcv+0x32d/0x5b0
-Oct  8 00:23:14 lphh23 kernel: [27239.568167]  [<ffffffff90cd8b7a>] ?
-ip6_fragment+0x965/0x965
-Oct  8 00:23:14 lphh23 kernel: [27239.568171]  [<ffffffff90c2fd4c>]
-process_backlog+0x39c/0xc50
-Oct  8 00:23:14 lphh23 kernel: [27239.568177]  [<ffffffff907be695>] ?
-ktime_get+0x35/0xa0
-Oct  8 00:23:14 lphh23 kernel: [27239.568180]  [<ffffffff907bf681>] ?
-clockevents_program_event+0x81/0x1c0
-Oct  8 00:23:14 lphh23 kernel: [27239.568183]  [<ffffffff90c2e22e>]
-net_rx_action+0x10e/0x360
-Oct  8 00:23:14 lphh23 kernel: [27239.568190]  [<ffffffff906064f1>]
-__do_softirq+0x151/0x2f5
-Oct  8 00:23:14 lphh23 kernel: [27239.568196]  [<ffffffff90d101dc>]
-do_softirq_own_stack+0x1c/0x30
-Oct  8 00:23:14 lphh23 kernel: [27239.568197]  <EOI>
-[<ffffffff9079a12b>] __local_bh_enable_ip+0x6b/0xa0
-Oct  8 00:23:14 lphh23 kernel: [27239.568203]  [<ffffffff90c609c6>]
-ip6_output+0x326/0x1060
-Oct  8 00:23:14 lphh23 kernel: [27239.568206]  [<ffffffff90c67d3d>] ?
-ip6table_mangle_hook+0xbd/0x190
-Oct  8 00:23:14 lphh23 kernel: [27239.568209]  [<ffffffff90c5f780>] ?
-inet6_getname+0x130/0x130
-Oct  8 00:23:14 lphh23 kernel: [27239.568212]  [<ffffffff90c606a0>] ?
-ip6_finish_output+0xf20/0xf20
-Oct  8 00:23:14 lphh23 kernel: [27239.568215]  [<ffffffff90cd77a7>]
-ip6_xmit+0x52d/0x5b6
-Oct  8 00:23:14 lphh23 kernel: [27239.568217]  [<ffffffff90cd6ffe>] ?
-ip6_call_ra_chain+0xc9/0xc9
-Oct  8 00:23:14 lphh23 kernel: [27239.568220]  [<ffffffff90c4483d>] ?
-tcp_ack+0x60d/0x3290
-Oct  8 00:23:14 lphh23 kernel: [27239.568223]  [<ffffffff90c67521>]
-inet6_csk_xmit+0x181/0x2b0
-Oct  8 00:23:14 lphh23 kernel: [27239.568225]  [<ffffffff90c4bb55>]
-tcp_send_ack+0x6f5/0xdf0
-Oct  8 00:23:14 lphh23 kernel: [27239.568229]  [<ffffffff90bf8311>]
-tcp_rcv_state_process+0x8a1/0x2630
-Oct  8 00:23:14 lphh23 kernel: [27239.568231]  [<ffffffff90c1c24b>]
-tcp_v6_do_rcv+0x13b/0x340
-Oct  8 00:23:14 lphh23 kernel: [27239.568234]  [<ffffffff90c2286c>]
-release_sock+0xec/0x180
-Oct  8 00:23:14 lphh23 kernel: [27239.568237]  [<ffffffff90c08b6f>]
-__inet_stream_connect+0x1ef/0x2f0
-Oct  8 00:23:14 lphh23 kernel: [27239.568240]  [<ffffffff906d8710>] ?
-__wake_up_locked_key+0x70/0x70
-Oct  8 00:23:14 lphh23 kernel: [27239.568243]  [<ffffffff90c08cab>]
-inet_stream_connect+0x3b/0x60
-Oct  8 00:23:14 lphh23 kernel: [27239.568249]  [<ffffffff90bd5564>]
-SYSC_connect+0x84/0xc0
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
