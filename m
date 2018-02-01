@@ -1,103 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeBANsd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 08:48:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42873 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751630AbeBANsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 08:48:32 -0500
-Date: Thu, 1 Feb 2018 14:48:29 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
-Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-Message-ID: <20180201134829.GL21609@dhcp22.suse.cz>
-References: <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
- <20180126140415.GD5027@dhcp22.suse.cz>
- <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
- <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
- <20180129132235.GE21609@dhcp22.suse.cz>
- <87k1w081e7.fsf@concordia.ellerman.id.au>
- <20180130094205.GS21609@dhcp22.suse.cz>
- <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
- <20180131131937.GA6740@dhcp22.suse.cz>
- <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+        id S1752228AbeBANss (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 08:48:48 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35026 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751408AbeBANsp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 08:48:45 -0500
+Date: Thu, 1 Feb 2018 13:48:40 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "wakasugi.jb@om.asahi-kasei.co.jp" <wakasugi.jb@om.asahi-kasei.co.jp>,
+        "mihai.serban@gmail.com" <mihai.serban@gmail.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "mihai.serban@nxp.com" <mihai.serban@nxp.com>
+Subject: Re: [PATCH] ASoC: codecs: Add support for AK5558 ADC driver
+Message-ID: <20180201134840.GA10785@sirena.org.uk>
+References: <1517403459-6668-1-git-send-email-daniel.baluta@nxp.com>
+ <CAHp75Vdd58U1y-LOQGg=rePOWf1LeQsZxn2ykzBhXL013ztW3Q@mail.gmail.com>
+ <1517475954.8615.18.camel@nxp.com>
+ <CAHp75Vf=Ap7UkMNOcOhzY+MjJmn-c-UphzEzAjmFtMh69kea4A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
 Content-Disposition: inline
-In-Reply-To: <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAHp75Vf=Ap7UkMNOcOhzY+MjJmn-c-UphzEzAjmFtMh69kea4A@mail.gmail.com>
+X-Cookie: $3,000,000.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 01-02-18 08:43:34, Anshuman Khandual wrote:
-[...]
-> $dmesg | grep elf_brk
-> [    9.571192] elf_brk 10030328 elf_bss 10030000
-> 
-> static int load_elf_binary(struct linux_binprm *bprm)
-> ---------------------
-> 
-> 	if (unlikely (elf_brk > elf_bss)) {
-> 			unsigned long nbyte;
-> 	            
-> 			/* There was a PT_LOAD segment with p_memsz > p_filesz
-> 			   before this one. Map anonymous pages, if needed,
-> 			   and clear the area.  */
-> 			retval = set_brk(elf_bss + load_bias,
-> 					 elf_brk + load_bias,
-> 					 bss_prot);
-> 
-> 
-> ---------------------
 
-Just a blind shot... Does the following make any difference?
----
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 021fe78998ea..04b24d00c911 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -895,7 +895,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	   the correct location in memory. */
- 	for(i = 0, elf_ppnt = elf_phdata;
- 	    i < loc->elf_ex.e_phnum; i++, elf_ppnt++) {
--		int elf_prot = 0, elf_flags;
-+		int elf_prot = 0, elf_flags, elf_fixed = MAP_FIXED_NOREPLACE;
- 		unsigned long k, vaddr;
- 		unsigned long total_size = 0;
- 
-@@ -927,6 +927,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 					 */
- 				}
- 			}
-+			elf_fixed = MAP_FIXED;
- 		}
- 
- 		if (elf_ppnt->p_flags & PF_R)
-@@ -944,7 +945,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		 * the ET_DYN load_addr calculations, proceed normally.
- 		 */
- 		if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
--			elf_flags |= MAP_FIXED_NOREPLACE;
-+			elf_flags |= elf_fixed;
- 		} else if (loc->elf_ex.e_type == ET_DYN) {
- 			/*
- 			 * This logic is run once for the first LOAD Program
-@@ -980,7 +981,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 				load_bias = ELF_ET_DYN_BASE;
- 				if (current->flags & PF_RANDOMIZE)
- 					load_bias += arch_mmap_rnd();
--				elf_flags |= MAP_FIXED_NOREPLACE;
-+				elf_flags |= elf_fixed;
- 			} else
- 				load_bias = 0;
- 
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Michal Hocko
-SUSE Labs
+On Thu, Feb 01, 2018 at 03:20:38PM +0200, Andy Shevchenko wrote:
+> On Thu, Feb 1, 2018 at 11:05 AM, Daniel Baluta <daniel.baluta@nxp.com> wrote:
+
+> >> > Signed-off-by: Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>
+> >> > Signed-off-by: Mihai Serban <mihai.serban@nxp.com>
+> >> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> >> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> >> 4 authors of the code?!
+
+> > The code has a very long history. I will add under each SoB the specific
+> > contribution.
+
+> > Mihai got the code from Junichi and reworked it for 4.9. Then Shengjiu and
+> > me added various features and cleanups.
+
+> > Any other suggestion?
+
+> Yes, please, put detailed credits in commit message to not shock
+> people with so many SoB w/o explanation why.
+
+Honestly the signoffs above are nothing unusual for a driver contributed
+by a vendor - things are often bouncing around internally for ages and
+it's good to keep credits for people.
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpzGrUACgkQJNaLcl1U
+h9C3lQf/YZrAB58+vemPyqBByphuou28a9BvXQ/NrWpcN/wLzkAv22E1xRFE+W4/
+9B1LiXWVBqK1viKoVkNRjl1JLMmRZeeQTVaoxLIO9IMW2lx9dSLvC0nK65J0BoPY
+8cY4y8pnv64ZBKrI2L7+zRD79r7R3e/0HMfMVf5fYetrKMjAunEh+QtIqrZyFMFn
+rLyrfYWrfi3pffDVooNU8OBWn6paOSiRcWyqUb+ddOWVAfOozM8DAhtlZavip513
+XN+JDwHB7Sj+ZPxcDPILGwkxwX5yBqmOn82o8GtA8tlQ1XtLapXVKLyvXLkABkfv
+2q4zeuuhTEilCcbKBgRmFe7doXm0Bw==
+=x7m6
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
