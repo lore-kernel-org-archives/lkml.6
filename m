@@ -1,104 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752139AbeBAVxB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 16:53:01 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:51976 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752059AbeBAVwx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 16:52:53 -0500
-X-Google-Smtp-Source: AH8x226DXQKzTjR7zgdmqCfewQLdYOcNBfo77ACnuPChNtsbQw/dE9I2MNKt99cXT6Hv6hdkkF5Acw==
-Date: Thu, 1 Feb 2018 13:52:49 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Jon Maloy <jon.maloy@ericsson.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>,
-        syzbot <syzbot+aae58876fb5a1fad0a4b@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        "tipc-discussion@lists.sourceforge.net"
-        <tipc-discussion@lists.sourceforge.net>,
-        Ying Xue <ying.xue@windriver.com>
-Subject: Re: KASAN: use-after-free Read in tipc_group_size
-Message-ID: <20180201215249.6axvmcejdew4no55@gmail.com>
-References: <001a1144982043d4af05624506fc@google.com>
- <CAM_iQpVAmixCT5D6GEn7rGpRL0DN8Vm5HoKzntgZuDiecbeUPg@mail.gmail.com>
- <HE1PR07MB17245B232686FE521527DB269A130@HE1PR07MB1724.eurprd07.prod.outlook.com>
+        id S1752029AbeBAVz7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 16:55:59 -0500
+Received: from mga05.intel.com ([192.55.52.43]:57076 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751730AbeBAVzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 16:55:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,444,1511856000";
+   d="scan'208";a="24234122"
+From: "Liang, Kan" <kan.liang@intel.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+CC: "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "wangnan0@huawei.com" <wangnan0@huawei.com>,
+        "jolsa@kernel.org" <jolsa@kernel.org>,
+        "namhyung@kernel.org" <namhyung@kernel.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "yao.jin@linux.intel.com" <yao.jin@linux.intel.com>
+Subject: RE: [PATCH V5 02/17] perf mmap: fix: recalculate size for overwrite
+ mode.
+Thread-Topic: [PATCH V5 02/17] perf mmap: fix: recalculate size for
+ overwrite mode.
+Thread-Index: AQHTkKNt+7LbeQSb0USJiFMkktoFcKOPnliAgACOXpA=
+Date: Thu, 1 Feb 2018 21:55:50 +0000
+Message-ID: <37D7C6CF3E00A74B8858931C1DB2F0775381C4E7@SHSMSX103.ccr.corp.intel.com>
+References: <1516310792-208685-1-git-send-email-kan.liang@intel.com>
+ <1516310792-208685-3-git-send-email-kan.liang@intel.com>
+ <20180201212313.GD4835@kernel.org>
+In-Reply-To: <20180201212313.GD4835@kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDVmZTBlNmItOTcwOC00M2JhLWFkMGQtNWNmMTJkOTg4ZWNiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX0lDIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6InF6RldRYVNRRlNrU1phOTJaSXA1ZTZvQTFLQ1RDb0ZnV0NxR1NNK1VjRTQ9In0=
+x-ctpclassification: CTP_IC
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <HE1PR07MB17245B232686FE521527DB269A130@HE1PR07MB1724.eurprd07.prod.outlook.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 08, 2018 at 08:11:35PM +0000, Jon Maloy wrote:
+> Em Thu, Jan 18, 2018 at 01:26:17PM -0800, kan.liang@intel.com escreveu:
+> > From: Kan Liang <kan.liang@intel.com>
+> >
+> > In perf_mmap__push(), the 'size' need to be recalculated, otherwise
+> > the invalid data might be pushed to the record in overwrite mode.
+> >
+> > The issue is introduced by commit 7fb4b407a124 ("perf mmap: Don't
+> > discard prev in backward mode").
 > 
+> In these cases, please add the Fixes tag, like:
+>
+> Fixes: 7fb4b407a124 ("perf mmap: Don't discard prev in backward mode")
 > 
-> > -----Original Message-----
-> > From: Cong Wang [mailto:xiyou.wangcong@gmail.com]
-> > Sent: Monday, January 08, 2018 13:44
-> > To: syzbot <syzbot+aae58876fb5a1fad0a4b@syzkaller.appspotmail.com>
-> > Cc: David Miller <davem@davemloft.net>; Jon Maloy
-> > <jon.maloy@ericsson.com>; LKML <linux-kernel@vger.kernel.org>; Linux
-> > Kernel Network Developers <netdev@vger.kernel.org>; syzkaller-
-> > bugs@googlegroups.com; tipc-discussion@lists.sourceforge.net; Ying Xue
-> > <ying.xue@windriver.com>
-> > Subject: Re: KASAN: use-after-free Read in tipc_group_size
-> > 
-> > On Mon, Jan 8, 2018 at 6:58 AM, syzbot
-> > <syzbot+aae58876fb5a1fad0a4b@syzkaller.appspotmail.com> wrote:
-> > > Hello,
-> > >
-> > > syzkaller hit the following crash on
-> > > b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/maste
-> > > r
-> > > compiler: gcc (GCC) 7.1.1 20170620
-> > > .config is attached
-> > > Raw console output is attached.
-> > > C reproducer is attached
-> > > syzkaller reproducer is attached. See https://goo.gl/kgGztJ for
-> > > information about syzkaller reproducers
-> > >
-> > >
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+aae58876fb5a1fad0a4b@syzkaller.appspotmail.com
-> > > It will help syzbot understand when the bug is fixed. See footer for
-> > > details.
-> > > If you forward the report, please keep this part and the footer.
-> > >
-> > >
-> > ==========================================================
-> > ========
-> > > BUG: KASAN: use-after-free in tipc_group_size+0x40/0x50
-> > > net/tipc/group.c:158 Read of size 2 at addr ffff8801c08ba280 by task
-> > > syzkaller447710/3513
-> > >
-> > > CPU: 0 PID: 3513 Comm: syzkaller447710 Not tainted 4.15.0-rc7+ #252
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine,
-> > > BIOS Google 01/01/2011 Call Trace:
-> > >  __dump_stack lib/dump_stack.c:17 [inline]
-> > >  dump_stack+0x194/0x257 lib/dump_stack.c:53
-> > >  print_address_description+0x73/0x250 mm/kasan/report.c:252
-> > > kasan_report_error mm/kasan/report.c:351 [inline]
-> > >  kasan_report+0x25b/0x340 mm/kasan/report.c:409
-> > >  __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:428
-> > >  tipc_group_size+0x40/0x50 net/tipc/group.c:158
-> > >  tipc_poll+0x374/0x4f0 net/tipc/socket.c:739
-> > 
-> > Seems we have to lock the sock for tipc_group_size() in tipc_poll().
-> 
-> Not quite. I think it is that we initialize 'grp' on the stack before we call sock_poll_wait() and access it after it returns.
-> This is anyway fixed in patch #9 of the series I just sent to net-next, where the poll() handling for group members is redesigned.
-> 
-> ///jon
-> 
+> I'm doing it this time.
+>
 
-Last occurred on Jan 16.  Seems to have been fixed by commit 60c2530696320:
+Thanks. I'll be careful next time.
 
-#syz fix: tipc: fix race between poll() and setsockopt()
-
-- Eric
+Thanks,
+Kan
+ 
+> Thanks,
+> 
+> - Arnaldo
+> 
+> > When the ringbuffer is full in overwrite mode, backward_rb_find_range
+> > will be called to recalculate the 'start' and 'end'. The 'size' needs
+> > to be recalculated accordingly.
+> >
+> > Unconditionally recalculate the 'size', not just for full ringbuffer
+> > in overwrite mode. Because,
+> > - There is no harmful to recalculate the 'size' for other cases.
+> > - The code of calculating 'start' and 'end' will be factored out later.
+> >   The new function does not need to return 'size'.
+> >
+> > Signed-off-by: Kan Liang <kan.liang@intel.com>
+> > ---
+> >  tools/perf/util/mmap.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c index
+> > 05076e6..97cf4fa 100644
+> > --- a/tools/perf/util/mmap.c
+> > +++ b/tools/perf/util/mmap.c
+> > @@ -302,6 +302,8 @@ int perf_mmap__push(struct perf_mmap *md,
+> bool overwrite,
+> >  			return -1;
+> >  	}
+> >
+> > +	size = end - start;
+> > +
+> >  	if ((start & md->mask) + size != (end & md->mask)) {
+> >  		buf = &data[start & md->mask];
+> >  		size = md->mask + 1 - (start & md->mask);
+> > --
+> > 2.5.5
