@@ -1,192 +1,426 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-422771-1518026232-2-1803952698647309106
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518026232; b=Z0f9FUjoegYjaE2tQckBzHRCVQN21PDlYs9NfyUa/K1ve8Z
-    sx03hH+PIBzIcnVLO7s6bcCtMLyTwvp3acYFFB5osF619pss6oJYmDyHwjJX7kxg
-    f6qRnAcAFbrF0dRxe6lus/4YS7YpY7G4aev8LDma5bZbkULUECF86RLjn8qhaG6c
-    zV906M0cSa7UjSnp1PzIZMZCWdSSo2EExT7e9qA1nT1Ui7ac0fklIy4mVUvSgYaO
-    C7A42UhVGkGjCZwnicEaGxocT9NYnHkdBwYctfT2KFHXEAcziM2pyhrez9k/DhuU
-    x/iVKZOMrO4rXXPVkUPCT2Hd7PCP5bPbe+xSX4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518026232; bh=0
-    LETxCKjQATvTPyLthUS72aAQHLLmFuCFQglSHe4838=; b=A2nofBd0T25IijpjB
-    b4dBbOl4iaeqG/LtioVit3yAKFJ+agTmfk8F+szxdsXxFXS6iCZEhJ3D61D2ubBU
-    83LQ54LwLK5T4Cm9EmjBgLr/TQvT/KogaA0s0h/nDKIOkIAhYHeh5f7NXe2PNLxV
-    assjeiGnREhXGUJErclGfn+qxxFdzbB6mSIjy2huigltEMint9PML7MBHtAgQ5Qb
-    3UUsm4N8DL6D2KBFKo2+ZAeaN3DSWkpuMIgqF7daJ+GWmH47SIGehBYs4aVMsIOb
-    tmZfOUO9vdK3GFl8xPlsNrBgW/iM87bFpCVGBAQsKRUVTRiGNsp1NVq1Pf1ZQwn5
-    9+7IQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: devel@linuxdriverproject.org
-Subject: [PATCH RESEND 4/4] hv_balloon: trace post_status
-Date: Wed,  7 Feb 2018 18:50:03 +0100
-Message-Id: <20180207175003.28859-5-vkuznets@redhat.com>
-In-Reply-To: <20180207175003.28859-1-vkuznets@redhat.com>
-References: <20180207175003.28859-1-vkuznets@redhat.com>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Eduardo Otubo <otubo@redhat.com>,
- Stephen Hemminger <sthemmin@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Alex Ng <alexng@microsoft.com>,
- linux-kernel@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <khalid.aziz@oracle.com>
+X-Google-Smtp-Source: AH8x226YdTxPDEo4eNSxahUMpirSOnqK+D6Xwe0jstHLZkL0VGyD2yVyCyOivJnoVbpXzqDueHkY
+ARC-Seal: i=1; a=rsa-sha256; t=1517509188; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Tp7AAj6qWsGZA6zYDEsde5SELTc4TTtUUNFwmsUV4hRz6PQsVNxlmA+EWmrocHW5Cz
+         ja6EkisRA+mt+ib9MYgNet2R6X2NNMLG3KaZoNWyEir34+I0pvjNJEUm6NKprZcySyJO
+         4wsAKOpUL2YeYKGushGEH1HGPtRTg0tdOZbPI6BpxrDdtuKGvNp1rNOA/6gZWX7drIhW
+         8IQ14xMUnRcrK1vCqHySRyLYyKCLbxrZb4WaCvr6C0BW7gCIdbDxs/Z0Cwf2O0IGrics
+         sJSYGwhBih0gM3PxU8Zeuy4Cys+QhWafARwwJVgujbBwB//VPfPnRJ/a3uLOg79pUW73
+         9Zog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=oAN5C576D/FWetJh8xV8LvTpk0eHEnrTVJbHxeTuESE=;
+        b=HTaHHcrKuKzEBSErDF0JDUK50KB/vgDzzU+Dk4qGxAGYTA2MxzfaDng6GPvKMqDZSf
+         WT0DzimdIFc7f2hI5TBvn95NSy+Huw0VRt14FeR52pM2drC3037G0D6023ruGj2A9BuS
+         vr6GYxVmElfakB/sbAS64tW4QVP6zccgq1OCGRioB+y/MO1pVNLpxKVelYKJyWJvFNh9
+         KAXXJvhgnupVE7sDz/sDgajE1h8iYTFylHOuzvzt+bmjgAhLoHsJilE/t6BowYWGjjLQ
+         /AOoDw6WLDYoqkuYsR+0SLoCGjuEdkVAyzRFlI96GWE8aI3fCxcv4OncLeLP5bzVt8fx
+         SPYg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=swvFtUfR;
+       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=swvFtUfR;
+       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+From: Khalid Aziz <khalid.aziz@oracle.com>
+To: davem@davemloft.net, dave.hansen@linux.intel.com
+Cc: Khalid Aziz <khalid.aziz@oracle.com>, aarcange@redhat.com,
+        akpm@linux-foundation.org, allen.pais@oracle.com,
+        anthony.yznaga@oracle.com, arnd@arndb.de, babu.moger@oracle.com,
+        benh@kernel.crashing.org, bob.picco@oracle.com, bsingharora@gmail.com,
+        corbet@lwn.net, dan.j.williams@intel.com, dave.jiang@intel.com,
+        david.j.aldridge@oracle.com, ebiederm@xmission.com,
+        elena.reshetova@intel.com, glx@linutronix.de,
+        gregkh@linuxfoundation.org, hannes@cmpxchg.org,
+        hillf.zj@alibaba-inc.com, hpa@zytor.com, hughd@google.com,
+        imbrenda@linux.vnet.ibm.com, jack@suse.cz, jag.raman@oracle.com,
+        jane.chu@oracle.com, jglisse@redhat.com, jroedel@suse.de,
+        khalid@gonehiking.org, khandual@linux.vnet.ibm.com,
+        kirill.shutemov@linux.intel.com, kstewart@linuxfoundation.org,
+        ktkhai@virtuozzo.com, liam.merwick@oracle.com,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux@roeck-us.net, me@tobin.cc,
+        mgorman@suse.de, mgorman@techsingularity.net, mhocko@suse.com,
+        mike.kravetz@oracle.com, minchan@kernel.org, mingo@kernel.org,
+        mingo@redhat.com, mpe@ellerman.id.au, nadav.amit@gmail.com,
+        nagarathnam.muthusamy@oracle.com, nborisov@suse.com,
+        n-horiguchi@ah.jp.nec.com, nick.alcock@oracle.com,
+        nitin.m.gupta@oracle.com, ombredanne@nexb.com,
+        pasha.tatashin@oracle.com, paulus@samba.org, pombredanne@nexb.com,
+        punit.agrawal@arm.com, rob.gardner@oracle.com,
+        ross.zwisler@linux.intel.com, shannon.nelson@oracle.com, shli@fb.com,
+        sparclinux@vger.kernel.org, steven.sistare@oracle.com,
+        tglx@linutronix.de, thomas.tai@oracle.com, tklauser@distanz.ch,
+        tom.hromatka@oracle.com, vegard.nossum@oracle.com,
+        vijay.ac.kumar@oracle.com, willy@infradead.org, x86@kernel.org,
+        zi.yan@cs.rutgers.edu
+Subject: [PATCH v11 00/10] Application Data Integrity feature introduced by SPARC M7
+Date: Thu,  1 Feb 2018 11:01:08 -0700
+Message-Id: <cover.1517497017.git.khalid.aziz@oracle.com>
+X-Mailer: git-send-email 2.11.0
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802010231
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591223715312130121?=
+X-GMAIL-MSGID: =?utf-8?q?1591223715312130121?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hyper-V balloon driver makes non-trivial calculations to convert Linux's
-representation of free/used memory to what Hyper-V host expects to see. Add
-a tracepoint to see what's being sent and where the data comes from.
+V11 changes:
+This series is same as v10 and was simply rebased on 4.15 kernel. Can
+mm maintainers please review patches 2, 7, 8 and 9 which are arch
+independent, and include/linux/mm.h and mm/ksm.c changes in patch 10
+and ack these if everything looks good? 
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- drivers/hv/Makefile           |  1 +
- drivers/hv/hv_balloon.c       |  6 ++++++
- drivers/hv/hv_trace_balloon.h | 48 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 55 insertions(+)
- create mode 100644 drivers/hv/hv_trace_balloon.h
 
-diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile
-index 14c22786b519..a1eec7177c2d 100644
---- a/drivers/hv/Makefile
-+++ b/drivers/hv/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_HYPERV_UTILS)	+= hv_utils.o
- obj-$(CONFIG_HYPERV_BALLOON)	+= hv_balloon.o
- 
- CFLAGS_hv_trace.o = -I$(src)
-+CFLAGS_hv_balloon.o = -I$(src)
- 
- hv_vmbus-y := vmbus_drv.o \
- 		 hv.o connection.o channel.o \
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index 7514a32d0de4..b3e9f13f8bc3 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -34,6 +34,9 @@
- 
- #include <linux/hyperv.h>
- 
-+#define CREATE_TRACE_POINTS
-+#include "hv_trace_balloon.h"
-+
- /*
-  * We begin with definitions supporting the Dynamic Memory protocol
-  * with the host.
-@@ -1159,6 +1162,9 @@ static void post_status(struct hv_dynmem_device *dm)
- 		 dm->num_pages_added - dm->num_pages_onlined : 0) +
- 		compute_balloon_floor();
- 
-+	trace_balloon_status(status.num_avail, status.num_committed,
-+			     vm_memory_committed(), dm->num_pages_ballooned,
-+			     dm->num_pages_added, dm->num_pages_onlined);
- 	/*
- 	 * If our transaction ID is no longer current, just don't
- 	 * send the status. This can happen if we were interrupted
-diff --git a/drivers/hv/hv_trace_balloon.h b/drivers/hv/hv_trace_balloon.h
-new file mode 100644
-index 000000000000..93082888aec3
---- /dev/null
-+++ b/drivers/hv/hv_trace_balloon.h
-@@ -0,0 +1,48 @@
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM hyperv
-+
-+#if !defined(_HV_TRACE_BALLOON_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _HV_TRACE_BALLOON_H
-+
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(balloon_status,
-+	    TP_PROTO(u64 available, u64 committed,
-+		     unsigned long vm_memory_committed,
-+		     unsigned long pages_ballooned,
-+		     unsigned long pages_added,
-+		     unsigned long pages_onlined),
-+	    TP_ARGS(available, committed, vm_memory_committed,
-+		    pages_ballooned, pages_added, pages_onlined),
-+	    TP_STRUCT__entry(
-+		    __field(u64, available)
-+		    __field(u64, committed)
-+		    __field(unsigned long, vm_memory_committed)
-+		    __field(unsigned long, pages_ballooned)
-+		    __field(unsigned long, pages_added)
-+		    __field(unsigned long, pages_onlined)
-+		    ),
-+	    TP_fast_assign(
-+		    __entry->available = available;
-+		    __entry->committed = committed;
-+		    __entry->vm_memory_committed = vm_memory_committed;
-+		    __entry->pages_ballooned = pages_ballooned;
-+		    __entry->pages_added = pages_added;
-+		    __entry->pages_onlined = pages_onlined;
-+		    ),
-+	    TP_printk("available %lld, committed %lld; vm_memory_committed %ld;"
-+		      " pages_ballooned %ld, pages_added %ld, pages_onlined %ld",
-+		      __entry->available, __entry->committed,
-+		      __entry->vm_memory_committed, __entry->pages_ballooned,
-+		      __entry->pages_added, __entry->pages_onlined
-+		    )
-+	);
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE hv_trace_balloon
-+#endif /* _HV_TRACE_BALLOON_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
+SPARC M7 processor adds additional metadata for memory address space
+that can be used to secure access to regions of memory. This additional
+metadata is implemented as a 4-bit tag attached to each cacheline size
+block of memory. A task can set a tag on any number of such blocks.
+Access to such block is granted only if the virtual address used to
+access that block of memory has the tag encoded in the uppermost 4 bits
+of VA. Since sparc processor does not implement all 64 bits of VA, top 4
+bits are available for ADI tags. Any mismatch between tag encoded in VA
+and tag set on the memory block results in a trap. Tags are verified in
+the VA presented to the MMU and tags are associated with the physical
+page VA maps on to. If a memory page is swapped out and page frame gets
+reused for another task, the tags are lost and hence must be saved when
+swapping or migrating the page.
+
+A userspace task enables ADI through mprotect(). This patch series adds
+a page protection bit PROT_ADI and a corresponding VMA flag
+VM_SPARC_ADI. VM_SPARC_ADI is used to trigger setting TTE.mcd bit in the
+sparc pte that enables ADI checking on the corresponding page. MMU
+validates the tag embedded in VA for every page that has TTE.mcd bit set
+in its pte. After enabling ADI on a memory range, the userspace task can
+set ADI version tags using stxa instruction with ASI_MCD_PRIMARY or
+ASI_MCD_ST_BLKINIT_PRIMARY ASI.
+
+Once userspace task calls mprotect() with PROT_ADI, kernel takes
+following overall steps:
+
+1. Find the VMAs covering the address range passed in to mprotect and
+set VM_SPARC_ADI flag. If address range covers a subset of a VMA, the
+VMA will be split.
+
+2. When a page is allocated for a VA and the VMA covering this VA has
+VM_SPARC_ADI flag set, set the TTE.mcd bit so MMU will check the
+vwersion tag.
+
+3. Userspace can now set version tags on the memory it has enabled ADI
+on. Userspace accesses ADI enabled memory using a virtual address that
+has the version tag embedded in the high bits. MMU validates this
+version tag against the actual tag set on the memory. If tag matches,
+MMU performs the VA->PA translation and access is granted. If there is a
+mismatch, hypervisor sends a data access exception or precise memory
+corruption detected exception depending upon whether precise exceptions
+are enabled or not (controlled by MCDPERR register). Kernel sends
+SIGSEGV to the task with appropriate si_code.
+
+4. If a page is being swapped out or migrated, kernel must save any ADI
+tags set on the page. Kernel maintains a page worth of tag storage
+descriptors. Each descriptors pointsto a tag storage space and the
+address range it covers. If the page being swapped out or migrated has
+ADI enabled on it, kernel finds a tag storage descriptor that covers the
+address range for the page or allocates a new descriptor if none of the
+existing descriptors cover the address range. Kernel saves tags from the
+page into the tag storage space descriptor points to.
+
+5. When the page is swapped back in or reinstantiated after migration,
+kernel restores the version tags on the new physical page by retrieving
+the original tag from tag storage pointed to by a tag storage descriptor
+for the virtual address range for new page.
+
+User task can disable ADI by calling mprotect() again on the memory
+range with PROT_ADI bit unset. Kernel clears the VM_SPARC_ADI flag in
+VMAs, merges adjacent VMAs if necessary, and clears TTE.mcd bit in the
+corresponding ptes.
+
+IOMMU does not support ADI checking. Any version tags embedded in the
+top bits of VA meant for IOMMU, are cleared and replaced with sign
+extension of the first non-version tag bit (bit 59 for SPARC M7) for
+IOMMU addresses.
+
+This patch series adds support for this feature in 10 patches:
+
+Patch 1/10
+  Tag mismatch on access by a task results in a trap from hypervisor as
+  data access exception or a precide memory corruption detected
+  exception. As part of handling these exceptions, kernel sends a
+  SIGSEGV to user process with special si_code to indicate which fault
+  occurred. This patch adds three new si_codes to differentiate between
+  various mismatch errors.
+
+Patch 2/10
+  When a page is swapped or migrated, metadata associated with the page
+  must be saved so it can be restored later. This patch adds a new
+  function that saves/restores this metadata when updating pte upon a
+  swap/migration.
+
+Patch 3/10
+  SPARC M7 processor adds new fields to control registers to support ADI
+  feature. It also adds a new exception for precise traps on tag
+  mismatch. This patch adds definitions for the new control register
+  fields, new ASIs for ADI and an exception handler for the precise trap
+  on tag mismatch.
+
+Patch 4/10
+  New hypervisor fault types were added by sparc M7 processor to support
+  ADI feature. This patch adds code to handle these fault types for data
+  access exception handler.
+
+Patch 5/10
+  When ADI is in use for a page and a tag mismatch occurs, processor
+  raises "Memory corruption Detected" trap. This patch adds a handler
+  for this trap.
+
+Patch 6/10
+  ADI usage is governed by ADI properties on a platform. These
+  properties are provided to kernel by firmware. Thsi patch adds new
+  auxiliary vectors that provide these values to userpsace.
+
+Patch 7/10
+  arch_validate_prot() is used to validate the new protection bits asked
+  for by the userspace app. Validating protection bits may need the
+  context of address space the bits are being applied to. One such
+  example is PROT_ADI bit on sparc processor that enables ADI protection
+  on an address range. ADI protection applies only to addresses covered
+  by physical RAM and not other PFN mapped addresses or device
+  addresses. This patch adds "address" to the parameters being passed to
+  arch_validate_prot() to provide that context.
+
+Patch 8/10
+  When protection bits are changed on a page, kernel carries forward all
+  protection bits except for read/write/exec. Additional code was added
+  to allow kernel to clear PKEY bits on x86 but this requirement to
+  clear other bits is not unique to x86. This patch extends the existing
+  code to allow other architectures to clear any other protection bits
+  as well on protection bit change.
+
+Patch 9/10
+  When a processor supports additional metadata on memory pages, that
+  additional metadata needs to be copied to new memory pages when those
+  pages are moved. This patch allows architecture specific code to
+  replace the default copy_highpage() routine with arch specific
+  version that copies the metadata as well besides the data on the page.
+
+Patch 10/10
+  This patch adds support for a user space task to enable ADI and enable
+  tag checking for subsets of its address space. As part of enabling
+  this feature, this patch adds to support manipulation of precise
+  exception for memory corruption detection, adds code to save and
+  restore tags on page swap and migration, and adds code to handle ADI
+  tagged addresses for DMA.
+
+
+Changelog v11:
+
+	- Rebased to 4.15
+
+Changelog v10:
+
+	- Patch 1/10: Updated si_codes definitions for SEGV to match 4.14
+	- Patch 2/10: No changes
+	- Patch 3/10: Updated copyright
+	- Patch 4/10: No changes
+	- Patch 5/10: No changes
+	- Patch 6/10: Updated copyright
+	- Patch 7/10: No changes
+	- Patch 8/10: No changes
+	- Patch 9/10: No changes
+	- Patch 10/10: Added code to return from kernel path to set
+	  PSTATE.mcde if kernel continues execution in another thread
+	  (Suggested by Anthony)
+
+Changelog v9:
+
+	- Patch 1/10: No changes
+	- Patch 2/10: No changes
+	- Patch 3/10: No changes
+	- Patch 4/10: No changes
+	- Patch 5/10: No changes
+	- Patch 6/10: No changes
+	- Patch 7/10: No changes
+	- Patch 8/10: No changes
+	- Patch 9/10: New patch
+	- Patch 10/10: Patch 9 from v8. Added code to copy ADI tags when
+	  pages are migrated. Updated code to detect overflow and underflow
+	  of addresses when allocating tag storage.
+
+Changelog v8:
+
+	- Patch 1/9: No changes
+	- Patch 2/9: Fixed and erroneous "}"
+	- Patch 3/9: Minor print formatting change
+	- Patch 4/9: No changes
+	- Patch 5/9: No changes
+	- Patch 6/9: Added AT_ADI_UEONADI back
+	- Patch 7/9: Added addr parameter to powerpc arch_validate_prot()
+	- Patch 8/9: No changes
+	- Patch 9/9:
+		- Documentation updates
+		- Added an IPI on mprotect(...PROT_ADI...) call and
+		  restore of TSTATE.MCDE on context switch
+		- Removed restriction on enabling ADI on read-only
+		  memory
+		- Changed kzalloc() for tag storage to use GFP_NOWAIT
+		- Added code to handle overflow and underflow when
+		  allocating tag storage
+		- Replaced sun_m7_patch_1insn_range() with
+		  sun4v_patch_1insn_range()
+		- Added membar after restoring ADI tags in
+		  copy_user_highpage()
+
+Changelog v7:
+
+	- Patch 1/9: No changes
+	- Patch 2/9: Updated parameters to arch specific swap in/out
+	  handlers
+	- Patch 3/9: No changes
+	- Patch 4/9: new patch split off from patch 4/4 in v6
+	- Patch 5/9: new patch split off from patch 4/4 in v6
+	- Patch 6/9: new patch split off from patch 4/4 in v6
+	- Patch 7/9: new patch
+	- Patch 8/9: new patch
+	- Patch 9/9:
+		- Enhanced arch_validate_prot() to enable ADI only on
+		  writable addresses backed by physical RAM
+		- Added support for saving/restoring ADI tags for each
+		  ADI block size address range on a page on swap in/out
+		- copy ADI tags on COW
+		- Updated values for auxiliary vectors to not conflict
+		  with values on other architectures to avoid conflict
+		  in glibc
+		- Disable same page merging on ADI enabled pages
+		- Enable ADI only on writable addresses backed by
+		  physical RAM
+		- Split parts of patch off into separate patches
+
+Changelog v6:
+	- Patch 1/4: No changes
+	- Patch 2/4: No changes
+	- Patch 3/4: Added missing nop in the delay slot in
+	  sun4v_mcd_detect_precise
+	- Patch 4/4: Eliminated instructions to read and write PSTATE
+	  as well as MCDPER and PMCDPER on every access to userspace
+	  addresses by setting PSTATE and PMCDPER correctly upon entry
+	  into kernel
+
+Changelog v5:
+	- Patch 1/4: No changes
+	- Patch 2/4: Replaced set_swp_pte_at() with new architecture
+	  functions arch_do_swap_page() and arch_unmap_one() that
+	  suppoprt architecture specific actions to be taken on page
+	  swap and migration
+	- Patch 3/4: Fixed indentation issues in assembly code
+	- Patch 4/4:
+		- Fixed indentation issues and instrcuctions in assembly
+		  code
+		- Removed CONFIG_SPARC64 from mdesc.c
+		- Changed to maintain state of MCDPER register in thread
+		  info flags as opposed to in mm context. MCDPER is a
+		  per-thread state and belongs in thread info flag as
+		  opposed to mm context which is shared across threads.
+		  Added comments to clarify this is a lazily maintained
+		  state and must be updated on context switch and
+		  copy_process() 
+		- Updated code to use the new arch_do_swap_page() and
+		  arch_unmap_one() functions
+
+Testing:
+
+- All functionality was tested with 8K normal pages as well as hugepages
+  using malloc, mmap and shm.
+- Multiple long duration stress tests were run using hugepages over 2+
+  months. Normal pages were tested with shorter duration stress tests.
+- Tested swapping with malloc and shm by reducing max memory and
+  allocating three times the available system memory by active processes
+  using ADI on allocated memory. Ran through multiple hours long runs of
+  this test.
+- Tested page migration with malloc and shm by migrating data pages of
+  active ADI test process using migratepages, back and forth between two
+  nodes every few seconds over an hour long run. Verified page migration
+  through /proc/<pid>/numa_maps.
+- Tested COW support using test that forks children that read from
+  ADI enabled pages shared with parent and other children and write to
+  them as well forcing COW.
+
+
+---------
+
+Khalid Aziz (10):
+  signals, sparc: Add signal codes for ADI violations
+  mm, swap: Add infrastructure for saving page metadata on swap
+  sparc64: Add support for ADI register fields, ASIs and traps
+  sparc64: Add HV fault type handlers for ADI related faults
+  sparc64: Add handler for "Memory Corruption Detected" trap
+  sparc64: Add auxiliary vectors to report platform ADI properties
+  mm: Add address parameter to arch_validate_prot()
+  mm: Clear arch specific VM flags on protection change
+  mm: Allow arch code to override copy_highpage()
+  sparc64: Add support for ADI (Application Data Integrity)
+
+ Documentation/sparc/adi.txt             | 278 ++++++++++++++++++++++
+ arch/powerpc/include/asm/mman.h         |   4 +-
+ arch/powerpc/kernel/syscalls.c          |   2 +-
+ arch/sparc/include/asm/adi.h            |   6 +
+ arch/sparc/include/asm/adi_64.h         |  47 ++++
+ arch/sparc/include/asm/elf_64.h         |   5 +
+ arch/sparc/include/asm/hypervisor.h     |   2 +
+ arch/sparc/include/asm/mman.h           |  84 ++++++-
+ arch/sparc/include/asm/mmu_64.h         |  17 ++
+ arch/sparc/include/asm/mmu_context_64.h |  50 ++++
+ arch/sparc/include/asm/page_64.h        |   6 +
+ arch/sparc/include/asm/pgtable_64.h     |  48 ++++
+ arch/sparc/include/asm/thread_info_64.h |   2 +-
+ arch/sparc/include/asm/trap_block.h     |   2 +
+ arch/sparc/include/asm/ttable.h         |  10 +
+ arch/sparc/include/uapi/asm/asi.h       |   5 +
+ arch/sparc/include/uapi/asm/auxvec.h    |  11 +
+ arch/sparc/include/uapi/asm/mman.h      |   2 +
+ arch/sparc/include/uapi/asm/pstate.h    |  10 +
+ arch/sparc/kernel/Makefile              |   1 +
+ arch/sparc/kernel/adi_64.c              | 397 ++++++++++++++++++++++++++++++++
+ arch/sparc/kernel/entry.h               |   3 +
+ arch/sparc/kernel/etrap_64.S            |  27 ++-
+ arch/sparc/kernel/head_64.S             |   1 +
+ arch/sparc/kernel/mdesc.c               |   2 +
+ arch/sparc/kernel/process_64.c          |  25 ++
+ arch/sparc/kernel/rtrap_64.S            |  33 ++-
+ arch/sparc/kernel/setup_64.c            |   2 +
+ arch/sparc/kernel/sun4v_mcd.S           |  18 ++
+ arch/sparc/kernel/traps_64.c            | 142 +++++++++++-
+ arch/sparc/kernel/ttable_64.S           |   6 +-
+ arch/sparc/kernel/urtt_fill.S           |   7 +-
+ arch/sparc/kernel/vmlinux.lds.S         |   5 +
+ arch/sparc/mm/gup.c                     |  37 +++
+ arch/sparc/mm/hugetlbpage.c             |  14 +-
+ arch/sparc/mm/init_64.c                 |  69 ++++++
+ arch/sparc/mm/tsb.c                     |  21 ++
+ arch/x86/kernel/signal_compat.c         |   2 +-
+ include/asm-generic/pgtable.h           |  36 +++
+ include/linux/highmem.h                 |   4 +
+ include/linux/mm.h                      |   9 +
+ include/linux/mman.h                    |   2 +-
+ include/uapi/asm-generic/siginfo.h      |   5 +-
+ mm/ksm.c                                |   4 +
+ mm/memory.c                             |   1 +
+ mm/mprotect.c                           |   4 +-
+ mm/rmap.c                               |  14 ++
+ 47 files changed, 1461 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/sparc/adi.txt
+ create mode 100644 arch/sparc/include/asm/adi.h
+ create mode 100644 arch/sparc/include/asm/adi_64.h
+ create mode 100644 arch/sparc/kernel/adi_64.c
+ create mode 100644 arch/sparc/kernel/sun4v_mcd.S
+
 -- 
-2.14.3
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+2.11.0
