@@ -1,159 +1,251 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752657AbeBAP4T (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:56:19 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:35778 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751547AbeBAP4Q (ORCPT
+        id S1752529AbeBAP54 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:57:56 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:54360 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751762AbeBAP5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:56:16 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180201155614epoutp01682459a4fe850fb0115df14bb56e1587~PPruGZz7m1004610046epoutp01S
-X-AuditID: b6c32a48-9adff70000000ff0-71-5a73389e1179
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH] fbdev: simplefb: add support for 'memory-region'
- property on DT node
-Date: Thu, 01 Feb 2018 16:56:08 +0100
-Message-id: <2359956.Z9lQWSAgHb@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <1516707296-23667-1-git-send-email-hayashi.kunihiko@socionext.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNIsWRmVeSWpSXmKPExsWy7bCmme48i+Iogz2HRSzmHznHanH4RhOj
-        xZvj05ksTvR9YLW4vGsOm8XS6xeZLFr3HmF3YPdYM28No8emVZ1sHu/3XWXzODH9O4vH501y
-        AaxRXDYpqTmZZalF+nYJXBnvnx1lLVgiVTFz0hH2Bsbtol2MHBwSAiYSC2f4dDFycQgJ7GCU
-        2PWxnQ3C+c4ocW/PAuYuRk6woj8bL7JDJHYDJXofQVV9BWo5c5YVpIpNwEpiYvsqRhBbRMBU
-        oq9tN1gRs8BJRokLb58ygSSEBaIlZj3YCtbAIqAqsbR3FRuIzSugKfFh4mSwuKiAl8SWfe1g
-        9ZwC/hIrzjxhgagRlPgx+R6YzSwgL7Fv/1RWCFtH4uyxdYwgyyQEjrBJfL+whx3iOReJxSfi
-        IF4Qlnh1fAs7hC0t8WzVRkYIezqjxPbfEhC9mxklVu2eAFVkLXH4+EWoBXwSHYf/Qs3kleho
-        E4Io8ZCYOrODBcJ2lJizaSZYq5DAIkaJ7x/0JzDKzkJy9iwkZ89CcvYCRuZVjGKpBcW56anF
-        RgUmesWJucWleel6yfm5mxjBSULLYwfjgXM+hxgFOBiVeHgTZIujhFgTy4orcw8xSnAwK4nw
-        vtlXFCXEm5JYWZValB9fVJqTWnyIUZqDRUmcty3AJUpIID2xJDU7NbUgtQgmy8TBKdXAWNec
-        uLoqVvRVWexjFuPNAebZNW/WiD474W8XFvz1xPLstQ8TjTOEP9xundz6+7oOI3PZ2rLgcz5b
-        3jxfdf7VP+6M9QLvFy8Pf/0ifaZTyqQ391hVhKoe3ys/KKUfpLdgxxvxKx8EH0x5MSmjVGTD
-        8sg1KxhtNA1sVvp9Zz9te/t/66bHdsk+b5RYijMSDbWYi4oTAbPoidMOAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsVy+t9jAd25FsVRBmvOaljMP3KO1eLwjSZG
-        izfHpzNZnOj7wGpxedccNoul1y8yWbTuPcLuwO6xZt4aRo9NqzrZPN7vu8rmcWL6dxaPz5vk
-        AlijuGxSUnMyy1KL9O0SuDLePzvKWrBEqmLmpCPsDYzbRbsYOTkkBEwk/my8yA5iCwnsZJTY
-        uaqwi5ELyP7KKDGp7SYrSIJNwEpiYvsqRhBbRMBUoq9tNxtIEbPASUaJ5XNXA3VzcAgLREuc
-        uBAKUsMioCqxtHcVG4jNK6Ap8WHiZLA5ogJeElv2tTOB2JwC/hIrzjxhgVi2hFHifeNVVogG
-        QYkfk++xgNjMAvIS+/ZPZYWwtSTW7zzONIGRfxaSsllIymYhKVvAyLyKUTK1oDg3PbfYqMAo
-        L7Vcrzgxt7g0L10vOT93EyMwrLcd1urfwfh4SfwhRgEORiUeXg7p4igh1sSy4srcQ4wSHMxK
-        Irxv9hVFCfGmJFZWpRblxxeV5qQWH2KU5mBREuflzz8WKSSQnliSmp2aWpBaBJNl4uCUamCc
-        JD2l4dNCKa8vIp/cvv657eEsb7codW6l+funRS8rvrRxTYl+knL+1Zeg9APer7il74XW9eTK
-        Hso6arrCIJxB9/FPrS2+m5+zn7HcZlf2YGnfraapq2wZdyXsLcqwXFXY46mS5KUxh/FGgFWc
-        0RH1ZoVJkzRVLbct51yn+0d1k2P1rRfvr1oosRRnJBpqMRcVJwIAR0CdCGcCAAA=
-X-CMS-MailID: 20180201155613epcas2p2ed96bb78dc101a604c5690fec5f7a0a0
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180123113510epcas1p1fc8a6e3ad50127bb84fe350b156a8c07
-X-RootMTR: 20180123113510epcas1p1fc8a6e3ad50127bb84fe350b156a8c07
-References: <CGME20180123113510epcas1p1fc8a6e3ad50127bb84fe350b156a8c07@epcas1p1.samsung.com>
-        <1516707296-23667-1-git-send-email-hayashi.kunihiko@socionext.com>
+        Thu, 1 Feb 2018 10:57:53 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w11Fvpbb021284, This message is accepted by code: ctloc85258
+From: Chunhao Lin <hau@realtek.com>
+To: <netdev@vger.kernel.org>
+CC: <nic_swsd@realtek.com>, <linux-kernel@vger.kernel.org>,
+        Chunhao Lin <hau@realtek.com>
+Subject: [PATCH net-next] r8169: add module param for control of ASPM disable
+Date: Thu, 1 Feb 2018 23:57:43 +0800
+Message-ID: <1517500663-24052-1-git-send-email-hau@realtek.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [172.21.177.216]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch is from Todd Broch <tbroch@chromium.org>.
+	ASPM has been disabled in this driver by default as its been
+	implicated in stability issues on at least one platform.  This CL adds
+	a  module parameter to allow control of ASPM disable.  The default
+	value is to enable ASPM again as its provides signficant (200mW) power
+	savings on the platform I tested.
 
-Hi,
+I make some modification that let this patch only for RTL8168G and later.
 
-On Tuesday, January 23, 2018 08:34:56 PM Kunihiko Hayashi wrote:
-> Enables 'memory-region' property referring to the memory description on
-> the reserved-memory node in case of devicetree use.
-> If there is no 'reg' property that specifies the address and size of
-> the framebuffer, the address and size written in the memory description
-> on the reserved-memory node can be used for the framebuffer.
-> 
-> Furthermore, the reserved-memory node needs to have "no-map" attributes
-> because simplefb driver maps the region by ioremap_wc().
-> 
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Signed-off-by: Chunhao Lin <hau@realtek.com>
+---
+ drivers/net/ethernet/realtek/r8169.c | 73 ++++++++++++++++++++++++------------
+ 1 file changed, 50 insertions(+), 23 deletions(-)
 
-This needs an ACK from Rob or Mark (DT bindings Maintainers).
-
-> ---
->  .../bindings/display/simple-framebuffer.txt        |  3 ++
->  drivers/video/fbdev/simplefb.c                     | 32 ++++++++++++++++++++++
->  2 files changed, 35 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/simple-framebuffer.txt b/Documentation/devicetree/bindings/display/simple-framebuffer.txt
-> index 5a9ce51..be5139f 100644
-> --- a/Documentation/devicetree/bindings/display/simple-framebuffer.txt
-> +++ b/Documentation/devicetree/bindings/display/simple-framebuffer.txt
-> @@ -56,6 +56,9 @@ Optional properties:
->    framebuffer remains active.
->  
->  - display : phandle pointing to the primary display hardware node
-> +- memory-region: phandle to a node describing memory region as framebuffer
-> +		 memory instead of reg property. The node should include
-> +		 'no-map'.
->  
->  Example:
->  
-> diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-> index a3c44ec..aefc4b1 100644
-> --- a/drivers/video/fbdev/simplefb.c
-> +++ b/drivers/video/fbdev/simplefb.c
-> @@ -29,6 +29,7 @@
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
->  #include <linux/of_platform.h>
->  #include <linux/parser.h>
->  #include <linux/regulator/consumer.h>
-> @@ -294,6 +295,35 @@ static void simplefb_clocks_enable(struct simplefb_par *par,
->  static void simplefb_clocks_destroy(struct simplefb_par *par) { }
->  #endif
->  
-> +#if defined CONFIG_OF
-> +static struct resource *simplefb_parse_dt_reserved_mem(struct device *dev)
-> +{
-> +	static struct resource res;
-> +	struct device_node *np;
-> +	int ret;
-> +
-> +	np = of_parse_phandle(dev->of_node, "memory-region", 0);
-> +	if (!np)
-> +		return NULL;
-> +
-> +	ret = of_address_to_resource(np, 0, &res);
-> +	if (ret < 0)
-> +		return NULL;
-> +
-> +	if (!of_find_property(np, "no-map", NULL)) {
-> +		dev_err(dev, "Can't apply mapped reserved-memory\n");
-> +		return NULL;
-> +	}
-> +
-> +	return &res;
-> +}
-> +#else
-> +static struct resource *simplefb_parse_dt_reserved_mem(struct device *dev)
-> +{
-> +	return NULL;
-> +}
-> +#endif
-> +
->  #if defined CONFIG_OF && defined CONFIG_REGULATOR
->  
->  #define SUPPLY_SUFFIX "-supply"
-> @@ -428,6 +458,8 @@ static int simplefb_probe(struct platform_device *pdev)
->  		return ret;
->  
->  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!mem)
-> +		mem = simplefb_parse_dt_reserved_mem(&pdev->dev);
->  	if (!mem) {
->  		dev_err(&pdev->dev, "No memory resource\n");
->  		return -EINVAL;
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index 0bf7d17..87d3136 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -346,6 +346,7 @@ static const struct pci_device_id rtl8169_pci_tbl[] = {
+ MODULE_DEVICE_TABLE(pci, rtl8169_pci_tbl);
+ 
+ static int rx_buf_sz = 16383;
++static int aspm_disable = 0;
+ static int use_dac = -1;
+ static struct {
+ 	u32 msg_enable;
+@@ -867,6 +868,8 @@ struct rtl8169_private {
+ 
+ MODULE_AUTHOR("Realtek and the Linux r8169 crew <netdev@vger.kernel.org>");
+ MODULE_DESCRIPTION("RealTek RTL-8169 Gigabit Ethernet driver");
++module_param(aspm_disable, int, 0444);
++MODULE_PARM_DESC(aspm_disable, "Disable ASPM completely.");
+ module_param(use_dac, int, 0);
+ MODULE_PARM_DESC(use_dac, "Enable PCI DAC. Unsafe on 32 bit PCI slot.");
+ module_param_named(debug, debug.msg_enable, int, 0);
+@@ -5878,6 +5881,20 @@ static void rtl_pcie_state_l2l3_enable(struct rtl8169_private *tp, bool enable)
+ 	RTL_W8(Config3, data);
+ }
+ 
++static void rtl_hw_internal_aspm_clkreq_enable(struct rtl8169_private *tp,
++				bool enable)
++{
++	void __iomem *ioaddr = tp->mmio_addr;
++
++	if (enable) {
++		RTL_W8(Config2, RTL_R8(Config2) | ClkReqEn);
++		RTL_W8(Config5, RTL_R8(Config5) | ASPM_en);
++	} else {
++		RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
++		RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
++	}
++}
++
+ #define R8168_CPCMD_QUIRK_MASK (\
+ 	EnableBist | \
+ 	Mac_dbgo_oe | \
+@@ -6264,7 +6281,6 @@ static void rtl_hw_start_8168g(struct rtl8169_private *tp)
+ 
+ static void rtl_hw_start_8168g_1(struct rtl8169_private *tp)
+ {
+-	void __iomem *ioaddr = tp->mmio_addr;
+ 	static const struct ephy_info e_info_8168g_1[] = {
+ 		{ 0x00, 0x0000,	0x0008 },
+ 		{ 0x0c, 0x37d0,	0x0820 },
+@@ -6275,14 +6291,14 @@ static void rtl_hw_start_8168g_1(struct rtl8169_private *tp)
+ 	rtl_hw_start_8168g(tp);
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
+-	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168g_1, ARRAY_SIZE(e_info_8168g_1));
++	if (!aspm_disable)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168g_2(struct rtl8169_private *tp)
+ {
+-	void __iomem *ioaddr = tp->mmio_addr;
+ 	static const struct ephy_info e_info_8168g_2[] = {
+ 		{ 0x00, 0x0000,	0x0008 },
+ 		{ 0x0c, 0x3df0,	0x0200 },
+@@ -6293,14 +6309,14 @@ static void rtl_hw_start_8168g_2(struct rtl8169_private *tp)
+ 	rtl_hw_start_8168g(tp);
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
+-	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168g_2, ARRAY_SIZE(e_info_8168g_2));
++	if (!aspm_disable)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
+ {
+-	void __iomem *ioaddr = tp->mmio_addr;
+ 	static const struct ephy_info e_info_8411_2[] = {
+ 		{ 0x00, 0x0000,	0x0008 },
+ 		{ 0x0c, 0x3df0,	0x0200 },
+@@ -6312,9 +6328,10 @@ static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
+ 	rtl_hw_start_8168g(tp);
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
+-	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8411_2, ARRAY_SIZE(e_info_8411_2));
++	if (!aspm_disable)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+@@ -6333,8 +6350,7 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+ 	};
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
+-	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168h_1, ARRAY_SIZE(e_info_8168h_1));
+ 
+ 	RTL_W32(TxConfig, RTL_R32(TxConfig) | TXCFG_AUTO_FIFO);
+@@ -6413,6 +6429,9 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+ 	r8168_mac_ocp_write(tp, 0xe63e, 0x0000);
+ 	r8168_mac_ocp_write(tp, 0xc094, 0x0000);
+ 	r8168_mac_ocp_write(tp, 0xc09e, 0x0000);
++
++	if (!aspm_disable)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
+@@ -6458,7 +6477,6 @@ static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
+ 
+ static void rtl_hw_start_8168ep_1(struct rtl8169_private *tp)
+ {
+-	void __iomem *ioaddr = tp->mmio_addr;
+ 	static const struct ephy_info e_info_8168ep_1[] = {
+ 		{ 0x00, 0xffff,	0x10ab },
+ 		{ 0x06, 0xffff,	0xf030 },
+@@ -6468,11 +6486,13 @@ static void rtl_hw_start_8168ep_1(struct rtl8169_private *tp)
+ 	};
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
+-	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168ep_1, ARRAY_SIZE(e_info_8168ep_1));
+ 
+ 	rtl_hw_start_8168ep(tp);
++
++	if (!aspm_disable)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
+@@ -6485,14 +6505,16 @@ static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
+ 	};
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
+-	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168ep_2, ARRAY_SIZE(e_info_8168ep_2));
+ 
+ 	rtl_hw_start_8168ep(tp);
+ 
+ 	RTL_W8(DLLPR, RTL_R8(DLLPR) & ~PFM_EN);
+ 	RTL_W8(MISC_1, RTL_R8(MISC_1) & ~PFM_D3COLD_EN);
++
++	if (!aspm_disable)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+@@ -6507,8 +6529,7 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+ 	};
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
+-	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168ep_3, ARRAY_SIZE(e_info_8168ep_3));
+ 
+ 	rtl_hw_start_8168ep(tp);
+@@ -6528,6 +6549,9 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+ 	data = r8168_mac_ocp_read(tp, 0xe860);
+ 	data |= 0x0080;
+ 	r8168_mac_ocp_write(tp, 0xe860, data);
++
++	if (!aspm_disable)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168(struct net_device *dev)
+@@ -8425,11 +8449,6 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	mii->reg_num_mask = 0x1f;
+ 	mii->supports_gmii = !!(cfg->features & RTL_FEATURE_GMII);
+ 
+-	/* disable ASPM completely as that cause random device stop working
+-	 * problems as well as full system hangs for some PCIe devices users */
+-	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+-				     PCIE_LINK_STATE_CLKPM);
+-
+ 	/* enable device (incl. PCI PM wakeup and hotplug setup) */
+ 	rc = pcim_enable_device(pdev);
+ 	if (rc < 0) {
+@@ -8476,6 +8495,14 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* Identify chip attached to board */
+ 	rtl8169_get_mac_version(tp, dev, cfg->default_ver);
+ 
++	/* disable ASPM completely as that cause random device stop working
++	 * problems as well as full system hangs for some PCIe devices users */
++	if (aspm_disable || tp->mac_version < RTL_GIGA_MAC_VER_40) {
++		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
++						PCIE_LINK_STATE_CLKPM);
++		netif_info(tp, probe, dev, "ASPM disabled\n");
++	}
++
+ 	tp->cp_cmd = 0;
+ 
+ 	if ((sizeof(dma_addr_t) > 4) &&
+-- 
+2.7.4
