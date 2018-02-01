@@ -1,152 +1,134 @@
-Return-Path: <eric.dumazet@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517528587; cv=none;
-        d=google.com; s=arc-20160816;
-        b=QAqqE5ie4OCnfO5eza9jOzaIvMfMk5jvdujjfihjTEp529B0D3qIFyMoIC8Ebuncys
-         3wzDLZrp7DtwjKsYzt7a2OX6WCxHBNaJKiT1cAXMyXoiE21xEiorRaW5UuApVKKaNDl0
-         ZuvD2o+mH5ujhbTx03UQhtPcKzRbuMk0rcRty5pw+JVu8Mzla0ksJkrUC5iJNakGJjHR
-         iUoY1ivbvAp7IAxOUhSwRP9T0RFFAxQzi6GrVp9gPFMrJE084zLB00nWRmIGdPPsEXX5
-         9AYofG11Wq4Ztr7EIlSCExsO8EdAT3TgDG0jfBd6Ywt7V7dOZVkPSWPhMEAruI9fmohQ
-         5Quw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:dkim-signature
-         :arc-authentication-results;
-        bh=x1/t4X39n/I55U9W91wpiSRINMQwKYPE9UVhyw3f3Yc=;
-        b=RdU9aDSvkAusI/ebZj9FTe4HSF2D4TtCBvKMCR2jNpnECGvaVvxUnIjTihDYLj/i18
-         ORQBFUMWORIJjk1G00+TbarCJD9bEMTY4QojvGGKQnRZFDnKXtONHT/nbDpt1hTkcUiI
-         pdxUTkqgoBFIQGety5dRcP1Lbd6D1rfAH3MjcsnvSu9qFs14yBdgBiEZXt8U9NuzBrCl
-         caqAEymqznIBMlxmWFFdIymWYT1AAr+PtJQBanzeNhrPfMr36gU5kutrUDtfpsdIPSNp
-         Uy12SA1erEcpqXf3uC/Y02pTUsztrM9ZfPp7nZWGnG7oxqtP1bNB8P5HoW552A8wztNN
-         v1UQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FCutQzel;
-       spf=pass (google.com: domain of eric.dumazet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=eric.dumazet@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FCutQzel;
-       spf=pass (google.com: domain of eric.dumazet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=eric.dumazet@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x226NpuLMJPHOeZ3jN0jaqf1GB+yGtrBYwhyeT7qyBi6XAqvlVngLzJYYqJCgtkuXx044RZP7JQ==
-Message-ID: <1517528585.3715.122.camel@gmail.com>
-Subject: Re: WARNING in reuseport_add_sock
-From: Eric Dumazet <eric.dumazet@gmail.com>
-To: Eric Biggers <ebiggers3@gmail.com>, syzbot
-	 <syzbot+c0ea2226f77a42936bf7@syzkaller.appspotmail.com>
-Cc: adobriyan@gmail.com, davem@davemloft.net, gregkh@linuxfoundation.org,
-	kraig@google.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pombredanne@nexb.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Date: Thu, 01 Feb 2018 15:43:05 -0800
-In-Reply-To: <20180201233012.fgcve3ohufcspb2c@gmail.com>
-References: <94eb2c1fcf4cdda26b05629d08d4@google.com>
-	 <20180201233012.fgcve3ohufcspb2c@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3115974-1517474254-2-9484584375227235360
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517474253; b=Og9kWQpeEBAD3xjm3B1MaNiVKIgT8cDFnUKVOwXg45zA+GK
+    9yhdIuOOvC3J0giFrLNEhEGIGBcNXdKpNrgBljcou++2Wt35jQCVHDpqp9XIxq8Q
+    38GuNYnAmFk2idi/4UQbcN8K/uS4U0IeIAKD+EtjQmNGoqkPibqGZEFxjIzLNpxS
+    5zqwHZZKBsuzIeA+zbxF+HilG5Ax5RXX5hrVAEgt8MPbzAwuLn5co+yfwz5Vr8wI
+    RPjSqsV+6TGxkJTk3E282GgQUuY57aTTxTa3tGsYWnKzzdd40FNS2Zho3CiVFFBK
+    xZSTZDV+xGKpglWJoFolgyRRA6qevhiSZERJAbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=message-id:subject:from:to:date
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:reply-to:cc
+    :content-type:content-transfer-encoding:sender; s=arctest; t=
+    1517474253; bh=pXsKPuoe75kOBz+1zL6RorT5uLW3nqQ2hZqVuzk1Mq0=; b=r
+    WhHUSsHEfRzohJ6Mdvb7ikNkJUeR9ww8APimlY3qPdCW6xZ4Q1bOAQpYyQBtyALp
+    6+mx/niAjrh257Mfpjgq8PznkEgJvI4Xd34FM2oxQWAPj21OeaTy1MCkIJF31wnd
+    sj+QvqvqCKdHRvJpHDnjV2rKphpUKLDm1zND6WKKQjUNWx7KuIrTehfRuC862H9H
+    VLmN865C1rzLqc22kwC7Qn/IDQzfaziPMRcbsxy0zymjeBvGcPkYhPfuTmqBKe5w
+    LpChhEYQGP9hTZ4/zlQd17whf9w5nKghPn+wqN4zFa8tnpHq4bo8UC9cXOWryFBw
+    ATtACl6ghVQDcJPDTuelg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Message-ID: <1517474239.30443.2.camel@redhat.com>
+Subject: Re: [RFC PATCH 1/2] hv_netvsc: Split netvsc_revoke_buf() and
+ netvsc_teardown_gpadl()
+From: Mohammed Gamal <mgamal@redhat.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Date: Thu, 01 Feb 2018 09:37:19 +0100
+In-Reply-To: <20180131150137.58abee5b@xeon-e3>
+References: <1516700045-32142-1-git-send-email-mgamal@redhat.com>
+ <1516700045-32142-2-git-send-email-mgamal@redhat.com>
+ <20180130112926.53f3c166@xeon-e3> <1517397409.3452.7.camel@redhat.com>
+ <20180131150137.58abee5b@xeon-e3>
+Organization: Red Hat
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Reply-To: mgamal@redhat.com
+Cc: otubo@redhat.com, sthemmin@microsoft.com, netdev@vger.kernel.org,
+ haiyangz@microsoft.com, linux-kernel@vger.kernel.org,
+ devel@linuxdriverproject.org, vkuznets@redhat.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1589433054887734562?=
-X-GMAIL-MSGID: =?utf-8?q?1591244055397606507?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 2018-02-01 at 15:30 -0800, Eric Biggers wrote:
-> On Fri, Jan 12, 2018 at 03:58:01PM -0800, syzbot wrote:
-> > Hello,
-> > 
-> > syzkaller hit the following crash on
-> > 30a7acd573899fd8b8ac39236eff6468b195ac7d
-> > git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
-> > compiler: gcc (GCC) 7.1.1 20170620
-> > .config is attached
-> > Raw console output is attached.
-> > C reproducer is attached
-> > syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> > for information about syzkaller reproducers
-> > 
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+c0ea2226f77a42936bf7@syzkaller.appspotmail.com
-> > It will help syzbot understand when the bug is fixed. See footer for
-> > details.
-> > If you forward the report, please keep this part and the footer.
-> > 
-> > ------------[ cut here ]------------
-> > socket already in reuseport group
-> > WARNING: CPU: 0 PID: 3496 at net/core/sock_reuseport.c:119
-> > reuseport_add_sock+0x742/0x9b0 net/core/sock_reuseport.c:117
-> > Kernel panic - not syncing: panic_on_warn set ...
-> > 
-> > CPU: 0 PID: 3496 Comm: syzkaller869503 Not tainted 4.15.0-rc6+ #245
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:17 [inline]
-> >  dump_stack+0x194/0x257 lib/dump_stack.c:53
-> >  panic+0x1e4/0x41c kernel/panic.c:183
-> >  __warn+0x1dc/0x200 kernel/panic.c:547
-> >  report_bug+0x211/0x2d0 lib/bug.c:184
-> >  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
-> >  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-> >  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-> >  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-> >  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1079
-> > RIP: 0010:reuseport_add_sock+0x742/0x9b0 net/core/sock_reuseport.c:117
-> > RSP: 0018:ffff8801bf5f7968 EFLAGS: 00010286
-> > RAX: dffffc0000000008 RBX: ffff8801bf4905c0 RCX: ffffffff8159d9de
-> > RDX: 0000000000000000 RSI: 1ffff10037ebeee8 RDI: 0000000000000293
-> > RBP: ffff8801bf5f7b00 R08: 1ffff10037ebeeaa R09: 0000000000000000
-> > R10: ffff8801bf5f7820 R11: 0000000000000000 R12: 1ffff10037ebef37
-> > R13: ffff8801bf47b930 R14: ffff8801bf5f7ad8 R15: 1ffff10037ebef3b
-> >  inet_reuseport_add_sock net/ipv4/inet_hashtables.c:456 [inline]
-> >  __inet_hash+0x767/0xb90 net/ipv4/inet_hashtables.c:477
-> >  inet_hash+0x61/0x90 net/ipv4/inet_hashtables.c:501
-> >  inet_csk_listen_start+0x38f/0x460 net/ipv4/inet_connection_sock.c:885
-> >  inet_listen+0x19a/0x440 net/ipv4/af_inet.c:228
-> >  SYSC_listen net/socket.c:1483 [inline]
-> >  SyS_listen+0x1aa/0x350 net/socket.c:1469
-> >  entry_SYSCALL_64_fastpath+0x23/0x9a
-> > RIP: 0033:0x445639
-> > RSP: 002b:00007f2966197db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000032
-> > RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445639
-> > RDX: 0000000000445639 RSI: 0000000000000000 RDI: 0000000000000006
-> > RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> > R13: 00007ffc328a273f R14: 00007f29661989c0 R15: 0000000000000008
-> > Dumping ftrace buffer:
-> >    (ftrace buffer empty)
-> > Kernel Offset: disabled
-> > Rebooting in 86400 seconds..
-> > 
-> 
-> Still happens.  Here's a simplified reproducer:
-> 
-> #include <linux/filter.h>
-> #include <linux/in.h>
-> #include <sys/socket.h>
-> 
-> int main()
-> {
-> 	struct sock_filter filt = { .code = 6 };
-> 	struct sock_fprog prog = { .len = 1, .filter = &filt };
-> 	struct sockaddr_in addr = {
-> 		.sin_family = AF_INET,
-> 		.sin_port = htobe16(20000),
-> 	};
-> 
-> 	for (;;) {
-> 		int fd = socket(AF_INET, SOCK_STREAM, 0);
-> 		setsockopt(fd, IPPROTO_TCP, IP_TRANSPARENT, &(int){ 1 }, 4);
-> 		setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &(int){ 1 }, 4);
-> 		setsockopt(fd, SOL_SOCKET, SO_ATTACH_REUSEPORT_CBPF,
-> 			   &prog, sizeof(prog));
-> 		bind(fd, (void *)&addr, sizeof(addr));
-> 		listen(fd, 0);
-> 	}
-> }
-
-It seems commit 1b5f962e71bf ("soreuseport: fix initialization race")
-was not complete, and missed check done in reuseport_add_sock()
-
-( That was my update in Google-Bug-Id 71459017 )
-
-I probably can send a fix today, if time permits.
+T24gV2VkLCAyMDE4LTAxLTMxIGF0IDE1OjAxIC0wODAwLCBTdGVwaGVuIEhlbW1pbmdlciB3cm90
+ZToKPiBPbiBXZWQsIDMxIEphbiAyMDE4IDEyOjE2OjQ5ICswMTAwCj4gTW9oYW1tZWQgR2FtYWwg
+PG1nYW1hbEByZWRoYXQuY29tPiB3cm90ZToKPiAKPiA+IE9uIFR1ZSwgMjAxOC0wMS0zMCBhdCAx
+MToyOSAtMDgwMCwgU3RlcGhlbiBIZW1taW5nZXIgd3JvdGU6Cj4gPiA+IE9uIFR1ZSwgMjMgSmFu
+IDIwMTggMTA6MzQ6MDQgKzAxMDAKPiA+ID4gTW9oYW1tZWQgR2FtYWwgPG1nYW1hbEByZWRoYXQu
+Y29tPiB3cm90ZToKPiA+ID4gwqDCoAo+ID4gPiA+IFNwbGl0IGVhY2ggb2YgdGhlIGZ1bmN0aW9u
+cyBpbnRvIHR3byBmb3IgZWFjaCBvZiBzZW5kL3JlY3YKPiA+ID4gPiBidWZmZXJzCj4gPiA+ID4g
+Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogTW9oYW1tZWQgR2FtYWwgPG1nYW1hbEByZWRoYXQuY29t
+PsKgwqAKPiA+ID4gCj4gPiA+IFNwbGl0dGluZyB0aGVzZSBmdW5jdGlvbnMgaXMgbm90IG5lY2Vz
+c2FyecKgwqAKPiA+IAo+ID4gSG93IHNvPyBXZSBuZWVkIHRvIHNlbmQgZWFjaCBtZXNzYWdlIGlu
+ZGVwZW5kZW50bHksIGFuZCBoZW5jZSB0aGUKPiA+IHNwbGl0Cj4gPiAoc2VlIGNvdmVyIGxldHRl
+cikuIElzIHRoZXJlIGFub3RoZXIgd2F5Pwo+IAo+IFRoaXMgaXMgYWxsIHRoYXQgaXMgbmVlZGVk
+Lgo+IAo+IAo+IFN1YmplY3Q6IFtQQVRDSF0gaHZfbmV0dnNjOiB3b3JrIGFyb3VuZCBmb3IgZ3Bh
+ZGwgdGVhcmRvd24gb24gb2xkZXIKPiB3aW5kb3dzCj4gwqBzZXJ2ZXIKPiAKPiBPbiBXUzIwMTIg
+dGhlIGhvc3QgaWdub3JlcyBtZXNzYWdlcyBhZnRlciB2bWJ1cyBjaGFubmVsIGlzIGNsb3NlZC4K
+PiBXb3JrYXJvdW5kIHRoaXMgYnkgZG9pbmcgd2hhdCBXaW5kb3dzIGRvZXMgYW5kIHNlbmQgdGhl
+IHRlYXJkb3duCj4gYmVmb3JlIGNsb3NlIG9uIG9sZGVyIHZlcnNpb25zIG9mIE5WU1AgcHJvdG9j
+b2wuCj4gCj4gUmVwb3J0ZWQtYnk6IE1vaGFtbWVkIEdhbWFsIDxtZ2FtYWxAcmVkaGF0LmNvbT4K
+PiBGaXhlczogMGNmNzM3ODA4YWU3ICgiaHZfbmV0dnNjOiBuZXR2c2NfdGVhcmRvd25fZ3BhZGwo
+KSBzcGxpdCIpCj4gU2lnbmVkLW9mZi1ieTogU3RlcGhlbiBIZW1taW5nZXIgPHN0aGVtbWluQG1p
+Y3Jvc29mdC5jb20+Cj4gLS0tCj4gwqBkcml2ZXJzL25ldC9oeXBlcnYvbmV0dnNjLmMgfCA5ICsr
+KysrKysrLQo+IMKgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigt
+KQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9oeXBlcnYvbmV0dnNjLmMKPiBiL2RyaXZl
+cnMvbmV0L2h5cGVydi9uZXR2c2MuYwo+IGluZGV4IDE3ZTUyOWFmNzlkYy4uMWEzZGYwZWZmNDJm
+IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvbmV0L2h5cGVydi9uZXR2c2MuYwo+ICsrKyBiL2RyaXZl
+cnMvbmV0L2h5cGVydi9uZXR2c2MuYwo+IEBAIC01NzQsMTAgKzU3NCwxNyBAQCB2b2lkIG5ldHZz
+Y19kZXZpY2VfcmVtb3ZlKHN0cnVjdCBodl9kZXZpY2UKPiAqZGV2aWNlKQo+IMKgCcKgKi8KPiDC
+oAluZXRkZXZfZGJnKG5kZXYsICJuZXQgZGV2aWNlIHNhZmUgdG8gcmVtb3ZlXG4iKTsKPiDCoAo+
+ICsJLyogV29ya2Fyb3VuZCBmb3Igb2xkZXIgdmVyc2lvbnMgb2YgV2luZG93cyByZXF1aXJlIHRo
+YXQKPiArCcKgKiBidWZmZXIgYmUgcmV2b2tlZCBiZWZvcmUgY2hhbm5lbCBpcyBkaXNhYmxlZAo+
+ICsJwqAqLwo+ICsJaWYgKG5ldF9kZXZpY2UtPm52c3BfdmVyc2lvbiA8IE5WU1BfUFJPVE9DT0xf
+VkVSU0lPTl80KQo+ICsJCW5ldHZzY190ZWFyZG93bl9ncGFkbChkZXZpY2UsIG5ldF9kZXZpY2Up
+Owo+ICsKPiDCoAkvKiBOb3csIHdlIGNhbiBjbG9zZSB0aGUgY2hhbm5lbCBzYWZlbHkgKi8KPiDC
+oAl2bWJ1c19jbG9zZShkZXZpY2UtPmNoYW5uZWwpOwo+IMKgCj4gLQluZXR2c2NfdGVhcmRvd25f
+Z3BhZGwoZGV2aWNlLCBuZXRfZGV2aWNlKTsKPiArCWlmIChuZXRfZGV2aWNlLT5udnNwX3ZlcnNp
+b24gPj0gTlZTUF9QUk9UT0NPTF9WRVJTSU9OXzQpCj4gKwkJbmV0dnNjX3RlYXJkb3duX2dwYWRs
+KGRldmljZSwgbmV0X2RldmljZSk7Cj4gwqAKPiDCoAkvKiBBbmQgZGlzc2Fzc29jaWF0ZSBOQVBJ
+IGNvbnRleHQgZnJvbSBkZXZpY2UgKi8KPiDCoAlmb3IgKGkgPSAwOyBpIDwgbmV0X2RldmljZS0+
+bnVtX2NobjsgaSsrKQoKSSd2ZSB0cmllZCBhIHNpbWlsYXIgd29ya2Fyb3VuZCBiZWZvcmUgYnkg
+Y2FsbGluZwpuZXR2c2NfdGVhcmRvd25fZ3BhZGwoKSBhZnRlciBuZXR2c2NfcmV2b2tlX2J1Zigp
+LCBidXQgYmVmb3JlIHNldHRpbmcKbmV0X2RldmljZV9jdHgtPm52ZGV2IHRvIE5VTEwgYW5kIGl0
+IGNhdXNlZCB0aGUgZ3Vlc3QgdG8gaGFuZyB3aGVuCnRyeWluZyB0byBjaGFuZ2UgTVRVLsKgCgpM
+ZXQgbWUgdHJ5IHRoYXQgY2hhbmdlIGFuZCBzZWUgaWYgaXQgYmVoYXZlcyBkaWZmZXJlbnRseS4K
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2ZWwgbWFp
+bGluZyBsaXN0CmRldmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0cDovL2RyaXZlcmRldi5s
+aW51eGRyaXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVsCg==
