@@ -1,145 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751959AbeBAVOh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 16:14:37 -0500
-Received: from mail-ua0-f179.google.com ([209.85.217.179]:42194 "EHLO
-        mail-ua0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751604AbeBAVOa (ORCPT
+        id S1751946AbeBAVRd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 16:17:33 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55456 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751710AbeBAVR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 16:14:30 -0500
-X-Google-Smtp-Source: AH8x227ebCSuijF+yiG39VQyvBHbDmxxhYwzMfsdJK26Lu1CcTfAKhiXdhOHKExtuvuwZe3OqVWDlp0+HhFidlS1d1o=
+        Thu, 1 Feb 2018 16:17:27 -0500
+X-Google-Smtp-Source: AH8x226moF/Mc6vcAjQw1PRR/kVNVcvTPQ8+FyMloAXpE00efzi2/DWmdcxrOXe2waVbJ3iANmKL/7tJqrc3gwJwb/k=
 MIME-Version: 1.0
-In-Reply-To: <bb5156667d084d77841f7078d373a265@ausx13mpc120.AMER.DELL.COM>
-References: <20180124104121.7g3zfay5smc5v2tc@pali> <20180201192945.wrsqjq7f5ejhqj6m@dtor-ws>
- <bb5156667d084d77841f7078d373a265@ausx13mpc120.AMER.DELL.COM>
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 1 Feb 2018 13:14:29 -0800
-Message-ID: <CAKdAkRS_TjTi-VxGg59+aw8wQZxrx8YBAF+m9MdknYNdKGyrvQ@mail.gmail.com>
-Subject: Re: Dell docking station & Dell Embedded Controller & PS/2 devices
-To: Mario Limonciello <Mario.Limonciello@dell.com>
-Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180201114657.7323-15-marc.zyngier@arm.com>
+References: <20180201114657.7323-1-marc.zyngier@arm.com> <20180201114657.7323-15-marc.zyngier@arm.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Thu, 1 Feb 2018 21:17:25 +0000
+Message-ID: <CAKv+Gu9Fpmc+Q2iQ-EoJ0TYkzh1nh59XQthuzh9Q9W+66pHSZg@mail.gmail.com>
+Subject: Re: [PATCH v3 14/18] firmware/psci: Expose SMCCC version through psci_ops
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>, Andrew Jones <drjones@redhat.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        Jon Masters <jcm@redhat.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w11LEj4S003190
 
-On Thu, Feb 1, 2018 at 11:35 AM,  <Mario.Limonciello@dell.com> wrote:
+On 1 February 2018 at 11:46, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> Since PSCI 1.0 allows the SMCCC version to be (indirectly) probed,
+> let's do that at boot time, and expose the version of the calling
+> convention as part of the psci_ops structure.
 >
+> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  drivers/firmware/psci.c | 19 +++++++++++++++++++
+>  include/linux/psci.h    |  6 ++++++
+>  2 files changed, 25 insertions(+)
 >
->> -----Original Message-----
->> From: Dmitry Torokhov [mailto:dmitry.torokhov@gmail.com]
->> Sent: Thursday, February 1, 2018 1:30 PM
->> To: Pali Rohár <pali.rohar@gmail.com>
->> Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; linux-
->> input@vger.kernel.org; linux-kernel@vger.kernel.org
->> Subject: Re: Dell docking station & Dell Embedded Controller & PS/2 devices
->>
->> Hi Pali,
->>
->> On Wed, Jan 24, 2018 at 11:41:21AM +0100, Pali Rohár wrote:
->> > Hi Dmitry!
->> >
->> > I'm observing a problem with internal touchpad (handled by psmouse.ko)
->> > on Dell laptops connected to Dell E docking station. When I connect
->> > external PS/2 keyboard to docking station then internal laptop touchpad
->> > switch from multitouch absolute mode to relative bare PS/2 mode.
->> >
->> > And because ALPS driver in psmouse.ko is capable to process interleaved
->> > bare 3-byte PS/2 packets with 6-byte ALPS packets (which handles
->> > trackstick data on some ALPS models), ALPS driver does not show any
->> > message about this "downgrade" from multitouch to bare mode. And
->> > continue working in bare mode.
->> >
->> > When I rmmod psmouse and modprobe it again, then touchpad switch back to
->> > multitouch mode.
->> >
->> > Mario told me that Dell Embedded Controller, which handle internal
->> > keyboard, internal touchpad and external PS/2 keyboard, automatically
->> > send RESET command to *all* those devices when external PS/2 keyboard is
->> > connected. Therefore this is reason why touchpad downgrade to to bare
->> > mode. And according to Mario, host system should issue vendor specific
->> > PS/2 commands to re-initialize all PS/2 devices when this situation
->> > happen. Mario also told me that Windows is doing this action.
->>
->> Yeah, I remember fun with Inspiron 8100 - when you dock it it woudl
->> silently switch Synaptics touchpad into standard mode and it would not
->> come back as Synaptics until you disconnect. And there was no
->> notification to the kernel as far as I could tell.
->>
->> It could be that we need to monitor dock events and then kick reconnect
->> of serio port, either from userspace via udev (I think that would be
->> preferred), or in kernel.
->>
->> >
->> > Every time when I connect external PS/2 keyboard to dock I see this
->> > message in dmesg:
->> >
->> > Spurious ACK... Some program might be trying to access hardware directly.
->> >
->> > I see it also every time when I dock laptop into docking station (to
->> > which is keyboard already connected). And it happens also when I connect
->> > external PS/2 mouse to dock.
->> >
->> > Dmitry, how to handle this situation to re-initialize psmouse.ko when
->> > external PS/2 device is connected to Dell E docking station? According
->> > to Mario, this is how Dell Embedded Controller is designed and suppose
->> > how OS should work with it.
->> >
->> > Manually rmmoding and modprobing for every docking/undocking laptop is
->> > not ideal solution.
->> >
->> > Could it be possible to use that Spurious ATKBD_RET_ACK from atkbd.c be
->> > handled on Dell systems (probably via DMI) as an event to reset and
->> > reinitialize all PS/2 devices?
->>
->> So we need to figure out what exactly we are getting from the docking
->> station in this case. We do try to handle the new device 0xaa 0x00
->> announcements:
+> diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+> index e9493da2b111..8631906c414c 100644
+> --- a/drivers/firmware/psci.c
+> +++ b/drivers/firmware/psci.c
+> @@ -61,6 +61,7 @@ bool psci_tos_resident_on(int cpu)
 >
-> Docking station itself won't have sent any events.  The PS2 ports in it
-> are electrically wired to the external PS2 pins in the docking adapter on
-> the system.
+>  struct psci_operations psci_ops = {
+>         .conduit = PSCI_CONDUIT_NONE,
+> +       .smccc_version = SMCCC_VERSION_1_0,
+>  };
 >
-> System EC is what will be sending any PS2 events.
+>  typedef unsigned long (psci_fn)(unsigned long, unsigned long,
+> @@ -511,6 +512,23 @@ static void __init psci_init_migrate(void)
+>         pr_info("Trusted OS resident on physical CPU 0x%lx\n", cpuid);
+>  }
+>
+> +static void __init psci_init_smccc(u32 ver)
+> +{
+> +       int feature;
+> +
+> +       feature = psci_features(ARM_SMCCC_VERSION_FUNC_ID);
+> +
+> +       if (feature != PSCI_RET_NOT_SUPPORTED) {
+> +               ver = invoke_psci_fn(ARM_SMCCC_VERSION_FUNC_ID, 0, 0, 0);
+> +               if (ver != ARM_SMCCC_VERSION_1_1)
+> +                       psci_ops.smccc_version = SMCCC_VERSION_1_0;
+> +               else
+> +                       psci_ops.smccc_version = SMCCC_VERSION_1_1;
+> +       }
+> +
+> +       pr_info("SMC Calling Convention v1.%d\n", psci_ops.smccc_version);
 
-OK, it does not matter from the input layer POW, if they are PS/2
-events they should be coming from i8042.
+This is a bit nasty: you are returning the numeric value of the enum
+as the minor number, and hardcoding the major version number as 1,
+while the return value of ARM_SMCCC_VERSION_FUNC_ID gives you the
+exact numbers. I assume nobody is expecting SMCCC v2.3 anytime soon,
+but it would still be a lot nicer to simply decode the value of 'ver'
+(and make it default to ARM_SMCCC_VERSION_1_0 if the PSCI feature call
+fails)
 
+
+> +}
+> +
+>  static void __init psci_0_2_set_functions(void)
+>  {
+>         pr_info("Using standard PSCI v0.2 function IDs\n");
+> @@ -559,6 +577,7 @@ static int __init psci_probe(void)
+>         psci_init_migrate();
 >
->>
->>       /* Check if this is a new device announcement (0xAA 0x00) */
->>       if (unlikely(psmouse->packet[0] == PSMOUSE_RET_BAT && psmouse-
->> >pktcnt <= 2)) {
->>               if (psmouse->pktcnt == 1) {
->>                       psmouse->last = jiffies;
->>                       goto out;
->>               }
->>
->>               if (psmouse->packet[1] == PSMOUSE_RET_ID ||
->>                   (psmouse->protocol->type == PSMOUSE_HGPK &&
->>                    psmouse->packet[1] == PSMOUSE_RET_BAT)) {
->>                       __psmouse_set_state(psmouse, PSMOUSE_IGNORE);
->>                       serio_reconnect(serio);
->>                       goto out;
->>               }
->>
->> ...
->>
->> I am not sure where the "spurious ACK comes from". Can you enable i8042
->> debug before trying to dock and capture the data stream from the mouse?
->>
+>         if (PSCI_VERSION_MAJOR(ver) >= 1) {
+> +               psci_init_smccc(ver);
+>                 psci_init_cpu_suspend();
+>                 psci_init_system_suspend();
+>         }
+> diff --git a/include/linux/psci.h b/include/linux/psci.h
+> index f2679e5faa4f..8b1b3b5935ab 100644
+> --- a/include/linux/psci.h
+> +++ b/include/linux/psci.h
+> @@ -31,6 +31,11 @@ enum psci_conduit {
+>         PSCI_CONDUIT_HVC,
+>  };
 >
-> The system EC has reset PS2 devices (but AFAIK kernel won't have seen this
-> communication).
-
-So what kind of communication does EC send when docking? It sounds it
-is completely out of band from PS/2 connection.
-
-Thanks.
-
--- 
-Dmitry
+> +enum smccc_version {
+> +       SMCCC_VERSION_1_0,
+> +       SMCCC_VERSION_1_1,
+> +};
+> +
+>  struct psci_operations {
+>         u32 (*get_version)(void);
+>         int (*cpu_suspend)(u32 state, unsigned long entry_point);
+> @@ -41,6 +46,7 @@ struct psci_operations {
+>                         unsigned long lowest_affinity_level);
+>         int (*migrate_info_type)(void);
+>         enum psci_conduit conduit;
+> +       enum smccc_version smccc_version;
+>  };
+>
+>  extern struct psci_operations psci_ops;
+> --
+> 2.14.2
+>
