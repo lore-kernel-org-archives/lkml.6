@@ -1,94 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752290AbeBAMDl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 07:03:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40954 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751916AbeBAMDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 07:03:37 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E6CE21748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Thu, 1 Feb 2018 12:03:06 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: ftrace: Remove pointer comparison to 0 in
- prepare_ftrace_return
-Message-ID: <20180201120306.GH7637@saruman>
-References: <20180117113157.25768-1-malat@debian.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="j2AXaZ4YhVcLc+PQ"
-Content-Disposition: inline
-In-Reply-To: <20180117113157.25768-1-malat@debian.org>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+        id S1752416AbeBAMER (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 07:04:17 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46338 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752044AbeBAMEQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 07:04:16 -0500
+X-Google-Smtp-Source: AH8x227z+xhLCtIAV1VR87V7mfjch09slW7qsmVp8AqQzkZbNqNeMcNHftykgTkim7poJhV5KzxesA==
+From: Andrea Parri <parri.andrea@gmail.com>
+To: stern@rowland.harvard.edu, will.deacon@arm.com, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, paulmck@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: [PATCH 1/2] tools/memory-model: clarify the origin/scope of the tool name
+Date: Thu,  1 Feb 2018 13:03:29 +0100
+Message-Id: <1517486609-10951-1-git-send-email-parri.andrea@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Ingo pointed out that:
 
---j2AXaZ4YhVcLc+PQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  "The "memory model" name is overly generic, ambiguous and somewhat
+   misleading, as we usually mean the virtual memory layout/model
+   when we say "memory model". GCC too uses it in that sense [...]"
 
-On Wed, Jan 17, 2018 at 12:31:57PM +0100, Mathieu Malaterre wrote:
-> Replace pointer comparison to 0 with NULL in prepare_ftrace_return
-> to improve code readability. Identified with coccinelle script
-> 'badzero.cocci'.
->=20
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Make it clearer that, in the context of tools/memory-model/, the term
+"memory-model" is used as shorthand for "memory consistency model" by
+calling out this convention in tools/memory-model/README.
 
-I've applied to my 4.16 branch,
+Stick to the full name in sources' headers and for the subsystem name.
 
-Thanks
-James
+Suggested-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+---
+ tools/memory-model/MAINTAINERS       |  2 +-
+ tools/memory-model/README            | 14 +++++++-------
+ tools/memory-model/linux-kernel.bell |  2 +-
+ tools/memory-model/linux-kernel.cat  |  2 +-
+ 4 files changed, 10 insertions(+), 10 deletions(-)
 
-> ---
->  arch/mips/kernel/ftrace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/mips/kernel/ftrace.c b/arch/mips/kernel/ftrace.c
-> index 99285be0e088..7f3dfdbc3657 100644
-> --- a/arch/mips/kernel/ftrace.c
-> +++ b/arch/mips/kernel/ftrace.c
-> @@ -361,7 +361,7 @@ void prepare_ftrace_return(unsigned long *parent_ra_a=
-ddr, unsigned long self_ra,
->  	 * If fails when getting the stack address of the non-leaf function's
->  	 * ra, stop function graph tracer and return
->  	 */
-> -	if (parent_ra_addr =3D=3D 0)
-> +	if (parent_ra_addr =3D=3D NULL)
->  		goto out;
->  #endif
->  	/* *parent_ra_addr =3D return_hooker; */
-> --=20
-> 2.11.0
->=20
->=20
-
---j2AXaZ4YhVcLc+PQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlpzAfkACgkQbAtpk944
-dnrhQQ/9FJfs6Jryq+qC61qbYP6a7SwG53uTSZseQ/wngdpe4jcmX/L5PKDyLCfL
-0ILvV3oRsqsdUUl7uRCBO3MNPB0VvVreRy6mUXie3SiAnIqKfqVmGTzE27kUhHMD
-P7+/0YTTYpliOTIw2eOInRcCrR3TtPCCOXSJTnvROzO5OcqPRR2qTk+mVWK5trC8
-Ohf4cjfiFwj0SC0Iy5LtTS0isKPrc9/ipv6m4MoseE4/Tav1p6S6xt18f/CJqMfT
-guRJdjNBYgi6fGTeQjJ6Ug2/DgEyD6ZjjHTD4VeGvmkwnQ+tuOXrzzmlh8vo0vfD
-d79jKCtmZPsVRUhNP4zKQ7X1ME89XX0GsxXwDSC9xAs6piiUXxwshCrXuu2d+mRP
-G5XJ/gRq7PRm+aGBlPJLkYKk3+HmnvcEP7V+fcZIRJ0k4ljHJMSNN7J1RiAdfS1Q
-vmru+L9jXMkQV2AjgTjp01bMn51HgIXgcnAGeNyXtNwdJ15+b99eGBKc0/4R113i
-kHIFwf5BeaYxNaO47HKqMTBs+jimBvoidCsrJ87ZT2CZGbIdZN64UUp6EWirGMIM
-64/yRi/aoAvZeDzbQkaFRkT8ATxY7sqlpRiOCgGBqLBvjvSOSqM1GDFmCXs7egLX
-l9hzBPMyxGKT3oSZrD5pnnr+ukLZqOFRnREnB2UP1BfmrRdSsEw=
-=X1Q3
------END PGP SIGNATURE-----
-
---j2AXaZ4YhVcLc+PQ--
+diff --git a/tools/memory-model/MAINTAINERS b/tools/memory-model/MAINTAINERS
+index 711cbe72d6066..db3bd3fc0435b 100644
+--- a/tools/memory-model/MAINTAINERS
++++ b/tools/memory-model/MAINTAINERS
+@@ -1,4 +1,4 @@
+-LINUX KERNEL MEMORY MODEL
++LINUX KERNEL MEMORY CONSISTENCY MODEL
+ M:	Alan Stern <stern@rowland.harvard.edu>
+ M:	Andrea Parri <parri.andrea@gmail.com>
+ M:	Will Deacon <will.deacon@arm.com>
+diff --git a/tools/memory-model/README b/tools/memory-model/README
+index 43ba49492111c..91414a49fac53 100644
+--- a/tools/memory-model/README
++++ b/tools/memory-model/README
+@@ -1,15 +1,15 @@
+-			=========================
+-			LINUX KERNEL MEMORY MODEL
+-			=========================
++		=====================================
++		LINUX KERNEL MEMORY CONSISTENCY MODEL
++		=====================================
+ 
+ ============
+ INTRODUCTION
+ ============
+ 
+-This directory contains the memory model of the Linux kernel, written
+-in the "cat" language and executable by the (externally provided)
+-"herd7" simulator, which exhaustively explores the state space of
+-small litmus tests.
++This directory contains the memory consistency model (memory model, for
++short) of the Linux kernel, written in the "cat" language and executable
++by the externally provided "herd7" simulator, which exhaustively explores
++the state space of small litmus tests.
+ 
+ In addition, the "klitmus7" tool (also externally provided) may be used
+ to convert a litmus test to a Linux kernel module, which in turn allows
+diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+index 57112505f5e03..b984bbda01a5c 100644
+--- a/tools/memory-model/linux-kernel.bell
++++ b/tools/memory-model/linux-kernel.bell
+@@ -11,7 +11,7 @@
+  * which is to appear in ASPLOS 2018.
+  *)
+ 
+-"Linux kernel memory model"
++"Linux-kernel memory consistency model"
+ 
+ enum Accesses = 'once (*READ_ONCE,WRITE_ONCE,ACCESS_ONCE*) ||
+ 		'release (*smp_store_release*) ||
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index 15b7a5dd8a9af..babe2b3b0bb32 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -11,7 +11,7 @@
+  * which is to appear in ASPLOS 2018.
+  *)
+ 
+-"Linux kernel memory model"
++"Linux-kernel memory consistency model"
+ 
+ (*
+  * File "lock.cat" handles locks and is experimental.
+-- 
+2.7.4
