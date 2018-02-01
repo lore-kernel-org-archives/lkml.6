@@ -1,81 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752762AbeBAQvO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:51:14 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51796 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751783AbeBAQvM (ORCPT
+        id S1752787AbeBAQvU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:51:20 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:44191 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752696AbeBAQvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:51:12 -0500
-X-Google-Smtp-Source: AH8x226Bnwn+GBp98FUA2hkvpvRxGn1Ikf+58WnWKUTmeoSdJqIoKMMO4/MIFgmeLdsxKH8joYhLAA==
+        Thu, 1 Feb 2018 11:51:14 -0500
+X-Google-Smtp-Source: AH8x225AbWbQJMvncypoF58P+aRiGZzx8H7pj2FMxu+12nP2jsqAP9f5gezmV8dST7JbyOqN+yShJQ==
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: peterz@infradead.org
 Cc: lizefan@huawei.com, mingo@redhat.com, rostedt@goodmis.org,
         claudio@evidence.eu.com, bristot@redhat.com,
         tommaso.cucinotta@santannapisa.it, juri.lelli@redhat.com,
         luca.abeni@santannapisa.it, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 0/7] sched/deadline: fix cpusets bandwidth accounting
-Date: Thu,  1 Feb 2018 09:51:02 -0700
-Message-Id: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH V2 1/7] sched/topology: Adding function partition_sched_domains_locked()
+Date: Thu,  1 Feb 2018 09:51:03 -0700
+Message-Id: <1517503869-3179-2-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the follow-up patchset to [1] that attempt to fix a problem
-reported by Steve Rostedt [2] where DL bandwidth accounting is not
-recomputed after CPUset and CPU hotplug operations.  When CPU hotplug and
-some CUPset manipulation take place root domains are destroyed and new ones
-created, loosing at the same time DL accounting information pertaining to
-utilisation.  Please see [1] for a full description of the approach.
+Introducing function partition_sched_domains_locked() by taking
+the mutex locking code out of the original function.  That way
+the work done by partition_sched_domains_locked() can be reused
+without dropping the mutex lock.
 
-In this revision a shortcoming identified by Luca is addressed, with most
-of the solution kept unchanged.
+This patch doesn't change the functionality provided by the
+original code.
 
-A notable addition is patch 7/7 - it addresses a problem seen when hot
-plugging out a CPU where a DL task is running (see changelog for full
-details).  The issue is unrelated to this patchset and will manifest
-itself on a mainline kernel.
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ include/linux/sched/topology.h |  9 +++++++++
+ kernel/sched/topology.c        | 17 +++++++++++++----
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
-I will start working on that problem once done with this set but lumping
-it in here to raise awareness and provide a stop-gap measure while a
-better solution is designed.  This set is also available here [3] with the
-instrumentation for patch 7/7 in this commit [4].
-
-This set applies cleanly on top of v4.15.
-
-Best regards,
-Mathieu
-
-------
-Change for V2:
-. Addressing a problem found by Luca Abeni where the mask of a DL task
-  isn't modified when cpuset are collapsed.
-
-[1]. https://groups.google.com/forum/#!topic/linux.kernel/uakbvOQE6rc
-[2]. https://lkml.org/lkml/2016/2/3/966
-[3]. https://git.linaro.org/people/mathieu.poirier/linux.git/log/?h=v4.15-bandwidth-accounting-v2
-[4]. af68563a6c21 ("sched/debug: Add 'rq_debug' proc entry")
-
-Mathieu Poirier (7):
-  sched/topology: Adding function partition_sched_domains_locked()
-  cpuset: Rebuild root domain deadline accounting information
-  sched/deadline: Keep new DL task within root domain's boundary
-  cgroup: Constrain 'sched_load_balance' flag when DL tasks are present
-  cgroup: Constrain the addition of CPUs to a new CPUset
-  sched/core: Don't change the affinity of DL tasks
-  sched/deadline: Prevent CPU hotplug operation if DL task on CPU
-
- include/linux/cpuset.h         |   6 ++
- include/linux/sched.h          |   3 +
- include/linux/sched/deadline.h |   8 ++
- include/linux/sched/topology.h |   9 ++
- kernel/cgroup/cpuset.c         | 232 ++++++++++++++++++++++++++++++++++++++++-
- kernel/sched/core.c            |  32 +++++-
- kernel/sched/deadline.c        |  36 +++++++
- kernel/sched/sched.h           |   3 -
- kernel/sched/topology.c        |  31 +++++-
- 9 files changed, 346 insertions(+), 14 deletions(-)
-
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index cf257c2e728d..118141c3216a 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -162,6 +162,9 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
+ 	return to_cpumask(sd->span);
+ }
+ 
++extern void partition_sched_domains_locked(int ndoms_new,
++					   cpumask_var_t doms_new[],
++					   struct sched_domain_attr *dattr_new);
+ extern void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ 				    struct sched_domain_attr *dattr_new);
+ 
+@@ -207,6 +210,12 @@ extern void set_sched_topology(struct sched_domain_topology_level *tl);
+ struct sched_domain_attr;
+ 
+ static inline void
++partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
++			       struct sched_domain_attr *dattr_new)
++{
++}
++
++static inline void
+ partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ 			struct sched_domain_attr *dattr_new)
+ {
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 41bf2a531ee5..892e1f9c78f0 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1842,15 +1842,15 @@ static int dattrs_equal(struct sched_domain_attr *cur, int idx_cur,
+  * ndoms_new == 0 is a special case for destroying existing domains,
+  * and it will not create the default domain.
+  *
+- * Call with hotplug lock held
++ * Call with hotplug lock and sched_domains_mutex held
+  */
+-void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+-			     struct sched_domain_attr *dattr_new)
++void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
++				    struct sched_domain_attr *dattr_new)
+ {
+ 	int i, j, n;
+ 	int new_topology;
+ 
+-	mutex_lock(&sched_domains_mutex);
++	lockdep_assert_held(&sched_domains_mutex);
+ 
+ 	/* Always unregister in case we don't destroy any domains: */
+ 	unregister_sched_domain_sysctl();
+@@ -1915,7 +1915,16 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ 	ndoms_cur = ndoms_new;
+ 
+ 	register_sched_domain_sysctl();
++}
+ 
++/*
++ * Call with hotplug lock held
++ */
++void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
++			     struct sched_domain_attr *dattr_new)
++{
++	mutex_lock(&sched_domains_mutex);
++	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+ 	mutex_unlock(&sched_domains_mutex);
+ }
+ 
 -- 
 2.7.4
