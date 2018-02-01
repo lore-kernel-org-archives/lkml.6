@@ -1,735 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752510AbeBAQq4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:46:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751526AbeBAQqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:46:54 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D292178E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AH8x224fELFVghlj+4KTf9AUYgfXeKY1T6unuH4GlC1LuqFJ0yuN84aF0H1UyGd1D67Pjq5XfXHfB4nG07cFZthHngk=
+        id S1752646AbeBAQrK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:47:10 -0500
+Received: from mail-db5eur01on0107.outbound.protection.outlook.com ([104.47.2.107]:12256
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752542AbeBAQrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 11:47:04 -0500
+X-HPESVCS-Source-Ip: 10.144.210.204
+Subject: Re: [PATCH] i2c-mux-reg: Delete an error message for a failed memory
+ allocation in i2c_mux_reg_probe_dt()
+To: SF Markus Elfring <elfring@users.sourceforge.net>,
+        <linux-i2c@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>, York Sun <yorksun@freescale.com>
+CC: LKML <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <224a8918-f882-9ab1-218c-83df93d4cb2f@users.sourceforge.net>
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Message-ID: <7b0fcef4-d0b2-e12d-c369-ac6704e16a09@nokia.com>
+Date: Thu, 1 Feb 2018 17:46:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <63760114db981535bf22c25be2daf0049f1b9709.1516366474.git.michal.simek@xilinx.com>
-References: <cover.1516366474.git.michal.simek@xilinx.com> <63760114db981535bf22c25be2daf0049f1b9709.1516366474.git.michal.simek@xilinx.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Thu, 1 Feb 2018 10:46:31 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+N-_8s0d=jD=fMD4y7e76M=tT0kt2vsH0kbOqs-eQ95w@mail.gmail.com>
-Message-ID: <CAL_Jsq+N-_8s0d=jD=fMD4y7e76M=tT0kt2vsH0kbOqs-eQ95w@mail.gmail.com>
-Subject: Re: [PATCH 2/7] arm64: zynqmp: Add support for Xilinx zcu102
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <224a8918-f882-9ab1-218c-83df93d4cb2f@users.sourceforge.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:131.228.2.241;IPV:CAL;SCL:-1;CTRY:FI;EFV:NLI;SFV:NSPM;SFS:(10019020)(346002)(39380400002)(396003)(376002)(39860400002)(2980300002)(438002)(189003)(199004)(23676004)(47776003)(316002)(36756003)(110136005)(31686004)(53936002)(6346003)(83506002)(15650500001)(336011)(230700001)(58126008)(8666007)(229853002)(106466001)(68736007)(2486003)(26005)(50466002)(53546011)(65806001)(77096007)(65956001)(59450400001)(64126003)(8936002)(305945005)(97736004)(106002)(31696002)(81156014)(478600001)(54906003)(81166006)(2950100002)(86362001)(356003)(8676002)(26826003)(2906002)(65826007)(22756006)(6246003)(4326008)(15760500003)(5660300001)(76176011)(186003)(42866002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM2PR07MB0756;H:mailrelay.int.nokia.com;FPR:;SPF:Pass;PTR:InfoDomainNonexistent;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;VE1EUR03FT006;1:UhVew89DV/uBjlbnMl0qcN98x0tkKwWifgix8V9zXUPXUERWMIsrxl0k6UPbJh5fBfdUMgh1kU/51oz5pQjIWmpYTbWNZdm61yAyA8pg/UsIO4yVrMmsRHvZ6kv7x4iX
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a5e578d7-5f5d-44d4-ee57-08d569936a35
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(4608076)(2017052603307);SRVR:AM2PR07MB0756;
+X-Microsoft-Exchange-Diagnostics: 1;AM2PR07MB0756;3:tOOSXRuZCWNF+qwUTI4BxGNmHIU8YiPO6v89MGfKTiDyGIsj7t3SThr1qR/7UNsWTmQP/6Y59PQRX+DOv+9vYOx6UTZG0CTSTZryMDNBuRsNYQ2sTALmEoKYePwYU+Ikm+eG9RNlTMYB7zIsNpf7cnvXptVWpVqMLZBd6/Dk3BjS0BTRSyaWq5NypgNiw7SP24IXEvscteSYV16Kk9AE3BAwoZtveuWfqKvis+4Wee32/GfGjFGJVVvaSJ3avcUGhGh1eECaZ25QfwYKuimmSuSVDxzBZelAFiCZ0z1Jz78XgciZGlsoO2DYvQdI9UCNcYHDEuyPnEJzfUlR0fwsYH8CN0WYXCl+ijKoX1FjEIE=;25:/DRPlBYJ3uRe4Ei/ZOmSD/ue0Mf6WE+e25QfiRup9A3nNXanLwT85zZrHYJ+uP2AfmJNiXCIft5sQb3XJdXCD9m1ZR4KU4028DCbn7o3pdQzXZZ+e4wX5Z4TOG6jFgVklrEHD75jL4Adz3VPZz4JbpsdbH+T8LWA16bircBH8FprMfvSJLDe5mZC++CK6dN4a8+0uUbSXs/OSbfighMeqv8nrDkhR0A5pePT/C237Tf4fH93o4KsfHk/H/2iPo1XIv70wI+GIlMWVu0J8r91wPXZ4BA6AKOHaq8peqY1FYcV6wSz77KQeEAehqPDo4B09vEf+XDsTXmU6ifsKodRrg==
+X-MS-TrafficTypeDiagnostic: AM2PR07MB0756:
+X-Microsoft-Exchange-Diagnostics: 1;AM2PR07MB0756;31:dJcN1J90ycAT1e+uOK8tdcJ84MQj6mcx4VIPJKnwWPCW2Y3RZimkV4m/TwUWTbknPWZDtvwCyjF95NaxdtatfaOf38bbG/eTwgjqHpGDI2dCejiQ69EF0EITSMY99bXV8btatqtQfPq8slUpKdnDl6qey/tqDiRQKgNxvphy791+9EMOSMB3IBE3Jhjr7kQshESNvqBX77LB5mCPOrv/m3pMHgiHV0MC8w7fJbESAtc=;20:994LRgmt8MVlh1euU+THmTMwcPCqLrTIo/FOn4WvoqiSuC8TVxMCAgtqueuWUuuuoTy5fv9vKnWmfOFa5q3+Lea1jr31y/1NzBseHnBIpUtENxcWjRcyyxm5TsnatSadIysHzt1mv/qtWMG600hKT6LxoRC9G+AKg+2evUisbGcH/IYUdrgA495oF92Q3k+Z53mOYrGa1GqZ7+oqVtUmou+FoDw4kHbbYVjCG5g3xrcKaZsBE9p8ikcn8OLBnUsE3oCSWOt6OPpkA3L1CgSSXnra4UKdUjI/y3Q2kgatC0gg1BSuu5OUMOhzyMU1An0zbdDBSAjiHHy5XEwZe+Jf0pvBVaPewzr1OUjeO4O8vvz7T7Im/HsxQUh4ZEZC5Up+5ovQ/DCa0s5lLkesfFhGJ+SCGQD81CbTqpj+/Ep1zh29ZlFqkOACqDeWOm9/RSzMNz1Ph5pgzAwRntRvnqxkqE49ppnzixqq6plfb+ohZAiUxhfB674UJuSfv3vrmL6t4UfkPnwvWbiLus80JLJLZ4v0jCnbYFtIcIK3FH93r95zByREgeKOFAHcENSE+VmU2uytrX1K3NwjyqfTLu5WRre0xaq194c2n9Uh7XdkiVw=
+X-Microsoft-Antispam-PRVS: <AM2PR07MB0756F4CAC041E1189259B28388FA0@AM2PR07MB0756.eurprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(82608151540597)(42262312472803);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93004095)(3002001)(3231101)(11241501184)(806099)(2400082)(944501161)(10201501046)(6055026)(6041288)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM2PR07MB0756;BCL:0;PCL:0;RULEID:;SRVR:AM2PR07MB0756;
+X-Microsoft-Exchange-Diagnostics: 1;AM2PR07MB0756;4://cZR77wnEQ7sAq92eqF++PFDyRb+ClOlDSC93RipzNFJdJOI7vEAv9sLy/rQbCCKOdtrWnLxBQYvcw4fp7YwdzON0Ifo0fPSC+8gi2XOSOO3MP2AF2I41bMZUcym3ltMud++SjsLQsR1X9EKekRbz58lUwTz2EgS5XfAsFVCfX09vVH7R64ga/uliUBbv14Pef2V5lsMc8N4iJUnIDdb4nJl5cgURl+ThhoRJfnb9gxXiO/D29sVJ+JcxdcS/lR81aDdJHrG/c0mfSd95ODv+5O5ps1vmTZJ6fqRwmATBy3ZG5cyie/ulVo4PYfMUYmEz6wu5YxOQNnccS3vLlBvZthd8JOeLOAj442IlBqqns=
+X-Forefront-PRVS: 0570F1F193
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTJQUjA3TUIwNzU2OzIzOm9rOCtaR3h0V0o3L205Rjh1eDNlc280NDhY?=
+ =?utf-8?B?Y0ZndzJtaEVhQURkV0ZBUDQ2UzJueHBwakE5azFLRXJuZDZHaFdsVUw5Rm52?=
+ =?utf-8?B?QnRVNlVSVGRUbCtUWFZhNm5hU3Q0bExxY21uaXRQNlVwanpQSnpHSy9mcWlX?=
+ =?utf-8?B?cUxYT05qQ0FMV2pBa2VvZjBIS1RmN09JS0QzL1dhaHgyeWxPdXN6OUNvWkpq?=
+ =?utf-8?B?L1h4YllxTUpvTnBDb3FPWkJPWlBOb24ra2p2WndsS0kycHIvQVdjUklzOW1H?=
+ =?utf-8?B?REkzeDl4RnMwQUtyei9SUENRNUN5d1laVUlRSmZFNUVQdHZReXp3YmswR1NL?=
+ =?utf-8?B?eFI0M1RaRWY3bFZxcUU4MXI0SEM3bEVaWlQrYWM3SlQyZDhGSlFvY1NKZlBY?=
+ =?utf-8?B?d1BxUU5XZ0dIejA4N2JsRkhLVGd5T01hS1Q5OFhid1hiQWp4ckFoR2ZuRnFy?=
+ =?utf-8?B?U0dpOUJib2hhU2VnV1pyUXZPekJvcDlBK012aitmY0x2MDZIRmxzMkNWQTBF?=
+ =?utf-8?B?UkFab0J6T1VQUWUxR0dsa2RIUCtLYTF6NjZVVVd1YVFQcUN5bXdIeDY5d3RB?=
+ =?utf-8?B?Q0NLMGVjdEowZWRNVVhVWFgrY0ZITVVhM3JIZ0cvTndRWWJYWkRuZEtHczV0?=
+ =?utf-8?B?eXYzamREZ1VtcWVwTENkN293YTM1TmNnVjB5ZzhqZVlxU0QrdklxTjlEMjgy?=
+ =?utf-8?B?WWFHOWlWL3lOOWYxMmN5OG1uZmZxbHljd3l1elNXc2hVVmU0Qng3bDBoM1hF?=
+ =?utf-8?B?QW83ZnBvVnZ1czFpZ1pGV2dTT3RhVVhmTS9FcnhaUk9WTjZzLzJKUThEbUpr?=
+ =?utf-8?B?b3RvTlFmYXdWUExVMVJvNFNyQjdFelN6aDhrMmZWV3RMVlByVThRUmhXek55?=
+ =?utf-8?B?UThXYWhUYlZldzA3cWJsM21rNVdWSTdjQkpKL0ZsTFBvV2Z5dlZlQ0dNS013?=
+ =?utf-8?B?M2UrWS9ZaW16OEViYmY0dFRqRVdrdm5hQStuTHE2YXhPYVcwbjBwTDU3T0lh?=
+ =?utf-8?B?OXdPUGFOQTdtUm9yVzVYSk5pQ29PZGJxWmtsWGZXd04yeHdTd0E4MUc1RkVv?=
+ =?utf-8?B?K1F1QWw4cjl6RVIyTWhycUtyVUVickRZcUYzeDNNSVI2OVFaSHVreVB0alVs?=
+ =?utf-8?B?RTVZbkg2YWtIMGdJUGwyZkhtVFNQV3VzQWcyTUNTL3Y5STRUQUNpd0p1THQ3?=
+ =?utf-8?B?WWVHT2pqaStlUFI2UUQzdks3L1N3ZXY4Y0VnTlV2QUtScFM4ODd5eUJyWGpy?=
+ =?utf-8?B?dDRCbFBpdU9uZFRwejNTSmE3SlJGQmoxeGhKYVRZTXFMVEhnMmtUbEpHQ1dC?=
+ =?utf-8?B?NnRLUElyMTFkYnZacDhwaWhCTUlGa1krOHBoMVBWQXNsUXhKb3ZPd3c3dnNJ?=
+ =?utf-8?B?ZVpwUmQvZm9QbVFockFyQkRRaXhBSnQzRWFMTENVK2ZNSXczTWJ6cHcvdUoz?=
+ =?utf-8?B?TEZDd3dHY0ZjQjVuYmR6L2pyUkMycHJBUlBQNVJwT2UyaWpvTDloNnZjOG1N?=
+ =?utf-8?B?aDQzZmRKVnRVbTd0YUNrNjl1YXh1VUtyaGErTGRoRGxPamg3aU5tVW00bzNW?=
+ =?utf-8?B?enRIU2VRS09VOUQzOFhGR2h0SjhFS0lBOEphNDB5Tzg1cFhQT0puS2tLZDhB?=
+ =?utf-8?B?UVE0YTJpMHlNWFJFVE5oc3kxcU9UWElPU1p4L0MxZjBMZ3czNGJRbERuR1V2?=
+ =?utf-8?B?eEhJV1JaWXpJc3czMlUrMWxBT1J2YnhHVWZ1cFNCaGx0SFUvYVl0VHZXRUhu?=
+ =?utf-8?B?SS93OEdBRXZQNm1lUHJlZE96RlpDYloxRkRwb0tBVEFOR1p5am8yUkZOZkQ5?=
+ =?utf-8?B?b3UrdDhST2ZEY3ppenRjTlVpc3RGVG9MYmpaa2lkZFRjS0E9PQ==?=
+X-Microsoft-Antispam-Message-Info: v2BV63d4PX1q85LOd50N0S2sUPJoIxWRjA6ZFlN03KUPf8g2X9qaXepw+Z7bq4ek/BHy+XJB+3cpj/jGL+m1W5qA/RsYAIZImTHVzyVSJuyDGRU49TrDGrnTYQtHIkLL
+X-Microsoft-Exchange-Diagnostics: 1;AM2PR07MB0756;6:Hj2jyBWXT0tVnGXfO0KyDDV2oq45Qboe7evsKbVi954APpnuFvniVRaZCxUYpgTbwTtmNa2X8EMqTKNurbhVIv2UgLQAYxgm46vCpLNgvjZT24Gz1ewQ9Vb1M/BcE5xuyn0YSHkP5xHYcarth58LGXKIVPewqdS8nt9Hy9fv3BYpyNKPcdF7omC1IjqLb+WXuwfYxfdALzuWnn1sCU9brk7y01RFj+2qkpcD97pg3H6oGvEvcaNDyfSMOXyL7XxMc+RieFbXyCh59MoDxw+1+jgHBOZSIqxkZ4LyKw+vjAvtuYe2sOgq2sVlEPLLPpEw7rlMHOGNE3hqzYxNntKkHsAGQRcnpFaQ5lJ1vX4JkIFmoWXU4jHRbvHH12K73Zxc;5:BH+CSaRXyYyDO4/u79NodMwfC0yL4AZjkleU3y7Cx5cyij6butC7h194cA1z5aeH25RcTpjQHtg0idPrGQLemo+/axd6fWFtzlTQOJXSb6Gl/Kl2JvwTzPoDE/IY7dVTMYBptKFdd42Y3fYbucrQnP/lzEP2AoO9Nh2SWLLqzoQ=;24:rFTbBpANWnkFOGh5W+vLHmnt9hBPEISQlqN1OrnDbdVDfKEAWfYbdswqWREtkGhBwsW6bj3F5p0jlaQisF8jtJvTBP9nOInjZrkUhgH+mLo=;7:vFmf4ReP2xm+Qt5LRJ+r2R5o0Blho55PY1TtDLdgaAwNt6OCHy70VXcVBuJRU6yjI88XyMdyEDeC3tde+VGgs2oFCpwCISEqbSrG1CHVsLLJV88EJMUGxsczMlfZ25zYAFnpjCVMjdNbCcTOgW+mSmmaR/iCNSSu/PXFFC+0DVBGcvwAnqzfBSGL736dVaDS4cI02t5b7zq46SAjUCS5TUwRL0kOfqS2r2PLQVn82H5tvKHKjnbEqPo3iOpP514V
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2018 16:47:00.3163
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5e578d7-5f5d-44d4-ee57-08d569936a35
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5d471751-9675-428d-917b-70f44f9630b0;Ip=[131.228.2.241];Helo=[mailrelay.int.nokia.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM2PR07MB0756
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 19, 2018 at 6:55 AM, Michal Simek <michal.simek@xilinx.com> wrote:
-> This patch is adding revA, revB and rev1.0. There are also other
-> revisions between which should be backward compatible with previous
-> versions. Unfortunately all revs are still in use.
+On 01/02/18 17:24, SF Markus Elfring wrote:
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Similar comments to the 1st patch. I won't repeat them here.
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
->
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > ---
->
->  arch/arm64/boot/dts/xilinx/Makefile                |   3 +
->  .../arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts |  36 ++
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts  | 556 +++++++++++++++++++++
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revB.dts  |  42 ++
->  4 files changed, 637 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts
->  create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
->  create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revB.dts
->
-> diff --git a/arch/arm64/boot/dts/xilinx/Makefile b/arch/arm64/boot/dts/xilinx/Makefile
-> index 7266a6a9c0cd..24e3ce801304 100644
-> --- a/arch/arm64/boot/dts/xilinx/Makefile
-> +++ b/arch/arm64/boot/dts/xilinx/Makefile
-> @@ -1,3 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-ep108.dtb
->  dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu100-revC.dtb
-> +dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu102-revA.dtb
-> +dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu102-revB.dtb
-> +dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu102-rev1.0.dtb
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts
-> new file mode 100644
-> index 000000000000..4b7477795fbd
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts
-> @@ -0,0 +1,36 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * dts file for Xilinx ZynqMP ZCU102 Rev1.0
-> + *
-> + * (C) Copyright 2016 - 2018, Xilinx, Inc.
-> + *
-> + * Michal Simek <michal.simek@xilinx.com>
-> + */
-> +
-> +#include "zynqmp-zcu102-revB.dts"
-> +
-> +/ {
-> +       model = "ZynqMP ZCU102 Rev1.0";
-> +       compatible = "xlnx,zynqmp-zcu102-rev1.0", "xlnx,zynqmp-zcu102", "xlnx,zynqmp";
+>  drivers/i2c/muxes/i2c-mux-reg.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/i2c/muxes/i2c-mux-reg.c b/drivers/i2c/muxes/i2c-mux-reg.c
+> index c948e5a4cb04..f624ed64a47b 100644
+> --- a/drivers/i2c/muxes/i2c-mux-reg.c
+> +++ b/drivers/i2c/muxes/i2c-mux-reg.c
+> @@ -127,10 +127,8 @@ static int i2c_mux_reg_probe_dt(struct regmux *mux,
+>  	values = devm_kzalloc(&pdev->dev,
+>  			      sizeof(*mux->data.values) * mux->data.n_values,
+>  			      GFP_KERNEL);
+> -	if (!values) {
+> -		dev_err(&pdev->dev, "Cannot allocate values array");
+> +	if (!values)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	for_each_child_of_node(np, child) {
+>  		of_property_read_u32(child, "reg", values + i);
 
-Documented?
-
-> +};
-> +
-> +&eeprom {
-> +       #address-cells = <1>;
-> +       #size-cells = <1>;
-> +
-> +       board_sn: board_sn@0 {
-
-Use '-' rather than '_' in node and property names.
-
-> +               reg = <0x0 0x14>;
-> +       };
-> +
-> +       eth_mac: eth_mac@20 {
-> +               reg = <0x20 0x6>;
-> +       };
-> +
-> +       board_name: board_name@d0 {
-> +               reg = <0xd0 0x6>;
-> +       };
-> +
-> +       board_revision: board_revision@e0 {
-> +               reg = <0xe0 0x3>;
-> +       };
-> +};
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-> new file mode 100644
-> index 000000000000..6a15aacf65ef
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-> @@ -0,0 +1,556 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * dts file for Xilinx ZynqMP ZCU102 RevA
-> + *
-> + * (C) Copyright 2015 - 2018, Xilinx, Inc.
-> + *
-> + * Michal Simek <michal.simek@xilinx.com>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "zynqmp.dtsi"
-> +#include "zynqmp-clk.dtsi"
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +
-> +/ {
-> +       model = "ZynqMP ZCU102 RevA";
-> +       compatible = "xlnx,zynqmp-zcu102-revA", "xlnx,zynqmp-zcu102", "xlnx,zynqmp";
-> +
-> +       aliases {
-> +               ethernet0 = &gem3;
-> +               gpio0 = &gpio;
-> +               i2c0 = &i2c0;
-> +               i2c1 = &i2c1;
-> +               mmc0 = &sdhci1;
-> +               rtc0 = &rtc;
-> +               serial0 = &uart0;
-> +               serial1 = &uart1;
-> +               serial2 = &dcc;
-> +               usb0 = &usb0;
-> +       };
-> +
-> +       chosen {
-> +               bootargs = "earlycon";
-> +               stdout-path = "serial0:115200n8";
-> +       };
-> +
-> +       memory@0 {
-> +               device_type = "memory";
-> +               reg = <0x0 0x0 0x0 0x80000000>, <0x8 0x00000000 0x0 0x80000000>;
-> +       };
-> +
-> +       gpio-keys {
-> +               compatible = "gpio-keys";
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               autorepeat;
-> +               sw19 {
-> +                       label = "sw19";
-> +                       gpios = <&gpio 22 GPIO_ACTIVE_HIGH>;
-> +                       linux,code = <KEY_DOWN>;
-> +                       gpio-key,wakeup;
-> +                       autorepeat;
-> +               };
-> +       };
-> +
-> +       leds {
-> +               compatible = "gpio-leds";
-> +               heartbeat_led {
-> +                       label = "heartbeat";
-> +                       gpios = <&gpio 23 GPIO_ACTIVE_HIGH>;
-> +                       linux,default-trigger = "heartbeat";
-> +               };
-> +       };
-> +};
-> +
-> +&can1 {
-> +       status = "okay";
-> +};
-> +
-> +&dcc {
-> +       status = "okay";
-> +};
-> +
-> +&fpd_dma_chan1 {
-> +       status = "okay";
-> +};
-> +
-> +&fpd_dma_chan2 {
-> +       status = "okay";
-> +};
-> +
-> +&fpd_dma_chan3 {
-> +       status = "okay";
-> +};
-> +
-> +&fpd_dma_chan4 {
-> +       status = "okay";
-> +};
-> +
-> +&fpd_dma_chan5 {
-> +       status = "okay";
-> +};
-> +
-> +&fpd_dma_chan6 {
-> +       status = "okay";
-> +};
-> +
-> +&fpd_dma_chan7 {
-> +       status = "okay";
-> +};
-> +
-> +&fpd_dma_chan8 {
-> +       status = "okay";
-> +};
-> +
-> +&gem3 {
-> +       status = "okay";
-> +       phy-handle = <&phy0>;
-> +       phy-mode = "rgmii-id";
-> +       phy0: phy@21 {
-> +               reg = <21>;
-> +               ti,rx-internal-delay = <0x8>;
-> +               ti,tx-internal-delay = <0xa>;
-> +               ti,fifo-depth = <0x1>;
-> +       };
-> +};
-> +
-> +&gpio {
-> +       status = "okay";
-> +};
-> +
-> +&i2c0 {
-> +       status = "okay";
-> +       clock-frequency = <400000>;
-> +
-> +       tca6416_u97: gpio@20 {
-> +               /*
-> +                * Enable all GTs to out from U-Boot
-> +                * i2c mw 20 6 0  - setup IO to output
-> +                * i2c mw 20 2 ef - setup output values on pins 0-7
-> +                * i2c mw 20 3 ff - setup output values on pins 10-17
-> +                */
-> +               compatible = "ti,tca6416";
-> +               reg = <0x20>;
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +               /*
-> +                * IRQ not connected
-> +                * Lines:
-> +                * 0 - PS_GTR_LAN_SEL0
-> +                * 1 - PS_GTR_LAN_SEL1
-> +                * 2 - PS_GTR_LAN_SEL2
-> +                * 3 - PS_GTR_LAN_SEL3
-> +                * 4 - PCI_CLK_DIR_SEL
-> +                * 5 - IIC_MUX_RESET_B
-> +                * 6 - GEM3_EXP_RESET_B
-> +                * 7, 10 - 17 - not connected
-> +                */
-> +
-> +               gtr_sel0 {
-> +                       gpio-hog;
-> +                       gpios = <0 0>;
-> +                       output-low; /* PCIE = 0, DP = 1 */
-> +                       line-name = "sel0";
-> +               };
-> +               gtr_sel1 {
-> +                       gpio-hog;
-> +                       gpios = <1 0>;
-> +                       output-high; /* PCIE = 0, DP = 1 */
-> +                       line-name = "sel1";
-> +               };
-> +               gtr_sel2 {
-> +                       gpio-hog;
-> +                       gpios = <2 0>;
-> +                       output-high; /* PCIE = 0, USB0 = 1 */
-> +                       line-name = "sel2";
-> +               };
-> +               gtr_sel3 {
-> +                       gpio-hog;
-> +                       gpios = <3 0>;
-> +                       output-high; /* PCIE = 0, SATA = 1 */
-> +                       line-name = "sel3";
-> +               };
-> +       };
-> +
-> +       tca6416_u61: gpio@21 { /* enable it by i2c mw 21 6 0 */
-> +               compatible = "ti,tca6416";
-> +               reg = <0x21>;
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +               /*
-> +                * IRQ not connected
-> +                * Lines:
-> +                * 0 - VCCPSPLL_EN
-> +                * 1 - MGTRAVCC_EN
-> +                * 2 - MGTRAVTT_EN
-> +                * 3 - VCCPSDDRPLL_EN
-> +                * 4 - MIO26_PMU_INPUT_LS
-> +                * 5 - PL_PMBUS_ALERT
-> +                * 6 - PS_PMBUS_ALERT
-> +                * 7 - MAXIM_PMBUS_ALERT
-> +                * 10 - PL_DDR4_VTERM_EN
-> +                * 11 - PL_DDR4_VPP_2V5_EN
-> +                * 12 - PS_DIMM_VDDQ_TO_PSVCCO_ON
-> +                * 13 - PS_DIMM_SUSPEND_EN
-> +                * 14 - PS_DDR4_VTERM_EN
-> +                * 15 - PS_DDR4_VPP_2V5_EN
-> +                * 16 - 17 - not connected
-> +                */
-> +       };
-> +
-> +       i2cswitch@75 { /* u60 */
-> +               compatible = "nxp,pca9544";
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               reg = <0x75>;
-> +               i2c@0 { /* i2c mw 75 0 1 */
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <0>;
-> +                       /* PS_PMBUS */
-> +                       ina226@40 { /* u76 */
-
-Should be what the device does, not part numbers if possible. Standard
-names are defined in the DT spec (additions welcome).
-
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x40>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@41 { /* u77 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x41>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@42 { /* u78 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x42>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@43 { /* u87 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x43>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@44 { /* u85 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x44>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@45 { /* u86 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x45>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@46 { /* u93 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x46>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@47 { /* u88 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x47>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@4a { /* u15 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x4a>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@4b { /* u92 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x4b>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +               };
-> +               i2c@1 { /* i2c mw 75 0 1 */
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <1>;
-> +                       /* PL_PMBUS */
-> +                       ina226@40 { /* u79 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x40>;
-> +                               shunt-resistor = <2000>;
-> +                       };
-> +                       ina226@41 { /* u81 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x41>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@42 { /* u80 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x42>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@43 { /* u84 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x43>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@44 { /* u16 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x44>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@45 { /* u65 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x45>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@46 { /* u74 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x46>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +                       ina226@47 { /* u75 */
-> +                               compatible = "ti,ina226";
-> +                               reg = <0x47>;
-> +                               shunt-resistor = <5000>;
-> +                       };
-> +               };
-> +               i2c@2 { /* i2c mw 75 0 1 */
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <2>;
-> +                       /* MAXIM_PMBUS - 00 */
-> +                       max15301@a { /* u46 */
-> +                               compatible = "maxim,max15301";
-> +                               reg = <0xa>;
-> +                       };
-> +                       max15303@b { /* u4 */
-> +                               compatible = "maxim,max15303";
-> +                               reg = <0xb>;
-> +                       };
-> +                       max15303@10 { /* u13 */
-> +                               compatible = "maxim,max15303";
-> +                               reg = <0x10>;
-> +                       };
-> +                       max15301@13 { /* u47 */
-> +                               compatible = "maxim,max15301";
-> +                               reg = <0x13>;
-> +                       };
-> +                       max15303@14 { /* u7 */
-> +                               compatible = "maxim,max15303";
-> +                               reg = <0x14>;
-> +                       };
-> +                       max15303@15 { /* u6 */
-> +                               compatible = "maxim,max15303";
-> +                               reg = <0x15>;
-> +                       };
-> +                       max15303@16 { /* u10 */
-> +                               compatible = "maxim,max15303";
-> +                               reg = <0x16>;
-> +                       };
-> +                       max15303@17 { /* u9 */
-> +                               compatible = "maxim,max15303";
-> +                               reg = <0x17>;
-> +                       };
-> +                       max15301@18 { /* u63 */
-> +                               compatible = "maxim,max15301";
-> +                               reg = <0x18>;
-> +                       };
-> +                       max15303@1a { /* u49 */
-> +                               compatible = "maxim,max15303";
-> +                               reg = <0x1a>;
-> +                       };
-> +                       max15303@1d { /* u18 */
-> +                               compatible = "maxim,max15303";
-> +                               reg = <0x1d>;
-> +                       };
-> +                       max15303@20 { /* u8 */
-> +                               compatible = "maxim,max15303";
-> +                               status = "disabled"; /* unreachable */
-> +                               reg = <0x20>;
-> +                       };
-> +
-> +                       max20751@72 { /* u95 */
-> +                               compatible = "maxim,max20751";
-> +                               reg = <0x72>;
-> +                       };
-> +                       max20751@73 { /* u96 */
-> +                               compatible = "maxim,max20751";
-> +                               reg = <0x73>;
-> +                       };
-> +               };
-> +               /* Bus 3 is not connected */
-> +       };
-> +};
-> +
-> +&i2c1 {
-> +       status = "okay";
-> +       clock-frequency = <400000>;
-> +
-> +       /* PL i2c via PCA9306 - u45 */
-> +       i2cswitch@74 { /* u34 */
-> +               compatible = "nxp,pca9548";
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               reg = <0x74>;
-> +               i2c@0 { /* i2c mw 74 0 1 */
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <0>;
-> +                       /*
-> +                        * IIC_EEPROM 1kB memory which uses 256B blocks
-> +                        * where every block has different address.
-> +                        *    0 - 256B address 0x54
-> +                        * 256B - 512B address 0x55
-> +                        * 512B - 768B address 0x56
-> +                        * 768B - 1024B address 0x57
-> +                        */
-> +                       eeprom: eeprom@54 { /* u23 */
-> +                               compatible = "atmel,24c08";
-> +                               reg = <0x54>;
-> +                       };
-> +               };
-> +               i2c@1 { /* i2c mw 74 0 2 */
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <1>;
-> +                       si5341: clock-generator1@36 { /* SI5341 - u69 */
-
-Drop the 1 on clock-generator1.
-
-> +                               reg = <0x36>;
-> +                       };
-> +
-> +               };
-> +               i2c@2 { /* i2c mw 74 0 4 */
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <2>;
-> +                       si570_1: clock-generator2@5d { /* USER SI570 - u42 */
-> +                               #clock-cells = <0>;
-> +                               compatible = "silabs,si570";
-> +                               reg = <0x5d>;
-> +                               temperature-stability = <50>;
-> +                               factory-fout = <300000000>;
-> +                               clock-frequency = <300000000>;
-> +                       };
-> +               };
-> +               i2c@3 { /* i2c mw 74 0 8 */
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <3>;
-> +                       si570_2: clock-generator3@5d { /* USER MGT SI570 - u56 */
-> +                               #clock-cells = <0>;
-> +                               compatible = "silabs,si570";
-> +                               reg = <0x5d>;
-> +                               temperature-stability = <50>; /* copy from zc702 */
-> +                               factory-fout = <156250000>;
-> +                               clock-frequency = <148500000>;
-> +                       };
-> +               };
-> +               i2c@4 { /* i2c mw 74 0 10 */
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <4>;
-> +                       si5328: clock-generator4@69 {/* SI5328 - u20 */
-> +                               reg = <0x69>;
-> +                               /*
-> +                                * Chip has interrupt present connected to PL
-> +                                * interrupt-parent = <&>;
-> +                                * interrupts = <>;
-> +                                */
-> +                       };
-> +               };
-> +               /* 5 - 7 unconnected */
-> +       };
-> +
-> +       i2cswitch@75 {
-> +               compatible = "nxp,pca9548"; /* u135 */
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               reg = <0x75>;
-> +
-> +               i2c@0 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <0>;
-> +                       /* HPC0_IIC */
-> +               };
-> +               i2c@1 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <1>;
-> +                       /* HPC1_IIC */
-> +               };
-> +               i2c@2 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <2>;
-> +                       /* SYSMON */
-> +               };
-> +               i2c@3 { /* i2c mw 75 0 8 */
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <3>;
-> +                       /* DDR4 SODIMM */
-> +               };
-> +               i2c@4 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <4>;
-> +                       /* SEP 3 */
-> +               };
-> +               i2c@5 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <5>;
-> +                       /* SEP 2 */
-> +               };
-> +               i2c@6 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <6>;
-> +                       /* SEP 1 */
-> +               };
-> +               i2c@7 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <7>;
-> +                       /* SEP 0 */
-> +               };
-> +       };
-> +};
-> +
-> +&pcie {
-> +       status = "okay";
-> +};
-> +
-> +&rtc {
-> +       status = "okay";
-> +};
-> +
-> +&sata {
-> +       status = "okay";
-> +       /* SATA OOB timing settings */
-> +       ceva,p0-cominit-params = /bits/ 8 <0x18 0x40 0x18 0x28>;
-> +       ceva,p0-comwake-params = /bits/ 8 <0x06 0x14 0x08 0x0E>;
-> +       ceva,p0-burst-params = /bits/ 8 <0x13 0x08 0x4A 0x06>;
-> +       ceva,p0-retry-params = /bits/ 16 <0x96A4 0x3FFC>;
-> +       ceva,p1-cominit-params = /bits/ 8 <0x18 0x40 0x18 0x28>;
-> +       ceva,p1-comwake-params = /bits/ 8 <0x06 0x14 0x08 0x0E>;
-> +       ceva,p1-burst-params = /bits/ 8 <0x13 0x08 0x4A 0x06>;
-> +       ceva,p1-retry-params = /bits/ 16 <0x96A4 0x3FFC>;
-> +};
-> +
-> +/* SD1 with level shifter */
-> +&sdhci1 {
-> +       status = "okay";
-> +       no-1-8-v;
-> +};
-> +
-> +&uart0 {
-> +       status = "okay";
-> +};
-> +
-> +&uart1 {
-> +       status = "okay";
-> +};
-> +
-> +/* ULPI SMSC USB3320 */
-> +&usb0 {
-> +       status = "okay";
-> +};
-> +
-> +&watchdog0 {
-> +       status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revB.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revB.dts
-> new file mode 100644
-> index 000000000000..ed3cc684931f
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revB.dts
-> @@ -0,0 +1,42 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * dts file for Xilinx ZynqMP ZCU102 RevB
-> + *
-> + * (C) Copyright 2016 - 2018, Xilinx, Inc.
-> + *
-> + * Michal Simek <michal.simek@xilinx.com>
-> + */
-> +
-> +#include "zynqmp-zcu102-revA.dts"
-> +
-> +/ {
-> +       model = "ZynqMP ZCU102 RevB";
-> +       compatible = "xlnx,zynqmp-zcu102-revB", "xlnx,zynqmp-zcu102", "xlnx,zynqmp";
-> +};
-> +
-> +&gem3 {
-> +       phy-handle = <&phyc>;
-> +       phyc: phy@c {
-> +               reg = <0xc>;
-> +               ti,rx-internal-delay = <0x8>;
-> +               ti,tx-internal-delay = <0xa>;
-> +               ti,fifo-depth = <0x1>;
-> +       };
-> +       /* Cleanup from RevA */
-> +       /delete-node/ phy@21;
-> +};
-> +
-> +/* Different qspi 512Mbit version */
-> +
-> +/* Fix collision with u61 */
-> +&i2c0 {
-> +       i2cswitch@75 {
-> +               i2c@2 {
-> +                       max15303@1b { /* u8 */
-> +                               compatible = "maxim,max15303";
-> +                               reg = <0x1b>;
-> +                       };
-> +                       /delete-node/ max15303@20;
-> +               };
-> +       };
-> +};
-> --
-> 1.9.1
->
+-- 
+Best regards,
+Alexander Sverdlin.
