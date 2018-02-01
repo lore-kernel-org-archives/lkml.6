@@ -1,48 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752155AbeBAWte (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 17:49:34 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52602 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752042AbeBAWtX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 17:49:23 -0500
-X-Google-Smtp-Source: AH8x227inzODZWZDLbjl68IFpEb9HXumL++kp86SBAhsssmBiHvK1uopJaba+tWiogVD/JzEYFX1gw==
-Date: Thu, 1 Feb 2018 15:49:17 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        Himanshu Jha <himanshujha199640@gmail.com>,
-        Jonathan Toppins <jtoppins@redhat.com>
-Subject: Re: [PATCH 0/2] RDMA/bnxt_re: Adjustments for
- bnxt_qplib_alloc_dpi_tbl()
-Message-ID: <20180201224917.GA8590@ziepe.ca>
-References: <19c755a6-8c52-bbd5-a425-48fc08cecd4f@users.sourceforge.net>
+        id S1752187AbeBAWu1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 17:50:27 -0500
+Received: from mga17.intel.com ([192.55.52.151]:32960 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752161AbeBAWuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 17:50:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,444,1511856000";
+   d="scan'208";a="200675962"
+Subject: Re: [RFC PATCH v1 03/13] mm: add lock array to pgdat and batch fields
+ to struct page
+To: daniel.m.jordan@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
+        Dave.Dice@oracle.com, dave@stgolabs.net, khandual@linux.vnet.ibm.com,
+        ldufour@linux.vnet.ibm.com, mgorman@suse.de, mhocko@kernel.org,
+        pasha.tatashin@oracle.com, steven.sistare@oracle.com,
+        yossi.lev@oracle.com
+References: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
+ <20180131230413.27653-4-daniel.m.jordan@oracle.com>
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Message-ID: <64330116-13ef-af3c-a445-f0c1b5bc1728@linux.intel.com>
+Date: Thu, 1 Feb 2018 14:50:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19c755a6-8c52-bbd5-a425-48fc08cecd4f@users.sourceforge.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180131230413.27653-4-daniel.m.jordan@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 27, 2018 at 09:15:09PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 27 Jan 2018 21:10:12 +0100
+On 01/31/2018 03:04 PM, daniel.m.jordan@oracle.com wrote:
+> This patch simply adds the array of locks and struct page fields.
+> Ignore for now where the struct page fields are: we need to find a place
+> to put them that doesn't enlarge the struct.
 > 
-> Two update suggestions were taken into account
-> from static source code analysis.
+> Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+> ---
+>  include/linux/mm_types.h | 5 +++++
+>  include/linux/mmzone.h   | 7 +++++++
+>  mm/page_alloc.c          | 3 +++
+>  3 files changed, 15 insertions(+)
 > 
-> Markus Elfring (2):
->   Delete two error messages for a failed memory allocation
->   Use common error handling code
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index cfd0ac4e5e0e..6e9d26f0cecf 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -190,6 +190,11 @@ struct page {
+>  		struct kmem_cache *slab_cache;	/* SL[AU]B: Pointer to slab */
+>  	};
+>  
+> +	struct {
+> +		unsigned lru_batch;
+> +		bool lru_sentinel;
 
-Applied to for-next with Jonathan and Devesh's ack, thanks all
+The above declaration adds at least 5 bytes to struct page.
+It adds a lot of extra memory overhead when multiplied
+by the number of pages in the system.
 
-Jason
+We can move sentinel bool to page flag, at least for 64 bit system.
+And 8 bit is probably enough for lru_batch id to give a max 
+lru_batch number of 256 to break the locks into 256 smaller ones.  
+The max used in the patchset is 32 and that is already giving
+pretty good spread of the locking.
+It will be better if we can find some unused space in struct page
+to squeeze it in.
+
+Tim
