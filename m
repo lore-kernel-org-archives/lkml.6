@@ -1,82 +1,74 @@
-Date: Thu, 1 Feb 2018 09:18:11 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Paul Moore <paul@paul-moore.com>, Mark Salyzyn <salyzyn@android.com>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>, linux-kernel@vger.kernel.org,
-	Eric Paris <eparis@parisplace.org>,
-	James Morris <james.l.morris@oracle.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>, selinux@tycho.nsa.gov,
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] general protection fault in sock_has_perm
-Message-ID: <20180201081811.GF15896@kroah.com>
-References: <20180118215853.228182-1-salyzyn@android.com>
- <1516382386.2560.11.camel@tycho.nsa.gov>
- <1516383672.2560.23.camel@tycho.nsa.gov>
- <99c11fa6-ad9a-830c-467e-6a56e78aecf8@android.com>
- <20180130224614.GA13647@kroah.com>
- <CAHC9VhTitwf5NLthRMxLdb=QrS+i7fDgVXq3qXkNmAt8ck8V3A@mail.gmail.com>
+Return-Path: <foo00@h08.hostsharing.net>
+X-Google-Smtp-Source: AH8x226mJYxAZKSB/isS5v6TbF4RR8GcBjmBGfLu19/yuXOabtK9xAsKNh18yiGf3FypiSZaMTZl
+ARC-Seal: i=1; a=rsa-sha256; t=1517464254; cv=none;
+        d=google.com; s=arc-20160816;
+        b=a3zgZSsCg/UkxKOeWWMCCiQPlPORfoGzL2KpT5kmJ2L2S4koZt5mzv9g7j1QpP95MI
+         eWCy4wnbrI5uS8DmTjLUPZPxqwjrg+XONDrHpiO/xRXd2WVLvxcnlIPG+PlSlA0Ozo3J
+         ni7YUJDb5+03XDZTAODJ5aOOLIlf7B1IvzzLBexiZbdkNfaCoh8e4HgnSNJmkUy7cibM
+         EkQct+WZaiiffAHEvYFjUbkK4jluws76kywaBDlZI0urGpJSTPAMHGMCyMYqoqOWvvY1
+         xALu9KAVusv04HNF0NDVB90u5sYJNgmLp0LnaZi0B/dpw+68QtMT6/nShcjsB2lmQ6W9
+         mMNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=qW2eGPpjh4k//Llxt3/MjkFXAAUybI9eO3VBq/CJY38=;
+        b=fnURIa/zlNFgMEw8zAGki3nxcArrcenIEYdrBWkTyUqT3jGlmabH5KOsLbBkkH+xT2
+         936F7F1rNjdblbY65G3PU4OMvNr2giaFZHA53jBhOBLlG3gqocXoxz+Lm45se6lotEZa
+         l+b9PIKBzT20X3hDwq837WfftTgM3gJWXR4DvlCEP9BTkXp8GknvDMSNLODCs0i7wfDS
+         bZrszUoZZrI9alxDnM0zkomQPlacZ3GOt/xqjzfo/cO40KiAvvqbIyJ4knLReye+19TM
+         Jb68XEdAXcnwjuBefgzrnlWasHeR/m90rFh0lhmjDkMM8GmmkRw1OSztHhG9ERLfMBQA
+         Auhg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of foo00@h08.hostsharing.net designates 83.223.95.100 as permitted sender) smtp.mailfrom=foo00@h08.hostsharing.net
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of foo00@h08.hostsharing.net designates 83.223.95.100 as permitted sender) smtp.mailfrom=foo00@h08.hostsharing.net
+Date: Thu, 1 Feb 2018 06:50:52 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: John Stultz <john.stultz@linaro.org>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Rob Herring <rob.herring@linaro.org>,
+	Johan Hovold <johan@kernel.org>,
+	Ronald Tschalaer <ronald@innovation.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Backport d73e17281665 to v4.15 stable
+Message-ID: <20180201055052.GA19082@wunner.de>
+References: <CALAqxLVTff-XX7bbQ8a1Pihqe=QW1HDMKST3F3okCV8jY+wGqw@mail.gmail.com>
+ <CALAqxLW9gzcBrwy3TWB5x_OpKtcLTe7P8PX4KeUgvibbAaMX_A@mail.gmail.com>
+ <20171116213045.GA17506@wunner.de>
+ <20171116214504.GB17506@wunner.de>
+ <CALAqxLX-qp=rc8P7ynGrUwWHgP2EBAwoEES-aOOuehtnJSDR+A@mail.gmail.com>
+ <f181189de5fd4c75da4708425df99e70abc6a127.1510875912.git.lukas@wunner.de>
+ <25BE9D66-9609-42D0-8A83-E15758FA3A1B@holtmann.org>
+ <CALAqxLXeN3fF_ZUVeKLEYnDy25bd0+D7DgK3eLA3rVv3dEv6qQ@mail.gmail.com>
+ <CALAqxLWbh=pmbZEfa03LvOTxBD7bnPVNdHs-os5xZjvhkSWT2Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhTitwf5NLthRMxLdb=QrS+i7fDgVXq3qXkNmAt8ck8V3A@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CALAqxLWbh=pmbZEfa03LvOTxBD7bnPVNdHs-os5xZjvhkSWT2Q@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591176597588210374?=
+X-GMAIL-MSGID: =?utf-8?q?1591176597588210374?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Jan 31, 2018 at 04:06:37AM -0500, Paul Moore wrote:
-> On Tue, Jan 30, 2018 at 5:46 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Tue, Jan 30, 2018 at 11:00:04AM -0800, Mark Salyzyn wrote:
-> >> On 01/19/2018 09:41 AM, Stephen Smalley wrote:
-> >> > If we can't safely dereference the sock in these hooks, then that seems
-> >> > to point back to the approach used in my original code, where in
-> >> > ancient history I had sock_has_perm() take the socket and use its inode
-> >> > i_security field instead of the sock.  commit
-> >> > 253bfae6e0ad97554799affa0266052968a45808 switched them to use the sock
-> >> > instead.
-> >>
-> >> Because of the nature of this problem (hard to duplicate, no clear path), I
-> >> am understandably not comfortable reverting and submitting for testing in
-> >> order to prove this point. It is disruptive because it changes several
-> >> subroutine call signatures.
-> >>
-> >> AFAIK this looks like a user request racing in without reference counting or
-> >> RCU grace period in the callers (could be viewed as not an issue with
-> >> security code). Effectively fixed in 4.9-stable, but broken in 4.4-stable.
-> >>
-> >> hygiene, KISS and small, is all I do feel comfortable to submit to
-> >> 4.4-stable without pulling in all the infrastructure improvements.
-> >>
-> >> -- Mark
-> >>
-> >> ---
-> >>  security/selinux/hooks.c | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> >> index 34427384605d..be68992a28cb 100644
-> >> --- a/security/selinux/hooks.c
-> >> +++ b/security/selinux/hooks.c
-> >> @@ -4066,6 +4066,8 @@ static int sock_has_perm(struct task_struct *task,
-> >> struct sock *sk, u32 perms)
-> >>      struct lsm_network_audit net = {0,};
-> >>      u32 tsid = task_sid(task);
-> >>
-> >> +    if (!sksec)
-> >> +        return -EFAULT;
-> >>      if (sksec->sid == SECINITSID_KERNEL)
-> >>          return 0;
-> >>
-> >
-> > This looks sane to me as a simple 4.4-only fix.  If the SELinux
-> > maintainer acks it, I can easily queue this up.
-> 
-> This revision addresses my concerns with Mark's previous patch.
-> 
-> Acked-by: Paul Moore <paul@paul-moore.com>
+Dear Greg,
 
-Wonderful!
+when you refill the patch queue for v4.15 stable one of these days,
+please consider adding
 
-Mark, can you resend this in a format I can apply it in?
+    commit d73e172816652772114827abaa2dbc053eecbbd7
+    Author: Lukas Wunner <lukas@wunner.de>
+    Date:   Fri Nov 17 00:54:53 2017 +0100
+    
+    Bluetooth: hci_serdev: Init hci_uart proto_lock to avoid oops
 
-thanks,
+to fix a boot crash on certain machines with UART-attached Bluetooth
+which was kindly reported by John Stultz.  The patch unfortunately
+lacked a Fixes: or Cc: stable tag.  It landed in Linus' tree 7 hours ago.
 
-greg k-h
+Thanks!
+
+Lukas
