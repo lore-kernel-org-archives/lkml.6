@@ -1,209 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752208AbeBAWvE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 17:51:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751735AbeBAWu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 17:50:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C9C521798
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 1 Feb 2018 17:50:56 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>,
-        "linux-trace-users@vger.kernel.org"
-        <linux-trace-users@vger.kernel.org>,
-        Linux Trace Devel <linux-trace-devel@vger.kernel.org>
-Cc: Yordan Karadzhov <y.karadz@gmail.com>,
-        Vladislav Valtchev <vladislav.valtchev@gmail.com>
-Subject: [ANNOUNCE] trace-cmd v2.7
-Message-ID: <20180201175056.319d575c@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752212AbeBAWwW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 17:52:22 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51861 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752018AbeBAWwN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 17:52:13 -0500
+X-Google-Smtp-Source: AH8x225g9I9M3KcgtG3OtoD4PXic+BpTUK75QdlxxtU7tB3FFdIezkWYIX+Npwo/3wYej44aOSsrtnNpEP4TyxvrU+M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180130010007.256564-5-dbasehore@chromium.org>
+References: <20180130010007.256564-1-dbasehore@chromium.org> <20180130010007.256564-5-dbasehore@chromium.org>
+From: "dbasehore ." <dbasehore@chromium.org>
+Date: Thu, 1 Feb 2018 14:52:11 -0800
+X-Google-Sender-Auth: 2V7fSnf-_meWFH6h7aDFMu2iQZU
+Message-ID: <CAGAzgsrRSHsQ-rkSfVk_Jd9iVcFmP5phEy13E9RZTAYnJB-EsQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] irqchip/gic-v3-its: add ability to resend MAPC on resume
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Soby Mathew <Soby.Mathew@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Brian Norris <briannorris@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Derek Basehore <dbasehore@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Features since 2.6:
+On Mon, Jan 29, 2018 at 5:00 PM, Derek Basehore <dbasehore@chromium.org> wrote:
+> This adds functionality to resend the MAPC command to an ITS node on
+> resume. If the ITS is powered down during suspend and the collections
+> are not backed by memory, the ITS will lose that state. This just sets
+> up the known state for the collections after the ITS is restored.
+>
+> This feature is enabled via Kconfig and a device tree entry.
+>
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> ---
+>  arch/arm64/Kconfig               |  10 ++++
+>  drivers/irqchip/irq-gic-v3-its.c | 101 ++++++++++++++++++++++++---------------
+>  2 files changed, 73 insertions(+), 38 deletions(-)
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 53612879fe56..f38f1a7b4266 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -571,6 +571,16 @@ config HISILICON_ERRATUM_161600802
+>
+>           If unsure, say Y.
+>
+> +config ARM_GIC500_COLLECTIONS_RESET
+> +       bool "GIC-500 Collections: Workaround for GIC-500 Collections on suspend reset"
+> +       default y
+> +       help
+> +         The GIC-500 can store Collections state internally for the ITS. If
+> +         the ITS is reset on suspend (ie from power getting disabled), the
+> +         collections need to be reconfigured on resume.
+> +
+> +         If unsure, say Y.
+> +
+>  config QCOM_FALKOR_ERRATUM_E1041
+>         bool "Falkor E1041: Speculative instruction fetches might cause errant memory access"
+>         default y
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 759ede7048ed..7fc533cf3bf7 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -48,6 +48,7 @@
+>  #define ITS_FLAGS_WORKAROUND_CAVIUM_22375      (1ULL << 1)
+>  #define ITS_FLAGS_WORKAROUND_CAVIUM_23144      (1ULL << 2)
+>  #define ITS_FLAGS_SAVE_SUSPEND_STATE           (1ULL << 3)
+> +#define ITS_FLAGS_WORKAROUND_GIC500_MAPC       (1ULL << 4)
+>
+>  #define RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING    (1 << 0)
+>
+> @@ -1950,52 +1951,53 @@ static void its_cpu_init_lpis(void)
+>         dsb(sy);
+>  }
+>
+> -static void its_cpu_init_collection(void)
+> +static void its_cpu_init_collection(struct its_node *its)
+>  {
+> -       struct its_node *its;
+> -       int cpu;
+> -
+> -       spin_lock(&its_lock);
+> -       cpu = smp_processor_id();
+> -
+> -       list_for_each_entry(its, &its_nodes, entry) {
+> -               u64 target;
+> +       int cpu = smp_processor_id();
+> +       u64 target;
+>
+> -               /* avoid cross node collections and its mapping */
+> -               if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
+> -                       struct device_node *cpu_node;
+> +       /* avoid cross node collections and its mapping */
+> +       if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
+> +               struct device_node *cpu_node;
+>
+> -                       cpu_node = of_get_cpu_node(cpu, NULL);
+> -                       if (its->numa_node != NUMA_NO_NODE &&
+> -                               its->numa_node != of_node_to_nid(cpu_node))
+> -                               continue;
+> -               }
+> +               cpu_node = of_get_cpu_node(cpu, NULL);
+> +               if (its->numa_node != NUMA_NO_NODE &&
+> +                       its->numa_node != of_node_to_nid(cpu_node))
+> +                       return;
+> +       }
+>
+> +       /*
+> +        * We now have to bind each collection to its target
+> +        * redistributor.
+> +        */
+> +       if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
+>                 /*
+> -                * We now have to bind each collection to its target
+> +                * This ITS wants the physical address of the
+>                  * redistributor.
+>                  */
+> -               if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
+> -                       /*
+> -                        * This ITS wants the physical address of the
+> -                        * redistributor.
+> -                        */
+> -                       target = gic_data_rdist()->phys_base;
+> -               } else {
+> -                       /*
+> -                        * This ITS wants a linear CPU number.
+> -                        */
+> -                       target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
+> -                       target = GICR_TYPER_CPU_NUMBER(target) << 16;
+> -               }
+> +               target = gic_data_rdist()->phys_base;
+> +       } else {
+> +               /* This ITS wants a linear CPU number. */
+> +               target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
+> +               target = GICR_TYPER_CPU_NUMBER(target) << 16;
+> +       }
+>
+> -               /* Perform collection mapping */
+> -               its->collections[cpu].target_address = target;
+> -               its->collections[cpu].col_id = cpu;
+> +       /* Perform collection mapping */
+> +       its->collections[cpu].target_address = target;
+> +       its->collections[cpu].col_id = cpu;
+>
+> -               its_send_mapc(its, &its->collections[cpu], 1);
+> -               its_send_invall(its, &its->collections[cpu]);
+> -       }
+> +       its_send_mapc(its, &its->collections[cpu], 1);
+> +       its_send_invall(its, &its->collections[cpu]);
+> +}
+> +
+> +static void its_cpu_init_collections(void)
+> +{
+> +       struct its_node *its;
+> +
+> +       spin_lock(&its_lock);
+> +
+> +       list_for_each_entry(its, &its_nodes, entry)
+> +               its_cpu_init_collection(its);
+>
+>         spin_unlock(&its_lock);
+>  }
+> @@ -2997,6 +2999,18 @@ static bool __maybe_unused its_enable_quirk_hip07_161600802(void *data)
+>         return true;
+>  }
+>
+> +static bool __maybe_unused its_enable_quirk_gic500_collections(void *data)
+> +{
+> +       struct its_node *its = data;
+> +
+> +       if (fwnode_property_present(its->fwnode_handle,
+> +                                   "collections-reset-on-suspend")) {
+> +               its->flags |= ITS_FLAGS_WORKAROUND_GIC500_MAPC;
+> +               return true;
+> +       }
+> +       return false;
+> +}
+> +
+>  static const struct gic_quirk its_quirks[] = {
+>  #ifdef CONFIG_CAVIUM_ERRATUM_22375
+>         {
+> @@ -3042,6 +3056,14 @@ static const struct gic_quirk its_quirks[] = {
+>                 .mask   = 0xffffffff,
+>                 .init   = its_enable_quirk_hip07_161600802,
+>         },
+> +#endif
+> +#ifdef CONFIG_ARM_GIC500_COLLECTIONS_RESET
+> +       {
+> +               .desc   = "ITS: GIC-500 Collections Reset on Resume",
+> +               .iidr   = 0x00000000,
+> +               .mask   = 0xff000000,
+> +               .init   = its_enable_quirk_gic500_collections,
+> +       },
+>  #endif
+>         {
+>         }
+> @@ -3114,6 +3136,9 @@ static void its_restore_enable(void)
+>                         }
+>                         writel_relaxed(ctx->ctlr, base + GITS_CTLR);
+>                 }
 
- - Add "--quiet" (-q) to trace-cmd record to surpress output
+Can anyone from ARM indicate whether we need to wait for the ITS to
+exit its Quiescent state before sending commands to it?
 
- - trace-cmd stat has some more data
-
- - trace-cmd record splice() how handles more than one page
-
- - Add --module filtering option to associate modules to filters
-
- - New -O offset for function plugin
-
- - Bash completion for -O options.
-
- - Bash completion for -B instance buffers
-
- - New trace-cmd clear to simply clear out the trace-cmd buffers
-
-And lots of internal churn to prepare for bigger features in the
-future.
-
-Short log:
-
-Baruch Siach (1):
-      trace-cmd: use the standard PATH_MAX macro
-
-Cheng Jian (1):
-      tools/lib/traceevent/parse-filter.c: clean up clang build warning
-
-Daniel Borkmann (1):
-      lib, traceevent: add PRINT_HEX_STR variant
-
-Deepak Das (1):
-      trace-cmd record: Add module filtering option
-
-Federico Vaga (2):
-      trace-cmd record: Use direname instead of custom code
-      trace-cmd: Use asprintf when possible
-
-Greg Kroah-Hartman (1):
-      License cleanup: add SPDX GPL-2.0 license identifier to files with no license
-
-Jan Kiszka (3):
-      trace-cmd record: Don't set wildcard filter for non-existing module
-      event-parse: Print value of unknown symbolic fields
-      trace-view: Pick up sched_wakeup_new event
-
-Masahiro Yamada (1):
-      scripts/spelling.txt: add "overide" pattern and fix typo instances
-
-Michael Sartain (13):
-      event-parse: Fix bad force_token escape sequence
-      trace-cmd: Fix unsigned return values being error checked as negative
-      trace-cmd: Fix read / write data offsets in read / write loops
-      trace-cmd: Fix function prototypes for __vwarning, __vpr_stat, and __vdie
-      kernelshark: Fix cases where string literals were passed as string format args
-      trace-cmd: Fix incorrect malloc size arg: *item instead of item
-      trace-cmd: Fix NULL pointer being passed to memcpy
-      trace-cmd: Add UL suffix to MISSING_EVENTS since ints shouldn't be left shifted by 31
-      trace-cmd: Use unsigned values in Hsieh's trace_hash fast hash function
-      trace-cmd: Fix use after free for recorder global
-      trace-cmd: Replace normalize_size loop with branchless previous pow2 algorithm
-      trace-cmd: Fix reading of overrun / commit_overrun cpu stat fields
-      trace-cmd: Add trace-cmd clear command
-
-Mike Rapoport (1):
-      trace-cmd-record: Update documentation for "-c" option
-
-Namhyung Kim (1):
-      tools lib traceevent: Fix kbuffer_read_at_offset()
-
-Steven Rostedt (Red Hat) (15):
-      trace-cmd msg: Add debug prints of messages sent and received
-      trace-cmd msg: Move the saved closing fd to the caller
-      trace-cmd listen: Add better output on error of connections
-      trace-cmd msg: Create a msg_handle to pass around for saved state
-      trace-cmd msg: Add server structure of msg_handler
-      trace-cmd: Remove global use_tcp variable
-      trace-cmd: Move protocol version into msg_handler
-      tracecmd: Clean up handling of cpu_count
-      tracecmd listen: Have pagesize passed as return not parameter
-      trace-cmd: Have cpu_count reside in instances and not be global
-      trace-cmd: Add option CPUCOUNT to buffer instance options
-      trace-cmd: Have msg_handle part of the buffer instance
-      trace-cmd record: Allow instances to be recorded over the network
-      trace-cmd: Have keep and profile be flags of buffer instance
-      trace-cmd: Add network handle into buffer instance
-
-Steven Rostedt (VMware) (55):
-      trace-cmd-v2.7.dev
-      trace-cmd: Fix completions
-      trace-cmd: Fix the fix for completions
-      trace-cmd: Have trace-cmd start, profile and stream use record completion
-      trace-cmd: Add trace-cmd show completion for bash
-      trace-cmd: Add bash completions for instance buffers for -B option
-      trace-cmd: Have bash completions look at all options by default
-      trace-cmd: Add bash completion for trace-cmd report -O
-      trace-cmd report: Fix pointer check in option -r
-      trace-cmd listen: Replace tab with spaces in help output
-      trace-cmd report: Add -O offset for function plugin
-      event-parse: Show contents (in hex) of data of unrecognized type records
-      parse-events: Fix get_field_str() for dynamic strings
-      trace-cmd record: Update man pages for some missing options
-      trace-cmd record: Have --module affect function filters listed after it
-      trace-cmd record: Update documentation for -c with -P
-      event-parse: Show value of flags that have not been parsed
-      trace-cmd msg: Remove unused tracecmd_msg_str
-      trace-cmd recorder: Always return if the read splice() does not read anything
-      trace-cmd record: Only write what was read in splice_data()
-      trace-cmd record: Make sure all is written in splice_data()
-      trace-cmd recorder: Use full pipe size in splice_data()
-      trace-cmd report: Add offsets and record sizes to --debug option
-      trace-cmd recorder: Make sure to write as much as was read in read_data()
-      trace-cmd listen: Do not kill client recorders
-      trace-cmd listen: Make sure to write everything that was read
-      trace-cmd recorder: Add define of F_GETPIPE_SZ if not already defined
-      trace-cmd build: Do not build python code if swig is not installed
-      trace-cmd recorder: Check if pipe_size was modified by fcntl(F_GETPIPE_SZ)
-      pevent: Simplify pointer print logic and fix %pF
-      pevent: Handle new pointer processing of bprint strings
-      trace-cmd record: Fix clearing out the ctx->instance when used in for_all_instances()
-      trace-cmd: Remove the creating of msg out of tracecmd_msg_send()
-      trace-cmd: Move tracecmd_msg_send_and_wait_for_msg() into its only user
-      trace-cmd: Turn tracecmd_msg data into an anonymous union
-      trace-cmd: Remove unused structure tracecmd_msg_error
-      trace-cmd: Move size and cmd in tracecmd_msg into its own header struct
-      trace-cmd: Move the tracecmd_msg pointers into their own union
-      trace-cmd: Just use the buf field for sending pointers
-      trace-cmd: Use an array to map msg types and min sizes
-      trace-cmd: Merge msg_do_write_check() into msg_write()
-      trace-cmd: Simplify msg_free() by using min sizes
-      trace-cmd: Add tracecmd_msg_init() helper function
-      trace-cmd: Remove mulitplexer tracecmd_msg_create()
-      trace-cmd: Simplify msg_read_extra()
-      trace-cmd: Have msg_free() zero out msg contents
-      trace-cmd: Verify RINIT was received after TINIT msg sent
-      trace-cmd: Make send_metadata a flag in the output handle
-      trace-cmd: Pass cpu count and port array to make_rinit()
-      trace-cmd: Pass cpu_count instead of having it as a global
-      trace-cmd: Pass in client_ports instead of using a global variable
-      trace-cmd: Fix leaking of port_array memory
-      trace-cmd msg: Set the min size of a message on init
-      trace-cmd TAGS: Fix tags to not parse .pc directory of patch
-      trace-cmd: Version 2.7
-
-Vladislav Valtchev (VMware) (20):
-      trace-cmd: Fix err msg for record w/o the -e option
-      trace-cmd: s/plugin/tracer/ in record's man page
-      trace-cmd: Extract trace_stop() from trace_record()
-      trace-cmd: Extract trace_restart() from trace_record()
-      trace-cmd: Extract trace_reset() from trace_record()
-      trace-cmd: Consolidate ARRAY_SIZE() in trace-cmd.h
-      trace-cmd: Making the "die" functions noreturn
-      trace-cmd: Extract parse_record_options() from trace_record()
-      trace-cmd: Replacing cmd flags w/ a trace_cmd enum
-      trace-cmd: Extracting record_trace()
-      trace-cmd: Rename trace_profile() to do_trace_profile()
-      trace-cmd: Making start,extract,stream,profile separate funcs
-      trace-cmd: Extract profile-specific code from record_trace
-      trace-cmd: Move init_common_record_context() into parse_record_options()
-      trace-cmd: Introducing get_trace_cmd_type()
-      trace-cmd: Extract finalize_record_trace()
-      trace-cmd: Fork record_trace() for the extract case
-      trace-cmd: Make read_proc() to return int status via OUT arg
-      trace-cmd: Remove the die() call from read_proc()
-      trace-cmd: Making stat to report when the stack tracer is ON
-
-Will Hawkins (2):
-      trace-cmd record: Add --quiet (-q) option
-      trace-cmd record: Fix syntax in make_pid_filter
-
-Yordan Karadzhov (VMware) (1):
-      kernelshark: Fix the GUI plugin loading
-
-Ziqian SUN (Zamir) (1):
-      trace-cmd report: Fix hash.key in option -w
-
-Enjoy,
-
--- Steve
+> +
+> +               if (its->flags & ITS_FLAGS_WORKAROUND_GIC500_MAPC)
+> +                       its_cpu_init_collection(its);
+>         }
+>         spin_unlock(&its_lock);
+>  }
+> @@ -3380,7 +3405,7 @@ int its_cpu_init(void)
+>                         return -ENXIO;
+>                 }
+>                 its_cpu_init_lpis();
+> -               its_cpu_init_collection();
+> +               its_cpu_init_collections();
+>         }
+>
+>         return 0;
+> --
+> 2.16.0.rc1.238.g530d649a79-goog
+>
