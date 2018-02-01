@@ -1,65 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751530AbeBACvz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 21:51:55 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:48063 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751001AbeBACvy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 21:51:54 -0500
-Subject: Re: mmotm 2018-01-31-16-51 uploaded (f2fs)
-To: akpm@linux-foundation.org, mm-commits@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz,
-        broonie@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-References: <5a7264b1.mqPv/eshq6wqQFu6%akpm@linux-foundation.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b764819a-a7d6-6976-bc46-eab972566309@infradead.org>
-Date: Wed, 31 Jan 2018 18:51:35 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1751467AbeBACz2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 21:55:28 -0500
+Received: from ozlabs.org ([103.22.144.67]:43301 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751163AbeBACzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 21:55:24 -0500
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Ingo Molnar <mingo@kernel.org>, Ram Pai <linuxram@us.ibm.com>
+Cc: mingo@redhat.com, akpm@linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
+        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
+Subject: Re: [PATCH v11 0/3] mm, x86, powerpc: Enhancements to Memory Protection Keys.
+In-Reply-To: <20180131070711.pad45qmnougnh4vf@gmail.com>
+References: <1517341452-11924-1-git-send-email-linuxram@us.ibm.com> <20180131070711.pad45qmnougnh4vf@gmail.com>
+Date: Thu, 01 Feb 2018 13:55:21 +1100
+Message-ID: <87lggde7vq.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <5a7264b1.mqPv/eshq6wqQFu6%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/31/2018 04:52 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-01-31-16-51 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (4.x
-> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
+Ingo Molnar <mingo@kernel.org> writes:
 
-It looks like this build error is not from an mmotm patch but from mainline
-or linux-next:
+> * Ram Pai <linuxram@us.ibm.com> wrote:
+>
+>> This patch series provides arch-neutral enhancements to
+>> enable memory-keys on new architecutes, and the corresponding
+>> changes in x86 and powerpc specific code to support that.
+>> 
+>> a) Provides ability to support upto 32 keys.  PowerPC
+>> 	can handle 32 keys and hence needs this.
+>> 
+>> b) Arch-neutral code; and not the arch-specific code,
+>>    determines the format of the string, that displays the key
+>>    for each vma in smaps.
+>> 
+>> PowerPC implementation of memory-keys is now in powerpc/next tree.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/commit/?h=next&id=92e3da3cf193fd27996909956c12a23c0333da44
+>
+> All three patches look sane to me. If you would like to carry these generic bits 
+> in the PowerPC tree as well then:
+>
+>   Reviewed-by: Ingo Molnar <mingo@kernel.org>
 
-on i386:
-../fs/f2fs/super.c: In function 'f2fs_fill_super':
-../fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPWB' undeclared (first use in this function)
-  sb->s_iflags |= SB_I_CGROUPWB;
-                  ^
+Thanks.
 
-Anyway, it's an unknown value.
+I'll put them in powerpc next and probably send to Linus next week in a
+2nd pull request for 4.16.
 
--- 
-~Randy
+cheers
