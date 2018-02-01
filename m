@@ -1,65 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751660AbeBAPCq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:02:46 -0500
-Received: from foss.arm.com ([217.140.101.70]:51222 "EHLO foss.arm.com"
+        id S1751655AbeBAPFl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:05:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60452 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751408AbeBAPCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:02:41 -0500
-Subject: Re: [PATCH] soc: mediatek: Handle return of of_match_device function
-To: Himanshu Jha <himanshujha199640@gmail.com>, matthias.bgg@gmail.com
-Cc: ulf.hansson@linaro.org, weiyi.lu@mediatek.com, geert+renesas@glider.be,
-        sean.wang@mediatek.com, linux-kernel@vger.kernel.org,
-        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1517482822-28758-1-git-send-email-himanshujha199640@gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <b8265d37-0ef0-9d24-8ace-8fae7f67477d@arm.com>
-Date: Thu, 1 Feb 2018 15:02:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751408AbeBAPFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 10:05:39 -0500
+Date: Thu, 1 Feb 2018 23:04:48 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Don Brace <don.brace@microsemi.com>
+Cc: Laurence Oberman <loberman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@fb.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 0/2] genirq/affinity: try to make sure online CPU is
+ assgined to irq vector
+Message-ID: <20180201150441.GA32269@ming.t460p>
+References: <20180115160345.2611-1-ming.lei@redhat.com>
+ <20180115174036.GA20191@infradead.org>
+ <20180116013043.GA3213@ming.t460p>
+ <alpine.DEB.2.20.1801161223500.1823@nanos>
+ <1516109317.9574.1.camel@redhat.com>
+ <a6086631efd54749a298add3d6b9a134@microsemi.com>
+ <20180201103651.GA29263@ming.t460p>
+ <35e74f9ae47b4b5db8ee4bf3a8989e82@microsemi.com>
 MIME-Version: 1.0
-In-Reply-To: <1517482822-28758-1-git-send-email-himanshujha199640@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35e74f9ae47b4b5db8ee4bf3a8989e82@microsemi.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/18 11:00, Himanshu Jha wrote:
-> In scpsys_probe function, return value of of_match_device function which
-> returns null is dereferenced without checking. Therefore, add a check for
-> potential null dereference.
+On Thu, Feb 01, 2018 at 02:53:35PM +0000, Don Brace wrote:
+> > -----Original Message-----
+> > From: Ming Lei [mailto:ming.lei@redhat.com]
+> > Sent: Thursday, February 01, 2018 4:37 AM
+> > To: Don Brace <don.brace@microsemi.com>
+> > Cc: Laurence Oberman <loberman@redhat.com>; Thomas Gleixner
+> > <tglx@linutronix.de>; Christoph Hellwig <hch@infradead.org>; Jens Axboe
+> > <axboe@fb.com>; linux-block@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > Mike Snitzer <snitzer@redhat.com>
+> > Subject: Re: [PATCH 0/2] genirq/affinity: try to make sure online CPU is assgined
+> > to irq vector
+> > 
+> > EXTERNAL EMAIL
+> > 
+> > 
+> > On Tue, Jan 16, 2018 at 03:22:18PM +0000, Don Brace wrote:
+> > > > -----Original Message-----
+> > > > From: Laurence Oberman [mailto:loberman@redhat.com]
+> > > > Sent: Tuesday, January 16, 2018 7:29 AM
+> > > > To: Thomas Gleixner <tglx@linutronix.de>; Ming Lei <ming.lei@redhat.com>
+> > > > Cc: Christoph Hellwig <hch@infradead.org>; Jens Axboe <axboe@fb.com>;
+> > > > linux-block@vger.kernel.org; linux-kernel@vger.kernel.org; Mike Snitzer
+> > > > <snitzer@redhat.com>; Don Brace <don.brace@microsemi.com>
+> > > > Subject: Re: [PATCH 0/2] genirq/affinity: try to make sure online CPU is
+> > assgined
+> > > > to irq vector
+> > > >
+> > > > > > It is because of irq_create_affinity_masks().
+> > > > >
+> > > > > That still does not answer the question. If the interrupt for a queue
+> > > > > is
+> > > > > assigned to an offline CPU, then the queue should not be used and
+> > > > > never
+> > > > > raise an interrupt. That's how managed interrupts have been designed.
+> > > > >
+> > > > > Thanks,
+> > > > >
+> > > > >       tglx
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > >
+> > > > I captured a full boot log for this issue for Microsemi, I will send it
+> > > > to Don Brace.
+> > > > I enabled all the HPSA debug and here is snippet
+> > > >
+> > > >
+> > > > ..
+> > > > ..
+> > > > ..
+> > > >   246.751135] INFO: task systemd-udevd:413 blocked for more than 120
+> > > > seconds.
+> > > > [  246.788008]       Tainted: G          I      4.15.0-rc4.noming+ #1
+> > > > [  246.822380] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> > > > disables this message.
+> > > > [  246.865594] systemd-udevd   D    0   413    411 0x80000004
+> > > > [  246.895519] Call Trace:
+> > > > [  246.909713]  ? __schedule+0x340/0xc20
+> > > > [  246.930236]  schedule+0x32/0x80
+> > > > [  246.947905]  schedule_timeout+0x23d/0x450
+> > > > [  246.970047]  ? find_held_lock+0x2d/0x90
+> > > > [  246.991774]  ? wait_for_completion_io+0x108/0x170
+> > > > [  247.018172]  io_schedule_timeout+0x19/0x40
+> > > > [  247.041208]  wait_for_completion_io+0x110/0x170
+> > > > [  247.067326]  ? wake_up_q+0x70/0x70
+> > > > [  247.086801]  hpsa_scsi_do_simple_cmd+0xc6/0x100 [hpsa]
+> > > > [  247.114315]  hpsa_scsi_do_simple_cmd_with_retry+0xb7/0x1c0 [hpsa]
+> > > > [  247.146629]  hpsa_scsi_do_inquiry+0x73/0xd0 [hpsa]
+> > > > [  247.174118]  hpsa_init_one+0x12cb/0x1a59 [hpsa]
+> > >
+> > > This trace comes from internally generated discovery commands. No SCSI
+> > devices have
+> > > been presented to the SML yet.
+> > >
+> > > At this point we should be running on only one CPU. These commands are
+> > meant to use
+> > > reply queue 0 which are tied to CPU 0. It's interesting that the patch helps.
+> > >
+> > > However, I was wondering if you could inspect the iLo IML logs and send the
+> > > AHS logs for inspection.
+> > 
+> > Hello Don,
+> > 
+> > Now the patch has been merged to linus tree as:
+> > 
+> > 84676c1f21e8ff54b ("genirq/affinity: assign vectors to all possible CPUs")
+> > 
+> > and it breaks Laurence's machine completely, :-(
+> > 
+> > I just take a look at HPSA's code, and found that reply queue is chosen
+> > in the following way in most of code path:
+> > 
+> >         if (likely(reply_queue == DEFAULT_REPLY_QUEUE))
+> >                 cp->ReplyQueue = smp_processor_id() % h->nreply_queues;
+> > 
+> > h->nreply_queues is the msix vector number which is returned from
+> > pci_alloc_irq_vectors(), and now some of vectors may be mapped to all
+> > offline CPUs, for example, one processor isn't plugged to socket.
+> > 
+> > If I understand correctly, 'cp->ReplyQueue' is aligned to one irq
+> > vector, and the command is expected by handled via that irq vector,
+> > is it right?
+> > 
+> > If yes, now I guess this way can't work any more if number of online
+> > CPUs is >= h->nreply_queues, and you may need to check the cpu affinity
+> > of one vector before choosing the reply queue, and block/blk-mq-pci.c
+> > may be helpful for you.
+> > 
+> > Thanks,
+> > Ming
 > 
-> Detected by CoverityScan, CID#1424087 "Dereference null return value"
-> 
-> Fixes: commit 53fddb1a66dd ("soc: mediatek: reduce code duplication of scpsys_probe across all SoCs")
-> Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
-> ---
->   drivers/soc/mediatek/mtk-scpsys.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index 435ce5e..6e7f196 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -981,6 +981,9 @@ static int scpsys_probe(struct platform_device *pdev)
->   	int i, ret;
->   
->   	match = of_match_device(of_scpsys_match_tbl, &pdev->dev);
-> +	if (!match)
-> +		return -EINVAL;
-> +
->   	soc = (const struct scp_soc_data *)match->data;
+> Thanks Ming,
+> I start working up a patch.
 
-You could of course replace the whole sequence with an 
-of_device_get_match_data() call, which happens to be inherently safe 
-against the no-match case even when that *is* impossible by design.
+Also the reply queue may be mapped to blk-mq's hw queue directly, then the
+conversion may be done by blk-mq's MQ framework, but legacy path still need
+the fix.
 
-Robin.
-
->   
->   	scp = init_scp(pdev, soc->domains, soc->num_domains, &soc->regs,
-> 
+thanks
+Ming
