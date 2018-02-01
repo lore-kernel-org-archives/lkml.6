@@ -1,32 +1,33 @@
-Return-Path: <jpoimboe@redhat.com>
-X-Google-Smtp-Source: AH8x227lb7sCzTEqInaufKUny8QKKRIHp0lzfM9QdNVzdYeyFsSG1JRMW5zXbwefTgfNlNUp3onE
-ARC-Seal: i=1; a=rsa-sha256; t=1517507018; cv=none;
+Return-Path: <peterz@infradead.org>
+X-Google-Smtp-Source: AH8x22451o1Tgahpz0mj0WGaZ/ON0M16Jomea/Frv91Y9FEFE65hyi/QswvVuIMrHmdXvb/t1vps
+ARC-Seal: i=1; a=rsa-sha256; t=1517499161; cv=none;
         d=google.com; s=arc-20160816;
-        b=RJTSKkBtRjGNORKhE2yS9kxVYiPmD0PW4zh5xdS6mnhquFO2CxF1MJREBaF5HkBhIK
-         eJEx6zhM1ob1dwaIXao04x2Vu3eVyA8nt7qrFceWbo0FetJlU8fCvt8jvAvaPJhsYVig
-         xPtDe1ZDpM61oq8kkwr/7B4QCkg7nVIpUwoXwxDJ4HYD9ROidLkYVdY7viHkQrR+cebS
-         9XnaKYD9I6c1d7mF3KRSE4/PnzsEwIljfG89d/qZHTIkSRFeTwERktDj5RDYpklp+Kiy
-         mgD7lC8z7uywEqwCcP2v2bwb2SUr3MmBU4fOq/+VqP5vQaEJCMLeowsqmB1xxqZ8081u
-         A4Eg==
+        b=qJExgk8XprZ3Tj0ZVzrl5OQyZoMsV125xY1ojpy/PbAOmTpxF9Y3ql3U0jQWYHauRJ
+         a+2/xbCkQxtCVyNT0zDb8YsfsPviqKwwE6N+fIjKebsM/PhjpuDXRaaBTrS99pMycgiP
+         qmH7QoZRu4AFMbw1GQ5Gf4/pSF1gwf6W7KLieDbV+AAsrU7H7Yg3MZ/9c7C/e51rDlJU
+         UOk73TrxuKJXYV41iRNrFXIJqWkNgwGu8aIpw28UioppyaDETEKxRcR+tGj0wyTwRIAs
+         IKP1MdaZU2Jw3pwXWF+/cQKZWphS/20qrUXPhf2K6DWkbL1ciMMD/vmM2P3qTDZa4+jZ
+         YgQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=vbNvSjiwbyMJxOXJ7Y7yMWIqjg6YjP3zHv7dNa+YF2A=;
-        b=QEYbtx8P5Ucc4hfM8/9AXfAwmPDX5yOXpGfraRqpkPST5Dyeiz8lPcnOyaTWnwUz04
-         JC9stoelmaSnbv7quCrkWMNNCfHowLx/Rv6/opJxvkdzQOZc3tlP64s2ACNhhTg+MbHY
-         K4BvjX2Dq40jjnwgtYB4ABmMrDoNR0UA9yPO5BAY3y/kFsVfgK9mwuxwdIX4ux9c+4pi
-         zFP5uwe4zN/Kwcy0BZUsaqltbsHtXPyawEcoZlU0/OXcbXu4xiiJR/kOxfdc4Nl0hihF
-         tLanXm8KsHlNKvdpoTC7YCqTYavDtY4M0DHXm7yLoKvKN48TpvoimRh5Of48vEGU3azi
-         QVow==
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=4P6B9YUhNTtgqkfGL/O2VuCkYScslCwuUb3bJ/n7ydk=;
+        b=JWuLeQHF3fYfDIzbGUqvbya62KkIlKJXfaJ9u1GfXYgUL8eEilztVj/CaXHMO9s2Fe
+         9b/Yk5jjL/TLqy9aBkTJY18ieRxroByj5PDl6GBk6dtYiX+0yPWjaVOCRAOtlT232wcf
+         VR2gVvvB2Pg3pNaxne/LRlQ21Cmcc0qX8jBtEMaFFhGCdlkDlqIJJuyIMvvRDk5EJls5
+         n7dtIWvn6QrkxehFVdy2ZXmnznK5WlUUoI7+xMpXPKlBJs6u1Nc2mbw5LBKdT2nOeZIj
+         tzW6FgccPRn06DTzTy1zt+W70HeT5Nfqp6MbxGi2ISMgBwKClzFiIDoxXq4aEqdXPG1Z
+         +A+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 209.132.183.28 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=wf5QpomG;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 209.132.183.28 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Thu, 1 Feb 2018 11:43:35 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=wf5QpomG;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
+Date: Thu, 1 Feb 2018 16:32:35 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: David Woodhouse <dwmw2@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
 	Dave Hansen <dave.hansen@intel.com>,
@@ -43,56 +44,34 @@ Cc: David Woodhouse <dwmw2@infradead.org>,
 	Jun Nakajima <jun.nakajima@intel.com>,
 	Asit Mallick <asit.k.mallick@intel.com>
 Subject: Re: [PATCH 0/7] objtool: retpoline validation
-Message-ID: <20180201174335.3tccxfotu7slriuu@treble>
+Message-ID: <20180201153235.GZ2249@hirez.programming.kicks-ass.net>
 References: <20180201143421.088202488@infradead.org>
  <20180201152856.okzhqvdlledykzps@treble>
- <1517499131.18619.317.camel@infradead.org>
- <20180201154028.GA2249@hirez.programming.kicks-ass.net>
- <1517503895.18619.319.camel@infradead.org>
- <20180201171427.GD2249@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180201171427.GD2249@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <20180201152856.okzhqvdlledykzps@treble>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591210454988302775?=
-X-GMAIL-MSGID: =?utf-8?q?1591221440186755877?=
+X-GMAIL-MSGID: =?utf-8?q?1591213200955060256?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 06:14:27PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 01, 2018 at 04:51:35PM +0000, David Woodhouse wrote:
-> > > Ideally we'd have a way to mark the module 'unsafe' or something.
-> > 
-> > No, we just need to set IBRS before doing it. 
+On Thu, Feb 01, 2018 at 09:28:56AM -0600, Josh Poimboeuf wrote:
+> On Thu, Feb 01, 2018 at 03:34:21PM +0100, Peter Zijlstra wrote:
+> > There are the retpoline validation patches; they work with the __noretpoline
+> > thing from David.
 > 
-> That would work, assuming IBRS is available to begin with of course. Do
-> we WARN if we hit this code and don't have IBRS available?
+> Have you run this through 0-day bot yet? 
 
-Perhaps it should just be reported in the spectre_v2 sysfs file.
+Yes, it complains a _lot_ because no retpoline supported compiler.
 
-So
-
-  "Mitigation: Full generic retpoline"
-
-would instead be something like
-
-  "Vulnerable: Retpoline without IBRS"
-
-?
-
-> > The same applies to any
-> > EFI runtime calls, APM and all kinds of other random crap that calls
-> > into firmware. I'm not sure why those aren't showing up.
+> A manual awk/sed found another
+> one, which objtool confirms:
 > 
-> arch/x86/platform/efi/Makefile:OBJECT_FILES_NON_STANDARD_efi_thunk_$(BITS).o := y
-> arch/x86/platform/efi/Makefile:OBJECT_FILES_NON_STANDARD_efi_stub_$(BITS).o := y
-> 
-> And similar things tell objtool to please not look..
+>   drivers/watchdog/.tmp_hpwdt.o: warning: objtool: .text+0x24: indirect call found in RETPOLINE build
 
-Right, some of the corner cases like efi, vdso, and bpf tend to be
-ignored by objtool right now.
-
--- 
-Josh
+That is the only known one left. It calls into BIOS code, so its not
+safe and using a retpoline for it is pointless since nobody audited the
+BIOS code.
