@@ -1,51 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751702AbeBAOFJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 09:05:09 -0500
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:32981 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751435AbeBAOFG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 09:05:06 -0500
-X-Google-Smtp-Source: AH8x226b9BnfSTeXhPEPQh/nyrQlhH3E7yWvqruiyXUOakw+Mgdg1QWd+OtkC15iOTAJulcZnbnYTw==
-Date: Thu, 1 Feb 2018 15:05:03 +0100
-From: Christoffer Dall <christoffer.dall@linaro.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
-Message-ID: <20180201140503.GE21802@cbox>
-References: <20180201125512.7bc96674@canb.auug.org.au>
- <20180201104707.GA21802@cbox>
- <20180202002227.36db3356@canb.auug.org.au>
+        id S1751530AbeBAOPs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 09:15:48 -0500
+Received: from mga04.intel.com ([192.55.52.120]:32234 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750985AbeBAOPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 09:15:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,444,1511856000";
+   d="scan'208";a="28035013"
+Subject: Re: [PATCH 1/2] mm/sparsemem: Defer the ms->section_mem_map clearing
+ a little later
+To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
+References: <20180201071956.14365-1-bhe@redhat.com>
+ <20180201071956.14365-2-bhe@redhat.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, mhocko@suse.com, tglx@linutronix.de,
+        douly.fnst@cn.fujitsu.com
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <87acc80a-8a9a-5037-8efc-9bb64ddaaffb@intel.com>
+Date: Thu, 1 Feb 2018 06:15:45 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180202002227.36db3356@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180201071956.14365-2-bhe@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 12:22:27AM +1100, Stephen Rothwell wrote:
-> Hi Christoffer,
-> 
-> On Thu, 1 Feb 2018 11:47:07 +0100 Christoffer Dall <christoffer.dall@linaro.org> wrote:
-> >
-> > While the suggested fix is functional it does result in some code
-> > duplication, and the better resolution is the following:
-> 
-> OK, I will use that resolution form tomorrow on.
-> 
-> Someone needs to remember to let Linus know when the pull request is
-> sent.
-> 
-I've sent a separate notice to Paolo and Radim, so I'm sure they'll take
-care of it.
+On 01/31/2018 11:19 PM, Baoquan He wrote:
+>  	for_each_present_section_nr(0, pnum) {
+> +		struct mem_section *ms;
+> +		ms = __nr_to_section(pnum);
+>  		usemap = usemap_map[pnum];
+> -		if (!usemap)
+> +		if (!usemap) {
+> +#ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+> +			ms->section_mem_map = 0;
+> +#endif
+>  			continue;
+> +		}
+>  
+>  #ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+>  		map = map_map[pnum];
+>  #else
+>  		map = sparse_early_mem_map_alloc(pnum);
+>  #endif
+> -		if (!map)
+> +		if (!map) {
+> +#ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+> +			ms->section_mem_map = 0;
+> +#endif
+>  			continue;
+> +		}
 
-Thanks,
--Christoffer
+This is starting to look like code that only a mother could love.  Can
+this be cleaned up a bit?
