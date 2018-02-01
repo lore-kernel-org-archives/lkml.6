@@ -1,46 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeBAOnX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 09:43:23 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:43850 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751537AbeBAOnT (ORCPT
+        id S1751767AbeBAOpe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 09:45:34 -0500
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:33470 "EHLO
+        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751378AbeBAOpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 09:43:19 -0500
-Date: Thu, 01 Feb 2018 09:43:17 -0500 (EST)
-Message-Id: <20180201.094317.1226307518693749272.davem@davemloft.net>
-To: colin.king@canonical.com
-Cc: sathya.perla@broadcom.com, ajit.khaparde@broadcom.com,
-        sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] be2net: remove redundant initialization of 'head' and
- pointer txq
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180131161425.15011-1-colin.king@canonical.com>
-References: <20180131161425.15011-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 1 Feb 2018 09:45:32 -0500
+X-Google-Smtp-Source: AH8x2269JHmyh0zk9753uZ+WHlUktWPmxHqxhrmrXi/vaL5ChX4Y6OaS4EFAjTmQ0efBVrXcx542nQ==
+Date: Thu, 1 Feb 2018 09:45:28 -0500
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: corbet@lwn.net, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] Documentation/process: kernel maintainer PGP guide
+Message-ID: <20180201144528.zfbinlt2hhsj34j2@gmail.com>
+Mail-Followup-To: Jani Nikula <jani.nikula@linux.intel.com>, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20180130184917.GA32095@gmail.com>
+ <87bmhajy30.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <87bmhajy30.fsf@intel.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 31 Jan 2018 16:14:25 +0000
+On Wed, Jan 31, 2018 at 09:18:11AM +0200, Jani Nikula wrote:
+>Just one nit, I think it would be better to move the Maintainer: bit
+>from the end near the top as a reStructuredText field list. See 'git
+>grep :Author:' under Documentation for examples. Could even add a
+>MAINTAINERS entry to improve your chances of being Cc'd on changes.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable head is initialized to a value that is never read and is
-> being updated to a new value a few lines later, hence this
-> initialization is redundant and can be safely removed as well
-> as the now unused pointer txq.
-> 
-> Cleans up clang warning:
-> drivers/net/ethernet/emulex/benet/be_main.c:996:6: warning: Value
-> stored to 'head' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Thank you for the feedback -- I've submitted a v2 with that change (and 
+a few bugfixes that resulted from md->rst conversion).
 
-Applied, thank you.
+I'm not sure one doc file is good enough reason to be put into 
+MAINTAINERS, even if the perk is that I get pre-approved for a 
+kernel.org account. ;)
+
+Best regards,
+-K
