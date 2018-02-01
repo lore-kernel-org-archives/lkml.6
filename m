@@ -1,100 +1,119 @@
-Return-Path: <arnd@arndb.de>
-X-Google-Smtp-Source: AH8x227sknN2re587NjkUwVwVWrQiWgDej1Ya0dD5viW6tfNYZHtMenXSjE20Lk4LU2kIBgLdG3o
-ARC-Seal: i=1; a=rsa-sha256; t=1517584814; cv=none;
+Return-Path: <vivek.gautam@codeaurora.org>
+X-Google-Smtp-Source: AH8x227OjIJ15ffp3xNKXc1Wavfa3+vjNMwUAh1wd0KG36Lfok0XBFazPnst9iYpgght8uOMCmBo
+ARC-Seal: i=1; a=rsa-sha256; t=1517475199; cv=none;
         d=google.com; s=arc-20160816;
-        b=c7Wtg5SbgkV1WXIqLfXGt7v34PhrIMqKDa1z/lglDBML9vxJiwFjiOev14iYtyKuJQ
-         5B5yrQsJ7Urz+zY/Orr29/lL/aP4oPueaUFPTSgLulgrCTDFMQI9g3mdXns0fiDMvI02
-         WHoQnhndq96GF5gX7p5pUR9r+ULD+HC/yzUY8dvmiwqWmWckZ1lyhJKfW15UN2IzDW9A
-         MtvK6Il+DcHKh7cTWC0/OLXW8khwzeWSbhHilUYlx1aWAFI5PwllQfXwg/+wG7ulOW15
-         W9ZUJzPjeRhfN8xfZoRjedq3YRKi6s1SxRqzpH1VySZ0DODUIhgKA7yOF/Y4khef4A7B
-         A0Ng==
+        b=dohkDfFGpfwd0qRLeDNqt59XyhNhshn87/zOmTFDQfzro+z8Mh7+vpDDWEETLzn6gQ
+         Pnj4SqM0eMLNvUotTP/Bra13R74IKScbVFT2pLxeDJ0I/qqhLlnU5ocWgMPL/RmKCHC5
+         3tk3/mGu3hii6VvkQdG9gKZC9PrF0M65vUbvTQbxkVUMlxP75cj15QXiP4IanviXHIrw
+         K9GUQ6/k2tgS5dgrRFo4VWzsW8S488yNFHz/gGtoCQ1abDRnepMA0J/IJb3bWYVwcdFM
+         TRz1j8v/GIMrEkgLUjR2b6JaO5jb08RareHEVQlY0JKkkP38Y6zaE+2AnDg8Q+X26f+z
+         mxLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=Tab/4EQIA1+AmRIeqa+fCNEAjuGT++8pMGj4/SLwowU=;
-        b=U0dqR8I2F35r9TU5ukFiZAFGujUQ1I9eMJuF7nNkEMmNiruqck8ffWnLN7dXPdtk2N
-         7sE7UKZ9OpZAwLzbBuhyqHOfnVHtVpS+gAt8+OOcqLF9iprsMqQvGEVJSTI0oxDb0njI
-         JGef4Bf4RirQor+yXU6xyyMYQhPy58Y9tNu1gOgxato99TMK6lyGuYqyPlO1z/l8psln
-         wJYZcqP2m6n354pRwr461izCSMJW+L+rg2o8gtUySQH6xqraCsytuw7DC4AOsCp2Zx4q
-         7ZlSyeEFi+VfFtUJl21XMAxtepK7r4p2tHS+ug9mpV8/hnnP3R2WRM8YKiKyADwMDj/P
-         jwvw==
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=iaWcD20VeB9+z9GkNE4KnN4POpMPP5I8ZV9DGziguVQ=;
+        b=KJxgSoBLluf3nSTnwK829qcbYie2zLM33Qx1QFfSBsE7YhqI/5iwWBzTe4bunltAlm
+         g9j8+Tcm+EGhrU4515FR/6HID1JWl8xkY0UVmzVixc/gDHiUnhb2pBjukQQBxM3umviH
+         djNo0tegInJrLOtGh81b/NCriJUgVGhHi1lFXYi8RA0T6EfnNC2pRV35581Hzsea+JVx
+         LLf4wvErTSfxI6HQqpbezvb6hkUsD6EQ/3jbzHhRcFx1rm+PfnTYw8lSpHNmP67HAMNI
+         gPl128p4v/8WaBIs39hiwwI2GX7EYrn1P9f7ewB9gnBD89kYYuGffH78DQGCJmvq2l2R
+         27GQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 217.72.192.75 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=FbTbFLra;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Vk0CYrdz;
+       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 217.72.192.75 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
-From: Arnd Bergmann <arnd@arndb.de>
-To: Alan Cox <alan@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?= <jeremy.lefaure@lse.epita.fr>,
-	Sergiy Redko <sergredko@gmail.com>,
-	linux-media@vger.kernel.org,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: media: atomisp: remove pointless string copy
-Date: Fri,  2 Feb 2018 16:19:41 +0100
-Message-Id: <20180202152009.843231-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:YwOaRFH0AilTCNdPNOQMzYA7Jmbl3dUcB6knq81TLO9t3aXQ/Mi
- Kcwdn00c2u2opFWSHAX92GuLY2GfsBa5OTkS4ReGB7M936bGDkyR+UweNVC6zvo313MiVp0
- 5c4hG1UojGhFrGvZAsTVzbnX6pT1GQhiUwHWi/y1VpE8+TZZmrBzGLUPhhRT6q6RW5zhsuG
- wqmlVn9KQxxAOoTcQ+d4Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:IdYRcOVakjM=:f9E+5x3G0tXpo7SSOOWGPj
- ZO56+7bLEoMBO5m7yI1dpYkCxlGHk9XvbmFf5z5+bfzAUuUsizgfdqKI9fbjLzzt5vCTPmDLB
- aXFWyN5oK3vw9Ns5uSvJ8FGiBh4wpI2YoC9I39fl4tlSnEjy/Vh3sUX+xE6o+qy8mlaP3AaUc
- vI3AbKnJRFsuzf3b6atfpOs3UNBYNRs1iJcVFlbqL+2lDyegxWFLOcHKXUfKWE4NlcpbUPh6j
- RRyIH3gPIQue5dIJZ+VaW57F7ag0mAXz6wonIcGqOl8mNT0aIpO9t75w/PZ3s+EcSe/luZW72
- TE4rqnENbSeN9yPsIuGwJh92VReRi3FwvhK5/PZ5lCGAsnVeTbI+aU5HuKXgoIObVbHS0dk7X
- O9naRLXzokiK/4nxGbyJHAj7YNaoMf4fjIqqYYJWqLPlcfE9AImtx8bKhqCgmgLLYyUIqvjnG
- FYLmOAdjM502kVu7RFAFh9xv4n76fdizshOrOgo/7MuImUVQxNQsCLYfeDi3yVU3+l8BaurMT
- t6SIdpgyhNpkS6cFANcncUyki3JD45RK1G89Zp8OP0tibtynfBhHMyFMp924DeLiYt5Xr3BFO
- BiSjO2Ecn/QIy6vN7R41i2WqlDhWgKiV35AHa0nW1YeRKBvB5xZdZg9Cd/Q6YPyAfnIDwLl8D
- 2RtCzq0R5bWTK3wakOMGLbTaJ/pdP1bFxNijt3otvsbRavF3bzAmzisAj5L4h8KAGYxYtTDMa
- RJbc2C/MWAc2TygSnWDYArJ+tqB8b7dIUofNhw==
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=FbTbFLra;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Vk0CYrdz;
+       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 42A9C6014B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH v6 4/6] iommu/arm-smmu: Add the device_link between
+ masters and smmu
+To: Robin Murphy <robin.murphy@arm.com>, alex.williamson@redhat.com,
+ robh+dt@kernel.org, mark.rutland@arm.com, rjw@rjwysocki.net,
+ will.deacon@arm.com, iommu@lists.linux-foundation.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, sboyd@codeaurora.org
+Cc: gregkh@linuxfoundation.org, sricharan@codeaurora.org,
+ m.szyprowski@samsung.com, architt@codeaurora.org,
+ linux-arm-msm@vger.kernel.org
+References: <1516362223-22946-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1516362223-22946-5-git-send-email-vivek.gautam@codeaurora.org>
+ <6b930150-cb81-b0a5-601c-16cb576c4341@arm.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <b7887b45-774a-2515-4304-227037b9af1f@codeaurora.org>
+Date: Thu, 1 Feb 2018 14:23:11 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <6b930150-cb81-b0a5-601c-16cb576c4341@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591303014085060994?=
-X-GMAIL-MSGID: =?utf-8?q?1591303014085060994?=
+X-GMAIL-THRID: =?utf-8?q?1590021073891800456?=
+X-GMAIL-MSGID: =?utf-8?q?1591188074955072783?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-gcc-8 points out that a string is copied to itself here:
+Hi,
 
-In file included from drivers/staging/media/atomisp/pci/atomisp2/css2400/hive_isp_css_include/platform_support.h:25,
-                 from drivers/staging/media/atomisp/pci/atomisp2/css2400/hive_isp_css_include/memory_access/memory_access.h:48,
-                 from drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c:16:
-In function 'strncpy',
-    inlined from 'ia_css_debug_pipe_graph_dump_stage' at drivers/staging/media/atomisp/pci/atomisp2/css2400/hive_isp_css_include/string_support.h:158:2:
-include/linux/string.h:253:9: error: '__builtin_strncpy' source argument is the same as destination [-Werror=restrict]
-  return __builtin_strncpy(p, q, size);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This removes the bogus code, leaving the behavior otherwise
-unchanged.
+On 1/31/2018 6:39 PM, Robin Murphy wrote:
+> On 19/01/18 11:43, Vivek Gautam wrote:
+>> From: Sricharan R <sricharan@codeaurora.org>
+>>
+>> Finally add the device link between the master device and
+>> smmu, so that the smmu gets runtime enabled/disabled only when the
+>> master needs it. This is done from add_device callback which gets
+>> called once when the master is added to the smmu.
+>
+> Don't we need to balance this with a device_link_del() in 
+> .remove_device (like exynos-iommu does)?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- .../atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Right. Will add device_link_del() call. Thanks for pointing out.
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c b/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c
-index f22d73b56bc6..60395904f89a 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c
-@@ -2858,13 +2858,7 @@ ia_css_debug_pipe_graph_dump_stage(
- 			if (l && enable_info[l-1] == ',')
- 				enable_info[--l] = '\0';
- 
--			if (l <= ENABLE_LINE_MAX_LENGTH) {
--				/* It fits on one line, copy string and init */
--				/* other helper strings with empty string */
--				strcpy_s(enable_info,
--					sizeof(enable_info),
--					ei);
--			} else {
-+			if (l > ENABLE_LINE_MAX_LENGTH) {
- 				/* Too big for one line, find last comma */
- 				p = ENABLE_LINE_MAX_LENGTH;
- 				while (ei[p] != ',')
--- 
-2.9.0
+regards
+Vivek
+
+>
+> Robin.
+>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>   drivers/iommu/arm-smmu.c | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>> index 95478bfb182c..33bbcfedb896 100644
+>> --- a/drivers/iommu/arm-smmu.c
+>> +++ b/drivers/iommu/arm-smmu.c
+>> @@ -1367,6 +1367,7 @@ static int arm_smmu_add_device(struct device *dev)
+>>       struct arm_smmu_device *smmu;
+>>       struct arm_smmu_master_cfg *cfg;
+>>       struct iommu_fwspec *fwspec = dev->iommu_fwspec;
+>> +    struct device_link *link;
+>>       int i, ret;
+>>         if (using_legacy_binding) {
+>> @@ -1428,6 +1429,16 @@ static int arm_smmu_add_device(struct device 
+>> *dev)
+>>         pm_runtime_put_sync(smmu->dev);
+>>   +    /*
+>> +     * Establish the link between smmu and master, so that the
+>> +     * smmu gets runtime enabled/disabled as per the master's
+>> +     * needs.
+>> +     */
+>> +    link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
+>> +    if (!link)
+>> +        dev_warn(smmu->dev, "Unable to create device link between %s 
+>> and %s\n",
+>> +             dev_name(smmu->dev), dev_name(dev));
+>> +
+>>       return 0;
+>>     out_cfg_free:
+>>
