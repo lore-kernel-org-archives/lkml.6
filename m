@@ -1,62 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754271AbeBAAEK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 19:04:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57048 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753730AbeBAAEI (ORCPT
+        id S1754434AbeBAAK1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 19:10:27 -0500
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:42515 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752209AbeBAAK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 19:04:08 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E214C6079C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-From: Shanker Donthineni <shankerd@codeaurora.org>
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Sean Campbell <scampbel@codeaurora.org>,
-        Thomas Speier <tspeier@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>
-Subject: [PATCH] irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
-Date: Wed, 31 Jan 2018 18:03:42 -0600
-Message-Id: <1517443422-30693-1-git-send-email-shankerd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 31 Jan 2018 19:10:26 -0500
+X-ME-Sender: <xms:8VpyWgJJeRUL0H5ndRWd_h5pcVrjFVMxO3cwNaQ6ywIG7SEnRpRFZQ>
+Date: Thu, 1 Feb 2018 11:10:21 +1100
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Joe Perches <joe@perches.com>
+Cc: linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: checkpatch changes for 4.16
+Message-ID: <20180201001021.GB29988@eros>
+References: <20180131214630.GF11433@eros>
+ <1517438936.7489.8.camel@perches.com>
+ <20180131232358.GA29988@eros>
+ <1517442979.7489.14.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517442979.7489.14.camel@perches.com>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A DMB instruction can be used to ensure the relative order of only
-memory accesses before and after the barrier. Since writes to system
-registers are not memory operations, barrier DMB is not sufficient
-for observability of memory accesses that occur before ICC_SGI1R_EL1
-writes.
+On Wed, Jan 31, 2018 at 03:56:19PM -0800, Joe Perches wrote:
+> On Thu, 2018-02-01 at 10:23 +1100, Tobin C. Harding wrote:
+> > On Wed, Jan 31, 2018 at 02:48:56PM -0800, Joe Perches wrote:
+> > > On Thu, 2018-02-01 at 08:46 +1100, Tobin C. Harding wrote:
+> > > > Hi Joe,
+> > > > 
+> > > > Can I please bother you with a maintainer question.  I know everyone is
+> > > > super busy right now, I'm asking for a smidgen of your time instead of
+> > > > doing it wrong and taking up some of Linus' time since it's merge window
+> > > > and all that.
+> > > > 
+> > > > I have the checkpatch set queued ready to do a GIT PULL to Linus.  My
+> > > > concern is that the subject line may not be unique if checkpatch changes
+> > > > are coming in from various trees this merge window. I have tagged the
+> > > > pull request with
+> > > 
+> > > Personally, I think you could let Andrew Morton pick them
+> > > up as very few patches for checkpatch go in any other way.
+> > 
+> > ok no worries.  I'll leave it until a few rc's are out then send to Andrew.
+> > 
+> > > What patches are you submitting again?
+> > > 
+> > > Is it just
+> > > 
+> > > commit 7b1924a1d930 ("vsprintf: add printk specifier %px")
+> > > 
+> > > or is there something else?
+> > 
+> > d94e97bc9ede checkpatch: add sub routine get_stat_real()
+> > d0e27c47f5b9 checkpatch: add sub routine get_stat_here()
+> > 986b3b5b7d7a checkpatch: warn for use of %px
+> > 26c1cf882d79 checkpatch: add check for tag Co-Developed-by
+> > 
+> > I thought it was odd when you said they could go in through _any_
+> > tree. Not to worry, it's not urgent. 
+> 
+> Stuff that is going to be pulled should at least
+> marinate in -next for awhile first and not first
+> be presented as a pull request.
 
-A DSB instruction ensures that no instructions that appear in program
-order after the DSB instruction, can execute until the DSB instruction
-has completed.
+Oh cheers, I forgot about that for leaking_addresses patches too :(
 
-Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
----
- drivers/irqchip/irq-gic-v3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index b56c3e2..980ae8e 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -688,7 +688,7 @@ static void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
- 	 * Ensure that stores to Normal memory are visible to the
- 	 * other CPUs before issuing the IPI.
- 	 */
--	smp_wmb();
-+	wmb();
- 
- 	for_each_cpu(cpu, mask) {
- 		u64 cluster_id = MPIDR_TO_SGI_CLUSTER_ID(cpu_logical_map(cpu));
--- 
-Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+thanks,
+Tobin.
