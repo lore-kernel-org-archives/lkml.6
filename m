@@ -1,100 +1,176 @@
-Return-Path: <arndbergmann@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517499365; cv=none;
+Return-Path: <maxime.ripard@free-electrons.com>
+X-Google-Smtp-Source: AH8x224BL/14rxZaSFOzqaZvro2K7IfBO1RrMQi0ViihD+DzJtqFHN96Q7EU6lRGpbTmbxqFHRre
+ARC-Seal: i=1; a=rsa-sha256; t=1517473943; cv=none;
         d=google.com; s=arc-20160816;
-        b=WAOUSY43x1TKO9Hh+fPvo/FIprtLO7ujOM0q7B4GUdyyB5z80yzmEUInlE+juYKxLn
-         JjBjFY9eu06v3QnSJmRX/KK6CHyssFMmSF6MDGaxeKc/N44TjkV9lo/R9+9KOj3NmeJb
-         0/RZTboMsJ+nMziM4MSbPVi3ckLZWcFiKMzcks0GmAabAJsgdyDWawWiHXV1F5pcybMR
-         sL6tSwr8uVXeQwhTZS35YyoXhSXRYU6xLuDFN7dOCvb1UNB/OpxLlC79KzjnkYw91TFw
-         7R6Al1MyBVtpqkJYcQXZHCWRJkvHQPTZhE2Xs2KD0acuI62kDiL8mr1oNE48T/GVRHFl
-         D6XA==
+        b=JDJR0PWUAni0c5Xl5nm6KCVPEd743BSn51A/E8MMw3jdlMr0/iWUepW2SgZ3IfS9ZY
+         cpVw281EolCqNwvh0eYsEVNWPCBNDdJ3vL8XljeCH9C4tGlSd4xjmjEQEbn4ZOFjogGq
+         6+wcxKD7TYSH1CY84eeeSQD41bmctUzWp1DmFefBvDQcIGD7bm6pyr5Xpo9O/TCWXlFY
+         2pRDMBVa3S1lAR4lPwoAI++kACIG07kLVi8jyDtX7jPcV5NW3thXJMB9mNnf4+0tWlso
+         PffhVAFVII4MYTW7MZiLsATKb0R4veo7aTScqoGlssEiuVUd1H6d6xJId4VjgDRLxCYJ
+         K9eQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=7NrDr9SEyHkhzdZwcF67R1ycLo+fnqOfR8hkrM8czS0=;
-        b=MOXvoj3/U+djiiKz5BRW4DsuKRonvr9aPSHUSqi92qephV9c3k7iwD4t+vShPrpX/A
-         cN35UTi+JZmDddobI1T25i9kLQGKbvJi8yYKZQZTVdwnQEQ9z5kt/qbeSaPRoesezsFn
-         nxbd2+Fip9KsGncS4y54mFeBNqPwZYFfhN9sjkTiS2lvz7aej247Ap+bQil6TyXZxRCN
-         /3e0VOr99TP2C2GjExrW06leSnowMbG32d9A+hVdrZD3LiCrK/zg0PjJDWemMtjv44og
-         DMqxrRurIB/essu6J8PCmZgUgD98umtNOdcndVtx1qiH/kM9RL64NJHaBSXtz83RsdR5
-         iGlA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=IzWIPgRnMfsvvZzSI/nRV5oHqJ9YV4I48R+opxCNPco=;
+        b=yIBEYaBgAKpoETuwF529c+EyqnXuf+rBj3RMpgp5DL0MVtZtoW8Zseo76P50VZnxf9
+         ZSHRprMjrKOugj/N++8lHiyIDwOEYuhai1nI5RtooDoHJOVG0NJ7P9d9NEII9LsX5YvH
+         XkWw8V7euESsAvje5LFfTF8BTrshpR5BAJ+mtCesqC3Mv0JqllyGDlHZkYBjN/ORuUk/
+         +gsYuttVtlkukTz6KN3TpkbET3pQVgTZPePswXYco5ZdxPKDZEf+KH2MCglC5EXjTS1h
+         GBfdJIT1R0nRMPTZu8z/WWviu5O2h/QrNRE+pdR5REgNPYurngNHynqS4W//rPglQDGl
+         AR2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BtkaspWP;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+       spf=pass (google.com: domain of maxime.ripard@free-electrons.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@free-electrons.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BtkaspWP;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
-X-Google-Smtp-Source: AH8x227zNRfbxiUjIERA2DrZ1GdKuHikgm0GRAJmrFtt/AG86yTUWDbZPoIBgqHVp+o4o6BJqrziBqpTab0Uoyt+lFM=
-MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <20180201152908.mdei742x5k4fye6p@flea.lan>
-References: <CACRpkdan52UB7HOyH1gnHWg4CDke_VQxAdq8cBgwUroibE59Ow@mail.gmail.com>
- <20180129082533.6edmqgbauo6q5dgz@flea.lan> <CACRpkdYAGwUjr2C-w5U+WuG48pZAOUcnxFjznLbdF6Lmy1uZuQ@mail.gmail.com>
- <CAK8P3a2HmPOTHAzqBnmim388pcWOE=fG50mG5HJifT=vzKOaTg@mail.gmail.com>
- <20180130075441.rqxzkwero6sdfak6@flea.lan> <CAK8P3a0QxQE=GM=SGPtT82=UreiqsgY6uMThvQ_woA3rjK0zjA@mail.gmail.com>
- <20180130095916.GA23047@ulmo> <20180130100150.GB23047@ulmo>
- <20180131072910.ajp3jc5dmetsjtf2@flea.lan> <CAK8P3a0X2bpLjKE6xKehG1junZoG1N_DjepOBQ+SZetKf6sgfA@mail.gmail.com>
- <20180201152908.mdei742x5k4fye6p@flea.lan>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 1 Feb 2018 16:36:04 +0100
-X-Google-Sender-Auth: IfSsIKaFGmizUXlozlVdnfCkBKY
-Message-ID: <CAK8P3a2+wH_n6sKNOyzv7sGBuvYX++5ffahfz780WtKr3Bvj=A@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] media: V3s: Add support for Allwinner CSI.
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Dave Martin <dave.martin@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>, Yong Deng <yong.deng@magewell.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+       spf=pass (google.com: domain of maxime.ripard@free-electrons.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@free-electrons.com
+Date: Thu, 1 Feb 2018 09:32:22 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Liviu Dudau <liviu@dudau.co.uk>
+Cc: Yong <yong.deng@magewell.com>, kbuild test robot <lkp@intel.com>,
+	kbuild-all@01.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	"David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hans.verkuil@cisco.com>, Randy Dunlap <rdunlap@infradead.org>,
-	Stanimir Varbanov <stanimir.varbanov@linaro.org>, Hugues Fruchet <hugues.fruchet@st.com>,
-	Yannick Fertre <yannick.fertre@st.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+	Hugues Fruchet <hugues.fruchet@st.com>,
+	Yannick Fertre <yannick.fertre@st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Arnd Bergmann <arnd@arndb.de>,
 	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
 	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Rick Chang <rick.chang@mediatek.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	megous@megous.com, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Rick Chang <rick.chang@mediatek.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	megous@megous.com
+Subject: Re: [linux-sunxi] Re: [PATCH v6 2/2] media: V3s: Add support for
+ Allwinner CSI.
+Message-ID: <20180201083222.q6rqql4nngn2bhiy@flea.lan>
+References: <1516695531-23349-1-git-send-email-yong.deng@magewell.com>
+ <201801260759.RyNhDZz4%fengguang.wu@intel.com>
+ <20180126094658.aa70ed3f890464f6051e21e4@magewell.com>
+ <20180126110041.f89848325b9ecfb07df387ca@magewell.com>
+ <20180131030807.GA19945@bart.dudau.co.uk>
+ <20180131074212.7hvb3nqkt22h2chg@flea.lan>
+ <20180131144753.GB19945@bart.dudau.co.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rrkgjn5tpiamdx5h"
+Content-Disposition: inline
+In-Reply-To: <20180131144753.GB19945@bart.dudau.co.uk>
+User-Agent: NeoMutt/20171215
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1590370608168306586?=
-X-GMAIL-MSGID: =?utf-8?q?1591213414933093014?=
+X-GMAIL-MSGID: =?utf-8?q?1591186757449732698?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 1, 2018 at 4:29 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Wed, Jan 31, 2018 at 10:37:37AM +0100, Arnd Bergmann wrote:
->> On Wed, Jan 31, 2018 at 8:29 AM, Maxime Ripard
->
->> I can think of a couple of other problems that may or may not be
->> relevant in the future that would require a more complex solution:
->>
->> - a device that is a bus master on more than one bus, e.g. a
->>   DMA engine that can copy between the CPU address space and
->>   another memory controller that is not visible to the CPU
->>
->> - a device that is connected to main memory both through an IOMMU
->>   and directly through its parent bus, and the device itself is in
->>   control over which of the two it uses (usually the IOMMU would
->>   contol whether a device is bypassing translation)
->>
->> - a device that has a single DMA address space with some form
->>   of non-linear mapping to one or more parent buses. Some of these
->>   can be expressed using the parent's dma-ranges properties, but
->>   our code currently only looks at the first entry in dma-ranges.
->
-> As far as I know, we're in neither of these cases.
 
-The point here was more about the general question of where we are
-heading with the complexity of finding the right DMA settings. It's
-already too complicated for anyone to fully understand what is
-going on with DMA masks, offset, coherency etc when we look
-at the existing DT bindings. Adding more complexity makes it
-worse, so if anyone else is in need of a solution for the issues
-above, we should try to accommodate their needs at the same time
-to avoid adding more complexity now and again later on if we
-can come up with a way that works for everyone now.
+--rrkgjn5tpiamdx5h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-     Arnd
+On Wed, Jan 31, 2018 at 02:47:53PM +0000, Liviu Dudau wrote:
+> On Wed, Jan 31, 2018 at 08:42:12AM +0100, Maxime Ripard wrote:
+> > On Wed, Jan 31, 2018 at 03:08:08AM +0000, Liviu Dudau wrote:
+> > > On Fri, Jan 26, 2018 at 11:00:41AM +0800, Yong wrote:
+> > > > Hi Maxime,
+> > > >=20
+> > > > On Fri, 26 Jan 2018 09:46:58 +0800
+> > > > Yong <yong.deng@magewell.com> wrote:
+> > > >=20
+> > > > > Hi Maxime,
+> > > > >=20
+> > > > > Do you have any experience in solving this problem?
+> > > > > It seems the PHYS_OFFSET maybe undeclared when the ARCH is not ar=
+m.
+> > > >=20
+> > > > Got it.
+> > > > Should I add 'depends on ARM' in Kconfig?
+> > >=20
+> > > No, I don't think you should do that, you should fix the code.
+> > >=20
+> > > The dma_addr_t addr that you've got is ideally coming from dma_alloc_=
+coherent(),
+> > > in which case the addr is already "suitable" for use by the device (b=
+ecause the
+> > > bus where the device is attached to does all the address translations=
+).
+> >=20
+> > Like we're discussing in that other part of the thread with Thierry
+> > and Arnd, things are slightly more complicated than that :)
+>=20
+> Yeah, sorry, my threading of the discussion was broken and I've seen
+> the rest of the thread after I have replied. My bad!
+>=20
+> >=20
+> > In our case, the bus where the device is attached will not do the
+> > address translations, and shouldn't.
+>=20
+> In my view, the bus is already doing address translation at physical
+> level, AFAIU it remaps the memory to zero.
+
+Not really. It uses a separate bus with a different mapping for the
+DMA accesses (and only the DMA accesses). The AXI (or AHB, I'm not
+sure, but, well, the "registers" bus) doesn't remap anything in
+itself, and we only describe this one usually in our DTs.
+
+> What you (we?) need is a simple bus driver that registers the
+> correct virt_to_bus()/bus_to_virt() hooks for the device that do
+> this translation at the DMA API level as well.
+
+Like I said, this only impact DMA transfers, and not the registers
+accesses. We have other devices sitting on the same bus that do not
+perform DMA accesses through that special memory bus and will not have
+that mapping changed.
+
+> > > If you apply PHYS_OFFSET forcefully to it you might get unexpected
+> > > results.
+> >=20
+> > Out of curiosity, what would be these unexpected results?
+>=20
+> If in the future (or a parallel world setup) the device is sitting
+> behind an IOMMU, the addr value might well be smaller than
+> PHYS_OFFSET and you will under-wrap, possibly starting to hit kernel
+> physical addresses (or anything sitting at the top of the physical
+> memory).
+>=20
+> From my time playing with IOMMUs and PCI domains, I've learned to
+> treat the dma_addr_t as a cookie value and never try to do
+> arithmetics with it.
+
+I've never worked with PCI or IOMMU, so I tend to overlook them, but
+yeah, you're right :)
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--rrkgjn5tpiamdx5h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpy0JUACgkQ0rTAlCFN
+r3RBqQ/+KKDc5keBlfkDD9E6x9aF2JcBTXtN+1LXzrxMR/Uta+YtmfqQUAGTtrCr
+tuBq+uIFhibdir0XGe+e2p+uPfUZ/BJT1+PAN42Z6qZnxHAu1fHGSw1U3zInGsrM
+74JGP5ZodoSEefxzOTlEJBFeBn68f2SX7jM0Oo2c2grUaRNsL0G+Y8ZmZwVe70+I
+icX2cQTNdr/WtRnKW2AlXfwXpgggMADFGXc4Vxb4CFy1d/l5Qylijpwuo2SxmDaU
+yiO+3RYdbtQXWazI6b+DFgCDhQbJXqJDR1S54hvO74Sh0tWFsD7MvYJWsWXm7+Np
+YmCdeWPpbvqg3c6xMLanOiqcPs1UPOq3cpDJaCvF4JEwus5BUC0ThmRC4lBWaMQo
+ZirgpNqSjsBX5eQ2daImuJoEcEdVT0zD18/wUM8UmxFSHO8KcmrS5QlFxSlxYQKI
+76oUrGQqRQAdPSUWTRN0ELfC1M0SlZmnKldl/yvFrKswr+Q63aeCkFoU9282C1hc
+Dsud8siGPhfyd1mczLouPhxfm71Sx2WCu53w4eRvkRKSJCaBrRsOiw6o5Tc6+WRM
+VXma/iRIOhTyJi/qZNosDilMxQy1JnReOB7GfmzULYtXQ5/3I5S8tNVk/z5mV7hV
+tqIysv4zEzqYkbDvZWcQh3SkrnrDVToXbHZPRcBcFnLjtVDb/xo=
+=+CTZ
+-----END PGP SIGNATURE-----
+
+--rrkgjn5tpiamdx5h--
