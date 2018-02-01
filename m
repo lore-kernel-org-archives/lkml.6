@@ -1,251 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752529AbeBAP54 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:57:56 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:54360 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751762AbeBAP5x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:57:53 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w11Fvpbb021284, This message is accepted by code: ctloc85258
-From: Chunhao Lin <hau@realtek.com>
-To: <netdev@vger.kernel.org>
-CC: <nic_swsd@realtek.com>, <linux-kernel@vger.kernel.org>,
-        Chunhao Lin <hau@realtek.com>
-Subject: [PATCH net-next] r8169: add module param for control of ASPM disable
-Date: Thu, 1 Feb 2018 23:57:43 +0800
-Message-ID: <1517500663-24052-1-git-send-email-hau@realtek.com>
-X-Mailer: git-send-email 2.7.4
+        id S1752611AbeBAP6u (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:58:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40004 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751530AbeBAP6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 10:58:49 -0500
+Date: Thu, 1 Feb 2018 16:58:34 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        Mihai Carabas <mihai.carabas@oracle.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>
+Subject: Re: [PATCH v3 0/3] Per-VCPU MSR bitmaps patches - topic branch for
+ x86/pti
+Message-ID: <20180201155833.GE31080@flask>
+References: <20180131210924.22812-1-pbonzini@redhat.com>
+ <20180201014810.GA19582@char.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.21.177.216]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180201014810.GA19582@char.us.oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch is from Todd Broch <tbroch@chromium.org>.
-	ASPM has been disabled in this driver by default as its been
-	implicated in stability issues on at least one platform.  This CL adds
-	a  module parameter to allow control of ASPM disable.  The default
-	value is to enable ASPM again as its provides signficant (200mW) power
-	savings on the platform I tested.
+2018-01-31 20:48-0500, Konrad Rzeszutek Wilk:
+> On Wed, Jan 31, 2018 at 04:09:21PM -0500, Paolo Bonzini wrote:
+> > David and others,
+> > 
+> > the following changes since commit ba804bb4b72e57374b5f567b783aa0298fba0ce6:
+> > 
+> >   Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2018-01-26 09:03:16 -0800)
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/virt/kvm/kvm.git msr-bitmaps
+> > 
+> > for you to fetch changes up to 904e14fb7cb96401a7dc803ca2863fd5ba32ffe6:
+> > 
+> >   KVM: VMX: make MSR bitmaps per-VCPU (2018-01-26 22:59:32 +0100)
+> > 
+> > The patches are on top of Linus's tree and I checked that they apply okay
+> > on top of the latest 4.14 tree as well as required for tip x86/pti.
+> > One extra commit is needed that is pretty safe and would have been merged
+> > for 4.16 anyway.
+> > 
+> > Radim, please pull this into kvm.git too.  As before I've placed my
+> > resolution on kvm.git, branch refs/heads/msr-bitmaps-merge-resolution.
+> > It's based on kvm/next this time.
+> 
+> You don't want folks to review patch #2 and #3 first? There are tons
+> of people that I am sure would be thrilled with the whole Spectra circus.
 
-I make some modification that let this patch only for RTL8168G and later.
+This is only a boring prerequisite that doesn't add any security ...
+Jim Mattson gave r-b to [v1 3/3] and was a significant contributor to
+the patches, David Hildenbrandt reviewed [v2 2,3/3] and there have been
+only minor changes since.
 
-Signed-off-by: Chunhao Lin <hau@realtek.com>
----
- drivers/net/ethernet/realtek/r8169.c | 73 ++++++++++++++++++++++++------------
- 1 file changed, 50 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index 0bf7d17..87d3136 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -346,6 +346,7 @@ static const struct pci_device_id rtl8169_pci_tbl[] = {
- MODULE_DEVICE_TABLE(pci, rtl8169_pci_tbl);
- 
- static int rx_buf_sz = 16383;
-+static int aspm_disable = 0;
- static int use_dac = -1;
- static struct {
- 	u32 msg_enable;
-@@ -867,6 +868,8 @@ struct rtl8169_private {
- 
- MODULE_AUTHOR("Realtek and the Linux r8169 crew <netdev@vger.kernel.org>");
- MODULE_DESCRIPTION("RealTek RTL-8169 Gigabit Ethernet driver");
-+module_param(aspm_disable, int, 0444);
-+MODULE_PARM_DESC(aspm_disable, "Disable ASPM completely.");
- module_param(use_dac, int, 0);
- MODULE_PARM_DESC(use_dac, "Enable PCI DAC. Unsafe on 32 bit PCI slot.");
- module_param_named(debug, debug.msg_enable, int, 0);
-@@ -5878,6 +5881,20 @@ static void rtl_pcie_state_l2l3_enable(struct rtl8169_private *tp, bool enable)
- 	RTL_W8(Config3, data);
- }
- 
-+static void rtl_hw_internal_aspm_clkreq_enable(struct rtl8169_private *tp,
-+				bool enable)
-+{
-+	void __iomem *ioaddr = tp->mmio_addr;
-+
-+	if (enable) {
-+		RTL_W8(Config2, RTL_R8(Config2) | ClkReqEn);
-+		RTL_W8(Config5, RTL_R8(Config5) | ASPM_en);
-+	} else {
-+		RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
-+		RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
-+	}
-+}
-+
- #define R8168_CPCMD_QUIRK_MASK (\
- 	EnableBist | \
- 	Mac_dbgo_oe | \
-@@ -6264,7 +6281,6 @@ static void rtl_hw_start_8168g(struct rtl8169_private *tp)
- 
- static void rtl_hw_start_8168g_1(struct rtl8169_private *tp)
- {
--	void __iomem *ioaddr = tp->mmio_addr;
- 	static const struct ephy_info e_info_8168g_1[] = {
- 		{ 0x00, 0x0000,	0x0008 },
- 		{ 0x0c, 0x37d0,	0x0820 },
-@@ -6275,14 +6291,14 @@ static void rtl_hw_start_8168g_1(struct rtl8169_private *tp)
- 	rtl_hw_start_8168g(tp);
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
--	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
-+	rtl_hw_internal_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168g_1, ARRAY_SIZE(e_info_8168g_1));
-+	if (!aspm_disable)
-+		rtl_hw_internal_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168g_2(struct rtl8169_private *tp)
- {
--	void __iomem *ioaddr = tp->mmio_addr;
- 	static const struct ephy_info e_info_8168g_2[] = {
- 		{ 0x00, 0x0000,	0x0008 },
- 		{ 0x0c, 0x3df0,	0x0200 },
-@@ -6293,14 +6309,14 @@ static void rtl_hw_start_8168g_2(struct rtl8169_private *tp)
- 	rtl_hw_start_8168g(tp);
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
--	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
-+	rtl_hw_internal_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168g_2, ARRAY_SIZE(e_info_8168g_2));
-+	if (!aspm_disable)
-+		rtl_hw_internal_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
- {
--	void __iomem *ioaddr = tp->mmio_addr;
- 	static const struct ephy_info e_info_8411_2[] = {
- 		{ 0x00, 0x0000,	0x0008 },
- 		{ 0x0c, 0x3df0,	0x0200 },
-@@ -6312,9 +6328,10 @@ static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
- 	rtl_hw_start_8168g(tp);
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
--	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
-+	rtl_hw_internal_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8411_2, ARRAY_SIZE(e_info_8411_2));
-+	if (!aspm_disable)
-+		rtl_hw_internal_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
-@@ -6333,8 +6350,7 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
- 	};
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
--	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
-+	rtl_hw_internal_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168h_1, ARRAY_SIZE(e_info_8168h_1));
- 
- 	RTL_W32(TxConfig, RTL_R32(TxConfig) | TXCFG_AUTO_FIFO);
-@@ -6413,6 +6429,9 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
- 	r8168_mac_ocp_write(tp, 0xe63e, 0x0000);
- 	r8168_mac_ocp_write(tp, 0xc094, 0x0000);
- 	r8168_mac_ocp_write(tp, 0xc09e, 0x0000);
-+
-+	if (!aspm_disable)
-+		rtl_hw_internal_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
-@@ -6458,7 +6477,6 @@ static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
- 
- static void rtl_hw_start_8168ep_1(struct rtl8169_private *tp)
- {
--	void __iomem *ioaddr = tp->mmio_addr;
- 	static const struct ephy_info e_info_8168ep_1[] = {
- 		{ 0x00, 0xffff,	0x10ab },
- 		{ 0x06, 0xffff,	0xf030 },
-@@ -6468,11 +6486,13 @@ static void rtl_hw_start_8168ep_1(struct rtl8169_private *tp)
- 	};
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
--	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
-+	rtl_hw_internal_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168ep_1, ARRAY_SIZE(e_info_8168ep_1));
- 
- 	rtl_hw_start_8168ep(tp);
-+
-+	if (!aspm_disable)
-+		rtl_hw_internal_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
-@@ -6485,14 +6505,16 @@ static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
- 	};
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
--	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
-+	rtl_hw_internal_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168ep_2, ARRAY_SIZE(e_info_8168ep_2));
- 
- 	rtl_hw_start_8168ep(tp);
- 
- 	RTL_W8(DLLPR, RTL_R8(DLLPR) & ~PFM_EN);
- 	RTL_W8(MISC_1, RTL_R8(MISC_1) & ~PFM_D3COLD_EN);
-+
-+	if (!aspm_disable)
-+		rtl_hw_internal_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
-@@ -6507,8 +6529,7 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
- 	};
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
--	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
-+	rtl_hw_internal_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168ep_3, ARRAY_SIZE(e_info_8168ep_3));
- 
- 	rtl_hw_start_8168ep(tp);
-@@ -6528,6 +6549,9 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
- 	data = r8168_mac_ocp_read(tp, 0xe860);
- 	data |= 0x0080;
- 	r8168_mac_ocp_write(tp, 0xe860, data);
-+
-+	if (!aspm_disable)
-+		rtl_hw_internal_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168(struct net_device *dev)
-@@ -8425,11 +8449,6 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	mii->reg_num_mask = 0x1f;
- 	mii->supports_gmii = !!(cfg->features & RTL_FEATURE_GMII);
- 
--	/* disable ASPM completely as that cause random device stop working
--	 * problems as well as full system hangs for some PCIe devices users */
--	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
--				     PCIE_LINK_STATE_CLKPM);
--
- 	/* enable device (incl. PCI PM wakeup and hotplug setup) */
- 	rc = pcim_enable_device(pdev);
- 	if (rc < 0) {
-@@ -8476,6 +8495,14 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* Identify chip attached to board */
- 	rtl8169_get_mac_version(tp, dev, cfg->default_ver);
- 
-+	/* disable ASPM completely as that cause random device stop working
-+	 * problems as well as full system hangs for some PCIe devices users */
-+	if (aspm_disable || tp->mac_version < RTL_GIGA_MAC_VER_40) {
-+		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
-+						PCIE_LINK_STATE_CLKPM);
-+		netif_info(tp, probe, dev, "ASPM disabled\n");
-+	}
-+
- 	tp->cp_cmd = 0;
- 
- 	if ((sizeof(dma_addr_t) > 4) &&
--- 
-2.7.4
+v3 looks good to me, so I'll pull if there are no more requirements from
+pti.
