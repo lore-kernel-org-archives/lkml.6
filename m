@@ -1,295 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752484AbeBAPNE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:13:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37740 "EHLO mx1.redhat.com"
+        id S1752015AbeBAPQH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:16:07 -0500
+Received: from mx2.mpynet.fi ([82.197.21.85]:13107 "EHLO mx2.mpynet.fi"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752172AbeBAPNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:13:02 -0500
-Subject: Re: [PATCH] perf vendor events aarch64: Add JSON metrics for ARM
- Cortex-A53 Processor
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org
-References: <20180131032813.9564-1-wcohen@redhat.com>
- <20180201144309.GA4835@kernel.org>
-From: William Cohen <wcohen@redhat.com>
-Message-ID: <3bebcee1-102c-34ec-880a-722d96062a39@redhat.com>
-Date: Thu, 1 Feb 2018 10:12:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751788AbeBAPQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 10:16:03 -0500
+Message-ID: <1517498160.5907.6.camel@tuxera.com>
+Subject: Re: [PATCH 1/2] ARM: dts: sunxi: Switch MMC nodes away from
+ cd-inverted property
+From: Tuomas Tynkkynen <tuomas@tuxera.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Thu, 1 Feb 2018 17:16:00 +0200
+In-Reply-To: <20180104150352.rsvtvviafxyuq2jp@flea.lan>
+References: <20171222205738.2389-1-tuomas@tuxera.com>
+         <20180104150352.rsvtvviafxyuq2jp@flea.lan>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 
 MIME-Version: 1.0
-In-Reply-To: <20180201144309.GA4835@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: tuxera-exch.ad.tuxera.com (10.20.48.11) To
+ tuxera-exch.ad.tuxera.com (10.20.48.11)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/01/2018 09:43 AM, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Jan 30, 2018 at 10:28:13PM -0500, William Cohen escreveu:
->> Add JSON metrics for ARM Cortex-A53 Processor
+Hi Maxime,
+
+On Thu, 2018-01-04 at 16:03 +0100, Maxime Ripard wrote:
+> On Fri, Dec 22, 2017 at 10:57:37PM +0200, Tuomas Tynkkynen wrote:
+> > Using the cd-inverted property is not useful when GPIOs are used as
+> > card
+> > detects since the polarity can be specified with the usual
+> > GPIO_ACTIVE_(HIGH|LOW) GPIO flags. It has also caused confusion for
+> > U-Boot developers, so migrate all sunxi boards away from cd-
+> > inverted.
+> > 
+> > Signed-off-by: Tuomas Tynkkynen <tuomas@tuxera.com>
 > 
-> Hi Will, would it be possible to you include an URL for the document
-> that served as a reference to you to write these files? Did you use some
-> script?
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Hi Arnaldo,
-
-I can certainly add the reference to section "12.9 Events" of the ARM Cortex -A53 MPCore Processor Revision: r0p4 Technical Reference Manual to the patch.  That would be useful for people to know where to look for additional information about the events.
-
-Unlike the Intel processors there isn't a script that automatically generated these files. The patch was manually generated from the documentation and the previous oprofile ARM Cortex ac53 event file patch I made.
-
--Will
-
-> 
-> - Arnaldo
->  
->> Signed-off-by: William Cohen <wcohen@redhat.com>
->> ---
->>  .../pmu-events/arch/arm64/cortex-a53/branch.json   | 27 +++++++++++
->>  .../perf/pmu-events/arch/arm64/cortex-a53/bus.json | 22 +++++++++
->>  .../pmu-events/arch/arm64/cortex-a53/cache.json    | 27 +++++++++++
->>  .../pmu-events/arch/arm64/cortex-a53/memory.json   | 22 +++++++++
->>  .../pmu-events/arch/arm64/cortex-a53/other.json    | 32 +++++++++++++
->>  .../pmu-events/arch/arm64/cortex-a53/pipeline.json | 52 ++++++++++++++++++++++
->>  tools/perf/pmu-events/arch/arm64/mapfile.csv       |  1 +
->>  7 files changed, 183 insertions(+)
->>  create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
->>  create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
->>  create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
->>  create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
->>  create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
->>  create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
->>
->> diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
->> new file mode 100644
->> index 000000000000..3b6208763e50
->> --- /dev/null
->> +++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
->> @@ -0,0 +1,27 @@
->> +[
->> +  {,
->> +    "EventCode": "0x7A",
->> +    "EventName": "BR_INDIRECT_SPEC",
->> +    "BriefDescription": "Branch speculatively executed - Indirect branch"
->> +  },
->> +  {,
->> +    "EventCode": "0xC9",
->> +    "EventName": "BR_COND",
->> +    "BriefDescription": "Conditional branch executed"
->> +  },
->> +  {,
->> +    "EventCode": "0xCA",
->> +    "EventName": "BR_INDIRECT_MISPRED",
->> +    "BriefDescription": "Indirect branch mispredicted"
->> +  },
->> +  {,
->> +    "EventCode": "0xCB",
->> +    "EventName": "BR_INDIRECT_MISPRED_ADDR",
->> +    "BriefDescription": "Indirect branch mispredicted because of address miscompare"
->> +  },
->> +  {,
->> +    "EventCode": "0xCC",
->> +    "EventName": "BR_COND_MISPRED",
->> +    "BriefDescription": "Conditional branch mispredicted"
->> +  }
->> +]
->> diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
->> new file mode 100644
->> index 000000000000..480d9f7460ab
->> --- /dev/null
->> +++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
->> @@ -0,0 +1,22 @@
->> +[
->> +  {,
->> +    "EventCode": "0x60",
->> +    "EventName": "BUS_ACCESS_LD",
->> +    "BriefDescription": "Bus access - Read"
->> +  },
->> +  {,
->> +    "EventCode": "0x61",
->> +    "EventName": "BUS_ACCESS_ST",
->> +    "BriefDescription": "Bus access - Write"
->> +  },
->> +  {,
->> +    "EventCode": "0xC0",
->> +    "EventName": "EXT_MEM_REQ",
->> +    "BriefDescription": "External memory request"
->> +  },
->> +  {,
->> +    "EventCode": "0xC1",
->> +    "EventName": "EXT_MEM_REQ_NC",
->> +    "BriefDescription": "Non-cacheable external memory request"
->> +  }
->> +]
->> diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
->> new file mode 100644
->> index 000000000000..11baad6344b9
->> --- /dev/null
->> +++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
->> @@ -0,0 +1,27 @@
->> +[
->> +  {,
->> +    "EventCode": "0xC2",
->> +    "EventName": "PREFETCH_LINEFILL",
->> +    "BriefDescription": "Linefill because of prefetch"
->> +  },
->> +  {,
->> +    "EventCode": "0xC3",
->> +    "EventName": "PREFETCH_LINEFILL_DROP",
->> +    "BriefDescription": "Instruction Cache Throttle occurred"
->> +  },
->> +  {,
->> +    "EventCode": "0xC4",
->> +    "EventName": "READ_ALLOC_ENTER",
->> +    "BriefDescription": "Entering read allocate mode"
->> +  },
->> +  {,
->> +    "EventCode": "0xC5",
->> +    "EventName": "READ_ALLOC",
->> +    "BriefDescription": "Read allocate mode"
->> +  },
->> +  {,
->> +    "EventCode": "0xC8",
->> +    "EventName": "EXT_SNOOP",
->> +    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
->> +  }
->> +]
->> diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
->> new file mode 100644
->> index 000000000000..480d9f7460ab
->> --- /dev/null
->> +++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
->> @@ -0,0 +1,22 @@
->> +[
->> +  {,
->> +    "EventCode": "0x60",
->> +    "EventName": "BUS_ACCESS_LD",
->> +    "BriefDescription": "Bus access - Read"
->> +  },
->> +  {,
->> +    "EventCode": "0x61",
->> +    "EventName": "BUS_ACCESS_ST",
->> +    "BriefDescription": "Bus access - Write"
->> +  },
->> +  {,
->> +    "EventCode": "0xC0",
->> +    "EventName": "EXT_MEM_REQ",
->> +    "BriefDescription": "External memory request"
->> +  },
->> +  {,
->> +    "EventCode": "0xC1",
->> +    "EventName": "EXT_MEM_REQ_NC",
->> +    "BriefDescription": "Non-cacheable external memory request"
->> +  }
->> +]
->> diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
->> new file mode 100644
->> index 000000000000..73a22402d003
->> --- /dev/null
->> +++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
->> @@ -0,0 +1,32 @@
->> +[
->> +  {,
->> +    "EventCode": "0x86",
->> +    "EventName": "EXC_IRQ",
->> +    "BriefDescription": "Exception taken, IRQ"
->> +  },
->> +  {,
->> +    "EventCode": "0x87",
->> +    "EventName": "EXC_FIQ",
->> +    "BriefDescription": "Exception taken, FIQ"
->> +  },
->> +  {,
->> +    "EventCode": "0xC6",
->> +    "EventName": "PRE_DECODE_ERR",
->> +    "BriefDescription": "Pre-decode error"
->> +  },
->> +  {,
->> +    "EventCode": "0xD0",
->> +    "EventName": "L1I_CACHE_ERR",
->> +    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
->> +  },
->> +  {,
->> +    "EventCode": "0xD1",
->> +    "EventName": "L1D_CACHE_ERR",
->> +    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
->> +  },
->> +  {,
->> +    "EventCode": "0xD2",
->> +    "EventName": "TLB_ERR",
->> +    "BriefDescription": "TLB memory error"
->> +  }
->> +]
->> diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
->> new file mode 100644
->> index 000000000000..3149fb90555a
->> --- /dev/null
->> +++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
->> @@ -0,0 +1,52 @@
->> +[
->> +  {,
->> +    "EventCode": "0xC7",
->> +    "EventName": "STALL_SB_FULL",
->> +    "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
->> +  },
->> +  {,
->> +    "EventCode": "0xE0",
->> +    "EventName": "OTHER_IQ_DEP_STALL",
->> +    "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
->> +  },
->> +  {,
->> +    "EventCode": "0xE1",
->> +    "EventName": "IC_DEP_STALL",
->> +    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
->> +  },
->> +  {,
->> +    "EventCode": "0xE2",
->> +    "EventName": "IUTLB_DEP_STALL",
->> +    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
->> +  },
->> +  {,
->> +    "EventCode": "0xE3",
->> +    "EventName": "DECODE_DEP_STALL",
->> +    "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
->> +  },
->> +  {,
->> +    "EventCode": "0xE4",
->> +    "EventName": "OTHER_INTERLOCK_STALL",
->> +    "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
->> +  },
->> +  {,
->> +    "EventCode": "0xE5",
->> +    "EventName": "AGU_DEP_STALL",
->> +    "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
->> +  },
->> +  {,
->> +    "EventCode": "0xE6",
->> +    "EventName": "SIMD_DEP_STALL",
->> +    "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
->> +  },
->> +  {,
->> +    "EventCode": "0xE7",
->> +    "EventName": "LD_DEP_STALL",
->> +    "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
->> +  },
->> +  {,
->> +    "EventCode": "0xE8",
->> +    "EventName": "ST_DEP_STALL",
->> +    "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
->> +  }
->> +]
->> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->> index 219d6756134e..e61c9ca6cf9e 100644
->> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
->> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->> @@ -13,3 +13,4 @@
->>  #
->>  #Family-model,Version,Filename,EventType
->>  0x00000000420f5160,v1,cavium,core
->> +0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
->> -- 
->> 2.14.3
+I was assuming these patches will go in through the sunxi tree but I
+don't see them applied anywhere, have these patches fallen through the
+cracks perhaps?
