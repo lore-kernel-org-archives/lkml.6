@@ -1,96 +1,108 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-238414-1517513596-2-8402956060029064920
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: to='UTF-8', plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517513596; b=Mx8iUhMmfyBhLvBTOr9CUxOms/2RWtxwkVm3YnWFRXmCxNE
-    725r1AxOkgv+4q03nk8qdzzKOLfbhIlCok37Rsg9BqKlzWaahoYqS8uvBJpznAUW
-    bOFEOiBi4eXHVOGDZQsdTNFXeRubxKhuJPKCAL/REzesC7pxRbWjW6fBs+MNyLJn
-    1yfcagDhbIeXPqYgPElLKy70wLpncv2pszkXEBKeEjd2Y/1Qn4dgz4qNvEEvPLd5
-    IOWlw0pPEXWtwNE60itCK1bLJ6n2cB5jyoClC0iP9tFYYNJFLERfZ4Yw0E0K4Lat
-    plcVSR8Cl1q3cbjXGX6apMv0Qs6aZaEc7kB2rpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1517513596; bh=lUrIRD0kg0G/IVmMRlHmhr2vr9g3nn9gdBAmAnsxKBU=; b=I
-    0PV+Ms2SEDLAc+ia/S046ujZTYmJfuf+ZMl/eHoZyzRsk2Z3ZJasBpNiR1Dt/oxJ
-    yFGQx28whp+yElCnpRS7eGJWWtp0QUh+p4h/GfHGwVhpkk/Be/wp0IDiY5ai7h1J
-    mEcmXGn7A5o/BgDyRS7vbv6ZYZ3No71fydelLqwbcBcTWwcc4stSi9zqKwTuHFro
-    QozV1HGYRa46PCLlK0sODRwXCH4fZ0ryZutcgTeEvSbPX09jt2AfXl0fLUR4ro/M
-    G9KtSIXYjNO6Tn+V14Rn7Jg6zjo1oVuibW4Vel8Tl90xtK97KhqJaiQhESfwkg0L
-    IygmNlCv8Eo7dAd0GA4YA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754594AbeBATdO (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Feb 2018 14:33:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40592 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754563AbeBATdO (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 1 Feb 2018 14:33:14 -0500
-Subject: Re: [PATCH] KVM: x86: fix backward migration with async_PF
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Wanpeng Li <wanpeng.li@hotmail.com>, stable@vger.kernel.org
-References: <20180201175022.25011-1-rkrcmar@redhat.com>
- <a4fa9a87-cc4e-73d6-e248-192ab167b2c2@redhat.com>
- <20180201191040.GD26932@flask>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <c820ef8e-b352-ef28-4756-d6949f718ec0@redhat.com>
-Date: Thu, 1 Feb 2018 14:33:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180201191040.GD26932@flask>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <lyude@redhat.com>
+X-Google-Smtp-Source: AH8x225iinkqFzQ+G75XfbCxVZll2h183+HDQyVD58g1AVekQwTefWqDkUOdp+rsxCTBH0KhZS4v
+ARC-Seal: i=1; a=rsa-sha256; t=1517508925; cv=none;
+        d=google.com; s=arc-20160816;
+        b=RL8E6MDvDhXsvkBHNniOQYGcVUwa9xLEABlZebF1EOenq09T4u6m6FBHFQh44+fV55
+         AhTYGke3vZk6VmAp6Izi9tWKrDdwS6rWKYgiutdT8mjmcJnKYqlRTPlnbsnrCsW77wLM
+         UgnHcpEHLUmaoJzv8Q9gn+coTwpqWwiEJizL6h9pDrTFQmSIY74Rw+wrhkG/qVFDOqSH
+         XLdijeQ9y8NeRPC5UlCQ/0uKkOLctflt2N4jqByMSK+QNBlhAnOfZacEzuEez/X2xNdp
+         70n6hEwoDY6u2Y2jSrDoce8BSevK7xJNFKroTs0kCinIp9cfst3cwbvi5Ir3XrjpjLT7
+         CKTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=n/16dyqeK5uSwLv6IazDlXspss7/AH3IOl0e0DBEt/A=;
+        b=ijBAztVhph3YaYgfqp8+A4ZL3o0ueQWNRcqW+6ubR9pverz1NVMe1vAmUX+n8nWDLD
+         09D8nHJEzBndV+6uC0+jW6yfyOYRNTZuohTAlJN43GcEH4eLEYbvBZP4J0USs7p4G2y3
+         LffkiA1O14OKLw4u/6MN7OHyKh+uK6Doj/cw/tt/LOh0e3Pubnfv+kZDs19CwnJXbiz8
+         SyZ8+mLqnyEeYKi4WSciDNUnRUkufraQJ+K6v8gkBocHqKz65VQXP0KR1bWyqM9kmplD
+         A6Y+j/Z3jy0shl5mdlaUwqX1MBPQd4E+sZkQMn1xcR53fPOl+QpeIAwVODUNmEAfBr+I
+         gVYA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of lyude@redhat.com designates 209.132.183.28 as permitted sender) smtp.mailfrom=lyude@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of lyude@redhat.com designates 209.132.183.28 as permitted sender) smtp.mailfrom=lyude@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: Lyude Paul <lyude@redhat.com>
+To: nouveau@lists.freedesktop.org
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>,
+	"David Airlie" <airlied@linux.ie>,
+	"Rhys Kidd" <rhyskidd@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	"Karol Herbst" <karolherbst@gmail.com>,
+	"Thomas Gleixner" <tglx@linutronix.de>,
+	"Ben Skeggs" <bskeggs@redhat.com>,
+	"Ilia Mirkin" <imirkin@alum.mit.edu>,
+	"Kate Stewart" <kstewart@linuxfoundation.org>,
+	"Martin Peres" <martin.peres@free.fr>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Lyude Paul" <lyude@redhat.com>,
+	"Philippe Ombredanne" <pombredanne@nexb.com>
+Subject: [RFC v6 0/5] Implement full clockgating for Kepler1 and 2
+Date: Thu,  1 Feb 2018 13:13:54 -0500
+Message-Id: <20180201181458.25776-1-lyude@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591223438928626228?=
+X-GMAIL-MSGID: =?utf-8?q?1591223438928626228?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 01/02/2018 14:10, Radim Krčmář wrote:
->>>
->> This check will break migration if the source guest and host both have
->> the recent kernels which support KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT, so
->> I am not sure about it.  Otherwise, the patch is okay!
-> Good point, breaking forward migration is worse than doing nothing.
-> 
-> A compromise solution would be to drop the feature check from the
-> hypervisor.  Newer guests would work everywhere and there would be no
-> change to old systems, so v4.13-v4.15 guests could at least upgrade.
-> 
-> Slightly better than doing nothing, IMO,
+Next version of my patchseries for adding clockgating support for
+kepler1 and 2 on nouveau. The first version of this series can be found
+here:
 
-Yes, I agree.  Just removing the guest_kvm_cpuid_has should be fine.
+https://patchwork.freedesktop.org/series/36504/
 
-Paolo
+Some small changes (shouldn't change anything functionally):
+ - Made gf100_therm_new, gk104_clkgate_pack, and
+   gk110_fb_clkgate_blcg_init_unk_0 static (re: kbuild test bot)
+ - Making all three of these things static made it apparent that we
+   create gf100_therm_new() and gf100_therm_func in
+   nvkm/subdev/therm/gf100.c, but never actually use them anywhere. So,
+   get rid of these two things entirely and also since we no longer need
+   to, stop exporting gt215_therm_init
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Martin Peres <martin.peres@free.fr>
+
+Lyude Paul (5):
+  drm/nouveau: Add support for basic clockgating on Kepler1
+  drm/nouveau: Add support for BLCG on Kepler1
+  drm/nouveau: Add support for BLCG on Kepler2
+  drm/nouveau: Add support for SLCG for Kepler2
+  drm/nouveau: Introduce NvPmEnableGating option
+
+ drivers/gpu/drm/nouveau/include/nvkm/subdev/fb.h   |   1 +
+ .../gpu/drm/nouveau/include/nvkm/subdev/therm.h    |  17 ++
+ drivers/gpu/drm/nouveau/nvkm/engine/device/base.c  |  25 +--
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h     |   1 +
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.c     | 207 +++++++++++++++++++++
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.h     |  55 ++++++
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/gk110.c     | 155 +++++++++++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/Kbuild      |   1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/gf100.c     |   6 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.c     |  47 +++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.h     |  35 ++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk110.c     |  71 +++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/priv.h      |   2 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild   |   2 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c   |  70 ++++++-
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.c  |  58 ++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.h  |  35 ++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf119.c  |   8 +-
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c  | 136 ++++++++++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.h  |  48 +++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gt215.c  |   2 +-
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/priv.h   |  21 ++-
+ 22 files changed, 977 insertions(+), 26 deletions(-)
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.h
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.h
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk110.c
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.c
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.h
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.h
+
+-- 
+2.14.3
