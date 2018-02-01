@@ -1,44 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752248AbeBALle (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 06:41:34 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53023 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751909AbeBALlb (ORCPT
+        id S1752294AbeBALn7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 06:43:59 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:30815 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752064AbeBALnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 06:41:31 -0500
-X-Google-Smtp-Source: AH8x226JV/h+njPLtlXYS+i8I9go/OmRgV6u2CJ85NXmdmZnSGHWpLH//OO8mG4NtT68XatgjlcoiA==
-From: Tycho Andersen <tycho@tycho.ws>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH] semaphore.h: correct path in documentation
-Date: Thu,  1 Feb 2018 12:41:19 +0100
-Message-Id: <20180201114119.1090-1-tycho@tycho.ws>
-X-Mailer: git-send-email 2.14.1
+        Thu, 1 Feb 2018 06:43:53 -0500
+Subject: Re: [PATCH v6 12/41] clk: davinci: Add platform information for TI
+ DA850 PSC
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-13-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <eeb0281b-93dd-ef8c-6416-5e47026bd6bd@ti.com>
+Date: Thu, 1 Feb 2018 17:12:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <1516468460-4908-13-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While reading this header, I noticed that the locking stuff has moved to
-kernel/locking/*, so update the path in semaphore.h to point to that.
+On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+> This adds platform-specific declarations for the PSC clocks on TI DA850/
+> OMAP-L138/AM18XX SoCs.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
----
- include/linux/semaphore.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-diff --git a/include/linux/semaphore.h b/include/linux/semaphore.h
-index dc368b8ce215..11c86fbfeb98 100644
---- a/include/linux/semaphore.h
-+++ b/include/linux/semaphore.h
-@@ -4,7 +4,7 @@
-  *
-  * Distributed under the terms of the GNU GPL, version 2
-  *
-- * Please see kernel/semaphore.c for documentation of these functions
-+ * Please see kernel/locking/semaphore.c for documentation of these functions
-  */
- #ifndef __LINUX_SEMAPHORE_H
- #define __LINUX_SEMAPHORE_H
--- 
-2.14.1
+Thanks,
+Sekhar
