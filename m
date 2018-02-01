@@ -1,134 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753121AbeBASCJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 13:02:09 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:58026 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753084AbeBASCA (ORCPT
+        id S1752864AbeBASDd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 13:03:33 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48057 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753214AbeBASD3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 13:02:00 -0500
-From: Khalid Aziz <khalid.aziz@oracle.com>
-To: davem@davemloft.net, dave.hansen@linux.intel.com
-Cc: Khalid Aziz <khalid.aziz@oracle.com>, anthony.yznaga@oracle.com,
-        mingo@kernel.org, rob.gardner@oracle.com, ebiederm@xmission.com,
-        vegard.nossum@oracle.com, jane.chu@oracle.com,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Khalid Aziz <khalid@gonehiking.org>
-Subject: [PATCH v11 05/10] sparc64: Add handler for "Memory Corruption Detected" trap
-Date: Thu,  1 Feb 2018 11:01:13 -0700
-Message-Id: <605397a59cb3d02fa7cbe3fa187ca421e9f5abce.1517497017.git.khalid.aziz@oracle.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1517497017.git.khalid.aziz@oracle.com>
-References: <cover.1517497017.git.khalid.aziz@oracle.com>
-In-Reply-To: <cover.1517497017.git.khalid.aziz@oracle.com>
-References: <cover.1517497017.git.khalid.aziz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802010231
+        Thu, 1 Feb 2018 13:03:29 -0500
+From: Colin King <colin.king@canonical.com>
+To: Jiri Slaby <jirislaby@gmail.com>,
+        Nick Kossifidis <mickflemm@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@do-not-panic.com>,
+        Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ath5k: remove duplicated re-assignment to pointer 'tq'
+Date: Thu,  1 Feb 2018 18:03:27 +0000
+Message-Id: <20180201180327.23435-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-M7 and newer processors add a "Memory corruption Detected" trap with
-the addition of ADI feature. This trap is vectored into kernel by HV
-through resumable error trap with error attribute for the resumable
-error set to 0x00000800.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
-Cc: Khalid Aziz <khalid@gonehiking.org>
-Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+Pointer tq is initialized with &ah->ah_txq[queue] and then a few
+lines later is re-assigned the same value, hence this duplicate
+assignment is redundant and can be removed.
+
+Cleans up clang warning:
+drivers/net/wireless/ath/ath5k/qcu.c:326:25: warning: Value stored
+to 'tq' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v7:     
-	- new patch split off from patch 4/4 in v6
+ drivers/net/wireless/ath/ath5k/qcu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
- arch/sparc/kernel/traps_64.c | 59 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
-index d273a65a0a10..f36a40217f6c 100644
---- a/arch/sparc/kernel/traps_64.c
-+++ b/arch/sparc/kernel/traps_64.c
-@@ -1870,6 +1870,7 @@ struct sun4v_error_entry {
- #define SUN4V_ERR_ATTRS_ASI		0x00000080
- #define SUN4V_ERR_ATTRS_PRIV_REG	0x00000100
- #define SUN4V_ERR_ATTRS_SPSTATE_MSK	0x00000600
-+#define SUN4V_ERR_ATTRS_MCD		0x00000800
- #define SUN4V_ERR_ATTRS_SPSTATE_SHFT	9
- #define SUN4V_ERR_ATTRS_MODE_MSK	0x03000000
- #define SUN4V_ERR_ATTRS_MODE_SHFT	24
-@@ -2067,6 +2068,56 @@ static void sun4v_log_error(struct pt_regs *regs, struct sun4v_error_entry *ent,
- 	}
- }
+diff --git a/drivers/net/wireless/ath/ath5k/qcu.c b/drivers/net/wireless/ath/ath5k/qcu.c
+index beda11ce34a7..147947f632f7 100644
+--- a/drivers/net/wireless/ath/ath5k/qcu.c
++++ b/drivers/net/wireless/ath/ath5k/qcu.c
+@@ -327,8 +327,6 @@ ath5k_hw_reset_tx_queue(struct ath5k_hw *ah, unsigned int queue)
  
-+/* Handle memory corruption detected error which is vectored in
-+ * through resumable error trap.
-+ */
-+void do_mcd_err(struct pt_regs *regs, struct sun4v_error_entry ent)
-+{
-+	siginfo_t info;
-+
-+	if (notify_die(DIE_TRAP, "MCD error", regs, 0, 0x34,
-+		       SIGSEGV) == NOTIFY_STOP)
-+		return;
-+
-+	if (regs->tstate & TSTATE_PRIV) {
-+		/* MCD exception could happen because the task was
-+		 * running a system call with MCD enabled and passed a
-+		 * non-versioned pointer or pointer with bad version
-+		 * tag to the system call. In such cases, hypervisor
-+		 * places the address of offending instruction in the
-+		 * resumable error report. This is a deferred error,
-+		 * so the read/write that caused the trap was potentially
-+		 * retired long time back and we may have no choice
-+		 * but to send SIGSEGV to the process.
-+		 */
-+		const struct exception_table_entry *entry;
-+
-+		entry = search_exception_tables(regs->tpc);
-+		if (entry) {
-+			/* Looks like a bad syscall parameter */
-+#ifdef DEBUG_EXCEPTIONS
-+			pr_emerg("Exception: PC<%016lx> faddr<UNKNOWN>\n",
-+				 regs->tpc);
-+			pr_emerg("EX_TABLE: insn<%016lx> fixup<%016lx>\n",
-+				 ent.err_raddr, entry->fixup);
-+#endif
-+			regs->tpc = entry->fixup;
-+			regs->tnpc = regs->tpc + 4;
-+			return;
-+		}
-+	}
-+
-+	/* Send SIGSEGV to the userspace process with the right signal
-+	 * code
-+	 */
-+	info.si_signo = SIGSEGV;
-+	info.si_errno = 0;
-+	info.si_code = SEGV_ADIDERR;
-+	info.si_addr = (void __user *)ent.err_raddr;
-+	info.si_trapno = 0;
-+	force_sig_info(SIGSEGV, &info, current);
-+}
-+
- /* We run with %pil set to PIL_NORMAL_MAX and PSTATE_IE enabled in %pstate.
-  * Log the event and clear the first word of the entry.
-  */
-@@ -2104,6 +2155,14 @@ void sun4v_resum_error(struct pt_regs *regs, unsigned long offset)
- 		goto out;
- 	}
+ 	AR5K_ASSERT_ENTRY(queue, ah->ah_capabilities.cap_queues.q_tx_num);
  
-+	/* If this is a memory corruption detected error vectored in
-+	 * by HV through resumable error trap, call the handler
-+	 */
-+	if (local_copy.err_attrs & SUN4V_ERR_ATTRS_MCD) {
-+		do_mcd_err(regs, local_copy);
-+		return;
-+	}
-+
- 	sun4v_log_error(regs, &local_copy, cpu,
- 			KERN_ERR "RESUMABLE ERROR",
- 			&sun4v_resum_oflow_cnt);
+-	tq = &ah->ah_txq[queue];
+-
+ 	/* Skip if queue inactive or if we are on AR5210
+ 	 * that doesn't have QCU/DCU */
+ 	if ((ah->ah_version == AR5K_AR5210) ||
 -- 
-2.11.0
+2.15.1
