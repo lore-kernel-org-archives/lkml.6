@@ -1,59 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeBANqQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 08:46:16 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47248 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751916AbeBANpr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 08:45:47 -0500
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
-        <alexandre.torgue@st.com>
-CC: <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-Subject: [PATCH 2/3] pwm: stm32: LPTimer: use 3 cells xlate
-Date: Thu, 1 Feb 2018 14:44:37 +0100
-Message-ID: <1517492678-767-3-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1517492678-767-1-git-send-email-fabrice.gasnier@st.com>
-References: <1517492678-767-1-git-send-email-fabrice.gasnier@st.com>
+        id S1752189AbeBANsd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 08:48:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42873 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751630AbeBANsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 08:48:32 -0500
+Date: Thu, 1 Feb 2018 14:48:29 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
+Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
+Message-ID: <20180201134829.GL21609@dhcp22.suse.cz>
+References: <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
+ <20180126140415.GD5027@dhcp22.suse.cz>
+ <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
+ <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
+ <20180129132235.GE21609@dhcp22.suse.cz>
+ <87k1w081e7.fsf@concordia.ellerman.id.au>
+ <20180130094205.GS21609@dhcp22.suse.cz>
+ <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
+ <20180131131937.GA6740@dhcp22.suse.cz>
+ <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-01_04:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerald Baeza <gerald.baeza@st.com>
+On Thu 01-02-18 08:43:34, Anshuman Khandual wrote:
+[...]
+> $dmesg | grep elf_brk
+> [    9.571192] elf_brk 10030328 elf_bss 10030000
+> 
+> static int load_elf_binary(struct linux_binprm *bprm)
+> ---------------------
+> 
+> 	if (unlikely (elf_brk > elf_bss)) {
+> 			unsigned long nbyte;
+> 	            
+> 			/* There was a PT_LOAD segment with p_memsz > p_filesz
+> 			   before this one. Map anonymous pages, if needed,
+> 			   and clear the area.  */
+> 			retval = set_brk(elf_bss + load_bias,
+> 					 elf_brk + load_bias,
+> 					 bss_prot);
+> 
+> 
+> ---------------------
 
-STM32 Low-Power Timer supports generic 3 cells pwm to encode
-PWM number, period and polarity.
-
-Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Just a blind shot... Does the following make any difference?
 ---
- drivers/pwm/pwm-stm32-lp.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
-index 1ac9e43..346b7bd 100644
---- a/drivers/pwm/pwm-stm32-lp.c
-+++ b/drivers/pwm/pwm-stm32-lp.c
-@@ -203,6 +203,8 @@ static int stm32_pwm_lp_probe(struct platform_device *pdev)
- 	priv->chip.dev = &pdev->dev;
- 	priv->chip.ops = &stm32_pwm_lp_ops;
- 	priv->chip.npwm = 1;
-+	priv->chip.of_xlate = of_pwm_xlate_with_flags;
-+	priv->chip.of_pwm_n_cells = 3;
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 021fe78998ea..04b24d00c911 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -895,7 +895,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	   the correct location in memory. */
+ 	for(i = 0, elf_ppnt = elf_phdata;
+ 	    i < loc->elf_ex.e_phnum; i++, elf_ppnt++) {
+-		int elf_prot = 0, elf_flags;
++		int elf_prot = 0, elf_flags, elf_fixed = MAP_FIXED_NOREPLACE;
+ 		unsigned long k, vaddr;
+ 		unsigned long total_size = 0;
  
- 	ret = pwmchip_add(&priv->chip);
- 	if (ret < 0)
+@@ -927,6 +927,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 					 */
+ 				}
+ 			}
++			elf_fixed = MAP_FIXED;
+ 		}
+ 
+ 		if (elf_ppnt->p_flags & PF_R)
+@@ -944,7 +945,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		 * the ET_DYN load_addr calculations, proceed normally.
+ 		 */
+ 		if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
+-			elf_flags |= MAP_FIXED_NOREPLACE;
++			elf_flags |= elf_fixed;
+ 		} else if (loc->elf_ex.e_type == ET_DYN) {
+ 			/*
+ 			 * This logic is run once for the first LOAD Program
+@@ -980,7 +981,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 				load_bias = ELF_ET_DYN_BASE;
+ 				if (current->flags & PF_RANDOMIZE)
+ 					load_bias += arch_mmap_rnd();
+-				elf_flags |= MAP_FIXED_NOREPLACE;
++				elf_flags |= elf_fixed;
+ 			} else
+ 				load_bias = 0;
+ 
+
 -- 
-1.9.1
+Michal Hocko
+SUSE Labs
