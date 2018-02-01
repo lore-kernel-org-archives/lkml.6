@@ -1,84 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752799AbeBAQ4q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:56:46 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:24238 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752542AbeBAQ4o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:56:44 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w11GuYuf002509
-X-Nifty-SrcIP: [209.85.217.176]
-X-Google-Smtp-Source: AH8x225iF3jdTHX0zG4o1/uYx+P6czha5pCgOjQdTwd29S4bMABCryT71DyOozSCav5k0nJ3IRlGAoH+8kZAjPRkGns=
+        id S1752824AbeBAQ5H (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:57:07 -0500
+Received: from mout.web.de ([212.227.15.3]:52307 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752375AbeBAQ5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 11:57:04 -0500
+Subject: [PATCH 1/2] i2c-tiny-usb: Delete an error message for a failed memory
+ allocation in i2c_tiny_usb_probe()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-i2c@vger.kernel.org, Till Harbaum <till@harbaum.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
+Message-ID: <39c40369-48ef-e245-4e19-4caf12e9f06b@users.sourceforge.net>
+Date: Thu, 1 Feb 2018 17:57:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 2 Feb 2018 01:55:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQfif_XNZYa8o3cn=HP6B8mdpZVTboR6hgVwctP32HeTw@mail.gmail.com>
-Message-ID: <CAK7LNAQfif_XNZYa8o3cn=HP6B8mdpZVTboR6hgVwctP32HeTw@mail.gmail.com>
-Subject: [GIT PULL 1/3] Kbuild updates for v4.16
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:075sf+zCWrMy1y05V9egReG8tEp8OT5xFMrGYon7V+49v+bTWOZ
+ KtmRHi0KZMy+ruUeYZyod+nveHjIuNe3XX/DR6buHpT3TRFhQr0RWuNJEOs9liWVJWdXrnu
+ /aipI3j4SKg2DtWkasA4xvTBt4W3mZ3DVIMkic4wTd9msSw74HScWiue544vQc0eFH9BBgh
+ NpqFVmQSW3mKfUxV5AQWQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:x5BpGAxJYEU=:mjBA32OY/ZBtRtrmQTp4sr
+ amXFivwSo+VnAkwsnThLhGgGI1+o0d8SpyOTMxaBabXHRIQjvOuWJR2uTmtjI8qBKc3yVseMX
+ vJX/1ujTphX0aBGkTAETTfiXJiaGhq5YZZpR73iLLYtn5zop36yPRCRLWvQUOEXSHFIre713a
+ j8a1h4argCTZAFavfWOTPtQi7Xets1G7dJKK0Bg2tfu7ogvj3Xr7WdTYyQbV7VArGo0lJDidG
+ 1324vkYS6PkWRkFOZYd5EoqltHV1koHNU5JYLuGO48JpUK10xJM78t3xsHybuYjnWDLH1J7dM
+ WNkzEg3gsH+Zz019/tD1WWtdMBpCP8l06Bk4Oy7aHDuRftsWUmJdyX/XxrEAplsVYXnQKrlQ3
+ QWGCvZQYTWt1CrwGDGb757srcF87vuJdBV+BvRFC4Qv2J5OgPlUTzGQ1ZVOPQPyQV2gLSCgbq
+ Xu5eJBSG801LAyVVmVAyDO0pAPMypOZ7J70bhvO7K36Z28e3/mxLq1sSmJHFixWmh0wliW8Pk
+ BXJ3ZCdwU/POjuqYZc8s8JvkJJyi4SoPwT+cGzo7LNP3XkyOv4miNNLEQOyeTm8Qbura4pRao
+ nIbIaIEUpmPmQud7zcxJdiJcCguPr/KC9Vkm6XVr/mXB44k70X9meKTSHZh1BL2naL2cdVkSa
+ cdiehdDbFEziAZpAlg3p5k2CD2iSJ752z2orSdK1zv+mBK+I1uyopmF2IN3ENhFyz18+Mw36I
+ EPtMyBUfaxtR49GEXES+p90P2RWN73WHCigsmj1uy4eLj6/+vCEWLXSOFazzLNIUbB4t6wa/Q
+ 3pi6feKHwrOVyC+XS1+uBPVau/PVmWThBQZnsr7W6tY8idRIzg=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Feb 2018 17:36:50 +0100
 
-Here are Kbuild updates for v4.16.  Please pull!
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/i2c/busses/i2c-tiny-usb.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-The following changes since commit ae64f9bd1d3621b5e60d7363bc20afb46aede215:
-
-  Linux 4.15-rc2 (2017-12-03 11:01:47 -0500)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-v4.16
-
-for you to fetch changes up to f759625ad270898efdf8c153c74021a8a919312b:
-
-  kbuild: fix W= option checks for extra DTC warnings (2018-01-25
-22:17:25 +0900)
-
-----------------------------------------------------------------
-Kbuild updates for v4.16
-
-- Terminate the build correctly in case of fixdep errors
-
-- Clean up fixdep
-
-- Suppress packed-not-aligned warnings from GCC-8
-
-- Fix W= handling for extra DTC warnings
-
-----------------------------------------------------------------
-Lukas Bulwahn (1):
-      fixdep: exit with error code in error branches of do_config_file()
-
-Masahiro Yamada (8):
-      fixdep: remove unnecessary <arpa/inet.h> inclusion
-      fixdep: use malloc() and read() to load dep_file to buffer
-      fixdep: factor out common code for reading files
-      fixdep: remove unneeded memcpy() in parse_dep_file()
-      fixdep: move global variables to local variables of main()
-      fixdep: refactor parse_dep_file()
-      fixdep: use existing helper to check modular CONFIG options
-      kbuild: fix W= option checks for extra DTC warnings
-
-Xiongfeng Wang (1):
-      Kbuild: suppress packed-not-aligned warning for default setting only
-
- scripts/Makefile.extrawarn |   3 +
- scripts/Makefile.lib       |   4 +-
- scripts/basic/fixdep.c     | 236 ++++++++++++++++------------------------
- 3 files changed, 101 insertions(+), 142 deletions(-)
-
-
+diff --git a/drivers/i2c/busses/i2c-tiny-usb.c b/drivers/i2c/busses/i2c-tiny-usb.c
+index a2e3dd715380..e210e36df123 100644
+--- a/drivers/i2c/busses/i2c-tiny-usb.c
++++ b/drivers/i2c/busses/i2c-tiny-usb.c
+@@ -230,10 +230,8 @@ static int i2c_tiny_usb_probe(struct usb_interface *interface,
+ 
+ 	/* allocate memory for our device state and initialize it */
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+-	if (dev == NULL) {
+-		dev_err(&interface->dev, "Out of memory\n");
++	if (!dev)
+ 		goto error;
+-	}
+ 
+ 	dev->usb_dev = usb_get_dev(interface_to_usbdev(interface));
+ 	dev->interface = interface;
 -- 
-Best Regards
-Masahiro Yamada
+2.16.1
