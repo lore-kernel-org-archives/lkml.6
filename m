@@ -1,117 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754854AbeBATyd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 14:54:33 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:63001
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754594AbeBATy1 (ORCPT
+        id S1754897AbeBATzC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 14:55:02 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:50020 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754870AbeBATyw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 14:54:27 -0500
-X-IronPort-AV: E=Sophos;i="5.46,444,1511823600";
-   d="scan'208";a="253322749"
-Date: Thu, 1 Feb 2018 20:54:25 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Mathieu Malaterre <malat@debian.org>
-cc: Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        Thu, 1 Feb 2018 14:54:52 -0500
+Date: Thu, 01 Feb 2018 14:54:50 -0500 (EST)
+Message-Id: <20180201.145450.930634145855259446.davem@davemloft.net>
+To: colin.king@canonical.com
+Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: cocci script for detecting alloc_apertures mem leak
-In-Reply-To: <CA+7wUsz+Ud6+LFVdVs7-pPMSJmW-7opXCqs2NuYP3=enYxoD4A@mail.gmail.com>
-Message-ID: <alpine.DEB.2.20.1802012041460.2188@hadrien>
-References: <CA+7wUsz+Ud6+LFVdVs7-pPMSJmW-7opXCqs2NuYP3=enYxoD4A@mail.gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH] lan78xx: remove redundant initialization of pointer
+ 'phydev'
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180201171018.22267-1-colin.king@canonical.com>
+References: <20180201171018.22267-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin King <colin.king@canonical.com>
+Date: Thu,  1 Feb 2018 17:10:18 +0000
 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer phydev is initialized and this value is never read, phydev
+> is immediately updated to a new value, hence this initialization
+> is redundant and can be removed
+> 
+> Cleans up clang warning:
+> drivers/net/usb/lan78xx.c:2009:21: warning: Value stored to 'phydev'
+> during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-On Thu, 1 Feb 2018, Mathieu Malaterre wrote:
-
-> Hi cocci gurus,
->
-> I am wondering if coccinelle can handle detection of kzalloc mem leak
-> (within alloc_apertures call) ? Typically:
->
-> $ cat drivers/video/fbdev/vesafb.c
-> static int vesafb_probe(struct platform_device *dev)
-> [...]
->   info->apertures = alloc_apertures(1);
->
-> but then:
->
-> static void vesafb_destroy(struct fb_info *info)
-> {
->   struct vesafb_par *par = info->par;
->
->   fb_dealloc_cmap(&info->cmap);
->   arch_phys_wc_del(par->wc_cookie);
->   if (info->screen_base)
->     iounmap(info->screen_base);
->   release_mem_region(info->apertures->ranges[0].base,
-> info->apertures->ranges[0].size);
-> }
->
-> For reference:
->
-> $ cat include/linux/fb.h
-> static inline struct apertures_struct *alloc_apertures(unsigned int max_num) {
->   struct apertures_struct *a = kzalloc(sizeof(struct apertures_struct)
->     + max_num * sizeof(struct aperture), GFP_KERNEL);
-
-You could do something like this:
-
-@nm@
-identifier i,j,prb,rem;
-@@
-
-struct i j = { .prob = prb, .rem = remove, };
-
-@a exists@
-identifier nm.prb;
-expression e;
-@@
-
-prb(...) { <+... e = alloc_apertures(...) ...+> }
-
-@@
-identifier nm.rem;
-expression a.e;
-@@
-
-*rem(...) {
-   ... when != kfree(e)
-}
-
-This is assuming that the reference to the alloc_apertures value is made
-in the same way in the probe and remove function.  If this is not the
-case, you have to figure out how to express some relation between them.
-
-This is also assuming that the kfree is directly in the remove function,
-not in some function called by it.  If that hypothesis does not hold, it
-might be better to just report any cases where ther is no call to kfree(e)
-in the whole file.  For this you could replace the last rule with:
-
-@ok@
-expression a.e;
-@@
-
-kfree(e);
-
-@depends on !ok@
-expression a.e;
-@@
-
-* e = alloc_apertures(...)
-
-That would be checking for files that don't free the result os
-alloc_apertures anywhere.
-
-If you want to do a full interprocedural analysis, it is possible, but
-more complicated.  You could look at coccinelle/demos/iteration.cocci.
-
-julia
+Applied.
