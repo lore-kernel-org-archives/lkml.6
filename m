@@ -1,72 +1,119 @@
-Return-Path: <marc.zyngier@arm.com>
-X-Google-Smtp-Source: AH8x225eWgMsxa9JPZfU+Np3sJd7f/ctTcxriwvrR30cBEj4+RBNVGOn3N0B2BIQ4lCp4dGqDsHH
-ARC-Seal: i=1; a=rsa-sha256; t=1517505830; cv=none;
-        d=google.com; s=arc-20160816;
-        b=tArsyxBZzK2dIvmeguIWZjjsUUEd5BFfdMRCuGdtPifJGEFx/Iv4asQEICkwvWNEoc
-         tiZmNq69diLq0kaRPbYUQpekbWnbyUA28rBSf0PCVkQIRlgTRW106Wxl97JIeschlYXF
-         kN7wcRDPrtO8ZhLwgGf9PYAWfafKn53wwnZnuaB4gc9ckNDjwKEoRr26aVEaznIgQILh
-         3b9ST9P36B7bR7b3qp3IQMrGzg5RX9x7TmcaszdUCcQ6GTKosSmnJPKO6pQ1cEeD9ZTx
-         y4bW1ueut8P8qlU+6WE0HW7tvW5mmarzxHGCnN57Ovc0xizVDiI2WYeogTcDoiGd31N1
-         OVoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:from:references:cc:to
-         :subject:arc-authentication-results;
-        bh=KZiEoXewjmq/i+GFIopXNJy+0Eb49wNXzp5O+ruFwU0=;
-        b=B8xqewCNkV7z5/eR0sO4vwlXHcjsOXmSHrPsjsGKYHk5MENyrnRU5rmrqDKFn36ObS
-         hYmHoyfQisLZOGEcDPMK8Gb8IdyChBRA5ouYD4OuASuaGf9gdJY7t2fsvs27gatIeysk
-         a1Mmr5kcJk8IUojATkMihZCqffXcUM+RNvmaVfpH+r21K9TV+pZt8Z7+16Kks14UIHAv
-         xvwby/uMcuwloT7EXgTT+5oy4CJSkEz5V5oFgDSqCNsq61qttjOfhDQ6FUcMY8sjur7l
-         E46QqeEa0Oj2A7Gy1McIaUVPEeH6cGRo1NWNdZ9coDX4e4fsgDVi6Dfz7t78wwai4Cz8
-         ik3A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of marc.zyngier@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=marc.zyngier@arm.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of marc.zyngier@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=marc.zyngier@arm.com
-Subject: Re: [PATCH v2] irqchip/gic-v3: Ignore disabled ITS nodes
-To: Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner
- <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Stuart Yoder <stuyoder@gmail.com>,
- Laurentiu Tudor <laurentiu.tudor@nxp.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rajendra Nayak <rnayak@codeaurora.org>
-References: <20180201170329.26916-1-sboyd@codeaurora.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <38dd5843-9290-28b2-8acb-aabb81acf00d@arm.com>
-Date: Thu, 1 Feb 2018 17:23:46 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4154219-1517505061-2-18059495396695601967
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517505061; b=w+R5XU+oG7303XkXs39wZf+SMfkEzcUy7IyGvt3g/tl0b95
+    DupJ1vx1jCbiyxYqppesuzcCF1FeP55ir/SDb/qLPLNC3FRc2AysSOm+RvDNG3eA
+    ETcemhchaE8TGV2/JbyBcxyovzphnmo0z9ca4rV0YWwuBThHULTBztW6JP7CGnHR
+    jxHFs26eB3bCX0KFrQZ1g593FNYd+fUuI/+xjqLaGCN6cQwcxuBT6gC2A/J/MB2w
+    AAMPO3fCyMISvPHm+UIJO1CNxjJ8O9OXohUSH0IV5sQWsX2VFXa63e7RR2lKUo5k
+    aFnAp+9bKfBoU9jJAbpK+6aOQPTGebsEKtvRGiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1517505061; bh=N
+    ATbnzcHy/OTBD9b9SC7AJpxPEnUNxgKpts0nZgD6Gs=; b=BtIYvNc5kQv7NnHUC
+    oNdYTTa0GXWYXOl2rRIcT+cUsyGisDq5leD+LkdNWnfbYDcCLnSL1qWjRv8xqYba
+    pJ8bgSWBMK7yBc+21zqw6rTss3/iHwjGb18B/g71YZ9aZyFUKU5oAw6//Bb2l05a
+    Z6QkhodtqYqAE8PHO6GQGkLfbZwd+Z7F5fqyGTW0UlYdkpkvZNAcQotEQ+UgyE0V
+    1zqgi3fbxcwtcxRow3B5nLEL6eOtlxeXxU0/dkHL52yrqVW8jxGchrOB9IuHXYj4
+    zQy4LldSTs4mMM+4x6q91+MGUB4+x86pt+cAl6fbdBZFhCvNgpfatYY83Lx3LE2u
+    u3ZeQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=nifty.com header.i=@nifty.com header.b=GEDzPFpl x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=socionext.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=nifty.com header.i=@nifty.com header.b=GEDzPFpl x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=socionext.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w11HAbdc025880
+X-Nifty-SrcIP: [209.85.217.175]
+X-Google-Smtp-Source: AH8x224ny6jt9GQGUnvlA7f921h83fOiAJmCIXd0vEApcl65QoBhyvHy9W/zPcyiONJFTSdnR0jjWRzWsNOxBLguSR4=
 MIME-Version: 1.0
-In-Reply-To: <20180201170329.26916-1-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <20180131093434.20050-6-ulfalizer@gmail.com>
+References: <20180131093434.20050-1-ulfalizer@gmail.com>
+ <20180131093434.20050-6-ulfalizer@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 2 Feb 2018 02:09:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARZkYpxY62ku1+6s_pL_yNjGJOT=mRNjXVE5eRUunWG+A@mail.gmail.com>
+Message-ID: <CAK7LNARZkYpxY62ku1+6s_pL_yNjGJOT=mRNjXVE5eRUunWG+A@mail.gmail.com>
+Subject: Re: [PATCH 05/11] Staging: rtl8192e: kconfig: Remove blank help text
+To: Ulf Magnusson <ulfalizer@gmail.com>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Paul Bolle <pebolle@tiscali.nl>,
+ Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "Luis R. Rodriguez" <mcgrof@kernel.org>,
+ Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591218916774125343?=
-X-GMAIL-MSGID: =?utf-8?q?1591220193509335343?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 01/02/18 17:03, Stephen Boyd wrote:
-> On some platforms there's an ITS available but it's not enabled
-> because reading or writing the registers is denied by the
-> firmware. In fact, reading or writing them will cause the system
-> to reset. We could remove the node from DT in such a case, but
-> it's better to skip nodes that are marked as "disabled" in DT so
-> that we can describe the hardware that exists and use the status
-> property to indicate how the firmware has configured things.
-> 
-> Cc: Stuart Yoder <stuyoder@gmail.com>
-> Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Rajendra Nayak <rnayak@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+2018-01-31 18:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+> Blank help texts are probably either a typo, a Kconfig misunderstanding,
+> or some kind of half-committing to adding a help text (in which case a
+> TODO comment would be clearer, if the help text really can't be added
+> right away).
+>
+> Best to remove them, IMO.
+>
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
 
-Queued, thanks Stephen.
 
-	M.
+FYI.
+
+I picked up this patch to kbuild
+because I need this to suppress warning messages
+introduced by 11/11.
+
+I am planning to send a PR for this series next week.
+
+
+
+
 -- 
-Jazz is not dead. It just smells funny...
+Best Regards
+Masahiro Yamada
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
