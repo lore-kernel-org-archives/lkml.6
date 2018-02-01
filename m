@@ -1,53 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752043AbeBAPXF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:23:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56164 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751554AbeBAPXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:23:03 -0500
-Date: Thu, 1 Feb 2018 16:22:44 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        KVM <kvm@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
-Message-ID: <20180201152244.GC31080@flask>
-References: <20180201125512.7bc96674@canb.auug.org.au>
- <20180201104707.GA21802@cbox>
- <20180202002227.36db3356@canb.auug.org.au>
- <f49453f2-223e-abe0-912a-7288183a1671@redhat.com>
+        id S1752126AbeBAPXj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:23:39 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:40812 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751966AbeBAPXi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 10:23:38 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w11FNA1l002989
+X-Nifty-SrcIP: [209.85.213.46]
+X-Google-Smtp-Source: AH8x224LkrslcbYleSxEsqXGl8tW82gCRjepVVcmdFfPJJ7hlkcmoj7v+kMnVNc+BoSe5NmLTxM9tOr56wPGBLbhD04=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f49453f2-223e-abe0-912a-7288183a1671@redhat.com>
+In-Reply-To: <1517476855-5235-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1517476855-5235-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 2 Feb 2018 00:22:29 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASRp5AmxGDJNvT+V=+B4xw5bBScdEeBaCBmdnyVOxatLg@mail.gmail.com>
+Message-ID: <CAK7LNASRp5AmxGDJNvT+V=+B4xw5bBScdEeBaCBmdnyVOxatLg@mail.gmail.com>
+Subject: Re: [PATCH] Coccinelle: coccicheck: fix typo
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-01 09:21-0500, Paolo Bonzini:
-> On 01/02/2018 08:22, Stephen Rothwell wrote:
-> > Hi Christoffer,
-> > 
-> > On Thu, 1 Feb 2018 11:47:07 +0100 Christoffer Dall <christoffer.dall@linaro.org> wrote:
-> >>
-> >> While the suggested fix is functional it does result in some code
-> >> duplication, and the better resolution is the following:
-> > 
-> > OK, I will use that resolution form tomorrow on.
-> > 
-> > Someone needs to remember to let Linus know when the pull request is
-> > sent.
-> 
-> It should be fixed in the KVM tree before it reaches Linus (when we
-> merge a topic branch that is common between x86/pti & KVM).
+2018-02-01 18:20 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
+> Correct spelling of "coccinelle".
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> ---
 
-I wasn't sure if the pti top branch is final, so I pulled hyper-v topic
-branch that also also contains v4.15.  This and the SEV feature
-conflicts should be gone now,
 
-thanks.
+Applied to linux-kbuild/misc.  Thanks!
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
