@@ -1,201 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751529AbeBAFs2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 00:48:28 -0500
-Received: from mail-by2nam03on0068.outbound.protection.outlook.com ([104.47.42.68]:10816
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750936AbeBAFs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 00:48:26 -0500
-From: "He, Roger" <Hongbo.He@amd.com>
-To: "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] mm/swap: add function get_total_swap_pages to expose
- total_swap_pages
-Thread-Topic: [PATCH] mm/swap: add function get_total_swap_pages to expose
- total_swap_pages
-Thread-Index: AQHTmNtYoBUw/9kRPkGbswRNbnupYaONlMmAgAANf7CAAAKaAIABYvbA
-Date: Thu, 1 Feb 2018 05:48:23 +0000
-Message-ID: <MWHPR1201MB0127A0AE58A331BDBF9DD34BFDFA0@MWHPR1201MB0127.namprd12.prod.outlook.com>
-References: <1517214582-30880-1-git-send-email-Hongbo.He@amd.com>
- <9ecba5f4-3d4c-0179-bf03-f89c436cff6b@amd.com>
- <MWHPR1201MB0127760D359772D5565BA3EBFDFB0@MWHPR1201MB0127.namprd12.prod.outlook.com>
- <b7dca756-b703-ff51-196c-832e5a43c63a@amd.com>
-In-Reply-To: <b7dca756-b703-ff51-196c-832e5a43c63a@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Hongbo.He@amd.com;
-x-originating-ip: [116.228.147.241]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR1201MB2542;7:f47fvKUaz0k4+bdQkWctCgx6HggtMJXmQbFZEgzV7z3LRXMnoeUgj29GteTl/m5k+nMAF+y+Y1TmB9uW/tzmqH31MpCc7s6xH1olt/+9g+ZEGIBuk/L/FPvnHI5GppiHUMRoJjBTH/kylRRJdXJEDY711lURsMoron3DUqFb9IRQ/ucmd2eiShVWmzDaqXVfl2KE2LBa+I377RQBDLruN+u0QimlXtBdXIVU7cNTTouvcv++B6wpr/JIPwzgq42i;20:BunPMzLDk6uSIIrEvNMQ0XZZBTHOw2fb8iBu4gwhEf3YI4QtHJKUPAHECmSangsUbrqeOqi2E98ijNjKLcek9QKUTiw9BTUUrHjVlGBVk3b5bkbuWeVnvJHXRWkIqOGoqERU4T1u6Z2QVQsf+gbGur9MDas2SEpJZY8bmeEvq+8Hwv93CZruK6x23FxG5s7jqS17BmHxGnVP+7zUILAdaRtUdWmuR5U4o7R77ln6cKBw4SPl91bZ7Ec0w40er2W0
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(346002)(39860400002)(366004)(39380400002)(376002)(13464003)(189003)(199004)(14454004)(6306002)(55016002)(76176011)(97736004)(478600001)(77096007)(8936002)(7736002)(2900100001)(305945005)(9686003)(2950100002)(68736007)(72206003)(6246003)(93886005)(99286004)(86362001)(26005)(5660300001)(6506007)(53546011)(7696005)(81156014)(2501003)(229853002)(33656002)(81166006)(102836004)(8676002)(110136005)(4326008)(25786009)(105586002)(53936002)(106356001)(59450400001)(2906002)(3660700001)(6436002)(966005)(6116002)(316002)(66066001)(74316002)(54906003)(3846002)(3280700002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR1201MB2542;H:MWHPR1201MB0127.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 308df612-0126-4208-c51a-08d569376828
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:MWHPR1201MB2542;
-x-ms-traffictypediagnostic: MWHPR1201MB2542:
-x-microsoft-antispam-prvs: <MWHPR1201MB2542BFEEC26A7040F3C42324FDFA0@MWHPR1201MB2542.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(217544274631240);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231101)(2400082)(944501161)(6055026)(6041288)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:MWHPR1201MB2542;BCL:0;PCL:0;RULEID:;SRVR:MWHPR1201MB2542;
-x-forefront-prvs: 0570F1F193
-x-microsoft-antispam-message-info: 5XIVZLVfUIRkFkv3igprRIAyyiINUlqdfYv7/C6T6ttVK8UsfvbHTisveidwVbU5PEcAnt52Yfvdi1aEymcUKg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751521AbeBAGDv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 01:03:51 -0500
+Received: from smtp.infotech.no ([82.134.31.41]:35123 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750978AbeBAGDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 01:03:47 -0500
+Reply-To: dgilbert@interlog.com
+Subject: Re: scsi: sg: assorted memory corruptions
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "ben.hutchings@codethink.co.uk" <ben.hutchings@codethink.co.uk>,
+        "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
+References: <CACT4Y+b0pizvOAxtWQ-TGCRAYvHXdv79BAEaXh50W6vF8gBvkQ@mail.gmail.com>
+ <1516638634.2545.0.camel@wdc.com>
+ <097921fa-52c5-8b2b-f564-4b24d9720478@interlog.com>
+ <CACT4Y+aEx0ie3qjx6afCYV2vN7gYii0uupKWPXaNTnWUmhdHQw@mail.gmail.com>
+From: Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <c0a7ec39-e357-9db6-cf12-ff9c46259f26@interlog.com>
+Date: Thu, 1 Feb 2018 01:03:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 308df612-0126-4208-c51a-08d569376828
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2018 05:48:23.1913
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB2542
+In-Reply-To: <CACT4Y+aEx0ie3qjx6afCYV2vN7gYii0uupKWPXaNTnWUmhdHQw@mail.gmail.com>
+Content-Type: multipart/mixed;
+ boundary="------------908CB96317416B6C4B738BD1"
+Content-Language: en-CA
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w115mZo9024777
 
-	But what we could do is to rely on a fixed limit like the Intel driver does and I suggested before.
-	E.g. don't copy anything into a shmemfile when there is only x MB of swap space left.
+This is a multi-part message in MIME format.
+--------------908CB96317416B6C4B738BD1
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Here I think we can do it further, let the limit value scaling with total system memory.
-For example: total system memory * 1/2. 
-If that it will match the platform configuration better. 
+On 2018-01-30 07:22 AM, Dmitry Vyukov wrote:
+> Uh, I've answered this a week ago, but did not notice that Doug
+> dropped everybody from CC. Reporting to all.
+> 
+> On Mon, Jan 22, 2018 at 8:16 PM, Douglas Gilbert <dgilbert@interlog.com> wrote:
+>> On 2018-01-22 02:06 PM, Dmitry Vyukov wrote:
+>>>
+>>> On Mon, Jan 22, 2018 at 7:57 PM, Douglas Gilbert <dgilbert@interlog.com>
+>> Please show me the output of 'lsscsi -g' on your test machine.
+>> /dev/sg0 is often associated with /dev/sda which is often a SATA
+>> SSD (or a virtualized one) that holds the root file system.
+>> With the sg pass-through driver it is relatively easy to write
+>> random (user provided data) over the root file system which will
+>> almost certainly "root" the system.
+> 
+> 
+> This is pretty standard qemu vm started with:
+> 
+> qemu-system-x86_64 -hda wheezy.img -net user,host=10.0.2.10 -net nic
+> -nographic -kernel arch/x86/boot/bzImage -append "console=ttyS0
+> root=/dev/sda earlyprintk=serial " -m 2G -smp 4
+> 
+> # lsscsi -g
+> [0:0:0:0]    disk    ATA      QEMU HARDDISK    0     /dev/sda   /dev/sg0
 
-	Roger can you test that approach once more with your fix for the OOM issues in the page fault handler?
+With lk 4.15.0-rc9 I can run your test program (with some additions, see
+attachment) for 30 minutes against a scsi_debug simulated disk. You can
+easily replicate this test just run 'modprobe scsi_debug' and a third
+line should appear in your lsscsi output. The new device will most likely
+be /dev/sg2 .
 
-Sure. Use the limit as total ram*1/2 seems work very well. 
-No OOM although swap disk reaches full at peak for piglit test.
-I speculate this case happens but no OOM because:
+With lk 4.15.0 (release) running against a SAS SSD (SEAGATE ST200FM0073),
+the test has  been running 20 minutes and counting without problems. That
+is using a LSI HBA with the mpt3sas driver.
 
-a. run a while, swap disk be used close to 1/2* total size and but not over 1/2 * total.
-b. all subsequent swapped pages stay in system memory until no space there.
-     Then the swapped pages in shmem be flushed into swap disk. And probably OS also need some swap space.
-     For this case, it is easy to get full for swap disk.
-c. but because now free swap size < 1/2 * total, so no swap out happen  after that. 
-    And at least 1/4* system memory will left because below check in ttm_mem_global_reserve will ensure that.
-	if (zone->used_mem > limit)
-			goto out_unlock;
-    
-Thanks
-Roger(Hongbo.He)
------Original Message-----
-From: Koenig, Christian 
-Sent: Wednesday, January 31, 2018 4:13 PM
-To: He, Roger <Hongbo.He@amd.com>; Zhou, David(ChunMing) <David1.Zhou@amd.com>; dri-devel@lists.freedesktop.org
-Cc: linux-mm@kvack.org; linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/swap: add function get_total_swap_pages to expose total_swap_pages
+> [1:0:0:0]    cd/dvd  QEMU     QEMU DVD-ROM     2.0.  /dev/sr0   /dev/sg1
+> 
+> # readlink /sys/class/scsi_generic/sg0
+> ../../devices/pci0000:00/0000:00:01.1/ata1/host0/target0:0:0/0:0:0:0/scsi_generic/sg0
+> 
+> # cat /sys/class/scsi_generic/sg0/device/vendor
+> ATA
 
-Yeah, indeed. But what we could do is to rely on a fixed limit like the Intel driver does and I suggested before.
+^^^^^
+That subsystem is the culprit IMO, most likely libata.
 
-E.g. don't copy anything into a shmemfile when there is only x MB of swap space left.
+Until you can show this test failing on something other than an
+ATA disk, then I will treat this issue as closed.
 
-Roger can you test that approach once more with your fix for the OOM issues in the page fault handler?
+Doug Gilbert
 
-Thanks,
-Christian.
 
-Am 31.01.2018 um 09:08 schrieb He, Roger:
-> 	I think this patch isn't need at all. You can directly read total_swap_pages variable in TTM.
->
-> Because the variable is not exported by EXPORT_SYMBOL_GPL. So direct using will result in:
-> "WARNING: "total_swap_pages" [drivers/gpu/drm/ttm/ttm.ko] undefined!".
->
-> Thanks
-> Roger(Hongbo.He)
-> -----Original Message-----
-> From: dri-devel [mailto:dri-devel-bounces@lists.freedesktop.org] On 
-> Behalf Of Chunming Zhou
-> Sent: Wednesday, January 31, 2018 3:15 PM
-> To: He, Roger <Hongbo.He@amd.com>; dri-devel@lists.freedesktop.org
-> Cc: linux-mm@kvack.org; linux-kernel@vger.kernel.org; Koenig, 
-> Christian <Christian.Koenig@amd.com>
-> Subject: Re: [PATCH] mm/swap: add function get_total_swap_pages to 
-> expose total_swap_pages
->
-> Hi Roger,
->
-> I think this patch isn't need at all. You can directly read total_swap_pages variable in TTM. See the comment:
->
-> /* protected with swap_lock. reading in vm_swap_full() doesn't need 
-> lock */ long total_swap_pages;
->
-> there are many places using it directly, you just couldn't change its value. Reading it doesn't need lock.
->
->
-> Regards,
->
-> David Zhou
->
->
-> On 2018年01月29日 16:29, Roger He wrote:
->> ttm module needs it to determine its internal parameter setting.
+>>>> Perhaps it misbehaves when it
+>>>> gets a SCSI command in the T10 range (i.e. not vendor specific) with
+>>>> a 9 byte cdb length. As far as I'm aware T10 (and the Ansi committee
+>>>> before it) have never defined a cdb with an odd length.
+>>>>
+>>>> For those that are not aware, the sg driver is a relatively thin
+>>>> shim over the block layer, the SCSI mid-level, and a low-level
+>>>> driver which may have another kernel driver stack underneath it
+>>>> (e.g. UAS (USB attached SCSI)). The previous report from syzkaller
+>>>> on the sg driver ("scsi: memory leak in sg_start_req") has resulted
+>>>> in one accepted patch on the block layer with probably more to
+>>>> come in the same area.
+>>>>
+>>>> Testing the patch Dmitry gave (with some added error checks which
+>>>> reported no problems) with the scsi_debug driver supplying /dev/sg0
+>>>> I have not seen any problems running that test program. Again
+>>>> there might be a very slow memory leak, but if there is I don't
+>>>> believe it is in the sg driver.
+>>>
+>>>
+>>> Did you run it in a loop? First runs pass just fine for me too.
 >>
->> Signed-off-by: Roger He <Hongbo.He@amd.com>
->> ---
->>    include/linux/swap.h |  6 ++++++
->>    mm/swapfile.c        | 15 +++++++++++++++
->>    2 files changed, 21 insertions(+)
 >>
->> diff --git a/include/linux/swap.h b/include/linux/swap.h index 
->> c2b8128..708d66f 100644
->> --- a/include/linux/swap.h
->> +++ b/include/linux/swap.h
->> @@ -484,6 +484,7 @@ extern int try_to_free_swap(struct page *);
->>    struct backing_dev_info;
->>    extern int init_swap_address_space(unsigned int type, unsigned long nr_pages);
->>    extern void exit_swap_address_space(unsigned int type);
->> +extern long get_total_swap_pages(void);
->>    
->>    #else /* CONFIG_SWAP */
->>    
->> @@ -516,6 +517,11 @@ static inline void show_swap_cache_info(void)
->>    {
->>    }
->>    
->> +long get_total_swap_pages(void)
->> +{
->> +	return 0;
->> +}
->> +
->>    #define free_swap_and_cache(e) ({(is_migration_entry(e) || is_device_private_entry(e));})
->>    #define swapcache_prepare(e) ({(is_migration_entry(e) || 
->> is_device_private_entry(e));})
->>    
->> diff --git a/mm/swapfile.c b/mm/swapfile.c index 3074b02..a0062eb 
->> 100644
->> --- a/mm/swapfile.c
->> +++ b/mm/swapfile.c
->> @@ -98,6 +98,21 @@ static atomic_t proc_poll_event = ATOMIC_INIT(0);
->>    
->>    atomic_t nr_rotate_swap = ATOMIC_INIT(0);
->>    
->> +/*
->> + * expose this value for others use
->> + */
->> +long get_total_swap_pages(void)
->> +{
->> +	long ret;
->> +
->> +	spin_lock(&swap_lock);
->> +	ret = total_swap_pages;
->> +	spin_unlock(&swap_lock);
->> +
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(get_total_swap_pages);
->> +
->>    static inline unsigned char swap_count(unsigned char ent)
->>    {
->>    	return ent & ~SWAP_HAS_CACHE;	/* may include SWAP_HAS_CONT flag */
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>> Is thirty minutes long enough ??
+> 
+> 
+> Yes, it certainly should be enough. Here is what I see:
+> 
+> 
+> # while ./a.out; do echo RUN; done
+> RUN
+> RUN
+> RUN
+> RUN
+> RUN
+> RUN
+> RUN
+> [  371.977266] ==================================================================
+> [  371.980158] BUG: KASAN: double-free or invalid-free in
+> __put_task_struct+0x1e7/0x5c0
+> ....
+> 
+> 
+> Here is full execution trace of the write call if that will be of any help:
+> https://gist.githubusercontent.com/dvyukov/14ae64c3e753dedf9ab2608676ecf0b9/raw/9803d52bb1e317a9228e362236d042aaf0fa9d69/gistfile1.txt
+> 
+> This is on upstream commit 0d665e7b109d512b7cae3ccef6e8654714887844.
+> Also attaching my config just in case.
+> 
+
+
+--------------908CB96317416B6C4B738BD1
+Content-Type: text/x-csrc;
+ name="sg_syzk_next_cbd.c"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="sg_syzk_next_cbd.c"
+
+// autogenerated by syzkaller (http://github.com/google/syzkaller)
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+
+#define SG_NEXT_CMD_LEN 0x2283
+
+static const char * usage = "sg_syzk_next_cdb <sg_dev>    # (e.g. '/dev/sg3') ";
+
+int main(int argc, const char * argv[])
+{
+  int res, err;
+  int fd;
+  long len = 9;
+  char* p = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x47\x00\x00\x24\x00"
+            "\x00\x00\x00\x00\x00\x1c\xbb\xac\x14\x00\xaa\xe0\x00\x00\x01"
+            "\x00\x07\x07\x00\x00\x59\x08\x00\x00\x00\x80\xfe\x7f\x00\x00\x01";
+    const char * dev_name;
+    struct stat a_stat;
+
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s\n", usage);
+        return 1;
+    }
+    dev_name = argv[1];
+    if (0 != stat(dev_name, &a_stat)) {
+        err = errno;
+        fprintf(stderr, "Unable to stat %s, err: %s\n", dev_name,
+                strerror(err));
+        return 1;
+    }
+    if ((a_stat.st_mode & S_IFMT) != S_IFCHR) {
+        fprintf(stderr, "Expected %s, to be sg device\n", dev_name);
+        return 1;
+    }
+  fd = open(dev_name, O_RDWR);
+  if (fd < 0) {
+	err = errno;
+	fprintf(stderr, "open(%s) failed: %s [%d]\n", dev_name, strerror(err),
+		err);
+  }
+  res = ioctl(fd, SG_NEXT_CMD_LEN, &len);
+  if (res < 0) {
+	err = errno;
+	fprintf(stderr, "ioctl failed: %s [%d]\n", strerror(err), err);
+  }
+  res = write(fd, p, 46);
+  if (res < 0) {
+	err = errno;
+	fprintf(stderr, "write failed: %s [%d]\n", strerror(err), err);
+  }
+  return 0;
+}
+
+--------------908CB96317416B6C4B738BD1--
