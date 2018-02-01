@@ -1,29 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752119AbeBAKW1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 05:22:27 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33012 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751936AbeBAKWI (ORCPT
+        id S1752156AbeBAKXJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 05:23:09 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:60164 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751766AbeBAKXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 05:22:08 -0500
+        Thu, 1 Feb 2018 05:23:06 -0500
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Christopher Li <sparse@chrisli.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-crypto@vger.kernel.org, linux-sparse@vger.kernel.org,
+To: "Darrick J . Wong" <darrick.wong@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-xfs@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 2/3] compiler-gcc.h: __nostackprotector needs gcc-4.4 and up
-Date: Thu,  1 Feb 2018 11:21:59 +0100
-Message-Id: <1517480520-4465-2-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH] xfs: Add missing braces around xfs_scrub_agfl_info initializer
+Date: Thu,  1 Feb 2018 11:23:04 +0100
+Message-Id: <1517480584-4588-1-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517480520-4465-1-git-send-email-geert@linux-m68k.org>
-References: <1517480520-4465-1-git-send-email-geert@linux-m68k.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -31,41 +23,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gcc versions before 4.4 do not recognize the __optimize__ compiler
-attribute:
+With gcc-4.1.2:
 
-    warning: ‘__optimize__’ attribute directive ignored
+    fs/xfs/scrub/agheader.c: In function ‘xfs_scrub_agfl’:
+    fs/xfs/scrub/agheader.c:770: warning: missing braces around initializer
+    fs/xfs/scrub/agheader.c:770: warning: (near initialization for ‘sai.oinfo’)
 
-Fixes: 7375ae3a0b79ea07 ("compiler-gcc.h: Introduce __nostackprotector function attribute")
+The first member of struct xfs_scrub_agfl_info is no longer an integral
+type, but a struct.  Add the missing curly braces to fix this.
+
+Fixes: d852657ccfc0e455 ("xfs: cross-reference reverse-mapping btree")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
-Can anyone please verify this?
-Apparently __nostackprotector is used on x86 only, which is usually
-served by modern compilers.
----
- include/linux/compiler-gcc.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/xfs/scrub/agheader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 0a278a527944ad2f..73bc63e0a1c4b664 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -167,8 +167,6 @@
- 
- #if GCC_VERSION >= 40100
- # define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
--
--#define __nostackprotector	__attribute__((__optimize__("no-stack-protector")))
- #endif
- 
- #if GCC_VERSION >= 40300
-@@ -198,6 +196,7 @@
- 
- #if GCC_VERSION >= 40400
- #define __optimize(level)	__attribute__((__optimize__(level)))
-+#define __nostackprotector	__optimize("no-stack-protector")
- #endif /* GCC_VERSION >= 40400 */
- 
- #if GCC_VERSION >= 40500
+diff --git a/fs/xfs/scrub/agheader.c b/fs/xfs/scrub/agheader.c
+index fd975524f4603387..9bcfdb0d1da379f5 100644
+--- a/fs/xfs/scrub/agheader.c
++++ b/fs/xfs/scrub/agheader.c
+@@ -767,7 +767,7 @@ int
+ xfs_scrub_agfl(
+ 	struct xfs_scrub_context	*sc)
+ {
+-	struct xfs_scrub_agfl_info	sai = { 0 };
++	struct xfs_scrub_agfl_info	sai = { { 0 } };
+ 	struct xfs_agf			*agf;
+ 	xfs_agnumber_t			agno;
+ 	unsigned int			agflcount;
 -- 
 2.7.4
