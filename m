@@ -1,247 +1,117 @@
-Return-Path: <JOLLYS@xilinx.com>
-X-Google-Smtp-Source: AH8x226AgPIa5FdM8G0tPwbzlNTIgOOshNKYVY9hCtOiCBgSOW4nSvZNSCm1wCiOBIxFfBK0m1N6
-ARC-Seal: i=1; a=rsa-sha256; t=1517529250; cv=none;
-        d=google.com; s=arc-20160816;
-        b=R4Ef8xSMZ6pgLuqc03ggUf06TnyZNB/UdKas8RYKETbnqJk4ss9da2ghdb9c/q2rJo
-         M1PqW3BtfHdAkEH3pPaUjwTWaWB2r+FS55O5HYBQj/6se91uZ4N2aHqNnbDaeqDTlGal
-         LzTgXaBuurNMAbai0RBmmIU08q7HWkJJ5+G9P7NRGx1kFqAwzD/faCJtDNedZRikWZTN
-         S4IbbkSmj++99ukco3VpfX1m8dgcGfZWeqE7qmbfS6MsG1GTG9pvnyFqJtLnFqEUxlgI
-         itRiayH7sFeiC1uftgrcxZL5gMcvNH9d2QpgyV0I+SvK37qvcgw7aB6Op/uhI/9rJDc3
-         pqpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
-         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
-         :references:message-id:date:thread-index:thread-topic:subject:cc:to
-         :from:dkim-signature:arc-authentication-results;
-        bh=LuwjUKXDqbjs6RLgf92NM1Kf4fFw1YzvyY5eekELUk0=;
-        b=JTHUnmPxNUHQx4f4Y7mKGR2YXqjyJ7AsD03tiqU2YQFyTumMDBdsMaQ13ZnSLIdzNK
-         kSB5QIyvU598PKiddDfHGXx8R8eEL8tOXs4qIftvJJ/JTuq3r7OZGpZdvAYC0b7yAruR
-         boOa9br1GRiaQHqRmKKhIVTeGTrr8aE0i1bokJB0qMb27SlOAMFUfAS1i1tWnW8qzULx
-         vnJiFZbz3Io/UzmH8GwKZr0khMezlgEVGu2sycpUkHeoZxjxNF/JeIyKK6fi7Yj1gz0k
-         Q7FSutF6p9NjT8i37FctTdEjKcEkJmpUmJL4N3ikKro3o6cdaZKlGDEci3Agj5Mn9yjY
-         YpiA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@xilinx.onmicrosoft.com header.s=selector1-xilinx-com header.b=1a4l7g8y;
-       spf=pass (google.com: domain of jollys@xilinx.com designates 104.47.33.57 as permitted sender) smtp.mailfrom=JOLLYS@xilinx.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@xilinx.onmicrosoft.com header.s=selector1-xilinx-com header.b=1a4l7g8y;
-       spf=pass (google.com: domain of jollys@xilinx.com designates 104.47.33.57 as permitted sender) smtp.mailfrom=JOLLYS@xilinx.com
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Mark Rutland <mark.rutland@arm.com>
-CC: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-	"mingo@kernel.org" <mingo@kernel.org>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "matt@codeblueprint.co.uk"
-	<matt@codeblueprint.co.uk>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>, "keescook@chromium.org"
-	<keescook@chromium.org>, "dmitry.torokhov@gmail.com"
-	<dmitry.torokhov@gmail.com>, "michal.simek@xilinx.com"
-	<michal.simek@xilinx.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>
-Subject: RE: [PATCH v3 2/4] drivers: firmware: xilinx: Add ZynqMP firmware
- driver
-Thread-Topic: [PATCH v3 2/4] drivers: firmware: xilinx: Add ZynqMP firmware
- driver
-Thread-Index: AQHTlWou2XFDSgiaBEabjrwcvuQZWKOOVW8AgABxHPCAAJ7JgIAA3v1w
-Date: Thu, 1 Feb 2018 23:54:05 +0000
-Message-ID: <DM2PR0201MB076775551226A17AC914DD6EB8FA0@DM2PR0201MB0767.namprd02.prod.outlook.com>
-References: <1516836074-4149-1-git-send-email-jollys@xilinx.com>
- <1516836074-4149-3-git-send-email-jollys@xilinx.com>
- <20180131182012.oshjmvahetaizlbu@lakrids.cambridge.arm.com>
- <CY1PR0201MB0764D88D409A35B8379323B4B8FA0@CY1PR0201MB0764.namprd02.prod.outlook.com>
- <20180201103321.fftn37mgzbk6oltl@lakrids.cambridge.arm.com>
-In-Reply-To: <20180201103321.fftn37mgzbk6oltl@lakrids.cambridge.arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-x-originating-ip: [149.199.62.254]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM2PR0201MB1040;7:t65Ckh3ZwT29XjlbqzCPU4RmYRLGoziVViKJjI9tPKkm8lqesZVZzxKLwb3QfnlykWfRq1RUy7Kty5VFTpSBdiZLR7hSA/O9d03Q6F8xDndeCi1fE7RdMVk9zUferMVP+QG/RZSMBQ6Q90is639Wlw4QRkoqRRaaTWnSgJkGWEKwInp2DjILHNethc8mG6yqvdzyltJRqHVuVYxbsf2MDFmBHDURqOZCGNjswQfG921F3lg/iOCI33Hz/47Iz9TX
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(346002)(396003)(366004)(376002)(51914003)(189003)(199004)(37524003)(13464003)(9686003)(6916009)(81166006)(3280700002)(6306002)(99286004)(316002)(97736004)(7736002)(5250100002)(8936002)(54906003)(6436002)(105586002)(68736007)(93886005)(2906002)(229853002)(186003)(8676002)(107886003)(74316002)(106356001)(14454004)(7696005)(76176011)(26005)(478600001)(25786009)(4326008)(72206003)(6506007)(39060400002)(53546011)(66066001)(53936002)(81156014)(59450400001)(3846002)(7416002)(5660300001)(33656002)(2950100002)(305945005)(86362001)(6116002)(3660700001)(966005)(102836004)(6246003)(2900100001)(55016002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR0201MB1040;H:DM2PR0201MB0767.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: afc314d4-eb76-4ae7-7f23-08d569cf13cb
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:DM2PR0201MB1040;
-x-ms-traffictypediagnostic: DM2PR0201MB1040:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=JOLLYS@xilinx.com;
-x-microsoft-antispam-prvs: <DM2PR0201MB104047EB2FD2C5D205E2A532B8FA0@DM2PR0201MB1040.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(85827821059158)(258649278758335)(192813158149592);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(6041288)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM2PR0201MB1040;BCL:0;PCL:0;RULEID:;SRVR:DM2PR0201MB1040;
-x-forefront-prvs: 0570F1F193
-x-microsoft-antispam-message-info: STXs+CWN4ErCbMIGUnkh0kSOtRcCu3dhIwTY+D957I/1AWJBD9arLlXGjkKJzwfsJPmSOL4vyRv/yczEwJArbQ==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: afc314d4-eb76-4ae7-7f23-08d569cf13cb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2018 23:54:05.2480
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR0201MB1040
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3617261-1517488844-2-8691492486265954517
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517488843; b=HeGh0+TivY0DkWgZoGkDqHQsHSC6KvqqqtnsOfPh1dYvGq0
+    QTiRj0fKEmod4lr6D88W8sMvr+KgSBukUXS4aETcxnS+IuQNXyhTuc7qtU6A7XnU
+    Ho+VSvmaM7ZpWXGFC1UqGKuAZ6sZj55MHENj0qjB7V+ZGzpEQDSfpDrQXtRDKQnL
+    wsBdjdKkUCZI0LimHqIaPJ4u0ymYy87/tqlC7IKs5Y0LZqGYVczwDdpc+UvIhgO1
+    qXa8xU4uJqLSUQggaZPRdflYGHErQEKGWHXgMK0xdAB1eXI7OTWWKaI1jlDoYnwr
+    PADbp2pdzdSdtR7KW1I6v7mLAr7AcSpIAGIEnKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1517488843; bh=HUJFbB2uQYZ7Nus1r1m2ud5hqr
+    kGK5JBhjIdQBpu+vI=; b=VfZJwpCFOG1x8+tzT2dMM+e3duitRM6QohJ5Y5BuWW
+    obhmA8OS7V5p4KvNMKpNVd2+ffx3cOBjTqbQU55vxvIRjY1v1HX/IlsNStXzC92f
+    S6HbVV0YExcw894tK+WRmj6+JVC8j8SUYhpMHph8yA4id+kBOyoKFOsZb7ynCpwh
+    PGwFiXiFMaxVUhd2Xzi9Yz3jvpp9BuL6MaXZEstCtdrQDiDt/PcRspk7vXQCljJz
+    eJ7uU7oogR0vrZQ8CvY2aQgsApTM1u6y2rx0qA2vrl5lRP22tJTzw7w9hY2Ale5m
+    jQIe2kWUq7IDEmUMGp7g7aizI5zA+ZINO5BnU5sQrXLQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752263AbeBAMk0 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Feb 2018 07:40:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35954 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752516AbeBAMkW (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 1 Feb 2018 07:40:22 -0500
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+Cc: boris.ostrovsky@oracle.com, Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] x86/xen: init %gs very early to avoid page faults with stack protector
+Date: Thu,  1 Feb 2018 13:40:19 +0100
+Message-Id: <20180201124019.11693-1-jgross@suse.com>
+X-Mailer: git-send-email 2.13.6
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590517939735530008?=
-X-GMAIL-MSGID: =?utf-8?q?1591244750876892381?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Mark,
+When running as Xen pv guest %gs is initialized some time after
+C code is started. Depending on stack protector usage this might be
+too late, resulting in page faults.
 
-> -----Original Message-----
-> From: Mark Rutland [mailto:mark.rutland@arm.com]
-> Sent: Thursday, February 01, 2018 2:33 AM
-> To: Jolly Shah <JOLLYS@xilinx.com>
-> Cc: ard.biesheuvel@linaro.org; mingo@kernel.org;
-> gregkh@linuxfoundation.org; matt@codeblueprint.co.uk;
-> sudeep.holla@arm.com; hkallweit1@gmail.com; keescook@chromium.org;
-> dmitry.torokhov@gmail.com; michal.simek@xilinx.com; robh+dt@kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; Rajan Vaja <RAJANV@xilinx.com>
-> Subject: Re: [PATCH v3 2/4] drivers: firmware: xilinx: Add ZynqMP firmwar=
-e
-> driver
->=20
-> On Thu, Feb 01, 2018 at 01:23:48AM +0000, Jolly Shah wrote:
-> > Hi Mark,
-> > Thanks for the review,
-> >
-> > > -----Original Message-----
-> > > From: Mark Rutland [mailto:mark.rutland@arm.com]
-> > > Sent: Wednesday, January 31, 2018 10:20 AM
-> > > To: Jolly Shah <JOLLYS@xilinx.com>
-> > > Cc: ard.biesheuvel@linaro.org; mingo@kernel.org;
-> > > gregkh@linuxfoundation.org; matt@codeblueprint.co.uk;
-> > > sudeep.holla@arm.com; hkallweit1@gmail.com; keescook@chromium.org;
-> > > dmitry.torokhov@gmail.com; michal.simek@xilinx.com;
-> > > robh+dt@kernel.org; linux-arm-kernel@lists.infradead.org;
-> > > linux-kernel@vger.kernel.org; devicetree@vger.kernel.org; Jolly Shah
-> > > <JOLLYS@xilinx.com>; Rajan Vaja <RAJANV@xilinx.com>
-> > > Subject: Re: [PATCH v3 2/4] drivers: firmware: xilinx: Add ZynqMP
-> > > firmware driver
-> > >
-> > > On Wed, Jan 24, 2018 at 03:21:12PM -0800, Jolly Shah wrote:
-> > > > This patch is adding communication layer with firmware.
-> > > > Firmware driver provides an interface to firmware APIs.
-> > > > Interface APIs can be used by any driver to communicate to
-> > > > PMUFW(Platform Management Unit). All requests go through ATF.
-> > >
-> > > > +/**
-> > > > + * zynqmp_pm_set_wakeup_source - PM call to specify the wakeup
-> source
-> > > > + *					while suspended
-> > > > + * @target:	Node ID of the targeted PU or subsystem
-> > > > + * @wakeup_node:Node ID of the wakeup peripheral
-> > > > + * @enable:	Enable or disable the specified peripheral as wake
-> source
-> > > > + *
-> > > > + * Return:	Returns status, either success or error+reason
-> > > > + */
-> > > > +static int zynqmp_pm_set_wakeup_source(const u32 target,
-> > > > +				       const u32 wakeup_node,
-> > > > +				       const u32 enable)
-> > > > +{
-> > > > +	return invoke_pm_fn(PM_SET_WAKEUP_SOURCE, target,
-> > > > +			    wakeup_node, enable, 0, NULL); }
-> > >
-> > > I see many functions take a "Node ID" parameter, but these don't
-> > > appear to be in any DT binding, and drivers (other than the debugfs d=
-river)
-> aren't using them.
-> > >
-> > > What's the plan for making use of these? Where are the node IDs
-> > > going to come from in practice?
-> > >
-> > Node ids are defined in firmware.h. Node id refers to targeted
-> PU/subsystem/peripheral for required action.
->=20
-> Ok. What I was asking was how a node id would be associated with particul=
-ar
-> peripheral instances (which are presumably going to be nodes in the DT).
->=20
-> e.g. if I have
->=20
-> 	device@foo {
-> 		compatible =3D "xlnx,some-device";
-> 		reg =3D <0xf00 0x100>;
-> 		...
-> 	};
->=20
-> ... how does the kernel know which node id(s) the device is associated wi=
-th?
->=20
-> I assume that those will need something like a xlnx,eemi-node-id property=
-.
->=20
-> [...]
->=20
+So setup %gs and MSR_GS_BASE in assembly code already.
 
-ZynqMP Power domain driver has node-ids defines under pd-id properties.(RFC=
- patch below)
-https://patchwork.kernel.org/patch/10150683/
+Cc: stable@vger.kernel.org
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/xen/xen-head.S | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Individual driver can have phandle to it.
-For example,
-power-domains {
-                pd_xx: pd_xx {
-                        #power-domain-cells =3D <0x0>;
-                        pd-id =3D <0x7>;
-                };
-                pd_yy: pd_yy {
-                        #power-domain-cells =3D <0x0>;
-                        pd-id =3D <0xf>;
-                };
-        };
-
-device: dev@ffe00000 {
-		compatible =3D "dev";
-		reg =3D <0x0 0xFFE00000 0x0 0x20000>;
-		pd-handle =3D <&pd_xx>;
-};
-
-
-> > > > +/**
-> > > > + * zynqmp_pm_pinctrl_request - Request Pin from firmware
-> > > > + * @pin:	Pin number to request
-> > > > + *
-> > >
-> > > No DT binding for the pinctrl bits?
-> > >
-> > > [...]
-> > It doesn't require any bindings. Calling drivers will have DT binding f=
-or pins they
-> use.
->=20
-> For those drivers to be able to refer to the EEMI FW as a pin controller,=
- we'll
-> need a pinctrl node in the DT (and hence a binding).
->=20
-
-This is just an interface driver. There is a separate pinctrl and clock dri=
-ver who will use these APIs to communicate with PMU(Platform Management Uni=
-t). Those driver has required DT nodes and bindings to use these APIs.
-For example, Clock driver bindings are mentioned below:
-https://patchwork.kernel.org/patch/10150703/
-
-
-> > > > +/**
-> > > > + * zynqmp_pm_clock_enable - Enable the clock for given id
-> > > > + * @clock_id:	ID of the clock to be enabled
-> > > > + *
-> > >
-> > > Likewise for the clocks?
-> > >
-> > It doesn't require bindings too.
->=20
-> As with pinctrl, for drivers to be able to refer to these clocks, we'll n=
-eed a clock
-> node in the DT (and hence a binding).
->=20
-> Thanks,
-> Mark.
+diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
+index 497cc55a0c16..96f26e026783 100644
+--- a/arch/x86/xen/xen-head.S
++++ b/arch/x86/xen/xen-head.S
+@@ -9,7 +9,9 @@
+ 
+ #include <asm/boot.h>
+ #include <asm/asm.h>
++#include <asm/msr.h>
+ #include <asm/page_types.h>
++#include <asm/percpu.h>
+ #include <asm/unwind_hints.h>
+ 
+ #include <xen/interface/elfnote.h>
+@@ -35,6 +37,20 @@ ENTRY(startup_xen)
+ 	mov %_ASM_SI, xen_start_info
+ 	mov $init_thread_union+THREAD_SIZE, %_ASM_SP
+ 
++#ifdef CONFIG_X86_64
++	/* Set up %gs.
++	 *
++	 * The base of %gs always points to the bottom of the irqstack
++	 * union.  If the stack protector canary is enabled, it is
++	 * located at %gs:40.  Note that, on SMP, the boot cpu uses
++	 * init data section till per cpu areas are set up.
++	 */
++	movl	$MSR_GS_BASE,%ecx
++	movq	$INIT_PER_CPU_VAR(irq_stack_union),%rax
++	cdq
++	wrmsr
++#endif
++
+ 	jmp xen_start_kernel
+ END(startup_xen)
+ 	__FINIT
+-- 
+2.13.6
