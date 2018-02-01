@@ -1,94 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752803AbeBANYM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 08:24:12 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50214 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752463AbeBANYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 08:24:11 -0500
-Subject: Re: [PATCH] irqchip/gic-v3: Use wmb() instead of smb_wmb() in
- gic_raise_softirq()
-To: shankerd@codeaurora.org, Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Sean Campbell <scampbel@codeaurora.org>,
-        Thomas Speier <tspeier@codeaurora.org>
-References: <1517443422-30693-1-git-send-email-shankerd@codeaurora.org>
- <20180201103337.GA13705@arm.com>
- <88d418ff-db83-c690-618e-69df3e3bb272@codeaurora.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <5cb5eccf-8edd-bdcc-844a-56bd94355747@arm.com>
-Date: Thu, 1 Feb 2018 13:24:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752807AbeBAN3m (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 08:29:42 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:54572 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751467AbeBAN3l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 08:29:41 -0500
+Date: Thu, 1 Feb 2018 14:29:09 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stafford Horne <shorne@gmail.com>
+Cc: Will Deacon <will.deacon@arm.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: asm-generic: Disallow no-op mb() for SMP systems
+Message-ID: <20180201132909.GW2249@hirez.programming.kicks-ass.net>
+References: <20180131130034.GR2269@hirez.programming.kicks-ass.net>
+ <20180131131737.GA5097@arm.com>
+ <20180131132610.GT2269@hirez.programming.kicks-ass.net>
+ <20180201122750.GE30895@lianli.shorne-pla.net>
 MIME-Version: 1.0
-In-Reply-To: <88d418ff-db83-c690-618e-69df3e3bb272@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180201122750.GE30895@lianli.shorne-pla.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/18 12:55, Shanker Donthineni wrote:
-> Hi Will, Thanks for your quick reply.
+On Thu, Feb 01, 2018 at 09:27:50PM +0900, Stafford Horne wrote:
+> I tried to clarify some of this in the spec v1.2 [0] which help formalize some of
+> the techniques we used for the SMP implementation.  Its probably not perfect,
+> but I added a section "10. Multicore support" and tried to clarify some things
+> in section 7 on Atomicity.  But it seems I dont cover exactly what are are
+> mentioning here.  In general:
 > 
-> On 02/01/2018 04:33 AM, Will Deacon wrote:
->> Hi Shanker,
->>
->> On Wed, Jan 31, 2018 at 06:03:42PM -0600, Shanker Donthineni wrote:
->>> A DMB instruction can be used to ensure the relative order of only
->>> memory accesses before and after the barrier. Since writes to system
->>> registers are not memory operations, barrier DMB is not sufficient
->>> for observability of memory accesses that occur before ICC_SGI1R_EL1
->>> writes.
->>>
->>> A DSB instruction ensures that no instructions that appear in program
->>> order after the DSB instruction, can execute until the DSB instruction
->>> has completed.
->>>
->>> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
->>> ---
->>>  drivers/irqchip/irq-gic-v3.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
->>> index b56c3e2..980ae8e 100644
->>> --- a/drivers/irqchip/irq-gic-v3.c
->>> +++ b/drivers/irqchip/irq-gic-v3.c
->>> @@ -688,7 +688,7 @@ static void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
->>>  	 * Ensure that stores to Normal memory are visible to the
->>>  	 * other CPUs before issuing the IPI.
->>>  	 */
->>> -	smp_wmb();
->>> +	wmb();
->>
->> I think this is the right thing to do and the smp_wmb() was accidentally
->> pulled in here as a copy-paste from the GICv2 driver where it is sufficient
->> in practice.
->>
->> Did you spot this by code inspection, or did the DMB actually cause
->> observable failures? (trying to figure out whether or not this need to go
->> to -stable).
->>
+>   1 Secondary cores have memory snooping enabled meaning that any write to a
+>     cached address will cause the cache line to be invalidated.
+>   2 l.swa (store atomic word) implies a store buffer flush.
+
+What about l.lwa? Can that observe 'old' values, or rather, miss values
+stuck in a remote store buffer?
+
+This will then cause the first l.swa to fail, which, per the above,
+would then sync things up? Which means you get that one extra
+merry-go-round.
+
+>   3 l.msync is used to flush the store buffer
 > 
-> We've inspected the code because kernel was causing failures in scheduler/IPI_RESCHDULE.
-> After some time of debugging, we landed in GIC driver and found that the issue was due
-> to the DMB barrier. 
-
-OK. I've applied this with a cc: stable and Will's Ack.
-
-> Side note, we're also missing synchronization barriers in GIC driver after writing some
-> of the ICC_XXX system registers. I'm planning to post those changes for comments.
+> Also, during the IPI controller review [1] Marc Z asked many similar questions.
+> I believe he was ok in the end.
 > 
-> e.g: gic_write_sgi1r(val) and gic_write_eoir(irqnr);
+> Anyway,
+> Thanks for thanks for spotting the issue here.  For some reason I remember we
+> did have an l.msync for our mb().  Let me think about and test out this patch
+> (and the fix to actually define mb) to see if anything comes up.
+> 
+> Also, I haven't seen any implementations that use WOM.  Stefan might know better.
 
-Thanks,
+So if the strong model has a store buffer, as I think the above says,
+then it is _NOT_ correct for l.msync to be treated as a NOP, it _must_
+flush the store buffer.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+At which point I think your 'strong' model is basically TSO. So it would
+be very good to get that spelled out somewhere.
