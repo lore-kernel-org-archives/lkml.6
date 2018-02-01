@@ -1,47 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752432AbeBAL41 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 06:56:27 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37901 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751916AbeBAL4Z (ORCPT
+        id S1752476AbeBAL4r (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 06:56:47 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:31155 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752385AbeBAL4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 06:56:25 -0500
-X-Google-Smtp-Source: AH8x227zZnmjrHSY6Tr5pDUpD1ZLgGfDZiTv39AKeGq852Is0/Mg8zRey/DWxhxuS3eSiT18orMNuw==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jbenc@redhat.com, nicolas.dichtel@6wind.com,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH net] rtnetlink: remove check for IFLA_IF_NETNSID
-Date: Thu,  1 Feb 2018 12:56:00 +0100
-Message-Id: <20180201115600.29334-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.14.1
+        Thu, 1 Feb 2018 06:56:44 -0500
+Subject: Re: [PATCH v6 14/41] clk: davinci: Add platform information for TI
+ DM365 PSC
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-15-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <9da9db42-a43a-0627-6b9f-b63c6da187a1@ti.com>
+Date: Thu, 1 Feb 2018 17:25:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <1516468460-4908-15-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RTM_NEWLINK supports the IFLA_IF_NETNSID property since
-5bb8ed075428b71492734af66230aa0c07fcc515 so we should not error out
-when it is passed.
+On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+> This adds platform-specific declarations for the PSC clocks on TI
+> DM365 based systems.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- net/core/rtnetlink.c | 3 ---
- 1 file changed, 3 deletions(-)
+Apart from comment given on 13/41 that applies here:
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 204297dffd2a..56af8e41abfc 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2802,9 +2802,6 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	if (err < 0)
- 		return err;
- 
--	if (tb[IFLA_IF_NETNSID])
--		return -EOPNOTSUPP;
--
- 	if (tb[IFLA_IFNAME])
- 		nla_strlcpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
- 	else
--- 
-2.14.1
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+
+Thanks,
+Sekhar
