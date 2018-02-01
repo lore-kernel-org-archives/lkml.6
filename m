@@ -1,118 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751644AbeBAVGf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 16:06:35 -0500
-Received: from mail-vk0-f52.google.com ([209.85.213.52]:37397 "EHLO
-        mail-vk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751012AbeBAVG0 (ORCPT
+        id S1751749AbeBAVJB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 16:09:01 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:59026 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751557AbeBAVIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 16:06:26 -0500
-X-Google-Smtp-Source: AH8x22520z/rXN4rCpOYAayzf6woJaoyQpzqkfwMiDDt4+2vWPyQUsNK5uNtauno1MjAPL64jbcqyQIcv1Z/yPUDPUc=
+        Thu, 1 Feb 2018 16:08:55 -0500
+Subject: Re: [PATCH] xen: fix frontend driver disconnected from xenbus on
+ removal
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc: jgross@suse.com, otubo@redhat.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1517475439-10541-1-git-send-email-andr2000@gmail.com>
+ <1517475439-10541-2-git-send-email-andr2000@gmail.com>
+ <3943477e-7768-ceb3-38a3-3a20cb0e3082@oracle.com>
+ <05dc798a-852a-aca4-8098-862ee566e1d8@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <e3ea4765-ba89-d09c-f581-158e4d488b4d@oracle.com>
+Date: Thu, 1 Feb 2018 16:09:25 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180201134829.GL21609@dhcp22.suse.cz>
-References: <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
- <20180126140415.GD5027@dhcp22.suse.cz> <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
- <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com> <20180129132235.GE21609@dhcp22.suse.cz>
- <87k1w081e7.fsf@concordia.ellerman.id.au> <20180130094205.GS21609@dhcp22.suse.cz>
- <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com> <20180131131937.GA6740@dhcp22.suse.cz>
- <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com> <20180201134829.GL21609@dhcp22.suse.cz>
-From: Kees Cook <keescook@google.com>
-Date: Fri, 2 Feb 2018 08:06:25 +1100
-Message-ID: <CAGXu5jJMQ0HK2NeRw9VmZmOkuaw2g8tAf2yZ-OxfwZBTXxuZMw@mail.gmail.com>
-Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux-Next <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <05dc798a-852a-aca4-8098-862ee566e1d8@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802010261
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 2, 2018 at 12:48 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Thu 01-02-18 08:43:34, Anshuman Khandual wrote:
-> [...]
->> $dmesg | grep elf_brk
->> [    9.571192] elf_brk 10030328 elf_bss 10030000
->>
->> static int load_elf_binary(struct linux_binprm *bprm)
->> ---------------------
->>
->>       if (unlikely (elf_brk > elf_bss)) {
->>                       unsigned long nbyte;
->>
->>                       /* There was a PT_LOAD segment with p_memsz > p_filesz
->>                          before this one. Map anonymous pages, if needed,
->>                          and clear the area.  */
->>                       retval = set_brk(elf_bss + load_bias,
->>                                        elf_brk + load_bias,
->>                                        bss_prot);
->>
->>
->> ---------------------
+On 02/01/2018 03:24 PM, Oleksandr Andrushchenko wrote:
 >
-> Just a blind shot... Does the following make any difference?
-> ---
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 021fe78998ea..04b24d00c911 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -895,7 +895,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->            the correct location in memory. */
->         for(i = 0, elf_ppnt = elf_phdata;
->             i < loc->elf_ex.e_phnum; i++, elf_ppnt++) {
-> -               int elf_prot = 0, elf_flags;
-> +               int elf_prot = 0, elf_flags, elf_fixed = MAP_FIXED_NOREPLACE;
->                 unsigned long k, vaddr;
->                 unsigned long total_size = 0;
 >
-> @@ -927,6 +927,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->                                          */
->                                 }
->                         }
-> +                       elf_fixed = MAP_FIXED;
->                 }
+> On 02/01/2018 10:08 PM, Boris Ostrovsky wrote:
+>> On 02/01/2018 03:57 AM, Oleksandr Andrushchenko wrote:
+>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>>
+>>> Current xenbus frontend driver removal flow first disconnects
+>>> the driver from xenbus and then calls driver's remove callback.
+>>> This makes it impossible for the driver to listen to backend's
+>>> state changes and synchronize the removal procedure.
+>>>
+>>> Fix this by removing other end XenBus watches after the
+>>> driver's remove callback is called.
+>>>
+>>> Signed-off-by: Oleksandr Andrushchenko
+>>> <oleksandr_andrushchenko@epam.com>
+>>> ---
+>>>   drivers/xen/xenbus/xenbus_probe.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/xen/xenbus/xenbus_probe.c
+>>> b/drivers/xen/xenbus/xenbus_probe.c
+>>> index 74888cacd0b0..9c63cd3f416b 100644
+>>> --- a/drivers/xen/xenbus/xenbus_probe.c
+>>> +++ b/drivers/xen/xenbus/xenbus_probe.c
+>>> @@ -258,11 +258,11 @@ int xenbus_dev_remove(struct device *_dev)
+>>>         DPRINTK("%s", dev->nodename);
+>>>   -    free_otherend_watch(dev);
+>>> -
+>>>       if (drv->remove)
+>>>           drv->remove(dev);
+>>
+>> Is it possible for the watch to fire here?
+> Indeed. Yes, It is possible, so we have to somehow protect the removed
+> driver from being called, e.g. the driver cleans up in its .remove,
+> but watch may still trigger .otherend_changed callback.
+> Is this what you mean?
+
+(-David who is not at Citrix anymore)
+
+Exactly.
+
+That's why otherend cleanup is split into free_otherend_watch() and
+free_otherend_details().
+
+
+> If so, do you have something neat on your mind how to solve this?
+
+Not necessarily "neat" but perhaps you can use
+xenbus_read_otherend_details() in both front and back ends. After all,
+IIUIC you are doing something synchronously so you don't really need a
+watch.
+
+-boris
+
 >
->                 if (elf_ppnt->p_flags & PF_R)
-> @@ -944,7 +945,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->                  * the ET_DYN load_addr calculations, proceed normally.
->                  */
->                 if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
-> -                       elf_flags |= MAP_FIXED_NOREPLACE;
-> +                       elf_flags |= elf_fixed;
->                 } else if (loc->elf_ex.e_type == ET_DYN) {
->                         /*
->                          * This logic is run once for the first LOAD Program
-> @@ -980,7 +981,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->                                 load_bias = ELF_ET_DYN_BASE;
->                                 if (current->flags & PF_RANDOMIZE)
->                                         load_bias += arch_mmap_rnd();
-> -                               elf_flags |= MAP_FIXED_NOREPLACE;
-> +                               elf_flags |= elf_fixed;
->                         } else
->                                 load_bias = 0;
-
-If I'm reading this patch correctly, the intention is to allow LOADs
-after brk-expansion to collide with the prior LOAD? (This patch will
-need more comments for our future sanity.) I think this makes sense,
-though it might be nice to be sure we're overlapping only with the
-prior LOAD (and nothing else), but it's not clear to me the best way
-to accomplish that here. Even without that extra check, I think this
-is a net benefit (i.e. gain MAP_FIXED_NOREPLACE without breaking
-page-crossing LOADs).
-
-Actually, maybe the second LOAD could be page-aligned first, so it
-doesn't collide with the prior LOAD, and it could keep
-MAP_FIXED_NOREPLACE? I'll have more time to study this on Monday...
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+>> -boris
+>>
+>>>   +    free_otherend_watch(dev);
+>>> +
+>>>       free_otherend_details(dev);
+>>>         xenbus_switch_state(dev, XenbusStateClosed);
+> Thank you,
+> Oleksandr
