@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752087AbeBAKZb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 05:25:31 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:37586 "EHLO
+        id S1752132AbeBAK02 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 05:26:28 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:37584 "EHLO
         andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751836AbeBAKZa (ORCPT
+        with ESMTP id S1751766AbeBAK00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 05:25:30 -0500
+        Thu, 1 Feb 2018 05:26:26 -0500
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Hemminger <stephen@networkplumber.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, bridge@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] net: bridge: Fix uninitialized error in br_fdb_sync_static()
-Date: Thu,  1 Feb 2018 11:25:27 +0100
-Message-Id: <1517480728-5580-1-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH] inet: Avoid unitialized variable warning in inet_unhash()
+Date: Thu,  1 Feb 2018 11:26:23 +0100
+Message-Id: <1517480783-5692-1-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -25,34 +25,50 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With gcc-4.1.2.:
+With gcc-4.1.2:
 
-    net/bridge/br_fdb.c: In function ‘br_fdb_sync_static’:
-    net/bridge/br_fdb.c:996: warning: ‘err’ may be used uninitialized in this function
+    net/ipv4/inet_hashtables.c: In function ‘inet_unhash’:
+    net/ipv4/inet_hashtables.c:628: warning: ‘ilb’ may be used uninitialized in this function
 
-Indeed, if the list is empty, err will be uninitialized, and will be
-propagated up as the function return value.
+While this is a false positive, it can easily be avoided by using the
+pointer itself as the canary variable.
 
-Fix this by preinitializing err to zero.
-
-Fixes: eb7935830d00b9e0 ("net: bridge: use rhashtable for fdbs")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- net/bridge/br_fdb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/inet_hashtables.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-index dc87fbc9a23b04e6..d9e69e4514beb20d 100644
---- a/net/bridge/br_fdb.c
-+++ b/net/bridge/br_fdb.c
-@@ -993,7 +993,7 @@ int br_fdb_delete(struct ndmsg *ndm, struct nlattr *tb[],
- int br_fdb_sync_static(struct net_bridge *br, struct net_bridge_port *p)
+diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
+index 37b7da0b975dc297..31ff46daae974645 100644
+--- a/net/ipv4/inet_hashtables.c
++++ b/net/ipv4/inet_hashtables.c
+@@ -625,9 +625,8 @@ EXPORT_SYMBOL_GPL(inet_hash);
+ void inet_unhash(struct sock *sk)
  {
- 	struct net_bridge_fdb_entry *f, *tmp;
--	int err;
-+	int err = 0;
+ 	struct inet_hashinfo *hashinfo = sk->sk_prot->h.hashinfo;
+-	struct inet_listen_hashbucket *ilb;
++	struct inet_listen_hashbucket *ilb = NULL;
+ 	spinlock_t *lock;
+-	bool listener = false;
  
- 	ASSERT_RTNL();
+ 	if (sk_unhashed(sk))
+ 		return;
+@@ -635,7 +634,6 @@ void inet_unhash(struct sock *sk)
+ 	if (sk->sk_state == TCP_LISTEN) {
+ 		ilb = &hashinfo->listening_hash[inet_sk_listen_hashfn(sk)];
+ 		lock = &ilb->lock;
+-		listener = true;
+ 	} else {
+ 		lock = inet_ehash_lockp(hashinfo, sk->sk_hash);
+ 	}
+@@ -645,7 +643,7 @@ void inet_unhash(struct sock *sk)
  
+ 	if (rcu_access_pointer(sk->sk_reuseport_cb))
+ 		reuseport_detach_sock(sk);
+-	if (listener) {
++	if (ilb) {
+ 		inet_unhash2(hashinfo, sk);
+ 		 __sk_del_node_init(sk);
+ 		 ilb->count--;
 -- 
 2.7.4
