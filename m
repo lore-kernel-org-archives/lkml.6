@@ -1,36 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753044AbeBASlp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 13:41:45 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40982 "EHLO
+        id S1753114AbeBASmM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 13:42:12 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39586 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752840AbeBASli (ORCPT
+        by vger.kernel.org with ESMTP id S1752971AbeBASll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 13:41:38 -0500
+        Thu, 1 Feb 2018 13:41:41 -0500
 From: Farhan Ali <alifm@linux.vnet.ibm.com>
 To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
         linux-fbdev@vger.kernel.org
 Cc: geert@linux-m68k.org, borntraeger@de.ibm.com,
         stefan.kristiansson@saunalahti.fi, tomi.valkeinen@ti.com,
         schwidefsky@de.ibm.com, alifm@linux.vnet.ibm.com
-Subject: [PATCH v2 0/3]Enable CONFIG_VT support for S390
-Date: Thu,  1 Feb 2018 13:41:27 -0500
+Subject: [PATCH v2 2/3] s390/char : Rename EBCDIC keymap variables
+Date: Thu,  1 Feb 2018 13:41:29 -0500
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
+References: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
+In-Reply-To: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
+References: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020118-0052-0000-0000-000002AD0590
+x-cbid: 18020118-0024-0000-0000-0000031C85A5
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008459; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000248; SDB=6.00983587; UDB=6.00498850; IPR=6.00762865;
+ PH=3.00000004; SC=3.00000248; SDB=6.00983595; UDB=6.00498855; IPR=6.00762873;
  BA=6.00005808; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
  ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019323; XFM=3.00000015;
- UTC=2018-02-01 18:41:34
+ UTC=2018-02-01 18:41:37
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020118-0053-0000-0000-0000536F7D0A
-Message-Id: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
+x-cbparentid: 18020118-0025-0000-0000-000046D6A795
+Message-Id: <34553ed6d45838a42f92fff1fef4486fa1040b03.1517508744.git.alifm@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-01_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802010239
@@ -38,52 +42,243 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The Linux Virtual Terminal (VT) layer provides a default keymap
+which is compiled when VT layer is enabled. But at the same time
+we are also compiling the EBCDIC keymap and this causes the linker
+to complain.
 
-This series of patches add support for an additional tty
-and console for a S390 KVM guest using a virtio-gpu device[1].
+So let's rename the EBCDIC keymap variables to prevent linker
+conflict.
 
-Patch 1 enables the "Graphics support" menu which is
-needed to enable dummy console, since the VT layer needs it.
-It also fixes a build error for Opencore framebuffer driver. 
-
-Patch 2 fixes few linker issues.
-
-Patch 3 add support for enabling VT layer for S390.
-
-
-ChangeLog
----------
-v1 -> v2
-
-v1 was posted under a different subject and here is a link to it:
-https://www.spinics.net/lists/linux-s390/msg18175.html
-
-   - Combine patch 1 and 2 from v1 into one patch (patch 1).
-   - Additional patches to enable CONFIG_VT for S390.
-
-
-Thanks
-Farhan
-
-
-[1] https://lists.nongnu.org/archive/html/qemu-devel/2017-09/msg04184.html
-
-
-Farhan Ali (3):
-  Kconfig : Remove HAS_IOMEM dependency for Graphics support
-  s390/char : Rename EBCDIC keymap variables
-  s390/setup : enable display support for KVM guest
-
- arch/s390/kernel/setup.c      |  2 ++
+Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
+Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+---
  drivers/s390/char/defkeymap.c | 66 ++++++++++++++++++++++---------------------
  drivers/s390/char/keyboard.c  | 32 ++++++++++-----------
  drivers/s390/char/keyboard.h  | 11 ++++++++
- drivers/tty/Kconfig           |  2 +-
- drivers/video/Kconfig         |  1 -
- drivers/video/console/Kconfig |  2 +-
- drivers/video/fbdev/Kconfig   |  2 +-
- 8 files changed, 66 insertions(+), 52 deletions(-)
+ 3 files changed, 61 insertions(+), 48 deletions(-)
 
+diff --git a/drivers/s390/char/defkeymap.c b/drivers/s390/char/defkeymap.c
+index 98a5c45..193142c 100644
+--- a/drivers/s390/char/defkeymap.c
++++ b/drivers/s390/char/defkeymap.c
+@@ -9,7 +9,9 @@
+ #include <linux/kbd_kern.h>
+ #include <linux/kbd_diacr.h>
+ 
+-u_short plain_map[NR_KEYS] = {
++#include "keyboard.h"
++
++u_short ebc_plain_map[NR_KEYS] = {
+ 	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,
+ 	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,
+ 	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,	0xf000,
+@@ -85,12 +87,12 @@ static u_short shift_ctrl_map[NR_KEYS] = {
+ 	0xf20a,	0xf108,	0xf200,	0xf200,	0xf200,	0xf200,	0xf200,	0xf200,
+ };
+ 
+-ushort *key_maps[MAX_NR_KEYMAPS] = {
+-	plain_map, shift_map, NULL, NULL,
++ushort *ebc_key_maps[MAX_NR_KEYMAPS] = {
++	ebc_plain_map, shift_map, NULL, NULL,
+ 	ctrl_map, shift_ctrl_map, NULL,
+ };
+ 
+-unsigned int keymap_count = 4;
++unsigned int ebc_keymap_count = 4;
+ 
+ 
+ /*
+@@ -99,7 +101,7 @@ unsigned int keymap_count = 4;
+  * the default and allocate dynamically in chunks of 512 bytes.
+  */
+ 
+-char func_buf[] = {
++char ebc_func_buf[] = {
+ 	'\033', '[', '[', 'A', 0, 
+ 	'\033', '[', '[', 'B', 0, 
+ 	'\033', '[', '[', 'C', 0, 
+@@ -123,37 +125,37 @@ char func_buf[] = {
+ };
+ 
+ 
+-char *funcbufptr = func_buf;
+-int funcbufsize = sizeof(func_buf);
+-int funcbufleft = 0;          /* space left */
+-
+-char *func_table[MAX_NR_FUNC] = {
+-	func_buf + 0,
+-	func_buf + 5,
+-	func_buf + 10,
+-	func_buf + 15,
+-	func_buf + 20,
+-	func_buf + 25,
+-	func_buf + 31,
+-	func_buf + 37,
+-	func_buf + 43,
+-	func_buf + 49,
+-	func_buf + 55,
+-	func_buf + 61,
+-	func_buf + 67,
+-	func_buf + 73,
+-	func_buf + 79,
+-	func_buf + 85,
+-	func_buf + 91,
+-	func_buf + 97,
+-	func_buf + 103,
+-	func_buf + 109,
++char *ebc_funcbufptr = ebc_func_buf;
++int ebc_funcbufsize = sizeof(ebc_func_buf);
++int ebc_funcbufleft = 0;          /* space left */
++
++char *ebc_func_table[MAX_NR_FUNC] = {
++	ebc_func_buf + 0,
++	ebc_func_buf + 5,
++	ebc_func_buf + 10,
++	ebc_func_buf + 15,
++	ebc_func_buf + 20,
++	ebc_func_buf + 25,
++	ebc_func_buf + 31,
++	ebc_func_buf + 37,
++	ebc_func_buf + 43,
++	ebc_func_buf + 49,
++	ebc_func_buf + 55,
++	ebc_func_buf + 61,
++	ebc_func_buf + 67,
++	ebc_func_buf + 73,
++	ebc_func_buf + 79,
++	ebc_func_buf + 85,
++	ebc_func_buf + 91,
++	ebc_func_buf + 97,
++	ebc_func_buf + 103,
++	ebc_func_buf + 109,
+ 	NULL,
+ };
+ 
+-struct kbdiacruc accent_table[MAX_DIACR] = {
++struct kbdiacruc ebc_accent_table[MAX_DIACR] = {
+ 	{'^', 'c', 0003},	{'^', 'd', 0004},
+ 	{'^', 'z', 0032},	{'^', 0012, 0000},
+ };
+ 
+-unsigned int accent_table_size = 4;
++unsigned int ebc_accent_table_size = 4;
+diff --git a/drivers/s390/char/keyboard.c b/drivers/s390/char/keyboard.c
+index 5b505fd..db1fbf9 100644
+--- a/drivers/s390/char/keyboard.c
++++ b/drivers/s390/char/keyboard.c
+@@ -54,24 +54,24 @@ kbd_alloc(void) {
+ 	kbd = kzalloc(sizeof(struct kbd_data), GFP_KERNEL);
+ 	if (!kbd)
+ 		goto out;
+-	kbd->key_maps = kzalloc(sizeof(key_maps), GFP_KERNEL);
++	kbd->key_maps = kzalloc(sizeof(ebc_key_maps), GFP_KERNEL);
+ 	if (!kbd->key_maps)
+ 		goto out_kbd;
+-	for (i = 0; i < ARRAY_SIZE(key_maps); i++) {
+-		if (key_maps[i]) {
+-			kbd->key_maps[i] = kmemdup(key_maps[i],
++	for (i = 0; i < ARRAY_SIZE(ebc_key_maps); i++) {
++		if (ebc_key_maps[i]) {
++			kbd->key_maps[i] = kmemdup(ebc_key_maps[i],
+ 						   sizeof(u_short) * NR_KEYS,
+ 						   GFP_KERNEL);
+ 			if (!kbd->key_maps[i])
+ 				goto out_maps;
+ 		}
+ 	}
+-	kbd->func_table = kzalloc(sizeof(func_table), GFP_KERNEL);
++	kbd->func_table = kzalloc(sizeof(ebc_func_table), GFP_KERNEL);
+ 	if (!kbd->func_table)
+ 		goto out_maps;
+-	for (i = 0; i < ARRAY_SIZE(func_table); i++) {
+-		if (func_table[i]) {
+-			kbd->func_table[i] = kstrdup(func_table[i],
++	for (i = 0; i < ARRAY_SIZE(ebc_func_table); i++) {
++		if (ebc_func_table[i]) {
++			kbd->func_table[i] = kstrdup(ebc_func_table[i],
+ 						     GFP_KERNEL);
+ 			if (!kbd->func_table[i])
+ 				goto out_func;
+@@ -81,22 +81,22 @@ kbd_alloc(void) {
+ 		kzalloc(sizeof(fn_handler_fn *) * NR_FN_HANDLER, GFP_KERNEL);
+ 	if (!kbd->fn_handler)
+ 		goto out_func;
+-	kbd->accent_table = kmemdup(accent_table,
++	kbd->accent_table = kmemdup(ebc_accent_table,
+ 				    sizeof(struct kbdiacruc) * MAX_DIACR,
+ 				    GFP_KERNEL);
+ 	if (!kbd->accent_table)
+ 		goto out_fn_handler;
+-	kbd->accent_table_size = accent_table_size;
++	kbd->accent_table_size = ebc_accent_table_size;
+ 	return kbd;
+ 
+ out_fn_handler:
+ 	kfree(kbd->fn_handler);
+ out_func:
+-	for (i = 0; i < ARRAY_SIZE(func_table); i++)
++	for (i = 0; i < ARRAY_SIZE(ebc_func_table); i++)
+ 		kfree(kbd->func_table[i]);
+ 	kfree(kbd->func_table);
+ out_maps:
+-	for (i = 0; i < ARRAY_SIZE(key_maps); i++)
++	for (i = 0; i < ARRAY_SIZE(ebc_key_maps); i++)
+ 		kfree(kbd->key_maps[i]);
+ 	kfree(kbd->key_maps);
+ out_kbd:
+@@ -112,10 +112,10 @@ kbd_free(struct kbd_data *kbd)
+ 
+ 	kfree(kbd->accent_table);
+ 	kfree(kbd->fn_handler);
+-	for (i = 0; i < ARRAY_SIZE(func_table); i++)
++	for (i = 0; i < ARRAY_SIZE(ebc_func_table); i++)
+ 		kfree(kbd->func_table[i]);
+ 	kfree(kbd->func_table);
+-	for (i = 0; i < ARRAY_SIZE(key_maps); i++)
++	for (i = 0; i < ARRAY_SIZE(ebc_key_maps); i++)
+ 		kfree(kbd->key_maps[i]);
+ 	kfree(kbd->key_maps);
+ 	kfree(kbd);
+@@ -131,7 +131,7 @@ kbd_ascebc(struct kbd_data *kbd, unsigned char *ascebc)
+ 	int i, j, k;
+ 
+ 	memset(ascebc, 0x40, 256);
+-	for (i = 0; i < ARRAY_SIZE(key_maps); i++) {
++	for (i = 0; i < ARRAY_SIZE(ebc_key_maps); i++) {
+ 		keymap = kbd->key_maps[i];
+ 		if (!keymap)
+ 			continue;
+@@ -158,7 +158,7 @@ kbd_ebcasc(struct kbd_data *kbd, unsigned char *ebcasc)
+ 	int i, j, k;
+ 
+ 	memset(ebcasc, ' ', 256);
+-	for (i = 0; i < ARRAY_SIZE(key_maps); i++) {
++	for (i = 0; i < ARRAY_SIZE(ebc_key_maps); i++) {
+ 		keymap = kbd->key_maps[i];
+ 		if (!keymap)
+ 			continue;
+diff --git a/drivers/s390/char/keyboard.h b/drivers/s390/char/keyboard.h
+index a074d97..c467589 100644
+--- a/drivers/s390/char/keyboard.h
++++ b/drivers/s390/char/keyboard.h
+@@ -14,6 +14,17 @@
+ 
+ struct kbd_data;
+ 
++extern int ebc_funcbufsize, ebc_funcbufleft;
++extern char *ebc_func_table[MAX_NR_FUNC];
++extern char ebc_func_buf[];
++extern char *ebc_funcbufptr;
++extern unsigned int ebc_keymap_count;
++
++extern struct kbdiacruc ebc_accent_table[];
++extern unsigned int ebc_accent_table_size;
++extern unsigned short *ebc_key_maps[MAX_NR_KEYMAPS];
++extern unsigned short ebc_plain_map[NR_KEYS];
++
+ typedef void (fn_handler_fn)(struct kbd_data *);
+ 
+ /*
 -- 
 2.7.4
