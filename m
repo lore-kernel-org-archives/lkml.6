@@ -1,40 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752297AbeBAPRC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:17:02 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:44620 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751729AbeBAPQ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:16:56 -0500
-Date: Thu, 01 Feb 2018 10:16:55 -0500 (EST)
-Message-Id: <20180201.101655.1316424669256047119.davem@davemloft.net>
-To: guro@fb.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, edumazet@google.com, hannes@cmpxchg.org,
-        tj@kernel.org
-Subject: Re: [PATCH net] net: memcontrol: charge allocated memory after
- mem_cgroup_sk_alloc()
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180131215401.GA8956@castle>
-References: <20180125001911.15597-1-guro@fb.com>
-        <20180125.120302.1117695034222616751.davem@davemloft.net>
-        <20180131215401.GA8956@castle>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1752395AbeBAPSP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:18:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:15410 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752064AbeBAPSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 10:18:11 -0500
+Date: Thu, 1 Feb 2018 09:18:07 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>, Petr Mladek <pmladek@suse.com>,
+        jikos@kernel.org, Jason Baron <jbaron@akamai.com>, jeyu@kernel.org,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: Re: PATCH v6 0/6] livepatch: Atomic replace feature
+Message-ID: <20180201151807.xjrldhmwwuot4c2o@treble>
+References: <20180125160203.28959-1-pmladek@suse.com>
+ <alpine.LSU.2.21.1802011350200.26656@pobox.suse.cz>
+ <1dd714ce-8d11-78b9-51f0-2b71734949e1@redhat.com>
+ <alpine.LSU.2.21.1802011605450.29533@pobox.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1802011605450.29533@pobox.suse.cz>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
-Date: Wed, 31 Jan 2018 21:54:08 +0000
+On Thu, Feb 01, 2018 at 04:08:14PM +0100, Miroslav Benes wrote:
+> On Thu, 1 Feb 2018, Joe Lawrence wrote:
+> 
+> > On 02/01/2018 08:49 AM, Miroslav Benes wrote:
+> > > 
+> > > Well, one more thing. I think there is a problem with shadow variables. 
+> > > Similar to callbacks situation. Shadow variables cannot be destroyed the 
+> > > way it is shown in our samples. Cumulative patches want to preserve 
+> > > everything as much as possible. If I'm right, it should be mentioned in 
+> > > the documentation.
+> > 
+> > Are you talking about using klp_shadow_free_all() call in a module_exit
+> > routine?  Yeah, I think in this case, that responsibility would be
+> > passed to the newly loaded cumulative patch, right?
+> 
+> Yes, but we haven't got an option not to call it here (as with callbacks, 
+> where we can omit callbacks completely with atomic replace patches). A 
+> live patch author must be aware of this and use shadow variables 
+> appropriately.
 
-> So I really start thinking that reverting 9f1c2674b328
-> ("net: memcontrol: defer call to mem_cgroup_sk_alloc()")
-> and fixing the original issue differently might be easier
-> and a proper way to go. Does it makes sense?
+So maybe we should recommend that shadow variables generally be freed
+from a post-unpatch callback.
 
-You'll need to work that out with Eric Dumazet who added the
-change in question which you think we should revert.
+-- 
+Josh
