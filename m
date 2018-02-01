@@ -1,162 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752884AbeBARC3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:02:29 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:24711 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751800AbeBARCY (ORCPT
+        id S1752689AbeBARIf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:08:35 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:55000 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751967AbeBARId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:02:24 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w11H2L3g019068
-X-Nifty-SrcIP: [209.85.213.46]
-X-Google-Smtp-Source: AH8x227NDN6SISTaAbeV70ce2th6VPs7cHDE2YTgHnvnxC9bqPYImjG3cW+iLCKrMA2UPHrhsyUc3nxVBUqfrtIwwc8=
+        Thu, 1 Feb 2018 12:08:33 -0500
+Date: Thu, 1 Feb 2018 09:08:26 -0800
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xfs: Add missing braces around xfs_scrub_agfl_info
+ initializer
+Message-ID: <20180201170826.GP4849@magnolia>
+References: <1517480584-4588-1-git-send-email-geert@linux-m68k.org>
+ <CAK8P3a1N-Yh65y6bEb+d7DwVOqB8ee=T1gM1cc7k6=cg1c3Jtw@mail.gmail.com>
 MIME-Version: 1.0
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 2 Feb 2018 02:01:40 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATYuoOb=LWzH87+UCj+SBsFS2XifCHgmsH2beOqkT1ptA@mail.gmail.com>
-Message-ID: <CAK7LNATYuoOb=LWzH87+UCj+SBsFS2XifCHgmsH2beOqkT1ptA@mail.gmail.com>
-Subject: [GIT PULL 3/3] Kconfig updates for v4.16
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK8P3a1N-Yh65y6bEb+d7DwVOqB8ee=T1gM1cc7k6=cg1c3Jtw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=903
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802010219
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Feb 01, 2018 at 12:31:36PM +0100, Arnd Bergmann wrote:
+> On Thu, Feb 1, 2018 at 11:23 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > With gcc-4.1.2:
+> >
+> >     fs/xfs/scrub/agheader.c: In function ‘xfs_scrub_agfl’:
+> >     fs/xfs/scrub/agheader.c:770: warning: missing braces around initializer
+> >     fs/xfs/scrub/agheader.c:770: warning: (near initialization for ‘sai.oinfo’)
+> >
+> > The first member of struct xfs_scrub_agfl_info is no longer an integral
+> > type, but a struct.  Add the missing curly braces to fix this.
+> 
+> I suspect gcc-4.5 is affected as well, but not 4.6+
+> 
+> > --- a/fs/xfs/scrub/agheader.c
+> > +++ b/fs/xfs/scrub/agheader.c
+> > @@ -767,7 +767,7 @@ int
+> >  xfs_scrub_agfl(
+> >         struct xfs_scrub_context        *sc)
+> >  {
+> > -       struct xfs_scrub_agfl_info      sai = { 0 };
+> > +       struct xfs_scrub_agfl_info      sai = { { 0 } };
+> >         struct xfs_agf                  *agf;
+> 
+> Looks ok to me, but
+> 
+>         struct xfs_scrub_agfl_info      sai = { };
+> 
+> might be slightly better in case the first member changes again.
 
-Please pull Kconfig updates for v4.16
-The detail is in the signed tag log below.
+Frankly I'd rather see it changed to memset(&sai, 0, sizeof(sai)); and
+stop having to field all these gcc warnings that vary depending on
+compiler version...
 
+--D
 
-
-The following changes since commit ae64f9bd1d3621b5e60d7363bc20afb46aede215:
-
-  Linux 4.15-rc2 (2017-12-03 11:01:47 -0500)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kconfig-v4.16
-
-for you to fetch changes up to cedd55d49dee941d0e4fabb2f2f555d50c53fad7:
-
-  kconfig: Remove silentoldconfig from help and docs; fix
-kconfig/conf's help (2018-01-28 05:48:31 +0900)
-
-----------------------------------------------------------------
-Kconfig updates for v4.16
-
-A pretty big batch of Kconfig updates. I have to mention the lexer
-and parser of Kconfig are now built from real .l and .y sources.
-So, flex and bison are the requirement for building the kernel.
-Both of them (unlike gperf) have been stable for a long time. This
-change has been tested several weeks in linux-next, and I did not
-receive any problem report about this.
-
-Summary:
-
-- Add checks for mistakes, like the choice default is not in
-  choice, help is doubled
-
-- Document data structure and complex code
-
-- Fix various memory leaks
-
-- Change Makefile to build lexer and parser instead of using
-  pre-generated C files
-
-- Drop 'boolean' keyword, which is equivalent to 'bool'
-
-- Use default 'yy' prefix and remove unneeded Make variables
-
-- Fix gettext() check for xconfig
-
-- Announce that oldnoconfig will be finally removed
-
-- Make 'Selected by:' and 'Implied by' readable in help and
-  search result
-
-- Hide silentoldconfig from 'make help' to stop confusing people
-
-- Fix misc things and cleanups
-
-----------------------------------------------------------------
-Marc Herbert (1):
-      kconfig: Remove silentoldconfig from help and docs; fix
-kconfig/conf's help
-
-Masahiro Yamada (12):
-      kconfig: display recursive dependency resolution hint just once
-      kbuild: add LEX and YACC variables
-      kbuild: prepare to remove C files pre-generated by flex and bison
-      kconfig: generate lexer and parser during build instead of shipping
-      kconfig: use bool instead of boolean for type definition attributes, again
-      kconfig: drop 'boolean' keyword
-      kconfig: make input_mode static
-      kconfig: make xfgets() really static
-      kconfig: make conf_unsaved a local variable of conf_read()
-      kconfig: use default 'yy' prefix for lexer and parser
-      kbuild: remove unnecessary LEX_PREFIX and YACC_PREFIX
-      kconfig: announce removal of oldnoconfig if used
-
-Petr Vorel (1):
-      kconfig: make "Selected by:" and "Implied by:" readable
-
-Ulf Magnusson (22):
-      kconfig: Warn if choice default is not in choice
-      kconfig: Document the 'menu' struct
-      kconfig: Document the 'symbol' struct
-      kconfig: Sync zconf.y with zconf.tab.c_shipped
-      kconfig: Rename menu_check_dep() to rewrite_m()
-      kconfig: Clarify expression rewriting
-      kconfig: Clean up modules handling and fix crash
-      kconfig: Don't leak symbol names during parsing
-      kconfig: Don't leak 'source' filenames during parsing
-      kconfig: Don't leak 'option' arguments during parsing
-      kconfig: Don't leak main menus during parsing
-      kconfig: Fix automatic menu creation mem leak
-      kconfig: Fix expr_free() E_NOT leak
-      kconfig: Fix choice symbol expression leak
-      kconfig: Document automatic submenu creation code
-      kconfig: Document important expression functions
-      kconfig: Remove menu_end_entry()
-      kconfig: Warn if there is more than one help text
-      kconfig: Document SYMBOL_OPTIONAL logic
-      kconfig: Clarify choice dependency propagation
-      kconfig: Document 'if' flattening logic
-      kconfig: Clarify menu and 'if' dependency propagation
-
-Yaakov Selkowitz (1):
-      kconfig: fix make xconfig when gettext is missing
-
- Documentation/admin-guide/README.rst |    5 -
- Documentation/process/changes.rst    |   25 +
- Makefile                             |    4 +-
- drivers/firmware/efi/Kconfig         |    2 +-
- drivers/staging/rtlwifi/Kconfig      |    2 +-
- scripts/Makefile.lib                 |   28 +-
- scripts/kconfig/Makefile             |   14 +-
- scripts/kconfig/conf.c               |   25 +-
- scripts/kconfig/confdata.c           |    6 +-
- scripts/kconfig/expr.c               |  136 +-
- scripts/kconfig/expr.h               |   91 +-
- scripts/kconfig/kconf_id.c           |    1 -
- scripts/kconfig/lkc.h                |    1 -
- scripts/kconfig/mconf.c              |    2 +-
- scripts/kconfig/menu.c               |  186 ++-
- scripts/kconfig/symbol.c             |   14 +-
- scripts/kconfig/zconf.l              |   16 +-
- scripts/kconfig/zconf.lex.c_shipped  | 2473 -----------------------------
- scripts/kconfig/zconf.tab.c_shipped  | 2471 ----------------------------
- scripts/kconfig/zconf.y              |  111 +-
- 20 files changed, 548 insertions(+), 5065 deletions(-)
- delete mode 100644 scripts/kconfig/zconf.lex.c_shipped
- delete mode 100644 scripts/kconfig/zconf.tab.c_shipped
-
-
--- 
-Best Regards
-Masahiro Yamada
+> 
+>      Arnd
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
