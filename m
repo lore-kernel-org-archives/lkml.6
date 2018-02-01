@@ -1,96 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752393AbeBAWB7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 17:01:59 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:42599 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752053AbeBAWAR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 17:00:17 -0500
-X-IronPort-AV: E=Sophos;i="5.46,444,1511827200";
-   d="scan'208";a="592233189"
-From: KarimAllah Ahmed <karahmed@amazon.de>
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: KarimAllah Ahmed <karahmed@amazon.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH v6 1/5] KVM: x86: Update the reverse_cpuid list to include CPUID_7_EDX
-Date: Thu,  1 Feb 2018 22:59:42 +0100
-Message-Id: <1517522386-18410-2-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517522386-18410-1-git-send-email-karahmed@amazon.de>
-References: <1517522386-18410-1-git-send-email-karahmed@amazon.de>
+        id S1752136AbeBAWIe convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 17:08:34 -0500
+Received: from mga04.intel.com ([192.55.52.120]:57896 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752079AbeBAWIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 17:08:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,444,1511856000";
+   d="scan'208";a="24237309"
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "tpmdd-devel@lists.sourceforge.net"
+        <tpmdd-devel@lists.sourceforge.net>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/3] tpm: cmd_ready command can be issued only after
+ granting locality
+Thread-Topic: [PATCH 1/3] tpm: cmd_ready command can be issued only after
+ granting locality
+Thread-Index: AQHTlElMx0TrUrXsWkqVKWv8E7WPWqODVukAgAcZy4CABbcioA==
+Date: Thu, 1 Feb 2018 22:08:19 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94214CFE@hasmsx108.ger.corp.intel.com>
+References: <20180123112731.3687-1-tomas.winkler@intel.com>
+ <20180123125426.t6xjgrqcfbkmvkdl@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94203771@hasmsx108.ger.corp.intel.com>
+ <20180129084441.6oc4m4jgbqzsfq3v@linux.intel.com>
+In-Reply-To: <20180129084441.6oc4m4jgbqzsfq3v@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZmZlOWEzNzMtMTdjNi00OGIwLTkwZWQtNGMyNjUwOThjYzkzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJ4ZW92SFB6aXZkZXN5QjNnXC9BK1FrRG1uRTZYUW5IV21kelBLdjFkMTIrYzM1RGUzdmZRXC96eW5POG1pMDR0MksifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.252.16.178]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[dwmw2: Stop using KF() for bits in it, too]
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/kvm/cpuid.c | 8 +++-----
- arch/x86/kvm/cpuid.h | 1 +
- 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 0099e10..c0eb337 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -67,9 +67,7 @@ u64 kvm_supported_xcr0(void)
- 
- #define F(x) bit(X86_FEATURE_##x)
- 
--/* These are scattered features in cpufeatures.h. */
--#define KVM_CPUID_BIT_AVX512_4VNNIW     2
--#define KVM_CPUID_BIT_AVX512_4FMAPS     3
-+/* For scattered features from cpufeatures.h; we currently expose none */
- #define KF(x) bit(KVM_CPUID_BIT_##x)
- 
- int kvm_update_cpuid(struct kvm_vcpu *vcpu)
-@@ -392,7 +390,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--		KF(AVX512_4VNNIW) | KF(AVX512_4FMAPS);
-+		F(AVX512_4VNNIW) | F(AVX512_4FMAPS);
- 
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
-@@ -477,7 +475,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
- 				entry->ecx &= ~F(PKU);
- 			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
--			entry->edx &= get_scattered_cpuid_leaf(7, 0, CPUID_EDX);
-+			cpuid_mask(&entry->edx, CPUID_7_EDX);
- 		} else {
- 			entry->ebx = 0;
- 			entry->ecx = 0;
-diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-index c2cea66..9a327d5 100644
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -54,6 +54,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
- 	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
- 	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
- 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
-+	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
- };
- 
- static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
--- 
-2.7.4
+> 
+> On Wed, Jan 24, 2018 at 06:33:53PM +0000, Winkler, Tomas wrote:
+> > > > -	pm_runtime_put(dev);
+> > > > +	pm_runtime_put_sync(dev);
+> > >
+> > > Change to put_sync is needed so that the idle handshake gets
+> completed?
+> >
+> > Right.
+> 
+> Since we seem to agree that your change to get rid of the use of PM runtime
+> should that be actually the first change in the patch set?
+> 
+> Or are you looking forward to get these backported to stable kernels?
+
+Yes, that was one of the reason behind for splitting this into two patches. 
+So this first patch is the actual fix and second is the rather non user visible fix 
+as runtime_pm should be enabled by default.  But .. maybe both need to be backported.
+
+Thanks
+Tomas
