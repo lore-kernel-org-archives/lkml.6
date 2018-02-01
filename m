@@ -1,57 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752776AbeBAQzM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:55:12 -0500
-Received: from mout.web.de ([212.227.15.14]:50894 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751783AbeBAQzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:55:10 -0500
-To: linux-i2c@vger.kernel.org, Till Harbaum <till@harbaum.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/2] i2c-tiny-usb: Adjustments for i2c_tiny_usb_probe()
-Message-ID: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
-Date: Thu, 1 Feb 2018 17:55:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752736AbeBAQ4I (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:56:08 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55936 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751783AbeBAQ4B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 11:56:01 -0500
+Date: Thu, 1 Feb 2018 17:55:57 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Morten Rasmussen <morten.rasmussen@foss.arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Subject: Re: [RFC PATCH 2/5] sched: Add NOHZ_STATS_KICK
+Message-ID: <20180201165556.GD2269@hirez.programming.kicks-ass.net>
+References: <20171222075934.f6yenvcb2zkf2ysd@hirez.programming.kicks-ass.net>
+ <CAKfTPtC0+5zjvgNXMyVcvnnyJh0giQgJHtx+5p-GEpjUW1x8eg@mail.gmail.com>
+ <20171222082915.4lcb7xyyooqyjpia@hirez.programming.kicks-ass.net>
+ <20171222091221.ow5vn3ydx3hj4nht@hirez.programming.kicks-ass.net>
+ <CAKfTPtAzutuyA7D2qOErKPwdFaRK082YAtVn4ci8hAOUvL3zMQ@mail.gmail.com>
+ <20171222185629.lysjebfifgdwvvhu@hirez.programming.kicks-ass.net>
+ <20171222204247.kyc6ugyyu3ei7zhs@hirez.programming.kicks-ass.net>
+ <CAKfTPtD13p-n9otxq23rQZZKUfA1r03bxYBSDtSdm5HbWX7H6Q@mail.gmail.com>
+ <20180115082609.GA6320@linaro.org>
+ <20180118103807.GD28799@e105550-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:rxp0ANqcZF8QMcykVyGInadZ3prDswE3xwih0gVRe3/TRIRgMMS
- RnHGM7ajZQYMU1PsDIrV8UBIwEF2nuO4tq6Boo7x3bNoLLuWTirKqn6lRxlN4N4iavJxFUY
- KAyo/lyHqcQSbSmx9M0Lg0RpQXst2ABZyR3HFoK3jBvxo4mbDS+wn5mnjYXhGvg0o39QRfB
- 1Lkwi/v8JLF+m1u3TB4OA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:cV5QU8PYvs4=:WkBSceXqppG8xWUYS38bGG
- cvpIPHTkA+m7i83xlc1j+9k41Y55Hx4jKVod7SDBkST3aJurH3DMLdci/R6L5wQdOjBvR5hZs
- ky+Bl5krfFFvztMnGzZVlFNB61ms+65KxZ9B9tg10HbG5Sh3eqZFbrHiSfXrmM/Ib+6iR+0I2
- sELRRP3mUQJoBfjphb6LnFZGwMiwrE4/17NTFEL/u+l3pAE1NUgXAV3sqe7a4TiQvqwA6EM2a
- /GR/+RpwIOrCu/Xxcz1VvQ5/cb8HQQU4Yjv4A6dJspCcpZPFfiJp3XLh6CeBX37s0K0meWQDs
- nr8Nngx59f5a5ONUARlttsRqTPGNqH/ZxS/MkuyPIGtnWhY4fECu4Apvl4W3EnS/w4DDSqw3Y
- bCZH1fGuTcMX7bpSa+HTZkAwytm1Fkzijmj4Ap7HPfoXzZE5+jP9Oeu+dNo17W/gaT36owUYN
- gH0LMnUYJ0FrmJrBtQnforjdeQk2TWwPcEs05PKd1K3yJzxoI5/WvrY8TVhV39fVOfIJxLbJ+
- LUvUa+rl/LFAFy5f1NQZDOOD/FO4RyPW/r5i4Yd5J4Hg78SPElc6RIxzvQ0yQ67jqIFz4/MlH
- juvLzKkXskda8IXwkiP0kGCJJMCYGFg1/GOGCR9OChgT/2F9ZtmP4OMVaOk9ecdtklOA1VAyq
- P8+9Vnral8RnpbrIeOh/TZJktiCxaQG16GopmRP3BlbMIvMNZhULxL5il1Q9lm478Z+Yefm2o
- jXTYrnEzeD1f+mKRQkot1rBaIxLBQc68ABPk4sUmPVXZ/0ORJn70BvzHKZcNirJ2gC45xKVqR
- qzQIjEGenlECR9Kb2NNmjruKlnZ3f6m03cOMcNqLDPtBLC5O5A=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180118103807.GD28799@e105550-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Feb 2018 17:51:23 +0100
+On Thu, Jan 18, 2018 at 10:38:07AM +0000, Morten Rasmussen wrote:
+> It seems pointless to have a timer to update PELT if the system is
+> completely idle, and when it isn't we can piggy back other events to
+> make the updates happen.
 
-Two update suggestions were taken into account
-from static source code analysis.
+Only if we do that update before making decisions based on the values.
+The thing I was bothered by in the earlier patches was that wakeup would
+use whatever current value and async kick something to go update.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Return an error code only as a constant
-
- drivers/i2c/busses/i2c-tiny-usb.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
-
--- 
-2.16.1
+That just seems wrong.
