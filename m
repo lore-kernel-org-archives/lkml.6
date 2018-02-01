@@ -1,62 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754733AbeBATjt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 14:39:49 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:44230 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754593AbeBATjm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 14:39:42 -0500
-X-Google-Smtp-Source: AH8x2259n9f6x1Qrjsyo3jMsyr4N2uXAznWLjrzCXHZ49HfDJ/EQERV0lZ4Re8n1lQMOrSbpQLXzMQ==
-Date: Thu, 1 Feb 2018 20:39:31 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: stern@rowland.harvard.edu, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, paulmck@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, corbet@lwn.net
-Subject: Re: [PATCH 2/2] MAINTAINERS: add the Memory Consistency Model
- subsystem
-Message-ID: <20180201193931.GA4537@andrea>
-References: <1517486666-11011-1-git-send-email-parri.andrea@gmail.com>
- <20180201134401.GE9182@arm.com>
+        id S1754767AbeBATrF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 14:47:05 -0500
+Received: from ms.lwn.net ([45.79.88.28]:42758 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752838AbeBATq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 14:46:59 -0500
+Date: Thu, 1 Feb 2018 12:46:57 -0700
+From: Jonathan Corbet <corbet@lwn.net>
+To: Corentin Labbe <clabbe@baylibre.com>
+Cc: ralf@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+Subject: Re: [PATCH] Documentation: mips: Update AU1xxx_IDE Kconfig
+ dependencies
+Message-ID: <20180201124657.5f9b3090@lwn.net>
+In-Reply-To: <1517228467-1444-1-git-send-email-clabbe@baylibre.com>
+References: <1517228467-1444-1-git-send-email-clabbe@baylibre.com>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180201134401.GE9182@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 01:44:01PM +0000, Will Deacon wrote:
-> On Thu, Feb 01, 2018 at 01:04:26PM +0100, Andrea Parri wrote:
-> > Integrate (and then remove) tools/memory-model/MAINTAINERS into the
-> > main MAINTAINERS file. This way get_maintainer.pl can give a "right
-> > answer" for tools/memory-model/.
-> > 
-> > Suggested-by: Ingo Molnar <mingo@kernel.org>
-> > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> > ---
-> >  MAINTAINERS                    | 16 ++++++++++++++++
-> >  tools/memory-model/MAINTAINERS | 15 ---------------
-> >  2 files changed, 16 insertions(+), 15 deletions(-)
-> >  delete mode 100644 tools/memory-model/MAINTAINERS
-> 
-> Acked-by: Will Deacon <will.deacon@arm.com>
-> 
-> Makes a lot more sense having this in the top-level MAINTAINERS file.
-> It might also make sense to add:
-> 
->   F:	Documentation/memory-barriers.txt
-> 
-> as a separate patch now that we have a hit-list of memory model people
-> who can help poor old Jon (who currently gets blamed by get_maintainer.pl).
+On Mon, 29 Jan 2018 12:21:07 +0000
+Corentin Labbe <clabbe@baylibre.com> wrote:
 
-This does make sense to me: I'll prepare/send such a patch tomorrow.
+> IDEDMA_AUTO IDEDMA_PCI_AUTO was removed in commit 120b9cfddff2 ("ide: remove CONFIG_IDEDMA_{ICS,PCI}_AUTO config")
+> BLK_DEV_IDEDISK was removed in commit 806f80a6fc20 ("ide: add generic ATA/ATAPI disk driver")
+> BLK_DEV_IDE_AU1XXX_BURSTABLE_ON was removed in commit 8f29e650bffc ("ide: AU1200 IDE update")
+> Remove them from documentation
 
-  Andrea
+Applied to the docs tree, thanks.
 
-
-> 
-> Will
+jon
