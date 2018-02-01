@@ -1,93 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752433AbeBANtb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 08:49:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43005 "EHLO mx2.suse.de"
+        id S1752484AbeBANtz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 08:49:55 -0500
+Received: from mga11.intel.com ([192.55.52.93]:33212 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752207AbeBANt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 08:49:26 -0500
-Date: Thu, 1 Feb 2018 14:49:24 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: jpoimboe@redhat.com, jikos@kernel.org, Jason Baron <jbaron@akamai.com>,
-        jeyu@kernel.org, Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: PATCH v6 6/6] livepatch: Add atomic replace
-In-Reply-To: <20180125160203.28959-7-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1802011423300.26656@pobox.suse.cz>
-References: <20180125160203.28959-1-pmladek@suse.com> <20180125160203.28959-7-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1752439AbeBANtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 08:49:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,444,1511856000";
+   d="scan'208";a="28028578"
+Subject: Re: [PATCH 2/2] mm/sparse.c: Add nr_present_sections to change the
+ mem_map allocation
+To: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Baoquan He <bhe@redhat.com>
+References: <20180201071956.14365-1-bhe@redhat.com>
+ <20180201071956.14365-3-bhe@redhat.com>
+ <20180201101641.icoxv2sp6ckrjfxd@node.shutemov.name>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        mhocko@suse.com, tglx@linutronix.de, douly.fnst@cn.fujitsu.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <6def8374-2de2-a30c-69ff-2a49fb57dc9a@linux.intel.com>
+Date: Thu, 1 Feb 2018 05:49:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180201101641.icoxv2sp6ckrjfxd@node.shutemov.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/01/2018 02:16 AM, Kirill A. Shutemov wrote:
+> On Thu, Feb 01, 2018 at 03:19:56PM +0800, Baoquan He wrote:
+>> In sparse_init(), we allocate usemap_map and map_map which are pointer
+>> array with the size of NR_MEM_SECTIONS. The memory consumption can be
+>> ignorable in 4-level paging mode. While in 5-level paging, this costs
+>> much memory, 512M. Kdump kernel even can't boot up with a normal
+>> 'crashkernel=' setting.
+>>
+>> Here add a new variable to record the number of present sections. Let's
+>> allocate the usemap_map and map_map with the size of nr_present_sections.
+>> We only need to make sure that for the ith present section, usemap_map[i]
+>> and map_map[i] store its usemap and mem_map separately.
+>>
+>> This change can save much memory on most of systems. Anytime, we should
+>> avoid to define array or allocate memory with the size of NR_MEM_SECTIONS.
+> That's very desirable outcome. But I don't know much about sparsemem.
 
-> -struct klp_object *klp_get_or_add_object(struct klp_patch *patch,
-> +static struct klp_object *klp_get_or_add_object(struct klp_patch *patch,
->  						struct klp_object *old_obj)
+... with the downside being that we can no longer hot-add memory that
+was not part of the original, present sections.
 
-A nit, but this change belongs to 3/6, doesn't it?
-
->  {
->  	struct klp_object *obj;
-> @@ -708,6 +764,102 @@ struct klp_object *klp_get_or_add_object(struct klp_patch *patch,
->  	return obj;
->  }
-
-[...]
-
-> diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-> index 6917100fbe79..3f6cf5b9e048 100644
-> --- a/kernel/livepatch/transition.c
-> +++ b/kernel/livepatch/transition.c
-> @@ -87,6 +87,33 @@ static void klp_complete_transition(void)
->  		 klp_transition_patch->mod->name,
->  		 klp_target_state == KLP_PATCHED ? "patching" : "unpatching");
->  
-> +	/*
-> +	 * For replace patches, we disable all previous patches, and replace
-> +	 * the dynamic no-op functions by removing the ftrace hook.
-> +	 */
-> +	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED) {
-> +		/*
-> +		 * Make sure klp_ftrace_handler() can no longer see functions
-> +		 * from the replaced patches.  Then all functions will be
-> +		 * redirected using klp_transition_patch.  They will use
-> +		 * either a new code or they will stay in the original code
-> +		 * because of the nop funcs' structures.
-> +		 */
-> +		if (klp_forced)
-> +			klp_synchronize_transition();
-
-I'm not sure why this is here. klp_forced should not be so special that it 
-would warrant a synchronization. However, I'm also not sure that it would 
-be safe to remove it from the patch.
-
-Is this because "force" is the only one who can clear TIF_PATCH_PENDING of 
-other tasks? So, there could be a task running in klp_ftrace_handler(), 
-its TIF_PATCH_PENDING is cleared by force and we could have a problem 
-because of that since we're throwing away replaced patches.
-
-Ok, that sounds viable. I'd welcome a comment on that in the code.
-
-Thanks,
-Miroslav
-
-> +
-> +		klp_throw_away_replaced_patches(klp_transition_patch,
-> +						klp_forced);
-> +
-> +		/*
-> +		 * There is no need to synchronize the transition after removing
-> +		 * nops. They must be the last on the func_stack. Ftrace
-> +		 * gurantees that nobody will stay in the trampoline after
-> +		 * the ftrace handler is unregistered.
-> +		 */
-> +		klp_unpatch_objects(klp_transition_patch, KLP_FUNC_NOP);
-> +	}
-> +
->  	if (klp_target_state == KLP_UNPATCHED) {
->  		/*
->  		 * All tasks have transitioned to KLP_UNPATCHED so we can now
+Is that OK?
