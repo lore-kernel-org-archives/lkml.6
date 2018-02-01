@@ -1,23 +1,23 @@
 Return-Path: <lyude@redhat.com>
-X-Google-Smtp-Source: AH8x224cqSn7/yPwePJDNw82JBdlaj/lZAR26813Atnl5CBuGHSILvwo0guAtNMdOWdonC+DUOi1
-ARC-Seal: i=1; a=rsa-sha256; t=1517509030; cv=none;
+X-Google-Smtp-Source: AH8x227kLbx7HjQWNKSDXj1KawF8dvH4Q2BAHM76bfaveI+bxJGex8o4pF3CAtabkIcMrhiBMq5T
+ARC-Seal: i=1; a=rsa-sha256; t=1517508949; cv=none;
         d=google.com; s=arc-20160816;
-        b=iad791wNnEkGhvLTxvsdiVF2nt5BCrsTmS0MyPvYVXEsy4cqFtRyr4blWO9mFWGqw8
-         75QI8gBSM5OWbQt25KTREHd7xs0XNn20la6mhy5GsYMsHpIGQvOfLhc5U2oWvy5RcfvK
-         C1KQ/nvIPFDj5QmVYke5fk9G7P2MNXx41+YnKuZVAMiqlJFTpYuz1Bg6lIQ723YVwRk0
-         frKN3oBY6nWxD2jLSOesmHaqd9UXy0ADv9QBxyhGEYxd7b/4CyIf+rAo8I5bnKabgjC7
-         gmZyWckI4D4nOgylx3QvbvNAqv1amQxhpUvu40Ul07utfaJU/Xd1Hfuaj48JvDR6v/tr
-         NvUg==
+        b=MzJjP+qmVbYNVTaOjJ2Vz6CU3y5/FqMZqpCgaUgUVgZaWcL8HDmjCxCfQgoEWD8bhq
+         C1w699G5Bvt/0a309jbK8hc+aIl9vovOKHC0/aimI0TMQ1HIH0PX3OEOz9D4oXpIXHAl
+         SNvV8/F5HmTefYb7OndXY4D5GV90MErfdWXT97xoxIQ02yKUY7c/BHPK8UK/qH25iFw4
+         nE+rNxZ0wJxULZtOhKrQP5oY69zRADC8mlnUa1AxDzDBqofN7Z+sFfFrCiSZaNUwdqzQ
+         ApdVHwgviqrHu4G/sHgaiiwF/u9jfZUuXG6mJM3hinDqGEktLU4xmfD0CoXN36adLOMe
+         il9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=GMkiDCqFZ4SmEy8AATvXBlYPr1pU3FDXnsUBkZ6HHb0=;
-        b=ds9pnrhnjLHDsgYlA9oYDdXsnZFHIKqU540AOpy2J8kfQSuV1UBhYUFY536hdyEaoU
-         SRnPGHhVL+lRaWIcmPyMomZElh6VMHgCVvCbX5DHORq60ffj9LNj+OImXuYgK05sRNM3
-         Cj2sdxOYXYVWc16QRamoiY+aICQdKBP/QpbtnHcLc8DeaRU8eW5/kLckTSuU3DqHbe2N
-         d6LwBmKEwz456aoZDLw7JOi+UU9886hc0R9gpKWGERYwXGxBiuZLGuiz8YHcmCviE3yZ
-         gHaRgtZZNryCeqHmfL5IwnFcG9kjqtIId31CvW458rx4ArSYNX4Cxq/NJEwv9xvN7SsB
-         BazA==
+        bh=RY8iAUl7jptsvuZNySqy8HvChdXNWXODlLJeNMfgYH4=;
+        b=BXDdXdMLGx35K1wtJUR1Tx5+38GcXbEYgDcnPx3HHpjcc8hVTyp5btY16W9CKcOjbA
+         pPrRLNevQ2ZTKn7gOGmtJnLgJO+jCKfzBmb/YEUh9IDkK3YOJpdBfVJIG0KQpRlFKUjn
+         Uayu8rPXfrd3XL4mKKhe0EY3CLSuLX0/6SafDN89n/XMN0VbbAFWMgQoaq6MDKaRsGvu
+         A+Xlhu45P7QQ5FR3+aZzTTv1YwwiNlB3kOe3E/LhqPcruoSH6UhpsQq7V5qU2nACxzti
+         BR3Tzj+6Gq4KBmtXYkJ7dVGFEod+ElQ8YVI2priRFm4DU2EvEFGSvkk78mK6bObnHscF
+         ++xA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of lyude@redhat.com designates 209.132.183.28 as permitted sender) smtp.mailfrom=lyude@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
@@ -29,506 +29,294 @@ To: nouveau@lists.freedesktop.org
 Cc: Ben Skeggs <bskeggs@redhat.com>,
 	David Airlie <airlied@linux.ie>,
 	Martin Peres <martin.peres@free.fr>,
-	Karol Herbst <karolherbst@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Rhys Kidd <rhyskidd@gmail.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
 	Kate Stewart <kstewart@linuxfoundation.org>,
+	Karol Herbst <karolherbst@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Ilia Mirkin <imirkin@alum.mit.edu>,
 	linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org
-Subject: [RFC v6 2/5] drm/nouveau: Add support for BLCG on Kepler1
-Date: Thu,  1 Feb 2018 13:13:56 -0500
-Message-Id: <20180201181458.25776-3-lyude@redhat.com>
+Subject: [RFC v6 1/5] drm/nouveau: Add support for basic clockgating on Kepler1
+Date: Thu,  1 Feb 2018 13:13:55 -0500
+Message-Id: <20180201181458.25776-2-lyude@redhat.com>
 In-Reply-To: <20180201181458.25776-1-lyude@redhat.com>
 References: <20180201181458.25776-1-lyude@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591223549234124399?=
-X-GMAIL-MSGID: =?utf-8?q?1591223549234124399?=
+X-GMAIL-THRID: =?utf-8?q?1591223464094098215?=
+X-GMAIL-MSGID: =?utf-8?q?1591223464094098215?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This enables BLCG optimization for kepler1. When using clockgating,
-nvidia's firmware has a set of registers which are initially programmed
-by the vbios with various engine delays and other mysterious settings
-that are safe enough to bring up the GPU. However, the values used by
-the vbios are more power hungry then they need to be, so the nvidia driver
-writes it's own more optimized set of BLCG settings before enabling
-CG_CTRL. This adds support for programming the optimized BLCG values
-during engine/subdev init, which enables rather significant power
-savings.
+This adds support for enabling automatic clockgating on nvidia GPUs for
+Kepler1. While this is not technically a clockgating level, it does
+enable clockgating using the clockgating values initially set by the
+vbios (which should be safe to use).
 
-This introduces the nvkm_therm_clkgate_init() helper, which we use to
-program the optimized BLCG settings before enabling clockgating with
-nvkm_therm_clkgate_enable.
+This introduces two therm helpers for controlling basic clockgating:
+	nvkm_therm_clkgate_enable() - enables clockgating through
+	CG_CTRL, done after initializing the GPU fully
+	nvkm_therm_clkgate_fini() - prepares clockgating for suspend or
+	driver unload
 
-As well, this commit shares a lot more code with Fermi since BLCG is
-mostly the same there as far as we can tell. In the future, it's likely
-we'll reformat the clkgate_packs for kepler1 so that they share a list
-of mmio packs with Fermi.
+A lot of this code was originally going to be based off of fermi;
+however it turns out that while Fermi's the first line of GPUs that
+introduced this kind of power saving, Fermi requires more fine tuned
+control of the CG_CTRL registers from the driver while reclocking that
+we don't entirely understand yet.
+
+For the simple parts we will be sharing with Fermi for certain however,
+we at least add those into a new subdev/therm/gf100.h header.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Reviewed-by: Martin Peres <martin.peres@free.fr>
 ---
- .../gpu/drm/nouveau/include/nvkm/subdev/therm.h    |  12 ++
- drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h     |   1 +
- drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.c     | 207 +++++++++++++++++++++
- drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.h     |  55 ++++++
- drivers/gpu/drm/nouveau/nvkm/subdev/fb/gf100.c     |   6 +
- drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.c     |  47 +++++
- drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.h     |  35 ++++
- drivers/gpu/drm/nouveau/nvkm/subdev/fb/priv.h      |   2 +
+ .../gpu/drm/nouveau/include/nvkm/subdev/therm.h    |   5 +
+ drivers/gpu/drm/nouveau/nvkm/engine/device/base.c  |  17 +--
  drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild   |   1 +
- drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c   |  10 +
- drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.c  |  58 ++++++
- drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c  |   1 +
- drivers/gpu/drm/nouveau/nvkm/subdev/therm/gt215.c  |   2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/therm/priv.h   |   6 +
- 14 files changed, 442 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.h
- create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.h
- create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.c
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c   |  58 +++++++--
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.h  |  35 ++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf119.c  |   8 +-
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c  | 135 +++++++++++++++++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.h  |  48 ++++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/priv.h   |  15 ++-
+ 9 files changed, 301 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.h
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c
+ create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.h
 
 diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/therm.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/therm.h
-index 240b19bb4667..9398d9f09339 100644
+index b1ac47eb786e..240b19bb4667 100644
 --- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/therm.h
 +++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/therm.h
-@@ -46,6 +46,16 @@ enum nvkm_therm_attr_type {
- 	NVKM_THERM_ATTR_THRS_SHUTDOWN_HYST = 17,
+@@ -85,17 +85,22 @@ struct nvkm_therm {
+ 
+ 	int (*attr_get)(struct nvkm_therm *, enum nvkm_therm_attr_type);
+ 	int (*attr_set)(struct nvkm_therm *, enum nvkm_therm_attr_type, int);
++
++	bool clkgating_enabled;
  };
  
-+struct nvkm_therm_clkgate_init {
-+	u32 addr;
-+	u8  count;
-+	u32 data;
-+};
-+
-+struct nvkm_therm_clkgate_pack {
-+	const struct nvkm_therm_clkgate_init *init;
-+};
-+
- struct nvkm_therm {
- 	const struct nvkm_therm_func *func;
- 	struct nvkm_subdev subdev;
-@@ -92,6 +102,8 @@ struct nvkm_therm {
  int nvkm_therm_temp_get(struct nvkm_therm *);
  int nvkm_therm_fan_sense(struct nvkm_therm *);
  int nvkm_therm_cstate(struct nvkm_therm *, int, int);
-+void nvkm_therm_clkgate_init(struct nvkm_therm *,
-+			     const struct nvkm_therm_clkgate_pack *);
- void nvkm_therm_clkgate_enable(struct nvkm_therm *);
- void nvkm_therm_clkgate_fini(struct nvkm_therm *, bool);
++void nvkm_therm_clkgate_enable(struct nvkm_therm *);
++void nvkm_therm_clkgate_fini(struct nvkm_therm *, bool);
  
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h
-index d7c2adb9b543..c8ec3fd97155 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h
-@@ -137,6 +137,7 @@ struct gf100_gr_func {
- 	int (*rops)(struct gf100_gr *);
- 	int ppc_nr;
- 	const struct gf100_grctx_func *grctx;
-+	const struct nvkm_therm_clkgate_pack *clkgate_pack;
- 	struct nvkm_sclass sclass[];
- };
- 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.c b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.c
-index 5e82f94c2245..1b52fcb2c49a 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.c
-@@ -22,6 +22,7 @@
-  * Authors: Ben Skeggs <bskeggs@redhat.com>
-  */
- #include "gf100.h"
-+#include "gk104.h"
- #include "ctxgf100.h"
- 
- #include <nvif/class.h>
-@@ -173,6 +174,208 @@ gk104_gr_pack_mmio[] = {
- 	{}
- };
- 
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_main_0[] = {
-+	{ 0x4041f0, 1, 0x00004046 },
-+	{ 0x409890, 1, 0x00000045 },
-+	{ 0x4098b0, 1, 0x0000007f },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_rstr2d_0[] = {
-+	{ 0x4078c0, 1, 0x00000042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_unk_0[] = {
-+	{ 0x406000, 1, 0x00004044 },
-+	{ 0x405860, 1, 0x00004042 },
-+	{ 0x40590c, 1, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gcc_0[] = {
-+	{ 0x408040, 1, 0x00004044 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_sked_0[] = {
-+	{ 0x407000, 1, 0x00004044 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_unk_1[] = {
-+	{ 0x405bf0, 1, 0x00004044 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_ctxctl_0[] = {
-+	{ 0x41a890, 1, 0x00000042 },
-+	{ 0x41a8b0, 1, 0x0000007f },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_unk_0[] = {
-+	{ 0x418500, 1, 0x00004042 },
-+	{ 0x418608, 1, 0x00004042 },
-+	{ 0x418688, 1, 0x00004042 },
-+	{ 0x418718, 1, 0x00000042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_esetup_0[] = {
-+	{ 0x418828, 1, 0x00000044 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_tpbus_0[] = {
-+	{ 0x418bbc, 1, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_zcull_0[] = {
-+	{ 0x418970, 1, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_tpconf_0[] = {
-+	{ 0x418c70, 1, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_unk_1[] = {
-+	{ 0x418cf0, 1, 0x00004042 },
-+	{ 0x418d70, 1, 0x00004042 },
-+	{ 0x418f0c, 1, 0x00004042 },
-+	{ 0x418e0c, 1, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_gcc_0[] = {
-+	{ 0x419020, 1, 0x00004042 },
-+	{ 0x419038, 1, 0x00000042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_ffb_0[] = {
-+	{ 0x418898, 1, 0x00000042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_tex_0[] = {
-+	{ 0x419a40, 9, 0x00004042 },
-+	{ 0x419acc, 1, 0x00004047 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_poly_0[] = {
-+	{ 0x419868, 1, 0x00000042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_l1c_0[] = {
-+	{ 0x419ccc, 3, 0x00000042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_unk_2[] = {
-+	{ 0x419c70, 1, 0x00004045 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_mp_0[] = {
-+	{ 0x419fd0, 1, 0x00004043 },
-+	{ 0x419fd8, 1, 0x00004049 },
-+	{ 0x419fe0, 2, 0x00004042 },
-+	{ 0x419ff0, 1, 0x00004046 },
-+	{ 0x419ff8, 1, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_gpc_ppc_0[] = {
-+	{ 0x41be28, 1, 0x00000042 },
-+	{ 0x41bfe8, 1, 0x00004042 },
-+	{ 0x41bed0, 1, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_rop_zrop_0[] = {
-+	{ 0x408810, 2, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_rop_0[] = {
-+	{ 0x408a80, 6, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_rop_crop_0[] = {
-+	{ 0x4089a8, 1, 0x00004042 },
-+	{ 0x4089b0, 1, 0x00000042 },
-+	{ 0x4089b8, 1, 0x00004042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_clkgate_blcg_init_pxbar_0[] = {
-+	{ 0x13c820, 1, 0x0001007f },
-+	{ 0x13cbe0, 1, 0x00000042 },
-+	{}
-+};
-+
-+static const struct nvkm_therm_clkgate_pack
-+gk104_clkgate_pack[] = {
-+	{ gk104_clkgate_blcg_init_main_0 },
-+	{ gk104_clkgate_blcg_init_rstr2d_0 },
-+	{ gk104_clkgate_blcg_init_unk_0 },
-+	{ gk104_clkgate_blcg_init_gcc_0 },
-+	{ gk104_clkgate_blcg_init_sked_0 },
-+	{ gk104_clkgate_blcg_init_unk_1 },
-+	{ gk104_clkgate_blcg_init_gpc_ctxctl_0 },
-+	{ gk104_clkgate_blcg_init_gpc_unk_0 },
-+	{ gk104_clkgate_blcg_init_gpc_esetup_0 },
-+	{ gk104_clkgate_blcg_init_gpc_tpbus_0 },
-+	{ gk104_clkgate_blcg_init_gpc_zcull_0 },
-+	{ gk104_clkgate_blcg_init_gpc_tpconf_0 },
-+	{ gk104_clkgate_blcg_init_gpc_unk_1 },
-+	{ gk104_clkgate_blcg_init_gpc_gcc_0 },
-+	{ gk104_clkgate_blcg_init_gpc_ffb_0 },
-+	{ gk104_clkgate_blcg_init_gpc_tex_0 },
-+	{ gk104_clkgate_blcg_init_gpc_poly_0 },
-+	{ gk104_clkgate_blcg_init_gpc_l1c_0 },
-+	{ gk104_clkgate_blcg_init_gpc_unk_2 },
-+	{ gk104_clkgate_blcg_init_gpc_mp_0 },
-+	{ gk104_clkgate_blcg_init_gpc_ppc_0 },
-+	{ gk104_clkgate_blcg_init_rop_zrop_0 },
-+	{ gk104_clkgate_blcg_init_rop_0 },
-+	{ gk104_clkgate_blcg_init_rop_crop_0 },
-+	{ gk104_clkgate_blcg_init_pxbar_0 },
-+	{}
-+};
-+
- /*******************************************************************************
-  * PGRAPH engine/subdev functions
-  ******************************************************************************/
-@@ -214,6 +417,9 @@ gk104_gr_init(struct gf100_gr *gr)
- 	gr->func->init_gpc_mmu(gr);
- 
- 	gf100_gr_mmio(gr, gr->func->mmio);
-+	if (gr->func->clkgate_pack)
-+		nvkm_therm_clkgate_init(gr->base.engine.subdev.device->therm,
-+					gr->func->clkgate_pack);
- 
- 	nvkm_wr32(device, GPC_UNIT(0, 0x3018), 0x00000001);
- 
-@@ -338,6 +544,7 @@ gk104_gr = {
- 	.rops = gf100_gr_rops,
- 	.ppc_nr = 1,
- 	.grctx = &gk104_grctx,
-+	.clkgate_pack = gk104_clkgate_pack,
- 	.sclass = {
- 		{ -1, -1, FERMI_TWOD_A },
- 		{ -1, -1, KEPLER_INLINE_TO_MEMORY_A },
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.h b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.h
-new file mode 100644
-index 000000000000..a24c177365d1
---- /dev/null
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk104.h
-@@ -0,0 +1,55 @@
-+/*
-+ * Copyright 2018 Red Hat Inc.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ * OTHER DEALINGS IN THE SOFTWARE.
-+ *
-+ * Authors: Lyude Paul <lyude@redhat.com>
-+ */
-+#ifndef __GK104_GR_H__
-+#define __GK104_GR_H__
-+
-+#include <subdev/therm.h>
-+
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_main_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_rstr2d_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_unk_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gcc_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_sked_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_unk_1[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_ctxctl_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_unk_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_esetup_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_tpbus_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_zcull_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_tpconf_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_unk_1[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_gcc_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_ffb_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_tex_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_poly_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_l1c_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_unk_2[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_mp_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_gpc_ppc_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_rop_zrop_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_rop_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_rop_crop_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_clkgate_blcg_init_pxbar_0[];
-+
-+#endif
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gf100.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gf100.c
-index 47d28c279707..cdc4e0a2cc6b 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gf100.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gf100.c
-@@ -26,6 +26,7 @@
- 
- #include <core/memory.h>
+ int nv40_therm_new(struct nvkm_device *, int, struct nvkm_therm **);
+ int nv50_therm_new(struct nvkm_device *, int, struct nvkm_therm **);
+ int g84_therm_new(struct nvkm_device *, int, struct nvkm_therm **);
+ int gt215_therm_new(struct nvkm_device *, int, struct nvkm_therm **);
+ int gf119_therm_new(struct nvkm_device *, int, struct nvkm_therm **);
++int gk104_therm_new(struct nvkm_device *, int, struct nvkm_therm **);
+ int gm107_therm_new(struct nvkm_device *, int, struct nvkm_therm **);
+ int gm200_therm_new(struct nvkm_device *, int, struct nvkm_therm **);
+ int gp100_therm_new(struct nvkm_device *, int, struct nvkm_therm **);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+index 08e77cd55e6e..74bd09b1c893 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+@@ -28,6 +28,7 @@
  #include <core/option.h>
+ 
+ #include <subdev/bios.h>
 +#include <subdev/therm.h>
  
- void
- gf100_fb_intr(struct nvkm_fb *base)
-@@ -92,6 +93,11 @@ gf100_fb_init(struct nvkm_fb *base)
+ static DEFINE_MUTEX(nv_devices_mutex);
+ static LIST_HEAD(nv_devices);
+@@ -1682,7 +1683,7 @@ nve4_chipset = {
+ 	.mxm = nv50_mxm_new,
+ 	.pci = gk104_pci_new,
+ 	.pmu = gk104_pmu_new,
+-	.therm = gf119_therm_new,
++	.therm = gk104_therm_new,
+ 	.timer = nv41_timer_new,
+ 	.top = gk104_top_new,
+ 	.volt = gk104_volt_new,
+@@ -1721,7 +1722,7 @@ nve6_chipset = {
+ 	.mxm = nv50_mxm_new,
+ 	.pci = gk104_pci_new,
+ 	.pmu = gk104_pmu_new,
+-	.therm = gf119_therm_new,
++	.therm = gk104_therm_new,
+ 	.timer = nv41_timer_new,
+ 	.top = gk104_top_new,
+ 	.volt = gk104_volt_new,
+@@ -1760,7 +1761,7 @@ nve7_chipset = {
+ 	.mxm = nv50_mxm_new,
+ 	.pci = gk104_pci_new,
+ 	.pmu = gk104_pmu_new,
+-	.therm = gf119_therm_new,
++	.therm = gk104_therm_new,
+ 	.timer = nv41_timer_new,
+ 	.top = gk104_top_new,
+ 	.volt = gk104_volt_new,
+@@ -1824,7 +1825,7 @@ nvf0_chipset = {
+ 	.mxm = nv50_mxm_new,
+ 	.pci = gk104_pci_new,
+ 	.pmu = gk110_pmu_new,
+-	.therm = gf119_therm_new,
++	.therm = gk104_therm_new,
+ 	.timer = nv41_timer_new,
+ 	.top = gk104_top_new,
+ 	.volt = gk104_volt_new,
+@@ -1862,7 +1863,7 @@ nvf1_chipset = {
+ 	.mxm = nv50_mxm_new,
+ 	.pci = gk104_pci_new,
+ 	.pmu = gk110_pmu_new,
+-	.therm = gf119_therm_new,
++	.therm = gk104_therm_new,
+ 	.timer = nv41_timer_new,
+ 	.top = gk104_top_new,
+ 	.volt = gk104_volt_new,
+@@ -1900,7 +1901,7 @@ nv106_chipset = {
+ 	.mxm = nv50_mxm_new,
+ 	.pci = gk104_pci_new,
+ 	.pmu = gk208_pmu_new,
+-	.therm = gf119_therm_new,
++	.therm = gk104_therm_new,
+ 	.timer = nv41_timer_new,
+ 	.top = gk104_top_new,
+ 	.volt = gk104_volt_new,
+@@ -1938,7 +1939,7 @@ nv108_chipset = {
+ 	.mxm = nv50_mxm_new,
+ 	.pci = gk104_pci_new,
+ 	.pmu = gk208_pmu_new,
+-	.therm = gf119_therm_new,
++	.therm = gk104_therm_new,
+ 	.timer = nv41_timer_new,
+ 	.top = gk104_top_new,
+ 	.volt = gk104_volt_new,
+@@ -2508,6 +2509,7 @@ nvkm_device_fini(struct nvkm_device *device, bool suspend)
+ 		}
+ 	}
  
- 	if (fb->r100c10_page)
- 		nvkm_wr32(device, 0x100c10, fb->r100c10 >> 8);
-+
-+	if (base->func->clkgate_pack) {
-+		nvkm_therm_clkgate_init(device->therm,
-+					base->func->clkgate_pack);
-+	}
- }
++	nvkm_therm_clkgate_fini(device->therm, suspend);
  
- void *
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.c
-index 0a6e8eaad42c..48fd98e08baa 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.c
-@@ -20,10 +20,56 @@
-  * OTHER DEALINGS IN THE SOFTWARE.
+ 	if (device->func->fini)
+ 		device->func->fini(device, suspend);
+@@ -2597,6 +2599,7 @@ nvkm_device_init(struct nvkm_device *device)
+ 	}
+ 
+ 	nvkm_acpi_init(device);
++	nvkm_therm_clkgate_enable(device->therm);
+ 
+ 	time = ktime_to_us(ktime_get()) - time;
+ 	nvdev_trace(device, "init completed in %lldus\n", time);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild
+index 7ba56b12badd..4bac4772d8ed 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild
+@@ -10,6 +10,7 @@ nvkm-y += nvkm/subdev/therm/nv50.o
+ nvkm-y += nvkm/subdev/therm/g84.o
+ nvkm-y += nvkm/subdev/therm/gt215.o
+ nvkm-y += nvkm/subdev/therm/gf119.o
++nvkm-y += nvkm/subdev/therm/gk104.o
+ nvkm-y += nvkm/subdev/therm/gm107.o
+ nvkm-y += nvkm/subdev/therm/gm200.o
+ nvkm-y += nvkm/subdev/therm/gp100.o
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
+index f27fc6d0d4c6..cf1d5af30f5f 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
+@@ -21,6 +21,7 @@
   *
-  * Authors: Ben Skeggs
-+ *          Lyude Paul
+  * Authors: Martin Peres
   */
-+#include "gk104.h"
- #include "gf100.h"
- #include "ram.h"
- 
-+/*
-+ *******************************************************************************
-+ * PGRAPH registers for clockgating
-+ *******************************************************************************
-+ */
-+const struct nvkm_therm_clkgate_init
-+gk104_fb_clkgate_blcg_init_unk_0[] = {
-+	{ 0x100d10, 1, 0x0000c244 },
-+	{ 0x100d30, 1, 0x0000c242 },
-+	{ 0x100d3c, 1, 0x00000242 },
-+	{ 0x100d48, 1, 0x00000242 },
-+	{ 0x100d1c, 1, 0x00000042 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_fb_clkgate_blcg_init_vm_0[] = {
-+	{ 0x100c98, 1, 0x00000242 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_fb_clkgate_blcg_init_main_0[] = {
-+	{ 0x10f000, 1, 0x00000042 },
-+	{ 0x17e030, 1, 0x00000044 },
-+	{ 0x17e040, 1, 0x00000044 },
-+	{}
-+};
-+
-+const struct nvkm_therm_clkgate_init
-+gk104_fb_clkgate_blcg_init_bcast_0[] = {
-+	{ 0x17ea60, 4, 0x00000044 },
-+	{}
-+};
-+
-+static const struct nvkm_therm_clkgate_pack
-+gk104_fb_clkgate_pack[] = {
-+	{ gk104_fb_clkgate_blcg_init_unk_0 },
-+	{ gk104_fb_clkgate_blcg_init_vm_0 },
-+	{ gk104_fb_clkgate_blcg_init_main_0 },
-+	{ gk104_fb_clkgate_blcg_init_bcast_0 },
-+	{}
-+};
-+
- static const struct nvkm_fb_func
- gk104_fb = {
- 	.dtor = gf100_fb_dtor,
-@@ -33,6 +79,7 @@ gk104_fb = {
- 	.intr = gf100_fb_intr,
- 	.ram_new = gk104_ram_new,
- 	.default_bigpage = 17,
-+	.clkgate_pack = gk104_fb_clkgate_pack,
- };
++#include <nvkm/core/option.h>
+ #include "priv.h"
  
  int
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.h b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.h
+@@ -297,6 +298,38 @@ nvkm_therm_attr_set(struct nvkm_therm *therm,
+ 	return -EINVAL;
+ }
+ 
++void
++nvkm_therm_clkgate_enable(struct nvkm_therm *therm)
++{
++	if (!therm->func->clkgate_enable || !therm->clkgating_enabled)
++		return;
++
++	nvkm_debug(&therm->subdev,
++		   "Enabling clockgating\n");
++	therm->func->clkgate_enable(therm);
++}
++
++void
++nvkm_therm_clkgate_fini(struct nvkm_therm *therm, bool suspend)
++{
++	if (!therm->func->clkgate_fini || !therm->clkgating_enabled)
++		return;
++
++	nvkm_debug(&therm->subdev,
++		   "Preparing clockgating for %s\n",
++		   suspend ? "suspend" : "fini");
++	therm->func->clkgate_fini(therm, suspend);
++}
++
++static void
++nvkm_therm_clkgate_oneinit(struct nvkm_therm *therm)
++{
++	if (!therm->func->clkgate_enable || !therm->clkgating_enabled)
++		return;
++
++	nvkm_info(&therm->subdev, "Clockgating enabled\n");
++}
++
+ static void
+ nvkm_therm_intr(struct nvkm_subdev *subdev)
+ {
+@@ -333,6 +366,7 @@ nvkm_therm_oneinit(struct nvkm_subdev *subdev)
+ 	nvkm_therm_fan_ctor(therm);
+ 	nvkm_therm_fan_mode(therm, NVKM_THERM_CTRL_AUTO);
+ 	nvkm_therm_sensor_preinit(therm);
++	nvkm_therm_clkgate_oneinit(therm);
+ 	return 0;
+ }
+ 
+@@ -374,15 +408,10 @@ nvkm_therm = {
+ 	.intr = nvkm_therm_intr,
+ };
+ 
+-int
+-nvkm_therm_new_(const struct nvkm_therm_func *func, struct nvkm_device *device,
+-		int index, struct nvkm_therm **ptherm)
++void
++nvkm_therm_ctor(struct nvkm_therm *therm, struct nvkm_device *device,
++		int index, const struct nvkm_therm_func *func)
+ {
+-	struct nvkm_therm *therm;
+-
+-	if (!(therm = *ptherm = kzalloc(sizeof(*therm), GFP_KERNEL)))
+-		return -ENOMEM;
+-
+ 	nvkm_subdev_ctor(&nvkm_therm, device, index, &therm->subdev);
+ 	therm->func = func;
+ 
+@@ -395,5 +424,18 @@ nvkm_therm_new_(const struct nvkm_therm_func *func, struct nvkm_device *device,
+ 	therm->attr_get = nvkm_therm_attr_get;
+ 	therm->attr_set = nvkm_therm_attr_set;
+ 	therm->mode = therm->suspend = -1; /* undefined */
++	therm->clkgating_enabled = false;
++}
++
++int
++nvkm_therm_new_(const struct nvkm_therm_func *func, struct nvkm_device *device,
++		int index, struct nvkm_therm **ptherm)
++{
++	struct nvkm_therm *therm;
++
++	if (!(therm = *ptherm = kzalloc(sizeof(*therm), GFP_KERNEL)))
++		return -ENOMEM;
++
++	nvkm_therm_ctor(therm, device, index, func);
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.h b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.h
 new file mode 100644
-index 000000000000..b3c78e4ff706
+index 000000000000..cfb25af77c60
 --- /dev/null
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk104.h
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.h
 @@ -0,0 +1,35 @@
 +/*
 + * Copyright 2018 Red Hat Inc.
@@ -554,76 +342,63 @@ index 000000000000..b3c78e4ff706
 + * Authors: Lyude Paul
 + */
 +
-+#ifndef __GK104_FB_H__
-+#define __GK104_FB_H__
++#ifndef __GF100_THERM_H__
++#define __GF100_THERM_H__
 +
-+#include <subdev/therm.h>
++#include <core/device.h>
 +
-+extern const struct nvkm_therm_clkgate_init gk104_fb_clkgate_blcg_init_unk_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_fb_clkgate_blcg_init_vm_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_fb_clkgate_blcg_init_main_0[];
-+extern const struct nvkm_therm_clkgate_init gk104_fb_clkgate_blcg_init_bcast_0[];
++struct gf100_idle_filter {
++	u32 fecs;
++	u32 hubmmu;
++};
 +
 +#endif
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/priv.h b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/priv.h
-index 9351188d5d76..414a423e0e55 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/priv.h
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/priv.h
-@@ -3,6 +3,7 @@
- #define __NVKM_FB_PRIV_H__
- #define nvkm_fb(p) container_of((p), struct nvkm_fb, subdev)
- #include <subdev/fb.h>
-+#include <subdev/therm.h>
- struct nvkm_bios;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf119.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf119.c
+index 06dcfd6ee966..0981b02790e2 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf119.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf119.c
+@@ -49,7 +49,7 @@ pwm_info(struct nvkm_therm *therm, int line)
+ 	return -ENODEV;
+ }
  
- struct nvkm_fb_func {
-@@ -27,6 +28,7 @@ struct nvkm_fb_func {
- 	int (*ram_new)(struct nvkm_fb *, struct nvkm_ram **);
- 
- 	u8 default_bigpage;
-+	const struct nvkm_therm_clkgate_pack *clkgate_pack;
- };
- 
- void nvkm_fb_ctor(const struct nvkm_fb_func *, struct nvkm_device *device,
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild
-index 4bac4772d8ed..550702eab0b1 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/Kbuild
-@@ -9,6 +9,7 @@ nvkm-y += nvkm/subdev/therm/nv40.o
- nvkm-y += nvkm/subdev/therm/nv50.o
- nvkm-y += nvkm/subdev/therm/g84.o
- nvkm-y += nvkm/subdev/therm/gt215.o
-+nvkm-y += nvkm/subdev/therm/gf100.o
- nvkm-y += nvkm/subdev/therm/gf119.o
- nvkm-y += nvkm/subdev/therm/gk104.o
- nvkm-y += nvkm/subdev/therm/gm107.o
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
-index cf1d5af30f5f..de07bc07abdb 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
-@@ -391,6 +391,16 @@ nvkm_therm_init(struct nvkm_subdev *subdev)
+-static int
++int
+ gf119_fan_pwm_ctrl(struct nvkm_therm *therm, int line, bool enable)
+ {
+ 	struct nvkm_device *device = therm->subdev.device;
+@@ -63,7 +63,7 @@ gf119_fan_pwm_ctrl(struct nvkm_therm *therm, int line, bool enable)
  	return 0;
  }
  
-+void
-+nvkm_therm_clkgate_init(struct nvkm_therm *therm,
-+			const struct nvkm_therm_clkgate_pack *p)
-+{
-+	if (!therm->func->clkgate_init || !therm->clkgating_enabled)
-+		return;
-+
-+	therm->func->clkgate_init(therm, p);
-+}
-+
- static void *
- nvkm_therm_dtor(struct nvkm_subdev *subdev)
+-static int
++int
+ gf119_fan_pwm_get(struct nvkm_therm *therm, int line, u32 *divs, u32 *duty)
  {
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.c
+ 	struct nvkm_device *device = therm->subdev.device;
+@@ -85,7 +85,7 @@ gf119_fan_pwm_get(struct nvkm_therm *therm, int line, u32 *divs, u32 *duty)
+ 	return -EINVAL;
+ }
+ 
+-static int
++int
+ gf119_fan_pwm_set(struct nvkm_therm *therm, int line, u32 divs, u32 duty)
+ {
+ 	struct nvkm_device *device = therm->subdev.device;
+@@ -102,7 +102,7 @@ gf119_fan_pwm_set(struct nvkm_therm *therm, int line, u32 divs, u32 duty)
+ 	return 0;
+ }
+ 
+-static int
++int
+ gf119_fan_pwm_clock(struct nvkm_therm *therm, int line)
+ {
+ 	struct nvkm_device *device = therm->subdev.device;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c
 new file mode 100644
-index 000000000000..5ae6913320e8
+index 000000000000..79806a757893
 --- /dev/null
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gf100.c
-@@ -0,0 +1,58 @@
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c
+@@ -0,0 +1,135 @@
 +/*
 + * Copyright 2018 Red Hat Inc.
 + *
@@ -650,93 +425,217 @@ index 000000000000..5ae6913320e8
 +#include <core/device.h>
 +
 +#include "priv.h"
++#include "gk104.h"
 +
-+#define pack_for_each_init(init, pack, head)                          \
-+	for (pack = head; pack && pack->init; pack++)                 \
-+		  for (init = pack->init; init && init->count; init++)
 +void
-+gf100_clkgate_init(struct nvkm_therm *therm,
-+		   const struct nvkm_therm_clkgate_pack *p)
++gk104_clkgate_enable(struct nvkm_therm *base)
 +{
-+	struct nvkm_device *device = therm->subdev.device;
-+	const struct nvkm_therm_clkgate_pack *pack;
-+	const struct nvkm_therm_clkgate_init *init;
-+	u32 next, addr;
++	struct gk104_therm *therm = gk104_therm(base);
++	struct nvkm_device *dev = therm->base.subdev.device;
++	const struct gk104_clkgate_engine_info *order = therm->clkgate_order;
++	int i;
 +
-+	pack_for_each_init(init, pack, p) {
-+		next = init->addr + init->count * 8;
-+		addr = init->addr;
++	/* Program ENG_MANT, ENG_FILTER */
++	for (i = 0; order[i].engine != NVKM_SUBDEV_NR; i++) {
++		if (!nvkm_device_subdev(dev, order[i].engine))
++			continue;
 +
-+		nvkm_trace(&therm->subdev, "{ 0x%06x, %d, 0x%08x }\n",
-+			   init->addr, init->count, init->data);
-+		while (addr < next) {
-+			nvkm_trace(&therm->subdev, "\t0x%06x = 0x%08x\n",
-+				   addr, init->data);
-+			nvkm_wr32(device, addr, init->data);
-+			addr += 8;
-+		}
++		nvkm_mask(dev, 0x20200 + order[i].offset, 0xff00, 0x4500);
++	}
++
++	/* magic */
++	nvkm_wr32(dev, 0x020288, therm->idle_filter->fecs);
++	nvkm_wr32(dev, 0x02028c, therm->idle_filter->hubmmu);
++
++	/* Enable clockgating (ENG_CLK = RUN->AUTO) */
++	for (i = 0; order[i].engine != NVKM_SUBDEV_NR; i++) {
++		if (!nvkm_device_subdev(dev, order[i].engine))
++			continue;
++
++		nvkm_mask(dev, 0x20200 + order[i].offset, 0x00ff, 0x0045);
 +	}
 +}
 +
-+/*
-+ * TODO: Fermi clockgating isn't understood fully yet, so we don't specify any
-+ * clockgate functions to use
-+ */
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c
-index 79806a757893..4e03971d2e3d 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.c
-@@ -100,6 +100,7 @@ gk104_therm_func = {
- 	.temp_get = g84_temp_get,
- 	.fan_sense = gt215_therm_fan_sense,
- 	.program_alarms = nvkm_therm_program_alarms_polling,
-+	.clkgate_init = gf100_clkgate_init,
- 	.clkgate_enable = gk104_clkgate_enable,
- 	.clkgate_fini = gk104_clkgate_fini,
- };
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gt215.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gt215.c
-index c08097f2aff5..4caf401d001a 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gt215.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gt215.c
-@@ -36,7 +36,7 @@ gt215_therm_fan_sense(struct nvkm_therm *therm)
- 	return -ENODEV;
- }
- 
--static void
 +void
- gt215_therm_init(struct nvkm_therm *therm)
- {
- 	struct nvkm_device *device = therm->subdev.device;
++gk104_clkgate_fini(struct nvkm_therm *base, bool suspend)
++{
++	struct gk104_therm *therm = gk104_therm(base);
++	struct nvkm_device *dev = therm->base.subdev.device;
++	const struct gk104_clkgate_engine_info *order = therm->clkgate_order;
++	int i;
++
++	/* ENG_CLK = AUTO->RUN, ENG_PWR = RUN->AUTO */
++	for (i = 0; order[i].engine != NVKM_SUBDEV_NR; i++) {
++		if (!nvkm_device_subdev(dev, order[i].engine))
++			continue;
++
++		nvkm_mask(dev, 0x20200 + order[i].offset, 0xff, 0x54);
++	}
++}
++
++const struct gk104_clkgate_engine_info gk104_clkgate_engine_info[] = {
++	{ NVKM_ENGINE_GR,     0x00 },
++	{ NVKM_ENGINE_MSPDEC, 0x04 },
++	{ NVKM_ENGINE_MSPPP,  0x08 },
++	{ NVKM_ENGINE_MSVLD,  0x0c },
++	{ NVKM_ENGINE_CE0,    0x10 },
++	{ NVKM_ENGINE_CE1,    0x14 },
++	{ NVKM_ENGINE_MSENC,  0x18 },
++	{ NVKM_ENGINE_CE2,    0x1c },
++	{ NVKM_SUBDEV_NR, 0 },
++};
++
++const struct gf100_idle_filter gk104_idle_filter = {
++	.fecs = 0x00001000,
++	.hubmmu = 0x00001000,
++};
++
++static const struct nvkm_therm_func
++gk104_therm_func = {
++	.init = gf119_therm_init,
++	.fini = g84_therm_fini,
++	.pwm_ctrl = gf119_fan_pwm_ctrl,
++	.pwm_get = gf119_fan_pwm_get,
++	.pwm_set = gf119_fan_pwm_set,
++	.pwm_clock = gf119_fan_pwm_clock,
++	.temp_get = g84_temp_get,
++	.fan_sense = gt215_therm_fan_sense,
++	.program_alarms = nvkm_therm_program_alarms_polling,
++	.clkgate_enable = gk104_clkgate_enable,
++	.clkgate_fini = gk104_clkgate_fini,
++};
++
++static int
++gk104_therm_new_(const struct nvkm_therm_func *func,
++		 struct nvkm_device *device,
++		 int index,
++		 const struct gk104_clkgate_engine_info *clkgate_order,
++		 const struct gf100_idle_filter *idle_filter,
++		 struct nvkm_therm **ptherm)
++{
++	struct gk104_therm *therm = kzalloc(sizeof(*therm), GFP_KERNEL);
++
++	if (!therm)
++		return -ENOMEM;
++
++	nvkm_therm_ctor(&therm->base, device, index, func);
++	*ptherm = &therm->base;
++	therm->clkgate_order = clkgate_order;
++	therm->idle_filter = idle_filter;
++
++	return 0;
++}
++
++int
++gk104_therm_new(struct nvkm_device *device,
++		int index, struct nvkm_therm **ptherm)
++{
++	return gk104_therm_new_(&gk104_therm_func, device, index,
++				gk104_clkgate_engine_info, &gk104_idle_filter,
++				ptherm);
++}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.h b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.h
+new file mode 100644
+index 000000000000..293e7743b19b
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/gk104.h
+@@ -0,0 +1,48 @@
++/*
++ * Copyright 2018 Red Hat Inc.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
++ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ * OTHER DEALINGS IN THE SOFTWARE.
++ *
++ * Authors: Lyude Paul
++ */
++
++#ifndef __GK104_THERM_H__
++#define __GK104_THERM_H__
++#define gk104_therm(p) (container_of((p), struct gk104_therm, base))
++
++#include <subdev/therm.h>
++#include "priv.h"
++#include "gf100.h"
++
++struct gk104_clkgate_engine_info {
++	enum nvkm_devidx engine;
++	u8 offset;
++};
++
++struct gk104_therm {
++	struct nvkm_therm base;
++
++	const struct gk104_clkgate_engine_info *clkgate_order;
++	const struct gf100_idle_filter *idle_filter;
++};
++
++extern const struct gk104_clkgate_engine_info gk104_clkgate_engine_info[];
++extern const struct gf100_idle_filter gk104_idle_filter;
++
++#endif
 diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/priv.h b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/priv.h
-index f30202dd88e7..21659daf1864 100644
+index 1f46e371d7c4..f30202dd88e7 100644
 --- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/priv.h
 +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/priv.h
-@@ -97,6 +97,8 @@ struct nvkm_therm_func {
+@@ -32,6 +32,8 @@
+ 
+ int nvkm_therm_new_(const struct nvkm_therm_func *, struct nvkm_device *,
+ 		    int index, struct nvkm_therm **);
++void nvkm_therm_ctor(struct nvkm_therm *therm, struct nvkm_device *device,
++		     int index, const struct nvkm_therm_func *func);
+ 
+ struct nvkm_fan {
+ 	struct nvkm_therm *parent;
+@@ -66,8 +68,6 @@ int nvkm_therm_fan_set(struct nvkm_therm *, bool now, int percent);
+ int nvkm_therm_fan_user_get(struct nvkm_therm *);
+ int nvkm_therm_fan_user_set(struct nvkm_therm *, int percent);
+ 
+-int nvkm_therm_preinit(struct nvkm_therm *);
+-
+ int  nvkm_therm_sensor_init(struct nvkm_therm *);
+ int  nvkm_therm_sensor_fini(struct nvkm_therm *, bool suspend);
+ void nvkm_therm_sensor_preinit(struct nvkm_therm *);
+@@ -96,6 +96,9 @@ struct nvkm_therm_func {
+ 	int (*fan_sense)(struct nvkm_therm *);
  
  	void (*program_alarms)(struct nvkm_therm *);
- 
-+	void (*clkgate_init)(struct nvkm_therm *,
-+			     const struct nvkm_therm_clkgate_pack *);
- 	void (*clkgate_enable)(struct nvkm_therm *);
- 	void (*clkgate_fini)(struct nvkm_therm *, bool);
++
++	void (*clkgate_enable)(struct nvkm_therm *);
++	void (*clkgate_fini)(struct nvkm_therm *, bool);
  };
-@@ -114,6 +116,9 @@ void g84_therm_fini(struct nvkm_therm *);
  
+ void nv40_therm_intr(struct nvkm_therm *);
+@@ -112,8 +115,16 @@ void g84_therm_fini(struct nvkm_therm *);
  int gt215_therm_fan_sense(struct nvkm_therm *);
  
-+void gf100_clkgate_init(struct nvkm_therm *,
-+			const struct nvkm_therm_clkgate_pack *);
-+
  void g84_therm_init(struct nvkm_therm *);
- 
- int gf119_fan_pwm_ctrl(struct nvkm_therm *, int, bool);
-@@ -122,6 +127,7 @@ int gf119_fan_pwm_set(struct nvkm_therm *, int, u32, u32);
- int gf119_fan_pwm_clock(struct nvkm_therm *, int);
++
++int gf119_fan_pwm_ctrl(struct nvkm_therm *, int, bool);
++int gf119_fan_pwm_get(struct nvkm_therm *, int, u32 *, u32 *);
++int gf119_fan_pwm_set(struct nvkm_therm *, int, u32, u32);
++int gf119_fan_pwm_clock(struct nvkm_therm *, int);
  void gf119_therm_init(struct nvkm_therm *);
  
-+void gk104_therm_init(struct nvkm_therm *);
- void gk104_clkgate_enable(struct nvkm_therm *);
- void gk104_clkgate_fini(struct nvkm_therm *, bool);
- 
++void gk104_clkgate_enable(struct nvkm_therm *);
++void gk104_clkgate_fini(struct nvkm_therm *, bool);
++
+ int nvkm_fanpwm_create(struct nvkm_therm *, struct dcb_gpio_func *);
+ int nvkm_fantog_create(struct nvkm_therm *, struct dcb_gpio_func *);
+ int nvkm_fannil_create(struct nvkm_therm *);
 -- 
 2.14.3
