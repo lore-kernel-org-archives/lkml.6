@@ -1,115 +1,410 @@
-Return-Path: <prvs=564c18bbf=Bart.VanAssche@wdc.com>
-X-Google-Smtp-Source: AH8x225tCYQe05uCQ8PqRmG5vbf7Wt5+iCDW2gAqhTx/VGbq6lMJAlhCxyvKnuWS+bR/mbb+7ndO
-ARC-Seal: i=1; a=rsa-sha256; t=1517531907; cv=none;
+Return-Path: <prvs=563541312=stanislav.nijnikov@wdc.com>
+X-Google-Smtp-Source: AH8x227agHo4egu4VbkFSzoBXRTMb1JiiDYM5kMyD2vhbR76fEYvGyU+do2tQ+S3LX1iLCzniM29
+ARC-Seal: i=1; a=rsa-sha256; t=1517501772; cv=none;
         d=google.com; s=arc-20160816;
-        b=pnzImcQWVd1j8B8QfUsjX8VksqTSLqAdm47lHjtQEyAd0vQjdjW+FFQm+xdrEgWcsU
-         oOj0Hd7le/WnaOUGlmBSjz4teqDcaaoQZEZuIpstvYpHRUy4O+yJrdAy/RUY31p0SZ/4
-         cmYWr6mGwiER+bI2134vZrAo/7B46LMCo1Vo7rq759kKDyDfuzXZxCt502IsIaBCakyt
-         wgwPc31Wab8iKH3AFGRruRdpDB67hKyrD51lqoEQOBMLAhVBTxk8SGW3rxC1NOG7tQIT
-         +YpLTi8xoKFF3fcSHrbhoFKN4DQb014bs3kBqlCumG7su0lEYvW3GyrN2Xu2gFnYW0M1
-         uQFA==
+        b=qz1VyEw+Y0q+6Yof5fsmx3+Jy5/Gf/fg/RzLgFdkeUuk+JIhq4lx2nf+Jfu7LUMim+
+         V/d4rpuWC90SmlJbtt0EZ10e2FXULYT4PhWTtAGMZvMJVwq4BuVC+TSvo7XwZ3Tr5Stl
+         byIjvQ7PXYJZvGg0ezvBauDVOBL4K8D7M8wCSTKvhSWhZBJW3IH5VGMo+8TIxCopY5pl
+         xGWeRF3J5JkSxuVuxoXjAzzNxfB4X6CN9ei0DzlZovZmk4kHQcf6Jk0kDsakO0J5WAhU
+         W7ouQCDVnwzclBklAZrqvZt/VO+t3NloK6lV2HTyswkQGNy/ezlQKuqbRZNtJLULq7XJ
+         u5dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id
-         :spamdiagnosticmetadata:spamdiagnosticoutput:wdcipoutbound
-         :content-language:accept-language:in-reply-to:references:message-id
-         :date:thread-index:thread-topic:subject:cc:to:from:dkim-signature
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=Lt0/KN/7qF/Ys61H7Kmn4KPLwkOD6IK20Tnsc55tktQ=;
-        b=DVgghcDmRPQ+nkWFzpTiB6Fb5UPzbgBAwymdyuDv7+fsQ8pekIS8IlaS5bVH4kMf6d
-         NG0FrzRyI73Pxfghzm8aRrkUMSCV+cu8t67XybtV1sxrku/K5nUVv7GyrhpyDdORHKZB
-         2tnlDdqf3Xtx77juYeE8wT2KYpptb/lyg6U7WeorCYjZGr4jhaUJPhKKZzBoTOMBQuTJ
-         WLPM+gvFDsxBkxpgAG4CHR/Lyw6OkKIQNAF6OidJDTAqlmTN/4FTVgff4eN1PPcpYn1c
-         twnbNcATA2L9ES5pl5HFoyUb9Ov8reUW1TitTpDdCojd5VoCpCKdAgTn+48PGLeIhDtr
-         h+YA==
+        bh=stFfLvX9gxaeGu6bPzpEIRizInhdongBDAe4+4LOxUs=;
+        b=juoAvWTgHm8TrhjqU3QfyyGR4EBWkg/+tT7AZ/RUfAnxVqw3ZIjDFLpmXGrpIE9Gud
+         o8CwB1M4qgGXW41RolvMY+82qe49ERltJDU+fPMxWG0GSwHIbRtPSC8D6I44t12uP2SZ
+         jWFrL6Mnc6iQJbIB5eBWRS1ONldpErlE+d6hgKA65Gcp94KBexZMOg5lqyCMIP2bD/g1
+         ib6HwwkhWz6S/L+roz1zcTJKQy+UdONric3plfALjzyVpI8zHzzMTWPZuUs3sfzdlklN
+         lw1PjAYu9TM2uxdvzL7OzGkbv8VtIb4gHDLnFieDDEWbl9Ouqb1Xu1az0tUAvQGWXZg+
+         o2vA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=HakGF2ZP;
-       dkim=pass header.i=@sharedspace.onmicrosoft.com header.s=selector1-wdc-com header.b=Kn68eW/A;
-       spf=pass (google.com: domain of prvs=564c18bbf=bart.vanassche@wdc.com designates 216.71.153.144 as permitted sender) smtp.mailfrom=prvs=564c18bbf=Bart.VanAssche@wdc.com
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=OVLmnuCR;
+       spf=pass (google.com: domain of prvs=563541312=stanislav.nijnikov@wdc.com designates 68.232.141.245 as permitted sender) smtp.mailfrom=prvs=563541312=stanislav.nijnikov@wdc.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=HakGF2ZP;
-       dkim=pass header.i=@sharedspace.onmicrosoft.com header.s=selector1-wdc-com header.b=Kn68eW/A;
-       spf=pass (google.com: domain of prvs=564c18bbf=bart.vanassche@wdc.com designates 216.71.153.144 as permitted sender) smtp.mailfrom=prvs=564c18bbf=Bart.VanAssche@wdc.com
-X-IronPort-AV: E=Sophos;i="5.46,445,1511798400";
-   d="scan'208";a="70508656"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jaegeuk@kernel.org" <jaegeuk@kernel.org>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, Stanislav Nijnikov <Stanislav.Nijnikov@wdc.com>
-CC: Alex Lemberg <Alex.Lemberg@wdc.com>
-Subject: Re: [PATCH v4 08/10] ufs: sysfs: unit descriptor
-Thread-Topic: [PATCH v4 08/10] ufs: sysfs: unit descriptor
-Thread-Index: AQHTm3gORSuoW1sppE+tpd0nPEIDTqOQRVKA
-Date: Fri, 2 Feb 2018 00:38:25 +0000
-Message-ID: <1517531903.2746.33.camel@wdc.com>
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=OVLmnuCR;
+       spf=pass (google.com: domain of prvs=563541312=stanislav.nijnikov@wdc.com designates 68.232.141.245 as permitted sender) smtp.mailfrom=prvs=563541312=stanislav.nijnikov@wdc.com
+X-IronPort-AV: E=Sophos;i="5.46,444,1511798400";
+   d="scan'208";a="173298288"
+From: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+To: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	jaegeuk@kernel.org
+Cc: alex.lemberg@wdc.com,
+	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+Subject: [PATCH v4 10/10] ufs: sysfs: attributes
+Date: Thu,  1 Feb 2018 18:15:46 +0200
+Message-Id: <1517501746-19075-11-git-send-email-stanislav.nijnikov@wdc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517501746-19075-1-git-send-email-stanislav.nijnikov@wdc.com>
 References: <1517501746-19075-1-git-send-email-stanislav.nijnikov@wdc.com>
-	 <1517501746-19075-9-git-send-email-stanislav.nijnikov@wdc.com>
-In-Reply-To: <1517501746-19075-9-git-send-email-stanislav.nijnikov@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [199.255.44.250]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY1PR0401MB1502;7:2oH4ZGWQFc8/UI/jPaD8vuzFF3VZQTtQrjAxeAWMZ5SGBmtsz/Bto9uIVpMA9hLx+xDM05hTmcvggi3bgRC34gtwiIHrB4B09vVP/6PhhBPqNydTBCfyplf4pbwn0bsAxU+Ukg+br1421vqwi5xwEWIs7ZAXJJlPWYzqBpjuGXeGSa08uJxc13Ov9afOKHRxThqb5HmHm1Gfsz0tR6XMzYnd7EbJMA+vss16zvmgSd8DbFh+GaerZZpAdRTmzSZv;20:XzoQ9qC0TDss9sOYr9hnsF4KkzNpxyKNhiQA74trOFaSP36u67ytSqPCLZylmuk3wV1HGUiTes+wxtFGX8Jl9nhB8PSAW1NKIqTOFcpA8oC75+/sw6N0ypn6lL6q15ugDzooOArLhGbzFxMJnvMyXR1TtoxB+0Fe/F6mNC4KFO8=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 689ac0ea-c0db-41f0-d82e-08d569d54579
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:CY1PR0401MB1502;
-x-ms-traffictypediagnostic: CY1PR0401MB1502:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <CY1PR0401MB1502709F63E23FAE2BF186C498F90@CY1PR0401MB1502.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(6041288)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CY1PR0401MB1502;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0401MB1502;
-x-forefront-prvs: 05715BE7FD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(366004)(39860400002)(39380400002)(376002)(199004)(189003)(377424004)(36756003)(6116002)(66066001)(72206003)(2906002)(99286004)(97736004)(68736007)(76176011)(2950100002)(14454004)(305945005)(5660300001)(2900100001)(7736002)(229853002)(8936002)(478600001)(102836004)(3846002)(316002)(6486002)(110136005)(2201001)(106356001)(3660700001)(2501003)(4326008)(575784001)(86362001)(81156014)(8676002)(53936002)(105586002)(77096007)(26005)(6506007)(81166006)(103116003)(6436002)(6512007)(6636002)(25786009)(186003)(3280700002)(6246003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY1PR0401MB1502;H:CY1PR0401MB1536.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: dB0Xaq6dFF/Fn5nvSAboT/PyUEG2Elgsp4cN4Dt1RsL7Xa9ap8Ff8VCpDv/bQuRUE9fliVAoOjA6oEFbA8Qbsw==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D35FB941F90F194780601E34F8982D41@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 689ac0ea-c0db-41f0-d82e-08d569d54579
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Feb 2018 00:38:25.5012
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0401MB1502
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591215933151078273?=
-X-GMAIL-MSGID: =?utf-8?q?1591247537562492791?=
+X-GMAIL-THRID: =?utf-8?q?1591215937991407364?=
+X-GMAIL-MSGID: =?utf-8?q?1591215937991407364?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gVGh1LCAyMDE4LTAyLTAxIGF0IDE4OjE1ICswMjAwLCBTdGFuaXNsYXYgTmlqbmlrb3Ygd3Jv
-dGU6DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvc2NzaV9zeXNmcy5jIGIvZHJpdmVycy9z
-Y3NpL3Njc2lfc3lzZnMuYw0KPiBpbmRleCBjYmMwZmUyLi42OWE2YTFmIDEwMDY0NA0KPiAtLS0g
-YS9kcml2ZXJzL3Njc2kvc2NzaV9zeXNmcy5jDQo+ICsrKyBiL2RyaXZlcnMvc2NzaS9zY3NpX3N5
-c2ZzLmMNCj4gQEAgLTEzMDksNiArMTMwOSwxNCBAQCBpbnQgc2NzaV9zeXNmc19hZGRfc2Rldihz
-dHJ1Y3Qgc2NzaV9kZXZpY2UgKnNkZXYpDQo+ICAJCX0NCj4gIAl9DQo+ICANCj4gKwlpZiAoc2Rl
-di0+aG9zdC0+aG9zdHQtPnNkZXZfZ3JvdXBzKSB7DQo+ICsJCWVycm9yID0gc3lzZnNfY3JlYXRl
-X2dyb3Vwcygmc2Rldi0+c2Rldl9nZW5kZXYua29iaiwNCj4gKwkJCShjb25zdCBzdHJ1Y3QgYXR0
-cmlidXRlX2dyb3VwICoqKQ0KPiArCQkJc2Rldi0+aG9zdC0+aG9zdHQtPnNkZXZfZ3JvdXBzKTsN
-Cj4gKwkJCWlmIChlcnJvcikNCj4gKwkJCQlyZXR1cm4gZXJyb3I7DQo+ICsJfQ0KPiArDQo+ICAJ
-c2NzaV9hdXRvcG1fcHV0X2RldmljZShzZGV2KTsNCj4gIAlyZXR1cm4gZXJyb3I7DQo+ICB9DQo+
-IEBAIC0xMzI2LDYgKzEzMzQsMTIgQEAgdm9pZCBfX3Njc2lfcmVtb3ZlX2RldmljZShzdHJ1Y3Qg
-c2NzaV9kZXZpY2UgKnNkZXYpDQo+ICAJaWYgKHNkZXYtPnNkZXZfc3RhdGUgPT0gU0RFVl9ERUwp
-DQo+ICAJCXJldHVybjsNCj4gIA0KPiArCWlmIChzZGV2LT5ob3N0LT5ob3N0dC0+c2Rldl9ncm91
-cHMpIHsNCj4gKwkJc3lzZnNfcmVtb3ZlX2dyb3Vwcygmc2Rldi0+c2Rldl9nZW5kZXYua29iaiwN
-Cj4gKwkJCShjb25zdCBzdHJ1Y3QgYXR0cmlidXRlX2dyb3VwICoqKQ0KPiArCQkJc2Rldi0+aG9z
-dC0+aG9zdHQtPnNkZXZfZ3JvdXBzKTsNCj4gKwl9DQo+ICsNCj4gIAlpZiAoc2Rldi0+aXNfdmlz
-aWJsZSkgew0KPiAgCQkvKg0KPiAgCQkgKiBJZiBzY3NpX2ludGVybmFsX3RhcmdldF9ibG9jaygp
-IGlzIHJ1bm5pbmcgY29uY3VycmVudGx5LA0KDQpQbGVhc2Ugc3BsaXQgdGhpcyBwYXRjaCBpbnRv
-IHR3byBwYXRjaGVzLCBuYW1lbHkgb25lIHBhdGNoIHRoYXQgaW50cm9kdWNlcw0KdGhlIHNkZXZf
-Z3JvdXBzIGF0dHJpYnV0ZSBpbiB0aGUgU0NTSSBjb3JlIGFuZCBhIHNlY29uZCBwYXRjaCB0aGF0
-IGRvZXMgbm90DQptb2RpZnkgdGhlIFNDU0kgY29yZSBidXQgb25seSB0aGUgVUZTIGRyaXZlci4g
-VGhhdCB3aWxsIG1ha2UgdGhlc2UgY2hhbmdlcw0KZWFzaWVyIHRvIHJldmlldy4NCg0KQWRkaXRp
-b25hbGx5LCBpdCBzZWVtcyB3cm9uZyB0byBtZSB0byBjYXN0IHRoZSB0aGlyZCBhcmd1bWVudCBv
-Zg0Kc3lzZnNfY3JlYXRlX2dyb3VwcygpIGFuZCBzeXNmc19yZW1vdmVfZ3JvdXBzKCkgZnJvbSBh
-IG5vbi1jb25zdCB0byBhIGNvbnN0DQpwb2ludGVyLiBQbGVhc2UgY29uc2lkZXIgdG8gZGVjbGFy
-ZSB0aGUgc2Rldl9ncm91cHMgbWVtYmVyIGNvbnN0IGFuZCBhbHNvDQp0aGUgY29ycmVzcG9uZGlu
-ZyBkYXRhIHN0cnVjdHVyZXMgaW4gdGhlIFVGUyBkcml2ZXIuDQoNClRoYW5rcywNCg0KQmFydC4=
+This patch introduces a sysfs group entry for the UFS attributes. The
+group adds "attributes" folder under the UFS driver sysfs entry
+(/sys/bus/platform/drivers/ufshcd/*). The attributes are shown
+as hexadecimal numbers. The full information about the attributes could
+be found at UFS specifications 2.1.
+
+Signed-off-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+---
+ Documentation/ABI/testing/sysfs-driver-ufs | 139 +++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufs-sysfs.c               |  82 +++++++++++++++++
+ drivers/scsi/ufs/ufs-sysfs.h               |   1 +
+ drivers/scsi/ufs/ufs.h                     |  27 +++++-
+ drivers/scsi/ufs/ufshcd.c                  |   5 +-
+ drivers/scsi/ufs/ufshcd.h                  |   3 +-
+ 6 files changed, 250 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
+index f4f49e2..07f1c2f 100644
+--- a/Documentation/ABI/testing/sysfs-driver-ufs
++++ b/Documentation/ABI/testing/sysfs-driver-ufs
+@@ -663,3 +663,142 @@ Description:	This file shows whether the device FW update is permanently
+ 		disabled. The full information about the flag could be found
+ 		at UFS specifications 2.1.
+ 		The file is read only.
++
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/boot_lun_enabled
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the boot lun enabled UFS device attribute.
++		The full information about the attribute could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/current_power_mode
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the current power mode UFS device attribute.
++		The full information about the attribute could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/active_icc_level
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the active icc level UFS device attribute.
++		The full information about the attribute could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/ooo_data_enabled
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the out of order data transfer enabled UFS
++		device attribute. The full information about the attribute
++		could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/bkops_status
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the background operations status UFS device
++		attribute. The full information about the attribute could
++		be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/purge_status
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the purge operation status UFS device
++		attribute. The full information about the attribute could
++		be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_data_in_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the maximum data size in a DATA IN
++		UPIU. The full information about the attribute could
++		be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_data_out_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the maximum number of bytes that can be
++		requested with a READY TO TRANSFER UPIU. The full information
++		about the attribute could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/reference_clock_frequency
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the reference clock frequency UFS device
++		attribute. The full information about the attribute could
++		be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/configuration_descriptor_lock
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows whether the configuration descriptor is locked.
++		The full information about the attribute could be found at
++		UFS specifications 2.1. The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_number_of_rtt
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the maximum current number of
++		outstanding RTTs in device that is allowed. The full
++		information about the attribute could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_control
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the exception event control UFS device
++		attribute. The full information about the attribute could
++		be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_status
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the exception event status UFS device
++		attribute. The full information about the attribute could
++		be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/ffu_status
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file provides the ffu status UFS device attribute.
++		The full information about the attribute could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/psa_state
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file show the PSA feature status. The full information
++		about the attribute could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/attributes/psa_data_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the amount of data that the host plans to
++		load to all logical units in pre-soldering state.
++		The full information about the attribute could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++
++What:		/sys/class/scsi_device/*/device/dyn_cap_needed
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the The amount of physical memory needed
++		to be removed from the physical memory resources pool of
++		the particular logical unit. The full information about
++		the attribute could be found at UFS specifications 2.1.
++		The file is read only.
+diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+index ab04205..1fb401f 100644
+--- a/drivers/scsi/ufs/ufs-sysfs.c
++++ b/drivers/scsi/ufs/ufs-sysfs.c
+@@ -592,6 +592,61 @@ static const struct attribute_group ufs_sysfs_flags_group = {
+ 	.attrs = ufs_sysfs_device_flags,
+ };
+ 
++#define UFS_ATTRIBUTE(_name, _uname)                                          \
++static ssize_t _name##_show(struct device *dev,                               \
++	struct device_attribute *attr, char *buf)                             \
++{                                                                             \
++	struct ufs_hba *hba = dev_get_drvdata(dev);                           \
++	u32 value;                                                            \
++	if (ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,               \
++		QUERY_ATTR_IDN##_uname, 0, 0, &value))                        \
++		return -EINVAL;                                               \
++	return sprintf(buf, "0x%08X\n", value);                               \
++}                                                                             \
++static DEVICE_ATTR_RO(_name)
++
++UFS_ATTRIBUTE(boot_lun_enabled, _BOOT_LU_EN);
++UFS_ATTRIBUTE(current_power_mode, _POWER_MODE);
++UFS_ATTRIBUTE(active_icc_level, _ACTIVE_ICC_LVL);
++UFS_ATTRIBUTE(ooo_data_enabled, _OOO_DATA_EN);
++UFS_ATTRIBUTE(bkops_status, _BKOPS_STATUS);
++UFS_ATTRIBUTE(purge_status, _PURGE_STATUS);
++UFS_ATTRIBUTE(max_data_in_size, _MAX_DATA_IN);
++UFS_ATTRIBUTE(max_data_out_size, _MAX_DATA_OUT);
++UFS_ATTRIBUTE(reference_clock_frequency, _REF_CLK_FREQ);
++UFS_ATTRIBUTE(configuration_descriptor_lock, _CONF_DESC_LOCK);
++UFS_ATTRIBUTE(max_number_of_rtt, _MAX_NUM_OF_RTT);
++UFS_ATTRIBUTE(exception_event_control, _EE_CONTROL);
++UFS_ATTRIBUTE(exception_event_status, _EE_STATUS);
++UFS_ATTRIBUTE(ffu_status, _FFU_STATUS);
++UFS_ATTRIBUTE(psa_state, _PSA_STATE);
++UFS_ATTRIBUTE(psa_data_size, _PSA_DATA_SIZE);
++
++static struct attribute *ufs_sysfs_attributes[] = {
++	&dev_attr_boot_lun_enabled.attr,
++	&dev_attr_current_power_mode.attr,
++	&dev_attr_active_icc_level.attr,
++	&dev_attr_ooo_data_enabled.attr,
++	&dev_attr_bkops_status.attr,
++	&dev_attr_purge_status.attr,
++	&dev_attr_max_data_in_size.attr,
++	&dev_attr_max_data_out_size.attr,
++	&dev_attr_reference_clock_frequency.attr,
++	&dev_attr_configuration_descriptor_lock.attr,
++	&dev_attr_max_number_of_rtt.attr,
++	&dev_attr_exception_event_control.attr,
++	&dev_attr_exception_event_status.attr,
++	&dev_attr_ffu_status.attr,
++	&dev_attr_psa_state.attr,
++	&dev_attr_psa_data_size.attr,
++	NULL,
++};
++
++static const struct attribute_group ufs_sysfs_attributes_group = {
++	.name = "attributes",
++	.attrs = ufs_sysfs_attributes,
++};
++
+ static const struct attribute_group *ufs_sysfs_groups[] = {
+ 	&ufs_sysfs_default_group,
+ 	&ufs_sysfs_device_descriptor_group,
+@@ -601,6 +656,7 @@ static const struct attribute_group *ufs_sysfs_groups[] = {
+ 	&ufs_sysfs_power_descriptor_group,
+ 	&ufs_sysfs_string_descriptors_group,
+ 	&ufs_sysfs_flags_group,
++	&ufs_sysfs_attributes_group,
+ 	NULL,
+ };
+ 
+@@ -658,6 +714,32 @@ struct attribute_group ufs_sysfs_unit_descriptor_group = {
+ 	.attrs = ufs_sysfs_unit_descriptor,
+ };
+ 
++#define UFS_LUN_ATTRIBUTE(_name, _uname)                                      \
++static ssize_t _name##_attribute_show(struct device *dev,                     \
++	struct device_attribute *attr, char *buf)                             \
++{                                                                             \
++	u32 value;                                                            \
++	struct scsi_device *sdev = to_scsi_device(dev);                       \
++	struct ufs_hba *hba = shost_priv(sdev->host);                         \
++	u8 lun = ufshcd_scsi_to_upiu_lun(sdev->lun);                          \
++	if (ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,               \
++		QUERY_ATTR_IDN##_uname, lun, 0, &value))                      \
++		return -EINVAL;                                               \
++	return sprintf(buf, "0x%08X\n", value);                               \
++}                                                                             \
++static DEVICE_ATTR_RO(_name##_attribute)
++
++UFS_LUN_ATTRIBUTE(dyn_cap_needed, _DYN_CAP_NEEDED);
++
++static struct attribute *ufs_sysfs_lun_attributes[] = {
++	&dev_attr_dyn_cap_needed_attribute.attr,
++	NULL,
++};
++
++struct attribute_group ufs_sysfs_lun_attributes_group = {
++	.attrs = ufs_sysfs_lun_attributes,
++};
++
+ void ufs_sysfs_add_nodes(struct device *dev)
+ {
+ 	int ret;
+diff --git a/drivers/scsi/ufs/ufs-sysfs.h b/drivers/scsi/ufs/ufs-sysfs.h
+index 4241748..3149bec 100644
+--- a/drivers/scsi/ufs/ufs-sysfs.h
++++ b/drivers/scsi/ufs/ufs-sysfs.h
+@@ -21,4 +21,5 @@ void ufs_sysfs_add_nodes(struct device *dev);
+ void ufs_sysfs_remove_nodes(struct device *dev);
+ 
+ extern struct attribute_group ufs_sysfs_unit_descriptor_group;
++extern struct attribute_group ufs_sysfs_lun_attributes_group;
+ #endif
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index df5e73e..14e5bf7 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -145,10 +145,29 @@ enum flag_idn {
+ 
+ /* Attribute idn for Query requests */
+ enum attr_idn {
+-	QUERY_ATTR_IDN_ACTIVE_ICC_LVL	= 0x03,
+-	QUERY_ATTR_IDN_BKOPS_STATUS	= 0x05,
+-	QUERY_ATTR_IDN_EE_CONTROL	= 0x0D,
+-	QUERY_ATTR_IDN_EE_STATUS	= 0x0E,
++	QUERY_ATTR_IDN_BOOT_LU_EN		= 0x00,
++	QUERY_ATTR_IDN_RESERVED			= 0x01,
++	QUERY_ATTR_IDN_POWER_MODE		= 0x02,
++	QUERY_ATTR_IDN_ACTIVE_ICC_LVL		= 0x03,
++	QUERY_ATTR_IDN_OOO_DATA_EN		= 0x04,
++	QUERY_ATTR_IDN_BKOPS_STATUS		= 0x05,
++	QUERY_ATTR_IDN_PURGE_STATUS		= 0x06,
++	QUERY_ATTR_IDN_MAX_DATA_IN		= 0x07,
++	QUERY_ATTR_IDN_MAX_DATA_OUT		= 0x08,
++	QUERY_ATTR_IDN_DYN_CAP_NEEDED		= 0x09,
++	QUERY_ATTR_IDN_REF_CLK_FREQ		= 0x0A,
++	QUERY_ATTR_IDN_CONF_DESC_LOCK		= 0x0B,
++	QUERY_ATTR_IDN_MAX_NUM_OF_RTT		= 0x0C,
++	QUERY_ATTR_IDN_EE_CONTROL		= 0x0D,
++	QUERY_ATTR_IDN_EE_STATUS		= 0x0E,
++	QUERY_ATTR_IDN_SECONDS_PASSED		= 0x0F,
++	QUERY_ATTR_IDN_CNTX_CONF		= 0x10,
++	QUERY_ATTR_IDN_CORR_PRG_BLK_NUM		= 0x11,
++	QUERY_ATTR_IDN_RESERVED2		= 0x12,
++	QUERY_ATTR_IDN_RESERVED3		= 0x13,
++	QUERY_ATTR_IDN_FFU_STATUS		= 0x14,
++	QUERY_ATTR_IDN_PSA_STATE		= 0x15,
++	QUERY_ATTR_IDN_PSA_DATA_SIZE		= 0x16,
+ };
+ 
+ /* Descriptor idn for Query requests */
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index dcda8ac..f169764 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -2689,8 +2689,8 @@ int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
+  *
+  * Returns 0 for success, non-zero in case of failure
+ */
+-static int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
+-			enum attr_idn idn, u8 index, u8 selector, u32 *attr_val)
++int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
++		      enum attr_idn idn, u8 index, u8 selector, u32 *attr_val)
+ {
+ 	struct ufs_query_req *request = NULL;
+ 	struct ufs_query_res *response = NULL;
+@@ -6468,6 +6468,7 @@ static enum blk_eh_timer_return ufshcd_eh_timed_out(struct scsi_cmnd *scmd)
+ 
+ static struct attribute_group *ufshcd_driver_groups[] = {
+ 	&ufs_sysfs_unit_descriptor_group,
++	&ufs_sysfs_lun_attributes_group,
+ 	NULL,
+ };
+ 
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index f4cb31b..deb3c5d 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -847,13 +847,14 @@ int ufshcd_query_descriptor_retry(struct ufs_hba *hba,
+ 				  enum desc_idn idn, u8 index,
+ 				  u8 selector,
+ 				  u8 *desc_buf, int *buf_len);
+-
+ int ufshcd_read_desc_param(struct ufs_hba *hba,
+ 			   enum desc_idn desc_id,
+ 			   int desc_index,
+ 			   u8 param_offset,
+ 			   u8 *param_read_buf,
+ 			   u8 param_size);
++int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
++		      enum attr_idn idn, u8 index, u8 selector, u32 *attr_val);
+ int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
+ 	enum flag_idn idn, bool *flag_res);
+ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
+-- 
+2.7.4
