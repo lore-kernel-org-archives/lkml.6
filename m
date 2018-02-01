@@ -1,73 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756031AbeBABbz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 20:31:55 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51157 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755903AbeBABbx (ORCPT
+        id S932182AbeBABqU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 20:46:20 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38603 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932118AbeBABqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 20:31:53 -0500
-X-Google-Smtp-Source: AH8x225Wu7vLyGt4E4sanq/t9Fp2LSYsglGDpA8ePF4rW+P3Sny448JXcV/YHJ9lqztYHoMzinxCEQ==
-From: Eric Biggers <ebiggers3@gmail.com>
-To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, Eric Biggers <ebiggers@google.com>
-Subject: [PATCH] KVM/x86: remove WARN_ON() for when vm_munmap() fails
-Date: Wed, 31 Jan 2018 17:30:21 -0800
-Message-Id: <20180201013021.151884-1-ebiggers3@gmail.com>
-X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
-In-Reply-To: <001a1141c71c13f559055d1b28eb@google.com>
-References: <001a1141c71c13f559055d1b28eb@google.com>
+        Wed, 31 Jan 2018 20:46:18 -0500
+X-Google-Smtp-Source: AH8x224cETqoHt54J0OItjff4ExQ2xi5yYyUbmsSvl3k6MG2DhPr9M3i5aRhD4K2SUJfMDDcwfEs9w==
+Message-ID: <1517449575.3715.113.camel@gmail.com>
+Subject: Re: [PATCH] iommu/vt-d: add NUMA awareness to intel_alloc_coherent()
+From: Eric Dumazet <eric.dumazet@gmail.com>
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Benjamin Serebrin <serebrin@google.com>,
+        David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, netdev <netdev@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>
+Date: Wed, 31 Jan 2018 17:46:15 -0800
+In-Reply-To: <1517438756.3715.108.camel@gmail.com>
+References: <1517438756.3715.108.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Wed, 2018-01-31 at 14:45 -0800, Eric Dumazet wrote:
+> From: Eric Dumazet <edumazet@google.com>
+> 
+> Some devices (like mlx4) try hard to allocate memory on selected
+> NUMA node, but it turns out intel_alloc_coherent() is not NUMA
+> aware yet.
+> 
+> Note that dma_generic_alloc_coherent() in arch/x86/kernel/pci-dma.c
+> gets this right.
+> 
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Cc: Benjamin Serebrin <serebrin@google.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> ---
+>  drivers/iommu/intel-iommu.c |    7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index a1373cf343269455808f66ad18dc0a2fb7aa73f2..0efef077abc099eb29ebc5cefdd1b996f025dffd 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -3734,8 +3734,11 @@ static void *intel_alloc_coherent(struct device *dev, size_t size,
+>  		}
+>  	}
+>  
+> -	if (!page)
+> -		page = alloc_pages(flags, order);
+> +	if (!page) {
+> +		page = alloc_pages_node(dev_to_node(dev), flags, order);
+> +		if (!page)
+> +			page = alloc_pages(flags, order);
 
-On x86, special KVM memslots such as the TSS region have anonymous
-memory mappings created on behalf of userspace, and these mappings are
-removed when the VM is destroyed.
+I'll send a V2 without the fallback to alloc_pages()
 
-It is however possible for removing these mappings via vm_munmap() to
-fail.  This can most easily happen if the thread receives SIGKILL while
-it's waiting to acquire ->mmap_sem.   This triggers the 'WARN_ON(r < 0)'
-in __x86_set_memory_region().  syzkaller was able to hit this, using
-'exit()' to send the SIGKILL.  Note that while the vm_munmap() failure
-results in the mapping not being removed immediately, it is not leaked
-forever but rather will be freed when the process exits.
+This seems not necessary at all.
 
-It's not really possible to handle this failure properly, so almost
-every other caller of vm_munmap() doesn't check the return value.  It's
-a limitation of having the kernel manage these mappings rather than
-userspace.
 
-So just remove the WARN_ON() so that users can't spam the kernel log
-with this warning.
-
-Fixes: f0d648bdf0a5 ("KVM: x86: map/unmap private slots in __x86_set_memory_region")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- arch/x86/kvm/x86.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index c53298dfbf50..53b57f18baec 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8272,10 +8272,8 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
- 			return r;
- 	}
- 
--	if (!size) {
--		r = vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
--		WARN_ON(r < 0);
--	}
-+	if (!size)
-+		vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
- 
- 	return 0;
- }
--- 
-2.16.0.rc1.238.g530d649a79-goog
+> +	}
+>  	if (!page)
+>  		return NULL;
+>  	memset(page_address(page), 0, size);
