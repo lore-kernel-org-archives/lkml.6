@@ -1,46 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751822AbeBAOfK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 09:35:10 -0500
-Received: from mail-ot0-f174.google.com ([74.125.82.174]:37327 "EHLO
-        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751563AbeBAOe6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 09:34:58 -0500
-X-Google-Smtp-Source: AH8x225lst1Im8M82Kx5eiziqMBvA0NH4/wTTIejcV43bNsySp71mukY6z+WmQp6LPj7etrejsMSkaFfo7ip1loOZlY=
-MIME-Version: 1.0
-In-Reply-To: <20180131072750.GF2736@zzz.localdomain>
-References: <001a114292fa7f761c0560ad62e1@google.com> <001a113f542aed9c4e0560b66f3b@google.com>
- <20180131072750.GF2736@zzz.localdomain>
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Thu, 1 Feb 2018 15:34:56 +0100
-Message-ID: <CAAeHK+xwrXTsgKpXKbJJXeneXeh2eLhYegdPbJYEJH3sD6Ld5A@mail.gmail.com>
-Subject: Re: WARNING in refcount_inc (2)
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: syzbot
-        <bot+944a064dbc165044476317df06ebfb218415e951@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>, gscrivan@redhat.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        LKML <linux-kernel@vger.kernel.org>, luc.vanoostenryck@gmail.com,
-        Ingo Molnar <mingo@kernel.org>, netdev <netdev@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        syzkaller-bugs@googlegroups.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Cong Wang <xiyou.wangcong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751656AbeBAOiM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 09:38:12 -0500
+Received: from mout.gmx.net ([212.227.15.18]:38539 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751408AbeBAOiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 09:38:11 -0500
+Message-ID: <1517495872.23787.20.camel@gmx.de>
+Subject: Re: [RFC PATCH] sched/fair: Optionally restrict SMT scheduling
+ ("restrict_smt")
+From: Mike Galbraith <efault@gmx.de>
+To: Sergio Lopez <slp@sinrega.org>, linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org
+Date: Thu, 01 Feb 2018 15:37:52 +0100
+In-Reply-To: <20180201123748.32596-1-slp@sinrega.org>
+References: <20180201123748.32596-1-slp@sinrega.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:yteeGBWJAvyq/vPiedY97ick14RBq3HnI7GqYe18BmEq7/f6ci1
+ Q+KO2h3HozIMPR+K4FNkAOooYzY5sMBWLlmRO0QsuwZlk1CaB0gfZCO3PIXWWIF9ECpJlnJ
+ HdQYpZ8TYygQqQdV8Yutpdi5Cx5jGlVTADUTyL36flzLzxo3foBUyrweqi09sh1jRsptTju
+ NucKJbdt+6CCTnXt86isQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:MKSJgRhYduo=:wIPJch2yAS+gqZ7kuCt3mu
+ 846NqFhf1Qkna92g5etUlkFzcSykGP78fRaj+KiFY5+Iq6kQgjydsZ4B2tT9rVhjd2UgPetUn
+ huZ971FOQ7b77cb1vrcWJidKKissg7R/Ir0YtZpx5sCboaa+Up1lXXTRWmdZ7DhQQUII3Ncvn
+ pYLbcHcI1BRJuyXt4jWAZfdXb4lnfzYHBMQYtdv2RztvjbobXeiPPiPDnT1XcwxvZQBr9WulJ
+ XTfRLUMYmCZcFDzGR1jCvhm6fEaL7qwciWK1Q2POKkl6RFoZBCAGEyfZzxfcY/Z9yAfX8CmIt
+ Z5oMFi8UzpStkf0Z8Q2ex/0irILGmHjDzXvQyw+iFO3+mM7oxRVjx8kME3FLy+P3RJ4gHdju3
+ AQ67Vs353ySpYiYLlyCUFEI2i+PwNlIgqGi3VRfc0B9MApSUyIYA5mQR6MLg0FBbUNBBLbgKj
+ nDfTjb/vBmZVcRmg8EtcbF0P9wGgfMHM7xX5SKr4EYVQ3zXsFmX/h4oKOVh4ktBgcdjStK+6q
+ GSPEcIsp9K/UT04DcMrFhUOHYsxb6komF816Mye1o9PYlndcPeZHGUYypU9wrGzHUx7ZECO1i
+ 5IuvwCzRL7/XYcvun6HCKq8Ad/aM7CqexTjNVkuUE6naKOAMEnyOtzFUsAPQfzaFEMPFg/YJg
+ srl0RLCv5IfhQvLlSIod5+hDAtroV+AN+cyaW3MiOyopX1v2ALGrMiVUTt11k6HuLsWznWfnW
+ R/cKRodvliBTrIufiQMacrYbPqUUmowFZIHGC3sk4WQrj8JWgwvT7JrQyOtqOD8TFZq74XYGa
+ gy9pP1uYmQF1090OMQamlh+M5jgLgF4/XwYmsS5wRBbm78tOGY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 8:27 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
->
-> Also Dmitry, syzbot seems to be grouping together unrelated bugs under the
-> refcount_t WARNINGs; maybe those should be on a blacklist?
+On Thu, 2018-02-01 at 13:37 +0100, Sergio Lopez wrote:
+> "restrict_smt" is an optional security feature that, when enabled,
+> automatically adjusts the cpus_allowed mask of user tasks with CFS
+> policies, forcing them to run on the first SMT thread of each core.
+> 
+> This security feature prevents user tasks from running on SMT sibling
+> threads, difficulting the abuse of shared physical resources to
+> construct covert side-channels or spying on other tasks. "restrict_smt"
+> also helps in the mitigation of some HT-based Spectre v2 attack
+> scenarios.
+> 
+> Users with CAP_SYS_NICE are still able to schedule tasks on secondary
+> SMT threads by exclusively pinning to the latter, so "restrict_smt"
+> won't interfere with resource planification strategies depending on
+> that, like vCPU pinning for KVM Guests.
+> 
+> Compared against disabling SMT at a hardware level, "restrict_smt"
+> presents the following advantages:
+>  - Secondary SMT threads can still be used by kthreads, or by user
+> tasks exclusively pinned to them.
+> 
+> Compared against "isolcpus", "restrict_smt" presents the following
+> advantages:
+>  - Doesn't require prior knowledge of the CPU topology, making it more
+> friendly to both end users and automation tools.
+>  - Load balancing is still active for tasks pinned to multiple secondary
+> SMT threads.
 
-Not a blacklist, we need a proper way of extracting the offending
-caller like it's done for reports from __this_cpu_* [1].
+This says that everybody and everything in the box is way smarter than
+the admin.
 
-[1] https://github.com/google/syzkaller/blob/master/pkg/report/linux.go#L579
+	-Mike
