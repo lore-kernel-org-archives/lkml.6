@@ -1,96 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752164AbeBAWAj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 17:00:39 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40600 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751826AbeBAWAE (ORCPT
+        id S1752393AbeBAWB7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 17:01:59 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:42599 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752053AbeBAWAR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 17:00:04 -0500
-Date: Thu, 1 Feb 2018 22:00:01 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [git pull] vfs.git: poll annotations
-Message-ID: <20180201220001.GE30522@ZenIV.linux.org.uk>
-References: <20180130183939.GB29051@ZenIV.linux.org.uk>
- <CA+55aFz8UL883+rj0nYsU_gtX6jLhriPGncDb1XDteEu817HRQ@mail.gmail.com>
- <20180131031300.GE29051@ZenIV.linux.org.uk>
- <CA+55aFyMh_cHUb37X6=8=DU2Zm8Cz=mhXYJcGGWqiC8LKLAoFA@mail.gmail.com>
- <20180131044620.GF29051@ZenIV.linux.org.uk>
+        Thu, 1 Feb 2018 17:00:17 -0500
+X-IronPort-AV: E=Sophos;i="5.46,444,1511827200";
+   d="scan'208";a="592233189"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH v6 1/5] KVM: x86: Update the reverse_cpuid list to include CPUID_7_EDX
+Date: Thu,  1 Feb 2018 22:59:42 +0100
+Message-Id: <1517522386-18410-2-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517522386-18410-1-git-send-email-karahmed@amazon.de>
+References: <1517522386-18410-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180131044620.GF29051@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 04:46:20AM +0000, Al Viro wrote:
-> On Tue, Jan 30, 2018 at 07:19:19PM -0800, Linus Torvalds wrote:
-> > On Tue, Jan 30, 2018 at 7:13 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > As for the place for mangle/demangle... where would you prefer them?
-> > 
-> > If we can make gcc generate ok code for the generic case and not need
-> > any arch-specific ones, why not just do in <linux/poll.h>?
-> 
-> Umm...  I'll try and see how well does that work.
+[dwmw2: Stop using KF() for bits in it, too]
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ arch/x86/kvm/cpuid.c | 8 +++-----
+ arch/x86/kvm/cpuid.h | 1 +
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-FWIW, it does generate sane code and bulk rename itself is not hard.
-What I've got is in vfs.git#work.poll:
-      smc: missing poll annotations
-      xen: fix poll misannotation
-      use linux/poll.h instead of asm/poll.h
-      add EPOLLNVAL, annotate EPOLL... and event_poll->event
-      preparation to switching ->poll() to returning EPOLL...
-      ep_send_events_proc(): return result via esed->res
-      annotate ep_scan_ready_list()
-      switch users of kernel-side POLL... to EPOLL...
-      unify {de,}mangle_poll(), get rid of kernel-side POLL...
-The first 7 commits are preparation, then mechanical bulk rename with
-for V in IN OUT PRI ERR RDNORM RDBAND WRNORM WRBAND HUP RDHUP NVAL MSG; do
-  L=`git grep -l -w POLL$V | grep -v '^t' | grep -v /um/ | grep -v '^sa' | grep -v '/poll.h$'|grep -v '^D'`
-  for f in $L; do sed -i "-es/^\([^\"]*\)\(\<POLL$V\>\)/\\1E\\2/" $f; done
-done
-then consolidation of mangle_poll/demangle_poll and making those
-ifndef __KERNEL__ poll.h unconditional.
-
-FWIW, with the entire series applied __poll_t warnings (with CF=-D__CHECK_POLL)
-are down to the following:
-
-* genuine bugs in ->poll() instances, of the "return -EINVAL/-ERESTARTSYS/etc."
-sort -
-kernel/trace/ring_buffer.c:643:32:    expected restricted __poll_t
-drivers/media/pci/saa7164/saa7164-vbi.c:632:24:    expected restricted __poll_t
-drivers/media/pci/saa7164/saa7164-vbi.c:637:40:    expected restricted __poll_t
-drivers/media/pci/saa7164/saa7164-vbi.c:647:40:    expected restricted __poll_t
-drivers/media/platform/exynos-gsc/gsc-m2m.c:718:24:    expected restricted __poll_t
-drivers/media/platform/s3c-camif/camif-capture.c:602:21:    expected restricted __poll_t [usertype] ret
-drivers/media/radio/radio-wl1273.c:1099:24:    expected restricted __poll_t
-drivers/platform/goldfish/goldfish_pipe.c:549:24:    expected restricted __poll_t
-drivers/tty/n_r3964.c:1239:24:    expected restricted __poll_t [assigned] [usertype] result
-drivers/uio/uio.c:505:24:    expected restricted __poll_t
-drivers/xen/pvcalls-front.c:921:24:    expected restricted __poll_t
-sound/core/seq/seq_clientmgr.c:1097:24:    expected restricted __poll_t
-sound/core/seq/oss/seq_oss.c:206:24:    expected restricted __poll_t
-
-* misannotation around SAA6588_CMD_POLL and struct saa6588_command -
-drivers/media/i2c/saa6588.c:416:35:    right side has type restricted __poll_t
-drivers/media/pci/bt8xx/bttv-driver.c:3347:20:    got restricted __poll_t [assigned] [usertype] res
-drivers/media/pci/bt8xx/bttv-driver.c:3350:19:    expected restricted __poll_t
-drivers/media/pci/saa7134/saa7134-video.c:1243:16: warning: restricted __poll_t degrades to integer
-drivers/media/pci/saa7134/saa7134-video.c:1243:19:    expected restricted __poll_t
-
-* misannotations around perf ring_buffer->poll -
-kernel/events/core.c:4541:24:    expected restricted __poll_t [usertype] events
-kernel/events/ring_buffer.c:22:39:    got restricted __poll_t [usertype] <noident>
-
-IOW, not much and fairly low on false positives.
-
-Are you OK with that approach?  I could send a pull request for the first 7
-in that series (it should be bisect-safe), then you'd run the bulk rename
-script just before -rc1 and apply the last one on top of that.
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 0099e10..c0eb337 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -67,9 +67,7 @@ u64 kvm_supported_xcr0(void)
+ 
+ #define F(x) bit(X86_FEATURE_##x)
+ 
+-/* These are scattered features in cpufeatures.h. */
+-#define KVM_CPUID_BIT_AVX512_4VNNIW     2
+-#define KVM_CPUID_BIT_AVX512_4FMAPS     3
++/* For scattered features from cpufeatures.h; we currently expose none */
+ #define KF(x) bit(KVM_CPUID_BIT_##x)
+ 
+ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
+@@ -392,7 +390,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 
+ 	/* cpuid 7.0.edx*/
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+-		KF(AVX512_4VNNIW) | KF(AVX512_4FMAPS);
++		F(AVX512_4VNNIW) | F(AVX512_4FMAPS);
+ 
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
+@@ -477,7 +475,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
+ 				entry->ecx &= ~F(PKU);
+ 			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
+-			entry->edx &= get_scattered_cpuid_leaf(7, 0, CPUID_EDX);
++			cpuid_mask(&entry->edx, CPUID_7_EDX);
+ 		} else {
+ 			entry->ebx = 0;
+ 			entry->ecx = 0;
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index c2cea66..9a327d5 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -54,6 +54,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
+ 	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
+ 	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
+ 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
++	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
+ };
+ 
+ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+-- 
+2.7.4
