@@ -1,22 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753256AbeBASEF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 13:04:05 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:50662 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753036AbeBASD6 (ORCPT
+        id S1753299AbeBASFI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 13:05:08 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:47230 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753122AbeBASCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 13:03:58 -0500
+        Thu, 1 Feb 2018 13:02:42 -0500
 From: Khalid Aziz <khalid.aziz@oracle.com>
-To: davem@davemloft.net, dave.hansen@linux.intel.com
-Cc: Khalid Aziz <khalid.aziz@oracle.com>, rob.gardner@oracle.com,
-        anthony.yznaga@oracle.com, jane.chu@oracle.com, mingo@kernel.org,
-        ebiederm@xmission.com, vegard.nossum@oracle.com,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: akpm@linux-foundation.org, davem@davemloft.net,
+        dave.hansen@linux.intel.com
+Cc: Khalid Aziz <khalid.aziz@oracle.com>, mhocko@suse.com, jack@suse.cz,
+        kirill.shutemov@linux.intel.com, ross.zwisler@linux.intel.com,
+        willy@infradead.org, hughd@google.com, n-horiguchi@ah.jp.nec.com,
+        mgorman@suse.de, jglisse@redhat.com, dave.jiang@intel.com,
+        dan.j.williams@intel.com, anthony.yznaga@oracle.com,
+        nadav.amit@gmail.com, zi.yan@cs.rutgers.edu, aarcange@redhat.com,
+        khandual@linux.vnet.ibm.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
         Khalid Aziz <khalid@gonehiking.org>
-Subject: [PATCH v11 04/10] sparc64: Add HV fault type handlers for ADI related faults
-Date: Thu,  1 Feb 2018 11:01:12 -0700
-Message-Id: <19a28478e29f255995ed3741423bb499fbc4b581.1517497017.git.khalid.aziz@oracle.com>
+Subject: [PATCH v11 08/10] mm: Clear arch specific VM flags on protection change
+Date: Thu,  1 Feb 2018 11:01:16 -0700
+Message-Id: <c917985f8eacf4647a135df1b223739ef62a5501.1517497017.git.khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1517497017.git.khalid.aziz@oracle.com>
 References: <cover.1517497017.git.khalid.aziz@oracle.com>
@@ -24,70 +29,59 @@ In-Reply-To: <cover.1517497017.git.khalid.aziz@oracle.com>
 References: <cover.1517497017.git.khalid.aziz@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=924
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=854
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1802010231
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ADI (Application Data Integrity) feature on M7 and newer processors
-adds new fault types for hypervisor - Invalid ASI and MCD disabled.
-This patch expands data access exception handler to handle these
-faults.
+When protection bits are changed on a VMA, some of the architecture
+specific flags should be cleared as well. An examples of this are the
+PKEY flags on x86. This patch expands the current code that clears
+PKEY flags for x86, to support similar functionality for other
+architectures as well.
 
 Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
 Cc: Khalid Aziz <khalid@gonehiking.org>
 Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
 v7:
-	- new patch split off from patch 4/4 in v6
+	- new patch
 
- arch/sparc/kernel/traps_64.c | 29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
+ include/linux/mm.h | 6 ++++++
+ mm/mprotect.c      | 2 +-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
-index fc73baa588f6..d273a65a0a10 100644
---- a/arch/sparc/kernel/traps_64.c
-+++ b/arch/sparc/kernel/traps_64.c
-@@ -397,12 +397,35 @@ void sun4v_data_access_exception(struct pt_regs *regs, unsigned long addr, unsig
- 	if (is_no_fault_exception(regs))
- 		return;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ea818ff739cd..1931c93fb063 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -287,6 +287,12 @@ extern unsigned int kobjsize(const void *objp);
+ /* This mask is used to clear all the VMA flags used by mlock */
+ #define VM_LOCKED_CLEAR_MASK	(~(VM_LOCKED | VM_LOCKONFAULT))
  
--	info.si_signo = SIGSEGV;
-+	/* MCD (Memory Corruption Detection) disabled trap (TT=0x19) in HV
-+	 * is vectored thorugh data access exception trap with fault type
-+	 * set to HV_FAULT_TYPE_MCD_DIS. Check for MCD disabled trap.
-+	 * Accessing an address with invalid ASI for the address, for
-+	 * example setting an ADI tag on an address with ASI_MCD_PRIMARY
-+	 * when TTE.mcd is not set for the VA, is also vectored into
-+	 * kerbel by HV as data access exception with fault type set to
-+	 * HV_FAULT_TYPE_INV_ASI.
-+	 */
- 	info.si_errno = 0;
--	info.si_code = SEGV_MAPERR;
- 	info.si_addr = (void __user *) addr;
- 	info.si_trapno = 0;
--	force_sig_info(SIGSEGV, &info, current);
-+	switch (type) {
-+	case HV_FAULT_TYPE_INV_ASI:
-+		info.si_signo = SIGILL;
-+		info.si_code = ILL_ILLADR;
-+		force_sig_info(SIGILL, &info, current);
-+		break;
-+	case HV_FAULT_TYPE_MCD_DIS:
-+		info.si_signo = SIGSEGV;
-+		info.si_code = SEGV_ACCADI;
-+		force_sig_info(SIGSEGV, &info, current);
-+		break;
-+	default:
-+		info.si_signo = SIGSEGV;
-+		info.si_code = SEGV_MAPERR;
-+		force_sig_info(SIGSEGV, &info, current);
-+		break;
-+	}
- }
++/* Arch-specific flags to clear when updating VM flags on protection change */
++#ifndef VM_ARCH_CLEAR
++# define VM_ARCH_CLEAR	VM_NONE
++#endif
++#define VM_FLAGS_CLEAR	(ARCH_VM_PKEY_FLAGS | VM_ARCH_CLEAR)
++
+ /*
+  * mapping from the currently active vm_flags protection bits (the
+  * low four bits) to a page protection mask..
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 80243e0166a7..8b24b9fa2f4f 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -470,7 +470,7 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
+ 		 * cleared from the VMA.
+ 		 */
+ 		mask_off_old_flags = VM_READ | VM_WRITE | VM_EXEC |
+-					ARCH_VM_PKEY_FLAGS;
++					VM_FLAGS_CLEAR;
  
- void sun4v_data_access_exception_tl1(struct pt_regs *regs, unsigned long addr, unsigned long type_ctx)
+ 		new_vma_pkey = arch_override_mprotect_pkey(vma, prot, pkey);
+ 		newflags = calc_vm_prot_bits(prot, new_vma_pkey);
 -- 
 2.11.0
