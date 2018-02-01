@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3205632-1517477797-2-18074178783691616712
+X-Cyrus-Session-Id: sloti22d1t05-3205632-1517477806-2-6473212701188757250
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517477797; b=f8KMwOv768wUEuEWYPcdOe3+o6kwpOnE/Cjew1LYhjAc05i
-    BOSghHDSUxOXtGqU9L6Nqr+ld2LuE2EBjYGkaDrduKHZu8X4kdJ5ZYBmv8Bqkxtc
-    nflSpFIgTlT4VUKrsTiTm5FfNwxEq52eSj4DjABHa8fuQzhlmPzRDYqEWUCQJL6j
-    esv3PdLCl7xQOkwXRwqRDH6APMLLxAnd5bczTvZBbGw4sYYfiFieinTuj0IHpw6F
-    b7B9Z4aj5Z/1dJfX0EiL/MB0uL+c78vKOk5wNThxpM704q70JbdOpB2j9562gszL
-    r32vQcDAGrnGrxaVSQJ3EIHI1NTl3LZ2X245JIg==
+    t=1517477806; b=ZYQCuJmpyf/gghXQJ84HkwpuHbm9H+lu9BMupOEesqnUUlj
+    Vcm3Z8OR1RQgQSMJZ0xPZUfCh1j8cephJ+yit0fMczPlcEXowrdcp/2vVdFEKPif
+    oh2yfLPCEphamgdtzUcWDAzwpPzSleb4vw0CWUDUoj5ZT5pXO6Tq5eG+wWsHTdPq
+    k+k3elteONnePkoRt1mrT4O6SptQDUf/eXCZ7yv9oBp3dnTtNwVD7tsQjqyzS5et
+    cdRbNXd+5b7+Qms38VY1qGCKtzlRZsuVxklRuXLg6lLydJ/WRtvD/uUEqMDVxkUl
+    JhJT8ugm/Mu3RPPl45qcZngBDw50+7xiona+Tgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:sender:list-id; s=arctest; t=
-    1517477797; bh=jcAkEAx1PkVIheZt+YlX+RIA4mYM9QrAQ0WVKMgZouo=; b=m
-    9hme4AWkeHsZv4Kq+qMqq+GDYOG6z0tejWDVfP5G4vhBMBBiJARooYZmr9kEgbRr
-    j/t6qm298rsR6h3ZqpQq25lAb7fPLJxHgawfF1aDkdaRePxnjak9TjncID0svCQR
-    WeT8isdrg6f4UgaMgtJhzxzw2IeGjiL6yhL/T8pmqtfBG/OTsGPfofC+pI1Yn6oW
-    uAPKArulSPApNtEtXYKyqjrsXeki6O5RF5W2kmmR7izye0OkflYc6vxbHbCksyNN
-    2HrxYS7Fppdfhg6mSjw98lmbo4p7iuFYyfH+zvlNQdUK2qoN5D3vrmNRUP+VsnHK
-    x5reNwbShxSanzt0W/GTw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517477806; bh=rfbMtgRThsxZmwEjDQ0Vmj3y92
+    B5gBJ0bkXyoLEIFjk=; b=jkNj+A2BvEpOuKeELn1rNZAIyR6rO19zIle/NQK0fH
+    ZN9r2sg+7wRn22s/zIMU3pLLMUskyPanVMGJOKEczbduKYxUyp1b7ky20s3jBQBn
+    uwpsRjbj267Hy/TEOzXSG4PISpgFKzMKA12Q+RWkDdiJestErDGYvKDdASPeuUZq
+    giQyrLat7jgqaNnzvzRO0p/NreJsLj+cWhjRKgM1zVloNaDop+Rnxc6fc8nUB4AD
+    vNbUm+iYDo1b5ZN2+youm+5iod9yPn0p+zF1317ffF3cIAYHVpPZjwvcxKzzjtdP
+    ZJX8VFEVHBSTD7+7diIYunXTNwaNvBmpY/kfKl2HL5Tg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microchip.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
@@ -47,24 +47,26 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microchip.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeBAJgY (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Feb 2018 04:36:24 -0500
+        id S1752026AbeBAJgm (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Feb 2018 04:36:42 -0500
 Received: from esa4.microchip.iphmx.com ([68.232.154.123]:16810 "EHLO
         esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbeBAJgV (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 1 Feb 2018 04:36:21 -0500
+        with ESMTP id S1751522AbeBAJgX (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 1 Feb 2018 04:36:23 -0500
 X-IronPort-AV: E=Sophos;i="5.46,443,1511852400";
-   d="scan'208";a="10737638"
+   d="scan'208";a="10737640"
 From: Ludovic Desroches <ludovic.desroches@microchip.com>
 To: <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
 CC: <nicolas.ferre@microchip.com>, <balbi@kernel.org>,
         <alexandre.belloni@free-electrons.com>,
         <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>,
         Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [PATCH 1/2] usb: gadget: udc: atmel: remove code related to platform stuff
-Date: Thu, 1 Feb 2018 10:34:31 +0100
-Message-ID: <20180201093432.21919-1-ludovic.desroches@microchip.com>
+Subject: [PATCH 2/2] usb: gadget: udc: atmel: convert to use GPIO descriptors
+Date: Thu, 1 Feb 2018 10:34:32 +0100
+Message-ID: <20180201093432.21919-2-ludovic.desroches@microchip.com>
 X-Mailer: git-send-email 2.12.2
+In-Reply-To: <20180201093432.21919-1-ludovic.desroches@microchip.com>
+References: <20180201093432.21919-1-ludovic.desroches@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-usb-owner@vger.kernel.org
@@ -73,119 +75,178 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-With the removal of AVR platforms, code related to platform stuff
-is useless.
+Use GPIO descriptors instead of relying on the old method.
+Include irq.h header since it is needed and was indirectly
+included through of_gpio.h.
 
 Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 ---
- drivers/usb/gadget/udc/atmel_usba_udc.c | 73 +--------------------------------
- 1 file changed, 2 insertions(+), 71 deletions(-)
+ drivers/usb/gadget/udc/atmel_usba_udc.c | 51 ++++++++++++++-------------------
+ drivers/usb/gadget/udc/atmel_usba_udc.h |  4 ++-
+ 2 files changed, 25 insertions(+), 30 deletions(-)
 
 diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
-index 075eaaa8a408..dc2604ec38f8 100644
+index dc2604ec38f8..ddd49281b427 100644
 --- a/drivers/usb/gadget/udc/atmel_usba_udc.c
 +++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
-@@ -2019,7 +2019,6 @@ static int atmel_usba_stop(struct usb_gadget *gadget)
+@@ -23,7 +23,8 @@
+ #include <linux/usb/atmel_usba_udc.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
++#include <linux/irq.h>
++#include <linux/gpio/consumer.h>
+ 
+ #include "atmel_usba_udc.h"
+ #define USBA_VBUS_IRQFLAGS (IRQF_ONESHOT \
+@@ -415,8 +416,8 @@ static inline void usba_int_enb_set(struct usba_udc *udc, u32 val)
+ 
+ static int vbus_is_present(struct usba_udc *udc)
+ {
+-	if (gpio_is_valid(udc->vbus_pin))
+-		return gpio_get_value(udc->vbus_pin) ^ udc->vbus_pin_inverted;
++	if (udc->vbus_pin)
++		return gpiod_get_value(udc->vbus_pin) ^ udc->vbus_pin_inverted;
+ 
+ 	/* No Vbus detection: Assume always present */
+ 	return 1;
+@@ -1975,8 +1976,8 @@ static int atmel_usba_start(struct usb_gadget *gadget,
+ 
+ 	mutex_lock(&udc->vbus_mutex);
+ 
+-	if (gpio_is_valid(udc->vbus_pin))
+-		enable_irq(gpio_to_irq(udc->vbus_pin));
++	if (udc->vbus_pin)
++		enable_irq(gpiod_to_irq(udc->vbus_pin));
+ 
+ 	/* If Vbus is present, enable the controller and wait for reset */
+ 	udc->vbus_prev = vbus_is_present(udc);
+@@ -1990,8 +1991,8 @@ static int atmel_usba_start(struct usb_gadget *gadget,
  	return 0;
- }
  
--#ifdef CONFIG_OF
- static void at91sam9rl_toggle_bias(struct usba_udc *udc, int is_on)
- {
- 	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
-@@ -2204,71 +2203,6 @@ static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
  err:
- 	return ERR_PTR(ret);
- }
--#else
--static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
--						    struct usba_udc *udc)
--{
--	return ERR_PTR(-ENOSYS);
--}
--#endif
--
--static struct usba_ep * usba_udc_pdata(struct platform_device *pdev,
--						 struct usba_udc *udc)
--{
--	struct usba_platform_data *pdata = dev_get_platdata(&pdev->dev);
--	struct usba_ep *eps;
--	int i;
--
--	if (!pdata)
--		return ERR_PTR(-ENXIO);
--
--	eps = devm_kzalloc(&pdev->dev, sizeof(struct usba_ep) * pdata->num_ep,
--			   GFP_KERNEL);
--	if (!eps)
--		return ERR_PTR(-ENOMEM);
--
--	udc->gadget.ep0 = &eps[0].ep;
--
--	udc->vbus_pin = pdata->vbus_pin;
--	udc->vbus_pin_inverted = pdata->vbus_pin_inverted;
--	udc->num_ep = pdata->num_ep;
--
--	INIT_LIST_HEAD(&eps[0].ep.ep_list);
--
--	for (i = 0; i < pdata->num_ep; i++) {
--		struct usba_ep *ep = &eps[i];
--
--		ep->ep_regs = udc->regs + USBA_EPT_BASE(i);
--		ep->dma_regs = udc->regs + USBA_DMA_BASE(i);
--		ep->fifo = udc->fifo + USBA_FIFO_BASE(i);
--		ep->ep.ops = &usba_ep_ops;
--		ep->ep.name = pdata->ep[i].name;
--		ep->fifo_size = pdata->ep[i].fifo_size;
--		usb_ep_set_maxpacket_limit(&ep->ep, ep->fifo_size);
--		ep->udc = udc;
--		INIT_LIST_HEAD(&ep->queue);
--		ep->nr_banks = pdata->ep[i].nr_banks;
--		ep->index = pdata->ep[i].index;
--		ep->can_dma = pdata->ep[i].can_dma;
--		ep->can_isoc = pdata->ep[i].can_isoc;
--
--		if (i == 0) {
--			ep->ep.caps.type_control = true;
--		} else {
--			ep->ep.caps.type_iso = ep->can_isoc;
--			ep->ep.caps.type_bulk = true;
--			ep->ep.caps.type_int = true;
--		}
--
--		ep->ep.caps.dir_in = true;
--		ep->ep.caps.dir_out = true;
--
--		if (i)
--			list_add_tail(&ep->ep.ep_list, &udc->gadget.ep_list);
--	}
--
--	return eps;
--}
+-	if (gpio_is_valid(udc->vbus_pin))
+-		disable_irq(gpio_to_irq(udc->vbus_pin));
++	if (udc->vbus_pin)
++		disable_irq(gpiod_to_irq(udc->vbus_pin));
  
- static int usba_udc_probe(struct platform_device *pdev)
+ 	mutex_unlock(&udc->vbus_mutex);
+ 
+@@ -2006,8 +2007,8 @@ static int atmel_usba_stop(struct usb_gadget *gadget)
  {
-@@ -2335,10 +2269,7 @@ static int usba_udc_probe(struct platform_device *pdev)
- 	usba_writel(udc, CTRL, USBA_DISABLE_MASK);
- 	clk_disable_unprepare(pclk);
+ 	struct usba_udc *udc = container_of(gadget, struct usba_udc, gadget);
  
--	if (pdev->dev.of_node)
--		udc->usba_ep = atmel_udc_of_init(pdev, udc);
--	else
--		udc->usba_ep = usba_udc_pdata(pdev, udc);
-+	udc->usba_ep = atmel_udc_of_init(pdev, udc);
+-	if (gpio_is_valid(udc->vbus_pin))
+-		disable_irq(gpio_to_irq(udc->vbus_pin));
++	if (udc->vbus_pin)
++		disable_irq(gpiod_to_irq(udc->vbus_pin));
  
- 	toggle_bias(udc, 0);
+ 	if (fifo_mode == 0)
+ 		udc->configured_ep = 1;
+@@ -2054,7 +2055,6 @@ static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
+ {
+ 	u32 val;
+ 	const char *name;
+-	enum of_gpio_flags flags;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	const struct of_device_id *match;
+ 	struct device_node *pp;
+@@ -2074,9 +2074,9 @@ static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
  
-@@ -2462,7 +2393,7 @@ static struct platform_driver udc_driver = {
- 	.driver		= {
- 		.name		= "atmel_usba_udc",
- 		.pm		= &usba_udc_pm_ops,
--		.of_match_table	= of_match_ptr(atmel_udc_dt_ids),
-+		.of_match_table	= atmel_udc_dt_ids,
- 	},
- };
+ 	udc->num_ep = 0;
  
+-	udc->vbus_pin = of_get_named_gpio_flags(np, "atmel,vbus-gpio", 0,
+-						&flags);
+-	udc->vbus_pin_inverted = (flags & OF_GPIO_ACTIVE_LOW) ? 1 : 0;
++	udc->vbus_pin = devm_gpiod_get_optional(&pdev->dev, "atmel,vbus",
++						GPIOD_IN);
++	udc->vbus_pin_inverted = gpiod_is_active_low(udc->vbus_pin);
+ 
+ 	if (fifo_mode == 0) {
+ 		pp = NULL;
+@@ -2239,7 +2239,6 @@ static int usba_udc_probe(struct platform_device *pdev)
+ 	udc->pdev = pdev;
+ 	udc->pclk = pclk;
+ 	udc->hclk = hclk;
+-	udc->vbus_pin = -ENODEV;
+ 
+ 	ret = -ENOMEM;
+ 	udc->regs = devm_ioremap(&pdev->dev, regs->start, resource_size(regs));
+@@ -2285,24 +2284,18 @@ static int usba_udc_probe(struct platform_device *pdev)
+ 	}
+ 	udc->irq = irq;
+ 
+-	if (gpio_is_valid(udc->vbus_pin)) {
+-		if (!devm_gpio_request(&pdev->dev, udc->vbus_pin, "atmel_usba_udc")) {
+-			irq_set_status_flags(gpio_to_irq(udc->vbus_pin),
+-					IRQ_NOAUTOEN);
+-			ret = devm_request_threaded_irq(&pdev->dev,
+-					gpio_to_irq(udc->vbus_pin), NULL,
++	if (udc->vbus_pin) {
++		irq_set_status_flags(gpiod_to_irq(udc->vbus_pin), IRQ_NOAUTOEN);
++		ret = devm_request_threaded_irq(&pdev->dev,
++					gpiod_to_irq(udc->vbus_pin), NULL,
+ 					usba_vbus_irq_thread, USBA_VBUS_IRQFLAGS,
+ 					"atmel_usba_udc", udc);
+ 			if (ret) {
+-				udc->vbus_pin = -ENODEV;
++				udc->vbus_pin = NULL;
+ 				dev_warn(&udc->pdev->dev,
+ 					 "failed to request vbus irq; "
+ 					 "assuming always on\n");
+ 			}
+-		} else {
+-			/* gpio_request fail so use -EINVAL for gpio_is_valid */
+-			udc->vbus_pin = -EINVAL;
+-		}
+ 	}
+ 
+ 	ret = usb_add_gadget_udc(&pdev->dev, &udc->gadget);
+@@ -2354,9 +2347,9 @@ static int usba_udc_suspend(struct device *dev)
+ 	 * Device may wake up. We stay clocked if we failed
+ 	 * to request vbus irq, assuming always on.
+ 	 */
+-	if (gpio_is_valid(udc->vbus_pin)) {
++	if (udc->vbus_pin) {
+ 		usba_stop(udc);
+-		enable_irq_wake(gpio_to_irq(udc->vbus_pin));
++		enable_irq_wake(gpiod_to_irq(udc->vbus_pin));
+ 	}
+ 
+ out:
+@@ -2372,8 +2365,8 @@ static int usba_udc_resume(struct device *dev)
+ 	if (!udc->driver)
+ 		return 0;
+ 
+-	if (device_may_wakeup(dev) && gpio_is_valid(udc->vbus_pin))
+-		disable_irq_wake(gpio_to_irq(udc->vbus_pin));
++	if (device_may_wakeup(dev) && udc->vbus_pin)
++		disable_irq_wake(gpiod_to_irq(udc->vbus_pin));
+ 
+ 	/* If Vbus is present, enable the controller and wait for reset */
+ 	mutex_lock(&udc->vbus_mutex);
+diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.h b/drivers/usb/gadget/udc/atmel_usba_udc.h
+index 860a00a6fdd0..969ce8f3c3e2 100644
+--- a/drivers/usb/gadget/udc/atmel_usba_udc.h
++++ b/drivers/usb/gadget/udc/atmel_usba_udc.h
+@@ -7,6 +7,8 @@
+ #ifndef __LINUX_USB_GADGET_USBA_UDC_H__
+ #define __LINUX_USB_GADGET_USBA_UDC_H__
+ 
++#include <linux/gpio/consumer.h>
++
+ /* USB register offsets */
+ #define USBA_CTRL				0x0000
+ #define USBA_FNUM				0x0004
+@@ -323,7 +325,7 @@ struct usba_udc {
+ 	struct platform_device *pdev;
+ 	const struct usba_udc_errata *errata;
+ 	int irq;
+-	int vbus_pin;
++	struct gpio_desc *vbus_pin;
+ 	int vbus_pin_inverted;
+ 	int num_ep;
+ 	int configured_ep;
 -- 
 2.12.2
 
