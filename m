@@ -1,31 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753028AbeBARM1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:12:27 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:48352 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752915AbeBARMY (ORCPT
+        id S1753114AbeBARMr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:12:47 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:36798 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752972AbeBARMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:12:24 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w11HC9I7017191
-X-Nifty-SrcIP: [209.85.213.53]
-X-Google-Smtp-Source: AH8x226PIaame7uY+deU9DVBAAvHq6k1kQiUWH5qjINhAIURRuo4w3lxzBoXzKiy0DsQRdeHOKCcGpEPmwlolCCow/0=
+        Thu, 1 Feb 2018 12:12:44 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w11HCcVO008150
+X-Nifty-SrcIP: [209.85.217.181]
+X-Google-Smtp-Source: AH8x227+Jd8Sz7WNbn8WpocVATTMnt0yv156uShGJOGWcEdqpdOFWUtbjzfnNZNA6virdlU5z7aXAyiXMDg94XfoYrw=
 MIME-Version: 1.0
-In-Reply-To: <20180131093434.20050-11-ulfalizer@gmail.com>
-References: <20180131093434.20050-1-ulfalizer@gmail.com> <20180131093434.20050-11-ulfalizer@gmail.com>
+In-Reply-To: <20180131093434.20050-10-ulfalizer@gmail.com>
+References: <20180131093434.20050-1-ulfalizer@gmail.com> <20180131093434.20050-10-ulfalizer@gmail.com>
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 2 Feb 2018 02:11:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATyy9v_OhdXdUST1MSHBzwfaQ8QN0vMX3bdy+NW_oEADQ@mail.gmail.com>
-Message-ID: <CAK7LNATyy9v_OhdXdUST1MSHBzwfaQ8QN0vMX3bdy+NW_oEADQ@mail.gmail.com>
-Subject: Re: [PATCH 10/11] nios2: kconfig: Remove blank help text
+Date: Fri, 2 Feb 2018 02:11:57 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQTDWe4oHO13AsE0vtL_wuWiPsduKScAZh1LP49OV8SMg@mail.gmail.com>
+Message-ID: <CAK7LNAQTDWe4oHO13AsE0vtL_wuWiPsduKScAZh1LP49OV8SMg@mail.gmail.com>
+Subject: Re: [PATCH 09/11] arm: vt8500: kconfig: Remove blank help text
 To: Ulf Magnusson <ulfalizer@gmail.com>
 Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "Luis R. Rodriguez" <mcgrof@kernel.org>,
         Randy Dunlap <rdunlap@infradead.org>,
         Dan Carpenter <dan.carpenter@oracle.com>,
-        Paul Bolle <pebolle@tiscali.nl>, Ley Foon Tan <lftan@altera.com>,
-        nios2-dev@lists.rocketboards.org
+        Paul Bolle <pebolle@tiscali.nl>, Tony Prisk <linux@prisktech.co.nz>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
