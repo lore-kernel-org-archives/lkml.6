@@ -1,271 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751848AbeBAJGB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 04:06:01 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:44309 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeBAJF5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 04:05:57 -0500
-X-Google-Smtp-Source: AH8x225BshLOmBkwtIw2sSq+1GTEHgWdToeDqWtbJROepIWpmceunqSPcNwVvvFTvrTYjdkLakW+tg==
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: catalin.marinas@arm.com, will.deacon@arm.com,
-        ard.biesheuvel@linaro.org
-Cc: bhsharma@redhat.com, dyoung@redhat.com, james.morse@arm.com,
-        al.stone@linaro.org, graeme.gregory@linaro.org, hanjun.guo@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH] arm64: acpi,efi: fix alignment fault in accessing ACPI tables at kdump
-Date: Thu,  1 Feb 2018 18:04:49 +0900
-Message-Id: <20180201090449.19514-1-takahiro.akashi@linaro.org>
-X-Mailer: git-send-email 2.15.1
+        id S1751935AbeBAJGG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 04:06:06 -0500
+Received: from mail-ve1eur01on0087.outbound.protection.outlook.com ([104.47.1.87]:43584
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751423AbeBAJF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 04:05:59 -0500
+From: Daniel Baluta <daniel.baluta@nxp.com>
+To: "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+CC: dl-linux-imx <linux-imx@nxp.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "wakasugi.jb@om.asahi-kasei.co.jp" <wakasugi.jb@om.asahi-kasei.co.jp>,
+        "mihai.serban@gmail.com" <mihai.serban@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "mihai.serban@nxp.com" <mihai.serban@nxp.com>
+Subject: Re: [PATCH] ASoC: codecs: Add support for AK5558 ADC driver
+Thread-Topic: [PATCH] ASoC: codecs: Add support for AK5558 ADC driver
+Thread-Index: AQHTmpMmXJa7uwAgokSqghD+5lSJdqOOJ16AgAEbNgA=
+Date: Thu, 1 Feb 2018 09:05:55 +0000
+Message-ID: <1517475954.8615.18.camel@nxp.com>
+References: <1517403459-6668-1-git-send-email-daniel.baluta@nxp.com>
+         <CAHp75Vdd58U1y-LOQGg=rePOWf1LeQsZxn2ykzBhXL013ztW3Q@mail.gmail.com>
+In-Reply-To: <CAHp75Vdd58U1y-LOQGg=rePOWf1LeQsZxn2ykzBhXL013ztW3Q@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=daniel.baluta@nxp.com;
+x-originating-ip: [92.121.36.129]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB0550;7:N51dv7bp+YSgvKRZwlr6ezMMs63r4ZsiQtu3xrUHD9eFed0xNYyYoh1ePqbV5+GjN8UKx1jEASt6aAUF8fCTTEJZDpN5IqafMXPZaq8FQVdsj+LrlB5tJhtkvUh0ijHcjAyYLLw3Pnz/eqhPEBhipxJava9ktK/c8d2fhj/pQMSwhMRdSeIojMk4RZ8cLKvgmbhbCbrxIL9KTLUbpJspVDnolrIJeyAyNioM9bbHIZ0JP0k0zkxarb2CztO3jJff
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 688f0542-bb8d-4784-bd80-08d5695300ba
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:AM3PR04MB0550;
+x-ms-traffictypediagnostic: AM3PR04MB0550:
+x-microsoft-antispam-prvs: <AM3PR04MB055017BBACD284EED26074F1F9FA0@AM3PR04MB0550.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(6041288)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:AM3PR04MB0550;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB0550;
+x-forefront-prvs: 0570F1F193
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(39380400002)(366004)(376002)(199004)(189003)(377424004)(53936002)(3846002)(305945005)(6636002)(3280700002)(316002)(229853002)(2950100002)(68736007)(110136005)(6116002)(99286004)(6306002)(8936002)(6512007)(3660700001)(5250100002)(102836004)(105586002)(8676002)(53546011)(76176011)(26005)(6436002)(186003)(5660300001)(6506007)(81156014)(2501003)(54906003)(86362001)(36756003)(4326008)(2900100001)(6246003)(66066001)(14454004)(25786009)(966005)(106356001)(103116003)(39060400002)(478600001)(81166006)(7736002)(2906002)(97736004)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB0550;H:AM3PR04MB500.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: wZs7d4Ha1WA8GRCYFzfxayN8B+Hj8lp+Pv2k4OLPTJps1kYLJMOdeU3Gg9Vj0kTadeC5bhSFuZv3Nhqj2z/ehQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DA9525180D80B24B8DCE8EB3B512EFEF@eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 688f0542-bb8d-4784-bd80-08d5695300ba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2018 09:05:55.6514
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB0550
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1196Cli003310
 
-This is a fix against the issue that crash dump kernel may hang up
-during booting, which can happen on any ACPI-based system with "ACPI
-Reclaim Memory."
+Hi Fabio, Andy,
 
-(kernel messages after panic kicked off kdump)
-	   (snip...)
-	Bye!
-	   (snip...)
-	ACPI: Core revision 20170728
-	pud=000000002e7d0003, *pmd=000000002e7c0003, *pte=00e8000039710707
-	Internal error: Oops: 96000021 [#1] SMP
-	Modules linked in:
-	CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.14.0-rc6 #1
-	task: ffff000008d05180 task.stack: ffff000008cc0000
-	PC is at acpi_ns_lookup+0x25c/0x3c0
-	LR is at acpi_ds_load1_begin_op+0xa4/0x294
-	   (snip...)
-	Process swapper/0 (pid: 0, stack limit = 0xffff000008cc0000)
-	Call trace:
-	   (snip...)
-	[<ffff0000084a6764>] acpi_ns_lookup+0x25c/0x3c0
-	[<ffff00000849b4f8>] acpi_ds_load1_begin_op+0xa4/0x294
-	[<ffff0000084ad4ac>] acpi_ps_build_named_op+0xc4/0x198
-	[<ffff0000084ad6cc>] acpi_ps_create_op+0x14c/0x270
-	[<ffff0000084acfa8>] acpi_ps_parse_loop+0x188/0x5c8
-	[<ffff0000084ae048>] acpi_ps_parse_aml+0xb0/0x2b8
-	[<ffff0000084a8e10>] acpi_ns_one_complete_parse+0x144/0x184
-	[<ffff0000084a8e98>] acpi_ns_parse_table+0x48/0x68
-	[<ffff0000084a82cc>] acpi_ns_load_table+0x4c/0xdc
-	[<ffff0000084b32f8>] acpi_tb_load_namespace+0xe4/0x264
-	[<ffff000008baf9b4>] acpi_load_tables+0x48/0xc0
-	[<ffff000008badc20>] acpi_early_init+0x9c/0xd0
-	[<ffff000008b70d50>] start_kernel+0x3b4/0x43c
-	Code: b9008fb9 2a000318 36380054 32190318 (b94002c0)
-	---[ end trace c46ed37f9651c58e ]---
-	Kernel panic - not syncing: Fatal exception
-	Rebooting in 10 seconds..
+Thanks a lot for your comments. I will address them and send v2.
 
-(diagnosis)
-* This fault is a data abort, alignment fault (ESR=0x96000021)
-  during reading out ACPI table.
-* Initial ACPI tables are normally stored in system ram and marked as
-  "ACPI Reclaim memory" by the firmware.
-* After the commit f56ab9a5b73c ("efi/arm: Don't mark ACPI reclaim
-  memory as MEMBLOCK_NOMAP"), those regions are differently handled
-  as they are "memblock-reserved", without NOMAP bit.
-* So they are now excluded from device tree's "usable-memory-range"
-  which kexec-tools determines based on a current view of /proc/iomem.
-* When crash dump kernel boots up, it tries to accesses ACPI tables by
-  mapping them with ioremap(), not ioremap_cache(), in acpi_os_ioremap()
-  since they are no longer part of mapped system ram.
-* Given that ACPI accessor/helper functions are compiled in without
-  unaligned access support (ACPI_MISALIGNMENT_NOT_SUPPORTED),
-  any unaligned access to ACPI tables can cause a fatal panic.
+Few comments inline.
 
-With this patch, acpi_os_ioremap() always honors a memory attribute
-provided by the firmware (efi). Hence retaining cacheability in said cases
-allows the kernel safe access to ACPI tables.
+On Mi, 2018-01-31 at 18:12 +0200, Andy Shevchenko wrote:
+> On Wed, Jan 31, 2018 at 2:57 PM, Daniel Baluta <daniel.baluta@nxp.com> wrote:
+> > 
+> > AK5558 is a 32-bit, 768 kHZ sampling, differential input ADC
+> > for digital audio systems.
+> > 
+> > Signed-off-by: Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>
+> > Signed-off-by: Mihai Serban <mihai.serban@nxp.com>
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> 4 authors of the code?!
 
-Please note that arm_enable_runtime_services(), which is renamed to
-efi_enter_virtual_mode() due to the similarity to x86's, is now called
-earlier before acpi_early_init() since efi_mem_attributes() relies on
-efi.memmap being mapped.
+The code has a very long history. I will add under each SoB the specific
+contribution.
 
-Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Suggested-by: James Morse <james.morse@arm.com>
-Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reported-by and Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
----
- arch/arm64/include/asm/acpi.h      | 23 ++++++++++++++++-------
- arch/arm64/kernel/acpi.c           | 11 +++--------
- drivers/firmware/efi/arm-runtime.c | 15 ++++++---------
- init/main.c                        |  3 +++
- 4 files changed, 28 insertions(+), 24 deletions(-)
+Mihai got the code from Junichi and reworked it for 4.9. Then Shengjiu and
+me added various features and cleanups.
 
-diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
-index 32f465a80e4e..d53c95f4e1a9 100644
---- a/arch/arm64/include/asm/acpi.h
-+++ b/arch/arm64/include/asm/acpi.h
-@@ -12,10 +12,12 @@
- #ifndef _ASM_ACPI_H
- #define _ASM_ACPI_H
- 
-+#include <linux/efi.h>
- #include <linux/memblock.h>
- #include <linux/psci.h>
- 
- #include <asm/cputype.h>
-+#include <asm/io.h>
- #include <asm/smp_plat.h>
- #include <asm/tlbflush.h>
- 
-@@ -29,18 +31,22 @@
- 
- /* Basic configuration for ACPI */
- #ifdef	CONFIG_ACPI
-+pgprot_t __acpi_get_mem_attribute(phys_addr_t addr);
-+
- /* ACPI table mapping after acpi_permanent_mmap is set */
- static inline void __iomem *acpi_os_ioremap(acpi_physical_address phys,
- 					    acpi_size size)
- {
-+	/* For normal memory we already have a cacheable mapping. */
-+	if (memblock_is_map_memory(phys))
-+		return (void __iomem *)__phys_to_virt(phys);
-+
- 	/*
--	 * EFI's reserve_regions() call adds memory with the WB attribute
--	 * to memblock via early_init_dt_add_memory_arch().
-+	 * We should still honor the memory's attribute here because
-+	 * crash dump kernel possibly excludes some ACPI (reclaim)
-+	 * regions from memblock list.
- 	 */
--	if (!memblock_is_memory(phys))
--		return ioremap(phys, size);
--
--	return ioremap_cache(phys, size);
-+	return __ioremap(phys, size, __acpi_get_mem_attribute(phys));
- }
- #define acpi_os_ioremap acpi_os_ioremap
- 
-@@ -125,7 +131,10 @@ static inline const char *acpi_get_enable_method(int cpu)
-  * for compatibility.
-  */
- #define acpi_disable_cmcff 1
--pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr);
-+static inline pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
-+{
-+	return __acpi_get_mem_attribute(addr);
-+}
- #endif /* CONFIG_ACPI_APEI */
- 
- #ifdef CONFIG_ACPI_NUMA
-diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-index b3162715ed78..35702c5e58d2 100644
---- a/arch/arm64/kernel/acpi.c
-+++ b/arch/arm64/kernel/acpi.c
-@@ -18,6 +18,7 @@
- #include <linux/acpi.h>
- #include <linux/bootmem.h>
- #include <linux/cpumask.h>
-+# include <linux/efi.h>
- #include <linux/efi-bgrt.h>
- #include <linux/init.h>
- #include <linux/irq.h>
-@@ -29,12 +30,8 @@
- 
- #include <asm/cputype.h>
- #include <asm/cpu_ops.h>
--#include <asm/smp_plat.h>
--
--#ifdef CONFIG_ACPI_APEI
--# include <linux/efi.h>
- # include <asm/pgtable.h>
--#endif
-+#include <asm/smp_plat.h>
- 
- int acpi_noirq = 1;		/* skip ACPI IRQ initialization */
- int acpi_disabled = 1;
-@@ -239,8 +236,7 @@ void __init acpi_boot_table_init(void)
- 	}
- }
- 
--#ifdef CONFIG_ACPI_APEI
--pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
-+pgprot_t __acpi_get_mem_attribute(phys_addr_t addr)
- {
- 	/*
- 	 * According to "Table 8 Map: EFI memory types to AArch64 memory
-@@ -261,4 +257,3 @@ pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
- 		return __pgprot(PROT_NORMAL_NC);
- 	return __pgprot(PROT_DEVICE_nGnRnE);
- }
--#endif
-diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-index 1cc41c3d6315..16dd8a2d0237 100644
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@ -115,23 +115,23 @@ static bool __init efi_virtmap_init(void)
-  * non-early mapping of the UEFI system table and virtual mappings for all
-  * EFI_MEMORY_RUNTIME regions.
-  */
--static int __init arm_enable_runtime_services(void)
-+void __init efi_enter_virtual_mode(void)
- {
- 	u64 mapsize;
- 
- 	if (!efi_enabled(EFI_BOOT)) {
- 		pr_info("EFI services will not be available.\n");
--		return 0;
-+		return;
- 	}
- 
- 	if (efi_runtime_disabled()) {
- 		pr_info("EFI runtime services will be disabled.\n");
--		return 0;
-+		return;
- 	}
- 
- 	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
- 		pr_info("EFI runtime services access via paravirt.\n");
--		return 0;
-+		return;
- 	}
- 
- 	pr_info("Remapping and enabling EFI services.\n");
-@@ -140,21 +140,18 @@ static int __init arm_enable_runtime_services(void)
- 
- 	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
- 		pr_err("Failed to remap EFI memory map\n");
--		return -ENOMEM;
-+		return;
- 	}
- 
- 	if (!efi_virtmap_init()) {
- 		pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
--		return -ENOMEM;
-+		return;
- 	}
- 
- 	/* Set up runtime services function pointers */
- 	efi_native_runtime_setup();
- 	set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
--
--	return 0;
- }
--early_initcall(arm_enable_runtime_services);
- 
- void efi_virtmap_load(void)
- {
-diff --git a/init/main.c b/init/main.c
-index a8100b954839..2d0927768e2d 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -674,6 +674,9 @@ asmlinkage __visible void __init start_kernel(void)
- 	debug_objects_mem_init();
- 	setup_per_cpu_pageset();
- 	numa_policy_init();
-+	if (IS_ENABLED(CONFIG_EFI) &&
-+	    (IS_ENABLED(CONFIG_ARM64) || IS_ENABLED(CONFIG_ARM)))
-+		efi_enter_virtual_mode();
- 	acpi_early_init();
- 	if (late_time_init)
- 		late_time_init();
--- 
-2.15.1
+According to DCO [1] all SoB are valid and required.
+
+
+> > +MODULE_AUTHOR("Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>");
+> > +MODULE_AUTHOR("Mihai Serban <mihai.serban@nxp.com>");
+> 4 SoBs, 2 Authors. Please, fix accordingly.
+
+Here I would prefer to list Junichi and Mihai because they were the main contributors.
+Any other suggestion?
+
+thanks,
+Daniel.
+
+[1] [1] https://developercertificate.org/
