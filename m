@@ -1,103 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeBAKSK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 05:18:10 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:47600 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752098AbeBAKSJ (ORCPT
+        id S1752073AbeBAKWJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 05:22:09 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:50646 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751766AbeBAKWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 05:18:09 -0500
-X-IronPort-AV: E=Sophos;i="5.46,443,1511823600";
-   d="scan'208";a="311588504"
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] coccinelle: reduce false positives
-Date: Thu,  1 Feb 2018 10:48:52 +0100
-Message-Id: <1517478532-5444-1-git-send-email-Julia.Lawall@lip6.fr>
-X-Mailer: git-send-email 1.9.1
+        Thu, 1 Feb 2018 05:22:06 -0500
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Christopher Li <sparse@chrisli.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-crypto@vger.kernel.org, linux-sparse@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 3/3] crypto: sha3-generic - Use __optimize to support old compilers
+Date: Thu,  1 Feb 2018 11:22:00 +0100
+Message-Id: <1517480520-4465-3-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517480520-4465-1-git-send-email-geert@linux-m68k.org>
+References: <1517480520-4465-1-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some files use both a non-devm allocation and a devm_allocation.  Don't
-complain about a free when the same function contains a non-devm
-allocation.
+With gcc-4.1.2:
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+    crypto/sha3_generic.c:39: warning: ‘__optimize__’ attribute directive ignored
 
+Use the newly introduced __optimize macro to fix this.
+
+Fixes: 83dee2ce1ae791c3 ("crypto: sha3-generic - rewrite KECCAK transform to help the compiler optimize")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- scripts/coccinelle/free/devm_free.cocci |   55 +++++++++++++++++++++++++++++++-
- 1 file changed, 54 insertions(+), 1 deletion(-)
+ crypto/sha3_generic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/free/devm_free.cocci b/scripts/coccinelle/free/devm_free.cocci
-index c990d2c..b2a2cf8b 100644
---- a/scripts/coccinelle/free/devm_free.cocci
-+++ b/scripts/coccinelle/free/devm_free.cocci
-@@ -56,9 +56,62 @@ expression x;
-  x = devm_ioport_map(...)
- )
+diff --git a/crypto/sha3_generic.c b/crypto/sha3_generic.c
+index a965b9d8055983af..c409cd87fea5decd 100644
+--- a/crypto/sha3_generic.c
++++ b/crypto/sha3_generic.c
+@@ -35,7 +35,7 @@ static const u64 keccakf_rndc[24] = {
  
-+@safe depends on context || org || report exists@
-+expression x;
-+position p;
-+@@
-+
-+(
-+ x = kmalloc(...)
-+|
-+ x = kvasprintf(...)
-+|
-+ x = kasprintf(...)
-+|
-+ x = kzalloc(...)
-+|
-+ x = kmalloc_array(...)
-+|
-+ x = kcalloc(...)
-+|
-+ x = kstrdup(...)
-+|
-+ x = kmemdup(...)
-+|
-+ x = get_free_pages(...)
-+|
-+ x = request_irq(...)
-+|
-+ x = ioremap(...)
-+|
-+ x = ioremap_nocache(...)
-+|
-+ x = ioport_map(...)
-+)
-+...
-+(
-+ kfree@p(x)
-+|
-+ kzfree@p(x)
-+|
-+ __krealloc@p(x, ...)
-+|
-+ krealloc@p(x, ...)
-+|
-+ free_pages@p(x, ...)
-+|
-+ free_page@p(x)
-+|
-+ free_irq@p(x)
-+|
-+ iounmap@p(x)
-+|
-+ ioport_unmap@p(x)
-+)
-+
- @pb@
- expression r.x;
--position p;
-+position p != safe.p;
- @@
+ /* update the state with given number of rounds */
  
- (
+-static void __attribute__((__optimize__("O3"))) keccakf(u64 st[25])
++static void __optimize("O3") keccakf(u64 st[25])
+ {
+ 	u64 t[5], tt, bc[5];
+ 	int round;
+-- 
+2.7.4
