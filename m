@@ -1,73 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752732AbeBAQuG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:50:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36898 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752680AbeBAQt5 (ORCPT
+        id S1752762AbeBAQvO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:51:14 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51796 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751783AbeBAQvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:49:57 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4D0D60112
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Thu, 1 Feb 2018 16:49:56 +0000
-From: Lina Iyer <ilina@codeaurora.org>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: tglx@linutronix.de, jason@lakedaemon.net, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org,
-        rnayak@codeaurora.org, asathyak@codeaurora.org
-Subject: Re: [PATCH RFC 1/4] drivers: irqchip: pdc: add support for PDC
- interrupt controller
-Message-ID: <20180201164956.GB13231@codeaurora.org>
-References: <20180123175656.11942-1-ilina@codeaurora.org>
- <20180123175656.11942-2-ilina@codeaurora.org>
- <9dd8307c-4906-4707-d4d7-2ef0fc8307b6@arm.com>
- <20180130175654.GC20815@codeaurora.org>
- <619608bb-a9c5-27a1-2383-5f6b2f455499@arm.com>
- <20180131162432.GA13231@codeaurora.org>
- <83cfda67-511f-aa83-8eff-214c08de25e4@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <83cfda67-511f-aa83-8eff-214c08de25e4@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Thu, 1 Feb 2018 11:51:12 -0500
+X-Google-Smtp-Source: AH8x226Bnwn+GBp98FUA2hkvpvRxGn1Ikf+58WnWKUTmeoSdJqIoKMMO4/MIFgmeLdsxKH8joYhLAA==
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: peterz@infradead.org
+Cc: lizefan@huawei.com, mingo@redhat.com, rostedt@goodmis.org,
+        claudio@evidence.eu.com, bristot@redhat.com,
+        tommaso.cucinotta@santannapisa.it, juri.lelli@redhat.com,
+        luca.abeni@santannapisa.it, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/7] sched/deadline: fix cpusets bandwidth accounting
+Date: Thu,  1 Feb 2018 09:51:02 -0700
+Message-Id: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31 2018 at 16:46 +0000, Marc Zyngier wrote:
->On 31/01/18 16:24, Lina Iyer wrote:
->> On Tue, Jan 30 2018 at 18:11 +0000, Marc Zyngier wrote:
->>> On 30/01/18 17:56, Lina Iyer wrote:
->>>> On Wed, Jan 24 2018 at 14:20 +0000, Marc Zyngier wrote:
->>>>> On 23/01/18 17:56, Lina Iyer wrote:
->>>>>> From : Archana Sathyakumar <asathyak@codeaurora.org>
->>>>>>
->>>>>> The Power Domain Controller (PDC) hardware block on Qualcomm SoCs houses
->>>>>> an interrupt controller along with other domain control functions to
->>>>>> handle interrupt related functions like handle falling edge or active
->>>>>> low which are not detected at the GIC and handle wakeup interrupts.
->>>>>>
->>>>>> The interrupt controller is on an always-on domain for the purpose of
->>>>>> waking up the processor, but only a subset of the processor's interrupts
->>>>>> are routed through the PDC to the GIC. The PDC powers on the processor's
->>>>>> domain, bringing the domain out of low power mode and replays the
->>>>>> pending interrupts so the GIC may wake up the processor.
->>>>>>
->>>>>> Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
->>>>>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->>>>>> [Lina: Split out DT bindings target data and initialization changes]
->>>>>> ---
->>>>
->> We looked at tegra's implementation and it appears similar, thought they
->> don't seemt to have the same complexity.
->
->Exactly. They are pretty similar. Hence my suggestion to adopt the same
->approach, which you don't seem to agree with.
->
-I am reworking the driver based on what you have suggested in this
-thread. Will submit a patchset for review in the next couple of days.
+This is the follow-up patchset to [1] that attempt to fix a problem
+reported by Steve Rostedt [2] where DL bandwidth accounting is not
+recomputed after CPUset and CPU hotplug operations.  When CPU hotplug and
+some CUPset manipulation take place root domains are destroyed and new ones
+created, loosing at the same time DL accounting information pertaining to
+utilisation.  Please see [1] for a full description of the approach.
 
-Once again, thank you for your time Marc.
+In this revision a shortcoming identified by Luca is addressed, with most
+of the solution kept unchanged.
 
--- Lina
+A notable addition is patch 7/7 - it addresses a problem seen when hot
+plugging out a CPU where a DL task is running (see changelog for full
+details).  The issue is unrelated to this patchset and will manifest
+itself on a mainline kernel.
+
+I will start working on that problem once done with this set but lumping
+it in here to raise awareness and provide a stop-gap measure while a
+better solution is designed.  This set is also available here [3] with the
+instrumentation for patch 7/7 in this commit [4].
+
+This set applies cleanly on top of v4.15.
+
+Best regards,
+Mathieu
+
+------
+Change for V2:
+. Addressing a problem found by Luca Abeni where the mask of a DL task
+  isn't modified when cpuset are collapsed.
+
+[1]. https://groups.google.com/forum/#!topic/linux.kernel/uakbvOQE6rc
+[2]. https://lkml.org/lkml/2016/2/3/966
+[3]. https://git.linaro.org/people/mathieu.poirier/linux.git/log/?h=v4.15-bandwidth-accounting-v2
+[4]. af68563a6c21 ("sched/debug: Add 'rq_debug' proc entry")
+
+Mathieu Poirier (7):
+  sched/topology: Adding function partition_sched_domains_locked()
+  cpuset: Rebuild root domain deadline accounting information
+  sched/deadline: Keep new DL task within root domain's boundary
+  cgroup: Constrain 'sched_load_balance' flag when DL tasks are present
+  cgroup: Constrain the addition of CPUs to a new CPUset
+  sched/core: Don't change the affinity of DL tasks
+  sched/deadline: Prevent CPU hotplug operation if DL task on CPU
+
+ include/linux/cpuset.h         |   6 ++
+ include/linux/sched.h          |   3 +
+ include/linux/sched/deadline.h |   8 ++
+ include/linux/sched/topology.h |   9 ++
+ kernel/cgroup/cpuset.c         | 232 ++++++++++++++++++++++++++++++++++++++++-
+ kernel/sched/core.c            |  32 +++++-
+ kernel/sched/deadline.c        |  36 +++++++
+ kernel/sched/sched.h           |   3 -
+ kernel/sched/topology.c        |  31 +++++-
+ 9 files changed, 346 insertions(+), 14 deletions(-)
+
+-- 
+2.7.4
