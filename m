@@ -1,76 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751586AbeBADpk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 22:45:40 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56070 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751163AbeBADpe (ORCPT
+        id S1751554AbeBAD5I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 22:57:08 -0500
+Received: from smtprelay0087.hostedemail.com ([216.40.44.87]:54812 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751190AbeBAD5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 22:45:34 -0500
-X-UUID: f1ff9e18fc5b494f8a98ff9b666ddd32-20180201
-From: <sean.wang@mediatek.com>
-To: <vinod.koul@intel.com>, <dan.j.williams@intel.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v3 0/3] add support for Mediatek High-Speed DMA controller on MT7622 and MT7623 SoC
-Date: Thu, 1 Feb 2018 11:45:22 +0800
-Message-ID: <cover.1517454174.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+        Wed, 31 Jan 2018 22:57:04 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:800:960:967:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1538:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2553:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3867:3868:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:8531:8985:9025:10004:10400:10848:11232:11658:11914:12043:12555:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21433:21611:21627:30012:30054:30064:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: farm99_3d767c903ca19
+X-Filterd-Recvd-Size: 1660
+Message-ID: <1517457420.7489.24.camel@perches.com>
+Subject: Re: [PATCH 1/2] dmaengine: dmatest: change symbolic permissions to
+ octal values
+From: Joe Perches <joe@perches.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+        Vinod Koul <vinod.koul@intel.com>
+Cc: Yang Shunyong <shunyong.yang@hxt-semitech.com>,
+        Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 31 Jan 2018 19:57:00 -0800
+In-Reply-To: <CAOh2x=kE4uKYnVs0tWnjBHk0t=BQp+=otr89+NHZ0m2GWbNRrA@mail.gmail.com>
+References: <1516617881-30044-1-git-send-email-shunyong.yang@hxt-semitech.com>
+         <20180129044801.GL18649@localhost>
+         <CAOh2x=naBBc-Os=+yFocc3fTri2pebMqdR4=qN+vpHrD0gvunQ@mail.gmail.com>
+         <20180201034507.GZ18649@localhost>
+         <CAOh2x=kE4uKYnVs0tWnjBHk0t=BQp+=otr89+NHZ0m2GWbNRrA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Thu, 2018-02-01 at 09:16 +0530, Viresh Kumar wrote:
+> On Thu, Feb 1, 2018 at 9:15 AM, Vinod Koul <vinod.koul@intel.com> wrote:
+> > Right but lets no go changing to octals everywhere, new code sure :)
+> > I don't see plans to remove representations entirely from kernel yet.
+> 
+> Sure. I was just pointing out to the discussion where the *preferred* thing
+> happened.
 
-Changes since v2:
-- remove extra tasklets and refactor driver for letting descriptors being processed ASAP.
-- add more comments stating the relevant logic
-- remove unused macro and variables
-- change to use the disclaimer with SPDX identifier
-- add mt7622 support
-- refine hardware initialization sequence
-- add tx_status support for DMA_RESIDUE_GRANULARITY_SEGMENT
-- refine remove handler with killing vc's tasklet
+Not really true.  Linus prefers actual octal
+and suggested treewide conversions.
 
-Changes since v1:
-- fix typo in the commit message.
-- delete status shown in the dt-binding example.
-
-This patchset introduces support for MediaTek High-Speed DMA controller
-(MTK-HSDMA) Currently, the driver is already tested successfully with
-dmatest module on MT7622 and MT7623 SoC. 
-
-MTK-HSDMA on MT7622/23 SoC has a single ring which is dedicated for
-doing memory-to-memory transfer through ring-based descriptor management.
-Even though there is only a single ring available inside HSDMA, the
-driver is being extended to the support for multiple virtual channels
-processing simultaneously by means of DMA_VIRTUAL_CHANNELS.
-
-Sean Wang (3):
-  dt-bindings: dmaengine: Add MediaTek High-Speed DMA controller
-    bindings
-  dmaengine: mediatek: Add MediaTek High-Speed DMA controller for MT7622
-    and MT7623 SoC
-  dmaengine: mediatek: update MAINTAINERS entry with MediaTek DMA driver
-
- .../devicetree/bindings/dma/mtk-hsdma.txt          |   33 +
- MAINTAINERS                                        |    9 +
- drivers/dma/Kconfig                                |    2 +
- drivers/dma/Makefile                               |    1 +
- drivers/dma/mediatek/Kconfig                       |   13 +
- drivers/dma/mediatek/Makefile                      |    1 +
- drivers/dma/mediatek/mtk-hsdma.c                   | 1045 ++++++++++++++++++++
- 7 files changed, 1104 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/mtk-hsdma.txt
- create mode 100644 drivers/dma/mediatek/Kconfig
- create mode 100644 drivers/dma/mediatek/Makefile
- create mode 100644 drivers/dma/mediatek/mtk-hsdma.c
-
--- 
-2.7.4
+https://lwn.net/Articles/696229/
