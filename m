@@ -1,35 +1,35 @@
-Return-Path: <peterz@infradead.org>
-X-Google-Smtp-Source: AH8x2267PYuDOfg9ra7fhX4f4XXi/X1TvOW7lu8DKG9iUJRD18xyVwxCKm1l6N3ZF5tv70tJcjmZ
-ARC-Seal: i=1; a=rsa-sha256; t=1517498034; cv=none;
+Return-Path: <jpoimboe@redhat.com>
+X-Google-Smtp-Source: AH8x224spYkCqkeLrxWhNyhmxer3gsq3agPHwipE2TzgAUpvnglGz/dcuTQfVfdcsq3JrDs/RAkh
+ARC-Seal: i=1; a=rsa-sha256; t=1517498499; cv=none;
         d=google.com; s=arc-20160816;
-        b=tRIIxPVzGEmWbTAbrDs4RClxqI11UEQ80Hbe0Q9YfKtcBbicWoGnc9fpFW41KKYiBt
-         svXiEGOZiQOaZu7ZVOTQHIiru/6jjcxBehB04kw+xXj+xgTiJ6SbyrCOuSnmiMiW8iE4
-         AM//w5p4llOBBvlvnimmBG3TvPT8s/XfI2kRmVXMSrf0tcB11HHnvZ71sC1dOBBQkYD4
-         /iUAbNNRZQKMdrjPmNxPCpTp3GNHJgTL+MQlns1Q883p7BNSYgIxqkDWiTwCQ6PtddXK
-         p0wf6wrlv0Pp3mP955S0Q3L0VFeIVVq55evmkTZB+JcyKaPxQJIicfshyhepQ9tCK6XL
-         XUiA==
+        b=PUfYvwX3Rg7sqeNLobBjgExvFBzAvet/B5cqeUU6vfQ2eER0mQMstfimsmExcg0HD1
+         zVruxxRV8UlQGesXKgti6xzKLJXv4mce5nB6JmVVuZbKRhc7H90X9x3ScHsGFTlns9RA
+         OsLJJ+90w9Q6FPjn9HpA83Rz6FoObXH9s15lUaboBERlejqltVb5Nwpw2RUfxSCZqN24
+         0ql2KKPgZNc3jE06RZR5rAG6cusQAVlGcjKnamWmzwaSNUL7KXnf6EfarFx/nO060WPi
+         NfpaKHaVbuHjFNlgUsBuHXTcCDubRp/eMHhjNiJSMTESzIa8qysu7GhAPVL0s5Ai8fTn
+         v/kw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-transfer-encoding
          :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=9XeLQCDIJ8trqimr3TXqJJs1nurDWmf3jLvSrixwpYI=;
-        b=I1HDRpV03HoQ2wyq+3Bmrqiq1k3g/0APjttl0fHpmbuHzV7zqjAUeIB15uXJtOsRvi
-         S+rkgz2N93D32OoLN0KBvTz+hUc9pNuHOh7spQDVTyNJ2Oq37/fP0x6xc7c/3npkiuTs
-         jcCs7gpDlX4C+wMNAftR5L/RErLlhkXgCn5DUsVUyoTqumcSvnsgjhzx1/7iUTwIZyYd
-         8NbySXKJDcBbq79HNrm5euuxhOKRk6eolO8Wti2rlWM97PBeXRyc8ECXO/QcN2q31jEk
-         nnpgN5F/j+cZPByMH8WZb8jeF5DrPTsghIVDV0oCMq+zvLNGElgd1BkLyEM4MPhoNj/Q
-         s/Eg==
+         :to:from:date:arc-authentication-results;
+        bh=rmMeQMFhBNxEp6SmSa6H+3cBjUBYvA72S/wMLqKrxO0=;
+        b=wu+TaamNvV7Pzu63kbeSKX5rYJZ+9809wOqHLlDuLOS4NChx3RZKSIcpygkdcRF6aB
+         TeFYzeFy2DgGCNmJRnOa+u5BOntsjqQGK7pcKvgoJxfNuairCgMilAQOpNwCqHMZZnS3
+         mrOnDRDKX48CXvPN9tA7YGuN3ly/Sk5CSjIB116G6ayZMymqaVI0cg2PZo87dSq1Xxq7
+         rPTPi2GH9l5hLb+3tOxTic7CO8HSsT/4M2kL59AC3VHu8EJPhDTMmceA+uSBWGEzm1aC
+         XlZns1wfcQN4nFWMbjkdAaBU32uzrnj6dJZNj3qVAWCOOQCaYYwjppILDN/zQZFSetlD
+         qisA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=ASCYk8WH;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
+       spf=pass (google.com: domain of jpoimboe@redhat.com designates 209.132.183.28 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=ASCYk8WH;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
-Date: Thu, 1 Feb 2018 16:13:48 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+       spf=pass (google.com: domain of jpoimboe@redhat.com designates 209.132.183.28 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Date: Thu, 1 Feb 2018 09:21:34 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
 	Dave Hansen <dave.hansen@intel.com>,
 	Ashok Raj <ashok.raj@intel.com>,
 	Tim Chen <tim.c.chen@linux.intel.com>,
@@ -44,50 +44,59 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Jun Nakajima <jun.nakajima@intel.com>,
 	Asit Mallick <asit.k.mallick@intel.com>
 Subject: Re: [PATCH 4/7] x86,nospec: Annotate indirect calls/jumps
-Message-ID: <20180201151348.GK2295@hirez.programming.kicks-ass.net>
+Message-ID: <20180201152134.63e553pvoq7mbm4p@treble>
 References: <20180201143421.088202488@infradead.org>
  <20180201143821.959147604@infradead.org>
  <1517496926.18619.315.camel@infradead.org>
  <20180201151136.GX2249@hirez.programming.kicks-ass.net>
+ <20180201151348.GK2295@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180201151136.GX2249@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180201151348.GK2295@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591210458303680239?=
-X-GMAIL-MSGID: =?utf-8?q?1591212018538237092?=
+X-GMAIL-MSGID: =?utf-8?q?1591212506928773712?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 04:11:36PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 01, 2018 at 02:55:26PM +0000, David Woodhouse wrote:
-> > 
-> > 
-> > On Thu, 2018-02-01 at 15:34 +0100, Peter Zijlstra wrote:
+On Thu, Feb 01, 2018 at 04:13:48PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 01, 2018 at 04:11:36PM +0100, Peter Zijlstra wrote:
+> > On Thu, Feb 01, 2018 at 02:55:26PM +0000, David Woodhouse wrote:
 > > > 
-> > >   * These are the bare retpoline primitives for indirect jmp and call.
-> > >   * Do not use these directly; they only exist to make the ALTERNATIVE
-> > >   * invocation below less ugly.
-> > > @@ -102,9 +114,9 @@
-> > >  .macro JMP_NOSPEC reg:req
-> > >  #ifdef CONFIG_RETPOLINE
-> > >         ANNOTATE_NOSPEC_ALTERNATIVE
-> > > -       ALTERNATIVE_2 __stringify(jmp *\reg),                           \
-> > > +       ALTERNATIVE_2 __stringify(ANNOTATE_RETPOLINE_SAFE; jmp *\reg),  \
-> > >                 __stringify(RETPOLINE_JMP \reg), X86_FEATURE_RETPOLINE, \
-> > > -               __stringify(lfence; jmp *\reg), X86_FEATURE_RETPOLINE_AMD
-> > > +               __stringify(lfence; ANNOTATE_RETPOLINE_SAFE; jmp *\reg), X86_FEATURE_RETPOLINE_AMD
-> > >  #else
-> > >         jmp     *\reg
-> > >  #endif
+> > > 
+> > > On Thu, 2018-02-01 at 15:34 +0100, Peter Zijlstra wrote:
+> > > > 
+> > > > Â  * These are the bare retpoline primitives for indirect jmp and call.
+> > > > Â  * Do not use these directly; they only exist to make the ALTERNATIVE
+> > > > Â  * invocation below less ugly.
+> > > > @@ -102,9 +114,9 @@
+> > > > Â .macro JMP_NOSPEC reg:req
+> > > > Â #ifdef CONFIG_RETPOLINE
+> > > > Â Â Â Â Â Â Â Â ANNOTATE_NOSPEC_ALTERNATIVE
+> > > > -Â Â Â Â Â Â Â ALTERNATIVE_2 __stringify(jmp *\reg),Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â \
+> > > > +Â Â Â Â Â Â Â ALTERNATIVE_2 __stringify(ANNOTATE_RETPOLINE_SAFE; jmp *\reg),Â Â \
+> > > > Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â __stringify(RETPOLINE_JMP \reg), X86_FEATURE_RETPOLINE,Â \
+> > > > -Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â __stringify(lfence; jmp *\reg), X86_FEATURE_RETPOLINE_AMD
+> > > > +Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â __stringify(lfence; ANNOTATE_RETPOLINE_SAFE; jmp *\reg), X86_FEATURE_RETPOLINE_AMD
+> > > > Â #else
+> > > > Â Â Â Â Â Â Â Â jmpÂ Â Â Â Â *\reg
+> > > > Â #endif
+> > > 
+> > > The first one, yes. But the second one for the AMD retpoline is
+> > > redundant, isn't it? Objtool isn't going to look there.
 > > 
-> > The first one, yes. But the second one for the AMD retpoline is
-> > redundant, isn't it? Objtool isn't going to look there.
+> > It was when I wrote it.. lemme try again.
 > 
-> It was when I wrote it.. lemme try again.
+> Insta complaint:
+> 
+> arch/x86/entry/.tmp_entry_64.o: warning: objtool: .altinstr_replacement+0x19: indirect jump found in RETPOLINE build
 
-Insta complaint:
+Right, objtool was recently made smarter, such that it actually decodes
+the ignored alternatives.  The check for that warning needs to also
+check that insn->ignore isn't set.
 
-arch/x86/entry/.tmp_entry_64.o: warning: objtool: .altinstr_replacement+0x19: indirect jump found in RETPOLINE build
+-- 
+Josh
