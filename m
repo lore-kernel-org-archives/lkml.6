@@ -1,15 +1,13 @@
-Date: Thu, 1 Feb 2018 12:08:45 +0100
+Date: Thu, 1 Feb 2018 12:08:24 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>
+	Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver patches for 4.16-rc1
-Message-ID: <20180201110845.GA29271@kroah.com>
+Subject: [GIT PULL] Driver core updates for 4.16-rc1
+Message-ID: <20180201110824.GA29150@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 User-Agent: Mutt/1.9.3 (2018-01-21)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -20,511 +18,246 @@ The following changes since commit 30a7acd573899fd8b8ac39236eff6468b195ac7d:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/ tags/char-misc-4.16-rc1
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/ tags/driver-core-4.16-rc1
 
-for you to fetch changes up to 9ff6576e124b1227c27c1da43fe5f8ee908263e0:
+for you to fetch changes up to c505cbd45f6e9c539d57dd171d95ec7e5e9f9cd0:
 
-  char: lp: use true or false for boolean values (2018-01-25 10:56:02 +0100)
+  device property: Define type of PROPERTY_ENRTY_*() macros (2018-01-25 13:44:20 +0100)
 
 ----------------------------------------------------------------
-Char/Misc driver patches for 4.16-rc1
+Driver Core updates for 4.16-rc1
 
-Here is the big pull request for char/misc drivers for 4.16-rc1.
+Here is the set of "big" driver core patches for 4.16-rc1.
 
-There's a lot of stuff in here.  Three new driver subsystems were added
-for various types of hardware busses:
-	- siox
-	- slimbus
-	- soundwire
-as well as a new vboxguest subsystem for the VirtualBox hypervisor
-drivers.
+The majority of the work here is in the firmware subsystem, with reworks
+to try to attempt to make the code easier to handle in the long run, but
+no functional change.  There's also some tree-wide sysfs attribute
+fixups with lots of acks from the various subsystem maintainers, as well
+as a handful of other normal fixes and changes.
 
-There's also big updates from the FPGA subsystem, lots of Android binder
-fixes, the usual handful of hyper-v updates, and lots of other smaller
-driver updates.
+And finally, some license cleanups for the driver core and sysfs code.
 
-All of these have been in linux-next for a long time, with no reported
-issues.
+All have been in linux-next for a while with no reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Aaron Sierra (1):
-      misc: ds1682: Show device registers as unsigned
+Andy Shevchenko (3):
+      device property: Move property_entry_free_data() upper
+      device property: Reuse property_entry_free_data()
+      device property: Define type of PROPERTY_ENRTY_*() macros
 
-Alan Tull (18):
-      fpga: bridge: support getting bridge from device
-      fpga: mgr: API change to replace fpga load functions with single function
-      fpga: mgr: separate getting/locking FPGA manager
-      fpga: region: use dev_err instead of pr_err
-      fpga: region: remove unneeded of_node_get and put
-      fpga: region: get mgr early on
-      fpga: region: check for child regions before allocing image info
-      fpga: region: fix slow warning with more than one overlay
-      fpga: region: use image info as parameter for programming region
-      fpga: region: separate out code that parses the overlay
-      fpga: region: add fpga-region.h header
-      fpga: region: rename some functions prior to moving
-      fpga: region: add register/unregister functions
-      fpga: region: add fpga_region_class_find
-      fpga: region: move device tree support to of-fpga-region.c
-      fpga: of-fpga-region: accept overlays that don't program FPGA
-      fpga: clean up fpga Kconfig
-      fpga: add attribute groups
+Arend van Spriel (2):
+      sysfs: add attribute specification for /sysfs/devices/.../coredump
+      drivers: base: add coredump driver ops
 
-Alexey Khoroshilov (1):
-      fpga: socfpga-a10: disable clk on error in socfpga_a10_fpga_probe()
+Benjamin Gilbert (3):
+      USB: serial: keyspan: Drop firmware Kconfig options
+      firmware: Drop FIRMWARE_IN_KERNEL Kconfig option
+      firmware: Fix up docs referring to FIRMWARE_IN_KERNEL
 
-Arnd Bergmann (5):
-      lp: support 64-bit time_t user space
-      virt: vbox: use %pap format for printing resource_size_t
-      slimbus: qcom-ctrl: use normal allocation
-      uio_hv_generic: fix type mismatch warnings
-      uio_hv_generic: fix new type mismatch warnings
+Gimcuan Hui (1):
+      drivers: base: omit redundant interations
 
-Arvind Yadav (4):
-      extcon: adc-jack: Fix platform_get_irq's error checking
-      misc: enclosure: Fix space before '[' error
-      misc: enclosure: Remove unnecessary error check
-      extcon: axp288:: Handle return value of platform_get_irq
+Greg Kroah-Hartman (10):
+      kobject: add SPDX identifiers to all kobject files
+      kobject: Remove redundant license text
+      driver core: add SPDX identifiers to all driver core files
+      drivers: core: arch_topology.c: move SPDX tag to top of the file
+      driver core: Remove redundant license text
+      Merge 4.15-rc3 into driver-core-next
+      Merge 4.15-rc6 into driver-core-next
+      sysfs: turn WARN() into pr_warn()
+      sysfs: use SPDX identifiers
+      sysfs: remove DEBUG defines
 
-Benson Leung (1):
-      extcon: usbc-cros-ec: add support to notify USB type cables.
+Joe Perches (4):
+      sysfs.h: Use octal permissions
+      treewide: Use DEVICE_ATTR_RW
+      treewide: Use DEVICE_ATTR_RO
+      treewide: Use DEVICE_ATTR_WO
 
-Chanwoo Choi (1):
-      Merge branch 'ib-extcon-mfd-4.16' into extcon-next
+Luis R. Rodriguez (20):
+      firmware: add helper to unregister pm ops
+      firmware: fix capturing errors on fw_cache_init() on early init
+      firmware: provide helpers for registering the syfs loader
+      firmware: fix detecting error on register_reboot_notifier()
+      test_firmware: fix setting old custom fw path back on exit
+      firmware: rename struct firmware_priv to struct fw_sysfs
+      firmware: rename struct firmware_buf to struct fw_priv
+      firmware: rename struct fw_priv->fw_id to fw_name
+      firmware: move core data structures to the top of file
+      firmware: remove duplicate fw_state_aborted()
+      firmware: remove unused __fw_state_is_done()
+      firmware: use static inlines for state machine checking
+      firmware: rename sysfs state checks with sysfs prefix
+      firmware: use static inline for to_fw_priv()
+      firmware: add helper to copy built-in data to pre-alloc buffer
+      firmware: provide helper for FW_OPT_USERHELPER
+      firmware: replace #ifdef over FW_OPT_FALLBACK with function checks
+      test_firmware: wrap sysfs timeout test into helper
+      test_firmware: wrap basic sysfs fallback tests into helper
+      test_firmware: wrap custom sysfs load tests into helper
 
-Colin Ian King (8):
-      misc: mic: remove unused label 'done'
-      mei: fix spelling mistake: "botther" -> "bother"
-      mei: fix incorrect logical operator in if statement
-      soundwire: fix sign extension when shifting buf[2] 24 places
-      soundwire: intel: fix missing assignment to ret
-      slimbus: avoid null pointer dereference on msg
-      slimbus: fix retries comparison to correctly identify failed allocation
-      slimbus: make functions slim_ack_txn and slim_alloc_txbuf static
+Maciej Purski (1):
+      component: add debugfs support
 
-Corentin Labbe (1):
-      misc: remove AVR32 dependencies
+Masanari Iida (1):
+      firmware: Fix a typo in fallback-mechanisms.rst
 
-Dan Carpenter (2):
-      mei: fix an && vs || typo
-      soundwire: Fix a signedness bug
+Paul Gortmaker (1):
+      bus: simple-pm-bus: convert bool SIMPLE_PM_BUS to tristate
 
-Dhaval Shah (10):
-      misc: hpilo: Use SPDX-License-Identifier
-      misc: isl29003: Missing a blank line after declarations
-      misc: ad525x_dpot: Unnecessary space before function pointer arguments
-      misc: ics932s401: Missing a blank line after declarations
-      misc: ics932s401: please, no space before tabs
-      misc: ics932s401: open brace should be on the previous line
-      misc: apds990x: Missing a blank line after declarations.
-      misc: ad525x_dpot: Prefer 'unsigned int' to bare use of 'unsigned'
-      misc: ad525x_dpot: please, no space before tabs
-      misc: ad525x_dpot: macros should not use a trailing semicolon
+Vasyl Gomonovych (2):
+      sysfs: Use PTR_ERR_OR_ZERO()
+      PNP: pnpbios: Use PTR_ERR_OR_ZERO()
 
-Elad Wexler (1):
-      android: binder: Prefer __func__ to using hardcoded function name
+Wei Yongjun (2):
+      test_firmware: make local symbol test_fw_config static
+      test_firmware: fix missing unlock on error in config_num_requests_store()
 
-Finley Xiao (2):
-      nvmem: rockchip-efuse: parse 'rockchip,efuse-size'
-      nvmem: rockchip-efuse: add support for rk3328-efuse
-
-Ganesh Mahendran (1):
-      android: binder: use VM_ALLOC to get vm area
-
-Geert Uytterhoeven (2):
-      MAINTAINERS: Remove bogus wildcards for CHAR and MISC DRIVERS
-      eeprom: at25: Add DT support for EEPROMs with odd address bits
-
-Greg Kroah-Hartman (3):
-      Merge 4.15-rc3 into char-misc-next
-      Merge 4.15-rc6 into char-misc-next
-      Merge tag 'extcon-next-for-4.16' of git://git.kernel.org/.../chanwoo/extcon into char-misc-next
-
-Guilherme G. Piccoli (3):
-      genwqe: Remove unused variable and rename function
-      genwqe: Make defines uppercase
-      genwqe: Remove unused parameter in some functions
-
-Gustavo A. R. Silva (4):
-      fpga: fpga-mgr: remove unnecessary code in __fpga_mgr_get
-      fpga: fpga-bridge: remove unnecessary null check in of_fpga_bridge_get
-      android: binder: Use true and false for boolean values
-      char: lp: use true or false for boolean values
-
-Hans de Goede (8):
-      virt: Add vboxguest driver for Virtual Box Guest integration UAPI
-      virt: Add vboxguest VMMDEV communication code
-      virt: Add vboxguest driver for Virtual Box Guest integration
-      extcon: axp288: Remove unused extcon_nb struct member
-      extcon: axp288: Remove unused platform data
-      extcon: axp288: Redo charger type detection a couple of seconds after probe()
-      extcon: axp288: Handle reserved charger-type values better
-      virt: vbox: Add error mapping for VERR_INVALID_NAME and VERR_NO_MORE_FILES
-
-Harsh Shandilya (1):
-      android: binder: Use octal permissions
-
-Heiner Kallweit (2):
-      nvmem: core: let stride and word_size default to 1
-      nvmem: core: switch to device_property_present for reading property "read-only"
-
-Ian Abbott (1):
-      fpga: region: release of_parse_phandle nodes after use
-
-Ivan Delalande (1):
-      lkdtm: fix handle_irq_event symbol for INT_HW_IRQ_EN
-
-Jesse Chan (1):
-      auxdisplay: img-ascii-lcd: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-
-Jia-Ju Bai (1):
-      vme: Fix a possible sleep-in-atomic bug in vme_tsi148
-
-Kees Cook (1):
-      /dev/mem: Add bounce buffer for copy-out
-
-Kunihiko Hayashi (1):
-      nvmem: uniphier: change access unit from 32bit to 8bit
-
-Ladislav Michl (2):
-      EISA: Whitespace cleanup
-      EISA: Delete error message for a failed memory allocation in eisa_probe()
-
-Lukas Wunner (2):
-      coresight: Deduplicate bus_find_device() by name matching
-      nvmem: core: Deduplicate bus_find_device() by name matching
-
-Markus Elfring (2):
-      extcon: max77693: Delete unneeded initialization in max77693_muic_set_path()
-      extcon: max8997: Delete unneeded initialization in max8997_muic_set_path()
-
-Martijn Coenen (4):
-      ANDROID: binder: show high watermark of alloc->pages.
-      ANDROID: binder: Add thread->process_todo flag.
-      ANDROID: binder: remove waitqueue when thread exits.
-      ANDROID: binder: Remove obsolete proc waitqueue.
-
-Michael Kelley (1):
-      Drivers: hv: vmbus: Remove x86-isms from arch independent drivers
-
-Peter Rosin (1):
-      mux: add SPDX identifiers to all mux source files
-
-Pravin Shedge (1):
-      coresight: etb10: remove duplicate includes
-
-Rob Herring (1):
-      char: xillybus: remove direct dependency on DT functions
-
-Robert Walker (1):
-      coresight: Fix disabling of CoreSight TPIU
-
-Sagar Dharia (9):
-      Documentation: Add SLIMbus summary
-      dt-bindings: Add SLIMbus bindings
-      slimbus: Add SLIMbus bus type
-      slimbus: core: Add slim controllers support
-      slimbus: Add messaging APIs to slimbus framework
-      slimbus: Add support for 'clock-pause' feature
-      dt-bindings: Add qcom slimbus controller bindings
-      slimbus: qcom: Add Qualcomm Slimbus controller driver
-      slimbus: qcom: Add runtime-pm support using clock-pause
-
-Sanyog Kale (4):
-      Documentation: Add SoundWire summary
-      soundwire: Add SoundWire MIPI defined registers
-      soundwire: Add Slave status handling helpers
-      soundwire: cdns: Add sdw_master_ops and IO transfer support
-
-Shreyas NC (1):
-      soundwire: Fix incorrect return value check
-
-Sinan Kaya (1):
-      i7300_idle: remove unused file
-
-Srinivas Kandagatla (6):
-      slimbus: core: add support to device tree helper
-      regmap: add SLIMbus support
-      slimbus: core: add common defines required for controllers
-      MAINTAINERS: Add SLIMbus maintainer
-      slimbus: qcom: fix incompatible pointer warning
-      slimbus: qcom: add HAS_IOMEM dependency
-
-Stephen Hemminger (11):
-      vmbus: make channel attributes static
-      uio_hv_generic: fix configuration comments
-      uio_hv_generic: use standard mmap for resources
-      uio_hv_generic: use ISR callback method
-      vmbus: fix ABI documentation
-      vmbus: add monitor_id and subchannel_id to sysfs per channel
-      doc: fix documentation about uio_hv_generic
-      uio: document uio_hv_generic regions
-      uio_hv_generic: create send and receive buffers
-      uio_hv_generic: check that host supports monitor page
-      uio_hv_generic: add rescind support
-
-Tejas Upadhyay (1):
-      misc: fsa9480: Add blank line after declarations.
-
-Tetsuo Handa (1):
-      android: binder: Check for errors in binder_alloc_shrinker_init().
-
-Thomas VanSelus (1):
-      misc: ds1682: Ignore update-in-progress ETC reads
-
-Tomas Winkler (2):
-      mei: speed up the power down flow
-      mei: me: allow runtime pm for platform with D0i3
-
-Uwe Kleine-König (4):
-      siox: new driver framework for eckelmann SIOX
-      siox: add support for tracing
-      siox: add gpio bus driver
-      MAINTAINERS: Add entry for SIOX
-
-Vasyl Gomonovych (4):
-      lkdtm: Missing kmalloc check
-      misc: vexpress: Use PTR_ERR_OR_ZERO()
-      misc: mic: Use memdup_user() as a cleanup
-      coresight: Use PTR_ERR_OR_ZERO()
-
-Vincent Legoll (1):
-      fsi: Make FSI a menuconfig to ease disabling it all
-
-Vinod Koul (11):
-      soundwire: Add SoundWire bus type
-      soundwire: Add Master registration
-      soundwire: Add MIPI DisCo property helpers
-      soundwire: Add IO transfer
-      soundwire: Add slave status handling
-      soundwire: cdns: Add cadence library
-      soundwire: intel: Add Intel Master driver
-      soundwire: intel: Add Intel init module
-      MAINTAINERS: Add SoundWire entry
-      soundwire: Add Pierre as reviewer
-      soundwire: select REGMAP_SOUNDWIRE
-
-Vitaly Kuznetsov (1):
-      tools/hv: add install target to Makefile
-
-Wei Yongjun (4):
-      soundwire: Fix typo in return value check of sdw_read()
-      slimbus: Use GFP_ATOMIC under spin lock
-      slimbus: Fix missing unlock on error in slim_msg_response()
-      slimbus: qcom: Fix return value check in qcom_slim_probe()
-
-Xiongwei Song (1):
-      ANDROID: binder: make binder_alloc_new_buf_locked static and indent its arguments
-
- Documentation/ABI/stable/sysfs-bus-vmbus           |   53 +-
- Documentation/ABI/testing/sysfs-bus-siox           |   87 ++
- Documentation/devicetree/bindings/eeprom/at25.txt  |    4 +-
- .../devicetree/bindings/nvmem/rockchip-efuse.txt   |    5 +
- .../bindings/siox/eckelmann,siox-gpio.txt          |   19 +
- Documentation/devicetree/bindings/slimbus/bus.txt  |   50 +
- .../devicetree/bindings/slimbus/slim-qcom-ctrl.txt |   39 +
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- Documentation/driver-api/index.rst                 |    2 +
- Documentation/driver-api/slimbus.rst               |  127 ++
- Documentation/driver-api/soundwire/index.rst       |   15 +
- Documentation/driver-api/soundwire/summary.rst     |  207 +++
- Documentation/driver-api/uio-howto.rst             |   26 +-
- Documentation/fpga/fpga-mgr.txt                    |  132 +-
- Documentation/fpga/fpga-region.txt                 |   95 ++
- Documentation/fpga/overview.txt                    |   23 +
- MAINTAINERS                                        |   38 +-
- arch/x86/hyperv/hv_init.c                          |   21 +-
- arch/x86/include/asm/mshyperv.h                    |    4 +-
- drivers/Kconfig                                    |    6 +
- drivers/Makefile                                   |    3 +
- drivers/android/binder.c                           |  196 ++-
- drivers/android/binder_alloc.c                     |   29 +-
- drivers/android/binder_alloc.h                     |    4 +-
- drivers/auxdisplay/img-ascii-lcd.c                 |    4 +
- drivers/base/regmap/Kconfig                        |    4 +
- drivers/base/regmap/Makefile                       |    1 +
- drivers/base/regmap/regmap-slimbus.c               |   80 +
- drivers/char/lp.c                                  |   69 +-
- drivers/char/mem.c                                 |   27 +-
- drivers/char/xillybus/Kconfig                      |    4 +-
- drivers/char/xillybus/xillybus_of.c                |   12 +-
- drivers/eisa/eisa-bus.c                            |   62 +-
- drivers/eisa/pci_eisa.c                            |   10 +-
- drivers/eisa/virtual_root.c                        |   19 +-
- drivers/extcon/extcon-adc-jack.c                   |    2 +-
- drivers/extcon/extcon-axp288.c                     |   75 +-
- drivers/extcon/extcon-max77693.c                   |    2 +-
- drivers/extcon/extcon-max8997.c                    |    2 +-
- drivers/extcon/extcon-usbc-cros-ec.c               |  142 +-
- drivers/fpga/Kconfig                               |  103 +-
- drivers/fpga/Makefile                              |    1 +
- drivers/fpga/fpga-bridge.c                         |  113 +-
- drivers/fpga/fpga-mgr.c                            |  123 +-
- drivers/fpga/fpga-region.c                         |  464 +-----
- drivers/fpga/of-fpga-region.c                      |  504 +++++++
- drivers/fpga/socfpga-a10.c                         |    8 +-
- drivers/fsi/Kconfig                                |    6 +-
- drivers/hv/hv.c                                    |    3 -
- drivers/hv/vmbus_drv.c                             |   40 +-
- .../coresight/coresight-dynamic-replicator.c       |    4 +-
- drivers/hwtracing/coresight/coresight-etb10.c      |    1 -
- drivers/hwtracing/coresight/coresight-funnel.c     |    4 +-
- drivers/hwtracing/coresight/coresight-tpiu.c       |   17 +-
- drivers/hwtracing/coresight/coresight.c            |   25 +-
- drivers/misc/Kconfig                               |    4 +-
- drivers/misc/ad525x_dpot.c                         |   30 +-
- drivers/misc/ad525x_dpot.h                         |   12 +-
- drivers/misc/apds990x.c                            |   11 +
- drivers/misc/ds1682.c                              |   35 +-
- drivers/misc/eeprom/at25.c                         |    3 +
- drivers/misc/enclosure.c                           |   12 +-
- drivers/misc/fsa9480.c                             |    1 +
- drivers/misc/genwqe/card_base.c                    |   16 +-
- drivers/misc/genwqe/card_base.h                    |   20 +-
- drivers/misc/genwqe/card_ddcb.c                    |   22 +-
- drivers/misc/genwqe/card_debugfs.c                 |    2 +-
- drivers/misc/genwqe/card_dev.c                     |   19 +-
- drivers/misc/genwqe/card_utils.c                   |   25 +-
- drivers/misc/hpilo.c                               |    5 +-
- drivers/misc/hpilo.h                               |    5 +-
- drivers/misc/ics932s401.c                          |    8 +-
- drivers/misc/isl29003.c                            |    7 +
- drivers/misc/lkdtm_core.c                          |    2 +-
- drivers/misc/lkdtm_heap.c                          |    4 +
- drivers/misc/mei/bus.c                             |   10 +-
- drivers/misc/mei/hw-me.c                           |    4 +-
- drivers/misc/mei/hw-txe.c                          |    4 +-
- drivers/misc/mei/init.c                            |    4 +-
- drivers/misc/mei/pci-me.c                          |    5 +-
- drivers/misc/mic/vop/vop_vringh.c                  |   22 +-
- drivers/misc/vexpress-syscfg.c                     |    4 +-
- drivers/mux/Kconfig                                |    1 +
- drivers/mux/Makefile                               |    1 +
- drivers/mux/adg792a.c                              |    5 +-
- drivers/mux/core.c                                 |    5 +-
- drivers/mux/gpio.c                                 |    5 +-
- drivers/mux/mmio.c                                 |    5 +-
- drivers/nvmem/core.c                               |   17 +-
- drivers/nvmem/rockchip-efuse.c                     |   70 +-
- drivers/nvmem/uniphier-efuse.c                     |   10 +-
- drivers/siox/Kconfig                               |   18 +
- drivers/siox/Makefile                              |    2 +
- drivers/siox/siox-bus-gpio.c                       |  172 +++
- drivers/siox/siox-core.c                           |  934 ++++++++++++
- drivers/siox/siox.h                                |   49 +
- drivers/slimbus/Kconfig                            |   24 +
- drivers/slimbus/Makefile                           |   10 +
- drivers/slimbus/core.c                             |  480 ++++++
- drivers/slimbus/messaging.c                        |  332 +++++
- drivers/slimbus/qcom-ctrl.c                        |  747 ++++++++++
- drivers/slimbus/sched.c                            |  121 ++
- drivers/slimbus/slimbus.h                          |  261 ++++
- drivers/soundwire/Kconfig                          |   37 +
- drivers/soundwire/Makefile                         |   18 +
- drivers/soundwire/bus.c                            |  997 +++++++++++++
- drivers/soundwire/bus.h                            |   71 +
- drivers/soundwire/bus_type.c                       |  193 +++
- drivers/soundwire/cadence_master.c                 |  751 ++++++++++
- drivers/soundwire/cadence_master.h                 |   48 +
- drivers/soundwire/intel.c                          |  345 +++++
- drivers/soundwire/intel.h                          |   23 +
- drivers/soundwire/intel_init.c                     |  198 +++
- drivers/soundwire/mipi_disco.c                     |  401 +++++
- drivers/soundwire/slave.c                          |  114 ++
- drivers/uio/uio_hv_generic.c                       |  138 +-
- drivers/virt/Kconfig                               |    1 +
- drivers/virt/Makefile                              |    1 +
- drivers/virt/vboxguest/Kconfig                     |   18 +
- drivers/virt/vboxguest/Makefile                    |    3 +
- drivers/virt/vboxguest/vboxguest_core.c            | 1571 ++++++++++++++++++++
- drivers/virt/vboxguest/vboxguest_core.h            |  174 +++
- drivers/virt/vboxguest/vboxguest_linux.c           |  466 ++++++
- drivers/virt/vboxguest/vboxguest_utils.c           |  803 ++++++++++
- drivers/virt/vboxguest/vboxguest_version.h         |   19 +
- drivers/virt/vboxguest/vmmdev.h                    |  449 ++++++
- drivers/vme/vme.c                                  |    2 +-
- include/linux/fpga/fpga-bridge.h                   |   14 +-
- include/linux/fpga/fpga-mgr.h                      |   39 +-
- include/linux/fpga/fpga-region.h                   |   40 +
- include/linux/i7300_idle.h                         |   84 --
- include/linux/mfd/axp20x.h                         |    5 -
- include/linux/mfd/cros_ec_commands.h               |   17 +
- include/linux/mod_devicetable.h                    |   19 +
- include/linux/mux/consumer.h                       |    5 +-
- include/linux/mux/driver.h                         |    5 +-
- include/linux/regmap.h                             |   18 +
- include/linux/siox.h                               |   77 +
- include/linux/slimbus.h                            |  164 ++
- include/linux/soundwire/sdw.h                      |  479 ++++++
- include/linux/soundwire/sdw_intel.h                |   24 +
- include/linux/soundwire/sdw_registers.h            |  194 +++
- include/linux/soundwire/sdw_type.h                 |   19 +
- include/linux/vbox_utils.h                         |   79 +
- include/trace/events/siox.h                        |   66 +
- include/uapi/linux/lp.h                            |   12 +-
- include/uapi/linux/vbox_err.h                      |  151 ++
- include/uapi/linux/vbox_vmmdev_types.h             |  226 +++
- include/uapi/linux/vboxguest.h                     |  330 ++++
- scripts/mod/devicetable-offsets.c                  |    4 +
- scripts/mod/file2alias.c                           |   15 +
- security/Kconfig                                   |    1 +
- tools/hv/Makefile                                  |   23 +-
- 153 files changed, 14447 insertions(+), 1186 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-siox
- create mode 100644 Documentation/devicetree/bindings/siox/eckelmann,siox-gpio.txt
- create mode 100644 Documentation/devicetree/bindings/slimbus/bus.txt
- create mode 100644 Documentation/devicetree/bindings/slimbus/slim-qcom-ctrl.txt
- create mode 100644 Documentation/driver-api/slimbus.rst
- create mode 100644 Documentation/driver-api/soundwire/index.rst
- create mode 100644 Documentation/driver-api/soundwire/summary.rst
- create mode 100644 Documentation/fpga/fpga-region.txt
- create mode 100644 Documentation/fpga/overview.txt
- create mode 100644 drivers/base/regmap/regmap-slimbus.c
- create mode 100644 drivers/fpga/of-fpga-region.c
- create mode 100644 drivers/siox/Kconfig
- create mode 100644 drivers/siox/Makefile
- create mode 100644 drivers/siox/siox-bus-gpio.c
- create mode 100644 drivers/siox/siox-core.c
- create mode 100644 drivers/siox/siox.h
- create mode 100644 drivers/slimbus/Kconfig
- create mode 100644 drivers/slimbus/Makefile
- create mode 100644 drivers/slimbus/core.c
- create mode 100644 drivers/slimbus/messaging.c
- create mode 100644 drivers/slimbus/qcom-ctrl.c
- create mode 100644 drivers/slimbus/sched.c
- create mode 100644 drivers/slimbus/slimbus.h
- create mode 100644 drivers/soundwire/Kconfig
- create mode 100644 drivers/soundwire/Makefile
- create mode 100644 drivers/soundwire/bus.c
- create mode 100644 drivers/soundwire/bus.h
- create mode 100644 drivers/soundwire/bus_type.c
- create mode 100644 drivers/soundwire/cadence_master.c
- create mode 100644 drivers/soundwire/cadence_master.h
- create mode 100644 drivers/soundwire/intel.c
- create mode 100644 drivers/soundwire/intel.h
- create mode 100644 drivers/soundwire/intel_init.c
- create mode 100644 drivers/soundwire/mipi_disco.c
- create mode 100644 drivers/soundwire/slave.c
- create mode 100644 drivers/virt/vboxguest/Kconfig
- create mode 100644 drivers/virt/vboxguest/Makefile
- create mode 100644 drivers/virt/vboxguest/vboxguest_core.c
- create mode 100644 drivers/virt/vboxguest/vboxguest_core.h
- create mode 100644 drivers/virt/vboxguest/vboxguest_linux.c
- create mode 100644 drivers/virt/vboxguest/vboxguest_utils.c
- create mode 100644 drivers/virt/vboxguest/vboxguest_version.h
- create mode 100644 drivers/virt/vboxguest/vmmdev.h
- create mode 100644 include/linux/fpga/fpga-region.h
- delete mode 100644 include/linux/i7300_idle.h
- create mode 100644 include/linux/siox.h
- create mode 100644 include/linux/slimbus.h
- create mode 100644 include/linux/soundwire/sdw.h
- create mode 100644 include/linux/soundwire/sdw_intel.h
- create mode 100644 include/linux/soundwire/sdw_registers.h
- create mode 100644 include/linux/soundwire/sdw_type.h
- create mode 100644 include/linux/vbox_utils.h
- create mode 100644 include/trace/events/siox.h
- create mode 100644 include/uapi/linux/vbox_err.h
- create mode 100644 include/uapi/linux/vbox_vmmdev_types.h
- create mode 100644 include/uapi/linux/vboxguest.h
+ Documentation/ABI/testing/sysfs-devices-coredump   |  10 +
+ Documentation/driver-api/firmware/built-in-fw.rst  |   7 +-
+ .../driver-api/firmware/fallback-mechanisms.rst    |   2 +-
+ Documentation/x86/microcode.txt                    |   5 +-
+ arch/arc/configs/axs101_defconfig                  |   1 -
+ arch/arc/configs/axs103_defconfig                  |   1 -
+ arch/arc/configs/axs103_smp_defconfig              |   1 -
+ arch/arc/configs/haps_hs_defconfig                 |   1 -
+ arch/arc/configs/haps_hs_smp_defconfig             |   1 -
+ arch/arc/configs/hsdk_defconfig                    |   1 -
+ arch/arc/configs/nsim_700_defconfig                |   1 -
+ arch/arc/configs/nsim_hs_defconfig                 |   1 -
+ arch/arc/configs/nsim_hs_smp_defconfig             |   1 -
+ arch/arc/configs/nsimosci_defconfig                |   1 -
+ arch/arc/configs/nsimosci_hs_defconfig             |   1 -
+ arch/arc/configs/nsimosci_hs_smp_defconfig         |   1 -
+ arch/arc/configs/tb10x_defconfig                   |   1 -
+ arch/arc/configs/vdk_hs38_defconfig                |   1 -
+ arch/arc/configs/vdk_hs38_smp_defconfig            |   1 -
+ arch/arm/configs/cns3420vb_defconfig               |   1 -
+ arch/arm/configs/magician_defconfig                |   1 -
+ arch/arm/configs/mini2440_defconfig                |   1 -
+ arch/arm/configs/mv78xx0_defconfig                 |   1 -
+ arch/arm/configs/mxs_defconfig                     |   1 -
+ arch/arm/configs/orion5x_defconfig                 |   1 -
+ arch/arm/configs/tegra_defconfig                   |   1 -
+ arch/arm/configs/vf610m4_defconfig                 |   1 -
+ arch/arm/mach-pxa/sharpsl_pm.c                     |   4 +-
+ arch/m68k/configs/amiga_defconfig                  |   1 -
+ arch/m68k/configs/apollo_defconfig                 |   1 -
+ arch/m68k/configs/atari_defconfig                  |   1 -
+ arch/m68k/configs/bvme6000_defconfig               |   1 -
+ arch/m68k/configs/hp300_defconfig                  |   1 -
+ arch/m68k/configs/mac_defconfig                    |   1 -
+ arch/m68k/configs/multi_defconfig                  |   1 -
+ arch/m68k/configs/mvme147_defconfig                |   1 -
+ arch/m68k/configs/mvme16x_defconfig                |   1 -
+ arch/m68k/configs/q40_defconfig                    |   1 -
+ arch/m68k/configs/sun3_defconfig                   |   1 -
+ arch/m68k/configs/sun3x_defconfig                  |   1 -
+ arch/mips/configs/ar7_defconfig                    |   1 -
+ arch/mips/configs/ath25_defconfig                  |   1 -
+ arch/mips/configs/ath79_defconfig                  |   1 -
+ arch/mips/configs/pic32mzda_defconfig              |   1 -
+ arch/mips/configs/qi_lb60_defconfig                |   1 -
+ arch/mips/configs/rm200_defconfig                  |   9 -
+ arch/mips/configs/rt305x_defconfig                 |   1 -
+ arch/mips/configs/xway_defconfig                   |   1 -
+ arch/mn10300/configs/asb2364_defconfig             |   1 -
+ arch/powerpc/configs/44x/warp_defconfig            |   1 -
+ arch/powerpc/configs/c2k_defconfig                 |  12 -
+ arch/powerpc/configs/g5_defconfig                  |  12 -
+ arch/powerpc/configs/maple_defconfig               |  12 -
+ arch/powerpc/configs/mpc512x_defconfig             |   1 -
+ arch/powerpc/configs/pmac32_defconfig              |  12 -
+ arch/powerpc/configs/ppc6xx_defconfig              |   1 -
+ arch/powerpc/configs/ps3_defconfig                 |   1 -
+ arch/powerpc/configs/wii_defconfig                 |   1 -
+ arch/s390/configs/zfcpdump_defconfig               |   1 -
+ arch/s390/kernel/smp.c                             |   2 +-
+ arch/s390/kernel/topology.c                        |   3 +-
+ arch/sh/configs/polaris_defconfig                  |   1 -
+ arch/sh/drivers/push-switch.c                      |   2 +-
+ arch/tile/configs/tilegx_defconfig                 |   1 -
+ arch/tile/configs/tilepro_defconfig                |   1 -
+ arch/tile/kernel/sysfs.c                           |  12 +-
+ arch/x86/Kconfig                                   |   6 +-
+ arch/x86/kernel/cpu/microcode/core.c               |   2 +-
+ drivers/acpi/device_sysfs.c                        |   6 +-
+ drivers/base/Kconfig                               |  28 +-
+ drivers/base/arch_topology.c                       |   8 +-
+ drivers/base/attribute_container.c                 |   3 +-
+ drivers/base/bus.c                                 |   6 +-
+ drivers/base/cacheinfo.c                           |  13 +-
+ drivers/base/class.c                               |   4 +-
+ drivers/base/component.c                           |  83 +-
+ drivers/base/container.c                           |   5 +-
+ drivers/base/core.c                                |   6 +-
+ drivers/base/cpu.c                                 |   1 +
+ drivers/base/dd.c                                  |  43 +-
+ drivers/base/devcoredump.c                         |  17 +-
+ drivers/base/devres.c                              |   3 +-
+ drivers/base/dma-contiguous.c                      |   6 +-
+ drivers/base/dma-mapping.c                         |   3 +-
+ drivers/base/driver.c                              |   6 +-
+ drivers/base/firmware.c                            |   3 +-
+ drivers/base/firmware_class.c                      | 859 ++++++++++++---------
+ drivers/base/hypervisor.c                          |   3 +-
+ drivers/base/init.c                                |   3 +-
+ drivers/base/isa.c                                 |   1 +
+ drivers/base/map.c                                 |   2 +-
+ drivers/base/module.c                              |   4 +-
+ drivers/base/pinctrl.c                             |   3 +-
+ drivers/base/platform-msi.c                        |  13 +-
+ drivers/base/platform.c                            |   3 +-
+ drivers/base/property.c                            |  73 +-
+ drivers/base/soc.c                                 |   2 +-
+ drivers/base/syscore.c                             |   3 +-
+ drivers/base/test/test_async_driver_probe.c        |  10 +-
+ drivers/base/topology.c                            |  17 +-
+ drivers/base/transport_class.c                     |   3 +-
+ drivers/bus/Kconfig                                |   2 +-
+ drivers/char/ipmi/ipmi_msghandler.c                |  17 +-
+ drivers/gpu/drm/i915/i915_sysfs.c                  |  12 +-
+ drivers/input/touchscreen/elants_i2c.c             |   2 +-
+ drivers/net/ethernet/ibm/ibmvnic.c                 |   2 +-
+ drivers/net/wimax/i2400m/sysfs.c                   |   3 +-
+ drivers/nvme/host/core.c                           |  10 +-
+ drivers/platform/x86/compal-laptop.c               |  18 +-
+ drivers/pnp/pnpbios/core.c                         |   5 +-
+ drivers/s390/cio/css.c                             |   8 +-
+ drivers/s390/cio/device.c                          |  10 +-
+ drivers/s390/crypto/ap_card.c                      |   2 +-
+ drivers/scsi/hpsa.c                                |  10 +-
+ drivers/scsi/lpfc/lpfc_attr.c                      |  64 +-
+ drivers/thermal/thermal_sysfs.c                    |  17 +-
+ drivers/tty/serial/sh-sci.c                        |   2 +-
+ drivers/usb/phy/phy-tahvo.c                        |   2 +-
+ drivers/usb/serial/Kconfig                         |  78 --
+ drivers/video/fbdev/auo_k190x.c                    |   4 +-
+ drivers/video/fbdev/w100fb.c                       |   4 +-
+ fs/sysfs/dir.c                                     |   9 +-
+ fs/sysfs/file.c                                    |   3 +-
+ fs/sysfs/group.c                                   |   6 +-
+ fs/sysfs/mount.c                                   |   5 +-
+ fs/sysfs/symlink.c                                 |   3 +-
+ fs/sysfs/sysfs.h                                   |   3 +-
+ include/linux/device.h                             |   5 +-
+ include/linux/kobject.h                            |   3 +-
+ include/linux/kobject_ns.h                         |   3 +-
+ include/linux/property.h                           |  10 +-
+ include/linux/sysfs.h                              |  14 +-
+ lib/kobject.c                                      |   4 +-
+ lib/kobject_uevent.c                               |   3 +-
+ lib/test_firmware.c                                |  17 +-
+ lib/test_kmod.c                                    |  14 +-
+ samples/kobject/kobject-example.c                  |   4 +-
+ samples/kobject/kset-example.c                     |   4 +-
+ sound/soc/omap/mcbsp.c                             |   4 +-
+ sound/soc/soc-core.c                               |   2 +-
+ sound/soc/soc-dapm.c                               |   2 +-
+ tools/testing/selftests/firmware/fw_fallback.sh    | 172 +++--
+ tools/testing/selftests/firmware/fw_filesystem.sh  |   5 +-
+ 143 files changed, 921 insertions(+), 1053 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-devices-coredump
