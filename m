@@ -1,51 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752922AbeBARKZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:10:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752544AbeBARKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:10:18 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0ED21748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 1 Feb 2018 12:10:15 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/1] of: easier debugging for node life cycle
- issues
-Message-ID: <20180201121015.72fd242c@gandalf.local.home>
-In-Reply-To: <4b373579-7a86-6883-2624-12a5408bb49b@gmail.com>
-References: <20180121143117.19805-1-wsa+renesas@sang-engineering.com>
-        <00fc90ee-de26-f819-9c81-27d06918564d@gmail.com>
-        <20180125060330.781667e9@vmware.local.home>
-        <a30d4cd3-0068-8cca-cc2f-ca207d0d278b@gmail.com>
-        <20180125231443.44yy65ztr6exaam7@ninjato>
-        <4b373579-7a86-6883-2624-12a5408bb49b@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753064AbeBARLb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:11:31 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:35796 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752088AbeBARL1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 12:11:27 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w11HBCEu007667
+X-Nifty-SrcIP: [209.85.217.179]
+X-Google-Smtp-Source: AH8x2244NGx2yRE1uUFDBg2XuLJJX6BOOjgeH7m3ldsDeGnZErJwXpTVnJJvBS2I1fvFKQ+d9Pod1gbYyS5KuOK9dL8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180131093434.20050-7-ulfalizer@gmail.com>
+References: <20180131093434.20050-1-ulfalizer@gmail.com> <20180131093434.20050-7-ulfalizer@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 2 Feb 2018 02:10:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATPiG6gvCr30W9ft7PB74xmx7ccLsZBiMUSK3dv4YYmZA@mail.gmail.com>
+Message-ID: <CAK7LNATPiG6gvCr30W9ft7PB74xmx7ccLsZBiMUSK3dv4YYmZA@mail.gmail.com>
+Subject: Re: [PATCH 06/11] lib/Kconfig.debug: Remove blank help text
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Paul Bolle <pebolle@tiscali.nl>, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>, "Theodore Ts'o" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Jan 2018 16:46:06 -0800
-Frank Rowand <frowand.list@gmail.com> wrote:
+2018-01-31 18:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+> Blank help texts are probably either a typo, a Kconfig misunderstanding,
+> or some kind of half-committing to adding a help text (in which case a
+> TODO comment would be clearer, if the help text really can't be added
+> right away).
+>
+> Best to remove them, IMO.
+>
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
 
-> The point is that using ftrace means there are use cases for the
-> debug information where the information will not be available.
 
-Note, this email came out when I was traveling. I'm now looking at the
-code and trace events are enabled right after rcu_init() in init/main.c.
+FYI.
 
-The early_initcall() enables syscall events(), as they are not
-available earlier.
+I picked up this patch to kbuild
+because I need this to suppress warning messages
+introduced by 11/11.
 
--- Steve
+I am planning to send a PR for this series next week.
