@@ -1,59 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753075AbeBARL6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:11:58 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:36187 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbeBARL5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:11:57 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w11HBo62007841
-X-Nifty-SrcIP: [209.85.213.50]
-X-Google-Smtp-Source: AH8x224J15gACqddXhOo/Uu7bgyTuXCwsmtYhB6Vt6ioa0yZw5b6fr5HuTB75mNoJ5h+IJRerCi/d7TsOmNgBgYdcNk=
+        id S1753101AbeBARMM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:12:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48473 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753083AbeBARMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 12:12:10 -0500
+Subject: Re: [PATCH] KVM/x86: remove WARN_ON() for when vm_munmap() fails
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Eric Biggers <ebiggers3@gmail.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, Eric Biggers <ebiggers@google.com>
+References: <001a1141c71c13f559055d1b28eb@google.com>
+ <20180201013021.151884-1-ebiggers3@gmail.com> <20180201153310.GD31080@flask>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <584ef475-21cc-9ef5-8ac9-d6b00e93134e@redhat.com>
+Date: Thu, 1 Feb 2018 12:12:00 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180131093434.20050-9-ulfalizer@gmail.com>
-References: <20180131093434.20050-1-ulfalizer@gmail.com> <20180131093434.20050-9-ulfalizer@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 2 Feb 2018 02:11:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATYoPzzHgNw8JfCDcCMATBGjf6r8R91RWgd4jMxYmgipg@mail.gmail.com>
-Message-ID: <CAK7LNATYoPzzHgNw8JfCDcCMATBGjf6r8R91RWgd4jMxYmgipg@mail.gmail.com>
-Subject: Re: [PATCH 08/11] MIPS: kconfig: Remove blank help text
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Paul Bolle <pebolle@tiscali.nl>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180201153310.GD31080@flask>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-01-31 18:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
-> Blank help texts are probably either a typo, a Kconfig misunderstanding,
-> or some kind of half-committing to adding a help text (in which case a
-> TODO comment would be clearer, if the help text really can't be added
-> right away).
->
-> Best to remove them, IMO.
->
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-> ---
+On 01/02/2018 10:33, Radim Krčmář wrote:
+> 2018-01-31 17:30-0800, Eric Biggers:
+>> From: Eric Biggers <ebiggers@google.com>
+>>
+>> On x86, special KVM memslots such as the TSS region have anonymous
+>> memory mappings created on behalf of userspace, and these mappings are
+>> removed when the VM is destroyed.
+>>
+>> It is however possible for removing these mappings via vm_munmap() to
+>> fail.  This can most easily happen if the thread receives SIGKILL while
+>> it's waiting to acquire ->mmap_sem.   This triggers the 'WARN_ON(r < 0)'
+>> in __x86_set_memory_region().  syzkaller was able to hit this, using
+>> 'exit()' to send the SIGKILL.  Note that while the vm_munmap() failure
+>> results in the mapping not being removed immediately, it is not leaked
+>> forever but rather will be freed when the process exits.
+>>
+>> It's not really possible to handle this failure properly, so almost
+> 
+> We could check "r < 0 && r != -EINTR" to get rid of the easily
+> triggerable warning.
 
+Considering that vm_munmap uses down_write_killable, that would be
+preferrable I think.
 
-FYI.
+Paolo
 
-I picked up this patch to kbuild
-because I need this to suppress warning messages
-introduced by 11/11.
-
-I am planning to send a PR for this series next week.
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+>> every other caller of vm_munmap() doesn't check the return value.  It's
+>> a limitation of having the kernel manage these mappings rather than
+>> userspace.
+>>
+>> So just remove the WARN_ON() so that users can't spam the kernel log
+>> with this warning.
+>>
+>> Fixes: f0d648bdf0a5 ("KVM: x86: map/unmap private slots in __x86_set_memory_region")
+>> Reported-by: syzbot <syzkaller@googlegroups.com>
+>> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>> ---
+> 
+> Removing it altogether doesn't sound that bad, though ...
+> Queued, thanks.
+> 
+>>  arch/x86/kvm/x86.c | 6 ++----
+>>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index c53298dfbf50..53b57f18baec 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -8272,10 +8272,8 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+>>  			return r;
+>>  	}
+>>  
+>> -	if (!size) {
+>> -		r = vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
+>> -		WARN_ON(r < 0);
+>> -	}
+>> +	if (!size)
+>> +		vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
+>>  
+>>  	return 0;
+>>  }
+>> -- 
+>> 2.16.0.rc1.238.g530d649a79-goog
+>>
