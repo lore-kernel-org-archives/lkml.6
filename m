@@ -1,55 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752960AbeBARK3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:10:29 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:47171 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752714AbeBARKU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:10:20 -0500
-From: Colin King <colin.king@canonical.com>
-To: Woojung Huh <woojung.huh@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] lan78xx: remove redundant initialization of pointer 'phydev'
-Date: Thu,  1 Feb 2018 17:10:18 +0000
-Message-Id: <20180201171018.22267-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S1752922AbeBARKZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:10:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46532 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752544AbeBARKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 12:10:18 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0ED21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 1 Feb 2018 12:10:15 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        devicetree@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 0/1] of: easier debugging for node life cycle
+ issues
+Message-ID: <20180201121015.72fd242c@gandalf.local.home>
+In-Reply-To: <4b373579-7a86-6883-2624-12a5408bb49b@gmail.com>
+References: <20180121143117.19805-1-wsa+renesas@sang-engineering.com>
+        <00fc90ee-de26-f819-9c81-27d06918564d@gmail.com>
+        <20180125060330.781667e9@vmware.local.home>
+        <a30d4cd3-0068-8cca-cc2f-ca207d0d278b@gmail.com>
+        <20180125231443.44yy65ztr6exaam7@ninjato>
+        <4b373579-7a86-6883-2624-12a5408bb49b@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 25 Jan 2018 16:46:06 -0800
+Frank Rowand <frowand.list@gmail.com> wrote:
 
-Pointer phydev is initialized and this value is never read, phydev
-is immediately updated to a new value, hence this initialization
-is redundant and can be removed
+> The point is that using ftrace means there are use cases for the
+> debug information where the information will not be available.
 
-Cleans up clang warning:
-drivers/net/usb/lan78xx.c:2009:21: warning: Value stored to 'phydev'
-during its initialization is never read
+Note, this email came out when I was traveling. I'm now looking at the
+code and trace events are enabled right after rcu_init() in init/main.c.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/usb/lan78xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The early_initcall() enables syscall events(), as they are not
+available earlier.
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index ec56ff29aac4..60a604cc7647 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2006,7 +2006,7 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
- {
- 	int ret;
- 	u32 mii_adv;
--	struct phy_device *phydev = dev->net->phydev;
-+	struct phy_device *phydev;
- 
- 	phydev = phy_find_first(dev->mdiobus);
- 	if (!phydev) {
--- 
-2.15.1
+-- Steve
