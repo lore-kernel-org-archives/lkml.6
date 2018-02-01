@@ -1,80 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751837AbeBAO0G (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 09:26:06 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41230 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751410AbeBAO0F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 09:26:05 -0500
-Date: Thu, 1 Feb 2018 14:24:55 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Olivier MOYSAN <olivier.moysan@st.com>
-Cc: Ladislav Michl <ladis@linux-mips.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@stlinux.com" <kernel@stlinux.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: Re: [alsa-devel] [PATCH 1/1] ASoC: stm32: add of dependency for
- stm32 drivers
-Message-ID: <20180201142455.GB10785@sirena.org.uk>
-References: <1517475281-6444-1-git-send-email-olivier.moysan@st.com>
- <20180201091012.GA10746@lenoch>
- <3bd3ba89-5c69-4485-c913-ff1c1ad67190@st.com>
+        id S1751677AbeBAO1V (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 09:27:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751450AbeBAO1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 09:27:19 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F173D21798
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AH8x227rtWSg6rj8iF03VpGqufuctItI/+58YbPUFDdZhtfv6uq5UMS9o5JdOhopCd+yJFS3O5eXquDb31jc5y2Jznc=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="V0207lvV8h4k8FAm"
-Content-Disposition: inline
-In-Reply-To: <3bd3ba89-5c69-4485-c913-ff1c1ad67190@st.com>
-X-Cookie: $3,000,000.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAL_JsqLV_bQ2pQ7hCRDP9_31kmKQjggWFDoCia-KmmO5CR3T5g@mail.gmail.com>
+References: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
+ <5dd35d8f-c430-237e-9863-2e73556f92ec@gmail.com> <CAL_JsqLV_bQ2pQ7hCRDP9_31kmKQjggWFDoCia-KmmO5CR3T5g@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 1 Feb 2018 08:26:57 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+6i9+tMh+M1vNWXf+7OHUDN=9QitYoBVzAcJVWCt2xAQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+6i9+tMh+M1vNWXf+7OHUDN=9QitYoBVzAcJVWCt2xAQ@mail.gmail.com>
+Subject: Re: [PATCH] of: cache phandle nodes to decrease cost of of_find_node_by_phandle()
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Chintan Pandya <cpandya@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 1, 2018 at 8:24 AM, Rob Herring <robh+dt@kernel.org> wrote:
+> On Wed, Jan 31, 2018 at 3:43 PM, Frank Rowand <frowand.list@gmail.com> wrote:
+>> On 01/31/18 12:05, frowand.list@gmail.com wrote:
+>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>
+>>> Create a cache of the nodes that contain a phandle property.  Use this
+>>> cache to find the node for a given phandle value instead of scanning
+>>> the devicetree to find the node.  If the phandle value is not found
+>>> in the cache, of_find_node_by_phandle() will fall back to the tree
+>>> scan algorithm.
+>>>
+>>> The cache is initialized in of_core_init().
+>>>
+>>> The cache is freed via a late_initcall_sync().
+>>>
+>>> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+>>> ---
+>>>
+>>> Some of_find_by_phandle() calls may occur before the cache is
+>>> initialized or after it is freed.  For example, for the qualcomm
+>>> qcom-apq8074-dragonboard, 11 calls occur before the initialization
+>>> and 80 occur after the cache is freed (out of 516 total calls.)
+>>>
+>>>
+>>>  drivers/of/base.c       | 85 ++++++++++++++++++++++++++++++++++++++++++++++---
+>>>  drivers/of/of_private.h |  5 +++
+>>>  drivers/of/resolver.c   | 21 ------------
+>>>  3 files changed, 86 insertions(+), 25 deletions(-)
+>>
+>> Some observations....
+>>
+>> The size of the cache for a normal device tree would be a couple of
+>> words of overhead for the cache, plus one pointer per devicetree node
+>> that contains a phandle property.  This will be less space than
+>> would be used by adding a hash field to each device node.  It is
+>> also less space than was used by the older algorithm (long gone)
+>> that added a linked list through the nodes that contained a
+>> phandle property.
+>>
+>> This is assuming that the values of the phandle properties are
+>> the default ones created by the dtc compiler.  In the case
+>> where a very large phandle property value is hand-coded in
+>> a devicetree source, the size of the cache is capped at one
+>> entry per node.  In this case, a little bit of space will be
+>> wasted -- but this is just a sanity fallback, it should not
+>> be encountered, and can be fixed by fixing the devicetree
+>> source.
+>
+> I don't think we should rely on how dtc allocates phandles. dtc is not
+> the only source of DeviceTrees. If we could do that, then lets make
+> them have some known flag in the upper byte so we have some hint for
+> phandle values. 2^24 phandles should be enough for anyone.TM
+>
+> Your cache size is also going to balloon if the dtb was built with
+> '-@'. Since you walk the tree for every phandle, it is conceivable
+> that you could make things slower.
 
---V0207lvV8h4k8FAm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Feb 01, 2018 at 01:19:28PM +0000, Olivier MOYSAN wrote:
-> On 02/01/2018 10:10 AM, Ladislav Michl wrote:
-
-> > depends on (ARCH_STM32 && OF) || COMPILE_TEST ?
-
-> I can find in many configs "depends on OF && (ARCH_X || COMPILE_TEST)"
-> This seems reasonable to me, as the driver always requires OF=20
-> dependency, regardless the compilation context.
-> In fact, I cannot see why OF would not have to be selected
-> for COMPILE_TEST.
-
-There are some OF functions that are stubbed out when OF is disabled and
-some that aren't, if the driver is using the more obscure APIs that
-aren't stubbed it needs the hard dependency but if it's using the other
-bits that do have the stubs then it can be compile tested without OF
-being abled.
-
---V0207lvV8h4k8FAm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpzIzYACgkQJNaLcl1U
-h9AyAQf+Meui41IfjGEXX68Ml4jX9krdGjzE3bdVK6etUerjl4R1RgKGvB2cXyeI
-u0NVrVL4We94NUHB6jVnZPOPkRmIOWHB15TkJd4Zp9Nc6tObQMmn0tJsuU6TJjer
-3PE342uRbyI6Z4LuXjSbZI7iiwCdgYxVFVF6cDKNzKbaPTUqyNLwDHnmVIXxd8X5
-LC61ITMnH4/hDPoKSep92Uv2FgDpydIXs3RINSLKH+fbisw/Cm756990anK9t8EB
-ffP0QSbfQoDWN+FHul00zYhSOpv9BqJEfFhaFdLiI6k5wTgRTs54w9xJWfzPYNNL
-sdqvOLxUrnVcx7I3TIp71+8KNy44XA==
-=Dn27
------END PGP SIGNATURE-----
-
---V0207lvV8h4k8FAm--
+Disregard the 2nd statement. Only 1 walk is not going to register.
