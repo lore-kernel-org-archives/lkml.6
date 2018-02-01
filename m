@@ -1,179 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752000AbeBAVXv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 16:23:51 -0500
-Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:63734 "EHLO
-        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751715AbeBAVXn (ORCPT
+        id S1751941AbeBAVgq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 16:36:46 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:49004 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751715AbeBAVgi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 16:23:43 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FWAQCrhHNah8qZ6ERdGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQYgQUoCoNWmFKCAnyIF45KggIKhTsCGoIXVxUBAQEBAQEBAQI?=
- =?us-ascii?q?BAhABAQEKCwkIKC+COCKCSgEBAQQjBA1FDAQCAQgRBAEBAQICIwMCAgIfJQECA?=
- =?us-ascii?q?QUIAgQOBQgTigIDFaxngW06hzYNgyIBAQEBAQUBAQEBAQEBAQEfgQ+DWoIVgz+?=
- =?us-ascii?q?CeDaCa0QEgTMlHhYdgl2CRSAFo2U+kGiEfZQ6jjCJO4E8NYF0cIJ8gmWCEniLJ?=
- =?us-ascii?q?YEXAQEB?=
-X-IPAS-Result: =?us-ascii?q?A2FWAQCrhHNah8qZ6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?YgQUoCoNWmFKCAnyIF45KggIKhTsCGoIXVxUBAQEBAQEBAQIBAhABAQEKCwkIK?=
- =?us-ascii?q?C+COCKCSgEBAQQjBA1FDAQCAQgRBAEBAQICIwMCAgIfJQECAQUIAgQOBQgTigI?=
- =?us-ascii?q?DFaxngW06hzYNgyIBAQEBAQUBAQEBAQEBAQEfgQ+DWoIVgz+CeDaCa0QEgTMlH?=
- =?us-ascii?q?hYdgl2CRSAFo2U+kGiEfZQ6jjCJO4E8NYF0cIJ8gmWCEniLJYEXAQEB?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.169
-X-IronPort-AV: E=Sophos;i="5.46,444,1511848800";
-   d="scan'208";a="1209871001"
-X-DLP: DLP_GlobalPCIDSS
-To: <dmitry.torokhov@gmail.com>
-CC: <pali.rohar@gmail.com>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: RE: Dell docking station & Dell Embedded Controller & PS/2 devices
-Thread-Topic: Dell docking station & Dell Embedded Controller & PS/2 devices
-Thread-Index: AQHTm5MKNYkzckAlZU27gJwgpYoerKOP74RAgACBNYD//50x8A==
-Date: Thu, 1 Feb 2018 21:23:40 +0000
-Message-ID: <ffe4f35a6570401083d7032e261daa20@ausx13mpc120.AMER.DELL.COM>
-References: <20180124104121.7g3zfay5smc5v2tc@pali>
- <20180201192945.wrsqjq7f5ejhqj6m@dtor-ws>
- <bb5156667d084d77841f7078d373a265@ausx13mpc120.AMER.DELL.COM>
- <CAKdAkRS_TjTi-VxGg59+aw8wQZxrx8YBAF+m9MdknYNdKGyrvQ@mail.gmail.com>
-In-Reply-To: <CAKdAkRS_TjTi-VxGg59+aw8wQZxrx8YBAF+m9MdknYNdKGyrvQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
+        Thu, 1 Feb 2018 16:36:38 -0500
+Date: Thu, 1 Feb 2018 22:36:32 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+cc: longman@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2 v5] lib: debugobjects: handle objects free in a batch
+ outside the loop
+In-Reply-To: <1517508959-63958-2-git-send-email-yang.shi@linux.alibaba.com>
+Message-ID: <alpine.DEB.2.21.1802012203210.1472@nanos.tec.linutronix.de>
+References: <1517508959-63958-1-git-send-email-yang.shi@linux.alibaba.com> <1517508959-63958-2-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w11LNsWq006997
 
-> -----Original Message-----
-> From: Dmitry Torokhov [mailto:dmitry.torokhov@gmail.com]
-> Sent: Thursday, February 1, 2018 3:14 PM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> Cc: Pali Rohár <pali.rohar@gmail.com>; linux-input@vger.kernel.org; lkml <linux-
-> kernel@vger.kernel.org>
-> Subject: Re: Dell docking station & Dell Embedded Controller & PS/2 devices
-> 
-> On Thu, Feb 1, 2018 at 11:35 AM,  <Mario.Limonciello@dell.com> wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Dmitry Torokhov [mailto:dmitry.torokhov@gmail.com]
-> >> Sent: Thursday, February 1, 2018 1:30 PM
-> >> To: Pali Rohár <pali.rohar@gmail.com>
-> >> Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; linux-
-> >> input@vger.kernel.org; linux-kernel@vger.kernel.org
-> >> Subject: Re: Dell docking station & Dell Embedded Controller & PS/2 devices
-> >>
-> >> Hi Pali,
-> >>
-> >> On Wed, Jan 24, 2018 at 11:41:21AM +0100, Pali Rohár wrote:
-> >> > Hi Dmitry!
-> >> >
-> >> > I'm observing a problem with internal touchpad (handled by psmouse.ko)
-> >> > on Dell laptops connected to Dell E docking station. When I connect
-> >> > external PS/2 keyboard to docking station then internal laptop touchpad
-> >> > switch from multitouch absolute mode to relative bare PS/2 mode.
-> >> >
-> >> > And because ALPS driver in psmouse.ko is capable to process interleaved
-> >> > bare 3-byte PS/2 packets with 6-byte ALPS packets (which handles
-> >> > trackstick data on some ALPS models), ALPS driver does not show any
-> >> > message about this "downgrade" from multitouch to bare mode. And
-> >> > continue working in bare mode.
-> >> >
-> >> > When I rmmod psmouse and modprobe it again, then touchpad switch back to
-> >> > multitouch mode.
-> >> >
-> >> > Mario told me that Dell Embedded Controller, which handle internal
-> >> > keyboard, internal touchpad and external PS/2 keyboard, automatically
-> >> > send RESET command to *all* those devices when external PS/2 keyboard is
-> >> > connected. Therefore this is reason why touchpad downgrade to to bare
-> >> > mode. And according to Mario, host system should issue vendor specific
-> >> > PS/2 commands to re-initialize all PS/2 devices when this situation
-> >> > happen. Mario also told me that Windows is doing this action.
-> >>
-> >> Yeah, I remember fun with Inspiron 8100 - when you dock it it woudl
-> >> silently switch Synaptics touchpad into standard mode and it would not
-> >> come back as Synaptics until you disconnect. And there was no
-> >> notification to the kernel as far as I could tell.
-> >>
-> >> It could be that we need to monitor dock events and then kick reconnect
-> >> of serio port, either from userspace via udev (I think that would be
-> >> preferred), or in kernel.
-> >>
-> >> >
-> >> > Every time when I connect external PS/2 keyboard to dock I see this
-> >> > message in dmesg:
-> >> >
-> >> > Spurious ACK... Some program might be trying to access hardware directly.
-> >> >
-> >> > I see it also every time when I dock laptop into docking station (to
-> >> > which is keyboard already connected). And it happens also when I connect
-> >> > external PS/2 mouse to dock.
-> >> >
-> >> > Dmitry, how to handle this situation to re-initialize psmouse.ko when
-> >> > external PS/2 device is connected to Dell E docking station? According
-> >> > to Mario, this is how Dell Embedded Controller is designed and suppose
-> >> > how OS should work with it.
-> >> >
-> >> > Manually rmmoding and modprobing for every docking/undocking laptop is
-> >> > not ideal solution.
-> >> >
-> >> > Could it be possible to use that Spurious ATKBD_RET_ACK from atkbd.c be
-> >> > handled on Dell systems (probably via DMI) as an event to reset and
-> >> > reinitialize all PS/2 devices?
-> >>
-> >> So we need to figure out what exactly we are getting from the docking
-> >> station in this case. We do try to handle the new device 0xaa 0x00
-> >> announcements:
-> >
-> > Docking station itself won't have sent any events.  The PS2 ports in it
-> > are electrically wired to the external PS2 pins in the docking adapter on
-> > the system.
-> >
-> > System EC is what will be sending any PS2 events.
-> 
-> OK, it does not matter from the input layer POW, if they are PS/2
-> events they should be coming from i8042.
-> 
-> >
-> >>
-> >>       /* Check if this is a new device announcement (0xAA 0x00) */
-> >>       if (unlikely(psmouse->packet[0] == PSMOUSE_RET_BAT && psmouse-
-> >> >pktcnt <= 2)) {
-> >>               if (psmouse->pktcnt == 1) {
-> >>                       psmouse->last = jiffies;
-> >>                       goto out;
-> >>               }
-> >>
-> >>               if (psmouse->packet[1] == PSMOUSE_RET_ID ||
-> >>                   (psmouse->protocol->type == PSMOUSE_HGPK &&
-> >>                    psmouse->packet[1] == PSMOUSE_RET_BAT)) {
-> >>                       __psmouse_set_state(psmouse, PSMOUSE_IGNORE);
-> >>                       serio_reconnect(serio);
-> >>                       goto out;
-> >>               }
-> >>
-> >> ...
-> >>
-> >> I am not sure where the "spurious ACK comes from". Can you enable i8042
-> >> debug before trying to dock and capture the data stream from the mouse?
-> >>
-> >
-> > The system EC has reset PS2 devices (but AFAIK kernel won't have seen this
-> > communication).
-> 
-> So what kind of communication does EC send when docking? It sounds it
-> is completely out of band from PS/2 connection.
+On Fri, 2 Feb 2018, Yang Shi wrote:
 
-Yes it's out of band from PS/2 connection OS sees.  However as Pali has 
-mentioned this issue will happen even if already docked but you plug in
-PS/2 keyboard.
+>  /*
+> - * Allocate a new object. If the pool is empty, switch off the debugger.
+> + * Allocate a new object. Retrieve from global freelist first. If the pool is
+> + * empty, switch off the debugger.
+>   * Must be called with interrupts disabled.
+>   */
+>  static struct debug_obj *
+> @@ -150,6 +154,13 @@ static struct debug_obj *lookup_object(void *addr, struct debug_bucket *b)
+>  	struct debug_obj *obj = NULL;
+>  
+>  	raw_spin_lock(&pool_lock);
 
-It will probably be clearer to you what OS has seen from this when Pali
-shares the captured data stream.
+Why in alloc_object() and not in fill_pool()?
+
+> +	if (obj_nr_tofree > 0 && (obj_pool_free < obj_pool_min_free)) {
+> +		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+> +		obj_nr_tofree--;
+> +		hlist_del(&obj->node);
+> +		goto out;
+> +	}
+
+Errm. This is wrong. It does not reinitialize the object. Please do that
+shuffling in fill_pool().
+
+>  	if (obj_pool.first) {
+>  		obj	    = hlist_entry(obj_pool.first, typeof(*obj), node);
+
+....
+
+> +	/* When pool list is not full move free objs to pool list */
+> +	while (obj_pool_free < debug_objects_pool_size) {
+> +		if (obj_nr_tofree <= 0)
+> +			break;
+> +
+> +		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+> +		hlist_del(&obj->node);
+> +		hlist_add_head(&obj->node, &obj_pool);
+> +		obj_pool_free++;
+> +		obj_pool_used--;
+> +		obj_nr_tofree--;
+> +	}
+> +
+> +	/*
+> +	 * pool list is already full, and there are still objs on the free list,
+> +	 * move remaining free objs to a separate list to free the memory later.
+> +	 */
+> +	if (obj_nr_tofree > 0) {
+> +		hlist_move_list(&obj_to_free, &tofree);
+> +		obj_nr_tofree = 0;
+> +	}
+
+The accounting is inconsistent. You leak obj_pool_used. But that's wrong
+anyway because an object should not be accounted for in two places. It's
+only on _ONE_ list....
+
+> @@ -716,7 +762,6 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+>  {
+>  	unsigned long flags, oaddr, saddr, eaddr, paddr, chunks;
+>  	struct hlist_node *tmp;
+> -	HLIST_HEAD(freelist);
+>  	struct debug_obj_descr *descr;
+>  	enum debug_obj_state state;
+>  	struct debug_bucket *db;
+> @@ -752,18 +797,17 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+>  				goto repeat;
+>  			default:
+>  				hlist_del(&obj->node);
+> -				hlist_add_head(&obj->node, &freelist);
+> +				/* Put obj on the global free list */
+> +				raw_spin_lock(&pool_lock);
+> +				hlist_add_head(&obj->node, &obj_to_free);
+> +				/* Update the counter of objs on the global freelist */
+> +				obj_nr_tofree++;
+> +				raw_spin_unlock(&pool_lock);
+
+As we have to take pool_lock anyway, we simply can change free_object() to:
+
+static bool __free_object(obj)
+{
+	bool work;
+
+	lock(pool);
+	work = obj_pool_free > debug_objects_pool_size && obj_cache;
+	obj_pool_used++;
+	if (work) {
+		obj_nr_tofree++;
+		hlist_add_head(&obj->node, &obj_to_free);
+	] else {
+		obj_pool_free++;
+		hlist_add_head(&obj->node, &obj_pool);
+	}
+	unlock(pool);
+	return work;
+}
+
+static void free_object(obj)
+{
+	if (__free_object(obj))
+		schedule_work(&debug_obj_work);
+}
+
+and then use __free_object() in __debug_check_no_obj_freed()
+
+    	 bool work = false;
+
+	 ...
+ 	    	 work |= __free_object(obj);
+	 ...
+
+	 if (work)
+		schedule_work(&debug_obj_work);
+
+That makes the whole thing simpler and the accounting is matching the place
+where the object is:
+
+      obj_pool_free counts the number of objects enqueued in obj_pool
+      obj_nr_tofree counts the number of objects enqueued in obj_to_free
+      obr_pool_used counts the number of objects enqueued in the hash lists
+
+Ideally you split that patch into pieces:
+
+1) Introduce obj_to_free/obj_nr_tofree and add the removing/freeing from it
+   in fill_pool() and free_obj_work(). Nothing adds an object at this point
+   to obj_to_free.
+
+2) Change free_object() to use obj_to_free and split it apart
+
+3) Change __debug_check_no_obj_freed() to use __free_object()
+
+That makes it simpler to review and to follow.
+
+Hmm?
+
+Thanks,
+
+	tglx
