@@ -1,73 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753025AbeBASiQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 13:38:16 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39348 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752695AbeBASiK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 13:38:10 -0500
-Subject: [GIT PULL] IMA bug fixes for 4.16
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date: Thu, 01 Feb 2018 13:38:02 -0500
+        id S1752820AbeBASke (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 13:40:34 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37126 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751988AbeBASk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 13:40:29 -0500
+Message-ID: <1517510422.2755.5.camel@redhat.com>
+Subject: Re: [PATCH] x86/microcode/intel: print previous microcode revision
+ during early update
+From: Petr Oros <poros@redhat.com>
+Reply-To: poros@redhat.com
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Thu, 01 Feb 2018 19:40:22 +0100
+In-Reply-To: <20180126144918.7jiaezmdhjsiman5@pd.tnic>
+References: <20180126103451.16863-1-poros@redhat.com>
+         <20180126104109.slxxoq4vkqytqjxd@pd.tnic>
+         <1516967135.2801.1.camel@redhat.com>
+         <20180126115800.bvqrzik2f3hmmiah@pd.tnic>
+         <1516974600.2801.10.camel@redhat.com>
+         <20180126144918.7jiaezmdhjsiman5@pd.tnic>
+Organization: Red Hat
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18020118-0020-0000-0000-000003F1618E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020118-0021-0000-0000-00004283CC0B
-Message-Id: <1517510282.6675.13.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-01_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802010238
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Borislav Petkov píše v Pá 26. 01. 2018 v 15:49 +0100:
+> On Fri, Jan 26, 2018 at 02:50:00PM +0100, Petr Oros wrote:
+> > But what in production? Edit boot params, restart server, grep /proc/cpuinfo and
+> > restart again? Why i can not read it just from dmesg?
+> 
+> Because you don't need the previous revision.
+> 
+> You only *happen* to need it now but that is being addressed too with
+> the blacklisting. And when you have broken microcode, it will say:
+> 
+> +               pr_warn("Intel Spectre v2 broken microcode detected; disabling SPEC_CTRL\n");
+> 
+> and if you have microcode which doesn't have IBRS, there won't be
+> "spec_ctrl" in /proc/cpuinfo.
+> 
+> I don't want people to start paying attention to microcode
+> revision numbers with the gazillion different revisions and
+> family/model/steppings out there and the crazy confusion that will ensue
+> from this.
+> 
 
-Included in this pull request are three bug fixes, assuming the 2 FUSE
-patches are considered bugs and not new features, and a maintainer update.
-I'd appreciate your sending them to Linus for 4.16.
+We talk about dmesg log, it is place for diagnostic messages.
+I think, people expected gazillion numbers here.
 
-thanks,
+I adding only one number (microcode version) into log and only if patch is
+applied. This is good also for future bugs, and for example for tools like
+sosreport.
 
-Mimi
+It is really better to have microcode version ready and not try find it and try
+to collect after problem...
 
-The following changes since commit 36447456e1cca853188505f2a964dbbeacfc7a7a:
+Btw: with hot microcode patch is possible to get previous version from dmesg
+[    0.680519] microcode: sig=0x306c3, pf=0x10, revision=0x23
+Only with early it is not possible.
 
-  ima/policy: fix parsing of fsuuid (2018-01-18 16:52:49 -0500)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-
-for you to fetch changes up to d56f30ac85c067d0d3a6c4f293f655dc298cb5ce:
-
-  ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE (2018-02-01 12:38:31 -0500)
-
-----------------------------------------------------------------
-Alban Crequy (2):
-      fuse: introduce new fs_type flag FS_IMA_NO_CACHE
-      ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
-
-Mimi Zohar (2):
-      ima: re-initialize iint->atomic_flags
-      maintainers: update trusted keys
-
- MAINTAINERS                       |  1 +
- fs/fuse/inode.c                   |  2 +-
- include/linux/fs.h                |  1 +
- security/integrity/iint.c         |  1 +
- security/integrity/ima/ima_main.c | 15 +++++++++++++--
- 5 files changed, 17 insertions(+), 3 deletions(-)
+Thanks,
+-Petr
