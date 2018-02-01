@@ -1,154 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751832AbeBAIxO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 03:53:14 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46416 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751448AbeBAIxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 03:53:13 -0500
-Subject: Re: [PATCH v2 16/16] arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
- hardening support
-To: Hanjun Guo <guohanjun@huawei.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
+        id S1751837AbeBAI4P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 03:56:15 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:35903 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751405AbeBAI4M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 03:56:12 -0500
+Date: Thu, 1 Feb 2018 09:56:09 +0100
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>, Jon Masters <jcm@redhat.com>
-References: <20180129174559.1866-1-marc.zyngier@arm.com>
- <20180129174559.1866-17-marc.zyngier@arm.com>
- <476d111e-6fb0-9bef-2448-a94d0cc03f45@huawei.com>
- <49853e5e-f093-2e79-1cfb-182f51fcd6a0@arm.com>
- <CAKv+Gu-XidYPh0hi1nzG5m0AO7EfRE6bnKfxCToG+9zsmvzmNg@mail.gmail.com>
- <CAKv+Gu-L0WOLSUbcHSTQ_FVDNSJoXQv25ExUmtv8ZEYhkCSQ-Q@mail.gmail.com>
- <501451b6-cc84-e8d3-b7b6-49a7de953976@arm.com>
- <f6579ab5-8d52-3f62-e538-515b28376d59@huawei.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <8183e28a-39e7-e4f0-d704-35a0beb14ef0@arm.com>
-Date: Thu, 1 Feb 2018 08:53:08 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Message-ID: <20180201085608.GA22568@axis.com>
+References: <20180201105114.562aef46@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <f6579ab5-8d52-3f62-e538-515b28376d59@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="lrZ03NoBR/3+SXJZ"
+Content-Disposition: inline
+In-Reply-To: <20180201105114.562aef46@canb.auug.org.au>
+User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/18 02:40, Hanjun Guo wrote:
-> On 2018/1/31 23:05, Marc Zyngier wrote:
->> On 31/01/18 14:38, Ard Biesheuvel wrote:
->>> On 31 January 2018 at 14:35, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->>>> On 31 January 2018 at 14:11, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>>>> On 31/01/18 13:56, Hanjun Guo wrote:
->>>>>> Hi Marc,
->>>>>>
->>>>>> On 2018/1/30 1:45, Marc Zyngier wrote:
->>>>>>>  static int enable_psci_bp_hardening(void *data)
->>>>>>>  {
->>>>>>>      const struct arm64_cpu_capabilities *entry = data;
->>>>>>>
->>>>>>> -    if (psci_ops.get_version)
->>>>>>> +    if (psci_ops.get_version) {
->>>>>>> +            if (check_smccc_arch_workaround_1(entry))
->>>>>>> +                    return 0;
->>>>>>
->>>>>> If I'm using the new version SMCCC, the firmware have the choicARM_SMCCC_ARCH_WORKAROUND_1e to decide
->>>>>> whether this machine needs the workaround, even if the CPU is vulnerable
->>>>>> for CVE-2017-5715, but..
->>>>>>
->>>>>>> +
->>>>>>>              install_bp_hardening_cb(entry,
->>>>>>>                                     (bp_hardening_cb_t)psci_ops.get_version,
->>>>>>>                                     __psci_hyp_bp_inval_start,
->>>>>>>                                     __psci_hyp_bp_inval_end);
->>>>>>
->>>>>> ..the code above seems will enable get_psci_version() for CPU and will
->>>>>> trap to trust firmware even the new version of firmware didn't say
->>>>>> we need the workaround, did I understand it correctly?
->>>>>
->>>>> Well, you only get there if we've established that your CPU is affected
->>>>> (it has an entry matching its MIDR with the HARDEN_BRANCH_PREDICTOR
->>>>> capability), and that entry points to enable_psci_bp_hardening. It is
-> 
-> I understand, but A53, A57, A72 and etc are always in the list :)
-> 
->>>>> not the firmware that decides whether we need hardening, but the kernel.
->>>>> The firmware merely provides a facility to apply the hardening.
->>>>>
->>>>>> I'm ask this because some platform will not expose to users to
->>>>>> take advantage of CVE-2017-5715, and we can use different firmware
->>>>>> to report we need such workaround or not, then use a single kernel
->>>>>> image for both vulnerable platforms and no vulnerable ones.
->>>>>
->>>>> You cannot have your cake and eat it. If you don't want to workaround
->>>>> the issue, you can disable the hardening. But asking for the same kernel
->>>>> to do both depending on what the firmware reports doesn't make much
->>>>> sense to me.
->>>>
->>>> The SMCCC v1.1. document does appear to imply that systems that
->>>> implement SMCCC v1.1 but don't implement ARM_SMCCC_ARCH_WORKAROUND_1
->>>> should be assumed to be unaffected.
->>>>
->>>> """
->>>> If the discovery call returns NOT_SUPPORTED:
->>>> • SMCCC_ARCH_WORKAROUND_1 must not be invoked on any PE in the system, and
->>>> • none of the PEs in the system require firmware mitigation for CVE-2017-5715.
->>>> """
->>>>
->>>> How to deal with conflicting information in this regard (quirk table
->>>> vs firmware implementation) is a matter of policy, of course.
->>
->> Yup. And the current approach fits the spec, I believe. The
-> 
-> Yes, approach in this patch set fits the spec, it just conflicts with
-> MIDR based approach.
 
-No it doesn't. We know that A72 is affected. However you look at it,
-there is no way around that fact. So if you have an affected CPU *and*
-you implement SMCCC 1.1 with WORKAROUND_1, you get the mitigation.
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If your firmware doesn't implement it, blame your provider for supplying
-you with an outdated firmware.
+On Thu, Feb 01, 2018 at 10:51:14AM +1100, Stephen Rothwell wrote:
+> Hi Bjorn,
+> 
+> After merging the pci tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> drivers/pci/dwc/pcie-designware-ep.c: In function 'dw_pcie_ep_raise_msi_irq':
+> drivers/pci/dwc/pcie-designware-ep.c:293:8: error: too few arguments to function 'dw_pcie_ep_map_addr'
+>   ret = dw_pcie_ep_map_addr(epc, ep->msi_mem_phys, msg_addr,
+>         ^~~~~~~~~~~~~~~~~~~
+> drivers/pci/dwc/pcie-designware-ep.c:177:12: note: declared here
+>  static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
+>             ^~~~~~~~~~~~~~~~~~~
+> drivers/pci/dwc/pcie-designware-ep.c:300:2: error: too few arguments to function 'dw_pcie_ep_unmap_addr'
+>   dw_pcie_ep_unmap_addr(epc, ep->msi_mem_phys);
+>   ^~~~~~~~~~~~~~~~~~~~~
+> drivers/pci/dwc/pcie-designware-ep.c:161:13: note: declared here
+>  static void dw_pcie_ep_unmap_addr(struct pci_epc *epc, u8 func_no,
+>              ^~~~~~~~~~~~~~~~~~~~~
+> 
+> Caused by commit
+> 
+>   4494738de0d9 ("PCI: endpoint: Add the function number as argument to EPC ops")
+> 
+> interacting with commit
+> 
+>   6f6d7873711c ("PCI: designware-ep: Add generic function for raising MSI irq")
+> 
+> This should have been fixed up in commit
+> 
+>   26b259ab4fe8 ("Merge remote-tracking branch 'lorenzo/pci/dwc' into next")
+> 
+> I have used the pci tree from next-20180131 for today.
 
->> PSCI_GET_VERSION band-aid should normally be removed shortly after these
->> patches hit mainline.
-> 
-> I'm a big fan of this :)
-> 
->>
->>>
->>> ... and actually, perhaps it makes sense for the
->>> SMCCC_ARCH_WORKAROUND_1 check to be completely independent of MIDR
->>> based errata matching?
->>>
->>> I.e., if SMCCC v1.1 and SMCCC_ARCH_WORKAROUND_1 are both implemented,
->>> we should probably invoke it even if the MIDR is not known to belong
->>> to an affected implementation.
->>
->> This would have an impact on big-little systems, for which there is
->> often a bunch of unaffected CPUs.
-> 
-> I think it's what we are doing now, SMCCC v1.1 didn't provide the ability
-> to report per-cpu SMCCC_ARCH_WORKAROUND_1, and it said:
->  - The discovery call must return the same result on all PEs in the system.
->  - In heterogeneous systems with some PEs that require mitigation and others
->    that do not, the firmware must provide a safe implementation of this
->    function on all PEs.
-> 
-> So from the spec that it's the firmware to take care of unaffected CPUs,
-> to the kernel it's the same.
+Hello,
 
-The spec makes it safe. The MIDR list makes it fast.
+A suggested merge resolution included as an attachment.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Regards,
+Niklas
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="dwc-ep.patch"
+
+diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+index 39e4a9744863..ed8558d638e5 100644
+--- a/drivers/pci/dwc/pci-dra7xx.c
++++ b/drivers/pci/dwc/pci-dra7xx.c
+@@ -368,7 +368,7 @@ static void dra7xx_pcie_raise_msi_irq(struct dra7xx_pcie *dra7xx,
+ 	dra7xx_pcie_writel(dra7xx, PCIECTRL_TI_CONF_MSI_XMT, reg);
+ }
+ 
+-static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep,
++static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 				 enum pci_epc_irq_type type, u8 interrupt_num)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
+index 34ae163603ee..93b3df9ed1b5 100644
+--- a/drivers/pci/dwc/pcie-artpec6.c
++++ b/drivers/pci/dwc/pcie-artpec6.c
+@@ -445,7 +445,7 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
+ 		dw_pcie_ep_reset_bar(pci, bar);
+ }
+ 
+-static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep,
++static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 				  enum pci_epc_irq_type type, u8 interrupt_num)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+@@ -455,7 +455,7 @@ static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep,
+ 		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
+ 		return -EINVAL;
+ 	case PCI_EPC_IRQ_MSI:
+-		return dw_pcie_ep_raise_msi_irq(ep, interrupt_num);
++		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+ 	default:
+ 		dev_err(pci->dev, "UNKNOWN IRQ type\n");
+ 	}
+diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+index c0395e1f470a..3a6feeff5f5b 100644
+--- a/drivers/pci/dwc/pcie-designware-ep.c
++++ b/drivers/pci/dwc/pcie-designware-ep.c
+@@ -229,7 +229,7 @@ static int dw_pcie_ep_raise_irq(struct pci_epc *epc, u8 func_no,
+ 	if (!ep->ops->raise_irq)
+ 		return -EINVAL;
+ 
+-	return ep->ops->raise_irq(ep, type, interrupt_num);
++	return ep->ops->raise_irq(ep, func_no, type, interrupt_num);
+ }
+ 
+ static void dw_pcie_ep_stop(struct pci_epc *epc)
+@@ -267,7 +267,7 @@ static const struct pci_epc_ops epc_ops = {
+ 	.stop			= dw_pcie_ep_stop,
+ };
+ 
+-int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep,
++int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 			     u8 interrupt_num)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+@@ -290,14 +290,14 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep,
+ 		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_32);
+ 	}
+ 	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
+-	ret = dw_pcie_ep_map_addr(epc, ep->msi_mem_phys, msg_addr,
++	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
+ 				  epc->mem->page_size);
+ 	if (ret)
+ 		return ret;
+ 
+ 	writel(msg_data | (interrupt_num - 1), ep->msi_mem);
+ 
+-	dw_pcie_ep_unmap_addr(epc, ep->msi_mem_phys);
++	dw_pcie_ep_unmap_addr(epc, func_no, ep->msi_mem_phys);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
+index 7e52119f0e96..11b13864a406 100644
+--- a/drivers/pci/dwc/pcie-designware.h
++++ b/drivers/pci/dwc/pcie-designware.h
+@@ -186,8 +186,8 @@ enum dw_pcie_as_type {
+ 
+ struct dw_pcie_ep_ops {
+ 	void	(*ep_init)(struct dw_pcie_ep *ep);
+-	int	(*raise_irq)(struct dw_pcie_ep *ep, enum pci_epc_irq_type type,
+-			     u8 interrupt_num);
++	int	(*raise_irq)(struct dw_pcie_ep *ep, u8 func_no,
++			     enum pci_epc_irq_type type, u8 interrupt_num);
+ };
+ 
+ struct dw_pcie_ep {
+@@ -342,7 +342,8 @@ static inline int dw_pcie_host_init(struct pcie_port *pp)
+ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep);
+ int dw_pcie_ep_init(struct dw_pcie_ep *ep);
+ void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
+-int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 interrupt_num);
++int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
++			     u8 interrupt_num);
+ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar);
+ #else
+ static inline void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
+@@ -358,7 +359,7 @@ static inline void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
+ {
+ }
+ 
+-static inline int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep,
++static inline int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 					   u8 interrupt_num)
+ {
+ 	return 0;
+
+--lrZ03NoBR/3+SXJZ--
