@@ -1,74 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752671AbeBAQYe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:24:34 -0500
-Received: from mout.web.de ([212.227.15.4]:58943 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751567AbeBAQY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:24:27 -0500
-To: linux-i2c@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>, York Sun <yorksun@freescale.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] i2c-mux-reg: Delete an error message for a failed memory
- allocation in i2c_mux_reg_probe_dt()
-Message-ID: <224a8918-f882-9ab1-218c-83df93d4cb2f@users.sourceforge.net>
-Date: Thu, 1 Feb 2018 17:24:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752704AbeBAQYm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:24:42 -0500
+Received: from mail-pl0-f42.google.com ([209.85.160.42]:36075 "EHLO
+        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751567AbeBAQYf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 11:24:35 -0500
+X-Google-Smtp-Source: AH8x227e0F/4B2TZkbJLtsqm0auuI4tGFNyygegwFeSREUTX1CX++ox+7c7HIzwrRR8krZM2rUp9lkle7gSlTAAxG1Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:J9lesRdQ824wBFz8+ancgBSaB/mx636s+mliJpC5y9ALFaAwXks
- a6mctGOWbDxV8CTjQH1I4p0RBIOtWk3EcY6bNTukjbKY6zyC4K/jwpkB9HlP+rKmg1YRxKq
- NFQdHSdcRMLCXzVDQkMj5SfZZ3+CsLwLXpNSlS+05mKRVj5U+MPt8UegT1MJ2vqzxrb6HwB
- CLtIGIVmGz8VH1CpTpntg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3HWSpoYenGA=:vy7OszB/CWGGEGWUjqVzAK
- 2t6dmiodHvTwc2cJCUrtmvvkxAlhz2hWoL5PpCw994SUh2xJ0DdgZGCKGbqvOY3OU8O4s+WN2
- lyVMw1XyXSlCeOWlGvym3jrMfOTZ0WeBwsRGCBWyiHZ9X/4JzjoJUVedZpfwte149KN+u8gCv
- KH5RumKENQnW3Q9Vw1DwvVZyfXF4oyTIPZsrSn1BBHMKFB3ksMUxFIBrYx/gvoFmaO0GjoqAG
- XXc7EIN968ibvsd5GHk/trcIyuSekrRjBWtT99iHHA84Dh8sFkbip+NFgfjh1lC6ZHUdOIS52
- xzSy8RUB4APCscEX6MRKZ24srwLO4T3uqR4zDK0p9dQ6ue6oD1QWk1lVWzpbyXk/TF+KlH1bt
- 9af33SVwbTYySlQNbuY7cR2SsSIp5963ojCbwYV2umXO6NfJCWYzSxu4ZRmesISO8695oyihv
- sZsEj8LwVFFRoIC0Wk6fTEdaQVjKaMtSASiHcdtcPjvqAoLQ06qNZXBbLCIR/A/T1BYTqtxA7
- hERBe/bjI+acck2L97Mm3jmGwGlFCv8VeHKlH8m4U6ZV+Rd8jhv7noBQYZ028RG174hjXmr9g
- FEwD+TxeKmA3qTD4oMxBhEr/G0k3rmis/MPT4+kNgyXtIe06ZhgsYiRYJXBxNFrrDupY/he4G
- IcCXPAwlucxcP/jyygpJ+RZY3HqwpwLtzqtEZKQVeTOrhdsEbqelvKDy8IAChvG+zoPNIl+5M
- sGZwnZA3+yE8+BQ7be4czaqGuO1t9FJgOD7CGqGurpJbb0N6j5VkB49aM0EZpF6JruMdmEbrH
- CGDg2q0yTcYPXVCuhb9uXbzv7p9I23gx+gNw31FIRxKKtfAKnM=
+In-Reply-To: <CAAeHK+xwrXTsgKpXKbJJXeneXeh2eLhYegdPbJYEJH3sD6Ld5A@mail.gmail.com>
+References: <001a114292fa7f761c0560ad62e1@google.com> <001a113f542aed9c4e0560b66f3b@google.com>
+ <20180131072750.GF2736@zzz.localdomain> <CAAeHK+xwrXTsgKpXKbJJXeneXeh2eLhYegdPbJYEJH3sD6Ld5A@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 1 Feb 2018 17:24:14 +0100
+Message-ID: <CACT4Y+boQD_-JpFU9BbeuHQMrBLt9YnCVvTqnOWgX9JqTkboiA@mail.gmail.com>
+Subject: Re: WARNING in refcount_inc (2)
+To: Andrey Konovalov <andreyknvl@google.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>,
+        syzbot
+        <bot+944a064dbc165044476317df06ebfb218415e951@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        LKML <linux-kernel@vger.kernel.org>, luc.vanoostenryck@gmail.com,
+        Ingo Molnar <mingo@kernel.org>, netdev <netdev@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        syzkaller-bugs@googlegroups.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Cong Wang <xiyou.wangcong@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Feb 2018 17:17:19 +0100
+On Thu, Feb 1, 2018 at 3:34 PM, 'Andrey Konovalov' via syzkaller-bugs
+<syzkaller-bugs@googlegroups.com> wrote:
+> On Wed, Jan 31, 2018 at 8:27 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
+>>
+>> Also Dmitry, syzbot seems to be grouping together unrelated bugs under the
+>> refcount_t WARNINGs; maybe those should be on a blacklist?
+>
+> Not a blacklist, we need a proper way of extracting the offending
+> caller like it's done for reports from __this_cpu_* [1].
+>
+> [1] https://github.com/google/syzkaller/blob/master/pkg/report/linux.go#L579
 
-Omit an extra message for a memory allocation failure in this function.
+Thanks, I've added this as a test case:
+https://github.com/google/syzkaller/commit/e525e980eaed440e278614b9e887270ca67d2dde
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/i2c/muxes/i2c-mux-reg.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/muxes/i2c-mux-reg.c b/drivers/i2c/muxes/i2c-mux-reg.c
-index c948e5a4cb04..f624ed64a47b 100644
---- a/drivers/i2c/muxes/i2c-mux-reg.c
-+++ b/drivers/i2c/muxes/i2c-mux-reg.c
-@@ -127,10 +127,8 @@ static int i2c_mux_reg_probe_dt(struct regmux *mux,
- 	values = devm_kzalloc(&pdev->dev,
- 			      sizeof(*mux->data.values) * mux->data.n_values,
- 			      GFP_KERNEL);
--	if (!values) {
--		dev_err(&pdev->dev, "Cannot allocate values array");
-+	if (!values)
- 		return -ENOMEM;
--	}
- 
- 	for_each_child_of_node(np, child) {
- 		of_property_read_u32(child, "reg", values + i);
--- 
-2.16.1
+We mishandle __this_cpu_* as well:
+https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/136
+https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/137
+It does not seem that regexps can sustain this anymore (we also
+mishandle rcu stalls and some other cases), I guess we need manual
+parsing of stack traces that can handle all these cases.
