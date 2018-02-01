@@ -1,87 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeBAIYB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 03:24:01 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:43726 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751832AbeBAIXl (ORCPT
+        id S1751960AbeBAIZ0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 03:25:26 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35144 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751405AbeBAIZX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 03:23:41 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180201082339epoutp04688247535e44bec9662faf794824a8b6~PJgjjqri-3232032320epoutp04n
-X-AuditID: b6c32a35-891ff70000001031-7b-5a72ce8ae2ea
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Sangwon Jee <jeesw@melfas.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>,
-        Andi Shyti <andi@etezian.org>
-Subject: [PATCH 2/2] Input: mms114 - fix license module information
-Date: Thu, 01 Feb 2018 17:23:20 +0900
-Message-id: <20180201082320.24031-3-andi.shyti@samsung.com>
-X-Mailer: git-send-email 2.15.1
-In-reply-to: <20180201082320.24031-1-andi.shyti@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsWy7bCmvm7XuaIog9Z9hhbbjzxjtVj84zmT
-        xeFFLxgt2h91slrc/PSN1eLyrjlsFhPX32N1YPe4vuQTs8fOWXfZPb7POMPo0bdlFaPH501y
-        AaxRqTYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QGco
-        KZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVog0NjfQMDcz1jIyM9EyMY62MTIFKElIz/nXd
-        YSzo5KjYP0+/gfEHWxcjJ4eEgInE2XNPgWwuDiGBHYwSd248gnK+M0p8uNsPV3Vz7VomiMQG
-        RomHh7+yQDifGCUubV0IVsUmoCnRdBtirohAgsTyzh/MIEXMAksZJRY2L2UBSQgLOEssPLuc
-        EcRmEVCVuPztO5jNK2At8WHefnaIdfISE7Y0gdVzCthIXF37jR1kkIRAB5vE2r52JogiF4mF
-        z34wQtjCEq+ObwEq4gCypSUuHbWFCDczSmy7nQzRO4FR4tPer1C9xhLPFnaB2cwCfBLvvvaw
-        QvTySnS0CUGUeEj8PLsI6n1HiX0H/0J93M8ocejzG7YJjFILGBlWMYqlFhTnpqcWGxYY6hUn
-        5haX5qXrJefnbmIEJxMt0x2MU875HGIU4GBU4uF9cakwSog1say4MvcQowQHs5II75t9RVFC
-        vCmJlVWpRfnxRaU5qcWHGE2BYTORWUo0OR+Y6PJK4g1NLA1MzIyAicHS0FBJnDcgwCVKSCA9
-        sSQ1OzW1ILUIpo+Jg1OqgdHKYsp3Z+fKVb+8uHIlV8yI3bzkTa20YoZvVW/Jve/axqkbbR5P
-        POvV7/buremq4wftnt/P1fNUex11PThXcNbxeF/B1XcCtW0feRw3UdfUl6sQ2/hHbmLPpLlN
-        c7773Jh5YltEuPvVwJ1ZBa9f3+nc7moSktU8NSdfe/6Oa8vXdk4J+ukjuUWJpTgj0VCLuag4
-        EQB+3ZqePAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42I5/e+xoG7XuaIog3u/5S22H3nGarH4x3Mm
-        i8OLXjBatD/qZLW4+ekbq8XlXXPYLCauv8fqwO5xfcknZo+ds+6ye3yfcYbRo2/LKkaPz5vk
-        AlijuGxSUnMyy1KL9O0SuDL+dd1hLOjkqNg/T7+B8QdbFyMnh4SAicTNtWuZuhi5OIQE1jFK
-        fJx+jRHC+cQosW3iJUaQKjYBTYmm2xAdIgIJEmfXvmAGKWIWWMoosfPWfbAiYQFniYVnl4PZ
-        LAKqEpe/fQezeQWsJT7M288OsU5eYsKWJhYQm1PARuLq2m9gcSGgmpn7rrJOYORZwMiwilEy
-        taA4Nz232KjAMC+1XK84Mbe4NC9dLzk/dxMjMIy2Hdbq28F4f0n8IUYBDkYlHt4XlwqjhFgT
-        y4orcw8xSnAwK4nwvtlXFCXEm5JYWZValB9fVJqTWnyIUZqDRUmc93besUghgfTEktTs1NSC
-        1CKYLBMHp1QDo72/wH7xN74GQZl7VU+IWCm3RbNzp+pum2QvnWWaJbfo2h+X1vX3JWKmMskW
-        pP/k4fQzuWPCnzSn/nmqh7vNg9rPGsqegs9/TXYq+/O0ncNtWs87bk7FCJ2lIs579iTmZhiG
-        H83YdkVvzfRfRx58Pxrhsp9DcHMVd/CCKyLvGs4qX/wf98ZUiaU4I9FQi7moOBEA19dZXB8C
-        AAA=
-X-CMS-MailID: 20180201082338epcas1p1b51e19d17ab9259cf18e031fb8e9f318
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180201082338epcas1p1b51e19d17ab9259cf18e031fb8e9f318
-X-RootMTR: 20180201082338epcas1p1b51e19d17ab9259cf18e031fb8e9f318
-References: <20180201082320.24031-1-andi.shyti@samsung.com>
-        <CGME20180201082338epcas1p1b51e19d17ab9259cf18e031fb8e9f318@epcas1p1.samsung.com>
+        Thu, 1 Feb 2018 03:25:23 -0500
+X-Google-Smtp-Source: AH8x224YqWn+NNEQ0wQU045Mscn3LWVBVFRTbzn5cZpdrpfjj3ZKA0uDf+NCSBlf+Rc0qJzF6vU7Ow==
+Date: Thu, 1 Feb 2018 09:25:20 +0100
+From: Christian Brauner <christian.brauner@canonical.com>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: mingo@kernel.org, hpa@zytor.com, tim.c.chen@linux.intel.com,
+        dwmw@amazon.co.uk, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        jpoimboe@redhat.com
+Subject: Re: [tip:x86/pti] x86/speculation: Use Indirect Branch Prediction
+ Barrier in context switch
+Message-ID: <20180201082518.w3bk5udvzdre7zc2@gmail.com>
+References: <1517263487-3708-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7@git.kernel.org>
+ <20180131070300.GA28206@light.dominikbrodowski.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180131070300.GA28206@light.dominikbrodowski.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver has been released with GNU Public License v2 as stated
-in the header, but the module license information has been tagged
-as "GPL" (GNU Public License v2 or later).
+On Wed, Jan 31, 2018 at 08:03:00AM +0100, Dominik Brodowski wrote:
+> On Tue, Jan 30, 2018 at 02:39:45PM -0800, tip-bot for Tim Chen wrote:
+> > Commit-ID:  18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
+> > Gitweb:     https://git.kernel.org/tip/18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
+> > Author:     Tim Chen <tim.c.chen@linux.intel.com>
+> > AuthorDate: Mon, 29 Jan 2018 22:04:47 +0000
+> > Committer:  Thomas Gleixner <tglx@linutronix.de>
+> > CommitDate: Tue, 30 Jan 2018 23:09:21 +0100
+> > 
+> > x86/speculation: Use Indirect Branch Prediction Barrier in context switch
+> > 
+> > Flush indirect branches when switching into a process that marked itself
+> > non dumpable. This protects high value processes like gpg better,
+> > without having too high performance overhead.
+> 
+> For the record, I am still opposed to limit this to non-dumpable processes.
+> Whether a process needs protection by IBPB on context switches is a
+> different question to whether a process should be allowed to be dumped,
 
-Fix the module license information so that it matches the one in
-the header as "GPL v2".
+This is especially true since you can get into a non-dumpable state
+implicitly due to setuid() in a new user namespace. So avoiding the
+performance hit due to IBPD is not necessary a concious decision taken
+by calling prctl(), that is to say even if you care about performance
+and don't want to take the IBPB hit you might accidently have to take it
+when doing a setuid(). Also there are definitely workloads where
+you want to be able to ptrace a task while at the same time having it do
+IBPB. So let's not limit this to non-dumpable taks! Thanks Dominik!
 
-Fixes: 07b8481d4aff ("Input: add MELFAS mms114 touchscreen driver")
-Reported-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
----
- drivers/input/touchscreen/mms114.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> though the former may be a superset of the latter. In my opinion, IBPB
+> should be enabled on all context switches to userspace processes, until we
+> have a clear mitigation strategy for userspace against Spectre-v2 designed
+> and implemented.
+> 
+> Thanks,
+> 	Dominik
+> 
+> --------------------------
+> From: Dominik Brodowski <linux@dominikbrodowski.net>
+> Date: Wed, 31 Jan 2018 07:43:12 +0100
+> Subject: [PATCH] x86/speculation: Do not limit Indirect Branch Prediction Barrier to non-dumpable processes
+> 
+> Whether a process needs protection by IBPB on context switches is a
+> different question to whether a process should be allowed to be dumped,
+> though the former may be a superset of the latter. Enable IBPB on all
+> context switches to a different userspace process, until we have a clear
+> mitigation strategy for userspace against Spectre-v2 designed and
+> implemented.
 
-diff --git a/drivers/input/touchscreen/mms114.c b/drivers/input/touchscreen/mms114.c
-index be7926555432..a5ab774da4cc 100644
---- a/drivers/input/touchscreen/mms114.c
-+++ b/drivers/input/touchscreen/mms114.c
-@@ -621,4 +621,4 @@ module_i2c_driver(mms114_driver);
- /* Module information */
- MODULE_AUTHOR("Joonyoung Shim <jy0922.shim@samsung.com>");
- MODULE_DESCRIPTION("MELFAS mms114 Touchscreen driver");
--MODULE_LICENSE("GPL");
-+MODULE_LICENSE("GPL v2");
--- 
-2.15.1
+Thanks Dominik. That makes a lot more sense!
+
+> 
+> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> 
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index 012d02624848..f54897b68b16 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -255,19 +255,13 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+>  		 * predictor when switching between processes. This stops
+>  		 * one process from doing Spectre-v2 attacks on another.
+>  		 *
+> -		 * As an optimization, flush indirect branches only when
+> -		 * switching into processes that disable dumping. This
+> -		 * protects high value processes like gpg, without having
+> -		 * too high performance overhead. IBPB is *expensive*!
+> -		 *
+>  		 * This will not flush branches when switching into kernel
+>  		 * threads. It will also not flush if we switch to idle
+>  		 * thread and back to the same process. It will flush if we
+> -		 * switch to a different non-dumpable process.
+> +		 * switch to a different user process.
+>  		 */
+>  		if (tsk && tsk->mm &&
+> -		    tsk->mm->context.ctx_id != last_ctx_id &&
+> -		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
+> +		    tsk->mm->context.ctx_id != last_ctx_id)
+>  			indirect_branch_prediction_barrier();
+>  
+>  		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
