@@ -1,110 +1,82 @@
-Return-Path: <krzk@kernel.org>
-X-Google-Smtp-Source: AH8x225y7wt0e0934Cf6Z6/kgcc5V0qcc1RUznqgg+Lx3GcgxG4ESOFwH7lW0P3nDZ4PXXz2J4yp
-ARC-Seal: i=1; a=rsa-sha256; t=1517474636; cv=none;
-        d=google.com; s=arc-20160816;
-        b=kfNSg1AubUnb0P4woys3x9Sn+SlcUi2KuURkWVktLuK5nqcYKjyr3zFJHlng5t4ydm
-         3Chy5Q9O6+VuqOOVjaNNjteBHtE27QWC397nMjZnNd1SI7mBtond3MlaSoMcjKeHa3hd
-         R3dVg3auNzUvnN6ugQie13Tv+dRzuaTBdDlsWWRfgyEE1axVOo7vvV0LtZvznLZwfbWi
-         zmVmh70c5SP77CIoCq8qG0cSnl2bnrhBcbfgWQNkZi4bM9RIU5AKv/BMBdtR0Y2GCB0q
-         PMgP6HyurJDOI7/WqDIAIIf8jbJ4EcFfaplmn8QfHS3RDX0RCHVXctRsdTwJ2+XKgBk4
-         QchA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:arc-authentication-results;
-        bh=63pc7vuTlm2awss5TlQ/d5tkEJCKc4G1X4fM8nQ+N8w=;
-        b=vzhI9UWkRkAkDQtwbuMsRSM4ib9OmIaToUuoD0ix3X7OGsmHpBIgZ1bkkEyXZ80YM9
-         DNEzEGzpiC+zC0/iRKGT21zh5oT9H79cf3TLKIDdIQkKOfvairP5zSnIyNhxAyfc4DqG
-         1q+13Dqa5Gt9cFTdveuY9M3BrFRqw+4D1qw0EZgldFMBD8SmoozLRWUOKnc76uRIV7Br
-         5LJGfG1VlwZ569Fg5U4QpeFnxE0U/SrS18GR2iSiJHom2tJ4jVPlpTMnR7oeGBLoVmgw
-         e4OYXBRVS9+mIi0H+JRdeiaxlz/LN30A0fOy2QQq/fiDZtQ9rTVaDTcACGqGSapb4w+c
-         w9Zw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37E8217A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+Date: Thu, 1 Feb 2018 09:18:11 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Paul Moore <paul@paul-moore.com>, Mark Salyzyn <salyzyn@android.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>, linux-kernel@vger.kernel.org,
+	Eric Paris <eparis@parisplace.org>,
+	James Morris <james.l.morris@oracle.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>, selinux@tycho.nsa.gov,
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] general protection fault in sock_has_perm
+Message-ID: <20180201081811.GF15896@kroah.com>
+References: <20180118215853.228182-1-salyzyn@android.com>
+ <1516382386.2560.11.camel@tycho.nsa.gov>
+ <1516383672.2560.23.camel@tycho.nsa.gov>
+ <99c11fa6-ad9a-830c-467e-6a56e78aecf8@android.com>
+ <20180130224614.GA13647@kroah.com>
+ <CAHC9VhTitwf5NLthRMxLdb=QrS+i7fDgVXq3qXkNmAt8ck8V3A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <6581962f-3552-2891-e6b3-b2f7c0018c93@samsung.com>
-References: <CGME20180131155734eucas1p1c7988ce46f3164329a39d2358d9fada9@eucas1p1.samsung.com>
- <20180131155718.5237-1-a.hajda@samsung.com> <20180131155718.5237-3-a.hajda@samsung.com>
- <CAJKOXPewrA38bxiCKa=pjhVKXys2KRstV2w=+MP3TVi9kkN1kw@mail.gmail.com> <6581962f-3552-2891-e6b3-b2f7c0018c93@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 1 Feb 2018 09:43:53 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPfs7Es4S5EdOg_en+WPFV6hcNf-0rZO-+7uNiNS96DcVg@mail.gmail.com>
-Message-ID: <CAJKOXPfs7Es4S5EdOg_en+WPFV6hcNf-0rZO-+7uNiNS96DcVg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: exynos: add OF graph between USB-PHY and MUIC
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "open list:DESIGNWARE USB3 DRD IP DRIVER" <linux-usb@vger.kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inki Dae <inki.dae@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591124177095890222?=
-X-GMAIL-MSGID: =?utf-8?q?1591187484588703931?=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTitwf5NLthRMxLdb=QrS+i7fDgVXq3qXkNmAt8ck8V3A@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 1, 2018 at 9:19 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> On 01.02.2018 08:50, Krzysztof Kozlowski wrote:
->> On Wed, Jan 31, 2018 at 4:57 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
->>> OF graph describes USB data lanes between USB-PHY and respective MUIC.
->>> Since graph is present and DWC driver can use it to get extcon, obsolete
->>> extcon property can be removed.
->>>
->>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>> ---
->>>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 18 +++++++++++++++++-
->>>  1 file changed, 17 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
->>> index 427ff861b441..b20b42659206 100644
->>> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
->>> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
->>> @@ -828,6 +828,17 @@
->>>                                         };
->>>                                 };
->>>                         };
->>> +
->>> +                       ports {
->>> +                               #address-cells = <1>;
->>> +                               #size-cells = <0>;
->>> +
->>> +                               port@0 {
->>> +                                       reg = <0>;
->>> +                                       muic_to_usb: endpoint {
->>> +                                               remote-endpoint = <&usb_to_muic>;
->>> +                                       };
->>> +                               };
->>>                         };
->>>                 };
->>>
->>> @@ -1242,12 +1253,17 @@
->>>
->>>  &usbdrd_dwc3 {
->>>         dr_mode = "otg";
->>> -       extcon = <&muic>;
->> Look ok for me.
->>
->> Does this depend on #1 patch for DWC?
->
-> Yes, it depends. #1 adds code to find extcon using graph, without it
-> dwc3 won't be able to work in dual-role mode.
-> Alternatively, I could split this patch into two parts:
-> 2a. adding graph bindings.
-> 2b. removing extcon property.
-> In such case only 2b depends on #1.
+On Wed, Jan 31, 2018 at 04:06:37AM -0500, Paul Moore wrote:
+> On Tue, Jan 30, 2018 at 5:46 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > On Tue, Jan 30, 2018 at 11:00:04AM -0800, Mark Salyzyn wrote:
+> >> On 01/19/2018 09:41 AM, Stephen Smalley wrote:
+> >> > If we can't safely dereference the sock in these hooks, then that seems
+> >> > to point back to the approach used in my original code, where in
+> >> > ancient history I had sock_has_perm() take the socket and use its inode
+> >> > i_security field instead of the sock.  commit
+> >> > 253bfae6e0ad97554799affa0266052968a45808 switched them to use the sock
+> >> > instead.
+> >>
+> >> Because of the nature of this problem (hard to duplicate, no clear path), I
+> >> am understandably not comfortable reverting and submitting for testing in
+> >> order to prove this point. It is disruptive because it changes several
+> >> subroutine call signatures.
+> >>
+> >> AFAIK this looks like a user request racing in without reference counting or
+> >> RCU grace period in the callers (could be viewed as not an issue with
+> >> security code). Effectively fixed in 4.9-stable, but broken in 4.4-stable.
+> >>
+> >> hygiene, KISS and small, is all I do feel comfortable to submit to
+> >> 4.4-stable without pulling in all the infrastructure improvements.
+> >>
+> >> -- Mark
+> >>
+> >> ---
+> >>  security/selinux/hooks.c | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> >> index 34427384605d..be68992a28cb 100644
+> >> --- a/security/selinux/hooks.c
+> >> +++ b/security/selinux/hooks.c
+> >> @@ -4066,6 +4066,8 @@ static int sock_has_perm(struct task_struct *task,
+> >> struct sock *sk, u32 perms)
+> >>      struct lsm_network_audit net = {0,};
+> >>      u32 tsid = task_sid(task);
+> >>
+> >> +    if (!sksec)
+> >> +        return -EFAULT;
+> >>      if (sksec->sid == SECINITSID_KERNEL)
+> >>          return 0;
+> >>
+> >
+> > This looks sane to me as a simple 4.4-only fix.  If the SELinux
+> > maintainer acks it, I can easily queue this up.
+> 
+> This revision addresses my concerns with Mark's previous patch.
+> 
+> Acked-by: Paul Moore <paul@paul-moore.com>
 
-Without splitting, this patch would have to wait till #1 gets into
-mainline (so probably till v4.17-rc1 because we are in merge window
-already). I am fine with this split-approach so only the cleanup patch
-would get postponed. Up to you.
+Wonderful!
 
-Best regards,
-Krzysztof
+Mark, can you resend this in a format I can apply it in?
+
+thanks,
+
+greg k-h
