@@ -1,62 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752820AbeBARKQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:10:16 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:34828 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752544AbeBARKO (ORCPT
+        id S1752960AbeBARK3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:10:29 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:47171 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752714AbeBARKU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:10:14 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w11H9tYE007035
-X-Nifty-SrcIP: [209.85.213.52]
-X-Google-Smtp-Source: AH8x225HCOUS6yZJJd+7era0F2mkmclzLfai8zVp+mhCPL0NbNvPNKEcHJCuie6sXf2WByf3S4d/gZ6hLyFCjCl1rF8=
+        Thu, 1 Feb 2018 12:10:20 -0500
+From: Colin King <colin.king@canonical.com>
+To: Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] lan78xx: remove redundant initialization of pointer 'phydev'
+Date: Thu,  1 Feb 2018 17:10:18 +0000
+Message-Id: <20180201171018.22267-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <20180131093434.20050-4-ulfalizer@gmail.com>
-References: <20180131093434.20050-1-ulfalizer@gmail.com> <20180131093434.20050-4-ulfalizer@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 2 Feb 2018 02:09:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARZaB6c7BYOaP9aKU38npfOiHG7=6R0QGLAsTA8egd18g@mail.gmail.com>
-Message-ID: <CAK7LNARZaB6c7BYOaP9aKU38npfOiHG7=6R0QGLAsTA8egd18g@mail.gmail.com>
-Subject: Re: [PATCH 03/11] mmc: kconfig: Remove blank help text
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Paul Bolle <pebolle@tiscali.nl>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Jan Glauber <jglauber@cavium.com>, Eric Anholt <eric@anholt.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rui Feng <rui_feng@realsil.com.cn>,
-        linux-mmc <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-01-31 18:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
-> Blank help texts are probably either a typo, a Kconfig misunderstanding,
-> or some kind of half-committing to adding a help text (in which case a
-> TODO comment would be clearer, if the help text really can't be added
-> right away).
->
-> Best to remove them, IMO.
->
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
+Pointer phydev is initialized and this value is never read, phydev
+is immediately updated to a new value, hence this initialization
+is redundant and can be removed
 
-FYI.
+Cleans up clang warning:
+drivers/net/usb/lan78xx.c:2009:21: warning: Value stored to 'phydev'
+during its initialization is never read
 
-I picked up this patch to kbuild
-because I need this to suppress warning messages
-introduced by 11/11.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/usb/lan78xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I am planning to send a PR for this series next week.
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index ec56ff29aac4..60a604cc7647 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2006,7 +2006,7 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ {
+ 	int ret;
+ 	u32 mii_adv;
+-	struct phy_device *phydev = dev->net->phydev;
++	struct phy_device *phydev;
+ 
+ 	phydev = phy_find_first(dev->mdiobus);
+ 	if (!phydev) {
+-- 
+2.15.1
