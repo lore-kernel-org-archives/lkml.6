@@ -1,110 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeBAR7Z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:59:25 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:46996 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751913AbeBAR7Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:59:24 -0500
-X-Google-Smtp-Source: AH8x226OSskaorIpLu0eQef7tXx1wHBhFI0lR051GkLnySJNfg94XuAA84t5AbO27X6JKkCGIkPRSw==
-From: Rob Herring <robh@kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: [PATCH v2] powerpc: pseries: use of_irq_get helper in request_event_sources_irqs
-Date: Thu,  1 Feb 2018 11:59:22 -0600
-Message-Id: <20180201175922.18930-1-robh@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        id S1752780AbeBASA3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 13:00:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751378AbeBASA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 13:00:28 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9271B21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 1 Feb 2018 13:00:25 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH] printk: do not flush printk_safe from irq_work
+Message-ID: <20180201130025.38fa70e0@gandalf.local.home>
+In-Reply-To: <20180129022918.GA24497@jagdpanzerIV>
+References: <20180124093723.1300-1-sergey.senozhatsky@gmail.com>
+        <20180126152613.7mko26ulk24hzjlp@pathway.suse.cz>
+        <20180129022918.GA24497@jagdpanzerIV>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of calling both of_irq_parse_one and irq_create_of_mapping, call
-of_irq_get instead which does essentially the same thing. of_irq_get
-also calls irq_find_host for deferred probe support, but this should be
-fine as irq_create_of_mapping also calls that internally. This gets us
-closer to making the former 2 functions static.
+On Mon, 29 Jan 2018 11:29:18 +0900
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
 
-In the process of simplifying request_event_sources_irqs, combine the
-the pr_err and WARN_ON calls to just a WARN().
+> On (01/26/18 16:26), Petr Mladek wrote:
+> [..]
+> > First, this delays showing eventually valuable information until
+> > the preemption is enabled. It might never happen if the system
+> > is in big troubles. In each case, it might be much longer delay
+> > than it was before.  
+> 
+> If the system is in "big troubles" then what makes irq_work more
+> possible? Local IRQs can stay disabled, just like preemption. I
+> guess when the troubles are really big our strategy is the same
+> for both wq and irq_work solutions - we keep the printk_safe buffer
+> and wait for panic()->flush.
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
-v2:
-- Fix infinite loop
-- Use of_irq_get instead to irq_of_parse_and_map to preserve handling of 
-  errors
-- Combine pr_err and WARN_ON calls to single WARN
+Working on the RT kernel, I would tell you there's a huge difference
+getting an irq_work to trigger than to expect something to schedule.
 
- arch/powerpc/platforms/pseries/event_sources.c | 40 +++++++++-----------------
- 1 file changed, 13 insertions(+), 27 deletions(-)
+It takes much less to disable the systems scheduling than it does to
+disable interrupts. If interrupts are disabled, then so is scheduling.
+But if scheduling is disabled, interrupts may still trigger.
 
-diff --git a/arch/powerpc/platforms/pseries/event_sources.c b/arch/powerpc/platforms/pseries/event_sources.c
-index 6eeb0d4bab61..446ef104fb3a 100644
---- a/arch/powerpc/platforms/pseries/event_sources.c
-+++ b/arch/powerpc/platforms/pseries/event_sources.c
-@@ -16,7 +16,8 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-  */
- 
--#include <asm/prom.h>
-+#include <linux/interrupt.h>
-+#include <linux/of_irq.h>
- 
- #include "pseries.h"
- 
-@@ -24,34 +25,19 @@ void request_event_sources_irqs(struct device_node *np,
- 				irq_handler_t handler,
- 				const char *name)
- {
--	int i, index, count = 0;
--	struct of_phandle_args oirq;
--	unsigned int virqs[16];
-+	int i, virq, rc;
- 
--	/* First try to do a proper OF tree parsing */
--	for (index = 0; of_irq_parse_one(np, index, &oirq) == 0;
--	     index++) {
--		if (count > 15)
--			break;
--		virqs[count] = irq_create_of_mapping(&oirq);
--		if (!virqs[count]) {
--			pr_err("event-sources: Unable to allocate "
--			       "interrupt number for %pOF\n",
--			       np);
--			WARN_ON(1);
--		} else {
--			count++;
--		}
--	}
-+	for (i = 0; i < 16; i++) {
-+		virq = of_irq_get(np, i);
-+		if (virq < 0)
-+			return;
-+		if (WARN(!virq, "event-sources: Unable to allocate "
-+			        "interrupt number for %pOF\n", np))
-+			continue;
- 
--	/* Now request them */
--	for (i = 0; i < count; i++) {
--		if (request_irq(virqs[i], handler, 0, name, NULL)) {
--			pr_err("event-sources: Unable to request interrupt "
--			       "%d for %pOF\n", virqs[i], np);
--			WARN_ON(1);
-+		rc = request_irq(virq, handler, 0, name, NULL);
-+		if (WARN(rc, "event-sources: Unable to request interrupt %d for %pOF\n",
-+		    virq, np))
- 			return;
--		}
- 	}
- }
--
--- 
-2.14.1
+But if printk_safe() is just for recursion protection, how important is
+it to get out?
+
+-- Steve
