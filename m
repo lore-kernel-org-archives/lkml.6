@@ -1,107 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752588AbeBAQII (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:08:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41646 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751873AbeBAQIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:08:07 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79EF52178E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Thu, 1 Feb 2018 16:08:01 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Luis de Bethencourt <luisbg@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>,
-        Ralf Baechle <ralf@linux-mips.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH] MIPS: Fix trailing semicolon
-Message-ID: <20180201160801.GN7637@saruman>
-References: <20180123133803.26789-1-luisbg@kernel.org>
+        id S1752297AbeBAQJh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:09:37 -0500
+Received: from mail.micronovasrl.com ([212.103.203.10]:46820 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751555AbeBAQJg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 11:09:36 -0500
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH 2/2] drm/sun4i: Handle DRM_MODE_FLAG_**SYNC_POSITIVE
+ correctly
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: airlied@linux.ie, wens@csie.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1516474221-114596-2-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180122085112.7xo2t3x5ag4k2kpl@flea.lan>
+ <aa724bd5-cfb1-128c-af32-db29253f32aa@micronovasrl.com>
+ <59f7b542-3b1d-ff62-e290-37c47f4075ff@micronovasrl.com>
+ <9929d894-53c3-a7e9-a328-a00cfc1ef546@micronovasrl.com>
+ <20180125152117.qikemrwl7f35ssjg@flea.lan>
+ <d79602b9-8e04-8250-fd7f-f52b8e16c575@micronovasrl.com>
+ <20180126145608.5s6c6ltpvrko7iyv@flea.lan>
+ <18ec71dc-a785-a771-76d4-176d95032c97@micronovasrl.com>
+ <e3a8682c-7524-ee99-8d4f-c492709e6e49@micronovasrl.com>
+ <20180201101411.d23efsjt7jdyi4zh@flea.lan>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <51323c6d-ba50-f09e-fcd7-d9b18d03673a@micronovasrl.com>
+Date: Thu, 1 Feb 2018 17:09:33 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1rguoi8KZGYj2k4L"
-Content-Disposition: inline
-In-Reply-To: <20180123133803.26789-1-luisbg@kernel.org>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180201101411.d23efsjt7jdyi4zh@flea.lan>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Il 01/02/2018 11:14, Maxime Ripard ha scritto:
+> On Sat, Jan 27, 2018 at 11:07:09PM +0100, Giulio Benetti wrote:
+>>>>>> I don't really know what the polarity of D0 would be just by
+>>>>>> judging at that capture, but we would have noticed if the colors
+>>>>>> were inverted for quite some time now.
+>>>>>
+>>>>> D0-D23 are correct.
+>>>>>
+>>>>> With that capture, I mean to show you instead dclk is inverted, as
+>>>>> dclk samples D0 on falling edge.
+>>>>
+>>>> Ah right, DCLK being the first channel?
+>>>
+>>> Yes, sorry I didn't place a label on channels
+>>>
+>>>>
+>>>>> So 0 is NEGEDGE and 1 is POSEDGE(1/3 of clock phase).
+>>>>> 1/3 clock phase seems enough to me to be considered POSEDGE,
+>>>>> 2/3 instead risks to go too much to the right of D0(even if it
+>>>>> could work).
+>>>>
+>>>> Do you have captures with both settings?
+>>>
+>>> Not now, but asap I'm going to take.
+>>
+>> Here we are:
+>> 1/3 phase: https://pasteboard.co/H4VehON.png
+>> 2/3 phase: https://pasteboard.co/H4Veq8a.png
+>>
+>> Yellow: D0
+>> Blue: DCLK
+>>
+>> As you can see:
+>> 1/3 phase has DCLK rising edge almost in the middle of D0
+>> 2/3 phase has DCLK rising edge that comes too late
+>>
+>> I would go for "1/3 phase" for Rising edge and "normal phase" for
+>> Falling edge.
+>>
+>> What do you think?
+> 
+> It seems fair. This need a whole lot of comments though :)
 
---1rguoi8KZGYj2k4L
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, then, do I proceed resubmitting both corrected patches with 
+corrected commit logs?
 
-On Tue, Jan 23, 2018 at 01:38:03PM +0000, Luis de Bethencourt wrote:
-> The trailing semicolon is an empty statement that does no operation.
-> Removing it since it doesn't do anything.
->=20
-> Signed-off-by: Luis de Bethencourt <luisbg@kernel.org>
+> 
+>>>> That it's going to be a nightmare... We've advertised since the very
+>>>> beginning something, and we're about to break it. I'm not sure we want
+>>>> to do that.
+>>>
+>>> I can take care about that.
+>>> But I also think that a lot of displays work because they use only
+>>> DE-mode, almost ignoring HSync and VSync signals(HV-mode).
+>>>
+>>> In any case I have to produce these patches because of my company's
+>>> board based on A20 and A33, and modify defconfig according to it.
+>>> The only technical nightmare I see is to produce a commit for every
+>>> defconfig to be modified and copy-paste che commit-log substituing board
+>>> name(1-2 days of work).
+>>> Problem is testing, but we're speaking about something that probably was
+>>> badly working, but you couldn't see it on display.
+>>> So I think this is only an improvement at the end.
+>>>
+>>> I'm sorry I've taken bad news.
+>>> Drink 1 glass of Spritz to go over! :)
+>>
+>> IMHO I think that we have only to take care about displays that don't have
+>> DE signal.
+>>
+>> If DE signal exists, then displays are driven through DE only for back and
+>> front porch as I know, and on most displays I've used, Hsync and VSync are
+>> ignored.
+>> DE is used not only for Data Enable, but also for sync the very beginning of
+>> frame, the rest of syncing is done by pause between every line sent.
+>> This is should be why nobody noticed it before,
+>> I think almost every display is used in DE mode only.
+>> So, if we fix bug for HSync and VSync, risk should be very low.
+>> Indeed, everybody or almost, use sync:3 because display ignore those 2
+>> signals (HSync and VSYnc) in favour of DE.
+>> And I don't know how many people checked with oscilloscope signals after
+>> getting display working in a few.
+> 
+> I know I did, but I apparently didn't pay attention to that and was
+> more focused on getting the timings right :)
+> 
+> But clearly this is a separate discussion that needs to be held on the
+> U-Boot ML.
 
-Applied to my 4.16 branch,
+Ok, so I'd create a patch regarding HSync and VSync polarity and send it 
+to uboot ML.
 
-Thanks
-James
+> 
+> Maxime
+> 
 
-> ---
->=20
-> Hi,
->=20
-> After fixing the same thing in drivers/staging/rtl8723bs/, Joe Perches
-> suggested I fix it treewide [0].
->=20
-> Best regards=20
-> Luis
->=20
->=20
-> [0] http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/201=
-8-January/115410.html
-> [1] http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/201=
-8-January/115390.html
->=20
->  arch/mips/include/asm/checksum.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/mips/include/asm/checksum.h b/arch/mips/include/asm/che=
-cksum.h
-> index 77cad232a1c6..e8161e4dfde7 100644
-> --- a/arch/mips/include/asm/checksum.h
-> +++ b/arch/mips/include/asm/checksum.h
-> @@ -110,7 +110,7 @@ __wsum csum_partial_copy_nocheck(const void *src, voi=
-d *dst,
->   */
->  static inline __sum16 csum_fold(__wsum csum)
->  {
-> -	u32 sum =3D (__force u32)csum;;
-> +	u32 sum =3D (__force u32)csum;
-> =20
->  	sum +=3D (sum << 16);
->  	csum =3D (sum < csum);
-> --=20
-> 2.15.1
->=20
 
---1rguoi8KZGYj2k4L
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+-- 
+Giulio Benetti
+R&D Manager &
+Advanced Research
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlpzO2EACgkQbAtpk944
-dnqn1A//T50PTqfoRRo7Q2UpltX3WXdXAedu8uTG+EqkILsX+ssn2+P+76YBSHLU
-VdDmME/RLu5/4cLrD7MjE3SkFWJ7iEy5xr4wSdTqjTkV7cKRr59xsIF0uiONUcYG
-BbjuxpLYxWfNOnfLtKY1QREBSxrB0AjRZQxK1BNX1UArTNzWt5rTwPWpN6iScbSa
-Pw0FzVphhc9i4LzhbPN1StXJ5cPtWNBIeeiHzXvJEYh/gupcm0KVInMfJhymtiii
-6u4oahQA4KHN8cyT37clhH4mQyaNsVyKpLjH7jb8odbaJjRFO/Vrzk3Cfh36Fk/+
-6LIuW8GP/LynpHKYstx4FxQvPqDyS6ytpMt/WN2DauIZbEOFTu+E4NmCpz8tWb2A
-y8YfwmaBGEoymHvy0Vol0YJ+ePDxX4ZbKSd/VfSDKE+2pducZWzZWiEAwPLmwZWq
-KEeqSHrdCZPflhWdOB+9+9nvDSm6St7IgS/4pc78/vFf2gWNLAqq7yTMAT0MMt9u
-MqOFm0XoRmHXukyuC4hCf1cjNpF3Ox9qZSV6TcvwCjhnen0WN1UtGTmkAWuGXpr6
-6+DMIbYpw8J/mb9ZPSeYzwiDnW/dgIh18tH36mrWQEOy9GBo/yD+m4oclPxoYBPs
-9nbgwARIDdxfmdDA6ndzDHshDdLUIgYD4ywscQ1QqiF4weiTDf4=
-=6d11
------END PGP SIGNATURE-----
-
---1rguoi8KZGYj2k4L--
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
