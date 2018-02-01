@@ -1,121 +1,121 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3115974-1517473424-2-9638920338341898423
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2638020-1517464120-2-13047753785006608063
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES endaro,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517473423; b=FYuluRgJIS/Y2fVSoto6Qr+glitcnSTba3LYdwrX6kClqZM
-    zAxLBglVYOGjmqMkl9DaSBBf9rCP38RLtg1VVRv+cyLldvD/0GPmZuFLKdt3VBIK
-    7uHyca+1OW2EAVyjOrZgqnuGLJcIM1SM1N+OHuuEfO5ZNwBGuQSENmVLuNdTdjWO
-    aoXQGzlCSBT2RBf2tzGFWxciA252+zafP+ZHi7PjZZBdEwUsqIb5a56N6Du6l9mM
-    DWiR+GtX58YZB/RwoabwIgnEp1dOU0i6pT+DhYTfiFWIxF7sldlJvCabeY/0fbbw
-    nrwfykDeu66setJLNdkIMi+BOf/mSEsPjEbkoUQ==
+    t=1517464119; b=CNjiOE37VhDHEeKGFL+IJTt4sk8HLkpBFbaLdt9ZXJx9vak
+    UM1F3yHXmbr7RdN1e/5xJrayhDb8i9sPE8eBE9BOrBSZ9aCnurB9X2UuFI8NvCmv
+    yh3bdlG/IOLyLTa+IcVrEnveU+KZQw3WlQGGjjn2soqJPJPCVFv794iYvsIOOEu/
+    pjF4YLjdxisqlTf0BFb+nhW7QhN/I8kW4CKHuzwfnenWFXfBk6NcL1sOzagW5zwG
+    X5ZMaWhArbamTCZh7yTkp4sMb7VacQEP60iJHXTQ5QDEXmF/izYGX2d4282WfYH8
+    XWBujujhTJBZ6S2+6/8GFAvjvi8UGWMNeqcivyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1517473423; bh=8
-    OR3Y/3Wd7ax/t/kEFq/be3BMkjtRdYgN/5wSE2d4FA=; b=jhjFA8H9vi1NA9LI6
-    imrCK/nqXDDM5PMMtf5yKKt81NCFCc+RmtA4XilaDnDHv88Hs91tCHuhw5QvTr6o
-    0j+/nuPn6Bbp2mJ67utzgdA6cVo4U/Bin2CPIRhFLDcFNpioN2zqS/p5GUyaQ8ee
-    nTuxqLeRPsxM3demoqrzAKM76stdnsdHQx6CTa02uU73BNlcgeWOBwVzo35ou8+p
-    cOvW4dsTuhs/qIwo/monkm09RwEsnviYflrdkcjRftou37quZhGJyGX3TwWV9a+b
-    VFTriSSF7qeAtK1PYqklK+1h8gVB6Hc+WrsoCkSL7vQUW/Kg0fA4c7pymj+xePMf
-    BkOdw==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=
+    arctest; t=1517464119; bh=+uHWau19r4odmJO7gMjkoC6UiAqFRxQ5JJs8W7
+    qXs3Y=; b=if4DrkxqKfbnQF4ZxnmT2zzdp0rolURAqJ3jKl06BVZl1m0u73ZwgP
+    Lv8xUpZxakpt+hdpQMbiUq8wgvVma9QA/bUDNBGB/EcHi4GzPKpLh6rk3sRaeM6d
+    ymFK1LLD7R/0eRS/E0ODDWdbspC1LJO9kA94ZBmvnAJx3k5uKntSHS9QTJNaaixv
+    EKwTikwv1gviJ/2CX0n3N4gv71b1e7KRFEbkDEklb4Z3oTlzzmBZ8qdQgfxMQ6+N
+    EwUek0D7xgIWUYtcM9ziDh7CA3naM+iySPzkJEVDr9unq6HyosbgSPF/q02QrrLV
+    CJhV9US4AmCt+rFSKxPqEKNe8lGsf1qg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=E/AVr7db x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=windriver.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=windriver.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=E/AVr7db x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=windriver.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 1 Feb 2018 11:23:26 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Quytelda Kahja <quytelda@tamalin.org>
-Subject: Re: [PATCH] Staging: fwserial: remove unnecessary parenthesis
-Message-ID: <20180201082325.bb7hfaoqxuavee6o@mwanda>
-References: <20180201053951.18688-1-quytelda@tamalin.org>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180201053951.18688-1-quytelda@tamalin.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8791
- signatures=668659
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=905
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802010110
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=windriver.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751625AbeBAFsh convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Thu, 1 Feb 2018 00:48:37 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:48644 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751602AbeBAFse (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Thu, 1 Feb 2018 00:48:34 -0500
+From: "Yoshida, Shigeru" <Shigeru.Yoshida@windriver.com>
+To: "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>
+CC: "Bai, Haiqing" <Haiqing.Bai@windriver.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ohci-hcd: Fix race condition caused by
+ ohci_urb_enqueue() and io_watchdog_func()
+Thread-Topic: [PATCH] ohci-hcd: Fix race condition caused by
+ ohci_urb_enqueue() and io_watchdog_func()
+Thread-Index: AQHTmncRqxjtZV1slkO7r5QpQNTFa6OOqw2AgADm5YA=
+Date: Thu, 1 Feb 2018 05:48:13 +0000
+Message-ID: <20180201.144911.2171407625301691891.shigeru.yoshida@windriver.com>
+References: <1517390197-32323-1-git-send-email-Haiqing.Bai@windriver.com>
+        <Pine.LNX.4.44L0.1801311053240.1370-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1801311053240.1370-100000@iolanthe.rowland.org>
+Accept-Language: ja-JP, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [128.224.232.213]
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-ID: <C18C3AF19F156F43B851A91BDEE2308C@local>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Jan 31, 2018 at 09:39:51PM -0800, Quytelda Kahja wrote:
-> Removed parenthesis causing a coding style warning.
+Hi Alan,
+
+Thank you for your commenting.
+
+On Wed, 31 Jan 2018 11:02:47 -0500, Alan Stern wrote:
+>> To address above scenario, this patch introduces timer_running flag to
+>> ohci_hcd structure.  Setting true to ohci->timer_running indicates
+>> io_watchdog_func() is scheduled or is running.  ohci_urb_enqueue()
+>> checks the flag when it schedules the watchdog (step 4 and 12 above),
+>> so ohci->prev_frame_no is not overwritten while io_watchdog_func() is
+>> running.
 > 
-> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
-> ---
->  drivers/staging/fwserial/dma_fifo.c | 2 +-
->  drivers/staging/fwserial/fwserial.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Instead of adding an extra flag variable, which has to be kept in sync 
+> with the timer routine, how about defining a special sentinel value for 
+> prev_frame_no?  For example:
 > 
-> diff --git a/drivers/staging/fwserial/dma_fifo.c b/drivers/staging/fwserial/dma_fifo.c
-> index 8b23a553fd4a..ead71f93f3c9 100644
-> --- a/drivers/staging/fwserial/dma_fifo.c
-> +++ b/drivers/staging/fwserial/dma_fifo.c
-> @@ -259,7 +259,7 @@ int dma_fifo_out_complete(struct dma_fifo *fifo, struct dma_pending *complete)
->  	if (list_empty(&fifo->pending) && fifo->open == 0)
->  		return -EINVAL;
->  
-> -	if (FAIL(fifo, list_empty(&fifo->pending) != (fifo->open == 0),
-> +	if (FAIL(fifo, list_empty(&fifo->pending) != fifo->open == 0,
+> #define IO_WATCHDOG_OFF		0xffffff00
+> 
+> Then whenever the timer isn't scheduled or running, set
+> ohci->prev_frame_no to IO_WATCHDOG_OFF.  And instead of testing
+> timer_pending(), compare prev_frame_no to this special value.
+> 
+> I think that approach will be slightly more robust.
 
-No no no...  You've changed what the code does here...  I'm so surprised
-the compiler doesn't complain.
+It's reasonable since ohci->prev_frame_no is not used while the
+watchdog timer is stopped.
 
-regards,
-dan carpenter
+I think we must choose an invalid frame number for the special
+sentinel value, but I'm not sure which value is adequate for it.
+Is 0xffffff00 an invalid frame number, otherwise how about simply
+-1(0xffffffff)?
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Thanks,
+Shigeru
