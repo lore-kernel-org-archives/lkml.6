@@ -1,143 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756018AbeBABOA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 20:14:00 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57700 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755903AbeBABN6 (ORCPT
+        id S1756022AbeBABRj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 20:17:39 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35634 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755937AbeBABRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 20:13:58 -0500
-Subject: Re: [PATCH v2] mm: Reduce memory bloat with THP
-To: Mel Gorman <mgorman@suse.de>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>, Michal Hocko <mhocko@kernel.org>,
-        Nitin Gupta <nitingupta910@gmail.com>, steven.sistare@oracle.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Minchan Kim <minchan@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        "Levin, Alexander" <alexander.levin@verizon.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Hillf Danton <hillf.zj@alibaba-inc.com>, Shaohua Li <shli@fb.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>, Rik van Riel <riel@redhat.com>,
-        Jan Kara <jack@suse.cz>, Dave Jiang <dave.jiang@intel.com>,
-        J?r?me Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@linux.intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Hugh Dickins <hughd@google.com>, Tobin C Harding <me@tobin.cc>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <1516318444-30868-1-git-send-email-nitingupta910@gmail.com>
- <20180119124957.GA6584@dhcp22.suse.cz>
- <ce7c1498-9f28-2eb0-67b7-ade9b04b8e2b@oracle.com>
- <59F98618-C49F-48A8-BCA1-A8F717888BAA@cs.rutgers.edu>
- <4d7ce874-9771-ad5f-c064-52a46fc37689@oracle.com>
- <20180125211303.rbfeg7ultwr6hpd3@suse.de>
-From: Nitin Gupta <nitin.m.gupta@oracle.com>
-Message-ID: <c8e16ca6-b78d-6066-4d5a-bb6be337c93e@oracle.com>
-Date: Wed, 31 Jan 2018 17:09:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 31 Jan 2018 20:17:36 -0500
+Date: Wed, 31 Jan 2018 17:17:28 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        stern@rowland.harvard.edu, parri.andrea@gmail.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, boqun.feng@gmail.com, will.deacon@arm.com,
+        peterz@infradead.org, npiggin@gmail.com, dhowells@redhat.com,
+        elena.reshetova@intel.com, mhocko@suse.com, akiyks@gmail.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL tools] Linux kernel memory model
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180125093440.GA875@linux.vnet.ibm.com>
+ <20180129065724.ybrdsabvktq7fbqg@gmail.com>
+ <20180129095449.GT3741@linux.vnet.ibm.com>
+ <20180131090006.onaopgyqthppoysi@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180125211303.rbfeg7ultwr6hpd3@suse.de>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8791 signatures=668659
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802010012
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131090006.onaopgyqthppoysi@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18020101-0044-0000-0000-000003D90593
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008457; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000248; SDB=6.00983247; UDB=6.00498647; IPR=6.00762530;
+ BA=6.00005806; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019311; XFM=3.00000015;
+ UTC=2018-02-01 01:17:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020101-0045-0000-0000-0000080870BC
+Message-Id: <20180201011728.GL3741@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-01-31_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802010012
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 31, 2018 at 10:00:06AM +0100, Ingo Molnar wrote:
+> 
+> * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> > On Mon, Jan 29, 2018 at 07:57:24AM +0100, Ingo Molnar wrote:
+> > > 
+> > > hi Paul,
+> > > 
+> > > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+> > > 
+> > > > Hello, Ingo,
+> > > > 
+> > > > This pull request contains a single commit that adds a memory model to
+> > > > the tools directory.  This memory model can (roughly speaking) be thought
+> > > > of as an automated version of memory-barriers.txt.  It is written in the
+> > > > "cat" language, which is executable by the externally provided "herd7"
+> > > > simulator, which exhaustively explores the state space of small litmus
+> > > > tests.
+> > > > 
+> > > > This memory model is accompanied by extensive documentation on its use
+> > > > and its design.  Two versions have been sent to LKML and feedback
+> > > > incorporated:
+> > > > 
+> > > > 1.	http://lkml.kernel.org/r/20171113184031.GA26302@linux.vnet.ibm.com
+> > > > 2.	http://lkml.kernel.org/r/20180119035855.GA29296@linux.vnet.ibm.com
+> > > > 
+> > > > This model has been presented and demoed at a number of Linux gatherings,
+> > > > including the 2016 LinuxCon EU, the 2016 Linux Plumbers Conference,
+> > > > the 2016 Linux Kernel Summit, the 2017 linux.conf.au, and the 2017 Linux
+> > > > Plumbers Conference, which featured a workshop helping a number of Linux
+> > > > kernel hackers install and use the tool.
+> > > > 
+> > > > This memory model has matured to the point where it would be good to include
+> > > > it in the Linux kernel, for example, to allow it to track changes as new
+> > > > hardware and use cases are added.  We expect the rate of change to be similar
+> > > > to that of Documentation/memory-barriers.txt.
+> > > > 
+> > > > This memory model is available in the git repository at:
+> > > > 
+> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git 
+> > > > 
+> > > > for you to fetch changes up to 1c27b644c0fdbc61e113b8faee14baeb8df32486:
+> > > > 
+> > > >   Automate memory-barriers.txt; provide Linux-kernel memory model (2018-01-24 20:53:49 -0800)
+> > > 
+> > > Looks good to me, but the commit is not in the master branch of your tree, which 
+> > > branch should I pull?
+> > 
+> > Oops!!!  The branch is lkmm-for-mingo.
+> > 
+> > Please accept my apologies for the implicit maintainer treasure hunt!
+> 
+> No problem, was able to pull it!
+> 
+> I really like this formal description of of the Linux kernel memory coherency 
+> model and the extensive documentation around it. Clearly a lot of effort went
+> into this work!
 
+Glad you like it, and kudos to my partners in crime!  ;-)
 
-On 01/25/2018 01:13 PM, Mel Gorman wrote:
-> On Thu, Jan 25, 2018 at 11:41:03AM -0800, Nitin Gupta wrote:
->>>> It's not really about memory scarcity but a more efficient use of it.
->>>> Applications may want hugepage benefits without requiring any changes to
->>>> app code which is what THP is supposed to provide, while still avoiding
->>>> memory bloat.
->>>>
->>> I read these links and find that there are mainly two complains:
->>> 1. THP causes latency spikes, because direction compaction slows down THP allocation,
->>> 2. THP bloats memory footprint when jemalloc uses MADV_DONTNEED to return memory ranges smaller than
->>>    THP size and fails because of THP.
->>>
->>> The first complain is not related to this patch.
->>
->> I'm trying to address many different THP issues and memory bloat is
->> first among them.
+> A couple of questions:
 > 
-> Expecting userspace to get this right is probably going to go sideways.
-> It'll be screwed up and be sub-optimal or have odd semantics for existing
-> madvise flags. The fact is that an application may not even know if it's
-> going to be sparsely using memory in advance if it's a computation load
-> modelling from unknown input data.
-> 
-> I suggest you read the old Talluri paper "Superpassing the TLB Performance
-> of Superpages with Less Operating System Support" and pay attention to
-> Section 4. There it discusses a page reservation scheme whereby on fault
-> a naturally aligned set of base pages are reserved and only one correctly
-> placed base page is inserted into the faulting address. It was tied into
-> a hypothetical piece of hardware that doesn't exist to give best-effort
-> support for superpages so it does not directly help you but the initial
-> idea is sound. There are holes in the paper from todays perspective but
-> it was written in the 90's.
-> 
-> From there, read "Transparent operating system support for superpages"
-> by Navarro, particularly chapter 4 paying attention to the parts where
-> it talks about opportunism and promotion threshold.
-> 
-> Superficially, it goes like this
-> 
-> 1. On fault, reserve a THP in the allocator and use one base page that
->    is correctly-aligned for the faulting addresses. By correctly-aligned,
->    I mean that you use base page whose offset would be naturally contiguous
->    if it ever was part of a huge page.
-> 2. On subsequent faults, attempt to use a base page that is naturally
->    aligned to be a THP
-> 3. When a "threshold" of base pages are inserted, allocate the remaining
->    pages and promote it to a THP
-> 4. If there is memory pressure, spill "reserved" pages into the main
->    allocation pool and lose the opportunity to promote (which will need
->    khugepaged to recover)
-> 
-> By definition, a promotion threshold of 1 would be the existing scheme
-> of allocation a THP on the first fault and some users will want that. It
-> also should be the default to avoid unexpected overhead.  For workloads
-> where memory is being sparsely addressed and the increased overhead of
-> THP is unwelcome then the threshold should be tuned higher with a maximum
-> possible value of HPAGE_PMD_NR.
-> 
-> It's non-trivial to do this because at minimum a page fault has to check
-> if there is a potential promotion candidate by checking the PTEs around
-> the faulting address searching for a correctly-aligned base page that is
-> already inserted. If there is, then check if the correctly aligned base
-> page for the current faulting address is free and if so use it. It'll
-> also then need to check the remaining PTEs to see if both the promotion
-> threshold has been reached and if so, promote it to a THP (or else teach
-> khugepaged to do an in-place promotion if possible). In other words,
-> implementing the promotion threshold is both hard and it's not free.
-> 
-> However, if it did exist then the only tunable would be the "promotion
-> threshold" and applications would not need any special awareness of their
-> address space.
-> 
+> - Would it be possible to include all the nice descriptions of the litmus tests in
+>   the tests themselves? Right now it's a bit weird that most of them come with
+>   zero explanations, but the tools/memory-model/litmus-tests/README lists most of
+>   them.
 
-I went through both references you mentioned and I really like the
-idea of reservation-based hugepage allocation.  Navarro also extends
-the idea to allow multiple hugepage sizes to be used (as support by
-underlying hardware) which was next in order of what I wanted to do in
-THP.
+Good point, and should be doable.
 
-So, please ignore this patch and I would work towards implementing
-ideas in these papers.
+> - Similary, some of the high level descriptions in tools/memory-model/README
+>   should probably propagated into the source code files as well: for example
+>   both tools/memory-model/lock.cat and linux-kernel.cat could be improved that
+>   way.
 
-Thanks for the feedback.
+I gratefully accept Peter's and Will's offer here.  ;-)
 
-Nitin
+> - Could tools/memory-model/MAINTAINERS be added to the main Linux MAINTAINERS file 
+>   as well, like we do for other bits of tooling?
+
+Easily enough.  Should we have both files, or just keep the
+information in the main Linux MAINTAINERS file, eliminating
+tools/memory-model/MAINTAINERS?  I have the usual concerns about
+duplicating this information.
+
+> - There's no description about why the .bell file is called 'bell' and what 
+>   language/syntax it is in - I had to search around to figure out that it's a 
+>   "Bell extension" to .cat files. This aspect IMHO isn't really obvious to first 
+>   time readers so a bit more explanation would be nice.
+
+This was named before my time, but I believe that it is a play on "bell
+the cat" (https://en.wikipedia.org/wiki/Belling_the_cat).
+
+Anyway, by convention (roughly speaking) the .bell file defines events
+(loads, stores, atomic operations, barriers) and the .cat file defines
+how those events interact, as in what cycles are permitted and not.
+
+> - A high level question: have you considered calling it the "Linux kernel memory 
+>   coherency model", instead of the "Linux memory model"? Another naming would be 
+>   the "Linux kernel memory access model" as memory-barriers.txt calls it.
+>   The "memory model" name is overly generic, ambiguous and somewhat misleading,
+>   as we usually mean the virtual memory layout/model when we say "memory model".
+>   GCC too uses it in that sense: 'small memory model' and 'large memory model' -
+>   which too is about VM layout, not multiprocessing coherency.
+
+Interesting point.  There is a lot of history calling these things
+"memory models", so there may be different tradeoffs for different people.
+Wikipedia has these two, which might indicate that the ambiguity is not
+too problematic:
+
+https://en.wikipedia.org/wiki/Memory_model_(programming)
+https://en.wikipedia.org/wiki/Memory_address#Memory_models
+
+But worth some thought!
+
+> - A long term question: have you considered and would it make sense to generate a
+>   memory-barriers.txt like file directly into Documentation/locking/, using the
+>   formal description? That way any changes/extensions/fixes to the model could be
+>   tracked on a high level, without readers having to understand the formal
+>   representation.
+
+I hadn't considered this at all, actually.  ;-)
+
+The sections of memory-barriers.txt dealing with MMIO ordering would need
+to stay hand-generated, but they are a very small fraction of the total.
+The herd7 tool is capable of generating cool diagrams sort of like
+this one: https://static.lwn.net/images/2017/mm-model/rmo-acyclic.png,
+which might replace at least some of the hand-generated ASCII-art
+diagrams.
+
+Although I do confess harboring some skepticism about being able to
+generated high-quality text, there is no denying that it would be
+valuable to be able to do so.
+
+> In any case, the base commit is certainly nice and clean and I've pulled it into 
+> tip:locking/core for a v4.17 merge.
+
+Very good!
+
+> I believe these additional improvements (to the extent you agree with doing them!) 
+> could/should be done as add-on commits on top of this existing commit.
+
+Sounds good!
+
+Would you prefer a pull request or a patch series for these?
+
+							Thanx, Paul
