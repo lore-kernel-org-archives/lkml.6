@@ -1,72 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752167AbeBAWqR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 17:46:17 -0500
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:44260 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeBAWqK (ORCPT
+        id S1752155AbeBAWte (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 17:49:34 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52602 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752042AbeBAWtX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 17:46:10 -0500
-X-Google-Smtp-Source: AH8x226vlIgrUrK41s6afDWPRxZLWk9oqMaKPSoqsSvQFhVRX6+dAtaImmn/XxScga3wojhHITDvAw==
-Subject: Re: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>
-Cc: initramfs <initramfs@vger.kernel.org>,
-        Taras Kondratiuk <takondra@cisco.com>,
-        Victor Kamensky <kamensky@cisco.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
- <1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
- <1517436423.3469.237.camel@linux.vnet.ibm.com>
- <a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
- <20180201020331.GA3774@rani.riverdale>
- <1517458921.3329.2.camel@linux.vnet.ibm.com>
-From: Rob Landley <rob@landley.net>
-Message-ID: <a9249307-9c95-ea75-bc83-7b95412e6ec4@landley.net>
-Date: Thu, 1 Feb 2018 16:46:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 1 Feb 2018 17:49:23 -0500
+X-Google-Smtp-Source: AH8x227inzODZWZDLbjl68IFpEb9HXumL++kp86SBAhsssmBiHvK1uopJaba+tWiogVD/JzEYFX1gw==
+Date: Thu, 1 Feb 2018 15:49:17 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        Himanshu Jha <himanshujha199640@gmail.com>,
+        Jonathan Toppins <jtoppins@redhat.com>
+Subject: Re: [PATCH 0/2] RDMA/bnxt_re: Adjustments for
+ bnxt_qplib_alloc_dpi_tbl()
+Message-ID: <20180201224917.GA8590@ziepe.ca>
+References: <19c755a6-8c52-bbd5-a425-48fc08cecd4f@users.sourceforge.net>
 MIME-Version: 1.0
-In-Reply-To: <1517458921.3329.2.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19c755a6-8c52-bbd5-a425-48fc08cecd4f@users.sourceforge.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 01/31/2018 10:22 PM, Mimi Zohar wrote:
-> On Wed, 2018-01-31 at 21:03 -0500, Arvind Sankar wrote:
->> On Wed, Jan 31, 2018 at 05:48:20PM -0600, Rob Landley wrote:
->>> On 01/31/2018 04:07 PM, Mimi Zohar wrote:
->>>> On Wed, 2018-01-31 at 13:32 -0600, Rob Landley wrote:>> (The old "I configured in tmpfs and am using rootfs but I want that
->>> rootfs
->>>>> to be ramfs, not tmpfs" code doesn't seem to be a real-world concern, does
->>>>> it?)
->>>>
->>>> I must be missing something.  Which systems don't specify "root=" on
->>>> the boot command line.
->>>
->>> Any system using initrd or initramfs?
->>>
->>
->> Don't a lot of initramfs setups use root= to tell the initramfs which
->> actual root file system to switch to after early boot?
+On Sat, Jan 27, 2018 at 09:15:09PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 27 Jan 2018 21:10:12 +0100
 > 
-> With your patch and specifying "root=tmpfs", dracut is complaining:
+> Two update suggestions were taken into account
+> from static source code analysis.
 > 
-> dracut: FATAL: Don't know how to handle 'root=tmpfs'
-> dracut: refusing to continue
+> Markus Elfring (2):
+>   Delete two error messages for a failed memory allocation
+>   Use common error handling code
 
-"The kernel can't break this buggy userspace package."
+Applied to for-next with Jonathan and Devesh's ack, thanks all
 
-"The kernel must give access to a new feature to this buggy userspace
-package".
-
-I think kernel policy asks you to pick one, but I could be wrong...
-
-Rob
+Jason
