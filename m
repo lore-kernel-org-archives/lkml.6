@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeBAKWJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 05:22:09 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:50646 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751766AbeBAKWG (ORCPT
+        id S1752147AbeBAKW2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 05:22:28 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:46116 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbeBAKWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 05:22:06 -0500
+        Thu, 1 Feb 2018 05:22:08 -0500
 From: Geert Uytterhoeven <geert@linux-m68k.org>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
         "David S . Miller" <davem@davemloft.net>,
@@ -18,12 +18,10 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
         linux-crypto@vger.kernel.org, linux-sparse@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 3/3] crypto: sha3-generic - Use __optimize to support old compilers
-Date: Thu,  1 Feb 2018 11:22:00 +0100
-Message-Id: <1517480520-4465-3-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 1/3] compiler-gcc.h: Introduce __optimize function attribute
+Date: Thu,  1 Feb 2018 11:21:58 +0100
+Message-Id: <1517480520-4465-1-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517480520-4465-1-git-send-email-geert@linux-m68k.org>
-References: <1517480520-4465-1-git-send-email-geert@linux-m68k.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -31,30 +29,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With gcc-4.1.2:
+Create a new function attribute __optimize, which allows to specify an
+optimization level on a per-function basis.
 
-    crypto/sha3_generic.c:39: warning: ‘__optimize__’ attribute directive ignored
-
-Use the newly introduced __optimize macro to fix this.
-
-Fixes: 83dee2ce1ae791c3 ("crypto: sha3-generic - rewrite KECCAK transform to help the compiler optimize")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- crypto/sha3_generic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I assume this is supported as of gcc-4.4:
+  - gcc version 4.3.3 (GCC): warning: ‘__optimize__’ attribute directive
+    ignored
+  - gcc version 4.4.7 (Ubuntu/Linaro 4.4.7-1ubuntu2): OK
+---
+ include/linux/compiler-gcc.h | 4 ++++
+ include/linux/compiler.h     | 4 ++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/crypto/sha3_generic.c b/crypto/sha3_generic.c
-index a965b9d8055983af..c409cd87fea5decd 100644
---- a/crypto/sha3_generic.c
-+++ b/crypto/sha3_generic.c
-@@ -35,7 +35,7 @@ static const u64 keccakf_rndc[24] = {
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index 631354acfa720475..0a278a527944ad2f 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -196,6 +196,10 @@
+ #endif /* __CHECKER__ */
+ #endif /* GCC_VERSION >= 40300 */
  
- /* update the state with given number of rounds */
++#if GCC_VERSION >= 40400
++#define __optimize(level)	__attribute__((__optimize__(level)))
++#endif /* GCC_VERSION >= 40400 */
++
+ #if GCC_VERSION >= 40500
  
--static void __attribute__((__optimize__("O3"))) keccakf(u64 st[25])
-+static void __optimize("O3") keccakf(u64 st[25])
- {
- 	u64 t[5], tt, bc[5];
- 	int round;
+ #ifndef __CHECKER__
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 52e611ab9a6cf6fd..5ff818e9a836e898 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -271,6 +271,10 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
+ 
+ #endif /* __ASSEMBLY__ */
+ 
++#ifndef __optimize
++# define __optimize(level)
++#endif
++
+ /* Compile time object size, -1 for unknown */
+ #ifndef __compiletime_object_size
+ # define __compiletime_object_size(obj) -1
 -- 
 2.7.4
