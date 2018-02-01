@@ -1,213 +1,85 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-X-Google-Smtp-Source: AH8x225uGEngk39EdtkamZWRX3srVr4oCbtVRVyCFhbHu4jM3Hu+4OoJQIgRIp7UpVEuW+WQCwdy
-ARC-Seal: i=1; a=rsa-sha256; t=1517500483; cv=none;
+Return-Path: <niklas.cassel@axis.com>
+X-Google-Smtp-Source: AH8x226RawP3tt/7QjbazM9u6K0In2ltK+v9An42183Ky8twH5KQWcAKyd29+OM7IYjFfES2plpx
+ARC-Seal: i=1; a=rsa-sha256; t=1517501492; cv=none;
         d=google.com; s=arc-20160816;
-        b=V89UyVQGZx6RG4btuG8BAU+su3kQBGo/lDWsJ58/imoCNM8MqQ2zn2eqAPvRMIkkti
-         XtX9bewU8cxxzHcrRnu7ibo8w80cPL+sS+MYXxTIq3dnIuZF2JB6JR17HOLap6TdqTB9
-         OkcvwThJssmZchFLYZ+/yKfX44ULDldORAeoYvSE4WtlRrM/mnB9OWZzuXFiAxDBp620
-         2355jywfN/VNbb7KRmbvuTjHHrCC3+DqznPKB+Udc1IRZdtf+Qln19p+21Ra9EV2d0R2
-         Z7q24i8xV0Avk0DYYXgEOTrFh8NamerflRy8TbwBLop7BZbKwFTtJYmMXVYyEImQFPpm
-         qunQ==
+        b=OWyumJkyqaHC7rpNq8YQMI5UJ3GAtpJeWi/385u/wC81Gw56V/rgV3afcxWE6ZWiHs
+         7Wo+iB8QZHG1klKkGRUYlUaaeZh8pR3j5xt9L1DqBJCQ1q2Xq/sI4/sbFIj1eJr45gwf
+         eFL3t3oJRsYBAZt7yQMXOf3dqEcv2qwE4NRRO1SGLMWoMUj/qjcLI5z/1u76BLs927Vv
+         f6Y5hiGgWx05YZ5OpLVg65hVzjIznNEFMc6s8Tos4VvLUiIV2wG4siDvkm6HTowPPs79
+         siNmEX0QhgN0J8OsM3qkWx+vCXIwudV6zUN235d6XJ4aSLDJEL3ZDDr8sGvdCaOQSH6r
+         mrmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=EkVvHNP/6pdwsfngS1WI5kjAmYWAIBDsZWpmQiblUww=;
-        b=dSQiSMSZARXTbaLfjjnIHZVvIeLx28fEsTLc8rvaDpI9owE+IgksrCvOHOvAFHBxSo
-         5/7+8xHqYuvlEfdg9kRsH/MzJFrQxVetix1xg2dzrhL6S8NjK8h3yZcnd6QyHnSFqiVt
-         MY5MIgpPBDh36nNI1CyRLE+gOOVEDy19zXEwD7a+5e3s9I2UiDjVtfyAM/xqRiurv3TY
-         qGOeo0J0GAU/EQsrxhbao+8tuWp9qGOUtkCwlSlHxFqZtCM2Sgh8OdsPevT478vfEzLA
-         H+f3SuaffLr/gZ3VwpDfjI1eei9cIq9MIQhcxZuXCDmv16OLhqucmR6I420bd/jlFwm+
-         3RBg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=sPNQqtjWVTIiu5lp1Lwlen5Oz5gVFsPFgnq3WfVEE2w=;
+        b=J2Uq829ROpg1pXFmRtNZfde3EChlA6LPJ5wIuIfc68TMPvY8u7Cxv4JCiEJ6BUaOWp
+         qz9/PtIvJSgU3QB3uo/3ktAsEsLnYZ5YOamInImeEFRji0OyUHP3CdxuMvMDFoMFGd+a
+         lgWPoePQeSzc00BtcotdElfaVkWicr+fI7/ssCMX7jYbQdN1jjxyQVPRLf4yBipzYyki
+         ESUMgqc+Q3lqFxCKcmCFO4r4qOahA5IwMNvb3Fzuroz9xE81R2wQJE8zEpizVn1zQ7BY
+         TS8ZjFOSVDrtbe1Zjgmr7iPY+QvcBBJg9ruWHYKOL423T27cXmKaOzgX8QfO+x2hliqz
+         LtEA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of maxime.ripard@free-electrons.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@free-electrons.com
+       spf=pass (google.com: domain of niklas.cassel@axis.com designates 195.60.68.11 as permitted sender) smtp.mailfrom=niklas.cassel@axis.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of maxime.ripard@free-electrons.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@free-electrons.com
-Date: Thu, 1 Feb 2018 16:54:32 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Liviu Dudau <liviu@dudau.co.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, Yong <yong.deng@magewell.com>,
-	kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-	Hugues Fruchet <hugues.fruchet@st.com>,
-	Yannick Fertre <yannick.fertre@st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Rick Chang <rick.chang@mediatek.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	DTML <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, megous@megous.com
-Subject: Re: [linux-sunxi] Re: [PATCH v6 2/2] media: V3s: Add support for
- Allwinner CSI.
-Message-ID: <20180201155432.odv6p6rals3sujhx@flea.lan>
-References: <1516695531-23349-1-git-send-email-yong.deng@magewell.com>
- <201801260759.RyNhDZz4%fengguang.wu@intel.com>
- <20180126094658.aa70ed3f890464f6051e21e4@magewell.com>
- <20180126110041.f89848325b9ecfb07df387ca@magewell.com>
- <20180131030807.GA19945@bart.dudau.co.uk>
- <20180131074212.7hvb3nqkt22h2chg@flea.lan>
- <20180131144753.GB19945@bart.dudau.co.uk>
- <20180201083222.q6rqql4nngn2bhiy@flea.lan>
- <CAK8P3a01DqmVJKt6J2i_okVoeELJCUW0voW0r52EzBY7iF74xQ@mail.gmail.com>
- <20180201113442.GC19945@bart.dudau.co.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="52oyo5npgo7v2l5n"
-Content-Disposition: inline
-In-Reply-To: <20180201113442.GC19945@bart.dudau.co.uk>
-User-Agent: NeoMutt/20171215
+       spf=pass (google.com: domain of niklas.cassel@axis.com designates 195.60.68.11 as permitted sender) smtp.mailfrom=niklas.cassel@axis.com
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: kishon@ti.com,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] misc: pci_endpoint_test: Handle 64-bit BARs properly
+Date: Thu,  1 Feb 2018 17:11:18 +0100
+Message-Id: <20180201161119.3852-3-niklas.cassel@axis.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180201161119.3852-1-niklas.cassel@axis.com>
+References: <20180201161119.3852-1-niklas.cassel@axis.com>
+X-TM-AS-GCONF: 00
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590370608168306586?=
-X-GMAIL-MSGID: =?utf-8?q?1591214586969046179?=
+X-GMAIL-THRID: =?utf-8?q?1591215644566133735?=
+X-GMAIL-MSGID: =?utf-8?q?1591215644566133735?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+A 64-bit BAR uses the succeeding BAR for the upper bits,
+so we cannot simply call pci_ioremap_bar() on every single BAR.
 
---52oyo5npgo7v2l5n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ignore BARs that does not have a valid resource length.
 
-On Thu, Feb 01, 2018 at 11:34:43AM +0000, Liviu Dudau wrote:
-> On Thu, Feb 01, 2018 at 10:20:28AM +0100, Arnd Bergmann wrote:
-> > On Thu, Feb 1, 2018 at 9:32 AM, Maxime Ripard
-> > <maxime.ripard@free-electrons.com> wrote:
-> > > On Wed, Jan 31, 2018 at 02:47:53PM +0000, Liviu Dudau wrote:
-> > >> On Wed, Jan 31, 2018 at 08:42:12AM +0100, Maxime Ripard wrote:
-> > >> > On Wed, Jan 31, 2018 at 03:08:08AM +0000, Liviu Dudau wrote:
-> > >> > > On Fri, Jan 26, 2018 at 11:00:41AM +0800, Yong wrote:
-> > >>
-> > >> Yeah, sorry, my threading of the discussion was broken and I've seen
-> > >> the rest of the thread after I have replied. My bad!
-> > >>
-> > >> >
-> > >> > In our case, the bus where the device is attached will not do the
-> > >> > address translations, and shouldn't.
-> > >>
-> > >> In my view, the bus is already doing address translation at physical
-> > >> level, AFAIU it remaps the memory to zero.
-> > >
-> > > Not really. It uses a separate bus with a different mapping for the
-> > > DMA accesses (and only the DMA accesses). The AXI (or AHB, I'm not
-> > > sure, but, well, the "registers" bus) doesn't remap anything in
-> > > itself, and we only describe this one usually in our DTs.
->=20
-> I was actually thinking about the DMA bus (AXI bus, most likely), not the
-> "registers" bus (yes, usually APB or AHB). The DMA bus is the one that do=
-es
-> the implicit remapping for the addresses it uses, if I understood you cor=
-rectly.
->=20
-> > Exactly, the DT model fundamentally assumes that each a device is
-> > connected to exactly one bus, so we make up a device *tree* rather
-> > than a non-directed mesh topology that you might see in modern
-> > SoCs.
->=20
-> I think you are right, but we also have the registers property for a devi=
-ce node
-> and that can be used for describing the "registers" bus. Now, it is possi=
-ble
-> that some driver code gets confused between accessing the device registers
-> (which in Arm world happens through an APB or AHB bus) and the device doi=
-ng system
-> read/writes which usually happends through an AXI (or for very old system=
-s, AHB) bus.
->=20
-> For the sake of making sure we are talking about the same thing and in ho=
-pe
-> that Maxime or Yong can give a more detailed picture of this device
+pci 0000:01:00.0: BAR 4: assigned [mem 0xc0300000-0xc031ffff 64bit]
+pci 0000:01:00.0: BAR 2: assigned [mem 0xc0320000-0xc03203ff 64bit]
+pci 0000:01:00.0: BAR 0: assigned [mem 0xc0320400-0xc03204ff 64bit]
+pci-endpoint-test 0000:01:00.0: can't ioremap BAR 1: [??? 0x00000000 flags 0x0]
+pci-endpoint-test 0000:01:00.0: failed to read BAR1
+pci-endpoint-test 0000:01:00.0: can't ioremap BAR 3: [??? 0x00000000 flags 0x0]
+pci-endpoint-test 0000:01:00.0: failed to read BAR3
+pci-endpoint-test 0000:01:00.0: can't ioremap BAR 5: [??? 0x00000000 flags 0x0]
+pci-endpoint-test 0000:01:00.0: failed to read BAR5
 
-Keep in mind that this part is heavily under-documented to us, and
-this is mostly information collected through testing and reading
-through the various vendor trees.
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+---
+Lorenzo/Bjorn: pci_resource_len() seems to fix my problem,
+but is it the correct function to use here?
+If BAR[x] is a 64-bit BAR, I'm assuming that pci_resource_len() on BAR[x+1]
+will always return 0 (since BAR[x+1] cannot have any prefetchable/type bits
+when BAR[x] is 64-bit).
 
-As far as I know, a few devices (Display Engine, hardware codec, the
-CSI driver that spawned this discussion) are connected to the memory
-through a proprietary bus that does the remapping. The registers part
-is connected to an AHB bus.
+ drivers/misc/pci_endpoint_test.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> I'll re-iterate what a lot of devices in the Arm world look like
-> nowadays:
->=20
-> - they have a bus for accessing the "registers" of the device, for contro=
-lling
->   the behaviour of that device. Inside the SoC, that happens through the
->   APB bus and it has a separate clock. The CPU has a view of those regist=
-ers
->   through some mapping in the address space that has been backed by the h=
-ardware
->   engineers at design time and in DT we express that through the "registe=
-rs" property,
->   plus the "apb_clk" for most of the bindings. In DT world we express the=
- mapping
->   vis-a-vis the parent bus by using the "ranges" property.
-
-We do have that.
-
-> - they have a high speed bus for doing data transfers. Inside the SoC that
->   happens through an AXI or more modern CCI interconnect bus. The CPU doe=
-s not
->   have a direct view on those transfers, but by using IOMMUs, SMMUs or si=
-mple
->   bus mastering capabilities it can gain knowledge of the state of the tr=
-ansfers
->   and/or influence the target memory.
-
-Part of that bus controller allows to probe the bus bandwidth and / or
-set limits for the various controllers connected to it, so it seems to
-match that description.
-
->   In the DT world, we use the "dma-ranges" property like you say to
->   express the translations that happen on that bus.
-
-Right, except that the way dma-ranges is parsed at the moment is that
-it will look on the parent node for dma-ranges. In this case, the
-parent in the DT will be our AHB bus, and not all the devices
-connected on that AHB bus that do DMA go through that DMA bus with the
-different mapping. So setting it there isn't an option.
-
-> Maxime/Yong: does your device have more than one AXI bus for doing
-> transfers?
-
-Not as far as I know.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---52oyo5npgo7v2l5n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpzODcACgkQ0rTAlCFN
-r3Ry4A//ftqxc40x32HJ8OqXs6ZO8AGW8747Y1D9u6gLO4wrL8I5F4ttRWT5gqug
-Dn+o8lidRtNhsiHgqUc7mqqBZMwqUF1R7A7Tly1kaSMO0B7x6QHbH7Uj2EH8H0Gs
-pSI6VFG+lhdKk4WJ5+3tGvuDfLWKlXC1CvoOSSRU5WK/FyfL3jnjDbj29Y0fr3EC
-jpP5O+2TUwM9yNGSX//rLSbwgwldSbzRdCgo6zLHlrwgJ+2Xj/Wsml2fwS42j8p5
-sqGhwCj/Hy7tKVtUbi8wtT3019y+Y6XpYEjktHwPBeliDWSZKrE0Y8iubpSfvA//
-LXR1mFCGBQlDyXNtnxWqETMEmypHuV6U0ZyfldP/rVNybskCEqL3gnNvGKAwyuD+
-48rJGD3hy5+R3HTYEFmZHihSPaNez0zIlgDoHqwcdOGAetBgmhq+Dcu+tB9nzK/B
-Kvk3tVWtKHJpZu3WLISpkKzFjh85ZSf3JVXI+YnisT/sv6hgznq8lUyuPjlYvJzm
-yR9aPY2LygdMrIgIraZ9f5spfeR7ot+eJXD0Vr7b0WeqC+QGp7UEV2uYt+g8lXeL
-4IoF1HbngY054Y9cBLXxJNSrjv2syTdpJNU6LSKHb4gb/yb2KsbD1uHo85efJG4L
-EJmTwMmFFR2g1Qr+2DQ68G0Uuj9LiVznzhfWfBIbZtrXRkliKG4=
-=YY2K
------END PGP SIGNATURE-----
-
---52oyo5npgo7v2l5n--
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index 320276f42653..3af31bfdcfdd 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -534,6 +534,8 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 	}
+ 
+ 	for (bar = BAR_0; bar <= BAR_5; bar++) {
++		if (pci_resource_len(pdev, bar) == 0)
++			continue;
+ 		base = pci_ioremap_bar(pdev, bar);
+ 		if (!base) {
+ 			dev_err(dev, "failed to read BAR%d\n", bar);
+-- 
+2.14.2
