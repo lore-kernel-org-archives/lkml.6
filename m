@@ -1,96 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932149AbeBABDD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 20:03:03 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:56385 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754559AbeBABDA (ORCPT
+        id S932193AbeBABH6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 20:07:58 -0500
+Received: from gateway31.websitewelcome.com ([192.185.144.95]:38157 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755927AbeBABHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 20:03:00 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0SxSki19_1517446964;
-Subject: Re: [PATCH 1/2] /proc/kcore: Fix SMAP violation when dumping vsyscall
- user page
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1517294579-117473-1-git-send-email-zhang.jia@linux.alibaba.com>
-From: Jia Zhang <zhang.jia@linux.alibaba.com>
-Message-ID: <2166a2cd-be40-ff3f-409d-7f32af4a7a10@linux.alibaba.com>
-Date: Thu, 1 Feb 2018 09:03:11 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        Wed, 31 Jan 2018 20:07:53 -0500
+Date: Wed, 31 Jan 2018 19:07:49 -0600
+Message-ID: <20180131190749.Horde.bsc7GhewsZwdnkmDtMlSwWO@gator4166.hostgator.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Wong Hoi Sing, Edison" <hswong3i@gmail.com>,
+        "Hung Hing Lun, Mike" <hlhung3i@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tcp_lp: use 64-bit arithmetic instead of 32-bit
+References: <20180201002407.GA1608@embeddedgus>
+ <20180201003236.06143fd0@alans-desktop>
+In-Reply-To: <20180201003236.06143fd0@alans-desktop>
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-In-Reply-To: <1517294579-117473-1-git-send-email-zhang.jia@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 108.167.133.22
+X-Source-L: Yes
+X-Exim-ID: 1eh3Lx-001cqO-7p
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:41994
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 1
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Are there any comments here?
+Hi Alan,
 
-Thanks,
-Jia
+Quoting Alan Cox <gnomes@lxorguk.ukuu.org.uk>:
 
-On 2018/1/30 下午2:42, Jia Zhang wrote:
-> The commit df04abfd181a
-> ("fs/proc/kcore.c: Add bounce buffer for ktext data") introduces a
-> bounce buffer to work around CONFIG_HARDENED_USERCOPY=y. However,
-> accessing vsyscall user page will cause SMAP violation in this way.
-> 
-> In order to fix this issue, simply replace memcpy() with copy_from_user()
-> may work, but using a common way to handle this sort of user page may be
-> useful for future.
-> 
-> Currently, only vsyscall page requires KCORE_USER.
-> 
-> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-> ---
->  arch/x86/mm/init_64.c | 2 +-
->  fs/proc/kcore.c       | 4 ++++
->  include/linux/kcore.h | 1 +
->  3 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 4a83728..dab78f6 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1187,7 +1187,7 @@ void __init mem_init(void)
->  
->  	/* Register memory areas for /proc/kcore */
->  	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
-> -			 PAGE_SIZE, KCORE_OTHER);
-> +		   PAGE_SIZE, KCORE_USER);
->  
->  	mem_init_print_info(NULL);
->  }
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index 4bc85cb..e4b0204 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -510,6 +510,10 @@ static void elf_kcore_store_hdr(char *bufp, int nphdr, int dataoff)
->  			/* we have to zero-fill user buffer even if no read */
->  			if (copy_to_user(buffer, buf, tsz))
->  				return -EFAULT;
-> +		} else if (m->type == KCORE_USER) {
-> +			/* user page is handled prior to normal kernel page */
-> +			if (copy_to_user(buffer, (char *)start, tsz))
-> +				return -EFAULT;
->  		} else {
->  			if (kern_addr_valid(start)) {
->  				unsigned long n;
-> diff --git a/include/linux/kcore.h b/include/linux/kcore.h
-> index 7ff25a8..80db19d 100644
-> --- a/include/linux/kcore.h
-> +++ b/include/linux/kcore.h
-> @@ -10,6 +10,7 @@ enum kcore_type {
->  	KCORE_VMALLOC,
->  	KCORE_RAM,
->  	KCORE_VMEMMAP,
-> +	KCORE_USER,
->  	KCORE_OTHER,
->  };
->  
-> 
+> On Wed, 31 Jan 2018 18:24:07 -0600
+> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+>
+>> Cast to s64 some variables and a macro in order to give the
+>> compiler complete information about the proper arithmetic to
+>> use. Notice that these elements are used in contexts that
+>> expect expressions of type s64 (64 bits, signed).
+>>
+>> Currently such expression are being evaluated using 32-bit
+>> arithmetic.
+>
+> The question you need to ask is 'can it overflow 32bit maths', otherwise
+> you are potentially making the system do extra work for no reason.
+>
+
+Yeah, I get your point and it seems that in this particular case there  
+is no risk of a 32bit overflow, but in general and IMHO as the code  
+evolves, the use of incorrect arithmetic may have security  
+implications in the future, so I advocate for code correctness in this  
+case.
+
+Thanks
+--
+Gustavo
