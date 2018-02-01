@@ -1,144 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751557AbeBAXpf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 18:45:35 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37427 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751508AbeBAXp1 (ORCPT
+        id S1751767AbeBAXsx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 18:48:53 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35830 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751555AbeBAXsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 18:45:27 -0500
-X-Google-Smtp-Source: AH8x224CVVyyFWRK0vOPn5xafFWIsptKnZlnyXXGbpML/iPnVFhOGlqPgx/fEvYtDC7eC97nKYDYBxR1oc+qC9ct84g=
+        Thu, 1 Feb 2018 18:48:45 -0500
+X-Google-Smtp-Source: AH8x227Tx/8ZzaiDRXnBFpSmJDtrkhwE4W8C20r/dQWTab0eVJBGqUCocgUDnvuDi3QXvFNYW1kTBQ==
+Subject: Re: [PATCH] Revert "extcon: axp288: Redo charger type detection a
+ couple of seconds after probe()"
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org
+References: <CGME20180125171023epcas4p2d0c38963b1155fd6bba3cdad3620fb46@epcas4p2.samsung.com>
+ <20180125171010.11169-1-hdegoede@redhat.com> <5A7384FC.8030400@samsung.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <fde91a16-c9bc-236a-976c-d9011e66e8d9@redhat.com>
+Date: Fri, 2 Feb 2018 00:48:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180201225646.dbug5oh3vupjrpy4@gmail.com>
-References: <001a113c0b987a17160561d3de01@google.com> <20180201225646.dbug5oh3vupjrpy4@gmail.com>
-From: Wei Wang <weiwan@google.com>
-Date: Thu, 1 Feb 2018 15:45:25 -0800
-Message-ID: <CAEA6p_Br8VjUits9XBG-opoJMj31Y_eBR7fjDjG3uxWyFNSjLA@mail.gmail.com>
-Subject: Re: suspicious RCU usage at net/ipv6/ip6_fib.c:LINE
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        syzbot <syzbot+bca7109dba5d86cb0209@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5A7384FC.8030400@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 1, 2018 at 2:56 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> +weiwan@google.com
->
-> On Tue, Jan 02, 2018 at 03:58:02PM -0800, syzbot wrote:
->> Hello,
->>
->> syzkaller hit the following crash on
->> 6bb8824732f69de0f233ae6b1a8158e149627b38
->> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
->> compiler: gcc (GCC) 7.1.1 20170620
->> .config is attached
->> Raw console output is attached.
->> C reproducer is attached
->> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
->> for information about syzkaller reproducers
->>
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+bca7109dba5d86cb0209@syzkaller.appspotmail.com
->> It will help syzbot understand when the bug is fixed. See footer for
->> details.
->> If you forward the report, please keep this part and the footer.
->>
->>
->> =============================
->> WARNING: suspicious RCU usage
->> 4.15.0-rc5+ #171 Not tainted
->> -----------------------------
->> net/ipv6/ip6_fib.c:1702 suspicious rcu_dereference_protected() usage!
->>
->> other info that might help us debug this:
->>
->>
->> rcu_scheduler_active = 2, debug_locks = 1
->> 4 locks held by swapper/0/0:
->>  #0:  ((&net->ipv6.ip6_fib_timer)){+.-.}, at: [<00000000d43f631b>]
->> lockdep_copy_map include/linux/lockdep.h:178 [inline]
->>  #0:  ((&net->ipv6.ip6_fib_timer)){+.-.}, at: [<00000000d43f631b>]
->> call_timer_fn+0x1c6/0x820 kernel/time/timer.c:1310
->>  #1:  (&(&net->ipv6.fib6_gc_lock)->rlock){+.-.}, at: [<000000002ff9d65c>]
->> spin_lock_bh include/linux/spinlock.h:315 [inline]
->>  #1:  (&(&net->ipv6.fib6_gc_lock)->rlock){+.-.}, at: [<000000002ff9d65c>]
->> fib6_run_gc+0x9d/0x3c0 net/ipv6/ip6_fib.c:2007
->>  #2:  (rcu_read_lock){....}, at: [<0000000091db762d>]
->> __fib6_clean_all+0x0/0x3a0 net/ipv6/ip6_fib.c:1560
->>  #3:  (&(&tb->tb6_lock)->rlock){+.-.}, at: [<000000009e503581>] spin_lock_bh
->> include/linux/spinlock.h:315 [inline]
->>  #3:  (&(&tb->tb6_lock)->rlock){+.-.}, at: [<000000009e503581>]
->> __fib6_clean_all+0x1d0/0x3a0 net/ipv6/ip6_fib.c:1948
->>
->> stack backtrace:
->> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.15.0-rc5+ #171
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>  <IRQ>
->>  __dump_stack lib/dump_stack.c:17 [inline]
->>  dump_stack+0x194/0x257 lib/dump_stack.c:53
->>  lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4585
->>  fib6_del+0xcaa/0x11b0 net/ipv6/ip6_fib.c:1701
->>  fib6_clean_node+0x3aa/0x4f0 net/ipv6/ip6_fib.c:1892
->>  fib6_walk_continue+0x46c/0x8a0 net/ipv6/ip6_fib.c:1815
->>  fib6_walk+0x91/0xf0 net/ipv6/ip6_fib.c:1863
->>  fib6_clean_tree+0x1e6/0x340 net/ipv6/ip6_fib.c:1933
->>  __fib6_clean_all+0x1f4/0x3a0 net/ipv6/ip6_fib.c:1949
->>  fib6_clean_all net/ipv6/ip6_fib.c:1960 [inline]
->>  fib6_run_gc+0x16b/0x3c0 net/ipv6/ip6_fib.c:2016
->>  fib6_gc_timer_cb+0x20/0x30 net/ipv6/ip6_fib.c:2033
->>  call_timer_fn+0x228/0x820 kernel/time/timer.c:1320
->>  expire_timers kernel/time/timer.c:1357 [inline]
->>  __run_timers+0x7ee/0xb70 kernel/time/timer.c:1660
->>  run_timer_softirq+0x4c/0xb0 kernel/time/timer.c:1686
->>  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
->>  invoke_softirq kernel/softirq.c:365 [inline]
->>  irq_exit+0x1cc/0x200 kernel/softirq.c:405
->>  exiting_irq arch/x86/include/asm/apic.h:540 [inline]
->>  smp_apic_timer_interrupt+0x16b/0x700 arch/x86/kernel/apic/apic.c:1052
->>  apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:904
->>  </IRQ>
->> RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
->> RSP: 0018:ffffffff86407c38 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff11
->> RAX: dffffc0000000000 RBX: 1ffffffff0c80f8a RCX: 0000000000000000
->> RDX: 1ffffffff0c99048 RSI: 0000000000000001 RDI: ffffffff864c8240
->> RBP: ffffffff86407c38 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
->> R13: ffffffff86407cf0 R14: ffffffff86c329a0 R15: 0000000000000000
->>  arch_safe_halt arch/x86/include/asm/paravirt.h:93 [inline]
->>  default_idle+0xbf/0x460 arch/x86/kernel/process.c:355
->>  arch_cpu_idle+0xa/0x10 arch/x86/kernel/process.c:346
->>  default_idle_call+0x36/0x90 kernel/sched/idle.c:98
->>  cpuidle_idle_call kernel/sched/idle.c:156 [inline]
->>  do_idle+0x24a/0x3b0 kernel/sched/idle.c:246
->>  cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:351
->>  rest_init+0xed/0xf0 init/main.c:435
->>  start_kernel+0x7f1/0x819 init/main.c:713
->>  x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:378
->>  x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:359
->>  secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:237
->
-> Wei, was this meant to have been fixed by commit 4512c43eac7e00 ("ipv6: remove
-> null_entry before adding default route")?  This crash actually still occurred on
+Hi,
 
-Yes. I would think so.
+On 01-02-18 22:22, Chanwoo Choi wrote:
+> Hi Hans,
+> 
+> Why don't modify the extcon-axp288.c after revert it?
 
-> net-next as recently as 43df215d99e604 (Jan 25) which included your fix.  I will
-> go ahead and mark this bug fixed, but syzbot will send a new report if it hits
-> it again.
->
+Fixing the axp288 extcon code properly requires usb-role-switch support
+which is not yet in the mainline kernel, I will submit the fix for it
+once usb-role-switch support is in the mainline.
 
-OK. Got it.
+> Instead, you sent the patch[1].
 
-> #syz fix: ipv6: remove null_entry before adding default route
->
-> - Eric
+Yes this is a preparation patch for the pending extcon-axp288 fix.
+
+Regards,
+
+Hans
+
+
+
+  Are you going to send other patch for extcon-axp288.c?
+> [1] [PATCH] extcon: int3496: process id-pin first so that we start with the right status
+> 
+> 
+> On 2018년 01월 26일 02:10, Hans de Goede wrote:
+>> Redoing the charger type detection to give the usb-role-switch code time
+>> to properly set the role-switch is no good for mainline, since the
+>> usb-role-switch code is not yet in mainline (my bad, sorry).
+>>
+>> Also once we've that code there are better ways to fix this which are
+>> not prone to racing as doing a retry after 2 seconds is.
+>>
+>> This reverts commit 50082c17bb1455acacd376ae30dff92f2e1addbd.
+>>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>>   drivers/extcon/extcon-axp288.c | 32 ++------------------------------
+>>   1 file changed, 2 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
+>> index 9abc99e8c0a5..901eddd3994b 100644
+>> --- a/drivers/extcon/extcon-axp288.c
+>> +++ b/drivers/extcon/extcon-axp288.c
+>> @@ -1,7 +1,6 @@
+>>   /*
+>>    * extcon-axp288.c - X-Power AXP288 PMIC extcon cable detection driver
+>>    *
+>> - * Copyright (C) 2016-2017 Hans de Goede <hdegoede@redhat.com>
+>>    * Copyright (C) 2015 Intel Corporation
+>>    * Author: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
+>>    *
+>> @@ -98,11 +97,9 @@ struct axp288_extcon_info {
+>>   	struct device *dev;
+>>   	struct regmap *regmap;
+>>   	struct regmap_irq_chip_data *regmap_irqc;
+>> -	struct delayed_work det_work;
+>>   	int irq[EXTCON_IRQ_END];
+>>   	struct extcon_dev *edev;
+>>   	unsigned int previous_cable;
+>> -	bool first_detect_done;
+>>   };
+>>   
+>>   /* Power up/down reason string array */
+>> @@ -140,25 +137,6 @@ static void axp288_extcon_log_rsi(struct axp288_extcon_info *info)
+>>   	regmap_write(info->regmap, AXP288_PS_BOOT_REASON_REG, clear_mask);
+>>   }
+>>   
+>> -static void axp288_chrg_detect_complete(struct axp288_extcon_info *info)
+>> -{
+>> -	/*
+>> -	 * We depend on other drivers to do things like mux the data lines,
+>> -	 * enable/disable vbus based on the id-pin, etc. Sometimes the BIOS has
+>> -	 * not set these things up correctly resulting in the initial charger
+>> -	 * cable type detection giving a wrong result and we end up not charging
+>> -	 * or charging at only 0.5A.
+>> -	 *
+>> -	 * So we schedule a second cable type detection after 2 seconds to
+>> -	 * give the other drivers time to load and do their thing.
+>> -	 */
+>> -	if (!info->first_detect_done) {
+>> -		queue_delayed_work(system_wq, &info->det_work,
+>> -				   msecs_to_jiffies(2000));
+>> -		info->first_detect_done = true;
+>> -	}
+>> -}
+>> -
+>>   static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+>>   {
+>>   	int ret, stat, cfg, pwr_stat;
+>> @@ -223,8 +201,6 @@ static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+>>   		info->previous_cable = cable;
+>>   	}
+>>   
+>> -	axp288_chrg_detect_complete(info);
+>> -
+>>   	return 0;
+>>   
+>>   dev_det_ret:
+>> @@ -246,11 +222,8 @@ static irqreturn_t axp288_extcon_isr(int irq, void *data)
+>>   	return IRQ_HANDLED;
+>>   }
+>>   
+>> -static void axp288_extcon_det_work(struct work_struct *work)
+>> +static void axp288_extcon_enable(struct axp288_extcon_info *info)
+>>   {
+>> -	struct axp288_extcon_info *info =
+>> -		container_of(work, struct axp288_extcon_info, det_work.work);
+>> -
+>>   	regmap_update_bits(info->regmap, AXP288_BC_GLOBAL_REG,
+>>   						BC_GLOBAL_RUN, 0);
+>>   	/* Enable the charger detection logic */
+>> @@ -272,7 +245,6 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+>>   	info->regmap = axp20x->regmap;
+>>   	info->regmap_irqc = axp20x->regmap_irqc;
+>>   	info->previous_cable = EXTCON_NONE;
+>> -	INIT_DELAYED_WORK(&info->det_work, axp288_extcon_det_work);
+>>   
+>>   	platform_set_drvdata(pdev, info);
+>>   
+>> @@ -315,7 +287,7 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+>>   	}
+>>   
+>>   	/* Start charger cable type detection */
+>> -	queue_delayed_work(system_wq, &info->det_work, 0);
+>> +	axp288_extcon_enable(info);
+>>   
+>>   	return 0;
+>>   }
+>>
+> 
