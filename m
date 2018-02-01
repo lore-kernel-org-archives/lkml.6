@@ -1,66 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752271AbeBAL3G (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 06:29:06 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54382 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751916AbeBAL3C (ORCPT
+        id S1752304AbeBAL31 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 06:29:27 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:11686 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751772AbeBAL3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 06:29:02 -0500
-X-Google-Smtp-Source: AH8x2252/VRnp/WMR9XAyXFlMzpaOGdERdtT3Q1w3lVooQ2tNs9R+ZDt80Lm4CMdkDMr9twvBioOhQ==
-Subject: Re: [PATCH] net: bridge: Fix uninitialized error in
- br_fdb_sync_static()
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Hemminger <stephen@networkplumber.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, bridge@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1517480728-5580-1-git-send-email-geert@linux-m68k.org>
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Message-ID: <657a050a-444d-2ad3-17fb-e855f5c54ea9@cumulusnetworks.com>
-Date: Thu, 1 Feb 2018 13:28:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <1517480728-5580-1-git-send-email-geert@linux-m68k.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 1 Feb 2018 06:29:25 -0500
+X-IronPort-AV: E=Sophos;i="5.46,443,1511827200";
+   d="scan'208";a="666033793"
+From: David Woodhouse <dwmw@amazon.co.uk>
+To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
+        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org
+Subject: [PATCH 2/2] x86: Simplify spectre_v2 command line parsing
+Date: Thu,  1 Feb 2018 11:27:21 +0000
+Message-Id: <1517484441-1420-3-git-send-email-dwmw@amazon.co.uk>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517484441-1420-1-git-send-email-dwmw@amazon.co.uk>
+References: <1517484441-1420-1-git-send-email-dwmw@amazon.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/18 12:25, Geert Uytterhoeven wrote:
-> With gcc-4.1.2.:
-> 
->     net/bridge/br_fdb.c: In function ‘br_fdb_sync_static’:
->     net/bridge/br_fdb.c:996: warning: ‘err’ may be used uninitialized in this function
-> 
-> Indeed, if the list is empty, err will be uninitialized, and will be
-> propagated up as the function return value.
-> 
-> Fix this by preinitializing err to zero.
-> 
-> Fixes: eb7935830d00b9e0 ("net: bridge: use rhashtable for fdbs")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
->  net/bridge/br_fdb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-> index dc87fbc9a23b04e6..d9e69e4514beb20d 100644
-> --- a/net/bridge/br_fdb.c
-> +++ b/net/bridge/br_fdb.c
-> @@ -993,7 +993,7 @@ int br_fdb_delete(struct ndmsg *ndm, struct nlattr *tb[],
->  int br_fdb_sync_static(struct net_bridge *br, struct net_bridge_port *p)
->  {
->  	struct net_bridge_fdb_entry *f, *tmp;
-> -	int err;
-> +	int err = 0;
->  
->  	ASSERT_RTNL();
->  
-> 
+From: KarimAllah Ahmed <karahmed@amazon.de>
 
-Thanks,
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+[dwmw2: Use ARRAY_SIZE]
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ arch/x86/kernel/cpu/bugs.c | 86 ++++++++++++++++++++++++++++++----------------
+ 1 file changed, 56 insertions(+), 30 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index dd3a3cc..71949bf 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -119,13 +119,13 @@ static inline const char *spectre_v2_module_string(void) { return ""; }
+ static void __init spec2_print_if_insecure(const char *reason)
+ {
+ 	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+-		pr_info("%s\n", reason);
++		pr_info("%s selected on command line.\n", reason);
+ }
+ 
+ static void __init spec2_print_if_secure(const char *reason)
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+-		pr_info("%s\n", reason);
++		pr_info("%s selected on command line.\n", reason);
+ }
+ 
+ static inline bool retp_compiler(void)
+@@ -140,42 +140,68 @@ static inline bool match_option(const char *arg, int arglen, const char *opt)
+ 	return len == arglen && !strncmp(arg, opt, len);
+ }
+ 
++static const struct {
++	const char *option;
++	enum spectre_v2_mitigation_cmd cmd;
++	bool secure;
++} mitigation_options[] = {
++	{ "off",               SPECTRE_V2_CMD_NONE,              false },
++	{ "on",                SPECTRE_V2_CMD_FORCE,             true },
++	{ "retpoline",         SPECTRE_V2_CMD_RETPOLINE,         false },
++	{ "retpoline,amd",     SPECTRE_V2_CMD_RETPOLINE_AMD,     false },
++	{ "retpoline,generic", SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
++	{ "auto",              SPECTRE_V2_CMD_AUTO,              false },
++};
++
+ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+ {
+ 	char arg[20];
+-	int ret;
+-
+-	ret = cmdline_find_option(boot_command_line, "spectre_v2", arg,
+-				  sizeof(arg));
+-	if (ret > 0)  {
+-		if (match_option(arg, ret, "off")) {
+-			goto disable;
+-		} else if (match_option(arg, ret, "on")) {
+-			spec2_print_if_secure("force enabled on command line.");
+-			return SPECTRE_V2_CMD_FORCE;
+-		} else if (match_option(arg, ret, "retpoline")) {
+-			spec2_print_if_insecure("retpoline selected on command line.");
+-			return SPECTRE_V2_CMD_RETPOLINE;
+-		} else if (match_option(arg, ret, "retpoline,amd")) {
+-			if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
+-				pr_err("retpoline,amd selected but CPU is not AMD. Switching to AUTO select\n");
+-				return SPECTRE_V2_CMD_AUTO;
+-			}
+-			spec2_print_if_insecure("AMD retpoline selected on command line.");
+-			return SPECTRE_V2_CMD_RETPOLINE_AMD;
+-		} else if (match_option(arg, ret, "retpoline,generic")) {
+-			spec2_print_if_insecure("generic retpoline selected on command line.");
+-			return SPECTRE_V2_CMD_RETPOLINE_GENERIC;
+-		} else if (match_option(arg, ret, "auto")) {
++	int ret, i;
++	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_CMD_AUTO;
++
++	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
++		return SPECTRE_V2_CMD_NONE;
++	else {
++		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg,
++					  sizeof(arg));
++		if (ret < 0)
++			return SPECTRE_V2_CMD_AUTO;
++
++		for (i = 0; i < ARRAY_SIZE(mitigation_options); i++) {
++			if (!match_option(arg, ret, mitigation_options[i].option))
++				continue;
++			cmd = mitigation_options[i].cmd;
++			break;
++		}
++
++		if (i >= ARRAY_SIZE(mitigation_options)) {
++			pr_err("unknown option (%s). Switching to AUTO select\n",
++			       mitigation_options[i].option);
+ 			return SPECTRE_V2_CMD_AUTO;
+ 		}
+ 	}
+ 
+-	if (!cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
++	if ((cmd == SPECTRE_V2_CMD_RETPOLINE ||
++	     cmd == SPECTRE_V2_CMD_RETPOLINE_AMD ||
++	     cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC) &&
++	    !IS_ENABLED(CONFIG_RETPOLINE)) {
++		pr_err("%s selected but not compiled in. Switching to AUTO select\n",
++		       mitigation_options[i].option);
+ 		return SPECTRE_V2_CMD_AUTO;
+-disable:
+-	spec2_print_if_insecure("disabled on command line.");
+-	return SPECTRE_V2_CMD_NONE;
++	}
++
++	if (cmd == SPECTRE_V2_CMD_RETPOLINE_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
++		pr_err("retpoline,amd selected but CPU is not AMD. Switching to AUTO select\n");
++		return SPECTRE_V2_CMD_AUTO;
++	}
++
++	if (mitigation_options[i].secure)
++		spec2_print_if_secure(mitigation_options[i].option);
++	else
++		spec2_print_if_insecure(mitigation_options[i].option);
++
++	return cmd;
+ }
+ 
+ /* Check for Skylake-like CPUs (for RSB handling) */
+-- 
+2.7.4
