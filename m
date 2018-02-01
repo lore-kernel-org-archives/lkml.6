@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753215AbeBASso (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 13:48:44 -0500
+        id S1753309AbeBAStC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 13:49:02 -0500
 Received: from mail-dm3nam03on0054.outbound.protection.outlook.com ([104.47.41.54]:29401
         "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753094AbeBASsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 13:48:30 -0500
+        id S1752924AbeBASsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 13:48:45 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Yazen.Ghannam@amd.com;
 From: Yazen Ghannam <Yazen.Ghannam@amd.com>
 To: linux-edac@vger.kernel.org
 Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, linux-kernel@vger.kernel.org,
         bp@suse.de, tony.luck@intel.com, x86@kernel.org
-Subject: [PATCH 1/3] x86/MCE/AMD: Redo function to get SMCA bank type
-Date: Thu,  1 Feb 2018 12:48:11 -0600
-Message-Id: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
+Subject: [PATCH 3/3] x86/MCE/AMD: Get address from already initialized block
+Date: Thu,  1 Feb 2018 12:48:13 -0600
+Message-Id: <20180201184813.82253-3-Yazen.Ghannam@amd.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
+References: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [165.204.78.1]
@@ -24,43 +26,44 @@ X-ClientProxiedBy: BN6PR1101CA0010.namprd11.prod.outlook.com (10.174.237.20)
  To BN6PR12MB1907.namprd12.prod.outlook.com (10.175.102.13)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: f6fc432e-d86a-4ac5-356a-08d569a46121
+X-MS-Office365-Filtering-Correlation-Id: 7c7fdce3-2c30-498a-8b60-08d569a4623a
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:BN6PR12MB1907;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1907;3:G7oPstpUtW1yszu8rtN/825P1wUX4mcB53IQwycbHXnnVwiLYriA5bo46jH5dAhjAvn6lLuklV+PaSPCljcAFWSiSBrudI6NaLrZjifeMFHhINddZyw3z2vDprcBpGrqP0QFmb+BNwMSKPd+aKEMDQ1ngsF081sjAKDmccqOMERaul0U1nt9t7ulhkm3lsiXuDTbN3EolXIN/HFOSzxPtGopQHW5mDDua2JmPJaHg3Wn5oCXdg50rY70Jmq4DJz6;25:SDyxCVC35re/cUJ+9GyIHhXERPBIzfELqvf5z/8BjzIYg9oTaHkZHARh3Ll+kuotG7ryaR7UwUUT0WslguqfLCHQiHi3KOnmZoB/zABLitnKrW1FSE7KYNtT/rc5pElLVmkqRZS4KOQ53bsfvGYEavcH1st4G3yiUvcfnSCFVb8pCJhZUzk8gUxtLeJ3s7Pxaa4Y9X/UAe0Om6cSZ5/SboAq4/MWM7OPS3wujUMnnWGeIGm0wy6aTjlfgRzfp29nUpHfhweeHsAdR8qO6WhBbmQGWBLZvHm2SeBO6G77xFhFy3EwuetpCj9AByRPV2pz9QTrxWeRLsl7OzhrXFAw0g==;31:p8+mT+KNDJHlGra20tZMAY6jkKJ00GwZvRoNRXQB7luKU0gWpjWpWblu9pZGONaj2nIGI7zMrntpshLlDch1f2s4Wf777aE6bDcNRmx079oHnPe4Pb1eByuaUJ133D3CLK08cQ650e+Dfqwrgxk7qoHFNUozO+x9f7wPh6V0EZQ0NcH6RDspabdoCvoVV/qISe+bkcMudAXI5q4W1Fx+aSw0fdEqJFA+g/gtUTTo5ag=
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1907;3:VzTtjkTKLQcxEf3AoSO6NdzWJRVn2jw7nBj1zPe4f2cDkLICXzWrlbplvAYKAFrcPaniTmsOFgKSinm9k1bD/hVJi6A+II4W206KZ/GrQUeQqUKq6/juCwTMoIUFb8uUwSgSpfkEM/G0QLSJEuakYgoE4vPKYSazUswnE6GFARPQ6nN9bIz3i6K7jfLu8Smt7ubvc0xkdi31hVsS53LBsZrl6DGpVGg2qgVYjaO0lcvru0cHgy57CLRPn80mkuBU;25:7FA4BvY1tPpjHolHTnk4t5ehYhsc5AA3RPRSfw32B+ko0SktosgDg1LdenET3AfdCDjzTTcR9pLes3vTPsfIzFc1sJmossmxVgvXTaYbkBGs7u7M5XrPkiVCUFgR15Dw6jV+EqYGMZBiaGAgkrN//bStxg4GmYg3a+W2wrgXkduohtLGzZdAni9p+C9vFUwItbFwSHEgGJpmQFv22OHouvvxLKceXmBhixEqazlzgPiXKw2lauvNUhqMiemkQcsUUWzIoL0vN/SAegUX+HLAAMHsb/9dchM36feGQUwnCRk5KI/bt4fSVy4vAmY6qBZWFszoTLZLJuWXLW0j+mablw==;31:7h62xbcPgDE9vVenyeIPApQt3xjKRYbuZ267mhqVmYodgAEn4NBxVEnViCeBILGi9JfFhxpUBItkEdO/o80P3B6Rr77wde95iE2nhuOJB1+GUvNcnGn9e2vZz1t/+SZ5CsSavFa1E7t+A343yUck6GpS6jMuCJJlAhK52P5K2F1zdJuL36vYd0Aa27an832L+4tnm7jlgbrxb0Z2MlDTep1I4i9ZoZMHj9mBvKnrbWE=
 X-MS-TrafficTypeDiagnostic: BN6PR12MB1907:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1907;20:xvMcPrA5vrNW5i2sjRUMhEfgKPl72UICu3DZQ9yhOF2nQLc+AMN+unl5uaB7SOTMgf9dtct0uITUtIpsUebQ7VzMk56pqD98R6osrN3iJfmosV7jemy+PqhsF3c3P4t5qCvQLXanybHwyQaao+f88ntJU7aa24QMpqSXlfwRYctBZN6UES3IlVBj9/Xjm9p5M09FOLNucbHSpqngfAzMdwT/DPRo54zlYTwJgSY9zTCbHzqj9RsA6DA4ztFNF7XLR5Pa5ukhdMOjIf0+vSwyeZoU0RXtmMNvAJmBupTTMfD3qUdDIlFW/Bz3MMMn1munBGHIgQ1nGT8w47Wr76s/9vFobG85/J5yCtnFy93eCYKE5q+wUVHIPorIrTFl8ipCXErnc1+rgrquKF4w1j9UJ4E+Xo8LGaQnoEff92fClDSxiBdUngLI+faZjgvs6OUOyvOVmjtYpjJQWMu5pmYCcTeyeq8WgrHpRYRfs3z7Ox5zzxqXth7MtYcVV+oexcsy;4:PNqNemB9gJdiOQssXlug0IgA0IfV/YvjU5zj5w5aYrHfITyxUitQUvLTrv5YkEPOXxQ0QYy8VCQ9H1HpIRGxB0heAHD1CH6e+EvQWEPCp7CjaQ4BJgmYsVB5PyjoyFsYyxTsOrv35r8n9KeZMZzNy+jZt0LjX4OWtsqrk9OhWCkswOU4tZba6WIIKDSHaq+vpuC0IRxssPZ3r2USsi5mw59QNtfFX1G51ENCvxK/t22RzypIFAr0FIoad/EJOrCGVBOl54CXL8i9C8FKo09UH1r85pUZv3/baXkHfKuapGRSJUKWe93PyVPPz3kEhzunoWaSSWOhw1cpRijudBHV1w==
-X-Microsoft-Antispam-PRVS: <BN6PR12MB1907CEA6C66CD5B1CAE6B1D8F8FA0@BN6PR12MB1907.namprd12.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1907;20:x00lZVOa583CBHhxPuUvREATGbKNdEwP9/99BKqfCpq6nZ54D/pAgAxSrXOJk3IsA6zrens1SCw2l3ZTnAIXGeOpP6vLhQRslIWzevg6TCd02SxLyi/wLczACSORdKBW6olddrn3J+QICXTPGP1RtJ9L6qJz1tWF2qIEN1wNIhv/pNtDxcZi5Ucmqa6nddwg6ba275hBbBct03u5h/R6GDKJ8p15hS+HNYAgk5kj4wSFNUNNtaCEUfPe3IM7Qj8fiOThYWxBi4/uNWEZtuAjG2Ldv15yfajoMzwNO6AX612a6TW9bmDkDaKbVnFQVRKSSNJY6HTuiC5UFuyiL6UU0x9KAHVvp85TVlGYbpdnXRUKcsZHf/MvvG0Q2T0zzFcOnLrWa/a9YKkWV/Nj1jz509YXi+nSaHvEtANtnDWbhlcEVsPN1o56K54QbHWY+w1BsxSyeRspeH/6ewcvObk373yTAxNGJxX/Kyx7d912Epg4LpFzdKncCfmeeroavEGE;4:Cntv8796cBNfaIdf/4qehMHkmY2J/ONRYxJE+sl7SSG6hdfhnPJZfTdmUlXKeMEfM2S5OmhbnSQlRY+D37Mykr57ORRySFFWOrGbGpBWlQZaQteVK48R3bJeNDoMUv5LmWf3RalZpbQ4olQQr0cBf6EKIgB4ZFJU59ebF69BC077ZCNmni9qkq3cpjSzBV/xA8fqzQqXInMGo4S5Rmbxn60zf9SYL3oRAHgX1GeM8V1IppaIXgQHYe3o0ek6HFZzV8RpNkkbIcJI1UlfTPngZ59PA5mDark+jfV3Np+kMu4ZZyHT+sbOX94cHqDA6/M4uL39mBesC4hm1b+uATlg9Q==
+X-Microsoft-Antispam-PRVS: <BN6PR12MB190796D55E21781EADAD79C2F8FA0@BN6PR12MB1907.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(767451399110);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(6041288)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:BN6PR12MB1907;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1907;
 X-Forefront-PRVS: 0570F1F193
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(396003)(376002)(366004)(346002)(199004)(189003)(16526019)(3846002)(81166006)(53416004)(68736007)(7736002)(4326008)(6486002)(36756003)(53936002)(6116002)(2906002)(305945005)(1076002)(97736004)(386003)(6666003)(7696005)(15650500001)(25786009)(47776003)(6916009)(26005)(52116002)(2351001)(316002)(51416003)(72206003)(66066001)(105586002)(8936002)(106356001)(50226002)(478600001)(8676002)(5660300001)(186003)(86362001)(48376002)(50466002)(81156014)(2361001)(16586007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1907;H:yaz-diesel.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR12MB1907;23:f2MTUXL2F15+xo8jOhDUzjficKw4r6KB4+oH6HYVy?=
- =?us-ascii?Q?ALcl6Ham9euUoLFR0PIJ2yEmb9dfCEZTD3rA94ObsUR0prG7VBJNuSLX+iBZ?=
- =?us-ascii?Q?FqOV8YHwJrmy+YhhpNucJjdIn+HbTCIaJM/bfDAqP2hPmK+nr6bKAxacm8fs?=
- =?us-ascii?Q?wsbjaDBJJ0622MoWrY3xnXmdULw23anX7iItnDdPWrLcRkK8XQY6JIRbHbX9?=
- =?us-ascii?Q?YSCYLWA59CFLoRZ3Eo3btn1FnxARAdyogSDrCe9sEyiEOXB4Y5spU3r6Vvmq?=
- =?us-ascii?Q?xDf/oS8TsmfDbA2KK1cqQUbWcYh+Ic0qAcmfhE8y4J3motZMmv40OYeIAmRx?=
- =?us-ascii?Q?viuRewRX/Co/hhg+dFve7dNvBhDu/r6W2DKi8M7pIq9KDcTO8cUVO5z+2i54?=
- =?us-ascii?Q?rEBhZLHzw0Jq5pAqnMErnmuKKdgg6NSz3CMidLjQPLbWWwto3Bzpyk6F3jip?=
- =?us-ascii?Q?nkuf9xbfpXtZEufhLEjQDq7VDWRGSwIy7Izzvp3kipOXd1+Fk73Cw28O0R9T?=
- =?us-ascii?Q?b/MAq9iBm2s2pj701PNpjcpY0I7e/DMdQ1M3jY5DbV5OT7KvfAgfkPD0+UIk?=
- =?us-ascii?Q?pBW9EY5AY0TY3gPrbS5LXEBzKWezIXK5DfyaWVYnCC8AVc+Mvk/tIPYyhOWM?=
- =?us-ascii?Q?ZI6/vbFzcohezCViwhS1dgcYuqOkxpQORR+sgecN04osem2BlQ9EQBJcwjwB?=
- =?us-ascii?Q?Q1+JB+qt+d1ZcryYfw/bvBag2hjwCSO4e2qsdD7zDb9IsnCVphgb34/PD76z?=
- =?us-ascii?Q?fXisRCx14tY8E0+DresKukwvt4EDgI4zrFEC8kI2RJ6TfUF0ypjm8BQIdBv2?=
- =?us-ascii?Q?Oa3NCIzgLQ7UDK4eypBBsWRtPHHae5SFU7nnZoDfigG5352zJx7xuLP1WToj?=
- =?us-ascii?Q?aXAiF01el7Q8t2XLdhs6vTvJQlH8jqjdKQ+23gRYx67g4XNAcPBYbqYMBo8V?=
- =?us-ascii?Q?En3yr5SO2/VkGUxwkwaW5qEiYj8UtkbO5ekS9E0AxGUptZy91mxBW7o8q1Vs?=
- =?us-ascii?Q?MWo3vX0DryWS/DMNAdEHRwiGWVObmLXBpJbojHTzMODp9/Bu5ZJrmkHqqUvp?=
- =?us-ascii?Q?vZ6jouUZALxpT1cqfCVPFrFcF7BVAZUmusDBFTW32/MVGyUYQxt87WeV9ji0?=
- =?us-ascii?Q?+L/skf+8oPK4om20dw359SWaF+BkmcJB6Hu/RBjfocLjpW8nwaJ8Q=3D=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1907;6:odemh9C/UX9OEKf9OXRhxFn5Mng1xeGFG15Q5Z6I2SXW6pWvPm2DpXPkmHuoEwoq/8L8KVaqb0Ph4hrBSz8Dfiib68D/fZ6yOMdOBnFutgrh3T8p3Cv5C61eg+l2zxY5Dzxy8NB4R3t3dQJDnQYwQKMBjXWwbnlXevbu/1tQsbI3sj/f+RnSDj95LeUIFJphQGl5Eaob2Z8jyz03UtS9JGaxi+2qkMj18KJEb9c3HN+F2L9ovUG+UgCtlzqlfkngvxJ8RDYCpY5+PNxYtWdmx0v8OB2u7pua9bahV0QJDY8Oalaer81ZmrEeRKUqYPo2JYnGJuhqtsB7HJBmjmUg/RIQM2F5EpV0Vd10Lr0Hu6M=;5:+U0v+B+GGxeSwbRxfjkFu3U6tLThjqH1N/SNfC32W1VzLftFHwJxnopSDDEB4eoEekK3a6yXOIX7YAygeU9J/T4pu9EzWTHfoEk5+p+VVTir3bCiAHMeSn1GB0ZrXiQRuMKwjXE0EhKps+2t/9GQlxL8i/qAj/WeCgf/tWyLaiU=;24:TyIbOTyahGhaXGPYudgwxlfgRXn5ZqNLxiqOX4ouccbT+/EdwooAdz/nfRnpH05S1tr5zm6NDJIpVTxdGYXUqJiFpa5AAcqcGpPKC5tru3Q=;7:2KPMRkcjosR6UEpAuDjjPcwJnMGYxfis2YbTX7t5679C8jg4Wh43s1rPtcOzoaRdOlZEpApEaHZXbalDFK2MYCueoaTdCGltogdftDsSbS6r+N4nLyxmbguVHpogU01+zu5ZR+2fl9DUfbwcd0gj+t8Fc9v1auqPHVsE/v+FxSEvfHQK5spqLpUPCV06fNsghDl4I8zRF61zFnzseraTLBjxL9/MxzSX17WkX8UlG5ciCcODwSxmKflJwbjQ2ZSm
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(396003)(376002)(366004)(346002)(199004)(189003)(16526019)(3846002)(81166006)(53416004)(68736007)(7736002)(4326008)(6486002)(36756003)(53936002)(6116002)(2906002)(305945005)(1076002)(97736004)(386003)(59450400001)(6666003)(7696005)(25786009)(47776003)(6916009)(26005)(2950100002)(52116002)(2351001)(76176011)(316002)(51416003)(72206003)(66066001)(105586002)(8936002)(106356001)(50226002)(478600001)(8676002)(5660300001)(186003)(86362001)(48376002)(50466002)(81156014)(2361001)(16586007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1907;H:yaz-diesel.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR12MB1907;23:hXkQWh2xLbnV3RNuSa91xiRMbHUBiWjYneolPYhBX?=
+ =?us-ascii?Q?oKccNkg5AD0kks6DaOEaxfz+kEb/NnpazhuuLNz8oLfMF8Sh6UOLTU7sxPs0?=
+ =?us-ascii?Q?OHoJA/ki7NB7Iz2z0Wu92vsDIhOFFu3w8jgrAijh+UL0xiT2TsZ81Qqa/jlm?=
+ =?us-ascii?Q?+f66slYqQQ5PFuc1eJR3/YE3Xx2YT72Ki6extxEMbmW9MhdoG1DQF11K9ieO?=
+ =?us-ascii?Q?RowG2iegaQNi2pFoOmJz/qej8+K/yNdKXvAwrJjwTBEsEdG/RXfGEv7ZzZYF?=
+ =?us-ascii?Q?yzuDRH6rYy4RKRywo2098ZG0SYs2l5NKEudRDGumVYrHYqWygHTJj6W42rdf?=
+ =?us-ascii?Q?pfshfDvlYN/uMvOnOxy8zx8E6TgCvrJaU5uCY6p8TWahbAWUsthJhcSnEKiP?=
+ =?us-ascii?Q?LyApXNPW5+2ezGG/57iQoJ7R8kwXOdYmgMomwBijqnwW0A3/r9jQooyUTp5c?=
+ =?us-ascii?Q?DB3jkhMKT2hToLTKvD3Nb/7dIzKkCF0eQpzQf3fQ+IV1SXtS3nLnbsietZl2?=
+ =?us-ascii?Q?ebLhvHe2UNaQVukL87BMi/d7Ix7T+o/O/RJlx7u7pMIbczC8VPcrrDhGXcPK?=
+ =?us-ascii?Q?PRrh4ve6fUS5bsZJNgfRzaYWLvFgP35XU4csOzq96+nzgiKHTBU9Z5q0d2/k?=
+ =?us-ascii?Q?b6QiSZpF9z/99aC7kSk7dwLtsDshQTIfXGyiOAV4ym0Czgb5EPNNXMsQoZfC?=
+ =?us-ascii?Q?QcSNlEOGv0jAWjDhZ9XO6PHasCdhgOw9sBGzvA1E6XjsR2I/F6JyKvZLz8II?=
+ =?us-ascii?Q?ws7r5ugSU7BJNAUl5nch69dX77Py+1GYClGYDdGF0LphglWna9i/oqMshUEC?=
+ =?us-ascii?Q?0z8VgrXqF9tB3NADIrHVgE9zJ64SD9Hy7GuWxuLGmqzJ74hzCLRH5nT2Hdeu?=
+ =?us-ascii?Q?AM4ZV1tzQloRK+IME4mkytQOEmUnpMEcTxeklo3lp91ay2huo/RzZmSHMyfc?=
+ =?us-ascii?Q?z4YsSku4yma6wr4/O4cVUMl8kmZUY5Oi24UA+fxjeZMJX5srYyHzn0VROa9v?=
+ =?us-ascii?Q?QIZk76pLqs9OiJNOw/oUkVun+U583Y+un01TGvGlrOEE0WxU036hG8Y3jxAL?=
+ =?us-ascii?Q?Rh72XxvmTGg86jbNFoEyppQLYW8HVWZ4S8MdGxEWB5l4MhGPVidL99XKpbv0?=
+ =?us-ascii?Q?h7rDJhUWJ2C0p/h9up4e0fheb386aSbeoSE17GTuxSSMYsKrvE4swJ3tnjW+?=
+ =?us-ascii?Q?vlV2IZenhYXm1KnS5vBqTHxO3zMC3jASWi9?=
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1907;6:8A+IfuqR0DPKxHkHOkPBrHlWRH0tSYf1Ea8gGL553MrAN5gcglz+VIW73gPW37fFwj6kayA0IckYE+gaQeu4EenqsOtPsBTqpVplF1DnkYdseZhoyq4K6mtUku+I1XFLAZSuRTV4qdyId+eHuupwGWV7RoUBBhYEoR45drXnaHavn6Gzd4F6Mhn2no0CRUYHKuYFBYfV66A6mB6Wclo/q0dvJX68l1ddidf/rPc65HfpjhWEfEUpUZvCuDRoI6ZU52ZD4XRJEP/V8tEKwmK0MydUrybcFxM/kYmkAWVyjaFg6kRO5aUcDWVsF6bW5QGSJtz/uccGmDBHmCEAosI5bn845IeN9gdr+0Au1r7DXhU=;5:pcKgg2ayV904GzXxU2tIKGH7uJx2qCcYVM/Pjzp8+I90ds8K4QFG2WKp7RLMWzn8edJ8GCwfuXJINsmvOh+8KWjnspK8dT+yj8KhY8zaUWsDU4bR1MvTvCyFCUF1+0veEPDn7QsoY+DXy/gychS9GkspvI9InZPWQaH/WCD7KHc=;24:9CH0jDNhLZn7V++F1C0CH3pEu0BFMLUCZJBgDR2PN1HsffmmMOx7tmrL1VqS2WduY2Kw434d4A8zvnSuWyOtTWpsAkMlXbET1FLiIdYghes=;7:/YzsM/KvR8Dw6jLQJBk+Ak1XGlxEj0NErJgOCjwzxStp5YTh0r9pVDoe3kzD8tzg0NCZs3YDPlxbwSG4jH2+SXvAvrULSXymoFBbgQmfccY1Pwp3vzybXupZ2cCH014IGjRTzl+93YK2pMXD/7mXXCMh+LPCUL8Mnz9q876Plrz/1g/EmaA3DGjVxl2LKCumPgF1hOdr8KgkgEWmE9EIwhEbEYt7CskBDdXB/H6+d81tDZEB9y06zTA4kgSo/1GF
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1907;20:TqD7sQY4Llik5KpqP6moVuuD+4Kg48HzhgT/J9OG4MY6roZA/YDDxme4BdArxEezhDhzcXa/RdIBR9uLUMQgjSOCMNEg1yd1WQjHX2mv6GofJ6YDdCVxWiUQI8JCuBFnPRPv1s4xsouyqD7xkGYG343+PO8vS+Z9qucn+/Abc5PDrsLmYPaoNC63WdNB/39U2mVPvAFw+dx7XRUHBpT0j8vTPck+2s3SOaxioBWF/BQVv3ykdNo05+fVKkBmFxuO
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1907;20:rVP9w0Sl/AspsurWOIL5zXszjStgn+1pqNKO1I9PHp3YXYDWjynwNIiIFJfmzmEdkah4sTOYjB/UHZntJIcBh1kRfNgsjP+LZzcyZH6BZlMA9CMLVAFM7Ce9hfmvddR8ctYRv204a6JEcFiMCXcr+ClIe9dFnNHBf7+Z3edGm4jSc+YajAyh/8LDNODVFLgUpmE1WrclRt5uRUlMbFrdLJzGfsD/XPvjDFjhuqXMNB6te4sBOe0xOvxyByZzPQPs
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2018 18:48:26.3850 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6fc432e-d86a-4ac5-356a-08d569a46121
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2018 18:48:28.2443 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c7fdce3-2c30-498a-8b60-08d569a4623a
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1907
@@ -70,77 +73,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-Pass the bank number to smca_get_bank_type() since that's all we need.
+The block address is saved after the block is initialized when
+threshold_init_device() is called.
 
-Also, we should compare the bank number to the size of the smca_banks
-array not the number of bank types. Bank types are reused for multiple
-banks, so the number of types can be different from the number of banks
-in a system. We could return an invalid bank type.
+Use the saved block address, if available, rather than trying to
+rediscover it.
 
-Use smca_get_bank_type() in get_name(), and change type of bank_type
-variable to match return type of smca_get_bank_type().
+We can avoid some *on_cpu() calls in the init path that will cause a
+call trace when resuming from suspend.
 
-Cc: <stable@vger.kernel.org> # 4.14.x: 11cf887728a3 x86/MCE/AMD: Define a function to get SMCA bank type
-Cc: <stable@vger.kernel.org> # 4.14.x: c6708d50f166 x86/MCE: Report only DRAM ECC as memory errors on AMD systems
 Cc: <stable@vger.kernel.org> # 4.14.x
 Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 ---
- arch/x86/kernel/cpu/mcheck/mce_amd.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce_amd.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-index 0f32ad242324..4e16afc0794d 100644
+index bf53b4549a17..8c4f8f30c779 100644
 --- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
 +++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -110,14 +110,14 @@ const char *smca_get_long_name(enum smca_bank_types t)
- }
- EXPORT_SYMBOL_GPL(smca_get_long_name);
- 
--static enum smca_bank_types smca_get_bank_type(struct mce *m)
-+static enum smca_bank_types smca_get_bank_type(unsigned int bank)
+@@ -436,6 +436,21 @@ static u32 get_block_address(unsigned int cpu, u32 current_addr, u32 low, u32 hi
  {
- 	struct smca_bank *b;
+ 	u32 addr = 0, offset = 0;
  
--	if (m->bank >= N_SMCA_BANK_TYPES)
-+	if (bank >= ARRAY_SIZE(smca_banks))
- 		return N_SMCA_BANK_TYPES;
- 
--	b = &smca_banks[m->bank];
-+	b = &smca_banks[bank];
- 	if (!b->hwid)
- 		return N_SMCA_BANK_TYPES;
- 
-@@ -760,7 +760,7 @@ bool amd_mce_is_memory_error(struct mce *m)
- 	u8 xec = (m->status >> 16) & 0x1f;
- 
- 	if (mce_flags.smca)
--		return smca_get_bank_type(m) == SMCA_UMC && xec == 0x0;
-+		return smca_get_bank_type(m->bank) == SMCA_UMC && xec == 0x0;
- 
- 	return m->bank == 4 && xec == 0x8;
- }
-@@ -1063,7 +1063,7 @@ static struct kobj_type threshold_ktype = {
- 
- static const char *get_name(unsigned int bank, struct threshold_block *b)
- {
--	unsigned int bank_type;
-+	enum smca_bank_types bank_type;
- 
- 	if (!mce_flags.smca) {
- 		if (b && bank == 4)
-@@ -1072,11 +1072,10 @@ static const char *get_name(unsigned int bank, struct threshold_block *b)
- 		return th_names[bank];
- 	}
- 
--	if (!smca_banks[bank].hwid)
-+	bank_type = smca_get_bank_type(bank);
-+	if (bank_type >= N_SMCA_BANK_TYPES)
- 		return NULL;
- 
--	bank_type = smca_banks[bank].hwid->bank_type;
--
- 	if (b && bank_type == SMCA_UMC) {
- 		if (b->block < ARRAY_SIZE(smca_umc_block_names))
- 			return smca_umc_block_names[b->block];
++	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
++		return addr;
++
++	/* Get address from already initialized block. */
++	if (per_cpu(threshold_banks, cpu)) {
++		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
++
++		if (bankp && bankp->blocks) {
++			struct threshold_block *blockp = &bankp->blocks[block];
++
++			if (blockp)
++				return blockp->address;
++		}
++	}
++
+ 	if (mce_flags.smca) {
+ 		if (smca_get_bank_type(bank) == SMCA_RESERVED)
+ 			return addr;
 -- 
 2.14.1
