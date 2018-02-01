@@ -1,76 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754434AbeBAAK1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 19:10:27 -0500
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:42515 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752209AbeBAAK0 (ORCPT
+        id S932143AbeBAAYM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 19:24:12 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.131]:16273 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753846AbeBAAYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 19:10:26 -0500
-X-ME-Sender: <xms:8VpyWgJJeRUL0H5ndRWd_h5pcVrjFVMxO3cwNaQ6ywIG7SEnRpRFZQ>
-Date: Thu, 1 Feb 2018 11:10:21 +1100
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Joe Perches <joe@perches.com>
-Cc: linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: checkpatch changes for 4.16
-Message-ID: <20180201001021.GB29988@eros>
-References: <20180131214630.GF11433@eros>
- <1517438936.7489.8.camel@perches.com>
- <20180131232358.GA29988@eros>
- <1517442979.7489.14.camel@perches.com>
+        Wed, 31 Jan 2018 19:24:09 -0500
+Date: Wed, 31 Jan 2018 18:24:07 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: "Wong Hoi Sing, Edison" <hswong3i@gmail.com>,
+        "Hung Hing Lun, Mike" <hlhung3i@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] tcp_lp: use 64-bit arithmetic instead of 32-bit
+Message-ID: <20180201002407.GA1608@embeddedgus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517442979.7489.14.camel@perches.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
 User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.201.65
+X-Source-L: No
+X-Exim-ID: 1eh2fg-000wkz-4r
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.152.201.65]:43454
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 03:56:19PM -0800, Joe Perches wrote:
-> On Thu, 2018-02-01 at 10:23 +1100, Tobin C. Harding wrote:
-> > On Wed, Jan 31, 2018 at 02:48:56PM -0800, Joe Perches wrote:
-> > > On Thu, 2018-02-01 at 08:46 +1100, Tobin C. Harding wrote:
-> > > > Hi Joe,
-> > > > 
-> > > > Can I please bother you with a maintainer question.  I know everyone is
-> > > > super busy right now, I'm asking for a smidgen of your time instead of
-> > > > doing it wrong and taking up some of Linus' time since it's merge window
-> > > > and all that.
-> > > > 
-> > > > I have the checkpatch set queued ready to do a GIT PULL to Linus.  My
-> > > > concern is that the subject line may not be unique if checkpatch changes
-> > > > are coming in from various trees this merge window. I have tagged the
-> > > > pull request with
-> > > 
-> > > Personally, I think you could let Andrew Morton pick them
-> > > up as very few patches for checkpatch go in any other way.
-> > 
-> > ok no worries.  I'll leave it until a few rc's are out then send to Andrew.
-> > 
-> > > What patches are you submitting again?
-> > > 
-> > > Is it just
-> > > 
-> > > commit 7b1924a1d930 ("vsprintf: add printk specifier %px")
-> > > 
-> > > or is there something else?
-> > 
-> > d94e97bc9ede checkpatch: add sub routine get_stat_real()
-> > d0e27c47f5b9 checkpatch: add sub routine get_stat_here()
-> > 986b3b5b7d7a checkpatch: warn for use of %px
-> > 26c1cf882d79 checkpatch: add check for tag Co-Developed-by
-> > 
-> > I thought it was odd when you said they could go in through _any_
-> > tree. Not to worry, it's not urgent. 
-> 
-> Stuff that is going to be pulled should at least
-> marinate in -next for awhile first and not first
-> be presented as a pull request.
+Cast to s64 some variables and a macro in order to give the
+compiler complete information about the proper arithmetic to
+use. Notice that these elements are used in contexts that
+expect expressions of type s64 (64 bits, signed).
 
-Oh cheers, I forgot about that for leaking_addresses patches too :(
+Currently such expression are being evaluated using 32-bit
+arithmetic.
 
-thanks,
-Tobin.
+Addresses-Coverity-ID: 200687
+Addresses-Coverity-ID: 200688
+Addresses-Coverity-ID: 200689
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ net/ipv4/tcp_lp.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/net/ipv4/tcp_lp.c b/net/ipv4/tcp_lp.c
+index ae10ed6..4999111 100644
+--- a/net/ipv4/tcp_lp.c
++++ b/net/ipv4/tcp_lp.c
+@@ -134,7 +134,7 @@ static u32 tcp_lp_remote_hz_estimator(struct sock *sk)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct lp *lp = inet_csk_ca(sk);
+-	s64 rhz = lp->remote_hz << 6;	/* remote HZ << 6 */
++	s64 rhz = (s64)lp->remote_hz << 6;	/* remote HZ << 6 */
+ 	s64 m = 0;
+ 
+ 	/* not yet record reference time
+@@ -147,7 +147,7 @@ static u32 tcp_lp_remote_hz_estimator(struct sock *sk)
+ 	    tp->rx_opt.rcv_tsecr == lp->local_ref_time)
+ 		goto out;
+ 
+-	m = TCP_TS_HZ *
++	m = (s64)TCP_TS_HZ *
+ 	    (tp->rx_opt.rcv_tsval - lp->remote_ref_time) /
+ 	    (tp->rx_opt.rcv_tsecr - lp->local_ref_time);
+ 	if (m < 0)
+@@ -193,8 +193,8 @@ static u32 tcp_lp_owd_calculator(struct sock *sk)
+ 
+ 	if (lp->flag & LP_VALID_RHZ) {
+ 		owd =
+-		    tp->rx_opt.rcv_tsval * (LP_RESOL / lp->remote_hz) -
+-		    tp->rx_opt.rcv_tsecr * (LP_RESOL / TCP_TS_HZ);
++		    (s64)tp->rx_opt.rcv_tsval * (LP_RESOL / lp->remote_hz) -
++		    (s64)tp->rx_opt.rcv_tsecr * (LP_RESOL / TCP_TS_HZ);
+ 		if (owd < 0)
+ 			owd = -owd;
+ 	}
+-- 
+2.7.4
