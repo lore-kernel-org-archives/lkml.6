@@ -1,14 +1,76 @@
-Date: Thu, 1 Feb 2018 12:08:24 +0100
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3445306-1517483261-2-7021136809869274848
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='iso-8859-1'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517483260; b=uv7NFPg/9PzszjFUQ8MGHEuuTas9tdGNJBoGOCm8mmxV8Ju
+    2esouiqmIhsIXGihfdfXhjQ55UXLudPJdB8j5ugSmt97EpKirbTYg8GTQzhAktyB
+    zhK/iTZR2kb2L5pe2L0XFP5qU7+M56bjkENW0rfLagwfuJ8kQDaqgmSSkrZjaZ1J
+    MFfCx22mtQOfEX4+U4EoTK2nGEkRcPj3YbfYbRo5RRw06kH8DKKAVPC9XSP3w8dO
+    99LJeAPhTm/ACpKAZI3Skc9M4reyaDsi6uC7jOzHlD+OP2TKNVXtAvd4NIN4AyKc
+    5CxxG393Cx3Pf8fJFgsqP965lwA1PT0XvzOVm1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1517483260; bh=GUtBGN6DIOtQfL7Mb65HlMCXkf
+    HzM8JNQo5oKlQ7KwQ=; b=qgnHb7P1ZedOogyVgHo2TiqzlXVrSnuGTfoPSPGuBK
+    8b5x7KxcNXGnI+KxptcBIuG4D9R4twO0J3Xy7UCI0uHXXJzRVDsJ4Fg3abJIYeNP
+    n77KSv9Ebum9N6y6KCPg8tpYX6Vhoaz5vgydkxYrP+D2A9I03d6vegJDHUH4zgz5
+    eM60fwDfrhfdxx7+y0sMgfvD5FywQmUa695Ds9zxoXh68eCIoDlAjrETvVNG12Zo
+    aPxxzjxIJLpqt6AdlrlrkJmzKR3FX8Wzl8VQ6gHUASNJPv15C3jj5jkylDiFf+pE
+    j3OOihVsqX6Dx7iM+idJ4q5DlY//s9wU6HeLCdRixCQA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751900AbeBALHj (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Feb 2018 06:07:39 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33522 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751520AbeBALHi (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Thu, 1 Feb 2018 06:07:38 -0500
+Date: Thu, 1 Feb 2018 12:07:35 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Driver core updates for 4.16-rc1
-Message-ID: <20180201110824.GA29150@kroah.com>
+        Jiri Slaby <jslaby@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY/Serial patches for 4.16-rc1
+Message-ID: <20180201110735.GA28809@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 User-Agent: Mutt/1.9.3 (2018-01-21)
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -18,246 +80,206 @@ The following changes since commit 30a7acd573899fd8b8ac39236eff6468b195ac7d:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/ tags/driver-core-4.16-rc1
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/ tags/tty-4.16-rc1
 
-for you to fetch changes up to c505cbd45f6e9c539d57dd171d95ec7e5e9f9cd0:
+for you to fetch changes up to c7e1b4059075c9e8eed101d7cc5da43e95eb5e18:
 
-  device property: Define type of PROPERTY_ENRTY_*() macros (2018-01-25 13:44:20 +0100)
+  tty: serial: exar: Relocate sleep wake-up handling (2018-01-25 12:44:50 +0100)
 
 ----------------------------------------------------------------
-Driver Core updates for 4.16-rc1
+TTY/Staging driver updates for 4.16-rc1
 
-Here is the set of "big" driver core patches for 4.16-rc1.
+Here is the big tty/serial driver update for 4.16-rc1.
 
-The majority of the work here is in the firmware subsystem, with reworks
-to try to attempt to make the code easier to handle in the long run, but
-no functional change.  There's also some tree-wide sysfs attribute
-fixups with lots of acks from the various subsystem maintainers, as well
-as a handful of other normal fixes and changes.
+The usual number of various serial driver fixes and updates to try to
+get them to work with crazy hardware configurations (seriously, how many
+different ways are hardware engineers going to come up with to hook up a
+simple UART?)
 
-And finally, some license cleanups for the driver core and sysfs code.
+There is also some serdev bugfixes and updates, as well as a smattering
+of other small fixes in here.
 
-All have been in linux-next for a while with no reported issues.
+All have been in the linux-next tree for a while, with no reported
+issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Andy Shevchenko (3):
-      device property: Move property_entry_free_data() upper
-      device property: Reuse property_entry_free_data()
-      device property: Define type of PROPERTY_ENRTY_*() macros
+Aaron Sierra (1):
+      tty: serial: exar: Relocate sleep wake-up handling
 
-Arend van Spriel (2):
-      sysfs: add attribute specification for /sysfs/devices/.../coredump
-      drivers: base: add coredump driver ops
+Andrey Smirnov (2):
+      serdev: Make .remove in struct serdev_device_driver optional
+      serdev: Introduce devm_serdev_device_open()
 
-Benjamin Gilbert (3):
-      USB: serial: keyspan: Drop firmware Kconfig options
-      firmware: Drop FIRMWARE_IN_KERNEL Kconfig option
-      firmware: Fix up docs referring to FIRMWARE_IN_KERNEL
+Andy Shevchenko (2):
+      MAINTAINERS: Add myself as designated reviewer for 8250_dw
+      serial: 8250_dw: Revert "Improve clock rate setting"
 
-Gimcuan Hui (1):
-      drivers: base: omit redundant interations
+Branislav Radocaj (1):
+      tty: serial: mxs-auart: fix error handling in mxs_auart_probe
 
-Greg Kroah-Hartman (10):
-      kobject: add SPDX identifiers to all kobject files
-      kobject: Remove redundant license text
-      driver core: add SPDX identifiers to all driver core files
-      drivers: core: arch_topology.c: move SPDX tag to top of the file
-      driver core: Remove redundant license text
-      Merge 4.15-rc3 into driver-core-next
-      Merge 4.15-rc6 into driver-core-next
-      sysfs: turn WARN() into pr_warn()
-      sysfs: use SPDX identifiers
-      sysfs: remove DEBUG defines
+Christian Borntraeger (1):
+      serial: forbid 8250 on s390
 
-Joe Perches (4):
-      sysfs.h: Use octal permissions
-      treewide: Use DEVICE_ATTR_RW
-      treewide: Use DEVICE_ATTR_RO
-      treewide: Use DEVICE_ATTR_WO
+Colin Ian King (1):
+      tty: n_gsm: remove redundant pointer gsm
 
-Luis R. Rodriguez (20):
-      firmware: add helper to unregister pm ops
-      firmware: fix capturing errors on fw_cache_init() on early init
-      firmware: provide helpers for registering the syfs loader
-      firmware: fix detecting error on register_reboot_notifier()
-      test_firmware: fix setting old custom fw path back on exit
-      firmware: rename struct firmware_priv to struct fw_sysfs
-      firmware: rename struct firmware_buf to struct fw_priv
-      firmware: rename struct fw_priv->fw_id to fw_name
-      firmware: move core data structures to the top of file
-      firmware: remove duplicate fw_state_aborted()
-      firmware: remove unused __fw_state_is_done()
-      firmware: use static inlines for state machine checking
-      firmware: rename sysfs state checks with sysfs prefix
-      firmware: use static inline for to_fw_priv()
-      firmware: add helper to copy built-in data to pre-alloc buffer
-      firmware: provide helper for FW_OPT_USERHELPER
-      firmware: replace #ifdef over FW_OPT_FALLBACK with function checks
-      test_firmware: wrap sysfs timeout test into helper
-      test_firmware: wrap basic sysfs fallback tests into helper
-      test_firmware: wrap custom sysfs load tests into helper
+Fabio Estevam (2):
+      dt-bindings: serial: fsl-imx-uart: Remove 'fsl,irda-mode' property
+      serial: imx: Only wakeup via RTSDEN bit if the system has RTS/CTS
 
-Maciej Purski (1):
-      component: add debugfs support
+Gaurav Kohli (1):
+      tty: fix data race between tty_init_dev and flush of buf
 
-Masanari Iida (1):
-      firmware: Fix a typo in fallback-mechanisms.rst
+Geert Uytterhoeven (5):
+      tty: serial: sh-sci: Hide number of ports config question
+      tty: serial: sh-sci: Hide serial console config question
+      tty: serial: sh-sci: Hide earlycon config question
+      tty: serial: sh-sci: Hide DMA config question
+      tty: serial: sh-sci: Add default for number of ports for compile-testing
 
-Paul Gortmaker (1):
-      bus: simple-pm-bus: convert bool SIMPLE_PM_BUS to tristate
+Greg Kroah-Hartman (2):
+      Merge 4.15-rc3 into tty-next
+      Merge 4.15-rc6 into tty-next
 
-Vasyl Gomonovych (2):
-      sysfs: Use PTR_ERR_OR_ZERO()
-      PNP: pnpbios: Use PTR_ERR_OR_ZERO()
+Guilherme G. Piccoli (2):
+      tty: serial: jsm: Remove unnecessary NULL checks
+      tty: serial: jsm: Add one check against NULL pointer dereference
 
-Wei Yongjun (2):
-      test_firmware: make local symbol test_fw_config static
-      test_firmware: fix missing unlock on error in config_num_requests_store()
+Gustavo A. R. Silva (1):
+      tty: vt: replace _manual_ swap with swap macro in set_selection
 
- Documentation/ABI/testing/sysfs-devices-coredump   |  10 +
- Documentation/driver-api/firmware/built-in-fw.rst  |   7 +-
- .../driver-api/firmware/fallback-mechanisms.rst    |   2 +-
- Documentation/x86/microcode.txt                    |   5 +-
- arch/arc/configs/axs101_defconfig                  |   1 -
- arch/arc/configs/axs103_defconfig                  |   1 -
- arch/arc/configs/axs103_smp_defconfig              |   1 -
- arch/arc/configs/haps_hs_defconfig                 |   1 -
- arch/arc/configs/haps_hs_smp_defconfig             |   1 -
- arch/arc/configs/hsdk_defconfig                    |   1 -
- arch/arc/configs/nsim_700_defconfig                |   1 -
- arch/arc/configs/nsim_hs_defconfig                 |   1 -
- arch/arc/configs/nsim_hs_smp_defconfig             |   1 -
- arch/arc/configs/nsimosci_defconfig                |   1 -
- arch/arc/configs/nsimosci_hs_defconfig             |   1 -
- arch/arc/configs/nsimosci_hs_smp_defconfig         |   1 -
- arch/arc/configs/tb10x_defconfig                   |   1 -
- arch/arc/configs/vdk_hs38_defconfig                |   1 -
- arch/arc/configs/vdk_hs38_smp_defconfig            |   1 -
- arch/arm/configs/cns3420vb_defconfig               |   1 -
- arch/arm/configs/magician_defconfig                |   1 -
- arch/arm/configs/mini2440_defconfig                |   1 -
- arch/arm/configs/mv78xx0_defconfig                 |   1 -
- arch/arm/configs/mxs_defconfig                     |   1 -
- arch/arm/configs/orion5x_defconfig                 |   1 -
- arch/arm/configs/tegra_defconfig                   |   1 -
- arch/arm/configs/vf610m4_defconfig                 |   1 -
- arch/arm/mach-pxa/sharpsl_pm.c                     |   4 +-
- arch/m68k/configs/amiga_defconfig                  |   1 -
- arch/m68k/configs/apollo_defconfig                 |   1 -
- arch/m68k/configs/atari_defconfig                  |   1 -
- arch/m68k/configs/bvme6000_defconfig               |   1 -
- arch/m68k/configs/hp300_defconfig                  |   1 -
- arch/m68k/configs/mac_defconfig                    |   1 -
- arch/m68k/configs/multi_defconfig                  |   1 -
- arch/m68k/configs/mvme147_defconfig                |   1 -
- arch/m68k/configs/mvme16x_defconfig                |   1 -
- arch/m68k/configs/q40_defconfig                    |   1 -
- arch/m68k/configs/sun3_defconfig                   |   1 -
- arch/m68k/configs/sun3x_defconfig                  |   1 -
- arch/mips/configs/ar7_defconfig                    |   1 -
- arch/mips/configs/ath25_defconfig                  |   1 -
- arch/mips/configs/ath79_defconfig                  |   1 -
- arch/mips/configs/pic32mzda_defconfig              |   1 -
- arch/mips/configs/qi_lb60_defconfig                |   1 -
- arch/mips/configs/rm200_defconfig                  |   9 -
- arch/mips/configs/rt305x_defconfig                 |   1 -
- arch/mips/configs/xway_defconfig                   |   1 -
- arch/mn10300/configs/asb2364_defconfig             |   1 -
- arch/powerpc/configs/44x/warp_defconfig            |   1 -
- arch/powerpc/configs/c2k_defconfig                 |  12 -
- arch/powerpc/configs/g5_defconfig                  |  12 -
- arch/powerpc/configs/maple_defconfig               |  12 -
- arch/powerpc/configs/mpc512x_defconfig             |   1 -
- arch/powerpc/configs/pmac32_defconfig              |  12 -
- arch/powerpc/configs/ppc6xx_defconfig              |   1 -
- arch/powerpc/configs/ps3_defconfig                 |   1 -
- arch/powerpc/configs/wii_defconfig                 |   1 -
- arch/s390/configs/zfcpdump_defconfig               |   1 -
- arch/s390/kernel/smp.c                             |   2 +-
- arch/s390/kernel/topology.c                        |   3 +-
- arch/sh/configs/polaris_defconfig                  |   1 -
- arch/sh/drivers/push-switch.c                      |   2 +-
- arch/tile/configs/tilegx_defconfig                 |   1 -
- arch/tile/configs/tilepro_defconfig                |   1 -
- arch/tile/kernel/sysfs.c                           |  12 +-
- arch/x86/Kconfig                                   |   6 +-
- arch/x86/kernel/cpu/microcode/core.c               |   2 +-
- drivers/acpi/device_sysfs.c                        |   6 +-
- drivers/base/Kconfig                               |  28 +-
- drivers/base/arch_topology.c                       |   8 +-
- drivers/base/attribute_container.c                 |   3 +-
- drivers/base/bus.c                                 |   6 +-
- drivers/base/cacheinfo.c                           |  13 +-
- drivers/base/class.c                               |   4 +-
- drivers/base/component.c                           |  83 +-
- drivers/base/container.c                           |   5 +-
- drivers/base/core.c                                |   6 +-
- drivers/base/cpu.c                                 |   1 +
- drivers/base/dd.c                                  |  43 +-
- drivers/base/devcoredump.c                         |  17 +-
- drivers/base/devres.c                              |   3 +-
- drivers/base/dma-contiguous.c                      |   6 +-
- drivers/base/dma-mapping.c                         |   3 +-
- drivers/base/driver.c                              |   6 +-
- drivers/base/firmware.c                            |   3 +-
- drivers/base/firmware_class.c                      | 859 ++++++++++++---------
- drivers/base/hypervisor.c                          |   3 +-
- drivers/base/init.c                                |   3 +-
- drivers/base/isa.c                                 |   1 +
- drivers/base/map.c                                 |   2 +-
- drivers/base/module.c                              |   4 +-
- drivers/base/pinctrl.c                             |   3 +-
- drivers/base/platform-msi.c                        |  13 +-
- drivers/base/platform.c                            |   3 +-
- drivers/base/property.c                            |  73 +-
- drivers/base/soc.c                                 |   2 +-
- drivers/base/syscore.c                             |   3 +-
- drivers/base/test/test_async_driver_probe.c        |  10 +-
- drivers/base/topology.c                            |  17 +-
- drivers/base/transport_class.c                     |   3 +-
- drivers/bus/Kconfig                                |   2 +-
- drivers/char/ipmi/ipmi_msghandler.c                |  17 +-
- drivers/gpu/drm/i915/i915_sysfs.c                  |  12 +-
- drivers/input/touchscreen/elants_i2c.c             |   2 +-
- drivers/net/ethernet/ibm/ibmvnic.c                 |   2 +-
- drivers/net/wimax/i2400m/sysfs.c                   |   3 +-
- drivers/nvme/host/core.c                           |  10 +-
- drivers/platform/x86/compal-laptop.c               |  18 +-
- drivers/pnp/pnpbios/core.c                         |   5 +-
- drivers/s390/cio/css.c                             |   8 +-
- drivers/s390/cio/device.c                          |  10 +-
- drivers/s390/crypto/ap_card.c                      |   2 +-
- drivers/scsi/hpsa.c                                |  10 +-
- drivers/scsi/lpfc/lpfc_attr.c                      |  64 +-
- drivers/thermal/thermal_sysfs.c                    |  17 +-
- drivers/tty/serial/sh-sci.c                        |   2 +-
- drivers/usb/phy/phy-tahvo.c                        |   2 +-
- drivers/usb/serial/Kconfig                         |  78 --
- drivers/video/fbdev/auo_k190x.c                    |   4 +-
- drivers/video/fbdev/w100fb.c                       |   4 +-
- fs/sysfs/dir.c                                     |   9 +-
- fs/sysfs/file.c                                    |   3 +-
- fs/sysfs/group.c                                   |   6 +-
- fs/sysfs/mount.c                                   |   5 +-
- fs/sysfs/symlink.c                                 |   3 +-
- fs/sysfs/sysfs.h                                   |   3 +-
- include/linux/device.h                             |   5 +-
- include/linux/kobject.h                            |   3 +-
- include/linux/kobject_ns.h                         |   3 +-
- include/linux/property.h                           |  10 +-
- include/linux/sysfs.h                              |  14 +-
- lib/kobject.c                                      |   4 +-
- lib/kobject_uevent.c                               |   3 +-
- lib/test_firmware.c                                |  17 +-
- lib/test_kmod.c                                    |  14 +-
- samples/kobject/kobject-example.c                  |   4 +-
- samples/kobject/kset-example.c                     |   4 +-
- sound/soc/omap/mcbsp.c                             |   4 +-
- sound/soc/soc-core.c                               |   2 +-
- sound/soc/soc-dapm.c                               |   2 +-
- tools/testing/selftests/firmware/fw_fallback.sh    | 172 +++--
- tools/testing/selftests/firmware/fw_filesystem.sh  |   5 +-
- 143 files changed, 921 insertions(+), 1053 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-devices-coredump
+Hans de Goede (1):
+      serdev: Fix serdev_uevent failure on ACPI enumerated serdev-controllers
+
+Jan Kundrát (9):
+      serial: max310x: Fix invalid memory access during GPIO init
+      serial: max310x: Do not hard-code the IRQ type
+      serial: max310x: Use level-triggered interrupts
+      serial: max310x: Support IRQ sharing with other devices
+      serial: max310x: Document clock setup
+      serial: max310x: use a batch write op for UART transmit
+      serial: max310x: Use batched reads when reasonably safe
+      serial: max310x: Reduce RX work starvation
+      gpio: serial: max310x: Support open-drain configuration for GPIOs
+
+Jia-Ju Bai (1):
+      tty/isicom: Fix a possible sleep-in-atomic bug in WaitTillCardIsFree
+
+Johan Hovold (6):
+      serdev: document driver callbacks
+      serdev: ttyport: release tty lock sooner on open
+      serdev: ttyport: ignore carrier detect to avoid hangups
+      serdev: ttyport: do not used keyed wakeup in write_wakeup
+      serdev: do not generate modaliases for controllers
+      serdev: only match serdev devices
+
+Lars Kanis (1):
+      tty: moxa: Add support for CMSPAR
+
+Ludovic Barre (1):
+      serial: stm32: fix name conflict with 8250
+
+Lukas Wunner (7):
+      serial: pl011: Drop duplicate loop counter
+      serial: pl011: Use cached copy of IMSC register
+      serial: Make retrieval of rs485 properties platform-agnostic
+      dt-bindings: serial: Add common rs485 binding for RTS polarity
+      serial: core: Support common rs485 binding for RTS polarity
+      serial: fsl_lpuart: Support common rs485 binding for RTS polarity
+      serial: imx: Support common rs485 binding for RTS polarity
+
+Martin Blumenstingl (4):
+      tty: serial: meson: remove duplicate "clear error" bit definition
+      tty: serial: meson: merge the two register sections for AML_UART_CONTROL
+      tty: serial: meson: fix typo in the "stop bit" register definition
+      nvmem: meson-mx-efuse: fix reading from an offset other than 0
+
+Martin Kaiser (1):
+      serial: imx: fix endless loop during suspend
+
+Masahiro Yamada (1):
+      serial: 8250_of: fix return code when probe function fails to get reset
+
+Miquel Raynal (1):
+      dt-bindings: mvebu-uart: update documentation with extended UART
+
+Paul Cercueil (3):
+      serial: core: Make uart_parse_options take const char* argument
+      serial: 8250_ingenic: Add support for the JZ4770 SoC
+      serial: 8250_ingenic: Parse earlycon options
+
+Rafael Gago (1):
+      tty: omap-serial: Fix initial on-boot RTS GPIO level
+
+Rolf Evers-Fischer (1):
+      serial: 8250: 8250_omap: Fix spelling error.
+
+Sahara (1):
+      pty: cancel pty slave port buf's work in tty_release
+
+Sebastian Andrzej Siewior (2):
+      tty: goldfish: Enable 'earlycon' only if built-in
+      serial: core: mark port as initialized after successful IRQ change
+
+Stefan Potyra (1):
+      serial: 8250_dw: Disable clock on error
+
+Tony Lindgren (1):
+      tty: n_gsm: Allow ADM response in addition to UA for control dlci
+
+Troy Kisky (1):
+      tty: serial: imx: remove imx_disable_rx_int
+
+Wei Yongjun (1):
+      serial: 8250_uniphier: fix error return code in uniphier_uart_probe()
+
+Wolfram Sang (1):
+      serial: mxs-auart: don't use GPIOF_* with gpiod_get_direction
+
+ .../devicetree/bindings/serial/fsl-imx-uart.txt    |   4 +-
+ .../devicetree/bindings/serial/fsl-lpuart.txt      |   3 +-
+ .../devicetree/bindings/serial/ingenic,uart.txt    |   8 +-
+ .../devicetree/bindings/serial/maxim,max310x.txt   |  18 +-
+ .../devicetree/bindings/serial/mvebu-uart.txt      |  50 +++-
+ .../devicetree/bindings/serial/omap_serial.txt     |   1 +
+ Documentation/devicetree/bindings/serial/rs485.txt |   1 +
+ Documentation/driver-model/devres.txt              |   3 +
+ MAINTAINERS                                        |   5 +
+ drivers/tty/Kconfig                                |   6 +-
+ drivers/tty/goldfish.c                             |   2 +
+ drivers/tty/isicom.c                               |   6 +-
+ drivers/tty/moxa.c                                 |  17 +-
+ drivers/tty/moxa.h                                 |   2 +
+ drivers/tty/n_gsm.c                                |  19 +-
+ drivers/tty/serdev/core.c                          | 106 +++++---
+ drivers/tty/serdev/serdev-ttyport.c                |   8 +-
+ drivers/tty/serial/8250/8250_dw.c                  |  33 ++-
+ drivers/tty/serial/8250/8250_exar.c                |  34 ++-
+ drivers/tty/serial/8250/8250_ingenic.c             |  17 +-
+ drivers/tty/serial/8250/8250_of.c                  |   5 +-
+ drivers/tty/serial/8250/8250_omap.c                |   2 +-
+ drivers/tty/serial/8250/8250_port.c                |  26 --
+ drivers/tty/serial/8250/8250_uniphier.c            |   5 +-
+ drivers/tty/serial/8250/Kconfig                    |   1 +
+ drivers/tty/serial/Kconfig                         |  14 +-
+ drivers/tty/serial/amba-pl011.c                    |  12 +-
+ drivers/tty/serial/atmel_serial.c                  |   2 +-
+ drivers/tty/serial/fsl_lpuart.c                    |  15 +-
+ drivers/tty/serial/imx.c                           |  93 +++----
+ drivers/tty/serial/jsm/jsm_neo.c                   |   6 +-
+ drivers/tty/serial/jsm/jsm_tty.c                   |   6 -
+ drivers/tty/serial/max310x.c                       | 267 ++++++++++++++-------
+ drivers/tty/serial/meson_uart.c                    |  31 ++-
+ drivers/tty/serial/mxs-auart.c                     |  11 +-
+ drivers/tty/serial/omap-serial.c                   |  18 +-
+ drivers/tty/serial/serial_core.c                   |  35 ++-
+ drivers/tty/serial/stm32-usart.h                   |   2 +-
+ drivers/tty/tty_io.c                               |  10 +-
+ drivers/tty/tty_ldisc.c                            |   4 +-
+ drivers/tty/vt/selection.c                         |   6 +-
+ include/linux/serdev.h                             |   7 +-
+ include/linux/serial_core.h                        |   8 +-
+ include/linux/tty.h                                |   2 +
+ 44 files changed, 579 insertions(+), 352 deletions(-)
