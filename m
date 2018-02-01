@@ -1,95 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752195AbeBALWV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 06:22:21 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:22672 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751772AbeBALWT (ORCPT
+        id S1752168AbeBAL1i (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 06:27:38 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:5136 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751761AbeBAL1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 06:22:19 -0500
-Subject: Re: linux-next: build failure after merge of the pci tree
-To: Niklas Cassel <niklas.cassel@axis.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <20180201105114.562aef46@canb.auug.org.au>
- <20180201085608.GA22568@axis.com>
- <20180201111054.GA3983@e107981-ln.cambridge.arm.com>
- <20180201111617.GA8396@axis.com>
-CC: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <30c8c87f-bba9-d71e-b8d5-4b547711bab2@ti.com>
-Date: Thu, 1 Feb 2018 16:52:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180201111617.GA8396@axis.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 1 Feb 2018 06:27:37 -0500
+X-IronPort-AV: E=Sophos;i="5.46,443,1511827200";
+   d="scan'208";a="330077957"
+From: David Woodhouse <dwmw@amazon.co.uk>
+To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
+        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org
+Subject: [PATCH 1/2] x86/retpoline: No retpolines for built-in __init functions
+Date: Thu,  1 Feb 2018 11:27:20 +0000
+Message-Id: <1517484441-1420-2-git-send-email-dwmw@amazon.co.uk>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517484441-1420-1-git-send-email-dwmw@amazon.co.uk>
+References: <1517484441-1420-1-git-send-email-dwmw@amazon.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Niklas,
+There's no point in building init code with retpolines, since it runs before
+any potentially hostile userspace does. And before the retpoline is actually
+ALTERNATIVEd into place, for much of it.
 
-On Thursday 01 February 2018 04:46 PM, Niklas Cassel wrote:
-> On Thu, Feb 01, 2018 at 11:10:54AM +0000, Lorenzo Pieralisi wrote:
->> On Thu, Feb 01, 2018 at 09:56:09AM +0100, Niklas Cassel wrote:
->>> On Thu, Feb 01, 2018 at 10:51:14AM +1100, Stephen Rothwell wrote:
->>>> Hi Bjorn,
->>>>
->>>> After merging the pci tree, today's linux-next build (arm
->>>> multi_v7_defconfig) failed like this:
->>>>
->>>> drivers/pci/dwc/pcie-designware-ep.c: In function 'dw_pcie_ep_raise_msi_irq':
->>>> drivers/pci/dwc/pcie-designware-ep.c:293:8: error: too few arguments to function 'dw_pcie_ep_map_addr'
->>>>   ret = dw_pcie_ep_map_addr(epc, ep->msi_mem_phys, msg_addr,
->>>>         ^~~~~~~~~~~~~~~~~~~
->>>> drivers/pci/dwc/pcie-designware-ep.c:177:12: note: declared here
->>>>  static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
->>>>             ^~~~~~~~~~~~~~~~~~~
->>>> drivers/pci/dwc/pcie-designware-ep.c:300:2: error: too few arguments to function 'dw_pcie_ep_unmap_addr'
->>>>   dw_pcie_ep_unmap_addr(epc, ep->msi_mem_phys);
->>>>   ^~~~~~~~~~~~~~~~~~~~~
->>>> drivers/pci/dwc/pcie-designware-ep.c:161:13: note: declared here
->>>>  static void dw_pcie_ep_unmap_addr(struct pci_epc *epc, u8 func_no,
->>>>              ^~~~~~~~~~~~~~~~~~~~~
->>>>
->>>> Caused by commit
->>>>
->>>>   4494738de0d9 ("PCI: endpoint: Add the function number as argument to EPC ops")
->>>>
->>>> interacting with commit
->>>>
->>>>   6f6d7873711c ("PCI: designware-ep: Add generic function for raising MSI irq")
->>>>
->>>> This should have been fixed up in commit
->>>>
->>>>   26b259ab4fe8 ("Merge remote-tracking branch 'lorenzo/pci/dwc' into next")
->>>>
->>>> I have used the pci tree from next-20180131 for today.
->>>
->>> Hello,
->>>
->>> A suggested merge resolution included as an attachment.
->>
->> The resolution is OK to me - we have not spotted it since
->> PCI_ENDPOINT is being turned on in the config file in question only
->> in -next, it is not on by default in current mainline, apologies.
->>
->> Lorenzo
-> 
-> Adding Kishon to CC, he should probably have a look.
-> 
-> https://marc.info/?l=linux-kernel&m=151747537928327&w=2
-> 
-> If Kishon approves the suggested merge resolution,
-> perhaps it can be squashed with Cyrille's patch.
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ include/linux/init.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-The patch looks good to me.
-
-Thanks
-Kishon
+diff --git a/include/linux/init.h b/include/linux/init.h
+index ea1b311..506a981 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -5,6 +5,13 @@
+ #include <linux/compiler.h>
+ #include <linux/types.h>
+ 
++/* Built-in __init functions needn't be compiled with retpoline */
++#if defined(RETPOLINE) && !defined(MODULE)
++#define __noretpoline __attribute__((indirect_branch("keep")))
++#else
++#define __noretpoline
++#endif
++
+ /* These macros are used to mark some functions or 
+  * initialized data (doesn't apply to uninitialized data)
+  * as `initialization' functions. The kernel can take this
+@@ -40,7 +47,7 @@
+ 
+ /* These are for everybody (although not all archs will actually
+    discard it in modules) */
+-#define __init		__section(.init.text) __cold  __latent_entropy
++#define __init		__section(.init.text) __cold  __latent_entropy __noretpoline
+ #define __initdata	__section(.init.data)
+ #define __initconst	__section(.init.rodata)
+ #define __exitdata	__section(.exit.data)
+-- 
+2.7.4
