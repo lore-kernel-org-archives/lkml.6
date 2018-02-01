@@ -1,53 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752876AbeBAQ6r (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:58:47 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:46912 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752643AbeBAQ6p (ORCPT
+        id S1752894AbeBAQ70 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:59:26 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:38118 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751800AbeBAQ7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:58:45 -0500
-From: Colin King <colin.king@canonical.com>
-To: Guo-Fu Tseng <cooldavid@cooldavid.org>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: jme: remove unused initialization of 'rxdesc'
-Date: Thu,  1 Feb 2018 16:58:42 +0000
-Message-Id: <20180201165842.21906-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Thu, 1 Feb 2018 11:59:24 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w11GxBNN012600
+X-Nifty-SrcIP: [209.85.217.178]
+X-Google-Smtp-Source: AH8x224kgwQ4i8X85uMcTu/9ab/vtU8MXU2l3N8MU6BsyKtEM+yo1aiSc+AT8LGI/o6N/G3FnbpdGeGQ7FewUZyY2+w=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 2 Feb 2018 01:58:29 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQC+qjdcDSkmWoD7h=WV7e_yYRES-Tf+Az4CpxONPomyA@mail.gmail.com>
+Message-ID: <CAK7LNAQC+qjdcDSkmWoD7h=WV7e_yYRES-Tf+Az4CpxONPomyA@mail.gmail.com>
+Subject: [GIT PULL 2/3] Kbuild misc updates for v4.16
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w11GxZvv014554
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Linus,
 
-Pointer rxdesc is assigned a value that is never read, it is overwritten
-by a new assignment inside a while loop hence the initial assignment
-is redundant and can be removed.
+Here are some updates of misc scripts for v4.16.  Please pull!
 
-Cleans up clang warning:
-drivers/net/ethernet/jme.c:1074:17: warning: Value stored to 'rxdesc'
-during its initialization is never read
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/jme.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
-index 62d848df26ef..8a165842fa85 100644
---- a/drivers/net/ethernet/jme.c
-+++ b/drivers/net/ethernet/jme.c
-@@ -1071,7 +1071,7 @@ static int
- jme_process_receive(struct jme_adapter *jme, int limit)
- {
- 	struct jme_ring *rxring = &(jme->rxring[0]);
--	struct rxdesc *rxdesc = rxring->desc;
-+	struct rxdesc *rxdesc;
- 	int i, j, ccnt, desccnt, mask = jme->rx_ring_mask;
- 
- 	if (unlikely(!atomic_dec_and_test(&jme->rx_cleaning)))
+The following changes since commit ae64f9bd1d3621b5e60d7363bc20afb46aede215:
+
+  Linux 4.15-rc2 (2017-12-03 11:01:47 -0500)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-misc-v4.16
+
+for you to fetch changes up to 1640eea35e8dcf0cb437f03c56868a97d0666df3:
+
+  Coccinelle: coccicheck: fix typo (2018-02-02 00:21:47 +0900)
+
+----------------------------------------------------------------
+Kbuild misc updates for v4.16
+
+- Add snap-pkg target to create Linux kernel snap package
+
+- Make out-of-tree creation of source packages fail correctly
+
+- Improve and fix several semantic patches
+
+----------------------------------------------------------------
+Himanshu Jha (4):
+      Coccinelle: kzalloc-simple: Add all zero allocating functions
+      Coccinelle: alloc_cast: Add more memory allocating functions to the list
+      Coccinelle: ifnullfree: Trim the warning reported in report mode
+      Coccinelle: kzalloc-simple: Rename kzalloc-simple to zalloc-simple
+
+Julia Lawall (2):
+      Coccinelle: memdup: drop spurious line
+      Coccinelle: coccicheck: fix typo
+
+Jérémy Lefaure (1):
+      Coccinelle: array_size: report even if include is missing
+
+Masahiro Yamada (1):
+      kbuild: pkg: make out-of-tree rpm/deb-pkg build immediately fail
+
+Paolo Pisati (1):
+      scripts/package: snap-pkg target
+
+ .gitignore                                      |   5 +
+ scripts/coccicheck                              |   2 +-
+ scripts/coccinelle/api/alloc/alloc_cast.cocci   |  92 +++-
+ .../coccinelle/api/alloc/kzalloc-simple.cocci   |  86 ----
+ .../coccinelle/api/alloc/zalloc-simple.cocci    | 448 +++++++++++++++++++
+ scripts/coccinelle/api/memdup.cocci             |   1 -
+ scripts/coccinelle/free/ifnullfree.cocci        |   2 +-
+ scripts/coccinelle/misc/array_size.cocci        |   4 +-
+ scripts/package/Makefile                        |  26 +-
+ scripts/package/snapcraft.template              |  14 +
+ 10 files changed, 565 insertions(+), 115 deletions(-)
+ delete mode 100644 scripts/coccinelle/api/alloc/kzalloc-simple.cocci
+ create mode 100644 scripts/coccinelle/api/alloc/zalloc-simple.cocci
+ create mode 100644 scripts/package/snapcraft.template
+
+
 -- 
-2.15.1
+Best Regards
+Masahiro Yamada
