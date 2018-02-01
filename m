@@ -1,84 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752448AbeBAPda (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:33:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37651 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751707AbeBAPd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:33:27 -0500
-Date: Thu, 1 Feb 2018 16:33:10 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH] KVM/x86: remove WARN_ON() for when vm_munmap() fails
-Message-ID: <20180201153310.GD31080@flask>
-References: <001a1141c71c13f559055d1b28eb@google.com>
- <20180201013021.151884-1-ebiggers3@gmail.com>
+        id S1752277AbeBAPh5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:37:57 -0500
+Received: from mail.micronovasrl.com ([212.103.203.10]:45390 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751555AbeBAPh4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 10:37:56 -0500
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH] arm: dts: sun7i: include correct ccu clock header
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1517427086-66480-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180201151900.2zabioxbq7iehl4v@flea.lan>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <3ae29cfa-a87e-c8da-60a7-4f8792fe52cf@micronovasrl.com>
+Date: Thu, 1 Feb 2018 16:37:53 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180201013021.151884-1-ebiggers3@gmail.com>
+In-Reply-To: <20180201151900.2zabioxbq7iehl4v@flea.lan>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-01-31 17:30-0800, Eric Biggers:
-> From: Eric Biggers <ebiggers@google.com>
+Il 01/02/2018 16:19, Maxime Ripard ha scritto:
+> Hi,
 > 
-> On x86, special KVM memslots such as the TSS region have anonymous
-> memory mappings created on behalf of userspace, and these mappings are
-> removed when the VM is destroyed.
+> On Wed, Jan 31, 2018 at 08:31:26PM +0100, Giulio Benetti wrote:
+>> Include correct clock header sun7i-a20-ccu.h
+>> instead of sun4i-a20-ccu.h.
 > 
-> It is however possible for removing these mappings via vm_munmap() to
-> fail.  This can most easily happen if the thread receives SIGKILL while
-> it's waiting to acquire ->mmap_sem.   This triggers the 'WARN_ON(r < 0)'
-> in __x86_set_memory_region().  syzkaller was able to hit this, using
-> 'exit()' to send the SIGKILL.  Note that while the vm_munmap() failure
-> results in the mapping not being removed immediately, it is not leaked
-> forever but rather will be freed when the process exits.
-> 
-> It's not really possible to handle this failure properly, so almost
+> You should wrap at 72 characters.
 
-We could check "r < 0 && r != -EINTR" to get rid of the easily
-triggerable warning.
+Ok, keep in mind for next patches. Thanks
 
-> every other caller of vm_munmap() doesn't check the return value.  It's
-> a limitation of having the kernel manage these mappings rather than
-> userspace.
 > 
-> So just remove the WARN_ON() so that users can't spam the kernel log
-> with this warning.
+>> Including sun4i header instead of sun7i
+>> prevents using sun7i specific defines.
+>>
+>> Substitute header inclusion in sun7i-a20.dtsi
+>> using right one.
 > 
-> Fixes: f0d648bdf0a5 ("KVM: x86: map/unmap private slots in __x86_set_memory_region")
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
+> This sentence is redundant with the first one.
 
-Removing it altogether doesn't sound that bad, though ...
-Queued, thanks.
+Yes, you're right. Thanks
 
->  arch/x86/kvm/x86.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index c53298dfbf50..53b57f18baec 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -8272,10 +8272,8 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
->  			return r;
->  	}
->  
-> -	if (!size) {
-> -		r = vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
-> -		WARN_ON(r < 0);
-> -	}
-> +	if (!size)
-> +		vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
->  
->  	return 0;
->  }
-> -- 
-> 2.16.0.rc1.238.g530d649a79-goog
+> Dropped the first one, corrected the wrapping and applied, thanks
 > 
+> Maxime
+> 
+
+
+-- 
+Giulio Benetti
+R&D Manager &
+Advanced Research
+
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
