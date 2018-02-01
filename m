@@ -1,70 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754063AbeAaX4X (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 18:56:23 -0500
-Received: from smtprelay0133.hostedemail.com ([216.40.44.133]:41414 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751707AbeAaX4W (ORCPT
+        id S1754271AbeBAAEK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 19:04:10 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:57048 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753730AbeBAAEI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 18:56:22 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:7522:7974:10010:10400:10848:11026:11232:11658:11914:12663:12740:12760:12895:13069:13311:13357:13439:14096:14097:14180:14659:21060:21063:21080:21325:21326:21611:21627:30041:30054:30055:30070:30083:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:1:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: quilt93_8ec39bd1faa54
-X-Filterd-Recvd-Size: 2414
-Message-ID: <1517442979.7489.14.camel@perches.com>
-Subject: Re: checkpatch changes for 4.16
-From: Joe Perches <joe@perches.com>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date: Wed, 31 Jan 2018 15:56:19 -0800
-In-Reply-To: <20180131232358.GA29988@eros>
-References: <20180131214630.GF11433@eros>
-         <1517438936.7489.8.camel@perches.com> <20180131232358.GA29988@eros>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 31 Jan 2018 19:04:08 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E214C6079C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+From: Shanker Donthineni <shankerd@codeaurora.org>
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Sean Campbell <scampbel@codeaurora.org>,
+        Thomas Speier <tspeier@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+Subject: [PATCH] irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
+Date: Wed, 31 Jan 2018 18:03:42 -0600
+Message-Id: <1517443422-30693-1-git-send-email-shankerd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-02-01 at 10:23 +1100, Tobin C. Harding wrote:
-> On Wed, Jan 31, 2018 at 02:48:56PM -0800, Joe Perches wrote:
-> > On Thu, 2018-02-01 at 08:46 +1100, Tobin C. Harding wrote:
-> > > Hi Joe,
-> > > 
-> > > Can I please bother you with a maintainer question.  I know everyone is
-> > > super busy right now, I'm asking for a smidgen of your time instead of
-> > > doing it wrong and taking up some of Linus' time since it's merge window
-> > > and all that.
-> > > 
-> > > I have the checkpatch set queued ready to do a GIT PULL to Linus.  My
-> > > concern is that the subject line may not be unique if checkpatch changes
-> > > are coming in from various trees this merge window. I have tagged the
-> > > pull request with
-> > 
-> > Personally, I think you could let Andrew Morton pick them
-> > up as very few patches for checkpatch go in any other way.
-> 
-> ok no worries.  I'll leave it until a few rc's are out then send to Andrew.
-> 
-> > What patches are you submitting again?
-> > 
-> > Is it just
-> > 
-> > commit 7b1924a1d930 ("vsprintf: add printk specifier %px")
-> > 
-> > or is there something else?
-> 
-> d94e97bc9ede checkpatch: add sub routine get_stat_real()
-> d0e27c47f5b9 checkpatch: add sub routine get_stat_here()
-> 986b3b5b7d7a checkpatch: warn for use of %px
-> 26c1cf882d79 checkpatch: add check for tag Co-Developed-by
-> 
-> I thought it was odd when you said they could go in through _any_
-> tree. Not to worry, it's not urgent. 
+A DMB instruction can be used to ensure the relative order of only
+memory accesses before and after the barrier. Since writes to system
+registers are not memory operations, barrier DMB is not sufficient
+for observability of memory accesses that occur before ICC_SGI1R_EL1
+writes.
 
-Stuff that is going to be pulled should at least
-marinate in -next for awhile first and not first
-be presented as a pull request.
+A DSB instruction ensures that no instructions that appear in program
+order after the DSB instruction, can execute until the DSB instruction
+has completed.
+
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+---
+ drivers/irqchip/irq-gic-v3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index b56c3e2..980ae8e 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -688,7 +688,7 @@ static void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
+ 	 * Ensure that stores to Normal memory are visible to the
+ 	 * other CPUs before issuing the IPI.
+ 	 */
+-	smp_wmb();
++	wmb();
+ 
+ 	for_each_cpu(cpu, mask) {
+ 		u64 cluster_id = MPIDR_TO_SGI_CLUSTER_ID(cpu_logical_map(cpu));
+-- 
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
