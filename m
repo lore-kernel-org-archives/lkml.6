@@ -1,60 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751619AbeBAOdl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 09:33:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54104 "EHLO mx1.redhat.com"
+        id S1751706AbeBAOe7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 09:34:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751450AbeBAOdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 09:33:38 -0500
-Date: Thu, 1 Feb 2018 22:33:33 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        mhocko@suse.com, tglx@linutronix.de, douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH 2/2] mm/sparse.c: Add nr_present_sections to change the
- mem_map allocation
-Message-ID: <20180201143333.GD1770@localhost.localdomain>
-References: <20180201071956.14365-1-bhe@redhat.com>
- <20180201071956.14365-3-bhe@redhat.com>
- <20180201101641.icoxv2sp6ckrjfxd@node.shutemov.name>
- <6def8374-2de2-a30c-69ff-2a49fb57dc9a@linux.intel.com>
- <20180201141934.GC1770@localhost.localdomain>
- <7494fba4-a769-67d4-4121-508bd26da4ba@linux.intel.com>
+        id S1751378AbeBAOe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 09:34:57 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C13F217A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AH8x227jByTPmHkkIE+pUpFCK8xbzH690aogFpWVmjkomT/P8qqO6gE69yzi7D1g/ovlWhtWnFJ4gLjyob+BYl0tYsY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7494fba4-a769-67d4-4121-508bd26da4ba@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
+References: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 1 Feb 2018 08:34:35 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+z7Z7nbXUS-6MxAzAq353OK02Uc6i3AH7WS2KmOrLnmA@mail.gmail.com>
+Message-ID: <CAL_Jsq+z7Z7nbXUS-6MxAzAq353OK02Uc6i3AH7WS2KmOrLnmA@mail.gmail.com>
+Subject: Re: [PATCH] of: cache phandle nodes to decrease cost of of_find_node_by_phandle()
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Chintan Pandya <cpandya@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/01/18 at 06:23am, Dave Hansen wrote:
-> On 02/01/2018 06:19 AM, Baoquan He wrote:
-> > 
-> > I suppose these functions changed here are only called during system
-> > bootup, namely in paging_init(). Hot-add memory goes in a different
-> > path, __add_section() -> sparse_add_one_section(), different called
-> > functions.
-> 
-> But does this keep those sections that were not present on boot from
-> being added later?
+On Wed, Jan 31, 2018 at 2:05 PM,  <frowand.list@gmail.com> wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+>
+> Create a cache of the nodes that contain a phandle property.  Use this
+> cache to find the node for a given phandle value instead of scanning
+> the devicetree to find the node.  If the phandle value is not found
+> in the cache, of_find_node_by_phandle() will fall back to the tree
+> scan algorithm.
+>
+> The cache is initialized in of_core_init().
+>
+> The cache is freed via a late_initcall_sync().
+>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+>
+> Some of_find_by_phandle() calls may occur before the cache is
+> initialized or after it is freed.  For example, for the qualcomm
+> qcom-apq8074-dragonboard, 11 calls occur before the initialization
+> and 80 occur after the cache is freed (out of 516 total calls.)
 
-I think it won't. As you can see, the referred functions are only called
-during init stage. If anyone try to use any of them for later hot-add memory,
-that will cause problem, lucky there isn't. And this is only used to
-store the allocated usemap and mem_map for each present section on boot.
-After that, the usemap_map and map_map pointer array will be freed, they
-are temporary here. I forget mentioning this in patch log, sorry for bringing
-confusion.
+We should be able to do this earlier. We already walk the tree twice
+in unflattening. We can get the max phandle (or number of phandles
+IMO) on the first pass, allocate with the early allocator and then
+populate the cache in the 2nd pass. AIUI, you can alloc with memblock
+and then free with kfree as the memblock allocations get transferred
+to the slab.
 
-void __init sparse_memory_present_with_active_regions(int nid)
-void __init memory_present(int nid, unsigned long start, unsigned long end)
-void __init sparse_init(void) 
-static void __init alloc_usemap_and_memmap(...)
-static void __init sparse_early_usemaps_alloc_node(...)
-static void __init sparse_early_mem_maps_alloc_node(...)
-void __init sparse_mem_maps_populate_node(...)
-void __init sparse_mem_maps_populate_node(...)
+Rob
