@@ -1,140 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752542AbeBAMZH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 07:25:07 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49366 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752189AbeBAMZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 07:25:06 -0500
-Subject: Re: [PATCH v3 13/18] firmware/psci: Expose PSCI conduit
-To: Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Jones <drjones@redhat.com>, Hanjun Guo <guohanjun@huawei.com>,
-        Jayachandran C <jnair@caviumnetworks.com>,
-        Jon Masters <jcm@redhat.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-References: <20180201114657.7323-1-marc.zyngier@arm.com>
- <20180201114657.7323-14-marc.zyngier@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <434a53f3-0109-8a5f-414b-0f697bc153d6@arm.com>
-Date: Thu, 1 Feb 2018 12:25:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752502AbeBAM0F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 07:26:05 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:39309 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752249AbeBAM0C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 07:26:02 -0500
+X-Google-Smtp-Source: AH8x227KYBedVvLguALkCVyFfccuKRyk7zr4Pqre0UA7I4XhBCToQ1aqsYzxBqa04Ry6GLpDBURt/7VGaW+fIC1y6TU=
 MIME-Version: 1.0
-In-Reply-To: <20180201114657.7323-14-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180201121753.GB690@gmail.com>
+References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
+ <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
+ <20180201121753.GB690@gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Thu, 1 Feb 2018 20:26:01 +0800
+Message-ID: <CAMz4ku+-R--QKU4FzXt68py-yDMo7Xt98vBLR2MhhdjzxOKOHA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/18 11:46, Marc Zyngier wrote:
-> In order to call into the firmware to apply workarounds, it is
-> useful to find out whether we're using HVC or SMC. Let's expose
-> this through the psci_ops.
+Hi Markus,
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+On 1 February 2018 at 20:17, Marcus Folkesson
+<marcus.folkesson@gmail.com> wrote:
+> Hi Baolin,
+>
+> On Tue, Jan 30, 2018 at 08:07:43PM +0800, Baolin Wang wrote:
+>> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
+>> each group contains 16 GPIOs. Each GPIO can set input/output and has
+>> the interrupt capability.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> diff --git a/drivers/gpio/gpio-sprd.c b/drivers/gpio/gpio-sprd.c
+>> new file mode 100644
+>> index 0000000..af59b9f
+>> --- /dev/null
+>> +++ b/drivers/gpio/gpio-sprd.c
+>> @@ -0,0 +1,301 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2018 Spreadtrum Communications Inc.
+>> + * Copyright (c) 2018 Linaro Ltd.
+>> + */
+>> +
+>> +#include <linux/bitops.h>
+>> +#include <linux/gpio/driver.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/spinlock.h>
+>> +
+>> +/* GPIO registers definition */
+>> +#define SPRD_GPIO_DATA               0x0
+>> +#define SPRD_GPIO_DMSK               0x4
+>> +#define SPRD_GPIO_DIR                0x8
+>> +#define SPRD_GPIO_IS         0xc
+>> +#define SPRD_GPIO_IBE                0x10
+>> +#define SPRD_GPIO_IEV                0x14
+>> +#define SPRD_GPIO_IE         0x18
+>> +#define SPRD_GPIO_RIS                0x1c
+>> +#define SPRD_GPIO_MIS                0x20
+>> +#define SPRD_GPIO_IC         0x24
+>> +#define SPRD_GPIO_INEN               0x28
+>> +
+>> +/* We have 16 groups GPIOs and each group contain 16 GPIOs */
+>> +#define SPRD_GPIO_GROUP_NR   16
+>> +#define SPRD_GPIO_NR         256
+>> +#define SPRD_GPIO_GROUP_SIZE 0x80
+>> +#define SPRD_GPIO_GROUP_MASK GENMASK(15, 0)
+>> +#define SPRD_GPIO_BIT(x)     ((x) & (SPRD_GPIO_GROUP_NR - 1))
+>> +
+>> +struct sprd_gpio {
+>> +     struct gpio_chip chip;
+>> +     void __iomem *base;
+>> +     spinlock_t lock;
+>> +     int irq;
+>> +};
+>> +
+>> +static inline void __iomem *sprd_gpio_group_base(struct sprd_gpio *sprd_gpio,
+>> +                                              unsigned int group)
+>> +{
+>> +     return sprd_gpio->base + SPRD_GPIO_GROUP_SIZE * group;
+>> +}
+>> +
+>> +static void sprd_gpio_update(struct gpio_chip *chip, unsigned int offset,
+>> +                          unsigned int reg, unsigned int val)
+>> +{
+>> +     struct sprd_gpio *sprd_gpio = gpiochip_get_data(chip);
+>> +     void __iomem *base = sprd_gpio_group_base(sprd_gpio,
+>> +                                               offset / SPRD_GPIO_GROUP_NR);
+>> +     u32 shift = SPRD_GPIO_BIT(offset);
+>> +     unsigned long flags;
+>> +     u32 orig, tmp;
+>> +
+>> +     spin_lock_irqsave(&sprd_gpio->lock, flags);
+>> +     orig = readl_relaxed(base + reg);
+>> +
+>> +     tmp = (orig & ~BIT(shift)) | (val << shift);
+>> +     writel_relaxed(tmp, base + reg);
+>> +     spin_unlock_irqrestore(&sprd_gpio->lock, flags);
+>> +}
+>> +
+>> +static int sprd_gpio_read(struct gpio_chip *chip, unsigned int offset,
+>> +                       unsigned int reg)
+>> +{
+>> +     struct sprd_gpio *sprd_gpio = gpiochip_get_data(chip);
+>> +     void __iomem *base = sprd_gpio_group_base(sprd_gpio,
+>> +                                               offset / SPRD_GPIO_GROUP_NR);
+>> +     u32 value = readl_relaxed(base + reg) & SPRD_GPIO_GROUP_MASK;
+>> +     u32 shift = SPRD_GPIO_BIT(offset);
+>> +
+>> +     return !!(value & BIT(shift));
+>> +}
+>> +
+>> +static int sprd_gpio_request(struct gpio_chip *chip, unsigned int offset)
+>> +{
+>> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DMSK, 1);
+>> +     return 0;
+>> +}
+>
+> Better to change the function to void since the return value is not
+> valueable.
 
-> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->   drivers/firmware/psci.c | 28 +++++++++++++++++++++++-----
->   include/linux/psci.h    |  7 +++++++
->   2 files changed, 30 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-> index 8b25d31e8401..e9493da2b111 100644
-> --- a/drivers/firmware/psci.c
-> +++ b/drivers/firmware/psci.c
-> @@ -59,7 +59,9 @@ bool psci_tos_resident_on(int cpu)
->   	return cpu == resident_cpu;
->   }
->   
-> -struct psci_operations psci_ops;
-> +struct psci_operations psci_ops = {
-> +	.conduit = PSCI_CONDUIT_NONE,
-> +};
->   
->   typedef unsigned long (psci_fn)(unsigned long, unsigned long,
->   				unsigned long, unsigned long);
-> @@ -210,6 +212,22 @@ static unsigned long psci_migrate_info_up_cpu(void)
->   			      0, 0, 0);
->   }
->   
-> +static void set_conduit(enum psci_conduit conduit)
-> +{
-> +	switch (conduit) {
-> +	case PSCI_CONDUIT_HVC:
-> +		invoke_psci_fn = __invoke_psci_fn_hvc;
-> +		break;
-> +	case PSCI_CONDUIT_SMC:
-> +		invoke_psci_fn = __invoke_psci_fn_smc;
-> +		break;
-> +	default:
-> +		WARN(1, "Unexpected PSCI conduit %d\n", conduit);
-> +	}
-> +
-> +	psci_ops.conduit = conduit;
-> +}
-> +
->   static int get_set_conduit_method(struct device_node *np)
->   {
->   	const char *method;
-> @@ -222,9 +240,9 @@ static int get_set_conduit_method(struct device_node *np)
->   	}
->   
->   	if (!strcmp("hvc", method)) {
-> -		invoke_psci_fn = __invoke_psci_fn_hvc;
-> +		set_conduit(PSCI_CONDUIT_HVC);
->   	} else if (!strcmp("smc", method)) {
-> -		invoke_psci_fn = __invoke_psci_fn_smc;
-> +		set_conduit(PSCI_CONDUIT_SMC);
->   	} else {
->   		pr_warn("invalid \"method\" property: %s\n", method);
->   		return -EINVAL;
-> @@ -654,9 +672,9 @@ int __init psci_acpi_init(void)
->   	pr_info("probing for conduit method from ACPI.\n");
->   
->   	if (acpi_psci_use_hvc())
-> -		invoke_psci_fn = __invoke_psci_fn_hvc;
-> +		set_conduit(PSCI_CONDUIT_HVC);
->   	else
-> -		invoke_psci_fn = __invoke_psci_fn_smc;
-> +		set_conduit(PSCI_CONDUIT_SMC);
->   
->   	return psci_probe();
->   }
-> diff --git a/include/linux/psci.h b/include/linux/psci.h
-> index f724fd8c78e8..f2679e5faa4f 100644
-> --- a/include/linux/psci.h
-> +++ b/include/linux/psci.h
-> @@ -25,6 +25,12 @@ bool psci_tos_resident_on(int cpu);
->   int psci_cpu_init_idle(unsigned int cpu);
->   int psci_cpu_suspend_enter(unsigned long index);
->   
-> +enum psci_conduit {
-> +	PSCI_CONDUIT_NONE,
-> +	PSCI_CONDUIT_SMC,
-> +	PSCI_CONDUIT_HVC,
-> +};
-> +
->   struct psci_operations {
->   	u32 (*get_version)(void);
->   	int (*cpu_suspend)(u32 state, unsigned long entry_point);
-> @@ -34,6 +40,7 @@ struct psci_operations {
->   	int (*affinity_info)(unsigned long target_affinity,
->   			unsigned long lowest_affinity_level);
->   	int (*migrate_info_type)(void);
-> +	enum psci_conduit conduit;
->   };
->   
->   extern struct psci_operations psci_ops;
-> 
+The function prototype of gpio_chip structure need one return value,
+so we need give one returned value though it is no meaningless.
+
+>
+>> +
+>> +static void sprd_gpio_free(struct gpio_chip *chip, unsigned int offset)
+>> +{
+>> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DMSK, 0);
+>> +}
+>> +
+>> +static int sprd_gpio_direction_input(struct gpio_chip *chip,
+>> +                                  unsigned int offset)
+>> +{
+>> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DIR, 0);
+>> +     sprd_gpio_update(chip, offset, SPRD_GPIO_INEN, 1);
+>> +     return 0;
+>> +}
+>
+> Same here
+>
+>
+>> +
+>> +static int sprd_gpio_direction_output(struct gpio_chip *chip,
+>> +                                   unsigned int offset, int value)
+>> +{
+>> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DIR, 1);
+>> +     sprd_gpio_update(chip, offset, SPRD_GPIO_INEN, 0);
+>> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DATA, value);
+>> +     return 0;
+>> +}
+>
+> and here.
+>
+>
+> Thanks,
+> Marcus Folkesson
+>
+>
+>
+
+
+
+-- 
+Baolin.wang
+Best Regards
