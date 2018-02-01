@@ -1,100 +1,101 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2121535-1517567269-2-12592317229205648792
+X-Cyrus-Session-Id: sloti22d1t05-4012269-1517500834-2-13422598610266324218
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517567266; b=u55TtCLKWjCRjFZArxclawqLTnFgRJdd2Cd6pb8tlRaxnQu
-    EoK2JiD/qYKvga+q6yCq7HtGU3xIOKdKcWHKNdvFmZ4zjzlOd/VyA6hrlOksDzEb
-    bc8zfH+qSso/EeYwsfN7FnpSyu/zYjSkPw1XubRA/IZi21/7kZHzp+ywwm4hOVto
-    XyofVYB4QSxYYakTmyXXfwBDNjjq62m6f6uCoj6Ims3Gkd8VM05ys44lpFmvhpbb
-    oe2WRtVc++MAILhEVkkXp/SBWhoisdOLNUWexg9vxHqMkmQM3pDzyrATZyq4CQ7Y
-    4y5yDEQaD8BpbOtJfQeIustLJ3cmKSabJxhqtUA==
+    t=1517500833; b=I30Wdj25eBjFiQgQ/POsQldVh7H9tmC5N+TAHqVLtAy8fyB
+    +8VU6l//XBNeyIOfk9ejdaj7ZZpfNSkx1wev+0lDfmYrfApLfm68cJnpo5SCj9B3
+    fLWbp5rwUzrzPBVPf1J76+eOJtuz7EUlii7DrS4IiYfHsk7co4cgKpXBtQqJ+9gE
+    L6tWGuJOTRweCFLEeXdg4O9xB8APpDFgvDUT2mpUoEQhN4Ar1XQLOKokwZnSm9E/
+    FuE2s6NuRA1cm8yxQN4oA21NmOMgrmHhz0yaIdMxzEYpHACPGAPNCspsBPIt+4Of
+    PQtY8TRTwYONEOCgVTDkTHI8J7T3Y9s96uKi+kA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1517567266; bh=vMnHsR7vcw+Tw00Ih0oBTOh33G
-    /cY1VedyTIwBCtFb4=; b=loWMzUYWLln2AZE5r2aBs+2NTJLpsVxWZL0u9Tdthr
-    RIPMRAMvLoLrBkPFiGudQYx9EKhNVzRtLn4tOxdszJrSyvDoApMsSAU7ZV/gNpGo
-    OQePVyZroF7esUFJz7W99GnlWHM923+Lv1wN4IvwJCHN3qsMl0j0l0DJRYxUzqQs
-    SwnFM2zEYQMFDMNYJYjzs9IYA6M0xcE4B10aPzT1pN4OiS8gwFhJ8Jg1z1xbesE+
-    1Eu8P9qS6LeajXHx5b5uiC4kYVbKxZkgQdq8fg0y6uzv/nteDCHV+hwQ0ncXdTfv
-    umTk40ZK9ms8QWjmL7vaCMS6Ewkv77SW5MM8YwqzwOEw==
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1517500833; bh=Vh+GXGmZrt+9ze3B88jkUonhaQ+u9JnhyC9dVP
+    bxg88=; b=dhOd/23cANiXG+qsqkPIha64zY8AS9/kbEG2AX3YmeCCBQAObI0O8R
+    lI6dECKMBd3soELbmzHF3Rv5kYDzvkbaFzLqkQ5sVRNarbIIQ5a3qj1WyAxSu6PL
+    NbPbbnMNqGVrhdgkk94HXeWW488Shacs5Dx6pEyaz46jxvwvLGl66/Ci0lsx7rAe
+    DSpI37hqphiMKOYdcLMwFPWlvs+PU/K7kT70CD1J9ssG3wntlLwTgHvyGbqdrR30
+    1kP5IaG22gewY3C3k5KuBg1rfMuzpUzVsw4gzDXOvMwL8thOrvL4MTyktjTPxmPZ
+    qorDZQRx4jHsBsLYqvPpg2kzIcRKcurg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=VMJBpSeU x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IdLBFKMT;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=VMJBpSeU x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IdLBFKMT;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751582AbeBBK12 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 05:27:28 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39822 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751514AbeBBK1Z (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 05:27:25 -0500
-Date: Fri, 2 Feb 2018 11:27:21 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
+        id S1752015AbeBAQAb (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Feb 2018 11:00:31 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46900 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751881AbeBAQAa (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Feb 2018 11:00:30 -0500
+X-Google-Smtp-Source: AH8x225ZPvVJT86tuAi/xa1CSgLvYVRYGsc6dEoTGszUBoeg9NvoSb9kg7LnujdRQ4QbB1v1rEpF7j0mFoCkrdNPa94=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180201153708.63506-1-salyzyn@android.com>
+References: <20180201153708.63506-1-salyzyn@android.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 1 Feb 2018 11:00:28 -0500
+Message-ID: <CAHC9VhSdR9UGpYhod5xhA76EbSKHzTW5rEiYWMovC0t6gfowig@mail.gmail.com>
+Subject: Re: [PATCH v2] general protection fault in sock_has_perm
 To: Mark Salyzyn <salyzyn@android.com>
 Cc: linux-kernel@vger.kernel.org,
         Paul Moore <paul@linuxfoundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
         Eric Dumazet <edumazet@google.com>,
         Stephen Smalley <sds@tycho.nsa.gov>, selinux@tycho.nsa.gov,
         linux-security-module@vger.kernel.org,
         Eric Paris <eparis@parisplace.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        stable <stable@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>
-Subject: Re: [PATCH v2] general protection fault in sock_has_perm
-Message-ID: <20180202102721.GB22855@kroah.com>
-References: <20180201153708.63506-1-salyzyn@android.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180201153708.63506-1-salyzyn@android.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        stable <stable@vger.kernel.org>, James Morris <jmorris@namei.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 07:37:04AM -0800, Mark Salyzyn wrote:
+On Thu, Feb 1, 2018 at 10:37 AM, Mark Salyzyn <salyzyn@android.com> wrote:
 > In the absence of commit a4298e4522d6 ("net: add SOCK_RCU_FREE socket
 > flag") and all the associated infrastructure changes to take advantage
 > of a RCU grace period before freeing, there is a heightened
 > possibility that a security check is performed while an ill-timed
 > setsockopt call races in from user space.  It then is prudent to null
 > check sk_security, and if the case, reject the permissions.
-> 
+>
 > Because of the nature of this problem, hard to duplicate, no clear
 > path, this patch is a simplified band-aid for stable trees lacking the
 > infrastructure for the series of commits leading up to providing a
 > suitable RCU grace period.  This adjustment is orthogonal to
 > infrastructure improvements that may nullify the needed check, but
 > could be added as good code hygiene in all trees.
-> 
+>
 > general protection fault: 0000 [#1] PREEMPT SMP KASAN
 > CPU: 1 PID: 14233 Comm: syz-executor2 Not tainted 4.4.112-g5f6325b #28
 > task: ffff8801d1095f00 task.stack: ffff8800b5950000
@@ -128,9 +129,19 @@ On Thu, Feb 01, 2018 at 07:37:04AM -0800, Mark Salyzyn wrote:
 > RIP  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0 security/selinux/hooks.c:4069
 > RSP <ffff8800b5957ce0>
 > ---[ end trace 7b5aaf788fef6174 ]---
-> 
+>
 > Signed-off-by: Mark Salyzyn <salyzyn@android.com>
 > Signed-off-by: Paul Moore <paul@linuxfoundation.org>
+
+No, in the previous thread I gave my ack, not my sign-off; please be
+more careful in the future.  It may seem silly, especially in this
+particular case, but it is an important distinction when things like
+the DCO are concerned.
+
+Anyway, here is my ack again.
+
+Acked-by: Paul Moore <paul@paul-moore.com>
+
 > Signed-off-by: Greg KH <gregkh@linuxfoundation.org>
 > Cc: Eric Dumazet <edumazet@google.com>
 > Cc: Stephen Smalley <sds@tycho.nsa.gov>
@@ -142,7 +153,26 @@ On Thu, Feb 01, 2018 at 07:37:04AM -0800, Mark Salyzyn wrote:
 > Cc: linux-kernel@vger.kernel.org
 > ---
 > v2: return -EFAULT for null sk_security instead of 0
+>
+>  security/selinux/hooks.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 8644d864e3c1..795efa71d656 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -4342,6 +4342,8 @@ static int sock_has_perm(struct sock *sk, u32 perms)
+>         struct common_audit_data ad;
+>         struct lsm_network_audit net = {0,};
+>
+> +       if (!sksec)
+> +               return -EFAULT;
+>         if (sksec->sid == SECINITSID_KERNEL)
+>                 return 0;
+>
+> --
+> 2.16.0.rc1.238.g530d649a79-goog
 
-Now queued up, thanks.
-
-greg k-h
+-- 
+paul moore
+www.paul-moore.com
