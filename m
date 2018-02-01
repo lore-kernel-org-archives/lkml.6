@@ -1,47 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751988AbeBAP04 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:26:56 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:48038 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1751742AbeBAP0v (ORCPT
+        id S1752364AbeBAP35 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:29:57 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:46052 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751948AbeBAP3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:26:51 -0500
-Date: Thu, 1 Feb 2018 10:26:50 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Andrea Parri <parri.andrea@gmail.com>
-cc: will.deacon@arm.com, <peterz@infradead.org>, <boqun.feng@gmail.com>,
-        <npiggin@gmail.com>, <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>,
-        <luc.maranget@inria.fr>, <paulmck@linux.vnet.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <mingo@kernel.org>
-Subject: Re: [PATCH 1/2] tools/memory-model: clarify the origin/scope of the
- tool name
-In-Reply-To: <1517486609-10951-1-git-send-email-parri.andrea@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1802011026250.1677-100000@iolanthe.rowland.org>
+        Thu, 1 Feb 2018 10:29:55 -0500
+X-Google-Smtp-Source: AH8x225h4ei8TS0UWke1qbFxB2o/+f0ZkNL4g06g8wErRDoyqyZAckvS5+AWDnmHLfmx6RUloNi08q7cx+aV8aGjxw8=
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <CAMuHMdWHZMxRg91LVz6n1GsM+6jezdzzfnDtBTXixHh=Updt5A@mail.gmail.com>
+References: <1517480520-4465-1-git-send-email-geert@linux-m68k.org>
+ <1517480520-4465-2-git-send-email-geert@linux-m68k.org> <CAK8P3a1Tm7zJf1VEGFPmhwqS=h92=_ssfAENJcrmxGg0eJCqnA@mail.gmail.com>
+ <CAMuHMdWHZMxRg91LVz6n1GsM+6jezdzzfnDtBTXixHh=Updt5A@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 1 Feb 2018 16:29:53 +0100
+X-Google-Sender-Auth: GpHEo_b1cTMZg-a2JYtVn1Hg5Eg
+Message-ID: <CAK8P3a1kW=c0p6wnNMu_85z4Rq1aRA02+mqRYkhnGTsuXsVjmw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] compiler-gcc.h: __nostackprotector needs gcc-4.4 and up
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Christopher Li <sparse@chrisli.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Feb 2018, Andrea Parri wrote:
+On Thu, Feb 1, 2018 at 12:55 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Arnd,
+>
+> On Thu, Feb 1, 2018 at 12:46 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Thu, Feb 1, 2018 at 11:21 AM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> Gcc versions before 4.4 do not recognize the __optimize__ compiler
+>>> attribute:
 
-> Ingo pointed out that:
-> 
->   "The "memory model" name is overly generic, ambiguous and somewhat
->    misleading, as we usually mean the virtual memory layout/model
->    when we say "memory model". GCC too uses it in that sense [...]"
-> 
-> Make it clearer that, in the context of tools/memory-model/, the term
-> "memory-model" is used as shorthand for "memory consistency model" by
-> calling out this convention in tools/memory-model/README.
-> 
-> Stick to the full name in sources' headers and for the subsystem name.
-> 
-> Suggested-by: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+>
+> And we might want to remove the dummy in include/linux/compiler_types.h:
+>
+> #ifndef __nostackprotector
+> # define __nostackprotector
+> #endif
+>
+> BTW, how does this work with non-gcc compilers?
 
-For both patches:
+clang should in theory accept the same flags, and it pretends to be an older
+version of gcc.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+I don't think anyone cares about ICC or any other compiler.
+
+    Arnd
