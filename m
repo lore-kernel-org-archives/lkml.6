@@ -1,31 +1,31 @@
 Return-Path: <prvs=563541312=stanislav.nijnikov@wdc.com>
-X-Google-Smtp-Source: AH8x226ZMoV67VVMQHr+eo5wn0U7nOfab50Od20MWTLqdfisXZ/rKLcHbEkLVOLp+oZjUde1AVOA
-ARC-Seal: i=1; a=rsa-sha256; t=1517501760; cv=none;
+X-Google-Smtp-Source: AH8x225cdnIDEcPPKpv9PDdCAA6kyuQNJnJfzxB3BY7WlGJH8KStTf6Jr+oKPz8yrB98XGYxSqT5
+ARC-Seal: i=1; a=rsa-sha256; t=1517501759; cv=none;
         d=google.com; s=arc-20160816;
-        b=DcLfDhaNkd+Ed7lmZEuVDSEZoOCMvlAMA/Mw0KQDghP2+txksA5KYZUeBkXCNREtMM
-         kOYAepzvovZ4N/blYSKQl8gu0QJXbpyrGI5Sf1S9HOdbeZZNhq3TMAnXvBpC17mUqDDL
-         HrF+abuWSqrPnGj/t7Wobp5o+9c/iV7nN8NbcgaNvXk6Z1su90XB0JEcDO4oI8n2bKKR
-         adb3dANG5QuyOKZxc32P4MZUa0x8Ih+zXHWh7O8Wkt/tMKWBCewBJYFmdCbuc+Q851Af
-         wR59LFZKQgBqyK2qr86M5rOaE0OFy9oO6zvmCkGGpBLurRuJ8GcG6TMwdTi5sROr9iij
-         Apew==
+        b=KWQDWYXb5Q7jE/EP85Hi24peNYJFKlPUWX5bC5ePKUGbN4hOfSp9nO9ArkdPU0RT3v
+         1EWIwOVuCEheL7z0vJYL1CpEYbrYLKLnlg9c+jHqiQ8mLIKyWPM0qKeNe78CQbQf+gXb
+         G8y/WG2FvgRKZCZED4K/C9YSfid+07SOjvvZD7PsGGEp6yQuiZa72afO6mBfx54gXskA
+         wskgtjA7Hn/0pY25bpt2AFrDVkm4kT7fDHnV6hv/5SeC/MH8wWNFGiQ1ezXYt1bI3pfy
+         +oPRBFG4pojQkQCIaWyaGTa85yoB+fG5FEY0yktX89FNwYyO78AM3Fcvtn4rURHEuRZR
+         vtPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=nc+ds8soCc97kL+hVEDy3kBzp6EDaeiv9Cwmg9nnSrY=;
-        b=kXDeyaOC+1rKLJO53bEvGYp7yebc/iNk0Jvyw29/ZbJSNPio61HDw0pGz+s7T/j9ON
-         Q9xwPb2a1stNarGN7WQACiKDvrmEgJOAN3+iMj3Y/be+4wHeOsjCWQhfd9fWivI/fXoX
-         +Pep/bIzIQjYeFk2fkAKEYLSY/0Oh6pB98odfQF7IdFZBkps6JBCbT1O4JuvOYiA/rdy
-         8NsGyBND29BXG10tx+CnJraat24zqF6AxTkirK2Xv0GkWTBywPcsRWDDujdzJJI/ic5o
-         BfsNR9zFRFy/YRtq5CQR05VTbuw2V5PbNnujzdzf31l9gIFLaSrslZZFAaTGTj5DZGUi
-         1F/A==
+        bh=98teTKeP7vBOnvNBFRJdDmkgtb0wiNQnv44fDnGl6NA=;
+        b=V+KeKOyECr/6KKGbd/H10fEsNCM1z3/9bafZPbNrGbou1sFLTVTeH2ufQZMxGywqz+
+         K9qdpR0Om0eSKn3nmP1AO8X6rFgLtt5ILwgfDT5nA+rcJVjqqf6SzE8pRC4i9eIvV0IM
+         1kmqD7/f284e/qXaYApdot+UyFrV3qkuVW6BEVEgNmdbUZPjFMxdOm42GVXiudD/jxu4
+         JLKFRDFKxCPfzNNYMGyRB3xhV6ijCzxcgxC+TRCyQd1bEvqnvNaO8gyCommNOlSIYfU1
+         k9cAogUbJyAKpgYCycVhhD53Kmtxokjezcft+/F5SK7MqR64s3sFJL+YVjiD1gRJWd1z
+         b9AA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=Z4GmvRxW;
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=bb711hkW;
        spf=pass (google.com: domain of prvs=563541312=stanislav.nijnikov@wdc.com designates 68.232.141.245 as permitted sender) smtp.mailfrom=prvs=563541312=stanislav.nijnikov@wdc.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=Z4GmvRxW;
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=bb711hkW;
        spf=pass (google.com: domain of prvs=563541312=stanislav.nijnikov@wdc.com designates 68.232.141.245 as permitted sender) smtp.mailfrom=prvs=563541312=stanislav.nijnikov@wdc.com
 X-IronPort-AV: E=Sophos;i="5.46,444,1511798400";
-   d="scan'208";a="173298248"
+   d="scan'208";a="173298244"
 From: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
 To: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -33,187 +33,359 @@ To: linux-scsi@vger.kernel.org,
 	jaegeuk@kernel.org
 Cc: alex.lemberg@wdc.com,
 	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-Subject: [PATCH v4 05/10] ufs: sysfs: health descriptor
-Date: Thu,  1 Feb 2018 18:15:41 +0200
-Message-Id: <1517501746-19075-6-git-send-email-stanislav.nijnikov@wdc.com>
+Subject: [PATCH v4 04/10] ufs: sysfs: geometry descriptor
+Date: Thu,  1 Feb 2018 18:15:40 +0200
+Message-Id: <1517501746-19075-5-git-send-email-stanislav.nijnikov@wdc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517501746-19075-1-git-send-email-stanislav.nijnikov@wdc.com>
 References: <1517501746-19075-1-git-send-email-stanislav.nijnikov@wdc.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591215926144929110?=
-X-GMAIL-MSGID: =?utf-8?q?1591215926144929110?=
+X-GMAIL-THRID: =?utf-8?q?1591215924807300676?=
+X-GMAIL-MSGID: =?utf-8?q?1591215924807300676?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch introduces a sysfs group entry for the UFS health descriptor
-parameters. The group adds "health_descriptor" folder under the UFS driver
-sysfs entry (/sys/bus/platform/drivers/ufshcd/*). The parameters are shown
-as hexadecimal numbers. The full information about the parameters could be
-found at UFS specifications 2.1.
+This patch introduces a sysfs group entry for the UFS geometry descriptor
+parameters. The group adds "geometry_descriptor" folder under the UFS
+driver sysfs entry (/sys/bus/platform/drivers/ufshcd/*). The parameters
+are shown as hexadecimal numbers. The full information about the parameters
+could be found at UFS specifications 2.1.
 
 Signed-off-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
 
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/ABI/testing/sysfs-driver-ufs | 28 ++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufs-sysfs.c               | 20 ++++++++++++++++++++
- drivers/scsi/ufs/ufs.h                     | 11 +++++++++++
- drivers/scsi/ufs/ufshcd.c                  |  8 ++++++++
- drivers/scsi/ufs/ufshcd.h                  |  1 +
- 5 files changed, 68 insertions(+)
+ Documentation/ABI/testing/sysfs-driver-ufs | 173 +++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufs-sysfs.c               |  84 ++++++++++++++
+ drivers/scsi/ufs/ufs.h                     |  36 ++++++
+ 3 files changed, 293 insertions(+)
 
 diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index 6ea7613..ddb012b 100644
+index 099e6fa..6ea7613 100644
 --- a/Documentation/ABI/testing/sysfs-driver-ufs
 +++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -413,3 +413,31 @@ Description:	This file shows the memory capacity adjustment factor for
- 		descriptor parameters. The full information about the
- 		descriptor could be found at UFS specifications 2.1.
+@@ -240,3 +240,176 @@ Description:	This file shows the MIPI M-PHY version number in BCD format.
+ 		The full information about the descriptor could be found at
+ 		UFS specifications 2.1.
  		The file is read only.
 +
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/health_descriptor/eol_info
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/raw_device_capacity
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows preend of life information. This is one
-+		of the UFS health descriptor parameters. The full
++Description:	This file shows the total memory quantity available to
++		the user to configure the device logical units. This is one
++		of the UFS geometry descriptor parameters. The full
 +		information about the descriptor could be found at
 +		UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/health_descriptor/life_time_estimation_a
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/max_number_of_luns
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows indication of the device life time
-+		(method a). This is one of the UFS health descriptor
-+		parameters. The full information about the descriptor
-+		could be found at UFS specifications 2.1.
++Description:	This file shows the maximum number of logical units
++		supported by the UFS device. This is one of the UFS
++		geometry descriptor parameters. The full information about
++		the descriptor could be found at UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/health_descriptor/life_time_estimation_b
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/segment_size
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows indication of the device life time
-+		(method b). This is one of the UFS health descriptor
-+		parameters. The full information about the descriptor
-+		could be found at UFS specifications 2.1.
++Description:	This file shows the segment size. This is one of the UFS
++		geometry descriptor parameters. The full information about
++		the descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/allocation_unit_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the allocation unit size. This is one of
++		the UFS geometry descriptor parameters. The full information
++		about the descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/min_addressable_block_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the minimum addressable block size. This
++		is one of the UFS geometry descriptor parameters. The full
++		information about the descriptor could be found at UFS
++		specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/optimal_read_block_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the optimal read block size. This is one
++		of the UFS geometry descriptor parameters. The full
++		information about the descriptor could be found at UFS
++		specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/optimal_write_block_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the optimal write block size. This is one
++		of the UFS geometry descriptor parameters. The full
++		information about the descriptor could be found at UFS
++		specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/max_in_buffer_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the maximum data-in buffer size. This
++		is one of the UFS geometry descriptor parameters. The full
++		information about the descriptor could be found at UFS
++		specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/max_out_buffer_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the maximum data-out buffer size. This
++		is one of the UFS geometry descriptor parameters. The full
++		information about the descriptor could be found at UFS
++		specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/rpmb_rw_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the maximum number of RPMB frames allowed
++		in Security Protocol In/Out. This is one of the UFS geometry
++		descriptor parameters. The full information about the
++		descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/dyn_capacity_resource_policy
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the dynamic capacity resource policy. This
++		is one of the UFS geometry descriptor parameters. The full
++		information about the descriptor could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/data_ordering
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows support for out-of-order data transfer.
++		This is one of the UFS geometry descriptor parameters.
++		The full information about the descriptor could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/max_number_of_contexts
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows maximum available number of contexts which
++		are supported by the device. This is one of the UFS geometry
++		descriptor parameters. The full information about the
++		descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/sys_data_tag_unit_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows system data tag unit size. This is one of
++		the UFS geometry descriptor parameters. The full information
++		about the descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/sys_data_tag_resource_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows maximum storage area size allocated by
++		the device to handle system data by the tagging mechanism.
++		This is one of the UFS geometry descriptor parameters.
++		The full information about the descriptor could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/secure_removal_types
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows supported secure removal types. This is
++		one of the UFS geometry descriptor parameters. The full
++		information about the descriptor could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/memory_types
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows supported memory types. This is one of
++		the UFS geometry descriptor parameters. The full
++		information about the descriptor could be found at
++		UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/*_memory_max_alloc_units
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the maximum number of allocation units for
++		different memory types (system code, non persistent,
++		enhanced type 1-4). This is one of the UFS geometry
++		descriptor parameters. The full information about the
++		descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/*_memory_capacity_adjustment_factor
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the memory capacity adjustment factor for
++		different memory types (system code, non persistent,
++		enhanced type 1-4). This is one of the UFS geometry
++		descriptor parameters. The full information about the
++		descriptor could be found at UFS specifications 2.1.
 +		The file is read only.
 diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index 6427804..1c89009 100644
+index 460378b..6427804 100644
 --- a/drivers/scsi/ufs/ufs-sysfs.c
 +++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -364,11 +364,31 @@ static const struct attribute_group ufs_sysfs_geometry_descriptor_group = {
- 	.attrs = ufs_sysfs_geometry_descriptor,
+@@ -281,10 +281,94 @@ static const struct attribute_group ufs_sysfs_interconnect_descriptor_group = {
+ 	.attrs = ufs_sysfs_interconnect_descriptor,
  };
  
-+#define UFS_HEALTH_DESC_PARAM(_name, _uname, _size)                     \
-+	UFS_DESC_PARAM(_name, _uname, HEALTH, _size)
++#define UFS_GEOMETRY_DESC_PARAM(_name, _uname, _size)                         \
++	UFS_DESC_PARAM(_name, _uname, GEOMETRY, _size)
 +
-+UFS_HEALTH_DESC_PARAM(eol_info, _EOL_INFO, BYTE);
-+UFS_HEALTH_DESC_PARAM(life_time_estimation_a, _LIFE_TIME_EST_A, BYTE);
-+UFS_HEALTH_DESC_PARAM(life_time_estimation_b, _LIFE_TIME_EST_B, BYTE);
++UFS_GEOMETRY_DESC_PARAM(raw_device_capacity, _DEV_CAP, QWORD);
++UFS_GEOMETRY_DESC_PARAM(max_number_of_luns, _MAX_NUM_LUN, BYTE);
++UFS_GEOMETRY_DESC_PARAM(segment_size, _SEG_SIZE, DWORD);
++UFS_GEOMETRY_DESC_PARAM(allocation_unit_size, _ALLOC_UNIT_SIZE, BYTE);
++UFS_GEOMETRY_DESC_PARAM(min_addressable_block_size, _MIN_BLK_SIZE, BYTE);
++UFS_GEOMETRY_DESC_PARAM(optimal_read_block_size, _OPT_RD_BLK_SIZE, BYTE);
++UFS_GEOMETRY_DESC_PARAM(optimal_write_block_size, _OPT_WR_BLK_SIZE, BYTE);
++UFS_GEOMETRY_DESC_PARAM(max_in_buffer_size, _MAX_IN_BUF_SIZE, BYTE);
++UFS_GEOMETRY_DESC_PARAM(max_out_buffer_size, _MAX_OUT_BUF_SIZE, BYTE);
++UFS_GEOMETRY_DESC_PARAM(rpmb_rw_size, _RPMB_RW_SIZE, BYTE);
++UFS_GEOMETRY_DESC_PARAM(dyn_capacity_resource_policy, _DYN_CAP_RSRC_PLC, BYTE);
++UFS_GEOMETRY_DESC_PARAM(data_ordering, _DATA_ORDER, BYTE);
++UFS_GEOMETRY_DESC_PARAM(max_number_of_contexts, _MAX_NUM_CTX, BYTE);
++UFS_GEOMETRY_DESC_PARAM(sys_data_tag_unit_size, _TAG_UNIT_SIZE, BYTE);
++UFS_GEOMETRY_DESC_PARAM(sys_data_tag_resource_size, _TAG_RSRC_SIZE, BYTE);
++UFS_GEOMETRY_DESC_PARAM(secure_removal_types, _SEC_RM_TYPES, BYTE);
++UFS_GEOMETRY_DESC_PARAM(memory_types, _MEM_TYPES, WORD);
++UFS_GEOMETRY_DESC_PARAM(sys_code_memory_max_alloc_units,
++	_SCM_MAX_NUM_UNITS, DWORD);
++UFS_GEOMETRY_DESC_PARAM(sys_code_memory_capacity_adjustment_factor,
++	_SCM_CAP_ADJ_FCTR, WORD);
++UFS_GEOMETRY_DESC_PARAM(non_persist_memory_max_alloc_units,
++	_NPM_MAX_NUM_UNITS, DWORD);
++UFS_GEOMETRY_DESC_PARAM(non_persist_memory_capacity_adjustment_factor,
++	_NPM_CAP_ADJ_FCTR, WORD);
++UFS_GEOMETRY_DESC_PARAM(enh1_memory_max_alloc_units,
++	_ENM1_MAX_NUM_UNITS, DWORD);
++UFS_GEOMETRY_DESC_PARAM(enh1_memory_capacity_adjustment_factor,
++	_ENM1_CAP_ADJ_FCTR, WORD);
++UFS_GEOMETRY_DESC_PARAM(enh2_memory_max_alloc_units,
++	_ENM2_MAX_NUM_UNITS, DWORD);
++UFS_GEOMETRY_DESC_PARAM(enh2_memory_capacity_adjustment_factor,
++	_ENM2_CAP_ADJ_FCTR, WORD);
++UFS_GEOMETRY_DESC_PARAM(enh3_memory_max_alloc_units,
++	_ENM3_MAX_NUM_UNITS, DWORD);
++UFS_GEOMETRY_DESC_PARAM(enh3_memory_capacity_adjustment_factor,
++	_ENM3_CAP_ADJ_FCTR, WORD);
++UFS_GEOMETRY_DESC_PARAM(enh4_memory_max_alloc_units,
++	_ENM4_MAX_NUM_UNITS, DWORD);
++UFS_GEOMETRY_DESC_PARAM(enh4_memory_capacity_adjustment_factor,
++	_ENM4_CAP_ADJ_FCTR, WORD);
 +
-+static struct attribute *ufs_sysfs_health_descriptor[] = {
-+	&dev_attr_eol_info.attr,
-+	&dev_attr_life_time_estimation_a.attr,
-+	&dev_attr_life_time_estimation_b.attr,
++static struct attribute *ufs_sysfs_geometry_descriptor[] = {
++	&dev_attr_raw_device_capacity.attr,
++	&dev_attr_max_number_of_luns.attr,
++	&dev_attr_segment_size.attr,
++	&dev_attr_allocation_unit_size.attr,
++	&dev_attr_min_addressable_block_size.attr,
++	&dev_attr_optimal_read_block_size.attr,
++	&dev_attr_optimal_write_block_size.attr,
++	&dev_attr_max_in_buffer_size.attr,
++	&dev_attr_max_out_buffer_size.attr,
++	&dev_attr_rpmb_rw_size.attr,
++	&dev_attr_dyn_capacity_resource_policy.attr,
++	&dev_attr_data_ordering.attr,
++	&dev_attr_max_number_of_contexts.attr,
++	&dev_attr_sys_data_tag_unit_size.attr,
++	&dev_attr_sys_data_tag_resource_size.attr,
++	&dev_attr_secure_removal_types.attr,
++	&dev_attr_memory_types.attr,
++	&dev_attr_sys_code_memory_max_alloc_units.attr,
++	&dev_attr_sys_code_memory_capacity_adjustment_factor.attr,
++	&dev_attr_non_persist_memory_max_alloc_units.attr,
++	&dev_attr_non_persist_memory_capacity_adjustment_factor.attr,
++	&dev_attr_enh1_memory_max_alloc_units.attr,
++	&dev_attr_enh1_memory_capacity_adjustment_factor.attr,
++	&dev_attr_enh2_memory_max_alloc_units.attr,
++	&dev_attr_enh2_memory_capacity_adjustment_factor.attr,
++	&dev_attr_enh3_memory_max_alloc_units.attr,
++	&dev_attr_enh3_memory_capacity_adjustment_factor.attr,
++	&dev_attr_enh4_memory_max_alloc_units.attr,
++	&dev_attr_enh4_memory_capacity_adjustment_factor.attr,
 +	NULL,
 +};
 +
-+static const struct attribute_group ufs_sysfs_health_descriptor_group = {
-+	.name = "health_descriptor",
-+	.attrs = ufs_sysfs_health_descriptor,
++static const struct attribute_group ufs_sysfs_geometry_descriptor_group = {
++	.name = "geometry_descriptor",
++	.attrs = ufs_sysfs_geometry_descriptor,
 +};
 +
  static const struct attribute_group *ufs_sysfs_groups[] = {
  	&ufs_sysfs_default_group,
  	&ufs_sysfs_device_descriptor_group,
  	&ufs_sysfs_interconnect_descriptor_group,
- 	&ufs_sysfs_geometry_descriptor_group,
-+	&ufs_sysfs_health_descriptor_group,
++	&ufs_sysfs_geometry_descriptor_group,
  	NULL,
  };
  
 diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 04d41c8..6bfeedb 100644
+index 773c049..04d41c8 100644
 --- a/drivers/scsi/ufs/ufs.h
 +++ b/drivers/scsi/ufs/ufs.h
-@@ -154,6 +154,7 @@ enum desc_idn {
- 	QUERY_DESC_IDN_RFU_1		= 0x6,
- 	QUERY_DESC_IDN_GEOMETRY		= 0x7,
- 	QUERY_DESC_IDN_POWER		= 0x8,
-+	QUERY_DESC_IDN_HEALTH           = 0x9,
- 	QUERY_DESC_IDN_MAX,
+@@ -238,6 +238,42 @@ enum interconnect_desc_param {
+ 	INTERCONNECT_DESC_PARAM_MPHY_VER	= 0x4,
  };
  
-@@ -169,6 +170,7 @@ enum ufs_desc_def_size {
- 	QUERY_DESC_INTERCONNECT_DEF_SIZE	= 0x06,
- 	QUERY_DESC_GEOMETRY_DEF_SIZE		= 0x44,
- 	QUERY_DESC_POWER_DEF_SIZE		= 0x62,
-+	QUERY_DESC_HEALTH_DEF_SIZE		= 0x25,
- };
- 
- /* Unit descriptor parameters offsets in bytes*/
-@@ -274,6 +276,15 @@ enum geometry_desc_param {
- 	GEOMETRY_DESC_PARAM_OPT_LOG_BLK_SIZE	= 0x44,
- };
- 
-+/* Health descriptor parameters offsets in bytes*/
-+enum health_desc_param {
-+	HEALTH_DESC_PARAM_LEN			= 0x0,
-+	HEALTH_DESC_PARAM_TYPE			= 0x1,
-+	HEALTH_DESC_PARAM_EOL_INFO		= 0x2,
-+	HEALTH_DESC_PARAM_LIFE_TIME_EST_A	= 0x3,
-+	HEALTH_DESC_PARAM_LIFE_TIME_EST_B	= 0x4,
++/* Geometry descriptor parameters offsets in bytes*/
++enum geometry_desc_param {
++	GEOMETRY_DESC_PARAM_LEN			= 0x0,
++	GEOMETRY_DESC_PARAM_TYPE		= 0x1,
++	GEOMETRY_DESC_PARAM_DEV_CAP		= 0x4,
++	GEOMETRY_DESC_PARAM_MAX_NUM_LUN		= 0xC,
++	GEOMETRY_DESC_PARAM_SEG_SIZE		= 0xD,
++	GEOMETRY_DESC_PARAM_ALLOC_UNIT_SIZE	= 0x11,
++	GEOMETRY_DESC_PARAM_MIN_BLK_SIZE	= 0x12,
++	GEOMETRY_DESC_PARAM_OPT_RD_BLK_SIZE	= 0x13,
++	GEOMETRY_DESC_PARAM_OPT_WR_BLK_SIZE	= 0x14,
++	GEOMETRY_DESC_PARAM_MAX_IN_BUF_SIZE	= 0x15,
++	GEOMETRY_DESC_PARAM_MAX_OUT_BUF_SIZE	= 0x16,
++	GEOMETRY_DESC_PARAM_RPMB_RW_SIZE	= 0x17,
++	GEOMETRY_DESC_PARAM_DYN_CAP_RSRC_PLC	= 0x18,
++	GEOMETRY_DESC_PARAM_DATA_ORDER		= 0x19,
++	GEOMETRY_DESC_PARAM_MAX_NUM_CTX		= 0x1A,
++	GEOMETRY_DESC_PARAM_TAG_UNIT_SIZE	= 0x1B,
++	GEOMETRY_DESC_PARAM_TAG_RSRC_SIZE	= 0x1C,
++	GEOMETRY_DESC_PARAM_SEC_RM_TYPES	= 0x1D,
++	GEOMETRY_DESC_PARAM_MEM_TYPES		= 0x1E,
++	GEOMETRY_DESC_PARAM_SCM_MAX_NUM_UNITS	= 0x20,
++	GEOMETRY_DESC_PARAM_SCM_CAP_ADJ_FCTR	= 0x24,
++	GEOMETRY_DESC_PARAM_NPM_MAX_NUM_UNITS	= 0x26,
++	GEOMETRY_DESC_PARAM_NPM_CAP_ADJ_FCTR	= 0x2A,
++	GEOMETRY_DESC_PARAM_ENM1_MAX_NUM_UNITS	= 0x2C,
++	GEOMETRY_DESC_PARAM_ENM1_CAP_ADJ_FCTR	= 0x30,
++	GEOMETRY_DESC_PARAM_ENM2_MAX_NUM_UNITS	= 0x32,
++	GEOMETRY_DESC_PARAM_ENM2_CAP_ADJ_FCTR	= 0x36,
++	GEOMETRY_DESC_PARAM_ENM3_MAX_NUM_UNITS	= 0x38,
++	GEOMETRY_DESC_PARAM_ENM3_CAP_ADJ_FCTR	= 0x3C,
++	GEOMETRY_DESC_PARAM_ENM4_MAX_NUM_UNITS	= 0x3E,
++	GEOMETRY_DESC_PARAM_ENM4_CAP_ADJ_FCTR	= 0x42,
++	GEOMETRY_DESC_PARAM_OPT_LOG_BLK_SIZE	= 0x44,
 +};
 +
  /*
   * Logical Unit Write Protect
   * 00h: LU not write protected
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 540a431..b88fcf7 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -2966,6 +2966,9 @@ int ufshcd_map_desc_id_to_length(struct ufs_hba *hba,
- 	case QUERY_DESC_IDN_STRING:
- 		*desc_len = QUERY_DESC_MAX_SIZE;
- 		break;
-+	case QUERY_DESC_IDN_HEALTH:
-+		*desc_len = hba->desc_size.hlth_desc;
-+		break;
- 	case QUERY_DESC_IDN_RFU_0:
- 	case QUERY_DESC_IDN_RFU_1:
- 		*desc_len = 0;
-@@ -6277,6 +6280,10 @@ static void ufshcd_init_desc_sizes(struct ufs_hba *hba)
- 		&hba->desc_size.geom_desc);
- 	if (err)
- 		hba->desc_size.geom_desc = QUERY_DESC_GEOMETRY_DEF_SIZE;
-+	err = ufshcd_read_desc_length(hba, QUERY_DESC_IDN_HEALTH, 0,
-+		&hba->desc_size.hlth_desc);
-+	if (err)
-+		hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
- }
- 
- static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
-@@ -6287,6 +6294,7 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
- 	hba->desc_size.conf_desc = QUERY_DESC_CONFIGURATION_DEF_SIZE;
- 	hba->desc_size.unit_desc = QUERY_DESC_UNIT_DEF_SIZE;
- 	hba->desc_size.geom_desc = QUERY_DESC_GEOMETRY_DEF_SIZE;
-+	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
- }
- 
- /**
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 38c307d..515c6e6 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -229,6 +229,7 @@ struct ufs_desc_size {
- 	int interc_desc;
- 	int unit_desc;
- 	int conf_desc;
-+	int hlth_desc;
- };
- 
- /**
 -- 
 2.7.4
