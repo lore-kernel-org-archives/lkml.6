@@ -1,87 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeBAPUf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:20:35 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:46167 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751760AbeBAPUb (ORCPT
+        id S1752543AbeBAPUp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:20:45 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:44732 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752383AbeBAPUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:20:31 -0500
-X-Google-Smtp-Source: AH8x224uGJEC03lh5KmfPj/j2+hJfg0REjcI1tvlHVdRUz/3uk0xvt+ci27gGRlR8HRI3ipEaYsaMQ==
-Subject: Re: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>
-Cc: initramfs <initramfs@vger.kernel.org>,
-        Taras Kondratiuk <takondra@cisco.com>,
-        Victor Kamensky <kamensky@cisco.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
- <1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
- <1517436423.3469.237.camel@linux.vnet.ibm.com>
- <a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
- <20180201020331.GA3774@rani.riverdale>
- <1517458921.3329.2.camel@linux.vnet.ibm.com>
-From: Rob Landley <rob@landley.net>
-Message-ID: <f9112881-772c-2568-ebfa-d2ca807124e9@landley.net>
-Date: Thu, 1 Feb 2018 09:20:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <1517458921.3329.2.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 1 Feb 2018 10:20:40 -0500
+Date: Thu, 01 Feb 2018 10:20:38 -0500 (EST)
+Message-Id: <20180201.102038.1412916523456522737.davem@davemloft.net>
+To: torvalds@linux-foundation.org
+CC: akpm@linux-foundation.org, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Sparc
+From: David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Please pull to get the following sparc changes for the merge window.
 
-On 01/31/2018 10:22 PM, Mimi Zohar wrote:
-> On Wed, 2018-01-31 at 21:03 -0500, Arvind Sankar wrote:
->> On Wed, Jan 31, 2018 at 05:48:20PM -0600, Rob Landley wrote:
->>> On 01/31/2018 04:07 PM, Mimi Zohar wrote:
->>>> On Wed, 2018-01-31 at 13:32 -0600, Rob Landley wrote:>> (The old "I configured in tmpfs and am using rootfs but I want that
->>> rootfs
->>>>> to be ramfs, not tmpfs" code doesn't seem to be a real-world concern, does
->>>>> it?)
->>>>
->>>> I must be missing something.  Which systems don't specify "root=" on
->>>> the boot command line.
->>>
->>> Any system using initrd or initramfs?
->>>
->>
->> Don't a lot of initramfs setups use root= to tell the initramfs which
->> actual root file system to switch to after early boot?
+Of note is the addition of a driver for the Data Analytics
+Accelerator, and some small cleanups.
 
-You mean the option that _isn't_ passed through as an environment
-variable (the way ROOT= would be) so you have to parse /proc/cmdline to
-to see if it was passed in?
+Thanks!
 
-If you really, really, really, really, really want to double down on the
-"no, this is the button, it doesn't do what I thought but I will MAKE it
-work" obsession, sure.
+The following changes since commit 0d665e7b109d512b7cae3ccef6e8654714887844:
 
-> With your patch and specifying "root=tmpfs", dracut is complaining:
-> 
-> dracut: FATAL: Don't know how to handle 'root=tmpfs'
-> dracut: refusing to continue
+  mm, page_vma_mapped: Drop faulty pointer arithmetics in check_pte() (2018-01-21 17:44:47 -0800)
 
-[googles]... I do not understand why this package exists.
+are available in the Git repository at:
 
-If you're switching to another root filesystem, using a tool that
-wikipedia[citation needed] says has no purpose but to switch to another
-root filesystem, (so let's reproduce the kernel infrastructure in
-userspace while leaving it the kernel too)... why do you need initramfs
-to be tmpfs? You're using it for half a second, then discarding it,
-what's the point of it being tmpfs?
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next.git 
 
-Sigh. If people are ok with having rootfs just be tmpfs whenever tmpfs
-is configured in, even when you're then going to overmount it with
-something else like you're doing, let's just _remove_ the test. If it
-can be tmpfs, have it be tmpfs.
+for you to fetch changes up to 2d85ec8acb01601a216b6c591cab63bfaacd2083:
 
-Rob
+  oradax: Fix return value check in dax_attach() (2018-01-29 14:28:48 -0500)
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      sparc: vDSO: remove an extra tab
+
+David S. Miller (1):
+      Merge branch 'sparc64-dax-support'
+
+Rob Gardner (2):
+      sparc64: Oracle DAX infrastructure
+      sparc64: Oracle DAX driver
+
+Rolf Eike Beer (1):
+      sparc64: drop unneeded compat include
+
+Wei Yongjun (1):
+      oradax: Fix return value check in dax_attach()
+
+ Documentation/sparc/oradax/dax-hv-api.txt | 1433 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Documentation/sparc/oradax/oracle-dax.txt |  429 +++++++++++++++++++++++
+ arch/sparc/include/asm/hypervisor.h       |  138 ++++++++
+ arch/sparc/include/uapi/asm/oradax.h      |   91 +++++
+ arch/sparc/kernel/hvapi.c                 |    1 +
+ arch/sparc/kernel/hvcalls.S               |   57 ++++
+ arch/sparc/kernel/signal_64.c             |    3 -
+ arch/sparc/vdso/vma.c                     |    2 +-
+ drivers/sbus/char/Kconfig                 |    8 +
+ drivers/sbus/char/Makefile                |    1 +
+ drivers/sbus/char/oradax.c                | 1005 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 11 files changed, 3164 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/sparc/oradax/dax-hv-api.txt
+ create mode 100644 Documentation/sparc/oradax/oracle-dax.txt
+ create mode 100644 arch/sparc/include/uapi/asm/oradax.h
+ create mode 100644 drivers/sbus/char/oradax.c
