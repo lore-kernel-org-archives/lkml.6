@@ -1,26 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752502AbeBAM0F (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 07:26:05 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39309 "EHLO
+        id S1752528AbeBAM1F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 07:27:05 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35650 "EHLO
         mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752249AbeBAM0C (ORCPT
+        with ESMTP id S1752062AbeBAM1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 07:26:02 -0500
-X-Google-Smtp-Source: AH8x227KYBedVvLguALkCVyFfccuKRyk7zr4Pqre0UA7I4XhBCToQ1aqsYzxBqa04Ry6GLpDBURt/7VGaW+fIC1y6TU=
+        Thu, 1 Feb 2018 07:27:00 -0500
+X-Google-Smtp-Source: AH8x224/VBAJr2l8KYpET7bNdsmNLJlFmHOMbaLjJMMSNlZwhuLWhMGTuv5IgqrZ/4mynU0DXipUBEYVkg7cuSm1AqY=
 MIME-Version: 1.0
-In-Reply-To: <20180201121753.GB690@gmail.com>
+In-Reply-To: <20180201122230.GC690@gmail.com>
 References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
  <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
- <20180201121753.GB690@gmail.com>
+ <CAHp75Vcig869pUQ5yK1b=GpXinhYkpw1q29OVKSs_7EqP4Hknw@mail.gmail.com>
+ <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg@mail.gmail.com>
+ <CAHp75VcYQMYNmW9-MkOKA5TWV2JgNfqnUB22s1qB4Z0ZZbTG2g@mail.gmail.com>
+ <CAMz4kuLO=zRqg72=7dC2fLHyVcEOcsU0PqiZM8XEYC3TGT1fYA@mail.gmail.com> <20180201122230.GC690@gmail.com>
 From: Baolin Wang <baolin.wang@linaro.org>
-Date: Thu, 1 Feb 2018 20:26:01 +0800
-Message-ID: <CAMz4ku+-R--QKU4FzXt68py-yDMo7Xt98vBLR2MhhdjzxOKOHA@mail.gmail.com>
+Date: Thu, 1 Feb 2018 20:26:59 +0800
+Message-ID: <CAMz4ku+J7RwkthJn9TbYCuVYWnUyD8sCLs892G_SO=vWxr2ddA@mail.gmail.com>
 Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
 To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -28,152 +33,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Markus,
-
-On 1 February 2018 at 20:17, Marcus Folkesson
+On 1 February 2018 at 20:22, Marcus Folkesson
 <marcus.folkesson@gmail.com> wrote:
-> Hi Baolin,
->
-> On Tue, Jan 30, 2018 at 08:07:43PM +0800, Baolin Wang wrote:
->> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
->> each group contains 16 GPIOs. Each GPIO can set input/output and has
->> the interrupt capability.
+> On Thu, Feb 01, 2018 at 11:08:46AM +0800, Baolin Wang wrote:
+>> On 31 January 2018 at 22:23, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>> > On Wed, Jan 31, 2018 at 4:01 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> >> On 31 January 2018 at 00:48, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>> >>> On Tue, Jan 30, 2018 at 2:07 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> >>>> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
+>> >>>> each group contains 16 GPIOs. Each GPIO can set input/output and has
+>> >>>> the interrupt capability.
+>> >>>
+>> >>>> +config GPIO_SPRD
+>> >>>
+>> >>>> +       bool "Spreadtrum GPIO support"
+>> >>>
+>> >>> Either you have to put tristate here, or remove all redundant
+>> >>> module_*() and MODULE_*() macros.
+>> >>
+>> >> I will remove module_*() and MODULE_*() macros in next version. Thanks
+>> >> for your comments.
+>> >
+>> > In that case you need to explain why driver can't be module. (And
+>> > don't forget to replace module.h with init.h).
 >>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->> diff --git a/drivers/gpio/gpio-sprd.c b/drivers/gpio/gpio-sprd.c
->> new file mode 100644
->> index 0000000..af59b9f
->> --- /dev/null
->> +++ b/drivers/gpio/gpio-sprd.c
->> @@ -0,0 +1,301 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2018 Spreadtrum Communications Inc.
->> + * Copyright (c) 2018 Linaro Ltd.
->> + */
->> +
->> +#include <linux/bitops.h>
->> +#include <linux/gpio/driver.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/spinlock.h>
->> +
->> +/* GPIO registers definition */
->> +#define SPRD_GPIO_DATA               0x0
->> +#define SPRD_GPIO_DMSK               0x4
->> +#define SPRD_GPIO_DIR                0x8
->> +#define SPRD_GPIO_IS         0xc
->> +#define SPRD_GPIO_IBE                0x10
->> +#define SPRD_GPIO_IEV                0x14
->> +#define SPRD_GPIO_IE         0x18
->> +#define SPRD_GPIO_RIS                0x1c
->> +#define SPRD_GPIO_MIS                0x20
->> +#define SPRD_GPIO_IC         0x24
->> +#define SPRD_GPIO_INEN               0x28
->> +
->> +/* We have 16 groups GPIOs and each group contain 16 GPIOs */
->> +#define SPRD_GPIO_GROUP_NR   16
->> +#define SPRD_GPIO_NR         256
->> +#define SPRD_GPIO_GROUP_SIZE 0x80
->> +#define SPRD_GPIO_GROUP_MASK GENMASK(15, 0)
->> +#define SPRD_GPIO_BIT(x)     ((x) & (SPRD_GPIO_GROUP_NR - 1))
->> +
->> +struct sprd_gpio {
->> +     struct gpio_chip chip;
->> +     void __iomem *base;
->> +     spinlock_t lock;
->> +     int irq;
->> +};
->> +
->> +static inline void __iomem *sprd_gpio_group_base(struct sprd_gpio *sprd_gpio,
->> +                                              unsigned int group)
->> +{
->> +     return sprd_gpio->base + SPRD_GPIO_GROUP_SIZE * group;
->> +}
->> +
->> +static void sprd_gpio_update(struct gpio_chip *chip, unsigned int offset,
->> +                          unsigned int reg, unsigned int val)
->> +{
->> +     struct sprd_gpio *sprd_gpio = gpiochip_get_data(chip);
->> +     void __iomem *base = sprd_gpio_group_base(sprd_gpio,
->> +                                               offset / SPRD_GPIO_GROUP_NR);
->> +     u32 shift = SPRD_GPIO_BIT(offset);
->> +     unsigned long flags;
->> +     u32 orig, tmp;
->> +
->> +     spin_lock_irqsave(&sprd_gpio->lock, flags);
->> +     orig = readl_relaxed(base + reg);
->> +
->> +     tmp = (orig & ~BIT(shift)) | (val << shift);
->> +     writel_relaxed(tmp, base + reg);
->> +     spin_unlock_irqrestore(&sprd_gpio->lock, flags);
->> +}
->> +
->> +static int sprd_gpio_read(struct gpio_chip *chip, unsigned int offset,
->> +                       unsigned int reg)
->> +{
->> +     struct sprd_gpio *sprd_gpio = gpiochip_get_data(chip);
->> +     void __iomem *base = sprd_gpio_group_base(sprd_gpio,
->> +                                               offset / SPRD_GPIO_GROUP_NR);
->> +     u32 value = readl_relaxed(base + reg) & SPRD_GPIO_GROUP_MASK;
->> +     u32 shift = SPRD_GPIO_BIT(offset);
->> +
->> +     return !!(value & BIT(shift));
->> +}
->> +
->> +static int sprd_gpio_request(struct gpio_chip *chip, unsigned int offset)
->> +{
->> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DMSK, 1);
->> +     return 0;
->> +}
+>> After more investigation, I found most GPIO dependencies can be
+>> deferred to probe. So I will change the GPIO driver to module level
+>> and change bool to tristate in next version.
 >
-> Better to change the function to void since the return value is not
-> valueable.
+> Then you could replace
+>
+> +static int __init sprd_gpio_init(void)
+> +{
+> +       return platform_driver_register(&sprd_gpio_driver);
+> +}
+> +subsys_initcall(sprd_gpio_init);
+> +
+> +static void __exit sprd_gpio_exit(void)
+> +{
+> +       platform_driver_unregister(&sprd_gpio_driver);
+> +}
+> +module_exit(sprd_gpio_exit);
+>
+> with
+>
+> module_platform_driver(sprd_gpio_driver);
 
-The function prototype of gpio_chip structure need one return value,
-so we need give one returned value though it is no meaningless.
-
->
->> +
->> +static void sprd_gpio_free(struct gpio_chip *chip, unsigned int offset)
->> +{
->> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DMSK, 0);
->> +}
->> +
->> +static int sprd_gpio_direction_input(struct gpio_chip *chip,
->> +                                  unsigned int offset)
->> +{
->> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DIR, 0);
->> +     sprd_gpio_update(chip, offset, SPRD_GPIO_INEN, 1);
->> +     return 0;
->> +}
->
-> Same here
->
->
->> +
->> +static int sprd_gpio_direction_output(struct gpio_chip *chip,
->> +                                   unsigned int offset, int value)
->> +{
->> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DIR, 1);
->> +     sprd_gpio_update(chip, offset, SPRD_GPIO_INEN, 0);
->> +     sprd_gpio_update(chip, offset, SPRD_GPIO_DATA, value);
->> +     return 0;
->> +}
->
-> and here.
->
->
-> Thanks,
-> Marcus Folkesson
->
->
->
-
-
+Yes, I already did this in V2 patch set, you can refer to the V2 patch
+set. Thanks.
 
 -- 
 Baolin.wang
