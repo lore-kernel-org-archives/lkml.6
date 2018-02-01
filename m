@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751738AbeBAOsI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 09:48:08 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:43954 "EHLO
+        id S1752318AbeBAOua (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 09:50:30 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:43972 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751472AbeBAOsH (ORCPT
+        with ESMTP id S1751960AbeBAOtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 09:48:07 -0500
-Date: Thu, 01 Feb 2018 09:48:05 -0500 (EST)
-Message-Id: <20180201.094805.1174548294600347835.davem@davemloft.net>
+        Thu, 1 Feb 2018 09:49:10 -0500
+Date: Thu, 01 Feb 2018 09:49:09 -0500 (EST)
+Message-Id: <20180201.094909.1943860277381269232.davem@davemloft.net>
 To: geert@linux-m68k.org
-Cc: nikolay@cumulusnetworks.com, stephen@networkplumber.org, arnd@arndb.de,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: bridge: Fix uninitialized error in
- br_fdb_sync_static()
+Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, arnd@arndb.de,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] inet: Avoid unitialized variable warning in
+ inet_unhash()
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <1517480728-5580-1-git-send-email-geert@linux-m68k.org>
-References: <1517480728-5580-1-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1517480783-5692-1-git-send-email-geert@linux-m68k.org>
+References: <1517480783-5692-1-git-send-email-geert@linux-m68k.org>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=iso-8859-7
@@ -25,22 +24,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w11EmDae026689
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w11EomAg026981
 
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu,  1 Feb 2018 11:25:27 +0100
+Date: Thu,  1 Feb 2018 11:26:23 +0100
 
-> With gcc-4.1.2.:
+> With gcc-4.1.2:
 > 
->     net/bridge/br_fdb.c: In function ¡br_fdb_sync_static¢:
->     net/bridge/br_fdb.c:996: warning: ¡err¢ may be used uninitialized in this function
+>     net/ipv4/inet_hashtables.c: In function ¡inet_unhash¢:
+>     net/ipv4/inet_hashtables.c:628: warning: ¡ilb¢ may be used uninitialized in this function
 > 
-> Indeed, if the list is empty, err will be uninitialized, and will be
-> propagated up as the function return value.
+> While this is a false positive, it can easily be avoided by using the
+> pointer itself as the canary variable.
 > 
-> Fix this by preinitializing err to zero.
-> 
-> Fixes: eb7935830d00b9e0 ("net: bridge: use rhashtable for fdbs")
 > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Applied, thanks Geert.
+This frankly also makes the logic simpler and doesn't increase register
+pressure, I like it.
+
+Applied, thanks.
