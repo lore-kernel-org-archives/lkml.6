@@ -1,71 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeBAWhL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 17:37:11 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44371 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751984AbeBAWhB (ORCPT
+        id S1752133AbeBAWlf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 17:41:35 -0500
+Received: from alln-iport-8.cisco.com ([173.37.142.95]:54629 "EHLO
+        alln-iport-8.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751567AbeBAWl1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 17:37:01 -0500
-X-Google-Smtp-Source: AH8x224DCw6Kh+L4278ytkAjFxi0r7SmKm52ysvlb+rzlXqK0tDvhw3LpimzOc7J+oAl7xndJcDxIA==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: devicetree <devicetree@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 0/5] ARM64: dts: meson-axg: UART DT updates
-Organization: BayLibre
-References: <20180111023401.125658-1-yixun.lan@amlogic.com>
-        <7hr2q6c2r4.fsf@baylibre.com>
-        <CAOi56cW4ufsegpy7heK1+pCxvZ2gz5Lf3dkUgxkZCgMq5oBzSA@mail.gmail.com>
-        <8990554d-e995-e432-8f50-3b247f71b0fd@amlogic.com>
-Date: Thu, 01 Feb 2018 14:36:58 -0800
-In-Reply-To: <8990554d-e995-e432-8f50-3b247f71b0fd@amlogic.com> (Yixun Lan's
-        message of "Wed, 31 Jan 2018 10:25:45 +0800")
-Message-ID: <7hinbg8hh1.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 1 Feb 2018 17:41:27 -0500
+X-IronPort-AV: E=Sophos;i="5.46,444,1511827200";
+   d="scan'208";a="64562470"
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Arvind Sankar <nivedita@alum.mit.edu>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>, Rob Landley <rob@landley.net>
+From: Taras Kondratiuk <takondra@cisco.com>
+In-Reply-To: <1517521912.3619.0.camel@linux.vnet.ibm.com>
+Cc: initramfs <initramfs@vger.kernel.org>,
+        Victor Kamensky <kamensky@cisco.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
+ <1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
+ <1517436423.3469.237.camel@linux.vnet.ibm.com>
+ <a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
+ <20180201020331.GA3774@rani.riverdale>
+ <1517458921.3329.2.camel@linux.vnet.ibm.com>
+ <f9112881-772c-2568-ebfa-d2ca807124e9@landley.net>
+ <1517500500.3974.45.camel@linux.vnet.ibm.com>
+ <875e5d2d-9ffe-14ab-090a-4a9632af0f35@landley.net>
+ <1517521912.3619.0.camel@linux.vnet.ibm.com>
+Message-ID: <151752488608.10051.146219644323454814@takondra-t460s>
+User-Agent: alot/0.6
+Subject: Re: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
+Date: Thu, 01 Feb 2018 14:41:26 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w11MfePL003033
 
-Hi Yixun,
+Quoting Mimi Zohar (2018-02-01 13:51:52)
+> On Thu, 2018-02-01 at 11:09 -0600, Rob Landley wrote:
+> > On 02/01/2018 09:55 AM, Mimi Zohar wrote:
+> > > On Thu, 2018-02-01 at 09:20 -0600, Rob Landley wrote:
+> > > 
+> > >>> With your patch and specifying "root=tmpfs", dracut is complaining:
+> > >>>
+> > >>> dracut: FATAL: Don't know how to handle 'root=tmpfs'
+> > >>> dracut: refusing to continue
+> > >>
+> > >> [googles]... I do not understand why this package exists.
+> > >>
+> > >> If you're switching to another root filesystem, using a tool that
+> > >> wikipedia[citation needed] says has no purpose but to switch to another
+> > >> root filesystem, (so let's reproduce the kernel infrastructure in
+> > >> userspace while leaving it the kernel too)... why do you need initramfs
+> > >> to be tmpfs? You're using it for half a second, then discarding it,
+> > >> what's the point of it being tmpfs?
+> > > 
+> > > Unlike the kernel image which is signed by the distros, the initramfs
+> > > doesn't come signed, because it is built on the target system.  Even
+> > > if the initramfs did come signed, it is beneficial to measure and
+> > > appraise the individual files in the initramfs.
+> > 
+> > You can still shoot yourself in the foot with tmpfs. People mount a /run
+> > and a /tmp and then as a normal user you can go
+> > https://twitter.com/landley/status/959103235305951233 and maybe the
+> > default should be a little more clever there...
+> > 
+> > I'll throw it on the todo heap. :)
+> > 
+> > >> Sigh. If people are ok with having rootfs just be tmpfs whenever tmpfs
+> > >> is configured in, even when you're then going to overmount it with
+> > >> something else like you're doing, let's just _remove_ the test. If it
+> > >> can be tmpfs, have it be tmpfs.
+> > > 
+> > > Very much appreciated!
+> > 
+> > Not yet tested, but something like the attached? (Sorry for the
+> > half-finished doc changes in there, I'm at work and have a 5 minute
+> > break. I can test properly this evening if you don't get to it...)
+> 
+> Yes, rootfs is being mounted as tmpfs.
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
-
-> On 01/31/18 08:22, Kevin Hilman wrote:
->> On Tue, Jan 30, 2018 at 4:04 PM, Kevin Hilman <khilman@baylibre.com> wrote:
->>> Yixun Lan <yixun.lan@amlogic.com> writes:
->>>
->>>> HI Kevin
->>>>  These are the UART DT updates for the Meson-AXG platform.
->>>>
->>>>  The patch 1 is a general fix.
->>>> Other patches are about adding clock & pinctrl info, then using them.
->>>> Last patch enable UART_A which connect to a BT module on the S400 board.
->>>
->>> Applied to v4.16/dt64,
->> 
->> Oops, I meant v4.17.
->> 
->
-> Hi Kevin
->  I should warn you about the patch 3 [1], it actually depend on the gpio
-> renaming patch [2]
->
->  I'm still waiting Linus to take patch [2], then update according
-> (or you could help amend the patch? it's simply a
-> 's/uart_ao_b_gpioz/uart_ao_b_z/g)
-
-I've made that change in the version of the patch that I applied to the
-v4.17/dt64 branch.
-
-It's harmless without the pinctrl patch applied anyways.
-
-Kevin
+I don't think you can unconditionally replace ramfs with initramfs by
+default. Their behavior is different in some cases (e.g. pivot_root vs
+switch_root) and it can break many systems that expect ramfs by default.
