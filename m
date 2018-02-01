@@ -1,74 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751897AbeBAIXs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 03:23:48 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:36607 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751245AbeBAIXk (ORCPT
+        id S1751915AbeBAIXy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 03:23:54 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:43722 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751812AbeBAIXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Feb 2018 03:23:40 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180201082339epoutp0161cf60d24a0b4c954f4193137e00dde9~PJgjjvD1I0139301393epoutp01X
-X-AuditID: b6c32a39-467ff70000000fc5-cc-5a72ce8a3d69
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180201082338epoutp04167f3bfded258b056b2c2631c3416f2f~PJgjYX_hP3160231602epoutp04A
+X-AuditID: b6c32a36-c91ff70000001028-c8-5a72ce8a6d0b
 From: Andi Shyti <andi.shyti@samsung.com>
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Marcus Folkesson <marcus.folkesson@gmail.com>
 Cc: Sangwon Jee <jeesw@melfas.com>, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>,
         Andi Shyti <andi@etezian.org>
-Subject: [PATCH 0/2] Licensing fixes and updates for the mms114 driver
-Date: Thu, 01 Feb 2018 17:23:18 +0900
-Message-id: <20180201082320.24031-1-andi.shyti@samsung.com>
+Subject: [PATCH 1/2] Input: mms114 - add SPDX identifier
+Date: Thu, 01 Feb 2018 17:23:19 +0900
+Message-id: <20180201082320.24031-2-andi.shyti@samsung.com>
 X-Mailer: git-send-email 2.15.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFKsWRmVeSWpSXmKPExsWy7bCmnm7XuaIogy/zdC22H3nGarH4x3Mm
+In-reply-to: <20180201082320.24031-1-andi.shyti@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7bCmvm7XuaIog72vVC22H3nGarH4x3Mm
         i8OLXjBatD/qZLW4+ekbq8XlXXPYLCauv8fqwO5xfcknZo+ds+6ye3yfcYbRo2/LKkaPz5vk
         AlijUm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgM5Q
-        UihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqRRsaGukZGpjrGRkZ6ZkYx1oZmQKVJKRm7H68
-        iK1gM3PFoV+3WBsYLzN1MXJySAiYSJzd2sgGYgsJ7GCUWPpduYuRC8j+zijR3PgLrmjS+z4m
-        iMQGRon5nZ+hnE+MEpe2LgRrZxPQlGi6/QPMFhFIkFje+YMZpIhZYCmjxMLmpSwgCWEBN4lX
-        k2aB2SwCqhKPFx4Hs3kFrCWuz1vNCrFOXmLCliYWkGYJgY+sEhOm/Ie6w0Vi14MX7BC2sMSr
-        41uAbA4gW1ri0lFbiHAzo8S228kQvRMYJT7t/QrVayzxbGEXmM0swCfx7msPK0Qvr0RHmxCE
-        6SFx6ZEYhOkocWZ2LiRUYiVuvXjIOoFRcgEjwypGsdSC4tz01GLDAlO94sTc4tK8dL3k/NxN
-        jOB0oWW5g/HYOZ9DjAIcjEo8vBMuFEYJsSaWFVfmHmKU4GBWEuF9s68oSog3JbGyKrUoP76o
-        NCe1+BCjKTAwJjJLiSbnA1NZXkm8oYmlgYmZETD2LQ0NlcR5AwJcooQE0hNLUrNTUwtSi2D6
-        mDg4pRoYFR7bCy623L7482z+2WVve9vfuOT2ic3fZrDFiTmI/V9CzJOt//NTqqN3Lrgg/k5v
-        F4/Bk4TgSIN4ZeWOJ+1yfTwfvZ3iLha+mzuFa/uSTSscGCuSefzEN26+W6F8rEdj5ZnvD3/c
-        Kb80/WjqqyUR+tKmN37NWPzUortv2Yy1RU+i18+9uKSkRYmlOCPRUIu5qDgRANXCNcstAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKJMWRmVeSWpSXmKPExsVy+t9jQd2uc0VRBk/WC1psP/KM1WLxj+dM
-        FocXvWC0aH/UyWpx89M3VovLu+awWUxcf4/Vgd3j+pJPzB47Z91l9/g+4wyjR9+WVYwenzfJ
-        BbBGcdmkpOZklqUW6dslcGXsfryIrWAzc8WhX7dYGxgvM3UxcnJICJhITHrfB2RzcQgJrGOU
-        aPh5FMr5xCixbeIlRpAqNgFNiabbP9hAbBGBBImza18wgxQxCyxllNh56z5YkbCAm8SrSbNY
-        QGwWAVWJxwuPg9m8AtYS1+etZoVYJy8xYUsTywRGrgWMDKsYJVMLinPTc4uNCgzzUsv1ihNz
-        i0vz0vWS83M3MQIDY9thrb4djPeXxB9iFOBgVOLhfXGpMEqINbGsuDL3EKMEB7OSCO+bfUVR
-        QrwpiZVVqUX58UWlOanFhxilOViUxHlv5x2LFBJITyxJzU5NLUgtgskycXBKNTA2y6U+vBB9
-        7scby9qpT/gCgp8Ub2wLWtWgvPeLTPj0n3+1xI9MfB2uxpPhuifTbEflkeUxgueKjmy53OU4
-        T0bNO+9vp6v2Np4Ob1XexFylmmeXFd6fsuyLf9EYdD9j068WlXU3Hxyf3Rwffnn/jp0GzId3
-        sk35XT5hZmnOE5Ger1KahVlSAWJKLMUZiYZazEXFiQCWdHTaCAIAAA==
-X-CMS-MailID: 20180201082338epcas1p43bf7d96c63fdc5bf905528e45d227d8b
+        UihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqRRsaGukZGpjrGRkZ6ZkYx1oZmQKVJKRmrJ93
+        kb3gMUfFl2cHWBoYN7B3MXJySAiYSHyZ1M0GYgsJ7GCU+Nvj0sXIBWR/Z5TY/WIKXNGSKYeZ
+        IRIbGCV2relnh3A+MUpc2roQrJ1NQFOi6fYPMFtEIEFieecPsA5mgaWMEgubl7J0MXJwCAtY
+        SDxfEQZSwyKgKtHf8gysnlfAWqLt83cWiG3yEhO2NIHZnAI2ElfXfgNbJiEwgU1i6eVjbBBF
+        LhKn7k9khrCFJV4d38IOMl9CQFri0lFbiHAzo8S228lQvYwSn/Z+ZYJIGEs8W9gFZjML8Em8
+        +9rDCtHLK9HRJgRhekjc/6MOUe0ocWnPKTaIf/sZJdbtms86gVFqASPDKkax1ILi3PTUYsMC
+        I73ixNzi0rx0veT83E2M4ESiZbaDcdE5n0OMAhyMSjy8Ly4VRgmxJpYVV+YeYpTgYFYS4X2z
+        ryhKiDclsbIqtSg/vqg0J7X4EKMpMGgmMkuJJucDk1xeSbyhiaWBiZkRMClYGhoqifMGBLhE
+        CQmkJ5akZqemFqQWwfQxcXBKNTB6iMYd1nrdr282rTZsltqnI7Pe/e7NundXNPWkWVlq/41H
+        gu6Ht306ozvFULk8mvHiBaGOJ1kMh1U/a6w9JvQ2KyX3snrDlYlJTmJRFx+ef9p6aza/8qVV
+        238Eft114teW49+PHGw60bzri6jDI/tik5OFGQs3/UvnE/WR3elkwXjuoMG8TDZhJZbijERD
+        Leai4kQAyd/IRjoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42I5/e+xoG7XuaIog8OXJCy2H3nGarH4x3Mm
+        i8OLXjBatD/qZLW4+ekbq8XlXXPYLCauv8fqwO5xfcknZo+ds+6ye3yfcYbRo2/LKkaPz5vk
+        AlijuGxSUnMyy1KL9O0SuDLWz7vIXvCYo+LLswMsDYwb2LsYOTkkBEwklkw5zNzFyMUhJLCO
+        UeLN2UmsEM4nRoltEy8xglSxCWhKNN3+wQZiiwgkSJxd+wKsg1lgKaPEzlv3gYo4OIQFLCSe
+        rwgDqWERUJXob3kGVs8rYC3R9vk7C8Q2eYkJW5rAbE4BG4mra7+BXSEEVDNz31XWCYw8CxgZ
+        VjFKphYU56bnFhsVGOallusVJ+YWl+al6yXn525iBIbRtsNafTsY7y+JP8QowMGoxMP74lJh
+        lBBrYllxZe4hRgkOZiUR3jf7iqKEeFMSK6tSi/Lji0pzUosPMUpzsCiJ897OOxYpJJCeWJKa
+        nZpakFoEk2Xi4JRqYFzZwBkR4N2QldlSM9fhx6WlatUG/eUSJ8r/1k3etfDQvIefJ6knH934
+        8JaHu9gP8eMLNW5POzNlfY7srpc8Z94tbm85uWUd9wLWG1zbnU609ivttOH9KZT7cvrz1Xvf
+        5vzZUVW52eDI7o+s8gpcYXfXbfveJ9n5rGz671e/Nf4VS7PdjVxYaxypxFKckWioxVxUnAgA
+        06Tf2B8CAAA=
+X-CMS-MailID: 20180201082338epcas1p3354b8615fdb2c44c94535380025d8354
 X-Msg-Generator: CA
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180201082338epcas1p43bf7d96c63fdc5bf905528e45d227d8b
-X-RootMTR: 20180201082338epcas1p43bf7d96c63fdc5bf905528e45d227d8b
-References: <CGME20180201082338epcas1p43bf7d96c63fdc5bf905528e45d227d8b@epcas1p4.samsung.com>
+X-CMS-RootMailID: 20180201082338epcas1p3354b8615fdb2c44c94535380025d8354
+X-RootMTR: 20180201082338epcas1p3354b8615fdb2c44c94535380025d8354
+References: <20180201082320.24031-1-andi.shyti@samsung.com>
+        <CGME20180201082338epcas1p3354b8615fdb2c44c94535380025d8354@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+Replace the original license statement with the SPDX identifier.
+Add also one line of description as recommended by the COPYING
+file.
 
-I will send this two as a new patchset. The first one is the
-messed SPDX patch that you reverted, the second one is about the
-license incohorency that Marcus has pointed out.
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+---
+ drivers/input/touchscreen/mms114.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Andi
-
-Andi Shyti (2):
-  Input: mms114 - add SPDX identifier
-  Input: mms114 - fix license module information
-
- drivers/input/touchscreen/mms114.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/input/touchscreen/mms114.c b/drivers/input/touchscreen/mms114.c
+index db4f6bb502e3..be7926555432 100644
+--- a/drivers/input/touchscreen/mms114.c
++++ b/drivers/input/touchscreen/mms114.c
+@@ -1,11 +1,8 @@
+-/*
+- * Copyright (C) 2012 Samsung Electronics Co.Ltd
+- * Author: Joonyoung Shim <jy0922.shim@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
++// SPDX-License-Identifier: GPL-2.0
++// Melfas MMS114/MMS152 touchscreen device driver
++//
++// Copyright (c) 2012 Samsung Electronics Co., Ltd.
++// Author: Joonyoung Shim <jy0922.shim@samsung.com>
+ 
+ #include <linux/module.h>
+ #include <linux/delay.h>
 -- 
 2.15.1
