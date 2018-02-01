@@ -1,152 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754730AbeBATfc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 14:35:32 -0500
-Received: from esa5.dell-outbound.iphmx.com ([68.232.153.95]:24436 "EHLO
-        esa5.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754690AbeBATfZ (ORCPT
+        id S1754733AbeBATjt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 14:39:49 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44230 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754593AbeBATjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 14:35:25 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FRAQCMa3Nah8uZ6ERdGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQYgQUoCpwnggKJE45KggIKhTsCgjFXFQEBAQEBAQEBAgECEAE?=
- =?us-ascii?q?BAQgNCQgoL4I4IoJKAQEBBCdSDAQCAQgRBAEBAScHISUDAQUIAgQBDQUIE4oCA?=
- =?us-ascii?q?xWuADqHNQ2DIgEBAQEBBQEBAQEBAQEBAR+EaYIVgz+DLoJrRASBMyUehVUgBZM?=
- =?us-ascii?q?SkFM+kGiEfZQ6jjCJO4E8NYF0cIJ8gmWCEniLMoEXAQEB?=
-X-IPAS-Result: =?us-ascii?q?A2FRAQCMa3Nah8uZ6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?YgQUoCpwnggKJE45KggIKhTsCgjFXFQEBAQEBAQEBAgECEAEBAQgNCQgoL4I4I?=
- =?us-ascii?q?oJKAQEBBCdSDAQCAQgRBAEBAScHISUDAQUIAgQBDQUIE4oCAxWuADqHNQ2DIgE?=
- =?us-ascii?q?BAQEBBQEBAQEBAQEBAR+EaYIVgz+DLoJrRASBMyUehVUgBZMSkFM+kGiEfZQ6j?=
- =?us-ascii?q?jCJO4E8NYF0cIJ8gmWCEniLMoEXAQEB?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.189
-X-IronPort-AV: E=Sophos;i="5.46,444,1511848800";
-   d="scan'208";a="208142874"
-X-DLP: DLP_GlobalPCIDSS
-To: <dmitry.torokhov@gmail.com>, <pali.rohar@gmail.com>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: Dell docking station & Dell Embedded Controller & PS/2 devices
-Thread-Topic: Dell docking station & Dell Embedded Controller & PS/2 devices
-Thread-Index: AQHTm5MKNYkzckAlZU27gJwgpYoerKOP74RA
-Date: Thu, 1 Feb 2018 19:35:21 +0000
-Message-ID: <bb5156667d084d77841f7078d373a265@ausx13mpc120.AMER.DELL.COM>
-References: <20180124104121.7g3zfay5smc5v2tc@pali>
- <20180201192945.wrsqjq7f5ejhqj6m@dtor-ws>
-In-Reply-To: <20180201192945.wrsqjq7f5ejhqj6m@dtor-ws>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="iso-8859-1"
+        Thu, 1 Feb 2018 14:39:42 -0500
+X-Google-Smtp-Source: AH8x2259n9f6x1Qrjsyo3jMsyr4N2uXAznWLjrzCXHZ49HfDJ/EQERV0lZ4Re8n1lQMOrSbpQLXzMQ==
+Date: Thu, 1 Feb 2018 20:39:31 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: stern@rowland.harvard.edu, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, paulmck@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, corbet@lwn.net
+Subject: Re: [PATCH 2/2] MAINTAINERS: add the Memory Consistency Model
+ subsystem
+Message-ID: <20180201193931.GA4537@andrea>
+References: <1517486666-11011-1-git-send-email-parri.andrea@gmail.com>
+ <20180201134401.GE9182@arm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180201134401.GE9182@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w11Ja8YR024579
+
+On Thu, Feb 01, 2018 at 01:44:01PM +0000, Will Deacon wrote:
+> On Thu, Feb 01, 2018 at 01:04:26PM +0100, Andrea Parri wrote:
+> > Integrate (and then remove) tools/memory-model/MAINTAINERS into the
+> > main MAINTAINERS file. This way get_maintainer.pl can give a "right
+> > answer" for tools/memory-model/.
+> > 
+> > Suggested-by: Ingo Molnar <mingo@kernel.org>
+> > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> > ---
+> >  MAINTAINERS                    | 16 ++++++++++++++++
+> >  tools/memory-model/MAINTAINERS | 15 ---------------
+> >  2 files changed, 16 insertions(+), 15 deletions(-)
+> >  delete mode 100644 tools/memory-model/MAINTAINERS
+> 
+> Acked-by: Will Deacon <will.deacon@arm.com>
+> 
+> Makes a lot more sense having this in the top-level MAINTAINERS file.
+> It might also make sense to add:
+> 
+>   F:	Documentation/memory-barriers.txt
+> 
+> as a separate patch now that we have a hit-list of memory model people
+> who can help poor old Jon (who currently gets blamed by get_maintainer.pl).
+
+This does make sense to me: I'll prepare/send such a patch tomorrow.
+
+  Andrea
 
 
-
-> -----Original Message-----
-> From: Dmitry Torokhov [mailto:dmitry.torokhov@gmail.com]
-> Sent: Thursday, February 1, 2018 1:30 PM
-> To: Pali Rohár <pali.rohar@gmail.com>
-> Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; linux-
-> input@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: Dell docking station & Dell Embedded Controller & PS/2 devices
 > 
-> Hi Pali,
-> 
-> On Wed, Jan 24, 2018 at 11:41:21AM +0100, Pali Rohár wrote:
-> > Hi Dmitry!
-> >
-> > I'm observing a problem with internal touchpad (handled by psmouse.ko)
-> > on Dell laptops connected to Dell E docking station. When I connect
-> > external PS/2 keyboard to docking station then internal laptop touchpad
-> > switch from multitouch absolute mode to relative bare PS/2 mode.
-> >
-> > And because ALPS driver in psmouse.ko is capable to process interleaved
-> > bare 3-byte PS/2 packets with 6-byte ALPS packets (which handles
-> > trackstick data on some ALPS models), ALPS driver does not show any
-> > message about this "downgrade" from multitouch to bare mode. And
-> > continue working in bare mode.
-> >
-> > When I rmmod psmouse and modprobe it again, then touchpad switch back to
-> > multitouch mode.
-> >
-> > Mario told me that Dell Embedded Controller, which handle internal
-> > keyboard, internal touchpad and external PS/2 keyboard, automatically
-> > send RESET command to *all* those devices when external PS/2 keyboard is
-> > connected. Therefore this is reason why touchpad downgrade to to bare
-> > mode. And according to Mario, host system should issue vendor specific
-> > PS/2 commands to re-initialize all PS/2 devices when this situation
-> > happen. Mario also told me that Windows is doing this action.
-> 
-> Yeah, I remember fun with Inspiron 8100 - when you dock it it woudl
-> silently switch Synaptics touchpad into standard mode and it would not
-> come back as Synaptics until you disconnect. And there was no
-> notification to the kernel as far as I could tell.
-> 
-> It could be that we need to monitor dock events and then kick reconnect
-> of serio port, either from userspace via udev (I think that would be
-> preferred), or in kernel.
-> 
-> >
-> > Every time when I connect external PS/2 keyboard to dock I see this
-> > message in dmesg:
-> >
-> > Spurious ACK... Some program might be trying to access hardware directly.
-> >
-> > I see it also every time when I dock laptop into docking station (to
-> > which is keyboard already connected). And it happens also when I connect
-> > external PS/2 mouse to dock.
-> >
-> > Dmitry, how to handle this situation to re-initialize psmouse.ko when
-> > external PS/2 device is connected to Dell E docking station? According
-> > to Mario, this is how Dell Embedded Controller is designed and suppose
-> > how OS should work with it.
-> >
-> > Manually rmmoding and modprobing for every docking/undocking laptop is
-> > not ideal solution.
-> >
-> > Could it be possible to use that Spurious ATKBD_RET_ACK from atkbd.c be
-> > handled on Dell systems (probably via DMI) as an event to reset and
-> > reinitialize all PS/2 devices?
-> 
-> So we need to figure out what exactly we are getting from the docking
-> station in this case. We do try to handle the new device 0xaa 0x00
-> announcements:
-
-Docking station itself won't have sent any events.  The PS2 ports in it
-are electrically wired to the external PS2 pins in the docking adapter on
-the system.
-
-System EC is what will be sending any PS2 events.
-
-> 
-> 	/* Check if this is a new device announcement (0xAA 0x00) */
-> 	if (unlikely(psmouse->packet[0] == PSMOUSE_RET_BAT && psmouse-
-> >pktcnt <= 2)) {
-> 		if (psmouse->pktcnt == 1) {
-> 			psmouse->last = jiffies;
-> 			goto out;
-> 		}
-> 
-> 		if (psmouse->packet[1] == PSMOUSE_RET_ID ||
-> 		    (psmouse->protocol->type == PSMOUSE_HGPK &&
-> 		     psmouse->packet[1] == PSMOUSE_RET_BAT)) {
-> 			__psmouse_set_state(psmouse, PSMOUSE_IGNORE);
-> 			serio_reconnect(serio);
-> 			goto out;
-> 		}
-> 
-> ...
-> 
-> I am not sure where the "spurious ACK comes from". Can you enable i8042
-> debug before trying to dock and capture the data stream from the mouse?
-> 
-
-The system EC has reset PS2 devices (but AFAIK kernel won't have seen this
-communication).
+> Will
