@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeBAQLg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:11:36 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:40550 "EHLO
+        id S1752686AbeBAQLv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:11:51 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:40575 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752463AbeBAQLb (ORCPT
+        with ESMTP id S1751881AbeBAQLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:11:31 -0500
+        Thu, 1 Feb 2018 11:11:47 -0500
 From: Niklas Cassel <niklas.cassel@axis.com>
-To: kishon@ti.com, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Sekhar Nori <nsekhar@ti.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Niklas Cassel <niklass@axis.com>, John Keeping <john@metanate.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>
+To: kishon@ti.com, Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
 Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] PCI: endpoint: Handle 64-bit BARs properly
-Date: Thu,  1 Feb 2018 17:11:17 +0100
-Message-Id: <20180201161119.3852-2-niklas.cassel@axis.com>
+Subject: [PATCH 3/3] PCI: designware-ep: Return an error when requesting a too large BAR size
+Date: Thu,  1 Feb 2018 17:11:19 +0100
+Message-Id: <20180201161119.3852-4-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180201161119.3852-1-niklas.cassel@axis.com>
 References: <20180201161119.3852-1-niklas.cassel@axis.com>
@@ -26,30 +25,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A 64-bit BAR uses the succeeding BAR for the upper bits, therefore
-we cannot call pci_epc_set_bar() on a BAR that follows a 64-bit BAR.
+pci_epc_set_bar() can be called with flag PCI_BASE_ADDRESS_MEM_TYPE_64,
+and can thus request a BAR size larger than 4 GB.
 
-If pci_epc_set_bar() is called with flag PCI_BASE_ADDRESS_MEM_TYPE_64,
-it has to be up to the controller driver to write both BAR[x] and BAR[x+1]
-(and BAR_mask[x] and BAR_mask[x+1]).
+However, the pcie-designware-ep.c driver currently doesn't handle
+BAR sizes larger than 4 GB. (Since we are only writing the BAR_mask[x]
+register and not the BAR_mask[x+1] register.)
+
+For now, return an error when requesting a BAR size larger than 4 GB.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
- drivers/pci/endpoint/functions/pci-epf-test.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pci/dwc/pcie-designware-ep.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 800da09d9005..eef85820f59e 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -382,6 +382,8 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
- 			if (bar == test_reg_bar)
- 				return ret;
- 		}
-+		if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
-+			bar++;
- 	}
+diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+index 3a6feeff5f5b..4a0085ead1e3 100644
+--- a/drivers/pci/dwc/pcie-designware-ep.c
++++ b/drivers/pci/dwc/pcie-designware-ep.c
+@@ -126,6 +126,11 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
+ 	enum dw_pcie_as_type as_type;
+ 	u32 reg = PCI_BASE_ADDRESS_0 + (4 * bar);
  
- 	return 0;
++	if (size > 0x100000000ULL) {
++		dev_err(pci->dev, "can't handle BAR larger than 4GB\n");
++		return -EINVAL;
++	}
++
+ 	if (!(flags & PCI_BASE_ADDRESS_SPACE))
+ 		as_type = DW_PCIE_AS_MEM;
+ 	else
 -- 
 2.14.2
