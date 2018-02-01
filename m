@@ -1,78 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751829AbeBAJKQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 04:10:16 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:58452 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeBAJKP (ORCPT
+        id S1751981AbeBAJLQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 04:11:16 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:52120 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751898AbeBAJLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 04:10:15 -0500
-Date: Thu, 1 Feb 2018 10:10:12 +0100
-From: Ladislav Michl <ladis@linux-mips.org>
-To: Olivier Moysan <olivier.moysan@st.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        kernel@stlinux.com, linux-kernel@vger.kernel.org,
-        arnaud.pouliquen@st.com, benjamin.gaignard@st.com
-Subject: Re: [alsa-devel] [PATCH 1/1] ASoC: stm32: add of dependency for
- stm32 drivers
-Message-ID: <20180201091012.GA10746@lenoch>
-References: <1517475281-6444-1-git-send-email-olivier.moysan@st.com>
+        Thu, 1 Feb 2018 04:11:14 -0500
+Date: Thu, 1 Feb 2018 10:11:04 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Mel Gorman <mgorman@techsingularity.net>,
+        Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        srinivas.pandruvada@linux.intel.com
+Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
+ candidate and the basis for SIS
+Message-ID: <20180201091104.GW2269@hirez.programming.kicks-ass.net>
+References: <20180130104555.4125-1-mgorman@techsingularity.net>
+ <4353713.vEOq6OHvJN@aspire.rjw.lan>
+ <20180131101710.GM2269@hirez.programming.kicks-ass.net>
+ <3838689.GpfBVtfPr0@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517475281-6444-1-git-send-email-olivier.moysan@st.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <3838689.GpfBVtfPr0@aspire.rjw.lan>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 09:54:41AM +0100, Olivier Moysan wrote:
-> Add of dependency for STM32 ASoC drivers.
-> DFSDM of dependency is already inherited
-> from STM32_DFSDM_ADC dependency.
+On Thu, Feb 01, 2018 at 08:50:28AM +0100, Rafael J. Wysocki wrote:
+> On Wednesday, January 31, 2018 11:17:10 AM CET Peter Zijlstra wrote:
+> > On Wed, Jan 31, 2018 at 10:22:49AM +0100, Rafael J. Wysocki wrote:
+> > > On Tuesday, January 30, 2018 2:15:31 PM CET Peter Zijlstra wrote:
+> > 
+> > > > IA32_HWP_REQUEST has "Minimum_Performance", "Maximum_Performance" and
+> > > > "Desired_Performance" fields which can be used to give explicit
+> > > > frequency hints. And we really _should_ be doing that.
+> > > > 
+> > > > Because, esp. in this scenario; a task migrating; the hardware really
+> > > > can't do anything sensible, whereas the OS _knows_.
+> > > 
+> > > But IA32_HWP_REQUEST is not a cheap MSR to write to.
+> > 
+> > That just means we might need to throttle writing to it, like it already
+> > does for the regular pstate (PERF_CTRL) msr in any case (also, is that a
+> > cheap msr?)
+> > 
+> > Not touching it at all seems silly.
 > 
-> Signed-off-by: olivier moysan <olivier.moysan@st.com>
-> ---
->  sound/soc/stm/Kconfig | 3 +++
->  1 file changed, 3 insertions(+)
+> OK
 > 
-> diff --git a/sound/soc/stm/Kconfig b/sound/soc/stm/Kconfig
-> index 3ad881f..b5375f9 100644
-> --- a/sound/soc/stm/Kconfig
-> +++ b/sound/soc/stm/Kconfig
-> @@ -3,6 +3,7 @@ menu "STMicroelectronics STM32 SOC audio support"
->  config SND_SOC_STM32_SAI
->  	tristate "STM32 SAI interface (Serial Audio Interface) support"
->  	depends on ARCH_STM32 || COMPILE_TEST
-> +	depends on OF
+> So what field precisely would you touch?  "desired"?  If so, does that actually
+> guarantee anything to happen?
 
-depends on (ARCH_STM32 && OF) || COMPILE_TEST ?
+No idea, desired would be the one I would start with, it matches with
+the intent here. But I've no idea what our current HWP implementation
+actually does with it.
 
->  	depends on SND_SOC
->  	select SND_SOC_GENERIC_DMAENGINE_PCM
->  	select REGMAP_MMIO
-> @@ -12,6 +13,7 @@ config SND_SOC_STM32_SAI
->  config SND_SOC_STM32_I2S
->  	tristate "STM32 I2S interface (SPI/I2S block) support"
->  	depends on ARCH_STM32 || COMPILE_TEST
-> +	depends on OF
->  	depends on SND_SOC
->  	select SND_SOC_GENERIC_DMAENGINE_PCM
->  	select REGMAP_MMIO
-> @@ -21,6 +23,7 @@ config SND_SOC_STM32_I2S
->  config SND_SOC_STM32_SPDIFRX
->  	tristate "STM32 S/PDIF receiver (SPDIFRX) support"
->  	depends on ARCH_STM32 || COMPILE_TEST
-> +	depends on OF
->  	depends on SND_SOC
->  	select SND_SOC_GENERIC_DMAENGINE_PCM
->  	select REGMAP_MMIO
-> -- 
-> 1.9.1
+> > But now that you made me look, intel_pstate_hwp_set() is horrible crap.
+> > You should _never_ do things like:
+> > 
+> >   rdmsr_on_cpu()
+> >   /* frob value */
+> >   wrmsr_on_cpu()
+> > 
+> > That's insane.
 > 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+> I guess you mean it does too many IPIs?  Or that it shouldn't do any IPIs
+> at all?
+
+Yes, too many synchronous IPIs, which themselves are typically already
+more expensive than the MSR access.
+
+At one point I looked to getting rid of the *msr_on_cpu() crud entirely,
+but there's just too much users out there I didn't feel like touching.
+
+If you really care you can do async IPIs and do a custom serialization
+that only waits when you do back-to-back things, which should be fairly
+uncommon I'd think.
