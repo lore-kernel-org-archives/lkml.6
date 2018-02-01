@@ -1,110 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751960AbeBAIZ0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 03:25:26 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:35144 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeBAIZX (ORCPT
+        id S1751976AbeBAIZg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 03:25:36 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55183 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751831AbeBAIZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 03:25:23 -0500
-X-Google-Smtp-Source: AH8x224YqWn+NNEQ0wQU045Mscn3LWVBVFRTbzn5cZpdrpfjj3ZKA0uDf+NCSBlf+Rc0qJzF6vU7Ow==
-Date: Thu, 1 Feb 2018 09:25:20 +0100
-From: Christian Brauner <christian.brauner@canonical.com>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: mingo@kernel.org, hpa@zytor.com, tim.c.chen@linux.intel.com,
-        dwmw@amazon.co.uk, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        jpoimboe@redhat.com
-Subject: Re: [tip:x86/pti] x86/speculation: Use Indirect Branch Prediction
- Barrier in context switch
-Message-ID: <20180201082518.w3bk5udvzdre7zc2@gmail.com>
-References: <1517263487-3708-1-git-send-email-dwmw@amazon.co.uk>
- <tip-18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7@git.kernel.org>
- <20180131070300.GA28206@light.dominikbrodowski.net>
+        Thu, 1 Feb 2018 03:25:33 -0500
+X-Google-Smtp-Source: AH8x227w2ZzLr9M+ltSEaRYPUEA6Ci1c4AYx3wCJntTwFxQjr0XteEOoKM+UFu4jeOGj1oZoltXq0w==
+Subject: Re: [PATCH 5/8] thermal/drivers/cpu_cooling: Introduce the cpu idle
+ cooling driver
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>, Leo Yan <leo.yan@linaro.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Javi Merino <javi.merino@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>
+References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
+ <1516721671-16360-6-git-send-email-daniel.lezcano@linaro.org>
+ <CAKfTPtD-cUYoAJfhtuTr-E1=rttZvWxVv1Qv7b+Si4vSBy0JVg@mail.gmail.com>
+ <11334876-ef8c-58fa-5e32-ab8499eebd7e@linaro.org>
+ <CAKfTPtBXcLHNHEObpttCGtfCWXmR+kwmOW5aD+G23bnYTJi6Yg@mail.gmail.com>
+ <6e776e6c-6f1e-b33b-58b7-b95410ca1f95@linaro.org>
+ <CAKfTPtAFNdOsNOBC8Qg3c=OB7P635gvePvfpDbc5QF10Tei-9Q@mail.gmail.com>
+ <22f4c4fc-fd74-b635-6859-7e2f599695f7@linaro.org>
+ <CAKfTPtCSWkXrmET9_6N-Nkt3+N-0deuT3j8E=mB=62ohzztmWw@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <73836143-e335-f6a1-3c37-d3050dd7ddde@linaro.org>
+Date: Thu, 1 Feb 2018 09:25:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
+In-Reply-To: <CAKfTPtCSWkXrmET9_6N-Nkt3+N-0deuT3j8E=mB=62ohzztmWw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180131070300.GA28206@light.dominikbrodowski.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 08:03:00AM +0100, Dominik Brodowski wrote:
-> On Tue, Jan 30, 2018 at 02:39:45PM -0800, tip-bot for Tim Chen wrote:
-> > Commit-ID:  18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
-> > Gitweb:     https://git.kernel.org/tip/18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
-> > Author:     Tim Chen <tim.c.chen@linux.intel.com>
-> > AuthorDate: Mon, 29 Jan 2018 22:04:47 +0000
-> > Committer:  Thomas Gleixner <tglx@linutronix.de>
-> > CommitDate: Tue, 30 Jan 2018 23:09:21 +0100
-> > 
-> > x86/speculation: Use Indirect Branch Prediction Barrier in context switch
-> > 
-> > Flush indirect branches when switching into a process that marked itself
-> > non dumpable. This protects high value processes like gpg better,
-> > without having too high performance overhead.
-> 
-> For the record, I am still opposed to limit this to non-dumpable processes.
-> Whether a process needs protection by IBPB on context switches is a
-> different question to whether a process should be allowed to be dumped,
+On 01/02/2018 08:57, Vincent Guittot wrote:
+> On 31 January 2018 at 16:27, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>> On 31/01/2018 10:56, Vincent Guittot wrote:
+>>> On 31 January 2018 at 10:50, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>>> On 31/01/2018 10:46, Vincent Guittot wrote:
+>>>>> On 31 January 2018 at 10:33, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>>>>> On 31/01/2018 10:01, Vincent Guittot wrote:
+>>>>>>> Hi Daniel,
+>>>>>>>
+>>>>>>> On 23 January 2018 at 16:34, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>>>>>
+>>>>>> [ ... ] (please trim :)
+>>>>>>
 
-This is especially true since you can get into a non-dumpable state
-implicitly due to setuid() in a new user namespace. So avoiding the
-performance hit due to IBPD is not necessary a concious decision taken
-by calling prctl(), that is to say even if you care about performance
-and don't want to take the IBPB hit you might accidently have to take it
-when doing a setuid(). Also there are definitely workloads where
-you want to be able to ptrace a task while at the same time having it do
-IBPB. So let's not limit this to non-dumpable taks! Thanks Dominik!
+[ ... ]
 
-> though the former may be a superset of the latter. In my opinion, IBPB
-> should be enabled on all context switches to userspace processes, until we
-> have a clear mitigation strategy for userspace against Spectre-v2 designed
-> and implemented.
+> struct cpuidle_cooling_device {
+>          struct thermal_cooling_device *cdev;
+>          struct cpumask *cpumask;
+>          struct list_head node;
+>          struct hrtimer timer;
+>          struct kref kref;
+>          atomic_t count;
+>          unsigned int idle_cycle;
+>          unsigned int state;
+> };
 > 
-> Thanks,
-> 	Dominik
+> struct cpuidle_cooling_cpu {
+>         struct task_struct *tsk;
+>         wait_queue_head_t waitq;
+> };
+> DECLARE_PER_CPU(struct cpuidle_cooling_cpu *, cpu_data);
 > 
-> --------------------------
-> From: Dominik Brodowski <linux@dominikbrodowski.net>
-> Date: Wed, 31 Jan 2018 07:43:12 +0100
-> Subject: [PATCH] x86/speculation: Do not limit Indirect Branch Prediction Barrier to non-dumpable processes
-> 
-> Whether a process needs protection by IBPB on context switches is a
-> different question to whether a process should be allowed to be dumped,
-> though the former may be a superset of the latter. Enable IBPB on all
-> context switches to a different userspace process, until we have a clear
-> mitigation strategy for userspace against Spectre-v2 designed and
-> implemented.
+> You continue to have cpuidle_cooling_device allocated dynamically per
+> cluster and added in the list but task and waitq are stored per cpu
 
-Thanks Dominik. That makes a lot more sense!
+Ok. I will try that.
 
-> 
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-> 
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 012d02624848..f54897b68b16 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -255,19 +255,13 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
->  		 * predictor when switching between processes. This stops
->  		 * one process from doing Spectre-v2 attacks on another.
->  		 *
-> -		 * As an optimization, flush indirect branches only when
-> -		 * switching into processes that disable dumping. This
-> -		 * protects high value processes like gpg, without having
-> -		 * too high performance overhead. IBPB is *expensive*!
-> -		 *
->  		 * This will not flush branches when switching into kernel
->  		 * threads. It will also not flush if we switch to idle
->  		 * thread and back to the same process. It will flush if we
-> -		 * switch to a different non-dumpable process.
-> +		 * switch to a different user process.
->  		 */
->  		if (tsk && tsk->mm &&
-> -		    tsk->mm->context.ctx_id != last_ctx_id &&
-> -		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
-> +		    tsk->mm->context.ctx_id != last_ctx_id)
->  			indirect_branch_prediction_barrier();
->  
->  		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
