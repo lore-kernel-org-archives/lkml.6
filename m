@@ -1,130 +1,117 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2982132-1518104570-2-16617920258136592793
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518104570; b=sH7HiNo41IT8Bx9KnQwd6RgAhHFS5plwWVsf/m81BqUQTY+
-    dtFsp+lYJrKlWSSUXh2VdPQOGxTA93Gz43WkMyrSaWGLJyH1dpRZCux5xqUnM+1P
-    0ojOb0L7E8WHYv7vCramp8MEesAjdMI25dPMmCZclRB1mN4zEnr7a6YtsM2JgAr4
-    BglIBKXGQ/nD09sdklpHvBigVGUUfcQ5UdzH6UAgXkXS82+ugUUjUzW65kBiq3Km
-    8sCLmVmW4oPF72DQZ2FiU7vmO+d9smhTO1X6J5qw6MXwsYw+OOv6FugsDLK6FjIU
-    KHxdQJ4MAQDuVVwvTkBQCkKNbX+xgKm4fqwnlDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:in-reply-to:message-id
-    :date:sender:list-id; s=arctest; t=1518104570; bh=BOsVEKMcNS2QUb
-    k3PwJtlK0ZRUB0pD7GncqukDWtGKs=; b=sgnigcArGPFaygUQJGqPQEYrSmXqIs
-    ioCLU43zUlMEO5vbLaNFPyoD3h86jjS76qcaHyGAgI2aU90H/EuwxkdinrOblFHh
-    KZQPFVE7fCAe8+lC+WoZeYwnRlGRT4ZkMiaTkaRL7xthHJYqU1NFGvgL77x26jb4
-    SENIl4FXn6PjFHClIjM2dlrX+fYahTUW70j68FVgsWGmPriRPO2h2qnEXu9D3uOF
-    zyca9rcJQfagh7NNazS8fKt7rQ8aLdbe6TWD2yOhEUTllaFflKmLj6Z0Fq4c0Eeo
-    Z7FCzRtFnK9Cj14pD8fLvkKCWpKn7NfxLh8ziawzwwXTyImoGuIoeaDQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=sirena.org.uk header.i=@sirena.org.uk header.b=Qlk9wntX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20170815-heliosphere;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=sirena.org.uk header.i=@sirena.org.uk header.b=Qlk9wntX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20170815-heliosphere;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeBHPme (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Feb 2018 10:42:34 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35822 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752268AbeBHPmF (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 8 Feb 2018 10:42:05 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
-        broonie@kernel.org, lgirdwood@gmail.com, alexandre.torgue@st.com,
-        mcoquelin.stm32@gmail.com, fabrice.gasnier@st.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: stm32-vrefbuf: fix check on ready flag" to the regulator tree
-In-Reply-To: <1518097385-7449-1-git-send-email-fabrice.gasnier@st.com>
-Message-Id: <E1ejoKj-00006C-SN@debutante>
-Date: Thu, 08 Feb 2018 15:41:57 +0000
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517519671; cv=none;
+        d=google.com; s=arc-20160816;
+        b=UDkdVbX39hpZ3EIZOVXoWdBgmtNiBSK7l4Js1DbDu2cuXKgTM4wTToCM18J+OiuFmc
+         NNNYKTvzQ1mm30gf+btNu2Zw0xnwuzpU9EqvyTztyDQ2N1kW6R3hOJe4HNdAImjTQ6+R
+         SnRor2SjniL884rZtTGumNISMI1MbYifmqEaE84H+EEQV+xVLS4r1s5BdkWKG1WX0ELN
+         qZECUkjgQXmEyuL3LI4dDuNHW81Nz5Kyc1fiGK/0HfvvVtCle1HsKjwgH/I6AuDW/G7c
+         mFsH+ubMlQvuYh1BvsW3Byr+KQm62ggDCDm5s6nCq1EGYh94oGuI9/KLGMTwuIKz64px
+         sZGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=OrOuGfK3PdyUbCaMSvD01na+u+j2feqqcwSnwEudh0w=;
+        b=MZsKvDPhpZBC/MQdcCRZO2ch5NqH/GqH05CuacJSdF3Q9PoonrKuqEf0nsXkfPun9O
+         DwSV/ANvak4HNzwxXlTeWy/Eu8ubPBirLQ4aTFss6XKcv/t4+7hJf7hHMvcVKHBdMgk9
+         6uhAx4OLdWkrnKAabyx4/NuGiaCBX3yzWd6rXXnZMg1D8COMZbEpP7VsTC1FMhTmeQGi
+         QAGjMoFbgB1OUlaFsKg1+oD7GV4+47kRglnH9UXnKAa0g3KQ/5gzzTO6Mgbso9go8MWc
+         uhv3l2okQM2byJF/0SfkrV3rWYeWgaPuVlgy5rSzr32y5Kz45fG9XlW9Alye4iEvgmwn
+         l/XQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+X-Google-Smtp-Source: AH8x225Upr1mRFTBTmgv602Oi5AEF566Ex0MUg70xBuwZbIQIseS8aGBW7rvx17cHqvrliR8YeIziQ==
+From: Rob Herring <robh@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>
+Subject: [PATCH] checkpatch.pl: Add SPDX license tag check
+Date: Thu,  1 Feb 2018 15:14:29 -0600
+Message-Id: <20180201211429.32696-1-robh@kernel.org>
+X-Mailer: git-send-email 2.14.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591234706723646014?=
+X-GMAIL-MSGID: =?utf-8?q?1591234706723646014?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The patch
+Add SPDX license tag check based on the rules defined in
+Documentation/process/license-rules.rst. To summarize, SPDX license tags
+should be on the 1st line (or 2nd line in scripts) using the appropriate
+comment style for the file type.
 
-   regulator: stm32-vrefbuf: fix check on ready flag
-
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From f63248fac563125fd5a2f0bc780ce7a299872cab Mon Sep 17 00:00:00 2001
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-Date: Thu, 8 Feb 2018 14:43:05 +0100
-Subject: [PATCH] regulator: stm32-vrefbuf: fix check on ready flag
-
-stm32_vrefbuf_enable() wrongly checks VRR bit: 0 stands for not ready,
-1 for ready. It currently checks the opposite.
-This makes enable routine to exit immediately without waiting for ready
-flag.
-
-Fixes: 0cdbf481e927 ("regulator: Add support for stm32-vrefbuf")
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/regulator/stm32-vrefbuf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I didn't get around to resending once license-rules.rst landed in -next. 
+Hopefully, this can be picked up for 4.16 so folks can start using it. 
+SPDX tags have already become a frequent review comment.
 
-diff --git a/drivers/regulator/stm32-vrefbuf.c b/drivers/regulator/stm32-vrefbuf.c
-index 72c8b3e1022b..e0a9c445ed67 100644
---- a/drivers/regulator/stm32-vrefbuf.c
-+++ b/drivers/regulator/stm32-vrefbuf.c
-@@ -51,7 +51,7 @@ static int stm32_vrefbuf_enable(struct regulator_dev *rdev)
- 	 * arbitrary timeout.
- 	 */
- 	ret = readl_poll_timeout(priv->base + STM32_VREFBUF_CSR, val,
--				 !(val & STM32_VRR), 650, 10000);
-+				 val & STM32_VRR, 650, 10000);
- 	if (ret) {
- 		dev_err(&rdev->dev, "stm32 vrefbuf timed out!\n");
- 		val = readl_relaxed(priv->base + STM32_VREFBUF_CSR);
+Rob
+
+ scripts/checkpatch.pl | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index ba03f17ff662..cf1b5a90b20a 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2225,6 +2225,8 @@ sub process {
+ 
+ 	my $camelcase_file_seeded = 0;
+ 
++	my $checklicenseline = 1;
++
+ 	sanitise_line_reset();
+ 	my $line;
+ 	foreach my $rawline (@rawlines) {
+@@ -2416,6 +2418,7 @@ sub process {
+ 			} else {
+ 				$check = $check_orig;
+ 			}
++			$checklicenseline = 1;
+ 			next;
+ 		}
+ 
+@@ -2866,6 +2869,30 @@ sub process {
+ 			}
+ 		}
+ 
++# check for using SPDX license tag at beginning of files
++		if ($realline == $checklicenseline) {
++			if ($realfile =~ /\.(?:sh|pl|py)/ && $rawline =~ /\[ \+]\s*\!\#/) {
++				$checklicenseline = 2;
++			} elsif ($rawline =~ /^\+/) {
++				my $comment = "";
++				if ($realfile =~ /\.(h|s|S)$/) {
++					$comment = '/*';
++				} elsif ($realfile =~ /\.(c|dts|dtsi)$/) {
++					$comment = '//';
++				} elsif ($realfile =~ /\.(sh|pl|py)$/) {
++					$comment = '#';
++				} elsif ($realfile =~ /\.rst$/) {
++					$comment = '..';
++				}
++
++				if ($comment !~ /^$/ &&
++				    $rawline !~ /^\+\Q$comment\E SPDX-License-Identifier: /) {
++					WARN("SPDX_LICENSE_TAG",
++					     "Missing or malformed SPDX-License-Identifier tag in 1st (or 2nd for scripts) line\n" . $herecurr);
++				}
++			}
++		}
++
+ # check we are in a valid source file if not then ignore this hunk
+ 		next if ($realfile !~ /\.(h|c|s|S|sh|dtsi|dts)$/);
+ 
 -- 
-2.15.1
+2.14.1
