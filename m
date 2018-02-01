@@ -1,100 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751649AbeBAXNb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 18:13:31 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:11523 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751508AbeBAXNZ (ORCPT
+        id S1751715AbeBAXO3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 18:14:29 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45404 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751378AbeBAXOX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 18:13:25 -0500
-X-IronPort-AV: E=Sophos;i="5.46,444,1511827200";
-   d="scan'208";a="706380342"
-From: =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
-To: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        x86@kernel.org
-Cc: =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86: e820: Implement a range manipulation operator
-Date: Fri,  2 Feb 2018 00:13:13 +0100
-Message-Id: <20180201231313.28458-1-jschoenh@amazon.de>
-X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
+        Thu, 1 Feb 2018 18:14:23 -0500
+X-Google-Smtp-Source: AH8x22738EZc1CAt1VJOpkkIFNe7pCnyzvEmVzP1wTk91KSBd+8jSKE3YnLKSudo+MRRrEJWFODemTccrAEetkxLDRc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 2 Feb 2018 00:14:22 +0100
+X-Google-Sender-Auth: DuwPz9RPDFcrrm768wq4KTXNn3M
+Message-ID: <CAK8P3a0vdWvPq-r9dRi2tJJ+Us=uZJ-hXZvNx8GuKPYnf8YT1w@mail.gmail.com>
+Subject: [GIT PULL 0/3] ARM: SoC branches
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a more versatile memmap= operator, which -- in addition to all the
-things that were possible before -- allows you to:
-- redeclare existing ranges -- before, you were limited to adding ranges;
-- drop any range -- like a mem= for any location;
-- use any e820 memory type -- not just some predefined ones.
+The arm-soc tree for this merge window contains the usual stuff,
+and is probably slightly smaller than usual. Only one new SoC
+gets added this time, and it's a minor variation of an existing one.
 
-The syntax is:
+A clear majority of the changes keep getting done for 32-bit SoCs.
+This appears to be the result of some 32-bit SoC families being
+particularly popular: omap, at91, aspeed and imx so far are only
+available with 32-bit cores, though the 64-bit i.MX8 has finally
+seen the light of day and will likely get added in the next merge
+window. The other popular platforms (renesas, marvell, samsung,
+amlogic, allwinner, and others) tend to have both 32-bit and 64-bit
+implementations with a comparable amount of patches going into
+either side.
 
-  memmap=<size>%<offset>-<oldtype>+<newtype>
+Overall, we pulled 89 branches containing 864 non-merge
+changesets. 994 files were touched in some form, with 32303 lines
+added and 11679 removed, the latter mostly due to some device tree
+files getting reorganized, but also from continued cleanup of the
+platform code leading to a net code reduction in the soc branch.
 
-Size and offset work as usual. The "-<oldtype>" and "+<newtype>" are
-optional and their existence determine the behavior: The command
-works on the specified range of memory limited to type <oldtype>
-(if specified). This memory is then configured to show up as <newtype>.
-If <newtype> is not specified, the memory is removed from the e820 map.
+dt: 49 pulls, 692 patches, 577 files, 23197 insertions, 7952 deletions
+soc: 22 pull, 84 patches, 320 files, 2058 insertions, 3055 deletions
+drivers: 18 pulls, 88 patches, 98 files, 7095 insertions, 737 deletions
 
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
----
- Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
- arch/x86/kernel/e820.c                          | 18 ++++++++++++++++++
- 2 files changed, 27 insertions(+)
+The top contributors by number of patches are:
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 46b26bfee27b..94609eaff2a9 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2221,6 +2221,15 @@
- 			The memory region may be marked as e820 type 12 (0xc)
- 			and is NVDIMM or ADR memory.
- 
-+	memmap=<size>%<offset>-<oldtype>+<newtype>
-+			[KNL,ACPI] Convert memory within the specified region
-+			from <oldtype> to <newtype>. If "-<oldtype>" is left
-+			out, the whole region will be marked as <newtype>,
-+			even if previously unavailable. If "+<newtype>" is left
-+			out, matching memory will be removed. Types are
-+			specified as e820 types, eg, 1==RAM, 2==reserved,
-+			3==ACPI, 12==PRAM.
-+
- 	memory_corruption_check=0/1 [X86]
- 			Some BIOSes seem to corrupt the first 64k of
- 			memory when doing things like suspend/resume.
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 71c11ad5643e..cd22c6a07632 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -924,6 +924,24 @@ static int __init parse_memmap_one(char *p)
- 	} else if (*p == '!') {
- 		start_at = memparse(p+1, &p);
- 		e820__range_add(start_at, mem_size, E820_TYPE_PRAM);
-+	} else if (*p == '%') {
-+		enum e820_type from = 0, to = 0;
-+
-+		start_at = memparse(p + 1, &p);
-+		if (*p == '-')
-+			from = simple_strtoull(p + 1, &p, 0);
-+		if (*p == '+')
-+			to = simple_strtoull(p + 1, &p, 0);
-+		if (*p != 0)
-+			return -EINVAL;
-+		if (from && to)
-+			e820__range_update(start_at, mem_size, from, to);
-+		else if (to)
-+			e820__range_add(start_at, mem_size, to);
-+		else if (from)
-+			e820__range_remove(start_at, mem_size, from, 1);
-+		else
-+			e820__range_remove(start_at, mem_size, 0, 0);
- 	} else {
- 		e820__range_remove(mem_size, ULLONG_MAX - mem_size, E820_TYPE_RAM, 1);
- 	}
--- 
-2.9.3.1.gcba166c.dirty
+     55 Tero Kristo
+     45 Alexandre Belloni
+     43 Fabio Estevam
+     41 Simon Horman
+     32 Russell King
+     30 Magnus Damm
+     28 Biju Das
+     27 Fabrizio Castro
+     22 Thierry Reding
+     21 Geert Uytterhoeven
+     21 Arnd Bergmann
+     17 Joel Stanley
+     16 Krzysztof Kozlowski
+     15 Marek Szyprowski
+     14 Tony Lindgren
+     13 Dave Gerlach
+     12 Volodymyr Babchuk
+     11 Lucas Stach
+     10 Stefan Agner
+     10 Neil Armstrong
+     10 Linus Walleij
+
+This is the dirstat of all changes. As usual, device tree files
+dominate the contents. The drivers/clk/ti/ is from a branch that
+is shared with the clk maintainer and should already be merged
+at this point:
+
+   0.9% Documentation/devicetree/bindings/
+  42.4% arch/arm/boot/dts/
+   0.4% arch/arm/mach-ep93xx/
+   0.4% arch/arm/mach-exynos/
+   2.3% arch/arm/mach-omap2/
+   0.4% arch/arm/mach-pxa/
+   4.2% arch/arm/mach-s3c24xx/
+   1.7% arch/arm/mach-s3c64xx/
+   0.6% arch/arm/plat-samsung/include/plat/
+   0.7% arch/arm/plat-samsung/
+   1.4% arch/arm/
+   0.4% arch/arm64/boot/dts/allwinner/
+   1.0% arch/arm64/boot/dts/amlogic/
+   0.6% arch/arm64/boot/dts/exynos/
+   3.8% arch/arm64/boot/dts/marvell/
+   0.6% arch/arm64/boot/dts/mediatek/
+   1.0% arch/arm64/boot/dts/nvidia/
+   0.4% arch/arm64/boot/dts/qcom/
+   2.9% arch/arm64/boot/dts/renesas/
+   1.4% arch/arm64/boot/dts/
+   1.0% drivers/bus/
+  10.7% drivers/clk/ti/
+   1.0% drivers/memory/tegra/
+   2.0% drivers/memory/
+   0.4% drivers/soc/bcm/brcmstb/
+   3.8% drivers/soc/qcom/
+   1.1% drivers/soc/tegra/
+   1.5% drivers/soc/xilinx/
+   1.0% drivers/soc/
+   2.4% drivers/tee/optee/
+   1.0% drivers/tee/
+   2.5% include/dt-bindings/clock/
+   0.7% include/dt-bindings/
+   0.6% include/linux/soc/qcom/
+   0.9% include/linux/
+
+       Arnd
