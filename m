@@ -1,28 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751832AbeBAOVg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 09:21:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41732 "EHLO mx1.redhat.com"
+        id S1751563AbeBAOXj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 09:23:39 -0500
+Received: from mga05.intel.com ([192.55.52.43]:31375 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751514AbeBAOVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 09:21:34 -0500
-Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christoffer Dall <christoffer.dall@linaro.org>
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-References: <20180201125512.7bc96674@canb.auug.org.au>
- <20180201104707.GA21802@cbox> <20180202002227.36db3356@canb.auug.org.au>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <f49453f2-223e-abe0-912a-7288183a1671@redhat.com>
-Date: Thu, 1 Feb 2018 09:21:30 -0500
+        id S1751378AbeBAOXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 09:23:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,444,1511856000";
+   d="scan'208";a="28036595"
+Subject: Re: [PATCH 2/2] mm/sparse.c: Add nr_present_sections to change the
+ mem_map allocation
+To: Baoquan He <bhe@redhat.com>
+References: <20180201071956.14365-1-bhe@redhat.com>
+ <20180201071956.14365-3-bhe@redhat.com>
+ <20180201101641.icoxv2sp6ckrjfxd@node.shutemov.name>
+ <6def8374-2de2-a30c-69ff-2a49fb57dc9a@linux.intel.com>
+ <20180201141934.GC1770@localhost.localdomain>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        mhocko@suse.com, tglx@linutronix.de, douly.fnst@cn.fujitsu.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <7494fba4-a769-67d4-4121-508bd26da4ba@linux.intel.com>
+Date: Thu, 1 Feb 2018 06:23:34 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180202002227.36db3356@canb.auug.org.au>
+In-Reply-To: <20180201141934.GC1770@localhost.localdomain>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -30,22 +37,12 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/2018 08:22, Stephen Rothwell wrote:
-> Hi Christoffer,
+On 02/01/2018 06:19 AM, Baoquan He wrote:
 > 
-> On Thu, 1 Feb 2018 11:47:07 +0100 Christoffer Dall <christoffer.dall@linaro.org> wrote:
->>
->> While the suggested fix is functional it does result in some code
->> duplication, and the better resolution is the following:
-> 
-> OK, I will use that resolution form tomorrow on.
-> 
-> Someone needs to remember to let Linus know when the pull request is
-> sent.
+> I suppose these functions changed here are only called during system
+> bootup, namely in paging_init(). Hot-add memory goes in a different
+> path, __add_section() -> sparse_add_one_section(), different called
+> functions.
 
-It should be fixed in the KVM tree before it reaches Linus (when we
-merge a topic branch that is common between x86/pti & KVM).
-
-Thanks,
-
-Paolo
+But does this keep those sections that were not present on boot from
+being added later?
