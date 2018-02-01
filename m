@@ -1,85 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932157AbeBAAtQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 19:49:16 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:39730 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754068AbeBAAtN (ORCPT
+        id S932176AbeBAAt2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 19:49:28 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:19331 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932161AbeBAAtW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 19:49:13 -0500
-X-Google-Smtp-Source: AH8x226+lp7CBHqBXyVqVcuabIv19vILChpXXBZOhnIFcqNHrfwuYGIC1HetKeJQAgfY+hwHHlEFHJmVrPd63Wa4IIk=
-MIME-Version: 1.0
-In-Reply-To: <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com>
-References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
- <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
- <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net> <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
- <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Thu, 1 Feb 2018 01:49:12 +0100
-Message-ID: <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
-Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
-To: David Ahern <dsahern@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>, David Miller <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Dan Streetman <ddstreet@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 31 Jan 2018 19:49:22 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180201004920epoutp023f6f2cccecaf273ba97be1bbbf40e56d~PDT4m_BmZ2956029560epoutp02p
+X-AuditID: b6c32a38-ac3ff70000001054-ac-5a72640f3ff7
+Date: Thu, 01 Feb 2018 09:49:18 +0900
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Simon Shields <simon@lineageos.org>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>,
+        jeesw@melfas.com
+Subject: Re: [PATCH 7/8] Input: mms114 - add SPDX identifier
+Message-id: <20180201004918.GE7575@gangnam.samsung>
+MIME-version: 1.0
+Content-type: text/plain; charset="us-ascii"
+Content-disposition: inline
+In-reply-to: <20180131073138.GA1499@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLKsWRmVeSWpSXmKPExsWy7bCmvi5/SlGUQeskHYvFP54zWRxe9ILR
+        ov1RJ6vFzU/fWC0u75rDZjFx/T1Wiy1nbrM5sHtcX/KJ2WPnrLvsHi3rN7F5fJ9xhtHj8ya5
+        ANaoVJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoDOU
+        FMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZK0YaGRnqGBuZ6RkZGeibGsVZGpkAlCakZ/5u/
+        shXs56h4+yS+gXEtWxcjB4eEgInEtrVFXYxcHEICOxgldh38xQ7hfGeUWHHlKnMXIydY0dwV
+        X5kgEhsYJe6tPwFV9YlRYu6xUywgVSwCqhLfP75iB7HZBDQlmm7/AFshImAosfm+A0g9s8Ax
+        RokZq0+BTRUWsJE4d28mWC+vgLHE71l/WCFsQYkfk++BxZkFdCTOHlvHCGFLSzz6OwNsPqeA
+        nsTSta/B6kUFlCUWvJrCDnHpATaJa9PNIV5zkdgzVx4iLCzx6vgWdoiwtMSlo7YQ4WZGiW23
+        k0FOkxCYwCjxaS/IkyAJY4lnC7uYINbySbz72sMK0csr0dEmBFHiIbHh9GdWCNtR4uLvBmj4
+        7GSS2DzvHcsERtlZSL6ZheSbWUi+WcDIvIpRLLWgODc9tdiwwESvODG3uDQvXS85P3cTIzip
+        aVnsYNxzzucQowAHoxIP74tLhVFCrIllxZW5hxglOJiVRHg3ihRFCfGmJFZWpRblxxeV5qQW
+        H2I0BcbIRGYp0eR8YMLNK4k3NLE0MDEzAiYoS0NDJXHegACXKCGB9MSS1OzU1ILUIpg+Jg5O
+        qQZGp6Of+oJSm9hK13myb9FakyURnKAt+l0jvW5J5NIV/+R9/jZcc5i74mHn1/buyGevJr8+
+        +pLZ53lur2StT5yMq/eHLyszjsbVW0g/DduqYTij/G5iTt0uq8fKvyOeX5wqwyzXPFf6QkzZ
+        65AL6ucEpkrfrldJLGE8pPv2mtN6oYUzN929941ZiaU4I9FQi7moOBEAavnt3IADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsVy+t9jQV3+lKIog+7VLBaLfzxnsji86AWj
+        RfujTlaLm5++sVpc3jWHzWLi+nusFlvO3GZzYPe4vuQTs8fOWXfZPVrWb2Lz+D7jDKPH501y
+        AaxRXDYpqTmZZalF+nYJXBn/m7+yFeznqHj7JL6BcS1bFyMnh4SAicTcFV+Zuhi5OIQE1jFK
+        NPWeZoNwPjFK7J3RzwJSxSKgKvH94yt2EJtNQFOi6fYPoCIODhEBQ4nN9x1A6pkFjjBKNF/d
+        DVYjLGAjce7eTLBeXgFjid+z/rBCDN3JJPHp8UI2iISgxI/J98CKmAW0JNbvPM4EYUtLPPo7
+        A2wQp4CexNK1r1lBbFEBZYkFr6awT2Dkn4WkfRaS9llI2hcwMq9ilEwtKM5Nzy02KjDMSy3X
+        K07MLS7NS9dLzs/dxAgM622Htfp2MN5fEn+IUYCDUYmH98Wlwigh1sSy4srcQ4wSHMxKIrwb
+        RYqihHhTEiurUovy44tKc1KLDzFKc7AoifPezjsWKSSQnliSmp2aWpBaBJNl4uCUamBMuFJ7
+        /9AW9l3bKs9qhJ1bZRQ/K0j+xuflXAdv6Nj/7Fu2tlzw1pLqTt2CC0JFT67vkDc9oThrb3mZ
+        Q8zkk/dDwo+/XHFkzck3Ruyrk6emmdTIeMXM2CLQ3f+y9crDTuYEn5qL3C9TLvBNfxJ8I1R7
+        bUK4ob5kasBhj0mKW6f+u/VC2W5iV0i6EktxRqKhFnNRcSIAwffuJ2cCAAA=
+X-CMS-MailID: 20180201004919epcas1p1f5a77389be04bee25b911d1b3aeb309c
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180129113331epcas2p193a0a99f660793fbfcf2ec825fac0e2c
+X-RootMTR: 20180129113331epcas2p193a0a99f660793fbfcf2ec825fac0e2c
+References: <20180129113323.18961-1-andi.shyti@samsung.com>
+        <CGME20180129113331epcas2p193a0a99f660793fbfcf2ec825fac0e2c@epcas2p1.samsung.com>
+        <20180129113323.18961-8-andi.shyti@samsung.com>
+        <20180129194659.df7nlhwx4demk6o6@dtor-ws>
+        <20180131060726.GB7575@gangnam.samsung> <20180131073138.GA1499@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 11:59 PM, David Ahern <dsahern@gmail.com> wrote:
-> On 1/30/18 1:57 PM, David Ahern wrote:
->> On 1/30/18 1:08 PM, Daniel Borkmann wrote:
->>> On 01/30/2018 07:32 PM, Cong Wang wrote:
->>>> On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
->>>>> Hello,
->>>>>
->>>>> The following program creates a hang in unregister_netdevice.
->>>>> cleanup_net work hangs there forever periodically printing
->>>>> "unregister_netdevice: waiting for lo to become free. Usage count = 3"
->>>>> and creation of any new network namespaces hangs forever.
->>>>
->>>> Interestingly, this is not reproducible on net-next.
->>>
->>> The most recent change on netns refcnt was 4ee806d51176 ("net: tcp: close
->>> sock if net namespace is exiting") in net/net-next from 5 days ago, maybe
->>> fixed due to that?
->>>
->>
->> This appears to be the commit introducing the refcnt leak:
->>
->> $ git bisect bad
->> dbc2b5e9a09e9a6664679a667ff81cff6e5f2641 is the first bad commit
->> commit dbc2b5e9a09e9a6664679a667ff81cff6e5f2641
->> Author: Xin Long <lucien.xin@gmail.com>
->> Date:   Fri May 12 14:39:52 2017 +0800
->>
->>     sctp: fix src address selection if using secondary addresses for ipv6
->>
->>
->> v4.14 is bad. Running bisect in the background while doing other things....
->>
->
-> Interesting. The commit that avoids the refcnt leak is
->
-> commit 955ec4cb3b54c7c389a9f830be7d3ae2056b9212
-> Author: David Ahern <dsahern@gmail.com>
-> Date:   Wed Jan 24 19:45:29 2018 -0800
->
->     net/ipv6: Do not allow route add with a device that is down
->
-> That commit does not intentionally address the problem so it is just
-> masking the problematic code introduced by the commit above.
-Thanks, David A.
+Hi Marcus,
 
-I'm still on a trip. will look into this asap.
+> > > > - * Copyright (C) 2012 Samsung Electronics Co.Ltd
+> > > > - * Author: Joonyoung Shim <jy0922.shim@samsung.com>
+> > > > - *
+> > > > - * This program is free software; you can redistribute it and/or modify
+> > > > - * it under the terms of the GNU General Public License version 2 as
+> > > > - * published by the Free Software Foundation.
+> > > > - */
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +// Samsung S6SY761 Touchscreen device driver
+> > 
+> > I'm very sorry, but my distrcation will kill me one day.
+> 
+> More coffee or sleep - your choice ;-)
+
+I see that beer is not working, indeed :)
+
+> > Is it possible to revert this patch or do you want me to send a
+> > fix?
+> 
+> When you are on it;
+> 
+> Change
+> MODULE_LICENSE("GPL");
+> 
+> to 
+> MODULE_LICENSE("GPL v2");
+> To match the former license text and SPDX-identifier.
+> 
+> See include/linux/module.h:
+>  *	"GPL"				[GNU Public License v2 or later]
+>  *	"GPL v2"			[GNU Public License v2]
+
+I haven't noticed that. I will fix it in a separate patch.
+
+Thanks,
+Andi
