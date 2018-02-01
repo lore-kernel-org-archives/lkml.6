@@ -1,181 +1,183 @@
-Return-Path: <ebiggers3@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517613794; cv=none;
+Return-Path: <JOLLYS@xilinx.com>
+X-Google-Smtp-Source: AH8x227rGBz6Jbr5F9axOXbu48ap6/gkNuY3NseMPrBKSRBLsbnyCbluF12HjCKMY5eIhmaw8w5j
+ARC-Seal: i=1; a=rsa-sha256; t=1517447090; cv=none;
         d=google.com; s=arc-20160816;
-        b=mUuQI21pgg+XP+l4/0DDFN5+I5v6J1iTohWBT7Hmg3uOOaVd+wmnVCRdd25tkBkprk
-         xEvdX43Zs9wRkQ/PGcWYJmZy5coGJKb1JnL/0mbuvmPjVkzuBI3Yf2d4lVdHXhFp/tyg
-         y9XQNFvo5OSprBKGmFW6TUF+FxjLkj9krIp2S2dpxDA2f39nXVtqeiNfg7gwxwJvvkQf
-         rMWuZkvYtl/WkDNvy558cF0/wnWPNNxIBVJbQJdZj0H44EPmc4IXmDf2S7ALo1i1bQYz
-         YflrjOm9NBVOogzTMlSU4yvZ7rNIKzhVAi9rgez7nAi56yjYBkbwQHTBQrtpkNOEmDtJ
-         w0Tg==
+        b=EGHd1EGwBCQRF6mPMfU+1MFcmRPqgI/76gw5ZIe6+hiv+g6xhBLEvUntqZNb22MvMy
+         0e63Dco4l1N0HLkTKBqYIODFIiu77O/hcyCF28YGITZpqDzm9hXGLPb3j7oISittpVg1
+         GSGnx/0QZ1MbGScyMUtByDsHacvip9y6IV3a7YmZtC0cAjKdjgS+yfpOFVJXt7uDQ5ly
+         EjEkpsGO0zTzLqU34u5d4HO7BsacT96eMcShK0cBz6ruJKMBEmSnXOu0aooI2OK/O51C
+         HqCOqxvkg6CBCezxR2WVbogog+RpbQdZWoiFS3ej/OVHy/KT5/iDNDKgMfzTVOQqhjYE
+         milg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=k3FoKlGsXFgz69H0L9ucTHz4qjprbeqST1L638B5+zI=;
-        b=uhlZPutg6IuJPbZra6pIbcqF/gpZYSAmJZXnCRN1SNkhDRT/jq4B5S8iOFkb2kR2rT
-         dS/ynJ3COej1l3pH8CSH6qdKoQ/02oZnJPoctloCcjQedrlgeMFaCR97t/IFiG7i5hfe
-         hrwYBqkLIL8Yj8js9iiK9JW/HGmT7JOl8OmYvQ023Z5rIQitMdFlLTP/ErbdIl3jdjq8
-         X0l/ScIfN9mIY3uKIT5tkavJyerF+iXnnqMi2a2yD31EYb6bjnMEFofoIYH4NQD//Mpm
-         A73lNGLA5u5eqPSzyw8p/fkgE7p8fCP63IFVK9FRtAJ4LLq6WKUeJBgUhIMor+j28uhR
-         N/vw==
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=X5xJkEZl3WbpByjlTkHUfMaDntxHwdqvgxxxWFsb8+Y=;
+        b=kZbxWftZkPXGTjbVNwM56Q47h+Npt175Dc2LEdOBoO40jNqyXgI5sa7IVfuRBuXhO4
+         Fkt7fB0DCvTCk6ViZKyjwYDbhI3AQlP10Adfa7OY+8UrrwG07PaXBl1UmmhllAInxVnd
+         59Cc59mPNYeUAnTHYDdgSAg0+5j5y6HGs+GU8bBwfgPi6OnIsxVIqj1wYtwHVMkggAKh
+         H6ZLHz0p+gOdGBG9AD8B8DzUv5KWz/3S9y/Vo+4RSRvBv6pk8Rpz1ehIxzMJozjXbBQ0
+         4UF0PTYxdoFiTsobc8WoT8WmKtLcL4Oc+4i0N3M6RWVxIsDERdX78wR6N3wMC2cY1hgY
+         MQBw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lnWpxc6c;
-       spf=pass (google.com: domain of ebiggers3@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ebiggers3@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@xilinx.onmicrosoft.com header.s=selector1-xilinx-com header.b=jbnodItw;
+       spf=pass (google.com: domain of jollys@xilinx.com designates 104.47.38.63 as permitted sender) smtp.mailfrom=JOLLYS@xilinx.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lnWpxc6c;
-       spf=pass (google.com: domain of ebiggers3@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ebiggers3@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x224dBH8v5oAMNXc8OOKDOWr9sVQpq0736O3wJVaAP6pH5AevWvQ9ptTM/O/hdHcHsilaJjD9fw==
-Date: Fri, 2 Feb 2018 15:23:10 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot <syzbot+9cd6f6d80e1a5205f2f6@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, arnd@arndb.de, dave.jiang@intel.com,
-	gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	mingo@kernel.org, syzkaller-bugs@googlegroups.com,
-	zaitcev@redhat.com
-Subject: Re: KASAN: use-after-free Read in mon_bin_vma_fault
-Message-ID: <20180202232310.xa3mezyibvzfbbom@gmail.com>
-References: <001a113f8d56b52d6605616c2b84@google.com>
+       dkim=pass header.i=@xilinx.onmicrosoft.com header.s=selector1-xilinx-com header.b=jbnodItw;
+       spf=pass (google.com: domain of jollys@xilinx.com designates 104.47.38.63 as permitted sender) smtp.mailfrom=JOLLYS@xilinx.com
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Mark Rutland <mark.rutland@arm.com>
+CC: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+	"mingo@kernel.org" <mingo@kernel.org>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "matt@codeblueprint.co.uk"
+	<matt@codeblueprint.co.uk>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>, "keescook@chromium.org"
+	<keescook@chromium.org>, "dmitry.torokhov@gmail.com"
+	<dmitry.torokhov@gmail.com>, "michal.simek@xilinx.com"
+	<michal.simek@xilinx.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>
+Subject: RE: [PATCH v3 1/4] dt-bindings: firmware: Add bindings for ZynqMP
+ firmware
+Thread-Topic: [PATCH v3 1/4] dt-bindings: firmware: Add bindings for ZynqMP
+ firmware
+Thread-Index: AQHTlWomdmmvreQR6kiWwxGfbK0z8aOOUOEAgAB0v5A=
+Date: Thu, 1 Feb 2018 01:04:45 +0000
+Message-ID: <CY1PR0201MB076454E915A6E6947A39F04BB8FA0@CY1PR0201MB0764.namprd02.prod.outlook.com>
+References: <1516836074-4149-1-git-send-email-jollys@xilinx.com>
+ <1516836074-4149-2-git-send-email-jollys@xilinx.com>
+ <20180131180354.mqf4gvvprdtycbn5@lakrids.cambridge.arm.com>
+In-Reply-To: <20180131180354.mqf4gvvprdtycbn5@lakrids.cambridge.arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=JOLLYS@xilinx.com;
+x-originating-ip: [149.199.62.254]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY1PR0201MB1529;7:zj03cgMW63KUkeFrP+nBBeX2ANLWMYpA4BzKla4Z67Tiw4yefV3oZ3qQ4zoZW6RIO24l5OE1zYySQtHvSY2dkctwlyiWNubpmdwnsNmRtMrl+RmvICYcFKSef6hrl/m0hYHuU+21AxW8fT7sSvyJGWy1BVc6AnU/mvfpZAgWzoPPipfrTea1MHNto5q3w89hpPhlPeO+WVlzidYroey/dC9mTwlxmLuEtxCuj9+CIUH5nSQFY919/756NR/A1/rR
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(39380400002)(366004)(346002)(376002)(51914003)(189003)(199004)(13464003)(8676002)(81156014)(3660700001)(81166006)(478600001)(26005)(53546011)(6506007)(6436002)(102836004)(105586002)(229853002)(2900100001)(966005)(8936002)(99286004)(77096007)(86362001)(3280700002)(7416002)(97736004)(7696005)(14454004)(76176011)(72206003)(4326008)(6116002)(33656002)(9686003)(107886003)(2906002)(53936002)(25786009)(39060400002)(3846002)(6916009)(54906003)(6246003)(106356001)(55016002)(74316002)(316002)(7736002)(5660300001)(66066001)(68736007)(6306002)(305945005)(186003)(2950100002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0201MB1529;H:CY1PR0201MB0764.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 907e81cc-55eb-42ef-6e58-08d5690fc8c1
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:CY1PR0201MB1529;
+x-ms-traffictypediagnostic: CY1PR0201MB1529:
+x-microsoft-antispam-prvs: <CY1PR0201MB15295375762EBF96ED79E3A2B8FA0@CY1PR0201MB1529.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(85827821059158)(258649278758335)(192813158149592)(189271028609987);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(10201501046)(3231101)(2400082)(944501161)(3002001)(93006095)(93001095)(6055026)(6041288)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:CY1PR0201MB1529;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0201MB1529;
+x-forefront-prvs: 0570F1F193
+x-microsoft-antispam-message-info: nvCtzf5YiFHXSk48+0j104SPONki01WjHUS5kbMQrVouDkF5oUB6HCwVljunBAv2fD7A0cJHL34P4Ebe60+T5A==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a113f8d56b52d6605616c2b84@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 907e81cc-55eb-42ef-6e58-08d5690fc8c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2018 01:04:45.3214
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0201MB1529
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1588060070485715658?=
-X-GMAIL-MSGID: =?utf-8?q?1591333401967719502?=
+X-GMAIL-THRID: =?utf-8?q?1590517943929452186?=
+X-GMAIL-MSGID: =?utf-8?q?1591158600424916213?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Dec 28, 2017 at 12:15:01PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzkaller hit the following crash on
-> beacbc68ac3e23821a681adb30b45dc55b17488d
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> Unfortunately, I don't have any reproducer for this bug yet.
-> 
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9cd6f6d80e1a5205f2f6@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in mon_bin_vma_fault+0x378/0x400
-> drivers/usb/mon/mon_bin.c:1238
-> Read of size 8 at addr ffff8801cd040080 by task syz-executor1/5424
-> 
-> CPU: 1 PID: 5424 Comm: syz-executor1 Not tainted 4.15.0-rc5+ #238
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  print_address_description+0x73/0x250 mm/kasan/report.c:252
->  kasan_report_error mm/kasan/report.c:351 [inline]
->  kasan_report+0x25b/0x340 mm/kasan/report.c:409
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
->  mon_bin_vma_fault+0x378/0x400 drivers/usb/mon/mon_bin.c:1238
->  __do_fault+0xeb/0x30f mm/memory.c:3196
->  do_read_fault mm/memory.c:3606 [inline]
->  do_fault mm/memory.c:3706 [inline]
->  handle_pte_fault mm/memory.c:3937 [inline]
->  __handle_mm_fault+0x1d8f/0x3ce0 mm/memory.c:4061
->  handle_mm_fault+0x334/0x8d0 mm/memory.c:4098
->  faultin_page mm/gup.c:502 [inline]
->  __get_user_pages+0x50c/0x15f0 mm/gup.c:699
->  populate_vma_page_range+0x20e/0x2f0 mm/gup.c:1216
->  __mm_populate+0x23a/0x450 mm/gup.c:1266
->  mm_populate include/linux/mm.h:2226 [inline]
->  vm_mmap_pgoff+0x241/0x280 mm/util.c:338
->  SYSC_mmap_pgoff mm/mmap.c:1533 [inline]
->  SyS_mmap_pgoff+0x462/0x5f0 mm/mmap.c:1491
->  SYSC_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
->  SyS_mmap+0x16/0x20 arch/x86/kernel/sys_x86_64.c:91
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> RIP: 0033:0x452ac9
-> RSP: 002b:00007f7721b03c58 EFLAGS: 00000212 ORIG_RAX: 0000000000000009
-> RAX: ffffffffffffffda RBX: 000000000071bea0 RCX: 0000000000452ac9
-> RDX: 0000000001000004 RSI: 0000000000004000 RDI: 0000000020ac6000
-> RBP: 000000000000039b R08: 0000000000000014 R09: 0000000000000000
-> R10: 0000000000008011 R11: 0000000000000212 R12: 00000000006f2728
-> R13: 00000000ffffffff R14: 00007f7721b046d4 R15: 0000000000000000
-> 
-> Allocated by task 5424:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
->  kmem_cache_alloc_trace+0x136/0x750 mm/slab.c:3610
->  kmalloc include/linux/slab.h:499 [inline]
->  kzalloc include/linux/slab.h:688 [inline]
->  mon_bin_open+0x1ae/0x4a0 drivers/usb/mon/mon_bin.c:703
->  chrdev_open+0x257/0x730 fs/char_dev.c:417
->  do_dentry_open+0x667/0xd40 fs/open.c:752
->  vfs_open+0x107/0x220 fs/open.c:866
->  do_last fs/namei.c:3379 [inline]
->  path_openat+0x1151/0x3530 fs/namei.c:3519
->  do_filp_open+0x25b/0x3b0 fs/namei.c:3554
->  do_sys_open+0x502/0x6d0 fs/open.c:1059
->  SYSC_open fs/open.c:1077 [inline]
->  SyS_open+0x2d/0x40 fs/open.c:1072
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> 
-> Freed by task 5433:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
->  __cache_free mm/slab.c:3488 [inline]
->  kfree+0xd6/0x260 mm/slab.c:3803
->  mon_bin_ioctl+0x68d/0xd40 drivers/usb/mon/mon_bin.c:1040
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
->  SYSC_ioctl fs/ioctl.c:701 [inline]
->  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> 
-> The buggy address belongs to the object at ffff8801cd040080
->  which belongs to the cache kmalloc-2048 of size 2048
-> The buggy address is located 0 bytes inside of
->  2048-byte region [ffff8801cd040080, ffff8801cd040880)
-> The buggy address belongs to the page:
-> page:000000003d43a99d count:1 mapcount:0 mapping:0000000083654cb9 index:0x0
-> compound_mapcount: 0
-> flags: 0x2fffc0000008100(slab|head)
-> raw: 02fffc0000008100 ffff8801cd040080 0000000000000000 0000000100000003
-> raw: ffffea00072a2e20 ffffea00071e6920 ffff8801db000c40 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8801cd03ff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8801cd040000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > ffff8801cd040080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                    ^
->  ffff8801cd040100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801cd040180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
+Hi Mark,
+Thanks for the review,
 
-No reproducer, but this seems to have stopped happening; I'm guessing it was
-fixed by commit 46eb14a6e158:
+> -----Original Message-----
+> From: Mark Rutland [mailto:mark.rutland@arm.com]
+> Sent: Wednesday, January 31, 2018 10:04 AM
+> To: Jolly Shah <JOLLYS@xilinx.com>
+> Cc: ard.biesheuvel@linaro.org; mingo@kernel.org;
+> gregkh@linuxfoundation.org; matt@codeblueprint.co.uk;
+> sudeep.holla@arm.com; hkallweit1@gmail.com; keescook@chromium.org;
+> dmitry.torokhov@gmail.com; michal.simek@xilinx.com; robh+dt@kernel.org;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> devicetree@vger.kernel.org; Jolly Shah <JOLLYS@xilinx.com>; Rajan Vaja
+> <RAJANV@xilinx.com>
+> Subject: Re: [PATCH v3 1/4] dt-bindings: firmware: Add bindings for ZynqM=
+P
+> firmware
+>=20
+> On Wed, Jan 24, 2018 at 03:21:11PM -0800, Jolly Shah wrote:
+> > Add documentation to describe Xilinx ZynqMP firmware driver bindings.
+> > Firmware driver provides an interface to firmware APIs. Interface APIs
+> > can be used by any driver to communicate to PMUFW (Platform Management
+> > Unit).
+> >
+> > Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> > Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> > ---
+> >  .../bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt    | 16
+> ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware
+> > .txt
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmwa
+> > re.txt
+> > b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmwa
+> > re.txt
+> > new file mode 100644
+> > index 0000000..a7aaf56
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-fi
+> > +++ rmware.txt
+> > @@ -0,0 +1,16 @@
+> > +Xilinx Zynq MPSoC Firmware Device Tree Bindings
+> > +
+> > +The zynqmp-firmware node describes the interface to platform firmware.
+>=20
+> Is there any documentation for this that can be referred to?
+>
 
-#syz fix: USB: fix usbmon BUG trigger
+Will add more information about supported APIs in next version patch.
+Below document describes interface APIs though it is not latest.  =20
+https://www.xilinx.com/support/documentation/user_guides/ug1200-eemi-api.pd=
+f
 
-- Eric
+
+> > +
+> > +Required properties:
+> > + - compatible:	Must contain:  "xlnx,zynqmp-firmware"
+> > + - method:	The method of calling the PM-API firmware layer.
+> > +		Permitted values are:
+> > +		 - "smc" : To be used in configurations without a hypervisor
+> > +		 - "hvc" : To be used when hypervisor is present
+>=20
+> Please specify what exactly these mean. I assume these follow the SMCCC.
+> If so, this can be:
+>=20
+> - method: The method of calling the PM-API firmware layer.
+>           Permitted values are:
+> 	  - "smc" : SMC #0, following the SMCCC
+> 	  - "hvc" : HVC #0, following the SMCCC
+>=20
+> Otherwise, this looks ok to me.
+>=20
+
+Yes it follows SMCCC.=20
+
+> Thanks,
+> Mark.
+>=20
+> > +
+> > +Examples:
+> > +	zynqmp_firmware: zynqmp-firmware {
+> > +		compatible =3D "xlnx,zynqmp-firmware";
+> > +		method =3D "smc";
+> > +	};
+> > --
+> > 2.7.4
+> >
