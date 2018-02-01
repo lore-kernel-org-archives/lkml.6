@@ -1,466 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754988AbeBAUW6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 15:22:58 -0500
-Received: from mail-it0-f41.google.com ([209.85.214.41]:37874 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754928AbeBAUWu (ORCPT
+        id S1754996AbeBAUXO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 15:23:14 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:37424 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754949AbeBAUWu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Feb 2018 15:22:50 -0500
-X-Google-Smtp-Source: AH8x224vmaDbOtTThIhMSxbS8avakPi6r8O6j5qSe80AxniWr53TBS1HcfZWXEMknx10NBYAYxGMSQ==
-Date: Thu, 1 Feb 2018 12:22:46 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+2c5eaba9c401949a52c043b08488931c0c275aec@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: unexpected kernel reboot
-Message-ID: <20180201202246.74wz5eop7yqn7xdq@gmail.com>
-References: <94eb2c19e7562ca97a05605d50da@google.com>
+Date: Thu, 1 Feb 2018 20:22:04 +0000
+From: Roman Gushchin <guro@fb.com>
+To: Eric Dumazet <edumazet@google.com>
+CC: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        <edumazet@google.com>, <hannes@cmpxchg.org>, <tj@kernel.org>
+Subject: Re: [PATCH net] net: memcontrol: charge allocated memory after
+ mem_cgroup_sk_alloc()
+Message-ID: <20180201202158.GA11477@castle.DHCP.thefacebook.com>
+References: <20180125001911.15597-1-guro@fb.com>
+ <20180125.120302.1117695034222616751.davem@davemloft.net>
+ <20180131215401.GA8956@castle>
+ <20180201.101655.1316424669256047119.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <94eb2c19e7562ca97a05605d50da@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180201.101655.1316424669256047119.davem@davemloft.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Originating-IP: [2620:10d:c092:200::1:e1d4]
+X-ClientProxiedBy: AM5PR06CA0002.eurprd06.prod.outlook.com
+ (2603:10a6:206:2::15) To SN2PR15MB1087.namprd15.prod.outlook.com
+ (2603:10b6:804:22::9)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0fb296d5-4bb0-426e-d45a-08d569b18031
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:SN2PR15MB1087;
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR15MB1087;3:cCR6KGHrSW1x34kQLKhC2xpb1+re3rzl8ssukCcVxLItHrrSOhdWWNQnhkT3UAbJzCbweCv5RSFHLTGQJCvX7tAUkScGwgOwucKzBxhv2OpIgEH23JHq3S7ttYBp8kXFGHUWaq+e4nUK9l1KuwcHxF7j4/pq3IeerBtXlvvAS2jc+Y9T1YI9iJZQej3YuHxU+MbS4TqJsk8WVdIVOCD5PA/mwMmtge1ed2O5vvQCZcGQkGpCbF/rUvMY9ElDz77r;25:B5Sxrk+8u9rO3QdhNuz6/QbPEE+dKBQANmVBl7yTOlGvJtUr9S5kKAJ/8iEY8lZx0X4VDvWZbExEHW+vsYIgoDBdVuPdIfbp8SUrNCq4p55k7+5UZBlMx4d4dkh7sbeQG0OZxDgxDLV4yZJziZ3LpbjoRYD2nipxEZKB87k0DRCHLhVVQRmeqNi8RWvWoVpIDb+uerHldRLXNZxu38No53bCTY9PEOoBGgPgAMlk/0UYKrp69dGCdKpjVqM1Dv+u6qSguCox3Ti5itoRUSP8K0QxMUDaX1W3y+EGPrLFb/oJ8ROtyzA0/7vBopVaAdcSazTzvzDUd1zM+BgmF1lmYw==;31:sSQZwThd54wz5lfNpD5bteiQ+txkWUQId8Z/7tSEPB7wMK1YXyLmQLFZI2twPapN/4gBnCFkirQTYZ6HBMlJNoULkBwtISrjNraP8qGN87rExJMaRTqkuXaF3oRnkw1uvjpZxvZtXjkb7l4xjlIn5XD5Y8rR1ctvtFomy55UUkdeLv6ZJJhIGKvhBe1oFZ1r88nrmViNfR31COvMoOBM8Z/W0BPNjAZQVaHsZO+YyXs=
+X-MS-TrafficTypeDiagnostic: SN2PR15MB1087:
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR15MB1087;20:cAC0NlogGrqJqLmC/Ecmhcs2FXnTiKMIAhJlaNduelasl1sRqDwdyxwlj67AMkLhBRGdB//um3qjmlsoiBp4iPEpVR5yGK5rOUn441B0rb8neptV2Ovsob8vGXJLySLxa4gVBpGfb4aPXqfjT+iFB0cRFLQy0hShh70WZo2b6LkzL+3zMIIbErvd9O0n7bbrQaOmgi+Ozi22P1nQphamUYwo6PZIEBjmmexEFk9eygbgB0Ou0NmMscLZWetDY8c5IzQ2g2h10Iw09iEqxf6G1a7EqQ0w/8hTd+Qz5vgqn1nfWy1sGkESe/tGQS6MWYbqzKOsY9pu/ugKjno/4p1LIACDRSV4uJO3aXTeIbtN4+6gKdKsHTq4cqY+8W0SFZak1kGijlfSCRBkeT/Ccx33sDbOhggj1qErdZIWslcWa64tGFrkt5c5PFDC4PIZ//8OAHS41ua4c2sjQN6cmcDG0MtU/d3FfQ3Yu4QZY71SJsdje+HhYPtX3Q31do64OePB;4:lVU2UFCI2KXmrVvY7yx1BDXoOXsCA5+PAlqedhXUYaNtlzFvwb87tFIf6VPRdQjfthDVukSvPTGEq4kJ27Z+5qzpZCGFCZ1mXbDn/RHngdAz45NUqmbhhoC8SutAYK+UPTO5GPoEat7KiYksxIIEEPKUZP09r7R5ItfQuPpGLtOxu0q7z1vQrBdMSJ7D2luO2c58oLg3q/tf7knvMJlKblXhAM/DCMj/osz9eQoHOqynF0mxu4P+e1zSVqKZQ7lts0+aUxNNnDX8OUjxNo9+c4Ob4K+CIf0VxoFnb+mwfDCRXUh0ugZuS2UZLhSymhfO
+X-Microsoft-Antispam-PRVS: <SN2PR15MB10874F0EAB273E67ACFA698DBEFA0@SN2PR15MB1087.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(67672495146484);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231101)(11241501184)(2400082)(944501161)(6041288)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:SN2PR15MB1087;BCL:0;PCL:0;RULEID:;SRVR:SN2PR15MB1087;
+X-Forefront-PRVS: 0570F1F193
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39380400002)(376002)(366004)(396003)(39860400002)(346002)(189003)(199004)(8936002)(47776003)(25786009)(105586002)(33656002)(6666003)(5660300001)(6506007)(93886005)(6916009)(4326008)(2906002)(52396003)(7696005)(6246003)(386003)(186003)(76176011)(478600001)(106356001)(52116002)(58126008)(16526019)(2950100002)(97736004)(68736007)(23726003)(9686003)(53936002)(81156014)(7736002)(229853002)(6116002)(8676002)(305945005)(55016002)(16586007)(316002)(81166006)(83506002)(86362001)(1076002)(50466002)(18370500001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN2PR15MB1087;H:castle.DHCP.thefacebook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN2PR15MB1087;23:2g7aTdkpbrTF775CF/zb+5aK7pJY5t+l4zbkKQAww?=
+ =?us-ascii?Q?1jcvG4kDVyYfwsozTFlfnQMLaFV0HjZ5rsvFsm+8WSt4YOg4FBGEJrjcNszm?=
+ =?us-ascii?Q?SXMzzILaNr9RqxQ9a7HBjJmtvG2sg7CwygRUWY79QuIVEJfgY9c9+je/PTm+?=
+ =?us-ascii?Q?MUj0ojBVxoD1YlWpW1c628b5FgYpBPggc8vc5Fk4h5q+Uh/egcYK7Q3fk8Nk?=
+ =?us-ascii?Q?A+Z73aKZOP81Sl4NjET0Ws9RWHxAZFuZJimMwLX65GD4ptkwLHeXfKIoBxA7?=
+ =?us-ascii?Q?PmnL3WEcs/+gCYAiAxGjaDcMK1AB7FAjbNJywZjJEL3ntogyYcLhjuApm1IQ?=
+ =?us-ascii?Q?kom0wGpFHR79cM52AblR3uI8rSCPohzUL82uj0ie8qunDoYsVsAaZhUdlJK4?=
+ =?us-ascii?Q?jpjRzzS1qwsVE+oM7jb/j9YahUKAyD7yRfKiXYqiWPucucZINaq1tOTixpf9?=
+ =?us-ascii?Q?37ntSz1AuqOqL+Xg6921N37z2N80H2bL2m144d+VJluuT05qdctvFn+EaDL0?=
+ =?us-ascii?Q?zwf5GW3mDHacIs0FXin9P65BCEv4hwXTBwbbhBVBx3+brX3O3pCRIlAgoklN?=
+ =?us-ascii?Q?wW7Oh5+zQmF9cXxXvDZh14L03aLFJJC9DWS+1ILs5r+eKOGy7mJw6Hm5x/F8?=
+ =?us-ascii?Q?KSrPSRigrbnWernFNlalWVgujj8876amSWrCaZP0XdiqTZzjwmAMMX6TEbx5?=
+ =?us-ascii?Q?+ltySid/l8gS91KdJ991gGNd1cegai0fdWCmTULCenLipfkQcUqj1augLOtq?=
+ =?us-ascii?Q?NX2K3SvZNZ2whgLTBIY33XQpLUZOk4c01D2CoYZutoyMLvvsmBXDZESdUFZG?=
+ =?us-ascii?Q?BHeTJgwpSvfND1xWVh7NaVJDCc9MBBYhufvw5qRkmFzXyJs+jEzGQY24p4et?=
+ =?us-ascii?Q?xejrqxPg8ubHNJV6bF+ll0skE0h+de0axhLLMwO1pgr4/UPhApV2yKWrD+Be?=
+ =?us-ascii?Q?1IpbYSXSMqGnheplXmQu3vjgd83siarHO5KQDD2mFnH8TBEHQJmSK2XNlJvv?=
+ =?us-ascii?Q?OfJ5kzEqR5tuCuMpI/x+a6YEGJk8ThvIL2CJgdmPvikMNLgY0i7GQ5TvhfJI?=
+ =?us-ascii?Q?vC9e1WTnqtmaxe3V5P7RFb1suRcsVNdd/DMiPQqjZoZJ++rFHNyDOWG3H/lN?=
+ =?us-ascii?Q?edm4VPcAxaDnc1Pul+U5pTkF7n46DW/LkIQ7RkukjKccgc0RVTDW2J0eke9H?=
+ =?us-ascii?Q?tZbwrXnXOTR1wy/vj0adp8h7zj4y48XjMGUHtNnOKJKNlVjyo6mFIDaSA=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR15MB1087;6:/BgR/odOFaNR5E8ULRS9uK6xagaepts/PO5ONYXg1L62k6uczfKpgxH711wjfokLvJxGPPXqCijldYzy2UfQJCMuO30eeiMmXUrCNF2Rlta4ItfTNDIoUUfD82zx5WInXyKIY5FyB6dh/9PywaZVzrai8S8Lvth4cyQka7HWtfwLdSQqx04lfgaXoOzmDVBSluXbxJGd5SQlK3+XxtjJHkPFF6mzeGAIpYbbZG3pe909B7/5nZ9iBdXQJetZSij1JDzQAvKQ+JukR1u6ZaivqZ63l0bTHe4HqLDxXaroH+gNfHagrZvoXHJl9T3J5CYweves3zXHDH8+KTO9CyF20NdfEx51waf5jwsZUlU9+5k=;5:Jya5rMSW+KNZKQwJ9tTM0o7ioXE2xcf0dMI6Guq2tf0aqaEzoBHfe5eufIm2VVPzQV5WWKpt56bnJpjVPmHryZ+tmdVOibacwSNLynvCXjMdIxZlB//ELvB9oTG9QI156fGRnoo0XMjmmOpGRyQEJXUDX5gq+wMvLu638YYwimc=;24:h+2PczfW9y4XzMz43nv5Xwm1JracK3NcjOXUY4wJcX1QNwdFcJBufcuR4zJUxL2PMGAo4IsY5gAdU/gsbN4+ImFosNL6hFL/wkjTSqZcVrE=;7:fhVd81F4K8ZuXTpLEUYCX13OJGk+t3v4pV+dtSsPBd3kAI3kfvoVCu8wdLp1LuUjMxrgVPFIipFQeBPQnBnXsMJf7BuTjeQRHpRP4D+XDI58QuABv9k+8ghu4CGXOAdhJHPyBMRshAorQnQbuoFqoBJ/UYZ8vGfWvp3wap2/hAXRdm+Yr5iFtjAzFaqjK9jAroAZ5DwFJkQC3T1lXVY5Q810p3ZxfLeNosxsueX/EVSdsFW3MMbMe6qFYKYqvEaB
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR15MB1087;20:O4N4GxQfXCr6GlpVitLR3lGiPSaeAgk8kSUS8JlkDQAbXY8oVa8Ngw+HlEpVmFNQsJGk+8axs/L/gWJWTFRb/UWkgwrvhkQGOeHYk7pJqzPaUaHKNyeUe12p0evGp6mpo4DP7ele2IZzPT+9omp78ycuxbs0NP38c+Q1BHhxcpo=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2018 20:22:15.9762 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fb296d5-4bb0-426e-d45a-08d569b18031
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR15MB1087
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-01_06:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 15, 2017 at 01:06:16AM -0800, syzbot wrote:
-> Hello,
+On Thu, Feb 01, 2018 at 10:16:55AM -0500, David Miller wrote:
+> From: Roman Gushchin <guro@fb.com>
+> Date: Wed, 31 Jan 2018 21:54:08 +0000
 > 
-> syzkaller hit the following crash on
-> d5c52866f560ba43edcb941868e1f884f15234e5
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> C reproducer is attached
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
+> > So I really start thinking that reverting 9f1c2674b328
+> > ("net: memcontrol: defer call to mem_cgroup_sk_alloc()")
+> > and fixing the original issue differently might be easier
+> > and a proper way to go. Does it makes sense?
 > 
-> 
-> Linux version 4.15.0-rc2-next-20171206+ (syzkaller@ci) (gcc version 7.1.1
-> 20170620 (GCC)) #60 SMP Wed Dec 6 04:36:07 UTC 2017
-> Command line: BOOT_IMAGE=/vmlinuz root=/dev/sda1 console=ttyS0
-> earlyprintk=serial vsyscall=native rodata=n ftrace_dump_on_oops=orig_cpu
-> oops=panic panic_on_warn=1 nmi_watchdog=panic panic=86400 kvm-intel.nested=1
-> x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
-> x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
-> x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
-> x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
-> x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, using
-> 'standard' format.
-> e820: BIOS-provided physical RAM map:
-> BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
-> BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-> BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
-> BIOS-e820: [mem 0x0000000000100000-0x00000000bfffcfff] usable
-> BIOS-e820: [mem 0x00000000bfffd000-0x00000000bfffffff] reserved
-> BIOS-e820: [mem 0x00000000fffbc000-0x00000000ffffffff] reserved
-> BIOS-e820: [mem 0x0000000100000000-0x000000021fffffff] usable
-> bootconsole [earlyser0] enabled
-> NX (Execute Disable) protection: active
-> random: fast init done
-> SMBIOS 2.4 present.
-> DMI: Google Google Compute Engine/Google Compute Engine, BIOS Google
-> 01/01/2011
-> Hypervisor detected: KVM
-> e820: last_pfn = 0x220000 max_arch_pfn = 0x400000000
-> x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT
-> e820: last_pfn = 0xbfffd max_arch_pfn = 0x400000000
-> found SMP MP-table at [mem 0x000f32a0-0x000f32af] mapped at [
-> (ptrval)]
-> Scanning 1 areas for low memory corruption
-> Using GB pages for direct mapping
-> ACPI: Early table checksum verification disabled
-> ACPI: RSDP 0x00000000000F3070 000014 (v00 Google)
-> ACPI: RSDT 0x00000000BFFFDC70 000034 (v01 Google GOOGRSDT 00000001 GOOG
-> 00000001)
-> ACPI: FACP 0x00000000BFFFFF00 0000F4 (v02 Google GOOGFACP 00000001 GOOG
-> 00000001)
-> ACPI: DSDT 0x00000000BFFFDCB0 0017B2 (v01 Google GOOGDSDT 00000001 GOOG
-> 00000001)
-> ACPI: FACS 0x00000000BFFFFEC0 000040
-> ACPI: FACS 0x00000000BFFFFEC0 000040
-> ACPI: SSDT 0x00000000BFFFF590 000930 (v01 Google GOOGSSDT 00000001 GOOG
-> 00000001)
-> ACPI: APIC 0x00000000BFFFF4A0 000076 (v01 Google GOOGAPIC 00000001 GOOG
-> 00000001)
-> ACPI: WAET 0x00000000BFFFF470 000028 (v01 Google GOOGWAET 00000001 GOOG
-> 00000001)
-> No NUMA configuration found
-> Faking a node at [mem 0x0000000000000000-0x000000021fffffff]
-> NODE_DATA(0) allocated [mem 0x21fffa000-0x21fffdfff]
-> kvm-clock: cpu 0, msr 2:1fff8001, primary cpu clock
-> kvm-clock: Using msrs 4b564d01 and 4b564d00
-> kvm-clock: using sched offset of 1978954790 cycles
-> clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb,
-> max_idle_ns: 881590591483 ns
-> Zone ranges:
->   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
->   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
->   Normal   [mem 0x0000000100000000-0x000000021fffffff]
-> Movable zone start for each node
-> Early memory node ranges
->   node   0: [mem 0x0000000000001000-0x000000000009efff]
->   node   0: [mem 0x0000000000100000-0x00000000bfffcfff]
->   node   0: [mem 0x0000000100000000-0x000000021fffffff]
-> Initmem setup node 0 [mem 0x0000000000001000-0x000000021fffffff]
-> Reserved but unavailable: 98 pages
-> kasan: KernelAddressSanitizer initialized
-> ACPI: PM-Timer IO Port: 0xb008
-> ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
-> IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
-> ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
-> ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
-> ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
-> ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
-> Using ACPI (MADT) for SMP configuration information
-> smpboot: Allowing 2 CPUs, 0 hotplug CPUs
-> PM: Registered nosave memory: [mem 0x00000000-0x00000fff]
-> PM: Registered nosave memory: [mem 0x0009f000-0x0009ffff]
-> PM: Registered nosave memory: [mem 0x000a0000-0x000effff]
-> PM: Registered nosave memory: [mem 0x000f0000-0x000fffff]
-> PM: Registered nosave memory: [mem 0xbfffd000-0xbfffffff]
-> PM: Registered nosave memory: [mem 0xc0000000-0xfffbbfff]
-> PM: Registered nosave memory: [mem 0xfffbc000-0xffffffff]
-> e820: [mem 0xc0000000-0xfffbbfff] available for PCI devices
-> Booting paravirtualized kernel on KVM
-> clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff,
-> max_idle_ns: 1910969940391419 ns
-> setup_percpu: NR_CPUS:64 nr_cpumask_bits:64 nr_cpu_ids:2 nr_node_ids:1
-> percpu: Embedded 50 pages/cpu @        (ptrval) s167568 r8192 d29040
-> u1048576
-> Built 1 zonelists, mobility grouping on.  Total pages: 1935238
-> Policy zone: Normal
-> Kernel command line: BOOT_IMAGE=/vmlinuz root=/dev/sda1 console=ttyS0
-> earlyprintk=serial vsyscall=native rodata=n ftrace_dump_on_oops=orig_cpu
-> oops=panic panic_on_warn=1 nmi_watchdog=panic panic=86400 kvm-intel.nested=1
-> Memory: 6564592K/7863916K available (67164K kernel code, 8174K rwdata,
-> 10684K rodata, 2348K init, 21532K bss, 1299324K reserved, 0K cma-reserved)
-> Running RCU self tests
-> Hierarchical RCU implementation.
-> 	RCU lockdep checking is enabled.
-> 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=2.
-> RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
-> NR_IRQS: 4352, nr_irqs: 440, preallocated irqs: 16
-> Console: colour VGA+ 80x25
-> console [ttyS0] enabled
-> console [ttyS0] enabled
-> bootconsole [earlyser0] disabled
-> bootconsole [earlyser0] disabled
-> Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
-> ... MAX_LOCKDEP_SUBCLASSES:  8
-> ... MAX_LOCK_DEPTH:          48
-> ... MAX_LOCKDEP_KEYS:        8191
-> ... CLASSHASH_SIZE:          4096
-> ... MAX_LOCKDEP_ENTRIES:     32768
-> ... MAX_LOCKDEP_CHAINS:      65536
-> ... CHAINHASH_SIZE:          32768
->  memory used by lock dependency info: 7391 kB
->  per task-struct memory footprint: 2304 bytes
-> ACPI: Core revision 20171110
-> ACPI: 2 ACPI AML tables successfully acquired and loaded
-> APIC: Switch to symmetric I/O mode setup
-> x2apic enabled
-> Switched APIC routing to physical x2apic.
-> ..TIMER: vector=0x30 apic1=0 pin1=0 apic2=-1 pin2=-1
-> tsc: Detected 2300.000 MHz processor
-> Calibrating delay loop (skipped) preset value.. 4600.00 BogoMIPS
-> (lpj=2300000)
-> pid_max: default: 32768 minimum: 301
-> Security Framework initialized
-> SELinux:  Initializing.
-> Dentry cache hash table entries: 1048576 (order: 11, 8388608 bytes)
-> Inode-cache hash table entries: 524288 (order: 10, 4194304 bytes)
-> Mount-cache hash table entries: 16384 (order: 5, 131072 bytes)
-> Mountpoint-cache hash table entries: 16384 (order: 5, 131072 bytes)
-> CPU: Physical Processor ID: 0
-> CPU: Processor Core ID: 0
-> mce: CPU supports 32 MCE banks
-> Last level iTLB entries: 4KB 1024, 2MB 1024, 4MB 1024
-> Last level dTLB entries: 4KB 1024, 2MB 1024, 4MB 1024, 1GB 4
-> Freeing SMP alternatives memory: 40K
-> smpboot: CPU0: Intel(R) Xeon(R) CPU @ 2.30GHz (family: 0x6, model: 0x3f,
-> stepping: 0x0)
-> Performance Events: unsupported p6 CPU model 63 no PMU driver, software
-> events only.
-> Hierarchical SRCU implementation.
-> NMI watchdog: Perf event create on CPU 0 failed with -2
-> NMI watchdog: Perf NMI watchdog permanently disabled
-> smp: Bringing up secondary CPUs ...
-> x86: Booting SMP configuration:
-> .... node  #0, CPUs:      #1
-> kvm-clock: cpu 1, msr 2:1fff8041, secondary cpu clock
-> smp: Brought up 1 node, 2 CPUs
-> smpboot: Max logical packages: 1
-> smpboot: Total of 2 processors activated (9200.00 BogoMIPS)
-> devtmpfs: initialized
-> kworker/u4:0 (22) used greatest stack depth: 23664 bytes left
-> clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns:
-> 1911260446275000 ns
-> futex hash table entries: 512 (order: 4, 65536 bytes)
-> RTC time: 19:44:55, date: 12/06/17
-> NET: Registered protocol family 16
-> audit: initializing netlink subsys (disabled)
-> audit: type=2000 audit(1512589495.682:1): state=initialized audit_enabled=0
-> res=1
-> cpuidle: using governor menu
-> ACPI: bus type PCI registered
-> PCI: Using configuration type 1 for base access
-> kworker/u4:1 (282) used greatest stack depth: 21216 bytes left
-> HugeTLB registered 2.00 MiB page size, pre-allocated 0 pages
-> cryptd: max_cpu_qlen set to 1000
-> ACPI: Added _OSI(Module Device)
-> ACPI: Added _OSI(Processor Device)
-> ACPI: Added _OSI(3.0 _SCP Extensions)
-> ACPI: Added _OSI(Processor Aggregator Device)
-> ACPI: Executed 2 blocks of module-level executable AML code
-> ACPI: Interpreter enabled
-> ACPI: (supports S0 S3 S4 S5)
-> ACPI: Using IOAPIC for interrupt routing
-> PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and
-> report a bug
-> ACPI: Enabled 16 GPEs in block 00 to 0F
-> ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
-> acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI]
-> acpi PNP0A03:00: _OSC failed (AE_NOT_FOUND); disabling ASPM
-> acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended PCI
-> configuration space under this bridge.
-> PCI host bridge to bus 0000:00
-> pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
-> pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
-> pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
-> pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
-> pci_bus 0000:00: root bus resource [bus 00-ff]
-> pci 0000:00:01.3: quirk: [io  0xb000-0xb03f] claimed by PIIX4 ACPI
-> ACPI: PCI Interrupt Link [LNKA] (IRQs 5 *10 11)
-> ACPI: PCI Interrupt Link [LNKB] (IRQs 5 *10 11)
-> ACPI: PCI Interrupt Link [LNKC] (IRQs 5 10 *11)
-> ACPI: PCI Interrupt Link [LNKD] (IRQs 5 10 *11)
-> ACPI: PCI Interrupt Link [LNKS] (IRQs *9)
-> vgaarb: loaded
-> SCSI subsystem initialized
-> ACPI: bus type USB registered
-> usbcore: registered new interface driver usbfs
-> usbcore: registered new interface driver hub
-> usbcore: registered new device driver usb
-> pps_core: LinuxPPS API ver. 1 registered
-> pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti
-> <giometti@linux.it>
-> PTP clock support registered
-> EDAC MC: Ver: 3.0.0
-> Advanced Linux Sound Architecture Driver Initialized.
-> PCI: Using ACPI for IRQ routing
-> Bluetooth: Core ver 2.22
-> NET: Registered protocol family 31
-> Bluetooth: HCI device and connection manager initialized
-> Bluetooth: HCI socket layer initialized
-> Bluetooth: L2CAP socket layer initialized
-> Bluetooth: SCO socket layer initialized
-> NET: Registered protocol family 8
-> NET: Registered protocol family 20
-> NetLabel: Initializing
-> NetLabel:  domain hash size = 128
-> NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
-> NetLabel:  unlabeled traffic allowed by default
-> nfc: nfc_init: NFC Core ver 0.1
-> NET: Registered protocol family 39
-> clocksource: Switched to clocksource kvm-clock
-> VFS: Disk quotas dquot_6.6.0
-> VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
-> FS-Cache: Loaded
-> pnp: PnP ACPI init
-> pnp: PnP ACPI: found 7 devices
-> clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns:
-> 2085701024 ns
-> NET: Registered protocol family 2
-> tcp_listen_portaddr_hash hash table entries: 4096 (order: 6, 327680 bytes)
-> TCP established hash table entries: 65536 (order: 7, 524288 bytes)
-> TCP bind hash table entries: 65536 (order: 10, 4718592 bytes)
-> TCP: Hash tables configured (established 65536 bind 65536)
-> UDP hash table entries: 4096 (order: 7, 655360 bytes)
-> UDP-Lite hash table entries: 4096 (order: 7, 655360 bytes)
-> NET: Registered protocol family 1
-> RPC: Registered named UNIX socket transport module.
-> RPC: Registered udp transport module.
-> RPC: Registered tcp transport module.
-> RPC: Registered tcp NFSv4.1 backchannel transport module.
-> pci 0000:00:00.0: Limiting direct PCI/PCI transfers
-> PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
-> software IO TLB [mem 0xbbffd000-0xbfffd000] (64MB) mapped at
-> [00000000a6fbbd9b-00000000ab54bbfe]
-> RAPL PMU: API unit is 2^-32 Joules, 4 fixed counters, 10737418240 ms ovfl
-> timer
-> RAPL PMU: hw unit of domain pp0-core 2^-0 Joules
-> RAPL PMU: hw unit of domain package 2^-0 Joules
-> RAPL PMU: hw unit of domain dram 2^-0 Joules
-> RAPL PMU: hw unit of domain pp1-gpu 2^-0 Joules
-> kvm: already loaded the other module
-> Machine check injector initialized
-> Scanning for low memory corruption every 60 seconds
-> Initialise system trusted keyrings
-> workingset: timestamp_bits=40 max_order=21 bucket_order=0
-> NFS: Registering the id_resolver key type
-> Key type id_resolver registered
-> Key type id_legacy registered
-> fuse init (API version 7.26)
-> 9p: Installing v9fs 9p2000 file system support
-> NET: Registered protocol family 38
-> Key type asymmetric registered
-> Asymmetric key parser 'x509' registered
-> Key type pkcs7_test registered
-> Block layer SCSI generic (bsg) driver version 0.4 loaded (major 250)
-> io scheduler noop registered
-> io scheduler deadline registered
-> io scheduler cfq registered (default)
-> io scheduler mq-deadline registered
-> io scheduler kyber registered
-> io scheduler bfq registered
-> input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
-> ACPI: Power Button [PWRF]
-> input: Sleep Button as /devices/LNXSYSTM:00/LNXSLPBN:00/input/input1
-> ACPI: Sleep Button [SLPF]
-> ACPI: PCI Interrupt Link [LNKC] enabled at IRQ 11
-> virtio-pci 0000:00:03.0: virtio_pci: leaving for legacy driver
-> ACPI: PCI Interrupt Link [LNKD] enabled at IRQ 10
-> virtio-pci 0000:00:04.0: virtio_pci: leaving for legacy driver
-> Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
-> 00:03: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
-> 00:04: ttyS1 at I/O 0x2f8 (irq = 3, base_baud = 115200) is a 16550A
-> 00:05: ttyS2 at I/O 0x3e8 (irq = 6, base_baud = 115200) is a 16550A
-> 00:06: ttyS3 at I/O 0x2e8 (irq = 7, base_baud = 115200) is a 16550A
-> Non-volatile memory driver v1.3
-> Linux agpgart interface v0.103
-> [drm] radeon kernel modesetting enabled.
-> [drm] amdgpu kernel modesetting enabled.
-> loop: module loaded
-> null: module loaded
-> nfcsim 0.2 initialized
-> scsi host0: Virtio SCSI HBA
-> scsi 0:0:1:0: Direct-Access     Google   PersistentDisk   1    PQ: 0 ANSI: 6
-> sd 0:0:1:0: Attached scsi generic sg0 type 0
-> sd 0:0:1:0: [sda] 4194304 512-byte logical blocks: (2.15 GB/2.00 GiB)
-> tun: Universal TUN/TAP device driver, 1.6
-> sd 0:0:1:0: [sda] 4096-byte physical blocks
-> sd 0:0:1:0: [sda] Write Protect is off
-> sd 0:0:1:0: [sda] Write cache: enabled, read cache: enabled, doesn't support
-> DPO or FUA
-> e100: Intel(R) PRO/100 Network Driver, 3.5.24-k2-NAPI
-> e100: Copyright(c) 1999-2006 Intel Corporation
-> e1000: Intel(R) PRO/1000 Network Driver - version 7.3.21-k8-NAPI
-> e1000: Copyright (c) 1999-2006 Intel Corporation.
-> e1000e: Intel(R) PRO/1000 Network Driver - 3.2.6-k
-> e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
-> sky2: driver version 1.30
->  sda: sda1
-> ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
-> ehci-pci: EHCI PCI platform driver
-> ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
-> ohci-pci: OHCI PCI platform driver
-> uhci_hcd: USB Universal Host Controller Interface driver
-> usbcore: registered new interface driver usblp
-> usbcore: registered new interface driver usb-storage
-> sd 0:0:1:0: [sda] Attached SCSI disk
-> i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
-> i8042: Warning: Keylock active
-> serio: i8042 KBD port at 0x60,0x64 irq 1
-> serio: i8042 AUX port at 0x60,0x64 irq 12
-> mousedev: PS/2 mouse device common for all mice
-> rtc_cmos 00:00: RTC can wake from S4
-> rtc_cmos 00:00: rtc core: registered rtc_cmos as rtc0
-> rtc_cmos 00:00: alarms up to one day, 114 bytes nvram
-> device-mapper: ioctl: 4.37.0-ioctl (2017-09-20) initialised:
-> dm-devel@redhat.com
-> usbcore: registered new interface driver btusb
-> hidraw: raw HID events driver (C) Jiri Kosina
-> usbcore: registered new interface driver usbhid
-> usbhid: USB HID core driver
-> NET: Registered protocol family 26
-> Netfilter messages via NETLINK v0.30.
-> nf_conntrack version 0.5.0 (65536 buckets, 262144 max)
-> ctnetlink v0.93: registering with nfnetlink.
-> ip_tables: (C) 2000-2006 Netfilter Core Team
-> Initializing XFRM netlink socket
-> NET: Registered protocol family 10
-> Segment Routing with IPv6
-> ip6_tables: (C) 2000-2006 Netfilter Core Team
-> sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
-> NET: Registered protocol family 17
-> NET: Registered protocol family 15
-> Bluetooth: RFCOMM TTY layer initialized
-> Bluetooth: RFCOMM socket layer initialized
-> Bluetooth: RFCOMM ver 1.11
-> Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-> Bluetooth: BNEP filters: protocol multicast
-> Bluetooth: BNEP socket layer initialized
-> Bluetooth: HIDP (Human Interface Emulation) ver 1.2
-> Bluetooth: HIDP socket layer initialized
-> NET: Registered protocol family 41
-> lec:lane_module_init: lec.c: initialized
-> mpoa:atm_mpoa_init: mpc.c: initialized
-> l2tp_core: L2TP core driver, V2.0
-> 8021q: 802.1Q VLAN Support v1.8
-> DCCP: Activated CCID 2 (TCP-like)
-> DCCP: Activated CCID 3 (TCP-Friendly Rate Control)
-> sctp: Hash tables configured (bind 32/56)
-> NET: Registered protocol family 21
-> Registered RDS/tcp transport
-> tipc: Activated (version 2.0.0)
-> NET: Registered protocol family 30
-> tipc: Started in single node mode
-> 9pnet: Installing 9P2000 support
-> Key type dns_resolver registered
-> AVX2 version of gcm_enc/dec engaged.
-> AES CTR mode by8 optimization enabled
-> sched_clock: Marking stable (1181858202, 0)->(2095233647, -913375445)
-> registered taskstats version 1
-> Loading compiled-in X.509 certificates
-> Key type big_key registered
-> Key type encrypted registered
->   Magic number: 13:188:748
-> console [netcon0] enabled
-> netconsole: network logging started
-> cfg80211: Loading compiled-in X.509 certificates for regulatory database
-> cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-> ALSA device list:
->   No soundcards found.
-> platform regulatory.0: Direct firmware load for regulatory.db failed with
-> error -2
-> cfg80211: failed to load regulatory.db
-> input: AT Translated Set 2 keyboard as
-> /devices/platform/i8042/serio0/input/input2
-> md: Waiting for all devices to be available before autodetect
-> md: If you don't use raid, use raid=noautodetect
-> tsc: Refined TSC clocksource calibration: 2299.802 MHz
-> clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x21267a1d6e0,
-> max_idle_ns: 440795287755 ns
-> input: ImPS/2 Generic Wheel Mouse as
-> /devices/platform/i8042/serio1/input/input4
-> md: Autodetecting RAID arrays.
-> md: autorun ...
-> md: ... autorun DONE.
-> EXT4-fs (sda1): couldn't mount as ext3 due to feature incompatibilities
-> EXT4-fs (sda1): couldn't mount as ext2 due to feature incompatibilities
-> EXT4-fs (sda1): INFO: recovery required on readonly filesystem
-> EXT4-fs (sda1): write access will be enabled during recovery
-> EXT4-fs (sda1): recovery complete
-> EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
-> VFS: Mounted root (ext4 filesystem) readonly on device 8:1.
-> devtmpfs: mounted
-> Freeing unused kernel memory: 2348K
-> Kernel memory protection disabled.
-> stty (1485) used greatest stack depth: 19240 bytes left
-> run-parts (1486) used greatest stack depth: 17680 bytes left
-> mount (1531) used greatest stack depth: 16384 bytes left
-> udevd[1591]: starting version 175
-> EXT4-fs (sda1): re-mounted. Opts: (null)
-> rsyslogd (2932) used greatest stack depth: 14992 bytes left
-> 
+> You'll need to work that out with Eric Dumazet who added the
+> change in question which you think we should revert.
 
-This crash involving KVM only ever happened on next-20171206, and there it
-happened a bunch of times.  I'm guessing it was a bug in an early version of the
-x86 page table isolation patches which quickly got fixed.  So I'm invalidating
-this bug for syzbot.
+Eric,
 
-#syz invalid
+can you, please, provide some details about the use-after-free problem
+that you've fixed with commit 9f1c2674b328 ("net: memcontrol: defer call
+to mem_cgroup_sk_alloc()" ? Do you know how to reproduce it?
+
+Deferring mem_cgroup_sk_alloc() breaks socket memory accounting
+and makes it much more fragile in general. So, I wonder, if there are
+solutions for the use-after-free problem.
+
+Thank you!
+
+Roman
