@@ -1,57 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752864AbeBASDd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 13:03:33 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:48057 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753214AbeBASD3 (ORCPT
+        id S1753248AbeBASDp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 13:03:45 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:48298 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752655AbeBASDm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 13:03:29 -0500
-From: Colin King <colin.king@canonical.com>
-To: Jiri Slaby <jirislaby@gmail.com>,
-        Nick Kossifidis <mickflemm@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@do-not-panic.com>,
-        Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ath5k: remove duplicated re-assignment to pointer 'tq'
-Date: Thu,  1 Feb 2018 18:03:27 +0000
-Message-Id: <20180201180327.23435-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Thu, 1 Feb 2018 13:03:42 -0500
+From: Khalid Aziz <khalid.aziz@oracle.com>
+To: akpm@linux-foundation.org, davem@davemloft.net,
+        dave.hansen@linux.intel.com, arnd@arndb.de
+Cc: Khalid Aziz <khalid.aziz@oracle.com>, kirill.shutemov@linux.intel.com,
+        mhocko@suse.com, ross.zwisler@linux.intel.com, dave.jiang@intel.com,
+        mgorman@techsingularity.net, willy@infradead.org, hughd@google.com,
+        minchan@kernel.org, hannes@cmpxchg.org, shli@fb.com, mingo@kernel.org,
+        jglisse@redhat.com, me@tobin.cc, anthony.yznaga@oracle.com,
+        hillf.zj@alibaba-inc.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>
+Subject: [PATCH v11 02/10] mm, swap: Add infrastructure for saving page metadata on swap
+Date: Thu,  1 Feb 2018 11:01:10 -0700
+Message-Id: <c7cdd0eccb1c1ea10cf0a145e4854364686a1e82.1517497017.git.khalid.aziz@oracle.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1517497017.git.khalid.aziz@oracle.com>
+References: <cover.1517497017.git.khalid.aziz@oracle.com>
+In-Reply-To: <cover.1517497017.git.khalid.aziz@oracle.com>
+References: <cover.1517497017.git.khalid.aziz@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802010231
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If a processor supports special metadata for a page, for example ADI
+version tags on SPARC M7, this metadata must be saved when the page is
+swapped out. The same metadata must be restored when the page is swapped
+back in. This patch adds two new architecture specific functions -
+arch_do_swap_page() to be called when a page is swapped in, and
+arch_unmap_one() to be called when a page is being unmapped for swap
+out. These architecture hooks allow page metadata to be saved if the
+architecture supports it.
 
-Pointer tq is initialized with &ah->ah_txq[queue] and then a few
-lines later is re-assigned the same value, hence this duplicate
-assignment is redundant and can be removed.
-
-Cleans up clang warning:
-drivers/net/wireless/ath/ath5k/qcu.c:326:25: warning: Value stored
-to 'tq' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+Cc: Khalid Aziz <khalid@gonehiking.org>
+Acked-by: Jerome Marchand <jmarchan@redhat.com>
+Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
- drivers/net/wireless/ath/ath5k/qcu.c | 2 --
- 1 file changed, 2 deletions(-)
+v8:
+	- Fixed an erroneous "}"
+v6:
+	- Updated parameter list for arch_do_swap_page() and
+	  arch_unmap_one()
+v5:
+	- Replaced set_swp_pte() function with new architecture
+	  functions arch_do_swap_page() and arch_unmap_one()
 
-diff --git a/drivers/net/wireless/ath/ath5k/qcu.c b/drivers/net/wireless/ath/ath5k/qcu.c
-index beda11ce34a7..147947f632f7 100644
---- a/drivers/net/wireless/ath/ath5k/qcu.c
-+++ b/drivers/net/wireless/ath/ath5k/qcu.c
-@@ -327,8 +327,6 @@ ath5k_hw_reset_tx_queue(struct ath5k_hw *ah, unsigned int queue)
+ include/asm-generic/pgtable.h | 36 ++++++++++++++++++++++++++++++++++++
+ mm/memory.c                   |  1 +
+ mm/rmap.c                     | 14 ++++++++++++++
+ 3 files changed, 51 insertions(+)
+
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 868e68561f91..5530cfc72ef8 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -393,6 +393,42 @@ static inline int pud_same(pud_t pud_a, pud_t pud_b)
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
  
- 	AR5K_ASSERT_ENTRY(queue, ah->ah_capabilities.cap_queues.q_tx_num);
++#ifndef __HAVE_ARCH_DO_SWAP_PAGE
++/*
++ * Some architectures support metadata associated with a page. When a
++ * page is being swapped out, this metadata must be saved so it can be
++ * restored when the page is swapped back in. SPARC M7 and newer
++ * processors support an ADI (Application Data Integrity) tag for the
++ * page as metadata for the page. arch_do_swap_page() can restore this
++ * metadata when a page is swapped back in.
++ */
++static inline void arch_do_swap_page(struct mm_struct *mm,
++				     struct vm_area_struct *vma,
++				     unsigned long addr,
++				     pte_t pte, pte_t oldpte)
++{
++
++}
++#endif
++
++#ifndef __HAVE_ARCH_UNMAP_ONE
++/*
++ * Some architectures support metadata associated with a page. When a
++ * page is being swapped out, this metadata must be saved so it can be
++ * restored when the page is swapped back in. SPARC M7 and newer
++ * processors support an ADI (Application Data Integrity) tag for the
++ * page as metadata for the page. arch_unmap_one() can save this
++ * metadata on a swap-out of a page.
++ */
++static inline int arch_unmap_one(struct mm_struct *mm,
++				  struct vm_area_struct *vma,
++				  unsigned long addr,
++				  pte_t orig_pte)
++{
++	return 0;
++}
++#endif
++
+ #ifndef __HAVE_ARCH_PGD_OFFSET_GATE
+ #define pgd_offset_gate(mm, addr)	pgd_offset(mm, addr)
+ #endif
+diff --git a/mm/memory.c b/mm/memory.c
+index 793004608332..4e9bd81aa6f5 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3017,6 +3017,7 @@ int do_swap_page(struct vm_fault *vmf)
+ 	if (pte_swp_soft_dirty(vmf->orig_pte))
+ 		pte = pte_mksoft_dirty(pte);
+ 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
++	arch_do_swap_page(vma->vm_mm, vma, vmf->address, pte, vmf->orig_pte);
+ 	vmf->orig_pte = pte;
  
--	tq = &ah->ah_txq[queue];
--
- 	/* Skip if queue inactive or if we are on AR5210
- 	 * that doesn't have QCU/DCU */
- 	if ((ah->ah_version == AR5K_AR5210) ||
+ 	/* ksm created a completely new copy */
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 47db27f8049e..144c66e688a9 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1497,6 +1497,14 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 				(flags & (TTU_MIGRATION|TTU_SPLIT_FREEZE))) {
+ 			swp_entry_t entry;
+ 			pte_t swp_pte;
++
++			if (arch_unmap_one(mm, vma, address, pteval) < 0) {
++				set_pte_at(mm, address, pvmw.pte, pteval);
++				ret = false;
++				page_vma_mapped_walk_done(&pvmw);
++				break;
++			}
++
+ 			/*
+ 			 * Store the pfn of the page in a special migration
+ 			 * pte. do_swap_page() will wait until the migration
+@@ -1556,6 +1564,12 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 				page_vma_mapped_walk_done(&pvmw);
+ 				break;
+ 			}
++			if (arch_unmap_one(mm, vma, address, pteval) < 0) {
++				set_pte_at(mm, address, pvmw.pte, pteval);
++				ret = false;
++				page_vma_mapped_walk_done(&pvmw);
++				break;
++			}
+ 			if (list_empty(&mm->mmlist)) {
+ 				spin_lock(&mmlist_lock);
+ 				if (list_empty(&mm->mmlist))
 -- 
-2.15.1
+2.11.0
