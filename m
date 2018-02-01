@@ -1,103 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752142AbeBAKa0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 05:30:26 -0500
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:39204 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751748AbeBAKaV (ORCPT
+        id S1752143AbeBAKcD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 05:32:03 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:57418 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbeBAKb7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 05:30:21 -0500
-X-Google-Smtp-Source: AH8x2275DKm12d0hEYwQcx5sDxFk7OlxGQlLzagSiKRGeqUAp/bin53v63cUcj70qP/sRq2VRzn+fEGgiHdXCeyMR+s=
+        Thu, 1 Feb 2018 05:31:59 -0500
+Date: Thu, 1 Feb 2018 13:25:01 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] coccinelle: reduce false positives
+Message-ID: <20180201102501.kc5pfxojn7fhxat4@mwanda>
+References: <1517478532-5444-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-In-Reply-To: <20180201083418.rfarzrodccdy54xx@gauss3.secunet.de>
-References: <001a1148251a36716f0564148ba9@google.com> <20180201083418.rfarzrodccdy54xx@gauss3.secunet.de>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 1 Feb 2018 11:30:00 +0100
-Message-ID: <CACT4Y+a1DEqBWSXvVC+=pV_J_aMnof3Ky5W5t1FpwiCHZUTqJA@mail.gmail.com>
-Subject: Re: KASAN: stack-out-of-bounds Read in xfrm_state_find (4)
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: syzbot <syzbot+e1a1577ca8bcb47b769a@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517478532-5444-1-git-send-email-Julia.Lawall@lip6.fr>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8791 signatures=668659
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=694
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802010136
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 1, 2018 at 9:34 AM, Steffen Klassert
-<steffen.klassert@secunet.com> wrote:
-> On Wed, Jan 31, 2018 at 07:58:01AM -0800, syzbot wrote:
->> Hello,
->>
->> syzbot hit the following crash on upstream commit
->> 72906f38934a49faf4d2d38ea9ae32adcf7d5d0c (Tue Jan 30 21:04:50 2018 +0000)
->> Merge branch 'x86-hyperv-for-linus' of
->> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
->>
->> So far this crash happened 4 times on net-next, upstream.
->> C reproducer is attached.
->> syzkaller reproducer is attached.
->> Raw console output is attached.
->> compiler: gcc (GCC) 7.1.1 20170620
->> .config is attached.
->> user-space arch: i386
->
-> Looks like we forgot to refuse to insert socket policies
-> when userspace is 32 bit and kernel is 64 bit. We do this
-> already for policies inserted with netlink because we don't
-> have a compat layer for xfrm. This means that userspace
-> and kernel structues don't match, leading to broken
-> configurations.
->
-> I don't have 32 bit userspace on 64 bit machines, so I
-> can't test this myself. Can you please test this patch:
+On Thu, Feb 01, 2018 at 10:48:52AM +0100, Julia Lawall wrote:
+> Some files use both a non-devm allocation and a devm_allocation.  Don't
+> complain about a free when the same function contains a non-devm
+> allocation.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
 
+That's surprising...  Do you have an example false positive?
 
-Hi Steffen,
-
-Please see the email footer:
-
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-
-
-> Subject: [PATCH RFC] xfrm: Refuse to insert 32 bit userspace socket policies on 64 bit systems
->
-> We don't have compat layer for xfrm, so userspace and kernel
-> structures have different sizes in this case. This results in
-> a broken confuguration, so refuse to configure socket policies
-> when trying to insert from 32 bit userspace as we do it already
-> with policies inserted via netlink.
->
-> Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-> ---
->  net/xfrm/xfrm_state.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-> index a3785f538018..25861a4ef872 100644
-> --- a/net/xfrm/xfrm_state.c
-> +++ b/net/xfrm/xfrm_state.c
-> @@ -2056,6 +2056,11 @@ int xfrm_user_policy(struct sock *sk, int optname, u8 __user *optval, int optlen
->         struct xfrm_mgr *km;
->         struct xfrm_policy *pol = NULL;
->
-> +#ifdef CONFIG_COMPAT
-> +       if (in_compat_syscall())
-> +               return -EOPNOTSUPP;
-> +#endif
-> +
->         if (optlen <= 0 || optlen > PAGE_SIZE)
->                 return -EMSGSIZE;
->
-> --
-> 2.14.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180201083418.rfarzrodccdy54xx%40gauss3.secunet.de.
-> For more options, visit https://groups.google.com/d/optout.
+regards,
+dan carpenter
