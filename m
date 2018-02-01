@@ -1,114 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752823AbeBARZx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:25:53 -0500
-Received: from mail-bn3nam01on0079.outbound.protection.outlook.com ([104.47.33.79]:47136
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752021AbeBARZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:25:51 -0500
-From: Yury Norov <ynorov@caviumnetworks.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Yury Norov <ynorov@caviumnetworks.com>, Arnd Bergmann <arnd@arndb.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] rename bitmap_copy_safe to bitmap_copy_clear_tail
-Date: Thu,  1 Feb 2018 20:25:08 +0300
-Message-Id: <20180201172508.5739-3-ynorov@caviumnetworks.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180201172508.5739-1-ynorov@caviumnetworks.com>
-References: <20180201172508.5739-1-ynorov@caviumnetworks.com>
+        id S1752853AbeBAR0V (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:26:21 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:38071 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752021AbeBAR0R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 12:26:17 -0500
+X-Google-Smtp-Source: AH8x224adfKgXQuyHqkmPdRe/dw9InEOpLWQxxlN9irWeKJaZ68DVRDhH1bEMJzI90Mhu+7BzXD9gUvr6mBob0xhoaI=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [42.107.64.135]
-X-ClientProxiedBy: DB6PR0402CA0014.eurprd04.prod.outlook.com (10.172.243.152)
- To BN6PR07MB2900.namprd07.prod.outlook.com (10.173.28.146)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f43077e6-73c4-46a4-9ee3-08d56998d635
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:BN6PR07MB2900;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2900;3:TV8K8JVF4tfC5Bc+8oiMw6/b0Hs0/Kkaivr6zlDX51h2/CVOK1T1zcZVm8p80mBWIbgZdRxIX9sAWUzicBTcSm7Q142Ud5oOm7SbcSMFIK5DmY9s4uEvzGZFdZ9U0IdauIYLQywNbYK0f2Ygb9xCxBBooLXtXQ70f1Bc7o+BX0hlrI4HADPwPOpETUNsxUjpHFu+7EJVpjf5gdDI1eKS8bxv0Ab4351Sv8AT9CJG/VoTpPNXm+Cs9btRXOts7XC8;25:fn2IwNPS3CHSDMxnpQt7FEzA8lGfajHA+Mka7sfZsLAs8g2lHKHCz5ImVVf9h2GM6tHkj8V/Q+eB12hnJLyf1/x6CvYJywa5y2k56liHh+zhxkHXeZqFekt+ThW1jy0gX324VNb5L+MkWx+diFOrfu5S51Laa6l8YWZjhb2fyZuwRxwQBE3P6Djp1CC43+L7m3stOgp7iGxcovocOd/M6bAWuvtQy0agHT9i6UzlHYueG3h7dLP2/qItkNLMS1JRoUagcZdh1Mq5737oWpc66prOE0zPG9s66AyQ3m5gYfbd4xYKtKv72fiUNRchMIniuTK2bZcRt5lcak2zjGxXTQ==;31:FHKH9c9h3QwiuCS96WpqWIiVSjeHyWYZ/zjzQgxQsHjc3VEzSrk6t/y6Ak/sMXl18OE8EbZVOZN/HW/sWySEt3vxqcuPzrJpgwpPUV4VNLszAFNPPz7XJ3IklsZiGLt2Te7fge4GdscWOll/+bXSTv+iL7Fm/8zezC3U+y4bv6pd3WU54mbchPDjAtQ3z9cRvRUJ3g+/UX6DXCt1tPMMkl2/CYQIeAvoQGCUN5NVt8Q=
-X-MS-TrafficTypeDiagnostic: BN6PR07MB2900:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Yuri.Norov@cavium.com;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2900;20:D8/oKlvAvgy29nZhpHsDGfXlTcPPJDYccsheL8rXQ20drIxfHyNfXDWvNJiJDAd6EkhrOati1qf805lRgp5wIsrM6HQghFpVQrJnVyoRyGi/Qmy9kJ6MBEvsTaBxXEze9kheynb8zOL75B7LCadOi6wIRG8VttoU+byL4CHr4O8/2beOvlNEkS8E3iBHloM8cYFWIHlSyYHbNMEdRF7aenppPOGHgoc6DR4PvfiOSoSejpWH99/VaSYJ/K9OKLr83XYYFNTVZz/RMcji44rlqA/9wHfv+5UpmBzwcufYIWusAL7UdwMwc/zF4k4FD5ucQluF+NDLYdP2nNTAD5ag76YNLirbl+5DPnaBPHpkhmeWh8v3VRzxgeRFwpdZkaa1Mrh/lfal0vOzbjoLoX1zfe2qTGnI4CnRSoeOythFLH5+Qama+INlnzBDcCzGoF+YMyitgxCeOqYagU4DpS1UusGZ7DzBwY5nPgRdzWfNkBgksvV/V802fOXCL9/LFMts6mPD5oNywynKz3oxClZZ0YbkY+WV+9sQ8I2Y7VFS3YvMGWTrSDQHQpbcL83rMmMCt7ax7AeWI93msv2HHnc+OgO9XBxDbI9z3LHkeqbIPsg=;4:uMvfM9sGcI8my5/xAr7HsGyYUQ0UOoP7Sx+bnyWUoF99o4FwI2dy5wdq+mmsmTyGn5m0WfmA6s84/OMpdwJxL/zEpzWQrJc8JbGCY900lindbbdUxBlLv/SjQcdabV3baOrKQTSjjiUuwgmUklVk58aU6t3CPm3RNYgnDCisc1NFO9OCncnxSDnuBKk1io+4mGu3cEIjDN8rW4iiIQbejKrjLfYvNXPQBPeXKVuxKHovXgs6H7pk5ncK4OKit7cLpq3sByqVdK8KMJ14QwwhnA==
-X-Microsoft-Antispam-PRVS: <BN6PR07MB29005E67797A4B71367F61B5E3FA0@BN6PR07MB2900.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(3231101)(2400082)(944501161)(6041288)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:BN6PR07MB2900;BCL:0;PCL:0;RULEID:;SRVR:BN6PR07MB2900;
-X-Forefront-PRVS: 0570F1F193
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39380400002)(346002)(39860400002)(396003)(376002)(366004)(199004)(189003)(5009440100003)(305945005)(575784001)(2906002)(7736002)(50466002)(48376002)(68736007)(25786009)(386003)(76506005)(8676002)(4326008)(76176011)(50226002)(81166006)(8936002)(81156014)(316002)(51416003)(52116002)(6486002)(6116002)(3846002)(106356001)(72206003)(53936002)(16586007)(105586002)(54906003)(110136005)(6306002)(5660300001)(6496006)(97736004)(1076002)(2950100002)(42882006)(966005)(6666003)(26005)(47776003)(66066001)(36756003)(186003)(16526019)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR07MB2900;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR07MB2900;23:79A9/mTbLLL+BuJI53j2BGN9KhHYguttw3iM2i9nA?=
- =?us-ascii?Q?ZrauvV+YznSY8VA9iHSPEqka2Z2PcWukuufH+Sjglpx4CgSLNtJRRkkd0v01?=
- =?us-ascii?Q?zpT0iKSUukSqcu3EfZsW1esrDcyf8Cv8wv6t6qqRuhfOoujJcXV97VW+ulUq?=
- =?us-ascii?Q?rYaf16VUV2bABKflxXf52UUlFADIxm87InNYkDEOksonQxgjH11SSpLMyrl4?=
- =?us-ascii?Q?EY+Kv6uz78eQVVfjTLS5GVw0zW35oma/M2ElbqxjWcbLmRhPD8etjZDAl1yM?=
- =?us-ascii?Q?q0JWzqPeo2AeTCIwfQnq3t2RlJroDCNZseG9awbr8tcuwuaBq85slnrPtmNG?=
- =?us-ascii?Q?uBG1NXvFo53AX5iY5RbAoezSYta1eX8/8XCDQYcxtlMtekzoGFPv5guK/Lvm?=
- =?us-ascii?Q?/G2sGiQmNBaNQFsVXQ9no4VE+qEPtqZOBcavpIx8d3jKZtJXL/T1l7tSySb+?=
- =?us-ascii?Q?5/RwZLd6CzPwFtld1/t1SijTGJUxbXBRmgY8Ltg4LBj5Wc4JyoP8PgCy9nBH?=
- =?us-ascii?Q?FjGzmVcpObABb1+y13FbyCttv+xWMimzeQ0cKzoD/pUb7UgL6aAkVhyY9I2q?=
- =?us-ascii?Q?cXHuBrdDF/NMWIMouAwYUk6pIdsvOd2RoLxr9OMdjm3Ze+fgg8IO5U21mMJc?=
- =?us-ascii?Q?YJW62uRNGwH73Z1NG+ex+cnHxxPcR/m/VBUfBvqD+xwQL83ZIsn4laJGWPcp?=
- =?us-ascii?Q?kh78kYRUDWoSr+Y/Lq5XmK1MJ/iQ4WGp6wcUM0RhrnFD7F/kzcPXv/wCggOV?=
- =?us-ascii?Q?xOwdVDic+KPiuj0C7zcBLDzB2D5P510+alCKlUsbgEE/lRQ0XnBK4Z75iMRq?=
- =?us-ascii?Q?028amR/ChRLweejbTVBxN7qXCBMLUaWI22eLhR/fbtlOd36MdPAvPCWZsaa8?=
- =?us-ascii?Q?DV9um74o9m5PFBsofVkNgAUMBq/71YPWdRLzm1Yr1pLoqnO4ERlzlTQdhYti?=
- =?us-ascii?Q?pjr3XkeRr2OdbmHxo9kqd9Di07g9ktjnpnGl9i0AA+vCECxGWjOQ7ljaTp9Q?=
- =?us-ascii?Q?KcJ4o/e6J4xXkK9o5YKBbQphp3kjn12XRXjbNdLB1leEYoLCe5GLTWESwQrZ?=
- =?us-ascii?Q?aZUphcu/7uqSNNlMXEd+PM5c8Hj3PvyULgGcMEyQz5IBm8n1NPQGpQt+lpYn?=
- =?us-ascii?Q?qQ5HLdYViD6SqriQXGJ1TrIXA6ZN/0XPFO1rzUptUC8RSzMcbkn+sk/lKYFK?=
- =?us-ascii?Q?DP8G+8RIsPkzB65wVlSPfeQLVTgz8RRTF80YuBGL1G0HFZfEOOz0f2kMzxCK?=
- =?us-ascii?Q?CxQVDNPihRj9uITCfDoU8qtSurlop2Yn/M/jM3j?=
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2900;6:mvtR/ga8NRpfLfiVzMbRHlxXqTiPqURDfzETR9UfkFMUA61mABkNhLZaipZZz4niCqqYe0ulIj/2frfa395Uftk/qbnpv5LPldmoT64EYjMFthjAiLo065S2Hw1IHx/sUktTIzf9GlabL6IjEEtHfg3cb48dopzxU9V2SRvx63nSQpwZiHDhsbLXHARVxWcQ0OLJSRtUu7I9331BJ5NTL6QWXxpqYgc7/gLxhL+Q/9u6vVNQmshKep8gJjNl1dsC0yJPfYvNzzOW9cQRA3f4Wc50/ZL2ifhnJ1Fc+BdiBEphoyA8RuK03on2p9gLSfQgPNC8p4eNVA32seF7TC+1htey/+A3urJ5+cLPS363J3Q=;5:w8tidBpl7m00eWf6cnUTQIji0qSjNnmAY+2NFezIb0jG2n3HlkP5TcVOO6iTR9+IpLqacFPXWG3E+T0C2gOR/BkLLx2qZoJgif/MlDU6BgLa5YPNgLRDBhAo2dgt0UcXSNz9zeZk0eI4/33j/n5+RMzvlO+QZHqUvQI+FeluO8k=;24:gSeLt1iFSoSc0L41YiYbCCMVYdQ4EXUnKjCTP7DIFULdyQKAaUEqFXsWW81m1SArw1hcvsYTwe4V59bSsDH+kkMXU+w2EJvtEsgnkrbQUgo=;7:8Rb87xfiP9en4f0fjC/eNrEfGGJISpvW7QSBFjY/w+hf4zJ7xloOvQQ+kXmh2uWe2EoSRGWwhp5ndlGhgLMbv9hhi6Y+8FrLMTqnvdwyiPlng6jOyQ3FlPb6YExL8Uzx1XGuX9ELdGV0RLL0TJmkLZ0b86cMpRrPBwyiQqXkFLMP7PRcXWlZ67xYUZZ2mnz1+uCj1NQAFdbtlxnjEDOxCJnmFmO6pcYFjOUyu/VvfARSLjZIIFMYM1+nW+xQaiIV
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2018 17:25:48.1326 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f43077e6-73c4-46a4-9ee3-08d56998d635
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR07MB2900
+In-Reply-To: <20180201165249.GC2269@hirez.programming.kicks-ass.net>
+References: <CAKfTPtCVgnO1zcD_X4Ad-T0auWmN-TJ0dezv0P5wEtubkbgHyQ@mail.gmail.com>
+ <20171222075934.f6yenvcb2zkf2ysd@hirez.programming.kicks-ass.net>
+ <CAKfTPtC0+5zjvgNXMyVcvnnyJh0giQgJHtx+5p-GEpjUW1x8eg@mail.gmail.com>
+ <20171222082915.4lcb7xyyooqyjpia@hirez.programming.kicks-ass.net>
+ <20171222091221.ow5vn3ydx3hj4nht@hirez.programming.kicks-ass.net>
+ <CAKfTPtAzutuyA7D2qOErKPwdFaRK082YAtVn4ci8hAOUvL3zMQ@mail.gmail.com>
+ <20171222185629.lysjebfifgdwvvhu@hirez.programming.kicks-ass.net>
+ <20171222204247.kyc6ugyyu3ei7zhs@hirez.programming.kicks-ass.net>
+ <CAKfTPtD13p-n9otxq23rQZZKUfA1r03bxYBSDtSdm5HbWX7H6Q@mail.gmail.com>
+ <20180115082609.GA6320@linaro.org> <20180201165249.GC2269@hirez.programming.kicks-ass.net>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 1 Feb 2018 18:25:56 +0100
+Message-ID: <CAKfTPtAVBbM5XpbZ6iv5gyYz5cpJeJ3=RAZyA80jcLc_8A7ThA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/5] sched: Add NOHZ_STATS_KICK
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename is proposed in review:
-https://lkml.org/lkml/2018/1/8/1052
+On 1 February 2018 at 17:52, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Mon, Jan 15, 2018 at 09:26:09AM +0100, Vincent Guittot wrote:
+>
+> Would've probably been easier to read if you'd not included the revert
+> of that timer patch...
+>
+>> @@ -9258,21 +9255,11 @@ void nohz_balance_enter_idle(int cpu)
+>>       set_cpu_sd_state_idle(cpu);
+>>
+>>       /*
+>> -      * implies a barrier such that if the stats_state update is observed
+>> -      * the above updates are also visible. Pairs with stuff in
+>> -      * update_sd_lb_stats() and nohz_idle_balance().
+>> +      * Each time a cpu enter idle, we assume that it has blocked load and
+>> +      * enable the periodic update of the load of idle cpus
+>>        */
+>> -     val = atomic_read(&nohz.stats_state);
+>> -     do {
+>> -             new = val + 2;
+>> -             new |= 1;
+>> -     } while (!atomic_try_cmpxchg(&nohz.stats_state, &val, new));
+>> +     atomic_set(&nohz.stats_state, 1);
+>>
+>
+>> @@ -9422,7 +9408,6 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>>               return false;
+>>       }
+>>
+>> -     stats_seq = atomic_read(&nohz.stats_state);
+>>       /*
+>>        * barrier, pairs with nohz_balance_enter_idle(), ensures ...
+>>        */
+>> @@ -9432,6 +9417,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>>
+>>       SCHED_WARN_ON((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
+>>
+>> +     /*
+>> +      * We assume there will be no idle load after this update and clear
+>> +      * the stats state. If a cpu enters idle in the mean time, it will
+>> +      * set the stats state and trig another update of idle load.
+>> +      * Because a cpu that becomes idle, is added to idle_cpus_mask before
+>> +      * setting the stats state, we are sure to not clear the state and not
+>> +      * check the load of an idle cpu.
+>> +      */
+>> +     atomic_set(&nohz.stats_state, 0);
+>> +
+>>       for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
+>>               if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
+>>                       continue;
+>> @@ -9441,8 +9436,10 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>>                * work being done for other cpus. Next load
+>>                * balancing owner will pick it up.
+>>                */
+>> -             if (need_resched())
+>> +             if (need_resched()) {
+>> +                     has_blocked_load = true;
+>>                       break;
+>> +             }
+>>
+>>               rq = cpu_rq(balance_cpu);
+>>
+>> @@ -9477,12 +9474,12 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>>       if (flags & NOHZ_BALANCE_KICK)
+>>               rebalance_domains(this_rq, CPU_IDLE);
+>>
+>> -     if (has_blocked_load ||
+>> -         !atomic_try_cmpxchg(&nohz.stats_state, &stats_seq, 0)) {
+>> -             WRITE_ONCE(nohz.next_stats,
+>> -                             now + msecs_to_jiffies(LOAD_AVG_PERIOD));
+>> -             mod_timer(&nohz.timer, nohz.next_stats);
+>> -     }
+>> +     WRITE_ONCE(nohz.next_stats,
+>> +             now + msecs_to_jiffies(LOAD_AVG_PERIOD));
+>> +
+>> +     /* There is still blocked load, enable periodic update */
+>> +     if (has_blocked_load)
+>> +             atomic_set(&nohz.stats_state, 1);
+>>
+>>       /*
+>>        * next_balance will be updated only when there is a need.
+>
+> After this there is no point for stats_state to be atomic anymore. Also
+> a better name.
 
-Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
----
- include/linux/bitmap.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Ok
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 49aea0b37994..5f11fbdc27f8 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -233,7 +233,7 @@ static inline void bitmap_copy(unsigned long *dst, const unsigned long *src,
- /*
-  * Copy bitmap and clear tail bits in last word.
-  */
--static inline void bitmap_copy_safe(unsigned long *dst,
-+static inline void bitmap_copy_clear_tail(unsigned long *dst,
- 		const unsigned long *src, unsigned int nbits)
- {
- 	bitmap_copy(dst, src, nbits);
-@@ -251,11 +251,11 @@ extern void bitmap_from_arr32(unsigned long *bitmap, const u32 *buf,
- extern void bitmap_to_arr32(u32 *buf, const unsigned long *bitmap,
- 							unsigned int nbits);
- #else
--#define bitmap_from_arr32(bitmap, buf, nbits)		\
--	bitmap_copy_safe((unsigned long *) (bitmap),	\
-+#define bitmap_from_arr32(bitmap, buf, nbits)			\
-+	bitmap_copy_clear_tail((unsigned long *) (bitmap),	\
- 			(const unsigned long *) (buf), (nbits))
--#define bitmap_to_arr32(buf, bitmap, nbits)		\
--	bitmap_copy_safe((unsigned long *) (buf),	\
-+#define bitmap_to_arr32(buf, bitmap, nbits)			\
-+	bitmap_copy_clear_tail((unsigned long *) (buf),		\
- 			(const unsigned long *) (bitmap), (nbits))
- #endif
- 
--- 
-2.11.0
+>
+> Maybe if I drop the last two patches (and you re-introduce the bits
+> from: Subject: sched: Optimize nohz stats, that you do need) this all
+> becomes more readable?
+
+Yes. we can do like that
