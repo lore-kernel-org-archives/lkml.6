@@ -1,181 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752078AbeBAKLP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 05:11:15 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:52055 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751772AbeBAKLL (ORCPT
+        id S1752059AbeBAKND (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 05:13:03 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:55073 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751748AbeBAKNA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 05:11:11 -0500
-X-Google-Smtp-Source: AH8x225+XiXMLe/vfUoikQYYivNjvefosSqncnsLCsw0bNomm/9AwtW+DlTq7Qd+tGvy1xdtP0gtpg==
-Date: Thu, 1 Feb 2018 02:11:08 -0800 (PST)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Michal Hocko <mhocko@kernel.org>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Tejun Heo <tj@kernel.org>, kernel-team@fb.com, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch -mm v2 1/3] mm, memcg: introduce per-memcg oom policy
- tunable
-In-Reply-To: <20180131094717.GR21609@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.10.1802010159570.175600@chino.kir.corp.google.com>
-References: <alpine.DEB.2.10.1801161812550.28198@chino.kir.corp.google.com> <alpine.DEB.2.10.1801251552320.161808@chino.kir.corp.google.com> <alpine.DEB.2.10.1801251552490.161808@chino.kir.corp.google.com> <20180126171548.GB16763@dhcp22.suse.cz>
- <alpine.DEB.2.10.1801291418150.29670@chino.kir.corp.google.com> <20180130085013.GP21609@dhcp22.suse.cz> <alpine.DEB.2.10.1801301413080.148885@chino.kir.corp.google.com> <20180131094717.GR21609@dhcp22.suse.cz>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        Thu, 1 Feb 2018 05:13:00 -0500
+X-UUID: a583efa373c6419581ace22a94791627-20180201
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <rjw@rjwysocki.net>,
+        <khilman@baylibre.com>
+CC: <ulf.hansson@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH 1/2] dt-bindings: soc: add SCPSYS binding for MT7623 and MT7623A SoC
+Date: Thu, 1 Feb 2018 18:12:47 +0800
+Message-ID: <975fb80e1cdbe7f6d4a1d04fd3a2a21b619a193d.1517479588.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Jan 2018, Michal Hocko wrote:
+From: Sean Wang <sean.wang@mediatek.com>
 
-> > > > >           root
-> > > > >          / |  \
-> > > > >         A  B   C
-> > > > >        / \    / \
-> > > > >       D   E  F   G
-> > > > > 
-> > > > > Assume A: cgroup, B: oom_group=1, C: tree, G: oom_group=1
-> > > > > 
-> > > > 
-> > > > At each level of the hierarchy, memory.oom_policy compares immediate 
-> > > > children, it's the only way that an admin can lock in a specific oom 
-> > > > policy like "tree" and then delegate the subtree to the user.  If you've 
-> > > > configured it as above, comparing A and C should be the same based on the 
-> > > > cumulative usage of their child mem cgroups.
-> > > 
-> It seems I am still not clear with my question. What kind of difference
-> does policy=cgroup vs. none on A? Also what kind of different does it
-> make when a leaf node has cgroup policy?
-> 
+document the binding for enabling SCPSYS on MediaTek MT7623 and MT7623A
+SoC. Where MT7623 SoC has the same definition about power domains with
+MT2701, so it's fine to using MT2701 ones as MT7623's fallback.
 
-If A has an oom policy of "cgroup" it will be comparing the local usage of 
-D vs E, "tree" would be the same since neither descendants have child 
-cgroups.  If A has an oom policy of "none" it would compare processes 
-attached to D and E and respect /proc/pid/oom_score_adj.  It allows for 
-opting in and opting out of cgroup aware selection not only for the whole 
-system but also per subtree.
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ Documentation/devicetree/bindings/soc/mediatek/scpsys.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> > Hmm, I'm not sure why we would limit memory.oom_group to any policy.  Even 
-> > if we are selecting a process, even without selecting cgroups as victims, 
-> > killing a process may still render an entire cgroup useless and it makes 
-> > sense to kill all processes in that cgroup.  If an unlucky process is 
-> > selected with today's heursitic of oom_badness() or with a "none" policy 
-> > with my patchset, I don't see why we can't enable the user to kill all 
-> > other processes in the cgroup.  It may not make sense for some trees, but 
-> > but I think it could be useful for others.
-> 
-> My intuition screams here. I will think about this some more but I would
-> be really curious about any sensible usecase when you want sacrifice the
-> whole gang just because of one process compared to other processes or
-> cgroups is too large. Do you see how you are mixing entities here?
-> 
-
-It's a property of the workload that has nothing to do with selection.  
-Regardless of how a victim is selected, we need a victim.  That victim may 
-be able to tolerate the loss of the process, and not even need to be the 
-largest memory hogging process based on /proc/pid/oom_score_adj (periodic 
-cleanups, logging, stat collection are what I'm most familiar with).  It 
-may also be vital to the workload and it's better off to kill the entire 
-job, it's highly dependent on what the job is.  There's a general usecase 
-for memory.oom_group behavior without any selection changes, we've had a 
-killall tunable for years and is used by many customers for the same 
-reason.  There's no reason for it to be coupled, it can exist independent 
-of any cgroup aware selection.
-
-> I do not understand. Get back to our example. Are you saying that G
-> with none will enforce the none policy to C and root? If yes then this
-> doesn't make any sense because you are not really able to delegate the
-> oom policy down the tree at all. It would effectively make tree policy
-> pointless.
-> 
-
-The oom policy of G is pointless, it has no children cgroups.  It can be 
-"none", "cgroup", or "tree", it's not the root of a subtree.  (The oom 
-policy of the root mem cgroup is also irrelevant if there are no other 
-cgroups, same thing.)  If G is oom, it kills the largest process or 
-everything if memory.oom_group is set, which in your example it is.
-
-> I am skipping the rest of the following text because it is picking
-> on details and the whole design is not clear to me. So could you start
-> over documenting semantic and requirements. Ideally by describing:
-> - how does the policy on the root of the OOM hierarchy controls the
->   selection policy
-
-If "none", there's no difference than Linus's tree right now.  If 
-"cgroup", it enables cgroup aware selection: it compares all cgroups on 
-the system wrt local usage unless that cgroup has "tree" set in which case 
-its usage is hierarchical.
-
-> - how does the per-memcg policy act during the tree walk - for both
->   intermediate nodes and leafs
-
-The oom policy is determined by the mem cgroup under oom, that is the root 
-of the subtree under oom and its policy dictates how to select a victim 
-mem cgroup.
-
-> - how does the oom killer act based on the selected memcg
-
-That's the point about memory.oom_group: once it has selected a cgroup (if 
-cgroup aware behavior is enabled for the oom subtree [could be root]), a 
-memory hogging process attached to that subtree is killed or everything is 
-killed if memory.oom_group is enabled.
-
-> - how do you compare tasks with memcgs
-> 
-
-You don't, I think the misunderstanding is what happens if the root of a 
-subtree is "cgroup", for example, and a descendant has "none" enabled.  
-The root is under oom, it is comparing cgroups :)  "None" is only 
-effective if that subtree root is oom where process usage is considered.
-
-The point is that all the functionality available in -mm is still 
-available, just dictate "cgroup" everywhere and make it a decision that 
-can change per subtree, if necessary, without any mount option that would 
-become obsoleted.  Then, make memory.oom_group possible without any 
-specific selection policy since its useful on its own.
-
-Let me give you a concrete example based on your earlier /admins, 
-/teachers, /students example.  We oversubscribe the /students subtree in 
-the case where /admins and /teachers aren't using the memory.  We say 100 
-students can use 1GB each, but the limit of /students is actually 200GB.  
-100 students using 1GB each won't cause a system oom, we control that by 
-the limit of /admins and /teachers.  But we allow using memory that isn't 
-in use by /admins and /teachers if it's there, opening up overconsumers to 
-the possibility of oom kill.  (This is a real world example with batch job 
-scheduling, it's anything but hypothetical.)
-
-/students/michal logs in, and he has complete control over his subtree.  
-He's going to start several jobs, all in their own cgroups, with usage 
-well over 1GB, but if he's oom killed he wants the right thing oom killed.  
-
-Obviously this completely breaks down if the -mm functionality is used if 
-you have 10 jobs using 512MB each, because another student using more than 
-1GB who isn't using cgroups is going to be oom killed instead, although 
-you are using 5GB.  We've discussed that ad nauseam, and is why I 
-introduced "tree".
-
-But now look at the API.  /students/michal is using child cgroups but 
-which selection policy is in effect?  Will it kill the most memory hogging 
-process in his subtree or the most memory hogging process from the most 
-memory hogging cgroup?  It's an important distinction because it's 
-directly based on how he constructs his hierarchy: if locked into one 
-selection logic, the least important job *must* be in the highest 
-consuming cgroup; otherwise, his /proc/pid/oom_score_adj is respected.  He 
-*must* query the mount option.
-
-But now let's say that memory.oom_policy is merged to give this control to 
-him to do per process, per cgroup, or per subtree oom killing based on how 
-he defines it.  The mount option doesn't mean anything anymore, in fact, 
-it can mean the complete opposite of what actually happens.  That's the 
-direct objection to the mount option.  Since I have systems with thousands 
-of cgroups in hundreds of cgroups and over 100 workgroups that define, 
-sometimes very creatively, how to select oom victims, I'm an advocate for 
-an extensible interface that is useful for general purpose, doesn't remove 
-any functionality, and doesn't have contradicting specifications.
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index 76bf45b..d6fe16f 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -21,6 +21,8 @@ Required properties:
+ 	- "mediatek,mt2712-scpsys"
+ 	- "mediatek,mt6797-scpsys"
+ 	- "mediatek,mt7622-scpsys"
++	- "mediatek,mt7623-scpsys", "mediatek,mt2701-scpsys": For MT7623 SoC
++	- "mediatek,mt7623a-scpsys": For MT7623A SoC
+ 	- "mediatek,mt8173-scpsys"
+ - #power-domain-cells: Must be 1
+ - reg: Address range of the SCPSYS unit
+@@ -28,10 +30,11 @@ Required properties:
+ - clock, clock-names: clocks according to the common clock binding.
+                       These are clocks which hardware needs to be
+                       enabled before enabling certain power domains.
+-	Required clocks for MT2701: "mm", "mfg", "ethif"
++	Required clocks for MT2701 or MT7623: "mm", "mfg", "ethif"
+ 	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
+ 	Required clocks for MT6797: "mm", "mfg", "vdec"
+ 	Required clocks for MT7622: "hif_sel"
++	Required clocks for MT7622A: "ethif"
+ 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
+ 
+ Optional properties:
+-- 
+2.7.4
