@@ -1,96 +1,92 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2132234-1518983504-2-16869350658625057829
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518983503; b=FpGW7diZQJymxw/dcOLAoYuQpeHkL/6I77pTn+eAgJHoGsB
-    EaX6ZgcZ9bSDx0KPiL0o63lKH2xIXylVcrY8osUagyoyThrse2j3DmVOGHDF49QZ
-    FAN61+EKFj0DWqFiTUaBTZyjqqGZXlH5j6fMOOpFGrbXu+/a89feEhss7s7y7Rv0
-    g6FniaokmdMfzVh4YKNxfyCUSCmBa0T++I4cNHSf2bI9hEq/+t6v8pSWAaGwoAyg
-    tMV5pJ47bdeaOTHiMYiml+4tejQ9y+mWQaPHNjuJ4rPyx7A0MS8A7APOZn7ruhA0
-    EqagzUWeIPhVEHftW8NyXvyrzGFO3JGeEBRV3Ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:date
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518983503; bh=Y
-    7VfW1dVNMj+QLhr98rZ6VezPZjM/S3ztur5unGXNdg=; b=tcSU69M4fUiFVvWbm
-    JsM8anpY+AMwJYk2cG1P9meYFY6GWvEpyj16Sn1GhhrL7uZxqz5yUe8QxiQKCmWD
-    YMn/I+81mMfVsxdw9W5F+xFQsSe6vL/3W/M5HWN8Kgb6qjz/TGOGmZ5iniYxmoRt
-    fv5N/UFuZ6LUiOrRrkOItelYL4YU1KCvUl9SWyRC3jqOfdvC9JNtDjIQ9sUtTsd7
-    Wc02B40xJRXF9RhuZOzEASGMd2H2hZlF0qQYVs0FAcRq17wSBaJroy0JqxZAj+tD
-    7B/0/K+8jfAci5Qoc8gGDF8CIFUk3Q9ZTbDyGwrYGGBFkHc/HX8Z8Gwrkttp9gEH
-    pAT1w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ryca7Vvg x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=S5YoV24d;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ryca7Vvg x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=S5YoV24d;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AH8x224FRyjqR+3mqfQj6zcVmj3g0LA1v4ZIHxMwszndgAOy5GV7O5nb0XdmcbaFYcu6qC0RFzvd0w==
-Message-ID: <1518983493.12414.1.camel@gmail.com>
-Subject: Re: [PATCH 1/2] staging: rtl8712: make unsigned length for
- rtl8717_get{_wpa_,_wpa2_,_}ie
+Return-Path: <stefano.manni@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517512503; cv=none;
+        d=google.com; s=arc-20160816;
+        b=IterOEM1oWqlKQjIN1CuUTjukidH8Agrjg4QfULxAbBvcnrcjMpKUABy6cZIJfCcLz
+         E/EgfZgGnHAhPXw35Yibu1lUmuQWeynx9ZUrqUOQKzt++2CI7UX8Q3NXrPdol/hrkf0R
+         XsI3P/KNVrGGdsiY/C45yOEtD3czAnNfNaiNBZZGaEJ5L+RAAnkqveq08j0DmmpMVSJK
+         ZLpuRzUPVx0Q5JuF5zSKQtfHFq74BEfNr7EK98tRsnw2DfCDDSMLH1nHVA1G8oax6v1r
+         ULd6BJalpxk6extQXvCqUzlGE2fQETNeB73a6BCPN8HNMfVghP90qfIcccmMsMUPUcgu
+         0CoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=p83qmBeGAQ/d12XvTyXM5yBzZKTRzeXBrdukmuEwou0=;
+        b=kww7j9X3sATbzPxKXVJznWxDFg+oLp2SzoxIlsYJp5w3rS2UP6oDsabgzJdL8cS9yt
+         5mk61fCtjKDmRxzvMQ5+p8Tmkzk8thCamW3zXXN4uT5kLoLC0SB+K2lbt/WAM6pQWaZT
+         jtisCLu+EBXQeYevvzJpiRG/hOFlSkcIvysR1InvV3/5yNqhFq8R6D8Z3rgC457iwNO3
+         qUckvdu5z4jra8FC26/LN2rqRGsfgNb30NH45x3ZQ2WtulVex/kMrtMpp7YbgLVWJgfh
+         RNmxeDhMKAxgIbhtqZhVV/IHxfeOqgBxsyBvl5rFwUsWBfSDph1pkpZOxh2swMu9xg57
+         376w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=U7KKZURm;
+       spf=pass (google.com: domain of stefano.manni@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=stefano.manni@gmail.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=U7KKZURm;
+       spf=pass (google.com: domain of stefano.manni@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=stefano.manni@gmail.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x226R7RMbFhUQUvjLyjRu1bYIOqLU0msltrQYNr0UVvdhRq2v5zVV6Lx5QRz/XQWlDzVmb/DS5A==
 From: Stefano Manni <stefano.manni@gmail.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 18 Feb 2018 20:51:33 +0100
-In-Reply-To: <20180216144819.GA10052@kroah.com>
+To: Larry.Finger@lwfinger.net,
+	florian.c.schilhabel@googlemail.com
+Cc: gregkh@linuxfoundation.org,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	Stefano Manni <stefano.manni@gmail.com>
+Subject: [PATCH 2/2] staging: rtl8712: fix signedness of length to rtl8717_set_ie
+Date: Thu,  1 Feb 2018 20:14:53 +0100
+Message-Id: <20180201191453.4611-2-stefano.manni@gmail.com>
+X-Mailer: git-send-email 2.9.4
+In-Reply-To: <20180201191453.4611-1-stefano.manni@gmail.com>
 References: <20180201191453.4611-1-stefano.manni@gmail.com>
- <20180216144819.GA10052@kroah.com>
-X-Mailer: Evolution 3.22.6 (3.22.6-2.fc25) 
-Mime-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com,
- linux-kernel@vger.kernel.org, Larry.Finger@lwfinger.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591227191128320280?=
+X-GMAIL-MSGID: =?utf-8?q?1591227191128320280?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gRnJpLCAyMDE4LTAyLTE2IGF0IDE1OjQ4ICswMTAwLCBHcmVnIEtIIHdyb3RlOgo+IENhbiB5
-b3UgcmViYXNlIGJvdGggb2YgdGhlc2UgcGF0Y2hlcyBvbiB0aGUgc3RhZ2luZy10ZXN0aW5nIGJy
-YW5jaCBvZgo+IHRoZSBzdGFnaW5nLmdpdCB0cmVlIHNvIHRoYXQgSSBjYW4gYXBwbHkgdGhlbT/C
-oMKgUmlnaHQgbm93IHRoZXkgaGF2ZQo+IHRvbwo+IG1hbnkgY29uZmxpY3RzLgoKUmViYXNlZCBv
-biBzdGFnaW5nLXRlc3RpbmcgZDkyYTFmYS4gdjIgdG8gY29tZS4KCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxA
-bGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVj
-dC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
+rtl8717_set_it() takes an unsigned int pointer as length,
+fixed signedness in code using it.
+
+Sparse warnings:
+
+drivers/staging/rtl8712/ieee80211.c:191:53: warning: incorrect type in argument 5 (different signedness)
+drivers/staging/rtl8712/ieee80211.c:191:53:    expected unsigned int [usertype] *frlen
+drivers/staging/rtl8712/ieee80211.c:191:53:    got int *<noident>
+drivers/staging/rtl8712/ieee80211.c:197:57: warning: incorrect type in argument 5 (different signedness)
+drivers/staging/rtl8712/ieee80211.c:197:57:    expected unsigned int [usertype] *frlen
+drivers/staging/rtl8712/ieee80211.c:197:57:    got int *<noident>
+drivers/staging/rtl8712/ieee80211.c:199:63: warning: incorrect type in argument 5 (different signedness)
+drivers/staging/rtl8712/ieee80211.c:199:63:    expected unsigned int [usertype] *frlen
+drivers/staging/rtl8712/ieee80211.c:199:63:    got int *<noident>
+drivers/staging/rtl8712/ieee80211.c:202:67: warning: incorrect type in argument 5 (different signedness)
+drivers/staging/rtl8712/ieee80211.c:202:67:    expected unsigned int [usertype] *frlen
+drivers/staging/rtl8712/ieee80211.c:202:67:    got int *<noident>
+drivers/staging/rtl8712/ieee80211.c:206:73: warning: incorrect type in argument 5 (different signedness)
+drivers/staging/rtl8712/ieee80211.c:206:73:    expected unsigned int [usertype] *frlen
+drivers/staging/rtl8712/ieee80211.c:206:73:    got int *<noident>
+drivers/staging/rtl8712/ieee80211.c:209:75: warning: incorrect type in argument 5 (different signedness)
+drivers/staging/rtl8712/ieee80211.c:209:75:    expected unsigned int [usertype] *frlen
+drivers/staging/rtl8712/ieee80211.c:209:75:    got int *<noident>
+
+Signed-off-by: Stefano Manni <stefano.manni@gmail.com>
+---
+ drivers/staging/rtl8712/ieee80211.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8712/ieee80211.c b/drivers/staging/rtl8712/ieee80211.c
+index 35e29112006b..5095af13a6dc 100644
+--- a/drivers/staging/rtl8712/ieee80211.c
++++ b/drivers/staging/rtl8712/ieee80211.c
+@@ -166,7 +166,8 @@ static uint r8712_get_rateset_len(u8 *rateset)
+ 
+ int r8712_generate_ie(struct registry_priv *pregistrypriv)
+ {
+-	int sz = 0, rate_len;
++	int rate_len;
++	uint sz = 0;
+ 	struct wlan_bssid_ex *pdev_network = &pregistrypriv->dev_network;
+ 	u8 *ie = pdev_network->IEs;
+ 
+-- 
+2.14.3
