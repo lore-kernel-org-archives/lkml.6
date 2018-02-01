@@ -1,236 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752143AbeBANe4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 08:34:56 -0500
-Received: from foss.arm.com ([217.140.101.70]:50344 "EHLO foss.arm.com"
+        id S1752064AbeBANkc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 08:40:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41938 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751467AbeBANez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 08:34:55 -0500
-Subject: Re: [PATCH v3 16/18] arm/arm64: smccc: Implement SMCCC v1.1 inline
- primitive
-To: Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Jones <drjones@redhat.com>, Hanjun Guo <guohanjun@huawei.com>,
-        Jayachandran C <jnair@caviumnetworks.com>,
-        Jon Masters <jcm@redhat.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-References: <20180201114657.7323-1-marc.zyngier@arm.com>
- <20180201114657.7323-17-marc.zyngier@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6082f2bf-58be-8493-013e-e27f5a0d2570@arm.com>
-Date: Thu, 1 Feb 2018 13:34:50 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751582AbeBANk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 08:40:29 -0500
+Date: Thu, 1 Feb 2018 14:40:26 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
+Message-ID: <20180201134026.GK21609@dhcp22.suse.cz>
+References: <20180126140415.GD5027@dhcp22.suse.cz>
+ <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
+ <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
+ <20180129132235.GE21609@dhcp22.suse.cz>
+ <87k1w081e7.fsf@concordia.ellerman.id.au>
+ <20180130094205.GS21609@dhcp22.suse.cz>
+ <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
+ <20180131131937.GA6740@dhcp22.suse.cz>
+ <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+ <20180201131007.GJ21609@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180201114657.7323-17-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180201131007.GJ21609@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/18 11:46, Marc Zyngier wrote:
-> One of the major improvement of SMCCC v1.1 is that it only clobbers
-> the first 4 registers, both on 32 and 64bit. This means that it
-> becomes very easy to provide an inline version of the SMC call
-> primitive, and avoid performing a function call to stash the
-> registers that would otherwise be clobbered by SMCCC v1.0.
+On Thu 01-02-18 14:10:07, Michal Hocko wrote:
+> [CC Kees and Linus - for your background, we are talking about failures
+>  http://lkml.kernel.org/r/20180107090229.GB24862@dhcp22.suse.cz
+>  introduced by http://lkml.kernel.org/r/20171213092550.2774-3-mhocko@kernel.org
+>  Debugging has shown that load_elf_binary tries to map elf segment over
+>  an existing brk - see below.]
 > 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->   include/linux/arm-smccc.h | 143 ++++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 143 insertions(+)
+> On Thu 01-02-18 08:43:34, Anshuman Khandual wrote:
+> [...]
+> > [    9.295990] vma c000001fc8137c80 start 0000000010030000 end 0000000010040000
+> > next c000001fc81378c0 prev c000001fc8137680 mm c000001fc8108200
+> > prot 8000000000000104 anon_vma           (null) vm_ops           (null)
+> > pgoff 1003 file           (null) private_data           (null)
+> > flags: 0x100073(read|write|mayread|maywrite|mayexec|account)
+> > [    9.296351] CPU: 47 PID: 7537 Comm: sed Not tainted 4.14.0-00006-g4bd92fe-dirty #162
+> > [    9.296450] Call Trace:
+> > [    9.296482] [c000001fc70db9b0] [c000000000b180e0] dump_stack+0xb0/0xf0 (unreliable)
+> > [    9.296588] [c000001fc70db9f0] [c0000000002db0b8] do_brk_flags+0x2d8/0x440
+> > [    9.296674] [c000001fc70dbac0] [c0000000002db4d0] vm_brk_flags+0x80/0x130
+> > [    9.296751] [c000001fc70dbb20] [c0000000003d2998] set_brk+0x80/0xe8
+> > [    9.296824] [c000001fc70dbb60] [c0000000003d2518] load_elf_binary+0x12f8/0x1580
+> > [    9.296910] [c000001fc70dbc80] [c00000000035d9e0] search_binary_handler+0xd0/0x270
+> > [    9.296999] [c000001fc70dbd10] [c00000000035f938] do_execveat_common.isra.31+0x658/0x890
+> > [    9.297089] [c000001fc70dbdf0] [c00000000035ff80] SyS_execve+0x40/0x50
+> > [    9.297162] [c000001fc70dbe30] [c00000000000b220] system_call+0x58/0x6c
+> > 
+> > But coming back to when it failed with MAP_FIXED_NOREPLACE, looking into ELF
+> > section details (readelf -aW /usr/bin/sed), there was a PT_LOAD segment with
+> > p_memsz > p_filesz which might be causing set_brk() to be called.
+> > 
+> > 
+> >   Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+> >   ...
+> >   LOAD           0x020328 0x0000000010030328 0x0000000010030328 0x000384 0x0094a0 RW  0x10000
+> > 
+> > which can be confirmed by just dumping elf_brk/elf_bss for this particular
+> > instance. (elf_brk > elf_bss)
 > 
-> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-> index dd44d8458c04..575aabe85905 100644
-> --- a/include/linux/arm-smccc.h
-> +++ b/include/linux/arm-smccc.h
-> @@ -150,5 +150,148 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
->   
->   #define arm_smccc_hvc_quirk(...) __arm_smccc_hvc(__VA_ARGS__)
->   
-> +/* SMCCC v1.1 implementation madness follows */
-> +#ifdef CONFIG_ARM64
-> +
-> +#define SMCCC_SMC_INST	"smc	#0"
-> +#define SMCCC_HVC_INST	"hvc	#0"
-
-Nit: Maybe the argument can go in the template and we just define the 
-instruction mnemonics here?
-
-> +
-> +#endif
-> +
-> +#ifdef CONFIG_ARM
-
-#elif ?
-
-> +#include <asm/opcodes-sec.h>
-> +#include <asm/opcodes-virt.h>
-> +
-> +#define SMCCC_SMC_INST	__SMC(0)
-> +#define SMCCC_HVC_INST	__HVC(0)
-
-Oh, I see, it was to line up with this :(
-
-I do wonder if we could just embed an asm(".arch armv7-a+virt\n") (if 
-even necessary) for ARM, then take advantage of the common mnemonics for 
-all 3 instruction sets instead of needing manual encoding tricks? I 
-don't think we should ever be pulling this file in for non-v7 builds.
-
-I suppose that strictly that appears to need binutils 2.21 rather than 
-the offical supported minimum of 2.20, but are people going to be 
-throwing SMCCC configs at antique toolchains in practice?
-
-> +
-> +#endif
-> +
-> +#define ___count_args(_0, _1, _2, _3, _4, _5, _6, _7, _8, x, ...) x
-> +
-> +#define __count_args(...)						\
-> +	___count_args(__VA_ARGS__, 7, 6, 5, 4, 3, 2, 1, 0)
-> +
-> +#define __constraint_write_0						\
-> +	"+r" (r0), "=&r" (r1), "=&r" (r2), "=&r" (r3)
-> +#define __constraint_write_1						\
-> +	"+r" (r0), "+r" (r1), "=&r" (r2), "=&r" (r3)
-> +#define __constraint_write_2						\
-> +	"+r" (r0), "+r" (r1), "+r" (r2), "=&r" (r3)
-> +#define __constraint_write_3						\
-> +	"+r" (r0), "+r" (r1), "+r" (r2), "+r" (r3)
-> +#define __constraint_write_4	__constraint_write_3
-> +#define __constraint_write_5	__constraint_write_4
-> +#define __constraint_write_6	__constraint_write_5
-> +#define __constraint_write_7	__constraint_write_6
-> +
-> +#define __constraint_read_0
-> +#define __constraint_read_1
-> +#define __constraint_read_2
-> +#define __constraint_read_3
-> +#define __constraint_read_4	"r" (r4)
-> +#define __constraint_read_5	__constraint_read_4, "r" (r5)
-> +#define __constraint_read_6	__constraint_read_5, "r" (r6)
-> +#define __constraint_read_7	__constraint_read_6, "r" (r7)
-> +
-> +#define __declare_arg_0(a0, res)					\
-> +	struct arm_smccc_res   *___res = res;				\
-
-Looks like the declaration of ___res could simply be factored out to the 
-template...
-
-> +	register u32           r0 asm("r0") = a0;			\
-> +	register unsigned long r1 asm("r1");				\
-> +	register unsigned long r2 asm("r2");				\
-> +	register unsigned long r3 asm("r3")
-> +
-> +#define __declare_arg_1(a0, a1, res)					\
-> +	struct arm_smccc_res   *___res = res;				\
-> +	register u32           r0 asm("r0") = a0;			\
-> +	register typeof(a1)    r1 asm("r1") = a1;			\
-> +	register unsigned long r2 asm("r2");				\
-> +	register unsigned long r3 asm("r3")
-> +
-> +#define __declare_arg_2(a0, a1, a2, res)				\
-> +	struct arm_smccc_res   *___res = res;				\
-> +	register u32           r0 asm("r0") = a0;			\
-> +	register typeof(a1)    r1 asm("r1") = a1;			\
-> +	register typeof(a2)    r2 asm("r2") = a2;			\
-> +	register unsigned long r3 asm("r3")
-> +
-> +#define __declare_arg_3(a0, a1, a2, a3, res)				\
-> +	struct arm_smccc_res   *___res = res;				\
-> +	register u32           r0 asm("r0") = a0;			\
-> +	register typeof(a1)    r1 asm("r1") = a1;			\
-> +	register typeof(a2)    r2 asm("r2") = a2;			\
-> +	register typeof(a3)    r3 asm("r3") = a3
-> +
-> +#define __declare_arg_4(a0, a1, a2, a3, a4, res)			\
-> +	__declare_arg_3(a0, a1, a2, a3, res);				\
-> +	register typeof(a4) r4 asm("r4") = a4
-> +
-> +#define __declare_arg_5(a0, a1, a2, a3, a4, a5, res)			\
-> +	__declare_arg_4(a0, a1, a2, a3, a4, res);			\
-> +	register typeof(a5) r5 asm("r5") = a5
-> +
-> +#define __declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res)		\
-> +	__declare_arg_5(a0, a1, a2, a3, a4, a5, res);			\
-> +	register typeof(a6) r6 asm("r6") = a6
-> +
-> +#define __declare_arg_7(a0, a1, a2, a3, a4, a5, a6, a7, res)		\
-> +	__declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res);		\
-> +	register typeof(a7) r7 asm("r7") = a7
-> +
-> +#define ___declare_args(count, ...) __declare_arg_ ## count(__VA_ARGS__)
-> +#define __declare_args(count, ...)  ___declare_args(count, __VA_ARGS__)
-> +
-> +#define ___constraints(count)						\
-> +	: __constraint_write_ ## count					\
-> +	: __constraint_read_ ## count					\
-> +	: "memory"
-> +#define __constraints(count)	___constraints(count)
-> +
-> +/*
-> + * We have an output list that is not necessarily used, and GCC feels
-> + * entitled to optimise the whole sequence away. "volatile" is what
-> + * makes it stick.
-> + */
-> +#define __arm_smccc_1_1(inst, ...)					\
-> +	do {								\
-> +		__declare_args(__count_args(__VA_ARGS__), __VA_ARGS__);	\
-> +		asm volatile(inst "\n"					\
-> +			     __constraints(__count_args(__VA_ARGS__)));	\
-> +		if (___res)						\
-> +			*___res = (typeof(*___res)){r0, r1, r2, r3};	\
-
-...especially since there's no obvious indication of where it comes from 
-when you're looking here.
-
-Otherwise, though, this has already turned out pretty sleek;
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-> +	} while (0)
-> +
-> +/*
-> + * arm_smccc_1_1_smc() - make an SMCCC v1.1 compliant SMC call
-> + *
-> + * This is a variadic macro taking one to eight source arguments, and
-> + * an optional return structure.
-> + *
-> + * @a0-a7: arguments passed in registers 0 to 7
-> + * @res: result values from registers 0 to 3
-> + *
-> + * This macro is used to make SMC calls following SMC Calling Convention v1.1.
-> + * The content of the supplied param are copied to registers 0 to 7 prior
-> + * to the SMC instruction. The return values are updated with the content
-> + * from register 0 to 3 on return from the SMC instruction if not NULL.
-> + */
-> +#define arm_smccc_1_1_smc(...)	__arm_smccc_1_1(SMCCC_SMC_INST, __VA_ARGS__)
-> +
-> +/*
-> + * arm_smccc_1_1_hvc() - make an SMCCC v1.1 compliant HVC call
-> + *
-> + * This is a variadic macro taking one to eight source arguments, and
-> + * an optional return structure.
-> + *
-> + * @a0-a7: arguments passed in registers 0 to 7
-> + * @res: result values from registers 0 to 3
-> + *
-> + * This macro is used to make HVC calls following SMC Calling Convention v1.1.
-> + * The content of the supplied param are copied to registers 0 to 7 prior
-> + * to the HVC instruction. The return values are updated with the content
-> + * from register 0 to 3 on return from the HVC instruction if not NULL.
-> + */
-> +#define arm_smccc_1_1_hvc(...)	__arm_smccc_1_1(SMCCC_HVC_INST, __VA_ARGS__)
-> +
->   #endif /*__ASSEMBLY__*/
->   #endif /*__LINUX_ARM_SMCCC_H*/
+> Hmm, interesting. So the above is not a regular brk. The check has been
+> added in 2001 by "v2.4.10.1 -> v2.4.10.2" but the changelog is not
+> revealing at all.
 > 
+> Btw. my /bin/ls also has MemSiz>FileSiz
+>   LOAD           0x01ade0 0x000000000061ade0 0x000000000061ade0 0x00079c 0x001520 RW  0x200000
+>    113: 000000000061b57c     0 NOTYPE  GLOBAL DEFAULT  ABS __bss_start
+> 
+> and do not see any problem. So this is more likely a problem of elf_brk
+> being placed at a wrong address. But I am desperately lost in this code
+> so I might be completely off.
+
+Thanks a lot to Michael Matz for his background. He has pointed me to
+the following two segments from your binary[1]
+  LOAD           0x0000000000000000 0x0000000010000000 0x0000000010000000
+                 0x0000000000013a8c 0x0000000000013a8c  R E    10000
+  LOAD           0x000000000001fd40 0x000000001002fd40 0x000000001002fd40
+                 0x00000000000002c0 0x00000000000005e8  RW     10000
+  LOAD           0x0000000000020328 0x0000000010030328 0x0000000010030328
+                 0x0000000000000384 0x00000000000094a0  RW     10000
+
+That binary has two RW LOAD segments, the first crosses a page border
+into the second
+0x1002fd40 (LOAD2-vaddr) + 0x5e8 (LOAD2-memlen) == 0x10030328 (LOAD3-vaddr)
+
+He says
+: This is actually an artifact of RELRO machinism.  The first RW mapping
+: will be remapped as RO after relocations are applied (to increase
+: security).
+: Well, to be honest, normal relro binaries also don't have more than
+: two LOAD segments, so whatever RHEL did to their compilation options,
+: it's something in addition to just relro (which can be detected by
+: having a GNU_RELRO program header)
+: But it definitely has something to do with relro, it's just not the
+: whole story yet.
+
+I am still trying to wrap my head around all this, but it smells rather
+dubious to map different segments over the same page. Is this something
+that might happen widely and therefore MAP_FIXED_NOREPLACE is a no-go
+when loading ELF segments? Or is this a special case we can detect?
+
+Or am I completely off?
+
+[1] http://lkml.kernel.org/r/96458c0a-e273-3fb9-a33b-f6f2d536f90b%40linux.vnet.ibm.com
+
+-- 
+Michal Hocko
+SUSE Labs
