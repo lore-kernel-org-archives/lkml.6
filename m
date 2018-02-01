@@ -1,52 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752036AbeBAJ4S (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 04:56:18 -0500
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:25188 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751522AbeBAJ4Q (ORCPT
+        id S1752071AbeBAJ4f (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 04:56:35 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:47741 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751522AbeBAJ4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 04:56:16 -0500
-Subject: Re: [PATCH v6 10/41] clk: davinci: New driver for davinci PSC clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-11-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <8c0c10ec-c1ec-89b3-ae7b-2df61c22779a@ti.com>
-Date: Thu, 1 Feb 2018 15:25:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 1 Feb 2018 04:56:33 -0500
+Date: Thu, 1 Feb 2018 10:56:13 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Meelis Roos <mroos@linux.ee>,
+        Ingo Molnar <mingo@kernel.org>, linux-tip-commits@vger.kernel.org,
+        kbuild test robot <fengguang.wu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [tip:irq/urgent] genirq: Make legacy autoprobing work again
+In-Reply-To: <CAMuHMdUfGUXmjFdyjLdBiyOayy22p-91Oonp-hK4x0hqcOnPUA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1802011055240.1472@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.20.1801301935410.1797@nanos> <tip-55595980acc3232b018ba30df8ee6e0ac40ad184@git.kernel.org> <CAMuHMdUfGUXmjFdyjLdBiyOayy22p-91Oonp-hK4x0hqcOnPUA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-11-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
-> This adds a new driver for mach-davinci PSC clocks. This is porting the
-> code from arch/arm/mach-davinci/psc.c to the common clock framework and
-> is converting it to use regmap to simplify the code. Additionally, it
-> adds device tree support for these clocks.
+On Thu, 1 Feb 2018, Geert Uytterhoeven wrote:
+> On Wed, Jan 31, 2018 at 10:54 AM, tip-bot for Thomas Gleixner
+> > -void irq_activate_and_startup(struct irq_desc *desc, bool resend)
+> > +int irq_activate_and_startup(struct irq_desc *desc, bool resend)
+> >  {
+> >         if (WARN_ON(irq_activate(desc)))
+> >                 return;
 > 
-> Note: although there are similar clocks for TI Keystone we are not able
-> to share the code for a few reasons. The keystone clocks are device tree
-> only and use legacy one-node-per-clock bindings. Also the keystone
-> driver makes the assumption that there is only one PSC per SoC and uses
-> global variables, but here we have two controllers per SoC.
+> As reported by 0day, this should return something.
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
+> if CONFIG_IRQ_DOMAIN=n or CONFIG_IRQ_DOMAIN_HIERARCHY=n,
+> irq_activate() will never return 1, and the code path can be eliminated.
+> 
+> BTW, is gcc becoming too smart, and already eliminating code before it
+> generates warnings for it? Recently I've seen some other cases where buggy
+> code was not warned about, as it was considered not having any impact.
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Looks like. Fixed it up.
 
 Thanks,
-Sekhar
+
+	tglx
