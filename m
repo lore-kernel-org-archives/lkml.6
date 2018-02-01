@@ -1,87 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752528AbeBAM1F (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 07:27:05 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35650 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752062AbeBAM1A (ORCPT
+        id S1752470AbeBAM15 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 07:27:57 -0500
+Received: from mail-pl0-f53.google.com ([209.85.160.53]:35170 "EHLO
+        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752030AbeBAM1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 07:27:00 -0500
-X-Google-Smtp-Source: AH8x224/VBAJr2l8KYpET7bNdsmNLJlFmHOMbaLjJMMSNlZwhuLWhMGTuv5IgqrZ/4mynU0DXipUBEYVkg7cuSm1AqY=
+        Thu, 1 Feb 2018 07:27:53 -0500
+X-Google-Smtp-Source: AH8x225B6lSl5nE146mYJWgFrhqJ+BVmptlsQOrNfcoPKiwyrt9U36ocphjlspBJVQci13nS4vKdhA==
+Date: Thu, 1 Feb 2018 21:27:50 +0900
+From: Stafford Horne <shorne@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: asm-generic: Disallow no-op mb() for SMP systems
+Message-ID: <20180201122750.GE30895@lianli.shorne-pla.net>
+References: <20180131130034.GR2269@hirez.programming.kicks-ass.net>
+ <20180131131737.GA5097@arm.com>
+ <20180131132610.GT2269@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180201122230.GC690@gmail.com>
-References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
- <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
- <CAHp75Vcig869pUQ5yK1b=GpXinhYkpw1q29OVKSs_7EqP4Hknw@mail.gmail.com>
- <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg@mail.gmail.com>
- <CAHp75VcYQMYNmW9-MkOKA5TWV2JgNfqnUB22s1qB4Z0ZZbTG2g@mail.gmail.com>
- <CAMz4kuLO=zRqg72=7dC2fLHyVcEOcsU0PqiZM8XEYC3TGT1fYA@mail.gmail.com> <20180201122230.GC690@gmail.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Thu, 1 Feb 2018 20:26:59 +0800
-Message-ID: <CAMz4ku+J7RwkthJn9TbYCuVYWnUyD8sCLs892G_SO=vWxr2ddA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131132610.GT2269@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1 February 2018 at 20:22, Marcus Folkesson
-<marcus.folkesson@gmail.com> wrote:
-> On Thu, Feb 01, 2018 at 11:08:46AM +0800, Baolin Wang wrote:
->> On 31 January 2018 at 22:23, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->> > On Wed, Jan 31, 2018 at 4:01 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> >> On 31 January 2018 at 00:48, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->> >>> On Tue, Jan 30, 2018 at 2:07 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> >>>> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
->> >>>> each group contains 16 GPIOs. Each GPIO can set input/output and has
->> >>>> the interrupt capability.
->> >>>
->> >>>> +config GPIO_SPRD
->> >>>
->> >>>> +       bool "Spreadtrum GPIO support"
->> >>>
->> >>> Either you have to put tristate here, or remove all redundant
->> >>> module_*() and MODULE_*() macros.
->> >>
->> >> I will remove module_*() and MODULE_*() macros in next version. Thanks
->> >> for your comments.
->> >
->> > In that case you need to explain why driver can't be module. (And
->> > don't forget to replace module.h with init.h).
->>
->> After more investigation, I found most GPIO dependencies can be
->> deferred to probe. So I will change the GPIO driver to module level
->> and change bool to tristate in next version.
->
-> Then you could replace
->
-> +static int __init sprd_gpio_init(void)
-> +{
-> +       return platform_driver_register(&sprd_gpio_driver);
-> +}
-> +subsys_initcall(sprd_gpio_init);
-> +
-> +static void __exit sprd_gpio_exit(void)
-> +{
-> +       platform_driver_unregister(&sprd_gpio_driver);
-> +}
-> +module_exit(sprd_gpio_exit);
->
-> with
->
-> module_platform_driver(sprd_gpio_driver);
+On Wed, Jan 31, 2018 at 02:26:10PM +0100, Peter Zijlstra wrote:
+> On Wed, Jan 31, 2018 at 01:17:37PM +0000, Will Deacon wrote:
+> > On Wed, Jan 31, 2018 at 02:00:34PM +0100, Peter Zijlstra wrote:
+> > > 
+> > > While looking through the qspinlock users, I stumbled upon openrisc and
+> > > being curious, I wanted to have a look at its memory model.
+> > > 
+> > > To my surprise it doesn't have asm/barrier.h. It does however support
+> > > SMP. This lead me to wonder why it would compile, turns out we provide a
+> > > no-op mb() if the architecture does not provide one.
+> > > 
+> > > With the obvious exception of Sequentially Consistent SMP systems, this
+> > > is terribly broken. And seeing how SC SMP is really rather unusual (and
+> > > unlikely), change the asm-generic/barrier.h to not provide this.
+> > > 
+> > > This _will_ break openrisc builds, they had better clarify their
+> > > position by writing their own barrier.h with a comment in.
+> > > 
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > ---
+> > >  include/asm-generic/barrier.h | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > 
+> > Acked-by: Will Deacon <will.deacon@arm.com>
+> > 
+> > One comment below...
+> > 
+> > > diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
+> > > index fe297b599b0a..7a10748615ff 100644
+> > > --- a/include/asm-generic/barrier.h
+> > > +++ b/include/asm-generic/barrier.h
+> > > @@ -30,9 +30,15 @@
+> > >   * Fall back to compiler barriers if nothing better is provided.
+> > >   */
+> > >  
+> > > +#ifndef CONFIG_SMP
+> > > +/*
+> > > + * If your SMP architecture really is Sequentially Consistent, you get
+> > > + * barrier.h to write a nice big comment about it.
+> > > + */
+> > 
+> > I couldn't find any documentation about the openrisc memory model other
+> > than:
+> > 
+> > https://openrisc.io/or1k.html#__RefHeading__504775_595890882
+> > 
+> > which talks about the WOM bit in the page table being used to select a weak
+> > memory model for the page being mapped as opposed to the strong memory
+> > model. Furthermore, the only fence instruction (l.msync) is permitted to
+> > be a NOP for the strong model, which implies that the strong model is SC
+> > and things like write buffers are forbidden. However, Google suggests that
+> > there are implementations of openrisc with write buffers so I'm not sure I
+> > understand what's going on here (maybe they force WOM and/or l.msync isn't
+> > actually a NOP?)
+> 
+> Right, so by that document they need:
+> 
+> #define mb() asm volatile ("l.msync":::"memory)
+> 
+> but yes, that document raises more questions than it answers. It would
+> be very good to get clarification on how strong their strong model
+> really is. SMP without store buffers is, as I wrote above, 'unusual'.
 
-Yes, I already did this in V2 patch set, you can refer to the V2 patch
-set. Thanks.
+Hello,
 
--- 
-Baolin.wang
-Best Regards
+I tried to clarify some of this in the spec v1.2 [0] which help formalize some of
+the techniques we used for the SMP implementation.  Its probably not perfect,
+but I added a section "10. Multicore support" and tried to clarify some things
+in section 7 on Atomicity.  But it seems I dont cover exactly what are are
+mentioning here.  In general:
+
+  1 Secondary cores have memory snooping enabled meaning that any write to a
+    cached address will cause the cache line to be invalidated.
+  2 l.swa (store atomic word) implies a store buffer flush.
+  3 l.msync is used to flush the store buffer
+
+Also, during the IPI controller review [1] Marc Z asked many similar questions.
+I believe he was ok in the end.
+
+Anyway,
+Thanks for thanks for spotting the issue here.  For some reason I remember we
+did have an l.msync for our mb().  Let me think about and test out this patch
+(and the fix to actually define mb) to see if anything comes up.
+
+Also, I haven't seen any implementations that use WOM.  Stefan might know better.
+
+[0] https://raw.githubusercontent.com/openrisc/doc/master/openrisc-arch-1.2-rev0.pdf
+[1] https://lkml.org/lkml/2017/9/14/487
+
+-Stafford
