@@ -1,45 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752126AbeBAPXj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:23:39 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:40812 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751966AbeBAPXi (ORCPT
+        id S1751988AbeBAP04 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:26:56 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:48038 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1751742AbeBAP0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:23:38 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w11FNA1l002989
-X-Nifty-SrcIP: [209.85.213.46]
-X-Google-Smtp-Source: AH8x224LkrslcbYleSxEsqXGl8tW82gCRjepVVcmdFfPJJ7hlkcmoj7v+kMnVNc+BoSe5NmLTxM9tOr56wPGBLbhD04=
+        Thu, 1 Feb 2018 10:26:51 -0500
+Date: Thu, 1 Feb 2018 10:26:50 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Andrea Parri <parri.andrea@gmail.com>
+cc: will.deacon@arm.com, <peterz@infradead.org>, <boqun.feng@gmail.com>,
+        <npiggin@gmail.com>, <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>,
+        <luc.maranget@inria.fr>, <paulmck@linux.vnet.ibm.com>,
+        <linux-kernel@vger.kernel.org>, <mingo@kernel.org>
+Subject: Re: [PATCH 1/2] tools/memory-model: clarify the origin/scope of the
+ tool name
+In-Reply-To: <1517486609-10951-1-git-send-email-parri.andrea@gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1802011026250.1677-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <1517476855-5235-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1517476855-5235-1-git-send-email-Julia.Lawall@lip6.fr>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 2 Feb 2018 00:22:29 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASRp5AmxGDJNvT+V=+B4xw5bBScdEeBaCBmdnyVOxatLg@mail.gmail.com>
-Message-ID: <CAK7LNASRp5AmxGDJNvT+V=+B4xw5bBScdEeBaCBmdnyVOxatLg@mail.gmail.com>
-Subject: Re: [PATCH] Coccinelle: coccicheck: fix typo
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-01 18:20 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> Correct spelling of "coccinelle".
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
+On Thu, 1 Feb 2018, Andrea Parri wrote:
 
+> Ingo pointed out that:
+> 
+>   "The "memory model" name is overly generic, ambiguous and somewhat
+>    misleading, as we usually mean the virtual memory layout/model
+>    when we say "memory model". GCC too uses it in that sense [...]"
+> 
+> Make it clearer that, in the context of tools/memory-model/, the term
+> "memory-model" is used as shorthand for "memory consistency model" by
+> calling out this convention in tools/memory-model/README.
+> 
+> Stick to the full name in sources' headers and for the subsystem name.
+> 
+> Suggested-by: Ingo Molnar <mingo@kernel.org>
+> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
 
-Applied to linux-kbuild/misc.  Thanks!
+For both patches:
 
-
-
--- 
-Best Regards
-Masahiro Yamada
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
