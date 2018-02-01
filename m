@@ -1,60 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752704AbeBAQYm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:24:42 -0500
-Received: from mail-pl0-f42.google.com ([209.85.160.42]:36075 "EHLO
-        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751567AbeBAQYf (ORCPT
+        id S1752189AbeBAQaF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:30:05 -0500
+Received: from mail-vk0-f52.google.com ([209.85.213.52]:39461 "EHLO
+        mail-vk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751508AbeBAQaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:24:35 -0500
-X-Google-Smtp-Source: AH8x227e0F/4B2TZkbJLtsqm0auuI4tGFNyygegwFeSREUTX1CX++ox+7c7HIzwrRR8krZM2rUp9lkle7gSlTAAxG1Y=
+        Thu, 1 Feb 2018 11:30:03 -0500
+X-Google-Smtp-Source: AH8x227Pb102pA+9v9cqX4J4ZgnyPf2HHKOJBkZLeTAz9WMQbWvmfzCxdu6i+EWP/EyOylkg397TzEGxNmdBj0gQoaA=
 MIME-Version: 1.0
-In-Reply-To: <CAAeHK+xwrXTsgKpXKbJJXeneXeh2eLhYegdPbJYEJH3sD6Ld5A@mail.gmail.com>
-References: <001a114292fa7f761c0560ad62e1@google.com> <001a113f542aed9c4e0560b66f3b@google.com>
- <20180131072750.GF2736@zzz.localdomain> <CAAeHK+xwrXTsgKpXKbJJXeneXeh2eLhYegdPbJYEJH3sD6Ld5A@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 1 Feb 2018 17:24:14 +0100
-Message-ID: <CACT4Y+boQD_-JpFU9BbeuHQMrBLt9YnCVvTqnOWgX9JqTkboiA@mail.gmail.com>
-Subject: Re: WARNING in refcount_inc (2)
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>,
-        syzbot
-        <bot+944a064dbc165044476317df06ebfb218415e951@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        LKML <linux-kernel@vger.kernel.org>, luc.vanoostenryck@gmail.com,
-        Ingo Molnar <mingo@kernel.org>, netdev <netdev@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        syzkaller-bugs@googlegroups.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Cong Wang <xiyou.wangcong@gmail.com>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Thu, 1 Feb 2018 17:29:42 +0100
+X-Google-Sender-Auth: 6yjJ4dpHnQPDHsT_7ltRl4tIFQg
+Message-ID: <CA+7wUsz+Ud6+LFVdVs7-pPMSJmW-7opXCqs2NuYP3=enYxoD4A@mail.gmail.com>
+Subject: cocci script for detecting alloc_apertures mem leak
+To: Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 1, 2018 at 3:34 PM, 'Andrey Konovalov' via syzkaller-bugs
-<syzkaller-bugs@googlegroups.com> wrote:
-> On Wed, Jan 31, 2018 at 8:27 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
->>
->> Also Dmitry, syzbot seems to be grouping together unrelated bugs under the
->> refcount_t WARNINGs; maybe those should be on a blacklist?
->
-> Not a blacklist, we need a proper way of extracting the offending
-> caller like it's done for reports from __this_cpu_* [1].
->
-> [1] https://github.com/google/syzkaller/blob/master/pkg/report/linux.go#L579
+Hi cocci gurus,
 
-Thanks, I've added this as a test case:
-https://github.com/google/syzkaller/commit/e525e980eaed440e278614b9e887270ca67d2dde
+I am wondering if coccinelle can handle detection of kzalloc mem leak
+(within alloc_apertures call) ? Typically:
 
-We mishandle __this_cpu_* as well:
-https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/136
-https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/137
-It does not seem that regexps can sustain this anymore (we also
-mishandle rcu stalls and some other cases), I guess we need manual
-parsing of stack traces that can handle all these cases.
+$ cat drivers/video/fbdev/vesafb.c
+static int vesafb_probe(struct platform_device *dev)
+[...]
+  info->apertures = alloc_apertures(1);
+
+but then:
+
+static void vesafb_destroy(struct fb_info *info)
+{
+  struct vesafb_par *par = info->par;
+
+  fb_dealloc_cmap(&info->cmap);
+  arch_phys_wc_del(par->wc_cookie);
+  if (info->screen_base)
+    iounmap(info->screen_base);
+  release_mem_region(info->apertures->ranges[0].base,
+info->apertures->ranges[0].size);
+}
+
+For reference:
+
+$ cat include/linux/fb.h
+static inline struct apertures_struct *alloc_apertures(unsigned int max_num) {
+  struct apertures_struct *a = kzalloc(sizeof(struct apertures_struct)
+    + max_num * sizeof(struct aperture), GFP_KERNEL);
+
+
+Thanks for comments,
