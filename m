@@ -1,65 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752695AbeBAR3Y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:29:24 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:47536 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751526AbeBAR3W (ORCPT
+        id S1752787AbeBARa1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:30:27 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46128 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752292AbeBARaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:29:22 -0500
-From: Colin King <colin.king@canonical.com>
-To: Shrikrishna Khare <skhare@vmware.com>, pv-drivers@vmware.com,
-        netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] vmxnet3: remove redundant initialization of pointer 'rq'
-Date: Thu,  1 Feb 2018 17:29:21 +0000
-Message-Id: <20180201172921.22770-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Thu, 1 Feb 2018 12:30:24 -0500
+X-Google-Smtp-Source: AH8x224j5USf03S6RNyBzThfsynvd+1086bJJ+34P3mdT7wZ7+C1L0XkcDhetxfJivhGB/TKL0EB5GpiuOm2Wik7qo4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1517480520-4465-3-git-send-email-geert@linux-m68k.org>
+References: <1517480520-4465-1-git-send-email-geert@linux-m68k.org> <1517480520-4465-3-git-send-email-geert@linux-m68k.org>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Thu, 1 Feb 2018 17:30:23 +0000
+Message-ID: <CAKv+Gu85sNC=5U2tgbEQ3ivEo0jVpundzkT-bGz50s0O-1PqHw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] crypto: sha3-generic - Use __optimize to support old compilers
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Christopher Li <sparse@chrisli.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        Linux-Sparse <linux-sparse@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w11HUVNm018151
 
-From: Colin Ian King <colin.king@canonical.com>
+On 1 February 2018 at 10:22, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> With gcc-4.1.2:
+>
+>     crypto/sha3_generic.c:39: warning: ‘__optimize__’ attribute directive ignored
+>
+> Use the newly introduced __optimize macro to fix this.
+>
+> Fixes: 83dee2ce1ae791c3 ("crypto: sha3-generic - rewrite KECCAK transform to help the compiler optimize")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Pointer rq is being initialized but this value is never read, it
-is being updated inside a for-loop. Remove the initialization and
-move it into the scope of the for-loop.
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Cleans up clang warning:
-drivers/net/vmxnet3/vmxnet3_drv.c:2763:27: warning: Value stored
-to 'rq' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/vmxnet3/vmxnet3_drv.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
-index cf95290b160c..8b39c160743d 100644
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -2760,9 +2760,6 @@ static void
- vmxnet3_adjust_rx_ring_size(struct vmxnet3_adapter *adapter)
- {
- 	size_t sz, i, ring0_size, ring1_size, comp_size;
--	struct vmxnet3_rx_queue	*rq = &adapter->rx_queue[0];
--
--
- 	if (adapter->netdev->mtu <= VMXNET3_MAX_SKB_BUF_SIZE -
- 				    VMXNET3_MAX_ETH_HDR_SIZE) {
- 		adapter->skb_buf_size = adapter->netdev->mtu +
-@@ -2794,7 +2791,8 @@ vmxnet3_adjust_rx_ring_size(struct vmxnet3_adapter *adapter)
- 	comp_size = ring0_size + ring1_size;
- 
- 	for (i = 0; i < adapter->num_rx_queues; i++) {
--		rq = &adapter->rx_queue[i];
-+		struct vmxnet3_rx_queue	*rq = &adapter->rx_queue[i];
-+
- 		rq->rx_ring[0].size = ring0_size;
- 		rq->rx_ring[1].size = ring1_size;
- 		rq->comp_ring.size = comp_size;
--- 
-2.15.1
+> ---
+>  crypto/sha3_generic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/crypto/sha3_generic.c b/crypto/sha3_generic.c
+> index a965b9d8055983af..c409cd87fea5decd 100644
+> --- a/crypto/sha3_generic.c
+> +++ b/crypto/sha3_generic.c
+> @@ -35,7 +35,7 @@ static const u64 keccakf_rndc[24] = {
+>
+>  /* update the state with given number of rounds */
+>
+> -static void __attribute__((__optimize__("O3"))) keccakf(u64 st[25])
+> +static void __optimize("O3") keccakf(u64 st[25])
+>  {
+>         u64 t[5], tt, bc[5];
+>         int round;
+> --
+> 2.7.4
+>
