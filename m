@@ -1,48 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752404AbeBAPuY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:50:24 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:40023 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751706AbeBAPuV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:50:21 -0500
-Date: Thu, 1 Feb 2018 16:50:07 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Stafford Horne <shorne@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: asm-generic: Disallow no-op mb() for SMP systems
-Message-ID: <20180201155007.GB2249@hirez.programming.kicks-ass.net>
-References: <20180131130034.GR2269@hirez.programming.kicks-ass.net>
- <20180131131737.GA5097@arm.com>
- <20180131132610.GT2269@hirez.programming.kicks-ass.net>
- <20180201122750.GE30895@lianli.shorne-pla.net>
- <20180201132909.GW2249@hirez.programming.kicks-ass.net>
- <20180201133229.GB9182@arm.com>
- <20180201135329.GB2269@hirez.programming.kicks-ass.net>
- <20180201153951.GG9182@arm.com>
+        id S1752607AbeBAPvf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:51:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53674 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751935AbeBAPvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 10:51:32 -0500
+Date: Thu, 1 Feb 2018 16:51:28 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+cc: Joe Lawrence <joe.lawrence@redhat.com>, Petr Mladek <pmladek@suse.com>,
+        jikos@kernel.org, Jason Baron <jbaron@akamai.com>, jeyu@kernel.org,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: Re: PATCH v6 0/6] livepatch: Atomic replace feature
+In-Reply-To: <20180201151807.xjrldhmwwuot4c2o@treble>
+Message-ID: <alpine.LSU.2.21.1802011649220.29533@pobox.suse.cz>
+References: <20180125160203.28959-1-pmladek@suse.com> <alpine.LSU.2.21.1802011350200.26656@pobox.suse.cz> <1dd714ce-8d11-78b9-51f0-2b71734949e1@redhat.com> <alpine.LSU.2.21.1802011605450.29533@pobox.suse.cz> <20180201151807.xjrldhmwwuot4c2o@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180201153951.GG9182@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 03:39:51PM +0000, Will Deacon wrote:
-> > I could've gotten my brain in a twist or course, which isn't _that_
-> > unusual. I never seem to be able to quite remember the holes you have
-> > with ll/sc on arm64 :-)
-> 
-> Is smp_mb__before_atomic supposed to provide ordering guarantees if it's
-> used before a failed cmpxchg? If so, I think it's needed here because the
-> l.swa might not even execute. Or did I just invent another problem?
+On Thu, 1 Feb 2018, Josh Poimboeuf wrote:
 
-I think it should do so indeed (and afaik all our current archs are good
-that way).
+> On Thu, Feb 01, 2018 at 04:08:14PM +0100, Miroslav Benes wrote:
+> > On Thu, 1 Feb 2018, Joe Lawrence wrote:
+> > 
+> > > On 02/01/2018 08:49 AM, Miroslav Benes wrote:
+> > > > 
+> > > > Well, one more thing. I think there is a problem with shadow variables. 
+> > > > Similar to callbacks situation. Shadow variables cannot be destroyed the 
+> > > > way it is shown in our samples. Cumulative patches want to preserve 
+> > > > everything as much as possible. If I'm right, it should be mentioned in 
+> > > > the documentation.
+> > > 
+> > > Are you talking about using klp_shadow_free_all() call in a module_exit
+> > > routine?  Yeah, I think in this case, that responsibility would be
+> > > passed to the newly loaded cumulative patch, right?
+> > 
+> > Yes, but we haven't got an option not to call it here (as with callbacks, 
+> > where we can omit callbacks completely with atomic replace patches). A 
+> > live patch author must be aware of this and use shadow variables 
+> > appropriately.
+> 
+> So maybe we should recommend that shadow variables generally be freed
+> from a post-unpatch callback.
+
+Yes, that's a possibility. In other words, if there is a need to call 
+klp_shadow_free_all() somewhere, it should be in a post-unpatch callback.
+
+Miroslav
