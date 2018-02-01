@@ -1,120 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751402AbeBAFEI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 00:04:08 -0500
-Received: from mail-co1nam03on0045.outbound.protection.outlook.com ([104.47.40.45]:2496
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S1751360AbeBAFLc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 00:11:32 -0500
+Received: from mail-bl2nam02on0082.outbound.protection.outlook.com ([104.47.38.82]:36179
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750936AbeBAFEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 00:04:04 -0500
+        id S1750753AbeBAFL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 00:11:29 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Suravee.Suthikulpanit@amd.com;
-Subject: Re: [PATCH 1/2] iommu: Fix iommu_unmap and iommu_unmap_fast return
- type
-To: Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jroedel@suse.de
-References: <1517363285-89304-1-git-send-email-suravee.suthikulpanit@amd.com>
- <1517363285-89304-2-git-send-email-suravee.suthikulpanit@amd.com>
- <eaa33cb6-3df0-6f95-59ea-e563076d7f76@arm.com>
+Subject: Re: [PATCH v4] vfio/type1: Adopt fast IOTLB flush interface when
+ unmap IOVAs
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: alex.williamson@redhat.com, joro@8bytes.org, jroedel@suse.de
+References: <1517391946-7830-1-git-send-email-suravee.suthikulpanit@amd.com>
 From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Message-ID: <de21de51-1589-edb1-3dd1-b7065eb8fb3c@amd.com>
-Date: Thu, 1 Feb 2018 12:03:46 +0700
+Message-ID: <0fd4610a-c3ec-90f9-2d87-a7c2dd78193d@amd.com>
+Date: Thu, 1 Feb 2018 12:11:19 +0700
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
  Gecko/20100101 Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <eaa33cb6-3df0-6f95-59ea-e563076d7f76@arm.com>
+In-Reply-To: <1517391946-7830-1-git-send-email-suravee.suthikulpanit@amd.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [114.109.128.54]
-X-ClientProxiedBy: CY4PR13CA0044.namprd13.prod.outlook.com (10.173.156.158) To
- CY4PR12MB1734.namprd12.prod.outlook.com (10.175.62.144)
+X-ClientProxiedBy: CY4PR13CA0089.namprd13.prod.outlook.com (10.171.162.27) To
+ DM5PR12MB1738.namprd12.prod.outlook.com (10.175.89.143)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 47ff5bbb-329c-4003-fed8-08d569313608
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:CY4PR12MB1734;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1734;3:npKrDeGNsTcl+QTmx0skDOJ/VC9Zfp4GX1uImOgGnCOlDd885Q5XBiGR+eESioFvPDsx66FbiLJ/hha5d6f16b8wyPplvFBKDpq+bSKTRCRo8A47pLbOxavEyhq9Z+CXo43Hk7EreZftisO9Oa/IErt5za31jjBUh1jqRwPNgUFH46kjh0+xPstQduQ5f3H15rcKBoRYfqCr7WClCFg6+gT/Vfch/1gvq19TlYwz7hxFINVVPvaKyLFLG9kbRg/P;25:s0qP5MzPWb2martc7mJ9jQ+i9Q5g8OfxxS6g7ffK69zAc2Sn+qqq1IBIBuT/tsUdowYNDWcbk6T0Avu80Cu9PKZouhYT0NAAdfBz8U1z0Tf6VS3RMLUek0hX2kGDN6gTLz6r68h3HwYEWIbpLfpbYJ6zI9t5JV7Mu/ZIK56Fy9zqSEIQ/gp3BGrHmiUE+VYYUdgSA+53zV9UziEbpfm2OO8IBhKyvaqt1yTWbKXMUH6/bwlWTf+J9wBtlnwbWZtWgquSfTNI2HLziI6MawoPWY7J5sV2kUbrHpIJHEJIJQLe2em0xxIxYt87Wnm4VUJFsvE24bhYw3WDSMF1Rrspqw==;31:56LjRH1PlYHIZXesu4XcXSQdbo/g2SJAt2IRw5fq2FXuBKpTQJtTUD+WJzMnFAIJHabIz4JCPjjZQH4Cd7lfc6BsVgSYuhgCtYMpnrkkAxj1mtKGHqniX5Ps5HrGNi4e8aAxQhAEJ4tCZpkO5eatyT6B+MvQ8zYIsx4rvTeXw2REO/fsYocV5fnyd+rPwTfzVgLQfSCVIFO8lI8bG+CHG2Lx1qWWzdEJS167xg7fu64=
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1734:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1734;20:KeFU38i8Bf5xxQxomLA1TZiTL+VoQAFygI2/1S5nUbNmAO1ZVppNHklrXIuCC1ThNmCwuyI6P3DKkIXdR4NPuESFoSLBu4SFTjyG+n0uv1XACIejl+XvfGpLMCg+eJR3abg+qNT6s/9709pw4Z2s91+DY/Idnp8zCvWQ//LTdx2Ic9fpG7wgk+dgDMY0hUz/R8DSnTXkza33ituU0e8c4++zhn9K+l+A31QP6/9CEU04kGoNnj02LUBIie0I2S+Tm4/XhCVribT7Aozvn/Q654FaXUq6cKkpa4BignLlFkOIp8PrPYeOvYz+t4s1JU6ni+1mKteYg0jU4A51dVM3H4rMMFygATDZQeNuXZ7kVkWqU8N/FnQ49Wsij+gp4HzHVh1FttdpHbzOGO0F8Ybsdt/9SOvuohBEQeb0kkHhk62FY9aaPnWpKONZ1Mx1tRjPZldqIRsODKULa6ptN/6KZDA9lGUpi5KkOkAVLnx5kC/sNuv9N+dlVZKME/LoF4Z1;4:DqmxOrRmgLS5sVRh+R/YwpB3Q/T4NePOZhJtkhu0BQgILtcUvfMCqDA//uuCG5R8URWvmvBl9i0FUWKXzSZFId3BL0mNkj3Phsrhg0Tx9V34eEWKNO3d+lEF6sF/Tpo1cYHS3AXEnwU7md34e4+cligQk8/o815NfFSF6WC0+MsuRJlc/k60tcuq6Ane+5QOQWa16kbcik98aGDpPYTu3Z8Q0rIw8kG90ya3pgKwmxnTv+hP5aOO/iL1NNP/NSVzq40SOWuruzcV7GlnP30Lhlq46xY/Ufj/j15C2sy73Q0+GH/ANcex9pE/oBQVP38A
-X-Microsoft-Antispam-PRVS: <CY4PR12MB17349D1AEBB440089E10BC84F3FA0@CY4PR12MB1734.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: bfbda5b0-c54a-4738-fa6a-08d569323f5b
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1738;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1738;3:aaB+sfVTB9qVMEj8e9fqGN1cxJZKF7SlFWEipJ2+IpFVsavwb0S3dT0Qs3cKZqPuiUPa4ojVyfIsh060rZdteQuVY4bSRPVKg8Ogtfz5FSDhuiLry59QrMdRVlsiCvE1fOYAdHQQRUAXj2fA4OxO67x93Asim67wBkDAiOZ66mCgQGgO5xj3O5Q3KEy3VQ13c2kmUK7LuRjvP2PPbEszHoJ/wujyeB76Y4pvY7pwYQ4bjH76EVuDBF5THIiBHZH7;25:Z8cIS/gCtxOQMxhgqJZDOjVxGT2M/8MWudE7ryPvb+cBICMaByxEUfgAFVAcOZMT67vqjHZ7CuOopKkvjQS6Fbl3uPq6diKg1eWOo4eCvSIhE7mGZqq3kLGzEdEia3i3JBhCFuczFSR66DCXdweJGl7REIyFcv8ir4s+ui7fc1VpnRlypT1HeLEr/MdxMbEsYcK44wec3MPKj6O1+MM0aZNjmY5e4KmSIE4QzTqOjIaYsA/+2sDmtMQRGwAi6nKrXIBKG+ubK4LNu0wxnBvB9AJ1FYe1fv4J44L0W2b8bs9dNzE6sYJ6zhIkQgxqRYdtRU21y4NgEcAQhqQpJGn2IA==;31:Uw3WYA2x5hGcyr3+CZ6XjH2oOuDzaFESgh63yZKmRfm1dhRAdh9i0HuS1Jcm+lcrpy3coHpCHRDmCudxoPXhxYBSKdaNowwJupsGbGFDYEP+wzxBuLdiGDYmFs66lUN73unurDTkbzkQJnlYxEQEdw7sleyiwetkaXQUvCFQVYHNhoYc/WSA9YxynXc9qCCKZbjAFJv7UeUIOfQwUIf2Prl2cAIFnCawrZLKyqZ4aGk=
+X-MS-TrafficTypeDiagnostic: DM5PR12MB1738:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1738;20:U96RhVU+k0b0bnJxR9s90ZN2sfVTDdgikMzI0f74qTQdBs0oUR+Kp5q41ejQv1NEyl7dVgjUMw+Gh7A2fOi548hQdpeHfNwE+TduwI/D47rQ1it3sIo+bJxnHkdf25r5Zs9+DgHS8SKBjZI0vXuRLrxioAGzZIoZyvP77KV5CO5j8cpazRMYTazoEOejqriE8J0i+LCtLh2u5YgP5b64ZYmeaTnC8lgAJ6blp+gvOFJ2zIMTIXZIrIuvK7QQe8bUHUA1eBoeQZIfOsFALqcJ+hTWLSOwXS2raBDXvXdoqRRuplrDRCHjgGHzSq40SqSBsPCfpFwAXw5LC5/8cHd6AFKyTRKRMixLVYLOXcUSPC8OnSG/NAQoUYsjI1D4Szig0QX5zu0VWBV+COBXaV5N1LlalDfICaWlrKuOLH3fLEQuGbadsakgoiKv7i5JGexyIDIJ2+FhA0fCElznokZRJ4RP8O9rYpMU3HDTNSgWu62xyExBU+DQdeqVPtw5d58l;4:Katejwtm9UoGWd6yXbdpjshcCPEfXKBjUgCXN++jQ1GPcGXBxUIWyv4q+1Cokd7lwWK/nGo+9518UJYlAUxIxuWvl7zqBRZTY24z+IiZkr39Is2A3MFaBUrFyAD76Dwx2F7GXmOjLDAVgJQ2KK9G6pu1rPFFdLkTJAkEk41os6xpfCrGjKtLu4s5CcNqSa+0zyYqg1YA1tyEvRA+o0TrDoUybml3TizfEeHncvjVSm3D6fgpjkD9mxE7SxjrIt281MOyfDf7AflKgzeCFnBTykVqi7nZqXinZ0DFfHDBPqCw32Sa/sA3ARxoPyS33mkN
+X-Microsoft-Antispam-PRVS: <DM5PR12MB1738C1501394751C456914C9F3FA0@DM5PR12MB1738.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(6041288)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CY4PR12MB1734;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1734;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231101)(2400082)(944501161)(6055026)(6041288)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR12MB1738;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1738;
 X-Forefront-PRVS: 0570F1F193
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(366004)(39860400002)(39380400002)(199004)(189003)(26005)(316002)(2870700001)(6246003)(386003)(6506007)(2906002)(186003)(305945005)(50466002)(105586002)(31696002)(6116002)(86362001)(4326008)(3846002)(25786009)(67846002)(2486003)(64126003)(36756003)(5660300001)(229853002)(76176011)(53936002)(6512007)(52146003)(72206003)(68736007)(97736004)(7736002)(16526019)(66066001)(65956001)(65806001)(6666003)(53546011)(23676004)(2950100002)(58126008)(478600001)(81156014)(106356001)(83506002)(8676002)(81166006)(6486002)(31686004)(8936002)(47776003)(52116002)(65826007);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1734;H:Suravees-MacBook-Pro-15.local;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTRQUjEyTUIxNzM0OzIzOklMWVQxbTZKbmFoVWZNdktWZHpUMFA4a09P?=
- =?utf-8?B?REYxOExlKytCeGNZUEE1T0lRMXppejIwdnVvenYzWnRsOU04aFBIU0FaNHdX?=
- =?utf-8?B?dmRxQmYyRnd0MC9OY05iM3hnUlBIVlBZUHkwTEF0QkM4TnlWRVpjSFdVelJW?=
- =?utf-8?B?ZzR6TTZ1eFRuVjhRR01BblI4WnYrY3hVUXFzRDdSaFJPWGFwdTMxUitPWWpi?=
- =?utf-8?B?Q0tiekxxNUNhbUc0WlhxeThPVENhZTVXVjViQWIzZVZuRnJ4bHYwdXpPWFR5?=
- =?utf-8?B?MXBSK2RsV0phbXk4NDVaYm5pRXJ4czN0bjRudVZodStLZVVkN3M5NU9ZbXM2?=
- =?utf-8?B?U0FjZHhvQ3BZM2lVUE8wUmlZcTFiQ29tSnlBczJJeDRBTC9aZFB1YVN1Z1FZ?=
- =?utf-8?B?bFMrcUVNdGZiSTJzYUhraElHUDl3aWlmYXdsdDdwUTUzY0h2dGNBcWV2ZlpI?=
- =?utf-8?B?RFRzRVNFN1lvQTVtRGlpQU95b01JVzc0TFd3MTVBNVVHMEdnVVBOQnRSZHdP?=
- =?utf-8?B?am1KREg1N05QZGduMlJVVWZiemdRYlh6eFc0M1JDTi9iZGVwaitGTmpZQVpB?=
- =?utf-8?B?eTM0WTdPTHgzWDNuUURRVjJuV0krSnhxTXdXU0I1K3VtaTg1VGx0TTE1dmlY?=
- =?utf-8?B?TTVFU3A2T1ZYTDFXZ09aQUJPdENXb0FmSVNiNkRsOXV0RzJiZ1pIWmFoWXBF?=
- =?utf-8?B?SWxkUWNIQy9xSGdJdm9yNUNJNGExZjBzZ2ZQTDRGc2IxTk1qMzNySTNyOGc2?=
- =?utf-8?B?aXJUZHhtYXhEd2JYY2ppOVBWZ0hpYzlwdWRoNVIyUEVyUUR5T2o3TDJQTnVl?=
- =?utf-8?B?TmNLRW5rTjBxdWpVWXRKdHFiMmIzL3NJTlUzTExVTElaTjRHVmkvR0ZiTDdx?=
- =?utf-8?B?cmdIZUQ0cHhxYVhrMi9FQTBTeEY4OVRPVzdaaEl0eFJhR28yYmlCMi9QRzhx?=
- =?utf-8?B?ajRHT01TcW5JSk0wbEhESUMxZzh3bW84WHhoVzV0TlN2SzVuYzFtbTBGTGdO?=
- =?utf-8?B?dWV4Rm0vbVEwNTZMUnNsVjlpZ25yZFEzbHRQNVJGZHFIYnZPZGpkbmwzbnlE?=
- =?utf-8?B?Mk1HM0pBWHFrU1U0ZEhGbUE2Umw3QUFWQzBwK04ySk0vT1FLQ3ZONC8yNXcx?=
- =?utf-8?B?N3BvQjAwUjNRTzRCYkxkZzY0RzhzZndvbFBnQTQ1c0tIbS9yOTVQQzVjYy9N?=
- =?utf-8?B?akN2WS8xRmtkUmI2WWNxZ2c5aTRUeDBXT1B6TDNsNHpJNlVBVEpRNUVIeE9q?=
- =?utf-8?B?YjkyT2tVQjZwa2hNTFNNd1N6Rll3WjJLZlRBdVBmUGxtRUgrT0xLMmZVellL?=
- =?utf-8?B?OG8vZHpJQXBhc0RkU1l2dVVSU1ROYk43a0tlUW9BMXJQN3hZNXlzcG9hRVlW?=
- =?utf-8?B?dXZqTTlWUTdlV2t3MVIwUURKck1QWm1YaG9VMlJUNGpQR3V6STdtVnRpNExa?=
- =?utf-8?B?UVUwVGxKNWFpZDQ3RHRvSnJhR2swNERHdE1RZDloby9WSmJyd010RDczMHk4?=
- =?utf-8?B?R2hDMnpackhkQXRwZXZUVjl5MmQ2RW1DNnNrSFVOZFNlcUNocCsvTzcvc3NR?=
- =?utf-8?B?OWhSQk5ra1FCZkk2Sk9qcnFtWmFUc1E1SHVOTnZ1WlhJZXA5NGI0N1l4TkJB?=
- =?utf-8?B?cDdISzBZVEw5bzR2NkJBWkg3YVZ0NHU0OXBwTlBXYU01b3NXSFlhR1EwdEk3?=
- =?utf-8?B?RnVEWm5qRDZuVVJpdFljNzBUbndSQ3RIaGZ1VVJCNUN6eUp2TXJiQ3VTUGFu?=
- =?utf-8?B?bUxHL2ZnWWx3dUkzemgxNEVrVCtPWnpaa3pWYXVrRFl3ZXRBTFhBWER4eUZt?=
- =?utf-8?B?TjJSdXNuUlQyUk0rRVBURjBQWDFBL1VYYkh1YVdISzVTZXc9PQ==?=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1734;6:fniDMlz4FqzdnBZGXnYkweOD5saq2jeV4Zb6CA9djBhqX2pgTrN8fsRn3vGO5AyEPjnO95kH+yWoamnMD910QVfOCGJFC+L85zw6LKm4ynF+igP30vopPubLhya0V9L6gNTQxByXxL4EogeyxDVN2z2KsB8iINTPXv/pXtDccQGOfniXOXtMlJvXMDp+eDLpNa26PkXCMRzoyb6yHY7AxFCJyRXVJrpJNv+gwjcZYuqEjFmU4zcyVU4zWUAMwx9d9sDz84TAXD9wNWqWqyw64uDx5mTDXpJyAg6xrDnP5u1rq1qCdIMA1y+7y9e9BWbHv5BS3YymSSxeypZIsEkYJCSROkiYFB/HR0k0NKmmBo8=;5:a8EVRPm8sUJTBvuR1Ukc5JYwBh9MfhjTbHsMePLSFP+rbkYN7c/xZnN/DUAux/d0pmTsvWAqHaPTejb8tRbX0wNNFgEDcww36eb+GcO9rE5Std7zP3x+8lMiaLAUqRXmaFm2rd9NBFHPWy4CtumnL7Wti6Nvapi20Rnxn4661b8=;24:RqbfOZHjVYF6mDXgdFWz6JBMy38GBkQfICXFbPolK/J1jNcmf5DNbzpmbSmP5hdnhVR50b5m/pD2ceNBRjsT2EO1aXFpP1P2ZvHm9/iDh0M=;7:Ge76vydM4KFWqabmCpRYy6KX+IW+MokggKHy6FcGMgt2cueu6FlfO4vlUU01l2qUTkDdN7eHzGZW3/FW1W74rxC7omMy6J8LDxk14k/7TUMl/es72P5zIvhJkuovFuu8Ev9/EFv6WPpzhJe9my7JLiPJVuOu7FCUTFR+RvmNQhCq0Yl3wGOfY0FfHrbld7+15xPwGP3xDZHzF9H9fIDmxfODqGfjjcQX+dl4dg7X8np1K52r4eH8tNXv/xvnRMwP
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(39380400002)(39860400002)(396003)(189003)(199004)(31686004)(6512007)(105586002)(2906002)(3846002)(97736004)(81166006)(5660300001)(6306002)(8676002)(81156014)(2950100002)(386003)(106356001)(6246003)(6666003)(2486003)(8936002)(23676004)(52146003)(65826007)(6116002)(230700001)(76176011)(52116002)(53546011)(53936002)(6506007)(305945005)(229853002)(86362001)(7736002)(83506002)(186003)(31696002)(68736007)(6486002)(4326008)(47776003)(26005)(50466002)(478600001)(25786009)(64126003)(72206003)(36756003)(65806001)(67846002)(58126008)(65956001)(16526019)(316002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1738;H:Suravees-MacBook-Pro-15.local;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxNzM4OzIzOkZpOVlYRmh6dmVkSVhoNmRtK0RTRVpSLzJs?=
+ =?utf-8?B?QlF2WFVtMm14TytBYktQMTV5VENDYUdwZnU2R0JRN1FiL3BjU0xoUVdmS0dW?=
+ =?utf-8?B?U3JxTVRxcmZ0Q2kyT2RoakNtVjhVYnFDS2xYUlUvVTJDUjhJN2l1VlNGeHBj?=
+ =?utf-8?B?QzJ3S2Z4cmVGdDZ6SXFXTjZJNG1OSGNSVlhkYW14cENoQ1E2dTFLUmIraEJN?=
+ =?utf-8?B?WGRlRkFYeUhUZGY2MnhvOURHV0V5Z1FXT1FGSWsyVzBiNHhDMVRRODJvNDBq?=
+ =?utf-8?B?eS9GaE9QaUlTREtKWXhDYUFpeTN4SDFveTBRVnMwOGF3YURGeXllbFVoSzh1?=
+ =?utf-8?B?SkRVR09PckFVSG9uNGpNOEp1K2pVNVNLVVdaSWZWTUwwNUZSQjhXMFpFdmsr?=
+ =?utf-8?B?K3hvNW9vWG1BNVBSYWFGL210M0RWOU5VYis4b2VqRVJpcTNYeUI3djNrcGM3?=
+ =?utf-8?B?ODllWDUrMjA0T28yMHU0eGF6cmR4QVlBN2dGdm15OW9aTDNKMHN4MEdERHhS?=
+ =?utf-8?B?ak1oY2FiakluWjNvNUNRVFN1WFpYTE5GTWFwMlJtZzg2bGluMU1aM0thT0VC?=
+ =?utf-8?B?dVZLZE1QblZzTFVhNU5jN1FPVVowallsaVhJYXA2Z0pGSnJheUtlaGFvUlF4?=
+ =?utf-8?B?LzZEaXpuSG9yblZYSFNmNmVGU0Z6VHkyNktXeVVsZGxYUkI4TGJjVUl5aVFJ?=
+ =?utf-8?B?dXZTSHJNM1dHQkdrVkVjT29ZSkZZSXdSZkJHMjdPY0ZuOUM3RkJkUE5QVjlS?=
+ =?utf-8?B?clRjemVlU0tCd2kvM0p3Uk9PbmVuLzN2bVp0LzJheWxycUI2bkZwZVJLSk4r?=
+ =?utf-8?B?WExJMlFwRENkRzZkT3E4bmFHeFlYUUM5NXBIZ3hpUUhvVGNjdktCNWcyWUFl?=
+ =?utf-8?B?T1VRaWJzaFVFeFUxbS9oRXZWODBxR3ZNNlp6TmJwQnJEakxkZDFFWUd2NTVV?=
+ =?utf-8?B?Y1NFYlllRHBmY3VtTmNPOHBUYjNqZjB4czdmZ09Nc3Ivbm9lQ3BnczhicW5t?=
+ =?utf-8?B?OEFnbEliTTZWSXZBbTNzNkM0alhyZWN6WUNyOXNWaVdzTFNBdDlScnh4Tkdo?=
+ =?utf-8?B?Y3NaYXZGdUVjdXBrbFdVT2IvTFpsVndUTEM2N0R4U0w3Sm8wV1h2NWxrY0Jh?=
+ =?utf-8?B?NkEvbkJTSGxzN2hVeXZabTdTY1grY21VR0E0SWZyQ3B6OUhGQW56UzhOMVV4?=
+ =?utf-8?B?dnNMTllvenJGQlhSQWVBWFhJRUVsUjZnckZjdXd4WUE3SnhZekpoT3BGeU0w?=
+ =?utf-8?B?aDBUcWJVa05nbDlMbnhFRGV3UmVZYW9KTnFsaUsxQlZ1Nkt1dlkvUS9jdjBL?=
+ =?utf-8?B?dm5EbXhEODlWVGxzd0M0d0pIVzJVQ2RUQmZQWU9OQ3lWV0Izd0I5Nkh6b1RM?=
+ =?utf-8?B?SGYxUjhuRWJXZkkwUWkzZTJmTEZaT29XZU9LRHY5VUhWb09ZRExXTWZ0L3VP?=
+ =?utf-8?B?VFgwQUlSWEFXaEZCbkRzcEZQczJFbGg4NWdQVHQ0eVlzOUJzQnB1aFhVWTJk?=
+ =?utf-8?B?TXVvWGtmdFd3VlBCSzlVSjlSdU5qUEpGekgxSDgrcndpcWFTWHFrS3hSUUJG?=
+ =?utf-8?B?cEZBdTc0WU9LbHBnNDI4MzdoNjV6MGRIUnhFNjZUa2l6YTRpQ1RtVUpvTmFy?=
+ =?utf-8?B?aGROTGgvNURuRmtMN05hVFFwZFdHTzk2SEQ5cCs5eUdOMlZ0a1ArVGF6d3Vz?=
+ =?utf-8?B?eTFuMGpaOXZXaXhPMVBFdEZ0VXYrUzNWaXdrUGo0SjgzbkNyVFdSZk1EaXZU?=
+ =?utf-8?B?cXYxV09ZOWhOWU5nL3Z3SWV2M3pBK0FEZGt5OFZpSjFjdHIxdjkyNFBNUHlR?=
+ =?utf-8?B?M1hNTGE1c0hCNWdUNWhoR1BYVGR4MVNaS1hLL25Da3E0ZkVwd0xRc2U3R2VS?=
+ =?utf-8?Q?+A5gCgKhlPY=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1738;6:VG2Ko4wMmG6AKHxiFYGIHIe/x6W3R4qKLzf2X+ujyPtkm18u2mwHxEkjzYg9VOkB2wW4/r6iQLfVyAXue8H4vh2zAl97Qdj4PQ51HHdxVCQp45ku2WUqPmxCxRStuMSB2MvPPfnPzYdZpEwhcpA5XzYR+1wIWfJccK8+cX2GX40qjggWSod4uAFK7b92F/d/O4Ri28TgzYzQNwqLfFg55AQqztNvD1jBFpbTFJcO+uEkJ7/mL5J8kybiINe8QsrO5Xx42JRNE1m+HxyEm5EN+8eEqMZsho6r/RzYPkB0cOyBx3eSsV9c0/e7cTvaOEQ8ZcjJAJ3hNhdcbbjOujAqzxtWilqE55IOJrSBi3TLuYQ=;5:OMWw/Szff2ZABxTkrPPMtzkosUjzyn5e/eWVTxelMyv+J0KfB8qqz6GeTxCKsGnbhCIjqwzDfVkya998PK+4S5MyIzgB11lGoGcVdMtCo6fLcTCnTkRcA35AoiJyADIG7by6kCGYlC2A0yY1FxWM6bLdy17F8zNv8a5kA+rPHTE=;24:597F6MT6CjdcCtWQXCn3eazqJUSTCjSE6sqz8EY44ESu0C9DLe9aplfb5IgCVxnTDdGJwLFT6Oxu7YRW0PSkvIgSlTR6xQO/ICGov5tTxn0=;7:4VnRhbU9bA4evzsgKj2Y58M9yA3psB+logbdeKlsq9dy/NLFtmFLn14OiMRvYM8csubmujUa0ymYC/hbbtDqZNTNe1BTVvJ9lBVJthOTGJfBXhulp83B0zwfA8f/bzqJFlM5rNzwRjv5gKZEAPdKuMmCcOsgno3lD/gf8zTHpY72+oh3LkFRw9B3OfmEMLYECk8OoZ20sbzrovBf1+kmv1veoeUh9wJsq+Vuk+afjffuirMHqJsE6Z8payx791gV
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1734;20:t1DEk9tEsxaS5kxj+jj82dZH+OnBBvlptuo5p4B4XFcDZptqd4/pDbR4YlKxeTZYwe+EP+7BQU6j7l4KtVOY7A6c+YFNnJHONOO9aQ9cBiMckE45d6PzKHbcKIGYDDYST1KwtC12A3DNlil8ZfQIY1dJ0QxyhoGkqdzBokeEftKJCIALFruw9BqskrcyOwz6IKx4YVMtgbqc8Uw6k3SKLPdJAgCi5VL50tao/IZvj5q2i3QBgRs9B9JTJmGoHkah
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1738;20:FqfwOiAiqv99WR9HuUgI1L5lOayTD+2Qz15eo42wPu22A6E6B6J4ej5nkR9D7Y8t+43J49Ljc55ktBpQwsE540HtSxskxZKlrgkM/sA8WycLPqiiRJfj1Utzw/rUb9IUmfRp+CYN/g5GFnK4M1HkTsjW5c9HlEjrKFrcujrwDxbNy0HJtFVnpTyH1oTLSGM6X8JKpyxJOaeNadLyOHydIiSjS4d8ttre0D6S3yzFkQ0vqkgISyWPrSGVZLdukdM3
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2018 05:04:00.2728 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47ff5bbb-329c-4003-fed8-08d569313608
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2018 05:11:25.5222 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bfbda5b0-c54a-4738-fa6a-08d569323f5b
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1734
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1738
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+Alex,
 
-On 2/1/18 1:02 AM, Robin Murphy wrote:
-> Hi Suravee,
+On 1/31/18 4:45 PM, Suravee Suthikulpanit wrote:
+> Currently, VFIO IOMMU type1 unmaps IOVA pages synchronously, which requires
+> IOTLB flush for every IOVA unmap. This results in a large number of IOTLB
+> flushes during initialization of pass-through devices.
 > 
-> On 31/01/18 01:48, Suravee Suthikulpanit wrote:
->> Currently, iommu_unmap and iommu_unmap_fast return unmapped
->> pages with size_t.  However, the actual value returned could
->> be error codes (< 0), which can be misinterpreted as large
->> number of unmapped pages. Therefore, change the return type to ssize_t.
->>
->> Cc: Joerg Roedel <joro@8bytes.org>
->> Cc: Alex Williamson <alex.williamson@redhat.com>
->> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
->> ---
->>   drivers/iommu/amd_iommu.c   |  6 +++---
->>   drivers/iommu/intel-iommu.c |  4 ++--
+> This can be avoided using the asynchronous (fast) IOTLB flush interface.
 > 
-> Er, there are a few more drivers than that implementing iommu_ops ;)
+> Cc: Alex Williamson<alex.williamson@redhat.com>
+> Cc: Joerg Roedel<joro@8bytes.org>
+> Signed-off-by: Suravee Suthikulpanit<suravee.suthikulpanit@amd.com>
+> ---
+> 
+> Changes from v3 (https://lkml.org/lkml/2018/1/21/244)
+>   * Refactor the code to unmap_unpin_fast() and unmap_unpin_slow()
+>     to improve code readability.
+>   * Fix logic in vfio_unmap_unpin() to fallback to unmap_unpin_slow()
+>     only for the failing iova unmapping, and continue the next unmapping
+>     with the unmap_unpin_fast(). (per Alex)
+>   * Fix error handling in case of failing to do fast unmapping to warn
+>     only once.
+>   * Remove reference to GPU in the commit message.
 
-Ahh right.
-> 
-> It seems like it might be more sensible to fix the single instance of a driver returning -EINVAL (which appears to be a "should never happen if used correctly" kinda thing anyway) and leave the API-internal callback prototype as-is. I do agree the inconsistency of iommu_unmap() itself wants sorting, though (particularly the !IOMMU_API stubs which are wrong either way).
-> 
-> Robin.
+Please ignore v4. I found an issue in error handling logic. Also, I need to change
+the return value back to size_t (as this was in a discussed in a separate thread).
 
-Make sense. I'll leave the API alone, and change the code to not returning error then.
-There are a few places to fix.
+Sorry for confusion. I'll clean up and send out v5.
 
 Thanks,
 Suravee
