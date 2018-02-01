@@ -1,41 +1,43 @@
 Return-Path: <khalid.aziz@oracle.com>
-X-Google-Smtp-Source: AH8x226kkKwvryP3pRtu0pcI+ENcTkNtrHIk+fTz7xyr2+oid2UaoyI5FAGRDrjckPfbIVPyRz1l
-ARC-Seal: i=1; a=rsa-sha256; t=1517508133; cv=none;
+X-Google-Smtp-Source: AH8x227wVc8Oc6OE7OqvdthD3gmvLXpc9aK48/ILKwWd7PcAr2H7vU47JPERbAm91mQIScNAt25t
+ARC-Seal: i=1; a=rsa-sha256; t=1517508132; cv=none;
         d=google.com; s=arc-20160816;
-        b=VF49zkvt5pDpOAZImSPn8A0UWbyM5kNr59ohUMrCnhSyV9M81qzPdIlBV3zxEhEGZ5
-         JY58+ZTsJC6NETUECsBHoL7Yfq5YhBrMdsfOeiKTyo001SCkQw6dYiqbE8eQy4wJUaqP
-         6dgPbTUNo6fmhsy6wZs3MQBijOtNoP5NqAuWl4JfhNsGWqYnzGla1nyhVmSvZIC840pg
-         HU7WnrL2J8gTIKrPktOUhGxyZ4/5KIdEDKjVtm95RMNIMWXn4Cuke0ITfhlOzswfIX+E
-         4T7111TUTMGTYHmwXvd+EPetpHGzC3QaSoLBy+LsewCmm62Gl2j2dNbZgvFJtxaQLRek
-         U/UQ==
+        b=cQClcj1HcumhwqXXRqLULO9739vf+8wu7GeuunfGQvfgfPHxY4Q+kGuR9ZqCjpX3Xb
+         E9UX8RyDfvuV2crB3jcW47Y6+FoEpLD/YgW9Zygg/4YYD1kSv/dOvHWITFo8uop2I5g+
+         67eMq9SD6zZAgei2OlkzTAcg4i4DZjsRFH3n28u6xltrxzAgI6ngRVqB8HkgslXBZ9GR
+         eu9d52s/Iglz7++FBVEowfoSIjX671gHNoS4sU0FJ3H+VC8b5Fnl3ox5ae/BuYaF+5Ll
+         Vu6lYfiamat+t+lqaQcbDr7PC11pnbrObjHOyqA6H0/M9dHXVBjLU1gEVXsk4v2+Lpiy
+         4N8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=NxbTRPn0RuHG9VYIAhhQIgaatn1I1OF71ZHIgqrDpVA=;
-        b=UwZNkWeEE7o1tVOGS7ns+bJkWLiQU1PUmq+CdtgRaS+TGTLqrOn0x4vUUzTzFN5dat
-         Pn7iGQm/rRA+2geOL4IpfB4/MN5QYE72/ZwaQoEAIVGDmB1E3COyZkpKmkkH34lMmkIJ
-         DpUYFybUA9IuVO3SSfbDDGwlhOv5CyEyLMacfjx0DxZkP3KSdd+QCTaDLzBEqp0N9pGA
-         eVFQV7G+gvjtNmHfrjwfM9ztaDJl5pTLOl+qQ3prr72jExMpJT8uDFLUfUe1+mdxOIfv
-         DIO224gilQGEx5tOyrFjvANcuNwxOhZTFjOv5sB4UoscXQ/Ndqc/mNFi6r1fJePdtqEQ
-         dBAQ==
+        bh=tCTL3CQSduIq8z3H2Wb2Tf1MgfNVCO58ITvnVMKN+Fc=;
+        b=uye8GwuflAeJLRbdOPXmDe2f5oJEqajMCJXST1OlOG5T6gNbq7I3uvp8nz1itfrkDK
+         sP9i0qXAvIUgyjRcgT1afY9ue4JuhNfBm9TMr6+kAkyNX9M6Nkx6qnD4EgZ5Oxy0DRFU
+         4IC1nWnxkCDnWC6usNqMMCE2WY6wH4pw6coztrJkJPZxiW/3BexsTb2Ms8mmDtyNEf96
+         u+NwZhTjJtzodPf3RKTvpFfxbdPtfQ1zTbAeINmC+z5aEX3mjnlESOe7HcRhXxM/pB15
+         Rf7g1kBgP+A9lIgI3zIBnoL0cLvwFhwHVaknTbwfGzkOtL50hSnFhwqJhJx/u1du0ekK
+         efhg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=CJCtQ2/i;
-       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=YXMICajm;
+       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=CJCtQ2/i;
-       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=YXMICajm;
+       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Khalid Aziz <khalid.aziz@oracle.com>
-To: akpm@linux-foundation.org, davem@davemloft.net
-Cc: Khalid Aziz <khalid.aziz@oracle.com>, kstewart@linuxfoundation.org,
-        pombredanne@nexb.com, tglx@linutronix.de, anthony.yznaga@oracle.com,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-mm@kvack.org,
-        Khalid Aziz <khalid@gonehiking.org>
-Subject: [PATCH v11 09/10] mm: Allow arch code to override copy_highpage()
-Date: Thu,  1 Feb 2018 11:01:17 -0700
-Message-Id: <3e5949f4cedfdd499bd745135bd99f36cbb13503.1517497017.git.khalid.aziz@oracle.com>
+To: davem@davemloft.net, dave.hansen@linux.intel.com
+Cc: Khalid Aziz <khalid.aziz@oracle.com>, anthony.yznaga@oracle.com,
+        tglx@linutronix.de, gregkh@linuxfoundation.org,
+        nagarathnam.muthusamy@oracle.com, nick.alcock@oracle.com,
+        jag.raman@oracle.com, shannon.nelson@oracle.com,
+        liam.merwick@oracle.com, mhocko@suse.com, pombredanne@nexb.com,
+        elena.reshetova@intel.com, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>
+Subject: [PATCH v11 06/10] sparc64: Add auxiliary vectors to report platform ADI properties
+Date: Thu,  1 Feb 2018 11:01:14 -0700
+Message-Id: <84fd2651f3c348095f4c0c36727a945046f83e01.1517497017.git.khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1517497017.git.khalid.aziz@oracle.com>
 References: <cover.1517497017.git.khalid.aziz@oracle.com>
@@ -47,49 +49,291 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1802010231
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591222607977470527?=
-X-GMAIL-MSGID: =?utf-8?q?1591222607977470527?=
+X-GMAIL-THRID: =?utf-8?q?1591222607872906483?=
+X-GMAIL-MSGID: =?utf-8?q?1591222607872906483?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Some architectures can support metadata for memory pages and when a
-page is copied, its metadata must also be copied. Sparc processors
-from M7 onwards support metadata for memory pages. This metadata
-provides tag based protection for access to memory pages. To maintain
-this protection, the tag data must be copied to the new page when a
-page is migrated across NUMA nodes. This patch allows arch specific
-code to override default copy_highpage() and copy metadata along
-with page data upon migration.
+ADI feature on M7 and newer processors has three important properties
+relevant to userspace apps using ADI capabilities - (1) Size of block of
+memory an ADI version tag applies to, (2) Number of uppermost bits in
+virtual address used to encode ADI tag, and (3) The value M7 processor
+will force the ADI tags to if it detects uncorrectable error in an ADI
+tagged cacheline. Kernel can retrieve these properties for a platform
+through machine description provided by the firmware. This patch adds
+code to retrieve these properties and report them to userspace through
+auxiliary vectors.
 
 Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
 Cc: Khalid Aziz <khalid@gonehiking.org>
 Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
-v9:
-	- new patch
+v11:
+	- Rebased to 4.15
+v10:
+	- Updated copyright
+v8:
+	- Added AT_ADI_UEONADI back
+v7:
+	- new patch split off from patch 4/4 in v6
 
- include/linux/highmem.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/sparc/include/asm/adi.h         |  6 +++
+ arch/sparc/include/asm/adi_64.h      | 47 ++++++++++++++++++
+ arch/sparc/include/asm/elf_64.h      |  5 ++
+ arch/sparc/include/uapi/asm/auxvec.h | 11 +++++
+ arch/sparc/kernel/Makefile           |  1 +
+ arch/sparc/kernel/adi_64.c           | 96 ++++++++++++++++++++++++++++++++++++
+ arch/sparc/kernel/mdesc.c            |  2 +
+ 7 files changed, 168 insertions(+)
+ create mode 100644 arch/sparc/include/asm/adi.h
+ create mode 100644 arch/sparc/include/asm/adi_64.h
+ create mode 100644 arch/sparc/kernel/adi_64.c
 
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index 776f90f3a1cd..0690679832d4 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -237,6 +237,8 @@ static inline void copy_user_highpage(struct page *to, struct page *from,
- 
- #endif
- 
-+#ifndef __HAVE_ARCH_COPY_HIGHPAGE
-+
- static inline void copy_highpage(struct page *to, struct page *from)
- {
- 	char *vfrom, *vto;
-@@ -248,4 +250,6 @@ static inline void copy_highpage(struct page *to, struct page *from)
- 	kunmap_atomic(vfrom);
- }
- 
+diff --git a/arch/sparc/include/asm/adi.h b/arch/sparc/include/asm/adi.h
+new file mode 100644
+index 000000000000..acad0d04e4c6
+--- /dev/null
++++ b/arch/sparc/include/asm/adi.h
+@@ -0,0 +1,6 @@
++#ifndef ___ASM_SPARC_ADI_H
++#define ___ASM_SPARC_ADI_H
++#if defined(__sparc__) && defined(__arch64__)
++#include <asm/adi_64.h>
 +#endif
++#endif
+diff --git a/arch/sparc/include/asm/adi_64.h b/arch/sparc/include/asm/adi_64.h
+new file mode 100644
+index 000000000000..85f7a763af85
+--- /dev/null
++++ b/arch/sparc/include/asm/adi_64.h
+@@ -0,0 +1,47 @@
++/* adi_64.h: ADI related data structures
++ *
++ * Copyright (c) 2016 Oracle and/or its affiliates. All rights reserved.
++ * Author: Khalid Aziz (khalid.aziz@oracle.com)
++ *
++ * This work is licensed under the terms of the GNU GPL, version 2.
++ */
++#ifndef __ASM_SPARC64_ADI_H
++#define __ASM_SPARC64_ADI_H
 +
- #endif /* _LINUX_HIGHMEM_H */
++#include <linux/types.h>
++
++#ifndef __ASSEMBLY__
++
++struct adi_caps {
++	__u64 blksz;
++	__u64 nbits;
++	__u64 ue_on_adi;
++};
++
++struct adi_config {
++	bool enabled;
++	struct adi_caps caps;
++};
++
++extern struct adi_config adi_state;
++
++extern void mdesc_adi_init(void);
++
++static inline bool adi_capable(void)
++{
++	return adi_state.enabled;
++}
++
++static inline unsigned long adi_blksize(void)
++{
++	return adi_state.caps.blksz;
++}
++
++static inline unsigned long adi_nbits(void)
++{
++	return adi_state.caps.nbits;
++}
++
++#endif	/* __ASSEMBLY__ */
++
++#endif	/* !(__ASM_SPARC64_ADI_H) */
+diff --git a/arch/sparc/include/asm/elf_64.h b/arch/sparc/include/asm/elf_64.h
+index 25340df3570c..7e078bc73ef5 100644
+--- a/arch/sparc/include/asm/elf_64.h
++++ b/arch/sparc/include/asm/elf_64.h
+@@ -10,6 +10,7 @@
+ #include <asm/processor.h>
+ #include <asm/extable_64.h>
+ #include <asm/spitfire.h>
++#include <asm/adi.h>
+ 
+ /*
+  * Sparc section types
+@@ -215,9 +216,13 @@ extern unsigned int vdso_enabled;
+ 
+ #define	ARCH_DLINFO							\
+ do {									\
++	extern struct adi_config adi_state;				\
+ 	if (vdso_enabled)						\
+ 		NEW_AUX_ENT(AT_SYSINFO_EHDR,				\
+ 			    (unsigned long)current->mm->context.vdso);	\
++	NEW_AUX_ENT(AT_ADI_BLKSZ, adi_state.caps.blksz);		\
++	NEW_AUX_ENT(AT_ADI_NBITS, adi_state.caps.nbits);		\
++	NEW_AUX_ENT(AT_ADI_UEONADI, adi_state.caps.ue_on_adi);		\
+ } while (0)
+ 
+ struct linux_binprm;
+diff --git a/arch/sparc/include/uapi/asm/auxvec.h b/arch/sparc/include/uapi/asm/auxvec.h
+index 5f80a70cc901..f9937ccfcd99 100644
+--- a/arch/sparc/include/uapi/asm/auxvec.h
++++ b/arch/sparc/include/uapi/asm/auxvec.h
+@@ -3,6 +3,17 @@
+ 
+ #define AT_SYSINFO_EHDR		33
+ 
++#ifdef CONFIG_SPARC64
++/* Avoid overlap with other AT_* values since they are consolidated in
++ * glibc and any overlaps can cause problems
++ */
++#define AT_ADI_BLKSZ	48
++#define AT_ADI_NBITS	49
++#define AT_ADI_UEONADI	50
++
++#define AT_VECTOR_SIZE_ARCH	4
++#else
+ #define AT_VECTOR_SIZE_ARCH	1
++#endif
+ 
+ #endif /* !(__ASMSPARC_AUXVEC_H) */
+diff --git a/arch/sparc/kernel/Makefile b/arch/sparc/kernel/Makefile
+index cc97545737f0..76cb57750dda 100644
+--- a/arch/sparc/kernel/Makefile
++++ b/arch/sparc/kernel/Makefile
+@@ -69,6 +69,7 @@ obj-$(CONFIG_SPARC64)   += visemul.o
+ obj-$(CONFIG_SPARC64)   += hvapi.o
+ obj-$(CONFIG_SPARC64)   += sstate.o
+ obj-$(CONFIG_SPARC64)   += mdesc.o
++obj-$(CONFIG_SPARC64)   += adi_64.o
+ obj-$(CONFIG_SPARC64)	+= pcr.o
+ obj-$(CONFIG_SPARC64)	+= nmi.o
+ obj-$(CONFIG_SPARC64_SMP) += cpumap.o
+diff --git a/arch/sparc/kernel/adi_64.c b/arch/sparc/kernel/adi_64.c
+new file mode 100644
+index 000000000000..8fb72585d9f1
+--- /dev/null
++++ b/arch/sparc/kernel/adi_64.c
+@@ -0,0 +1,96 @@
++/* adi_64.c: support for ADI (Application Data Integrity) feature on
++ * sparc m7 and newer processors. This feature is also known as
++ * SSM (Silicon Secured Memory).
++ *
++ * Copyright (C) 2016 Oracle and/or its affiliates. All rights reserved.
++ * Author: Khalid Aziz (khalid.aziz@oracle.com)
++ *
++ * This work is licensed under the terms of the GNU GPL, version 2.
++ */
++#include <linux/init.h>
++#include <asm/mdesc.h>
++#include <asm/adi_64.h>
++
++struct adi_config adi_state;
++
++/* mdesc_adi_init() : Parse machine description provided by the
++ *	hypervisor to detect ADI capabilities
++ *
++ * Hypervisor reports ADI capabilities of platform in "hwcap-list" property
++ * for "cpu" node. If the platform supports ADI, "hwcap-list" property
++ * contains the keyword "adp". If the platform supports ADI, "platform"
++ * node will contain "adp-blksz", "adp-nbits" and "ue-on-adp" properties
++ * to describe the ADI capabilities.
++ */
++void __init mdesc_adi_init(void)
++{
++	struct mdesc_handle *hp = mdesc_grab();
++	const char *prop;
++	u64 pn, *val;
++	int len;
++
++	if (!hp)
++		goto adi_not_found;
++
++	pn = mdesc_node_by_name(hp, MDESC_NODE_NULL, "cpu");
++	if (pn == MDESC_NODE_NULL)
++		goto adi_not_found;
++
++	prop = mdesc_get_property(hp, pn, "hwcap-list", &len);
++	if (!prop)
++		goto adi_not_found;
++
++	/*
++	 * Look for "adp" keyword in hwcap-list which would indicate
++	 * ADI support
++	 */
++	adi_state.enabled = false;
++	while (len) {
++		int plen;
++
++		if (!strcmp(prop, "adp")) {
++			adi_state.enabled = true;
++			break;
++		}
++
++		plen = strlen(prop) + 1;
++		prop += plen;
++		len -= plen;
++	}
++
++	if (!adi_state.enabled)
++		goto adi_not_found;
++
++	/* Find the ADI properties in "platform" node. If all ADI
++	 * properties are not found, ADI support is incomplete and
++	 * do not enable ADI in the kernel.
++	 */
++	pn = mdesc_node_by_name(hp, MDESC_NODE_NULL, "platform");
++	if (pn == MDESC_NODE_NULL)
++		goto adi_not_found;
++
++	val = (u64 *) mdesc_get_property(hp, pn, "adp-blksz", &len);
++	if (!val)
++		goto adi_not_found;
++	adi_state.caps.blksz = *val;
++
++	val = (u64 *) mdesc_get_property(hp, pn, "adp-nbits", &len);
++	if (!val)
++		goto adi_not_found;
++	adi_state.caps.nbits = *val;
++
++	val = (u64 *) mdesc_get_property(hp, pn, "ue-on-adp", &len);
++	if (!val)
++		goto adi_not_found;
++	adi_state.caps.ue_on_adi = *val;
++
++	mdesc_release(hp);
++	return;
++
++adi_not_found:
++	adi_state.enabled = false;
++	adi_state.caps.blksz = 0;
++	adi_state.caps.nbits = 0;
++	if (hp)
++		mdesc_release(hp);
++}
+diff --git a/arch/sparc/kernel/mdesc.c b/arch/sparc/kernel/mdesc.c
+index 418592a09b41..39a2503fa3e1 100644
+--- a/arch/sparc/kernel/mdesc.c
++++ b/arch/sparc/kernel/mdesc.c
+@@ -22,6 +22,7 @@
+ #include <linux/uaccess.h>
+ #include <asm/oplib.h>
+ #include <asm/smp.h>
++#include <asm/adi.h>
+ 
+ /* Unlike the OBP device tree, the machine description is a full-on
+  * DAG.  An arbitrary number of ARCs are possible from one
+@@ -1345,5 +1346,6 @@ void __init sun4v_mdesc_init(void)
+ 
+ 	cur_mdesc = hp;
+ 
++	mdesc_adi_init();
+ 	report_platform_properties();
+ }
 -- 
 2.11.0
