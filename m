@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeBARZ1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:25:27 -0500
-Received: from mail-bn3nam01on0045.outbound.protection.outlook.com ([104.47.33.45]:43952
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1752777AbeBARZn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:25:43 -0500
+Received: from mail-by2nam01on0056.outbound.protection.outlook.com ([104.47.34.56]:29504
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751526AbeBARZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:25:23 -0500
+        id S1752439AbeBARZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 12:25:39 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Yuri.Norov@cavium.com;
 From: Yury Norov <ynorov@caviumnetworks.com>
@@ -15,85 +15,98 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 Cc: Yury Norov <ynorov@caviumnetworks.com>, Arnd Bergmann <arnd@arndb.de>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         linux-kernel@vger.kernel.org
-Subject: [Next] [PATCH 0/2] Fixes for bitmap_{from,to}_arr32()
-Date: Thu,  1 Feb 2018 20:25:06 +0300
-Message-Id: <20180201172508.5739-1-ynorov@caviumnetworks.com>
+Subject: [PATCH 1/2] perf: arm_dsu_pmu: convert to bitmap_from_arr32
+Date: Thu,  1 Feb 2018 20:25:07 +0300
+Message-Id: <20180201172508.5739-2-ynorov@caviumnetworks.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180201172508.5739-1-ynorov@caviumnetworks.com>
+References: <20180201172508.5739-1-ynorov@caviumnetworks.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [42.107.64.135]
-X-ClientProxiedBy: HE1P191CA0001.EURP191.PROD.OUTLOOK.COM (10.172.132.139) To
- BN6PR07MB2898.namprd07.prod.outlook.com (10.173.28.144)
+X-ClientProxiedBy: DB6PR0402CA0024.eurprd04.prod.outlook.com (10.172.243.162)
+ To MWHPR07MB2911.namprd07.prod.outlook.com (10.169.231.135)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ab5c64f1-14c4-4147-4ef9-08d56998c63e
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:BN6PR07MB2898;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2898;3:svwCe/wWS33KTB2TJ06Y3hRYSyetdtzORwOT5y0jQQotnmqOsoNnuJC/GiOP2LOttjfBH+jfoZ8REwtE0h0x1YOKGJ/7DvlrDDL3B0y+UG5m9aPTuo+Ia+k7j8d4l5Pd+j7gOWLr8rqeu6c494wh5v0Rd3+pjU7m+eSzc0nWnbPXb8sAXg3LlUJVMNUrkWVp7bQA8IV3gkVQpmSYknkwNmBlRKhLpEbAedO8DCMlHaIEDRkYNgg2JXZTZQ/kGDCd;25:LsTUptsNQ00lZRbfeJG2xtiA9EGvc+xExgXNIwvDpPbKoMMPQGPCtnamuzm1JxyXow593lB2NTDB/nnavZHoiHdQpBU//rMRwHozJ6Hd2LTMZpzMJ75qowI/ZBVbbnqf2N5rhpX+Te8tMPpa7tk8oNvpT7kawvCD/UpOgCNdT4EcAEOB/xgvfMbIxinM1TOeVSqXIdHgbdlt1B8NX4f/mpShsTIusjGql1TXA6i6oMlTRU00qupSpm1ik09Z3cq2IDlbzfIKRaEsGw2cGjLel9tBHz79c4CbfKqbG0leAyCeYKMMamWXr9cVE23kq0Y/qN3TfZUYsfKWEKTFr1I5ow==;31:bLrQ/B1Syn7drnKgvHKZcHBBwiGxhNvEXaNgtIRNxNVpBznASOxpnWccDnxQR3ozy4v6nuLjBWhi8xPRYYkUbmlSP63zf/QRzkn87g3HFARxmT/uAt2fcN54a66OgK/vRMGucEoWjE2htIsKVLs7xjpEs6fxnad0DbzlPyDDjOmgfhWB+qflcPoeh8dmxuY8Q+qdnDMbGxs/kWv9Mh37Fj7E501IIE/H0Uz7fnUIu94=
-X-MS-TrafficTypeDiagnostic: BN6PR07MB2898:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2898;20:o1dyYGCOK/ZpnrOBrk7QzcnZTzpT1YNLX60e+MYOyEkF1abw9yHmSDgK1unN8NpED2bVnBLgnsBuUx53YONozJpBe+d3DtW1F1SPpRdFe9V+AMN6oE59/+Uh9rK54rQ6WKpehGLacoWnMKEdyz3tnGcRkzJJ/GV2QBZBav4d7XO8fCW2TGqxBUN7J4/OyJydh/GwAkNfqjLACUEtj9IY3ii1d6E40liZk58yp81IlI58xSFYghGrpdW+RqkY2oybtxPlOkwATPMMrAP+AjQ3D8MVMXcEBmBFza8MdU2NLZrJPr8IQqYt/cFZoQSlDMy+Vl7GKilmeHskotWLDUq0GkqFF0Y2ua1PTIkooNhMLj6dbUEvvGdJpbMES4gE5jzpxXFeFRNUCqY69lfde4iHXGS505OrdgrWZkeuHDXJ+pqiBilwOn5j3y4O+iNwnSjholq/da82r/BqgLVUAqyG60EkdjVZXCjpvpuP+ETd53wqXn742rKmvlEhLoDxkhMYWNGM2Gf0aG4LLTigBaEDa4oi6xmXNEOrle/h119fJ8HHTYzOTHH2QwCuhp03u0i54Zt7E3Gxrxa2DC4J8EaeWBxGYdDO4SMxVt1Mo9GZc34=;4:x7vJ7C9zA6cfxFnMQSEUHxoZRBHQN/fSPrgFs9LPk52/shHiVd2F3eloPxpOlWKs9wi4UgOBm+UDTqkNHaQwWXa79Rb86beZJHYTf5xzG+6bgmMx/lGktAVK/zyn9DO0Axqglaxs43pxoBLoM6qqcBNmRNC8F+ORvNBI7+ZgNkmpMIs4VyRS90dXFEMmuSp0kzMNnaWECnbx3jjpQfAXfZyPQYRL8H6G80A5psU5pEv3iWjLTInh6BAjZMxj1nFirgkpPUSzWGYWyVZT51Yh9mb5DTy8Stk2qXAcq4GkcyH7W8vuUln+HqEgVaR4tyLu
-X-Microsoft-Antispam-PRVS: <BN6PR07MB28988F4B7F3D4BD4D9971A5DE3FA0@BN6PR07MB2898.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: eb93a4ce-3133-4f8d-2f6d-08d56998cea2
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR07MB2911;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR07MB2911;3:3VBURN4zwQjqGXsw7Jkwruh+CJk4cntAei0SSnxs2chY09LhYqQ7tLUcA0GrZ4SRn1bqh0bm3uDBOCrONz7rkXwb1jsB3ScPgChMnM+L+KkmSJqi0xH586USl/QUzxKVaDlqpd4J70VKPMXQ4sini8kj/OzJwk6WNEqoNXck3yt6nJJIE/1kPSeBJdJCQ1aAijWSdWdVDaVCIH6+89djROU2GTEaDqbGQUaLZ+NcG9II9sUay7F5rNtqkLBksVw2;25:hWsfIGExLU6zRCQ8U10722xCOCyVP4UGlG0lP2paEA5BVOooTyUzCegwlokkQSLHsoWbObmyd6Gr6f5SpZaeRbvJupng8w9Xx/OYLQC5/6/SonbN2CkouUpqN/a6J8YVcKAr6TkMT7NBWEpJthGsntcrFVHIsm4P6x2J91pDgbDPUDheZYj5gVt6e0LHkypraUKZJOgCq141VQqoaOSd6Lp+jvsP6Wz0xfRNlMZKJU6ibRIQCss4O5HEIIuGWENSRonBl6By9FpfO7v7bxAuGd8cj8SWZwBb3m3xYqdz4l/zlHdAbp+4a5mWNknnZNI69rfgZu3ovVgVXPpbWz7YsA==;31:73EAsIqaatvqgTVabyiV/oRZC3ezaerDQSy4s8t4CKRS/ll5cROpI6Uw2vzV+re/WfnsyiMZjddO8ucooMyRH3L+6dppWLpznYeHaXJLNOWC0TZiGlU1AC2jpAodOVgabl/OQjP82bJalnfXAxYgGEzSSdZAObkmyyZm2GJAcd9zsEy/JsOcy5T7L6Z63zWkiaeVPP8pmhCebILX36E8nr2snF2PFG9RMCiz7egSVsg=
+X-MS-TrafficTypeDiagnostic: MWHPR07MB2911:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR07MB2911;20:TrDj/VB+8E7fntG+rhkuhehLh/1pZYTWek5TVxERD0sSKvbxzptBPNHmLJ9RsDTWZrMgctKgr/Y7yBHqi6YN6CMKR9X+xddoScmztxLbcTYonNEQYtOnGNMN8Y09ZX5LxirrHDcYHjgM3jf4cMa3cGu/ZRw2+Xpzv89VbfUeC+T119th5qS/gAGXtUQiVO29t9ouXE22H6SRYSgvVK9uRqjj/tE7PMlVfChYRiE8Xnl+3H/rMboVP0gawXgFlSKBrx3ybUq75AhozRS21S1pa+llH3Y37jdNmTVxPFF5+60SIWoubYiTP/fWkM57+PdEKO6BM38ttOEzKxsRpjvNjTuawAepXLeMPbj8IrNFncV0EN+uZ9SD9FthuRvI9WepvNB4KBEqSauiGlkrI4RHY7mhnjN7wZke4ATEN7hkLXwBuKrEUuac3xa8/tnTQuq/z7W3Qfq6e+qwZYLhpFbyr6OBoAecY5+KLDlmWB76u4y6BYuwlwAP+oeLdYplWIxrGdOynZsdm247NVLtSFZt+vFu23BysrI7dtiSJQ81HiNaUIv9bZQDeyL14W6Z7ThOF7IQFeWkV/CCq99VMUH+IOtJ/Ukf5maQBtznlJpciWI=;4:eQWIenzMmg9N8DAZGQQn77qDQNa5f2dV5PobGlCfRDWa1p6CJrnLGlyH19OSESHIQYY0SRQFAwttRxLSN6n5stJlZQdeGphGIB2uxLRjWIdM4VA6+zfYVj87Jx9X5i8AN04t5bW3NUbT5LHoQ3Me7yRHbbFM5y+/zBAOZkw6U76XZuP/PRT7kZ7zQORa2WFPh4iXZ25bjPN1/uoUFmiIM3B9FaMr7r0WTPFN2sX1EfLsfrXmp2cIsU84yjzMJgg0fIwrGW4iBCir6rigcA+nbm5EwJjKxaqEZ82tLUz3bsG6XDqbq+HIZ7FGY5MJeGY1
+X-Microsoft-Antispam-PRVS: <MWHPR07MB2911239EB93AAE4266D38F6DE3FA0@MWHPR07MB2911.namprd07.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(788757137089);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(10201501046)(3231101)(2400082)(944501161)(93006095)(3002001)(6041288)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:BN6PR07MB2898;BCL:0;PCL:0;RULEID:;SRVR:BN6PR07MB2898;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(3231101)(2400082)(944501161)(6041288)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:MWHPR07MB2911;BCL:0;PCL:0;RULEID:;SRVR:MWHPR07MB2911;
 X-Forefront-PRVS: 0570F1F193
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(366004)(376002)(39860400002)(346002)(39380400002)(199004)(189003)(2906002)(5660300001)(106356001)(8936002)(25786009)(6116002)(50226002)(110136005)(478600001)(3846002)(81156014)(1076002)(26005)(105586002)(48376002)(16526019)(76506005)(81166006)(16586007)(66066001)(7736002)(186003)(54906003)(6306002)(6486002)(50466002)(97736004)(6496006)(68736007)(386003)(316002)(8676002)(6666003)(305945005)(42882006)(51416003)(4326008)(5009440100003)(53936002)(72206003)(47776003)(966005)(52116002)(36756003)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR07MB2898;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR07MB2898;23:/Yuk+WscEfgmDhVR0Qst/9EbcndkX/eRRBb04QRSf?=
- =?us-ascii?Q?qoidI0IV1AhJEJ9DeZ4v5ceLyIxYrmSz1nehhypIiDX3FrSyspOIG/iG/L2t?=
- =?us-ascii?Q?Ivt48vi56QjLSh5zN29GisqQUkRasemlmRPzY7poWXwy3exK6hL9Iw6AchPi?=
- =?us-ascii?Q?j2RtxJSmVqalu6e2vAIvxpLsymlXyLYnmzXAukuqQ4G2Prz0pTWMQ0vwUNpM?=
- =?us-ascii?Q?rmPPJhmGRMgt8MSnjNeR3ZPYTw9CZ2ojx5lrSNV34TJ+sOX5El+FInKlYCZ6?=
- =?us-ascii?Q?aJD1tEF9NFo4VJwJZrGC6QiUC0ZenaBbiTQv/3BSaeXua4kL8GN0szAi2VkW?=
- =?us-ascii?Q?/pnXNqo/LtpU2eyUpqVzm0wG0tR90TBw95kmYL3UeEgCy+XvZ4UKGhbyrN1F?=
- =?us-ascii?Q?83IKCAV5OsHgY6+37nS+r2GgKoXxi/6AuHEDpiyF/xWluRP0R8KXqtXV7Nmm?=
- =?us-ascii?Q?7UgFHdkCa7VxKCX1viqk1u3vZ7EnSEDrE1o23Zk8Q2OcJ0Aa8g8eND3V2j4j?=
- =?us-ascii?Q?FlWoHnffnp+iufHG8OOEPM6snQYaCzVWj8aawW7RnJQmLIR3B2rmt32tqI5W?=
- =?us-ascii?Q?YRZQbuh0n+jkaG+xilGwclogYSpxl6EcFpS3eJVeb49WKvDYTHdi/fXn6g3w?=
- =?us-ascii?Q?9hOAdkBk/F8OfduB8+Oj4TwlnfEsuRevsqO2OrbUUyf7RkKjRzkcUPFRl4KO?=
- =?us-ascii?Q?O1QA/1ZtRk3ZWkWSHNanmdm/5J7jkLdM3/nzDLij1GLSawR75FJuBifT05VB?=
- =?us-ascii?Q?5/iJYk1wOh9Ti+mJHn8lgi5M4TmbSZ+vi34PQuQehQUjm7sQpjoLlw2NP21J?=
- =?us-ascii?Q?LkM//69YgK2EsAiPGd27kWqyAO5p4inSJd7aSZGE61Cuo8zyB7ux7+K00TWB?=
- =?us-ascii?Q?CiHXVpjhQIkzHxctNVIgsaoTZw/IalBIOhfDen6DyfnOD6E4jAAuVw2UOGAp?=
- =?us-ascii?Q?Q/0+ER2akYqlHPutpLEDxVHya7W8aI2KepLoGtVPfmPPd/sMAPSNMHIBp71Y?=
- =?us-ascii?Q?xiEDUazt5FsA9Zrz9ONFPs7xruybG7bT6E/eockRHaZOM8clBttWOJiZbH5W?=
- =?us-ascii?Q?RiAaGG8HzeEOlHxrHJHCh0GZHiL8R7K4IZniIA4WCk5tjTXibBWaHzlz2Am7?=
- =?us-ascii?Q?K4aUPkGthlVdD9IJz7kUX1pplkhIMTHt2YMDvRn1dDLyPg2FLZSQYP+N13/E?=
- =?us-ascii?Q?aAmoYmS6ihd6yIyVKQ003mlPMcRGiE6C2WsHqTsQngvJ5WvXFcBOhAERg=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2898;6:FGB7HzM0HiTrzWRTPOg2d08CeVWNyD6JeQKt31P6FD0knR3gJo1wWAeuHZj2I6ppfAuj6vpwcIDla59px1PeReH1qWVOwk7nWS+Eg5p0yflFY+xI9ym6Xw7y+MeUZeKk8bTVsTfos8i+YFSOzaDqEzOhhVgIBlnCgtOYd4xabnPSArhlZ3Fll0nDZw4HBp6wIuATjOvHTdslvpQa/vpFE3wOw/nqaLvifDBKxkuE+BBEbAbyUgni2F5a8Y3l15Y+R9HKn83Ah7ug3o9cUmDd5nAFgF+7xzcydjdZ4bVcigYg3tS5/E0G+m1UoB0DbOV48h65pFfjBuRCTJwrE75h1inKcXwuWlORvpl3ts5vSgQ=;5:jYa5CAYZN/XzzFUi/KjaImIK7DwDrAQdKcIbkZ775kkUjwFpaoTKAwqYwoDfZWu0/x25m+hkJnJRZjIzv6noInkkYR/pqakNI4mQw8fJyIEaOBovBe4qOR2//K8mg0uXIQj4OhfLJdPq48A9zPtpEKVvRjRA95TG+Z8O6rHqoUw=;24:0rHHtb5u9og6Y85Z8hXYR4IkbFo4U1mtQ2BzbcF1xaUEYm1N4eKMo0eYLyGjfFdZBP/5/zvkpvO+P3d6qenYgyoezgEDGy/8nUGXuWvysA4=;7:wsSy7C9yrijHB4qp8Z9FKp/AASYELLBU6GTUquIL/dAQVejSpP9zNB1JTstaq7p25mwmCPxlEOhoICq8YnDa0bG0fRwbJty5CJSBHloGwoyn1TdQrEn8k0hakc1kwHYYyCNsOWU97qZ4ySiK+6JkFIcFWUvOyAlYILzPIHInSVRwArDW338hTrkfl5iu7TIK0KP0saBl22JovZ5kqCPn0jmbHG5AI8hci3tFd8ajTK/0DIhQz+gCqQQBzEZMFaZq
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39380400002)(366004)(396003)(346002)(39860400002)(376002)(199004)(189003)(6486002)(15760500003)(47776003)(105586002)(6666003)(81166006)(2950100002)(42882006)(52116002)(8936002)(106356001)(50226002)(1076002)(6496006)(48376002)(81156014)(5660300001)(25786009)(66066001)(4326008)(478600001)(72206003)(8676002)(76176011)(26005)(316002)(16586007)(36756003)(51416003)(76506005)(54906003)(16526019)(305945005)(7736002)(110136005)(186003)(386003)(6116002)(50466002)(53936002)(97736004)(3846002)(59450400001)(68736007)(5009440100003)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR07MB2911;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR07MB2911;23:cDlE7k9RLWK7E3ul+V+SWrcQMypohnZee57kKI/ET?=
+ =?us-ascii?Q?Kqp8p53rG26cVh6zk+sXPhBoXSAthT9vfZG1+iikpYHAk4DqLw1bPd8CT0H0?=
+ =?us-ascii?Q?WVIwRlo490x/Dp4osRdju+/w4Lq+ER9a7RmrwKBhPH7O33a90lr03KAo7QCG?=
+ =?us-ascii?Q?SB8IU+O1BBl5Z03xH8pqQBC4tCm3tFHbgoyXnVzqJsLCh+O1nB0DpB9DpVWm?=
+ =?us-ascii?Q?gf2D0WHLGS+eQCVH/uzNAqpDWtr9ilJp8jmFnBeMZVg6Cz5N/bYLm+LbODYd?=
+ =?us-ascii?Q?c/O1fNJ1shsyLE1JNoka0FD/6PLmn1QIa8N7+M3TSM4JhGJOorajpohXr0TY?=
+ =?us-ascii?Q?jsZ0SMRCIElVrOxoBokrd7dBaqVkxl16d7gaKYrLR6tN8cR5pdJTAXyOkWM4?=
+ =?us-ascii?Q?fUTslg/Sbbrkmd3kEpKOt/+mMAcbl5qP42qw3e0kkFhsByuZC/95RX9ofvnH?=
+ =?us-ascii?Q?9lNJwfQsmaXkbdDrt6+XjxF78Bxt94IreP2Snmzxc9TJjFOSGkf6AkeRuSQQ?=
+ =?us-ascii?Q?CRI84x7n19jBFbySUdPt4V02spUTQvZbgn2uSG+bw7HcvF/NffKAa6g8yRZE?=
+ =?us-ascii?Q?TDg4jmc9RkFivwlbnpXO+3faNISteSMbRqMs3k5ULNh5fx2IMnbk/jB3bMVA?=
+ =?us-ascii?Q?XUTRmxwEQKBvVVLdmVyvGL2133Y650+au4SrJBscrmOiThnHvjQ/CqkCfOcG?=
+ =?us-ascii?Q?W2cHROI1qWVYXBf1V+crdhRD0l5gBIUc1o7eAaxnOIdnWjvcWsg14OOEOhfo?=
+ =?us-ascii?Q?G/KoUGqWsd/MhsW8Z6KmqOO51bLhFMgqObGLS6ehttnK8hSMqFb1DW6gIboh?=
+ =?us-ascii?Q?u/N7vW+hMcBJH/vpbWipPpK5YiPoksr2PBbg17zeezhb++xcZyVuNaYlD+iU?=
+ =?us-ascii?Q?mg4RhZ6l/q37Ux+KdZlaafocr+tUfvvmvrxIsD4RlCTU8MeMYL27mrfNrWs/?=
+ =?us-ascii?Q?aRMBZdAkHerD3geSLxq9ebPRv2IfKFlYUGR5c0iFTpo6I5gxYHefdLpsmdq0?=
+ =?us-ascii?Q?wjFBH/2O/1yxfXBW8u+tCdbDo2A3vp+tRWNQzk1cyEO1JA2eYjzlEtlwFQ8+?=
+ =?us-ascii?Q?xCSlYk62XDrG7BHZoH7HAE5COnxJxfSkinuYkxobllfqfnDTieK6cZQSjNn1?=
+ =?us-ascii?Q?nt/vFdhjsKOIeBjTF/zjMRLtgBKpSWKbu80WlLlC6EcDR+RqTlPp9M99lq24?=
+ =?us-ascii?Q?vYFv4H0FaL7HSnHnrJMt9+qGC7J5qYpsK/tIinmfB8ABONecdhUFkNr3t9XM?=
+ =?us-ascii?Q?UKtozk363QjGXpAprTIiVWEj+VRw1T+8hx4Ih3y?=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR07MB2911;6:3ez9f0BFXxN4efEFUik0cYMvyh+iGdu5qgt17k/BGFU8Uif2IEsFwJmqOX3+iipWdDxMpj9kvRH0CtvdaqEmJFCX2DtaEJgr1ZvnkipaUvaoxvxdNRlXJAlxK7j0Pcz6xp/FkzVzaN5DlDDA+01tHoOphCNIC2xJwS/aKYfxe+kJmQ4guY6CkPUSPq7wQ+3ZOQfnI9Ct62vseWqEstX0gQk+e3+OZdryoDu68RYK5U7mT5fFyM4kROpNTskCxtCDUJVGArb2snKh9MHDZ+/xqTpmQDpNSsMRQunsGJvFur1e5ncs2NlRVWQv/fejMrNgRsR2eCsqOohHtH6Y4mSiI3urZ/+K5j5owpDz7Z/ZTxU=;5:cWYbN0RDpGiPtFZKjv3uF/U/fOExcCkOipPeldomsSqvjcZwJOrkmhZE4xQ/FMGX0Sha0laddSi8S1BKWx0KyjM3vC+4X4BWj8hkFcCD0kqzDXUwRURly0PVlNxGpiKYla/VBpujUw/FTZ0w10IBWIn1YikrB4P4mKB2RX80vqI=;24:sQ1rOzpw6c5heJ1LPjb0VPhzxUMUjviaZZeC75ZgwzSQNwk9wgm0GefrBlMvBTKI6bjYMTXlzxG2yIJq/dFEN/jBPzsqYwuH8sKL0iZ5Gfk=;7:IH1kB5FlsT4CgS6K3uuAtYZfIZX10spfpxEbHs+FgOTEc9ivhCuCQOODu5mL2K92fH8Hn0xJV9jLEQZDjIMnXapvVqswFC7MOO6aQsr9JA9aAzk9DmS83N0cO1+IOSWH2eCFUMe1tH6UVOl6eGdRe17K0SXDT28UYTmxyn1fuJPHLZMsBBIxelbtE0ulLry918zmuLiCJV+vf+EGA50cjrEQX0MMhiaATurWWXNVN4oQ1mfnz+sXzgDrhYAP7g6g
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2018 17:25:21.5023 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab5c64f1-14c4-4147-4ef9-08d56998c63e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2018 17:25:35.4692 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb93a4ce-3133-4f8d-2f6d-08d56998cea2
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR07MB2898
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR07MB2911
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First patch replaces bitmap_from_u32array() from
-drivers/perf/arm_dsu_pmu.c. The change that adds dependency on
-bitmap_from_u32array() appeared in linux-next recently, so patch
-may be applied only now.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Second patch renames bitmap_copy_safe with bitmap_copy_clear_tail
-as suggested in review:
-https://lkml.org/lkml/2018/1/8/1052
+The bitmap_from_u32array() interface got replaced in a global
+change, but the arm_dsu_pmu driver adds another instance,
+resulting in a build failure:
 
-Andrew, Stephen, please apply it in linux-next branch, or meld in
-corresponding commits if you prefer:
-87e93201a5264c3 (bitmap: replace bitmap_{from,to}_u32array)
-c27460ea428a257 (bitmap: new bitmap_copy_safe and bitmap_{from,to}_arr32)
-(branch next-20180201)
+drivers/perf/arm_dsu_pmu.c: In function 'dsu_pmu_probe_pmu':
+drivers/perf/arm_dsu_pmu.c:661:2: error: implicit declaration of function 'bitmap_from_u32array'; did you mean 'bitmap_from_arr32'? [-Werror=implicit-function-declaration]
 
-Arnd Bergmann (1):
-  perf: arm_dsu_pmu: convert to bitmap_from_arr32
+This changes the new instance accordingly.
 
-Yury Norov (1):
-  rename bitmap_copy_safe to bitmap_copy_clear_tail
+Fixes: mmotm ("bitmap: replace bitmap_{from,to}_u32array")
+Fixes: 7520fa99246d ("perf: ARM DynamIQ Shared Unit PMU support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+---
+ drivers/perf/arm_dsu_pmu.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
- drivers/perf/arm_dsu_pmu.c |  6 ++----
- include/linux/bitmap.h     | 10 +++++-----
- 2 files changed, 7 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
+index 93c50e377507..38f2cc2a6c74 100644
+--- a/drivers/perf/arm_dsu_pmu.c
++++ b/drivers/perf/arm_dsu_pmu.c
+@@ -658,10 +658,8 @@ static void dsu_pmu_probe_pmu(struct dsu_pmu *dsu_pmu)
+ 		return;
+ 	cpmceid[0] = __dsu_pmu_read_pmceid(0);
+ 	cpmceid[1] = __dsu_pmu_read_pmceid(1);
+-	bitmap_from_u32array(dsu_pmu->cpmceid_bitmap,
+-				DSU_PMU_MAX_COMMON_EVENTS,
+-				cpmceid,
+-				ARRAY_SIZE(cpmceid));
++	bitmap_from_arr32(dsu_pmu->cpmceid_bitmap, cpmceid,
++			  DSU_PMU_MAX_COMMON_EVENTS);
+ }
+ 
+ static void dsu_pmu_set_active_cpu(int cpu, struct dsu_pmu *dsu_pmu)
 -- 
 2.11.0
