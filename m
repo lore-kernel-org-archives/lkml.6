@@ -1,105 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752913AbeBAQwj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:52:39 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33709 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752789AbeBAQvV (ORCPT
+        id S1752940AbeBAQxC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:53:02 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55916 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752719AbeBAQw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:51:21 -0500
-X-Google-Smtp-Source: AH8x227Jjz0LBwmTRiyrvwFPGSAXRX+DZLtxyUsBx/1FlnvNqYMWe2UYSx4ziDet7RhLUoEJUj1xpQ==
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: peterz@infradead.org
-Cc: lizefan@huawei.com, mingo@redhat.com, rostedt@goodmis.org,
-        claudio@evidence.eu.com, bristot@redhat.com,
-        tommaso.cucinotta@santannapisa.it, juri.lelli@redhat.com,
-        luca.abeni@santannapisa.it, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 5/7] cgroup: Constrain the addition of CPUs to a new CPUset
-Date: Thu,  1 Feb 2018 09:51:07 -0700
-Message-Id: <1517503869-3179-6-git-send-email-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
-References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+        Thu, 1 Feb 2018 11:52:57 -0500
+Date: Thu, 1 Feb 2018 17:52:49 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Subject: Re: [RFC PATCH 2/5] sched: Add NOHZ_STATS_KICK
+Message-ID: <20180201165249.GC2269@hirez.programming.kicks-ass.net>
+References: <CAKfTPtCVgnO1zcD_X4Ad-T0auWmN-TJ0dezv0P5wEtubkbgHyQ@mail.gmail.com>
+ <20171222075934.f6yenvcb2zkf2ysd@hirez.programming.kicks-ass.net>
+ <CAKfTPtC0+5zjvgNXMyVcvnnyJh0giQgJHtx+5p-GEpjUW1x8eg@mail.gmail.com>
+ <20171222082915.4lcb7xyyooqyjpia@hirez.programming.kicks-ass.net>
+ <20171222091221.ow5vn3ydx3hj4nht@hirez.programming.kicks-ass.net>
+ <CAKfTPtAzutuyA7D2qOErKPwdFaRK082YAtVn4ci8hAOUvL3zMQ@mail.gmail.com>
+ <20171222185629.lysjebfifgdwvvhu@hirez.programming.kicks-ass.net>
+ <20171222204247.kyc6ugyyu3ei7zhs@hirez.programming.kicks-ass.net>
+ <CAKfTPtD13p-n9otxq23rQZZKUfA1r03bxYBSDtSdm5HbWX7H6Q@mail.gmail.com>
+ <20180115082609.GA6320@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180115082609.GA6320@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Care must be taken when CPUs are added to a new CPUset.  If an ancestor
-of that set has its sched_load_balance flag switch off then the CPUs in
-the new CPUset will be added to a new root domain.  If the ancestor also
-had DL tasks those will end up covering more than one root domain,
-breaking at the same time the DL integrity model.
+On Mon, Jan 15, 2018 at 09:26:09AM +0100, Vincent Guittot wrote:
 
-This patch prevents adding CPUs to a new CPUset if one of its ancestor
-had its sched_load_balance flag off and had DL tasks assigned to it.
+Would've probably been easier to read if you'd not included the revert
+of that timer patch...
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- kernel/cgroup/cpuset.c | 44 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+> @@ -9258,21 +9255,11 @@ void nohz_balance_enter_idle(int cpu)
+>  	set_cpu_sd_state_idle(cpu);
+>  
+>  	/*
+> -	 * implies a barrier such that if the stats_state update is observed
+> -	 * the above updates are also visible. Pairs with stuff in
+> -	 * update_sd_lb_stats() and nohz_idle_balance().
+> +	 * Each time a cpu enter idle, we assume that it has blocked load and
+> +	 * enable the periodic update of the load of idle cpus
+>  	 */
+> -	val = atomic_read(&nohz.stats_state);
+> -	do {
+> -		new = val + 2;
+> -		new |= 1;
+> -	} while (!atomic_try_cmpxchg(&nohz.stats_state, &val, new));
+> +	atomic_set(&nohz.stats_state, 1);
+>  
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index daa1b2bc7e11..6ae4ad995e9e 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -481,6 +481,43 @@ static bool cpuset_has_dl_tasks(struct cpuset *cs)
-  * Assumes RCU read lock and cpuset_mutex are held.
-  */
- static int
-+validate_change_cpus(struct cpuset *cur, struct cpuset *trial)
-+{
-+	int ret = 0;
-+
-+	/*
-+	 * CPUs are being added to a CPUset.  If any parent of @trial has its
-+	 * sched_load_balance flag switched off this operation will create a
-+	 * new root domain spanning trial->cpus_allowed. At the same time
-+	 * if any parent of @trial has a DL task, that task will end up
-+	 * spanning more than one root domain and break the deadline integrity
-+	 * model.
-+	 */
-+	if (cpumask_weight(cur->cpus_allowed) <
-+	    cpumask_weight(trial->cpus_allowed)) {
-+		struct cpuset *parent;
-+
-+		parent = parent_cs(trial);
-+		/* Go up until we reach the top_cpuset */
-+		while (parent) {
-+			if (cpuset_has_dl_tasks(parent) &&
-+			    !is_sched_load_balance(parent)) {
-+				ret = -EBUSY;
-+				goto out;
-+			}
-+
-+			parent = parent_cs(parent);
-+		}
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+/*
-+ * Assumes RCU read lock and cpuset_mutex are held.
-+ */
-+static int
- validate_change_load_balance(struct cpuset *cur, struct cpuset *trial)
- {
- 	bool populated = false, dl_tasks = false;
-@@ -553,8 +590,13 @@ validate_dl_change(struct cpuset *cur, struct cpuset *trial)
- 	/* Check if the sched_load_balance flag has been changed */
- 	ret = validate_change_load_balance(cur, trial);
- 	if (ret)
--		return ret;
-+		goto out;
- 
-+	ret = validate_change_cpus(cur, trial);
-+	if (ret)
-+		goto out;
-+
-+out:
- 	return ret;
- }
- 
--- 
-2.7.4
+> @@ -9422,7 +9408,6 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>  		return false;
+>  	}
+>  
+> -	stats_seq = atomic_read(&nohz.stats_state);
+>  	/*
+>  	 * barrier, pairs with nohz_balance_enter_idle(), ensures ...
+>  	 */
+> @@ -9432,6 +9417,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>  
+>  	SCHED_WARN_ON((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
+>  
+> +	/*
+> +	 * We assume there will be no idle load after this update and clear
+> +	 * the stats state. If a cpu enters idle in the mean time, it will
+> +	 * set the stats state and trig another update of idle load.
+> +	 * Because a cpu that becomes idle, is added to idle_cpus_mask before
+> +	 * setting the stats state, we are sure to not clear the state and not
+> +	 * check the load of an idle cpu.
+> +	 */
+> +	atomic_set(&nohz.stats_state, 0);
+> +
+>  	for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
+>  		if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
+>  			continue;
+> @@ -9441,8 +9436,10 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>  		 * work being done for other cpus. Next load
+>  		 * balancing owner will pick it up.
+>  		 */
+> -		if (need_resched())
+> +		if (need_resched()) {
+> +			has_blocked_load = true;
+>  			break;
+> +		}
+>  
+>  		rq = cpu_rq(balance_cpu);
+>  
+> @@ -9477,12 +9474,12 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>  	if (flags & NOHZ_BALANCE_KICK)
+>  		rebalance_domains(this_rq, CPU_IDLE);
+>  
+> -	if (has_blocked_load ||
+> -	    !atomic_try_cmpxchg(&nohz.stats_state, &stats_seq, 0)) {
+> -		WRITE_ONCE(nohz.next_stats,
+> -				now + msecs_to_jiffies(LOAD_AVG_PERIOD));
+> -		mod_timer(&nohz.timer, nohz.next_stats);
+> -	}
+> +	WRITE_ONCE(nohz.next_stats,
+> +		now + msecs_to_jiffies(LOAD_AVG_PERIOD));
+> +
+> +	/* There is still blocked load, enable periodic update */
+> +	if (has_blocked_load)
+> +		atomic_set(&nohz.stats_state, 1);
+>  
+>  	/*
+>  	 * next_balance will be updated only when there is a need.
+
+After this there is no point for stats_state to be atomic anymore. Also
+a better name.
+
+Maybe if I drop the last two patches (and you re-introduce the bits
+from: Subject: sched: Optimize nohz stats, that you do need) this all
+becomes more readable?
