@@ -1,129 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752043AbeBAKhX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 05:37:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50754 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751520AbeBAKhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 05:37:19 -0500
-Date: Thu, 1 Feb 2018 18:36:57 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Don Brace <don.brace@microsemi.com>
-Cc: Laurence Oberman <loberman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@fb.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: Re: [PATCH 0/2] genirq/affinity: try to make sure online CPU is
- assgined to irq vector
-Message-ID: <20180201103651.GA29263@ming.t460p>
-References: <20180115160345.2611-1-ming.lei@redhat.com>
- <20180115174036.GA20191@infradead.org>
- <20180116013043.GA3213@ming.t460p>
- <alpine.DEB.2.20.1801161223500.1823@nanos>
- <1516109317.9574.1.camel@redhat.com>
- <a6086631efd54749a298add3d6b9a134@microsemi.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a6086631efd54749a298add3d6b9a134@microsemi.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752101AbeBAKhp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 05:37:45 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:35376 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751520AbeBAKhk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 05:37:40 -0500
+From: Joao Martins <joao.m.martins@oracle.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc: Joao Martins <joao.m.martins@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH] xenbus: track user request id
+Date: Thu,  1 Feb 2018 10:37:21 +0000
+Message-Id: <20180201103721.5432-1-joao.m.martins@oracle.com>
+X-Mailer: git-send-email 2.11.0
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8791 signatures=668659
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802010140
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 16, 2018 at 03:22:18PM +0000, Don Brace wrote:
-> > -----Original Message-----
-> > From: Laurence Oberman [mailto:loberman@redhat.com]
-> > Sent: Tuesday, January 16, 2018 7:29 AM
-> > To: Thomas Gleixner <tglx@linutronix.de>; Ming Lei <ming.lei@redhat.com>
-> > Cc: Christoph Hellwig <hch@infradead.org>; Jens Axboe <axboe@fb.com>;
-> > linux-block@vger.kernel.org; linux-kernel@vger.kernel.org; Mike Snitzer
-> > <snitzer@redhat.com>; Don Brace <don.brace@microsemi.com>
-> > Subject: Re: [PATCH 0/2] genirq/affinity: try to make sure online CPU is assgined
-> > to irq vector
-> > 
-> > > > It is because of irq_create_affinity_masks().
-> > >
-> > > That still does not answer the question. If the interrupt for a queue
-> > > is
-> > > assigned to an offline CPU, then the queue should not be used and
-> > > never
-> > > raise an interrupt. That's how managed interrupts have been designed.
-> > >
-> > > Thanks,
-> > >
-> > >       tglx
-> > >
-> > >
-> > >
-> > >
-> > 
-> > I captured a full boot log for this issue for Microsemi, I will send it
-> > to Don Brace.
-> > I enabled all the HPSA debug and here is snippet
-> > 
-> > 
-> > ..
-> > ..
-> > ..
-> >   246.751135] INFO: task systemd-udevd:413 blocked for more than 120
-> > seconds.
-> > [  246.788008]       Tainted: G          I      4.15.0-rc4.noming+ #1
-> > [  246.822380] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> > disables this message.
-> > [  246.865594] systemd-udevd   D    0   413    411 0x80000004
-> > [  246.895519] Call Trace:
-> > [  246.909713]  ? __schedule+0x340/0xc20
-> > [  246.930236]  schedule+0x32/0x80
-> > [  246.947905]  schedule_timeout+0x23d/0x450
-> > [  246.970047]  ? find_held_lock+0x2d/0x90
-> > [  246.991774]  ? wait_for_completion_io+0x108/0x170
-> > [  247.018172]  io_schedule_timeout+0x19/0x40
-> > [  247.041208]  wait_for_completion_io+0x110/0x170
-> > [  247.067326]  ? wake_up_q+0x70/0x70
-> > [  247.086801]  hpsa_scsi_do_simple_cmd+0xc6/0x100 [hpsa]
-> > [  247.114315]  hpsa_scsi_do_simple_cmd_with_retry+0xb7/0x1c0 [hpsa]
-> > [  247.146629]  hpsa_scsi_do_inquiry+0x73/0xd0 [hpsa]
-> > [  247.174118]  hpsa_init_one+0x12cb/0x1a59 [hpsa]
-> 
-> This trace comes from internally generated discovery commands. No SCSI devices have
-> been presented to the SML yet.
-> 
-> At this point we should be running on only one CPU. These commands are meant to use
-> reply queue 0 which are tied to CPU 0. It's interesting that the patch helps.
-> 
-> However, I was wondering if you could inspect the iLo IML logs and send the
-> AHS logs for inspection.
+Commit fd8aa9095a95 ("xen: optimize xenbus driver for multiple concurrent
+xenstore accesses") optimized xenbus concurrent accesses but in doing so
+may have broke UABI of /dev/xen/xenbus. Through /dev/xen/xenbus
+applications are in charge of exchange xenbus message exchange with the
+correct header and body. Now, after the mentioned commit the replies
+received by application will no longer have the header req_id echoed back
+as it was on request (see specification below for reference), because that
+particular field is being overwritten by kernel.
 
-Hello Don,
+struct xsd_sockmsg
+{
+ uint32_t type;  /* XS_??? */
+ uint32_t req_id;/* Request identifier, echoed in daemon's response.  */
+ uint32_t tx_id; /* Transaction id (0 if not related to a transaction). */
+ uint32_t len;   /* Length of data following this. */
 
-Now the patch has been merged to linus tree as:
+ /* Generally followed by nul-terminated string(s). */
+};
 
-84676c1f21e8ff54b ("genirq/affinity: assign vectors to all possible CPUs")
+Before there was only one request at a time so req_id could simply be
+forwarded back and forth. To allow simultaneous requests we need a
+different req_id for each message thus kernel keeps a monotonic increasing
+counter for this field and is written on every request irrespective of
+userspace value.
 
-and it breaks Laurence's machine completely, :-(
+Forwarding again the req_id on userspace requests is not a solution because
+we would open the possibility of userspace-generated req_id colliding with
+kernel ones. So this patch instead takes another route which is to
+artificially keep user req_id while keeping the xenbus logic as is. We do
+that by saving the original req_id before xs_send(), use the private kernel
+counter as req_id and then once reply comes and was validated, we restore
+back the original req_id. Note however that we only do this when requests
+come from userspace.
 
-I just take a look at HPSA's code, and found that reply queue is chosen
-in the following way in most of code path:
+Fixes: fd8aa9095a ("xen: optimize xenbus driver for multiple concurrent xenstore accesses")
+Reported-by: Bhavesh Davda <bhavesh.davda@oracle.com>
+Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+---
+Sending out for some feedback first, more to double check whether this indeed
+constitutes a problem. If it does I'll need to include a 
+"Cc: <stable@vger.kernel.org> # 4.11" on the next iteration.
 
-        if (likely(reply_queue == DEFAULT_REPLY_QUEUE))
-                cp->ReplyQueue = smp_processor_id() % h->nreply_queues;
+Here's also a link to a test (https://pastebin.com/2q51j2sR) where req_id
+of reply and response are asserted. Without this patch the assert will
+fail (e.g. try it with `./xswire_reqid_test name`). But on <= v4.10 or v4.11+
+with the fix above, it will print domain name 10 times.
 
-h->nreply_queues is the msix vector number which is returned from
-pci_alloc_irq_vectors(), and now some of vectors may be mapped to all
-offline CPUs, for example, one processor isn't plugged to socket.
+Thanks!
+---
+ drivers/xen/xenbus/xenbus.h       | 3 +++
+ drivers/xen/xenbus/xenbus_comms.c | 2 ++
+ drivers/xen/xenbus/xenbus_xs.c    | 6 ++++++
+ 3 files changed, 11 insertions(+)
 
-If I understand correctly, 'cp->ReplyQueue' is aligned to one irq
-vector, and the command is expected by handled via that irq vector,
-is it right?
-
-If yes, now I guess this way can't work any more if number of online
-CPUs is >= h->nreply_queues, and you may need to check the cpu affinity
-of one vector before choosing the reply queue, and block/blk-mq-pci.c
-may be helpful for you.
-
-Thanks,
-Ming
+diff --git a/drivers/xen/xenbus/xenbus.h b/drivers/xen/xenbus/xenbus.h
+index 149c5e7efc89..d0954896214e 100644
+--- a/drivers/xen/xenbus/xenbus.h
++++ b/drivers/xen/xenbus/xenbus.h
+@@ -76,6 +76,7 @@ struct xb_req_data {
+ 	struct list_head list;
+ 	wait_queue_head_t wq;
+ 	struct xsd_sockmsg msg;
++	uint32_t user_req_id;
+ 	enum xsd_sockmsg_type type;
+ 	char *body;
+ 	const struct kvec *vec;
+@@ -132,4 +133,6 @@ void xenbus_ring_ops_init(void);
+ int xenbus_dev_request_and_reply(struct xsd_sockmsg *msg, void *par);
+ void xenbus_dev_queue_reply(struct xb_req_data *req);
+ 
++#define xs_request_is_user(_r) ((_r)->cb == xenbus_dev_queue_reply)
++
+ #endif
+diff --git a/drivers/xen/xenbus/xenbus_comms.c b/drivers/xen/xenbus/xenbus_comms.c
+index 5b081a01779d..b08fe7d00372 100644
+--- a/drivers/xen/xenbus/xenbus_comms.c
++++ b/drivers/xen/xenbus/xenbus_comms.c
+@@ -309,6 +309,8 @@ static int process_msg(void)
+ 			goto out;
+ 
+ 		if (req->state == xb_req_state_wait_reply) {
++			if (xs_request_is_user(req))
++				req->msg.req_id = req->user_req_id;
+ 			req->msg.type = state.msg.type;
+ 			req->msg.len = state.msg.len;
+ 			req->body = state.body;
+diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+index 3e59590c7254..a908d706be7f 100644
+--- a/drivers/xen/xenbus/xenbus_xs.c
++++ b/drivers/xen/xenbus/xenbus_xs.c
+@@ -227,6 +227,12 @@ static void xs_send(struct xb_req_data *req, struct xsd_sockmsg *msg)
+ 	req->state = xb_req_state_queued;
+ 	init_waitqueue_head(&req->wq);
+ 
++	/*
++	 * Request comes from userspace so save the original req_id
++	 * and restore it later in the reply.
++	 */
++	if (xs_request_is_user(req))
++		req->user_req_id = req->msg.req_id;
+ 	req->msg.req_id = xs_request_enter(req);
+ 
+ 	mutex_lock(&xb_write_mutex);
+-- 
+2.11.0
