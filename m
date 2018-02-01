@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeBAKXJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 05:23:09 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:60164 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751766AbeBAKXG (ORCPT
+        id S1752087AbeBAKZb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 05:25:31 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:37586 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751836AbeBAKZa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 05:23:06 -0500
+        Thu, 1 Feb 2018 05:25:30 -0500
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Hemminger <stephen@networkplumber.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, bridge@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] xfs: Add missing braces around xfs_scrub_agfl_info initializer
-Date: Thu,  1 Feb 2018 11:23:04 +0100
-Message-Id: <1517480584-4588-1-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH] net: bridge: Fix uninitialized error in br_fdb_sync_static()
+Date: Thu,  1 Feb 2018 11:25:27 +0100
+Message-Id: <1517480728-5580-1-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -23,33 +25,34 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With gcc-4.1.2:
+With gcc-4.1.2.:
 
-    fs/xfs/scrub/agheader.c: In function ‘xfs_scrub_agfl’:
-    fs/xfs/scrub/agheader.c:770: warning: missing braces around initializer
-    fs/xfs/scrub/agheader.c:770: warning: (near initialization for ‘sai.oinfo’)
+    net/bridge/br_fdb.c: In function ‘br_fdb_sync_static’:
+    net/bridge/br_fdb.c:996: warning: ‘err’ may be used uninitialized in this function
 
-The first member of struct xfs_scrub_agfl_info is no longer an integral
-type, but a struct.  Add the missing curly braces to fix this.
+Indeed, if the list is empty, err will be uninitialized, and will be
+propagated up as the function return value.
 
-Fixes: d852657ccfc0e455 ("xfs: cross-reference reverse-mapping btree")
+Fix this by preinitializing err to zero.
+
+Fixes: eb7935830d00b9e0 ("net: bridge: use rhashtable for fdbs")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- fs/xfs/scrub/agheader.c | 2 +-
+ net/bridge/br_fdb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/scrub/agheader.c b/fs/xfs/scrub/agheader.c
-index fd975524f4603387..9bcfdb0d1da379f5 100644
---- a/fs/xfs/scrub/agheader.c
-+++ b/fs/xfs/scrub/agheader.c
-@@ -767,7 +767,7 @@ int
- xfs_scrub_agfl(
- 	struct xfs_scrub_context	*sc)
+diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+index dc87fbc9a23b04e6..d9e69e4514beb20d 100644
+--- a/net/bridge/br_fdb.c
++++ b/net/bridge/br_fdb.c
+@@ -993,7 +993,7 @@ int br_fdb_delete(struct ndmsg *ndm, struct nlattr *tb[],
+ int br_fdb_sync_static(struct net_bridge *br, struct net_bridge_port *p)
  {
--	struct xfs_scrub_agfl_info	sai = { 0 };
-+	struct xfs_scrub_agfl_info	sai = { { 0 } };
- 	struct xfs_agf			*agf;
- 	xfs_agnumber_t			agno;
- 	unsigned int			agflcount;
+ 	struct net_bridge_fdb_entry *f, *tmp;
+-	int err;
++	int err = 0;
+ 
+ 	ASSERT_RTNL();
+ 
 -- 
 2.7.4
