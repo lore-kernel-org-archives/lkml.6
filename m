@@ -1,77 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752689AbeBARIf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 12:08:35 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:55000 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751967AbeBARId (ORCPT
+        id S1752732AbeBARIr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 12:08:47 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:33659 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752556AbeBARIo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:08:33 -0500
-Date: Thu, 1 Feb 2018 09:08:26 -0800
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xfs: Add missing braces around xfs_scrub_agfl_info
- initializer
-Message-ID: <20180201170826.GP4849@magnolia>
-References: <1517480584-4588-1-git-send-email-geert@linux-m68k.org>
- <CAK8P3a1N-Yh65y6bEb+d7DwVOqB8ee=T1gM1cc7k6=cg1c3Jtw@mail.gmail.com>
+        Thu, 1 Feb 2018 12:08:44 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w11H8UtU006620
+X-Nifty-SrcIP: [209.85.213.53]
+X-Google-Smtp-Source: AH8x225abcSII8Pb0jvqCHK97QvhYheqsKkgsul9d+DDHfYsr87/emduOYUcXupgyrupm7wyuGXVigls7BUUwLeWLXk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK8P3a1N-Yh65y6bEb+d7DwVOqB8ee=T1gM1cc7k6=cg1c3Jtw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=903
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802010219
+In-Reply-To: <8d57e878-2195-d59a-460b-1706889eab17@infradead.org>
+References: <20180131093434.20050-1-ulfalizer@gmail.com> <CAK7LNAQYT2DuGkP1s+BP8OHChgqE_o6vCwhkU0ZEsFzveb-Bhg@mail.gmail.com>
+ <8d57e878-2195-d59a-460b-1706889eab17@infradead.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 2 Feb 2018 02:07:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQP2K6FrQv9D+pGsXhvmk0BRxFmw3pv0pQzfY0Rusb5Ug@mail.gmail.com>
+Message-ID: <CAK7LNAQP2K6FrQv9D+pGsXhvmk0BRxFmw3pv0pQzfY0Rusb5Ug@mail.gmail.com>
+Subject: Re: [PATCH 00/11] Remove blank help texts from Kconfig files and add warning
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Paul Bolle <pebolle@tiscali.nl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 12:31:36PM +0100, Arnd Bergmann wrote:
-> On Thu, Feb 1, 2018 at 11:23 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > With gcc-4.1.2:
-> >
-> >     fs/xfs/scrub/agheader.c: In function ‘xfs_scrub_agfl’:
-> >     fs/xfs/scrub/agheader.c:770: warning: missing braces around initializer
-> >     fs/xfs/scrub/agheader.c:770: warning: (near initialization for ‘sai.oinfo’)
-> >
-> > The first member of struct xfs_scrub_agfl_info is no longer an integral
-> > type, but a struct.  Add the missing curly braces to fix this.
-> 
-> I suspect gcc-4.5 is affected as well, but not 4.6+
-> 
-> > --- a/fs/xfs/scrub/agheader.c
-> > +++ b/fs/xfs/scrub/agheader.c
-> > @@ -767,7 +767,7 @@ int
-> >  xfs_scrub_agfl(
-> >         struct xfs_scrub_context        *sc)
-> >  {
-> > -       struct xfs_scrub_agfl_info      sai = { 0 };
-> > +       struct xfs_scrub_agfl_info      sai = { { 0 } };
-> >         struct xfs_agf                  *agf;
-> 
-> Looks ok to me, but
-> 
->         struct xfs_scrub_agfl_info      sai = { };
-> 
-> might be slightly better in case the first member changes again.
+2018-02-01 5:46 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
+> On 01/31/2018 07:27 AM, Masahiro Yamada wrote:
+>> 2018-01-31 18:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+>>> This patchset first removes all blank help texts from Kconfig files for all
+>>> arches, and then makes Kconfig print a warning for blank help texts.
+>>>
+>>> All patches can be applied independently, but to avoid warning spam, the blank
+>>> help texts ought to be removed before the warning is added.
+>>>
+>>> Ulf Magnusson (11):
+>>>   net/sched: kconfig: Remove blank help texts
+>>>   video: fbdev: kconfig: Remove blank help text
+>>>   mmc: kconfig: Remove blank help text
+>>>   Staging: rtl8192u: kconfig: Remove blank help text
+>>>   Staging: rtl8192e: kconfig: Remove blank help text
+>>>   lib/Kconfig.debug: Remove blank help text
+>>>   MIPS: BCM63XX: kconfig: Remove blank help text
+>>>   MIPS: kconfig: Remove blank help text
+>>>   arm: vt8500: kconfig: Remove blank help text
+>>>   nios2: kconfig: Remove blank help text
+>>>   kconfig: Warn if help text is blank
+>>
+>>
+>> Whole of the series, applied to linux-kbuild/kconfig.  Thanks!
+>>
+>
+> That probably means that I am too late, but anyway:
+>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org> # series of 11 patches
+>
 
-Frankly I'd rather see it changed to memset(&sai, 0, sizeof(sai)); and
-stop having to field all these gcc warnings that vary depending on
-compiler version...
 
---D
+I will add your Acked-by. Thanks!
 
-> 
->      Arnd
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+Best Regards
+Masahiro Yamada
