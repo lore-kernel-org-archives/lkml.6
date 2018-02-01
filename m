@@ -1,63 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeBAP6u (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:58:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40004 "EHLO mx1.redhat.com"
+        id S1752088AbeBAQCQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:02:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751530AbeBAP6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:58:49 -0500
-Date: Thu, 1 Feb 2018 16:58:34 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        Mihai Carabas <mihai.carabas@oracle.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>
-Subject: Re: [PATCH v3 0/3] Per-VCPU MSR bitmaps patches - topic branch for
- x86/pti
-Message-ID: <20180201155833.GE31080@flask>
-References: <20180131210924.22812-1-pbonzini@redhat.com>
- <20180201014810.GA19582@char.us.oracle.com>
+        id S1751760AbeBAQCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 11:02:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2111E20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Thu, 1 Feb 2018 16:02:06 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Huacai CHen <chenhc@lemote.com>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] MIPS: Loongson64: Drop 32-bit support for Loongson
+ 2E/2F devices
+Message-ID: <20180201160205.GJ7637@saruman>
+References: <20180102153917.4563-1-jiaxun.yang@flygoat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PMULwz+zIGJzpDN9"
 Content-Disposition: inline
-In-Reply-To: <20180201014810.GA19582@char.us.oracle.com>
+In-Reply-To: <20180102153917.4563-1-jiaxun.yang@flygoat.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-01-31 20:48-0500, Konrad Rzeszutek Wilk:
-> On Wed, Jan 31, 2018 at 04:09:21PM -0500, Paolo Bonzini wrote:
-> > David and others,
-> > 
-> > the following changes since commit ba804bb4b72e57374b5f567b783aa0298fba0ce6:
-> > 
-> >   Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2018-01-26 09:03:16 -0800)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/virt/kvm/kvm.git msr-bitmaps
-> > 
-> > for you to fetch changes up to 904e14fb7cb96401a7dc803ca2863fd5ba32ffe6:
-> > 
-> >   KVM: VMX: make MSR bitmaps per-VCPU (2018-01-26 22:59:32 +0100)
-> > 
-> > The patches are on top of Linus's tree and I checked that they apply okay
-> > on top of the latest 4.14 tree as well as required for tip x86/pti.
-> > One extra commit is needed that is pretty safe and would have been merged
-> > for 4.16 anyway.
-> > 
-> > Radim, please pull this into kvm.git too.  As before I've placed my
-> > resolution on kvm.git, branch refs/heads/msr-bitmaps-merge-resolution.
-> > It's based on kvm/next this time.
-> 
-> You don't want folks to review patch #2 and #3 first? There are tons
-> of people that I am sure would be thrilled with the whole Spectra circus.
 
-This is only a boring prerequisite that doesn't add any security ...
-Jim Mattson gave r-b to [v1 3/3] and was a significant contributor to
-the patches, David Hildenbrandt reviewed [v2 2,3/3] and there have been
-only minor changes since.
+--PMULwz+zIGJzpDN9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v3 looks good to me, so I'll pull if there are no more requirements from
-pti.
+On Tue, Jan 02, 2018 at 11:39:17PM +0800, Jiaxun Yang wrote:
+> The 32-bit support was broken at runtime, it doesn't boot anymore,
+> witch is hard to debug because even early printk isn't working, also
+> there are some build warnings. Some newer bootloader may not support
+> 32-bit ELF. So we decide to drop 32-bit support.
+>=20
+> Make loongson64 a pure 64-bit arch.
+>=20
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+
+Applied to my 4.16 branch,
+
+Thanks
+James
+
+> ---
+>  arch/mips/loongson64/Kconfig | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/arch/mips/loongson64/Kconfig b/arch/mips/loongson64/Kconfig
+> index 0d249fc3cfe9..a7d9a9241ac4 100644
+> --- a/arch/mips/loongson64/Kconfig
+> +++ b/arch/mips/loongson64/Kconfig
+> @@ -17,7 +17,6 @@ config LEMOTE_FULOONG2E
+>  	select I8259
+>  	select ISA
+>  	select IRQ_MIPS_CPU
+> -	select SYS_SUPPORTS_32BIT_KERNEL
+>  	select SYS_SUPPORTS_64BIT_KERNEL
+>  	select SYS_SUPPORTS_LITTLE_ENDIAN
+>  	select SYS_SUPPORTS_HIGHMEM
+> @@ -49,7 +48,6 @@ config LEMOTE_MACH2F
+>  	select ISA
+>  	select SYS_HAS_CPU_LOONGSON2F
+>  	select SYS_HAS_EARLY_PRINTK
+> -	select SYS_SUPPORTS_32BIT_KERNEL
+>  	select SYS_SUPPORTS_64BIT_KERNEL
+>  	select SYS_SUPPORTS_HIGHMEM
+>  	select SYS_SUPPORTS_LITTLE_ENDIAN
+> --=20
+> 2.15.1
+>=20
+
+--PMULwz+zIGJzpDN9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlpzOf0ACgkQbAtpk944
+dnrN9g//R1Ef1pZ1T+Ru8tRJJWUXaB8RtykHv39FB5c+2TjxZ6Nfceh5rD4HUO3m
+jtbMcgoESmkGwIQSJF5RMDJp2Bj8XVD4HVTlm282/ElQw0iaJDjGCdu7MGmk84hF
+PviNfGA8CtvG8X4MWVcOG2c07cKUjqiUUJGCeKUaCBfWns3Cd04w1uwF2oGfnTcp
+F0mnecK86j/8oKLn6JjcHksxJ5N4vhz68Ax0VilSyeZu9QmB9zL3UGq3KkNwVJyt
+e6KlJZlCaoXFnUqKOuAasO7g42zKxJNtK1EK+F09AbPvxPu0TIeeXYD17qZhHwrX
+MqT6oE8PGszjw5++fHMh+AKgBzs7qMcN+l9plzXbAfbp8wu8u+vAxtkzWZJOZkc9
+Iz5BujoYUmjPO96+x3n41t5sRDgGmQ/ShmEQY3l1rVswaHr/pQL4JbkR9/JKEWay
+P2H8uGnB64UWB5vLDaUCPVOW3hBjQKWFT3t7STjMIJZ8Ep9BRpxqR4/+bR9kAAU5
+BqggaE/PYWzMuCQ6QUhbE5QPhb3CQcaPYvU+6ZoRKIv7lK9K+Yh4+iPBbUR/bNRS
+amx1p3vip9w+kxM/Bt+xkmyaOb+mj2rhmUz9nimlBWpSieLyqQlhaz3l//I82WoX
+/0/Ro30mFKc1j2kHtG++tjbq8bF+yyJSxxOsfMvf5ZDOUo9ieN8=
+=uZ0o
+-----END PGP SIGNATURE-----
+
+--PMULwz+zIGJzpDN9--
