@@ -1,67 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752331AbeBALqF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 06:46:05 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:39039 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeBALqD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 06:46:03 -0500
-X-Google-Smtp-Source: AH8x224AthhXddLvnVm+w0fZ9pDJFHayfIDV7qmQlb/4qDmHlcX+rUGvIYoauzDJzsYP/FV3l7VvtpuAafPTuuSok0A=
-MIME-Version: 1.0
-In-Reply-To: <1517480520-4465-2-git-send-email-geert@linux-m68k.org>
-References: <1517480520-4465-1-git-send-email-geert@linux-m68k.org> <1517480520-4465-2-git-send-email-geert@linux-m68k.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 1 Feb 2018 12:46:02 +0100
-X-Google-Sender-Auth: q9kkKTeZ4ig11UfutSfXpahFNTU
-Message-ID: <CAK8P3a1Tm7zJf1VEGFPmhwqS=h92=_ssfAENJcrmxGg0eJCqnA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] compiler-gcc.h: __nostackprotector needs gcc-4.4 and up
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Christopher Li <sparse@chrisli.org>,
+        id S1752297AbeBALri (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 06:47:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:48272 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751909AbeBALrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 06:47:37 -0500
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Jones <drjones@redhat.com>, Hanjun Guo <guohanjun@huawei.com>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        Jon Masters <jcm@redhat.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: [PATCH v3 00/18] arm64: Add SMCCC v1.1 support and CVE-2017-5715 (Spectre variant 2) mitigation
+Date: Thu,  1 Feb 2018 11:46:39 +0000
+Message-Id: <20180201114657.7323-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w11Bk8hq026052
 
-On Thu, Feb 1, 2018 at 11:21 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Gcc versions before 4.4 do not recognize the __optimize__ compiler
-> attribute:
->
->     warning: ‘__optimize__’ attribute directive ignored
->
-> Fixes: 7375ae3a0b79ea07 ("compiler-gcc.h: Introduce __nostackprotector function attribute")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> Can anyone please verify this?
-> Apparently __nostackprotector is used on x86 only, which is usually
-> served by modern compilers.
+ARM has recently published a SMC Calling Convention (SMCCC)
+specification update[1] that provides an optimised calling convention
+and optional, discoverable support for mitigating CVE-2017-5715. ARM
+Trusted Firmware (ATF) has already gained such an implementation[2].
 
-I've checked that __optimize("no-stack-protector") is accepted by exactly those
-compilers that your 40400 version check tests for, across all architectures, so
-that's fine.
+This series addresses a few things:
 
-However,  looking at commit 91cfc88c66bf ("x86: Use __nostackprotect for
-sme_encrypt_kernel"), I suspect that gcc-4.1 through 4.3 will now cause
-a runtime failure in sme_encrypt_kernel() without a compile-time warning.
+- It provides a KVM implementation of PSCI v1.0, which is a
+  prerequisite for being able to discover SMCCC v1.1, together with a
+  new userspace API to control the PSCI revision number that the guest
+  sees.
 
-I would leave __nostackprotector unchanged here, so we at least get
-a warning for functions that need to disable the stack protector to work
-correctly.
+- It allows KVM to advertise SMCCC v1.1, which is de-facto supported
+  already (it never corrupts any of the guest registers).
 
-We might want to add an #ifdef CONFIG_CC_STACKPROTECTOR around
-the __nostackprotector definition, so that we only warn if stackprotector
-is globally enabled.
+- It implements KVM support for the ARCH_WORKAROUND_1 function that is
+  used to mitigate CVE-2017-5715 in a guest (if such mitigation is
+  available on the host).
 
-       Arnd
+- It implements SMCCC v1.1 and ARCH_WORKAROUND_1 discovery support in
+  the kernel itself.
+
+- It finally provides firmware callbacks for CVE-2017-5715 for both
+  kernel and KVM and drop the initial PSCI_GET_VERSION based
+  mitigation.
+
+Patch 1 is already merged, and included here for reference. Patches on
+top of arm64/for-next/core. Tested on Seattle and Juno, the latter
+with ATF implementing SMCCC v1.1.
+
+[1]: https://developer.arm.com/support/security-update/downloads/
+
+[2]: https://github.com/ARM-software/arm-trusted-firmware/pull/1240
+
+* From v2:
+  - Fixed SMC handling in KVM
+  - PSCI fixes and tidying up
+  - SMCCC primitive rework for better code generation (both efficiency
+  and correctness)
+  - Remove PSCI_GET_VERSION as a mitigation vector
+
+* From v1:
+  - Fixed 32bit build
+  - Fix function number sign extension (Ard)
+  - Inline SMCCC v1.1 primitives (cpp soup)
+  - Prevent SMCCC spamming on feature probing
+  - Random fixes and tidying up
+
+Marc Zyngier (18):
+  arm64: KVM: Fix SMCCC handling of unimplemented SMC/HVC calls
+  arm: KVM: Fix SMCCC handling of unimplemented SMC/HVC calls
+  arm64: KVM: Increment PC after handling an SMC trap
+  arm/arm64: KVM: Consolidate the PSCI include files
+  arm/arm64: KVM: Add PSCI_VERSION helper
+  arm/arm64: KVM: Add smccc accessors to PSCI code
+  arm/arm64: KVM: Implement PSCI 1.0 support
+  arm/arm64: KVM: Add PSCI version selection API
+  arm/arm64: KVM: Advertise SMCCC v1.1
+  arm/arm64: KVM: Turn kvm_psci_version into a static inline
+  arm64: KVM: Report SMCCC_ARCH_WORKAROUND_1 BP hardening support
+  arm64: KVM: Add SMCCC_ARCH_WORKAROUND_1 fast handling
+  firmware/psci: Expose PSCI conduit
+  firmware/psci: Expose SMCCC version through psci_ops
+  arm/arm64: smccc: Make function identifiers an unsigned quantity
+  arm/arm64: smccc: Implement SMCCC v1.1 inline primitive
+  arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP hardening support
+  arm64: Kill PSCI_GET_VERSION as a variant-2 workaround
+
+ Documentation/virtual/kvm/api.txt      |   3 +-
+ Documentation/virtual/kvm/arm/psci.txt |  30 +++++
+ arch/arm/include/asm/kvm_host.h        |  10 ++
+ arch/arm/include/asm/kvm_psci.h        |  27 -----
+ arch/arm/include/uapi/asm/kvm.h        |   6 +
+ arch/arm/kvm/guest.c                   |  13 +++
+ arch/arm/kvm/handle_exit.c             |  17 ++-
+ arch/arm64/include/asm/kvm_host.h      |   9 ++
+ arch/arm64/include/asm/kvm_psci.h      |  27 -----
+ arch/arm64/include/uapi/asm/kvm.h      |   6 +
+ arch/arm64/kernel/bpi.S                |  44 ++++----
+ arch/arm64/kernel/cpu_errata.c         |  77 ++++++++++---
+ arch/arm64/kvm/guest.c                 |  14 ++-
+ arch/arm64/kvm/handle_exit.c           |  18 ++-
+ arch/arm64/kvm/hyp/hyp-entry.S         |  20 +++-
+ arch/arm64/kvm/hyp/switch.c            |  14 +--
+ drivers/firmware/psci.c                |  47 +++++++-
+ include/kvm/arm_psci.h                 |  63 +++++++++++
+ include/linux/arm-smccc.h              | 167 +++++++++++++++++++++++++++-
+ include/linux/psci.h                   |  13 +++
+ include/uapi/linux/psci.h              |   3 +
+ virt/kvm/arm/arm.c                     |   2 +-
+ virt/kvm/arm/psci.c                    | 196 +++++++++++++++++++++++++++++----
+ 23 files changed, 677 insertions(+), 149 deletions(-)
+ create mode 100644 Documentation/virtual/kvm/arm/psci.txt
+ delete mode 100644 arch/arm/include/asm/kvm_psci.h
+ delete mode 100644 arch/arm64/include/asm/kvm_psci.h
+ create mode 100644 include/kvm/arm_psci.h
+
+-- 
+2.14.2
