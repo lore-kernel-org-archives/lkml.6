@@ -1,89 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932223AbeBAB4P (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 20:56:15 -0500
-Received: from mga09.intel.com ([134.134.136.24]:53476 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932137AbeBAB4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 20:56:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,442,1511856000";
-   d="scan'208";a="200406313"
-Subject: [PATCH] x86/kvm: Update spectre-v1 mitigation
-From: Dan Williams <dan.j.williams@intel.com>
-To: tglx@linutronix.de
-Cc: Andrew Honig <ahonig@google.com>, Jim Mattson <jmattson@google.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>
-Date: Wed, 31 Jan 2018 17:47:03 -0800
-Message-ID: <151744959670.6342.3001723920950249067.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.17.1-9-g687f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S932234AbeBAB4s (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 20:56:48 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40430 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932137AbeBAB4o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 20:56:44 -0500
+X-Google-Smtp-Source: AH8x226cZ26K3v9TiawQ8wTtOaNtWvasFNx1QRJRZJDn5mm4XFcs+SMZr55WniyPdLRAjt/x+6cuxg==
+From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
+Message-Id: <D1CC1A53-9A57-4162-ADBF-45F0BDD519C0@lightnvm.io>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_8D242FFC-0E22-4DFB-97D2-0E4D8D7AF45B";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH 1/2] lightnvm: remove mlc pairs structure
+Date: Thu, 1 Feb 2018 09:56:42 +0800
+In-Reply-To: <e807b046-7d83-9cea-377c-03eb6fd1f662@lightnvm.io>
+Cc: =?utf-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+References: <20180130132605.28635-1-m@bjorling.me>
+ <E2E51BC8-63D4-40EC-9912-398BB73C9F16@lightnvm.io>
+ <e807b046-7d83-9cea-377c-03eb6fd1f662@lightnvm.io>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 75f139aaf896 "KVM: x86: Add memory barrier on vmcs field lookup"
-added a raw 'asm("lfence");' to prevent a bounds check bypass of
-'vmcs_field_to_offset_table'. We can save an lfence in this path and
-just use the common array_index_nospec() helper designed for these types
-of fixes.
 
-Cc: Andrew Honig <ahonig@google.com>
-Cc: Jim Mattson <jmattson@google.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Hi Thomas,
+--Apple-Mail=_8D242FFC-0E22-4DFB-97D2-0E4D8D7AF45B
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Here's that KVM patch rebased on latest tip/x86/pti.
+> On 31 Jan 2018, at 16.35, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 01/31/2018 03:00 AM, Javier Gonz=C3=A1lez wrote:
+>>> On 30 Jan 2018, at 21.26, Matias Bj=C3=B8rling <m@bjorling.me> =
+wrote:
+>>>=20
+>>> The known implementations of the 1.2 specification, and upcoming 2.0
+>>> implementation all expose a sequential list of pages to write.
+>>> Remove the data structure, as it is no longer needed.
+>>>=20
+>>> Signed-off-by: Matias Bj=C3=B8rling <m@bjorling.me>
+>>> ---
+>>> drivers/nvme/host/lightnvm.c | 14 +-------------
+>>> 1 file changed, 1 insertion(+), 13 deletions(-)
+>> Even though the current implementations does not use the MLC pairing
+>> information, this is part of the on the 1.2 identification. Until we
+>> eventually remove 1.2 support (if we do), the identify structure =
+should
+>> reflect the specification as is.
+>> Javier
+>=20
+> I already started on removing the MLC bits in previous patches. These
+> two patches continue that trend. I don't know of any implementing
+> either multiple groups or MLC, and since it has not been implemented
+> before, no one is going to use it. No reason to have dead code hanging
+> around. This is similar to the NVMe device driver not having
+> definitions for all that is in the specification until it is used in
+> the implementation.
 
- arch/x86/kvm/vmx.c |   20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+It's ok with me - just wanted to point out that it seems weird removing
+bits from the structure that describes the 1.2 identify command. Guess
+these can com back if someone ever needs them...
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index a8b96dc4cd83..28942823cc3a 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -34,6 +34,7 @@
- #include <linux/tboot.h>
- #include <linux/hrtimer.h>
- #include <linux/frame.h>
-+#include <linux/nospec.h>
- #include "kvm_cache_regs.h"
- #include "x86.h"
- 
-@@ -898,21 +899,18 @@ static const unsigned short vmcs_field_to_offset_table[] = {
- 
- static inline short vmcs_field_to_offset(unsigned long field)
- {
--	BUILD_BUG_ON(ARRAY_SIZE(vmcs_field_to_offset_table) > SHRT_MAX);
-+	const size_t size = ARRAY_SIZE(vmcs_field_to_offset_table);
-+	unsigned short offset;
- 
--	if (field >= ARRAY_SIZE(vmcs_field_to_offset_table))
-+	BUILD_BUG_ON(size > SHRT_MAX);
-+	if (field >= size)
- 		return -ENOENT;
- 
--	/*
--	 * FIXME: Mitigation for CVE-2017-5753.  To be replaced with a
--	 * generic mechanism.
--	 */
--	asm("lfence");
--
--	if (vmcs_field_to_offset_table[field] == 0)
-+	field = array_index_nospec(field, size);
-+	offset = vmcs_field_to_offset_table[field];
-+	if (offset == 0)
- 		return -ENOENT;
--
--	return vmcs_field_to_offset_table[field];
-+	return offset;
- }
- 
- static inline struct vmcs12 *get_vmcs12(struct kvm_vcpu *vcpu)
+Javier
+
+--Apple-Mail=_8D242FFC-0E22-4DFB-97D2-0E4D8D7AF45B
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlpyc9oACgkQYx8FO3WZ
+GMrztQ//fXC3X4TDW4MWcyH+tX2lsgnO1utR6Ng69ulo2d1A2mWIrCEgMVhMe+Gj
+G6fHBmoh6kwV8k5rOAShCwD1rObCLu7vqBhsxsNIbFtlffeEJQrf9K7Uw6nCZ8DR
+fi2T7Ot9Bl9chg/o1V6F19b2aKbrW4MncTcvd5cZxi8xz+fF70vfYBNE2pF0G6fu
+rb5nuuxD9ltAaVQyACbjdJ+fkPuhWphLxeGPJYcwGnY1D574bWaCm71LMqOGsDDI
+WeSPhEl6beWeCjHCijplOm8/zxGbG2TidMVhbBYGpLEyeJA89oScrlYrbJeIknDQ
+gSMfuoHWSCxl5xustRFX8C7COrXRwuRzsdq1kAnK+MU5JrMd4fGYx4MJz8Fo+ybw
+LksYYZQp1YWf6vnKlnbVSlWconne0/u/GuW6o6sv7IC1KL263VrY4Idp+B7rWPnO
+y4IeUW7oy4qzQeo+gN3mwP0vCuxoKxtP3C0wQ4PsrRYKRzRsLbw8rE65HeZV/+2g
+759M18bm/VISf19yO9ZzhTxEBO74miMMQt01erZm1ga+Lh7PA5H5lM2wR7B61C+Y
+SCIGIUPS8PL7giYq+glWo96XMrc5WsOuvyzfzuYsTFfiHFKxDxaXbGbS9yZEnj4n
+BZNfUZgCf7CpDUXRO1ZHRm9QD4asMIGcWgUHV3JerRfuhpIfu2k=
+=6GRD
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_8D242FFC-0E22-4DFB-97D2-0E4D8D7AF45B--
