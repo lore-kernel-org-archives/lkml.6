@@ -1,77 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752543AbeBAPUp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:20:45 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:44732 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752383AbeBAPUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:20:40 -0500
-Date: Thu, 01 Feb 2018 10:20:38 -0500 (EST)
-Message-Id: <20180201.102038.1412916523456522737.davem@davemloft.net>
-To: torvalds@linux-foundation.org
-CC: akpm@linux-foundation.org, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Sparc
-From: David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1752043AbeBAPXF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:23:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56164 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751554AbeBAPXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 10:23:03 -0500
+Date: Thu, 1 Feb 2018 16:22:44 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        KVM <kvm@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+Message-ID: <20180201152244.GC31080@flask>
+References: <20180201125512.7bc96674@canb.auug.org.au>
+ <20180201104707.GA21802@cbox>
+ <20180202002227.36db3356@canb.auug.org.au>
+ <f49453f2-223e-abe0-912a-7288183a1671@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f49453f2-223e-abe0-912a-7288183a1671@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-02-01 09:21-0500, Paolo Bonzini:
+> On 01/02/2018 08:22, Stephen Rothwell wrote:
+> > Hi Christoffer,
+> > 
+> > On Thu, 1 Feb 2018 11:47:07 +0100 Christoffer Dall <christoffer.dall@linaro.org> wrote:
+> >>
+> >> While the suggested fix is functional it does result in some code
+> >> duplication, and the better resolution is the following:
+> > 
+> > OK, I will use that resolution form tomorrow on.
+> > 
+> > Someone needs to remember to let Linus know when the pull request is
+> > sent.
+> 
+> It should be fixed in the KVM tree before it reaches Linus (when we
+> merge a topic branch that is common between x86/pti & KVM).
 
-Please pull to get the following sparc changes for the merge window.
+I wasn't sure if the pti top branch is final, so I pulled hyper-v topic
+branch that also also contains v4.15.  This and the SEV feature
+conflicts should be gone now,
 
-Of note is the addition of a driver for the Data Analytics
-Accelerator, and some small cleanups.
-
-Thanks!
-
-The following changes since commit 0d665e7b109d512b7cae3ccef6e8654714887844:
-
-  mm, page_vma_mapped: Drop faulty pointer arithmetics in check_pte() (2018-01-21 17:44:47 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next.git 
-
-for you to fetch changes up to 2d85ec8acb01601a216b6c591cab63bfaacd2083:
-
-  oradax: Fix return value check in dax_attach() (2018-01-29 14:28:48 -0500)
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      sparc: vDSO: remove an extra tab
-
-David S. Miller (1):
-      Merge branch 'sparc64-dax-support'
-
-Rob Gardner (2):
-      sparc64: Oracle DAX infrastructure
-      sparc64: Oracle DAX driver
-
-Rolf Eike Beer (1):
-      sparc64: drop unneeded compat include
-
-Wei Yongjun (1):
-      oradax: Fix return value check in dax_attach()
-
- Documentation/sparc/oradax/dax-hv-api.txt | 1433 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- Documentation/sparc/oradax/oracle-dax.txt |  429 +++++++++++++++++++++++
- arch/sparc/include/asm/hypervisor.h       |  138 ++++++++
- arch/sparc/include/uapi/asm/oradax.h      |   91 +++++
- arch/sparc/kernel/hvapi.c                 |    1 +
- arch/sparc/kernel/hvcalls.S               |   57 ++++
- arch/sparc/kernel/signal_64.c             |    3 -
- arch/sparc/vdso/vma.c                     |    2 +-
- drivers/sbus/char/Kconfig                 |    8 +
- drivers/sbus/char/Makefile                |    1 +
- drivers/sbus/char/oradax.c                | 1005 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 11 files changed, 3164 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/sparc/oradax/dax-hv-api.txt
- create mode 100644 Documentation/sparc/oradax/oracle-dax.txt
- create mode 100644 arch/sparc/include/uapi/asm/oradax.h
- create mode 100644 drivers/sbus/char/oradax.c
+thanks.
