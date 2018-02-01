@@ -1,58 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751467AbeBACz2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 31 Jan 2018 21:55:28 -0500
-Received: from ozlabs.org ([103.22.144.67]:43301 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751163AbeBACzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jan 2018 21:55:24 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Ingo Molnar <mingo@kernel.org>, Ram Pai <linuxram@us.ibm.com>
-Cc: mingo@redhat.com, akpm@linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
-        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
-Subject: Re: [PATCH v11 0/3] mm, x86, powerpc: Enhancements to Memory Protection Keys.
-In-Reply-To: <20180131070711.pad45qmnougnh4vf@gmail.com>
-References: <1517341452-11924-1-git-send-email-linuxram@us.ibm.com> <20180131070711.pad45qmnougnh4vf@gmail.com>
-Date: Thu, 01 Feb 2018 13:55:21 +1100
-Message-ID: <87lggde7vq.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1751514AbeBADFt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 31 Jan 2018 22:05:49 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41019 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751397AbeBADFr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jan 2018 22:05:47 -0500
+X-Google-Smtp-Source: AH8x226XHpcKnwelaTFZdwCsICY2Z9h6qgOUX7PPOlulRwEi8vTXPajar5bZU3B0EDj3DPaACirCbw==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org
+Subject: [PATCH v2 1/2] dt-bindings: gpio: Add Spreadtrum GPIO controller documentation
+Date: Thu,  1 Feb 2018 11:04:31 +0800
+Message-Id: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517453568.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingo Molnar <mingo@kernel.org> writes:
+This patch adds the device tree bindings for the Spreadtrum
+GPIO controller. The gpios will be supported by the GPIO
+generic library.
 
-> * Ram Pai <linuxram@us.ibm.com> wrote:
->
->> This patch series provides arch-neutral enhancements to
->> enable memory-keys on new architecutes, and the corresponding
->> changes in x86 and powerpc specific code to support that.
->> 
->> a) Provides ability to support upto 32 keys.  PowerPC
->> 	can handle 32 keys and hence needs this.
->> 
->> b) Arch-neutral code; and not the arch-specific code,
->>    determines the format of the string, that displays the key
->>    for each vma in smaps.
->> 
->> PowerPC implementation of memory-keys is now in powerpc/next tree.
->> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/commit/?h=next&id=92e3da3cf193fd27996909956c12a23c0333da44
->
-> All three patches look sane to me. If you would like to carry these generic bits 
-> in the PowerPC tree as well then:
->
->   Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes since v1:
+ - No updates.
+---
+ .../devicetree/bindings/gpio/gpio-sprd.txt         |   28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sprd.txt
 
-Thanks.
-
-I'll put them in powerpc next and probably send to Linus next week in a
-2nd pull request for 4.16.
-
-cheers
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+new file mode 100644
+index 0000000..eca97d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+@@ -0,0 +1,28 @@
++Spreadtrum GPIO controller bindings
++
++The controller's registers are organized as sets of sixteen 16-bit
++registers with each set controlling a bank of up to 16 pins. A single
++interrupt is shared for all of the banks handled by the controller.
++
++Required properties:
++- compatible: Should be "sprd,sc9860-gpio".
++- reg: Define the base and range of the I/O address space containing
++the GPIO controller registers.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be <2>. The first cell is the gpio number and
++the second cell is used to specify optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be <2>. Specifies the number of cells needed
++to encode interrupt source.
++- interrupts: Should be the port interrupt shared by all the gpios.
++
++Example:
++	ap_gpio: gpio@40280000 {
++		compatible = "sprd,sc9860-gpio";
++		reg = <0 0x40280000 0 0x1000>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++	};
+-- 
+1.7.9.5
