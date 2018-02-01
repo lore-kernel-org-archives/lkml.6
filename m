@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752845AbeBAQvl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:51:41 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39810 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752808AbeBAQvZ (ORCPT
+        id S1752888AbeBAQwc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:52:32 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:40923 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752799AbeBAQvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:51:25 -0500
-X-Google-Smtp-Source: AH8x2256R8nXzaCc6SYdHqE1k9fV5AoHapkhwB0sO+A/JfqsbcgoDtjf6chdayj5BmjBdC4rlCovAg==
+        Thu, 1 Feb 2018 11:51:23 -0500
+X-Google-Smtp-Source: AH8x2267JHnrRbIoDZoLh9uQMaf/jdCc+uwvTYTPZ/valLCWKPjdl1OFyzxJqchUdwxzL8Am8lk9bQ==
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: peterz@infradead.org
 Cc: lizefan@huawei.com, mingo@redhat.com, rostedt@goodmis.org,
         claudio@evidence.eu.com, bristot@redhat.com,
         tommaso.cucinotta@santannapisa.it, juri.lelli@redhat.com,
         luca.abeni@santannapisa.it, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 7/7] sched/deadline: Prevent CPU hotplug operation if DL task on CPU
-Date: Thu,  1 Feb 2018 09:51:09 -0700
-Message-Id: <1517503869-3179-8-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH V2 6/7] sched/core: Don't change the affinity of DL tasks
+Date: Thu,  1 Feb 2018 09:51:08 -0700
+Message-Id: <1517503869-3179-7-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
@@ -24,172 +24,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a DL task is assigned a CPU the "utilisation" (this_bw) and the
-"active utilisation" (running_bw) fields of rq->dl are incremented
-accordingly.  If the CPU is hotplugged out the DL task is transferred
-to another CPU but the task's contribution to this_bw and running_bw
-isn't substracted from the outgoing CPU's rq nor added to the newly
-appointed CPU.
+Now that we mandate that on creation, the ->cpus_allowed mask of a future
+DL task has to be equal to the rd->span of the root domain it will be
+associated with, changing the affinity of a DL task doesn't make sense
+anymore.
 
-In this example (where a kernel has been instrumented to output the
-relevant information) we have a 4 CPU system with one 6:10 DL task that
-has been assigned to CPU 2:
+Indeed, if we set the task to a smaller affinity set then we may be running
+out of CPU cycle.  If we try to increase the size of the affinity set the
+new CPUs are necessarily part of another root domain where DL utilisation
+for the task won't be accounted for.
 
-	root@dragon:/home/linaro/# cat /proc/rq_debug
-
-	dl_rq[0]:
-	  .online			: yes
-	  .dl_nr_running		: 0
-	  .running_bw			: 0
-	  .this_bw			: 0
-	  .rd->span			: 0-3
-	  .dl_nr_migratory		: 0
-	  .rd->dl_bw->bw		: 3984588
-	  .rd->dl_bw->total_bw		: 629145
-
-	dl_rq[1]:
-	  .online			: yes
-	  .dl_nr_running		: 0
-	  .running_bw			: 0
-	  .this_bw			: 0
-	  .rd->span:			: 0-3
-	  .dl_nr_migratory		: 0
-	  .rd->dl_bw->bw		: 3984588	<-- RD capacity for 4 CPUs
-	  .rd->dl_bw->total_bw		: 629145
-
-	dl_rq[2]:
-	  .online			: yes
-	  .dl_nr_running		: 1		<-- One task running
-	  .running_bw			: 629145	<-- Normal behavior
-	  .this_bw			: 629145	<-- Normal behavior
-	  .rd->span			: 0-3
-	  .dl_nr_migratory		: 1
-	  .rd->dl_bw->bw		: 3984588
-	  .rd->dl_bw->total_bw		: 629145
-
-	dl_rq[3]:
-	  .online			: yes
-	  .dl_nr_running		: 0
-	  .running_bw			: 0
-	  .this_bw			: 0
-	  .rd->span			: 0-3
-	  .dl_nr_migratory		: 0
-	  .rd->dl_bw->bw		: 3984588
-	  .rd->dl_bw->total_bw		: 629145
-
-At this point we hotplug out CPU2 and list the status again:
-
-root@dragon:/home/linaro/# echo  0 > /sys/devices/system/cpu/cpu2/online
-root@dragon:/home/linaro/# cat /proc/rq_debug
-
-	dl_rq[0]:
-	  .online			: yes
-	  .dl_nr_running		: 1		<-- DL task was moved here
-	  .running_bw			: 0		<-- Contribution not added
-	  .this_bw			: 0		<-- Contribution not added
-	  .rd->span			: 0-1,3
-	  .dl_nr_migratory		: 1
-	  .rd->dl_bw->bw		: 2988441	<-- RD capacity updated
-	  .rd->dl_bw->total_bw		: 629145
-
-	dl_rq[1]:
-	  .online			: yes
-	  .dl_nr_running		: 0
-	  .running_bw			: 0
-	  .this_bw			: 0
-	  .rd->span			: 0-1,3
-	  .dl_nr_migratory		: 0
-	  .rd->dl_bw->bw		: 2988441
-	  .rd->dl_bw->total_bw		: 629145
-
-	dl_rq[2]:
-	  .online			: no		<-- runqueue no longer online
-	  .dl_nr_running		: 0		<-- DL task was moved
-	  .running_bw			: 629145	<-- Contribution not substracted
-	  .this_bw			: 629145	<-- Contribution not substracted
-	  .rd->span			: 2
-	  .dl_nr_migratory		: 0
-	  .rd->dl_bw->bw		: 996147
-	  .rd->dl_bw->total_bw		: 0
-
-	dl_rq[3]:
-	  .online			: yes
-	  .dl_nr_running		: 0
-	  .running_bw			: 0
-	  .this_bw			: 0
-	  .rd->span			: 0-1,3
-	  .dl_nr_migratory		: 0
-	  .rd->dl_bw->bw		: 2988441
-	  .rd->dl_bw->total_bw: 629145
-
-Upon rebooting the system a splat is also produced:
-
-[  578.184789] ------------[ cut here ]------------
-[  578.184813] dl_rq->running_bw > old
-[  578.184838] WARNING: CPU: 0 PID: 4076 at /home/mpoirier/work/linaro/deadline/kernel/kernel/sched/deadline.c:98 dequeue_task_dl+0x128/0x168
-[  578.191693] Modules linked in:
-[  578.191705] CPU: 0 PID: 4076 Comm: burn Not tainted 4.15.0-00009-gf597fc1e5764-dirty #259
-[  578.191708] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-[  578.191713] pstate: 60000085 (nZCv daIf -PAN -UAO)
-[  578.191718] pc : dequeue_task_dl+0x128/0x168
-[  578.191722] lr : dequeue_task_dl+0x128/0x168
-[  578.191724] sp : ffff8000383ebbf0
-[  578.191727] x29: ffff8000383ebbf0 x28: ffff800038288000
-[  578.191733] x27: 0000000000000009 x26: ffff800038890000
-[  578.191739] x25: ffff800038994e60 x24: ffff800038994e00
-[  578.191744] x23: 0000000000000000 x22: 0000000000000000
-[  578.191749] x21: 000000000000000e x20: ffff800038288000
-[  578.191755] x19: ffff80003d950aa8 x18: 0000000000000010
-[  578.191761] x17: 0000000000000001 x16: 0000000000002710
-[  578.191766] x15: 0000000000000006 x14: ffff0000892ed37f
-[  578.191772] x13: ffff0000092ed38d x12: 0000000000000000
-[  578.191778] x11: ffff8000383eb840 x10: 0000000005f5e0ff
-[  578.191784] x9 : 0000000000000034 x8 : 625f676e696e6e75
-[  578.191794] x7 : 723e2d71725f6c64 x6 : 000000000000016c
-[  578.191800] x5 : 0000000000000000 x4 : 0000000000000000
-[  578.191806] x3 : ffffffffffffffff x2 : 000080003480f000
-[  578.191812] x1 : ffff800038288000 x0 : 0000000000000017
-[  578.191818] Call trace:
-[  578.191824]  dequeue_task_dl+0x128/0x168
-[  578.191830]  sched_move_task+0xa8/0x150
-[  578.191837]  sched_autogroup_exit_task+0x20/0x30
-[  578.191843]  do_exit+0x2c4/0x9f8
-[  578.191847]  do_group_exit+0x3c/0xa0
-[  578.191853]  get_signal+0x2a4/0x568
-[  578.191860]  do_signal+0x70/0x210
-[  578.191866]  do_notify_resume+0xe0/0x138
-[  578.191870]  work_pending+0x8/0x10
-[  578.191874] ---[ end trace 345388d10dc698fe ]---
-
-As a stop-gap measure before the real solution is available this patch
-prevents users from carrying out a CPU hotplug operation if a DL task is
-running (or suspended) on said CPU.
+As such simply refuse to change the affinity set of a DL task.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- kernel/sched/deadline.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/sched/core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 1a5c42e7b076..9fa9421bb23f 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2672,11 +2672,16 @@ bool dl_cpu_busy(unsigned int cpu)
- 	int cpus;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 1a64aad1b9dc..2c9e54aac3cc 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4694,15 +4694,15 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
+ 	cpumask_and(new_mask, in_mask, cpus_allowed);
  
- 	rcu_read_lock_sched();
-+	overflow = !!(cpu_rq(cpu)->dl.this_bw);
-+	if (overflow)
-+		goto out;
-+
- 	dl_b = dl_bw_of(cpu);
- 	raw_spin_lock_irqsave(&dl_b->lock, flags);
- 	cpus = dl_bw_cpus(cpu);
- 	overflow = __dl_overflow(dl_b, cpus, 0, 0);
- 	raw_spin_unlock_irqrestore(&dl_b->lock, flags);
-+out:
- 	rcu_read_unlock_sched();
- 	return overflow;
- }
+ 	/*
+-	 * Since bandwidth control happens on root_domain basis,
+-	 * if admission test is enabled, we only admit -deadline
+-	 * tasks allowed to run on all the CPUs in the task's
+-	 * root_domain.
++	 * Since bandwidth control happens on root_domain basis, if admission
++	 * test is enabled we don't allow the task' CPUs to change.  If
++	 * @new_mask is smaller than we risk running out of cycles.  If it is
++	 * bigger than we may be using DL bandwidth allocated to other CPUs.
+ 	 */
+ #ifdef CONFIG_SMP
+ 	if (task_has_dl_policy(p) && dl_bandwidth_enabled()) {
+ 		rcu_read_lock();
+-		if (!cpumask_subset(task_rq(p)->rd->span, new_mask)) {
++		if (!cpumask_equal(task_rq(p)->rd->span, new_mask)) {
+ 			retval = -EBUSY;
+ 			rcu_read_unlock();
+ 			goto out_free_new_mask;
 -- 
 2.7.4
