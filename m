@@ -1,203 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeBAPTX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 10:19:23 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50541 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752003AbeBAPTP (ORCPT
+        id S1752281AbeBAPUf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 10:20:35 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:46167 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751760AbeBAPUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 10:19:15 -0500
-X-Google-Smtp-Source: AH8x224UORNL07iMZPgx6ntZ3zToutkPKuaNz/29Yodwls6m7oDWoLsLTPaj4Deo0+ZuOHmKgH0D8g==
-Subject: Re: [PATCH 2/2] soc: mediatek: add SCPSYS power domain driver for
- MediaTek MT7623A SoC
-To: sean.wang@mediatek.com, robh+dt@kernel.org, rjw@rjwysocki.net,
-        khilman@baylibre.com
-Cc: ulf.hansson@linaro.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <975fb80e1cdbe7f6d4a1d04fd3a2a21b619a193d.1517479588.git.sean.wang@mediatek.com>
- <de07c071f968ae9da84543bb33cc5658ed184801.1517479588.git.sean.wang@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <f0675124-c5c7-0f98-9762-c0778d7f5807@gmail.com>
-Date: Thu, 1 Feb 2018 16:19:10 +0100
+        Thu, 1 Feb 2018 10:20:31 -0500
+X-Google-Smtp-Source: AH8x224uGJEC03lh5KmfPj/j2+hJfg0REjcI1tvlHVdRUz/3uk0xvt+ci27gGRlR8HRI3ipEaYsaMQ==
+Subject: Re: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>
+Cc: initramfs <initramfs@vger.kernel.org>,
+        Taras Kondratiuk <takondra@cisco.com>,
+        Victor Kamensky <kamensky@cisco.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
+ <1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
+ <1517436423.3469.237.camel@linux.vnet.ibm.com>
+ <a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
+ <20180201020331.GA3774@rani.riverdale>
+ <1517458921.3329.2.camel@linux.vnet.ibm.com>
+From: Rob Landley <rob@landley.net>
+Message-ID: <f9112881-772c-2568-ebfa-d2ca807124e9@landley.net>
+Date: Thu, 1 Feb 2018 09:20:23 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <de07c071f968ae9da84543bb33cc5658ed184801.1517479588.git.sean.wang@mediatek.com>
+In-Reply-To: <1517458921.3329.2.camel@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 02/01/2018 11:12 AM, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Add SCPSYS power domain driver for MT7623A SoC. The MT7623A's power
-> domains are the subset of MT7623 SoC's ones. As MT7623 SoC has full
-> features whereas MT7623A is being designed just for router applications.
-> Thus, MT7623A doesn't include those power domains multimedia function
-> belongs to. In order to avoid certain errors undoubtedly happening at
-> registering those power domains on MT7623A SoC using the existing MT7623
-> SCPSYS driver, it's required to define another setup specifically for
-> MT7623A SoC. Also, use a meaningful definition for bus_prot_mask instead
-> of just hardcoded for it.
+On 01/31/2018 10:22 PM, Mimi Zohar wrote:
+> On Wed, 2018-01-31 at 21:03 -0500, Arvind Sankar wrote:
+>> On Wed, Jan 31, 2018 at 05:48:20PM -0600, Rob Landley wrote:
+>>> On 01/31/2018 04:07 PM, Mimi Zohar wrote:
+>>>> On Wed, 2018-01-31 at 13:32 -0600, Rob Landley wrote:>> (The old "I configured in tmpfs and am using rootfs but I want that
+>>> rootfs
+>>>>> to be ramfs, not tmpfs" code doesn't seem to be a real-world concern, does
+>>>>> it?)
+>>>>
+>>>> I must be missing something.  Which systems don't specify "root=" on
+>>>> the boot command line.
+>>>
+>>> Any system using initrd or initramfs?
+>>>
+>>
+>> Don't a lot of initramfs setups use root= to tell the initramfs which
+>> actual root file system to switch to after early boot?
 
-Also is nearly always a indicator to put it in a different patch. Could you
-please do so?
+You mean the option that _isn't_ passed through as an environment
+variable (the way ROOT= would be) so you have to parse /proc/cmdline to
+to see if it was passed in?
 
-Otherwise the series look good.
+If you really, really, really, really, really want to double down on the
+"no, this is the button, it doesn't do what I thought but I will MAKE it
+work" obsession, sure.
 
-Regards,
-Matthias
+> With your patch and specifying "root=tmpfs", dracut is complaining:
+> 
+> dracut: FATAL: Don't know how to handle 'root=tmpfs'
+> dracut: refusing to continue
 
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-scpsys.c         | 60 +++++++++++++++++++++++++++++--
->  include/dt-bindings/power/mt7623a-power.h | 10 ++++++
->  include/linux/soc/mediatek/infracfg.h     |  4 +++
->  3 files changed, 72 insertions(+), 2 deletions(-)
->  create mode 100644 include/dt-bindings/power/mt7623a-power.h
-> 
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index 435ce5e..fc55faa 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -24,6 +24,7 @@
->  #include <dt-bindings/power/mt2712-power.h>
->  #include <dt-bindings/power/mt6797-power.h>
->  #include <dt-bindings/power/mt7622-power.h>
-> +#include <dt-bindings/power/mt7623a-power.h>
->  #include <dt-bindings/power/mt8173-power.h>
->  
->  #define SPM_VDE_PWR_CON			0x0210
-> @@ -518,7 +519,8 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
->  		.name = "conn",
->  		.sta_mask = PWR_STATUS_CONN,
->  		.ctl_offs = SPM_CONN_PWR_CON,
-> -		.bus_prot_mask = 0x0104,
-> +		.bus_prot_mask = MT2701_TOP_AXI_PROT_EN_CONN_M |
-> +				 MT2701_TOP_AXI_PROT_EN_CONN_S,
->  		.clk_id = {CLK_NONE},
->  		.active_wakeup = true,
->  	},
-> @@ -528,7 +530,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
->  		.ctl_offs = SPM_DIS_PWR_CON,
->  		.sram_pdn_bits = GENMASK(11, 8),
->  		.clk_id = {CLK_MM},
-> -		.bus_prot_mask = 0x0002,
-> +		.bus_prot_mask = MT2701_TOP_AXI_PROT_EN_MM_M0,
->  		.active_wakeup = true,
->  	},
->  	[MT2701_POWER_DOMAIN_MFG] = {
-> @@ -794,6 +796,47 @@ static const struct scp_domain_data scp_domain_data_mt7622[] = {
->  };
->  
->  /*
-> + * MT7623A power domain support
-> + */
-> +
-> +static const struct scp_domain_data scp_domain_data_mt7623a[] = {
-> +	[MT7623A_POWER_DOMAIN_CONN] = {
-> +		.name = "conn",
-> +		.sta_mask = PWR_STATUS_CONN,
-> +		.ctl_offs = SPM_CONN_PWR_CON,
-> +		.bus_prot_mask = MT2701_TOP_AXI_PROT_EN_CONN_M |
-> +				 MT2701_TOP_AXI_PROT_EN_CONN_S,
-> +		.clk_id = {CLK_NONE},
-> +		.active_wakeup = true,
-> +	},
-> +	[MT7623A_POWER_DOMAIN_ETH] = {
-> +		.name = "eth",
-> +		.sta_mask = PWR_STATUS_ETH,
-> +		.ctl_offs = SPM_ETH_PWR_CON,
-> +		.sram_pdn_bits = GENMASK(11, 8),
-> +		.sram_pdn_ack_bits = GENMASK(15, 12),
-> +		.clk_id = {CLK_ETHIF},
-> +		.active_wakeup = true,
-> +	},
-> +	[MT7623A_POWER_DOMAIN_HIF] = {
-> +		.name = "hif",
-> +		.sta_mask = PWR_STATUS_HIF,
-> +		.ctl_offs = SPM_HIF_PWR_CON,
-> +		.sram_pdn_bits = GENMASK(11, 8),
-> +		.sram_pdn_ack_bits = GENMASK(15, 12),
-> +		.clk_id = {CLK_ETHIF},
-> +		.active_wakeup = true,
-> +	},
-> +	[MT7623A_POWER_DOMAIN_IFR_MSC] = {
-> +		.name = "ifr_msc",
-> +		.sta_mask = PWR_STATUS_IFR_MSC,
-> +		.ctl_offs = SPM_IFR_MSC_PWR_CON,
-> +		.clk_id = {CLK_NONE},
-> +		.active_wakeup = true,
-> +	},
-> +};
-> +
-> +/*
->   * MT8173 power domain support
->   */
->  
-> @@ -934,6 +977,16 @@ static const struct scp_soc_data mt7622_data = {
->  	.bus_prot_reg_update = true,
->  };
->  
-> +static const struct scp_soc_data mt7623a_data = {
-> +	.domains = scp_domain_data_mt7623a,
-> +	.num_domains = ARRAY_SIZE(scp_domain_data_mt7623a),
-> +	.regs = {
-> +		.pwr_sta_offs = SPM_PWR_STATUS,
-> +		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-> +	},
-> +	.bus_prot_reg_update = true,
-> +};
-> +
->  static const struct scp_soc_data mt8173_data = {
->  	.domains = scp_domain_data_mt8173,
->  	.num_domains = ARRAY_SIZE(scp_domain_data_mt8173),
-> @@ -964,6 +1017,9 @@ static const struct of_device_id of_scpsys_match_tbl[] = {
->  		.compatible = "mediatek,mt7622-scpsys",
->  		.data = &mt7622_data,
->  	}, {
-> +		.compatible = "mediatek,mt7623a-scpsys",
-> +		.data = &mt7623a_data,
-> +	}, {
->  		.compatible = "mediatek,mt8173-scpsys",
->  		.data = &mt8173_data,
->  	}, {
-> diff --git a/include/dt-bindings/power/mt7623a-power.h b/include/dt-bindings/power/mt7623a-power.h
-> new file mode 100644
-> index 0000000..ac15b5d
-> --- /dev/null
-> +++ b/include/dt-bindings/power/mt7623a-power.h
-> @@ -0,0 +1,10 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _DT_BINDINGS_POWER_MT7623A_POWER_H
-> +#define _DT_BINDINGS_POWER_MT7623A_POWER_H
-> +
-> +#define MT7623A_POWER_DOMAIN_CONN	0
-> +#define MT7623A_POWER_DOMAIN_ETH	1
-> +#define MT7623A_POWER_DOMAIN_HIF	2
-> +#define MT7623A_POWER_DOMAIN_IFR_MSC	3
-> +
-> +#endif /* _DT_BINDINGS_POWER_MT2701_POWER_H */
-> diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
-> index b0a507d..fd25f01 100644
-> --- a/include/linux/soc/mediatek/infracfg.h
-> +++ b/include/linux/soc/mediatek/infracfg.h
-> @@ -21,6 +21,10 @@
->  #define MT8173_TOP_AXI_PROT_EN_MFG_M1		BIT(22)
->  #define MT8173_TOP_AXI_PROT_EN_MFG_SNOOP_OUT	BIT(23)
->  
-> +#define MT2701_TOP_AXI_PROT_EN_MM_M0		BIT(1)
-> +#define MT2701_TOP_AXI_PROT_EN_CONN_M		BIT(2)
-> +#define MT2701_TOP_AXI_PROT_EN_CONN_S		BIT(8)
-> +
->  #define MT7622_TOP_AXI_PROT_EN_ETHSYS		(BIT(3) | BIT(17))
->  #define MT7622_TOP_AXI_PROT_EN_HIF0		(BIT(24) | BIT(25))
->  #define MT7622_TOP_AXI_PROT_EN_HIF1		(BIT(26) | BIT(27) | \
-> 
+[googles]... I do not understand why this package exists.
+
+If you're switching to another root filesystem, using a tool that
+wikipedia[citation needed] says has no purpose but to switch to another
+root filesystem, (so let's reproduce the kernel infrastructure in
+userspace while leaving it the kernel too)... why do you need initramfs
+to be tmpfs? You're using it for half a second, then discarding it,
+what's the point of it being tmpfs?
+
+Sigh. If people are ok with having rootfs just be tmpfs whenever tmpfs
+is configured in, even when you're then going to overmount it with
+something else like you're doing, let's just _remove_ the test. If it
+can be tmpfs, have it be tmpfs.
+
+Rob
