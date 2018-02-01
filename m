@@ -1,70 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752845AbeBAQRt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 11:17:49 -0500
-Received: from imap1.codethink.co.uk ([176.9.8.82]:32815 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752698AbeBAQRq (ORCPT
+        id S1752510AbeBAQVi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 11:21:38 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33321 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751783AbeBAQVd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 11:17:46 -0500
-Message-ID: <1517501859.3417.67.camel@codethink.co.uk>
+        Thu, 1 Feb 2018 11:21:33 -0500
+X-Google-Smtp-Source: AH8x225vhIlmTA4aMq6rzxwlnK5S96RzozGCEf+/pCQ+p4ctZBS6QIqeIQFQKQ5EgX8D3upxdEmkvcvLzsDvOLOHNmU=
+MIME-Version: 1.0
+In-Reply-To: <1517501859.3417.67.camel@codethink.co.uk>
+References: <CACT4Y+b0pizvOAxtWQ-TGCRAYvHXdv79BAEaXh50W6vF8gBvkQ@mail.gmail.com>
+ <1516638634.2545.0.camel@wdc.com> <097921fa-52c5-8b2b-f564-4b24d9720478@interlog.com>
+ <CACT4Y+aEx0ie3qjx6afCYV2vN7gYii0uupKWPXaNTnWUmhdHQw@mail.gmail.com>
+ <c0a7ec39-e357-9db6-cf12-ff9c46259f26@interlog.com> <CACT4Y+bObXrFiB0Qn+nfkD8DZRiVck1GJ5U9UeQz+-y85gh70Q@mail.gmail.com>
+ <1517501859.3417.67.camel@codethink.co.uk>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 1 Feb 2018 17:21:12 +0100
+Message-ID: <CACT4Y+ZEJ9_no0uQSXO66iyyUeJLn_zbPBEey62YkuzOEUMP2w@mail.gmail.com>
 Subject: Re: scsi: sg: assorted memory corruptions
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Dmitry Vyukov <dvyukov@google.com>,
-        Doug Gilbert <dgilbert@interlog.com>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
+Cc: Doug Gilbert <dgilbert@interlog.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
         "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
         "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
         "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
-Date: Thu, 01 Feb 2018 16:17:39 +0000
-In-Reply-To: <CACT4Y+bObXrFiB0Qn+nfkD8DZRiVck1GJ5U9UeQz+-y85gh70Q@mail.gmail.com>
-References: <CACT4Y+b0pizvOAxtWQ-TGCRAYvHXdv79BAEaXh50W6vF8gBvkQ@mail.gmail.com>
-         <1516638634.2545.0.camel@wdc.com>
-         <097921fa-52c5-8b2b-f564-4b24d9720478@interlog.com>
-         <CACT4Y+aEx0ie3qjx6afCYV2vN7gYii0uupKWPXaNTnWUmhdHQw@mail.gmail.com>
-         <c0a7ec39-e357-9db6-cf12-ff9c46259f26@interlog.com>
-         <CACT4Y+bObXrFiB0Qn+nfkD8DZRiVck1GJ5U9UeQz+-y85gh70Q@mail.gmail.com>
-Organization: Codethink Ltd.
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-02-01 at 08:04 +0100, Dmitry Vyukov wrote:
-> On Thu, Feb 1, 2018 at 7:03 AM, Douglas Gilbert <dgilbert@interlog.com> wrote:
-> > On 2018-01-30 07:22 AM, Dmitry Vyukov wrote:
-[...]
-> > > [1:0:0:0]    cd/dvd  QEMU     QEMU DVD-ROM     2.0.  /dev/sr0   /dev/sg1
-> > > 
-> > > # readlink /sys/class/scsi_generic/sg0
-> > > 
-> > > ../../devices/pci0000:00/0000:00:01.1/ata1/host0/target0:0:0/0:0:0:0/scsi_generic/sg0
-> > > 
-> > > # cat /sys/class/scsi_generic/sg0/device/vendor
-> > > ATA
-> > 
-> > 
-> > ^^^^^
-> > That subsystem is the culprit IMO, most likely libata.
-> > 
-> > Until you can show this test failing on something other than an
-> > ATA disk, then I will treat this issue as closed.
-> 
-> Hi Doug,
-> 
-> Why is bug in ATA not a bug? Is it long unused by everybody? I've got
-> it by running qemu with default flags...
+On Thu, Feb 1, 2018 at 5:17 PM, Ben Hutchings
+<ben.hutchings@codethink.co.uk> wrote:
+> On Thu, 2018-02-01 at 08:04 +0100, Dmitry Vyukov wrote:
+>> On Thu, Feb 1, 2018 at 7:03 AM, Douglas Gilbert <dgilbert@interlog.com> wrote:
+>> > On 2018-01-30 07:22 AM, Dmitry Vyukov wrote:
+> [...]
+>> > > [1:0:0:0]    cd/dvd  QEMU     QEMU DVD-ROM     2.0.  /dev/sr0   /dev/sg1
+>> > >
+>> > > # readlink /sys/class/scsi_generic/sg0
+>> > >
+>> > > ../../devices/pci0000:00/0000:00:01.1/ata1/host0/target0:0:0/0:0:0:0/scsi_generic/sg0
+>> > >
+>> > > # cat /sys/class/scsi_generic/sg0/device/vendor
+>> > > ATA
+>> >
+>> >
+>> > ^^^^^
+>> > That subsystem is the culprit IMO, most likely libata.
+>> >
+>> > Until you can show this test failing on something other than an
+>> > ATA disk, then I will treat this issue as closed.
+>>
+>> Hi Doug,
+>>
+>> Why is bug in ATA not a bug? Is it long unused by everybody? I've got
+>> it by running qemu with default flags...
+>
+> If the bug is in libata then it's not on Doug to fix it since he's only
+> maintaining sg.
 
-If the bug is in libata then it's not on Doug to fix it since he's only
-maintaining sg.
 
-Ben.
-
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Then I think we need to CC ata maintainers rather than treat it as closed.
++Tejun, linux-ide@, you can see full thread here:
+https://groups.google.com/forum/#!topic/syzkaller/9RNr9Gu0MyY
