@@ -1,135 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752019AbeBAJku (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 04:40:50 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:50943
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751520AbeBAJkp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 04:40:45 -0500
-X-IronPort-AV: E=Sophos;i="5.46,443,1511823600";
-   d="scan'208";a="253233217"
-Date: Thu, 1 Feb 2018 10:40:40 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-cc: cocci@systeme.lip6.fr, Gilles Muller <Gilles.Muller@lip6.fr>,
-        Himanshu Jha <himanshujha199640@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Coccinelle: zalloc-simple: Delete function "kmem_cache_alloc"
- from SmPL rules
-In-Reply-To: <6bee0e11-59ef-b7b1-886e-7abaa30887f2@users.sourceforge.net>
-Message-ID: <alpine.DEB.2.20.1802011040110.3135@hadrien>
-References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com> <6bee0e11-59ef-b7b1-886e-7abaa30887f2@users.sourceforge.net>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1752058AbeBAJk5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 04:40:57 -0500
+Received: from mga03.intel.com ([134.134.136.65]:6202 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751520AbeBAJkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 04:40:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,443,1511856000";
+   d="scan'208";a="26462592"
+Message-ID: <5A72E13A.9030701@intel.com>
+Date: Thu, 01 Feb 2018 17:43:22 +0800
+From: Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>
+Subject: Re: [virtio-dev] Re: [PATCH v25 2/2] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+References: <1516871646-22741-1-git-send-email-wei.w.wang@intel.com> <1516871646-22741-3-git-send-email-wei.w.wang@intel.com> <20180125154708-mutt-send-email-mst@kernel.org> <5A6A871C.6040408@intel.com> <20180126042649-mutt-send-email-mst@kernel.org> <5A6AA107.3000607@intel.com> <20180131011423-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180131011423-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/31/2018 07:44 AM, Michael S. Tsirkin wrote:
+> On Fri, Jan 26, 2018 at 11:31:19AM +0800, Wei Wang wrote:
+>> On 01/26/2018 10:42 AM, Michael S. Tsirkin wrote:
+>>> On Fri, Jan 26, 2018 at 09:40:44AM +0800, Wei Wang wrote:
+>>>> On 01/25/2018 09:49 PM, Michael S. Tsirkin wrote:
+>>>>> On Thu, Jan 25, 2018 at 05:14:06PM +0800, Wei Wang wrote:
+>>>>>
+>>>> The controversy is that the free list is not static
+>>>> once the lock is dropped, so everything is dynamically changing, including
+>>>> the state that was recorded. The method we are using is more prudent, IMHO.
+>>>> How about taking the fundamental solution, and seek to improve incrementally
+>>>> in the future?
+>>>>
+>>>>
+>>>> Best,
+>>>> Wei
+>>> I'd like to see kicks happen outside the spinlock. kick with a spinlock
+>>> taken looks like a scalability issue that won't be easy to
+>>> reproduce but hurt workloads at random unexpected times.
+>>>
+>> Is that "kick inside the spinlock" the only concern you have? I think we can
+>> remove the kick actually. If we check how the host side works, it is
+>> worthwhile to let the host poll the virtqueue after it receives the cmd id
+>> from the guest (kick for cmd id isn't within the lock).
+>>
+>>
+>> Best,
+>> Wei
+> So really there are different ways to put free page hints to use.
+>
+> The current interface requires host to do dirty tracking
+> for all memory, and it's more or less useless for
+> things like freeing host memory.
+>
+> So while your project's needs seem to be addressed, I'm
+> still a bit disappointed that so little collaboration
+> happened with e.g. Nitesh's project, to the point where
+> you don't even CC him on patches.
+
+Isn't "nilal@redhat.com" Nitesh? Actually it's been cc-ed long time ago.
+
+I think we should at least see the performance numbers and a working 
+prototype from them (I remember they lack the host side implementation).
+
+Btw, this feature is requested by many customers of Linux (not our own 
+project's need). They want to use this feature to optimize their *live 
+migration*. Hope the community could understand our need.
 
 
-On Thu, 1 Feb 2018, SF Markus Elfring wrote:
+> So I'm kind of trying to bridge this a bit - I would
+> like the interfaces that we build to at least superficially
+> look like they might be reusable for other uses of hinting.
+>
+> Imagine that you don't have dirty tracking on the host.
+> What would it take to still use hinting information,
+> e.g. to call MADV_FREE on the pages guest gives us?
+>
+> I think you need to kick and you need to wait for
+> host to consume the hint before page is reused.
+> And we know madvise takes a lot of time sometimes,
+> so locking out the free list does not sound like a
+> good idea.
+>
+> That's why I was talking about kick out of lock,
+> so that eventually we can reuse that for hinting
+> and actually wait for an interrupt.
+>
+> So how about we take a bunch of pages out of the free list, move them to
+> the balloon, kick (and optionally wait for host to consume), them move
+> them back? Preferably to end of the list? This will also make things
+> like sorting them much easier as you can just put them in a binary tree
+> or something.
+>
+> For when we need to be careful to make sure we don't
+> create an OOM situation with this out of thin air,
+> and for when you can't give everything to host in one go,
+> you might want some kind of notifier that tells you
+> that you need to return pages to the free list ASAP.
+>
+> How'd this sound?
+>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 1 Feb 2018 10:20:47 +0100
->
-> The deletion for a call of the function "memset" depends on
-> the specification that a size determination is passed by
-> the expression "E1".
-> The function "kmem_cache_alloc" was specified despite of the technical
-> detail that this function does not get a parameter passed which would
-> correspond to such a size information.
->
-> Thus remove it from the first two SmPL rules and omit the rule "r4".
+I think the above is a duplicate function of ballooning, though there 
+are some differences. Please see below my concerns and different thoughts:
 
-Nack.  It should be supported by the size determined in another way.
+1) From the previous discussion, the only acceptable method to get pages 
+from mm is to do alloc() (btw, we are not getting pages in this patch, 
+we are getting hints). The above sounds like we are going to take pages 
+from the free list without mm's awareness. I'm not sure if you would be 
+ready to convince the mm folks that this idea is allowed.
 
-julia
+2) If the guest has 8G free memory, how much can virtio-balloon take 
+with the above method? For example, if virtio-balloon only takes 1G, 
+with 7G left in mm. The next moment, it is possible that something comes 
+out and needs to use 7.5GB. I think it is barely possible to ensure that 
+the amount of memory we take to virtio-balloon won't affect the system.
 
-> Link: https://elixir.free-electrons.com/linux/v4.15/source/tools/testing/radix-tree/linux/slab.h#L14
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/tools/testing/radix-tree/linux/slab.h?id=f26e52e08ab8e56f528ac14aa7929b3477de5616#n14
-> Fixes: 5e2d9da5b9ba350a4f13bd3b255be046bcf86465 ("Coccinelle: kzalloc-simple: Add all zero allocating functions")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  scripts/coccinelle/api/alloc/zalloc-simple.cocci | 41 +-----------------------
->  1 file changed, 1 insertion(+), 40 deletions(-)
->
-> diff --git a/scripts/coccinelle/api/alloc/zalloc-simple.cocci b/scripts/coccinelle/api/alloc/zalloc-simple.cocci
-> index 92b20913055f..3bee6cdd99ea 100644
-> --- a/scripts/coccinelle/api/alloc/zalloc-simple.cocci
-> +++ b/scripts/coccinelle/api/alloc/zalloc-simple.cocci
-> @@ -34,7 +34,7 @@ statement S;
->  @@
->
->  * x = (T)\(kmalloc(E1, ...)\|vmalloc(E1)\|dma_alloc_coherent(...,E1,...)\|
-> -  kmalloc_node(E1, ...)\|kmem_cache_alloc(...)\|kmem_alloc(E1, ...)\|
-> +  kmalloc_node(E1, ...)\|kmem_alloc(E1, ...)\|
->    devm_kmalloc(...,E1,...)\|kvmalloc(E1, ...)\|pci_alloc_consistent(...,E1,...)\|
->    kvmalloc_node(E1,...)\);
->    if ((x==NULL) || ...) S
-> @@ -88,15 +88,6 @@ statement S;
->  - x = (T)kmalloc_node(E1,E2,E3);
->  + x = (T)kzalloc_node(E1,E2,E3);
->  |
-> -- x = kmem_cache_alloc(E3,E4);
-> -+ x = kmem_cache_zalloc(E3,E4);
-> -|
-> -- x = (T *)kmem_cache_alloc(E3,E4);
-> -+ x = kmem_cache_zalloc(E3,E4);
-> -|
-> -- x = (T)kmem_cache_alloc(E3,E4);
-> -+ x = (T)kmem_cache_zalloc(E3,E4);
-> -|
->  - x = kmem_alloc(E1,E2);
->  + x = kmem_zalloc(E1,E2);
->  |
-> @@ -268,36 +259,6 @@ x << r3.x;
->  msg="WARNING: kzalloc_node should be used for %s, instead of kmalloc_node/memset" % (x)
->  coccilib.report.print_report(p[0], msg)
->
-> -//-----------------------------------------------------------------
-> -@r4 depends on org || report@
-> -type T, T2;
-> -expression x;
-> -expression E1,E2,E3;
-> -statement S;
-> -position p;
-> -@@
-> -
-> - x = (T)kmem_cache_alloc@p(E2,E3);
-> - if ((x==NULL) || ...) S
-> - memset((T2)x,0,E1);
-> -
-> -@script:python depends on org@
-> -p << r4.p;
-> -x << r4.x;
-> -@@
-> -
-> -msg="%s" % (x)
-> -msg_safe=msg.replace("[","@(").replace("]",")")
-> -coccilib.org.print_todo(p[0], msg_safe)
-> -
-> -@script:python depends on report@
-> -p << r4.p;
-> -x << r4.x;
-> -@@
-> -
-> -msg="WARNING: kmem_cache_zalloc should be used for %s, instead of kmem_cache_alloc/memset" % (x)
-> -coccilib.report.print_report(p[0], msg)
-> -
->  //-----------------------------------------------------------------
->  @r5 depends on org || report@
->  type T, T2;
-> --
-> 2.16.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+3) Hints means the pages are quite likely to be free pages (no 
+guarantee). If the pages given to host are going to be freed, then we 
+really couldn't call them hints, they are true free pages. Ballooning 
+needs true free pages, while live migration needs hints, would you agree 
+with this? From the perspective of features, they are two different 
+features, and should be gated with two feature bits and separated 
+implementations. Mixing them would cause many unexpected issues (e.g. 
+the case when the two features function at the same time)
+
+4) If we want to add another function of ballooning, how is this better 
+than the existing ballooning? The difference I can see is the current 
+ballooning takes free pages via alloc(), while the above hacks into the 
+free page list.
+
+
+Best,
+Wei
