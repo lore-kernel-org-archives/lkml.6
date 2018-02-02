@@ -1,77 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751713AbeBBPTX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 10:19:23 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:47513 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751472AbeBBPTQ (ORCPT
+        id S1751638AbeBBPUs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 10:20:48 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50286 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751887AbeBBPU3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 10:19:16 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Ganesh Goudar <ganeshgr@chelsio.com>
-Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        Kumar Sanghvi <kumaras@chelsio.com>, Harsh Jain <harsh@chelsio.com>,
-        Atul Gupta <atul.gupta@chelsio.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] net: cxgb4: avoid memcpy beyond end of source buffer
-Date: Fri,  2 Feb 2018 16:18:37 +0100
-Message-Id: <20180202151849.808610-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:aQgj518KjoKGduzq+UOYDCkSZ1m8qyeYGkhVaxQOoA+4sqJ1fic
- 0PX+eJYqPj1RCCvPm4bO+uDCLtdKz6P4tahNv9DhZe0/8MRGeDwzVTzIojXeOQZmisojWvz
- OzzCYWeV67NiEZhayQdHCAR8EqmVOdfsr3pptJ/cdx2ozQuBkS/FRZbw6P6Dpx1kmKvnbb6
- 8RpOyO8bWLzMGhcp5J1DQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:nI749I8mSz8=:5n6SiV2dcHaMu8CCrqnlAv
- TJ8ZbQzZwrxHZXYzuRNBzus7HE2sBfu0zUHCXkaM3m9bCw2C3xBBGMp4fTxQh5tTAZnyskykT
- 8soH1WQSrIsXnLsr1ExZS0C1o3zrMf7vTAQpABvQanOWfXwA3dy5nOvAdheuakJnHD4X9XP6F
- uFHVbKr6Usr/30iHIHpD/hXSmVFQN1ukMWiWMCqrTzkTDMKxpn6VsPFSXFGWzRgKKQ/GBPWfv
- 8sU0JX87JQePJOVovYy+I+7ZpkER/FjDvd7uUzX2OQTKAY3zBYZjbfD4IIu2budqZjiPW+yoJ
- I7pfaq5piqpSxTaT3hOwhDCMsnpO2idu4Hl77NH7Vq/Y3YU+LzCJv5Z8z1MV1Z6wcxgeWsxZd
- Sn3vPhddS6ZsDWWlfxxqcPK/dN4AJD4N30NP1BkKP8+vT/C5AxyyOHXE07Ve+deRRkQQtaEuh
- sBg0Vw3M6rdhZwQDvB2gAh6WMiJhb9ApSPDMICr1MKfc/MUNPpGBaLP766w6Zu47iFtb+6J+4
- 2uvlxuQ0T7PpzZwaPDz+d6pDOW32wrspDF4Gx7SxJdkwDwT6P68Xgcv/r+JTnhmz6NDirjjks
- tYiRVuMh962yD55vKZGzqlx4GDG0u5yiu8lSoUMov19EzB7nV8CskGwLgYQyiz17wFNW4Gw8k
- taqZLNRGxzv8ICFTQX3Qt8Xw7gsGmIW15fHt4x7VcSrJ6o+j63L0smHNkmS26SKYa7eCAwrpX
- kMnaKe19kohJKVRDH4Qgo8B2eV9hOy/5cz+1PA==
+        Fri, 2 Feb 2018 10:20:29 -0500
+Subject: Re: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag
+ FS_IMA_NO_CACHE
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+        Christoph Hellwig <hch@infradead.org>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>, linux-kernel@vger.kernel.org
+Date: Fri, 02 Feb 2018 10:20:16 -0500
+In-Reply-To: <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
+References: <cover.1517314847.git.dongsu@kinvolk.io>
+         <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18020215-0012-0000-0000-000005AAC84F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020215-0013-0000-0000-0000192672A7
+Message-Id: <1517584816.3171.61.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802020188
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building with link-time-optimizations revealed that the cxgb4 driver does
-a fixed-size memcpy() from a variable-length constant string into the
-network interface name:
+Hi Miklos,
 
-In function 'memcpy',
-    inlined from 'cfg_queues_uld.constprop' at drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c:335:2,
-    inlined from 'cxgb4_register_uld.constprop' at drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c:719:9:
-include/linux/string.h:350:3: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
-   __read_overflow2();
-   ^
+On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
+> From: Alban Crequy <alban@kinvolk.io>
+> 
+> This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
+> re-appraised and re-audited each time. Cached integrity results should
+> not be used.
+> 
+> It is useful in FUSE because the userspace FUSE process can change the
+> underlying files at any time without notifying the kernel.
 
-I can see two equally workable solutions: either we use a strncpy() instead
-of the memcpy() to stop at the end of the input, or we make the source buffer
-fixed length as well. This implements the latter.
+Both IMA-measurement and IMA-appraisal cache the integrity results and
+are dependent on the kernel to detect when a file changes in order to
+clear the cached info and force the file to be re-evaluated.  This
+detection was dependent on i_version changing.  For filesystems that
+do not support i_version, remote or fuse filesystems, where the kernel
+does not detect the file change, the file was measured and the
+signature evaluated just once.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+With commit a2a2c3c8580a ("ima: Use i_version only when filesystem
+supports it"), which is being upstreamed in this open window,
+i_version is considered an optimization.  If i_version is not enabled,
+either because the local filesystem does not support it or the
+filesystem wasn't mounted with i_version, the file will now always be
+re-evaluated.
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.h
-index 1d37672902da..a14e8db51cdc 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.h
-@@ -355,7 +355,7 @@ struct cxgb4_lld_info {
- };
- 
- struct cxgb4_uld_info {
--	const char *name;
-+	char name[IFNAMSIZ];
- 	void *handle;
- 	unsigned int nrxq;
- 	unsigned int rxq_size;
--- 
-2.9.0
+That patch does not address FUSE or remote filesystems, as the kernel
+does not detect the change.  Further, even if the kernel could detect
+the change, FUSE filesystems by definition are untrusted.
+
+The original patches addressed FUSE filesystems, by defining a new IMA
+policy option, forcing the file to be re-evaluated based on the
+filesystem magic number.  All of the changes were in the IMA
+subsystem.  These patches are the result of Christoph's comment on the
+original patches saying, "ima has no business looking at either the
+name _or_ the magic number."
+
+Your help in resolving this problem is much appreciated!
+
+Mimi
+
+> 
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-integrity@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
+> Acked-by: Seth Forshee <seth.forshee@canonical.com>
+> Tested-by: Dongsu Park <dongsu@kinvolk.io>
+> Signed-off-by: Alban Crequy <alban@kinvolk.io>
+> ---
+>  fs/fuse/inode.c    | 2 +-
+>  include/linux/fs.h | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 624f18bb..0a9e5164 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
+>  static struct file_system_type fuse_fs_type = {
+>  	.owner		= THIS_MODULE,
+>  	.name		= "fuse",
+> -	.fs_flags	= FS_HAS_SUBTYPE,
+> +	.fs_flags	= FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
+>  	.mount		= fuse_mount,
+>  	.kill_sb	= fuse_kill_sb_anon,
+>  };
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 511fbaab..ced841ba 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2075,6 +2075,7 @@ struct file_system_type {
+>  #define FS_BINARY_MOUNTDATA	2
+>  #define FS_HAS_SUBTYPE		4
+>  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+> +#define FS_IMA_NO_CACHE		16	/* Force IMA to re-measure, re-appraise, re-audit files */
+>  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+>  	struct dentry *(*mount) (struct file_system_type *, int,
+>  		       const char *, void *);
