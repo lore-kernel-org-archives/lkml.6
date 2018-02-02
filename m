@@ -1,75 +1,45 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591228-2-10427360555529902123
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensvda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591227; b=qe4+JyR9ooOWZMntuJjFXYgLHa4Ziy/u3McPQ+Ctmo2LNSb
-    qQBxVZRWjHpKNfOhweHo8yMClAK4N509LGNH+J9EncWCCkD7Z1Tj+vjx4YJlCmFW
-    swNLNmTWOhfRAxlsTQeHHIRvQq9/iPKRSNN3+Ky3ts1FAUpuWOWvQkErYXeJNyGm
-    inwaTQrG+jDtawyPPbTek2C3dEBzNfqHz2nxmw9UKFOiYb3ZH01xmsSuq/MdMoud
-    kAUod8eI8rkLW6k+w+/M37aBEXFdmkNc2JUFxWWpJwhy0kK1C8918wX7WnwOiFj1
-    K9RFFAt24w0zTVRRTwpInT0R+dgj3V8HuzXcAkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591227; bh=2Ro1e1ymrtpudPzM0811ZgVC7f
-    cytNwNKj4OJHfkxRo=; b=J8cSsyl5LI7kQckmq+oznYu6n3m+dKhpp09MQAcZPT
-    XDHI8d/kqmfiJ4oGzRwmLuZKZGlyppWqsVOFi7eNyRnerG57GE0s0b0aRj6SY8Pa
-    s22rGamJ5SEQAhqy0cR5vzuHzxCAOzPjD659GCmjtNlddjNNCuAsUoutPfY6mBPs
-    kmsP5DywYPsNLif7nqh257fWoCQG8lSfh9HWJKqFqrSPJMxBBMohTReNgE7kP6ha
-    BJZbJFRQG6Pm48XwxCX7GNAK6zV/A2gSgvjjv+4iT+8zABDuGQfDhbvvng/5Ui7k
-    vfXTW0l7CZaJpx5OP0lK40QBbgIKgEGHZQ1UZsb1pHFA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752949AbeBBRHF (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:07:05 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36918 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752910AbeBBRHC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:07:02 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224hB+mgtXri28H4DavAPSjyuyP2ppg1JZAmUS1i5U7KmlI0TV8i+y6zjSwAM6Q0971wW6aE
+ARC-Seal: i=1; a=rsa-sha256; t=1517591226; cv=none;
+        d=google.com; s=arc-20160816;
+        b=UXyFidyB6eQ4SeA3eOLcDok5fXObzLVmAy+qgRye6dp8TIVIKFFqRX3XmbGQCNGJP0
+         S2bo8ziyzPuv9Py+gHi3ls/0NXRvDP1Y3DxUcKlUcb7omhZKdzTLHXDn2Y9zwnrAnl2Y
+         jA+IwhWLC0u+K+bSfCtiPMVF2gG69/lK4oyjt9EavNYehjKjbJ0jrRPW/pXl/4VtRs/S
+         3j61kLWOqePPpY7N5I86g3GqMU82lmsXsNIJFKFm5XDCkTyP1pHwrAWXIfWNhHLUrx3h
+         NIvpNtMqv28u8kL3uF7QXehhvhzv5aYKSz9KpRxA7eqXJ5yU5blA3vFMsdbIDwvw+7dC
+         pstA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=av5Ag3CFkzBS82Ty9hHriCzBRDBrB5NllK6bZ5LEqYw=;
+        b=flwsCXP2E+iX403GDwmYfAb45k5/HeSjgt24dYJoc+V9JIlwd98nGWWkjC5boTWPFC
+         A7TvF/VGOeQ5FoMhesN7Y8twTXgNEb+CML5Z7Q51z0htszpU+dWlY098VeJBEJ4hHHpP
+         LThrzWNQgSkVUs/otq0G4mEGkLhkbGrEcRXxjR35gbRymXQ4MLD20+zSB8tNBVPoAUXl
+         uZCIVigO5xo4Yx6RM+7h36E8AYeybZvl5Go1EJ95buFFCaoi3PT68YdfNZ2/FnqI0jAr
+         plBlCDOfn//0yoyykXQUgmiq3cb/Pg/y7FUEA0ecqKOdNAGwzPUhHwUsTTC8hGz65CMh
+         FJrA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 86/86] spi: imx: do not access registers while clocks disabled
-Date: Fri,  2 Feb 2018 17:58:46 +0100
-Message-Id: <20180202140830.666019664@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: [PATCH 4.9 83/86] usb/gadget: Fix "high bandwidth" check in usb_gadget_ep_match_desc()
+Date: Fri,  2 Feb 2018 17:58:43 +0100
+Message-Id: <20180202140830.262018063@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309737270542005?=
+X-GMAIL-MSGID: =?utf-8?q?1591309737270542005?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,49 +47,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit d593574aff0ab846136190b1729c151c736727ec upstream.
+commit 11fb37998759c48e4e4c200c974593cbeab25d3e upstream.
 
-Since clocks are disabled except during message transfer clocks
-are also disabled when spi_imx_remove gets called. Accessing
-registers leads to a freeeze at least on a i.MX 6ULL. Enable
-clocks before disabling accessing the MXC_CSPICTRL register.
+The current code tries to test for bits that are masked out by
+usb_endpoint_maxp(). Instead, use the proper accessor to access
+the new high bandwidth bits.
 
-Fixes: 9e556dcc55774 ("spi: spi-imx: only enable the clocks when we start to transfer a message")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-imx.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -1307,12 +1307,23 @@ static int spi_imx_remove(struct platfor
- {
- 	struct spi_master *master = platform_get_drvdata(pdev);
- 	struct spi_imx_data *spi_imx = spi_master_get_devdata(master);
-+	int ret;
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -913,7 +913,7 @@ int usb_gadget_ep_match_desc(struct usb_
+ 		return 0;
  
- 	spi_bitbang_stop(&spi_imx->bitbang);
+ 	/* "high bandwidth" works only at high speed */
+-	if (!gadget_is_dualspeed(gadget) && usb_endpoint_maxp(desc) & (3<<11))
++	if (!gadget_is_dualspeed(gadget) && usb_endpoint_maxp_mult(desc) > 1)
+ 		return 0;
  
-+	ret = clk_enable(spi_imx->clk_per);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_enable(spi_imx->clk_ipg);
-+	if (ret) {
-+		clk_disable(spi_imx->clk_per);
-+		return ret;
-+	}
-+
- 	writel(0, spi_imx->base + MXC_CSPICTRL);
--	clk_unprepare(spi_imx->clk_ipg);
--	clk_unprepare(spi_imx->clk_per);
-+	clk_disable_unprepare(spi_imx->clk_ipg);
-+	clk_disable_unprepare(spi_imx->clk_per);
- 	spi_imx_sdma_exit(spi_imx);
- 	spi_master_put(master);
- 
+ 	switch (type) {
