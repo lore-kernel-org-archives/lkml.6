@@ -1,78 +1,57 @@
-Return-Path: <ulf.hansson@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1518184862; cv=none;
+Return-Path: <vadimp@mellanox.com>
+X-Google-Smtp-Source: AH8x226hu8XmeGs6dGqhnerWMVtC2kmrl+nzD9LxnKsCJIJXpbocNEBWcVpoTBwNo7kfIH+sRqep
+ARC-Seal: i=1; a=rsa-sha256; t=1517554164; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bt62mZtG4fZjKUwYFNfDd5+KiP/IhpuqwbOLFtsnJ8DSA67fV68bcIzVh02P+24R42
-         S4sWZ8pnWlGQUNcs8y8JFrCNdjM29IjMvfumjEHYDZ2fXFQCB5JMuBik6cgiiTpvUAs9
-         1sSRKQnHQn0nQWfSebn2wfoHeZwRHy88TGv56okYxblQCRZugp6dmWwlSHpfL/OCauOc
-         pjsoXzpevzS2N5OHhW5szTA3q7hwm02sD8uGC8TFrrMDsYU6pVB30qNdJ3gRPgNveqEO
-         3KjorDlLcaH2na1V4SVJT5C2jvh3Ripq/aTv4JiwJI1yZ3igUz5+VweV6G5i6tGQaecI
-         NSGQ==
+        b=xpvBQdlKMWyUeba6RDMCn3MYOIMccaBhw+jZEv/LBrxnQUMUF/7GbCVYKpmZqpSF8S
+         u7BHIp+Qw6G6yP2+f1gpOYPuRmwva68mXGbLJqLcgIjOF8E0WeQzvZ9K0wYKP2WI/HhP
+         L2XV3Obfl5d4+/h6XK9LvakgmT+cEJwUqZxXawGr8ag4XXbvWiYLVHTiRp7p2S9ZcRZo
+         RNsSoMmbB8IqQkJFP4qOSx2H8/yi9jaxS8drO+tlmuorRmTK144R5Ka7P7e34W1eKTbN
+         UBCT1xeEJ+5ACCxfNr9B/OAUkcFRZcbM+ccXvENogxXGa5NghvWqa9UE0G6VGVI/KYR7
+         m3eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=S6qCzJ3ld3D+a+oSdLLsCJ4uW7NqvzqvzebpLnIZnTU=;
-        b=OeB5FY6CjYeUlIHe4HRFmdvr4UKmVnf26nB85IoJTBTwdeRW1sMejxFkVnlEBWLAXS
-         72lA4cEQDG21UFG2W97a6SKRRywdnZ5Wc/rkTfbjy7QXrKO97JwtDLo4uPAm/flQ5i/e
-         VGZIrcRE644ajH5Mcy2fbh+JmIB2+WvpKMnCSUR7bro2ZuVZ8G0fsKNxDyd76HfUGb6V
-         YQG589czWMUsl2TNtPbcGR2uU7to8H4W2fdGSDsCwlZMNNdX5MHHQu/zmWPdtM1itsf7
-         VZgxA+R90CWQ5iGh4guJy9l6Mf20h0GU5hLHeyBHyS7qQn8h1dPvj9kUMN4+kDDbpe2H
-         wpFA==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=WCFa4dtXLRhY3Ssk3OG55/gKVQrz094qEZUKLVq23C8=;
+        b=VGMdy9YDlFnFMDzAGcSYUZ94yM/2jnC+oyk67JOvyCtOfT0GczU1QDY8Mt2GrlZUTT
+         ukjU1xIvr9WU9XbWBRFA8hOAaILOtzIuSRgbQ3hUmHfOxzNbUMwRpessattFOLxVwzzK
+         G9keXE8YNJL2ptwQP27i9BrGu3Kjz3zGmDVIUiGEFsnZtaXobZFh+/1nlcWhA2iIkU6J
+         UevNd2u2pZOuu83vH26/0pc7smPwYb0niivY8ndmvMuaAL7FFGMyoMo/Rt2Riksz7RJH
+         cdyGOKTiFUIOcEM5Fdhhtt6WmpueUFrwdSkS4Kr25iCNovDeJD6WWddzafQNmVU7RSMS
+         4/Ng==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Lgd9fI6T;
-       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Lgd9fI6T;
-       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AH8x226IledUs9ncbrW98bINUXKLloByP+usmK/CMZ88+uWQy2dZiJICwFm0Wkd5yMz1G5fSznWasouHoXFtfERBTec=
-MIME-Version: 1.0
-In-Reply-To: <20180209080541.edgjbhjo542vq3h6@qschulz>
-References: <20170721143502.1991-1-quentin.schulz@free-electrons.com>
- <20170721143502.1991-3-quentin.schulz@free-electrons.com> <4015f7df-36ca-c762-5b9a-94a270f65475@redhat.com>
- <CAPDyKFpePxfAc20NCO7xvbGca8m=Bymc=5KBYFF570rnACViQA@mail.gmail.com>
- <20180208145952.qlq4sxohqd3s7m7o@qschulz> <CAPDyKFrbRVgOFRKpO5TdwHO-XQ035exrUt_bgM=BaxnEPmCvrw@mail.gmail.com>
- <20180209080541.edgjbhjo542vq3h6@qschulz>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 9 Feb 2018 15:01:00 +0100
-Message-ID: <CAPDyKFqDrdD+N+foLCwsVABtboz1Vn=OtJs14gp07zJfXHVKSA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: Add mmc_force_detect_change_begin / _end functions
-To: Quentin Schulz <quentin.schulz@bootlin.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>, Adrian Hunter <adrian.hunter@intel.com>,
-	Baolin Wang <baolin.wang@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>,
-	Icenowy Zheng <icenowy@aosc.xyz>, Chen-Yu Tsai <wens@csie.org>
-Content-Type: text/plain; charset="UTF-8"
+       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+From: Vadim Pasternak <vadimp@mellanox.com>
+To: dvhart@infradead.org, andy.shevchenko@gmail.com,
+        gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        jiri@resnulli.us, Vadim Pasternak <vadimp@mellanox.com>
+Subject: [patch v1 0/4] mlx-platform: Add support for new Mellanox systems, code improvement, fixes for msn21xx system
+Date: Fri,  2 Feb 2018 08:45:44 +0000
+Message-Id: <1517561148-38587-1-git-send-email-vadimp@mellanox.com>
+X-Mailer: git-send-email 2.1.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1573543183974033537?=
-X-GMAIL-MSGID: =?utf-8?q?1591932210025227696?=
+X-GMAIL-THRID: =?utf-8?q?1591270875340200693?=
+X-GMAIL-MSGID: =?utf-8?q?1591270875340200693?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-[...]
+The patchset:
+- adds defines for bus numbers, used for system topology description;
+- fixes definition for power cables for system family msn21xx;
+- introduces support for new Mellanox systems;
 
->> > I'd like to know if any progress has been made on that problem (I may
->> > have missed patches).
->> > Had you had the time to look at the issue?
->>
->> I have looked at the issue, but not manage to cook some patches for it.
->>
->> However, it's on my top of my TODO list for mmc. No promises, but
->> perhaps and hopefully I manage to get something posted during the
->> coming release cycle.
->>
->
-> Cool! If you ever need some testing, I'd be glad to test your patches
-> (even if they are in a draft/RFC state).
->
-> Also, when you send patches, I'd appreciate being Cc'ed so that I can
-> put my Tested-by :) Thanks!
+Vadim Pasternak (4):
+  platform/x86: mlx-platform: Use defines for bus assignment
+  platform/x86: mlx-platform: Add define for the negative bus
+  platform/x86: mlx-platform: Fix power cable setting for systems from
+    msn21xx family
+  platform/x86: mlx-platform: Add support for new Mellanox systems
 
-Absolutely! I appreciate it.
+ drivers/platform/x86/mlx-platform.c | 345 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 335 insertions(+), 10 deletions(-)
 
-Br
-Uffe
+-- 
+2.1.4
