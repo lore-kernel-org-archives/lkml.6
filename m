@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227xmIXgP3C1EIQ9o/hjqgT9XmHZL0UDQzpvH+gd6ETE/RwhKjqivSMyXj2iCqf3LTUfSj2K
-ARC-Seal: i=1; a=rsa-sha256; t=1517590974; cv=none;
+X-Google-Smtp-Source: AH8x225MOQhgM2w1mUGpN0B6JtkeChtz6pqS85PWqAn0iP5ktBVnG56yohgnmsaqsRVcrv2af8nM
+ARC-Seal: i=1; a=rsa-sha256; t=1517590971; cv=none;
         d=google.com; s=arc-20160816;
-        b=BaXDpdshqCNksBqocOLmFq2r/KSSfcs6hMb75h7Npn+5kslsU0qHL0QSodVn/70coQ
-         lwbs28NXoa7eMGUG1di9PevlLZKnZXUdd8bj4iRR4UN3zEvVj1g74DK1gMcNJHiVZdwb
-         MtpOflds914plWFo6K2qMTDvjIOmpa9S3U1Ckm4UFEwmtG7AES9lFqqaFLEfIg64cRX8
-         H1hAkG0jOWcW2OlF783wGekZ+BwuZ89A2oDQOarbfpLPlJXdlx8jMZyJm+RdclNLxHYv
-         8m4XSFZQOlrofHtHpJSnkh03uFrNCR6a9ZWi592RAYJICu9uxouJQyQbkpK8yzDgeb2k
-         ssXA==
+        b=IIzc1/kHfl0Qfv6/GOAedG7fbvG7yBOwisrtCIflC6YTXEFMEgq0MpzcKcipBKBJrn
+         Q5x1FYhmXUD1U1rWvNNnviOP9VTSHL20gyJlNf8RfjncoK8y2UyAIOySGX7cdr5ymlVP
+         ybdupLnesFdJHmKTs+2eX5SxpDA+SiPLguG3B3rGVF8qWo8wNtSgAm0ShgJfLPksZ5e+
+         yOEhfIMsMrxkHAfddhxnzDqooglTUdj3Nbv8lvwXaev2g/HffK90SuAYnCKFBT9L+piH
+         ayC2oMMDTcuk7JEOWyhdmyhF4wl0Y2euOo7GheGLWdaZp/Dv+N14upLmvpapdYNJisEw
+         +M3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1Wina20onWvuN1btJkZGpIa/1VJlx/7o7o3pg+McnRI=;
-        b=CnQDkMe4SY9ODSbwFR/z16pq15LzeciddF+QIKhfeuVZJqx7oGCx/zSQxqgWP/wwUL
-         Gf9my4t7P79Hur/C0ihV7NrYTrta9jYWeQsTOklRrWIEHUwRfEddUD2PpRY+J0NCBW5R
-         i+Yov0YqVrIiN7mnDNhuo4GCAcSd550W1zI7MP9BRimCXAAUapowILqjHieYoBBS8xi2
-         Kjo/Q1ZHkIGJxTWZWjVmdHXd0Q1TpDKO6amCilrMDkj8C0zkelji+U2EnKuASMKeo5Cn
-         yYcpkWwQ9s+3Gzm5NzqUecqsqoTvoZbx2h201ts1hOz40RQpe2Gt4PJj9eyuRHieIRYV
-         7vJw==
+        bh=F414iYEDXYGGVqQ/IouvCukMF6LpgP1s+AC6rOfze7g=;
+        b=NCkZXfizhtaDxBvFrJzmeLLPjUUQIWQ3L+25BSZ1iPDOFSq/A7ZEeDydO0Jff4mKIK
+         BwsmTFY4uaBg/PjNcZmnVYBvKHKr+pOEnq8372Nw067oN1Yw+Vg2wYBHwPc7LTIintdz
+         puvLC5QVv3eORb3M8RFrfR8fMi4kz4+vtkE38gEmtJEVBN8OZrLEXtOHSsQx8KAJLgYG
+         cYRlHktC7i9iOXF7tnhuoz02FcxOE+mRh+A8M7oTob59axHKLtxa7PVUorqjV+EX8Nia
+         vZvrySxITD59H8JUQzHVfSPwbiOjUqWx0qpRY1dzC+b7y1PVucQHHWTy0FJ/Kvij94e/
+         o5tQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot <syzkaller@googlegroups.com>,
-	Stephan Mueller <smueller@chronox.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 10/86] crypto: af_alg - whitelist mask and type
-Date: Fri,  2 Feb 2018 17:57:30 +0100
-Message-Id: <20180202140823.788833552@linuxfoundation.org>
+	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 01/86] loop: fix concurrent lo_open/lo_release
+Date: Fri,  2 Feb 2018 17:57:21 +0100
+Message-Id: <20180202140822.793620959@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309282150108123?=
-X-GMAIL-MSGID: =?utf-8?q?1591309473298566168?=
+X-GMAIL-THRID: =?utf-8?q?1591309264145802026?=
+X-GMAIL-MSGID: =?utf-8?q?1591309470312175331?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,56 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephan Mueller <smueller@chronox.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit bb30b8848c85e18ca7e371d0a869e94b3e383bdf upstream.
+commit ae6650163c66a7eff1acd6eb8b0f752dcfa8eba5 upstream.
 
-The user space interface allows specifying the type and mask field used
-to allocate the cipher. Only a subset of the possible flags are intended
-for user space. Therefore, white-list the allowed flags.
+范龙飞 reports that KASAN can report a use-after-free in __lock_acquire.
+The reason is due to insufficient serialization in lo_release(), which
+will continue to use the loop device even after it has decremented the
+lo_refcnt to zero.
 
-In case the user space caller uses at least one non-allowed flag, EINVAL
-is returned.
+In the meantime, another process can come in, open the loop device
+again as it is being shut down. Confusion ensues.
 
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Stephan Mueller <smueller@chronox.de>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-by: 范龙飞 <long7573@126.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/af_alg.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/block/loop.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -149,7 +149,7 @@ EXPORT_SYMBOL_GPL(af_alg_release_parent)
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1558,9 +1558,8 @@ out:
+ 	return err;
+ }
  
- static int alg_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+-static void lo_release(struct gendisk *disk, fmode_t mode)
++static void __lo_release(struct loop_device *lo)
  {
--	const u32 forbidden = CRYPTO_ALG_INTERNAL;
-+	const u32 allowed = CRYPTO_ALG_KERN_DRIVER_ONLY;
- 	struct sock *sk = sock->sk;
- 	struct alg_sock *ask = alg_sk(sk);
- 	struct sockaddr_alg *sa = (void *)uaddr;
-@@ -157,6 +157,10 @@ static int alg_bind(struct socket *sock,
- 	void *private;
+-	struct loop_device *lo = disk->private_data;
  	int err;
  
-+	/* If caller uses non-allowed flag, return error. */
-+	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
-+		return -EINVAL;
+ 	if (atomic_dec_return(&lo->lo_refcnt))
+@@ -1586,6 +1585,13 @@ static void lo_release(struct gendisk *d
+ 	mutex_unlock(&lo->lo_ctl_mutex);
+ }
+ 
++static void lo_release(struct gendisk *disk, fmode_t mode)
++{
++	mutex_lock(&loop_index_mutex);
++	__lo_release(disk->private_data);
++	mutex_unlock(&loop_index_mutex);
++}
 +
- 	if (sock->state == SS_CONNECTED)
- 		return -EINVAL;
- 
-@@ -175,9 +179,7 @@ static int alg_bind(struct socket *sock,
- 	if (IS_ERR(type))
- 		return PTR_ERR(type);
- 
--	private = type->bind(sa->salg_name,
--			     sa->salg_feat & ~forbidden,
--			     sa->salg_mask & ~forbidden);
-+	private = type->bind(sa->salg_name, sa->salg_feat, sa->salg_mask);
- 	if (IS_ERR(private)) {
- 		module_put(type->owner);
- 		return PTR_ERR(private);
+ static const struct block_device_operations lo_fops = {
+ 	.owner =	THIS_MODULE,
+ 	.open =		lo_open,
