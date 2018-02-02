@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591078-2-9840499374281418659
+X-Cyrus-Session-Id: sloti22d1t05-2879036-1517591072-2-4545124551605576724
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591077; b=i6iCTAOEySJpHTvfEoDCIIypw5cgJOC7VLuybs70K+056WN
-    V/Irf6zqJgUKkf79AB4ZGuBitVg6WEZz6GC3F750ocJ3DraufVisy6eL1G5dq835
-    G0JzAYuIhImZpTYx+lBnvJ7kp7LQXzdEpcU5ERBBVeu5cVKYcYzKSR+WKvqxHnp8
-    v/jz1ADVIgD9t1niEjA9lTGdKI0kbFQXqeHCcn2JFxJsKR6GRUh5B8xbAkskWNlo
-    jXHqm5BvSAPZ/WicL6mfsVEm7LWmIBEBHSN8HjVFVY+0IDboGJj6jP4zezDnvcqG
-    b4ZIS3xOqvsiMDXVsplAxTaRa2ozeFx5/1Uf1HA==
+    t=1517591070; b=cq0PoIoaKKeib0hqQ7p5AatfJtoAb0xzWaA2Xf5MxzA0MP6
+    spHpULKAd+qC5mdrFVv/SihzAD50YQ/QJU+ECPQES4uR7eSrkX5vbUW1wZsN/vGl
+    p1gXwls90arcE/g/cc+FaRFVX63+OpwzHrucRAB1UQIY5tJ/UaMB+u9ISdBdcfu/
+    1HlWhrAxldMEXxNDjS+s6onGQWwkXXN1kGWHG1TNXMcnpO3aqC0fiXb7JDL9WPye
+    cuqifqU0k++P6ttpNUxqO+RdbOx/TWA7LySuDK9vWev/3z61kJrwAneSedOY3Xe3
+    pPBA84hv/RE+EtHFvTDpLvgYcT1UDg6Egd+weLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591077; bh=8vT//m7uk/X6uemfNXDQyki1gM
-    JvcP5PsrwY2Vikd50=; b=ZmYriDV4e+3b9f5SAJKqzT30Nq0GvyU344btH8LPK0
-    G+a9o0TcmbRRrI0GmYVS5ljPIBf8eCPqq7v30jmaZNVhK9xcBGdo0/5IfdIDaRq9
-    JSE5HOLJ0R3m/+PS0FrwpAf8IQkVETgjMzqa2VdCL4UiKUhJIrFe6bptti/4W6+9
-    L005XxKgVTOMT7CMnMrNsv0wlyh8wd9AanELpSdvV2cQBH9nHEI0mgcB1pVuyLbm
-    Lab+TzldbykOQMOrV5eyhE1qV4qImhmZhdVFXnUHI3ZSxkNWondnVu0UR1lQP+Jk
-    K04s8X2/npHNaHXezb6Dfz6fY9EwTKcsomzPeEFjYJxA==
+    :list-id; s=arctest; t=1517591070; bh=hvCsXe56oQzXX1rd80VlZdJAWQ
+    Wbv81ojSXX9SIQ25g=; b=dY/H6Jl/cdO8We27ArfYCNCYnE3Nr7b+gKM6IeGHpJ
+    eoYdP9i7lir9VxN94mztlIunXHI/a683wUS5wZBGpW5S0UXo2ZpDmJXT1EcPRO+y
+    5B+k5eML4WoY7RrHGBHn1fDsxpawE3oR8DQCle/WVt2ckBhbriFQ91AOX3uge+he
+    yJj5/w2RVC8TPnWr2ncdgv9epNHb+B+1BDKHFGhxCPPyLX+UGwH3XnD9YL8S6IHt
+    4JcGx+1TJ22fZPvtQFa8Z7VAXBlEOe8YczQh/Bm0TS9RMMJXzzwMmrlEVM4v+LDF
+    K0vMCwqGC9G15O687mLFbBQgCMOZ1Y3IWCfgUANt9jXw==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752873AbeBBREe (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:04:34 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36234 "EHLO
+        id S1752861AbeBBREW (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:04:22 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36118 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752868AbeBBREc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:04:32 -0500
+        with ESMTP id S1752631AbeBBREJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:04:09 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
+        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
+        Omar Sandoval <osandov@fb.com>, Liu Bo <bo.li.liu@oracle.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 41/86] nfsd: CLOSE SHOULD return the invalid special stateid for NFSv4.x (x>0)
-Date: Fri,  2 Feb 2018 17:58:01 +0100
-Message-Id: <20180202140826.148532980@linuxfoundation.org>
+Subject: [PATCH 4.9 34/86] btrfs: fix deadlock when writing out space cache
+Date: Fri,  2 Feb 2018 17:57:54 +0100
+Message-Id: <20180202140825.686102707@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -79,40 +79,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: Josef Bacik <jbacik@fb.com>
 
 
-[ Upstream commit fb500a7cfee7f2f447d2bbf30cb59629feab6ac1 ]
+[ Upstream commit b77000ed558daa3bef0899d29bf171b8c9b5e6a8 ]
 
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+If we fail to prepare our pages for whatever reason (out of memory in
+our case) we need to make sure to drop the block_group->data_rwsem,
+otherwise hilarity ensues.
+
+Signed-off-by: Josef Bacik <jbacik@fb.com>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+[ add label and use existing unlocking code ]
+Signed-off-by: David Sterba <dsterba@suse.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfsd/nfs4state.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/btrfs/free-space-cache.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -63,6 +63,9 @@ static const stateid_t zero_stateid = {
- static const stateid_t currentstateid = {
- 	.si_generation = 1,
- };
-+static const stateid_t close_stateid = {
-+	.si_generation = 0xffffffffU,
-+};
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@ -1253,7 +1253,7 @@ static int __btrfs_write_out_cache(struc
+ 	/* Lock all pages first so we can lock the extent safely. */
+ 	ret = io_ctl_prepare_pages(io_ctl, inode, 0);
+ 	if (ret)
+-		goto out;
++		goto out_unlock;
  
- static u64 current_sessionid = 1;
+ 	lock_extent_bits(&BTRFS_I(inode)->io_tree, 0, i_size_read(inode) - 1,
+ 			 &cached_state);
+@@ -1346,6 +1346,7 @@ out_nospc_locked:
+ out_nospc:
+ 	cleanup_write_cache_enospc(inode, io_ctl, &cached_state, &bitmap_list);
  
-@@ -5407,6 +5410,11 @@ nfsd4_close(struct svc_rqst *rqstp, stru
- 	nfsd4_close_open_stateid(stp);
- 	mutex_unlock(&stp->st_mutex);
++out_unlock:
+ 	if (block_group && (block_group->flags & BTRFS_BLOCK_GROUP_DATA))
+ 		up_write(&block_group->data_rwsem);
  
-+	/* See RFC5661 sectionm 18.2.4 */
-+	if (stp->st_stid.sc_client->cl_minorversion)
-+		memcpy(&close->cl_stateid, &close_stateid,
-+				sizeof(close->cl_stateid));
-+
- 	/* put reference from nfs4_preprocess_seqid_op */
- 	nfs4_put_stid(&stp->st_stid);
- out:
