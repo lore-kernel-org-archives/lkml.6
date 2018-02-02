@@ -1,75 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751180AbeBBF73 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 00:59:29 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35642 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbeBBF7V (ORCPT
+        id S1751508AbeBBGDD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 01:03:03 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33965 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750737AbeBBGCy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 00:59:21 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB5396076A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-Subject: Re: [PATCH] of: cache phandle nodes to decrease cost of
- of_find_node_by_phandle()
-To: Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
- <5b84a166-c71b-3a41-9e7f-a7624a8441f6@codeaurora.org>
- <38cdcae5-ec0f-d1be-b024-1990d4387731@gmail.com>
- <9e23d32f-05a0-ce8a-41f8-9a1a3d66be37@codeaurora.org>
- <fd9f5f63-b08e-602e-1510-85a65889f550@gmail.com>
-From: Chintan Pandya <cpandya@codeaurora.org>
-Message-ID: <567731e8-8f89-bd6e-c3d4-e36400e69198@codeaurora.org>
-Date: Fri, 2 Feb 2018 11:29:16 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Fri, 2 Feb 2018 01:02:54 -0500
+X-Google-Smtp-Source: AH8x227Ed/8y+yQz+rku6Yu75iuUNk0Xk1GjWvlryku9tjwHATwPbAqJaNlU+F3Ue8NJcJvsKSuENg==
 MIME-Version: 1.0
-In-Reply-To: <fd9f5f63-b08e-602e-1510-85a65889f550@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <d23317ee-af0d-3fe8-cbfb-cff01f9d82b8@infradead.org>
+References: <20180131102427.207721-1-acourbot@chromium.org>
+ <20180131102427.207721-6-acourbot@chromium.org> <d23317ee-af0d-3fe8-cbfb-cff01f9d82b8@infradead.org>
+From: Alexandre Courbot <acourbot@chromium.org>
+Date: Fri, 2 Feb 2018 15:02:31 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MVpHLeJneBfS0LLYTO3iSk5cOXZYjGySXzab5xYDjgMNA@mail.gmail.com>
+Message-ID: <CAPBb6MVpHLeJneBfS0LLYTO3iSk5cOXZYjGySXzab5xYDjgMNA@mail.gmail.com>
+Subject: Re: [RFCv2 05/17] media: Document the media request API
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Randy,
 
+On Fri, Feb 2, 2018 at 3:14 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 01/31/2018 02:24 AM, Alexandre Courbot wrote:
+>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>
+>> The media request API is made of a new ioctl to implement request
+>> management. Document it.
+>>
+>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>> [acourbot@chromium.org: adapt for newest API]
+>> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+>> ---
+>>  Documentation/media/uapi/mediactl/media-funcs.rst  |   1 +
+>>  .../media/uapi/mediactl/media-ioc-request-cmd.rst  | 141 +++++++++++++++++++++
+>>  2 files changed, 142 insertions(+)
+>>  create mode 100644 Documentation/media/uapi/mediactl/media-ioc-request-cmd.rst
+>>
+>> diff --git a/Documentation/media/uapi/mediactl/media-funcs.rst b/Documentation/media/uapi/mediactl/media-funcs.rst
+>> index 076856501cdb..e3a45d82ffcb 100644
+>> --- a/Documentation/media/uapi/mediactl/media-funcs.rst
+>> +++ b/Documentation/media/uapi/mediactl/media-funcs.rst
+>> @@ -15,4 +15,5 @@ Function Reference
+>>      media-ioc-g-topology
+>>      media-ioc-enum-entities
+>>      media-ioc-enum-links
+>> +    media-ioc-request-cmd
+>>      media-ioc-setup-link
+>> diff --git a/Documentation/media/uapi/mediactl/media-ioc-request-cmd.rst b/Documentation/media/uapi/mediactl/media-ioc-request-cmd.rst
+>> new file mode 100644
+>> index 000000000000..723b422afcce
+>> --- /dev/null
+>> +++ b/Documentation/media/uapi/mediactl/media-ioc-request-cmd.rst
+>> @@ -0,0 +1,141 @@
+>> +.. -*- coding: utf-8; mode: rst -*-
+>> +
+>> +.. _media_ioc_request_cmd:
+>> +
+>> +***************************
+>> +ioctl MEDIA_IOC_REQUEST_CMD
+>> +***************************
+>> +
+>> +Name
+>> +====
+>> +
+>> +MEDIA_IOC_REQUEST_CMD - Manage media device requests
+>> +
+>> +
+>> +Synopsis
+>> +========
+>> +
+>> +.. c:function:: int ioctl( int fd, MEDIA_IOC_REQUEST_CMD, struct media_request_cmd *argp )
+>> +    :name: MEDIA_IOC_REQUEST_CMD
+>> +
+>> +
+>> +Arguments
+>> +=========
+>> +
+>> +``fd``
+>> +    File descriptor returned by :ref:`open() <media-func-open>`.
+>> +
+>> +``argp``
+>> +
+>> +
+>> +Description
+>> +===========
+>> +
+>> +The MEDIA_IOC_REQUEST_CMD ioctl allow applications to manage media device
+>
+>                                    allows
+>
+>> +requests. A request is an object that can group media device configuration
+>> +parameters, including subsystem-specific parameters, in order to apply all the
+>> +parameters atomically. Applications are responsible for allocating and
+>> +deleting requests, filling them with configuration parameters submitting them.
+>
+>                                                                 and submitting them.
+>
+>> +
+>> +Request operations are performed by calling the MEDIA_IOC_REQUEST_CMD ioctl
+>> +with a pointer to a struct :c:type:`media_request_cmd` with the cmd field set
+>> +to the appropriate command. :ref:`media-request-command` lists the commands
+>> +supported by the ioctl.
+>> +
+>> +The struct :c:type:`media_request_cmd` request field contains the file
+>> +descriptorof the request on which the command operates. For the
+>
+>    descriptor of
+>
+>> +``MEDIA_REQ_CMD_ALLOC`` command the field is set to zero by applications and
+>> +filled by the driver. For all other commands the field is set by applications
+>> +and left untouched by the driver.
+>> +
+>> +To allocate a new request applications use the ``MEDIA_REQ_CMD_ALLOC``
+>> +command. The driver will allocate a new request and return its FD in the
+>> +request field. After allocation, the request is "empty", which means that it
+>> +does not hold any state of its own, and that the hardware's state will not be
+>> +affected by it unless it is passed as argument to V4L2 or media controller
+>> +commands.
+>> +
+>> +Requests are reference-counted. A newly allocated request is referenced
+>> +by the returned file descriptor, and can be later referenced by
+>> +subsystem-specific operations. Requests will thus be automatically deleted
+>> +when they're not longer used after the returned file descriptor is closed.
+>
+>                  no longer
+>
+>> +
+>> +If a request isn't needed applications can delete it by calling ``close()``
+>> +on it. The driver will drop the file handle reference. The request will not
+>> +be usable through the MEDIA_IOC_REQUEST_CMD ioctl anymore, but will only be
+>> +deleted when the last reference is released. If no other reference exists when
+>> +``close()`` is invoked the request will be deleted immediately.
+>> +
+>> +After creating a request applications should fill it with configuration
+>> +parameters. This is performed through subsystem-specific request APIs outside
+>> +the scope of the media controller API. See the appropriate subsystem APIs for
+>> +more information, including how they interact with the MEDIA_IOC_REQUEST_CMD
+>> +ioctl.
+>> +
+>> +Once a request contains all the desired configuration parameters it can be
+>> +submitted using the ``MEDIA_REQ_CMD_SUBMIT`` command. This will let the
+>> +buffers queued for the request be passed to their respective drivers, which
+>> +will then apply the request's parameters before processing them.
+>> +
+>> +Once a request has been queued applications are not allowed to modify its
+>> +configuration parameters until the request has been fully processed. Any
+>> +attempt to do so will result in the related subsystem API returning an error.
+>> +The application that submitted the request can wait for its completion by
+>> +polling on the request's file descriptor.
+>> +
+>> +Once a request has completed, it can be reused. The ``MEDIA_REQ_CMD_REINIT``
+>> +command will bring it back to its initial state, so it can be prepared and
+>> +submitted again.
+>> +
+>> +.. c:type:: media_request_cmd
+>> +
+>> +.. flat-table:: struct media_request_cmd
+>> +    :header-rows:  0
+>> +    :stub-columns: 0
+>> +    :widths: 1 2 8
+>> +
+>> +    * - __u32
+>> +      - ``cmd``
+>> +      - Command, set by the application. See below for the list of supported
+>> +        commands.
+>> +    * - __u32
+>> +      - ``fd``
+>> +      - Request FD, set by the driver for the MEDIA_REQ_CMD_ALLOC command and
+>> +        by the application for all other commands.
+>> +
+>> +
+>> +.. _media-request-command:
+>> +
+>> +.. cssclass:: longtable
+>> +
+>> +.. flat-table:: Media request commands
+>> +    :header-rows:  0
+>> +    :stub-columns: 0
+>> +
+>> +    * .. _MEDIA-REQ-CMD-ALLOC:
+>> +
+>> +      - ``MEDIA_REQ_CMD_ALLOC``
+>> +      - Allocate a new request.
+>> +    * .. _MEDIA-REQ-CMD-SUBMIT:
+>> +
+>> +      - ``MEDIA_REQ_CMD_SUBMIT``
+>> +      - Submit a request to be processed.
+>> +    * .. _MEDIA-REQ-CMD-QUEUE:
+>> +
+>> +      - ``MEDIA_REQ_CMD_REINIT``
+>> +      - Reinitializes a completed request.
+>
+>            Reinitialize
+> to be consistent with other entries above.
 
-On 2/2/2018 12:40 AM, Frank Rowand wrote:
-> On 02/01/18 02:31, Chintan Pandya wrote:
->>
->>>> Anyways, will fix this locally and share test results.
->>>
->>> Thanks, I look forward to the results.
->>>
->>
->> Set up for this time was slightly different. So, taken all the numbers again.
->>
->> Boot to shell time (in ms): Experiment 2
->> [1] Base            : 14.843805 14.784842 14.842338
->> [2] 64 sized fixed cache    : 14.189292 14.200003 14.266711
->> [3] Dynamic freeable cache    : 14.112412 14.064772 14.036052
->>
->> So, [3] (this patch) looks to be improving 750ms (on avg from base build).
->>
-> 
-> Is this with the many debug options enabled?  If so, can you repeat with
-> a normal configuration?
-
-Could you share me the point of doing this experiment in perf mode ? I 
-don't have a set up for taking these numbers in perf mode. For that, I 
-need to ask some other team and round trip follow ups. In my set up, I 
-rely on serial console logging which gets disabled in perf mode.
-
-> 
-> Thanks,
-> 
-> Frank
-> 
-
-Chintan
--- 
-Qualcom India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation
-Collaborative Project
+Applied all these fixes, thanks!
