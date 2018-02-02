@@ -1,86 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeBBVRT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 16:17:19 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:35402 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750805AbeBBVRK (ORCPT
+        id S1752009AbeBBVS3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 16:18:29 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:56442 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbeBBVSV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 16:17:10 -0500
-X-Google-Smtp-Source: AH8x224u1QAIXsprIu/IY9VDgw9MRlLMaAQfK6/jVa3nuTRgY5vwGadzUjJB7DdRtRSC04x/oRt/CA==
-Date: Fri, 2 Feb 2018 16:17:08 -0500 (EST)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Andi Kleen <ak@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Subject: Re: [PATCH 7/7] Kbuild: lto: pass -m32/-m64 to to LDFINAL
-In-Reply-To: <CAK8P3a3R79Hd7QWdskfRscA1UndQGPaLP3rcKdykEOqPr1ja=Q@mail.gmail.com>
-Message-ID: <nycvar.YSQ.7.76.1802021609240.1842@knanqh.ubzr>
-References: <20180202161550.2106846-1-arnd@arndb.de> <20180202162104.2300532-7-arnd@arndb.de> <nycvar.YSQ.7.76.1802021336090.1842@knanqh.ubzr> <CAK8P3a3dgFjXP3wub+J5-_67MS2Mm_twktD=cyoY2pPro+AWzQ@mail.gmail.com> <nycvar.YSQ.7.76.1802021523390.1842@knanqh.ubzr>
- <CAK8P3a3R79Hd7QWdskfRscA1UndQGPaLP3rcKdykEOqPr1ja=Q@mail.gmail.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Fri, 2 Feb 2018 16:18:21 -0500
+Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
+ select_idle_sibling using SMT balance
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: subhra mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        dhaval.giani@oracle.com
+References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
+ <20180201123335.GV2249@hirez.programming.kicks-ass.net>
+ <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
+ <20180202172153.GO2269@hirez.programming.kicks-ass.net>
+ <ed78c502-c1f8-43b3-f3d4-e0256e4085ee@oracle.com>
+ <5b9f0828-8d35-885b-3eba-d31ca46da642@oracle.com>
+ <20180202200401.GS2269@hirez.programming.kicks-ass.net>
+From: Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <70ff99d5-1240-69ae-63d4-773b201d8c0e@oracle.com>
+Date: Fri, 2 Feb 2018 16:17:52 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180202200401.GS2269@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8793 signatures=668661
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=951
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802020255
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Feb 2018, Arnd Bergmann wrote:
-
-> On Fri, Feb 2, 2018 at 9:38 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> > On Fri, 2 Feb 2018, Arnd Bergmann wrote:
-> >
-> >> Do you have a git tree with other changes for LTO on ARM? I'd
-> >> like to try that as well.
-> >
-> > I currently have only 2 other patches.
-> >
-> > You need commit 75fea300d73a that just hit mainline (you may cherry-pick
-> > it easily if necessary).
+On 2/2/2018 3:04 PM, Peter Zijlstra wrote:
+> On Fri, Feb 02, 2018 at 01:34:58PM -0500, Steven Sistare wrote:
+>> Actually, I take back my take back.  I suspect the primary benefit
+>> of random selection is that it breaks up resonance states where
+>> CPUs that are busy tend to stay busy, and CPUs that are idle tend
+>> to stay idle, which is reinforced by starting the search at target =
+>> last cpu ran.
 > 
-> Ok, I apparently have that already by basing on today's linux-next.
-
-OK. linux-next has had it for quite a while.
-
-> > Then the following:
-> >
-> > ----- >8
-> > Subject: [PATCH] HACK: enable LTO on ARM
-> >
-> > Without the ${KBUILD_VMLINUX_LIBS} move the build fails with missing
-> > memcpy all over the place. Didn't figure it out yet.
+> Which, according to there here patches:
 > 
-> Added that now as well, thanks! I'll see what comes out of it.
+>   https://lkml.kernel.org/r/20180130104555.4125-1-mgorman@techsingularity.net
+> 
+> is a good thing, because of power management.
 
-I forgot: you'll need to hack your toolchain a bit too.
+Yes, but it's a bad thing if ready to run tasks pile on busy CPUs and idle 
+CPUs go unused.  Stating the obvious, when the search for idle fails, the 
+thread goes on a busy CPU. The existing logic that checks and uses the
+initial target if it is idle reduces unnecessary spreading and is power
+friendly (indeed, added in the patch you reference).  Subhra's patch does
+not change that.
 
-Here's the script I created to remember about the issue:
-
------ >8
-#!/bin/bash
-
-# work around https://gcc.gnu.org/bugzilla/show_bug.cgi?id=78353
-
-GCC_ROOT=/opt/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf
-
-set -e
-set -x
-
-cd $GCC_ROOT//arm-linux-gnueabihf/bin
-[ -e fat-as ] && exit 1
-mv as fat-as
-cat > as << EOF
-#!/bin/bash
-exec -a "\$0" "\$(dirname "\$0")/fat-as" -mimplicit-it=always "\$@"
-EOF
-chmod +x as
-8< -----
-
-> Have you tried arm64 already? I suppose I could do the same change 
-> there and see what happens.
-
-No, didn't try arm64.
-
-
-Nicolas
+- Steve
