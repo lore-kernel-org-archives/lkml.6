@@ -1,108 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeBBMx3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 07:53:29 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50221 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752118AbeBBMwg (ORCPT
+        id S1751914AbeBBMxm convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 07:53:42 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:55167 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751995AbeBBMxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 07:52:36 -0500
-X-Google-Smtp-Source: AH8x225peWmUVIMAPq1T+0K2EHpjlcUKnOtUICiKkjk1SaS96vnNwwGnIC2l4Tl8ZsLuEXXO3p3vkQ==
-Date: Fri, 2 Feb 2018 13:52:31 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: peterz@infradead.org, lizefan@huawei.com, mingo@redhat.com,
-        rostedt@goodmis.org, claudio@evidence.eu.com, bristot@redhat.com,
-        tommaso.cucinotta@santannapisa.it, luca.abeni@santannapisa.it,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 2/7] cpuset: Rebuild root domain deadline accounting
- information
-Message-ID: <20180202125231.GT19535@localhost.localdomain>
-References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
- <1517503869-3179-3-git-send-email-mathieu.poirier@linaro.org>
+        Fri, 2 Feb 2018 07:53:08 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w12Cr1oV007943, This message is accepted by code: ctloc85258
+From: Hau <hau@realtek.com>
+To: Francois Romieu <romieu@fr.zoreil.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        nic_swsd <nic_swsd@realtek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next] r8169: add module param for control of ASPM disable
+Thread-Topic: [PATCH net-next] r8169: add module param for control of ASPM
+ disable
+Thread-Index: AQHTm3VptCaa3TYsykSp40X/dNZxG6OPq0AAgAFjuKA=
+Date: Fri, 2 Feb 2018 12:52:59 +0000
+Message-ID: <80377ECBC5453840BA8C7155328B5377D3410C47@RTITMBSV06.realtek.com.tw>
+References: <1517500663-24052-1-git-send-email-hau@realtek.com>
+ <20180201232652.GA19190@electric-eye.fr.zoreil.com>
+In-Reply-To: <20180201232652.GA19190@electric-eye.fr.zoreil.com>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.177.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517503869-3179-3-git-send-email-mathieu.poirier@linaro.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu,
-
-On 01/02/18 09:51, Mathieu Poirier wrote:
-> When the topology of root domains is modified by CPUset or CPUhotplug
-> operations information about the current deadline bandwidth held in the
-> root domain is lost.
+> -----Original Message-----
+> From: Francois Romieu [mailto:romieu@fr.zoreil.com]
+> Sent: Friday, February 2, 2018 7:27 AM
+> To: Hau <hau@realtek.com>
+> Cc: netdev@vger.kernel.org; nic_swsd <nic_swsd@realtek.com>; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH net-next] r8169: add module param for control of ASPM
+> disable
 > 
-> This patch address the issue by recalculating the lost deadline
-> bandwidth information by circling through the deadline tasks held in
-> CPUsets and adding their current load to the root domain they are
-> associated with.
+> Chunhao Lin <hau@realtek.com> :
+> [...]
+> > @@ -5878,6 +5881,20 @@ static void rtl_pcie_state_l2l3_enable(struct
+> rtl8169_private *tp, bool enable)
+> >  	RTL_W8(Config3, data);
+> >  }
+> >
+> > +static void rtl_hw_internal_aspm_clkreq_enable(struct rtl8169_private
+> *tp,
+> > +				bool enable)
+> > +{
+> > +	void __iomem *ioaddr = tp->mmio_addr;
+> > +
+> > +	if (enable) {
+> > +		RTL_W8(Config2, RTL_R8(Config2) | ClkReqEn);
+> > +		RTL_W8(Config5, RTL_R8(Config5) | ASPM_en);
+> > +	} else {
+> > +		RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
+> > +		RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en);
+> > +	}
+> > +}
 > 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
+> s/enable(..., false)/disable()/
+> 
+> static void rtl_hw_internal_aspm_clkreq_enable(truct rtl8169_private *tp) {
+> 	void __iomem *ioaddr = tp->mmio_addr;
+> 
+> 	RTL_W8(Config2, RTL_R8(Config2) | ClkReqEn);
+> 	RTL_W8(Config5, RTL_R8(Config5) | ASPM_en); }
+> 
+> static void rtl_hw_internal_aspm_clkreq_disable(truct rtl8169_private *tp) {
+> 	void __iomem *ioaddr = tp->mmio_addr;
+> 
+> 	RTL_W8(Config2, RTL_R8(Config2) & ~ClkReqEn);
+> 	RTL_W8(Config5, RTL_R8(Config5) & ~ASPM_en); }
+> 
+> If you really want to factor something out, you may use helpers that set or
+> clear bits according to the 3-uple (tp, register, bits) but foo_enable(..., false)
+> is pointlessly convoluted.
+> 
+> --
+> Ueimor
+> 
+> ------Please consider the environment before printing this e-mail.
 
-[...]
+This two bits are related to hardware ASPM function, so I put them together into one function.
+I could use helper to set these bits, if doing this can make the patch more readable for kernel team.
 
-> +static void update_tasks_root_domain(struct cpuset *cs)
-> +{
-> +	struct css_task_iter it;
-> +	struct task_struct *task;
-> +
-> +	css_task_iter_start(&cs->css, 0, &it);
-> +
-> +	while ((task = css_task_iter_next(&it)))
-> +		dl_add_task_root_domain(task);
-> +
-> +	css_task_iter_end(&it);
-> +}
-> +
-> +/*
-> + * Called with cpuset_mutex held (rebuild_sched_domains())
-> + * Called with hotplug lock held (rebuild_sched_domains_locked())
-> + * Called with sched_domains_mutex held (partition_and_rebuild_domains())
-> + */
-> +static void rebuild_root_domains(void)
-> +{
-> +	struct cpuset *cs = NULL;
-> +	struct cgroup_subsys_state *pos_css;
-> +
-> +	rcu_read_lock();
-> +
-> +	/*
-> +	 * Clear default root domain DL accounting, it will be computed again
-> +	 * if a task belongs to it.
-> +	 */
-> +	dl_clear_root_domain(&def_root_domain);
+Thanks for inform me that net-next is closed. I will resubmit this patch when net-next open.
 
-Can't a __sched_setscheduler sneak in at this point, set a task to
-DEADLINE, add its bandwidth to the rd...
+Thanks.
 
-> +
-> +	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
-> +
-> +		if (cpumask_empty(cs->effective_cpus)) {
-> +			pos_css = css_rightmost_descendant(pos_css);
-> +			continue;
-> +		}
-> +
-> +		css_get(&cs->css);
-> +
-> +		rcu_read_unlock();
-> +
-> +		update_tasks_root_domain(cs);
-
-... and this adds it again?
-
-> +
-> +		rcu_read_lock();
-> +		css_put(&cs->css);
-> +	}
-> +	rcu_read_unlock();
-> +}
-
-Best,
-
-- Juri
+------Please consider the environment before printing this e-mail.
