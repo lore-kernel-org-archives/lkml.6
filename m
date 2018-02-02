@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2251HWi9MmdzelgHrJlyw0z9szARTXjKghmP3BFoAgagzWN8bLtuB6f72v+ulABIkYD5X9Os
-ARC-Seal: i=1; a=rsa-sha256; t=1517590907; cv=none;
+X-Google-Smtp-Source: AH8x224SwjnRhlBaC2Vnr1Zm+D5VDRi1hWc3PLtQaZwnGUD/fuuD1A2GnHbhAQz0NxxKEkAUeQmE
+ARC-Seal: i=1; a=rsa-sha256; t=1517590905; cv=none;
         d=google.com; s=arc-20160816;
-        b=M3x90MBYWgUwfK2kwMxnKkIp1wH06TFCl6bRp9zNzgmB8EjowVxhEN8H5NS9Q7fqRH
-         BLNaB0qG6IOqono+mVDwgNu+OrqBVLEn2MhFSKqyzSG2ZARhftx6WoATJEoCkHnyky/P
-         my9vHJZFkwS4INpN78BCM2DFzIuaUmG37z0bGOml5POpPpqcT23TrJO1mzQmKziPDdJ8
-         G4fq7JUX1VReTK9OjH/GZhlg7e0yPBr8GadHOKWo37ljwiJQTUxdYVbGqpSh8BbEkFg9
-         jrOcqVUCRPZbtzN1V+RLkIOfxpJgJc7obDYuDu5n050T8W4Gtipl7mhgdWe4C/xPZlmh
-         5zKw==
+        b=DhoiianDL56O4b8rNoUDHD+mT3QeVjqA0dJaqYIgMt6ZEa/uqfQIjS4JV/ztiLZFvF
+         srhfchnCff0iVY3+6yTfACdft0fmSnSFbM7XbVSNzWQCvjEysadJiSwSQfarjp0QxhKo
+         WSVMPGwEtcnGMrPt1OBQ1Jy+1l516SiQkByjxKgK4Fp1WDLqZRQtajSDQft8a3LBM53p
+         oMFJboY5iRBm4A8v/IZARpsssl0KUAj6A7ByLHeu5u76SvBGfdQeuc53VJfZaHT2KgDk
+         MiizlWjCk8t1cJbJsDXbqGmCVyx1JYWUumQij/1vM8xHuFPaQtfv8m2QeorocaZfar6L
+         fJ7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=anY1jnHIeEaO+IJrGw+9F/nHCEDh2Ld/qMQhNr6AvUI=;
-        b=gSsI8Y50mxRIUlJ1+uvgu0rAE6cTwPekBd6ojfcvR+FDXLi8PsJdM0H+je7g83w5fV
-         zJZUC/GWRjTg94VPMErs1599qEEucKJtkDebh2boBwoIMfBA8r5bquxdQPrTe5YJoamo
-         xfigN4DQDYbQWFs2dmfXCqyndtoZ4lFQ3xkkckMhsIDHyZafsAzHjnqARgJkRAROlnfx
-         C8VUO6P4AizGhEizR0QeH/f9iVoDNpTjfNcmv4yUvgUg3/i0S+fHYKlBpg2ghLy1K7g6
-         7oha1JcvQ5ft9+TEN9Quaq9COL5h4wbbUwUUTYbkSVmrY4u78/0V+u7H7hsfW2ELAYTC
-         JIiA==
+        bh=FKfzfKF4bBLTh4jcIqvSYpGBjHSpjghS4cJVJD6QB+M=;
+        b=FK7wGeP9bLOtWLJbRTmKQHvpmOZv01ezjgO5JikMdcKXxrc3EY0uaLOlga2W5K6Eet
+         aAvUO37nU1j66SgHks3qgjz9XZj/BIiKBKHcbLKIJpayPQm1FfE9IWliqPW7D3MML/l/
+         C5cv5i2dK1mD9zqzm99kopEQPuxj9Ovo+k//pCDcpn5FiG/W/yxEYoq7JUReEQfLobmn
+         aoZK3H5vNyNBUQr5EgpHtcbNhwDbTmhTsz7jzK+rnFMws/FVLtamRRMOBtFsEI4e2fge
+         hqCSra7U39pgdzsh15fiz2MXbXyUTXLSYgm664otTKMC1aSZQZ1eaz9xGkEhNNi5p6+R
+         w1iw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Colin Ian King <colin.king@canonical.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 27/67] ACPI / bus: Leave modalias empty for devices which are not present
-Date: Fri,  2 Feb 2018 17:57:56 +0100
-Message-Id: <20180202140818.525948379@linuxfoundation.org>
+Subject: [PATCH 4.4 53/67] usb: gadget: dont dereference g until after it has been null checked
+Date: Fri,  2 Feb 2018 17:58:22 +0100
+Message-Id: <20180202140821.185771025@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309403407129442?=
-X-GMAIL-MSGID: =?utf-8?q?1591309403407129442?=
+X-GMAIL-THRID: =?utf-8?q?1591309400693081740?=
+X-GMAIL-MSGID: =?utf-8?q?1591309400693081740?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +49,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Colin Ian King <colin.king@canonical.com>
 
 
-[ Upstream commit 10809bb976648ac58194a629e3d7af99e7400297 ]
+[ Upstream commit b2fc059fa549fe6881d4c1f8d698b0f50bcd16ec ]
 
-Most Bay and Cherry Trail devices use a generic DSDT with all possible
-peripheral devices present in the DSDT, with their _STA returning 0x00 or
-0x0f based on AML variables which describe what is actually present on
-the board.
+Avoid dereferencing pointer g until after g has been sanity null checked;
+move the assignment of cdev much later when it is required into a more
+local scope.
 
-Since ACPI device objects with a 0x00 status (not present) still get an
-entry under /sys/bus/acpi/devices, and those entry had an acpi:PNPID
-modalias, userspace would end up loading modules for non present hardware.
+Detected by CoverityScan, CID#1222135 ("Dereference before null check")
 
-This commit fixes this by leaving the modalias empty for non present
-devices. This results in 10 modules less being loaded with a generic
-distro kernel config on my Cherry Trail test-device (a GPD pocket).
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: b785ea7ce662 ("usb: gadget: composite: fix ep->maxburst initialization")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/device_sysfs.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/gadget/composite.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/acpi/device_sysfs.c
-+++ b/drivers/acpi/device_sysfs.c
-@@ -146,6 +146,10 @@ static int create_pnp_modalias(struct ac
- 	int count;
- 	struct acpi_hardware_id *id;
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -104,7 +104,6 @@ int config_ep_by_speed(struct usb_gadget
+ 			struct usb_function *f,
+ 			struct usb_ep *_ep)
+ {
+-	struct usb_composite_dev	*cdev = get_gadget_data(g);
+ 	struct usb_endpoint_descriptor *chosen_desc = NULL;
+ 	struct usb_descriptor_header **speed_desc = NULL;
  
-+	/* Avoid unnecessarily loading modules for non present devices. */
-+	if (!acpi_device_is_present(acpi_dev))
-+		return 0;
+@@ -176,8 +175,12 @@ ep_found:
+ 			_ep->maxburst = comp_desc->bMaxBurst + 1;
+ 			break;
+ 		default:
+-			if (comp_desc->bMaxBurst != 0)
++			if (comp_desc->bMaxBurst != 0) {
++				struct usb_composite_dev *cdev;
 +
- 	/*
- 	 * Since we skip ACPI_DT_NAMESPACE_HID from the modalias below, 0 should
- 	 * be returned if ACPI_DT_NAMESPACE_HID is the only ACPI/PNP ID in the
++				cdev = get_gadget_data(g);
+ 				ERROR(cdev, "ep0 bMaxBurst must be 0\n");
++			}
+ 			_ep->maxburst = 1;
+ 			break;
+ 		}
