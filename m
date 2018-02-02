@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227P/dqJRniJK4p5Jp46tXwuMTCo+gIN0GMni3mxIiSNtywVVTq8/5GbvfwbRkQGUgbNQXlj
-ARC-Seal: i=1; a=rsa-sha256; t=1517591679; cv=none;
+X-Google-Smtp-Source: AH8x227nJvvV7ZaU/x3BZ/PYW9iTUlB1z7ObsKfKXHsahCdDc33Dq1r0/6I5PfBz1MpMIbiJip+p
+ARC-Seal: i=1; a=rsa-sha256; t=1517591677; cv=none;
         d=google.com; s=arc-20160816;
-        b=eHtiWGbNIWm9GVLRSg6J+kOD2UjuP5OCATvagAunQZxUZopV0c/adpowNhIgSxJ9Zb
-         x09u5i3uGlr19L+A04BcrU/CA4bgVA+KqnRJcOysHqNeXQWmYo+K7ud6jIZer6SGiMG1
-         Hx0r3ynF+zPGNSa7kpg+RrdAdO6gikYJZs6JzfiOC2SuktVxxZizrKlMnPlQXZvWyxYK
-         q0WA/3TztKE5bbGPITCQ7Po93OGGQDWhr8iEBaeOeLHAhHHHqlrX4xWRBcdoOzV7PwME
-         2k5jzNGMRXMXjSty3ZFmq4ttodrEXCyBSIoZSPrdVr+DcVJXeha5Yh0P3JmJroB6seNq
-         EnXA==
+        b=PsjhPqDCjLF5pgj/+j1S6IBC9NDN15KNV5P1iWJpxuxvYgxe0sjX3RDV8Nqb9to27I
+         hrDOUzuhlWdGqz1w6Ivhr5UKt6le7W/eZuUbB49graZ928Jmy1NSVQ4aHYapUljLqd28
+         kTBPncD0x7OJnmRtiGcUyBOST14voX3ul301EtqcT421cjqzdRBpXsOC+gJZgI6rw+2u
+         WjGtstc9jxM//h1Hkq5QACXVkS5L3qgNmE/UteB5SRriv88xdDR8cikfBfyjFmCB2fQC
+         nokNFFB3LDbwzSgmUKf/B+kWmQIOVFAx9au/cMZG0ZXbouFFoKHhJhRqWiPOJIP7/ldX
+         PtsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ijwqGSPYJKl1tV5mMiqSfuldjmC/zdfJYm+KynUrUwE=;
-        b=tO2fw3v4wogGHJACieq0GQEXZQrn/nRoPt3/dNDgXzMPpR94OsHyl7KYzTCTiOcqSU
-         3omgUQMWl6Ite31PcCfxyAVHI+au34HRDOyra79EicC1+E+WOtbtMdwH7CDd3n3pu4bP
-         sZ29ds1MK5qhbnICBMz14TMbv4kCrooZDxKnlIOB6YoEgndsHmoH/M92eQ4IN/qzcD6N
-         KtnJ11WweNNs2liHbJwzkAEQrC0Iax3g5zG1Ol/O6xJt/1T/cwbD3s/KpnrVhs4FcK27
-         lXiL2qet4fWgF4i/wDTMW7IVmuYk1EfuuQLA4e3WiwBt5BLYAZd+DAUSyG2f6QqljoS9
-         1LAg==
+        bh=GT8eCIALRKGr6d3MmI+PQIKTKbdrtv7pfd8HM/oTMB0=;
+        b=m7jGS+eeMkIMgmIvL3StAOal8g3BM03CU7Odkulw0qzvFJ/Ai69Qdaw8rGXr4ZOq9S
+         vBJaJYzDbUomK1W3o0LUJn9QHpbydnPqpKWl1dKM8DKEhRXoul2okzjBWpfsREbsmk7I
+         xk6qHr/iNiLdOQG6r6YIgfAp5WtzWlxFDPbAwfRDeiDX1Bf6hrj26DsdhGtfp698pl4D
+         hz+L11FIRZKWgdu1gizG37qrUT3PWN8y5OHiqhE5j5h1gMPvhGkjsMYHYlquOTJ0n0QV
+         tMd+ZHXr0w7XtUCgxmXzFnZAkbckKOF/wG7iO6vboGn4rI9Ex9C1N9UrM2j+pwNLlPmt
+         h7Lg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Max Schulze <max.schulze@posteo.de>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 140/156] USB: serial: simple: add Motorola Tetra driver
-Date: Fri,  2 Feb 2018 17:58:41 +0100
-Message-Id: <20180202140846.710287805@linuxfoundation.org>
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.14 139/156] usbip: list: dont list devices attached to vhci_hcd
+Date: Fri,  2 Feb 2018 17:58:40 +0100
+Message-Id: <20180202140846.663815139@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -39,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309449263095125?=
-X-GMAIL-MSGID: =?utf-8?q?1591310213181132256?=
+X-GMAIL-THRID: =?utf-8?q?1591309446455834325?=
+X-GMAIL-MSGID: =?utf-8?q?1591310210421302259?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,71 +47,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 46fe895e22ab3845515ec06b01eaf1282b342e29 upstream.
+commit ef824501f50846589f02173d73ce3fe6021a9d2a upstream.
 
-Add new Motorola Tetra (simple) driver for Motorola Solutions TETRA PEI
-devices.
+usbip host lists devices attached to vhci_hcd on the same server
+when user does attach over localhost or specifies the server as the
+remote.
 
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=0cad ProdID=9011 Rev=24.16
-S:  Manufacturer=Motorola Solutions Inc.
-S:  Product=Motorola Solutions TETRA PEI interface
-C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
-I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
+usbip attach -r localhost -b busid
+or
+usbip attach -r servername (or server IP)
 
-Note that these devices do not support the CDC SET_CONTROL_LINE_STATE
-request (for any interface).
+Fix it to check and not list devices that are attached to vhci_hcd.
 
-Reported-by: Max Schulze <max.schulze@posteo.de>
-Tested-by: Max Schulze <max.schulze@posteo.de>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/Kconfig             |    1 +
- drivers/usb/serial/usb-serial-simple.c |    7 +++++++
- 2 files changed, 8 insertions(+)
+ tools/usb/usbip/src/usbip_list.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/usb/serial/Kconfig
-+++ b/drivers/usb/serial/Kconfig
-@@ -63,6 +63,7 @@ config USB_SERIAL_SIMPLE
- 		- Google USB serial devices
- 		- HP4x calculators
- 		- a number of Motorola phones
-+		- Motorola Tetra devices
- 		- Novatel Wireless GPS receivers
- 		- Siemens USB/MPI adapter.
- 		- ViVOtech ViVOpay USB device.
---- a/drivers/usb/serial/usb-serial-simple.c
-+++ b/drivers/usb/serial/usb-serial-simple.c
-@@ -80,6 +80,11 @@ DEVICE(vivopay, VIVOPAY_IDS);
- 	{ USB_DEVICE(0x22b8, 0x2c64) }	/* Motorola V950 phone */
- DEVICE(moto_modem, MOTO_IDS);
+--- a/tools/usb/usbip/src/usbip_list.c
++++ b/tools/usb/usbip/src/usbip_list.c
+@@ -187,6 +187,7 @@ static int list_devices(bool parsable)
+ 	const char *busid;
+ 	char product_name[128];
+ 	int ret = -1;
++	const char *devpath;
  
-+/* Motorola Tetra driver */
-+#define MOTOROLA_TETRA_IDS()			\
-+	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
-+DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
+ 	/* Create libudev context. */
+ 	udev = udev_new();
+@@ -209,6 +210,14 @@ static int list_devices(bool parsable)
+ 		path = udev_list_entry_get_name(dev_list_entry);
+ 		dev = udev_device_new_from_syspath(udev, path);
+ 
++		/* Ignore devices attached to vhci_hcd */
++		devpath = udev_device_get_devpath(dev);
++		if (strstr(devpath, USBIP_VHCI_DRV_NAME)) {
++			dbg("Skip the device %s already attached to %s\n",
++			    devpath, USBIP_VHCI_DRV_NAME);
++			continue;
++		}
 +
- /* Novatel Wireless GPS driver */
- #define NOVATEL_IDS()			\
- 	{ USB_DEVICE(0x09d7, 0x0100) }	/* NovAtel FlexPack GPS */
-@@ -110,6 +115,7 @@ static struct usb_serial_driver * const
- 	&google_device,
- 	&vivopay_device,
- 	&moto_modem_device,
-+	&motorola_tetra_device,
- 	&novatel_gps_device,
- 	&hp4x_device,
- 	&suunto_device,
-@@ -125,6 +131,7 @@ static const struct usb_device_id id_tab
- 	GOOGLE_IDS(),
- 	VIVOPAY_IDS(),
- 	MOTO_IDS(),
-+	MOTOROLA_TETRA_IDS(),
- 	NOVATEL_IDS(),
- 	HP4X_IDS(),
- 	SUUNTO_IDS(),
+ 		/* Get device information. */
+ 		idVendor = udev_device_get_sysattr_value(dev, "idVendor");
+ 		idProduct = udev_device_get_sysattr_value(dev, "idProduct");
