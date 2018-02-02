@@ -1,169 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751759AbeBBLtz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 06:49:55 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:53737 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751569AbeBBLts (ORCPT
+        id S1751829AbeBBLuP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 06:50:15 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:54714 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751580AbeBBLtu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 06:49:48 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w12BnhiU028109, This message is accepted by code: ctloc85258
-From: Hau <hau@realtek.com>
-To: Chris Chiu <chiu@endlessm.com>
-CC: nic_swsd <nic_swsd@realtek.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "Linux Upstreaming Team" <linux@endlessm.com>
-Subject: RE: r8169 take too long to complete driver initialization
-Thread-Topic: r8169 take too long to complete driver initialization
-Thread-Index: AQHTeW5i9BCLrRGdOUyHPseed+hwSaNkHbmAgCY8oACAANttQIAA1xKAgAQOBQCAASjSEA==
-Date: Fri, 2 Feb 2018 11:49:42 +0000
-Message-ID: <80377ECBC5453840BA8C7155328B5377D3410B5D@RTITMBSV06.realtek.com.tw>
-References: <CAB4CAweXip+hDprJc6biwR=UtGF1xu-06HdB4ddzg9UZGL+Ngw@mail.gmail.com>
- <CAB4CAwf8zFc8DtzjceATaZbrHJakioPHp7MPb+h7Sa1ySB-_RQ@mail.gmail.com>
- <CAB4CAwfXF3RSiAMsjOe5RkAT8dh__A3677XuDwxwrarxdrZpZQ@mail.gmail.com>
- <80377ECBC5453840BA8C7155328B5377D340AC54@RTITMBSV06.realtek.com.tw>
- <CAB4CAwdRgjT+rk9WJbZzu7Ltw8CL3oAM1VeWvNz_uWYvY1Pmrg@mail.gmail.com>
- <CAB4CAwd=_J42gLoet1EQBws6ztCidqtdQrKGQ0hmx3BGzhZijg@mail.gmail.com>
-In-Reply-To: <CAB4CAwd=_J42gLoet1EQBws6ztCidqtdQrKGQ0hmx3BGzhZijg@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.177.206]
-Content-Type: text/plain; charset="utf-8"
+        Fri, 2 Feb 2018 06:49:50 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Prateek Sood <prsood@codeaurora.org>
+Cc: viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gkohli@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: Query related to usage of cpufreq_suspend() & cpufreq_resume
+Date: Fri, 02 Feb 2018 12:48:13 +0100
+Message-ID: <1949391.4ffJqIIJSQ@aspire.rjw.lan>
+In-Reply-To: <e9d13871-184b-dee3-c45f-c6d19e671eea@codeaurora.org>
+References: <e9d13871-184b-dee3-c45f-c6d19e671eea@codeaurora.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w12BnxMZ008185
 
-
-> -----Original Message-----
-> From: Chris Chiu [mailto:chiu@endlessm.com]
-> Sent: Friday, February 2, 2018 10:03 AM
-> To: Hau <hau@realtek.com>
-> Cc: nic_swsd <nic_swsd@realtek.com>; netdev@vger.kernel.org; Linux
-> Kernel <linux-kernel@vger.kernel.org>; Linux Upstreaming Team
-> <linux@endlessm.com>
-> Subject: Re: r8169 take too long to complete driver initialization
+On Friday, February 2, 2018 12:41:58 PM CET Prateek Sood wrote:
+> Hi Viresh,
 > 
-> On Tue, Jan 30, 2018 at 8:07 PM, Chris Chiu <chiu@endlessm.com> wrote:
-> > On Mon, Jan 29, 2018 at 11:24 PM, Hau <hau@realtek.com> wrote:
-> >> Hi Chris,
-> >>
-> >> Could you test following patch?
-> >>
-> >>  DECLARE_RTL_COND(rtl_ocp_tx_cond)
-> >>  {
-> >>         void __iomem *ioaddr = tp->mmio_addr;
-> >>
-> >> -       return RTL_R8(IBISR0) & 0x02;
-> >> +       return RTL_R8(IBISR0) & 0x20;
-> >>  }
-> >>
-> >>  static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)  {
-> >>         void __iomem *ioaddr = tp->mmio_addr;
-> >>
-> >>         RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
-> >> -       rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
-> >> +       rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
-> >>         RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
-> >>         RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);  }
-> >>
-> >> Thanks.
-> >>
-> >
-> > Yes. It completes the initialization in 70 ms. So it means the
-> > rtl_ocp_tx_cond are waiting for incorrect register bit? Can you help work
-> out a patch for this?
-> >
-> > Chris
-> >
-> >
+> One scenario is there where a kernel panic is observed in
+> cpufreq during suspend/resume.
 > 
-> Gentle ping,
-> cheers.
+> pm_suspend()
+>   suspend_devices_and_enter()
+>     dpm_suspend_start()
+>       dpm_prepare() 
 > 
-> Chris
+> Failure in dpm_prepare() happend with following dmesg:
 > 
+> [ 3746.316062] PM: Device xyz not prepared for power transition: code -16
+> [ 3746.316071] PM: Some devices failed to suspend, or early wake event detected
+> 
+> 
+> pm_suspend()
+>   suspend_devices_and_enter()
+>     dpm_suspend_start()
+>       dpm_prepare() //failed
+>     dpm_resume_end()
+>       dpm_resume()
+>         cpufreq_resume()
+>           cpufreq_start_governor()
+>             sugov_start()
+>               cpufreq_add_update_util_hook()
+> 
+> After failure in dpm_prepare(), dpm_resume() called
+> cpufreq_resume(). Corresponding cpufreq_suspend() was not
+> called due to failure of dpm_prepare(). 
+> 
+> This resulted in WARN_ON(per_cpu(cpufreq_update_util_data, cpu))
+> in cpufreq_add_update_util_hook() and cpufreq_add_update_util_hook->func
+> being inconsistent state. It caused crash in scheduler.
+> 
+> Following are some of the ways to mitigate this issue. Could
+> you please provide feedback on below two approaches or suugest
+> a better way to fix this problem.
+> 
+> -----------------------8<------------------------------
+> 
+> Co-developed-by: Gaurav Kohli <gkohli@codeaurora.org>
+> Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org> 
+> Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+> 
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 02a497e..732e5a2 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -1038,6 +1038,7 @@ void dpm_resume(pm_message_t state)
+>  {
+>         struct device *dev;
+>         ktime_t starttime = ktime_get();
+> +       bool valid_resume = false;
+> 
+>         trace_suspend_resume(TPS("dpm_resume"), state.event, true);
+>         might_sleep();
+> @@ -1055,6 +1056,7 @@ void dpm_resume(pm_message_t state)
+>         }
+> 
+>         while (!list_empty(&dpm_suspended_list)) {
+> +               valid_resume = true;
+>                 dev = to_device(dpm_suspended_list.next);
+>                 get_device(dev);
+>                 if (!is_async(dev)) {
+> @@ -1080,7 +1082,8 @@ void dpm_resume(pm_message_t state)
+>         async_synchronize_full();
+>         dpm_show_time(starttime, state, 0, NULL);
+> 
+> -       cpufreq_resume();
+> +       if (valid_resume)
+> +               cpufreq_resume();
+>         trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+>  }
+> 
+> --------------------8<--------------------------------------
+> 
+> Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+> 
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 421f318..439eab8 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -1648,7 +1648,7 @@ void cpufreq_suspend(void)
+>  {
+>         struct cpufreq_policy *policy;
+> 
+> -       if (!cpufreq_driver)
+> +       if (!cpufreq_driver || cpufreq_suspended)
+>                 return;
+> 
+>         if (!has_target() && !cpufreq_driver->suspend)
+> @@ -1683,7 +1683,7 @@ void cpufreq_resume(void)
+>         struct cpufreq_policy *policy;
+>         int ret;
+> 
+> -       if (!cpufreq_driver)
+> +       if (!cpufreq_driver || !cpufreq_suspended)
+>                 return;
+> 
+>         cpufreq_suspended = false;
 
-I have submitted the patch to kernel team.
-https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=086ca23d03c0d2f4088f472386778d293e15c5f6
+Since we have cpufreq_suspended already, the second one is better.
 
-
-------Please consider the environment before printing this e-mail.
-
-> >>> -----Original Message-----
-> >>> From: Chris Chiu [mailto:chiu@endlessm.com]
-> >>> Sent: Monday, January 29, 2018 6:12 PM
-> >>> To: nic_swsd <nic_swsd@realtek.com>; netdev@vger.kernel.org; Linux
-> >>> Kernel <linux-kernel@vger.kernel.org>; Linux Upstreaming Team
-> >>> <linux@endlessm.com>
-> >>> Subject: Re: r8169 take too long to complete driver initialization
-> >>>
-> >>> On Fri, Jan 5, 2018 at 10:17 AM, Chris Chiu <chiu@endlessm.com> wrote:
-> >>> > On Wed, Dec 20, 2017 at 4:41 PM, Chris Chiu <chiu@endlessm.com>
-> wrote:
-> >>> >> Hi,
-> >>> >>     We've hit a suspend/resume issue on a Acer desktop caused by
-> >>> >> r8169 driver. The dmseg
-> >>> >>
-> https://gist.github.com/mschiu77/b741849b5070281daaead8dfee312d1a
-> >>> >> shows it's still in msleep() within a mutex lock.
-> >>> >>     After looking into the code, it's caused by the
-> >>> >> rtl8168ep_stop_cmac() which is waiting 100 seconds for
-> >>> >> rtl_ocp_tx_cond. The following dmesg states that the r8169 driver
-> >>> >> is loaded.
-> >>> >>
-> >>> >> [   20.270526] r8169 Gigabit Ethernet driver 2.3LK-NAPI loaded
-> >>> >>
-> >>> >> But it takes > 100 seconds to get the following messages
-> >>> >>
-> >>> >> [  140.400223] r8169 0000:02:00.0 (unnamed net_device)
-> >>> >> (uninitialized): rtl_ocp_tx_cond == 1 (loop: 2000, delay: 50).
-> >>> >> [  140.413294] r8169 0000:02:00.0 eth0: RTL8168ep/8111ep at
-> >>> >> 0xffffb16c80db1000, f8:0f:41:ea:74:0d, XID 10200800 IRQ 46 [
-> >>> >> 140.413297] r8169 0000:02:00.0 eth0: jumbo features [frames: 9200
-> >>> >> bytes, tx checksumming: ko]
-> >>> >>
-> >>> >> So any trial to suspend the machine during this period would
-> >>> >> always get device/resource busy message then abort. Is this
-> >>> >> rtl_ocp_tx_cond necessary? Because the ethernet is still working
-> >>> >> and I don't see any problem. I don't know it should be considered
-> >>> >> normal or not. Please let me know if any more information
-> >>> >> required. Thanks
-> >>> >>
-> >>> >> Chris
-> >>> >
-> >>> > gentle ping,
-> >>> >
-> >>> > cheers.
-> >>>
-> >>> Hi,
-> >>>     Just found a r8168 driver which seems to be authrized by realtek
-> >>> for cross comparison. I tried applying the patch to latest 4.15
-> >>> kernel and the driver done it's initialization in faily short time. The patch
-> file is here
-> >>>     https://gist.github.com/mschiu77/fcf406e64a1a437f46cf2be643f1057d.
-> >>>
-> >>>     In mainline r8169.c, the IBISR0 register need to be polled in
-> >>> the rtl8168ep_stop_cmac().
-> >>> In the patch file, there's also the same IBISR0 polling code in
-> >>> Dash2DisableTx(), but it's been bypassed since the chipset maches
-> >>> HW_DASH_SUPPORT_TYPE_2.
-> >>> Per the rtl_chip_info[] in r8168_n.c, CFG_METHOD_23/27/28 are
-> >>> HW_DASH_SUPPORT_TYPE_2, and they happens to be the only 3 named
-> >>> RTL8168EP/8111EP in the rtl_chip_info[].
-> >>>
-> >>>     To find the same matches in r8169.c, RTL_GIGA_MAC_VER_49/50/51
-> >>> seems share the same config. Can anyone clarify if the
-> >>> rtl_ocp_tx_cond() really necessary for 8168EP/8111EP?
-> >>> Or we can just ignore the condition check for
-> RTL_GIGA_MAC_VER_49/50/51?
-> >>>
-> >>> Chris
-> >>>
-> >>> ------Please consider the environment before printing this e-mail.
+Thanks,
+Rafael
