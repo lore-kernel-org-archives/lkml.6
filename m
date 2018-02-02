@@ -1,103 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751625AbeBBK5b (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 05:57:31 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:42466 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751129AbeBBK5W (ORCPT
+        id S1751671AbeBBK7W (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 05:59:22 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:39428 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbeBBK7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 05:57:22 -0500
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
- frequency
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
- <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
- <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
- <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
- <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
- <20180202105304.gow2znzgxqmuxgol@flea.lan>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
-Date: Fri, 2 Feb 2018 11:57:20 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 2 Feb 2018 05:59:16 -0500
+Date: Fri, 2 Feb 2018 11:59:02 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] RTC for 4.16
+Message-ID: <20180202105902.GA9418@piout.net>
 MIME-Version: 1.0
-In-Reply-To: <20180202105304.gow2znzgxqmuxgol@flea.lan>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Il 02/02/2018 11:53, Maxime Ripard ha scritto:
-> Hi,
-> 
-> On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
->>>>> What kernel version did you use?
->>>>
->>>> Latest mainline.
->>>
->>> I guess this patch could fix it:
->>> http://code.bulix.org/1kitrq-268936?raw
->>
->> This should prevent from modifying parent clock. But my problem was
->> different.
->>
->> On A20, gpu_clk can have different PLL, not I've found out the way
->> to choose right one with assigned-parent-clocks.
->>
->> I have patchset ready for adding A20 mali node, but I need some more
->> time to complete with OPP, then I will submit entire patchset.
->>
->> Now it works correctly, using right pll(dedicated PLL8), setting
->> right frequency.
-> 
-> The point is that we really don't care about which PLL is actually
-> being used, as long as the rate is correct and we don't break anything
-> else. If the GPU rate is accessible through one of the other PLL, it
-> makes even more sense to not use the GPU PLL and keep it disabled,
-> since it will result in some power savings.
+Hi Linus,
 
-Ah! I see the point now, very clever system for power saving.
-I'm going to check if it's resolutive,
-but it sounds good.
+Here is the pull-request for the RTC subsystem for 4.16.
 
-> 
->> Btw, do I need to add a board using it, or can I add only Mali node
->> to sun7i-a20.dtsi(plus other little patches)?
-> 
-> You can add it to the DTSI without a board using it (and actually,
-> nothing should be in the board DTS, everything in the DT for the Mali
-> applies to all boards).
+Not much this cycle. I've pushed the at32ap700x removal late but it is
+unlikely to cause any issue.
 
-Sure. So I would also add the patch you've addressed me:
-http://code.bulix.org/1kitrq-268936?raw
-as a commit. Can I submit it in patchset to complete the whole job?
+The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
 
-> 
-> Maxime
-> 
+  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/rtc-4.16
+
+for you to fetch changes up to 4402be2b4ca7f53b6213a9e6b3abe9cdcc683e9b:
+
+  rtc: remove rtc-at32ap700x (2018-01-19 09:59:32 +0100)
+
+----------------------------------------------------------------
+RTC for 4.16
+
+Subsystem:
+ - Move ABI documentation to Documentation/ABI
+
+New driver:
+ - NXP i.MX53 SRTC
+ - Chrome OS EC RTC
+
+Drivers:
+ - Remove at32ap700x
+ - Many fixes in various error paths
+
+----------------------------------------------------------------
+Aishwarya Pant (2):
+      Documentation: rtc: add sysfs file permissions
+      Documentation: rtc: move iotcl interface documentation to ABI
+
+Alexandre Belloni (2):
+      rtc: ac100: Fix multiple race conditions
+      Documentation: rtc: move sysfs documentation to ABI
+
+Alexey Khoroshilov (1):
+      rtc: brcmstb-waketimer: fix error handling in brcmstb_waketmr_probe()
+
+Andreas Platschek (1):
+      rtc: omap: fix unbalanced clk_prepare_enable/clk_disable_unprepare
+
+Arnd Bergmann (1):
+      rtc: mxc_v2: remove __exit annotation
+
+Benjamin Gaignard (1):
+      rtc: stm32: Fix copyright
+
+Cole Robinson (1):
+      rtc: Remove unused RTC_DEVICE_NAME_SIZE
+
+Colin Ian King (1):
+      rtc: sun6i: ensure rtc is kfree'd on error
+
+Corentin Labbe (1):
+      rtc: remove rtc-at32ap700x
+
+Fabio Estevam (1):
+      rtc: mxc_v2: Remove unnecessary platform_get_resource() error check
+
+Jia-Ju Bai (2):
+      rtc: r7301: Fix a possible sleep-in-atomic bug in rtc7301_read_time
+      rtc: r7301: Fix a possible sleep-in-atomic bug in rtc7301_set_time
+
+Nobuhiro Iwamatsu (1):
+      rtc: r9701: Remove r9701_remove function
+
+Patrick Bruenn (2):
+      dt-bindings: rtc: add bindings for i.MX53 SRTC
+      rtc: add mxc driver for i.MX53 SRTC
+
+Stephen Barber (2):
+      mfd: cros_ec: Introduce RTC commands and events definitions.
+      rtc: cros-ec: add cros-ec-rtc driver.
+
+ Documentation/ABI/testing/rtc-cdev                 |  42 +++
+ Documentation/ABI/testing/sysfs-class-rtc          |  91 +++++
+ .../devicetree/bindings/rtc/rtc-mxc_v2.txt         |  17 +
+ Documentation/rtc.txt                              |  81 +---
+ drivers/rtc/Kconfig                                |  27 +-
+ drivers/rtc/Makefile                               |   3 +-
+ drivers/rtc/rtc-ac100.c                            |  19 +-
+ drivers/rtc/rtc-at32ap700x.c                       | 287 --------------
+ drivers/rtc/rtc-brcmstb-waketimer.c                |  15 +-
+ drivers/rtc/rtc-cros-ec.c                          | 413 ++++++++++++++++++++
+ drivers/rtc/rtc-mxc_v2.c                           | 419 +++++++++++++++++++++
+ drivers/rtc/rtc-omap.c                             |   5 +-
+ drivers/rtc/rtc-r7301.c                            |   4 +-
+ drivers/rtc/rtc-r9701.c                            |   6 -
+ drivers/rtc/rtc-stm32.c                            |   4 +-
+ drivers/rtc/rtc-sun6i.c                            |   4 +-
+ include/linux/mfd/cros_ec_commands.h               |   8 +
+ include/linux/rtc.h                                |   1 -
+ 18 files changed, 1049 insertions(+), 397 deletions(-)
+ create mode 100644 Documentation/ABI/testing/rtc-cdev
+ create mode 100644 Documentation/ABI/testing/sysfs-class-rtc
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-mxc_v2.txt
+ delete mode 100644 drivers/rtc/rtc-at32ap700x.c
+ create mode 100644 drivers/rtc/rtc-cros-ec.c
+ create mode 100644 drivers/rtc/rtc-mxc_v2.c
 
 -- 
-Giulio Benetti
-R&D Manager &
-Advanced Research
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
