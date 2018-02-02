@@ -1,130 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751711AbeBBJvg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 04:51:36 -0500
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:57978
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751017AbeBBJv2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 04:51:28 -0500
-X-ASG-Debug-ID: 1517565084-093b7e4cf100210001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: Yang Shunyong <shunyong.yang@hxt-semitech.com>
-To: <vinod.koul@intel.com>
-CC: <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Yang Shunyong <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: [PATCH v3] dmaengine: dmatest: add norandom option
-Date: Fri, 2 Feb 2018 17:51:09 +0800
-X-ASG-Orig-Subj: [PATCH v3] dmaengine: dmatest: add norandom option
-Message-ID: <1517565069-19769-1-git-send-email-shunyong.yang@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1751630AbeBBJ4T (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 04:56:19 -0500
+Received: from mout.web.de ([212.227.17.12]:57560 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750795AbeBBJ4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 04:56:12 -0500
+Subject: Re: Adjustments for a lot of function implementations
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Jan Kara <jack@suse.cz>,
+        Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>,
+        Muralidharan Karicheri <mkaricheri@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+ <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
+ <14619198-bebe-d215-5324-a14fbc2103fb@users.sourceforge.net>
+ <alpine.DEB.2.20.1710301745530.2160@hadrien>
+ <ebf37d57-38c6-b3de-5a66-dbb1c13fd63a@xs4all.nl>
+ <049aa1b4-6291-ec24-1ffb-77ae8d1cdb63@users.sourceforge.net>
+ <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <f082b1ae-1be4-440a-6a81-68446c67243e@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 10:55:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.5.21.109]
-X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
-X-Barracuda-Connect: localhost[10.128.0.14]
-X-Barracuda-Start-Time: 1517565084
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5114 1.0000 0.7500
-X-Barracuda-Spam-Score: 0.75
-X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.47508
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+In-Reply-To: <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:eGC8RrkmJERLhuN3CAi8O4ub5SENIJaI8ldQg7bMwV120uVgpX2
+ g+e8HlJsU8PB1xZ9+u+xuestrto6EljwwwILbbJRGesATSNe0oqChJuztoWwEGlxxLNmfCN
+ m3OcrU5P/B95G9dUEH1LnLH+3n0Plu/abrqbmgOb7ioBkBRbanPxWXQ3wg77xzCCdZb6EFk
+ MNbGeTMoxdvyBQFp65RTg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:XU2ERFcQLco=:pwUMVnXeS+DUCU5wzxlpZ4
+ S3LpKl4vMliEVKLVt3V/l4grqWh1lV0lQ6+9mZT/FFChYux7eNZ5IaZlC+8iZAZg7D26H5JSt
+ I4ZaVVDcO0wwzRAMJHBJjWHBBPMS/xI6P7U41z+3aUj03p8IyG17Guuc5ekC8P+BU5LLf2a08
+ XvWTBqijEpI1pXvRRPWjXb/xREXeeZF7pNvBgI5Go5pFVAsfl2JqN6qtBzcw52VealihNkCm0
+ SxfwllJLDe+2JufSoAoz3yBLKBnGEFGr2C91Cn95GE54CmO7+zxe1oKKGXTIciGL3rFG6iRKG
+ 6TqVYuA2ewh/rA1vD2ftZvWkKd5b8TV99PQXXFigwSD6ZBl+Kv3GYhBcTa8uzGMryq0Y7AYj6
+ xgrAhlUA3d9ylEFuf4k6Xvp144JNftV2JMEU7GjEgrdfWPqxjm+p19XwkCTR+FpCXtCCo/vUa
+ IrRyVTTIomUClxfkS3J5PL2piZnE8vOTdWKKP15gNowJaETPeLeCmDtCvyieDumlp95tbiO91
+ ZB2tFRk/78MV7T90zA6Jh6uuBYsCeK6BiO3fMgkWZd1CQmK5L/ffMaoaoXRrOS36zzX4OQa5C
+ Nn/uuPE6bjCD1BdGPRKwLfAnZ9aIxTXFEHxmEsfXYtOTPbqI5GRRyNoVGWPuDb797no/Xm+5/
+ Qrx5kDub83IJ/KEr8aEDMn3/6AjIe8oMqtpadOQn9sEQenQ105ZUQlBOQbuDF97u3QkTE1EDV
+ /hbPdjR3ncJ8zg56oykRBrpt8O7yiHG9Y5e0fYwH32Bfpf2XL3gOBC2wRZuDi8zC5V8AnrrHY
+ s5lmPRwQKHS+3FUhZW4443h9lnDEwPtOT7B6RrsZGA7M3ZhZKY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Existing option noverify disables both random src/dst address offset
-setup and data verification. Sometimes, we need to control random
-src/dst address setup and verification separately, such as disabling
-random to make sure that test covers addresses in all interleaving
-banks, but data verification is still performed.
+> ??? I did that: either one patch per directory with the same type of change,
+> or one patch per driver combining all the changes for that driver.
 
-This patch adds option norandom to disable random offset setup. Option
-noverify has been changed to disable data verification only.
+Do any contributors get into the mood to take another look at software updates
+from my selection of change possibilities in a more constructive way?
 
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Signed-off-by: Yang Shunyong <shunyong.yang@hxt-semitech.com>
----
+Do you need any additional development resources?
 
-v3: new patch should be octal permissions.
-
-v2: change to symbolic permissions.
-
----
- drivers/dma/dmatest.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
-index 80cc2be6483c..b9339524d5bd 100644
---- a/drivers/dma/dmatest.c
-+++ b/drivers/dma/dmatest.c
-@@ -74,7 +74,11 @@
- 
- static bool noverify;
- module_param(noverify, bool, S_IRUGO | S_IWUSR);
--MODULE_PARM_DESC(noverify, "Disable random data setup and verification");
-+MODULE_PARM_DESC(noverify, "Disable data verification (default: verify)");
-+
-+static bool norandom;
-+module_param(norandom, bool, 0644);
-+MODULE_PARM_DESC(norandom, "Disable random offset setup (default: random)");
- 
- static bool verbose;
- module_param(verbose, bool, S_IRUGO | S_IWUSR);
-@@ -103,6 +107,7 @@ struct dmatest_params {
- 	unsigned int	pq_sources;
- 	int		timeout;
- 	bool		noverify;
-+	bool		norandom;
- };
- 
- /**
-@@ -575,7 +580,7 @@ static int dmatest_func(void *data)
- 			break;
- 		}
- 
--		if (params->noverify)
-+		if (params->norandom)
- 			len = params->buf_size;
- 		else
- 			len = dmatest_random() % params->buf_size + 1;
-@@ -586,17 +591,19 @@ static int dmatest_func(void *data)
- 
- 		total_len += len;
- 
--		if (params->noverify) {
-+		if (params->norandom) {
- 			src_off = 0;
- 			dst_off = 0;
- 		} else {
--			start = ktime_get();
- 			src_off = dmatest_random() % (params->buf_size - len + 1);
- 			dst_off = dmatest_random() % (params->buf_size - len + 1);
- 
- 			src_off = (src_off >> align) << align;
- 			dst_off = (dst_off >> align) << align;
-+		}
- 
-+		if (!params->noverify) {
-+			start = ktime_get();
- 			dmatest_init_srcs(thread->srcs, src_off, len,
- 					  params->buf_size, is_memset);
- 			dmatest_init_dsts(thread->dsts, dst_off, len,
-@@ -975,6 +982,7 @@ static void run_threaded_test(struct dmatest_info *info)
- 	params->pq_sources = pq_sources;
- 	params->timeout = timeout;
- 	params->noverify = noverify;
-+	params->norandom = norandom;
- 
- 	request_channels(info, DMA_MEMCPY);
- 	request_channels(info, DMA_MEMSET);
--- 
-1.8.3.1
+Regards,
+Markus
