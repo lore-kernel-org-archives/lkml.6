@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225UUjFTAhntS7/rKhfDu+tZwsXxGZFNKUq16lP5uBaamP0Wrp/6IJuKPMnup0/al1yrO8Y+
-ARC-Seal: i=1; a=rsa-sha256; t=1517591654; cv=none;
+X-Google-Smtp-Source: AH8x2248WXq7WzkM/oEFURUuo/blXyCfirPE1QUQChYQmTChBZcVv+NACsjiWvX++9UEFLNj72Kx
+ARC-Seal: i=1; a=rsa-sha256; t=1517591653; cv=none;
         d=google.com; s=arc-20160816;
-        b=a/1M8dKAxh/Le+8p3mCFYhzTduywzecedRusl3SfqwRK67kp1+e8PIpBe+XxVBPTih
-         ji4kAOewyL7rtUldTdXq8NE7Uv3KgFz0Xt8i/vuF/XdIu5blZTyHozWcHDNg/Z/hXaLF
-         kBaKoeu6bpYg1pe9ezF1krPseXqUHgO+ADJN3Yo13sEDVm+nlsG9NOu1l1cHnihKYUBM
-         UUIXaLagjT1F7NlZhpMKVIXhIW8YPTrVWeGwsWgIVsWY09BIEUQfWPZ4xlCxJWJO+If7
-         80hDsfp8cwpoDQkgYXLd3wZiIQWk58ks2mcmnMOfIKhkPGGmmDR047CDYYoZYAI56he1
-         Km4g==
+        b=0bvY86hAC44MZFCUvCdRP+TB8ytk1BZvjsY9URjNOdPNGl/QyvOCJaDkwdXQI+sBSa
+         XzrN56JWcgB8dxu8U7+WZ18tQ+6WuwpAwPo9Td3XnfxsZDPrFfLZ9v2xBa6Vs4E2AgoQ
+         pd/Z2OgL6daayUxvYlJMxfDNfnmg5fAOEWl7GLZD7cd2237xQALmHFbwFa3hF1ol9f+M
+         tBvJCBxEKDqeubPNsofDEW3K1RfsaLkcoR8ChZxl1wODEZBWB0lOtuCC+QPOhx72Y2Z5
+         rqD8OoPXpEcp3eqL207G+umMMIB65lRkOO/OslwMkr1Q+kS5Nlcd2KUxXVm+r7hMg2ME
+         YDBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SQFKErIa/lBDoyAQ9uYPQAR6r+TlOWv9qdJMs6eAaio=;
-        b=YO4xsvc2JSbG+srlxDvo3Pay1BVdFNuiltC407FmY0YP1Iub3ooPkKj1Kz1h1Jfp9U
-         t6awbsmJYeAvA5+0l5FT4vFKeBE0mYBFaHTXQ42mc56g0Fo3I4IqIed3vhXMyjocUaVG
-         c/1xRk7PNphssfxW6mPK7w5tlY5FjTrfU9d+9YrcbPQSCUJYB+Uz8F9B2TpB5M8/HBa0
-         44RV36kvguPgaXYxn7F+Ad0ENtwJGi6a+E0789gVGE8ugrMkv3G39PgWrAVMAsTQURbi
-         UPczIDgurPHNZDaoTO4pNkmS8uItgg+Xx8XEuzPil5FLtVakOpL0/WBzWzqfcxJ6s+f+
-         Oupw==
+        bh=m8YzTU0b6I/Q9SLgB1KK+QVv3wFUfAjm7u9q6FdRk4g=;
+        b=t6UdOGdRuxKY5kcAbz0OljC/bAXQTRYZyFsPscOyV6qxbqnJqghtdgFrlvuM015Kgg
+         AzY4BnraJydhbU6J3jwDXw88VoeMsqhCd+BIcdIuijXuiMeFXDSMn95EA+iVchuLCoZv
+         KA7ya1/wjvkLDlUK7qez1W+VPKzSDl7jybtE6+nQJRnQh2gH7lfNkuTFXaWz/TqcAtC5
+         Tta3nwfW//chwADIaUbkV1vSsOnJMGMonnSNBepohtymOx+RUh+Qlijctw1OhHx33XrK
+         8R+IK8CF/dfPkaA0YhxPwVC909bbopEetsV0h9UyEYkXmWIXYzxHz6I49W7WrR6ZD/AW
+         GQTg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 150/156] spi: imx: do not access registers while clocks disabled
-Date: Fri,  2 Feb 2018 17:58:51 +0100
-Message-Id: <20180202140847.143336945@linuxfoundation.org>
+	Wei Yongjun <weiyongjun1@huawei.com>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 4.14 148/156] serial: 8250_uniphier: fix error return code in uniphier_uart_probe()
+Date: Fri,  2 Feb 2018 17:58:49 +0100
+Message-Id: <20180202140847.061624606@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309464774805195?=
-X-GMAIL-MSGID: =?utf-8?q?1591310186179427673?=
+X-GMAIL-THRID: =?utf-8?q?1591310185216144895?=
+X-GMAIL-MSGID: =?utf-8?q?1591310185216144895?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,49 +48,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit d593574aff0ab846136190b1729c151c736727ec upstream.
+commit 7defa77d2baca4d6eb85234f10f38ab618332e75 upstream.
 
-Since clocks are disabled except during message transfer clocks
-are also disabled when spi_imx_remove gets called. Accessing
-registers leads to a freeeze at least on a i.MX 6ULL. Enable
-clocks before disabling accessing the MXC_CSPICTRL register.
+Fix to return a negative error code from the port register error
+handling case instead of 0, as done elsewhere in this function.
 
-Fixes: 9e556dcc55774 ("spi: spi-imx: only enable the clocks when we start to transfer a message")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 39be40ce066d ("serial: 8250_uniphier: fix serial port index in private data")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-imx.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_uniphier.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -1496,12 +1496,23 @@ static int spi_imx_remove(struct platfor
- {
- 	struct spi_master *master = platform_get_drvdata(pdev);
- 	struct spi_imx_data *spi_imx = spi_master_get_devdata(master);
-+	int ret;
+--- a/drivers/tty/serial/8250/8250_uniphier.c
++++ b/drivers/tty/serial/8250/8250_uniphier.c
+@@ -259,12 +259,13 @@ static int uniphier_uart_probe(struct pl
+ 	up.dl_read = uniphier_serial_dl_read;
+ 	up.dl_write = uniphier_serial_dl_write;
  
- 	spi_bitbang_stop(&spi_imx->bitbang);
+-	priv->line = serial8250_register_8250_port(&up);
+-	if (priv->line < 0) {
++	ret = serial8250_register_8250_port(&up);
++	if (ret < 0) {
+ 		dev_err(dev, "failed to register 8250 port\n");
+ 		clk_disable_unprepare(priv->clk);
+ 		return ret;
+ 	}
++	priv->line = ret;
  
-+	ret = clk_enable(spi_imx->clk_per);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_enable(spi_imx->clk_ipg);
-+	if (ret) {
-+		clk_disable(spi_imx->clk_per);
-+		return ret;
-+	}
-+
- 	writel(0, spi_imx->base + MXC_CSPICTRL);
--	clk_unprepare(spi_imx->clk_ipg);
--	clk_unprepare(spi_imx->clk_per);
-+	clk_disable_unprepare(spi_imx->clk_ipg);
-+	clk_disable_unprepare(spi_imx->clk_per);
- 	spi_imx_sdma_exit(spi_imx);
- 	spi_master_put(master);
+ 	platform_set_drvdata(pdev, priv);
  
