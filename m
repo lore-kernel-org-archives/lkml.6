@@ -1,106 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752172AbeBBXvM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 18:51:12 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751699AbeBBXvF (ORCPT
+        id S1752201AbeBBXzg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 18:55:36 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36781 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751699AbeBBXza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 18:51:05 -0500
-Date: Fri, 2 Feb 2018 15:51:02 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: corbet@lwn.net, stern@rowland.harvard.edu, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/2] MAINTAINERS: list file memory-barriers.txt within
- the LKMM entry
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1517562822-6293-1-git-send-email-parri.andrea@gmail.com>
+        Fri, 2 Feb 2018 18:55:30 -0500
+X-Google-Smtp-Source: AH8x227YcxYq9W+yBrlmLOVYqlJY4G4dAT9PwduqngVDl0sJYFXx4pCoY9eU9JKdZTaKfFL48HKh4A==
+Date: Fri, 2 Feb 2018 15:55:27 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot <syzbot+fbbedb95ed1d1e95781e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>
+Subject: Re: KASAN: use-after-free Read in __list_add_valid (3)
+Message-ID: <20180202235527.zf5i5tpae4qvufz7@gmail.com>
+References: <001a113f6344fd86f70563951f82@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517562822-6293-1-git-send-email-parri.andrea@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18020223-0048-0000-0000-000002319C51
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008463; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000248; SDB=6.00984178; UDB=6.00499204; IPR=6.00763456;
- BA=6.00005809; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019342; XFM=3.00000015;
- UTC=2018-02-02 23:51:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020223-0049-0000-0000-000043FFE14C
-Message-Id: <20180202235102.GC3617@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802020285
+In-Reply-To: <001a113f6344fd86f70563951f82@google.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 10:13:42AM +0100, Andrea Parri wrote:
-> Now that a formal specification of the LKMM has become available to
-> the developer, some concern about how to track changes to the model
-> on the level of the "high-level documentation" was raised.
+On Wed, Jan 24, 2018 at 11:57:01PM -0800, syzbot wrote:
+> Hello,
 > 
-> A first "mitigation" to this issue, suggested by Will, is to assign
-> maintainership (and responsibility!!)  of such documentation (here,
-> memory-barriers.txt) to the maintainers of the LKMM themselves.
+> syzbot hit the following crash on upstream commit
+> 1f07476ec143bbed7bf0b641749783b1094b4c4f (Tue Jan 23 20:45:40 2018 +0000)
+> Merge tag 'pci-v4.15-fixes-3' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci
 > 
-> Suggested-by: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> So far this crash happened 6 times on upstream.
+> Unfortunately, I don't have any reproducer for this crash yet.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+fbbedb95ed1d1e95781e@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+> 
+> ==================================================================
+> BUG: KASAN: use-after-free in __list_add_valid+0xb1/0xd0 lib/list_debug.c:23
+> Read of size 8 at addr ffff8801bb5893d0 by task syz-executor1/28911
+> 
+> CPU: 0 PID: 28911 Comm: syz-executor1 Not tainted 4.15.0-rc9+ #277
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  print_address_description+0x73/0x250 mm/kasan/report.c:252
+>  kasan_report_error mm/kasan/report.c:351 [inline]
+>  kasan_report+0x25b/0x340 mm/kasan/report.c:409
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
+>  __list_add_valid+0xb1/0xd0 lib/list_debug.c:23
+>  __list_add include/linux/list.h:60 [inline]
+>  list_add include/linux/list.h:79 [inline]
+>  __add_wait_queue include/linux/wait.h:156 [inline]
+>  add_wait_queue+0xcf/0x290 kernel/sched/wait.c:30
+>  vhost_poll_func+0x3d/0x50 drivers/vhost/vhost.c:165
+>  poll_wait include/linux/poll.h:46 [inline]
+>  eventfd_poll+0xe8/0x1f0 fs/eventfd.c:123
+>  vhost_poll_start+0x97/0x1c0 drivers/vhost/vhost.c:212
+>  vhost_vring_ioctl+0xe28/0x19b0 drivers/vhost/vhost.c:1556
+>  vhost_net_ioctl+0x9df/0x1910 drivers/vhost/net.c:1320
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
+>  SYSC_ioctl fs/ioctl.c:701 [inline]
+>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+>  entry_SYSCALL_64_fastpath+0x29/0xa0
+> RIP: 0033:0x452f19
+> RSP: 002b:00007f33da20dc58 EFLAGS: 00000212 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f33da20e700 RCX: 0000000000452f19
+> RDX: 00000000208ffff8 RSI: 000000004008af20 RDI: 0000000000000017
+> RBP: 0000000000a2f850 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000212 R12: 0000000000000000
+> R13: 0000000000a2f7cf R14: 00007f33da20e9c0 R15: 0000000000000006
+> 
+> Allocated by task 28878:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
+>  __do_kmalloc_node mm/slab.c:3672 [inline]
+>  __kmalloc_node+0x47/0x70 mm/slab.c:3679
+>  kmalloc_node include/linux/slab.h:541 [inline]
+>  kvmalloc_node+0x64/0xd0 mm/util.c:397
+>  kvmalloc include/linux/mm.h:541 [inline]
+>  vhost_net_open+0x27/0x670 drivers/vhost/net.c:902
+>  misc_open+0x382/0x500 drivers/char/misc.c:154
+>  chrdev_open+0x257/0x730 fs/char_dev.c:417
+>  do_dentry_open+0x667/0xd40 fs/open.c:752
+>  vfs_open+0x107/0x220 fs/open.c:866
+>  do_last fs/namei.c:3379 [inline]
+>  path_openat+0x1151/0x3530 fs/namei.c:3519
+>  do_filp_open+0x25b/0x3b0 fs/namei.c:3554
+>  do_sys_open+0x502/0x6d0 fs/open.c:1059
+>  SYSC_openat fs/open.c:1086 [inline]
+>  SyS_openat+0x30/0x40 fs/open.c:1080
+>  entry_SYSCALL_64_fastpath+0x29/0xa0
+> 
+> Freed by task 28878:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
+>  __cache_free mm/slab.c:3488 [inline]
+>  kfree+0xd6/0x260 mm/slab.c:3803
+>  kvfree+0x36/0x60 mm/util.c:416
+>  vhost_net_release+0x159/0x190 drivers/vhost/net.c:1012
+>  __fput+0x327/0x7e0 fs/file_table.c:210
+>  ____fput+0x15/0x20 fs/file_table.c:244
+>  task_work_run+0x199/0x270 kernel/task_work.c:113
+>  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+>  exit_to_usermode_loop+0x296/0x310 arch/x86/entry/common.c:162
+>  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+>  syscall_return_slowpath+0x490/0x550 arch/x86/entry/common.c:264
+>  entry_SYSCALL_64_fastpath+0x9e/0xa0
+> 
+> The buggy address belongs to the object at ffff8801bb589140
+>  which belongs to the cache kmalloc-65536 of size 65536
+> The buggy address is located 656 bytes inside of
+>  65536-byte region [ffff8801bb589140, ffff8801bb599140)
+> The buggy address belongs to the page:
+> page:ffffea0006ed6000 count:1 mapcount:0 mapping:ffff8801bb589140 index:0x0
+> compound_mapcount: 0
+> flags: 0x2fffc0000008100(slab|head)
+> raw: 02fffc0000008100 ffff8801bb589140 0000000000000000 0000000100000001
+> raw: ffffea00068b0820 ffffea000693d020 ffff8801dac02500 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>  ffff8801bb589280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8801bb589300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff8801bb589380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                                  ^
+>  ffff8801bb589400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8801bb589480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
+> 
+> 
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
 
-Very good, thank you, queued!  Please see below for the usual commit-log
-rework.  BTW, in future submissions, could you please capitalize the
-first word after the colon (":") in the subject line?  It is all too
-easy for me to forget to change this, as Ingo can attest.  ;-)
+No reproducer for this one but I assume it was yet another report of the
+vhost_net bug fixed by commit 4cd879515d68:
 
-If we are going to continue to use the LKMM acronym, should we make the
-first line of the MAINTAINERS block look something like this?
+#syz fix: vhost_net: stop device during reset owner
 
-	LINUX KERNEL MEMORY CONSISTENCY MODEL (LKMM)
-
-One alternative would be to start calling it LKMCM, though that does
-look a bit like a Roman numeral.  ;-)
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 2f80571625dc2d1977acdef79267ba1645b07c53
-Author: Andrea Parri <parri.andrea@gmail.com>
-Date:   Fri Feb 2 10:13:42 2018 +0100
-
-    MAINTAINERS: List file memory-barriers.txt within the LKMM entry
-    
-    We now have a shiny new Linux-kernel memory model (LKMM) and the old
-    tried-and-true Documentation/memory-barrier.txt.  It would be good to
-    keep these automatically synchronized, but in the meantime we need at
-    least let people know that they are related.  Will suggested adding the
-    Documentation/memory-barrier.txt file to the LKMM maintainership list,
-    thus making the LKMM maintainers responsible for both the old and the new.
-    This commit follows Will's excellent suggestion.
-    
-    Suggested-by: Will Deacon <will.deacon@arm.com>
-    Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ba4dc08fbe95..e6ad9b44e8fb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8101,6 +8101,7 @@ L:	linux-kernel@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
- F:	tools/memory-model/
-+F:	Documentation/memory-barriers.txt
- 
- LINUX SECURITY MODULE (LSM) FRAMEWORK
- M:	Chris Wright <chrisw@sous-sol.org>
+- Eric
