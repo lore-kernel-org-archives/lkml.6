@@ -1,46 +1,75 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2250o0f+AvD4z1mMPDlvBajG8cfgzCwg+cCBN/TFk0gWH8MBLuWmiuBDDRDj4SqPwEs+Lj0q
-ARC-Seal: i=1; a=rsa-sha256; t=1517591671; cv=none;
-        d=google.com; s=arc-20160816;
-        b=I2RhJcyN7yixZAHhqOM5/dI2zIxVpfea03sVn+TlMFGK4j1pLrNP/S+bzYfBsDJejL
-         vHKEE3PWU6PHxcuDxiYCjUWBC5qa9MfQMuiNCNE0MjeBqGmR1a1JyjJhTbfc+/HpjYCs
-         59b5yiustGB1C55jBu4dqd7M158HZz7A8DqYerGhxXZsF3uXTCgKLvyWtqnV52I/Ydwd
-         ZqHcbspcOXPFGLVYi+0mmtfzUqCgJd5pr3VCDRR/nzZF8C4BcI5HZXq5Pr15fhEn0NCE
-         ZWmRNn/2We517Sz3stedhjcTNElIfpEy2pNHAmxxm5GcfevN5it9Q1E+V39awAYVUeiQ
-         AsEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=2Zb8igdi0JyRObo3AwsgrsUyTHKN+wbMZuZdTJmCYsg=;
-        b=ap+d09QmIShD6ARL+W59boV4Ruksf6qKYoMTgxna2ifVRhIocA+KN9zUKlGKw/ISig
-         LtG4S1sVMt+OrdorJJLKh8qBj4Tf2fpJD+Br91cLB2Knr+AUNxX2iJyOo7YXB8/1UgZU
-         x1a3zCHDI8sohm5HjSCNJc3L9XMZfua0E/igYyM6q39mrWuoA0krhh+EQOH/0tBSbw/h
-         s8uBbQ9DG882E348pYhAXf8Vf5IBUama3BD5/fCInizRBBJs66XNR2XP/jq/YsNT2UWT
-         PUXEzhdhLzyjY6Fa5m73df1utQdnGSjYOJnPYXjg/hF1CoWLPYTi5gDXs5chnrb7bFa+
-         K9jQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591667-2-6418448335892380662
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591666; b=uYp+QghNeaINPuw46u8AB0HSRRVYWwpEuDPpNhwXnYa/PUk
+    H/O9kbcRzJmNC3BNPeCZZKOcCHySvx58I6BF4kdIHBW8OumZnMyjDxU7nyImtoHz
+    U2ln0R0/+3nCyrmquIwCxYppiKRRTpdRXdDfZVJW7SpMeKl0+xABTXj26fTZvSww
+    H4gwHhUMVGVqyV64qeyaOygXYCLYT/PT1x2Gu0M3MH9MCUNm7XDqkC8YI2OsZRNd
+    +jLXOaGwzn6VsV29KxCuB+ogiKjmiK28FzyeshcST/mfY4Q8pTdHtOHV9Dc8PeGl
+    CjSrbF2PcoLWr2+7Mu5RSlyb+wRuAa+lwI1X1RA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591666; bh=iFN0n0HwSdAF4Fn/4QGgYy3O+N
+    Uw7ITnZUjbRB5lfXI=; b=HsurID/bgeAilNYH6j5hVWv46Y7lij4l0RsG0SQ5KU
+    d8u2ST9WEU06dHp4sjikKjebbRcpGICIcRnmpWzzK3O9aqLUpupA+LVMV2xo3NmF
+    H1pZgNzySoA6a3Od/+CH2GnwVrLbGOejTRqRIE41WE/A8+H3AFiiSEg/+3i3+1Wh
+    4GxSo2uzR6v9dBkSCmH2Iy2M4Zli2Q3htgV2k2mXGXCl9A4EApLkggmpt7jkFQqa
+    zSWHDPvpiEYGt9ZZoENDptv0R6k7RzWeKmIWJtpyHIdRQxcuLwxc8Af7FtSX1Lc/
+    Yvjn3bpaEduaVlo7kJYPKK6eqCK+99RE7xeBUFQb/RIQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753622AbeBBROZ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:14:25 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40404 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753583AbeBBRON (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:14:13 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 137/156] USB: serial: io_edgeport: fix possible sleep-in-atomic
-Date: Fri,  2 Feb 2018 17:58:38 +0100
-Message-Id: <20180202140846.572241771@linuxfoundation.org>
+        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 151/156] iio: adc: stm32: fix scan of multiple channels with DMA
+Date: Fri,  2 Feb 2018 17:58:52 +0100
+Message-Id: <20180202140847.189804360@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309422775128641?=
-X-GMAIL-MSGID: =?utf-8?q?1591310204376445180?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,43 +77,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-commit c7b8f77872c73f69a16528a9eb87afefcccdc18b upstream.
+commit 04e491ca9df60ffe8637d00d68e5ab8bc73b30d5 upstream.
 
-According to drivers/usb/serial/io_edgeport.c, the driver may sleep
-under a spinlock.
-The function call path is:
-edge_bulk_in_callback (acquire the spinlock)
-   process_rcvd_data
-     process_rcvd_status
-       change_port_settings
-         send_iosp_ext_cmd
-           write_cmd_usb
-             usb_kill_urb --> may sleep
+By default, watermark is set to '1'. Watermark is used to fine tune
+cyclic dma buffer period. In case watermark is left untouched (e.g. 1)
+and several channels are being scanned, buffer period is wrongly set
+(e.g. to 1 sample). As a consequence, data is never pushed to upper layer.
+Fix buffer period size, by taking scan channels number into account.
 
-To fix it, the redundant usb_kill_urb() is removed from the error path
-after usb_submit_urb() fails.
+Fixes: 2763ea0585c9 ("iio: adc: stm32: add optional dma support")
 
-This possible bug is found by my static analysis tool (DSAC) and checked
-by my code review.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/io_edgeport.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/iio/adc/stm32-adc.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -2286,7 +2286,6 @@ static int write_cmd_usb(struct edgeport
- 		/* something went wrong */
- 		dev_err(dev, "%s - usb_submit_urb(write command) failed, status = %d\n",
- 			__func__, status);
--		usb_kill_urb(urb);
- 		usb_free_urb(urb);
- 		atomic_dec(&CmdUrbs);
- 		return status;
+--- a/drivers/iio/adc/stm32-adc.c
++++ b/drivers/iio/adc/stm32-adc.c
+@@ -1314,6 +1314,7 @@ static int stm32_adc_set_watermark(struc
+ {
+ 	struct stm32_adc *adc = iio_priv(indio_dev);
+ 	unsigned int watermark = STM32_DMA_BUFFER_SIZE / 2;
++	unsigned int rx_buf_sz = STM32_DMA_BUFFER_SIZE;
+ 
+ 	/*
+ 	 * dma cyclic transfers are used, buffer is split into two periods.
+@@ -1322,7 +1323,7 @@ static int stm32_adc_set_watermark(struc
+ 	 * - one buffer (period) driver can push with iio_trigger_poll().
+ 	 */
+ 	watermark = min(watermark, val * (unsigned)(sizeof(u16)));
+-	adc->rx_buf_sz = watermark * 2;
++	adc->rx_buf_sz = min(rx_buf_sz, watermark * 2 * adc->num_conv);
+ 
+ 	return 0;
+ }
