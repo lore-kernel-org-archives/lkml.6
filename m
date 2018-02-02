@@ -1,122 +1,98 @@
-Return-Path: <tim.c.chen@linux.intel.com>
-X-Google-Smtp-Source: AH8x2277qb/gZTe7gXW7W2xYLs8BF+GTlyrmia7gLmSwKtzliFwHRVTq4fqq2WRDvLC/Kn+gFHSe
-ARC-Seal: i=1; a=rsa-sha256; t=1517859308; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517612212; cv=none;
         d=google.com; s=arc-20160816;
-        b=Yb8GAQLRgA+r0qR3Oez8gxTBJoggeXAsb7fd7nR9aOOr/vrRHIYVzBq/plZi1TEZbs
-         zhW+x5dYCcVG8pP7u9+HQeJR3SQBB+JawPqtpJO0m6qAjPAM0ea5BbsoDRmmRcQl1X7v
-         dyrjXSb44aq2QDRru39oF82i2BeM+RDfN505KsD3Sldb0TV/Y1Q9jNR9l9v/zlxXoSAm
-         caVG/2KmBRerbvFu8s902OSAVwlhsRkl7SP92qOlQHrNF/EibpEHJKkecRlUEOu9AVr8
-         ffxtk6zJ0aOpWNN/OcXKhCxYjJkKS5VP//RkHZWGYDizOatdQxcMXV9VZarN1eGloK25
-         Wvfg==
+        b=jzr41He1jmkUz2tk+LylMg/sNF3MxlRnLb6bKYojxi5x57faeMFKPq+RS+vtwJ6ZBA
+         Ona/t9EYXHIQkvZy56Yo0ety9HpuH0PXmq7gJrSn82wPqi3RoxnDpFLslMKBAAJEIkuF
+         23b9pB5cWQOryHm7n/jZcakEVnGF2klvaHB4TkmuUzbkw+fSsslVujrKqoTRL9SCvXxV
+         ZylQJKpfnatL8EyV9KuX4Zf7XAt9BRUUxS6klWicWe/N35aqOKmrSA7k3PuLeQ/lerB8
+         9XuKS/wTcFAOCp1+F/XwDYiLb7gtfCJScq+mTSKtWXeXXk+osr0CzuXWhFgFwekf9YCA
+         hO8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject
-         :arc-authentication-results;
-        bh=9ZPTtGUhV2nSF+c5XTKcaHKwRinNga1tmJrDF2ibV+I=;
-        b=lAKfLQpathBSkqQbv5oxYQ3ny3C6IkALfWFO4rLuWVMRhOOF6xbSYZQspX92jWZOgX
-         06nb2uDBS5nlUs09zUPknCkkDEW4+le+ZBgTCf+ymPHEOfCBq6eRDsAfGVCvAR9sJYBB
-         if/V21TWZ0Vr5RN5322KjesTQZP8XGoDJuYzCbMhczNAvNUnfKjm7/EPFPSO0meztqH3
-         yLDzJgPAM2Lwo58NRCBT1teGVkJ1HGJ5XATz6jv30i9kh73tGriEkkeWUeCv4TwFA6co
-         qsX/S4KAx4SQea+AR1qtbjLbSLA+EXQXifVDhUUDMQ6jJPzeBe/HxEm80Az/CHNVJgUt
-         jTWQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=a3ws2QNpI7dvY4c1MUH7guZ2uUNy8kp4hHtiC3b8ho8=;
+        b=1EtaijAWeoIHNhdaseth2LfXkKme/Tmxuio6i2C2QG/WYd0PIgnmZSMNhZ9uoB+jqv
+         EjhWfDDa7xN4vuzGkr765UktIfRuTLwCEM4PCO5aRtL/np5T8XNETZdknDe+Kd4n/bZ8
+         BOehZ6Ap5AQeuLqwny9Taw+YA2BdaVG6X1LEpqT0A0VbEE4GqmyA0zSplIgl93Z+1VMn
+         Mam+BCASZapR6lConzVbxOhSKNgQdBllC0v9I5X4fGDmjZEhf1XThmocrgGb7ZugJba1
+         hOAvShxDcW4JiOGKOFWSVeMKGnSNjbFFKFIIo4ccPggKfxo+TCBBkwk8quKg9KrQPxXv
+         MlWw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of tim.c.chen@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=tim.c.chen@linux.intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=C9thoMvO;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of tim.c.chen@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=tim.c.chen@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,465,1511856000";
-   d="scan'208";a="25018920"
-Subject: Re: [tip:x86/pti] x86/speculation: Use Indirect Branch Prediction
- Barrier in context switch
-To: David Woodhouse <dwmw2@infradead.org>, mingo@kernel.org, hpa@zytor.com,
- linux-kernel@vger.kernel.org, tglx@linutronix.de, luto@kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-mm <linux-mm@kvack.org>
-References: <1517263487-3708-1-git-send-email-dwmw@amazon.co.uk>
- <tip-18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7@git.kernel.org>
- <1517840309.31953.153.camel@infradead.org>
-From: Tim Chen <tim.c.chen@linux.intel.com>
-Message-ID: <a38f70bc-13a0-506a-2b8b-18877e6e6796@linux.intel.com>
-Date: Mon, 5 Feb 2018 11:35:05 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=C9thoMvO;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AH8x227K+n71QhpgmNrsbxcrdVyoDIXjEPLBbxFYUKKIn9HpEtnr3eT3yIqt2b30Ux0R7vF2/d8gN7mnr4Sb/dSMd5E=
 MIME-Version: 1.0
-In-Reply-To: <1517840309.31953.153.camel@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Sender: linus971@gmail.com
+In-Reply-To: <CACRpkdaTv4NBrRXeJE6dVi4W88+LZdsTCSzTHi0vdcKMW3Qfmw@mail.gmail.com>
+References: <CACRpkdaTv4NBrRXeJE6dVi4W88+LZdsTCSzTHi0vdcKMW3Qfmw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 2 Feb 2018 14:56:51 -0800
+X-Google-Sender-Auth: oRyUvEIU1cGCIJ5WcX4bM3e50bY
+Message-ID: <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
+Subject: Re: [GIT PULL] pin control bulk changes for v4.16
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590966106432961445?=
-X-GMAIL-MSGID: =?utf-8?q?1591590842129770583?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
+X-GMAIL-THRID: =?utf-8?q?1591331743286572652?=
+X-GMAIL-MSGID: =?utf-8?q?1591331743286572652?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/05/2018 06:18 AM, David Woodhouse wrote:
-> On Tue, 2018-01-30 at 14:39 -0800, tip-bot for Tim Chen wrote:
->> Thanks to the reviewers and Andy Lutomirski for the suggestion of
->> using ctx_id which got rid of the problem of mm pointer recycling.
-> 
-> That one doesn't backport well to 4.9. Suggestions welcome.
-> 
+On Fri, Feb 2, 2018 at 5:28 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> here is the big slew of changes in pin control for the v4.16 cycle.
 
-Will something like the following work for 4.9 using active_mm?
-This patch is not really tested, but just
-want to put it out here to see if this is a reasonable backport.
+So I pulled this, and then was surprised by how *everything* got
+rebuilt even though it only touched pinctl files.
 
-Tim
+The reason for that seems to be that the pinctl pull got me this:
 
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
----
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index a7655f6..4994db2 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -9,6 +9,7 @@
- 
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-+#include <asm/nospec-branch.h>
- #include <asm/cache.h>
- #include <asm/apic.h>
- #include <asm/uv/uv.h>
-@@ -75,6 +76,9 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 			struct task_struct *tsk)
- {
- 	unsigned cpu = smp_processor_id();
-+#ifdef CONFIG_SMP
-+	struct mm_struct *active_mm = this_cpu_read(cpu_tlbstate.active_mm);
-+#endif
- 
- 	if (likely(prev != next)) {
- 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
-@@ -91,6 +95,28 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 				set_pgd(pgd, init_mm.pgd[stack_pgd_index]);
- 		}
- 
-+		/*
-+		 * Avoid user/user BTB poisoning by flushing the branch
-+		 * predictor when switching between processes. This stops
-+		 * one process from doing Spectre-v2 attacks on another.
-+		 *
-+		 * As an optimization, flush indirect branches only when
-+		 * switching into processes that disable dumping. This
-+		 * protects high value processes like gpg, without having
-+		 * too high performance overhead. IBPB is *expensive*!
-+		 *
-+		 * This will not flush branches when switching into kernel
-+		 * threads. It will also not flush if we switch to idle
-+		 * thread and back to the same process. It will flush if we
-+		 * switch to a different non-dumpable process.
-+		 */
-+		if (tsk && tsk->mm &&
-+#ifdef CONFIG_SMP
-+		    next != active_mm &&
-+#endif
-+		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
-+			indirect_branch_prediction_barrier();
-+
- #ifdef CONFIG_SMP
- 		this_cpu_write(cpu_tlbstate.state, TLBSTATE_OK);
- 		this_cpu_write(cpu_tlbstate.active_mm, next);
+   include/linux/pinctrl/devinfo.h                    |    2 +
+
+and in include/linux/device.h we have
+
+  #include <linux/pinctrl/devinfo.h>
+
+so pretty much *every* driver ends up depending on that silly two-line change.
+
+I *think* that the only reason that happens is because of this:
+
+  #ifdef CONFIG_PINCTRL
+          struct dev_pin_info     *pins;
+  #endif
+
+and honestly, that could be trivially done by just having a forward
+declaration, replacing the pinctrl/devinfo.h header include entirely.
+
+Ironically, that two-line change to pinctrl/devinfo.h was a forward
+declaration in the exact reverse direction:
+
+    +struct device;
+    +
+
+so I would really prefer to speed up recompiles and just generally try
+to avoid horrible header file inclusion by doing the same thing in
+<linux/device.h>, adding just that
+
+    struct dev_pin_info;
+
+declaration, and removing the <linux/pinctrl/devinfo.h> include.
+
+Hmm?
+
+I also wonder if there are any automated tools that try to find these
+kinds of crazy things. I suspect a lot of our build times is the poor
+compiler just reading and parsing header files over and over again,
+and a lot of them are probably not needed.
+
+A year ago, Ingo did patches limit some of the header file issues for
+the core headers (<linux/sched.h> in particular). Maybe he had
+tooling? Ingo?
+
+                  Linus
