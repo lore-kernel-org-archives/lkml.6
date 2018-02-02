@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226A0uvKZNChmvztaBWE0ygjBa41zyqbGlxduSePIqHubU4j/2La353/B3jYeA46g0PDJpEd
-ARC-Seal: i=1; a=rsa-sha256; t=1517590895; cv=none;
+X-Google-Smtp-Source: AH8x226V4uiMd72jriWGZEKSBtFBTpNGBUaaxi1QAsGrN4fm7g9StM/uxUYGBemulTAlpeNFmG0+
+ARC-Seal: i=1; a=rsa-sha256; t=1517590890; cv=none;
         d=google.com; s=arc-20160816;
-        b=JEOU9OMcykwt0ps/ky45PLnKPb+9tBn0hWhULNwShuXBhQgqrRV6nNn+yWyeIKjaOZ
-         1rJdIdG+yUaaogHlrddDt6gFmF81B8ODvKcLEGmWR1WL6AdzFrtBovv8Gty7YpYWTbdk
-         czzIl6y1NHl1MdGYe9kAGZJVkhM0MyrMg9PehbF+l3V1AkLKBXODqIyKWTFeLOj0bQbB
-         dEWC3w6rIPFZpkteLPfgedpybO6AWZYfVNjSvjcgdWOYzUckbVUtDZWL2VB2sAfRMhEM
-         ibs0e3ZgS1MjF1UGaJDm9H3qu3WDo3ePli3A8B9HuNsOYOdCaujzfuFJdT97E+akJ1J5
-         znlA==
+        b=o6yGRUPbV1QNLiUWaWBvrs6RnVII3PmWLmG35PR/686ZGmP8z0disSM82Gm5kaXppR
+         ew/0EGwGcWbumLdSKvUn10a67N5Z+RnWJ+Lj/dv4BY4qB4F7wrf5liVyP/Lgoq8XEwUg
+         gm5OY369pyIBB3/GYVxEbvIkyDlUV7vQZldCtpkQKW7FzIHRsnUFaEWMqNqAvWqiR6xk
+         nsxf8w7FtR0GOxFMslTfYSHwf2WzHi8JQ8pDMArOvHgu5Nv+H01aLUN6CrUYA9EdrH1N
+         yuMMS1HWzZ4yg0mYzAocZ51DM0vCodvfuyUzJL/tMVZWijIkle2PMp9wxshqIcArzVmJ
+         UHPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fRIbjXh9vVQViak/bF2/qIDOwTr+sMxx0vD6ej7Y7ko=;
-        b=XrZVVNSoDzu9uZCdQFaPoB27kwbluD4+G9FDOCSCRrMla27Cf8hHKYO5rMuvBoX7sq
-         Sq8kNdAhwfEdBp5+nQNFlAeKTXv9D/cElu3liNrNoxbe5Dso0RjbQpXdJILkRxWTt+Sd
-         hppRnZsg6m2ZINc3lFWXWes2IfK7KZia1ls/EasODWMMQDMJRl8E7wCCg4mFIoRmMnCp
-         iqmB33rhqNzbDooEQMnC/j1DxvwJxz+FuI5XsePmFv/0TTIfklO/s/qeb5hhFElbC0Nu
-         CR9+pZQft5oDYyhVgg5b9nIoEJO12m2myZMQjviuHZbPHD2HtQgA7AAjE69FREfzjyAu
-         tw1g==
+        bh=9MipztKd0Lqbi5ssS4qqrxpcF+6QWCZnSM1gUueu0mg=;
+        b=kQ2q3pL4zOWsk92bTMu9nH5WwDq6Cmin8R/Bdu9y2HtwtyxBYoeYAGvdFjmAOOE6E8
+         nDdu2CWUgFCYvDD2Al6o/vVVo6R1cc7pQVAnTOwBgx/gZ6+77xJL2OfD+vQDBo+TGzR0
+         WwGiuptNe2SbEGFjQA6FGIMirzBRvHOQ35gYOIjExz5nJI8y/bkv43mi3spXcZ8p+yhr
+         oEoCU82w2R7Rj5FqkK/qIC6DSGy+ktC+a4NQQPq8bDVncKkm1Hva95wglULj4FNKw4Q+
+         lZ/9DRhLGPm2Xd5BEpwB8vEUN9zQ0u7mXI5rjEQkFrhlwX2uw+NAVQyLWDVecDdJ23v6
+         b+Pw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
-	Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 50/67] scsi: aacraid: Prevent crash in case of free interrupt during scsi EH path
-Date: Fri,  2 Feb 2018 17:58:19 +0100
-Message-Id: <20180202140820.869816404@linuxfoundation.org>
+Subject: [PATCH 4.4 48/67] drm/omap: Fix error handling path in omap_dmm_probe()
+Date: Fri,  2 Feb 2018 17:58:17 +0100
+Message-Id: <20180202140820.676180442@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309390426445921?=
-X-GMAIL-MSGID: =?utf-8?q?1591309390426445921?=
+X-GMAIL-THRID: =?utf-8?q?1591309385535184665?=
+X-GMAIL-MSGID: =?utf-8?q?1591309385535184665?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,62 +49,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit e4717292ddebcfe231651b5aff9fa19ca158d178 ]
+[ Upstream commit 8677b1ac2db021ab30bb1fa34f1e56ebe0051ec3 ]
 
-As part of the scsi EH path, aacraid performs a reinitialization of the
-adapter, which encompass freeing resources and IRQs, NULLifying lots of
-pointers, and then initialize it all over again.  We've identified a
-problem during the free IRQ portion of this path if CONFIG_DEBUG_SHIRQ
-is enabled on kernel config file.
+If we don't find a matching device node, we must free the memory allocated
+in 'omap_dmm' a few lines above.
 
-Happens that, in case this flag was set, right after free_irq()
-effectively clears the interrupt, it checks if it was requested as
-IRQF_SHARED. In positive case, it performs another call to the IRQ
-handler on driver. Problem is: since aacraid currently free some
-resources *before* freeing the IRQ, once free_irq() path calls the
-handler again (due to CONFIG_DEBUG_SHIRQ), aacraid crashes due to NULL
-pointer dereference with the following trace:
-
-  aac_src_intr_message+0xf8/0x740 [aacraid]
-  __free_irq+0x33c/0x4a0
-  free_irq+0x78/0xb0
-  aac_free_irq+0x13c/0x150 [aacraid]
-  aac_reset_adapter+0x2e8/0x970 [aacraid]
-  aac_eh_reset+0x3a8/0x5d0 [aacraid]
-  scsi_try_host_reset+0x74/0x180
-  scsi_eh_ready_devs+0xc70/0x1510
-  scsi_error_handler+0x624/0xa20
-
-This patch prevents the crash by changing the order of the
-deinitialization in this path of aacraid: first we clear the IRQ, then
-we free other resources. No functional change intended.
-
-Signed-off-by: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
-Reviewed-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 7cb0d6c17b96 ("drm/omap: fix TILER on OMAP5")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/aacraid/commsup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -1363,13 +1363,13 @@ static int _aac_reset_adapter(struct aac
- 	 * will ensure that i/o is queisced and the card is flushed in that
- 	 * case.
- 	 */
-+	aac_free_irq(aac);
- 	aac_fib_map_free(aac);
- 	pci_free_consistent(aac->pdev, aac->comm_size, aac->comm_addr, aac->comm_phys);
- 	aac->comm_addr = NULL;
- 	aac->comm_phys = 0;
- 	kfree(aac->queues);
- 	aac->queues = NULL;
--	aac_free_irq(aac);
- 	kfree(aac->fsa_dev);
- 	aac->fsa_dev = NULL;
- 	quirks = aac_get_driver_ident(index)->quirks;
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -611,7 +611,8 @@ static int omap_dmm_probe(struct platfor
+ 		match = of_match_node(dmm_of_match, dev->dev.of_node);
+ 		if (!match) {
+ 			dev_err(&dev->dev, "failed to find matching device node\n");
+-			return -ENODEV;
++			ret = -ENODEV;
++			goto fail;
+ 		}
+ 
+ 		omap_dmm->plat_data = match->data;
