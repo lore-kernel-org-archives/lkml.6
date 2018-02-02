@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227fb1EQuH44CQqaeCbej0KGSCBWkEl/xNRh0NIiuHFD0c83vRLac62dqCXuzG0q36auqn3J
-ARC-Seal: i=1; a=rsa-sha256; t=1517591623; cv=none;
+X-Google-Smtp-Source: AH8x224KdbQDU3rnD7culy7Q5LHHIfkGvh64PYk+75l/uJkNchA4ertXyRU7KmuZ5ePqOaBQU3Mn
+ARC-Seal: i=1; a=rsa-sha256; t=1517591620; cv=none;
         d=google.com; s=arc-20160816;
-        b=NEXFB1eZXxgIMw+wQQ0YA+nwp++zfcgvzcSBRssRAOOdkuvV7s4fDtJwB9ppGmEAyP
-         OzADz13CdE5wbEoVBfhKaSlBRXCKzf1x0VQ6UV8pU1rGWMaNMug4IjRHdnnco/kgEvIX
-         OxpAQWu0vkxvJQfnCcfch5ezMypMu4xxUD4dhH3lFVNye21eFyqHUEhJMlCj6RTm+ze5
-         6ze3FqaI9wI4lfmpb5cxFBZyr3ENhaBSNf0jfqYGpsqktGxb8Nok37pSQOKu1iNwKmRQ
-         g/048Canuitvzyz20bjZqetv/w1XWHE2OwVjjtArLrbyyv/vBXnG03Jqjj8Mg8DcoCXS
-         //jw==
+        b=atw9bxvZXDDmT991vTrSYa+uB+B/pMvBCe7c362ZqDTx4edOri3nmVvIa3OYk2f4HN
+         DNL/ey/pAXqBegzrFmq2lNAp4DQZ1szyWhDR5gVddFI3ExMh8Rytrc8pGHq38aU2x/HP
+         hWYaxHV9w6pwsdN88f7zyudwRTAiGQzkNVJ78ZfWLWXU5wVl/kxn5bTFjUxc90gGGhEq
+         0gk07/aED4oiSibmSx18v969iB08mHYVAbpOel+CfhjMOMK+nXS9ylSp4LlTHxvn4mIn
+         mO0CjTWWpbSST5j5eQyto3fZTpW4NtWW4bfyKBo6bbVZIBng9op6k+FV97MQL1EWlLOG
+         c28g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8qUDj1GCWJRzhZd6FNduVB8Sa8dz8BjMSQh3QnbdBVM=;
-        b=C+FMbpr2sNH1ogHGyvJpQKXaAY7goTXjPh+CqkEsAIzqpQITsKnbbNlFsIgQEvtSJQ
-         dmPvmgEl9zVj3ZWjffM1eGwZw2hxfGSNgJIAUZFp9BHNXiAwFUpI3HBOg8dFUrOF47jZ
-         /xHMSWeK7kxs4Uwm1gjyueiZfiN8Pf+7D4G8SLq3Q0r//Vt/firEwguEB+n44toHs9pI
-         MoUROF/3qGH4E4xrV8xusPXPA+WsA+0YKk48lZt3wpYo2xeqSUWkvPCKRec1/wYiOAXY
-         exbwG79yUOQkjYpnro7Vcgc5xoWc5uimmXieOkzJGmEEp6eC11LhAR3h6n6d1CCIZgFl
-         Wy/g==
+        bh=Dyzo8b1hf4VBETuFry9frr4CuogS/KuPoM2pD+utAMQ=;
+        b=KTbKFQRH1RlJrbGzxvtbXfFru7oTstrtpSRwOh248U0VQTmKBeBe6Arz6G/RSXpTZ4
+         bRhYAAufOwS7AVjjEWdDre+MLXqimiEA9Mgq/URjmVTpQ0l4uQrp276AkQ6GzvvwlNrK
+         N89N2gFxng9eHprCZhtOU9ddL3clIVge6RBPq87CwsV6eHcWL+oKIWzY79t1zl7qVX6f
+         M7Xa58Pag79jBnaPxQ4FX6+r4XEgrbfeMguDei4nsiaVcumbC7RUT59fSnqFR+Manksl
+         EgolMNcUtmXpMcbMZaprzHp0+FH4NLKt+uozY2NIsmMUC9XJaYhIEtIgY0xMz1quMkDD
+         sFEg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Martijn Coenen <maco@android.com>,
-	syzbot <syzkaller@googlegroups.com>
-Subject: [PATCH 4.14 144/156] ANDROID: binder: remove waitqueue when thread exits.
-Date: Fri,  2 Feb 2018 17:58:45 +0100
-Message-Id: <20180202140846.892505124@linuxfoundation.org>
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: [PATCH 4.14 143/156] usb/gadget: Fix "high bandwidth" check in usb_gadget_ep_match_desc()
+Date: Fri,  2 Feb 2018 17:58:44 +0100
+Message-Id: <20180202140846.842250189@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -39,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591310154319836900?=
-X-GMAIL-MSGID: =?utf-8?q?1591310154319836900?=
+X-GMAIL-THRID: =?utf-8?q?1591309737270542005?=
+X-GMAIL-MSGID: =?utf-8?q?1591310150833270009?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,47 +47,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martijn Coenen <maco@android.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit f5cb779ba16334b45ba8946d6bfa6d9834d1527f upstream.
+commit 11fb37998759c48e4e4c200c974593cbeab25d3e upstream.
 
-binder_poll() passes the thread->wait waitqueue that
-can be slept on for work. When a thread that uses
-epoll explicitly exits using BINDER_THREAD_EXIT,
-the waitqueue is freed, but it is never removed
-from the corresponding epoll data structure. When
-the process subsequently exits, the epoll cleanup
-code tries to access the waitlist, which results in
-a use-after-free.
+The current code tries to test for bits that are masked out by
+usb_endpoint_maxp(). Instead, use the proper accessor to access
+the new high bandwidth bits.
 
-Prevent this by using POLLFREE when the thread exits.
-
-Signed-off-by: Martijn Coenen <maco@android.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/android/binder.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/usb/gadget/udc/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -4302,6 +4302,18 @@ static int binder_thread_release(struct
- 		if (t)
- 			spin_lock(&t->lock);
- 	}
-+
-+	/*
-+	 * If this thread used poll, make sure we remove the waitqueue
-+	 * from any epoll data structures holding it with POLLFREE.
-+	 * waitqueue_active() is safe to use here because we're holding
-+	 * the inner lock.
-+	 */
-+	if ((thread->looper & BINDER_LOOPER_STATE_POLL) &&
-+	    waitqueue_active(&thread->wait)) {
-+		wake_up_poll(&thread->wait, POLLHUP | POLLFREE);
-+	}
-+
- 	binder_inner_proc_unlock(thread->proc);
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -923,7 +923,7 @@ int usb_gadget_ep_match_desc(struct usb_
+ 		return 0;
  
- 	if (send_reply)
+ 	/* "high bandwidth" works only at high speed */
+-	if (!gadget_is_dualspeed(gadget) && usb_endpoint_maxp(desc) & (3<<11))
++	if (!gadget_is_dualspeed(gadget) && usb_endpoint_maxp_mult(desc) > 1)
+ 		return 0;
+ 
+ 	switch (type) {
