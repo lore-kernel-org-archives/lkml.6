@@ -1,82 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeBBNgT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:36:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751416AbeBBNgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 08:36:12 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0238321759
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Fri, 2 Feb 2018 10:36:09 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: William Cohen <wcohen@redhat.com>
-Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org
-Subject: Re: [PATCH] perf vendor events aarch64: Add JSON metrics for ARM
- Cortex-A53 Processor
-Message-ID: <20180202133609.GE4835@kernel.org>
-References: <20180131032813.9564-1-wcohen@redhat.com>
- <20180201144309.GA4835@kernel.org>
- <3bebcee1-102c-34ec-880a-722d96062a39@redhat.com>
- <20180201205129.GC4835@kernel.org>
- <c0d905c6-948d-98b1-85ca-5aa8b5090435@redhat.com>
+        id S1752038AbeBBNge (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:36:34 -0500
+Received: from einhorn.in-berlin.de ([192.109.42.8]:33048 "EHLO
+        einhorn-mail.in-berlin.de" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751416AbeBBNgY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 08:36:24 -0500
+X-Envelope-From: stefanr@s5r6.in-berlin.de
+Date: Fri, 2 Feb 2018 14:36:49 +0100
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
+Subject: [git pull] FireWire (IEEE 1394) updates post v4.15
+Message-ID: <20180202143649.4f5cc982@kant>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0d905c6-948d-98b1-85ca-5aa8b5090435@redhat.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Feb 01, 2018 at 04:52:16PM -0500, William Cohen escreveu:
-> On 02/01/2018 03:51 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Thu, Feb 01, 2018 at 10:12:59AM -0500, William Cohen escreveu:
-> >> On 02/01/2018 09:43 AM, Arnaldo Carvalho de Melo wrote:
-> >>> Em Tue, Jan 30, 2018 at 10:28:13PM -0500, William Cohen escreveu:
-> >>>> Add JSON metrics for ARM Cortex-A53 Processor
-> >>>
-> >>> Hi Will, would it be possible to you include an URL for the document
-> >>> that served as a reference to you to write these files? Did you use some
-> >>> script?
-> >>
-> >> Hi Arnaldo,
-> >  
-> >> I can certainly add the reference to section "12.9 Events" of the ARM
-> >> Cortex -A53 MPCore Processor Revision: r0p4 Technical Reference Manual
-> >> to the patch.  That would be useful for people to know where to look
-> >> for additional information about the events.
-> > 
-> 
-> Hi Arnaldo,
-> 
-> The ARM Cortex A53 manual is available at:
-> 
-> http://infocenter.arm.com/help/topic/com.arm.doc.ddi0500g/DDI0500G_cortex_a53_trm.pdf
- 
-> It would probably be useful to include that URL in the commit
-> information to make it easier for people to look up the information.
+Linus,
 
-Thanks, I'll add that to that cset.
+please pull from the tag "firewire-updates" at
 
-- Arnaldo
- 
-> -Will
-> 
-> > I'll take these clarifications and add it to your patch, that I am
-> > applying now, please let me know if you have anything else to add and
-> > I'll ammend it if I get it before I send it upstream.
-> >  
-> >> Unlike the Intel processors there isn't a script that automatically
-> >> generated these files. The patch was manually generated from the
-> >> documentation and the previous oprofile ARM Cortex ac53 event file
-> >> patch I made.
-> > 
-> > Thanks a lot for this extra information,
-> > 
-> > - Arnaldo
-> > 
+    git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git firewire-updates
+
+to receive the following
+IEEE 1394 subsystem patches:
+
+  - make JMicron JMB38x controllers work with IOMMU-equipped systems
+  - IP-over-1394: allow user-configured MTU of up to 4096 bytes
+
+Hector Martin (1):
+      firewire-ohci: work around oversized DMA reads on JMicron controllers
+
+Stefan Richter (1):
+      firewire: net: max MTU off by one
+
+ drivers/firewire/net.c  | 7 ++++++-
+ drivers/firewire/ohci.c | 8 +++++++-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+Thanks,
+-- 
+Stefan Richter
+-======---=- --=- ---=-
+http://arcgraph.de/sr/
