@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227Sthe05tR9mOfqKxr1whQenW3mfPI66DcIhUY1MpD3Td0l6396EJGu7XSsUHKakZiYsUgf
-ARC-Seal: i=1; a=rsa-sha256; t=1517591606; cv=none;
+X-Google-Smtp-Source: AH8x226oZOhRMXhLKDZ8gbccxylY4llkNhZCUt4WJnPOXQ3e5JAZ86hTWcJRv2uyVrFHiQcCrRGZ
+ARC-Seal: i=1; a=rsa-sha256; t=1517591603; cv=none;
         d=google.com; s=arc-20160816;
-        b=rfqxH0pO7yaUoCcq8JnFgY7CHeS9TOKcOSY7EJSas33M8RuUNWZxY5j7gIJJHeHapD
-         BOGxiblf+3JMuG6Vu+qvoEJOKlUScdvAhykAe6o5qkJqpQaVA2Et7OOvqfK36Qoao5gc
-         J3LXN/y8CKstP+qJ23+kEOSNiHMJUGa6HcyfKAAG7oC0jwi0WEccMhQ4GasXjAC0AOQ0
-         C9olP6NE6XUH+dsqCAA91xQ0FSHrOrysBp/45d9GL3JIa/S1Xr1Kq7GyI+EbuyQZFQXJ
-         84qjkWKaoFjAB5KEg6fbIeuYLKLbI18yx/M1XlouhfPY2zLhZVqkhYpzDwT/J9MfEZRE
-         8OkQ==
+        b=vRwCyg/RtFfgbaPQtYAHKb6EXYW3Zb17HjF2KFVhPmMgLPWptOY/VsZVRN6N+wiXAl
+         sBKivNMKFNrLF4Bfempa1QWX8COJj0zryGLzjDfPtGDGRvz0JOUSNkB2clVEjD+PTTS7
+         ZDC/e8AEVQ/zBSR5psbQ8e8CpFJeZjmqFcTYPxizWTmQNhm5yN9bAxcNdgyGIaPA9Beu
+         rxInTGQ5HRDonIQC23Nn/rME2pi5a/Ks8NyGwOPo16ZCRrfP9SWjppGqSTBH5+CAf53T
+         Nunmsy6/z0XmVDLQGtVIbIg93Shu95Of1DTDlQRHsBaXdY9A29/Q0fr+LvLjzjnGA+5V
+         5Mfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YVLELla9xfzOF+vwxqy5QcqIc2SYegi14EePlJ22eqY=;
-        b=IYT7jSnY4/hd1CInSZOMYoXzSCPWQlBbvAI26VlZl+QkWACpEdY3HdeaDSxGlBDjSs
-         GL4n9f9uwgYkb3+4ucToHVEUKvCLfa+wlWcE7rfxeZ+/eOc164gDwYZhYvogd4MOQxaT
-         Q4wFKLP+lozS/nbG3R/bBV3S5YRq50SKVIDK6MnCGep1bqL3TxogYdUAN5oy5cUYe0Td
-         iJ2rokuF8GQX8HSZ90B7JamcgqzSrWmYcI8n3m9nMEhfWgbWvzlmnysyYmdEdR0GTA3r
-         Hw7S6ffhjvQ4CxW6vD0s98aCQZ1MxSFMTLNR9VevbBO53ketOhWb98RxymNuQnx5pUsM
-         VOcA==
+        bh=Odkk6+T04KCeu4laKjQZ/ndqXRHPUQW/iWAq6DAmXWU=;
+        b=q0ukNkmlRWt9PlLpf5nemw/P6t7E9vNTsrAVA1Qkv/tuKx+ZgOhzfusEpbWkyIAF3u
+         BBfHwkR37oqHUR/aq45jNGFemyfGflr/7foSZ4U/rhBfK/wcSGIxmnp1B4ntFt9ssh5k
+         Db2umJF96HWrsoUNTQnXzXs9PaVTigdU03hLt3hsC+hv55CazDEjoVKBtFopI2O8Sn0a
+         /gBPPazDtXY47zN4C53PwUcw7CCCrOUvkP5KGn9DolsEFyaqmFd6ZqWShHg2smzDmVRc
+         mCw6l6tbMelOgDPtQ00tD94sczbiZcBvHCQRie66OSNfw1aZpFAS0QjCOCqvTvniF2kl
+         C+6g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
 	Andrzej Hajda <a.hajda@samsung.com>,
+	Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 108/156] drm/bridge: tc358767: fix DP0_MISC register set
-Date: Fri,  2 Feb 2018 17:58:09 +0100
-Message-Id: <20180202140845.072909468@linuxfoundation.org>
+Subject: [PATCH 4.14 107/156] drm/bridge: tc358767: filter out too high modes
+Date: Fri,  2 Feb 2018 17:58:08 +0100
+Message-Id: <20180202140845.029544497@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309721522702501?=
-X-GMAIL-MSGID: =?utf-8?q?1591310136193851077?=
+X-GMAIL-THRID: =?utf-8?q?1591309718911970272?=
+X-GMAIL-MSGID: =?utf-8?q?1591310133414892788?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,39 +52,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
 
 
-[ Upstream commit f3b8adbe1911f66fd3cab1aaa74f0f66b7ceda25 ]
+[ Upstream commit 99fc8e963a4c0203dba26a77cf737db6081bca14 ]
 
-Remove shift from TU_SIZE_RECOMMENDED define as it used to
-calculate max_tu_symbols.
+Pixel clock limitation for DPI is 154 MHz. Do not accept modes
+with higher pixel clock rate.
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1510073785-16108-4-git-send-email-andrey.gusakov@cogentembedded.com
+Link: https://patchwork.freedesktop.org/patch/msgid/1510073785-16108-3-git-send-email-andrey.gusakov@cogentembedded.com
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 --- a/drivers/gpu/drm/bridge/tc358767.c
 +++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -97,7 +97,7 @@
- #define DP0_ACTIVEVAL		0x0650
- #define DP0_SYNCVAL		0x0654
- #define DP0_MISC		0x0658
--#define TU_SIZE_RECOMMENDED		(0x3f << 16) /* LSCLK cycles per TU */
-+#define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
- #define BPC_6				(0 << 5)
- #define BPC_8				(1 << 5)
+@@ -1103,7 +1103,10 @@ static bool tc_bridge_mode_fixup(struct
+ static int tc_connector_mode_valid(struct drm_connector *connector,
+ 				   struct drm_display_mode *mode)
+ {
+-	/* Accept any mode */
++	/* DPI interface clock limitation: upto 154 MHz */
++	if (mode->clock > 154000)
++		return MODE_CLOCK_HIGH;
++
+ 	return MODE_OK;
+ }
  
-@@ -716,7 +716,8 @@ static int tc_set_video_mode(struct tc_d
- 	 * Must be less than tu_size.
- 	 */
- 	max_tu_symbol = TU_SIZE_RECOMMENDED - 1;
--	tc_write(DP0_MISC, (max_tu_symbol << 23) | TU_SIZE_RECOMMENDED | BPC_8);
-+	tc_write(DP0_MISC, (max_tu_symbol << 23) | (TU_SIZE_RECOMMENDED << 16) |
-+			   BPC_8);
- 
- 	return 0;
- err:
