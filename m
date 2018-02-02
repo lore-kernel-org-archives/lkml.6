@@ -1,391 +1,745 @@
-Return-Path: <prvs=563541312=stanislav.nijnikov@wdc.com>
-X-Google-Smtp-Source: AH8x225cdnIDEcPPKpv9PDdCAA6kyuQNJnJfzxB3BY7WlGJH8KStTf6Jr+oKPz8yrB98XGYxSqT5
-ARC-Seal: i=1; a=rsa-sha256; t=1517501759; cv=none;
-        d=google.com; s=arc-20160816;
-        b=KWQDWYXb5Q7jE/EP85Hi24peNYJFKlPUWX5bC5ePKUGbN4hOfSp9nO9ArkdPU0RT3v
-         1EWIwOVuCEheL7z0vJYL1CpEYbrYLKLnlg9c+jHqiQ8mLIKyWPM0qKeNe78CQbQf+gXb
-         G8y/WG2FvgRKZCZED4K/C9YSfid+07SOjvvZD7PsGGEp6yQuiZa72afO6mBfx54gXskA
-         wskgtjA7Hn/0pY25bpt2AFrDVkm4kT7fDHnV6hv/5SeC/MH8wWNFGiQ1ezXYt1bI3pfy
-         +oPRBFG4pojQkQCIaWyaGTa85yoB+fG5FEY0yktX89FNwYyO78AM3Fcvtn4rURHEuRZR
-         vtPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=98teTKeP7vBOnvNBFRJdDmkgtb0wiNQnv44fDnGl6NA=;
-        b=V+KeKOyECr/6KKGbd/H10fEsNCM1z3/9bafZPbNrGbou1sFLTVTeH2ufQZMxGywqz+
-         K9qdpR0Om0eSKn3nmP1AO8X6rFgLtt5ILwgfDT5nA+rcJVjqqf6SzE8pRC4i9eIvV0IM
-         1kmqD7/f284e/qXaYApdot+UyFrV3qkuVW6BEVEgNmdbUZPjFMxdOm42GVXiudD/jxu4
-         JLKFRDFKxCPfzNNYMGyRB3xhV6ijCzxcgxC+TRCyQd1bEvqnvNaO8gyCommNOlSIYfU1
-         k9cAogUbJyAKpgYCycVhhD53Kmtxokjezcft+/F5SK7MqR64s3sFJL+YVjiD1gRJWd1z
-         b9AA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=bb711hkW;
-       spf=pass (google.com: domain of prvs=563541312=stanislav.nijnikov@wdc.com designates 68.232.141.245 as permitted sender) smtp.mailfrom=prvs=563541312=stanislav.nijnikov@wdc.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=bb711hkW;
-       spf=pass (google.com: domain of prvs=563541312=stanislav.nijnikov@wdc.com designates 68.232.141.245 as permitted sender) smtp.mailfrom=prvs=563541312=stanislav.nijnikov@wdc.com
-X-IronPort-AV: E=Sophos;i="5.46,444,1511798400";
-   d="scan'208";a="173298244"
-From: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-To: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	jaegeuk@kernel.org
-Cc: alex.lemberg@wdc.com,
-	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-Subject: [PATCH v4 04/10] ufs: sysfs: geometry descriptor
-Date: Thu,  1 Feb 2018 18:15:40 +0200
-Message-Id: <1517501746-19075-5-git-send-email-stanislav.nijnikov@wdc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517501746-19075-1-git-send-email-stanislav.nijnikov@wdc.com>
-References: <1517501746-19075-1-git-send-email-stanislav.nijnikov@wdc.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3034830-1517594693-2-80785499887323051
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517594691; b=FNg0s/U2M/NP7EaF77PUiGqNG/s034yIXPr9Gqj0Vp2jP2a
+    nAwgBoeRMegNBUIVtPDmEla7vJvoQJfc2W4s5R+7IOR4utnRQGwubghgD6ehiCXd
+    uDhIN5KLS89vY6KELc2lhVW//C4LhH4om1GCE+aFUUb9CT1lRlBHAAH8wkemOdjH
+    TW3usfAlTRxIQeh39CBcWc4zHX8nVvL9JYG2v35IVaii6w99R/mRX7LfMPJwH0HQ
+    6qZ8QJ9nWrkZ7AWRv2bo/3CIdj6nHGrf77P6kY8Fgw1eDeMkbAK+tghjdWAWWsG2
+    hKrTW8Ip5MWNm456W17KcSYmLzEcs4EykZh7X9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1517594691; bh=qc35G2qzXTX1wqoq768nM7qI7x
+    KitqTq21Tw84vpGcc=; b=PayyBVphVrPmdoo/r9CcKsWCUolN8roDsvKMd1iLRX
+    IVYpaW7D9/Gsp5BKOu1sD3jm2OxIrM4dhDh+KA1i9nscToR6cQjm8+Zq51ukL1/y
+    jPtziW2Z9C4bMWBTXec7TC9hhiDax5Dnt26Ode+3EV9OyHI4/CKQ3HixL8/JMQpK
+    JlH2BDcEXrMyNALxU3Hl94VB8tT/+dMAgMgeOBDoU3P+ccovaYhoGsNHc2TnkmQL
+    hEnjOzCtR4aKHxUuCSo71CYUtV3WQUOGrlxJ67ObtG11iL25oCMAXGpMizxL2kj2
+    emZqoDxK7B7Z0onikvPs/dzpvFePz8sjlSby8OD47nPg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752856AbeBBSEs (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 13:04:48 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37368 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752519AbeBBRIg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:08:36 -0500
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.14 000/156] 4.14.17-stable review
+Date: Fri,  2 Feb 2018 17:56:21 +0100
+Message-Id: <20180202140840.242829545@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.1
+MIME-Version: 1.0
+User-Agent: quilt/0.65
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.17-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.14.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.14.17-rc1
+X-KernelTest-Deadline: 2018-02-04T14:08+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591215924807300676?=
-X-GMAIL-MSGID: =?utf-8?q?1591215924807300676?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch introduces a sysfs group entry for the UFS geometry descriptor
-parameters. The group adds "geometry_descriptor" folder under the UFS
-driver sysfs entry (/sys/bus/platform/drivers/ufshcd/*). The parameters
-are shown as hexadecimal numbers. The full information about the parameters
-could be found at UFS specifications 2.1.
+This is the start of the stable review cycle for the 4.14.17 release.
+There are 156 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Signed-off-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+Responses should be made by Sun Feb  4 14:07:42 UTC 2018.
+Anything received after that time might be too late.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/ABI/testing/sysfs-driver-ufs | 173 +++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufs-sysfs.c               |  84 ++++++++++++++
- drivers/scsi/ufs/ufs.h                     |  36 ++++++
- 3 files changed, 293 insertions(+)
+The whole patch series can be found in one patch at:
+	kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.17-rc1.gz
+or in the git tree and branch at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+and the diffstat can be found below.
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index 099e6fa..6ea7613 100644
---- a/Documentation/ABI/testing/sysfs-driver-ufs
-+++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -240,3 +240,176 @@ Description:	This file shows the MIPI M-PHY version number in BCD format.
- 		The full information about the descriptor could be found at
- 		UFS specifications 2.1.
- 		The file is read only.
-+
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/raw_device_capacity
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the total memory quantity available to
-+		the user to configure the device logical units. This is one
-+		of the UFS geometry descriptor parameters. The full
-+		information about the descriptor could be found at
-+		UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/max_number_of_luns
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the maximum number of logical units
-+		supported by the UFS device. This is one of the UFS
-+		geometry descriptor parameters. The full information about
-+		the descriptor could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/segment_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the segment size. This is one of the UFS
-+		geometry descriptor parameters. The full information about
-+		the descriptor could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/allocation_unit_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the allocation unit size. This is one of
-+		the UFS geometry descriptor parameters. The full information
-+		about the descriptor could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/min_addressable_block_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the minimum addressable block size. This
-+		is one of the UFS geometry descriptor parameters. The full
-+		information about the descriptor could be found at UFS
-+		specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/optimal_read_block_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the optimal read block size. This is one
-+		of the UFS geometry descriptor parameters. The full
-+		information about the descriptor could be found at UFS
-+		specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/optimal_write_block_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the optimal write block size. This is one
-+		of the UFS geometry descriptor parameters. The full
-+		information about the descriptor could be found at UFS
-+		specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/max_in_buffer_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the maximum data-in buffer size. This
-+		is one of the UFS geometry descriptor parameters. The full
-+		information about the descriptor could be found at UFS
-+		specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/max_out_buffer_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the maximum data-out buffer size. This
-+		is one of the UFS geometry descriptor parameters. The full
-+		information about the descriptor could be found at UFS
-+		specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/rpmb_rw_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the maximum number of RPMB frames allowed
-+		in Security Protocol In/Out. This is one of the UFS geometry
-+		descriptor parameters. The full information about the
-+		descriptor could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/dyn_capacity_resource_policy
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the dynamic capacity resource policy. This
-+		is one of the UFS geometry descriptor parameters. The full
-+		information about the descriptor could be found at
-+		UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/data_ordering
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows support for out-of-order data transfer.
-+		This is one of the UFS geometry descriptor parameters.
-+		The full information about the descriptor could be found at
-+		UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/max_number_of_contexts
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows maximum available number of contexts which
-+		are supported by the device. This is one of the UFS geometry
-+		descriptor parameters. The full information about the
-+		descriptor could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/sys_data_tag_unit_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows system data tag unit size. This is one of
-+		the UFS geometry descriptor parameters. The full information
-+		about the descriptor could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/sys_data_tag_resource_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows maximum storage area size allocated by
-+		the device to handle system data by the tagging mechanism.
-+		This is one of the UFS geometry descriptor parameters.
-+		The full information about the descriptor could be found at
-+		UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/secure_removal_types
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows supported secure removal types. This is
-+		one of the UFS geometry descriptor parameters. The full
-+		information about the descriptor could be found at
-+		UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/memory_types
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows supported memory types. This is one of
-+		the UFS geometry descriptor parameters. The full
-+		information about the descriptor could be found at
-+		UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/*_memory_max_alloc_units
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the maximum number of allocation units for
-+		different memory types (system code, non persistent,
-+		enhanced type 1-4). This is one of the UFS geometry
-+		descriptor parameters. The full information about the
-+		descriptor could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/geometry_descriptor/*_memory_capacity_adjustment_factor
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the memory capacity adjustment factor for
-+		different memory types (system code, non persistent,
-+		enhanced type 1-4). This is one of the UFS geometry
-+		descriptor parameters. The full information about the
-+		descriptor could be found at UFS specifications 2.1.
-+		The file is read only.
-diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index 460378b..6427804 100644
---- a/drivers/scsi/ufs/ufs-sysfs.c
-+++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -281,10 +281,94 @@ static const struct attribute_group ufs_sysfs_interconnect_descriptor_group = {
- 	.attrs = ufs_sysfs_interconnect_descriptor,
- };
- 
-+#define UFS_GEOMETRY_DESC_PARAM(_name, _uname, _size)                         \
-+	UFS_DESC_PARAM(_name, _uname, GEOMETRY, _size)
-+
-+UFS_GEOMETRY_DESC_PARAM(raw_device_capacity, _DEV_CAP, QWORD);
-+UFS_GEOMETRY_DESC_PARAM(max_number_of_luns, _MAX_NUM_LUN, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(segment_size, _SEG_SIZE, DWORD);
-+UFS_GEOMETRY_DESC_PARAM(allocation_unit_size, _ALLOC_UNIT_SIZE, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(min_addressable_block_size, _MIN_BLK_SIZE, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(optimal_read_block_size, _OPT_RD_BLK_SIZE, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(optimal_write_block_size, _OPT_WR_BLK_SIZE, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(max_in_buffer_size, _MAX_IN_BUF_SIZE, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(max_out_buffer_size, _MAX_OUT_BUF_SIZE, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(rpmb_rw_size, _RPMB_RW_SIZE, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(dyn_capacity_resource_policy, _DYN_CAP_RSRC_PLC, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(data_ordering, _DATA_ORDER, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(max_number_of_contexts, _MAX_NUM_CTX, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(sys_data_tag_unit_size, _TAG_UNIT_SIZE, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(sys_data_tag_resource_size, _TAG_RSRC_SIZE, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(secure_removal_types, _SEC_RM_TYPES, BYTE);
-+UFS_GEOMETRY_DESC_PARAM(memory_types, _MEM_TYPES, WORD);
-+UFS_GEOMETRY_DESC_PARAM(sys_code_memory_max_alloc_units,
-+	_SCM_MAX_NUM_UNITS, DWORD);
-+UFS_GEOMETRY_DESC_PARAM(sys_code_memory_capacity_adjustment_factor,
-+	_SCM_CAP_ADJ_FCTR, WORD);
-+UFS_GEOMETRY_DESC_PARAM(non_persist_memory_max_alloc_units,
-+	_NPM_MAX_NUM_UNITS, DWORD);
-+UFS_GEOMETRY_DESC_PARAM(non_persist_memory_capacity_adjustment_factor,
-+	_NPM_CAP_ADJ_FCTR, WORD);
-+UFS_GEOMETRY_DESC_PARAM(enh1_memory_max_alloc_units,
-+	_ENM1_MAX_NUM_UNITS, DWORD);
-+UFS_GEOMETRY_DESC_PARAM(enh1_memory_capacity_adjustment_factor,
-+	_ENM1_CAP_ADJ_FCTR, WORD);
-+UFS_GEOMETRY_DESC_PARAM(enh2_memory_max_alloc_units,
-+	_ENM2_MAX_NUM_UNITS, DWORD);
-+UFS_GEOMETRY_DESC_PARAM(enh2_memory_capacity_adjustment_factor,
-+	_ENM2_CAP_ADJ_FCTR, WORD);
-+UFS_GEOMETRY_DESC_PARAM(enh3_memory_max_alloc_units,
-+	_ENM3_MAX_NUM_UNITS, DWORD);
-+UFS_GEOMETRY_DESC_PARAM(enh3_memory_capacity_adjustment_factor,
-+	_ENM3_CAP_ADJ_FCTR, WORD);
-+UFS_GEOMETRY_DESC_PARAM(enh4_memory_max_alloc_units,
-+	_ENM4_MAX_NUM_UNITS, DWORD);
-+UFS_GEOMETRY_DESC_PARAM(enh4_memory_capacity_adjustment_factor,
-+	_ENM4_CAP_ADJ_FCTR, WORD);
-+
-+static struct attribute *ufs_sysfs_geometry_descriptor[] = {
-+	&dev_attr_raw_device_capacity.attr,
-+	&dev_attr_max_number_of_luns.attr,
-+	&dev_attr_segment_size.attr,
-+	&dev_attr_allocation_unit_size.attr,
-+	&dev_attr_min_addressable_block_size.attr,
-+	&dev_attr_optimal_read_block_size.attr,
-+	&dev_attr_optimal_write_block_size.attr,
-+	&dev_attr_max_in_buffer_size.attr,
-+	&dev_attr_max_out_buffer_size.attr,
-+	&dev_attr_rpmb_rw_size.attr,
-+	&dev_attr_dyn_capacity_resource_policy.attr,
-+	&dev_attr_data_ordering.attr,
-+	&dev_attr_max_number_of_contexts.attr,
-+	&dev_attr_sys_data_tag_unit_size.attr,
-+	&dev_attr_sys_data_tag_resource_size.attr,
-+	&dev_attr_secure_removal_types.attr,
-+	&dev_attr_memory_types.attr,
-+	&dev_attr_sys_code_memory_max_alloc_units.attr,
-+	&dev_attr_sys_code_memory_capacity_adjustment_factor.attr,
-+	&dev_attr_non_persist_memory_max_alloc_units.attr,
-+	&dev_attr_non_persist_memory_capacity_adjustment_factor.attr,
-+	&dev_attr_enh1_memory_max_alloc_units.attr,
-+	&dev_attr_enh1_memory_capacity_adjustment_factor.attr,
-+	&dev_attr_enh2_memory_max_alloc_units.attr,
-+	&dev_attr_enh2_memory_capacity_adjustment_factor.attr,
-+	&dev_attr_enh3_memory_max_alloc_units.attr,
-+	&dev_attr_enh3_memory_capacity_adjustment_factor.attr,
-+	&dev_attr_enh4_memory_max_alloc_units.attr,
-+	&dev_attr_enh4_memory_capacity_adjustment_factor.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group ufs_sysfs_geometry_descriptor_group = {
-+	.name = "geometry_descriptor",
-+	.attrs = ufs_sysfs_geometry_descriptor,
-+};
-+
- static const struct attribute_group *ufs_sysfs_groups[] = {
- 	&ufs_sysfs_default_group,
- 	&ufs_sysfs_device_descriptor_group,
- 	&ufs_sysfs_interconnect_descriptor_group,
-+	&ufs_sysfs_geometry_descriptor_group,
- 	NULL,
- };
- 
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 773c049..04d41c8 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -238,6 +238,42 @@ enum interconnect_desc_param {
- 	INTERCONNECT_DESC_PARAM_MPHY_VER	= 0x4,
- };
- 
-+/* Geometry descriptor parameters offsets in bytes*/
-+enum geometry_desc_param {
-+	GEOMETRY_DESC_PARAM_LEN			= 0x0,
-+	GEOMETRY_DESC_PARAM_TYPE		= 0x1,
-+	GEOMETRY_DESC_PARAM_DEV_CAP		= 0x4,
-+	GEOMETRY_DESC_PARAM_MAX_NUM_LUN		= 0xC,
-+	GEOMETRY_DESC_PARAM_SEG_SIZE		= 0xD,
-+	GEOMETRY_DESC_PARAM_ALLOC_UNIT_SIZE	= 0x11,
-+	GEOMETRY_DESC_PARAM_MIN_BLK_SIZE	= 0x12,
-+	GEOMETRY_DESC_PARAM_OPT_RD_BLK_SIZE	= 0x13,
-+	GEOMETRY_DESC_PARAM_OPT_WR_BLK_SIZE	= 0x14,
-+	GEOMETRY_DESC_PARAM_MAX_IN_BUF_SIZE	= 0x15,
-+	GEOMETRY_DESC_PARAM_MAX_OUT_BUF_SIZE	= 0x16,
-+	GEOMETRY_DESC_PARAM_RPMB_RW_SIZE	= 0x17,
-+	GEOMETRY_DESC_PARAM_DYN_CAP_RSRC_PLC	= 0x18,
-+	GEOMETRY_DESC_PARAM_DATA_ORDER		= 0x19,
-+	GEOMETRY_DESC_PARAM_MAX_NUM_CTX		= 0x1A,
-+	GEOMETRY_DESC_PARAM_TAG_UNIT_SIZE	= 0x1B,
-+	GEOMETRY_DESC_PARAM_TAG_RSRC_SIZE	= 0x1C,
-+	GEOMETRY_DESC_PARAM_SEC_RM_TYPES	= 0x1D,
-+	GEOMETRY_DESC_PARAM_MEM_TYPES		= 0x1E,
-+	GEOMETRY_DESC_PARAM_SCM_MAX_NUM_UNITS	= 0x20,
-+	GEOMETRY_DESC_PARAM_SCM_CAP_ADJ_FCTR	= 0x24,
-+	GEOMETRY_DESC_PARAM_NPM_MAX_NUM_UNITS	= 0x26,
-+	GEOMETRY_DESC_PARAM_NPM_CAP_ADJ_FCTR	= 0x2A,
-+	GEOMETRY_DESC_PARAM_ENM1_MAX_NUM_UNITS	= 0x2C,
-+	GEOMETRY_DESC_PARAM_ENM1_CAP_ADJ_FCTR	= 0x30,
-+	GEOMETRY_DESC_PARAM_ENM2_MAX_NUM_UNITS	= 0x32,
-+	GEOMETRY_DESC_PARAM_ENM2_CAP_ADJ_FCTR	= 0x36,
-+	GEOMETRY_DESC_PARAM_ENM3_MAX_NUM_UNITS	= 0x38,
-+	GEOMETRY_DESC_PARAM_ENM3_CAP_ADJ_FCTR	= 0x3C,
-+	GEOMETRY_DESC_PARAM_ENM4_MAX_NUM_UNITS	= 0x3E,
-+	GEOMETRY_DESC_PARAM_ENM4_CAP_ADJ_FCTR	= 0x42,
-+	GEOMETRY_DESC_PARAM_OPT_LOG_BLK_SIZE	= 0x44,
-+};
-+
- /*
-  * Logical Unit Write Protect
-  * 00h: LU not write protected
--- 
-2.7.4
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.14.17-rc1
+
+Matthew Garrett <mjg59@google.com>
+    x86/efi: Clarify that reset attack mitigation needs appropriate userspace
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    Input: synaptics-rmi4 - do not delete interrupt memory too early
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    Input: synaptics-rmi4 - unmask F03 interrupts when port is opened
+
+Wei Yongjun <weiyongjun1@huawei.com>
+    test_firmware: fix missing unlock on error in config_num_requests_store()
+
+Narcisa Ana Maria Vasile <narcisaanamaria12@gmail.com>
+    iio: chemical: ccs811: Fix output of IIO_CONCENTRATION channels
+
+Fabrice Gasnier <fabrice.gasnier@st.com>
+    iio: adc: stm32: fix scan of multiple channels with DMA
+
+Stefan Agner <stefan@agner.ch>
+    spi: imx: do not access registers while clocks disabled
+
+Fabio Estevam <fabio.estevam@nxp.com>
+    serial: imx: Only wakeup via RTSDEN bit if the system has RTS/CTS
+
+Wei Yongjun <weiyongjun1@huawei.com>
+    serial: 8250_uniphier: fix error return code in uniphier_uart_probe()
+
+Masahiro Yamada <yamada.masahiro@socionext.com>
+    serial: 8250_of: fix return code when probe function fails to get reset
+
+Tomas Winkler <tomas.winkler@intel.com>
+    mei: me: allow runtime pm for platform with D0i3
+
+Ganesh Mahendran <opensource.ganesh@gmail.com>
+    android: binder: use VM_ALLOC to get vm area
+
+Martijn Coenen <maco@android.com>
+    ANDROID: binder: remove waitqueue when thread exits.
+
+Benjamin Herrenschmidt <benh@kernel.crashing.org>
+    usb/gadget: Fix "high bandwidth" check in usb_gadget_ep_match_desc()
+
+Oliver Neukum <oneukum@suse.com>
+    usb: uas: unconditionally bring back host after reset
+
+Hemant Kumar <hemantk@codeaurora.org>
+    usb: f_fs: Prevent gadget unbind if it is already unbound
+
+Johan Hovold <johan@kernel.org>
+    USB: serial: simple: add Motorola Tetra driver
+
+Shuah Khan <shuah@kernel.org>
+    usbip: list: don't list devices attached to vhci_hcd
+
+Shuah Khan <shuah@kernel.org>
+    usbip: prevent bind loops on devices attached to vhci_hcd
+
+Jia-Ju Bai <baijiaju1990@gmail.com>
+    USB: serial: io_edgeport: fix possible sleep-in-atomic
+
+Oliver Neukum <oneukum@suse.com>
+    CDC-ACM: apply quirk for card reader
+
+Hans de Goede <hdegoede@redhat.com>
+    USB: cdc-acm: Do not log urb submission errors on disconnect
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    USB: serial: pl2303: new device id for Chilitag
+
+OKAMOTO Yoshiaki <yokamoto@allied-telesis.co.jp>
+    usb: option: Add support for FS040U modem
+
+Gaurav Kohli <gkohli@codeaurora.org>
+    tty: fix data race between tty_init_dev and flush of buf
+
+Gilad Ben-Yossef <gilad@benyossef.com>
+    staging: ccree: fix fips event irq handling build
+
+Gilad Ben-Yossef <gilad@benyossef.com>
+    staging: ccree: NULLify backup_info when unused
+
+Dmitry Eremin <dmitry.eremin@intel.com>
+    staging: lustre: separate a connection destroy from free struct kib_conn
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: x86: emulate #UD while in guest mode
+
+Stefan Schake <stschake@gmail.com>
+    drm/vc4: Move IRQ enable to PM path
+
+Larry Finger <Larry.Finger@lwfinger.net>
+    staging: rtl8188eu: Fix incorrect response to SIOCGIWESSID
+
+Colin Ian King <colin.king@canonical.com>
+    usb: gadget: don't dereference g until after it has been null checked
+
+Juergen Gross <jgross@suse.com>
+    x86/xen: Support early interrupts in xen pv guests
+
+Icenowy Zheng <icenowy@aosc.io>
+    media: usbtv: add a new usbid
+
+Florian Fainelli <f.fainelli@gmail.com>
+    ARM: dts: NSP: Fix PPI interrupt types
+
+Florian Fainelli <f.fainelli@gmail.com>
+    ARM: dts: NSP: Disable AHCI controller for HR NSP boards
+
+Sara Sharon <sara.sharon@intel.com>
+    iwlwifi: fix access to prph when transport is stopped
+
+Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+    iwlwifi: mvm: fix the TX queue hang timeout for MONITOR vif type
+
+Gustavo A. R. Silva <garsilva@embeddedor.com>
+    scsi: ufs: ufshcd: fix potential NULL pointer dereference in ufshcd_config_vreg
+
+Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+    scsi: aacraid: Prevent crash in case of free interrupt during scsi EH path
+
+Vasily Averin <vvs@virtuozzo.com>
+    perf/core: Fix memory leak triggered by perf --namespace
+
+Carlos Maiolino <cmaiolino@redhat.com>
+    xfs: Properly retry failed dquot items in case of error during buffer writeback
+
+Darrick J. Wong <darrick.wong@oracle.com>
+    xfs: ubsan fixes
+
+Arnd Bergmann <arnd@arndb.de>
+    drm/omap: displays: panel-dpi: add backlight dependency
+
+Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+    drm/omap: Fix error handling path in 'omap_dmm_probe()'
+
+Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+    drm/bridge: tc358767: fix 1-lane behavior
+
+Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+    drm/bridge: tc358767: fix AUXDATAn registers access
+
+Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+    drm/bridge: tc358767: fix timing calculations
+
+Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+    drm/bridge: tc358767: fix DP0_MISC register set
+
+Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+    drm/bridge: tc358767: filter out too high modes
+
+Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+    drm/bridge: tc358767: do no fail on hi-res displays
+
+Eric Anholt <eric@anholt.net>
+    drm/bridge: Fix lvds-encoder since the panel_bridge rework.
+
+Yisheng Xie <xieyisheng1@huawei.com>
+    kmemleak: add scheduling point to kmemleak_scan()
+
+Liu, Changcheng <changcheng.liu@intel.com>
+    scripts/faddr2line: extend usage on generic arch
+
+Trond Myklebust <trond.myklebust@primarydata.com>
+    SUNRPC: Allow connect to return EHOSTUNREACH
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    quota: Check for register_shrinker() failure.
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    net: ethernet: xilinx: Mark XILINX_LL_TEMAC broken on 64-bit
+
+Christian König <christian.koenig@amd.com>
+    drm/amdgpu: don't try to move pinned BOs
+
+Michal Hocko <mhocko@suse.com>
+    xfs: fortify xfs_alloc_buftarg error handling
+
+Minwoo Im <minwoo.im.dev@gmail.com>
+    nvme-pci: fix NULL pointer dereference in nvme_free_host_mem()
+
+Filipe Manana <fdmanana@suse.com>
+    Btrfs: incremental send, fix wrong unlink path after renaming file
+
+Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+    bnxt_en: Fix an error handling path in 'bnxt_get_module_eeprom()'
+
+Antoine Tenart <antoine.tenart@free-electrons.com>
+    net: phy: marvell10g: fix the PHY id mask
+
+Antoine Tenart <antoine.tenart@free-electrons.com>
+    net: mvpp2: fix the txq_init error path
+
+Chao Yu <yuchao0@huawei.com>
+    quota: propagate error from __dquot_initialize
+
+Robert Lippert <roblip@gmail.com>
+    hwmon: (pmbus) Use 64bit math for DIRECT format values
+
+Vasily Averin <vvs@virtuozzo.com>
+    lockd: fix "list_add double add" caused by legacy signal interface
+
+Vasily Averin <vvs@virtuozzo.com>
+    race of lockd inetaddr notifiers vs nlmsvc_rqst change
+
+Andrew Elble <aweits@rit.edu>
+    nfsd: check for use of the closed special stateid
+
+Vasily Averin <vvs@virtuozzo.com>
+    grace: replace BUG_ON by WARN_ONCE in exit_net hook
+
+Trond Myklebust <trond.myklebust@primarydata.com>
+    nfsd: Ensure we check stateid validity in the seqid operation checks
+
+Trond Myklebust <trond.myklebust@primarydata.com>
+    nfsd: CLOSE SHOULD return the invalid special stateid for NFSv4.x (x>0)
+
+Thomas Meyer <thomas@m3y3r.de>
+    auxdisplay: img-ascii-lcd: Only build on archs that have IOMEM
+
+Eduardo Otubo <otubo@redhat.com>
+    xen-netfront: remove warning when unloading module
+
+Colin Ian King <colin.king@canonical.com>
+    i2c: i2c-boardinfo: fix memory leaks on devinfo
+
+Darrick J. Wong <darrick.wong@oracle.com>
+    xfs: log recovery should replay deferred ops in order
+
+Darrick J. Wong <darrick.wong@oracle.com>
+    xfs: always free inline data before resetting inode fork during ifree
+
+Jan H. Schönherr <jschoenh@amazon.de>
+    KVM: Let KVM_SET_SIGNAL_MASK work as advertised
+
+Liu Bo <bo.li.liu@oracle.com>
+    Btrfs: fix list_add corruption and soft lockups in fsync
+
+Wanpeng Li <wanpeng.li@hotmail.com>
+    KVM: VMX: Fix rflags cache during vCPU reset
+
+Wanpeng Li <kernellwp@gmail.com>
+    KVM: X86: Fix softlockup when get the current kvmclock
+
+Jeff Layton <jlayton@redhat.com>
+    reiserfs: remove unneeded i_version bump
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: set sender next_tsn for the old result with ctsn_ack_point plus 1
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: avoid flushing unsent queue when doing asoc reset
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: only allow the asoc reset when the asoc outq is empty
+
+Josef Bacik <jbacik@fb.com>
+    btrfs: fix deadlock when writing out space cache
+
+Chun-Yeow Yeoh <yeohchunyeow@gmail.com>
+    mac80211: fix the update of path metric for RANN frame
+
+Johannes Berg <johannes.berg@intel.com>
+    mac80211: use QoS NDP for AP probing
+
+Mirza Krak <mirza.krak@endian.se>
+    drm/rockchip: dw-mipi-dsi: fix possible un-balanced runtime PM enable
+
+zhangliping <zhangliping02@baidu.com>
+    openvswitch: fix the incorrect flow action alloc size
+
+Sagi Grimberg <sagi@grimberg.me>
+    nvme-rdma: don't complete requests before a send work request has completed
+
+Dmitry V. Levin <ldv@altlinux.org>
+    uapi: fix linux/kfd_ioctl.h userspace compilation errors
+
+Felix Kuehling <Felix.Kuehling@amd.com>
+    drm/amdkfd: Fix SDMA oversubsription handling
+
+shaoyunl <Shaoyun.Liu@amd.com>
+    drm/amdkfd: Fix SDMA ring buffer size calculation
+
+Felix Kuehling <Felix.Kuehling@amd.com>
+    drm/amdgpu: Fix SDMA load/unload sequence on HWS disabled mode
+
+Michael Lyle <mlyle@lyle.org>
+    bcache: check return value of register_shrinker
+
+David Howells <dhowells@redhat.com>
+    rxrpc: Fix service endpoint expiry
+
+David Howells <dhowells@redhat.com>
+    rxrpc: Provide a different lockdep key for call->user_mutex for kernel calls
+
+David Howells <dhowells@redhat.com>
+    rxrpc: The mutex lock returned by rxrpc_accept_call() needs releasing
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: fix alloc_pgste check in init_new_context again
+
+David Disseldorp <ddiss@suse.de>
+    null_blk: fix dev->badblocks leak
+
+James Hogan <jhogan@kernel.org>
+    cpufreq: Add Loongson machine dependencies
+
+Hans de Goede <hdegoede@redhat.com>
+    ACPI / bus: Leave modalias empty for devices which are not present
+
+Harald Freudenberger <freude@linux.vnet.ibm.com>
+    s390/zcrypt: Fix wrong comparison leading to strange load balancing
+
+Thomas Richter <tmricht@linux.vnet.ibm.com>
+    s390/topology: fix compile error in file arch/s390/kernel/smp.c
+
+James Smart <jsmart2021@gmail.com>
+    nvmet-fc: correct ref counting error when deferred rcv used
+
+Minwoo Im <minwoo.im.dev@gmail.com>
+    nvme-pci: avoid hmb desc array idx out-of-bound when hmmaxd set.
+
+Kai-Heng Feng <kai.heng.feng@canonical.com>
+    nvme-pci: disable APST on Samsung SSD 960 EVO + ASUS PRIME B350M-A
+
+Sagi Grimberg <sagi@grimberg.me>
+    nvme-loop: check if queue is ready in queue_rq
+
+Sagi Grimberg <sagi@grimberg.me>
+    nvme-fc: check if queue is ready in queue_rq
+
+Sagi Grimberg <sagi@grimberg.me>
+    nvme-fabrics: introduce init command check for a queue that is not alive
+
+Liran Alon <liran.alon@oracle.com>
+    KVM: nVMX: Fix vmx_check_nested_events() return value in case an event was reinjected to L2
+
+Nikita Leshenko <nikita.leshchenko@oracle.com>
+    KVM: x86: ioapic: Preserve read-only values in the redirection table
+
+Nikita Leshenko <nikita.leshchenko@oracle.com>
+    KVM: x86: ioapic: Clear Remote IRR when entry is switched to edge-triggered
+
+Nikita Leshenko <nikita.leshchenko@oracle.com>
+    KVM: x86: ioapic: Fix level-triggered EOI and IOAPIC reconfigure race
+
+David Hildenbrand <david@redhat.com>
+    KVM: x86: fix em_fxstor() sleeping while in atomic
+
+Wanpeng Li <wanpeng.li@hotmail.com>
+    KVM: nVMX: Fix mmu context after VMLAUNCH/VMRESUME failure
+
+Wanpeng Li <wanpeng.li@hotmail.com>
+    KVM: X86: Fix operand/address-size during instruction decoding
+
+Liran Alon <liran.alon@oracle.com>
+    KVM: x86: Don't re-execute instruction when not passing CR2 value
+
+Liran Alon <liran.alon@oracle.com>
+    KVM: x86: emulator: Return to user-mode on L1 CPL=0 emulation failure
+
+Liran Alon <liran.alon@oracle.com>
+    KVM: nVMX/nSVM: Don't intercept #UD when running L2
+
+Abhishek Goel <huntbag@linux.vnet.ibm.com>
+    cpupower : Fix cpupower working when cpu0 is offline
+
+Abhishek Goel <huntbag@linux.vnet.ibm.com>
+    cpupowerutils: bench - Fix cpu online check
+
+Liu Bo <bo.li.liu@oracle.com>
+    Btrfs: bail out gracefully rather than BUG_ON
+
+Nikolay Borisov <nborisov@suse.com>
+    btrfs: Fix transaction abort during failure in btrfs_rm_dev_item
+
+Stefan Schake <stschake@gmail.com>
+    drm/vc4: Account for interrupts in flight
+
+Markus Trippelsdorf <markus@trippelsdorf.de>
+    VFS: Handle lazytime in do_mount()
+
+Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+    scsi: aacraid: Fix hang in kdump
+
+Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+    scsi: aacraid: Fix udev inquiry race condition
+
+Mike Rapoport <rppt@linux.vnet.ibm.com>
+    ima/policy: fix parsing of fsuuid
+
+Lyude Paul <lyude@redhat.com>
+    igb: Free IRQs when device is hotplugged
+
+Jesse Chan <jc@linux.com>
+    mtd: nand: denali_pci: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+
+Jesse Chan <jc@linux.com>
+    gpio: ath79: add missing MODULE_DESCRIPTION/LICENSE
+
+Jesse Chan <jc@linux.com>
+    gpio: iop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+
+Jesse Chan <jc@linux.com>
+    power: reset: zx-reboot: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+
+Jason Gerecke <killertofu@gmail.com>
+    HID: wacom: Fix reporting of touch toggle (WACOM_HID_WD_MUTE_DEVICE) events
+
+Aaron Armstrong Skomra <skomra@gmail.com>
+    HID: wacom: EKR: ensure devres groups at higher indexes are released
+
+Stephan Mueller <smueller@chronox.de>
+    crypto: af_alg - whitelist mask and type
+
+Ard Biesheuvel <ard.biesheuvel@linaro.org>
+    crypto: sha3-generic - fixes for alignment and big endian operation
+
+Antoine Tenart <antoine.tenart@free-electrons.com>
+    crypto: inside-secure - avoid unmapping DMA memory that was not mapped
+
+Antoine Tenart <antoine.tenart@free-electrons.com>
+    crypto: inside-secure - fix hash when length is a multiple of a block
+
+Junaid Shahid <junaids@google.com>
+    crypto: aesni - Fix out-of-bounds access of the AAD buffer in generic-gcm-aesni
+
+Junaid Shahid <junaids@google.com>
+    crypto: aesni - Fix out-of-bounds access of the data buffer in generic-gcm-aesni
+
+Sabrina Dubroca <sd@queasysnail.net>
+    crypto: aesni - add wrapper for generic gcm(aes)
+
+Corentin LABBE <clabbe.montjoie@gmail.com>
+    crypto: aesni - Use GCM IV size constant
+
+Corentin LABBE <clabbe.montjoie@gmail.com>
+    crypto: gcm - add GCM IV size constant
+
+Sabrina Dubroca <sd@queasysnail.net>
+    crypto: aesni - fix typo in generic_gcmaes_decrypt
+
+Stephan Mueller <smueller@chronox.de>
+    crypto: aesni - handle zero length dst buffer
+
+Hauke Mehrtens <hauke@hauke-m.de>
+    crypto: ecdh - fix typo in KPP dependency of CRYPTO_ECDH
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hda - Reduce the suspend time consumption for ALC256
+
+Linus Walleij <linus.walleij@linaro.org>
+    gpio: Fix kernel stack leak to userspace
+
+Patrice Chotard <patrice.chotard@st.com>
+    gpio: stmpe: i2c transfer are forbiden in atomic context
+
+Joel Stanley <joel@jms.id.au>
+    tools/gpio: Fix build error with musl libc
+
+Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+    KVM: x86: Fix CPUID function for word 6 (80000001_ECX)
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    loop: fix concurrent lo_open/lo_release
+
+Peter Zijlstra <peterz@infradead.org>
+    futex: Fix OWNER_DEAD fixup
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm/boot/dts/bcm-nsp.dtsi                     |   4 +-
+ arch/arm/boot/dts/bcm958623hr.dts                  |   4 -
+ arch/arm/boot/dts/bcm958625hr.dts                  |   4 -
+ arch/mips/kvm/mips.c                               |   7 +-
+ arch/powerpc/kvm/powerpc.c                         |   7 +-
+ arch/s390/include/asm/mmu_context.h                |   2 +-
+ arch/s390/include/asm/topology.h                   |   1 +
+ arch/s390/kernel/smp.c                             |   1 +
+ arch/s390/kvm/kvm-s390.c                           |   7 +-
+ arch/x86/crypto/aesni-intel_asm.S                  | 199 ++++++---------------
+ arch/x86/crypto/aesni-intel_glue.c                 |  77 ++++++--
+ arch/x86/include/asm/kvm_host.h                    |   3 +-
+ arch/x86/include/asm/segment.h                     |  12 ++
+ arch/x86/kvm/cpuid.h                               |   2 +-
+ arch/x86/kvm/emulate.c                             |  39 +++-
+ arch/x86/kvm/ioapic.c                              |  20 ++-
+ arch/x86/kvm/vmx.c                                 |  55 +++---
+ arch/x86/kvm/x86.c                                 |  20 +--
+ arch/x86/mm/extable.c                              |   4 +-
+ arch/x86/xen/enlighten_pv.c                        |  37 ++--
+ arch/x86/xen/xen-asm_64.S                          |  14 ++
+ crypto/Kconfig                                     |   2 +-
+ crypto/af_alg.c                                    |  10 +-
+ crypto/sha3_generic.c                              |   5 +-
+ drivers/acpi/device_sysfs.c                        |   4 +
+ drivers/android/binder.c                           |  12 ++
+ drivers/android/binder_alloc.c                     |   2 +-
+ drivers/auxdisplay/Kconfig                         |   1 +
+ drivers/block/loop.c                               |  10 +-
+ drivers/block/null_blk.c                           |   5 +-
+ drivers/cpufreq/Kconfig                            |   2 +
+ drivers/crypto/inside-secure/safexcel_hash.c       |  56 ++++--
+ drivers/firmware/efi/Kconfig                       |   5 +-
+ drivers/gpio/gpio-ath79.c                          |   3 +
+ drivers/gpio/gpio-iop.c                            |   4 +
+ drivers/gpio/gpio-stmpe.c                          |  20 +--
+ drivers/gpio/gpiolib.c                             |   3 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c  |  47 +++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             |   4 +
+ drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_cik.c   |   4 +-
+ .../gpu/drm/amd/amdkfd/kfd_process_queue_manager.c |  18 ++
+ drivers/gpu/drm/bridge/lvds-encoder.c              |  48 ++++-
+ drivers/gpu/drm/bridge/tc358767.c                  |  73 ++++----
+ drivers/gpu/drm/omapdrm/displays/Kconfig           |   1 +
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c           |   3 +-
+ drivers/gpu/drm/rockchip/dw-mipi-dsi.c             |   3 +-
+ drivers/gpu/drm/vc4/vc4_irq.c                      |   3 +
+ drivers/gpu/drm/vc4/vc4_v3d.c                      |   3 +
+ drivers/hid/wacom_sys.c                            |  24 +--
+ drivers/hid/wacom_wac.c                            |  16 +-
+ drivers/hwmon/pmbus/pmbus_core.c                   |  21 ++-
+ drivers/i2c/i2c-boardinfo.c                        |   2 +
+ drivers/iio/adc/stm32-adc.c                        |   3 +-
+ drivers/iio/chemical/ccs811.c                      |  13 +-
+ drivers/input/rmi4/rmi_driver.c                    |  14 +-
+ drivers/input/rmi4/rmi_f03.c                       |  64 +++++--
+ drivers/md/bcache/btree.c                          |   5 +-
+ drivers/media/usb/usbtv/usbtv-core.c               |   1 +
+ drivers/misc/mei/pci-me.c                          |   5 +-
+ drivers/mtd/nand/denali_pci.c                      |   4 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c  |   4 +-
+ drivers/net/ethernet/intel/igb/igb_main.c          |   2 +-
+ drivers/net/ethernet/marvell/mvpp2.c               |  20 +--
+ drivers/net/ethernet/xilinx/Kconfig                |   1 +
+ drivers/net/phy/marvell10g.c                       |   5 +-
+ drivers/net/wireless/ath/ath9k/channel.c           |   2 +-
+ drivers/net/wireless/intel/iwlwifi/fw/dbg.h        |   2 -
+ drivers/net/wireless/intel/iwlwifi/mvm/utils.c     |   2 +
+ .../net/wireless/intel/iwlwifi/pcie/trans-gen2.c   |   6 +
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c    |   9 +
+ drivers/net/wireless/st/cw1200/sta.c               |   4 +-
+ drivers/net/wireless/ti/wl1251/main.c              |   2 +-
+ drivers/net/wireless/ti/wlcore/cmd.c               |   5 +-
+ drivers/net/xen-netfront.c                         |  18 ++
+ drivers/nvme/host/fabrics.h                        |  30 ++++
+ drivers/nvme/host/fc.c                             |  19 +-
+ drivers/nvme/host/pci.c                            |  15 +-
+ drivers/nvme/host/rdma.c                           |  60 +++----
+ drivers/nvme/target/fc.c                           |   9 +-
+ drivers/nvme/target/loop.c                         |  25 ++-
+ drivers/power/reset/zx-reboot.c                    |   4 +
+ drivers/s390/crypto/zcrypt_api.c                   |   4 +-
+ drivers/scsi/aacraid/aachba.c                      |  15 +-
+ drivers/scsi/aacraid/commsup.c                     |  11 +-
+ drivers/scsi/ufs/ufshcd.c                          |   7 +-
+ drivers/spi/spi-imx.c                              |  15 +-
+ drivers/staging/ccree/ssi_cipher.c                 |   1 +
+ drivers/staging/ccree/ssi_driver.c                 |   2 +-
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c    |   7 +-
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h    |   2 +-
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |   6 +-
+ drivers/staging/rtl8188eu/os_dep/ioctl_linux.c     |  14 +-
+ drivers/tty/serial/8250/8250_of.c                  |   5 +-
+ drivers/tty/serial/8250/8250_uniphier.c            |   5 +-
+ drivers/tty/serial/imx.c                           |  14 +-
+ drivers/tty/tty_io.c                               |   8 +-
+ drivers/tty/tty_ldisc.c                            |   4 +-
+ drivers/usb/class/cdc-acm.c                        |   5 +-
+ drivers/usb/gadget/composite.c                     |   7 +-
+ drivers/usb/gadget/function/f_fs.c                 |   3 +-
+ drivers/usb/gadget/udc/core.c                      |   2 +-
+ drivers/usb/serial/Kconfig                         |   1 +
+ drivers/usb/serial/io_edgeport.c                   |   1 -
+ drivers/usb/serial/option.c                        |   5 +
+ drivers/usb/serial/pl2303.c                        |   1 +
+ drivers/usb/serial/pl2303.h                        |   1 +
+ drivers/usb/serial/usb-serial-simple.c             |   7 +
+ drivers/usb/storage/uas.c                          |   7 +-
+ fs/btrfs/file.c                                    |   5 +-
+ fs/btrfs/free-space-cache.c                        |   3 +-
+ fs/btrfs/inode.c                                   |  10 +-
+ fs/btrfs/send.c                                    | 124 +++++++++++--
+ fs/btrfs/tree-log.c                                |   2 +-
+ fs/btrfs/volumes.c                                 |  20 ++-
+ fs/lockd/svc.c                                     |  16 +-
+ fs/namespace.c                                     |   1 +
+ fs/nfs_common/grace.c                              |  10 +-
+ fs/nfsd/nfs4state.c                                |  34 ++--
+ fs/quota/dquot.c                                   |  22 ++-
+ fs/reiserfs/super.c                                |   1 -
+ fs/xfs/xfs_aops.c                                  |   6 +-
+ fs/xfs/xfs_bmap_item.c                             |  23 +--
+ fs/xfs/xfs_bmap_item.h                             |   3 +-
+ fs/xfs/xfs_buf.c                                   |  15 +-
+ fs/xfs/xfs_dquot.c                                 |  14 +-
+ fs/xfs/xfs_dquot_item.c                            |  40 ++++-
+ fs/xfs/xfs_inode.c                                 |  21 +++
+ fs/xfs/xfs_log_recover.c                           |  75 +++++++-
+ fs/xfs/xfs_refcount_item.c                         |  21 +--
+ fs/xfs/xfs_refcount_item.h                         |   3 +-
+ include/crypto/gcm.h                               |   8 +
+ include/linux/kvm_host.h                           |   3 +
+ include/linux/tty.h                                |   2 +
+ include/net/mac80211.h                             |   8 +-
+ include/trace/events/rxrpc.h                       |   2 +
+ include/uapi/linux/kfd_ioctl.h                     |  22 +--
+ kernel/events/core.c                               |   1 +
+ kernel/futex.c                                     |   6 +-
+ lib/test_firmware.c                                |   1 +
+ mm/kmemleak.c                                      |   2 +
+ net/mac80211/mesh_hwmp.c                           |  15 +-
+ net/mac80211/mlme.c                                |   2 +-
+ net/mac80211/tx.c                                  |  29 ++-
+ net/openvswitch/flow_netlink.c                     |  16 +-
+ net/rxrpc/af_rxrpc.c                               |  13 ++
+ net/rxrpc/ar-internal.h                            |   5 +-
+ net/rxrpc/call_accept.c                            |   2 +-
+ net/rxrpc/call_object.c                            |  19 +-
+ net/rxrpc/conn_client.c                            |   2 +
+ net/rxrpc/conn_object.c                            |  42 +++--
+ net/rxrpc/net_ns.c                                 |   3 +
+ net/rxrpc/sendmsg.c                                |   5 +-
+ net/sctp/stream.c                                  |  32 +++-
+ net/sunrpc/xprtsock.c                              |   1 +
+ scripts/faddr2line                                 |  21 ++-
+ security/integrity/ima/ima_policy.c                |   2 +-
+ sound/pci/hda/patch_realtek.c                      |   6 +-
+ tools/gpio/gpio-event-mon.c                        |   1 +
+ tools/power/cpupower/bench/system.c                |   2 +-
+ .../cpupower/utils/idle_monitor/cpuidle_sysfs.c    |   9 +-
+ tools/usb/usbip/src/usbip_bind.c                   |   9 +
+ tools/usb/usbip/src/usbip_list.c                   |   9 +
+ virt/kvm/arm/arm.c                                 |   8 +-
+ virt/kvm/kvm_main.c                                |  23 +++
+ 165 files changed, 1521 insertions(+), 729 deletions(-)
