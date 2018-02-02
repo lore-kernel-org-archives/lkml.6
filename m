@@ -1,57 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752212AbeBBQKd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 11:10:33 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42390 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751844AbeBBQKZ (ORCPT
+        id S1752246AbeBBQLL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 11:11:11 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:36759 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751567AbeBBQLD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 11:10:25 -0500
-X-Google-Smtp-Source: AH8x227MRzxqFsdDkwSy5eUfOkbRZOnUMbej0KTAnlR6js1AltLKW32dxCzS4aBbCRKO0D1hs4H/lTZavoJ35cuWMFQ=
+        Fri, 2 Feb 2018 11:11:03 -0500
+X-Google-Smtp-Source: AH8x2245HD2j0vlWglGJ9HLt1J/YHOkf/i+Cb7fBdrqFfVJPD6Vrxwd8ozMVWJdMBnkPfjtkhYy6l+ZF7q+/B5ToAOw=
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <1517585624.3171.64.camel@linux.vnet.ibm.com>
-References: <cover.1517314847.git.dongsu@kinvolk.io> <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
- <1517584816.3171.61.camel@linux.vnet.ibm.com> <1517585624.3171.64.camel@linux.vnet.ibm.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 2 Feb 2018 17:10:24 +0100
-Message-ID: <CAJfpegvt5W-q0W8_VRML-MNW6+n2ZQYW+51utRXDDKSbvsqf3w@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag FS_IMA_NO_CACHE
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-integrity@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Dongsu Park <dongsu@kinvolk.io>, linux-kernel@vger.kernel.org
+In-Reply-To: <20180202155309.2xg2gjcp7wb7bbpe@mwanda>
+References: <20180202153240.1190361-1-arnd@arndb.de> <20180202155309.2xg2gjcp7wb7bbpe@mwanda>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 2 Feb 2018 17:11:02 +0100
+X-Google-Sender-Auth: V39I-YZ2b2Jxa7uik1TFdTwCfkw
+Message-ID: <CAK8P3a0Z2PMP-=e2Ga8kw196vWeAz_HC02ABQmDB9W_0Cmmr-Q@mail.gmail.com>
+Subject: Re: [PATCH] xen: hypercall: fix out-of-bounds memcpy
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, Nicolas Pitre <nico@linaro.org>,
+        Andi Kleen <ak@linux.intel.com>, Jan Beulich <jbeulich@suse.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 2, 2018 at 4:33 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Fri, 2018-02-02 at 10:20 -0500, Mimi Zohar wrote:
->> Hi Miklos,
+On Fri, Feb 2, 2018 at 4:53 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> On Fri, Feb 02, 2018 at 04:32:31PM +0100, Arnd Bergmann wrote:
+
+>> --- a/drivers/xen/fallback.c
+>> +++ b/drivers/xen/fallback.c
+>> @@ -7,75 +7,87 @@
 >>
->> On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
->> > From: Alban Crequy <alban@kinvolk.io>
->> >
->> > This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
->> > re-appraised and re-audited each time. Cached integrity results should
->> > not be used.
->> >
->> > It is useful in FUSE because the userspace FUSE process can change the
->> > underlying files at any time without notifying the kernel.
+>>  int xen_event_channel_op_compat(int cmd, void *arg)
+>>  {
+>> -     struct evtchn_op op;
+>> +     struct evtchn_op op = { .cmd = cmd, };
+>> +     size_t len;
+>>       int rc;
+>>
+>> -     op.cmd = cmd;
+>> -     memcpy(&op.u, arg, sizeof(op.u));
+>> -     rc = _hypercall1(int, event_channel_op_compat, &op);
+>> -
+>>       switch (cmd) {
+>> +     case EVTCHNOP_bind_interdomain:
+>> +             len = sizeof(struct evtchn_bind_interdomain);
+>> +             break;
+>
+> This was in the original code, but I'm slightly surpprised that we're
+> using a switch statement here instead of a table.  I would have thought
+> this is a fast path but I don't know xen at all.
 
-I don't really have an understanding what IMA is doing, I think the
-same thing applies to any network filesystem (i.e. ones with
-d_revalidate).
+I thought about using a table, but figured the switch statement
+had a lower risk of getting something slightly wrong during the
+conversion.
 
-Isn't that the case?
+I would expect gcc to turn this into a table lookup, since all the
+constants are consecutive, but it should not really matter since
+this is only the fallback path for ancient Xen releases. When Xen
+guest support was first merged in 2007, it was already
+deprecated.
 
-Thanks,
-Miklos
+      Arnd
