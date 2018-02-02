@@ -1,120 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752267AbeBBObP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:31:15 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:42703 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751988AbeBBObG (ORCPT
+        id S1752114AbeBBOfc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:35:32 -0500
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:34016 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbeBBOf0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:31:06 -0500
-X-Google-Smtp-Source: AH8x2258mG8tVBL6VWEPtXqIEjYya8kD1rz/iaU2aJy+E48tGyQndifQDK2HXsp0IceS28KOHzldBA==
-From: Matthew Whitehead <tedheadster@gmail.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        Fri, 2 Feb 2018 09:35:26 -0500
+X-Google-Smtp-Source: AH8x224MHzHeWuvOpzFJsVDN2sT41zv9pylk5aHtRU/UJ5gPi7/qm/cZ8jo4cFFmOYOYuD0Qp28GPg==
+Date: Fri, 2 Feb 2018 15:35:21 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: peterz@infradead.org, lizefan@huawei.com, mingo@redhat.com,
+        rostedt@goodmis.org, claudio@evidence.eu.com, bristot@redhat.com,
+        tommaso.cucinotta@santannapisa.it, luca.abeni@santannapisa.it,
         linux-kernel@vger.kernel.org
-Cc: Matthew Whitehead <tedheadster@gmail.com>
-Subject: [PATCH] x86/perf : Add check for CPUID instruction before using
-Date: Fri,  2 Feb 2018 09:30:51 -0500
-Message-Id: <1517581851-6600-1-git-send-email-tedheadster@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+Subject: Re: [PATCH V2 3/7] sched/deadline: Keep new DL task within root
+ domain's boundary
+Message-ID: <20180202143521.GU19535@localhost.localdomain>
+References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+ <1517503869-3179-4-git-send-email-mathieu.poirier@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517503869-3179-4-git-send-email-mathieu.poirier@linaro.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We still officially support the ancient i486 cpu. First generation
-versions of this processor do not have the CPUID instruction, though
-later versions do. Therefore you must check that the cpu supports
-it before using it. At present it fails with an "Illegal Instruction"
-signal on the early processors.
+Hi Mathieu,
 
-This code was based on similar code in the gcc package.
+On 01/02/18 09:51, Mathieu Poirier wrote:
+> When considering to move a task to the DL policy we need to make sure
+> the CPUs it is allowed to run on matches the CPUs of the root domains of
+> the runqueue it is currently assigned to.  Otherwise the task will be
+> allowed to roam on CPUs outside of this root domain, something that will
+> skew system deadline statistics and potentially lead to over selling DL
+> bandwidth.
+> 
+> For example say we have a 4 core system split in 2 cpuset: set1 has CPU 0
+> and 1 while set2 has CPU 2 and 3.  This results in 3 cpuset - the default
+> set that has all 4 CPUs along with set1 and set2 as just depicted.  We also
+> have task A that hasn't been assigned to any CPUset and as such, is part of
+> the default CPUset.
+> 
+> At the time we want to move task A to a DL policy it has been assigned to
+> CPU1.  Since CPU1 is part of set1 the root domain will have 2 CPUs in it
+> and the bandwidth constraint checked against the current DL bandwidth
+> allotment of those 2 CPUs.
 
-Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
----
- tools/perf/arch/x86/util/header.c | 51 +++++++++++++++++++++++++++++++++++++++
- tools/perf/util/header.h          |  2 ++
- 2 files changed, 53 insertions(+)
+Wait.. I'm confused. :)
 
-diff --git a/tools/perf/arch/x86/util/header.c b/tools/perf/arch/x86/util/header.c
-index fb0d71afee8b..d4d12894c64d 100644
---- a/tools/perf/arch/x86/util/header.c
-+++ b/tools/perf/arch/x86/util/header.c
-@@ -7,6 +7,54 @@
- 
- #include "../../util/header.h"
- 
-+/* This code based on gcc cpuid.h __get_cpuid_max() */
-+unsigned int have_cpuid(void)
-+{
-+	unsigned int __eax, __ebx;
-+
-+#ifndef __x86_64__
-+/* See if we can use cpuid.  On AMD64 we always can.  */
-+#if __GNUC__ >= 3
-+	__asm__ ("pushf{l|d}\n\t"
-+		"pushf{l|d}\n\t"
-+		"pop{l}\t%0\n\t"
-+		"mov{l}\t{%0, %1|%1, %0}\n\t"
-+		"xor{l}\t{%2, %0|%0, %2}\n\t"
-+		"push{l}\t%0\n\t"
-+		"popf{l|d}\n\t"
-+		"pushf{l|d}\n\t"
-+		"pop{l}\t%0\n\t"
-+		"popf{l|d}\n\t"
-+		: "=&r" (__eax), "=&r" (__ebx)
-+		: "i" (0x00200000));
-+#else
-+/* Host GCCs older than 3.0 weren't supporting Intel asm syntax
-+ * nor alternatives in i386 code.
-+ */
-+	__asm__ ("pushfl\n\t"
-+		"pushfl\n\t"
-+		"popl\t%0\n\t"
-+		"movl\t%0, %1\n\t"
-+		"xorl\t%2, %0\n\t"
-+		"pushl\t%0\n\t"
-+		"popfl\n\t"
-+		"pushfl\n\t"
-+		"popl\t%0\n\t"
-+		"popfl\n\t"
-+		: "=&r" (__eax), "=&r" (__ebx)
-+		: "i" (0x00200000));
-+#endif
-+
-+	if (!((__eax ^ __ebx) & 0x00200000))
-+		return 0;
-+	else
-+		return 1;
-+#endif
-+
-+/* All x86_64 support cpuid */
-+	return 1;
-+}
-+
- static inline void
- cpuid(unsigned int op, unsigned int *a, unsigned int *b, unsigned int *c,
-       unsigned int *d)
-@@ -28,6 +76,9 @@ __get_cpuid(char *buffer, size_t sz, const char *fmt)
- 	int nb;
- 	char vendor[16];
- 
-+	if (!have_cpuid())
-+		return -1;
-+
- 	cpuid(0, &lvl, &b, &c, &d);
- 	strncpy(&vendor[0], (char *)(&b), 4);
- 	strncpy(&vendor[4], (char *)(&d), 4);
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index f28aaaa3a440..ce31fca36077 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -171,6 +171,8 @@ int write_padded(struct feat_fd *fd, const void *bf,
- /*
-  * arch specific callback
-  */
-+unsigned int have_cpuid(void);
-+
- int get_cpuid(char *buffer, size_t sz);
- 
- char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused);
--- 
-2.13.6
+Do you disabled cpuset.sched_load_balance in the root (default) cpuset?
+If yes, we would end up with 2 root domains and if task A happens to be
+on root domain (0-1) checking its admission against 2 CPUs looks like
+the right thing to do to me. If no, then there is a single root domain
+(the root/deafult one) with 4 CPUs, and it indeed seems that we've
+probably got a problem: it is possible for a DEADLINE task running on
+root/default cpuset to be put in (for example) 0-1 cpuset, and so
+restrict its affinity. Is it this that this patch cures?
+
+Anyway, see more comments below..
+
+[...]
+
+>  	/*
+> +	 * If setscheduling to SCHED_DEADLINE we need to make sure the task
+> +	 * is constrained to run within the root domain it is associated with,
+> +	 * something that isn't guaranteed when using cpusets.
+> +	 *
+> +	 * Speaking of cpusets, we also need to assert that a task's
+> +	 * cpus_allowed mask equals its cpuset's cpus_allowed mask. Otherwise
+> +	 * a DL task could be assigned to a cpuset that has more CPUs than the
+> +	 * root domain it is associated with, a situation that yields no
+> +	 * benefits and greatly complicate the management of DL task when
+> +	 * cpusets are present.
+> +	 */
+> +	if (dl_policy(policy)) {
+> +		struct root_domain *rd = cpu_rq(task_cpu(p))->rd;
+
+I fear root_domain doesn't exist on UP.
+
+Maybe this logic can be put above changing the check we already do
+against the span?
+
+https://elixir.free-electrons.com/linux/latest/source/kernel/sched/core.c#L4174
+
+Best,
+
+- Juri
