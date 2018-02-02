@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751720AbeBBNKw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:10:52 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44264 "EHLO
+        id S1752182AbeBBNLD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:11:03 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43498 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751912AbeBBNHo (ORCPT
+        by vger.kernel.org with ESMTP id S1751880AbeBBNHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 08:07:44 -0500
+        Fri, 2 Feb 2018 08:07:41 -0500
 From: Philipp Rudo <prudo@linux.vnet.ibm.com>
 To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
 Cc: prudo@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
@@ -15,20 +15,20 @@ Cc: prudo@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH 13/17] s390/kexec_file: Add purgatory
-Date: Fri,  2 Feb 2018 14:07:14 +0100
+Subject: [PATCH 10/17] kexec_file: Allow archs to set purgatory load address
+Date: Fri,  2 Feb 2018 14:07:11 +0100
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
 References: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020213-0008-0000-0000-000004C8CBFF
+x-cbid: 18020213-0020-0000-0000-000003F1AF05
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020213-0009-0000-0000-00001E5C6E4D
-Message-Id: <20180202130718.35509-14-prudo@linux.vnet.ibm.com>
+x-cbparentid: 18020213-0021-0000-0000-000042841C0B
+Message-Id: <20180202130718.35509-11-prudo@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802020162
@@ -36,266 +36,209 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The common code expects the architecture to have a purgatory that runs
-between the two kernels. Add it now. For simplicity first skip crash
-support.
+For s390 new kernels are loaded to fixed addresses in memory before they
+are booted. With the current code this is a problem as it assumes the
+kernel will be loaded to an 'arbitrary' address. In particular,
+kexec_locate_mem_hole searches for a large enough memory region and sets
+the load address (kexec_bufer->mem) to it.
+
+Luckily there is a simple workaround for this problem. By returning 1 in
+arch_kexec_walk_mem, kexec_locate_mem_hole is turned off. This allows the
+architecture to set kbuf->mem by hand. While the trick works fine for the
+kernel it does not for the purgatory as here the architectures don't have
+access to its kexec_buffer.
+
+Give architectures access to the purgatories kexec_buffer by changing
+kexec_load_purgatory to take a pointer to it. With this change
+architectures have access to the buffer and can edit it as they need.
+
+A nice side effect of this change is that we can get rid of the
+purgatory_info->purgatory_load_address field. As now the information stored
+there can directly be accessed from kbuf->mem.
 
 Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 ---
- arch/s390/Kbuild                  |  1 +
- arch/s390/include/asm/purgatory.h | 17 +++++++
- arch/s390/kernel/asm-offsets.c    |  5 ++
- arch/s390/purgatory/Makefile      | 37 +++++++++++++++
- arch/s390/purgatory/head.S        | 96 +++++++++++++++++++++++++++++++++++++++
- arch/s390/purgatory/purgatory.c   | 38 ++++++++++++++++
- 6 files changed, 194 insertions(+)
- create mode 100644 arch/s390/include/asm/purgatory.h
- create mode 100644 arch/s390/purgatory/Makefile
- create mode 100644 arch/s390/purgatory/head.S
- create mode 100644 arch/s390/purgatory/purgatory.c
+ arch/powerpc/kernel/kexec_elf_64.c |  9 +++++----
+ arch/x86/kernel/kexec-bzimage64.c  |  8 ++++----
+ include/linux/kexec.h              |  7 +------
+ kernel/kexec_file.c                | 29 ++++++++++++++++-------------
+ 4 files changed, 26 insertions(+), 27 deletions(-)
 
-diff --git a/arch/s390/Kbuild b/arch/s390/Kbuild
-index 9fdff3fe1a42..091f14bc9af0 100644
---- a/arch/s390/Kbuild
-+++ b/arch/s390/Kbuild
-@@ -8,3 +8,4 @@ obj-$(CONFIG_APPLDATA_BASE)	+= appldata/
- obj-y				+= net/
- obj-$(CONFIG_PCI)		+= pci/
- obj-$(CONFIG_NUMA)		+= numa/
-+obj-y				+= purgatory/
-diff --git a/arch/s390/include/asm/purgatory.h b/arch/s390/include/asm/purgatory.h
-new file mode 100644
-index 000000000000..e297bcfc476f
---- /dev/null
-+++ b/arch/s390/include/asm/purgatory.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright IBM Corp. 2018
-+ *
-+ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
-+ */
-+
-+#ifndef _S390_PURGATORY_H_
-+#define _S390_PURGATORY_H_
-+#ifndef __ASSEMBLY__
-+
-+#include <linux/purgatory.h>
-+
-+int verify_sha256_digest(void);
-+
-+#endif	/* __ASSEMBLY__ */
-+#endif /* _S390_PURGATORY_H_ */
-diff --git a/arch/s390/kernel/asm-offsets.c b/arch/s390/kernel/asm-offsets.c
-index 587b195b588d..a22b478de567 100644
---- a/arch/s390/kernel/asm-offsets.c
-+++ b/arch/s390/kernel/asm-offsets.c
-@@ -10,6 +10,7 @@
- #include <linux/kbuild.h>
- #include <linux/kvm_host.h>
- #include <linux/sched.h>
-+#include <linux/purgatory.h>
- #include <asm/idle.h>
- #include <asm/vdso.h>
- #include <asm/pgtable.h>
-@@ -203,5 +204,9 @@ int main(void)
- 	OFFSET(__GMAP_ASCE, gmap, asce);
- 	OFFSET(__SIE_PROG0C, kvm_s390_sie_block, prog0c);
- 	OFFSET(__SIE_PROG20, kvm_s390_sie_block, prog20);
-+	/* kexec_sha_region */
-+	OFFSET(__KEXEC_SHA_REGION_START, kexec_sha_region, start);
-+	OFFSET(__KEXEC_SHA_REGION_LEN, kexec_sha_region, len);
-+	DEFINE(__KEXEC_SHA_REGION_SIZE, sizeof(struct kexec_sha_region));
+diff --git a/arch/powerpc/kernel/kexec_elf_64.c b/arch/powerpc/kernel/kexec_elf_64.c
+index 9a42309b091a..82448c03502d 100644
+--- a/arch/powerpc/kernel/kexec_elf_64.c
++++ b/arch/powerpc/kernel/kexec_elf_64.c
+@@ -572,7 +572,7 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
+ {
+ 	int ret;
+ 	unsigned int fdt_size;
+-	unsigned long kernel_load_addr, purgatory_load_addr;
++	unsigned long kernel_load_addr;
+ 	unsigned long initrd_load_addr = 0, fdt_load_addr;
+ 	void *fdt;
+ 	const void *slave_code;
+@@ -580,6 +580,8 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
+ 	struct elf_info elf_info;
+ 	struct kexec_buf kbuf = { .image = image, .buf_min = 0,
+ 				  .buf_max = ppc64_rma_size };
++	struct kexec_buf pbuf = { .image = image, .buf_min = 0,
++				  .buf_max = ppc64_rma_size, .top_down = true };
+ 
+ 	ret = build_elf_exec_info(kernel_buf, kernel_len, &ehdr, &elf_info);
+ 	if (ret)
+@@ -591,14 +593,13 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
+ 
+ 	pr_debug("Loaded the kernel at 0x%lx\n", kernel_load_addr);
+ 
+-	ret = kexec_load_purgatory(image, 0, ppc64_rma_size, true,
+-				   &purgatory_load_addr);
++	ret = kexec_load_purgatory(image, &pbuf);
+ 	if (ret) {
+ 		pr_err("Loading purgatory failed.\n");
+ 		goto out;
+ 	}
+ 
+-	pr_debug("Loaded purgatory at 0x%lx\n", purgatory_load_addr);
++	pr_debug("Loaded purgatory at 0x%lx\n", pbuf.mem);
+ 
+ 	if (initrd != NULL) {
+ 		kbuf.buffer = initrd;
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index fb095ba0c02f..df183585928f 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -334,7 +334,6 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+ 	unsigned long setup_header_size, params_cmdline_sz;
+ 	struct boot_params *params;
+ 	unsigned long bootparam_load_addr, kernel_load_addr, initrd_load_addr;
+-	unsigned long purgatory_load_addr;
+ 	struct bzimage64_data *ldata;
+ 	struct kexec_entry64_regs regs64;
+ 	void *stack;
+@@ -342,6 +341,8 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+ 	unsigned int efi_map_offset, efi_map_sz, efi_setup_data_offset;
+ 	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
+ 				  .top_down = true };
++	struct kexec_buf pbuf = { .image = image, .buf_min = MIN_PURGATORY_ADDR,
++				  .buf_max = ULONG_MAX, .top_down = true };
+ 
+ 	header = (struct setup_header *)(kernel + setup_hdr_offset);
+ 	setup_sects = header->setup_sects;
+@@ -379,14 +380,13 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+ 	 * Load purgatory. For 64bit entry point, purgatory  code can be
+ 	 * anywhere.
+ 	 */
+-	ret = kexec_load_purgatory(image, MIN_PURGATORY_ADDR, ULONG_MAX, 1,
+-				   &purgatory_load_addr);
++	ret = kexec_load_purgatory(image, &pbuf);
+ 	if (ret) {
+ 		pr_err("Loading purgatory failed\n");
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-	pr_debug("Loaded purgatory at 0x%lx\n", purgatory_load_addr);
++	pr_debug("Loaded purgatory at 0x%lx\n", pbuf.mem);
+ 
+ 
+ 	/*
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index f15446be0e25..1cd9c5f49859 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -114,9 +114,6 @@ struct purgatory_info {
+ 	 * relocation. This memory can be freed post image load.
+ 	 */
+ 	void *purgatory_buf;
+-
+-	/* Address where purgatory is finally loaded and is executed from */
+-	unsigned long purgatory_load_addr;
+ };
+ 
+ struct kimage;
+@@ -237,9 +234,7 @@ extern asmlinkage long sys_kexec_load(unsigned long entry,
+ extern int kernel_kexec(void);
+ extern struct page *kimage_alloc_control_pages(struct kimage *image,
+ 						unsigned int order);
+-extern int kexec_load_purgatory(struct kimage *image, unsigned long min,
+-				unsigned long max, int top_down,
+-				unsigned long *load_addr);
++extern int kexec_load_purgatory(struct kimage *image, struct kexec_buf *kbuf);
+ extern int kexec_purgatory_get_set_symbol(struct kimage *image,
+ 					  const char *name, void *buf,
+ 					  unsigned int size, bool get_value);
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 25b44d1a664a..d69d1bf9e7a2 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -669,8 +669,8 @@ static int kexec_purgatory_setup_kbuf(struct purgatory_info *pi,
+ 	int i, ret;
+ 
+ 	sechdrs = (void *)pi->ehdr + pi->ehdr->e_shoff;
+-	bss_align = 1;
+-	bss_sz = 0;
++	kbuf->buf_align = bss_align = 1;
++	kbuf->bufsz = bss_sz = 0;
+ 
+ 	for (i = 0; i < pi->ehdr->e_shnum; i++) {
+ 		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
+@@ -702,7 +702,6 @@ static int kexec_purgatory_setup_kbuf(struct purgatory_info *pi,
+ 	ret = kexec_add_buffer(kbuf);
+ 	if (ret)
+ 		goto out;
+-	pi->purgatory_load_addr = kbuf->mem;
+ 
+ 	return 0;
+ out:
+@@ -836,27 +835,32 @@ static int kexec_apply_relocations(struct kimage *image)
  	return 0;
  }
-diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
-new file mode 100644
-index 000000000000..c4b405d9c713
---- /dev/null
-+++ b/arch/s390/purgatory/Makefile
-@@ -0,0 +1,37 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+OBJECT_FILES_NON_STANDARD := y
-+
-+purgatory-y := head.o purgatory.o string.o sha256.o mem.o
-+
-+targets += $(purgatory-y) purgatory.ro kexec-purgatory.c
-+PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
-+
-+$(obj)/sha256.o: $(srctree)/lib/sha256.c
-+	$(call if_changed_rule,cc_o_c)
-+
-+$(obj)/mem.o: $(srctree)/arch/s390/lib/mem.S
-+	$(call if_changed_rule,as_o_S)
-+
-+$(obj)/string.o: $(srctree)/arch/s390/lib/string.c
-+	$(call if_changed_rule,cc_o_c)
-+
-+LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib
-+LDFLAGS_purgatory.ro += -z nodefaultlib
-+KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes
-+KBUILD_CFLAGS += -Wno-pointer-sign -Wno-sign-compare
-+KBUILD_CFLAGS += -fno-zero-initialized-in-bss -fno-builtin -ffreestanding
-+KBUILD_CFLAGS += -c -MD -Os -m64
-+KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
-+
-+$(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
-+		$(call if_changed,ld)
-+
-+CMD_BIN2C = $(objtree)/scripts/basic/bin2c
-+quiet_cmd_bin2c = BIN2C   $@
-+      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
-+
-+$(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
-+	$(call if_changed,bin2c)
-+
-+obj-y	+= kexec-purgatory.o
-diff --git a/arch/s390/purgatory/head.S b/arch/s390/purgatory/head.S
-new file mode 100644
-index 000000000000..8735409d0280
---- /dev/null
-+++ b/arch/s390/purgatory/head.S
-@@ -0,0 +1,96 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+ 
+-/* Load relocatable purgatory object and relocate it appropriately */
+-int kexec_load_purgatory(struct kimage *image, unsigned long min,
+-			 unsigned long max, int top_down,
+-			 unsigned long *load_addr)
 +/*
-+ * Purgatory setup code
++ * kexec_load_purgatory - Load and relocate the purgatory object.
++ * @image:	Image to add the purgatory to.
++ * @kbuf:	Memory parameters to use.
 + *
-+ * Copyright IBM Corp. 2018
++ * Allocates the memory needed for image->purgatory_info.sechdrs and
++ * image->purgatory_info.purgatory_buf/kbuf->buffer. Caller is responsible
++ * to free the memory after use.
 + *
-+ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
++ * Return: 0 on success, negative errno on error.
 + */
-+
-+#include <linux/linkage.h>
-+#include <asm/asm-offsets.h>
-+#include <asm/page.h>
-+#include <asm/sigp.h>
-+
-+/* The purgatory is the code running between two kernels. It's main purpose
-+ * is to verify that the next kernel was not corrupted after load and to
-+ * start it.
-+ */
-+
-+.macro START_NEXT_KERNEL base
-+	lg	%r4,kernel_entry-\base(%r13)
-+	lg	%r5,load_psw_mask-\base(%r13)
-+	ogr	%r4,%r5
-+	stg	%r4,0(%r0)
-+
-+	xgr	%r0,%r0
-+	diag	%r0,%r0,0x308
-+.endm
-+
-+.text
-+.align PAGE_SIZE
-+ENTRY(purgatory_start)
-+	/* The purgatory might be called after a diag308 so better set
-+	 * architecture and addressing mode.
-+	 */
-+	lhi	%r1,1
-+	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
-+	sam64
-+
-+	larl	%r5,gprregs
-+	stmg	%r6,%r15,0(%r5)
-+
-+	basr	%r13,0
-+.base_crash:
-+
-+	/* Setup stack */
-+	larl	%r15,purgatory_end
-+	aghi	%r15,-160
-+
-+.do_checksum_verification:
-+	brasl	%r14,verify_sha256_digest
-+
-+	cghi	%r2,0		/* checksum match */
-+	jne	.disabled_wait
-+
-+	/* start normal kernel */
-+	START_NEXT_KERNEL .base_crash
-+
-+.disabled_wait:
-+	lpswe	disabled_wait_psw-.base_crash(%r13)
-+
-+
-+load_psw_mask:
-+	.long	0x00080000,0x80000000
-+
-+	.align	8
-+disabled_wait_psw:
-+	.quad	0x0002000180000000
-+	.quad	0x0000000000000000 + .do_checksum_verification
-+
-+gprregs:
-+	.rept	10
-+	.quad	0
-+	.endr
-+
-+purgatory_sha256_digest:
-+	.global purgatory_sha256_digest
-+	.rept	32	/* SHA256_DIGEST_SIZE */
-+	.byte	0
-+	.endr
-+
-+purgatory_sha_regions:
-+	.global purgatory_sha_regions
-+	.rept	16 * __KEXEC_SHA_REGION_SIZE	/* KEXEC_SEGMENTS_MAX */
-+	.byte	0
-+	.endr
-+
-+kernel_entry:
-+	.global kernel_entry
-+	.quad	0
-+
-+	.align	PAGE_SIZE
-+stack:
-+	.skip	PAGE_SIZE
-+	.align	PAGE_SIZE
-+purgatory_end:
-diff --git a/arch/s390/purgatory/purgatory.c b/arch/s390/purgatory/purgatory.c
-new file mode 100644
-index 000000000000..fec67b58b8be
---- /dev/null
-+++ b/arch/s390/purgatory/purgatory.c
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Purgatory code running between two kernels.
-+ *
-+ * Copyright IBM Corp. 2018
-+ *
-+ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
-+ */
-+
-+#include <linux/kexec.h>
-+#include <linux/sha256.h>
-+#include <linux/string.h>
-+#include <asm/purgatory.h>
-+
-+struct kexec_sha_region purgatory_sha_regions[KEXEC_SEGMENT_MAX];
-+u8 purgatory_sha256_digest[SHA256_DIGEST_SIZE];
-+
-+u64 kernel_entry;
-+
-+int verify_sha256_digest(void)
-+{
-+	struct kexec_sha_region *ptr, *end;
-+	u8 digest[SHA256_DIGEST_SIZE];
-+	struct sha256_state sctx;
-+
-+	sha256_init(&sctx);
-+	end = purgatory_sha_regions + ARRAY_SIZE(purgatory_sha_regions);
-+
-+	for (ptr = purgatory_sha_regions; ptr < end; ptr++)
-+		sha256_update(&sctx, (uint8_t *)(ptr->start), ptr->len);
-+
-+	sha256_final(&sctx, digest);
-+
-+	if (memcmp(digest, purgatory_sha256_digest, sizeof(digest)))
-+		return 1;
-+
-+	return 0;
-+}
++int kexec_load_purgatory(struct kimage *image, struct kexec_buf *kbuf)
+ {
+ 	struct purgatory_info *pi = &image->purgatory_info;
+ 	int ret;
+-	struct kexec_buf kbuf = { .image = image, .bufsz = 0, .buf_align = 1,
+-				  .buf_min = min, .buf_max = max,
+-				  .top_down = top_down };
+ 
+ 	if (kexec_purgatory_size <= 0)
+ 		return -EINVAL;
+ 
+ 	pi->ehdr = (const Elf_Ehdr *)kexec_purgatory;
+ 
+-	ret = kexec_purgatory_setup_kbuf(pi, &kbuf);
++	ret = kexec_purgatory_setup_kbuf(pi, kbuf);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = kexec_purgatory_setup_sechdrs(pi, &kbuf);
++	ret = kexec_purgatory_setup_sechdrs(pi, kbuf);
+ 	if (ret)
+ 		goto out_free_kbuf;
+ 
+@@ -864,7 +868,6 @@ int kexec_load_purgatory(struct kimage *image, unsigned long min,
+ 	if (ret)
+ 		goto out;
+ 
+-	*load_addr = pi->purgatory_load_addr;
+ 	return 0;
+ out:
+ 	vfree(pi->sechdrs);
 -- 
 2.13.5
