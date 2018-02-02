@@ -1,84 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752852AbeBBVHC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 16:07:02 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37092 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeBBVGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 16:06:55 -0500
-Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
- select_idle_sibling using SMT balance
+        id S1752795AbeBBVJ3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 16:09:29 -0500
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:36988 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752341AbeBBVJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 16:09:21 -0500
+Date: Fri, 2 Feb 2018 21:08:20 +0000
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 To: Peter Zijlstra <peterz@infradead.org>
-Cc: subhra mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        dhaval.giani@oracle.com
-References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
- <20180201123335.GV2249@hirez.programming.kicks-ass.net>
- <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
- <20180202195943.GR2269@hirez.programming.kicks-ass.net>
-From: Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <25d67bd2-cbe7-2c2a-e89a-13a7ca5adc10@oracle.com>
-Date: Fri, 2 Feb 2018 16:06:32 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        Stafford Horne <shorne@gmail.com>, Will Deacon <will.deacon@arm.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: asm-generic: Disallow no-op mb() for SMP systems
+Message-ID: <20180202210820.48ed7f87@alans-desktop>
+In-Reply-To: <20180202202549.GT2269@hirez.programming.kicks-ass.net>
+References: <20180131130034.GR2269@hirez.programming.kicks-ass.net>
+        <201802030326.M4zaX4v1%fengguang.wu@intel.com>
+        <20180202202549.GT2269@hirez.programming.kicks-ass.net>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180202195943.GR2269@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8793 signatures=668661
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802020253
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/2/2018 2:59 PM, Peter Zijlstra wrote:
-> On Fri, Feb 02, 2018 at 11:53:40AM -0500, Steven Sistare wrote:
->> On 2/1/2018 7:33 AM, Peter Zijlstra wrote:
->>> On Mon, Jan 29, 2018 at 03:31:02PM -0800, subhra mazumdar wrote:
->>>> +	rcu_read_lock();
->>>> +	sd = rcu_dereference(per_cpu(sd_llc, this_cpu));
->>>> +	if (util) {
->>>> +		for_each_lower_domain(sd) {
->>>> +			if (sd->level == 0)
->>>> +				break;
->>>
->>> afaict you really only need this for the core, and here you're assuming
->>> everything below the LLC is cores. Would it not be much clearer if you
->>> introduce sd_core.
->>>
->>> As is, for_each_lower_domain includes the starting domain, sd->group
->>> then is the first core group for this cpu. But then you continue to the
->>> smt domain (on Intel, on other architectures there could be a cluster
->>> domain in between) and then you bail using that sd->level == 0 hack
->>> because otherwise things would go *bang*.
->>
->> Hi Peter,
->>
->> The code here and in smt_balance intentionally visits each level between
->> the llc and smt, including core-cluster on architectures that define it.
->> smt_balance thus has the chance to randomly pick a better cluster,
->> and then within that cluster randomly pick a better core.  It makes sense,
->> as resources are shared within a cluster, and choosing a less loaded cluster
->> should give better performance.  As you suggest in a few other places,
->> it would be nice to see performance results for this case.  We have
->> SPARC processors with core clusters.
->>
+On Fri, 2 Feb 2018 21:25:49 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Sat, Feb 03, 2018 at 04:00:35AM +0800, kbuild test robot wrote:
+> > Hi Peter,
+> > 
+> > I love your patch! Yet something to improve:  
 > 
-> But then you get that atomic crud to contend on the cluster level, which
-> is even worse than it contending on the core level.
+> Seriously? Bots have feelings?
+> 
+> > [auto build test ERROR on asm-generic/master]
+> > [also build test ERROR on v4.15 next-20180202]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> > 
+> > url:    https://github.com/0day-ci/linux/commits/Peter-Zijlstra/asm-generic-Disallow-no-op-mb-for-SMP-systems/20180203-000108
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+> > config: m32r-usrv_defconfig (attached as .config)
+> > compiler: m32r-linux-gcc (GCC) 7.2.0  
+> 
+> Awesome, another broken architecture.. and this one is Orphaned :-(
+> No maintainer to bug..
 
-True, but it can still be a net win if we make better scheduling decisions.
-A saving grace is that the atomic counter is only updated if the cpu
-makes a transition from idle to busy or vice versa.
+Renesas claim to still support the processor family so perhaps they can
+provide a maintainer if you instead submit a patch to remove it from the
+tree ;-)
 
-We need data for this type of system, showing improvements for normal
-workloads, and showing little downside for a high context switch rate
-torture test.  
+>From the documentation however the processor only does explicit dual
+issue instructions, and the SMP is cache coherent so I'm not convinced
+there is a problem with it.
 
-- Steve
+
+Alan
