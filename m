@@ -1,64 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751916AbeBBW5N (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 17:57:13 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41771 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751468AbeBBW5F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 17:57:05 -0500
-X-Google-Smtp-Source: AH8x225xypDUHhM24EmZE3aQCRnbBrAV+o8izsdGLg6++jMq2w9YugAeqoDshxyQ//dZ2JBTEyQSvw==
-Date: Fri, 2 Feb 2018 14:57:01 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Jeremy McNicoll <jmcnicol@redhat.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Will Newton <will.newton@gmail.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Chris Lew <clew@quicinc.com>
-Subject: Re: [PATCH 2/5] rpmsg: smd: Create device for all channels
-Message-ID: <20180202225701.GJ12728@builder>
-References: <20171212235857.10432-1-bjorn.andersson@linaro.org>
- <20171212235857.10432-3-bjorn.andersson@linaro.org>
- <20180127010152.GA32527@mini-rhel.redhat.com>
+        id S1752018AbeBBXCa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 18:02:30 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:36286 "EHLO smtp.gentoo.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751804AbeBBXCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 18:02:25 -0500
+Date: Fri, 2 Feb 2018 23:02:20 +0000
+From: Sergei Trofimovich <slyfox@gentoo.org>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ia64: fix ptrace(PTRACE_GETREGS) (unbreaks strace, gdb)
+Message-ID: <20180202230220.13b74e8c@sf>
+In-Reply-To: <20180202222231.23favlxecnxcencr@agluck-desk>
+References: <20180202221224.16597-1-slyfox@gentoo.org>
+        <20180202222231.23favlxecnxcencr@agluck-desk>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180127010152.GA32527@mini-rhel.redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 26 Jan 17:01 PST 2018, Jeremy McNicoll wrote:
+On Fri, 2 Feb 2018 14:22:32 -0800
+"Luck, Tony" <tony.luck@intel.com> wrote:
 
-> On Tue, Dec 12, 2017 at 03:58:54PM -0800, Bjorn Andersson wrote:
-[..]
+> On Fri, Feb 02, 2018 at 10:12:24PM +0000, Sergei Trofimovich wrote:
+> > The strace breakage looks like that:
+> > ./strace: get_regs: get_regs_error: Input/output error
 > > 
-> > The result of this patch is that we will actively open the RPM channel
-> > even though it's left in a state other than "opening" after the boot
-> > loader's closing of the channel.
-> >
+> > It happens because ia64 needs to load unwind tables
+> > to read certain registers. Unwind tables fail to load
+> > due to GCC quirk on the following code:
+> > 
+> >     extern char __end_unwind[];
+> >     const struct unw_table_entry *end = (struct unw_table_entry *)table_end;
+> >     table->end = segment_base + end[-1].end_offset;
+> > 
+> > GCC does not generate correct code for this single memory
+> > reference after constant propagation (see https://gcc.gnu.org/PR84184).  
 > 
-> Its been a while since I looked at this closely but, isn't the result
-> of this patch that we now will create a channel / register a platform
-> device if the state of the channel is left in any state. 
+> I'm not seeing this ... probably because I build with
+> a pre-historic 4.3.4 version of gcc.
 > 
+> Do you know which version(s) are affected? I'm not looking
+> for an exhaustive list, just the one on which you found this
+> would be good.
+> 
+> -Tony
 
-Correct, we will create devices for all channels found (on the specific
-edge), rather than just the ones that are in opening state. Looking
-through a few platforms does however indicate that the two cases where
-channels appear but are not in this state are:
+Original bug https://bugs.gentoo.org/518130 claims regression appeared
+around gcc-4.5. Locally am seeing the problem with gcc-6.4.0, gcc-7.2.0 and
+gcc-8 (HEAD).
 
-1) The rpm_request channel when LK has been communicating with the RPM
-before jumping to the kernel.
+-- 
 
-2) You stop a remote processor, switch firmware to one with less
-features and the start it again. Any channels not used by the new
-firmware will still be found and we will fail to open them - as
-described above. I would be surprised if this would happen in reality.
-
-
-So with the added handshake mechanism we're supporting #1 and we deal
-with #2 - if it ever would happen.
-
-Regards,
-Bjorn
+  Sergei
