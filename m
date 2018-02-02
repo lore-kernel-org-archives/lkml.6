@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755236AbeBBCeG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 21:34:06 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.216]:48721 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754125AbeBBCd4 (ORCPT
+        id S1755238AbeBBCg3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 21:36:29 -0500
+Received: from gateway24.websitewelcome.com ([192.185.50.66]:48413 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753803AbeBBCgU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 21:33:56 -0500
-Date: Thu, 01 Feb 2018 20:33:52 -0600
-Message-ID: <20180201203352.Horde.xv5XUdiSqNDHlFujzwjX6S0@gator4166.hostgator.com>
+        Thu, 1 Feb 2018 21:36:20 -0500
+Date: Thu, 01 Feb 2018 20:32:05 -0600
+Message-ID: <20180201203205.Horde.YtKPm_GK0EOCMEr9mvnfcDd@gator4166.hostgator.com>
 From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: David Laight <David.Laight@aculab.com>
+To: Andrew Lunn <andrew@lunn.ch>
 Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         "Wong Hoi Sing, Edison" <hswong3i@gmail.com>,
@@ -23,8 +23,8 @@ Subject: Re: [PATCH] tcp_lp: use 64-bit arithmetic instead of 32-bit
 References: <20180201002407.GA1608@embeddedgus>
  <20180201003236.06143fd0@alans-desktop>
  <20180131190749.Horde.bsc7GhewsZwdnkmDtMlSwWO@gator4166.hostgator.com>
- <ef625a4f15144822a037ddabc33a4134@AcuMS.aculab.com>
-In-Reply-To: <ef625a4f15144822a037ddabc33a4134@AcuMS.aculab.com>
+ <20180201015126.GH16547@lunn.ch>
+In-Reply-To: <20180201015126.GH16547@lunn.ch>
 User-Agent: Horde Application Framework 5
 Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
@@ -37,41 +37,58 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 108.167.133.22
 X-Source-L: Yes
-X-Exim-ID: 1ehRAn-000vkd-LE
+X-Exim-ID: 1ehR93-000u4M-9t
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:50091
+X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:43053
 X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 11
+X-Email-Count: 2
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+Hi Andrew,
 
-Quoting David Laight <David.Laight@aculab.com>:
+Quoting Andrew Lunn <andrew@lunn.ch>:
 
->> > The question you need to ask is 'can it overflow 32bit maths', otherwise
->> > you are potentially making the system do extra work for no reason.
+> On Wed, Jan 31, 2018 at 07:07:49PM -0600, Gustavo A. R. Silva wrote:
+>>
+>> Hi Alan,
+>>
+>> Quoting Alan Cox <gnomes@lxorguk.ukuu.org.uk>:
+>>
+>> >On Wed, 31 Jan 2018 18:24:07 -0600
+>> >"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+>> >
+>> >>Cast to s64 some variables and a macro in order to give the
+>> >>compiler complete information about the proper arithmetic to
+>> >>use. Notice that these elements are used in contexts that
+>> >>expect expressions of type s64 (64 bits, signed).
+>> >>
+>> >>Currently such expression are being evaluated using 32-bit
+>> >>arithmetic.
+>> >
+>> >The question you need to ask is 'can it overflow 32bit maths', otherwise
+>> >you are potentially making the system do extra work for no reason.
 >> >
 >>
->> Yeah, I get your point and it seems that in this particular case there
->> is no risk of a 32bit overflow, but in general and IMHO as the code
->> evolves, the use of incorrect arithmetic may have security
->> implications in the future, so I advocate for code correctness in this
->> case.
+>> Yeah, I get your point and it seems that in this particular case there is no
+>> risk of a 32bit overflow, but in general and IMHO as the code evolves, the
+>> use of incorrect arithmetic may have security implications in the future, so
+>> I advocate for code correctness in this case.
 >
-> Even if the variable are 64bit you still need to worry (maybe less)
-> about arithmetic overflow.
-> The only real way to avoid overflow is to understand the domain
-> of the values being used.
+> Hi Gustavo
+>
+> Is this on the hotpath? How much overhead does it add to 32 bit
+> architectures which don't have 64 bit arithmetic in hardware? There
+> are a lot of embedded systems which are 32 bit.
 >
 
-Yep, that's correct.
+I'm sorry, I don't have access to 32-bit hardware at the moment.
 
-Thanks for the feedback.
+Thanks
 --
 Gustavo
