@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224CPDGPWJoohhuZXN906Kgx0mjrqwMFjH5/6RxTUyFXvpyV90auCxFlGeoKI5bupRoL9QGE
-ARC-Seal: i=1; a=rsa-sha256; t=1517591143; cv=none;
+X-Google-Smtp-Source: AH8x227eDlpi/MjeEjoeSm/IJd8y92d/qjVugltVHS837uD8gjky+c22fMHEOODXsTRg8ZY01IVl
+ARC-Seal: i=1; a=rsa-sha256; t=1517591141; cv=none;
         d=google.com; s=arc-20160816;
-        b=B2fRjfNyihf7UcLx3361m1GgAL5j8Ms7iR/xu9o8eB6geVTN66SttacqqE4xXaVptl
-         0ia2sSDD/Bpir6Uw4VOT6EXzcKA7stCtsyJJ+UY3bPCAFvUUqlY9Ufi/+L5PYPnySimI
-         BIibCHjI4rrYnwMGroFrxcxpAmqAXTSWjGSzF2PtEP+CmbtYgRNyB7mKxpiOuMfV7M8Q
-         wNjs/96dJwPSIgsiZiHGQOimKUBo9l3rZDimtg/kuveu6eMUdrEVUFN7f8Odm/I/QaFe
-         NYwhBilgFQkPoczYYxYaThEwM6eev+2VOjy/jXTr1RbjelIVUVDv3PS8B9aMX4xjJbf2
-         OMkw==
+        b=VtCZgDmVy7WiaIx0LlQlQ074YMaD6Uq2AUbknyg1EQCGbVv3N1iKwmKz3VyWWZp72Q
+         ya7sLJB2mM+7PvbQQrM0RIcMZbQ2TgH4NLnrSofbaergKtxKupiG+yKRYSPimk39Qgbm
+         nJpoegCjPG1XND3BEn4kWl5mqWWqW2icsb4x9fog0xc24f9hfBadJzjFIxMdWaLBkrpb
+         FSoGI4xm52NgDKXVYnNozwm/4Al7xwCExGEe+6Z7yUSmYfsuZXYpGiJ1GoH2vMEe9Exe
+         aXIEjWJql8vn5JTxlT50Wpn3++0foeWmrvxaZWrug3jqBIlzBckfenDDIKYUIpieBGpS
+         cWIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pJO2YoNS0t40sxDws2oiypI324NATcc7hFAqxqlgwSU=;
-        b=OX9OhtQHQZzUjena58TqBEnQ274bgsJtHbknURCQU4BgbxIuASNDLl01bEVYA9xwEh
-         YovNPo9/acOx9peN673ifBK1TnXVDnu4B7eLGLI7NNC4VpfuLr/XTlUlYWGiUDaPX+eP
-         3LqUM63IIMgBKpSjU/lzFi64nJ9qNVUSL9z2329B37GdtlFZIVqF4Ce+G45Kf91TOetr
-         9zo3CuGNp0i+aQ7IUkTQsbS3u8K2Sb7FqwnxyVnD+qtms5cCsLlb9kurDBfd+KL+spIG
-         Hvx+ROsagvvlsdCD0SHO3SQRwiz47r7IMusVenDpHQb7AIjF5EnrX8WqW1xUPaHIohz7
-         EQPw==
+        bh=dXjSdb29exT6xaMPPLOKVE8PzJ+RnaCZ06SQCe9e5gE=;
+        b=VlX3gvvQq5teF7SVVCYOjqxn1PrzUkN0NKL8obMVbQhMT7nRrtldYA1Gz5HFPsIrkL
+         ThbzHY0RFFLYL9EUD7HKECecTwEpZPWE+4jieiNV4ADEibdsBptaMKGpDjymx/xgTTjQ
+         T2hMgubzynq545y6FOYjFRxJ7IbGQqe2b/Be1m0VPgEQsxQvQD8fS2G0njn+ykZiPvMo
+         ++3UxQAE+hltr/Y+CMN9tIA5Hr3E0KBTB90QVikboI2Yhw7STaCBoG4mvQJS8UluFhJ2
+         2SiIiwDkBmkREL9URxK9CjsFN4ni/Te1hxP268JzC1gNq+S9yFN2Hka15Fo6sg/IV/Xz
+         oQEA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+	Jon Mason <jon.mason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 49/86] drm/amdgpu: dont try to move pinned BOs
-Date: Fri,  2 Feb 2018 17:58:09 +0100
-Message-Id: <20180202140826.759017123@linuxfoundation.org>
+Subject: [PATCH 4.9 66/86] ARM: dts: NSP: Fix PPI interrupt types
+Date: Fri,  2 Feb 2018 17:58:26 +0100
+Message-Id: <20180202140828.759363734@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309650985590160?=
-X-GMAIL-MSGID: =?utf-8?q?1591309650985590160?=
+X-GMAIL-THRID: =?utf-8?q?1591309648545488098?=
+X-GMAIL-MSGID: =?utf-8?q?1591309648545488098?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,32 +49,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Christian K�nig" <christian.koenig@amd.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
 
-[ Upstream commit 6edc6910ba4cd6eab309263539c8f09b8ad772bf ]
+[ Upstream commit 5f1aa51c7a1eef1c5a60b8334e32c89904964245 ]
 
-Never try to move pinned BOs during CS.
+Booting a kernel results in the kernel warning us about the following
+PPI interrupts configuration:
+[    0.105127] smp: Bringing up secondary CPUs ...
+[    0.110545] GIC: PPI11 is secure or misconfigured
+[    0.110551] GIC: PPI13 is secure or misconfigured
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fix this by using the appropriate edge configuration for PPI11 and
+PPI13, this is similar to what was fixed for Northstar (BCM5301X) in
+commit 0e34079cd1f6 ("ARM: dts: BCM5301X: Correct GIC_PPI interrupt
+flags").
+
+Fixes: 7b2e987de207 ("ARM: NSP: add minimal Northstar Plus device tree")
+Fixes: 1a9d53cabaf4 ("ARM: dts: NSP: Add TWD Support to DT")
+Acked-by: Jon Mason <jon.mason@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/bcm-nsp.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-@@ -416,6 +416,10 @@ static bool amdgpu_cs_try_evict(struct a
- 		if (candidate == lobj)
- 			break;
+--- a/arch/arm/boot/dts/bcm-nsp.dtsi
++++ b/arch/arm/boot/dts/bcm-nsp.dtsi
+@@ -85,7 +85,7 @@
+ 		timer@20200 {
+ 			compatible = "arm,cortex-a9-global-timer";
+ 			reg = <0x20200 0x100>;
+-			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_PPI 11 IRQ_TYPE_EDGE_RISING>;
+ 			clocks = <&periph_clk>;
+ 		};
  
-+		/* We can't move pinned BOs here */
-+		if (bo->pin_count)
-+			continue;
-+
- 		other = amdgpu_mem_type_to_domain(bo->tbo.mem.mem_type);
+@@ -93,7 +93,7 @@
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0x20600 0x20>;
+ 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_HIGH)>;
++						  IRQ_TYPE_EDGE_RISING)>;
+ 			clocks = <&periph_clk>;
+ 		};
  
- 		/* Check if this BO is in one of the domains we need space for */
