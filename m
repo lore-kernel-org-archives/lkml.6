@@ -1,51 +1,77 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226VXWuaUN6HhPXpXQihUsSeioZKo8pIOC3/2qjC09n/JnPd9Oi4ujLRgFwL/RZGVZfDlZZD
-ARC-Seal: i=1; a=rsa-sha256; t=1517590875; cv=none;
-        d=google.com; s=arc-20160816;
-        b=OZ5TgrlGerSii03g3cTMT9RL037bsnhWOYMdpw7kJ+Y6rbT3PI3W8BrpMkgaLP8QKr
-         i2c4LnntnwQhB4difOoFilyUyx6GBqiWirRKckakAizJwPNQzuhzTTvhvffNeoC23wSR
-         TVGnS0Xdzv9Up/aqmz0ePRHph7EK5eOMCMMOZXt3aAFED4Ap/nGLue+aVcK2kzyiOUpZ
-         VZ9ywM8PfU1A2J/+mtBcU5/6wRFAS/HQAOJJWGgF+7DQziM9BqFJVWhsFRyETqRgycPE
-         n6ZATVcQ8J2KG0pEBYGlP1ZlbOf7HRwS7L34bV/w7rJeyNHP0pBN+Av0pBCL6hcMOnbE
-         0a6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=/HtVtY/ucxHMFrfN5+8yi8nFBgiQmCPriXQISLfgYLk=;
-        b=OiAC1ht8az1CJ8xyXcSJzAT+cFcMeFhn2nN8XNgcCe3w+zDtaLQlMDa4DkjmwwFvbS
-         CBE8hZ2ClGyjvY9t7gdunmGPdOvCr5Ot7VNNjTAkW5DHeKvTVtEGy8jX+cea5zXs9Gc7
-         KHOhT6qStauhSPKIHcWLW9lCLTggNudoa8OJNoWkX0WqV86amII7OeqAoz6l8Vpy0Aht
-         NDZqtkJdHvGSed1ltkklN/sR1+bZdGp7Ip/596g1qsnWj0QSaZ8OF2OwlSrX1rI4uh+M
-         QgnArXxwdQraDOKmdroEYUqzAMteEsJpN1X7lFIK//1KT1AiiDFmnBXfndKUBRSoakO3
-         DXvg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2844860-1517590871-2-8861766658535015439
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517590870; b=u0wo8VkWI+v9injhu977Lq+8e6Gfrgmy/mK9KnZ/vwOlJBH
+    sEakcErLocibFmG79wClw5t0sMQea1SVvS27cFrPXdVw4EGg83pm+VEgcw29xOix
+    k+KbgKXQkfm4d8ZdezCrw6GSYG5y5G+WyDYaCK7vhFTzmOS7IYr9zPrV/uLiwi/X
+    awoubhAHRjz3CHvhW0xC6CjWDUwwtCHvJyNGeXcTLGK66LjcP0K967VR9Vnx4CUj
+    5yoZOKPDsEvbavWTcF94ZVFmYwodAShOS8QeK2qfEhuViNaPFPtCXoF41NC4cUjc
+    SrhDGpMMhrCHGoFnzYY3jqMqhaIqe0Nl8o38gbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517590870; bh=U/Wcbuhnv8UoAVWlSKmr/tiQN8
+    QPSljW/pkWlG8FGHc=; b=m/B90gB9Icl5XoxAYWWXD3dhpeP8B5rZL/ksIkh12S
+    ykswLJovE7WAk9Pu+Y2nRTba93273UoUEhPzV5Jk+gdWcQVmk1AvyDoGZc9M5zxM
+    DWqnAFLVbyLWsVYwQdtb8vrYeLTahYeQliFY19D8C3IhVCtEEk5TYSctL94bezBE
+    4xxGvke0GGtrk3Dz7Fa32nqK/aYKNwzxoiCws0Y3sEczeUK2jRFL641LwAcKsIdJ
+    /DYrOULzdCLWWz7am19NCUVpsE+jRzUDncQim46IRNmS8X3hggdE+LGJs2q89TGx
+    zs7UlpnnayFahzfyKEv+NUbYuQBL6wNDeaA28nOFWwHA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752675AbeBBRBI (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:01:08 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34946 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752648AbeBBRAy (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:00:54 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Nikita Leshenko <nikita.leshchenko@oracle.com>,
-	Liran Alon <liran.alon@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	Steve Rutherford <srutherford@google.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 26/67] KVM: x86: ioapic: Preserve read-only values in the redirection table
-Date: Fri,  2 Feb 2018 17:57:55 +0100
-Message-Id: <20180202140818.348657591@linuxfoundation.org>
+        stable@vger.kernel.org, Eduardo Otubo <otubo@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 37/67] xen-netfront: remove warning when unloading module
+Date: Fri,  2 Feb 2018 17:58:06 +0100
+Message-Id: <20180202140819.696530973@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309369903259525?=
-X-GMAIL-MSGID: =?utf-8?q?1591309369903259525?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,53 +79,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikita Leshenko <nikita.leshchenko@oracle.com>
+From: Eduardo Otubo <otubo@redhat.com>
 
 
-[ Upstream commit b200dded0a6974a3b69599832b2203483920ab25 ]
+[ Upstream commit 5b5971df3bc2775107ddad164018a8a8db633b81 ]
 
-According to 82093AA (IOAPIC) manual, Remote IRR and Delivery Status are
-read-only. QEMU implements the bits as RO in commit 479c2a1cb7fb
-("ioapic: keep RO bits for IOAPIC entry").
+v2:
+ * Replace busy wait with wait_event()/wake_up_all()
+ * Cannot garantee that at the time xennet_remove is called, the
+   xen_netback state will not be XenbusStateClosed, so added a
+   condition for that
+ * There's a small chance for the xen_netback state is
+   XenbusStateUnknown by the time the xen_netfront switches to Closed,
+   so added a condition for that.
 
-Signed-off-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Reviewed-by: Steve Rutherford <srutherford@google.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+When unloading module xen_netfront from guest, dmesg would output
+warning messages like below:
+
+  [  105.236836] xen:grant_table: WARNING: g.e. 0x903 still in use!
+  [  105.236839] deferring g.e. 0x903 (pfn 0x35805)
+
+This problem relies on netfront and netback being out of sync. By the time
+netfront revokes the g.e.'s netback didn't have enough time to free all of
+them, hence displaying the warnings on dmesg.
+
+The trick here is to make netfront to wait until netback frees all the g.e.'s
+and only then continue to cleanup for the module removal, and this is done by
+manipulating both device states.
+
+Signed-off-by: Eduardo Otubo <otubo@redhat.com>
+Acked-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/ioapic.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/xen-netfront.c |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -268,6 +268,7 @@ static void ioapic_write_indirect(struct
- {
- 	unsigned index;
- 	bool mask_before, mask_after;
-+	int old_remote_irr, old_delivery_status;
- 	union kvm_ioapic_redirect_entry *e;
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -86,6 +86,8 @@ struct netfront_cb {
+ /* IRQ name is queue name with "-tx" or "-rx" appended */
+ #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
  
- 	switch (ioapic->ioregsel) {
-@@ -290,6 +291,9 @@ static void ioapic_write_indirect(struct
- 			return;
- 		e = &ioapic->redirtbl[index];
- 		mask_before = e->fields.mask;
-+		/* Preserve read-only fields */
-+		old_remote_irr = e->fields.remote_irr;
-+		old_delivery_status = e->fields.delivery_status;
- 		if (ioapic->ioregsel & 1) {
- 			e->bits &= 0xffffffff;
- 			e->bits |= (u64) val << 32;
-@@ -297,6 +301,8 @@ static void ioapic_write_indirect(struct
- 			e->bits &= ~0xffffffffULL;
- 			e->bits |= (u32) val;
- 		}
-+		e->fields.remote_irr = old_remote_irr;
-+		e->fields.delivery_status = old_delivery_status;
++static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
++
+ struct netfront_stats {
+ 	u64			packets;
+ 	u64			bytes;
+@@ -2037,10 +2039,12 @@ static void netback_changed(struct xenbu
+ 		break;
  
- 		/*
- 		 * Some OSes (Linux, Xen) assume that Remote IRR bit will
+ 	case XenbusStateClosed:
++		wake_up_all(&module_unload_q);
+ 		if (dev->state == XenbusStateClosed)
+ 			break;
+ 		/* Missed the backend's CLOSING state -- fallthrough */
+ 	case XenbusStateClosing:
++		wake_up_all(&module_unload_q);
+ 		xenbus_frontend_closed(dev);
+ 		break;
+ 	}
+@@ -2146,6 +2150,20 @@ static int xennet_remove(struct xenbus_d
+ 
+ 	dev_dbg(&dev->dev, "%s\n", dev->nodename);
+ 
++	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
++		xenbus_switch_state(dev, XenbusStateClosing);
++		wait_event(module_unload_q,
++			   xenbus_read_driver_state(dev->otherend) ==
++			   XenbusStateClosing);
++
++		xenbus_switch_state(dev, XenbusStateClosed);
++		wait_event(module_unload_q,
++			   xenbus_read_driver_state(dev->otherend) ==
++			   XenbusStateClosed ||
++			   xenbus_read_driver_state(dev->otherend) ==
++			   XenbusStateUnknown);
++	}
++
+ 	xennet_disconnect_backend(info);
+ 
+ 	unregister_netdev(info->netdev);
