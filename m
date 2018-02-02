@@ -1,125 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751988AbeBBJd6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 04:33:58 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:17520 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750805AbeBBJc6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 04:32:58 -0500
-X-UUID: 783c2ddcd2084a4c82e8cdfc52963c33-20180202
-Message-ID: <1517563970.24622.9.camel@mtkswgap22>
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Rob Herring <robh+dt@kernel.org>
-CC: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Frank Rowand" <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Date: Fri, 2 Feb 2018 17:32:50 +0800
-In-Reply-To: <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1751664AbeBBJgi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 04:36:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42294 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751425AbeBBJgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 04:36:33 -0500
+Date: Fri, 2 Feb 2018 10:36:32 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH] mm/migrate: Change migration reason MR_CMA as
+ MR_CONTIG_RANGE
+Message-ID: <20180202093632.GQ21609@dhcp22.suse.cz>
+References: <20180130030714.6790-1-khandual@linux.vnet.ibm.com>
+ <20180202091518.18798-1-khandual@linux.vnet.ibm.com>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180202091518.18798-1-khandual@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-01-31 at 10:02 -0600, Rob Herring wrote:
-> On Wed, Jan 31, 2018 at 1:41 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> > A root complex usually consist of a host bridge and multiple P2P bridges,
-> > and someone may express that in the form of a root node with many subnodes
-> > and list all four interrupts for each slot (child node) in the root node
-> > like this:
-> >
-> >         pcie-controller {
-> >                 ...
-> >                 interrupt-map-mask = <0xf800 0 0 7>;
-> >                 interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
-> >                                  0x0800 0 0 {INTx} &{interrupt parent} ...>;
-> >
-> >                 pcie@0,0 {
-> >                         reg = <0x0000 0 0 0 0>;
-> >                         ...
-> >                 };
-> >
-> >                 pcie@1,0 {
-> >                         reg = <0x0800 0 0 0 0>;
-> >                         ...
-> >                 };
-> >         };
-> >
-> > As shown above, we'd like to propagate IRQs from a root port to the devices
-> > in the hierarchy below it in this way.  However, it seems that the current
-> > parser couldn't handle such cases and will get something unexpected below:
-> >
-> >         pcieport 0000:00:01.0: assign IRQ: got 213
-> >         igb 0000:01:00.0: assign IRQ: got 212
-> >
-> > There is a device which is connected to 2nd slot, but the port doesn't share
-> > the same IRQ with its downstream devices.  The problem here is that, if the
-> > loop found a P2P bridge, it wouldn't check whether the reg property exists
-> > in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
-> > thus the subsequent flow couldn't correctly resolve them.
-> >
-> > Fix this by adding a check to fallback to standard device tree parsing.
-> >
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> > Please refer to the previous discussion thread: https://patchwork.ozlabs.org/patch/829108/
-> > ---
-> >  drivers/of/of_pci_irq.c | 14 ++++++++++++--
-> >  1 file changed, 12 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/of/of_pci_irq.c b/drivers/of/of_pci_irq.c
-> > index 3a05568..e445866 100644
-> > --- a/drivers/of/of_pci_irq.c
-> > +++ b/drivers/of/of_pci_irq.c
-> > @@ -86,8 +86,18 @@ int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *out_irq
-> >         out_irq->np = ppnode;
-> >         out_irq->args_count = 1;
-> >         out_irq->args[0] = pin;
-> > -       laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
-> > -       laddr[1] = laddr[2] = cpu_to_be32(0);
-> > +
-> > +       if (!dn && ppnode) {
+On Fri 02-02-18 14:45:18, Anshuman Khandual wrote:
+> alloc_contig_range() initiates compaction and eventual migration for
+> the purpose of either CMA or HugeTLB allocation. At present, reason
+> code remains the same MR_CMA for either of these cases. Lets make it
+> MR_CONTIG_RANGE which will appropriately reflect reason code in both
+> these cases.
+
+It is not very specific but I guess this is better than inventing a code
+for each source. If we ever get to need distinguish all of them then we
+should better mark a function which calls the allocator or something
+like that.
+
+> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  arch/powerpc/mm/mmu_context_iommu.c | 2 +-
+>  include/linux/migrate.h             | 2 +-
+>  include/trace/events/migrate.h      | 2 +-
+>  mm/page_alloc.c                     | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> I would think whether you have a child device in DT or not is
-> irrelevant. If it's the bridge address you need to look at for
-> resolving interrupts, that would be true regardless.
+> diff --git a/arch/powerpc/mm/mmu_context_iommu.c b/arch/powerpc/mm/mmu_context_iommu.c
+> index 91ee2231c527..4c615fcb0cf0 100644
+> --- a/arch/powerpc/mm/mmu_context_iommu.c
+> +++ b/arch/powerpc/mm/mmu_context_iommu.c
+> @@ -111,7 +111,7 @@ static int mm_iommu_move_page_from_cma(struct page *page)
+>  	put_page(page); /* Drop the gup reference */
+>  
+>  	ret = migrate_pages(&cma_migrate_pages, new_iommu_non_cma_page,
+> -				NULL, 0, MIGRATE_SYNC, MR_CMA);
+> +				NULL, 0, MIGRATE_SYNC, MR_CONTIG_RANGE);
+>  	if (ret) {
+>  		if (!list_empty(&cma_migrate_pages))
+>  			putback_movable_pages(&cma_migrate_pages);
+> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+> index a732598fcf83..7e7e2606bb4c 100644
+> --- a/include/linux/migrate.h
+> +++ b/include/linux/migrate.h
+> @@ -25,7 +25,7 @@ enum migrate_reason {
+>  	MR_SYSCALL,		/* also applies to cpusets */
+>  	MR_MEMPOLICY_MBIND,
+>  	MR_NUMA_MISPLACED,
+> -	MR_CMA,
+> +	MR_CONTIG_RANGE,
+>  	MR_TYPES
+>  };
+>  
+> diff --git a/include/trace/events/migrate.h b/include/trace/events/migrate.h
+> index bcf4daccd6be..711372845945 100644
+> --- a/include/trace/events/migrate.h
+> +++ b/include/trace/events/migrate.h
+> @@ -20,7 +20,7 @@
+>  	EM( MR_SYSCALL,		"syscall_or_cpuset")		\
+>  	EM( MR_MEMPOLICY_MBIND,	"mempolicy_mbind")		\
+>  	EM( MR_NUMA_MISPLACED,	"numa_misplaced")		\
+> -	EMe(MR_CMA,		"cma")
+> +	EMe(MR_CONTIG_RANGE,	"contig_range")
+>  
+>  /*
+>   * First define the enums in the above macros to be exported to userspace
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 242565855d05..b9a22e16b4cf 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -7622,7 +7622,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
+>  		cc->nr_migratepages -= nr_reclaimed;
+>  
+>  		ret = migrate_pages(&cc->migratepages, new_page_alloc_contig,
+> -				    NULL, 0, cc->mode, MR_CMA);
+> +				    NULL, 0, cc->mode, MR_CONTIG_RANGE);
+>  	}
+>  	if (ret < 0) {
+>  		putback_movable_pages(&cc->migratepages);
+> -- 
+> 2.11.0
 > 
-> > +               const __be32 *addr;
-> > +
-> > +               addr = of_get_property(ppnode, "reg", NULL);
-> > +               if (addr)
-> > +                       memcpy(laddr, addr, 3);
-> 
-> Can't you just adjust pdev to be ppdev in this case and then use the
-> existing code to set laddr?
 
-Okay, I will try it out and and see if the code gets better or worse.
- 
-> Please copy the powerpc list on this. I worry that touching this
-> function will break something.
-> BTW, this code is moving to drivers/pci/ in 4.16.
-
-Sure. I will loop more people in next version.
-
-Thanks
-
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+-- 
+Michal Hocko
+SUSE Labs
