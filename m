@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225f795YqlnXRELgvs3zNYBrVWTyfytO8wwm+SWOx1EatMzwthwcFrmE7+B8aCPCEso4nicW
-ARC-Seal: i=1; a=rsa-sha256; t=1517591496; cv=none;
+X-Google-Smtp-Source: AH8x225fEkNxeE+Z4A1/Uk518Ndpj/hX6HQTHxlFshYuUOpz02wHBsb0IicIg6V2yM/v/psdIrjc
+ARC-Seal: i=1; a=rsa-sha256; t=1517591488; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ug4j7IX3fR5bkZu87i88cRdGKNFh4ZMpS61YbIEoL1fIJZKhAHtuw4NmNyj0joxy6Z
-         PdDIad6NGc0yhYm1gmDkTTjI6PqAH5T3sbNOAj/sFnaaHoXASohYBMl+q8XkrV5Glyuf
-         a0vnPB3x8RQjUc2cb57FTj5/aZby6hVtxBMkcU74gpvS6a7mhYDG8CbCZQN8C7lNE+zv
-         5mKIhPcjvenPClGXxD7H+/pe1F4oBDONIJjHI51edFEM75F95DAFGldVTC/M6yQti36B
-         Ixdd2P8HQIOl0Zw1Aok3wULDx8Ol1wMgs0gfdAcXQHGYD+8m1AvDvo30TggnIxCZvASB
-         TIug==
+        b=w647INSUCdRd5I31kZ35ipYG0xLVW8etVBmcvPB7TYFDeozF617FrdHimVWJ+Ofwyc
+         pXA9HbgkAbuT+zPU4dINqcwVbCiE5AYYNvEXgIJKwcCBv0X8WV72YBb3V6hnmo+EeJZg
+         fZLfHHb1g9bNrZiRmZn+F87vm4mlaFFnZYv1RQCuA9Qmrc6Ci2+RhF8kIKVVKO5I7HNf
+         Ps9Dejgd8Ia2wo/SUri7P9WoJcDeZfmGglWIJ8z5oQ9R7SQe5dSO/65LdOls5mlcsfva
+         T/STcivT4LcWBjdJsZ7mv7gmXIFvdPt1XdJN5LnJp4O7oHtXJrAJd8u1v8PRJtrLUXPf
+         QBZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zaKbRa+T4U0XzoW8jaMvirD5R7lkbeG4spSOCb4/o38=;
-        b=pO7WPIF+A+HtCityrinrqd7dPlV95wV6J3EmB67YJOht4eD351Aj/x6VFkIPlf+AlL
-         7u9b/S2X17H9frYj7e1Zd+PhgfBs5QYNQmUut1Si1oL554XLEs1cs2x8RHk0edWjnVXn
-         xvWY4F+ftSexgk5MSum00GvOkMH5YLtvq273xWHCtYqNFkS7DxV+cwC74ERmk4KZXflM
-         VixfH5FqXN0e1/gkNrWDW/bUPCrTp0gwrv0wvCgBX1sBSByhwQGThNW2zN/gOB/95oSe
-         p+QPMi3AiigzhUw/T2vVfxWB5syiGv1YYpp8+zDr1T26p/iVT4Xeika1pRl73/BgZo2O
-         GivA==
+        bh=RfDMWwWIoLXfLEdhRkHpTCFu1u2rCPD3S31BTnEmilk=;
+        b=lhfWGa23tw3hCQ6gMOvMhYeK1T6c+B77Wjf+1lwQ6EMC7k6M5qabE7lmzMbsfodXvV
+         CUqOEONJW9V3/NLlYbwCsqxbkRcpUOY2cI5RR1zE4svw3fe9skALMWTMWFrXpe0rrS1Y
+         Ej/9AQyd4zrZ5fxIB8iqApHEynoLbKLZqQNbx4wTB4BF+24w02FkDW41v3/tye5Cw/HW
+         R7EtY1ImAPrx0tYddTg9oDEnu45MRlX49ucuwY+x2yEwtyp80x+HQg0Id0765180TLnj
+         YjoFtJnaYo76tC11xOOzhaGVK/HkmyK+bv+fObBOwvHMACGUHh9BiBCI8EW1vW3kN0nL
+         /7dA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>,
-	Dave Chinner <dchinner@redhat.com>,
-	"Darrick J. Wong" <darrick.wong@oracle.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	David Sterba <dsterba@suse.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 098/156] xfs: fortify xfs_alloc_buftarg error handling
-Date: Fri,  2 Feb 2018 17:57:59 +0100
-Message-Id: <20180202140844.647380902@linuxfoundation.org>
+Subject: [PATCH 4.14 096/156] Btrfs: incremental send, fix wrong unlink path after renaming file
+Date: Fri,  2 Feb 2018 17:57:57 +0100
+Message-Id: <20180202140844.564094479@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309616616792419?=
-X-GMAIL-MSGID: =?utf-8?q?1591310020425344115?=
+X-GMAIL-THRID: =?utf-8?q?1591310012337283342?=
+X-GMAIL-MSGID: =?utf-8?q?1591310012337283342?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,62 +49,237 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Filipe Manana <fdmanana@suse.com>
 
 
-[ Upstream commit d210a9874b8f6166579408131cb74495caff1958 ]
+[ Upstream commit ea37d5998b50a72b9045ba60a132eeb20e1c4230 ]
 
-percpu_counter_init failure path doesn't clean up &btp->bt_lru list.
-Call list_lru_destroy in that error path. Similarly register_shrinker
-error path is not handled.
+Under some circumstances, an incremental send operation can issue wrong
+paths for unlink commands related to files that have multiple hard links
+and some (or all) of those links were renamed between the parent and send
+snapshots. Consider the following example:
 
-While it is unlikely to trigger these error path, it is not impossible
-especially the later might fail with large NUMAs.  Let's handle the
-failure to make the code more robust.
+Parent snapshot
 
-Noticed-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+ .                                                      (ino 256)
+ |---- a/                                               (ino 257)
+ |     |---- b/                                         (ino 259)
+ |     |     |---- c/                                   (ino 260)
+ |     |     |---- f2                                   (ino 261)
+ |     |
+ |     |---- f2l1                                       (ino 261)
+ |
+ |---- d/                                               (ino 262)
+       |---- f1l1_2                                     (ino 258)
+       |---- f2l2                                       (ino 261)
+       |---- f1_2                                       (ino 258)
+
+Send snapshot
+
+ .                                                      (ino 256)
+ |---- a/                                               (ino 257)
+ |     |---- f2l1/                                      (ino 263)
+ |             |---- b2/                                (ino 259)
+ |                   |---- c/                           (ino 260)
+ |                   |     |---- d3                     (ino 262)
+ |                   |           |---- f1l1_2           (ino 258)
+ |                   |           |---- f2l2_2           (ino 261)
+ |                   |           |---- f1_2             (ino 258)
+ |                   |
+ |                   |---- f2                           (ino 261)
+ |                   |---- f1l2                         (ino 258)
+ |
+ |---- d                                                (ino 261)
+
+When computing the incremental send stream the following steps happen:
+
+1) When processing inode 261, a rename operation is issued that renames
+   inode 262, which currently as a path of "d", to an orphan name of
+   "o262-7-0". This is done because in the send snapshot, inode 261 has
+   of its hard links with a path of "d" as well.
+
+2) Two link operations are issued that create the new hard links for
+   inode 261, whose names are "d" and "f2l2_2", at paths "/" and
+   "o262-7-0/" respectively.
+
+3) Still while processing inode 261, unlink operations are issued to
+   remove the old hard links of inode 261, with names "f2l1" and "f2l2",
+   at paths "a/" and "d/". However path "d/" does not correspond anymore
+   to the directory inode 262 but corresponds instead to a hard link of
+   inode 261 (link command issued in the previous step). This makes the
+   receiver fail with a ENOTDIR error when attempting the unlink
+   operation.
+
+The problem happens because before sending the unlink operation, we failed
+to detect that inode 262 was one of ancestors for inode 261 in the parent
+snapshot, and therefore we didn't recompute the path for inode 262 before
+issuing the unlink operation for the link named "f2l2" of inode 262. The
+detection failed because the function "is_ancestor()" only follows the
+first hard link it finds for an inode instead of all of its hard links
+(as it was originally created for being used with directories only, for
+which only one hard link exists). So fix this by making "is_ancestor()"
+follow all hard links of the input inode.
+
+A test case for fstests follows soon.
+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/xfs/xfs_buf.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/btrfs/send.c |  124 +++++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 106 insertions(+), 18 deletions(-)
 
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -1813,22 +1813,27 @@ xfs_alloc_buftarg(
- 	btp->bt_daxdev = dax_dev;
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -3527,7 +3527,40 @@ out:
+ }
  
- 	if (xfs_setsize_buftarg_early(btp, bdev))
--		goto error;
-+		goto error_free;
+ /*
+- * Check if ino ino1 is an ancestor of inode ino2 in the given root.
++ * Check if inode ino2, or any of its ancestors, is inode ino1.
++ * Return 1 if true, 0 if false and < 0 on error.
++ */
++static int check_ino_in_path(struct btrfs_root *root,
++			     const u64 ino1,
++			     const u64 ino1_gen,
++			     const u64 ino2,
++			     const u64 ino2_gen,
++			     struct fs_path *fs_path)
++{
++	u64 ino = ino2;
++
++	if (ino1 == ino2)
++		return ino1_gen == ino2_gen;
++
++	while (ino > BTRFS_FIRST_FREE_OBJECTID) {
++		u64 parent;
++		u64 parent_gen;
++		int ret;
++
++		fs_path_reset(fs_path);
++		ret = get_first_ref(root, ino, &parent, &parent_gen, fs_path);
++		if (ret < 0)
++			return ret;
++		if (parent == ino1)
++			return parent_gen == ino1_gen;
++		ino = parent;
++	}
++	return 0;
++}
++
++/*
++ * Check if ino ino1 is an ancestor of inode ino2 in the given root for any
++ * possible path (in case ino2 is not a directory and has multiple hard links).
+  * Return 1 if true, 0 if false and < 0 on error.
+  */
+ static int is_ancestor(struct btrfs_root *root,
+@@ -3536,36 +3569,91 @@ static int is_ancestor(struct btrfs_root
+ 		       const u64 ino2,
+ 		       struct fs_path *fs_path)
+ {
+-	u64 ino = ino2;
+-	bool free_path = false;
++	bool free_fs_path = false;
+ 	int ret = 0;
++	struct btrfs_path *path = NULL;
++	struct btrfs_key key;
  
- 	if (list_lru_init(&btp->bt_lru))
--		goto error;
-+		goto error_free;
+ 	if (!fs_path) {
+ 		fs_path = fs_path_alloc();
+ 		if (!fs_path)
+ 			return -ENOMEM;
+-		free_path = true;
++		free_fs_path = true;
+ 	}
  
- 	if (percpu_counter_init(&btp->bt_io_count, 0, GFP_KERNEL))
--		goto error;
-+		goto error_lru;
+-	while (ino > BTRFS_FIRST_FREE_OBJECTID) {
+-		u64 parent;
+-		u64 parent_gen;
++	path = alloc_path_for_send();
++	if (!path) {
++		ret = -ENOMEM;
++		goto out;
++	}
  
- 	btp->bt_shrinker.count_objects = xfs_buftarg_shrink_count;
- 	btp->bt_shrinker.scan_objects = xfs_buftarg_shrink_scan;
- 	btp->bt_shrinker.seeks = DEFAULT_SEEKS;
- 	btp->bt_shrinker.flags = SHRINKER_NUMA_AWARE;
--	register_shrinker(&btp->bt_shrinker);
-+	if (register_shrinker(&btp->bt_shrinker))
-+		goto error_pcpu;
- 	return btp;
- 
--error:
-+error_pcpu:
-+	percpu_counter_destroy(&btp->bt_io_count);
-+error_lru:
-+	list_lru_destroy(&btp->bt_lru);
-+error_free:
- 	kmem_free(btp);
- 	return NULL;
+-		fs_path_reset(fs_path);
+-		ret = get_first_ref(root, ino, &parent, &parent_gen, fs_path);
+-		if (ret < 0) {
+-			if (ret == -ENOENT && ino == ino2)
+-				ret = 0;
+-			goto out;
++	key.objectid = ino2;
++	key.type = BTRFS_INODE_REF_KEY;
++	key.offset = 0;
++
++	ret = btrfs_search_slot(NULL, root, &key, path, 0, 0);
++	if (ret < 0)
++		goto out;
++
++	while (true) {
++		struct extent_buffer *leaf = path->nodes[0];
++		int slot = path->slots[0];
++		u32 cur_offset = 0;
++		u32 item_size;
++
++		if (slot >= btrfs_header_nritems(leaf)) {
++			ret = btrfs_next_leaf(root, path);
++			if (ret < 0)
++				goto out;
++			if (ret > 0)
++				break;
++			continue;
+ 		}
+-		if (parent == ino1) {
+-			ret = parent_gen == ino1_gen ? 1 : 0;
+-			goto out;
++
++		btrfs_item_key_to_cpu(leaf, &key, slot);
++		if (key.objectid != ino2)
++			break;
++		if (key.type != BTRFS_INODE_REF_KEY &&
++		    key.type != BTRFS_INODE_EXTREF_KEY)
++			break;
++
++		item_size = btrfs_item_size_nr(leaf, slot);
++		while (cur_offset < item_size) {
++			u64 parent;
++			u64 parent_gen;
++
++			if (key.type == BTRFS_INODE_EXTREF_KEY) {
++				unsigned long ptr;
++				struct btrfs_inode_extref *extref;
++
++				ptr = btrfs_item_ptr_offset(leaf, slot);
++				extref = (struct btrfs_inode_extref *)
++					(ptr + cur_offset);
++				parent = btrfs_inode_extref_parent(leaf,
++								   extref);
++				cur_offset += sizeof(*extref);
++				cur_offset += btrfs_inode_extref_name_len(leaf,
++								  extref);
++			} else {
++				parent = key.offset;
++				cur_offset = item_size;
++			}
++
++			ret = get_inode_info(root, parent, NULL, &parent_gen,
++					     NULL, NULL, NULL, NULL);
++			if (ret < 0)
++				goto out;
++			ret = check_ino_in_path(root, ino1, ino1_gen,
++						parent, parent_gen, fs_path);
++			if (ret)
++				goto out;
+ 		}
+-		ino = parent;
++		path->slots[0]++;
+ 	}
++	ret = 0;
+  out:
+-	if (free_path)
++	btrfs_free_path(path);
++	if (free_fs_path)
+ 		fs_path_free(fs_path);
+ 	return ret;
  }
