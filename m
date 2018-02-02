@@ -1,47 +1,76 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2254h5EpKG4jyJ2vFR6ESKLTeinjhLsz3h1LhVcA2WfzTx/YiWoia/CxBJw43f9WvjPccdf/
-ARC-Seal: i=1; a=rsa-sha256; t=1517591652; cv=none;
-        d=google.com; s=arc-20160816;
-        b=LFk8w7U3RfHLhUj6xl6gY1WxCx4Ywg5mnZTbZ0amRtHjBcHlCc7krUw7vgJsmMO7Zc
-         HvA6pmCTonuoon/YOQnxsnk04KAoDnrwnWaLjH1soyU0Dvxb5moci0sauiOy0v4u4tXX
-         /M0C1t1Aaix+6p4y15XeJx8tklmBRcqfuoFCTo3mMe67EuqFxOOzMC89/wLsyaQ9c7LC
-         No+Z2akN8ZcsQarApv/22SMavJry0GShBgA0j7CvifSpbqSPxKdc6Vhuv6otzOSw/qcu
-         e7mmtGG5aVuuZP27fH1yvYGEU1s9wC0x/KeG45mbKrJxd6CiVQGGvv3KK84jUyyUo1b4
-         /fHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=p958Ppf+UT7T4BfwskTo/gBqr+T84NPd9ddwBORGJic=;
-        b=AZftIt5DKm/vIH9O6igF6QGE4JjRNm9Zkqfp2MwxnOWEflsmia755yNMynNTlV2xhR
-         Rn3zPPzt17WTzFd+Qu7FYiP3FpySdQU8r1rXUwk9GL8xomGAs+hvGF2iOzrwGeBTUPeq
-         sQZj0P2RuateOVQLnAmxPrpCcpOjB+BKqliSoSC5p7d5a9xz1bSXj7waDcVcPYD3Wv+q
-         XcB27KIWcGwDdmYa5Q3p16bDWvvV4PuUByPQpY/H9uMZLXRMEXo4jK2pFPNoe2S/kh3P
-         5FIWDLShHyVLI4AcO22S2aFIVptj1NxJR6cgONk2nCwAmzdKujTdh7xMAHZu7h2wYEOz
-         mCbA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2951738-1517591634-2-13984376839331212206
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591633; b=WwqPMuhnFMujdH5+wtns9wTrbWlM5Y7QWQOTva33p+MudNS
+    kmEBALaC/5P20nctCZCrc7N+gKYKHfv4M+gIXHxZ+b1aOeomuf1qB1E0d9JnNyee
+    DtfQFs997qUHDamIZlNxkXYPb5NP7I2ezyu2noSnWSRFlDRV5SKuIrXL1mUptxB0
+    0/zX+hkgt9ArAlATAK7oXP1cArkQqJjgrVusYoTpdPKYzmuvBRjBCNa68pIy7DfK
+    a+z2P98vrVx9FdWODxdaV5t3mi8ria8GgBJCJJOYdONC5g1E/US0NXyYNR+DgO0l
+    9GlY/3S2lYVyA7Wfy3yqaUtvWljFhjNOHZZF4Lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591633; bh=QJJzDayzoABr3f9zrXuxSfhZN5
+    7YiX9sAih7rGsVJdk=; b=Hlw91urkJUIM22q7Xmo44CdV+Jwwz+LA+fw1v0HI4Z
+    BKHQ3THV3ORZdTEwqbJFyEG7qJJaivVLdXb9hz4oixS8493Cojr+Cl73AJn1sD7i
+    8GlQ6daGmHcyZFmxsT1K2N5xn/CxWPPnAqWlnHJdJI90Cpu2OGZsHpmIsBeHlhqS
+    SLC2sVTpJ+NtImzJ5gSI6CRrDrU0ctvUA5QqcJ/MaMcKd2g6oisr+2dZ+6Cftle4
+    aRuH8KirzPed27xgC52JbworTCMVZwwKjTU5/3fswDs2w3NXXtCiPlXIdteI54hh
+    wMUe9KkAT6FpeqtaSCNxdW3Eok9WtClDGIU1FMW/5vdQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753149AbeBBRNv (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:13:51 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39554 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753534AbeBBRNq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:13:46 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Tomas Winkler <tomas.winkler@intel.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>
-Subject: [PATCH 4.14 146/156] mei: me: allow runtime pm for platform with D0i3
-Date: Fri,  2 Feb 2018 17:58:47 +0100
-Message-Id: <20180202140846.979795697@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        Martijn Coenen <maco@android.com>, Todd Kjos <tkjos@google.com>
+Subject: [PATCH 4.14 145/156] android: binder: use VM_ALLOC to get vm area
+Date: Fri,  2 Feb 2018 17:58:46 +0100
+Message-Id: <20180202140846.937885894@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591310183968671557?=
-X-GMAIL-MSGID: =?utf-8?q?1591310183968671557?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,43 +78,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+From: Ganesh Mahendran <opensource.ganesh@gmail.com>
 
-commit cc365dcf0e56271bedf3de95f88922abe248e951 upstream.
+commit aac6830ec1cb681544212838911cdc57f2638216 upstream.
 
->From the pci power documentation:
-"The driver itself should not call pm_runtime_allow(), though. Instead,
-it should let user space or some platform-specific code do that (user space
-can do it via sysfs as stated above)..."
+VM_IOREMAP is used to access hardware through a mechanism called
+I/O mapped memory. Android binder is a IPC machanism which will
+not access I/O memory.
 
-However, the S0ix residency cannot be reached without MEI device getting
-into low power state. Hence, for mei devices that support D0i3, it's better
-to make runtime power management mandatory and not rely on the system
-integration such as udev rules.
-This policy cannot be applied globally as some older platforms
-were found to have broken power management.
+And VM_IOREMAP has alignment requiement which may not needed in
+binder.
+    __get_vm_area_node()
+    {
+    ...
+        if (flags & VM_IOREMAP)
+            align = 1ul << clamp_t(int, fls_long(size),
+               PAGE_SHIFT, IOREMAP_MAX_ORDER);
+    ...
+    }
 
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Alexander Usyskin <alexander.usyskin@intel.com>
+This patch will save some kernel vm area, especially for 32bit os.
+
+In 32bit OS, kernel vm area is only 240MB. We may got below
+error when launching a app:
+
+<3>[ 4482.440053] binder_alloc: binder_alloc_mmap_handler: 15728 8ce67000-8cf65000 get_vm_area failed -12
+<3>[ 4483.218817] binder_alloc: binder_alloc_mmap_handler: 15745 8ce67000-8cf65000 get_vm_area failed -12
+
+Signed-off-by: Ganesh Mahendran <opensource.ganesh@gmail.com>
+Acked-by: Martijn Coenen <maco@android.com>
+Acked-by: Todd Kjos <tkjos@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/pci-me.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/android/binder_alloc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/mei/pci-me.c
-+++ b/drivers/misc/mei/pci-me.c
-@@ -238,8 +238,11 @@ static int mei_me_probe(struct pci_dev *
- 	 */
- 	mei_me_set_pm_domain(dev);
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -668,7 +668,7 @@ int binder_alloc_mmap_handler(struct bin
+ 		goto err_already_mapped;
+ 	}
  
--	if (mei_pg_is_enabled(dev))
-+	if (mei_pg_is_enabled(dev)) {
- 		pm_runtime_put_noidle(&pdev->dev);
-+		if (hw->d0i3_supported)
-+			pm_runtime_allow(&pdev->dev);
-+	}
- 
- 	dev_dbg(&pdev->dev, "initialization successful.\n");
- 
+-	area = get_vm_area(vma->vm_end - vma->vm_start, VM_IOREMAP);
++	area = get_vm_area(vma->vm_end - vma->vm_start, VM_ALLOC);
+ 	if (area == NULL) {
+ 		ret = -ENOMEM;
+ 		failure_string = "get_vm_area";
