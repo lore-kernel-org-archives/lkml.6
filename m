@@ -1,74 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751715AbeBBKHv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 05:07:51 -0500
-Received: from namei.org ([65.99.196.166]:47250 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750799AbeBBKHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 05:07:46 -0500
-Date: Fri, 2 Feb 2018 21:07:37 +1100 (AEDT)
-From: James Morris <jmorris@namei.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [GIT PULL] IMA bug fixes for 4.16
-In-Reply-To: <1517510282.6675.13.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1802022106130.2739@namei.org>
-References: <1517510282.6675.13.camel@linux.vnet.ibm.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1751643AbeBBKUE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 05:20:04 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:47084 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeBBKTz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 05:19:55 -0500
+X-Google-Smtp-Source: AH8x226O+x6bIKnRw0DY7YmVukW2sw+fcNrtYD+RF/QbTv2gjIrDWBoxRaYrytPsQKSw9Fgvx3NhhA==
+Date: Fri, 2 Feb 2018 11:19:51 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: peterz@infradead.org, lizefan@huawei.com, mingo@redhat.com,
+        rostedt@goodmis.org, claudio@evidence.eu.com, bristot@redhat.com,
+        tommaso.cucinotta@santannapisa.it, luca.abeni@santannapisa.it,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/7] sched/topology: Adding function
+ partition_sched_domains_locked()
+Message-ID: <20180202101951.GS19535@localhost.localdomain>
+References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+ <1517503869-3179-2-git-send-email-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517503869-3179-2-git-send-email-mathieu.poirier@linaro.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Feb 2018, Mimi Zohar wrote:
+Hi Mathieu,
 
-> Hi James,
+On 01/02/18 09:51, Mathieu Poirier wrote:
+> Introducing function partition_sched_domains_locked() by taking
+> the mutex locking code out of the original function.  That way
+> the work done by partition_sched_domains_locked() can be reused
+> without dropping the mutex lock.
 > 
-> Included in this pull request are three bug fixes, assuming the 2 FUSE
-> patches are considered bugs and not new features, and a maintainer update.
-> I'd appreciate your sending them to Linus for 4.16.
+> This patch doesn't change the functionality provided by the
+> original code.
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
 
-I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
-(cc'd), on the FUSE patches.
+[...]
 
+> +/*
+> + * Call with hotplug lock held
 
+Is this the one that we can actually check if it's locked with
 
-> 
-> Mimi
-> 
-> The following changes since commit 36447456e1cca853188505f2a964dbbeacfc7a7a:
-> 
->   ima/policy: fix parsing of fsuuid (2018-01-18 16:52:49 -0500)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-> 
-> for you to fetch changes up to d56f30ac85c067d0d3a6c4f293f655dc298cb5ce:
-> 
->   ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE (2018-02-01 12:38:31 -0500)
-> 
-> ----------------------------------------------------------------
-> Alban Crequy (2):
->       fuse: introduce new fs_type flag FS_IMA_NO_CACHE
->       ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
-> 
-> Mimi Zohar (2):
->       ima: re-initialize iint->atomic_flags
->       maintainers: update trusted keys
-> 
->  MAINTAINERS                       |  1 +
->  fs/fuse/inode.c                   |  2 +-
->  include/linux/fs.h                |  1 +
->  security/integrity/iint.c         |  1 +
->  security/integrity/ima/ima_main.c | 15 +++++++++++++--
->  5 files changed, 17 insertions(+), 3 deletions(-)
-> 
+lockdep_assert_cpus_held()
 
--- 
-James Morris
-<jmorris@namei.org>
+?
+
+> + */
+> +void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+> +			     struct sched_domain_attr *dattr_new)
+> +{
+> +	mutex_lock(&sched_domains_mutex);
+> +	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+>  	mutex_unlock(&sched_domains_mutex);
+>  }
+
+Best,
+
+- Juri
