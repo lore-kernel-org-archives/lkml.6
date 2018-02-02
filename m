@@ -1,41 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751956AbeBBODE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:03:04 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:48224 "EHLO hermes.aosc.io"
+        id S1752001AbeBBODW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:03:22 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:48250 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751629AbeBBOCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:02:55 -0500
+        id S1751629AbeBBODO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 09:03:14 -0500
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 0/3] Allwinner V3s audio codec device tree changes
-Date: Fri,  2 Feb 2018 22:01:50 +0800
-Message-Id: <20180202140153.21549-1-icenowy@aosc.io>
+Subject: [PATCH 1/3] ARM: dts: sun8i: add DMA engine in V3s DTSI
+Date: Fri,  2 Feb 2018 22:01:51 +0800
+Message-Id: <20180202140153.21549-2-icenowy@aosc.io>
+In-Reply-To: <20180202140153.21549-1-icenowy@aosc.io>
+References: <20180202140153.21549-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here's the Allwinner V3s audio codec device tree changes, which used to
-be blocked by the DMA engine code.
+Allwinner V3s SoC features a DMA engine.
 
-The first patch adds the DMA engine device tree node, and the second
-adds the codec nodes (digital and analog).
+Add it in the DTSI file.
 
-The thrid patch is for Lichee Pi Zero with Dock board to enable the
-audio jack and on-board mic.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Icenowy Zheng (3):
-  ARM: dts: sun8i: add DMA engine in V3s DTSI
-  ARM: dts: sun8i: add audio codec support into V3s DTSI
-  ARM: sun8i: v3s: enable audio on Lichee Pi Zero Dock board
-
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts |  9 +++++++
- arch/arm/boot/dts/sun8i-v3s.dtsi                   | 28 ++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
-
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+index 443b083c6adc..20edebd983f0 100644
+--- a/arch/arm/boot/dts/sun8i-v3s.dtsi
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -178,6 +178,15 @@
+ 		};
+ 
+ 
++		dma: dma-controller@01c02000 {
++			compatible = "allwinner,sun8i-v3s-dma";
++			reg = <0x01c02000 0x1000>;
++			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_DMA>;
++			resets = <&ccu RST_BUS_DMA>;
++			#dma-cells = <1>;
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun7i-a20-mmc";
+ 			reg = <0x01c0f000 0x1000>;
 -- 
 2.15.1
