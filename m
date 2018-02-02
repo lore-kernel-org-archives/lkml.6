@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeBBXKc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 18:10:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
+        id S1752565AbeBBXKm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 18:10:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751655AbeBBXKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751671AbeBBXKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 2 Feb 2018 18:10:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03694214DA
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4906821798
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180202230458.840252014@goodmis.org>
+Message-Id: <20180202231017.316870605@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 02 Feb 2018 18:04:58 -0500
+Date: Fri, 02 Feb 2018 18:05:00 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -29,145 +29,101 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: [PATCH 00/18] [ANNOUNCE] Dynamically created function based events
+Subject: [PATCH 02/18] tracing: Add documentation for function based events
+References: <20180202230458.840252014@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0002-tracing-Add-documentation-for-function-based-events.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-At Kernel Summit back in October, we tried to bring up trace markers, which
-would be nops within the kernel proper, that would allow modules to hook
-arbitrary trace events to them. The reaction to this proposal was less than
-favorable. We were told that we were trying to make a work around for a
-problem, and not solving it. The problem in our minds is the notion of a
-"stable trace event".
+Start documenting the usage of function based events. This only gives an
+introduction for the function based events. As new features are added to
+them, those features will be documented in this document.
 
-There are maintainers that do not want trace events, or more trace events in
-their subsystems. This is due to the fact that trace events post an
-interface to user space, and this interface could become required by some
-tool. This may cause the trace event to become stable where it must not
-break the tool, and thus prevent the code from changing.
-
-Or, the trace event may just have to add padding for fields that tools
-may require. The "success" field of the sched_wakeup trace event is one such
-instance. There is no more "success" variable, but tools may fail if it were
-to go away, so a "1" is simply added to the trace event wasting ring buffer
-real estate.
-
-I talked with Linus about this, and he told me that we already have these
-markers in the kernel. They are from the mcount/__fentry__ used by function
-tracing. Have the trace events be created by these, and see if this will
-satisfy most areas that want trace events.
-
-I decided to implement this idea, and here's the patch set.
-
-Introducing "function based events". These are created dynamically by a
-tracefs file called "function_events". By writing a pseudo prototype into
-this file, you create an event.
-
- # mount -t tracefs nodev /sys/kernel/tracing
- # cd /sys/kernel/tracing
- # echo 'do_IRQ(symbol ip[16] | x64[6] irq_stack[16])' > function_events
- # cat events/functions/do_IRQ/format
-name: do_IRQ
-ID: 1399
-format:
-	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
-	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
-	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
-	field:int common_pid;	offset:4;	size:4;	signed:1;
-
-	field:unsigned long __parent_ip;	offset:8;	size:8;	signed:0;
-	field:unsigned long __ip;	offset:16;	size:8;	signed:0;
-	field:symbol ip;	offset:24;	size:8;	signed:0;
-	field:x64 irq_stack[6];	offset:32;	size:48;	signed:0;
-
-print fmt: "%pS->%pS(ip=%pS, irq_stack=%llx:%llx:%llx:%llx:%llx:%llx)", REC->__ip, REC->__parent_ip,
-REC->ip, REC->irq_stack[0], REC->irq_stack[1], REC->irq_stack[2], REC->irq_stack[3], REC->irq_stack[4],
-REC->irq_stack[5]
-
- # echo 1 > events/functions/do_IRQ/enable
- # cat trace
-          <idle>-0     [003] d..3  3647.049344: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-          <idle>-0     [003] d..3  3647.049433: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-          <idle>-0     [003] d..3  3647.049672: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-          <idle>-0     [003] d..3  3647.325709: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-          <idle>-0     [003] d..3  3647.325929: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-          <idle>-0     [003] d..3  3647.325993: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-          <idle>-0     [003] d..3  3647.387571: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-          <idle>-0     [003] d..3  3647.387791: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-          <idle>-0     [003] d..3  3647.387874: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-
-And this is much more powerful than just this. We can show strings, and
-index off of structures into other structures.
-
-  # echo '__vfs_read(symbol read+40[0]+16)' > function_events
-
-  # echo 1 > events/functions/__vfs_read/enable
-  # cat trace
-         sshd-1343  [005] ...2   199.734752: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
-         bash-1344  [003] ...2   199.734822: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
-         sshd-1343  [005] ...2   199.734835: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
- avahi-daemon-910   [003] ...2   200.136740: vfs_read->__vfs_read(read=          (null))
- avahi-daemon-910   [003] ...2   200.136750: vfs_read->__vfs_read(read=          (null))
-
-And even read user space:
-
-  # echo 'SyS_openat(int dfd, string path, x32 flags, x16 mode)' > function_events
-  # echo 1 > events/functions/enable
-  # grep task_fork /proc/kallsyms 
-ffffffff810d5a60 t task_fork_fair
-ffffffff810dfc30 t task_fork_dl
-  # cat trace
-            grep-1820  [000] ...2  3926.107603: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, path=/proc/kallsyms, flags=100, mode=0)
-
-These are fully functional events. That is, they work with ftrace,
-trace-cmd, perf, histograms, triggers, and eBPF.
-
-What's next? I need to rewrite the function graph tracer, and be able to add
-dynamic events on function return.
-
-I made this work with x86 with a simple function that only returns
-6 function parameters for x86_64 and 3 for x86_32. But this could easily
-be extended.
-
-Cheers!
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-ftrace/dynamic-ftrace-events
-
-Head SHA1: 30fbdffd5d38bd27b04fb911f7158f10a99be8c4
-
-
-Steven Rostedt (VMware) (18):
-      tracing: Add function based events
-      tracing: Add documentation for function based events
-      tracing: Add simple arguments to function based events
-      tracing/x86: Add arch_get_func_args() function
-      tracing: Add hex print for dynamic ftrace based events
-      tracing: Add indirect offset to args of ftrace based events
-      tracing: Add dereferencing multiple fields per arg
-      tracing: Add "unsigned" to function based events
-      tracing: Add indexing of arguments for function based events
-      tracing: Make func_type enums for easier comparing of arg types
-      tracing: Add symbol type to function based events
-      tracing: Add accessing direct address from function based events
-      tracing: Add array type to function based events
-      tracing: Have char arrays be strings for function based events
-      tracing: Add string type for dynamic strings in function based events
-      tracing: Add NULL to skip args for function based events
-      tracing: Add indirect to indirect access for function based events
-      tracing/perf: Allow perf to use function based events
-
-----
- Documentation/trace/function-based-events.rst |  426 ++++++++
- arch/x86/kernel/ftrace.c                      |   28 +
- include/linux/trace_events.h                  |    2 +
- kernel/trace/Kconfig                          |   12 +
- kernel/trace/Makefile                         |    1 +
- kernel/trace/trace.h                          |   11 +
- kernel/trace/trace_event_ftrace.c             | 1440 +++++++++++++++++++++++++
- kernel/trace/trace_probe.h                    |   11 -
- 8 files changed, 1920 insertions(+), 11 deletions(-)
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ Documentation/trace/function-based-events.rst | 69 +++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
  create mode 100644 Documentation/trace/function-based-events.rst
- create mode 100644 kernel/trace/trace_event_ftrace.c
+
+diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
+new file mode 100644
+index 000000000000..843a1bf76459
+--- /dev/null
++++ b/Documentation/trace/function-based-events.rst
+@@ -0,0 +1,69 @@
++=====================
++Function based events
++=====================
++
++.. Copyright 2018 VMware Inc.
++..   Author:   Steven Rostedt <srostedt@goodmis.org>
++..  License:   The GNU Free Documentation License, Version 1.2
++..               (dual licensed under the GPL v2)
++
++
++Introduction
++============
++
++Static events are extremely useful for analyzing the happenings of
++inside the Linux kernel. But there are times where events are not
++available, either due to not being in control of the kernel, or simply
++because a maintainer refuses to have them in their subsystem.
++
++The function tracer is a way trace within a subsystem without trace events.
++But it only provides information of when a function was hit and who
++called it. Combining trace events with the function tracer allows
++for dynamically creating trace events where they do not exist at
++function entry. They provide more information than the function
++tracer can provide, as they can read the parameters of a function
++or simply read an address. This makes it possible to create a
++trace point at any function that the function tracer can trace, and
++read the parameters of the function.
++
++
++Usage
++=====
++
++Simply writing an ASCII string into a file called "function_events"
++in the tracefs file system will create the function based events.
++Note, this file is only writable by root.
++
++ # mount -t tracefs nodev /sys/kernel/tracing
++ # cd /sys/kernel/tracing
++ # echo 'do_IRQ()' > function_events
++
++The above will create a trace event on the do_IRQ function call.
++As no parameters were specified, it will not trace anything other
++than the function and the parent. This is the minimum function
++based event.
++
++ # ls events/functions/do_IRQ
++enable  filter  format  hist  id  trigger
++
++Even though the above function based event does not record much more
++than the function tracer does, it does become a full fledge event.
++This can be used by the histogram infrastructure, and triggers.
++
++ # cat events/functions/do_IRQ/format
++name: do_IRQ
++ID: 1304
++format:
++	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
++	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
++	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
++	field:int common_pid;	offset:4;	size:4;	signed:1;
++
++	field:unsigned long __parent_ip;	offset:8;	size:8;	signed:0;
++	field:unsigned long __ip;	offset:16;	size:8;	signed:0;
++
++print fmt: "%pS->%pS()", REC->__ip, REC->__parent_ip
++
++The above shows that the format is very close to the function trace
++except that it displays the parent function followed by the called
++function.
+-- 
+2.15.1
