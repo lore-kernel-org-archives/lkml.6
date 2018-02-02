@@ -1,48 +1,77 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225gMY3R738dSGgFzp9PYcm92QalmK2UoPXVnqDm4y3AaN+qUUYZ5cLozWTPIdpAu93Sczwj
-ARC-Seal: i=1; a=rsa-sha256; t=1517591817; cv=none;
-        d=google.com; s=arc-20160816;
-        b=F/hYRaqp2fbF0YAspBAa160meWtHmVp2RixyzOQZhTC8OjVQ6GE1nE2E9/Y18L+5gr
-         Fu2n8Dl+HSPPEh91gu9CP8eIGnuSz8WrmOveOtYpfJIHsFkFc2KFpluUheQJAZWfAofa
-         aMZAh98lllQoRQ63mUCpW/xtk6juB6mhkq+p94oS+sInpPLgsVqudOzkjrk1tXpB+cZg
-         OJkh184yilB9G7srBn08kp12AYiqovEF67E1rCRF+WoWxXPSfl6ORwPz9fCBfUJ/dPYC
-         2+ECS2Hz6QEFiXIYwqAWXtaVcQJFmjgCnT4ZhTgV9OQUrUtbha2u9XOKZfcacJuqRn7p
-         omTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=X10+0AmtSCgXqo3u9kaXF1I9dVo69CZfe/xcb2vbv7k=;
-        b=UCllKt4onpI/iKHPdJsbXI/7qJ+7zizPGBw6TCCwXtHb2wPnp4H6E7RSzywhYSx2jO
-         0zayYvluHrdzrFbEDUze7pIA7cftYvT+ji85RjBsRHnXJ6ZynCESoxzAb48gDpul3HwY
-         OhPRooS1it8uQ42b+QM+DUWul07zr7/xydPFCuraMXSVeDy4H7TcdKp8ga4ue7M1BNSQ
-         +9B8k+5AFyi4Jp3ihPgkUe/MfBMp7wbw9ONK0O9VEsRizmOaJrf/sxKlEE9qMQ8P2Uae
-         zXl8RxRq9ihT8yfFjWg+uu4U4GwKNe9yheLhBzOp5ARXfVn5a0BIE/uJEo1NzO2MTjCR
-         5StA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591819-2-3010470827321149343
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591818; b=Z+U+KoJWWzmB3L29KtKuWR/cVsaIaKiGs6ipDnF7w8YWNml
+    BLVYwCurRoeBFRkMsNx6ey9c0fc6Xw5yGozozjVDxOwf0bFrt3cwsIBVHxmt3DIg
+    FvdX40GJDLgQQLvMpfufmW1wL5k+KZtXmstUiCtSYyq0I2SrBacXX5kT5bOG/GBI
+    6lybDugZ1/ewtNVYN8tOB8eG18cYodvV69zikuCapkHGpSj1ScBEhpzpVLNtRakE
+    hkoeJhuhrMrOHdmJY07W2wZ4YUNdSJ+XoaJMNwx+gFTMCTeTZ71NAPxnqHc8vcOE
+    PnUjUK2lndppCRLLP+MjD/A3QFjSnzHXSg8prbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591818; bh=FBXi8meEScZlEneKHZGmjuUIN4
+    AgkX1VnYSnFn6+xKE=; b=PjEMg/cLtKLVCUVMTaEvdh45hZY2lSgrAelpvv7lpj
+    BUmFAl6xsL6xLvE8vAO7/PLLdzhvjF+zZyxTEpKKLxFl1O5iVXecOb5ncMiruNOS
+    wNVuMvFPAtozWeWR3AITP6npz8KrBK0iqI2fZ8dY0LSrup16pJLn8dOLTXxZ6XSQ
+    8VT6VPVOqz+pRsTk+aST0//cQd+djpEA5QbiI27k4HI8wsWbw9GP3ZDv49rG/lHb
+    sx7R0OfFwKmzlMR9TLLQHbZesAx7+j1l/KRf9wBWgQ4YHl55vkjckWYXiZij/bUv
+    ZNm6xz7SDya2vDCHir+TpmVTiEmDz0ivLHbLvquyKMBQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753752AbeBBRQz (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:16:55 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41088 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753307AbeBBRQv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:16:51 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Cathy Avery <cavery@redhat.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 26/55] scsi: storvsc: missing error code in storvsc_probe()
-Date: Fri,  2 Feb 2018 17:58:44 +0100
-Message-Id: <20180202140828.920638248@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Raghava Aditya Renukunta
+        <RaghavaAditya.Renukunta@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 24/55] scsi: aacraid: Fix udev inquiry race condition
+Date: Fri,  2 Feb 2018 17:58:42 +0100
+Message-Id: <20180202140828.711529542@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591310357562911184?=
-X-GMAIL-MSGID: =?utf-8?q?1591310357562911184?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +79,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
 
-commit ca8dc694045e9aa248e9916e0f614deb0494cb3d upstream.
+commit f4e8708d3104437fd7716e957f38c265b0c509ef upstream.
 
-We should set the error code if fc_remote_port_add() fails.
+When udev requests for a devices inquiry string, it might create multiple
+threads causing a race condition on the shared inquiry resource string.
 
-Fixes: daf0cd445a21 ("scsi: storvsc: Add support for FC rport.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Cathy Avery <cavery@redhat.com>
-Acked-by: K. Y. Srinivasan <kys@microsoft.com>
+Created a buffer with the string for each thread.
+
+Fixes: 3bc8070fb75b3315 ([SCSI] aacraid: SMC vendor identification)
+Signed-off-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/storvsc_drv.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/aacraid/aachba.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -1834,8 +1834,10 @@ static int storvsc_probe(struct hv_devic
- 		fc_host_node_name(host) = stor_device->node_name;
- 		fc_host_port_name(host) = stor_device->port_name;
- 		stor_device->rport = fc_remote_port_add(host, 0, &ids);
--		if (!stor_device->rport)
-+		if (!stor_device->rport) {
-+			ret = -ENOMEM;
- 			goto err_out4;
-+		}
- 	}
- #endif
- 	return 0;
+--- a/drivers/scsi/aacraid/aachba.c
++++ b/drivers/scsi/aacraid/aachba.c
+@@ -913,8 +913,16 @@ static void setinqstr(struct aac_dev *de
+ 	memset(str, ' ', sizeof(*str));
+ 
+ 	if (sup_adap_info->adapter_type_text[0]) {
+-		char *cp = sup_adap_info->adapter_type_text;
+ 		int c;
++		char *cp;
++		char *cname = kmemdup(sup_adap_info->adapter_type_text,
++				sizeof(sup_adap_info->adapter_type_text),
++								GFP_ATOMIC);
++
++		if (!cname)
++			return;
++
++		cp = cname;
+ 		if ((cp[0] == 'A') && (cp[1] == 'O') && (cp[2] == 'C'))
+ 			inqstrcpy("SMC", str->vid);
+ 		else {
+@@ -923,7 +931,7 @@ static void setinqstr(struct aac_dev *de
+ 				++cp;
+ 			c = *cp;
+ 			*cp = '\0';
+-			inqstrcpy(sup_adap_info->adapter_type_text, str->vid);
++			inqstrcpy(cname, str->vid);
+ 			*cp = c;
+ 			while (*cp && *cp != ' ')
+ 				++cp;
+@@ -937,8 +945,8 @@ static void setinqstr(struct aac_dev *de
+ 			cp[sizeof(str->pid)] = '\0';
+ 		}
+ 		inqstrcpy (cp, str->pid);
+-		if (c)
+-			cp[sizeof(str->pid)] = c;
++
++		kfree(cname);
+ 	} else {
+ 		struct aac_driver_ident *mp = aac_get_driver_ident(dev->cardtype);
+ 
