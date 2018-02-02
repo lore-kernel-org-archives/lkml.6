@@ -1,187 +1,155 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1914214-1518457203-2-17668035622478185238
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518457202; b=jyGluv7RMQgN88lKF8aEas3Bblj7tjkOWvvjRDkr/O2jiEt
-    C/MjVPwO58DESDgVwhBJdiYk1VT+zovcHOOtvwFDL7ihlpqUlNDvdkkk7nXx59D2
-    IBGlJ98A5pkS43ETq3mpmyk/J01Z7U60pi3q1vYF707QCWDSG7NNdftnLdg2zYPi
-    KZI5PRYIDdiyvxI71uGjCA2zmLJNuczXPxtfBjjZgUWr5WH2XV9aUH3cvl2VxB7S
-    TvI3bJtlJRDcgDpXjQX0FADOen+AofM3Ov2qXS1rrsRWJNAAFLhmoXrS+vBKfLoU
-    RuBKrPrXTf5Jb3CPgLhZnNspbavy5L0dw9gL6tw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1518457202; bh=xszDX/N7euzRbzybxW9FMVOnSR
-    Z02oXX7b1BPlub7cs=; b=HFizoIDAaNr2uDO0jmGj50YVntQ3lCuEPRbwZUFiOu
-    q5xM0wIzymnt353oppOu0t0+5d6fO4xvJZnD1wkFSbM5K9+lqHMxPvaDFvRWuDJW
-    9LfV0EbiG87/fOGzum8feIr+hqC5sfD1rJVV7RyFfxmr7diGyB2pz2CwypbyuuVz
-    v1e2Fa1NphKkUSc1MbAC/lRjyRqyynAzmuLKnwY0nTxlvLv25W6O1GzJ8JkjDD1s
-    LjVVAaSNHmC0LNlHRewI/tF5KrUe9uOo285UsNIdJg96cGIETiuVj5U27UMMKGU/
-    xVLRKVd2EBgAz32EBIDg92ZHZbvIS4L6nfBAuxpctNHA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=stgolabs.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=stgolabs.net header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751216AbeBLRj7 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Feb 2018 12:39:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60212 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751063AbeBLRj6 (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:39:58 -0500
-Date: Mon, 12 Feb 2018 09:30:37 -0800
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Waychison <mikew@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: shmctl(SHM_STAT) vs. /proc/sysvipc/shm permissions discrepancies
-Message-ID: <20180212173037.oruxafinai5tkv6t@linux-n805>
-Mail-Followup-To: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Waychison <mikew@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20171219094848.GE2787@dhcp22.suse.cz>
- <CAKgNAkjJrmCFY-h2oqKS3zM_D+Csx-17A27mh08WKahyOVzrgQ@mail.gmail.com>
- <20171220092025.GD4831@dhcp22.suse.cz>
- <CAKgNAkisD7zDRoqJd6Gk1JMCZ8+Huj5QPV04nh2JXHMA+_R0-A@mail.gmail.com>
- <20171221080203.GZ4831@dhcp22.suse.cz>
- <CAKgNAkjSF9fXhKCxPMp92zftA4Qtq91WBt8L5UR50oQO8HgRxw@mail.gmail.com>
+Return-Path: <kernel-hardening-return-11556-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x227ynVP+HmvqSd595MAU8QG2c4CVBTPYaYD48WrlAppwmLoGfBbFwgqb0eAL/S+V3rXKDdFW
+ARC-Seal: i=1; a=rsa-sha256; t=1517587014; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rIkkwAXD+zLHnOWQWn/IH5FieNNTs3rasrEv9fdu/YEENwDRFq5JErU3iwBTc0e4lj
+         9YDdkYVH925CNavhlVV+m4cU/A3qkeXMr17fmFnW6/SSygp0MXJClboLzPQVc/W43Tx6
+         Ax4+QPZFsaLSJyKOySqklaEAZVARlQy9Z0e/RKO23pAp3SSdixuZRwwQvfcd2ioYoivO
+         IpBL9S8dcbOQN1MqPXfVLKWESEIZED6STN/ImRlY9kCyUvp409RhGzaZuEBxz1Wat45/
+         BNLRIkDSznl7gBOoDukF0JDI6HUMFPdjdBsLdElp9PGGnexy6bhVwTEOmk189ZoqEgxX
+         sKdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=1g7Nbsuwc/kOI+75/otZNS3Ko6Szeh+z6hva4mH7z3U=;
+        b=0d+TgRMQLWlMJaf1GUXaFUd6PluW6wA2T0Egucpze2Ad6tPmFqNb8tn0t2GFV3vi6a
+         boF+57q2kaMh7ypJp3p/ucHcFlWUTJua/E1Su332YIKI51NzM/CzS1h1UrydwnvnCOAt
+         m63PphT6JIGy6LXL1wcjNSM2DlR4XrarMnojAjUjFV/5UvQ1rLH1qzxUlWfTc9C77LNQ
+         d4GFfJbxHCr0oh/nm1t8Nb8BJy2PGPuap2eYo01pOdGoxCBnCaBVJDcz+WRNuxD+yW9e
+         FZyvHbEHqOi61fXO1VxgucXjh8nItCd6M2DX3Vm76BTmdvniFsqWiCCVwbvKSirRSviM
+         XryQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11556-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11556-gregkh=linuxfoundation.org@lists.openwall.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11556-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11556-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Subject: Re: [PATCH 5/6] Documentation for Pmalloc
+To: Jonathan Corbet <corbet@lwn.net>
+CC: <jglisse@redhat.com>, <keescook@chromium.org>, <mhocko@kernel.org>,
+	<labbott@redhat.com>, <hch@infradead.org>, <willy@infradead.org>,
+	<cl@linux.com>, <linux-security-module@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-hardening@lists.openwall.com>
+References: <20180130151446.24698-1-igor.stoppa@huawei.com>
+ <20180130151446.24698-6-igor.stoppa@huawei.com>
+ <20180130100852.2213b94d@lwn.net>
+From: Igor Stoppa <igor.stoppa@huawei.com>
+Message-ID: <56eb3e0d-d74d-737a-9f85-fead2c40c17c@huawei.com>
+Date: Fri, 2 Feb 2018 17:56:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAKgNAkjSF9fXhKCxPMp92zftA4Qtq91WBt8L5UR50oQO8HgRxw@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+In-Reply-To: <20180130100852.2213b94d@lwn.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.122.225.51]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591031095823992296?=
+X-GMAIL-MSGID: =?utf-8?q?1591305321433364004?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 21 Dec 2017, Michael Kerrisk (man-pages) wrote:
+Thanks for the review and apologies for the delay.
+Replies inlined below.
 
->Hi Michal,
->
->On 21 December 2017 at 09:02, Michal Hocko <mhocko@kernel.org> wrote:
->> On Wed 20-12-17 17:17:46, Michael Kerrisk wrote:
->>> Hello Michal,
->>>
->>> On 20 December 2017 at 10:20, Michal Hocko <mhocko@kernel.org> wrote:
->>> > On Tue 19-12-17 17:45:40, Michael Kerrisk wrote:
->>> >> But, is
->>> >> there a pressing reason to make the change? (Okay, I guess iterating
->>> >> using *_STAT is nicer than parsing /proc/sysvipc/*.)
->>> >
->>> > The reporter of this issue claims that "Reading /proc/sysvipc/shm is way
->>> > slower than executing the system call." I haven't checked that but I can
->>> > imagine that /proc/sysvipc/shm can take quite some time when there are
->>> > _many_ segments registered.
->>>
->>> Yes, that makes sense.
->>>
->>> > So they would like to use the syscall but
->>> > the interacting parties do not have compatible permissions.
->>>
->>> So, I don't think there is any security issue, since the same info is
->>> available in /proc/sysvipc/*.
->>
->> Well, I am not sure this is a valid argument (maybe I just misread your
->> statement).
->
->(Or perhaps I was not clear enough; see below)
->
->> Our security model _might_ be broken because of the sysipc
->> proc interface existance already. I am not saying it is broken because
->> I cannot see an attack vector based solely on the metadata information
->> knowledge. An attacker still cannot see/modify the real data. But maybe
->> there are some bugs lurking there and knowing the metadata might help to
->> exploit them. I dunno.
->>
->> You are certainly right that modifying/adding STAT flag to comply with
->> the proc interface permission model will not make the system any more
->> vulnerable, though.
->
->Yep, that was my point. Modifying _STAT behavior won't decrease security.
->
->That said, /proc/sysvipc/* has been around for a long time now, and
->nothing bad seems to have happened so far, AFAIK.
->
->>> The only question would be whether
->>> change in the *_STAT behavior might surprise some applications into
->>> behaving differently. I presume the chances of that are low, but if it
->>> was a concert, one could add new shmctl/msgctl/semctl *_STAT_ALL (or
->>> some such) operations that have the desired behavior.
->>
->> I would lean towards _STAT_ALL because this is Linux specific behavior
->> (I have looked at what BSD does here and they are checking permissions
->> for STAT as well). It would also be simpler to revert if we ever find
->> that this is a leak with security consequences.
+On 30/01/18 19:08, Jonathan Corbet wrote:
+> On Tue, 30 Jan 2018 17:14:45 +0200
+> Igor Stoppa <igor.stoppa@huawei.com> wrote:
 
-So I took a crack at this, and my only doubt is whether or not the lsm
-security hooks should be considered or not. Specifically, should the
-SHM_STAT_ALL case consider security_shm_shmctl()?
+[...]
 
-While the relevant persmission checks that allow for the discripancies
-between 0444 procfs and a 0600 via creating the ipc object are done in
-ipcperms() returning -1, is there a scenario where some lsm policy could
-change the /proc/sysvipc/ interface? If not, I think we can avoid it, but
-I'm not a security person.
+> Please don't put plain-text files into core-api - that's a directory full
 
-Thanks,
-Davidlohr
+ok
 
->
->Oh -- I was unaware of this BSD behavior. At least on the various UNIX
->systems that I ever used SYSVIPC (including one or two ancient
->commercial BSD derivatives), ipcs(1) showed all IPC objects. (On
->FeeBSD, at least, it looks like ipcs(1) doesn't use the *_STAT
->interfaces.)
->
->Cheers,
->
->Michael
->
->
->
->-- 
->Michael Kerrisk
->Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
->Linux/UNIX System Programming Training: http://man7.org/training/
+>> diff --git a/Documentation/core-api/pmalloc.txt b/Documentation/core-api/pmalloc.txt
+>> new file mode 100644
+>> index 0000000..934d356
+>> --- /dev/null
+>> +++ b/Documentation/core-api/pmalloc.txt
+>> @@ -0,0 +1,104 @@
+> 
+> We might as well put the SPDX tag here, it's a new file.
+
+ok, this is all new stuff to me ... I suppose I should do it also for
+all the other new files I create
+
+But what is the license for the documentation? It's not code, so GPL
+seems wrong. Creative commons?
+
+I just noticed a patch for checkpatch.pl about SPDX and asked the same
+question there.
+
+https://lkml.org/lkml/2018/2/2/365
+
+>> +============================
+>> +Protectable memory allocator
+>> +============================
+>> +
+>> +Introduction
+>> +------------
+
+[...]
+
+> This is all good information, but I'd suggest it belongs more in the 0/n
+> patch posting than here.  The introduction of *this* document should say
+> what it actually covers.
+
+ok
+
+> 
+>> +
+>> +Design
+>> +------
+
+[...]
+
+>> +To keep it to a minimum, locking is left to the user of the API, in
+>> +those cases where it's not strictly needed.
+> 
+> This seems like a relevant and important aspect of the API that shouldn't
+> be buried in the middle of a section talking about random things.
+
+I'll move it to the Use section.
+
+[...]
+
+>> +Use
+>> +---
+>> +
+>> +The typical sequence, when using pmalloc, is:
+>> +
+>> +1. create a pool
+>> +2. [optional] pre-allocate some memory in the pool
+>> +3. issue one or more allocation requests to the pool
+>> +4. initialize the memory obtained
+>> +   - iterate over points 3 & 4 as needed -
+>> +5. write protect the pool
+>> +6. use in read-only mode the handlers obtained through the allocations
+>> +7. [optional] destroy the pool
+> 
+> So one gets this far, but has no actual idea of how to do these things.
+> Which leads me to wonder: what is this document for?  Who are you expecting
+> to read it?
+
+I will add a reference to the selftest file.
+In practice it can also work as example.
+
+> You could improve things a lot by (once again) going to RST and using
+> directives to bring in the kerneldoc comments from the source (which, I
+> note, do exist).  But I'd suggest rethinking this document and its
+> audience.  Most of the people reading it are likely wanting to learn how to
+> *use* this API; I think it would be best to not leave them frustrated.
+
+ok, the example route should be more explicative.
+
+--
+thanks again for the review, igor
