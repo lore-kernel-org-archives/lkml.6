@@ -1,107 +1,108 @@
-Return-Path: <msfjarvis@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517565595; cv=none;
+Return-Path: <srivatsa@csail.mit.edu>
+X-Google-Smtp-Source: AH8x227mrYcm0e4Fb6EORkLCvjJ92xXAgRgprfJy2k00L0eCI6GFEFUlm3EHTl5xLKFBfcwIBAKM
+ARC-Seal: i=1; a=rsa-sha256; t=1517531006; cv=none;
         d=google.com; s=arc-20160816;
-        b=YcnRlQIhI0k+85Ed1HBDCiliMDhh8V7qCv/Zq29FdCmr5QaAafdlah+b7F4ln05t0d
-         2A/0LRqEr23kqITdttP0YxGJIw7KPVDqQzCuTL5XmGTDBA7M7aecNza/s0ruglSk51YW
-         s51jTcsHfnlQSvUkfYSBdY9kosXexEFIWl3VjBMYPqbXXcZCGxBdUZn1GSoQ0Y64Dsh5
-         ZpteTQ4O62r8iYY2T112ylS4bZAbrWK8K4Gwd413Ri60gBO4JuSYa9dtWx4GwaBYJrBy
-         6x19FycoO+FcpmSts2iSYErfGGbMerKonar86g7izUa+zgBZfAAN2H5mAe7RB1jIXKtQ
-         e2oQ==
+        b=0RxAAEBOyUR1+U6QyvBJosi+Oal20BxzpuGTjE92EfKkWj2MF2Jt22exrp0VhDoWXX
+         MGEQjO+xdTdZsNgCJ/YjrmKJ49y8Pte25rVSnf3JZazJPsicEJuj+q0OlOr0x0J++KBl
+         cWj/TGSy3OGzpgLMqgMNVjieFd78WeOy24DaJqNTstiKY5JRUYqQcqKuhz7/QMmNwLSn
+         A2VZntoy8+DCM0961ySsQT7xc8gt7Md+c2adhIc1+BetovsijFJrQ+chtPw7wrMsUN9k
+         3+tUkvMi9Jdan1THN0CdABTrf+xtXPIBTr0iw3gVIDjpzhOCKaaAmL3ABAYNDWuYJitK
+         h4dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=lb6SuMHt1/rPTWAyAVCiFYKu+9iIS45/vWCkGr9PGFM=;
-        b=Yc5KjeXI+uijjHuOSpe6IE1QoIt2jOltt1QaVW27IrOmBDOdoyvuszEwCkDyaNZvmn
-         9ceUlbKJC0fbR+r1Rtwo5TegOMpSL2VnzBRtm4mhh9KQleQnTB3Nn/drphUQS7xo1dHm
-         INou/4gaYddvUTOkyWmx1DjWhAfgecfjccvrgNGL92Ugpj6lVAxO0IDRPqDj0O5CD0jl
-         vyplvRRc0KzB2NKz8m4zNnZvVWAhjQ75Wgty1jK5dcQ8kL+iV/57il4d/SKysAToBBAL
-         KgWMT9ArDJNxcuUNNMWrJB0M0HYKrdA9WCrhFhF83000J2X7TA1B1TU578t/uJt2etFT
-         LFoQ==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=yA5KfEKHqVSdffdYSaFlJ09b318HNvr9o4CQpRaCWjg=;
+        b=EZy0Td8gGqLtQEqkmpkltysf9rc3a9lo6jIwSbTz3TCngr9IEQVPgKisaOk+PNMDhW
+         Tnv75XZ9O4bWNbuPosrj7a8umDAGrudF2hgofthQIe1kdZUbt5Pl7KKhtJ+xPCI/Wh2G
+         FV/1UGw0ilDeJXEM3g6Q4zW4u8uZ4ZrXsMjwJXco8ficI1dVv+nnJzC06eMWN4md//OS
+         NPmj5IWO16owDEzg6em4GB07AQdivyWsDWxDM/uq3GSYS2u3U49+F1tA5dEz8f7Zh9yA
+         k1NC5oV5N58yUx3j5gTut5hZMa+nN9KrGA7lTCnNhnM+ZeOfKoVu6XIPB6yC9Y6jrqlc
+         n7Ew==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=M9SGxE/u;
-       spf=pass (google.com: domain of msfjarvis@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=msfjarvis@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of srivatsa@csail.mit.edu designates 128.30.2.210 as permitted sender) smtp.mailfrom=srivatsa@csail.mit.edu;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=csail.mit.edu
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=M9SGxE/u;
-       spf=pass (google.com: domain of msfjarvis@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=msfjarvis@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227c2i/IJQyxhZkseuZTpH274N/A9a+YiKQ/KDyzP3thwTrllyyIu8WhKUZVjPUQ0zlc0GuiqM3f7/A3lmVWPFs=
+       spf=pass (google.com: domain of srivatsa@csail.mit.edu designates 128.30.2.210 as permitted sender) smtp.mailfrom=srivatsa@csail.mit.edu;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=csail.mit.edu
+Subject: Re: Change in register_blkdev() behavior
+To: Logan Gunthorpe <logang@deltatee.com>, gregkh@linuxfoundation.org
+Cc: axboe@kernel.dk, jlayton@poochiereds.net, bfields@fieldses.org,
+ linux-kernel@vger.kernel.org
+References: <a01cedbc-ca1a-3e3d-cf2c-3e995c63f793@csail.mit.edu>
+ <ce6d8040-3a1e-4137-e7b1-2066b9e56f42@deltatee.com>
+From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Message-ID: <e23b4d8f-9391-d214-e370-548244339cfb@csail.mit.edu>
+Date: Thu, 1 Feb 2018 16:23:05 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.5.2
 MIME-Version: 1.0
-References: <20180131152534.GA11909@kroah.com>
-In-Reply-To: <20180131152534.GA11909@kroah.com>
-From: Harsh Shandilya <msfjarvis@gmail.com>
-Date: Fri, 02 Feb 2018 09:59:44 +0000
-Message-ID: <CALpmF+EeckyWMNLd4wp466xwFgYKWAwnpca+rdkNrU+1cp-EUA@mail.gmail.com>
-Subject: Re: Linux 3.18.93
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jiri Slaby <jslaby@suse.cz>,
-	linux-kernel@vger.kernel.org, lwn@lwn.net, stable@vger.kernel.org,
-	torvalds@linux-foundation.org
-Content-Type: multipart/alternative; boundary="089e08e5683d3407f3056437c6fc"
+In-Reply-To: <ce6d8040-3a1e-4137-e7b1-2066b9e56f42@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1591282861834124289?=
-X-GMAIL-MSGID: =?utf-8?q?1591282861834124289?=
+X-GMAIL-THRID: =?utf-8?q?1591067494565207085?=
+X-GMAIL-MSGID: =?utf-8?q?1591246592344216284?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---089e08e5683d3407f3056437c6fc
-Content-Type: text/plain; charset="UTF-8"
+Hi Logan,
 
-On Wed 31 Jan, 2018, 8:56 PM Greg KH, <gregkh@linuxfoundation.org> wrote:
+On 1/30/18 5:26 PM, Logan Gunthorpe wrote:
+> 
+> 
+> On 30/01/18 05:56 PM, Srivatsa S. Bhat wrote:
+>> If the restriction on the major number was intentional, perhaps we
+>> should get the LTP testcase modified for kernel versions >= 4.14.
+>> Otherwise, we should fix register_blkdev to preserve the old behavior.
+>> (I guess the same thing applies to commit 8a932f73e5b "char_dev: order
+>> /proc/devices by major number" as well).
+> 
+> The restriction was put in place so the code that prints the devices doesn't have to run through every integer in order to print the devices in order.
+> 
+> Given the existing documented fixed numbers in [1] and that future new char devices should be using dynamic allocation, this seemed like a reasonable restriction.
+> 
+> It would be pretty trivial to increase the limit but, IMO, setting it to UINT_MAX seems a bit much. Especially given that a lot of the documentation and code still very much has remnants of the 256 limit. (The series that included this patch only just expanded the char dynamic range to  above 256). So, I'd suggest the LTP test should change.
+> 
 
-> I'm announcing the release of the 3.18.93 kernel.
->
-> All users of the 3.18 kernel series must upgrade.
->
-> The updated 3.18.y git tree can be found at:
->         git://
-> git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-> linux-3.18.y
-> and can be browsed at the normal kernel.org git web browser:
->
-> http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
->
-> thanks,
->
-> greg k-h
->
+Sounds good! Thank you!
 
-Better late than never: no regressions noticed on OnePlhs 3 over the past
-two days.
+By the way, I happened to notice a few minor issues with the
+find_dynamic_major() function added by this patch series:
 
->
+static int find_dynamic_major(void)
+{
+        int i;
+        struct char_device_struct *cd;
 
---089e08e5683d3407f3056437c6fc
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        for (i = ARRAY_SIZE(chrdevs)-1; i > CHRDEV_MAJOR_DYN_END; i--) {
+                                         ^^^^
+As far as I can see, _DYN_END is inclusive, so shouldn't this be >= ?
 
-<br><br><div class=3D"gmail_quote"><div dir=3D"ltr">On Wed 31 Jan, 2018, 8:=
-56 PM Greg KH, &lt;<a href=3D"mailto:gregkh@linuxfoundation.org">gregkh@lin=
-uxfoundation.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" =
-style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">I&#=
-39;m announcing the release of the 3.18.93 kernel.<br>
-<br>
-All users of the 3.18 kernel series must upgrade.<br>
-<br>
-The updated 3.18.y git tree can be found at:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 git://<a href=3D"http://git.kernel.org/pub/scm/=
-linux/kernel/git/stable/linux-stable.git" rel=3D"noreferrer" target=3D"_bla=
-nk">git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git</a> lin=
-ux-3.18.y<br>
-and can be browsed at the normal <a href=3D"http://kernel.org" rel=3D"noref=
-errer" target=3D"_blank">kernel.org</a> git web browser:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"http://git.kernel.org/?p=3Dlinux/ker=
-nel/git/stable/linux-stable.git;a=3Dsummary" rel=3D"noreferrer" target=3D"_=
-blank">http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;=
-a=3Dsummary</a><br>
-<br>
-thanks,<br>
-<br>
-greg k-h<br></blockquote></div><div><br></div><div>Better late than never: =
-no regressions noticed on OnePlhs 3 over the past two days.</div><div class=
-=3D"gmail_quote"><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8=
-ex;border-left:1px #ccc solid;padding-left:1ex">
-</blockquote></div>
+                if (chrdevs[i] == NULL)
+                        return i;
+        }
 
---089e08e5683d3407f3056437c6fc--
+        for (i = CHRDEV_MAJOR_DYN_EXT_START;
+             i > CHRDEV_MAJOR_DYN_EXT_END; i--) {
+              ^^^^
+Same here; I believe this should be >=
+
+                for (cd = chrdevs[major_to_index(i)]; cd; cd = cd->next)
+                        if (cd->major == i)
+                                break;
+
+                if (cd == NULL || cd->major != i)
+                                     ^^^^^^^^
+It seems that this latter condition is unnecessary, as it will never be
+true. (We'll reach here only if cd == NULL or cd->major == i).
+
+                        return i;
+        }
+
+        return -EBUSY;
+}
+
+Regards,
+Srivatsa
