@@ -1,70 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751767AbeBBEEm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 23:04:42 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:15696 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751589AbeBBEEd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 23:04:33 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="36655284"
-Subject: Re: [PATCH v2 0/2] x86/apic/kexec: Legacy irq setting fixs in kdump
- kernel
-To: Baoquan He <bhe@redhat.com>, <linux-kernel@vger.kernel.org>
-CC: <ebiederm@xmission.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>, <x86@kernel.org>, <joro@8bytes.org>,
-        <uobergfe@redhat.com>, <prarit@redhat.com>
-References: <20180125141134.25053-1-bhe@redhat.com>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <69a94ca6-6974-deff-f194-abfcdcc028f1@cn.fujitsu.com>
-Date: Fri, 2 Feb 2018 12:04:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751756AbeBBEGQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 23:06:16 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4760 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751544AbeBBEGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 23:06:09 -0500
+Subject: Re: [PATCH v3 18/18] arm64: Kill PSCI_GET_VERSION as a variant-2
+ workaround
+To: Marc Zyngier <marc.zyngier@arm.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.cs.columbia.edu>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        "Christoffer Dall" <christoffer.dall@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Robin Murphy" <robin.murphy@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Jones <drjones@redhat.com>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        Jon Masters <jcm@redhat.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+References: <20180201114657.7323-1-marc.zyngier@arm.com>
+ <20180201114657.7323-19-marc.zyngier@arm.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <d130b0b5-edc3-b305-c33e-33f9954d0858@huawei.com>
+Date: Fri, 2 Feb 2018 12:05:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180125141134.25053-1-bhe@redhat.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
+In-Reply-To: <20180201114657.7323-19-marc.zyngier@arm.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 7A08E486A78C.AD9B4
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baoquan,
+Hi Marc,
 
-At 01/25/2018 10:11 PM, Baoquan He wrote:
-> This is v2 post.
-> 
-> In v2, no code change, just improve change log of patch 1 and 2.
-> 
-> And drop the old patch 3 in v1, a clean up patch. The current
-> x86_io_apic_ops.disable() hook is still needed by irq remapping.
-> 
-> Baoquan He (2):
+Thank you for keeping me in the loop, just minor comments below.
 
-Test these patches in both 32bit and 64bit of x86 arches. feel free to
-add my Tested-by.
-
-Tested-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-
-Thanks,
-	dou.
-
->    x86/apic/kexec: Enable legacy irq mode before jump to kexec/kdump
->      kernel
->    x86/apic: Set up through-local-APIC on boot CPU's LINT0 if 'noapic'
->      specified
+On 2018/2/1 19:46, Marc Zyngier wrote:
+> Now that we've standardised on SMCCC v1.1 to perform the branch
+> prediction invalidation, let's drop the previous band-aid.
+> If vendors haven't updated their firmware to do SMCCC 1.1, they
+> haven't updated PSCI either, so we don't loose anything.
 > 
->   arch/x86/include/asm/io_apic.h     |  3 ++-
->   arch/x86/kernel/apic/apic.c        |  2 +-
->   arch/x86/kernel/apic/io_apic.c     | 12 ++++--------
->   arch/x86/kernel/crash.c            |  2 +-
->   arch/x86/kernel/machine_kexec_32.c | 15 +++++----------
->   arch/x86/kernel/machine_kexec_64.c | 15 +++++----------
->   arch/x86/kernel/reboot.c           |  2 +-
->   7 files changed, 19 insertions(+), 32 deletions(-)
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  arch/arm64/kernel/bpi.S        | 24 -----------------------
+>  arch/arm64/kernel/cpu_errata.c | 43 ++++++++++++------------------------------
+>  arch/arm64/kvm/hyp/switch.c    | 14 --------------
+>  3 files changed, 12 insertions(+), 69 deletions(-)
 > 
+> diff --git a/arch/arm64/kernel/bpi.S b/arch/arm64/kernel/bpi.S
+> index fdeed629f2c6..e5de33513b5d 100644
+> --- a/arch/arm64/kernel/bpi.S
+> +++ b/arch/arm64/kernel/bpi.S
+> @@ -54,30 +54,6 @@ ENTRY(__bp_harden_hyp_vecs_start)
+>  	vectors __kvm_hyp_vector
+>  	.endr
+>  ENTRY(__bp_harden_hyp_vecs_end)
+> -ENTRY(__psci_hyp_bp_inval_start)
+> -	sub	sp, sp, #(8 * 18)
+> -	stp	x16, x17, [sp, #(16 * 0)]
+> -	stp	x14, x15, [sp, #(16 * 1)]
+> -	stp	x12, x13, [sp, #(16 * 2)]
+> -	stp	x10, x11, [sp, #(16 * 3)]
+> -	stp	x8, x9, [sp, #(16 * 4)]
+> -	stp	x6, x7, [sp, #(16 * 5)]
+> -	stp	x4, x5, [sp, #(16 * 6)]
+> -	stp	x2, x3, [sp, #(16 * 7)]
+> -	stp	x0, x1, [sp, #(16 * 8)]
+> -	mov	x0, #0x84000000
+> -	smc	#0
+> -	ldp	x16, x17, [sp, #(16 * 0)]
+> -	ldp	x14, x15, [sp, #(16 * 1)]
+> -	ldp	x12, x13, [sp, #(16 * 2)]
+> -	ldp	x10, x11, [sp, #(16 * 3)]
+> -	ldp	x8, x9, [sp, #(16 * 4)]
+> -	ldp	x6, x7, [sp, #(16 * 5)]
+> -	ldp	x4, x5, [sp, #(16 * 6)]
+> -	ldp	x2, x3, [sp, #(16 * 7)]
+> -	ldp	x0, x1, [sp, #(16 * 8)]
+> -	add	sp, sp, #(8 * 18)
+> -ENTRY(__psci_hyp_bp_inval_end)
+>  
+>  ENTRY(__qcom_hyp_sanitize_link_stack_start)
+>  	stp     x29, x30, [sp, #-16]!
+> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+> index 9e77809a3b23..b8279a11f57b 100644
+> --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
+> @@ -67,7 +67,6 @@ static int cpu_enable_trap_ctr_access(void *__unused)
+>  DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
+>  
+>  #ifdef CONFIG_KVM
+> -extern char __psci_hyp_bp_inval_start[], __psci_hyp_bp_inval_end[];
+>  extern char __qcom_hyp_sanitize_link_stack_start[];
+>  extern char __qcom_hyp_sanitize_link_stack_end[];
+>  extern char __smccc_workaround_1_smc_start[];
+> @@ -116,8 +115,6 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
+>  	spin_unlock(&bp_lock);
+>  }
+>  #else
+> -#define __psci_hyp_bp_inval_start		NULL
+> -#define __psci_hyp_bp_inval_end			NULL
+>  #define __qcom_hyp_sanitize_link_stack_start	NULL
+>  #define __qcom_hyp_sanitize_link_stack_end	NULL
+>  #define __smccc_workaround_1_smc_start		NULL
+> @@ -164,14 +161,15 @@ static void call_hvc_arch_workaround_1(void)
+>  	arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
+>  }
+>  
+> -static bool check_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+> +static int smccc_arch_workaround_1(void *data)
+>  {
+> +	const struct arm64_cpu_capabilities *entry = data;
+>  	bp_hardening_cb_t cb;
+>  	void *smccc_start, *smccc_end;
+>  	struct arm_smccc_res res;
+>  
+>  	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
+
+entry->matches() will be called twice in this function, another
+one is in install_bp_hardening_cb() below, but install_bp_hardening_cb()
+will be called in qcom_enable_link_stack_sanitization(), and
+this is in the init path, so I think it's fine to keep as it is now.
+
+> -		return false;
+> +		return 0;
+>  
+>  	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
+>  		return false;
+
+return 0;
+
+> @@ -181,7 +179,7 @@ static bool check_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *e
+>  		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+>  				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+>  		if (res.a0)
+> -			return false;
+> +			return 0;
+>  		cb = call_hvc_arch_workaround_1;
+>  		smccc_start = __smccc_workaround_1_hvc_start;
+>  		smccc_end = __smccc_workaround_1_hvc_end;
+> @@ -191,35 +189,18 @@ static bool check_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *e
+>  		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+>  				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+>  		if (res.a0)
+> -			return false;
+> +			return 0;
+>  		cb = call_smc_arch_workaround_1;
+>  		smccc_start = __smccc_workaround_1_smc_start;
+>  		smccc_end = __smccc_workaround_1_smc_end;
+>  		break;
+>  
+>  	default:
+> -		return false;
+> +		return 0;
+>  	}
+>  
+>  	install_bp_hardening_cb(entry, cb, smccc_start, smccc_end);
+
+Thanks
+Hanjun
