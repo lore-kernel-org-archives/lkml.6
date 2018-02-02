@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225k25kkhu3l5vFtb6E09XY3EQqBpnAgTAOuKtMIMnzYxooG8VU4SA2ywQUMuvGJwqnNWFyC
-ARC-Seal: i=1; a=rsa-sha256; t=1517591138; cv=none;
+X-Google-Smtp-Source: AH8x226qwQ/isKjlvHcmb+nWIh35cWG2P9Ev4X9XrgmoqkUKfbc5WMqYCtvrbOeGQy9phXKRB7mb
+ARC-Seal: i=1; a=rsa-sha256; t=1517591135; cv=none;
         d=google.com; s=arc-20160816;
-        b=w5nEQnof7dMVNm8QmQ/gcSCd5SBN9f/VmGX/uls7CDiBnui8GMSFlYo57ZAyYQIuzu
-         /Xkr0D7WECPnpTUGTU6Rw3hQMXEiPq5as0kyTuPkOG/k/eDZwiAl1cspLhJN8v4216E3
-         odY0JK7RPSuM5tpA5hnDOa20Ndi3Y/fCj9LeJ9eQGJEKfBNCH0W3fMqkhXNYdKr/suTo
-         +A/AGf9YMs/bdDPj0/8gHVPaeHlfSjrenz2B+85QTQGxw3KHezMvwtyJl5nhS5ImhTMy
-         Vidb9A9IDkl/L1gUz7/VsOqSoCyu3rhEnkhJck8ntH+xEOMBlk1YFOwhTI0G/FTzXPXM
-         zvzQ==
+        b=QT5AcLNjybB64NwHCkzkWXGd3LFmGfsLQ2ZXcV+kE2ikeYBreFOZspRcFfOXCgVXLO
+         qlA1i0s3kEDWWfGdzE0lAzLcLB+xX2FORhTlDUMO5FhjCG18lwFdOAVpIcwstRdYMraz
+         +kmoYGFtk3W7IB+ua5tuqxPFRyBk8aiL9IW2SA2so9nrHQeYLa9B2ew9qQNsCwv1feiT
+         jBZL8QGerT7Va+jy4Ukkou9MqHCyCmQ5OP0bZBTTY0No4C2wQQ3slldHYJIcBcf0rNFA
+         W069DEBQh3E81qHSUqDa2DNGuTappzyme5kKesApoB7M8y8tz0x6YICyZMkm0NAzupTJ
+         kCqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XZ7QqfXSlGlpU5c3h1Mw83TrN4uP3S9DTYomhw4HNHc=;
-        b=SFoHnu612qM/MoF/we9vXKqKNHzrriM9x9btlE9OYVQh4P4sO3UPHDFR8bYSQu4amM
-         GBpHC+AzWqUu1H3XF7bLe6m1FOokNb1wGH9idhw7/7FWybmrwj0S2GiL1s3xmzDcEsSN
-         87YmMDY2Dw55os20WnMAowomZq4MnLjjGe/HDVi7WcDMIoEo6JvHkqcBvB4yBjKqhFwF
-         za7utvzf0Ts8LIYHhlGwz0lT5Tqi2Cal3GJRSfIGuxovRYEoye6baH09akbcN65ZOGhg
-         RVTXl1WmEEJVJsgzTfftX4qq5v3m21z3zrktci3x/VdXaJyo8sfZnP7nN5FMsWhxex3n
-         D29A==
+        bh=D/Yqnn3gj+4RxvYMahiDE9yxK1s3D3AzvVUctMMTJHA=;
+        b=ATBJcUoq3FHt8SP4Rpqjh40E+wRN1E52bilnRxF8RGfiI+YZIj5bkfDVyBXgzeRJKU
+         zvdnyPULIV9SuqIWZlmNAtpuVkWCNb5cK//XKO974qBa4eKm2iiw1a6sExT+1mJ1mRjL
+         V4vLTmQoY5zENDuHEX9eMMB4yXcEXwVLG0dd82WKbewjjGqMg3ekf+F7pRAu8T2DCAUO
+         U/t5+a0V1QzC7C/SVtHoevdvXmrlGMZ2N60woWuPYdsv302D35nulcQiEUBqyoLHljZp
+         qs03VjEUGUcNjFKmDqvPrsImfdK/dqv9OEdElTaFxk+whFD3gi4C//zebs8hbotG+SxB
+         Io2A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Luca Coelho <luciano.coelho@intel.com>,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+	Subhash Jadavani <subhashj@codeaurora.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 65/86] iwlwifi: mvm: fix the TX queue hang timeout for MONITOR vif type
-Date: Fri,  2 Feb 2018 17:58:25 +0100
-Message-Id: <20180202140828.647980820@linuxfoundation.org>
+Subject: [PATCH 4.9 64/86] scsi: ufs: ufshcd: fix potential NULL pointer dereference in ufshcd_config_vreg
+Date: Fri,  2 Feb 2018 17:58:24 +0100
+Message-Id: <20180202140828.538551432@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309645672364356?=
-X-GMAIL-MSGID: =?utf-8?q?1591309645672364356?=
+X-GMAIL-THRID: =?utf-8?q?1591309395625912256?=
+X-GMAIL-MSGID: =?utf-8?q?1591309643152346220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
 
-[ Upstream commit d1b275ffec459c5ae12b5c7086c84175696e5a9f ]
+[ Upstream commit 727535903bea924c4f73abb202c4b3e85fff0ca4 ]
 
-The MONITOR type is missing in the interface type switch.
-Add it.
+_vreg_ is being dereferenced before it is null checked, hence there is a
+potential null pointer dereference.
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fix this by moving the pointer dereference after _vreg_ has been null
+checked.
+
+This issue was detected with the help of Coccinelle.
+
+Fixes: aa4976130934 ("ufs: Add regulator enable support")
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/utils.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/ufs/ufshcd.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
-@@ -1040,6 +1040,8 @@ unsigned int iwl_mvm_get_wd_timeout(stru
- 		return le32_to_cpu(txq_timer->p2p_go);
- 	case NL80211_IFTYPE_P2P_DEVICE:
- 		return le32_to_cpu(txq_timer->p2p_device);
-+	case NL80211_IFTYPE_MONITOR:
-+		return default_timeout;
- 	default:
- 		WARN_ON(1);
- 		return mvm->cfg->base_params->wd_timeout;
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -5327,12 +5327,15 @@ static int ufshcd_config_vreg(struct dev
+ 		struct ufs_vreg *vreg, bool on)
+ {
+ 	int ret = 0;
+-	struct regulator *reg = vreg->reg;
+-	const char *name = vreg->name;
++	struct regulator *reg;
++	const char *name;
+ 	int min_uV, uA_load;
+ 
+ 	BUG_ON(!vreg);
+ 
++	reg = vreg->reg;
++	name = vreg->name;
++
+ 	if (regulator_count_voltages(reg) > 0) {
+ 		min_uV = on ? vreg->min_uV : 0;
+ 		ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
