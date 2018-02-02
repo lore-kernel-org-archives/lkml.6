@@ -1,82 +1,49 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591198-2-3682294491225271833
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591197; b=HzCf/t3CzivIWISzf9G/rTk4LXRm1mD//BfyhL0n9jWb6sy
-    abQKf48W+2jJ1geXBocWV+8VO276Fm2XGaaM5uc6/UVc2h2afnWckCWjvFh/OyAC
-    UOU4vB92nB9JMhgl2W2AbGpF65amlMPd3FwvSTy0IqH9Z3tzUkVLk1MqTpsdG7BC
-    4CNUzc21J8B+uD4wxoLWlpKPugTRN+5HhMmJdgSslK8gxB+JcbaBPuTjIeVqBAoI
-    o3/DUtb47gZcWguJMTCUkncTzhXBprnkASWLbux8G1CpoIteY8bYXCXT1EKQlz7n
-    L5XJVIFUwiFmh9e7ATB0UoZRs9Xoz/u1C5Siaww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591197; bh=V5BUlqWxkEoTI+3s9XqXbVJb4a
-    Bz/TmOX/u89O6O6vM=; b=J2rHrNeTi3xwLokG14QSpTHsZW+gbrqIRHuUP3UPyi
-    RGGYlU8WxGW1pN16C6vg0AekkHCU+YBdAbtI3BBUfqOtgN90sH30vfa7o61nMSjf
-    CY11YgdDAzy32SMd2Cp7no39oJHHgTAg8JiZuPV3YrDOHgMk/BABNJLjDY9omSgE
-    8iG15Ffvts/joryck7NfWdY27FsZxyhIkPIt1XH5RO7aHRaiCOps+zckjgtGNat9
-    xS206m8lTbhfWysg3WLAFx9QVFdwMY0CHlBJW7qvkRHJT6wCHQ0Z3PHfFLtq1V6Z
-    XGe88nxBYK46DnBGxFJKdAn/PEuCzEiPMssZiWMYaeFA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753106AbeBBRGb (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:06:31 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36772 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753100AbeBBRG3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:06:29 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227V1mzshxWDgMUUIskYTkNvcvNXd065QxR6IWuZZKLqJLfjABFf+deFZPhAAmGkCuUbeRTA
+ARC-Seal: i=1; a=rsa-sha256; t=1517591196; cv=none;
+        d=google.com; s=arc-20160816;
+        b=eFKebiqSfcfhobc/mDoyg+tKfDK1++AkDxsI6y6vi2/2BCbC7DXLnIHFm2ECyeS4+R
+         97PVkGlWqHOYCOlXrDGQOjqu7FvhN+0KuYRrWDVEzdxEdC6nqoschfrJaFe8b9duGWll
+         84jfYXnbaKGzefI1lekFW/UTGfQtt0K3HyUq5kAaGcVrqd8V66pKLzkjZiriHZBAMwur
+         H5lsau02glcO9A7rLNB5f6ZgHkYpLQNm0vgy6N0FPMmGpbmoEssygzb7maExMbm00I6G
+         UL5V+du8u+UQDvztIL/Syxtad+BOSr2B1rgaCD+1HxRKA2kuYxZfjrOKd6K3xpLc/KMQ
+         +RvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=J87ZbkEnEsuGI65+RTO4ZJM4rimBjtsf/ZzIQ39sZ+0=;
+        b=weHR0laZOvx2NQVji0CI+P0zTXpG5TYpeXiMFiX0zq8rQTnv24CH/r2rC/UxU2gteu
+         HkYfo2aLvDt4t8dChXeeh48M6ZMzeZ7xLQSSrHzT+3nKdBoEytTCU173IyqWa0eEn+7d
+         VS7trkQMFRnT5QRvKAO/P2mKkHulhkQdBnJO3rSw3c2pkA15/3IBu32RThGQNzrdAyWO
+         qyhCoJ+N3akeEjkU3f5J9OI8DmR36fEUm7oaGJwrKoBKYvvbA8TlbwsX9c5KGLab9ySG
+         5CpvbezPmKUu1AehpYKJ0sSeUfmiiTwn20GjJ5SDxzn0erXiktQwftYiLGG9nfLer/P/
+         cnLA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Badhri <badhri@google.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Hemant Kumar <hemantk@codeaurora.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Greg KH <gregkh@linux-foundation.org>
-Subject: [PATCH 4.9 81/86] usb: f_fs: Prevent gadget unbind if it is already unbound
-Date: Fri,  2 Feb 2018 17:58:41 +0100
-Message-Id: <20180202140830.100425500@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Jan Kara <jack@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jan Kara <jack@suse.cz>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 51/86] quota: Check for register_shrinker() failure.
+Date: Fri,  2 Feb 2018 17:58:11 +0100
+Message-Id: <20180202140826.948824042@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309376971073820?=
+X-GMAIL-MSGID: =?utf-8?q?1591309706585567356?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -84,49 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hemant Kumar <hemantk@codeaurora.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit ce5bf9a50daf2d9078b505aca1cea22e88ecb94a upstream.
 
-Upon usb composition switch there is possibility of ep0 file
-release happening after gadget driver bind. In case of composition
-switch from adb to a non-adb composition gadget will never gets
-bound again resulting into failure of usb device enumeration. Fix
-this issue by checking FFS_FL_BOUND flag and avoid extra
-gadget driver unbind if it is already done as part of composition
-switch.
+[ Upstream commit 88bc0ede8d35edc969350852894dc864a2dc1859 ]
 
-This fixes adb reconnection error reported on Android running
-v4.4 and above kernel versions. Verified on Hikey running vanilla
-v4.15-rc7 + few out of tree Mali patches.
+register_shrinker() might return -ENOMEM error since Linux 3.12.
+Call panic() as with other failure checks in this function if
+register_shrinker() failed.
 
-Reviewed-at: https://android-review.googlesource.com/#/c/582632/
-
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Greg KH <gregkh@linux-foundation.org>
-Cc: Michal Nazarewicz <mina86@mina86.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Dmitry Shmidt <dimitrysh@google.com>
-Cc: Badhri <badhri@google.com>
-Cc: Android Kernel Team <kernel-team@android.com>
-Signed-off-by: Hemant Kumar <hemantk@codeaurora.org>
-[AmitP: Cherry-picked it from android-4.14 and updated the commit log]
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Fixes: 1d3d4437eae1 ("vmscan: per-node deferred work")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Jan Kara <jack@suse.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/gadget/function/f_fs.c |    3 ++-
+ fs/quota/dquot.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -3725,7 +3725,8 @@ static void ffs_closed(struct ffs_data *
- 	ci = opts->func_inst.group.cg_item.ci_parent->ci_parent;
- 	ffs_dev_unlock();
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -2985,7 +2985,8 @@ static int __init dquot_init(void)
+ 	pr_info("VFS: Dquot-cache hash table entries: %ld (order %ld,"
+ 		" %ld bytes)\n", nr_hash, order, (PAGE_SIZE << order));
  
--	unregister_gadget_item(ci);
-+	if (test_bit(FFS_FL_BOUND, &ffs->flags))
-+		unregister_gadget_item(ci);
- 	return;
- done:
- 	ffs_dev_unlock();
+-	register_shrinker(&dqcache_shrinker);
++	if (register_shrinker(&dqcache_shrinker))
++		panic("Cannot register dquot shrinker");
+ 
+ 	return 0;
+ }
