@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227U2Jw50wZrKuND6vB7xC64rZW5yHC/6hkRKmk0iFIsfcS3kBUh5VfN4+fNs3lEzno5YMzy
-ARC-Seal: i=1; a=rsa-sha256; t=1517591475; cv=none;
+X-Google-Smtp-Source: AH8x2243jExu81P5x0v5B+8H60Dw7y+QpJm4lvZsNFaP5GJgg3C1k3ofPpWQMNyo3+U1N36lMXY9
+ARC-Seal: i=1; a=rsa-sha256; t=1517591470; cv=none;
         d=google.com; s=arc-20160816;
-        b=TMsZdwyQtvEIr5Lr4T5Vov2CWu0Z6t2W66TdT+vatJSPa5/NVNDC+lDIzXCRuMBjKk
-         Vs2lw8+LU8HINn/W9L+t6qn9p8DaITCgTTL0LoGix0kl3t0GFE3COotAv2M47HTgH6RP
-         WPObmX8Qci+3R1aZL4PBHFmpyWgADnuLN4EOPLmtFxX9L1ddslrqWHTp/yGZjbLBwM+P
-         e6KAuYR9Wnzz81ozhffEPsBOrMktxyxS1dcqJFiAvkeRsMxExm01HCLjVKgvmHR6ULNe
-         NZpVNwePtZJupiYLtGrWtvxWosSPz0bpMhxVQ3Cm8sfrCClXcl7OMqfeE6aLpL+sHXw0
-         BkKw==
+        b=SgfjgmTarlhQl9B+rsIHok3amYIOragYObopETOfqRktU4oJF0rRNRScMkWXxwVcsd
+         B91XqBZx2gma94EXgoMTks7yhOBiPwxx+u9AwZD77gEkbZn+WR00nWl1U7Si+llUePMr
+         uDPEjxM+nadxEgmU6dZW7Du+VnNUVMaznAfaK40A1e0IhYHfG269EOfUpV7VXQsVV1FC
+         YuX5qnLhZ99GjezqIRrwlDtJNKzD7IAhIEJLxPkNknGNrWZVGzW2WWJMNtTeL/OCPB1A
+         5aP7q9uiVRemmrsceboWOp/ZLH5iTMg0aZjV04pcaX5fuvuipf2SaOHJC21G5foMgJ3I
+         XOwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=o7bbXmV2+BFr00KYt+Al8ZulHw2PnKowK2jpeq9gVIs=;
-        b=gT4zRzb3AxnsQo1FGjk6GS3cm+DAykeXO60vEifb1GCODOmxu57kVxIn7G2p5i7089
-         6RY5Z3mAzh+LtcMOQbSuM9P+8f/FqeLg+BGO9wTEwCdTTJR6Hj7W7PGZWZEA8pdx0JYl
-         4k0g78BjczoZQTONRtvF3JJ+RPcPUq+Mc99XMVz7GS+b4YTSXTnwNir2Kjf0J9vsCMy9
-         vIF6wdn9bGZ7Kc7dM5p/Ix4GYcpfreJib52n0MLqKnvaIqbluR8x8OSYvmHcBIPY6Z+d
-         tEqm41HIfO3NGh5t8HsA6S9RVfDE3rVCahh8R9SSsTzMFzW9F5PzDglQ3Hc7sG3N/rKj
-         tdEw==
+        bh=IEksBJMuhkkavryFyp/v3Ni0C0VEr3lYc1DAJ4i5D3g=;
+        b=cS810NOHeKN3cZfhq39gAVZUqftlsKxQg5GX5S1SfwAdncG86B873y4SI6pWTk7SFv
+         zHglOlMP6Ls1mli4qWToUncW2As4H0RBV3Akscwd2Zl8WASoO26ph3nF3l3KsOqqzYFL
+         htM8C/Zu9xTRhlPi71x8PBSwvl3sM/3faR0tyuXj65kuPvP0SQ/iFf4G/21WmgNoBtCo
+         l7rAPkis1Wx6MXbZuLXhjPsgeoCkER9OikH/4PkJMqXZPHguPIDVNR4I5qWebEyumC5F
+         /n0gPMnEYSiY/qaysuPd1IrAK+xcyhDTGhtCI+Ig6lYdOq9sUPfkKeVSnDsEVIJoCOeg
+         yZgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jan Kara <jack@suse.cz>,
-	Chao Yu <yuchao0@huawei.com>,
+	Jeff Layton <jlayton@redhat.com>,
+	Vasily Averin <vvs@virtuozzo.com>,
+	"J. Bruce Fields" <bfields@redhat.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 092/156] quota: propagate error from __dquot_initialize
-Date: Fri,  2 Feb 2018 17:57:53 +0100
-Message-Id: <20180202140844.405332383@linuxfoundation.org>
+Subject: [PATCH 4.14 090/156] lockd: fix "list_add double add" caused by legacy signal interface
+Date: Fri,  2 Feb 2018 17:57:51 +0100
+Message-Id: <20180202140844.318445757@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309999435898622?=
-X-GMAIL-MSGID: =?utf-8?q?1591309999435898622?=
+X-GMAIL-THRID: =?utf-8?q?1591309364374629787?=
+X-GMAIL-MSGID: =?utf-8?q?1591309993372930329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,90 +50,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
 
-[ Upstream commit 1a6152d36dee08da2be2a3030dceb45ef680460a ]
+[ Upstream commit 81833de1a46edce9ca20cfe079872ac1c20ef359 ]
 
-In commit 6184fc0b8dd7 ("quota: Propagate error from ->acquire_dquot()"),
-we have propagated error from __dquot_initialize to caller, but we forgot
-to handle such error in add_dquot_ref(), so, currently, during quota
-accounting information initialization flow, if we failed for some of
-inodes, we just ignore such error, and do account for others, which is
-not a good implementation.
+restart_grace() uses hardcoded init_net.
+It can cause to "list_add double add" in following scenario:
 
-In this patch, we choose to let user be aware of such error, so after
-turning on quota successfully, we can make sure all inodes disk usage
-can be accounted, which will be more reasonable.
+1) nfsd and lockd was started in several net namespaces
+2) nfsd in init_net was stopped (lockd was not stopped because
+ it have users from another net namespaces)
+3) lockd got signal, called restart_grace() -> set_grace_period()
+ and enabled lock_manager in hardcoded init_net.
+4) nfsd in init_net is started again,
+ its lockd_up() calls set_grace_period() and tries to add
+ lock_manager into init_net 2nd time.
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Jeff Layton suggest:
+"Make it safe to call locks_start_grace multiple times on the same
+lock_manager. If it's already on the global grace_list, then don't try
+to add it again.  (But we don't intentionally add twice, so for now we
+WARN about that case.)
+
+With this change, we also need to ensure that the nfsd4 lock manager
+initializes the list before we call locks_start_grace. While we're at
+it, move the rest of the nfsd_net initialization into
+nfs4_state_create_net. I see no reason to have it spread over two
+functions like it is today."
+
+Suggested patch was updated to generate warning in described situation.
+
+Suggested-by: Jeff Layton <jlayton@redhat.com>
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/quota/dquot.c |   19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ fs/nfs_common/grace.c |    6 +++++-
+ fs/nfsd/nfs4state.c   |    7 ++++---
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -934,12 +934,13 @@ static int dqinit_needed(struct inode *i
+--- a/fs/nfs_common/grace.c
++++ b/fs/nfs_common/grace.c
+@@ -30,7 +30,11 @@ locks_start_grace(struct net *net, struc
+ 	struct list_head *grace_list = net_generic(net, grace_net_id);
+ 
+ 	spin_lock(&grace_lock);
+-	list_add(&lm->list, grace_list);
++	if (list_empty(&lm->list))
++		list_add(&lm->list, grace_list);
++	else
++		WARN(1, "double list_add attempt detected in net %x %s\n",
++		     net->ns.inum, (net == &init_net) ? "(init_net)" : "");
+ 	spin_unlock(&grace_lock);
  }
- 
- /* This routine is guarded by s_umount semaphore */
--static void add_dquot_ref(struct super_block *sb, int type)
-+static int add_dquot_ref(struct super_block *sb, int type)
- {
- 	struct inode *inode, *old_inode = NULL;
- #ifdef CONFIG_QUOTA_DEBUG
- 	int reserved = 0;
- #endif
-+	int err = 0;
- 
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-@@ -959,7 +960,11 @@ static void add_dquot_ref(struct super_b
- 			reserved = 1;
- #endif
- 		iput(old_inode);
--		__dquot_initialize(inode, type);
-+		err = __dquot_initialize(inode, type);
-+		if (err) {
-+			iput(inode);
-+			goto out;
-+		}
- 
- 		/*
- 		 * We hold a reference to 'inode' so it couldn't have been
-@@ -974,7 +979,7 @@ static void add_dquot_ref(struct super_b
- 	}
- 	spin_unlock(&sb->s_inode_list_lock);
- 	iput(old_inode);
--
-+out:
- #ifdef CONFIG_QUOTA_DEBUG
- 	if (reserved) {
- 		quota_error(sb, "Writes happened before quota was turned on "
-@@ -982,6 +987,7 @@ static void add_dquot_ref(struct super_b
- 			"Please run quotacheck(8)");
- 	}
- #endif
-+	return err;
- }
- 
- /*
-@@ -2372,10 +2378,11 @@ static int vfs_load_quota_inode(struct i
- 	dqopt->flags |= dquot_state_flag(flags, type);
- 	spin_unlock(&dq_state_lock);
- 
--	add_dquot_ref(sb, type);
--
--	return 0;
-+	error = add_dquot_ref(sb, type);
-+	if (error)
-+		dquot_disable(sb, type, flags);
- 
-+	return error;
- out_file_init:
- 	dqopt->files[type] = NULL;
- 	iput(inode);
+ EXPORT_SYMBOL_GPL(locks_start_grace);
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -7021,6 +7021,10 @@ static int nfs4_state_create_net(struct
+ 		INIT_LIST_HEAD(&nn->sessionid_hashtbl[i]);
+ 	nn->conf_name_tree = RB_ROOT;
+ 	nn->unconf_name_tree = RB_ROOT;
++	nn->boot_time = get_seconds();
++	nn->grace_ended = false;
++	nn->nfsd4_manager.block_opens = true;
++	INIT_LIST_HEAD(&nn->nfsd4_manager.list);
+ 	INIT_LIST_HEAD(&nn->client_lru);
+ 	INIT_LIST_HEAD(&nn->close_lru);
+ 	INIT_LIST_HEAD(&nn->del_recall_lru);
+@@ -7078,9 +7082,6 @@ nfs4_state_start_net(struct net *net)
+ 	ret = nfs4_state_create_net(net);
+ 	if (ret)
+ 		return ret;
+-	nn->boot_time = get_seconds();
+-	nn->grace_ended = false;
+-	nn->nfsd4_manager.block_opens = true;
+ 	locks_start_grace(net, &nn->nfsd4_manager);
+ 	nfsd4_client_tracking_init(net);
+ 	printk(KERN_INFO "NFSD: starting %ld-second grace period (net %p)\n",
