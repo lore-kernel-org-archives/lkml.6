@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224cIvdhBZvxTG/ek0Nj5q5jmVcMRJhQtTtGvnVQkg4dUr6aQX43KrscqLoI4SzJopfzqcjF
-ARC-Seal: i=1; a=rsa-sha256; t=1517591233; cv=none;
+X-Google-Smtp-Source: AH8x224MV2JL2h1o0vVGrBufPPLTev2fLpR2bpMfjsFKLM2lvx7TZ+efIyQ/Hj3yEcwTTDuuIiqH
+ARC-Seal: i=1; a=rsa-sha256; t=1517591228; cv=none;
         d=google.com; s=arc-20160816;
-        b=nY8//arp38XKnzoqr39Ih2TpV9sE5UHokJc+n5CPUJypWjq+NCbGZ9++kt8RPuARLo
-         0S4aFmJRkOiuY77JLHrHvhfB94/jskMbYEEczJcr40CvS+/xVHaOYBvdj1GTDjMLhu0Z
-         vPPR1H1Pj1c9U9EVDH0H7QMthx6MIkmi4YDlBYo1EgUhZUQkMvFxJ1x2XHnD/f/3k0n1
-         oDhknodcKe6G2EjkOnGPDH1yD+S3b/zy1pjYdqcHKNJTwcX70kAkgomXjcyYvzALDSZl
-         ijJ14cs7VBHNObQYep2PxnSjYwGK6rolO1+P53SBscuBSCXLvTVa/9NcppJT9UVZ3GT5
-         aC4Q==
+        b=FzGQvMoFdW9CRavrkPSJRbzvD8h9cNqlzZ+tyw+o0ZsQCfxKp4sUYEBJoB5olsrkxs
+         LCTblmISQ+uyDVjQ7E5tRZUbOTHkujHL94/xm2paw8EHS+M9yhPtH/2mj4HablG9Hwo6
+         /oBVsZs5/j0lV2hUvV1c/5DlwZLqCqokILkrOvElwbc5/DKZna57xfHnBH5xjCQsMreK
+         NVCpEy89592EQwNffesryOxinwli53c7UyuXBFGozeVe70eCpn+3Ke48cCE5JfmDo41p
+         KSqlAPP9TvZdUhuNYqCR5AINTuaf0qNx4eJHW8TaQ4WD0ZvzmdMckzCLGhtrEFwjv9b3
+         nCIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=v2Kco4+OAG88NZ/yXOp5ay7QLGjdP7a3xAJQ5LsPCGk=;
-        b=WOvvgltAZWg6FsmCMx0y0ngKn+fGXM0saNkUGuFB2AG3i9ZzptDI84aI5SNX9FRXPg
-         miOChftIsL5AymUNuKsxwNvyVbuVQAmSMnQahC84X9ByHx4IvLyDQhpyPvfNu+fa+FYJ
-         dVsRZQBoJQ5G76Nl2WZXL7AYMSCg+xKmotJZ//i6vWpmsZg3HS6xPWd7l0p2n0N/3swB
-         eD6Vp58kYg4qgMWraKwitTmhVmW0sCPB3+RvmOhBGgf7wkaC5DTxW6l7HamMA0aAyiLN
-         OgGdfopCi1kLWw0LySPheoB3cWjLC+o3+dsD7p+g2aoTFhEjul7tm3Cr0RZsk2nvLkwS
-         /Iig==
+        bh=XdiWZ+m4ySFt9SVnLEkwxZCbK0SBRW3shFR6WCqoOFs=;
+        b=kafT8/vKfKn1eKG70lKq2qJrpGvo/J+2ac24cPaklhlW1oFSEnYycPojESaPsN3wkT
+         eBV6bBLZT6RFK1ufuugMtLSbJ1PPInbjRjaug/hOzE91a1LPGYAGY3IMOwiurIU8AFYp
+         jDF/QZcfsz3TaBG/kpnhV+PLhElyqbp0oX7fx2b+AicKY6P/yenOL/LjNGWc4X26a+7x
+         hMe/PgmUNlPfHYyRm9jvPi4wyrv/NVaMPv75pWVG24MCD4tZcNlmdD6ArVBPuYdVUU8f
+         /8F2f/4Ztgxi+JzW9Yugz+dqZNeu+HFtzJ+atG1jiQdvegsKw2eToJUpkk/kOcSkiFak
+         Rlvg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Stefano Brivio <sbrivio@redhat.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 010/156] crypto: aesni - fix typo in generic_gcmaes_decrypt
-Date: Fri,  2 Feb 2018 17:56:31 +0100
-Message-Id: <20180202140840.787171740@linuxfoundation.org>
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Dave Jones <davej@codemonkey.org.uk>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Paul E. McKenney" <paulmck@us.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Ozkan Sezer <sezeroz@gmail.com>
+Subject: [PATCH 4.14 001/156] futex: Fix OWNER_DEAD fixup
+Date: Fri,  2 Feb 2018 17:56:22 +0100
+Message-Id: <20180202140840.309210764@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309745134653616?=
-X-GMAIL-MSGID: =?utf-8?q?1591309745134653616?=
+X-GMAIL-THRID: =?utf-8?q?1591309740904584915?=
+X-GMAIL-MSGID: =?utf-8?q?1591309740904584915?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,33 +55,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 106840c41096a01079d3a2025225029c13713802 upstream.
+commit a97cb0e7b3f4c6297fd857055ae8e895f402f501 upstream.
 
-generic_gcmaes_decrypt needs to use generic_gcmaes_ctx, not
-aesni_rfc4106_gcm_ctx. This is actually harmless because the fields in
-struct generic_gcmaes_ctx share the layout of the same fields in
-aesni_rfc4106_gcm_ctx.
+Both Geert and DaveJ reported that the recent futex commit:
 
-Fixes: cce2ea8d90fe ("crypto: aesni - add generic gcm(aes)")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+  c1e2f0eaf015 ("futex: Avoid violating the 10th rule of futex")
+
+introduced a problem with setting OWNER_DEAD. We set the bit on an
+uninitialized variable and then entirely optimize it away as a
+dead-store.
+
+Move the setting of the bit to where it is more useful.
+
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reported-by: Dave Jones <davej@codemonkey.org.uk>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@us.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: c1e2f0eaf015 ("futex: Avoid violating the 10th rule of futex")
+Link: http://lkml.kernel.org/r/20180122103947.GD2228@hirez.programming.kicks-ass.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Ozkan Sezer <sezeroz@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/crypto/aesni-intel_glue.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/futex.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/crypto/aesni-intel_glue.c
-+++ b/arch/x86/crypto/aesni-intel_glue.c
-@@ -1115,7 +1115,7 @@ static int generic_gcmaes_decrypt(struct
- {
- 	__be32 counter = cpu_to_be32(1);
- 	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
--	struct aesni_rfc4106_gcm_ctx *ctx = aesni_rfc4106_gcm_ctx_get(tfm);
-+	struct generic_gcmaes_ctx *ctx = generic_gcmaes_ctx_get(tfm);
- 	void *aes_ctx = &(ctx->aes_key_expanded);
- 	u8 iv[16] __attribute__ ((__aligned__(AESNI_ALIGN)));
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -2311,9 +2311,6 @@ static int fixup_pi_state_owner(u32 __us
+ 	raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
  
+ 	oldowner = pi_state->owner;
+-	/* Owner died? */
+-	if (!pi_state->owner)
+-		newtid |= FUTEX_OWNER_DIED;
+ 
+ 	/*
+ 	 * We are here because either:
+@@ -2374,6 +2371,9 @@ retry:
+ 	}
+ 
+ 	newtid = task_pid_vnr(newowner) | FUTEX_WAITERS;
++	/* Owner died? */
++	if (!pi_state->owner)
++		newtid |= FUTEX_OWNER_DIED;
+ 
+ 	if (get_futex_value_locked(&uval, uaddr))
+ 		goto handle_fault;
