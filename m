@@ -1,47 +1,76 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226OS2HDqhjTRn4MoknWAGS+9+iPBD30rYg5X/iOgCo0oKMJcecxibMswAepVwAT0ikW5wjR
-ARC-Seal: i=1; a=rsa-sha256; t=1517591710; cv=none;
-        d=google.com; s=arc-20160816;
-        b=nyYd2KkXWbNcPzVEZxN8tdJqtz1gR/BW483oM7ueWm+vX5wjt5i8Gq/OTiLit0J5E7
-         RPUkM70QnvbUSN99JGaKjGs8jcfwJ6HN23xGQ3Mp9aODiSahG/P10hItWKt6sbASK3A8
-         U1evb5PO71pcTyW/f0HmSXt2pPTGQ7l/36tynJSJfgJpl+iY9Yo7ZOy6g9r1Ls8EE2Wb
-         1n+VY2fzB8nGqyEhGwdFXgCquKacQ/zqqe8MPm93IK5qzANjJIzXcB7gRqu5EncRuZ95
-         l1iuEvggjPpuBTHtzLrKF4URYw/YBLktVrWepLmDR4DXylsQvndhoGd93cV1PVSSjhUq
-         QLyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=wppr/JmPq7PQCAI3Dcc/bBkUFsh9zYxxuezSsKb98uo=;
-        b=XQdT/6+5HMyyca1NZcITwb8bBYghqEjiwx7BEXIHQpqvnbyMokhvLAO5vDhdE+2xTv
-         AHAEeoPtMmJmPKB+KNgyW2Nyy9aLTeAIxQEFvPIJyZLQcE75GagKzyXNy77peVHBrzC0
-         mpWnEM89vHGW9a0P5Dayekjnn9WS2tRQhTNYXxAm8hfldogdR0MLshC9uvR33paev+fu
-         FDrU+nfT9QiKW0+ne+h/BsFzigVQqDpfntjKttEpCEJuJhmb9v+lWB8vVUf76683qOBX
-         hZU7uyT+ifOUBbt2JOYS8XBhMkn/vzGJlX3Jz/Y77gCC9Vq+MpNpHP8AK86YL9gJVT3W
-         10Ag==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2951738-1517591708-2-962575333768768474
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591707; b=nvbS/caI8Mbbk3+QMwdSnAAhuhrDsuybIAK0zs3wRe952+B
+    pGeN/80UZjwg+um68olZ1qx9Fproj6aRtKV+Ze/cC2uNic6XqrrAOU5OKIJgwXMz
+    kQSUUwpYNmqcwg14osX35glDQrXhH+hV5t1yM05S+GU2RcBwDMR6fUu61usmCIDn
+    ouka/Yjkg9mQuJXjAipqiTdKNJKOxMjZWenfo/r+2W6kD3I7uQEoUZnzeXg4fTTf
+    8CpPQFGqv55scDadVQ+eEZyCO0o1FKI7hzZXhiQ89NKwkdd3RklnJA76RGlTF3g/
+    pTvvrdIHkBFGZQ57T8/ZPP+q4b5qShJxkjkNmPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591707; bh=FjVij3vwgHk86QgU8Fto7I0W7W
+    Hm4jJB7RdMG68BZ/A=; b=Kp6JJumb4l/9eLLt4KUIIt6WkMsXVipIE5wUdsbQR6
+    8O79qRX6x4voJjtW6tVlz5HgkMOfCk+KAL4KFhVkk0wECVeXtpbnXSMKjGe1CJGw
+    Ha5VfJ1/9ydICVRdqFhm/Bll4cqxH7Px9MbhPCp4BJ+qkCskgu4+0vyIwiZiy6Yk
+    /kl7VN+e0iEIRY82Gh49x+wWVe+OXvsT3FKdjzKNUyTfnaa72jT8r8jnXnDMp1YN
+    7EvlNm85JcFz2BjrXdz9glOpL4jxLQYde8cQclLp3XINZULNj2GlHfvqRqb6Nm19
+    ZPK0VDkctB1nG4k4mxoGUOZr0BFROzuLGMB8/iMHsD0A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753703AbeBBRPD (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:15:03 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40646 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753698AbeBBRPB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:15:01 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Alexandre TORGUE <alexandre.torgue@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.15 03/55] gpio: stmpe: i2c transfer are forbiden in atomic context
-Date: Fri,  2 Feb 2018 17:58:21 +0100
-Message-Id: <20180202140826.393010815@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.15 15/55] crypto: af_alg - whitelist mask and type
+Date: Fri,  2 Feb 2018 17:58:33 +0100
+Message-Id: <20180202140827.628846872@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309486473338245?=
-X-GMAIL-MSGID: =?utf-8?q?1591310245159817669?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,98 +78,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Patrice Chotard <patrice.chotard@st.com>
+From: Stephan Mueller <smueller@chronox.de>
 
-commit b888fb6f2a278442933e3bfab70262e9a5365fb3 upstream.
+commit bb30b8848c85e18ca7e371d0a869e94b3e383bdf upstream.
 
-Move the workaround from stmpe_gpio_irq_unmask() which is executed
-in atomic context to stmpe_gpio_irq_sync_unlock() which is not.
+The user space interface allows specifying the type and mask field used
+to allocate the cipher. Only a subset of the possible flags are intended
+for user space. Therefore, white-list the allowed flags.
 
-It fixes the following issue:
+In case the user space caller uses at least one non-allowed flag, EINVAL
+is returned.
 
-[    1.500000] BUG: scheduling while atomic: swapper/1/0x00000002
-[    1.500000] CPU: 0 PID: 1 Comm: swapper Not tainted 4.15.0-rc2-00020-gbd4301f-dirty #28
-[    1.520000] Hardware name: STM32 (Device Tree Support)
-[    1.520000] [<0000bfc9>] (unwind_backtrace) from [<0000b347>] (show_stack+0xb/0xc)
-[    1.530000] [<0000b347>] (show_stack) from [<0001fc49>] (__schedule_bug+0x39/0x58)
-[    1.530000] [<0001fc49>] (__schedule_bug) from [<00168211>] (__schedule+0x23/0x2b2)
-[    1.550000] [<00168211>] (__schedule) from [<001684f7>] (schedule+0x57/0x64)
-[    1.550000] [<001684f7>] (schedule) from [<0016a513>] (schedule_timeout+0x137/0x164)
-[    1.550000] [<0016a513>] (schedule_timeout) from [<00168b91>] (wait_for_common+0x8d/0xfc)
-[    1.570000] [<00168b91>] (wait_for_common) from [<00139753>] (stm32f4_i2c_xfer+0xe9/0xfe)
-[    1.580000] [<00139753>] (stm32f4_i2c_xfer) from [<00138545>] (__i2c_transfer+0x111/0x148)
-[    1.590000] [<00138545>] (__i2c_transfer) from [<001385cf>] (i2c_transfer+0x53/0x70)
-[    1.590000] [<001385cf>] (i2c_transfer) from [<001388a5>] (i2c_smbus_xfer+0x12f/0x36e)
-[    1.600000] [<001388a5>] (i2c_smbus_xfer) from [<00138b49>] (i2c_smbus_read_byte_data+0x1f/0x2a)
-[    1.610000] [<00138b49>] (i2c_smbus_read_byte_data) from [<00124fdd>] (__stmpe_reg_read+0xd/0x24)
-[    1.620000] [<00124fdd>] (__stmpe_reg_read) from [<001252b3>] (stmpe_reg_read+0x19/0x24)
-[    1.630000] [<001252b3>] (stmpe_reg_read) from [<0002c4d1>] (unmask_irq+0x17/0x22)
-[    1.640000] [<0002c4d1>] (unmask_irq) from [<0002c57f>] (irq_startup+0x6f/0x78)
-[    1.650000] [<0002c57f>] (irq_startup) from [<0002b7a1>] (__setup_irq+0x319/0x47c)
-[    1.650000] [<0002b7a1>] (__setup_irq) from [<0002bad3>] (request_threaded_irq+0x6b/0xe8)
-[    1.660000] [<0002bad3>] (request_threaded_irq) from [<0002d0b9>] (devm_request_threaded_irq+0x3b/0x6a)
-[    1.670000] [<0002d0b9>] (devm_request_threaded_irq) from [<001446e7>] (mmc_gpiod_request_cd_irq+0x49/0x8a)
-[    1.680000] [<001446e7>] (mmc_gpiod_request_cd_irq) from [<0013d45d>] (mmc_start_host+0x49/0x60)
-[    1.690000] [<0013d45d>] (mmc_start_host) from [<0013e40b>] (mmc_add_host+0x3b/0x54)
-[    1.700000] [<0013e40b>] (mmc_add_host) from [<00148119>] (mmci_probe+0x4d1/0x60c)
-[    1.710000] [<00148119>] (mmci_probe) from [<000f903b>] (amba_probe+0x7b/0xbe)
-[    1.720000] [<000f903b>] (amba_probe) from [<001170e5>] (driver_probe_device+0x169/0x1f8)
-[    1.730000] [<001170e5>] (driver_probe_device) from [<001171b7>] (__driver_attach+0x43/0x5c)
-[    1.740000] [<001171b7>] (__driver_attach) from [<0011618d>] (bus_for_each_dev+0x3d/0x46)
-[    1.740000] [<0011618d>] (bus_for_each_dev) from [<001165cd>] (bus_add_driver+0xcd/0x124)
-[    1.740000] [<001165cd>] (bus_add_driver) from [<00117713>] (driver_register+0x4d/0x7a)
-[    1.760000] [<00117713>] (driver_register) from [<001fc765>] (do_one_initcall+0xbd/0xe8)
-[    1.770000] [<001fc765>] (do_one_initcall) from [<001fc88b>] (kernel_init_freeable+0xfb/0x134)
-[    1.780000] [<001fc88b>] (kernel_init_freeable) from [<00167ee3>] (kernel_init+0x7/0x9c)
-[    1.790000] [<00167ee3>] (kernel_init) from [<00009b65>] (ret_from_fork+0x11/0x2c)
-
-Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpio-stmpe.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ crypto/af_alg.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -190,6 +190,16 @@ static void stmpe_gpio_irq_sync_unlock(s
- 	};
- 	int i, j;
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -150,7 +150,7 @@ EXPORT_SYMBOL_GPL(af_alg_release_parent)
  
-+	/*
-+	 * STMPE1600: to be able to get IRQ from pins,
-+	 * a read must be done on GPMR register, or a write in
-+	 * GPSR or GPCR registers
-+	 */
-+	if (stmpe->partnum == STMPE1600) {
-+		stmpe_reg_read(stmpe, stmpe->regs[STMPE_IDX_GPMR_LSB]);
-+		stmpe_reg_read(stmpe, stmpe->regs[STMPE_IDX_GPMR_CSB]);
-+	}
-+
- 	for (i = 0; i < CACHE_NR_REGS; i++) {
- 		/* STMPE801 and STMPE1600 don't have RE and FE registers */
- 		if ((stmpe->partnum == STMPE801 ||
-@@ -227,21 +237,11 @@ static void stmpe_gpio_irq_unmask(struct
+ static int alg_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
  {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
--	struct stmpe *stmpe = stmpe_gpio->stmpe;
- 	int offset = d->hwirq;
- 	int regoffset = offset / 8;
- 	int mask = BIT(offset % 8);
+-	const u32 forbidden = CRYPTO_ALG_INTERNAL;
++	const u32 allowed = CRYPTO_ALG_KERN_DRIVER_ONLY;
+ 	struct sock *sk = sock->sk;
+ 	struct alg_sock *ask = alg_sk(sk);
+ 	struct sockaddr_alg *sa = (void *)uaddr;
+@@ -158,6 +158,10 @@ static int alg_bind(struct socket *sock,
+ 	void *private;
+ 	int err;
  
- 	stmpe_gpio->regs[REG_IE][regoffset] |= mask;
--
--	/*
--	 * STMPE1600 workaround: to be able to get IRQ from pins,
--	 * a read must be done on GPMR register, or a write in
--	 * GPSR or GPCR registers
--	 */
--	if (stmpe->partnum == STMPE1600)
--		stmpe_reg_read(stmpe,
--			       stmpe->regs[STMPE_IDX_GPMR_LSB + regoffset]);
- }
++	/* If caller uses non-allowed flag, return error. */
++	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
++		return -EINVAL;
++
+ 	if (sock->state == SS_CONNECTED)
+ 		return -EINVAL;
  
- static void stmpe_dbg_show_one(struct seq_file *s,
+@@ -176,9 +180,7 @@ static int alg_bind(struct socket *sock,
+ 	if (IS_ERR(type))
+ 		return PTR_ERR(type);
+ 
+-	private = type->bind(sa->salg_name,
+-			     sa->salg_feat & ~forbidden,
+-			     sa->salg_mask & ~forbidden);
++	private = type->bind(sa->salg_name, sa->salg_feat, sa->salg_mask);
+ 	if (IS_ERR(private)) {
+ 		module_put(type->owner);
+ 		return PTR_ERR(private);
