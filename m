@@ -1,57 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751887AbeBBJNc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 04:13:32 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38555 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeBBJNW (ORCPT
+        id S1751948AbeBBJOM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 04:14:12 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38722 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeBBJOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 04:13:22 -0500
-X-Google-Smtp-Source: AH8x225P3UQ6kafPa7yczV1qcxbFAAw+/XxD9EWsaEsstjd/8QAq4mAZghAO6VbDOSV7an9xlfRV6g==
+        Fri, 2 Feb 2018 04:14:05 -0500
+X-Google-Smtp-Source: AH8x225/n4RbGf+zapXy9KkgHZ1O0rMtB/6r2gZjj2JSEJdGYuUO0jUPlqquDInb3Srah3Zn4zxLIA==
 From: Andrea Parri <parri.andrea@gmail.com>
-To: corbet@lwn.net, dhowells@redhat.com, paulmck@linux.vnet.ibm.com,
-        will.deacon@arm.com, peterz@infradead.org
+To: corbet@lwn.net, stern@rowland.harvard.edu, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        paulmck@linux.vnet.ibm.com
 Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        stern@rowland.harvard.edu, boqun.feng@gmail.com, npiggin@gmail.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
         Andrea Parri <parri.andrea@gmail.com>
-Subject: [PATCH 1/2] Documentation/memory-barriers.txt: cross-reference "tools/memory-model/"
-Date: Fri,  2 Feb 2018 10:12:48 +0100
-Message-Id: <1517562768-6238-1-git-send-email-parri.andrea@gmail.com>
+Subject: [PATCH 2/2] MAINTAINERS: list file memory-barriers.txt within the LKMM entry
+Date: Fri,  2 Feb 2018 10:13:42 +0100
+Message-Id: <1517562822-6293-1-git-send-email-parri.andrea@gmail.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent efforts led to the specification of a memory consistency model
-for the Linux kernel [1], which "can (roughly speaking) be thought of
-as an automated version of memory-barriers.txt" and which is (in turn)
-"accompanied by extensive documentation on its use and its design".
+Now that a formal specification of the LKMM has become available to
+the developer, some concern about how to track changes to the model
+on the level of the "high-level documentation" was raised.
 
-Make sure that the (occasional) reader of memory-barriers.txt will be
-aware of these developments.
+A first "mitigation" to this issue, suggested by Will, is to assign
+maintainership (and responsibility!!)  of such documentation (here,
+memory-barriers.txt) to the maintainers of the LKMM themselves.
 
-[1] https://marc.info/?l=linux-kernel&m=151687290114799&w=2
-
+Suggested-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
 ---
- Documentation/memory-barriers.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ On top of: https://marc.info/?l=linux-kernel&m=151748668632046&w=2 
 
-diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-index a863009849a3b..8cc3f098f4a7d 100644
---- a/Documentation/memory-barriers.txt
-+++ b/Documentation/memory-barriers.txt
-@@ -17,7 +17,9 @@ meant as a guide to using the various memory barriers provided by Linux, but
- in case of any doubt (and there are many) please ask.
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 08454be9237d7..9466907aa4db1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8106,6 +8106,7 @@ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+ F:	tools/memory-model/
++F:	Documentation/memory-barriers.txt
  
- To repeat, this document is not a specification of what Linux expects from
--hardware.
-+hardware.  For such a specification, in the form of a memory consistency
-+model, and for documentation about its usage and its design, the reader is
-+referred to "tools/memory-model/".
- 
- The purpose of this document is twofold:
- 
+ LINUX SECURITY MODULE (LSM) FRAMEWORK
+ M:	Chris Wright <chrisw@sous-sol.org>
 -- 
 2.7.4
