@@ -1,76 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753628AbeBBReb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 12:34:31 -0500
-Received: from mout.web.de ([212.227.15.14]:62550 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753682AbeBBRVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 12:21:45 -0500
-Subject: [PATCH 1/2] i2c-davinci: Delete an error message for a failed memory
- allocation in davinci_i2c_probe()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Kevin Hilman <khilman@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
-Message-ID: <f890924b-ca68-253b-a7c8-fce269393867@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 18:21:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753391AbeBBRgT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 12:36:19 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:40185 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753667AbeBBRRO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 12:17:14 -0500
+Date: Fri, 2 Feb 2018 18:17:08 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Sistare <steven.sistare@oracle.com>
+Cc: subhra mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        dhaval.giani@oracle.com
+Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
+ select_idle_sibling using SMT balance
+Message-ID: <20180202171708.GN2269@hirez.programming.kicks-ass.net>
+References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
+ <20180201123335.GV2249@hirez.programming.kicks-ass.net>
+ <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:X9mWGY9IK56enbtcYUi3D8vm7ggftfmFfsNXOSLqo3CD6Zu/zAe
- SE7CeuKtafriI17fU5Iw+EoNc7fpfc/FFzNx66XuofIWBQlcOhLkG+0o+iqTKP8tSM+BuaI
- itE5+Wf/jf6h1934GF0yJVTmNVXJoY6+0V9FcrhrGHEQR+bmErpa2T/IIQ9hb3VoaLYfzhi
- U0BhE8evTJaR1CHAV2KBg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:91IHUphB/SA=:Eco1uGG+04Wm5NtY0s/8kB
- c9ls6fF7ib8sTySvDzDwOOpqw0Y9UNqwh/vFFk7qsPV7ynPP1x5kpJH0iY6il4sh15yKu9KoB
- KU8D8gRj4BM6z4585TrFmzD4L9FCEyYiSG0KkYMePphIVcEXTxTEioyN8CXwbahZ5ids0IeX9
- IJEMBNXkVl/IP0oBbVjrBCCzqWqNzfg6928/ugHmphkqs/mLjjeGUQJMbIM99Qnmxx5Pju0o2
- gV6hbUyaOzT/ewGUSPc8Tq/yuuG8TxmkhrAUvarx0JY1dNnFhPx5W7Ee0foGS5yemBHkGQfg+
- mdh5ntpcocjsS0RXJku8j5xIH1UMqFa60krhMsNl+kRsxHUu2JhTJNJYXbOpZg/Nx0FJ/hpY8
- oNkbTIZ1I9r/MrZ5zNyswRF9x15ULdZkCIGyW80T0SLewjqC+dX4+dHLoJqZXG8ltPaFjvN2Z
- 9gZKE9Of0CNKvm+waGT9QpR4ap3fIxg2J02FJNn9lm40z6/oxP+2HHwjeB6bu93hhbs0ebg7N
- veCng4MeNSf9OT9zAmURuqUEt5LWeLzPArgz9du/ZwnrAkgfRbUdVAC5RzylCCQdFzT6w+3U2
- mVBhy3ypx/NnwxesKEy8eRYJyhz3CS5UBOEsQLXufaa4HIw6BQ8creu9cMBe21Z+BfeOgZxKL
- TlAQbMcqDdAvDwghUxBIK6mWso61zOLULFC5msmpTe3en8aKAsjadlaDblv7OC/cSOaeRiJRh
- t89AuhECtyil8QIb+LpE+slcvcC9yZwKNyaAFL1guMNvEzmHJUXtONxHL1ynItQN8hkug584H
- VTxAsBIRHJELGDHDTo8YIeW5SufVd278DaTNVD0F06GTR98+Ys=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 18:00:20 +0100
+On Fri, Feb 02, 2018 at 11:53:40AM -0500, Steven Sistare wrote:
+> >> +static int select_idle_smt(struct task_struct *p, struct sched_group *sg)
+> >>  {
+> >> +	int i, rand_index, rand_cpu;
+> >> +	int this_cpu = smp_processor_id();
+> >>  
+> >> +	rand_index = CPU_PSEUDO_RANDOM(this_cpu) % sg->group_weight;
+> >> +	rand_cpu = sg->cp_array[rand_index];
+> > 
+> > Right, so yuck.. I know why you need that, but that extra array and
+> > dereference is the reason I never went there.
+> > 
+> > How much difference does it really make vs the 'normal' wrapping search
+> > from last CPU ?
+> > 
+> > This really should be a separate patch with separate performance numbers
+> > on.
+> 
+> For the benefit of other readers, if we always search and choose starting from
+> the first CPU in a core, then later searches will often need to traverse the first
+> N busy CPU's to find the first idle CPU.  Choosing a random starting point avoids
+> such bias.  It is probably a win for processors with 4 to 8 CPUs per core, and
+> a slight but hopefully negligible loss for 2 CPUs per core, and I agree we need
+> to see performance data for this as a separate patch to decide.  We have SPARC
+> systems with 8 CPUs per core.
 
-Omit an extra message for a memory allocation failure in this function.
+Which is why the current code already doesn't start from the first cpu
+in the mask. We start at whatever CPU the task ran last on, which is
+effectively 'random' if the system is busy.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/i2c/busses/i2c-davinci.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
-index cb24a3ffdfa2..71a9c29b3981 100644
---- a/drivers/i2c/busses/i2c-davinci.c
-+++ b/drivers/i2c/busses/i2c-davinci.c
-@@ -784,10 +784,8 @@ static int davinci_i2c_probe(struct platform_device *pdev)
- 
- 	dev = devm_kzalloc(&pdev->dev, sizeof(struct davinci_i2c_dev),
- 			GFP_KERNEL);
--	if (!dev) {
--		dev_err(&pdev->dev, "Memory allocation failed\n");
-+	if (!dev)
- 		return -ENOMEM;
--	}
- 
- 	init_completion(&dev->cmd_complete);
- #ifdef CONFIG_CPU_FREQ
--- 
-2.16.1
+So how is a per-cpu rotor better than that?
