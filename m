@@ -1,76 +1,48 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591385-2-15866060044261530100
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES sk.us-asciiensv,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591384; b=cAkB/v4/WnemXFnVVD1U4c4LUG49UeojU6dTacCKzpUab0u
-    yjfnRKrceYgKlSk2OOXNLHLyjdkWq39C2TLAd1eAPaF5O/VAfg3s2K5zkQ/+brcF
-    3ZzfAHCjXv2WNmOGXOVagFGKtAULtksQEe1zfnPvKjlq5OJ5gElG6ud6FAmZZOqK
-    9bXhnyQm79EPr/4dVBARwE77Trx+im2iWVLaDgj5aGwj6lSo/2OL0gAzL4EADOY0
-    ZFaGdeSOfDTbKvdA9lK3WWn7CgFVKMJ7hv74pgirrECCOPmP7QO8Ul5Hx0+5KHGL
-    WHYdjzLs149O/onbE75Ust3bQ0C6OWcJJ+3+WUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591384; bh=Hqu6nuAf40fotSo4G23R4hM5uP
-    ONipEFmlJudIwSpqY=; b=uJvu9NA1UWhYzKjee2WJNc63atc1TUmCwg+qgjYvwB
-    JVY1JsU3nGTApkybDLKO+fk9XusHO1F5KCuXV9peLYSZq/RONQemZgGtGgOqkc5/
-    TERoe7TXbv2yrd92wvwrtMVWokt1iKnpZYGsf2S7aMzHI0ZXe97YBC+hAZhi5Mgd
-    5SGUqYJ6SzKbnMEd2KK6j1/vFvAO8YEAW16JGpOYjmCFCedBpA5TqAbfy7qUhDZE
-    CGwVl20dhqyDZqHaNAPUsIwZDPCn09uMr6XCfIRQK70YlPCWz3WGs5ydMD6zj2Sk
-    VVbQDBlz21T1nCZYL0LxwepLBm6ZoGfuZz8HZv6nBM0g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753253AbeBBRJi (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:09:38 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37976 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752669AbeBBRJb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:09:31 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227Vak2mKs83sFzdQPVzn7xk9QHw5s7kNJw4c5DDEj+mljLtZl3sWpgAv7uKe2fy9g0Srq/F
+ARC-Seal: i=1; a=rsa-sha256; t=1517591384; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ju0Zqsl4NrEUlca1JzutplfL86mqNRb+7Hp7KJoCLcphBVa7wAT11mlGQ2r23rz9xc
+         D8opRKXuHzN5RXCNGsJIvwMxrkl/pv8zXXuJUon16pIpB/tDdVRv7X4igX3BnV8OtMZn
+         +kMJI4uC5bHMSNX0lm/FqoOqBibSd2kcJfZu/5JB4rTP7EAIdwSjGh4zbd2QR+ifPTcD
+         OcW+xWlE/YFZuYL6Sqfz642I5OpErIaPXe+R4L37kD1zHrvZ3Uf4Wh0U9AGrstKNnz/I
+         x/Jt9AYi4vToiF7hnq+wSWHKxZmKpUyVbUE/ipQdlFfon8wrU8YU6cVAJdK1sLBq8Qhx
+         f1Xg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Ynhb9djjyOF1A+Bd7L5lCYAF+iF3NM+4bNKZf1hpnpw=;
+        b=nlyszrTjchmkarWUV7dLFwcY6qm0W5HOY+ZMs5kB9CvbG573Rbp3IwNUx9fplu9MLJ
+         WGswETRtDwXc/+WuDp6C9Iti7etDGKssrLuQAdRNnWS86w73J+eRNH57uztj04i3ScRM
+         meYih/kvC6GseIHZw4uZZ30aCd66XwDPnmIK8ujN5MSoQ91S3EpfW3rV49mn58OvaIf/
+         Fg4nA20J+MPG+E5cJW6AjNf+W56jIixaGN8VGK25kTJdkjXPfdMwuO2TRaRE9IvAWVgq
+         eGsCIB1oIZiZNLZZF6bzkvxt7TiZx2s1pa36ATh1Spvge5LNstf2jc6awTzt5RabauIs
+         jhQw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shaohua Li <shli@fb.com>,
-        David Disseldorp <ddiss@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 056/156] null_blk: fix dev->badblocks leak
-Date: Fri,  2 Feb 2018 17:57:17 +0100
-Message-Id: <20180202140842.829885141@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Liu Bo <bo.li.liu@oracle.com>,
+	Guillaume Bouchard <bouchard@mercs-eng.com>,
+	David Sterba <dsterba@suse.com>,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 033/156] Btrfs: bail out gracefully rather than BUG_ON
+Date: Fri,  2 Feb 2018 17:56:54 +0100
+Message-Id: <20180202140841.821186650@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309902845141119?=
+X-GMAIL-MSGID: =?utf-8?q?1591309902845141119?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,67 +50,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Disseldorp <ddiss@suse.de>
+From: Liu Bo <bo.li.liu@oracle.com>
 
 
-[ Upstream commit 1addb798e93893d33c8dfab743cd44f09fd7719a ]
+[ Upstream commit 56a0e706fcf870270878d6d72b71092ae42d229c ]
 
-null_alloc_dev() allocates memory for dev->badblocks, but cleanup
-currently only occurs in the configfs release codepath, missing a number
-of other places.
+If a file's DIR_ITEM key is invalid (due to memory errors) and gets
+written to disk, a future lookup_path can end up with kernel panic due
+to BUG_ON().
 
-This bug was found running the blktests block/010 test, alongside
-kmemleak:
-rapido1:/blktests# ./check block/010
-...
-rapido1:/blktests# echo scan > /sys/kernel/debug/kmemleak
-[  306.966708] kmemleak: 32 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
-rapido1:/blktests# cat /sys/kernel/debug/kmemleak
-unreferenced object 0xffff88001f86d000 (size 4096):
-  comm "modprobe", pid 231, jiffies 4294892415 (age 318.252s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff814b0379>] kmemleak_alloc+0x49/0xa0
-    [<ffffffff810f180f>] kmem_cache_alloc+0x9f/0xe0
-    [<ffffffff8124e45f>] badblocks_init+0x2f/0x60
-    [<ffffffffa0019fae>] 0xffffffffa0019fae
-    [<ffffffffa0021273>] nullb_device_badblocks_store+0x63/0x130 [null_blk]
-    [<ffffffff810004cd>] do_one_initcall+0x3d/0x170
-    [<ffffffff8109fe0d>] do_init_module+0x56/0x1e9
-    [<ffffffff8109ebd7>] load_module+0x1c47/0x26a0
-    [<ffffffff8109f819>] SyS_finit_module+0xa9/0xd0
-    [<ffffffff814b4f60>] entry_SYSCALL_64_fastpath+0x13/0x94
+This gets rid of the BUG_ON(), meanwhile output the corrupted key and
+return ENOENT if it's invalid.
 
-Fixes: 2f54a613c942 ("nullb: badbblocks support")
-Reviewed-by: Shaohua Li <shli@fb.com>
-Signed-off-by: David Disseldorp <ddiss@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reported-by: Guillaume Bouchard <bouchard@mercs-eng.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/null_blk.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/btrfs/inode.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/block/null_blk.c
-+++ b/drivers/block/null_blk.c
-@@ -467,7 +467,6 @@ static void nullb_device_release(struct
- {
- 	struct nullb_device *dev = to_nullb_device(item);
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -5500,6 +5500,14 @@ static int btrfs_inode_by_name(struct in
+ 		goto out_err;
  
--	badblocks_exit(&dev->badblocks);
- 	null_free_device_storage(dev, false);
- 	null_free_dev(dev);
- }
-@@ -578,6 +577,10 @@ static struct nullb_device *null_alloc_d
+ 	btrfs_dir_item_key_to_cpu(path->nodes[0], di, location);
++	if (location->type != BTRFS_INODE_ITEM_KEY &&
++	    location->type != BTRFS_ROOT_ITEM_KEY) {
++		btrfs_warn(root->fs_info,
++"%s gets something invalid in DIR_ITEM (name %s, directory ino %llu, location(%llu %u %llu))",
++			   __func__, name, btrfs_ino(BTRFS_I(dir)),
++			   location->objectid, location->type, location->offset);
++		goto out_err;
++	}
+ out:
+ 	btrfs_free_path(path);
+ 	return ret;
+@@ -5816,8 +5824,6 @@ struct inode *btrfs_lookup_dentry(struct
+ 		return inode;
+ 	}
  
- static void null_free_dev(struct nullb_device *dev)
- {
-+	if (!dev)
-+		return;
-+
-+	badblocks_exit(&dev->badblocks);
- 	kfree(dev);
- }
- 
+-	BUG_ON(location.type != BTRFS_ROOT_ITEM_KEY);
+-
+ 	index = srcu_read_lock(&fs_info->subvol_srcu);
+ 	ret = fixup_tree_root_location(fs_info, dir, dentry,
+ 				       &location, &sub_root);
