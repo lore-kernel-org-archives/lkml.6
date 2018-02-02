@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2245tkCv//QYTyQMenlkkJsXAXvkuNmMTszHDSw9/dNUmMm+7a7m4N0wwwdxLow4TpWMxCg4
-ARC-Seal: i=1; a=rsa-sha256; t=1517591381; cv=none;
+X-Google-Smtp-Source: AH8x224OX4jch/VXZMq60nBkWSBIhplSKnTDDUR3xrDo3WUYlrcpaPFcBFz2vj0+O73YCHjYO38k
+ARC-Seal: i=1; a=rsa-sha256; t=1517591377; cv=none;
         d=google.com; s=arc-20160816;
-        b=C+mmMKIm6QUbPqp+0jEM/+En7kVz8JJXFp7rlDAIUiIHEcoyQZEr19klKhnjKdLG79
-         VTopa2cCuzbkePTQz1yiwlkC9d7dLoq+52BmItv++NHwF6cyCaTPF6EzGf/rYMEdWX3z
-         GzVcIQkK/QtUpytfWXo8gXiMmmGHNHkRLoZiadDbn+vyrCfGCDPJNb3mioU8XLt0eOsN
-         pzFBcuU07ma4V/um6I7UhuIXGtUDDD33PyDL3oJVDQFst/ubNRBIBcJZb5BjKX9JOozW
-         SmszonRtNdT4FyUsYFXLNfK5h9cvytrVfJkeRazeQx6MdlOmDFGljuHi01SEApOKk0IW
-         xxhA==
+        b=RX3TmdKqwtsGn1Sgq38Jrtp9LeH29FtDjICsJo5CtzT1tV3hR1Y7cdhTBXRcwe7hLW
+         8IeFapK8EqQ0qHkHs1gw3vOaolPv9HmWZKTShkjPw41CH3l3S/T/OWrVAHP3x2qhu9iW
+         XzuxkUm0iDiuD1/g9YBQHR7KiTp/K5PPOQTdhwsgFOCl4gcWMVcnrXsQLaKFmsIY7EK/
+         zDnu9pyCuz7rhSikuRgbqzXcDCy7K2UBh1w4O4hRd0MkXRD7ZFHS31VA1VCDnu/eZzq3
+         aGxNN6e1qM4lLk4t8b6gFh5CjtSFJXfwcISLyKx63qYn8Y1p2ppEbjTWUDOvyEZjRJty
+         Hy2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mAQ1aPs09H24mBxu1y6Z8Nd9B2hOjcdiMa1uh76khmw=;
-        b=KH+tjyfCRJsFrXuP3nKCFlpTXq4JD6vZIiSonLiKB0RGIXncLgJHTkbLy4G/FE0WNS
-         EnqJ7b5uRkcBM8JLi9gbwYkDvdzS8JUT6hLLV3YhjJuSlVV+AABgxoAlxReKIsdbYk5Z
-         pvNkiDjzxd2NpOs+d1zzfUCG8t6e14ir2FhY54XVEOyyCISq8LvxaB4a8F7sFv5aCAFv
-         ZVwyd7QXsN8lMW/Am/iUIeA7zgTMOFcNqFSa8I9wnzuKLcG6KYw8k3gHYFGAxOuDc6lv
-         SIBynuu79zvpYLI2OtiQW5Ol14ZF+ydPfGoCPYhFyozx1Q4ZVsZqQQIFBM2iiXXsH0n6
-         o/1A==
+        bh=TVGsWZo2r82wzaOtBLbex3J4fpQvRBBZBAEiKEh/8gQ=;
+        b=M4+PlvbhO6v+UVjYuIijuars3YCarR77GhLTsdm4KgQsiurTBfSIdKuKUS9Rfj2wbH
+         2lVC4cpjvPwPYFI4foDrqplUIp+XFgmzv+t2IodlLN6D8Sg1blANckq/KmZSbZ+Ta8vi
+         ckJRQdqnwaihV+DL3lcTtfAlWSN8oz90Y+yERRyvZcgJFcQ+VcZNtSIhJlUciIwtc0b1
+         yfMzmYADHYsU5QxnKRCI85wZj3ohuKIZCH+/G6gR2tQwokpKi8MNfl8t/LC28r2sqD91
+         hFBGrSutf8s8+nwAWD96N4Y+ar81dH30zUTtojwL3Z5Ek2XeFHWIlaUhC5HOsReqnn6u
+         Xe+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	David Howells <dhowells@redhat.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 059/156] rxrpc: Provide a different lockdep key for call->user_mutex for kernel calls
-Date: Fri,  2 Feb 2018 17:57:20 +0100
-Message-Id: <20180202140842.986718685@linuxfoundation.org>
+Subject: [PATCH 4.14 058/156] rxrpc: The mutex lock returned by rxrpc_accept_call() needs releasing
+Date: Fri,  2 Feb 2018 17:57:19 +0100
+Message-Id: <20180202140842.911280244@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309900088726720?=
-X-GMAIL-MSGID: =?utf-8?q?1591309900088726720?=
+X-GMAIL-THRID: =?utf-8?q?1591309896594608258?=
+X-GMAIL-MSGID: =?utf-8?q?1591309896594608258?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,263 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: David Howells <dhowells@redhat.com>
 
 
-[ Upstream commit 9faaff593404a9c4e5abc6839a641635d7b9d0cd ]
+[ Upstream commit 03a6c82218b9a87014b2c6c4e178294fdc8ebd8a ]
 
-Provide a different lockdep key for rxrpc_call::user_mutex when the call is
-made on a kernel socket, such as by the AFS filesystem.
-
-The problem is that lockdep registers a false positive between userspace
-calling the sendmsg syscall on a user socket where call->user_mutex is held
-whilst userspace memory is accessed whereas the AFS filesystem may perform
-operations with mmap_sem held by the caller.
-
-In such a case, the following warning is produced.
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.14.0-fscache+ #243 Tainted: G            E
-------------------------------------------------------
-modpost/16701 is trying to acquire lock:
- (&vnode->io_lock){+.+.}, at: [<ffffffffa000fc40>] afs_begin_vnode_operation+0x33/0x77 [kafs]
-
-but task is already holding lock:
- (&mm->mmap_sem){++++}, at: [<ffffffff8104376a>] __do_page_fault+0x1ef/0x486
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&mm->mmap_sem){++++}:
-       __might_fault+0x61/0x89
-       _copy_from_iter_full+0x40/0x1fa
-       rxrpc_send_data+0x8dc/0xff3
-       rxrpc_do_sendmsg+0x62f/0x6a1
-       rxrpc_sendmsg+0x166/0x1b7
-       sock_sendmsg+0x2d/0x39
-       ___sys_sendmsg+0x1ad/0x22b
-       __sys_sendmsg+0x41/0x62
-       do_syscall_64+0x89/0x1be
-       return_from_SYSCALL_64+0x0/0x75
-
--> #2 (&call->user_mutex){+.+.}:
-       __mutex_lock+0x86/0x7d2
-       rxrpc_new_client_call+0x378/0x80e
-       rxrpc_kernel_begin_call+0xf3/0x154
-       afs_make_call+0x195/0x454 [kafs]
-       afs_vl_get_capabilities+0x193/0x198 [kafs]
-       afs_vl_lookup_vldb+0x5f/0x151 [kafs]
-       afs_create_volume+0x2e/0x2f4 [kafs]
-       afs_mount+0x56a/0x8d7 [kafs]
-       mount_fs+0x6a/0x109
-       vfs_kern_mount+0x67/0x135
-       do_mount+0x90b/0xb57
-       SyS_mount+0x72/0x98
-       do_syscall_64+0x89/0x1be
-       return_from_SYSCALL_64+0x0/0x75
-
--> #1 (k-sk_lock-AF_RXRPC){+.+.}:
-       lock_sock_nested+0x74/0x8a
-       rxrpc_kernel_begin_call+0x8a/0x154
-       afs_make_call+0x195/0x454 [kafs]
-       afs_fs_get_capabilities+0x17a/0x17f [kafs]
-       afs_probe_fileserver+0xf7/0x2f0 [kafs]
-       afs_select_fileserver+0x83f/0x903 [kafs]
-       afs_fetch_status+0x89/0x11d [kafs]
-       afs_iget+0x16f/0x4f8 [kafs]
-       afs_mount+0x6c6/0x8d7 [kafs]
-       mount_fs+0x6a/0x109
-       vfs_kern_mount+0x67/0x135
-       do_mount+0x90b/0xb57
-       SyS_mount+0x72/0x98
-       do_syscall_64+0x89/0x1be
-       return_from_SYSCALL_64+0x0/0x75
-
--> #0 (&vnode->io_lock){+.+.}:
-       lock_acquire+0x174/0x19f
-       __mutex_lock+0x86/0x7d2
-       afs_begin_vnode_operation+0x33/0x77 [kafs]
-       afs_fetch_data+0x80/0x12a [kafs]
-       afs_readpages+0x314/0x405 [kafs]
-       __do_page_cache_readahead+0x203/0x2ba
-       filemap_fault+0x179/0x54d
-       __do_fault+0x17/0x60
-       __handle_mm_fault+0x6d7/0x95c
-       handle_mm_fault+0x24e/0x2a3
-       __do_page_fault+0x301/0x486
-       do_page_fault+0x236/0x259
-       page_fault+0x22/0x30
-       __clear_user+0x3d/0x60
-       padzero+0x1c/0x2b
-       load_elf_binary+0x785/0xdc7
-       search_binary_handler+0x81/0x1ff
-       do_execveat_common.isra.14+0x600/0x888
-       do_execve+0x1f/0x21
-       SyS_execve+0x28/0x2f
-       do_syscall_64+0x89/0x1be
-       return_from_SYSCALL_64+0x0/0x75
-
-other info that might help us debug this:
-
-Chain exists of:
-  &vnode->io_lock --> &call->user_mutex --> &mm->mmap_sem
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&mm->mmap_sem);
-                               lock(&call->user_mutex);
-                               lock(&mm->mmap_sem);
-  lock(&vnode->io_lock);
-
- *** DEADLOCK ***
-
-1 lock held by modpost/16701:
- #0:  (&mm->mmap_sem){++++}, at: [<ffffffff8104376a>] __do_page_fault+0x1ef/0x486
-
-stack backtrace:
-CPU: 0 PID: 16701 Comm: modpost Tainted: G            E   4.14.0-fscache+ #243
-Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
-Call Trace:
- dump_stack+0x67/0x8e
- print_circular_bug+0x341/0x34f
- check_prev_add+0x11f/0x5d4
- ? add_lock_to_list.isra.12+0x8b/0x8b
- ? add_lock_to_list.isra.12+0x8b/0x8b
- ? __lock_acquire+0xf77/0x10b4
- __lock_acquire+0xf77/0x10b4
- lock_acquire+0x174/0x19f
- ? afs_begin_vnode_operation+0x33/0x77 [kafs]
- __mutex_lock+0x86/0x7d2
- ? afs_begin_vnode_operation+0x33/0x77 [kafs]
- ? afs_begin_vnode_operation+0x33/0x77 [kafs]
- ? afs_begin_vnode_operation+0x33/0x77 [kafs]
- afs_begin_vnode_operation+0x33/0x77 [kafs]
- afs_fetch_data+0x80/0x12a [kafs]
- afs_readpages+0x314/0x405 [kafs]
- __do_page_cache_readahead+0x203/0x2ba
- ? filemap_fault+0x179/0x54d
- filemap_fault+0x179/0x54d
- __do_fault+0x17/0x60
- __handle_mm_fault+0x6d7/0x95c
- handle_mm_fault+0x24e/0x2a3
- __do_page_fault+0x301/0x486
- do_page_fault+0x236/0x259
- page_fault+0x22/0x30
-RIP: 0010:__clear_user+0x3d/0x60
-RSP: 0018:ffff880071e93da0 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 000000000000011c RCX: 000000000000011c
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: 000000000060f720
-RBP: 000000000060f720 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: ffff8800b5459b68 R12: ffff8800ce150e00
-R13: 000000000060f720 R14: 00000000006127a8 R15: 0000000000000000
- padzero+0x1c/0x2b
- load_elf_binary+0x785/0xdc7
- search_binary_handler+0x81/0x1ff
- do_execveat_common.isra.14+0x600/0x888
- do_execve+0x1f/0x21
- SyS_execve+0x28/0x2f
- do_syscall_64+0x89/0x1be
- entry_SYSCALL64_slow_path+0x25/0x25
-RIP: 0033:0x7fdb6009ee07
-RSP: 002b:00007fff566d9728 EFLAGS: 00000246 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 000055ba57280900 RCX: 00007fdb6009ee07
-RDX: 000055ba5727f270 RSI: 000055ba5727cac0 RDI: 000055ba57280900
-RBP: 000055ba57280900 R08: 00007fff566d9700 R09: 0000000000000000
-R10: 000055ba5727cac0 R11: 0000000000000246 R12: 0000000000000000
-R13: 000055ba5727cac0 R14: 000055ba5727f270 R15: 0000000000000000
+The caller of rxrpc_accept_call() must release the lock on call->user_mutex
+returned by that function.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rxrpc/ar-internal.h |    2 +-
- net/rxrpc/call_accept.c |    2 +-
- net/rxrpc/call_object.c |   19 +++++++++++++++----
- 3 files changed, 17 insertions(+), 6 deletions(-)
+ net/rxrpc/sendmsg.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -671,7 +671,7 @@ extern unsigned int rxrpc_max_call_lifet
- extern struct kmem_cache *rxrpc_call_jar;
+--- a/net/rxrpc/sendmsg.c
++++ b/net/rxrpc/sendmsg.c
+@@ -563,8 +563,8 @@ int rxrpc_do_sendmsg(struct rxrpc_sock *
+ 		/* The socket is now unlocked. */
+ 		if (IS_ERR(call))
+ 			return PTR_ERR(call);
+-		rxrpc_put_call(call, rxrpc_call_put);
+-		return 0;
++		ret = 0;
++		goto out_put_unlock;
+ 	}
  
- struct rxrpc_call *rxrpc_find_call_by_user_ID(struct rxrpc_sock *, unsigned long);
--struct rxrpc_call *rxrpc_alloc_call(gfp_t);
-+struct rxrpc_call *rxrpc_alloc_call(struct rxrpc_sock *, gfp_t);
- struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *,
- 					 struct rxrpc_conn_parameters *,
- 					 struct sockaddr_rxrpc *,
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -94,7 +94,7 @@ static int rxrpc_service_prealloc_one(st
- 	/* Now it gets complicated, because calls get registered with the
- 	 * socket here, particularly if a user ID is preassigned by the user.
- 	 */
--	call = rxrpc_alloc_call(gfp);
-+	call = rxrpc_alloc_call(rx, gfp);
- 	if (!call)
- 		return -ENOMEM;
- 	call->flags |= (1 << RXRPC_CALL_IS_SERVICE);
---- a/net/rxrpc/call_object.c
-+++ b/net/rxrpc/call_object.c
-@@ -55,6 +55,8 @@ static void rxrpc_call_timer_expired(uns
- 		rxrpc_set_timer(call, rxrpc_timer_expired, ktime_get_real());
- }
+ 	call = rxrpc_find_call_by_user_ID(rx, p.user_call_ID);
+@@ -633,6 +633,7 @@ int rxrpc_do_sendmsg(struct rxrpc_sock *
+ 		ret = rxrpc_send_data(rx, call, msg, len, NULL);
+ 	}
  
-+static struct lock_class_key rxrpc_call_user_mutex_lock_class_key;
-+
- /*
-  * find an extant server call
-  * - called in process context with IRQs enabled
-@@ -95,7 +97,7 @@ found_extant_call:
- /*
-  * allocate a new call
-  */
--struct rxrpc_call *rxrpc_alloc_call(gfp_t gfp)
-+struct rxrpc_call *rxrpc_alloc_call(struct rxrpc_sock *rx, gfp_t gfp)
- {
- 	struct rxrpc_call *call;
- 
-@@ -114,6 +116,14 @@ struct rxrpc_call *rxrpc_alloc_call(gfp_
- 		goto nomem_2;
- 
- 	mutex_init(&call->user_mutex);
-+
-+	/* Prevent lockdep reporting a deadlock false positive between the afs
-+	 * filesystem and sys_sendmsg() via the mmap sem.
-+	 */
-+	if (rx->sk.sk_kern_sock)
-+		lockdep_set_class(&call->user_mutex,
-+				  &rxrpc_call_user_mutex_lock_class_key);
-+
- 	setup_timer(&call->timer, rxrpc_call_timer_expired,
- 		    (unsigned long)call);
- 	INIT_WORK(&call->processor, &rxrpc_process_call);
-@@ -150,7 +160,8 @@ nomem:
- /*
-  * Allocate a new client call.
-  */
--static struct rxrpc_call *rxrpc_alloc_client_call(struct sockaddr_rxrpc *srx,
-+static struct rxrpc_call *rxrpc_alloc_client_call(struct rxrpc_sock *rx,
-+						  struct sockaddr_rxrpc *srx,
- 						  gfp_t gfp)
- {
- 	struct rxrpc_call *call;
-@@ -158,7 +169,7 @@ static struct rxrpc_call *rxrpc_alloc_cl
- 
- 	_enter("");
- 
--	call = rxrpc_alloc_call(gfp);
-+	call = rxrpc_alloc_call(rx, gfp);
- 	if (!call)
- 		return ERR_PTR(-ENOMEM);
- 	call->state = RXRPC_CALL_CLIENT_AWAIT_CONN;
-@@ -209,7 +220,7 @@ struct rxrpc_call *rxrpc_new_client_call
- 
- 	_enter("%p,%lx", rx, user_call_ID);
- 
--	call = rxrpc_alloc_client_call(srx, gfp);
-+	call = rxrpc_alloc_client_call(rx, srx, gfp);
- 	if (IS_ERR(call)) {
- 		release_sock(&rx->sk);
- 		_leave(" = %ld", PTR_ERR(call));
++out_put_unlock:
+ 	mutex_unlock(&call->user_mutex);
+ error_put:
+ 	rxrpc_put_call(call, rxrpc_call_put);
