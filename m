@@ -1,31 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752107AbeBBO3z (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:29:55 -0500
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:38661 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751916AbeBBO3r (ORCPT
+        id S1752168AbeBBOaV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:30:21 -0500
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:53074 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751653AbeBBOaO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:29:47 -0500
-X-Google-Smtp-Source: AH8x225IzbvGY5m3ZZyHFI1WmIMMYCo88SNB+Hy4ZTIWib59BsOtTBP9YrJOxM7T+aK/WF7l1TW8KQ==
-Subject: Re: Is the hisilicon tree maintained ?
-To: Wei Xu <xuwei5@hisilicon.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <68abfa22-86fa-67db-b583-661c9f5672ce@linaro.org>
- <5A744EBA.7030104@hisilicon.com>
- <e7a0977d-5fee-b874-d6b7-21638bb9b885@linaro.org>
- <5A745526.6040006@hisilicon.com>
- <9f22e61e-a5d4-47b9-b8dd-71443b9aa408@linaro.org>
- <5A746C4A.9050604@hisilicon.com>
- <ce9f1703-d27b-5d57-bf32-497917fca361@linaro.org>
- <5A746FD6.5050603@hisilicon.com>
+        Fri, 2 Feb 2018 09:30:14 -0500
+X-Google-Smtp-Source: AH8x224f6nhu7MPLQh+AXb+7wunLs7coXu6KSOjt2jITJm8VMI6NVtReGIMDcUwYCM2ZZ+uKmCmHPg==
+Subject: Re: [PATCH 8/8] thermal/drivers/cpu_cooling: Add the combo cpu
+ cooling device
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
+        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        daniel.thompson@linaro.org
+References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
+ <1516721671-16360-9-git-send-email-daniel.lezcano@linaro.org>
+ <20180202104259.GA28462@vireshk-i7>
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <26b7f172-c8d3-0a2e-3573-a488e3ca8ef7@linaro.org>
-Date: Fri, 2 Feb 2018 15:29:44 +0100
+Message-ID: <8dadd854-25ac-68aa-aa9f-33ba76a137a4@linaro.org>
+Date: Fri, 2 Feb 2018 15:30:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <5A746FD6.5050603@hisilicon.com>
+In-Reply-To: <20180202104259.GA28462@vireshk-i7>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -33,61 +34,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/02/2018 15:04, Wei Xu wrote:
+On 02/02/2018 11:42, Viresh Kumar wrote:
 > Hi Daniel,
+
+Hi Viresh,
+
+
+> I have gone through the other review comments, specially from Daniel T.. While I
+> share some of his concerns, I have few more of mine.
 > 
-> On 2018/2/2 13:53, Daniel Lezcano wrote:
->> On 02/02/2018 14:48, Wei Xu wrote:
->>> Hi Daniel,
->>>
->>> On 2018/2/2 13:34, Daniel Lezcano wrote:
->>>> On 02/02/2018 13:10, Wei Xu wrote:
->>>>> Hi Daniel,
->>>>>
->>>>> On 2018/2/2 12:05, Daniel Lezcano wrote:
->>>>>> On 02/02/2018 12:42, Wei Xu wrote:
->>>>>>> Hi Daniel,
->>>>>>>
->>>>>>> On 2018/2/2 6:59, Daniel Lezcano wrote:
->>>>>>>>
->>>>>>>> Hi Wei Xu,
->>>>>>>>
->>>>>>>> I found in the MAINTAINERS file the hisilicon tree is at:
->>>>>>>>
->>>>>>>> https://github.com/hisilicon/linux-hisi
->>>>>>>>
->>>>>>>> But, (except I missed it) I didn't find any update since Nov, 2017.
->>>>>>>>
->>>>>>>> Is that tree maintained ?
->>>>>>>
->>>>>>> Yes. It is still maintained.
->>>>>>> You can find update from other branches or the tags like next/dt64.
->>>>>>> I will update the master when every rc1 is released.
->>>>>>
->>>>>> Is there a development branch for something else than the DT ?
->>>>>
->>>>> Sorry, no developing branch is there.
->>>>> But we will create one if needed like the topic-acpi-mbigen branch.
->>>>> And most of development branches are kept in another git repo.
->>>>
->>>> What is the purpose of this tree? Why not rely on arm-soc?
->>>
->>> Currently it is mainly a place to pick up the patches
->>> and save the pull request.
->>
->> What is the other repo with development branches you mentioned above ?
+> On 23-01-18, 16:34, Daniel Lezcano wrote:
+>> +late_initcall(cpu_cooling_init);
 > 
-> Sorry, they are private repos in the github hisilicon and are for the SoC
-> enablement like hip06, hip07 and so on.
-> But if you can share what kind of information you want, I can create a
-> public branch in the hisilicon/linux-hisi repo if I have those.
+> For example, this thing isn't going to fly nicely as you have assumed cpufreq
+> and cpuidle drivers are going to be part of the kernel itself. What if they are
+> modules and are inserted after late-init ? There are more cases like this where
+> the cpufreq driver may unregister the cpufreq cooling device on the fly and then
+> add it back. And so this stuff is a bit tricky.
 
-Actually I was expecting to see an up-to-date branch I can rely on to
-base my patches.
+The cpuidle driver can not be compiled as a module.
 
-Apparently there is very few dev on this tree. Why not change the tree
-to arm-soc in the MAINTAINERS file ?
+Agree the cpufreq driver can be unloaded and this part needs some
+adjustments.
 
+> Here is how I see the whole thing now:
+> 
+> - Yes we need individual support for both cpufreq and cpuidle cooling devices,
+>   and no one disagrees on that I believe.
+> 
+> - There is nothing in the thermal framework that disallows both cpufreq and
+>   cpuidle cooling devices to co-exist. Both would be part of the same thermal
+>   zone and so will get throttled with the same thermal sensor event. And so we
+>   will end up trying to cool down the SoC using both cpufreq and cpuidle
+>   technique.
+
+No. It does not work because we will need different state for each
+cooling device and we need some logic behind.
+
+> - Now I am just wondering if we really need the "combo" functionality or not.
+>   Can we fine tune the DT cpu-cooling properties (existing ones) for a platform,
+>   so that it automatically acts as a combo cooling device? I am not 100% sure
+>   its gonna fly, but just wanted to make sure its not possible to work around
+>   with and then only try the combo device thing.
+> 
+> For example, suppose that with just cpufreq-cooling device we need to take the
+> CPU down to 1 GHz from 2 GHz if we cross temperature 'X'. What if we can change
+> this policy from DT and say the cpufreq-cooling device goes to 1.5 GHz and
+> cpuidle-cooling device takes us to idle for 'y' us, and the effect of
+> combination of these two is >= the effect of the 1 GHz for just the
+> cpufreq-cooling device.
+> 
+> Is there any possibility of this to work ?
+
+It does not make sense. The combo does that automatically by computing
+the power equivalence more precisely.
 
 
 -- 
