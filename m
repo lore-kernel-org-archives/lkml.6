@@ -1,117 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751970AbeBBPiX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 10:38:23 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:52184 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751472AbeBBPiP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 10:38:15 -0500
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
- frequency
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
- <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
- <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
- <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
- <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
- <20180202105304.gow2znzgxqmuxgol@flea.lan>
- <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
- <20180202133516.uoy7ppuozd6cnldm@flea.lan>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <aa43a02a-3ea9-2f61-eaf6-ddc7980f78a5@micronovasrl.com>
-Date: Fri, 2 Feb 2018 16:38:13 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1752018AbeBBPi4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 10:38:56 -0500
+Received: from mout.web.de ([212.227.15.3]:46619 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751472AbeBBPiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 10:38:51 -0500
+To: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] I2C-Nomadik: Adjustments for nmk_i2c_probe()
+Message-ID: <97f41346-6abb-1c14-f536-ad12bbcb4c60@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 16:38:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180202133516.uoy7ppuozd6cnldm@flea.lan>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:mNYqlgDrg3crVRk5QOwDvUykcCRowajrJ33I7gjzYIU55zzslFR
+ w5XFUwLq+2tHBYTX9wH1Cc97BRfZZJd41sm6JecqDXD7a9GgN2LnXaC7zgsicYrqtTcJqsI
+ fOUG/lUsCt0EXn4W/8+4b7CKjqrecm3tpnsXuvF3IEiw1kNcdvWaoYvweQbJ2wt+vHHZUJJ
+ CtoSlNjVnJpCOMN01MBoQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:OuulaQmdjzU=:kdfWCrb/CuI8WZtC8lTkBU
+ M301bLGFoAQuRJ+o6+b6vv2DsKD3xV3aPzzVW2b4BUP9DgeVSwNXagw72lV0eKLoFhVODX1u8
+ z+mgLtujuZNTj9edlLzwVl2s5ECHPE5IBNwvHXTsi1UMFEqNwUQuOhmCaMbO1u5EWy7uJk3uj
+ HPRC3RZ8mmEvj8U/pHv9WjrQVtZ/qXXv6dLOJX2GPj28D2WIIvopv+7fsu+j6fRip9mhCjUni
+ fzNAwQLYKxa/tBsI8UiZRjjGZpuTrKrrXxeBxAOh8bFxKHAoI5hxOGemtw8AaxGyB3kXHQLrZ
+ 8fd6G8HRzQ6EEP3jH7uXc1ksvmmoYoB4FAc7mUheuWN0/ZkRS5QWINGU1PupBgqvvVcDFylLB
+ nOXp8YNFkX+b2qnoepCW97fMAdDae9qXml1GAUayJndRu1vCy3Vnqb3Wlpd41LSQX7+qirgos
+ FLb4jy7g2z5rVHs+kIQWVsGVd4Ey4s+m5wigUYo/tcrdDcA6nxGUBbmJWTrbhSm/VCJ+KVL9K
+ Jrrb+sk90ev+DjgF5O68Lbz/QBfplOgt2AjjmI32nfwP5DuEHXq3Rmjufv3FR5mRJrhntBT96
+ jVXvfxH8/zGvMnh/8TujoQozsJjomrMDcKeawTT09aETO0UaemgEgqELFnlpLI+Z6Cfv/Oxoe
+ M8ODPsGrU50xV4dgVLQk7W9xCtIuAfuyD6qXUhepkcQbF6eP9cvvs5/Lreb7pfMHRk4aX/nBe
+ BvGxpl3sU9W74UBuXXBRbzoitnN84nS9EJgIFXPBcbMKjVSsvJ83neO1+tg79X9Fclp7PPXog
+ 6VsuVqXavsACWzfz+AO6YVmjJTZkH8AcDG68ewpvOG+JQ9jrag=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 16:34:56 +0100
 
-Il 02/02/2018 14:35, Maxime Ripard ha scritto:
-> On Fri, Feb 02, 2018 at 11:57:20AM +0100, Giulio Benetti wrote:
->> Il 02/02/2018 11:53, Maxime Ripard ha scritto:
->>> Hi,
->>>
->>> On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
->>>>>>> What kernel version did you use?
->>>>>>
->>>>>> Latest mainline.
->>>>>
->>>>> I guess this patch could fix it:
->>>>> http://code.bulix.org/1kitrq-268936?raw
->>>>
->>>> This should prevent from modifying parent clock. But my problem was
->>>> different.
->>>>
->>>> On A20, gpu_clk can have different PLL, not I've found out the way
->>>> to choose right one with assigned-parent-clocks.
->>>>
->>>> I have patchset ready for adding A20 mali node, but I need some more
->>>> time to complete with OPP, then I will submit entire patchset.
->>>>
->>>> Now it works correctly, using right pll(dedicated PLL8), setting
->>>> right frequency.
->>>
->>> The point is that we really don't care about which PLL is actually
->>> being used, as long as the rate is correct and we don't break anything
->>> else. If the GPU rate is accessible through one of the other PLL, it
->>> makes even more sense to not use the GPU PLL and keep it disabled,
->>> since it will result in some power savings.
->>
->> Ah! I see the point now, very clever system for power saving.
->> I'm going to check if it's resolutive,
->> but it sounds good.
->>
->>>
->>>> Btw, do I need to add a board using it, or can I add only Mali node
->>>> to sun7i-a20.dtsi(plus other little patches)?
->>>
->>> You can add it to the DTSI without a board using it (and actually,
->>> nothing should be in the board DTS, everything in the DT for the Mali
->>> applies to all boards).
->>
->> Sure. So I would also add the patch you've addressed me:
->> http://code.bulix.org/1kitrq-268936?raw
->> as a commit. Can I submit it in patchset to complete the whole job?
-> 
-> I already sent that patch quite some time ago, I'll just apply it. You
-> can send the DT patch :)
+Two update suggestions were taken into account
+from static source code analysis.
 
-Thanks. Sorry for my ignorance, but where are you applying patches?
-Because I've tried to check sunxi-next and a lot of other Repo but I 
-can't find this and neither "Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: 
-Fix mali changing dclk frequency"
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-> 
-> Maxime
-> 
-
+ drivers/i2c/busses/i2c-nomadik.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 -- 
-Giulio Benetti
-R&D Manager &
-Advanced Research
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+2.16.1
