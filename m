@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226q2VnQoJuUr9kxp16bH1VEuE8mE+1C38oEZ+BbKxaWkPNjvdzVaG5gCxfTc9xJ4U6EQ5U/
-ARC-Seal: i=1; a=rsa-sha256; t=1517591765; cv=none;
+X-Google-Smtp-Source: AH8x224DbHz9ziGi6dk/q19zCyo+ZSoac/PUAD36cLehcIr8Dz0Z0lmPSrNFyr00rYIhcRbwrCoa
+ARC-Seal: i=1; a=rsa-sha256; t=1517591758; cv=none;
         d=google.com; s=arc-20160816;
-        b=04K2kkZToaRYnL99J79Av2KeeOPBGzxGUJ0ACpBe6KihIrKUcgM4zJp7Xqsioj9OE6
-         kNroDfSiGXia1ngrZC+LLL+6CMY528dr+UGoOY9Gndz4qqUSi6CwkowgD+6MVHiv4yCh
-         u8XmZ05x7jze+McTXO4iAbnQoSL+3hshiwTEm9PxAaW6AVff2iVyNyWhSZwsv72N551t
-         XeQCHZmroV+1a3COm2s+p+Gk0ok3cvjb1wPlwMyxH5JRWtN1/dKsOAlcxMDoRw3pXoda
-         zQqEGcN4O5bu003kgkFH7R+zdfNgtLr3u1eXPdmxhlwcucXsEL1Z7ktdpB5FAMqbMA1+
-         Gs2Q==
+        b=mGW77qVqo+msa5qu51Ec4rGMTjq6tbSxrWWNuDEgCAoQE8mj+y5EmDK6uTGJi56a/5
+         WA5LuJen7kcbm3xcJPrBWCITtEGNo7ZKeGPAYHCQVG8H02ZVFkeCuK0kT8flbx5RynbA
+         Mz8wfRh4cCknfP0TRQgO8OwhoA7dovcsdWCeq+/QUA85eIRl+/2XmYfBskrQP3eDMK1n
+         IiyAudxndzdNR79bgsYeo3lIaE/61kMWYOwfc1l/QyA3y89WMBIGtsr/uoEoCnNh0acn
+         f5Jo8VbNXPh3b9dzCQCa5iU0MQAs045KEWWO6jlJ0Hvd1P+HUA/GjsbuYxMldKzboFlC
+         l7Ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wHCZAKkFJuZyR7ZzwVXibUvZwga838kiskoA9qjWAR0=;
-        b=e7Hnr95peZgZmjkIVX7MGoqz9zN11wJn7+veUEbec9NY2g7+FEMxcm/j6JstwUcyTY
-         JR2rExb0w/yqgUDcn2JF8R1eKNkIFb3M5s2proLVoNRzTK6DIvq/bGVc6KYofmCieaqA
-         3FvLRikB7hvnA7JFAa5peSFB2MGSxjzjUyjoPj5hkAoUWHDFs5EfLHFU1exXlTmQiHZv
-         tzEns1nsU2Dn2g6N46SuySuj3BHQEwZZ7mulDUgAghbJRG3r+myf8bSJxXrHzM9IG2RQ
-         2rn2iq8JmTfks/omSleBkbKIFezli1N3Fx94fpVX98jA/Zv2k9nziXqfqnckfoK590sb
-         5kug==
+        bh=Xv0Hh5m2WzJIJF/v8EgOiEDHlAP67E2OnD49Q/GOzj4=;
+        b=gyhx1KmWWUd29tRTrQfvfiXCOvdNqvC3AKDUe6TVXiNPVugN3/gRaHbydha3fdtILq
+         9WJdymLSTOzLMP5qtH6dx+eB3nrrm1zFurCHNyY4h5Co4tHphVBSjGNtAs+eBCTMOSJm
+         nRLALRc3SlRfXwAAC1fZ1IiotpZXeVQd0zQbIjVADuuIo1R+xUCiO/dFw1rcreR8VVCr
+         JbrrKZgwT3WneaYj0sEALZ5hDEN5kXYwrCs4/aSYiSkoa8eO5gk162oJYiL5i81rL2M7
+         rn1fsRtqNhBAhRuUjFrIl18kaNZv5G+mP+FBRmdmTcjSjhOOEeiF9YTmR1Ogi7f9MpIZ
+         1c7w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.15 36/55] usbip: prevent bind loops on devices attached to vhci_hcd
-Date: Fri,  2 Feb 2018 17:58:54 +0100
-Message-Id: <20180202140829.760810465@linuxfoundation.org>
+	Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.15 34/55] CDC-ACM: apply quirk for card reader
+Date: Fri,  2 Feb 2018 17:58:52 +0100
+Message-Id: <20180202140829.560351348@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
@@ -38,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309467728999985?=
-X-GMAIL-MSGID: =?utf-8?q?1591310303572129510?=
+X-GMAIL-THRID: =?utf-8?q?1591309418514762445?=
+X-GMAIL-MSGID: =?utf-8?q?1591310296282018513?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -47,55 +47,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit ef54cf0c600fb8f5737fb001a9e357edda1a1de8 upstream.
+commit df1cc78a52491f71d8170d513d0f6f114faa1bda upstream.
 
-usbip host binds to devices attached to vhci_hcd on the same server
-when user does attach over localhost or specifies the server as the
-remote.
+This devices drops random bytes from messages if you talk to it
+too fast.
 
-usbip attach -r localhost -b busid
-or
-usbip attach -r servername (or server IP)
-
-Unbind followed by bind works, however device is left in a bad state with
-accesses via the attached busid result in errors and system hangs during
-shutdown.
-
-Fix it to check and bail out if the device is already attached to vhci_hcd.
-
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/usb/usbip/src/usbip_bind.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/usb/class/cdc-acm.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/tools/usb/usbip/src/usbip_bind.c
-+++ b/tools/usb/usbip/src/usbip_bind.c
-@@ -144,6 +144,7 @@ static int bind_device(char *busid)
- 	int rc;
- 	struct udev *udev;
- 	struct udev_device *dev;
-+	const char *devpath;
- 
- 	/* Check whether the device with this bus ID exists. */
- 	udev = udev_new();
-@@ -152,8 +153,16 @@ static int bind_device(char *busid)
- 		err("device with the specified bus ID does not exist");
- 		return -1;
- 	}
-+	devpath = udev_device_get_devpath(dev);
- 	udev_unref(udev);
- 
-+	/* If the device is already attached to vhci_hcd - bail out */
-+	if (strstr(devpath, USBIP_VHCI_DRV_NAME)) {
-+		err("bind loop detected: device: %s is attached to %s\n",
-+		    devpath, USBIP_VHCI_DRV_NAME);
-+		return -1;
-+	}
-+
- 	rc = unbind_other(busid);
- 	if (rc == UNBIND_ST_FAILED) {
- 		err("could not unbind driver from device on busid %s", busid);
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1752,6 +1752,9 @@ static const struct usb_device_id acm_id
+ 	{ USB_DEVICE(0x0ace, 0x1611), /* ZyDAS 56K USB MODEM - new version */
+ 	.driver_info = SINGLE_RX_URB, /* firmware bug */
+ 	},
++	{ USB_DEVICE(0x11ca, 0x0201), /* VeriFone Mx870 Gadget Serial */
++	.driver_info = SINGLE_RX_URB,
++	},
+ 	{ USB_DEVICE(0x22b8, 0x7000), /* Motorola Q Phone */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
