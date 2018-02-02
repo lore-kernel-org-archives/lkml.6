@@ -1,75 +1,45 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2879036-1517590970-2-2592059945401870965
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensvda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517590970; b=r5j325/+lWFIaOxi7rXsDsiA+RaX2ubZfL3kCMKQ+53zRDL
-    QjcqHZiYmrdAAIgVXc0BI7fqRQ3EFBW7Snj4NfwEgN7NZmboKgXsQ5Xi9Gmvj0yY
-    kZCJOd9gFlS3Tf1cJw22w5/Z1X7/eXN2nJKEWNzA0uZOCr5foUMGh9MO4qDE+CQw
-    /vzCHD7tzgaQR+4THq6p+ZfnUeHE+YytK8gYOdxdYQrgSg8YDPHNnzPVO4snhpsa
-    R1yWGpqBZUawfSRDmZqru07qdXF7QaVFuXWI5wSJ85Xc9jte+hVTuIRnw0YcBC6v
-    Ulkfz/DyT0hQzyPYpUCgYIxXiDMy1xMTZbqL1GA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517590970; bh=8fRPHXBwQ2hjFq9IUG95M97mZe
-    h5MYfwXsRWG3klTeg=; b=qQnX77AcWesIysPmYSYofMDQYRp5aktzspL/OkXjhj
-    nZmSP6AcGLbR7MjfhSge9mL7UxPLyZgxAsxJkR2taQJ2W/OQ4hDV8dyhNIDQOsP5
-    QOcvrEEI7PBqg4mcWByiU9g14n/xdsuKo+lDF0oGNDnuV71kxPDCw6U7HqDHOpWU
-    U5Hnp2UvB4BS+dO1zV8dRAjy0D8bJ6CnbEaUFiTfQF7G2q/MlKC9MTCIalFrIsMM
-    8cf/1pBcWSvp9Z6ysQ7CYGJqdv3bEFynnJ54cdNIb+u+wdofIZs5XDN25NAa0+aw
-    NYkVaAVZF4O7dMJdUGcQsyUaVyRPecwJC1jZa5eCAl0g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752781AbeBBRCr (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:02:47 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35504 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752776AbeBBRCp (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:02:45 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224lyd27i+V1n/NT0Sa8203vKPpqq/ju8+KL8bFeat/+PZ/QuECJpq9fnpIvpZemJc16/uQK
+ARC-Seal: i=1; a=rsa-sha256; t=1517590968; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bd0XOLEIC87940ZqX2K/2IWqKxD1KwkIvXym1ic0ufqAgDPj/TFhZ5ZM40knjqaY4i
+         LPZ8Ig4XldCML41jKVfO+XSzDW2i1ozCR+cCEGXpve2J4MTZTPAB9qQYJKygx5B5Hy13
+         RkKWNgt4POUneb8Tce+wjx6mbh2fYcxcxJHP8IuculizC3sqF1bnOJ6l8OhICKZDKUM6
+         f/o5v4+eOBWB64QSv9hOb4HunNscABKnEq6Rz+n4rT25zv4VfWx1vpM0uN3d8xy+hQP1
+         91aY8yycraXyqdk0L3OtfxhI0KayD8nnZeeIM07lAzvgVXRUFXnW50Jw0c/4DmFAyfT0
+         /j1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=UbjQjweQo/kwKB6eas6QWmSzBPq+wM1QPVxr6eK7ZkQ=;
+        b=HqSGlCRnyfECsdCruK/6VnxgwZ8KomPUl81dd/ybVJ+ccGAx0GNn2AOV+lEVNaSpec
+         OI37LqEVi8ddTc8MfxPSWljNXhD3rInbO3Qcx0i3bNFyxRVN/F8a/REHivjwF8lA9a3m
+         tobV7gdpLZgY5/SOKFhWodK3Ew90faYkV0dxcB+c7UumTiFeUJHgiTtnIARU4EnNoKt2
+         YBBaYwbWXGgV4Cf1J8TVXwP5gtOqvAVwczPdaucHbp1qZ89cmAgJXV/QgQjewVdulE7j
+         RVdlDdfRfnpTSiHOKohngncIVRZZcrIK2hDXk4yNaKlvEfIrVRqf+3sp00FBAzu8ryKA
+         AF4A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.4 67/67] spi: imx: do not access registers while clocks disabled
-Date: Fri,  2 Feb 2018 17:58:36 +0100
-Message-Id: <20180202140822.554477179@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.4 60/67] usbip: prevent bind loops on devices attached to vhci_hcd
+Date: Fri,  2 Feb 2018 17:58:29 +0100
+Message-Id: <20180202140821.868570518@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309467728999985?=
+X-GMAIL-MSGID: =?utf-8?q?1591309467728999985?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,49 +47,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit d593574aff0ab846136190b1729c151c736727ec upstream.
+commit ef54cf0c600fb8f5737fb001a9e357edda1a1de8 upstream.
 
-Since clocks are disabled except during message transfer clocks
-are also disabled when spi_imx_remove gets called. Accessing
-registers leads to a freeeze at least on a i.MX 6ULL. Enable
-clocks before disabling accessing the MXC_CSPICTRL register.
+usbip host binds to devices attached to vhci_hcd on the same server
+when user does attach over localhost or specifies the server as the
+remote.
 
-Fixes: 9e556dcc55774 ("spi: spi-imx: only enable the clocks when we start to transfer a message")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+usbip attach -r localhost -b busid
+or
+usbip attach -r servername (or server IP)
+
+Unbind followed by bind works, however device is left in a bad state with
+accesses via the attached busid result in errors and system hangs during
+shutdown.
+
+Fix it to check and bail out if the device is already attached to vhci_hcd.
+
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-imx.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ tools/usb/usbip/src/usbip_bind.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -1228,12 +1228,23 @@ static int spi_imx_remove(struct platfor
- {
- 	struct spi_master *master = platform_get_drvdata(pdev);
- 	struct spi_imx_data *spi_imx = spi_master_get_devdata(master);
-+	int ret;
+--- a/tools/usb/usbip/src/usbip_bind.c
++++ b/tools/usb/usbip/src/usbip_bind.c
+@@ -144,6 +144,7 @@ static int bind_device(char *busid)
+ 	int rc;
+ 	struct udev *udev;
+ 	struct udev_device *dev;
++	const char *devpath;
  
- 	spi_bitbang_stop(&spi_imx->bitbang);
+ 	/* Check whether the device with this bus ID exists. */
+ 	udev = udev_new();
+@@ -152,8 +153,16 @@ static int bind_device(char *busid)
+ 		err("device with the specified bus ID does not exist");
+ 		return -1;
+ 	}
++	devpath = udev_device_get_devpath(dev);
+ 	udev_unref(udev);
  
-+	ret = clk_enable(spi_imx->clk_per);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_enable(spi_imx->clk_ipg);
-+	if (ret) {
-+		clk_disable(spi_imx->clk_per);
-+		return ret;
++	/* If the device is already attached to vhci_hcd - bail out */
++	if (strstr(devpath, USBIP_VHCI_DRV_NAME)) {
++		err("bind loop detected: device: %s is attached to %s\n",
++		    devpath, USBIP_VHCI_DRV_NAME);
++		return -1;
 +	}
 +
- 	writel(0, spi_imx->base + MXC_CSPICTRL);
--	clk_unprepare(spi_imx->clk_ipg);
--	clk_unprepare(spi_imx->clk_per);
-+	clk_disable_unprepare(spi_imx->clk_ipg);
-+	clk_disable_unprepare(spi_imx->clk_per);
- 	spi_imx_sdma_exit(spi_imx);
- 	spi_master_put(master);
- 
+ 	rc = unbind_other(busid);
+ 	if (rc == UNBIND_ST_FAILED) {
+ 		err("could not unbind driver from device on busid %s", busid);
