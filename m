@@ -1,75 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2951738-1517591680-2-9090911287205881041
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591679; b=hs1XyTZd+tI3GAL9ukb66FwgmYn8Ire04KIqyh1cbh2uHtP
-    TADVw6CxCl039faTiplIKPtAoqpTSK5FOpZe9asitkxQWSsOYUuEic8tTEvt3cNl
-    EvQKYinzkslkCrz5R1q1bJRw/WXrsasPhL/GR3/ORX//VhqSH2DF8ppvFZqzfZko
-    rOKq2UO23ezfmkdp1CoR6igbeGPzn+mvxLVj5OWaJ1Yt2MzD8UzTcPOsPQV7Su2r
-    ufMudde0ZI/fONL6s7xnlMmFVYUzVBqqP/gcoxso2WfK+P3UmCHyP2HPHl813CyK
-    /p0ykRx/lkUOnSP8qv+XjHnf1ewQHevwSY1Xzhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591679; bh=wxottuDx7W9Lj3xIsDRsfxMVfb
-    35sxZ6TzNosesXljw=; b=Wu6W3oE5/GspuYi00DCDqMLsKIx5iV4KtxKO39APCj
-    HUYOeXiWlFlSNMPCGPavXyk9IA/eARNRAmg7gycsRkzVNTQhfye4MpWVruvmNf3U
-    WANvSPpm4xnHZLwQXQCSeJZbiJ33LxHYZSDxFbYEYB41gyBs1H2Rot4xNLwAyp5A
-    5xO/KjQFbOnLNRBq1kZbUFKUtWZal8wMkve903SST09YZGdC9ea6HNRPaoRt+O/Z
-    +NKkU8kkZi1iiDo6G9hWGOa4N7Q67wAGncyrPCGGhkKSp5IA8EjbfVELFVh7nfMn
-    dhM/M5HeVDgNIL0Goi/RpWjfMOnDRhPSyRL0BjC84yiQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753647AbeBBROg (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:14:36 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40490 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753618AbeBBROY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:14:24 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227P/dqJRniJK4p5Jp46tXwuMTCo+gIN0GMni3mxIiSNtywVVTq8/5GbvfwbRkQGUgbNQXlj
+ARC-Seal: i=1; a=rsa-sha256; t=1517591679; cv=none;
+        d=google.com; s=arc-20160816;
+        b=eHtiWGbNIWm9GVLRSg6J+kOD2UjuP5OCATvagAunQZxUZopV0c/adpowNhIgSxJ9Zb
+         x09u5i3uGlr19L+A04BcrU/CA4bgVA+KqnRJcOysHqNeXQWmYo+K7ud6jIZer6SGiMG1
+         Hx0r3ynF+zPGNSa7kpg+RrdAdO6gikYJZs6JzfiOC2SuktVxxZizrKlMnPlQXZvWyxYK
+         q0WA/3TztKE5bbGPITCQ7Po93OGGQDWhr8iEBaeOeLHAhHHHqlrX4xWRBcdoOzV7PwME
+         2k5jzNGMRXMXjSty3ZFmq4ttodrEXCyBSIoZSPrdVr+DcVJXeha5Yh0P3JmJroB6seNq
+         EnXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=ijwqGSPYJKl1tV5mMiqSfuldjmC/zdfJYm+KynUrUwE=;
+        b=tO2fw3v4wogGHJACieq0GQEXZQrn/nRoPt3/dNDgXzMPpR94OsHyl7KYzTCTiOcqSU
+         3omgUQMWl6Ite31PcCfxyAVHI+au34HRDOyra79EicC1+E+WOtbtMdwH7CDd3n3pu4bP
+         sZ29ds1MK5qhbnICBMz14TMbv4kCrooZDxKnlIOB6YoEgndsHmoH/M92eQ4IN/qzcD6N
+         KtnJ11WweNNs2liHbJwzkAEQrC0Iax3g5zG1Ol/O6xJt/1T/cwbD3s/KpnrVhs4FcK27
+         lXiL2qet4fWgF4i/wDTMW7IVmuYk1EfuuQLA4e3WiwBt5BLYAZd+DAUSyG2f6QqljoS9
+         1LAg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.14 135/156] USB: cdc-acm: Do not log urb submission errors on disconnect
-Date: Fri,  2 Feb 2018 17:58:36 +0100
-Message-Id: <20180202140846.489102757@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Max Schulze <max.schulze@posteo.de>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 140/156] USB: serial: simple: add Motorola Tetra driver
+Date: Fri,  2 Feb 2018 17:58:41 +0100
+Message-Id: <20180202140846.710287805@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309449263095125?=
+X-GMAIL-MSGID: =?utf-8?q?1591310213181132256?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,38 +48,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit f0386c083c2ce85284dc0b419d7b89c8e567c09f upstream.
+commit 46fe895e22ab3845515ec06b01eaf1282b342e29 upstream.
 
-When disconnected sometimes the cdc-acm driver logs errors like these:
+Add new Motorola Tetra (simple) driver for Motorola Solutions TETRA PEI
+devices.
 
-[20278.039417] cdc_acm 2-2:2.1: urb 9 failed submission with -19
-[20278.042924] cdc_acm 2-2:2.1: urb 10 failed submission with -19
-[20278.046449] cdc_acm 2-2:2.1: urb 11 failed submission with -19
-[20278.049920] cdc_acm 2-2:2.1: urb 12 failed submission with -19
-[20278.053442] cdc_acm 2-2:2.1: urb 13 failed submission with -19
-[20278.056915] cdc_acm 2-2:2.1: urb 14 failed submission with -19
-[20278.060418] cdc_acm 2-2:2.1: urb 15 failed submission with -19
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=0cad ProdID=9011 Rev=24.16
+S:  Manufacturer=Motorola Solutions Inc.
+S:  Product=Motorola Solutions TETRA PEI interface
+C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
+I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
 
-Silence these by not logging errors when the result is -ENODEV.
+Note that these devices do not support the CDC SET_CONTROL_LINE_STATE
+request (for any interface).
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: Max Schulze <max.schulze@posteo.de>
+Tested-by: Max Schulze <max.schulze@posteo.de>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/serial/Kconfig             |    1 +
+ drivers/usb/serial/usb-serial-simple.c |    7 +++++++
+ 2 files changed, 8 insertions(+)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -438,7 +438,7 @@ static int acm_submit_read_urb(struct ac
+--- a/drivers/usb/serial/Kconfig
++++ b/drivers/usb/serial/Kconfig
+@@ -63,6 +63,7 @@ config USB_SERIAL_SIMPLE
+ 		- Google USB serial devices
+ 		- HP4x calculators
+ 		- a number of Motorola phones
++		- Motorola Tetra devices
+ 		- Novatel Wireless GPS receivers
+ 		- Siemens USB/MPI adapter.
+ 		- ViVOtech ViVOpay USB device.
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -80,6 +80,11 @@ DEVICE(vivopay, VIVOPAY_IDS);
+ 	{ USB_DEVICE(0x22b8, 0x2c64) }	/* Motorola V950 phone */
+ DEVICE(moto_modem, MOTO_IDS);
  
- 	res = usb_submit_urb(acm->read_urbs[index], mem_flags);
- 	if (res) {
--		if (res != -EPERM) {
-+		if (res != -EPERM && res != -ENODEV) {
- 			dev_err(&acm->data->dev,
- 				"urb %d failed submission with %d\n",
- 				index, res);
++/* Motorola Tetra driver */
++#define MOTOROLA_TETRA_IDS()			\
++	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
++DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
++
+ /* Novatel Wireless GPS driver */
+ #define NOVATEL_IDS()			\
+ 	{ USB_DEVICE(0x09d7, 0x0100) }	/* NovAtel FlexPack GPS */
+@@ -110,6 +115,7 @@ static struct usb_serial_driver * const
+ 	&google_device,
+ 	&vivopay_device,
+ 	&moto_modem_device,
++	&motorola_tetra_device,
+ 	&novatel_gps_device,
+ 	&hp4x_device,
+ 	&suunto_device,
+@@ -125,6 +131,7 @@ static const struct usb_device_id id_tab
+ 	GOOGLE_IDS(),
+ 	VIVOPAY_IDS(),
+ 	MOTO_IDS(),
++	MOTOROLA_TETRA_IDS(),
+ 	NOVATEL_IDS(),
+ 	HP4X_IDS(),
+ 	SUUNTO_IDS(),
