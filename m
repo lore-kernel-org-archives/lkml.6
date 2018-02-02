@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225g0F0afWbXsKjsCOc2kGvV+Ypl8UiFyn5/Ra3A74GPHdbOeDcNIuNZ0gCpxTpFB/mAHTUX
-ARC-Seal: i=1; a=rsa-sha256; t=1517591392; cv=none;
+X-Google-Smtp-Source: AH8x224OtxJVqayYQx+Qg2HQfG3CJ3p68PEMjkyAMV6Lc3atA8CFUJGZKEfh9jaenJh6WZr4vhbE
+ARC-Seal: i=1; a=rsa-sha256; t=1517591389; cv=none;
         d=google.com; s=arc-20160816;
-        b=vRvHBDt4TLF2r2PIOZrxVbWyzL/3PYk0Vil90GvhnQRi+PHZDc3WoUmHqChpRym7a4
-         A5aJTt5xJuAIhLw+6ZA2w2j+7hqCI5Fmlx3H4oOC2Arr4urZ9xTL7oMCCVGcZHLsEmxO
-         UOP0O6cLAJPb03/l7qTTWGLj39UKQaWI/8EnxKRHKMmnWLRcR13eR04yi8szMKQLeKTa
-         Ng2Hmp5v/EtGvl9u12lHVQ0uMRKiHTdLGv9eOOTIB/GnpcWezJu8Ww8sLy7obtDK+s8e
-         QS1qmQOyOnf/kzteK7C4AFRFqSKB2uhwYLmM4IL9fOsBYivq1/RA5g1MmzdWLP8yhcvb
-         QpZw==
+        b=s1wQOpBlZIy2+feWW0cptZFqhgGkHaadcD7HDAJMhJIbH6lItiYNtsO7WL+ujwYGf/
+         w8F8+lLXAOvHIXx2NKCumMFvVoAKolruoMEwtFcV2RVU327obwYbkpUS3j3Wo8UZKDA5
+         wGH72WNDhn26Nl+IR/c/hv74tJW7UA47NpPyokOAQn4lXoi6IgQcfHK70W2EBlgIGfjl
+         Rm2blvbqf8mWlaL3EBwm9I4uX+yYL5iwgBOkMKTHzDIyQgHi/aWVm0aI7Fu1T+sFi5lt
+         YgTmkpPylQOp/oxO3UttQF7AbEiAV2db29BEUGHnojcdXv+WmmryfDO5I5hjolVRm25f
+         YcTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zD9Z2Tg6Aj9bRAehCXhKOZN+pbIQR1owPWgDow2xeis=;
-        b=h9bXvCvw1vjPsqVMm9nfCNPjIqjlGJ6PJJPxmb1mracwKmW0NUkMluJ6jl82SZ1DLn
-         A9JGiy0aM0ihay9oYB1LiPJtj2H0icb8IYELY9G8ajSNOMhaGH1WcodzU8zXFToWbx9R
-         zjf4lBTTM3zCvrwWQJJEI5TBNO0hnrWaMGgLsmfA0iOus087wdiZ5lctjcdvHKFDiSNt
-         JhacYIhZ5lVYqUXCpyTRxVZ7BVghufm71iOITJ8CWg1m+tMq9aDBKdE8Q1DTkgELc27R
-         q2wDt99eQsFOOU8EhrY7Bji8qwfyzBV57Y88kqr9CCRtjM9/ib6LBT+rhH5HQPGD1WFF
-         UEJA==
+        bh=IcNeQ7Ke8ZyZ+BMEmB7NRoyNv4but60xLPzLDOTOXuw=;
+        b=BX0qknMGE9K98ltgcz7bANW47ZjKZlpTIwcuen//UE9intXhIFdwyJJU76euIdgK0e
+         4QErQfq2AEJ5PJy8j8O+LErVsJ+ZPrdu0LmR1H4XpdOvP73gcST6K5lS2WY33nd1YOBP
+         dVJVZCmNJYZUHGwtpgF998ctYse+n7DnVHyHg85quurE3nfYpueHJdwVjVbyCMVTZDVB
+         o5pIsPOe4y/Z515KOB09t/ZzUzdy2lDbuceN83PnhV8CT56+f5mPQE9pXwjGNtMthgqI
+         ZSF4TwZkFxRiays2cVX3Ytqk6/JadSqkJQQ2CoFlu9sGU93XgG6SU/NS5JBGkjHEELUg
+         oDow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	shaoyun liu <shaoyun.liu@amd.com>,
-	Felix Kuehling <Felix.Kuehling@amd.com>,
-	Oded Gabbay <oded.gabbay@gmail.com>,
+	Michael Lyle <mlyle@lyle.org>,
+	Vojtech Pavlik <vojtech@suse.com>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 062/156] drm/amdgpu: Fix SDMA load/unload sequence on HWS disabled mode
-Date: Fri,  2 Feb 2018 17:57:23 +0100
-Message-Id: <20180202140843.100000679@linuxfoundation.org>
+Subject: [PATCH 4.14 061/156] bcache: check return value of register_shrinker
+Date: Fri,  2 Feb 2018 17:57:22 +0100
+Message-Id: <20180202140843.061297415@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309431766878115?=
-X-GMAIL-MSGID: =?utf-8?q?1591309911813134142?=
+X-GMAIL-THRID: =?utf-8?q?1591309428712517955?=
+X-GMAIL-MSGID: =?utf-8?q?1591309908954063461?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,96 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felix Kuehling <Felix.Kuehling@amd.com>
+From: Michael Lyle <mlyle@lyle.org>
 
 
-[ Upstream commit cf21654b40968609779751b34e7923180968fe5b ]
+[ Upstream commit 6c4ca1e36cdc1a0a7a84797804b87920ccbebf51 ]
 
-Fix the SDMA load and unload sequence as suggested by HW document.
+register_shrinker is now __must_check, so check it to kill a warning.
+Caller of bch_btree_cache_alloc in super.c appropriately checks return
+value so this is fully plumbed through.
 
-Signed-off-by: shaoyun liu <shaoyun.liu@amd.com>
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Acked-by: Oded Gabbay <oded.gabbay@gmail.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+This V2 fixes checkpatch warnings and improves the commit description,
+as I was too hasty getting the previous version out.
+
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Reviewed-by: Vojtech Pavlik <vojtech@suse.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c |   47 +++++++++++++++-------
- 1 file changed, 34 insertions(+), 13 deletions(-)
+ drivers/md/bcache/btree.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c
-@@ -369,29 +369,50 @@ static int kgd_hqd_sdma_load(struct kgd_
- {
- 	struct amdgpu_device *adev = get_amdgpu_device(kgd);
- 	struct cik_sdma_rlc_registers *m;
-+	unsigned long end_jiffies;
- 	uint32_t sdma_base_addr;
-+	uint32_t data;
- 
- 	m = get_sdma_mqd(mqd);
- 	sdma_base_addr = get_sdma_base_addr(m);
- 
--	WREG32(sdma_base_addr + mmSDMA0_RLC0_VIRTUAL_ADDR,
--			m->sdma_rlc_virtual_addr);
-+	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_CNTL,
-+		m->sdma_rlc_rb_cntl & (~SDMA0_RLC0_RB_CNTL__RB_ENABLE_MASK));
- 
--	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_BASE,
--			m->sdma_rlc_rb_base);
-+	end_jiffies = msecs_to_jiffies(2000) + jiffies;
-+	while (true) {
-+		data = RREG32(sdma_base_addr + mmSDMA0_RLC0_CONTEXT_STATUS);
-+		if (data & SDMA0_RLC0_CONTEXT_STATUS__IDLE_MASK)
-+			break;
-+		if (time_after(jiffies, end_jiffies))
-+			return -ETIME;
-+		usleep_range(500, 1000);
-+	}
-+	if (m->sdma_engine_id) {
-+		data = RREG32(mmSDMA1_GFX_CONTEXT_CNTL);
-+		data = REG_SET_FIELD(data, SDMA1_GFX_CONTEXT_CNTL,
-+				RESUME_CTX, 0);
-+		WREG32(mmSDMA1_GFX_CONTEXT_CNTL, data);
-+	} else {
-+		data = RREG32(mmSDMA0_GFX_CONTEXT_CNTL);
-+		data = REG_SET_FIELD(data, SDMA0_GFX_CONTEXT_CNTL,
-+				RESUME_CTX, 0);
-+		WREG32(mmSDMA0_GFX_CONTEXT_CNTL, data);
-+	}
- 
-+	WREG32(sdma_base_addr + mmSDMA0_RLC0_DOORBELL,
-+				m->sdma_rlc_doorbell);
-+	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_RPTR, 0);
-+	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_WPTR, 0);
-+	WREG32(sdma_base_addr + mmSDMA0_RLC0_VIRTUAL_ADDR,
-+				m->sdma_rlc_virtual_addr);
-+	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_BASE, m->sdma_rlc_rb_base);
- 	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_BASE_HI,
- 			m->sdma_rlc_rb_base_hi);
--
- 	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_RPTR_ADDR_LO,
- 			m->sdma_rlc_rb_rptr_addr_lo);
--
- 	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_RPTR_ADDR_HI,
- 			m->sdma_rlc_rb_rptr_addr_hi);
--
--	WREG32(sdma_base_addr + mmSDMA0_RLC0_DOORBELL,
--			m->sdma_rlc_doorbell);
--
- 	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_CNTL,
- 			m->sdma_rlc_rb_cntl);
- 
-@@ -564,9 +585,9 @@ static int kgd_hqd_sdma_destroy(struct k
- 	}
- 
- 	WREG32(sdma_base_addr + mmSDMA0_RLC0_DOORBELL, 0);
--	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_RPTR, 0);
--	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_WPTR, 0);
--	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_BASE, 0);
-+	WREG32(sdma_base_addr + mmSDMA0_RLC0_RB_CNTL,
-+		RREG32(sdma_base_addr + mmSDMA0_RLC0_RB_CNTL) |
-+		SDMA0_RLC0_RB_CNTL__RB_ENABLE_MASK);
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -807,7 +807,10 @@ int bch_btree_cache_alloc(struct cache_s
+ 	c->shrink.scan_objects = bch_mca_scan;
+ 	c->shrink.seeks = 4;
+ 	c->shrink.batch = c->btree_pages * 2;
+-	register_shrinker(&c->shrink);
++
++	if (register_shrinker(&c->shrink))
++		pr_warn("bcache: %s: could not register shrinker",
++				__func__);
  
  	return 0;
  }
