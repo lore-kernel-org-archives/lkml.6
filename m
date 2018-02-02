@@ -1,70 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752426AbeBBO7Y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:59:24 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:49262 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752029AbeBBO7P (ORCPT
+        id S1752196AbeBBO7j (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:59:39 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:5264 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752069AbeBBO7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:59:15 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 3/3] x86: error_inject: make  just_return_func globally visible
-Date: Fri,  2 Feb 2018 15:56:19 +0100
-Message-Id: <20180202145634.200291-3-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180202145634.200291-1-arnd@arndb.de>
-References: <20180202145434.100626-1-arnd@arndb.de>
- <20180202145634.200291-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:hiXWzmx7Z9S3IwGnYbP8u+Xj80EIya28N0XC+8ESANwln5WzUYU
- lm+5wplDOhe9YiEnaR4ui/BtiD+D1x0uNzQdfSugyGSWDWF+gh/4u/iNuqRQZYoSFTOEr/C
- NoziMIy1mh7RNl37ct2/xR2mkI728P9aTCVtEh5YaMxtqXVjYuQhieqzjI6yliKma8GVjnK
- TNoY0OY8dcU2B7NmL+FSA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:AMXJisyEtF0=:EE2SMXpObJdFU1Q1XeqD9r
- N/SCsXmJ7Ur9inHz8/OcqIofDxCShKXo5BjhFMGgtkucaPgvqUrQ+9qr0xJ17GxUpdGz2nbKt
- 9cNRHEXIxd7ZBP8iaZxXyyjtI5rqE/+6+PGn3bstBxrSrGS+aBkVvhvAnlJGr6J8uUmCtHdEM
- hkSLzMXKvRyy7J289EeWtNERMLEnVraa2WgETeUiyIAwzLIZyN+LkLo2IiYYuxsAVeqiVjx+T
- O0j72LwezIFMPdh5wFnl4e6Aq+1wn3M87O3Pc11y1wsye/KRFpSxBwhLIjTz7/jNTdm0YgnVq
- a8D1CTTqaiR4N8bg0AtUZQzW0RIZm4118PG7OujzEiNV6MrVyiHHrAcEmxIdl4tAR1jr0Eqp5
- AgCrpo9kRFZm3HEoitHoUHRXsAK5or1qlI884VLrGWuAkE1MbuzQsS763MOe4rl/uK2ytS6PN
- bZw8XByA1ComF6OmevxfJ8nzUb8FPEbmUhQNm7XqXJotjfkzVzoqZiia1kd5YAa2NwxwxE7+S
- wA6qsXBW3ASTvJVbXZSAFqO8tbenWMua72b7cktbB4nDapfIuCxy9sUS1oktANclra0jt1BeA
- MLhZMCcczkTueKOGnR6UidCiA7cHBYjW/+KQ3Oy80p1PLRY6YpBIINP+RpHL4uhcEtGrql3mg
- bmmoAJzqaKuRPRuz62lO024e5YddcuVOts6lNKEdDhGVEO2zxkEVNaw1xNxMzWN6SEKoLu2zS
- EpyCJkI4Bj66rX/wsi+IoU+hxOHDZwu53MdIIw==
+        Fri, 2 Feb 2018 09:59:32 -0500
+X-IronPort-AV: E=Sophos;i="5.46,448,1511827200";
+   d="scan'208";a="330329713"
+From: David Woodhouse <dwmw@amazon.co.uk>
+To: tglx@linutronix.de, karahmed@amazon.de, sironi@amazon.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        peterz@infradead.org
+Subject: [PATCH] KVM: x86: Reduce retpoline performance impact in slot_handle_level_range()
+Date: Fri,  2 Feb 2018 14:59:19 +0000
+Message-Id: <1517583559-424-1-git-send-email-dwmw@amazon.co.uk>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With link time optimizations enabled, I get a link failure:
+With retpoline, tight loops of "call this function for every XXX" are
+very much pessimised by taking a prediction miss *every* time.
 
-./ccLbOEHX.ltrans19.ltrans.o: In function `override_function_with_return':
-<artificial>:(.text+0x7f3): undefined reference to `just_return_func'
+This one showed up very high in our early testing, and it only has five
+things it'll ever call so make it take an 'op' enum instead of a
+function pointer and let's see how that works out...
 
-Marking the symbol .globl makes it work as expected.
-
-Fixes: 540adea3809f ("error-injection: Separate error-injection from kprobe")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/lib/error-inject.c | 1 +
- 1 file changed, 1 insertion(+)
+Not sure I like this. Better suggestions welcomed...
 
-diff --git a/arch/x86/lib/error-inject.c b/arch/x86/lib/error-inject.c
-index 7b881d03d0dd..3cdf06128d13 100644
---- a/arch/x86/lib/error-inject.c
-+++ b/arch/x86/lib/error-inject.c
-@@ -7,6 +7,7 @@ asmlinkage void just_return_func(void);
+In the general case, we have a few things we can do with the calls that
+retpoline turns into bottlenecks. This is one of them.
+
+Another option, if there are just one or two "likely" functions, is
+something along the lines of
+
+ if (func == likelyfunc)
+    likelyfunc()
+ else
+    (*func)(); // GCC does retpoline for this
+
+For things like kvm_x86_ops we really could just turn *all* of those
+into direct calls at runtime, like pvops does.
+
+There are some which land somewhere in the middle, like the default
+dma_ops. We probably want something like the 'likelyfunc' version
+above, except that we *also* want to flip the likelyfunc between the
+Intel and AMD IOMMU ops functions, at early boot. I'll see what I can
+come up with...
+
+ arch/x86/kvm/mmu.c | 72 ++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 48 insertions(+), 24 deletions(-)
+
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 2b8eb4d..44f9de7 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -5055,12 +5055,21 @@ void kvm_mmu_uninit_vm(struct kvm *kvm)
+ }
  
- asm(
- 	".type just_return_func, @function\n"
-+	".globl just_return_func\n"
- 	"just_return_func:\n"
- 	"	ret\n"
- 	".size just_return_func, .-just_return_func\n"
+ /* The return value indicates if tlb flush on all vcpus is needed. */
+-typedef bool (*slot_level_handler) (struct kvm *kvm, struct kvm_rmap_head *rmap_head);
++enum slot_handler_op {
++	SLOT_RMAP_CLEAR_DIRTY,
++	SLOT_RMAP_SET_DIRTY,
++	SLOT_RMAP_WRITE_PROTECT,
++	SLOT_ZAP_RMAPP,
++	SLOT_ZAP_COLLAPSIBLE_SPTE,
++};
++
++static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
++					 struct kvm_rmap_head *rmap_head);
+ 
+ /* The caller should hold mmu-lock before calling this function. */
+ static bool
+ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
+-			slot_level_handler fn, int start_level, int end_level,
++			enum slot_handler_op op, int start_level, int end_level,
+ 			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
+ {
+ 	struct slot_rmap_walk_iterator iterator;
+@@ -5068,8 +5077,29 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 
+ 	for_each_slot_rmap_range(memslot, start_level, end_level, start_gfn,
+ 			end_gfn, &iterator) {
+-		if (iterator.rmap)
+-			flush |= fn(kvm, iterator.rmap);
++		if (iterator.rmap) {
++			switch (op) {
++			case SLOT_RMAP_CLEAR_DIRTY:
++				flush |= __rmap_clear_dirty(kvm, iterator.rmap);
++				break;
++
++			case SLOT_RMAP_SET_DIRTY:
++				flush |= __rmap_set_dirty(kvm, iterator.rmap);
++				break;
++
++			case SLOT_RMAP_WRITE_PROTECT:
++				flush |= __rmap_write_protect(kvm, iterator.rmap, false);
++				break;
++
++			case SLOT_ZAP_RMAPP:
++				flush |= kvm_zap_rmapp(kvm, iterator.rmap);
++				break;
++
++			case SLOT_ZAP_COLLAPSIBLE_SPTE:
++				flush |= kvm_mmu_zap_collapsible_spte(kvm, iterator.rmap);
++				break;
++			}
++		}
+ 
+ 		if (need_resched() || spin_needbreak(&kvm->mmu_lock)) {
+ 			if (flush && lock_flush_tlb) {
+@@ -5090,10 +5120,10 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 
+ static bool
+ slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+-		  slot_level_handler fn, int start_level, int end_level,
++		  enum slot_handler_op op, int start_level, int end_level,
+ 		  bool lock_flush_tlb)
+ {
+-	return slot_handle_level_range(kvm, memslot, fn, start_level,
++	return slot_handle_level_range(kvm, memslot, op, start_level,
+ 			end_level, memslot->base_gfn,
+ 			memslot->base_gfn + memslot->npages - 1,
+ 			lock_flush_tlb);
+@@ -5101,25 +5131,25 @@ slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 
+ static bool
+ slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+-		      slot_level_handler fn, bool lock_flush_tlb)
++		      enum slot_handler_op op, bool lock_flush_tlb)
+ {
+-	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
++	return slot_handle_level(kvm, memslot, op, PT_PAGE_TABLE_LEVEL,
+ 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
+ }
+ 
+ static bool
+ slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+-			slot_level_handler fn, bool lock_flush_tlb)
++			enum slot_handler_op op, bool lock_flush_tlb)
+ {
+-	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL + 1,
++	return slot_handle_level(kvm, memslot, op, PT_PAGE_TABLE_LEVEL + 1,
+ 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
+ }
+ 
+ static bool
+ slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
+-		 slot_level_handler fn, bool lock_flush_tlb)
++		 enum slot_handler_op op, bool lock_flush_tlb)
+ {
+-	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
++	return slot_handle_level(kvm, memslot, op, PT_PAGE_TABLE_LEVEL,
+ 				 PT_PAGE_TABLE_LEVEL, lock_flush_tlb);
+ }
+ 
+@@ -5140,7 +5170,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+ 			if (start >= end)
+ 				continue;
+ 
+-			slot_handle_level_range(kvm, memslot, kvm_zap_rmapp,
++			slot_handle_level_range(kvm, memslot, SLOT_ZAP_RMAPP,
+ 						PT_PAGE_TABLE_LEVEL, PT_MAX_HUGEPAGE_LEVEL,
+ 						start, end - 1, true);
+ 		}
+@@ -5149,19 +5179,13 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+ 	spin_unlock(&kvm->mmu_lock);
+ }
+ 
+-static bool slot_rmap_write_protect(struct kvm *kvm,
+-				    struct kvm_rmap_head *rmap_head)
+-{
+-	return __rmap_write_protect(kvm, rmap_head, false);
+-}
+-
+ void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
+ 				      struct kvm_memory_slot *memslot)
+ {
+ 	bool flush;
+ 
+ 	spin_lock(&kvm->mmu_lock);
+-	flush = slot_handle_all_level(kvm, memslot, slot_rmap_write_protect,
++	flush = slot_handle_all_level(kvm, memslot, SLOT_RMAP_WRITE_PROTECT,
+ 				      false);
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+@@ -5226,7 +5250,7 @@ void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
+ 	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
+ 	spin_lock(&kvm->mmu_lock);
+ 	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
+-			 kvm_mmu_zap_collapsible_spte, true);
++			 SLOT_ZAP_COLLAPSIBLE_SPTE, true);
+ 	spin_unlock(&kvm->mmu_lock);
+ }
+ 
+@@ -5236,7 +5260,7 @@ void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
+ 	bool flush;
+ 
+ 	spin_lock(&kvm->mmu_lock);
+-	flush = slot_handle_leaf(kvm, memslot, __rmap_clear_dirty, false);
++	flush = slot_handle_leaf(kvm, memslot, SLOT_RMAP_CLEAR_DIRTY, false);
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+ 	lockdep_assert_held(&kvm->slots_lock);
+@@ -5258,7 +5282,7 @@ void kvm_mmu_slot_largepage_remove_write_access(struct kvm *kvm,
+ 	bool flush;
+ 
+ 	spin_lock(&kvm->mmu_lock);
+-	flush = slot_handle_large_level(kvm, memslot, slot_rmap_write_protect,
++	flush = slot_handle_large_level(kvm, memslot, SLOT_RMAP_WRITE_PROTECT,
+ 					false);
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+@@ -5276,7 +5300,7 @@ void kvm_mmu_slot_set_dirty(struct kvm *kvm,
+ 	bool flush;
+ 
+ 	spin_lock(&kvm->mmu_lock);
+-	flush = slot_handle_all_level(kvm, memslot, __rmap_set_dirty, false);
++	flush = slot_handle_all_level(kvm, memslot, SLOT_RMAP_SET_DIRTY, false);
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+ 	lockdep_assert_held(&kvm->slots_lock);
 -- 
-2.9.0
+2.7.4
