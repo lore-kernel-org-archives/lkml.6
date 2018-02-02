@@ -1,64 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932086AbeBBSl7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 13:41:59 -0500
-Received: from mga17.intel.com ([192.55.52.151]:51444 "EHLO mga17.intel.com"
+        id S1754122AbeBBSm0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 13:42:26 -0500
+Received: from mga02.intel.com ([134.134.136.20]:60444 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755051AbeBBSkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 13:40:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1751907AbeBBSmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 13:42:18 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,450,1511856000";
-   d="scan'208";a="171221081"
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Nikola Ciprich <nikola.ciprich@linuxbox.cz>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 7/8] parport: Sort headers alphabetically
-Date: Fri,  2 Feb 2018 20:39:54 +0200
-Message-Id: <20180202183955.85453-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180202183955.85453-1-andriy.shevchenko@linux.intel.com>
-References: <20180202183955.85453-1-andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="200751028"
+Date: Fri, 2 Feb 2018 11:46:05 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] nvme-pci: move clearing host mem behind stopping
+ queues
+Message-ID: <20180202184605.GJ24417@localhost.localdomain>
+References: <1517554849-7802-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1517554849-7802-2-git-send-email-jianchao.w.wang@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517554849-7802-2-git-send-email-jianchao.w.wang@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While here, remove init.h inclusion since we are not using it directly and
-module.h will do this for us.
+On Fri, Feb 02, 2018 at 03:00:44PM +0800, Jianchao Wang wrote:
+> Move clearing host mem behind stopping queues. Prepare for
+> following patch which will grab all the outstanding requests.
+> 
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-No functional changes intended.
+This one makes sense, though I would alter the change log to something
+like:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/parport/parport_serial.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+  This patch quiecses new IO prior to disabling device HMB access.
+  A controller using HMB may be relying on it to efficiently complete
+  IO commands.
 
-diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
-index be28cc1fa37e..e71340014638 100644
---- a/drivers/parport/parport_serial.c
-+++ b/drivers/parport/parport_serial.c
-@@ -17,14 +17,14 @@
-  *
-  */
- 
--#include <linux/types.h>
--#include <linux/module.h>
--#include <linux/init.h>
--#include <linux/slab.h>
--#include <linux/pci.h>
- #include <linux/interrupt.h>
-+#include <linux/module.h>
- #include <linux/parport.h>
- #include <linux/parport_pc.h>
-+#include <linux/pci.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+
- #include <linux/8250_pci.h>
- 
- enum parport_pc_pci_cards {
--- 
-2.15.1
+Reviewed-by: Keith Busch <keith.busch@intel.com>
+
+> ---
+>  drivers/nvme/host/pci.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 6fe7af0..00cffed 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2186,7 +2186,10 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+>  	if (!dead) {
+>  		if (shutdown)
+>  			nvme_wait_freeze_timeout(&dev->ctrl, NVME_IO_TIMEOUT);
+> +	}
+> +	nvme_stop_queues(&dev->ctrl);
+>  
+> +	if (!dead) {
+>  		/*
+>  		 * If the controller is still alive tell it to stop using the
+>  		 * host memory buffer.  In theory the shutdown / reset should
+> @@ -2195,11 +2198,6 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+>  		 */
+>  		if (dev->host_mem_descs)
+>  			nvme_set_host_mem(dev, 0);
+> -
+> -	}
+> -	nvme_stop_queues(&dev->ctrl);
+> -
+> -	if (!dead) {
+>  		nvme_disable_io_queues(dev);
+>  		nvme_disable_admin_queue(dev, shutdown);
+>  	}
+> -- 
+> 2.7.4
