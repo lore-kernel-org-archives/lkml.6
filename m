@@ -1,150 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeBBMx7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 07:53:59 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44722 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752118AbeBBMxi (ORCPT
+        id S1752023AbeBBMyh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 07:54:37 -0500
+Received: from mail-edgeka24.fraunhofer.de ([153.96.1.24]:43233 "EHLO
+        mail-edgeKA24.fraunhofer.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751848AbeBBMya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 07:53:38 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 534B06076A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=prsood@codeaurora.org
-Subject: Re: Query related to usage of cpufreq_suspend() & cpufreq_resume
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gkohli@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-References: <e9d13871-184b-dee3-c45f-c6d19e671eea@codeaurora.org>
- <1949391.4ffJqIIJSQ@aspire.rjw.lan>
-From: Prateek Sood <prsood@codeaurora.org>
-Message-ID: <7d50aeb5-cc2d-521b-2f31-5477e6e18f20@codeaurora.org>
-Date: Fri, 2 Feb 2018 18:23:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <1949391.4ffJqIIJSQ@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8
+        Fri, 2 Feb 2018 07:54:30 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GiAAAuXnRa/xoBYJldGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYNRZnAyg1uKJHSNOoICl0iCGAojhRgCGoIeVBgBAQEBAQEBAQI?=
+ =?us-ascii?q?DaCiCa3gBAQEBAQEBAQFMAg1eAQUjEUUQAgEIGAICJgICAjAVEAIEAQ2KOQEQr?=
+ =?us-ascii?q?zCCJ4QWAQGEXYF9AQEBAQEBAQEBAQEBAQEBAQEBAQEBGAWBD4NagQ6BB4FYhRW?=
+ =?us-ascii?q?FOYMAgmUFil+JW49kBgKBHYZ6jVeCHoYlg2yIBY1qigeBPB86gVBxgxiDCYEyA?=
+ =?us-ascii?q?TqMDoEXAQEB?=
+X-IPAS-Result: =?us-ascii?q?A2GiAAAuXnRa/xoBYJldGQEBAQEBAQEBAQEBAQcBAQEBAYN?=
+ =?us-ascii?q?RZnAyg1uKJHSNOoICl0iCGAojhRgCGoIeVBgBAQEBAQEBAQIDaCiCa3gBAQEBA?=
+ =?us-ascii?q?QEBAQFMAg1eAQUjEUUQAgEIGAICJgICAjAVEAIEAQ2KOQEQrzCCJ4QWAQGEXYF?=
+ =?us-ascii?q?9AQEBAQEBAQEBAQEBAQEBAQEBAQEBGAWBD4NagQ6BB4FYhRWFOYMAgmUFil+JW?=
+ =?us-ascii?q?49kBgKBHYZ6jVeCHoYlg2yIBY1qigeBPB86gVBxgxiDCYEyATqMDoEXAQEB?=
+X-IronPort-AV: E=Sophos;i="5.46,448,1511823600";
+   d="scan'208";a="4684562"
+X-IronPort-AV: E=Sophos;i="5.46,448,1511823600";
+   d="scan'208";a="8930245"
+From: "Auer, Lukas" <lukas.auer@aisec.fraunhofer.de>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aymen.sghaier@nxp.com" <aymen.sghaier@nxp.com>,
+        "horia.geanta@nxp.com" <horia.geanta@nxp.com>,
+        "pure.logic@nexus-software.ie" <pure.logic@nexus-software.ie>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+CC: "peng.fan@nxp.com" <peng.fan@nxp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "ryan.harkin@linaro.org" <ryan.harkin@linaro.org>,
+        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
+        "rui.silva@linaro.org" <rui.silva@linaro.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v3 2/5] crypto: caam: Fix endless loop when RNG is
+ already initialized
+Thread-Topic: [PATCH v3 2/5] crypto: caam: Fix endless loop when RNG is
+ already initialized
+Thread-Index: AQHTmjdPDFt5DoJeZkev9KNOEKfDKqOQ6pcAgAAaHIA=
+Date: Fri, 2 Feb 2018 12:54:24 +0000
+Message-ID: <1517576063.2002.19.camel@aisec.fraunhofer.de>
+References: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
+         <1517364040-27607-3-git-send-email-pure.logic@nexus-software.ie>
+         <VI1PR0402MB334297558BB1984131546B1D98FA0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+         <78ad6a62-190c-e4fe-dd23-e1d058f9bbb2@nexus-software.ie>
+In-Reply-To: <78ad6a62-190c-e4fe-dd23-e1d058f9bbb2@nexus-software.ie>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.80.233.51]
+x-tm-as-product-ver: SMEX-11.0.0.4179-8.200.1013-23636.006
+x-tm-as-result: No--13.628400-8.000000-31
+x-tm-as-user-approved-sender: No
+x-tm-as-user-blocked-sender: No
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <319A159D028DB7489AE7EEE5F58C047B@xch.fraunhofer.de>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w12Cse54020591
 
-On 02/02/2018 05:18 PM, Rafael J. Wysocki wrote:
-> On Friday, February 2, 2018 12:41:58 PM CET Prateek Sood wrote:
->> Hi Viresh,
->>
->> One scenario is there where a kernel panic is observed in
->> cpufreq during suspend/resume.
->>
->> pm_suspend()
->>   suspend_devices_and_enter()
->>     dpm_suspend_start()
->>       dpm_prepare() 
->>
->> Failure in dpm_prepare() happend with following dmesg:
->>
->> [ 3746.316062] PM: Device xyz not prepared for power transition: code -16
->> [ 3746.316071] PM: Some devices failed to suspend, or early wake event detected
->>
->>
->> pm_suspend()
->>   suspend_devices_and_enter()
->>     dpm_suspend_start()
->>       dpm_prepare() //failed
->>     dpm_resume_end()
->>       dpm_resume()
->>         cpufreq_resume()
->>           cpufreq_start_governor()
->>             sugov_start()
->>               cpufreq_add_update_util_hook()
->>
->> After failure in dpm_prepare(), dpm_resume() called
->> cpufreq_resume(). Corresponding cpufreq_suspend() was not
->> called due to failure of dpm_prepare(). 
->>
->> This resulted in WARN_ON(per_cpu(cpufreq_update_util_data, cpu))
->> in cpufreq_add_update_util_hook() and cpufreq_add_update_util_hook->func
->> being inconsistent state. It caused crash in scheduler.
->>
->> Following are some of the ways to mitigate this issue. Could
->> you please provide feedback on below two approaches or suugest
->> a better way to fix this problem.
->>
->> -----------------------8<------------------------------
->>
->> Co-developed-by: Gaurav Kohli <gkohli@codeaurora.org>
->> Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org> 
->> Signed-off-by: Prateek Sood <prsood@codeaurora.org>
->>
->> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
->> index 02a497e..732e5a2 100644
->> --- a/drivers/base/power/main.c
->> +++ b/drivers/base/power/main.c
->> @@ -1038,6 +1038,7 @@ void dpm_resume(pm_message_t state)
->>  {
->>         struct device *dev;
->>         ktime_t starttime = ktime_get();
->> +       bool valid_resume = false;
->>
->>         trace_suspend_resume(TPS("dpm_resume"), state.event, true);
->>         might_sleep();
->> @@ -1055,6 +1056,7 @@ void dpm_resume(pm_message_t state)
->>         }
->>
->>         while (!list_empty(&dpm_suspended_list)) {
->> +               valid_resume = true;
->>                 dev = to_device(dpm_suspended_list.next);
->>                 get_device(dev);
->>                 if (!is_async(dev)) {
->> @@ -1080,7 +1082,8 @@ void dpm_resume(pm_message_t state)
->>         async_synchronize_full();
->>         dpm_show_time(starttime, state, 0, NULL);
->>
->> -       cpufreq_resume();
->> +       if (valid_resume)
->> +               cpufreq_resume();
->>         trace_suspend_resume(TPS("dpm_resume"), state.event, false);
->>  }
->>
->> --------------------8<--------------------------------------
->>
->> Signed-off-by: Prateek Sood <prsood@codeaurora.org>
->>
->> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
->> index 421f318..439eab8 100644
->> --- a/drivers/cpufreq/cpufreq.c
->> +++ b/drivers/cpufreq/cpufreq.c
->> @@ -1648,7 +1648,7 @@ void cpufreq_suspend(void)
->>  {
->>         struct cpufreq_policy *policy;
->>
->> -       if (!cpufreq_driver)
->> +       if (!cpufreq_driver || cpufreq_suspended)
->>                 return;
->>
->>         if (!has_target() && !cpufreq_driver->suspend)
->> @@ -1683,7 +1683,7 @@ void cpufreq_resume(void)
->>         struct cpufreq_policy *policy;
->>         int ret;
->>
->> -       if (!cpufreq_driver)
->> +       if (!cpufreq_driver || !cpufreq_suspended)
->>                 return;
->>
->>         cpufreq_suspended = false;
+On Fri, 2018-02-02 at 11:20 +0000, Bryan O'Donoghue wrote:
+> On 01/02/18 12:16, Horia Geantă wrote:
+> > If the loop cannot exit based on value of "ret" != -EAGAIN, then it
+> > means
+> > caam_probe() will eventually fail due to ret == -EAGAIN:
+> > 	if (ret) {
+> > 		dev_err(dev, "failed to instantiate RNG");
+> > 		goto caam_remove;
+> > 	}
 > 
-> Since we have cpufreq_suspended already, the second one is better.
+> For me it's an endless loop applying the first two
 > 
-> Thanks,
-> Rafael
+> https://patchwork.ozlabs.org/patch/866460/
+> https://patchwork.ozlabs.org/patch/866462/
 > 
+> but not this one
+> 
+> https://patchwork.ozlabs.org/patch/865890/
+> 
+> > Please provide more details, so that the root cause is found and
+> > fixed.
+> 
+> np
+> 
+> ---
+> bod
 
-Thanks Rafael for the inputs, I will send a formal patch.
+I think the problem lies in the instantiate_rng() function. If the
+driver is unable to acquire DEC0 it'll return -ENODEV. This should
+terminate the while loop in the probe function. However, the return
+value is never checked and is instead overwritten with -EAGAIN, causing
+the endless loop.
 
+This problem only occurs if u-boot instantiates only one of the state
+handles (ent_delay doesn't get incremented) and the kernel runs in non-
+secure mode (DEC0 can't get acquired). Instantiating all state handles
+in u-boot therefore fixes this problem. In addition, the return value
+in instantiate_rng() should be handled correctly by including
 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation
-Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
-Collaborative Project
+if (ret)
+	break;
+
+right after "ret = run_descriptor_deco0(ctrldev, desc, &status);".
+
+Thanks,
+Lukas
