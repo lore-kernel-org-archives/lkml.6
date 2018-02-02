@@ -1,112 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751606AbeBBGiv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 01:38:51 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39520 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbeBBGin (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 01:38:43 -0500
-X-Google-Smtp-Source: AH8x226pdeERkOoLPtOkbLeiA6wcfhz1ewCJEyq+tPoiVDoVLSzG28xSY1yTszusY+KsDE+HK25GWw==
-Reply-To: monstr@monstr.eu
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Michal Simek <monstr@monstr.eu>
-Subject: [GIT PULL] arch/microblaze patches for 4.16-rc1
-Message-ID: <ae6c735f-e9de-dbc2-7018-51fac09a5702@monstr.eu>
-Date: Fri, 2 Feb 2018 07:38:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751530AbeBBGwU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 01:52:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750732AbeBBGwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 01:52:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDB4221748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Fri, 2 Feb 2018 14:52:02 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martyn Welch <martyn.welch@collabora.co.uk>
+Subject: Re: [PATCH] ARM: dts: imx53: Add touchscreen reset line
+Message-ID: <20180202065201.GA25699@dragon>
+References: <20180115142452.31278-1-sebastian.reichel@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="JI55PJeBcpb4ViTURqQHzU8wqfApdaSq5"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180115142452.31278-1-sebastian.reichel@collabora.co.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---JI55PJeBcpb4ViTURqQHzU8wqfApdaSq5
-Content-Type: multipart/mixed; boundary="feyQTUSmyK9vhCVWk6eBLjGtoSbcexDpY";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Message-ID: <ae6c735f-e9de-dbc2-7018-51fac09a5702@monstr.eu>
-Subject: [GIT PULL] arch/microblaze patches for 4.16-rc1
+On Mon, Jan 15, 2018 at 03:24:52PM +0100, Sebastian Reichel wrote:
+> From: Martyn Welch <martyn.welch@collabora.co.uk>
+> 
+> Utilise new support in Atmel MaxTouch driver to drive the
+> touchscreen controllers reset line correctly.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
---feyQTUSmyK9vhCVWk6eBLjGtoSbcexDpY
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+s/imx53/imx53-ppd in subject.
 
-Hi,
+I fixed it up and applied the patch.
 
-please pull the following fixes to your tree.
-
-Thanks,
-Michal
-
-
-The following changes since commit a8750ddca918032d6349adbf9a4b6555e7db20=
-da:
-
-  Linux 4.15-rc8 (2018-01-14 15:32:30 -0800)
-
-are available in the git repository at:
-
-  git://git.monstr.eu/linux-2.6-microblaze.git tags/microblaze-4.16-rc1
-
-for you to fetch changes up to 7b6ce52be3f86520524711a6f33f3866f9339694:
-
-  microblaze: Setup proper dependency for optimized lib functions
-(2018-01-22 11:24:14 +0100)
-
-----------------------------------------------------------------
-Microblaze patches for 4.16-rc1
-
-- Fix endian handling and Kconfig dependency
-- Fix iounmap prototype
-
-----------------------------------------------------------------
-Arnd Bergmann (2):
-      microblaze: fix endian handling
-      microblaze: fix iounmap prototype
-
-Michal Simek (1):
-      microblaze: Setup proper dependency for optimized lib functions
-
- arch/microblaze/Kconfig.platform |  1 +
- arch/microblaze/Makefile         | 17 +++++++++++------
- arch/microblaze/include/asm/io.h |  2 +-
- arch/microblaze/mm/pgtable.c     |  2 +-
- 4 files changed, 14 insertions(+), 8 deletions(-)
-
-
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
-
-
-
---feyQTUSmyK9vhCVWk6eBLjGtoSbcexDpY--
-
---JI55PJeBcpb4ViTURqQHzU8wqfApdaSq5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAlp0B2wACgkQykllyylKDCEW4ACaAoioD97fhYTMdBjlUOocrUte
-1HUAnigiFDBgzjsj79Iq3U/C3smAdu4x
-=jKZ5
------END PGP SIGNATURE-----
-
---JI55PJeBcpb4ViTURqQHzU8wqfApdaSq5--
+Shawn
