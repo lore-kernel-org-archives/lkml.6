@@ -1,75 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2951738-1517591664-2-3290104053964014533
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591663; b=c5Kn9uOtutBBL25Z8qcANdHE9p2oKSXoD/GYrQHYRnghPu9
-    nTJzhX5EHhvIMqoA0n8QBAeDYYD+SE/9Dagyde2kCSWv3oZ9rMf6hoZKukzRQGlU
-    /VBL27zmfiqyWvl0zavGiC1cHPaxZKJwNnRE5+4oKKVjDhxI3ryRSbG/m8I+aNLY
-    +NQKv/R5TwaMWJSKBGK+sZWniF8DfpCOLIb9zm99NWrD8BMQEl+vfLGF49w952Mc
-    903pMwXOltjPRC2Fpgz0aYMb6bK3Q2n+dIhbkFD3YRPkxpbDuCFYn1xmSYpqZ0Pz
-    3IfvgmOWz89or9Q401hywz/VV7639agpO2xZrmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591663; bh=DV4mGouGKKC2cDzSs+lFojT8cl
-    nOZ8rsB5HTufNgeHI=; b=PovbyFNVBLxFjXFWtP/StFgCwamQOsz39bVK2prwsO
-    zfuhftLjjH3jhMh0p5CpuLh3SLMZUAdMt35ELT4Vei5Gg2yP2p4mMiauTypaTnrD
-    pQHoY0CfEXMI17IeQlozcwL0jaCQW/hU3OieR/dI9Dc/8jBrCSCyvBSDqC9lApYS
-    WpVOv0fEtmcGD0lM1rDIF7D3r3tVQV1andU0kT8fD7jQaiyjDJ+vM1kYkGD4HwBi
-    4ragJ6syWAPJIjp4o7WlDE0CqECaCGArrY1ZpRzfZ9SYb3CTeoe1UXNl/uno09fT
-    XjenHB9rtSJ2RqVsmUL3UDKO9b1wCHL89O+d4kl4bmpQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753609AbeBBROT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:14:19 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40432 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753590AbeBBROO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:14:14 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224J+rjAzqL0xgODOy0QsmCPHi37BWFLb4CqWL9JW1wR00x5/Q3DXXcUkM2ZpbYH89hBMWgo
+ARC-Seal: i=1; a=rsa-sha256; t=1517591662; cv=none;
+        d=google.com; s=arc-20160816;
+        b=xp+K3Lt3cSQtmsmmVJhvXak3EjhI8iTHMfZ3O3Mau1JY3+PeZm0LPH7YHut1C+L4F0
+         npiZyUQEHyBHqGYiCxjP3tW3oNmZxsm77BPNbn4/tEzVa0MdTeSJ8JE5EDuM8hfOH2rj
+         ryOpbBmmnsSCEGA2Y/7OM4kd19oXh+AMCP9hyms+mKO77BuurOBpP9Gmsjse1E5Ih7BI
+         DyYxkQTpbETL5bRETvaUKLKquOiXSROu0stuVsd2YdwTJjCCdTOdZTAZg2AM59Kj1exD
+         hFe3EzX+Mbql1cPFg1GPQjA+yzUABF7noGV2SwZz5HHuZLLVbwPf/y19IqSbLna19+GL
+         4iMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=IScxSoGb1MVgcdFK6nQrcs8dXcggNg/6cd6Y/a6Y+/4=;
+        b=TeyKWMQ+Yw2iMtETlvknbniLp/mhZaY6b6FXASWtzY+bVamw422MtAYouJv9+i6woz
+         Nt3kmx5uxjfEmfv17XeoZPNfbriwk71mtcOuyqzfrCpu8/RSk4LVSRpdto1KRnBRYOTc
+         j8ik+b+NwnAdeCIq3VvWfc9nfdAzItJXaNr45HUHbBhu4kArpecBut+GWbNtX1NDVv5k
+         YnZNHTUZTmAtnZpji8/kS0opZuf/jp14Y5IRLmc/NHhQ28giKtnkWjOKd9W+hThDYS+5
+         mh9baUFqiasFbQmEBK4tq22EhzpPsjXBs8O7hRh0GxzSq70kjAZFlbRYAwU30BAtOuhz
+         GxDw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 154/156] Input: synaptics-rmi4 - unmask F03 interrupts when port is opened
-Date: Fri,  2 Feb 2018 17:58:55 +0100
-Message-Id: <20180202140847.360646121@linuxfoundation.org>
+	stable@vger.kernel.org,
+	"=?UTF-8?q?Chu . Mike=20 [ =E6=9C=B1=E5=A0=85=E5=AE=9C ] ?=" <Mike-Chu@prolific.com.tw>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 134/156] USB: serial: pl2303: new device id for Chilitag
+Date: Fri,  2 Feb 2018 17:58:35 +0100
+Message-Id: <20180202140846.444794735@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309411957795471?=
+X-GMAIL-MSGID: =?utf-8?q?1591310194812673510?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,153 +48,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 6abe534f0776d2437c8302f58d8eb5abd483e926 upstream.
+commit d08dd3f3dd2ae351b793fc5b76abdbf0fd317b12 upstream.
 
-Currently we register the pass-through serio port when we probe the F03 RMI
-function, and then, in sensor configure phase, we unmask interrupts.
-Unfortunately this is too late, as other drivers are free probe devices
-attached to the serio port as soon as it is probed. Because interrupts are
-masked, the IO times out, which may result in not being able to detect
-trackpoints on the pass-through port.
+This adds a new device id for Chilitag devices to the pl2303 driver.
 
-To fix the issue we implement open() and close() methods for the
-pass-through serio port and unmask interrupts from there. We also move
-creation of the pass-through port form probe to configure stage, as RMI
-driver does not enable transport interrupt until all functions are probed
-(we should change this, but this is a separate topic).
-
-We also try to clear the pending data before unmasking interrupts, because
-some devices like to spam the system with multiple 0xaa 0x00 announcements,
-which may interfere with us trying to query ID of the device.
-
-Fixes: c5e8848fc98e ("Input: synaptics-rmi4 - add support for F03")
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reported-by: "Chu.Mike [朱堅宜]" <Mike-Chu@prolific.com.tw>
+Acked-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/rmi4/rmi_f03.c |   64 ++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 54 insertions(+), 10 deletions(-)
+ drivers/usb/serial/pl2303.c |    1 +
+ drivers/usb/serial/pl2303.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/input/rmi4/rmi_f03.c
-+++ b/drivers/input/rmi4/rmi_f03.c
-@@ -32,6 +32,7 @@ struct f03_data {
- 	struct rmi_function *fn;
- 
- 	struct serio *serio;
-+	bool serio_registered;
- 
- 	unsigned int overwrite_buttons;
- 
-@@ -138,6 +139,37 @@ static int rmi_f03_initialize(struct f03
- 	return 0;
- }
- 
-+static int rmi_f03_pt_open(struct serio *serio)
-+{
-+	struct f03_data *f03 = serio->port_data;
-+	struct rmi_function *fn = f03->fn;
-+	const u8 ob_len = f03->rx_queue_length * RMI_F03_OB_SIZE;
-+	const u16 data_addr = fn->fd.data_base_addr + RMI_F03_OB_OFFSET;
-+	u8 obs[RMI_F03_QUEUE_LENGTH * RMI_F03_OB_SIZE];
-+	int error;
-+
-+	/*
-+	 * Consume any pending data. Some devices like to spam with
-+	 * 0xaa 0x00 announcements which may confuse us as we try to
-+	 * probe the device.
-+	 */
-+	error = rmi_read_block(fn->rmi_dev, data_addr, &obs, ob_len);
-+	if (!error)
-+		rmi_dbg(RMI_DEBUG_FN, &fn->dev,
-+			"%s: Consumed %*ph (%d) from PS2 guest\n",
-+			__func__, ob_len, obs, ob_len);
-+
-+	return fn->rmi_dev->driver->set_irq_bits(fn->rmi_dev, fn->irq_mask);
-+}
-+
-+static void rmi_f03_pt_close(struct serio *serio)
-+{
-+	struct f03_data *f03 = serio->port_data;
-+	struct rmi_function *fn = f03->fn;
-+
-+	fn->rmi_dev->driver->clear_irq_bits(fn->rmi_dev, fn->irq_mask);
-+}
-+
- static int rmi_f03_register_pt(struct f03_data *f03)
- {
- 	struct serio *serio;
-@@ -148,6 +180,8 @@ static int rmi_f03_register_pt(struct f0
- 
- 	serio->id.type = SERIO_PS_PSTHRU;
- 	serio->write = rmi_f03_pt_write;
-+	serio->open = rmi_f03_pt_open;
-+	serio->close = rmi_f03_pt_close;
- 	serio->port_data = f03;
- 
- 	strlcpy(serio->name, "Synaptics RMI4 PS/2 pass-through",
-@@ -184,17 +218,27 @@ static int rmi_f03_probe(struct rmi_func
- 			 f03->device_count);
- 
- 	dev_set_drvdata(dev, f03);
--
--	error = rmi_f03_register_pt(f03);
--	if (error)
--		return error;
--
- 	return 0;
- }
- 
- static int rmi_f03_config(struct rmi_function *fn)
- {
--	fn->rmi_dev->driver->set_irq_bits(fn->rmi_dev, fn->irq_mask);
-+	struct f03_data *f03 = dev_get_drvdata(&fn->dev);
-+	int error;
-+
-+	if (!f03->serio_registered) {
-+		error = rmi_f03_register_pt(f03);
-+		if (error)
-+			return error;
-+
-+		f03->serio_registered = true;
-+	} else {
-+		/*
-+		 * We must be re-configuring the sensor, just enable
-+		 * interrupts for this function.
-+		 */
-+		fn->rmi_dev->driver->set_irq_bits(fn->rmi_dev, fn->irq_mask);
-+	}
- 
- 	return 0;
- }
-@@ -204,7 +248,7 @@ static int rmi_f03_attention(struct rmi_
- 	struct rmi_device *rmi_dev = fn->rmi_dev;
- 	struct rmi_driver_data *drvdata = dev_get_drvdata(&rmi_dev->dev);
- 	struct f03_data *f03 = dev_get_drvdata(&fn->dev);
--	u16 data_addr = fn->fd.data_base_addr;
-+	const u16 data_addr = fn->fd.data_base_addr + RMI_F03_OB_OFFSET;
- 	const u8 ob_len = f03->rx_queue_length * RMI_F03_OB_SIZE;
- 	u8 obs[RMI_F03_QUEUE_LENGTH * RMI_F03_OB_SIZE];
- 	u8 ob_status;
-@@ -226,8 +270,7 @@ static int rmi_f03_attention(struct rmi_
- 		drvdata->attn_data.size -= ob_len;
- 	} else {
- 		/* Grab all of the data registers, and check them for data */
--		error = rmi_read_block(fn->rmi_dev, data_addr + RMI_F03_OB_OFFSET,
--				       &obs, ob_len);
-+		error = rmi_read_block(fn->rmi_dev, data_addr, &obs, ob_len);
- 		if (error) {
- 			dev_err(&fn->dev,
- 				"%s: Failed to read F03 output buffers: %d\n",
-@@ -266,7 +309,8 @@ static void rmi_f03_remove(struct rmi_fu
- {
- 	struct f03_data *f03 = dev_get_drvdata(&fn->dev);
- 
--	serio_unregister_port(f03->serio);
-+	if (f03->serio_registered)
-+		serio_unregister_port(f03->serio);
- }
- 
- struct rmi_function_handler rmi_f03_handler = {
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -41,6 +41,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ2) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_DCU11) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ3) },
++	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_CHILITAG) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_PHAROS) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ALDIGA) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MMX) },
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -17,6 +17,7 @@
+ #define PL2303_PRODUCT_ID_DCU11		0x1234
+ #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
+ #define PL2303_PRODUCT_ID_RSAQ3		0xaaa2
++#define PL2303_PRODUCT_ID_CHILITAG	0xaaa8
+ #define PL2303_PRODUCT_ID_ALDIGA	0x0611
+ #define PL2303_PRODUCT_ID_MMX		0x0612
+ #define PL2303_PRODUCT_ID_GPRS		0x0609
