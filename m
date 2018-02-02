@@ -1,69 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751967AbeBBJdx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 04:33:53 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60810 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751788AbeBBJc7 (ORCPT
+        id S1751988AbeBBJd6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 04:33:58 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:17520 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750805AbeBBJc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 04:32:59 -0500
-Subject: Re: [RFC] mm/migrate: Consolidate page allocation helper functions
-To: Hugh Dickins <hughd@google.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-References: <20180130050642.19834-1-khandual@linux.vnet.ibm.com>
- <20180130143635.GF21609@dhcp22.suse.cz>
- <53cf5454-405b-a812-1389-af4fd7527122@linux.vnet.ibm.com>
- <alpine.LSU.2.11.1801302000200.8014@eggly.anvils>
-Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Date: Fri, 2 Feb 2018 15:02:49 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.11.1801302000200.8014@eggly.anvils>
-Content-Type: text/plain; charset=windows-1252
+        Fri, 2 Feb 2018 04:32:58 -0500
+X-UUID: 783c2ddcd2084a4c82e8cdfc52963c33-20180202
+Message-ID: <1517563970.24622.9.camel@mtkswgap22>
+Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
+ device tree parsing
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Rob Herring <robh+dt@kernel.org>
+CC: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Frank Rowand" <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Date: Fri, 2 Feb 2018 17:32:50 +0800
+In-Reply-To: <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
+References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
+         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18020209-0040-0000-0000-0000042BB65E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020209-0041-0000-0000-000020CF5A74
-Message-Id: <2fe9bab9-d35d-e3fe-418a-41ab8f981ce8@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802020114
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/31/2018 09:56 AM, Hugh Dickins wrote:
-> On Wed, 31 Jan 2018, Anshuman Khandual wrote:
->> On 01/30/2018 08:06 PM, Michal Hocko wrote:
->>> On Tue 30-01-18 10:36:42, Anshuman Khandual wrote:
->>>> Allocation helper functions for migrate_pages() remmain scattered with
->>>> similar names making them really confusing. Rename these functions based
->>>> on the context for the migration and move them all into common migration
->>>> header. Functionality remains unchanged.
+On Wed, 2018-01-31 at 10:02 -0600, Rob Herring wrote:
+> On Wed, Jan 31, 2018 at 1:41 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> > A root complex usually consist of a host bridge and multiple P2P bridges,
+> > and someone may express that in the form of a root node with many subnodes
+> > and list all four interrupts for each slot (child node) in the root node
+> > like this:
+> >
+> >         pcie-controller {
+> >                 ...
+> >                 interrupt-map-mask = <0xf800 0 0 7>;
+> >                 interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
+> >                                  0x0800 0 0 {INTx} &{interrupt parent} ...>;
+> >
+> >                 pcie@0,0 {
+> >                         reg = <0x0000 0 0 0 0>;
+> >                         ...
+> >                 };
+> >
+> >                 pcie@1,0 {
+> >                         reg = <0x0800 0 0 0 0>;
+> >                         ...
+> >                 };
+> >         };
+> >
+> > As shown above, we'd like to propagate IRQs from a root port to the devices
+> > in the hierarchy below it in this way.  However, it seems that the current
+> > parser couldn't handle such cases and will get something unexpected below:
+> >
+> >         pcieport 0000:00:01.0: assign IRQ: got 213
+> >         igb 0000:01:00.0: assign IRQ: got 212
+> >
+> > There is a device which is connected to 2nd slot, but the port doesn't share
+> > the same IRQ with its downstream devices.  The problem here is that, if the
+> > loop found a P2P bridge, it wouldn't check whether the reg property exists
+> > in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
+> > thus the subsequent flow couldn't correctly resolve them.
+> >
+> > Fix this by adding a check to fallback to standard device tree parsing.
+> >
+> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> > Please refer to the previous discussion thread: https://patchwork.ozlabs.org/patch/829108/
+> > ---
+> >  drivers/of/of_pci_irq.c | 14 ++++++++++++--
+> >  1 file changed, 12 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/of/of_pci_irq.c b/drivers/of/of_pci_irq.c
+> > index 3a05568..e445866 100644
+> > --- a/drivers/of/of_pci_irq.c
+> > +++ b/drivers/of/of_pci_irq.c
+> > @@ -86,8 +86,18 @@ int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *out_irq
+> >         out_irq->np = ppnode;
+> >         out_irq->args_count = 1;
+> >         out_irq->args[0] = pin;
+> > -       laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
+> > -       laddr[1] = laddr[2] = cpu_to_be32(0);
+> > +
+> > +       if (!dn && ppnode) {
 > 
-> I agree that their names could be made less confusing (though didn't
-> succeed very well when I tried); and maybe a couple of them are general
-> enough to be used from more than one callsite, and could well live in
-> mm/migrate.c.
+> I would think whether you have a child device in DT or not is
+> irrelevant. If it's the bridge address you need to look at for
+> resolving interrupts, that would be true regardless.
 > 
-> But moving all of page migration's (currently static) new_page allocator
-> functions away from the code that relies on their special characteristics
-> (probably relayed to them through a private argument), and into a single
-> header file, just seems perverse to me.  And likely to be a nuisance when
-> adding more in future: private structures having to be made public just
-> to make them visible in that shared header file.
+> > +               const __be32 *addr;
+> > +
+> > +               addr = of_get_property(ppnode, "reg", NULL);
+> > +               if (addr)
+> > +                       memcpy(laddr, addr, 3);
 > 
-> Would it make sense to keep the various functions that may be called by
-> rmap_walk() together in one rmap_walk.h?  The different filesystems'
-> writepage methods together in one writepage.h?  I don't think so.
+> Can't you just adjust pdev to be ppdev in this case and then use the
+> existing code to set laddr?
 
-Makes sense. Will probably just change the helper names to something
-more meaningful (from previous suggestions in this thread) next around.
+Okay, I will try it out and and see if the code gets better or worse.
+ 
+> Please copy the powerpc list on this. I worry that touching this
+> function will break something.
+> BTW, this code is moving to drivers/pci/ in 4.16.
+
+Sure. I will loop more people in next version.
+
+Thanks
+
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
