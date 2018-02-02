@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3351577-1517606329-2-10984309538794961365
+X-Cyrus-Session-Id: sloti22d1t05-3424180-1517609129-2-7360113004051783680
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,70 +13,70 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517606328; b=W5yu9d8Tip5vIgkAav+4/RdTFJnjUU7P3ZgAalmg24fxqmo
-    zZgff4lTu81yPUUqiEcLYVMAVbqpRjjaILhuptShFwSoLp3YKdg41gYYrjwBNgs7
-    HnX8kDmrKpjwR0WUvoDkcPnuDLRkzpv4XEhvGkTp5i4D7huRaEEYFjCfT/LBhkbM
-    vhURS3VymLEU7+2FVuZuWA3mH7HPr+wW6Fs3uV4D8af2/ISVsiTNIe9skCoKU40t
-    HcpIybmO7LcLy0qXOI/TY4QUIkxofe3jCB606Czts9KhH4PgHV+wADVwyCFF/a/A
-    vLar77RBnvgLOJJ+F8NaxkvIefyR7NKy6mLr0Pg==
+    t=1517609129; b=XwDW76jqM1KQgDr3wDQ8ewfvtl1eaYJKGxUuSQJp9FbkMvX
+    DIB906KfaD2cuDiAD1rQqU1ZfH3zFqTMN9FAe+VI4H7lL6STR1WdGkhSljmWkfYg
+    Zo29nuFf8z4oo6khTz6TTjWNwA0L6EdAF5uwuR7LNm0huFHzggI9pAJqOK7q5dq9
+    Wdsq8z2JPygisuiGcrD+spzG94GT/LoHqXZ0qOZuQcUxnuN8GjxOpjrrvcKy3FMq
+    hL/cmNwRhGjTCTeZlUpjNVdnppiOR4bMzpvk7vJcs4gChr/FFYUbWZ1QzI5RuX+G
+    x7jgbahQ4LGKltCLs9vqLnc3grR89IhJBMic/qQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1517606328; bh=EXRPbC2ZHvb6E0Ivsafxv1mf3t9s71LJ7BXlqO
-    SX44w=; b=by0dkSulVa5mKLHAkTJvnHX1a9VgigNxQcqZpUrmAS4ruzfP4G9vBI
-    I4nAXQH0MwRDNhVNzn+HYNX/d0zJLP9HGJwC5wdTMzzzgxIj8O2ZVadies8nP61y
-    F9ny9WpIP90qYHP1CU2conIsQ7lDMF3eK1ijhWhiC0zwKOXRPSK5W+9VfNw93Bhr
-    xk9JoZxCcbA1X8izdM23Jm8sRHtrCYa46/QmeloCwWUTa5wh8NHkCFXZbWDYO1NO
-    J3DFn1DhIg28/qNSOAoKMsfYQJdBdS7NO0mxyaQpn2VVYJ8+Yyr6Q+t8D2yHakau
-    1Xnb4z0PRAjIV3rBRJY4OsFsNfETcK7w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=YGq16x3z x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    arctest; t=1517609129; bh=xgVxZVL4Ecu3TN8Wv9Pipt0SDsxNG10CKojyh8
+    xlTc4=; b=agirwn+B8H1LdcPr2JAk/hcTWdOsoLDyR6dVTw6GUCSyu6uzMEhKzk
+    mqmyL7TjlYP5EwMti+vvYSLYUcg/H85YANRp4btQmum1gaXyXSGMc2kTqvpefVy1
+    2fmoQ77ElXFaAGPnd69BnmvUfLMfLBKjIa0lLsYldq8qo6ZdV+/+1WKXvSwImggQ
+    JYdGUuAchI4rXJ8upRt5EuXlsAy+wWcFwv4bbDafTRxTJ3uRQXl052UoiNADNHCl
+    uqQkoZGJh1DcPjQ6rERlEtaMKQxsC9X9bNulxZvWc0+zRfysv+VZtOjDBt1ilnU2
+    DwCyQV1HvgMxeKsI9rtSkVfdvspSBUhg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=lvSJbF9i x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FTS+kIpF;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EfBCK/Ii;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=YGq16x3z x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=lvSJbF9i x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FTS+kIpF;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EfBCK/Ii;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeBBVSr (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 16:18:47 -0500
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:38266 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752015AbeBBVSo (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 2 Feb 2018 16:18:44 -0500
-X-Google-Smtp-Source: AH8x225wjddj+sKp21svBzuzsl0LZyw/aAXij0gRtLeXRBe/zTeyHJ+YVipq+43QG3MwT5oGgQgqBYQsZi579pxgPCc=
+        id S1752250AbeBBWF0 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 17:05:26 -0500
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:35907 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752180AbeBBWFY (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 2 Feb 2018 17:05:24 -0500
+X-Google-Smtp-Source: AH8x227ms8kIUBusUOxZZDwIJznOotVKJ1xTgC4pm6FQa9Cz4vSt2jcG0s+Lx4EcHZsEZlu8M7XxpgYdCfFc77L6XmQ=
 MIME-Version: 1.0
 X-Originating-IP: [108.20.156.165]
-In-Reply-To: <1515514736.3239.10.camel@redhat.com>
-References: <20180109121620.wi7dq2423ugsraqv@madcap2.tricolour.ca> <1515514736.3239.10.camel@redhat.com>
+In-Reply-To: <20180109121620.wi7dq2423ugsraqv@madcap2.tricolour.ca>
+References: <20180109121620.wi7dq2423ugsraqv@madcap2.tricolour.ca>
 From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 2 Feb 2018 16:18:41 -0500
-Message-ID: <CAHC9VhSMnG9=h8YrrV7uS3mDGpdD5tDUivmbsOiKrmgT-ZpFYA@mail.gmail.com>
+Date: Fri, 2 Feb 2018 17:05:22 -0500
+Message-ID: <CAHC9VhQ5ciUZDhrsb6S4YxwuzQEY-ra2RTDceWXOdjHEBoZ0BQ@mail.gmail.com>
 Subject: Re: RFC(V3): Audit Kernel Container IDs
-To: Simo Sorce <simo@redhat.com>
-Cc: Richard Guy Briggs <rgb@redhat.com>, cgroups@vger.kernel.org,
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: cgroups@vger.kernel.org,
         Linux Containers <containers@lists.linux-foundation.org>,
         Linux API <linux-api@vger.kernel.org>,
         Linux Audit <linux-audit@redhat.com>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel <linux-kernel@vger.kernel.org>,
         Linux Network Development <netdev@vger.kernel.org>,
-        mszeredi@redhat.com, jlayton@redhat.com,
-        "Carlos O'Donell" <carlos@redhat.com>,
+        mszeredi@redhat.com, Andy Lutomirski <luto@kernel.org>,
+        jlayton@redhat.com, "Carlos O'Donell" <carlos@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, trondmy@primarydata.com,
+        Simo Sorce <simo@redhat.com>, trondmy@primarydata.com,
         Eric Paris <eparis@parisplace.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>
@@ -87,89 +87,47 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Jan 9, 2018 at 11:18 AM, Simo Sorce <simo@redhat.com> wrote:
-> On Tue, 2018-01-09 at 07:16 -0500, Richard Guy Briggs wrote:
-
-...
-
->> Changelog:
->>
->> (Upstream V3)
->> - switch back to u64 (from pmoore, can be expanded to u128 in future if
->>   need arises without breaking API.  u32 was originally proposed, up to
->>   c36 discussed)
->> - write-once, but children inherit audit container identifier and can
->>   then still be written once
->> - switch to CAP_AUDIT_CONTROL
->> - group namespace actions together, auxilliary records to namespace
->>   operations.
->>
->> (Upstream V2)
->> - switch from u64 to u128 UUID
->> - switch from "signal" and "trigger" to "register"
->> - restrict registration to single process or force all threads and
->>   children into same container
+On Tue, Jan 9, 2018 at 7:16 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Containers are a userspace concept.  The kernel knows nothing of them.
 >
-> I am trying to understand the back and forth on the ID size.
+> The Linux audit system needs a way to be able to track the container
+> provenance of events and actions.  Audit needs the kernel's help to do
+> this.
 
-I'm just now getting a chance to read Richard's latest draft, but I
-wanted to comment on this quickly.
+Two small comments below, but I tend to think we are at a point where
+you can start cobbling together some prototype/RFC patches.  Surely
+there are going to be a few changes, and new comments, that come out
+once we see an initial implementation so let's see what those are.
 
-There are two main reasons for keeping this a 32 or 64 bit integer:
-
-1) After the initial "be able to associate audit events with a
-container" stage, we are going to look into supporting multiple audit
-daemons on the system so that you could run an audit daemon inside a
-container and it would collect events generated by the container
-(we're tentatively calling this "phase 2", feel free to insert your
-own "magic happens" joke).  There are a lot things that need to happen
-in phase two, one of these things is the addition of an audit event
-routing mechanism that will send audit records to the right audit
-daemons (the "host" daemon will always see everything), in order to do
-this we will need to be able to quickly compare audit container IDs,
-this means an integer.
-
-2) Whatever we pick for an audit container ID it is going to be wrong
-for at least one container orchestrator.  There is no "one" solution
-here, so we are providing a small and flexible mechanism that higher
-level orchestrators can use to provide a more complete solution.
-
-> >From an orchestrator POV anything that requires tracking a node
-> specific ID is not ideal.
+> The registration is a u64 representing the audit container identifier
+> written to a special file in a pseudo filesystem (proc, since PID tree
+> already exists) representing a process that will become a parent process
+> in that container.  This write might place restrictions on mount
+> namespaces required to define a container, or at least careful checking
+> of namespaces in the kernel to verify permissions of the orchestrator so
+> it can't change its own container ID.  A bind mount of nsfs may be
+> necessary in the container orchestrator's mount namespace.  This write
+> can only happen once per process.
 >
-> Orchestrators tend to span many nodes, and containers tend to have IDs
-> that are either UUID or have a Hash (like SHA256) as identifier.
+> Note: The justification for using a u64 is that it minimizes the
+> information printed in every audit record, reducing bandwidth and limits
+> comparisons to a single u64 which will be faster and less error-prone.
 
-You're helping me prove my reason #2.
+I know Steve generally worries about audit record size, which is a
+perfectly valid concern in this case, I also worry about the
+additional overhead when we start routing audit records to multiple
+audit daemons (see my other emails in this thread).
 
-> The problem here is two-fold:
->
-> a) Your auditing requires some mapping to be useful outside of the
-> system.
-> If you aggreggate audit logs outside of the system or you want to
-> correlate the system audit logs with other components dealing with
-> containers, now you need a place where you provide a mapping from your
-> audit u64 to the ID a container has in the rest of the system.
+> ...
+> When a container ceases to exist because the last process in that
+> container has exited log the fact to balance the registration action.
+> (This is likely needed for certification accountability.)
 
-Yep, see my reason #2.  I want us to have something that "works" for a
-single system as well as something that can be leveraged by higher
-level tools for large networks of machines.
-
-I realize it's easy, and tempting, to expand the scope of this effort;
-but if we are to have any success it is only going to be through some
-discipline.  We need to focus on a small solution which addresses the
-basic needs and hopefully remains flexible enough for any potential
-expansion while staying palatable to the audit folks and the general
-kernel community.
-
-> b) Now you need a mapping of some sort. The simplest way a container
-> orchestrator can go about this is to just use the UUID or Hash
-> representing their view of the container, truncate it to a u64 and use
-> that for Audit. This means there are some chances there will be a
-> collision and a duplicate u64 ID will be used by the orchestrator as
-> the container ID. What happen in that case ?
-
-That is a design decision left to the different container orchestrators.
+On the "container ceases to exist" point, I expect this "container
+dead" message to come from the orchestrator and not the kernel itself
+(I don't want the kernel to have to handle that level of bookkeeping).
+I imagine this should be similar to what is done for VM auditing with
+libvirt.
 
 -- 
 paul moore
