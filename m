@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752179AbeBBOEq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:04:46 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:11343 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751638AbeBBOEj (ORCPT
+        id S1751787AbeBBOE6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:04:58 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48655 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751774AbeBBOEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:04:39 -0500
+        Fri, 2 Feb 2018 09:04:41 -0500
 From: <gabriel.fernandez@st.com>
 To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Lee Jones <lee.jones@linaro.org>,
@@ -18,16 +18,16 @@ To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
 CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
-Subject: [PATCH 09/14] clk: stm32mp1: add Kernel timers
-Date: Fri, 2 Feb 2018 15:03:37 +0100
-Message-ID: <1517580222-23301-10-git-send-email-gabriel.fernandez@st.com>
+Subject: [PATCH 14/14] clk: stm32mp1: add Debug clocks
+Date: Fri, 2 Feb 2018 15:03:42 +0100
+Message-ID: <1517580222-23301-15-git-send-email-gabriel.fernandez@st.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
 References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG4NODE2.st.com
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG4NODE2.st.com
  (10.75.127.11)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
  signatures=0
@@ -37,231 +37,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-This patch adds Kernel timers.
-This patch adds timers kernel clock.
-Timers are gather into two groups corresponding to the APB bus
-they are attached to.
-Each group has its own prescaler, managed in this patch.
+RCC manages clock for debug and trace.
 
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- drivers/clk/clk-stm32mp1.c | 185 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 185 insertions(+)
+ drivers/clk/clk-stm32mp1.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index d85c619..13d74f3 100644
+index 0402a0e..eafc95a 100644
 --- a/drivers/clk/clk-stm32mp1.c
 +++ b/drivers/clk/clk-stm32mp1.c
-@@ -854,6 +854,138 @@ static struct clk_hw *clk_register_pll(struct device *dev, const char *name,
- 	return hw;
- }
+@@ -352,6 +352,12 @@
+ 	{ 0 },
+ };
  
-+/* Kernel Timer */
-+struct timer_cker {
-+	/* lock the kernel output divider register */
-+	spinlock_t *lock;
-+	void __iomem *apbdiv;
-+	void __iomem *timpre;
-+	struct clk_hw hw;
++static const struct clk_div_table ck_trace_div_table[] = {
++	{ 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 8 },
++	{ 4, 16 }, { 5, 16 }, { 6, 16 }, { 7, 16 },
++	{ 0 },
 +};
 +
-+#define to_timer_cker(_hw) container_of(_hw, struct timer_cker, hw)
+ struct clock_config {
+ 	u32 id;
+ 	const char *name;
+@@ -1566,6 +1572,17 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
+ 		  _GATEMUXDIV(RCC_MCO2CFGR, 12,
+ 			      RCC_MCO2CFGR, 0, 3,
+ 			      RCC_MCO2CFGR, 4, 4)),
 +
-+#define APB_DIV_MASK 0x07
-+#define TIM_PRE_MASK 0x01
++	/* Debug clocks */
++	FIXED_FACTOR(NO_ID, "ck_axi_div2", "ck_axi", 0, 1, 2),
 +
-+static unsigned long __bestmult(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct timer_cker *tim_ker = to_timer_cker(hw);
-+	u32 prescaler;
-+	unsigned int mult = 0;
++	GATE(DBG, "ck_apb_dbg", "ck_axi_div2", 0, RCC_DBGCFGR, 8, 0),
 +
-+	prescaler = readl_relaxed(tim_ker->apbdiv) & APB_DIV_MASK;
-+	if (prescaler < 2)
-+		return 1;
++	GATE(CK_DBG, "ck_sys_dbg", "ck_axi", 0, RCC_DBGCFGR, 8, 0),
 +
-+	mult = 2;
-+
-+	if (rate / parent_rate >= 4)
-+		mult = 4;
-+
-+	return mult;
-+}
-+
-+static long timer_ker_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	unsigned long factor = __bestmult(hw, rate, *parent_rate);
-+
-+	return *parent_rate * factor;
-+}
-+
-+static int timer_ker_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct timer_cker *tim_ker = to_timer_cker(hw);
-+	unsigned long flags = 0;
-+	unsigned long factor = __bestmult(hw, rate, parent_rate);
-+	int ret = 0;
-+
-+	spin_lock_irqsave(tim_ker->lock, flags);
-+
-+	switch (factor) {
-+	case 1:
-+		break;
-+	case 2:
-+		writel_relaxed(0, tim_ker->timpre);
-+		break;
-+	case 4:
-+		writel_relaxed(1, tim_ker->timpre);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
-+	spin_unlock_irqrestore(tim_ker->lock, flags);
-+
-+	return ret;
-+}
-+
-+static unsigned long timer_ker_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct timer_cker *tim_ker = to_timer_cker(hw);
-+	u32 prescaler, timpre;
-+	u32 mul;
-+
-+	prescaler = readl_relaxed(tim_ker->apbdiv) & APB_DIV_MASK;
-+
-+	timpre = readl_relaxed(tim_ker->timpre) & TIM_PRE_MASK;
-+
-+	if (!prescaler)
-+		return parent_rate;
-+
-+	mul = (timpre + 1) * 2;
-+
-+	return parent_rate * mul;
-+}
-+
-+static const struct clk_ops timer_ker_ops = {
-+	.recalc_rate	= timer_ker_recalc_rate,
-+	.round_rate	= timer_ker_round_rate,
-+	.set_rate	= timer_ker_set_rate,
-+
-+};
-+
-+static struct clk_hw *clk_register_cktim(struct device *dev, const char *name,
-+					 const char *parent_name,
-+					 unsigned long flags,
-+					 void __iomem *apbdiv,
-+					 void __iomem *timpre,
-+					 spinlock_t *lock)
-+{
-+	struct timer_cker *tim_ker;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int err;
-+
-+	tim_ker = kzalloc(sizeof(*tim_ker), GFP_KERNEL);
-+	if (!tim_ker)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &timer_ker_ops;
-+	init.flags = flags;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	tim_ker->hw.init = &init;
-+	tim_ker->lock = lock;
-+	tim_ker->apbdiv = apbdiv;
-+	tim_ker->timpre = timpre;
-+
-+	hw = &tim_ker->hw;
-+	err = clk_hw_register(dev, hw);
-+
-+	if (err) {
-+		kfree(tim_ker);
-+		return ERR_PTR(err);
-+	}
-+
-+	return hw;
-+}
-+
- static struct clk_hw *
- _clk_register_mp1_gate(struct device *dev,
- 		       struct clk_hw_onecell_data *clk_data,
-@@ -887,6 +1019,23 @@ struct clk_hw *_clk_register_pll(struct device *dev,
- 				base + stm_pll_cfg->offset, cfg->flags, lock);
- }
- 
-+struct stm32_cktim_cfg {
-+	u32 offset_apbdiv;
-+	u32 offset_timpre;
-+};
-+
-+static struct clk_hw *_clk_register_cktim(struct device *dev,
-+					  struct clk_hw_onecell_data *clk_data,
-+					  void __iomem *base, spinlock_t *lock,
-+					  const struct clock_config *cfg)
-+{
-+	struct stm32_cktim_cfg *cktim_cfg = cfg->cfg;
-+
-+	return clk_register_cktim(dev, cfg->name, cfg->parent_name, cfg->flags,
-+				  cktim_cfg->offset_apbdiv + base,
-+				  cktim_cfg->offset_timpre + base, lock);
-+}
-+
- #define GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
- {\
- 	.id		= _id,\
-@@ -1056,6 +1205,23 @@ struct clk_hw *_clk_register_pll(struct device *dev,
- 	.func		= _clk_register_pll,\
- }
- 
-+#define STM32_CKTIM(_name, _parent, _flags, _offset_apbdiv, _offset_timpre)\
-+{\
-+	.id		= NO_ID,\
-+	.name		= _name,\
-+	.parent_name	= _parent,\
-+	.flags		= _flags,\
-+	.cfg		=  &(struct stm32_cktim_cfg) {\
-+		.offset_apbdiv = _offset_apbdiv,\
-+		.offset_timpre = _offset_timpre,\
-+	},\
-+	.func		= _clk_register_cktim,\
-+}
-+
-+#define STM32_TIM(_id, _name, _parent, _offset_set, _bit_idx)\
-+		  MP1_GATE(_id, _name, _parent, CLK_SET_RATE_PARENT,\
-+			   _offset_set, _bit_idx, 0)
-+
- static const struct clock_config stm32mp1_clock_cfg[] = {
- 	/* Oscillator divider */
- 	DIV(NO_ID, "clk-hsi-div", "clk-hsi", 0, RCC_HSICFGR, 0, 2,
-@@ -1152,6 +1318,25 @@ struct clk_hw *_clk_register_pll(struct device *dev,
- 
- 	DIV_TABLE(NO_ID, "pclk5", "ck_axi", CLK_IGNORE_UNUSED, RCC_APB5DIVR, 0,
- 		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
-+
-+	/* Kernel Timers */
-+	STM32_CKTIM("ck1_tim", "pclk1", 0, RCC_APB1DIVR, RCC_TIMG1PRER),
-+	STM32_CKTIM("ck2_tim", "pclk2", 0, RCC_APB2DIVR, RCC_TIMG2PRER),
-+
-+	STM32_TIM(TIM2_K, "tim2_k", "ck1_tim", RCC_APB1ENSETR, 0),
-+	STM32_TIM(TIM3_K, "tim3_k", "ck1_tim", RCC_APB1ENSETR, 1),
-+	STM32_TIM(TIM4_K, "tim4_k", "ck1_tim", RCC_APB1ENSETR, 2),
-+	STM32_TIM(TIM5_K, "tim5_k", "ck1_tim", RCC_APB1ENSETR, 3),
-+	STM32_TIM(TIM6_K, "tim6_k", "ck1_tim", RCC_APB1ENSETR, 4),
-+	STM32_TIM(TIM7_K, "tim7_k", "ck1_tim", RCC_APB1ENSETR, 5),
-+	STM32_TIM(TIM12_K, "tim12_k", "ck1_tim", RCC_APB1ENSETR, 6),
-+	STM32_TIM(TIM13_K, "tim13_k", "ck1_tim", RCC_APB1ENSETR, 7),
-+	STM32_TIM(TIM14_K, "tim14_k", "ck1_tim", RCC_APB1ENSETR, 8),
-+	STM32_TIM(TIM1_K, "tim1_k", "ck2_tim", RCC_APB2ENSETR, 0),
-+	STM32_TIM(TIM8_K, "tim8_k", "ck2_tim", RCC_APB2ENSETR, 1),
-+	STM32_TIM(TIM15_K, "tim15_k", "ck2_tim", RCC_APB2ENSETR, 2),
-+	STM32_TIM(TIM16_K, "tim16_k", "ck2_tim", RCC_APB2ENSETR, 3),
-+	STM32_TIM(TIM17_K, "tim17_k", "ck2_tim", RCC_APB2ENSETR, 4),
++	COMPOSITE(CK_TRACE, "ck_trace", ck_trace_src, CLK_OPS_PARENT_ENABLE,
++		  _GATEDIV(RCC_DBGCFGR, 9,
++			   RCC_DBGCFGR, 0, 3, ck_trace_div_table)),
  };
  
  struct stm32_clock_match_data {
