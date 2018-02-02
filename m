@@ -1,98 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751727AbeBBMa6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 07:30:58 -0500
-Received: from mout.web.de ([212.227.15.14]:54898 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751544AbeBBMar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 07:30:47 -0500
-Subject: Re: Adjustments for a lot of function implementations
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Jan Kara <jack@suse.cz>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>,
-        Muralidharan Karicheri <mkaricheri@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
- <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
- <14619198-bebe-d215-5324-a14fbc2103fb@users.sourceforge.net>
- <alpine.DEB.2.20.1710301745530.2160@hadrien>
- <ebf37d57-38c6-b3de-5a66-dbb1c13fd63a@xs4all.nl>
- <049aa1b4-6291-ec24-1ffb-77ae8d1cdb63@users.sourceforge.net>
- <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
- <f082b1ae-1be4-440a-6a81-68446c67243e@users.sourceforge.net>
- <ca67319a-622b-e35e-dfb5-045dd04b4deb@xs4all.nl>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <4772aced-f43a-f4f4-c593-b42c7b862a37@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 13:30:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751797AbeBBMce (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 07:32:34 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.108]:44338 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751546AbeBBMc0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 07:32:26 -0500
+Date: Fri, 2 Feb 2018 06:32:23 -0600
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] drm/msm/adreno/a5xx_debugfs: fix potential NULL pointer
+ dereference
+Message-ID: <20180202123223.GA4410@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <ca67319a-622b-e35e-dfb5-045dd04b4deb@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:ba7AxDcfQW6Eq/nJP/EZK0NRnDI6IBKBhjMHxSmMOp4kUBSEHwN
- U7/50KkhqqCuTZQQ8c3ZT+1Vt9jgclMQk6IiwvRVY6UVi2+SpJ9Q12cwD1nif1onkSepd1H
- /YfFjYhwS6F+enktwwc9UDgUuG9gSuSPZOjPOMrzt6aLwXxYoX5sMkhjE1n7KHyTrrQfXQT
- APqImCamTAbme/m7qFIHw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:bsMD1sxIrqA=:C1R7lvUepLTlH4kL0Q9xVq
- GVg5c2zqnuz9ND6oHn20hdnYjPpvXQPExJPFp2L83icfjNvKHLSSKW25/d3gTgtUcMMb4mW8H
- W4XSeE6mMwPpchuUw5DssHr3+B6TJdeZDWeCxYfNPeuSV8zogaykF66Gfoe4yeNYzSn7/QzG+
- RTXQEae8mBDr+1iDHqaGCo1GA/PQlBa6yU5jnhpfX1SU3j1XlWtg2x1ZwHTiGW5lFEG218GQx
- gvlUj47/ZCSgGjPI5SV6iLGCgKcPsR/gcIi7Hxx6JQc2xvjJln3ZHKsErINt78lHr+jiC42vc
- jD7tTRS8QU2weaoiffP5WhUgS7P0z4Wv4q0x2YBPQ/efQkfitiB7QiFPZQq7OVKiJgF13L0KJ
- TxAQKwFMy/Z5MCPhMK0JSTaJ16bvy/t08HZV2bAbbiFKOoAk8c26F1Uf81euyUV/1EqCBFh13
- OS8yw4rc3mBHnDla1Ed/eS49u3/vvTqkkmlUqU9YdBkOHpDpPKVT8zKe6fE6M4rhMI68iwVff
- 3c7MmEWLdVItOrFFuqgSNiaG00eQW5TQG4MfEwUB9RaAi/kYM6nWEfW9AUU0Vuj+RDqNr/4ZD
- 8ED2HVoHC+KdJkm5wkEzGBiqOIzewJMMZ6A3IAUawPoOxvkUWPbWhAStgHEu6yGWju6SW9O5Z
- ecE90plLm4LXC5h025Ke/EVyGBwHZsnP50UDL/2ZTdroxlyC0fw4MoD8BAntyWA4JfqOJ2cqG
- DxR/j3iy2rTCZH8RoHkGHCO3QCaC0iL/n6C64zqoE39IwqFNg4akeZESqRrrcG2XA+YlcFaUB
- qf3eMuG9Rjgvnkrg4ce1yRKUTpzZ2uY19m58cfikrECGiPFKRM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.201.65
+X-Source-L: No
+X-Exim-ID: 1ehaW1-001tmn-1c
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.152.201.65]:44546
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> One last time: either post per-driver patches with all the cleanups for a driver
-> in a single patch,
+_minor_ is being dereferenced before it is null checked, hence there
+is a potential null pointer dereference. Fix this by moving the pointer
+dereference after _minor_ has been null checked.
 
-I preferred to offer source code adjustments according to specific transformation
-patterns mostly for each software module separately (also in small patch series).
+Fixes: 024ad8df763f ("drm/msm: add a5xx specific debugfs")
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+---
 
+I wonder if a better solution for this would be to WARN_ON in case _minor_
+happens to be NULL and return -EINVAL, instead of just returning zero.
 
-> or a per-directory patch (drivers/media/pci, usb, etc) doing the same cleanup
-> for all drivers in that directory.
+Something like:
 
-I am curious if bigger patch packages would be easier to get accepted.
+struct drm_device *dev;
 
-Or would you get frightened still by any other change combination?
+if (WARN_ON(!minor)
+	return -EINVAL;
 
+dev = minor->dev;
 
+What do you think?
 
-> I prefer the first approach,
-
-We have got different preferences for a safe patch granularity.
-
-
-> but it's up to you.
-
-I imagine that there are more development factors involved.
-
-
-> We don't have the time to wade through dozens of one-liner cleanup patches.
-
-It is usual that integration of update suggestions will take some time.
-How would the situation change if I would dare to regroup possible update steps?
+Thanks
 
 
-> I don't understand what is so difficult about this.
+ drivers/gpu/drm/msm/adreno/a5xx_debugfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-There are communication difficulties to consider since your terse information
-from your conference meeting.
-
-If you would insist on patch squashing, would you dare to use a development tool
-like “quilt fold” also on your own once more?
-
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c b/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c
+index 6b27941..059ec7d 100644
+--- a/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c
++++ b/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c
+@@ -159,13 +159,15 @@ DEFINE_SIMPLE_ATTRIBUTE(reset_fops, NULL, reset_set, "%llx\n");
+ 
+ int a5xx_debugfs_init(struct msm_gpu *gpu, struct drm_minor *minor)
+ {
+-	struct drm_device *dev = minor->dev;
++	struct drm_device *dev;
+ 	struct dentry *ent;
+ 	int ret;
+ 
+ 	if (!minor)
+ 		return 0;
+ 
++	dev = minor->dev;
++
+ 	ret = drm_debugfs_create_files(a5xx_debugfs_list,
+ 			ARRAY_SIZE(a5xx_debugfs_list),
+ 			minor->debugfs_root, minor);
+-- 
+2.7.4
