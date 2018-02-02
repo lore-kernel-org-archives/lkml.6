@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227ACqXdWCudEZbEoToMJXJATgJL9fLKfQk+JyjdlkU5Wl9WMHbtKRejB4OWagqYtrVC44C3
-ARC-Seal: i=1; a=rsa-sha256; t=1517591574; cv=none;
+X-Google-Smtp-Source: AH8x2279Hao0tEQ9FyxYoC5omDZVCSvIKi/hdbSS4MkFBh+abqrNReu6i8GBBcuj0IoK3uyYQVzH
+ARC-Seal: i=1; a=rsa-sha256; t=1517591572; cv=none;
         d=google.com; s=arc-20160816;
-        b=kRV8lMI5f1fqShrp6F53Q0gncKbrlkcK14VCyiX25NOjMj77CvoyKFSO1cL5EcjpBK
-         fBgUUa8epoP4baiBCeOGkS4WzB3GYHtZeN9c1XkltUsFCj1TSztcBpxuBDQ/dfaqGuN9
-         uni4DTau64GbgOJSjQKmXS9LkE79AP7j/WGAVYrobb5KoTXoknV3YjFItilFBfLu9QEV
-         HI1wKgwrLBVAbER+a5+RSrhQT17Nfdi7LDcGQZKnf8zXNOl6tFsZEIYEq4ZJpo7pFj1Z
-         DpYRPnUfVdRbBtwan6/OqJDXo54RWHzaa2NXHrnlE6SbbrFQfbCMqIoF8pCIyhAYkpIZ
-         3uRQ==
+        b=nPrMLr2lFrpV7uk6Yh1JV+OYv6WBgv+lcz6EtK/4Qnhd4XIg87rzSo1McEwHXBkqYm
+         HDAQSBTChyLcEsmiMuQ2l3Q1WKIgOzh4dnXyueVr6zMuRTz2HU9rQEiJvDWQWbufHCVb
+         b+5r+CqpY0AKE9R7FPlt6kcvxu1jcO8MOmb6N/dBc53sGptw+94/Q52LS6giQR56Pn9n
+         iz9jwNIjtImjuraTwihvjp63VfmxTzzWvwDknUEZa5T+landrgAQT7Fe63hpk7BZya2k
+         xAC73fQS9hhNvdD6u6FP2V2P7mIcZmy4zoyqnjrqHWhdop1oV7+B7eIYX9H3NOEFxFQs
+         gZJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ILog2jm4LIT3wJxY5gJEqLek/sorubsj60gXL5gIDdg=;
-        b=XV25A51Wmp8igJeRINeKMe/HN7obOMmndtpstkjpysZcSckZruEQJDhoAkWlUag4U4
-         5CV9WedWzMnmnoijow5ny9EYxVBaOcj4bojAWSsE/etF9f+i8wQAf4SbJM5hpmcZcTSt
-         Gf0hCQPFH6T/LPOunCPdZBWtJi3F9oyTsHlLWmaZkm1P6Aa6HpzPMIWmjEmXOBN0aJ4/
-         H2V4k3WRPIATUPNoqJpX9TDfuDjiamO73moEQPGQ6CJjsCAXilE1W7j4jaUtTs6Qj0WS
-         cPUtTJYPucRHfe++6N247PvPDR1t7EjRvUEx+kitqn30Oz8UfsVlRrioUrxjOlM9jEv3
-         O0Tw==
+        bh=JOqKCXtePEpv7/DuG4GE0cq/habkACRNuvmaOqT9N8M=;
+        b=Ntn5d+StogK5wJ748Vo5+qgYgN4bl/eM494MdQAli6g48E9IeuJlxYoOVRgo9sRYWM
+         MmlxE0+AW9ChF0nzSxCwvyxz8pTn3oI8LcMTU0BCS7rhC14XAZgWnjw8T6qqj5T0PPGd
+         zQlAeQxNgoweISV6lE78Dms8xGcmRbVV1iOJpthsA3fV2pY8B1S3f5988pn5xBiQxGdj
+         Ss/IDVOHSiCTy25h0fcBciShxXAX/p5IbVHXhKOHYQ0K/rCNiypPMg/2d3hak7KbmbhA
+         pup8QdvbBubRvO6d9lzNM2lW/YC/4R82ZECNLOIY6rBKcyajv223rANvf/M5Lz3uD+sp
+         DTQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Larry Finger <Larry.Finger@lwfinger.net>,
+	Colin Ian King <colin.king@canonical.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 126/156] staging: rtl8188eu: Fix incorrect response to SIOCGIWESSID
-Date: Fri,  2 Feb 2018 17:58:27 +0100
-Message-Id: <20180202140846.076565864@linuxfoundation.org>
+Subject: [PATCH 4.14 125/156] usb: gadget: dont dereference g until after it has been null checked
+Date: Fri,  2 Feb 2018 17:58:26 +0100
+Message-Id: <20180202140846.036004738@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309406156908442?=
-X-GMAIL-MSGID: =?utf-8?q?1591310103375952846?=
+X-GMAIL-THRID: =?utf-8?q?1591309400693081740?=
+X-GMAIL-MSGID: =?utf-8?q?1591310100348807555?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,53 +49,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Colin Ian King <colin.king@canonical.com>
 
 
-[ Upstream commit b77992d2df9e47144354d1b25328b180afa33442 ]
+[ Upstream commit b2fc059fa549fe6881d4c1f8d698b0f50bcd16ec ]
 
-When not associated with an AP, wifi device drivers should respond to the
-SIOCGIWESSID ioctl with a zero-length string for the SSID, which is the
-behavior expected by dhcpcd.
+Avoid dereferencing pointer g until after g has been sanity null checked;
+move the assignment of cdev much later when it is required into a more
+local scope.
 
-Currently, this driver returns an error code (-1) from the ioctl call,
-which causes dhcpcd to assume that the device is not a wireless interface
-and therefore it fails to work correctly with it thereafter.
+Detected by CoverityScan, CID#1222135 ("Dereference before null check")
 
-This problem was reported and tested at
-https://github.com/lwfinger/rtl8188eu/issues/234.
-
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: b785ea7ce662 ("usb: gadget: composite: fix ep->maxburst initialization")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/usb/gadget/composite.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -1395,19 +1395,13 @@ static int rtw_wx_get_essid(struct net_d
- 	if ((check_fwstate(pmlmepriv, _FW_LINKED)) ||
- 	    (check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE))) {
- 		len = pcur_bss->Ssid.SsidLength;
--
--		wrqu->essid.length = len;
--
- 		memcpy(extra, pcur_bss->Ssid.Ssid, len);
--
--		wrqu->essid.flags = 1;
- 	} else {
--		ret = -1;
--		goto exit;
-+		len = 0;
-+		*extra = 0;
- 	}
--
--exit:
--
-+	wrqu->essid.length = len;
-+	wrqu->essid.flags = 1;
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -150,7 +150,6 @@ int config_ep_by_speed(struct usb_gadget
+ 			struct usb_function *f,
+ 			struct usb_ep *_ep)
+ {
+-	struct usb_composite_dev	*cdev = get_gadget_data(g);
+ 	struct usb_endpoint_descriptor *chosen_desc = NULL;
+ 	struct usb_descriptor_header **speed_desc = NULL;
  
- 	return ret;
- }
+@@ -229,8 +228,12 @@ ep_found:
+ 			_ep->maxburst = comp_desc->bMaxBurst + 1;
+ 			break;
+ 		default:
+-			if (comp_desc->bMaxBurst != 0)
++			if (comp_desc->bMaxBurst != 0) {
++				struct usb_composite_dev *cdev;
++
++				cdev = get_gadget_data(g);
+ 				ERROR(cdev, "ep0 bMaxBurst must be 0\n");
++			}
+ 			_ep->maxburst = 1;
+ 			break;
+ 		}
