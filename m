@@ -1,46 +1,77 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224GhwUrXLWQur92vuvkBMtdwc3nFJUCJdd8DWacCj0JLtTQavcLaUr+9YAhjv4o/riOqvyq
-ARC-Seal: i=1; a=rsa-sha256; t=1517591161; cv=none;
-        d=google.com; s=arc-20160816;
-        b=GEKQyeajQKAHuHz/Fr8yXDl9Jvoq25V0H4ZB4YscZQfeztk/JPAQnAlFWSK96TB9g5
-         uTA/kdqwkoVjwMzDHLkgEkxcEiMepE2dHkevCVhj741qke8ZT5/wPFunWraXMRN8I6hp
-         fZ/YBGAfOPLgl8vHZQUzBGn/7YSacnkF3PXgBOBV6BoKacJsWkioWPWRJRmCOwtk7dWZ
-         o2rXIGufc0NuP1HUUyn5pI4QiG1Qou8Vbv5VFHx2J9/6+X10oKF2LB8mAGINE0gtFKya
-         xf1fDegY+N0Wu0L5GSj7q9fj2LP5asVIA23HDl2s/xUY4g7eI5oFissY+uq02zXQFZto
-         WFDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=fgAnLHaMKxlEMmjIwf4w3j1gi9urPkj5tDiN8nKunak=;
-        b=tdKgixnXfuX8mmxr3SsRjP4vWwK9qeXxEHiCOp3fC/7vV6QzrXavzrTWOJ7RhhdFUt
-         1VMfRsLDdpSzCeyq/gStgCfuvAjfYq/zkhhbSGKf1ZbDCoY0dEsGuwu1vOrVkwUOKlIK
-         vM0eUA1r7Z3wFEKlG+HwKyOgBWr2D/OR8qo84w6TSlp5mDXdVyHmdjQjQOia0f0pkgg/
-         J3OY06fTwKBJTMElgGACI4T6QmhrqSokcaVcdYVonnC/oXH85oPNDqEEosXufyHQAyhE
-         kUniSzLcM8elCLFs+5ME732sySOkG4Ujn1qGgecZYl/ZBj0wb9pC9K8qxIh/gU2SChnD
-         2f+w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591154-2-401838148834474574
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591153; b=exhKFEG4FCaDOLdYbI2qYuZ3xPpncgBRuH6s4qFlRxbDuDI
+    6xHzcHhCrmZ6Ea46EZq+9/3P50PSZ4OzzP/nwEP5OJWPNqaZrb4aKbIJwg+3dUBh
+    5odgNhi2JqISAzRjj8nb7kOB5QWoPR8UfPj310fIQ0t/f6vX3PFDLwxi67PZvLoG
+    6NiXwVsgqGye5C1M9g6fWgT0leFn2vNntMR+5+jc86i4/GGMk6eVVAYNe/+btC/M
+    obKPHrIlg7Fkks4ENijvuNZU6vDGx4W2xcJ3C/TgpAgUn15UWJmoLvvk+sAmfJZ0
+    JXk1nH53xKJeguq2E2emEKU+Q0zlc92CwB10Gtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591153; bh=26o2MkVKVcMRy+N2lUG4NCX1CT
+    yoyTL7VYf+2WUgzEc=; b=dm5nO+QNnhiTu/o69rersl5WzPdCBJRGvoCRz40LxF
+    F3FQxYfCVBNeAx31mRPB5RtOvPdJgAxMUsWzeYpHx56vprRiRdCP7wVLW9uYHOij
+    ibq799Or8v6MSncfqO8iVyOmsVtZHJvJPwHnMJ5HloacDB9V7Qnrhsxprjlg2NeO
+    mRMit2y07/oGi7N/yrfUAT0ascs2/6NCyLYa4wFHzEPvu3D35sftl5LXd84rWtee
+    tAtthKtvvOpcq7ocgrLkRGq8uX7diT3fAHHbnad1MW3SKx8Q1YNFJSKaKM7h/u3a
+    ZgdCOTCR1kXi6OvR7KBfjKnUZnWgAB8/gWHUVpCsJwtw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752784AbeBBRFu (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:05:50 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36604 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752538AbeBBRFq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:05:46 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Gaurav Kohli <gkohli@codeaurora.org>,
-	Alan Cox <alan@linux.intel.com>
-Subject: [PATCH 4.9 72/86] tty: fix data race between tty_init_dev and flush of buf
-Date: Fri,  2 Feb 2018 17:58:32 +0100
-Message-Id: <20180202140829.336126023@linuxfoundation.org>
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 67/86] media: usbtv: add a new usbid
+Date: Fri,  2 Feb 2018 17:58:27 +0100
+Message-Id: <20180202140828.865552542@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309669814416277?=
-X-GMAIL-MSGID: =?utf-8?q?1591309669814416277?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,94 +79,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gaurav Kohli <gkohli@codeaurora.org>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-commit b027e2298bd588d6fa36ed2eda97447fb3eac078 upstream.
 
-There can be a race, if receive_buf call comes before
-tty initialization completes in n_tty_open and tty->disc_data
-may be NULL.
+[ Upstream commit 04226916d2360f56d57ad00bc48d2d1854d1e0b0 ]
 
-CPU0					CPU1
-----					----
- 000|n_tty_receive_buf_common()   	n_tty_open()
--001|n_tty_receive_buf2()		tty_ldisc_open.isra.3()
--002|tty_ldisc_receive_buf(inline)	tty_ldisc_setup()
+A new usbid of UTV007 is found in a newly bought device.
 
-Using ldisc semaphore lock in tty_init_dev till disc_data
-initializes completely.
+The usbid is 1f71:3301.
 
-Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
-Reviewed-by: Alan Cox <alan@linux.intel.com>
+The ID on the chip is:
+UTV007
+A89029.1
+1520L18K1
+
+Both video and audio is tested with the modified usbtv driver.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/tty_io.c    |    8 +++++++-
- drivers/tty/tty_ldisc.c |    4 ++--
- include/linux/tty.h     |    2 ++
- 3 files changed, 11 insertions(+), 3 deletions(-)
+ drivers/media/usb/usbtv/usbtv-core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1543,6 +1543,9 @@ struct tty_struct *tty_init_dev(struct t
- 			"%s: %s driver does not set tty->port. This will crash the kernel later. Fix the driver!\n",
- 			__func__, tty->driver->name);
+--- a/drivers/media/usb/usbtv/usbtv-core.c
++++ b/drivers/media/usb/usbtv/usbtv-core.c
+@@ -141,6 +141,7 @@ static void usbtv_disconnect(struct usb_
  
-+	retval = tty_ldisc_lock(tty, 5 * HZ);
-+	if (retval)
-+		goto err_release_lock;
- 	tty->port->itty = tty;
- 
- 	/*
-@@ -1553,6 +1556,7 @@ struct tty_struct *tty_init_dev(struct t
- 	retval = tty_ldisc_setup(tty, tty->link);
- 	if (retval)
- 		goto err_release_tty;
-+	tty_ldisc_unlock(tty);
- 	/* Return the tty locked so that it cannot vanish under the caller */
- 	return tty;
- 
-@@ -1565,9 +1569,11 @@ err_module_put:
- 
- 	/* call the tty release_tty routine to clean out this slot */
- err_release_tty:
--	tty_unlock(tty);
-+	tty_ldisc_unlock(tty);
- 	tty_info_ratelimited(tty, "ldisc open failed (%d), clearing slot %d\n",
- 			     retval, idx);
-+err_release_lock:
-+	tty_unlock(tty);
- 	release_tty(tty, idx);
- 	return ERR_PTR(retval);
- }
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -336,7 +336,7 @@ static inline void __tty_ldisc_unlock(st
- 	ldsem_up_write(&tty->ldisc_sem);
- }
- 
--static int tty_ldisc_lock(struct tty_struct *tty, unsigned long timeout)
-+int tty_ldisc_lock(struct tty_struct *tty, unsigned long timeout)
- {
- 	int ret;
- 
-@@ -347,7 +347,7 @@ static int tty_ldisc_lock(struct tty_str
- 	return 0;
- }
- 
--static void tty_ldisc_unlock(struct tty_struct *tty)
-+void tty_ldisc_unlock(struct tty_struct *tty)
- {
- 	clear_bit(TTY_LDISC_HALTED, &tty->flags);
- 	__tty_ldisc_unlock(tty);
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -394,6 +394,8 @@ extern struct tty_struct *get_current_tt
- /* tty_io.c */
- extern int __init tty_init(void);
- extern const char *tty_name(const struct tty_struct *tty);
-+extern int tty_ldisc_lock(struct tty_struct *tty, unsigned long timeout);
-+extern void tty_ldisc_unlock(struct tty_struct *tty);
- #else
- static inline void console_init(void)
- { }
+ static struct usb_device_id usbtv_id_table[] = {
+ 	{ USB_DEVICE(0x1b71, 0x3002) },
++	{ USB_DEVICE(0x1f71, 0x3301) },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(usb, usbtv_id_table);
