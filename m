@@ -1,105 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeBBXLN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 18:11:13 -0500
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:17884 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751671AbeBBXKo (ORCPT
+        id S1752689AbeBBXL0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 18:11:26 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36400 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752639AbeBBXLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 18:10:44 -0500
-X-IronPort-AV: E=Sophos;i="5.46,451,1511827200";
-   d="scan'208";a="330369682"
-From: =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
-To: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        x86@kernel.org
-Cc: =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] x86: e820: Implement a range manipulation operator
-Date: Sat,  3 Feb 2018 00:10:20 +0100
-Message-Id: <20180202231020.15608-1-jschoenh@amazon.de>
-X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
-In-Reply-To: <d4741079-eeda-c063-795f-60f5f1036a25@amazon.de>
-References: <d4741079-eeda-c063-795f-60f5f1036a25@amazon.de>
+        Fri, 2 Feb 2018 18:11:11 -0500
+Date: Sat, 3 Feb 2018 00:11:02 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        wakasugi.jb@om.asahi-kasei.co.jp, "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Mihai Serban <mihai.serban@gmail.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@gmail.com>,
+        Mihai Serban <mihai.serban@nxp.com>
+Subject: Re: [PATCH v2 1/2] ASoC: codecs: Add support for AK5558 ADC driver
+Message-ID: <20180202231102.GA2705@sirena.org.uk>
+References: <1517588406-3295-1-git-send-email-daniel.baluta@nxp.com>
+ <1517588406-3295-2-git-send-email-daniel.baluta@nxp.com>
+ <CAHp75VfyVfGdCfjV_iaXFcRcanbgwFSgJRfu8eojdbMONMUOaQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfyVfGdCfjV_iaXFcRcanbgwFSgJRfu8eojdbMONMUOaQ@mail.gmail.com>
+X-Cookie: Even bytes get lonely for a little bit.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a more versatile memmap= operator, which -- in addition to all the
-things that were possible before -- allows you to:
-- redeclare existing ranges -- before, you were limited to adding ranges;
-- drop any range -- like a mem= for any location;
-- use any e820 memory type -- not just some predefined ones.
 
-The syntax is:
+--k+w/mQv8wyuph6w0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  memmap=<size>%<offset>-<oldtype>+<newtype>
+On Fri, Feb 02, 2018 at 09:33:18PM +0200, Andy Shevchenko wrote:
+> On Fri, Feb 2, 2018 at 6:20 PM, Daniel Baluta <daniel.baluta@nxp.com> wro=
+te:
 
-Size and offset work as usual. The "-<oldtype>" and "+<newtype>" are
-optional and their existence determine the behavior: The command
-works on the specified range of memory limited to type <oldtype>
-(if specified). This memory is then configured to show up as <newtype>.
-If <newtype> is not specified, the memory is removed from the e820 map.
+> > +static int ak5558_set_dai_mute(struct snd_soc_dai *dai, int mute)
+> > +{
+> > +       struct snd_soc_codec *codec =3D dai->codec;
+> > +       struct ak5558_priv *ak5558 =3D snd_soc_codec_get_drvdata(codec);
+>=20
+> > +       int ndt =3D 0;
+>=20
+> It might be even
+>=20
+>       int ndt =3D max(ak5558->fs ? 583000 / ak5558->fs : 5, 5);
 
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
----
-v2: Small coding style and typography adjustments
+Please don't encourage people to use the ternery operator like that, it
+does nothing for legibility not to write out the conditionals.
 
- Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
- arch/x86/kernel/e820.c                          | 18 ++++++++++++++++++
- 2 files changed, 27 insertions(+)
+> > +static const struct i2c_device_id ak5558_i2c_id[] =3D {
+> > +       { "ak5558", 0 },
+> > +       { }
+> > +};
+> > +MODULE_DEVICE_TABLE(i2c, ak5558_i2c_id);
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 46b26bfee27b..60926ae3ec06 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2221,6 +2221,15 @@
- 			The memory region may be marked as e820 type 12 (0xc)
- 			and is NVDIMM or ADR memory.
- 
-+	memmap=<size>%<offset>-<oldtype>+<newtype>
-+			[KNL,ACPI] Convert memory within the specified region
-+			from <oldtype> to <newtype>. If "-<oldtype>" is left
-+			out, the whole region will be marked as <newtype>,
-+			even if previously unavailable. If "+<newtype>" is left
-+			out, matching memory will be removed. Types are
-+			specified as e820 types, e.g., 1 = RAM, 2 = reserved,
-+			3 = ACPI, 12 = PRAM.
-+
- 	memory_corruption_check=0/1 [X86]
- 			Some BIOSes seem to corrupt the first 64k of
- 			memory when doing things like suspend/resume.
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 71c11ad5643e..6a2cb1442e05 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -924,6 +924,24 @@ static int __init parse_memmap_one(char *p)
- 	} else if (*p == '!') {
- 		start_at = memparse(p+1, &p);
- 		e820__range_add(start_at, mem_size, E820_TYPE_PRAM);
-+	} else if (*p == '%') {
-+		enum e820_type from = 0, to = 0;
-+
-+		start_at = memparse(p + 1, &p);
-+		if (*p == '-')
-+			from = simple_strtoull(p + 1, &p, 0);
-+		if (*p == '+')
-+			to = simple_strtoull(p + 1, &p, 0);
-+		if (*p != '\0')
-+			return -EINVAL;
-+		if (from && to)
-+			e820__range_update(start_at, mem_size, from, to);
-+		else if (to)
-+			e820__range_add(start_at, mem_size, to);
-+		else if (from)
-+			e820__range_remove(start_at, mem_size, from, 1);
-+		else
-+			e820__range_remove(start_at, mem_size, 0, 0);
- 	} else {
- 		e820__range_remove(mem_size, ULLONG_MAX - mem_size, E820_TYPE_RAM, 1);
- 	}
--- 
-2.9.3.1.gcba166c.dirty
+> I dunno if it's really helpful to have. Though it's up to Mark and you.
+
+I don't care either way.
+
+--k+w/mQv8wyuph6w0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp07+wACgkQJNaLcl1U
+h9BHPAf/ULNE/TgqMjU6OG0niwehPfex4/rWAdnXSuCTnMwNjAxLykg5za+EIoZL
+svckNQsXK/isMwPkN9y5C1Y3Rj0lzHwrUS1r8TLlBGIfHrptjdE/DsTuEsSoN6Rg
+U399B7xrn/mmbilMPrKCFfw/4W+HWam7zTzx0ZeusQniLQV9OVt7lUY4WWAGGk1g
+fHFPOllskPqZ+ssxsZxQZZkEo3GLYDREcJxLD4EI0QZnSF7sLvFrDHKMezvw0svN
+U6K13e5Qz5JMhDodebCmxc6W61b9eB8YX1xOtsWIcxn1/ay0Pfaii0Yej487bxqH
+gtWrH+pg7Osgv+RrzicaFQHK6jgNcg==
+=YBel
+-----END PGP SIGNATURE-----
+
+--k+w/mQv8wyuph6w0--
