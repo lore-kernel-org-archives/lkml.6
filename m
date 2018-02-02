@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2240zfF3b+ZbSjgiD2gahD8GVwd+KLxAd8iW638HdX4z6EnS0Du9ZjcyvAEFl3KHYFaIM+Dd
-ARC-Seal: i=1; a=rsa-sha256; t=1517591431; cv=none;
+X-Google-Smtp-Source: AH8x227eSFN+7B6JXpBEXp5rOiaKqyn34l/sCtNvkG6jACyCv5/udZawmGeG6ALR5i1zTs2xvxgS
+ARC-Seal: i=1; a=rsa-sha256; t=1517591428; cv=none;
         d=google.com; s=arc-20160816;
-        b=jbpIQtI6dH2TFzOzZy1NZUJq2fCFwQ+pKT+Wgmn3LQblxP7Z8wSiBIzUejaxdy4EXV
-         w27vJ4UT0huu/bCGJeKk1qBTk67kNA4buPgGVgYwo7gRQUhMTvU0NQdtoXgfw/HCNSio
-         RkG6FnvcoCCIxo8OQ7jeYTzeSyZvQFq1ZtcqOA0p+4BBowU1mIx+iSgBHtnA6JCe/9U9
-         jvqyuvyPtMJ7CS/SmB7uB76Pihardrp/3QLeJlePpcjuaMFNT9yVCAHVGzPVmJFCDz//
-         y73Bu4EwyJgbWI4zgOVX/qbuMCXTkLh7tTxhDiT8apfO5iRj9s2PGlESBOP+NzWqWBaS
-         QYqQ==
+        b=IIahqJMByE4sk74xFx9voNUzglXwmc197oM6UT7gC2/PdDbl+UB4yfqi97qHigFJkW
+         pFWeBih7lPySIuFuIQFRB7YRRq8o/3rDr3tfty6Bvp5KfvfLsMZhhZ36Jmndkchr9Kqs
+         e9puqnju9ZXvE7nlqouQRxpt2EMvoRTqlndR4ay3lhQL78NqLNLEPHXN00bV6D1zcquI
+         Ev3tGCjNsEPszTP+iXGmuUAwt3hPXXrK7ga8Ewkqzl5GlxbYTr/FgtNAwmf1Vp1eaZVk
+         +3sTpm6UWfA9WZYcpixG5sFa0fApmXub+c57PIfPlxmtZFf0UEDBVCSSWIOJ/2fHSi+U
+         IeKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kt5p7F6XjwxenMB2sGuif7BSQScpS0vAtVbBtlSXkeA=;
-        b=sAVIAHUwE4KB8hTQlEO0BmnsCLOW9LZa8QY7F6RpniY7IhiZqbQ9w22l2z46KFvddM
-         QXYkAths69aA/xU0ynrKQfqzJFRU8z7oBnfUCZl3d+gbDx+LwLxKul9Mj+Esf0eNC34r
-         TXTn4LCFASfRjpKvInQoL2bVw0FBO+cz4nH1JpQkAbD71lOtt37yjwu1UnbsjN3ptEGO
-         SJY/DPPMSK3vrT5pYPXuDAQb92C+QF+0mzpD8PL12oFbrxLPoC3//lvzmDVWqo9zlCHO
-         G8vbnJPIuRdnI+nMs5FQ9H4M2PP3B8x32Zbc1TRW12Pkk0G/6PYkx84u7e/VpyJDDy6Z
-         1j8A==
+        bh=VghAtYJ/xm/3ZrZCjxRf1Fcw4O27a9djplYT5UZFxWs=;
+        b=izXrefUAZu9Hbu3MCaK7FIchijry8CMj7P4Lpn21pCSb2JXGyYtb6mLogxjpKs95Pb
+         ZWvuobvRFbaF5CSqIFRdMZSftL4aNFHMCrXLaMnscjHMHExEWr2FpewKw7y9yfK9HBuy
+         2Dc7lMZ4eEG48HEgV0TJ9do60A7qoq3fE3VJ8qg6V6QqHkvbLtdQ+8tPg5vXzjeAg5h4
+         j6ZORSfKtGgzXYIyhqoV7+dG35KjOUVZmxq9LkEFOUoMpiKnPvnGl78knpTShD0ijmHb
+         Gp9DKki4sQsKbiZI9WN0FYrmKoTgs4gKwbSn/UDIy3XDC6xsDcJAD35bKkWIFga0DCbO
+         vHZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liu Bo <bo.li.liu@oracle.com>,
-	David Sterba <dsterba@suse.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Nadav Amit <nadav.amit@gmail.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 078/156] Btrfs: fix list_add corruption and soft lockups in fsync
-Date: Fri,  2 Feb 2018 17:57:39 +0100
-Message-Id: <20180202140843.808678497@linuxfoundation.org>
+Subject: [PATCH 4.14 077/156] KVM: VMX: Fix rflags cache during vCPU reset
+Date: Fri,  2 Feb 2018 17:57:38 +0100
+Message-Id: <20180202140843.767194075@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309952913529844?=
-X-GMAIL-MSGID: =?utf-8?q?1591309952913529844?=
+X-GMAIL-THRID: =?utf-8?q?1591309345660400496?=
+X-GMAIL-MSGID: =?utf-8?q?1591309950108070271?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,94 +53,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Wanpeng Li <wanpeng.li@hotmail.com>
 
 
-[ Upstream commit ebb70442cdd4872260c2415929c456be3562da82 ]
+[ Upstream commit c37c28730bb031cc8a44a130c2555c0f3efbe2d0 ]
 
-Xfstests btrfs/146 revealed this corruption,
+Reported by syzkaller:
 
-[   58.138831] Buffer I/O error on dev dm-0, logical block 2621424, async page read
-[   58.151233] BTRFS error (device sdf): bdev /dev/mapper/error-test errs: wr 1, rd 0, flush 0, corrupt 0, gen 0
-[   58.152403] list_add corruption. prev->next should be next (ffff88005e6775d8), but was ffffc9000189be88. (prev=ffffc9000189be88).
-[   58.153518] ------------[ cut here ]------------
-[   58.153892] WARNING: CPU: 1 PID: 1287 at lib/list_debug.c:31 __list_add_valid+0x169/0x1f0
-...
-[   58.157379] RIP: 0010:__list_add_valid+0x169/0x1f0
-...
-[   58.161956] Call Trace:
-[   58.162264]  btrfs_log_inode_parent+0x5bd/0xfb0 [btrfs]
-[   58.163583]  btrfs_log_dentry_safe+0x60/0x80 [btrfs]
-[   58.164003]  btrfs_sync_file+0x4c2/0x6f0 [btrfs]
-[   58.164393]  vfs_fsync_range+0x5f/0xd0
-[   58.164898]  do_fsync+0x5a/0x90
-[   58.165170]  SyS_fsync+0x10/0x20
-[   58.165395]  entry_SYSCALL_64_fastpath+0x1f/0xbe
-...
+   *** Guest State ***
+   CR0: actual=0x0000000080010031, shadow=0x0000000060000010, gh_mask=fffffffffffffff7
+   CR4: actual=0x0000000000002061, shadow=0x0000000000000000, gh_mask=ffffffffffffe8f1
+   CR3 = 0x000000002081e000
+   RSP = 0x000000000000fffa  RIP = 0x0000000000000000
+   RFLAGS=0x00023000         DR7 = 0x00000000000000
+          ^^^^^^^^^^
+   ------------[ cut here ]------------
+   WARNING: CPU: 6 PID: 24431 at /home/kernel/linux/arch/x86/kvm//x86.c:7302 kvm_arch_vcpu_ioctl_run+0x651/0x2ea0 [kvm]
+   CPU: 6 PID: 24431 Comm: reprotest Tainted: G        W  OE   4.14.0+ #26
+   RIP: 0010:kvm_arch_vcpu_ioctl_run+0x651/0x2ea0 [kvm]
+   RSP: 0018:ffff880291d179e0 EFLAGS: 00010202
+   Call Trace:
+    kvm_vcpu_ioctl+0x479/0x880 [kvm]
+    do_vfs_ioctl+0x142/0x9a0
+    SyS_ioctl+0x74/0x80
+    entry_SYSCALL_64_fastpath+0x23/0x9a
 
-It turns out that we could record btrfs_log_ctx:io_err in
-log_one_extents when IO fails, but make log_one_extents() return '0'
-instead of -EIO, so the IO error is not acknowledged by the callers,
-i.e.  btrfs_log_inode_parent(), which would remove btrfs_log_ctx:list
-from list head 'root->log_ctxs'.  Since btrfs_log_ctx is allocated
-from stack memory, it'd get freed with a object alive on the
-list. then a future list_add will throw the above warning.
+The failed vmentry is triggered by the following beautified testcase:
 
-This returns the correct error in the above case.
+    #include <unistd.h>
+    #include <sys/syscall.h>
+    #include <string.h>
+    #include <stdint.h>
+    #include <linux/kvm.h>
+    #include <fcntl.h>
+    #include <sys/ioctl.h>
 
-Jeff also reported this while testing against his fsync error
-patch set[1].
+    long r[5];
+    int main()
+    {
+        struct kvm_debugregs dr = { 0 };
 
-[1]: https://www.spinics.net/lists/linux-btrfs/msg65308.html
-"btrfs list corruption and soft lockups while testing writeback error handling"
+        r[2] = open("/dev/kvm", O_RDONLY);
+        r[3] = ioctl(r[2], KVM_CREATE_VM, 0);
+        r[4] = ioctl(r[3], KVM_CREATE_VCPU, 7);
+        struct kvm_guest_debug debug = {
+                .control = 0xf0403,
+                .arch = {
+                        .debugreg[6] = 0x2,
+                        .debugreg[7] = 0x2
+                }
+        };
+        ioctl(r[4], KVM_SET_GUEST_DEBUG, &debug);
+        ioctl(r[4], KVM_RUN, 0);
+    }
 
-Fixes: 8407f553268a4611f254 ("Btrfs: fix data corruption after fast fsync and writeback error")
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+which testcase tries to setup the processor specific debug
+registers and configure vCPU for handling guest debug events through
+KVM_SET_GUEST_DEBUG.  The KVM_SET_GUEST_DEBUG ioctl will get and set
+rflags in order to set TF bit if single step is needed. All regs' caches
+are reset to avail and GUEST_RFLAGS vmcs field is reset to 0x2 during vCPU
+reset. However, the cache of rflags is not reset during vCPU reset. The
+function vmx_get_rflags() returns an unreset rflags cache value since
+the cache is marked avail, it is 0 after boot. Vmentry fails if the
+rflags reserved bit 1 is 0.
+
+This patch fixes it by resetting both the GUEST_RFLAGS vmcs field and
+its cache to 0x2 during vCPU reset.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Tested-by: Dmitry Vyukov <dvyukov@google.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/file.c     |    5 +++--
- fs/btrfs/tree-log.c |    2 +-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/kvm/vmx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -2056,6 +2056,8 @@ int btrfs_sync_file(struct file *file, l
- 	len = (u64)end - (u64)start + 1;
- 	trace_btrfs_sync_file(file, datasync);
- 
-+	btrfs_init_log_ctx(&ctx, inode);
-+
- 	/*
- 	 * We write the dirty pages in the range and wait until they complete
- 	 * out of the ->i_mutex. If so, we can flush the dirty pages by
-@@ -2202,8 +2204,6 @@ int btrfs_sync_file(struct file *file, l
- 	}
- 	trans->sync = true;
- 
--	btrfs_init_log_ctx(&ctx, inode);
--
- 	ret = btrfs_log_dentry_safe(trans, root, dentry, start, end, &ctx);
- 	if (ret < 0) {
- 		/* Fallthrough and commit/free transaction. */
-@@ -2261,6 +2261,7 @@ int btrfs_sync_file(struct file *file, l
- 		ret = btrfs_end_transaction(trans);
- 	}
- out:
-+	ASSERT(list_empty(&ctx.list));
- 	err = file_check_and_advance_wb_err(file);
- 	if (!ret)
- 		ret = err;
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -4100,7 +4100,7 @@ static int log_one_extent(struct btrfs_t
- 
- 	if (ordered_io_err) {
- 		ctx->io_err = -EIO;
--		return 0;
-+		return ctx->io_err;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -5608,7 +5608,7 @@ static void vmx_vcpu_reset(struct kvm_vc
+ 		vmcs_write64(GUEST_IA32_DEBUGCTL, 0);
  	}
  
- 	btrfs_init_map_token(&token);
+-	vmcs_writel(GUEST_RFLAGS, 0x02);
++	kvm_set_rflags(vcpu, X86_EFLAGS_FIXED);
+ 	kvm_rip_write(vcpu, 0xfff0);
+ 
+ 	vmcs_writel(GUEST_GDTR_BASE, 0);
