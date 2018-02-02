@@ -1,75 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591245-2-17132393223148683269
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591244; b=WnYmGEOP7QxCbd6mO4qNcuLiKS3QKFS7Ex/0G/3qrBCtklw
-    nt9SdFZTmB4pfZkEE0AbQlmU8vzIjhhDb6ROGPXaDcmecRmjSMjjIgO2EBSL4HcT
-    EUgJ0idLZxYz48d60I9rPdck/hlSr436hYMtLpx0pXITCqoqpRCQUwRXTNBstFUv
-    tV/APgp+gdvHJyAwjJ7cL+Op/HRfhfPM+oT/oC4eQk0t0XUM7k8Z4Rvm+Hz7DCUy
-    DsVNojje3peFAvNcB02XUDhF8FHXcGv7Pxt+c4E5Sn2fQAbCe1h8J5YAdsBP8j4s
-    0giqeG8pY+4qXEUsa43zTQpBnaQbz7OSq4pO4ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591244; bh=Xuh0/6KGmpxEkrUX+Pc7RISqYb
-    TeEpBGK7Lam/dQmH0=; b=HxDBMNd2QxbNb/j9Cna65BkiOhVGWJ90yDqj1MIMg5
-    ay4VUO39YsOZQ2UxJrtzyR9NSOjTUuEWMG0byU1hhS5Va0ryQ/i+BFpw+riqsXsj
-    JGABBK9JV24i0mJOZG+kNxKxehDcff/CqlruLWoL3NMZadr84ScTGPWK/Xwhf8Ef
-    pmLjUmoS0tvepPiudKRe8VEQkIWQonZkXP93cxZpREq1mOZFy9FDnvWONpG+K294
-    gZLLr/40+JYRaEQf4Fz4ALnySjhmmM6VT9tcyIFCCjmcjqSoAUUKI9WCC33SAbMb
-    IwdQgHW+q/b9/0H9p2lyDRYaFW6zCGNbT9ZeURNYM7ag==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753145AbeBBRHX (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:07:23 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36988 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753050AbeBBRHR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:07:17 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227eMUaLOevM6+g9UDa2msUns1/9PZCccwSdBW9oxVLiGDrzoWmQw46iF3H0dA4XWLoiy4J7
+ARC-Seal: i=1; a=rsa-sha256; t=1517591244; cv=none;
+        d=google.com; s=arc-20160816;
+        b=KPjODs4jO/HGw6qHx1r8caiDnwwKoq/PRU8BWgT3sxeLoqBRSEnh4kwmgZewLbYNqr
+         YdokygWsBzyWOrsJONGMqQpJNmmOagfCJ3NfgFpo1u2KTmX7sbloJLa48ElKplg6nZR5
+         KbTBQ8Xsx16jy89J8Vlz83pPzAnREv/s32OUQEQo/iYqPqAFyGRFoMxJSYtS423iIcV9
+         CXlCqE4kqJ9QLLM/dpcIpUDLoQOXerGGJ8k/4CDx4zUE1H3MqZ+allr35Hpdz0J++B8C
+         INyEB+eEeHkabCkLm+zjF0Yy1QH12EqW2zsGgqoZZPFvPqhKaZLc+93+KwgtPlsPJbg/
+         o0GQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=JQANne+jkp3DSsctURvOFEu5nTOZURcAjZxzlHngBo0=;
+        b=RTLu0mHJT9MOXrwKQ5U4X5K91vCbEwyzZqQG7DmtYp8JmeJ4wT16BaevPoy1M+d5qn
+         D6W4FVOM3iyTkHo2M89RQZU1NmAGvNe+MgD2jjcvYy9Um97rlDasiB8IdkpXRL1HK/XX
+         WpvguA++cYyUElodroYalNthtf+NoP3ZN2JA4UnA395e5fxpIa6cOD1iAcL9K9OKN8yo
+         VMFB4JUgUwgoA8yJCSJ8aY9adlGUP+7A57uFOgNQMdFsqVTCRJ308TU3T7qFKDdd1HZ0
+         hnrJP8i9d7uc19XX39RFumn22z5KtqOc8HGpOqF4Vf2SZtEY+qzeYpgVgkxYXXlbE8Mb
+         dRVg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 012/156] crypto: aesni - Use GCM IV size constant
-Date: Fri,  2 Feb 2018 17:56:33 +0100
-Message-Id: <20180202140840.871267023@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Junaid Shahid <junaids@google.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 014/156] crypto: aesni - Fix out-of-bounds access of the data buffer in generic-gcm-aesni
+Date: Fri,  2 Feb 2018 17:56:35 +0100
+Message-Id: <20180202140840.952027525@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309756503641082?=
+X-GMAIL-MSGID: =?utf-8?q?1591309756503641082?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,54 +48,168 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Corentin LABBE <clabbe.montjoie@gmail.com>
+From: Junaid Shahid <junaids@google.com>
 
-commit 46d93748e5a3628f9f553832cd64d8a59d8bafde upstream.
+commit b20209c91e23a9bbad9cac2f80bc16b3c259e10e upstream.
 
-This patch replace GCM IV size value by their constant name.
+The aesni_gcm_enc/dec functions can access memory before the start of
+the data buffer if the length of the data buffer is less than 16 bytes.
+This is because they perform the read via a single 16-byte load. This
+can potentially result in accessing a page that is not mapped and thus
+causing the machine to crash. This patch fixes that by reading the
+partial block byte-by-byte and optionally an via 8-byte load if the block
+was at least 8 bytes.
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Fixes: 0487ccac ("crypto: aesni - make non-AVX AES-GCM work with any aadlen")
+Signed-off-by: Junaid Shahid <junaids@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/crypto/aesni-intel_glue.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/crypto/aesni-intel_asm.S |   87 +++++++++++++++++++-------------------
+ 1 file changed, 45 insertions(+), 42 deletions(-)
 
---- a/arch/x86/crypto/aesni-intel_glue.c
-+++ b/arch/x86/crypto/aesni-intel_glue.c
-@@ -28,6 +28,7 @@
- #include <crypto/cryptd.h>
- #include <crypto/ctr.h>
- #include <crypto/b128ops.h>
-+#include <crypto/gcm.h>
- #include <crypto/xts.h>
- #include <asm/cpu_device_id.h>
- #include <asm/fpu/api.h>
-@@ -1131,7 +1132,7 @@ static struct aead_alg aesni_aead_algs[]
- 	.setauthsize		= common_rfc4106_set_authsize,
- 	.encrypt		= helper_rfc4106_encrypt,
- 	.decrypt		= helper_rfc4106_decrypt,
--	.ivsize			= 8,
-+	.ivsize			= GCM_RFC4106_IV_SIZE,
- 	.maxauthsize		= 16,
- 	.base = {
- 		.cra_name		= "__gcm-aes-aesni",
-@@ -1149,7 +1150,7 @@ static struct aead_alg aesni_aead_algs[]
- 	.setauthsize		= rfc4106_set_authsize,
- 	.encrypt		= rfc4106_encrypt,
- 	.decrypt		= rfc4106_decrypt,
--	.ivsize			= 8,
-+	.ivsize			= GCM_RFC4106_IV_SIZE,
- 	.maxauthsize		= 16,
- 	.base = {
- 		.cra_name		= "rfc4106(gcm(aes))",
-@@ -1165,7 +1166,7 @@ static struct aead_alg aesni_aead_algs[]
- 	.setauthsize		= generic_gcmaes_set_authsize,
- 	.encrypt		= generic_gcmaes_encrypt,
- 	.decrypt		= generic_gcmaes_decrypt,
--	.ivsize			= 12,
-+	.ivsize			= GCM_AES_IV_SIZE,
- 	.maxauthsize		= 16,
- 	.base = {
- 		.cra_name		= "gcm(aes)",
+--- a/arch/x86/crypto/aesni-intel_asm.S
++++ b/arch/x86/crypto/aesni-intel_asm.S
+@@ -257,6 +257,37 @@ aad_shift_arr:
+ 	pxor      \TMP1, \GH            # result is in TMP1
+ .endm
+ 
++# Reads DLEN bytes starting at DPTR and stores in XMMDst
++# where 0 < DLEN < 16
++# Clobbers %rax, DLEN and XMM1
++.macro READ_PARTIAL_BLOCK DPTR DLEN XMM1 XMMDst
++        cmp $8, \DLEN
++        jl _read_lt8_\@
++        mov (\DPTR), %rax
++        MOVQ_R64_XMM %rax, \XMMDst
++        sub $8, \DLEN
++        jz _done_read_partial_block_\@
++	xor %eax, %eax
++_read_next_byte_\@:
++        shl $8, %rax
++        mov 7(\DPTR, \DLEN, 1), %al
++        dec \DLEN
++        jnz _read_next_byte_\@
++        MOVQ_R64_XMM %rax, \XMM1
++	pslldq $8, \XMM1
++        por \XMM1, \XMMDst
++	jmp _done_read_partial_block_\@
++_read_lt8_\@:
++	xor %eax, %eax
++_read_next_byte_lt8_\@:
++        shl $8, %rax
++        mov -1(\DPTR, \DLEN, 1), %al
++        dec \DLEN
++        jnz _read_next_byte_lt8_\@
++        MOVQ_R64_XMM %rax, \XMMDst
++_done_read_partial_block_\@:
++.endm
++
+ /*
+ * if a = number of total plaintext bytes
+ * b = floor(a/16)
+@@ -1386,14 +1417,6 @@ _esb_loop_\@:
+ *
+ *                        AAD Format with 64-bit Extended Sequence Number
+ *
+-* aadLen:
+-*       from the definition of the spec, aadLen can only be 8 or 12 bytes.
+-*       The code supports 16 too but for other sizes, the code will fail.
+-*
+-* TLen:
+-*       from the definition of the spec, TLen can only be 8, 12 or 16 bytes.
+-*       For other sizes, the code will fail.
+-*
+ * poly = x^128 + x^127 + x^126 + x^121 + 1
+ *
+ *****************************************************************************/
+@@ -1487,19 +1510,16 @@ _zero_cipher_left_decrypt:
+ 	PSHUFB_XMM %xmm10, %xmm0
+ 
+ 	ENCRYPT_SINGLE_BLOCK  %xmm0, %xmm1    # E(K, Yn)
+-	sub $16, %r11
+-	add %r13, %r11
+-	movdqu (%arg3,%r11,1), %xmm1   # receive the last <16 byte block
+-	lea SHIFT_MASK+16(%rip), %r12
+-	sub %r13, %r12
+-# adjust the shuffle mask pointer to be able to shift 16-%r13 bytes
+-# (%r13 is the number of bytes in plaintext mod 16)
+-	movdqu (%r12), %xmm2           # get the appropriate shuffle mask
+-	PSHUFB_XMM %xmm2, %xmm1            # right shift 16-%r13 butes
+ 
++	lea (%arg3,%r11,1), %r10
++	mov %r13, %r12
++	READ_PARTIAL_BLOCK %r10 %r12 %xmm2 %xmm1
++
++	lea ALL_F+16(%rip), %r12
++	sub %r13, %r12
+ 	movdqa  %xmm1, %xmm2
+ 	pxor %xmm1, %xmm0            # Ciphertext XOR E(K, Yn)
+-	movdqu ALL_F-SHIFT_MASK(%r12), %xmm1
++	movdqu (%r12), %xmm1
+ 	# get the appropriate mask to mask out top 16-%r13 bytes of %xmm0
+ 	pand %xmm1, %xmm0            # mask out top 16-%r13 bytes of %xmm0
+ 	pand    %xmm1, %xmm2
+@@ -1508,9 +1528,6 @@ _zero_cipher_left_decrypt:
+ 
+ 	pxor %xmm2, %xmm8
+ 	GHASH_MUL %xmm8, %xmm13, %xmm9, %xmm10, %xmm11, %xmm5, %xmm6
+-	          # GHASH computation for the last <16 byte block
+-	sub %r13, %r11
+-	add $16, %r11
+ 
+         # output %r13 bytes
+ 	MOVQ_R64_XMM	%xmm0, %rax
+@@ -1664,14 +1681,6 @@ ENDPROC(aesni_gcm_dec)
+ *
+ *                         AAD Format with 64-bit Extended Sequence Number
+ *
+-* aadLen:
+-*       from the definition of the spec, aadLen can only be 8 or 12 bytes.
+-*       The code supports 16 too but for other sizes, the code will fail.
+-*
+-* TLen:
+-*       from the definition of the spec, TLen can only be 8, 12 or 16 bytes.
+-*       For other sizes, the code will fail.
+-*
+ * poly = x^128 + x^127 + x^126 + x^121 + 1
+ ***************************************************************************/
+ ENTRY(aesni_gcm_enc)
+@@ -1764,19 +1773,16 @@ _zero_cipher_left_encrypt:
+         movdqa SHUF_MASK(%rip), %xmm10
+ 	PSHUFB_XMM %xmm10, %xmm0
+ 
+-
+ 	ENCRYPT_SINGLE_BLOCK	%xmm0, %xmm1        # Encrypt(K, Yn)
+-	sub $16, %r11
+-	add %r13, %r11
+-	movdqu (%arg3,%r11,1), %xmm1     # receive the last <16 byte blocks
+-	lea SHIFT_MASK+16(%rip), %r12
++
++	lea (%arg3,%r11,1), %r10
++	mov %r13, %r12
++	READ_PARTIAL_BLOCK %r10 %r12 %xmm2 %xmm1
++
++	lea ALL_F+16(%rip), %r12
+ 	sub %r13, %r12
+-	# adjust the shuffle mask pointer to be able to shift 16-r13 bytes
+-	# (%r13 is the number of bytes in plaintext mod 16)
+-	movdqu	(%r12), %xmm2           # get the appropriate shuffle mask
+-	PSHUFB_XMM	%xmm2, %xmm1            # shift right 16-r13 byte
+ 	pxor	%xmm1, %xmm0            # Plaintext XOR Encrypt(K, Yn)
+-	movdqu	ALL_F-SHIFT_MASK(%r12), %xmm1
++	movdqu	(%r12), %xmm1
+ 	# get the appropriate mask to mask out top 16-r13 bytes of xmm0
+ 	pand	%xmm1, %xmm0            # mask out top 16-r13 bytes of xmm0
+         movdqa SHUF_MASK(%rip), %xmm10
+@@ -1785,9 +1791,6 @@ _zero_cipher_left_encrypt:
+ 	pxor	%xmm0, %xmm8
+ 	GHASH_MUL %xmm8, %xmm13, %xmm9, %xmm10, %xmm11, %xmm5, %xmm6
+ 	# GHASH computation for the last <16 byte block
+-	sub	%r13, %r11
+-	add	$16, %r11
+-
+ 	movdqa SHUF_MASK(%rip), %xmm10
+ 	PSHUFB_XMM %xmm10, %xmm0
+ 
