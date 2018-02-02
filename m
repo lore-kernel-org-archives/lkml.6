@@ -1,121 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752330AbeBBO7E (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:59:04 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:53657 "EHLO
+        id S1752426AbeBBO7Y (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:59:24 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:49262 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751795AbeBBO65 (ORCPT
+        with ESMTP id S1752029AbeBBO7P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:58:57 -0500
+        Fri, 2 Feb 2018 09:59:15 -0500
 From: Arnd Bergmann <arnd@arndb.de>
-To: x86@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Len Brown <len.brown@intel.com>
+To: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
 Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
         linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Bart Van Assche <bart.vanassche@wdc.com>, linux-pm@vger.kernel.org
-Subject: [PATCH 2/3] x86: fix swsusp_arch_resume prototype
-Date: Fri,  2 Feb 2018 15:56:18 +0100
-Message-Id: <20180202145634.200291-2-arnd@arndb.de>
+        Masami Hiramatsu <mhiramat@kernel.org>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 3/3] x86: error_inject: make  just_return_func globally visible
+Date: Fri,  2 Feb 2018 15:56:19 +0100
+Message-Id: <20180202145634.200291-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180202145634.200291-1-arnd@arndb.de>
 References: <20180202145434.100626-1-arnd@arndb.de>
  <20180202145634.200291-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:ky5wMEXrnMiWObgBA5KeDBRDcJHbRB63cOR62Dk9Joh5+1tRJC5
- CjM86WptwuuIxieB4rxjpSZrBk4iT9feA8Ncizh81R03TOV7sTarb2I1VubutQYQmZ/ZaPG
- IAXGsKFNLB1yBUkDOZbzx94RHHiX8evSkiWCUQmFW+P8BTi3ouGqkHIUbGbURli/HKwXBS6
- ycE1m4L7Z1AQKdtC6kcrw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:SOG8ZtnVteE=:N2Ou79kS+dqCc0gWQYsaDU
- XKvkJH98YLzjTmVW5Ed5hIFcSWwyVZRIeYbhupqeEJUsgclX0zbqT8GxEB8gj+QaU4KTu47Nb
- vFO9yGVJToocmhXNlX4kNsAHjnWEpTK7S1ssF/hQeZufRDQWlWWEMaJlKfnrouVHulRzXDJxq
- 6+ZdM1OrOZ0kaVrPPAGqWtD3dp4DE2w0jD6KQ1JzSeaTIX5XgmztKTWJRjMGOwsmI+AYvM4xf
- pJNFQjWAAXckblzYf6wXFo5lnhqELhvnxJHeM0+ApJlYp4dW3iugB523KBDObmz/Mo9d2O5dZ
- vl4zH/kTRBRvBhqFk6Libwz5GIYwWHgfiZO6aIgFxALqiZ0vUNYmCWIt6PFcSQiRGoISzmxTL
- PvRNntWbUrDaHbnimh1LorNjS50190WtaM1+RBpuL9U8GKbkmcjU3pntzq9om+fKvAlaNuGvm
- gLg3MmF7S9TAjjfZjyqvr2KyjGDmV0pFTdae3bALnKW1hPojyvHtfn06HFkDFl3O0CaIRSUKJ
- eaeN+QEcMIxXgvoMr85XkUTwtBzpnPYzMeQlb63yuKUbXxuF6Dwl6k1njPh9w8OwGb62AMPzH
- 6YsMqK80FB9HnPuKtsmGCfobHMo1t/rlQeXTAVgKz/JQfdpURE0sBQGelUWke+p2nPw9F8uFK
- UnB6Jd2OVS8YQIy1P7Y7fxAJuFv7ZPkA71vuPAiuyHF2r1FEOPeaYbqz5QDCmkAUQ3DvHDOUh
- 5lr6KZB51m/oaZ9fhZsqB+4PeAwGsGviaFqvsw==
+X-Provags-ID: V03:K0:hiXWzmx7Z9S3IwGnYbP8u+Xj80EIya28N0XC+8ESANwln5WzUYU
+ lm+5wplDOhe9YiEnaR4ui/BtiD+D1x0uNzQdfSugyGSWDWF+gh/4u/iNuqRQZYoSFTOEr/C
+ NoziMIy1mh7RNl37ct2/xR2mkI728P9aTCVtEh5YaMxtqXVjYuQhieqzjI6yliKma8GVjnK
+ TNoY0OY8dcU2B7NmL+FSA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:AMXJisyEtF0=:EE2SMXpObJdFU1Q1XeqD9r
+ N/SCsXmJ7Ur9inHz8/OcqIofDxCShKXo5BjhFMGgtkucaPgvqUrQ+9qr0xJ17GxUpdGz2nbKt
+ 9cNRHEXIxd7ZBP8iaZxXyyjtI5rqE/+6+PGn3bstBxrSrGS+aBkVvhvAnlJGr6J8uUmCtHdEM
+ hkSLzMXKvRyy7J289EeWtNERMLEnVraa2WgETeUiyIAwzLIZyN+LkLo2IiYYuxsAVeqiVjx+T
+ O0j72LwezIFMPdh5wFnl4e6Aq+1wn3M87O3Pc11y1wsye/KRFpSxBwhLIjTz7/jNTdm0YgnVq
+ a8D1CTTqaiR4N8bg0AtUZQzW0RIZm4118PG7OujzEiNV6MrVyiHHrAcEmxIdl4tAR1jr0Eqp5
+ AgCrpo9kRFZm3HEoitHoUHRXsAK5or1qlI884VLrGWuAkE1MbuzQsS763MOe4rl/uK2ytS6PN
+ bZw8XByA1ComF6OmevxfJ8nzUb8FPEbmUhQNm7XqXJotjfkzVzoqZiia1kd5YAa2NwxwxE7+S
+ wA6qsXBW3ASTvJVbXZSAFqO8tbenWMua72b7cktbB4nDapfIuCxy9sUS1oktANclra0jt1BeA
+ MLhZMCcczkTueKOGnR6UidCiA7cHBYjW/+KQ3Oy80p1PLRY6YpBIINP+RpHL4uhcEtGrql3mg
+ bmmoAJzqaKuRPRuz62lO024e5YddcuVOts6lNKEdDhGVEO2zxkEVNaw1xNxMzWN6SEKoLu2zS
+ EpyCJkI4Bj66rX/wsi+IoU+hxOHDZwu53MdIIw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The declaration for swsusp_arch_resume marks it as 'asmlinkage',
-but the definition in x86-32 does not, and it fails to include
-the header with the declaration. This leads to a warning when
-building with link-time-optimizations:
+With link time optimizations enabled, I get a link failure:
 
-kernel/power/power.h:108:23: error: type of 'swsusp_arch_resume' does not match original declaration [-Werror=lto-type-mismatch]
- extern asmlinkage int swsusp_arch_resume(void);
-                       ^
-arch/x86/power/hibernate_32.c:148:0: note: 'swsusp_arch_resume' was previously declared here
- int swsusp_arch_resume(void)
+./ccLbOEHX.ltrans19.ltrans.o: In function `override_function_with_return':
+<artificial>:(.text+0x7f3): undefined reference to `just_return_func'
 
-This moves the declaration into a globally visible header file
-and fixes up both x86 definitions to match it.
+Marking the symbol .globl makes it work as expected.
 
+Fixes: 540adea3809f ("error-injection: Separate error-injection from kprobe")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/power/hibernate_32.c | 2 +-
- arch/x86/power/hibernate_64.c | 2 +-
- include/linux/suspend.h       | 2 ++
- kernel/power/power.h          | 3 ---
- 4 files changed, 4 insertions(+), 5 deletions(-)
+ arch/x86/lib/error-inject.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/power/hibernate_32.c b/arch/x86/power/hibernate_32.c
-index c35fdb585c68..afc4ed7b1578 100644
---- a/arch/x86/power/hibernate_32.c
-+++ b/arch/x86/power/hibernate_32.c
-@@ -145,7 +145,7 @@ static inline void resume_init_first_level_page_table(pgd_t *pg_dir)
- #endif
- }
+diff --git a/arch/x86/lib/error-inject.c b/arch/x86/lib/error-inject.c
+index 7b881d03d0dd..3cdf06128d13 100644
+--- a/arch/x86/lib/error-inject.c
++++ b/arch/x86/lib/error-inject.c
+@@ -7,6 +7,7 @@ asmlinkage void just_return_func(void);
  
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
- {
- 	int error;
- 
-diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
-index f910c514438f..0ef5e5204968 100644
---- a/arch/x86/power/hibernate_64.c
-+++ b/arch/x86/power/hibernate_64.c
-@@ -174,7 +174,7 @@ static int relocate_restore_code(void)
- 	return 0;
- }
- 
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
- {
- 	int error;
- 
-diff --git a/include/linux/suspend.h b/include/linux/suspend.h
-index cc22a24516d6..440b62f7502e 100644
---- a/include/linux/suspend.h
-+++ b/include/linux/suspend.h
-@@ -384,6 +384,8 @@ extern int swsusp_page_is_forbidden(struct page *);
- extern void swsusp_set_page_free(struct page *);
- extern void swsusp_unset_page_free(struct page *);
- extern unsigned long get_safe_page(gfp_t gfp_mask);
-+extern asmlinkage int swsusp_arch_suspend(void);
-+extern asmlinkage int swsusp_arch_resume(void);
- 
- extern void hibernation_set_ops(const struct platform_hibernation_ops *ops);
- extern int hibernate(void);
-diff --git a/kernel/power/power.h b/kernel/power/power.h
-index f29cd178df90..9e58bdc8a562 100644
---- a/kernel/power/power.h
-+++ b/kernel/power/power.h
-@@ -104,9 +104,6 @@ extern int in_suspend;
- extern dev_t swsusp_resume_device;
- extern sector_t swsusp_resume_block;
- 
--extern asmlinkage int swsusp_arch_suspend(void);
--extern asmlinkage int swsusp_arch_resume(void);
--
- extern int create_basic_memory_bitmaps(void);
- extern void free_basic_memory_bitmaps(void);
- extern int hibernate_preallocate_memory(void);
+ asm(
+ 	".type just_return_func, @function\n"
++	".globl just_return_func\n"
+ 	"just_return_func:\n"
+ 	"	ret\n"
+ 	".size just_return_func, .-just_return_func\n"
 -- 
 2.9.0
