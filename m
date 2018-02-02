@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226DznUo8AYOOguIMaKHlE20p1WNZg23FtS7AdgdKsaPqO6gpHtYpK3MyEx//Yfod+0zAD4C
-ARC-Seal: i=1; a=rsa-sha256; t=1517591696; cv=none;
+X-Google-Smtp-Source: AH8x227WJs5Sc9rFdAv6FqgTTNoUz35hH7+nkvYHLiz4TXxnXcXi8U060yAlDXO2RTtyZyUTl10s
+ARC-Seal: i=1; a=rsa-sha256; t=1517591693; cv=none;
         d=google.com; s=arc-20160816;
-        b=Wxw382o83GQqQowCCsJPFSarmBrglhHwQONPS0oPMalK9XJKedbAVKMg0E/HrS5QWJ
-         kJxfrjjHJeQ4mPUyiReuiwpM+kb6aX4hXfIy3f3+OZlv4x+VIERBfyrtuB2Xi1XuGWwE
-         vNz2/ZtqHiUG8kadkScMQn7XINXTRejJ+O1R+BnGwoZvTK2N/jlkPZr0F4dMJt/vdLqw
-         zjnC9cwqyBkthekBsJKE7/nHUtVDhUruq4l3wn0sbcXkZGQHSluLrysPcs3BDRzE1XsO
-         qyoaKFKZo+Pg9bOfTeD6cf7sNlj7DSx+62ocxI4ARqmO7JHA59hzJQ1nrJYf7GpHSNwe
-         maMg==
+        b=sHpR6FAp/PBMHUBAQgTpX7nBnCtpL49CVXGjyfZ6xhkfI8tTrqRumGDfcL5g/eGy6w
+         pr/VfN+AnK3jfM6NZ9hXSQ5N2SMw8+mTRlbHjL5+GXGPIAEG+opmWvW4zyziCOQ+m4ia
+         xxwmLUKkNALPs9am6NA6QYRLkXKan1shj/lVURPWkkAL+9QKLAfgUByvLjE8gU5kNWCB
+         3p8Ctvo4JQ0kTn9k8EE8o5BcphDk54IOoW72DMkubCFobD3S4f+11uluORnKOhIk4/Gs
+         1WmNXrkRhZS88s8OBj7znGVjkAFi5A/c0YKPEhZTr/VeD+P2bJC0Qb5g2d/x+eAesprq
+         oISA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rhSd/rRTkbT8hqKhh5VrFKrCT9Ph3nYQbXKL9V2xyyQ=;
-        b=ELldb9aazZmgTHqtFqcuWvouV3nXa8xcy63rFT+VZ/nHgG0rvgedb/Bvta51b8YdUv
-         1UIsSG5WiYtGJabSGe/UEPO99fzn6QCt6sC150AZdaW9qdzM/kxhBWPtBLtU5t9N/b0i
-         QAyTFbsEdQendK9Uug0pvadI67s04Lx53wwjWEFmjIaVqGjC6aDPreviH5DaEmgoKWHE
-         30qQ5LKxNUAgdfCSv4D4Kf7Fih6gq/6Wl4E2ktGxbyaEafkdZhsAuVb/oqr3ojYtpAbf
-         DxzTZvKTePBWtvvW/p1jSKB7bDlKjKFHYZoGArSjIw/pl0yPaHiCNItkuAFeyx5WxLIc
-         AVEQ==
+        bh=K/OgMpl3hkkqriqrczTvVieEaw857sCy7UcxAkMp02Q=;
+        b=sdoHBo+Ilc/bRkk5aeQpaMtt7OAp2Yi5gdq1BcsDE3R5QHt7tyepE3Ibn9ohtKMqRa
+         q5nlV1WvGtGjAkp5ZF9hzA8b4kcb+ntnN15wg9duaLmN4vMEBNgXz3pZAkObke9ERzp9
+         jgvTMMGdthh9pPc/flx4LOkuYbIDiAM+HU2QK95JQt2dER9VYddGn9McJUPsmY8mX7lp
+         qZwZCqZo040si/uIJddzTdOWcvwxXAx4/TtAq5xikD9oBGcYs28GMWT90X2RWQxkiVrm
+         zEDch/7u5clAVbA0Z3qcZp0pRDXbbaGw6OrWOHZwmSBmJX/isU0ATDb+ANz3tKKKx7Rf
+         YrmQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Antoine Tenart <antoine.tenart@free-electrons.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 13/55] crypto: inside-secure - avoid unmapping DMA memory that was not mapped
-Date: Fri,  2 Feb 2018 17:58:31 +0100
-Message-Id: <20180202140827.337756380@linuxfoundation.org>
+Subject: [PATCH 4.15 12/55] crypto: inside-secure - fix hash when length is a multiple of a block
+Date: Fri,  2 Feb 2018 17:58:30 +0100
+Message-Id: <20180202140827.168066257@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309766611043261?=
-X-GMAIL-MSGID: =?utf-8?q?1591310230818724375?=
+X-GMAIL-THRID: =?utf-8?q?1591309763913025219?=
+X-GMAIL-MSGID: =?utf-8?q?1591310228298668200?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,14 +50,13 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Antoine Tenart <antoine.tenart@free-electrons.com>
 
-commit c957f8b3e2e54b29f53ef69decc87bbc858c9b58 upstream.
+commit 809778e02cd45d0625439fee67688f655627bb3c upstream.
 
-This patch adds a parameter in the SafeXcel ahash request structure to
-keep track of the number of SG entries mapped. This allows not to call
-dma_unmap_sg() when dma_map_sg() wasn't called in the first place. This
-also removes a warning when the debugging of the DMA-API is enabled in
-the kernel configuration: "DMA-API: device driver tries to free DMA
-memory it has not allocated".
+This patch fixes the hash support in the SafeXcel driver when the update
+size is a multiple of a block size, and when a final call is made just
+after with a size of 0. In such cases the driver should cache the last
+block from the update to avoid handling 0 length data on the final call
+(that's a hardware limitation).
 
 Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
 Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
@@ -65,60 +64,50 @@ Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/inside-secure/safexcel_hash.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/crypto/inside-secure/safexcel_hash.c |   34 +++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
 --- a/drivers/crypto/inside-secure/safexcel_hash.c
 +++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -34,6 +34,8 @@ struct safexcel_ahash_req {
- 	bool hmac;
- 	bool needs_inv;
+@@ -186,17 +186,31 @@ static int safexcel_ahash_send_req(struc
+ 	else
+ 		cache_len = queued - areq->nbytes;
  
-+	int nents;
+-	/*
+-	 * If this is not the last request and the queued data does not fit
+-	 * into full blocks, cache it for the next send() call.
+-	 */
+-	extra = queued & (crypto_ahash_blocksize(ahash) - 1);
+-	if (!req->last_req && extra) {
+-		sg_pcopy_to_buffer(areq->src, sg_nents(areq->src),
+-				   req->cache_next, extra, areq->nbytes - extra);
++	if (!req->last_req) {
++		/* If this is not the last request and the queued data does not
++		 * fit into full blocks, cache it for the next send() call.
++		 */
++		extra = queued & (crypto_ahash_blocksize(ahash) - 1);
++		if (!extra)
++			/* If this is not the last request and the queued data
++			 * is a multiple of a block, cache the last one for now.
++			 */
++			extra = queued - crypto_ahash_blocksize(ahash);
+ 
+-		queued -= extra;
+-		len -= extra;
++		if (extra) {
++			sg_pcopy_to_buffer(areq->src, sg_nents(areq->src),
++					   req->cache_next, extra,
++					   areq->nbytes - extra);
 +
- 	u8 state_sz;    /* expected sate size, only set once */
- 	u32 state[SHA256_DIGEST_SIZE / sizeof(u32)] __aligned(sizeof(u32));
- 
-@@ -152,8 +154,10 @@ static int safexcel_handle_req_result(st
- 		memcpy(areq->result, sreq->state,
- 		       crypto_ahash_digestsize(ahash));
- 
--	dma_unmap_sg(priv->dev, areq->src,
--		     sg_nents_for_len(areq->src, areq->nbytes), DMA_TO_DEVICE);
-+	if (sreq->nents) {
-+		dma_unmap_sg(priv->dev, areq->src, sreq->nents, DMA_TO_DEVICE);
-+		sreq->nents = 0;
-+	}
- 
- 	safexcel_free_context(priv, async, sreq->state_sz);
- 
-@@ -178,7 +182,7 @@ static int safexcel_ahash_send_req(struc
- 	struct safexcel_command_desc *cdesc, *first_cdesc = NULL;
- 	struct safexcel_result_desc *rdesc;
- 	struct scatterlist *sg;
--	int i, nents, queued, len, cache_len, extra, n_cdesc = 0, ret = 0;
-+	int i, queued, len, cache_len, extra, n_cdesc = 0, ret = 0;
- 
- 	queued = len = req->len - req->processed;
- 	if (queued < crypto_ahash_blocksize(ahash))
-@@ -248,15 +252,15 @@ static int safexcel_ahash_send_req(struc
++			queued -= extra;
++			len -= extra;
++
++			if (!queued) {
++				*commands = 0;
++				*results = 0;
++				return 0;
++			}
++		}
  	}
  
- 	/* Now handle the current ahash request buffer(s) */
--	nents = dma_map_sg(priv->dev, areq->src,
--		       sg_nents_for_len(areq->src, areq->nbytes),
--		       DMA_TO_DEVICE);
--	if (!nents) {
-+	req->nents = dma_map_sg(priv->dev, areq->src,
-+				sg_nents_for_len(areq->src, areq->nbytes),
-+				DMA_TO_DEVICE);
-+	if (!req->nents) {
- 		ret = -ENOMEM;
- 		goto cdesc_rollback;
- 	}
- 
--	for_each_sg(areq->src, sg, nents, i) {
-+	for_each_sg(areq->src, sg, req->nents, i) {
- 		int sglen = sg_dma_len(sg);
- 
- 		/* Do not overflow the request */
+ 	spin_lock_bh(&priv->ring[ring].egress_lock);
