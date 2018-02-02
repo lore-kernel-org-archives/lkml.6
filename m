@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225XE6RObBJLzxt4zWrZXjDPAfRKHhYG0uoAUrogmLPLQMRrTqAPqS6cc2VtpxXtFrWcVSKD
-ARC-Seal: i=1; a=rsa-sha256; t=1517591331; cv=none;
+X-Google-Smtp-Source: AH8x225BmPwGXrSzGC4OZC+XhsxHw6NLYIj2+4PevRGs6cmsbXPmffafYpXZI8R5BFg5/fLWhdDV
+ARC-Seal: i=1; a=rsa-sha256; t=1517591328; cv=none;
         d=google.com; s=arc-20160816;
-        b=tLrCX3Vhh1ji5GrgQRkAtBry1srGeLquMe12BSr6aDchfcTI24N/oQ6FbE8Bg3pc4J
-         x9YQKADrkaI9dahdcMLxrllezDRI3lT8/7Zb6Cbk7gIV91IE+HVHL3g8moxNZGtC6EVd
-         qXKtCOke6A37etlP2zINF/WTiGllwRahdJpl+0O1X2JPMkhGx46osaysUI3CcrzAYT6K
-         edD+SJR1gj7Y6ChOIJr7Hor/WBK1ru1mBmby2UDl/3gQ8RX++nuuSmh+5X+CQ5Mo2NST
-         O8jPwWAhzFY/CpZ4guDikxCc/IUADUU/Lu/XD9CIhgqZxbdZ9rkJSn685Ku29R8wUtTU
-         0NkA==
+        b=QR9/KYETd9+jhNuHAKSyI+wx4zftNZxsDGP+mBkFGvdPe9GDhrRq9HV9LsY/krWkqJ
+         yGN1JMjQmo+A+efTgJcX5fQq0RdSJx6sUn51Hm4ZcEXuQEQgUczc7SUTb2FQo3ijry4p
+         ntcmd8jhpQEFNL2F767QiJavXxtrpW9sToijGK51K+qm7IQ3E69QVmplWER3oVYBqrld
+         MwD3ndPd7+AuEdCaWoluKGT2VlBXm2rQbRE2CPgpwN263LW95Fcl3zY2xfjze4sb2RaU
+         644Bxu/9Gt8J+SW3Or0HjMmSx7fry65C9ni7U6lrzUODreNoeOVrZxIgx1nQlD5DfL6y
+         Iy/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IfEp06c5dlvA0k6QBHNrWqpJB/KuFQP4wvGb5W21SBY=;
-        b=wLearFqrm96F9nKo23xphGz1bpt3k2H7d+ZmYdPsmhhKWh0er0loUsWaMOfsOJnb7z
-         rtyYBu/jc4U+/WaF0E3MNktw65ykeDGSbJ+mA3XS+rh/wZ6dfm1tv9Zy52LYfE/Mw7DH
-         nT2Gj8sHQUazZ4dOSCNWdYRvOPbdecOdyiJM4DMKFoTi9HPDV1+sF2iQW7QHTc+o1Nj3
-         PwtPNY+qPjDzx9WBGz64s59n1hxrG3dxN1isXrP6KQkPdk6p8FK/qsWYcVkMYdsahwcw
-         eC9/z8OZZsF/4M4z5UVoyhqvKy79ol8XOVdVR92dsbdvavDd3TSuB4SwEayjMS6ewuPB
-         I5xw==
+        bh=LrsLWYzBPJdMUzUq6f+IFi6xbVVn+O3ZHTfc680y0QY=;
+        b=rz0snURWzFxsPAGXTG0x4cXl7AAJBolF4KfWCr29RgmfgE+rK36v0fDME5lH20sqZZ
+         TyYO3FQgi2O0NapB9yrDcWkiYTEfKVuGyqz/+O6jPYJbB5iDtJMVHy+eKTDQvQykdb4H
+         HWBfScbi1GeCPHuwb9zW+GME0Vlz+7rAnCXvx2CK7ETmCj1GTCe4eOmIq/Fvee6UWp1l
+         9ThJ8/9lfvlf48FIzXEOI4nR6ANNQgP6iMDYOKCvDUeJ4sztTKGEV6Z5mD2iZR+sy+Mz
+         /GSzJw3jXE/30vpOo0Gac1O1Wzt/FgRJjSyQkGQaG0pGm5B2sNKfsZ49i6Qvee/EYo1g
+         pyRA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,13 +29,11 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Nikita Leshenko <nikita.leshchenko@oracle.com>,
 	Liran Alon <liran.alon@oracle.com>,
 	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	Steve Rutherford <srutherford@google.com>,
 	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 043/156] KVM: x86: ioapic: Clear Remote IRR when entry is switched to edge-triggered
-Date: Fri,  2 Feb 2018 17:57:04 +0100
-Message-Id: <20180202140842.238756142@linuxfoundation.org>
+Subject: [PATCH 4.14 042/156] KVM: x86: ioapic: Fix level-triggered EOI and IOAPIC reconfigure race
+Date: Fri,  2 Feb 2018 17:57:03 +0100
+Message-Id: <20180202140842.181726024@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309336556964423?=
-X-GMAIL-MSGID: =?utf-8?q?1591309848106555245?=
+X-GMAIL-THRID: =?utf-8?q?1591309444031014728?=
+X-GMAIL-MSGID: =?utf-8?q?1591309844797556107?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,53 +54,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Nikita Leshenko <nikita.leshchenko@oracle.com>
 
 
-[ Upstream commit a8bfec2930525808c01f038825d1df3904638631 ]
+[ Upstream commit 0fc5a36dd6b345eb0d251a65c236e53bead3eef7 ]
 
-Some OSes (Linux, Xen) use this behavior to clear the Remote IRR bit for
-IOAPICs without an EOI register. They simulate the EOI message manually
-by changing the trigger mode to edge and then back to level, with the
-entry being masked during this.
+KVM uses ioapic_handled_vectors to track vectors that need to notify the
+IOAPIC on EOI. The problem is that IOAPIC can be reconfigured while an
+interrupt with old configuration is pending or running and
+ioapic_handled_vectors only remembers the newest configuration;
+thus EOI from the old interrupt is not delievered to the IOAPIC.
 
-QEMU implements this feature in commit ed1263c363c9
-("ioapic: clear remote irr bit for edge-triggered interrupts")
+A previous commit db2bdcbbbd32
+("KVM: x86: fix edge EOI and IOAPIC reconfig race")
+addressed this issue by adding pending edge-triggered interrupts to
+ioapic_handled_vectors, fixing this race for edge-triggered interrupts.
+The commit explicitly ignored level-triggered interrupts,
+but this race applies to them as well:
 
-As a side effect, this commit removes an incorrect behavior where Remote
-IRR was cleared when the redirection table entry was rewritten. This is not
-consistent with the manual and also opens an opportunity for a strange
-behavior when a redirection table entry is modified from an interrupt
-handler that handles the same entry: The modification will clear the
-Remote IRR bit even though the interrupt handler is still running.
+1) IOAPIC sends a level triggered interrupt vector to VCPU0
+2) VCPU0's handler deasserts the irq line and reconfigures the IOAPIC
+   to route the vector to VCPU1. The reconfiguration rewrites only the
+   upper 32 bits of the IOREDTBLn register. (Causes KVM to update
+   ioapic_handled_vectors for VCPU0 and it no longer includes the vector.)
+3) VCPU0 sends EOI for the vector, but it's not delievered to the
+   IOAPIC because the ioapic_handled_vectors doesn't include the vector.
+4) New interrupts are not delievered to VCPU1 because remote_irr bit
+   is set forever.
+
+Therefore, the correct behavior is to add all pending and running
+interrupts to ioapic_handled_vectors.
+
+This commit introduces a slight performance hit similar to
+commit db2bdcbbbd32 ("KVM: x86: fix edge EOI and IOAPIC reconfig race")
+for the rare case that the vector is reused by a non-IOAPIC source on
+VCPU0. We prefer to keep solution simple and not handle this case just
+as the original commit does.
+
+Fixes: db2bdcbbbd32 ("KVM: x86: fix edge EOI and IOAPIC reconfig race")
 
 Signed-off-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
 Reviewed-by: Liran Alon <liran.alon@oracle.com>
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Reviewed-by: Steve Rutherford <srutherford@google.com>
 Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/ioapic.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/x86/kvm/ioapic.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 --- a/arch/x86/kvm/ioapic.c
 +++ b/arch/x86/kvm/ioapic.c
-@@ -304,8 +304,17 @@ static void ioapic_write_indirect(struct
- 		} else {
- 			e->bits &= ~0xffffffffULL;
- 			e->bits |= (u32) val;
--			e->fields.remote_irr = 0;
+@@ -257,8 +257,7 @@ void kvm_ioapic_scan_entry(struct kvm_vc
+ 		    index == RTC_GSI) {
+ 			if (kvm_apic_match_dest(vcpu, NULL, 0,
+ 			             e->fields.dest_id, e->fields.dest_mode) ||
+-			    (e->fields.trig_mode == IOAPIC_EDGE_TRIG &&
+-			     kvm_apic_pending_eoi(vcpu, e->fields.vector)))
++			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
+ 				__set_bit(e->fields.vector,
+ 					  ioapic_handled_vectors);
  		}
-+
-+		/*
-+		 * Some OSes (Linux, Xen) assume that Remote IRR bit will
-+		 * be cleared by IOAPIC hardware when the entry is configured
-+		 * as edge-triggered. This behavior is used to simulate an
-+		 * explicit EOI on IOAPICs that don't have the EOI register.
-+		 */
-+		if (e->fields.trig_mode == IOAPIC_EDGE_TRIG)
-+			e->fields.remote_irr = 0;
-+
- 		mask_after = e->fields.mask;
- 		if (mask_before != mask_after)
- 			kvm_fire_mask_notifiers(ioapic->kvm, KVM_IRQCHIP_IOAPIC, index, mask_after);
