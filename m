@@ -1,202 +1,100 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-991961-1517918764-2-16017382361567868147
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517918764; b=h7qiAHg9zKmKyqhWcTGbCY3bfJ30kCIydGvpeNiQbccC543
-    3MLXVKCHeJ7tGV2nutQXMPiZrE5oyp9O5tnCPPMIjq11H1frgv6hAH+JcPF2aNsv
-    21CeccSSbvikRrfowpJxZTf79Y5vuQA+zpkw1XtKP8Fpfv2Z2k+V9Xd9d3mZeW4H
-    YZhVwhImnuFJF+7KipFrTWWIo+QozWdEgqwnYE0SOONeyJVTt81HYrB6doDIaB9l
-    j9sp/wL1qABFWeaM81pXql0ehVX4GFaf6TbrPHwtVSXicYfpZNt0cub86MJGsRmE
-    PkZtHaDxCVqMByDT3kzPj/MnZP8DUBrKvq/OG+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:message-id:cc:reply-to
-    :in-reply-to:references:to:subject:mime-version
-    :content-transfer-encoding:content-type:sender:list-id; s=
-    arctest; t=1517918764; bh=Wasfs2ETUShvj6UCDjqp9X0RD9O75cug17v1If
-    VUZRY=; b=IgV3IFFjcho0AF8PSfUI2tsGxfv9S9zx0JXFnrbF/X8o6LiuCDbYro
-    dYgdS1KEscwfylpRgI+nCe+H8BMSg+w7M1ZwwX8Mk2+xLvZJMyL+yvn0p+59x0DX
-    AuIsuuCqHLRDaUKgykuEjZcaTFKnr0ODcHmFREcwZveXPiDzxkam2BPtuYgRT6Kp
-    Rw89VTHpSHI+0K0PtydT04D0VoiHXXcnq3lzDLSugyesL3NYZIcuA1cPoIbuP+AF
-    m6zemjvxslayNf9Z/LMSr9BCYfJFN8ppZok3xisN6UDCeRfyGYeowcBGzPXo23fW
-    MKhdvPJmxETi/Xu+lI+H+WgXzl0zaVpg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=zytor.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=zytor.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=zytor.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=zytor.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752743AbeBFMGB (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 07:06:01 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:49769 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752420AbeBFMF6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 07:05:58 -0500
-Date: Tue, 6 Feb 2018 04:00:07 -0800
-From: tip-bot for Dan Williams <tipbot@zytor.com>
-Message-ID: <tip-3ac6d8c787b835b997eb23e43e09aa0895ef7d58@git.kernel.org>
-Cc: torvalds@linux-foundation.org, bp@alien8.de, brgerst@gmail.com,
-        stable@vger.kernel.org, dan.j.williams@intel.com,
-        linux-kernel@vger.kernel.org, jpoimboe@redhat.com, hpa@zytor.com,
-        mingo@kernel.org, dvlasenk@redhat.com, peterz@infradead.org,
-        luto@kernel.org, tglx@linutronix.de
-Reply-To: bp@alien8.de, torvalds@linux-foundation.org, brgerst@gmail.com,
-          stable@vger.kernel.org, dan.j.williams@intel.com,
-          linux-kernel@vger.kernel.org, jpoimboe@redhat.com, hpa@zytor.com,
-          mingo@kernel.org, dvlasenk@redhat.com, peterz@infradead.org,
-          luto@kernel.org, tglx@linutronix.de
-In-Reply-To: <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Clear registers for
- exceptions/interrupts, to reduce speculation attack surface
-Git-Commit-ID: 3ac6d8c787b835b997eb23e43e09aa0895ef7d58
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Remote-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.1
-X-Remote-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on terminus.zytor.com
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <arnd@arndb.de>
+X-Google-Smtp-Source: AH8x224ShvYQjNrfUZ2iy8qcMVmBfl4EnM4dT0Xa4otkjCUbBoIrzgL6Tn11ZJgB+TnyKMwEWHK5
+ARC-Seal: i=1; a=rsa-sha256; t=1517586433; cv=none;
+        d=google.com; s=arc-20160816;
+        b=H6ZoGWm0FZa0QdfPbhHQUYVQieLbixKvOXmSS+YMwTOtk81d2t6w31ZanyTnESrBlZ
+         vGUw/65JeosZTDPcKQ+YtPCHQCW/jAscAplAOMr3hkjGqfby99rwNGpsVM08ltmT1kxx
+         O0OZpWvgbPwFtQUc1x8T8KLjnlRNM650ufwU9sZQvdkJSgWqxjqM8r+jDAtNyE8KBvu+
+         IX/sRxg8QxobSuG9mT3QnHypgcYhfxPmOgNbcy7YLoSUHIWq+DF5O8qucuk0bswVKkff
+         CSxRv5jFaQTTykVtxOjzC3O26GjepMj+hNpbDfLwibRePRgQRXvsTvOXXJmMJ0r2J53V
+         iefA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=wOYry3/reDkNznYD3EyWWs6IsDqD2hkfs/ti6M8gJ1c=;
+        b=DmhMUmMjbumJUOO4WeH9MUsq7q97bmqgXEt06iZQtqsKNVS8pb6t8KX5JMmMPab52F
+         blFv1iM06vCn4A4tFRAvmJpx+dR2V2U6vqaCO/VxGn4J/NScvT3mO+psMvf1pf9Ml+rf
+         E5C/CNW/CmiDEPsPog/lh7VvL1g/e0/elA99DyxOCt7ArJ3DIVUDM0UH8155nh5Eg9fv
+         POXqx3TPTXBqFazC0VftOqlFQp2dR24OPSPiTVuIp+xnadW+/05xsb4h6kWNk91OxjnX
+         pgbaVVn4xmHSxJ+4ci/KzLNaHgIu/FWYTEfNIzcf6XHFQumtU981exLfRSnGmshdURMx
+         jXNg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 212.227.17.24 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 212.227.17.24 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+From: Arnd Bergmann <arnd@arndb.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Nicolas Pitre <nico@linaro.org>,
+	Andi Kleen <ak@linux.intel.com>,
+	Babu Moger <babu.moger@oracle.com>,
+	Will Deacon <will.deacon@arm.com>,
+	stable@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] locking/qrwlock: include asm/byteorder.h as needed
+Date: Fri,  2 Feb 2018 16:40:44 +0100
+Message-Id: <20180202154104.1522809-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:TsOBgWWVAzowO3S5IpWgn+9z8V3m3+ACevvCnQgbj5YYHS8FsK5
+ NrLRnIEwaovjGRBaOyo8Tv2eUu5dpN2SgBe+SArQdZr5iLYSVzdDXpoPFlyT3bSN63ypmHT
+ PaQnMlW8TOFab2/DQMubN+TJyktuNsytcM7YkKKjhQpDpOOnHfI/53A+Y4/iop1jL4SakrM
+ OuWI5MlLME72e3VT+nnrQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:W92YmiA5Riw=:/X0ZQApivGwwCGdBR7SGkZ
+ alMh8VFPSWCmM40dxR0bLcrQch4C+QHNn4QNYN8P8p6zIQ9a9cjWjilhZumZ6x0xODYk2OCPw
+ qCNeq5+p13Vg6ZnHLOQ8LMKeseCHeimA5HNe2GrxREsr3ZwyhVG+SLySyiNRW/sUBB7dmuYPP
+ 4NcfPPERFhJ/cxm7JhT8Bhhf1wX1BzyTYz/nadUbCJ24BYbmkXoQmaHKrx9qNYktuHiylt/K4
+ 07ge3hlbXvOoxQA0AStLPOOv35qsWDngGYev06DgLZohnOpqyCmcZqPXyrfMgnB1ZvAR9pRwJ
+ NtBMEAQMUw/SHTVXi7qboM1DbHzZMihY2PhFzNnJKUakhiGdDLEj/4jXGRDV4OqqMEVwFKp2h
+ wxc9TCNbR1k4/ycOZRH0hsAGH6CCo4U35EJRXppfWcBlxuKEL7Uc59I9silBA2qQ2vJfWB0MK
+ UI15LO6Ot5jABkenZFI0yG/6qeY8GkNDVnsAqStcyrstrjRj7aNvK/fIhxq4gAnL6Cd2wezBW
+ m/BX6dDdRVFtThZBBEGSE3IUp9ydKkLDCekwhwDad0U+Uf9ckVkp45PXroMsPiS1SQsndXkt+
+ gi98sMA1ydSpH6eS8j88nreRT8LTzvWKl/mF9Igu3fci/4fFAyWLy2qU4WI7kOhHicD1LQ/eG
+ p6OEHOAfMZ9kQ5MYh7p5mHG9K1jKNh5jAdyDJe+fm+h/J1X6z4hXM21vbmrZZDSNERS7lWY4d
+ +/LqOcMcTmQ50eDupE672kUDyC4GnPXc8kI2XA==
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591304711998635461?=
+X-GMAIL-MSGID: =?utf-8?q?1591304711998635461?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  3ac6d8c787b835b997eb23e43e09aa0895ef7d58
-Gitweb:     https://git.kernel.org/tip/3ac6d8c787b835b997eb23e43e09aa0895ef7d58
-Author:     Dan Williams <dan.j.williams@intel.com>
-AuthorDate: Mon, 5 Feb 2018 17:18:11 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 6 Feb 2018 11:47:44 +0100
+Moving the qrwlock struct definition into a header file introduced
+a subtle bug on all little-endian machines, where some files in some
+configurations would see the fields in an incorrect order.  This was
+found by building with an LTO enabled compiler that warns every time we
+try to link together files with incompatible data structures.
 
-x86/entry/64: Clear registers for exceptions/interrupts, to reduce speculation attack surface
+A second patch changes linux/kconfig.h to always define the symbols,
+but this seems to be the root cause of most of the issues, so I'd suggest
+we do both.
 
-Clear the 'extra' registers on entering the 64-bit kernel for exceptions
-and interrupts. The common registers are not cleared since they are
-likely clobbered well before they can be exploited in a speculative
-execution attack.
+On a current linux-next kernel, I verified that this header is
+responsible for all type mismatches as a result from the endianess
+confusion.
 
-Originally-From: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Cc: <stable@vger.kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com
-[ Made small improvements to the changelog and the code comments. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: e0d02285f16e ("locking/qrwlock: Use 'struct qrwlock' instead of 'struct __qrwlock'")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/entry/calling.h  | 19 +++++++++++++++++++
- arch/x86/entry/entry_64.S |  6 +++++-
- 2 files changed, 24 insertions(+), 1 deletion(-)
+ include/asm-generic/qrwlock_types.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 3f48f69..f4b129d 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -147,6 +147,25 @@ For 32-bit we have the following conventions - kernel is built with
- 	UNWIND_HINT_REGS offset=\offset
- 	.endm
+diff --git a/include/asm-generic/qrwlock_types.h b/include/asm-generic/qrwlock_types.h
+index 137ecdd16daa..c36f1d5a2572 100644
+--- a/include/asm-generic/qrwlock_types.h
++++ b/include/asm-generic/qrwlock_types.h
+@@ -3,6 +3,7 @@
+ #define __ASM_GENERIC_QRWLOCK_TYPES_H
  
-+	/*
-+	 * Sanitize registers of values that a speculation attack
-+	 * might otherwise want to exploit. The lower registers are
-+	 * likely clobbered well before they could be put to use in
-+	 * a speculative execution gadget:
-+	 */
-+	.macro CLEAR_REGS_NOSPEC
-+	xorl %ebp, %ebp
-+	xorl %ebx, %ebx
-+	xorq %r8, %r8
-+	xorq %r9, %r9
-+	xorq %r10, %r10
-+	xorq %r11, %r11
-+	xorq %r12, %r12
-+	xorq %r13, %r13
-+	xorq %r14, %r14
-+	xorq %r15, %r15
-+	.endm
-+
- 	.macro POP_EXTRA_REGS
- 	popq %r15
- 	popq %r14
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 065a71b..9e48002 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -575,6 +575,7 @@ END(irq_entries_start)
- 	ALLOC_PT_GPREGS_ON_STACK
- 	SAVE_C_REGS
- 	SAVE_EXTRA_REGS
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER
+ #include <linux/types.h>
++#include <asm/byteorder.h>
+ #include <asm/spinlock_types.h>
  
- 	testb	$3, CS(%rsp)
-@@ -1133,6 +1134,7 @@ ENTRY(xen_failsafe_callback)
- 	ALLOC_PT_GPREGS_ON_STACK
- 	SAVE_C_REGS
- 	SAVE_EXTRA_REGS
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER
- 	jmp	error_exit
- END(xen_failsafe_callback)
-@@ -1178,6 +1180,7 @@ ENTRY(paranoid_entry)
- 	cld
- 	SAVE_C_REGS 8
- 	SAVE_EXTRA_REGS 8
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER 8
- 	movl	$1, %ebx
- 	movl	$MSR_GS_BASE, %ecx
-@@ -1230,8 +1233,8 @@ ENTRY(error_entry)
- 	cld
- 	SAVE_C_REGS 8
- 	SAVE_EXTRA_REGS 8
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER 8
--	xorl	%ebx, %ebx
- 	testb	$3, CS+8(%rsp)
- 	jz	.Lerror_kernelspace
- 
-@@ -1428,6 +1431,7 @@ ENTRY(nmi)
- 	pushq	%r14		/* pt_regs->r14 */
- 	pushq	%r15		/* pt_regs->r15 */
- 	UNWIND_HINT_REGS
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER
- 
- 	/*
+ /*
+-- 
+2.9.0
