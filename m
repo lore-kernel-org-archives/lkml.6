@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2279Hao0tEQ9FyxYoC5omDZVCSvIKi/hdbSS4MkFBh+abqrNReu6i8GBBcuj0IoK3uyYQVzH
-ARC-Seal: i=1; a=rsa-sha256; t=1517591572; cv=none;
+X-Google-Smtp-Source: AH8x224ia62W3OMg+KzlTDclBsaTHDLs2tQxySizmDeBAPhI907NWumXcWYWBJV+FdM7mJtnbQQ3
+ARC-Seal: i=1; a=rsa-sha256; t=1517591569; cv=none;
         d=google.com; s=arc-20160816;
-        b=nPrMLr2lFrpV7uk6Yh1JV+OYv6WBgv+lcz6EtK/4Qnhd4XIg87rzSo1McEwHXBkqYm
-         HDAQSBTChyLcEsmiMuQ2l3Q1WKIgOzh4dnXyueVr6zMuRTz2HU9rQEiJvDWQWbufHCVb
-         b+5r+CqpY0AKE9R7FPlt6kcvxu1jcO8MOmb6N/dBc53sGptw+94/Q52LS6giQR56Pn9n
-         iz9jwNIjtImjuraTwihvjp63VfmxTzzWvwDknUEZa5T+landrgAQT7Fe63hpk7BZya2k
-         xAC73fQS9hhNvdD6u6FP2V2P7mIcZmy4zoyqnjrqHWhdop1oV7+B7eIYX9H3NOEFxFQs
-         gZJw==
+        b=d5dREu4bsK4VWmGKW2+YjhN8q4JZfXnRcK4hU+Crt+NxtI3ps6tsas8dbf6cz/kVfV
+         9/W/ilMzzYaeSBOLEQfjWl7XraZfV16j6ISt5P4DcT/knAuYARZ5m9Y3DyG1gxuQ46Tr
+         nr3K3PmcoQPpZHiFYSTRvMCdQVn1KQM1EUFggpsxcEPNG9ssRBjvHkyd+Kyf/apqG1Tn
+         DnO5q1r5vEf3fgg6E21JoBjtumVmej1AliAEQBvoF97zn+RJRv1HIPQXNDUNiXDewXC7
+         50HGh7TOhwiN59rNuncrIwJD3gMpcQa22dHirvfMVBXQ4cLnle4FYqq3NzGELw5OR+78
+         rFCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JOqKCXtePEpv7/DuG4GE0cq/habkACRNuvmaOqT9N8M=;
-        b=Ntn5d+StogK5wJ748Vo5+qgYgN4bl/eM494MdQAli6g48E9IeuJlxYoOVRgo9sRYWM
-         MmlxE0+AW9ChF0nzSxCwvyxz8pTn3oI8LcMTU0BCS7rhC14XAZgWnjw8T6qqj5T0PPGd
-         zQlAeQxNgoweISV6lE78Dms8xGcmRbVV1iOJpthsA3fV2pY8B1S3f5988pn5xBiQxGdj
-         Ss/IDVOHSiCTy25h0fcBciShxXAX/p5IbVHXhKOHYQ0K/rCNiypPMg/2d3hak7KbmbhA
-         pup8QdvbBubRvO6d9lzNM2lW/YC/4R82ZECNLOIY6rBKcyajv223rANvf/M5Lz3uD+sp
-         DTQg==
+        bh=wR1sVdRL1SawtfAT6IJCOXjceKOvmOkxWWphbAqI/Ho=;
+        b=zqI+/0XnrQAoZoeelpKB/5tW5s78BYdBPVFMDJmT5E72rD9xZG6vp6PgxOUGucB0oB
+         gf5lhNd7/PSWVNCnMLTrtgO0xtc2ExOsIfioEZNHGNLqcsGLeuQO+2ILApcfa2f8ME8T
+         r0qHEtoxD5ca3XcD/niNVC41bmJVugYWS/J3S8CHiMSTCcDcJy3PC00OQUAYaff4IoFQ
+         DJzVkmeFWcAQ6965C+RBsvW20CRfYBMW5DB8od+XtgZkhKDebdFO3GD1t9/DMs5VhK17
+         a/Z1bkTQDYYiT3DFBRhh5/meSSt1hEdGdi2ENxDHjReG5+mQi3dV5bnwQpc3+D/zl47f
+         Bp3A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	xen-devel@lists.xenproject.org,
+	boris.ostrovsky@oracle.com,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 125/156] usb: gadget: dont dereference g until after it has been null checked
-Date: Fri,  2 Feb 2018 17:58:26 +0100
-Message-Id: <20180202140846.036004738@linuxfoundation.org>
+Subject: [PATCH 4.14 124/156] x86/xen: Support early interrupts in xen pv guests
+Date: Fri,  2 Feb 2018 17:58:25 +0100
+Message-Id: <20180202140845.994367591@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309400693081740?=
-X-GMAIL-MSGID: =?utf-8?q?1591310100348807555?=
+X-GMAIL-THRID: =?utf-8?q?1591310097679908944?=
+X-GMAIL-MSGID: =?utf-8?q?1591310097679908944?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +52,171 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Juergen Gross <jgross@suse.com>
 
 
-[ Upstream commit b2fc059fa549fe6881d4c1f8d698b0f50bcd16ec ]
+[ Upstream commit 42b3a4cb5609de757f5445fcad18945ba9239a07 ]
 
-Avoid dereferencing pointer g until after g has been sanity null checked;
-move the assignment of cdev much later when it is required into a more
-local scope.
+Add early interrupt handlers activated by idt_setup_early_handler() to
+the handlers supported by Xen pv guests. This will allow for early
+WARN() calls not crashing the guest.
 
-Detected by CoverityScan, CID#1222135 ("Dereference before null check")
-
-Fixes: b785ea7ce662 ("usb: gadget: composite: fix ep->maxburst initialization")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: xen-devel@lists.xenproject.org
+Cc: boris.ostrovsky@oracle.com
+Link: https://lkml.kernel.org/r/20171124084221.30172-1-jgross@suse.com
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/composite.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/segment.h |   12 ++++++++++++
+ arch/x86/mm/extable.c          |    4 +++-
+ arch/x86/xen/enlighten_pv.c    |   37 ++++++++++++++++++++++++-------------
+ arch/x86/xen/xen-asm_64.S      |   14 ++++++++++++++
+ 4 files changed, 53 insertions(+), 14 deletions(-)
 
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -150,7 +150,6 @@ int config_ep_by_speed(struct usb_gadget
- 			struct usb_function *f,
- 			struct usb_ep *_ep)
- {
--	struct usb_composite_dev	*cdev = get_gadget_data(g);
- 	struct usb_endpoint_descriptor *chosen_desc = NULL;
- 	struct usb_descriptor_header **speed_desc = NULL;
+--- a/arch/x86/include/asm/segment.h
++++ b/arch/x86/include/asm/segment.h
+@@ -236,11 +236,23 @@
+  */
+ #define EARLY_IDT_HANDLER_SIZE 9
  
-@@ -229,8 +228,12 @@ ep_found:
- 			_ep->maxburst = comp_desc->bMaxBurst + 1;
- 			break;
- 		default:
--			if (comp_desc->bMaxBurst != 0)
-+			if (comp_desc->bMaxBurst != 0) {
-+				struct usb_composite_dev *cdev;
++/*
++ * xen_early_idt_handler_array is for Xen pv guests: for each entry in
++ * early_idt_handler_array it contains a prequel in the form of
++ * pop %rcx; pop %r11; jmp early_idt_handler_array[i]; summing up to
++ * max 8 bytes.
++ */
++#define XEN_EARLY_IDT_HANDLER_SIZE 8
 +
-+				cdev = get_gadget_data(g);
- 				ERROR(cdev, "ep0 bMaxBurst must be 0\n");
-+			}
- 			_ep->maxburst = 1;
- 			break;
+ #ifndef __ASSEMBLY__
+ 
+ extern const char early_idt_handler_array[NUM_EXCEPTION_VECTORS][EARLY_IDT_HANDLER_SIZE];
+ extern void early_ignore_irq(void);
+ 
++#if defined(CONFIG_X86_64) && defined(CONFIG_XEN_PV)
++extern const char xen_early_idt_handler_array[NUM_EXCEPTION_VECTORS][XEN_EARLY_IDT_HANDLER_SIZE];
++#endif
++
+ /*
+  * Load a segment. Fall back on loading the zero segment if something goes
+  * wrong.  This variant assumes that loading zero fully clears the segment.
+--- a/arch/x86/mm/extable.c
++++ b/arch/x86/mm/extable.c
+@@ -1,6 +1,7 @@
+ #include <linux/extable.h>
+ #include <linux/uaccess.h>
+ #include <linux/sched/debug.h>
++#include <xen/xen.h>
+ 
+ #include <asm/fpu/internal.h>
+ #include <asm/traps.h>
+@@ -212,8 +213,9 @@ void __init early_fixup_exception(struct
+ 	 * Old CPUs leave the high bits of CS on the stack
+ 	 * undefined.  I'm not sure which CPUs do this, but at least
+ 	 * the 486 DX works this way.
++	 * Xen pv domains are not using the default __KERNEL_CS.
+ 	 */
+-	if (regs->cs != __KERNEL_CS)
++	if (!xen_pv_domain() && regs->cs != __KERNEL_CS)
+ 		goto fail;
+ 
+ 	/*
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -622,7 +622,7 @@ static struct trap_array_entry trap_arra
+ 	{ simd_coprocessor_error,      xen_simd_coprocessor_error,      false },
+ };
+ 
+-static bool get_trap_addr(void **addr, unsigned int ist)
++static bool __ref get_trap_addr(void **addr, unsigned int ist)
+ {
+ 	unsigned int nr;
+ 	bool ist_okay = false;
+@@ -644,6 +644,14 @@ static bool get_trap_addr(void **addr, u
  		}
+ 	}
+ 
++	if (nr == ARRAY_SIZE(trap_array) &&
++	    *addr >= (void *)early_idt_handler_array[0] &&
++	    *addr < (void *)early_idt_handler_array[NUM_EXCEPTION_VECTORS]) {
++		nr = (*addr - (void *)early_idt_handler_array[0]) /
++		     EARLY_IDT_HANDLER_SIZE;
++		*addr = (void *)xen_early_idt_handler_array[nr];
++	}
++
+ 	if (WARN_ON(ist != 0 && !ist_okay))
+ 		return false;
+ 
+@@ -1261,6 +1269,21 @@ asmlinkage __visible void __init xen_sta
+ 	xen_setup_gdt(0);
+ 
+ 	xen_init_irq_ops();
++
++	/* Let's presume PV guests always boot on vCPU with id 0. */
++	per_cpu(xen_vcpu_id, 0) = 0;
++
++	/*
++	 * Setup xen_vcpu early because idt_setup_early_handler needs it for
++	 * local_irq_disable(), irqs_disabled().
++	 *
++	 * Don't do the full vcpu_info placement stuff until we have
++	 * the cpu_possible_mask and a non-dummy shared_info.
++	 */
++	xen_vcpu_info_reset(0);
++
++	idt_setup_early_handler();
++
+ 	xen_init_capabilities();
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+@@ -1294,18 +1317,6 @@ asmlinkage __visible void __init xen_sta
+ 	 */
+ 	acpi_numa = -1;
+ #endif
+-	/* Let's presume PV guests always boot on vCPU with id 0. */
+-	per_cpu(xen_vcpu_id, 0) = 0;
+-
+-	/*
+-	 * Setup xen_vcpu early because start_kernel needs it for
+-	 * local_irq_disable(), irqs_disabled().
+-	 *
+-	 * Don't do the full vcpu_info placement stuff until we have
+-	 * the cpu_possible_mask and a non-dummy shared_info.
+-	 */
+-	xen_vcpu_info_reset(0);
+-
+ 	WARN_ON(xen_cpuhp_setup(xen_cpu_up_prepare_pv, xen_cpu_dead_pv));
+ 
+ 	local_irq_disable();
+--- a/arch/x86/xen/xen-asm_64.S
++++ b/arch/x86/xen/xen-asm_64.S
+@@ -15,6 +15,7 @@
+ 
+ #include <xen/interface/xen.h>
+ 
++#include <linux/init.h>
+ #include <linux/linkage.h>
+ 
+ .macro xen_pv_trap name
+@@ -54,6 +55,19 @@ xen_pv_trap entry_INT80_compat
+ #endif
+ xen_pv_trap hypervisor_callback
+ 
++	__INIT
++ENTRY(xen_early_idt_handler_array)
++	i = 0
++	.rept NUM_EXCEPTION_VECTORS
++	pop %rcx
++	pop %r11
++	jmp early_idt_handler_array + i*EARLY_IDT_HANDLER_SIZE
++	i = i + 1
++	.fill xen_early_idt_handler_array + i*XEN_EARLY_IDT_HANDLER_SIZE - ., 1, 0xcc
++	.endr
++END(xen_early_idt_handler_array)
++	__FINIT
++
+ hypercall_iret = hypercall_page + __HYPERVISOR_iret * 32
+ /*
+  * Xen64 iret frame:
