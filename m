@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227V1mzshxWDgMUUIskYTkNvcvNXd065QxR6IWuZZKLqJLfjABFf+deFZPhAAmGkCuUbeRTA
-ARC-Seal: i=1; a=rsa-sha256; t=1517591196; cv=none;
+X-Google-Smtp-Source: AH8x226MlybYEin+AyrWubtSarWo+sxi6khcO5SfWTFps5rVeKQtt0xxItl6UC6Xs5mRQhyPNKC8
+ARC-Seal: i=1; a=rsa-sha256; t=1517591193; cv=none;
         d=google.com; s=arc-20160816;
-        b=eFKebiqSfcfhobc/mDoyg+tKfDK1++AkDxsI6y6vi2/2BCbC7DXLnIHFm2ECyeS4+R
-         97PVkGlWqHOYCOlXrDGQOjqu7FvhN+0KuYRrWDVEzdxEdC6nqoschfrJaFe8b9duGWll
-         84jfYXnbaKGzefI1lekFW/UTGfQtt0K3HyUq5kAaGcVrqd8V66pKLzkjZiriHZBAMwur
-         H5lsau02glcO9A7rLNB5f6ZgHkYpLQNm0vgy6N0FPMmGpbmoEssygzb7maExMbm00I6G
-         UL5V+du8u+UQDvztIL/Syxtad+BOSr2B1rgaCD+1HxRKA2kuYxZfjrOKd6K3xpLc/KMQ
-         +RvA==
+        b=XK7Ug6eTnmc6sKsjj8bqFTpWljzCRCmvmScNka1f8vdbQOsDAhE5RND1KyTEphjeHA
+         +DasFUCFE8wvFFivI1ITRK6iIX11EDs3Dl+Bp16VMDG2W8sqH73oJf2taINdpUlDpoue
+         ghCwsEXxi6GMonJL6gqNZncjYtkbRsW3CYNNhxeKQiVQQi0WesFtcFssXHYdzKgsehLo
+         JopE3WOppTKJlFj7ACTRd5aEL7K5CbsWssopjaI1bkJSYRIBbpzyoerZZ890FyNKl208
+         DY/A5rBmMr9gmx95+clFUp/hOscEex4abb29P4Ty0ppfK/4GFdoGpweziGv9Qm2uDNcP
+         RHEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=J87ZbkEnEsuGI65+RTO4ZJM4rimBjtsf/ZzIQ39sZ+0=;
-        b=weHR0laZOvx2NQVji0CI+P0zTXpG5TYpeXiMFiX0zq8rQTnv24CH/r2rC/UxU2gteu
-         HkYfo2aLvDt4t8dChXeeh48M6ZMzeZ7xLQSSrHzT+3nKdBoEytTCU173IyqWa0eEn+7d
-         VS7trkQMFRnT5QRvKAO/P2mKkHulhkQdBnJO3rSw3c2pkA15/3IBu32RThGQNzrdAyWO
-         qyhCoJ+N3akeEjkU3f5J9OI8DmR36fEUm7oaGJwrKoBKYvvbA8TlbwsX9c5KGLab9ySG
-         5CpvbezPmKUu1AehpYKJ0sSeUfmiiTwn20GjJ5SDxzn0erXiktQwftYiLGG9nfLer/P/
-         cnLA==
+        bh=N+nAMH3TkAwTCItJ3g2+CeUCQXWjR/roU2shImTTTjk=;
+        b=d5I590yn49FrlYn4HOYqgZsy0TiXKsbWVi1jmr9bq2kQopYt10pJ5h0vfX3kMs+hxR
+         2GK/K5h9UkcSBgkXPgpQ3O3qs8p/CfUbbvnmlXCaok6pvgGMP2O+RafJzRxtIIhQC1zi
+         SqpyPkAedJK6wIMIZOEWU4Ke0WLzMOHG1nO5Bul6VmHJc7r7MfKvUO5LdDCboIDeWizR
+         C5qc8ClWT4rVFOQvPFH+ncJOF0d4DzsK6icC2lM3kD+VQdjhv517/IcJAmchtc6qyKV5
+         0wssZO7HtfCwdYbkxtMaUeWLjl5D4/UD4xtLy261cdQ61jYdIFyymT7fIJE6Uwy0x2ee
+         NSMQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Jan Kara <jack@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Jan Kara <jack@suse.cz>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 51/86] quota: Check for register_shrinker() failure.
-Date: Fri,  2 Feb 2018 17:58:11 +0100
-Message-Id: <20180202140826.948824042@linuxfoundation.org>
+	Oliver Neukum <oneukum@suse.com>,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH 4.9 82/86] usb: uas: unconditionally bring back host after reset
+Date: Fri,  2 Feb 2018 17:58:42 +0100
+Message-Id: <20180202140830.169784420@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -42,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309376971073820?=
-X-GMAIL-MSGID: =?utf-8?q?1591309706585567356?=
+X-GMAIL-THRID: =?utf-8?q?1591309454850913215?=
+X-GMAIL-MSGID: =?utf-8?q?1591309702637372420?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +48,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Oliver Neukum <oneukum@suse.com>
 
+commit cbeef22fd611c4f47c494b821b2b105b8af970bb upstream.
 
-[ Upstream commit 88bc0ede8d35edc969350852894dc864a2dc1859 ]
+Quoting Hans:
 
-register_shrinker() might return -ENOMEM error since Linux 3.12.
-Call panic() as with other failure checks in this function if
-register_shrinker() failed.
+If we return 1 from our post_reset handler, then our disconnect handler
+will be called immediately afterwards. Since pre_reset blocks all scsi
+requests our disconnect handler will then hang in the scsi_remove_host
+call.
 
-Fixes: 1d3d4437eae1 ("vmscan: per-node deferred work")
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Jan Kara <jack@suse.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+This is esp. bad because our disconnect handler hanging for ever also
+stops the USB subsys from enumerating any new USB devices, causes commands
+like lsusb to hang, etc.
+
+In practice this happens when unplugging some uas devices because the hub
+code may see the device as needing a warm-reset and calls usb_reset_device
+before seeing the disconnect. In this case uas_configure_endpoints fails
+with -ENODEV. We do not want to print an error for this, so this commit
+also silences the shost_printk for -ENODEV.
+
+ENDQUOTE
+
+However, if we do that we better drop any unconditional execution
+and report to the SCSI subsystem that we have undergone a reset
+but we are not operational now.
+
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/quota/dquot.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -2985,7 +2985,8 @@ static int __init dquot_init(void)
- 	pr_info("VFS: Dquot-cache hash table entries: %ld (order %ld,"
- 		" %ld bytes)\n", nr_hash, order, (PAGE_SIZE << order));
+---
+ drivers/usb/storage/uas.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -1076,20 +1076,19 @@ static int uas_post_reset(struct usb_int
+ 		return 0;
  
--	register_shrinker(&dqcache_shrinker);
-+	if (register_shrinker(&dqcache_shrinker))
-+		panic("Cannot register dquot shrinker");
+ 	err = uas_configure_endpoints(devinfo);
+-	if (err) {
++	if (err && err != ENODEV)
+ 		shost_printk(KERN_ERR, shost,
+ 			     "%s: alloc streams error %d after reset",
+ 			     __func__, err);
+-		return 1;
+-	}
  
- 	return 0;
++	/* we must unblock the host in every case lest we deadlock */
+ 	spin_lock_irqsave(shost->host_lock, flags);
+ 	scsi_report_bus_reset(shost, 0);
+ 	spin_unlock_irqrestore(shost->host_lock, flags);
+ 
+ 	scsi_unblock_requests(shost);
+ 
+-	return 0;
++	return err ? 1 : 0;
  }
+ 
+ static int uas_suspend(struct usb_interface *intf, pm_message_t message)
