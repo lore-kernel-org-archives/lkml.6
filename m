@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224V6rRjcSdFDzQffpFArSSb2AvGTPMgnB7Oyh95aB4aRY3Vox6ltOardeLqpL3mql8aGDQ/
-ARC-Seal: i=1; a=rsa-sha256; t=1517591417; cv=none;
+X-Google-Smtp-Source: AH8x224HNA0sRT/LqdnjHiCUrzF1GWF9ckqQxl8CYi2wB3jZZnJiPubYc0gChTAl1BaqAd5RUcKP
+ARC-Seal: i=1; a=rsa-sha256; t=1517591414; cv=none;
         d=google.com; s=arc-20160816;
-        b=S6JHg9ZnNJhrehyhYif93YmvOvIyCJYd8b5Dx8DeFNjvbPOnagFvSUW1iNCWw0i0nm
-         ExcJbPnlpsdXVbhm0+YZm5VKeu1qhUwHNhOFAE28ogqyzlkix9bpdPQGaxcldQEjEE7f
-         CZ65tDmxM0nQlLBk5EI0KDmRAffSQL+sFE+ivV0SJksSZrvD0JE0qO480rcZX71Xlq88
-         QMQ9yNsEFQe/i23uiT0BDbYpVt/QLlxC6KRqNfBkHMjaaLGSGddzRTM/IwnQrFhrJzOI
-         cyyCH6b6iHua2L4cWYgijU62NSfaLKj1hahiNQv2bi1BnqGmb4xcS2pyiWmWO4gFe1CU
-         gUdg==
+        b=wtJPMNoYO7At3NwiNuxNWkLfVd/KYfZU8jxWnDiWOATVApkY+SwAX5dUJGegRI48fF
+         jK0kgMwMZiO8gK2KBeWGA9tFZ/IWJBl3k9aDbR1WSKWI7vqw1CAcyQzcT2phTrlQtmap
+         4mSr+l5iT7/jwKmLuw2U59S/LiqOiT3ji+7MbzuggwiKpqb5PFaRCdNOcvfAoLXOEV+q
+         lpyrWgvgA5NjPreuHfwuToBRocwih2GeNE/iOTtWRV+FaxqTIfKiGGdpiLYABocJX6J+
+         F6BrxJgSlTo0h1HmiGDX11ExBZfyJ8Zu9PuycytQPIUU+HNG9sZKU8ldSRdeKCdMmVHB
+         f/BA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Dqq4wI/Ai9+2tnkfLp8AZL6MYgKyR7Zc29u4neznQYs=;
-        b=ymsCKiv2qvpcs7v6zpQn4Xetw2HV6ZLQCec017J812VRwX+hbZuSEm5OAWsqABVcAc
-         JE3YfBATaCnHpuOOo6g4eAQA49Fj5/SJVLPeiMTunO7gXe9TmBqq0aRo6EVf3JaHeVWE
-         az5KrBty6KVevqZlyMml45n32i+WLHsKtkq56f7Zq54K1Jm87tskEf8k3CjLVx0HoqKY
-         UiFwM7W76pDdX9Mmmnhwr6L5uZpbbldDgahYMVyUbFDHqcuxGjuSQAtfdNrhOVasNrPO
-         1M2KVAuiKMB+aykEtjIMXB9ykTpifB6XBkagZN74aJb1Yiuyx/TADH6wy8wtRBTBg/SZ
-         X00w==
+        bh=4o7rZhWk3rLxzMsANYGsXviTmq7MBA+iuCGx7vAkJPI=;
+        b=FOrCbWkXCnlsfxCOioWM+yj+Geai5BqX3LnQc1WBlPWKVX5yV1EQUfkRteZ9uDv1U9
+         lGButK8fCzqUJmpVuHCdRSklbCW+IDfc4e2YxaPrhrNSypAL5PB+80QxBIR/J0dd/Vf+
+         Zi4GOkIf3NvFL7987VS4XkbviMH7qrdnXjW2Ip4duYjPpRoyNPvpeePmzcatzXGZ3gFZ
+         geugkqqBO4qvrI3zSTMCrqKqIpEFaSW5JxhoKMAr+cmSLNYT3QPq5ndktF5tovQwyKMZ
+         bDTW3z9tZ22wZzIVugL4wBYPhoF1JuBA6rG1C2ByCtYWiT8HVwkPk/yxxFIbh39e39Q+
+         X/9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -32,9 +32,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Wanpeng Li <wanpeng.li@hotmail.com>,
 	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 038/156] KVM: x86: Dont re-execute instruction when not passing CR2 value
-Date: Fri,  2 Feb 2018 17:56:59 +0100
-Message-Id: <20180202140842.020181790@linuxfoundation.org>
+Subject: [PATCH 4.14 037/156] KVM: x86: emulator: Return to user-mode on L1 CPL=0 emulation failure
+Date: Fri,  2 Feb 2018 17:56:58 +0100
+Message-Id: <20180202140841.977533176@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309306306746799?=
-X-GMAIL-MSGID: =?utf-8?q?1591309938170173650?=
+X-GMAIL-THRID: =?utf-8?q?1591309303116688752?=
+X-GMAIL-MSGID: =?utf-8?q?1591309935831558941?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,16 +55,16 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Liran Alon <liran.alon@oracle.com>
 
 
-[ Upstream commit 9b8ae63798cb97e785a667ff27e43fa6220cb734 ]
+[ Upstream commit 1f4dcb3b213235e642088709a1c54964d23365e9 ]
 
-In case of instruction-decode failure or emulation failure,
-x86_emulate_instruction() will call reexecute_instruction() which will
-attempt to use the cr2 value passed to x86_emulate_instruction().
-However, when x86_emulate_instruction() is called from
-emulate_instruction(), cr2 is not passed (passed as 0) and therefore
-it doesn't make sense to execute reexecute_instruction() logic at all.
+On this case, handle_emulation_failure() fills kvm_run with
+internal-error information which it expects to be delivered
+to user-mode for further processing.
+However, the code reports a wrong return-value which makes KVM to never
+return to user-mode on this scenario.
 
-Fixes: 51d8b66199e9 ("KVM: cleanup emulate_instruction")
+Fixes: 6d77dbfc88e3 ("KVM: inject #UD if instruction emulation fails and exit to
+userspace")
 
 Signed-off-by: Liran Alon <liran.alon@oracle.com>
 Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
@@ -75,30 +75,17 @@ Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/kvm_host.h |    3 ++-
- arch/x86/kvm/vmx.c              |    2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kvm/x86.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1156,7 +1156,8 @@ int x86_emulate_instruction(struct kvm_v
- static inline int emulate_instruction(struct kvm_vcpu *vcpu,
- 			int emulation_type)
- {
--	return x86_emulate_instruction(vcpu, 0, emulation_type, NULL, 0);
-+	return x86_emulate_instruction(vcpu, 0,
-+			emulation_type | EMULTYPE_NO_REEXECUTE, NULL, 0);
- }
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5416,7 +5416,7 @@ static int handle_emulation_failure(stru
+ 		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
+ 		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
+ 		vcpu->run->internal.ndata = 0;
+-		r = EMULATE_FAIL;
++		r = EMULATE_USER_EXIT;
+ 	}
+ 	kvm_queue_exception(vcpu, UD_VECTOR);
  
- void kvm_enable_efer_bits(u64);
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6607,7 +6607,7 @@ static int handle_invalid_guest_state(st
- 		if (kvm_test_request(KVM_REQ_EVENT, vcpu))
- 			return 1;
- 
--		err = emulate_instruction(vcpu, EMULTYPE_NO_REEXECUTE);
-+		err = emulate_instruction(vcpu, 0);
- 
- 		if (err == EMULATE_USER_EXIT) {
- 			++vcpu->stat.mmio_exits;
