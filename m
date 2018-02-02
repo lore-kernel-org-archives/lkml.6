@@ -1,95 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeBBV0f (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 16:26:35 -0500
-Received: from mail-pl0-f49.google.com ([209.85.160.49]:42695 "EHLO
-        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeBBV01 (ORCPT
+        id S1751561AbeBBV20 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 16:28:26 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14217 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751699AbeBBV2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 16:26:27 -0500
-X-Google-Smtp-Source: AH8x226RTRSWmlC963oAXtPbwhjWcb3kTQNoZ2XC1HJoAeNUsJPqLvocIeUjK37rd+gJrMyyArO36g==
-Subject: Re: [PATCH] of: cache phandle nodes to decrease cost of
- of_find_node_by_phandle()
-To: Chintan Pandya <cpandya@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
- <5b84a166-c71b-3a41-9e7f-a7624a8441f6@codeaurora.org>
- <38cdcae5-ec0f-d1be-b024-1990d4387731@gmail.com>
- <9e23d32f-05a0-ce8a-41f8-9a1a3d66be37@codeaurora.org>
- <fd9f5f63-b08e-602e-1510-85a65889f550@gmail.com>
- <567731e8-8f89-bd6e-c3d4-e36400e69198@codeaurora.org>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <0db129ef-ffd8-96fe-46a7-55fb575272e3@gmail.com>
-Date: Fri, 2 Feb 2018 13:26:25 -0800
+        Fri, 2 Feb 2018 16:28:17 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 02 Feb 2018 13:28:16 -0800
+Subject: Re: [PATCH] cpufreq: skip cpufreq resume if it's not suspended
+To: Saravana Kannan <skannan@codeaurora.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC: <viresh.kumar@linaro.org>, <sgurrappadi@nvidia.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1516744675-21233-1-git-send-email-byan@nvidia.com>
+ <1744712.rO4QOLozun@aspire.rjw.lan>
+ <913f1715-bdd0-1c03-ad76-38be9d3d2298@nvidia.com>
+ <17447147.z6jfkRxuEB@aspire.rjw.lan> <5A74BD55.5000402@codeaurora.org>
+X-Nvconfidentiality: public
+From: Bo Yan <byan@nvidia.com>
+Message-ID: <dc33ef16-9684-3d8d-f4cc-6e24697f007f@nvidia.com>
+Date: Fri, 2 Feb 2018 13:28:15 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <567731e8-8f89-bd6e-c3d4-e36400e69198@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5A74BD55.5000402@codeaurora.org>
+X-Originating-IP: [172.17.136.14]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL108.nvidia.com (172.18.146.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/01/18 21:59, Chintan Pandya wrote:
-> 
-> 
-> On 2/2/2018 12:40 AM, Frank Rowand wrote:
->> On 02/01/18 02:31, Chintan Pandya wrote:
+On 02/02/2018 11:34 AM, Saravana Kannan wrote:
+> On 02/02/2018 03:54 AM, Rafael J. Wysocki wrote:
+>> On Wednesday, January 24, 2018 9:53:14 PM CET Bo Yan wrote:
 >>>
->>>>> Anyways, will fix this locally and share test results.
->>>>
->>>> Thanks, I look forward to the results.
->>>>
+>>> On 01/23/2018 06:02 PM, Rafael J. Wysocki wrote:
+>>>> On Tuesday, January 23, 2018 10:57:55 PM CET Bo Yan wrote:
+>>>>>    drivers/cpufreq/cpufreq.c | 4 ++++
+>>>>>    1 file changed, 4 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+>>>>> index 41d148af7748..95b1c4afe14e 100644
+>>>>> --- a/drivers/cpufreq/cpufreq.c
+>>>>> +++ b/drivers/cpufreq/cpufreq.c
+>>>>> @@ -1680,6 +1680,10 @@ void cpufreq_resume(void)
+>>>>>        if (!cpufreq_driver)
+>>>>>            return;
+>>>>>
+>>>>> +    if (unlikely(!cpufreq_suspended)) {
+>>>>> +        pr_warn("%s: resume after failing suspend\n", __func__);
+>>>>> +        return;
+>>>>> +    }
+>>>>>        cpufreq_suspended = false;
+>>>>>
+>>>>>        if (!has_target() && !cpufreq_driver->resume)
+>>>>>
+>>>> Good catch, but rather than doing this it would be better to avoid
+>>>> calling cpufreq_resume() at all if cpufreq_suspend() has not been 
+>>>> called.
+>>> Yes, I thought about that, but there is no good way to skip over it
+>>> without introducing another flag. cpufreq_resume is called by
+>>> dpm_resume, cpufreq_suspend is called by dpm_suspend. In the failure
+>>> case, dpm_resume is called, but dpm_suspend is not. So on a higher 
+>>> level
+>>> it's already unbalanced.
 >>>
->>> Set up for this time was slightly different. So, taken all the numbers again.
+>>> One possibility is to rely on the pm_transition flag. So something 
+>>> like:
 >>>
->>> Boot to shell time (in ms): Experiment 2
->>> [1] Base            : 14.843805 14.784842 14.842338
->>> [2] 64 sized fixed cache    : 14.189292 14.200003 14.266711
->>> [3] Dynamic freeable cache    : 14.112412 14.064772 14.036052
 >>>
->>> So, [3] (this patch) looks to be improving 750ms (on avg from base build).
+>>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+>>> index dc259d20c967..8469e6fc2b2c 100644
+>>> --- a/drivers/base/power/main.c
+>>> +++ b/drivers/base/power/main.c
+>>> @@ -842,6 +842,7 @@ static void async_resume(void *data, async_cookie_t
+>>> cookie)
+>>>    void dpm_resume(pm_message_t state)
+>>>    {
+>>>           struct device *dev;
+>>> +       bool suspended = (pm_transition.event != PM_EVENT_ON);
+>>>           ktime_t starttime = ktime_get();
 >>>
+>>>           trace_suspend_resume(TPS("dpm_resume"), state.event, true);
+>>> @@ -885,7 +886,8 @@ void dpm_resume(pm_message_t state)
+>>>           async_synchronize_full();
+>>>           dpm_show_time(starttime, state, NULL);
+>>>
+>>> -       cpufreq_resume();
+>>> +       if (likely(suspended))
+>>> +               cpufreq_resume();
+>>>           trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+>>>    }
 >>
->> Is this with the many debug options enabled?  If so, can you repeat with
->> a normal configuration?
-> 
-> Could you share me the point of doing this experiment in perf mode ?
-
-
-You had mentioned earlier in another thread:
-
-   My recent results were taken on debug_defconfig which has many performance
-   slowing code. So, gap between base-build and w/ the test patches would be
-   more than the actual production build.
-
-If you measure a large performance gain with a debug configuration, that
-may not represent the actual gain you will get with a production
-configuration, as you noted.
-
-My question was trying to determine whether the numbers reported above
-are for a debug configuration or a production configuration.  And if
-not a production configuration, I was requesting the numbers for a
-production configuration.  If the production configuration does not
-show a significant boot time reduction from the patch then there is
-less justification for adding complexity to the existing code.  I
-prefer to use simpler data structures and algorithms __if__ extra
-complexity does not provide any advantage.  The balance between
-complexity and benefits is a core software engineering issue.
-
-
-> I don't have a set up for taking these numbers in perf mode. For
-> that, I need to ask some other team and round trip follow ups. In my
-> set up, I rely on serial console logging which gets disabled in perf
-> mode.
-> 
+>> I was thinking about something else.
 >>
->> Thanks,
+>> Anyway, I think your original patch is OK too, but without printing the
+>> message.  Just combine the cpufreq_suspended check with the 
+>> cpufreq_driver
+>> one and the unlikely() thing is not necessary.
 >>
->> Frank
->>
-> 
-> Chintan
+>
+> I rather have this fixed in the dpm_suspend/resume() code. This is 
+> just masking the first issue that's being caused by unbalanced error 
+> handling. If that means adding flags in dpm_suspend/resume() then 
+> that's what we should do right now and clean it up later if it can be 
+> improved. Making cpufreq more messy doesn't seem like the right answer.
+>
+> Thanks,
+> Saravana
+>
+>
+dpm_suspend and dpm_resume by themselves are not balanced in this 
+particular case. As it's currently structured, dpm_resume can't be 
+omitted even if dpm_suspend is skipped due to earlier failure.  I think 
+checking cpufreq_suspended flag is a reasonable compromise. If we can 
+find a way to make dpm_suspend/dpm_resume also balanced, that will be best.
