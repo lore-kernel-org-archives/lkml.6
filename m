@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225BmPwGXrSzGC4OZC+XhsxHw6NLYIj2+4PevRGs6cmsbXPmffafYpXZI8R5BFg5/fLWhdDV
-ARC-Seal: i=1; a=rsa-sha256; t=1517591328; cv=none;
+X-Google-Smtp-Source: AH8x226/YKJdKSlNE1UsPCVdoluqWIdki9JL2qiiwr6slmxYSff3aMsgGxcWMjCN2t0iwRKq+Dbx
+ARC-Seal: i=1; a=rsa-sha256; t=1517591325; cv=none;
         d=google.com; s=arc-20160816;
-        b=QR9/KYETd9+jhNuHAKSyI+wx4zftNZxsDGP+mBkFGvdPe9GDhrRq9HV9LsY/krWkqJ
-         yGN1JMjQmo+A+efTgJcX5fQq0RdSJx6sUn51Hm4ZcEXuQEQgUczc7SUTb2FQo3ijry4p
-         ntcmd8jhpQEFNL2F767QiJavXxtrpW9sToijGK51K+qm7IQ3E69QVmplWER3oVYBqrld
-         MwD3ndPd7+AuEdCaWoluKGT2VlBXm2rQbRE2CPgpwN263LW95Fcl3zY2xfjze4sb2RaU
-         644Bxu/9Gt8J+SW3Or0HjMmSx7fry65C9ni7U6lrzUODreNoeOVrZxIgx1nQlD5DfL6y
-         Iy/A==
+        b=tJRnAqpJnnOHs0MrB2VHUyo+Ww48LayB+GsZTb4VbU6AI92U1kiTfkjEL8NxGhMMhk
+         dIdno5gFS5/ng3x7hmXI2Tz7uZih4ilXNXh+rhwBXZLfLnoBDmuZTI3unWVSU+yX6NuP
+         33r1kaqiB2F0JiLmj3iz3lM10F9m8+L5qkf1VoG883yNBrkGyMO92QP1mtN9jRA27K3p
+         S7cZ3E7YlXaG0G6mQB09SF1sA4kP06hx2JjnybRlT3i6X2vtiYuiDLeaL2Amh9YX1mU/
+         Z8GZnDyZ9b7+EVVpPR+GLvwwSw75bTc+vXfuMZtggrxrON9pnLEhvNEsbpfzH5+0Nj0D
+         IBNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LrsLWYzBPJdMUzUq6f+IFi6xbVVn+O3ZHTfc680y0QY=;
-        b=rz0snURWzFxsPAGXTG0x4cXl7AAJBolF4KfWCr29RgmfgE+rK36v0fDME5lH20sqZZ
-         TyYO3FQgi2O0NapB9yrDcWkiYTEfKVuGyqz/+O6jPYJbB5iDtJMVHy+eKTDQvQykdb4H
-         HWBfScbi1GeCPHuwb9zW+GME0Vlz+7rAnCXvx2CK7ETmCj1GTCe4eOmIq/Fvee6UWp1l
-         9ThJ8/9lfvlf48FIzXEOI4nR6ANNQgP6iMDYOKCvDUeJ4sztTKGEV6Z5mD2iZR+sy+Mz
-         /GSzJw3jXE/30vpOo0Gac1O1Wzt/FgRJjSyQkGQaG0pGm5B2sNKfsZ49i6Qvee/EYo1g
-         pyRA==
+        bh=aijrTyhwvXr0NKSbR3Lo2iqRiqZ5PIFOyWkK4zH1P9k=;
+        b=RlYEN6r5GARoMOdiSZr/eOY0qdGLXI5LmwYLsfXGTp6GgHioI08I9D6+y7/wgtae0F
+         w2vrTnKXEwh45sGHGRxkVs2xajYkDMqzSfgA5Y8XHlWFZ6wYsq/Bo9GICbROg6Eb2zX2
+         xlzEt50/orroRCza9RIl65HxE0bEBmHW1Wy/lSPduzI07fhlKSR+3zwqGSE6oUw71+Aq
+         OyczKRhIU1ByWxXZlst4ynmLdx0xWcNa7J45ruFYqIb0wqw6NutKp1s9Yeqly5PYznDh
+         BaKkJj/J8nhfJ+CXEl85o/Ir9d7Ierv6vtBeDvQrQjTdHmgncBqLaqUFg5tJP0gQRpmJ
+         SOLQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nikita Leshenko <nikita.leshchenko@oracle.com>,
-	Liran Alon <liran.alon@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
 	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 042/156] KVM: x86: ioapic: Fix level-triggered EOI and IOAPIC reconfigure race
-Date: Fri,  2 Feb 2018 17:57:03 +0100
-Message-Id: <20180202140842.181726024@linuxfoundation.org>
+Subject: [PATCH 4.14 041/156] KVM: x86: fix em_fxstor() sleeping while in atomic
+Date: Fri,  2 Feb 2018 17:57:02 +0100
+Message-Id: <20180202140842.145006354@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309444031014728?=
-X-GMAIL-MSGID: =?utf-8?q?1591309844797556107?=
+X-GMAIL-THRID: =?utf-8?q?1591309841753167739?=
+X-GMAIL-MSGID: =?utf-8?q?1591309841753167739?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,64 +49,130 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikita Leshenko <nikita.leshchenko@oracle.com>
+From: David Hildenbrand <david@redhat.com>
 
 
-[ Upstream commit 0fc5a36dd6b345eb0d251a65c236e53bead3eef7 ]
+[ Upstream commit 4d772cb85f64c16eca00177089ecb3cd5d292120 ]
 
-KVM uses ioapic_handled_vectors to track vectors that need to notify the
-IOAPIC on EOI. The problem is that IOAPIC can be reconfigured while an
-interrupt with old configuration is pending or running and
-ioapic_handled_vectors only remembers the newest configuration;
-thus EOI from the old interrupt is not delievered to the IOAPIC.
+Commit 9d643f63128b ("KVM: x86: avoid large stack allocations in
+em_fxrstor") optimize the stack size, but introduced a guest memory access
+which might sleep while in atomic.
 
-A previous commit db2bdcbbbd32
-("KVM: x86: fix edge EOI and IOAPIC reconfig race")
-addressed this issue by adding pending edge-triggered interrupts to
-ioapic_handled_vectors, fixing this race for edge-triggered interrupts.
-The commit explicitly ignored level-triggered interrupts,
-but this race applies to them as well:
+Fix it by introducing, again, a second fxregs_state. Try to avoid
+large stacks by using noinline. Add some helpful comments.
 
-1) IOAPIC sends a level triggered interrupt vector to VCPU0
-2) VCPU0's handler deasserts the irq line and reconfigures the IOAPIC
-   to route the vector to VCPU1. The reconfiguration rewrites only the
-   upper 32 bits of the IOREDTBLn register. (Causes KVM to update
-   ioapic_handled_vectors for VCPU0 and it no longer includes the vector.)
-3) VCPU0 sends EOI for the vector, but it's not delievered to the
-   IOAPIC because the ioapic_handled_vectors doesn't include the vector.
-4) New interrupts are not delievered to VCPU1 because remote_irr bit
-   is set forever.
+Reported by syzbot:
 
-Therefore, the correct behavior is to add all pending and running
-interrupts to ioapic_handled_vectors.
+in_atomic(): 1, irqs_disabled(): 0, pid: 2909, name: syzkaller879109
+2 locks held by syzkaller879109/2909:
+  #0:  (&vcpu->mutex){+.+.}, at: [<ffffffff8106222c>] vcpu_load+0x1c/0x70
+arch/x86/kvm/../../../virt/kvm/kvm_main.c:154
+  #1:  (&kvm->srcu){....}, at: [<ffffffff810dd162>] vcpu_enter_guest
+arch/x86/kvm/x86.c:6983 [inline]
+  #1:  (&kvm->srcu){....}, at: [<ffffffff810dd162>] vcpu_run
+arch/x86/kvm/x86.c:7061 [inline]
+  #1:  (&kvm->srcu){....}, at: [<ffffffff810dd162>]
+kvm_arch_vcpu_ioctl_run+0x1bc2/0x58b0 arch/x86/kvm/x86.c:7222
+CPU: 1 PID: 2909 Comm: syzkaller879109 Not tainted 4.13.0-rc4-next-20170811
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:16 [inline]
+  dump_stack+0x194/0x257 lib/dump_stack.c:52
+  ___might_sleep+0x2b2/0x470 kernel/sched/core.c:6014
+  __might_sleep+0x95/0x190 kernel/sched/core.c:5967
+  __might_fault+0xab/0x1d0 mm/memory.c:4383
+  __copy_from_user include/linux/uaccess.h:71 [inline]
+  __kvm_read_guest_page+0x58/0xa0
+arch/x86/kvm/../../../virt/kvm/kvm_main.c:1771
+  kvm_vcpu_read_guest_page+0x44/0x60
+arch/x86/kvm/../../../virt/kvm/kvm_main.c:1791
+  kvm_read_guest_virt_helper+0x76/0x140 arch/x86/kvm/x86.c:4407
+  kvm_read_guest_virt_system+0x3c/0x50 arch/x86/kvm/x86.c:4466
+  segmented_read_std+0x10c/0x180 arch/x86/kvm/emulate.c:819
+  em_fxrstor+0x27b/0x410 arch/x86/kvm/emulate.c:4022
+  x86_emulate_insn+0x55d/0x3c50 arch/x86/kvm/emulate.c:5471
+  x86_emulate_instruction+0x411/0x1ca0 arch/x86/kvm/x86.c:5698
+  kvm_mmu_page_fault+0x18b/0x2c0 arch/x86/kvm/mmu.c:4854
+  handle_ept_violation+0x1fc/0x5e0 arch/x86/kvm/vmx.c:6400
+  vmx_handle_exit+0x281/0x1ab0 arch/x86/kvm/vmx.c:8718
+  vcpu_enter_guest arch/x86/kvm/x86.c:6999 [inline]
+  vcpu_run arch/x86/kvm/x86.c:7061 [inline]
+  kvm_arch_vcpu_ioctl_run+0x1cee/0x58b0 arch/x86/kvm/x86.c:7222
+  kvm_vcpu_ioctl+0x64c/0x1010 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2591
+  vfs_ioctl fs/ioctl.c:45 [inline]
+  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:685
+  SYSC_ioctl fs/ioctl.c:700 [inline]
+  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:691
+  entry_SYSCALL_64_fastpath+0x1f/0xbe
+RIP: 0033:0x437fc9
+RSP: 002b:00007ffc7b4d5ab8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002b0 RCX: 0000000000437fc9
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
+RBP: 0000000000000086 R08: 0000000000000000 R09: 0000000020ae8000
+R10: 0000000000009120 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000004 R14: 0000000000000004 R15: 0000000020077000
 
-This commit introduces a slight performance hit similar to
-commit db2bdcbbbd32 ("KVM: x86: fix edge EOI and IOAPIC reconfig race")
-for the rare case that the vector is reused by a non-IOAPIC source on
-VCPU0. We prefer to keep solution simple and not handle this case just
-as the original commit does.
-
-Fixes: db2bdcbbbd32 ("KVM: x86: fix edge EOI and IOAPIC reconfig race")
-
-Signed-off-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Fixes: 9d643f63128b ("KVM: x86: avoid large stack allocations in em_fxrstor")
+Signed-off-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/ioapic.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/kvm/emulate.c |   32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
 
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -257,8 +257,7 @@ void kvm_ioapic_scan_entry(struct kvm_vc
- 		    index == RTC_GSI) {
- 			if (kvm_apic_match_dest(vcpu, NULL, 0,
- 			             e->fields.dest_id, e->fields.dest_mode) ||
--			    (e->fields.trig_mode == IOAPIC_EDGE_TRIG &&
--			     kvm_apic_pending_eoi(vcpu, e->fields.vector)))
-+			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
- 				__set_bit(e->fields.vector,
- 					  ioapic_handled_vectors);
- 		}
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -4023,6 +4023,26 @@ static int em_fxsave(struct x86_emulate_
+ 		                   fxstate_size(ctxt));
+ }
+ 
++/*
++ * FXRSTOR might restore XMM registers not provided by the guest. Fill
++ * in the host registers (via FXSAVE) instead, so they won't be modified.
++ * (preemption has to stay disabled until FXRSTOR).
++ *
++ * Use noinline to keep the stack for other functions called by callers small.
++ */
++static noinline int fxregs_fixup(struct fxregs_state *fx_state,
++				 const size_t used_size)
++{
++	struct fxregs_state fx_tmp;
++	int rc;
++
++	rc = asm_safe("fxsave %[fx]", , [fx] "+m"(fx_tmp));
++	memcpy((void *)fx_state + used_size, (void *)&fx_tmp + used_size,
++	       __fxstate_size(16) - used_size);
++
++	return rc;
++}
++
+ static int em_fxrstor(struct x86_emulate_ctxt *ctxt)
+ {
+ 	struct fxregs_state fx_state;
+@@ -4033,19 +4053,19 @@ static int em_fxrstor(struct x86_emulate
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
++	size = fxstate_size(ctxt);
++	rc = segmented_read_std(ctxt, ctxt->memop.addr.mem, &fx_state, size);
++	if (rc != X86EMUL_CONTINUE)
++		return rc;
++
+ 	ctxt->ops->get_fpu(ctxt);
+ 
+-	size = fxstate_size(ctxt);
+ 	if (size < __fxstate_size(16)) {
+-		rc = asm_safe("fxsave %[fx]", , [fx] "+m"(fx_state));
++		rc = fxregs_fixup(&fx_state, size);
+ 		if (rc != X86EMUL_CONTINUE)
+ 			goto out;
+ 	}
+ 
+-	rc = segmented_read_std(ctxt, ctxt->memop.addr.mem, &fx_state, size);
+-	if (rc != X86EMUL_CONTINUE)
+-		goto out;
+-
+ 	if (fx_state.mxcsr >> 16) {
+ 		rc = emulate_gp(ctxt, 0);
+ 		goto out;
