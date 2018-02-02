@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226r+6yDpvdz0HiaE2VrZ0duvbndfk5BhRCV4RQk5OSco2tXWhfnQEdsg+bpX5TfPz8XqFnx
+X-Google-Smtp-Source: AH8x225UUjFTAhntS7/rKhfDu+tZwsXxGZFNKUq16lP5uBaamP0Wrp/6IJuKPMnup0/al1yrO8Y+
 ARC-Seal: i=1; a=rsa-sha256; t=1517591654; cv=none;
         d=google.com; s=arc-20160816;
-        b=J+nSDEDJeoH4/BjDq5WJo3rTdS4qmCy4iuHaEx1EydhaJ9kHyFBUkD1iw6HkcKGY7X
-         LV3v4EMo9H0TjdldKRstnr3OvxFgP6gBKNQ9XsGMHyjx8UaHG1bfTfVScknR2kepgy0x
-         Rrosmt9hhhY1Sji/yslCeoxz2DaanPZmeX7oycvIICxoGsmwMFYFr3hGlvcIM36ve+kE
-         4gFfjY9/6Vg3/v+Cifg/KVvo1t1WxAV47s2GgtLHNmAFSB5UZzoH6PWTFt+31bF7ZjL1
-         J50FxcFHjtHKH7eMz0Ud7i3e3qXZY/+0Jd9e2JXKweGk6NsIK2w0bEa+0gVEBk+b7Jsf
-         77YQ==
+        b=a/1M8dKAxh/Le+8p3mCFYhzTduywzecedRusl3SfqwRK67kp1+e8PIpBe+XxVBPTih
+         ji4kAOewyL7rtUldTdXq8NE7Uv3KgFz0Xt8i/vuF/XdIu5blZTyHozWcHDNg/Z/hXaLF
+         kBaKoeu6bpYg1pe9ezF1krPseXqUHgO+ADJN3Yo13sEDVm+nlsG9NOu1l1cHnihKYUBM
+         UUIXaLagjT1F7NlZhpMKVIXhIW8YPTrVWeGwsWgIVsWY09BIEUQfWPZ4xlCxJWJO+If7
+         80hDsfp8cwpoDQkgYXLd3wZiIQWk58ks2mcmnMOfIKhkPGGmmDR047CDYYoZYAI56he1
+         Km4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5aDUcjqOiF19Nnk0KOHBA7xKIwuTLUs++laNBQzDvXU=;
-        b=rHeyn445Kvy8gIbH5uL5bwpmHxBnSP/TsIdDB4nQB7nR88F9fStc7/PsDG4w+G+dtv
-         aCCGSDouRlPul+F7+TDZuB2SxArEZ8zsAXbBGWVRVzbHvecesSGLbZc8AGNjtMh12v5h
-         t/gKI9Xrf45+4QutJJiVX4boEZZGJpiHEIFwqNHC2iWvmcQLwUGeOqE0ykSmmbzdc61C
-         QVATTmZuZl2pRKbtiQMBpIIVzzXtaen5lJfxyJjaquuvwWkPuILH+iw6BSTNqlu/Xk28
-         ot+9LMKI8jZoTUVo0V8hK0sM83hNz5JM00cczJSA9in9RJ/2R5XJiIF7MLwE9r+OqztP
-         /D9w==
+        bh=SQFKErIa/lBDoyAQ9uYPQAR6r+TlOWv9qdJMs6eAaio=;
+        b=YO4xsvc2JSbG+srlxDvo3Pay1BVdFNuiltC407FmY0YP1Iub3ooPkKj1Kz1h1Jfp9U
+         t6awbsmJYeAvA5+0l5FT4vFKeBE0mYBFaHTXQ42mc56g0Fo3I4IqIed3vhXMyjocUaVG
+         c/1xRk7PNphssfxW6mPK7w5tlY5FjTrfU9d+9YrcbPQSCUJYB+Uz8F9B2TpB5M8/HBa0
+         44RV36kvguPgaXYxn7F+Ad0ENtwJGi6a+E0789gVGE8ugrMkv3G39PgWrAVMAsTQURbi
+         UPczIDgurPHNZDaoTO4pNkmS8uItgg+Xx8XEuzPil5FLtVakOpL0/WBzWzqfcxJ6s+f+
+         Oupw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yoshiaki Okamoto <yokamoto@allied-telesis.co.jp>,
-	Hiroyuki Yamamoto <hyamamo@allied-telesis.co.jp>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 133/156] usb: option: Add support for FS040U modem
-Date: Fri,  2 Feb 2018 17:58:34 +0100
-Message-Id: <20180202140846.389149171@linuxfoundation.org>
+	Stefan Agner <stefan@agner.ch>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 150/156] spi: imx: do not access registers while clocks disabled
+Date: Fri,  2 Feb 2018 17:58:51 +0100
+Message-Id: <20180202140847.143336945@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309409648037799?=
-X-GMAIL-MSGID: =?utf-8?q?1591310186576160481?=
+X-GMAIL-THRID: =?utf-8?q?1591309464774805195?=
+X-GMAIL-MSGID: =?utf-8?q?1591310186179427673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,41 +48,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: OKAMOTO Yoshiaki <yokamoto@allied-telesis.co.jp>
+From: Stefan Agner <stefan@agner.ch>
 
-commit 69341bd15018da0a662847e210f9b2380c71e623 upstream.
+commit d593574aff0ab846136190b1729c151c736727ec upstream.
 
-FS040U modem is manufactured by omega, and sold by Fujisoft. This patch
-adds ID of the modem to use option1 driver. Interface 3 is used as
-qmi_wwan, so the interface is ignored.
+Since clocks are disabled except during message transfer clocks
+are also disabled when spi_imx_remove gets called. Accessing
+registers leads to a freeeze at least on a i.MX 6ULL. Enable
+clocks before disabling accessing the MXC_CSPICTRL register.
 
-Signed-off-by: Yoshiaki Okamoto <yokamoto@allied-telesis.co.jp>
-Signed-off-by: Hiroyuki Yamamoto <hyamamo@allied-telesis.co.jp>
-Acked-by: Johan Hovold <johan@kernel.org>
+Fixes: 9e556dcc55774 ("spi: spi-imx: only enable the clocks when we start to transfer a message")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/spi/spi-imx.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -383,6 +383,9 @@ static void option_instat_callback(struc
- #define FOUR_G_SYSTEMS_PRODUCT_W14		0x9603
- #define FOUR_G_SYSTEMS_PRODUCT_W100		0x9b01
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -1496,12 +1496,23 @@ static int spi_imx_remove(struct platfor
+ {
+ 	struct spi_master *master = platform_get_drvdata(pdev);
+ 	struct spi_imx_data *spi_imx = spi_master_get_devdata(master);
++	int ret;
  
-+/* Fujisoft products */
-+#define FUJISOFT_PRODUCT_FS040U			0x9b02
+ 	spi_bitbang_stop(&spi_imx->bitbang);
+ 
++	ret = clk_enable(spi_imx->clk_per);
++	if (ret)
++		return ret;
 +
- /* iBall 3.5G connect wireless modem */
- #define IBALL_3_5G_CONNECT			0x9605
++	ret = clk_enable(spi_imx->clk_ipg);
++	if (ret) {
++		clk_disable(spi_imx->clk_per);
++		return ret;
++	}
++
+ 	writel(0, spi_imx->base + MXC_CSPICTRL);
+-	clk_unprepare(spi_imx->clk_ipg);
+-	clk_unprepare(spi_imx->clk_per);
++	clk_disable_unprepare(spi_imx->clk_ipg);
++	clk_disable_unprepare(spi_imx->clk_per);
+ 	spi_imx_sdma_exit(spi_imx);
+ 	spi_master_put(master);
  
-@@ -1897,6 +1900,8 @@ static const struct usb_device_id option
- 	{ USB_DEVICE(LONGCHEER_VENDOR_ID, FOUR_G_SYSTEMS_PRODUCT_W100),
- 	  .driver_info = (kernel_ulong_t)&four_g_w100_blacklist
- 	},
-+	{USB_DEVICE(LONGCHEER_VENDOR_ID, FUJISOFT_PRODUCT_FS040U),
-+	 .driver_info = (kernel_ulong_t)&net_intf3_blacklist},
- 	{ USB_DEVICE_INTERFACE_CLASS(LONGCHEER_VENDOR_ID, SPEEDUP_PRODUCT_SU9800, 0xff) },
- 	{ USB_DEVICE_INTERFACE_CLASS(LONGCHEER_VENDOR_ID, 0x9801, 0xff),
- 	  .driver_info = (kernel_ulong_t)&net_intf3_blacklist },
