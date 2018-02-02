@@ -1,256 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751774AbeBBPhd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 10:37:33 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49835 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751470AbeBBPhZ (ORCPT
+        id S1751970AbeBBPiX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 10:38:23 -0500
+Received: from mail.micronovasrl.com ([212.103.203.10]:52184 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751472AbeBBPiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 10:37:25 -0500
-Date: Fri, 2 Feb 2018 16:37:20 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Lina Iyer <ilina@codeaurora.org>
-cc: jason@lakedaemon.net, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        sboyd@codeaurora.org, rnayak@codeaurora.org, asathyak@codeaurora.org
-Subject: Re: [PATCH RFC v2 1/3] drivers: irqchip: pdc: Add PDC interrupt
- controller for QCOM SoCs
-In-Reply-To: <20180202142200.6229-2-ilina@codeaurora.org>
-Message-ID: <alpine.DEB.2.21.1802021551150.1472@nanos.tec.linutronix.de>
-References: <20180202142200.6229-1-ilina@codeaurora.org> <20180202142200.6229-2-ilina@codeaurora.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 2 Feb 2018 10:38:15 -0500
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
+ frequency
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
+ <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
+ <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
+ <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
+ <20180202105304.gow2znzgxqmuxgol@flea.lan>
+ <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
+ <20180202133516.uoy7ppuozd6cnldm@flea.lan>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <aa43a02a-3ea9-2f61-eaf6-ddc7980f78a5@micronovasrl.com>
+Date: Fri, 2 Feb 2018 16:38:13 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180202133516.uoy7ppuozd6cnldm@flea.lan>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Feb 2018, Lina Iyer wrote:
-> +static inline void pdc_enable_intr(struct irq_data *d, bool on)
-> +{
-> +	int pin_out = d->hwirq;
-> +	u32 index, mask;
-> +	u32 enable;
-> +	unsigned long flags;
-> +
-> +	index = pin_out / 32;
-> +	mask = pin_out % 32;
-> +
-> +	spin_lock_irqsave(&pdc_lock, flags);
+Hi,
 
-Please make this a raw spinlock. Aside of that the _irqsave() is pointless
-as the chip callbacks are already called with interrupts disabled.
+Il 02/02/2018 14:35, Maxime Ripard ha scritto:
+> On Fri, Feb 02, 2018 at 11:57:20AM +0100, Giulio Benetti wrote:
+>> Il 02/02/2018 11:53, Maxime Ripard ha scritto:
+>>> Hi,
+>>>
+>>> On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
+>>>>>>> What kernel version did you use?
+>>>>>>
+>>>>>> Latest mainline.
+>>>>>
+>>>>> I guess this patch could fix it:
+>>>>> http://code.bulix.org/1kitrq-268936?raw
+>>>>
+>>>> This should prevent from modifying parent clock. But my problem was
+>>>> different.
+>>>>
+>>>> On A20, gpu_clk can have different PLL, not I've found out the way
+>>>> to choose right one with assigned-parent-clocks.
+>>>>
+>>>> I have patchset ready for adding A20 mali node, but I need some more
+>>>> time to complete with OPP, then I will submit entire patchset.
+>>>>
+>>>> Now it works correctly, using right pll(dedicated PLL8), setting
+>>>> right frequency.
+>>>
+>>> The point is that we really don't care about which PLL is actually
+>>> being used, as long as the rate is correct and we don't break anything
+>>> else. If the GPU rate is accessible through one of the other PLL, it
+>>> makes even more sense to not use the GPU PLL and keep it disabled,
+>>> since it will result in some power savings.
+>>
+>> Ah! I see the point now, very clever system for power saving.
+>> I'm going to check if it's resolutive,
+>> but it sounds good.
+>>
+>>>
+>>>> Btw, do I need to add a board using it, or can I add only Mali node
+>>>> to sun7i-a20.dtsi(plus other little patches)?
+>>>
+>>> You can add it to the DTSI without a board using it (and actually,
+>>> nothing should be in the board DTS, everything in the DT for the Mali
+>>> applies to all boards).
+>>
+>> Sure. So I would also add the patch you've addressed me:
+>> http://code.bulix.org/1kitrq-268936?raw
+>> as a commit. Can I submit it in patchset to complete the whole job?
+> 
+> I already sent that patch quite some time ago, I'll just apply it. You
+> can send the DT patch :)
 
-> +	enable = pdc_reg_read(IRQ_ENABLE_BANK, index);
-> +	enable = on ? ENABLE_INTR(enable, mask) : CLEAR_INTR(enable, mask);
+Thanks. Sorry for my ignorance, but where are you applying patches?
+Because I've tried to check sunxi-next and a lot of other Repo but I 
+can't find this and neither "Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: 
+Fix mali changing dclk frequency"
 
-You really should cache the enable register content to avoid the read back
-
-> +	pdc_reg_write(IRQ_ENABLE_BANK, index, enable);
-> +	spin_unlock_irqrestore(&pdc_lock, flags);
-> +}
-> +
-> +static void qcom_pdc_gic_mask(struct irq_data *d)
-> +{
-> +	pdc_enable_intr(d, false);
-> +	irq_chip_mask_parent(d);
-> +}
-> +
-> +static void qcom_pdc_gic_unmask(struct irq_data *d)
-> +{
-> +	pdc_enable_intr(d, true);
-> +	irq_chip_unmask_parent(d);
-> +}
-> +
-> +/*
-> + * GIC does not handle falling edge or active low. To allow falling edge and
-> + * active low interrupts to be handled at GIC, PDC has an inverter that inverts
-> + * falling edge into a rising edge and active low into an active high.
-> + * For the inverter to work, the polarity bit in the IRQ_CONFIG register has to
-> + * set as per the table below.
-> + * (polarity, falling edge, rising edge ) POLARITY
-> + * 3'b0 00  Level sensitive active low    LOW
-> + * 3'b0 01  Rising edge sensitive         NOT USED
-> + * 3'b0 10  Falling edge sensitive        LOW
-> + * 3'b0 11  Dual Edge sensitive           NOT USED
-> + * 3'b1 00  Level senstive active High    HIGH
-> + * 3'b1 01  Falling Edge sensitive        NOT USED
-> + * 3'b1 10  Rising edge sensitive         HIGH
-> + * 3'b1 11  Dual Edge sensitive           HIGH
-> + */
-> +enum pdc_irq_config_bits {
-> +	PDC_POLARITY_LOW	= 0, // 0 00
-
-What's wrong with
-
-       PDC_POLARITY_LOW		= 000b,
-       PDC_FALLING_EDGE		= 010b,
-
-instead of decimal and these weird comments ?
-
-> +static irq_hw_number_t get_irq_for_pin(int pin, struct pdc_pin_data *pdc_data)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; pdc_data[i].pin >= 0; i++)
-> +		if (pdc_data[i].pin == pin)
-> +			return pdc_data[i].hwirq;
-
-Please let the for() loop have braces. See:
-
-       https://marc.info/?l=linux-kernel&m=148467980905537&w=2
-
-> +
-> +	return pin;
-> +}
-> +
-> +static int qcom_pdc_translate(struct irq_domain *d,
-> +	struct irq_fwspec *fwspec, unsigned long *hwirq, unsigned int *type)
-
-Please align the arguments right of the opening brace:
-
-static int qcom_pdc_translate(struct irq_domain *d,
-			      struct irq_fwspec *fwspec, unsigned long *hwirq,
-			      unsigned int *type)
+> 
+> Maxime
+> 
 
 
-> +{
-> +	if (is_of_node(fwspec->fwnode)) {
-> +		if (fwspec->param_count < 3)
-> +			return -EINVAL;
-> +
-> +		*hwirq = fwspec->param[1];
-> +		*type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
-> +		return 0;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int qcom_pdc_alloc(struct irq_domain *domain,
-> +			unsigned int virq, unsigned int nr_irqs, void *data)
+-- 
+Giulio Benetti
+R&D Manager &
+Advanced Research
 
-Ditto
-
-> +static int pdc_setup_pin_mapping(struct device_node *np,
-> +				struct pdc_pin_data **data)
-> +{
-> +	int ret;
-> +	int n, i, j, k, pins = 0;
-> +	int *val;
-
-I have no idea what's the rationale behind these 3 lines of int declarations.
-
-> +	struct pdc_pin_data *map;
-> +
-> +	n = of_property_count_elems_of_size(np, "qcom,pdc-ranges", sizeof(u32));
-> +	if (!n || n % 3)
-> +		return -EINVAL;
-> +
-> +	val = kcalloc(n, sizeof(u32), GFP_KERNEL);
-> +	if (!val)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_u32_array(np, "qcom,pdc-ranges", val, n);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < n; i += 3)
-> +		pins += val[i + 2];
-> +
-> +	if (pins > PDC_MAX_IRQS)
-> +		return -EFAULT;
-> +
-> +	map = kcalloc(pins + 1, sizeof(*map), GFP_KERNEL);
-> +	if (!map) {
-> +		ret = -ENOMEM;
-> +		goto fail;
-> +	}
-> +
-> +	for (i = 0, k = 0; i < n; i += 3) {
-> +		for (j = 0; j < val[i + 2]; j++, k++) {
-> +			map[k].pin = val[i] + j;
-> +			map[k].hwirq = val[i + 1] + j;
-> +		}
-> +	}
-
-This all is really horrible to read. First of all the val[] array. That can
-be represented in a structure, right? Without looking at the DT patch the
-code lets me assume:
-
-   struct pdcrange {
-   	u32	pin;
-	u32	hwirq;
-	u32	numpins;
-	u32	unused;
-   };
-
-So the above becomes:
-
-	nelm = of_property_count_elems_of_size(np, "qcom,pdc-ranges", sizeof(u32));
-	if (!nelm || nelm % 3)
-		return -EINVAL;
-
-	nranges = nelm / 4;	
-	ranges = kcalloc(nranges, sizeof(*prng), GFP_KERNEL);
-	if (!ranges)
-		return -ENOMEM;
-
-which makes the pin counting readable:
-
-	for (i = 0; i < nranges; i++)
-		pins += ranges[i].numpins;
-
-And then allows to write the map initialization with:
-
-	*data = map;
-	for (i = 0; i < nranges; i++) {
-		for (j = 0; j < ranges[i].numpins; j++, map++) {
-			map->pin = ranges[i].pin + j;
-			map->hwirq = ranges[i].hwirq + j;
-		}
-	}
-	map->pin = -1;
-
-Hmm?
-
-> +int qcom_pdc_init(struct device_node *node, struct device_node *parent)
-> +{
-> +	struct irq_domain *parent_domain, *pdc_domain;
-> +	struct pdc_pin_data *pdc_data = NULL;
-> +	int ret;
-> +
-> +	pdc_base = of_iomap(node, 0);
-> +	if (!pdc_base) {
-> +		pr_err("%s(): unable to map PDC registers\n", node->full_name);
-> +		return -ENXIO;
-> +	}
-> +
-> +	parent_domain = irq_find_host(parent);
-> +	if (!parent_domain) {
-> +		pr_err("unable to obtain PDC parent domain\n");
-> +		ret = -ENXIO;
-> +		goto failure;
-> +	}
-> +
-> +	ret = pdc_setup_pin_mapping(node, &pdc_data);
-
-You can let pdc_setup_pin_mapping() return a pointer to pdc_data or NULL
-and check the pointer for ERR or NULL instead of having that ret
-indirection.
-
-> +	if (ret) {
-> +		pr_err("failed to setup PDC pin mapping\n");
-> +		goto failure;
-> +	}
-> +
-> +	pdc_domain = irq_domain_create_hierarchy(parent_domain, 0, PDC_MAX_IRQS,
-> +					of_fwnode_handle(node), &qcom_pdc_ops,
-> +					pdc_data);
-
-See comment about argument alignement above. Hint: shortening the *_domain
-variable names helps.
-
-Thanks,
-
-	tglx
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
