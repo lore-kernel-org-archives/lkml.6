@@ -1,79 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752685AbeBBWNT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 17:13:19 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:53042 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752215AbeBBWNN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 17:13:13 -0500
-Date: Fri, 2 Feb 2018 23:13:01 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/3] net: stmmac: dwmac-sun8i: drop V3s compatible and
- add V3 one
-Message-ID: <20180202221301.judzaafcu67h4c2v@flea.lan>
-References: <20180202180456.60378-1-icenowy@aosc.io>
- <20180202180456.60378-2-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w3j3l6kd2tz7c6az"
-Content-Disposition: inline
-In-Reply-To: <20180202180456.60378-2-icenowy@aosc.io>
-User-Agent: NeoMutt/20171215
+        id S1752720AbeBBWNr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 17:13:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51132 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752215AbeBBWNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 17:13:36 -0500
+From: Heinz Mauelshagen <heinzm@redhat.com>
+To: heinzm@redhat.com, dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, shli@kernel.org
+Subject: [PATCH] md: fix md_write_start() deadlock w/o metadata devices
+Date: Fri,  2 Feb 2018 23:13:19 +0100
+Message-Id: <054eff295e0cd2df2b11a3f9ba3b3d66e89beb47.1517609290.git.heinzm@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If no metadata devices are configured on raid1/4/5/6/10
+(e.g. via dm-raid), md_write_start() unconditionally waits
+for superblocks to be written thus deadlocking.
 
---w3j3l6kd2tz7c6az
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix introduces mddev->has_superblocks bool, defines it in md_run()
+and checks for it in md_write_start() to conditionally avoid waiting.
 
-On Sat, Feb 03, 2018 at 02:04:54AM +0800, Icenowy Zheng wrote:
-> The V3s is just a differently packaged version of the V3 chip, which has
-> a MAC with the same capability with H3. The V3s just doesn't wire out
-> the external MII/RMII/RGMII bus. (V3 wired out it).
->=20
-> Drop the compatible string of V3s in the dwmac-sun8i driver, and add a
-> V3 compatible string, which has all capabilities.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Once on it, check for non-existing superblocks in md_super_write().
 
-This breaks the DT ABI, so NAK.
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=198647
+Fixes: cc27b0c78c796 ("md: fix deadlock between mddev_suspend() and md_write_start()")
 
-Maxime
+Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+---
+ drivers/md/md.c | 10 ++++++++++
+ drivers/md/md.h |  2 ++
+ 2 files changed, 12 insertions(+)
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
-
---w3j3l6kd2tz7c6az
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp04mwACgkQ0rTAlCFN
-r3R0fQ//ffoKAqEP0sFMB9nFlN99JfDugPC/YpywXyDNrTMvb5TV1Ir1d0YMLAWC
-jaT+EgL/eGA3Eo5488f2tD7Dl7hlOCJEliXJp3tyP5DGGDUN8tzEaej5j+R6GpMU
-+b4nIZyZj/lw7fmTHCiynhG4MdyR0yT8QILUbhD4ts/+UeIy1OoEpJVjGAp4gFAP
-lY29KR1D8j+uK2CLPoSYnnqv+1Fr15NDE2gbxMPDvle5DgglCSphUXN+A23Dzk38
-EnrELnrHJj8V+E9QBX/kfCoIGWHQpknphDoMR1J5/1r1J7bo87S/PRvoH0MU7eqm
-aFu6Jc+Whe3MG02ItTg9py+L9WT8hW5Yq98xXqQmc2T1R0nBfIAROY54LLhXs1VX
-mRAgsn3k+5s4/hNPRdMEmxBlDOO/ecsYHMqRLVos7Bg6KUjjnJp7h4Ja3mta0fGa
-R4w0fBCfTEcVTHhR0LfXmGOYY0XIzH8cwJpGGB4hw5xM/nDEULJtt3u8Qf5rMqnx
-KutdC6QQ9QMMGMeADPgT/7hGt7Keabk48Urc4Ye6QXiq825QirfFfcNklY5UEgs8
-OZ69tG3JGK/xcphgJryF499Qy6WABb/XWvCEIyiW5UapI/hvhtMLBKs38+SeZgDP
-HZV8m+cvScrnRiD7sTHqzPRWPKxiHMnJWL4x4OlXIbP0+JFX5L4=
-=rMO6
------END PGP SIGNATURE-----
-
---w3j3l6kd2tz7c6az--
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 0081ace39a64..8a7e7034962c 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -801,6 +801,9 @@ void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
+ 	struct bio *bio;
+ 	int ff = 0;
+ 
++	if (!page)
++		return;
++
+ 	if (test_bit(Faulty, &rdev->flags))
+ 		return;
+ 
+@@ -5452,6 +5455,7 @@ int md_run(struct mddev *mddev)
+ 	 * the only valid external interface is through the md
+ 	 * device.
+ 	 */
++	mddev->has_superblocks = false;
+ 	rdev_for_each(rdev, mddev) {
+ 		if (test_bit(Faulty, &rdev->flags))
+ 			continue;
+@@ -5465,6 +5469,9 @@ int md_run(struct mddev *mddev)
+ 				set_disk_ro(mddev->gendisk, 1);
+ 		}
+ 
++		if (rdev->sb_page)
++			mddev->has_superblocks = true;
++
+ 		/* perform some consistency tests on the device.
+ 		 * We don't want the data to overlap the metadata,
+ 		 * Internal Bitmap issues have been handled elsewhere.
+@@ -8049,6 +8056,7 @@ EXPORT_SYMBOL(md_done_sync);
+ bool md_write_start(struct mddev *mddev, struct bio *bi)
+ {
+ 	int did_change = 0;
++
+ 	if (bio_data_dir(bi) != WRITE)
+ 		return true;
+ 
+@@ -8081,6 +8089,8 @@ bool md_write_start(struct mddev *mddev, struct bio *bi)
+ 	rcu_read_unlock();
+ 	if (did_change)
+ 		sysfs_notify_dirent_safe(mddev->sysfs_state);
++	if (!mddev->has_superblocks)
++		return true;
+ 	wait_event(mddev->sb_wait,
+ 		   !test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags) ||
+ 		   mddev->suspended);
+diff --git a/drivers/md/md.h b/drivers/md/md.h
+index 58cd20a5e85e..fbc925cce810 100644
+--- a/drivers/md/md.h
++++ b/drivers/md/md.h
+@@ -468,6 +468,8 @@ struct mddev {
+ 	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
+ 	struct md_cluster_info		*cluster_info;
+ 	unsigned int			good_device_nr;	/* good device num within cluster raid */
++
++	bool	has_superblocks:1;
+ };
+ 
+ enum recovery_flags {
+-- 
+2.14.3
