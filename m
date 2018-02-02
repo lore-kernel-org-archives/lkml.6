@@ -1,71 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeBBHAw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 02:00:52 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:46328 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbeBBHAr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751730AbeBBHBG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 02:01:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34292 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751544AbeBBHAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 2 Feb 2018 02:00:47 -0500
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] blk-mq: make blk_mq_rq_update_aborted_gstate a external interface
-Date: Fri,  2 Feb 2018 14:54:49 +0800
-Message-Id: <1517554492-7680-4-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517554492-7680-1-git-send-email-jianchao.w.wang@oracle.com>
-References: <1517554492-7680-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=774
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802020079
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE73D21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Fri, 2 Feb 2018 15:00:34 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: imx53: use PMIC's TSI pins in adc mode
+Message-ID: <20180202070033.GB25699@dragon>
+References: <20180115142820.31729-1-sebastian.reichel@collabora.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180115142820.31729-1-sebastian.reichel@collabora.co.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No functional change, just make blk_mq_rq_update_aborted_gstate a
-external interface.
+On Mon, Jan 15, 2018 at 03:28:20PM +0100, Sebastian Reichel wrote:
+> PPD uses the PMIC's TSI pins in general purpose ADC mode.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- block/blk-mq.c         | 3 ++-
- include/linux/blk-mq.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+s/imx53/imx53-ppd
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 01f271d..a027ca2 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -581,7 +581,7 @@ static void hctx_lock(struct blk_mq_hw_ctx *hctx, int *srcu_idx)
- 		*srcu_idx = srcu_read_lock(hctx->srcu);
- }
- 
--static void blk_mq_rq_update_aborted_gstate(struct request *rq, u64 gstate)
-+void blk_mq_rq_update_aborted_gstate(struct request *rq, u64 gstate)
- {
- 	unsigned long flags;
- 
-@@ -597,6 +597,7 @@ static void blk_mq_rq_update_aborted_gstate(struct request *rq, u64 gstate)
- 	u64_stats_update_end(&rq->aborted_gstate_sync);
- 	local_irq_restore(flags);
- }
-+EXPORT_SYMBOL(blk_mq_rq_update_aborted_gstate);
- 
- static u64 blk_mq_rq_aborted_gstate(struct request *rq)
- {
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 8efcf49..ad54024 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -257,6 +257,7 @@ void blk_mq_add_to_requeue_list(struct request *rq, bool at_head,
- void blk_mq_kick_requeue_list(struct request_queue *q);
- void blk_mq_delay_kick_requeue_list(struct request_queue *q, unsigned long msecs);
- void blk_mq_complete_request(struct request *rq);
-+void blk_mq_rq_update_aborted_gstate(struct request *rq, u64 gstate);
- 
- bool blk_mq_queue_stopped(struct request_queue *q);
- void blk_mq_stop_hw_queue(struct blk_mq_hw_ctx *hctx);
--- 
-2.7.4
+> ---
+>  arch/arm/boot/dts/imx53-ppd.dts | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx53-ppd.dts b/arch/arm/boot/dts/imx53-ppd.dts
+> index 123297da43a7..80224fa995f9 100644
+> --- a/arch/arm/boot/dts/imx53-ppd.dts
+> +++ b/arch/arm/boot/dts/imx53-ppd.dts
+> @@ -132,6 +132,14 @@
+>  		enable-active-high;
+>  	};
+>  
+> +	reg_tsiref: tsiref {
+
+A better node name should be regulator-tsiref.
+
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "tsiref";
+> +		regulator-min-microvolt = <2500000>;
+> +		regulator-max-microvolt = <2500000>;
+> +		regulator-always-on;
+> +	};
+> +
+>  	pwm_bl: backlight {
+>  		compatible = "pwm-backlight";
+>  		pwms = <&pwm2 0 50000>;
+> @@ -295,6 +303,9 @@
+>  		interrupts = <12 0x8>;
+>  		spi-max-frequency = <1000000>;
+>  
+
+This new line can be dropped now.
+
+I fixed up all these, and applied the patch.
+
+Shawn 
+
+> +		dlg,tsi-as-adc;
+> +		tsiref-supply = <&reg_tsiref>;
+> +
+>  		regulators {
+>  			buck1_reg: buck1 {
+>  				regulator-name = "BUCKCORE";
+> -- 
+> 2.15.1
+> 
