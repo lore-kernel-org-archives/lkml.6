@@ -1,50 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751706AbeBBMJ0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 07:09:26 -0500
-Received: from mga18.intel.com ([134.134.136.126]:44015 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751416AbeBBMJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 07:09:20 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,448,1511856000";
-   d="scan'208";a="15370706"
-Date: Fri, 2 Feb 2018 14:09:16 +0200
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Alexandre Courbot <acourbot@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFCv2 00/17] Request API, take three
-Message-ID: <20180202120916.blkgr2hafau4h4l6@paasikivi.fi.intel.com>
-References: <20180131102427.207721-1-acourbot@chromium.org>
+        id S1751795AbeBBMKl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 07:10:41 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37261 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751646AbeBBMKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 07:10:35 -0500
+Subject: Re: Is the hisilicon tree maintained ?
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <68abfa22-86fa-67db-b583-661c9f5672ce@linaro.org>
+ <5A744EBA.7030104@hisilicon.com>
+ <e7a0977d-5fee-b874-d6b7-21638bb9b885@linaro.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5A745526.6040006@hisilicon.com>
+Date: Fri, 2 Feb 2018 12:10:14 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180131102427.207721-1-acourbot@chromium.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <e7a0977d-5fee-b874-d6b7-21638bb9b885@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.123]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+Hi Daniel,
 
-On Wed, Jan 31, 2018 at 07:24:18PM +0900, Alexandre Courbot wrote:
-> This is a quickly-put together revision that includes and uses Hans' work to
-> use v4l2_ctrl_handler as the request state holder for V4L2 devices. Although
-> minor fixes have also been applied, there are still a few comments from the
-> previous revision that are left unaddressed. I wanted to give Hans something
-> to play with before he forgets what he had in mind for controls. ;)
+On 2018/2/2 12:05, Daniel Lezcano wrote:
+> On 02/02/2018 12:42, Wei Xu wrote:
+>> Hi Daniel,
+>>
+>> On 2018/2/2 6:59, Daniel Lezcano wrote:
+>>>
+>>> Hi Wei Xu,
+>>>
+>>> I found in the MAINTAINERS file the hisilicon tree is at:
+>>>
+>>> https://github.com/hisilicon/linux-hisi
+>>>
+>>> But, (except I missed it) I didn't find any update since Nov, 2017.
+>>>
+>>> Is that tree maintained ?
+>>
+>> Yes. It is still maintained.
+>> You can find update from other branches or the tags like next/dt64.
+>> I will update the master when every rc1 is released.
+> 
+> Is there a development branch for something else than the DT ?
 
-Could you rebase this on the current media master, please?
+Sorry, no developing branch is there.
+But we will create one if needed like the topic-acpi-mbigen branch.
+And most of development branches are kept in another git repo.
 
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Best Regards,
+Wei
+
+> 
+> 
+> 
+> 
