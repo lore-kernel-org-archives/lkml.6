@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2270qQQJBCK1k1zf5nrg5KPHVmN3OqtCaqmjOIdJygvFaMU9fM9x5x8fSI3+PL4OZ7xkvmlx
-ARC-Seal: i=1; a=rsa-sha256; t=1517591397; cv=none;
+X-Google-Smtp-Source: AH8x225RCcsb4YSy6gP8aVZ8Y57AqnjDUSx4HOHIp6pxpkWalbrMsWBdmtWVDloGjFrcZ16Cb9kH
+ARC-Seal: i=1; a=rsa-sha256; t=1517591394; cv=none;
         d=google.com; s=arc-20160816;
-        b=PewpZerovvwrLnjg/yRkRfEKaxAChfOfL8daR1kD3K6Q1mf7MbqN3GghLN0f8+4P4Y
-         aIS4zJqiRRtKZxS3hzl5JKVhDIS3ynh+qbDBnRGG6dsap06r/6IiWm/DJ7w3lxTzg6+K
-         DSq/GIDf1+SMa/zthgosPOgrtHqQdrV0mhBayYsU/Y9iTgnf+ytBecj+d3CKiFiKOutr
-         UHcvMCwg6CEgaM6rYRpm9rczJ7NRPQsWI6ouZFvextn1e7xOeWn57rOgGZGvKfweW0Ag
-         /VGRPSwKY87nVgbtmoGgUfKO+WdfxQu82oNZIyo81fX/tw41n83ltVN0stIGMkg6OB2W
-         pPZg==
+        b=pwR4F0iOW/kbSpfZgU7E6zjpEzEeIQLSkm1nHn6OHEf9RRcR0sYVzCMx89sATbYbgl
+         0xDxqTZfwuFx1f5O0P6dYLWIOW5cW4fAWIAGnPItXzURuqv34kj+nCCCgzTijVfS4GjQ
+         MnvdhheTq7VBzYh8wgNdH8w9Oek8xfapUY62oT1Scq+Ymk4gqeVpf0AdQfj2j8lGV8SJ
+         DoeYuhRQF/HA2cu6hvkry7cSPtJGaFSaa1gT0ZxVfghEGuj5nSs06Dpd1MsxHapIClwe
+         UWzbgItqcwepHxX2NeMcQ6B8Kc2g8eIb5OCCgu/5GAEFEiR/4e+IZr0wBpq6lY7nQA5M
+         5ifg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=X/EWyOMbDNpDN3pOiJXyH4jtHaQS2Vd8PKeBcNQVOp8=;
-        b=tIdFy3nhF6b08L5KD8Of4cmDvdqsaDtjLoz7cAtD6MWxxOOc2Fd0y6/agET2529caI
-         Jm5htpWpUlGmoqS4SeEZXr33B14NQaCpgJnGMcZK0atbAMoqsogpfbRqm/BNzwwcEFfv
-         8TPNPR5E1n2LJD651K2MG11c1FSsw6JwG831ZKDROfi/aTsYeG3fv3QhT+Sy6BkO/GG4
-         42lsWlZR3Dv/dqKqnRYgyri49f15FxX4W3SovS37hMIyUyUAWHFhHUo8H5zCmfWEMaAy
-         4tT/XHxb82YwQllVmmnssjnejhp/wJ9DzU66NxUS1EN3p2aR80ZFKQc8fhzXoXfUIVP6
-         E6sg==
+        bh=DQ+WOz20vyfgn2TSDdE9lByTJzXNn94qW0H1OOXMfuU=;
+        b=UVe8snMvBtmEgQipvCFwNwHkfqxhCH0EHeAaWnXf0jjhkGX/QPZTFK87PhgXiB5GUH
+         exE6V3lPGp9FSr+3BN0DUFfBh1Eqa9Lfgt3t8rBQGzjQjPK+FZLs4CMUDkEjWmdTwMm4
+         43voKZGJp0zls/93TV/Utci/O5OQ0T5dvdHuXi5e0B9vd6juFT0rjTc3GMZbJilDhHYj
+         D57cWhlcp4a+Flu82m88tlmdE7Fms0wQVssNDDkLpigRNAYAnMmSsPdx5fW9XcIhHo52
+         9wIpZ42qOamjv22tctyxcd1SyLzYaR3uvNJJVhBU8o/pV6Zu8y/zj6rbTQIFEBU6kpp/
+         g7Ag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Felix Kuehling <Felix.Kuehling@amd.com>,
 	Oded Gabbay <oded.gabbay@gmail.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 064/156] drm/amdkfd: Fix SDMA oversubsription handling
-Date: Fri,  2 Feb 2018 17:57:25 +0100
-Message-Id: <20180202140843.187197082@linuxfoundation.org>
+Subject: [PATCH 4.14 063/156] drm/amdkfd: Fix SDMA ring buffer size calculation
+Date: Fri,  2 Feb 2018 17:57:24 +0100
+Message-Id: <20180202140843.143873811@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309437743981845?=
-X-GMAIL-MSGID: =?utf-8?q?1591309917397531561?=
+X-GMAIL-THRID: =?utf-8?q?1591309434338895990?=
+X-GMAIL-MSGID: =?utf-8?q?1591309914543319796?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,13 +50,13 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felix Kuehling <Felix.Kuehling@amd.com>
+From: shaoyunl <Shaoyun.Liu@amd.com>
 
 
-[ Upstream commit 8c946b8988acec785bcf67088b6bd0747f36d2d3 ]
+[ Upstream commit d12fb13f23199faa7e536acec1db49068e5a067d ]
 
-SDMA only supports a fixed number of queues. HWS cannot handle
-oversubscription.
+ffs function return the position of the first bit set on 1 based.
+(bit zero returns 1).
 
 Signed-off-by: shaoyun liu <shaoyun.liu@amd.com>
 Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
@@ -65,33 +65,19 @@ Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c |   18 +++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_cik.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-@@ -184,6 +184,24 @@ int pqm_create_queue(struct process_queu
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_cik.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_cik.c
+@@ -205,8 +205,8 @@ static int update_mqd_sdma(struct mqd_ma
+ 	struct cik_sdma_rlc_registers *m;
  
- 	switch (type) {
- 	case KFD_QUEUE_TYPE_SDMA:
-+		if (dev->dqm->queue_count >=
-+			CIK_SDMA_QUEUES_PER_ENGINE * CIK_SDMA_ENGINE_NUM) {
-+			pr_err("Over-subscription is not allowed for SDMA.\n");
-+			retval = -EPERM;
-+			goto err_create_queue;
-+		}
-+
-+		retval = create_cp_queue(pqm, dev, &q, properties, f, *qid);
-+		if (retval != 0)
-+			goto err_create_queue;
-+		pqn->q = q;
-+		pqn->kq = NULL;
-+		retval = dev->dqm->ops.create_queue(dev->dqm, q, &pdd->qpd,
-+						&q->properties.vmid);
-+		pr_debug("DQM returned %d for create_queue\n", retval);
-+		print_queue(q);
-+		break;
-+
- 	case KFD_QUEUE_TYPE_COMPUTE:
- 		/* check if there is over subscription */
- 		if ((sched_policy == KFD_SCHED_POLICY_HWS_NO_OVERSUBSCRIPTION) &&
+ 	m = get_sdma_mqd(mqd);
+-	m->sdma_rlc_rb_cntl = ffs(q->queue_size / sizeof(unsigned int)) <<
+-			SDMA0_RLC0_RB_CNTL__RB_SIZE__SHIFT |
++	m->sdma_rlc_rb_cntl = (ffs(q->queue_size / sizeof(unsigned int)) - 1)
++			<< SDMA0_RLC0_RB_CNTL__RB_SIZE__SHIFT |
+ 			q->vmid << SDMA0_RLC0_RB_CNTL__RB_VMID__SHIFT |
+ 			1 << SDMA0_RLC0_RB_CNTL__RPTR_WRITEBACK_ENABLE__SHIFT |
+ 			6 << SDMA0_RLC0_RB_CNTL__RPTR_WRITEBACK_TIMER__SHIFT;
