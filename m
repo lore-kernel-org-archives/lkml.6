@@ -1,436 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751774AbeBBA2g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 19:28:36 -0500
-Received: from mga06.intel.com ([134.134.136.31]:34308 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751601AbeBBA2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 19:28:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,444,1511856000";
-   d="scan'208";a="200551039"
-From: Haiyue Wang <haiyue.wang@linux.intel.com>
-To: minyard@acm.org, joel@jms.id.au, openbmc@lists.ozlabs.org,
-        openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Cc: Haiyue Wang <haiyue.wang@linux.intel.com>, andriy.shevchenko@intel.com
-Subject: [PATCH arm/aspeed/ast2500 v4 2/2] ipmi: add an Aspeed KCS IPMI BMC driver
-Date: Fri,  2 Feb 2018 08:28:43 +0800
-Message-Id: <1517531323-19427-2-git-send-email-haiyue.wang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517531323-19427-1-git-send-email-haiyue.wang@linux.intel.com>
-References: <1517531323-19427-1-git-send-email-haiyue.wang@linux.intel.com>
+        id S1751737AbeBBAbf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 19:31:35 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:38322 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751557AbeBBAb3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 19:31:29 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180202003127epoutp018a74c0b50cb55196e31f080d21653d0b~PWtj3FFfN1705617056epoutp01N
+X-AuditID: b6c32a45-3ebff70000001023-ba-5a73b15ec374
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Message-id: <5A73B15E.3050508@samsung.com>
+Date: Fri, 02 Feb 2018 09:31:26 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: Hans de Goede <hdegoede@redhat.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert
+ "extcon: axp288: Redo charger type detection a couple of seconds after probe()"
+In-reply-to: <fde91a16-c9bc-236a-976c-d9011e66e8d9@redhat.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7bCmuW7cxuIog18PLC3eHJ/OZHF51xw2
+        i9uNK9gsfh46z+TA4rHh0WpWj/f7rrJ59G1ZxejxeZNcAEtUqk1GamJKapFCal5yfkpmXrqt
+        kndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0EolhbLEnFKgUEBicbGSvp1NUX5pSapC
+        Rn5xia1StKGhkZ6hgbmekZGRnolxrJWRKVBJQmrGgxuTGAtWqFdMOtfD1MC4U66LkZNDQsBE
+        4snPTexdjFwcQgI7GCWObXvEBOF8Z5S4uv08I0zV0z0LmSESG4ASfXdZQRK8AoISPybfY+li
+        5OBgFpCXOHIpGyTMLKAp8eLLJBaI+nuMEi8bOqDqtSSefpsMZrMIqErMvPaUGcRmA4rvf3GD
+        DcTmF1CUuPrjMdhiUYEIiZ3zv7GD2CICBRKNP7axQSxQkPh1bxPYHGGBXInfe74ygdzAKWAn
+        MfOiL8heCYE1bBJnO1+zQTzgInFv0xUoW1ji1fEt7BC2tMSzVRsZIRraGSXa985jhnCmMEqc
+        u36PCaLKWOLZwi4miM18Eh2H/7KDbJMQ4JXoaBOCKPGQeHK7hRXCdpS4MHkj2ANCAvcZJR5N
+        spnAKDcLKbxmIcJrFlJ4LWBkXsUollpQnJueWmxUYKhXnJhbXJqXrpecn7uJEZzItFx3MM44
+        53OIUYCDUYmHl0O6OEqINbGsuDL3EKMEB7OSCO+VbqAQb0piZVVqUX58UWlOavEhRlNgcE9k
+        lhJNzgcm2bySeEMTSwMTMzMjczMLYAIT520LcIkSEkhPLEnNTk0tSC2C6WPi4JRqYJzu+Dl/
+        /oXP385fXvd+d8MUo2SD23bZNU151ifnzDG805nEd+7XiqZ4rWPaYlcLy2ekLH39Ua898Zn0
+        gvYEZoa9jncFfoU/nXy2uUB62pz7t+6caVzwjdv7uYn75YDKhTm8zNZesTuY9wu311/Ltin6
+        cuIQt/hCE8mQo7Uez15pXBHd/OpZ+l4lluKMREMt5qLiRAANStPMegMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t9jQd24jcVRBhNOqVu8OT6dyeLyrjls
+        FrcbV7BZ/Dx0nsmBxWPDo9WsHu/3XWXz6NuyitHj8ya5AJYoLpuU1JzMstQifbsErowHNyYx
+        FqxQr5h0roepgXGnXBcjJ4eEgInE0z0LmbsYuTiEBNYxSuydsJoFJMErICjxY/I9IJuDg1lA
+        XuLIpWwIU11iypRciPIHjBJ3N31mhSjXknj6bTKYzSKgKjHz2lNmEJsNKL7/xQ02EJtfQFHi
+        6o/HjCBzRAUiJLpPVIKYIgIFEn3fKkEqmAUUJH7d2wQ2RVggV+L3nq9MILaQwENGib/H2EHK
+        OQXsJGZe9J3AKDALyZmzEM6chXDmAkbmVYySqQXFuem5xUYFRnmp5XrFibnFpXnpesn5uZsY
+        gYG77bBW/w7Gx0viDzEKcDAq8fBySBdHCbEmlhVX5h5ilOBgVhLh/boBKMSbklhZlVqUH19U
+        mpNafIhRmoNFSZyXP/9YpJBAemJJanZqakFqEUyWiYNTqoHx5NkL/R8aJ9XovrWaemWmwbQJ
+        a3omBM1lDhbOnMa44b7xTo6NbZM6+YTSf9cHe3FtnsuSb/38/P4TfazLdYI1GAtmLflydWPY
+        K6Pd/S185yVLPzX2pSzWervh0KQP9ae/GDK1+y/0ntewJswrua5dw/DDzQWrZjg7Vj0/OuGu
+        wS33ikk7jHYGK7EUZyQaajEXFScCAF9zjuNYAgAA
+X-CMS-MailID: 20180202003126epcas2p4f2374c29b99b4af7e2a34087ebf268f3
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180125171023epcas4p2d0c38963b1155fd6bba3cdad3620fb46
+X-RootMTR: 20180125171023epcas4p2d0c38963b1155fd6bba3cdad3620fb46
+References: <CGME20180125171023epcas4p2d0c38963b1155fd6bba3cdad3620fb46@epcas4p2.samsung.com>
+        <20180125171010.11169-1-hdegoede@redhat.com> <5A7384FC.8030400@samsung.com>
+        <fde91a16-c9bc-236a-976c-d9011e66e8d9@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The KCS (Keyboard Controller Style) interface is used to perform in-band
-IPMI communication between a server host and its BMC (BaseBoard Management
-Controllers).
+Hi,
 
-This driver exposes the KCS interface on ASpeed SOCs (AST2400 and AST2500)
-as a character device. Such SOCs are commonly used as BMCs and this driver
-implements the BMC side of the KCS interface.
+On 2018년 02월 02일 08:48, Hans de Goede wrote:
+> Hi,
+> 
+> On 01-02-18 22:22, Chanwoo Choi wrote:
+>> Hi Hans,
+>>
+>> Why don't modify the extcon-axp288.c after revert it?
+> 
+> Fixing the axp288 extcon code properly requires usb-role-switch support
+> which is not yet in the mainline kernel, I will submit the fix for it
+> once usb-role-switch support is in the mainline.
+> 
+>> Instead, you sent the patch[1].
+> 
+> Yes this is a preparation patch for the pending extcon-axp288 fix.
 
-Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
----
- .../devicetree/bindings/ipmi/aspeed-kcs-bmc.txt    |  26 ++
- drivers/char/ipmi/Kconfig                          |  12 +
- drivers/char/ipmi/Makefile                         |   1 +
- drivers/char/ipmi/kcs_bmc_aspeed.c                 | 319 +++++++++++++++++++++
- 4 files changed, 358 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
- create mode 100644 drivers/char/ipmi/kcs_bmc_aspeed.c
+OK. Applied it.
 
-diff --git a/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt b/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
-new file mode 100644
-index 0000000..613c34c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
-@@ -0,0 +1,26 @@
-+* Aspeed KCS (Keyboard Controller Style) IPMI interface
-+
-+The Aspeed SOCs (AST2400 and AST2500) are commonly used as BMCs
-+(Baseboard Management Controllers) and the KCS interface can be
-+used to perform in-band IPMI communication with their host.
-+
-+Required properties:
-+- compatible : should be one of
-+    "aspeed,ast2400-kcs-bmc"
-+    "aspeed,ast2500-kcs-bmc"
-+- interrupts : interrupt generated by the controller
-+- kcs_chan : The LPC channel number in the controller
-+- kcs_addr : The host CPU IO map address
-+
-+
-+Example:
-+
-+    kcs3: kcs3@0 {
-+        compatible = "aspeed,ast2500-kcs-bmc";
-+        reg = <0x0 0x80>;
-+        interrupts = <8>;
-+        kcs_chan = <3>;
-+        kcs_addr = <0xCA2>;
-+        status = "okay";
-+    };
-+
-diff --git a/drivers/char/ipmi/Kconfig b/drivers/char/ipmi/Kconfig
-index aa9bcb1..770def0 100644
---- a/drivers/char/ipmi/Kconfig
-+++ b/drivers/char/ipmi/Kconfig
-@@ -104,6 +104,18 @@ config IPMI_KCS_BMC
- 	  Management Controllers) side for handling the IPMI request from
- 	  host system software.
- 
-+config ASPEED_KCS_IPMI_BMC
-+	depends on ARCH_ASPEED || COMPILE_TEST
-+	depends on IPMI_KCS_BMC
-+	select REGMAP_MMIO
-+	tristate "Aspeed KCS IPMI BMC driver"
-+	help
-+	  Provides a driver for the KCS (Keyboard Controller Style) IPMI
-+	  interface found on Aspeed SOCs (AST2400 and AST2500).
-+
-+	  The driver implements the BMC side of the KCS contorller, it
-+	  provides the access of KCS IO space for BMC side.
-+
- config ASPEED_BT_IPMI_BMC
- 	depends on ARCH_ASPEED || COMPILE_TEST
-        depends on REGMAP && REGMAP_MMIO && MFD_SYSCON
-diff --git a/drivers/char/ipmi/Makefile b/drivers/char/ipmi/Makefile
-index 2abccb3..21e9e87 100644
---- a/drivers/char/ipmi/Makefile
-+++ b/drivers/char/ipmi/Makefile
-@@ -23,3 +23,4 @@ obj-$(CONFIG_IPMI_WATCHDOG) += ipmi_watchdog.o
- obj-$(CONFIG_IPMI_POWEROFF) += ipmi_poweroff.o
- obj-$(CONFIG_IPMI_KCS_BMC) += kcs_bmc.o
- obj-$(CONFIG_ASPEED_BT_IPMI_BMC) += bt-bmc.o
-+obj-$(CONFIG_ASPEED_KCS_IPMI_BMC) += kcs_bmc_aspeed.o
-diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
-new file mode 100644
-index 0000000..0c4d1a3
---- /dev/null
-+++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
-@@ -0,0 +1,319 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2015-2018, Intel Corporation.
-+
-+#define pr_fmt(fmt) "aspeed-kcs-bmc: " fmt
-+
-+#include <linux/atomic.h>
-+#include <linux/errno.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/poll.h>
-+#include <linux/regmap.h>
-+#include <linux/sched.h>
-+#include <linux/slab.h>
-+#include <linux/timer.h>
-+
-+#include "kcs_bmc.h"
-+
-+
-+#define DEVICE_NAME     "ast-kcs-bmc"
-+
-+#define KCS_CHANNEL_MAX     4
-+
-+/* mapped to lpc-bmc@0 IO space */
-+#define LPC_HICR0            0x000
-+#define     LPC_HICR0_LPC3E          BIT(7)
-+#define     LPC_HICR0_LPC2E          BIT(6)
-+#define     LPC_HICR0_LPC1E          BIT(5)
-+#define LPC_HICR2            0x008
-+#define     LPC_HICR2_IBFIF3         BIT(3)
-+#define     LPC_HICR2_IBFIF2         BIT(2)
-+#define     LPC_HICR2_IBFIF1         BIT(1)
-+#define LPC_HICR4            0x010
-+#define     LPC_HICR4_LADR12AS       BIT(7)
-+#define     LPC_HICR4_KCSENBL        BIT(2)
-+#define LPC_LADR3H           0x014
-+#define LPC_LADR3L           0x018
-+#define LPC_LADR12H          0x01C
-+#define LPC_LADR12L          0x020
-+#define LPC_IDR1             0x024
-+#define LPC_IDR2             0x028
-+#define LPC_IDR3             0x02C
-+#define LPC_ODR1             0x030
-+#define LPC_ODR2             0x034
-+#define LPC_ODR3             0x038
-+#define LPC_STR1             0x03C
-+#define LPC_STR2             0x040
-+#define LPC_STR3             0x044
-+
-+/* mapped to lpc-host@80 IO space */
-+#define LPC_HICRB            0x080
-+#define     LPC_HICRB_IBFIF4         BIT(1)
-+#define     LPC_HICRB_LPC4E          BIT(0)
-+#define LPC_LADR4            0x090
-+#define LPC_IDR4             0x094
-+#define LPC_ODR4             0x098
-+#define LPC_STR4             0x09C
-+
-+struct aspeed_kcs_bmc {
-+	struct regmap *map;
-+};
-+
-+
-+static u8 aspeed_kcs_inb(struct kcs_bmc *kcs_bmc, u32 reg)
-+{
-+	struct aspeed_kcs_bmc *priv = kcs_bmc_priv(kcs_bmc);
-+	u32 val = 0;
-+	int rc;
-+
-+	rc = regmap_read(priv->map, reg, &val);
-+	WARN(rc != 0, "regmap_read() failed: %d\n", rc);
-+
-+	return rc == 0 ? (u8) val : 0;
-+}
-+
-+static void aspeed_kcs_outb(struct kcs_bmc *kcs_bmc, u32 reg, u8 data)
-+{
-+	struct aspeed_kcs_bmc *priv = kcs_bmc_priv(kcs_bmc);
-+	int rc;
-+
-+	rc = regmap_write(priv->map, reg, data);
-+	WARN(rc != 0, "regmap_write() failed: %d\n", rc);
-+}
-+
-+
-+/*
-+ * AST_usrGuide_KCS.pdf
-+ * 2. Background:
-+ *   we note D for Data, and C for Cmd/Status, default rules are
-+ *     A. KCS1 / KCS2 ( D / C:X / X+4 )
-+ *        D / C : CA0h / CA4h
-+ *        D / C : CA8h / CACh
-+ *     B. KCS3 ( D / C:XX2h / XX3h )
-+ *        D / C : CA2h / CA3h
-+ *        D / C : CB2h / CB3h
-+ *     C. KCS4
-+ *        D / C : CA4h / CA5h
-+ */
-+static void aspeed_kcs_set_address(struct kcs_bmc *kcs_bmc, u16 addr)
-+{
-+	struct aspeed_kcs_bmc *priv = kcs_bmc_priv(kcs_bmc);
-+
-+	switch (kcs_bmc->channel) {
-+	case 1:
-+		regmap_update_bits(priv->map, LPC_HICR4,
-+				LPC_HICR4_LADR12AS, 0);
-+		regmap_write(priv->map, LPC_LADR12H, addr >> 8);
-+		regmap_write(priv->map, LPC_LADR12L, addr & 0xFF);
-+		break;
-+
-+	case 2:
-+		regmap_update_bits(priv->map, LPC_HICR4,
-+				LPC_HICR4_LADR12AS, LPC_HICR4_LADR12AS);
-+		regmap_write(priv->map, LPC_LADR12H, addr >> 8);
-+		regmap_write(priv->map, LPC_LADR12L, addr & 0xFF);
-+		break;
-+
-+	case 3:
-+		regmap_write(priv->map, LPC_LADR3H, addr >> 8);
-+		regmap_write(priv->map, LPC_LADR3L, addr & 0xFF);
-+		break;
-+
-+	case 4:
-+		regmap_write(priv->map, LPC_LADR4, ((addr + 1) << 16) |
-+			addr);
-+		break;
-+
-+	default:
-+		break;
-+	}
-+}
-+
-+static void aspeed_kcs_enable_channel(struct kcs_bmc *kcs_bmc, bool enable)
-+{
-+	struct aspeed_kcs_bmc *priv = kcs_bmc_priv(kcs_bmc);
-+
-+	switch (kcs_bmc->channel) {
-+	case 1:
-+		if (enable) {
-+			regmap_update_bits(priv->map, LPC_HICR2,
-+					LPC_HICR2_IBFIF1, LPC_HICR2_IBFIF1);
-+			regmap_update_bits(priv->map, LPC_HICR0,
-+					LPC_HICR0_LPC1E, LPC_HICR0_LPC1E);
-+		} else {
-+			regmap_update_bits(priv->map, LPC_HICR0,
-+					LPC_HICR0_LPC1E, 0);
-+			regmap_update_bits(priv->map, LPC_HICR2,
-+					LPC_HICR2_IBFIF1, 0);
-+		}
-+		break;
-+
-+	case 2:
-+		if (enable) {
-+			regmap_update_bits(priv->map, LPC_HICR2,
-+					LPC_HICR2_IBFIF2, LPC_HICR2_IBFIF2);
-+			regmap_update_bits(priv->map, LPC_HICR0,
-+					LPC_HICR0_LPC2E, LPC_HICR0_LPC2E);
-+		} else {
-+			regmap_update_bits(priv->map, LPC_HICR0,
-+					LPC_HICR0_LPC2E, 0);
-+			regmap_update_bits(priv->map, LPC_HICR2,
-+					LPC_HICR2_IBFIF2, 0);
-+		}
-+		break;
-+
-+	case 3:
-+		if (enable) {
-+			regmap_update_bits(priv->map, LPC_HICR2,
-+					LPC_HICR2_IBFIF3, LPC_HICR2_IBFIF3);
-+			regmap_update_bits(priv->map, LPC_HICR0,
-+					LPC_HICR0_LPC3E, LPC_HICR0_LPC3E);
-+			regmap_update_bits(priv->map, LPC_HICR4,
-+					LPC_HICR4_KCSENBL, LPC_HICR4_KCSENBL);
-+		} else {
-+			regmap_update_bits(priv->map, LPC_HICR0,
-+					LPC_HICR0_LPC3E, 0);
-+			regmap_update_bits(priv->map, LPC_HICR4,
-+					LPC_HICR4_KCSENBL, 0);
-+			regmap_update_bits(priv->map, LPC_HICR2,
-+					LPC_HICR2_IBFIF3, 0);
-+		}
-+		break;
-+
-+	case 4:
-+		if (enable)
-+			regmap_update_bits(priv->map, LPC_HICRB,
-+					LPC_HICRB_IBFIF4 | LPC_HICRB_LPC4E,
-+					LPC_HICRB_IBFIF4 | LPC_HICRB_LPC4E);
-+		else
-+			regmap_update_bits(priv->map, LPC_HICRB,
-+					LPC_HICRB_IBFIF4 | LPC_HICRB_LPC4E,
-+					0);
-+		break;
-+
-+	default:
-+		break;
-+	}
-+}
-+
-+static irqreturn_t aspeed_kcs_irq(int irq, void *arg)
-+{
-+	struct kcs_bmc *kcs_bmc = arg;
-+
-+	if (!kcs_bmc_handle_event(kcs_bmc))
-+		return IRQ_HANDLED;
-+
-+	return IRQ_NONE;
-+}
-+
-+static int aspeed_kcs_config_irq(struct kcs_bmc *kcs_bmc,
-+			struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	int irq;
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	return devm_request_irq(dev, irq, aspeed_kcs_irq, IRQF_SHARED,
-+				dev_name(dev), kcs_bmc);
-+}
-+
-+static const struct kcs_ioreg ast_kcs_bmc_ioregs[KCS_CHANNEL_MAX] = {
-+	{ .idr = LPC_IDR1, .odr = LPC_ODR1, .str = LPC_STR1 },
-+	{ .idr = LPC_IDR2, .odr = LPC_ODR2, .str = LPC_STR2 },
-+	{ .idr = LPC_IDR3, .odr = LPC_ODR3, .str = LPC_STR3 },
-+	{ .idr = LPC_IDR4, .odr = LPC_ODR4, .str = LPC_STR4 },
-+};
-+
-+static int aspeed_kcs_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct aspeed_kcs_bmc *priv;
-+	struct kcs_bmc *kcs_bmc;
-+	u32 chan, addr;
-+	int rc;
-+
-+	rc = of_property_read_u32(dev->of_node, "kcs_chan", &chan);
-+	if ((rc != 0) || (chan == 0 || chan > KCS_CHANNEL_MAX)) {
-+		dev_err(dev, "no valid 'kcs_chan' configured\n");
-+		return -ENODEV;
-+	}
-+
-+	rc = of_property_read_u32(dev->of_node, "kcs_addr", &addr);
-+	if (rc) {
-+		dev_err(dev, "no valid 'kcs_addr' configured\n");
-+		return -ENODEV;
-+	}
-+
-+	kcs_bmc = kcs_bmc_alloc(dev, sizeof(*priv), chan);
-+	if (!kcs_bmc)
-+		return -ENOMEM;
-+
-+	priv = kcs_bmc_priv(kcs_bmc);
-+	priv->map = syscon_node_to_regmap(dev->parent->of_node);
-+	if (IS_ERR(priv->map)) {
-+		dev_err(dev, "Couldn't get regmap\n");
-+		return -ENODEV;
-+	}
-+
-+	kcs_bmc->ioreg = ast_kcs_bmc_ioregs[chan - 1];
-+	kcs_bmc->io_inputb = aspeed_kcs_inb;
-+	kcs_bmc->io_outputb = aspeed_kcs_outb;
-+
-+	dev_set_drvdata(dev, kcs_bmc);
-+
-+	aspeed_kcs_set_address(kcs_bmc, addr);
-+	aspeed_kcs_enable_channel(kcs_bmc, true);
-+	rc = aspeed_kcs_config_irq(kcs_bmc, pdev);
-+	if (rc)
-+		return rc;
-+
-+	rc = misc_register(&kcs_bmc->miscdev);
-+	if (rc) {
-+		dev_err(dev, "Unable to register device\n");
-+		return rc;
-+	}
-+
-+	pr_info("channel=%u addr=0x%x idr=0x%x odr=0x%x str=0x%x\n",
-+		chan, addr,
-+		kcs_bmc->ioreg.idr, kcs_bmc->ioreg.odr, kcs_bmc->ioreg.str);
-+
-+	return 0;
-+}
-+
-+static int aspeed_kcs_remove(struct platform_device *pdev)
-+{
-+	struct kcs_bmc *kcs_bmc = dev_get_drvdata(&pdev->dev);
-+
-+	misc_deregister(&kcs_bmc->miscdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ast_kcs_bmc_match[] = {
-+	{ .compatible = "aspeed,ast2400-kcs-bmc" },
-+	{ .compatible = "aspeed,ast2500-kcs-bmc" },
-+	{ }
-+};
-+
-+static struct platform_driver ast_kcs_bmc_driver = {
-+	.driver = {
-+		.name           = DEVICE_NAME,
-+		.of_match_table = ast_kcs_bmc_match,
-+	},
-+	.probe = aspeed_kcs_probe,
-+	.remove = aspeed_kcs_remove,
-+};
-+
-+module_platform_driver(ast_kcs_bmc_driver);
-+
-+MODULE_DEVICE_TABLE(of, ast_kcs_bmc_match);
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Haiyue Wang <haiyue.wang@linux.intel.com>");
-+MODULE_DESCRIPTION("Aspeed device interface to the KCS BMC device");
--- 
-2.7.4
+Thanks,
+Chanwoo Choi
+
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> 
+>  Are you going to send other patch for extcon-axp288.c?
+>> [1] [PATCH] extcon: int3496: process id-pin first so that we start with the right status
+>>
+>>
+>> On 2018년 01월 26일 02:10, Hans de Goede wrote:
+>>> Redoing the charger type detection to give the usb-role-switch code time
+>>> to properly set the role-switch is no good for mainline, since the
+>>> usb-role-switch code is not yet in mainline (my bad, sorry).
+>>>
+>>> Also once we've that code there are better ways to fix this which are
+>>> not prone to racing as doing a retry after 2 seconds is.
+>>>
+>>> This reverts commit 50082c17bb1455acacd376ae30dff92f2e1addbd.
+>>>
+>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>>> ---
+>>>   drivers/extcon/extcon-axp288.c | 32 ++------------------------------
+>>>   1 file changed, 2 insertions(+), 30 deletions(-)
+>>>
+>>> diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
+>>> index 9abc99e8c0a5..901eddd3994b 100644
+>>> --- a/drivers/extcon/extcon-axp288.c
+>>> +++ b/drivers/extcon/extcon-axp288.c
+>>> @@ -1,7 +1,6 @@
+>>>   /*
+>>>    * extcon-axp288.c - X-Power AXP288 PMIC extcon cable detection driver
+>>>    *
+>>> - * Copyright (C) 2016-2017 Hans de Goede <hdegoede@redhat.com>
+>>>    * Copyright (C) 2015 Intel Corporation
+>>>    * Author: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
+>>>    *
+>>> @@ -98,11 +97,9 @@ struct axp288_extcon_info {
+>>>       struct device *dev;
+>>>       struct regmap *regmap;
+>>>       struct regmap_irq_chip_data *regmap_irqc;
+>>> -    struct delayed_work det_work;
+>>>       int irq[EXTCON_IRQ_END];
+>>>       struct extcon_dev *edev;
+>>>       unsigned int previous_cable;
+>>> -    bool first_detect_done;
+>>>   };
+>>>     /* Power up/down reason string array */
+>>> @@ -140,25 +137,6 @@ static void axp288_extcon_log_rsi(struct axp288_extcon_info *info)
+>>>       regmap_write(info->regmap, AXP288_PS_BOOT_REASON_REG, clear_mask);
+>>>   }
+>>>   -static void axp288_chrg_detect_complete(struct axp288_extcon_info *info)
+>>> -{
+>>> -    /*
+>>> -     * We depend on other drivers to do things like mux the data lines,
+>>> -     * enable/disable vbus based on the id-pin, etc. Sometimes the BIOS has
+>>> -     * not set these things up correctly resulting in the initial charger
+>>> -     * cable type detection giving a wrong result and we end up not charging
+>>> -     * or charging at only 0.5A.
+>>> -     *
+>>> -     * So we schedule a second cable type detection after 2 seconds to
+>>> -     * give the other drivers time to load and do their thing.
+>>> -     */
+>>> -    if (!info->first_detect_done) {
+>>> -        queue_delayed_work(system_wq, &info->det_work,
+>>> -                   msecs_to_jiffies(2000));
+>>> -        info->first_detect_done = true;
+>>> -    }
+>>> -}
+>>> -
+>>>   static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+>>>   {
+>>>       int ret, stat, cfg, pwr_stat;
+>>> @@ -223,8 +201,6 @@ static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+>>>           info->previous_cable = cable;
+>>>       }
+>>>   -    axp288_chrg_detect_complete(info);
+>>> -
+>>>       return 0;
+>>>     dev_det_ret:
+>>> @@ -246,11 +222,8 @@ static irqreturn_t axp288_extcon_isr(int irq, void *data)
+>>>       return IRQ_HANDLED;
+>>>   }
+>>>   -static void axp288_extcon_det_work(struct work_struct *work)
+>>> +static void axp288_extcon_enable(struct axp288_extcon_info *info)
+>>>   {
+>>> -    struct axp288_extcon_info *info =
+>>> -        container_of(work, struct axp288_extcon_info, det_work.work);
+>>> -
+>>>       regmap_update_bits(info->regmap, AXP288_BC_GLOBAL_REG,
+>>>                           BC_GLOBAL_RUN, 0);
+>>>       /* Enable the charger detection logic */
+>>> @@ -272,7 +245,6 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+>>>       info->regmap = axp20x->regmap;
+>>>       info->regmap_irqc = axp20x->regmap_irqc;
+>>>       info->previous_cable = EXTCON_NONE;
+>>> -    INIT_DELAYED_WORK(&info->det_work, axp288_extcon_det_work);
+>>>         platform_set_drvdata(pdev, info);
+>>>   @@ -315,7 +287,7 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+>>>       }
+>>>         /* Start charger cable type detection */
+>>> -    queue_delayed_work(system_wq, &info->det_work, 0);
+>>> +    axp288_extcon_enable(info);
+>>>         return 0;
+>>>   }
+>>>
+>>
+> 
+> 
+> 
