@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeBBNJD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:09:03 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52956 "EHLO
+        id S1751936AbeBBNJm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:09:42 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35482 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751666AbeBBNI1 (ORCPT
+        by vger.kernel.org with ESMTP id S1751836AbeBBNIA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 08:08:27 -0500
+        Fri, 2 Feb 2018 08:08:00 -0500
 From: Philipp Rudo <prudo@linux.vnet.ibm.com>
 To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
 Cc: prudo@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
@@ -15,16 +15,16 @@ Cc: prudo@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH 08/17] kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
-Date: Fri,  2 Feb 2018 14:07:09 +0100
+Subject: [PATCH 17/17] s390/kexec_file: Add ELF loader
+Date: Fri,  2 Feb 2018 14:07:18 +0100
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
 References: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020213-0008-0000-0000-000004C8CBFB
+x-cbid: 18020213-0008-0000-0000-000004C8CC02
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020213-0009-0000-0000-00001E5C6E4A
-Message-Id: <20180202130718.35509-9-prudo@linux.vnet.ibm.com>
+x-cbparentid: 18020213-0009-0000-0000-00001E5C6E50
+Message-Id: <20180202130718.35509-18-prudo@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -36,95 +36,209 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The main loop currently uses quite a lot of variables to update the section
-headers. Some of them are unnecessary. So clean them up a little.
+Add an ELF loader for kexec_file. The main task here is to do proper sanity
+checks on the ELF file. Basically all other functionality was already
+implemented for the image loader.
 
 Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
 ---
- kernel/kexec_file.c | 34 ++++++++++++----------------------
- 1 file changed, 12 insertions(+), 22 deletions(-)
+ arch/s390/include/asm/kexec.h         |   1 +
+ arch/s390/kernel/Makefile             |   2 +-
+ arch/s390/kernel/kexec_elf.c          | 149 ++++++++++++++++++++++++++++++++++
+ arch/s390/kernel/machine_kexec_file.c |   1 +
+ 4 files changed, 152 insertions(+), 1 deletion(-)
+ create mode 100644 arch/s390/kernel/kexec_elf.c
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index bb31a3b627c2..746b91e46e34 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -724,12 +724,8 @@ static int kexec_purgatory_setup_kbuf(struct purgatory_info *pi,
- static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
- 					 struct kexec_buf *kbuf)
- {
--	unsigned long curr_load_addr;
--	unsigned long load_addr;
- 	unsigned long bss_addr;
- 	unsigned long offset;
--	unsigned char *buf_addr;
--	unsigned char *src;
- 	Elf_Shdr *sechdrs;
- 	int i;
+diff --git a/arch/s390/include/asm/kexec.h b/arch/s390/include/asm/kexec.h
+index 532f5e4f198f..e450b82e2716 100644
+--- a/arch/s390/include/asm/kexec.h
++++ b/arch/s390/include/asm/kexec.h
+@@ -67,5 +67,6 @@ void kexec_file_update_kernel(struct kimage *iamge,
+ 			      struct s390_load_data *data);
  
-@@ -762,20 +758,18 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
- 						sechdrs[i].sh_offset;
- 	}
+ extern const struct kexec_file_ops s390_kexec_image_ops;
++extern const struct kexec_file_ops s390_kexec_elf_ops;
  
--	/* Load SHF_ALLOC sections */
--	buf_addr = kbuf->buffer;
--	load_addr = curr_load_addr = kbuf->mem;
--	bss_addr = load_addr + kbuf->bufsz;
-+	offset = 0;
-+	bss_addr = kbuf->mem + kbuf->bufsz;
- 	kbuf->image->start = pi->ehdr->e_entry;
+ #endif /*_S390_KEXEC_H */
+diff --git a/arch/s390/kernel/Makefile b/arch/s390/kernel/Makefile
+index 58a590709cc3..66d7b432c2a8 100644
+--- a/arch/s390/kernel/Makefile
++++ b/arch/s390/kernel/Makefile
+@@ -60,7 +60,7 @@ obj-y	+= debug.o irq.o ipl.o dis.o diag.o vdso.o als.o
+ obj-y	+= sysinfo.o jump_label.o lgr.o os_info.o machine_kexec.o pgm_check.o
+ obj-y	+= runtime_instr.o cache.o fpu.o dumpstack.o guarded_storage.o sthyi.o
+ obj-y	+= entry.o reipl.o relocate_kernel.o kdebugfs.o alternative.o
+-obj-y	+= machine_kexec_file.o kexec_image.o
++obj-y	+= machine_kexec_file.o kexec_image.o kexec_elf.o
  
- 	for (i = 0; i < pi->ehdr->e_shnum; i++) {
- 		unsigned long align;
-+		void *src, *dst;
+ extra-y				+= head.o head64.o vmlinux.lds
  
- 		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
- 			continue;
- 
- 		align = sechdrs[i].sh_addralign;
--
- 		if (sechdrs[i].sh_type == SHT_NOBITS) {
- 			bss_addr = ALIGN(bss_addr, align);
- 			sechdrs[i].sh_addr = bss_addr;
-@@ -783,31 +777,27 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
- 			continue;
- 		}
- 
--		curr_load_addr = ALIGN(curr_load_addr, align);
--		offset = curr_load_addr - load_addr;
--		/* We already modifed ->sh_offset to keep src addr */
--		src = (char *)sechdrs[i].sh_offset;
--		memcpy(buf_addr + offset, src, sechdrs[i].sh_size);
--
-+		offset = ALIGN(offset, align);
- 		if (sechdrs[i].sh_flags & SHF_EXECINSTR &&
- 		    pi->ehdr->e_entry >= sechdrs[i].sh_addr &&
- 		    pi->ehdr->e_entry < (sechdrs[i].sh_addr
- 					 + sechdrs[i].sh_size)) {
- 			kbuf->image->start -= sechdrs[i].sh_addr;
--			kbuf->image->start += curr_load_addr
-+			kbuf->image->start += kbuf->mem + offset;
- 		}
- 
--		/* Store load address and source address of section */
--		sechdrs[i].sh_addr = curr_load_addr;
-+		src = (void *)sechdrs[i].sh_offset;
-+		dst = pi->purgatory_buf + offset;
-+		memcpy(dst, src, sechdrs[i].sh_size);
+diff --git a/arch/s390/kernel/kexec_elf.c b/arch/s390/kernel/kexec_elf.c
+new file mode 100644
+index 000000000000..919ab2f1256f
+--- /dev/null
++++ b/arch/s390/kernel/kexec_elf.c
+@@ -0,0 +1,149 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * ELF loader for kexec_file_load system call.
++ *
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
++ */
 +
-+		sechdrs[i].sh_addr = kbuf->mem + offset;
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/kexec.h>
++#include <asm/setup.h>
++
++static int kexec_file_add_elf_kernel(struct kimage *image,
++				     struct s390_load_data *data,
++				     char *kernel, unsigned long kernel_len)
++{
++	struct kexec_buf buf;
++	const Elf_Ehdr *ehdr;
++	const Elf_Phdr *phdr;
++	int i, ret;
++
++	ehdr = (Elf_Ehdr *)kernel;
++	buf.image = image;
++
++	phdr = (void *)ehdr + ehdr->e_phoff;
++	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
++		if (phdr->p_type != PT_LOAD)
++			continue;
++
++		buf.buffer = kernel + phdr->p_offset;
++		buf.bufsz = phdr->p_filesz;
++
++		buf.mem = ALIGN(phdr->p_paddr, phdr->p_align);
++		buf.memsz = phdr->p_memsz;
++
++		if (phdr->p_paddr == 0) {
++			data->kernel_buf = buf.buffer;
++			data->memsz += STARTUP_NORMAL_OFFSET;
++
++			buf.buffer += STARTUP_NORMAL_OFFSET;
++			buf.bufsz -= STARTUP_NORMAL_OFFSET;
++
++			buf.mem += STARTUP_NORMAL_OFFSET;
++			buf.memsz -= STARTUP_NORMAL_OFFSET;
++		}
++
++		if (image->type == KEXEC_TYPE_CRASH)
++			buf.mem += crashk_res.start;
++
++		ret = kexec_add_buffer(&buf);
++		if (ret)
++			return ret;
++
++		data->memsz += buf.memsz;
++	}
++
++	return 0;
++}
++
++static void *s390_elf_load(struct kimage *image,
++			   char *kernel, unsigned long kernel_len,
++			   char *initrd, unsigned long initrd_len,
++			   char *cmdline, unsigned long cmdline_len)
++{
++	struct s390_load_data data = {0};
++	const Elf_Ehdr *ehdr;
++	const Elf_Phdr *phdr;
++	size_t size;
++	int i, ret;
++
++	/* image->fobs->probe already checked for valid ELF magic number. */
++	ehdr = (Elf_Ehdr *)kernel;
++
++	if (ehdr->e_type != ET_EXEC ||
++	    ehdr->e_ident[EI_CLASS] != ELFCLASS64 ||
++	    !elf_check_arch(ehdr))
++		return ERR_PTR(-EINVAL);
++
++	if (!ehdr->e_phnum || ehdr->e_phentsize != sizeof(Elf_Phdr))
++		return ERR_PTR(-EINVAL);
++
++	size = ehdr->e_ehsize + ehdr->e_phoff;
++	size += ehdr->e_phentsize * ehdr->e_phnum;
++	if (size > kernel_len)
++		return ERR_PTR(-EINVAL);
++
++	phdr = (void *)ehdr + ehdr->e_phoff;
++	size = ALIGN(size, phdr->p_align);
++	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
++		if (phdr->p_type == PT_INTERP)
++			return ERR_PTR(-EINVAL);
++
++		if (phdr->p_offset > kernel_len)
++			return ERR_PTR(-EINVAL);
++
++		size += ALIGN(phdr->p_filesz, phdr->p_align);
++	}
++
++	if (size > kernel_len)
++		return ERR_PTR(-EINVAL);
++
++	ret = kexec_file_add_elf_kernel(image, &data, kernel, kernel_len);
++	if (ret)
++		return ERR_PTR(ret);
++
++	if (!data.memsz)
++		return ERR_PTR(-EINVAL);
++
++	if (initrd) {
++		ret = kexec_file_add_initrd(image, &data, initrd, initrd_len);
++		if (ret)
++			return ERR_PTR(ret);
++	}
++
++	ret = kexec_file_add_purgatory(image, &data);
++	if (ret)
++		return ERR_PTR(ret);
++
++	kexec_file_update_kernel(image, &data);
++
++	return NULL;
++}
++
++static int s390_elf_probe(const char *buf, unsigned long len)
++{
++	const Elf_Ehdr *ehdr;
++
++	if (len < sizeof(Elf_Ehdr))
++		return -ENOEXEC;
++
++	ehdr = (Elf_Ehdr *)buf;
++
++	/* Only check the ELF magic number here and do proper validity check
++	 * in the loader. Any check here that fails would send the erroneous
++	 * ELF file to the image loader that does not care what it gets.
++	 * (Most likely) causing behavior not intended by the user.
++	 */
++	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG) != 0)
++		return -ENOEXEC;
++
++	return 0;
++}
++
++const struct kexec_file_ops s390_kexec_elf_ops = {
++	.probe = s390_elf_probe,
++	.load = s390_elf_load,
++};
+diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
+index 050ceab746ec..8938e0eca4b0 100644
+--- a/arch/s390/kernel/machine_kexec_file.c
++++ b/arch/s390/kernel/machine_kexec_file.c
+@@ -12,6 +12,7 @@
+ #include <asm/setup.h>
  
- 		/*
- 		 * This section got copied to temporary buffer. Update
- 		 * ->sh_offset accordingly.
- 		 */
--		sechdrs[i].sh_offset = (unsigned long)(buf_addr + offset);
--
--		/* Advance to the next address */
--		curr_load_addr += sechdrs[i].sh_size;
-+		sechdrs[i].sh_offset = (unsigned long)dst;
-+		offset += sechdrs[i].sh_size;
- 	}
- 
- 	return 0;
+ const struct kexec_file_ops * const kexec_file_loaders[] = {
++	&s390_kexec_elf_ops,
+ 	&s390_kexec_image_ops,
+ 	NULL,
+ };
 -- 
 2.13.5
