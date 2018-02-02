@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591770-2-17816148836159791785
+X-Cyrus-Session-Id: sloti22d1t05-2951739-1517591769-2-6441134880161995708
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591769; b=F/xIqpHtCDv0wq8DxLKpRpxAJfhYNokEdR1JGq699pq/MdX
-    +95c+ASZ6tB/puK43KgQv/qG/g6J5maqkWtNZwecU2baF83MLeXDEyL6cG//RsSx
-    OmRrfJLkW4zoNNvuS//t9tX0/3i5dMUXvlu9WwDSH0RrGuBSlXauufFaGDVRObAg
-    Mr9bNTyILLt/X7lEXAr/CBD3zvfcSEWew2kVVvdea6lHPRYBk6Mg22P6y1sFI2t5
-    81udiHXqD3wwxBgvi+DVUyaF2XZ7i8tesYPo3VLwTCAxHOVWA19/Dk6vQb0fb+XU
-    Y6cpXwYOrNZGIfzA7naDHL3+S5t25m2INz4dbeQ==
+    t=1517591768; b=sdFmKNLbPBAI3bmuOKK74qSxTPrG3fGGkb8TTMSratkuFd6
+    avV4fFwcBIO+Gr9Ww4Ljecm0k5D7AUvV439JGghbom/eI+H+XLQ13KMwL2BtD+S1
+    cE6LOM/f7mZZRwp79nUUtUg99nWNTLPfYZM7kf8YzKFbpYo/avBvnYkaQkGwZVZp
+    xMbx6KzbTeFgXJiPW9jKephWfo8l/C9uFZmYc2UXJNj3npZpN3r3QDL1vkmL9mk3
+    D6NosZSHe23RtXpUqpR7+N6vwCSXRMwxpDjySaFfhcFeLknX3fG2LElU5IudlH5N
+    3JSptyL5gSGLKTT0i0ghyj1yiYQ8pZzRqyBm+aw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591769; bh=fSOGrpBF8tOa1Q5+ufKeZvNByc
-    Mnu6wc2AXFj1xeL+8=; b=m+VGbhMQfNxKe2XqXWniBDbYPlhrkO/QswXJr2qBXV
-    F/OcJ2+EJvtTvzV5o2BspRY88/vWAZ2TDncO06iAdxxmbZnr8aSJBucjw7Gma943
-    8ULKN2KhRaWvKW1BB5+VOHW9Y6lDP/WUVdSlkTs/UCJ22vc9aPWBYH6Z2helReIm
-    FM8rlkrUegItgtQ4nF8J5lBREc5wKfTPoqaC4kYrIjl/pYfaA67ZWIEj5ZMj4y6W
-    UEEKr8Vkl4nZAI9AVpwKnNyI5yvU4ZML0P5k09SOtAo8p1pMbnZGsuufjH1/Qsj9
-    ICbOy8iF/NH7LAMCrhqJGDH3iliDWQhGF30a3d2lijcw==
+    :list-id; s=arctest; t=1517591768; bh=zajTn7hLNBZl2GtKW9tBZ4gBLU
+    cxmfT5j7Qa3WbWBr8=; b=wkxFCjCfqhNOPR8W8ygXiGaP5aGiq3Xf6gCNeh1LK2
+    Y1r4vWqcdTa0mMjmmdpwXVj6BOa5VZtUNUlciA2alKLiSx4ftIjmP9juRNxXHxRj
+    fI0fVfhlkWScDgB5aa5xDqtDfJZZk4WyWeLQg/2amBnvD+F2DMvJmWkwNKG4ii08
+    77X8cdbNIthIOYKx1o8tZB7ndg/3F2hpQ+7LNCh03d/xUhR8XVn97DjAcCcpG2xi
+    A+g4tTU1dxf7AuWYgWUqf3rCDeFgoukbnVqD/ATeFgIF5y3tOI9BnsaZ567SwEjJ
+    APgJGdUxU1WQX1V5RF48Vyp0Y4ud7IR41Vc9BkU5TVrA==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,19 +47,20 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753617AbeBBRQA (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:16:00 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40824 "EHLO
+        id S1753817AbeBBRQC (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:16:02 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753805AbeBBRPn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:15:43 -0500
+        with ESMTP id S1753636AbeBBRPz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:15:55 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>
-Subject: [PATCH 4.15 29/55] staging: ccree: fix fips event irq handling build
-Date: Fri,  2 Feb 2018 17:58:47 +0100
-Message-Id: <20180202140829.145933496@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.15 33/55] USB: cdc-acm: Do not log urb submission errors on disconnect
+Date: Fri,  2 Feb 2018 17:58:51 +0100
+Message-Id: <20180202140829.468915914@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
@@ -76,29 +77,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gilad Ben-Yossef <gilad@benyossef.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit dc5591dc9c03e4cd22d3f0c3659196cc34668452 upstream.
+commit f0386c083c2ce85284dc0b419d7b89c8e567c09f upstream.
 
-When moving from internal for kernel FIPS infrastructure the FIPS event irq
-handling code was left with the old ifdef by mistake. Fix it.
+When disconnected sometimes the cdc-acm driver logs errors like these:
 
-Fixes: b7e607bf33a2 ("staging: ccree: move FIPS support to kernel infrastructure")
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+[20278.039417] cdc_acm 2-2:2.1: urb 9 failed submission with -19
+[20278.042924] cdc_acm 2-2:2.1: urb 10 failed submission with -19
+[20278.046449] cdc_acm 2-2:2.1: urb 11 failed submission with -19
+[20278.049920] cdc_acm 2-2:2.1: urb 12 failed submission with -19
+[20278.053442] cdc_acm 2-2:2.1: urb 13 failed submission with -19
+[20278.056915] cdc_acm 2-2:2.1: urb 14 failed submission with -19
+[20278.060418] cdc_acm 2-2:2.1: urb 15 failed submission with -19
+
+Silence these by not logging errors when the result is -ENODEV.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/ccree/ssi_driver.c |    2 +-
+ drivers/usb/class/cdc-acm.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/ccree/ssi_driver.c
-+++ b/drivers/staging/ccree/ssi_driver.c
-@@ -117,7 +117,7 @@ static irqreturn_t cc_isr(int irq, void
- 		irr &= ~SSI_COMP_IRQ_MASK;
- 		complete_request(drvdata);
- 	}
--#ifdef CC_SUPPORT_FIPS
-+#ifdef CONFIG_CRYPTO_FIPS
- 	/* TEE FIPS interrupt */
- 	if (likely((irr & SSI_GPR0_IRQ_MASK) != 0)) {
- 		/* Mask interrupt - will be unmasked in Deferred service handler */
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -425,7 +425,7 @@ static int acm_submit_read_urb(struct ac
+ 
+ 	res = usb_submit_urb(acm->read_urbs[index], mem_flags);
+ 	if (res) {
+-		if (res != -EPERM) {
++		if (res != -EPERM && res != -ENODEV) {
+ 			dev_err(&acm->data->dev,
+ 				"urb %d failed submission with %d\n",
+ 				index, res);
