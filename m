@@ -1,140 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeBBDXT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 22:23:19 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41762 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751530AbeBBDXQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 22:23:16 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F8CB605A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
-Subject: Re: [PATCH 1/1] scsi: ufs: make sure all interrupts are processed
-To: Avri Altman <Avri.Altman@wdc.com>,
-        "subhashj@codeaurora.org" <subhashj@codeaurora.org>,
-        "cang@codeaurora.org" <cang@codeaurora.org>,
-        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
-        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
-        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1517288066-13171-1-git-send-email-asutoshd@codeaurora.org>
- <DM5PR04MB1085C5039CA525D6FB77DBE3FCFB0@DM5PR04MB1085.namprd04.prod.outlook.com>
-From: "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <6ca20a27-3c10-bf0e-35e7-542b7ab77356@codeaurora.org>
-Date: Fri, 2 Feb 2018 08:53:09 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751737AbeBBDpS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 22:45:18 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4759 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751544AbeBBDpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 22:45:08 -0500
+Subject: Re: [PATCH v2 16/16] arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
+ hardening support
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Robin Murphy" <robin.murphy@arm.com>, Jon Masters <jcm@redhat.com>
+References: <20180129174559.1866-1-marc.zyngier@arm.com>
+ <20180129174559.1866-17-marc.zyngier@arm.com>
+ <476d111e-6fb0-9bef-2448-a94d0cc03f45@huawei.com>
+ <49853e5e-f093-2e79-1cfb-182f51fcd6a0@arm.com>
+ <CAKv+Gu-XidYPh0hi1nzG5m0AO7EfRE6bnKfxCToG+9zsmvzmNg@mail.gmail.com>
+ <CAKv+Gu-L0WOLSUbcHSTQ_FVDNSJoXQv25ExUmtv8ZEYhkCSQ-Q@mail.gmail.com>
+ <501451b6-cc84-e8d3-b7b6-49a7de953976@arm.com>
+ <f6579ab5-8d52-3f62-e538-515b28376d59@huawei.com>
+ <8183e28a-39e7-e4f0-d704-35a0beb14ef0@arm.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <7e62d00e-df3b-1fb8-8e5e-83e1cf0e86bf@huawei.com>
+Date: Fri, 2 Feb 2018 11:43:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <DM5PR04MB1085C5039CA525D6FB77DBE3FCFB0@DM5PR04MB1085.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <8183e28a-39e7-e4f0-d704-35a0beb14ef0@arm.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/2018 1:09 PM, Avri Altman wrote:
-> Hi,
-> Can you elaborate how this can even happen?
-> Isn't the interrupt aggregation capability should attend for those cases?
+On 2018/2/1 16:53, Marc Zyngier wrote:
+[...]
+>>>> ... and actually, perhaps it makes sense for the
+>>>> SMCCC_ARCH_WORKAROUND_1 check to be completely independent of MIDR
+>>>> based errata matching?
+>>>>
+>>>> I.e., if SMCCC v1.1 and SMCCC_ARCH_WORKAROUND_1 are both implemented,
+>>>> we should probably invoke it even if the MIDR is not known to belong
+>>>> to an affected implementation.
+>>>
+>>> This would have an impact on big-little systems, for which there is
+>>> often a bunch of unaffected CPUs.
+>>
+>> I think it's what we are doing now, SMCCC v1.1 didn't provide the ability
+>> to report per-cpu SMCCC_ARCH_WORKAROUND_1, and it said:
+>>  - The discovery call must return the same result on all PEs in the system.
+>>  - In heterogeneous systems with some PEs that require mitigation and others
+>>    that do not, the firmware must provide a safe implementation of this
+>>    function on all PEs.
+>>
+>> So from the spec that it's the firmware to take care of unaffected CPUs,
+>> to the kernel it's the same.
 > 
-> Thanks,
-> Avri
-> 
->> -----Original Message-----
->> From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-
->> owner@vger.kernel.org] On Behalf Of Asutosh Das
->> Sent: Tuesday, January 30, 2018 6:54 AM
->> To: subhashj@codeaurora.org; cang@codeaurora.org;
->> vivek.gautam@codeaurora.org; rnayak@codeaurora.org;
->> vinholikatti@gmail.com; jejb@linux.vnet.ibm.com;
->> martin.petersen@oracle.com
->> Cc: linux-scsi@vger.kernel.org; Venkat Gopalakrishnan
->> <venkatg@codeaurora.org>; Asutosh Das <asutoshd@codeaurora.org>; open
->> list <linux-kernel@vger.kernel.org>
->> Subject: [PATCH 1/1] scsi: ufs: make sure all interrupts are processed
->>
->> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
->>
->> As multiple requests are submitted to the ufs host controller in parallel there
->> could be instances where the command completion interrupt arrives later for a
->> request that is already processed earlier as the corresponding doorbell was
->> cleared when handling the previous interrupt. Read the interrupt status in a
->> loop after processing the received interrupt to catch such interrupts and handle
->> it.
->>
->> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
->> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
->> ---
->>   drivers/scsi/ufs/ufshcd.c | 27 +++++++++++++++++++--------
->>   1 file changed, 19 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index
->> 8af2af3..58d81de 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -5357,19 +5357,30 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
->>   	u32 intr_status, enabled_intr_status;
->>   	irqreturn_t retval = IRQ_NONE;
->>   	struct ufs_hba *hba = __hba;
->> +	int retries = hba->nutrs;
->>
->>   	spin_lock(hba->host->host_lock);
->>   	intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
->> -	enabled_intr_status =
->> -		intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
->>
->> -	if (intr_status)
->> -		ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
->> +	/*
->> +	 * There could be max of hba->nutrs reqs in flight and in worst case
->> +	 * if the reqs get finished 1 by 1 after the interrupt status is
->> +	 * read, make sure we handle them by checking the interrupt status
->> +	 * again in a loop until we process all of the reqs before returning.
->> +	 */
->> +	do {
->> +		enabled_intr_status =
->> +			intr_status & ufshcd_readl(hba,
->> REG_INTERRUPT_ENABLE);
->> +		if (intr_status)
->> +			ufshcd_writel(hba, intr_status,
->> REG_INTERRUPT_STATUS);
->> +		if (enabled_intr_status) {
->> +			ufshcd_sl_intr(hba, enabled_intr_status);
->> +			retval = IRQ_HANDLED;
->> +		}
->> +
->> +		intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
->> +	} while (intr_status && --retries);
->>
->> -	if (enabled_intr_status) {
->> -		ufshcd_sl_intr(hba, enabled_intr_status);
->> -		retval = IRQ_HANDLED;
->> -	}
->>   	spin_unlock(hba->host->host_lock);
->>   	return retval;
->>   }
->> --
->> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
->> Inc.
->> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux
->> Foundation Collaborative Project.
-> 
+> The spec makes it safe. The MIDR list makes it fast.
 
-Hi
-yes - interrupt aggregation makes sense here. But there were some 
-performance concerns with it; well, I don't have the data to back that 
-up now though.
-However, I can code it up and check it.
-Will post it in some time.
+Got it, thank you for clarifying this.
 
--asd
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+Thanks
+Hanjun
