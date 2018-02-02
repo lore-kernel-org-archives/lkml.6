@@ -1,48 +1,76 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224JHA/iSmf5z7ul6fEA+bkhH9K1gkHQFths+jJNbdtaGe3xk+pz1nOY6EpvSu0dJ0/PNzqi
-ARC-Seal: i=1; a=rsa-sha256; t=1517591502; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Va8E8m3iA965InxNSCPb2mfsDi9iCxBLvqMdBeNXM/ka7qCi8YW+dHsQ84FcTXw4+U
-         B6J+tHWCNNWzkkEeppAN4qSkkHV4I09aRkPEP2RBJqV7x/tSvNx2tz0UZaUjnnQ8BhXK
-         Nd9k6ZlMcSjmw/EKac1wxWymwKwhPiqT+10e1QvhKZO/B2bnzxmHuP7UyqE/W+M/opHr
-         4zjOWjs3JvjmQBAszZVQRGWdeQ8BQGZl45xEGWWlyGZ3fJUPc9u0KFoUnHg79FMURE5s
-         8NfuT3xbyFQSeXu5KDcABJn49MozIspodTYaT0Jb96HGHTIG7uopqpPV9WmNmagXj35J
-         g+1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=X6J8pnjYGSWYYX6gpDJluTP5MLuwgQcD39EtAyC9rHE=;
-        b=R+Nj1hXWYmjx2ac2TJjYH/JC30BUMg36p60xtwHRShTmZxNQGbxnejKsHGZakSoEyr
-         oWhIlRmu6vjeAdTai68FBYTZw+TGmCNV2zKfo8LQlq92+Pgd0olxBYFwdOVKlQofMkoL
-         7q8hgSyFTG19uPd/uHS0dxpJZOI/GbxNGAY1siCIiDIw1IfaBmbbuwzyBg6iuEssjFRU
-         J595qnAzXUDhtkH5bzQeYufCKqEn9PjkzT1QpIjbvz3BlgolsqoN00xA8LNHYVszk67I
-         q80zrCUHPxP0akuYvdnIgnpdHCaKzg4vZm4rE5otI8Kbzbb77gcsbdLwWoqSWQdo6V01
-         QqAA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591501-2-5178292561591601816
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591500; b=jNV2oO50mYSXQpuGvsAz6BfVitLq9PStYvxF/GatX9OdZ89
+    cjBzl/ZgEizZkzCweo9hmFKhNkkP2eZcmZha2fDNwrUtYEgeAJ1dYB1mBFQK9/fL
+    aa/eUBI0oTeCc62MmNJtR/vP7gm6Fv0QM07O6qbrCFR/egUt/RubBIJm3lSHQ9Je
+    dmQ7TQjSm8YklFoTRSUcBAPzkce1pirUDDGu13JFCBQA1i2NW1k2OK+pCATevw1f
+    0hn8pOcMMrMPZHDUe4VQApl1TUkfkdb9VxAclj8Z4uiew0YReOcbyD06ZjikKv8R
+    E8PhupWZ3fTO4+0qbhGl+j7OSjLK8jQtoWaO9hg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591500; bh=dQS7uZqbbMwupFoLN9fkGwUAlW
+    XxdvVz4jWwxa1aN6c=; b=kMDT0Oxyg2FxMz1XNCLjHE+FZASa1cQEaf1hI0lQQB
+    JbXOFfo8ebqVCInRwbLCYDs4ncBQSuTSupTwT4naPN3b4rnGZAvVJKjpZaM7mqAv
+    7Tr5vNBDcD2R3ghbtoT/kOyUECSCzbiFWGm96M9vYkf+z0rKvC1lNrat2iuam8Xo
+    YjC5uvJjGmvfjeRJY2YkEPgmmN2kWbr+Sa64JEnAW2aicZJZ3DxdJ5B/g9bgp7gi
+    08DOpqLmRbIHaa0m/JwQRX8nIIkfO/cqKWO5MlDBfuYD0jEEKe7Kdjl5rCzM/T90
+    VzMTE1J/GXuoxQ+qkZuiryhVrkHntXg4Lzg05BnwhUag==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753147AbeBBRLg (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:11:36 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38670 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753031AbeBBRLc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:11:32 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Xin Long <lucien.xin@gmail.com>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 072/156] sctp: only allow the asoc reset when the asoc outq is empty
-Date: Fri,  2 Feb 2018 17:57:33 +0100
-Message-Id: <20180202140843.543142768@linuxfoundation.org>
+        stable@vger.kernel.org, Minwoo Im <minwoo.im.dev@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 097/156] nvme-pci: fix NULL pointer dereference in nvme_free_host_mem()
+Date: Fri,  2 Feb 2018 17:57:58 +0100
+Message-Id: <20180202140844.607338782@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591310026836826983?=
-X-GMAIL-MSGID: =?utf-8?q?1591310026836826983?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,58 +78,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Minwoo Im <minwoo.im.dev@gmail.com>
 
 
-[ Upstream commit 5c6144a0eb5366ae07fc5059301b139338f39bbd ]
+[ Upstream commit 7e5dd57ef3081ff6c03908d786ed5087f6fbb7ae ]
 
-As it says in rfc6525#section5.1.4, before sending the request,
+Following condition which will cause NULL pointer dereference will
+occur in nvme_free_host_mem() when it tries to remove pci device via
+nvme_remove() especially after a failure of host memory allocation for HMB.
 
-   C2:  The sender has either no outstanding TSNs or considers all
-        outstanding TSNs abandoned.
+    "(host_mem_descs == NULL) && (nr_host_mem_descs != 0)"
 
-Prior to this patch, it tried to consider all outstanding TSNs abandoned
-by dropping all chunks in all outqs with sctp_outq_free (even including
-sacked, retransmit and transmitted queues) when doing this reset, which
-is too aggressive.
+It's because __nr_host_mem_descs__ is not cleared to 0 unlike
+__host_mem_descs__ is so.
 
-To make it work gently, this patch will only allow the asoc reset when
-the sender has no outstanding TSNs by checking if unsent, transmitted
-and retransmit are all empty with sctp_outq_is_empty before sending
-and processing the request.
-
-Fixes: 692787cef651 ("sctp: implement receiver-side procedures for the SSN/TSN Reset Request Parameter")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/stream.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/nvme/host/pci.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/sctp/stream.c
-+++ b/net/sctp/stream.c
-@@ -224,6 +224,9 @@ int sctp_send_reset_assoc(struct sctp_as
- 	if (asoc->strreset_outstanding)
- 		return -EINPROGRESS;
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1617,6 +1617,7 @@ static void nvme_free_host_mem(struct nv
+ 			dev->nr_host_mem_descs * sizeof(*dev->host_mem_descs),
+ 			dev->host_mem_descs, dev->host_mem_descs_dma);
+ 	dev->host_mem_descs = NULL;
++	dev->nr_host_mem_descs = 0;
+ }
  
-+	if (!sctp_outq_is_empty(&asoc->outqueue))
-+		return -EAGAIN;
-+
- 	chunk = sctp_make_strreset_tsnreq(asoc);
- 	if (!chunk)
- 		return -ENOMEM;
-@@ -544,6 +547,12 @@ struct sctp_chunk *sctp_process_strreset
- 		}
- 		goto err;
- 	}
-+
-+	if (!sctp_outq_is_empty(&asoc->outqueue)) {
-+		result = SCTP_STRRESET_IN_PROGRESS;
-+		goto err;
-+	}
-+
- 	asoc->strreset_inseq++;
- 
- 	if (!(asoc->strreset_enable & SCTP_ENABLE_RESET_ASSOC_REQ))
+ static int __nvme_alloc_host_mem(struct nvme_dev *dev, u64 preferred,
