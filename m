@@ -1,146 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752087AbeBBQ2R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 11:28:17 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33192 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751718AbeBBQ2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 11:28:12 -0500
-Subject: Re: [PATCH RFC v2 2/3] dt-bindings/interrupt-controller: pdc: descibe
- PDC device binding
-To: Lina Iyer <ilina@codeaurora.org>, tglx@linutronix.de,
-        jason@lakedaemon.net
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        sboyd@codeaurora.org, rnayak@codeaurora.org, asathyak@codeaurora.org,
-        devicetree@vger.kernel.org
-References: <20180202142200.6229-1-ilina@codeaurora.org>
- <20180202142200.6229-3-ilina@codeaurora.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <396cfc2f-7deb-0c93-7178-d9f5524f110e@arm.com>
-Date: Fri, 2 Feb 2018 16:28:09 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752265AbeBBQaT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 11:30:19 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751963AbeBBQaK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 11:30:10 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7735B60364
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date: Fri, 2 Feb 2018 09:30:06 -0700
+From: Jordan Crouse <jcrouse@codeaurora.org>
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/adreno/a5xx_debugfs: fix potential NULL pointer
+ dereference
+Message-ID: <20180202163006.GA878@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180202123223.GA4410@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180202142200.6229-3-ilina@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180202123223.GA4410@embeddedor.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/02/18 14:21, Lina Iyer wrote:
-> From: Archana Sathyakumar <asathyak@codeaurora.org>
+On Fri, Feb 02, 2018 at 06:32:23AM -0600, Gustavo A. R. Silva wrote:
+> _minor_ is being dereferenced before it is null checked, hence there
+> is a potential null pointer dereference. Fix this by moving the pointer
+> dereference after _minor_ has been null checked.
 > 
-> Add device binding documentation for the PDC Interrupt controller on
-> QCOM SoC's like the SDM845. The interrupt-controller can be used to
-> sense edge low interrupts and wakeup interrupts when the GIC is
-> non-operational.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> Fixes: 024ad8df763f ("drm/msm: add a5xx specific debugfs")
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 > ---
->  .../bindings/interrupt-controller/qcom,pdc.txt     | 78 ++++++++++++++++++++++
->  1 file changed, 78 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> new file mode 100644
-> index 000000000000..7bf40cb6a4f8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> @@ -0,0 +1,78 @@
-> +PDC interrupt controller
-> +
-> +Qualcomm Technologies Inc. SoCs based on the RPM Hardened architecture have a
-> +Power Domain Controller (PDC) that is on always-on domain. In addition to
-> +providing power control for the power domains, the hardware also has an
-> +interrupt controller that can be used to help detect edge low interrupts as
-> +well detect interrupts when the GIC is non-operational.
-> +
-> +GIC is parent interrupt controller at the highest level. Platform interrupt
-> +controller PDC is next in hierarchy, followed by others. Drivers requiring
-> +wakeup capabilities of their device interrupts routed through the PDC, must
-> +specify PDC as their interrupt controller and request the PDC port associated
-> +with the GIC interrupt. See example below.
-> +
-> +Properties:
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: Should contain "qcom,<soc>-pdc"
-> +		    - "qcom,sdm845-pdc": For SDM845
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: Specifies the base physical address for PDC hardware.
-> +
-> +- interrupt-cells:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: Specifies the number of cells needed to encode an interrupt
-> +		    source.
-> +		    The value must match that of the parent interrupt
-> +		    controller defined in the DT.
-> +		    The encoding of these cells are same as described in [1].
-
-There shouldn't be such a requirement. These are two independent pieces
-of HW, and the first parameter doesn't mean anything for the PDC.
-
-> +
-> +- interrupt-parent:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: Specifies the interrupt parent necessary for hierarchical
-> +		    domain to operate.
-> +
-> +- interrupt-controller:
-> +	Usage: required
-> +	Value type: <bool>
-> +	Definition: Identifies the node as an interrupt controller.
-> +
-> +- qcom,pdc-range:
-> +	Usage: required
-> +	Value type: <u32 array>
-> +	Definition: Specifies the PDC pin offset and the number of PDC ports.
-> +		    The tuples indicates the valid mapping of valid PDC ports
-> +		    and their hwirq mapping.
-> +		    The first element of the tuple is the staring PDC port num.
-> +		    The second element is the hwirq number for the PDC port.
-> +		    The third element is the number of elements in sequence.
-> +
-> +Example:
-> +
-> +	pdc: interrupt-controller@b220000 {
-> +		compatible = "qcom,sdm845-pdc";
-> +		reg = <0xb220000 0x30000>;
-> +		qcom,pdc-ranges = <0 512 94>, <94 641 15>, <115 662 7>;
-> +		#interrupt-cells = <3>;
-> +		interrupt-parent = <&intc>;
-> +		interrupt-controller;
-> +	};
-> +
-> +The DT binding of a device that wants to use the GIC SPI 514 as a wakeup
-> +interrupt, would look like this -
-> +
-> +	wake-device {
-> +		[...]
-> +		interrupt-parent = <&pdc>;
-> +		interrupt = <0 2 0>;
-
-Again: 0 is not a valid trigger value.
-
-> +	};
-> +
-> +[1]. Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+> I wonder if a better solution for this would be to WARN_ON in case _minor_
+> happens to be NULL and return -EINVAL, instead of just returning zero.
 > 
+> Something like:
+> 
+> struct drm_device *dev;
+> 
+> if (WARN_ON(!minor)
+> 	return -EINVAL;
+> 
+> dev = minor->dev;
+> 
+> What do you think?
 
-Thanks,
+In my opinion everything in debugfs is optional. I'm not sure if it is even
+possible for dev->primary, dev->render or dev->control to be NULL from the DRM
+core but if so I think the failure should be silent.
 
-	M.
+Jordan
+> 
+>  drivers/gpu/drm/msm/adreno/a5xx_debugfs.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c b/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c
+> index 6b27941..059ec7d 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c
+> @@ -159,13 +159,15 @@ DEFINE_SIMPLE_ATTRIBUTE(reset_fops, NULL, reset_set, "%llx\n");
+>  
+>  int a5xx_debugfs_init(struct msm_gpu *gpu, struct drm_minor *minor)
+>  {
+> -	struct drm_device *dev = minor->dev;
+> +	struct drm_device *dev;
+>  	struct dentry *ent;
+>  	int ret;
+>  
+>  	if (!minor)
+>  		return 0;
+>  
+> +	dev = minor->dev;
+> +
+>  	ret = drm_debugfs_create_files(a5xx_debugfs_list,
+>  			ARRAY_SIZE(a5xx_debugfs_list),
+>  			minor->debugfs_root, minor);
+> -- 
+> 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
 -- 
-Jazz is not dead. It just smells funny...
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
