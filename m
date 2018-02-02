@@ -1,76 +1,48 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591815-2-17093417687096676671
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591814; b=mnTgL9bP/xpHgBHrPftqs3E04GzgOAEe1qlNip5HZfUmqJn
-    cFHEvw57YX3gaPdlBIq31ZLIcwG3sojf0yJU1CLMv0tz7mfyp1dcoInu8dmLDcaf
-    i481fDSyfLEyFBKahFi5f5jmGGG3QNdHmvcrgOX70523+cBg1YnXcQIBDHxKOq58
-    ciegYZAVfoE08Jp7HkPvdSKkXcX6HgCagiciMOmOiZSV2a3/7KLYeN6aKsgc7//h
-    0Q1ZOEoMKRkmETh7/6teV3IYKINCLR9mok+DOQLKGbl3dbxnsgWSQCSn9dYaBtDj
-    Gu2pkotxczwKC52RIL03bHpulHfHFdylwDjkTLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591814; bh=baCw/f3TKkM7MNaz5NK7UJyUpa
-    u309XoWoQwJBWRouw=; b=hmDspJIhn6Y5087NChtKflmzJBh5QD+N265SlDzhvD
-    vH1G8oFtnJ1hOB2daqdB91/3B5ID0bUIkvnBvBREFnHtYhhVdT4mCNUoqHAHmKtE
-    eZtIWUH5bawOyO9r2BOxafVYShxy5yIQHST0czK2km7ZxlDvtC1W9BR9ww+aIhPV
-    6weqsiuBA34IZs5EQ5VHdMzxeS05vtVPugx5S9TJ88Y7nK00vwi5TOZwRYwkFCvN
-    FPmrN6v+fzPyhcIZ/Qrrq4Gz68eQhK8KlQ+Wz95K56L8+y75klpFjFNRo0Epvukr
-    Egk4lQ1ARwfxS1msCbLRIas4NI7g8UQWxAJilstDGTAg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753857AbeBBRQo (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:16:44 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41056 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753356AbeBBRQk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:16:40 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224tOpb9xH5MKDo1MsLC98UTmbisiu0cEthj7U9JxN2LV4KVkOoWZTG45P7VVTpRBGr3OSQS
+ARC-Seal: i=1; a=rsa-sha256; t=1517591814; cv=none;
+        d=google.com; s=arc-20160816;
+        b=KIfabBFSbXnTRKodAdLQ0ajL2esnIQxfUTPEnd9tc0OvG7ZrjTvZiBWPRlQJqRd4G9
+         gDUZ00omVyxBa2vd5zhkHe8xbwOV3FHtAmxzTmufMdKsbj9AKV3Nvd9tqfmc118/19ih
+         T7jfYUy+x/Vx/YkRf7Lmb5Aa8kaxf1rAj1bS/MgTpPAot0QstCUXtdRRKGrveqI4dFEe
+         ApOm/G6TIVd3Q/x/yI3GgU2jE1LlVful97NfyrvGTtIhnrvi5Lh5/MFtLdX4VVBwRZFO
+         MdpN2xPs+AdXltszoao0abKsXRh3vSISZMIlEhPSDlIpFFIuBIBdummIXx8CEYdUauWL
+         5HKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=WbiCjvlX015nc64MnQVHCHRCzGb/HlYn+bOEkqjAYrE=;
+        b=Q3j/6wwJoqtbK+9LovhhnS0anABKFmiCmWoS+41YPUyUWVbqCuKBjCl38vrrR20w9c
+         T5hxDeTvMTybDsjteN9bdeZOu0vQFAZ3npG1CILGYwVv0OeY6K2KkU9wEB4TK230/Tc+
+         +SNq8bGfq/lLPWnwkEjAuSAsXJIFjGTCa/Ag48Z6oPXd5cN/Y/yyuQm+OUpsHJbYHRHW
+         45LuVedVpZnikM4lFqiY6IZHwgcua0+SnnObajfjRh6pJZn+dTHVFUrHR8ZTd9GDN/+1
+         NcwDDmQAc8ifNgPqVZ2H4vkCLKBf3x1l1+KI7cS/ookdqmlAUG2ECd1iThBFFT7WDcIP
+         5XkA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 4.15 21/55] mtd: nand: denali_pci: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Fri,  2 Feb 2018 17:58:39 +0100
-Message-Id: <20180202140828.375469696@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Douglas Miller <dougmill@linux.vnet.ibm.com>,
+	"Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+	Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 25/55] scsi: aacraid: Fix hang in kdump
+Date: Fri,  2 Feb 2018 17:58:43 +0100
+Message-Id: <20180202140828.807489255@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309808970580972?=
+X-GMAIL-MSGID: =?utf-8?q?1591310354541294014?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,36 +50,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
 
-commit d822401d1c6898a4a4ee03977b78b8cec402e88a upstream.
+commit c5313ae8e4e037bfaf5e56cb8d6efdb8e92ce437 upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+Driver attempts to perform a device scan and device add after coming out
+of reset. At times when the kdump kernel loads and it tries to perform
+eh recovery, the device scan hangs since its commands are blocked because
+of the eh recovery. This should have shown up in normal eh recovery path
+(Should have been obvious)
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/mtd/nand/denali_pci.o
-see include/linux/module.h for more information
+Remove the code that performs scanning.I can live without the rescanning
+support in the stable kernels but a hanging kdump/eh recovery needs to be
+fixed.
 
-This adds the license as "GPL v2", which matches the header of the file.
-
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
-
-Signed-off-by: Jesse Chan <jc@linux.com>
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Fixes: a2d0321dd532901e (scsi: aacraid: Reload offlined drives after controller reset)
+Reported-by: Douglas Miller <dougmill@linux.vnet.ibm.com>
+Tested-by: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+Fixes: a2d0321dd532901e (scsi: aacraid: Reload offlined drives after controller reset)
+Signed-off-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/denali_pci.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/aacraid/aachba.c  |    1 -
+ drivers/scsi/aacraid/commsup.c |    9 +--------
+ 2 files changed, 1 insertion(+), 9 deletions(-)
 
---- a/drivers/mtd/nand/denali_pci.c
-+++ b/drivers/mtd/nand/denali_pci.c
-@@ -125,3 +125,7 @@ static struct pci_driver denali_pci_driv
- 	.remove = denali_pci_remove,
- };
- module_pci_driver(denali_pci_driver);
+--- a/drivers/scsi/aacraid/aachba.c
++++ b/drivers/scsi/aacraid/aachba.c
+@@ -918,7 +918,6 @@ static void setinqstr(struct aac_dev *de
+ 		char *cname = kmemdup(sup_adap_info->adapter_type_text,
+ 				sizeof(sup_adap_info->adapter_type_text),
+ 								GFP_ATOMIC);
+-
+ 		if (!cname)
+ 			return;
+ 
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -1643,14 +1643,7 @@ static int _aac_reset_adapter(struct aac
+ out:
+ 	aac->in_reset = 0;
+ 	scsi_unblock_requests(host);
+-	/*
+-	 * Issue bus rescan to catch any configuration that might have
+-	 * occurred
+-	 */
+-	if (!retval) {
+-		dev_info(&aac->pdev->dev, "Issuing bus rescan\n");
+-		scsi_scan_host(host);
+-	}
 +
-+MODULE_DESCRIPTION("PCI driver for Denali NAND controller");
-+MODULE_AUTHOR("Intel Corporation and its suppliers");
-+MODULE_LICENSE("GPL v2");
+ 	if (jafo) {
+ 		spin_lock_irq(host->host_lock);
+ 	}
