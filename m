@@ -1,75 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591168-3-5838996125486291435
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591168; b=GB53ljV/k2xfatI77p7cHnMB1ewBsalCAamgmkDba2uwetK
-    3hJArLONZFyB7GKp0a+CyjYAyGb0E46YeQbn4JKzQfa+DE13taPrnndNjJraS2mR
-    mNNfjxGJfXHqSCvFBpzdamIYPf9kg6JAVAhqPbx4OuU8ZU5V3FklCbRmAbTZkWty
-    lvFMMAFO5TB4ZtRWS138vnzGENsnEsOUSiz5Nvzt0d0DX0iVvsy/teMhegnwhmTL
-    q8O/Q48pYe2aNJm5HxVLJJ5x6vPjixDeCQL2E3r8tId9r0CSnjmsY+Cd7Gm3luBW
-    UQXXQ4N6jN+qIoc1rQNyo7EWrmlfZYBGY4eDWJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591168; bh=gXbTSgM9i01TGn4VNRWbSvCcRQ
-    gTYC2AYil/nCQUkI8=; b=TQioKkPV+rh6hTYPFb/bI8MXTv2G5NUAK/7vHz0LDn
-    dyKnhr/QJMskI9Y2pOol46F9gw6c5ReLBa7GJCk86nn+ZUfkLYT9nLwTxsNGJoNc
-    UCXiAB+76Y9TicGLH2Yh598DPrGJpF0LB8bkDxgp1xg2ryeiAg6WE8wuo8NfxGkE
-    5MkJPHcSgzlxm+eQzhPAQ9hB7LIvD0RFl0W3BYT84dUJaDsBK0NvC8dpcLRTXRqK
-    uUqz7+2rDEL84qP4uCr3X17jDKWeGVrT2EL+lqabacpYb1YTMRWP5CCWjNo5nO06
-    aZbj9xxuh9S/3msiOd9tvMhkK/tVntszhLaT10yw/tEQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753040AbeBBRGD (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:06:03 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36634 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752537AbeBBRFw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:05:52 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227kcc77xzrNBYEoRWc964hh+Gh1l9Gys8ugLs5n2y988pBi773eoQQdxX2HD6TRac1SVXJW
+ARC-Seal: i=1; a=rsa-sha256; t=1517591167; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FqI0CirAxMUfHdczQAaZfhIvq4Z5LgTxBlTXlUPYEG1UQaSoiDbc9wCaYnMSLU3cU8
+         PXbkeVETp0RLxWDhjC0hi4uocsMIH1R6iDaN4HqYHnfTaKn8rvLV5XG6UrcCeAvIYgIt
+         xs7wDWgcgj7m07MS2+MtDIEVXW/vGLloxjo9WAfJcogJ1FCx7KeHIK5ibXXh4Jseau9i
+         kEa1/8YluMGN9a0aZsmO1VT367pLf6oK/dtxU5p9AWps0B5KBwXk41jz9MMb/oMM//HQ
+         +9kO9RFhF2NTn1sv3AwQ94WhqtyajRBZ5/JK5bYLBg/U4mCJsY5Tw23po+sSgb9yEn5g
+         td9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=znJSDbFz00l0/z6KIlax3wHEubk0oUM4bjMy8/eC7to=;
+        b=sbDltnBroJjSXfUTiuEK3EqMAzC900XxYSYLmOaM/MPTW31IOP4P6nq09kp3Q+JKc2
+         Su+IVmZRJWMhXIPVLZ7cTfs+D9yaUPkLNoMaxfeF2KiBuNuJDJbk/1kDvOa1Zxk1JBH3
+         aw6orwIUe57AkL95K/4cSI2YnVYGgqTZZXHMjSaLFUPtY9+EeuWKj621sM4yTblFD325
+         kjbzVtuMUXdmHsaqoGaIthGlq+Rt6L8Fpbak5V+wcdbj48QP2WgBg7C7seQvBRAQDuOE
+         OU5j7P9jTTi+Hpw7OKOngi1ije0NUqKxefM2vpPDjyaAZ1klUY+u/yIEZFXLQ/O7dqDl
+         CTQw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 69/86] staging: rtl8188eu: Fix incorrect response to SIOCGIWESSID
-Date: Fri,  2 Feb 2018 17:58:29 +0100
-Message-Id: <20180202140829.065497605@linuxfoundation.org>
+	stable@vger.kernel.org,
+	"=?UTF-8?q?Chu . Mike=20 [ =E6=9C=B1=E5=A0=85=E5=AE=9C ] ?=" <Mike-Chu@prolific.com.tw>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 74/86] USB: serial: pl2303: new device id for Chilitag
+Date: Fri,  2 Feb 2018 17:58:34 +0100
+Message-Id: <20180202140829.520877600@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309411957795471?=
+X-GMAIL-MSGID: =?utf-8?q?1591309675835421733?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,53 +48,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
+commit d08dd3f3dd2ae351b793fc5b76abdbf0fd317b12 upstream.
 
-[ Upstream commit b77992d2df9e47144354d1b25328b180afa33442 ]
+This adds a new device id for Chilitag devices to the pl2303 driver.
 
-When not associated with an AP, wifi device drivers should respond to the
-SIOCGIWESSID ioctl with a zero-length string for the SSID, which is the
-behavior expected by dhcpcd.
-
-Currently, this driver returns an error code (-1) from the ioctl call,
-which causes dhcpcd to assume that the device is not a wireless interface
-and therefore it fails to work correctly with it thereafter.
-
-This problem was reported and tested at
-https://github.com/lwfinger/rtl8188eu/issues/234.
-
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Reported-by: "Chu.Mike [朱堅宜]" <Mike-Chu@prolific.com.tw>
+Acked-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/usb/serial/pl2303.c |    1 +
+ drivers/usb/serial/pl2303.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -1397,19 +1397,13 @@ static int rtw_wx_get_essid(struct net_d
- 	if ((check_fwstate(pmlmepriv, _FW_LINKED)) ||
- 	    (check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE))) {
- 		len = pcur_bss->Ssid.SsidLength;
--
--		wrqu->essid.length = len;
--
- 		memcpy(extra, pcur_bss->Ssid.Ssid, len);
--
--		wrqu->essid.flags = 1;
- 	} else {
--		ret = -1;
--		goto exit;
-+		len = 0;
-+		*extra = 0;
- 	}
--
--exit:
--
-+	wrqu->essid.length = len;
-+	wrqu->essid.flags = 1;
- 
- 	return ret;
- }
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -39,6 +39,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ2) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_DCU11) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ3) },
++	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_CHILITAG) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_PHAROS) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ALDIGA) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MMX) },
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -17,6 +17,7 @@
+ #define PL2303_PRODUCT_ID_DCU11		0x1234
+ #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
+ #define PL2303_PRODUCT_ID_RSAQ3		0xaaa2
++#define PL2303_PRODUCT_ID_CHILITAG	0xaaa8
+ #define PL2303_PRODUCT_ID_ALDIGA	0x0611
+ #define PL2303_PRODUCT_ID_MMX		0x0612
+ #define PL2303_PRODUCT_ID_GPRS		0x0609
