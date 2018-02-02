@@ -1,127 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751990AbeBBNLS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:11:18 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48768 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751856AbeBBNHj (ORCPT
+        id S1751935AbeBBNND (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:13:03 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:52581 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751634AbeBBNMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 08:07:39 -0500
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
-Cc: prudo@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH 11/17] kexec_file: Move purgatories sha256 to common code
-Date: Fri,  2 Feb 2018 14:07:12 +0100
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
-References: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18020213-0040-0000-0000-0000040BC087
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020213-0041-0000-0000-0000260F6495
-Message-Id: <20180202130718.35509-12-prudo@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802020162
+        Fri, 2 Feb 2018 08:12:53 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-scsi@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] scsi: fc_encode: work around strncpy size warnings
+Date: Fri,  2 Feb 2018 14:12:15 +0100
+Message-Id: <20180202131225.1658853-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180202131225.1658853-1-arnd@arndb.de>
+References: <20180202131225.1658853-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:dz8PWAnrvHGNo9daKGFlUcYqCoVYuoWYUOMtFcbnMQBPU9c86Jo
+ w0fkQ/pjpPOF/DX85KYhKQhESxyxv3BA2FFIvE+MAY8umP/7CPXtXXLeRyfU4VOeovpExOs
+ NJqpUDcYA04h4QhZltCYvbUnMrSt8zh3vPI5Ery/HfzDIh0+wluegoIWQ35fPkO//Dlw7NH
+ boKEZYnZjk+RYsHVnMmtw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:FhCeIQgWm3I=:tQgb50UJ3E7LBP/syMLpXp
+ 3TktEnVx67yolLqPNlrtaUq97y2cAD7yaigo4j760XiaPMemiAz9QDMQKTsU5aapE/GMbdQZp
+ 5LYFKf2VgjD7qT8Ol7vZpWVZA+F1cybUGeTuSI83axwgyEp8zSu8DLjkiSCUhrNeiBRyuE10v
+ BWeWOFocvlGhnQ7XXJhmLQIW+cvhqRMcVO6DkXLHRyhzEgLLT4RL0HIvELK98MIPfwYr+OETt
+ 6VGtstnbojD32hptGpABemxv579qmGRbE0c3a4riGl2oCooPANjcsQFEX4xRMQaO93mBcPrY+
+ Pz/m+IqoMnHV5pr50FiBRos/F4jyp8xsfcVdAsCJ2TMJQJEaZnx04Py0O7NlRY3WVw8hbh8+4
+ 1vkzSrtuWEszs/5O+0wuWcEbtQaBxVBNtRR1Ss9Bkr76rfg0jdM9ER60GZ1GqbDMOh/7CJDtZ
+ TxBUeY9mG7udsIMLtdxvvDgtYcYjYGJo1mHOwjrIuDwB9c9avNRPNEWFpH8HqMUGahd5zOy0y
+ eSohg5Sm4EMvEIHjMSMsBocdndWyvhwcXJYcx/J9+U8kwsGGUxWOnWduIggF1/B3K0Wbjdtkn
+ cBAWq2+zbueDLqikYAer37MDEZAko6+zPizZT0Q53mykExIqvpwthOsmao2kxFNKTOPNWuhAx
+ ALCA7bRj6baO56SOERIJ5g66p7+wKhKYEPv7X/nKMOLUEbRXVWQagY9fZgB1a18FI6BjPG3n4
+ BVMHDFln6pCNO7Q6qx5vPAhunUosnvnBmvqIMA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code to verify the new kernels sha digest are applicable for all
-architectures. Move it to common code.
+struct fc_fdmi_attr_entry contains a variable-length string at
+the end, which is encoded as a one-byte array.  gcc-8 notices that
+we copy strings into it that obviously go beyond that one byte:
 
-Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+In function 'fc_ct_ms_fill',
+    inlined from 'fc_elsct_send' at include/scsi/fc_encode.h:518:8:
+include/scsi/fc_encode.h:275:3: error: 'strncpy' writing 64 bytes into a region of size 1 overflows the destination [-Werror=stringop-overflow=]
+   strncpy((char *)&entry->value,
+   ^
+include/scsi/fc_encode.h:287:3: error: 'strncpy' writing 64 bytes into a region of size 1 overflows the destination [-Werror=stringop-overflow=]
+   strncpy((char *)&entry->value,
+   ^
+
+No idea what the right fix is.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/purgatory/Makefile                    |  3 +++
- arch/x86/purgatory/purgatory.c                 |  2 +-
- {arch/x86/purgatory => include/linux}/sha256.h | 10 +++++++++-
- {arch/x86/purgatory => lib}/sha256.c           |  4 ++--
- 4 files changed, 15 insertions(+), 4 deletions(-)
- rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
- rename {arch/x86/purgatory => lib}/sha256.c (99%)
+ include/scsi/fc/fc_ms.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 2f15a2ac4209..414eed6b5065 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string
- targets += $(purgatory-y)
- PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+diff --git a/include/scsi/fc/fc_ms.h b/include/scsi/fc/fc_ms.h
+index f52b921b5c70..c5614e725a0e 100644
+--- a/include/scsi/fc/fc_ms.h
++++ b/include/scsi/fc/fc_ms.h
+@@ -128,7 +128,7 @@ struct fc_fdmi_port_name {
+ struct fc_fdmi_attr_entry {
+ 	__be16		type;
+ 	__be16		len;
+-	__u8		value[1];
++	__u8		value[];
+ } __attribute__((__packed__));
  
-+$(obj)/sha256.o: $(srctree)/lib/sha256.c
-+	$(call if_changed_rule,cc_o_c)
-+
- LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
- targets += purgatory.ro
- 
-diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.c
-index 470edad96bb9..025c34ac0d84 100644
---- a/arch/x86/purgatory/purgatory.c
-+++ b/arch/x86/purgatory/purgatory.c
-@@ -11,9 +11,9 @@
-  */
- 
- #include <linux/bug.h>
-+#include <linux/sha256.h>
- #include <asm/purgatory.h>
- 
--#include "sha256.h"
- #include "../boot/string.h"
- 
- unsigned long purgatory_backup_dest __section(.kexec-purgatory);
-diff --git a/arch/x86/purgatory/sha256.h b/include/linux/sha256.h
-similarity index 63%
-rename from arch/x86/purgatory/sha256.h
-rename to include/linux/sha256.h
-index 2867d9825a57..43a20ac33688 100644
---- a/arch/x86/purgatory/sha256.h
-+++ b/include/linux/sha256.h
-@@ -13,9 +13,17 @@
- #include <linux/types.h>
- #include <crypto/sha.h>
- 
-+/* Stand-alone implementation of the SHA256 algorithm. It is designed to
-+ * have as little dependencies as possible so it can be used in the
-+ * kexec_file purgatory. In other cases you should use the implementation in
-+ * crypto/.
-+ *
-+ * For details see lib/sha256.c
-+ */
-+
- extern int sha256_init(struct sha256_state *sctx);
- extern int sha256_update(struct sha256_state *sctx, const u8 *input,
--				unsigned int length);
-+			 unsigned int length);
- extern int sha256_final(struct sha256_state *sctx, u8 *hash);
- 
- #endif /* SHA256_H */
-diff --git a/arch/x86/purgatory/sha256.c b/lib/sha256.c
-similarity index 99%
-rename from arch/x86/purgatory/sha256.c
-rename to lib/sha256.c
-index 548ca675a14a..4400c832e2aa 100644
---- a/arch/x86/purgatory/sha256.c
-+++ b/lib/sha256.c
-@@ -16,9 +16,9 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/sha256.h>
-+#include <linux/string.h>
- #include <asm/byteorder.h>
--#include "sha256.h"
--#include "../boot/string.h"
- 
- static inline u32 Ch(u32 x, u32 y, u32 z)
- {
+ /*
 -- 
-2.13.5
+2.9.0
