@@ -1,46 +1,84 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226f+7a4rCRN2kKmzp0ecCNu4FKQ1if6uYWVhbmtmCjlJ8x0QekdpdCa1wLTerfq7QxlCejm
-ARC-Seal: i=1; a=rsa-sha256; t=1517590797; cv=none;
-        d=google.com; s=arc-20160816;
-        b=HdPCB5OyZHI2ZxCsTRTrP29eQ8nSN0oVMUCds96FBvIxPBzWCdfcGrKV9k17qdbi3Q
-         Z10tguEw4xZKm//zY1uo6331FABHLjQ1lXJWCSOpt//4w1XlkIkLg3VPClFBufwAIuSU
-         WrmJH5ceNsUG/snP2MzTUNdJhD+9Gartp5snEH0LvXhRsUfeBaJ8hJ7YPssqkyOcE2d0
-         1pOo3z9TdzQZ2oB1iuHSNAXgXfC67T4gdqaRVZ4vLiAmRPX7nHsKAyLumSFqLFahl0jt
-         cKg2IOMfnT2INjOjBgBSjeZ1E2XEYZyNmpVu/PU/ASSSEgG1ckhwau2Uhu2YtvASK/rE
-         cI7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=SCDij7lhOxHMKFvjSpcfPgtfcy5AmwM0ys01nUnZTew=;
-        b=QE0CCPOB0rqRYwn/0XEcDth4eCW4kF2lD4iApqOd2cftPB9IrZ2BXNO48jX7JjdHt/
-         gVYPD8bCSZFojLCJvQMIsTCwZ8muXVDVeLcuuaeoHrmPvaAqqUs08VKJm+gmNlGQeyiF
-         fxs4BbIvRKcnL98tkw+NbfSUxuUnFOHsWHcJMTokRq2pJtKSxqsclXAqkrG41Gggo1YM
-         9naqRTnF2exOkytwH/UlRGXkF0MTW1s/wQrrf1uU5E7L9RCmzDvSXg6P4703+rmlrDnM
-         CKp/wG62T+WiCj+PE1Q9ePcS8uRN5rSUxk4bhG6x1l33ag1dT5YxJKcvVEcDIkKyLHzt
-         pw2Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2879036-1517590797-2-3743359905965150178
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517590793; b=J0bmpt1xsb7Los/gdINSa+dK3JTq+h2PsSGBUCwB27Ys1TA
+    71qeIr/3CE14daw54wpinNf/rvTIq5LrOiGNp69bA85jk5PcwSWCczDpH2bxJ6RD
+    GNoOhi3+iRrGhjRQP/+7iau/uZKb9HUnp88+fX2W1M6xXOCjT+tykXC6Hdw5Qtg5
+    mGonr1Z1pGlwwMVTvQXy66ChLTaXzVgTIhu6lCApA7PySGUMdR6yL0FgCEZKYgyD
+    WynsJIuFkrpKBM6q0TA61RRkbzz60svjgrWoZLfiV7cGRA2gxk9EGIZ9RaQY13o5
+    GxVCmShBxJ4Q3DB0BRZew7daK6UmYWDEAujYTMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517590793; bh=x2sIyCL+jGOJuatqIkD4sgCZkC
+    BAdkVCWz3+R7rZ+fI=; b=LgqxBlaBxjTR3YUnglGph5jblxR0w0j36jSUGGL7kr
+    HJ+dx+KVW99mlr/apyATW6O3FZbUuZ0AA4o8IlqwTqplyy9i8npfrqv+SLLnSNbn
+    +wyZxpN4bydv+xYjFXYYLSQfWTv2SezoK8ZhazL9wnLlGWGpQvjvSn2m/dQJJeZH
+    M5wSg/vP3/mfqDEn48mHTsxSttqguS0fCuIddeHEMMJtuoLPc58mg5VtYsvl+C3M
+    fJP1xBV9kQkjMDpOTyOXThcO0SpGBGaCFxmvmjk3gDdIwUwg5ay+aHCrtinqvvye
+    x2n1HT1W8LQkEwqSOqEzI1M2NNGrfLNKlJPTiNOVAKsw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752519AbeBBQ7w (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 11:59:52 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34456 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752494AbeBBQ7k (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 11:59:40 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jesse Chan <jc@linux.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.4 17/67] gpio: iop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Fri,  2 Feb 2018 17:57:46 +0100
-Message-Id: <20180202140817.179657576@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jon Masters <jcm@redhat.com>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        gnomes@lxorguk.ukuu.org.uk, peterz@infradead.org,
+        ning.sun@intel.com, tboot-devel@lists.sourceforge.net,
+        andi@firstfloor.org, luto@kernel.org, law@redhat.com,
+        pbonzini@redhat.com, torvalds@linux-foundation.org,
+        dwmw@amazon.co.uk, nickc@redhat.com,
+        Hugh Dickins <hughd@google.com>, gregkh@linux-foundation.org
+Subject: [PATCH 4.4 11/67] x86/pti: Make unpoison of pgd for trusted boot work for real
+Date: Fri,  2 Feb 2018 17:57:40 +0100
+Message-Id: <20180202140816.487701831@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309288396481657?=
-X-GMAIL-MSGID: =?utf-8?q?1591309288396481657?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,35 +86,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 97b03136e1b637d7a9d2274c099e44ecf23f1103 upstream.
+commit 445b69e3b75e42362a5bdc13c8b8f61599e2228a upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+The inital fix for trusted boot and PTI potentially misses the pgd clearing
+if pud_alloc() sets a PGD.  It probably works in *practice* because for two
+adjacent calls to map_tboot_page() that share a PGD entry, the first will
+clear NX, *then* allocate and set the PGD (without NX clear).  The second
+call will *not* allocate but will clear the NX bit.
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-iop.o
-see include/linux/module.h for more information
+Defer the NX clearing to a point after it is known that all top-level
+allocations have occurred.  Add a comment to clarify why.
 
-This adds the license as "GPL", which matches the header of the file.
+[ tglx: Massaged changelog ]
 
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
+[hughd notes: I have not tested tboot, but this looks to me as necessary
+and as safe in old-Kaiser backports as it is upstream; I'm not submitting
+the commit-to-be-fixed 262b6b30087, since it was undone by 445b69e3b75e,
+and makes conflict trouble because of 5-level's p4d versus 4-level's pgd.]
 
-Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 262b6b30087 ("x86/tboot: Unbreak tboot with PTI enabled")
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: "Tim Chen" <tim.c.chen@linux.intel.com>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: peterz@infradead.org
+Cc: ning.sun@intel.com
+Cc: tboot-devel@lists.sourceforge.net
+Cc: andi@firstfloor.org
+Cc: luto@kernel.org
+Cc: law@redhat.com
+Cc: pbonzini@redhat.com
+Cc: torvalds@linux-foundation.org
+Cc: gregkh@linux-foundation.org
+Cc: dwmw@amazon.co.uk
+Cc: nickc@redhat.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180110224939.2695CD47@viggo.jf.intel.com
+Signed-off-by: Hugh Dickins <hughd@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpio-iop.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kernel/tboot.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/gpio/gpio-iop.c
-+++ b/drivers/gpio/gpio-iop.c
-@@ -129,3 +129,7 @@ static int __init iop3xx_gpio_init(void)
- 	return platform_driver_register(&iop3xx_gpio_driver);
- }
- arch_initcall(iop3xx_gpio_init);
+--- a/arch/x86/kernel/tboot.c
++++ b/arch/x86/kernel/tboot.c
+@@ -140,6 +140,16 @@ static int map_tboot_page(unsigned long
+ 		return -1;
+ 	set_pte_at(&tboot_mm, vaddr, pte, pfn_pte(pfn, prot));
+ 	pte_unmap(pte);
 +
-+MODULE_DESCRIPTION("GPIO handling for Intel IOP3xx processors");
-+MODULE_AUTHOR("Lennert Buytenhek <buytenh@wantstofly.org>");
-+MODULE_LICENSE("GPL");
++	/*
++	 * PTI poisons low addresses in the kernel page tables in the
++	 * name of making them unusable for userspace.  To execute
++	 * code at such a low address, the poison must be cleared.
++	 *
++	 * Note: 'pgd' actually gets set in pud_alloc().
++	 */
++	pgd->pgd &= ~_PAGE_NX;
++
+ 	return 0;
+ }
+ 
