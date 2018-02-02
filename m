@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2244vjROc1UArWqbzFTr60LdqsRmlDcw/THxcbnPtqudXPInlU5Jan8OhisRQHQFvkJ2pq3X
-ARC-Seal: i=1; a=rsa-sha256; t=1517591102; cv=none;
+X-Google-Smtp-Source: AH8x224ecAJ4e03ZRMjLsT3lKO0170V2Vug1n0mO058fOflD7UDQAGG5GXgjjB1II7KGf0w+FWip
+ARC-Seal: i=1; a=rsa-sha256; t=1517591098; cv=none;
         d=google.com; s=arc-20160816;
-        b=GQoXwASXhPMkixtHwFV5Wh5+fktHhT5UOryQOHyctS931nzyelDUS84AuMisuN/HEf
-         XZr4OnI6p7uZWJFvSZvMI35yYoZL9VIsQcZAAoHDJfo9OUugrOOf/tluwyCar+4bDYU3
-         NhM6szCZFR/EVOWAh2RT+dWnYtK+TILjyTftTkb++YRUi6Ajg1Q94ZRFVDXMt5Ruqp9I
-         DkGjhmg/V9P37ampCwsk25Eu4NpVD/TiaYMPqF3g07NaRh8kAvwsyyxwXNGb4FxIxB0/
-         O6gb3uABjieW7mXLzTCkHGJUkeL8+PMNKpk9swcJpfeAu+6VWxYcaTsTeYg+15Jo4Uhv
-         416g==
+        b=dDaq+WJLyIf+YNg3rEM5AWQNKgdB5IwixlrZ1SF2ohMU6cAz31u0qsUuJggvXgIxLx
+         XlJixWeRQrjLxiMguyoj43GJZQtwR2yLpLur+JFBA00e4Co3w6C0dTJvh//lmEXDYHCg
+         h+vYJGiGwtoVElYlK5P43B9zrVPywM8JnTTLE73iVSqpN4ddAvwvZdTp48oH+mllkqfy
+         n08PjIKHFCYUJBNN6YXM45xTqyO1pFt3t6i2jutXuHSTzObOfftQEggkwe0iXOklCOvj
+         zKEFilcHcV7FKAApbQKvfFvasqH+HOzzTwPQphpAFabArok1Lnst+B4yDMe0YJvYGRSr
+         tUXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qZN/Um9NxwKsdkD6mA6WV5Eik6GJX726rJSKGekJex8=;
-        b=hdwSVptnE0qBRWRyq9oV075jdm15MwWvstaIOez0RHp6a/heTc95VSjxAsiVqxMQBN
-         KjAS2Y5zpErxj8vI457zTM5qxjXQ4I0z4OkQZXlKleBR4NOXBDi73Jd7mZGMK8jwiAe+
-         mEcUrdLrtlQS3so9G6RlIJTX1BEMEyHi4umgexXWna1SnZDGxgHiwb7F6GmW67k21f2S
-         XmfPj4nC3aAcz/GH/DtxfSS2T4JZ6fouo77XF58SXR2jPChxcD8+gjYw/5AtHKrr/2RF
-         dGaj8RQTHrv2avxW9BXj5hloK9/qGZI0H/fO1rOBMhaOsUoqQaHGZ5hREb0wEygPa1ll
-         KL1g==
+        bh=Qr0NCXgketDI7vITS2BpcexsRMyock1VDEw2JqPbRYQ=;
+        b=A5Tp6S5BQ8m1BPmF78ytEAMdDSVv/YrH40/XS49RLspxg7fWDafpEPXfyZQo8nNEH1
+         ZxCnTpnqWitfrseHm9dutWEh0Ud3qXeyP9mOs1hXQP+b2TMtSCjhyn1RnVQ/bXnYpGDj
+         seMnj4CgC7EdKk9IhWkqs+ABs7aG5htKP85OGR/hKL+XHlcJ2hpUV1YQTAnPkFCotlbx
+         YgpHkE0K6jCC0hrJErj7igzRUzvnh/uaUyVDr6zKv1eKKcFprZtlCZgPzEtg/6kjFZIV
+         jICS5y50GKrXr/kA3eJ75uWqrBDqTpBZaJdjcr5lV1bIeKYyxUsRRQ0a/qyoWR1qJf9I
+         N6Fg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Abhishek Goel <huntbag@linux.vnet.ibm.com>,
 	Shuah Khan <shuahkh@osg.samsung.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 19/86] cpupower : Fix cpupower working when cpu0 is offline
-Date: Fri,  2 Feb 2018 17:57:39 +0100
-Message-Id: <20180202140824.536513876@linuxfoundation.org>
+Subject: [PATCH 4.9 18/86] cpupowerutils: bench - Fix cpu online check
+Date: Fri,  2 Feb 2018 17:57:38 +0100
+Message-Id: <20180202140824.480086738@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309607653259712?=
-X-GMAIL-MSGID: =?utf-8?q?1591309607653259712?=
+X-GMAIL-THRID: =?utf-8?q?1591309604120937333?=
+X-GMAIL-MSGID: =?utf-8?q?1591309604120937333?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,50 +52,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Abhishek Goel <huntbag@linux.vnet.ibm.com>
 
 
-[ Upstream commit dbdc468f35ee827cab2753caa1c660bdb832243a ]
+[ Upstream commit 53d1cd6b125fb9d69303516a1179ebc3b72f797a ]
 
-cpuidle_monitor used to assume that cpu0 is always online which is not
-a valid assumption on POWER machines. This patch fixes this by getting
-the cpu on which the current thread is running, instead of always using
-cpu0 for monitoring which may not be online.
+cpupower_is_cpu_online was incorrectly checking for 0. This patch fixes
+this by checking for 1 when the cpu is online.
 
 Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ tools/power/cpupower/bench/system.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
-+++ b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
-@@ -130,15 +130,18 @@ static struct cpuidle_monitor *cpuidle_r
- {
- 	int num;
- 	char *tmp;
-+	int this_cpu;
-+
-+	this_cpu = sched_getcpu();
+--- a/tools/power/cpupower/bench/system.c
++++ b/tools/power/cpupower/bench/system.c
+@@ -61,7 +61,7 @@ int set_cpufreq_governor(char *governor,
  
- 	/* Assume idle state count is the same for all CPUs */
--	cpuidle_sysfs_monitor.hw_states_num = cpuidle_state_count(0);
-+	cpuidle_sysfs_monitor.hw_states_num = cpuidle_state_count(this_cpu);
+ 	dprintf("set %s as cpufreq governor\n", governor);
  
- 	if (cpuidle_sysfs_monitor.hw_states_num <= 0)
- 		return NULL;
- 
- 	for (num = 0; num < cpuidle_sysfs_monitor.hw_states_num; num++) {
--		tmp = cpuidle_state_name(0, num);
-+		tmp = cpuidle_state_name(this_cpu, num);
- 		if (tmp == NULL)
- 			continue;
- 
-@@ -146,7 +149,7 @@ static struct cpuidle_monitor *cpuidle_r
- 		strncpy(cpuidle_cstates[num].name, tmp, CSTATE_NAME_LEN - 1);
- 		free(tmp);
- 
--		tmp = cpuidle_state_desc(0, num);
-+		tmp = cpuidle_state_desc(this_cpu, num);
- 		if (tmp == NULL)
- 			continue;
- 		strncpy(cpuidle_cstates[num].desc, tmp,	CSTATE_DESC_LEN - 1);
+-	if (cpupower_is_cpu_online(cpu) != 0) {
++	if (cpupower_is_cpu_online(cpu) != 1) {
+ 		perror("cpufreq_cpu_exists");
+ 		fprintf(stderr, "error: cpu %u does not exist\n", cpu);
+ 		return -1;
