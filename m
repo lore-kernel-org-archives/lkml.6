@@ -1,46 +1,76 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224PN4Cq4EjEahMXdA6Uf4PGpP+zFFjlnx0XnDYlg9OqS+D6/ivC5uoa1jY/sNQ2CSf6KPrm
-ARC-Seal: i=1; a=rsa-sha256; t=1517591386; cv=none;
-        d=google.com; s=arc-20160816;
-        b=NXiRtS4tuxaYfTqoTNCrDXEU0Z8juNlNm8tyKvjFsHzIJUf0tJgvPFYKfkH1MyJzP3
-         6ZOvqYt5bUQorupmGpLUJHKakql2XdDEWyCjNp7oeWsdN5gHx2uS95Ni68OiBQN4UzxT
-         h9s8EVCbMdxRnGOavbq+z0yvfRBUqsuh0wQdxDjBAABCrISYHJ3/2ck33fNpJL2NyCri
-         tJm+XIjP3kwhFjxym6acH8ZU2oCKxptOVBqRxgUHRXxOxRxkM18YWcgenUqmN0W0SjTG
-         mJed/KRj35uOrZzHt6x7F0dH+NWW3zeNyEfpNwJZoBb6HTeoCqlpXjKxsBeA8F0mUoZQ
-         JxFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=Yy+2WEVpCQkrtIBnFxZcUisVaM2ZlWuE/6n/umstpf0=;
-        b=MXNDPtJQpx35+hptld5JltfAB5JvVQlJ4/y2Z5t5F1Qqh8AZ3wK20YokOklH7qHY2K
-         FI10uo/WKyVhzJxQSMpFMWzSOH+hHPbNhtEgGY3mykuUtilNa9TTuhIZYmVmAJ5Kk0c+
-         KjZVuwdu6YMbGkPNZb7cs1Fi/YxfOx93NjeLZhztv7g+l9etD4RPbbl+9XqXnyOU5b8v
-         2XnkqiBLx6rGP8fle33Qo6VbRex30ZAtISDu9pdgpvto9bl9btxJk8wOzzPxOPeuUwsN
-         sPqw1lVQ9yP1iyxUlVab8gSW0goTjnT8w4IA7X+tvEjVJ+kwWOimXWisywQjlMFYdM94
-         adRg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591385-2-15866060044261530100
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES sk.us-asciiensv,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591384; b=cAkB/v4/WnemXFnVVD1U4c4LUG49UeojU6dTacCKzpUab0u
+    yjfnRKrceYgKlSk2OOXNLHLyjdkWq39C2TLAd1eAPaF5O/VAfg3s2K5zkQ/+brcF
+    3ZzfAHCjXv2WNmOGXOVagFGKtAULtksQEe1zfnPvKjlq5OJ5gElG6ud6FAmZZOqK
+    9bXhnyQm79EPr/4dVBARwE77Trx+im2iWVLaDgj5aGwj6lSo/2OL0gAzL4EADOY0
+    ZFaGdeSOfDTbKvdA9lK3WWn7CgFVKMJ7hv74pgirrECCOPmP7QO8Ul5Hx0+5KHGL
+    WHYdjzLs149O/onbE75Ust3bQ0C6OWcJJ+3+WUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591384; bh=Hqu6nuAf40fotSo4G23R4hM5uP
+    ONipEFmlJudIwSpqY=; b=uJvu9NA1UWhYzKjee2WJNc63atc1TUmCwg+qgjYvwB
+    JVY1JsU3nGTApkybDLKO+fk9XusHO1F5KCuXV9peLYSZq/RONQemZgGtGgOqkc5/
+    TERoe7TXbv2yrd92wvwrtMVWokt1iKnpZYGsf2S7aMzHI0ZXe97YBC+hAZhi5Mgd
+    5SGUqYJ6SzKbnMEd2KK6j1/vFvAO8YEAW16JGpOYjmCFCedBpA5TqAbfy7qUhDZE
+    CGwVl20dhqyDZqHaNAPUsIwZDPCn09uMr6XCfIRQK70YlPCWz3WGs5ydMD6zj2Sk
+    VVbQDBlz21T1nCZYL0LxwepLBm6ZoGfuZz8HZv6nBM0g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753253AbeBBRJi (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:09:38 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37976 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752669AbeBBRJb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:09:31 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 060/156] rxrpc: Fix service endpoint expiry
-Date: Fri,  2 Feb 2018 17:57:21 +0100
-Message-Id: <20180202140843.025207221@linuxfoundation.org>
+        stable@vger.kernel.org, Shaohua Li <shli@fb.com>,
+        David Disseldorp <ddiss@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 056/156] null_blk: fix dev->badblocks leak
+Date: Fri,  2 Feb 2018 17:57:17 +0100
+Message-Id: <20180202140842.829885141@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309905936325877?=
-X-GMAIL-MSGID: =?utf-8?q?1591309905936325877?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,252 +78,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: David Disseldorp <ddiss@suse.de>
 
 
-[ Upstream commit f859ab61875978eeaa539740ff7f7d91f5d60006 ]
+[ Upstream commit 1addb798e93893d33c8dfab743cd44f09fd7719a ]
 
-RxRPC service endpoints expire like they're supposed to by the following
-means:
+null_alloc_dev() allocates memory for dev->badblocks, but cleanup
+currently only occurs in the configfs release codepath, missing a number
+of other places.
 
- (1) Mark dead rxrpc_net structs (with ->live) rather than twiddling the
-     global service conn timeout, otherwise the first rxrpc_net struct to
-     die will cause connections on all others to expire immediately from
-     then on.
+This bug was found running the blktests block/010 test, alongside
+kmemleak:
+rapido1:/blktests# ./check block/010
+...
+rapido1:/blktests# echo scan > /sys/kernel/debug/kmemleak
+[  306.966708] kmemleak: 32 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
+rapido1:/blktests# cat /sys/kernel/debug/kmemleak
+unreferenced object 0xffff88001f86d000 (size 4096):
+  comm "modprobe", pid 231, jiffies 4294892415 (age 318.252s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff814b0379>] kmemleak_alloc+0x49/0xa0
+    [<ffffffff810f180f>] kmem_cache_alloc+0x9f/0xe0
+    [<ffffffff8124e45f>] badblocks_init+0x2f/0x60
+    [<ffffffffa0019fae>] 0xffffffffa0019fae
+    [<ffffffffa0021273>] nullb_device_badblocks_store+0x63/0x130 [null_blk]
+    [<ffffffff810004cd>] do_one_initcall+0x3d/0x170
+    [<ffffffff8109fe0d>] do_init_module+0x56/0x1e9
+    [<ffffffff8109ebd7>] load_module+0x1c47/0x26a0
+    [<ffffffff8109f819>] SyS_finit_module+0xa9/0xd0
+    [<ffffffff814b4f60>] entry_SYSCALL_64_fastpath+0x13/0x94
 
- (2) Mark local service endpoints for which the socket has been closed
-     (->service_closed) so that the expiration timeout can be much
-     shortened for service and client connections going through that
-     endpoint.
-
- (3) rxrpc_put_service_conn() needs to schedule the reaper when the usage
-     count reaches 1, not 0, as idle conns have a 1 count.
-
- (4) The accumulator for the earliest time we might want to schedule for
-     should be initialised to jiffies + MAX_JIFFY_OFFSET, not ULONG_MAX as
-     the comparison functions use signed arithmetic.
-
- (5) Simplify the expiration handling, adding the expiration value to the
-     idle timestamp each time rather than keeping track of the time in the
-     past before which the idle timestamp must go to be expired.  This is
-     much easier to read.
-
- (6) Ignore the timeouts if the net namespace is dead.
-
- (7) Restart the service reaper work item rather the client reaper.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
+Fixes: 2f54a613c942 ("nullb: badbblocks support")
+Reviewed-by: Shaohua Li <shli@fb.com>
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/trace/events/rxrpc.h |    2 ++
- net/rxrpc/af_rxrpc.c         |   13 +++++++++++++
- net/rxrpc/ar-internal.h      |    3 +++
- net/rxrpc/conn_client.c      |    2 ++
- net/rxrpc/conn_object.c      |   42 ++++++++++++++++++++++++------------------
- net/rxrpc/net_ns.c           |    3 +++
- 6 files changed, 47 insertions(+), 18 deletions(-)
+ drivers/block/null_blk.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -49,6 +49,7 @@ enum rxrpc_conn_trace {
- 	rxrpc_conn_put_client,
- 	rxrpc_conn_put_service,
- 	rxrpc_conn_queued,
-+	rxrpc_conn_reap_service,
- 	rxrpc_conn_seen,
- };
+--- a/drivers/block/null_blk.c
++++ b/drivers/block/null_blk.c
+@@ -467,7 +467,6 @@ static void nullb_device_release(struct
+ {
+ 	struct nullb_device *dev = to_nullb_device(item);
  
-@@ -206,6 +207,7 @@ enum rxrpc_congest_change {
- 	EM(rxrpc_conn_put_client,		"PTc") \
- 	EM(rxrpc_conn_put_service,		"PTs") \
- 	EM(rxrpc_conn_queued,			"QUE") \
-+	EM(rxrpc_conn_reap_service,		"RPs") \
- 	E_(rxrpc_conn_seen,			"SEE")
+-	badblocks_exit(&dev->badblocks);
+ 	null_free_device_storage(dev, false);
+ 	null_free_dev(dev);
+ }
+@@ -578,6 +577,10 @@ static struct nullb_device *null_alloc_d
  
- #define rxrpc_client_traces \
---- a/net/rxrpc/af_rxrpc.c
-+++ b/net/rxrpc/af_rxrpc.c
-@@ -823,6 +823,19 @@ static int rxrpc_release_sock(struct soc
- 	sock_orphan(sk);
- 	sk->sk_shutdown = SHUTDOWN_MASK;
- 
-+	/* We want to kill off all connections from a service socket
-+	 * as fast as possible because we can't share these; client
-+	 * sockets, on the other hand, can share an endpoint.
-+	 */
-+	switch (sk->sk_state) {
-+	case RXRPC_SERVER_BOUND:
-+	case RXRPC_SERVER_BOUND2:
-+	case RXRPC_SERVER_LISTENING:
-+	case RXRPC_SERVER_LISTEN_DISABLED:
-+		rx->local->service_closed = true;
-+		break;
-+	}
+ static void null_free_dev(struct nullb_device *dev)
+ {
++	if (!dev)
++		return;
 +
- 	spin_lock_bh(&sk->sk_receive_queue.lock);
- 	sk->sk_state = RXRPC_CLOSE;
- 	spin_unlock_bh(&sk->sk_receive_queue.lock);
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -84,6 +84,7 @@ struct rxrpc_net {
- 	unsigned int		nr_client_conns;
- 	unsigned int		nr_active_client_conns;
- 	bool			kill_all_client_conns;
-+	bool			live;
- 	spinlock_t		client_conn_cache_lock; /* Lock for ->*_client_conns */
- 	spinlock_t		client_conn_discard_lock; /* Prevent multiple discarders */
- 	struct list_head	waiting_client_conns;
-@@ -265,6 +266,7 @@ struct rxrpc_local {
- 	rwlock_t		services_lock;	/* lock for services list */
- 	int			debug_id;	/* debug ID for printks */
- 	bool			dead;
-+	bool			service_closed;	/* Service socket closed */
- 	struct sockaddr_rxrpc	srx;		/* local address */
- };
- 
-@@ -824,6 +826,7 @@ void rxrpc_process_connection(struct wor
-  * conn_object.c
-  */
- extern unsigned int rxrpc_connection_expiry;
-+extern unsigned int rxrpc_closed_conn_expiry;
- 
- struct rxrpc_connection *rxrpc_alloc_connection(gfp_t);
- struct rxrpc_connection *rxrpc_find_connection_rcu(struct rxrpc_local *,
---- a/net/rxrpc/conn_client.c
-+++ b/net/rxrpc/conn_client.c
-@@ -1061,6 +1061,8 @@ next:
- 		expiry = rxrpc_conn_idle_client_expiry;
- 		if (nr_conns > rxrpc_reap_client_connections)
- 			expiry = rxrpc_conn_idle_client_fast_expiry;
-+		if (conn->params.local->service_closed)
-+			expiry = rxrpc_closed_conn_expiry * HZ;
- 
- 		conn_expires_at = conn->idle_timestamp + expiry;
- 
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -20,7 +20,8 @@
- /*
-  * Time till a connection expires after last use (in seconds).
-  */
--unsigned int rxrpc_connection_expiry = 10 * 60;
-+unsigned int __read_mostly rxrpc_connection_expiry = 10 * 60;
-+unsigned int __read_mostly rxrpc_closed_conn_expiry = 10;
- 
- static void rxrpc_destroy_connection(struct rcu_head *);
- 
-@@ -312,7 +313,7 @@ void rxrpc_put_service_conn(struct rxrpc
- 	n = atomic_dec_return(&conn->usage);
- 	trace_rxrpc_conn(conn, rxrpc_conn_put_service, n, here);
- 	ASSERTCMP(n, >=, 0);
--	if (n == 0) {
-+	if (n == 1) {
- 		rxnet = conn->params.local->rxnet;
- 		rxrpc_queue_delayed_work(&rxnet->service_conn_reaper, 0);
- 	}
-@@ -353,15 +354,14 @@ void rxrpc_service_connection_reaper(str
- 	struct rxrpc_net *rxnet =
- 		container_of(to_delayed_work(work),
- 			     struct rxrpc_net, service_conn_reaper);
--	unsigned long reap_older_than, earliest, idle_timestamp, now;
-+	unsigned long expire_at, earliest, idle_timestamp, now;
- 
- 	LIST_HEAD(graveyard);
- 
- 	_enter("");
- 
- 	now = jiffies;
--	reap_older_than = now - rxrpc_connection_expiry * HZ;
--	earliest = ULONG_MAX;
-+	earliest = now + MAX_JIFFY_OFFSET;
- 
- 	write_lock(&rxnet->conn_lock);
- 	list_for_each_entry_safe(conn, _p, &rxnet->service_conns, link) {
-@@ -371,15 +371,21 @@ void rxrpc_service_connection_reaper(str
- 		if (conn->state == RXRPC_CONN_SERVICE_PREALLOC)
- 			continue;
- 
--		idle_timestamp = READ_ONCE(conn->idle_timestamp);
--		_debug("reap CONN %d { u=%d,t=%ld }",
--		       conn->debug_id, atomic_read(&conn->usage),
--		       (long)reap_older_than - (long)idle_timestamp);
--
--		if (time_after(idle_timestamp, reap_older_than)) {
--			if (time_before(idle_timestamp, earliest))
--				earliest = idle_timestamp;
--			continue;
-+		if (rxnet->live) {
-+			idle_timestamp = READ_ONCE(conn->idle_timestamp);
-+			expire_at = idle_timestamp + rxrpc_connection_expiry * HZ;
-+			if (conn->params.local->service_closed)
-+				expire_at = idle_timestamp + rxrpc_closed_conn_expiry * HZ;
-+
-+			_debug("reap CONN %d { u=%d,t=%ld }",
-+			       conn->debug_id, atomic_read(&conn->usage),
-+			       (long)expire_at - (long)now);
-+
-+			if (time_before(now, expire_at)) {
-+				if (time_before(expire_at, earliest))
-+					earliest = expire_at;
-+				continue;
-+			}
- 		}
- 
- 		/* The usage count sits at 1 whilst the object is unused on the
-@@ -387,6 +393,7 @@ void rxrpc_service_connection_reaper(str
- 		 */
- 		if (atomic_cmpxchg(&conn->usage, 1, 0) != 1)
- 			continue;
-+		trace_rxrpc_conn(conn, rxrpc_conn_reap_service, 0, 0);
- 
- 		if (rxrpc_conn_is_client(conn))
- 			BUG();
-@@ -397,10 +404,10 @@ void rxrpc_service_connection_reaper(str
- 	}
- 	write_unlock(&rxnet->conn_lock);
- 
--	if (earliest != ULONG_MAX) {
--		_debug("reschedule reaper %ld", (long) earliest - now);
-+	if (earliest != now + MAX_JIFFY_OFFSET) {
-+		_debug("reschedule reaper %ld", (long)earliest - (long)now);
- 		ASSERT(time_after(earliest, now));
--		rxrpc_queue_delayed_work(&rxnet->client_conn_reaper,
-+		rxrpc_queue_delayed_work(&rxnet->service_conn_reaper,
- 					 earliest - now);
- 	}
- 
-@@ -429,7 +436,6 @@ void rxrpc_destroy_all_connections(struc
- 
- 	rxrpc_destroy_all_client_connections(rxnet);
- 
--	rxrpc_connection_expiry = 0;
- 	cancel_delayed_work(&rxnet->client_conn_reaper);
- 	rxrpc_queue_delayed_work(&rxnet->client_conn_reaper, 0);
- 	flush_workqueue(rxrpc_workqueue);
---- a/net/rxrpc/net_ns.c
-+++ b/net/rxrpc/net_ns.c
-@@ -22,6 +22,7 @@ static __net_init int rxrpc_init_net(str
- 	struct rxrpc_net *rxnet = rxrpc_net(net);
- 	int ret;
- 
-+	rxnet->live = true;
- 	get_random_bytes(&rxnet->epoch, sizeof(rxnet->epoch));
- 	rxnet->epoch |= RXRPC_RANDOM_EPOCH;
- 
-@@ -60,6 +61,7 @@ static __net_init int rxrpc_init_net(str
- 	return 0;
- 
- err_proc:
-+	rxnet->live = false;
- 	return ret;
++	badblocks_exit(&dev->badblocks);
+ 	kfree(dev);
  }
  
-@@ -70,6 +72,7 @@ static __net_exit void rxrpc_exit_net(st
- {
- 	struct rxrpc_net *rxnet = rxrpc_net(net);
- 
-+	rxnet->live = false;
- 	rxrpc_destroy_all_calls(rxnet);
- 	rxrpc_destroy_all_connections(rxnet);
- 	rxrpc_destroy_all_locals(rxnet);
