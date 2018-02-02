@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2259ICEmvktFvitDz1ZdkqxK+ZvUUnxHkBLU6OF3/R4z8HVkrd71UW9JFzjIfHbxxsPK1FbT
-ARC-Seal: i=1; a=rsa-sha256; t=1517591070; cv=none;
+X-Google-Smtp-Source: AH8x22401NAm3VE1fIhuonug4lAiGwoLV5frJjX3wvuDolTF49irRyWglqSQegl0mst93DTBzP7d
+ARC-Seal: i=1; a=rsa-sha256; t=1517591067; cv=none;
         d=google.com; s=arc-20160816;
-        b=kLZ+uEQCq39OjQWI+2F+elp9e3EbRclxv5G82gwCSvJqj/icV9jZDCwLZ9eNeuwbzN
-         Plimd+JholXYkACM7K5bFNtucTut4LarbkIVYP5EeZgEZ3LIkydIeQWSMVb+Vwrz+lSo
-         ozueG3dLgTzDDHgWqZF66KOPk6nkZpagql7PNctgb1YWhbHCG3pIpIVGb6kdLOkZ9/V0
-         W27bGJhojMxfQaj3UzEbDCAbPZ3yS5KPyXUOCX2yZzef3Vw+C5Ja85vw431BzfCogfy9
-         iNgP/gk7Yze76+EEcHzJzjaEpVk5BLKaUdjih/p0znDaDIaUkjRzdZRoDX/H+uCDcRdH
-         ul8A==
+        b=IrQxriGJmacCXYpPHUIFv6WvCj7AIN6gk58g2l9qCR7Do5wtVc93PI6CC363Rfkgfx
+         pdSTz1VvaMfJrOxL16gX6xEgddEVeLFXCQxbRSxx3IqSirLu+IBZqf0Zn1wi6Byn+iKj
+         7AzORqyLuiztSyk5Plihdx0Hka169RHL0YqKLdU2sMc7VJLyg+Opnw97R5vzFhXLYtyT
+         SZe9tW3RFkofZvFXO3GancyqY0waR6zDxHRO18I5xde6KDU2I2dqD3aeqoEN/haxiKL+
+         K8adp1tvaG/Sx+PZjJjBfXUY3kvkJXl1LxkTDaDGeU1kx5fP7/ECnUbTSe+2QRyMhNdd
+         kQCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=X75YnOr2/A+GHdGGpEbLrhmOdr2uNFqoLaN3bD+PweQ=;
-        b=diGAEMO8KBDEpGCCADw4uWTMwQdJs3NhjyLU2pLNf2uD3aFItvmDYrC5OJHFgPhxAT
-         QC+Hp9l1XLXlt0Fdh9yiznrG7QFRykHrbOHzc8qascZE+EsWFJbyanfgTqv1CmFKqhV6
-         svGuklkBstOTxPngQBlw99tJCjPmQWYD9v6/HzXcg5klgVr7vOeIUFAeQzyg3Z2kekvX
-         JoMwo/jUNo4DToD5e4duxO3EDS4knuHEQtnAE/L23fYpj2qtIybfkqlgldFmk1cMlKjR
-         XjwvOLHIGwBlMzzrWQce0dzdM9/C6Gpy6gAV/zP2G4xospE/eeelLeph4F+ZJcczpvOm
-         4gQw==
+        bh=tYSE9x/aRF/N9HBM9XG9Hy26GoTTOTGE+as3p+Op2WM=;
+        b=EvAhCsJ/G8PxSbZuvngEy6E7Oom1lEPgWB3u/sLV79CnlmtHXffwkeResXp1Yzslqi
+         HALKjjQP5Dc+Aj01x3pkBR5GBjQoHUnfpJkVYO6XZnl4I8/phNKqe3zJYT/GfcLDW+Ju
+         apjZEerYBDiFGdn459ZsvLJavu9WRByAPryYrospU6V7JhNjzua2TKzTemi8mjJAIoUh
+         EROAcplSnVtCHgmurDdxuysY5n9hV2UxoBgsMfthNhnQTnCamwH6nUYjJMYSiq4GAeNA
+         xOgbMiJo/Ri/JTL+1eyNl3HNHRtOw01dPvy7QjyLYY4DaWRI6QBKQWCpD3vDl5u8eoqb
+         cEfw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jesse Chan <jc@linux.com>,
-	Alban Bedel <albeu@free.fr>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.9 14/86] gpio: ath79: add missing MODULE_DESCRIPTION/LICENSE
-Date: Fri,  2 Feb 2018 17:57:34 +0100
-Message-Id: <20180202140824.179988975@linuxfoundation.org>
+	Thomas Meyer <thomas@m3y3r.de>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 40/86] auxdisplay: img-ascii-lcd: Only build on archs that have IOMEM
+Date: Fri,  2 Feb 2018 17:58:00 +0100
+Message-Id: <20180202140826.081448104@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309290648693598?=
-X-GMAIL-MSGID: =?utf-8?q?1591309574442180645?=
+X-GMAIL-THRID: =?utf-8?q?1591309570942204976?=
+X-GMAIL-MSGID: =?utf-8?q?1591309570942204976?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,35 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Thomas Meyer <thomas@m3y3r.de>
 
-commit 539340f37e6d6ed4cd93e8e18c9b2e4eafd4b842 upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+[ Upstream commit 141cbfba1d0502006463aa80f57c64086226af1a ]
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-ath79.o
-see include/linux/module.h for more information
+This avoids the MODPOST error:
 
-This adds the license as "GPL v2", which matches the header of the file.
+  ERROR: "devm_ioremap_resource" [drivers/auxdisplay/img-ascii-lcd.ko] undefined!
 
-MODULE_DESCRIPTION is also added.
-
-Signed-off-by: Jesse Chan <jc@linux.com>
-Acked-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpio/gpio-ath79.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/auxdisplay/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpio/gpio-ath79.c
-+++ b/drivers/gpio/gpio-ath79.c
-@@ -323,3 +323,6 @@ static struct platform_driver ath79_gpio
- };
+--- a/drivers/auxdisplay/Kconfig
++++ b/drivers/auxdisplay/Kconfig
+@@ -121,6 +121,7 @@ config CFAG12864B_RATE
  
- module_platform_driver(ath79_gpio_driver);
-+
-+MODULE_DESCRIPTION("Atheros AR71XX/AR724X/AR913X GPIO API support");
-+MODULE_LICENSE("GPL v2");
+ config IMG_ASCII_LCD
+ 	tristate "Imagination Technologies ASCII LCD Display"
++	depends on HAS_IOMEM
+ 	default y if MIPS_MALTA || MIPS_SEAD3
+ 	select SYSCON
+ 	help
