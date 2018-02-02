@@ -1,48 +1,77 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225yVBb2t6z2iuQLp0ub6FUAxxaMRSqrstKBOBBA9FsX8784grS99HC3U/LZv5q3YwT/c02M
-ARC-Seal: i=1; a=rsa-sha256; t=1517590902; cv=none;
-        d=google.com; s=arc-20160816;
-        b=j1RDlUmcW+zVmnEFTuxL0I/hDShegFWwktsJ2AORzdxBqW+mXlJYf04FCrCS4Y6qN6
-         8kY0HrvihmffAR/hKZ6KCDVJG30ZnGpyworOD7UBdNng4m5iHYpRg746BAjWWlW6QK5N
-         KY1+dRLu6CHIFBMazHEKHcIKzK8Dik2t5CvHRMqfMSaeNak1pmE159YOTQxd8NsfUezr
-         OY1NRcHPmDbo78AldwmS6KCtRYem12aPi/uPUi+nkountNMEWvsrJiexslHubteup9V5
-         +cEUdNq/+GJQKJK9ug4NzTAE7BSkWO3Su/UDATl9zwDWsx0PkHuVa1xrxbK1W2iKHuOI
-         DABg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=NYEEVs7zP96e6c2lMp3kU49cVH1OuLh/IwAStBBPwR4=;
-        b=ZKyS+wNuoe7OtJAmUu5PXSDnAW+EO8/9Ko9XjxG+rFa7dRronIw91Cc+DWAP3/AdFj
-         lP7au6l98on9erLznUqbKIb6M/gbsCW4HpIeFSS+D+MdK9iQkeSWwpKODYlcVKcAqdoV
-         iK9/LBrycDK3NbswaFRYebcC/0JNsvTCuybe0/IrHPcdKNs+NkhoCbHbemtoFRtCmElN
-         PdHRjQ6BC4oH9iXKNjV65JvTWXouv7aXxt2oU0LVKD8bASEw9r1en0M6xUVUjOTEyxYN
-         HRePkUut4qCu5n8LQuzluIDTeByhMfbttWQ+8ZXYAUvl4Bno/Kg/qc63V3REpJ0YefyP
-         Om/Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2879036-1517590901-2-9138783298226396866
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517590900; b=NgKhTZU/oLVLXO/wDeTZTS1al65rmwpwSWZdcEgmBbPfTZP
+    JqEcISwHC1sVDq3B2zqtri1x3WPc+7AudBDGWfoSBYpXcKoLV8UgLKpZbrQ6tgvr
+    /oTx16G5iQBQF4nzhFGUeRhq9Ma3TCQASe43AYJ9R7XaJezUP0Bik6NguNVn04o9
+    4BG+Y0iaYYYsEsaVZMCrI2anc9JCJosFcq++FkF80BaN6DWE9/ggYEflfTJuOzST
+    YX5WHjrvKlrE0RjJb3FsylBxLU1wxTK6gWtbVELtL5109jTDdxY9f7++FdJMeiMp
+    UubhfQqaxquJpcQIsVPxSXeftSJb5rj3xSRl37g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517590900; bh=UqfzBEFizmWcDpEy+b6xA1twch
+    y+qMM+SVajx7cACJs=; b=VZMs2PR03tPz0lhkVkZgNS0ar39WoV1GhINRCxYLH4
+    +689LS695N9KY5cxPp8+GZGbVEqRhL5S6yxL2LV9H5ZokwfAEOIQWSpuYKExacTz
+    G3AC54H4rVelXZOGU24bOGkePr0XbutrwJkekzO/A8TgESXv/RQLf31xVAIHNQxo
+    6xdlKMB5Q43xfEWmgpxdgz66wKRD+k9nLnLAetEjAmOrskzLF0zI57hY0nPp8QTR
+    V9ruZ3ybafhAdV8KcNC34HaflBxiX9elCZimFJ+Tgw81lgqBILt8QGjA7DMlCnJd
+    P9w9yZKuw5AqKm/dWq39TkUtFd615bXWPQgWyme+V+3A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752271AbeBBRBh (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:01:37 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35142 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752593AbeBBRBc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:01:32 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Lubomir Rintel <lkundrak@v3.sk>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 52/67] media: usbtv: add a new usbid
-Date: Fri,  2 Feb 2018 17:58:21 +0100
-Message-Id: <20180202140821.103086181@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 49/67] xfs: ubsan fixes
+Date: Fri,  2 Feb 2018 17:58:18 +0100
+Message-Id: <20180202140820.758478009@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309398323406308?=
-X-GMAIL-MSGID: =?utf-8?q?1591309398323406308?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +79,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
 
 
-[ Upstream commit 04226916d2360f56d57ad00bc48d2d1854d1e0b0 ]
+[ Upstream commit 22a6c83777ac7c17d6c63891beeeac24cf5da450 ]
 
-A new usbid of UTV007 is found in a newly bought device.
+Fix some complaints from the UBSAN about signed integer addition overflows.
 
-The usbid is 1f71:3301.
-
-The ID on the chip is:
-UTV007
-A89029.1
-1520L18K1
-
-Both video and audio is tested with the modified usbtv driver.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Acked-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Brian Foster <bfoster@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/usbtv/usbtv-core.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/xfs/xfs_aops.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/media/usb/usbtv/usbtv-core.c
-+++ b/drivers/media/usb/usbtv/usbtv-core.c
-@@ -127,6 +127,7 @@ static void usbtv_disconnect(struct usb_
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -310,7 +310,7 @@ xfs_map_blocks(
+ 	       (ip->i_df.if_flags & XFS_IFEXTENTS));
+ 	ASSERT(offset <= mp->m_super->s_maxbytes);
  
- static struct usb_device_id usbtv_id_table[] = {
- 	{ USB_DEVICE(0x1b71, 0x3002) },
-+	{ USB_DEVICE(0x1f71, 0x3301) },
- 	{}
- };
- MODULE_DEVICE_TABLE(usb, usbtv_id_table);
+-	if (offset + count > mp->m_super->s_maxbytes)
++	if ((xfs_ufsize_t)offset + count > mp->m_super->s_maxbytes)
+ 		count = mp->m_super->s_maxbytes - offset;
+ 	end_fsb = XFS_B_TO_FSB(mp, (xfs_ufsize_t)offset + count);
+ 	offset_fsb = XFS_B_TO_FSBT(mp, offset);
+@@ -1360,7 +1360,7 @@ xfs_map_trim_size(
+ 	if (mapping_size > size)
+ 		mapping_size = size;
+ 	if (offset < i_size_read(inode) &&
+-	    offset + mapping_size >= i_size_read(inode)) {
++	    (xfs_ufsize_t)offset + mapping_size >= i_size_read(inode)) {
+ 		/* limit mapping to block that spans EOF */
+ 		mapping_size = roundup_64(i_size_read(inode) - offset,
+ 					  i_blocksize(inode));
+@@ -1416,7 +1416,7 @@ __xfs_get_blocks(
+ 	}
+ 
+ 	ASSERT(offset <= mp->m_super->s_maxbytes);
+-	if (offset + size > mp->m_super->s_maxbytes)
++	if ((xfs_ufsize_t)offset + size > mp->m_super->s_maxbytes)
+ 		size = mp->m_super->s_maxbytes - offset;
+ 	end_fsb = XFS_B_TO_FSB(mp, (xfs_ufsize_t)offset + size);
+ 	offset_fsb = XFS_B_TO_FSBT(mp, offset);
