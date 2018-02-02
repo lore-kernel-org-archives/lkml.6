@@ -1,77 +1,47 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591083-2-10255825231235444560
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591082; b=Hzh00eD2NTvdiK0y6Hc/fUHKHmen1rBRc/8/+i8DKD9SwDl
-    3ckJLfREycDa89JC4YgKnDqv4vTofSZgu3LDGGkAfg9sYcnLVyv5EBZZ+2+5FJro
-    WU9asTZvKamwJCMEg33KzSCKjpuGse6ckntAI8mJMVD28NJn41JqsIotR0B8EbHi
-    Lrawmq8qb6acuwYAOzIawgg+C9QHYcDNlx6gLDkyQ7JpQvZI/GCoFSlesAuA9CCK
-    9LzAtRqzkSG6Tg6CZgJsj51JZVSmFwU9y6+YTROr4OP11gxnwTSlpSzzMACGCPS9
-    0u5wZC8rViER27NkDJU+b6RxGyiR0/8RaIjtrlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591082; bh=bMWkEZJNqrt5/V/0entxzlqrmD
-    i8iosN6k19ofRIQb0=; b=jeGEM4Ql2x8n/NfJUNhNjdLKJFCYEB3/LmvU61886R
-    5/1R3dozTP/0myi9vCbzuADnWzx3xbiLHkFjxEHIQ1CJE3xW1MTidB4K7ySSngXX
-    KQ3WyZlrVM31t/em9tSky92ygdypYcOFgS4xcK9WNIxQ89bgus84U0ns0MUbeKhE
-    1ifJoQZz5F07lRQ1DG+LpN6PRhvfQkbor3T57s+k9WeCmrkeRJHvhNvAhd4p9Xrt
-    eyxyNVTTTujnYDIpiDthHYihipgByJDqkSVxlbA43Q9fLz+5Xs67Wnir6yyMNJKs
-    D77D5UA1qWy4zwifCG4SAYlDlOZYrCLOS8rpg/IdeMow==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752260AbeBBREg (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:04:36 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36252 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752641AbeBBREe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:04:34 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226vNkKu88x0KFU9JhEMEuwzEkP42Jj76i7FVppCd5tKL4zETBFbfioJeJwtIf6LQhKjqo4k
+ARC-Seal: i=1; a=rsa-sha256; t=1517591082; cv=none;
+        d=google.com; s=arc-20160816;
+        b=lerJYbyt6wCvWAMGpeEitJAKkDNSO/W8hYf836MrRQ9tAuvD4ciE0ig1Twy9lAFIqi
+         YwHFQqwndohLhJr3yzxVrnhFfRzgOxP9Bb6TE9CHIJ3o74kuzCOR8tar4qeVtN1YXPzI
+         XpAsg64zXtWxmqQLpNenprK5cxAC82q5nqSqCzwpBOVY8p8Y6CT/tHeCBZOETeUOpUhK
+         SVhpNBi+xIWL8GIiD1/hGe4BXragpOy4sCOEGvY9BVyGxMdC2hqj5TIPKh63viKmmTgi
+         NQx/PfSOASTSrLxSHzvDtfeSEE9uJoxcIZB6nH0a3fzDlim2e6bHB8zkOoAy44+NAvQB
+         C0bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=9NI1nYJvIC1oqS5O8xxL9W2rV7eJN5X+R3vOOKJT0RQ=;
+        b=BFwy4RxFgbOuZHp++6GrdnxMK5iPdhXt77em2zGR/kGT8MTbKYqQyfbUXfhvOilkEZ
+         rVS32up4eSz9gVwpotZsSD7LnsNoj4wSLPFcZEcavS7bWCb+nr539Rbu7evk7JJ+nHnK
+         xFj733H2F+043de1gCZVYLbiwF2BDRGOhxwAr0qGDmlFXL/bnw/m7/Wk3/4QKPETmmqP
+         ORh/V1MZ4lMlPmYAHvcZOGiLFRwMCAkB6MKcR8Zjurqofm3su/z+MiOa+gU5MnYla/fl
+         ES+Btwn26vVeTGrSm//7QXWegZkn/DVOSiEIHx4xggxL8DvZsmJxU8X6b7OCHXCQGb6/
+         Rw3A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 42/86] nfsd: Ensure we check stateid validity in the seqid operation checks
-Date: Fri,  2 Feb 2018 17:58:02 +0100
-Message-Id: <20180202140826.248482724@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Andrew Elble <aweits@rit.edu>,
+	"J. Bruce Fields" <bfields@redhat.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 44/86] nfsd: check for use of the closed special stateid
+Date: Fri,  2 Feb 2018 17:58:04 +0100
+Message-Id: <20180202140826.425593154@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309361425299026?=
+X-GMAIL-MSGID: =?utf-8?q?1591309587229737372?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,41 +49,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: Andrew Elble <aweits@rit.edu>
 
 
-[ Upstream commit 9271d7e509c1bfc0b9a418caec29ec8d1ac38270 ]
+[ Upstream commit ae254dac721d44c0bfebe2795df87459e2e88219 ]
 
-After taking the stateid st_mutex, we want to know that the stateid
-still represents valid state before performing any non-idempotent
-actions.
+Prevent the use of the closed (invalid) special stateid by clients.
 
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: Andrew Elble <aweits@rit.edu>
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfsd/nfs4state.c |   12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ fs/nfsd/nfs4state.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 --- a/fs/nfsd/nfs4state.c
 +++ b/fs/nfsd/nfs4state.c
-@@ -5178,15 +5178,9 @@ static __be32 nfs4_seqid_op_checks(struc
- 	status = nfsd4_check_seqid(cstate, sop, seqid);
- 	if (status)
+@@ -72,6 +72,7 @@ static u64 current_sessionid = 1;
+ #define ZERO_STATEID(stateid) (!memcmp((stateid), &zero_stateid, sizeof(stateid_t)))
+ #define ONE_STATEID(stateid)  (!memcmp((stateid), &one_stateid, sizeof(stateid_t)))
+ #define CURRENT_STATEID(stateid) (!memcmp((stateid), &currentstateid, sizeof(stateid_t)))
++#define CLOSE_STATEID(stateid)  (!memcmp((stateid), &close_stateid, sizeof(stateid_t)))
+ 
+ /* forward declarations */
+ static bool check_for_locks(struct nfs4_file *fp, struct nfs4_lockowner *lowner);
+@@ -4869,7 +4870,8 @@ static __be32 nfsd4_validate_stateid(str
+ 	struct nfs4_stid *s;
+ 	__be32 status = nfserr_bad_stateid;
+ 
+-	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid))
++	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid) ||
++		CLOSE_STATEID(stateid))
  		return status;
--	if (stp->st_stid.sc_type == NFS4_CLOSED_STID
--		|| stp->st_stid.sc_type == NFS4_REVOKED_DELEG_STID)
--		/*
--		 * "Closed" stateid's exist *only* to return
--		 * nfserr_replay_me from the previous step, and
--		 * revoked delegations are kept only for free_stateid.
--		 */
--		return nfserr_bad_stateid;
--	mutex_lock(&stp->st_mutex);
-+	status = nfsd4_lock_ol_stateid(stp);
-+	if (status != nfs_ok)
-+		return status;
- 	status = check_stateid_generation(stateid, &stp->st_stid.sc_stateid, nfsd4_has_session(cstate));
- 	if (status == nfs_ok)
- 		status = nfs4_check_fh(current_fh, &stp->st_stid);
+ 	/* Client debugging aid. */
+ 	if (!same_clid(&stateid->si_opaque.so_clid, &cl->cl_clientid)) {
+@@ -4927,7 +4929,8 @@ nfsd4_lookup_stateid(struct nfsd4_compou
+ 	else if (typemask & NFS4_DELEG_STID)
+ 		typemask |= NFS4_REVOKED_DELEG_STID;
+ 
+-	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid))
++	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid) ||
++		CLOSE_STATEID(stateid))
+ 		return nfserr_bad_stateid;
+ 	status = lookup_clientid(&stateid->si_opaque.so_clid, cstate, nn);
+ 	if (status == nfserr_stale_clientid) {
