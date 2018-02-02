@@ -1,190 +1,112 @@
-Return-Path: <BATV+fa3758ec04dcdc472965+5276+infradead.org+dwmw2@twosheds.srs.infradead.org>
-X-Google-Smtp-Source: AH8x226+BOBquBbjzdnGaVPFurFcdRuGiW/J7vCsCjtC2iUwT3oOkTMp3m3o3jvSsiyD3Jg/FHCG
-ARC-Seal: i=1; a=rsa-sha256; t=1517594591; cv=none;
+Return-Path: <konrad.wilk@oracle.com>
+X-Google-Smtp-Source: AH8x226VlZEdtxj4kC2hFGTQx+axvpOxP/ws6hNLLzqPAjT4BwcgETFGJY0glgpzFitEq8oDQLaf
+ARC-Seal: i=1; a=rsa-sha256; t=1517601397; cv=none;
         d=google.com; s=arc-20160816;
-        b=z7er9zXJyI0DFnAmQWk03jGFNQBbq6VZKMHsX9CV8Vfp0+jK18AkxBr+VnWuAiYz8O
-         5ovdrMLQ+hAIC/BecdJOZNfVnPD8E+34N6Vu/WtC6/Pu/68VCWPkBV8dt0n9kJirOrJ1
-         I/GcMl34Pb4iFUWVin/94enaUOCN2szRMIXCFLQloZTFSFoFVwtnsXpWYEA7zDscoP29
-         yAZUz38Pg01xHSJXL+wR+Ps6q2Jeh1JrhL+5ueA95wiND4Whvq+bS+pjckzAQrtSO/d+
-         LFyxJAjy38o9BKsvBlqysPu07B5vp3PrMJPC0oQqplH9GZyaE6L5ZxZHkuUhgHBtSqoV
-         YaRA==
+        b=bnCYNxSCtNUrI7mwSCywf5BvNzNIAMcu4OlWigZSN5HZWsw+pXqCpatNctIqeXL908
+         qCDjfJ8KcuOKpUP6YUcbW7SwcVQuv9huLoCf3lGO8c/26gaAxvEgTewxAepEZaFOEfhB
+         ctnINFokQ29wog90RpkXCHNxkl2sDecVEo1SjpnzpP/EWSB8wqjMLPKGRzW17Gp06snT
+         3W0QY80U2sRkoJiXeS35ipCqu4SJ3Xv3PYABflEXn8rHa0j6Xznx61ywwBmxWWdmCb8J
+         78ZQZhY2zhaCaCKINOWA6s8CRbxnYQUvD7aaap94X42eOvBAJsYmAeh/gaqEdlzd37Td
+         /TFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:date:face:references:in-reply-to:cc:to:from:subject
-         :message-id:dkim-signature:arc-authentication-results;
-        bh=L5kgt+iLlTdIHE/3+aHYiMvUowDVRMDVKWDlJIBAZkk=;
-        b=Y8BYqSZPgcFn0WOEfL/ccl0Jf1CEBKBcUUhqhIpcXE7/lTGIkVb+43BRzgB1KhKqvT
-         SQtWOHg+6GVUb7Ode+g6DwQUrOdE6nhe0eFq2GRa3NAhqSTN5NtJnRRhCj290Wmyodjw
-         AWdbaCSReUdCmIjbaAI6wNMtx8BYPfquIqz+zQAX0Yaf3JDoVtofc/EJlMEJPJlbIvMY
-         X/Nb3wxwi2guRrtolWjjIFMoh6GcU2iI3sIEJnogFy5Jbhb485nK9aQfb680CiEthKsC
-         ULcvc6yCeG77oHoov2SgWZTbNNPGMdooJhHuWYCLj7wY/Q/5YZlGDlpPxGog2unF5O2U
-         DVrA==
+        h=content-transfer-encoding:user-agent:in-reply-to
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=/+TeL7BPNhw0iejxJ0Tum35tjS+7L9qnxZdLnd4T9ak=;
+        b=v5p84xK8vLz8zLvb/8hxNgEqq7giGTlu6N/GXoZWZdP3Luxw4m1U2eXKMWJjFk9s7h
+         7dE35C98To9bAzittf/DdXeOnAStQtvcDywwEnAG2UHWZpVt/uI0FY6KcrqtNFb646TF
+         NQL35+nCnQ+y5G6QMf0BPqZ8TETrw26flyTsvGNegX3zBX0JjXNsiLEz3CT7jzvEp85Z
+         WxZHIAW/SW8bXYVM+2xCtQCUespKbLrAD/uXcPPbXn/AvtgaFyVra8CPnkbnTCxyKDv4
+         Kt7vZ/Cv4O0ITS8WiNzEDsBqUtDOkdMnMhlW5lqhO1Hd3/yHMpBbN7dzrEkDvabOoC5C
+         9NaQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=gjnFpumU;
-       spf=pass (google.com: best guess record for domain of batv+fa3758ec04dcdc472965+5276+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+fa3758ec04dcdc472965+5276+infradead.org+dwmw2@twosheds.srs.infradead.org
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=umOlgpnV;
+       spf=pass (google.com: domain of konrad.wilk@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=konrad.wilk@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=gjnFpumU;
-       spf=pass (google.com: best guess record for domain of batv+fa3758ec04dcdc472965+5276+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+fa3758ec04dcdc472965+5276+infradead.org+dwmw2@twosheds.srs.infradead.org
-Message-ID: <1517594544.31953.62.camel@infradead.org>
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=umOlgpnV;
+       spf=pass (google.com: domain of konrad.wilk@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=konrad.wilk@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Date: Fri, 2 Feb 2018 14:56:01 -0500
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ashok Raj <ashok.raj@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Arjan Van De Ven <arjan.van.de.ven@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
 Subject: Re: [PATCH v6 2/5] KVM: x86: Add IBPB support
-From: David Woodhouse <dwmw2@infradead.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, KarimAllah Ahmed
- <karahmed@amazon.de>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
- Ashok Raj <ashok.raj@intel.com>, Asit Mallick <asit.k.mallick@intel.com>,
- Dave Hansen <dave.hansen@intel.com>, Arjan Van De Ven
- <arjan.van.de.ven@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, Linus
- Torvalds <torvalds@linux-foundation.org>,  Andrea Arcangeli
- <aarcange@redhat.com>, Andi Kleen <ak@linux.intel.com>, Thomas Gleixner
- <tglx@linutronix.de>, Dan Williams <dan.j.williams@intel.com>, Jun Nakajima
- <jun.nakajima@intel.com>, Andy Lutomirski <luto@kernel.org>, Greg KH
- <gregkh@linuxfoundation.org>, Paolo Bonzini <pbonzini@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>
-In-Reply-To: <20180202174932.GR28192@char.us.oracle.com>
+Message-ID: <20180202195601.GD28192@char.us.oracle.com>
 References: <1517522386-18410-1-git-send-email-karahmed@amazon.de>
-	 <1517522386-18410-3-git-send-email-karahmed@amazon.de>
-	 <20180202174932.GR28192@char.us.oracle.com>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-v3tw7PKlNOSZw0z8ON/w"
-Date: Fri, 02 Feb 2018 18:02:24 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+ <1517522386-18410-3-git-send-email-karahmed@amazon.de>
+ <20180202174932.GR28192@char.us.oracle.com>
+ <1517594544.31953.62.camel@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <1517594544.31953.62.camel@infradead.org>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8793 signatures=668661
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802020237
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591237582659331850?=
-X-GMAIL-MSGID: =?utf-8?q?1591313266913788585?=
+X-GMAIL-MSGID: =?utf-8?q?1591320402961465289?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Fri, Feb 02, 2018 at 06:02:24PM +0000, David Woodhouse wrote:
+> On Fri, 2018-02-02 at 12:49 -0500, Konrad Rzeszutek Wilk wrote:
+> > > @@ -625,7 +629,12 @@ static inline int __do_cpuid_ent(struct
+> > > kvm_cpuid_entry2 *entry, u32 function,
+> > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (!g_phys_as)
+> > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0g_phys_as =3D phys_as;
+> > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0entry->eax =3D g_=
+phys_as | (virt_as << 8);
+> > > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0entry->ebx =3D entry-=
+>edx =3D 0;
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0entry->edx =3D 0;
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0/* IBPB isn't necessa=
+rily present in hardware cpuid>  */
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (boot_cpu_has(X86_=
+FEATURE_IBPB))
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0entry->ebx |=3D F(IBPB);
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0entry->ebx &=3D kvm_c=
+puid_8000_0008_ebx_x86_features;
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0cpuid_mask(&entry->eb=
+x, CPUID_8000_0008_EBX);
+> >=20
+> > It is with x86/pti nowadays. I think you can remove that comment.
+>=20
+> In this code we use the actual CPUID instruction, then filter stuff out
+> of it (with &=3D kvm_cpuid_XXX_x86_features and then cpuid_mask() to tu=
+rn
+> off any bits which were otherwise present in the hardware and *would*
+> have been supported by KVM, but which the kernel has decided to pretend
+> are not present.
+>=20
+> Nothing would *set* the IBPB bit though, since that's a "virtual" bit
+> on Intel hardware. The comment explains why we have that |=3D F(IBPB),
+> and if the comment wasn't true, we wouldn't need that code either.
 
---=-v3tw7PKlNOSZw0z8ON/w
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+But this seems wrong. That is on Intel CPUs we will advertise on
+AMD leaf that the IBPB feature is available.
 
-T24gRnJpLCAyMDE4LTAyLTAyIGF0IDEyOjQ5IC0wNTAwLCBLb25yYWQgUnplc3p1dGVrIFdpbGsg
-d3JvdGU6Cj4gPiBAQCAtNjI1LDcgKzYyOSwxMiBAQCBzdGF0aWMgaW5saW5lIGludCBfX2RvX2Nw
-dWlkX2VudChzdHJ1Y3QKPiA+IGt2bV9jcHVpZF9lbnRyeTIgKmVudHJ5LCB1MzIgZnVuY3Rpb24s
-Cj4gPsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoIWdfcGh5c19hcykKPiA+
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnX3BoeXNf
-YXMgPSBwaHlzX2FzOwo+ID7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZW50cnkt
-PmVheCA9IGdfcGh5c19hcyB8ICh2aXJ0X2FzIDw8IDgpOwo+ID4gLcKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoGVudHJ5LT5lYnggPSBlbnRyeS0+ZWR4ID0gMDsKPiA+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBlbnRyeS0+ZWR4ID0gMDsKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAvKiBJQlBCIGlzbid0IG5lY2Vzc2FyaWx5IHByZXNlbnQgaW4gaGFyZHdh
-cmUgY3B1aWQ+ICAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmIChib290
-X2NwdV9oYXMoWDg2X0ZFQVRVUkVfSUJQQikpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoGVudHJ5LT5lYnggfD0gRihJQlBCKTsKPiA+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBlbnRyeS0+ZWJ4ICY9IGt2bV9jcHVpZF84MDAwXzAwMDhf
-ZWJ4X3g4Nl9mZWF0dXJlczsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjcHVp
-ZF9tYXNrKCZlbnRyeS0+ZWJ4LCBDUFVJRF84MDAwXzAwMDhfRUJYKTsKPiAKPiBJdCBpcyB3aXRo
-IHg4Ni9wdGkgbm93YWRheXMuIEkgdGhpbmsgeW91IGNhbiByZW1vdmUgdGhhdCBjb21tZW50LgoK
-SW4gdGhpcyBjb2RlIHdlIHVzZSB0aGUgYWN0dWFsIENQVUlEIGluc3RydWN0aW9uLCB0aGVuIGZp
-bHRlciBzdHVmZiBvdXQKb2YgaXQgKHdpdGggJj0ga3ZtX2NwdWlkX1hYWF94ODZfZmVhdHVyZXMg
-YW5kIHRoZW4gY3B1aWRfbWFzaygpIHRvIHR1cm4Kb2ZmIGFueSBiaXRzIHdoaWNoIHdlcmUgb3Ro
-ZXJ3aXNlIHByZXNlbnQgaW4gdGhlIGhhcmR3YXJlIGFuZCAqd291bGQqCmhhdmUgYmVlbiBzdXBw
-b3J0ZWQgYnkgS1ZNLCBidXQgd2hpY2ggdGhlIGtlcm5lbCBoYXMgZGVjaWRlZCB0byBwcmV0ZW5k
-CmFyZSBub3QgcHJlc2VudC4KCk5vdGhpbmcgd291bGQgKnNldCogdGhlIElCUEIgYml0IHRob3Vn
-aCwgc2luY2UgdGhhdCdzIGEgInZpcnR1YWwiIGJpdApvbiBJbnRlbCBoYXJkd2FyZS4gVGhlIGNv
-bW1lbnQgZXhwbGFpbnMgd2h5IHdlIGhhdmUgdGhhdCB8PSBGKElCUEIpLAphbmQgaWYgdGhlIGNv
-bW1lbnQgd2Fzbid0IHRydWUsIHdlIHdvdWxkbid0IG5lZWQgdGhhdCBjb2RlIGVpdGhlci4=
-
-
---=-v3tw7PKlNOSZw0z8ON/w
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDIxODAyMjRaMC8GCSqG
-SIb3DQEJBDEiBCD94bLA0oRDbdTlsc17SI/MJi1B5bYWV6nKrRWRLSRoaDCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAM4bKWxTqSO9
-3VrGxf+dO816bQwMcjBani/jkaYuovgPnwPRHFIEYop+1kMwfGHGyayDREFEq14yvlstCh3XsGLn
-1YxOyQGHr2KJfUOQNMeh0/iay5wMmHtRM29/cKF4pGwa1uWrOmp5WrFSAyX++ZX7RV7mM6F434vV
-idl/3OKwfyX6mJobokEh+LAfnbYoHHWQwRVWmyMBcloXOdwBID3+A5PFwjSVUwc8BUxQCA3h+ZwB
-sdDjnv7uBEHP+jVk8ped8wi1nakLPC61+KGWbgp9gHoiMD7uMIqRV/NfHlHRu8AUI6sb48t9O3dn
-0bJOay6nL1dMB0iWmO8fbcDBWrAAAAAAAAA=
-
-
---=-v3tw7PKlNOSZw0z8ON/w--
+Shouldn't we just check to see if the machine is AMD before advertising
+this bit?
