@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225jp1ia+2KDVUc1jFwFXBDU1jIcGZn+7N3klett9lFhq8eK1YJIQAtjUpUYwpejfAEmhbfU
-ARC-Seal: i=1; a=rsa-sha256; t=1517590794; cv=none;
+X-Google-Smtp-Source: AH8x225HI2w8rMGE5aLqrR2iTWDnrx/t6eJqn1hYAAPy/mjQAE8TPWvAUHTNgT5srtEBSsa2P6tu
+ARC-Seal: i=1; a=rsa-sha256; t=1517590791; cv=none;
         d=google.com; s=arc-20160816;
-        b=xP1HTV/o5GcOK5AXIwssRAYrhZhTaQVAQtbmGXFTr1Fh9Xv0ubDUKZ9YBJZ3L2GHkF
-         19UiJU/PocOxq22QeteZJR2/gNDq7rg1p2qCgSDqmg5MQN2wSoEMQy0G+Ve0bYe6S3Yr
-         ZrfiP65DZKaDIRNfAlkPsyhae9kDmvSsyQUHaT+CCiYo61FGzdfl2b7/qhOk20coQVjN
-         lW4EM2E+8HKB1Dx4EL1uay18U7ZAjuDS0ESEpccnQrYwPQCJguV3CmpYnv5wD9vd2u1U
-         M4tJ5vWUJLcAq/90sHMJaVXCDw5vMLSACM2TalzBpXdxbAEu1SM7Xas62r/I1SuVhOar
-         Gm2g==
+        b=kvWOvZ2RRqpisfXGCPsPMVVFrS4dJdIz6HpikcvUQ8kIg/a2rsGtcWP18d3KYoL68i
+         1aNDNkjT0QPZmvampKtn5IctxxvitoHCdPu/3mAxUqrSVeHflwVv6A07uaw0BFSBosKb
+         WfoRaGKvTs7Y1RNmAA/S68RN6//SemIjbASJ95ilG8WvemyA+7P98L6JIhZAKfl7A3S9
+         MsIuYD1cUV8HgJesnyT/nVaAMos5a1SsYKh8kl6gw6aQulMTiS3db6enYqSeqrCIC1QT
+         QSxY600bS6smdLlC3jgZyF3PFJsGvg+mm+R9EBUjzVjPb5TrZVWbC/Q/nfmEly/iui6W
+         eTQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yBeR4rL+rCzl6t+PXvleMTj0OnmERxeDBYMZgBS3DLw=;
-        b=Ch5zxNym0yXHJ2krmUT10PyMZhDqWp7cPXu/4XK/ASjx0rCHSONSrJx/zEuwRjwS3t
-         j3QIWTXlZC76D5uiFzxJCMkpD+izFUQzbOsqitkPEwACw6gJgWffAMKFAcPloSqAy3Ka
-         jXQ8TVpgOXcZ3GL85geG4zt8vhohLbuYdCQKkElVU3/ur4z94SdJ3J7F5+8K8TMbtSBw
-         YxDAzagmzTrca+gvkvTnQR2lHxX/aA69gS6AsN6sryPMaBtkYfoECpn1FYPFAlL2TbIW
-         f3LhILRu3FqTPw1fhJmHTxJv4C00GLxkHUa42Tgmdt1CtnPjUA6LlERSlStIfxTUlvDv
-         vlCQ==
+        bh=O4vCgIjKcBRLeSlVWwbOTnKHA+v6SXzRYqUQ3DO9S0g=;
+        b=NbX9IQNex3sCQo7MyQrL2+JnAWLldzaGLG9xY2V92qWU4vy90fccbfVqQxewuWG/iP
+         fWyKg4NeiwSpod/oct7E68YEZHXZBkoei7Wpg7Hoc2qtCS2NXUkQYyg4wMrOqxHuohp9
+         DxU3DXReeoioDe5Ec3yCshV0SJWoQCmcfKDUrtb8zttioBP/JYVV7qiStxO847sX7z0E
+         uHxPXJ9oeBlvkeUn9irUos6ALwmKpvhcSN1VhnqUVTKm8xpNEcX0sT/ZNj7d3GDsHTln
+         3t2oUQXmbWjzX5m1bKJMoIjUt6pmmUCt8Tlhl1bPEPTiyNMBC512VWx/O5dkebb4tCai
+         u9hw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jesse Chan <jc@linux.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCH 4.4 16/67] power: reset: zx-reboot: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Fri,  2 Feb 2018 17:57:45 +0100
-Message-Id: <20180202140817.078588941@linuxfoundation.org>
+	syzbot <syzkaller@googlegroups.com>,
+	Stephan Mueller <smueller@chronox.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.4 15/67] crypto: af_alg - whitelist mask and type
+Date: Fri,  2 Feb 2018 17:57:44 +0100
+Message-Id: <20180202140816.984119391@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309284971476790?=
-X-GMAIL-MSGID: =?utf-8?q?1591309284971476790?=
+X-GMAIL-THRID: =?utf-8?q?1591309282150108123?=
+X-GMAIL-MSGID: =?utf-8?q?1591309282150108123?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,35 +49,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Stephan Mueller <smueller@chronox.de>
 
-commit 348c7cf5fcbcb68838255759d4cb45d039af36d2 upstream.
+commit bb30b8848c85e18ca7e371d0a869e94b3e383bdf upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+The user space interface allows specifying the type and mask field used
+to allocate the cipher. Only a subset of the possible flags are intended
+for user space. Therefore, white-list the allowed flags.
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/power/reset/zx-reboot.o
-see include/linux/module.h for more information
+In case the user space caller uses at least one non-allowed flag, EINVAL
+is returned.
 
-This adds the license as "GPL v2", which matches the header of the file.
-
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
-
-Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/reset/zx-reboot.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ crypto/af_alg.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/power/reset/zx-reboot.c
-+++ b/drivers/power/reset/zx-reboot.c
-@@ -78,3 +78,7 @@ static struct platform_driver zx_reboot_
- 	},
- };
- module_platform_driver(zx_reboot_driver);
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -149,7 +149,7 @@ EXPORT_SYMBOL_GPL(af_alg_release_parent)
+ 
+ static int alg_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+ {
+-	const u32 forbidden = CRYPTO_ALG_INTERNAL;
++	const u32 allowed = CRYPTO_ALG_KERN_DRIVER_ONLY;
+ 	struct sock *sk = sock->sk;
+ 	struct alg_sock *ask = alg_sk(sk);
+ 	struct sockaddr_alg *sa = (void *)uaddr;
+@@ -157,6 +157,10 @@ static int alg_bind(struct socket *sock,
+ 	void *private;
+ 	int err;
+ 
++	/* If caller uses non-allowed flag, return error. */
++	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
++		return -EINVAL;
 +
-+MODULE_DESCRIPTION("ZTE SoCs reset driver");
-+MODULE_AUTHOR("Jun Nie <jun.nie@linaro.org>");
-+MODULE_LICENSE("GPL v2");
+ 	if (sock->state == SS_CONNECTED)
+ 		return -EINVAL;
+ 
+@@ -175,9 +179,7 @@ static int alg_bind(struct socket *sock,
+ 	if (IS_ERR(type))
+ 		return PTR_ERR(type);
+ 
+-	private = type->bind(sa->salg_name,
+-			     sa->salg_feat & ~forbidden,
+-			     sa->salg_mask & ~forbidden);
++	private = type->bind(sa->salg_name, sa->salg_feat, sa->salg_mask);
+ 	if (IS_ERR(private)) {
+ 		module_put(type->owner);
+ 		return PTR_ERR(private);
