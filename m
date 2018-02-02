@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591317-2-18396565388342063901
+X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591311-2-2918800007250451949
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591317; b=Rx1tV8WlKvOgII6eVXaR9rz1CKIvtw47K+TCJ9i0aKFmNVV
-    zSCBdtwS3GKTlQRvgiONc7T6FYZWJcVeunAIKQCWMngyREbUifVQ/UaPrxrFGej5
-    CnHrpkz+DU1TC+i5YnFVa7xY7rrzkCWyX9TJgMjdf6uXoe7P3e/L+lVVFh9qLNAn
-    G2jmHOk/xOQc31Yz8Cu6mpj4SvkkdfS5L73CvarQ0mIPeDxC/PRcu1Igv6CYrRWD
-    L8xJ1OSK8oI/pHW9qz2nwPcu+I3v5pTNBbEij/7SwJtN9xqW1t6/Bfm1uZqbjqYl
-    WFDq1cx2O3vOv5QmKOOmPHlqxdKpgZf5k4jQbvw==
+    t=1517591310; b=n4LScA+khBqzpXIOca95NEV+ftZ4tZo8iFLg3uqiHtz8W0V
+    pD42z6t9OhnOpHk9LcgLdQ0TvgU8BmWGcJh2PWKorcyJdvji+lvub60hHQcLQGtt
+    AByiFjtemXNpe3YkhztGzFzaH6Ah18h5BOYWPYIxcxyoZdXtAv6t4Xkh71a7snJJ
+    5gQxbpaUxIBRH0wu3mUONxYL9cZ9kJE2BCgdC1OB32VixUwktX7GawA1QjetGoCB
+    8VkdKklpTjyx33dUe5WKt+lABOefLvJYUgJIKIohD8i3YkjSmBrzqslyR9xq4vch
+    dxsF3h/isRxTTPDJ67zPzCeplLXdJHk89GOY+0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591317; bh=rFYFGB+a80WhrWVF2/souyb5P0
-    0m2v0OL72P0T3yBoA=; b=nkGAggf22fv7kdE/BxVvMWFFbHdPR4OOhTLgrWjoVr
-    szWaJhjXoHEtjTO1nloA3jefxijFjwFvAjyCaPBJ/zGDGMF6dg2MaOoD3CQVAfe4
-    WEdi/wIDMSWIN+dy5MQpQ+XW2/o2Angb3L75ZbdCdbT8nUzC2blhWI3AcCh+nXud
-    BdTkDGE8VOpr6pVgEvvNXDL3/rabJQYTiE730chUbKlNKsjntfLeJfP7A8EtCqNL
-    J8xCJwDkpwasK07T6/ecZWljx+Tg51Bmk14KzPR1CgO59xys8o8kdS0j/hsfBg78
-    FpCpIW5DHF95VPgWpnUSkCLjpDIme5D96MN99nC9HR6g==
+    :list-id; s=arctest; t=1517591310; bh=ghotT7++qZ2+jqah154dOaO2TN
+    vyLDXkfMMqOOI6eDc=; b=VnU9eYXXOWS7pnLfFbXU1yzEK/x2cVHABPPHawbter
+    MZ39g7RYjd3DWZ9o+F1LbITmpHhSbcMr/6sCjZPOnyuTOQMQ28p27xAzAHpyVBbi
+    cW9xGd9GWRqn737mPayPJfd/Mz/V96VyhQBNZkvEUrSS5IJ2AzH/I8K/cd67SBs3
+    O5b+fOQrGTz5mkkpCpacb3smyj/B8mIEY61hEXEfohIK99aSfXQdnqaKGCpAD9E1
+    i1KlukkjYRex3hNC+OFJLQ5N9NPRB1KuvtcS+BUQsV+qnu2u8vnsFo15e7otjkxF
+    nNC1DNFdKR8Fi6BUzmUJEG6qOgco9LPa6Ppo0N+/7IZA==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752982AbeBBRIe (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:08:34 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37334 "EHLO
+        id S1752864AbeBBRI0 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:08:26 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37292 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752749AbeBBRIa (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:08:30 -0500
+        with ESMTP id S1753212AbeBBRIW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:08:22 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 008/156] crypto: ecdh - fix typo in KPP dependency of CRYPTO_ECDH
-Date: Fri,  2 Feb 2018 17:56:29 +0100
-Message-Id: <20180202140840.702526537@linuxfoundation.org>
+        stable@vger.kernel.org, Alexandre TORGUE <alexandre.torgue@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 005/156] gpio: stmpe: i2c transfer are forbiden in atomic context
+Date: Fri,  2 Feb 2018 17:56:26 +0100
+Message-Id: <20180202140840.541561090@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -77,29 +78,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hauke Mehrtens <hauke@hauke-m.de>
+From: Patrice Chotard <patrice.chotard@st.com>
 
-commit b5b9007730ce1d90deaf25d7f678511550744bdc upstream.
+commit b888fb6f2a278442933e3bfab70262e9a5365fb3 upstream.
 
-This fixes a typo in the CRYPTO_KPP dependency of CRYPTO_ECDH.
+Move the workaround from stmpe_gpio_irq_unmask() which is executed
+in atomic context to stmpe_gpio_irq_sync_unlock() which is not.
 
-Fixes: 3c4b23901a0c ("crypto: ecdh - Add ECDH software support")
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+It fixes the following issue:
+
+[    1.500000] BUG: scheduling while atomic: swapper/1/0x00000002
+[    1.500000] CPU: 0 PID: 1 Comm: swapper Not tainted 4.15.0-rc2-00020-gbd4301f-dirty #28
+[    1.520000] Hardware name: STM32 (Device Tree Support)
+[    1.520000] [<0000bfc9>] (unwind_backtrace) from [<0000b347>] (show_stack+0xb/0xc)
+[    1.530000] [<0000b347>] (show_stack) from [<0001fc49>] (__schedule_bug+0x39/0x58)
+[    1.530000] [<0001fc49>] (__schedule_bug) from [<00168211>] (__schedule+0x23/0x2b2)
+[    1.550000] [<00168211>] (__schedule) from [<001684f7>] (schedule+0x57/0x64)
+[    1.550000] [<001684f7>] (schedule) from [<0016a513>] (schedule_timeout+0x137/0x164)
+[    1.550000] [<0016a513>] (schedule_timeout) from [<00168b91>] (wait_for_common+0x8d/0xfc)
+[    1.570000] [<00168b91>] (wait_for_common) from [<00139753>] (stm32f4_i2c_xfer+0xe9/0xfe)
+[    1.580000] [<00139753>] (stm32f4_i2c_xfer) from [<00138545>] (__i2c_transfer+0x111/0x148)
+[    1.590000] [<00138545>] (__i2c_transfer) from [<001385cf>] (i2c_transfer+0x53/0x70)
+[    1.590000] [<001385cf>] (i2c_transfer) from [<001388a5>] (i2c_smbus_xfer+0x12f/0x36e)
+[    1.600000] [<001388a5>] (i2c_smbus_xfer) from [<00138b49>] (i2c_smbus_read_byte_data+0x1f/0x2a)
+[    1.610000] [<00138b49>] (i2c_smbus_read_byte_data) from [<00124fdd>] (__stmpe_reg_read+0xd/0x24)
+[    1.620000] [<00124fdd>] (__stmpe_reg_read) from [<001252b3>] (stmpe_reg_read+0x19/0x24)
+[    1.630000] [<001252b3>] (stmpe_reg_read) from [<0002c4d1>] (unmask_irq+0x17/0x22)
+[    1.640000] [<0002c4d1>] (unmask_irq) from [<0002c57f>] (irq_startup+0x6f/0x78)
+[    1.650000] [<0002c57f>] (irq_startup) from [<0002b7a1>] (__setup_irq+0x319/0x47c)
+[    1.650000] [<0002b7a1>] (__setup_irq) from [<0002bad3>] (request_threaded_irq+0x6b/0xe8)
+[    1.660000] [<0002bad3>] (request_threaded_irq) from [<0002d0b9>] (devm_request_threaded_irq+0x3b/0x6a)
+[    1.670000] [<0002d0b9>] (devm_request_threaded_irq) from [<001446e7>] (mmc_gpiod_request_cd_irq+0x49/0x8a)
+[    1.680000] [<001446e7>] (mmc_gpiod_request_cd_irq) from [<0013d45d>] (mmc_start_host+0x49/0x60)
+[    1.690000] [<0013d45d>] (mmc_start_host) from [<0013e40b>] (mmc_add_host+0x3b/0x54)
+[    1.700000] [<0013e40b>] (mmc_add_host) from [<00148119>] (mmci_probe+0x4d1/0x60c)
+[    1.710000] [<00148119>] (mmci_probe) from [<000f903b>] (amba_probe+0x7b/0xbe)
+[    1.720000] [<000f903b>] (amba_probe) from [<001170e5>] (driver_probe_device+0x169/0x1f8)
+[    1.730000] [<001170e5>] (driver_probe_device) from [<001171b7>] (__driver_attach+0x43/0x5c)
+[    1.740000] [<001171b7>] (__driver_attach) from [<0011618d>] (bus_for_each_dev+0x3d/0x46)
+[    1.740000] [<0011618d>] (bus_for_each_dev) from [<001165cd>] (bus_add_driver+0xcd/0x124)
+[    1.740000] [<001165cd>] (bus_add_driver) from [<00117713>] (driver_register+0x4d/0x7a)
+[    1.760000] [<00117713>] (driver_register) from [<001fc765>] (do_one_initcall+0xbd/0xe8)
+[    1.770000] [<001fc765>] (do_one_initcall) from [<001fc88b>] (kernel_init_freeable+0xfb/0x134)
+[    1.780000] [<001fc88b>] (kernel_init_freeable) from [<00167ee3>] (kernel_init+0x7/0x9c)
+[    1.790000] [<00167ee3>] (kernel_init) from [<00009b65>] (ret_from_fork+0x11/0x2c)
+
+Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-stmpe.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -130,7 +130,7 @@ config CRYPTO_DH
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -190,6 +190,16 @@ static void stmpe_gpio_irq_sync_unlock(s
+ 	};
+ 	int i, j;
  
- config CRYPTO_ECDH
- 	tristate "ECDH algorithm"
--	select CRYTPO_KPP
-+	select CRYPTO_KPP
- 	select CRYPTO_RNG_DEFAULT
- 	help
- 	  Generic implementation of the ECDH algorithm
++	/*
++	 * STMPE1600: to be able to get IRQ from pins,
++	 * a read must be done on GPMR register, or a write in
++	 * GPSR or GPCR registers
++	 */
++	if (stmpe->partnum == STMPE1600) {
++		stmpe_reg_read(stmpe, stmpe->regs[STMPE_IDX_GPMR_LSB]);
++		stmpe_reg_read(stmpe, stmpe->regs[STMPE_IDX_GPMR_CSB]);
++	}
++
+ 	for (i = 0; i < CACHE_NR_REGS; i++) {
+ 		/* STMPE801 and STMPE1600 don't have RE and FE registers */
+ 		if ((stmpe->partnum == STMPE801 ||
+@@ -227,21 +237,11 @@ static void stmpe_gpio_irq_unmask(struct
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
+-	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	int offset = d->hwirq;
+ 	int regoffset = offset / 8;
+ 	int mask = BIT(offset % 8);
+ 
+ 	stmpe_gpio->regs[REG_IE][regoffset] |= mask;
+-
+-	/*
+-	 * STMPE1600 workaround: to be able to get IRQ from pins,
+-	 * a read must be done on GPMR register, or a write in
+-	 * GPSR or GPCR registers
+-	 */
+-	if (stmpe->partnum == STMPE1600)
+-		stmpe_reg_read(stmpe,
+-			       stmpe->regs[STMPE_IDX_GPMR_LSB + regoffset]);
+ }
+ 
+ static void stmpe_dbg_show_one(struct seq_file *s,
