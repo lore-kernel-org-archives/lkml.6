@@ -1,112 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752183AbeBBOxv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:53:51 -0500
-Received: from mga04.intel.com ([192.55.52.120]:35423 "EHLO mga04.intel.com"
+        id S1752237AbeBBOyc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:54:32 -0500
+Received: from mga05.intel.com ([192.55.52.43]:35745 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751643AbeBBOxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:53:45 -0500
+        id S1751643AbeBBOy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 09:54:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,448,1511856000";
-   d="scan'208";a="171166997"
-From: "Liang, Kan" <kan.liang@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-CC: "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wangnan0@huawei.com" <wangnan0@huawei.com>,
-        "jolsa@kernel.org" <jolsa@kernel.org>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "yao.jin@linux.intel.com" <yao.jin@linux.intel.com>
-Subject: RE: [PATCH V5 12/17] perf evsel: expose
- perf_missing_features.write_backward
-Thread-Topic: [PATCH V5 12/17] perf evsel: expose
- perf_missing_features.write_backward
-Thread-Index: AQHTkKM1a8KwiOsTq0WQ+0cXwu++jaOQvEkAgACKakA=
-Date: Fri, 2 Feb 2018 14:53:42 +0000
-Message-ID: <37D7C6CF3E00A74B8858931C1DB2F07753826CC8@SHSMSX103.ccr.corp.intel.com>
-References: <1516310792-208685-1-git-send-email-kan.liang@intel.com>
- <1516310792-208685-13-git-send-email-kan.liang@intel.com>
- <20180202142638.GC26905@kernel.org>
-In-Reply-To: <20180202142638.GC26905@kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZmIwZmY5NWQtMDg1ZC00Yjc3LWJiMTItNTI1MmIwYzU4NWVjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX0lDIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6InBLNHRBTjkxT2hzZlRkNUgwbkliK0c4TVFaMkMrSHAxTFpmd1lQNXhFblk9In0=
-x-ctpclassification: CTP_IC
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+   d="scan'208";a="28307141"
+Message-ID: <1517583264.18051.60.camel@linux.intel.com>
+Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
+ candidate and the basis for SIS
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Fri, 02 Feb 2018 06:54:24 -0800
+In-Reply-To: <2447536.u3g27UoP4q@aspire.rjw.lan>
+References: <20180130104555.4125-1-mgorman@techsingularity.net>
+         <20180201091104.GW2269@hirez.programming.kicks-ass.net>
+         <1517491092.18051.52.camel@linux.intel.com>
+         <2447536.u3g27UoP4q@aspire.rjw.lan>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2 (3.18.5.2-1.fc23) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Em Thu, Jan 18, 2018 at 01:26:27PM -0800, kan.liang@intel.com escreveu:
-> > From: Kan Liang <kan.liang@intel.com>
-> >
-> > perf top need it to handle overwrite fallback later.
-> >
-> > Signed-off-by: Kan Liang <kan.liang@intel.com>
-> > ---
-> >  tools/perf/util/evsel.c | 5 +++++
-> >  tools/perf/util/evsel.h | 2 ++
-> >  2 files changed, 7 insertions(+)
-> >
-> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c index
-> > 4eea3b4..1dd3700 100644
-> > --- a/tools/perf/util/evsel.c
-> > +++ b/tools/perf/util/evsel.c
-> > @@ -1670,6 +1670,11 @@ static bool ignore_missing_thread(struct
-> perf_evsel *evsel,
-> >  	return true;
-> >  }
-> >
-> > +bool is_write_backward_fail(void)
-> > +{
-> > +	return perf_missing_features.write_backward;
-> > +}
-> > +
-> 
-> Humm,  I think we better expose perf_missing_features, i.e. tools using
-> 
-> 	if (perf_missing_features.write_backward)
-> 
-
-It looks good.
-Thanks a lot.
-
-Kan
-
-> looks more clear than:
-> 
-> 	if (is_write_backward_fail())
-> 
-> This is minor, so I'm doing this myself, please holler if you disagree.
-> 
-> - Arnaldo
-> 
-> >  int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
-> >  		     struct thread_map *threads)
-> >  {
-> > diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h index
-> > 846e416..1f46728 100644
-> > --- a/tools/perf/util/evsel.h
-> > +++ b/tools/perf/util/evsel.h
-> > @@ -448,4 +448,6 @@ int perf_event_attr__fprintf(FILE *fp, struct
-> > perf_event_attr *attr,
-> >
-> >  struct perf_env *perf_evsel__env(struct perf_evsel *evsel);
-> >
-> > +bool is_write_backward_fail(void);
-> > +
-> >  #endif /* __PERF_EVSEL_H */
-> > --
-> > 2.5.5
+On Fri, 2018-02-02 at 12:00 +0100, Rafael J. Wysocki wrote:
+> On Thursday, February 1, 2018 2:18:12 PM CET Srinivas Pandruvada
+> wrote:
+> > 
+> > On Thu, 2018-02-01 at 10:11 +0100, Peter Zijlstra wrote:
+> > > 
+> > > On Thu, Feb 01, 2018 at 08:50:28AM +0100, Rafael J. Wysocki
+> > > wrote:
+> > > > 
+> > > > 
+> > > > On Wednesday, January 31, 2018 11:17:10 AM CET Peter Zijlstra
+> > > > wrote:
+> > > > > 
+> > > > > 
+> > > > > On Wed, Jan 31, 2018 at 10:22:49AM +0100, Rafael J. Wysocki
+> > > > > wrote:
+> > > > > > 
+> > > > > > 
+> > > > > > On Tuesday, January 30, 2018 2:15:31 PM CET Peter Zijlstra
+> > > > > > wrote:
+> > > > > > 
+> > > > > > > 
+> > > > > > > 
+> > > > > > > IA32_HWP_REQUEST has "Minimum_Performance",
+> > > > > > > "Maximum_Performance" and
+> > > > > > > "Desired_Performance" fields which can be used to give
+> > > > > > > explicit
+> > > > > > > frequency hints. And we really _should_ be doing that.
+> > > > > > > 
+> > > > > > > Because, esp. in this scenario; a task migrating; the
+> > > > > > > hardware really
+> > > > > > > can't do anything sensible, whereas the OS _knows_.
+> > > > > > But IA32_HWP_REQUEST is not a cheap MSR to write to.
+> > > > > That just means we might need to throttle writing to it, like
+> > > > > it
+> > > > > already
+> > > > > does for the regular pstate (PERF_CTRL) msr in any case
+> > > > > (also, is
+> > > > > that a
+> > > > > cheap msr?)
+> > > > > 
+> > > > > Not touching it at all seems silly.
+> > > > OK
+> > > > 
+> > > > So what field precisely would you touch?  "desired"?  If so,
+> > > > does
+> > > > that actually
+> > > > guarantee anything to happen?
+> > > No idea, desired would be the one I would start with, it matches
+> > > with
+> > > the intent here. But I've no idea what our current HWP
+> > > implementation
+> > > actually does with it.
+> > Desired !=0 will disable HWP autonomous mode of frequency
+> > selection.
+> But I don't think it will just run at "desired" then, will it?
+HWP all are these hints only not a guarantee.
+There are totally different way HWP is handled in client an servers.
+If you set desired all heuristics they collected will be dumped, so
+they suggest don't set desired when you are in autonomous mode. If we
+really want a boost set the EPP. We know that EPP makes lots of
+measurable difference.
