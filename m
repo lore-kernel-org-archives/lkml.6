@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2248WXq7WzkM/oEFURUuo/blXyCfirPE1QUQChYQmTChBZcVv+NACsjiWvX++9UEFLNj72Kx
-ARC-Seal: i=1; a=rsa-sha256; t=1517591653; cv=none;
+X-Google-Smtp-Source: AH8x227sRPV59a+VTpoiNmYl7Vt0f8hWdu53ThEzTRoWbTMD+iEcp/zXXrdo2bYGMfNggk6a2REG
+ARC-Seal: i=1; a=rsa-sha256; t=1517591652; cv=none;
         d=google.com; s=arc-20160816;
-        b=0bvY86hAC44MZFCUvCdRP+TB8ytk1BZvjsY9URjNOdPNGl/QyvOCJaDkwdXQI+sBSa
-         XzrN56JWcgB8dxu8U7+WZ18tQ+6WuwpAwPo9Td3XnfxsZDPrFfLZ9v2xBa6Vs4E2AgoQ
-         pd/Z2OgL6daayUxvYlJMxfDNfnmg5fAOEWl7GLZD7cd2237xQALmHFbwFa3hF1ol9f+M
-         tBvJCBxEKDqeubPNsofDEW3K1RfsaLkcoR8ChZxl1wODEZBWB0lOtuCC+QPOhx72Y2Z5
-         rqD8OoPXpEcp3eqL207G+umMMIB65lRkOO/OslwMkr1Q+kS5Nlcd2KUxXVm+r7hMg2ME
-         YDBQ==
+        b=V4Sk6Q+omPsbK5T8DEja+B7j93ZNwaZqsSqeL+vC980hLpMgroNBSfkHf6mf6yrHdy
+         OortwkrnC20omAPk3Oi2KK5byLPj18GVCXuAnNpXMt3uhS7/rBzV5q0j0BFvl6Ycqz3t
+         RYTReXM2o9BA/u8xCFSlVSv016EF2fdwzw743T/Crgd4UeKHZobbP08QdTJh8PfRwe4I
+         lptEVD18QkHREpqryJK4bqN4b49PWD1DKwVC2xPdiYZu3D7XBd7DnOzJomE3qDeCs1+A
+         lP+MCDlL/PproiYz7Jz3W2PlRPMX4RrWh8YUyxcwM/fIPYiAFF6TAMR/1pDErfGAOX04
+         9oUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=m8YzTU0b6I/Q9SLgB1KK+QVv3wFUfAjm7u9q6FdRk4g=;
-        b=t6UdOGdRuxKY5kcAbz0OljC/bAXQTRYZyFsPscOyV6qxbqnJqghtdgFrlvuM015Kgg
-         AzY4BnraJydhbU6J3jwDXw88VoeMsqhCd+BIcdIuijXuiMeFXDSMn95EA+iVchuLCoZv
-         KA7ya1/wjvkLDlUK7qez1W+VPKzSDl7jybtE6+nQJRnQh2gH7lfNkuTFXaWz/TqcAtC5
-         Tta3nwfW//chwADIaUbkV1vSsOnJMGMonnSNBepohtymOx+RUh+Qlijctw1OhHx33XrK
-         8R+IK8CF/dfPkaA0YhxPwVC909bbopEetsV0h9UyEYkXmWIXYzxHz6I49W7WrR6ZD/AW
-         GQTg==
+        bh=E2mQZQb4e+e16/6HPaj8xSmCkvghd0wluj3kJCOba1k=;
+        b=EnTNaGp3ccmTJ7ATBCZgDLjHhX7+P6oVPTopkwxmZYH3xgom4r0cBXrbWCaALTbgdB
+         a6JyI1jVMYARwV+nFdCHfxjuWiJE2DbjI8wU9mGz/RBE5Ege1RuFDr3lRk0UB7bkxp25
+         KY+6qgahsiCpf4GdM0F+vwqnANnRzu5GxKCy6OhcJXZrTqGA23wfqKlXvk180SDcojX7
+         Ls047eDlEtN0f8PYiVSlAMV/tWuyZHxtanAliBYHcVJW1XU5En9ut7TO5q+X6g7TJNXv
+         8MhWqog/ve7+bL0IQIiLR8NzfR2Kvh7fPlz3G+lGdWA0HU9b15auoaZF784HvyBhluKQ
+         XrPg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Wei Yongjun <weiyongjun1@huawei.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.14 148/156] serial: 8250_uniphier: fix error return code in uniphier_uart_probe()
-Date: Fri,  2 Feb 2018 17:58:49 +0100
-Message-Id: <20180202140847.061624606@linuxfoundation.org>
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 4.14 147/156] serial: 8250_of: fix return code when probe function fails to get reset
+Date: Fri,  2 Feb 2018 17:58:48 +0100
+Message-Id: <20180202140847.021774034@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591310185216144895?=
-X-GMAIL-MSGID: =?utf-8?q?1591310185216144895?=
+X-GMAIL-THRID: =?utf-8?q?1591310184137013467?=
+X-GMAIL-MSGID: =?utf-8?q?1591310184137013467?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,37 +48,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-commit 7defa77d2baca4d6eb85234f10f38ab618332e75 upstream.
+commit b9820a31691b771db37afe2054dd3d3a680c1eed upstream.
 
-Fix to return a negative error code from the port register error
-handling case instead of 0, as done elsewhere in this function.
+The error pointer from devm_reset_control_get_optional_shared() is
+not propagated.
 
-Fixes: 39be40ce066d ("serial: 8250_uniphier: fix serial port index in private data")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+One of the most common problem scenarios is it returns -EPROBE_DEFER
+when the reset controller has not probed yet.  In this case, the
+probe of the reset consumer should be deferred.
+
+Fixes: e2860e1f62f2 ("serial: 8250_of: Add reset support")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_uniphier.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_of.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/8250/8250_uniphier.c
-+++ b/drivers/tty/serial/8250/8250_uniphier.c
-@@ -259,12 +259,13 @@ static int uniphier_uart_probe(struct pl
- 	up.dl_read = uniphier_serial_dl_read;
- 	up.dl_write = uniphier_serial_dl_write;
- 
--	priv->line = serial8250_register_8250_port(&up);
--	if (priv->line < 0) {
-+	ret = serial8250_register_8250_port(&up);
-+	if (ret < 0) {
- 		dev_err(dev, "failed to register 8250 port\n");
- 		clk_disable_unprepare(priv->clk);
- 		return ret;
+--- a/drivers/tty/serial/8250/8250_of.c
++++ b/drivers/tty/serial/8250/8250_of.c
+@@ -141,8 +141,11 @@ static int of_platform_serial_setup(stru
  	}
-+	priv->line = ret;
  
- 	platform_set_drvdata(pdev, priv);
- 
+ 	info->rst = devm_reset_control_get_optional_shared(&ofdev->dev, NULL);
+-	if (IS_ERR(info->rst))
++	if (IS_ERR(info->rst)) {
++		ret = PTR_ERR(info->rst);
+ 		goto err_dispose;
++	}
++
+ 	ret = reset_control_deassert(info->rst);
+ 	if (ret)
+ 		goto err_dispose;
