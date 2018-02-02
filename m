@@ -1,78 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751649AbeBBHmS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 02:42:18 -0500
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:33926 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750805AbeBBHmK (ORCPT
+        id S1751664AbeBBHnW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 02:43:22 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33202 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751671AbeBBHnO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 02:42:10 -0500
-X-Google-Smtp-Source: AH8x225hZOsqufpHEjfq9uRiwL4qF2EjgGtJzFRmPR/Wsr+iHa4fAtscjppEYprUgD79UjRl78ZxFw==
+        Fri, 2 Feb 2018 02:43:14 -0500
+X-Google-Smtp-Source: AH8x227qtk1Wvv5hSii3m1dSdlDVvgDGn/a2TrM1tFjxLzRn3jIxy+rcXxRLcEKuUnThDXMfeJioCVmQaNrG/eiYJYM=
 MIME-Version: 1.0
-In-Reply-To: <20180202073316.ovee5fbe45npksnt@paasikivi.fi.intel.com>
-References: <20171215075625.27028-1-acourbot@chromium.org> <20171215075625.27028-2-acourbot@chromium.org>
- <20180126083936.5qxacbdprm6j7pcc@valkosipuli.retiisi.org.uk>
- <CAPBb6MVAaGPh-sxD0ZTMbo2Ejtp8Rpqb8+OaKxhAC=BaT360eQ@mail.gmail.com> <20180202073316.ovee5fbe45npksnt@paasikivi.fi.intel.com>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Fri, 2 Feb 2018 16:41:45 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BtOac2Mi9yTpma=96RQhtjTcBXYoSc2LkStYJx+s7jSA@mail.gmail.com>
-Message-ID: <CAAFQd5BtOac2Mi9yTpma=96RQhtjTcBXYoSc2LkStYJx+s7jSA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/9] media: add request API core and UAPI
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <CAPM=9tyqDtVPqJ0Gv7LOmmBQQfoU6G0VsNkN0mPymg+Bv5VTSw@mail.gmail.com>
+References: <CAPM=9tzdZucx_zkMESOfTV5tp9tP+g_tVkCmcQ7R9vYLaXq3Gw@mail.gmail.com>
+ <CA+55aFzZiPJEoOViZh4hdKC=y9iEv8xAU_aCE2SxBqENZNO9_w@mail.gmail.com>
+ <CAPM=9twxZtrNO8r_cQtXrMjkZ1jfvRD_3-dVPXAkLObE99DBFg@mail.gmail.com>
+ <CA+55aFyEEKa48WADO0-5=vdGxGDug801u4C6+Cn7Gg6RoxCWZA@mail.gmail.com> <CAPM=9tyqDtVPqJ0Gv7LOmmBQQfoU6G0VsNkN0mPymg+Bv5VTSw@mail.gmail.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 2 Feb 2018 07:43:11 +0000
+Message-ID: <CAPj87rOyvJyaS_MGZru3E0PZ+WiOjTEWApA7zeqHV0wiLJiBTQ@mail.gmail.com>
+Subject: Re: [git pull] drm pull for v4.16-rc1
+To: Dave Airlie <airlied@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 2, 2018 at 4:33 PM, Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->> >> +/**
->> >> + * struct media_request_queue - queue of requests
->> >> + *
->> >> + * @mdev:    media_device that manages this queue
->> >> + * @ops:     implementation of the queue
->> >> + * @mutex:   protects requests, active_request, req_id, and all members of
->> >> + *           struct media_request
->> >> + * @active_request: request being currently run by this queue
->> >> + * @requests:        list of requests (not in any particular order) that this
->> >> + *           queue owns.
->> >> + * @req_id:  counter used to identify requests for debugging purposes
->> >> + */
->> >> +struct media_request_queue {
->> >> +     struct media_device *mdev;
->> >> +     const struct media_request_queue_ops *ops;
->> >> +
->> >> +     struct mutex mutex;
->> >
->> > Any particular reason for using a mutex? The request queue lock will need
->> > to be acquired from interrupts, too, so this should be changed to a
->> > spinlock.
+On 2 February 2018 at 02:50, Dave Airlie <airlied@gmail.com> wrote:
+> On 2 February 2018 at 12:44, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> On Thu, Feb 1, 2018 at 6:22 PM, Dave Airlie <airlied@gmail.com> wrote:
+>>>
+>>> Turned out I was running on wayland instead of X.org and my cut-n-paste from
+>>> gedit to firefox got truncated, wierd. I'll go annoy some people, and make sure
+>>> it doesn't happen again.
 >>
->> Will it be acquired from interrupts? In any case it should be possible
->> to change this to a spinlock.
+>> Heh, so there's some Wayland clipboard buffer limit.
 >
-> Using mutexes will effectively make this impossible, and I don't think we
-> can safely say there's not going to be a need for that. So spinlocks,
-> please.
+> Yup or some bug getting the second chunks across from one place to another.
+
+The transfer part of Wayland's clipboard protocol is an FD between
+both clients for them to send data directly. But Firefox isn't yet
+native, and I can fully believe that GNOME Shell's Xwayland clipboard
+translator isn't perfect.
+
+>> But that reminds me: is there any *standard* tool to programmatically
+>> feed into the clipboard?
+>>
+>> I occasionally do things like
+>>
+>>     git shortlog A..B | xsel
+>>
+>> in order to then paste it into some browser window or other.
+>>
+>> And sure, that works well. But I do it seldom enough that I never
+>> remember the command, and half the time it's not even installed
+>> because I've switched machines or something, and xsel is always some
+>> add-on.
+>>
+>> What's the thing "real" X people do/use?
 >
+> I use gedit to move things from files to clip now, for mostly the same reasons,
+> I know it's installed usually. xclip and xsel are two utilities I know
+> off, but I don'
+> think anything gets installed by default.
 
-IMHO whether a mutex or spinlock is the right thing depends on what
-kind of critical section it is used for. If it only protects data (and
-according to the comment, this one seems to do so), spinlock might
-actually have better properties, e.g. not introducing the need to
-reschedule, if another CPU is accessing the data at the moment. It
-might also depend on how heavy the data accesses are, though. We
-shouldn't need to spin for too long time.
+That's the state of the art for X11.
 
-Best regards,
-Tomasz
+Cheers,
+Daniel
