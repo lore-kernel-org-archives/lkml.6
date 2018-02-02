@@ -1,73 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752222AbeBBPrb (ORCPT <rfc822;w@1wt.eu>);
+        id S1752264AbeBBPrl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 10:47:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59904 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752220AbeBBPrb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 2 Feb 2018 10:47:31 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:54837 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751580AbeBBPrX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 10:47:23 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH] vxfs: fix building with LTO
-Date: Fri,  2 Feb 2018 16:47:01 +0100
-Message-Id: <20180202154706.1624997-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:CokESm8dCIvopzcdBhgorOOTK5BPyuYQv8xbHBe32qaDtOQc+MS
- Xr44MVM+3jXhSbPO9dNMAcZon/dTRlo0NDsHfyxrS8vOPguXu7zgavgiwzwnykKW9+2YORw
- NpKJsMQWsmE080w+tTzPgdbgteZcvCTcy5wpUfhGK7Dz/178snnQJW5RzN3bbXFKQ6YymOc
- yl1RKlE5DYow7BrHugbbQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:QironpDZpJg=:NeivasZHj8IfetJEVtyvuC
- Drqwye2S5rBqPwXRKc2GUDqhnetmrUhR5pgWiYxAuV3HAkm3pRwVm0qF2YZ0S75RFZMuVGyfo
- BlRPNSjwDLshP2fJuXJDKF0txrD+JOKk+AaWBqliambJIAS3fykD5i6Z/wecf40KVnEKAfwAf
- 8gI0WeYh2RKUAOp7YuhyRAWalrK0ha7/foSneKaVJeekwNJUAcA9du2w/9A2W3prmJLgVfR3M
- WiBdCAbPcs34fMjjo/SoMq9Ht60zeJZWhi6v4ExEiX5fOaYiqn3hLbZQfEbdqC+Ll+iSguX11
- mvfjn2rgUZRecuIq8G5+FX36kT/VtPLusvr/ENtSbXp5nCv3noSdRBHdJ/TJ2BQ2zw72MNRnQ
- WTLX2NMFuPUSwYq1eamrI/iRmYYG82IVepB98nC6mMngFPp85ZMayUV8rDUMI2dN12FqJ2HV5
- YmX8a2jeDk3hJ1pIHa/PE1E9B2rxhOM8pCQYtG+Z5YFeKvN32W97zHF/+EyrSXJVnRATt4AHx
- 48uMFlRFw6mHMmbSYMc0RhSn+gSbfCRHPeLT3DXzHZT36zGAPxw4OMptRorAfxCFzVnBso2Cn
- Xk+sjJD58HQiG2cfxexLx7bjDpPS1jW8Dxv2H2QR+syl/y0tCmXRVor4Ll8lTfUF5IZKHuPvd
- nqki2u7m3YRZzrof2aOTnG878d0Zc1kmeou+xSg5ULUUb3z+pkgwk4bkagxDmSd29FlSkeXTf
- QbTQy2ARYrKQdXmAuqCDOE8dW2XS9Gga/e+POA==
+Date: Fri, 2 Feb 2018 10:47:30 -0500 (EST)
+From: Bob Peterson <rpeterso@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: cluster-devel <cluster-devel@redhat.com>, linux-kernel@vger.kernel.org
+Message-ID: <2018618406.6385867.1517586450779.JavaMail.zimbra@redhat.com>
+In-Reply-To: <1118826781.6385862.1517586443478.JavaMail.zimbra@redhat.com>
+Subject: GFS2: Second Pull request (merge window)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.3.112.38, 10.4.195.13]
+Thread-Topic: GFS2: Second Pull request (merge window)
+Thread-Index: STlFXKE6x1OpyIIuuBG/wT1rkFP58w==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When link-time optimizations are enabled, vxfs fails to build:
+Hi Linus,
 
-fs/freevxfs/vxfs_lookup.c: In function 'vxfs_readdir':
-fs/freevxfs/vxfs_subr.c:50:1: error: inlining failed in call to always_inline 'vxfs_put_page': function not declared inline and code size would grow
- vxfs_put_page(struct page *pp)
- ^
-fs/freevxfs/vxfs_lookup.c:291:3: note: called from here
-   vxfs_put_page(pp);
-   ^
-fs/freevxfs/vxfs_inode.c: In function '__vxfs_iget':
-fs/freevxfs/vxfs_subr.c:50:1: error: inlining failed in call to always_inline 'vxfs_put_page': function not declared inline and code size would grow
-fs/freevxfs/vxfs_lookup.c: In function 'vxfs_lookup':
-fs/freevxfs/vxfs_subr.c:50:1: error: inlining failed in call to always_inline 'vxfs_put_page': function not declared inline and code size would grow
+Sorry to bother you with a second merge request for GFS2, but we found
+a couple regressions and want to get them fixed in this merge window.
 
-This removes the 'inline' annotation that obviously doesn't do much
-anyway.
+Please consider pulling the following changes for the GFS2 file system.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/freevxfs/vxfs_subr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
 
-diff --git a/fs/freevxfs/vxfs_subr.c b/fs/freevxfs/vxfs_subr.c
-index e806694d4145..8e213cce586f 100644
---- a/fs/freevxfs/vxfs_subr.c
-+++ b/fs/freevxfs/vxfs_subr.c
-@@ -46,7 +46,7 @@ const struct address_space_operations vxfs_aops = {
- 	.bmap =			vxfs_bmap,
- };
- 
--inline void
-+void
- vxfs_put_page(struct page *pp)
- {
- 	kunmap(pp);
--- 
-2.9.0
+Bob Peterson
+----------------------------------------------------------------
+The following changes since commit 255442c93843f52b6891b21d0b485bf2c97f93c3:
+
+  Merge tag 'docs-4.16' of git://git.lwn.net/linux (2018-01-31 19:25:25 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-4.16.fixes2
+
+for you to fetch changes up to 7ac07fdaf840f9b141c6d5c286805107227c0e68:
+
+  gfs2: Glock dump performance regression fix (2018-02-01 11:27:11 -0700)
+
+----------------------------------------------------------------
+Andreas Gruenbacher wrote two additional patches that we would like
+merged in this time. Both are regressions:
+
+1. The first fixes another kernel build dependency problem.
+2. The second fixes a performance regression in glock dumps.
+
+----------------------------------------------------------------
+Andreas Gruenbacher (2):
+      gfs2: Fix the crc32c dependency
+      gfs2: Glock dump performance regression fix
+
+ fs/gfs2/Kconfig |  3 +--
+ fs/gfs2/glock.c | 65 ++++++++++++++++++++++++++++++++++++++-------------------
+ 2 files changed, 44 insertions(+), 24 deletions(-)
