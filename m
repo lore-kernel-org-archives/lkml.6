@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224RlP03K5KsB3Gkh4t4Qrvb93N27RaeMizsIw/MqJAC+LUm692Hac41paOvGsPl24GCim08
-ARC-Seal: i=1; a=rsa-sha256; t=1517591564; cv=none;
+X-Google-Smtp-Source: AH8x225me5OmcIe76uc24RlX7OdpcB7ryaoSXOSZVTsWYV/X2QFkcX6bcQwMAlWOroyDGIhwcdwX
+ARC-Seal: i=1; a=rsa-sha256; t=1517591560; cv=none;
         d=google.com; s=arc-20160816;
-        b=mgoPzb0BbRAqh5uCLynn6Awl/rUTfEpNuXDJvitKvK+hB9dwFriq/V3CzNdzFz4oVx
-         wlG+jkaOMiz7eVgDrSPRkJaXDkYSChjy3ZO0aVmTZTdEv+FsCKzWyR3ajb/bh6X1dGLt
-         GbjDctVl3AwQ2ascHEFwxNo6Hozozr/rhtnxdWPsIXOhspe289ACby6yVbhnBIhhOApD
-         V/oMqbqRsEVm4aclI/q5eZ6IiVvmNO72b4OMRPEzYjmmcE7vEDG4Rh7HMf2sgpZkd1wm
-         1UvDTU/fAp3nua4zqCHjGhMls/+Upd0DIUDV3STmXiSYj3ZBIg4BGX7apS/HM3Qk/oR8
-         LJ7A==
+        b=N1vtaFrfPxeYtICgyrLRGBAMSIiYHOYWYNGp3C4o+WDtbd+cjp6PiINVyalCQHed+b
+         WKLC5wA3KVULFY1Gx/jQx15mYcj6FzzztqNSmje/hIFz3yHBedkSfzK4l/tYo0KPhu6F
+         OjO80BBNu/9TftEqD5h4sIRuocDFb8Aczr9k/oUO2ekSUY7zVBpanUfCc62raaPgUkGG
+         kDoNWB18CPjcB1UNzWEA+DxphAZMU3ChclpMcC8kHy9dmAJOHcDzVqTQi1dEwi+u3fxR
+         elgGCR3I3eknaK5f1Uc/sc/KjUi1fvx/DMX8fhHut6z6pJV/28UzDUs8tik2GVBL34ow
+         S4ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AfpjDIA37vwHHY2odxTOqi17K6m0nVlTpHCVBgX8f70=;
-        b=bEpdthf8eVrANoRllT170tIuMF6+hwx1TCbUXf5tarw7LfAlEAbp+j55D12dwHcloZ
-         IE38EZzwpWm9WtA20+dXHq8fJgFP/eXOC9P6v0vvEqHn83Sw1bu2vlB5DR6wiEKoRd3L
-         qUXPgDp3ZWD5suwtHodxz+kp9zUl+S2pJ0+i53yBA1F/Ebtqq95YJjzFP9qgk0x7hPHQ
-         iyOWCdEL7ByGmRBf6EX8zaePpHgRpf7sMo/hap+iKr89M+zNt5MT3FODbShvD+Om4RlV
-         Oj7VIPkdhYf4+TAAzf3hA7xYgiXqLgEvNgtIzJyumBmvkvmxVxSoga3fvwAaknZDauLO
-         dWUA==
+        bh=m8D67AVjULjanNV+qYLtkjaF8ZVaZDrZBQbaxUJcgAA=;
+        b=UydO3BDAnwvCjoUJgWeHNSYjbv0ZtdeXL6LuoKgpmOl1jd848bgSTC1aU1WoFRaVGw
+         okOVe/S+lKJUnQiUooTbX2oplH+nbEkLqDk4tFl4ySV6tWRnTzHp18RPTZ+8r15YUhV2
+         NQIgLj/wPb3iNhDsSm4jXjz00E/y2CKckGIXudyoi+ViVhfLLTPZefs7HhOtlob04+e9
+         Vs/nrhms5K2Es2cWa1aWglpFW9HQWDZ84vwZaprExhnhaii6moCLLG6G9K80+koeG4d5
+         hYpxL5yGz9cwlcSePaCM/KF8cusUPd3qv3hN9fl/MrWIJ/XOzoCtoC3/D6YZBOpbYWsO
+         EBLw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jon Mason <jon.mason@broadcom.com>,
 	Florian Fainelli <f.fainelli@gmail.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 122/156] ARM: dts: NSP: Fix PPI interrupt types
-Date: Fri,  2 Feb 2018 17:58:23 +0100
-Message-Id: <20180202140845.697902239@linuxfoundation.org>
+Subject: [PATCH 4.14 121/156] ARM: dts: NSP: Disable AHCI controller for HR NSP boards
+Date: Fri,  2 Feb 2018 17:58:22 +0100
+Message-Id: <20180202140845.652050967@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309648545488098?=
-X-GMAIL-MSGID: =?utf-8?q?1591310091956093798?=
+X-GMAIL-THRID: =?utf-8?q?1591310087606032393?=
+X-GMAIL-MSGID: =?utf-8?q?1591310087606032393?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,46 +52,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Florian Fainelli <f.fainelli@gmail.com>
 
 
-[ Upstream commit 5f1aa51c7a1eef1c5a60b8334e32c89904964245 ]
+[ Upstream commit 77416ab35f5712382e5a792bfa1736ceb70d5bbb ]
 
-Booting a kernel results in the kernel warning us about the following
-PPI interrupts configuration:
-[    0.105127] smp: Bringing up secondary CPUs ...
-[    0.110545] GIC: PPI11 is secure or misconfigured
-[    0.110551] GIC: PPI13 is secure or misconfigured
+The AHCI controller is currently enabled for all of these boards:
+bcm958623hr and bcm958625hr would result in a hard hang on boot that we
+cannot get rid of. Since this does not appear to have an easy and simple
+fix, just disable the AHCI controller for now until this gets resolved.
 
-Fix this by using the appropriate edge configuration for PPI11 and
-PPI13, this is similar to what was fixed for Northstar (BCM5301X) in
-commit 0e34079cd1f6 ("ARM: dts: BCM5301X: Correct GIC_PPI interrupt
-flags").
-
-Fixes: 7b2e987de207 ("ARM: NSP: add minimal Northstar Plus device tree")
-Fixes: 1a9d53cabaf4 ("ARM: dts: NSP: Add TWD Support to DT")
+Fixes: 70725d6e97ac ("ARM: dts: NSP: Enable SATA on bcm958625hr")
+Fixes: d454c3762437 ("ARM: dts: NSP: Add new DT file for bcm958623hr")
 Acked-by: Jon Mason <jon.mason@broadcom.com>
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm-nsp.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/bcm958623hr.dts |    4 ----
+ arch/arm/boot/dts/bcm958625hr.dts |    4 ----
+ 2 files changed, 8 deletions(-)
 
---- a/arch/arm/boot/dts/bcm-nsp.dtsi
-+++ b/arch/arm/boot/dts/bcm-nsp.dtsi
-@@ -85,7 +85,7 @@
- 		timer@20200 {
- 			compatible = "arm,cortex-a9-global-timer";
- 			reg = <0x20200 0x100>;
--			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_PPI 11 IRQ_TYPE_EDGE_RISING>;
- 			clocks = <&periph_clk>;
- 		};
+--- a/arch/arm/boot/dts/bcm958623hr.dts
++++ b/arch/arm/boot/dts/bcm958623hr.dts
+@@ -141,10 +141,6 @@
+ 	status = "okay";
+ };
  
-@@ -93,7 +93,7 @@
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0x20600 0x20>;
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_HIGH)>;
-+						  IRQ_TYPE_EDGE_RISING)>;
- 			clocks = <&periph_clk>;
- 		};
+-&sata {
+-	status = "okay";
+-};
+-
+ &qspi {
+ 	bspi-sel = <0>;
+ 	flash: m25p80@0 {
+--- a/arch/arm/boot/dts/bcm958625hr.dts
++++ b/arch/arm/boot/dts/bcm958625hr.dts
+@@ -177,10 +177,6 @@
+ 	status = "okay";
+ };
  
+-&sata {
+-	status = "okay";
+-};
+-
+ &srab {
+ 	compatible = "brcm,bcm58625-srab", "brcm,nsp-srab";
+ 	status = "okay";
