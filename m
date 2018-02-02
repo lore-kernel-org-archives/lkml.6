@@ -1,43 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751788AbeBBM65 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 07:58:57 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:55463 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbeBBM6u (ORCPT
+        id S1751678AbeBBNFK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:05:10 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.31]:40904 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750773AbeBBNFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 07:58:50 -0500
-Date: Fri, 2 Feb 2018 13:58:46 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Mel Gorman <mgorman@techsingularity.net>,
-        Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        srinivas.pandruvada@linux.intel.com
-Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
- candidate and the basis for SIS
-Message-ID: <20180202125846.GM2269@hirez.programming.kicks-ass.net>
-References: <20180130104555.4125-1-mgorman@techsingularity.net>
- <3838689.GpfBVtfPr0@aspire.rjw.lan>
- <20180201091104.GW2269@hirez.programming.kicks-ass.net>
- <8930678.7E2iWGoJnn@aspire.rjw.lan>
+        Fri, 2 Feb 2018 08:05:04 -0500
+Date: Fri, 2 Feb 2018 06:42:33 -0600
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Lloyd Atkinson <latkinso@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] drm/msm/dsi: Fix potential NULL pointer dereference in
+ msm_dsi_modeset_init
+Message-ID: <20180202124233.GA5056@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8930678.7E2iWGoJnn@aspire.rjw.lan>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.201.65
+X-Source-L: No
+X-Exim-ID: 1ehafq-0023dk-Ja
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.152.201.65]:44582
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 12:42:29PM +0100, Rafael J. Wysocki wrote:
-> > Yes, too many synchronous IPIs, which themselves are typically already
-> > more expensive than the MSR access.
-> 
-> We could do all of the updates in one IPI (as Srinivas said), but it would be
-> more code, and custom code for that matter.
-> 
-> Is this really worth it for a slow path like this one?
+_dev_ is being dereferenced before it is null checked, hence there
+is a potential null pointer dereference.
 
-Probably not, still, the pattern really annoys me ;-)
+Fix this by moving the pointer dereference after _dev_ has been
+null checked.
+
+Fixes: d4e7f38d70ef ("drm/msm/dsi: check msm_dsi and dsi pointers before use")
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+---
+ drivers/gpu/drm/msm/dsi/dsi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/dsi/dsi.c b/drivers/gpu/drm/msm/dsi/dsi.c
+index ee7e090..b744bcc 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi.c
++++ b/drivers/gpu/drm/msm/dsi/dsi.c
+@@ -192,13 +192,14 @@ void __exit msm_dsi_unregister(void)
+ int msm_dsi_modeset_init(struct msm_dsi *msm_dsi, struct drm_device *dev,
+ 			 struct drm_encoder *encoder)
+ {
+-	struct msm_drm_private *priv = dev->dev_private;
++	struct msm_drm_private *priv;
+ 	struct drm_bridge *ext_bridge;
+ 	int ret;
+ 
+ 	if (WARN_ON(!encoder) || WARN_ON(!msm_dsi) || WARN_ON(!dev))
+ 		return -EINVAL;
+ 
++	priv = dev->dev_private;
+ 	msm_dsi->dev = dev;
+ 
+ 	ret = msm_dsi_host_modeset_init(msm_dsi->host, dev);
+-- 
+2.7.4
