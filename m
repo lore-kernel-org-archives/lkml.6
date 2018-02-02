@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226MlybYEin+AyrWubtSarWo+sxi6khcO5SfWTFps5rVeKQtt0xxItl6UC6Xs5mRQhyPNKC8
-ARC-Seal: i=1; a=rsa-sha256; t=1517591193; cv=none;
+X-Google-Smtp-Source: AH8x226umCJCvfE2jFTjTFOXb/yEa8ZQ+6MdkylXydGFqqX7M8aRoMsA2il656uayFATIu4CGt7p
+ARC-Seal: i=1; a=rsa-sha256; t=1517591187; cv=none;
         d=google.com; s=arc-20160816;
-        b=XK7Ug6eTnmc6sKsjj8bqFTpWljzCRCmvmScNka1f8vdbQOsDAhE5RND1KyTEphjeHA
-         +DasFUCFE8wvFFivI1ITRK6iIX11EDs3Dl+Bp16VMDG2W8sqH73oJf2taINdpUlDpoue
-         ghCwsEXxi6GMonJL6gqNZncjYtkbRsW3CYNNhxeKQiVQQi0WesFtcFssXHYdzKgsehLo
-         JopE3WOppTKJlFj7ACTRd5aEL7K5CbsWssopjaI1bkJSYRIBbpzyoerZZ890FyNKl208
-         DY/A5rBmMr9gmx95+clFUp/hOscEex4abb29P4Ty0ppfK/4GFdoGpweziGv9Qm2uDNcP
-         RHEg==
+        b=0UkI2g9EYd075lIaNu6qQ9SA+/tlcXGsj1D/KKEaMJ3ig9lWjRjPyx/1F+ZzHDaK/e
+         SZ1isMS+oDXWquKGEFmc5o0PkXY8Vg0rUpoHpdqa8Zf6ULwUx/4NLxUiQuqYdWaPw9kO
+         jAtcUvda/3qNSUcfNVTmUh5VUOS/ABeWfBYqX6mxWlD95lq1AJaBH+F8TBVsxOUE8wGR
+         z/6sUQfSquTUDloosegog+XFgztKHSTn8OP+6Bn5F7jWMbaCBDRDutWh5IEsWRvsDhrk
+         6fIw5ImwlCQSynKTTX9MZijPjs0E/g6475xbUoi6u5/t2mOD0R/XQ+DJVc34PTSIuYMS
+         aTLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=N+nAMH3TkAwTCItJ3g2+CeUCQXWjR/roU2shImTTTjk=;
-        b=d5I590yn49FrlYn4HOYqgZsy0TiXKsbWVi1jmr9bq2kQopYt10pJ5h0vfX3kMs+hxR
-         2GK/K5h9UkcSBgkXPgpQ3O3qs8p/CfUbbvnmlXCaok6pvgGMP2O+RafJzRxtIIhQC1zi
-         SqpyPkAedJK6wIMIZOEWU4Ke0WLzMOHG1nO5Bul6VmHJc7r7MfKvUO5LdDCboIDeWizR
-         C5qc8ClWT4rVFOQvPFH+ncJOF0d4DzsK6icC2lM3kD+VQdjhv517/IcJAmchtc6qyKV5
-         0wssZO7HtfCwdYbkxtMaUeWLjl5D4/UD4xtLy261cdQ61jYdIFyymT7fIJE6Uwy0x2ee
-         NSMQ==
+        bh=mZ48PDPNe7CksuH+K9xuyRy3EPylWN+2iez+2rDWz8A=;
+        b=EIhf8AfGdhDPpiYRyh93qbyiq53/dfV5OwPu1F29IaeRBV3hXA/b8GFgn+K/CaiK5K
+         6D89n/i9aQmBnKQhpK9fhpwDUJCAOTNON1ypMZEPIZY+bf/rgjvSS3v2gvVDLNWotX4H
+         dtIvLSPo7HXN3cWIgeThA4BBc6tzVBFs+hyD/DYG8lPXwUgh54rfVFKX+Y/fjFwWNSCK
+         HuwIAV1K70FFrSunKDlxgAvpH0E8AhjAkLqt9hzbK3NPrMmPy5UR+InTrgSmzcXULv3W
+         ZZo0FHjmi3kMW+FWjjfZh4w3sbrubnuPlbt8M7PcNldswE/1KCtIfIFDVYawWJu7llTh
+         psgg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Oliver Neukum <oneukum@suse.com>,
-	Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 4.9 82/86] usb: uas: unconditionally bring back host after reset
-Date: Fri,  2 Feb 2018 17:58:42 +0100
-Message-Id: <20180202140830.169784420@linuxfoundation.org>
+	Max Schulze <max.schulze@posteo.de>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 80/86] USB: serial: simple: add Motorola Tetra driver
+Date: Fri,  2 Feb 2018 17:58:40 +0100
+Message-Id: <20180202140830.020886758@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309454850913215?=
-X-GMAIL-MSGID: =?utf-8?q?1591309702637372420?=
+X-GMAIL-THRID: =?utf-8?q?1591309449263095125?=
+X-GMAIL-MSGID: =?utf-8?q?1591309696923507077?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,64 +48,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit cbeef22fd611c4f47c494b821b2b105b8af970bb upstream.
+commit 46fe895e22ab3845515ec06b01eaf1282b342e29 upstream.
 
-Quoting Hans:
+Add new Motorola Tetra (simple) driver for Motorola Solutions TETRA PEI
+devices.
 
-If we return 1 from our post_reset handler, then our disconnect handler
-will be called immediately afterwards. Since pre_reset blocks all scsi
-requests our disconnect handler will then hang in the scsi_remove_host
-call.
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=0cad ProdID=9011 Rev=24.16
+S:  Manufacturer=Motorola Solutions Inc.
+S:  Product=Motorola Solutions TETRA PEI interface
+C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
+I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
 
-This is esp. bad because our disconnect handler hanging for ever also
-stops the USB subsys from enumerating any new USB devices, causes commands
-like lsusb to hang, etc.
+Note that these devices do not support the CDC SET_CONTROL_LINE_STATE
+request (for any interface).
 
-In practice this happens when unplugging some uas devices because the hub
-code may see the device as needing a warm-reset and calls usb_reset_device
-before seeing the disconnect. In this case uas_configure_endpoints fails
-with -ENODEV. We do not want to print an error for this, so this commit
-also silences the shost_printk for -ENODEV.
-
-ENDQUOTE
-
-However, if we do that we better drop any unconditional execution
-and report to the SCSI subsystem that we have undergone a reset
-but we are not operational now.
-
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reported-by: Hans de Goede <hdegoede@redhat.com>
+Reported-by: Max Schulze <max.schulze@posteo.de>
+Tested-by: Max Schulze <max.schulze@posteo.de>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/uas.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/usb/serial/Kconfig             |    1 +
+ drivers/usb/serial/usb-serial-simple.c |    7 +++++++
+ 2 files changed, 8 insertions(+)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -1076,20 +1076,19 @@ static int uas_post_reset(struct usb_int
- 		return 0;
+--- a/drivers/usb/serial/Kconfig
++++ b/drivers/usb/serial/Kconfig
+@@ -63,6 +63,7 @@ config USB_SERIAL_SIMPLE
+ 		- Google USB serial devices
+ 		- HP4x calculators
+ 		- a number of Motorola phones
++		- Motorola Tetra devices
+ 		- Novatel Wireless GPS receivers
+ 		- Siemens USB/MPI adapter.
+ 		- ViVOtech ViVOpay USB device.
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -80,6 +80,11 @@ DEVICE(vivopay, VIVOPAY_IDS);
+ 	{ USB_DEVICE(0x22b8, 0x2c64) }	/* Motorola V950 phone */
+ DEVICE(moto_modem, MOTO_IDS);
  
- 	err = uas_configure_endpoints(devinfo);
--	if (err) {
-+	if (err && err != ENODEV)
- 		shost_printk(KERN_ERR, shost,
- 			     "%s: alloc streams error %d after reset",
- 			     __func__, err);
--		return 1;
--	}
- 
-+	/* we must unblock the host in every case lest we deadlock */
- 	spin_lock_irqsave(shost->host_lock, flags);
- 	scsi_report_bus_reset(shost, 0);
- 	spin_unlock_irqrestore(shost->host_lock, flags);
- 
- 	scsi_unblock_requests(shost);
- 
--	return 0;
-+	return err ? 1 : 0;
- }
- 
- static int uas_suspend(struct usb_interface *intf, pm_message_t message)
++/* Motorola Tetra driver */
++#define MOTOROLA_TETRA_IDS()			\
++	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
++DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
++
+ /* Novatel Wireless GPS driver */
+ #define NOVATEL_IDS()			\
+ 	{ USB_DEVICE(0x09d7, 0x0100) }	/* NovAtel FlexPack GPS */
+@@ -110,6 +115,7 @@ static struct usb_serial_driver * const
+ 	&google_device,
+ 	&vivopay_device,
+ 	&moto_modem_device,
++	&motorola_tetra_device,
+ 	&novatel_gps_device,
+ 	&hp4x_device,
+ 	&suunto_device,
+@@ -125,6 +131,7 @@ static const struct usb_device_id id_tab
+ 	GOOGLE_IDS(),
+ 	VIVOPAY_IDS(),
+ 	MOTO_IDS(),
++	MOTOROLA_TETRA_IDS(),
+ 	NOVATEL_IDS(),
+ 	HP4X_IDS(),
+ 	SUUNTO_IDS(),
