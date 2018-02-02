@@ -1,47 +1,77 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2249QvcnSDwC+LqR31Tg4dPfF1JLKTtGDAxS3Sj9ZyuYt5XIl+NAf50fd0RoW7unu3HtGRqL
-ARC-Seal: i=1; a=rsa-sha256; t=1517591164; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jrJKoMcS52+OfMccO3cXPkA0dPnjqfhpJkSQO0PDepPgGDxUrXKvbTt5VfRiwTkcHY
-         XvvM0lhtVbEllg6tA+psytAv3qRBeq8flmDAbmASKzHM05BrKXPsKfVZDXI4aUQ0zIVW
-         /C31M3a6da3op91Cel2kv5pdMFzWOPqHX+HajQsAGw1qJmbKXC07wuxqrjrgpnJCINEm
-         /XpJl1zDkjIhRV43iB/Gf6y7+SdnqQYNzsCJDt8GXuIXNxpVxitdgxpCFlQGqGvohlE2
-         46qP/pZX05v+khwWN0ZHRbL4Ch+M7Xz44Nm0q/DVVO6ShS2eNDEHzTvoHgfbOFrDkLvQ
-         7w6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=vPJemg6aLQnQ1CFRs0K8w86F7Z5R/fFHt7YXNChTugI=;
-        b=YQzhH14kDWc93o2XFispUaTaozwCxV1w1uRemA+qkyLYeNE/nUaxtnxrA4Kfte1xqT
-         hQYT1ypufbXueU3SIn1xWyXA6ZUNJ5eXQEPq0YHpsErhOUkQukY9JE0A3h8RhM1ztS7g
-         71ciTrVa3qirhsTaVS8/lATkvKcSqIkdaxHZkiBcFbqNiYNNQMMpd0hpBebk22srQcrG
-         NYJHcT4r5N1haqrSLDR4gtx+5Q8HlVZ/4HfQGWGvJgVUFEECOV6ycl53rs2rL/N7p/1o
-         IXYd+i542GJdSyUMo4CpTV/oautxuXkT7l/0r7di+XCvg1FduGP7mfkRubIez37M4PPz
-         pYRg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2879036-1517591163-2-13476047487085185003
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591163; b=muhw5jzly0FOMadnrkPYcE7c0mCqOrJlZ7cyQMmLG0vOAGP
+    DkkjziFOFLGD+wXOFojyacSLuU+gCwqdxUGMPwbY1KoPzIqp4XTfeAnWLBrH86bT
+    jfCTGkLD/4PSv3EimWKmzDrNnWdAp2tpivq9sk0CuKIIUOOchqIptkM91Ii45uTS
+    /QrGnrWzzNH0ZdsQoaVVAO5flJ860FeESMH3/tnwZekBin3RUM6PJh0Q1A5W95Gw
+    C3BYA7dCg4smpCmUEOhvU+VgX4nST1oNB/5YVh0yIL5X7Mq47ZXLYwn0/ogWR1BT
+    GoO8rHewfT7PlAH/e6HhZNj3CYMxU82q4hZDD5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591163; bh=6CmlIMMCabzsoWBpzMQAef6OWv
+    07legF6SrrDuu03B4=; b=hC5Jz7Jf+1cxapWhTWJ/8JAM19vMpfQEJjiLJX2eSi
+    JzgwRMIcsFlz4t2+2isq/QM4ozqdRoKg+X18Os2nGyGLBc3HEBaR8v4mxRuYMeMp
+    T0jataspbP4g1qyGsCkrdJft6qnF+pL08UcXhT+ZN690eLg6s3HhKy7bzqzvPkgq
+    CszsC7JlhXxP0sTTU6X30SRntVvw3Q8patoEbxk4haMOAmpWXsyarvxOtIzC1r5E
+    ugYJS5sTOZlXmmpQM9TGvgFXAaaeRZLUA7XZofH/UPXmeJGgdFh08PkeW98pfYMg
+    B1kPsk1tdCxgY/6iGw743v1F0qtv0B1rAYoWBSZ8iSpw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753026AbeBBRF4 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:05:56 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36646 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752626AbeBBRFz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:05:55 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Yoshiaki Okamoto <yokamoto@allied-telesis.co.jp>,
-	Hiroyuki Yamamoto <hyamamo@allied-telesis.co.jp>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 73/86] usb: option: Add support for FS040U modem
-Date: Fri,  2 Feb 2018 17:58:33 +0100
-Message-Id: <20180202140829.405384351@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Schake <stschake@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 70/86] drm/vc4: Move IRQ enable to PM path
+Date: Fri,  2 Feb 2018 17:58:30 +0100
+Message-Id: <20180202140829.135557701@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309409648037799?=
-X-GMAIL-MSGID: =?utf-8?q?1591309672539145625?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,41 +79,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: OKAMOTO Yoshiaki <yokamoto@allied-telesis.co.jp>
+From: Stefan Schake <stschake@gmail.com>
 
-commit 69341bd15018da0a662847e210f9b2380c71e623 upstream.
 
-FS040U modem is manufactured by omega, and sold by Fujisoft. This patch
-adds ID of the modem to use option1 driver. Interface 3 is used as
-qmi_wwan, so the interface is ignored.
+[ Upstream commit ce9caf2f79a5aa170a4b6456a03db639eed9c988 ]
 
-Signed-off-by: Yoshiaki Okamoto <yokamoto@allied-telesis.co.jp>
-Signed-off-by: Hiroyuki Yamamoto <hyamamo@allied-telesis.co.jp>
-Acked-by: Johan Hovold <johan@kernel.org>
+We were calling enable_irq on bind, where it was already enabled previously
+by the IRQ helper. Additionally, dev->irq is not set correctly until after
+postinstall and so was always zero here, triggering a warning in 4.15.
+Fix both by moving the enable to the power management resume path, where we
+know there was a previous disable invocation during suspend.
+
+Fixes: 253696ccd613 ("drm/vc4: Account for interrupts in flight")
+Signed-off-by: Stefan Schake <stschake@gmail.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/1514563543-32511-1-git-send-email-stschake@gmail.com
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/option.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/vc4/vc4_irq.c |    3 ---
+ drivers/gpu/drm/vc4/vc4_v3d.c |    3 +++
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -383,6 +383,9 @@ static void option_instat_callback(struc
- #define FOUR_G_SYSTEMS_PRODUCT_W14		0x9603
- #define FOUR_G_SYSTEMS_PRODUCT_W100		0x9b01
+--- a/drivers/gpu/drm/vc4/vc4_irq.c
++++ b/drivers/gpu/drm/vc4/vc4_irq.c
+@@ -208,9 +208,6 @@ vc4_irq_postinstall(struct drm_device *d
+ {
+ 	struct vc4_dev *vc4 = to_vc4_dev(dev);
  
-+/* Fujisoft products */
-+#define FUJISOFT_PRODUCT_FS040U			0x9b02
+-	/* Undo the effects of a previous vc4_irq_uninstall. */
+-	enable_irq(dev->irq);
+-
+ 	/* Enable both the render done and out of memory interrupts. */
+ 	V3D_WRITE(V3D_INTENA, V3D_DRIVER_IRQS);
+ 
+--- a/drivers/gpu/drm/vc4/vc4_v3d.c
++++ b/drivers/gpu/drm/vc4/vc4_v3d.c
+@@ -173,6 +173,9 @@ static int vc4_v3d_runtime_resume(struct
+ 	struct vc4_dev *vc4 = v3d->vc4;
+ 
+ 	vc4_v3d_init_hw(vc4->dev);
 +
- /* iBall 3.5G connect wireless modem */
- #define IBALL_3_5G_CONNECT			0x9605
++	/* We disabled the IRQ as part of vc4_irq_uninstall in suspend. */
++	enable_irq(vc4->dev->irq);
+ 	vc4_irq_postinstall(vc4->dev);
  
-@@ -1897,6 +1900,8 @@ static const struct usb_device_id option
- 	{ USB_DEVICE(LONGCHEER_VENDOR_ID, FOUR_G_SYSTEMS_PRODUCT_W100),
- 	  .driver_info = (kernel_ulong_t)&four_g_w100_blacklist
- 	},
-+	{USB_DEVICE(LONGCHEER_VENDOR_ID, FUJISOFT_PRODUCT_FS040U),
-+	 .driver_info = (kernel_ulong_t)&net_intf3_blacklist},
- 	{ USB_DEVICE_INTERFACE_CLASS(LONGCHEER_VENDOR_ID, SPEEDUP_PRODUCT_SU9800, 0xff) },
- 	{ USB_DEVICE_INTERFACE_CLASS(LONGCHEER_VENDOR_ID, 0x9801, 0xff),
- 	  .driver_info = (kernel_ulong_t)&net_intf3_blacklist },
+ 	return 0;
