@@ -1,96 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752010AbeBBVqt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 16:46:49 -0500
-Received: from srv06.itamservices.de ([78.46.48.226]:60723 "EHLO
-        srv06.itamservices.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751544AbeBBVqk (ORCPT
+        id S1752088AbeBBVwJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 16:52:09 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39162 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeBBVv6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 16:46:40 -0500
-To: Trond Myklebust <trond.myklebust@primarydata.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-From: Daniel Reichelt <hacking@nachtgeist.net>
-Subject: Re: It's back! (Re: [REGRESSION] NFS is creating a hidden port (left
- over from xs_bind() ))
-Message-ID: <57220e1f-f81e-b30b-a4ea-39ad74c7c0d6@nachtgeist.net>
-Date: Fri, 2 Feb 2018 22:31:26 +0100
+        Fri, 2 Feb 2018 16:51:58 -0500
+X-Google-Smtp-Source: AH8x225shMazEpemLlvHTguSQULrhyMGpMlymEoHOMvhU0UInFhK+tCTyEoEU2iHfKLVNSfiJFXL3g==
+Date: Fri, 2 Feb 2018 13:51:54 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Vijay Viswanath <vviswana@codeaurora.org>
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Krishna Konda <kkonda@codeaurora.org>
+Subject: Re: [PATCH RFC 2/2] mmc: sdhci-msm: support voltage pad switching
+Message-ID: <20180202215154.GI12728@builder>
+References: <1516262742-44326-1-git-send-email-vviswana@codeaurora.org>
+ <1516262742-44326-3-git-send-email-vviswana@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="zvATQcned257m0yRLlQIpf4UvjFrgFcxd"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516262742-44326-3-git-send-email-vviswana@codeaurora.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---zvATQcned257m0yRLlQIpf4UvjFrgFcxd
-Content-Type: multipart/mixed; boundary="1VV7miNeqSPmnhaBlJj86XeI56jV6Bky7";
- protected-headers="v1"
-From: Daniel Reichelt <hacking@nachtgeist.net>
-To: Trond Myklebust <trond.myklebust@primarydata.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Message-ID: <57220e1f-f81e-b30b-a4ea-39ad74c7c0d6@nachtgeist.net>
-Subject: Re: It's back! (Re: [REGRESSION] NFS is creating a hidden port (left
- over from xs_bind() ))
+On Thu 18 Jan 00:05 PST 2018, Vijay Viswanath wrote:
 
---1VV7miNeqSPmnhaBlJj86XeI56jV6Bky7
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+> From: Krishna Konda <kkonda@codeaurora.org>
+> 
+> The PADs for sdhc controller are dual-voltage that support 3v/1.8v.
+> Those PADs have a control signal (io_pad_pwr_switch/mode18 ) that
+> indicates whether the PAD works in 3v or 1.8v.
+> 
+> SDHC core on msm platforms should have IO_PAD_PWR_SWITCH bit set/unset
+> based on actual voltage used for IO lines. So when power irq is
+> triggered for io high or io low, the driver should check the voltages
+> supported and set the pad accordingly.
+> 
 
-Hi Trond, Steven,
+I'll try to find some time to check that this doesn't break 8916 and
+8974...again...
 
-eversince I switched from Debian Jessie to Stretch last summer, I've
-been seeing the very same hidden ports on an NFS server as described in
-[1], which is a follow-up to [2].
+> Signed-off-by: Krishna Konda <kkonda@codeaurora.org>
+> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 5c23e92..f5728a8 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -78,6 +78,8 @@
+>  #define CORE_HC_MCLK_SEL_DFLT	(2 << 8)
+>  #define CORE_HC_MCLK_SEL_HS400	(3 << 8)
+>  #define CORE_HC_MCLK_SEL_MASK	(3 << 8)
+> +#define CORE_IO_PAD_PWR_SWITCH_EN	(1 << 15)
+> +#define CORE_IO_PAD_PWR_SWITCH  (1 << 16)
+>  #define CORE_HC_SELECT_IN_EN	BIT(18)
+>  #define CORE_HC_SELECT_IN_HS400	(6 << 19)
+>  #define CORE_HC_SELECT_IN_MASK	(7 << 19)
+> @@ -1166,6 +1168,35 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
+>  	 */
+>  	writel_relaxed(irq_ack, msm_host->core_mem + CORE_PWRCTL_CTL);
+>  
+> +	/*
+> +	 * SDHC has core_mem and hc_mem device memory and these memory
+> +	 * addresses do not fall within 1KB region. Hence, any update to
+> +	 * core_mem address space would require an mb() to ensure this gets
+> +	 * completed before its next update to registers within hc_mem.
+> +	 */
+> +	mb();
 
-Your patch ([3], [4]) solved the issue back then. Later on, you changed
-that fix again in [5], which lead to the situation we're seeing today.
+If you just use writel() instead of writel_relaxed() you don't need to
+sprinkle the driver with comments like this. And you really should be
+able to just say "Ensure ordering between core_mem and hc_mem writes" if
+you really feel like making it explicit.
 
-Reverting 0b0ab51 fixes the issue for me.
+> +	/*
+> +	 * We should unset IO PAD PWR switch only if the register write can
+> +	 * set IO lines high and the regulator also switches to 3 V.
+> +	 * Else, we should keep the IO PAD PWR switch set.
+> +	 * This is applicable to certain targets where eMMC vccq supply is only
+> +	 * 1.8V. In such targets, even during REQ_IO_HIGH, the IO PAD PWR
+> +	 * switch must be kept set to reflect actual regulator voltage. This
+> +	 * way, during initialization of controllers with only 1.8V, we will
+> +	 * set the IO PAD bit without waiting for a REQ_IO_LOW.
+> +	 */
+> +	if ((io_level & REQ_IO_HIGH) && (msm_host->caps_0 & CORE_3_0V_SUPPORT))
+> +		writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC) &
+> +					~CORE_IO_PAD_PWR_SWITCH), host->ioaddr +
+> +				CORE_VENDOR_SPEC);
 
-Let me know if you need more info.
+Please split this up in read, modify and write operations.
 
+> +	else if ((io_level & REQ_IO_LOW) ||
+> +			(msm_host->caps_0 & CORE_1_8V_SUPPORT))
+> +		writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC) |
+> +					CORE_IO_PAD_PWR_SWITCH), host->ioaddr +
+> +				CORE_VENDOR_SPEC);
+> +	/* Ensure that the IO PAD switches are updated before proceeding */
 
+That's not what "mb()" does, it ensures that any writes that was done
+before this line will hit the hardware before any writes that is done
+after this line.
 
-Thanks
-Daniel
+But again, using writel() would save us from doing this explicitly
+throughout the code.
 
+> +	mb();
+> +
+>  	if (pwr_state)
+>  		msm_host->curr_pwr_state = pwr_state;
+>  	if (io_level)
+> @@ -1518,6 +1549,13 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	/*
+> +	 * Set the PAD_PWR_SWITCH_EN bit so that the PAD_PWR_SWITCH bit can
+> +	 * be used as required later on.
+> +	 */
+> +	writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC) |
+> +				CORE_IO_PAD_PWR_SWITCH_EN), host->ioaddr +
+> +			CORE_VENDOR_SPEC);
 
-[1] https://lkml.org/lkml/2016/6/30/341
-[2] https://lkml.org/lkml/2015/6/11/803
-[3] https://lkml.org/lkml/2015/6/19/759
-[4] 4876cc779ff525b9c2376d8076edf47815e71f2c
-[5] 4b0ab51db32eba0f48b7618254742f143364a28d
+Please rewrite as 3 operations.
 
+Do we need to set the pwr switch value as well? Or we're fine relying on
+the existing value here?
 
---1VV7miNeqSPmnhaBlJj86XeI56jV6Bky7--
-
---zvATQcned257m0yRLlQIpf4UvjFrgFcxd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJLBAEBCAA1FiEEg2wMpOXGvc4nunsZnjl+Rc/8gF8FAlp02K4XHGhhY2tpbmdA
-bmFjaHRnZWlzdC5uZXQACgkQnjl+Rc/8gF+HhQ//UCVSqA3wnJ6JZaafDOLPot1c
-CiaCsArQPgXzQo8HCulKjBc/TVdvh/LSNslwH2UXSsoUPz15OaJ0Sy915CMxQOl8
-zsCZoQdxZS8g2o4ProeU2UKlcGbrC5Zx/d68TaQjUy3dWlhNNULsXK3kmwO8FFWG
-5qd7cu6j5YwgL3g795r1g784BC0L9v/isZsTV/jLd+7ULIRBwfS13eiiEyRxPAve
-vICENfcj46iWrHuLRlQGnPLjs26gypxneduaSTtDBCWMPltzXuss/UuYTDeFeCFG
-bGSCZ/hoDPtqxVbHYs07KsYHU30al22Zt4RIZDGjz2aCOpgvVlMIZ+IrqjtFU9Vc
-x4CAti55FFGlinFsquIrdd5gfzyfKpUkK0q/utrybynMnm6cwN/nnwrp35ESIj55
-vnVWAR5ptXAUzpTa1uU4CIBAFwBIMEUwYNsRMTNmSPm7x49Hx2Kv4qVT49MyhJko
-P/fc2xlFKeq8D8KiLT/6lO/d9ymYk+VKEyLZhCW8eqR4zKKVLJG1QiiuRUQbmMXI
-m7BOrMBeHZepe3Pf8SbRVA/yaDSL3UnYhOmKG5z9dzKNpBnAxUqN3EWjsviDSVZ7
-Iu94Ueof+I9x/P5b8VXU58QyXB1a5EDr3opFDDBo3du1hMGnvY4ZnRfmh4FI6WGu
-X2sL7iKzL9mr1mFSyqU=
-=HUpz
------END PGP SIGNATURE-----
-
---zvATQcned257m0yRLlQIpf4UvjFrgFcxd--
+Regards,
+Bjorn
