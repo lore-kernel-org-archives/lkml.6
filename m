@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224O5L3nV/9RF+n2zemq1GVcTnhA/73QKbeU/ZpE9bThks+l4mtyYRFM3MVz4AzEKNAFYhli
-ARC-Seal: i=1; a=rsa-sha256; t=1517591299; cv=none;
+X-Google-Smtp-Source: AH8x226L5jTb0E2F07T1rZk+tF8YfzfF33wOx0qG/3TfePxKG2RwnGThfrsYsTzvFNzMyOsgLh6+
+ARC-Seal: i=1; a=rsa-sha256; t=1517591297; cv=none;
         d=google.com; s=arc-20160816;
-        b=qMKR1c3Vo5GPGNTlMvfdBypzjZNNyRmUVc5xKtTnZUAP4zNX9yCJAtY+6KALo0p6UQ
-         qPvV7Num9nQUPqGuHdoIbw4bhhs9RXw/C3qaFZjRf/Rf1o/OlDj7pCYgjJRW1ucG++az
-         RbRokYi/Y/wUNTIKg1gjmvVoLKzFunA7suVsRpXv4LBObBxvzsz9LGlYwqwDIrEtwfMx
-         UIfoH+m/qCAmrHvW7Rd5Dyvu91QA1H2ngcAhKod5trS6R523gEwCVOd7z1foWa7SpgXA
-         ZOU7JAuomG2umbtXs36oAhvClio2f3DF29e7GhE/bz+ebnY/Wra3FUmeuxrLMBqc22NC
-         fvvg==
+        b=haB/3C0Q2R1Zs9CTg0+oYtriZoEXBPKZcLrnALVVVo6MUWLOmflK7yDnR50QxBEV/y
+         reUE2FBYfRG9GReZqqnmcGvxc1uY1HA2JLUGr0UDVtuNKADOVYeYygWUlBVs+qc7hlQS
+         O5csn7nptSc51tcVkTPPkfdI0IP4LCEMqCaUj7dzLfHvSKYlH8ua+sEhW7sJKSaZ2XYT
+         aut7M/s6ZKJ46qlLsFNFjWxPqLrOMP//t30GVmL+zoiZ8k5ccfefM3evI21tNAnOkfnD
+         GIxH6EFpvRV8Zd7zlPTbsFgYNK30aY4cjCEMjF+5FJy0ipxxMv5rf6+0SB6BoRd/hsxd
+         RaSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=k/7UilHFjSPkM2oJPWje/ujFvhuLHwdT8k/WjuqL+lc=;
-        b=BPC7ZEaiGuJZJNZYteVqSffEnlVwMOvZv+GotGvWFsALlxFTXGIZ8RRzwhGvapQaPH
-         xIvQ8LE8lc91unAuDi/yJQvdF+iWwYFmP6cijASzZynCX+Jk0Mw60iIh2/695yMNQ8Bw
-         sJSe9FBzEtvt5u7M/oCDRE4klqM8/aS0YUXHgSERI06AUF4t7c7Lr0kHcCS5Kp0V1igF
-         OUn0HiGjl6IVF+hJXf3Zht4NDQJAh+5lXiQRoZK8LyEoNEAOpOEHwgASZBLuzfwScJKJ
-         nOvahpXHemmmsKsrIrazVhB/knkBQHL6eoerxskdzNQKiNNd92mAfLvGgeJS7f37JRJu
-         b7dw==
+        bh=MYB7TqDQgg6+TKo7BWFCDcXsb4yL6s8eeLxB/8ZAJeg=;
+        b=Wx6Bh+8U4/YkFMLoKwDYLiRC4HTkfuDZU9GP4gofov/a8wBejM3ucE1hlx68Dt6s+h
+         VHHz7bDNJQXiYFXKMdQKwi7MD1RyeEIkif1YTkUWdscfPQJlAekl7MFOJo2o7AvNOCI1
+         7rBN/KWFbfRgoW0oi1daf0NX84pmtQZq0LUX7KK3lJV3YQtm1oXp4bi+cG/TsfxLT189
+         vVBferVXdiNdYPFdMXTbrYMvL3RAtQVT9iUVNefmLA+d4welZGKC5ceptTi1yH8DFl3Y
+         BelNetHeKkukWUZwdNP4dIXOMhbe6pxQp1Bzp1mf1mjkxWEfzE4JNx3f821HrbOCz5m5
+         QsnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Joel Stanley <joel@jms.id.au>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.14 004/156] tools/gpio: Fix build error with musl libc
-Date: Fri,  2 Feb 2018 17:56:25 +0100
-Message-Id: <20180202140840.462352854@linuxfoundation.org>
+	Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+	Jim Mattson <jmattson@google.com>,
+	Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+	Borislav Petkov <bp@suse.de>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.14 003/156] KVM: x86: Fix CPUID function for word 6 (80000001_ECX)
+Date: Fri,  2 Feb 2018 17:56:24 +0100
+Message-Id: <20180202140840.396238366@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309482387772779?=
-X-GMAIL-MSGID: =?utf-8?q?1591309814832117757?=
+X-GMAIL-THRID: =?utf-8?q?1591309812139806221?=
+X-GMAIL-MSGID: =?utf-8?q?1591309812139806221?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,40 +51,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
 
-commit 1696784eb7b52b13b62d160c028ef2c2c981d4f2 upstream.
+commit 50a671d4d15b859f447fa527191073019b6ce9cb upstream.
 
-The GPIO tools build fails when using a buildroot toolchain that uses musl
-as it's C library:
+The function for CPUID 80000001 ECX is set to 0xc0000001. Set it to
+0x80000001.
 
-arm-broomstick-linux-musleabi-gcc -Wp,-MD,./.gpio-event-mon.o.d \
- -Wp,-MT,gpio-event-mon.o -O2 -Wall -g -D_GNU_SOURCE \
- -Iinclude -D"BUILD_STR(s)=#s" -c -o gpio-event-mon.o gpio-event-mon.c
-gpio-event-mon.c:30:6: error: unknown type name ‘u_int32_t’; did you mean ‘uint32_t’?
-      u_int32_t handleflags,
-      ^~~~~~~~~
-      uint32_t
-
-The glibc headers installed on my laptop include sys/types.h in
-unistd.h, but it appears that musl does not.
-
-Fixes: 97f69747d8b1 ("tools/gpio: add the gpio-event-mon tool")
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Fixes: d6321d493319 ("KVM: x86: generalize guest_cpuid_has_ helpers")
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/gpio/gpio-event-mon.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/cpuid.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/gpio/gpio-event-mon.c
-+++ b/tools/gpio/gpio-event-mon.c
-@@ -23,6 +23,7 @@
- #include <getopt.h>
- #include <inttypes.h>
- #include <sys/ioctl.h>
-+#include <sys/types.h>
- #include <linux/gpio.h>
- 
- int monitor_device(const char *device_name,
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -44,7 +44,7 @@ static const struct cpuid_reg reverse_cp
+ 	[CPUID_8086_0001_EDX] = {0x80860001, 0, CPUID_EDX},
+ 	[CPUID_1_ECX]         = {         1, 0, CPUID_ECX},
+ 	[CPUID_C000_0001_EDX] = {0xc0000001, 0, CPUID_EDX},
+-	[CPUID_8000_0001_ECX] = {0xc0000001, 0, CPUID_ECX},
++	[CPUID_8000_0001_ECX] = {0x80000001, 0, CPUID_ECX},
+ 	[CPUID_7_0_EBX]       = {         7, 0, CPUID_EBX},
+ 	[CPUID_D_1_EAX]       = {       0xd, 1, CPUID_EAX},
+ 	[CPUID_F_0_EDX]       = {       0xf, 0, CPUID_EDX},
