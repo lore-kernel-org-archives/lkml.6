@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2251QZoBC/FwoZIbs6jEDfmXP0aRt3r8eSQ0yv+rXiGdx4t2mZ6EHDNY5C47hFixbiBSdA5u
-ARC-Seal: i=1; a=rsa-sha256; t=1517591752; cv=none;
+X-Google-Smtp-Source: AH8x225wfCF7X0Mo46VS6fID1xzJh4AZrO6A87mzqdPYlO3+EFjXxNR1TG+9lRnoxDSDWBp9XLOr
+ARC-Seal: i=1; a=rsa-sha256; t=1517591742; cv=none;
         d=google.com; s=arc-20160816;
-        b=useMMZAT9zuaFSlBGQliCCFmsKiAZjaCXqRxRJjWnry3heQV/t2mLgfasiLGdmF2c4
-         MxV3NnFXEFTnm/vm7dlFgDXiJHsUT6ptx7hL78g+bioQ/dyaiMHXXaHBBGMYECMo0r79
-         a42RPnzc9XBWPOxq2uIX5j+WHQCHvdEYGPtI9N92HN8ziU2BUk3z5kPm5xe1QxJVIxie
-         l4zHlZewnP7aUI/HMYfXWQC03JnLawNzdOa3UqT8du5rRapCIpM/3sunSXnx2IeDS78L
-         zBhSFB9tzSZf+embhr7qDZg1LNM+lrH0XwaoXD7fUj3hviKKxjCvz+G6lW3EyLTK6n0n
-         X2Lw==
+        b=xhhcRpa4Qopsj7M01j47LDVqlfbhM1NWKRog9oWHOXikYVAQUZebOpWvBlZ+o90wPd
+         xwB/+ySbAVo2aMChd7nlJoohOMhWDxEx62Jpt5Y4a3VmVaDALTWh6wD7CEoZ60iXebVY
+         tXAE9JDZxlhxn4xg6LmGi6pgsx+t8eg3HOyYSG67HG9MiMLFhLhJnqWjXkjIVLRuRK/8
+         UN3U1DJ1lG50fic944E9c7dmdM5z8B4aPysQmkRV+VkvlOfZ/ixeVNr1N5KhlhF1pS8v
+         SNboZJddC7/LBjWUjkgu9Ox5QVNFJkEYJxwmhVmFhf1kY9HeDwN3cUiCNk1VPL1ZAhg9
+         SkEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mKFpG/TJAopvynqA/2a285PhkbaKh4vWUekBpGuD+dc=;
-        b=l7NipYCnkdQqKRJQ+s8zVUyL/MzeXd68MPXzVLSnWeuyddT5J0CfvQiYu+2hjNF67c
-         AanzpHfJ4pMo2m6DiuQ7ZWGmjNU3AZBhmbNXmdzWyKpJZIq00ctlYvm+Nc7KlQUhZ3Gq
-         J9IfuKgENbXGOHb0ZKbbWKPzsE7zvKHOzwfNYmVsE7Zjzy9I/ZDY/MvJw0/56fODitnM
-         lHHot4n9gfgm8rafNyDbmzk32kkCrGBvxztfPMsf0pIutJkmeFCFzPGd9DgL5xj5m++g
-         YMbf3P1xx3Df196vm6wyVyTIfgxoxhONLgy5j72UUlbpqycpoGtkQloKyd8FwocwmEX1
-         TanA==
+        bh=k8Prb4eaIsfDG48I416I0t0oj1A+5hT9BwMRwLeQWEU=;
+        b=Fg30MlyoTZEKSc6mmV6GKf6YWSrJJ3tMX+NhYQf2zMVYJTPASCYJigOiOY1H9m4U0q
+         dJ1GDJwigkILcutfl7C4eZrdbgjqEAKa+/atcYLUGJBoHtRy32mnV8AgQOzj/fQ59gGJ
+         86h7NQGBvmo6ku5EXFDOMDfuTG7puQ0MG1DaGfVdBlnffRpmN+dxFVOSjm4mFBPlxgWz
+         q1jhdKKGXsSa7i6OJElHbC1MbSnpUkKb7GQLQnOS+Z705B1MZyRM69H3Oybhs2l8D9aq
+         R83w9wrklS2C2Nz0VRGcdtbMD/uu443zesRrH7b6z/TPuUY7620J3BmCwSca/SwZBhBR
+         9XTA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"=?UTF-8?q?Chu . Mike=20 [ =E6=9C=B1=E5=A0=85=E5=AE=9C ] ?=" <Mike-Chu@prolific.com.tw>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.15 32/55] USB: serial: pl2303: new device id for Chilitag
-Date: Fri,  2 Feb 2018 17:58:50 +0100
-Message-Id: <20180202140829.419159094@linuxfoundation.org>
+	Gilad Ben-Yossef <gilad@benyossef.com>
+Subject: [PATCH 4.15 28/55] staging: ccree: NULLify backup_info when unused
+Date: Fri,  2 Feb 2018 17:58:46 +0100
+Message-Id: <20180202140829.082285149@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
@@ -39,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309411957795471?=
-X-GMAIL-MSGID: =?utf-8?q?1591310289925388498?=
+X-GMAIL-THRID: =?utf-8?q?1591310117118385319?=
+X-GMAIL-MSGID: =?utf-8?q?1591310278422371853?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,38 +47,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
 
-commit d08dd3f3dd2ae351b793fc5b76abdbf0fd317b12 upstream.
+commit 46df8824982e4fb0198776078d4a8c3e2d531464 upstream.
 
-This adds a new device id for Chilitag devices to the pl2303 driver.
+backup_info field is only allocated for decrypt code path.
+The field was not nullified when not used causing a kfree
+in an error handling path to attempt to free random
+addresses as uncovered in stress testing.
 
-Reported-by: "Chu.Mike [朱堅宜]" <Mike-Chu@prolific.com.tw>
-Acked-by: Johan Hovold <johan@kernel.org>
+Fixes: 737aed947f9b ("staging: ccree: save ciphertext for CTS IV")
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/pl2303.c |    1 +
- drivers/usb/serial/pl2303.h |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/staging/ccree/ssi_cipher.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -38,6 +38,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ2) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_DCU11) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ3) },
-+	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_CHILITAG) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_PHAROS) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ALDIGA) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MMX) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -12,6 +12,7 @@
- #define PL2303_PRODUCT_ID_DCU11		0x1234
- #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
- #define PL2303_PRODUCT_ID_RSAQ3		0xaaa2
-+#define PL2303_PRODUCT_ID_CHILITAG	0xaaa8
- #define PL2303_PRODUCT_ID_ALDIGA	0x0611
- #define PL2303_PRODUCT_ID_MMX		0x0612
- #define PL2303_PRODUCT_ID_GPRS		0x0609
+--- a/drivers/staging/ccree/ssi_cipher.c
++++ b/drivers/staging/ccree/ssi_cipher.c
+@@ -908,6 +908,7 @@ static int ssi_ablkcipher_decrypt(struct
+ 	scatterwalk_map_and_copy(req_ctx->backup_info, req->src,
+ 				 (req->nbytes - ivsize), ivsize, 0);
+ 	req_ctx->is_giv = false;
++	req_ctx->backup_info = NULL;
+ 
+ 	return ssi_blkcipher_process(tfm, req_ctx, req->dst, req->src, req->nbytes, req->info, ivsize, (void *)req, DRV_CRYPTO_DIRECTION_DECRYPT);
+ }
