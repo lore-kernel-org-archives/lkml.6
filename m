@@ -1,155 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753608AbeBBTd2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 14:33:28 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36538 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751959AbeBBTdT (ORCPT
+        id S1753698AbeBBTe4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 14:34:56 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58560 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753109AbeBBTer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 14:33:19 -0500
-X-Google-Smtp-Source: AH8x227YRBx/lZ8V0IG9LYPIqg6tPgeV+NDLfFPWP8GFghmxh6du2GXQcl/P4ODn17C2Q3Q+/jJK37aW+hT6Xiyj1ZA=
+        Fri, 2 Feb 2018 14:34:47 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C6E1B6050D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Message-ID: <5A74BD55.5000402@codeaurora.org>
+Date: Fri, 02 Feb 2018 11:34:45 -0800
+From: Saravana Kannan <skannan@codeaurora.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
 MIME-Version: 1.0
-In-Reply-To: <1517588406-3295-2-git-send-email-daniel.baluta@nxp.com>
-References: <1517588406-3295-1-git-send-email-daniel.baluta@nxp.com> <1517588406-3295-2-git-send-email-daniel.baluta@nxp.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 2 Feb 2018 21:33:18 +0200
-Message-ID: <CAHp75VfyVfGdCfjV_iaXFcRcanbgwFSgJRfu8eojdbMONMUOaQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ASoC: codecs: Add support for AK5558 ADC driver
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        wakasugi.jb@om.asahi-kasei.co.jp, "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Mihai Serban <mihai.serban@gmail.com>,
-        Cosmin Samoila <cosmin.samoila@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Daniel Baluta <daniel.baluta@gmail.com>,
-        Mihai Serban <mihai.serban@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC: Bo Yan <byan@nvidia.com>, viresh.kumar@linaro.org,
+        sgurrappadi@nvidia.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: skip cpufreq resume if it's not suspended
+References: <1516744675-21233-1-git-send-email-byan@nvidia.com> <1744712.rO4QOLozun@aspire.rjw.lan> <913f1715-bdd0-1c03-ad76-38be9d3d2298@nvidia.com> <17447147.z6jfkRxuEB@aspire.rjw.lan>
+In-Reply-To: <17447147.z6jfkRxuEB@aspire.rjw.lan>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 2, 2018 at 6:20 PM, Daniel Baluta <daniel.baluta@nxp.com> wrote:
-> AK5558 is a 32-bit, 768 kHZ sampling, differential input ADC
-> for digital audio systems.
+On 02/02/2018 03:54 AM, Rafael J. Wysocki wrote:
+> On Wednesday, January 24, 2018 9:53:14 PM CET Bo Yan wrote:
+>>
+>> On 01/23/2018 06:02 PM, Rafael J. Wysocki wrote:
+>>> On Tuesday, January 23, 2018 10:57:55 PM CET Bo Yan wrote:
+>>>>    drivers/cpufreq/cpufreq.c | 4 ++++
+>>>>    1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+>>>> index 41d148af7748..95b1c4afe14e 100644
+>>>> --- a/drivers/cpufreq/cpufreq.c
+>>>> +++ b/drivers/cpufreq/cpufreq.c
+>>>> @@ -1680,6 +1680,10 @@ void cpufreq_resume(void)
+>>>>    	if (!cpufreq_driver)
+>>>>    		return;
+>>>>
+>>>> +	if (unlikely(!cpufreq_suspended)) {
+>>>> +		pr_warn("%s: resume after failing suspend\n", __func__);
+>>>> +		return;
+>>>> +	}
+>>>>    	cpufreq_suspended = false;
+>>>>
+>>>>    	if (!has_target() && !cpufreq_driver->resume)
+>>>>
+>>> Good catch, but rather than doing this it would be better to avoid
+>>> calling cpufreq_resume() at all if cpufreq_suspend() has not been called.
+>> Yes, I thought about that, but there is no good way to skip over it
+>> without introducing another flag. cpufreq_resume is called by
+>> dpm_resume, cpufreq_suspend is called by dpm_suspend. In the failure
+>> case, dpm_resume is called, but dpm_suspend is not. So on a higher level
+>> it's already unbalanced.
+>>
+>> One possibility is to rely on the pm_transition flag. So something like:
+>>
+>>
+>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+>> index dc259d20c967..8469e6fc2b2c 100644
+>> --- a/drivers/base/power/main.c
+>> +++ b/drivers/base/power/main.c
+>> @@ -842,6 +842,7 @@ static void async_resume(void *data, async_cookie_t
+>> cookie)
+>>    void dpm_resume(pm_message_t state)
+>>    {
+>>           struct device *dev;
+>> +       bool suspended = (pm_transition.event != PM_EVENT_ON);
+>>           ktime_t starttime = ktime_get();
+>>
+>>           trace_suspend_resume(TPS("dpm_resume"), state.event, true);
+>> @@ -885,7 +886,8 @@ void dpm_resume(pm_message_t state)
+>>           async_synchronize_full();
+>>           dpm_show_time(starttime, state, NULL);
+>>
+>> -       cpufreq_resume();
+>> +       if (likely(suspended))
+>> +               cpufreq_resume();
+>>           trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+>>    }
 >
-> Datasheet is available at:
+> I was thinking about something else.
 >
-> https://www.akm.com/akm/en/file/datasheet/AK5558VN.pdf
+> Anyway, I think your original patch is OK too, but without printing the
+> message.  Just combine the cpufreq_suspended check with the cpufreq_driver
+> one and the unlikely() thing is not necessary.
 >
-> Initial patch includes support for normal and TDM modes.
->
-> Signed-off-by: Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>
-> [initial coding for 3.18 kernel]
-> Signed-off-by: Mihai Serban <mihai.serban@nxp.com>
-> [cleanups and porting to 4.9 kernel]
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> [tdm support]
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> [pm support, cleanups and porting to latest kernel]
 
-Thanks for an update.
+I rather have this fixed in the dpm_suspend/resume() code. This is just 
+masking the first issue that's being caused by unbalanced error 
+handling. If that means adding flags in dpm_suspend/resume() then that's 
+what we should do right now and clean it up later if it can be improved. 
+Making cpufreq more messy doesn't seem like the right answer.
 
-Couple of nitpicks below, otherwise FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Thanks,
+Saravana
 
-
-> @@ -0,0 +1,626 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-
-> + * ak5558.c  --  audio driver for AK5558 ADC
-
-I would remove filename. If file is ever be renamed this will make an
-additional noise.
-
-> + *
-> + * Copyright (C) 2015 Asahi Kasei Microdevices Corporation
-> + * Copyright 2018 NXP
-> + */
-
-> +#include <linux/module.h>
-> +#include <linux/delay.h>
-> +#include <linux/slab.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <sound/soc.h>
-> +#include <sound/soc-dapm.h>
-> +#include <sound/pcm.h>
-> +#include <sound/pcm_params.h>
-> +#include <linux/pm_runtime.h>
-> +#include <sound/initval.h>
-> +#include <linux/i2c.h>
-> +#include <sound/tlv.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/regmap.h>
-
-I would rather keep it sorted
-
- +#include <linux/delay.h>
- +#include <linux/gpio/consumer.h>
- +#include <linux/i2c.h>
- +#include <linux/module.h>
- +#include <linux/pm_runtime.h>
- +#include <linux/regmap.h>
- +#include <linux/slab.h>
-      // yeah keep an empty line here to split groups
- +#include <sound/initval.h>
- +#include <sound/pcm.h>
- +#include <sound/pcm_params.h>
- +#include <sound/soc.h>
- +#include <sound/soc-dapm.h>
- +#include <sound/tlv.h>
-
-+#include <linux/of_gpio.h>
-
-This one is redundant.
-
-> +static int ak5558_set_dai_mute(struct snd_soc_dai *dai, int mute)
-> +{
-> +       struct snd_soc_codec *codec = dai->codec;
-> +       struct ak5558_priv *ak5558 = snd_soc_codec_get_drvdata(codec);
-
-> +       int ndt = 0;
-
-It might be even
-
-      int ndt = max(ak5558->fs ? 583000 / ak5558->fs : 5, 5);
-
-> +       if (!mute)
-> +               return 0;
-> +
-
-> +       if (ak5558->fs != 0)
-> +               ndt = 583000 / ak5558->fs;
-> +
-> +       msleep(max(ndt, 5));
-
-...and here just
-
-       msleep(ndt);
-
-But I don't know if Mark is okay with that.
-
-> +
-> +       return 0;
-> +}
-
-> +       pm_runtime_enable(&i2c->dev);
-> +       pm_runtime_disable(&client->dev);
-
-I'm also not sure about these calls, but I leave it to you.
-
-> +static const struct i2c_device_id ak5558_i2c_id[] = {
-> +       { "ak5558", 0 },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, ak5558_i2c_id);
-
-I dunno if it's really helpful to have. Though it's up to Mark and you.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
