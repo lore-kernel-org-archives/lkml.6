@@ -1,108 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751826AbeBBHBj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 02:01:39 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44629 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751043AbeBBHB3 (ORCPT
+        id S1751869AbeBBHBs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 02:01:48 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:47172 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeBBHBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 02:01:29 -0500
-X-Google-Smtp-Source: AH8x224fhbAN6b6zhUd8l4MbTBhJSKU7CWI1LzbxlVwBqFYJbvTVOKoFzdx2mS5oZh/dw+lcc0yGiw==
-Subject: Re: [PATCH] xen: fix frontend driver disconnected from xenbus on
- removal
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc: jgross@suse.com, otubo@redhat.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <1517475439-10541-1-git-send-email-andr2000@gmail.com>
- <1517475439-10541-2-git-send-email-andr2000@gmail.com>
- <3943477e-7768-ceb3-38a3-3a20cb0e3082@oracle.com>
- <05dc798a-852a-aca4-8098-862ee566e1d8@gmail.com>
- <e3ea4765-ba89-d09c-f581-158e4d488b4d@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <5d702f19-24c8-97e5-3c5f-31ee51f8c943@gmail.com>
-Date: Fri, 2 Feb 2018 09:01:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <e3ea4765-ba89-d09c-f581-158e4d488b4d@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Fri, 2 Feb 2018 02:01:31 -0500
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/6] nvme-pci: fix the freeze and quiesce for shutdown and reset case
+Date: Fri,  2 Feb 2018 15:00:45 +0800
+Message-Id: <1517554849-7802-3-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517554849-7802-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1517554849-7802-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802020080
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/01/2018 11:09 PM, Boris Ostrovsky wrote:
-> On 02/01/2018 03:24 PM, Oleksandr Andrushchenko wrote:
->>
->> On 02/01/2018 10:08 PM, Boris Ostrovsky wrote:
->>> On 02/01/2018 03:57 AM, Oleksandr Andrushchenko wrote:
->>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>>>
->>>> Current xenbus frontend driver removal flow first disconnects
->>>> the driver from xenbus and then calls driver's remove callback.
->>>> This makes it impossible for the driver to listen to backend's
->>>> state changes and synchronize the removal procedure.
->>>>
->>>> Fix this by removing other end XenBus watches after the
->>>> driver's remove callback is called.
->>>>
->>>> Signed-off-by: Oleksandr Andrushchenko
->>>> <oleksandr_andrushchenko@epam.com>
->>>> ---
->>>>    drivers/xen/xenbus/xenbus_probe.c | 4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/xen/xenbus/xenbus_probe.c
->>>> b/drivers/xen/xenbus/xenbus_probe.c
->>>> index 74888cacd0b0..9c63cd3f416b 100644
->>>> --- a/drivers/xen/xenbus/xenbus_probe.c
->>>> +++ b/drivers/xen/xenbus/xenbus_probe.c
->>>> @@ -258,11 +258,11 @@ int xenbus_dev_remove(struct device *_dev)
->>>>          DPRINTK("%s", dev->nodename);
->>>>    -    free_otherend_watch(dev);
->>>> -
->>>>        if (drv->remove)
->>>>            drv->remove(dev);
->>> Is it possible for the watch to fire here?
->> Indeed. Yes, It is possible, so we have to somehow protect the removed
->> driver from being called, e.g. the driver cleans up in its .remove,
->> but watch may still trigger .otherend_changed callback.
->> Is this what you mean?
-> (-David who is not at Citrix anymore)
->
-> Exactly.
->
-> That's why otherend cleanup is split into free_otherend_watch() and
-> free_otherend_details().
-Understood, thank you
-Confusion came because of the patch [1]: in .remove we wait
-for the backend to change its states in .otherend_changed
-callback and wake us, but I am not sure how those state changes
-may occur if during .remove the driver has already watches
-freed. So, this is why I tried to play around with
-free_otherend_watch()...
->
->> If so, do you have something neat on your mind how to solve this?
-> Not necessarily "neat" but perhaps you can use
-> xenbus_read_otherend_details() in both front and back ends. After all,
-> IIUIC you are doing something synchronously so you don't really need a
-> watch.
-Yes, I will implement a dedicated flow in the .remove
-instead of relying on .otherend_changed
-> -boris
->
->>> -boris
->>>
->>>>    +    free_otherend_watch(dev);
->>>> +
->>>>        free_otherend_details(dev);
->>>>          xenbus_switch_state(dev, XenbusStateClosed);
->> Thank you,
->> Oleksandr
-Thank you,
-Oleksandr
+Currently, request queue will be frozen and quiesced for both reset
+and shutdown case. This will trigger ioq requests in RECONNECTING
+state which should be avoided to prepare for following patch.
+Just freeze request queue for shutdown case and drain all the resudual
+entered requests after controller has been shutdown.
 
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/net/xen-netfront.c?id=5b5971df3bc2775107ddad164018a8a8db633b81
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ drivers/nvme/host/pci.c | 36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 00cffed..a7fa397 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2172,21 +2172,23 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+ 	if (pci_is_enabled(pdev)) {
+ 		u32 csts = readl(dev->bar + NVME_REG_CSTS);
+ 
+-		if (dev->ctrl.state == NVME_CTRL_LIVE ||
+-		    dev->ctrl.state == NVME_CTRL_RESETTING)
+-			nvme_start_freeze(&dev->ctrl);
+ 		dead = !!((csts & NVME_CSTS_CFS) || !(csts & NVME_CSTS_RDY) ||
+ 			pdev->error_state  != pci_channel_io_normal);
+ 	}
+ 
+-	/*
+-	 * Give the controller a chance to complete all entered requests if
+-	 * doing a safe shutdown.
+-	 */
+-	if (!dead) {
+-		if (shutdown)
++	/* Just freeze the queue for shutdown case */
++	if (shutdown) {
++		if (dev->ctrl.state == NVME_CTRL_LIVE ||
++			dev->ctrl.state == NVME_CTRL_RESETTING)
++			nvme_start_freeze(&dev->ctrl);
++		/*
++		 * Give the controller a chance to complete all
++		 * entered requests if doing a safe shutdown.
++		 */
++		if (!dead)
+ 			nvme_wait_freeze_timeout(&dev->ctrl, NVME_IO_TIMEOUT);
+ 	}
++
+ 	nvme_stop_queues(&dev->ctrl);
+ 
+ 	if (!dead) {
+@@ -2210,12 +2212,15 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+ 	blk_mq_tagset_busy_iter(&dev->admin_tagset, nvme_cancel_request, &dev->ctrl);
+ 
+ 	/*
+-	 * The driver will not be starting up queues again if shutting down so
+-	 * must flush all entered requests to their failed completion to avoid
+-	 * deadlocking blk-mq hot-cpu notifier.
++	 * For shutdown case, controller will not be setup again soon. If any
++	 * residual requests here, the controller must have go wrong. Drain and
++	 * fail all the residual entered IO requests.
+ 	 */
+-	if (shutdown)
++	if (shutdown) {
+ 		nvme_start_queues(&dev->ctrl);
++		nvme_wait_freeze(&dev->ctrl);
++		nvme_stop_queues(&dev->ctrl);
++	}
+ 	mutex_unlock(&dev->shutdown_lock);
+ }
+ 
+@@ -2349,12 +2354,11 @@ static void nvme_reset_work(struct work_struct *work)
+ 		nvme_remove_namespaces(&dev->ctrl);
+ 		new_state = NVME_CTRL_ADMIN_ONLY;
+ 	} else {
+-		nvme_start_queues(&dev->ctrl);
+-		nvme_wait_freeze(&dev->ctrl);
+ 		/* hit this only when allocate tagset fails */
+ 		if (nvme_dev_add(dev))
+ 			new_state = NVME_CTRL_ADMIN_ONLY;
+-		nvme_unfreeze(&dev->ctrl);
++		if (was_suspend)
++			nvme_unfreeze(&dev->ctrl);
+ 	}
+ 
+ 	/*
+-- 
+2.7.4
