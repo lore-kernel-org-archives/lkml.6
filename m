@@ -1,104 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751856AbeBBKuv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 05:50:51 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52248 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751129AbeBBKum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 05:50:42 -0500
-Subject: Re: [RFC PATCH v1 00/13] lru_lock scalability
-To: Daniel Jordan <daniel.m.jordan@oracle.com>, linux-mm@kvack.org,
+        id S1751938AbeBBKxP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 05:53:15 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:39280 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751129AbeBBKxG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 05:53:06 -0500
+Date: Fri, 2 Feb 2018 11:53:04 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
-        Dave.Dice@oracle.com, dave@stgolabs.net, khandual@linux.vnet.ibm.com,
-        ldufour@linux.vnet.ibm.com, mgorman@suse.de, mhocko@kernel.org,
-        pasha.tatashin@oracle.com, steven.sistare@oracle.com,
-        yossi.lev@oracle.com
-References: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
- <6bd1c8a5-c682-a3ce-1f9f-f1f53b4117a9@redhat.com>
- <e3e47085-1b5e-0d2e-f8cb-03defb9af0dd@oracle.com>
-From: Steven Whitehouse <swhiteho@redhat.com>
-Message-ID: <962e6540-08e5-aca2-2ff9-bcbd9650d962@redhat.com>
-Date: Fri, 2 Feb 2018 10:50:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
+ frequency
+Message-ID: <20180202105304.gow2znzgxqmuxgol@flea.lan>
+References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
+ <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
+ <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
+ <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
 MIME-Version: 1.0
-In-Reply-To: <e3e47085-1b5e-0d2e-f8cb-03defb9af0dd@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sfqjnlte6ae4g5v4"
+Content-Disposition: inline
+In-Reply-To: <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+
+--sfqjnlte6ae4g5v4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
 Hi,
 
+On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
+> > > > What kernel version did you use?
+> > >=20
+> > > Latest mainline.
+> >=20
+> > I guess this patch could fix it:
+> > http://code.bulix.org/1kitrq-268936?raw
+>=20
+> This should prevent from modifying parent clock. But my problem was
+> different.
+>
+> On A20, gpu_clk can have different PLL, not I've found out the way
+> to choose right one with assigned-parent-clocks.
+>=20
+> I have patchset ready for adding A20 mali node, but I need some more
+> time to complete with OPP, then I will submit entire patchset.
+>
+> Now it works correctly, using right pll(dedicated PLL8), setting
+> right frequency.
 
-On 02/02/18 04:18, Daniel Jordan wrote:
->
->
-> On 02/01/2018 10:54 AM, Steven Whitehouse wrote:
->> Hi,
->>
->>
->> On 31/01/18 23:04, daniel.m.jordan@oracle.com wrote:
->>> lru_lock, a per-node* spinlock that protects an LRU list, is one of the
->>> hottest locks in the kernel.  On some workloads on large machines, it
->>> shows up at the top of lock_stat.
->>>
->>> One way to improve lru_lock scalability is to introduce an array of 
->>> locks,
->>> with each lock protecting certain batches of LRU pages.
->>>
->>>          *ooooooooooo**ooooooooooo**ooooooooooo**oooo ...
->>>          |           ||           ||           ||
->>>           \ batch 1 /  \ batch 2 /  \ batch 3 /
->>>
->>> In this ASCII depiction of an LRU, a page is represented with either 
->>> '*'
->>> or 'o'.  An asterisk indicates a sentinel page, which is a page at the
->>> edge of a batch.  An 'o' indicates a non-sentinel page.
->>>
->>> To remove a non-sentinel LRU page, only one lock from the array is
->>> required.  This allows multiple threads to remove pages from different
->>> batches simultaneously.  A sentinel page requires lru_lock in 
->>> addition to
->>> a lock from the array.
->>>
->>> Full performance numbers appear in the last patch in this series, 
->>> but this
->>> prototype allows a microbenchmark to do up to 28% more page faults per
->>> second with 16 or more concurrent processes.
->>>
->>> This work was developed in collaboration with Steve Sistare.
->>>
->>> Note: This is an early prototype.  I'm submitting it now to support my
->>> request to attend LSF/MM, as well as get early feedback on the 
->>> idea.  Any
->>> comments appreciated.
->>>
->>>
->>> * lru_lock is actually per-memcg, but without memcg's in the picture it
->>>    becomes per-node.
->> GFS2 has an lru list for glocks, which can be contended under certain 
->> workloads. Work is still ongoing to figure out exactly why, but this 
->> looks like it might be a good approach to that issue too. The main 
->> purpose of GFS2's lru list is to allow shrinking of the glocks under 
->> memory pressure via the gfs2_scan_glock_lru() function, and it looks 
->> like this type of approach could be used there to improve the 
->> scalability,
->
-> Glad to hear that this could help in gfs2 as well.
->
-> Hopefully struct gfs2_glock is less space constrained than struct page 
-> for storing the few bits of metadata that this approach requires.
->
-> Daniel
->
-We obviously want to keep gfs2_glock small, however within reason then 
-yet we can add some additional fields as required. The use case is 
-pretty much a standard LRU list, so items are added and removed, mostly 
-at the active end of the list, and the inactive end of the list is 
-scanned periodically by gfs2_scan_glock_lru()
+The point is that we really don't care about which PLL is actually
+being used, as long as the rate is correct and we don't break anything
+else. If the GPU rate is accessible through one of the other PLL, it
+makes even more sense to not use the GPU PLL and keep it disabled,
+since it will result in some power savings.
 
-Steve.
+> Btw, do I need to add a board using it, or can I add only Mali node
+> to sun7i-a20.dtsi(plus other little patches)?
+
+You can add it to the DTSI without a board using it (and actually,
+nothing should be in the board DTS, everything in the DT for the Mali
+applies to all boards).
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
+
+--sfqjnlte6ae4g5v4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp0Qw8ACgkQ0rTAlCFN
+r3R60w/+OryJIZIypTsduJLs4gmV6yQnKOshv/+GTHtldVdAaqcKfqvhEgnahNS8
+ykMmMh0mD7nrI/pclNa9Eg4AEi3PBc/BuI1vlAFnSpwKey6+yO2b8SpHmsC2fYNs
+5kALXb+sWF9T983dXhF0IfWgjulUefJq87B7+u67zlUmBTpq2ukaeI5ZaS3fW/Zv
+9TA/2l2qYa3NFPkJv7IGIfvyRMbzDBHNJpBWuAFPU3PsayI5Ik+4157djnfcrYX0
+k8ei0wfrgq8G6tB9cVadTmi3q2jbFz6waQOAUejJJKnmtJb69xUJoYEk7aR76Hxa
+gjv6oCvibhHhRFsIbMRJicf1G3veaYCzqeybpakuXIbWaOxe1Gq25fkOt+GQFp78
+PlIUUR5msaYq0rGwSgHUkjcEFb3bBxh7MR73NxIv6WXaNePRETxHVnE3btMWdzds
+dHNpa+EDpJ51x0VNBosqKkbMrrQtKbGgCTYGjDb/nZVqlcKUkeZPOIbaJufBq/DI
+ruqBuFqBZ9E2OVss1T9ZZ3yszmkMrt6SfOfzJim+Y1v3r71S6+l6ZccOm1MJ6nvG
+et7s1RLS/fNpjP19od8pY6CFMXO+rKN3LOoqMcl4fh2tEAE5ZlG5YgwgHd9hHU/h
+FNatNSiPpDUwtNsJHZKICbAG2d619tveupbNF66T5Fqv4lGLhjM=
+=9Kj3
+-----END PGP SIGNATURE-----
+
+--sfqjnlte6ae4g5v4--
