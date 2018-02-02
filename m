@@ -1,148 +1,100 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2700043-1517585123-2-3598151179374905291
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='edu', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517585123; b=WpuntD/DA4xcj9uyRc7SbWlzX2wOzwbhRIYHsxL1RO1cW5k
-    jrAvW/d92+5ULHycNw7ojGcYeN7Fv519DEVjsIOKjAky9T/GDS2Iwj173571F04a
-    80Qvn3NIdfQf2zIgES61KXizavMecC19/juM+0qswSAxoG2/6t6ZFvRBpwXydVOH
-    pZ91uotbhcp13YmVdpuIbtsfQpzys9OG1OxmrqWiPBrmodAYN/XZlvNQ0mYVIVw1
-    SyEotR7xoc2vuHXLRVtRFqJLEDY7SczqL66DQKc/+JJiuVDiMOOObcyc5wNrQIOI
-    3FTJQzGhigSWWjKzLaQPaibJArQ24T3mz23sF9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
-    :message-id:mime-version:content-type:sender:list-id; s=arctest;
-    t=1517585123; bh=bdn00U/zvVXuGvAKDN0fTONHi977hhQycLMWdkN3Zeg=; b=
-    u2ecjq+pYnjdQDSTCHLd9NnXG7MYg7ImToL2vrMzc0ia+IXY5zLQyMYxXg9KFr0k
-    czFh4HwYbwVXtQL+PWdHQCofAC7vBt3f+pEZciVpfrf1gxylFEohwk2jXiPtG2RN
-    8xHF4d5u1K+n4mL/b3tqu5quQC64kVGX4Epc6Vvs2WUHD3lJP1DRQIRtpx/bt6Nv
-    9FM+8igLygYqvMDtoWiUt4lUDK6UKYwdACu5rlvk/npSPoB13figKkIdlRpONu5s
-    ZL++uEnOAK9rmWC9jyLEBDHdJITYUx3XmRJBI/ryL2V+dt/DPptIMf+5poKVbxrF
-    1PNY/DcLaX0BKskC/ghthg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rowland.harvard.edu;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rowland.harvard.edu header.result=pass header_org.domain=harvard.edu header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rowland.harvard.edu;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rowland.harvard.edu header.result=pass header_org.domain=harvard.edu header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751927AbeBBPZG (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 10:25:06 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:41114 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1751878AbeBBPZB (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Fri, 2 Feb 2018 10:25:01 -0500
-Date: Fri, 2 Feb 2018 10:25:00 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Haiqing Bai <Haiqing.Bai@windriver.com>
-cc: gregkh@linuxfoundation.org, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <Shigeru.Yoshida@windriver.com>
-Subject: Re: [V2][PATCH] ohci-hcd: Fix race condition caused by ohci_urb_enqueue()
- and io_watchdog_func()
-In-Reply-To: <1517550699-7879-1-git-send-email-Haiqing.Bai@windriver.com>
-Message-ID: <Pine.LNX.4.44L0.1802021021090.1357-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <arnd@arndb.de>
+X-Google-Smtp-Source: AH8x227sknN2re587NjkUwVwVWrQiWgDej1Ya0dD5viW6tfNYZHtMenXSjE20Lk4LU2kIBgLdG3o
+ARC-Seal: i=1; a=rsa-sha256; t=1517584814; cv=none;
+        d=google.com; s=arc-20160816;
+        b=c7Wtg5SbgkV1WXIqLfXGt7v34PhrIMqKDa1z/lglDBML9vxJiwFjiOev14iYtyKuJQ
+         5B5yrQsJ7Urz+zY/Orr29/lL/aP4oPueaUFPTSgLulgrCTDFMQI9g3mdXns0fiDMvI02
+         WHoQnhndq96GF5gX7p5pUR9r+ULD+HC/yzUY8dvmiwqWmWckZ1lyhJKfW15UN2IzDW9A
+         MtvK6Il+DcHKh7cTWC0/OLXW8khwzeWSbhHilUYlx1aWAFI5PwllQfXwg/+wG7ulOW15
+         W9ZUJzPjeRhfN8xfZoRjedq3YRKi6s1SxRqzpH1VySZ0DODUIhgKA7yOF/Y4khef4A7B
+         A0Ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=Tab/4EQIA1+AmRIeqa+fCNEAjuGT++8pMGj4/SLwowU=;
+        b=U0dqR8I2F35r9TU5ukFiZAFGujUQ1I9eMJuF7nNkEMmNiruqck8ffWnLN7dXPdtk2N
+         7sE7UKZ9OpZAwLzbBuhyqHOfnVHtVpS+gAt8+OOcqLF9iprsMqQvGEVJSTI0oxDb0njI
+         JGef4Bf4RirQor+yXU6xyyMYQhPy58Y9tNu1gOgxato99TMK6lyGuYqyPlO1z/l8psln
+         wJYZcqP2m6n354pRwr461izCSMJW+L+rg2o8gtUySQH6xqraCsytuw7DC4AOsCp2Zx4q
+         7ZlSyeEFi+VfFtUJl21XMAxtepK7r4p2tHS+ug9mpV8/hnnP3R2WRM8YKiKyADwMDj/P
+         jwvw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 217.72.192.75 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 217.72.192.75 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+From: Arnd Bergmann <arnd@arndb.de>
+To: Alan Cox <alan@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?= <jeremy.lefaure@lse.epita.fr>,
+	Sergiy Redko <sergredko@gmail.com>,
+	linux-media@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: media: atomisp: remove pointless string copy
+Date: Fri,  2 Feb 2018 16:19:41 +0100
+Message-Id: <20180202152009.843231-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:YwOaRFH0AilTCNdPNOQMzYA7Jmbl3dUcB6knq81TLO9t3aXQ/Mi
+ Kcwdn00c2u2opFWSHAX92GuLY2GfsBa5OTkS4ReGB7M936bGDkyR+UweNVC6zvo313MiVp0
+ 5c4hG1UojGhFrGvZAsTVzbnX6pT1GQhiUwHWi/y1VpE8+TZZmrBzGLUPhhRT6q6RW5zhsuG
+ wqmlVn9KQxxAOoTcQ+d4Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:IdYRcOVakjM=:f9E+5x3G0tXpo7SSOOWGPj
+ ZO56+7bLEoMBO5m7yI1dpYkCxlGHk9XvbmFf5z5+bfzAUuUsizgfdqKI9fbjLzzt5vCTPmDLB
+ aXFWyN5oK3vw9Ns5uSvJ8FGiBh4wpI2YoC9I39fl4tlSnEjy/Vh3sUX+xE6o+qy8mlaP3AaUc
+ vI3AbKnJRFsuzf3b6atfpOs3UNBYNRs1iJcVFlbqL+2lDyegxWFLOcHKXUfKWE4NlcpbUPh6j
+ RRyIH3gPIQue5dIJZ+VaW57F7ag0mAXz6wonIcGqOl8mNT0aIpO9t75w/PZ3s+EcSe/luZW72
+ TE4rqnENbSeN9yPsIuGwJh92VReRi3FwvhK5/PZ5lCGAsnVeTbI+aU5HuKXgoIObVbHS0dk7X
+ O9naRLXzokiK/4nxGbyJHAj7YNaoMf4fjIqqYYJWqLPlcfE9AImtx8bKhqCgmgLLYyUIqvjnG
+ FYLmOAdjM502kVu7RFAFh9xv4n76fdizshOrOgo/7MuImUVQxNQsCLYfeDi3yVU3+l8BaurMT
+ t6SIdpgyhNpkS6cFANcncUyki3JD45RK1G89Zp8OP0tibtynfBhHMyFMp924DeLiYt5Xr3BFO
+ BiSjO2Ecn/QIy6vN7R41i2WqlDhWgKiV35AHa0nW1YeRKBvB5xZdZg9Cd/Q6YPyAfnIDwLl8D
+ 2RtCzq0R5bWTK3wakOMGLbTaJ/pdP1bFxNijt3otvsbRavF3bzAmzisAj5L4h8KAGYxYtTDMa
+ RJbc2C/MWAc2TygSnWDYArJ+tqB8b7dIUofNhw==
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591303014085060994?=
+X-GMAIL-MSGID: =?utf-8?q?1591303014085060994?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 2 Feb 2018, Haiqing Bai wrote:
+gcc-8 points out that a string is copied to itself here:
 
-> From: Shigeru Yoshida <shigeru.yoshida@windriver.com>
-> 
-> Running io_watchdog_func() while ohci_urb_enqueue() is running can
-> cause a race condition where ohci->prev_frame_no is corrupted and the
-> watchdog can mis-detect following error:
-> 
->   ohci-platform 664a0800.usb: frame counter not updating; disabled
->   ohci-platform 664a0800.usb: HC died; cleaning up
-> 
-> Specifically, following scenario causes a race condition:
-> 
->   1. ohci_urb_enqueue() calls spin_lock_irqsave(&ohci->lock, flags)
->      and enters the critical section
->   2. ohci_urb_enqueue() calls timer_pending(&ohci->io_watchdog) and it
->      returns false
->   3. ohci_urb_enqueue() sets ohci->prev_frame_no to a frame number
->      read by ohci_frame_no(ohci)
->   4. ohci_urb_enqueue() schedules io_watchdog_func() with mod_timer()
->   5. ohci_urb_enqueue() calls spin_unlock_irqrestore(&ohci->lock,
->      flags) and exits the critical section
->   6. Later, ohci_urb_enqueue() is called
->   7. ohci_urb_enqueue() calls spin_lock_irqsave(&ohci->lock, flags)
->      and enters the critical section
->   8. The timer scheduled on step 4 expires and io_watchdog_func() runs
->   9. io_watchdog_func() calls spin_lock_irqsave(&ohci->lock, flags)
->      and waits on it because ohci_urb_enqueue() is already in the
->      critical section on step 7
->  10. ohci_urb_enqueue() calls timer_pending(&ohci->io_watchdog) and it
->      returns false
->  11. ohci_urb_enqueue() sets ohci->prev_frame_no to new frame number
->      read by ohci_frame_no(ohci) because the frame number proceeded
->      between step 3 and 6
->  12. ohci_urb_enqueue() schedules io_watchdog_func() with mod_timer()
->  13. ohci_urb_enqueue() calls spin_unlock_irqrestore(&ohci->lock,
->      flags) and exits the critical section, then wake up
->      io_watchdog_func() which is waiting on step 9
->  14. io_watchdog_func() enters the critical section
->  15. io_watchdog_func() calls ohci_frame_no(ohci) and set frame_no
->      variable to the frame number
->  16. io_watchdog_func() compares frame_no and ohci->prev_frame_no
-> 
-> On step 16, because this calling of io_watchdog_func() is scheduled on
-> step 4, the frame number set in ohci->prev_frame_no is expected to the
-> number set on step 3.  However, ohci->prev_frame_no is overwritten on
-> step 11.  Because step 16 is executed soon after step 11, the frame
-> number might not proceed, so ohci->prev_frame_no must equals to
-> frame_no.
-> 
-> To address above scenario, this patch introduces a special sentinel
-> value IO_WATCHDOG_OFF and set this value to ohci->prev_frame_no when
-> the watchdog is not pending or running.  When ohci_urb_enqueue()
-> schedules the watchdog (step 4 and 12 above), it compares
-> ohci->prev_frame_no to IO_WATCHDOG_OFF so that ohci->prev_frame_no is
-> not overwritten while io_watchdog_func() is running.
-> 
-> v2: Instead of adding an extra flag variable, defining IO_WATCHDOG_OFF
->     as a special sentinel value for prev_frame_no.
-> 
-> Signed-off-by: Shigeru Yoshida <Shigeru.Yoshida@windriver.com>
-> Signed-off-by: Haiqing Bai <Haiqing.Bai@windriver.com>
+In file included from drivers/staging/media/atomisp/pci/atomisp2/css2400/hive_isp_css_include/platform_support.h:25,
+                 from drivers/staging/media/atomisp/pci/atomisp2/css2400/hive_isp_css_include/memory_access/memory_access.h:48,
+                 from drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c:16:
+In function 'strncpy',
+    inlined from 'ia_css_debug_pipe_graph_dump_stage' at drivers/staging/media/atomisp/pci/atomisp2/css2400/hive_isp_css_include/string_support.h:158:2:
+include/linux/string.h:253:9: error: '__builtin_strncpy' source argument is the same as destination [-Werror=restrict]
+  return __builtin_strncpy(p, q, size);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The "v2" explanation is supposed to go below the "---" tear line, but 
-that doesn't matter much.  In any case,
+This removes the bogus code, leaving the behavior otherwise
+unchanged.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ .../atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-You know, this could have been fixed a lot more easily if the core
-kernel had a timer_pending_or_executing() routine.  I bet there are
-other places in the kernel that suffer from the same bug and need the
-same fix.
-
-Alan Stern
-
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c b/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c
+index f22d73b56bc6..60395904f89a 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c
+@@ -2858,13 +2858,7 @@ ia_css_debug_pipe_graph_dump_stage(
+ 			if (l && enable_info[l-1] == ',')
+ 				enable_info[--l] = '\0';
+ 
+-			if (l <= ENABLE_LINE_MAX_LENGTH) {
+-				/* It fits on one line, copy string and init */
+-				/* other helper strings with empty string */
+-				strcpy_s(enable_info,
+-					sizeof(enable_info),
+-					ei);
+-			} else {
++			if (l > ENABLE_LINE_MAX_LENGTH) {
+ 				/* Too big for one line, find last comma */
+ 				p = ENABLE_LINE_MAX_LENGTH;
+ 				while (ei[p] != ',')
+-- 
+2.9.0
