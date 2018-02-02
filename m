@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751829AbeBBLuP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 06:50:15 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:54714 "EHLO
+        id S1751666AbeBBL4B (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 06:56:01 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42475 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751580AbeBBLtu (ORCPT
+        with ESMTP id S1750773AbeBBLzy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 06:49:50 -0500
+        Fri, 2 Feb 2018 06:55:54 -0500
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Prateek Sood <prsood@codeaurora.org>
-Cc: viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gkohli@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: Query related to usage of cpufreq_suspend() & cpufreq_resume
-Date: Fri, 02 Feb 2018 12:48:13 +0100
-Message-ID: <1949391.4ffJqIIJSQ@aspire.rjw.lan>
-In-Reply-To: <e9d13871-184b-dee3-c45f-c6d19e671eea@codeaurora.org>
-References: <e9d13871-184b-dee3-c45f-c6d19e671eea@codeaurora.org>
+To: Bo Yan <byan@nvidia.com>
+Cc: viresh.kumar@linaro.org, sgurrappadi@nvidia.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: skip cpufreq resume if it's not suspended
+Date: Fri, 02 Feb 2018 12:54:17 +0100
+Message-ID: <17447147.z6jfkRxuEB@aspire.rjw.lan>
+In-Reply-To: <913f1715-bdd0-1c03-ad76-38be9d3d2298@nvidia.com>
+References: <1516744675-21233-1-git-send-email-byan@nvidia.com> <1744712.rO4QOLozun@aspire.rjw.lan> <913f1715-bdd0-1c03-ad76-38be9d3d2298@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -24,110 +23,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, February 2, 2018 12:41:58 PM CET Prateek Sood wrote:
-> Hi Viresh,
+On Wednesday, January 24, 2018 9:53:14 PM CET Bo Yan wrote:
 > 
-> One scenario is there where a kernel panic is observed in
-> cpufreq during suspend/resume.
+> On 01/23/2018 06:02 PM, Rafael J. Wysocki wrote:
+> > On Tuesday, January 23, 2018 10:57:55 PM CET Bo Yan wrote:
+> >>   drivers/cpufreq/cpufreq.c | 4 ++++
+> >>   1 file changed, 4 insertions(+)
+> >>
+> >> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> >> index 41d148af7748..95b1c4afe14e 100644
+> >> --- a/drivers/cpufreq/cpufreq.c
+> >> +++ b/drivers/cpufreq/cpufreq.c
+> >> @@ -1680,6 +1680,10 @@ void cpufreq_resume(void)
+> >>   	if (!cpufreq_driver)
+> >>   		return;
+> >>   
+> >> +	if (unlikely(!cpufreq_suspended)) {
+> >> +		pr_warn("%s: resume after failing suspend\n", __func__);
+> >> +		return;
+> >> +	}
+> >>   	cpufreq_suspended = false;
+> >>   
+> >>   	if (!has_target() && !cpufreq_driver->resume)
+> >>
+> > Good catch, but rather than doing this it would be better to avoid
+> > calling cpufreq_resume() at all if cpufreq_suspend() has not been called.
+> Yes, I thought about that, but there is no good way to skip over it 
+> without introducing another flag. cpufreq_resume is called by 
+> dpm_resume, cpufreq_suspend is called by dpm_suspend. In the failure 
+> case, dpm_resume is called, but dpm_suspend is not. So on a higher level 
+> it's already unbalanced.
 > 
-> pm_suspend()
->   suspend_devices_and_enter()
->     dpm_suspend_start()
->       dpm_prepare() 
+> One possibility is to rely on the pm_transition flag. So something like:
 > 
-> Failure in dpm_prepare() happend with following dmesg:
-> 
-> [ 3746.316062] PM: Device xyz not prepared for power transition: code -16
-> [ 3746.316071] PM: Some devices failed to suspend, or early wake event detected
-> 
-> 
-> pm_suspend()
->   suspend_devices_and_enter()
->     dpm_suspend_start()
->       dpm_prepare() //failed
->     dpm_resume_end()
->       dpm_resume()
->         cpufreq_resume()
->           cpufreq_start_governor()
->             sugov_start()
->               cpufreq_add_update_util_hook()
-> 
-> After failure in dpm_prepare(), dpm_resume() called
-> cpufreq_resume(). Corresponding cpufreq_suspend() was not
-> called due to failure of dpm_prepare(). 
-> 
-> This resulted in WARN_ON(per_cpu(cpufreq_update_util_data, cpu))
-> in cpufreq_add_update_util_hook() and cpufreq_add_update_util_hook->func
-> being inconsistent state. It caused crash in scheduler.
-> 
-> Following are some of the ways to mitigate this issue. Could
-> you please provide feedback on below two approaches or suugest
-> a better way to fix this problem.
-> 
-> -----------------------8<------------------------------
-> 
-> Co-developed-by: Gaurav Kohli <gkohli@codeaurora.org>
-> Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org> 
-> Signed-off-by: Prateek Sood <prsood@codeaurora.org>
 > 
 > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 02a497e..732e5a2 100644
+> index dc259d20c967..8469e6fc2b2c 100644
 > --- a/drivers/base/power/main.c
 > +++ b/drivers/base/power/main.c
-> @@ -1038,6 +1038,7 @@ void dpm_resume(pm_message_t state)
->  {
->         struct device *dev;
->         ktime_t starttime = ktime_get();
-> +       bool valid_resume = false;
+> @@ -842,6 +842,7 @@ static void async_resume(void *data, async_cookie_t 
+> cookie)
+>   void dpm_resume(pm_message_t state)
+>   {
+>          struct device *dev;
+> +       bool suspended = (pm_transition.event != PM_EVENT_ON);
+>          ktime_t starttime = ktime_get();
 > 
->         trace_suspend_resume(TPS("dpm_resume"), state.event, true);
->         might_sleep();
-> @@ -1055,6 +1056,7 @@ void dpm_resume(pm_message_t state)
->         }
-> 
->         while (!list_empty(&dpm_suspended_list)) {
-> +               valid_resume = true;
->                 dev = to_device(dpm_suspended_list.next);
->                 get_device(dev);
->                 if (!is_async(dev)) {
-> @@ -1080,7 +1082,8 @@ void dpm_resume(pm_message_t state)
->         async_synchronize_full();
->         dpm_show_time(starttime, state, 0, NULL);
+>          trace_suspend_resume(TPS("dpm_resume"), state.event, true);
+> @@ -885,7 +886,8 @@ void dpm_resume(pm_message_t state)
+>          async_synchronize_full();
+>          dpm_show_time(starttime, state, NULL);
 > 
 > -       cpufreq_resume();
-> +       if (valid_resume)
+> +       if (likely(suspended))
 > +               cpufreq_resume();
->         trace_suspend_resume(TPS("dpm_resume"), state.event, false);
->  }
-> 
-> --------------------8<--------------------------------------
-> 
-> Signed-off-by: Prateek Sood <prsood@codeaurora.org>
-> 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 421f318..439eab8 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -1648,7 +1648,7 @@ void cpufreq_suspend(void)
->  {
->         struct cpufreq_policy *policy;
-> 
-> -       if (!cpufreq_driver)
-> +       if (!cpufreq_driver || cpufreq_suspended)
->                 return;
-> 
->         if (!has_target() && !cpufreq_driver->suspend)
-> @@ -1683,7 +1683,7 @@ void cpufreq_resume(void)
->         struct cpufreq_policy *policy;
->         int ret;
-> 
-> -       if (!cpufreq_driver)
-> +       if (!cpufreq_driver || !cpufreq_suspended)
->                 return;
-> 
->         cpufreq_suspended = false;
+>          trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+>   }
 
-Since we have cpufreq_suspended already, the second one is better.
+I was thinking about something else.
+
+Anyway, I think your original patch is OK too, but without printing the
+message.  Just combine the cpufreq_suspended check with the cpufreq_driver
+one and the unlikely() thing is not necessary.
 
 Thanks,
 Rafael
