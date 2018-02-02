@@ -1,64 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751795AbeBBMKl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 07:10:41 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37261 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751646AbeBBMKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 07:10:35 -0500
-Subject: Re: Is the hisilicon tree maintained ?
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-References: <68abfa22-86fa-67db-b583-661c9f5672ce@linaro.org>
- <5A744EBA.7030104@hisilicon.com>
- <e7a0977d-5fee-b874-d6b7-21638bb9b885@linaro.org>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5A745526.6040006@hisilicon.com>
-Date: Fri, 2 Feb 2018 12:10:14 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
-MIME-Version: 1.0
-In-Reply-To: <e7a0977d-5fee-b874-d6b7-21638bb9b885@linaro.org>
+        id S1751737AbeBBMNA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 07:13:00 -0500
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:59874
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751508AbeBBMMx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 07:12:53 -0500
+X-ASG-Debug-ID: 1517573568-093b7e4cf101040001-xx1T2L
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+From: "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To: Hanjun Guo <guohanjun@huawei.com>,
+        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+CC: "lenb@kernel.org" <lenb@kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        "Jiang, Yutang2" <yutang2.jiang@hxt-semitech.com>
+Subject: Re: Re: [PATCH v3] ACPI / tables: Add IORT to injectable table list
+Thread-Topic: Re: [PATCH v3] ACPI / tables: Add IORT to injectable table list
+X-ASG-Orig-Subj: Re: Re: [PATCH v3] ACPI / tables: Add IORT to injectable table list
+Thread-Index: AQHTnBBsYAsQWgur5Uueb4Qh1ttM2KOQeuYAgAAFGgA=
+Date: Fri, 2 Feb 2018 12:12:39 +0000
+Message-ID: <em5890c25f-84af-42ac-bfea-b27c6516e46b@bjl0091>
+References: <1517567138-27283-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <68362a1f-cc0c-42f9-97da-bdf379c4f5a1@huawei.com>
+In-Reply-To: <68362a1f-cc0c-42f9-97da-bdf379c4f5a1@huawei.com>
+Reply-To: "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.64.6.4]
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.123]
-X-CFilter-Loop: Reflected
+Content-ID: <2C293ACC3B91E445907C1EE789E92A4B@hxt-semitech.com>
+MIME-Version: 1.0
+X-Barracuda-Connect: localhost[10.128.0.14]
+X-Barracuda-Start-Time: 1517573568
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4104 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.47510
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w12CD4Ap011868
 
-Hi Daniel,
+Hey, Hanjun,
 
-On 2018/2/2 12:05, Daniel Lezcano wrote:
-> On 02/02/2018 12:42, Wei Xu wrote:
->> Hi Daniel,
->>
->> On 2018/2/2 6:59, Daniel Lezcano wrote:
->>>
->>> Hi Wei Xu,
->>>
->>> I found in the MAINTAINERS file the hisilicon tree is at:
->>>
->>> https://github.com/hisilicon/linux-hisi
->>>
->>> But, (except I missed it) I didn't find any update since Nov, 2017.
->>>
->>> Is that tree maintained ?
->>
->> Yes. It is still maintained.
->> You can find update from other branches or the tags like next/dt64.
->> I will update the master when every rc1 is released.
-> 
-> Is there a development branch for something else than the DT ?
+On 2018/2/2 19:54:24, "Hanjun Guo" <guohanjun@huawei.com> wrote:
 
-Sorry, no developing branch is there.
-But we will create one if needed like the topic-acpi-mbigen branch.
-And most of development branches are kept in another git repo.
+>On 2018/2/2 18:25, Yang Shunyong wrote:
+>>Loading IORT table from initrd is used to fix firmware IORT defects.
+>
+>I don't think this fix "firmware defects", it just for debug purpose,
+>we will not use that for production purpose, right? I think above line
+>can be removed.
+>
+I thinks the upgrade feature not only for debug. Here's an important
+way to fix bugs that come from the firmware.
 
-Best Regards,
-Wei
+Documentation/acpi/initrd_table_override.txt
 
-> 
-> 
-> 
-> 
+
+Cheers,
+-Dongsheng
