@@ -1,79 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751632AbeBBJXE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 04:23:04 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:55582 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750799AbeBBJXA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 04:23:00 -0500
-Date: Fri, 2 Feb 2018 11:22:57 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH 4/8] i2c: ov9650: fix potential integer overflow in
- __ov965x_set_frame_interval
-Message-ID: <20180202092257.xknpdvc4bcrg4dyi@valkosipuli.retiisi.org.uk>
-References: <cover.1517268667.git.gustavo@embeddedor.com>
- <8ccf6acf10745fd1b9f33a7cacd5365e125633bf.1517268668.git.gustavo@embeddedor.com>
+        id S1751582AbeBBJ2i convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 04:28:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40423 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750773AbeBBJ2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 04:28:24 -0500
+Date: Fri, 2 Feb 2018 08:00:27 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Martin =?UTF-8?B?SHVuZGViw7hsbA==?= <mnhu@prevas.dk>
+Cc: <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH] firmware: dmi_scan: avoid printing error on non-efi
+ systems
+Message-ID: <20180202080027.36a7f102@endymion>
+In-Reply-To: <20180201080805.8076-1-mnhu@prevas.dk>
+References: <20180201080805.8076-1-mnhu@prevas.dk>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ccf6acf10745fd1b9f33a7cacd5365e125633bf.1517268668.git.gustavo@embeddedor.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 06:32:01PM -0600, Gustavo A. R. Silva wrote:
-> Cast fi->interval.numerator to u64 in order to avoid a potential integer
-> overflow. This variable is being used in a context that expects an
-> expression of type u64.
+Hi Martin,
+
+On Thu, 1 Feb 2018 09:08:05 +0100, Martin Hundebøll wrote:
+> dmi_init() rightfully checks if dmi is available at all, and errors out
+> if not. This leads to harmless errors being printed during boot on
+> non-efi systems, even when these are booted quietly.
 > 
-> Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Avoid this error-print by returning directly from dmi_init() if dmi
+> isn't available, instead of jumping to the err-label.
+> 
+> Signed-off-by: Martin Hundebøll <mnhu@prevas.dk>
 > ---
->  drivers/media/i2c/ov9650.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/firmware/dmi_scan.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
-> index e519f27..c674a49 100644
-> --- a/drivers/media/i2c/ov9650.c
-> +++ b/drivers/media/i2c/ov9650.c
-> @@ -1130,7 +1130,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
->  	if (fi->interval.denominator == 0)
->  		return -EINVAL;
+> diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
+> index 783041964439..86c5e0625a08 100644
+> --- a/drivers/firmware/dmi_scan.c
+> +++ b/drivers/firmware/dmi_scan.c
+> @@ -715,10 +715,8 @@ static int __init dmi_init(void)
+>  	u8 *dmi_table;
+>  	int ret = -ENOMEM;
 >  
-> -	req_int = (u64)(fi->interval.numerator * 10000) /
-> +	req_int = (u64)fi->interval.numerator * 10000 /
->  		fi->interval.denominator;
-
-This requires do_div(). I've applied the patch with this change:
-
-diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
-index 88276dba828d..5bea31cd41aa 100644
---- a/drivers/media/i2c/ov9650.c
-+++ b/drivers/media/i2c/ov9650.c
-@@ -1136,8 +1136,8 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
- 	if (fi->interval.denominator == 0)
- 		return -EINVAL;
- 
--	req_int = (u64)fi->interval.numerator * 10000 /
--		fi->interval.denominator;
-+	req_int = (u64)fi->interval.numerator * 10000;
-+	do_div(req_int, fi->interval.denominator);
- 
- 	for (i = 0; i < ARRAY_SIZE(ov965x_intervals); i++) {
- 		const struct ov965x_interval *iv = &ov965x_intervals[i];
-
+> -	if (!dmi_available) {
+> -		ret = -ENODATA;
+> -		goto err;
+> -	}
+> +	if (!dmi_available)
+> +		return -ENODATA;
 >  
->  	for (i = 0; i < ARRAY_SIZE(ov965x_intervals); i++) {
-> -- 
-> 2.7.4
-> 
+>  	/*
+>  	 * Set up dmi directory at /sys/firmware/dmi. This entry should stay
 
+I already have a similar patch by Ard Biesheuvel in my dmi tree:
+
+http://jdelvare.nerim.net/devel/linux/jdelvare-dmi/firmware-dmi-handle-missing-dmi-data-gracefully.patch
+
+Does it work for you?
+
+I'll send a pull request to Linus later today.
+
+Thanks,
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Jean Delvare
+SUSE L3 Support
