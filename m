@@ -1,47 +1,75 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225aevIYaZCq5kROQcv6O/hdBAHQrnN75e3tLm88TeTSDCcWc+zyrCycZjQyG2luvRhkHUz3
-ARC-Seal: i=1; a=rsa-sha256; t=1517591047; cv=none;
-        d=google.com; s=arc-20160816;
-        b=fijDV6rsIej1RqrVcReK/tc4h5BvATkGuNSkRgVsnqabSLj06dl3JyiiDoYLXaq8NP
-         XkNvvJ/GryT8YyXPub7TRXiKCFHwc/W6EQ76qj2w4oGqpVTNa7MPb7aMR1IND2dPugFG
-         j+FbUheYDcH/FgpnZEjYYp49dzAox6zh14YnCGzvKLAiQr7HemCBTVsq6uqpaW0iqVtJ
-         YdNIBUxBq1Td2A1de/6GjjgY582M8DLwFfEZOBqPnt2haPk+iMY6ayebaPQi1bdta5Th
-         iTkH+PHF4EYN3mSq7LzhLQm7hhJTnDwnmHH2xRXuA00/bQ2WtuTyYjupIF6Nx/gVQshv
-         CL0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=rEfluPzm9qZdfCY9rW8JOdxxYdNUf1eWmme9dOyLORk=;
-        b=GSN3wPQB6kYnIXtkRgKNA5opypkTQmPXIsqDZwl3VmLioPwn5WD1dkwBNbjswGbSHw
-         za0trQRrFg3MSotWnBpvUV07CCCReD+wV+z5uTK4deZ1F3kARY8LrIANAj8loNmTXxP3
-         xkLfNJ3LA2zep0TQmWeWuJB58G/WkOIpWnjW5uShKI/a6hA0duoYWoJvmAiTbcxCnaLV
-         bHjf+waDeOWmMwTnSdvgidiWA/2ouwzIjFYTRz/QviQ/SHRpFVMk+PuZQurz0EGoBKrj
-         b0crhBcRBRQ2yKjDB24SOd6rjywjYT7mO6eoeo0iRxUQ9zdBJMKj21uz6sG/aUrAqVxA
-         HbBw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2879036-1517591046-2-11020932856975646926
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591045; b=Iv4ipy26/dq98vtNhj4Chj3DbiJzEhRjZC4hmi4t0TFCtOa
+    0n4GuWeqx6OuKoxhMUW8vWr+zXoG8pZ9ffcU3q5pYm7AmfL1ocEFmR2idFTS/SP0
+    2vebVOlja6++wtgSI9rT2P7AU52oZqAk842lMks2Tb3MM2pEu7NrB8lYNsSYZly9
+    sLjn7D8m4V8B+PBlcroEudXrNrpLSPGSI0dO8060N2xmTYcond6NwIpthrTb1vkK
+    Wf6SCEl1/a7xdkNmuK5Shxmhfp7xZqPDHGgya2CsM2FIJoHR+MjzmxMwGMBc6+VA
+    kdQCVsnBKfyIWkjr38eYJronHbA7d4emlWgLfcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591045; bh=UTWBFe5iVNbGpDRXBQfZzcjUu0
+    L7Fqv6lGbwRMtiHlI=; b=M913Bne9L+IOzLTx4d19zoe/MFlUVTsNMhB0540dYt
+    wCcFsU2XO9TDPMsAeWVp0balS26pYbYFbtnW4kK+4SqFlEFuUM1eD8Jbe6VKg66X
+    sJP+etVrHd2R2315l568w6zfgf0k7jHhgpZ/cIWlBsqWQsqlqDKVJPL+DHe9gjAd
+    pzVNwsZMsEKudp6VRtDmlchd1gFhQAQ78ncmJYZTpjmRJNG7ji4X2Db0YiPXFRrp
+    WhWFuEjpU22OvvSdJ6aAA7ppKHY9U6Mo29CBtsiSwmPsZpOtreUkfyFXHQwW2Eot
+    iIdfz+ldXB0qGNyP3XC5KFiEdI+vNaGrTDlvbpNeVKOg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752846AbeBBREC (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:04:02 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36074 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752494AbeBBRD5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:03:57 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Chun-Yeow Yeoh <yeohchunyeow@gmail.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 33/86] mac80211: fix the update of path metric for RANN frame
-Date: Fri,  2 Feb 2018 17:57:53 +0100
-Message-Id: <20180202140825.616241476@linuxfoundation.org>
+        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.9 13/86] gpio: iop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Fri,  2 Feb 2018 17:57:33 +0100
+Message-Id: <20180202140824.065281862@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309339525012620?=
-X-GMAIL-MSGID: =?utf-8?q?1591309550660127803?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,79 +77,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chun-Yeow Yeoh <yeohchunyeow@gmail.com>
+From: Jesse Chan <jc@linux.com>
 
+commit 97b03136e1b637d7a9d2274c099e44ecf23f1103 upstream.
 
-[ Upstream commit fbbdad5edf0bb59786a51b94a9d006bc8c2da9a2 ]
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-The previous path metric update from RANN frame has not considered
-the own link metric toward the transmitting mesh STA. Fix this.
+WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-iop.o
+see include/linux/module.h for more information
 
-Reported-by: Michael65535
-Signed-off-by: Chun-Yeow Yeoh <yeohchunyeow@gmail.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+This adds the license as "GPL", which matches the header of the file.
+
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
+
+Signed-off-by: Jesse Chan <jc@linux.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/mac80211/mesh_hwmp.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -788,7 +788,7 @@ static void hwmp_rann_frame_process(stru
- 	struct mesh_path *mpath;
- 	u8 ttl, flags, hopcount;
- 	const u8 *orig_addr;
--	u32 orig_sn, metric, metric_txsta, interval;
-+	u32 orig_sn, new_metric, orig_metric, last_hop_metric, interval;
- 	bool root_is_gate;
- 
- 	ttl = rann->rann_ttl;
-@@ -799,7 +799,7 @@ static void hwmp_rann_frame_process(stru
- 	interval = le32_to_cpu(rann->rann_interval);
- 	hopcount = rann->rann_hopcount;
- 	hopcount++;
--	metric = le32_to_cpu(rann->rann_metric);
-+	orig_metric = le32_to_cpu(rann->rann_metric);
- 
- 	/*  Ignore our own RANNs */
- 	if (ether_addr_equal(orig_addr, sdata->vif.addr))
-@@ -816,7 +816,10 @@ static void hwmp_rann_frame_process(stru
- 		return;
- 	}
- 
--	metric_txsta = airtime_link_metric_get(local, sta);
-+	last_hop_metric = airtime_link_metric_get(local, sta);
-+	new_metric = orig_metric + last_hop_metric;
-+	if (new_metric < orig_metric)
-+		new_metric = MAX_METRIC;
- 
- 	mpath = mesh_path_lookup(sdata, orig_addr);
- 	if (!mpath) {
-@@ -829,7 +832,7 @@ static void hwmp_rann_frame_process(stru
- 	}
- 
- 	if (!(SN_LT(mpath->sn, orig_sn)) &&
--	    !(mpath->sn == orig_sn && metric < mpath->rann_metric)) {
-+	    !(mpath->sn == orig_sn && new_metric < mpath->rann_metric)) {
- 		rcu_read_unlock();
- 		return;
- 	}
-@@ -847,7 +850,7 @@ static void hwmp_rann_frame_process(stru
- 	}
- 
- 	mpath->sn = orig_sn;
--	mpath->rann_metric = metric + metric_txsta;
-+	mpath->rann_metric = new_metric;
- 	mpath->is_root = true;
- 	/* Recording RANNs sender address to send individually
- 	 * addressed PREQs destined for root mesh STA */
-@@ -867,7 +870,7 @@ static void hwmp_rann_frame_process(stru
- 		mesh_path_sel_frame_tx(MPATH_RANN, flags, orig_addr,
- 				       orig_sn, 0, NULL, 0, broadcast_addr,
- 				       hopcount, ttl, interval,
--				       metric + metric_txsta, 0, sdata);
-+				       new_metric, 0, sdata);
- 	}
- 
- 	rcu_read_unlock();
+---
+ drivers/gpio/gpio-iop.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/gpio/gpio-iop.c
++++ b/drivers/gpio/gpio-iop.c
+@@ -58,3 +58,7 @@ static int __init iop3xx_gpio_init(void)
+ 	return platform_driver_register(&iop3xx_gpio_driver);
+ }
+ arch_initcall(iop3xx_gpio_init);
++
++MODULE_DESCRIPTION("GPIO handling for Intel IOP3xx processors");
++MODULE_AUTHOR("Lennert Buytenhek <buytenh@wantstofly.org>");
++MODULE_LICENSE("GPL");
