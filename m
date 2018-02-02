@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224OtxJVqayYQx+Qg2HQfG3CJ3p68PEMjkyAMV6Lc3atA8CFUJGZKEfh9jaenJh6WZr4vhbE
-ARC-Seal: i=1; a=rsa-sha256; t=1517591389; cv=none;
+X-Google-Smtp-Source: AH8x224PN4Cq4EjEahMXdA6Uf4PGpP+zFFjlnx0XnDYlg9OqS+D6/ivC5uoa1jY/sNQ2CSf6KPrm
+ARC-Seal: i=1; a=rsa-sha256; t=1517591386; cv=none;
         d=google.com; s=arc-20160816;
-        b=s1wQOpBlZIy2+feWW0cptZFqhgGkHaadcD7HDAJMhJIbH6lItiYNtsO7WL+ujwYGf/
-         w8F8+lLXAOvHIXx2NKCumMFvVoAKolruoMEwtFcV2RVU327obwYbkpUS3j3Wo8UZKDA5
-         wGH72WNDhn26Nl+IR/c/hv74tJW7UA47NpPyokOAQn4lXoi6IgQcfHK70W2EBlgIGfjl
-         Rm2blvbqf8mWlaL3EBwm9I4uX+yYL5iwgBOkMKTHzDIyQgHi/aWVm0aI7Fu1T+sFi5lt
-         YgTmkpPylQOp/oxO3UttQF7AbEiAV2db29BEUGHnojcdXv+WmmryfDO5I5hjolVRm25f
-         YcTw==
+        b=NXiRtS4tuxaYfTqoTNCrDXEU0Z8juNlNm8tyKvjFsHzIJUf0tJgvPFYKfkH1MyJzP3
+         6ZOvqYt5bUQorupmGpLUJHKakql2XdDEWyCjNp7oeWsdN5gHx2uS95Ni68OiBQN4UzxT
+         h9s8EVCbMdxRnGOavbq+z0yvfRBUqsuh0wQdxDjBAABCrISYHJ3/2ck33fNpJL2NyCri
+         tJm+XIjP3kwhFjxym6acH8ZU2oCKxptOVBqRxgUHRXxOxRxkM18YWcgenUqmN0W0SjTG
+         mJed/KRj35uOrZzHt6x7F0dH+NWW3zeNyEfpNwJZoBb6HTeoCqlpXjKxsBeA8F0mUoZQ
+         JxFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IcNeQ7Ke8ZyZ+BMEmB7NRoyNv4but60xLPzLDOTOXuw=;
-        b=BX0qknMGE9K98ltgcz7bANW47ZjKZlpTIwcuen//UE9intXhIFdwyJJU76euIdgK0e
-         4QErQfq2AEJ5PJy8j8O+LErVsJ+ZPrdu0LmR1H4XpdOvP73gcST6K5lS2WY33nd1YOBP
-         dVJVZCmNJYZUHGwtpgF998ctYse+n7DnVHyHg85quurE3nfYpueHJdwVjVbyCMVTZDVB
-         o5pIsPOe4y/Z515KOB09t/ZzUzdy2lDbuceN83PnhV8CT56+f5mPQE9pXwjGNtMthgqI
-         ZSF4TwZkFxRiays2cVX3Ytqk6/JadSqkJQQ2CoFlu9sGU93XgG6SU/NS5JBGkjHEELUg
-         oDow==
+        bh=Yy+2WEVpCQkrtIBnFxZcUisVaM2ZlWuE/6n/umstpf0=;
+        b=MXNDPtJQpx35+hptld5JltfAB5JvVQlJ4/y2Z5t5F1Qqh8AZ3wK20YokOklH7qHY2K
+         FI10uo/WKyVhzJxQSMpFMWzSOH+hHPbNhtEgGY3mykuUtilNa9TTuhIZYmVmAJ5Kk0c+
+         KjZVuwdu6YMbGkPNZb7cs1Fi/YxfOx93NjeLZhztv7g+l9etD4RPbbl+9XqXnyOU5b8v
+         2XnkqiBLx6rGP8fle33Qo6VbRex30ZAtISDu9pdgpvto9bl9btxJk8wOzzPxOPeuUwsN
+         sPqw1lVQ9yP1iyxUlVab8gSW0goTjnT8w4IA7X+tvEjVJ+kwWOimXWisywQjlMFYdM94
+         adRg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Lyle <mlyle@lyle.org>,
-	Vojtech Pavlik <vojtech@suse.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	David Howells <dhowells@redhat.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 061/156] bcache: check return value of register_shrinker
-Date: Fri,  2 Feb 2018 17:57:22 +0100
-Message-Id: <20180202140843.061297415@linuxfoundation.org>
+Subject: [PATCH 4.14 060/156] rxrpc: Fix service endpoint expiry
+Date: Fri,  2 Feb 2018 17:57:21 +0100
+Message-Id: <20180202140843.025207221@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309428712517955?=
-X-GMAIL-MSGID: =?utf-8?q?1591309908954063461?=
+X-GMAIL-THRID: =?utf-8?q?1591309905936325877?=
+X-GMAIL-MSGID: =?utf-8?q?1591309905936325877?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +48,252 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Lyle <mlyle@lyle.org>
+From: David Howells <dhowells@redhat.com>
 
 
-[ Upstream commit 6c4ca1e36cdc1a0a7a84797804b87920ccbebf51 ]
+[ Upstream commit f859ab61875978eeaa539740ff7f7d91f5d60006 ]
 
-register_shrinker is now __must_check, so check it to kill a warning.
-Caller of bch_btree_cache_alloc in super.c appropriately checks return
-value so this is fully plumbed through.
+RxRPC service endpoints expire like they're supposed to by the following
+means:
 
-This V2 fixes checkpatch warnings and improves the commit description,
-as I was too hasty getting the previous version out.
+ (1) Mark dead rxrpc_net structs (with ->live) rather than twiddling the
+     global service conn timeout, otherwise the first rxrpc_net struct to
+     die will cause connections on all others to expire immediately from
+     then on.
 
-Signed-off-by: Michael Lyle <mlyle@lyle.org>
-Reviewed-by: Vojtech Pavlik <vojtech@suse.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+ (2) Mark local service endpoints for which the socket has been closed
+     (->service_closed) so that the expiration timeout can be much
+     shortened for service and client connections going through that
+     endpoint.
+
+ (3) rxrpc_put_service_conn() needs to schedule the reaper when the usage
+     count reaches 1, not 0, as idle conns have a 1 count.
+
+ (4) The accumulator for the earliest time we might want to schedule for
+     should be initialised to jiffies + MAX_JIFFY_OFFSET, not ULONG_MAX as
+     the comparison functions use signed arithmetic.
+
+ (5) Simplify the expiration handling, adding the expiration value to the
+     idle timestamp each time rather than keeping track of the time in the
+     past before which the idle timestamp must go to be expired.  This is
+     much easier to read.
+
+ (6) Ignore the timeouts if the net namespace is dead.
+
+ (7) Restart the service reaper work item rather the client reaper.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/btree.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ include/trace/events/rxrpc.h |    2 ++
+ net/rxrpc/af_rxrpc.c         |   13 +++++++++++++
+ net/rxrpc/ar-internal.h      |    3 +++
+ net/rxrpc/conn_client.c      |    2 ++
+ net/rxrpc/conn_object.c      |   42 ++++++++++++++++++++++++------------------
+ net/rxrpc/net_ns.c           |    3 +++
+ 6 files changed, 47 insertions(+), 18 deletions(-)
 
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -807,7 +807,10 @@ int bch_btree_cache_alloc(struct cache_s
- 	c->shrink.scan_objects = bch_mca_scan;
- 	c->shrink.seeks = 4;
- 	c->shrink.batch = c->btree_pages * 2;
--	register_shrinker(&c->shrink);
-+
-+	if (register_shrinker(&c->shrink))
-+		pr_warn("bcache: %s: could not register shrinker",
-+				__func__);
+--- a/include/trace/events/rxrpc.h
++++ b/include/trace/events/rxrpc.h
+@@ -49,6 +49,7 @@ enum rxrpc_conn_trace {
+ 	rxrpc_conn_put_client,
+ 	rxrpc_conn_put_service,
+ 	rxrpc_conn_queued,
++	rxrpc_conn_reap_service,
+ 	rxrpc_conn_seen,
+ };
  
+@@ -206,6 +207,7 @@ enum rxrpc_congest_change {
+ 	EM(rxrpc_conn_put_client,		"PTc") \
+ 	EM(rxrpc_conn_put_service,		"PTs") \
+ 	EM(rxrpc_conn_queued,			"QUE") \
++	EM(rxrpc_conn_reap_service,		"RPs") \
+ 	E_(rxrpc_conn_seen,			"SEE")
+ 
+ #define rxrpc_client_traces \
+--- a/net/rxrpc/af_rxrpc.c
++++ b/net/rxrpc/af_rxrpc.c
+@@ -823,6 +823,19 @@ static int rxrpc_release_sock(struct soc
+ 	sock_orphan(sk);
+ 	sk->sk_shutdown = SHUTDOWN_MASK;
+ 
++	/* We want to kill off all connections from a service socket
++	 * as fast as possible because we can't share these; client
++	 * sockets, on the other hand, can share an endpoint.
++	 */
++	switch (sk->sk_state) {
++	case RXRPC_SERVER_BOUND:
++	case RXRPC_SERVER_BOUND2:
++	case RXRPC_SERVER_LISTENING:
++	case RXRPC_SERVER_LISTEN_DISABLED:
++		rx->local->service_closed = true;
++		break;
++	}
++
+ 	spin_lock_bh(&sk->sk_receive_queue.lock);
+ 	sk->sk_state = RXRPC_CLOSE;
+ 	spin_unlock_bh(&sk->sk_receive_queue.lock);
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -84,6 +84,7 @@ struct rxrpc_net {
+ 	unsigned int		nr_client_conns;
+ 	unsigned int		nr_active_client_conns;
+ 	bool			kill_all_client_conns;
++	bool			live;
+ 	spinlock_t		client_conn_cache_lock; /* Lock for ->*_client_conns */
+ 	spinlock_t		client_conn_discard_lock; /* Prevent multiple discarders */
+ 	struct list_head	waiting_client_conns;
+@@ -265,6 +266,7 @@ struct rxrpc_local {
+ 	rwlock_t		services_lock;	/* lock for services list */
+ 	int			debug_id;	/* debug ID for printks */
+ 	bool			dead;
++	bool			service_closed;	/* Service socket closed */
+ 	struct sockaddr_rxrpc	srx;		/* local address */
+ };
+ 
+@@ -824,6 +826,7 @@ void rxrpc_process_connection(struct wor
+  * conn_object.c
+  */
+ extern unsigned int rxrpc_connection_expiry;
++extern unsigned int rxrpc_closed_conn_expiry;
+ 
+ struct rxrpc_connection *rxrpc_alloc_connection(gfp_t);
+ struct rxrpc_connection *rxrpc_find_connection_rcu(struct rxrpc_local *,
+--- a/net/rxrpc/conn_client.c
++++ b/net/rxrpc/conn_client.c
+@@ -1061,6 +1061,8 @@ next:
+ 		expiry = rxrpc_conn_idle_client_expiry;
+ 		if (nr_conns > rxrpc_reap_client_connections)
+ 			expiry = rxrpc_conn_idle_client_fast_expiry;
++		if (conn->params.local->service_closed)
++			expiry = rxrpc_closed_conn_expiry * HZ;
+ 
+ 		conn_expires_at = conn->idle_timestamp + expiry;
+ 
+--- a/net/rxrpc/conn_object.c
++++ b/net/rxrpc/conn_object.c
+@@ -20,7 +20,8 @@
+ /*
+  * Time till a connection expires after last use (in seconds).
+  */
+-unsigned int rxrpc_connection_expiry = 10 * 60;
++unsigned int __read_mostly rxrpc_connection_expiry = 10 * 60;
++unsigned int __read_mostly rxrpc_closed_conn_expiry = 10;
+ 
+ static void rxrpc_destroy_connection(struct rcu_head *);
+ 
+@@ -312,7 +313,7 @@ void rxrpc_put_service_conn(struct rxrpc
+ 	n = atomic_dec_return(&conn->usage);
+ 	trace_rxrpc_conn(conn, rxrpc_conn_put_service, n, here);
+ 	ASSERTCMP(n, >=, 0);
+-	if (n == 0) {
++	if (n == 1) {
+ 		rxnet = conn->params.local->rxnet;
+ 		rxrpc_queue_delayed_work(&rxnet->service_conn_reaper, 0);
+ 	}
+@@ -353,15 +354,14 @@ void rxrpc_service_connection_reaper(str
+ 	struct rxrpc_net *rxnet =
+ 		container_of(to_delayed_work(work),
+ 			     struct rxrpc_net, service_conn_reaper);
+-	unsigned long reap_older_than, earliest, idle_timestamp, now;
++	unsigned long expire_at, earliest, idle_timestamp, now;
+ 
+ 	LIST_HEAD(graveyard);
+ 
+ 	_enter("");
+ 
+ 	now = jiffies;
+-	reap_older_than = now - rxrpc_connection_expiry * HZ;
+-	earliest = ULONG_MAX;
++	earliest = now + MAX_JIFFY_OFFSET;
+ 
+ 	write_lock(&rxnet->conn_lock);
+ 	list_for_each_entry_safe(conn, _p, &rxnet->service_conns, link) {
+@@ -371,15 +371,21 @@ void rxrpc_service_connection_reaper(str
+ 		if (conn->state == RXRPC_CONN_SERVICE_PREALLOC)
+ 			continue;
+ 
+-		idle_timestamp = READ_ONCE(conn->idle_timestamp);
+-		_debug("reap CONN %d { u=%d,t=%ld }",
+-		       conn->debug_id, atomic_read(&conn->usage),
+-		       (long)reap_older_than - (long)idle_timestamp);
+-
+-		if (time_after(idle_timestamp, reap_older_than)) {
+-			if (time_before(idle_timestamp, earliest))
+-				earliest = idle_timestamp;
+-			continue;
++		if (rxnet->live) {
++			idle_timestamp = READ_ONCE(conn->idle_timestamp);
++			expire_at = idle_timestamp + rxrpc_connection_expiry * HZ;
++			if (conn->params.local->service_closed)
++				expire_at = idle_timestamp + rxrpc_closed_conn_expiry * HZ;
++
++			_debug("reap CONN %d { u=%d,t=%ld }",
++			       conn->debug_id, atomic_read(&conn->usage),
++			       (long)expire_at - (long)now);
++
++			if (time_before(now, expire_at)) {
++				if (time_before(expire_at, earliest))
++					earliest = expire_at;
++				continue;
++			}
+ 		}
+ 
+ 		/* The usage count sits at 1 whilst the object is unused on the
+@@ -387,6 +393,7 @@ void rxrpc_service_connection_reaper(str
+ 		 */
+ 		if (atomic_cmpxchg(&conn->usage, 1, 0) != 1)
+ 			continue;
++		trace_rxrpc_conn(conn, rxrpc_conn_reap_service, 0, 0);
+ 
+ 		if (rxrpc_conn_is_client(conn))
+ 			BUG();
+@@ -397,10 +404,10 @@ void rxrpc_service_connection_reaper(str
+ 	}
+ 	write_unlock(&rxnet->conn_lock);
+ 
+-	if (earliest != ULONG_MAX) {
+-		_debug("reschedule reaper %ld", (long) earliest - now);
++	if (earliest != now + MAX_JIFFY_OFFSET) {
++		_debug("reschedule reaper %ld", (long)earliest - (long)now);
+ 		ASSERT(time_after(earliest, now));
+-		rxrpc_queue_delayed_work(&rxnet->client_conn_reaper,
++		rxrpc_queue_delayed_work(&rxnet->service_conn_reaper,
+ 					 earliest - now);
+ 	}
+ 
+@@ -429,7 +436,6 @@ void rxrpc_destroy_all_connections(struc
+ 
+ 	rxrpc_destroy_all_client_connections(rxnet);
+ 
+-	rxrpc_connection_expiry = 0;
+ 	cancel_delayed_work(&rxnet->client_conn_reaper);
+ 	rxrpc_queue_delayed_work(&rxnet->client_conn_reaper, 0);
+ 	flush_workqueue(rxrpc_workqueue);
+--- a/net/rxrpc/net_ns.c
++++ b/net/rxrpc/net_ns.c
+@@ -22,6 +22,7 @@ static __net_init int rxrpc_init_net(str
+ 	struct rxrpc_net *rxnet = rxrpc_net(net);
+ 	int ret;
+ 
++	rxnet->live = true;
+ 	get_random_bytes(&rxnet->epoch, sizeof(rxnet->epoch));
+ 	rxnet->epoch |= RXRPC_RANDOM_EPOCH;
+ 
+@@ -60,6 +61,7 @@ static __net_init int rxrpc_init_net(str
  	return 0;
+ 
+ err_proc:
++	rxnet->live = false;
+ 	return ret;
  }
+ 
+@@ -70,6 +72,7 @@ static __net_exit void rxrpc_exit_net(st
+ {
+ 	struct rxrpc_net *rxnet = rxrpc_net(net);
+ 
++	rxnet->live = false;
+ 	rxrpc_destroy_all_calls(rxnet);
+ 	rxrpc_destroy_all_connections(rxnet);
+ 	rxrpc_destroy_all_locals(rxnet);
