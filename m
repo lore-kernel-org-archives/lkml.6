@@ -1,91 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755225AbeBBCdA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 21:33:00 -0500
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:42721 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754558AbeBBCc4 (ORCPT
+        id S1755236AbeBBCeG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 21:34:06 -0500
+Received: from gateway33.websitewelcome.com ([192.185.145.216]:48721 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754125AbeBBCd4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 21:32:56 -0500
-X-Google-Smtp-Source: AH8x226VA/JidUR4VjodoR1/dE2dDb2zDijpi2zkDniOYO4Cxc07m4qVez84QIHlbQ1+Yl4mzj0nVBg/yXCQpr2BAro=
+        Thu, 1 Feb 2018 21:33:56 -0500
+Date: Thu, 01 Feb 2018 20:33:52 -0600
+Message-ID: <20180201203352.Horde.xv5XUdiSqNDHlFujzwjX6S0@gator4166.hostgator.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: David Laight <David.Laight@aculab.com>
+Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Wong Hoi Sing, Edison" <hswong3i@gmail.com>,
+        "Hung Hing Lun, Mike" <hlhung3i@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tcp_lp: use 64-bit arithmetic instead of 32-bit
+References: <20180201002407.GA1608@embeddedgus>
+ <20180201003236.06143fd0@alans-desktop>
+ <20180131190749.Horde.bsc7GhewsZwdnkmDtMlSwWO@gator4166.hostgator.com>
+ <ef625a4f15144822a037ddabc33a4134@AcuMS.aculab.com>
+In-Reply-To: <ef625a4f15144822a037ddabc33a4134@AcuMS.aculab.com>
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VdYjz6f2wBXsTL1kf5z-jcM68sMhtmkdgJM+TiPZb=gww@mail.gmail.com>
-References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517453568.git.baolin.wang@linaro.org>
- <62ceed73b65399099ccd76fe6b7331bcd253b027.1517453569.git.baolin.wang@linaro.org>
- <CAHp75VdYjz6f2wBXsTL1kf5z-jcM68sMhtmkdgJM+TiPZb=gww@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Fri, 2 Feb 2018 10:32:55 +0800
-Message-ID: <CAMz4ku+9dQ-d_E0Zf0iwjLgZ4hkEAunUhqGm_+jFQrZ6O4W0fQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 108.167.133.22
+X-Source-L: Yes
+X-Exim-ID: 1ehRAn-000vkd-LE
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:50091
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1 February 2018 at 23:31, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> On Thu, Feb 1, 2018 at 5:04 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
->> each group contains 16 GPIOs. Each GPIO can set input/output and has
->> the interrupt capability.
->
-> Just noticed couple of more improvements you can do.
->
->> +       case IRQ_TYPE_EDGE_RISING:
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 1);
->> +               irq_set_handler_locked(data, handle_edge_irq);
->> +               break;
->> +       case IRQ_TYPE_EDGE_FALLING:
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 0);
->> +               irq_set_handler_locked(data, handle_edge_irq);
->> +               break;
->> +       case IRQ_TYPE_EDGE_BOTH:
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 1);
->> +               irq_set_handler_locked(data, handle_edge_irq);
->> +               break;
->> +       case IRQ_TYPE_LEVEL_HIGH:
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 1);
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 1);
->> +               irq_set_handler_locked(data, handle_level_irq);
->> +               break;
->> +       case IRQ_TYPE_LEVEL_LOW:
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 1);
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
->> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 0);
->> +               irq_set_handler_locked(data, handle_level_irq);
->> +               break;
->> +       default:
->> +               return -EINVAL;
->
-> I guess you can use fallthrough and reduce some lines, but I have no
-> strong opinion which will look better.
+Hi David,
 
-Um, we need keep the sequence of updating registers and each irq type
-has different register updating. So I think current code can make
-things clear.
+Quoting David Laight <David.Laight@aculab.com>:
 
+>> > The question you need to ask is 'can it overflow 32bit maths', otherwise
+>> > you are potentially making the system do extra work for no reason.
+>> >
+>>
+>> Yeah, I get your point and it seems that in this particular case there
+>> is no risk of a 32bit overflow, but in general and IMHO as the code
+>> evolves, the use of incorrect arithmetic may have security
+>> implications in the future, so I advocate for code correctness in this
+>> case.
 >
->> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +       sprd_gpio->base = devm_ioremap_nocache(&pdev->dev, res->start,
->> +                                              resource_size(res));
+> Even if the variable are 64bit you still need to worry (maybe less)
+> about arithmetic overflow.
+> The only real way to avoid overflow is to understand the domain
+> of the values being used.
 >
-> Didn't notice before, why not to simple call devm_ioremap_resource() ?
 
-Ah, you are correct, I missed devm_ioremap_resource(). Will change in
-next version. Thanks.
+Yep, that's correct.
 
--- 
-Baolin.wang
-Best Regards
+Thanks for the feedback.
+--
+Gustavo
