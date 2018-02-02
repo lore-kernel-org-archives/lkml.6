@@ -1,172 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751829AbeBBMd6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 07:33:58 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39150 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751897AbeBBMdX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 07:33:23 -0500
-X-Google-Smtp-Source: AH8x226axdaylo/EAfu4FlWOYW1ObuLdGJQ2haJOsO/uHERQ4lM2mMD2wDsuwcODeSORoFQBfCDTww==
-Date: Fri, 2 Feb 2018 13:33:19 +0100
-From: Christoffer Dall <christoffer.dall@linaro.org>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Jones <drjones@redhat.com>, Hanjun Guo <guohanjun@huawei.com>,
-        Jayachandran C <jnair@caviumnetworks.com>,
-        Jon Masters <jcm@redhat.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH v3 06/18] arm/arm64: KVM: Add smccc accessors to PSCI code
-Message-ID: <20180202123319.GI21802@cbox>
-References: <20180201114657.7323-1-marc.zyngier@arm.com>
- <20180201114657.7323-7-marc.zyngier@arm.com>
+        id S1751664AbeBBMqJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 07:46:09 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35011 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751416AbeBBMqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 07:46:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,448,1511856000";
+   d="scan'208";a="24381714"
+Message-ID: <5A745E27.7070002@intel.com>
+Date: Fri, 02 Feb 2018 20:48:39 +0800
+From: Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180201114657.7323-7-marc.zyngier@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com
+Subject: Re: [PATCH v25 0/2] Virtio-balloon: support free page reporting
+References: <1516871646-22741-1-git-send-email-wei.w.wang@intel.com> <20180201211525-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180201211525-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 11:46:45AM +0000, Marc Zyngier wrote:
-> Instead of open coding the accesses to the various registers,
-> let's add explicit SMCCC accessors.
-> 
+On 02/02/2018 03:15 AM, Michael S. Tsirkin wrote:
+> On Thu, Jan 25, 2018 at 05:14:04PM +0800, Wei Wang wrote:
+>> This patch series is separated from the previous "Virtio-balloon
+>> Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,
+>> implemented by this series enables the virtio-balloon driver to report
+>> hints of guest free pages to the host. It can be used to accelerate live
+>> migration of VMs. Here is an introduction of this usage:
+>>
+>> Live migration needs to transfer the VM's memory from the source machine
+>> to the destination round by round. For the 1st round, all the VM's memory
+>> is transferred. From the 2nd round, only the pieces of memory that were
+>> written by the guest (after the 1st round) are transferred. One method
+>> that is popularly used by the hypervisor to track which part of memory is
+>> written is to write-protect all the guest memory.
+>>
+>> The second feature enables the optimization of the 1st round memory
+>> transfer - the hypervisor can skip the transfer of guest free pages in the
+>> 1st round. It is not concerned that the memory pages are used after they
+>> are given to the hypervisor as a hint of the free pages, because they will
+>> be tracked by the hypervisor and transferred in the next round if they are
+>> used and written.
+> Could you post performance numbers please?
 
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Yes, it was posted here https://lkml.org/lkml/2018/1/25/698
 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  virt/kvm/arm/psci.c | 52 ++++++++++++++++++++++++++++++++++++++++++----------
->  1 file changed, 42 insertions(+), 10 deletions(-)
-> 
-> diff --git a/virt/kvm/arm/psci.c b/virt/kvm/arm/psci.c
-> index 999f94d6bb98..c41553d35110 100644
-> --- a/virt/kvm/arm/psci.c
-> +++ b/virt/kvm/arm/psci.c
-> @@ -32,6 +32,38 @@
->  
->  #define AFFINITY_MASK(level)	~((0x1UL << ((level) * MPIDR_LEVEL_BITS)) - 1)
->  
-> +static u32 smccc_get_function(struct kvm_vcpu *vcpu)
-> +{
-> +	return vcpu_get_reg(vcpu, 0);
-> +}
-> +
-> +static unsigned long smccc_get_arg1(struct kvm_vcpu *vcpu)
-> +{
-> +	return vcpu_get_reg(vcpu, 1);
-> +}
-> +
-> +static unsigned long smccc_get_arg2(struct kvm_vcpu *vcpu)
-> +{
-> +	return vcpu_get_reg(vcpu, 2);
-> +}
-> +
-> +static unsigned long smccc_get_arg3(struct kvm_vcpu *vcpu)
-> +{
-> +	return vcpu_get_reg(vcpu, 3);
-> +}
-> +
-> +static void smccc_set_retval(struct kvm_vcpu *vcpu,
-> +			     unsigned long a0,
-> +			     unsigned long a1,
-> +			     unsigned long a2,
-> +			     unsigned long a3)
-> +{
-> +	vcpu_set_reg(vcpu, 0, a0);
-> +	vcpu_set_reg(vcpu, 1, a1);
-> +	vcpu_set_reg(vcpu, 2, a2);
-> +	vcpu_set_reg(vcpu, 3, a3);
-> +}
-> +
->  static unsigned long psci_affinity_mask(unsigned long affinity_level)
->  {
->  	if (affinity_level <= 3)
-> @@ -77,7 +109,7 @@ static unsigned long kvm_psci_vcpu_on(struct kvm_vcpu *source_vcpu)
->  	unsigned long context_id;
->  	phys_addr_t target_pc;
->  
-> -	cpu_id = vcpu_get_reg(source_vcpu, 1) & MPIDR_HWID_BITMASK;
-> +	cpu_id = smccc_get_arg1(source_vcpu) & MPIDR_HWID_BITMASK;
->  	if (vcpu_mode_is_32bit(source_vcpu))
->  		cpu_id &= ~((u32) 0);
->  
-> @@ -96,8 +128,8 @@ static unsigned long kvm_psci_vcpu_on(struct kvm_vcpu *source_vcpu)
->  			return PSCI_RET_INVALID_PARAMS;
->  	}
->  
-> -	target_pc = vcpu_get_reg(source_vcpu, 2);
-> -	context_id = vcpu_get_reg(source_vcpu, 3);
-> +	target_pc = smccc_get_arg2(source_vcpu);
-> +	context_id = smccc_get_arg3(source_vcpu);
->  
->  	kvm_reset_vcpu(vcpu);
->  
-> @@ -116,7 +148,7 @@ static unsigned long kvm_psci_vcpu_on(struct kvm_vcpu *source_vcpu)
->  	 * NOTE: We always update r0 (or x0) because for PSCI v0.1
->  	 * the general puspose registers are undefined upon CPU_ON.
->  	 */
-> -	vcpu_set_reg(vcpu, 0, context_id);
-> +	smccc_set_retval(vcpu, context_id, 0, 0, 0);
->  	vcpu->arch.power_off = false;
->  	smp_mb();		/* Make sure the above is visible */
->  
-> @@ -136,8 +168,8 @@ static unsigned long kvm_psci_vcpu_affinity_info(struct kvm_vcpu *vcpu)
->  	struct kvm *kvm = vcpu->kvm;
->  	struct kvm_vcpu *tmp;
->  
-> -	target_affinity = vcpu_get_reg(vcpu, 1);
-> -	lowest_affinity_level = vcpu_get_reg(vcpu, 2);
-> +	target_affinity = smccc_get_arg1(vcpu);
-> +	lowest_affinity_level = smccc_get_arg2(vcpu);
->  
->  	/* Determine target affinity mask */
->  	target_affinity_mask = psci_affinity_mask(lowest_affinity_level);
-> @@ -210,7 +242,7 @@ int kvm_psci_version(struct kvm_vcpu *vcpu)
->  static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm *kvm = vcpu->kvm;
-> -	unsigned long psci_fn = vcpu_get_reg(vcpu, 0) & ~((u32) 0);
-> +	u32 psci_fn = smccc_get_function(vcpu);
->  	unsigned long val;
->  	int ret = 1;
->  
-> @@ -277,14 +309,14 @@ static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
->  		break;
->  	}
->  
-> -	vcpu_set_reg(vcpu, 0, val);
-> +	smccc_set_retval(vcpu, val, 0, 0, 0);
->  	return ret;
->  }
->  
->  static int kvm_psci_0_1_call(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm *kvm = vcpu->kvm;
-> -	unsigned long psci_fn = vcpu_get_reg(vcpu, 0) & ~((u32) 0);
-> +	u32 psci_fn = smccc_get_function(vcpu);
->  	unsigned long val;
->  
->  	switch (psci_fn) {
-> @@ -302,7 +334,7 @@ static int kvm_psci_0_1_call(struct kvm_vcpu *vcpu)
->  		break;
->  	}
->  
-> -	vcpu_set_reg(vcpu, 0, val);
-> +	smccc_set_retval(vcpu, val, 0, 0, 0);
->  	return 1;
->  }
->  
-> -- 
-> 2.14.2
-> 
+I just changed the host side to poll the vq so that we don't need kick 
+in the driver, it works pretty well. I'll test a little bit more and 
+post out a new version with new performance numbers attached in the 
+cover letter.
+
+Best,
+Wei
