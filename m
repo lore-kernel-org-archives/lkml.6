@@ -1,49 +1,77 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224fxlrXZR7OaZ6dS1yTMnQuY9eVP0/5j5sXg62vO9Z5QfGfngjbk6pmjtyx29j2yXgXYOcr
-ARC-Seal: i=1; a=rsa-sha256; t=1517591512; cv=none;
-        d=google.com; s=arc-20160816;
-        b=RltL/YlrC2eOAmmxMOCUAJQmJyGP+uNGSM2Z/UdXVcRDTljdIIHXz7m5oojUeDEL7v
-         8finRGmCGKhHrkGpiSiUSGUfaahMwxTjhx0H9TEQeJCoSatPG4O+qOhcixRuWSqLfKCA
-         R3SOIqJ6MuE05TOPvfYvxK4bF7Vg+BaH/PN2qnp7CEs32ZjMCXey+V6XRbIV0+/4r3gY
-         sxFx09bQ8kgYC8R60OV5tDwL/ynUc7vZ+8vrsKqGOMl/qo1HAQaysYDEjbsegUrfUl5/
-         A2aIUYEPesWeZFHmv8/zZ9cMEGZcMBpIjhulsTd++R1EJOGkauY4cApkmhXcIBbXN4vw
-         uxgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=oCYiND7iXBiGITEvpSx4GAq5rfmUJ6q7Q0GQ2bJDACg=;
-        b=K5BuIPGg92I6cgoZxnZrX3YRDrrsKGmr0cZEisLJl0f9970+7Ta4ZYPAeNTdOpRqi3
-         cERPRPG+MAHCirAf7HuHv46fnEg5MGeke8HwzbFJyf9QtZauBjTYWTu+Dyk1GYop/O4i
-         +CWgYPuKUSrgcPq2MQs8/v9D2E4NyW3GQFI5jxPCMcz+BpFIyr1YsCEDmVkKAxDnAE9O
-         LgI3H5euTuJ7rdAfDGeaAubBTEnzdAct/YmVZd+WkpWgBSQm3GDGhvQ896ERCldS0uE0
-         tjCw7CjIaltP2sgFQOHMapkOdIdjcGQfjrNCygzdvjT7TBhKrIryB8PFcyr61MkMGKxE
-         iTIA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591511-2-13080876308148693606
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591510; b=marOUwrzVxIt9nk/lfY9ccJouuhAPE7Bkm5NCuxKPKPV7up
+    pPFXjfdbGfrrzyTX+pKpI7IP5LKvazmM7ov1fTiB+DwIcpvvOHm3fkZQdI4aikr6
+    uME3qUkLguEVGXf9i5k+gRy//EecQRmfYMXSDKn3BOti0xwOuSwq+qAJ7UwQ+N5B
+    QR4QFSYk6Cy2V9R/wAhx9wF7EFwv822WKVWu8ka7I5OxucfXsqwbK9vVpBpHreU/
+    CRDdcwS93WKNqiF37hBlvRIjQra2g3hoTUQB1r/VdIaMtwjUp/K6Un2/LcvUiEDw
+    Y8G5ZNJ6uufZVpTvjZ9mSEBV44bi1NJbU064SUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591510; bh=31807pIAv9n2+Zh7QhBzyK+hG5
+    BUrXc0GiNTncabKfE=; b=E8+BpH7pgigm0DK8iA3e3TOEvksnV9//2/FxMIwvjv
+    6j3QY+L4C4my8ITMATzQl9/mE961YNvyCqJ3seCdbfzDDiPDr8Y1mdqg3CHiWYCo
+    hZTmfhXMcJg6BsMN7hdSZKV6nhI3ET+h9Uy75WwSkcZgXnRLNSH87Q4WJchqaumT
+    leDIWu0iCF8y797ZR12SpDBc/C2OpenlR/e0XX+aQ0E5q5QLlUU+hsagB3cN/cJi
+    5zR+xf/thwkv1OGwiR1Fqs+lpYDIOS/Xd7YM8ip2olshPmBch2cHI+YFREJECcC0
+    ldTQS7ETmO3a0Qr6iLs49o2FIatonxCK55My5WLggAWQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753415AbeBBRLr (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:11:47 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38740 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753146AbeBBRLn (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:11:43 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 076/156] KVM: X86: Fix softlockup when get the current kvmclock
-Date: Fri,  2 Feb 2018 17:57:37 +0100
-Message-Id: <20180202140843.713012956@linuxfoundation.org>
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 073/156] sctp: avoid flushing unsent queue when doing asoc reset
+Date: Fri,  2 Feb 2018 17:57:34 +0100
+Message-Id: <20180202140843.584159834@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309559973496793?=
-X-GMAIL-MSGID: =?utf-8?q?1591310038317471083?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,59 +79,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wanpeng Li <kernellwp@gmail.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit e70b57a6ce4e8b92a56a615ae79bdb2bd66035e7 ]
+[ Upstream commit 159f2a7456c6ae95c1e1a58e8b8ec65ef12d51cf ]
 
- watchdog: BUG: soft lockup - CPU#6 stuck for 22s! [qemu-system-x86:10185]
- CPU: 6 PID: 10185 Comm: qemu-system-x86 Tainted: G           OE   4.14.0-rc4+ #4
- RIP: 0010:kvm_get_time_scale+0x4e/0xa0 [kvm]
- Call Trace:
-  get_time_ref_counter+0x5a/0x80 [kvm]
-  kvm_hv_process_stimers+0x120/0x5f0 [kvm]
-  kvm_arch_vcpu_ioctl_run+0x4b4/0x1690 [kvm]
-  kvm_vcpu_ioctl+0x33a/0x620 [kvm]
-  do_vfs_ioctl+0xa1/0x5d0
-  SyS_ioctl+0x79/0x90
-  entry_SYSCALL_64_fastpath+0x1e/0xa9
+Now when doing asoc reset, it cleans up sacked and abandoned queues
+by calling sctp_outq_free where it also cleans up unsent, retransmit
+and transmitted queues.
 
-This can be reproduced when running kvm-unit-tests/hyperv_stimer.flat and
-cpu-hotplug stress simultaneously. __this_cpu_read(cpu_tsc_khz) returns 0
-(set in kvmclock_cpu_down_prep()) when the pCPU is unhotplug which results
-in kvm_get_time_scale() gets into an infinite loop.
+It's safe for the sender of response, as these 3 queues are empty at
+that time. But when the receiver of response is doing the reset, the
+users may already enqueue some chunks into unsent during the time
+waiting the response, and these chunks should not be flushed.
 
-This patch fixes it by treating the unhotplug pCPU as not using master clock.
+To void the chunks in it would be removed, it moves the queue into a
+temp list, then gets it back after sctp_outq_free is done.
 
-Reviewed-by: Radim Krčmář <rkrcmar@redhat.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+The patch also fixes some incorrect comments in
+sctp_process_strreset_tsnreq.
+
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/x86.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ net/sctp/stream.c |   21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1795,10 +1795,13 @@ u64 get_kvmclock_ns(struct kvm *kvm)
- 	/* both __this_cpu_read() and rdtsc() should be on the same cpu */
- 	get_cpu();
+--- a/net/sctp/stream.c
++++ b/net/sctp/stream.c
+@@ -563,9 +563,10 @@ struct sctp_chunk *sctp_process_strreset
+ 		goto out;
+ 	}
  
--	kvm_get_time_scale(NSEC_PER_SEC, __this_cpu_read(cpu_tsc_khz) * 1000LL,
--			   &hv_clock.tsc_shift,
--			   &hv_clock.tsc_to_system_mul);
--	ret = __pvclock_read_cycles(&hv_clock, rdtsc());
-+	if (__this_cpu_read(cpu_tsc_khz)) {
-+		kvm_get_time_scale(NSEC_PER_SEC, __this_cpu_read(cpu_tsc_khz) * 1000LL,
-+				   &hv_clock.tsc_shift,
-+				   &hv_clock.tsc_to_system_mul);
-+		ret = __pvclock_read_cycles(&hv_clock, rdtsc());
-+	} else
-+		ret = ktime_get_boot_ns() + ka->kvmclock_offset;
+-	/* G3: The same processing as though a SACK chunk with no gap report
+-	 *     and a cumulative TSN ACK of the Sender's Next TSN minus 1 were
+-	 *     received MUST be performed.
++	/* G4: The same processing as though a FWD-TSN chunk (as defined in
++	 *     [RFC3758]) with all streams affected and a new cumulative TSN
++	 *     ACK of the Receiver's Next TSN minus 1 were received MUST be
++	 *     performed.
+ 	 */
+ 	max_tsn_seen = sctp_tsnmap_get_max_tsn_seen(&asoc->peer.tsn_map);
+ 	sctp_ulpq_reasm_flushtsn(&asoc->ulpq, max_tsn_seen);
+@@ -580,10 +581,9 @@ struct sctp_chunk *sctp_process_strreset
+ 	sctp_tsnmap_init(&asoc->peer.tsn_map, SCTP_TSN_MAP_INITIAL,
+ 			 init_tsn, GFP_ATOMIC);
  
- 	put_cpu();
+-	/* G4: The same processing as though a FWD-TSN chunk (as defined in
+-	 *     [RFC3758]) with all streams affected and a new cumulative TSN
+-	 *     ACK of the Receiver's Next TSN minus 1 were received MUST be
+-	 *     performed.
++	/* G3: The same processing as though a SACK chunk with no gap report
++	 *     and a cumulative TSN ACK of the Sender's Next TSN minus 1 were
++	 *     received MUST be performed.
+ 	 */
+ 	sctp_outq_free(&asoc->outqueue);
  
+@@ -844,6 +844,7 @@ struct sctp_chunk *sctp_process_strreset
+ 		if (result == SCTP_STRRESET_PERFORMED) {
+ 			__u32 mtsn = sctp_tsnmap_get_max_tsn_seen(
+ 						&asoc->peer.tsn_map);
++			LIST_HEAD(temp);
+ 
+ 			sctp_ulpq_reasm_flushtsn(&asoc->ulpq, mtsn);
+ 			sctp_ulpq_abort_pd(&asoc->ulpq, GFP_ATOMIC);
+@@ -852,7 +853,13 @@ struct sctp_chunk *sctp_process_strreset
+ 					 SCTP_TSN_MAP_INITIAL,
+ 					 stsn, GFP_ATOMIC);
+ 
++			/* Clean up sacked and abandoned queues only. As the
++			 * out_chunk_list may not be empty, splice it to temp,
++			 * then get it back after sctp_outq_free is done.
++			 */
++			list_splice_init(&asoc->outqueue.out_chunk_list, &temp);
+ 			sctp_outq_free(&asoc->outqueue);
++			list_splice_init(&temp, &asoc->outqueue.out_chunk_list);
+ 
+ 			asoc->next_tsn = rtsn;
+ 			asoc->ctsn_ack_point = asoc->next_tsn - 1;
