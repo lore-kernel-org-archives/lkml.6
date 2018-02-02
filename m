@@ -1,101 +1,114 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-842278-1517531790-2-5415302991347011287
+X-Cyrus-Session-Id: sloti22d1t05-2074586-1517563982-2-16192193221498755433
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+X-Spam-hits: BAYES_00 -1.9, DATE_IN_PAST_03_06 1.592,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517531790; b=MhxS/7AzzOVmyWOue8UXvxJIbGNyQAHHq3E3gvgMOe7Sj0V
-    8g2p55g5BaKpi72X8LqHeS05301dnA+GKVzTbJi5oma0c+wZcLhYhnmUbxKKIZBM
-    x813hgQbq4s1+h7mxjL/gurRpbTS/NCiVvuZezQ2cDiR9R4OgYU4lEaPSDwnBN/Q
-    EhtejP+czRmBDIxs0qbfXypGA2M/9OQpzzHwcnzSQvj+/OTPlf68KrXbxzAIdKvJ
-    hKrAFppzdIpRvlVCQDCExfve9lxRGbu5HD5JzRDnL4xqXjueh7S3oYEfDd6Z79z5
-    HT86vWDt8QJFcNchfZ1km80Rz86B6f39XeDfw9Q==
+    t=1517563982; b=PM5bNKNbFNCgaQoie+KlCiUqxX775hjnJBW4YIhydR7QPZb
+    59FWZp16p1nt8GoiqTl7sX+avmHBw/lHgmceZDzC2PnWfhpol3wxPrB4X0WLtTrO
+    C902sjbo4W4WnTbFnfX4REmdverxK67yXu4LM/AZ2EQUeYwGAAWGopwR/dF6lNXF
+    EVGZC3wgZVLYrbVSXGfZEqJ7Rd3BHU1czEyWJ5791p08WeUKnIPv3kID9sgy1WDL
+    IcXNh4QbtFVfzCGBAI/5WWUEwJ0ntUWm3j8eg3/cEinJ+ck/s6iT5sitmTUZcxKl
+    g/9y4zwr89ny0P+eayczoTZO2OoGCi55167P+9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1517531790; bh=Gjyi/E06TUaaR6sZ725jnqPEMGJ7cjIAfvh5tw
-    hzi4A=; b=R7i6lR7pd9njajdVu7N1fcL29XQXwE90g5Ue8QXeOunHjT4ihILjbV
-    u8tideAYqMjzTlpwrU5Lw/BwmyhrkNu3JRhIqtcqdH9kmU4Dr+wTx+BUmDAGQWLs
-    oVBeyezBV8rmwU79tsgFoFyxFPhD4lfLHTauTjNTnmcX2HfDEqZjUUFR2z+hIwi1
-    B5KDsgKDY3DMQWhIjOFDc7opJYbX409cYNbQVFyaqBM6ETmCeyON+WRb3MWOiC5Q
-    gwH9dzSDRcrSGOigRJtNlUW+2ARHMelclQFqdhuC9Zws1/JqVXpLAHzk1MvsGgN4
-    82mCgGSqpRzZHe7WkULSEqVF9xWLB32A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=itw5fc/S x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1517563982; bh=PelU/mBgoHhagA5Qu8lbssM1C0RCskRXG0wV5z6S88E=; b=N
+    yIuNv3T1ANXbsOylfNaM4iAKWV/o2eDA1Bzp8XpsON1VkUMJDH+t+u5JNyBOJ8QQ
+    zGdttP3tckl5W0hZ2XxDysxrVYRjBn97UD07lR+PfibQrUhshjZaoaN8k61VzMVw
+    6xLDDaukMgTVUUp9f6zowLYQEp3yaW9DZzBa938Ki9/4oVNwVbOXZUet5dLKGNFv
+    5w6b8IzWKhOoZE3FkmSKFeXXQWDpCD97RhbJ3cIm3prOy8T134B2zrQAC8Lt+4cQ
+    UPeol1ngd5obEIj56i3sOXAyFROlvIi5qGDLoZz79+Egjnc501K+w5KBRChmydvx
+    tgNeF39AL9mHQO54la7hg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=U8LjTzbD;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=itw5fc/S x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=U8LjTzbD;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751643AbeBBAg1 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Feb 2018 19:36:27 -0500
-Received: from mail-it0-f46.google.com ([209.85.214.46]:34899 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeBBAg0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Feb 2018 19:36:26 -0500
-X-Google-Smtp-Source: AH8x224mzPIfLHpdgVh3Dx9052rKNNlWaih4cYl2ZzB8gA8JYqzdob0Xgf/KTqM82Nyazg52lH+USv4ZrlVhe477Dwg=
-MIME-Version: 1.0
-In-Reply-To: <b8f04374-97f1-76d5-81b5-3583441833f4@oracle.com>
-References: <20180201124019.11693-1-jgross@suse.com> <b8f04374-97f1-76d5-81b5-3583441833f4@oracle.com>
-From: Chris Patterson <cjp256@gmail.com>
-Date: Thu, 1 Feb 2018 19:36:05 -0500
-Message-ID: <CABZSBQcmKBGZ2-i-YRL=Ux6hcAP0peR1zfaVh4Go9vr=JTRThQ@mail.gmail.com>
+        id S1751796AbeBBJdA (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 04:33:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41335 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751221AbeBBJca (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 2 Feb 2018 04:32:30 -0500
 Subject: Re: [Xen-devel] [PATCH v2] x86/xen: init %gs very early to avoid page
  faults with stack protector
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To: Chris Patterson <cjp256@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        stable@vger.kernel.org
+References: <20180201124019.11693-1-jgross@suse.com>
+ <b8f04374-97f1-76d5-81b5-3583441833f4@oracle.com>
+ <CABZSBQcmKBGZ2-i-YRL=Ux6hcAP0peR1zfaVh4Go9vr=JTRThQ@mail.gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <3a4fa32b-7909-9fa6-4b6c-71d6b51ad35d@suse.com>
+Date: Fri, 2 Feb 2018 06:56:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <CABZSBQcmKBGZ2-i-YRL=Ux6hcAP0peR1zfaVh4Go9vr=JTRThQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Works great, tested it and it fixes booting Linux v4.15 kernel for me :)
+On 02/02/18 01:36, Chris Patterson wrote:
+> Works great, tested it and it fixes booting Linux v4.15 kernel for me :)
 
-Cheers!
+Can I add your "Tested-by:" to the patch when committing it?
 
-On Thu, Feb 1, 2018 at 3:17 PM, Boris Ostrovsky
-<boris.ostrovsky@oracle.com> wrote:
-> On 02/01/2018 07:40 AM, Juergen Gross wrote:
->> When running as Xen pv guest %gs is initialized some time after
->> C code is started. Depending on stack protector usage this might be
->> too late, resulting in page faults.
+
+Juergen
+
+> 
+> Cheers!
+> 
+> On Thu, Feb 1, 2018 at 3:17 PM, Boris Ostrovsky
+> <boris.ostrovsky@oracle.com> wrote:
+>> On 02/01/2018 07:40 AM, Juergen Gross wrote:
+>>> When running as Xen pv guest %gs is initialized some time after
+>>> C code is started. Depending on stack protector usage this might be
+>>> too late, resulting in page faults.
+>>>
+>>> So setup %gs and MSR_GS_BASE in assembly code already.
+>>>
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Juergen Gross <jgross@suse.com>
 >>
->> So setup %gs and MSR_GS_BASE in assembly code already.
+>> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 >>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Juergen Gross <jgross@suse.com>
->
-> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->
->
->
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xenproject.org
-> https://lists.xenproject.org/mailman/listinfo/xen-devel
+>>
+>>
+>> _______________________________________________
+>> Xen-devel mailing list
+>> Xen-devel@lists.xenproject.org
+>> https://lists.xenproject.org/mailman/listinfo/xen-devel
+> 
