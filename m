@@ -1,129 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751604AbeBBLKQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 06:10:16 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42908 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750773AbeBBLKI (ORCPT
+        id S1751584AbeBBLVH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 06:21:07 -0500
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:37110 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751129AbeBBLU7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 06:10:08 -0500
-Date: Fri, 2 Feb 2018 12:10:04 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>, Frank Li <Frank.li@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Ian Ray <ian.ray@ge.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: imx6q-bx50v3: Enable secure-reg-access
-Message-ID: <20180202111004.mnv3elblyjxkbyzz@earth.universe>
-References: <20180115160722.17206-1-sebastian.reichel@collabora.co.uk>
- <20180202071819.GE25699@dragon>
+        Fri, 2 Feb 2018 06:20:59 -0500
+X-Google-Smtp-Source: AH8x225dd1pQTG9wQDkPoCeN0CI3pL99X90G/ib+Mzemo6KIVpvxBZrNgs0M3badVai1GPfZocDIFQ==
+Subject: Re: [PATCH v3 2/5] crypto: caam: Fix endless loop when RNG is already
+ initialized
+To: =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "lukas.auer@aisec.fraunhofer.de" <lukas.auer@aisec.fraunhofer.de>,
+        "rui.silva@linaro.org" <rui.silva@linaro.org>,
+        "ryan.harkin@linaro.org" <ryan.harkin@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+References: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
+ <1517364040-27607-3-git-send-email-pure.logic@nexus-software.ie>
+ <VI1PR0402MB334297558BB1984131546B1D98FA0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+From: "Bryan O'Donoghue" <pure.logic@nexus-software.ie>
+Message-ID: <78ad6a62-190c-e4fe-dd23-e1d058f9bbb2@nexus-software.ie>
+Date: Fri, 2 Feb 2018 11:20:56 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oqt2zu6s5rd7zxgq"
-Content-Disposition: inline
-In-Reply-To: <20180202071819.GE25699@dragon>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <VI1PR0402MB334297558BB1984131546B1D98FA0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/02/18 12:16, Horia Geantã wrote:
+> If the loop cannot exit based on value of "ret" != -EAGAIN, then it means
+> caam_probe() will eventually fail due to ret == -EAGAIN:
+> 	if (ret) {
+> 		dev_err(dev, "failed to instantiate RNG");
+> 		goto caam_remove;
+> 	}
 
---oqt2zu6s5rd7zxgq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For me it's an endless loop applying the first two
 
-Hi,
+https://patchwork.ozlabs.org/patch/866460/
+https://patchwork.ozlabs.org/patch/866462/
 
-On Fri, Feb 02, 2018 at 03:18:20PM +0800, Shawn Guo wrote:
-> + Frank
->=20
-> On Mon, Jan 15, 2018 at 05:07:22PM +0100, Sebastian Reichel wrote:
-> > From: Peter Senna Tschudin <peter.senna@collabora.com>
-> >=20
-> > Add secure-reg-access on device tree include file for Bx50 devices
-> > to enable PMU and hardware counters for perf.
-> >=20
-> > Signed-off-by: Peter Senna Tschudin <peter.senna@collabora.com>
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> > ---
-> >  arch/arm/boot/dts/imx6q-bx50v3.dtsi | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >=20
-> > diff --git a/arch/arm/boot/dts/imx6q-bx50v3.dtsi b/arch/arm/boot/dts/im=
-x6q-bx50v3.dtsi
-> > index 86cfd4481e72..ccaaee83e2fa 100644
-> > --- a/arch/arm/boot/dts/imx6q-bx50v3.dtsi
-> > +++ b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
-> > @@ -43,6 +43,13 @@
-> >  #include "imx6q-ba16.dtsi"
-> > =20
-> >  / {
-> > +	soc {
-> > +		pmu {
-> > +			compatible =3D "arm,cortex-a9-pmu";
-> > +			secure-reg-access;
->=20
-> I'm not sure this could be a board level configuration.  Shouldn't this
-> property just be added into pmu node in imx6qdl.dtsi?
+but not this one
 
-This cannot become part of imx6qdl.dtsi for two reasons:
+https://patchwork.ozlabs.org/patch/865890/
 
-1. It's not safe to be enabled on imx6qdl in secure state, see
-   excerpt from DT binding documentation below
-2. We cannot enable it by default, since DTS format does not provide
-   a method to unset it in board files using a imx6qdl in secure
-   mode.
+> Please provide more details, so that the root cause is found and fixed.
 
-Here is an extract from the DT documentation for the PMU node:
+np
 
-- secure-reg-access : Indicates that the ARMv7 Secure Debug Enable Register
-		      (SDER) is accessible. This will cause the driver to do
-		      any setup required that is only possible in ARMv7 secure
-		      state. If not present the ARMv7 SDER will not be touched,
-		      which means the PMU may fail to operate unless external
-		      code (bootloader or security monitor) has performed the
-		      appropriate initialisation. Note that this property is
-		      not valid for non-ARMv7 CPUs or ARMv7 CPUs booting Linux
-		      in Non-secure state.
-
-For B450v3, B650v3 and B850v3 it's safe to enable the bit and it
-improves debugging capabilities a lot.
-
--- Sebastian
-
->=20
-> Shawn
->=20
-> > +		};
-> > +	};
-> > +
-> >  	clocks {
-> >  		mclk: clock@0 {
-> >  			compatible =3D "fixed-clock";
-> > --=20
-> > 2.15.1
-> >=20
-
---oqt2zu6s5rd7zxgq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlp0RwkACgkQ2O7X88g7
-+przbxAAj8IZq1fcC3bQYRSj88o8koPCdOL514egIq9don6K3J3ozFd4xzeXB72h
-YOCyqk63Ze2uDG1ZB4ilfgsr2afKcQIC46v/U4/9PqC/xd7JrO3KV5HVkNpASVE6
-XZGuV0ekMWEPRev6xlq3fIwMR+q2WGmn7Zr4Cj2s4ughbTqlrseqTXI4T78ZKGOf
-nighHWK0HkmlCTFf/S+//UV+3YkIztfLdjdKe51GwTujvbmmSKtZ76NMpZCONZqV
-PkkdK4FY2zR5+uXRwMrDE14SpuW04MWC94alSHShpSZGX03m69Z4rXtgJTcnV8Xa
-q/gMqJrh96i1mMZIkJQ2BTcQAMoPoB1NCrSj0304QVFhXd5TKO/yP5vpFZqI1nI5
-KDoY4H38mBI+kzdMJXCQvqw/WdDrNROr1oG775q6/d4fNNztNn5H+iWPc5KgdiGj
-NaljqhHxARsnkMN1s8sEnVeMIr1/PxBw/5krnTzt1aHmv3Nf0zsii65THZU0yJxW
-w1K7N5pfCriyhXmmFMgBF8sg935uYG9aUt6zS5JHT8FdWY3K65kminwAx6DiCVPP
-+UZIS265IGnSnWzZJJgq30mEGXfnvkAvJ3+asrKXOW+u2Psf3HTClJzUOqzfO7ej
-wJaReTnwlxKNj8+zmps4WHwavIQ4o4+5IJ1xc9VGB9hx7LVc7wc=
-=NP40
------END PGP SIGNATURE-----
-
---oqt2zu6s5rd7zxgq--
+---
+bod
