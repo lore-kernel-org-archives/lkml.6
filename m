@@ -1,77 +1,51 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2848808-1517590855-2-5089681556144200116
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517590854; b=GxsZcAOHhN5mC4PrJvT8g9lr7jsmXKsenrCOWXWrhaj309H
-    YHd+hBxPLHHJbkyrH7OkIh7JnG0gigGkUdyRF5T3GHitG6nDMWiQr63UAvsnZJU0
-    wAEBk2YlCPHXC0PjCLhCLXaWIEMrP6WZskAq3/pYoi2eOGsy8UPtPnaNwAmoHXo8
-    J8oarIqXbnjurvf9z/OrCNqmLJV9HIKqv8tLb2yiiSDUeK2fbelCnVcA5gF4OyUj
-    9M/R54jZlRsTcRE9dfQ72BAj+vC+nBywnlY3S0jywdzBSj40P2sOYD/RrJGW0iO0
-    ASgHcNCj84T4kw7n1zH1malFS4BpT4le99BBXBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517590854; bh=sDIA/hV1qjy94DExQdc44c5K0X
-    f4j5ei9sX4ErD8zC4=; b=Gl8hcTqjPSTiHkyPL99m6n8DGrFFnZoDq4S4Xa3693
-    nnZGcUNADBIOWGH1qR+wZrOW3uctx6YJ40ZwLAmWHKwsZBjeCeqesDjncaSv3/EU
-    Rmaum72xGcWnT7pbPmr5hvxnyGzI7crz1AjTza8SEL2gZEdfFU0gAMI03rC7eFHu
-    6Ro9h0pxrytRyps/nv9lq948Rpxz3JT5K0V1Cdxu5Q+JuuK9USTEUI9muqoYdpSG
-    RDoQQpN/kTAR+0R9oVYUvP3WtUw5XIURu+okswmkjqb5Vypv4TRhnG+8ar4zkWTC
-    wPJd3k8oEcqI5hIEEdcR4VtfDkCsouRRC6S6rdIZQM7A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752643AbeBBRAw (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:00:52 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34896 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752639AbeBBRAs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:00:48 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226yRZ4FZxi/jDWq+w2uCs7cAO2/ELG8QCwPbkMr5BrAXwHzmmpw6AvD4PCIncL+qH3Hh73W
+ARC-Seal: i=1; a=rsa-sha256; t=1517590852; cv=none;
+        d=google.com; s=arc-20160816;
+        b=JTGIJw2OStrHn11vjdXv43DYiwo3hQM805YjxdrG+BiQ0lHuBCsFIk/zinMdRtx1Vt
+         ECp/id3EpH5zOnE/7Wog4beVgkSyC4xtyADFCa50G8H+x1/PF9RnpK6lx3lk5xkP1lCa
+         to5lNZRDxT+pCgEhCXSMgFyJwrWY1ZtcYvlSfk1uAJscu/Tl6vUXGlKoq5z17rjehjk7
+         7afi40vjzn+od+nGqfWhcap0ssnI3oik2y56ddqUqS6EfKKPpHIypppP8q0gGY5dXo15
+         3aQQpv4Yrx+X1BskpU+GXDKhAyYz+jFH90EqWiof4VzWJHwemMQPcIkGCiJQYPT+QO2f
+         GhLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=O2IHJiKDUb2EIL1IdEk2MbeeUj0fWokX+tB675MZbdw=;
+        b=Q9aCe0Rg+uSuZfUMaoo+BSTLAv9+AXnKoyeLcj/pBcRG+tOeUpV+fTcHwhu43weX3c
+         NueZC/quyeofGmkyTYoPADoJckiEKdd37jerZom+1FtxHLfPvp4tyP7vqVdwaRMAbupg
+         r7NDeuhKFST4UiQOyeHg65cPMz3fdtOrEfS0b2JeN7EMPGQHKoi3TRHM45r87J8/Cnap
+         WblFTkX7etKxaZwhyI4bVeGohaaAiM1mgIjRsEgu8QxkkwHNGOr8Pwg6nUc8fyXwvcXx
+         3WFtBNqlghtGQc4yAM60SoXsy8IrxH1/w20bj6VDfrwvSQTOsgMq11IWBVogHyIGopnH
+         kNlQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
-        Omar Sandoval <osandov@fb.com>, Liu Bo <bo.li.liu@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 35/67] btrfs: fix deadlock when writing out space cache
-Date: Fri,  2 Feb 2018 17:58:04 +0100
-Message-Id: <20180202140819.497327493@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Nadav Amit <nadav.amit@gmail.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 36/67] KVM: VMX: Fix rflags cache during vCPU reset
+Date: Fri,  2 Feb 2018 17:58:05 +0100
+Message-Id: <20180202140819.570874745@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309345660400496?=
+X-GMAIL-MSGID: =?utf-8?q?1591309345660400496?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,44 +53,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Wanpeng Li <wanpeng.li@hotmail.com>
 
 
-[ Upstream commit b77000ed558daa3bef0899d29bf171b8c9b5e6a8 ]
+[ Upstream commit c37c28730bb031cc8a44a130c2555c0f3efbe2d0 ]
 
-If we fail to prepare our pages for whatever reason (out of memory in
-our case) we need to make sure to drop the block_group->data_rwsem,
-otherwise hilarity ensues.
+Reported by syzkaller:
 
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ add label and use existing unlocking code ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+   *** Guest State ***
+   CR0: actual=0x0000000080010031, shadow=0x0000000060000010, gh_mask=fffffffffffffff7
+   CR4: actual=0x0000000000002061, shadow=0x0000000000000000, gh_mask=ffffffffffffe8f1
+   CR3 = 0x000000002081e000
+   RSP = 0x000000000000fffa  RIP = 0x0000000000000000
+   RFLAGS=0x00023000         DR7 = 0x00000000000000
+          ^^^^^^^^^^
+   ------------[ cut here ]------------
+   WARNING: CPU: 6 PID: 24431 at /home/kernel/linux/arch/x86/kvm//x86.c:7302 kvm_arch_vcpu_ioctl_run+0x651/0x2ea0 [kvm]
+   CPU: 6 PID: 24431 Comm: reprotest Tainted: G        W  OE   4.14.0+ #26
+   RIP: 0010:kvm_arch_vcpu_ioctl_run+0x651/0x2ea0 [kvm]
+   RSP: 0018:ffff880291d179e0 EFLAGS: 00010202
+   Call Trace:
+    kvm_vcpu_ioctl+0x479/0x880 [kvm]
+    do_vfs_ioctl+0x142/0x9a0
+    SyS_ioctl+0x74/0x80
+    entry_SYSCALL_64_fastpath+0x23/0x9a
 
+The failed vmentry is triggered by the following beautified testcase:
+
+    #include <unistd.h>
+    #include <sys/syscall.h>
+    #include <string.h>
+    #include <stdint.h>
+    #include <linux/kvm.h>
+    #include <fcntl.h>
+    #include <sys/ioctl.h>
+
+    long r[5];
+    int main()
+    {
+        struct kvm_debugregs dr = { 0 };
+
+        r[2] = open("/dev/kvm", O_RDONLY);
+        r[3] = ioctl(r[2], KVM_CREATE_VM, 0);
+        r[4] = ioctl(r[3], KVM_CREATE_VCPU, 7);
+        struct kvm_guest_debug debug = {
+                .control = 0xf0403,
+                .arch = {
+                        .debugreg[6] = 0x2,
+                        .debugreg[7] = 0x2
+                }
+        };
+        ioctl(r[4], KVM_SET_GUEST_DEBUG, &debug);
+        ioctl(r[4], KVM_RUN, 0);
+    }
+
+which testcase tries to setup the processor specific debug
+registers and configure vCPU for handling guest debug events through
+KVM_SET_GUEST_DEBUG.  The KVM_SET_GUEST_DEBUG ioctl will get and set
+rflags in order to set TF bit if single step is needed. All regs' caches
+are reset to avail and GUEST_RFLAGS vmcs field is reset to 0x2 during vCPU
+reset. However, the cache of rflags is not reset during vCPU reset. The
+function vmx_get_rflags() returns an unreset rflags cache value since
+the cache is marked avail, it is 0 after boot. Vmentry fails if the
+rflags reserved bit 1 is 0.
+
+This patch fixes it by resetting both the GUEST_RFLAGS vmcs field and
+its cache to 0x2 during vCPU reset.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Tested-by: Dmitry Vyukov <dvyukov@google.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/free-space-cache.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/free-space-cache.c
-+++ b/fs/btrfs/free-space-cache.c
-@@ -1258,7 +1258,7 @@ static int __btrfs_write_out_cache(struc
- 	/* Lock all pages first so we can lock the extent safely. */
- 	ret = io_ctl_prepare_pages(io_ctl, inode, 0);
- 	if (ret)
--		goto out;
-+		goto out_unlock;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4954,7 +4954,7 @@ static void vmx_vcpu_reset(struct kvm_vc
+ 		vmcs_write64(GUEST_IA32_DEBUGCTL, 0);
+ 	}
  
- 	lock_extent_bits(&BTRFS_I(inode)->io_tree, 0, i_size_read(inode) - 1,
- 			 0, &cached_state);
-@@ -1351,6 +1351,7 @@ out_nospc_locked:
- out_nospc:
- 	cleanup_write_cache_enospc(inode, io_ctl, &cached_state, &bitmap_list);
+-	vmcs_writel(GUEST_RFLAGS, 0x02);
++	kvm_set_rflags(vcpu, X86_EFLAGS_FIXED);
+ 	kvm_rip_write(vcpu, 0xfff0);
  
-+out_unlock:
- 	if (block_group && (block_group->flags & BTRFS_BLOCK_GROUP_DATA))
- 		up_write(&block_group->data_rwsem);
- 
+ 	vmcs_writel(GUEST_GDTR_BASE, 0);
