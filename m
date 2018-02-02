@@ -1,65 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751729AbeBBODz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:03:55 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:48280 "EHLO hermes.aosc.io"
+        id S1752118AbeBBOEI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:04:08 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:48300 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752059AbeBBODq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:03:46 -0500
+        id S1752085AbeBBODx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 09:03:53 -0500
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 2/3] ARM: dts: sun8i: add audio codec support into V3s DTSI
-Date: Fri,  2 Feb 2018 22:01:52 +0800
-Message-Id: <20180202140153.21549-3-icenowy@aosc.io>
+Subject: [PATCH 3/3] ARM: sun8i: v3s: enable audio on Lichee Pi Zero Dock board
+Date: Fri,  2 Feb 2018 22:01:53 +0800
+Message-Id: <20180202140153.21549-4-icenowy@aosc.io>
 In-Reply-To: <20180202140153.21549-1-icenowy@aosc.io>
 References: <20180202140153.21549-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner V3s SoC features an internal audio codec like the one in H3,
-and a analog codec like the one in H3/A23 (but much simpler).
+The Lichee Pi Zero Dock board has an audio jack and an onboard MIC.
 
-Add them in the DTSI file.
+Enable them.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm/boot/dts/sun8i-v3s.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index 20edebd983f0..f6c534efaef9 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -354,6 +354,25 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts
+index d1311098ea45..80f477738668 100644
+--- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts
++++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts
+@@ -55,6 +55,15 @@
+ 	};
+ };
  
-+		codec: codec@01c22c00 {
-+			#sound-dai-cells = <0>;
-+			compatible = "allwinner,sun8i-v3s-codec";
-+			reg = <0x01c22c00 0x400>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+			clock-names = "apb", "codec";
-+			resets = <&ccu RST_BUS_CODEC>;
-+			dmas = <&dma 15>, <&dma 15>;
-+			dma-names = "rx", "tx";
-+			allwinner,codec-analog-controls = <&codec_analog>;
-+			status = "disabled";
-+		};
++&codec {
++	allwinner,audio-routing =
++		"Headphone", "HP",
++		"Headphone", "HPCOM",
++		"MIC1", "Mic",
++		"Mic",  "HBIAS";
++	status = "okay";
++};
 +
-+		codec_analog: codec-analog@01c23000 {
-+			compatible = "allwinner,sun8i-v3s-codec-analog";
-+			reg = <0x01c23000 0x4>;
-+		};
-+
- 		uart0: serial@1c28000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x01c28000 0x400>;
+ &mmc1 {
+ 	broken-cd;
+ 	bus-width = <4>;
 -- 
 2.15.1
