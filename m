@@ -1,47 +1,76 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227DfCcLngR2X7qhbQwbNs2CRlr6+dEQhirAULNBkbZZFxDbHhcMnKAwcd8hm8mHki1T+VJM
-ARC-Seal: i=1; a=rsa-sha256; t=1517591269; cv=none;
-        d=google.com; s=arc-20160816;
-        b=NtmpXbYE8bK85FA713hXjAxLx7JRYKTbaCDrWBGnUOEVoj3Pr89B0phTG5y2aYcaH2
-         kRwXSxLSnVzZgwU1jq4xqR+9RW5MSVGByeT2HUa3G9E+Dpg/0L6+aDcGn7jgUeFpYZWn
-         gmo8wGSDVaBOQ/8xuf++RmRHdKOaj0CZ9Q7l98XPMrEmtd2TlmTGdjrLxAZDk7nXppS7
-         26w+a2Pm/eYGtP84KSizDacKefQ5MsBpZogm7Of3uzMKVHz2wBIGfxUWzorMYDEIcGug
-         u6kS/6DlLXOh0aXjiN5dMeGaQJa0QiqveMv2ScXEa6AXlyoFhcpMHNz+9fFnziP+udkc
-         f+zA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=TinKj3s1gQOgx+0JnxGVAHHxiHzwU/7GV57F/8rswrI=;
-        b=JfI9/S6DXMllm42/T4XUlqVV+Ml4viZk6XSnnyEC4Ay+OaNcQxw5BKXQ3C7O/G8LP9
-         0x9USomn0dl13uKwW+DkTXZp6jreKN47qPcDbYbviuEAJDYwYsNGtAdrimpxliwF9trB
-         D/vkiSN9dF6FmQxdNqNYmto2SXU5N4i8nKAX3UJ2Dysgz70IlzUqLkucW+nRCJGx/VyJ
-         U7hAz6L7i8/E4usiO7P7GR1zD6xQh+3N2I4hvtWucKfsGu2asityWVoJ1c83NWoacyuc
-         sBiBueQzi/07sViFSDw1W7xCZgLCDKRtArHUi+EOhnBKP49PokiBUoosS9LnG5MSpP8Y
-         g4Yg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2879036-1517591268-2-12272333507570141588
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591268; b=cb6hdYfWhXewEftZxDhrlxVnqxPhflXks8RauAFiBRPc55O
+    FOr8VZoNx+RR9i5AyeFRkH5zHpgn8UMUNlhCbcqB05wRVchcYb+PPiLqC3q9FDtQ
+    m58JQ3gh5gIGBzcqxqAWPZK/KgVfcq3ew6dv8tEiwqEjEXoEvGx+XF3Z3aw+eBU8
+    am0Ejq784r3GoWLZaKFDhLgFm/BsRreID0pyGuUe5HVvBHbReOYcDf+CThScrQcT
+    Yz5ZiaQFo766Igr/TbjB/eF7EjwfyPTClwkNTABpK6gt7esv776DqCwcFOetprSI
+    soIvtTAghQVo90t5S4P95undz8rmSRpLQ5e3/vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591268; bh=fwKa0CmToxr4Y2cOWIu4fIzqZP
+    h/6ZvNh3FTsm4ki+c=; b=qFkG1woOj4xU7jLvhmdMFIfQ+JmyPzgupcw/PO8WXS
+    8dHvMbVuXKeO6OCkP/FH3+ff0Pv8AORGHPifd0ZrqOMOHgivMQ/9jvFpROq+PPFg
+    ZheAmS0fQWU0sXRT54N+Son0DnBlyovqe406/xV9ZOBoNd/ER/59sXgJ0Z7lI6yi
+    PU7Y8QHjoOJckwRGuoon6Vi6Zfl+b95DscIcDaKHfUDX3nWW1Umh1wT81IWpaTfV
+    A9dxGrGb9dTmsTVYKlP/b/wiX20FD7SzkroKBcS8+aLsVrPNjOliVJg2V+f3h9oz
+    W5CSbh3hD2px6lK5Ei9Hw+uWy6YEs91igkxKB2yzxzVg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752077AbeBBRHo (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:07:44 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37096 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753163AbeBBRHk (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:07:40 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jason Gerecke <jason.gerecke@wacom.com>,
-	Aaron Skomra <aaron.skomra@wacom.com>,
-	Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 021/156] HID: wacom: Fix reporting of touch toggle (WACOM_HID_WD_MUTE_DEVICE) events
-Date: Fri,  2 Feb 2018 17:56:42 +0100
-Message-Id: <20180202140841.282225601@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 019/156] crypto: af_alg - whitelist mask and type
+Date: Fri,  2 Feb 2018 17:56:40 +0100
+Message-Id: <20180202140841.185966767@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309782831925446?=
-X-GMAIL-MSGID: =?utf-8?q?1591309782831925446?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,79 +78,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Gerecke <killertofu@gmail.com>
+From: Stephan Mueller <smueller@chronox.de>
 
-commit 403c0f681c1964ff1db8c2fb8de8c4067779d081 upstream.
+commit bb30b8848c85e18ca7e371d0a869e94b3e383bdf upstream.
 
-Touch toggle softkeys send a '1' while pressed and a '0' while released,
-requring the kernel to keep track of wether touch should be enabled or
-disabled. The code does not handle the state transitions properly,
-however. If the key is pressed repeatedly, the following four states
-of states are cycled through (assuming touch starts out enabled):
+The user space interface allows specifying the type and mask field used
+to allocate the cipher. Only a subset of the possible flags are intended
+for user space. Therefore, white-list the allowed flags.
 
-Press:   shared->is_touch_on => 0, SW_MUTE_DEVICE => 1
-Release: shared->is_touch_on => 0, SW_MUTE_DEVICE => 1
-Press:   shared->is_touch_on => 1, SW_MUTE_DEVICE => 0
-Release: shared->is_touch_on => 1, SW_MUTE_DEVICE => 1
+In case the user space caller uses at least one non-allowed flag, EINVAL
+is returned.
 
-The hardware always properly enables/disables touch when the key is
-pressed but applications that listen for SW_MUTE_DEVICE events to provide
-feedback about the state will only ever show touch as being enabled while
-the key is held, and only every-other time. This sequence occurs because
-the fallthrough WACOM_HID_WD_TOUCHONOFF case is always handled, and it
-uses the value of the *local* is_touch_on variable as the value to
-report to userspace. The local value is equal to the shared value when
-the button is pressed, but equal to zero when the button is released.
-
-Reporting the shared value to userspace fixes this problem, but the
-fallthrough case needs to update the shared value in an incompatible
-way (which is why the local variable was introduced in the first place).
-To work around this, we just handle both cases in a single block of code
-and update the shared variable as appropriate.
-
-Fixes: d793ff8187 ("HID: wacom: generic: support touch on/off softkey")
-Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
-Reviewed-by: Aaron Skomra <aaron.skomra@wacom.com>
-Tested-by: Aaron Skomra <aaron.skomra@wacom.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/wacom_wac.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ crypto/af_alg.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -1924,7 +1924,6 @@ static void wacom_wac_pad_event(struct h
- 	struct wacom_features *features = &wacom_wac->features;
- 	unsigned equivalent_usage = wacom_equivalent_usage(usage->hid);
- 	int i;
--	bool is_touch_on = value;
- 	bool do_report = false;
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -150,7 +150,7 @@ EXPORT_SYMBOL_GPL(af_alg_release_parent)
  
- 	/*
-@@ -1969,16 +1968,17 @@ static void wacom_wac_pad_event(struct h
- 		break;
+ static int alg_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+ {
+-	const u32 forbidden = CRYPTO_ALG_INTERNAL;
++	const u32 allowed = CRYPTO_ALG_KERN_DRIVER_ONLY;
+ 	struct sock *sk = sock->sk;
+ 	struct alg_sock *ask = alg_sk(sk);
+ 	struct sockaddr_alg *sa = (void *)uaddr;
+@@ -158,6 +158,10 @@ static int alg_bind(struct socket *sock,
+ 	void *private;
+ 	int err;
  
- 	case WACOM_HID_WD_MUTE_DEVICE:
--		if (wacom_wac->shared->touch_input && value) {
--			wacom_wac->shared->is_touch_on = !wacom_wac->shared->is_touch_on;
--			is_touch_on = wacom_wac->shared->is_touch_on;
--		}
--
--		/* fall through*/
- 	case WACOM_HID_WD_TOUCHONOFF:
- 		if (wacom_wac->shared->touch_input) {
-+			bool *is_touch_on = &wacom_wac->shared->is_touch_on;
++	/* If caller uses non-allowed flag, return error. */
++	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
++		return -EINVAL;
 +
-+			if (equivalent_usage == WACOM_HID_WD_MUTE_DEVICE && value)
-+				*is_touch_on = !(*is_touch_on);
-+			else if (equivalent_usage == WACOM_HID_WD_TOUCHONOFF)
-+				*is_touch_on = value;
-+
- 			input_report_switch(wacom_wac->shared->touch_input,
--					    SW_MUTE_DEVICE, !is_touch_on);
-+					    SW_MUTE_DEVICE, !(*is_touch_on));
- 			input_sync(wacom_wac->shared->touch_input);
- 		}
- 		break;
+ 	if (sock->state == SS_CONNECTED)
+ 		return -EINVAL;
+ 
+@@ -176,9 +180,7 @@ static int alg_bind(struct socket *sock,
+ 	if (IS_ERR(type))
+ 		return PTR_ERR(type);
+ 
+-	private = type->bind(sa->salg_name,
+-			     sa->salg_feat & ~forbidden,
+-			     sa->salg_mask & ~forbidden);
++	private = type->bind(sa->salg_name, sa->salg_feat, sa->salg_mask);
+ 	if (IS_ERR(private)) {
+ 		module_put(type->owner);
+ 		return PTR_ERR(private);
