@@ -1,46 +1,75 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2243Lm9bV+U5cofD1/6QRVEDzVOEGtrvS8t1LftluJCmxIHuVCTGV0GFHKrhyX/Met/DgnO3
-ARC-Seal: i=1; a=rsa-sha256; t=1517591251; cv=none;
-        d=google.com; s=arc-20160816;
-        b=WP4RYFx1fhQSgQrJCWieo+gxj4YtLJPQjg7TjuVzAK90Y8mQ5+MTzV69lPNLGIB1fv
-         uYB/6o7PqhhjgtNILxIXpRiP4pl6oOCQ3QUBMj0y9l7/3FhwZYpvxspWj8znMibP3alX
-         YczWLhYh305f1u+LbHSf19W5JX7uVLGpGWon9VwUDTdPDj+2P/oHYdIhMnC8SFqj4bXF
-         /QK6BCSE7LmgjVk9MPtvYTKID9nwbdn26KPHIm98AlN/UsdeolT8GzPHPmJrIyQItoko
-         YN6SHM+LsCt4bW0TglmDmHI5kSQEvYUXi+9zxoThp2AS6vBAge9gwCkOrr623jBqD/Wg
-         Q10A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=59BO1eBgvf6ErkGAG3tT1gipt5haK8F/OkqIMyLLVfc=;
-        b=vxlSpeet8mkxnI0LxeH+jek6H3o+9ftSzq+bcQ0y7jW/WXMRLo7gDfnhqgS6PTd3ZW
-         D2aZW5aS2JHO1nWH/M7XYgjwJt/98yTXM+AUvynRtHO3rPh/zzsRIXwA7Mtj1dguVrwI
-         YGggV5mIg75pMYXXvSmeWNHqs4d2lFtlgrF7HMx0bwx4DPHJVlMYuXIjm5g14momEJ5h
-         odNuu6e24YuV1frFho9+qEq2JI8DwwtZe8vF+gDU/yPX8dr/QhPzR8paNnhQLThv7DSA
-         BD7ii2cQSnL6jPcMDpO9WrHSxHmkPBhAihiRvxkz/P82Dp+MyGCeSfjrohTCfWIdZckg
-         588A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591245-2-17132393223148683269
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591244; b=WnYmGEOP7QxCbd6mO4qNcuLiKS3QKFS7Ex/0G/3qrBCtklw
+    nt9SdFZTmB4pfZkEE0AbQlmU8vzIjhhDb6ROGPXaDcmecRmjSMjjIgO2EBSL4HcT
+    EUgJ0idLZxYz48d60I9rPdck/hlSr436hYMtLpx0pXITCqoqpRCQUwRXTNBstFUv
+    tV/APgp+gdvHJyAwjJ7cL+Op/HRfhfPM+oT/oC4eQk0t0XUM7k8Z4Rvm+Hz7DCUy
+    DsVNojje3peFAvNcB02XUDhF8FHXcGv7Pxt+c4E5Sn2fQAbCe1h8J5YAdsBP8j4s
+    0giqeG8pY+4qXEUsa43zTQpBnaQbz7OSq4pO4ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591244; bh=Xuh0/6KGmpxEkrUX+Pc7RISqYb
+    TeEpBGK7Lam/dQmH0=; b=HxDBMNd2QxbNb/j9Cna65BkiOhVGWJ90yDqj1MIMg5
+    ay4VUO39YsOZQ2UxJrtzyR9NSOjTUuEWMG0byU1hhS5Va0ryQ/i+BFpw+riqsXsj
+    JGABBK9JV24i0mJOZG+kNxKxehDcff/CqlruLWoL3NMZadr84ScTGPWK/Xwhf8Ef
+    pmLjUmoS0tvepPiudKRe8VEQkIWQonZkXP93cxZpREq1mOZFy9FDnvWONpG+K294
+    gZLLr/40+JYRaEQf4Fz4ALnySjhmmM6VT9tcyIFCCjmcjqSoAUUKI9WCC33SAbMb
+    IwdQgHW+q/b9/0H9p2lyDRYaFW6zCGNbT9ZeURNYM7ag==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753145AbeBBRHX (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:07:23 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36988 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753050AbeBBRHR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:07:17 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Antoine Tenart <antoine.tenart@free-electrons.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 016/156] crypto: inside-secure - fix hash when length is a multiple of a block
-Date: Fri,  2 Feb 2018 17:56:37 +0100
-Message-Id: <20180202140841.044638657@linuxfoundation.org>
+        stable@vger.kernel.org, Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 012/156] crypto: aesni - Use GCM IV size constant
+Date: Fri,  2 Feb 2018 17:56:33 +0100
+Message-Id: <20180202140840.871267023@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309763913025219?=
-X-GMAIL-MSGID: =?utf-8?q?1591309763913025219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,66 +77,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
+From: Corentin LABBE <clabbe.montjoie@gmail.com>
 
-commit 809778e02cd45d0625439fee67688f655627bb3c upstream.
+commit 46d93748e5a3628f9f553832cd64d8a59d8bafde upstream.
 
-This patch fixes the hash support in the SafeXcel driver when the update
-size is a multiple of a block size, and when a final call is made just
-after with a size of 0. In such cases the driver should cache the last
-block from the update to avoid handling 0 length data on the final call
-(that's a hardware limitation).
+This patch replace GCM IV size value by their constant name.
 
-Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
-Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/inside-secure/safexcel_hash.c |   34 +++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 10 deletions(-)
+ arch/x86/crypto/aesni-intel_glue.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -185,17 +185,31 @@ static int safexcel_ahash_send(struct cr
- 	else
- 		cache_len = queued - areq->nbytes;
- 
--	/*
--	 * If this is not the last request and the queued data does not fit
--	 * into full blocks, cache it for the next send() call.
--	 */
--	extra = queued & (crypto_ahash_blocksize(ahash) - 1);
--	if (!req->last_req && extra) {
--		sg_pcopy_to_buffer(areq->src, sg_nents(areq->src),
--				   req->cache_next, extra, areq->nbytes - extra);
-+	if (!req->last_req) {
-+		/* If this is not the last request and the queued data does not
-+		 * fit into full blocks, cache it for the next send() call.
-+		 */
-+		extra = queued & (crypto_ahash_blocksize(ahash) - 1);
-+		if (!extra)
-+			/* If this is not the last request and the queued data
-+			 * is a multiple of a block, cache the last one for now.
-+			 */
-+			extra = queued - crypto_ahash_blocksize(ahash);
- 
--		queued -= extra;
--		len -= extra;
-+		if (extra) {
-+			sg_pcopy_to_buffer(areq->src, sg_nents(areq->src),
-+					   req->cache_next, extra,
-+					   areq->nbytes - extra);
-+
-+			queued -= extra;
-+			len -= extra;
-+
-+			if (!queued) {
-+				*commands = 0;
-+				*results = 0;
-+				return 0;
-+			}
-+		}
- 	}
- 
- 	spin_lock_bh(&priv->ring[ring].egress_lock);
+--- a/arch/x86/crypto/aesni-intel_glue.c
++++ b/arch/x86/crypto/aesni-intel_glue.c
+@@ -28,6 +28,7 @@
+ #include <crypto/cryptd.h>
+ #include <crypto/ctr.h>
+ #include <crypto/b128ops.h>
++#include <crypto/gcm.h>
+ #include <crypto/xts.h>
+ #include <asm/cpu_device_id.h>
+ #include <asm/fpu/api.h>
+@@ -1131,7 +1132,7 @@ static struct aead_alg aesni_aead_algs[]
+ 	.setauthsize		= common_rfc4106_set_authsize,
+ 	.encrypt		= helper_rfc4106_encrypt,
+ 	.decrypt		= helper_rfc4106_decrypt,
+-	.ivsize			= 8,
++	.ivsize			= GCM_RFC4106_IV_SIZE,
+ 	.maxauthsize		= 16,
+ 	.base = {
+ 		.cra_name		= "__gcm-aes-aesni",
+@@ -1149,7 +1150,7 @@ static struct aead_alg aesni_aead_algs[]
+ 	.setauthsize		= rfc4106_set_authsize,
+ 	.encrypt		= rfc4106_encrypt,
+ 	.decrypt		= rfc4106_decrypt,
+-	.ivsize			= 8,
++	.ivsize			= GCM_RFC4106_IV_SIZE,
+ 	.maxauthsize		= 16,
+ 	.base = {
+ 		.cra_name		= "rfc4106(gcm(aes))",
+@@ -1165,7 +1166,7 @@ static struct aead_alg aesni_aead_algs[]
+ 	.setauthsize		= generic_gcmaes_set_authsize,
+ 	.encrypt		= generic_gcmaes_encrypt,
+ 	.decrypt		= generic_gcmaes_decrypt,
+-	.ivsize			= 12,
++	.ivsize			= GCM_AES_IV_SIZE,
+ 	.maxauthsize		= 16,
+ 	.base = {
+ 		.cra_name		= "gcm(aes)",
