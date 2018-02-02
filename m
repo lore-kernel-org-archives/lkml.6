@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591467-2-8054957240884995717
+X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591465-2-9683388766279913213
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591467; b=l/bBgcq1fez3rJ/ORdun7R4L+UrELes5CnSF1G0wsRmuCYU
-    JWI7kFe6WhnBJ3Dn2SSq6KJywQovxT3qVZorOVTbS5e+nVWEp60h5OUYFl/XtumL
-    O1YfmiPtdLqmY0hKzT7VrHetuBgoMDLOK6CkldeozXxEbTKDda34k2zuDP34IAvw
-    2S1ZcZZSqpCVOvG+jyPMBJWNdOLljXv3BeXbw/AEEf6MLV4behlvaNxftESCajdt
-    hNbRmH5hDpyMeWBmiH+/AskAXLd3IJMWmcqD6KtY0FYxvTfDnLX0nE8XZ/vo6cUU
-    xIrtlnmnqEWiOdsWsOSZbrh7a+ggtvW6lNqXKXA==
+    t=1517591464; b=XgjXgK7F4S/WFnc7uK29grZUSiIQcd5cspf5jVyFG6Ktvjz
+    RaWuUEciL08VThjxrkWym3yFuYS1itydisG4TsdAcKUPco6HVlWgLHTjbH1TrkGc
+    M0ItyjgyQziWylM2UW+gjDJDGdu+O1txxngD97mIQiyQ6HrL8Uc9K10QiuAECTDj
+    SBl2pO4K6dfDKycqVahEy+uc51zjaV22izUOI0kYlWlLGzTXKGS3gmu2goUtwkEs
+    +6AeHmqoP7xX5tlSiIbP+lLzJEyH0ah1UftsH5S6FhuNjfohzenU5C/2REu7og0I
+    w3Uma67SsHtslMi61C4vd/wpVWFEFjYFWXNNQbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591467; bh=mS2RXh6xdeTrRka2Z0lXPCzCuU
-    wVqPopUd2GaoFEue0=; b=U0yIA0BjU73rM0SkGheDPBHe6wgEQdRXnDqfhJcE2q
-    bkf4XvrOhUk/draO1UCzDPXzGB1Bq9Cr+xVaSkSjFVuap7tFO/kryXI5uot5t52z
-    L2tC+YxDwG8MxRGdW+NF4GRolPpDUkmQ01+eMRTmfjvRnd+mYCMB/rL1/6CfBmAb
-    00UpYZRNLyaqb3k7SfGb6r0FFtP/JpepDmAsAEc6tdn6roIGJzsTUZFx3TFXG5Kd
-    cpDUZ5oLHSTyVEcJAQw4yqcAbf0jx+CvvTUuoawH9ZOjaZExSvRtPFlAazmGJ8bA
-    aLE5CAu5epwoQA18BbgcJZX9TEYluXr9UmeSu2M2CRGw==
+    :list-id; s=arctest; t=1517591464; bh=tw/QczJbYVIcxm2UJvTe6ddA0e
+    pXNQDlRzGrg9XE1jw=; b=PKr1RqzItkBjbZcorBx25ywRe+UBm+BWog6IHPj7rq
+    QFjf4JnY/dBKEHgVisaddvokP+y99cAlYlfgR4K1UDtFzkjVj16ahL0woRL2kUGn
+    eJ0AeA9ysv89ZeX6gfGAAZxYsX5VounktLW8u3KCsngM8TXKncAM2dX3Xs+rN7IG
+    FvKcjfPTszsSIqYGjSvzE20QqpOOTMp2J+Z6ix6j/3/bucRbTO38bbwUSE5dovCB
+    n30mTZ6INVD1ufUH7lc2jdJiJEQhMHyTzlcmIyKLyhb2FSUTTa51xGIufqNh0Bhl
+    rNoXX8ZloLAjcoDRfzTEPqlbtjPSIPLAaVAWKG107BTA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753350AbeBBRK5 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:10:57 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38436 "EHLO
+        id S1753354AbeBBRK6 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:10:58 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38470 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753345AbeBBRKr (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:10:47 -0500
+        with ESMTP id S1753123AbeBBRKx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:10:53 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Meyer <thomas@m3y3r.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 084/156] auxdisplay: img-ascii-lcd: Only build on archs that have IOMEM
-Date: Fri,  2 Feb 2018 17:57:45 +0100
-Message-Id: <20180202140844.059801348@linuxfoundation.org>
+Subject: [PATCH 4.14 086/156] nfsd: Ensure we check stateid validity in the seqid operation checks
+Date: Fri,  2 Feb 2018 17:57:47 +0100
+Message-Id: <20180202140844.144140129@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -79,31 +79,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Meyer <thomas@m3y3r.de>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
 
-[ Upstream commit 141cbfba1d0502006463aa80f57c64086226af1a ]
+[ Upstream commit 9271d7e509c1bfc0b9a418caec29ec8d1ac38270 ]
 
-This avoids the MODPOST error:
+After taking the stateid st_mutex, we want to know that the stateid
+still represents valid state before performing any non-idempotent
+actions.
 
-  ERROR: "devm_ioremap_resource" [drivers/auxdisplay/img-ascii-lcd.ko] undefined!
-
-Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/auxdisplay/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ fs/nfsd/nfs4state.c |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
---- a/drivers/auxdisplay/Kconfig
-+++ b/drivers/auxdisplay/Kconfig
-@@ -136,6 +136,7 @@ config CFAG12864B_RATE
- 
- config IMG_ASCII_LCD
- 	tristate "Imagination Technologies ASCII LCD Display"
-+	depends on HAS_IOMEM
- 	default y if MIPS_MALTA || MIPS_SEAD3
- 	select SYSCON
- 	help
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -5180,15 +5180,9 @@ static __be32 nfs4_seqid_op_checks(struc
+ 	status = nfsd4_check_seqid(cstate, sop, seqid);
+ 	if (status)
+ 		return status;
+-	if (stp->st_stid.sc_type == NFS4_CLOSED_STID
+-		|| stp->st_stid.sc_type == NFS4_REVOKED_DELEG_STID)
+-		/*
+-		 * "Closed" stateid's exist *only* to return
+-		 * nfserr_replay_me from the previous step, and
+-		 * revoked delegations are kept only for free_stateid.
+-		 */
+-		return nfserr_bad_stateid;
+-	mutex_lock(&stp->st_mutex);
++	status = nfsd4_lock_ol_stateid(stp);
++	if (status != nfs_ok)
++		return status;
+ 	status = check_stateid_generation(stateid, &stp->st_stid.sc_stateid, nfsd4_has_session(cstate));
+ 	if (status == nfs_ok)
+ 		status = nfs4_check_fh(current_fh, &stp->st_stid);
