@@ -1,73 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeBBOWb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:22:31 -0500
-Received: from mout.web.de ([212.227.15.4]:54640 "EHLO mout.web.de"
+        id S1752043AbeBBO0z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:26:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752191AbeBBOWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:22:24 -0500
-Subject: [PATCH 2/2] i2c-sh7760: Improve a size determination in
- sh7760_i2c_probe()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <3f4a9053-5518-61ab-2cdf-e400f6b35ce3@users.sourceforge.net>
-Message-ID: <51f963df-4ad0-22a9-5d27-67facfac7a27@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 15:22:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751589AbeBBO0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 09:26:49 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFAB52178E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 2 Feb 2018 11:26:38 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: kan.liang@intel.com
+Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        wangnan0@huawei.com, jolsa@kernel.org, namhyung@kernel.org,
+        ak@linux.intel.com, yao.jin@linux.intel.com
+Subject: Re: [PATCH V5 12/17] perf evsel: expose
+ perf_missing_features.write_backward
+Message-ID: <20180202142638.GC26905@kernel.org>
+References: <1516310792-208685-1-git-send-email-kan.liang@intel.com>
+ <1516310792-208685-13-git-send-email-kan.liang@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <3f4a9053-5518-61ab-2cdf-e400f6b35ce3@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:kcDwTQnplwXRSwYbjjyNgYb687Tea6AXpSIgUAsNG9OEA2FIplr
- fjqaGh4x+9MIj/Ul4ij6Co2yJBgQnYw7+BKXozQSTtlAS2hvcr+MaCbdcQ11QCyS8LAc/yn
- DSiHpvCC65untEJacteunDR7tZ1821XzovJtaPiWYaeioYMkurAYL5N1CIN7FlTG7/0F2no
- vgD5Ru94HP257SuncXVmw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:i2Cj4pgUHqg=:Euxlk7N6xmF/KgIsL2kRCd
- MEkbGHOHTF4aJ7qHlxHxO6/NdPQD4r5mrCOZjNMTVDaJeMfQVa84Bk67sWvU471s1N6H7167f
- T4ST4SVw8QqFe3ILcjythUlFGZOuYmGLYuSonvHBSMzXKdKyuBvlI5Q8tF4Yre1pdHtVf4Cfs
- CSGz5tyUrf2/0aH6vfXF1BLoi3G0FOXEXEWmz5C0cCUseaFcn03ZnXhkbX8wOFpu0wCB9SsaF
- Gm4kcEAhxsB5ztLy47KXp8DLqmK3Fyh7AmRIiLxEW5VvIBqCuVNbTm7JsUhH7+BJBDjNPmy8b
- 2KI0P8LOVWvpCenbzw385Pbdl9XF/JanV9rpe/sZdXFIn9MH2/G79+VF++SX+tnBrr6mPAekf
- drE5O+/B8GtThgDK1reQXm12FbzmsCAGPUS7t+5mXJZ3+A7lhCE9IjSziYT8eYPoKLSy/0/pR
- /geDoWwjjtWojBEd0bIxBOZCv31kXapSvtHyrdu9BTaNcQZhy3oML+24o93k5T8wJezQGV77q
- Ov1W0R1tL6/vvr6E8nHP8rtLMnZhGcxvPGDrY+6j5Uce/rvxmuGthAne5Ya1uwto9Enz7xStE
- tk8qK7YTuwqvrmmVxgYlofOCEeip16VboMMOJ0BcMj7KBX5zxkySgBfZ+4I7ogO5rshfHx/Kq
- PxH+KR/iCMgc/lt/2Ey980tmx2K+GUuGAZqKSQKnyD+gqriUVUCPFZFBYY22YpajHdHdJAs4E
- sb6zdjs6PFPlOTKIqEZHUC8ZITXFge26nEuF20274GVpB1F4iZYp6aI9Q1pJtEbCVnHn9acpz
- Gx59ay3Jylk9//L/1EuPP2D5LiKKIEdmIL+sV2Cb37IFr56ks4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516310792-208685-13-git-send-email-kan.liang@intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 14:50:09 +0100
+Em Thu, Jan 18, 2018 at 01:26:27PM -0800, kan.liang@intel.com escreveu:
+> From: Kan Liang <kan.liang@intel.com>
+> 
+> perf top need it to handle overwrite fallback later.
+> 
+> Signed-off-by: Kan Liang <kan.liang@intel.com>
+> ---
+>  tools/perf/util/evsel.c | 5 +++++
+>  tools/perf/util/evsel.h | 2 ++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 4eea3b4..1dd3700 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -1670,6 +1670,11 @@ static bool ignore_missing_thread(struct perf_evsel *evsel,
+>  	return true;
+>  }
+>  
+> +bool is_write_backward_fail(void)
+> +{
+> +	return perf_missing_features.write_backward;
+> +}
+> +
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Humm,  I think we better expose perf_missing_features, i.e. tools using
 
-This issue was detected by using the Coccinelle software.
+	if (perf_missing_features.write_backward)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/i2c/busses/i2c-sh7760.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+looks more clear than:
 
-diff --git a/drivers/i2c/busses/i2c-sh7760.c b/drivers/i2c/busses/i2c-sh7760.c
-index 4d2e4d10600b..62bc23b9acbb 100644
---- a/drivers/i2c/busses/i2c-sh7760.c
-+++ b/drivers/i2c/busses/i2c-sh7760.c
-@@ -443,7 +443,7 @@ static int sh7760_i2c_probe(struct platform_device *pdev)
- 		goto out0;
- 	}
- 
--	id = kzalloc(sizeof(struct cami2c), GFP_KERNEL);
-+	id = kzalloc(sizeof(*id), GFP_KERNEL);
- 	if (!id) {
- 		ret = -ENOMEM;
- 		goto out0;
--- 
-2.16.1
+	if (is_write_backward_fail())
+
+This is minor, so I'm doing this myself, please holler if you disagree.
+
+- Arnaldo
+
+>  int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
+>  		     struct thread_map *threads)
+>  {
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index 846e416..1f46728 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -448,4 +448,6 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
+>  
+>  struct perf_env *perf_evsel__env(struct perf_evsel *evsel);
+>  
+> +bool is_write_backward_fail(void);
+> +
+>  #endif /* __PERF_EVSEL_H */
+> -- 
+> 2.5.5
