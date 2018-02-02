@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227sRPV59a+VTpoiNmYl7Vt0f8hWdu53ThEzTRoWbTMD+iEcp/zXXrdo2bYGMfNggk6a2REG
+X-Google-Smtp-Source: AH8x2254h5EpKG4jyJ2vFR6ESKLTeinjhLsz3h1LhVcA2WfzTx/YiWoia/CxBJw43f9WvjPccdf/
 ARC-Seal: i=1; a=rsa-sha256; t=1517591652; cv=none;
         d=google.com; s=arc-20160816;
-        b=V4Sk6Q+omPsbK5T8DEja+B7j93ZNwaZqsSqeL+vC980hLpMgroNBSfkHf6mf6yrHdy
-         OortwkrnC20omAPk3Oi2KK5byLPj18GVCXuAnNpXMt3uhS7/rBzV5q0j0BFvl6Ycqz3t
-         RYTReXM2o9BA/u8xCFSlVSv016EF2fdwzw743T/Crgd4UeKHZobbP08QdTJh8PfRwe4I
-         lptEVD18QkHREpqryJK4bqN4b49PWD1DKwVC2xPdiYZu3D7XBd7DnOzJomE3qDeCs1+A
-         lP+MCDlL/PproiYz7Jz3W2PlRPMX4RrWh8YUyxcwM/fIPYiAFF6TAMR/1pDErfGAOX04
-         9oUw==
+        b=LFk8w7U3RfHLhUj6xl6gY1WxCx4Ywg5mnZTbZ0amRtHjBcHlCc7krUw7vgJsmMO7Zc
+         HvA6pmCTonuoon/YOQnxsnk04KAoDnrwnWaLjH1soyU0Dvxb5moci0sauiOy0v4u4tXX
+         /M0C1t1Aaix+6p4y15XeJx8tklmBRcqfuoFCTo3mMe67EuqFxOOzMC89/wLsyaQ9c7LC
+         No+Z2akN8ZcsQarApv/22SMavJry0GShBgA0j7CvifSpbqSPxKdc6Vhuv6otzOSw/qcu
+         e7mmtGG5aVuuZP27fH1yvYGEU1s9wC0x/KeG45mbKrJxd6CiVQGGvv3KK84jUyyUo1b4
+         /fHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=E2mQZQb4e+e16/6HPaj8xSmCkvghd0wluj3kJCOba1k=;
-        b=EnTNaGp3ccmTJ7ATBCZgDLjHhX7+P6oVPTopkwxmZYH3xgom4r0cBXrbWCaALTbgdB
-         a6JyI1jVMYARwV+nFdCHfxjuWiJE2DbjI8wU9mGz/RBE5Ege1RuFDr3lRk0UB7bkxp25
-         KY+6qgahsiCpf4GdM0F+vwqnANnRzu5GxKCy6OhcJXZrTqGA23wfqKlXvk180SDcojX7
-         Ls047eDlEtN0f8PYiVSlAMV/tWuyZHxtanAliBYHcVJW1XU5En9ut7TO5q+X6g7TJNXv
-         8MhWqog/ve7+bL0IQIiLR8NzfR2Kvh7fPlz3G+lGdWA0HU9b15auoaZF784HvyBhluKQ
-         XrPg==
+        bh=p958Ppf+UT7T4BfwskTo/gBqr+T84NPd9ddwBORGJic=;
+        b=AZftIt5DKm/vIH9O6igF6QGE4JjRNm9Zkqfp2MwxnOWEflsmia755yNMynNTlV2xhR
+         Rn3zPPzt17WTzFd+Qu7FYiP3FpySdQU8r1rXUwk9GL8xomGAs+hvGF2iOzrwGeBTUPeq
+         sQZj0P2RuateOVQLnAmxPrpCcpOjB+BKqliSoSC5p7d5a9xz1bSXj7waDcVcPYD3Wv+q
+         XcB27KIWcGwDdmYa5Q3p16bDWvvV4PuUByPQpY/H9uMZLXRMEXo4jK2pFPNoe2S/kh3P
+         5FIWDLShHyVLI4AcO22S2aFIVptj1NxJR6cgONk2nCwAmzdKujTdh7xMAHZu7h2wYEOz
+         mCbA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 4.14 147/156] serial: 8250_of: fix return code when probe function fails to get reset
-Date: Fri,  2 Feb 2018 17:58:48 +0100
-Message-Id: <20180202140847.021774034@linuxfoundation.org>
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Tomas Winkler <tomas.winkler@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>
+Subject: [PATCH 4.14 146/156] mei: me: allow runtime pm for platform with D0i3
+Date: Fri,  2 Feb 2018 17:58:47 +0100
+Message-Id: <20180202140846.979795697@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591310184137013467?=
-X-GMAIL-MSGID: =?utf-8?q?1591310184137013467?=
+X-GMAIL-THRID: =?utf-8?q?1591310183968671557?=
+X-GMAIL-MSGID: =?utf-8?q?1591310183968671557?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,38 +49,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit b9820a31691b771db37afe2054dd3d3a680c1eed upstream.
+commit cc365dcf0e56271bedf3de95f88922abe248e951 upstream.
 
-The error pointer from devm_reset_control_get_optional_shared() is
-not propagated.
+>From the pci power documentation:
+"The driver itself should not call pm_runtime_allow(), though. Instead,
+it should let user space or some platform-specific code do that (user space
+can do it via sysfs as stated above)..."
 
-One of the most common problem scenarios is it returns -EPROBE_DEFER
-when the reset controller has not probed yet.  In this case, the
-probe of the reset consumer should be deferred.
+However, the S0ix residency cannot be reached without MEI device getting
+into low power state. Hence, for mei devices that support D0i3, it's better
+to make runtime power management mandatory and not rely on the system
+integration such as udev rules.
+This policy cannot be applied globally as some older platforms
+were found to have broken power management.
 
-Fixes: e2860e1f62f2 ("serial: 8250_of: Add reset support")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Alexander Usyskin <alexander.usyskin@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_of.c |    5 ++++-
+ drivers/misc/mei/pci-me.c |    5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/8250/8250_of.c
-+++ b/drivers/tty/serial/8250/8250_of.c
-@@ -141,8 +141,11 @@ static int of_platform_serial_setup(stru
- 	}
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -238,8 +238,11 @@ static int mei_me_probe(struct pci_dev *
+ 	 */
+ 	mei_me_set_pm_domain(dev);
  
- 	info->rst = devm_reset_control_get_optional_shared(&ofdev->dev, NULL);
--	if (IS_ERR(info->rst))
-+	if (IS_ERR(info->rst)) {
-+		ret = PTR_ERR(info->rst);
- 		goto err_dispose;
+-	if (mei_pg_is_enabled(dev))
++	if (mei_pg_is_enabled(dev)) {
+ 		pm_runtime_put_noidle(&pdev->dev);
++		if (hw->d0i3_supported)
++			pm_runtime_allow(&pdev->dev);
 +	}
-+
- 	ret = reset_control_deassert(info->rst);
- 	if (ret)
- 		goto err_dispose;
+ 
+ 	dev_dbg(&pdev->dev, "initialization successful.\n");
+ 
