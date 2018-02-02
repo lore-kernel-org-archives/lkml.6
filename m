@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224AEs78M40OHs0DOF/gVLophZfCXTIoQCdxvYn0Nemm8XbsAFUT+UcKnDQH6Iwx+NWwgX2h
-ARC-Seal: i=1; a=rsa-sha256; t=1517591176; cv=none;
+X-Google-Smtp-Source: AH8x227zNaRGNNah64q5Q1WLJp9fktPc9+vqLRkhfIMIHjVXljqdId/SO/Y8KsypVa8ECDdO9ugX
+ARC-Seal: i=1; a=rsa-sha256; t=1517591173; cv=none;
         d=google.com; s=arc-20160816;
-        b=GYs39dcjjoi4ZXxKs2+W+6T+MG8jPOjHr14f3ssmO+7kKRB7ZmtGOWOI0UIQTYiTBi
-         DVZn02E/yAIM4U+dUQaYU9QR62D8cll2+HeuGbCBjcZFc9EwMWnxAq9Sqjxnl2fVp7qv
-         9AAArKhD0o8Lf28A7JyzRrbmCfBGFDF63nXZIyAgXiO9+hD3jdS0qc7CkJNq/oVpOhVL
-         oL5CSa8aucjDcMcIUv3IB4+zPsElFYtaTiGcE5Xzwv+3GRl0zgWiTcyGvNiKIF8EB7lv
-         2EF1KMxXs0ceeDNMWNT5wbs+qz6lWvCkJ5m/eNHfuXzwsYTaCX2RTnYXs97bRWlzi8RD
-         W5mA==
+        b=u8LnMm97Xsgr8keKh9x2IeeH9r4rFgUl1zMP5U45Eg2ktATcaP84zocDmsSOS9tLrk
+         zK3D9kImMt9/UIVx4WnWPNKZmCWlX2iFyAok/IwGKUA8zK+w16wKwRxco2V6y9F4kD6a
+         hdk1zM5coZ7sc0IT7j95GLMcWDYAg0UNPXknLv1tK/Bv18tTe2YIqQ/X1vGq9yihxmAS
+         /xXj/WDQ2JP5QcaPTh5xce/alh8cM9piCS5DCIYp6SL7NT7g7NqLsKwJ3LL4uDf2zaTc
+         +sRoTY1jiJla1rHa1djZ8MJblayc6H0tkkkZ/P0tsY5ByZVKJsp/54rmxV84I4Xp7Eky
+         IrDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F96jAw0cLjXeR7Fdf0GAXiDSg7KwP8FpIMV9ZLrql6w=;
-        b=roZ8hK5PTSbLYVNiLytaf+Wr8Wv3axIo+NVGBqOEVmxV6YvHWpRxuxut7d4ugSjwSh
-         ms6B9U1nTGGfLzl3grEDtSbc3b6JGdVqZX99bpcX64zvQ3cNlBKMpzuFmGGowflU9Re3
-         rK4BMihXkYiF8PayVcpL/q6+wmxLyH9igDnB1V5ggeYR/J/rIZ0+IewrVQP8UD0QbKXh
-         6hucgdoLcGh5zUEycyYw0QtzBrmb0PzuQjwAxVOSrO9He5jPNr/N2KM3LcIKbE38LTd7
-         v6dgaRmWg5nuGskxRaMAfmMAzpys0BhGJYq7rynpuMEb89F+6FMmCX3eIOzsOPvoHIR6
-         9W/w==
+        bh=IKyKgLLLSt0aRgRJFGhpNy969DkZnX+oqkC9Vpcgr2Y=;
+        b=MOF7Wigco9z81v13JG+Q50P/U7k3TcfqXQvd5bHC0C091/qXloqayN9dolGbGHeM7H
+         drm6kkASnYk6V1PoQX7n2FOsuZiCGrD+XXkc0fNpalfpEIYpd/Dmybi6aQK2Hrbw9/qv
+         eBrF/By09fcs+eDbZVlBCY2owarLDMYEhJtB5l5KPOskSSm7SDB9+WTkjze5fyyoL4/+
+         BYGPVaE68dOU7G/6Q5jkh1NXlaTS+3t+PfTe52oayH3VNsw30xCHF0x/GE+lmJJ55MdS
+         V60Tki141SKXuXQBiNxGiBKu5AErcIIgg7BgQDPiuf9I9typNjPh6iG1FvcpJ+jutfsQ
+         OdxA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 50/86] net: ethernet: xilinx: Mark XILINX_LL_TEMAC broken on 64-bit
-Date: Fri,  2 Feb 2018 17:58:10 +0100
-Message-Id: <20180202140826.853467548@linuxfoundation.org>
+	Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.9 76/86] CDC-ACM: apply quirk for card reader
+Date: Fri,  2 Feb 2018 17:58:36 +0100
+Message-Id: <20180202140829.643208478@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -40,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309373573918616?=
-X-GMAIL-MSGID: =?utf-8?q?1591309684661072195?=
+X-GMAIL-THRID: =?utf-8?q?1591309418514762445?=
+X-GMAIL-MSGID: =?utf-8?q?1591309682511151874?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +47,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Oliver Neukum <oneukum@suse.com>
 
+commit df1cc78a52491f71d8170d513d0f6f114faa1bda upstream.
 
-[ Upstream commit 15bfe05c8d6386f1a90e9340d15336e85e32aad6 ]
+This devices drops random bytes from messages if you talk to it
+too fast.
 
-On 64-bit (e.g. powerpc64/allmodconfig):
-
-    drivers/net/ethernet/xilinx/ll_temac_main.c: In function 'temac_start_xmit_done':
-    drivers/net/ethernet/xilinx/ll_temac_main.c:633:22: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	dev_kfree_skb_irq((struct sk_buff *)cur_p->app4);
-			  ^
-
-cdmac_bd.app4 is u32, so it is too small to hold a kernel pointer.
-
-Note that several other fields in struct cdmac_bd are also too small to
-hold physical addresses on 64-bit platforms.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/xilinx/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/xilinx/Kconfig
-+++ b/drivers/net/ethernet/xilinx/Kconfig
-@@ -34,6 +34,7 @@ config XILINX_AXI_EMAC
- config XILINX_LL_TEMAC
- 	tristate "Xilinx LL TEMAC (LocalLink Tri-mode Ethernet MAC) driver"
- 	depends on (PPC || MICROBLAZE)
-+	depends on !64BIT || BROKEN
- 	select PHYLIB
- 	---help---
- 	  This driver supports the Xilinx 10/100/1000 LocalLink TEMAC
+---
+ drivers/usb/class/cdc-acm.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1706,6 +1706,9 @@ static const struct usb_device_id acm_id
+ 	{ USB_DEVICE(0x0ace, 0x1611), /* ZyDAS 56K USB MODEM - new version */
+ 	.driver_info = SINGLE_RX_URB, /* firmware bug */
+ 	},
++	{ USB_DEVICE(0x11ca, 0x0201), /* VeriFone Mx870 Gadget Serial */
++	.driver_info = SINGLE_RX_URB,
++	},
+ 	{ USB_DEVICE(0x22b8, 0x7000), /* Motorola Q Phone */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
