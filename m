@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226/YKJdKSlNE1UsPCVdoluqWIdki9JL2qiiwr6slmxYSff3aMsgGxcWMjCN2t0iwRKq+Dbx
-ARC-Seal: i=1; a=rsa-sha256; t=1517591325; cv=none;
+X-Google-Smtp-Source: AH8x2249nfj89BiX4N2kAVxQNKc6sjyoCmjRi/zcdWS8x41WCsYIuOjPVxqoL1Z62TTR8SQQNxav
+ARC-Seal: i=1; a=rsa-sha256; t=1517591322; cv=none;
         d=google.com; s=arc-20160816;
-        b=tJRnAqpJnnOHs0MrB2VHUyo+Ww48LayB+GsZTb4VbU6AI92U1kiTfkjEL8NxGhMMhk
-         dIdno5gFS5/ng3x7hmXI2Tz7uZih4ilXNXh+rhwBXZLfLnoBDmuZTI3unWVSU+yX6NuP
-         33r1kaqiB2F0JiLmj3iz3lM10F9m8+L5qkf1VoG883yNBrkGyMO92QP1mtN9jRA27K3p
-         S7cZ3E7YlXaG0G6mQB09SF1sA4kP06hx2JjnybRlT3i6X2vtiYuiDLeaL2Amh9YX1mU/
-         Z8GZnDyZ9b7+EVVpPR+GLvwwSw75bTc+vXfuMZtggrxrON9pnLEhvNEsbpfzH5+0Nj0D
-         IBNA==
+        b=rMGZxGXqBBelnbtvp5I+x7ohgRNcfhqh/+BW0pkWCrYP/e9Gl3c6bhOdJtXy9CYCvs
+         sd4gI91z2mCtD5nF1IqAPCxExwTYJ3tCqk74jkgAFR6ULDDCFV4WelFVcC8v/b4f7KfG
+         Slt9fIwpXk6RVDM4RP8JrNpZ69boocdBwvhnaxDGJ9XR3NkjfMpsIbX/oFvQyzT1RXXq
+         PeuImSCXBFhcX4XvWUK7G7D23a4dOCM+nb6SXcNU+OxaW/AAQS4cLCpg8HCPCkReF74k
+         KszGhopr4NdxSUsktUL54Or9pqUKxxT9lvHqTR6cZF94JkoILHvI7zFCNuGs0DFQBprP
+         wk0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aijrTyhwvXr0NKSbR3Lo2iqRiqZ5PIFOyWkK4zH1P9k=;
-        b=RlYEN6r5GARoMOdiSZr/eOY0qdGLXI5LmwYLsfXGTp6GgHioI08I9D6+y7/wgtae0F
-         w2vrTnKXEwh45sGHGRxkVs2xajYkDMqzSfgA5Y8XHlWFZ6wYsq/Bo9GICbROg6Eb2zX2
-         xlzEt50/orroRCza9RIl65HxE0bEBmHW1Wy/lSPduzI07fhlKSR+3zwqGSE6oUw71+Aq
-         OyczKRhIU1ByWxXZlst4ynmLdx0xWcNa7J45ruFYqIb0wqw6NutKp1s9Yeqly5PYznDh
-         BaKkJj/J8nhfJ+CXEl85o/Ir9d7Ierv6vtBeDvQrQjTdHmgncBqLaqUFg5tJP0gQRpmJ
-         SOLQ==
+        bh=LYElnqIhbnkFLENAlyySc5uPpaaLJOGnAMNClaCm+uE=;
+        b=Dlb3whDapvdI0hcRnK36ihJ9S3O+AdNN42/a8HpIN4jKadx0wbMu0fNDCgxxM1EJ4f
+         TJg7dIfKR2tUoxiea109DzBY9Y519X3uT0SVeJGHbBu8Jmibk/DHm9QHEphaIn9sQR+J
+         Zq8PKiDGufm0dcovuEEfCOsZZjFGe/sx0KdX4+u6new09PcWcqDXogFzRlPe2QbV7xtb
+         7GlDm4FaVoyHWM/SdFDtDeg7o4rTkuw98zWcEaRDekYvAYPhgSiNEGkheql0lu40GxZb
+         7R4dFkaPFDg9WTaYb/jVkxerI0lUqU+UyOLrM+DYi3gnTqst8C3n48U3wC8uSfF1RiQj
+         NT6A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
+	Jim Mattson <jmattson@google.com>,
+	Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
 	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 041/156] KVM: x86: fix em_fxstor() sleeping while in atomic
-Date: Fri,  2 Feb 2018 17:57:02 +0100
-Message-Id: <20180202140842.145006354@linuxfoundation.org>
+Subject: [PATCH 4.14 040/156] KVM: nVMX: Fix mmu context after VMLAUNCH/VMRESUME failure
+Date: Fri,  2 Feb 2018 17:57:01 +0100
+Message-Id: <20180202140842.100581637@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309841753167739?=
-X-GMAIL-MSGID: =?utf-8?q?1591309841753167739?=
+X-GMAIL-THRID: =?utf-8?q?1591309838996422969?=
+X-GMAIL-MSGID: =?utf-8?q?1591309838996422969?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,130 +52,139 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Wanpeng Li <wanpeng.li@hotmail.com>
 
 
-[ Upstream commit 4d772cb85f64c16eca00177089ecb3cd5d292120 ]
+[ Upstream commit 5af4157388adad82c339e3742fb6b67840721347 ]
 
-Commit 9d643f63128b ("KVM: x86: avoid large stack allocations in
-em_fxrstor") optimize the stack size, but introduced a guest memory access
-which might sleep while in atomic.
+Commit 4f350c6dbcb (kvm: nVMX: Handle deferred early VMLAUNCH/VMRESUME failure
+properly) can result in L1(run kvm-unit-tests/run_tests.sh vmx_controls in L1)
+null pointer deference and also L0 calltrace when EPT=0 on both L0 and L1.
 
-Fix it by introducing, again, a second fxregs_state. Try to avoid
-large stacks by using noinline. Add some helpful comments.
+In L1:
 
-Reported by syzbot:
+BUG: unable to handle kernel paging request at ffffffffc015bf8f
+ IP: vmx_vcpu_run+0x202/0x510 [kvm_intel]
+ PGD 146e13067 P4D 146e13067 PUD 146e15067 PMD 3d2686067 PTE 3d4af9161
+ Oops: 0003 [#1] PREEMPT SMP
+ CPU: 2 PID: 1798 Comm: qemu-system-x86 Not tainted 4.14.0-rc4+ #6
+ RIP: 0010:vmx_vcpu_run+0x202/0x510 [kvm_intel]
+ Call Trace:
+ WARNING: kernel stack frame pointer at ffffb86f4988bc18 in qemu-system-x86:1798 has bad value 0000000000000002
 
-in_atomic(): 1, irqs_disabled(): 0, pid: 2909, name: syzkaller879109
-2 locks held by syzkaller879109/2909:
-  #0:  (&vcpu->mutex){+.+.}, at: [<ffffffff8106222c>] vcpu_load+0x1c/0x70
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:154
-  #1:  (&kvm->srcu){....}, at: [<ffffffff810dd162>] vcpu_enter_guest
-arch/x86/kvm/x86.c:6983 [inline]
-  #1:  (&kvm->srcu){....}, at: [<ffffffff810dd162>] vcpu_run
-arch/x86/kvm/x86.c:7061 [inline]
-  #1:  (&kvm->srcu){....}, at: [<ffffffff810dd162>]
-kvm_arch_vcpu_ioctl_run+0x1bc2/0x58b0 arch/x86/kvm/x86.c:7222
-CPU: 1 PID: 2909 Comm: syzkaller879109 Not tainted 4.13.0-rc4-next-20170811
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:16 [inline]
-  dump_stack+0x194/0x257 lib/dump_stack.c:52
-  ___might_sleep+0x2b2/0x470 kernel/sched/core.c:6014
-  __might_sleep+0x95/0x190 kernel/sched/core.c:5967
-  __might_fault+0xab/0x1d0 mm/memory.c:4383
-  __copy_from_user include/linux/uaccess.h:71 [inline]
-  __kvm_read_guest_page+0x58/0xa0
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:1771
-  kvm_vcpu_read_guest_page+0x44/0x60
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:1791
-  kvm_read_guest_virt_helper+0x76/0x140 arch/x86/kvm/x86.c:4407
-  kvm_read_guest_virt_system+0x3c/0x50 arch/x86/kvm/x86.c:4466
-  segmented_read_std+0x10c/0x180 arch/x86/kvm/emulate.c:819
-  em_fxrstor+0x27b/0x410 arch/x86/kvm/emulate.c:4022
-  x86_emulate_insn+0x55d/0x3c50 arch/x86/kvm/emulate.c:5471
-  x86_emulate_instruction+0x411/0x1ca0 arch/x86/kvm/x86.c:5698
-  kvm_mmu_page_fault+0x18b/0x2c0 arch/x86/kvm/mmu.c:4854
-  handle_ept_violation+0x1fc/0x5e0 arch/x86/kvm/vmx.c:6400
-  vmx_handle_exit+0x281/0x1ab0 arch/x86/kvm/vmx.c:8718
-  vcpu_enter_guest arch/x86/kvm/x86.c:6999 [inline]
-  vcpu_run arch/x86/kvm/x86.c:7061 [inline]
-  kvm_arch_vcpu_ioctl_run+0x1cee/0x58b0 arch/x86/kvm/x86.c:7222
-  kvm_vcpu_ioctl+0x64c/0x1010 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2591
-  vfs_ioctl fs/ioctl.c:45 [inline]
-  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:685
-  SYSC_ioctl fs/ioctl.c:700 [inline]
-  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:691
-  entry_SYSCALL_64_fastpath+0x1f/0xbe
-RIP: 0033:0x437fc9
-RSP: 002b:00007ffc7b4d5ab8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002b0 RCX: 0000000000437fc9
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
-RBP: 0000000000000086 R08: 0000000000000000 R09: 0000000020ae8000
-R10: 0000000000009120 R11: 0000000000000206 R12: 0000000000000000
-R13: 0000000000000004 R14: 0000000000000004 R15: 0000000020077000
+In L0:
 
-Fixes: 9d643f63128b ("KVM: x86: avoid large stack allocations in em_fxrstor")
-Signed-off-by: David Hildenbrand <david@redhat.com>
+-----------[ cut here ]------------
+ WARNING: CPU: 6 PID: 4460 at /home/kernel/linux/arch/x86/kvm//vmx.c:9845 vmx_inject_page_fault_nested+0x130/0x140 [kvm_intel]
+ CPU: 6 PID: 4460 Comm: qemu-system-x86 Tainted: G           OE   4.14.0-rc7+ #25
+ RIP: 0010:vmx_inject_page_fault_nested+0x130/0x140 [kvm_intel]
+ Call Trace:
+  paging64_page_fault+0x500/0xde0 [kvm]
+  ? paging32_gva_to_gpa_nested+0x120/0x120 [kvm]
+  ? nonpaging_page_fault+0x3b0/0x3b0 [kvm]
+  ? __asan_storeN+0x12/0x20
+  ? paging64_gva_to_gpa+0xb0/0x120 [kvm]
+  ? paging64_walk_addr_generic+0x11a0/0x11a0 [kvm]
+  ? lock_acquire+0x2c0/0x2c0
+  ? vmx_read_guest_seg_ar+0x97/0x100 [kvm_intel]
+  ? vmx_get_segment+0x2a6/0x310 [kvm_intel]
+  ? sched_clock+0x1f/0x30
+  ? check_chain_key+0x137/0x1e0
+  ? __lock_acquire+0x83c/0x2420
+  ? kvm_multiple_exception+0xf2/0x220 [kvm]
+  ? debug_check_no_locks_freed+0x240/0x240
+  ? debug_smp_processor_id+0x17/0x20
+  ? __lock_is_held+0x9e/0x100
+  kvm_mmu_page_fault+0x90/0x180 [kvm]
+  kvm_handle_page_fault+0x15c/0x310 [kvm]
+  ? __lock_is_held+0x9e/0x100
+  handle_exception+0x3c7/0x4d0 [kvm_intel]
+  vmx_handle_exit+0x103/0x1010 [kvm_intel]
+  ? kvm_arch_vcpu_ioctl_run+0x1628/0x2e20 [kvm]
+
+The commit avoids to load host state of vmcs12 as vmcs01's guest state
+since vmcs12 is not modified (except for the VM-instruction error field)
+if the checking of vmcs control area fails. However, the mmu context is
+switched to nested mmu in prepare_vmcs02() and it will not be reloaded
+since load_vmcs12_host_state() is skipped when nested VMLAUNCH/VMRESUME
+fails. This patch fixes it by reloading mmu context when nested
+VMLAUNCH/VMRESUME fails.
+
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Jim Mattson <jmattson@google.com>
+Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/emulate.c |   32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
+ arch/x86/kvm/vmx.c |   34 ++++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -4023,6 +4023,26 @@ static int em_fxsave(struct x86_emulate_
- 		                   fxstate_size(ctxt));
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11339,6 +11339,24 @@ static void prepare_vmcs12(struct kvm_vc
+ 	kvm_clear_interrupt_queue(vcpu);
  }
  
-+/*
-+ * FXRSTOR might restore XMM registers not provided by the guest. Fill
-+ * in the host registers (via FXSAVE) instead, so they won't be modified.
-+ * (preemption has to stay disabled until FXRSTOR).
-+ *
-+ * Use noinline to keep the stack for other functions called by callers small.
-+ */
-+static noinline int fxregs_fixup(struct fxregs_state *fx_state,
-+				 const size_t used_size)
++static void load_vmcs12_mmu_host_state(struct kvm_vcpu *vcpu,
++			struct vmcs12 *vmcs12)
 +{
-+	struct fxregs_state fx_tmp;
-+	int rc;
++	u32 entry_failure_code;
 +
-+	rc = asm_safe("fxsave %[fx]", , [fx] "+m"(fx_tmp));
-+	memcpy((void *)fx_state + used_size, (void *)&fx_tmp + used_size,
-+	       __fxstate_size(16) - used_size);
++	nested_ept_uninit_mmu_context(vcpu);
 +
-+	return rc;
++	/*
++	 * Only PDPTE load can fail as the value of cr3 was checked on entry and
++	 * couldn't have changed.
++	 */
++	if (nested_vmx_load_cr3(vcpu, vmcs12->host_cr3, false, &entry_failure_code))
++		nested_vmx_abort(vcpu, VMX_ABORT_LOAD_HOST_PDPTE_FAIL);
++
++	if (!enable_ept)
++		vcpu->arch.walk_mmu->inject_page_fault = kvm_inject_page_fault;
 +}
 +
- static int em_fxrstor(struct x86_emulate_ctxt *ctxt)
+ /*
+  * A part of what we need to when the nested L2 guest exits and we want to
+  * run its L1 parent, is to reset L1's guest state to the host state specified
+@@ -11352,7 +11370,6 @@ static void load_vmcs12_host_state(struc
+ 				   struct vmcs12 *vmcs12)
  {
- 	struct fxregs_state fx_state;
-@@ -4033,19 +4053,19 @@ static int em_fxrstor(struct x86_emulate
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
+ 	struct kvm_segment seg;
+-	u32 entry_failure_code;
  
-+	size = fxstate_size(ctxt);
-+	rc = segmented_read_std(ctxt, ctxt->memop.addr.mem, &fx_state, size);
-+	if (rc != X86EMUL_CONTINUE)
-+		return rc;
-+
- 	ctxt->ops->get_fpu(ctxt);
+ 	if (vmcs12->vm_exit_controls & VM_EXIT_LOAD_IA32_EFER)
+ 		vcpu->arch.efer = vmcs12->host_ia32_efer;
+@@ -11379,17 +11396,7 @@ static void load_vmcs12_host_state(struc
+ 	vcpu->arch.cr4_guest_owned_bits = ~vmcs_readl(CR4_GUEST_HOST_MASK);
+ 	vmx_set_cr4(vcpu, vmcs12->host_cr4);
  
--	size = fxstate_size(ctxt);
- 	if (size < __fxstate_size(16)) {
--		rc = asm_safe("fxsave %[fx]", , [fx] "+m"(fx_state));
-+		rc = fxregs_fixup(&fx_state, size);
- 		if (rc != X86EMUL_CONTINUE)
- 			goto out;
- 	}
- 
--	rc = segmented_read_std(ctxt, ctxt->memop.addr.mem, &fx_state, size);
--	if (rc != X86EMUL_CONTINUE)
--		goto out;
+-	nested_ept_uninit_mmu_context(vcpu);
 -
- 	if (fx_state.mxcsr >> 16) {
- 		rc = emulate_gp(ctxt, 0);
- 		goto out;
+-	/*
+-	 * Only PDPTE load can fail as the value of cr3 was checked on entry and
+-	 * couldn't have changed.
+-	 */
+-	if (nested_vmx_load_cr3(vcpu, vmcs12->host_cr3, false, &entry_failure_code))
+-		nested_vmx_abort(vcpu, VMX_ABORT_LOAD_HOST_PDPTE_FAIL);
+-
+-	if (!enable_ept)
+-		vcpu->arch.walk_mmu->inject_page_fault = kvm_inject_page_fault;
++	load_vmcs12_mmu_host_state(vcpu, vmcs12);
+ 
+ 	if (enable_vpid) {
+ 		/*
+@@ -11615,6 +11622,9 @@ static void nested_vmx_vmexit(struct kvm
+ 	 * accordingly.
+ 	 */
+ 	nested_vmx_failValid(vcpu, VMXERR_ENTRY_INVALID_CONTROL_FIELD);
++
++	load_vmcs12_mmu_host_state(vcpu, vmcs12);
++
+ 	/*
+ 	 * The emulated instruction was already skipped in
+ 	 * nested_vmx_run, but the updated RIP was never
