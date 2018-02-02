@@ -1,86 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755191AbeBBCYK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 21:24:10 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38745 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754363AbeBBCYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 21:24:03 -0500
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <rostedt@goodmis.org>, <mingo@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, Yisheng Xie <xieyisheng1@huawei.com>
-Subject: [PATCH] ftrace: nuke clear_ftrace_function
-Date: Fri, 2 Feb 2018 10:14:49 +0800
-Message-ID: <1517537689-34947-1-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1755225AbeBBCdA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 21:33:00 -0500
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:42721 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754558AbeBBCc4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 21:32:56 -0500
+X-Google-Smtp-Source: AH8x226VA/JidUR4VjodoR1/dE2dDb2zDijpi2zkDniOYO4Cxc07m4qVez84QIHlbQ1+Yl4mzj0nVBg/yXCQpr2BAro=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAHp75VdYjz6f2wBXsTL1kf5z-jcM68sMhtmkdgJM+TiPZb=gww@mail.gmail.com>
+References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517453568.git.baolin.wang@linaro.org>
+ <62ceed73b65399099ccd76fe6b7331bcd253b027.1517453569.git.baolin.wang@linaro.org>
+ <CAHp75VdYjz6f2wBXsTL1kf5z-jcM68sMhtmkdgJM+TiPZb=gww@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Fri, 2 Feb 2018 10:32:55 +0800
+Message-ID: <CAMz4ku+9dQ-d_E0Zf0iwjLgZ4hkEAunUhqGm_+jFQrZ6O4W0fQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clear_ftrace_function is not used outside of ftrace.c and is not help to
-use a function, so nuke it per Steve's suggestion.
+On 1 February 2018 at 23:31, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> On Thu, Feb 1, 2018 at 5:04 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
+>> each group contains 16 GPIOs. Each GPIO can set input/output and has
+>> the interrupt capability.
+>
+> Just noticed couple of more improvements you can do.
+>
+>> +       case IRQ_TYPE_EDGE_RISING:
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 1);
+>> +               irq_set_handler_locked(data, handle_edge_irq);
+>> +               break;
+>> +       case IRQ_TYPE_EDGE_FALLING:
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 0);
+>> +               irq_set_handler_locked(data, handle_edge_irq);
+>> +               break;
+>> +       case IRQ_TYPE_EDGE_BOTH:
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 1);
+>> +               irq_set_handler_locked(data, handle_edge_irq);
+>> +               break;
+>> +       case IRQ_TYPE_LEVEL_HIGH:
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 1);
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 1);
+>> +               irq_set_handler_locked(data, handle_level_irq);
+>> +               break;
+>> +       case IRQ_TYPE_LEVEL_LOW:
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 1);
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
+>> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 0);
+>> +               irq_set_handler_locked(data, handle_level_irq);
+>> +               break;
+>> +       default:
+>> +               return -EINVAL;
+>
+> I guess you can use fallthrough and reduce some lines, but I have no
+> strong opinion which will look better.
 
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- include/linux/ftrace.h |  2 --
- kernel/trace/ftrace.c  | 13 +------------
- 2 files changed, 1 insertion(+), 14 deletions(-)
+Um, we need keep the sequence of updating registers and each irq type
+has different register updating. So I think current code can make
+things clear.
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 9c3c9a3..15518b5 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -223,7 +223,6 @@ enum ftrace_tracing_type_t {
-  */
- int register_ftrace_function(struct ftrace_ops *ops);
- int unregister_ftrace_function(struct ftrace_ops *ops);
--void clear_ftrace_function(void);
- 
- extern void ftrace_stub(unsigned long a0, unsigned long a1,
- 			struct ftrace_ops *op, struct pt_regs *regs);
-@@ -239,7 +238,6 @@ static inline int ftrace_nr_registered_ops(void)
- {
- 	return 0;
- }
--static inline void clear_ftrace_function(void) { }
- static inline void ftrace_kill(void) { }
- static inline void ftrace_free_init_mem(void) { }
- static inline void ftrace_free_mem(struct module *mod, void *start, void *end) { }
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index dabd9d1..6263a98 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -192,17 +192,6 @@ static void ftrace_pid_func(unsigned long ip, unsigned long parent_ip,
- 	op->saved_func(ip, parent_ip, op, regs);
- }
- 
--/**
-- * clear_ftrace_function - reset the ftrace function
-- *
-- * This NULLs the ftrace function and in essence stops
-- * tracing.  There may be lag
-- */
--void clear_ftrace_function(void)
--{
--	ftrace_trace_function = ftrace_stub;
--}
--
- static void ftrace_sync(struct work_struct *work)
- {
- 	/*
-@@ -6691,7 +6680,7 @@ void ftrace_kill(void)
- {
- 	ftrace_disabled = 1;
- 	ftrace_enabled = 0;
--	clear_ftrace_function();
-+	ftrace_trace_function = ftrace_stub;
- }
- 
- /**
+>
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +       sprd_gpio->base = devm_ioremap_nocache(&pdev->dev, res->start,
+>> +                                              resource_size(res));
+>
+> Didn't notice before, why not to simple call devm_ioremap_resource() ?
+
+Ah, you are correct, I missed devm_ioremap_resource(). Will change in
+next version. Thanks.
+
 -- 
-1.7.12.4
+Baolin.wang
+Best Regards
