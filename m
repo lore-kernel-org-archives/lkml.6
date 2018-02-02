@@ -1,52 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751829AbeBBCoq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 21:44:46 -0500
-Received: from mail-it0-f50.google.com ([209.85.214.50]:33152 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751644AbeBBCoa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 21:44:30 -0500
-X-Google-Smtp-Source: AH8x226hBA8BXH8tt2xjf6+2CPDhkGgX5YK/x7wj9MFlromtwCk/Rl4AAtAF+Xa93KtgH6wHLQb6iiR0q2yzMcGSsiw=
+        id S1751742AbeBBCsL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 21:48:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55248 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751521AbeBBCsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 21:48:02 -0500
+Date: Fri, 2 Feb 2018 04:47:54 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@redhat.com>
+Cc: linux-kernel@vger.kernel.org, slp@redhat.com, bhe@redhat.com,
+        somlo@cmu.edu, xiaolong.ye@intel.com
+Subject: Re: [PATCH v11 2/4] fw_cfg: do DMA read operation
+Message-ID: <20180202044433-mutt-send-email-mst@kernel.org>
+References: <20180201130300.9962-1-marcandre.lureau@redhat.com>
+ <20180201130300.9962-3-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPM=9twxZtrNO8r_cQtXrMjkZ1jfvRD_3-dVPXAkLObE99DBFg@mail.gmail.com>
-References: <CAPM=9tzdZucx_zkMESOfTV5tp9tP+g_tVkCmcQ7R9vYLaXq3Gw@mail.gmail.com>
- <CA+55aFzZiPJEoOViZh4hdKC=y9iEv8xAU_aCE2SxBqENZNO9_w@mail.gmail.com> <CAPM=9twxZtrNO8r_cQtXrMjkZ1jfvRD_3-dVPXAkLObE99DBFg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 1 Feb 2018 18:44:29 -0800
-X-Google-Sender-Auth: qYiQB9nSvP72TGuOwqmsdiOjWqo
-Message-ID: <CA+55aFyEEKa48WADO0-5=vdGxGDug801u4C6+Cn7Gg6RoxCWZA@mail.gmail.com>
-Subject: Re: [git pull] drm pull for v4.16-rc1
-To: Dave Airlie <airlied@gmail.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180201130300.9962-3-marcandre.lureau@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 1, 2018 at 6:22 PM, Dave Airlie <airlied@gmail.com> wrote:
->
-> Turned out I was running on wayland instead of X.org and my cut-n-paste from
-> gedit to firefox got truncated, wierd. I'll go annoy some people, and make sure
-> it doesn't happen again.
+On Thu, Feb 01, 2018 at 02:02:58PM +0100, Marc-André Lureau wrote:
+> Modify fw_cfg_read_blob() to use DMA if the device supports it.
+> Return errors, because the operation may fail.
+> 
+> The DMA operation is expected to run synchronously with today qemu,
+> but the specification states that it may become async, so we run
+> "control" field check in a loop for eventual changes.
+> 
+> We may want to switch all the *buf addresses to use only kmalloc'ed
+> buffers (instead of using stack/image addresses with dma=false).
+> 
+> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
 
-Heh, so there's some Wayland clipboard buffer limit.
+This seems to cause no end of pain. I see no reason to keep
+pushing this patch until it's all much more stable.
 
-But that reminds me: is there any *standard* tool to programmatically
-feed into the clipboard?
+Something like the below would disable it temporarily.
 
-I occasionally do things like
 
-    git shortlog A..B | xsel
+commit 05054fca8b96900f6b54ab0056458f92b616d74c
+Author: Michael S. Tsirkin <mst@redhat.com>
+Date:   Fri Feb 2 04:29:59 2018 +0200
 
-in order to then paste it into some browser window or other.
+    fixup! fw_cfg: do DMA read operation
 
-And sure, that works well. But I do it seldom enough that I never
-remember the command, and half the time it's not even installed
-because I've switched machines or something, and xsel is always some
-add-on.
-
-What's the thing "real" X people do/use?
-
-           Linus
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index d86ad92..33e0256 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -41,6 +41,9 @@ MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+ MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+ MODULE_LICENSE("GPL");
+ 
++/* enable DMA for all accesses */
++#define FW_CFG_DMA_READ_ENABLE 0
++
+ /* selector key values for "well-known" fw_cfg entries */
+ #define FW_CFG_SIGNATURE  0x00
+ #define FW_CFG_ID         0x01
+@@ -171,7 +174,7 @@ static ssize_t fw_cfg_read_blob(struct device *dev, u16 key,
+ 	}
+ 
+ 	mutex_lock(&fw_cfg_dev_lock);
+-	if (dma && fw_cfg_dma_enabled()) {
++	if (FW_CFG_DMA_READ_ENABLE && dma && fw_cfg_dma_enabled()) {
+ 		if (pos == 0) {
+ 			ret = fw_cfg_dma_transfer(dev, buf, count, key << 16
+ 						  | FW_CFG_DMA_CTL_SELECT
