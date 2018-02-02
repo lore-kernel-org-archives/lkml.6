@@ -1,55 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752819AbeBBVEj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 16:04:39 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:44664 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeBBVEf (ORCPT
+        id S1752852AbeBBVHC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 16:07:02 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37092 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeBBVGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 16:04:35 -0500
-X-Google-Smtp-Source: AH8x227G3YO0FRC0w0fERv75gWasvfpvTU8ddDYiycY0pNkpiYnBroIODOy6CLOHMznuGRssg2wiL5asnSp/8WyXQBI=
+        Fri, 2 Feb 2018 16:06:55 -0500
+Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
+ select_idle_sibling using SMT balance
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: subhra mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        dhaval.giani@oracle.com
+References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
+ <20180201123335.GV2249@hirez.programming.kicks-ass.net>
+ <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
+ <20180202195943.GR2269@hirez.programming.kicks-ass.net>
+From: Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <25d67bd2-cbe7-2c2a-e89a-13a7ca5adc10@oracle.com>
+Date: Fri, 2 Feb 2018 16:06:32 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180202204004.GB8297@kernel.org>
-References: <20180201083812.11359-1-jolsa@kernel.org> <20180201083812.11359-2-jolsa@kernel.org>
- <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com>
- <20180202202849.GA8297@kernel.org> <20180202204004.GB8297@kernel.org>
-From: Stephane Eranian <eranian@google.com>
-Date: Fri, 2 Feb 2018 13:04:34 -0800
-Message-ID: <CABPqkBQniVqi_7OuEmWQohWSsnp17BkDMRYgOE1RQYE00GpuVw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] perf tools: Fix period/freq terms setup
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>, Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180202195943.GR2269@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8793 signatures=668661
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802020253
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 2, 2018 at 12:40 PM, Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
-> Em Fri, Feb 02, 2018 at 05:28:49PM -0300, Arnaldo Carvalho de Melo escreveu:
->> Em Fri, Feb 02, 2018 at 10:45:46AM -0800, Stephane Eranian escreveu:
->> > Otherwise, I tested what you have written so far and it works.
->
->> So I take that as a Tested-by: Stephane and will apply the patches, Jiri
->> can continue working on these other aspects, right?
->
-> I also added this for the casual reader to get up to speed more quickly,
-> please check that it makes sense.
->
->     Committer note:
->
->     When we use -c or a period=N term in the event definition, then we don't
->     need to ask the kernel, via perf_event_attr.sample_type |=
->     PERF_SAMPLE_PERIOD, to put the event period in each sample, as we know
->     it already, it is in perf_event_attr.sample_period.
->
-Not quite. It depends on how each event is setup. I can mix & match period
-and frequency. The PERF_SAMPLE_PERIOD can be dropped only if all the
-events use a fixed period either via period=N or -c.
+On 2/2/2018 2:59 PM, Peter Zijlstra wrote:
+> On Fri, Feb 02, 2018 at 11:53:40AM -0500, Steven Sistare wrote:
+>> On 2/1/2018 7:33 AM, Peter Zijlstra wrote:
+>>> On Mon, Jan 29, 2018 at 03:31:02PM -0800, subhra mazumdar wrote:
+>>>> +	rcu_read_lock();
+>>>> +	sd = rcu_dereference(per_cpu(sd_llc, this_cpu));
+>>>> +	if (util) {
+>>>> +		for_each_lower_domain(sd) {
+>>>> +			if (sd->level == 0)
+>>>> +				break;
+>>>
+>>> afaict you really only need this for the core, and here you're assuming
+>>> everything below the LLC is cores. Would it not be much clearer if you
+>>> introduce sd_core.
+>>>
+>>> As is, for_each_lower_domain includes the starting domain, sd->group
+>>> then is the first core group for this cpu. But then you continue to the
+>>> smt domain (on Intel, on other architectures there could be a cluster
+>>> domain in between) and then you bail using that sd->level == 0 hack
+>>> because otherwise things would go *bang*.
+>>
+>> Hi Peter,
+>>
+>> The code here and in smt_balance intentionally visits each level between
+>> the llc and smt, including core-cluster on architectures that define it.
+>> smt_balance thus has the chance to randomly pick a better cluster,
+>> and then within that cluster randomly pick a better core.  It makes sense,
+>> as resources are shared within a cluster, and choosing a less loaded cluster
+>> should give better performance.  As you suggest in a few other places,
+>> it would be nice to see performance results for this case.  We have
+>> SPARC processors with core clusters.
+>>
+> 
+> But then you get that atomic crud to contend on the cluster level, which
+> is even worse than it contending on the core level.
 
-I hope that perf report can deal with config mixing period and fixed
-mode correctly.
+True, but it can still be a net win if we make better scheduling decisions.
+A saving grace is that the atomic counter is only updated if the cpu
+makes a transition from idle to busy or vice versa.
+
+We need data for this type of system, showing improvements for normal
+workloads, and showing little downside for a high context switch rate
+torture test.  
+
+- Steve
