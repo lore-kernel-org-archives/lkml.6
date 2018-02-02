@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225rhMjwoMb1hFeRhN9Raym6Ov9u9Z/vi3hR2iwXv4pwcQJo/1gNJNUSbKbknkjHht0g/1zu
-ARC-Seal: i=1; a=rsa-sha256; t=1517591519; cv=none;
+X-Google-Smtp-Source: AH8x226WVZAwDA9A3oUuKJFUpKahRLAaAe6vySJI4RHqqxkYze+Ip0S6Rvx7Ngv8jsd5Br6s2UMe
+ARC-Seal: i=1; a=rsa-sha256; t=1517591420; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZQAjRoz0GrEYOMhLIIeM3Trn8mqdhVZekqB38KpA+qtsoqgo55U7fGfde+ZyFnLPhA
-         nFFunRaNQ3cKuVSurs1zAioQryjy737IqzEa20NyM7qS93iEaiITC/RF1Bn0HpRpYJVk
-         xvY9qJ1Cubvwbb+F7wyDiuaIW/9UG586Z31mfrKZ9+J20a4YL/gYncbkfY2U6pyPgifE
-         Gob0fBWgCGPN1H74+X0exJzr6JVgFxRkGkn43QREmb9MdZ/j/v3TyEOl0NTpTj2dI76F
-         4hAe4ca7mfQ6E5i5+mIrgVqd51gW7I+y8oSTuN84TLbAco1bVv1Y7YPQLYJps+O5phyX
-         TIxw==
+        b=GJ4iB/XZ4nQenU6ZimLkkHNPUzRNmRXzHHJd3v5ymFYscqBHvVG11SxnPucrFeF+4w
+         OB8XoNP4w9kX9kjiOYWWCrLOyEQ4RqPBJbNJ92OQCoUVfnPQw5JtzkDMT4zW5/UX8rY1
+         XJ6YMQ3IivUrAAt7csma1Ap9Oc5z3QXH2317a+KPlzrLi+EYMrQg3hS9yjlIOq8W8Ld7
+         A/tcnhRa+Q3YeixiGQvQkTVnXAwc7IEMjxW9k5t4rstuv4vs5KqRctLCJPwRx0npxg1T
+         dY+Nunk0VESt70HCMJO8HkCyC0EbderSbl0x/c0RxIhS5zzcbkmaL7xIsOzyb7zxMAbZ
+         kzJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6xwpLGNt3mRfye0gqxbtQaGRabZxPjoFKhhAvu2FPhE=;
-        b=xgXEOyhFS3pex5SSzdC5yew22LXIbKTBJL7CVH6cAU5QiLnXyTg9M0AZ3y9YcqauwM
-         dRFirFjfaSW2geTk8w+PpswF1mVnQoFHpWk9zxwqOFVOeAE7DRosFe1PVbvPXddix4Mb
-         1cvJFYjunLs9kSzAu0CyvG+vF8itPbzUqHbP0Ovi3rqmYSudxPkL0ayrNGzSNeO2eJQG
-         8j/aHEkE5MvmLt67jsLdGB3qvGEVWyueBt12r/F6T8/lV2lgGOte2QGTdj/9sm6FkYwD
-         9w/HfBsElwExHSdEmYWc3f3+Fie8nq10gezrFOge3Nvc4xjTS8dnpc+MdCkgpYF96H38
-         V6pg==
+        bh=WkyjsMG9bCJaGEl5P0Mh44sZccvPaOV78bqUuFs4KKk=;
+        b=DTDmMf7VV5P0rze4ukeuNUc7H92f5YjEuAtkJLBO1YFul2ClIIU+4/7t8h99SCJSYC
+         jsHo/4sHy2HUj/Uy2MYa7XI0xyc+aLSQLWifpPn3F/hEfW5GHskvckuUVYQgmRFg2RjE
+         tqHsKMcWafTuJrqsWxnXzoX4P5J08nqtUydjWmDx2wipifiXI/6DHMpDlvm2CNWUiLQQ
+         4CH85HUf8ZI6IhkX8p3ZagQn3x4JGqjnS5P8cgerFs2bd08JVwtehWNdDew+ITpNq1KV
+         iAVs1PhqlM3IPJjb55HXFxswJudtxK8imbuZCqJ2nGifraFCLwo5eCGd+0ZdDYyx5RN8
+         h4Bw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"David S. Miller" <davem@davemloft.net>,
+	Pedro Fonseca <pfonseca@cs.washington.edu>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Nadav Amit <nadav.amit@gmail.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 100/156] net: ethernet: xilinx: Mark XILINX_LL_TEMAC broken on 64-bit
-Date: Fri,  2 Feb 2018 17:58:01 +0100
-Message-Id: <20180202140844.737064475@linuxfoundation.org>
+Subject: [PATCH 4.14 039/156] KVM: X86: Fix operand/address-size during instruction decoding
+Date: Fri,  2 Feb 2018 17:57:00 +0100
+Message-Id: <20180202140842.061130251@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309373573918616?=
-X-GMAIL-MSGID: =?utf-8?q?1591310045249430470?=
+X-GMAIL-THRID: =?utf-8?q?1591309309879638297?=
+X-GMAIL-MSGID: =?utf-8?q?1591309941032560134?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +52,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Wanpeng Li <wanpeng.li@hotmail.com>
 
 
-[ Upstream commit 15bfe05c8d6386f1a90e9340d15336e85e32aad6 ]
+[ Upstream commit 3853be2603191829b442b64dac6ae8ba0c027bf9 ]
 
-On 64-bit (e.g. powerpc64/allmodconfig):
+Pedro reported:
+  During tests that we conducted on KVM, we noticed that executing a "PUSH %ES"
+  instruction under KVM produces different results on both memory and the SP
+  register depending on whether EPT support is enabled. With EPT the SP is
+  reduced by 4 bytes (and the written value is 0-padded) but without EPT support
+  it is only reduced by 2 bytes. The difference can be observed when the CS.DB
+  field is 1 (32-bit) but not when it's 0 (16-bit).
 
-    drivers/net/ethernet/xilinx/ll_temac_main.c: In function 'temac_start_xmit_done':
-    drivers/net/ethernet/xilinx/ll_temac_main.c:633:22: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	dev_kfree_skb_irq((struct sk_buff *)cur_p->app4);
-			  ^
+The internal segment descriptor cache exist even in real/vm8096 mode. The CS.D
+also should be respected instead of just default operand/address-size/66H
+prefix/67H prefix during instruction decoding. This patch fixes it by also
+adjusting operand/address-size according to CS.D.
 
-cdmac_bd.app4 is u32, so it is too small to hold a kernel pointer.
-
-Note that several other fields in struct cdmac_bd are also too small to
-hold physical addresses on 64-bit platforms.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Pedro Fonseca <pfonseca@cs.washington.edu>
+Tested-by: Pedro Fonseca <pfonseca@cs.washington.edu>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Pedro Fonseca <pfonseca@cs.washington.edu>
+Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/xilinx/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/emulate.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/net/ethernet/xilinx/Kconfig
-+++ b/drivers/net/ethernet/xilinx/Kconfig
-@@ -34,6 +34,7 @@ config XILINX_AXI_EMAC
- config XILINX_LL_TEMAC
- 	tristate "Xilinx LL TEMAC (LocalLink Tri-mode Ethernet MAC) driver"
- 	depends on (PPC || MICROBLAZE)
-+	depends on !64BIT || BROKEN
- 	select PHYLIB
- 	---help---
- 	  This driver supports the Xilinx 10/100/1000 LocalLink TEMAC
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -5009,6 +5009,8 @@ int x86_decode_insn(struct x86_emulate_c
+ 	bool op_prefix = false;
+ 	bool has_seg_override = false;
+ 	struct opcode opcode;
++	u16 dummy;
++	struct desc_struct desc;
+ 
+ 	ctxt->memop.type = OP_NONE;
+ 	ctxt->memopp = NULL;
+@@ -5027,6 +5029,11 @@ int x86_decode_insn(struct x86_emulate_c
+ 	switch (mode) {
+ 	case X86EMUL_MODE_REAL:
+ 	case X86EMUL_MODE_VM86:
++		def_op_bytes = def_ad_bytes = 2;
++		ctxt->ops->get_segment(ctxt, &dummy, &desc, NULL, VCPU_SREG_CS);
++		if (desc.d)
++			def_op_bytes = def_ad_bytes = 4;
++		break;
+ 	case X86EMUL_MODE_PROT16:
+ 		def_op_bytes = def_ad_bytes = 2;
+ 		break;
