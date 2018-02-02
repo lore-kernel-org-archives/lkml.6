@@ -1,34 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751702AbeBBLFq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 06:05:46 -0500
-Received: from foss.arm.com ([217.140.101.70]:58016 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750773AbeBBLFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 06:05:40 -0500
-Date: Fri, 2 Feb 2018 11:05:32 +0000
+        id S1751632AbeBBLIU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 06:08:20 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58052 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751165AbeBBLIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 06:08:13 -0500
+Date: Fri, 2 Feb 2018 11:08:08 +0000
 From: Mark Rutland <mark.rutland@arm.com>
 To: Channa <ckadabi@codeaurora.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, sboyd@codeaurora.org, kyan@codeaurora.org
+        tsoni@codeaurora.org, sboyd@codeaurora.org, kyan@codeaurora.org,
+        linux-kernel-owner@vger.kernel.org
 Subject: Re: [PATCH 1/2] dt-bindings: Documentation for qcom,llcc
-Message-ID: <20180202110532.n2eez3zqbmf2jelr@lakrids.cambridge.arm.com>
+Message-ID: <20180202110808.nnrawjhyvz273em3@lakrids.cambridge.arm.com>
 References: <1516924513-20183-1-git-send-email-ckadabi@codeaurora.org>
  <1516924513-20183-2-git-send-email-ckadabi@codeaurora.org>
- <20180201104434.7j27fl2hb4glqd3v@lakrids.cambridge.arm.com>
- <d2751939f5813c296cdcb7a92d5698bf@codeaurora.org>
+ <20180201104808.rxgqcrlsevtotq55@lakrids.cambridge.arm.com>
+ <2c343b57bf3ee8aeb3338aee0d27dc06@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d2751939f5813c296cdcb7a92d5698bf@codeaurora.org>
+In-Reply-To: <2c343b57bf3ee8aeb3338aee0d27dc06@codeaurora.org>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 12:39:09PM -0800, Channa wrote:
-> On 2018-02-01 02:44, Mark Rutland wrote:
+On Thu, Feb 01, 2018 at 12:47:01PM -0800, Channa wrote:
+> On 2018-02-01 02:48, Mark Rutland wrote:
 > > On Thu, Jan 25, 2018 at 03:55:12PM -0800, Channagoud Kadabi wrote:
 > > > Documentation for last level cache controller device tree bindings,
 > > > client bindings usage examples.
@@ -41,95 +42,15 @@ On Thu, Feb 01, 2018 at 12:39:09PM -0800, Channa wrote:
 > > >  create mode 100644
 > > > Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
 > > > 
-> > > diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
-> > > b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
-> > > new file mode 100644
-> > > index 0000000..d433b0c
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
-> > > @@ -0,0 +1,93 @@
-> > > +* LLCC (Last Level Cache Controller)
-> > > +
-> > > +Properties:
-> > > +- compatible:
-> > > +	Usage: required
-> > > +	Value type: <string>
-> > > +	Definition: must be "qcom,llcc-core"
-> > > +
-> > > +- reg:
-> > > +	Usage: required
-> > > +	Value Type: <prop-encoded-array>
-> > > +	Definition: must be addresses and sizes of the LLCC registers
-> > > +
-> > > +- llcc-bank-off:
-> > > +	Usage: required
-> > > +	Value Type: <u32 array>
-> > > +	Definition: Offsets of llcc banks from llcc base address starting
-> > > from
-> > > +		    LLCC bank0.
-> > > +
-> > > +- llcc-broadcast-off:
-> > > +	Usage: required
-> > > +	Value Type: <u32>
-> > > +	Definition: Offset of broadcast register from LLCC bank0 address.
-> > 
-> > Please could we use "offset" rather than "off" for both of these? That
-> > way it's obvious these aren't properties for disabling some feature.
-> > 
-> > How variable are these offsets in practice? Is the memory map not fixed?
-> 
-> The offsets depends on the number of LLCC HW blocks. These number of HW
-> blocks vary from
-> chipset to chipset and new registers could be added that changes the offset.
-
-Surely if new registers are added, we need a new compatible string?
-
-Can't we encode the number of LLCC HW blocks, instead? Presumably that
-would give enough information to cover both llcc-bank-off and
-llcc-broadcast-off.
-
-[...]
-
-> > > +
-> > > +compatible devices:
-> > > +		qcom,sdm845-llcc
-> > 
-> > Huh? The "qcom,sdm845-llcc" bindings wasn't described above, and it's
-> > not clear what this means.
-> > 
-> > > +
 > > > +Example:
 > > > +
 > > > +	qcom,system-cache@1300000 {
 > > > +		compatible = "qcom,llcc-core", "syscon", "simple-mfd";
-> > 
-> > This looks very wrong. Why do you need syscon and simple-mfd?
-> 
-> LLCC HW block has 3 functionalities:
-> System cache core, ECC & AMON drivers for debugging.
-> All three drivers use the same register space for configuration, status etc.
-> In order to avoid remapping the same address region across multiple drivers,
-> I have implemented this driver as a syncon and simple-mfd.
-
-Please don't do that; that's completely dependent on Linux
-implementation details.
-
-Have one top level driver for the whole LLCC block, which maps the
-registers, and provides an API for accessing them. When that probes, it
-can cause the other drivers to be probed (e.g. with a platform device),
-and those can access the LLCC registers via that API.
-
 > > > +		reg = <0x1300000 0x50000>;
 > > > +		reg-names = "llcc_base";
 > > > +
 > > > +		llcc: qcom,sdm845-llcc {
 > > > +			compatible = "qcom,sdm845-llcc";
-> > 
-> > Why is this a sub-node?
-> qcom,sdm845-llcc: This core driver as mentioned in the list above.
-> > 
-> > Why isn't the top-level node just "qcom,sdm845-llcc" ?
-> > 
 > > > +			#cache-cells = <1>;
 > > > +			max-slices = <32>;
 > > > +		};
@@ -137,39 +58,32 @@ and those can access the LLCC registers via that API.
 > > > +		qcom,llcc-ecc {
 > > > +			compatible = "qcom,llcc-ecc";
 > > > +		};
-> 
-> qcom,llcc-ecc: Driver #2 for ECC
-> 
 > > > +
 > > > +		qcom,llcc-amon {
 > > > +			compatible = "qcom,llcc-amon";
 > > > +			qcom,fg-cnt = <0x7>;
 > > > +		};
 > > > +
-> 
-> qcom,llcc-amon: Driver #3 for AMON
-
-Please describe the HW, not the drivers.
-
-As above, I don't believe you need multiple nodes here. Linux can
-instantiate the drivers as necessary.
-
-[...]
-
-> > > +- cache-slices:
-> > > +	Usage: required
-> > > +	Value type: <prop-encoded-array>
-> > > +	Definition: The tuple has phandle to llcc device as the first
-> > > argument and the
-> > > +		    second argument is the usecase id of the client.
+> > > +	};
 > > 
-> > What is a "usecase id" ?
+> > The "qcom,llcc-ecc" and "qcom,llcc-amon" bindings doesn't seem to be
+> > used by the driver in patch 2, and it's not clear how they are intended
+> > to be used, so I think they should go from the binding for now.
 > 
-> Usecase id for use case that wants to use system cache for eg: video-encode
-> and video-decode
+> Sure I can remove them for now and add them when the I push other drivers
+> for review.
+> 
+> > I don't think you need syscon and simple-mfd, and I think you can
+> 
+> I used syscon and simple-mfd because three drivers touch the same address
+> space.
 
-Sure, but how is the value used? Is it the index of a slice? Or
-something more abstract?
+As in my other reply, I don't think that's the right way to solve the
+problem.
+
+Please have one top-level driver and associated binding. That driver can
+carve up the functional units and allow other drivers to access the
+registers as necessary.
 
 Thanks,
 Mark.
