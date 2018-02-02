@@ -1,61 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753391AbeBBRgT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 12:36:19 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:40185 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753667AbeBBRRO (ORCPT
+        id S1753574AbeBBRhv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 12:37:51 -0500
+Received: from mail-io0-f182.google.com ([209.85.223.182]:45274 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753013AbeBBRhj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 12:17:14 -0500
-Date: Fri, 2 Feb 2018 18:17:08 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Sistare <steven.sistare@oracle.com>
-Cc: subhra mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        dhaval.giani@oracle.com
-Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
- select_idle_sibling using SMT balance
-Message-ID: <20180202171708.GN2269@hirez.programming.kicks-ass.net>
-References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
- <20180201123335.GV2249@hirez.programming.kicks-ass.net>
- <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
+        Fri, 2 Feb 2018 12:37:39 -0500
+X-Google-Smtp-Source: AH8x225B5ctkAZrjFAhSqK+5arivI29902gO7Vtt4KG1pXlV3CBuG6Fl3Y3bWjRV1eKgREw6ziA/sV/NYg43W2O+Em4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1517522386-18410-2-git-send-email-karahmed@amazon.de>
+References: <1517522386-18410-1-git-send-email-karahmed@amazon.de> <1517522386-18410-2-git-send-email-karahmed@amazon.de>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 2 Feb 2018 09:37:37 -0800
+Message-ID: <CALMp9eTWEO4dZ7Gu3-=6wd3Wj6Z=Qkq3peBNx6ZK3oUOkXbthQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/5] KVM: x86: Update the reverse_cpuid list to include CPUID_7_EDX
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w12HbuET011790
 
-On Fri, Feb 02, 2018 at 11:53:40AM -0500, Steven Sistare wrote:
-> >> +static int select_idle_smt(struct task_struct *p, struct sched_group *sg)
-> >>  {
-> >> +	int i, rand_index, rand_cpu;
-> >> +	int this_cpu = smp_processor_id();
-> >>  
-> >> +	rand_index = CPU_PSEUDO_RANDOM(this_cpu) % sg->group_weight;
-> >> +	rand_cpu = sg->cp_array[rand_index];
-> > 
-> > Right, so yuck.. I know why you need that, but that extra array and
-> > dereference is the reason I never went there.
-> > 
-> > How much difference does it really make vs the 'normal' wrapping search
-> > from last CPU ?
-> > 
-> > This really should be a separate patch with separate performance numbers
-> > on.
-> 
-> For the benefit of other readers, if we always search and choose starting from
-> the first CPU in a core, then later searches will often need to traverse the first
-> N busy CPU's to find the first idle CPU.  Choosing a random starting point avoids
-> such bias.  It is probably a win for processors with 4 to 8 CPUs per core, and
-> a slight but hopefully negligible loss for 2 CPUs per core, and I agree we need
-> to see performance data for this as a separate patch to decide.  We have SPARC
-> systems with 8 CPUs per core.
+On Thu, Feb 1, 2018 at 1:59 PM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
+> [dwmw2: Stop using KF() for bits in it, too]
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+> Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 
-Which is why the current code already doesn't start from the first cpu
-in the mask. We start at whatever CPU the task ran last on, which is
-effectively 'random' if the system is busy.
-
-So how is a per-cpu rotor better than that?
+Reviewed-by: Jim Mattson <jmattson@google.com>
