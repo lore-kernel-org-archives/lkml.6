@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227WJs5Sc9rFdAv6FqgTTNoUz35hH7+nkvYHLiz4TXxnXcXi8U060yAlDXO2RTtyZyUTl10s
-ARC-Seal: i=1; a=rsa-sha256; t=1517591693; cv=none;
+X-Google-Smtp-Source: AH8x224Q/iYQPA6AbPMMoNxneRNPZt4OV7LENAZ1ZTWHSUqFkEMBO3Zt6arYoCPFpxK7r3mGMseG
+ARC-Seal: i=1; a=rsa-sha256; t=1517591688; cv=none;
         d=google.com; s=arc-20160816;
-        b=sHpR6FAp/PBMHUBAQgTpX7nBnCtpL49CVXGjyfZ6xhkfI8tTrqRumGDfcL5g/eGy6w
-         pr/VfN+AnK3jfM6NZ9hXSQ5N2SMw8+mTRlbHjL5+GXGPIAEG+opmWvW4zyziCOQ+m4ia
-         xxwmLUKkNALPs9am6NA6QYRLkXKan1shj/lVURPWkkAL+9QKLAfgUByvLjE8gU5kNWCB
-         3p8Ctvo4JQ0kTn9k8EE8o5BcphDk54IOoW72DMkubCFobD3S4f+11uluORnKOhIk4/Gs
-         1WmNXrkRhZS88s8OBj7znGVjkAFi5A/c0YKPEhZTr/VeD+P2bJC0Qb5g2d/x+eAesprq
-         oISA==
+        b=h0iOL/q3js9oQJ/vb2HAZNCr4oApXckikgbcXoma16P2oN8b/drJK1Ok/2t64hYKAE
+         qC+U/BOdqGjL8hXyA84df/ZZISX1j+S0psL/Epma661crbR73M8rr1hZi5WdpEaFevgu
+         A5Od7ChFb+eMZf9MrESYKJtszrBpdUvgE+gwogxIKuQYyyOqLdUkEPhvHVuGn14xUhkS
+         G7TUIy/0CNtKgJiAi9GFRViuD5bcRL/P/oznrYaSCZgtUh1Cb2dPkYZcrcewrPE80fvg
+         T8gktaAjuNDb4kvXnSToAydgd0466HZrzJjxQfQOXGVMePpPhyzeXjEZayvriW8CR1/+
+         518w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=K/OgMpl3hkkqriqrczTvVieEaw857sCy7UcxAkMp02Q=;
-        b=sdoHBo+Ilc/bRkk5aeQpaMtt7OAp2Yi5gdq1BcsDE3R5QHt7tyepE3Ibn9ohtKMqRa
-         q5nlV1WvGtGjAkp5ZF9hzA8b4kcb+ntnN15wg9duaLmN4vMEBNgXz3pZAkObke9ERzp9
-         jgvTMMGdthh9pPc/flx4LOkuYbIDiAM+HU2QK95JQt2dER9VYddGn9McJUPsmY8mX7lp
-         qZwZCqZo040si/uIJddzTdOWcvwxXAx4/TtAq5xikD9oBGcYs28GMWT90X2RWQxkiVrm
-         zEDch/7u5clAVbA0Z3qcZp0pRDXbbaGw6OrWOHZwmSBmJX/isU0ATDb+ANz3tKKKx7Rf
-         YrmQ==
+        bh=xrC0eCsltUcbw1/wT6IxgawhbM2eC4zqHXkSzInmoz0=;
+        b=y08YBp+0+thD2h5mOhv2UuAGVoet1e06ZOaZ/BJYy3Nwc0/dsvjQkkka42dERfQdq4
+         klftdAhARiEhAZbnbdUUQ/vCVlh3hy2KaLyj7kB5K5k8LOBjeLHBU1mfGShHKEQ4Wf2q
+         RZ2ah41pyMDR4RGEsIVK7+Pb7DD2J5c3RKcQvTW6+URGw2fE7LBRDpvrFepfzgn66/K2
+         rLfmqvWTGBg0yI8JRwPDsMbA5ItZdOccEP8HRSynp7hLPNCImXLns1wLAoVoXYPzbGJZ
+         g8EfryTdL9mDSy3k1usw7mHyO4M1jNfa3cR6Zhi+184VZaT79/witsKB5fwmppZY2tgL
+         nl+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Antoine Tenart <antoine.tenart@free-electrons.com>,
+	Junaid Shahid <junaids@google.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 12/55] crypto: inside-secure - fix hash when length is a multiple of a block
-Date: Fri,  2 Feb 2018 17:58:30 +0100
-Message-Id: <20180202140827.168066257@linuxfoundation.org>
+Subject: [PATCH 4.15 10/55] crypto: aesni - Fix out-of-bounds access of the data buffer in generic-gcm-aesni
+Date: Fri,  2 Feb 2018 17:58:28 +0100
+Message-Id: <20180202140826.954760210@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309763913025219?=
-X-GMAIL-MSGID: =?utf-8?q?1591310228298668200?=
+X-GMAIL-THRID: =?utf-8?q?1591309756503641082?=
+X-GMAIL-MSGID: =?utf-8?q?1591310222234827397?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,66 +48,168 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
+From: Junaid Shahid <junaids@google.com>
 
-commit 809778e02cd45d0625439fee67688f655627bb3c upstream.
+commit b20209c91e23a9bbad9cac2f80bc16b3c259e10e upstream.
 
-This patch fixes the hash support in the SafeXcel driver when the update
-size is a multiple of a block size, and when a final call is made just
-after with a size of 0. In such cases the driver should cache the last
-block from the update to avoid handling 0 length data on the final call
-(that's a hardware limitation).
+The aesni_gcm_enc/dec functions can access memory before the start of
+the data buffer if the length of the data buffer is less than 16 bytes.
+This is because they perform the read via a single 16-byte load. This
+can potentially result in accessing a page that is not mapped and thus
+causing the machine to crash. This patch fixes that by reading the
+partial block byte-by-byte and optionally an via 8-byte load if the block
+was at least 8 bytes.
 
-Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
-Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Fixes: 0487ccac ("crypto: aesni - make non-AVX AES-GCM work with any aadlen")
+Signed-off-by: Junaid Shahid <junaids@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/inside-secure/safexcel_hash.c |   34 +++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 10 deletions(-)
+ arch/x86/crypto/aesni-intel_asm.S |   87 +++++++++++++++++++-------------------
+ 1 file changed, 45 insertions(+), 42 deletions(-)
 
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -186,17 +186,31 @@ static int safexcel_ahash_send_req(struc
- 	else
- 		cache_len = queued - areq->nbytes;
+--- a/arch/x86/crypto/aesni-intel_asm.S
++++ b/arch/x86/crypto/aesni-intel_asm.S
+@@ -257,6 +257,37 @@ aad_shift_arr:
+ 	pxor      \TMP1, \GH            # result is in TMP1
+ .endm
  
--	/*
--	 * If this is not the last request and the queued data does not fit
--	 * into full blocks, cache it for the next send() call.
--	 */
--	extra = queued & (crypto_ahash_blocksize(ahash) - 1);
--	if (!req->last_req && extra) {
--		sg_pcopy_to_buffer(areq->src, sg_nents(areq->src),
--				   req->cache_next, extra, areq->nbytes - extra);
-+	if (!req->last_req) {
-+		/* If this is not the last request and the queued data does not
-+		 * fit into full blocks, cache it for the next send() call.
-+		 */
-+		extra = queued & (crypto_ahash_blocksize(ahash) - 1);
-+		if (!extra)
-+			/* If this is not the last request and the queued data
-+			 * is a multiple of a block, cache the last one for now.
-+			 */
-+			extra = queued - crypto_ahash_blocksize(ahash);
- 
--		queued -= extra;
--		len -= extra;
-+		if (extra) {
-+			sg_pcopy_to_buffer(areq->src, sg_nents(areq->src),
-+					   req->cache_next, extra,
-+					   areq->nbytes - extra);
++# Reads DLEN bytes starting at DPTR and stores in XMMDst
++# where 0 < DLEN < 16
++# Clobbers %rax, DLEN and XMM1
++.macro READ_PARTIAL_BLOCK DPTR DLEN XMM1 XMMDst
++        cmp $8, \DLEN
++        jl _read_lt8_\@
++        mov (\DPTR), %rax
++        MOVQ_R64_XMM %rax, \XMMDst
++        sub $8, \DLEN
++        jz _done_read_partial_block_\@
++	xor %eax, %eax
++_read_next_byte_\@:
++        shl $8, %rax
++        mov 7(\DPTR, \DLEN, 1), %al
++        dec \DLEN
++        jnz _read_next_byte_\@
++        MOVQ_R64_XMM %rax, \XMM1
++	pslldq $8, \XMM1
++        por \XMM1, \XMMDst
++	jmp _done_read_partial_block_\@
++_read_lt8_\@:
++	xor %eax, %eax
++_read_next_byte_lt8_\@:
++        shl $8, %rax
++        mov -1(\DPTR, \DLEN, 1), %al
++        dec \DLEN
++        jnz _read_next_byte_lt8_\@
++        MOVQ_R64_XMM %rax, \XMMDst
++_done_read_partial_block_\@:
++.endm
 +
-+			queued -= extra;
-+			len -= extra;
-+
-+			if (!queued) {
-+				*commands = 0;
-+				*results = 0;
-+				return 0;
-+			}
-+		}
- 	}
+ /*
+ * if a = number of total plaintext bytes
+ * b = floor(a/16)
+@@ -1386,14 +1417,6 @@ _esb_loop_\@:
+ *
+ *                        AAD Format with 64-bit Extended Sequence Number
+ *
+-* aadLen:
+-*       from the definition of the spec, aadLen can only be 8 or 12 bytes.
+-*       The code supports 16 too but for other sizes, the code will fail.
+-*
+-* TLen:
+-*       from the definition of the spec, TLen can only be 8, 12 or 16 bytes.
+-*       For other sizes, the code will fail.
+-*
+ * poly = x^128 + x^127 + x^126 + x^121 + 1
+ *
+ *****************************************************************************/
+@@ -1487,19 +1510,16 @@ _zero_cipher_left_decrypt:
+ 	PSHUFB_XMM %xmm10, %xmm0
  
- 	spin_lock_bh(&priv->ring[ring].egress_lock);
+ 	ENCRYPT_SINGLE_BLOCK  %xmm0, %xmm1    # E(K, Yn)
+-	sub $16, %r11
+-	add %r13, %r11
+-	movdqu (%arg3,%r11,1), %xmm1   # receive the last <16 byte block
+-	lea SHIFT_MASK+16(%rip), %r12
+-	sub %r13, %r12
+-# adjust the shuffle mask pointer to be able to shift 16-%r13 bytes
+-# (%r13 is the number of bytes in plaintext mod 16)
+-	movdqu (%r12), %xmm2           # get the appropriate shuffle mask
+-	PSHUFB_XMM %xmm2, %xmm1            # right shift 16-%r13 butes
+ 
++	lea (%arg3,%r11,1), %r10
++	mov %r13, %r12
++	READ_PARTIAL_BLOCK %r10 %r12 %xmm2 %xmm1
++
++	lea ALL_F+16(%rip), %r12
++	sub %r13, %r12
+ 	movdqa  %xmm1, %xmm2
+ 	pxor %xmm1, %xmm0            # Ciphertext XOR E(K, Yn)
+-	movdqu ALL_F-SHIFT_MASK(%r12), %xmm1
++	movdqu (%r12), %xmm1
+ 	# get the appropriate mask to mask out top 16-%r13 bytes of %xmm0
+ 	pand %xmm1, %xmm0            # mask out top 16-%r13 bytes of %xmm0
+ 	pand    %xmm1, %xmm2
+@@ -1508,9 +1528,6 @@ _zero_cipher_left_decrypt:
+ 
+ 	pxor %xmm2, %xmm8
+ 	GHASH_MUL %xmm8, %xmm13, %xmm9, %xmm10, %xmm11, %xmm5, %xmm6
+-	          # GHASH computation for the last <16 byte block
+-	sub %r13, %r11
+-	add $16, %r11
+ 
+         # output %r13 bytes
+ 	MOVQ_R64_XMM	%xmm0, %rax
+@@ -1664,14 +1681,6 @@ ENDPROC(aesni_gcm_dec)
+ *
+ *                         AAD Format with 64-bit Extended Sequence Number
+ *
+-* aadLen:
+-*       from the definition of the spec, aadLen can only be 8 or 12 bytes.
+-*       The code supports 16 too but for other sizes, the code will fail.
+-*
+-* TLen:
+-*       from the definition of the spec, TLen can only be 8, 12 or 16 bytes.
+-*       For other sizes, the code will fail.
+-*
+ * poly = x^128 + x^127 + x^126 + x^121 + 1
+ ***************************************************************************/
+ ENTRY(aesni_gcm_enc)
+@@ -1764,19 +1773,16 @@ _zero_cipher_left_encrypt:
+         movdqa SHUF_MASK(%rip), %xmm10
+ 	PSHUFB_XMM %xmm10, %xmm0
+ 
+-
+ 	ENCRYPT_SINGLE_BLOCK	%xmm0, %xmm1        # Encrypt(K, Yn)
+-	sub $16, %r11
+-	add %r13, %r11
+-	movdqu (%arg3,%r11,1), %xmm1     # receive the last <16 byte blocks
+-	lea SHIFT_MASK+16(%rip), %r12
++
++	lea (%arg3,%r11,1), %r10
++	mov %r13, %r12
++	READ_PARTIAL_BLOCK %r10 %r12 %xmm2 %xmm1
++
++	lea ALL_F+16(%rip), %r12
+ 	sub %r13, %r12
+-	# adjust the shuffle mask pointer to be able to shift 16-r13 bytes
+-	# (%r13 is the number of bytes in plaintext mod 16)
+-	movdqu	(%r12), %xmm2           # get the appropriate shuffle mask
+-	PSHUFB_XMM	%xmm2, %xmm1            # shift right 16-r13 byte
+ 	pxor	%xmm1, %xmm0            # Plaintext XOR Encrypt(K, Yn)
+-	movdqu	ALL_F-SHIFT_MASK(%r12), %xmm1
++	movdqu	(%r12), %xmm1
+ 	# get the appropriate mask to mask out top 16-r13 bytes of xmm0
+ 	pand	%xmm1, %xmm0            # mask out top 16-r13 bytes of xmm0
+         movdqa SHUF_MASK(%rip), %xmm10
+@@ -1785,9 +1791,6 @@ _zero_cipher_left_encrypt:
+ 	pxor	%xmm0, %xmm8
+ 	GHASH_MUL %xmm8, %xmm13, %xmm9, %xmm10, %xmm11, %xmm5, %xmm6
+ 	# GHASH computation for the last <16 byte block
+-	sub	%r13, %r11
+-	add	$16, %r11
+-
+ 	movdqa SHUF_MASK(%rip), %xmm10
+ 	PSHUFB_XMM %xmm10, %xmm0
+ 
