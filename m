@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224XNTissWtCkk5EeCttbWqwWceJjtckmuSxHRLOSrBUwtmZj/6pARSAX/t9Als/RUlH/+Ra
-ARC-Seal: i=1; a=rsa-sha256; t=1517590943; cv=none;
+X-Google-Smtp-Source: AH8x224RpVNE9PzQeSPaxGHwhHoIh+vvwWj/kCurfTPmLVhG2iGqF9sGZvB9uWrvVw2ynT3UFxVW
+ARC-Seal: i=1; a=rsa-sha256; t=1517590940; cv=none;
         d=google.com; s=arc-20160816;
-        b=uq38Oxd+bO8etCHvONEC5fnhF2oJ/A1iKJtdysBiNEQ8a/afpSUXz5JbrRX6gJw+7F
-         +iCut1sAWdMjWcWAGx2Wk+WoVU6gl3gjnxeutmJZuIflLe8v8/WFqhsgN3X+v9xq/nc5
-         PWFF/cE1XfwIplrlZ7Ifx5L5w9Zxp3VVYl0YhztDuODXZtqhmXxbyZ9TEGhWhSVMQfR1
-         L7oPKcrufGYrmeA76LTjfyRkAV310NDBFbr9D1R1diwYpSNhzdWpG/8Pef8ZOWlYlUTj
-         W5LT6sKQXLYKU3+UNyo3R0Hot4Rdc8BJRsmYjNHIGTgPm9NWAo90Qkyekb2rhgcLphHI
-         bp9A==
+        b=0+fedKG4+71RKeiNtpvqamZPU05pXuVya5Z8+GTavRgrbJLqmFnNoLGIeq/GsQYRsY
+         vfJeLpNEc5BikI+31m9GG9xQO6axRvFg4xAx+bLn3VBWmphSRzYmVPHchFQVhiT061FE
+         5l8DNpF9GPVRR30v0D7kjcnaAL2aLLv0sMT3zbMWQYCC2LGqPwEe8X0C+6J4SaWTio98
+         8ylDvLqNixdYLMOsT7GIM7wnOW261wjmYp+ZLzId7gOcJ9vkaSbC/6+ERXhQHWe4k3a6
+         kyGhDhWWwX4+sb7FZQ7qv8R/FAA5Bc4V7hsJO8Qo4qF2C9xqlf9YzffPBM4jwF1iq/GM
+         ENiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ou7ftDabgV/Zh+gSfIWqYFk7ozQ5de00s0vDmMm3bvA=;
-        b=IhSfUpCkT9Jp6WUd7WKW0sgcTwnHzV2klgDZkEGlR6fhHfxUrOYLe+rwUc1paJ2pbP
-         d53ua8vaJKUMo2Fgp8O7yluMExva5yZASzoBhCNyk4401ViTz/UFFZDCWGx2DF4WV4EZ
-         arlkjVeAbsXj3iq2t8jZN6kv2/Y/8a/Bx9pAIxtUrdA3rEO258UcHnQd8DAeLCuRFdd3
-         XII0ExmMxaLO1C42HJJ/I3jY72zrHZmiwmsWpWorrt//qvaDcLLvzqxIx5WSr7AQtSn3
-         r6tfkyzIB3a3eKpgxT1eYC9UauLO6yAr+EsKZU2hVEyiW6Ue7yPbUYZxUhNGiU0UuFGl
-         9H7A==
+        bh=JIj7g/cSUXY8YZDVGsVZk/QDjlVg/TZPnPLdCHOWibQ=;
+        b=l34TYWhOQGKLhj8MZnWZO2LvD1WEmucQxMCXq3lI3DCCRQ2lKXpZPIGvDORk04pGwO
+         AMvUZrO7s4erngupON7cMpyuDgKQN2tlwBNMz+WJTzDsRqauxwlTVMrdER1bJd6q6RRX
+         tgl00tDTtvyEBumEHlUr7lBdf4tax37oyo9/0eM2BipxFYoXRyk2oM3k9sxggbAtrF1k
+         mYFs8iR1ektjzSmeJTRk465qtS0NotU016UTvO6ZEGIPLi603PUQrOeW+uWk1n0HUrbD
+         8WxodVpTZ2GzhfWVZ4QPVIY0Z2tR94SQrTnatc4x/hL/dJIAfJbQ+fQlc939V+UM+hna
+         lQLw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	zhangliping <zhangliping02@baidu.com>,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
+	shaoyun liu <shaoyun.liu@amd.com>,
+	Felix Kuehling <Felix.Kuehling@amd.com>,
+	Oded Gabbay <oded.gabbay@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 33/67] openvswitch: fix the incorrect flow action alloc size
-Date: Fri,  2 Feb 2018 17:58:02 +0100
-Message-Id: <20180202140819.318783523@linuxfoundation.org>
+Subject: [PATCH 4.4 32/67] drm/amdkfd: Fix SDMA oversubsription handling
+Date: Fri,  2 Feb 2018 17:58:01 +0100
+Message-Id: <20180202140819.157522461@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309440466485315?=
-X-GMAIL-MSGID: =?utf-8?q?1591309440466485315?=
+X-GMAIL-THRID: =?utf-8?q?1591309437743981845?=
+X-GMAIL-MSGID: =?utf-8?q?1591309437743981845?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,81 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: zhangliping <zhangliping02@baidu.com>
+From: Felix Kuehling <Felix.Kuehling@amd.com>
 
 
-[ Upstream commit 67c8d22a73128ff910e2287567132530abcf5b71 ]
+[ Upstream commit 8c946b8988acec785bcf67088b6bd0747f36d2d3 ]
 
-If we want to add a datapath flow, which has more than 500 vxlan outputs'
-action, we will get the following error reports:
-  openvswitch: netlink: Flow action size 32832 bytes exceeds max
-  openvswitch: netlink: Flow action size 32832 bytes exceeds max
-  openvswitch: netlink: Actions may not be safe on all matching packets
-  ... ...
+SDMA only supports a fixed number of queues. HWS cannot handle
+oversubscription.
 
-It seems that we can simply enlarge the MAX_ACTIONS_BUFSIZE to fix it, but
-this is not the root cause. For example, for a vxlan output action, we need
-about 60 bytes for the nlattr, but after it is converted to the flow
-action, it only occupies 24 bytes. This means that we can still support
-more than 1000 vxlan output actions for a single datapath flow under the
-the current 32k max limitation.
-
-So even if the nla_len(attr) is larger than MAX_ACTIONS_BUFSIZE, we
-shouldn't report EINVAL and keep it move on, as the judgement can be
-done by the reserve_sfa_size.
-
-Signed-off-by: zhangliping <zhangliping02@baidu.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: shaoyun liu <shaoyun.liu@amd.com>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/flow_netlink.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c |   18 +++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/net/openvswitch/flow_netlink.c
-+++ b/net/openvswitch/flow_netlink.c
-@@ -1672,14 +1672,11 @@ int ovs_nla_put_mask(const struct sw_flo
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+@@ -205,6 +205,24 @@ int pqm_create_queue(struct process_queu
  
- #define MAX_ACTIONS_BUFSIZE	(32 * 1024)
- 
--static struct sw_flow_actions *nla_alloc_flow_actions(int size, bool log)
-+static struct sw_flow_actions *nla_alloc_flow_actions(int size)
- {
- 	struct sw_flow_actions *sfa;
- 
--	if (size > MAX_ACTIONS_BUFSIZE) {
--		OVS_NLERR(log, "Flow action size %u bytes exceeds max", size);
--		return ERR_PTR(-EINVAL);
--	}
-+	WARN_ON_ONCE(size > MAX_ACTIONS_BUFSIZE);
- 
- 	sfa = kmalloc(sizeof(*sfa) + size, GFP_KERNEL);
- 	if (!sfa)
-@@ -1752,12 +1749,15 @@ static struct nlattr *reserve_sfa_size(s
- 	new_acts_size = ksize(*sfa) * 2;
- 
- 	if (new_acts_size > MAX_ACTIONS_BUFSIZE) {
--		if ((MAX_ACTIONS_BUFSIZE - next_offset) < req_size)
-+		if ((MAX_ACTIONS_BUFSIZE - next_offset) < req_size) {
-+			OVS_NLERR(log, "Flow action size exceeds max %u",
-+				  MAX_ACTIONS_BUFSIZE);
- 			return ERR_PTR(-EMSGSIZE);
+ 	switch (type) {
+ 	case KFD_QUEUE_TYPE_SDMA:
++		if (dev->dqm->queue_count >=
++			CIK_SDMA_QUEUES_PER_ENGINE * CIK_SDMA_ENGINE_NUM) {
++			pr_err("Over-subscription is not allowed for SDMA.\n");
++			retval = -EPERM;
++			goto err_create_queue;
 +		}
- 		new_acts_size = MAX_ACTIONS_BUFSIZE;
- 	}
- 
--	acts = nla_alloc_flow_actions(new_acts_size, log);
-+	acts = nla_alloc_flow_actions(new_acts_size);
- 	if (IS_ERR(acts))
- 		return (void *)acts;
- 
-@@ -2369,7 +2369,7 @@ int ovs_nla_copy_actions(struct net *net
- {
- 	int err;
- 
--	*sfa = nla_alloc_flow_actions(nla_len(attr), log);
-+	*sfa = nla_alloc_flow_actions(min(nla_len(attr), MAX_ACTIONS_BUFSIZE));
- 	if (IS_ERR(*sfa))
- 		return PTR_ERR(*sfa);
- 
++
++		retval = create_cp_queue(pqm, dev, &q, properties, f, *qid);
++		if (retval != 0)
++			goto err_create_queue;
++		pqn->q = q;
++		pqn->kq = NULL;
++		retval = dev->dqm->ops.create_queue(dev->dqm, q, &pdd->qpd,
++						&q->properties.vmid);
++		pr_debug("DQM returned %d for create_queue\n", retval);
++		print_queue(q);
++		break;
++
+ 	case KFD_QUEUE_TYPE_COMPUTE:
+ 		/* check if there is over subscription */
+ 		if ((sched_policy == KFD_SCHED_POLICY_HWS_NO_OVERSUBSCRIPTION) &&
