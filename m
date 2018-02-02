@@ -1,78 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751678AbeBBNFK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:05:10 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.31]:40904 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750773AbeBBNFE (ORCPT
+        id S1751822AbeBBNHc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:07:32 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46858 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750773AbeBBNHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 08:05:04 -0500
-Date: Fri, 2 Feb 2018 06:42:33 -0600
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Lloyd Atkinson <latkinso@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] drm/msm/dsi: Fix potential NULL pointer dereference in
- msm_dsi_modeset_init
-Message-ID: <20180202124233.GA5056@embeddedor.com>
+        Fri, 2 Feb 2018 08:07:24 -0500
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
+Cc: prudo@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [PATCH 00/17] Add kexec_file_load support to s390
+Date: Fri,  2 Feb 2018 14:07:01 +0100
+X-Mailer: git-send-email 2.13.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.201.65
-X-Source-L: No
-X-Exim-ID: 1ehafq-0023dk-Ja
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.152.201.65]:44582
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18020213-0040-0000-0000-0000040BC081
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020213-0041-0000-0000-0000260F648E
+Message-Id: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802020162
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-_dev_ is being dereferenced before it is null checked, hence there
-is a potential null pointer dereference.
+Hi everybody
 
-Fix this by moving the pointer dereference after _dev_ has been
-null checked.
+this series adds the kexec_file_load system call to s390. Before the system
+call is added there are some preparations/clean ups to common
+kexec_file_load. In detail this series contains:
 
-Fixes: d4e7f38d70ef ("drm/msm/dsi: check msm_dsi and dsi pointers before use")
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
- drivers/gpu/drm/msm/dsi/dsi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Patch #1&2: Minor cleanups/fixes.
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi.c b/drivers/gpu/drm/msm/dsi/dsi.c
-index ee7e090..b744bcc 100644
---- a/drivers/gpu/drm/msm/dsi/dsi.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi.c
-@@ -192,13 +192,14 @@ void __exit msm_dsi_unregister(void)
- int msm_dsi_modeset_init(struct msm_dsi *msm_dsi, struct drm_device *dev,
- 			 struct drm_encoder *encoder)
- {
--	struct msm_drm_private *priv = dev->dev_private;
-+	struct msm_drm_private *priv;
- 	struct drm_bridge *ext_bridge;
- 	int ret;
- 
- 	if (WARN_ON(!encoder) || WARN_ON(!msm_dsi) || WARN_ON(!dev))
- 		return -EINVAL;
- 
-+	priv = dev->dev_private;
- 	msm_dsi->dev = dev;
- 
- 	ret = msm_dsi_host_modeset_init(msm_dsi->host, dev);
+Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
+the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
+holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
+depending on the section. With these patches the section address will be
+calculated verbosely and sh_offset will contain the offset of the section
+in the stripped purgatory binary (purgatory_buf).
+
+Patch #10: Allows architectures to set the purgaory load address. This
+patch is important for s390 as the kernel and purgatory have to be loaded
+to fixed addresses. In current code this is impossible as the purgatory
+load is opaque to the architecture.
+
+Patch #11: Moves x86 purgatories sha implementation to common lib/
+directory.
+
+Patches #12-17 finally adds the kexec_file_load system call to s390.
+
+Please note that I had to touch arch code for x86 and power a little. In
+theory this should not change the behavior but I don't have a way to test
+it. Cross-compiling with defconfig(*) works fine for both.
+
+Thanks
+Philipp
+
+(*) On x86 with the orc unwinder turned off. objtool SEGFAULTs on s390...
+
+Philipp Rudo (17):
+  kexec_file: Silence compile warnings
+  kexec_file: Remove checks in kexec_purgatory_load
+  kexec_file: Make purgatory_info->ehdr const
+  kexec_file: Search symbols in read-only kexec_purgatory
+  kexec_file: Use read-only sections in arch_kexec_apply_relocations*
+  kexec_file: Split up __kexec_load_puragory
+  kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
+  kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
+  kexec_file: Remove mis-use of sh_offset field
+  kexec_file: Allow archs to set purgatory load address
+  kexec_file: Move purgatories sha256 to common code
+  s390/kexec_file: Prepare setup.h for kexec_file_load
+  s390/kexec_file: Add purgatory
+  s390/kexec_file: Add kexec_file_load system call
+  s390/kexec_file: Add image loader
+  s390/kexec_file: Add crash support to image loader
+  s390/kexec_file: Add ELF loader
+
+ arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
+ arch/s390/Kbuild                               |   1 +
+ arch/s390/Kconfig                              |   4 +
+ arch/s390/include/asm/kexec.h                  |  23 ++
+ arch/s390/include/asm/purgatory.h              |  17 ++
+ arch/s390/include/asm/setup.h                  |  40 ++-
+ arch/s390/kernel/Makefile                      |   1 +
+ arch/s390/kernel/asm-offsets.c                 |   5 +
+ arch/s390/kernel/compat_wrapper.c              |   1 +
+ arch/s390/kernel/kexec_elf.c                   | 149 ++++++++++
+ arch/s390/kernel/kexec_image.c                 |  78 +++++
+ arch/s390/kernel/machine_kexec_file.c          | 291 +++++++++++++++++++
+ arch/s390/kernel/syscalls/syscall.tbl          |   1 +
+ arch/s390/purgatory/Makefile                   |  37 +++
+ arch/s390/purgatory/head.S                     | 279 ++++++++++++++++++
+ arch/s390/purgatory/purgatory.c                |  42 +++
+ arch/x86/kernel/kexec-bzimage64.c              |   8 +-
+ arch/x86/kernel/machine_kexec_64.c             |  66 ++---
+ arch/x86/purgatory/Makefile                    |   3 +
+ arch/x86/purgatory/purgatory.c                 |   2 +-
+ include/linux/kexec.h                          |  38 +--
+ {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
+ kernel/kexec_file.c                            | 375 ++++++++++++-------------
+ {arch/x86/purgatory => lib}/sha256.c           |   4 +-
+ 24 files changed, 1200 insertions(+), 284 deletions(-)
+ create mode 100644 arch/s390/include/asm/purgatory.h
+ create mode 100644 arch/s390/kernel/kexec_elf.c
+ create mode 100644 arch/s390/kernel/kexec_image.c
+ create mode 100644 arch/s390/kernel/machine_kexec_file.c
+ create mode 100644 arch/s390/purgatory/Makefile
+ create mode 100644 arch/s390/purgatory/head.S
+ create mode 100644 arch/s390/purgatory/purgatory.c
+ rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
+ rename {arch/x86/purgatory => lib}/sha256.c (99%)
+
 -- 
-2.7.4
+2.13.5
