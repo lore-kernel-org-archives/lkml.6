@@ -1,46 +1,74 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226umCJCvfE2jFTjTFOXb/yEa8ZQ+6MdkylXydGFqqX7M8aRoMsA2il656uayFATIu4CGt7p
-ARC-Seal: i=1; a=rsa-sha256; t=1517591187; cv=none;
-        d=google.com; s=arc-20160816;
-        b=0UkI2g9EYd075lIaNu6qQ9SA+/tlcXGsj1D/KKEaMJ3ig9lWjRjPyx/1F+ZzHDaK/e
-         SZ1isMS+oDXWquKGEFmc5o0PkXY8Vg0rUpoHpdqa8Zf6ULwUx/4NLxUiQuqYdWaPw9kO
-         jAtcUvda/3qNSUcfNVTmUh5VUOS/ABeWfBYqX6mxWlD95lq1AJaBH+F8TBVsxOUE8wGR
-         z/6sUQfSquTUDloosegog+XFgztKHSTn8OP+6Bn5F7jWMbaCBDRDutWh5IEsWRvsDhrk
-         6fIw5ImwlCQSynKTTX9MZijPjs0E/g6475xbUoi6u5/t2mOD0R/XQ+DJVc34PTSIuYMS
-         aTLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=mZ48PDPNe7CksuH+K9xuyRy3EPylWN+2iez+2rDWz8A=;
-        b=EIhf8AfGdhDPpiYRyh93qbyiq53/dfV5OwPu1F29IaeRBV3hXA/b8GFgn+K/CaiK5K
-         6D89n/i9aQmBnKQhpK9fhpwDUJCAOTNON1ypMZEPIZY+bf/rgjvSS3v2gvVDLNWotX4H
-         dtIvLSPo7HXN3cWIgeThA4BBc6tzVBFs+hyD/DYG8lPXwUgh54rfVFKX+Y/fjFwWNSCK
-         HuwIAV1K70FFrSunKDlxgAvpH0E8AhjAkLqt9hzbK3NPrMmPy5UR+InTrgSmzcXULv3W
-         ZZo0FHjmi3kMW+FWjjfZh4w3sbrubnuPlbt8M7PcNldswE/1KCtIfIFDVYawWJu7llTh
-         psgg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591187-2-4594413038003356701
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591186; b=RBxshsgH2gD7cSQYQImlRsRj6p9qwi81t/BLqMM4m/qjPH5
+    w3gWwogawMDufhSWhzhNpTWxCga5/JS1SPlFurvz7NjPulkgFNXzqlfbBZV8JqGt
+    AHOZZkyX8I/De1UubjdU6dA0IThuTq9QPSlZM9P0QPKkdctjiTltyKEI7D+dC5aC
+    0ok2AnjqnZAIRyN+k7QsV31o2PBwhD6fJvPTGwMBoyDCFln+48IWE22AkHug9wwS
+    lmTfC2FaHTUGnXTMg5JoNcjVhW+/xPg13dJf2uYQKNuLlvjk8TqjVb1CZc4FxENd
+    QNUUTMubADHZB+QTEZX7ZgmqzWijg/0srnsa/TQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591186; bh=c32QVSOvxW7fDK7u+z6PLTYyqC
+    X65cfyhb3WG0MZvzY=; b=iJe9TDIY7RZ6xKUZoMUs5smCE2J6B8YFR7U+H/DPOD
+    gbBX6i5DBdFuMLKk30E7cgfLqDRoA0kRDsdpsSvyMGWPkut96ENgsszsrWm/mi/8
+    06RJwYFyxQu8IqUrLTgoG5B8A+AEpwz2o9xpxHuZbhI43FNoiwdkYDRBlo7Wcd/9
+    nmvI4Zx6HJPkVLBlpdCn+s2E6z2jSnTs5d6n2NJbu3Si82rcIM7IlyIAiMnRK5Xt
+    zWu3tllNF+RjuED+MyhHcidLBLlN9tepOKsupt0g5v0BitUYLlv+eD5YBFKh/A3o
+    D8SYfnR0sDeqE3bSUSAYuBAQ/PHTMWZJSzCEzVn9FwsQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752810AbeBBRGY (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:06:24 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36746 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753078AbeBBRGV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:06:21 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Max Schulze <max.schulze@posteo.de>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 80/86] USB: serial: simple: add Motorola Tetra driver
-Date: Fri,  2 Feb 2018 17:58:40 +0100
-Message-Id: <20180202140830.020886758@linuxfoundation.org>
+        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.9 78/86] usbip: prevent bind loops on devices attached to vhci_hcd
+Date: Fri,  2 Feb 2018 17:58:38 +0100
+Message-Id: <20180202140829.853191066@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309449263095125?=
-X-GMAIL-MSGID: =?utf-8?q?1591309696923507077?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,71 +76,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 46fe895e22ab3845515ec06b01eaf1282b342e29 upstream.
+commit ef54cf0c600fb8f5737fb001a9e357edda1a1de8 upstream.
 
-Add new Motorola Tetra (simple) driver for Motorola Solutions TETRA PEI
-devices.
+usbip host binds to devices attached to vhci_hcd on the same server
+when user does attach over localhost or specifies the server as the
+remote.
 
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=0cad ProdID=9011 Rev=24.16
-S:  Manufacturer=Motorola Solutions Inc.
-S:  Product=Motorola Solutions TETRA PEI interface
-C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
-I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
+usbip attach -r localhost -b busid
+or
+usbip attach -r servername (or server IP)
 
-Note that these devices do not support the CDC SET_CONTROL_LINE_STATE
-request (for any interface).
+Unbind followed by bind works, however device is left in a bad state with
+accesses via the attached busid result in errors and system hangs during
+shutdown.
 
-Reported-by: Max Schulze <max.schulze@posteo.de>
-Tested-by: Max Schulze <max.schulze@posteo.de>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fix it to check and bail out if the device is already attached to vhci_hcd.
+
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/Kconfig             |    1 +
- drivers/usb/serial/usb-serial-simple.c |    7 +++++++
- 2 files changed, 8 insertions(+)
+ tools/usb/usbip/src/usbip_bind.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/usb/serial/Kconfig
-+++ b/drivers/usb/serial/Kconfig
-@@ -63,6 +63,7 @@ config USB_SERIAL_SIMPLE
- 		- Google USB serial devices
- 		- HP4x calculators
- 		- a number of Motorola phones
-+		- Motorola Tetra devices
- 		- Novatel Wireless GPS receivers
- 		- Siemens USB/MPI adapter.
- 		- ViVOtech ViVOpay USB device.
---- a/drivers/usb/serial/usb-serial-simple.c
-+++ b/drivers/usb/serial/usb-serial-simple.c
-@@ -80,6 +80,11 @@ DEVICE(vivopay, VIVOPAY_IDS);
- 	{ USB_DEVICE(0x22b8, 0x2c64) }	/* Motorola V950 phone */
- DEVICE(moto_modem, MOTO_IDS);
+--- a/tools/usb/usbip/src/usbip_bind.c
++++ b/tools/usb/usbip/src/usbip_bind.c
+@@ -144,6 +144,7 @@ static int bind_device(char *busid)
+ 	int rc;
+ 	struct udev *udev;
+ 	struct udev_device *dev;
++	const char *devpath;
  
-+/* Motorola Tetra driver */
-+#define MOTOROLA_TETRA_IDS()			\
-+	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
-+DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
+ 	/* Check whether the device with this bus ID exists. */
+ 	udev = udev_new();
+@@ -152,8 +153,16 @@ static int bind_device(char *busid)
+ 		err("device with the specified bus ID does not exist");
+ 		return -1;
+ 	}
++	devpath = udev_device_get_devpath(dev);
+ 	udev_unref(udev);
+ 
++	/* If the device is already attached to vhci_hcd - bail out */
++	if (strstr(devpath, USBIP_VHCI_DRV_NAME)) {
++		err("bind loop detected: device: %s is attached to %s\n",
++		    devpath, USBIP_VHCI_DRV_NAME);
++		return -1;
++	}
 +
- /* Novatel Wireless GPS driver */
- #define NOVATEL_IDS()			\
- 	{ USB_DEVICE(0x09d7, 0x0100) }	/* NovAtel FlexPack GPS */
-@@ -110,6 +115,7 @@ static struct usb_serial_driver * const
- 	&google_device,
- 	&vivopay_device,
- 	&moto_modem_device,
-+	&motorola_tetra_device,
- 	&novatel_gps_device,
- 	&hp4x_device,
- 	&suunto_device,
-@@ -125,6 +131,7 @@ static const struct usb_device_id id_tab
- 	GOOGLE_IDS(),
- 	VIVOPAY_IDS(),
- 	MOTO_IDS(),
-+	MOTOROLA_TETRA_IDS(),
- 	NOVATEL_IDS(),
- 	HP4X_IDS(),
- 	SUUNTO_IDS(),
+ 	rc = unbind_other(busid);
+ 	if (rc == UNBIND_ST_FAILED) {
+ 		err("could not unbind driver from device on busid %s", busid);
