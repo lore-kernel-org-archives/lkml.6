@@ -1,90 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753415AbeBBR5L (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 12:57:11 -0500
-Received: from vern.gendns.com ([206.190.152.46]:48197 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752673AbeBBR4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 12:56:07 -0500
-Subject: Re: [PATCH v6 18/41] clk: davinci: New driver for TI DA8XX CFGCHIP
- clocks
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-19-git-send-email-david@lechnology.com>
- <c2138795-edcd-bb7d-094d-47dc049c33df@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <af157fd3-f1da-cf17-8b1a-47223ac3fd39@lechnology.com>
-Date: Fri, 2 Feb 2018 11:56:08 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <c2138795-edcd-bb7d-094d-47dc049c33df@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1753378AbeBBR74 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 12:59:56 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35044 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752803AbeBBR73 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 12:59:29 -0500
+X-Google-Smtp-Source: AH8x2257+NDdorp6v0KUybv4boJgCvLJJcCCgNBe8EDim/dc022t+vHl/L7bVXZsiGDkJL3azqgImw==
+Message-ID: <1517594367.3715.130.camel@gmail.com>
+Subject: Re: [PATCH net] Revert "defer call to mem_cgroup_sk_alloc()"
+From: Eric Dumazet <eric.dumazet@gmail.com>
+To: Roman Gushchin <guro@fb.com>, Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, "David S . Miller" <davem@davemloft.net>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>
+Date: Fri, 02 Feb 2018 09:59:27 -0800
+In-Reply-To: <20180202165754.8551-1-guro@fb.com>
+References: <20180202165754.8551-1-guro@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/02/2018 07:19 AM, Sekhar Nori wrote:
-> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
->> +static const struct clk_ops da8xx_cfgchip_div4p5_clk_ops = {
->> +	.enable		= da8xx_cfgchip_gate_clk_enable,
->> +	.disable	= da8xx_cfgchip_gate_clk_disable,
->> +	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
+On Fri, 2018-02-02 at 16:57 +0000, Roman Gushchin wrote:
+> This patch effectively reverts commit 9f1c2674b328 ("net: memcontrol:
+> defer call to mem_cgroup_sk_alloc()").
 > 
-> I assume the reason for not using clk-gate.c is lack of regmap support
-> there?
-
-Correct.
-
-I couldn't find a way to get a lock from the regmap that could
-be passed to clk_register_gate() to prevent non-clock drivers from
-trying to use the regmap at the same the the clocks are.
-
+> Moving mem_cgroup_sk_alloc() to the inet_csk_accept() completely breaks
+> memcg socket memory accounting, as packets received before memcg
+> pointer initialization are not accounted and are causing refcounting
+> underflow on socket release.
 > 
->> +	.recalc_rate	= da8xx_cfgchip_div4p5_recalc_rate,
->> +};
->> +
->> +static struct clk * __init
->> +da8xx_cfgchip_gate_clk_register(const struct da8xx_cfgchip_gate_clk_info *info,
->> +				const char *parent_name,
->> +				struct regmap *regmap)
->> +{
->> +	struct da8xx_cfgchip_gate_clk *gate;
->> +	struct clk_init_data init;
->> +
->> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
->> +	if (!gate)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	init.name = info->name;
->> +	if (info->flags & DA8XX_GATE_CLOCK_IS_DIV4P5)
->> +		init.ops = &da8xx_cfgchip_div4p5_clk_ops;
->> +	else
->> +		init.ops = &da8xx_cfgchip_gate_clk_ops;
+> Actually the free-after-use problem was fixed by
+> commit c0576e397508 ("net: call cgroup_sk_alloc() earlier in
+> sk_clone_lock()") for the cgroup pointer.
 > 
-> This will be easier to read using ternary operator, I think. But you
-> will probably have line breaks.
+> So, let's revert it and call mem_cgroup_sk_alloc() just before
+> cgroup_sk_alloc(). This is safe, as we hold a reference to the socket
+> we're cloning, and it holds a reference to the memcg.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> ---
+>  mm/memcontrol.c                 | 14 ++++++++++++++
+>  net/core/sock.c                 |  5 +----
+>  net/ipv4/inet_connection_sock.c |  1 -
+>  3 files changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 0ae2dc3a1748..0937f2c52c7d 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5747,6 +5747,20 @@ void mem_cgroup_sk_alloc(struct sock *sk)
+>  	if (!mem_cgroup_sockets_enabled)
+>  		return;
+>  
+> +	/*
+> +	 * Socket cloning can throw us here with sk_memcg already
+> +	 * filled. It won't however, necessarily happen from
+> +	 * process context. So the test for root memcg given
+> +	 * the current task's memcg won't help us in this case.
+> +	 *
+> +	 * Respecting the original socket's memcg is a better
+> +	 * decision in this case.
+> +	 */
+> +	if (sk->sk_memcg) {
 
-The names are so long that the ternary operator doesn't make it better IMHO.
+Original commit had a BUG_ON(mem_cgroup_is_root(sk->sk_memcg));
 
-	init.ops = (info->flags & DA8XX_GATE_CLOCK_IS_DIV4P5) ?
-		&da8xx_cfgchip_div4p5_clk_ops :
-		&da8xx_cfgchip_gate_clk_ops;
+I presume it is no longer useful ?
+
+Thanks
+
+> +		css_get(&sk->sk_memcg->css);
+> +		return;
+> +	}
+> +
+>  	rcu_read_lock();
