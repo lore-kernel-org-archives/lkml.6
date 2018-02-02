@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227H/eN0J7YuiHUnAanfXNOW3/8xROjvOzLIdFMuHje8cZIra2Bnx8BSZOBtya8oC5uW4+AK
-ARC-Seal: i=1; a=rsa-sha256; t=1517591442; cv=none;
+X-Google-Smtp-Source: AH8x22526sppikebpyhbZqXZTtA9hKA/e59P+oSKypuhRmq2PQBUdmKzerZzJBgAvCtHvZqvDoNA
+ARC-Seal: i=1; a=rsa-sha256; t=1517591439; cv=none;
         d=google.com; s=arc-20160816;
-        b=IgpXsUjImoKD694k7xMQy2mjZOj+gEVScX/zzK+YItDsj5nZ3XB02E0nWv+ohAmQDs
-         EjSjdTrVzt8orPhNZYl6FILdfbbqbQlnObb2Mre783ad1yUpAHex9jMbgOgMgWjStwDJ
-         GTmBSKDS7m40KrVRop2vhGihz5e9o35U10yEr8TVj1yC+NmP4ZdNy8xX5Sl5V3Zmjv9i
-         VxRZmDwfGDFTh5VD5zAkIHxrCj78W9tSoDvb6zj9SAC/Jco+yxpS/nwO4cUHhB49NJ7d
-         5Yc26WZcsMpQL3hocp7//QeSpIBm2skhI2kuWkilXtcBw/9Mv0sFUNtcH6TMED2E0V/P
-         FZ4g==
+        b=mgY6SEP+t53E23iv9Yw2zV5mFfdMCyEvDUIO6QYxYguXy+XmFBwelYs+ieqKeffEJL
+         7p8QWJZeG4Bon+SeEa1ycTuM0c/Y2SUD8xkL0R2ZpuH03UwK/h5qJjUp2V4uVRNbrhkv
+         QIeJkeFOUAwHPSbscnUsb5ewe3sU5/RZQfiaV7wocZG7iLoKJH59mMT8MSIcJ1+8s2lQ
+         +LXg/x44Q4cCFR2I+9foNC4ilbjjTlPigPX2UnBBXDJn4B/A3dH/+wpcZyxcQ8JC8N1d
+         S1ioRnXZJ2byfmSJUOYdzIF0yE03mTxivym1Xs2iv/H7UDt++v1atjLxNLVzuLv2R3Mi
+         v25g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=O62YG1Sao71/DE5n9NvRgbkNn2NE4bB8iQ840O1dfs8=;
-        b=0YxJ8Qni125XpA2JdHcfyQAOtXrz+DQ3K3NLUowS+3w/WT4Rc/pMCYci5CDFuFVxAP
-         KaTKk5aaGBR+gv4PtDs6sqASA8ZEr6GWETgzYl2f5HUKU6BIouRkYfaPWpvP6NepWcNp
-         VQrcX5Hn+jhtv6agQk9ltprjsfcKjHgSXbhnGPMvmfEpojcWigfy1J3b4C58Yw9pTlLy
-         92sMoxdLt+/QeMzh70k00wJ/DAtF04AxzojAH+QX4Oqt4vILB+odIlWQY7XFlWabL4TK
-         XXLF2wBy9aip2Ypkfiv2aMnFNgrcWMNARZAfvU9j4Frx4mKo3VTzc5IulS/q9si1JUL8
-         UA+Q==
+        bh=eobSrlgxBnmQnLK2/DGCKpVxcm4yetAqR9NMoIieWGo=;
+        b=z0Z/hu9BC04umFKmEdbDL2tuZZOculjmodAkSYLoBKHnmRA6l+BhiuFDWSr3WinDfl
+         numlwdK1u/qGvZcPIDUtcK3fm1hUl0v3vwUlWS1jqQWMreCCBAhmRCURA3UssqbhmVgT
+         l4E0zZeRp1+dCOJNsa2+HlFCQK4gRbUghOm8K6imbGuxCyNHAyY6wM/i6z47cKXLA8Wd
+         wfkF7qRhDMkhkK9I7/xVh4YnyxtUe6JUZNCgBPNgf8LK5LCpx6Lqvf4A+kw0wyj2qpEk
+         2R/mII5YcLmM9MS1WijSqIyRo/MzTl7uJbgL3OeI9FmvpGq//+Y3w4EIPOnjc+M3g3tT
+         JXqw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	Wolfram Sang <wsa@the-dreams.de>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Christoph Hellwig <hch@lst.de>,
+	"Darrick J. Wong" <darrick.wong@oracle.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 082/156] i2c: i2c-boardinfo: fix memory leaks on devinfo
-Date: Fri,  2 Feb 2018 17:57:43 +0100
-Message-Id: <20180202140843.980784802@linuxfoundation.org>
+Subject: [PATCH 4.14 081/156] xfs: log recovery should replay deferred ops in order
+Date: Fri,  2 Feb 2018 17:57:42 +0100
+Message-Id: <20180202140843.939057347@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309964240889073?=
-X-GMAIL-MSGID: =?utf-8?q?1591309964240889073?=
+X-GMAIL-THRID: =?utf-8?q?1591309961989625300?=
+X-GMAIL-MSGID: =?utf-8?q?1591309961989625300?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +50,426 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
 
 
-[ Upstream commit 66a7c84d677e8e4a5a2ef4afdb9bd52e1399a866 ]
+[ Upstream commit 509955823cc9cc225c05673b1b83d70ca70c5c60 ]
 
-Currently when an error occurs devinfo is still allocated but is
-unused when the error exit paths break out of the for-loop. Fix
-this by kfree'ing devinfo to avoid the leak.
+As part of testing log recovery with dm_log_writes, Amir Goldstein
+discovered an error in the deferred ops recovery that lead to corruption
+of the filesystem metadata if a reflink+rmap filesystem happened to shut
+down midway through a CoW remap:
 
-Detected by CoverityScan, CID#1416590 ("Resource Leak")
+"This is what happens [after failed log recovery]:
 
-Fixes: 4124c4eba402 ("i2c: allow attaching IRQ resources to i2c_board_info")
-Fixes: 0daaf99d8424 ("i2c: copy device properties when using i2c_register_board_info()")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+"Phase 1 - find and verify superblock...
+"Phase 2 - using internal log
+"        - zero log...
+"        - scan filesystem freespace and inode maps...
+"        - found root inode chunk
+"Phase 3 - for each AG...
+"        - scan (but don't clear) agi unlinked lists...
+"        - process known inodes and perform inode discovery...
+"        - agno = 0
+"data fork in regular inode 134 claims CoW block 376
+"correcting nextents for inode 134
+"bad data fork in inode 134
+"would have cleared inode 134"
+
+Hou Tao dissected the log contents of exactly such a crash:
+
+"According to the implementation of xfs_defer_finish(), these ops should
+be completed in the following sequence:
+
+"Have been done:
+"(1) CUI: Oper (160)
+"(2) BUI: Oper (161)
+"(3) CUD: Oper (194), for CUI Oper (160)
+"(4) RUI A: Oper (197), free rmap [0x155, 2, -9]
+
+"Should be done:
+"(5) BUD: for BUI Oper (161)
+"(6) RUI B: add rmap [0x155, 2, 137]
+"(7) RUD: for RUI A
+"(8) RUD: for RUI B
+
+"Actually be done by xlog_recover_process_intents()
+"(5) BUD: for BUI Oper (161)
+"(6) RUI B: add rmap [0x155, 2, 137]
+"(7) RUD: for RUI B
+"(8) RUD: for RUI A
+
+"So the rmap entry [0x155, 2, -9] for COW should be freed firstly,
+then a new rmap entry [0x155, 2, 137] will be added. However, as we can see
+from the log record in post_mount.log (generated after umount) and the trace
+print, the new rmap entry [0x155, 2, 137] are added firstly, then the rmap
+entry [0x155, 2, -9] are freed."
+
+When reconstructing the internal log state from the log items found on
+disk, it's required that deferred ops replay in exactly the same order
+that they would have had the filesystem not gone down.  However,
+replaying unfinished deferred ops can create /more/ deferred ops.  These
+new deferred ops are finished in the wrong order.  This causes fs
+corruption and replay crashes, so let's create a single defer_ops to
+handle the subsequent ops created during replay, then use one single
+transaction at the end of log recovery to ensure that everything is
+replayed in the same order as they're supposed to be.
+
+Reported-by: Amir Goldstein <amir73il@gmail.com>
+Analyzed-by: Hou Tao <houtao1@huawei.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Tested-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/i2c-boardinfo.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/xfs/xfs_bmap_item.c     |   23 ++++---------
+ fs/xfs/xfs_bmap_item.h     |    3 +
+ fs/xfs/xfs_log_recover.c   |   75 ++++++++++++++++++++++++++++++++++++++++-----
+ fs/xfs/xfs_refcount_item.c |   21 ++++--------
+ fs/xfs/xfs_refcount_item.h |    3 +
+ 5 files changed, 85 insertions(+), 40 deletions(-)
 
---- a/drivers/i2c/i2c-boardinfo.c
-+++ b/drivers/i2c/i2c-boardinfo.c
-@@ -86,6 +86,7 @@ int i2c_register_board_info(int busnum,
- 					property_entries_dup(info->properties);
- 			if (IS_ERR(devinfo->board_info.properties)) {
- 				status = PTR_ERR(devinfo->board_info.properties);
-+				kfree(devinfo);
- 				break;
- 			}
+--- a/fs/xfs/xfs_bmap_item.c
++++ b/fs/xfs/xfs_bmap_item.c
+@@ -389,7 +389,8 @@ xfs_bud_init(
+ int
+ xfs_bui_recover(
+ 	struct xfs_mount		*mp,
+-	struct xfs_bui_log_item		*buip)
++	struct xfs_bui_log_item		*buip,
++	struct xfs_defer_ops		*dfops)
+ {
+ 	int				error = 0;
+ 	unsigned int			bui_type;
+@@ -404,9 +405,7 @@ xfs_bui_recover(
+ 	xfs_exntst_t			state;
+ 	struct xfs_trans		*tp;
+ 	struct xfs_inode		*ip = NULL;
+-	struct xfs_defer_ops		dfops;
+ 	struct xfs_bmbt_irec		irec;
+-	xfs_fsblock_t			firstfsb;
+ 
+ 	ASSERT(!test_bit(XFS_BUI_RECOVERED, &buip->bui_flags));
+ 
+@@ -464,7 +463,6 @@ xfs_bui_recover(
+ 
+ 	if (VFS_I(ip)->i_nlink == 0)
+ 		xfs_iflags_set(ip, XFS_IRECOVERY);
+-	xfs_defer_init(&dfops, &firstfsb);
+ 
+ 	/* Process deferred bmap item. */
+ 	state = (bmap->me_flags & XFS_BMAP_EXTENT_UNWRITTEN) ?
+@@ -479,16 +477,16 @@ xfs_bui_recover(
+ 		break;
+ 	default:
+ 		error = -EFSCORRUPTED;
+-		goto err_dfops;
++		goto err_inode;
+ 	}
+ 	xfs_trans_ijoin(tp, ip, 0);
+ 
+ 	count = bmap->me_len;
+-	error = xfs_trans_log_finish_bmap_update(tp, budp, &dfops, type,
++	error = xfs_trans_log_finish_bmap_update(tp, budp, dfops, type,
+ 			ip, whichfork, bmap->me_startoff,
+ 			bmap->me_startblock, &count, state);
+ 	if (error)
+-		goto err_dfops;
++		goto err_inode;
+ 
+ 	if (count > 0) {
+ 		ASSERT(type == XFS_BMAP_UNMAP);
+@@ -496,16 +494,11 @@ xfs_bui_recover(
+ 		irec.br_blockcount = count;
+ 		irec.br_startoff = bmap->me_startoff;
+ 		irec.br_state = state;
+-		error = xfs_bmap_unmap_extent(tp->t_mountp, &dfops, ip, &irec);
++		error = xfs_bmap_unmap_extent(tp->t_mountp, dfops, ip, &irec);
+ 		if (error)
+-			goto err_dfops;
++			goto err_inode;
+ 	}
+ 
+-	/* Finish transaction, free inodes. */
+-	error = xfs_defer_finish(&tp, &dfops);
+-	if (error)
+-		goto err_dfops;
+-
+ 	set_bit(XFS_BUI_RECOVERED, &buip->bui_flags);
+ 	error = xfs_trans_commit(tp);
+ 	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+@@ -513,8 +506,6 @@ xfs_bui_recover(
+ 
+ 	return error;
+ 
+-err_dfops:
+-	xfs_defer_cancel(&dfops);
+ err_inode:
+ 	xfs_trans_cancel(tp);
+ 	if (ip) {
+--- a/fs/xfs/xfs_bmap_item.h
++++ b/fs/xfs/xfs_bmap_item.h
+@@ -93,6 +93,7 @@ struct xfs_bud_log_item *xfs_bud_init(st
+ 		struct xfs_bui_log_item *);
+ void xfs_bui_item_free(struct xfs_bui_log_item *);
+ void xfs_bui_release(struct xfs_bui_log_item *);
+-int xfs_bui_recover(struct xfs_mount *mp, struct xfs_bui_log_item *buip);
++int xfs_bui_recover(struct xfs_mount *mp, struct xfs_bui_log_item *buip,
++		struct xfs_defer_ops *dfops);
+ 
+ #endif	/* __XFS_BMAP_ITEM_H__ */
+--- a/fs/xfs/xfs_log_recover.c
++++ b/fs/xfs/xfs_log_recover.c
+@@ -24,6 +24,7 @@
+ #include "xfs_bit.h"
+ #include "xfs_sb.h"
+ #include "xfs_mount.h"
++#include "xfs_defer.h"
+ #include "xfs_da_format.h"
+ #include "xfs_da_btree.h"
+ #include "xfs_inode.h"
+@@ -4714,7 +4715,8 @@ STATIC int
+ xlog_recover_process_cui(
+ 	struct xfs_mount		*mp,
+ 	struct xfs_ail			*ailp,
+-	struct xfs_log_item		*lip)
++	struct xfs_log_item		*lip,
++	struct xfs_defer_ops		*dfops)
+ {
+ 	struct xfs_cui_log_item		*cuip;
+ 	int				error;
+@@ -4727,7 +4729,7 @@ xlog_recover_process_cui(
+ 		return 0;
+ 
+ 	spin_unlock(&ailp->xa_lock);
+-	error = xfs_cui_recover(mp, cuip);
++	error = xfs_cui_recover(mp, cuip, dfops);
+ 	spin_lock(&ailp->xa_lock);
+ 
+ 	return error;
+@@ -4754,7 +4756,8 @@ STATIC int
+ xlog_recover_process_bui(
+ 	struct xfs_mount		*mp,
+ 	struct xfs_ail			*ailp,
+-	struct xfs_log_item		*lip)
++	struct xfs_log_item		*lip,
++	struct xfs_defer_ops		*dfops)
+ {
+ 	struct xfs_bui_log_item		*buip;
+ 	int				error;
+@@ -4767,7 +4770,7 @@ xlog_recover_process_bui(
+ 		return 0;
+ 
+ 	spin_unlock(&ailp->xa_lock);
+-	error = xfs_bui_recover(mp, buip);
++	error = xfs_bui_recover(mp, buip, dfops);
+ 	spin_lock(&ailp->xa_lock);
+ 
+ 	return error;
+@@ -4803,6 +4806,46 @@ static inline bool xlog_item_is_intent(s
+ 	}
+ }
+ 
++/* Take all the collected deferred ops and finish them in order. */
++static int
++xlog_finish_defer_ops(
++	struct xfs_mount	*mp,
++	struct xfs_defer_ops	*dfops)
++{
++	struct xfs_trans	*tp;
++	int64_t			freeblks;
++	uint			resblks;
++	int			error;
++
++	/*
++	 * We're finishing the defer_ops that accumulated as a result of
++	 * recovering unfinished intent items during log recovery.  We
++	 * reserve an itruncate transaction because it is the largest
++	 * permanent transaction type.  Since we're the only user of the fs
++	 * right now, take 93% (15/16) of the available free blocks.  Use
++	 * weird math to avoid a 64-bit division.
++	 */
++	freeblks = percpu_counter_sum(&mp->m_fdblocks);
++	if (freeblks <= 0)
++		return -ENOSPC;
++	resblks = min_t(int64_t, UINT_MAX, freeblks);
++	resblks = (resblks * 15) >> 4;
++	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, resblks,
++			0, XFS_TRANS_RESERVE, &tp);
++	if (error)
++		return error;
++
++	error = xfs_defer_finish(&tp, dfops);
++	if (error)
++		goto out_cancel;
++
++	return xfs_trans_commit(tp);
++
++out_cancel:
++	xfs_trans_cancel(tp);
++	return error;
++}
++
+ /*
+  * When this is called, all of the log intent items which did not have
+  * corresponding log done items should be in the AIL.  What we do now
+@@ -4823,10 +4866,12 @@ STATIC int
+ xlog_recover_process_intents(
+ 	struct xlog		*log)
+ {
+-	struct xfs_log_item	*lip;
+-	int			error = 0;
++	struct xfs_defer_ops	dfops;
+ 	struct xfs_ail_cursor	cur;
++	struct xfs_log_item	*lip;
+ 	struct xfs_ail		*ailp;
++	xfs_fsblock_t		firstfsb;
++	int			error = 0;
+ #if defined(DEBUG) || defined(XFS_WARN)
+ 	xfs_lsn_t		last_lsn;
+ #endif
+@@ -4837,6 +4882,7 @@ xlog_recover_process_intents(
+ #if defined(DEBUG) || defined(XFS_WARN)
+ 	last_lsn = xlog_assign_lsn(log->l_curr_cycle, log->l_curr_block);
+ #endif
++	xfs_defer_init(&dfops, &firstfsb);
+ 	while (lip != NULL) {
+ 		/*
+ 		 * We're done when we see something other than an intent.
+@@ -4857,6 +4903,12 @@ xlog_recover_process_intents(
+ 		 */
+ 		ASSERT(XFS_LSN_CMP(last_lsn, lip->li_lsn) >= 0);
+ 
++		/*
++		 * NOTE: If your intent processing routine can create more
++		 * deferred ops, you /must/ attach them to the dfops in this
++		 * routine or else those subsequent intents will get
++		 * replayed in the wrong order!
++		 */
+ 		switch (lip->li_type) {
+ 		case XFS_LI_EFI:
+ 			error = xlog_recover_process_efi(log->l_mp, ailp, lip);
+@@ -4865,10 +4917,12 @@ xlog_recover_process_intents(
+ 			error = xlog_recover_process_rui(log->l_mp, ailp, lip);
+ 			break;
+ 		case XFS_LI_CUI:
+-			error = xlog_recover_process_cui(log->l_mp, ailp, lip);
++			error = xlog_recover_process_cui(log->l_mp, ailp, lip,
++					&dfops);
+ 			break;
+ 		case XFS_LI_BUI:
+-			error = xlog_recover_process_bui(log->l_mp, ailp, lip);
++			error = xlog_recover_process_bui(log->l_mp, ailp, lip,
++					&dfops);
+ 			break;
  		}
-@@ -98,6 +99,7 @@ int i2c_register_board_info(int busnum,
- 					GFP_KERNEL);
- 			if (!devinfo->board_info.resources) {
- 				status = -ENOMEM;
-+				kfree(devinfo);
+ 		if (error)
+@@ -4878,6 +4932,11 @@ xlog_recover_process_intents(
+ out:
+ 	xfs_trans_ail_cursor_done(&cur);
+ 	spin_unlock(&ailp->xa_lock);
++	if (error)
++		xfs_defer_cancel(&dfops);
++	else
++		error = xlog_finish_defer_ops(log->l_mp, &dfops);
++
+ 	return error;
+ }
+ 
+--- a/fs/xfs/xfs_refcount_item.c
++++ b/fs/xfs/xfs_refcount_item.c
+@@ -393,7 +393,8 @@ xfs_cud_init(
+ int
+ xfs_cui_recover(
+ 	struct xfs_mount		*mp,
+-	struct xfs_cui_log_item		*cuip)
++	struct xfs_cui_log_item		*cuip,
++	struct xfs_defer_ops		*dfops)
+ {
+ 	int				i;
+ 	int				error = 0;
+@@ -405,11 +406,9 @@ xfs_cui_recover(
+ 	struct xfs_trans		*tp;
+ 	struct xfs_btree_cur		*rcur = NULL;
+ 	enum xfs_refcount_intent_type	type;
+-	xfs_fsblock_t			firstfsb;
+ 	xfs_fsblock_t			new_fsb;
+ 	xfs_extlen_t			new_len;
+ 	struct xfs_bmbt_irec		irec;
+-	struct xfs_defer_ops		dfops;
+ 	bool				requeue_only = false;
+ 
+ 	ASSERT(!test_bit(XFS_CUI_RECOVERED, &cuip->cui_flags));
+@@ -465,7 +464,6 @@ xfs_cui_recover(
+ 		return error;
+ 	cudp = xfs_trans_get_cud(tp, cuip);
+ 
+-	xfs_defer_init(&dfops, &firstfsb);
+ 	for (i = 0; i < cuip->cui_format.cui_nextents; i++) {
+ 		refc = &cuip->cui_format.cui_extents[i];
+ 		refc_type = refc->pe_flags & XFS_REFCOUNT_EXTENT_TYPE_MASK;
+@@ -485,7 +483,7 @@ xfs_cui_recover(
+ 			new_len = refc->pe_len;
+ 		} else
+ 			error = xfs_trans_log_finish_refcount_update(tp, cudp,
+-				&dfops, type, refc->pe_startblock, refc->pe_len,
++				dfops, type, refc->pe_startblock, refc->pe_len,
+ 				&new_fsb, &new_len, &rcur);
+ 		if (error)
+ 			goto abort_error;
+@@ -497,21 +495,21 @@ xfs_cui_recover(
+ 			switch (type) {
+ 			case XFS_REFCOUNT_INCREASE:
+ 				error = xfs_refcount_increase_extent(
+-						tp->t_mountp, &dfops, &irec);
++						tp->t_mountp, dfops, &irec);
  				break;
- 			}
- 		}
+ 			case XFS_REFCOUNT_DECREASE:
+ 				error = xfs_refcount_decrease_extent(
+-						tp->t_mountp, &dfops, &irec);
++						tp->t_mountp, dfops, &irec);
+ 				break;
+ 			case XFS_REFCOUNT_ALLOC_COW:
+ 				error = xfs_refcount_alloc_cow_extent(
+-						tp->t_mountp, &dfops,
++						tp->t_mountp, dfops,
+ 						irec.br_startblock,
+ 						irec.br_blockcount);
+ 				break;
+ 			case XFS_REFCOUNT_FREE_COW:
+ 				error = xfs_refcount_free_cow_extent(
+-						tp->t_mountp, &dfops,
++						tp->t_mountp, dfops,
+ 						irec.br_startblock,
+ 						irec.br_blockcount);
+ 				break;
+@@ -525,17 +523,12 @@ xfs_cui_recover(
+ 	}
+ 
+ 	xfs_refcount_finish_one_cleanup(tp, rcur, error);
+-	error = xfs_defer_finish(&tp, &dfops);
+-	if (error)
+-		goto abort_defer;
+ 	set_bit(XFS_CUI_RECOVERED, &cuip->cui_flags);
+ 	error = xfs_trans_commit(tp);
+ 	return error;
+ 
+ abort_error:
+ 	xfs_refcount_finish_one_cleanup(tp, rcur, error);
+-abort_defer:
+-	xfs_defer_cancel(&dfops);
+ 	xfs_trans_cancel(tp);
+ 	return error;
+ }
+--- a/fs/xfs/xfs_refcount_item.h
++++ b/fs/xfs/xfs_refcount_item.h
+@@ -96,6 +96,7 @@ struct xfs_cud_log_item *xfs_cud_init(st
+ 		struct xfs_cui_log_item *);
+ void xfs_cui_item_free(struct xfs_cui_log_item *);
+ void xfs_cui_release(struct xfs_cui_log_item *);
+-int xfs_cui_recover(struct xfs_mount *mp, struct xfs_cui_log_item *cuip);
++int xfs_cui_recover(struct xfs_mount *mp, struct xfs_cui_log_item *cuip,
++		struct xfs_defer_ops *dfops);
+ 
+ #endif	/* __XFS_REFCOUNT_ITEM_H__ */
