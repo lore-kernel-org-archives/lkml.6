@@ -1,167 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752212AbeBBXqU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 18:46:20 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36263 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751557AbeBBXqN (ORCPT
+        id S1752172AbeBBXvM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 18:51:12 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46418 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751699AbeBBXvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 18:46:13 -0500
-X-Google-Smtp-Source: AH8x227iOWt9NbQuR3pEWv7dLw1DBttlJLoYsA/QYXqEIcUKcwbnEHssDdnJvE3S69nxgJlTETZtlA==
-Date: Sat, 3 Feb 2018 00:46:05 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, will.deacon@arm.com,
+        Fri, 2 Feb 2018 18:51:05 -0500
+Date: Fri, 2 Feb 2018 15:51:02 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: corbet@lwn.net, stern@rowland.harvard.edu, will.deacon@arm.com,
         peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
         dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-Subject: Re: [PATCH 1/2] tools/memory-model: clarify the origin/scope of the
- tool name
-Message-ID: <20180202234605.GA4187@andrea>
-References: <1517486609-10951-1-git-send-email-parri.andrea@gmail.com>
- <Pine.LNX.4.44L0.1802011026250.1677-100000@iolanthe.rowland.org>
- <20180201230941.GT3741@linux.vnet.ibm.com>
- <20180202104421.GA31828@andrea>
- <20180202231922.GB3617@linux.vnet.ibm.com>
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] MAINTAINERS: list file memory-barriers.txt within
+ the LKMM entry
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1517562822-6293-1-git-send-email-parri.andrea@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180202231922.GB3617@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1517562822-6293-1-git-send-email-parri.andrea@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18020223-0048-0000-0000-000002319C51
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008463; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000248; SDB=6.00984178; UDB=6.00499204; IPR=6.00763456;
+ BA=6.00005809; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019342; XFM=3.00000015;
+ UTC=2018-02-02 23:51:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020223-0049-0000-0000-000043FFE14C
+Message-Id: <20180202235102.GC3617@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802020285
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 03:19:22PM -0800, Paul E. McKenney wrote:
-> On Fri, Feb 02, 2018 at 11:44:21AM +0100, Andrea Parri wrote:
-> > On Thu, Feb 01, 2018 at 03:09:41PM -0800, Paul E. McKenney wrote:
-> > > On Thu, Feb 01, 2018 at 10:26:50AM -0500, Alan Stern wrote:
-> > > > On Thu, 1 Feb 2018, Andrea Parri wrote:
-> > > > 
-> > > > > Ingo pointed out that:
-> > > > > 
-> > > > >   "The "memory model" name is overly generic, ambiguous and somewhat
-> > > > >    misleading, as we usually mean the virtual memory layout/model
-> > > > >    when we say "memory model". GCC too uses it in that sense [...]"
-> > > > > 
-> > > > > Make it clearer that, in the context of tools/memory-model/, the term
-> > > > > "memory-model" is used as shorthand for "memory consistency model" by
-> > > > > calling out this convention in tools/memory-model/README.
-> > > > > 
-> > > > > Stick to the full name in sources' headers and for the subsystem name.
-> > > > > 
-> > > > > Suggested-by: Ingo Molnar <mingo@kernel.org>
-> > > > > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> > > > 
-> > > > For both patches:
-> > > > 
-> > > > Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> > > 
-> > > Thank you all -- I have queued this and pushed it to my RCU tree on
-> > > branch lkmm.  I did reword the commit log a bit, please see below and
-> > > please let me know if any of my rewordings need halp.
-> > 
-> > Seems to me that your message has a leftover "is used".
+On Fri, Feb 02, 2018 at 10:13:42AM +0100, Andrea Parri wrote:
+> Now that a formal specification of the LKMM has become available to
+> the developer, some concern about how to track changes to the model
+> on the level of the "high-level documentation" was raised.
 > 
-> Good catch, how about this instead?
+> A first "mitigation" to this issue, suggested by Will, is to assign
+> maintainership (and responsibility!!)  of such documentation (here,
+> memory-barriers.txt) to the maintainers of the LKMM themselves.
+> 
+> Suggested-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
 
-Looks good to me. The same for 12a62a1d07031.
+Very good, thank you, queued!  Please see below for the usual commit-log
+rework.  BTW, in future submissions, could you please capitalize the
+first word after the colon (":") in the subject line?  It is all too
+easy for me to forget to change this, as Ingo can attest.  ;-)
 
-Thanks,
-  Andrea
+If we are going to continue to use the LKMM acronym, should we make the
+first line of the MAINTAINERS block look something like this?
 
+	LINUX KERNEL MEMORY CONSISTENCY MODEL (LKMM)
 
-> 
-> 							Thanx, Paul
-> 
-> -----------------------------------------------------------------------
-> 
-> commit 2b1b4ab5166209da849f306fbdc84114d9e611fd
-> Author: Andrea Parri <parri.andrea@gmail.com>
-> Date:   Thu Feb 1 13:03:29 2018 +0100
-> 
->     tools/memory-model: Clarify the origin/scope of the tool name
->     
->     Ingo pointed out that:
->     
->       "The "memory model" name is overly generic, ambiguous and somewhat
->        misleading, as we usually mean the virtual memory layout/model
->        when we say "memory model". GCC too uses it in that sense [...]"
->     
->     Make it clear that tools/memory-model/ uses the term "memory model" as
->     shorthand for "memory consistency model" by calling out this convention
->     in tools/memory-model/README.
->     
->     Stick to the original "memory model" term in sources' headers and for
->     the subsystem name.
->     
->     Suggested-by: Ingo Molnar <mingo@kernel.org>
->     Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
->     Acked-by: Will Deacon <will.deacon@arm.com>
->     Acked-by: Alan Stern <stern@rowland.harvard.edu>
->     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> 
-> diff --git a/tools/memory-model/MAINTAINERS b/tools/memory-model/MAINTAINERS
-> index 711cbe72d606..db3bd3fc0435 100644
-> --- a/tools/memory-model/MAINTAINERS
-> +++ b/tools/memory-model/MAINTAINERS
-> @@ -1,4 +1,4 @@
-> -LINUX KERNEL MEMORY MODEL
-> +LINUX KERNEL MEMORY CONSISTENCY MODEL
->  M:	Alan Stern <stern@rowland.harvard.edu>
->  M:	Andrea Parri <parri.andrea@gmail.com>
->  M:	Will Deacon <will.deacon@arm.com>
-> diff --git a/tools/memory-model/README b/tools/memory-model/README
-> index 43ba49492111..91414a49fac5 100644
-> --- a/tools/memory-model/README
-> +++ b/tools/memory-model/README
-> @@ -1,15 +1,15 @@
-> -			=========================
-> -			LINUX KERNEL MEMORY MODEL
-> -			=========================
-> +		=====================================
-> +		LINUX KERNEL MEMORY CONSISTENCY MODEL
-> +		=====================================
->  
->  ============
->  INTRODUCTION
->  ============
->  
-> -This directory contains the memory model of the Linux kernel, written
-> -in the "cat" language and executable by the (externally provided)
-> -"herd7" simulator, which exhaustively explores the state space of
-> -small litmus tests.
-> +This directory contains the memory consistency model (memory model, for
-> +short) of the Linux kernel, written in the "cat" language and executable
-> +by the externally provided "herd7" simulator, which exhaustively explores
-> +the state space of small litmus tests.
->  
->  In addition, the "klitmus7" tool (also externally provided) may be used
->  to convert a litmus test to a Linux kernel module, which in turn allows
-> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-> index 57112505f5e0..b984bbda01a5 100644
-> --- a/tools/memory-model/linux-kernel.bell
-> +++ b/tools/memory-model/linux-kernel.bell
-> @@ -11,7 +11,7 @@
->   * which is to appear in ASPLOS 2018.
->   *)
->  
-> -"Linux kernel memory model"
-> +"Linux-kernel memory consistency model"
->  
->  enum Accesses = 'once (*READ_ONCE,WRITE_ONCE,ACCESS_ONCE*) ||
->  		'release (*smp_store_release*) ||
-> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-> index 15b7a5dd8a9a..babe2b3b0bb3 100644
-> --- a/tools/memory-model/linux-kernel.cat
-> +++ b/tools/memory-model/linux-kernel.cat
-> @@ -11,7 +11,7 @@
->   * which is to appear in ASPLOS 2018.
->   *)
->  
-> -"Linux kernel memory model"
-> +"Linux-kernel memory consistency model"
->  
->  (*
->   * File "lock.cat" handles locks and is experimental.
-> 
+One alternative would be to start calling it LKMCM, though that does
+look a bit like a Roman numeral.  ;-)
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit 2f80571625dc2d1977acdef79267ba1645b07c53
+Author: Andrea Parri <parri.andrea@gmail.com>
+Date:   Fri Feb 2 10:13:42 2018 +0100
+
+    MAINTAINERS: List file memory-barriers.txt within the LKMM entry
+    
+    We now have a shiny new Linux-kernel memory model (LKMM) and the old
+    tried-and-true Documentation/memory-barrier.txt.  It would be good to
+    keep these automatically synchronized, but in the meantime we need at
+    least let people know that they are related.  Will suggested adding the
+    Documentation/memory-barrier.txt file to the LKMM maintainership list,
+    thus making the LKMM maintainers responsible for both the old and the new.
+    This commit follows Will's excellent suggestion.
+    
+    Suggested-by: Will Deacon <will.deacon@arm.com>
+    Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ba4dc08fbe95..e6ad9b44e8fb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8101,6 +8101,7 @@ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+ F:	tools/memory-model/
++F:	Documentation/memory-barriers.txt
+ 
+ LINUX SECURITY MODULE (LSM) FRAMEWORK
+ M:	Chris Wright <chrisw@sous-sol.org>
