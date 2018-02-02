@@ -1,149 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751913AbeBBIyp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 03:54:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46994 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751180AbeBBIyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 03:54:36 -0500
-Date: Fri, 2 Feb 2018 09:54:28 +0100
-From: Eduardo Otubo <otubo@redhat.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: xen-devel@lists.xenproject.org, jgross@suse.com, wei.liu2@citrix.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        paul.durrant@citrix.com, cheshi@redhat.com, vkuznets@redhat.com,
-        mgamal@redhat.com, cavery@redhat.com, boris.ostrovsky@oracle.com
-Subject: Re: [Xen-devel] [PATCHv2] xen-netfront: remove warning when
- unloading module
-Message-ID: <20180202085428.GA26899@vader>
-References: <20171123141835.5820-1-otubo@redhat.com>
- <fcbb9d8a-85b4-5543-6ebc-cd34a66729ff@gmail.com>
+        id S1751964AbeBBIy4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 03:54:56 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53321 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbeBBIyh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 03:54:37 -0500
+X-Google-Smtp-Source: AH8x224hWhy18b1vIE/HfLj9br2wlFwJNoGEfCVliKNd7QUgQqOmF7g9CeO8J17uqefs80XUbYjjlw==
+Date: Fri, 2 Feb 2018 09:54:27 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        linux-kernel@vger.kernel.org, mingo@kernel.org
+Subject: Re: [PATCH 1/2] tools/memory-model: clarify the origin/scope of the
+ tool name
+Message-ID: <20180202085427.GA5456@andrea>
+References: <1517486609-10951-1-git-send-email-parri.andrea@gmail.com>
+ <Pine.LNX.4.44L0.1802011026250.1677-100000@iolanthe.rowland.org>
+ <20180201230941.GT3741@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fcbb9d8a-85b4-5543-6ebc-cd34a66729ff@gmail.com>
-User-Agent: Mutt/1.8.3+47 (5f034395e53d) (2017-05-23)
+In-Reply-To: <20180201230941.GT3741@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 05:00:23PM +0200, Oleksandr Andrushchenko wrote:
-> Hi, Eduardo!
+On Thu, Feb 01, 2018 at 03:09:41PM -0800, Paul E. McKenney wrote:
+> On Thu, Feb 01, 2018 at 10:26:50AM -0500, Alan Stern wrote:
+> > On Thu, 1 Feb 2018, Andrea Parri wrote:
+> > 
+> > > Ingo pointed out that:
+> > > 
+> > >   "The "memory model" name is overly generic, ambiguous and somewhat
+> > >    misleading, as we usually mean the virtual memory layout/model
+> > >    when we say "memory model". GCC too uses it in that sense [...]"
+> > > 
+> > > Make it clearer that, in the context of tools/memory-model/, the term
+> > > "memory-model" is used as shorthand for "memory consistency model" by
+> > > calling out this convention in tools/memory-model/README.
+> > > 
+> > > Stick to the full name in sources' headers and for the subsystem name.
+> > > 
+> > > Suggested-by: Ingo Molnar <mingo@kernel.org>
+> > > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> > 
+> > For both patches:
+> > 
+> > Acked-by: Alan Stern <stern@rowland.harvard.edu>
 > 
-> I am working on a frontend driver (PV DRM) and also seeing some strange
+> Thank you all -- I have queued this and pushed it to my RCU tree on
+> branch lkmm.  I did reword the commit log a bit, please see below and
+> please let me know if any of my rewordings need halp.
 > 
-> things on driver unloading:
-> 
-> xt# rmmod -f drm_xen_front.ko
-> [ 3236.462497] [drm] Unregistering XEN PV vdispl
-> [ 3236.485745] [drm:xen_drv_remove [drm_xen_front]] *ERROR* Backend state is
-> InitWait while removing driver
-> [ 3236.486950] vdispl vdispl-0: 22 freeing event channel 11
-> [ 3236.496123] vdispl vdispl-0: failed to write error node for
-> device/vdispl/0 (22 freeing event channel 11)
-> [ 3236.496271] vdispl vdispl-0: 22 freeing event channel 12
-> [ 3236.501633] vdispl vdispl-0: failed to write error node for
-> device/vdispl/0 (22 freeing event channel 12)
-> 
-> These are somewhat different from your use-case with grant references, but I
-> have a question:
-> 
-> do you really see that XenbusStateClosed and XenbusStateClosing are
-> 
-> called? In my driver I can't see those and once I tried to dig deeper into
-> the problem
-> 
-> I saw that on driver removal it is disconnected from XenBus, so no backend
-> state
-> 
-> change events come in via .otherend_changed callback.
-> 
-> The only difference I see here is that the backend is a user-space
-> application
-> 
-> Thank you,
-> Oleksandr
+> Andrea, when you resend your second patch, could you please add Alan's
+> Acked-by?
 
-To be honest, most of the things I assumed were true, according to some talks on
-IRC with maintainers. Since I assumed it was true I started to write code based
-on that and all the behaviors that followed were correct according to my
-assumptions (and discussions).
+You mean in order to integrate Will's suggestion? I was planning to send
+that as a separate patch, as suggested by Will: the patch is on its way,
+IAC, please let me know if you'd prefer a V2 merging the two changes.
 
-But if you find something else weird, please let me know and we can fix it.
+  Andrea
+
 
 > 
-> On 11/23/2017 04:18 PM, Eduardo Otubo wrote:
-> > v2:
-> >   * Replace busy wait with wait_event()/wake_up_all()
-> >   * Cannot garantee that at the time xennet_remove is called, the
-> >     xen_netback state will not be XenbusStateClosed, so added a
-> >     condition for that
-> >   * There's a small chance for the xen_netback state is
-> >     XenbusStateUnknown by the time the xen_netfront switches to Closed,
-> >     so added a condition for that.
-> > 
-> > When unloading module xen_netfront from guest, dmesg would output
-> > warning messages like below:
-> > 
-> >    [  105.236836] xen:grant_table: WARNING: g.e. 0x903 still in use!
-> >    [  105.236839] deferring g.e. 0x903 (pfn 0x35805)
-> > 
-> > This problem relies on netfront and netback being out of sync. By the time
-> > netfront revokes the g.e.'s netback didn't have enough time to free all of
-> > them, hence displaying the warnings on dmesg.
-> > 
-> > The trick here is to make netfront to wait until netback frees all the g.e.'s
-> > and only then continue to cleanup for the module removal, and this is done by
-> > manipulating both device states.
-> > 
-> > Signed-off-by: Eduardo Otubo <otubo@redhat.com>
-> > ---
-> >   drivers/net/xen-netfront.c | 18 ++++++++++++++++++
-> >   1 file changed, 18 insertions(+)
-> > 
-> > diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-> > index 8b8689c6d887..391432e2725d 100644
-> > --- a/drivers/net/xen-netfront.c
-> > +++ b/drivers/net/xen-netfront.c
-> > @@ -87,6 +87,8 @@ struct netfront_cb {
-> >   /* IRQ name is queue name with "-tx" or "-rx" appended */
-> >   #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
-> > +static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
-> > +
-> >   struct netfront_stats {
-> >   	u64			packets;
-> >   	u64			bytes;
-> > @@ -2021,10 +2023,12 @@ static void netback_changed(struct xenbus_device *dev,
-> >   		break;
-> >   	case XenbusStateClosed:
-> > +		wake_up_all(&module_unload_q);
-> >   		if (dev->state == XenbusStateClosed)
-> >   			break;
-> >   		/* Missed the backend's CLOSING state -- fallthrough */
-> >   	case XenbusStateClosing:
-> > +		wake_up_all(&module_unload_q);
-> >   		xenbus_frontend_closed(dev);
-> >   		break;
-> >   	}
-> > @@ -2130,6 +2134,20 @@ static int xennet_remove(struct xenbus_device *dev)
-> >   	dev_dbg(&dev->dev, "%s\n", dev->nodename);
-> > +	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
-> > +		xenbus_switch_state(dev, XenbusStateClosing);
-> > +		wait_event(module_unload_q,
-> > +			   xenbus_read_driver_state(dev->otherend) ==
-> > +			   XenbusStateClosing);
-> > +
-> > +		xenbus_switch_state(dev, XenbusStateClosed);
-> > +		wait_event(module_unload_q,
-> > +			   xenbus_read_driver_state(dev->otherend) ==
-> > +			   XenbusStateClosed ||
-> > +			   xenbus_read_driver_state(dev->otherend) ==
-> > +			   XenbusStateUnknown);
-> > +	}
-> > +
-> >   	xennet_disconnect_backend(info);
-> >   	unregister_netdev(info->netdev);
+> 							Thanx, Paul
 > 
-
--- 
-Eduardo Otubo
+> ------------------------------------------------------------------------
+> 
+> commit de175b697f71b8e3e6d980b7186b909fee0c4378
+> Author: Andrea Parri <parri.andrea@gmail.com>
+> Date:   Thu Feb 1 13:03:29 2018 +0100
+> 
+>     tools/memory-model: Clarify the origin/scope of the tool name
+>     
+>     Ingo pointed out that:
+>     
+>       "The "memory model" name is overly generic, ambiguous and somewhat
+>        misleading, as we usually mean the virtual memory layout/model
+>        when we say "memory model". GCC too uses it in that sense [...]"
+>     
+>     Make it clearer that tools/memory-model/ uses the term "memory model"
+>     is used as shorthand for "memory consistency model" by calling out this
+>     convention in tools/memory-model/README.
+>     
+>     Stick to the original "memory model" term in sources' headers and for
+>     the subsystem name.
+>     
+>     Suggested-by: Ingo Molnar <mingo@kernel.org>
+>     Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+>     Acked-by: Will Deacon <will.deacon@arm.com>
+>     Acked-by: Alan Stern <stern@rowland.harvard.edu>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> 
+> diff --git a/tools/memory-model/MAINTAINERS b/tools/memory-model/MAINTAINERS
+> index 711cbe72d606..db3bd3fc0435 100644
+> --- a/tools/memory-model/MAINTAINERS
+> +++ b/tools/memory-model/MAINTAINERS
+> @@ -1,4 +1,4 @@
+> -LINUX KERNEL MEMORY MODEL
+> +LINUX KERNEL MEMORY CONSISTENCY MODEL
+>  M:	Alan Stern <stern@rowland.harvard.edu>
+>  M:	Andrea Parri <parri.andrea@gmail.com>
+>  M:	Will Deacon <will.deacon@arm.com>
+> diff --git a/tools/memory-model/README b/tools/memory-model/README
+> index 43ba49492111..91414a49fac5 100644
+> --- a/tools/memory-model/README
+> +++ b/tools/memory-model/README
+> @@ -1,15 +1,15 @@
+> -			=========================
+> -			LINUX KERNEL MEMORY MODEL
+> -			=========================
+> +		=====================================
+> +		LINUX KERNEL MEMORY CONSISTENCY MODEL
+> +		=====================================
+>  
+>  ============
+>  INTRODUCTION
+>  ============
+>  
+> -This directory contains the memory model of the Linux kernel, written
+> -in the "cat" language and executable by the (externally provided)
+> -"herd7" simulator, which exhaustively explores the state space of
+> -small litmus tests.
+> +This directory contains the memory consistency model (memory model, for
+> +short) of the Linux kernel, written in the "cat" language and executable
+> +by the externally provided "herd7" simulator, which exhaustively explores
+> +the state space of small litmus tests.
+>  
+>  In addition, the "klitmus7" tool (also externally provided) may be used
+>  to convert a litmus test to a Linux kernel module, which in turn allows
+> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+> index 57112505f5e0..b984bbda01a5 100644
+> --- a/tools/memory-model/linux-kernel.bell
+> +++ b/tools/memory-model/linux-kernel.bell
+> @@ -11,7 +11,7 @@
+>   * which is to appear in ASPLOS 2018.
+>   *)
+>  
+> -"Linux kernel memory model"
+> +"Linux-kernel memory consistency model"
+>  
+>  enum Accesses = 'once (*READ_ONCE,WRITE_ONCE,ACCESS_ONCE*) ||
+>  		'release (*smp_store_release*) ||
+> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> index 15b7a5dd8a9a..babe2b3b0bb3 100644
+> --- a/tools/memory-model/linux-kernel.cat
+> +++ b/tools/memory-model/linux-kernel.cat
+> @@ -11,7 +11,7 @@
+>   * which is to appear in ASPLOS 2018.
+>   *)
+>  
+> -"Linux kernel memory model"
+> +"Linux-kernel memory consistency model"
+>  
+>  (*
+>   * File "lock.cat" handles locks and is experimental.
+> 
