@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752061AbeBBNIO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:08:14 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51298 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751835AbeBBNHg (ORCPT
+        id S1752082AbeBBNI0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:08:26 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49216 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751666AbeBBNH2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 08:07:36 -0500
+        Fri, 2 Feb 2018 08:07:28 -0500
 From: Philipp Rudo <prudo@linux.vnet.ibm.com>
 To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
 Cc: prudo@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
@@ -15,149 +15,71 @@ Cc: prudo@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH 07/17] kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
-Date: Fri,  2 Feb 2018 14:07:08 +0100
+Subject: [PATCH 02/17] kexec_file: Remove checks in kexec_purgatory_load
+Date: Fri,  2 Feb 2018 14:07:03 +0100
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
 References: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020213-0020-0000-0000-000003F1AF02
+x-cbid: 18020213-0008-0000-0000-000004C8CBF8
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020213-0021-0000-0000-000042841C08
-Message-Id: <20180202130718.35509-8-prudo@linux.vnet.ibm.com>
+x-cbparentid: 18020213-0009-0000-0000-00001E5C6E47
+Message-Id: <20180202130718.35509-3-prudo@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=1
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802020162
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To update the entry point there is an extra loop over all section headers
-although this can be done in the main loop. So move it there and eliminate
-the extra loop and variable to store the 'entry section index'.
+Before the purgatory is loaded several checks are done whether the ELF file
+in kexec_purgatory is valid or not. These checks are incomplete. For
+example they don't check for the total size of the sections defined in the
+section header table or if the entry point actually points into the
+purgatory.
 
-Also, in the main loop, move the usual case, i.e. non-bss section, out of
-the extra if-block.
+On the other hand the purgatory, although an ELF file on its own, is part
+of the kernel. Thus not trusting the purgatory means not trusting the
+kernel build itself.
+
+So remove all validity checks on the purgatory and just trust the kernel
+build.
 
 Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
-Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 ---
- kernel/kexec_file.c | 76 +++++++++++++++++++++--------------------------------
- 1 file changed, 30 insertions(+), 46 deletions(-)
+ kernel/kexec_file.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
 diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index d1c3ec8dc6b1..bb31a3b627c2 100644
+index e5bcd94c1efb..0f044457b40c 100644
 --- a/kernel/kexec_file.c
 +++ b/kernel/kexec_file.c
-@@ -731,7 +731,6 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
- 	unsigned char *buf_addr;
- 	unsigned char *src;
- 	Elf_Shdr *sechdrs;
--	int entry_sidx = -1;
- 	int i;
+@@ -880,22 +880,8 @@ int kexec_load_purgatory(struct kimage *image, unsigned long min,
+ 	if (kexec_purgatory_size <= 0)
+ 		return -EINVAL;
  
- 	sechdrs = vzalloc(pi->ehdr->e_shnum * sizeof(Elf_Shdr));
-@@ -763,32 +762,11 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
- 						sechdrs[i].sh_offset;
- 	}
+-	if (kexec_purgatory_size < sizeof(Elf_Ehdr))
+-		return -ENOEXEC;
+-
+ 	pi->ehdr = (Elf_Ehdr *)kexec_purgatory;
  
--	/*
--	 * Identify entry point section and make entry relative to section
--	 * start.
--	 */
--	kbuf->image->start = pi->ehdr->e_entry;
--	for (i = 0; i < pi->ehdr->e_shnum; i++) {
--		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
--			continue;
+-	if (memcmp(pi->ehdr->e_ident, ELFMAG, SELFMAG) != 0
+-	    || pi->ehdr->e_type != ET_REL
+-	    || !elf_check_arch(pi->ehdr)
+-	    || pi->ehdr->e_shentsize != sizeof(Elf_Shdr))
+-		return -ENOEXEC;
 -
--		if (!(sechdrs[i].sh_flags & SHF_EXECINSTR))
--			continue;
+-	if (pi->ehdr->e_shoff >= kexec_purgatory_size
+-	    || (pi->ehdr->e_shnum * sizeof(Elf_Shdr) >
+-	    kexec_purgatory_size - pi->ehdr->e_shoff))
+-		return -ENOEXEC;
 -
--		/* Make entry section relative */
--		if (sechdrs[i].sh_addr <= pi->ehdr->e_entry &&
--		    ((sechdrs[i].sh_addr + sechdrs[i].sh_size) >
--		     pi->ehdr->e_entry)) {
--			entry_sidx = i;
--			kbuf->image->start -= sechdrs[i].sh_addr;
--			break;
--		}
--	}
--
- 	/* Load SHF_ALLOC sections */
- 	buf_addr = kbuf->buffer;
- 	load_addr = curr_load_addr = kbuf->mem;
- 	bss_addr = load_addr + kbuf->bufsz;
-+	kbuf->image->start = pi->ehdr->e_entry;
- 
- 	for (i = 0; i < pi->ehdr->e_shnum; i++) {
- 		unsigned long align;
-@@ -797,34 +775,40 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
- 			continue;
- 
- 		align = sechdrs[i].sh_addralign;
--		if (sechdrs[i].sh_type != SHT_NOBITS) {
--			curr_load_addr = ALIGN(curr_load_addr, align);
--			offset = curr_load_addr - load_addr;
--			/* We already modifed ->sh_offset to keep src addr */
--			src = (char *) sechdrs[i].sh_offset;
--			memcpy(buf_addr + offset, src, sechdrs[i].sh_size);
--
--			/* Store load address and source address of section */
--			sechdrs[i].sh_addr = curr_load_addr;
--
--			/*
--			 * This section got copied to temporary buffer. Update
--			 * ->sh_offset accordingly.
--			 */
--			sechdrs[i].sh_offset = (unsigned long)(buf_addr + offset);
--
--			/* Advance to the next address */
--			curr_load_addr += sechdrs[i].sh_size;
--		} else {
-+
-+		if (sechdrs[i].sh_type == SHT_NOBITS) {
- 			bss_addr = ALIGN(bss_addr, align);
- 			sechdrs[i].sh_addr = bss_addr;
- 			bss_addr += sechdrs[i].sh_size;
-+			continue;
-+		}
-+
-+		curr_load_addr = ALIGN(curr_load_addr, align);
-+		offset = curr_load_addr - load_addr;
-+		/* We already modifed ->sh_offset to keep src addr */
-+		src = (char *)sechdrs[i].sh_offset;
-+		memcpy(buf_addr + offset, src, sechdrs[i].sh_size);
-+
-+		if (sechdrs[i].sh_flags & SHF_EXECINSTR &&
-+		    pi->ehdr->e_entry >= sechdrs[i].sh_addr &&
-+		    pi->ehdr->e_entry < (sechdrs[i].sh_addr
-+					 + sechdrs[i].sh_size)) {
-+			kbuf->image->start -= sechdrs[i].sh_addr;
-+			kbuf->image->start += curr_load_addr
- 		}
--	}
- 
--	/* Update entry point based on load address of text section */
--	if (entry_sidx >= 0)
--		kbuf->image->start += sechdrs[entry_sidx].sh_addr;
-+		/* Store load address and source address of section */
-+		sechdrs[i].sh_addr = curr_load_addr;
-+
-+		/*
-+		 * This section got copied to temporary buffer. Update
-+		 * ->sh_offset accordingly.
-+		 */
-+		sechdrs[i].sh_offset = (unsigned long)(buf_addr + offset);
-+
-+		/* Advance to the next address */
-+		curr_load_addr += sechdrs[i].sh_size;
-+	}
- 
- 	return 0;
- }
+ 	ret = __kexec_load_purgatory(image, min, max, top_down);
+ 	if (ret)
+ 		return ret;
 -- 
 2.13.5
