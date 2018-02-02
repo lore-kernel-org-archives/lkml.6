@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224Q/iYQPA6AbPMMoNxneRNPZt4OV7LENAZ1ZTWHSUqFkEMBO3Zt6arYoCPFpxK7r3mGMseG
-ARC-Seal: i=1; a=rsa-sha256; t=1517591688; cv=none;
+X-Google-Smtp-Source: AH8x224v38Nl/eAWqH7EfJ7mG1rNIJVXehhkkk26dO7xthcnbAHSREceWLgJjbgsTc7YDkYFxnwu
+ARC-Seal: i=1; a=rsa-sha256; t=1517591685; cv=none;
         d=google.com; s=arc-20160816;
-        b=h0iOL/q3js9oQJ/vb2HAZNCr4oApXckikgbcXoma16P2oN8b/drJK1Ok/2t64hYKAE
-         qC+U/BOdqGjL8hXyA84df/ZZISX1j+S0psL/Epma661crbR73M8rr1hZi5WdpEaFevgu
-         A5Od7ChFb+eMZf9MrESYKJtszrBpdUvgE+gwogxIKuQYyyOqLdUkEPhvHVuGn14xUhkS
-         G7TUIy/0CNtKgJiAi9GFRViuD5bcRL/P/oznrYaSCZgtUh1Cb2dPkYZcrcewrPE80fvg
-         T8gktaAjuNDb4kvXnSToAydgd0466HZrzJjxQfQOXGVMePpPhyzeXjEZayvriW8CR1/+
-         518w==
+        b=iWAVLuuvrMJW+Bt/cjmHax79j6roihbXS3WkTRxfHdA8NuMD9KOJ9hSX/F7t2b0Eel
+         RrAXKGJt8P7X2QRyyMjbdJOOY01U5Rwq6kMXdcckW6kfhavfIXQiLlhRujJ6hUaylE9D
+         v7Ry5zZxiv/UX0+J9fA0xPzJTl3ZlFSJdiT6w15pqqmAXMD1OKjvmeJclbW3gSPDHpVx
+         zC9EhhvvnF273uskonSLptUR7hFqz/mZwQ2ImN9u1kM281Xgzl/nlGbUiDN9wlQjakZF
+         a/idBwRUNeLwYoKA2HcrI7RcqwR+x1l9PFYgRV37HzDFLDYrtoF74GC5xJox8TR4FemZ
+         /fsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xrC0eCsltUcbw1/wT6IxgawhbM2eC4zqHXkSzInmoz0=;
-        b=y08YBp+0+thD2h5mOhv2UuAGVoet1e06ZOaZ/BJYy3Nwc0/dsvjQkkka42dERfQdq4
-         klftdAhARiEhAZbnbdUUQ/vCVlh3hy2KaLyj7kB5K5k8LOBjeLHBU1mfGShHKEQ4Wf2q
-         RZ2ah41pyMDR4RGEsIVK7+Pb7DD2J5c3RKcQvTW6+URGw2fE7LBRDpvrFepfzgn66/K2
-         rLfmqvWTGBg0yI8JRwPDsMbA5ItZdOccEP8HRSynp7hLPNCImXLns1wLAoVoXYPzbGJZ
-         g8EfryTdL9mDSy3k1usw7mHyO4M1jNfa3cR6Zhi+184VZaT79/witsKB5fwmppZY2tgL
-         nl+Q==
+        bh=QhxCSSjjVOgO33E6FxyrqOnA7KAfq0tM7ofNxqEIVsY=;
+        b=TPVBfn6BGE01+twTHR2coXjlMF0ElI2KfNNwmh6yo3zUucTbSFmmYoTCKwx51vuugI
+         F6WP7PIGZtmd/fm/zRmHkovoK+LlEx+6gKQ+Q7JQBIIX1Ymv6JZQn9BQZUxC6EvuZOPV
+         h8bSKxCPTb9nTTTHzyhXv+bBH58/s0VvXcBb+cPFGUUVNJdBumEMIhheclCDP4AXwfFR
+         zWZUOlW8aQoc1JC3EHUzIJoYaqa+nOAN25FtfKmsQgSMlSZJdahqFOPbI5FddnTNOaUO
+         OfVgfqfheIBuDB/oMd0StA5WKaCg7W+ZoDcGuAXi1QnDJaUfsdD8okRc2FCG/4V+Pkac
+         2gzw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Junaid Shahid <junaids@google.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 10/55] crypto: aesni - Fix out-of-bounds access of the data buffer in generic-gcm-aesni
-Date: Fri,  2 Feb 2018 17:58:28 +0100
-Message-Id: <20180202140826.954760210@linuxfoundation.org>
+	=?UTF-8?q?Ronald=20Tschal=C3=A4r?= <ronald@innovation.ch>,
+	Rob Herring <rob.herring@linaro.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.15 01/55] Bluetooth: hci_serdev: Init hci_uart proto_lock to avoid oops
+Date: Fri,  2 Feb 2018 17:58:19 +0100
+Message-Id: <20180202140826.214170110@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309756503641082?=
-X-GMAIL-MSGID: =?utf-8?q?1591310222234827397?=
+X-GMAIL-THRID: =?utf-8?q?1591310218934404837?=
+X-GMAIL-MSGID: =?utf-8?q?1591310218934404837?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,168 +51,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Junaid Shahid <junaids@google.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit b20209c91e23a9bbad9cac2f80bc16b3c259e10e upstream.
+commit d73e172816652772114827abaa2dbc053eecbbd7 upstream.
 
-The aesni_gcm_enc/dec functions can access memory before the start of
-the data buffer if the length of the data buffer is less than 16 bytes.
-This is because they perform the read via a single 16-byte load. This
-can potentially result in accessing a page that is not mapped and thus
-causing the machine to crash. This patch fixes that by reading the
-partial block byte-by-byte and optionally an via 8-byte load if the block
-was at least 8 bytes.
+John Stultz reports a boot time crash with the HiKey board (which uses
+hci_serdev) occurring in hci_uart_tx_wakeup().  That function is
+contained in hci_ldisc.c, but also called from the newer hci_serdev.c.
+It acquires the proto_lock in struct hci_uart and it turns out that we
+forgot to init the lock in the serdev code path, thus causing the crash.
 
-Fixes: 0487ccac ("crypto: aesni - make non-AVX AES-GCM work with any aadlen")
-Signed-off-by: Junaid Shahid <junaids@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+John bisected the crash to commit 67d2f8781b9f ("Bluetooth: hci_ldisc:
+Allow sleeping while proto locks are held"), but the issue was present
+before and the commit merely exposed it.  (Perhaps by luck, the crash
+did not occur with rwlocks.)
+
+Init the proto_lock in the serdev code path to avoid the oops.
+
+Stack trace for posterity:
+
+Unable to handle kernel read from unreadable memory at 406f127000
+[000000406f127000] user address but active_mm is swapper
+Internal error: Oops: 96000005 [#1] PREEMPT SMP
+Hardware name: HiKey Development Board (DT)
+Call trace:
+ hci_uart_tx_wakeup+0x38/0x148
+ hci_uart_send_frame+0x28/0x38
+ hci_send_frame+0x64/0xc0
+ hci_cmd_work+0x98/0x110
+ process_one_work+0x134/0x330
+ worker_thread+0x130/0x468
+ kthread+0xf8/0x128
+ ret_from_fork+0x10/0x18
+
+Link: https://lkml.org/lkml/2017/11/15/908
+Reported-and-tested-by: John Stultz <john.stultz@linaro.org>
+Cc: Ronald Tschalär <ronald@innovation.ch>
+Cc: Rob Herring <rob.herring@linaro.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/crypto/aesni-intel_asm.S |   87 +++++++++++++++++++-------------------
- 1 file changed, 45 insertions(+), 42 deletions(-)
+ drivers/bluetooth/hci_serdev.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/crypto/aesni-intel_asm.S
-+++ b/arch/x86/crypto/aesni-intel_asm.S
-@@ -257,6 +257,37 @@ aad_shift_arr:
- 	pxor      \TMP1, \GH            # result is in TMP1
- .endm
+--- a/drivers/bluetooth/hci_serdev.c
++++ b/drivers/bluetooth/hci_serdev.c
+@@ -303,6 +303,7 @@ int hci_uart_register_device(struct hci_
+ 	hci_set_drvdata(hdev, hu);
  
-+# Reads DLEN bytes starting at DPTR and stores in XMMDst
-+# where 0 < DLEN < 16
-+# Clobbers %rax, DLEN and XMM1
-+.macro READ_PARTIAL_BLOCK DPTR DLEN XMM1 XMMDst
-+        cmp $8, \DLEN
-+        jl _read_lt8_\@
-+        mov (\DPTR), %rax
-+        MOVQ_R64_XMM %rax, \XMMDst
-+        sub $8, \DLEN
-+        jz _done_read_partial_block_\@
-+	xor %eax, %eax
-+_read_next_byte_\@:
-+        shl $8, %rax
-+        mov 7(\DPTR, \DLEN, 1), %al
-+        dec \DLEN
-+        jnz _read_next_byte_\@
-+        MOVQ_R64_XMM %rax, \XMM1
-+	pslldq $8, \XMM1
-+        por \XMM1, \XMMDst
-+	jmp _done_read_partial_block_\@
-+_read_lt8_\@:
-+	xor %eax, %eax
-+_read_next_byte_lt8_\@:
-+        shl $8, %rax
-+        mov -1(\DPTR, \DLEN, 1), %al
-+        dec \DLEN
-+        jnz _read_next_byte_lt8_\@
-+        MOVQ_R64_XMM %rax, \XMMDst
-+_done_read_partial_block_\@:
-+.endm
-+
- /*
- * if a = number of total plaintext bytes
- * b = floor(a/16)
-@@ -1386,14 +1417,6 @@ _esb_loop_\@:
- *
- *                        AAD Format with 64-bit Extended Sequence Number
- *
--* aadLen:
--*       from the definition of the spec, aadLen can only be 8 or 12 bytes.
--*       The code supports 16 too but for other sizes, the code will fail.
--*
--* TLen:
--*       from the definition of the spec, TLen can only be 8, 12 or 16 bytes.
--*       For other sizes, the code will fail.
--*
- * poly = x^128 + x^127 + x^126 + x^121 + 1
- *
- *****************************************************************************/
-@@ -1487,19 +1510,16 @@ _zero_cipher_left_decrypt:
- 	PSHUFB_XMM %xmm10, %xmm0
+ 	INIT_WORK(&hu->write_work, hci_uart_write_work);
++	percpu_init_rwsem(&hu->proto_lock);
  
- 	ENCRYPT_SINGLE_BLOCK  %xmm0, %xmm1    # E(K, Yn)
--	sub $16, %r11
--	add %r13, %r11
--	movdqu (%arg3,%r11,1), %xmm1   # receive the last <16 byte block
--	lea SHIFT_MASK+16(%rip), %r12
--	sub %r13, %r12
--# adjust the shuffle mask pointer to be able to shift 16-%r13 bytes
--# (%r13 is the number of bytes in plaintext mod 16)
--	movdqu (%r12), %xmm2           # get the appropriate shuffle mask
--	PSHUFB_XMM %xmm2, %xmm1            # right shift 16-%r13 butes
- 
-+	lea (%arg3,%r11,1), %r10
-+	mov %r13, %r12
-+	READ_PARTIAL_BLOCK %r10 %r12 %xmm2 %xmm1
-+
-+	lea ALL_F+16(%rip), %r12
-+	sub %r13, %r12
- 	movdqa  %xmm1, %xmm2
- 	pxor %xmm1, %xmm0            # Ciphertext XOR E(K, Yn)
--	movdqu ALL_F-SHIFT_MASK(%r12), %xmm1
-+	movdqu (%r12), %xmm1
- 	# get the appropriate mask to mask out top 16-%r13 bytes of %xmm0
- 	pand %xmm1, %xmm0            # mask out top 16-%r13 bytes of %xmm0
- 	pand    %xmm1, %xmm2
-@@ -1508,9 +1528,6 @@ _zero_cipher_left_decrypt:
- 
- 	pxor %xmm2, %xmm8
- 	GHASH_MUL %xmm8, %xmm13, %xmm9, %xmm10, %xmm11, %xmm5, %xmm6
--	          # GHASH computation for the last <16 byte block
--	sub %r13, %r11
--	add $16, %r11
- 
-         # output %r13 bytes
- 	MOVQ_R64_XMM	%xmm0, %rax
-@@ -1664,14 +1681,6 @@ ENDPROC(aesni_gcm_dec)
- *
- *                         AAD Format with 64-bit Extended Sequence Number
- *
--* aadLen:
--*       from the definition of the spec, aadLen can only be 8 or 12 bytes.
--*       The code supports 16 too but for other sizes, the code will fail.
--*
--* TLen:
--*       from the definition of the spec, TLen can only be 8, 12 or 16 bytes.
--*       For other sizes, the code will fail.
--*
- * poly = x^128 + x^127 + x^126 + x^121 + 1
- ***************************************************************************/
- ENTRY(aesni_gcm_enc)
-@@ -1764,19 +1773,16 @@ _zero_cipher_left_encrypt:
-         movdqa SHUF_MASK(%rip), %xmm10
- 	PSHUFB_XMM %xmm10, %xmm0
- 
--
- 	ENCRYPT_SINGLE_BLOCK	%xmm0, %xmm1        # Encrypt(K, Yn)
--	sub $16, %r11
--	add %r13, %r11
--	movdqu (%arg3,%r11,1), %xmm1     # receive the last <16 byte blocks
--	lea SHIFT_MASK+16(%rip), %r12
-+
-+	lea (%arg3,%r11,1), %r10
-+	mov %r13, %r12
-+	READ_PARTIAL_BLOCK %r10 %r12 %xmm2 %xmm1
-+
-+	lea ALL_F+16(%rip), %r12
- 	sub %r13, %r12
--	# adjust the shuffle mask pointer to be able to shift 16-r13 bytes
--	# (%r13 is the number of bytes in plaintext mod 16)
--	movdqu	(%r12), %xmm2           # get the appropriate shuffle mask
--	PSHUFB_XMM	%xmm2, %xmm1            # shift right 16-r13 byte
- 	pxor	%xmm1, %xmm0            # Plaintext XOR Encrypt(K, Yn)
--	movdqu	ALL_F-SHIFT_MASK(%r12), %xmm1
-+	movdqu	(%r12), %xmm1
- 	# get the appropriate mask to mask out top 16-r13 bytes of xmm0
- 	pand	%xmm1, %xmm0            # mask out top 16-r13 bytes of xmm0
-         movdqa SHUF_MASK(%rip), %xmm10
-@@ -1785,9 +1791,6 @@ _zero_cipher_left_encrypt:
- 	pxor	%xmm0, %xmm8
- 	GHASH_MUL %xmm8, %xmm13, %xmm9, %xmm10, %xmm11, %xmm5, %xmm6
- 	# GHASH computation for the last <16 byte block
--	sub	%r13, %r11
--	add	$16, %r11
--
- 	movdqa SHUF_MASK(%rip), %xmm10
- 	PSHUFB_XMM %xmm10, %xmm0
- 
+ 	/* Only when vendor specific setup callback is provided, consider
+ 	 * the manufacturer information valid. This avoids filling in the
