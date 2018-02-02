@@ -1,55 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752139AbeBBOt4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:49:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48334 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751887AbeBBOts (ORCPT
+        id S1752228AbeBBOux (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:50:53 -0500
+Received: from mail-ua0-f177.google.com ([209.85.217.177]:45454 "EHLO
+        mail-ua0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752177AbeBBOup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:49:48 -0500
-Subject: Re: [GIT PULL] IMA bug fixes for 4.16
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 02 Feb 2018 09:49:39 -0500
-In-Reply-To: <alpine.LRH.2.21.1802022106130.2739@namei.org>
-References: <1517510282.6675.13.camel@linux.vnet.ibm.com>
-         <alpine.LRH.2.21.1802022106130.2739@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Fri, 2 Feb 2018 09:50:45 -0500
+X-Google-Smtp-Source: AH8x226UF2noBRst+3t+7YIFMWfd5REESPvyu7NJmjttv+rkIz3EmICA8J6Eo+eRFX7EuvTmwFH2uw==
+Subject: Re: [PATCH v2] buffer: Avoid setting buffer bits that are already set
+To: kemi <kemi.wang@intel.com>, Jan Kara <jack@suse.cz>,
+        Darrick J Wong <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>
+Cc: Dave <dave.hansen@linux.intel.com>, Andi Kleen <andi.kleen@intel.com>,
+        Tim Chen <tim.c.chen@intel.com>, Ying Huang <ying.huang@intel.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+References: <1508807802-9691-1-git-send-email-kemi.wang@intel.com>
+ <f18ba82a-e715-a71c-4904-3adc9b8ea149@intel.com>
+ <6e946728-23f5-d5df-c8d0-c9ec4251557c@intel.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <872a539f-ce92-d3c8-92fb-312e57296191@kernel.dk>
+Date: Fri, 2 Feb 2018 07:50:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101
+ Thunderbird/58.0
+MIME-Version: 1.0
+In-Reply-To: <6e946728-23f5-d5df-c8d0-c9ec4251557c@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18020214-0040-0000-0000-0000040BC90A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020214-0041-0000-0000-0000260F6D7F
-Message-Id: <1517582979.3171.46.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802020182
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-02 at 21:07 +1100, James Morris wrote:
-> On Thu, 1 Feb 2018, Mimi Zohar wrote:
-> 
-> > Hi James,
-> > 
-> > Included in this pull request are three bug fixes, assuming the 2 FUSE
-> > patches are considered bugs and not new features, and a maintainer update.
-> > I'd appreciate your sending them to Linus for 4.16.
-> 
-> I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
-> (cc'd), on the FUSE patches.
+On 2/2/18 1:07 AM, kemi wrote:
+> Hi, Jens
+>   Could you help to merge this patch to your tree? Thanks
 
-Ok.  For now, can you take the first two patches?
+Yes, I'll queue it up, thanks.
 
-Mimi
+-- 
+Jens Axboe
