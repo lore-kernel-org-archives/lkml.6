@@ -1,67 +1,73 @@
-Return-Path: <igor.stoppa@huawei.com>
-X-Google-Smtp-Source: AH8x227nn26cx1oGX0IT0rFsV3Xjuh5O6SXTNsiR77YdF4CgGPwtjF0ex6I0rpGLz0gXtg07QgHl
-ARC-Seal: i=1; a=rsa-sha256; t=1517586570; cv=none;
+Return-Path: <robh@kernel.org>
+X-Google-Smtp-Source: AH8x2259ETf+yiZPjI8Y8qlfcxdWoQOtO3nIRzAVP9JJ599lEOZpHTNQpN+FgYWRLVIjOPtGbTqN
+ARC-Seal: i=1; a=rsa-sha256; t=1517596060; cv=none;
         d=google.com; s=arc-20160816;
-        b=v/02KTFJpWWmWwA5R02Dnc8DsliHCeMflz7kngjl7o7UzaYXDv8eK0I648NQe4oiSZ
-         QA1kevkVYW2AWTEgxh0bUo0EgQn+EaLz/9yDl7o+Rd+4XmMBbmhAJt/HDtUhDMNGnpAh
-         AHersGOqiERqs64jlVlSenr7toKAqMfoWpTs8sVRbA/JaSlW726LhBhRUd78rNoKccA+
-         RBCVpb4q59lrtedAkusw7WeP7X8B5kG221GyWXpikCgvkptyhlAt33UM49JS9/sAZa5X
-         io76tJDcISwkCavhH3HQKEHzPJ/jGQGj5s6SmJYUGwCDBt2Lbr5Zd20Lyw31PoLrspkF
-         /C8w==
+        b=ZUwtj7SpAWZCVIcb8LFth8zCWM3f5VSR5auFzLYS7D6x+3GpCLAMyXaMIO2CjHUFGe
+         4mGAzB/BYMsEmpOxZUC7b60UHc/goJIcZg75tuHOI55t572Hb8twjM8ObdcRACXuEpMy
+         KqgJsJ5alzs2t0LNrd5DZg1hL81DrRxZ/FkhktWBUphOND9trVkXhgr2kBt4r0xlsPev
+         5xmEFRLPCx7p8kUNO8geSeLnAc6vbAl6tKiPT8xlq3UccPBBO0I14Mm17BNPDpO6uVl1
+         LrUOngEmdA2CFiq8j1tR+/u/XqJkNOluQNPmbdm/HTLkGT6lpzVq8gEsAtj6pbP15Ufk
+         ojsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=TLXA9S3u6dvqRMiD1PIjzezJP0c1UY/OXejD96SMqow=;
-        b=rnS1rjDONAMoaR7z1/uveQle1N0SgqNFCNiV44EtDHZkNuN4jYk60NR8KW7dd6hHA4
-         aeZIK+DMEX15R0i1NzsdPV25yYy9jxA0VLdas3075kTAoGVpSjNHvOpahqFX16SA2co9
-         T6YlHMu5iHp5WMEFWsQSScOnzAH1y+B0A0HBaW6eloeH6+UqFR9Yz/upYl7sUK8jgrDG
-         wbFV/ZDtuOpI50ccneS/NeRE4qAzY1WFNBCOSZ3sjIKMP0m2OqjDVfVmQ/71C/irnsTS
-         KZDEJskodj2xYp8X9eEK544AkKtLYj8pHlTK8fXYK+e2RvOFkKAvQ62ZZWI27cLZ54gD
-         LIcQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dmarc-filter:arc-authentication-results;
+        bh=QaK8AtBDhFl5XS5myjlHN1plf/c7C1+9qBB34eO4txo=;
+        b=SLk4jrBpKC+Do2kPNW3z+PbZ25QQn2jv8dKHBdvbseVVV4Uzfj0eBF1c2RCWyMGELl
+         lVNrjUao57k3+lJa5NvI8//0n3ydqIO4cvX3j+wjcMuQRjFwADhgvyuYASnQfolquCOe
+         6I4fkGVbzH1SgwhpeZmhC9M+xW3ETvyuHhnh6az3eQerv6XbtZFhog/XpJwmrIm3KCs6
+         lQRPDc+ITPraAMWx5MkCPGRrQwvJkM/YRzr3b5+XNPM5fZtTY2stdkCpy8qYDnp9uSGx
+         pPjXrmxfrueyjueram4F9djGF0g7fZNYKdbk408fFACBE3T1lOTjUncfa7YPe0Bj507n
+         fAzw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of igor.stoppa@huawei.com designates 194.213.3.17 as permitted sender) smtp.mailfrom=igor.stoppa@huawei.com
+       spf=pass (google.com: best guess record for domain of robh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=robh@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of igor.stoppa@huawei.com designates 194.213.3.17 as permitted sender) smtp.mailfrom=igor.stoppa@huawei.com
-Subject: Re: [PATCH v6] checkpatch.pl: Add SPDX license tag check
-To: Rob Herring <robh@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-CC: <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, "Andy
- Whitcroft" <apw@canonical.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
-	"Philippe Ombredanne" <pombredanne@nexb.com>
-References: <20180202154026.15298-1-robh@kernel.org>
-From: Igor Stoppa <igor.stoppa@huawei.com>
-Message-ID: <bb680231-b9ca-ee46-f088-086da0bed2c1@huawei.com>
-Date: Fri, 2 Feb 2018 17:49:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+       spf=pass (google.com: best guess record for domain of robh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=robh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D6C217A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
 MIME-Version: 1.0
-In-Reply-To: <20180202154026.15298-1-robh@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.122.225.51]
-X-CFilter-Loop: Reflected
+In-Reply-To: <bb680231-b9ca-ee46-f088-086da0bed2c1@huawei.com>
+References: <20180202154026.15298-1-robh@kernel.org> <bb680231-b9ca-ee46-f088-086da0bed2c1@huawei.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 2 Feb 2018 12:27:18 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK+1Z_vuFE_po1VCxkSc112OFmgCiwM7F1S0mH6gw3KHQ@mail.gmail.com>
+Message-ID: <CAL_JsqK+1Z_vuFE_po1VCxkSc112OFmgCiwM7F1S0mH6gw3KHQ@mail.gmail.com>
+Subject: Re: [PATCH v6] checkpatch.pl: Add SPDX license tag check
+To: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>,
+	Andy Whitcroft <apw@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Philippe Ombredanne <pombredanne@nexb.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591304287671259020?=
-X-GMAIL-MSGID: =?utf-8?q?1591304855115044764?=
+X-GMAIL-MSGID: =?utf-8?q?1591314806641367659?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/02/18 17:40, Rob Herring wrote:
-> Add SPDX license tag check based on the rules defined in
+On Fri, Feb 2, 2018 at 9:49 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> On 02/02/18 17:40, Rob Herring wrote:
+>> Add SPDX license tag check based on the rules defined in
+>
+> Shouldn't it also check that the license is compatible?
+>
 
-Shouldn't it also check that the license is compatible?
+Perhaps we shouldn't try to script legal advice.
 
-[...]
+> [...]
+>
+>> +                             } elsif ($realfile =~ /\.rst$/) {
+>> +                                     $comment = '..';
+>
+> What is the correct/acceptable license for documentation?
+> Creative Commons? AFAIK GPL is for source code.
 
-> +				} elsif ($realfile =~ /\.rst$/) {
-> +					$comment = '..';
+At least for the DT bindings, we probably want those to be Apache v2
+because that's what the DT spec is. But that really only matters on
+the common bindings. But then are device specific bindings derived
+from those? And we have include/dt-bindings/ which are part of binding
+definition/doc and those get used in dts (GPL, MIT or BSD) and source
+files. In summary, it's complicated...
 
-What is the correct/acceptable license for documentation?
-Creative Commons? AFAIK GPL is for source code.
-
-Googling didn't bring the wished-for enlightenment.
-
---
-igor
+Rob
