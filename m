@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225gGcX5FV5qk0uuToCt9DV7aBesxxx6Ez5OjZjGA8mzGwRnBJHPhWxoFjQZgPAsxh0G/0bj
-ARC-Seal: i=1; a=rsa-sha256; t=1517591308; cv=none;
+X-Google-Smtp-Source: AH8x225U0evUXqoPIUnbC4QKs1wqeg9VkG6yz5u2wuW8gC7mr49OXhK9sLFuozB1XbghiQNbpjmw
+ARC-Seal: i=1; a=rsa-sha256; t=1517591306; cv=none;
         d=google.com; s=arc-20160816;
-        b=JL5UYdQhvsofVqQZvNWCyP267GGT+4r4cxztpdJR5ZfifWAhwyFgl8XYnFuMa7SUEg
-         FR03WPEDc5M+oXq7gsMYyx0a+rpYz9XA+fe/VeqofZu77cL6RnDq50F7CP+xWbudoF2b
-         3qbdnKaE2MjqKgT/ClkAuIO9QhNM+jav5K1pYC6Ah4G0njiAi5dHT74F12SXV2eL6gh3
-         HYaQU46sXUiS6EuTrUTrSckk2BZz98Gx7jBscCUJoAEz1kge2F/g/o4KUGSsZU0fVGtZ
-         VtAcEosIwu14e5BFi/7OZ8MFLgVfPxzJHJtVicRcOLOw0KeOVs1KGKAesmU8wjmAeT2t
-         j0Ag==
+        b=t8Z9TlQhWORmhv8mCCX+5/2TQB1OX1KnVNJa+pMPAPFba/q42oFSi5lDyNv8l67aGH
+         4xT3gzBYFZ68P5XaOVYMty35hbH5IBVtoWwR78dlRsu/ls7xd6NS0TWrihLSVy8bHlNl
+         CRtz+c7P2VTfywi9J2tIC9AK68fcn/FAJiVxeB76VB9imoTYQzLpCkukoSj71EY95qNB
+         GqRXuL3/tG3+nhYZlWF1tmYzhjuRSqJXn9Ghcxc0Vwz2YTOrX8L5IxjLEXFZrERpK8dp
+         cX0RAuWm+5XRSkbTH9M08fRf/8sxrMK70W8VtxmIEpin0Kfw1Ge8AIGwGChw1RPQG85a
+         DRyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dUkWD2ZxVFah9jB25GZSVYAyYCOO+3+WcoDa0zFAX5Q=;
-        b=DxPazF8UWt8I0GHj9bFWLUTtCzCr+/GDCPiFUrUleJFtv0cwdaHpSjVTUPsqhAAYBm
-         ZntotyOu5rvm3hI58rAdgSbP0e855roCGdUQfASHFRRf0+H9Jn5aDY+2a1LLqKApl3DZ
-         G/PGxbZHmAq4yFuMpmPcnBd5ZVy3rNnr9tNr6FwY0UlKHhAqGmut+NskoSpXomARikep
-         5QJgl3lad8lfo9Y/SUAIKZWYPdl+8I3zcG+zh+sbiINFK6mlNqoMUD92k8XRvMBLxOrA
-         ND3stj7wRVZ2fcdo1ci7+WLVg1nIbD1XpIMh09D1Ptsav1m5cSu9n2dW+aczC7ftp/K5
-         TZCg==
+        bh=fMlEblNVby3vinrLbHvn52/NPHa6RjVAueED1cPHNWI=;
+        b=uwyH7UZOHZE4g44QnOma7Q4tYflBUBhC/HL1nCnsuawxpKIkNtbWYysoVVo156JmOr
+         DO0S1u/gSriUyjZaeNdtrlWpWVILd4mHwJUO4GUKTlK/AoFsJZ8aboO73sglmMmD5nYN
+         hN4KEwe3wI5tBGFdtqn1CyQpPlxDDbDel7IdeB7rqidd3x/YbqMpvrGa9LUSkjeS1JwN
+         ynW4kNxvg+UhHqHZI++a3kkg14azK5746jGhrxpVl2hyn6/kgwofDiAPlbljwUZqFp35
+         nQjobhqZ6/R1I4NAwSPmv0cgae7WD/bLLtxgeWtyC/6qZMHM4G+P//sgQj/G6IEzXWOC
+         X3OQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 007/156] ALSA: hda - Reduce the suspend time consumption for ALC256
-Date: Fri,  2 Feb 2018 17:56:28 +0100
-Message-Id: <20180202140840.650973613@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 006/156] gpio: Fix kernel stack leak to userspace
+Date: Fri,  2 Feb 2018 17:56:27 +0100
+Message-Id: <20180202140840.599129976@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309823879821974?=
-X-GMAIL-MSGID: =?utf-8?q?1591309823879821974?=
+X-GMAIL-THRID: =?utf-8?q?1591309489818363187?=
+X-GMAIL-MSGID: =?utf-8?q?1591309821411125225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,44 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit 1c9609e3a8cf5997bd35205cfda1ff2218ee793b upstream.
+commit 24bd3efc9d1efb5f756a7c6f807a36ddb6adc671 upstream.
 
-ALC256 has its own quirk to override the shutup call, and it contains
-the COEF update for pulling down the headset jack control.  Currently,
-the COEF update is called after clearing the headphone pin, and this
-seems triggering a stall of the codec communication, and results in a
-long delay over a second at suspend.
+The GPIO event descriptor was leaking kernel stack to
+userspace because we don't zero the variable before
+use. Ooops. Fix this.
 
-A quick resolution is to swap the calls: at first with the COEF
-update, then clear the headphone pin.
-
-Fixes: 4a219ef8f370 ("ALSA: hda/realtek - Add ALC256 HP depop function")
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198503
-Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -3131,11 +3131,13 @@ static void alc256_shutup(struct hda_cod
- 	if (hp_pin_sense)
- 		msleep(85);
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -723,6 +723,9 @@ static irqreturn_t lineevent_irq_thread(
+ 	struct gpioevent_data ge;
+ 	int ret, level;
  
-+	/* 3k pull low control for Headset jack. */
-+	/* NOTE: call this before clearing the pin, otherwise codec stalls */
-+	alc_update_coef_idx(codec, 0x46, 0, 3 << 12);
++	/* Do not leak kernel stack to userspace */
++	memset(&ge, 0, sizeof(ge));
 +
- 	snd_hda_codec_write(codec, hp_pin, 0,
- 			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0x0);
- 
--	alc_update_coef_idx(codec, 0x46, 0, 3 << 12); /* 3k pull low control for Headset jack. */
--
- 	if (hp_pin_sense)
- 		msleep(100);
+ 	ge.timestamp = ktime_get_real_ns();
+ 	level = gpiod_get_value_cansleep(le->desc);
  
