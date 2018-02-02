@@ -1,70 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeBBNex (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:34:53 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40188 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751656AbeBBNer (ORCPT
+        id S1751968AbeBBNff (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:35:35 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:42686 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751646AbeBBNf2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 08:34:47 -0500
-X-Google-Smtp-Source: AH8x226/CvRfXLf0N4ftCCUJQ9Bgc4OkmZmJ5lWJGYFfw7VwTkK8kZEAntbHcaFBFPCHZX+pESZzWw==
-Subject: Re: Is the hisilicon tree maintained ?
-To: Wei Xu <xuwei5@hisilicon.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <68abfa22-86fa-67db-b583-661c9f5672ce@linaro.org>
- <5A744EBA.7030104@hisilicon.com>
- <e7a0977d-5fee-b874-d6b7-21638bb9b885@linaro.org>
- <5A745526.6040006@hisilicon.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <9f22e61e-a5d4-47b9-b8dd-71443b9aa408@linaro.org>
-Date: Fri, 2 Feb 2018 14:34:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Fri, 2 Feb 2018 08:35:28 -0500
+Date: Fri, 2 Feb 2018 14:35:16 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
+ frequency
+Message-ID: <20180202133516.uoy7ppuozd6cnldm@flea.lan>
+References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
+ <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
+ <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
+ <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
+ <20180202105304.gow2znzgxqmuxgol@flea.lan>
+ <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
 MIME-Version: 1.0
-In-Reply-To: <5A745526.6040006@hisilicon.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l4rzk2xpisn644pn"
+Content-Disposition: inline
+In-Reply-To: <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/02/2018 13:10, Wei Xu wrote:
-> Hi Daniel,
-> 
-> On 2018/2/2 12:05, Daniel Lezcano wrote:
->> On 02/02/2018 12:42, Wei Xu wrote:
->>> Hi Daniel,
->>>
->>> On 2018/2/2 6:59, Daniel Lezcano wrote:
->>>>
->>>> Hi Wei Xu,
->>>>
->>>> I found in the MAINTAINERS file the hisilicon tree is at:
->>>>
->>>> https://github.com/hisilicon/linux-hisi
->>>>
->>>> But, (except I missed it) I didn't find any update since Nov, 2017.
->>>>
->>>> Is that tree maintained ?
->>>
->>> Yes. It is still maintained.
->>> You can find update from other branches or the tags like next/dt64.
->>> I will update the master when every rc1 is released.
->>
->> Is there a development branch for something else than the DT ?
-> 
-> Sorry, no developing branch is there.
-> But we will create one if needed like the topic-acpi-mbigen branch.
-> And most of development branches are kept in another git repo.
 
-What is the purpose of this tree? Why not rely on arm-soc?
+--l4rzk2xpisn644pn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Feb 02, 2018 at 11:57:20AM +0100, Giulio Benetti wrote:
+> Il 02/02/2018 11:53, Maxime Ripard ha scritto:
+> > Hi,
+> >=20
+> > On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
+> > > > > > What kernel version did you use?
+> > > > >=20
+> > > > > Latest mainline.
+> > > >=20
+> > > > I guess this patch could fix it:
+> > > > http://code.bulix.org/1kitrq-268936?raw
+> > >=20
+> > > This should prevent from modifying parent clock. But my problem was
+> > > different.
+> > >=20
+> > > On A20, gpu_clk can have different PLL, not I've found out the way
+> > > to choose right one with assigned-parent-clocks.
+> > >=20
+> > > I have patchset ready for adding A20 mali node, but I need some more
+> > > time to complete with OPP, then I will submit entire patchset.
+> > >=20
+> > > Now it works correctly, using right pll(dedicated PLL8), setting
+> > > right frequency.
+> >=20
+> > The point is that we really don't care about which PLL is actually
+> > being used, as long as the rate is correct and we don't break anything
+> > else. If the GPU rate is accessible through one of the other PLL, it
+> > makes even more sense to not use the GPU PLL and keep it disabled,
+> > since it will result in some power savings.
+>=20
+> Ah! I see the point now, very clever system for power saving.
+> I'm going to check if it's resolutive,
+> but it sounds good.
+>=20
+> >=20
+> > > Btw, do I need to add a board using it, or can I add only Mali node
+> > > to sun7i-a20.dtsi(plus other little patches)?
+> >=20
+> > You can add it to the DTSI without a board using it (and actually,
+> > nothing should be in the board DTS, everything in the DT for the Mali
+> > applies to all boards).
+>=20
+> Sure. So I would also add the patch you've addressed me:
+> http://code.bulix.org/1kitrq-268936?raw
+> as a commit. Can I submit it in patchset to complete the whole job?
 
+I already sent that patch quite some time ago, I'll just apply it. You
+can send the DT patch :)
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Maxime
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
+
+--l4rzk2xpisn644pn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp0aRMACgkQ0rTAlCFN
+r3SAcBAAhhPt0DtFatN1dtDWCDvuHw3pA63c7pDGWLGG6gHckzoxZvGiVEjyXaJ7
+mZgqeR70ZATpgHPWBP2apnnFOTfq2MQp/TksO6dePlt9BFJpwKPy2rMjfnJFK5qE
+a03oItlMFem1deR8/MxotfcdUE3GyMBQTpo2NqEv/9EoxRi7t3SnDvUaLTdLnSom
+cFHFGECOHqC4wBSD/B7EMqysgNQ68AHslIgy7qJ9dprFrIqvlnK+/KsxywTrTpdz
+H+I2KdGKLmdVTBjsA3Gme3DPyuDwrIspPAbH8oddmVarih9C3pFfck+TQJbjb8Bh
+25HABSyRJVQFbOwNvhaPp8AEw1WGwM5hxGbC8XzQqpKgLf+4vtxNsV9CuK2cY7ZE
+LHzkb424tRB2PUnH0paigx+gCH97seZezYPQR9zIc1EovwTOwIdjqWsn5RNNM5Fa
+T6iKJYj/TxD6+mj0lSkerG+9/GwJsJO8g6/8Bm5irSdGDua1p5gK7uGRl++BYYaL
+pnSHG/I4jRH8Ocq1KpiWKJOQYA77rVONiLV5ob6t/Fm7yL7pp3k5Cp5s9VN4kXRN
+Yny8ycM0spWws35avmFqKCbT+lO42B1oxfG5xi6BmA74epewoWz749Iaq2lUFmyv
+0nsExkCTXXN6xk6JpetYo+j+X/q8YLesaaLW5JFgCiaWKm39m7g=
+=X7sj
+-----END PGP SIGNATURE-----
+
+--l4rzk2xpisn644pn--
