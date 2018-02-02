@@ -1,69 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754148AbeBBRaK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 12:30:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58545 "EHLO mx2.suse.de"
+        id S1753921AbeBBRaf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 12:30:35 -0500
+Received: from mout.web.de ([212.227.15.4]:56646 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753089AbeBBRUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 12:20:13 -0500
-Date: Fri, 2 Feb 2018 18:17:58 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Nikolay Borisov <nborisov@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        herbert@gondor.apana.org.au
-Subject: Re: [PATCH 2/2] btrfs: Remove custom crc32c init code
-Message-ID: <20180202171758.GT18553@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Nikolay Borisov <nborisov@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        herbert@gondor.apana.org.au
-References: <1515404705-490-1-git-send-email-nborisov@suse.com>
- <1515404705-490-3-git-send-email-nborisov@suse.com>
+        id S1753091AbeBBRUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 12:20:31 -0500
+To: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Kevin Hilman <khilman@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] I2C-DaVinci: Adjustments for davinci_i2c_probe()
+Message-ID: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 18:20:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1515404705-490-3-git-send-email-nborisov@suse.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:UBGxOdIPfaXAs3LQx8EVmKgrtjp5oZsoxqz+bSVjaXRLKVmkCVS
+ PDKEmUdPChgF0x4+nqsXxZFZlM448zALEgcujW0D0u+Su0haP+KgI7wGpqmoO4iWrDNUGKa
+ Pm3Fyr5ZZFQVZazJP9BNQgOAwWaUwMz5//5OWYq+r4qR1V8AHF4AT9ImhGiXNAiR1beYSQ+
+ smb4M4nd/5rqbRDJuYWVg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:HgrEEVXBKjI=:C5qmWBxyAajn4LuvhPX9Us
+ 9PgAZtWzBv+/Xf1z6qRPyRYLiPcRyHp3oqZYtMv4qOB86cTXNLroBHBEecaTXC5z4NsLIuy/n
+ WSbQKNqx9MmdpnAJo7qK+Z/vbQlhPA8XSFNjLM+U1jvQDvtaXwuJ8xSURvhDu43G3v4Zucavv
+ RbHmZ8Qy5opcX680uaunB1h2pp9ndQw9hLbc64xdOFLZNQ/KAv+zI0wceMAmc8h/LpOhwwuzY
+ rpxvWHgAZ09jikuIuUOh8UiwItn7L1pMCx489RxTuS4u95ixvDiJwSxK3DR0qSpXlyw2Lmivo
+ m1TnEporhk5z0LNeAQXOr2oaHIrYAJuFFVC8T1USnpoe2j12C+6zRRM9n2lJw+DgflKyyFl58
+ 1QhRiLQ30smwAxT2jLsPqluDpoHJCmNc1Qp7x4JHZckQcvsHFA3HHO85Vikx8AJvJV9uTQXbD
+ byRGFGfZVWNbt1oemYM13jhYnMEBo7qkLjGhtwXvHilkhoz85vVE84VaNbXUVth8dumNg7iJS
+ jaU3UvAwHUg81Sy+wfm7Q1BbkSRULC7AefgVuUPhzzekVpOf1AC0sc1OUH90tmAx9cbgy0BME
+ FTSsYvOZ4fUhK8rCDbYp8qDM6reH9TdQxgxI5bl8fsRIeyMLrgMznhlmICl5iGbPNIl9mBKLt
+ pQyII33CK9HjhjX++HjrJ42xtOUoNrSEtfcN8fNRoJxPSkPIQBKMnr04azLFNmxAlhzE87GuA
+ fba2/oqZ03lWiVMe9Q0qEk4HrtsvFD507Q4gAXxjCqW81r8zZDUDIKNdUrs76nCFDlxLefMaj
+ tQoEvI/k7kuw+/v9lN4FppRhUlxUy3lWsMfBmO+9tYbLO0Rnz4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 08, 2018 at 11:45:05AM +0200, Nikolay Borisov wrote:
-> The custom crc32 init code was introduced in
-> 14a958e678cd ("Btrfs: fix btrfs boot when compiled as built-in") to
-> enable using btrfs as a built-in. However, later as pointed out by
-> 60efa5eb2e88 ("Btrfs: use late_initcall instead of module_init") this
-> wasn't enough and finally btrfs was switched to late_initcall which
-> comes after the generic crc32c implementation is initiliased. The
-> latter commit superseeded the former. Now that we don't have to
-> maintain our own code let's just remove it and switch to using the
-> generic implementation.
-> 
-> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-> ---
-> 
-> Despite touching a lot of files the patch is really simple. Here is the gist 
-> of the changes: 
-> 
-> 1. Select LIBCRC32C rather than the low-level modules. 
-> 2. s/btrfs_crc32c/crc32c/g
-> 3. replace hash.h with linux/crc32c.h
-> 4. Move the btrfs namehash funcs to ctree.h and change the tree accordingly. 
-> 
-> I've tested this with btrfs being both a module and a built-in and xfstest
-> doesn't complain. 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 18:16:14 +0100
 
-This text could be also part of the changelog, it's useful to understand
-how the change is done.
+Two update suggestions were taken into account
+from static source code analysis.
 
-So this patches looks good to me and does seem to fix the longstanding
-problem of not automatically selectiong the crc32c module when btrfs is
-used. IIRC this has some workaround in dracut.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-The modinfo confirms that now all the module dependencies are there:
+ drivers/i2c/busses/i2c-davinci.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-before:
-depends:        zstd_compress,zstd_decompress,raid6_pq,xor,zlib_deflate
-
-after:
-depends:        libcrc32c,zstd_compress,zstd_decompress,raid6_pq,xor,zlib_deflate
+-- 
+2.16.1
