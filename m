@@ -1,111 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeBBIvn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 03:51:43 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55932 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751165AbeBBIvc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 03:51:32 -0500
-X-Google-Smtp-Source: AH8x225EaRpPfK4/as9vZxDfSMGYbjnLejG2Q2GzTS3IFkmNcxbrTafPvz8hpt4KwZ6+oGknp9R7VQ==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: netdev@vger.kernel.org
-Cc: ebiederm@xmission.com, jbenc@redhat.com, nicolas.dichtel@6wind.com,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [RFC net 1/1] rtnetlink: require unique netns identifier
-Date: Fri,  2 Feb 2018 09:51:15 +0100
-Message-Id: <20180202085115.17229-2-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180202085115.17229-1-christian.brauner@ubuntu.com>
-References: <20180202085115.17229-1-christian.brauner@ubuntu.com>
+        id S1751913AbeBBIyp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 03:54:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46994 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751180AbeBBIyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 03:54:36 -0500
+Date: Fri, 2 Feb 2018 09:54:28 +0100
+From: Eduardo Otubo <otubo@redhat.com>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: xen-devel@lists.xenproject.org, jgross@suse.com, wei.liu2@citrix.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        paul.durrant@citrix.com, cheshi@redhat.com, vkuznets@redhat.com,
+        mgamal@redhat.com, cavery@redhat.com, boris.ostrovsky@oracle.com
+Subject: Re: [Xen-devel] [PATCHv2] xen-netfront: remove warning when
+ unloading module
+Message-ID: <20180202085428.GA26899@vader>
+References: <20171123141835.5820-1-otubo@redhat.com>
+ <fcbb9d8a-85b4-5543-6ebc-cd34a66729ff@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fcbb9d8a-85b4-5543-6ebc-cd34a66729ff@gmail.com>
+User-Agent: Mutt/1.8.3+47 (5f034395e53d) (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we've added support for IFLA_IF_NETNSID for RTM_{DEL,GET,SET,NEW}LINK
-it is possible for userspace to send us requests with three different
-properties to identify a target network namespace. This affects at least
-RTM_{NEW,SET}LINK. Each of them could potentially refer to a different
-network namespace which is confusing. For legacy reasons the kernel will
-pick the IFLA_NET_NS_PID property first and then look for the
-IFLA_NET_NS_FD property but there is no reason to extend this type of
-behavior to network namespace ids. The regression potential is quite
-minimal since the rtnetlink requests in question either won't allow
-IFLA_IF_NETNSID requests before 4.16 is out (RTM_{NEW,SET}LINK) or don't
-support IFLA_NET_NS_{PID,FD} (RTM_{DEL,GET}LINK) in the first place.
+On Wed, Jan 31, 2018 at 05:00:23PM +0200, Oleksandr Andrushchenko wrote:
+> Hi, Eduardo!
+> 
+> I am working on a frontend driver (PV DRM) and also seeing some strange
+> 
+> things on driver unloading:
+> 
+> xt# rmmod -f drm_xen_front.ko
+> [ 3236.462497] [drm] Unregistering XEN PV vdispl
+> [ 3236.485745] [drm:xen_drv_remove [drm_xen_front]] *ERROR* Backend state is
+> InitWait while removing driver
+> [ 3236.486950] vdispl vdispl-0: 22 freeing event channel 11
+> [ 3236.496123] vdispl vdispl-0: failed to write error node for
+> device/vdispl/0 (22 freeing event channel 11)
+> [ 3236.496271] vdispl vdispl-0: 22 freeing event channel 12
+> [ 3236.501633] vdispl vdispl-0: failed to write error node for
+> device/vdispl/0 (22 freeing event channel 12)
+> 
+> These are somewhat different from your use-case with grant references, but I
+> have a question:
+> 
+> do you really see that XenbusStateClosed and XenbusStateClosing are
+> 
+> called? In my driver I can't see those and once I tried to dig deeper into
+> the problem
+> 
+> I saw that on driver removal it is disconnected from XenBus, so no backend
+> state
+> 
+> change events come in via .otherend_changed callback.
+> 
+> The only difference I see here is that the backend is a user-space
+> application
+> 
+> Thank you,
+> Oleksandr
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- net/core/rtnetlink.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+To be honest, most of the things I assumed were true, according to some talks on
+IRC with maintainers. Since I assumed it was true I started to write code based
+on that and all the behaviors that followed were correct according to my
+assumptions (and discussions).
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 56af8e41abfc..d0b7ab22eff4 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1951,6 +1951,18 @@ static struct net *rtnl_link_get_net_capable(const struct sk_buff *skb,
- 	return net;
- }
- 
-+/* Verify that rtnetlink requests that support network namespace ids do not pass
-+ * additional properties that allow to identify a network namespace as they
-+ * might conflict.
-+ */
-+static int rtnl_ensure_unique_netns_attr(struct nlattr *tb[])
-+{
-+	if (tb[IFLA_IF_NETNSID] && (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD]))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static int validate_linkmsg(struct net_device *dev, struct nlattr *tb[])
- {
- 	if (dev) {
-@@ -2553,6 +2565,10 @@ static int rtnl_setlink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	if (err < 0)
- 		goto errout;
- 
-+	err = rtnl_ensure_unique_netns_attr(tb);
-+	if (err < 0)
-+		goto errout;
-+
- 	if (tb[IFLA_IFNAME])
- 		nla_strlcpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
- 	else
-@@ -2649,6 +2665,10 @@ static int rtnl_dellink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	if (err < 0)
- 		return err;
- 
-+	err = rtnl_ensure_unique_netns_attr(tb);
-+	if (err < 0)
-+		return err;
-+
- 	if (tb[IFLA_IFNAME])
- 		nla_strlcpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
- 
-@@ -2802,6 +2822,10 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	if (err < 0)
- 		return err;
- 
-+	err = rtnl_ensure_unique_netns_attr(tb);
-+	if (err < 0)
-+		return err;
-+
- 	if (tb[IFLA_IFNAME])
- 		nla_strlcpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
- 	else
-@@ -3045,6 +3069,10 @@ static int rtnl_getlink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	if (err < 0)
- 		return err;
- 
-+	err = rtnl_ensure_unique_netns_attr(tb);
-+	if (err < 0)
-+		return err;
-+
- 	if (tb[IFLA_IF_NETNSID]) {
- 		netnsid = nla_get_s32(tb[IFLA_IF_NETNSID]);
- 		tgt_net = get_target_net(NETLINK_CB(skb).sk, netnsid);
+But if you find something else weird, please let me know and we can fix it.
+
+> 
+> On 11/23/2017 04:18 PM, Eduardo Otubo wrote:
+> > v2:
+> >   * Replace busy wait with wait_event()/wake_up_all()
+> >   * Cannot garantee that at the time xennet_remove is called, the
+> >     xen_netback state will not be XenbusStateClosed, so added a
+> >     condition for that
+> >   * There's a small chance for the xen_netback state is
+> >     XenbusStateUnknown by the time the xen_netfront switches to Closed,
+> >     so added a condition for that.
+> > 
+> > When unloading module xen_netfront from guest, dmesg would output
+> > warning messages like below:
+> > 
+> >    [  105.236836] xen:grant_table: WARNING: g.e. 0x903 still in use!
+> >    [  105.236839] deferring g.e. 0x903 (pfn 0x35805)
+> > 
+> > This problem relies on netfront and netback being out of sync. By the time
+> > netfront revokes the g.e.'s netback didn't have enough time to free all of
+> > them, hence displaying the warnings on dmesg.
+> > 
+> > The trick here is to make netfront to wait until netback frees all the g.e.'s
+> > and only then continue to cleanup for the module removal, and this is done by
+> > manipulating both device states.
+> > 
+> > Signed-off-by: Eduardo Otubo <otubo@redhat.com>
+> > ---
+> >   drivers/net/xen-netfront.c | 18 ++++++++++++++++++
+> >   1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+> > index 8b8689c6d887..391432e2725d 100644
+> > --- a/drivers/net/xen-netfront.c
+> > +++ b/drivers/net/xen-netfront.c
+> > @@ -87,6 +87,8 @@ struct netfront_cb {
+> >   /* IRQ name is queue name with "-tx" or "-rx" appended */
+> >   #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
+> > +static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
+> > +
+> >   struct netfront_stats {
+> >   	u64			packets;
+> >   	u64			bytes;
+> > @@ -2021,10 +2023,12 @@ static void netback_changed(struct xenbus_device *dev,
+> >   		break;
+> >   	case XenbusStateClosed:
+> > +		wake_up_all(&module_unload_q);
+> >   		if (dev->state == XenbusStateClosed)
+> >   			break;
+> >   		/* Missed the backend's CLOSING state -- fallthrough */
+> >   	case XenbusStateClosing:
+> > +		wake_up_all(&module_unload_q);
+> >   		xenbus_frontend_closed(dev);
+> >   		break;
+> >   	}
+> > @@ -2130,6 +2134,20 @@ static int xennet_remove(struct xenbus_device *dev)
+> >   	dev_dbg(&dev->dev, "%s\n", dev->nodename);
+> > +	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
+> > +		xenbus_switch_state(dev, XenbusStateClosing);
+> > +		wait_event(module_unload_q,
+> > +			   xenbus_read_driver_state(dev->otherend) ==
+> > +			   XenbusStateClosing);
+> > +
+> > +		xenbus_switch_state(dev, XenbusStateClosed);
+> > +		wait_event(module_unload_q,
+> > +			   xenbus_read_driver_state(dev->otherend) ==
+> > +			   XenbusStateClosed ||
+> > +			   xenbus_read_driver_state(dev->otherend) ==
+> > +			   XenbusStateUnknown);
+> > +	}
+> > +
+> >   	xennet_disconnect_backend(info);
+> >   	unregister_netdev(info->netdev);
+> 
+
 -- 
-2.14.1
+Eduardo Otubo
