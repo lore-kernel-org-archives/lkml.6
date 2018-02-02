@@ -1,59 +1,115 @@
-Return-Path: <dvhart@infradead.org>
-X-Google-Smtp-Source: AH8x224czt/pRWJuXvTTozaDT7Td4RecBAJIfZjETuSCYdd07BtxOuy1eGRTm7k+Z9gjRhIIrbR9
-ARC-Seal: i=1; a=rsa-sha256; t=1518142882; cv=none;
+Return-Path: <vadimp@mellanox.com>
+X-Google-Smtp-Source: AH8x224si6XEXAwWbHO3HvYBBR4IjS5Om70IbC89eY+srX2oVb0P+tGZCPihntWy3zDgo19erPgW
+ARC-Seal: i=1; a=rsa-sha256; t=1517554178; cv=none;
         d=google.com; s=arc-20160816;
-        b=Pn80VmBVON4S/eNP8qcuhfJ3WnelvgW093+NhZCmEADaUQ1S9QM8Y/m8KMNpg1HOat
-         C4CriwbK6MutqdFwLlu5m6hpGvWGz6LUnwAX287lqAfwbWxgV25rCFsjHlbqcyCCY6dm
-         CIoT22WxV4qpG9Fz9ZMTOWbFCDiDDi+vMBhCm8JifRkLPbxgHZ3ArfAp1UUj4bGffpJs
-         vXBBzlzHUrmy6xGmh9tWuub8veMS1OBNMfMCJa4EyaFJsl4yUMQorf3dr82HjDbVRZWq
-         COrLQHD3yPSmz6NGChFC3j9lOkdUh55/R/oeomMUz05cYlvvxRfkgRKCoLZwmN3oJCFQ
-         Cprg==
+        b=ejedFOmw3xEZFFSQ71tYkP0F88wuwq5rxH1AqKs4oSWlyFHnOP6dNLnR9MMvzga9DD
+         wdQotOfKz1g57HCc+M0/sSZkBhFWCO69lUYo7469dYdeBr4WHSfTyU4aOF5yBZxMoAAN
+         p3ET1XwjEYRtsg2AlceA2jbBaJx296uB5EexZdc9otqVvAHQwK4w8nimPINnjQtROsU2
+         aflmWNUppIOk18tR3cw3G50vXuh475gnH9zFAN4Br7Wy+SBJa2tCJ7EElowL+zVfnJIV
+         PymwdOmJA2scdw9mkvUu5GvTCMyinH/3IabG8dTak288QSchs+rTtUsFSbZHkknexQf1
+         Au1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=2bs1IEC5bkjhSvfaVW9dgpFGXcj9hhVP9o5vJu5COR8=;
-        b=MCGj858BDISAUD03rHGxNWAXFuMX41HWNFMCXQrLQRLiQzp0v63GK5zM6G+tFy5gjp
-         QEGKB3bQtOPUXWpkg0iMKrQLIzzM5kmBESULvR06pvT2++bTivdJ8/Ep1jEDa1ne4Op2
-         E7z6usrlx/fQPNjRzuMJ6MSWY/YlqpWKs6wWFjOTh1OTA974/KWPlBq0vYj1uZY0ER+j
-         3AHI5r1cZiO291Xp5xvDx6GwzZgBk2+o17J45WDvRMEvEvDmjwJ6h77LB3m9eGooFrKN
-         L7jE/gBDD5eeNWIS86laHz3tyleGPj58UZeFBs2KM77viVEHYwnR0MjS0yLOpS1ep7DF
-         9DEQ==
+        bh=Ns6ViRkthvg0vWB9jrtaYIZC80wZNeY+eNzgqSj53Os=;
+        b=eODQ7ORTC2Ym8VqdVCc/MW4x9sdwb0qE+H9NJgyWAlMuwKbvY7um1bhS9pBeJ+6RY4
+         tZW/mdFAVCv940g7VUAlfl9OcbPvtEFT6agesujMIyjasfE4v5C5lP03QhBmamh7OAn8
+         0ICKilsQOqAVY88OtuyBAiLFs5gbhd1UJz0RhtmkZsLCW34YBpET9lCDBC1+cvm+eNiI
+         uK1iTYBa08ij2WvxwK2mwCAJ+4t5Jkz+GPbNfCb+6E5ppJqeOhFtpOl172+OJNYb1hBO
+         mwkz6Gej7JggXbAhgTH7UGDMQH+OdB4c/BOpHDO4E6AZXCH8gKWv00nbfoVtJ5Fyuch8
+         Yh+w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=tFGMakFB;
-       spf=pass (google.com: best guess record for domain of dvhart@infradead.org designates 65.50.211.133 as permitted sender) smtp.mailfrom=dvhart@infradead.org
+       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=tFGMakFB;
-       spf=pass (google.com: best guess record for domain of dvhart@infradead.org designates 65.50.211.133 as permitted sender) smtp.mailfrom=dvhart@infradead.org
-Date: Thu, 8 Feb 2018 18:21:16 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: andy.shevchenko@gmail.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	jiri@resnulli.us
-Subject: Re: [patch v1 4/4] platform/x86: mlx-platform: Add support for new
- Mellanox systems
-Message-ID: <20180209022116.GA25898@fury>
+       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+From: Vadim Pasternak <vadimp@mellanox.com>
+To: dvhart@infradead.org, andy.shevchenko@gmail.com,
+        gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        jiri@resnulli.us, Vadim Pasternak <vadimp@mellanox.com>
+Subject: [patch v1 3/4] platform/x86: mlx-platform: Fix power cable setting for systems from msn21xx family
+Date: Fri,  2 Feb 2018 08:45:47 +0000
+Message-Id: <1517561148-38587-4-git-send-email-vadimp@mellanox.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1517561148-38587-1-git-send-email-vadimp@mellanox.com>
 References: <1517561148-38587-1-git-send-email-vadimp@mellanox.com>
- <1517561148-38587-5-git-send-email-vadimp@mellanox.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517561148-38587-5-git-send-email-vadimp@mellanox.com>
-User-Agent: Mutt/1.8.0 (2017-02-23)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591270896093123492?=
-X-GMAIL-MSGID: =?utf-8?q?1591888190528574288?=
+X-GMAIL-THRID: =?utf-8?q?1591270889847473743?=
+X-GMAIL-MSGID: =?utf-8?q?1591270889847473743?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 02, 2018 at 08:45:48AM +0000, Vadim Pasternak wrote:
-> Add support for the next new Mellanox system types: msn274x, msn201x,
-> qmb7, sn34, sn37. The current members of these types are:
+Add dedicated structure with power cable setting for Mellanox system from
+family msn21xx. These systems do not have physical device for power
+unit controller. So, in case power cable is inserted or removed, relevant
+interrupt signal is to be handled, status will be updated, but no device
+is to be associated with this signal.
 
-Please break this up into one patch per system type, or a similar logical
-breakdown.
+Add definition for interrupt low aggregation signal. On system from
+msn21xx family, low aggregation mask should be removed in order to allow
+signal hit CPU.
 
+Fixes: 6613d18e9038 ("platform/x86: mlx-platform: Move module from arch/x86")
+Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+---
+ drivers/platform/x86/mlx-platform.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
+index 177b40a..4d8078d 100644
+--- a/drivers/platform/x86/mlx-platform.c
++++ b/drivers/platform/x86/mlx-platform.c
+@@ -77,6 +77,8 @@
+ #define MLXPLAT_CPLD_AGGR_FAN_MASK_DEF	0x40
+ #define MLXPLAT_CPLD_AGGR_MASK_DEF	(MLXPLAT_CPLD_AGGR_PSU_MASK_DEF | \
+ 					 MLXPLAT_CPLD_AGGR_FAN_MASK_DEF)
++#define MLXPLAT_CPLD_AGGR_MASK_NG_DEF	0x04
++#define MLXPLAT_CPLD_LOW_AGGR_MASK_LOW	0xc0
+ #define MLXPLAT_CPLD_AGGR_MASK_MSN21XX	0x04
+ #define MLXPLAT_CPLD_PSU_MASK		GENMASK(1, 0)
+ #define MLXPLAT_CPLD_PWR_MASK		GENMASK(1, 0)
+@@ -295,14 +297,29 @@ struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_default_data = {
+ 	.mask = MLXPLAT_CPLD_AGGR_MASK_DEF,
+ };
+ 
++static struct mlxreg_core_data mlxplat_mlxcpld_msn21xx_pwr_items_data[] = {
++	{
++		.label = "pwr1",
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
++		.mask = BIT(0),
++		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
++	},
++	{
++		.label = "pwr2",
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
++		.mask = BIT(1),
++		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
++	},
++};
++
+ /* Platform hotplug MSN21xx system family data */
+ static struct mlxreg_core_item mlxplat_mlxcpld_msn21xx_items[] = {
+ 	{
+-		.data = mlxplat_mlxcpld_default_pwr_items_data,
++		.data = mlxplat_mlxcpld_msn21xx_pwr_items_data,
+ 		.aggr_mask = MLXPLAT_CPLD_AGGR_PWR_MASK_DEF,
+ 		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
+ 		.mask = MLXPLAT_CPLD_PWR_MASK,
+-		.count = ARRAY_SIZE(mlxplat_mlxcpld_pwr),
++		.count = ARRAY_SIZE(mlxplat_mlxcpld_msn21xx_pwr_items_data),
+ 		.inversed = 0,
+ 		.health = false,
+ 	},
+@@ -314,6 +331,8 @@ struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_msn21xx_data = {
+ 	.counter = ARRAY_SIZE(mlxplat_mlxcpld_msn21xx_items),
+ 	.cell = MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET,
+ 	.mask = MLXPLAT_CPLD_AGGR_MASK_DEF,
++	.cell_low = MLXPLAT_CPLD_LPC_REG_AGGRLO_OFFSET,
++	.mask_low = MLXPLAT_CPLD_LOW_AGGR_MASK_LOW,
+ };
+ 
+ static bool mlxplat_mlxcpld_writeable_reg(struct device *dev, unsigned int reg)
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.1.4
