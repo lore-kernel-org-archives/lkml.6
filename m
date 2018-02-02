@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225U0evUXqoPIUnbC4QKs1wqeg9VkG6yz5u2wuW8gC7mr49OXhK9sLFuozB1XbghiQNbpjmw
-ARC-Seal: i=1; a=rsa-sha256; t=1517591306; cv=none;
+X-Google-Smtp-Source: AH8x224O5L3nV/9RF+n2zemq1GVcTnhA/73QKbeU/ZpE9bThks+l4mtyYRFM3MVz4AzEKNAFYhli
+ARC-Seal: i=1; a=rsa-sha256; t=1517591299; cv=none;
         d=google.com; s=arc-20160816;
-        b=t8Z9TlQhWORmhv8mCCX+5/2TQB1OX1KnVNJa+pMPAPFba/q42oFSi5lDyNv8l67aGH
-         4xT3gzBYFZ68P5XaOVYMty35hbH5IBVtoWwR78dlRsu/ls7xd6NS0TWrihLSVy8bHlNl
-         CRtz+c7P2VTfywi9J2tIC9AK68fcn/FAJiVxeB76VB9imoTYQzLpCkukoSj71EY95qNB
-         GqRXuL3/tG3+nhYZlWF1tmYzhjuRSqJXn9Ghcxc0Vwz2YTOrX8L5IxjLEXFZrERpK8dp
-         cX0RAuWm+5XRSkbTH9M08fRf/8sxrMK70W8VtxmIEpin0Kfw1Ge8AIGwGChw1RPQG85a
-         DRyA==
+        b=qMKR1c3Vo5GPGNTlMvfdBypzjZNNyRmUVc5xKtTnZUAP4zNX9yCJAtY+6KALo0p6UQ
+         qPvV7Num9nQUPqGuHdoIbw4bhhs9RXw/C3qaFZjRf/Rf1o/OlDj7pCYgjJRW1ucG++az
+         RbRokYi/Y/wUNTIKg1gjmvVoLKzFunA7suVsRpXv4LBObBxvzsz9LGlYwqwDIrEtwfMx
+         UIfoH+m/qCAmrHvW7Rd5Dyvu91QA1H2ngcAhKod5trS6R523gEwCVOd7z1foWa7SpgXA
+         ZOU7JAuomG2umbtXs36oAhvClio2f3DF29e7GhE/bz+ebnY/Wra3FUmeuxrLMBqc22NC
+         fvvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fMlEblNVby3vinrLbHvn52/NPHa6RjVAueED1cPHNWI=;
-        b=uwyH7UZOHZE4g44QnOma7Q4tYflBUBhC/HL1nCnsuawxpKIkNtbWYysoVVo156JmOr
-         DO0S1u/gSriUyjZaeNdtrlWpWVILd4mHwJUO4GUKTlK/AoFsJZ8aboO73sglmMmD5nYN
-         hN4KEwe3wI5tBGFdtqn1CyQpPlxDDbDel7IdeB7rqidd3x/YbqMpvrGa9LUSkjeS1JwN
-         ynW4kNxvg+UhHqHZI++a3kkg14azK5746jGhrxpVl2hyn6/kgwofDiAPlbljwUZqFp35
-         nQjobhqZ6/R1I4NAwSPmv0cgae7WD/bLLtxgeWtyC/6qZMHM4G+P//sgQj/G6IEzXWOC
-         X3OQ==
+        bh=k/7UilHFjSPkM2oJPWje/ujFvhuLHwdT8k/WjuqL+lc=;
+        b=BPC7ZEaiGuJZJNZYteVqSffEnlVwMOvZv+GotGvWFsALlxFTXGIZ8RRzwhGvapQaPH
+         xIvQ8LE8lc91unAuDi/yJQvdF+iWwYFmP6cijASzZynCX+Jk0Mw60iIh2/695yMNQ8Bw
+         sJSe9FBzEtvt5u7M/oCDRE4klqM8/aS0YUXHgSERI06AUF4t7c7Lr0kHcCS5Kp0V1igF
+         OUn0HiGjl6IVF+hJXf3Zht4NDQJAh+5lXiQRoZK8LyEoNEAOpOEHwgASZBLuzfwScJKJ
+         nOvahpXHemmmsKsrIrazVhB/knkBQHL6eoerxskdzNQKiNNd92mAfLvGgeJS7f37JRJu
+         b7dw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Joel Stanley <joel@jms.id.au>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.14 006/156] gpio: Fix kernel stack leak to userspace
-Date: Fri,  2 Feb 2018 17:56:27 +0100
-Message-Id: <20180202140840.599129976@linuxfoundation.org>
+Subject: [PATCH 4.14 004/156] tools/gpio: Fix build error with musl libc
+Date: Fri,  2 Feb 2018 17:56:25 +0100
+Message-Id: <20180202140840.462352854@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309489818363187?=
-X-GMAIL-MSGID: =?utf-8?q?1591309821411125225?=
+X-GMAIL-THRID: =?utf-8?q?1591309482387772779?=
+X-GMAIL-MSGID: =?utf-8?q?1591309814832117757?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,33 +48,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Joel Stanley <joel@jms.id.au>
 
-commit 24bd3efc9d1efb5f756a7c6f807a36ddb6adc671 upstream.
+commit 1696784eb7b52b13b62d160c028ef2c2c981d4f2 upstream.
 
-The GPIO event descriptor was leaking kernel stack to
-userspace because we don't zero the variable before
-use. Ooops. Fix this.
+The GPIO tools build fails when using a buildroot toolchain that uses musl
+as it's C library:
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+arm-broomstick-linux-musleabi-gcc -Wp,-MD,./.gpio-event-mon.o.d \
+ -Wp,-MT,gpio-event-mon.o -O2 -Wall -g -D_GNU_SOURCE \
+ -Iinclude -D"BUILD_STR(s)=#s" -c -o gpio-event-mon.o gpio-event-mon.c
+gpio-event-mon.c:30:6: error: unknown type name ‘u_int32_t’; did you mean ‘uint32_t’?
+      u_int32_t handleflags,
+      ^~~~~~~~~
+      uint32_t
+
+The glibc headers installed on my laptop include sys/types.h in
+unistd.h, but it appears that musl does not.
+
+Fixes: 97f69747d8b1 ("tools/gpio: add the gpio-event-mon tool")
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib.c |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/gpio/gpio-event-mon.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -723,6 +723,9 @@ static irqreturn_t lineevent_irq_thread(
- 	struct gpioevent_data ge;
- 	int ret, level;
+--- a/tools/gpio/gpio-event-mon.c
++++ b/tools/gpio/gpio-event-mon.c
+@@ -23,6 +23,7 @@
+ #include <getopt.h>
+ #include <inttypes.h>
+ #include <sys/ioctl.h>
++#include <sys/types.h>
+ #include <linux/gpio.h>
  
-+	/* Do not leak kernel stack to userspace */
-+	memset(&ge, 0, sizeof(ge));
-+
- 	ge.timestamp = ktime_get_real_ns();
- 	level = gpiod_get_value_cansleep(le->desc);
- 
+ int monitor_device(const char *device_name,
