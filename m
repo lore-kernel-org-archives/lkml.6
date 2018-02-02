@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752460AbeBBOHj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:07:39 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:43714 "EHLO
+        id S1751986AbeBBOH6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:07:58 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:24552 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752150AbeBBOEm (ORCPT
+        by vger.kernel.org with ESMTP id S1752143AbeBBOEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 2 Feb 2018 09:04:42 -0500
 From: <gabriel.fernandez@st.com>
@@ -18,16 +18,16 @@ To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
 CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
-Subject: [PATCH 06/14] clk: stm32mp1: add PLL clocks
-Date: Fri, 2 Feb 2018 15:03:34 +0100
-Message-ID: <1517580222-23301-7-git-send-email-gabriel.fernandez@st.com>
+Subject: [PATCH 02/14] dt-bindings: clock: add STM32MP1 clocks
+Date: Fri, 2 Feb 2018 15:03:30 +0100
+Message-ID: <1517580222-23301-3-git-send-email-gabriel.fernandez@st.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
 References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG4NODE2.st.com
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG4NODE2.st.com
  (10.75.127.11)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
  signatures=0
@@ -37,262 +37,267 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-STMP32MP1 has 4 PLLs.
-PLL supports integer and fractional mode.
-Each PLL has 3 output dividers (p, q, r)
+This patch adds the clock binding entry for STM32MP1
 
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- drivers/clk/clk-stm32mp1.c | 209 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 209 insertions(+)
+ include/dt-bindings/clock/stm32mp1-clks.h | 248 ++++++++++++++++++++++++++++++
+ 1 file changed, 248 insertions(+)
+ create mode 100644 include/dt-bindings/clock/stm32mp1-clks.h
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 1c9a84a..33f0d09 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/of.h>
-@@ -506,6 +507,181 @@ static struct clk_hw *clk_register_mp1_gate(struct device *dev,
- 	return hw;
- }
- 
-+/* STM32 PLL */
+diff --git a/include/dt-bindings/clock/stm32mp1-clks.h b/include/dt-bindings/clock/stm32mp1-clks.h
+new file mode 100644
+index 0000000..11978f7
+--- /dev/null
++++ b/include/dt-bindings/clock/stm32mp1-clks.h
+@@ -0,0 +1,248 @@
++/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
++/*
++ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
++ * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
++ */
 +
-+struct stm32_pll_obj {
-+	/* lock pll enable/disable registers */
-+	spinlock_t *lock;
-+	void __iomem *reg;
-+	struct clk_hw hw;
-+};
++#ifndef _DT_BINDINGS_STM32MP1_CLKS_H_
++#define _DT_BINDINGS_STM32MP1_CLKS_H_
 +
-+#define to_pll(_hw) container_of(_hw, struct stm32_pll_obj, hw)
++/* OSCILLATOR clocks */
++#define CK_HSE		0
++#define CK_CSI		1
++#define CK_LSI		2
++#define CK_LSE		3
++#define CK_HSI		4
++#define CK_HSE_DIV2	5
 +
-+#define PLL_ON		BIT(0)
-+#define PLL_RDY		BIT(1)
-+#define DIVN_MASK	0x1FF
-+#define DIVM_MASK	0x3F
-+#define DIVM_SHIFT	16
-+#define DIVN_SHIFT	0
-+#define FRAC_OFFSET	0xC
-+#define FRAC_MASK	0x1FFF
-+#define FRAC_SHIFT	3
-+#define FRACLE		BIT(16)
++/* Bus clocks */
++#define TIM2		6
++#define TIM3		7
++#define TIM4		8
++#define TIM5		9
++#define TIM6		10
++#define TIM7		11
++#define TIM12		12
++#define TIM13		13
++#define TIM14		14
++#define LPTIM1		15
++#define SPI2		16
++#define SPI3		17
++#define USART2		18
++#define USART3		19
++#define UART4		20
++#define UART5		21
++#define UART7		22
++#define UART8		23
++#define I2C1		24
++#define I2C2		25
++#define I2C3		26
++#define I2C5		27
++#define SPDIF		28
++#define CEC		29
++#define DAC12		30
++#define MDIO		31
++#define TIM1		32
++#define TIM8		33
++#define TIM15		34
++#define TIM16		35
++#define TIM17		36
++#define SPI1		37
++#define SPI4		38
++#define SPI5		39
++#define USART6		40
++#define SAI1		41
++#define SAI2		42
++#define SAI3		43
++#define DFSDM		44
++#define FDCAN		45
++#define LPTIM2		46
++#define LPTIM3		47
++#define LPTIM4		48
++#define LPTIM5		49
++#define SAI4		50
++#define SYSCFG		51
++#define VREF		52
++#define TMPSENS		53
++#define PMBCTRL		54
++#define HDP		55
++#define LTDC		56
++#define DSI		57
++#define IWDG2		58
++#define USBPHY		59
++#define STGENRO		60
++#define SPI6		61
++#define I2C4		62
++#define I2C6		63
++#define USART1		64
++#define RTCAPB		65
++#define TZC		66
++#define TZPC		67
++#define IWDG1		68
++#define BSEC		69
++#define STGEN		70
++#define DMA1		71
++#define DMA2		72
++#define DMAMUX		73
++#define ADC12		74
++#define USBO		75
++#define SDMMC3		76
++#define DCMI		77
++#define CRYP2		78
++#define HASH2		79
++#define RNG2		80
++#define CRC2		81
++#define HSEM		82
++#define IPCC		83
++#define GPIOA		84
++#define GPIOB		85
++#define GPIOC		86
++#define GPIOD		87
++#define GPIOE		88
++#define GPIOF		89
++#define GPIOG		90
++#define GPIOH		91
++#define GPIOI		92
++#define GPIOJ		93
++#define GPIOK		94
++#define GPIOZ		95
++#define CRYP1		96
++#define HASH1		97
++#define RNG1		98
++#define BKPSRAM		99
++#define MDMA		100
++#define GPU		102
++#define ETHCK		103
++#define ETHTX		104
++#define ETHRX		105
++#define ETHMAC		106
++#define FMC		107
++#define QSPI		108
++#define SDMMC1		109
++#define SDMMC2		110
++#define CRC1		111
++#define USBH		112
++#define ETHSTP		113
 +
-+static int __pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
++/* Kernel clocks */
++#define SDMMC1_K	114
++#define SDMMC2_K	115
++#define SDMMC3_K	116
++#define FMC_K		117
++#define QSPI_K		118
++#define ETHMAC_K	119
++#define RNG1_K		120
++#define RNG2_K		121
++#define GPU_K		122
++#define USBPHY_K	123
++#define STGEN_K		124
++#define SPDIF_K		125
++#define SPI1_K		126
++#define SPI2_K		127
++#define SPI3_K		128
++#define SPI4_K		129
++#define SPI5_K		130
++#define SPI6_K		131
++#define CEC_K		132
++#define I2C1_K		133
++#define I2C2_K		134
++#define I2C3_K		135
++#define I2C4_K		136
++#define I2C5_K		137
++#define I2C6_K		138
++#define LPTIM1_K	139
++#define LPTIM2_K	140
++#define LPTIM3_K	141
++#define LPTIM4_K	142
++#define LPTIM5_K	143
++#define USART1_K	144
++#define USART2_K	145
++#define USART3_K	146
++#define UART4_K		147
++#define UART5_K		148
++#define USART6_K	149
++#define UART7_K		150
++#define UART8_K		151
++#define DFSDM_K		152
++#define FDCAN_K		153
++#define SAI1_K		154
++#define SAI2_K		155
++#define SAI3_K		156
++#define SAI4_K		157
++#define ADC12_K		158
++#define DSI_K		159
++#define ADFSDM_K	160
++#define USBO_K		161
++#define LTDC_K		162
 +
-+	return readl_relaxed(clk_elem->reg) & PLL_ON;
-+}
++/* PLL */
++#define PLL1		163
++#define PLL2		164
++#define PLL3		165
++#define PLL4		166
 +
-+#define TIMEOUT 5
++/* ODF */
++#define PLL1_P		167
++#define PLL1_Q		168
++#define PLL1_R		169
++#define PLL2_P		170
++#define PLL2_Q		171
++#define PLL2_R		172
++#define PLL3_P		173
++#define PLL3_Q		174
++#define PLL3_R		175
++#define PLL4_P		176
++#define PLL4_Q		177
++#define PLL4_R		178
 +
-+static int pll_enable(struct clk_hw *hw)
-+{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	u32 reg;
-+	unsigned long flags = 0;
-+	unsigned int timeout = TIMEOUT;
-+	int bit_status = 0;
++/* AUX */
++#define RTC		179
 +
-+	spin_lock_irqsave(clk_elem->lock, flags);
++/* MCLK */
++#define CK_PER		180
++#define CK_MPU		181
++#define CK_AXI		182
++#define CK_MCU		183
 +
-+	if (__pll_is_enabled(hw))
-+		goto unlock;
++/* Time base */
++#define TIM2_K		184
++#define TIM3_K		185
++#define TIM4_K		186
++#define TIM5_K		187
++#define TIM6_K		188
++#define TIM7_K		189
++#define TIM12_K		190
++#define TIM13_K		191
++#define TIM14_K		192
++#define TIM1_K		193
++#define TIM8_K		194
++#define TIM15_K		195
++#define TIM16_K		196
++#define TIM17_K		197
 +
-+	reg = readl_relaxed(clk_elem->reg);
-+	reg |= PLL_ON;
-+	writel_relaxed(reg, clk_elem->reg);
++/* MCO clocks */
++#define CK_MCO1		198
++#define CK_MCO2		199
 +
-+	/* We can't use readl_poll_timeout() because we can be blocked if
-+	 * someone enables this clock before clocksource changes.
-+	 * Only jiffies counter is available. Jiffies are incremented by
-+	 * interruptions and enable op does not allow to be interrupted.
-+	 */
-+	do {
-+		bit_status = !(readl_relaxed(clk_elem->reg) & PLL_RDY);
++/* TRACE & DEBUG clocks */
++#define DBG		200
++#define CK_DBG		201
++#define CK_TRACE	202
 +
-+		if (bit_status)
-+			udelay(120);
++/* DDR */
++#define DDRC1		203
++#define DDRC1LP		204
++#define DDRC2		205
++#define DDRC2LP		206
++#define DDRPHYC		207
++#define DDRPHYCLP	208
++#define DDRCAPB		209
++#define DDRCAPBLP	210
++#define AXIDCG		211
++#define DDRPHYCAPB	212
++#define DDRPHYCAPBLP	213
++#define DDRPERFM	214
 +
-+	} while (bit_status && --timeout);
++#define STM32MP1_LAST_CLK 215
 +
-+unlock:
-+	spin_unlock_irqrestore(clk_elem->lock, flags);
-+
-+	return bit_status;
-+}
-+
-+static void pll_disable(struct clk_hw *hw)
-+{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	u32 reg;
-+	unsigned long flags = 0;
-+
-+	spin_lock_irqsave(clk_elem->lock, flags);
-+
-+	reg = readl_relaxed(clk_elem->reg);
-+	reg &= ~PLL_ON;
-+	writel_relaxed(reg, clk_elem->reg);
-+
-+	spin_unlock_irqrestore(clk_elem->lock, flags);
-+}
-+
-+static u32 pll_frac_val(struct clk_hw *hw)
-+{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	u32 reg, frac = 0;
-+
-+	reg = readl_relaxed(clk_elem->reg + FRAC_OFFSET);
-+	if (reg & FRACLE)
-+		frac = (reg >> FRAC_SHIFT) & FRAC_MASK;
-+
-+	return frac;
-+}
-+
-+static unsigned long pll_recalc_rate(struct clk_hw *hw,
-+				     unsigned long parent_rate)
-+{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	u32 reg;
-+	u32 frac, divm, divn;
-+	u64 rate, rate_frac = 0;
-+
-+	reg = readl_relaxed(clk_elem->reg + 4);
-+
-+	divm = ((reg >> DIVM_SHIFT) & DIVM_MASK) + 1;
-+	divn = ((reg >> DIVN_SHIFT) & DIVN_MASK) + 1;
-+	rate = (u64)parent_rate * divn;
-+
-+	do_div(rate, divm);
-+
-+	frac = pll_frac_val(hw);
-+	if (frac) {
-+		rate_frac = (u64)parent_rate * (u64)frac;
-+		do_div(rate_frac, (divm * 8192));
-+	}
-+
-+	return rate + rate_frac;
-+}
-+
-+static int pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	unsigned long flags = 0;
-+	int ret;
-+
-+	spin_lock_irqsave(clk_elem->lock, flags);
-+	ret = __pll_is_enabled(hw);
-+	spin_unlock_irqrestore(clk_elem->lock, flags);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops pll_ops = {
-+	.enable = pll_enable,
-+	.disable = pll_disable,
-+	.recalc_rate = pll_recalc_rate,
-+	.is_enabled = pll_is_enabled,
-+};
-+
-+static struct clk_hw *clk_register_pll(struct device *dev, const char *name,
-+				       const char *parent_name,
-+				       void __iomem *reg,
-+				       unsigned long flags,
-+				       spinlock_t *lock)
-+{
-+	struct stm32_pll_obj *element;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int err;
-+
-+	element = kzalloc(sizeof(*element), GFP_KERNEL);
-+	if (!element)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &pll_ops;
-+	init.flags = flags;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	element->hw.init = &init;
-+	element->reg = reg;
-+	element->lock = lock;
-+
-+	hw = &element->hw;
-+	err = clk_hw_register(dev, hw);
-+
-+	if (err) {
-+		kfree(element);
-+		return ERR_PTR(err);
-+	}
-+
-+	return hw;
-+}
-+
- static struct clk_hw *
- _clk_register_mp1_gate(struct device *dev,
- 		       struct clk_hw_onecell_data *clk_data,
-@@ -524,6 +700,21 @@ static struct clk_hw *clk_register_mp1_gate(struct device *dev,
- 				     lock);
- }
- 
-+struct stm32_pll_cfg {
-+	u32 offset;
-+};
-+
-+struct clk_hw *_clk_register_pll(struct device *dev,
-+				 struct clk_hw_onecell_data *clk_data,
-+				 void __iomem *base, spinlock_t *lock,
-+				 const struct clock_config *cfg)
-+{
-+	struct stm32_pll_cfg *stm_pll_cfg = cfg->cfg;
-+
-+	return clk_register_pll(dev, cfg->name, cfg->parent_name,
-+				base + stm_pll_cfg->offset, cfg->flags, lock);
-+}
-+
- #define GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
- {\
- 	.id		= _id,\
-@@ -602,6 +793,18 @@ static struct clk_hw *clk_register_mp1_gate(struct device *dev,
- 	.func		= _clk_register_mp1_gate,\
- }
- 
-+#define PLL(_id, _name, _parent, _flags, _offset)\
-+{\
-+	.id		= _id,\
-+	.name		= _name,\
-+	.parent_name	= _parent,\
-+	.flags		= _flags,\
-+	.cfg		=  &(struct stm32_pll_cfg) {\
-+		.offset = _offset,\
-+	},\
-+	.func		= _clk_register_pll,\
-+}
-+
- static const struct clock_config stm32mp1_clock_cfg[] = {
- 	/* Oscillator divider */
- 	DIV(NO_ID, "clk-hsi-div", "clk-hsi", 0, RCC_HSICFGR, 0, 2,
-@@ -625,6 +828,12 @@ static struct clk_hw *clk_register_mp1_gate(struct device *dev,
- 
- 	MUX(NO_ID, "ref4", ref4_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK4SELR,
- 	    0, 2, CLK_MUX_READ_ONLY),
-+
-+	/* PLLs */
-+	PLL(PLL1, "pll1", "ref1", CLK_IGNORE_UNUSED, RCC_PLL1CR),
-+	PLL(PLL2, "pll2", "ref1", CLK_IGNORE_UNUSED, RCC_PLL2CR),
-+	PLL(PLL3, "pll3", "ref3", CLK_IGNORE_UNUSED, RCC_PLL3CR),
-+	PLL(PLL4, "pll4", "ref4", CLK_IGNORE_UNUSED, RCC_PLL4CR),
- };
- 
- struct stm32_clock_match_data {
++#endif /* _DT_BINDINGS_STM32MP1_CLKS_H_ */
 -- 
 1.9.1
