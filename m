@@ -1,65 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751708AbeBBAJj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 19:09:39 -0500
-Received: from ozlabs.org ([103.22.144.67]:52543 "EHLO ozlabs.org"
+        id S1751669AbeBBAUo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 19:20:44 -0500
+Received: from ozlabs.org ([103.22.144.67]:54137 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751555AbeBBAJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 19:09:31 -0500
-Date: Fri, 2 Feb 2018 11:09:28 +1100
+        id S1751472AbeBBAUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 19:20:33 -0500
+Date: Fri, 2 Feb 2018 11:20:29 +1100
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+To: Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        KVM <kvm@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alban Crequy <alban@kinvolk.io>, Dongsu Park <dongsu@kinvolk.io>,
-        Jeff Layton <jlayton@redhat.com>
-Subject: linux-next: manual merge of the integrity tree with Linus' tree
-Message-ID: <20180202110928.0ca234ee@canb.auug.org.au>
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+Message-ID: <20180202112029.0f4aa558@canb.auug.org.au>
+In-Reply-To: <20180201152244.GC31080@flask>
+References: <20180201125512.7bc96674@canb.auug.org.au>
+        <20180201104707.GA21802@cbox>
+        <20180202002227.36db3356@canb.auug.org.au>
+        <f49453f2-223e-abe0-912a-7288183a1671@redhat.com>
+        <20180201152244.GC31080@flask>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w120KmNF019564
 
-Hi all,
+Hi Radim,
 
-Today's linux-next merge of the integrity tree got a conflict in:
+On Thu, 1 Feb 2018 16:22:44 +0100 Radim Krčmář <rkrcmar@redhat.com> wrote:
+>
+> I wasn't sure if the pti top branch is final, so I pulled hyper-v topic
+> branch that also also contains v4.15.  This and the SEV feature
+> conflicts should be gone now,
 
-  security/integrity/ima/ima_main.c
+That merge would have been a good place to add the following merge
+resolution fix patch I have been carrying:
 
-between commit:
+From: Eric Biggers <ebiggers@google.com>
+Subject: KVM: x86: don't forget vcpu_put() in kvm_arch_vcpu_ioctl_set_sregs()
+Date: Thu, 21 Dec 2017 01:30:30 +0100
 
-  3b370b215f4b ("IMA: switch IMA over to new i_version API")
+Due to a bad merge resolution between commit f29810335965 ("KVM/x86:
+Check input paging mode when cs.l is set") and commit b4ef9d4e8cb8
+("KVM: Move vcpu_load to arch-specific kvm_arch_vcpu_ioctl_set_sregs"),
+there is a case in kvm_arch_vcpu_ioctl_set_sregs() where vcpu_put() is
+not called after vcpu_get().  Fix it.
 
-from Linus' tree and commit:
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ arch/x86/kvm/x86.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  d56f30ac85c0 ("ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE")
-
-from the integrity tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index ea3a98196753..f4e8b5089b28 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7624,7 +7624,7 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+ 		goto out;
+ 
+ 	if (kvm_valid_sregs(vcpu, sregs))
+-		return -EINVAL;
++		goto out;
+ 
+ 	apic_base_msr.data = sregs->apic_base;
+ 	apic_base_msr.host_initiated = true;
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc security/integrity/ima/ima_main.c
-index 2cfb0c714967,83edbad81f83..000000000000
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@@ -24,7 -24,7 +24,8 @@@
-  #include <linux/slab.h>
-  #include <linux/xattr.h>
-  #include <linux/ima.h>
- +#include <linux/iversion.h>
-+ #include <linux/fs.h>
-  
-  #include "ima.h"
-  
