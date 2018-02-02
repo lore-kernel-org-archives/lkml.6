@@ -1,96 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753174AbeBBRJW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 12:09:22 -0500
-Received: from smtprelay0192.hostedemail.com ([216.40.44.192]:32906 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752919AbeBBRE6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 12:04:58 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:541:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2692:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3873:3874:4321:4605:5007:6119:7903:10004:10400:10848:11026:11232:11658:11914:12043:12296:12438:12555:12660:12740:12760:12895:13161:13229:13439:14659:14721:21080:21433:21451:21611:21627:30012:30029:30045:30046:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: word00_def2ff0a2f33
-X-Filterd-Recvd-Size: 3346
-Message-ID: <1517591094.7489.103.camel@perches.com>
-Subject: Re: [PATCH 5/7] [HACK] avoid gcc-8 ICE on LTO
-From: Joe Perches <joe@perches.com>
-To: Arnd Bergmann <arnd@arndb.de>, Andi Kleen <ak@linux.intel.com>
-Cc: Nicolas Pitre <nico@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org
-Date: Fri, 02 Feb 2018 09:04:54 -0800
-In-Reply-To: <20180202162104.2300532-5-arnd@arndb.de>
-References: <20180202161550.2106846-1-arnd@arndb.de>
-         <20180202162104.2300532-5-arnd@arndb.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
+        id S1754266AbeBBR3w (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 12:29:52 -0500
+Received: from mout.gmx.net ([212.227.17.21]:63138 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753873AbeBBRTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 12:19:07 -0500
+Message-ID: <1517591925.8368.58.camel@gmx.de>
+Subject: Re: [RFC PATCH] sched/fair: Optionally restrict SMT scheduling
+ ("restrict_smt")
+From: Mike Galbraith <efault@gmx.de>
+To: Sergio Lopez <slp@sinrega.org>, linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org
+Date: Fri, 02 Feb 2018 18:18:45 +0100
+In-Reply-To: <1517584441.10356.21.camel@sinrega.org>
+References: <20180201123748.32596-1-slp@sinrega.org>
+         <1517495872.23787.20.camel@gmx.de> <1517584441.10356.21.camel@sinrega.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:qk34Jo//ilg6nUMq/XPbTXD3GiJUEWupdaQg0YgcRU2fmSrZbtW
+ qw9QQt/M47tb9W4Yt9Fp5CpssBCG+Clqe5EMqOjVEPSPo8gnwB3/wBEvQ1vr5YhAgKY9LZQ
+ z3jX66vYzl5mauBhpIYi2+9rHG8Dn0icoUsznGJMg5mtGgvPz261O1fYOV50CKsBKFwOsrP
+ MeJzXD4XRZKjrDxXBU8hw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:qM/1mKpF7U8=:CUtAz17HmQbU4oiQkwk+eP
+ sb7RknmHuJ+8tPqQ3ktRWvluJ5Oiom2HKVSoISnuaYnz4w7qH236iapkiN6RvUoIu5cIPUx0V
+ OAPvQZuotYqz9MnnJLU8E8goDRxikhONakEhaM+WJzBvmNNyK0JXIoP3pRT6UZsCUxAE7Nik+
+ r0er2JIAroS2WzdRXeG50oJuxgAcamWdz+AP29npY6YaLAmoy5CfZw0JD8FeZA3oKenFWUGQO
+ mQ9S4jzfm/9ITXsTPM2xY6dizm5QJZldS79JElwQB1IliLCUXZsUaFxA0EnWvC/wp51y5wUxV
+ 1AImZCEeq6vGgIpdK7LwHg5jk9FFgNOIPcM8zJrvyWk7XesYU986XgbhqdqBnpZpGSMqrt8nS
+ LJ5jvLwD6P3FgSFVZlZVGHrMoVpn/yOwt1u9mMgymcimLwHKaNy042stns38ZfNCn3n+ERb0I
+ NdMab455ttJ/4mDf9jU+iLSWamSNmlakf/O95ZUOy770ua/MfWIi2mQoLkDmZOLJv2YbfCjKq
+ BirnVXqmWiRLjH+Hg6PAh+n5+H61fut+BwCcHx5KczfwF4JxHRVccrHsJMZM7nua2mdjZR9ki
+ SIt7CojpSwMSb4UvNKFAQ1HGkyYbgQX5e1BDBT03F6yIakg5feDiohtKYAcVsgLBFG54fTFML
+ LcVj2RA5giupCwJ7mKlm57RIp4Wc2qBpZMPVTKM5qYG089naQ/265HaJQ5hnf4Zg/hijhqrur
+ DroAf5hjdbNXxM8BtMd6Yp7Q6odFj2d7vBui7/V8TKDwVZyvlIWjYszuPsXvSKzb1EbG7Hmh3
+ tukjPCzxgomWEbrqyLqRFPip5CvGoKUvV50Bd6YBTkpkVxEAW4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-02 at 17:21 +0100, Arnd Bergmann wrote:
-> I ran into a build error:
+On Fri, 2018-02-02 at 16:14 +0100, Sergio Lopez wrote:
+> On Thu, 2018-02-01 at 15:37 +0100, Mike Galbraith wrote:
+> > On Thu, 2018-02-01 at 13:37 +0100, Sergio Lopez wrote:
+> > > Compared against "isolcpus", "restrict_smt" presents the following
+> > > advantages:
+> > >  - Doesn't require prior knowledge of the CPU topology, making it
+> > > more friendly to both end users and automation tools.
+> > >  - Load balancing is still active for tasks pinned to multiple
+> > > secondary SMT threads.
+> > 
+> > This says that everybody and everything in the box is way smarter
+> > than the admin.
 > 
-> /git/arm-soc/net/sctp/sm_sideeffect.c: In function 'sctp_do_sm':
-> /git/arm-soc/net/sctp/sm_sideeffect.c:1155:5: internal compiler error: Segmentation fault
->  int sctp_do_sm(struct net *net, enum sctp_event event_type,
->      ^
-> 0xa42b7f crash_signal
-> 
-> The bug is fixed in mainline gcc now, but I carry this as I have
-> not yet upgrade.
-[]
-> diff --git a/net/sctp/sm_sideeffect.c b/net/sctp/sm_sideeffect.c
-[]
-> @@ -1152,12 +1152,12 @@ static void sctp_cmd_send_asconf(struct sctp_association *asoc)
->   * If you want to understand all of lksctp, this is a
->   * good place to start.
->   */
-> +typedef const char *(printfn_t)(union sctp_subtype);
+> If that's an argument in favor of manual pinning and isolation, I have
+> to disagree with you. That's an unnecessary burden put on the shoulders
+> of the admin.
 
-This typedef is only used in this file twice.
-Perhaps removing the typedef is clearer.
+Give the admin job to one of those users you mentioned who knows which
+threads are "secondary" threads, he/she won't be burdened at all.
 
-Given the debug_fn use is only in another
-used-once macro, convert that debug_fn in
-the macro too and avoid the unnecessary
-variable initialization.
-
-The debug_[pre|post]_[sfn|sfx] macros are
-probably unnecessary indirections and could
-be removed too but the code might read worse.
-
----
- net/sctp/sm_sideeffect.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/net/sctp/sm_sideeffect.c b/net/sctp/sm_sideeffect.c
-index b71e7fb0a20a..5a6de0070b71 100644
---- a/net/sctp/sm_sideeffect.c
-+++ b/net/sctp/sm_sideeffect.c
-@@ -1133,8 +1133,9 @@ static void sctp_cmd_send_asconf(struct sctp_association *asoc)
-  * functionality there.
-  */
- #define debug_pre_sfn() \
--	pr_debug("%s[pre-fn]: ep:%p, %s, %s, asoc:%p[%s], %s\n", __func__, \
--		 ep, sctp_evttype_tbl[event_type], (*debug_fn)(subtype),   \
-+	pr_debug("%s[pre-fn]: ep:%p, %s, %s, asoc:%p[%s], %s\n",	\
-+		 __func__, ep, sctp_evttype_tbl[event_type],		\
-+		 (*table[event_type])(subtype),				\
- 		 asoc, sctp_state_tbl[state], state_fn->name)
- 
- #define debug_post_sfn() \
-@@ -1157,11 +1158,9 @@ int sctp_do_sm(struct net *net, enum sctp_event event_type,
- 	       struct sctp_endpoint *ep, struct sctp_association *asoc,
- 	       void *event_arg, gfp_t gfp)
- {
--	typedef const char *(printfn_t)(union sctp_subtype);
--	static printfn_t *table[] = {
-+	static const char *(*table[])(union sctp_subtype) = {
- 		NULL, sctp_cname, sctp_tname, sctp_oname, sctp_pname,
- 	};
--	printfn_t *debug_fn  __attribute__ ((unused)) = table[event_type];
- 	const struct sctp_sm_table_entry *state_fn;
- 	struct sctp_cmd_seq commands;
- 	enum sctp_disposition status;
+	-Mike
