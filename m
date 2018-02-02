@@ -1,48 +1,77 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225KgiE41B8ZxxulVz6N9vlIZ8II4uibQu5eb/7IiEsz2mtZvNXGelKzCiFwEcl3na6T9jL6
-ARC-Seal: i=1; a=rsa-sha256; t=1517591085; cv=none;
-        d=google.com; s=arc-20160816;
-        b=fV4sC3LZIkKRMBM4ClTwwcsXxDp8ZkrLiVere9hA7Hz+nzZYLAvXdDcTfT336nYBe2
-         5TSXUM4/+J8hQyV+ughVSbmjA/2iZDagMer6F8MfFN8BKz7OxMvoLNQCUqZlI/vaU1Mv
-         pDNGDUCOlstQv+oX1COAZWmz0kdfg/+vJCzivPGOXh4z9u4bMPRUWernhO8Yb9ztlsro
-         K3hT3jAUvKVv6DurUM+6nifkb6//hbjo5T9b3Kkm/KwIcl/cLlU8AD4Il5Wj7JnTzj38
-         BZDTT1ERtjpdEsW/L/BTnh8daWNAEvPJaj41Q09E7NFICG79pPU8f9XEc6fHx4LiezPm
-         Evig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=eg4noRI637hcK+yx8QzGzGSlOzw7HvcLrf9PuOwPIL0=;
-        b=CPcILndQU9xoRL6hr6zkth0LqZtF4lzL3rC8E5FlI2Oi1n7Hf0ILkeBdueizRsT5cc
-         S7gTUBaNPzex5YeVEvY+4kzGW41ZJEdfH2pS6Ir794cswGCFE78r2js3coBmDZG1jsQ7
-         hkck18JcbCJVDGF0CXq7eoWdp/hx633ZBX2gOutaOGgAWu6zZhS2yxWUjZ0wF8uR7Opd
-         dCIdRjxgkS4/zMakZgCRkgV1ucQICy3hviIAUauQnIvXCwTJi8tILVC9gkYexSwaOwai
-         y4a2YQR+o2AKeuoNjDY65ooVQEkAjnUkGdFgBK0is1M1a0rneXF6ZgVDLPw7o4F1ATMv
-         E49A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591083-2-10255825231235444560
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591082; b=Hzh00eD2NTvdiK0y6Hc/fUHKHmen1rBRc/8/+i8DKD9SwDl
+    3ckJLfREycDa89JC4YgKnDqv4vTofSZgu3LDGGkAfg9sYcnLVyv5EBZZ+2+5FJro
+    WU9asTZvKamwJCMEg33KzSCKjpuGse6ckntAI8mJMVD28NJn41JqsIotR0B8EbHi
+    Lrawmq8qb6acuwYAOzIawgg+C9QHYcDNlx6gLDkyQ7JpQvZI/GCoFSlesAuA9CCK
+    9LzAtRqzkSG6Tg6CZgJsj51JZVSmFwU9y6+YTROr4OP11gxnwTSlpSzzMACGCPS9
+    0u5wZC8rViER27NkDJU+b6RxGyiR0/8RaIjtrlw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591082; bh=bMWkEZJNqrt5/V/0entxzlqrmD
+    i8iosN6k19ofRIQb0=; b=jeGEM4Ql2x8n/NfJUNhNjdLKJFCYEB3/LmvU61886R
+    5/1R3dozTP/0myi9vCbzuADnWzx3xbiLHkFjxEHIQ1CJE3xW1MTidB4K7ySSngXX
+    KQ3WyZlrVM31t/em9tSky92ygdypYcOFgS4xcK9WNIxQ89bgus84U0ns0MUbeKhE
+    1ifJoQZz5F07lRQ1DG+LpN6PRhvfQkbor3T57s+k9WeCmrkeRJHvhNvAhd4p9Xrt
+    eyxyNVTTTujnYDIpiDthHYihipgByJDqkSVxlbA43Q9fLz+5Xs67Wnir6yyMNJKs
+    D77D5UA1qWy4zwifCG4SAYlDlOZYrCLOS8rpg/IdeMow==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752260AbeBBREg (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:04:36 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36252 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752641AbeBBREe (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:04:34 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jeff Layton <jlayton@redhat.com>,
-	Vasily Averin <vvs@virtuozzo.com>,
-	"J. Bruce Fields" <bfields@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 45/86] lockd: fix "list_add double add" caused by legacy signal interface
-Date: Fri,  2 Feb 2018 17:58:05 +0100
-Message-Id: <20180202140826.475645847@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 42/86] nfsd: Ensure we check stateid validity in the seqid operation checks
+Date: Fri,  2 Feb 2018 17:58:02 +0100
+Message-Id: <20180202140826.248482724@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309364374629787?=
-X-GMAIL-MSGID: =?utf-8?q?1591309589739147004?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,82 +79,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
 
-[ Upstream commit 81833de1a46edce9ca20cfe079872ac1c20ef359 ]
+[ Upstream commit 9271d7e509c1bfc0b9a418caec29ec8d1ac38270 ]
 
-restart_grace() uses hardcoded init_net.
-It can cause to "list_add double add" in following scenario:
+After taking the stateid st_mutex, we want to know that the stateid
+still represents valid state before performing any non-idempotent
+actions.
 
-1) nfsd and lockd was started in several net namespaces
-2) nfsd in init_net was stopped (lockd was not stopped because
- it have users from another net namespaces)
-3) lockd got signal, called restart_grace() -> set_grace_period()
- and enabled lock_manager in hardcoded init_net.
-4) nfsd in init_net is started again,
- its lockd_up() calls set_grace_period() and tries to add
- lock_manager into init_net 2nd time.
-
-Jeff Layton suggest:
-"Make it safe to call locks_start_grace multiple times on the same
-lock_manager. If it's already on the global grace_list, then don't try
-to add it again.  (But we don't intentionally add twice, so for now we
-WARN about that case.)
-
-With this change, we also need to ensure that the nfsd4 lock manager
-initializes the list before we call locks_start_grace. While we're at
-it, move the rest of the nfsd_net initialization into
-nfs4_state_create_net. I see no reason to have it spread over two
-functions like it is today."
-
-Suggested patch was updated to generate warning in described situation.
-
-Suggested-by: Jeff Layton <jlayton@redhat.com>
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs_common/grace.c |    6 +++++-
- fs/nfsd/nfs4state.c   |    7 ++++---
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ fs/nfsd/nfs4state.c |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
---- a/fs/nfs_common/grace.c
-+++ b/fs/nfs_common/grace.c
-@@ -30,7 +30,11 @@ locks_start_grace(struct net *net, struc
- 	struct list_head *grace_list = net_generic(net, grace_net_id);
- 
- 	spin_lock(&grace_lock);
--	list_add(&lm->list, grace_list);
-+	if (list_empty(&lm->list))
-+		list_add(&lm->list, grace_list);
-+	else
-+		WARN(1, "double list_add attempt detected in net %x %s\n",
-+		     net->ns.inum, (net == &init_net) ? "(init_net)" : "");
- 	spin_unlock(&grace_lock);
- }
- EXPORT_SYMBOL_GPL(locks_start_grace);
 --- a/fs/nfsd/nfs4state.c
 +++ b/fs/nfsd/nfs4state.c
-@@ -7012,6 +7012,10 @@ static int nfs4_state_create_net(struct
- 		INIT_LIST_HEAD(&nn->sessionid_hashtbl[i]);
- 	nn->conf_name_tree = RB_ROOT;
- 	nn->unconf_name_tree = RB_ROOT;
-+	nn->boot_time = get_seconds();
-+	nn->grace_ended = false;
-+	nn->nfsd4_manager.block_opens = true;
-+	INIT_LIST_HEAD(&nn->nfsd4_manager.list);
- 	INIT_LIST_HEAD(&nn->client_lru);
- 	INIT_LIST_HEAD(&nn->close_lru);
- 	INIT_LIST_HEAD(&nn->del_recall_lru);
-@@ -7069,9 +7073,6 @@ nfs4_state_start_net(struct net *net)
- 	ret = nfs4_state_create_net(net);
- 	if (ret)
- 		return ret;
--	nn->boot_time = get_seconds();
--	nn->grace_ended = false;
--	nn->nfsd4_manager.block_opens = true;
- 	locks_start_grace(net, &nn->nfsd4_manager);
- 	nfsd4_client_tracking_init(net);
- 	printk(KERN_INFO "NFSD: starting %ld-second grace period (net %p)\n",
+@@ -5178,15 +5178,9 @@ static __be32 nfs4_seqid_op_checks(struc
+ 	status = nfsd4_check_seqid(cstate, sop, seqid);
+ 	if (status)
+ 		return status;
+-	if (stp->st_stid.sc_type == NFS4_CLOSED_STID
+-		|| stp->st_stid.sc_type == NFS4_REVOKED_DELEG_STID)
+-		/*
+-		 * "Closed" stateid's exist *only* to return
+-		 * nfserr_replay_me from the previous step, and
+-		 * revoked delegations are kept only for free_stateid.
+-		 */
+-		return nfserr_bad_stateid;
+-	mutex_lock(&stp->st_mutex);
++	status = nfsd4_lock_ol_stateid(stp);
++	if (status != nfs_ok)
++		return status;
+ 	status = check_stateid_generation(stateid, &stp->st_stid.sc_stateid, nfsd4_has_session(cstate));
+ 	if (status == nfs_ok)
+ 		status = nfs4_check_fh(current_fh, &stp->st_stid);
