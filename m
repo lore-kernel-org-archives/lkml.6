@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226vifsMCXXxNCDRGFeytGg6jlYTXRiWcIq466ycx6f0BrkldGosZ2jdliENRyv+FbIc+/D+
-ARC-Seal: i=1; a=rsa-sha256; t=1517590919; cv=none;
+X-Google-Smtp-Source: AH8x226hCpR1z8UTtfLU2ebyVIoefgiugTvPNImYnc8kXxYXbbQSA/eY1VurBuzlnFVomfyTUD1t
+ARC-Seal: i=1; a=rsa-sha256; t=1517590915; cv=none;
         d=google.com; s=arc-20160816;
-        b=SrFdGqHyuBpSq9rKId++GyG0ew6LkmAZJGWx1BesEdqj5G63MSUXvz/eHNXs3m7IK+
-         ikF0v4NcfG/BKqiCP3zt0452oom7H56BNxUDxRvsMmtdPayogNHoB1tF22PJRAMOkcGH
-         WV2XZB4BRA5axkuNrYHdIkKKTfwMOWxTN/3JYmZscoYHj7s2KL3krJ51NA0CldzaCmb4
-         qPzjT8V6KxJmVpudoG6wEwDe+wVxzohZGqItoQfofARwiSt0nFC8RpHd0p2xsq6lJG+j
-         Aw6h3Ay71gZax+0W1zAV5Jh+UdZp9yhMmbWc2RwQHqNWTHs5zjjR4PGA1mt2gpowSgND
-         rAHg==
+        b=CGxWTPy9tF/98s3cZN5di0nE+EScvXum+rYAKzYsOk7I+1oOds5mZnVDFPLMSieDXV
+         5K7FFIGuawyhhh0298JDGn17fjPV5YzdCf7yvZBGXz/SC/EEKjNv0Zk1u4P0oUJRulEa
+         rHSfS3axSmI1NNe281Kj/bxIon24ZuZkg8DF/JnrlCZjcWul9JsR4aPKxx9w4bAZi3bR
+         uJPXIUdPVuow/IDx6DFr+bnPviCwe/W+tQgdmkPDm5SEXH75jElZO45jzcwxkjQsYV2H
+         L2wIEdBBNBr9v5RBd23ZompF8jtH0aK/cpYp4CfkzRXlvXVzjt2HI7PScfFihyoLW62V
+         gNAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cm3t7wtCMBpCPDkR8GsfcMo8pu10Q4wo+tUKkicZFrw=;
-        b=vPeTZxWVv+FOh462elRG2XS+xV9VsCuZ3aYCe9g+wdA/oNykwihdDtmxLyMJg5KYr6
-         MOrnb8X9rNV36QVwl73dBqTHovmBdbwIHh5UMbv2G3NMOk90DywW1XWN5z/lPidwQtdW
-         JiDiGLObsEWbKMwJHhFYvKTAVe35XoA0V+i5axV4hYEnn6jDBwb7nyfjnjrYCunDoRzK
-         OtyUIDOynk6J9SLMCXEHVJoriO/6o8Om4W3VVgO4fFzXnMPJfU8Sx1FXLVqzg3m/YgVR
-         PG/LKOXR/SNWpyl0KWps50vFEBx7PNPItqZidJqgz5DkAB6LdM5tb2W9G4Yn7Er59Nby
-         Z3Ww==
+        bh=i+wZaluvXm0KZkNOA0Glu3lWt2e+ZTGOmVDI2a/ww20=;
+        b=XzajL5/23JeUnYFsENOXVfRjzg3yeZ87H3n+7Ws/xiipjqObYxQVMBCg1iyUmWwyN1
+         q68DIzPEnAdHK7ES45YLcFdI3Ifz7nFQs2KoBa9Xgaxg7keyjZFgl+je6DC3791REiEj
+         rjfkNnHV8L/3EKz6A0yhZ8qGfkdfhiRFGZhWvjSh1XUmOl6CoO7Pmil/H6kcMHQt5DwB
+         x5/teQ8zAFgQGrxhmoMJh1C2015UIPuGXVDo6ltaUGSRQqHrtutWj4s6emGoWWl+moBj
+         DfFZabXHl5zUz12uxEAU24wvThySi5AUj1yPdoc/n0TAbl6PMjWxY8TURlH/6nlZiDiZ
+         3HWg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.4 57/67] USB: cdc-acm: Do not log urb submission errors on disconnect
-Date: Fri,  2 Feb 2018 17:58:26 +0100
-Message-Id: <20180202140821.585669569@linuxfoundation.org>
+	"=?UTF-8?q?Chu . Mike=20 [ =E6=9C=B1=E5=A0=85=E5=AE=9C ] ?=" <Mike-Chu@prolific.com.tw>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 56/67] USB: serial: pl2303: new device id for Chilitag
+Date: Fri,  2 Feb 2018 17:58:25 +0100
+Message-Id: <20180202140821.451491209@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309416129281728?=
-X-GMAIL-MSGID: =?utf-8?q?1591309416129281728?=
+X-GMAIL-THRID: =?utf-8?q?1591309411957795471?=
+X-GMAIL-MSGID: =?utf-8?q?1591309411957795471?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,38 +48,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit f0386c083c2ce85284dc0b419d7b89c8e567c09f upstream.
+commit d08dd3f3dd2ae351b793fc5b76abdbf0fd317b12 upstream.
 
-When disconnected sometimes the cdc-acm driver logs errors like these:
+This adds a new device id for Chilitag devices to the pl2303 driver.
 
-[20278.039417] cdc_acm 2-2:2.1: urb 9 failed submission with -19
-[20278.042924] cdc_acm 2-2:2.1: urb 10 failed submission with -19
-[20278.046449] cdc_acm 2-2:2.1: urb 11 failed submission with -19
-[20278.049920] cdc_acm 2-2:2.1: urb 12 failed submission with -19
-[20278.053442] cdc_acm 2-2:2.1: urb 13 failed submission with -19
-[20278.056915] cdc_acm 2-2:2.1: urb 14 failed submission with -19
-[20278.060418] cdc_acm 2-2:2.1: urb 15 failed submission with -19
-
-Silence these by not logging errors when the result is -ENODEV.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: "Chu.Mike [朱堅宜]" <Mike-Chu@prolific.com.tw>
+Acked-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/serial/pl2303.c |    1 +
+ drivers/usb/serial/pl2303.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -377,7 +377,7 @@ static int acm_submit_read_urb(struct ac
- 
- 	res = usb_submit_urb(acm->read_urbs[index], mem_flags);
- 	if (res) {
--		if (res != -EPERM) {
-+		if (res != -EPERM && res != -ENODEV) {
- 			dev_err(&acm->data->dev,
- 					"%s - usb_submit_urb failed: %d\n",
- 					__func__, res);
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -39,6 +39,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ2) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_DCU11) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ3) },
++	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_CHILITAG) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_PHAROS) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ALDIGA) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MMX) },
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -17,6 +17,7 @@
+ #define PL2303_PRODUCT_ID_DCU11		0x1234
+ #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
+ #define PL2303_PRODUCT_ID_RSAQ3		0xaaa2
++#define PL2303_PRODUCT_ID_CHILITAG	0xaaa8
+ #define PL2303_PRODUCT_ID_ALDIGA	0x0611
+ #define PL2303_PRODUCT_ID_MMX		0x0612
+ #define PL2303_PRODUCT_ID_GPRS		0x0609
