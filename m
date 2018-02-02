@@ -1,75 +1,51 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2879036-1517591017-2-928849096907227836
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591014; b=GY4sGU9RFjCWL7gKt+o3bT68g+kKRjm2QsZybmKMe/Fg6br
-    km2dTAWEevLiA3AuZLvUjaZM1Gp+DbDNxpacKSPcz7yXfgrwcpBPyQHzl7bsBWOr
-    uWyuAHQ2ALjUXf0z5DUccXWpFFIbWLADwDrhA4ashXHNlu/DejdtNVd9o6QqOl/b
-    acoqESqEqd1zUMjiXjvv4VmrrLdWZVd3dGbnI707jOl2Q2fjz1vHSoE2HpU2MbsV
-    QEp+AEvZK/8HEimMsphQX2Km8jJla3QAVMAzDzjdy0/Sk12j91DLo0rnKbLTuIrT
-    zQW7ZLPqBIOSn80fhoDvTDfwD7ySKUyuVaNC0bA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591014; bh=t5Sw6QyrZ8R4c0fG3iPf+wYj4/
-    1m15lhn5f3MqhwBAw=; b=vEGiPMr8RtCcBFj/LMbwhSKtChq6tJeRsDomRbC1G1
-    CGHUOBnqSF4RYlImWzl5jOqeSfLLxihjEboHkO/KY+gUIy8883JEMAMnZ2U2Qc0g
-    1eMQLoy3taDYITKrQ4kncf0Pxio22EeUngvuAUayiEqv7c9EcFOkVWylQwey4aRB
-    tSxw//iLk5LLsxuFJ/Jc+UvCf3+X2OoiBROZLyLt/JUM88O8xnnZqowVR717p2+L
-    53P3N2rS9H9v8cIM9dVpvOUPsKE+tYloiwlj7ofo7NKdhQnD6n5tkU9mXKkTaBLq
-    67dLGdRw+MJ/acOfAHtu2q4xqQXNQ+Ie0X4iTrgw0x0w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752484AbeBBRDX (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:03:23 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35670 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752657AbeBBRDU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:03:20 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226vW7LDclmVnZj9wDsiiqjNZGZO/8uZFMKmjF5bLVaG76vEoCo8WN9cd6xLc3bcdUIoy5ee
+ARC-Seal: i=1; a=rsa-sha256; t=1517591016; cv=none;
+        d=google.com; s=arc-20160816;
+        b=LocwuPQEMpn/VKrpVLpGzUZPJIuLeBdNOH6Ad99HodEahW13KKIPedDwtrUMMD4NG0
+         FxxeDGlMVYTyi74klgSVB36PyF9xlE6yHc1x7D0QQvi4IImcjq63kSCyWCbniKE1Rju6
+         6ddmvSb1wAzfTbrgR/2zgK0EX84xolf0SDRXWppu+DlWd7/qqZFEej1Xu7rrsS1xfHJ0
+         e3rCdqbBEjCiPhPonP6EukH01YeBix952uUiS3mLFWx/fVuHTSZ4/f+bYUzTza3m5x6I
+         9p0UV+JGzZCPu1yqGGsBkx/WLJJ6Do7iY0LrG6Z4tjzhDh7wxYADDFiXFB3SrKysvR0B
+         wmvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=SaV4MwspdCyfJC4ZmRmrFLqttVD9RBOgTkrf5y7fXZQ=;
+        b=aajzBwzyhQFCC8nKWVUAG+oBgqyP6BNavHZYS6ECJvDE7ePoKq6gOv1Q4RkZI1SLyQ
+         C6nBdLW2hl2nc9VpfICYvD44511ajPmjbclO5bIAv2szUAqof6zmnTFfjYAT/wNwjoyD
+         bGchyc6LI237N9OzFJbuRlszkySdVC89BY+SDigaJ9WOXcH2u1O4fNqSRa6bDT4uGKsG
+         /nccAK9sbNrWINWx3w+vDZiGFczybUxY209ic+rxg0CRiS/snbS14rTIKRiqZMmo7gaD
+         +FdlDTXlDX5BCPTHXBQjTTzmxiIrGTFk6j5c8X2mSomE2vDO0s02N1Rac3k/oV0XQXyx
+         GH9g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 09/86] crypto: sha3-generic - fixes for alignment and big endian operation
-Date: Fri,  2 Feb 2018 17:57:29 +0100
-Message-Id: <20180202140823.645916199@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Nikita Leshenko <nikita.leshchenko@oracle.com>,
+	Liran Alon <liran.alon@oracle.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>,
+	Steve Rutherford <srutherford@google.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 24/86] KVM: x86: ioapic: Clear Remote IRR when entry is switched to edge-triggered
+Date: Fri,  2 Feb 2018 17:57:44 +0100
+Message-Id: <20180202140824.868776845@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309336556964423?=
+X-GMAIL-MSGID: =?utf-8?q?1591309517770779562?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,49 +53,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Nikita Leshenko <nikita.leshchenko@oracle.com>
 
-commit c013cee99d5a18aec8c71fee8f5f41369cd12595 upstream.
 
-Ensure that the input is byte swabbed before injecting it into the
-SHA3 transform. Use the get_unaligned() accessor for this so that
-we don't perform unaligned access inadvertently on architectures
-that do not support that.
+[ Upstream commit a8bfec2930525808c01f038825d1df3904638631 ]
 
-Fixes: 53964b9ee63b7075 ("crypto: sha3 - Add SHA-3 hash algorithm")
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Some OSes (Linux, Xen) use this behavior to clear the Remote IRR bit for
+IOAPICs without an EOI register. They simulate the EOI message manually
+by changing the trigger mode to edge and then back to level, with the
+entry being masked during this.
+
+QEMU implements this feature in commit ed1263c363c9
+("ioapic: clear remote irr bit for edge-triggered interrupts")
+
+As a side effect, this commit removes an incorrect behavior where Remote
+IRR was cleared when the redirection table entry was rewritten. This is not
+consistent with the manual and also opens an opportunity for a strange
+behavior when a redirection table entry is modified from an interrupt
+handler that handles the same entry: The modification will clear the
+Remote IRR bit even though the interrupt handler is still running.
+
+Signed-off-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Reviewed-by: Steve Rutherford <srutherford@google.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- crypto/sha3_generic.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kvm/ioapic.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/crypto/sha3_generic.c
-+++ b/crypto/sha3_generic.c
-@@ -18,6 +18,7 @@
- #include <linux/types.h>
- #include <crypto/sha3.h>
- #include <asm/byteorder.h>
-+#include <asm/unaligned.h>
- 
- #define KECCAK_ROUNDS 24
- 
-@@ -149,7 +150,7 @@ static int sha3_update(struct shash_desc
- 			unsigned int i;
- 
- 			for (i = 0; i < sctx->rsizw; i++)
--				sctx->st[i] ^= ((u64 *) src)[i];
-+				sctx->st[i] ^= get_unaligned_le64(src + 8 * i);
- 			keccakf(sctx->st);
- 
- 			done += sctx->rsiz;
-@@ -174,7 +175,7 @@ static int sha3_final(struct shash_desc
- 	sctx->buf[sctx->rsiz - 1] |= 0x80;
- 
- 	for (i = 0; i < sctx->rsizw; i++)
--		sctx->st[i] ^= ((u64 *) sctx->buf)[i];
-+		sctx->st[i] ^= get_unaligned_le64(sctx->buf + 8 * i);
- 
- 	keccakf(sctx->st);
- 
+diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
+index a7ac8688bba8..4b573c8694ac 100644
+--- a/arch/x86/kvm/ioapic.c
++++ b/arch/x86/kvm/ioapic.c
+@@ -306,8 +306,17 @@ static void ioapic_write_indirect(struct kvm_ioapic *ioapic, u32 val)
+ 		} else {
+ 			e->bits &= ~0xffffffffULL;
+ 			e->bits |= (u32) val;
+-			e->fields.remote_irr = 0;
+ 		}
++
++		/*
++		 * Some OSes (Linux, Xen) assume that Remote IRR bit will
++		 * be cleared by IOAPIC hardware when the entry is configured
++		 * as edge-triggered. This behavior is used to simulate an
++		 * explicit EOI on IOAPICs that don't have the EOI register.
++		 */
++		if (e->fields.trig_mode == IOAPIC_EDGE_TRIG)
++			e->fields.remote_irr = 0;
++
+ 		mask_after = e->fields.mask;
+ 		if (mask_before != mask_after)
+ 			kvm_fire_mask_notifiers(ioapic->kvm, KVM_IRQCHIP_IOAPIC, index, mask_after);
+-- 
+2.16.1
