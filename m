@@ -1,48 +1,77 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226yrpvz0SYM63eaiHcBkTjON6vE//bD8pG9IdC+Fvrv0w2GuLe3USgWaQSpX0pQMny+PYyZ
-ARC-Seal: i=1; a=rsa-sha256; t=1517591598; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jjqr/AfyOR3h0QQ1EjxK2HZmzPLgyecek/n+pBASbMozk7ksYTcQquQ6Ec1dLPfXv4
-         2QhWGLbjVg/Hi4yszwqXptOH2lLNMw1iRFFvfVpbo/TlBtLeU2ELat+aGWE5q9u1gUeI
-         NgE/BdXNaqrDiFvjTqAi2igMNhnTeXJacr93i/BaSIgkCY/ApsiMnmMryAKt57LoBi0e
-         9bllzepLykIioBtBt40NaE5R9reBaOh68EF4yhrNlflabQhzHFKq3E9j4AMKCpb/JxVG
-         9SQiYoeTnnJLjgiszigd87OQrxzwRFJ87MVafEX4Qh8vQYiMKRRgugH/2PSbMkjdWqZL
-         dbyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=W3KA7AQs6iywzvC50lPypbbMkmkxzBJ6ZZ4u85LOROU=;
-        b=UkFxsxwc8x7rKNI3B4Tgxo5EGl5i5D3+zfDpTh9KmjTlmFxYM3dDL8/IFxNIPDQyfj
-         m5MzFhZnjZ5yEe0Ab4ouanfh/v54526pa2Q3J7M0eNJ1HD0LMn9hqMhaQ0jbL0LfbpXA
-         HSv5MDD6j56mVddP4jmpfPb+9aG/T0pvEYnHgAZlLJ3CX2+V33A8LxLez+tg3vQZfiU/
-         sBlJwdPMxNmATH86VMgsC4AQQaV6JmP9INncIapsa4+zv5lAxp92oYwBCukM3I4mnO1/
-         HnSLvbwAzseLf2li1PC9W3FFGSEmFinKfTr2rGeKgsIWNob8iB1J67+FTvn0KsBvM74V
-         jApA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2951738-1517591593-2-15218829309318431788
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591592; b=pOqmgEPDVE77Lv4fO8Ky5f3I2P56BL/cWzADq58XsA9Emxu
+    4pv0V9w//puk6ZeY84azDrouSlL978OALuElmQBXTuS7fuLK1r+LUfFZiOVlRBZI
+    BvHQURHf8ckY01nnWDVCQDgExFetCKhHI/tprG+mskYDdGD4m7SjQjLH55Mr392f
+    vI1FWROu8d6X1xyXZhB9pvSA4gykn50uY7MIOMHRzIBY1S8+cwzV/GfXZyyo7NXI
+    EWZB5+BguGg2pWe8EtmKjXsMealRvzizpVzDIQUreS0NLp030TPw2bvlNAZZ1rZJ
+    G+HiR0/QH78aUsPoDjByDvlJZGDfKe8t4XMIsOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591592; bh=WZwEYmKtPt7Qn0kXEJ3IKl7B/X
+    xrFA4J3PBu7aT17cQ=; b=T3S4LePYxXUvdGUDU3o2CsMNdtzcqUfOeYMbfbwX1t
+    koD2UxQHF4PSa1fuI6/1XZd/8ZfQkooo633VWYuUhCPe56fXrcJbMtdV8DbC7qoj
+    gFAiSjKh9I+v+F6toxTwBiGnJagoQPNQIFrPSOPo89lGBs4ATNKCK2f0NUK3rxJu
+    5iYTvWKQTIlJOj9i0EyO2vn7MbiBFbLnaYOM6mSqdcx/qWfQagUaX7U81CKIePD/
+    wV7NN3R9808CmbWBd22sQOWbYAi178JpbYftMg+NLKEaIkcd2NKWCQzSOB8mZs+A
+    lyv4FWJnwEOSRW+wUI5qYMrxfj613beMB3Dgy/UnxYsg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753444AbeBBRNK (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:13:10 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39158 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753485AbeBBRM4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:12:56 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Archit Taneja <architt@codeaurora.org>,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 105/156] drm/bridge: Fix lvds-encoder since the panel_bridge rework.
-Date: Fri,  2 Feb 2018 17:58:06 +0100
-Message-Id: <20180202140844.939317667@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Schake <stschake@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 127/156] drm/vc4: Move IRQ enable to PM path
+Date: Fri,  2 Feb 2018 17:58:28 +0100
+Message-Id: <20180202140846.119895785@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591310127977588938?=
-X-GMAIL-MSGID: =?utf-8?q?1591310127977588938?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,106 +79,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Anholt <eric@anholt.net>
+From: Stefan Schake <stschake@gmail.com>
 
 
-[ Upstream commit dbb58bfd9ae6c885b2ca001a9a5ab8b881fb4ba9 ]
+[ Upstream commit ce9caf2f79a5aa170a4b6456a03db639eed9c988 ]
 
-The panel_bridge bridge attaches to the panel's OF node, not the
-lvds-encoder's node.  Put in a little no-op bridge of our own so that
-our consumers can still find a bridge where they expect.
+We were calling enable_irq on bind, where it was already enabled previously
+by the IRQ helper. Additionally, dev->irq is not set correctly until after
+postinstall and so was always zero here, triggering a warning in 4.15.
+Fix both by moving the enable to the power management resume path, where we
+know there was a previous disable invocation during suspend.
 
-This also fixes an unintended unregistration and leak of the
-panel-bridge on module remove.
-
+Fixes: 253696ccd613 ("drm/vc4: Account for interrupts in flight")
+Signed-off-by: Stefan Schake <stschake@gmail.com>
 Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 13dfc0540a57 ("drm/bridge: Refactor out the panel wrapper from the lvds-encoder bri
-dge.")
-Tested-by: Lothar Waßmann <LW@KARO-electronics.de>
-Signed-off-by: Archit Taneja <architt@codeaurora.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171114191647.22207-1-eric@anholt.net
-
-Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1514563543-32511-1-git-send-email-stschake@gmail.com
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/lvds-encoder.c |   48 +++++++++++++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/vc4/vc4_irq.c |    3 ---
+ drivers/gpu/drm/vc4/vc4_v3d.c |    3 +++
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/bridge/lvds-encoder.c
-+++ b/drivers/gpu/drm/bridge/lvds-encoder.c
-@@ -13,13 +13,37 @@
- 
- #include <linux/of_graph.h>
- 
-+struct lvds_encoder {
-+	struct drm_bridge bridge;
-+	struct drm_bridge *panel_bridge;
-+};
-+
-+static int lvds_encoder_attach(struct drm_bridge *bridge)
-+{
-+	struct lvds_encoder *lvds_encoder = container_of(bridge,
-+							 struct lvds_encoder,
-+							 bridge);
-+
-+	return drm_bridge_attach(bridge->encoder, lvds_encoder->panel_bridge,
-+				 bridge);
-+}
-+
-+static struct drm_bridge_funcs funcs = {
-+	.attach = lvds_encoder_attach,
-+};
-+
- static int lvds_encoder_probe(struct platform_device *pdev)
+--- a/drivers/gpu/drm/vc4/vc4_irq.c
++++ b/drivers/gpu/drm/vc4/vc4_irq.c
+@@ -208,9 +208,6 @@ vc4_irq_postinstall(struct drm_device *d
  {
- 	struct device_node *port;
- 	struct device_node *endpoint;
- 	struct device_node *panel_node;
- 	struct drm_panel *panel;
--	struct drm_bridge *bridge;
-+	struct lvds_encoder *lvds_encoder;
+ 	struct vc4_dev *vc4 = to_vc4_dev(dev);
+ 
+-	/* Undo the effects of a previous vc4_irq_uninstall. */
+-	enable_irq(dev->irq);
+-
+ 	/* Enable both the render done and out of memory interrupts. */
+ 	V3D_WRITE(V3D_INTENA, V3D_DRIVER_IRQS);
+ 
+--- a/drivers/gpu/drm/vc4/vc4_v3d.c
++++ b/drivers/gpu/drm/vc4/vc4_v3d.c
+@@ -327,6 +327,9 @@ static int vc4_v3d_runtime_resume(struct
+ 		return ret;
+ 
+ 	vc4_v3d_init_hw(vc4->dev);
 +
-+	lvds_encoder = devm_kzalloc(&pdev->dev, sizeof(*lvds_encoder),
-+				    GFP_KERNEL);
-+	if (!lvds_encoder)
-+		return -ENOMEM;
- 
- 	/* Locate the panel DT node. */
- 	port = of_graph_get_port_by_id(pdev->dev.of_node, 1);
-@@ -49,20 +73,30 @@ static int lvds_encoder_probe(struct pla
- 		return -EPROBE_DEFER;
- 	}
- 
--	bridge = drm_panel_bridge_add(panel, DRM_MODE_CONNECTOR_LVDS);
--	if (IS_ERR(bridge))
--		return PTR_ERR(bridge);
-+	lvds_encoder->panel_bridge =
-+		devm_drm_panel_bridge_add(&pdev->dev,
-+					  panel, DRM_MODE_CONNECTOR_LVDS);
-+	if (IS_ERR(lvds_encoder->panel_bridge))
-+		return PTR_ERR(lvds_encoder->panel_bridge);
-+
-+	/* The panel_bridge bridge is attached to the panel's of_node,
-+	 * but we need a bridge attached to our of_node for our user
-+	 * to look up.
-+	 */
-+	lvds_encoder->bridge.of_node = pdev->dev.of_node;
-+	lvds_encoder->bridge.funcs = &funcs;
-+	drm_bridge_add(&lvds_encoder->bridge);
- 
--	platform_set_drvdata(pdev, bridge);
-+	platform_set_drvdata(pdev, lvds_encoder);
++	/* We disabled the IRQ as part of vc4_irq_uninstall in suspend. */
++	enable_irq(vc4->dev->irq);
+ 	vc4_irq_postinstall(vc4->dev);
  
  	return 0;
- }
- 
- static int lvds_encoder_remove(struct platform_device *pdev)
- {
--	struct drm_bridge *bridge = platform_get_drvdata(pdev);
-+	struct lvds_encoder *lvds_encoder = platform_get_drvdata(pdev);
- 
--	drm_bridge_remove(bridge);
-+	drm_bridge_remove(&lvds_encoder->bridge);
- 
- 	return 0;
- }
