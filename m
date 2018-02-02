@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225VQuiqxPnSehrTe80z3OZrCCSeDBsC6jCEeuNkTeRlaTbGOCUR4YnYTVNYTYepk5GRHV0D
-ARC-Seal: i=1; a=rsa-sha256; t=1517591030; cv=none;
+X-Google-Smtp-Source: AH8x227uRtHj8E0+7VjxR8Sm3ovH/9p0DWHNN4JVobqMd8jIAzbubnHFJRKRHHxgO7qGtRtnWHEq
+ARC-Seal: i=1; a=rsa-sha256; t=1517591026; cv=none;
         d=google.com; s=arc-20160816;
-        b=hBzljvDhh8d8ajhVxIJSIV2AUzUQcwXQf9f7Zm+EdjEj7VNNzZhUFvFmJEa/7e+EGr
-         l+yWIAoMCcKLAGoeGczRd6q/j3sdsTQxtmy8m6owzLTyGKOeaF37fN4KaPjvpFEskcRq
-         Vkujqmd6y6enaA6sTMcGzcgAH6L5XXQCUYshsVq5P2s7basI3bNCnz0IGK14ZzIPK0nz
-         sDzmrbxH5cH+W1vuyn7hrMU7VMCjvaOSNID1xwd32khlL6TFyL8+7jpiomFeKEwfgtPp
-         AYZJAovmLcuuU4kMs0mdLexvB6q+eC0WI3PmmFpfcw+3rnqhzomBMnDMtT+E6nerCt/z
-         VmOQ==
+        b=Lm4Cex+qgVLHLjpmUQ5qIEhcsSygPFTLtw95KkLi5IXy+QI0ytsQxQrfzRdet3VlpD
+         LBWhT2G0VoY+fIOPnUrG5/5LXjOEbnEP1S944MNs5k/+u3Cp4meC2Y6UeXzaj6XgeM5J
+         72cIH1YgoeqDPHu6SgAH7DYCRxATQ1W7hNMpV/6Ma3saAZoModd3RR00KPqgA4EFZmuu
+         0C3rmpotIINRElsASlHnhIsB3ct17VVGKGP+8/N0dvHE/lhOPYK1/dHVmQsiAHTET0Ms
+         nbp5jBA7L+Ze/S8b7Pmxz9Jw9mC/tW2idA9hjLGuA5q2EEggOUYJLOkI0EYuFzaS7210
+         9Tfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QpTiy4RLpLMsRJrs6Ze/I8o1Gaiy35ZS9NIMi1/AJCw=;
-        b=HrjewLXBB711Mc9VNHDyPiT97m6HQX/tOm8Nnh+J3PJJX9tKkr1PYoMIzHMGOHQYrb
-         iOL0BiUHJLSAN6dHQRDIbw3RaEyZsQ3qet8J9WlIa/aNYcIKgqGSLzlO1Bpryx4e7vET
-         Sxu4L8ndrLH9wI0O1H4qyg1xCeGAPHPtwRcSV0+3zUnfFWR0aUjYex7IZn+7Q/qFVUYt
-         t1or7k2u0o0xFlZLP/AMJtPlnOtaLzL68NxPjLpU37etLuuIUTcpbd+PgImQtLH8uvpI
-         QMDJUNPSQIpN6qVU2D9TgiVsa2rP0zNwH8njUq73B5H6oci/pOdhTAcQOr6XCtiXckL2
-         wk1g==
+        bh=vzVhdlOTeT6twczBJcmuS8DGaUUfsJ2ZJfHpz7YXqYk=;
+        b=psGVjjHwaDwqvw2YRw9U1pzXSlgZABHVb4Wdk5WdI24SAVVsD1ip5VBK5xeusaYZ8X
+         3hdWF/MIOzwDFDAJCry1PDXSayWfHvuq8oEnWGt/SptsjriIx17eiNSFTb58AgyIdmf6
+         1eobA82/Z7z5lTOz0wcAWLcYBASiIi4BhhKUtn9YOVPXB89+awmftRpKzILHZ7mIugdY
+         P0ihgwFQIPfbUoTQe+JAqEajZ8P/NbmtWpi2BYm0O3tdVvuN+K7WEumREviDz0MDiJdk
+         5AH6UapGUS1zspJJ9/K9x25FQP8dvexnhn2appMOyUrIwwa7RJ/TNQgbAJ+n5OukcbYo
+         PsQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Lyle <mlyle@lyle.org>,
-	Vojtech Pavlik <vojtech@suse.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	James Hogan <jhogan@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 28/86] bcache: check return value of register_shrinker
-Date: Fri,  2 Feb 2018 17:57:48 +0100
-Message-Id: <20180202140825.175201232@linuxfoundation.org>
+Subject: [PATCH 4.9 27/86] cpufreq: Add Loongson machine dependencies
+Date: Fri,  2 Feb 2018 17:57:47 +0100
+Message-Id: <20180202140825.105701479@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309428712517955?=
-X-GMAIL-MSGID: =?utf-8?q?1591309532055006647?=
+X-GMAIL-THRID: =?utf-8?q?1591309426016769835?=
+X-GMAIL-MSGID: =?utf-8?q?1591309528464476797?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +50,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Lyle <mlyle@lyle.org>
+From: James Hogan <jhogan@kernel.org>
 
 
-[ Upstream commit 6c4ca1e36cdc1a0a7a84797804b87920ccbebf51 ]
+[ Upstream commit 0d307935fefa6389eb726c6362351c162c949101 ]
 
-register_shrinker is now __must_check, so check it to kill a warning.
-Caller of bch_btree_cache_alloc in super.c appropriately checks return
-value so this is fully plumbed through.
+The MIPS loongson cpufreq drivers don't build unless configured for the
+correct machine type, due to dependency on machine specific architecture
+headers and symbols in machine specific platform code.
 
-This V2 fixes checkpatch warnings and improves the commit description,
-as I was too hasty getting the previous version out.
+More specifically loongson1-cpufreq.c uses RST_CPU_EN and RST_CPU,
+neither of which is defined in asm/mach-loongson32/regs-clk.h unless
+CONFIG_LOONGSON1_LS1B=y, and loongson2_cpufreq.c references
+loongson2_clockmod_table[], which is only defined in
+arch/mips/loongson64/lemote-2f/clock.c, i.e. when
+CONFIG_LEMOTE_MACH2F=y.
 
-Signed-off-by: Michael Lyle <mlyle@lyle.org>
-Reviewed-by: Vojtech Pavlik <vojtech@suse.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Add these dependencies to Kconfig to avoid randconfig / allyesconfig
+build failures (e.g. when based on BMIPS which also has a cpufreq
+driver).
+
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/btree.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/cpufreq/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -803,7 +803,10 @@ int bch_btree_cache_alloc(struct cache_s
- 	c->shrink.scan_objects = bch_mca_scan;
- 	c->shrink.seeks = 4;
- 	c->shrink.batch = c->btree_pages * 2;
--	register_shrinker(&c->shrink);
-+
-+	if (register_shrinker(&c->shrink))
-+		pr_warn("bcache: %s: could not register shrinker",
-+				__func__);
+--- a/drivers/cpufreq/Kconfig
++++ b/drivers/cpufreq/Kconfig
+@@ -273,6 +273,7 @@ endif
+ if MIPS
+ config LOONGSON2_CPUFREQ
+ 	tristate "Loongson2 CPUFreq Driver"
++	depends on LEMOTE_MACH2F
+ 	help
+ 	  This option adds a CPUFreq driver for loongson processors which
+ 	  support software configurable cpu frequency.
+@@ -285,6 +286,7 @@ config LOONGSON2_CPUFREQ
  
- 	return 0;
- }
+ config LOONGSON1_CPUFREQ
+ 	tristate "Loongson1 CPUFreq Driver"
++	depends on LOONGSON1_LS1B
+ 	help
+ 	  This option adds a CPUFreq driver for loongson1 processors which
+ 	  support software configurable cpu frequency.
