@@ -1,48 +1,77 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2255f+MtAaZULXq6P5iPnygYlNZorJdnaGXzpmUwA9L/0+gOKnGTZd1BfwFLHoMJSwkNfvEi
-ARC-Seal: i=1; a=rsa-sha256; t=1517591522; cv=none;
-        d=google.com; s=arc-20160816;
-        b=KSpIoZXwgelU6+LcKcJ7vqRFmEZmJnPdA2aimMhEKsXLjODKwbD22CmRVgVMid8SPi
-         kBaMd/lMpUvbOJh9xZOeieQxtHdTaK0dD8L1EGU8AVW4nBjtrQ2lmeGurDi++7St5UfL
-         ytNRthF1qICFFzkK+KHBKycnm+ESv2zpAZh7v8Ixk0gypHRBXRjnZx7Yc8tA+YuvC/BE
-         eNPQ8p3/SioBPsz1KVXAzESn1znw5vI9g5nrTEqq7YWu+mMQ7IcoD+a3YGqwKvJ8rEJf
-         Z+dKJgLzpqLlCy/7noVvDTbUiihRAt+nEy8ZwiqqsDxwScfwnmWypbyN5FZpq0CzftRm
-         lzFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=kxOl2WHTaRK7aXIDbtyACZBIqAa2cEkRUT8krjx+hAo=;
-        b=pi/oc9m5QvKZOH+4+6ZhpmpTXYdsxEW238EkzVKT0qmn4R4tYDbvPIl2XB5HjY7imo
-         D5+VYfaV6dJfA/hTq5eM58jclSF3UHQTB5++2dZw1YlAGjYwf7Qm924k8f2GEPlMd7yz
-         cjndpO41Wzsa9aL0z4miYQZEVZG2K/G1b4VHrqwAyE+vAAW+ZZpgjaATdN7kMhDNehbo
-         4FmBRHg5IIWSqxm5x65jevr8hP91G7j0qwyu785XGDK4Omf+M/GHm6gStra8DFBR9PUR
-         cqoTYvdJHJ17kya/UJsJssknu8/ygAG0GZQLc+dEIDoHKU0BEEIPtXkjRep0oW7w7rC+
-         HHqw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2951739-1517591520-2-918249580888624232
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591520; b=S7IjfqROM2h1hsE99yYIqwijFdAbQwPlvRnNL2aM8+G9jvV
+    jRLGC7eqX7zd/iNwdi2AruaC4X70fKb3g1plO8ADuoHwb7F/oVru7/uolkMU1UOv
+    lBvIbsHxVxMhcshAOFKAh18QXMI0+RfydXpn01Jw6XBH98cBJmiz3YZPLSNm01JE
+    qTUGMxz+JdJWMRnx5yNO5C7IR+CURPmbFI+AApKw/cWtCGw10Q22nJWRwXbe36XM
+    tNhD97z3JW1ceRh31cw8AybCKI0zI60ANRKFyLYWkDEFuqVb0Ym+W8+DX24xxZhW
+    n6Hz/W5hp8I9i9UnbMb4lmKX24yLW7CWCX3ym8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591520; bh=I9tUJDBkBxC4dm76IEndzDWYwk
+    kZgGbE6ZzqryfKStk=; b=G3pPn4SS/uI4U96ALU+gKzTn7h8DF0/9weR6NlGcwp
+    mPvm78qMQNCphXZ5kQnUkdETInzpkxkn37ktdz80CG0SbZm0gb9KSMAqOqNgqMCw
+    oY4EqnWO4BAlvJ/j6B8KkPDBmIlIFEiH76ORvMPXQdh2KqZ40km79s+3VFLSPMXB
+    Es8PBnwxiZD24P3CG4viTLFP40oDSajHCFzlDPSWQl3cnNObdLgz8wvQKX9u1thP
+    ULgbV4+Go5gOotQj/D/g1zblhA/bN4csFYwYMiJVd1HPKJdZdyeoK15yUBJ5Va/3
+    l+7CdiIGFKpZ4EStERmqr3X0CqDWygNBxGEQ7RXyVmVw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753420AbeBBRLu (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:11:50 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38762 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753122AbeBBRLq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:11:46 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-	Andrzej Hajda <a.hajda@samsung.com>,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 109/156] drm/bridge: tc358767: fix timing calculations
-Date: Fri,  2 Feb 2018 17:58:10 +0100
-Message-Id: <20180202140845.114333952@linuxfoundation.org>
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 074/156] sctp: set sender next_tsn for the old result with ctsn_ack_point plus 1
+Date: Fri,  2 Feb 2018 17:57:35 +0100
+Message-Id: <20180202140843.628645681@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309619504798871?=
-X-GMAIL-MSGID: =?utf-8?q?1591310047839416791?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,88 +79,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit 66d1c3b94d5d59e4325e61a78d520f92c043d645 ]
+[ Upstream commit 52a395896a051a3d5c34fba67c324f69ec5e67c6 ]
 
-Fields in HTIM01 and HTIM02 regs should be even.
-Recomended thresh_dly value is max_tu_symbol.
-Remove set of VPCTRL0.VSDELAY as it is related to DSI input
-interface. Currently driver supports only DPI.
+When doing asoc reset, if the sender of the response has already sent some
+chunk and increased asoc->next_tsn before the duplicate request comes, the
+response will use the old result with an incorrect sender next_tsn.
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1510073785-16108-5-git-send-email-andrey.gusakov@cogentembedded.com
+Better than asoc->next_tsn, asoc->ctsn_ack_point can't be changed after
+the sender of the response has performed the asoc reset and before the
+peer has confirmed it, and it's value is still asoc->next_tsn original
+value minus 1.
+
+This patch sets sender next_tsn for the old result with ctsn_ack_point
+plus 1 when processing the duplicate request, to make sure the sender
+next_tsn value peer gets will be always right.
+
+Fixes: 692787cef651 ("sctp: implement receiver-side procedures for the SSN/TSN Reset Request Parameter")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c |   34 ++++++++++++++++++++--------------
- 1 file changed, 20 insertions(+), 14 deletions(-)
+ net/sctp/stream.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -659,6 +659,14 @@ static int tc_set_video_mode(struct tc_d
- 	int lower_margin = mode->vsync_start - mode->vdisplay;
- 	int vsync_len = mode->vsync_end - mode->vsync_start;
- 
-+	/*
-+	 * Recommended maximum number of symbols transferred in a transfer unit:
-+	 * DIV_ROUND_UP((input active video bandwidth in bytes) * tu_size,
-+	 *              (output active video bandwidth in bytes))
-+	 * Must be less than tu_size.
-+	 */
-+	max_tu_symbol = TU_SIZE_RECOMMENDED - 1;
-+
- 	dev_dbg(tc->dev, "set mode %dx%d\n",
- 		mode->hdisplay, mode->vdisplay);
- 	dev_dbg(tc->dev, "H margin %d,%d sync %d\n",
-@@ -668,13 +676,18 @@ static int tc_set_video_mode(struct tc_d
- 	dev_dbg(tc->dev, "total: %dx%d\n", mode->htotal, mode->vtotal);
- 
- 
--	/* LCD Ctl Frame Size */
--	tc_write(VPCTRL0, (0x40 << 20) /* VSDELAY */ |
-+	/*
-+	 * LCD Ctl Frame Size
-+	 * datasheet is not clear of vsdelay in case of DPI
-+	 * assume we do not need any delay when DPI is a source of
-+	 * sync signals
-+	 */
-+	tc_write(VPCTRL0, (0 << 20) /* VSDELAY */ |
- 		 OPXLFMT_RGB888 | FRMSYNC_DISABLED | MSF_DISABLED);
--	tc_write(HTIM01, (left_margin << 16) |		/* H back porch */
--			 (hsync_len << 0));		/* Hsync */
--	tc_write(HTIM02, (right_margin << 16) |		/* H front porch */
--			 (mode->hdisplay << 0));	/* width */
-+	tc_write(HTIM01, (ALIGN(left_margin, 2) << 16) | /* H back porch */
-+			 (ALIGN(hsync_len, 2) << 0));	 /* Hsync */
-+	tc_write(HTIM02, (ALIGN(right_margin, 2) << 16) |  /* H front porch */
-+			 (ALIGN(mode->hdisplay, 2) << 0)); /* width */
- 	tc_write(VTIM01, (upper_margin << 16) |		/* V back porch */
- 			 (vsync_len << 0));		/* Vsync */
- 	tc_write(VTIM02, (lower_margin << 16) |		/* V front porch */
-@@ -693,7 +706,7 @@ static int tc_set_video_mode(struct tc_d
- 	/* DP Main Stream Attributes */
- 	vid_sync_dly = hsync_len + left_margin + mode->hdisplay;
- 	tc_write(DP0_VIDSYNCDELAY,
--		 (0x003e << 16) |	/* thresh_dly */
-+		 (max_tu_symbol << 16) |	/* thresh_dly */
- 		 (vid_sync_dly << 0));
- 
- 	tc_write(DP0_TOTALVAL, (mode->vtotal << 16) | (mode->htotal));
-@@ -709,13 +722,6 @@ static int tc_set_video_mode(struct tc_d
- 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
- 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
- 
--	/*
--	 * Recommended maximum number of symbols transferred in a transfer unit:
--	 * DIV_ROUND_UP((input active video bandwidth in bytes) * tu_size,
--	 *              (output active video bandwidth in bytes))
--	 * Must be less than tu_size.
--	 */
--	max_tu_symbol = TU_SIZE_RECOMMENDED - 1;
- 	tc_write(DP0_MISC, (max_tu_symbol << 23) | (TU_SIZE_RECOMMENDED << 16) |
- 			   BPC_8);
- 
+--- a/net/sctp/stream.c
++++ b/net/sctp/stream.c
+@@ -541,7 +541,7 @@ struct sctp_chunk *sctp_process_strreset
+ 		i = asoc->strreset_inseq - request_seq - 1;
+ 		result = asoc->strreset_result[i];
+ 		if (result == SCTP_STRRESET_PERFORMED) {
+-			next_tsn = asoc->next_tsn;
++			next_tsn = asoc->ctsn_ack_point + 1;
+ 			init_tsn =
+ 				sctp_tsnmap_get_ctsn(&asoc->peer.tsn_map) + 1;
+ 		}
