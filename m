@@ -1,55 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752874AbeBBX1Y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 18:27:24 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34961 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751702AbeBBX1Q (ORCPT
+        id S1752900AbeBBX3e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 18:29:34 -0500
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:41987 "EHLO
+        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751938AbeBBX31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 18:27:16 -0500
-X-Google-Smtp-Source: AH8x224OPXCrkRUI8xpLs2rJrDeHYtfmiXjRsg09iyZ/GqGUwSbc7uTf1fhj8+xZGZ7bgWEVNnwg9w==
-Subject: Re: [RFC net 1/1] rtnetlink: require unique netns identifier
-To: Christian Brauner <christian.brauner@ubuntu.com>,
-        netdev@vger.kernel.org
-Cc: ebiederm@xmission.com, jbenc@redhat.com, nicolas.dichtel@6wind.com,
-        linux-kernel@vger.kernel.org
-References: <20180202085115.17229-1-christian.brauner@ubuntu.com>
- <20180202085115.17229-2-christian.brauner@ubuntu.com>
-From: David Ahern <dsahern@gmail.com>
-Message-ID: <e65ad155-3888-3691-dd74-acf4d5d852bb@gmail.com>
-Date: Fri, 2 Feb 2018 16:27:13 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        Fri, 2 Feb 2018 18:29:27 -0500
+X-Google-Smtp-Source: AH8x226d4u+b34EKcO3WoVhioVi90Xon/R72xp68el5zKcJWUPGvTYRmesr4UE6EshvB1OYM3JQHIA==
+Date: Fri, 2 Feb 2018 15:29:23 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "Andy Gross <andy.gross@linaro.org> , David Brown"
+        <david.brown@linaro.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-soc@vger.kernel.org" <linux-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: Re: Compilation error report for:
+ drivers/firmware/qcom_scm.c:469:47: error: passing argument 3 of
+ ?dma_alloc_coherent? from incompatible pointer type
+Message-ID: <20180202232923.GK12728@builder>
+References: <a2a6bf12-529c-cb20-c69f-106d34e1204a@st.com>
+ <e804928d-deb9-668a-7012-2843ba85285e@st.com>
+ <CAK8P3a36Kqh-qscU0vsKH00ReXKk8HOYzzhbt6SxAoEBvPYuig@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180202085115.17229-2-christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a36Kqh-qscU0vsKH00ReXKk8HOYzzhbt6SxAoEBvPYuig@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/2/18 1:51 AM, Christian Brauner wrote:
-> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> index 56af8e41abfc..d0b7ab22eff4 100644
-> --- a/net/core/rtnetlink.c
-> +++ b/net/core/rtnetlink.c
-> @@ -1951,6 +1951,18 @@ static struct net *rtnl_link_get_net_capable(const struct sk_buff *skb,
->  	return net;
->  }
->  
-> +/* Verify that rtnetlink requests that support network namespace ids do not pass
-> + * additional properties that allow to identify a network namespace as they
-> + * might conflict.
-> + */
-> +static int rtnl_ensure_unique_netns_attr(struct nlattr *tb[])
-> +{
-> +	if (tb[IFLA_IF_NETNSID] && (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD]))
-> +		return -EINVAL;
+On Tue 30 Jan 05:25 PST 2018, Arnd Bergmann wrote:
 
-The days of just returning EINVAL are over; please plumb extack arg to
-this message and add a string describing the problem. There are plenty
-of examples in rtnetlink.c
+> On Tue, Jan 30, 2018 at 11:11 AM, Benjamin GAIGNARD
+> <benjamin.gaignard@st.com> wrote:
+> >
+> > On 01/12/2018 05:11 PM, Arnaud Pouliquen wrote:
+> >> Hello Andy,David,
+> > + Arnd
+> >
+> > I have the same issue on drm-misc-next.
+> > Does Arnaud's fix make sense or should we update/change the way of how
+> > we compile the kernel ?
+> 
+> We've hit a couple of bugs with qcom drivers confusing physical addresses
+> and DMA addresses in the past, usually the drivers were buggy in
+> some form, and tried to use dma_alloc_coherent() to get a buffer
+> that gets passed into a firmware interface taking a physical address,
+> which is of course completely wrong.
+> 
 
-Also, what if those NSID's all point to the same namespace? That should
-not fail right?
+Thanks Arnd, for once again using the words "bug" and "completely wrong"
+when referring to something that obviously works just fine...
+
+
+The solution you introduced for venus and adreno relies on static
+reservations of system ram, which isn't pretty, but more importantly
+isn't viable for the qcom_scm driver.
+
+
+So, how do I dynamically allocate a chunk of coherent memory?
+
+Preferably with the possibility of unmapping it temporarily from Linux
+while passing the buffer into the trusted environment (as any accesses
+during the operation might cause access violations).
+
+Regards,
+Bjorn
