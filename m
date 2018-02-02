@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752564AbeBBXNi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 18:13:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60926 "EHLO mail.kernel.org"
+        id S1752693AbeBBXOC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 18:14:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752071AbeBBXKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752034AbeBBXKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 2 Feb 2018 18:10:20 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D4FB217AB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 225CA217DF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180202231018.481870614@goodmis.org>
+Message-Id: <20180202231018.191075357@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 02 Feb 2018 18:05:08 -0500
+Date: Fri, 02 Feb 2018 18:05:06 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -29,108 +29,166 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: [PATCH 10/18] tracing: Make func_type enums for easier comparing of arg types
+Subject: [PATCH 08/18] tracing: Add "unsigned" to function based events
 References: <20180202230458.840252014@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0010-tracing-Make-func_type-enums-for-easier-comparing-of.patch
+Content-Disposition: inline; filename=0008-tracing-Add-unsigned-to-function-based-events.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-For the function based event args, knowing quickly what type they are is
-advantageous, as decisions can be made quickly based on them. Having an
-enum for the types is useful for this purpose.
-
-Use macros to create both the func_type array as well as enums that
-match the type to the index into that array.
+Add "unsigned" to the format processing to creating dynamic function based
+events. For example: "unsigned long" now works.
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_event_ftrace.c | 47 +++++++++++++++++++++++++--------------
- 1 file changed, 30 insertions(+), 17 deletions(-)
+ Documentation/trace/function-based-events.rst | 47 ++++++++++++++++++++++++++-
+ kernel/trace/trace_event_ftrace.c             | 23 ++++++++++---
+ 2 files changed, 65 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
+index 2a002c8a500b..72e3e7730d63 100644
+--- a/Documentation/trace/function-based-events.rst
++++ b/Documentation/trace/function-based-events.rst
+@@ -93,7 +93,7 @@ as follows:
+ 
+  ARG := TYPE FIELD | ARG '|' ARG
+ 
+- TYPE := ATOM
++ TYPE := ATOM | 'unsigned' ATOM
+ 
+  ATOM := 'u8' | 'u16' | 'u32' | 'u64' |
+          's8' | 's16' | 's32' | 's64' |
+@@ -176,3 +176,48 @@ an argument:
+     <idle>-0     [003] ..s3   904.075848: __netif_receive_skb_core->ip_rcv(skb=ffff88011396e800, skb=52, dev=ffff880115204000)
+     <idle>-0     [003] ..s3   904.725486: __netif_receive_skb_core->ip_rcv(skb=ffff88011396e800, skb=194, dev=ffff880115204000)
+     <idle>-0     [003] ..s3   905.152537: __netif_receive_skb_core->ip_rcv(skb=ffff88011396f200, skb=88, dev=ffff880115204000)
++
++
++Unsigned usage
++==============
++
++One can also use "unsigned" to make some types unsigned. It works against
++"long", "int", "short" and "char". It doesn't error against other types but
++may not make any sense.
++
++ # echo 'ip_rcv(int skb[32])' > function_events
++ # cat events/functions/ip_rcv/format
++name: ip_rcv
++ID: 1397
++format:
++	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
++	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
++	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
++	field:int common_pid;	offset:4;	size:4;	signed:1;
++
++	field:unsigned long __parent_ip;	offset:8;	size:8;	signed:0;
++	field:unsigned long __ip;	offset:16;	size:8;	signed:0;
++	field:int skb;	offset:24;	size:4;	signed:1;
++
++print fmt: "%pS->%pS(skb=%d)", REC->__ip, REC->__parent_ip, REC->skb
++
++
++Notice that REC->skb is printed with "%d". By adding "unsigned"
++
++ # echo 'ip_rcv(unsigned int skb[32])' > function_events
++ # cat events/functions/ip_rcv/format
++name: ip_rcv
++ID: 1398
++format:
++	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
++	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
++	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
++	field:int common_pid;	offset:4;	size:4;	signed:1;
++
++	field:unsigned long __parent_ip;	offset:8;	size:8;	signed:0;
++	field:unsigned long __ip;	offset:16;	size:8;	signed:0;
++	field:unsigned int skb;	offset:24;	size:4;	signed:0;
++
++print fmt: "%pS->%pS(skb=%u)", REC->__ip, REC->__parent_ip, REC->skb
++
++It is now printed with a "%u".
 diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
-index 4c23fa18453d..0f2650e97e49 100644
+index 8c9d4a92deab..9548b93eb8cd 100644
 --- a/kernel/trace/trace_event_ftrace.c
 +++ b/kernel/trace/trace_event_ftrace.c
-@@ -24,6 +24,7 @@ struct func_arg {
- 	short				size;
- 	s8				arg;
- 	u8				sign;
-+	u8				func_type;
- };
+@@ -60,6 +60,7 @@ enum func_states {
+ 	FUNC_STATE_BRACKET,
+ 	FUNC_STATE_BRACKET_END,
+ 	FUNC_STATE_INDIRECT,
++	FUNC_STATE_UNSIGNED,
+ 	FUNC_STATE_PIPE,
+ 	FUNC_STATE_TYPE,
+ 	FUNC_STATE_VAR,
+@@ -198,7 +199,7 @@ static char *next_token(char **ptr, char *last)
+ 	return arg;
+ }
  
- struct func_event {
-@@ -79,31 +80,42 @@ typedef u8 x8;
- #define TYPE_TUPLE(type)			\
- 	{ #type, sizeof(type), is_signed_type(type) }
+-static int add_arg(struct func_event *fevent, int ftype)
++static int add_arg(struct func_event *fevent, int ftype, int unsign)
+ {
+ 	struct func_type *func_type = &func_types[ftype];
+ 	struct func_arg *arg;
+@@ -211,13 +212,18 @@ static int add_arg(struct func_event *fevent, int ftype)
+ 	if (!arg)
+ 		return -ENOMEM;
  
-+#define FUNC_TYPES				\
-+	TYPE_TUPLE(long),			\
-+	TYPE_TUPLE(int),			\
-+	TYPE_TUPLE(short),			\
-+	TYPE_TUPLE(char),			\
-+	TYPE_TUPLE(size_t),			\
-+	TYPE_TUPLE(u64),			\
-+	TYPE_TUPLE(s64),			\
-+	TYPE_TUPLE(x64),			\
-+	TYPE_TUPLE(u32),			\
-+	TYPE_TUPLE(s32),			\
-+	TYPE_TUPLE(x32),			\
-+	TYPE_TUPLE(u16),			\
-+	TYPE_TUPLE(s16),			\
-+	TYPE_TUPLE(x16),			\
-+	TYPE_TUPLE(u8),				\
-+	TYPE_TUPLE(s8),				\
-+	TYPE_TUPLE(x8)
-+
- static struct func_type {
- 	char		*name;
- 	int		size;
- 	int		sign;
- } func_types[] = {
--	TYPE_TUPLE(long),
--	TYPE_TUPLE(int),
--	TYPE_TUPLE(short),
--	TYPE_TUPLE(char),
--	TYPE_TUPLE(size_t),
--	TYPE_TUPLE(u64),
--	TYPE_TUPLE(s64),
--	TYPE_TUPLE(x64),
--	TYPE_TUPLE(u32),
--	TYPE_TUPLE(s32),
--	TYPE_TUPLE(x32),
--	TYPE_TUPLE(u16),
--	TYPE_TUPLE(s16),
--	TYPE_TUPLE(x16),
--	TYPE_TUPLE(u8),
--	TYPE_TUPLE(s8),
--	TYPE_TUPLE(x8),
-+	FUNC_TYPES,
- 	{ NULL,		0,	0 }
- };
- 
-+#undef TYPE_TUPLE
-+#define TYPE_TUPLE(type)	FUNC_TYPE_##type
-+
-+enum {
-+	FUNC_TYPES,
-+	FUNC_TYPE_MAX
-+};
-+
- /**
-  * arch_get_func_args - retrieve function arguments via pt_regs
-  * @regs: The registers at the moment the function is called
-@@ -228,6 +240,7 @@ static int add_arg(struct func_event *fevent, int ftype, int unsign)
- 	if (!unsign)
- 		arg->sign = func_type->sign;
+-	arg->type = kstrdup(func_type->name, GFP_KERNEL);
++	if (unsign)
++		arg->type = kasprintf(GFP_KERNEL, "unsigned %s",
++				      func_type->name);
++	else
++		arg->type = kstrdup(func_type->name, GFP_KERNEL);
+ 	if (!arg->type) {
+ 		kfree(arg);
+ 		return -ENOMEM;
+ 	}
+ 	arg->size = func_type->size;
+-	arg->sign = func_type->sign;
++	if (!unsign)
++		arg->sign = func_type->sign;
  	arg->offset = ALIGN(fevent->arg_offset, arg->size);
-+	arg->func_type = ftype;
  	arg->arg = fevent->arg_cnt;
  	fevent->arg_offset = arg->offset + arg->size;
+@@ -232,12 +238,14 @@ static int add_arg(struct func_event *fevent, int ftype)
+ static enum func_states
+ process_event(struct func_event *fevent, const char *token, enum func_states state)
+ {
++	static int unsign;
+ 	long val;
+ 	int ret;
+ 	int i;
  
+ 	switch (state) {
+ 	case FUNC_STATE_INIT:
++		unsign = 0;
+ 		if (!isalpha(token[0]))
+ 			break;
+ 		/* Do not allow wild cards */
+@@ -262,13 +270,20 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 		/* Fall through */
+ 	case FUNC_STATE_COMMA:
+  comma:
++		if (strcmp(token, "unsigned") == 0) {
++			unsign = 2;
++			return FUNC_STATE_UNSIGNED;
++		}
++		/* Fall through */
++	case FUNC_STATE_UNSIGNED:
+ 		for (i = 0; func_types[i].size; i++) {
+ 			if (strcmp(token, func_types[i].name) == 0)
+ 				break;
+ 		}
+ 		if (!func_types[i].size)
+ 			break;
+-		ret = add_arg(fevent, i);
++		ret = add_arg(fevent, i, unsign);
++		unsign = 0;
+ 		if (ret < 0)
+ 			break;
+ 		return FUNC_STATE_TYPE;
 -- 
 2.15.1
