@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2879036-1517590797-2-3743359905965150178
+X-Cyrus-Session-Id: sloti22d1t05-2848808-1517590797-2-15374587629381013286
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517590793; b=J0bmpt1xsb7Los/gdINSa+dK3JTq+h2PsSGBUCwB27Ys1TA
-    71qeIr/3CE14daw54wpinNf/rvTIq5LrOiGNp69bA85jk5PcwSWCczDpH2bxJ6RD
-    GNoOhi3+iRrGhjRQP/+7iau/uZKb9HUnp88+fX2W1M6xXOCjT+tykXC6Hdw5Qtg5
-    mGonr1Z1pGlwwMVTvQXy66ChLTaXzVgTIhu6lCApA7PySGUMdR6yL0FgCEZKYgyD
-    WynsJIuFkrpKBM6q0TA61RRkbzz60svjgrWoZLfiV7cGRA2gxk9EGIZ9RaQY13o5
-    GxVCmShBxJ4Q3DB0BRZew7daK6UmYWDEAujYTMw==
+    t=1517590795; b=hICW1BxIAQhAV0COE7NRNCDEyauWOMgUNGlzLUkaJKK+r0i
+    z5XAcJkn47YPSKtmw3J9YTppcwJDhQCa5y5uDhbwMJ2C3d61D1ucjbiZNIkmHmZa
+    hhJ+oVcaR1un3u8YuwK+h7cRY9WzJx4pgx7183d+TnvlSUC3kU/SIDBDBxWT8oMm
+    WTeQTrx0i7/Cw5XGZj0yGunbPT1Fbd7+6NOV3YbHEnZXKBDdzww2Z4TGRgfR3bF8
+    N6zuVyxb72WEsaZO/TCCHMytZn/yB0WGaUEHjiYPP70bAmAfxOrfyFL5MTBP0JyS
+    11cyfL8H1b4X6aPZAgGp5fmcXv3qmKAKz25m0qA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517590793; bh=x2sIyCL+jGOJuatqIkD4sgCZkC
-    BAdkVCWz3+R7rZ+fI=; b=LgqxBlaBxjTR3YUnglGph5jblxR0w0j36jSUGGL7kr
-    HJ+dx+KVW99mlr/apyATW6O3FZbUuZ0AA4o8IlqwTqplyy9i8npfrqv+SLLnSNbn
-    +wyZxpN4bydv+xYjFXYYLSQfWTv2SezoK8ZhazL9wnLlGWGpQvjvSn2m/dQJJeZH
-    M5wSg/vP3/mfqDEn48mHTsxSttqguS0fCuIddeHEMMJtuoLPc58mg5VtYsvl+C3M
-    fJP1xBV9kQkjMDpOTyOXThcO0SpGBGaCFxmvmjk3gDdIwUwg5ay+aHCrtinqvvye
-    x2n1HT1W8LQkEwqSOqEzI1M2NNGrfLNKlJPTiNOVAKsw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1517590795; bh=hLl0kcmq+bNvjGOXJM7sTSoAQk
+    TCuhbbnADjOh+9qcc=; b=kfaqcpDjOCF4X4lo1imrC15k5IKgih0RvDZPuplUEj
+    eW6Tm7FN1wS0LnW2HLo1beiucNZsiYBUKCcSCOjrRRdlBFfYRjixV4ww/SN64bh0
+    BBNDkqkhd07e1Npc4WnNss93WN9TzxlkDOMfRx6gm0TRlvNt4vT1WueY/GTZ/sts
+    MANi5w15GmIhtrTRXngXP1NtBfYDXselitDUt+NwIoGRpvQBzrmefu4oxtNN1P7V
+    14Upr6nI9/wn2XmvrgT/5qcN+miEjFrnGKt8I46Cf3ER8D5Hm+hEf0CcGNIpRgR+
+    xf+oY0cz799nOyc2/RDqL5uwMlk2aHme2iT4Xh45A6gw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,29 +47,22 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752519AbeBBQ7w (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 11:59:52 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34456 "EHLO
+        id S1752523AbeBBQ7x (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 11:59:53 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34518 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752494AbeBBQ7k (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 11:59:40 -0500
+        with ESMTP id S1752518AbeBBQ7p (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 11:59:45 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jon Masters <jcm@redhat.com>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        gnomes@lxorguk.ukuu.org.uk, peterz@infradead.org,
-        ning.sun@intel.com, tboot-devel@lists.sourceforge.net,
-        andi@firstfloor.org, luto@kernel.org, law@redhat.com,
-        pbonzini@redhat.com, torvalds@linux-foundation.org,
-        dwmw@amazon.co.uk, nickc@redhat.com,
-        Hugh Dickins <hughd@google.com>, gregkh@linux-foundation.org
-Subject: [PATCH 4.4 11/67] x86/pti: Make unpoison of pgd for trusted boot work for real
-Date: Fri,  2 Feb 2018 17:57:40 +0100
-Message-Id: <20180202140816.487701831@linuxfoundation.org>
+        stable@vger.kernel.org, Luo Quan <a4651386@163.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 13/67] ALSA: seq: Make ioctls race-free
+Date: Fri,  2 Feb 2018 17:57:42 +0100
+Message-Id: <20180202140816.773212940@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -86,69 +79,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 445b69e3b75e42362a5bdc13c8b8f61599e2228a upstream.
+commit b3defb791b26ea0683a93a4f49c77ec45ec96f10 upstream.
 
-The inital fix for trusted boot and PTI potentially misses the pgd clearing
-if pud_alloc() sets a PGD.  It probably works in *practice* because for two
-adjacent calls to map_tboot_page() that share a PGD entry, the first will
-clear NX, *then* allocate and set the PGD (without NX clear).  The second
-call will *not* allocate but will clear the NX bit.
+The ALSA sequencer ioctls have no protection against racy calls while
+the concurrent operations may lead to interfere with each other.  As
+reported recently, for example, the concurrent calls of setting client
+pool with a combination of write calls may lead to either the
+unkillable dead-lock or UAF.
 
-Defer the NX clearing to a point after it is known that all top-level
-allocations have occurred.  Add a comment to clarify why.
+As a slightly big hammer solution, this patch introduces the mutex to
+make each ioctl exclusive.  Although this may reduce performance via
+parallel ioctl calls, usually it's not demanded for sequencer usages,
+hence it should be negligible.
 
-[ tglx: Massaged changelog ]
-
-[hughd notes: I have not tested tboot, but this looks to me as necessary
-and as safe in old-Kaiser backports as it is upstream; I'm not submitting
-the commit-to-be-fixed 262b6b30087, since it was undone by 445b69e3b75e,
-and makes conflict trouble because of 5-level's p4d versus 4-level's pgd.]
-
-Fixes: 262b6b30087 ("x86/tboot: Unbreak tboot with PTI enabled")
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: "Tim Chen" <tim.c.chen@linux.intel.com>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: peterz@infradead.org
-Cc: ning.sun@intel.com
-Cc: tboot-devel@lists.sourceforge.net
-Cc: andi@firstfloor.org
-Cc: luto@kernel.org
-Cc: law@redhat.com
-Cc: pbonzini@redhat.com
-Cc: torvalds@linux-foundation.org
-Cc: gregkh@linux-foundation.org
-Cc: dwmw@amazon.co.uk
-Cc: nickc@redhat.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180110224939.2695CD47@viggo.jf.intel.com
-Signed-off-by: Hugh Dickins <hughd@google.com>
+Reported-by: Luo Quan <a4651386@163.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[bwh: Backported to 4.4: ioctl dispatch is done from snd_seq_do_ioctl();
+ take the mutex and add ret variable there.]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/tboot.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ sound/core/seq/seq_clientmgr.c |   10 ++++++++--
+ sound/core/seq/seq_clientmgr.h |    1 +
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/tboot.c
-+++ b/arch/x86/kernel/tboot.c
-@@ -140,6 +140,16 @@ static int map_tboot_page(unsigned long
- 		return -1;
- 	set_pte_at(&tboot_mm, vaddr, pte, pfn_pte(pfn, prot));
- 	pte_unmap(pte);
-+
-+	/*
-+	 * PTI poisons low addresses in the kernel page tables in the
-+	 * name of making them unusable for userspace.  To execute
-+	 * code at such a low address, the poison must be cleared.
-+	 *
-+	 * Note: 'pgd' actually gets set in pud_alloc().
-+	 */
-+	pgd->pgd &= ~_PAGE_NX;
-+
- 	return 0;
- }
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -236,6 +236,7 @@ static struct snd_seq_client *seq_create
+ 	rwlock_init(&client->ports_lock);
+ 	mutex_init(&client->ports_mutex);
+ 	INIT_LIST_HEAD(&client->ports_list_head);
++	mutex_init(&client->ioctl_mutex);
  
+ 	/* find free slot in the client table */
+ 	spin_lock_irqsave(&clients_lock, flags);
+@@ -2195,6 +2196,7 @@ static int snd_seq_do_ioctl(struct snd_s
+ 			    void __user *arg)
+ {
+ 	struct seq_ioctl_table *p;
++	int ret;
+ 
+ 	switch (cmd) {
+ 	case SNDRV_SEQ_IOCTL_PVERSION:
+@@ -2208,8 +2210,12 @@ static int snd_seq_do_ioctl(struct snd_s
+ 	if (! arg)
+ 		return -EFAULT;
+ 	for (p = ioctl_tables; p->cmd; p++) {
+-		if (p->cmd == cmd)
+-			return p->func(client, arg);
++		if (p->cmd == cmd) {
++			mutex_lock(&client->ioctl_mutex);
++			ret = p->func(client, arg);
++			mutex_unlock(&client->ioctl_mutex);
++			return ret;
++		}
+ 	}
+ 	pr_debug("ALSA: seq unknown ioctl() 0x%x (type='%c', number=0x%02x)\n",
+ 		   cmd, _IOC_TYPE(cmd), _IOC_NR(cmd));
+--- a/sound/core/seq/seq_clientmgr.h
++++ b/sound/core/seq/seq_clientmgr.h
+@@ -59,6 +59,7 @@ struct snd_seq_client {
+ 	struct list_head ports_list_head;
+ 	rwlock_t ports_lock;
+ 	struct mutex ports_mutex;
++	struct mutex ioctl_mutex;
+ 	int convert32;		/* convert 32->64bit */
+ 
+ 	/* output pool */
