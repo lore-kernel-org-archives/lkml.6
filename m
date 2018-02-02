@@ -1,45 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751727AbeBBKfh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 05:35:37 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49518 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751630AbeBBKfc (ORCPT
+        id S1751821AbeBBKkS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 05:40:18 -0500
+Received: from forwardcorp1j.cmail.yandex.net ([5.255.227.105]:46399 "EHLO
+        forwardcorp1j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751656AbeBBKkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 05:35:32 -0500
-Date: Fri, 2 Feb 2018 11:35:25 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Chen Baozi <cbz@baozis.org>
-cc: x86@kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/retpoline: check CONFIG_RETPOLINE option when
- SPECTRE_V2_CMD_AUTO
-In-Reply-To: <20180202064744.29331-1-cbz@baozis.org>
-Message-ID: <alpine.DEB.2.21.1802021134270.1472@nanos.tec.linutronix.de>
-References: <20180202064744.29331-1-cbz@baozis.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 2 Feb 2018 05:40:11 -0500
+Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: [PATCH] ext4: report delalloc reserve as non-free in statfs mangled
+ by project quota
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org
+Cc: Dmitry Monakhov <dmonakhov@openvz.org>, Li Xi <lixi@ddn.com>,
+        Jan Kara <jack@suse.cz>
+Date: Fri, 02 Feb 2018 13:40:05 +0300
+Message-ID: <151756800585.979296.13086151972011935611.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Feb 2018, Chen Baozi wrote:
+This reserved space isn't committed yet but cannot be used for allocations.
+For userspace it has no difference from used space. XFS already does this.
 
-> Currently, if there is no spectre_v2= or nospectre_v2 specified in the boot
-> parameter, the kernel will automatically choose mitigation by default.
-> However, when selecting the auto mode, it doesn't check whether the
-> retpoline has been built in the kernel. Thus, if someone built a kernel
-> without CONFIG_RETPOLINE and booted the system without specifying any
-> spectre_v2 kernel parameters, the kernel would still report that it has
-> enabled a minimal retpoline mitigation which is not the case. This patch
-> adds the checking of CONFIG_RETPOLINE option under the 'auto' mode to fix
-> it.
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Fixes: 689c958cbe6b ("ext4: add project quota support")
+---
+ fs/ext4/super.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks for sending that patch, but its already fixed and queued for upstream:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/pti&id=9471eee9186a46893726e22ebb54cade3f9bc043
-
-Thanks,
-
-	tglx
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 5de959fb0244..13ce97b9e820 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5227,7 +5227,8 @@ static int ext4_statfs_project(struct super_block *sb,
+ 		 dquot->dq_dqb.dqb_bsoftlimit :
+ 		 dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
+ 	if (limit && buf->f_blocks > limit) {
+-		curblock = dquot->dq_dqb.dqb_curspace >> sb->s_blocksize_bits;
++		curblock = (dquot->dq_dqb.dqb_curspace +
++			    dquot->dq_dqb.dqb_rsvspace) >> sb->s_blocksize_bits;
+ 		buf->f_blocks = limit;
+ 		buf->f_bfree = buf->f_bavail =
+ 			(buf->f_blocks > curblock) ?
