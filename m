@@ -1,48 +1,76 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226UOemZGlgomEzIWJLAIc+qPtCWbvrkdKU3CZK4R+BcG8vJIMDXmU6ubGdUl4nhDpDxtu0t
-ARC-Seal: i=1; a=rsa-sha256; t=1517591113; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Ch2zZkPTu/N/MdJ/K7gi8ss7YWprY15gObcxF73PaY62wuXYxz0zHSCZMAKUdrcvOK
-         A2aNMvy+uFDkv+5tVX7E288XfmMBkWi9YQw13QM0kZ+2M216LOVGJ9BmzOJyZMhU5pzD
-         PepDYi0UUPNd+VETYRZ1DfCdRtIVpmxXV04aChMmni4NQgIqaA1K4RaVLI06hVA+DOc0
-         OSEJZNTw4L54T/iEtzplRNQdmTLiUultjNIyzkBCRx7OBbxjFwON6DQbn1gG2vvub9cB
-         bALBjVxm4vJGRLgOSU6V8l11bbKRPcqGxawnJSxXqTNsGUMviDX1x5IFtoRP0rCe5nst
-         VbzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=4CYpM7sbEFnkgSC2DtoX6dFzB7SSHlHhaE7kwWtXNFU=;
-        b=06p2InHqVNZAE9z2K0WpklEw8jfmpeLvbkWZiLl5F4uWuBCrLKwEKjTZ5G090ZYqPD
-         cOdenVAXmpvZhR0HJsLj3Nkw3lLWgFyn7w3GXiLG5n2NGm3vFjxIOPJnGZv1IYe+oLJ0
-         NwQLVw1FHjdQRQ04RbwdbiHWtDMtyxa2k4BkemF5sUmDBhlwTyv06NsF+GkLu3AKBlLq
-         Ut0fGM0fS1Pns/IWjJl6hv7/U5UC8fsqLxVUU8P5A6ap1WrfdmSTFI7ShYb83OPYYhAF
-         HP9IXKEZrY6brk7XUDAhJph2qxC4JAssNNfr/FTIaqyiRNvDMXZBT3QvZy86McRJbBWG
-         SFsg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591112-2-7515025857745973084
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591111; b=cn6UHL9E5RyS4399PQ1XaRtmjR4XtPM2vc+e19OmMJqX18v
+    hKnVGeIURxbF1/2pckcneP/HPxAEC5NwVSOjyNiIEBZt/rS2NtquTYqyYabFUqLi
+    5U7Q4dAxSNJfjLe/uqLbM421ZAGfzYZiBS5Wo2+AMKjODj2fxjbNfIV/oeo4ABfq
+    HrSiV1Vcf+9hw7Uik2xhQ6PzNE+QGkVU0IgJ6zxPYFufQAYgu89x5rcKSvHgDneA
+    T6u3e09RZW4mlwbTMZQDgCUsUfEVtdOUtIreH4dXP5PFONBG7jqmB7UBPLBgRqB3
+    jphSjkVF9eBVuIqOWlGK8JxVI6IGcKkuKCKhRRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591111; bh=ME0CzJTpgjFUto6U92HSH1Zi6E
+    4vELVambrL3ZPLui0=; b=kUpV1VQE2f2t6ef2a3tjr9Xw61vIP4gP6xTJ6htruW
+    htGYJ4AXw6npRQQ2vZkTzWMTvB+4gNap7A1zOGENJzue7Bta4se0GTES/i4WO5KX
+    I93H1LkdgWy7iPBAUprkAlEoOPb3vdQqhOksA1qd6aDJgbhHXfISbrOdT1pIDR0a
+    UuCsMJypeoYJNV2TBDxdrcguBagN+YjlqKLdvD72CT/rXv+gDx/adtc7iQXX1zoN
+    9BJCvKsfapAw0h024tInSJdVGk+DpBJWAI/phQDq1M5nN2Za1BAGxXJGmYrgChBW
+    XPIT8XTERarI5w0hxcALLhxNWsNJXJ1YlzWuu0uwyYGA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752951AbeBBRFI (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:05:08 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36326 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752911AbeBBREz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:04:55 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-	Andrzej Hajda <a.hajda@samsung.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 57/86] drm/bridge: tc358767: fix timing calculations
-Date: Fri,  2 Feb 2018 17:58:17 +0100
-Message-Id: <20180202140827.692232619@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Schake <stschake@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 17/86] drm/vc4: Account for interrupts in flight
+Date: Fri,  2 Feb 2018 17:57:37 +0100
+Message-Id: <20180202140824.410233044@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309619504798871?=
-X-GMAIL-MSGID: =?utf-8?q?1591309619504798871?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,88 +78,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+From: Stefan Schake <stschake@gmail.com>
 
 
-[ Upstream commit 66d1c3b94d5d59e4325e61a78d520f92c043d645 ]
+[ Upstream commit 253696ccd613fbdaa5aba1de44c461a058e0a114 ]
 
-Fields in HTIM01 and HTIM02 regs should be even.
-Recomended thresh_dly value is max_tu_symbol.
-Remove set of VPCTRL0.VSDELAY as it is related to DSI input
-interface. Currently driver supports only DPI.
+Synchronously disable the IRQ to make the following cancel_work_sync
+invocation effective.
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1510073785-16108-5-git-send-email-andrey.gusakov@cogentembedded.com
+An interrupt in flight could enqueue further overflow mem work. As we
+free the binner BO immediately following vc4_irq_uninstall this caused
+a NULL pointer dereference in the work callback vc4_overflow_mem_work.
+
+Link: https://github.com/anholt/linux/issues/114
+Signed-off-by: Stefan Schake <stschake@gmail.com>
+Fixes: d5b1a78a772f ("drm/vc4: Add support for drawing 3D frames.")
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/1510275907-993-2-git-send-email-stschake@gmail.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c |   34 ++++++++++++++++++++--------------
- 1 file changed, 20 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/vc4/vc4_irq.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -659,6 +659,14 @@ static int tc_set_video_mode(struct tc_d
- 	int lower_margin = mode->vsync_start - mode->vdisplay;
- 	int vsync_len = mode->vsync_end - mode->vsync_start;
+--- a/drivers/gpu/drm/vc4/vc4_irq.c
++++ b/drivers/gpu/drm/vc4/vc4_irq.c
+@@ -208,6 +208,9 @@ vc4_irq_postinstall(struct drm_device *d
+ {
+ 	struct vc4_dev *vc4 = to_vc4_dev(dev);
  
-+	/*
-+	 * Recommended maximum number of symbols transferred in a transfer unit:
-+	 * DIV_ROUND_UP((input active video bandwidth in bytes) * tu_size,
-+	 *              (output active video bandwidth in bytes))
-+	 * Must be less than tu_size.
-+	 */
-+	max_tu_symbol = TU_SIZE_RECOMMENDED - 1;
++	/* Undo the effects of a previous vc4_irq_uninstall. */
++	enable_irq(dev->irq);
 +
- 	dev_dbg(tc->dev, "set mode %dx%d\n",
- 		mode->hdisplay, mode->vdisplay);
- 	dev_dbg(tc->dev, "H margin %d,%d sync %d\n",
-@@ -668,13 +676,18 @@ static int tc_set_video_mode(struct tc_d
- 	dev_dbg(tc->dev, "total: %dx%d\n", mode->htotal, mode->vtotal);
+ 	/* Enable both the render done and out of memory interrupts. */
+ 	V3D_WRITE(V3D_INTENA, V3D_DRIVER_IRQS);
  
+@@ -225,6 +228,9 @@ vc4_irq_uninstall(struct drm_device *dev
+ 	/* Clear any pending interrupts we might have left. */
+ 	V3D_WRITE(V3D_INTCTL, V3D_DRIVER_IRQS);
  
--	/* LCD Ctl Frame Size */
--	tc_write(VPCTRL0, (0x40 << 20) /* VSDELAY */ |
-+	/*
-+	 * LCD Ctl Frame Size
-+	 * datasheet is not clear of vsdelay in case of DPI
-+	 * assume we do not need any delay when DPI is a source of
-+	 * sync signals
-+	 */
-+	tc_write(VPCTRL0, (0 << 20) /* VSDELAY */ |
- 		 OPXLFMT_RGB888 | FRMSYNC_DISABLED | MSF_DISABLED);
--	tc_write(HTIM01, (left_margin << 16) |		/* H back porch */
--			 (hsync_len << 0));		/* Hsync */
--	tc_write(HTIM02, (right_margin << 16) |		/* H front porch */
--			 (mode->hdisplay << 0));	/* width */
-+	tc_write(HTIM01, (ALIGN(left_margin, 2) << 16) | /* H back porch */
-+			 (ALIGN(hsync_len, 2) << 0));	 /* Hsync */
-+	tc_write(HTIM02, (ALIGN(right_margin, 2) << 16) |  /* H front porch */
-+			 (ALIGN(mode->hdisplay, 2) << 0)); /* width */
- 	tc_write(VTIM01, (upper_margin << 16) |		/* V back porch */
- 			 (vsync_len << 0));		/* Vsync */
- 	tc_write(VTIM02, (lower_margin << 16) |		/* V front porch */
-@@ -693,7 +706,7 @@ static int tc_set_video_mode(struct tc_d
- 	/* DP Main Stream Attributes */
- 	vid_sync_dly = hsync_len + left_margin + mode->hdisplay;
- 	tc_write(DP0_VIDSYNCDELAY,
--		 (0x003e << 16) |	/* thresh_dly */
-+		 (max_tu_symbol << 16) |	/* thresh_dly */
- 		 (vid_sync_dly << 0));
- 
- 	tc_write(DP0_TOTALVAL, (mode->vtotal << 16) | (mode->htotal));
-@@ -709,13 +722,6 @@ static int tc_set_video_mode(struct tc_d
- 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
- 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
- 
--	/*
--	 * Recommended maximum number of symbols transferred in a transfer unit:
--	 * DIV_ROUND_UP((input active video bandwidth in bytes) * tu_size,
--	 *              (output active video bandwidth in bytes))
--	 * Must be less than tu_size.
--	 */
--	max_tu_symbol = TU_SIZE_RECOMMENDED - 1;
- 	tc_write(DP0_MISC, (max_tu_symbol << 23) | (TU_SIZE_RECOMMENDED << 16) |
- 			   BPC_8);
++	/* Finish any interrupt handler still in flight. */
++	disable_irq(dev->irq);
++
+ 	cancel_work_sync(&vc4->overflow_mem_work);
+ }
  
