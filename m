@@ -1,62 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752589AbeBBUoP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 15:44:15 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:50528 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752028AbeBBUoJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 15:44:09 -0500
-Date: Fri, 2 Feb 2018 21:44:04 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-cc: longman@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2 v5] lib: debugobjects: handle objects free in a batch
- outside the loop
-In-Reply-To: <af314f63-1a6b-c2cb-95d9-59b1e4ff674d@linux.alibaba.com>
-Message-ID: <alpine.DEB.2.21.1802022141390.1472@nanos.tec.linutronix.de>
-References: <1517508959-63958-1-git-send-email-yang.shi@linux.alibaba.com> <1517508959-63958-2-git-send-email-yang.shi@linux.alibaba.com> <alpine.DEB.2.21.1802012203210.1472@nanos.tec.linutronix.de> <62f30929-47b0-87d6-f9cf-c85d9abf69df@linux.alibaba.com>
- <af314f63-1a6b-c2cb-95d9-59b1e4ff674d@linux.alibaba.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1752641AbeBBUqz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 15:46:55 -0500
+Received: from mout.web.de ([212.227.15.14]:50635 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751557AbeBBUqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 15:46:46 -0500
+To: linux-input@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] hid-zydacron: Delete an error message for a failed memory
+ allocation in zc_probe()
+Message-ID: <4064fe6c-18d1-1a82-ea46-9c2d86cdbf69@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 21:46:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:z3YtuYhm99lvH1fMrD+rquJyKdm5hKtYMdXFeX1lrRwwOTbxC5u
+ NF106o2Ypq06Jn/d7kRxaKV5CFG5mUwZuuDxxdZC7dp1J2DsIYfcsseUgIP9pIKNklsbSHn
+ dphoACUENTrFqpCexAwi+kLWgbTsf2z+wHlaIsOrxltSRn6mdlKHciwPO3KAY5R/5iUMDUL
+ 4IUZxMkLMogdJB8dIUY4g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Ms69xFhuJw4=:YHge7BhCcq+sotsTK6hT9H
+ M7+nwNIxlWArxHzk2PTvful+4lBJ+5ASPVKhD47tGwY1L0Ry+Xd3gJ2N2FNfDVbdyJO3Wwvd6
+ y/PgodNSOckoih4IUcCCvSTBmzhZdV25GuhN9perXWaK35z/XcYmFVTGAZtQt2r3dPChNmff6
+ bd6Y514ClCnQEmwwMYOV9QdVm1reMbQAfxk1ubVcsa4wzfHyTaSVsP4pVupfs6PiP/SRdCBss
+ T3VAIRcclI5/Wy9laVMc1YjPNlWAudLIXw0igENp3GRPuC5T/5cJG3ZYgMaeOvCLhCGbl5RxJ
+ a5DXiKuQZtJXuxw90mLCzIEXeikLQ2ti2MxeIZFK9egrb26BQQgJMcHX5r+xS0pDs6YGQ49vH
+ Z1X8qyLcOt0gwFxpNmLF1EaeFwNQ+dsC0dOidvkdB92WcEhDQl1/1cDkuR9kZKvQ5WKy1khQs
+ K9+51cpwsLG4XUsOUenR+ywE9P0rfCZ8oIbICY5XUGCd9mUsTXc+MTXIwWspLh6Q87hwLpkwZ
+ Wr7u8svGdc9CWHBpa5T78yujBorwjKPxJIuo3VmCWdgl3/cPjn6r5bvQqdo0mc7HVwjq1M4TW
+ HNbrMDNZ/G43rk7psZ2lcRVHCxOd/q7HUWchgu0HDUnt62uLV8PJ0SheSyQyH6OJ0+wx9lL6N
+ L8gCzVDEN9uUjSh2/RsephgRzGHRxxwK/TV0nqBNTJJC4tWrT1LrmV/LgndSyba82l51XhAi5
+ 4rtkqMN9tQj4thtknFiueHDcwl+KGoxy9EP/CVQ0BmGbKQ++PFOZUUKQUJnjF7xDtkFwDQ0y0
+ gPfBST4YvzFD5rYzoMU9kUsVZ+YzLBJrWQcBXcDomlMD+Cvpfs=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Feb 2018, Yang Shi wrote:
-> On 2/1/18 3:01 PM, Yang Shi wrote:
-> > On 2/1/18 1:36 PM, Thomas Gleixner wrote:
-> > > The accounting is inconsistent. You leak obj_pool_used. But that's wrong
-> > > anyway because an object should not be accounted for in two places. It's
-> > > only on _ONE_ list....
-> > 
-> > So I should move the accounting to where the obj is deleted from the list?
-> > It should look like:
-> 
-> I got your point here. Yes, obj_pool_used should be not decreased here since
-> it has not been allocated from pool list.
-> 
-> But, I think obj_nr_tofree counter should be cleared since all the objs are
-> *NOT* on the global free list anymore. They will be freed later. And, we can't
-> decrease the obj_nr_tofree counter later without acquiring pool lock.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 21:41:37 +0100
 
-Right, when you split the list to the temporary tofree list head then you
-need to reset obj_nr_tofree as well. And that's correct because the objects
-are not longer reachable through one of the global lists.
+Omit an extra message for a memory allocation failure in this function.
 
-> > > static bool __free_object(obj)
-> > > {
-> > >     bool work;
-> > > 
-> > >     lock(pool);
-> > >     work = obj_pool_free > debug_objects_pool_size && obj_cache;
-> > >     obj_pool_used++;
-> 
-> Should it be decreased here since the obj is being dequeued from hlist?
+This issue was detected by using the Coccinelle software.
 
-I guess so :)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-zydacron.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Thanks,
-
-	tglx
+diff --git a/drivers/hid/hid-zydacron.c b/drivers/hid/hid-zydacron.c
+index 1a660bd97ab2..3e8afaea2ab3 100644
+--- a/drivers/hid/hid-zydacron.c
++++ b/drivers/hid/hid-zydacron.c
+@@ -170,10 +170,8 @@ static int zc_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	struct zc_device *zc;
+ 
+ 	zc = devm_kzalloc(&hdev->dev, sizeof(*zc), GFP_KERNEL);
+-	if (zc == NULL) {
+-		hid_err(hdev, "can't alloc descriptor\n");
++	if (!zc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	hid_set_drvdata(hdev, zc);
+ 
+-- 
+2.16.1
