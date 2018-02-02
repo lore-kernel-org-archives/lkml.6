@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227CYJFNtlZJNcPaFWiKE6WRA7YtkeopGPFwyAdre28RcNUwVOm6iVmMgMmm8e2iLXr0zmNl
-ARC-Seal: i=1; a=rsa-sha256; t=1517590887; cv=none;
+X-Google-Smtp-Source: AH8x227+mBZ/LRGhmJ5+w0dxAnEaZOfkg9UEEnpJNOTARfwgWezX9AjqpbC/IO2d/EuaUmzPR/mp
+ARC-Seal: i=1; a=rsa-sha256; t=1517590884; cv=none;
         d=google.com; s=arc-20160816;
-        b=IJXFPgmTSnPS8qQIQI15K9X13DtveOCkCN7593qKh8hoel1MHzOODHKxxMhSK2rCD2
-         ayg6kUUj84qs3hwmVdtG1viFLnaayMVavPTtdAL1J/TJxDxnZpOPE9nbLdYNZshJuMrc
-         LUaZHhvsxCBZjp+IDGFOOgH0TbO1KK+HhT2pN0mN6BJBS9YI/pm0cAiiO1SBEgyyc/FN
-         +JTuLUFMe847gpMJrsm47UIzfgry4V0hYxCWGBiQCRyIwQQZvK6dSIZ9c7PcAOqyP4p0
-         GY7GvsBxm/hTkFfOnnec+P1jMKWYj2v2eaYlPDrJkgw7D5P3vq0Hi7jCYK+TmrRH7s72
-         lHPg==
+        b=IVQK2QEshlsr48mcpEB+Dd0wN4U9ydGgzwBn0FjkLl+B+EITZc+SPz6qyQ4fGboAMa
+         ChH4XQX3FlhKuXCNCo6LdU26GhMXVYXc33Oe8/lxTgrgy+PBcjpZ0BZTVLawYM7dp4Ud
+         XXyBFC2uH2aX7JM4gRPnoxrkyvDdYMzDvGEwJUw5ZNZmWasXbq8rlXSr0P7MBWePKHyz
+         EUcXP0BhWQMwyJzYDl0Q8dafJIQqyKB4Q6gnHRuinjvuf3rSNJFDQdVGGpizhQPVLC8c
+         TAazJLymfVB+Qp5AJFDraMMcv1G04wRbtcGkGiidojziM02IdsXSRtL2f7UFNcGvEd/D
+         xFIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ad5aY8JiyQZLr3H/PrHdHozNY9L1tOg34j/rcqN9ocA=;
-        b=LCAlEFFGT+p+mRVvfbdjZFCPffNTMcNnEymhdSMIfn/VzP3L/QqFf06RSDBRzM/dzu
-         Ag5o7APYSbj5e990Vxz0NVNYPQ14gabQYjY7C7NaUMz+bjVGqwmQF371BnmvsOJS++Ec
-         2/tAL6t/joaOzBdGyddRmBDuAyAG96GIrfm3opUnpoHstRDDzIQjDlmRrBhbrfCfgCMZ
-         PNHbhTxigQQ++Mrl5fcv3NrrlWfX4te0T8qgus7RqqFuJuTNQ2JoCmlUiLD+F6lDEYIb
-         n5h17pmoeajA6pKnak8Urkfsga3wrMop+2ElH0BVSswJzLrna2skTnMN1+7lYtwj2R85
-         QuSg==
+        bh=7bwvNSWbCNpY/Pbt7kHH4vh2YU+TEo7vhS3Nz4N3Ggc=;
+        b=ugNrVunuvWeRofR4lYRRGjCI0utp6YPmg/XG6qavSjMKx4OxQYwl5Qwv7uIkWCEEiV
+         88rtz6r4vdeJH8Scbk34Xqaaa/5ez6WEYK9Tw98C+0SDSU/UkOqWbWSIesKGc58q974T
+         ctDUGpXcqNPv/AKEt2WKYqe7Rhe8yWzdz608bwF4CPMr4a8SpXoSIb5hRvBn6Q+9gSb4
+         I+ThikJK5+iNOt3Wb+iR+PsOe73fIFxsj0NDHB6KdeUepmEUCRaG0CGmQ9g2xqrc3NWz
+         v254QnR8QkZliIV653coxqmPF62FBV4hF5Xj3zXToyxqjiy3HacBd8+UucjE+2rhNQn4
+         zLaA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yisheng Xie <xieyisheng1@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Trond Myklebust <trond.myklebust@primarydata.com>,
+	Anna Schumaker <Anna.Schumaker@Netapp.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 47/67] kmemleak: add scheduling point to kmemleak_scan()
-Date: Fri,  2 Feb 2018 17:58:16 +0100
-Message-Id: <20180202140820.602701736@linuxfoundation.org>
+Subject: [PATCH 4.4 46/67] SUNRPC: Allow connect to return EHOSTUNREACH
+Date: Fri,  2 Feb 2018 17:58:15 +0100
+Message-Id: <20180202140820.487727094@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309382786408029?=
-X-GMAIL-MSGID: =?utf-8?q?1591309382786408029?=
+X-GMAIL-THRID: =?utf-8?q?1591309379764684718?=
+X-GMAIL-MSGID: =?utf-8?q?1591309379764684718?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,50 +50,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yisheng Xie <xieyisheng1@huawei.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
 
-[ Upstream commit bde5f6bc68db51128f875a756e9082a6c6ff7b4c ]
+[ Upstream commit 4ba161a793d5f43757c35feff258d9f20a082940 ]
 
-kmemleak_scan() will scan struct page for each node and it can be really
-large and resulting in a soft lockup.  We have seen a soft lockup when
-do scan while compile kernel:
-
-  watchdog: BUG: soft lockup - CPU#53 stuck for 22s! [bash:10287]
- [...]
-  Call Trace:
-   kmemleak_scan+0x21a/0x4c0
-   kmemleak_write+0x312/0x350
-   full_proxy_write+0x5a/0xa0
-   __vfs_write+0x33/0x150
-   vfs_write+0xad/0x1a0
-   SyS_write+0x52/0xc0
-   do_syscall_64+0x61/0x1a0
-   entry_SYSCALL64_slow_path+0x25/0x25
-
-Fix this by adding cond_resched every MAX_SCAN_SIZE.
-
-Link: http://lkml.kernel.org/r/1511439788-20099-1-git-send-email-xieyisheng1@huawei.com
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Tested-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/kmemleak.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/sunrpc/xprtsock.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -1394,6 +1394,8 @@ static void kmemleak_scan(void)
- 			if (page_count(page) == 0)
- 				continue;
- 			scan_block(page, page + 1, NULL);
-+			if (!(pfn % (MAX_SCAN_SIZE / sizeof(*page))))
-+				cond_resched();
- 		}
- 	}
- 	put_online_mems();
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -2360,6 +2360,7 @@ static void xs_tcp_setup_socket(struct w
+ 	case -ECONNREFUSED:
+ 	case -ECONNRESET:
+ 	case -ENETUNREACH:
++	case -EHOSTUNREACH:
+ 	case -EADDRINUSE:
+ 	case -ENOBUFS:
+ 		/* retry with existing socket, after a delay */
