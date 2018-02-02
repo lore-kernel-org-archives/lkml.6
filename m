@@ -1,72 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751927AbeBBQWV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 11:22:21 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:50294 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751651AbeBBQVd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 11:21:33 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Nicolas Pitre <nico@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 6/7] Kbuild: lto: clean build artifacts
-Date: Fri,  2 Feb 2018 17:21:03 +0100
-Message-Id: <20180202162104.2300532-6-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180202161550.2106846-1-arnd@arndb.de>
-References: <20180202161550.2106846-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:Q1tpS3sWZ5LNeV0el4my5icWFnLMwoMc+8eoN7V3rt5qwXJuzQ8
- vtGU13j1C9xMJsLIEv7EsNn9CsyZ5lo0q/dSqI6FT9QppVG7WB1NajeZiF/dN97kNSEdMv2
- ANuasXrS4Poz+3emQBbyrmrRT85DQUrq92OWbzC+dMhLcD1UhfkKTBNK3XyyAIa13xVFDVE
- SN6aiXKdt/FN06bBO1p6g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:RWiW4QIXb4c=:1Q4uXSpidCYq2vVAjTNwZd
- 0k+FQ78LOWPtd92fMTBUMoF3pe6xPsYu23LUOt+u8ttFjYcWhjDtaJ1G6bxnv2wyCnQJW6hsv
- /sDahi74CGuj4Om9RoyKOb/vGL2f+k+LW1uTlp2banOv1lpPzjVJgIlmAO5Xa7oWvVgR3Hdd7
- S6tIyatXO7r05c5z2afhJRO0RWIqYCzPfInjhOS39GJtUexIYi4cJ51iEVl+QfD09niPAJOxb
- r3uLW3GbOoFSK3acLKy74H8WuFyCeBNRsHPof/dG3jnQzXf8YdO29sVMvzYQR/8c6j4rh35dA
- tClPoT7qJJcdxI5ouOgvYbQZ90gxnW4zhV0xV1IZJyUUepGIAjUmkC4c41dS1WbKIIVimq3fZ
- EFi4aJCqMYnFdMSootJTCR7rxAme2OPQamgSJ7yy+FvyWb5qsytymz9C5zSREouW2oxT6lP1t
- rxcP6Hv8D0EyhmyWVb8XxhIJiD92TF9Vg08Arv/Mfl26rxE5tbOfLCXzfLyn4KVeOyG5rfOw3
- XhoBkPlYZ8sQAhvu1SjTJA6xQMsGRT06PiDya71GpEBcE8KuWecOa8vJhy2oUpp3+wayKdtga
- xvOLvWWaREoEwzHh+SyIxDnV2boAyNGxi96t+wxl0ZqPn7c3XKSNFFXAAg+HCAEBoh0elG9OL
- rxToquRiW65cJpkng2jOedOHRAPW4MAT6Yp1J/AGttk/TkAfAsKALSkqD6Bifv9DUCLgtSyzP
- 5oSpGG2ulqM2svtyn8Ea/6ucGp3kvORvEJRxlA==
+        id S1752187AbeBBQXe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 11:23:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751711AbeBBQX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 11:23:26 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA5121724
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 2 Feb 2018 13:23:22 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: s390 unistd.h & perf
+Message-ID: <20180202162322.GF26905@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During test-building I filled up my disk with stale files
-that never got cleaned. This should make sure we remove them
-all.
+Hi Hendrik,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- scripts/link-vmlinux.sh | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+	I noticed, after fast forwarding my perf/urgent branch to
+torvalds/master, that this appears in my perf build:
 
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 964b2ee855dd..130df0781072 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -113,7 +113,7 @@ vmlinux_link()
- 				${1}"
- 		fi
- 
--		${LDFINAL} ${LDFLAGS} ${LDFLAGS_vmlinux} -o ${2}		\
-+		${LDFINAL} ${LDFLAGS} ${LDFLAGS_vmlinux} -o ${2}	\
- 			-T ${lds} ${objects}
- 	else
- 		if [ -n "${CONFIG_THIN_ARCHIVES}" ]; then
-@@ -195,6 +195,8 @@ cleanup()
- 	rm -f System.map
- 	rm -f vmlinux
- 	rm -f vmlinux.o
-+	rm -f cc*.ltrans*.o
-+	rm -f vmlinux.o.* vmlinux.ltrans* vmlinux.wpa*
- }
- 
- on_exit()
--- 
-2.9.0
+Warning: Kernel ABI header at 'tools/arch/s390/include/uapi/asm/unistd.h' differs from latest version at 'arch/s390/include/uapi/asm/unistd.h'
+
+	Looking at the log for that file I noticed this cset:
+
+4381f9f12e79 ("s390/syscalls: use generated syscall_table.h and unistd.h header files")
+
+	Can you please take a look how this affects the syscall table
+generation process in tools/perf and how can we proceed to silence that
+warning, i.e. to update the copy we have in tools/?
+
+Thanks,
+
+- Arnaldo
