@@ -1,88 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752016AbeBBOWF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:22:05 -0500
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:38831 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751469AbeBBOV5 (ORCPT
+        id S1751974AbeBBOXD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:23:03 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59754 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752260AbeBBOWb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:21:57 -0500
-Subject: Re: [PATCH v6 21/41] ARM: da850: add new clock init using common
- clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-22-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <73d2c30d-ee86-1269-dd4b-1ebfe88a3149@ti.com>
-Date: Fri, 2 Feb 2018 19:50:39 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-22-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 2 Feb 2018 09:22:31 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2C9776076A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        sboyd@codeaurora.org, rnayak@codeaurora.org, asathyak@codeaurora.org,
+        Lina Iyer <ilina@codeaurora.org>, devicetree@vger.kernel.org
+Subject: [PATCH RFC v2 2/3] dt-bindings/interrupt-controller: pdc: descibe PDC device binding
+Date: Fri,  2 Feb 2018 07:21:59 -0700
+Message-Id: <20180202142200.6229-3-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180202142200.6229-1-ilina@codeaurora.org>
+References: <20180202142200.6229-1-ilina@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
->  void __init da850_init_time(void)
->  {
-> +#ifdef CONFIG_COMMON_CLK
-> +	void __iomem *pll0, *pll1, *psc0, *psc1;
-> +	struct regmap *cfgchip;
-> +	struct clk *clk;
-> +	struct clk_hw *parent;
-> +
-> +	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
-> +	pll1 = ioremap(DA850_PLL1_BASE, SZ_4K);
-> +	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
-> +	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
-> +
-> +	cfgchip = da8xx_register_cfgchip();
-> +	if (WARN(IS_ERR(cfgchip), "failed to register CFGCHIP syscon"))
-> +		return;
-> +
-> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
-> +
-> +	da850_pll_clk_init(pll0, pll1);
-> +
-> +	da8xx_cfgchip_register_div4p5(cfgchip);
-> +
-> +	da8xx_cfgchip_register_async1(cfgchip);
-> +
-> +	clk = clk_register_fixed_factor(NULL, "async2", "pll0_auxclk", 0, 1, 1);
-> +	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-> +	clk_register_clkdev(clk, "timer0", NULL);
-> +	clk_register_clkdev(clk, NULL, "davinci-wdt");
+From: Archana Sathyakumar <asathyak@codeaurora.org>
 
-I think its better to get these clkdevs registered in
-da850_pll_clk_init() itself.
+Add device binding documentation for the PDC Interrupt controller on
+QCOM SoC's like the SDM845. The interrupt-controller can be used to
+sense edge low interrupts and wakeup interrupts when the GIC is
+non-operational.
 
-> +
-> +	clk = da8xx_cfgchip_register_async3(cfgchip);
-> +
-> +	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
-> +	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk), 1);
-> +	if (parent)
-> +		clk_set_parent(clk, parent->clk);
-> +	else
-> +		pr_warn("%s: Failed to find async3 parent clock\n", __func__);
-> +
-> +	da850_psc_clk_init(psc0, psc1);
-> +
-> +	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
-> +	clk_register_clkdev(clk, "rmii", NULL);
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+---
+ .../bindings/interrupt-controller/qcom,pdc.txt     | 78 ++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
 
-Like in da830, can drop this rmii clock, I think.
-
-Thanks,
-Sekhar
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+new file mode 100644
+index 000000000000..7bf40cb6a4f8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+@@ -0,0 +1,78 @@
++PDC interrupt controller
++
++Qualcomm Technologies Inc. SoCs based on the RPM Hardened architecture have a
++Power Domain Controller (PDC) that is on always-on domain. In addition to
++providing power control for the power domains, the hardware also has an
++interrupt controller that can be used to help detect edge low interrupts as
++well detect interrupts when the GIC is non-operational.
++
++GIC is parent interrupt controller at the highest level. Platform interrupt
++controller PDC is next in hierarchy, followed by others. Drivers requiring
++wakeup capabilities of their device interrupts routed through the PDC, must
++specify PDC as their interrupt controller and request the PDC port associated
++with the GIC interrupt. See example below.
++
++Properties:
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: Should contain "qcom,<soc>-pdc"
++		    - "qcom,sdm845-pdc": For SDM845
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: Specifies the base physical address for PDC hardware.
++
++- interrupt-cells:
++	Usage: required
++	Value type: <u32>
++	Definition: Specifies the number of cells needed to encode an interrupt
++		    source.
++		    The value must match that of the parent interrupt
++		    controller defined in the DT.
++		    The encoding of these cells are same as described in [1].
++
++- interrupt-parent:
++	Usage: required
++	Value type: <phandle>
++	Definition: Specifies the interrupt parent necessary for hierarchical
++		    domain to operate.
++
++- interrupt-controller:
++	Usage: required
++	Value type: <bool>
++	Definition: Identifies the node as an interrupt controller.
++
++- qcom,pdc-range:
++	Usage: required
++	Value type: <u32 array>
++	Definition: Specifies the PDC pin offset and the number of PDC ports.
++		    The tuples indicates the valid mapping of valid PDC ports
++		    and their hwirq mapping.
++		    The first element of the tuple is the staring PDC port num.
++		    The second element is the hwirq number for the PDC port.
++		    The third element is the number of elements in sequence.
++
++Example:
++
++	pdc: interrupt-controller@b220000 {
++		compatible = "qcom,sdm845-pdc";
++		reg = <0xb220000 0x30000>;
++		qcom,pdc-ranges = <0 512 94>, <94 641 15>, <115 662 7>;
++		#interrupt-cells = <3>;
++		interrupt-parent = <&intc>;
++		interrupt-controller;
++	};
++
++The DT binding of a device that wants to use the GIC SPI 514 as a wakeup
++interrupt, would look like this -
++
++	wake-device {
++		[...]
++		interrupt-parent = <&pdc>;
++		interrupt = <0 2 0>;
++	};
++
++[1]. Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
