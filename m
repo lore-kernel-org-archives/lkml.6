@@ -1,99 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752237AbeBBOyc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:54:32 -0500
-Received: from mga05.intel.com ([192.55.52.43]:35745 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751643AbeBBOy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:54:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,448,1511856000";
-   d="scan'208";a="28307141"
-Message-ID: <1517583264.18051.60.camel@linux.intel.com>
-Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
- candidate and the basis for SIS
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Fri, 02 Feb 2018 06:54:24 -0800
-In-Reply-To: <2447536.u3g27UoP4q@aspire.rjw.lan>
-References: <20180130104555.4125-1-mgorman@techsingularity.net>
-         <20180201091104.GW2269@hirez.programming.kicks-ass.net>
-         <1517491092.18051.52.camel@linux.intel.com>
-         <2447536.u3g27UoP4q@aspire.rjw.lan>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2 (3.18.5.2-1.fc23) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1752313AbeBBOyy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:54:54 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:52665 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752249AbeBBOyt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 09:54:49 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: x86@kernel.org
+Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 0/3] x86 bugfixes for LTO
+Date: Fri,  2 Feb 2018 15:54:28 +0100
+Message-Id: <20180202145434.100626-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:UPk4t5/qqaWPi69+X5ps5Mp7Rv0momQ3gBiVGTGa9CUyRk6/ETJ
+ qYlslsYHCbj3xAIw6VF+mEfg7x8PbbALS9KpbiSz0/Km4r68ug+9pNfOiM+5vtSMUVqr5y5
+ 51EaQifz5gOD5O1690WlWmCa09caUx/XPkh66UL+IG0C0r9xtAF1jCjgEY/bhbjDLgjqvgi
+ 7gdk/cZC+Dwd5LlsuYrfQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9KCHHH7zPf4=:wzsHu2s8prtKdAmxdmSgko
+ zKeQ/7dmVjFmRcTUsHS0E65+eaFgfPlFRJ/kLbAhyg/coErS5xgtN6VS98kIvhH+sCuAzfVR3
+ 0fWNcrg1iTEr4T3WsxkA4imTD77YbmtiDqdvgTQ1ItKaicjvJ+bt+q17kowPdlLkVw0Ld3A0o
+ w27ZXzlSCi/W2+JZb4jqGqj88MaGoadCeBfDO+tjrycip4IjG5mRc/xskdw4RlyDwSYoAtbKO
+ jcHdyo5j8mAppMT91GgoxE1amcfiAf6IIM19/TXYOL0elcs2dS8JI9QC5B9wQdFFxwLxR9jK+
+ 9xdKl9FChsSGsjpdTq6wOUOWHwBgxyAdYgBN0QuNT7tnuFKaINm4dvagktbLhAVw3Q2pfhL2n
+ E43es8xg79/4L2janB1HtnbDKQoqFkZkddg1+72bMw5iYd4BMSiTe2PBaQ4ZVdFDpiQHChrT5
+ SH9IEJGTpPR327KdTu/oW2Bh93swxTKBQZ7j97ZfDzFMtHQNqyc3WS2xFBUvIpuVkl+S8KOgm
+ 2JpO2CGgVqHLLTrx7ezpBtErkOFVbNV8AFExwcAd8j44PW6OKZYNoMZMnSOnMuBYRKKaQ7TZM
+ N4AvoD4DMkLnrylR1OSgWb14C5V5ylm67UgDWIaSD4xkO327dtKqoic85MIgmRhXTkiR1FX1r
+ QWNNc7ARzufLlKXoF4cZqW0PQagc41rJmJDbQA53JDhKfOVf9cQrgQbVzQ64l9Z/HouRg4zZJ
+ biFgot6A6Bf8fiSunnT7sfVCgMK8sSwPP3sTIg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-02 at 12:00 +0100, Rafael J. Wysocki wrote:
-> On Thursday, February 1, 2018 2:18:12 PM CET Srinivas Pandruvada
-> wrote:
-> > 
-> > On Thu, 2018-02-01 at 10:11 +0100, Peter Zijlstra wrote:
-> > > 
-> > > On Thu, Feb 01, 2018 at 08:50:28AM +0100, Rafael J. Wysocki
-> > > wrote:
-> > > > 
-> > > > 
-> > > > On Wednesday, January 31, 2018 11:17:10 AM CET Peter Zijlstra
-> > > > wrote:
-> > > > > 
-> > > > > 
-> > > > > On Wed, Jan 31, 2018 at 10:22:49AM +0100, Rafael J. Wysocki
-> > > > > wrote:
-> > > > > > 
-> > > > > > 
-> > > > > > On Tuesday, January 30, 2018 2:15:31 PM CET Peter Zijlstra
-> > > > > > wrote:
-> > > > > > 
-> > > > > > > 
-> > > > > > > 
-> > > > > > > IA32_HWP_REQUEST has "Minimum_Performance",
-> > > > > > > "Maximum_Performance" and
-> > > > > > > "Desired_Performance" fields which can be used to give
-> > > > > > > explicit
-> > > > > > > frequency hints. And we really _should_ be doing that.
-> > > > > > > 
-> > > > > > > Because, esp. in this scenario; a task migrating; the
-> > > > > > > hardware really
-> > > > > > > can't do anything sensible, whereas the OS _knows_.
-> > > > > > But IA32_HWP_REQUEST is not a cheap MSR to write to.
-> > > > > That just means we might need to throttle writing to it, like
-> > > > > it
-> > > > > already
-> > > > > does for the regular pstate (PERF_CTRL) msr in any case
-> > > > > (also, is
-> > > > > that a
-> > > > > cheap msr?)
-> > > > > 
-> > > > > Not touching it at all seems silly.
-> > > > OK
-> > > > 
-> > > > So what field precisely would you touch?  "desired"?  If so,
-> > > > does
-> > > > that actually
-> > > > guarantee anything to happen?
-> > > No idea, desired would be the one I would start with, it matches
-> > > with
-> > > the intent here. But I've no idea what our current HWP
-> > > implementation
-> > > actually does with it.
-> > Desired !=0 will disable HWP autonomous mode of frequency
-> > selection.
-> But I don't think it will just run at "desired" then, will it?
-HWP all are these hints only not a guarantee.
-There are totally different way HWP is handled in client an servers.
-If you set desired all heuristics they collected will be dumped, so
-they suggest don't set desired when you are in autonomous mode. If we
-really want a boost set the EPP. We know that EPP makes lots of
-measurable difference.
+Here are three bugfixes for x86 that I needed to get LTO-enabled
+kernels to build reliably. I'm not sure abouto that first one
+though.
+
+None of these are urgent, as they don't show up in mainline
+kernels and they don't indicate serious problems.
+
+Arnd Bergmann (3):
+  x86: dumpstack: avoid uninitialized variable
+  x86: fix swsusp_arch_resume prototype
+  x86: error_inject: make  just_return_func globally visible
+
+ arch/x86/kernel/dumpstack.c   | 2 +-
+ arch/x86/lib/error-inject.c   | 1 +
+ arch/x86/power/hibernate_32.c | 2 +-
+ arch/x86/power/hibernate_64.c | 2 +-
+ include/linux/suspend.h       | 2 ++
+ kernel/power/power.h          | 3 ---
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+-- 
+2.9.0
