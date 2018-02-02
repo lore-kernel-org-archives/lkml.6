@@ -1,76 +1,49 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591501-2-5178292561591601816
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591500; b=jNV2oO50mYSXQpuGvsAz6BfVitLq9PStYvxF/GatX9OdZ89
-    cjBzl/ZgEizZkzCweo9hmFKhNkkP2eZcmZha2fDNwrUtYEgeAJ1dYB1mBFQK9/fL
-    aa/eUBI0oTeCc62MmNJtR/vP7gm6Fv0QM07O6qbrCFR/egUt/RubBIJm3lSHQ9Je
-    dmQ7TQjSm8YklFoTRSUcBAPzkce1pirUDDGu13JFCBQA1i2NW1k2OK+pCATevw1f
-    0hn8pOcMMrMPZHDUe4VQApl1TUkfkdb9VxAclj8Z4uiew0YReOcbyD06ZjikKv8R
-    E8PhupWZ3fTO4+0qbhGl+j7OSjLK8jQtoWaO9hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591500; bh=dQS7uZqbbMwupFoLN9fkGwUAlW
-    XxdvVz4jWwxa1aN6c=; b=kMDT0Oxyg2FxMz1XNCLjHE+FZASa1cQEaf1hI0lQQB
-    JbXOFfo8ebqVCInRwbLCYDs4ncBQSuTSupTwT4naPN3b4rnGZAvVJKjpZaM7mqAv
-    7Tr5vNBDcD2R3ghbtoT/kOyUECSCzbiFWGm96M9vYkf+z0rKvC1lNrat2iuam8Xo
-    YjC5uvJjGmvfjeRJY2YkEPgmmN2kWbr+Sa64JEnAW2aicZJZ3DxdJ5B/g9bgp7gi
-    08DOpqLmRbIHaa0m/JwQRX8nIIkfO/cqKWO5MlDBfuYD0jEEKe7Kdjl5rCzM/T90
-    VzMTE1J/GXuoxQ+qkZuiryhVrkHntXg4Lzg05BnwhUag==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753147AbeBBRLg (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:11:36 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38670 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753031AbeBBRLc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:11:32 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224iOCUkJcNF8AbN4xjvAeGKar3t47xzziHebmGA/1S4GokK3+aJW/S8W1d1D6vD8Va2qYZR
+ARC-Seal: i=1; a=rsa-sha256; t=1517591499; cv=none;
+        d=google.com; s=arc-20160816;
+        b=pih6TTLbgVU0UjtSX5B3DW/THhQ4fXlL/EFr6Uzh3aVhmSAbXGUX1L54aJtyYACYxA
+         6v0NE8kGBtseD6A30U8QaDSP6PblBGEWhWfqXPKw0DuPcfIM8eRyaHRKe+LfZMKYS/sM
+         ymv3qBY00C+s1YmImO0+xeoPywa8j8qh4rhkJBWQrz/F8D0LVZBxSuQsEhT1QK+8RNuK
+         qdslN1vTxNkOX3SegRY+HYjSLZhGVG8SxHkBjVgGtFKYq0yJbw7/iZf1aPYxsJb7O73Q
+         mLjW5yoTOIKpafy58n301rsxMMrq3GktmjOMLsZ8x10pknqYCSXBKWuQdG0NV2irC9eT
+         lc5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=0S9KoW8ZRO5lJLxbYTnnb04W2idS3aHkJYzzU5NvMC0=;
+        b=EQQcxRC/TP7jNR5IDBPYgP6C4pr62jm5b0SgHpZQzvUs8nmh2KabsGWWH6A2XjNFwb
+         T+GtTL3QHSAfxLUm4VNxPLn6kleGGtNlfXpU1Viudx5N7O38poD5DtJsutyMJA8bTX+7
+         naNFi7/SS/ifn8DnXYqASt4ubNdtIxFvaARk5oq0qa6ybbgR0janF6KaySMjt9etZMyp
+         PkBnTkBEKRLf1Xjvq9lHBoBb+yHCoJZFntzAPBBRRFOJYAzkkCpnjQUeoC+b4QURl0op
+         7VI59+JdLma3FPmOn3MG0CPiGA8KzBaPV1+AQrdIFqlydLGnM8liwD8t46FhE5K/7jo8
+         gWZw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Minwoo Im <minwoo.im.dev@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 097/156] nvme-pci: fix NULL pointer dereference in nvme_free_host_mem()
-Date: Fri,  2 Feb 2018 17:57:58 +0100
-Message-Id: <20180202140844.607338782@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Josef Bacik <jbacik@fb.com>,
+	Omar Sandoval <osandov@fb.com>,
+	Liu Bo <bo.li.liu@oracle.com>,
+	David Sterba <dsterba@suse.com>,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 071/156] btrfs: fix deadlock when writing out space cache
+Date: Fri,  2 Feb 2018 17:57:32 +0100
+Message-Id: <20180202140843.498772658@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309342633146937?=
+X-GMAIL-MSGID: =?utf-8?q?1591310024348636472?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,35 +51,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Minwoo Im <minwoo.im.dev@gmail.com>
+From: Josef Bacik <jbacik@fb.com>
 
 
-[ Upstream commit 7e5dd57ef3081ff6c03908d786ed5087f6fbb7ae ]
+[ Upstream commit b77000ed558daa3bef0899d29bf171b8c9b5e6a8 ]
 
-Following condition which will cause NULL pointer dereference will
-occur in nvme_free_host_mem() when it tries to remove pci device via
-nvme_remove() especially after a failure of host memory allocation for HMB.
+If we fail to prepare our pages for whatever reason (out of memory in
+our case) we need to make sure to drop the block_group->data_rwsem,
+otherwise hilarity ensues.
 
-    "(host_mem_descs == NULL) && (nr_host_mem_descs != 0)"
+Signed-off-by: Josef Bacik <jbacik@fb.com>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+[ add label and use existing unlocking code ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 
-It's because __nr_host_mem_descs__ is not cleared to 0 unlike
-__host_mem_descs__ is so.
-
-Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/pci.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/free-space-cache.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1617,6 +1617,7 @@ static void nvme_free_host_mem(struct nv
- 			dev->nr_host_mem_descs * sizeof(*dev->host_mem_descs),
- 			dev->host_mem_descs, dev->host_mem_descs_dma);
- 	dev->host_mem_descs = NULL;
-+	dev->nr_host_mem_descs = 0;
- }
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@ -1264,7 +1264,7 @@ static int __btrfs_write_out_cache(struc
+ 	/* Lock all pages first so we can lock the extent safely. */
+ 	ret = io_ctl_prepare_pages(io_ctl, inode, 0);
+ 	if (ret)
+-		goto out;
++		goto out_unlock;
  
- static int __nvme_alloc_host_mem(struct nvme_dev *dev, u64 preferred,
+ 	lock_extent_bits(&BTRFS_I(inode)->io_tree, 0, i_size_read(inode) - 1,
+ 			 &cached_state);
+@@ -1358,6 +1358,7 @@ out_nospc_locked:
+ out_nospc:
+ 	cleanup_write_cache_enospc(inode, io_ctl, &cached_state);
+ 
++out_unlock:
+ 	if (block_group && (block_group->flags & BTRFS_BLOCK_GROUP_DATA))
+ 		up_write(&block_group->data_rwsem);
+ 
