@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2844860-1517590871-2-8861766658535015439
+X-Cyrus-Session-Id: sloti22d1t05-2848808-1517590869-2-17324185460014547218
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517590870; b=u0wo8VkWI+v9injhu977Lq+8e6Gfrgmy/mK9KnZ/vwOlJBH
-    sEakcErLocibFmG79wClw5t0sMQea1SVvS27cFrPXdVw4EGg83pm+VEgcw29xOix
-    k+KbgKXQkfm4d8ZdezCrw6GSYG5y5G+WyDYaCK7vhFTzmOS7IYr9zPrV/uLiwi/X
-    awoubhAHRjz3CHvhW0xC6CjWDUwwtCHvJyNGeXcTLGK66LjcP0K967VR9Vnx4CUj
-    5yoZOKPDsEvbavWTcF94ZVFmYwodAShOS8QeK2qfEhuViNaPFPtCXoF41NC4cUjc
-    SrhDGpMMhrCHGoFnzYY3jqMqhaIqe0Nl8o38gbQ==
+    t=1517590869; b=eKuZQrYGsQtsLcFUXI7DuRkYraXfJHn+LrBH8rbgNQ9y30Q
+    6RY6iBPe+OwtdpeBT18SxQHJdAM0Rw3H2vdMxetZERvqAeA0+k8TxGKUDf9bjJ5w
+    +FVlRy90T01r+9+V8bEriyQqOjtgF/9Zzd+mE9uoXJFg4qQYLQ7FG/pvsa3ppX8G
+    RDtyqkT6qgXhxkxjo/qu4Q8eLtcXPq6tXqeaBkyZkBw+d5Em/JuFiFGiSS/BF5Lc
+    GiiKh01P8ZT487RofhX/3xlfVNQQSGfrhLii5O6MuZzZjpsSLbwkVgRkzSGhEJsp
+    8EV2pUYHNvitKeCk9qiQrajHalU7klFnLCqGvPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517590870; bh=U/Wcbuhnv8UoAVWlSKmr/tiQN8
-    QPSljW/pkWlG8FGHc=; b=m/B90gB9Icl5XoxAYWWXD3dhpeP8B5rZL/ksIkh12S
-    ykswLJovE7WAk9Pu+Y2nRTba93273UoUEhPzV5Jk+gdWcQVmk1AvyDoGZc9M5zxM
-    DWqnAFLVbyLWsVYwQdtb8vrYeLTahYeQliFY19D8C3IhVCtEEk5TYSctL94bezBE
-    4xxGvke0GGtrk3Dz7Fa32nqK/aYKNwzxoiCws0Y3sEczeUK2jRFL641LwAcKsIdJ
-    /DYrOULzdCLWWz7am19NCUVpsE+jRzUDncQim46IRNmS8X3hggdE+LGJs2q89TGx
-    zs7UlpnnayFahzfyKEv+NUbYuQBL6wNDeaA28nOFWwHA==
+    :list-id; s=arctest; t=1517590869; bh=iZtnX9P6TKj6P58FOf7lCIXW1P
+    XpaNVTT649PN/W/TA=; b=uwTNvNwn5iAeSrGJDt99iH1Ma1Q+MJzyP/DTX1rxgJ
+    GR8WrH83g6CQhEZ1sPZO/URZEWKX+yTBuBgW1waowXJSSY3lKoS0rynofQYUroVt
+    8OxhoCG7gBb8y+zdGnB1k4y5SYhV9vDJtcxbca1I/U7MG/QXzMPMnwGsrlhHepeg
+    0m3sboRKIFnKnTIiYYA+ZA6oY8ZY6H5b82AHXVY6WScg+iiSC0n+DSzomd30wFwu
+    hDYHe01jr+obKyaaq2qJ0lBN5cy5FkeOA/IYWYNNPKhfcB2ID7FJciE12imgZwJh
+    7GXeIefWyJqCZSZ8wjNGUabD0sp5Ysf1IX1Duv7TU8dg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeBBRBI (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:01:08 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34946 "EHLO
+        id S1752665AbeBBRBH (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:01:07 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34964 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752648AbeBBRAy (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:00:54 -0500
+        with ESMTP id S1752656AbeBBRA5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:00:57 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eduardo Otubo <otubo@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 37/67] xen-netfront: remove warning when unloading module
-Date: Fri,  2 Feb 2018 17:58:06 +0100
-Message-Id: <20180202140819.696530973@linuxfoundation.org>
+Subject: [PATCH 4.4 38/67] nfsd: CLOSE SHOULD return the invalid special stateid for NFSv4.x (x>0)
+Date: Fri,  2 Feb 2018 17:58:07 +0100
+Message-Id: <20180202140819.796906482@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -79,85 +79,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eduardo Otubo <otubo@redhat.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
 
-[ Upstream commit 5b5971df3bc2775107ddad164018a8a8db633b81 ]
+[ Upstream commit fb500a7cfee7f2f447d2bbf30cb59629feab6ac1 ]
 
-v2:
- * Replace busy wait with wait_event()/wake_up_all()
- * Cannot garantee that at the time xennet_remove is called, the
-   xen_netback state will not be XenbusStateClosed, so added a
-   condition for that
- * There's a small chance for the xen_netback state is
-   XenbusStateUnknown by the time the xen_netfront switches to Closed,
-   so added a condition for that.
-
-When unloading module xen_netfront from guest, dmesg would output
-warning messages like below:
-
-  [  105.236836] xen:grant_table: WARNING: g.e. 0x903 still in use!
-  [  105.236839] deferring g.e. 0x903 (pfn 0x35805)
-
-This problem relies on netfront and netback being out of sync. By the time
-netfront revokes the g.e.'s netback didn't have enough time to free all of
-them, hence displaying the warnings on dmesg.
-
-The trick here is to make netfront to wait until netback frees all the g.e.'s
-and only then continue to cleanup for the module removal, and this is done by
-manipulating both device states.
-
-Signed-off-by: Eduardo Otubo <otubo@redhat.com>
-Acked-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/xen-netfront.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ fs/nfsd/nfs4state.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -86,6 +86,8 @@ struct netfront_cb {
- /* IRQ name is queue name with "-tx" or "-rx" appended */
- #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -63,6 +63,9 @@ static const stateid_t zero_stateid = {
+ static const stateid_t currentstateid = {
+ 	.si_generation = 1,
+ };
++static const stateid_t close_stateid = {
++	.si_generation = 0xffffffffU,
++};
  
-+static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
+ static u64 current_sessionid = 1;
+ 
+@@ -5243,6 +5246,11 @@ nfsd4_close(struct svc_rqst *rqstp, stru
+ 	nfsd4_close_open_stateid(stp);
+ 	mutex_unlock(&stp->st_mutex);
+ 
++	/* See RFC5661 sectionm 18.2.4 */
++	if (stp->st_stid.sc_client->cl_minorversion)
++		memcpy(&close->cl_stateid, &close_stateid,
++				sizeof(close->cl_stateid));
 +
- struct netfront_stats {
- 	u64			packets;
- 	u64			bytes;
-@@ -2037,10 +2039,12 @@ static void netback_changed(struct xenbu
- 		break;
- 
- 	case XenbusStateClosed:
-+		wake_up_all(&module_unload_q);
- 		if (dev->state == XenbusStateClosed)
- 			break;
- 		/* Missed the backend's CLOSING state -- fallthrough */
- 	case XenbusStateClosing:
-+		wake_up_all(&module_unload_q);
- 		xenbus_frontend_closed(dev);
- 		break;
- 	}
-@@ -2146,6 +2150,20 @@ static int xennet_remove(struct xenbus_d
- 
- 	dev_dbg(&dev->dev, "%s\n", dev->nodename);
- 
-+	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
-+		xenbus_switch_state(dev, XenbusStateClosing);
-+		wait_event(module_unload_q,
-+			   xenbus_read_driver_state(dev->otherend) ==
-+			   XenbusStateClosing);
-+
-+		xenbus_switch_state(dev, XenbusStateClosed);
-+		wait_event(module_unload_q,
-+			   xenbus_read_driver_state(dev->otherend) ==
-+			   XenbusStateClosed ||
-+			   xenbus_read_driver_state(dev->otherend) ==
-+			   XenbusStateUnknown);
-+	}
-+
- 	xennet_disconnect_backend(info);
- 
- 	unregister_netdev(info->netdev);
+ 	/* put reference from nfs4_preprocess_seqid_op */
+ 	nfs4_put_stid(&stp->st_stid);
+ out:
