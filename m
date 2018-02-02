@@ -1,65 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751829AbeBBAdg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 19:33:36 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58708 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751557AbeBBAd3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 19:33:29 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 715586079C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sboyd@codeaurora.org
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: qcom: smd-rpm: Migrate to devm_of_clk_add_hw_provider()
-Date: Thu,  1 Feb 2018 16:33:26 -0800
-Message-Id: <20180202003326.3571-1-sboyd@codeaurora.org>
-X-Mailer: git-send-email 2.15.0.374.g5f9953d2c365
+        id S1751585AbeBBAiJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 19:38:09 -0500
+Received: from mga12.intel.com ([192.55.52.136]:47286 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751530AbeBBAiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 19:38:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,445,1511856000";
+   d="scan'208";a="24078173"
+Subject: [PATCH] tools/testing/nvdimm: force nfit_test to depend on
+ instrumented modules
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org
+Date: Thu, 01 Feb 2018 16:28:56 -0800
+Message-ID: <151753133661.5914.4544112484376138963.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.17.1-9-g687f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/clk-smd-rpm.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+The libnvdimm unit tests will fail when they are run against the
+production / in-tree version of libnvdimm.ko or nfit.ko due to
+symbols not being mocked per nfit_test's expectation. For example,
+nfit_test expects acpi_evaluate_dsm() to be replaced by
+__wrap_acpi_evaluate_dsm() to test how acpi_nfit_ctl() responds to
+different stimuli.
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index c26d9007bfc4..850c02a52248 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -686,7 +686,7 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
- 			goto err;
- 	}
+Create a test-only symbol name that nfit_test links against to cause
+module load failures when the wrong module is present.
+
+For example, with this change, attempts to use the wrong module will
+report:
+
+    nfit_test: Unknown symbol libnvdimm_test (err 0)
+
+Reported-by: Dave Jiang <dave.jiang@intel.com>
+Reported-by: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ tools/testing/nvdimm/Kbuild            |    4 ++++
+ tools/testing/nvdimm/acpi_nfit_test.c  |    8 ++++++++
+ tools/testing/nvdimm/device_dax_test.c |    8 ++++++++
+ tools/testing/nvdimm/libnvdimm_test.c  |    8 ++++++++
+ tools/testing/nvdimm/pmem_test.c       |    8 ++++++++
+ tools/testing/nvdimm/test/nfit.c       |    6 ++++++
+ tools/testing/nvdimm/watermark.h       |   21 +++++++++++++++++++++
+ 7 files changed, 63 insertions(+)
+ create mode 100644 tools/testing/nvdimm/acpi_nfit_test.c
+ create mode 100644 tools/testing/nvdimm/device_dax_test.c
+ create mode 100644 tools/testing/nvdimm/libnvdimm_test.c
+ create mode 100644 tools/testing/nvdimm/pmem_test.c
+ create mode 100644 tools/testing/nvdimm/watermark.h
+
+diff --git a/tools/testing/nvdimm/Kbuild b/tools/testing/nvdimm/Kbuild
+index db33b28c5ef3..0392153a0009 100644
+--- a/tools/testing/nvdimm/Kbuild
++++ b/tools/testing/nvdimm/Kbuild
+@@ -37,10 +37,12 @@ obj-$(CONFIG_DEV_DAX_PMEM) += dax_pmem.o
  
--	ret = of_clk_add_hw_provider(pdev->dev.of_node, qcom_smdrpm_clk_hw_get,
-+	ret = devm_of_clk_add_hw_provider(&pdev->dev, qcom_smdrpm_clk_hw_get,
- 				     rcc);
- 	if (ret)
- 		goto err;
-@@ -697,19 +697,12 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
- 	return ret;
- }
+ nfit-y := $(ACPI_SRC)/core.o
+ nfit-$(CONFIG_X86_MCE) += $(ACPI_SRC)/mce.o
++nfit-y += acpi_nfit_test.o
+ nfit-y += config_check.o
  
--static int rpm_smd_clk_remove(struct platform_device *pdev)
--{
--	of_clk_del_provider(pdev->dev.of_node);
--	return 0;
--}
--
- static struct platform_driver rpm_smd_clk_driver = {
- 	.driver = {
- 		.name = "qcom-clk-smd-rpm",
- 		.of_match_table = rpm_smd_clk_match_table,
- 	},
- 	.probe = rpm_smd_clk_probe,
--	.remove = rpm_smd_clk_remove,
- };
+ nd_pmem-y := $(NVDIMM_SRC)/pmem.o
+ nd_pmem-y += pmem-dax.o
++nd_pmem-y += pmem_test.o
+ nd_pmem-y += config_check.o
  
- static int __init rpm_smd_clk_init(void)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+ nd_btt-y := $(NVDIMM_SRC)/btt.o
+@@ -57,6 +59,7 @@ dax-y += config_check.o
+ 
+ device_dax-y := $(DAX_SRC)/device.o
+ device_dax-y += dax-dev.o
++device_dax-y += device_dax_test.o
+ device_dax-y += config_check.o
+ 
+ dax_pmem-y := $(DAX_SRC)/pmem.o
+@@ -75,6 +78,7 @@ libnvdimm-$(CONFIG_ND_CLAIM) += $(NVDIMM_SRC)/claim.o
+ libnvdimm-$(CONFIG_BTT) += $(NVDIMM_SRC)/btt_devs.o
+ libnvdimm-$(CONFIG_NVDIMM_PFN) += $(NVDIMM_SRC)/pfn_devs.o
+ libnvdimm-$(CONFIG_NVDIMM_DAX) += $(NVDIMM_SRC)/dax_devs.o
++libnvdimm-y += libnvdimm_test.o
+ libnvdimm-y += config_check.o
+ 
+ obj-m += test/
+diff --git a/tools/testing/nvdimm/acpi_nfit_test.c b/tools/testing/nvdimm/acpi_nfit_test.c
+new file mode 100644
+index 000000000000..43521512e577
+--- /dev/null
++++ b/tools/testing/nvdimm/acpi_nfit_test.c
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright(c) 2018 Intel Corporation. All rights reserved.
++
++#include <linux/module.h>
++#include <linux/printk.h>
++#include "watermark.h"
++
++nfit_test_watermark(acpi_nfit);
+diff --git a/tools/testing/nvdimm/device_dax_test.c b/tools/testing/nvdimm/device_dax_test.c
+new file mode 100644
+index 000000000000..24b17bf42429
+--- /dev/null
++++ b/tools/testing/nvdimm/device_dax_test.c
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright(c) 2018 Intel Corporation. All rights reserved.
++
++#include <linux/module.h>
++#include <linux/printk.h>
++#include "watermark.h"
++
++nfit_test_watermark(device_dax);
+diff --git a/tools/testing/nvdimm/libnvdimm_test.c b/tools/testing/nvdimm/libnvdimm_test.c
+new file mode 100644
+index 000000000000..00ca30b23932
+--- /dev/null
++++ b/tools/testing/nvdimm/libnvdimm_test.c
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright(c) 2018 Intel Corporation. All rights reserved.
++
++#include <linux/module.h>
++#include <linux/printk.h>
++#include "watermark.h"
++
++nfit_test_watermark(libnvdimm);
+diff --git a/tools/testing/nvdimm/pmem_test.c b/tools/testing/nvdimm/pmem_test.c
+new file mode 100644
+index 000000000000..fd38f92275cf
+--- /dev/null
++++ b/tools/testing/nvdimm/pmem_test.c
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright(c) 2018 Intel Corporation. All rights reserved.
++
++#include <linux/module.h>
++#include <linux/printk.h>
++#include "watermark.h"
++
++nfit_test_watermark(pmem);
+diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
+index 2b57254342aa..77bd5d096333 100644
+--- a/tools/testing/nvdimm/test/nfit.c
++++ b/tools/testing/nvdimm/test/nfit.c
+@@ -27,6 +27,7 @@
+ #include <nfit.h>
+ #include <nd.h>
+ #include "nfit_test.h"
++#include "../watermark.h"
+ 
+ /*
+  * Generate an NFIT table to describe the following topology:
+@@ -2239,6 +2240,11 @@ static __init int nfit_test_init(void)
+ {
+ 	int rc, i;
+ 
++	pmem_test();
++	libnvdimm_test();
++	acpi_nfit_test();
++	device_dax_test();
++
+ 	nfit_test_setup(nfit_test_lookup, nfit_test_evaluate_dsm);
+ 
+ 	nfit_wq = create_singlethread_workqueue("nfit");
+diff --git a/tools/testing/nvdimm/watermark.h b/tools/testing/nvdimm/watermark.h
+new file mode 100644
+index 000000000000..ed0528757bd4
+--- /dev/null
++++ b/tools/testing/nvdimm/watermark.h
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright(c) 2018 Intel Corporation. All rights reserved.
++#ifndef _TEST_NVDIMM_WATERMARK_H_
++#define _TEST_NVDIMM_WATERMARK_H_
++int pmem_test(void);
++int libnvdimm_test(void);
++int acpi_nfit_test(void);
++int device_dax_test(void);
++
++/*
++ * dummy routine for nfit_test to validate it is linking to the properly
++ * mocked module and not the standard one from the base tree.
++ */
++#define nfit_test_watermark(x)				\
++int x##_test(void)					\
++{							\
++	pr_debug("%s for nfit_test\n", KBUILD_MODNAME);	\
++	return 0;					\
++}							\
++EXPORT_SYMBOL(x##_test)
++#endif /* _TEST_NVDIMM_WATERMARK_H_ */
