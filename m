@@ -1,129 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeBBXLA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 18:11:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60758 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751857AbeBBXKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 18:10:20 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B459A217C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180202231017.756258991@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Fri, 02 Feb 2018 18:05:03 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: [PATCH 05/18] tracing: Add hex print for dynamic ftrace based events
-References: <20180202230458.840252014@goodmis.org>
+        id S1752647AbeBBXLN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 18:11:13 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:17884 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751671AbeBBXKo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 18:10:44 -0500
+X-IronPort-AV: E=Sophos;i="5.46,451,1511827200";
+   d="scan'208";a="330369682"
+From: =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
+To: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        x86@kernel.org
+Cc: =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] x86: e820: Implement a range manipulation operator
+Date: Sat,  3 Feb 2018 00:10:20 +0100
+Message-Id: <20180202231020.15608-1-jschoenh@amazon.de>
+X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
+In-Reply-To: <d4741079-eeda-c063-795f-60f5f1036a25@amazon.de>
+References: <d4741079-eeda-c063-795f-60f5f1036a25@amazon.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0005-tracing-Add-hex-print-for-dynamic-ftrace-based-event.patch
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Add a more versatile memmap= operator, which -- in addition to all the
+things that were possible before -- allows you to:
+- redeclare existing ranges -- before, you were limited to adding ranges;
+- drop any range -- like a mem= for any location;
+- use any e820 memory type -- not just some predefined ones.
 
-Add x64, x32, x16 and x8 to represent numbers of the same size in hex.
-Similar to u64, u32, u16, and u8 but uses %x instead of %u.
+The syntax is:
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+  memmap=<size>%<offset>-<oldtype>+<newtype>
+
+Size and offset work as usual. The "-<oldtype>" and "+<newtype>" are
+optional and their existence determine the behavior: The command
+works on the specified range of memory limited to type <oldtype>
+(if specified). This memory is then configured to show up as <newtype>.
+If <newtype> is not specified, the memory is removed from the e820 map.
+
+Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
 ---
- Documentation/trace/function-based-events.rst | 14 +++++++++-----
- kernel/trace/trace_event_ftrace.c             | 13 ++++++++++++-
- 2 files changed, 21 insertions(+), 6 deletions(-)
+v2: Small coding style and typography adjustments
 
-diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
-index 94c2c975295a..f27a0c4e829c 100644
---- a/Documentation/trace/function-based-events.rst
-+++ b/Documentation/trace/function-based-events.rst
-@@ -97,6 +97,7 @@ as follows:
+ Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
+ arch/x86/kernel/e820.c                          | 18 ++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 46b26bfee27b..60926ae3ec06 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2221,6 +2221,15 @@
+ 			The memory region may be marked as e820 type 12 (0xc)
+ 			and is NVDIMM or ADR memory.
  
-  ATOM := 'u8' | 'u16' | 'u32' | 'u64' |
-          's8' | 's16' | 's32' | 's64' |
-+         'x8' | 'x16' | 'x32' | 'x64' |
-          'char' | 'short' | 'int' | 'long' | 'size_t'
- 
-  FIELD := <name>
-@@ -116,11 +117,14 @@ int ip_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt,
- 
- If we are only interested in the first argument (skb):
- 
-- # echo 'ip_rcv(u64 skb, u64 dev)' > function_events
-+ # echo 'ip_rcv(x64 skb, x86 dev)' > function_events
- 
-  # echo 1 > events/functions/ip_rcv/enable
-  # cat trace
--     <idle>-0     [003] ..s3  2119.041935: __netif_receive_skb_core->ip_rcv(skb=18446612136982403072, dev=18446612136968273920)
--     <idle>-0     [003] ..s3  2119.041944: __netif_receive_skb_core->ip_rcv(skb=18446612136982403072, dev=18446612136968273920)
--     <idle>-0     [003] ..s3  2119.288337: __netif_receive_skb_core->ip_rcv(skb=18446612136982403072, dev=18446612136968273920)
--     <idle>-0     [003] ..s3  2119.288960: __netif_receive_skb_core->ip_rcv(skb=18446612136982403072, dev=18446612136968273920)
-+     <idle>-0     [003] ..s3  5543.133460: __netif_receive_skb_core->ip_rcv(skb=ffff88007f960700, net=ffff880114250000)
-+     <idle>-0     [003] ..s3  5543.133475: __netif_receive_skb_core->ip_rcv(skb=ffff88007f960700, net=ffff880114250000)
-+     <idle>-0     [003] ..s3  5543.312592: __netif_receive_skb_core->ip_rcv(skb=ffff88007f960700, net=ffff880114250000)
-+     <idle>-0     [003] ..s3  5543.313150: __netif_receive_skb_core->ip_rcv(skb=ffff88007f960700, net=ffff880114250000)
++	memmap=<size>%<offset>-<oldtype>+<newtype>
++			[KNL,ACPI] Convert memory within the specified region
++			from <oldtype> to <newtype>. If "-<oldtype>" is left
++			out, the whole region will be marked as <newtype>,
++			even if previously unavailable. If "+<newtype>" is left
++			out, matching memory will be removed. Types are
++			specified as e820 types, e.g., 1 = RAM, 2 = reserved,
++			3 = ACPI, 12 = PRAM.
 +
-+We use "x64" in order to make sure that the data is displayed in hex.
-+This is on a x86_64 machine, and we know the pointer sizes are 8 bytes.
-diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
-index 66465be1e6d5..aa19c8af9d34 100644
---- a/kernel/trace/trace_event_ftrace.c
-+++ b/kernel/trace/trace_event_ftrace.c
-@@ -62,6 +62,11 @@ enum func_states {
- 	FUNC_STATE_ERROR,
- };
- 
-+typedef u64 x64;
-+typedef u32 x32;
-+typedef u16 x16;
-+typedef u8 x8;
+ 	memory_corruption_check=0/1 [X86]
+ 			Some BIOSes seem to corrupt the first 64k of
+ 			memory when doing things like suspend/resume.
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 71c11ad5643e..6a2cb1442e05 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -924,6 +924,24 @@ static int __init parse_memmap_one(char *p)
+ 	} else if (*p == '!') {
+ 		start_at = memparse(p+1, &p);
+ 		e820__range_add(start_at, mem_size, E820_TYPE_PRAM);
++	} else if (*p == '%') {
++		enum e820_type from = 0, to = 0;
 +
- #define TYPE_TUPLE(type)			\
- 	{ #type, sizeof(type), is_signed_type(type) }
- 
-@@ -77,12 +82,16 @@ static struct func_type {
- 	TYPE_TUPLE(size_t),
- 	TYPE_TUPLE(u64),
- 	TYPE_TUPLE(s64),
-+	TYPE_TUPLE(x64),
- 	TYPE_TUPLE(u32),
- 	TYPE_TUPLE(s32),
-+	TYPE_TUPLE(x32),
- 	TYPE_TUPLE(u16),
- 	TYPE_TUPLE(s16),
-+	TYPE_TUPLE(x16),
- 	TYPE_TUPLE(u8),
- 	TYPE_TUPLE(s8),
-+	TYPE_TUPLE(x8),
- 	{ NULL,		0,	0 }
- };
- 
-@@ -353,7 +362,9 @@ static void make_fmt(struct func_arg *arg, char *fmt)
- 		fmt[c++] = 'l';
++		start_at = memparse(p + 1, &p);
++		if (*p == '-')
++			from = simple_strtoull(p + 1, &p, 0);
++		if (*p == '+')
++			to = simple_strtoull(p + 1, &p, 0);
++		if (*p != '\0')
++			return -EINVAL;
++		if (from && to)
++			e820__range_update(start_at, mem_size, from, to);
++		else if (to)
++			e820__range_add(start_at, mem_size, to);
++		else if (from)
++			e820__range_remove(start_at, mem_size, from, 1);
++		else
++			e820__range_remove(start_at, mem_size, 0, 0);
+ 	} else {
+ 		e820__range_remove(mem_size, ULLONG_MAX - mem_size, E820_TYPE_RAM, 1);
  	}
- 
--	if (arg->sign)
-+	if (arg->type[0] == 'x')
-+		fmt[c++] = 'x';
-+	else if (arg->sign)
- 		fmt[c++] = 'd';
- 	else
- 		fmt[c++] = 'u';
 -- 
-2.15.1
+2.9.3.1.gcba166c.dirty
