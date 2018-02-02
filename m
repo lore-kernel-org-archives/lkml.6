@@ -1,75 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2951739-1517591774-2-2138806321070569988
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591773; b=QFY+gNMi0vWZwQI9ksCostEpRCnnvasoVTMJlU8UHEFp18a
-    kkhDdpDaJOz3buU2xYxxidB2vieJe1FAdWqCZSm2f4OcyCX7cSCsvMtSGhCleqOV
-    JR53spso7ilYIGTuSIxHO9n+QmgTKgv7oetupDLM7y8bw1v3FS5LZRcnsR64vKq0
-    vXTsTd11qv40PVrSq7RYEY1uK7hpIeWM5X5yaRN7Qkkq7PPt+9aS+OhpOxaEKWD1
-    WXylRGElLLFC5Ol33yPrUNQ5+IEoPfwnNKMVDr9h9WgC+qHRd7sDgMumrAMJKMb4
-    w+fskzIuVhRx8mbBy4Ni87qChTeUdpRnr+Y7W+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591773; bh=j/hHnxKuAecMTmUtV91uyMUpn8
-    1MrmFWHne3N3xfVKE=; b=XRi8KvD2PoYHJle8OYz9BEZJRgEyVe4CpOf5qUwaF6
-    BcFKAmG1HGe7gt8/Vz8IC5ZMxisTsxdV9fWDMgFGPrC97eHLHOG7WlluiI1CvS0Z
-    JciY8MgeTNvpkNWom3ieTixoLPR+bTGtr7TOi2+tjVfMEwYkAnrHR9Sq5BrpViXv
-    ivqfDPcMb0A1W2RefsZc+oO/+LX/4pNSxfuuZeMBx9y6vq7YyYMpkR00B1LdwFhK
-    xrHTFpAacAUDHRxfvz6G5sVT/u4Kj4uTQkKxpVBKhSaPdRRKPMwNjIorDAxSgRsb
-    AYkRglF9h/sNch8IABHVLyWEmEhd9mP+6EEf6sJtaANQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753385AbeBBRQL (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:16:11 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40924 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753393AbeBBRQH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:16:07 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227GDHq/k558QWXEYYzN0OC7sy7VT49FrEx7uPVuoAbstYL2+7gc/YgkiKhzVuAkJiZ3Yu9F
+ARC-Seal: i=1; a=rsa-sha256; t=1517591773; cv=none;
+        d=google.com; s=arc-20160816;
+        b=OlVX3dNE8KqCpg0htamffMgS8r3B+KwbphUF+k2IM08OsMsXka2FiqYbK+HoBosoP4
+         1AS0NktC4wuV91O8iVUBUaO9gUCN4UTCDyXXsqmiDMqrP4Zd/fb6IbTNYI4O8n7ELy97
+         ElvnkTsI9TeaokKudKoyEOXH5Vx4fFOEV6BMFoY2vKsrVIWoQl4xTPpBJrJkzntr98Gy
+         PLroVjrlhmIuRO+eChyDy6uTI1MvSTjQvLSqp2SV5M4E76Fe6MPQ8nvGAxiEK8ZYG3sN
+         MXdWcbviygEk/jK2pvUmMlndmXklx8QPS0ryftAGlMHY6caaB1GVY4xmd4ci2XN2+xBu
+         mVRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/3rVBo2hp4npXTBkNHOM8o6ziOrLThTJA0xG0p10lW0=;
+        b=GkBOoteHDdH/QC2IMrUVnYkWcw6PufA3jUn5Zdj2sgjypIHeVWeHwyJMa5V0joxJo/
+         Xc5CS/XHT/MEpgUebFad6cdElstXKErRTW7Kyi6mu/TKgDX14yTGxO/4SrwfXTwXzmM3
+         Wm82nR3KhflOQ6zz2cZbiaQ81Lu+9AXs+JCcjrmYxp3zFRd2YlvRxsfHsp/zLf1Cp2Xk
+         IpjFJHEi+fj2b4u/JpgzNaNhJGfp4hYNB9lzuBk4ywhYNShHyQKa1eKjKh3gv3RgOdoC
+         gXmD3hwsBOrFLRoLXeYb2LEbqnNQvRV1yOkrjbR9qnmfpmXR8USl1WJ0cJ9v2rHrGMn/
+         7dxg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.15 19/55] gpio: iop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Fri,  2 Feb 2018 17:58:37 +0100
-Message-Id: <20180202140828.166230357@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Max Schulze <max.schulze@posteo.de>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.15 38/55] USB: serial: simple: add Motorola Tetra driver
+Date: Fri,  2 Feb 2018 17:58:56 +0100
+Message-Id: <20180202140829.916706581@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309449263095125?=
+X-GMAIL-MSGID: =?utf-8?q?1591310311683118454?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,35 +48,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 97b03136e1b637d7a9d2274c099e44ecf23f1103 upstream.
+commit 46fe895e22ab3845515ec06b01eaf1282b342e29 upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+Add new Motorola Tetra (simple) driver for Motorola Solutions TETRA PEI
+devices.
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-iop.o
-see include/linux/module.h for more information
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=0cad ProdID=9011 Rev=24.16
+S:  Manufacturer=Motorola Solutions Inc.
+S:  Product=Motorola Solutions TETRA PEI interface
+C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
+I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
 
-This adds the license as "GPL", which matches the header of the file.
+Note that these devices do not support the CDC SET_CONTROL_LINE_STATE
+request (for any interface).
 
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
-
-Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reported-by: Max Schulze <max.schulze@posteo.de>
+Tested-by: Max Schulze <max.schulze@posteo.de>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpio-iop.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/serial/Kconfig             |    1 +
+ drivers/usb/serial/usb-serial-simple.c |    7 +++++++
+ 2 files changed, 8 insertions(+)
 
---- a/drivers/gpio/gpio-iop.c
-+++ b/drivers/gpio/gpio-iop.c
-@@ -58,3 +58,7 @@ static int __init iop3xx_gpio_init(void)
- 	return platform_driver_register(&iop3xx_gpio_driver);
- }
- arch_initcall(iop3xx_gpio_init);
+--- a/drivers/usb/serial/Kconfig
++++ b/drivers/usb/serial/Kconfig
+@@ -63,6 +63,7 @@ config USB_SERIAL_SIMPLE
+ 		- Google USB serial devices
+ 		- HP4x calculators
+ 		- a number of Motorola phones
++		- Motorola Tetra devices
+ 		- Novatel Wireless GPS receivers
+ 		- Siemens USB/MPI adapter.
+ 		- ViVOtech ViVOpay USB device.
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -77,6 +77,11 @@ DEVICE(vivopay, VIVOPAY_IDS);
+ 	{ USB_DEVICE(0x22b8, 0x2c64) }	/* Motorola V950 phone */
+ DEVICE(moto_modem, MOTO_IDS);
+ 
++/* Motorola Tetra driver */
++#define MOTOROLA_TETRA_IDS()			\
++	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
++DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
 +
-+MODULE_DESCRIPTION("GPIO handling for Intel IOP3xx processors");
-+MODULE_AUTHOR("Lennert Buytenhek <buytenh@wantstofly.org>");
-+MODULE_LICENSE("GPL");
+ /* Novatel Wireless GPS driver */
+ #define NOVATEL_IDS()			\
+ 	{ USB_DEVICE(0x09d7, 0x0100) }	/* NovAtel FlexPack GPS */
+@@ -107,6 +112,7 @@ static struct usb_serial_driver * const
+ 	&google_device,
+ 	&vivopay_device,
+ 	&moto_modem_device,
++	&motorola_tetra_device,
+ 	&novatel_gps_device,
+ 	&hp4x_device,
+ 	&suunto_device,
+@@ -122,6 +128,7 @@ static const struct usb_device_id id_tab
+ 	GOOGLE_IDS(),
+ 	VIVOPAY_IDS(),
+ 	MOTO_IDS(),
++	MOTOROLA_TETRA_IDS(),
+ 	NOVATEL_IDS(),
+ 	HP4X_IDS(),
+ 	SUUNTO_IDS(),
