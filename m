@@ -1,45 +1,75 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227zNaRGNNah64q5Q1WLJp9fktPc9+vqLRkhfIMIHjVXljqdId/SO/Y8KsypVa8ECDdO9ugX
-ARC-Seal: i=1; a=rsa-sha256; t=1517591173; cv=none;
-        d=google.com; s=arc-20160816;
-        b=u8LnMm97Xsgr8keKh9x2IeeH9r4rFgUl1zMP5U45Eg2ktATcaP84zocDmsSOS9tLrk
-         zK3D9kImMt9/UIVx4WnWPNKZmCWlX2iFyAok/IwGKUA8zK+w16wKwRxco2V6y9F4kD6a
-         hdk1zM5coZ7sc0IT7j95GLMcWDYAg0UNPXknLv1tK/Bv18tTe2YIqQ/X1vGq9yihxmAS
-         /xXj/WDQ2JP5QcaPTh5xce/alh8cM9piCS5DCIYp6SL7NT7g7NqLsKwJ3LL4uDf2zaTc
-         +sRoTY1jiJla1rHa1djZ8MJblayc6H0tkkkZ/P0tsY5ByZVKJsp/54rmxV84I4Xp7Eky
-         IrDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=IKyKgLLLSt0aRgRJFGhpNy969DkZnX+oqkC9Vpcgr2Y=;
-        b=MOF7Wigco9z81v13JG+Q50P/U7k3TcfqXQvd5bHC0C091/qXloqayN9dolGbGHeM7H
-         drm6kkASnYk6V1PoQX7n2FOsuZiCGrD+XXkc0fNpalfpEIYpd/Dmybi6aQK2Hrbw9/qv
-         eBrF/By09fcs+eDbZVlBCY2owarLDMYEhJtB5l5KPOskSSm7SDB9+WTkjze5fyyoL4/+
-         BYGPVaE68dOU7G/6Q5jkh1NXlaTS+3t+PfTe52oayH3VNsw30xCHF0x/GE+lmJJ55MdS
-         V60Tki141SKXuXQBiNxGiBKu5AErcIIgg7BgQDPiuf9I9typNjPh6iG1FvcpJ+jutfsQ
-         OdxA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591168-3-5838996125486291435
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591168; b=GB53ljV/k2xfatI77p7cHnMB1ewBsalCAamgmkDba2uwetK
+    3hJArLONZFyB7GKp0a+CyjYAyGb0E46YeQbn4JKzQfa+DE13taPrnndNjJraS2mR
+    mNNfjxGJfXHqSCvFBpzdamIYPf9kg6JAVAhqPbx4OuU8ZU5V3FklCbRmAbTZkWty
+    lvFMMAFO5TB4ZtRWS138vnzGENsnEsOUSiz5Nvzt0d0DX0iVvsy/teMhegnwhmTL
+    q8O/Q48pYe2aNJm5HxVLJJ5x6vPjixDeCQL2E3r8tId9r0CSnjmsY+Cd7Gm3luBW
+    UQXXQ4N6jN+qIoc1rQNyo7EWrmlfZYBGY4eDWJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591168; bh=gXbTSgM9i01TGn4VNRWbSvCcRQ
+    gTYC2AYil/nCQUkI8=; b=TQioKkPV+rh6hTYPFb/bI8MXTv2G5NUAK/7vHz0LDn
+    dyKnhr/QJMskI9Y2pOol46F9gw6c5ReLBa7GJCk86nn+ZUfkLYT9nLwTxsNGJoNc
+    UCXiAB+76Y9TicGLH2Yh598DPrGJpF0LB8bkDxgp1xg2ryeiAg6WE8wuo8NfxGkE
+    5MkJPHcSgzlxm+eQzhPAQ9hB7LIvD0RFl0W3BYT84dUJaDsBK0NvC8dpcLRTXRqK
+    uUqz7+2rDEL84qP4uCr3X17jDKWeGVrT2EL+lqabacpYb1YTMRWP5CCWjNo5nO06
+    aZbj9xxuh9S/3msiOd9tvMhkK/tVntszhLaT10yw/tEQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753040AbeBBRGD (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:06:03 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36634 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752537AbeBBRFw (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:05:52 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.9 76/86] CDC-ACM: apply quirk for card reader
-Date: Fri,  2 Feb 2018 17:58:36 +0100
-Message-Id: <20180202140829.643208478@linuxfoundation.org>
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 69/86] staging: rtl8188eu: Fix incorrect response to SIOCGIWESSID
+Date: Fri,  2 Feb 2018 17:58:29 +0100
+Message-Id: <20180202140829.065497605@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309418514762445?=
-X-GMAIL-MSGID: =?utf-8?q?1591309682511151874?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -47,29 +77,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit df1cc78a52491f71d8170d513d0f6f114faa1bda upstream.
 
-This devices drops random bytes from messages if you talk to it
-too fast.
+[ Upstream commit b77992d2df9e47144354d1b25328b180afa33442 ]
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
+When not associated with an AP, wifi device drivers should respond to the
+SIOCGIWESSID ioctl with a zero-length string for the SSID, which is the
+behavior expected by dhcpcd.
+
+Currently, this driver returns an error code (-1) from the ioctl call,
+which causes dhcpcd to assume that the device is not a wireless interface
+and therefore it fails to work correctly with it thereafter.
+
+This problem was reported and tested at
+https://github.com/lwfinger/rtl8188eu/issues/234.
+
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/class/cdc-acm.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1706,6 +1706,9 @@ static const struct usb_device_id acm_id
- 	{ USB_DEVICE(0x0ace, 0x1611), /* ZyDAS 56K USB MODEM - new version */
- 	.driver_info = SINGLE_RX_URB, /* firmware bug */
- 	},
-+	{ USB_DEVICE(0x11ca, 0x0201), /* VeriFone Mx870 Gadget Serial */
-+	.driver_info = SINGLE_RX_URB,
-+	},
- 	{ USB_DEVICE(0x22b8, 0x7000), /* Motorola Q Phone */
- 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
- 	},
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -1397,19 +1397,13 @@ static int rtw_wx_get_essid(struct net_d
+ 	if ((check_fwstate(pmlmepriv, _FW_LINKED)) ||
+ 	    (check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE))) {
+ 		len = pcur_bss->Ssid.SsidLength;
+-
+-		wrqu->essid.length = len;
+-
+ 		memcpy(extra, pcur_bss->Ssid.Ssid, len);
+-
+-		wrqu->essid.flags = 1;
+ 	} else {
+-		ret = -1;
+-		goto exit;
++		len = 0;
++		*extra = 0;
+ 	}
+-
+-exit:
+-
++	wrqu->essid.length = len;
++	wrqu->essid.flags = 1;
+ 
+ 	return ret;
+ }
