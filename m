@@ -1,78 +1,48 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591115-2-5206234772246112452
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591114; b=hznxinvmLh2TLlHijTJlveJRdNPFVqItiWly+lP1ouxmC3Y
-    1y3o9/OlZq9fTb4lHcpcjNg5vUYYAELx1SWHghGDdO+ItOa0gvHGjl0EoZONLvIb
-    jmhTUcO7x1zYGzpjUWXtQGJWvLIJfxA19up3rvuVA4YXhdKoUBThsedJ9Pj5eGli
-    NRqs29N2697mYqEVBpKzYZ8GC43NNcC9QD4V1kBN8IYP3En8b68jKbnjf8Qjhxti
-    q4AKemIY10MaWt3o+9YnRxmBzHeC3ZsSvF2btD8KAvNSVOV2T6ktDF0X0YRpaI79
-    7AVU/MtvtHRjlu1suHFfA1OS7uypv/2w1IOXebA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591114; bh=ox/0qN+SaIQn2GSLb/drz22oIF
-    PoiZtBlW1g6R67DbM=; b=a10bebxtpol7M70qfpVr7O4DA0qr9IdZzpz/VyvQ97
-    COQSbiYVisPLhUqMIQgOfO9kFpJhKSH4cjDH+o+2rXBJjesKTGAstgDwwx/yOMNo
-    ktrEz+HZt3owEP0nv5ztEX0Fh+WA8EmgUmJsGGUYViQwl/2Yl+WUkyRz/LBJ0aEj
-    5lSCn077UbRA7ACeao3A0i7S4eVwmowF6KJn9Q+/LBpMECf9gk4bDG0bmgqDDE11
-    PgPIoqMR9kTvoDR8xrC8tPCP0R3t3yvu1LryTckDzoleo1dZD4KZDMQdvfhfpJMg
-    BTAXFP+x2vLcgvlHHpk6g0Ax3XCdtIXvN+cbOnQi0/sw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752971AbeBBRFL (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:05:11 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36318 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752646AbeBBREw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:04:52 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226UOemZGlgomEzIWJLAIc+qPtCWbvrkdKU3CZK4R+BcG8vJIMDXmU6ubGdUl4nhDpDxtu0t
+ARC-Seal: i=1; a=rsa-sha256; t=1517591113; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Ch2zZkPTu/N/MdJ/K7gi8ss7YWprY15gObcxF73PaY62wuXYxz0zHSCZMAKUdrcvOK
+         A2aNMvy+uFDkv+5tVX7E288XfmMBkWi9YQw13QM0kZ+2M216LOVGJ9BmzOJyZMhU5pzD
+         PepDYi0UUPNd+VETYRZ1DfCdRtIVpmxXV04aChMmni4NQgIqaA1K4RaVLI06hVA+DOc0
+         OSEJZNTw4L54T/iEtzplRNQdmTLiUultjNIyzkBCRx7OBbxjFwON6DQbn1gG2vvub9cB
+         bALBjVxm4vJGRLgOSU6V8l11bbKRPcqGxawnJSxXqTNsGUMviDX1x5IFtoRP0rCe5nst
+         VbzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=4CYpM7sbEFnkgSC2DtoX6dFzB7SSHlHhaE7kwWtXNFU=;
+        b=06p2InHqVNZAE9z2K0WpklEw8jfmpeLvbkWZiLl5F4uWuBCrLKwEKjTZ5G090ZYqPD
+         cOdenVAXmpvZhR0HJsLj3Nkw3lLWgFyn7w3GXiLG5n2NGm3vFjxIOPJnGZv1IYe+oLJ0
+         NwQLVw1FHjdQRQ04RbwdbiHWtDMtyxa2k4BkemF5sUmDBhlwTyv06NsF+GkLu3AKBlLq
+         Ut0fGM0fS1Pns/IWjJl6hv7/U5UC8fsqLxVUU8P5A6ap1WrfdmSTFI7ShYb83OPYYhAF
+         HP9IXKEZrY6brk7XUDAhJph2qxC4JAssNNfr/FTIaqyiRNvDMXZBT3QvZy86McRJbBWG
+         SFsg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Todd Fujinaka <todd.fujinaka@intel.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: [PATCH 4.9 16/86] igb: Free IRQs when device is hotplugged
-Date: Fri,  2 Feb 2018 17:57:36 +0100
-Message-Id: <20180202140824.346496985@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+	Andrzej Hajda <a.hajda@samsung.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 57/86] drm/bridge: tc358767: fix timing calculations
+Date: Fri,  2 Feb 2018 17:58:17 +0100
+Message-Id: <20180202140827.692232619@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309619504798871?=
+X-GMAIL-MSGID: =?utf-8?q?1591309619504798871?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,88 +50,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
 
-commit 888f22931478a05bc81ceb7295c626e1292bf0ed upstream.
 
-Recently I got a Caldigit TS3 Thunderbolt 3 dock, and noticed that upon
-hotplugging my kernel would immediately crash due to igb:
+[ Upstream commit 66d1c3b94d5d59e4325e61a78d520f92c043d645 ]
 
-[  680.825801] kernel BUG at drivers/pci/msi.c:352!
-[  680.828388] invalid opcode: 0000 [#1] SMP
-[  680.829194] Modules linked in: igb(O) thunderbolt i2c_algo_bit joydev vfat fat btusb btrtl btbcm btintel bluetooth ecdh_generic hp_wmi sparse_keymap rfkill wmi_bmof iTCO_wdt intel_rapl x86_pkg_temp_thermal coretemp crc32_pclmul snd_pcm rtsx_pci_ms mei_me snd_timer memstick snd pcspkr mei soundcore i2c_i801 tpm_tis psmouse shpchp wmi tpm_tis_core tpm video hp_wireless acpi_pad rtsx_pci_sdmmc mmc_core crc32c_intel serio_raw rtsx_pci mfd_core xhci_pci xhci_hcd i2c_hid i2c_core [last unloaded: igb]
-[  680.831085] CPU: 1 PID: 78 Comm: kworker/u16:1 Tainted: G           O     4.15.0-rc3Lyude-Test+ #6
-[  680.831596] Hardware name: HP HP ZBook Studio G4/826B, BIOS P71 Ver. 01.03 06/09/2017
-[  680.832168] Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-[  680.832687] RIP: 0010:free_msi_irqs+0x180/0x1b0
-[  680.833271] RSP: 0018:ffffc9000030fbf0 EFLAGS: 00010286
-[  680.833761] RAX: ffff8803405f9c00 RBX: ffff88033e3d2e40 RCX: 000000000000002c
-[  680.834278] RDX: 0000000000000000 RSI: 00000000000000ac RDI: ffff880340be2178
-[  680.834832] RBP: 0000000000000000 R08: ffff880340be1ff0 R09: ffff8803405f9c00
-[  680.835342] R10: 0000000000000000 R11: 0000000000000040 R12: ffff88033d63a298
-[  680.835822] R13: ffff88033d63a000 R14: 0000000000000060 R15: ffff880341959000
-[  680.836332] FS:  0000000000000000(0000) GS:ffff88034f440000(0000) knlGS:0000000000000000
-[  680.836817] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  680.837360] CR2: 000055e64044afdf CR3: 0000000001c09002 CR4: 00000000003606e0
-[  680.837954] Call Trace:
-[  680.838853]  pci_disable_msix+0xce/0xf0
-[  680.839616]  igb_reset_interrupt_capability+0x5d/0x60 [igb]
-[  680.840278]  igb_remove+0x9d/0x110 [igb]
-[  680.840764]  pci_device_remove+0x36/0xb0
-[  680.841279]  device_release_driver_internal+0x157/0x220
-[  680.841739]  pci_stop_bus_device+0x7d/0xa0
-[  680.842255]  pci_stop_bus_device+0x2b/0xa0
-[  680.842722]  pci_stop_bus_device+0x3d/0xa0
-[  680.843189]  pci_stop_and_remove_bus_device+0xe/0x20
-[  680.843627]  trim_stale_devices+0xf3/0x140
-[  680.844086]  trim_stale_devices+0x94/0x140
-[  680.844532]  trim_stale_devices+0xa6/0x140
-[  680.845031]  ? get_slot_status+0x90/0xc0
-[  680.845536]  acpiphp_check_bridge.part.5+0xfe/0x140
-[  680.846021]  acpiphp_hotplug_notify+0x175/0x200
-[  680.846581]  ? free_bridge+0x100/0x100
-[  680.847113]  acpi_device_hotplug+0x8a/0x490
-[  680.847535]  acpi_hotplug_work_fn+0x1a/0x30
-[  680.848076]  process_one_work+0x182/0x3a0
-[  680.848543]  worker_thread+0x2e/0x380
-[  680.848963]  ? process_one_work+0x3a0/0x3a0
-[  680.849373]  kthread+0x111/0x130
-[  680.849776]  ? kthread_create_worker_on_cpu+0x50/0x50
-[  680.850188]  ret_from_fork+0x1f/0x30
-[  680.850601] Code: 43 14 85 c0 0f 84 d5 fe ff ff 31 ed eb 0f 83 c5 01 39 6b 14 0f 86 c5 fe ff ff 8b 7b 10 01 ef e8 b7 e4 d2 ff 48 83 78 70 00 74 e3 <0f> 0b 49 8d b5 a0 00 00 00 e8 62 6f d3 ff e9 c7 fe ff ff 48 8b
-[  680.851497] RIP: free_msi_irqs+0x180/0x1b0 RSP: ffffc9000030fbf0
+Fields in HTIM01 and HTIM02 regs should be even.
+Recomended thresh_dly value is max_tu_symbol.
+Remove set of VPCTRL0.VSDELAY as it is related to DSI input
+interface. Currently driver supports only DPI.
 
-As it turns out, normally the freeing of IRQs that would fix this is called
-inside of the scope of __igb_close(). However, since the device is
-already gone by the point we try to unregister the netdevice from the
-driver due to a hotplug we end up seeing that the netif isn't present
-and thus, forget to free any of the device IRQs.
-
-So: make sure that if we're in the process of dismantling the netdev, we
-always allow __igb_close() to be called so that IRQs may be freed
-normally. Additionally, only allow igb_close() to be called from
-__igb_close() if it hasn't already been called for the given adapter.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: 9474933caf21 ("igb: close/suspend race in netif_device_detach")
-Cc: Todd Fujinaka <todd.fujinaka@intel.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1510073785-16108-5-git-send-email-andrey.gusakov@cogentembedded.com
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/ethernet/intel/igb/igb_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/tc358767.c |   34 ++++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
 
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -3273,7 +3273,7 @@ static int __igb_close(struct net_device
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -659,6 +659,14 @@ static int tc_set_video_mode(struct tc_d
+ 	int lower_margin = mode->vsync_start - mode->vdisplay;
+ 	int vsync_len = mode->vsync_end - mode->vsync_start;
  
- int igb_close(struct net_device *netdev)
- {
--	if (netif_device_present(netdev))
-+	if (netif_device_present(netdev) || netdev->dismantle)
- 		return __igb_close(netdev, false);
- 	return 0;
- }
++	/*
++	 * Recommended maximum number of symbols transferred in a transfer unit:
++	 * DIV_ROUND_UP((input active video bandwidth in bytes) * tu_size,
++	 *              (output active video bandwidth in bytes))
++	 * Must be less than tu_size.
++	 */
++	max_tu_symbol = TU_SIZE_RECOMMENDED - 1;
++
+ 	dev_dbg(tc->dev, "set mode %dx%d\n",
+ 		mode->hdisplay, mode->vdisplay);
+ 	dev_dbg(tc->dev, "H margin %d,%d sync %d\n",
+@@ -668,13 +676,18 @@ static int tc_set_video_mode(struct tc_d
+ 	dev_dbg(tc->dev, "total: %dx%d\n", mode->htotal, mode->vtotal);
+ 
+ 
+-	/* LCD Ctl Frame Size */
+-	tc_write(VPCTRL0, (0x40 << 20) /* VSDELAY */ |
++	/*
++	 * LCD Ctl Frame Size
++	 * datasheet is not clear of vsdelay in case of DPI
++	 * assume we do not need any delay when DPI is a source of
++	 * sync signals
++	 */
++	tc_write(VPCTRL0, (0 << 20) /* VSDELAY */ |
+ 		 OPXLFMT_RGB888 | FRMSYNC_DISABLED | MSF_DISABLED);
+-	tc_write(HTIM01, (left_margin << 16) |		/* H back porch */
+-			 (hsync_len << 0));		/* Hsync */
+-	tc_write(HTIM02, (right_margin << 16) |		/* H front porch */
+-			 (mode->hdisplay << 0));	/* width */
++	tc_write(HTIM01, (ALIGN(left_margin, 2) << 16) | /* H back porch */
++			 (ALIGN(hsync_len, 2) << 0));	 /* Hsync */
++	tc_write(HTIM02, (ALIGN(right_margin, 2) << 16) |  /* H front porch */
++			 (ALIGN(mode->hdisplay, 2) << 0)); /* width */
+ 	tc_write(VTIM01, (upper_margin << 16) |		/* V back porch */
+ 			 (vsync_len << 0));		/* Vsync */
+ 	tc_write(VTIM02, (lower_margin << 16) |		/* V front porch */
+@@ -693,7 +706,7 @@ static int tc_set_video_mode(struct tc_d
+ 	/* DP Main Stream Attributes */
+ 	vid_sync_dly = hsync_len + left_margin + mode->hdisplay;
+ 	tc_write(DP0_VIDSYNCDELAY,
+-		 (0x003e << 16) |	/* thresh_dly */
++		 (max_tu_symbol << 16) |	/* thresh_dly */
+ 		 (vid_sync_dly << 0));
+ 
+ 	tc_write(DP0_TOTALVAL, (mode->vtotal << 16) | (mode->htotal));
+@@ -709,13 +722,6 @@ static int tc_set_video_mode(struct tc_d
+ 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
+ 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
+ 
+-	/*
+-	 * Recommended maximum number of symbols transferred in a transfer unit:
+-	 * DIV_ROUND_UP((input active video bandwidth in bytes) * tu_size,
+-	 *              (output active video bandwidth in bytes))
+-	 * Must be less than tu_size.
+-	 */
+-	max_tu_symbol = TU_SIZE_RECOMMENDED - 1;
+ 	tc_write(DP0_MISC, (max_tu_symbol << 23) | (TU_SIZE_RECOMMENDED << 16) |
+ 			   BPC_8);
+ 
