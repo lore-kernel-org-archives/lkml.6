@@ -1,88 +1,80 @@
-Return-Path: <stern+5a7bc81c@rowland.harvard.edu>
-X-Google-Smtp-Source: AH8x225M05xw4e6vdqdbbeah/SmUYB2r5G8tvfOEWptr89P2K9UASpiR+mLsTAwKg5QrAoGuSU9a
-ARC-Seal: i=1; a=rsa-sha256; t=1517499214; cv=none;
+Return-Path: <Shigeru.Yoshida@windriver.com>
+X-Google-Smtp-Source: AH8x227hsVCzMNMQsL9fZcJQbSEHrdlMV+OR0aoMR/nHXFDUniD+f3BPiCHmG9qUMapp+og+6WyC
+ARC-Seal: i=1; a=rsa-sha256; t=1517535964; cv=none;
         d=google.com; s=arc-20160816;
-        b=u2B4dOu4eudLKQjaRIG932cD5d/OLaEcp/Na9suWnM7lkbk1QczFLTbt5VXzhHW0Z9
-         dMA9/vOIjOcpShHmwguDbj7tQpEtEoNuHLpoMpnkMvucHwxBChuPev7sXW5wwIkqe9LY
-         98D1t2bi4rMhDJnBcUOZAPHCygvejcvwnwltCTq8C4xyUfYMsxUNwblkYy51uUIMNn9e
-         SQ830V83/ymT2HJOrtPbQHnBSf+Pd6GFlpsSN63FdyVgidbu5RitQu2DgZAuzLp3fpYY
-         Pn5UAhu47SbHstFAThRGbMJhYYsrlgSuj4k7RPYgRhOeFbJwLyRXpjmIK/0IaBZQ7Kwl
-         24ew==
+        b=rFW45YFiWAP+mr1xcHtoublA5avQnEUFUTSEzkDY8B9ewe2zeFWbFUjxpOOfMSqthD
+         4EKsHSLfdhvQCYu2U1bT73+37FeIHskdvKXfRmjLrfw9hDuF8S2WDE1dgAp4J6WgavgD
+         aBSA/73Pg23qLTsxKksZvB/CFXfwkz1qGajFmVZ1JtM43/3FMgV+Sz4Yt4PVJwLWJbU9
+         VhdYzVfrXIhcE9WBvjRE25R36PSlS6Q29m1Fzan8HChTvRGcsbg0rlD6otxvKWFdxQj4
+         Be+V541NiuXPn5+8H3lhQ7YWDboUXHNn3/8156LfxIiD/7WOQaInkpuWozebijFxDS3J
+         YjcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:in-reply-to:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=2GQb1rMw38IHB+yRqLDOgZ3lzbo3SWYowL9Yi8YJ4vM=;
-        b=raOcl7xrxbwDuHe705wNg5LAHtDlW4B8RRiv/OZ9GP4hZc/royAplOVyy20uOJ7ppt
-         wESGaLrFEKjBF4amLRmYOpB1uZeA6kYpP2a5MlVufQdBLpasX07GI+geYLT802TM9CFo
-         ANj2ic+bdxO7zjWygiH8/bTy4Xx9azY0mYDmUFfWIiP6NZkg2dn5Xi04jt0g5e4Nf3lX
-         QsEKxOq//HVFk7boCxgmSjii+GAgXYNygzamJWNZ0LY3sJX3oyfgHE1p7UmNaJm5iYmV
-         80DLg0R3KHMdwcyue3AbHYVkNXdINoTcwBqEpwN0PIqIQ58ocEWVv+Jk5vESsDwLJdwH
-         XXsA==
+        h=mime-version:content-transfer-encoding:content-id:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:arc-authentication-results;
+        bh=urAUzF8EbSqoJKrA8sgo0Zp56owkhiGIg1fSwyOv1CQ=;
+        b=mD3NGt7nG/8CtFG7QazbvydFpz5iJ9N+hpEWew7ABL1QOlkgF+1Avd3/LPnnNq8/6s
+         zr1vWKNekxbNelxkZyfSDBOjHgfXQ5omHoIF7CxnzF1epNKR242DEcM7zAGDJwFNom8x
+         h7jNPD0rF7IxF+reqAztmfVjzaKlr3K27WhSo4wkRIya56+tL6RP9KAkbRkGH/Izvenn
+         IBjjX9LL/WHtmKLFZP30M0xZyfnQnTlPe3aYqmjJrIBjIaP3S5/eb0ILDK2atJf36bK9
+         AUrZBjrs1OCdO/JOfhXmbOlf4TpXPFsmNa1TYYhtErH/fB38eP4HtfGcwLy198otjI3O
+         4mpQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 192.131.102.54 is neither permitted nor denied by best guess record for domain of stern+5a7bc81c@rowland.harvard.edu) smtp.mailfrom=stern+5a7bc81c@rowland.harvard.edu
+       spf=pass (google.com: domain of shigeru.yoshida@windriver.com designates 147.11.146.13 as permitted sender) smtp.mailfrom=Shigeru.Yoshida@windriver.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 192.131.102.54 is neither permitted nor denied by best guess record for domain of stern+5a7bc81c@rowland.harvard.edu) smtp.mailfrom=stern+5a7bc81c@rowland.harvard.edu
-Date: Thu, 1 Feb 2018 10:33:33 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Yoshida, Shigeru" <Shigeru.Yoshida@windriver.com>
-cc: "Bai, Haiqing" <Haiqing.Bai@windriver.com>,
-    "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-    "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ohci-hcd: Fix race condition caused by ohci_urb_enqueue()
- and io_watchdog_func()
-In-Reply-To: <20180201.144911.2171407625301691891.shigeru.yoshida@windriver.com>
-Message-ID: <Pine.LNX.4.44L0.1802011029160.1677-100000@iolanthe.rowland.org>
+       spf=pass (google.com: domain of shigeru.yoshida@windriver.com designates 147.11.146.13 as permitted sender) smtp.mailfrom=Shigeru.Yoshida@windriver.com
+From: "Yoshida, Shigeru" <Shigeru.Yoshida@windriver.com>
+To: "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>
+CC: "Bai, Haiqing" <Haiqing.Bai@windriver.com>,
+        "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ohci-hcd: Fix race condition caused by
+ ohci_urb_enqueue() and io_watchdog_func()
+Thread-Topic: [PATCH] ohci-hcd: Fix race condition caused by
+ ohci_urb_enqueue() and io_watchdog_func()
+Thread-Index: AQHTmncRqxjtZV1slkO7r5QpQNTFa6OOqw2AgADm5YCAAKNFgIAAq14A
+Date: Fri, 2 Feb 2018 01:46:01 +0000
+Message-ID: <20180202.104654.1854598770724026730.shigeru.yoshida@windriver.com>
+References: <20180201.144911.2171407625301691891.shigeru.yoshida@windriver.com>
+	<Pine.LNX.4.44L0.1802011029160.1677-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1802011029160.1677-100000@iolanthe.rowland.org>
+Accept-Language: ja-JP, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [128.224.232.213]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <DBB7DA941DBEF641983CB7C10AEBA9A9@local>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591100238204595234?=
-X-GMAIL-MSGID: =?utf-8?q?1591213256587281788?=
+X-GMAIL-MSGID: =?utf-8?q?1591251791185691746?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 1 Feb 2018, Yoshida, Shigeru wrote:
+Hi Alan,
 
-> Hi Alan,
-> 
-> Thank you for your commenting.
-> 
-> On Wed, 31 Jan 2018 11:02:47 -0500, Alan Stern wrote:
-> >> To address above scenario, this patch introduces timer_running flag to
-> >> ohci_hcd structure.  Setting true to ohci->timer_running indicates
-> >> io_watchdog_func() is scheduled or is running.  ohci_urb_enqueue()
-> >> checks the flag when it schedules the watchdog (step 4 and 12 above),
-> >> so ohci->prev_frame_no is not overwritten while io_watchdog_func() is
-> >> running.
-> > 
-> > Instead of adding an extra flag variable, which has to be kept in sync 
-> > with the timer routine, how about defining a special sentinel value for 
-> > prev_frame_no?  For example:
-> > 
-> > #define IO_WATCHDOG_OFF		0xffffff00
-> > 
-> > Then whenever the timer isn't scheduled or running, set
-> > ohci->prev_frame_no to IO_WATCHDOG_OFF.  And instead of testing
-> > timer_pending(), compare prev_frame_no to this special value.
-> > 
-> > I think that approach will be slightly more robust.
-> 
-> It's reasonable since ohci->prev_frame_no is not used while the
-> watchdog timer is stopped.
-> 
-> I think we must choose an invalid frame number for the special
-> sentinel value, but I'm not sure which value is adequate for it.
-> Is 0xffffff00 an invalid frame number, otherwise how about simply
-> -1(0xffffffff)?
+On Thu, 1 Feb 2018 10:33:33 -0500, Alan Stern wrote:
+>> I think we must choose an invalid frame number for the special
+>> sentinel value, but I'm not sure which value is adequate for it.
+>> Is 0xffffff00 an invalid frame number, otherwise how about simply
+>> -1(0xffffffff)?
+>=20
+> Well, the frame_no register is 32 bits wide, but only the 16 low-order=20
+> bits are meaningful.  ohci_frame_no() strips off the high-order 16=20
+> bits, so any value with one of those bits set would be acceptable. =20
+> (Besides, valid frame numbers only go up to 2047.)
+>=20
+> I chose 0xffffff00 because PCI reads from a non-working device=20
+> generally get a value with all the bits set.  But since the upper 16=20
+> bits are masked away anyhow, it doesn't matter.  -1u would be fine.
 
-Well, the frame_no register is 32 bits wide, but only the 16 low-order 
-bits are meaningful.  ohci_frame_no() strips off the high-order 16 
-bits, so any value with one of those bits set would be acceptable.  
-(Besides, valid frame numbers only go up to 2047.)
+Thanks, I choose 0xffffff00 as you suggested, and will prepare v2 patch.
 
-I chose 0xffffff00 because PCI reads from a non-working device 
-generally get a value with all the bits set.  But since the upper 16 
-bits are masked away anyhow, it doesn't matter.  -1u would be fine.
-
-Alan Stern
+Thanks,
+Shigeru=
