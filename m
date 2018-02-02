@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2951738-1517591553-2-6465656983417395695
+X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591553-2-3448135378053888944
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591552; b=CBPyMvzkMJ3v4CpMt/KJHWm28fYWYLDxrL7nhSXKmKWpsXG
-    olJ5b+bRcnLnGBCBvWO7N8HvCRtucJ8VOfryhbQV1ntE/IEWbA+4rLzfj//YwxZG
-    9+RtsG0FODj0it23LicQVWhAJ9GfmGdKuoSiLn+et/p8f9R0HglDhXklo7slZJZf
-    vZB7aQecyAfHqTxt6s9wBbyR+5JxaKKRQGBwTWRY2ZLT9M2V8MnH8pwBWzrMEdh1
-    aaL+nLgoBqiohvuVj6wcWfbxZbvtcvh5A1dY8PiqQ4JewC/o0L/NBJcC256Xzs//
-    Zn+PN2Ev0wZM/8z3kea1Nt9q78r9C0KO2WACvcg==
+    t=1517591552; b=wzBXLbAvFS60mCtbSHmc0E2A7XNDzLqJ5nsIHVkARuuXU6r
+    Ipt/m5vRQdotMdiwNTraRIKp9c5VE7TDM3P9B/sBtrd5aP2qVfdq4aeIYoPpcloD
+    mQ51FxaM3AZtjBXUfncSa8uqQsDwSJA3f6onzeSnz4w8d0dPxj+H5QdaDOv3+ve0
+    9Kt6+CmhNXcF2d5g7/YMcHTHW69nSQ8hNuzfuHtj+oRh4glMo3iyZDK2oRBD0XTr
+    i5jKsm7acT/tRGYIt/rBGiUnYuUHIoxsyf/LQjuBYXLxCgezCmkDH4IaVPkqyBAw
+    qqMKRqrw/QrEtozlx4QiNAv6ARHnIMxaQj4WrjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591552; bh=epReIyLiXyI7k2IlkRoLeslHd/
-    axOrMKMxQdp5x3JwM=; b=qL84PMPJIqakQ2ZIPf0KcgvsBdqxgS7EO7KuWad4xg
-    hhD3NDajVF6ESjuvoJ4pAczbUKjnc0ocdzeX39HbPfk+hWT4lrSDM6/5rlqdMq17
-    hsb+KGK0Ld1T+QBVoB2XJAbNTVwuCN3DCGXNu2ioMEjFzSA1m2QaSRjb/oUAEDdq
-    /kSYSR7SgT84G38xTqnpM+hLJv+qq/NmYC8RusW1jX+hkE3Q3fy6WNsjPL3LfLNH
-    1goV/P1JFVpYaIOQhWeojmH9Vr/fV1mi2BiZlR1TmzLGoErwSMWF5KJ0Mp6S4bDW
-    R8thIcEBCg8bEyWBN3F2aUsDDON28Tu7pApO7ou4qNVg==
+    :list-id; s=arctest; t=1517591552; bh=PHzkQX7pwHRpD4uTBq2uwOsgQa
+    kG/vCChretdpV8+r4=; b=UO8M0vVkOEL8SGvVfRMYDavbqB6ctAVVnuEtS9R4In
+    eYl+zF55bKLESYh6we7pLqxsjLcySGWpepOU6oIA+BfQyc4QlzUbTuqDfEKhj5ZI
+    Twq5oRaHnMvkPKrma/9MRL64hHEpsSlxzikZ2tgtqheW3jTAKcXHHY5yTTb7PK+I
+    1YkGfoDNKm2sp75GuWGDSn+ZESeA7jjcNP+BPVDAwfrnK+yHSoZd3grZFtHpx8JQ
+    FD0vGECY+qK2gFPHUtk92O0xc3bw3uj7wHHLXrkCFpZq6svdi2F9828a2IN8p4Na
+    Lqfgy4XfxRLL1cec4gGm+ZQ0ZBoZ9DMGYU9D6SSx0Ltg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,24 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752540AbeBBRMa (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:12:30 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39016 "EHLO
+        id S1752671AbeBBRM3 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:12:29 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38996 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752622AbeBBRM2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:12:28 -0500
+        with ESMTP id S1753467AbeBBRM0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:12:26 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        Raghava Aditya Renukunta
+        <RaghavaAditya.Renukunta@microsemi.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 118/156] scsi: ufs: ufshcd: fix potential NULL pointer dereference in ufshcd_config_vreg
-Date: Fri,  2 Feb 2018 17:58:19 +0100
-Message-Id: <20180202140845.524006441@linuxfoundation.org>
+Subject: [PATCH 4.14 117/156] scsi: aacraid: Prevent crash in case of free interrupt during scsi EH path
+Date: Fri,  2 Feb 2018 17:58:18 +0100
+Message-Id: <20180202140845.475716367@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -80,46 +81,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+From: "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>
 
 
-[ Upstream commit 727535903bea924c4f73abb202c4b3e85fff0ca4 ]
+[ Upstream commit e4717292ddebcfe231651b5aff9fa19ca158d178 ]
 
-_vreg_ is being dereferenced before it is null checked, hence there is a
-potential null pointer dereference.
+As part of the scsi EH path, aacraid performs a reinitialization of the
+adapter, which encompass freeing resources and IRQs, NULLifying lots of
+pointers, and then initialize it all over again.  We've identified a
+problem during the free IRQ portion of this path if CONFIG_DEBUG_SHIRQ
+is enabled on kernel config file.
 
-Fix this by moving the pointer dereference after _vreg_ has been null
-checked.
+Happens that, in case this flag was set, right after free_irq()
+effectively clears the interrupt, it checks if it was requested as
+IRQF_SHARED. In positive case, it performs another call to the IRQ
+handler on driver. Problem is: since aacraid currently free some
+resources *before* freeing the IRQ, once free_irq() path calls the
+handler again (due to CONFIG_DEBUG_SHIRQ), aacraid crashes due to NULL
+pointer dereference with the following trace:
 
-This issue was detected with the help of Coccinelle.
+  aac_src_intr_message+0xf8/0x740 [aacraid]
+  __free_irq+0x33c/0x4a0
+  free_irq+0x78/0xb0
+  aac_free_irq+0x13c/0x150 [aacraid]
+  aac_reset_adapter+0x2e8/0x970 [aacraid]
+  aac_eh_reset+0x3a8/0x5d0 [aacraid]
+  scsi_try_host_reset+0x74/0x180
+  scsi_eh_ready_devs+0xc70/0x1510
+  scsi_error_handler+0x624/0xa20
 
-Fixes: aa4976130934 ("ufs: Add regulator enable support")
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+This patch prevents the crash by changing the order of the
+deinitialization in this path of aacraid: first we clear the IRQ, then
+we free other resources. No functional change intended.
+
+Signed-off-by: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+Reviewed-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/ufs/ufshcd.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/scsi/aacraid/commsup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -6555,12 +6555,15 @@ static int ufshcd_config_vreg(struct dev
- 		struct ufs_vreg *vreg, bool on)
- {
- 	int ret = 0;
--	struct regulator *reg = vreg->reg;
--	const char *name = vreg->name;
-+	struct regulator *reg;
-+	const char *name;
- 	int min_uV, uA_load;
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -1583,6 +1583,7 @@ static int _aac_reset_adapter(struct aac
+ 	 * will ensure that i/o is queisced and the card is flushed in that
+ 	 * case.
+ 	 */
++	aac_free_irq(aac);
+ 	aac_fib_map_free(aac);
+ 	dma_free_coherent(&aac->pdev->dev, aac->comm_size, aac->comm_addr,
+ 			  aac->comm_phys);
+@@ -1590,7 +1591,6 @@ static int _aac_reset_adapter(struct aac
+ 	aac->comm_phys = 0;
+ 	kfree(aac->queues);
+ 	aac->queues = NULL;
+-	aac_free_irq(aac);
+ 	kfree(aac->fsa_dev);
+ 	aac->fsa_dev = NULL;
  
- 	BUG_ON(!vreg);
- 
-+	reg = vreg->reg;
-+	name = vreg->name;
-+
- 	if (regulator_count_voltages(reg) > 0) {
- 		min_uV = on ? vreg->min_uV : 0;
- 		ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
