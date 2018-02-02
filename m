@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591852-2-4150357691656158394
+X-Cyrus-Session-Id: sloti22d1t05-2951738-1517591849-2-6487848448923476778
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591851; b=Y1gMlxNrl+1RIWVN7w5xkioA3vcKgD+gA67EeNWBlyGEwp0
-    GA8CQ0ahlafS1/rqGxM+dBolGEmnyqvqUhKZJlS0dEOy44EdtwKWVmY5LGw18p0n
-    BjJ6WzvUiazaRZ2pxeTCKUFINBetXbAmjnVexy7VsAbxbhQT7rmRsxN4/PUYJ3cU
-    m+RyBzH1DmcWyz/T5LeY5b94Ol56ms4w/c/zTMKVg6zqST0AMkfMms+R2yrdZ4xl
-    8hIZoxqdeF+hNzpX649jx+iaZ85lfG1Pt/KGyD9NUh7HOf5VgNx0Fc6I5Xv8CjUl
-    ZrigWyEmb9PA68as0mclFAmOuUAAEc6WzmvnGkQ==
+    t=1517591848; b=l1ixyYTwctwHG+mMepPsLUTEWyio5LlyGT+zTgNczKeFmlm
+    vP0Ae9D+VRESRYPn4SW6uTq39zROCFyt1DxHSUHKQPobl1/T9fhswf231xFTjchJ
+    zhLBjdhI3w6BYBm0gEcKK5jg8+ZR9259Z0OU4J18GU6lFW1WssYcp1lMifYaotmf
+    rlvFOSXNjIYoYSOIhorRrUngNHQz4YOgWAkNnbnGNjgW2TGnYCDPRYrQJtfviHpU
+    0+hyonb0/ASFrd2hvMnSTPEKPfrBnoGgHtzqC+wKTUVnpEdVNSH23l9+pHMs/5zD
+    hCyxZQeKQqnfoyp6Lb7WFwrn2dKqb/5PJxHPWvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591851; bh=4nroiMDPYT1kvOF3vgho7GHUWL
-    BRi+f+pd+XPjWnO0s=; b=R23qqob46wJLC1VW0P7ooUJIc5YH2Xf256r5B51EJ/
-    Ltk0qIlW/dU7XFhxv89kZPREcVqZWyLxqnJ/dWW58NPtJXW6q5vdUVOX9hwqD3rZ
-    6dukgi8MQ+0j2QFtr8UkZBkb81BowX7QRv8zRxoqAbb5nACkV7paefM0B2GZ8S6r
-    OrdSCuN5QSZcrIls+XwHkjgtTc0g1PDpAPUzxk0s3ZVu612b/uIvYHnzxMAbipC3
-    dQeol4c3CeND/aJVHLvnpinLFT7Wv3zGTHp6cd4jZrCQIhOLUX5yC7ixnn7TrIp3
-    jjJ0ibo7ksEVdI+6T7tBrUiL0B7vcBl4ILZCTwT3m4aQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1517591848; bh=kndp6RXt86QlzDoIwuXBAP/LW4
+    gwqbW239+i75ATYsk=; b=vvy9iyAHaL3oZ+6eA0rcwWTb273qMKR8n7vZSsdlyp
+    b0c89JDjqAX58kdIcext28LhhbGVpc2WDX/dHPyN2cJMWCtcRQnCDS4uULxF9tSm
+    bkIiDHxe6ddRhEsLnaNEcjnZ09lso+1Vu9qSjfY7sReGOUuvXDZkxtDU7nzH3BXz
+    eMF0kxZ+zqfQGhNLAdr3Sstc3X5VqmizGadYRscBIduzfu0nQk+paa+ihiXAq92a
+    lY1UkKYx9IfNXYPcrdb0MOo0ej52fQ9lUAKkPavwoL60IP+DwWIdVBkJtW7bGZD+
+    +oBe0PhFqUbpKowIavI3DSb/+WMO53NbHJYYAfS9Aa2Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753690AbeBBRR0 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:17:26 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41204 "EHLO
+        id S1753881AbeBBRRZ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:17:25 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41196 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753123AbeBBRRX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:17:23 -0500
+        with ESMTP id S1753778AbeBBRRV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:17:21 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.15 54/55] Input: synaptics-rmi4 - do not delete interrupt memory too early
-Date: Fri,  2 Feb 2018 17:59:12 +0100
-Message-Id: <20180202140831.259749651@linuxfoundation.org>
+Subject: [PATCH 4.15 53/55] Input: synaptics-rmi4 - unmask F03 interrupts when port is opened
+Date: Fri,  2 Feb 2018 17:59:11 +0100
+Message-Id: <20180202140831.173761159@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140826.117602411@linuxfoundation.org>
 References: <20180202140826.117602411@linuxfoundation.org>
@@ -79,49 +79,151 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit a1ab69021a584d952e6548a44b93760547b1b6b5 upstream.
+commit 6abe534f0776d2437c8302f58d8eb5abd483e926 upstream.
 
-We want to free memory reserved for interrupt mask handling only after we
-free functions, as function drivers might want to mask interrupts. This is
-needed for the followup patch to the F03 that would implement unmasking and
-masking interrupts from the serio pass-through port open() and close()
-methods.
+Currently we register the pass-through serio port when we probe the F03 RMI
+function, and then, in sensor configure phase, we unmask interrupts.
+Unfortunately this is too late, as other drivers are free probe devices
+attached to the serio port as soon as it is probed. Because interrupts are
+masked, the IO times out, which may result in not being able to detect
+trackpoints on the pass-through port.
 
+To fix the issue we implement open() and close() methods for the
+pass-through serio port and unmask interrupts from there. We also move
+creation of the pass-through port form probe to configure stage, as RMI
+driver does not enable transport interrupt until all functions are probed
+(we should change this, but this is a separate topic).
+
+We also try to clear the pending data before unmasking interrupts, because
+some devices like to spam the system with multiple 0xaa 0x00 announcements,
+which may interfere with us trying to query ID of the device.
+
+Fixes: c5e8848fc98e ("Input: synaptics-rmi4 - add support for F03")
 Reviewed-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/rmi4/rmi_driver.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/input/rmi4/rmi_f03.c |   64 ++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 54 insertions(+), 10 deletions(-)
 
---- a/drivers/input/rmi4/rmi_driver.c
-+++ b/drivers/input/rmi4/rmi_driver.c
-@@ -41,6 +41,13 @@ void rmi_free_function_list(struct rmi_d
+--- a/drivers/input/rmi4/rmi_f03.c
++++ b/drivers/input/rmi4/rmi_f03.c
+@@ -32,6 +32,7 @@ struct f03_data {
+ 	struct rmi_function *fn;
  
- 	rmi_dbg(RMI_DEBUG_CORE, &rmi_dev->dev, "Freeing function list\n");
+ 	struct serio *serio;
++	bool serio_registered;
  
-+	/* Doing it in the reverse order so F01 will be removed last */
-+	list_for_each_entry_safe_reverse(fn, tmp,
-+					 &data->function_list, node) {
-+		list_del(&fn->node);
-+		rmi_unregister_function(fn);
-+	}
-+
- 	devm_kfree(&rmi_dev->dev, data->irq_memory);
- 	data->irq_memory = NULL;
- 	data->irq_status = NULL;
-@@ -50,13 +57,6 @@ void rmi_free_function_list(struct rmi_d
+ 	unsigned int overwrite_buttons;
  
- 	data->f01_container = NULL;
- 	data->f34_container = NULL;
--
--	/* Doing it in the reverse order so F01 will be removed last */
--	list_for_each_entry_safe_reverse(fn, tmp,
--					 &data->function_list, node) {
--		list_del(&fn->node);
--		rmi_unregister_function(fn);
--	}
+@@ -138,6 +139,37 @@ static int rmi_f03_initialize(struct f03
+ 	return 0;
  }
  
- static int reset_one_function(struct rmi_function *fn)
++static int rmi_f03_pt_open(struct serio *serio)
++{
++	struct f03_data *f03 = serio->port_data;
++	struct rmi_function *fn = f03->fn;
++	const u8 ob_len = f03->rx_queue_length * RMI_F03_OB_SIZE;
++	const u16 data_addr = fn->fd.data_base_addr + RMI_F03_OB_OFFSET;
++	u8 obs[RMI_F03_QUEUE_LENGTH * RMI_F03_OB_SIZE];
++	int error;
++
++	/*
++	 * Consume any pending data. Some devices like to spam with
++	 * 0xaa 0x00 announcements which may confuse us as we try to
++	 * probe the device.
++	 */
++	error = rmi_read_block(fn->rmi_dev, data_addr, &obs, ob_len);
++	if (!error)
++		rmi_dbg(RMI_DEBUG_FN, &fn->dev,
++			"%s: Consumed %*ph (%d) from PS2 guest\n",
++			__func__, ob_len, obs, ob_len);
++
++	return fn->rmi_dev->driver->set_irq_bits(fn->rmi_dev, fn->irq_mask);
++}
++
++static void rmi_f03_pt_close(struct serio *serio)
++{
++	struct f03_data *f03 = serio->port_data;
++	struct rmi_function *fn = f03->fn;
++
++	fn->rmi_dev->driver->clear_irq_bits(fn->rmi_dev, fn->irq_mask);
++}
++
+ static int rmi_f03_register_pt(struct f03_data *f03)
+ {
+ 	struct serio *serio;
+@@ -148,6 +180,8 @@ static int rmi_f03_register_pt(struct f0
+ 
+ 	serio->id.type = SERIO_PS_PSTHRU;
+ 	serio->write = rmi_f03_pt_write;
++	serio->open = rmi_f03_pt_open;
++	serio->close = rmi_f03_pt_close;
+ 	serio->port_data = f03;
+ 
+ 	strlcpy(serio->name, "Synaptics RMI4 PS/2 pass-through",
+@@ -184,17 +218,27 @@ static int rmi_f03_probe(struct rmi_func
+ 			 f03->device_count);
+ 
+ 	dev_set_drvdata(dev, f03);
+-
+-	error = rmi_f03_register_pt(f03);
+-	if (error)
+-		return error;
+-
+ 	return 0;
+ }
+ 
+ static int rmi_f03_config(struct rmi_function *fn)
+ {
+-	fn->rmi_dev->driver->set_irq_bits(fn->rmi_dev, fn->irq_mask);
++	struct f03_data *f03 = dev_get_drvdata(&fn->dev);
++	int error;
++
++	if (!f03->serio_registered) {
++		error = rmi_f03_register_pt(f03);
++		if (error)
++			return error;
++
++		f03->serio_registered = true;
++	} else {
++		/*
++		 * We must be re-configuring the sensor, just enable
++		 * interrupts for this function.
++		 */
++		fn->rmi_dev->driver->set_irq_bits(fn->rmi_dev, fn->irq_mask);
++	}
+ 
+ 	return 0;
+ }
+@@ -204,7 +248,7 @@ static int rmi_f03_attention(struct rmi_
+ 	struct rmi_device *rmi_dev = fn->rmi_dev;
+ 	struct rmi_driver_data *drvdata = dev_get_drvdata(&rmi_dev->dev);
+ 	struct f03_data *f03 = dev_get_drvdata(&fn->dev);
+-	u16 data_addr = fn->fd.data_base_addr;
++	const u16 data_addr = fn->fd.data_base_addr + RMI_F03_OB_OFFSET;
+ 	const u8 ob_len = f03->rx_queue_length * RMI_F03_OB_SIZE;
+ 	u8 obs[RMI_F03_QUEUE_LENGTH * RMI_F03_OB_SIZE];
+ 	u8 ob_status;
+@@ -226,8 +270,7 @@ static int rmi_f03_attention(struct rmi_
+ 		drvdata->attn_data.size -= ob_len;
+ 	} else {
+ 		/* Grab all of the data registers, and check them for data */
+-		error = rmi_read_block(fn->rmi_dev, data_addr + RMI_F03_OB_OFFSET,
+-				       &obs, ob_len);
++		error = rmi_read_block(fn->rmi_dev, data_addr, &obs, ob_len);
+ 		if (error) {
+ 			dev_err(&fn->dev,
+ 				"%s: Failed to read F03 output buffers: %d\n",
+@@ -266,7 +309,8 @@ static void rmi_f03_remove(struct rmi_fu
+ {
+ 	struct f03_data *f03 = dev_get_drvdata(&fn->dev);
+ 
+-	serio_unregister_port(f03->serio);
++	if (f03->serio_registered)
++		serio_unregister_port(f03->serio);
+ }
+ 
+ struct rmi_function_handler rmi_f03_handler = {
