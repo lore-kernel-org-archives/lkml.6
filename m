@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227s6K+eSBy/EzKwTrImHax0cwo8EfoyIFp2N7O01opQeWE11X8nTkkoNSNoNBvvyZm4+F6m
-ARC-Seal: i=1; a=rsa-sha256; t=1517591674; cv=none;
+X-Google-Smtp-Source: AH8x2250o0f+AvD4z1mMPDlvBajG8cfgzCwg+cCBN/TFk0gWH8MBLuWmiuBDDRDj4SqPwEs+Lj0q
+ARC-Seal: i=1; a=rsa-sha256; t=1517591671; cv=none;
         d=google.com; s=arc-20160816;
-        b=qyb43D5qHy18i8pRFWtwjFWcsLeSrqjr7LzG//6RXgU5qACcEIS/8//ERI0CcWC1NN
-         Hly0DJoNqDx2d8mUdzIPeFqmSejYtT1KeNozzItbCJhoCAK2IpmPSqB3K1YrsUhSSHfY
-         jDiuLOKpXP2Z/mkW8PdwQp0knJEoDWhhPiwyqRP5fMXXugBEYagqjE6NokpWdfHOdXW3
-         LwhtnhG0f1TBc63XxncBJkb8fx4wc4tVcAD+lXVp+x/Ciu+17maTkSdnvhXyxFhWIYVK
-         S26ikkJzEbVX6gHiHnkqPQR+x0WscoSnNH1n0rfhhMRGGtJ1y6xjBc6o93V2ccdNLKLu
-         zKiA==
+        b=I2RhJcyN7yixZAHhqOM5/dI2zIxVpfea03sVn+TlMFGK4j1pLrNP/S+bzYfBsDJejL
+         vHKEE3PWU6PHxcuDxiYCjUWBC5qa9MfQMuiNCNE0MjeBqGmR1a1JyjJhTbfc+/HpjYCs
+         59b5yiustGB1C55jBu4dqd7M158HZz7A8DqYerGhxXZsF3uXTCgKLvyWtqnV52I/Ydwd
+         ZqHcbspcOXPFGLVYi+0mmtfzUqCgJd5pr3VCDRR/nzZF8C4BcI5HZXq5Pr15fhEn0NCE
+         ZWmRNn/2We517Sz3stedhjcTNElIfpEy2pNHAmxxm5GcfevN5it9Q1E+V39awAYVUeiQ
+         AsEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AeSHPvftPOgNaAzWArL9NNilRrZn6FiA1tfR3w0R3fs=;
-        b=kb1ciaALxXKOTaeZ8X3tWQzGks9ii25gdQZQ9yXJ6RGTcyekJHwg1+f9ljU5rtScSD
-         uCRtYNGn5XiRtsL6jUcww/dgz+QbWgQZ7ekL8m3P30f0vMGGFT1GBLPIAoA6GDl2ki+S
-         DVMgsU3WdjM762aLR/pyxuETHMtfYqo5uWWxLJ/X9fJ5yjQqVEG3WwEomb+k4sNofkD/
-         iHaMnrOpIpMkGJBwOpqJp1OgaSYiZmgsFG2sseU4Ck7f70t5DPrswhINubj3YRbCm7Ws
-         4r1UALArR76OLDYITe5WBa7LNXbOYANyeu8JC4lkGBCvokaWuVU3X2Yu1ANDwjRKE2Mw
-         FjsQ==
+        bh=2Zb8igdi0JyRObo3AwsgrsUyTHKN+wbMZuZdTJmCYsg=;
+        b=ap+d09QmIShD6ARL+W59boV4Ruksf6qKYoMTgxna2ifVRhIocA+KN9zUKlGKw/ISig
+         LtG4S1sVMt+OrdorJJLKh8qBj4Tf2fpJD+Br91cLB2Knr+AUNxX2iJyOo7YXB8/1UgZU
+         x1a3zCHDI8sohm5HjSCNJc3L9XMZfua0E/igYyM6q39mrWuoA0krhh+EQOH/0tBSbw/h
+         s8uBbQ9DG882E348pYhAXf8Vf5IBUama3BD5/fCInizRBBJs66XNR2XP/jq/YsNT2UWT
+         PUXEzhdhLzyjY6Fa5m73df1utQdnGSjYOJnPYXjg/hF1CoWLPYTi5gDXs5chnrb7bFa+
+         K9jQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.14 138/156] usbip: prevent bind loops on devices attached to vhci_hcd
-Date: Fri,  2 Feb 2018 17:58:39 +0100
-Message-Id: <20180202140846.622444985@linuxfoundation.org>
+	Jia-Ju Bai <baijiaju1990@gmail.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 137/156] USB: serial: io_edgeport: fix possible sleep-in-atomic
+Date: Fri,  2 Feb 2018 17:58:38 +0100
+Message-Id: <20180202140846.572241771@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -38,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309467728999985?=
-X-GMAIL-MSGID: =?utf-8?q?1591310207702789780?=
+X-GMAIL-THRID: =?utf-8?q?1591309422775128641?=
+X-GMAIL-MSGID: =?utf-8?q?1591310204376445180?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -47,55 +48,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-commit ef54cf0c600fb8f5737fb001a9e357edda1a1de8 upstream.
+commit c7b8f77872c73f69a16528a9eb87afefcccdc18b upstream.
 
-usbip host binds to devices attached to vhci_hcd on the same server
-when user does attach over localhost or specifies the server as the
-remote.
+According to drivers/usb/serial/io_edgeport.c, the driver may sleep
+under a spinlock.
+The function call path is:
+edge_bulk_in_callback (acquire the spinlock)
+   process_rcvd_data
+     process_rcvd_status
+       change_port_settings
+         send_iosp_ext_cmd
+           write_cmd_usb
+             usb_kill_urb --> may sleep
 
-usbip attach -r localhost -b busid
-or
-usbip attach -r servername (or server IP)
+To fix it, the redundant usb_kill_urb() is removed from the error path
+after usb_submit_urb() fails.
 
-Unbind followed by bind works, however device is left in a bad state with
-accesses via the attached busid result in errors and system hangs during
-shutdown.
+This possible bug is found by my static analysis tool (DSAC) and checked
+by my code review.
 
-Fix it to check and bail out if the device is already attached to vhci_hcd.
-
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/usb/usbip/src/usbip_bind.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/usb/serial/io_edgeport.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/tools/usb/usbip/src/usbip_bind.c
-+++ b/tools/usb/usbip/src/usbip_bind.c
-@@ -144,6 +144,7 @@ static int bind_device(char *busid)
- 	int rc;
- 	struct udev *udev;
- 	struct udev_device *dev;
-+	const char *devpath;
- 
- 	/* Check whether the device with this bus ID exists. */
- 	udev = udev_new();
-@@ -152,8 +153,16 @@ static int bind_device(char *busid)
- 		err("device with the specified bus ID does not exist");
- 		return -1;
- 	}
-+	devpath = udev_device_get_devpath(dev);
- 	udev_unref(udev);
- 
-+	/* If the device is already attached to vhci_hcd - bail out */
-+	if (strstr(devpath, USBIP_VHCI_DRV_NAME)) {
-+		err("bind loop detected: device: %s is attached to %s\n",
-+		    devpath, USBIP_VHCI_DRV_NAME);
-+		return -1;
-+	}
-+
- 	rc = unbind_other(busid);
- 	if (rc == UNBIND_ST_FAILED) {
- 		err("could not unbind driver from device on busid %s", busid);
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -2286,7 +2286,6 @@ static int write_cmd_usb(struct edgeport
+ 		/* something went wrong */
+ 		dev_err(dev, "%s - usb_submit_urb(write command) failed, status = %d\n",
+ 			__func__, status);
+-		usb_kill_urb(urb);
+ 		usb_free_urb(urb);
+ 		atomic_dec(&CmdUrbs);
+ 		return status;
