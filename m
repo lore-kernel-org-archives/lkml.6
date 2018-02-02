@@ -1,76 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753898AbeBBRdx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 12:33:53 -0500
-Received: from mout.web.de ([212.227.15.14]:54274 "EHLO mout.web.de"
+        id S1753628AbeBBReb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 12:34:31 -0500
+Received: from mout.web.de ([212.227.15.14]:62550 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754019AbeBBRWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 12:22:43 -0500
-Subject: [PATCH 2/2] i2c-davinci: Improve a size determination in
- davinci_i2c_probe()
+        id S1753682AbeBBRVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 12:21:45 -0500
+Subject: [PATCH 1/2] i2c-davinci: Delete an error message for a failed memory
+ allocation in davinci_i2c_probe()
 From: SF Markus Elfring <elfring@users.sourceforge.net>
 To: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Kevin Hilman <khilman@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
         Wolfram Sang <wsa@the-dreams.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 References: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
-Message-ID: <e16ba754-078a-097a-7333-076f43718645@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 18:22:21 +0100
+Message-ID: <f890924b-ca68-253b-a7c8-fce269393867@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 18:21:21 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
 In-Reply-To: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:36QAdl1NNElsX9VydWdFWM9oCS1i19ealWs0Jii3zrRhHohkfY4
- Se0yodtUsRVkVJSfMOjFvsi6JsupDQDw5+d2sxjybEfowQZvGPMFeaESeMGIOqFN69VT8PN
- QIde9cUIeMO4F0E5LDg9dmBpzllkVgTCOGsDXPER8Jp7GqhRDLJy+fkYHJ91tVt7iW885MM
- Tc3eeXpgLQaJwQ+rqMK3Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:YNI7N8PlpeA=:aRq54R7F5742vks+f7+gQg
- YAgv42bNOlTCpRk5qS9E8XZ/s0zE6gU3vvCwsa/wKrXXQQJEfmtP3AaTf7dyxWpz7if7P3MBj
- TZymZNXTFUa931+9Fxf72lSMW69PZzxXbgRBZ5dzyUQWwWQEfB7dwww0BrX/eQxIP+tZ+UTP6
- Dccy+RXzkr7KV1PQ7mwXwYEgg2LcEqMjKuz97LUAwobpqoLYJfKVmmlW7bJ96nWwVrvWd8oxH
- FjXQx55zoRC5MkNnux1kcqDe7yux6G04lCm6f0frOCis4OwAs4RhsxLt3hgatBwNMEeFwKX41
- wrcdqM0Tc4pOELTbt/OIMlCkErNv/iNgXiAvZC6B9Viw5SYLgo7jq3m0XbUkECxgbbiQAzSuL
- ow6AiVIi7ymVbgC4o23BvuHDGnddYcJOVOCqk1YRyIXr5KMVn9n9E2RP8fnlrYxqAyosmzXug
- 4y8ZzB9smhxz/lsuTc6XsjiWonQss4cO/TPYxBxsIXzVikHDMPCG5d5zNX5s9oiw8SlYQiIif
- +IFhtGly/y1enF9MSm10DrZ10w3GfB8vRaRLGkYteqK3M4099rS9GDIBU58xcnbxBcFFQ6ZZG
- jbJnt+SSdrDnCiactlREbfwpVcFc2bwaXCRTUZ+8378FW+sp9/GbqF1Y7/fk6k6VvcQkR4bmA
- 0OFJRkjHtQE7VsiqYcblf8d/CCoqFI7QVdecTHmtFbXDKM2Qoei8hdzdDvS+EPUbN6wQvYEdU
- cv3maJCBH7Pzb502iJygWBEGF8sDHitZaDkgdbW8NaO2MF43xDK1eJE2o64I79E8Li/ZWOyux
- 5quwpUdjYqxqlgujdISU/zpdX3SQ7J1R7ZSWs0vZEB38nL/UA0=
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:X9mWGY9IK56enbtcYUi3D8vm7ggftfmFfsNXOSLqo3CD6Zu/zAe
+ SE7CeuKtafriI17fU5Iw+EoNc7fpfc/FFzNx66XuofIWBQlcOhLkG+0o+iqTKP8tSM+BuaI
+ itE5+Wf/jf6h1934GF0yJVTmNVXJoY6+0V9FcrhrGHEQR+bmErpa2T/IIQ9hb3VoaLYfzhi
+ U0BhE8evTJaR1CHAV2KBg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:91IHUphB/SA=:Eco1uGG+04Wm5NtY0s/8kB
+ c9ls6fF7ib8sTySvDzDwOOpqw0Y9UNqwh/vFFk7qsPV7ynPP1x5kpJH0iY6il4sh15yKu9KoB
+ KU8D8gRj4BM6z4585TrFmzD4L9FCEyYiSG0KkYMePphIVcEXTxTEioyN8CXwbahZ5ids0IeX9
+ IJEMBNXkVl/IP0oBbVjrBCCzqWqNzfg6928/ugHmphkqs/mLjjeGUQJMbIM99Qnmxx5Pju0o2
+ gV6hbUyaOzT/ewGUSPc8Tq/yuuG8TxmkhrAUvarx0JY1dNnFhPx5W7Ee0foGS5yemBHkGQfg+
+ mdh5ntpcocjsS0RXJku8j5xIH1UMqFa60krhMsNl+kRsxHUu2JhTJNJYXbOpZg/Nx0FJ/hpY8
+ oNkbTIZ1I9r/MrZ5zNyswRF9x15ULdZkCIGyW80T0SLewjqC+dX4+dHLoJqZXG8ltPaFjvN2Z
+ 9gZKE9Of0CNKvm+waGT9QpR4ap3fIxg2J02FJNn9lm40z6/oxP+2HHwjeB6bu93hhbs0ebg7N
+ veCng4MeNSf9OT9zAmURuqUEt5LWeLzPArgz9du/ZwnrAkgfRbUdVAC5RzylCCQdFzT6w+3U2
+ mVBhy3ypx/NnwxesKEy8eRYJyhz3CS5UBOEsQLXufaa4HIw6BQ8creu9cMBe21Z+BfeOgZxKL
+ TlAQbMcqDdAvDwghUxBIK6mWso61zOLULFC5msmpTe3en8aKAsjadlaDblv7OC/cSOaeRiJRh
+ t89AuhECtyil8QIb+LpE+slcvcC9yZwKNyaAFL1guMNvEzmHJUXtONxHL1ynItQN8hkug584H
+ VTxAsBIRHJELGDHDTo8YIeW5SufVd278DaTNVD0F06GTR98+Ys=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 18:02:49 +0100
+Date: Fri, 2 Feb 2018 18:00:20 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/busses/i2c-davinci.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-davinci.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
-index 71a9c29b3981..1702b1d1b000 100644
+index cb24a3ffdfa2..71a9c29b3981 100644
 --- a/drivers/i2c/busses/i2c-davinci.c
 +++ b/drivers/i2c/busses/i2c-davinci.c
-@@ -782,8 +782,7 @@ static int davinci_i2c_probe(struct platform_device *pdev)
- 		return irq;
- 	}
+@@ -784,10 +784,8 @@ static int davinci_i2c_probe(struct platform_device *pdev)
  
--	dev = devm_kzalloc(&pdev->dev, sizeof(struct davinci_i2c_dev),
--			GFP_KERNEL);
-+	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
+ 	dev = devm_kzalloc(&pdev->dev, sizeof(struct davinci_i2c_dev),
+ 			GFP_KERNEL);
+-	if (!dev) {
+-		dev_err(&pdev->dev, "Memory allocation failed\n");
++	if (!dev)
  		return -ENOMEM;
+-	}
  
+ 	init_completion(&dev->cmd_complete);
+ #ifdef CONFIG_CPU_FREQ
 -- 
 2.16.1
