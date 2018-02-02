@@ -1,161 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeBBKoi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 05:44:38 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42370 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751671AbeBBKob (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 05:44:31 -0500
-X-Google-Smtp-Source: AH8x224JtwAbuDJNR+HhqfKX47hMvVOwaxGfSAbG+vT53eWXu6QWqGx5CrAnbc4mwIYbmXrj5+owmQ==
-Date: Fri, 2 Feb 2018 11:44:21 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-Subject: Re: [PATCH 1/2] tools/memory-model: clarify the origin/scope of the
- tool name
-Message-ID: <20180202104421.GA31828@andrea>
-References: <1517486609-10951-1-git-send-email-parri.andrea@gmail.com>
- <Pine.LNX.4.44L0.1802011026250.1677-100000@iolanthe.rowland.org>
- <20180201230941.GT3741@linux.vnet.ibm.com>
+        id S1751856AbeBBKuv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 05:50:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52248 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751129AbeBBKum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 05:50:42 -0500
+Subject: Re: [RFC PATCH v1 00/13] lru_lock scalability
+To: Daniel Jordan <daniel.m.jordan@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
+        Dave.Dice@oracle.com, dave@stgolabs.net, khandual@linux.vnet.ibm.com,
+        ldufour@linux.vnet.ibm.com, mgorman@suse.de, mhocko@kernel.org,
+        pasha.tatashin@oracle.com, steven.sistare@oracle.com,
+        yossi.lev@oracle.com
+References: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
+ <6bd1c8a5-c682-a3ce-1f9f-f1f53b4117a9@redhat.com>
+ <e3e47085-1b5e-0d2e-f8cb-03defb9af0dd@oracle.com>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <962e6540-08e5-aca2-2ff9-bcbd9650d962@redhat.com>
+Date: Fri, 2 Feb 2018 10:50:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180201230941.GT3741@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <e3e47085-1b5e-0d2e-f8cb-03defb9af0dd@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 03:09:41PM -0800, Paul E. McKenney wrote:
-> On Thu, Feb 01, 2018 at 10:26:50AM -0500, Alan Stern wrote:
-> > On Thu, 1 Feb 2018, Andrea Parri wrote:
-> > 
-> > > Ingo pointed out that:
-> > > 
-> > >   "The "memory model" name is overly generic, ambiguous and somewhat
-> > >    misleading, as we usually mean the virtual memory layout/model
-> > >    when we say "memory model". GCC too uses it in that sense [...]"
-> > > 
-> > > Make it clearer that, in the context of tools/memory-model/, the term
-> > > "memory-model" is used as shorthand for "memory consistency model" by
-> > > calling out this convention in tools/memory-model/README.
-> > > 
-> > > Stick to the full name in sources' headers and for the subsystem name.
-> > > 
-> > > Suggested-by: Ingo Molnar <mingo@kernel.org>
-> > > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> > 
-> > For both patches:
-> > 
-> > Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> 
-> Thank you all -- I have queued this and pushed it to my RCU tree on
-> branch lkmm.  I did reword the commit log a bit, please see below and
-> please let me know if any of my rewordings need halp.
-
-Seems to me that your message has a leftover "is used".
-
-  Andrea
+Hi,
 
 
-> 
-> Andrea, when you resend your second patch, could you please add Alan's
-> Acked-by?
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> commit de175b697f71b8e3e6d980b7186b909fee0c4378
-> Author: Andrea Parri <parri.andrea@gmail.com>
-> Date:   Thu Feb 1 13:03:29 2018 +0100
-> 
->     tools/memory-model: Clarify the origin/scope of the tool name
->     
->     Ingo pointed out that:
->     
->       "The "memory model" name is overly generic, ambiguous and somewhat
->        misleading, as we usually mean the virtual memory layout/model
->        when we say "memory model". GCC too uses it in that sense [...]"
->     
->     Make it clearer that tools/memory-model/ uses the term "memory model"
->     is used as shorthand for "memory consistency model" by calling out this
->     convention in tools/memory-model/README.
->     
->     Stick to the original "memory model" term in sources' headers and for
->     the subsystem name.
->     
->     Suggested-by: Ingo Molnar <mingo@kernel.org>
->     Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
->     Acked-by: Will Deacon <will.deacon@arm.com>
->     Acked-by: Alan Stern <stern@rowland.harvard.edu>
->     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> 
-> diff --git a/tools/memory-model/MAINTAINERS b/tools/memory-model/MAINTAINERS
-> index 711cbe72d606..db3bd3fc0435 100644
-> --- a/tools/memory-model/MAINTAINERS
-> +++ b/tools/memory-model/MAINTAINERS
-> @@ -1,4 +1,4 @@
-> -LINUX KERNEL MEMORY MODEL
-> +LINUX KERNEL MEMORY CONSISTENCY MODEL
->  M:	Alan Stern <stern@rowland.harvard.edu>
->  M:	Andrea Parri <parri.andrea@gmail.com>
->  M:	Will Deacon <will.deacon@arm.com>
-> diff --git a/tools/memory-model/README b/tools/memory-model/README
-> index 43ba49492111..91414a49fac5 100644
-> --- a/tools/memory-model/README
-> +++ b/tools/memory-model/README
-> @@ -1,15 +1,15 @@
-> -			=========================
-> -			LINUX KERNEL MEMORY MODEL
-> -			=========================
-> +		=====================================
-> +		LINUX KERNEL MEMORY CONSISTENCY MODEL
-> +		=====================================
->  
->  ============
->  INTRODUCTION
->  ============
->  
-> -This directory contains the memory model of the Linux kernel, written
-> -in the "cat" language and executable by the (externally provided)
-> -"herd7" simulator, which exhaustively explores the state space of
-> -small litmus tests.
-> +This directory contains the memory consistency model (memory model, for
-> +short) of the Linux kernel, written in the "cat" language and executable
-> +by the externally provided "herd7" simulator, which exhaustively explores
-> +the state space of small litmus tests.
->  
->  In addition, the "klitmus7" tool (also externally provided) may be used
->  to convert a litmus test to a Linux kernel module, which in turn allows
-> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-> index 57112505f5e0..b984bbda01a5 100644
-> --- a/tools/memory-model/linux-kernel.bell
-> +++ b/tools/memory-model/linux-kernel.bell
-> @@ -11,7 +11,7 @@
->   * which is to appear in ASPLOS 2018.
->   *)
->  
-> -"Linux kernel memory model"
-> +"Linux-kernel memory consistency model"
->  
->  enum Accesses = 'once (*READ_ONCE,WRITE_ONCE,ACCESS_ONCE*) ||
->  		'release (*smp_store_release*) ||
-> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-> index 15b7a5dd8a9a..babe2b3b0bb3 100644
-> --- a/tools/memory-model/linux-kernel.cat
-> +++ b/tools/memory-model/linux-kernel.cat
-> @@ -11,7 +11,7 @@
->   * which is to appear in ASPLOS 2018.
->   *)
->  
-> -"Linux kernel memory model"
-> +"Linux-kernel memory consistency model"
->  
->  (*
->   * File "lock.cat" handles locks and is experimental.
-> 
+On 02/02/18 04:18, Daniel Jordan wrote:
+>
+>
+> On 02/01/2018 10:54 AM, Steven Whitehouse wrote:
+>> Hi,
+>>
+>>
+>> On 31/01/18 23:04, daniel.m.jordan@oracle.com wrote:
+>>> lru_lock, a per-node* spinlock that protects an LRU list, is one of the
+>>> hottest locks in the kernel.  On some workloads on large machines, it
+>>> shows up at the top of lock_stat.
+>>>
+>>> One way to improve lru_lock scalability is to introduce an array of 
+>>> locks,
+>>> with each lock protecting certain batches of LRU pages.
+>>>
+>>>          *ooooooooooo**ooooooooooo**ooooooooooo**oooo ...
+>>>          |           ||           ||           ||
+>>>           \ batch 1 /  \ batch 2 /  \ batch 3 /
+>>>
+>>> In this ASCII depiction of an LRU, a page is represented with either 
+>>> '*'
+>>> or 'o'.  An asterisk indicates a sentinel page, which is a page at the
+>>> edge of a batch.  An 'o' indicates a non-sentinel page.
+>>>
+>>> To remove a non-sentinel LRU page, only one lock from the array is
+>>> required.  This allows multiple threads to remove pages from different
+>>> batches simultaneously.  A sentinel page requires lru_lock in 
+>>> addition to
+>>> a lock from the array.
+>>>
+>>> Full performance numbers appear in the last patch in this series, 
+>>> but this
+>>> prototype allows a microbenchmark to do up to 28% more page faults per
+>>> second with 16 or more concurrent processes.
+>>>
+>>> This work was developed in collaboration with Steve Sistare.
+>>>
+>>> Note: This is an early prototype.  I'm submitting it now to support my
+>>> request to attend LSF/MM, as well as get early feedback on the 
+>>> idea.  Any
+>>> comments appreciated.
+>>>
+>>>
+>>> * lru_lock is actually per-memcg, but without memcg's in the picture it
+>>>    becomes per-node.
+>> GFS2 has an lru list for glocks, which can be contended under certain 
+>> workloads. Work is still ongoing to figure out exactly why, but this 
+>> looks like it might be a good approach to that issue too. The main 
+>> purpose of GFS2's lru list is to allow shrinking of the glocks under 
+>> memory pressure via the gfs2_scan_glock_lru() function, and it looks 
+>> like this type of approach could be used there to improve the 
+>> scalability,
+>
+> Glad to hear that this could help in gfs2 as well.
+>
+> Hopefully struct gfs2_glock is less space constrained than struct page 
+> for storing the few bits of metadata that this approach requires.
+>
+> Daniel
+>
+We obviously want to keep gfs2_glock small, however within reason then 
+yet we can add some additional fields as required. The use case is 
+pretty much a standard LRU list, so items are added and removed, mostly 
+at the active end of the list, and the inactive end of the list is 
+scanned periodically by gfs2_scan_glock_lru()
+
+Steve.
