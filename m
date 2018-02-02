@@ -1,147 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754336AbeBBRao (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 12:30:44 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:55474 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753551AbeBBRVW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 12:21:22 -0500
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
- frequency
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
- <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
- <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
- <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
- <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
- <20180202105304.gow2znzgxqmuxgol@flea.lan>
- <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
- <20180202133516.uoy7ppuozd6cnldm@flea.lan>
- <aa43a02a-3ea9-2f61-eaf6-ddc7980f78a5@micronovasrl.com>
- <20180202155252.vhlih33ju6zh26oh@flea.lan>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <ee1f5d36-5b85-f770-1670-527632367f01@micronovasrl.com>
-Date: Fri, 2 Feb 2018 18:21:18 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754110AbeBBRcF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 12:32:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59766 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752249AbeBBRb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 12:31:56 -0500
+Date: Fri, 2 Feb 2018 18:29:42 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Nikolay Borisov <nborisov@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 1/2] libcrc32c: Add crc32c_impl function
+Message-ID: <20180202172942.GU18553@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Nikolay Borisov <nborisov@suse.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org
+References: <1515404705-490-1-git-send-email-nborisov@suse.com>
+ <1515404705-490-2-git-send-email-nborisov@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <20180202155252.vhlih33ju6zh26oh@flea.lan>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1515404705-490-2-git-send-email-nborisov@suse.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Adding linux-crypto@vger.kernel.org to CC
 
-Il 02/02/2018 16:52, Maxime Ripard ha scritto:
-> On Fri, Feb 02, 2018 at 04:38:13PM +0100, Giulio Benetti wrote:
->> Hi,
->>
->> Il 02/02/2018 14:35, Maxime Ripard ha scritto:
->>> On Fri, Feb 02, 2018 at 11:57:20AM +0100, Giulio Benetti wrote:
->>>> Il 02/02/2018 11:53, Maxime Ripard ha scritto:
->>>>> Hi,
->>>>>
->>>>> On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
->>>>>>>>> What kernel version did you use?
->>>>>>>>
->>>>>>>> Latest mainline.
->>>>>>>
->>>>>>> I guess this patch could fix it:
->>>>>>> http://code.bulix.org/1kitrq-268936?raw
->>>>>>
->>>>>> This should prevent from modifying parent clock. But my problem was
->>>>>> different.
->>>>>>
->>>>>> On A20, gpu_clk can have different PLL, not I've found out the way
->>>>>> to choose right one with assigned-parent-clocks.
->>>>>>
->>>>>> I have patchset ready for adding A20 mali node, but I need some more
->>>>>> time to complete with OPP, then I will submit entire patchset.
->>>>>>
->>>>>> Now it works correctly, using right pll(dedicated PLL8), setting
->>>>>> right frequency.
->>>>>
->>>>> The point is that we really don't care about which PLL is actually
->>>>> being used, as long as the rate is correct and we don't break anything
->>>>> else. If the GPU rate is accessible through one of the other PLL, it
->>>>> makes even more sense to not use the GPU PLL and keep it disabled,
->>>>> since it will result in some power savings.
->>>>
->>>> Ah! I see the point now, very clever system for power saving.
->>>> I'm going to check if it's resolutive,
->>>> but it sounds good.
->>>>
->>>>>
->>>>>> Btw, do I need to add a board using it, or can I add only Mali node
->>>>>> to sun7i-a20.dtsi(plus other little patches)?
->>>>>
->>>>> You can add it to the DTSI without a board using it (and actually,
->>>>> nothing should be in the board DTS, everything in the DT for the Mali
->>>>> applies to all boards).
->>>>
->>>> Sure. So I would also add the patch you've addressed me:
->>>> http://code.bulix.org/1kitrq-268936?raw
->>>> as a commit. Can I submit it in patchset to complete the whole job?
->>>
->>> I already sent that patch quite some time ago, I'll just apply it. You
->>> can send the DT patch :)
->>
->> Thanks. Sorry for my ignorance, but where are you applying patches?
->> Because I've tried to check sunxi-next and a lot of other Repo but I can't
->> find this and neither "Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali
->> changing dclk frequency"
+Link to the 2/2 patch https://patchwork.kernel.org/patch/10149203/
+
+On Mon, Jan 08, 2018 at 11:45:04AM +0200, Nikolay Borisov wrote:
+> This function returns a string with the currently in-use implementation
+> of the crc32c algorithm, i.e crc32c-generic (for unoptimised, generic
+> implementation) or crc32c-intel for the sse optimised version. This
+> will be used by btrfs.
 > 
-> Usually, in the git tree listed in MAINTAINERS :)
-
-Please don't laugh at me! :)
-
-I've tried to check for your patch(drivers/gpu/drm/sun4i/sun4i_tcon.c) on:
-https://cgit.freedesktop.org/drm/drm-misc/
-according to MAINTAINERS file and nothing found.
-
-For the other one(arch/arm/boot/dts/sun7i-a20.dtsi), I've checked
-on:
-https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/devicetree/devicetree-rebasing.git/
-
-Nothing neither here!
-
-In MAINTANERS file there's no arch/arm/boot/dts/sun* association.
-
-I don't know where else to look, I'm going nut!
-And for sure I'm looking idiot,
-this is why I've prepended "Please don't laugh at me!" :))
-
-Help!
-
+> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+> ---
+>  include/linux/crc32c.h | 1 +
+>  lib/libcrc32c.c        | 6 ++++++
+>  2 files changed, 7 insertions(+)
 > 
-> Maxime
-> 
+> diff --git a/include/linux/crc32c.h b/include/linux/crc32c.h
+> index 357ae4611a45..bd21af828ff6 100644
+> --- a/include/linux/crc32c.h
+> +++ b/include/linux/crc32c.h
+> @@ -5,6 +5,7 @@
+>  #include <linux/types.h>
+>  
+>  extern u32 crc32c(u32 crc, const void *address, unsigned int length);
+> +extern const char *crc32c_impl(void);
+>  
+>  /* This macro exists for backwards-compatibility. */
+>  #define crc32c_le crc32c
+> diff --git a/lib/libcrc32c.c b/lib/libcrc32c.c
+> index 9f79547d1b97..eaf71e0e04be 100644
+> --- a/lib/libcrc32c.c
+> +++ b/lib/libcrc32c.c
+> @@ -71,6 +71,12 @@ static void __exit libcrc32c_mod_fini(void)
+>  	crypto_free_shash(tfm);
+>  }
+>  
+> +const char *crc32c_impl(void)
+> +{
+> +	return crypto_tfm_alg_driver_name(crypto_shash_tfm(tfm));
+> +}
+> +EXPORT_SYMBOL(crc32c_impl);
 
+Crypto maintainers, would it be still possible to squeeze this patch to
+4.16? It's quite trivial, but as it is not in a code I maintain I'm not
+comfortable to add it to my tree (unless I get an ACK).
 
--- 
-Giulio Benetti
-R&D Manager &
-Advanced Research
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+The linked patch depends on that change and would let us get rid of some
+custom crypto wrappers around crc32c.
