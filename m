@@ -1,77 +1,47 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591588-2-728985680584122956
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591588; b=ZpE8ZlDkLPE074lBCM1ZK1dpeCK0rZdUhTfxYTmXCz9qZP0
-    pYjOCHunDaDr4aIiDuXgnYD46IuZQsRJMvvfQ18ZB4rm0v2sMXQVio6+Oi83LeJZ
-    45Tkpze8qPOhAr0pICIkZT40hpkVV32xW+Q/v7+cfF+ZofL2VVxOAiNJb5hYN1hJ
-    TaEMfJLuoJ+NS+PUCxeundaTznIya36VYEX+CLaXXBgA/teSkV+hJ3eRtUz5xZd5
-    v+5ET5VArnOohdH8c6E49WEupYNJ9aZCYIXaJDHErysgUnDONFYbyCExNFEAkcbX
-    VuaXfyOnooEzBFIk58A5bxrKjCHHXNXysK1+sNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591588; bh=5Rk7b6f0Ba0jyvW7X4Rry+9GPw
-    NXSLW4uVHGei82T5M=; b=YF6J2EMMMU99yZdcT29iNcqVatF0umNyr/1bQifHyD
-    V0TbFiTw3VLGddSQ1OboRFcS5tx6RZCwv/Sj5XfSz9tRpV8NfVnqHSR2hUlwsJZX
-    YZ0/W+NrqqsJwdCU7Lk3Kf72840sIlinLyIinAgr6U4pfgkHU1lgj1gx890S4eWO
-    Gd5JfkwER1jpBZgiZ9BX/2v1Ce8E5t0Gs0Ri2rhYDAAGit254zLIi2y/PQuNPTlt
-    OCx6vHiUo2eUlbloSp2C9PyUFuPPU1eRXrkwZ6gWjvjNrWusTVTd2TNSTf/kqdT3
-    KuAwDxxAMDx42hW7PRYz7Vd8EDfjqQBeigbtdYqrfL3Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752696AbeBBRNF (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:13:05 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39192 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753497AbeBBRNC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:13:02 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x225arm1Ov7t33MuY19tatVA3CA4I0W8K5yGJQsCwcw8TdSDfpOSxJ+q1sE6RWmbpK82RQeux
+ARC-Seal: i=1; a=rsa-sha256; t=1517591580; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ci5FRCAyqeHiYmY51U8+qMtZBTSnq5fZhT/cw2i8Es7mXjmsK9XZYjbDGr8WgsLy2x
+         Rv1PWQP0fJkdh3VRsvTCP4+ZX7bJ3vAaNS8Ogbsn4C57gUt6JtsjeSXpR+TGDziDBHHe
+         f/24VOaRwcgD5THZ3xy1+gFnsKmbsWlD+FL1VyQQyUj22zXT1sJ3ZL364uBO7XZ8bNaA
+         xhPu/IB8DjfL07jNTzRFOFmoCqcX42jfBU3lC/q6GhQdP9dlMko3+U6AZtAPsGw0WP4C
+         Y+Eml/K1uSCctyJ8xvyNYv6cDy6z+IVB8c7F44m6ES0qDJrrws2U2bWhpG/GiyYWZyID
+         qSkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=gKJrYxE7dX+TQthzbQnbxApgMoxyVjuxuKUZzQg46jE=;
+        b=Gc5FE8p5Z6fjvsJczLzBg2fc6z8+MDEB5bK8ZnjgKumxJFMqiIL0MM0IUK005q6xnv
+         2pkcEBryXiRttffRZn3yYfXEA9QYmo0RfYJvu/RABWnrpAsPdgrF5rHzQEy/S2yywqb8
+         StGcdVbzswG0QASN3OP/3QB1MuUfRZAozMKXRsZXIGtvHRGq7JeFJFaf23ZqN3MBki+f
+         5yK4UVpcDg5FMWvHfkidKYCueoUCQ40ArVFBOfp3ksyz7FtanIqZvpmrS1gwmaUndLxU
+         bCZZjvfNm6j3fF4sWnnAFR0qFzZKsgGZqyGbmXZlRUYEYZ/XhkRN502HHFbpgkYNVhHQ
+         Ibzw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 102/156] SUNRPC: Allow connect to return EHOSTUNREACH
-Date: Fri,  2 Feb 2018 17:58:03 +0100
-Message-Id: <20180202140844.815058277@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Jim Mattson <jmattson@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 128/156] KVM: x86: emulate #UD while in guest mode
+Date: Fri,  2 Feb 2018 17:58:29 +0100
+Message-Id: <20180202140846.162276178@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591310109198616337?=
+X-GMAIL-MSGID: =?utf-8?q?1591310109198616337?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,28 +49,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
 
-[ Upstream commit 4ba161a793d5f43757c35feff258d9f20a082940 ]
+[ Upstream commit bd89525a823ce6edddcedbe9aed79faa1b9cf544 ]
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
-Tested-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+This reverts commits ae1f57670703656cc9f293722c3b8b6782f8ab3f
+and ac9b305caa0df6f5b75d294e4b86c1027648991e.
+
+If the hardware doesn't support MOVBE, but L0 sets CPUID.01H:ECX.MOVBE
+in L1's emulated CPUID information, then L1 is likely to pass that
+CPUID bit through to L2. L2 will expect MOVBE to work, but if L1
+doesn't intercept #UD, then any MOVBE instruction executed in L2 will
+raise #UD, and the exception will be delivered in L2.
+
+Commit ac9b305caa0df6f5b75d294e4b86c1027648991e is a better and more
+complete version of ae1f57670703 ("KVM: nVMX: Do not emulate #UD while
+in guest mode"); however, neither considers the above case.
+
+Suggested-by: Jim Mattson <jmattson@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sunrpc/xprtsock.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/svm.c |    9 +--------
+ arch/x86/kvm/vmx.c |    5 +----
+ 2 files changed, 2 insertions(+), 12 deletions(-)
 
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -2437,6 +2437,7 @@ static void xs_tcp_setup_socket(struct w
- 	case -ECONNREFUSED:
- 	case -ECONNRESET:
- 	case -ENETUNREACH:
-+	case -EHOSTUNREACH:
- 	case -EADDRINUSE:
- 	case -ENOBUFS:
- 		/*
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -362,7 +362,6 @@ static void recalc_intercepts(struct vcp
+ {
+ 	struct vmcb_control_area *c, *h;
+ 	struct nested_state *g;
+-	u32 h_intercept_exceptions;
+ 
+ 	mark_dirty(svm->vmcb, VMCB_INTERCEPTS);
+ 
+@@ -373,14 +372,9 @@ static void recalc_intercepts(struct vcp
+ 	h = &svm->nested.hsave->control;
+ 	g = &svm->nested;
+ 
+-	/* No need to intercept #UD if L1 doesn't intercept it */
+-	h_intercept_exceptions =
+-		h->intercept_exceptions & ~(1U << UD_VECTOR);
+-
+ 	c->intercept_cr = h->intercept_cr | g->intercept_cr;
+ 	c->intercept_dr = h->intercept_dr | g->intercept_dr;
+-	c->intercept_exceptions =
+-		h_intercept_exceptions | g->intercept_exceptions;
++	c->intercept_exceptions = h->intercept_exceptions | g->intercept_exceptions;
+ 	c->intercept = h->intercept | g->intercept;
+ }
+ 
+@@ -2195,7 +2189,6 @@ static int ud_interception(struct vcpu_s
+ {
+ 	int er;
+ 
+-	WARN_ON_ONCE(is_guest_mode(&svm->vcpu));
+ 	er = emulate_instruction(&svm->vcpu, EMULTYPE_TRAP_UD);
+ 	if (er == EMULATE_USER_EXIT)
+ 		return 0;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1891,7 +1891,7 @@ static void update_exception_bitmap(stru
+ {
+ 	u32 eb;
+ 
+-	eb = (1u << PF_VECTOR) | (1u << MC_VECTOR) |
++	eb = (1u << PF_VECTOR) | (1u << UD_VECTOR) | (1u << MC_VECTOR) |
+ 	     (1u << DB_VECTOR) | (1u << AC_VECTOR);
+ 	if ((vcpu->guest_debug &
+ 	     (KVM_GUESTDBG_ENABLE | KVM_GUESTDBG_USE_SW_BP)) ==
+@@ -1909,8 +1909,6 @@ static void update_exception_bitmap(stru
+ 	 */
+ 	if (is_guest_mode(vcpu))
+ 		eb |= get_vmcs12(vcpu)->exception_bitmap;
+-	else
+-		eb |= 1u << UD_VECTOR;
+ 
+ 	vmcs_write32(EXCEPTION_BITMAP, eb);
+ }
+@@ -5921,7 +5919,6 @@ static int handle_exception(struct kvm_v
+ 		return 1;  /* already handled by vmx_vcpu_run() */
+ 
+ 	if (is_invalid_opcode(intr_info)) {
+-		WARN_ON_ONCE(is_guest_mode(vcpu));
+ 		er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
+ 		if (er == EMULATE_USER_EXIT)
+ 			return 0;
