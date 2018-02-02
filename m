@@ -1,97 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751699AbeBBIAY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 03:00:24 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56568 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750795AbeBBIAQ (ORCPT
+        id S1751815AbeBBIAu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 03:00:50 -0500
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:47583 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751329AbeBBIAm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 03:00:16 -0500
-Subject: Re: [PATCH v2 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
- support
-To: Farhan Ali <alifm@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: geert@linux-m68k.org, stefan.kristiansson@saunalahti.fi,
-        tomi.valkeinen@ti.com, schwidefsky@de.ibm.com,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
- <49ef903a791cbca658194c68932eb90450027774.1517508744.git.alifm@linux.vnet.ibm.com>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Fri, 2 Feb 2018 08:59:57 +0100
+        Fri, 2 Feb 2018 03:00:42 -0500
+Subject: Re: [RFC PATCH 1/9] media: add request API core and UAPI
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Alexandre Courbot <acourbot@chromium.org>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20171215075625.27028-1-acourbot@chromium.org>
+ <20171215075625.27028-2-acourbot@chromium.org>
+ <20180126083936.5qxacbdprm6j7pcc@valkosipuli.retiisi.org.uk>
+ <CAPBb6MVAaGPh-sxD0ZTMbo2Ejtp8Rpqb8+OaKxhAC=BaT360eQ@mail.gmail.com>
+ <20180202073316.ovee5fbe45npksnt@paasikivi.fi.intel.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6292179f-4b3d-573b-09c9-7a1efc101d44@xs4all.nl>
+Date: Fri, 2 Feb 2018 09:00:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <49ef903a791cbca658194c68932eb90450027774.1517508744.git.alifm@linux.vnet.ibm.com>
+In-Reply-To: <20180202073316.ovee5fbe45npksnt@paasikivi.fi.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18020208-0008-0000-0000-000004C8AFE8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020207-0009-0000-0000-00001E5C5123
-Message-Id: <246f92c9-15dc-223f-59d9-b2f0756cdf5e@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802020095
+X-CMAE-Envelope: MS4wfF16G2Y4QK9KDCtiIQEpYQiIJB4+0m2okkLsKiMlQvsKHewebJWiX4gIwtwx8qUKY2ePl8dnZC9bih2mM7JLKB4hMoMOCNYMzrH8NqaCgMmRI65eqMdT
+ RYJZgVqk8hhip1LFE4IhbPxWUIiQO6FQMaYFPHpPyDxw6O7ZxYmEXzyhQq0RusRzEVcLbNflSXX37bN+KewQ3c5dzgsmjs8BFFhm8OVZTvz0JvJIHONjkC9h
+ CmG2Zma7Hc6+m+9lzh4vrbLAFXOXAkIpR3xxeYK28LH1QRacxp2mHcyfrHcS9iVgFS0j1Yo3rM4ycSBw5Fiq82yoNHigw9ZVfbe5xHiDoUGnuHFzKsuyp7GS
+ 7Xhdns7zwi9z12wKWxhLwWA2OhwNmRRZcUVu5Gkxg+Oqs6TY0g4sh26jawkJUYmGsAwB96ABER1sC8f6obcbLmPghaO6u9V0WbmcyAObAQdDVY9+Hb7AUVmf
+ k5blrRYEIkuv2p+Lb16ituV9AxcYmSdeDdWySzczxGgyGVnulSVq9rGSwEESwV1JdWZ1EsAdB/Mtjvvc8l/avgwN3Y1o2FpUvmhWLqu75+kb6Gz7mopsGRJE
+ e29kk5iT4zPgMEfRB2erp8vD
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/01/2018 07:41 PM, Farhan Ali wrote:
-> The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
-> added the HAS_IOMEM dependecy for "Graphics support". This disabled the
-> "Graphics support" menu for S390. But if we enable VT layer for S390,
-> we would also need to enable the dummy console. So let's remove the
-> HAS_IOMEM dependency.
-> 
-> Move this dependency to Opencores framebuffer driver which would fail to build
-> with CONFIG_HAS_IOMEM disabled:
-> 
-> ERROR: "devm_ioremap_resource" [drivers/video/fbdev/ocfb.ko] undefined!
-> 
-> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
-> Tested-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+On 02/02/2018 08:33 AM, Sakari Ailus wrote:
 
-This also enables several PCI based graphic device driver on s390.
-This makes no sense but they all compile fine so I guess this is ok.
+<snip>
 
-I think patch 2 and 3 are clearly for the s390 tree, patch 1 seems trivial
-Also ccing Bart. Can we maybe get an ack to carry this patch also via the s390
-tree?
+>>>> +struct media_request_entity_data *
+>>>> +media_request_get_entity_data(struct media_request *req,
+>>>> +                           struct media_entity *entity, void *fh)
+>>>
+>>> This makes the assumption that request data is bound to entities. How does
+>>> this work with links?
+>>>
+>>> I wonder if it should rather be bound to graph objects, or certain graph
+>>> objects. Having a standard way to bind request specific information e.g. to
+>>> entities is definitely worth having, though.
+>>>
+>>> V4L2 framework specific information would be needed across the media graph
+>>> and it'd be good to store it in a non-driver specific way. What I think
+>>> you'd need is an interface that allows storing information based on two
+>>> keys --- the request and e.g. a pointer provided by the caller. The V4L2
+>>> framework would have one key, e.g. a pointer to an empty struct defined
+>>> somewhere in the V4L2 framework could be used for the purpose.
+>>>
+>>> Going forward, the entire media graph state will be subject to changing
+>>> through requests. This includes link state, media bus and pixel formats,
+>>> cropping and scaling configurations, everything. Let's not try to go there
+>>> yet in this patchset, but what I'm asking is to keep the goal in mind when
+>>> implementating the request API.
+>>
+>> Yeah, I think a similar idea is brought up in the cover letter of the
+>> next revision (although for different reasons). Entities are probably
+>> not a one-fit for all use-cases.
+>>
+>> For the case of links though, I believe that the "entity" that would
+>> control them would be the media controller itself, since it is the one
+>> that takes the MEDIA_IOC_SETUP_LINK ioctl. But even for this case, we
+>> cannot use an entity to look up the media_device, so something more
+>> generic like an opaque key would probably be needed.
+> 
+> Perhaps in the near future we still need a little less than that. Changing
+> something that has a state in V4L2 will be troublesome and will require
+> managing state of what is now stream centric.
+> 
+> I still think that the framework would need to do the job of managing the
+> video buffers related to a request as well as controls without necessarily
+> trying to generalise that right now. But how to store these in a meaningful
+> way? Putting them to the request itself would be one option: you'll need to
+> dig the request up anyway when things are associated to it, and the driver
+> needs it when it is queued.
+> 
+> I wonder what Hans and Laurent think.
 
+I think this is something for the future. I want to avoid delaying the Request
+API for endless internal design discussions. The public API should be solid,
+but the internal framework will undoubtedly need to change in the future.
 
-> ---
->  drivers/video/Kconfig       | 1 -
->  drivers/video/fbdev/Kconfig | 2 +-
->  2 files changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-> index 3c20af9..41e7ba9 100644
-> --- a/drivers/video/Kconfig
-> +++ b/drivers/video/Kconfig
-> @@ -3,7 +3,6 @@
->  #
-> 
->  menu "Graphics support"
-> -	depends on HAS_IOMEM
-> 
->  config HAVE_FB_ATMEL
->  	bool
-> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-> index 2f615b7..ec9c9ce 100644
-> --- a/drivers/video/fbdev/Kconfig
-> +++ b/drivers/video/fbdev/Kconfig
-> @@ -966,7 +966,7 @@ config FB_PVR2
-> 
->  config FB_OPENCORES
->  	tristate "OpenCores VGA/LCD core 2.0 framebuffer support"
-> -	depends on FB && HAS_DMA
-> +	depends on FB && HAS_DMA && HAS_IOMEM
->  	select FB_CFB_FILLRECT
->  	select FB_CFB_COPYAREA
->  	select FB_CFB_IMAGEBLIT
-> 
+That's OK. The reality is that there is a lot of demand for the Request API for
+stateless codecs, and that is what we should concentrate on.
+
+Should the framework manage the buffers? I don't even know what is meant with
+that exactly, let alone that I can give an answer.
+
+Let's stay focused: 1) solid uAPI, 2) stateless codec support. The internal
+framework shouldn't of course make it harder than it needs to to later extend
+the support to camera pipelines, but neither should we spend much time on it
+or we will never get this in.
+
+Regards,
+
+	Hans
