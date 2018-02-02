@@ -1,75 +1,48 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2879036-1517591046-2-11020932856975646926
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591045; b=Iv4ipy26/dq98vtNhj4Chj3DbiJzEhRjZC4hmi4t0TFCtOa
-    0n4GuWeqx6OuKoxhMUW8vWr+zXoG8pZ9ffcU3q5pYm7AmfL1ocEFmR2idFTS/SP0
-    2vebVOlja6++wtgSI9rT2P7AU52oZqAk842lMks2Tb3MM2pEu7NrB8lYNsSYZly9
-    sLjn7D8m4V8B+PBlcroEudXrNrpLSPGSI0dO8060N2xmTYcond6NwIpthrTb1vkK
-    Wf6SCEl1/a7xdkNmuK5Shxmhfp7xZqPDHGgya2CsM2FIJoHR+MjzmxMwGMBc6+VA
-    kdQCVsnBKfyIWkjr38eYJronHbA7d4emlWgLfcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591045; bh=UTWBFe5iVNbGpDRXBQfZzcjUu0
-    L7Fqv6lGbwRMtiHlI=; b=M913Bne9L+IOzLTx4d19zoe/MFlUVTsNMhB0540dYt
-    wCcFsU2XO9TDPMsAeWVp0balS26pYbYFbtnW4kK+4SqFlEFuUM1eD8Jbe6VKg66X
-    sJP+etVrHd2R2315l568w6zfgf0k7jHhgpZ/cIWlBsqWQsqlqDKVJPL+DHe9gjAd
-    pzVNwsZMsEKudp6VRtDmlchd1gFhQAQ78ncmJYZTpjmRJNG7ji4X2Db0YiPXFRrp
-    WhWFuEjpU22OvvSdJ6aAA7ppKHY9U6Mo29CBtsiSwmPsZpOtreUkfyFXHQwW2Eot
-    iIdfz+ldXB0qGNyP3XC5KFiEdI+vNaGrTDlvbpNeVKOg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752846AbeBBREC (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:04:02 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36074 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752494AbeBBRD5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:03:57 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227/Jacs+V79QGjhdT5nBWBBS8ZsmuilYpwWALbJm+9WaFcOc07eJiadBgKFD+k9vt066oEu
+ARC-Seal: i=1; a=rsa-sha256; t=1517591045; cv=none;
+        d=google.com; s=arc-20160816;
+        b=UVOjDCW0o6/5kd2V+PeijgMSiPMou5DlT8RF1Di9d3fQjuhss/U2YNMKij9lJ8GqNQ
+         T1pScLw/NXMlOps8MJmmhgU7eCfPPn5qPCRTf0hmL6e9kfZ8BOjeqMKBI+c0QUpa7pOO
+         2BQB7pg5ok5VGYAQL9/dbqyyUcLGk8LENTLNl/il9z8bFAieQLC29sH8ZmOUpHvjnFKE
+         4OzVnFSuJYfWXLNInR/ONBUjC2z2Yb6pInxuW/9IE2Gg/dD11nlqg980KpNRirOlTg/V
+         6Cdk6zIsIl09PTqYjUHNeMeWgsKlKYz6YLFtUOaulMjc1BGypKpVGpbySI6tAHj0n0Xr
+         teFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Nt3ApN0cms1XUMu8ZvkbpE8scof0HY8wwZISr0T5TJI=;
+        b=mSG7ad76SF6+ycfPIGzEsYikSPdRMw2zj4bMWqNA+Ydv4hjPy0RJN/lpN2Ul2fRoQd
+         0AIwsRyJAlRbHz/GjNq2GgvtAdVCqd6Ej0j51Auk4uUTT9qoWnhLkU0aiaENS+TO6uwj
+         E8NsrXeln/2gl8DRYkd9Z4vE/Ttt9nrfylbky93P4Fij/HkT0reAsRYNdUCiv9JP7Zj1
+         7SiqSn6D5C7kp20GcwV9WVX+DYIOTz00/KMWn/sZRSBWnyQT37r/lqiRJOruw7ndaxOv
+         v0fSKRLoQkd8cr7PVjqvStx1qiKXO0bmzcSDUxI3aAWy3oObWHCoiC3Gce5I1zHRQa1t
+         EgCQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.9 13/86] gpio: iop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Fri,  2 Feb 2018 17:57:33 +0100
-Message-Id: <20180202140824.065281862@linuxfoundation.org>
+	stable@vger.kernel.org,
+	zhangliping <zhangliping02@baidu.com>,
+	Pravin B Shelar <pshelar@ovn.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 32/86] openvswitch: fix the incorrect flow action alloc size
+Date: Fri,  2 Feb 2018 17:57:52 +0100
+Message-Id: <20180202140825.515335098@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309440466485315?=
+X-GMAIL-MSGID: =?utf-8?q?1591309548248341623?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,35 +50,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: zhangliping <zhangliping02@baidu.com>
 
-commit 97b03136e1b637d7a9d2274c099e44ecf23f1103 upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+[ Upstream commit 67c8d22a73128ff910e2287567132530abcf5b71 ]
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-iop.o
-see include/linux/module.h for more information
+If we want to add a datapath flow, which has more than 500 vxlan outputs'
+action, we will get the following error reports:
+  openvswitch: netlink: Flow action size 32832 bytes exceeds max
+  openvswitch: netlink: Flow action size 32832 bytes exceeds max
+  openvswitch: netlink: Actions may not be safe on all matching packets
+  ... ...
 
-This adds the license as "GPL", which matches the header of the file.
+It seems that we can simply enlarge the MAX_ACTIONS_BUFSIZE to fix it, but
+this is not the root cause. For example, for a vxlan output action, we need
+about 60 bytes for the nlattr, but after it is converted to the flow
+action, it only occupies 24 bytes. This means that we can still support
+more than 1000 vxlan output actions for a single datapath flow under the
+the current 32k max limitation.
 
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
+So even if the nla_len(attr) is larger than MAX_ACTIONS_BUFSIZE, we
+shouldn't report EINVAL and keep it move on, as the judgement can be
+done by the reserve_sfa_size.
 
-Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: zhangliping <zhangliping02@baidu.com>
+Acked-by: Pravin B Shelar <pshelar@ovn.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpio/gpio-iop.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/openvswitch/flow_netlink.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/gpio/gpio-iop.c
-+++ b/drivers/gpio/gpio-iop.c
-@@ -58,3 +58,7 @@ static int __init iop3xx_gpio_init(void)
- 	return platform_driver_register(&iop3xx_gpio_driver);
- }
- arch_initcall(iop3xx_gpio_init);
-+
-+MODULE_DESCRIPTION("GPIO handling for Intel IOP3xx processors");
-+MODULE_AUTHOR("Lennert Buytenhek <buytenh@wantstofly.org>");
-+MODULE_LICENSE("GPL");
+--- a/net/openvswitch/flow_netlink.c
++++ b/net/openvswitch/flow_netlink.c
+@@ -1789,14 +1789,11 @@ int ovs_nla_put_mask(const struct sw_flo
+ 
+ #define MAX_ACTIONS_BUFSIZE	(32 * 1024)
+ 
+-static struct sw_flow_actions *nla_alloc_flow_actions(int size, bool log)
++static struct sw_flow_actions *nla_alloc_flow_actions(int size)
+ {
+ 	struct sw_flow_actions *sfa;
+ 
+-	if (size > MAX_ACTIONS_BUFSIZE) {
+-		OVS_NLERR(log, "Flow action size %u bytes exceeds max", size);
+-		return ERR_PTR(-EINVAL);
+-	}
++	WARN_ON_ONCE(size > MAX_ACTIONS_BUFSIZE);
+ 
+ 	sfa = kmalloc(sizeof(*sfa) + size, GFP_KERNEL);
+ 	if (!sfa)
+@@ -1869,12 +1866,15 @@ static struct nlattr *reserve_sfa_size(s
+ 	new_acts_size = ksize(*sfa) * 2;
+ 
+ 	if (new_acts_size > MAX_ACTIONS_BUFSIZE) {
+-		if ((MAX_ACTIONS_BUFSIZE - next_offset) < req_size)
++		if ((MAX_ACTIONS_BUFSIZE - next_offset) < req_size) {
++			OVS_NLERR(log, "Flow action size exceeds max %u",
++				  MAX_ACTIONS_BUFSIZE);
+ 			return ERR_PTR(-EMSGSIZE);
++		}
+ 		new_acts_size = MAX_ACTIONS_BUFSIZE;
+ 	}
+ 
+-	acts = nla_alloc_flow_actions(new_acts_size, log);
++	acts = nla_alloc_flow_actions(new_acts_size);
+ 	if (IS_ERR(acts))
+ 		return (void *)acts;
+ 
+@@ -2500,7 +2500,7 @@ int ovs_nla_copy_actions(struct net *net
+ {
+ 	int err;
+ 
+-	*sfa = nla_alloc_flow_actions(nla_len(attr), log);
++	*sfa = nla_alloc_flow_actions(min(nla_len(attr), MAX_ACTIONS_BUFSIZE));
+ 	if (IS_ERR(*sfa))
+ 		return PTR_ERR(*sfa);
+ 
