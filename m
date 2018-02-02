@@ -1,75 +1,51 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2951739-1517591662-2-17157694595354614743
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591661; b=JZSZBjwXTYAk8TFTHjfAEiJDiGcWsTpenEjCX/gt2wB7Tx9
-    BQOBmLkxxI7SQnG54J72Ooy7ujgZ980HDnnAte5A2FH/BTeI0vKzniA4zURvK+DQ
-    Bulnl2GwKixaxCAw0YgXTB1ur9f0UyZWooJOmXu3f6bFwIxrz6x6V+MPnBp9seaz
-    P738x1YkvNcgbB9+gQkL8nRaTAXpFgJrIpwGGEJnSI3V9TEGr35QfDijDhV6NsgE
-    bm87cVTfxdoAjya7VEjsXZCPil3kM83/BW5YlQXGVt5xfWWRCaCzNgWrHo4wtFAA
-    MdLO83hDCLTQcBtz4GhRo0r3KD3/cUJwWe99qTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591661; bh=VeACQyFRbJQrbEz5WGuznKxfSI
-    WGR0pGHp/h9qaHu8g=; b=T8RJIWmfSwWTY2Gpf07QcSY3mwJLmiJT8kp/Uzhray
-    A7hC3IMkk6e6oZ2rP/yqVyGvklMdq+qjdlNH2DU3Pdrj+BQ6jWBD0rrtW9cr/X8o
-    4InDEstDPYBTPZWdFTSGd2YydbcdRpXXye8512NQW6vbkuuh//lC1gyw4g3p2R6L
-    MM0g5Ll/RuiMRswatW/G2+BN7PdlWdPQg+IM6Q30wYZwaYhXLKaVC6cv2ak/h2Bp
-    tC40RhxWI7+7fzn9WHSMaPVnd2wJezyzF/fo8z2MleaHdkHO3DHYr/hkv0sOU0C9
-    JAPzrvnfPunOu095ZRd57B/wPoi//3bYStlt9Bcdwi/g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753602AbeBBROS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:14:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40402 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753095AbeBBROP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:14:15 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224KbYm37fGMuy+/xCHjYq3GZ9esxeG+qjFO3ZaIZ0AH9/DFyk+ICUFldIeh3iUiEX9LVDjA
+ARC-Seal: i=1; a=rsa-sha256; t=1517591659; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Np+eGAfW1DBZY/KbxFFWm4ve51CnoLF8kymZfpTVMp8K/6dZQoDXTES2O8Pdv39s09
+         MLP/G92Hy9BoNefXbLMyXFcyb9VcsOO6XxDRISiOoLuXvcp0W4+UcWXzTp8a481Gj9RV
+         Yb+1ODIrUyP8EWm6aC+gS/kO05ykwssfWkjo+b1KZDSJ6rO/3xyVppG0fplnVTtzLHdb
+         WdJ07kq8f47sbgRQSjHtwV6mKXRfEWs8LuS0lKJSkbCf91xzm+796RVBfwpknL/xK3KF
+         N9+vLUGL8iD4QpQ/utFvFxtqTzH4/Jjz3IBbdF3D36SUuay8ckKhfUoBtX670EYOaRJq
+         bZwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=yuihUbh0XEAtraCEltfLhbLpxxwS9sqBp/ibIx393EM=;
+        b=fAU4h6uv/n6uGquAv4welggfvvDzFNBvZKr2rqfI5e9HC8V7JDdOJh0zTBmx2e1WYV
+         iutp/NgLMW6/wb4wn1lmvIb08/rXB8Qi/MCoaNeW9dRD44JrPpJJT/K+rIV71PRrhhX3
+         22w5kpsXxqYmS0xhkxegVUJZ9+aK51JnLxApboWV23u+CP8qHSdWr9Sc59MoGWnc+0bQ
+         rWv9VY+cNDhIfPC80x/2c8Wm4Bk/rTq8MEotXO5+SKBkjP7Ieu7w86oxA5bLzueNcmbI
+         sRTa2okZKFLH0PSvsNQLjsHxPiiwekF4ZEZ8yqwaBSdK13+pA6yzxAlV7RGf/qoNEUHk
+         rhcw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 155/156] Input: synaptics-rmi4 - do not delete interrupt memory too early
-Date: Fri,  2 Feb 2018 17:58:56 +0100
-Message-Id: <20180202140847.413943696@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Matthew Garrett <mjg59@google.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-efi@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 156/156] x86/efi: Clarify that reset attack mitigation needs appropriate userspace
+Date: Fri,  2 Feb 2018 17:58:57 +0100
+Message-Id: <20180202140847.458165935@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591310192231562942?=
+X-GMAIL-MSGID: =?utf-8?q?1591310192231562942?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,51 +53,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Matthew Garrett <mjg59@google.com>
 
-commit a1ab69021a584d952e6548a44b93760547b1b6b5 upstream.
+commit a5c03c31af2291f13689d11760c0b59fb70c9a5a upstream.
 
-We want to free memory reserved for interrupt mask handling only after we
-free functions, as function drivers might want to mask interrupts. This is
-needed for the followup patch to the F03 that would implement unmasking and
-masking interrupts from the serio pass-through port open() and close()
-methods.
+Some distributions have turned on the reset attack mitigation feature,
+which is designed to force the platform to clear the contents of RAM if
+the machine is shut down uncleanly. However, in order for the platform
+to be able to determine whether the shutdown was clean or not, userspace
+has to be configured to clear the MemoryOverwriteRequest flag on
+shutdown - otherwise the firmware will end up clearing RAM on every
+reboot, which is unnecessarily time consuming. Add some additional
+clarity to the kconfig text to reduce the risk of systems being
+configured this way.
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/rmi4/rmi_driver.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/firmware/efi/Kconfig |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/input/rmi4/rmi_driver.c
-+++ b/drivers/input/rmi4/rmi_driver.c
-@@ -41,6 +41,13 @@ void rmi_free_function_list(struct rmi_d
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -159,7 +159,10 @@ config RESET_ATTACK_MITIGATION
+ 	  using the TCG Platform Reset Attack Mitigation specification. This
+ 	  protects against an attacker forcibly rebooting the system while it
+ 	  still contains secrets in RAM, booting another OS and extracting the
+-	  secrets.
++	  secrets. This should only be enabled when userland is configured to
++	  clear the MemoryOverwriteRequest flag on clean shutdown after secrets
++	  have been evicted, since otherwise it will trigger even on clean
++	  reboots.
  
- 	rmi_dbg(RMI_DEBUG_CORE, &rmi_dev->dev, "Freeing function list\n");
+ endmenu
  
-+	/* Doing it in the reverse order so F01 will be removed last */
-+	list_for_each_entry_safe_reverse(fn, tmp,
-+					 &data->function_list, node) {
-+		list_del(&fn->node);
-+		rmi_unregister_function(fn);
-+	}
-+
- 	devm_kfree(&rmi_dev->dev, data->irq_memory);
- 	data->irq_memory = NULL;
- 	data->irq_status = NULL;
-@@ -50,13 +57,6 @@ void rmi_free_function_list(struct rmi_d
- 
- 	data->f01_container = NULL;
- 	data->f34_container = NULL;
--
--	/* Doing it in the reverse order so F01 will be removed last */
--	list_for_each_entry_safe_reverse(fn, tmp,
--					 &data->function_list, node) {
--		list_del(&fn->node);
--		rmi_unregister_function(fn);
--	}
- }
- 
- static int reset_one_function(struct rmi_function *fn)
