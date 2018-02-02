@@ -1,64 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeBBVS3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 16:18:29 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:56442 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbeBBVSV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 16:18:21 -0500
-Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
- select_idle_sibling using SMT balance
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: subhra mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        dhaval.giani@oracle.com
-References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
- <20180201123335.GV2249@hirez.programming.kicks-ass.net>
- <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
- <20180202172153.GO2269@hirez.programming.kicks-ass.net>
- <ed78c502-c1f8-43b3-f3d4-e0256e4085ee@oracle.com>
- <5b9f0828-8d35-885b-3eba-d31ca46da642@oracle.com>
- <20180202200401.GS2269@hirez.programming.kicks-ass.net>
-From: Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <70ff99d5-1240-69ae-63d4-773b201d8c0e@oracle.com>
-Date: Fri, 2 Feb 2018 16:17:52 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752126AbeBBVYW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 16:24:22 -0500
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:37072 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751557AbeBBVYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 16:24:16 -0500
+Date: Fri, 2 Feb 2018 21:23:33 +0000
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        KarimAllah Ahmed <karahmed@amazon.de>, sironi@amazon.de,
+        the arch/x86 maintainers <x86@kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] KVM: x86: Reduce retpoline performance impact in
+ slot_handle_level_range()
+Message-ID: <20180202212321.5186c13c@alans-desktop>
+In-Reply-To: <1517599033.31953.71.camel@infradead.org>
+References: <1517583559-424-1-git-send-email-dwmw@amazon.co.uk>
+        <CA+55aFwg88mxuOiJSh+xLnAfqEwAC-ReB9rdNx+r8fy=FTSHJw@mail.gmail.com>
+        <CA+55aFwqCc1UOkdBjEgiuL9fMkRj7RPrGFYQ376YhrqTUpLwrg@mail.gmail.com>
+        <1517599033.31953.71.camel@infradead.org>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180202200401.GS2269@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8793 signatures=668661
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=951
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802020255
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/2/2018 3:04 PM, Peter Zijlstra wrote:
-> On Fri, Feb 02, 2018 at 01:34:58PM -0500, Steven Sistare wrote:
->> Actually, I take back my take back.  I suspect the primary benefit
->> of random selection is that it breaks up resonance states where
->> CPUs that are busy tend to stay busy, and CPUs that are idle tend
->> to stay idle, which is reinforced by starting the search at target =
->> last cpu ran.
-> 
-> Which, according to there here patches:
-> 
->   https://lkml.kernel.org/r/20180130104555.4125-1-mgorman@techsingularity.net
-> 
-> is a good thing, because of power management.
+> Either way, that does look like a reasonable answer. I had looked at
+> the various one-line wrappers around slot_handle_level_range() and
+> thought "hm, those should be inline", but I hadn't made the next step
+> and pondered putting the whole thing inline. We'll give it a spin and
+> work out where the next performance bottleneck is. Thanks.
 
-Yes, but it's a bad thing if ready to run tasks pile on busy CPUs and idle 
-CPUs go unused.  Stating the obvious, when the search for idle fails, the 
-thread goes on a busy CPU. The existing logic that checks and uses the
-initial target if it is idle reduces unnecessary spreading and is power
-friendly (indeed, added in the patch you reference).  Subhra's patch does
-not change that.
+In addition the problem with switch() is that gcc might decide in some
+cases that the best way to implement your switch is an indirect call
+from a lookup table.
 
-- Steve
+For the simple case how about wrapping the if into
+
+                call_likely(foo->bar, usualfunction, args)
+
+as a companion to 
+
+                 foo->bar(args)
+
+that can resolve to nothing special on architectures that don't need it,
+an if/else case on platforms with spectre, and potentially clever
+stuff on any platform where you can beat the compiler by knowing
+probabilities it can't infer ?
+
+Alan
