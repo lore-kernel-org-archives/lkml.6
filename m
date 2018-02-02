@@ -1,54 +1,75 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226XB95aZSV+sbiLy7lO8Vktwqyuvlu3empyCr5XESbbUr2Sn0Huu9J31uSlgJ6PEGOx1aQK
-ARC-Seal: i=1; a=rsa-sha256; t=1517590783; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jbm2dn6ElxrqY4GmD+nXGUNLLUyLxV+fFSifaSQGZQkbywYMmM1jQNkWvTO1I5HMgc
-         V3CZ3BTginCWuTocU0z9iK9ZpeWGrqAoNyI538Tu24YbBruax69+tYHEvBEU0aq6wlXu
-         2FoqclXBiWvE45+EmindR8zuI9iKyi8Cn7UOfawzJ/YKfcM5xGlA0vp5/lBdkWgOQ15h
-         P+Y6BRMbokRU1T1kYwviBh4Oo5z5sPdmyqpp3FKl5eLj19wG6J4IqRJuwcO/rCIa4BcN
-         3HrKfh84XDGUEUJKVxvSsD4ltGoWP5sVUSkMsuvGARE7+nQU9yUyW11O/yZPAhVRw1FT
-         RHxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=ew4hySqiHGLkd0a74ZjTg0FQISZ8YmroUkOUxuIa8HI=;
-        b=mS6/oMJneQ2NjmrZL4AIRah4L4ApPcxIe7pYCiNgtAekP+oMZyZkOTnqYQgmQESY/n
-         DHqCX7nVD9JA487GDrLH9qzE0wjEtVq60DU5PbXv9xXIX6c9seIoU1hFNX8B47J6vrh6
-         Lngs8Bqtz5Kx0W4zzI1ONZJvvdHPAcWQ+5XZHusH5cl+ZquaE8HAnimNVrXoObTwAXg/
-         Vc0fmD1e24xbZinzBnHEfIQZ5SSa+QZ7HewOMpqJfOxbl8HRb4NSMcRzfFO25ktdRlQW
-         bid35vZagYzNp6gVZr3RHXmbNm5q7DojqjsSiSekA7kJkz1an35PemD8qMoiU2DC9cXu
-         5bnA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2848808-1517590783-2-3607205088622521692
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517590783; b=PXPUzUPndSoh0bQHJgbXLS/XPol5fDjt49cYopi4FfCeu+4
+    2zlYa4+liX6Tl7wOBEyw+riHCGGKBbHO+RJeNxwmdzwQQjBW4XLKZ6CzML6tKWyU
+    odCuEbcCxOPvWBwgNQ1VzHE3Vttn77i3WjZfReS7VQflCnG0nMPFuuAyEgUCTP8g
+    VvXq3yNy5cJtGqCRL1fYn1HnK4467T4uVsfq1qDi0rkmLIOYGRhn/FIPbMLs1e3H
+    Qr77M08cWIFIZn2HcYl/fattxIzEtGWfxvcceMI1yYtK+LmkPHFi6gQPFxsTPT66
+    FuF1hXliC4a9fNOvG/lBJtoZZEC55eedCZTZ4UA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517590783; bh=75MuXyPI9RyJBIpm0lFf5ttmP4
+    F5QyoszXSZVDYW2cg=; b=rXU+h27dcBUSBW4HI2XlxSt+yLpCOoivj8QoS4aJsb
+    C7OlI+gViJV0texClIbn2fg+1xDittRQOMadv2NL8d81eMfzMJ1ry2fevQOfik4a
+    VR4tEhwsKDhIvXBqDIOEMvkoWuyd+QU95V0Kj++fcbFvuCgKM8L0abXMwW3dLiL9
+    Uq6tUCB+S80wfXuJAExQ86e4p+y9PYlVlHC/+jjohfHoKSIbP1BMaLTTKbgT8Sjg
+    od38///sGOZ8cWEjw165GB2h6wxCx4luiE/DQ7fuO7fi8/g2icrSxMYaNGYDCeC8
+    9qBtbI/7rM9F62B5m9UXIKCjrn3uJN6+xvoVILgLbkeg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752497AbeBBQ7k (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 11:59:40 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34436 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752050AbeBBQ7g (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 11:59:36 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Vince Weaver <vincent.weaver@maine.edu>,
-	=?UTF-8?q?Robert=20=C5=9Awi=C4=99cki?= <robert@swiecki.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Vince Weaver <vince@deater.net>,
-	Jiri Kosina <jkosina@suze.cz>,
-	Hugh Dickins <hughd@google.com>
-Subject: [PATCH 4.4 12/67] kaiser: fix intel_bts perf crashes
-Date: Fri,  2 Feb 2018 17:57:41 +0100
-Message-Id: <20180202140816.605663601@linuxfoundation.org>
+        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 4.4 10/67] bpf: reject stores into ctx via st and xadd
+Date: Fri,  2 Feb 2018 17:57:39 +0100
+Message-Id: <20180202140816.368433911@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309273634786204?=
-X-GMAIL-MSGID: =?utf-8?q?1591309273634786204?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,129 +77,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hugh Dickins <hughd@google.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-Vince reported perf_fuzzer quickly locks up on 4.15-rc7 with PTI;
-Robert reported Bad RIP with KPTI and Intel BTS also on 4.15-rc7:
-honggfuzz -f /tmp/somedirectorywithatleastonefile \
-          --linux_perf_bts_edge -s -- /bin/true
-(honggfuzz from https://github.com/google/honggfuzz) crashed with
-BUG: unable to handle kernel paging request at ffff9d3215100000
-(then narrowed it down to
-perf record --per-thread -e intel_bts//u -- /bin/ls).
+[ upstream commit f37a8cb84cce18762e8f86a70bd6a49a66ab964c ]
 
-The intel_bts driver does not use the 'normal' BTS buffer which is
-exposed through kaiser_add_mapping(), but instead uses the memory
-allocated for the perf AUX buffer.
+Alexei found that verifier does not reject stores into context
+via BPF_ST instead of BPF_STX. And while looking at it, we
+also should not allow XADD variant of BPF_STX.
 
-This obviously comes apart when using PTI, because then the kernel
-mapping, which includes that AUX buffer memory, disappears while
-switched to user page tables.
+The context rewriter is only assuming either BPF_LDX_MEM- or
+BPF_STX_MEM-type operations, thus reject anything other than
+that so that assumptions in the rewriter properly hold. Add
+test cases as well for BPF selftests.
 
-Easily fixed in old-Kaiser backports, by applying kaiser_add_mapping()
-to those pages; perhaps not so easy for upstream, where 4.15-rc8 commit
-99a9dc98ba52 ("x86,perf: Disable intel_bts when PTI") disables for now.
-
-Slightly reorganized surrounding code in bts_buffer_setup_aux(),
-so it can better match bts_buffer_free_aux(): free_aux with an #ifdef
-to avoid the loop when PTI is off, but setup_aux needs to loop anyway
-(and kaiser_add_mapping() is cheap when PTI config is off or "pti=off").
-
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
-Reported-by: Robert Święcki <robert@swiecki.net>
-Analyzed-by: Peter Zijlstra <peterz@infradead.org>
-Analyzed-by: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vince Weaver <vince@deater.net>
-Cc: stable@vger.kernel.org
-Cc: Jiri Kosina <jkosina@suze.cz>
-Signed-off-by: Hugh Dickins <hughd@google.com>
+Fixes: d691f9e8d440 ("bpf: allow programs to write to certain skb fields")
+Reported-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/cpu/perf_event_intel_bts.c |   44 +++++++++++++++++++++--------
- 1 file changed, 33 insertions(+), 11 deletions(-)
+ kernel/bpf/verifier.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
---- a/arch/x86/kernel/cpu/perf_event_intel_bts.c
-+++ b/arch/x86/kernel/cpu/perf_event_intel_bts.c
-@@ -22,6 +22,7 @@
- #include <linux/debugfs.h>
- #include <linux/device.h>
- #include <linux/coredump.h>
-+#include <linux/kaiser.h>
- 
- #include <asm-generic/sizes.h>
- #include <asm/perf_event.h>
-@@ -67,6 +68,23 @@ static size_t buf_size(struct page *page
- 	return 1 << (PAGE_SHIFT + page_private(page));
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -683,6 +683,13 @@ static bool is_pointer_value(struct veri
+ 	}
  }
  
-+static void bts_buffer_free_aux(void *data)
++static bool is_ctx_reg(struct verifier_env *env, int regno)
 +{
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	struct bts_buffer *buf = data;
-+	int nbuf;
++	const struct reg_state *reg = &env->cur_state.regs[regno];
 +
-+	for (nbuf = 0; nbuf < buf->nr_bufs; nbuf++) {
-+		struct page *page = buf->buf[nbuf].page;
-+		void *kaddr = page_address(page);
-+		size_t page_size = buf_size(page);
-+
-+		kaiser_remove_mapping((unsigned long)kaddr, page_size);
-+	}
-+#endif
-+	kfree(data);
++	return reg->type == PTR_TO_CTX;
 +}
 +
- static void *
- bts_buffer_setup_aux(int cpu, void **pages, int nr_pages, bool overwrite)
- {
-@@ -103,29 +121,33 @@ bts_buffer_setup_aux(int cpu, void **pag
- 	buf->real_size = size - size % BTS_RECORD_SIZE;
- 
- 	for (pg = 0, nbuf = 0, offset = 0, pad = 0; nbuf < buf->nr_bufs; nbuf++) {
--		unsigned int __nr_pages;
-+		void *kaddr = pages[pg];
-+		size_t page_size;
-+
-+		page = virt_to_page(kaddr);
-+		page_size = buf_size(page);
-+
-+		if (kaiser_add_mapping((unsigned long)kaddr,
-+					page_size, __PAGE_KERNEL) < 0) {
-+			buf->nr_bufs = nbuf;
-+			bts_buffer_free_aux(buf);
-+			return NULL;
-+		}
- 
--		page = virt_to_page(pages[pg]);
--		__nr_pages = PagePrivate(page) ? 1 << page_private(page) : 1;
- 		buf->buf[nbuf].page = page;
- 		buf->buf[nbuf].offset = offset;
- 		buf->buf[nbuf].displacement = (pad ? BTS_RECORD_SIZE - pad : 0);
--		buf->buf[nbuf].size = buf_size(page) - buf->buf[nbuf].displacement;
-+		buf->buf[nbuf].size = page_size - buf->buf[nbuf].displacement;
- 		pad = buf->buf[nbuf].size % BTS_RECORD_SIZE;
- 		buf->buf[nbuf].size -= pad;
- 
--		pg += __nr_pages;
--		offset += __nr_pages << PAGE_SHIFT;
-+		pg += page_size >> PAGE_SHIFT;
-+		offset += page_size;
+ /* check whether memory at (regno + off) is accessible for t = (read | write)
+  * if t==write, value_regno is a register which value is stored into memory
+  * if t==read, value_regno is a register which will receive the value from memory
+@@ -779,6 +786,12 @@ static int check_xadd(struct verifier_en
+ 		return -EACCES;
  	}
  
- 	return buf;
- }
++	if (is_ctx_reg(env, insn->dst_reg)) {
++		verbose("BPF_XADD stores into R%d context is not allowed\n",
++			insn->dst_reg);
++		return -EACCES;
++	}
++
+ 	/* check whether atomic_add can read the memory */
+ 	err = check_mem_access(env, insn->dst_reg, insn->off,
+ 			       BPF_SIZE(insn->code), BPF_READ, -1);
+@@ -1909,6 +1922,12 @@ static int do_check(struct verifier_env
+ 			if (err)
+ 				return err;
  
--static void bts_buffer_free_aux(void *data)
--{
--	kfree(data);
--}
--
- static unsigned long bts_buffer_offset(struct bts_buffer *buf, unsigned int idx)
- {
- 	return buf->buf[idx].offset + buf->buf[idx].displacement;
++			if (is_ctx_reg(env, insn->dst_reg)) {
++				verbose("BPF_ST stores into R%d context is not allowed\n",
++					insn->dst_reg);
++				return -EACCES;
++			}
++
+ 			/* check that memory (dst_reg + off) is writeable */
+ 			err = check_mem_access(env, insn->dst_reg, insn->off,
+ 					       BPF_SIZE(insn->code), BPF_WRITE,
