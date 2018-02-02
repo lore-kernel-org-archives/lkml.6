@@ -1,164 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752201AbeBBXzg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 18:55:36 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:36781 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbeBBXza (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 18:55:30 -0500
-X-Google-Smtp-Source: AH8x227YcxYq9W+yBrlmLOVYqlJY4G4dAT9PwduqngVDl0sJYFXx4pCoY9eU9JKdZTaKfFL48HKh4A==
-Date: Fri, 2 Feb 2018 15:55:27 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot <syzbot+fbbedb95ed1d1e95781e@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Subject: Re: KASAN: use-after-free Read in __list_add_valid (3)
-Message-ID: <20180202235527.zf5i5tpae4qvufz7@gmail.com>
-References: <001a113f6344fd86f70563951f82@google.com>
+        id S1752379AbeBBX62 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 18:58:28 -0500
+Received: from mga04.intel.com ([192.55.52.120]:61629 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751857AbeBBX6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 18:58:17 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,452,1511856000";
+   d="scan'208";a="15079069"
+Date: Sat, 3 Feb 2018 07:57:49 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: kbuild-all@01.org, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org, joro@8bytes.org,
+        jroedel@suse.de, alex.williamson@redhat.com,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH 1/2] iommu: Fix iommu_unmap and iommu_unmap_fast return
+ type
+Message-ID: <201802030748.xftfsqJe%fengguang.wu@intel.com>
+References: <1517363285-89304-2-git-send-email-suravee.suthikulpanit@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <001a113f6344fd86f70563951f82@google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1517363285-89304-2-git-send-email-suravee.suthikulpanit@amd.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 11:57:01PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on upstream commit
-> 1f07476ec143bbed7bf0b641749783b1094b4c4f (Tue Jan 23 20:45:40 2018 +0000)
-> Merge tag 'pci-v4.15-fixes-3' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci
-> 
-> So far this crash happened 6 times on upstream.
-> Unfortunately, I don't have any reproducer for this crash yet.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+fbbedb95ed1d1e95781e@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in __list_add_valid+0xb1/0xd0 lib/list_debug.c:23
-> Read of size 8 at addr ffff8801bb5893d0 by task syz-executor1/28911
-> 
-> CPU: 0 PID: 28911 Comm: syz-executor1 Not tainted 4.15.0-rc9+ #277
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  print_address_description+0x73/0x250 mm/kasan/report.c:252
->  kasan_report_error mm/kasan/report.c:351 [inline]
->  kasan_report+0x25b/0x340 mm/kasan/report.c:409
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
->  __list_add_valid+0xb1/0xd0 lib/list_debug.c:23
->  __list_add include/linux/list.h:60 [inline]
->  list_add include/linux/list.h:79 [inline]
->  __add_wait_queue include/linux/wait.h:156 [inline]
->  add_wait_queue+0xcf/0x290 kernel/sched/wait.c:30
->  vhost_poll_func+0x3d/0x50 drivers/vhost/vhost.c:165
->  poll_wait include/linux/poll.h:46 [inline]
->  eventfd_poll+0xe8/0x1f0 fs/eventfd.c:123
->  vhost_poll_start+0x97/0x1c0 drivers/vhost/vhost.c:212
->  vhost_vring_ioctl+0xe28/0x19b0 drivers/vhost/vhost.c:1556
->  vhost_net_ioctl+0x9df/0x1910 drivers/vhost/net.c:1320
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
->  SYSC_ioctl fs/ioctl.c:701 [inline]
->  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
->  entry_SYSCALL_64_fastpath+0x29/0xa0
-> RIP: 0033:0x452f19
-> RSP: 002b:00007f33da20dc58 EFLAGS: 00000212 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f33da20e700 RCX: 0000000000452f19
-> RDX: 00000000208ffff8 RSI: 000000004008af20 RDI: 0000000000000017
-> RBP: 0000000000a2f850 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000212 R12: 0000000000000000
-> R13: 0000000000a2f7cf R14: 00007f33da20e9c0 R15: 0000000000000006
-> 
-> Allocated by task 28878:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
->  __do_kmalloc_node mm/slab.c:3672 [inline]
->  __kmalloc_node+0x47/0x70 mm/slab.c:3679
->  kmalloc_node include/linux/slab.h:541 [inline]
->  kvmalloc_node+0x64/0xd0 mm/util.c:397
->  kvmalloc include/linux/mm.h:541 [inline]
->  vhost_net_open+0x27/0x670 drivers/vhost/net.c:902
->  misc_open+0x382/0x500 drivers/char/misc.c:154
->  chrdev_open+0x257/0x730 fs/char_dev.c:417
->  do_dentry_open+0x667/0xd40 fs/open.c:752
->  vfs_open+0x107/0x220 fs/open.c:866
->  do_last fs/namei.c:3379 [inline]
->  path_openat+0x1151/0x3530 fs/namei.c:3519
->  do_filp_open+0x25b/0x3b0 fs/namei.c:3554
->  do_sys_open+0x502/0x6d0 fs/open.c:1059
->  SYSC_openat fs/open.c:1086 [inline]
->  SyS_openat+0x30/0x40 fs/open.c:1080
->  entry_SYSCALL_64_fastpath+0x29/0xa0
-> 
-> Freed by task 28878:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
->  __cache_free mm/slab.c:3488 [inline]
->  kfree+0xd6/0x260 mm/slab.c:3803
->  kvfree+0x36/0x60 mm/util.c:416
->  vhost_net_release+0x159/0x190 drivers/vhost/net.c:1012
->  __fput+0x327/0x7e0 fs/file_table.c:210
->  ____fput+0x15/0x20 fs/file_table.c:244
->  task_work_run+0x199/0x270 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
->  exit_to_usermode_loop+0x296/0x310 arch/x86/entry/common.c:162
->  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
->  syscall_return_slowpath+0x490/0x550 arch/x86/entry/common.c:264
->  entry_SYSCALL_64_fastpath+0x9e/0xa0
-> 
-> The buggy address belongs to the object at ffff8801bb589140
->  which belongs to the cache kmalloc-65536 of size 65536
-> The buggy address is located 656 bytes inside of
->  65536-byte region [ffff8801bb589140, ffff8801bb599140)
-> The buggy address belongs to the page:
-> page:ffffea0006ed6000 count:1 mapcount:0 mapping:ffff8801bb589140 index:0x0
-> compound_mapcount: 0
-> flags: 0x2fffc0000008100(slab|head)
-> raw: 02fffc0000008100 ffff8801bb589140 0000000000000000 0000000100000001
-> raw: ffffea00068b0820 ffffea000693d020 ffff8801dac02500 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8801bb589280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801bb589300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff8801bb589380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                                  ^
->  ffff8801bb589400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801bb589480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
+Hi Suravee,
 
-No reproducer for this one but I assume it was yet another report of the
-vhost_net bug fixed by commit 4cd879515d68:
+I love your patch! Perhaps something to improve:
 
-#syz fix: vhost_net: stop device during reset owner
+[auto build test WARNING on iommu/next]
+[also build test WARNING on v4.15 next-20180202]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-- Eric
+url:    https://github.com/0day-ci/linux/commits/Suravee-Suthikulpanit/iommu-Fix-iommu_unmap-and-iommu_unmap_fast-return-type/20180203-015316
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/iommu/qcom_iommu.c:592:27: sparse: incorrect type in initializer (different signedness) @@ expected long ( )( ... ) @@ got unsigned long ( )( ... ) @@
+   drivers/iommu/qcom_iommu.c:592:27: expected long ( )( ... )
+   drivers/iommu/qcom_iommu.c:592:27: got unsigned long ( )( ... )
+   drivers/iommu/qcom_iommu.c:592:12: error: initialization from incompatible pointer type
+    .unmap = qcom_iommu_unmap,
+    ^~~~~~~~~~~~~~~~
+   drivers/iommu/qcom_iommu.c:592:12: note: (near initialization for 'qcom_iommu_ops.unmap')
+   cc1: some warnings being treated as errors
+
+vim +592 drivers/iommu/qcom_iommu.c
+
+0ae349a0f3 Rob Clark    2017-08-09  584  
+0ae349a0f3 Rob Clark    2017-08-09  585  static const struct iommu_ops qcom_iommu_ops = {
+0ae349a0f3 Rob Clark    2017-08-09  586  	.capable	= qcom_iommu_capable,
+0ae349a0f3 Rob Clark    2017-08-09  587  	.domain_alloc	= qcom_iommu_domain_alloc,
+0ae349a0f3 Rob Clark    2017-08-09  588  	.domain_free	= qcom_iommu_domain_free,
+0ae349a0f3 Rob Clark    2017-08-09  589  	.attach_dev	= qcom_iommu_attach_dev,
+0ae349a0f3 Rob Clark    2017-08-09  590  	.detach_dev	= qcom_iommu_detach_dev,
+0ae349a0f3 Rob Clark    2017-08-09  591  	.map		= qcom_iommu_map,
+0ae349a0f3 Rob Clark    2017-08-09 @592  	.unmap		= qcom_iommu_unmap,
+0ae349a0f3 Rob Clark    2017-08-09  593  	.map_sg		= default_iommu_map_sg,
+4d689b6194 Robin Murphy 2017-09-28  594  	.flush_iotlb_all = qcom_iommu_iotlb_sync,
+4d689b6194 Robin Murphy 2017-09-28  595  	.iotlb_sync	= qcom_iommu_iotlb_sync,
+0ae349a0f3 Rob Clark    2017-08-09  596  	.iova_to_phys	= qcom_iommu_iova_to_phys,
+0ae349a0f3 Rob Clark    2017-08-09  597  	.add_device	= qcom_iommu_add_device,
+0ae349a0f3 Rob Clark    2017-08-09  598  	.remove_device	= qcom_iommu_remove_device,
+0ae349a0f3 Rob Clark    2017-08-09  599  	.device_group	= generic_device_group,
+0ae349a0f3 Rob Clark    2017-08-09  600  	.of_xlate	= qcom_iommu_of_xlate,
+0ae349a0f3 Rob Clark    2017-08-09  601  	.pgsize_bitmap	= SZ_4K | SZ_64K | SZ_1M | SZ_16M,
+0ae349a0f3 Rob Clark    2017-08-09  602  };
+0ae349a0f3 Rob Clark    2017-08-09  603  
+
+:::::: The code at line 592 was first introduced by commit
+:::::: 0ae349a0f33fb040a2bc228fdc6d60111455feab iommu/qcom: Add qcom_iommu
+
+:::::: TO: Rob Clark <robdclark@gmail.com>
+:::::: CC: Joerg Roedel <jroedel@suse.de>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
