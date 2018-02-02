@@ -1,93 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752180AbeBBU0i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 15:26:38 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:42648 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752139AbeBBU00 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 15:26:26 -0500
-X-Google-Smtp-Source: AH8x224+FVkjLJaC55jQ8y2U1ogaMKS2pZg41v5+JUYkQzeNrdJLHY60yoMgJlWM3nU62HRf+q8481wZgxD3jJ+S+rA=
+        id S1752223AbeBBU27 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 15:28:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752110AbeBBU2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 15:28:54 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26CE521785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 2 Feb 2018 17:28:49 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Stephane Eranian <eranian@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 1/3] perf tools: Fix period/freq terms setup
+Message-ID: <20180202202849.GA8297@kernel.org>
+References: <20180201083812.11359-1-jolsa@kernel.org>
+ <20180201083812.11359-2-jolsa@kernel.org>
+ <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180202190600.GD9080@ziepe.ca>
-References: <20180202154636.1624079-1-arnd@arndb.de> <20180202190600.GD9080@ziepe.ca>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 2 Feb 2018 21:26:24 +0100
-X-Google-Sender-Auth: OZ7NuUviUA8DDpOBgAw8n1i5GV4
-Message-ID: <CAK8P3a2gi4EC+0tEzoRQ9ojscmXgddrmgwtB=TfQKriszPVaLA@mail.gmail.com>
-Subject: Re: [PATCH] net: mlx5: remove pointless memcpy
-To: Jason Gunthorpe <jgg@mellanox.com>
-Cc: Saeed Mahameed <saeedm@mellanox.com>,
-        Matan Barak <matanb@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>,
-        Networking <netdev@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 2, 2018 at 8:06 PM, Jason Gunthorpe <jgg@mellanox.com> wrote:
-> On Fri, Feb 02, 2018 at 04:46:30PM +0100, Arnd Bergmann wrote:
->> gcc-8 notices that the memcpy in mlx5_core_query_xsrq() makes no
->> sense because the source and destination variables are identical:
->>
->> drivers/net/ethernet/mellanox/mlx5/core/transobj.c: In function 'mlx5_core_query_xsrq':
->> drivers/net/ethernet/mellanox/mlx5/core/transobj.c:347:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
->>
->> Either one of the pointers should be something else, or the code is
->> completely bogus. Removing the memcpy() won't change the behavior
->> but gets rid of the warning.
->>
->> Fixes: 01949d0109ee ("net/mlx5_core: Enable XRCs and SRQs when using ISSI > 0")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> Please review carefully, I have no idea what the author actually
->> intended here.
->
-> I think they intended to adjust the command return between
-> mlx5_ifc_query_srq_out_bits and mlx5_ifc_query_xrc_srq_out_bits?
->
->> index 9e38343a951f..75450f7d53bf 100644
->> +++ b/drivers/net/ethernet/mellanox/mlx5/core/transobj.c
->> @@ -332,20 +332,12 @@ int mlx5_core_destroy_xsrq(struct mlx5_core_dev *dev, u32 xsrqn)
->>  int mlx5_core_query_xsrq(struct mlx5_core_dev *dev, u32 xsrqn, u32 *out)
->>  {
->>       u32 in[MLX5_ST_SZ_DW(query_xrc_srq_in)] = {0};
->> -     void *srqc;
->> -     void *xrc_srqc;
->>       int err;
->>
->>       MLX5_SET(query_xrc_srq_in, in, opcode,   MLX5_CMD_OP_QUERY_XRC_SRQ);
->>       MLX5_SET(query_xrc_srq_in, in, xrc_srqn, xsrqn);
->>       err = mlx5_cmd_exec(dev, in, sizeof(in), out,
->>                           MLX5_ST_SZ_BYTES(query_xrc_srq_out));
->> -     if (!err) {
->> -             xrc_srqc = MLX5_ADDR_OF(query_xrc_srq_out, out,
->> -                                     xrc_srq_context_entry);
->> -             srqc = MLX5_ADDR_OF(query_srq_out, out, srq_context_entry);
->> -             memcpy(srqc, xrc_srqc, MLX5_ST_SZ_BYTES(srqc));
->> -     }
->
-> Probably should add a
->
-> BUILD_BUG_ON(MLX5_BYTE_OFF(query_xrc_srq_out, xrc_srq_context_entry) == MLX5_BYTE_OFF(query_srq_out, srq_context_entry));
->
-> Just for clarity that the SRQ and XRC_SRQ are being used interchangeably.
->
-> and the 'err' variable can be eliminated.
->
-> Curious though that I can't find a call site for it, and removing the
-> prototype doesn't break the build.. Seems like dead code.
+Em Fri, Feb 02, 2018 at 10:45:46AM -0800, Stephane Eranian escreveu:
+> Jiri,
+> 
+> On Thu, Feb 1, 2018 at 12:38 AM, Jiri Olsa <jolsa@kernel.org> wrote:
+> > Stephane reported that we don't set properly PERIOD
+> > sample type for events with period term defined.
+> >
+> > Before:
+> >   $ perf record -e cpu/cpu-cycles,period=1000/u ls
+> >   $ perf evlist -v
+> >   cpu/cpu-cycles,period=1000/u: ... sample_type: IP|TID|TIME|PERIOD, ...
+> >
+> > After:
+> >   $ perf record -e cpu/cpu-cycles,period=1000/u ls
+> >   $ perf evlist -v
+> >   cpu/cpu-cycles,period=1000/u: ... sample_type: IP|TID|TIME, ...
+> >
+> > Setting PERIOD sample type based on period term setup.
+> >
+> there is still one problem remaining here. It has to do with the handling
+> of cycles:pp or :p or :ppp. Suppose I want to set a period for it while I am
+> also sampling on other events: Something like:
+> 
+> $ perf record -e
+> cycles:pp,instructions,cpu/event=0xd0,umaks=0x81,period=100000/ .....
+> 
+> I want to set the period for cycles:pp, but not for instructions. I
+> cannot use -c because
+> it would also force a period on instructions. I could use the raw hw
+> raw event code for cycles:pp.
+> But that does not work because recent kernels prevent use of hw
+> filters on events programmed
+> for PEBS, e.g., cpu/event=0xc2,umask=0x1,cmask=16,inv/pp is rejected.
+> PEBS does not support filters.
+> It works in the case of cycles:pp simply by the nature on the
+> underlying event and the stalls.
+> 
+> To get precise cycles, the only event syntax you can use is cycles:pp,
+> but then you cannot specify
+> an event-specific period. This needs to be fixed as well.
+> 
+> I'd like to be able to say:
+> 
+> $ perf record -e
+> cycles:pp:period=10000001,cpu/event=0xd0,umaks=0x81,period=100000/
+> 
+> Or something equivalent.
+> 
+> Otherwise, I tested what you have written so far and it works.
 
-I checked the git history and don't see any user ever added after the function
-first showed up in the kernel, same for a couple of other functions from
-commit 01949d0109ee ("net/mlx5_core: Enable XRCs and SRQs when
-using ISSI > 0").
+So I take that as a Tested-by: Stephane and will apply the patches, Jiri
+can continue working on these other aspects, right?
 
-Can you come up with a proper patch for this isse, either removing the
-dead code, or fixing it appropriately? You clearly understand what this
-file is about, and I don't ;-)
-
-      Arnd
+- Arnaldo
+ 
+> Thanks.
+> 
+> 
+> > Reported-by: Stephane Eranian <eranian@google.com>
+> > Link: http://lkml.kernel.org/n/tip-anrtntkwfto5rqulegfwitn5@git.kernel.org
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  tools/perf/util/evsel.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> > index 66fa45198a11..f2f2eaafde6d 100644
+> > --- a/tools/perf/util/evsel.c
+> > +++ b/tools/perf/util/evsel.c
+> > @@ -745,12 +745,14 @@ static void apply_config_terms(struct perf_evsel *evsel,
+> >                         if (!(term->weak && opts->user_interval != ULLONG_MAX)) {
+> >                                 attr->sample_period = term->val.period;
+> >                                 attr->freq = 0;
+> > +                               perf_evsel__reset_sample_bit(evsel, PERIOD);
+> >                         }
+> >                         break;
+> >                 case PERF_EVSEL__CONFIG_TERM_FREQ:
+> >                         if (!(term->weak && opts->user_freq != UINT_MAX)) {
+> >                                 attr->sample_freq = term->val.freq;
+> >                                 attr->freq = 1;
+> > +                               perf_evsel__set_sample_bit(evsel, PERIOD);
+> >                         }
+> >                         break;
+> >                 case PERF_EVSEL__CONFIG_TERM_TIME:
+> > --
+> > 2.13.6
+> >
