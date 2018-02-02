@@ -1,46 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753872AbeBBTqs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 14:46:48 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:34678 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753292AbeBBTql (ORCPT
+        id S1753899AbeBBTsJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 14:48:09 -0500
+Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:54533 "EHLO
+        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753316AbeBBTsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 14:46:41 -0500
-X-Google-Smtp-Source: AH8x225qcUGsI8fG5FQZDnqHGvx+fjlzKC+vZpjDYnZ6YxIFySY/SwHeP4RRADME8vVek+rz4pxwpyX6d1AUkvymGu8=
+        Fri, 2 Feb 2018 14:48:03 -0500
+Date: Fri, 2 Feb 2018 19:48:01 +0000
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>, Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
+ candidate and the basis for SIS
+Message-ID: <20180202194801.mhvuwzbz6pauf63f@techsingularity.net>
+References: <20180130104555.4125-1-mgorman@techsingularity.net>
+ <20180201091104.GW2269@hirez.programming.kicks-ass.net>
+ <1517491092.18051.52.camel@linux.intel.com>
+ <2447536.u3g27UoP4q@aspire.rjw.lan>
+ <1517583264.18051.60.camel@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1515404705-490-3-git-send-email-nborisov@suse.com>
-References: <1515404705-490-1-git-send-email-nborisov@suse.com> <1515404705-490-3-git-send-email-nborisov@suse.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 2 Feb 2018 21:46:40 +0200
-Message-ID: <CAHp75VeXC=ig=P1xeFDQTvMn+FP2oGWN2SgbOmTZQj+C-K6EWg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] btrfs: Remove custom crc32c init code
-To: Nikolay Borisov <nborisov@suse.com>
-Cc: linux-btrfs@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <1517583264.18051.60.camel@linux.intel.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 8, 2018 at 11:45 AM, Nikolay Borisov <nborisov@suse.com> wrote:
-> The custom crc32 init code was introduced in
-> 14a958e678cd ("Btrfs: fix btrfs boot when compiled as built-in") to
-> enable using btrfs as a built-in. However, later as pointed out by
-> 60efa5eb2e88 ("Btrfs: use late_initcall instead of module_init") this
-> wasn't enough and finally btrfs was switched to late_initcall which
-> comes after the generic crc32c implementation is initiliased. The
-> latter commit superseeded the former. Now that we don't have to
-> maintain our own code let's just remove it and switch to using the
-> generic implementation.
+On Fri, Feb 02, 2018 at 06:54:24AM -0800, Srinivas Pandruvada wrote:
+> > > > No idea, desired would be the one I would start with, it matches
+> > > > with
+> > > > the intent here. But I've no idea what our current HWP
+> > > > implementation
+> > > > actually does with it.
+> > > Desired !=0 will disable HWP autonomous mode of frequency
+> > > selection.
+> > But I don't think it will just run at "desired" then, will it?
+> HWP all are these hints only not a guarantee.
 
->  fs/btrfs/hash.c            | 54 ----------------------------------------------
->  fs/btrfs/hash.h            | 43 ------------------------------------
+Sure, but the lack on detection when tasks are low utilisation but still
+latency/throughput sensitive is problematic. Users shouldn't have to
+know they need to disable HWP or set performance goernor out of the box.
+It's only going to get worse as sockets get larger.
 
-IIRC Adding -D to git format-patch will make it shorter and nicer.
-But please, double check that git am actually detects removals.
+> There are totally different way HWP is handled in client an servers.
+> If you set desired all heuristics they collected will be dumped, so
+> they suggest don't set desired when you are in autonomous mode. If we
+> really want a boost set the EPP. We know that EPP makes lots of
+> measurable difference.
+> 
+
+Sure boosting EPP makes a difference -- it's essentially what the performance
+goveror does and I know that can be done by a user but it's still basically a
+cop-out. Default performance for low utilisation or lightly loaded machines
+is poor. Maybe it should be set based on the ACPI preferred profile but
+that information is not always available. It would be nice if *some*
+sort of hint about new migrations or tasks waking from IO would be desirable.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Mel Gorman
+SUSE Labs
