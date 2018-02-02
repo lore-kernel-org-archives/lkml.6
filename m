@@ -1,50 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeBBGQ4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 01:16:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750737AbeBBGQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 01:16:49 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D06C21738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Fri, 2 Feb 2018 14:16:41 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anson Huang <anson.huang@nxp.com>
-Subject: Re: [PATCH v2 1/7] ARM: imx: add timer stop flag to ARM power off
- state
-Message-ID: <20180202061605.GL20833@dragon>
-References: <20180110210453.19264-1-stefan@agner.ch>
+        id S1751469AbeBBGUy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 01:20:54 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48420 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750714AbeBBGUs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 01:20:48 -0500
+Date: Fri, 2 Feb 2018 06:20:37 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: syzbot <syzbot+bacbe5d8791f30c9cee5@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, aneesh.kumar@linux.vnet.ibm.com,
+        dan.j.williams@intel.com, james.morse@arm.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mingo@kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: possible deadlock in get_user_pages_unlocked
+Message-ID: <20180202062037.GH30522@ZenIV.linux.org.uk>
+References: <001a113f6344393d89056430347d@google.com>
+ <20180202045020.GF30522@ZenIV.linux.org.uk>
+ <20180202053502.GB949@zzz.localdomain>
+ <20180202054626.GG30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180110210453.19264-1-stefan@agner.ch>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180202054626.GG30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 10:04:47PM +0100, Stefan Agner wrote:
-> When the CPU is in ARM power off state the ARM architected
-> timers are stopped. The flag is already present in the higher
-> power WAIT mode.
+On Fri, Feb 02, 2018 at 05:46:26AM +0000, Al Viro wrote:
+> On Thu, Feb 01, 2018 at 09:35:02PM -0800, Eric Biggers wrote:
 > 
-> This allows to use the ARM generic timer on i.MX 6UL/6ULL SoC.
-> Without the flag the kernel freezes when the timer enters the
-> first time ARM power off mode.
+> > Try starting up multiple instances of the program; that sometimes helps with
+> > these races that are hard to hit (since you may e.g. have a different number of
+> > CPUs than syzbot used).  If I start up 4 instances I see the lockdep splat after
+> > around 2-5 seconds.
 > 
-> Note: The default timer on i.MX6SX is the i.MX GPT timer which is
-> not disabled during CPU idle. However, the timer is not affected
-> by the CPUIDLE_FLAG_TIMER_STOP flag. The flag only affects CPU
-> local timers.
+> 5 instances in parallel, 10 minutes into the run...
 > 
-> Cc: Anson Huang <anson.huang@nxp.com>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> >  This is on latest Linus tree (4bf772b1467).  Also note the
+> > reproducer uses KVM, so if you're running it in a VM it will only work if you've
+> > enabled nested virtualization on the host (kvm_intel.nested=1).
+> 
+> cat /sys/module/kvm_amd/parameters/nested 
+> 1
+> 
+> on host
+> 
+> > Also it appears to go away if I revert ce53053ce378c21 ("kvm: switch
+> > get_user_page_nowait() to get_user_pages_unlocked()").
+> 
+> That simply prevents this reproducer hitting get_user_pages_unlocked()
+> instead of grab mmap_sem/get_user_pages/drop mmap_sem.  I.e. does not
+> allow __get_user_pages_locked() to drop/regain ->mmap_sem.
+> 
+> The bug may be in the way we call get_user_pages_unlocked() in that
+> commit, but it might easily be a bug in __get_user_pages_locked()
+> exposed by that reproducer somehow.
 
-Applied all, thanks.
+I think I understand what's going on.  FOLL_NOWAIT handling is a serious
+mess ;-/  I'll probably have something to test tomorrow - I still can't
+reproduce it here, unfortunately.
