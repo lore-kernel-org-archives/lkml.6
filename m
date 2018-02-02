@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224tiaIN8Ssb2nVd2lCVzGUAoeVD9euU28MqlDYy7tp94kYAJI/IMf58AxIltII8p3uNqO9/
-ARC-Seal: i=1; a=rsa-sha256; t=1517590838; cv=none;
+X-Google-Smtp-Source: AH8x226pRQVjsUph+QLzze1ApcvGALLjTdW+ATJnua/QnJoh/26bEAPpaIDULuscd/EBQl8xt+L3
+ARC-Seal: i=1; a=rsa-sha256; t=1517590835; cv=none;
         d=google.com; s=arc-20160816;
-        b=n1JRwsju8Abb3fedvfM+Jodksr6pQGrJVrAd2PVXt7FJ98/H77sHRGUrlp+d3nNm0a
-         hy4DHcQP9jxDtv047XL4geGn9TSZyEGFhc0qQqZdyQGpob5RIU4vbPrJ3P6oqYhwSnFu
-         +EsHNePe53FLlozeLfPtnYqd+OMV2k7rp11daKaE2kVO/2KZsDopw93D+Y5BsimwnXhd
-         1GuUxjvUX2KrDRiIVah0VxED9Rxpa/jL+Q8AcRh6RgAfow6H9kAtiYTpCezLHNzTQsWf
-         eVlkfSWbp0XjGzvOat5UPfGvQaJpgLXNEUYDDf41sNQoxNeLic/fIforBi4lXBVoTxbt
-         mc3w==
+        b=q6hi27SgW5Kij4CdyEw6SiAOXsRhaPYw15OmG/pbLI7hETmqd3QvxX10DME5gsU8uj
+         InXR2SMjuAPrF1OHQFrJ3Y8NGqLrwYwGXocR9SGKlaNYFiPVNlL6L5D0EFn1NHTLn3qF
+         FY+FlAHW0p87iWP6S/q/VNeS6FB7Lwe0EgjF1LMoCukUVPNBvZZhlOmZXhg/oYdSxETJ
+         tn8SxIgGF77yAfQluZChyBp48givGAA1vZ4oAvc0HfY0fLN6wysIYQ4VM1wNm8ww9ber
+         IgHBBjAbzUicMZp98/D9IrLdSml32PoQrZAPhQ/svuTn7j/u5kth9uztx2msec8bcZe6
+         /qyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uccpZixSY6+G46tcKeRaUk6mpW6ToZIAP7rt8cxkvmI=;
-        b=NNhShFXJ17N8w8odGcZ5WSwS0JImcbsLrAs+22OSlBiozaKDhPTHp9GaBQ56fco7o0
-         ZhsJJwml0xwpbqkEj93wjBqkB6/JAGy08eYlawLnUNAeGecq+fvxO+bQe6OG4+t3uRvs
-         kcZf2fG240O1drs9pf8DJvjRfXPGlyCmL80tiUc+IU9Ywajs3KTUmdU215w4buzJGLS6
-         yV2Jj1WVOHax1PcAJxfSh37fTVyGPkTmPOAJpcZFT1ftzb9PzfNz3qlWagynBurEmc00
-         jKHWg4+byHz35RvuGvd+8IWbVt/NPmtQ+Dtro7pSWzkILsF7PQiYan0VDuT3+a1bhHBG
-         JT/Q==
+        bh=Q2FByB1aZYpufaiPMkAOslNlp9oYvA5ABW5k8Gzi3aE=;
+        b=MVBwmZLBJ6HjGLnA/Hnjz6zelXpHOL4tvagRz0Y4YLpnywfQyYbX4qdM8AI0NYb0BZ
+         v57mwTlH8lpN7Xbl0y5zZMsEKFEfS2xAFG3Yn7ZZ6BKI8TK5Lp+Op5wMdQpJlFlEcE/D
+         t76VxjszHB5xTZN8qqlBwBYqi63nZPL/YJKj+neo/R/Ha1LwHrENDcxFK5bu7AfBIRMS
+         wdD6VkbcGpbFW2DYf9bx7N/SG7AyXc9+ArX6N+OgUekeJX9GtflXFN1wIaEqNo8Yhvcm
+         q2WtdQXFxhubzBGvRyj4/G680h0mJOE2I21jakWwgSTYAo7mU+6GKJm5xNSMda/wi09u
+         FA5A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+48340bb518e88849e2e3@syzkaller.appspotmail.com,
+	"ast@kernel.org, daniel@iogearbox.net, stable@vger.kernel.org, Eric Dumazet" <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
 	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH 4.4 09/67] bpf: fix 32-bit divide by zero
-Date: Fri,  2 Feb 2018 17:57:38 +0100
-Message-Id: <20180202140816.287771547@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>
+Subject: [PATCH 4.4 08/67] bpf: fix divides by zero
+Date: Fri,  2 Feb 2018 17:57:37 +0100
+Message-Id: <20180202140816.159023846@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309331274938520?=
-X-GMAIL-MSGID: =?utf-8?q?1591309331274938520?=
+X-GMAIL-THRID: =?utf-8?q?1591309328138704672?=
+X-GMAIL-MSGID: =?utf-8?q?1591309328138704672?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,62 +50,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexei Starovoitov <ast@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
 
-[ upstream commit 68fda450a7df51cff9e5a4d4a4d9d0d5f2589153 ]
+[ upstream commit c366287ebd698ef5e3de300d90cd62ee9ee7373e ]
 
-due to some JITs doing if (src_reg == 0) check in 64-bit mode
-for div/mod operations mask upper 32-bits of src register
-before doing the check
+Divides by zero are not nice, lets avoid them if possible.
 
-Fixes: 622582786c9e ("net: filter: x86: internal BPF JIT")
-Fixes: 7a12b5031c6b ("sparc64: Add eBPF JIT.")
-Reported-by: syzbot+48340bb518e88849e2e3@syzkaller.appspotmail.com
+Also do_div() seems not needed when dealing with 32bit operands,
+but this seems a minor detail.
+
+Fixes: bd4cf0ed331a ("net: filter: rework/optimize internal BPF interpreter's instruction set")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/verifier.c |   18 ++++++++++++++++++
- net/core/filter.c     |    4 ++++
- 2 files changed, 22 insertions(+)
+ kernel/bpf/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -2248,6 +2248,24 @@ static int fixup_bpf_calls(struct verifi
- 	int i, cnt, delta = 0;
- 
- 	for (i = 0; i < insn_cnt; i++, insn++) {
-+		if (insn->code == (BPF_ALU | BPF_MOD | BPF_X) ||
-+		    insn->code == (BPF_ALU | BPF_DIV | BPF_X)) {
-+			/* due to JIT bugs clear upper 32-bits of src register
-+			 * before div/mod operation
-+			 */
-+			insn_buf[0] = BPF_MOV32_REG(insn->src_reg, insn->src_reg);
-+			insn_buf[1] = *insn;
-+			cnt = 2;
-+			new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
-+			if (!new_prog)
-+				return -ENOMEM;
-+
-+			delta    += cnt - 1;
-+			env->prog = prog = new_prog;
-+			insn      = new_prog->insnsi + i + delta;
-+			continue;
-+		}
-+
- 		if (insn->code != (BPF_JMP | BPF_CALL))
- 			continue;
- 
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -430,6 +430,10 @@ do_pass:
- 			    convert_bpf_extensions(fp, &insn))
- 				break;
- 
-+			if (fp->code == (BPF_ALU | BPF_DIV | BPF_X) ||
-+			    fp->code == (BPF_ALU | BPF_MOD | BPF_X))
-+				*insn++ = BPF_MOV32_REG(BPF_REG_X, BPF_REG_X);
-+
- 			*insn = BPF_RAW_INSN(fp->code, BPF_REG_A, BPF_REG_X, 0, fp->k);
- 			break;
- 
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -444,7 +444,7 @@ select_insn:
+ 		DST = tmp;
+ 		CONT;
+ 	ALU_MOD_X:
+-		if (unlikely(SRC == 0))
++		if (unlikely((u32)SRC == 0))
+ 			return 0;
+ 		tmp = (u32) DST;
+ 		DST = do_div(tmp, (u32) SRC);
+@@ -463,7 +463,7 @@ select_insn:
+ 		DST = div64_u64(DST, SRC);
+ 		CONT;
+ 	ALU_DIV_X:
+-		if (unlikely(SRC == 0))
++		if (unlikely((u32)SRC == 0))
+ 			return 0;
+ 		tmp = (u32) DST;
+ 		do_div(tmp, (u32) SRC);
