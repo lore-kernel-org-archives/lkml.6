@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224kjivJT7RI62+ad6ngWmPtPj+orpbYfohV95QhFiq1N67QOSDAa02iInDLY9X9jeXomG09
-ARC-Seal: i=1; a=rsa-sha256; t=1517591533; cv=none;
+X-Google-Smtp-Source: AH8x225+ktAXe349MjL6S9dj3hjq2vSSAu1pvJmC9rHUhKEj53sIDrfdMESg6hEKBaGJiR7BAnwo
+ARC-Seal: i=1; a=rsa-sha256; t=1517591531; cv=none;
         d=google.com; s=arc-20160816;
-        b=R+I64s9bKf+XUcJ+UxcTjVpF2US+7m+mbx2Itr2OHGt1v3KXz4d0SWW4M7khTaLBV4
-         e5ul4ArmihlOcmLyThhL4nQUFkQwC0pNS4R2IPaZBcvxyY/WYd6WTw6bzT0XT0wjavWm
-         XRC6Ia/4XHMYYEORpIFdDc2erfmhFtZv+ZjrrlIqXObKBzp+DLOA7ZY4JneEFPkv174d
-         9LU9H/Bk/tr/MvLKa8oMHrEShBYB8heG1dP8CYL9HVsya7d8z2MwFU/f5JQXA/Hz8QyZ
-         6wFmKLRuVgSPikeO0b1R2YWmW7fXHrSWx/LmVohjzS6fYel1yEjItB5pGHVSIGMUdq9c
-         s1oA==
+        b=z+cnPNWIuf9dJaDZGQJVLpLJdCYSlYej2MgM6T56Ava9txsbMFI0ONzFzvoxtmdMZZ
+         LqIZw2MITzZUkbDTZhzbGlLaowOKonmL4BQv5Tfj2UX6UTRTS9Eb6wHvTxGCVfQNfNpM
+         TcIb3BuG2Th/xi8G4Xk27VaScFMnHcElvpMeXEyZ6TBDPtkCO4sGkHRMmN3psQrqdwfn
+         2MNXCTmbKRgHXIvp0/KnzytuyhXExiX2qZ89x+XGNPwS57+UijFuWSogxOAoOaMhEEXS
+         khYRPrU2uqCb2tvL3CjQE2ze9wiHPMU9Wie+Zj/jgdYEcL+XVXMIVZYSf2Fpyh/jyY23
+         HL1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Lu/c/etmliPGLsg38biFZ6VU56oxhscPDIfFWPPur0I=;
-        b=jd9heD56LCmruE97c4EyxCPIUwUk3PEc9HU0LG/JQ77u1wIWbwK1HuqOXxsuudSuoR
-         VPUHgwbePWjeZlUGUgDf7qSvmLBhIS8Lv2ONYCxedQVp5qQ/YiTABxTsbZZlureALFC2
-         8bQ/+hBNbxNSJfHu022EcHoHZ96VSHuaF8fltfWjodZkMhDCgGPaXuhQNN5JZULitKxD
-         mA/NtOjrFLACr7IcPRO62LmhGOd/5kUQMrNgNY3HphKdogde3lQAt63ODF+QC73KAmrZ
-         qenwWaQhpaqXjBtKVTQ1xng6AEKFW3ki89PvIy8+tGDnk7pQxC9rd683eyC9hvVYISPS
-         qEMg==
+        bh=xfG70MIje4QorqUw9IOQcO+wsIWg6UF0dnYmKKWLkbM=;
+        b=06vUQwN8lBUheulqdaqd+SqwESAKPo8bKrh8IfC6+aAt9sMl0ipvCd6z48SBYELJXs
+         yP/N4rhCdBBVqKkgJCdk35E07QmS1SohMn006VbX73EEKJiHkggo3NtEY0XBl8YeDFbW
+         NsFm939ZtnUdjzKDVHNmKPGARWYvczkgu1cirtqSeq+a9HWcMl+kZYAaj8E7i1pL44Zl
+         z4yJj6fi++XQd7fbcYjjxuPw+iqWFOimrWLkNG1KPvqi3baDZnjZVdSTRVswXCnJdJbi
+         vKh01GSvHRDK9uUoio9KrEDbfR+dAA4kpEm9tzR6K2ax2H3a4RlEWjNobwB4vQDB9Kl5
+         NRuA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	Tomi Valkeinen <tomi.valkeinen@ti.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 113/156] drm/omap: displays: panel-dpi: add backlight dependency
-Date: Fri,  2 Feb 2018 17:58:14 +0100
-Message-Id: <20180202140845.289730292@linuxfoundation.org>
+Subject: [PATCH 4.14 112/156] drm/omap: Fix error handling path in omap_dmm_probe()
+Date: Fri,  2 Feb 2018 17:58:13 +0100
+Message-Id: <20180202140845.246322922@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591310060084349704?=
-X-GMAIL-MSGID: =?utf-8?q?1591310060084349704?=
+X-GMAIL-THRID: =?utf-8?q?1591309385535184665?=
+X-GMAIL-MSGID: =?utf-8?q?1591310057510035314?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +49,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 499ec0ed5eb2f6a7fcaab2dd66ffc5993484bda9 ]
+[ Upstream commit 8677b1ac2db021ab30bb1fa34f1e56ebe0051ec3 ]
 
-The new backlight code causes a link failure when backlight
-support itself is disabled:
+If we don't find a matching device node, we must free the memory allocated
+in 'omap_dmm' a few lines above.
 
-drivers/gpu/drm/omapdrm/displays/panel-dpi.o: In function `panel_dpi_probe_of':
-panel-dpi.c:(.text+0x35c): undefined reference to `of_find_backlight_by_node'
-
-This adds a Kconfig dependency like we have for the other OMAP
-display targets.
-
-Fixes: 39135a305a0f ("drm/omap: displays: panel-dpi: Support for handling backlight devices")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 7cb0d6c17b96 ("drm/omap: fix TILER on OMAP5")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/omapdrm/displays/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/omapdrm/displays/Kconfig
-+++ b/drivers/gpu/drm/omapdrm/displays/Kconfig
-@@ -35,6 +35,7 @@ config DRM_OMAP_CONNECTOR_ANALOG_TV
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -638,7 +638,8 @@ static int omap_dmm_probe(struct platfor
+ 		match = of_match_node(dmm_of_match, dev->dev.of_node);
+ 		if (!match) {
+ 			dev_err(&dev->dev, "failed to find matching device node\n");
+-			return -ENODEV;
++			ret = -ENODEV;
++			goto fail;
+ 		}
  
- config DRM_OMAP_PANEL_DPI
- 	tristate "Generic DPI panel"
-+	depends on BACKLIGHT_CLASS_DEVICE
- 	help
- 	  Driver for generic DPI panels.
- 
+ 		omap_dmm->plat_data = match->data;
