@@ -1,65 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751707AbeBBDxj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 22:53:39 -0500
-Received: from smtprelay0185.hostedemail.com ([216.40.44.185]:37864 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751557AbeBBDxd (ORCPT
+        id S1751778AbeBBDzL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 22:55:11 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36685 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751530AbeBBDzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 22:53:33 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:800:960:968:973:982:988:989:1260:1345:1437:1534:1541:1711:1730:1747:1777:1792:2393:2559:2562:3138:3139:3140:3141:3142:3352:3653:3865:3866:3867:3868:3874:4321:5007:6261:7903:10004:10848:11026:11658:11914:12043:12296:12555:12663:12679:12895:13069:13095:13221:13229:13311:13357:14181:14384:14394:14721:21080:21433:21451:21627:30054:30064,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
-X-HE-Tag: shock62_58fb6a37d3b06
-X-Filterd-Recvd-Size: 2047
-From: Joe Perches <joe@perches.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andy Whitcroft <apw@canonical.com>
-Cc: Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] checkpatch: Improve OPEN_BRACE test
-Date: Thu,  1 Feb 2018 19:53:29 -0800
-Message-Id: <db9b772999d1d2fbda3b9ee24bbca81a87837e13.1517543491.git.joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Thu, 1 Feb 2018 22:55:04 -0500
+X-Google-Smtp-Source: AH8x227LPD4ldnHOOmaSLEF6WiOK7TpoB7wo7isKbuUDqEs5YQv8+v3C3JuY+HkxG1tdzJZ4yYbyMg==
+From: Serge Semin <fancer.lancer@gmail.com>
+To: ralf@linux-mips.org, miodrag.dinic@mips.com, jhogan@kernel.org,
+        goran.ferenc@mips.com, david.daney@cavium.com,
+        paul.gortmaker@windriver.com, paul.burton@mips.com,
+        alex.belits@cavium.com, Steven.Hill@cavium.com
+Cc: alexander.sverdlin@nokia.com, matt.redfearn@mips.com, kumba@gentoo.org,
+        marcin.nowakowski@mips.com, James.hogan@mips.com,
+        Peter.Wotton@mips.com, Sergey.Semin@t-platforms.ru,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Serge Semin <fancer.lancer@gmail.com>
+Subject: [PATCH v2 00/15] MIPS: memblock: Switch arch code to NO_BOOTMEM
+Date: Fri,  2 Feb 2018 06:54:43 +0300
+Message-Id: <20180202035458.30456-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.12.0
+In-Reply-To: <20180117222312.14763-1-fancer.lancer@gmail.com>
+References: <20180117222312.14763-1-fancer.lancer@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some structure definitions that use macros trip the OPEN_BRACE test.
+Even though it's common to see the architecture code using both
+bootmem and memblock early memory allocators, it's not good for
+multiple reasons. First of all, it's redundant to have two
+early memory allocator while one would be more than enough from
+functionality and stability points of view. Secondly, some new
+features introduced in the kernel utilize the methods of the most
+modern allocator ignoring the older one. It means the architecture
+code must keep the both subsystems up synchronized with information
+about memory regions and reservations, which leads to the code
+complexity increase, that obviously increases bugs probability.
+Finally it's better to keep all the architectures code unified for
+better readability and code simplification. All these reasons lead
+to one conclusion - arch code should use just one memory allocator,
+which is supposed to be memblock as the most modern and already
+utilized by the most of the kernel platforms. This patchset is
+mostly about it.
 
-e.g. +struct bpf_map_def SEC("maps") control_map = {
+One more reason why the MIPS arch code should finally move to
+memblock is a BUG somewhere in the initialization process, when
+CMA is activated:
 
-Improve the test by using $balanced_parens instead of a .*
+[    0.248762] BUG: Bad page state in process swapper/0  pfn:01f93
+[    0.255415] page:8205b0ac count:0 mapcount:-127 mapping:  (null) index:0x1
+[    0.263172] flags: 0x40000000()
+[    0.266723] page dumped because: nonzero mapcount
+[    0.272049] Modules linked in:
+[    0.275511] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.88-module #5
+[    0.282900] Stack : 00000000 00000000 80b6dd6a 0000003a 00000000 00000000 80930000 8092bff4
+          86073a14 80ac88c7 809f21ac 00000000 00000001 80b6998c 00000400 00000000
+          80a00000 801822e8 80b6dd68 00000000 00000002 00000000 809f8024 86077ccc
+          80b80000 801e9328 809fcbc0 00000000 00000400 00010000 86077ccc 86073a14
+          00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+          ...
+[    0.323148] Call Trace:
+[    0.325935] [<8010e7c4>] show_stack+0x8c/0xa8
+[    0.330859] [<80404814>] dump_stack+0xd4/0x110
+[    0.335879] [<801f0bc0>] bad_page+0xfc/0x14c
+[    0.340710] [<801f0e04>] free_pages_prepare+0x1f4/0x330
+[    0.346632] [<801f36c4>] __free_pages_ok+0x2c/0x104
+[    0.352154] [<80b23a40>] init_cma_reserved_pageblock+0x5c/0x74
+[    0.358761] [<80b29390>] cma_init_reserved_areas+0x1b4/0x240
+[    0.365170] [<8010058c>] do_one_initcall+0xe8/0x27c
+[    0.370697] [<80b14e60>] kernel_init_freeable+0x200/0x2c4
+[    0.376828] [<808faca4>] kernel_init+0x14/0x104
+[    0.381939] [<80107598>] ret_from_kernel_thread+0x14/0x1c
 
-Miscellanea:
+The bugus pfn seems to be the one allocated for bootmem allocator
+pages and hasn't been freed before letting the CMA working with its
+areas. Anyway the bug is solved by this patchset.
 
-o Use $sline so any comments are ignored
-o Correct the message output from declaration to definition
-o Remove unnecessary parentheses
+Another reason why this patchset is useful is that it fixes the fdt
+reserved-memory nodes functionality for MIPS. Really it's bug to have
+the fdt reserved nodes scanning before the memblock is
+fully initialized (calling early_init_fdt_scan_reserved_mem before
+bootmem_init is called). Additionally no-map flag of the
+reserved-memory node hasn't been taking into account. This patchset
+fixes all of these.
 
-Signed-off-by: Joe Perches <joe@perches.com>
-Reported-by: Song Liu <songliubraving@fb.com>
----
- scripts/checkpatch.pl | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+As you probably remember I already did another attempt to merge a
+similar functionality into the kernel. This time the patchset got
+to be less complex (14 patches vs 21 last time) and fixes the
+platform code like SGI IP27 and Loongson3, which due to being
+NUMA introduce its own memory initialization process. Although
+I have much doubt in SGI IP27 code operability in the first place,
+since it got prom_meminit() method of early memory initialization,
+which hasn't been called at any other place in the kernel. It must
+have been left there unrenamed after arch/mips/mips-boards/generic
+code had been discarded.
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 78e7a310af46..3d4040322ae1 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3919,10 +3919,12 @@ sub process {
- 
- # function brace can't be on same line, except for #defines of do while,
- # or if closed on same line
--		if (($line=~/$Type\s*$Ident\(.*\).*\s*{/) and
--		    !($line=~/\#\s*define.*do\s\{/) and !($line=~/}/)) {
-+		if ($^V && $^V ge 5.10.0 &&
-+		    $sline =~ /$Type\s*$Ident\s*$balanced_parens\s*\{/ &&
-+		    $sline !~ /\#\s*define\b.*do\s*\{/ &&
-+		    $sline !~ /}/) {
- 			if (ERROR("OPEN_BRACE",
--				  "open brace '{' following function declarations go on the next line\n" . $herecurr) &&
-+				  "open brace '{' following function definitions go on the next line\n" . $herecurr) &&
- 			    $fix) {
- 				fix_delete_line($fixlinenr, $rawline);
- 				my $fixed_line = $rawline;
+Here are the list of folks, who agreed to perform some tests of
+the patchset:
+Alexander Sverdlin <alexander.sverdlin@nokia.com> - Octeon2
+Matt Redfearn <matt.redfearn@mips.com> - Loongson3, etc
+Joshua Kinard <kumba@gentoo.org> - IP27
+Marcin Nowakowski <marcin.nowakowski@mips.com>
+Thanks to you all and to everybody, who will be involved in reviewing
+and testing.
+
+The patchset is applied on top of kernel 4.15-rc8 and can be found
+submitted at my repo:
+https://github.com/fancer/Linux-kernel-MIPS-memblock-project
+
+So far the patchset has been successfully tested on the platforms:
+UTM8 (Cavium Octeon III)
+Creator CI20
+Creator CI40
+Loongson3a
+MIPS Boston
+MIPS Malta
+MIPS SEAD3
+Octeon2
+
+Changelog v2:
+- Hide mem_print_kmap_info() behind CONFIG_DEBUG_KERNEL and replace
+  %pK with %px there (requested by Matt Redfearn)
+- Drop relocatable fixup from reservation_init (patch from Matt Redfearn)
+- Move __maybe_unused change from patch 7 to patch 8 (requested by Marcin Nowakowski)
+- Add tested platforms to the cover letter
+
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+Tested-by: Matt Redfearn <matt.redfearn@mips.com>
+Tested-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+
+Matt Redfearn (1):
+  MIPS: KASLR: Drop relocatable fixup from reservation_init
+
+Serge Semin (14):
+  MIPS: memblock: Add RESERVED_NOMAP memory flag
+  MIPS: memblock: Surely map BSS kernel memory section
+  MIPS: memblock: Reserve initrd memory in memblock
+  MIPS: memblock: Discard bootmem initialization
+  MIPS: memblock: Add reserved memory regions to memblock
+  MIPS: memblock: Reserve kdump/crash regions in memblock
+  MIPS: memblock: Mark present sparsemem sections
+  MIPS: memblock: Simplify DMA contiguous reservation
+  MIPS: memblock: Allow memblock regions resize
+  MIPS: memblock: Perform early low memory test
+  MIPS: memblock: Print out kernel virtual mem layout
+  MIPS: memblock: Discard bootmem from Loongson3 code
+  MIPS: memblock: Discard bootmem from SGI IP27 code
+  MIPS: memblock: Deactivate bootmem allocator
+
+ arch/mips/Kconfig                      |   2 +-
+ arch/mips/include/asm/bootinfo.h       |   1 +
+ arch/mips/kernel/prom.c                |   8 +-
+ arch/mips/kernel/setup.c               | 239 +++++++++++++--------------------
+ arch/mips/loongson64/loongson-3/numa.c |  16 +--
+ arch/mips/mm/init.c                    |  49 +++++++
+ arch/mips/sgi-ip27/ip27-memory.c       |   9 +-
+ 7 files changed, 154 insertions(+), 170 deletions(-)
+
 -- 
-2.15.0
+2.12.0
