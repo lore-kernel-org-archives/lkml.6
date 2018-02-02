@@ -1,48 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225ejqL4C0LAu7/Iyo0aFqjh4NUv1TmkTm8j2vQ4aq8SVVMH1D9lNXhoBDhvPNXgOqc+mDSR
-ARC-Seal: i=1; a=rsa-sha256; t=1517591199; cv=none;
-        d=google.com; s=arc-20160816;
-        b=HTEisGvvOXgzpFeGV1bkDypPuTMwsQ2mcYyGU2eL5lnXqHbn1p6XUnfihqPt6qJiAj
-         7nmgh+A5ABI4QrprcIz4lexE1BddKtlI48As2lWsvTPhxb13PJ7CU37GZewdeGvXzDvq
-         moMotWPF88ZEbQxJixExDJJjKjTdoSxf4/wXUqg3qghzjSauuGoonCEtIT3d9v7lTHR0
-         9vZP/2AGY0VTBv9zzHQLm2JSmL9JIXvmtZn6S6U0zqXLJuoaLGAHh92rHu0QjXObkPvM
-         KUImVuin3t+CldJL2Di2Kk51BsGu13ufhK4LS7Ffwh6cQHQSTMyTmIwDC+mahCjg8E7Y
-         jf0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=A9q+gNfwc81ltM4djc6wOJJ7gs2TeqD+h1+YRcbTvnU=;
-        b=GKaLTobf6qw7gLAuMH1hAbXp/3ZVnP/bI2vY1av15tTNqghU54fA3EU7Gv5PDDxhE4
-         nx/QqOCC/EufT51HhTocqmXpGTiC1QfjsVuxIsOwcPm0AfgV6rvk5r7rkVGs6FK+HqLl
-         3TWPoEK3EyxcG9Rulzr8rNr7C3VbH4poyX5q+UTLdJy2XHUD1R4Zp2ZhHtQnAhDn2Q9Y
-         REu+J1x9WI/KysVhhmu3Lp1LW6Hyr9CxtLml3Gfw1JEuIgOh1YV81MlROw6L1yxacF1R
-         I+RFtJFwv6bv1siqTwGnG5Rl5SJXXnXIO8y24rUb5s7+XuVVaibD4mwW8q6W2jS7jdNa
-         htTQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591198-2-3682294491225271833
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591197; b=HzCf/t3CzivIWISzf9G/rTk4LXRm1mD//BfyhL0n9jWb6sy
+    abQKf48W+2jJ1geXBocWV+8VO276Fm2XGaaM5uc6/UVc2h2afnWckCWjvFh/OyAC
+    UOU4vB92nB9JMhgl2W2AbGpF65amlMPd3FwvSTy0IqH9Z3tzUkVLk1MqTpsdG7BC
+    4CNUzc21J8B+uD4wxoLWlpKPugTRN+5HhMmJdgSslK8gxB+JcbaBPuTjIeVqBAoI
+    o3/DUtb47gZcWguJMTCUkncTzhXBprnkASWLbux8G1CpoIteY8bYXCXT1EKQlz7n
+    L5XJVIFUwiFmh9e7ATB0UoZRs9Xoz/u1C5Siaww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591197; bh=V5BUlqWxkEoTI+3s9XqXbVJb4a
+    Bz/TmOX/u89O6O6vM=; b=J2rHrNeTi3xwLokG14QSpTHsZW+gbrqIRHuUP3UPyi
+    RGGYlU8WxGW1pN16C6vg0AekkHCU+YBdAbtI3BBUfqOtgN90sH30vfa7o61nMSjf
+    CY11YgdDAzy32SMd2Cp7no39oJHHgTAg8JiZuPV3YrDOHgMk/BABNJLjDY9omSgE
+    8iG15Ffvts/joryck7NfWdY27FsZxyhIkPIt1XH5RO7aHRaiCOps+zckjgtGNat9
+    xS206m8lTbhfWysg3WLAFx9QVFdwMY0CHlBJW7qvkRHJT6wCHQ0Z3PHfFLtq1V6Z
+    XGe88nxBYK46DnBGxFJKdAn/PEuCzEiPMssZiWMYaeFA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753106AbeBBRGb (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:06:31 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36772 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753100AbeBBRG3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:06:29 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Trond Myklebust <trond.myklebust@primarydata.com>,
-	Anna Schumaker <Anna.Schumaker@Netapp.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 52/86] SUNRPC: Allow connect to return EHOSTUNREACH
-Date: Fri,  2 Feb 2018 17:58:12 +0100
-Message-Id: <20180202140827.082398102@linuxfoundation.org>
+        stable@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Dmitry Shmidt <dimitrysh@google.com>,
+        Badhri <badhri@google.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Hemant Kumar <hemantk@codeaurora.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Greg KH <gregkh@linux-foundation.org>
+Subject: [PATCH 4.9 81/86] usb: f_fs: Prevent gadget unbind if it is already unbound
+Date: Fri,  2 Feb 2018 17:58:41 +0100
+Message-Id: <20180202140830.100425500@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309379764684718?=
-X-GMAIL-MSGID: =?utf-8?q?1591309709640625824?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,28 +84,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: Hemant Kumar <hemantk@codeaurora.org>
 
+commit ce5bf9a50daf2d9078b505aca1cea22e88ecb94a upstream.
 
-[ Upstream commit 4ba161a793d5f43757c35feff258d9f20a082940 ]
+Upon usb composition switch there is possibility of ep0 file
+release happening after gadget driver bind. In case of composition
+switch from adb to a non-adb composition gadget will never gets
+bound again resulting into failure of usb device enumeration. Fix
+this issue by checking FFS_FL_BOUND flag and avoid extra
+gadget driver unbind if it is already done as part of composition
+switch.
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
-Tested-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+This fixes adb reconnection error reported on Android running
+v4.4 and above kernel versions. Verified on Hikey running vanilla
+v4.15-rc7 + few out of tree Mali patches.
+
+Reviewed-at: https://android-review.googlesource.com/#/c/582632/
+
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Greg KH <gregkh@linux-foundation.org>
+Cc: Michal Nazarewicz <mina86@mina86.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Dmitry Shmidt <dimitrysh@google.com>
+Cc: Badhri <badhri@google.com>
+Cc: Android Kernel Team <kernel-team@android.com>
+Signed-off-by: Hemant Kumar <hemantk@codeaurora.org>
+[AmitP: Cherry-picked it from android-4.14 and updated the commit log]
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sunrpc/xprtsock.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -2381,6 +2381,7 @@ static void xs_tcp_setup_socket(struct w
- 	case -ECONNREFUSED:
- 	case -ECONNRESET:
- 	case -ENETUNREACH:
-+	case -EHOSTUNREACH:
- 	case -EADDRINUSE:
- 	case -ENOBUFS:
- 		/* retry with existing socket, after a delay */
+---
+ drivers/usb/gadget/function/f_fs.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -3725,7 +3725,8 @@ static void ffs_closed(struct ffs_data *
+ 	ci = opts->func_inst.group.cg_item.ci_parent->ci_parent;
+ 	ffs_dev_unlock();
+ 
+-	unregister_gadget_item(ci);
++	if (test_bit(FFS_FL_BOUND, &ffs->flags))
++		unregister_gadget_item(ci);
+ 	return;
+ done:
+ 	ffs_dev_unlock();
