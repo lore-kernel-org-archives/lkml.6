@@ -1,87 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751770AbeBBE3y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 23:29:54 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:41978 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751569AbeBBE3t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 23:29:49 -0500
-Subject: Re: [RFC PATCH v1 03/13] mm: add lock array to pgdat and batch fields
- to struct page
-To: Tim Chen <tim.c.chen@linux.intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
-        Dave.Dice@oracle.com, dave@stgolabs.net, khandual@linux.vnet.ibm.com,
-        ldufour@linux.vnet.ibm.com, mgorman@suse.de, mhocko@kernel.org,
-        pasha.tatashin@oracle.com, steven.sistare@oracle.com,
-        yossi.lev@oracle.com
-References: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
- <20180131230413.27653-4-daniel.m.jordan@oracle.com>
- <64330116-13ef-af3c-a445-f0c1b5bc1728@linux.intel.com>
-From: Daniel Jordan <daniel.m.jordan@oracle.com>
-Message-ID: <02b757a9-5b06-51a5-a3e1-5cbc06a79996@oracle.com>
-Date: Thu, 1 Feb 2018 23:29:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <64330116-13ef-af3c-a445-f0c1b5bc1728@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1751856AbeBBEaI convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 23:30:08 -0500
+Received: from mga01.intel.com ([192.55.52.88]:3492 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751788AbeBBE36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 23:29:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,445,1511856000";
+   d="scan'208";a="14440865"
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+To: Benjamin Poirier <bpoirier@suse.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>
+CC: Netdev <netdev@vger.kernel.org>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [RFC PATCH] e1000e: Remove Other from EIAC.
+Thread-Topic: [Intel-wired-lan] [RFC PATCH] e1000e: Remove Other from EIAC.
+Thread-Index: AQHTkCjRUoY6zH0tL0mG3OCqMNi3CqONa8EAgADE8YCAAmupAA==
+Date: Fri, 2 Feb 2018 04:29:56 +0000
+Message-ID: <309B89C4C689E141A5FF6A0C5FB2118B8C7D0D01@ORSMSX101.amr.corp.intel.com>
+References: <20180118065054.29844-1-bpoirier@suse.com>
+ <CAKgT0Uc+sSREnAvF=TTDp2FFxGcro6JmDpE2KdnEYk5rDE3Tpw@mail.gmail.com>
+ <20180131073105.7tqyzylc76wjyoav@f1.synalogic.ca>
+In-Reply-To: <20180131073105.7tqyzylc76wjyoav@f1.synalogic.ca>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8792 signatures=668660
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802020044
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWEyODUwZDAtYmQzMi00N2EzLTlkNzktNWM4OWJkNWU0M2ZiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IjdXRnVvVTV4aysxY2NZQnV5Nm1LNlk5ejlUd2tBWG5BOXR0dTd6dGp5Rk09In0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/01/2018 05:50 PM, Tim Chen wrote:
-> On 01/31/2018 03:04 PM, daniel.m.jordan@oracle.com wrote:
->> This patch simply adds the array of locks and struct page fields.
->> Ignore for now where the struct page fields are: we need to find a place
->> to put them that doesn't enlarge the struct.
->>
->> Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
->> ---
->>   include/linux/mm_types.h | 5 +++++
->>   include/linux/mmzone.h   | 7 +++++++
->>   mm/page_alloc.c          | 3 +++
->>   3 files changed, 15 insertions(+)
->>
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->> index cfd0ac4e5e0e..6e9d26f0cecf 100644
->> --- a/include/linux/mm_types.h
->> +++ b/include/linux/mm_types.h
->> @@ -190,6 +190,11 @@ struct page {
->>   		struct kmem_cache *slab_cache;	/* SL[AU]B: Pointer to slab */
->>   	};
->>   
->> +	struct {
->> +		unsigned lru_batch;
->> +		bool lru_sentinel;
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
+> Behalf Of Benjamin Poirier
+> Sent: Tuesday, January 30, 2018 11:31 PM
+> To: Alexander Duyck <alexander.duyck@gmail.com>
+> Cc: Netdev <netdev@vger.kernel.org>; intel-wired-lan <intel-wired-
+> lan@lists.osuosl.org>; linux-kernel@vger.kernel.org
+> Subject: Re: [Intel-wired-lan] [RFC PATCH] e1000e: Remove Other from EIAC.
 > 
-> The above declaration adds at least 5 bytes to struct page.
-> It adds a lot of extra memory overhead when multiplied
-> by the number of pages in the system.
+> On 2018/01/30 11:46, Alexander Duyck wrote:
+> > On Wed, Jan 17, 2018 at 10:50 PM, Benjamin Poirier <bpoirier@suse.com>
+> wrote:
+> > > It was reported that emulated e1000e devices in vmware esxi 6.5 Build
+> > > 7526125 do not link up after commit 4aea7a5c5e94 ("e1000e: Avoid
+> receiver
+> > > overrun interrupt bursts", v4.15-rc1). Some tracing shows that after
+> > > e1000e_trigger_lsc() is called, ICR reads out as 0x0 in e1000_msix_other()
+> > > on emulated e1000e devices. In comparison, on real e1000e 82574
+> hardware,
+> > > icr=0x80000004 (_INT_ASSERTED | _OTHER) in the same situation.
+> > >
+> > > Some experimentation showed that this flaw in vmware e1000e
+> emulation can
+> > > be worked around by not setting Other in EIAC. This is how it was before
+> > > 16ecba59bc33 ("e1000e: Do not read ICR in Other interrupt", v4.5-rc1).
+> > >
+> > > Fixes: 4aea7a5c5e94 ("e1000e: Avoid receiver overrun interrupt bursts")
+> > > Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+> > > ---
+> >
+> > Hi Benjamin,
+> >
+> > How would you feel about resubmitting this patch for net?
+> >
+> > We have some issues that have come up and it would be useful to have
+> > this fixed in the kernel sooner rather than later. I would be okay
+> > with us applying it for now while we work on coming up with a more
+> > complete solution.
+> 
+> Ok, I've resent it in its original form. Once it's in mainline I'll
+> rebase the cleanups.
 
-Yes, I completely agree, enlarging struct page won't cut it for the final solution.
+Tested-by: Aaron Brown
+<aaron.f.brown@intel.com>
 
-> We can move sentinel bool to page flag, at least for 64 bit system.
-
-There did seem to be room for one more bit the way my kernel was configured (without losing a component in page->flags), but I'd have to look again.
-
-> And 8 bit is probably enough for lru_batch id to give a max
-> lru_batch number of 256 to break the locks into 256 smaller ones.
-> The max used in the patchset is 32 and that is already giving
-> pretty good spread of the locking.
-> It will be better if we can find some unused space in struct page
-> to squeeze it in.
-
-One idea we'd had was to store the batch id in the lower bits of the mem_cgroup pointer.  CONFIG_MEMCG seems to be pretty ubiquitous these days, and it's a large enough struct (1048 bytes on one machine) to have room in the lower bits.
-
-Another way might be to encode the previous and next lru page pointers as pfn's instead of struct list_head *'s, shrinking the footprint of struct page's lru field to allow room for the batch id.
+> _______________________________________________
+> Intel-wired-lan mailing list
+> Intel-wired-lan@osuosl.org
+> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
