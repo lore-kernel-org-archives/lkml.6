@@ -1,57 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751671AbeBBLle (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 06:41:34 -0500
-Received: from mail.us.es ([193.147.175.20]:56026 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751508AbeBBLlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 06:41:24 -0500
-Date: Fri, 2 Feb 2018 12:41:18 +0100
-X-SMTPAUTHUS: auth mail.us.es
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Florian Westphal <fw@strlen.de>, Dmitry Vyukov <dvyukov@google.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        David Miller <davem@davemloft.net>, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev <netdev@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Yang Shi <yang.s@alibaba-inc.com>, syzkaller-bugs@googlegroups.com,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, guro@fb.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [netfilter-core] kernel panic: Out of memory and no killable
- processes... (2)
-Message-ID: <20180202114118.6iktfm26wadxflfe@salvia>
-References: <20180129182811.fze4vrb5zd5cojmr@node.shutemov.name>
- <20180129223522.GG5906@breakpoint.cc>
- <20180130075226.GL21609@dhcp22.suse.cz>
- <20180130081127.GH5906@breakpoint.cc>
- <20180130082817.cbax5qj4mxancx4b@node.shutemov.name>
- <CACT4Y+bFKwoxopr1dwnc7OHUoHy28ksVguqtMY6tD=aRh-7LyQ@mail.gmail.com>
- <20180130095739.GV21609@dhcp22.suse.cz>
- <20180130140104.GE21609@dhcp22.suse.cz>
- <20180130140111.GM5906@breakpoint.cc>
- <20180130143958.GG21609@dhcp22.suse.cz>
+        id S1751755AbeBBLmW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 06:42:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60766 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750773AbeBBLmN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 06:42:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8524A606AC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=prsood@codeaurora.org
+To: viresh.kumar@linaro.org
+Cc: rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gkohli@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+From: Prateek Sood <prsood@codeaurora.org>
+Subject: Query related to usage of cpufreq_suspend() & cpufreq_resume
+Message-ID: <e9d13871-184b-dee3-c45f-c6d19e671eea@codeaurora.org>
+Date: Fri, 2 Feb 2018 17:11:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180130143958.GG21609@dhcp22.suse.cz>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 03:39:58PM +0100, Michal Hocko wrote:
-> On Tue 30-01-18 15:01:11, Florian Westphal wrote:
-> > > From d48e950f1b04f234b57b9e34c363bdcfec10aeee Mon Sep 17 00:00:00 2001
-> > > From: Michal Hocko <mhocko@suse.com>
-> > > Date: Tue, 30 Jan 2018 14:51:07 +0100
-> > > Subject: [PATCH] net/netfilter/x_tables.c: make allocation less aggressive
-> > 
-> > Acked-by: Florian Westphal <fw@strlen.de>
-> 
-> Thanks! How should we route this change? Andrew, David?
+Hi Viresh,
 
-I'll place this in the nf.git tree if everyone is happy with it.
+One scenario is there where a kernel panic is observed in
+cpufreq during suspend/resume.
+
+pm_suspend()
+  suspend_devices_and_enter()
+    dpm_suspend_start()
+      dpm_prepare() 
+
+Failure in dpm_prepare() happend with following dmesg:
+
+[ 3746.316062] PM: Device xyz not prepared for power transition: code -16
+[ 3746.316071] PM: Some devices failed to suspend, or early wake event detected
+
+
+pm_suspend()
+  suspend_devices_and_enter()
+    dpm_suspend_start()
+      dpm_prepare() //failed
+    dpm_resume_end()
+      dpm_resume()
+        cpufreq_resume()
+          cpufreq_start_governor()
+            sugov_start()
+              cpufreq_add_update_util_hook()
+
+After failure in dpm_prepare(), dpm_resume() called
+cpufreq_resume(). Corresponding cpufreq_suspend() was not
+called due to failure of dpm_prepare(). 
+
+This resulted in WARN_ON(per_cpu(cpufreq_update_util_data, cpu))
+in cpufreq_add_update_util_hook() and cpufreq_add_update_util_hook->func
+being inconsistent state. It caused crash in scheduler.
+
+Following are some of the ways to mitigate this issue. Could
+you please provide feedback on below two approaches or suugest
+a better way to fix this problem.
+
+-----------------------8<------------------------------
+
+Co-developed-by: Gaurav Kohli <gkohli@codeaurora.org>
+Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org> 
+Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index 02a497e..732e5a2 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1038,6 +1038,7 @@ void dpm_resume(pm_message_t state)
+ {
+        struct device *dev;
+        ktime_t starttime = ktime_get();
++       bool valid_resume = false;
+
+        trace_suspend_resume(TPS("dpm_resume"), state.event, true);
+        might_sleep();
+@@ -1055,6 +1056,7 @@ void dpm_resume(pm_message_t state)
+        }
+
+        while (!list_empty(&dpm_suspended_list)) {
++               valid_resume = true;
+                dev = to_device(dpm_suspended_list.next);
+                get_device(dev);
+                if (!is_async(dev)) {
+@@ -1080,7 +1082,8 @@ void dpm_resume(pm_message_t state)
+        async_synchronize_full();
+        dpm_show_time(starttime, state, 0, NULL);
+
+-       cpufreq_resume();
++       if (valid_resume)
++               cpufreq_resume();
+        trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+ }
+
+--------------------8<--------------------------------------
+
+Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 421f318..439eab8 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1648,7 +1648,7 @@ void cpufreq_suspend(void)
+ {
+        struct cpufreq_policy *policy;
+
+-       if (!cpufreq_driver)
++       if (!cpufreq_driver || cpufreq_suspended)
+                return;
+
+        if (!has_target() && !cpufreq_driver->suspend)
+@@ -1683,7 +1683,7 @@ void cpufreq_resume(void)
+        struct cpufreq_policy *policy;
+        int ret;
+
+-       if (!cpufreq_driver)
++       if (!cpufreq_driver || !cpufreq_suspended)
+                return;
+
+        cpufreq_suspended = false;
+
+
+
+
+Thanks
+
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
+Collaborative Project
