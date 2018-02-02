@@ -1,51 +1,75 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226vW7LDclmVnZj9wDsiiqjNZGZO/8uZFMKmjF5bLVaG76vEoCo8WN9cd6xLc3bcdUIoy5ee
-ARC-Seal: i=1; a=rsa-sha256; t=1517591016; cv=none;
-        d=google.com; s=arc-20160816;
-        b=LocwuPQEMpn/VKrpVLpGzUZPJIuLeBdNOH6Ad99HodEahW13KKIPedDwtrUMMD4NG0
-         FxxeDGlMVYTyi74klgSVB36PyF9xlE6yHc1x7D0QQvi4IImcjq63kSCyWCbniKE1Rju6
-         6ddmvSb1wAzfTbrgR/2zgK0EX84xolf0SDRXWppu+DlWd7/qqZFEej1Xu7rrsS1xfHJ0
-         e3rCdqbBEjCiPhPonP6EukH01YeBix952uUiS3mLFWx/fVuHTSZ4/f+bYUzTza3m5x6I
-         9p0UV+JGzZCPu1yqGGsBkx/WLJJ6Do7iY0LrG6Z4tjzhDh7wxYADDFiXFB3SrKysvR0B
-         wmvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=SaV4MwspdCyfJC4ZmRmrFLqttVD9RBOgTkrf5y7fXZQ=;
-        b=aajzBwzyhQFCC8nKWVUAG+oBgqyP6BNavHZYS6ECJvDE7ePoKq6gOv1Q4RkZI1SLyQ
-         C6nBdLW2hl2nc9VpfICYvD44511ajPmjbclO5bIAv2szUAqof6zmnTFfjYAT/wNwjoyD
-         bGchyc6LI237N9OzFJbuRlszkySdVC89BY+SDigaJ9WOXcH2u1O4fNqSRa6bDT4uGKsG
-         /nccAK9sbNrWINWx3w+vDZiGFczybUxY209ic+rxg0CRiS/snbS14rTIKRiqZMmo7gaD
-         +FdlDTXlDX5BCPTHXBQjTTzmxiIrGTFk6j5c8X2mSomE2vDO0s02N1Rac3k/oV0XQXyx
-         GH9g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2879036-1517591016-5-660549590021814136
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517591013; b=nl8wBRSzxU7/b625NKAgItPx6QiRLI58Cj9vxXlo2Ebo8PM
+    UnrNIgjAQaTG1lVQ2chTHzc9x0+7nBFaxnet9CpbM3YE1YPA8B5bPn6PLeDtDXln
+    U0J5oQHeQOECDL7nIfMD/1i/KRsLV6fnscOtGzcoevEypjfOxxEwfyQbiNsUQyn8
+    6Tr4E8uoYKD/5VNPDK7unpoyn3QRIjXaEz75Lm57GaWEbhvWx3/Wr3LF2PmqHF1D
+    FjHWOwwpTskPAldXgIZj+LzI7SbWT/dvFj7xkOR0sCuMU+8dFoLC0w7xcLGJai5s
+    Sdd3n+hq18MuT6tCZGAa1VqT/6yxrcwV+hogU6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517591013; bh=Z+BtcRQKcqFXRGEkvNR1zHiZxW
+    6mMylKlCcLdrBLOf4=; b=DrKM9Av+sp5gwHYCKL8xVEmBe86mjhRBf6jMJ44Veb
+    Lh3gzLlY628IBwvGLDrjbpHQoduAqznNAUX5O2W6jGEn/21EZuLylnS/3UnniJFw
+    kK1EObz1tHFsFK8yIg72aXMcq1ANgUz4MUNnbCihZftQC9HaGOs0NnYzXE0jtnyI
+    Xi3BD+wZfYSj7a9IYs8zuHEopadsigfzcb70f8cQqMCbvE+LtmNMMax1yueJ6Lum
+    ikxIqvWdoRgCpxGc7OvEBbfh2GxKiJotixlQIujPlv2jPovdOQIuCqpCXzcucXVg
+    A8jonkDFuT2UYCep6Niqq3liXJ/SxYiLJx5U9Hl3aSFA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752693AbeBBRD0 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:03:26 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35704 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752810AbeBBRDY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:03:24 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Nikita Leshenko <nikita.leshchenko@oracle.com>,
-	Liran Alon <liran.alon@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	Steve Rutherford <srutherford@google.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 24/86] KVM: x86: ioapic: Clear Remote IRR when entry is switched to edge-triggered
-Date: Fri,  2 Feb 2018 17:57:44 +0100
-Message-Id: <20180202140824.868776845@linuxfoundation.org>
+        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: [PATCH 4.9 12/86] power: reset: zx-reboot: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Fri,  2 Feb 2018 17:57:32 +0100
+Message-Id: <20180202140823.963801692@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309336556964423?=
-X-GMAIL-MSGID: =?utf-8?q?1591309517770779562?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,60 +77,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikita Leshenko <nikita.leshchenko@oracle.com>
+From: Jesse Chan <jc@linux.com>
 
+commit 348c7cf5fcbcb68838255759d4cb45d039af36d2 upstream.
 
-[ Upstream commit a8bfec2930525808c01f038825d1df3904638631 ]
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-Some OSes (Linux, Xen) use this behavior to clear the Remote IRR bit for
-IOAPICs without an EOI register. They simulate the EOI message manually
-by changing the trigger mode to edge and then back to level, with the
-entry being masked during this.
+WARNING: modpost: missing MODULE_LICENSE() in drivers/power/reset/zx-reboot.o
+see include/linux/module.h for more information
 
-QEMU implements this feature in commit ed1263c363c9
-("ioapic: clear remote irr bit for edge-triggered interrupts")
+This adds the license as "GPL v2", which matches the header of the file.
 
-As a side effect, this commit removes an incorrect behavior where Remote
-IRR was cleared when the redirection table entry was rewritten. This is not
-consistent with the manual and also opens an opportunity for a strange
-behavior when a redirection table entry is modified from an interrupt
-handler that handles the same entry: The modification will clear the
-Remote IRR bit even though the interrupt handler is still running.
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
 
-Signed-off-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Reviewed-by: Steve Rutherford <srutherford@google.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Jesse Chan <jc@linux.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kvm/ioapic.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
-index a7ac8688bba8..4b573c8694ac 100644
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -306,8 +306,17 @@ static void ioapic_write_indirect(struct kvm_ioapic *ioapic, u32 val)
- 		} else {
- 			e->bits &= ~0xffffffffULL;
- 			e->bits |= (u32) val;
--			e->fields.remote_irr = 0;
- 		}
+---
+ drivers/power/reset/zx-reboot.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/power/reset/zx-reboot.c
++++ b/drivers/power/reset/zx-reboot.c
+@@ -81,3 +81,7 @@ static struct platform_driver zx_reboot_
+ 	},
+ };
+ module_platform_driver(zx_reboot_driver);
 +
-+		/*
-+		 * Some OSes (Linux, Xen) assume that Remote IRR bit will
-+		 * be cleared by IOAPIC hardware when the entry is configured
-+		 * as edge-triggered. This behavior is used to simulate an
-+		 * explicit EOI on IOAPICs that don't have the EOI register.
-+		 */
-+		if (e->fields.trig_mode == IOAPIC_EDGE_TRIG)
-+			e->fields.remote_irr = 0;
-+
- 		mask_after = e->fields.mask;
- 		if (mask_before != mask_after)
- 			kvm_fire_mask_notifiers(ioapic->kvm, KVM_IRQCHIP_IOAPIC, index, mask_after);
--- 
-2.16.1
++MODULE_DESCRIPTION("ZTE SoCs reset driver");
++MODULE_AUTHOR("Jun Nie <jun.nie@linaro.org>");
++MODULE_LICENSE("GPL v2");
