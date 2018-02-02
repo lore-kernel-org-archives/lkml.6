@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224hI3KJaiHLIYGDwjbazgUaNG7um5o03/Q2xyuXWX2YHxOZIQUPdH3ElO0cW7tdLKxOWJFK
-ARC-Seal: i=1; a=rsa-sha256; t=1517591110; cv=none;
+X-Google-Smtp-Source: AH8x224uc/+CFTwYQ+/T8pdV1lhomS+RaK3WL53BsTZC1zREWM6ADK2NTM61AapI4sVsPBdhX7R6
+ARC-Seal: i=1; a=rsa-sha256; t=1517591105; cv=none;
         d=google.com; s=arc-20160816;
-        b=lArn5AgSz37pGW0ywiviwrUMYQCsWq5arKo5gD77PJXatf8kNmTSnJTQg4hOOg3pP0
-         NcBOujEbVVGVxPHsQrkhGRmOGev3L2Pkcp6EO5eMHTbuDfpkB3uVH3b65x4Zsoxw0v1y
-         srfrrc06sYSkwY8Nekcp7xKCLByqeqM5M1HqWtlwHnEm4Uor7PffRFcvXag8JHx7FyYu
-         E64JHZ7oxol2BeuJTmJPfkYb0PxAB+ZfpC1CCu8mmC+KjBW5LeTEyflFzYvWk+lx4dWa
-         ZeJxknEijSAzRbomYoejWBQ6C1uaby8NdXCgqWmarhmd1a5ERPXE9fAGrSkbVxvOEZzq
-         VeWA==
+        b=XDobfAADZIjF6VK9pcKyVLZ+RnlWCBxIKvaGFfzbF0wL4j3q/1DqUtJzUo/c5pW3hI
+         8DLwk1UWsuX+ZSd/hDYS2J8DG/BPeLrUHGWIKszWJTez8uw/20pb2T8W6rF1o86eDaWh
+         uMGcYLzqXXr1sTCNoVDhRewBNQ7yt5ExL9TjEYXSUDfZTebzn0Tjy7One7YuJLwB4t7z
+         PVtWGO7WVJw+3DKhH11swVm+rRA6z5Pl+HgZlSk3bx0XGbIpsZcDBncntZ0JeZZd7Zzy
+         rxNampWtAxwSH3PCp1xXD2Y6NWcFKSifvMphDbkDucQfG5VdhwYLnXQarrBvctuxIih/
+         hPDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HN3k4TMW/LH6UZfMxbKQckVtrt7WsPLEg6RzCUiCAUQ=;
-        b=fxdBESp277dApn79SnTqCH1xDxQP11o3DNnLC37b4JUMSXy6Z90xL6E09GkOtwqnBy
-         CD8wuPqBatycO+90AwAmPOuMWFy5//nX+gtC+bXS/mJrX3ZEuvj8UGWTPJZOBxrNJJWZ
-         O8CkDYSlg4zI8rWIbotJMmPVlOdThFBZxcRtTLzLZRFIfBDmnCAdyykONB8Uq8COVxYV
-         yI+koGfLdGpeYby0cauaA6p1oB+dvYZ9/P12imqQDAVDUfUxX3rMzyTqyV62/CZT1kjz
-         UUNDt+7/aD/H2s/Y1uzc2ZPdAcrxWuB+HtT7y6VNzWnTnmhu45gAGr9VmHcbYs0P+5MM
-         Vb3w==
+        bh=Esku0FL3Bl7hWFgrA9k/m/D7RapOcGpT/Xgz6L5TUws=;
+        b=AbQrBth8nM+B0xPyr7r8tqUd3klR9xlK9G0bdFFce0TyxqOhPoJAwuxLDF4Ld4jaQu
+         5q7bgazOeHRu92s5f1wobd97aGmKRmQhvjL20DHllu3gJOJ03eyRt9Hi1mzt6LrPPEss
+         48yIvjNZomeeJ6V+TS54jqGdIvI9PvKB+Y1A8TvLge+0oEawjvs6EgCmZ71rcG8t/12+
+         Qr0pVqkEVwEJnI0rIz3ID6kDdAmMmqkBIDgLIrF32g1varcVL/5fip35sGlJjmV/5Gjh
+         AhugvczRwzUbSnMmkT7ed33kFYzzw+iFPg17guI6uOdUjiv4SE1qot6ENT9l2KzAea5E
+         OqXw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>,
-	Dave Chinner <dchinner@redhat.com>,
-	"Darrick J. Wong" <darrick.wong@oracle.com>,
+	Liran Alon <liran.alon@oracle.com>,
+	Nikita Leshenko <nikita.leshchenko@oracle.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 48/86] xfs: fortify xfs_alloc_buftarg error handling
-Date: Fri,  2 Feb 2018 17:58:08 +0100
-Message-Id: <20180202140826.688891482@linuxfoundation.org>
+Subject: [PATCH 4.9 20/86] KVM: x86: emulator: Return to user-mode on L1 CPL=0 emulation failure
+Date: Fri,  2 Feb 2018 17:57:40 +0100
+Message-Id: <20180202140824.609324467@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309616616792419?=
-X-GMAIL-MSGID: =?utf-8?q?1591309616616792419?=
+X-GMAIL-THRID: =?utf-8?q?1591309303116688752?=
+X-GMAIL-MSGID: =?utf-8?q?1591309610952442297?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,62 +52,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Liran Alon <liran.alon@oracle.com>
 
 
-[ Upstream commit d210a9874b8f6166579408131cb74495caff1958 ]
+[ Upstream commit 1f4dcb3b213235e642088709a1c54964d23365e9 ]
 
-percpu_counter_init failure path doesn't clean up &btp->bt_lru list.
-Call list_lru_destroy in that error path. Similarly register_shrinker
-error path is not handled.
+On this case, handle_emulation_failure() fills kvm_run with
+internal-error information which it expects to be delivered
+to user-mode for further processing.
+However, the code reports a wrong return-value which makes KVM to never
+return to user-mode on this scenario.
 
-While it is unlikely to trigger these error path, it is not impossible
-especially the later might fail with large NUMAs.  Let's handle the
-failure to make the code more robust.
+Fixes: 6d77dbfc88e3 ("KVM: inject #UD if instruction emulation fails and exit to
+userspace")
 
-Noticed-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/xfs/xfs_buf.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/x86/kvm/x86.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -1785,22 +1785,27 @@ xfs_alloc_buftarg(
- 	btp->bt_bdi = blk_get_backing_dev_info(bdev);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5308,7 +5308,7 @@ static int handle_emulation_failure(stru
+ 		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
+ 		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
+ 		vcpu->run->internal.ndata = 0;
+-		r = EMULATE_FAIL;
++		r = EMULATE_USER_EXIT;
+ 	}
+ 	kvm_queue_exception(vcpu, UD_VECTOR);
  
- 	if (xfs_setsize_buftarg_early(btp, bdev))
--		goto error;
-+		goto error_free;
- 
- 	if (list_lru_init(&btp->bt_lru))
--		goto error;
-+		goto error_free;
- 
- 	if (percpu_counter_init(&btp->bt_io_count, 0, GFP_KERNEL))
--		goto error;
-+		goto error_lru;
- 
- 	btp->bt_shrinker.count_objects = xfs_buftarg_shrink_count;
- 	btp->bt_shrinker.scan_objects = xfs_buftarg_shrink_scan;
- 	btp->bt_shrinker.seeks = DEFAULT_SEEKS;
- 	btp->bt_shrinker.flags = SHRINKER_NUMA_AWARE;
--	register_shrinker(&btp->bt_shrinker);
-+	if (register_shrinker(&btp->bt_shrinker))
-+		goto error_pcpu;
- 	return btp;
- 
--error:
-+error_pcpu:
-+	percpu_counter_destroy(&btp->bt_io_count);
-+error_lru:
-+	list_lru_destroy(&btp->bt_lru);
-+error_free:
- 	kmem_free(btp);
- 	return NULL;
- }
