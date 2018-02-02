@@ -1,205 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752015AbeBBPdS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 10:33:18 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:64790 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751470AbeBBPdK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 10:33:10 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Jan Beulich <jbeulich@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] xen: hypercall: fix out-of-bounds memcpy
-Date: Fri,  2 Feb 2018 16:32:31 +0100
-Message-Id: <20180202153240.1190361-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:XPC/aBNTJ6HoMhdxlkHQWX43Zp9Rk9lzA+Jp2LMeYW+JRKf6MmD
- fAYYoWi17colqZjaUtEaHtgZcerT0JGLkcVcPRAbXwcQcvGjyeEU46PTPali23tMAw7c4PX
- Z9fvKHIPjJPaIeBJLnfNraTyXh/z8A84RAsaYm9TeFoJgs3xeRhMdrR1HbTSrB2zyXlupke
- DMFyWvWwKJIQ3f18FLlhQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:FivGfNiSDGg=:8zZE5M376lioGU98EZRiH8
- rx0G4FGCSpae26RX4DoT+6GiZoMYf0b5qrscYKrrTri+radqR4V9u1ra5nhHhhBcwdwddkydf
- Xm0WIc0wAAD3aUGpMt/EBSJjP32g6iXz3eUYYhz96RnsTTFUZTbXgGUagK9Icf+/7yT1kXCh3
- YKds26rfCfQXYm3SucosOMB7dCny1cEJNX5kvpOnGxEeFzxz+OOancqfRQACtm63lCVY1rZdX
- 9sKcg4q2d0qWBC5934pII9uh7WrugpE6Cmvr1uFKPUANxo+4xmerRDSpvmGAMFOMJk0cRob+w
- LSlgi/iJvAwmJ4PP63eIcvrFLpfG9AtWjWZKnW9WLW+KdKYccCk9vTUJnyzwBV0e65l7mId3A
- J+LBPkkgLdLq88HYXKvEjsGixlFETBMJeGbwSKO3LzzkB+DOHxmgbaB4rZugjJzvl+FvVhQzQ
- mk79HgxYV6l90KqwKQKiNytznRvu4Dn9tHPbZ+/Smea8vE9egcnhOdYP5KBj5woFqy/r2UpfS
- 8B0z0W2wn8THNPNbkt2cKvRFen2gwyPnB8hmtRXXna30E9wTeic7EWQwx/6Xnl/DixC3JKwEI
- 8SwDmRaagHbESLuOyuggWd9FKwPqMpTqLciYRXcsAcWfchX4z7H2ctFATiifWWgP3+v8uerDE
- eU1imj42+jfgjQRsWiJ4aZWd0BkvEGG/ruDW/toFMtrFebY9GBIaXpzDqmaWAvXhES7HZxkqe
- Sdlz2HqxH8PgAUI9g30K1ASVQIwPl2uhw14XsA==
+        id S1751728AbeBBPdz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 10:33:55 -0500
+Received: from mail-he1eur01on0073.outbound.protection.outlook.com ([104.47.0.73]:54912
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751470AbeBBPdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 10:33:46 -0500
+From: Frank Li <frank.li@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+CC: Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Ian Ray <ian.ray@ge.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] ARM: dts: imx6q-bx50v3: Enable secure-reg-access
+Thread-Topic: [PATCH] ARM: dts: imx6q-bx50v3: Enable secure-reg-access
+Thread-Index: AQHTjhrzoCixc+F7oE+0g5P6QUGo66OQz8sAgACKJ9A=
+Date: Fri, 2 Feb 2018 15:33:40 +0000
+Message-ID: <HE1PR04MB2091FB16A11EE4A02940EB6088F90@HE1PR04MB2091.eurprd04.prod.outlook.com>
+References: <20180115160722.17206-1-sebastian.reichel@collabora.co.uk>
+ <20180202071819.GE25699@dragon>
+In-Reply-To: <20180202071819.GE25699@dragon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [192.88.168.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR04MB1020;7:YHNdZOt2MwdTiBBLBy1JsnkYVzTXPrcjtpuKXCCYE12QAeEOZPXQaYLbj61bPllEP+IIUnoQ+PmqYgTtYL7emkcoEQ5pCUQvfX4L+YMZeIShdZDwBYfIsMOpvgq3KC8k2xulpzTgYWDJMTGHICpdBRwVGyyH/i38nCX+utb5K0/IcmKArq+9W2yDILFNFfhrE6btU3oKNh3NuUgk+7/3vGD6+3HXV5RqTit97Xh5QB0z0fv2L+pfnU5WzkNhI2Nz
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(376002)(39380400002)(346002)(396003)(366004)(39860400002)(189003)(13464003)(199004)(2950100002)(99286004)(33656002)(55016002)(9686003)(5660300001)(6436002)(316002)(68736007)(110136005)(4326008)(54906003)(2900100001)(6246003)(229853002)(5250100002)(97736004)(53546011)(6506007)(7696005)(76176011)(102836004)(59450400001)(14454004)(478600001)(53936002)(8936002)(106356001)(25786009)(3660700001)(3280700002)(81166006)(81156014)(66066001)(86362001)(105586002)(8676002)(2906002)(7736002)(305945005)(6116002)(74316002)(26005)(3846002)(186003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1020;H:HE1PR04MB2091.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: efb28c92-abfc-46f7-c274-08d56a5255f8
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:HE1PR04MB1020;
+x-ms-traffictypediagnostic: HE1PR04MB1020:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=frank.li@nxp.com;
+x-microsoft-antispam-prvs: <HE1PR04MB10209E20097718CA7476A86688F90@HE1PR04MB1020.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(106981052589767);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231101)(2400082)(944501161)(10201501046)(3002001)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:HE1PR04MB1020;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1020;
+x-forefront-prvs: 05715BE7FD
+x-microsoft-antispam-message-info: JG5w5otdlhKrAbLRz0tS8eAxEYGPxo9ll7fUGJnuN6pRPBOATJh5L891NupjukorKgX4XWlmpQHEBoA0Qwr0Fg==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: efb28c92-abfc-46f7-c274-08d56a5255f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Feb 2018 15:33:40.3459
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1020
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w12FXwJv018868
 
-The legacy hypercall handlers were originally added with
-a comment explaining that "copying the argument structures in
-HYPERVISOR_event_channel_op() and HYPERVISOR_physdev_op() into the local
-variable is sufficiently safe" and only made sure to not write
-past the end of the argument structure, the checks in linux/string.h
-disagree with that, when link-time optimizations are used:
 
-In function 'memcpy',
-    inlined from 'pirq_query_unmask' at drivers/xen/fallback.c:53:2,
-    inlined from '__startup_pirq' at drivers/xen/events/events_base.c:529:2,
-    inlined from 'restore_pirqs' at drivers/xen/events/events_base.c:1439:3,
-    inlined from 'xen_irq_resume' at drivers/xen/events/events_base.c:1581:2:
-include/linux/string.h:350:3: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
-   __read_overflow2();
-   ^
-make[3]: *** [ccLujFNx.ltrans15.ltrans.o] Error 1
-make[3]: Target 'all' not remade because of errors.
-lto-wrapper: fatal error: make returned 2 exit status
-compilation terminated.
-ld: error: lto-wrapper failed
 
-This changes the functions so that each argument is accessed with
-exactly the correct length based on the command code.
+> -----Original Message-----
+> From: Shawn Guo [mailto:shawnguo@kernel.org]
+> Sent: Friday, February 02, 2018 1:18 AM
+> To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> Cc: Sascha Hauer <kernel@pengutronix.de>; Frank Li <frank.li@nxp.com>;
+> Fabio Estevam <fabio.estevam@nxp.com>; Ian Ray <ian.ray@ge.com>; Rob
+> Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] ARM: dts: imx6q-bx50v3: Enable secure-reg-access
+> 
+> + Frank
+> 
+> On Mon, Jan 15, 2018 at 05:07:22PM +0100, Sebastian Reichel wrote:
+> > From: Peter Senna Tschudin <peter.senna@collabora.com>
+> >
+> > Add secure-reg-access on device tree include file for Bx50 devices to
+> > enable PMU and hardware counters for perf.
+> >
+> > Signed-off-by: Peter Senna Tschudin <peter.senna@collabora.com>
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> > ---
+> >  arch/arm/boot/dts/imx6q-bx50v3.dtsi | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/imx6q-bx50v3.dtsi
+> > b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
+> > index 86cfd4481e72..ccaaee83e2fa 100644
+> > --- a/arch/arm/boot/dts/imx6q-bx50v3.dtsi
+> > +++ b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
+> > @@ -43,6 +43,13 @@
+> >  #include "imx6q-ba16.dtsi"
+> >
+> >  / {
+> > +	soc {
+> > +		pmu {
+> > +			compatible = "arm,cortex-a9-pmu";
+> > +			secure-reg-access;
+> 
+> I'm not sure this could be a board level configuration.  Shouldn't this property
+> just be added into pmu node in imx6qdl.dtsi?
 
-Fixes: cf47a83fb06e ("xen/hypercall: fix hypercall fallback code for very old hypervisors")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/xen/fallback.c | 94 ++++++++++++++++++++++++++++----------------------
- 1 file changed, 53 insertions(+), 41 deletions(-)
+I agree. It should be in imx6qdl.dtsi
 
-diff --git a/drivers/xen/fallback.c b/drivers/xen/fallback.c
-index b04fb64c5a91..eded8dd821ad 100644
---- a/drivers/xen/fallback.c
-+++ b/drivers/xen/fallback.c
-@@ -7,75 +7,87 @@
- 
- int xen_event_channel_op_compat(int cmd, void *arg)
- {
--	struct evtchn_op op;
-+	struct evtchn_op op = { .cmd = cmd, };
-+	size_t len;
- 	int rc;
- 
--	op.cmd = cmd;
--	memcpy(&op.u, arg, sizeof(op.u));
--	rc = _hypercall1(int, event_channel_op_compat, &op);
--
- 	switch (cmd) {
-+	case EVTCHNOP_bind_interdomain:
-+		len = sizeof(struct evtchn_bind_interdomain);
-+		break;
-+	case EVTCHNOP_bind_virq:
-+		len = sizeof(struct evtchn_bind_virq);
-+		break;
-+	case EVTCHNOP_bind_pirq:
-+		len = sizeof(struct evtchn_bind_pirq);
-+		break;
- 	case EVTCHNOP_close:
-+		len = sizeof(struct evtchn_close);
-+		break;
- 	case EVTCHNOP_send:
-+		len = sizeof(struct evtchn_send);
-+		break;
-+	case EVTCHNOP_alloc_unbound:
-+		len = sizeof(struct evtchn_alloc_unbound);
-+		break;
-+	case EVTCHNOP_bind_ipi:
-+		len = sizeof(struct evtchn_bind_ipi);
-+		break;
-+	case EVTCHNOP_status:
-+		len = sizeof(struct evtchn_status);
-+		break;
- 	case EVTCHNOP_bind_vcpu:
-+		len = sizeof(struct evtchn_bind_vcpu);
-+		break;
- 	case EVTCHNOP_unmask:
--		/* no output */
-+		len = sizeof(struct evtchn_unmask);
- 		break;
--
--#define COPY_BACK(eop) \
--	case EVTCHNOP_##eop: \
--		memcpy(arg, &op.u.eop, sizeof(op.u.eop)); \
--		break
--
--	COPY_BACK(bind_interdomain);
--	COPY_BACK(bind_virq);
--	COPY_BACK(bind_pirq);
--	COPY_BACK(status);
--	COPY_BACK(alloc_unbound);
--	COPY_BACK(bind_ipi);
--#undef COPY_BACK
--
- 	default:
--		WARN_ON(rc != -ENOSYS);
--		break;
-+		return -ENOSYS;
- 	}
- 
-+	memcpy(&op.u, arg, len);
-+	rc = _hypercall1(int, event_channel_op_compat, &op);
-+	memcpy(arg, &op.u, len);
-+
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(xen_event_channel_op_compat);
- 
- int xen_physdev_op_compat(int cmd, void *arg)
- {
--	struct physdev_op op;
-+	struct physdev_op op = { .cmd = cmd, };
-+	size_t len;
- 	int rc;
- 
--	op.cmd = cmd;
--	memcpy(&op.u, arg, sizeof(op.u));
--	rc = _hypercall1(int, physdev_op_compat, &op);
--
- 	switch (cmd) {
- 	case PHYSDEVOP_IRQ_UNMASK_NOTIFY:
-+		len = 0;
-+		break;
-+	case PHYSDEVOP_irq_status_query:
-+		len = sizeof(struct physdev_irq_status_query);
-+		break;
- 	case PHYSDEVOP_set_iopl:
-+		len = sizeof(struct physdev_set_iopl);
-+		break;
- 	case PHYSDEVOP_set_iobitmap:
-+		len = sizeof(struct physdev_set_iobitmap);
-+		break;
-+	case PHYSDEVOP_apic_read:
- 	case PHYSDEVOP_apic_write:
--		/* no output */
-+		len = sizeof(struct physdev_apic);
- 		break;
--
--#define COPY_BACK(pop, fld) \
--	case PHYSDEVOP_##pop: \
--		memcpy(arg, &op.u.fld, sizeof(op.u.fld)); \
--		break
--
--	COPY_BACK(irq_status_query, irq_status_query);
--	COPY_BACK(apic_read, apic_op);
--	COPY_BACK(ASSIGN_VECTOR, irq_op);
--#undef COPY_BACK
--
--	default:
--		WARN_ON(rc != -ENOSYS);
-+	case PHYSDEVOP_ASSIGN_VECTOR:
-+		len = sizeof(struct physdev_irq);
- 		break;
-+	default:
-+		return -ENOSYS;
- 	}
- 
-+	memcpy(&op.u, arg, len);
-+	rc = _hypercall1(int, physdev_op_compat, &op);
-+	memcpy(arg, &op.u, len);
-+
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(xen_physdev_op_compat);
--- 
-2.9.0
+Frank Li
+
+> 
+> Shawn
+> 
+> > +		};
+> > +	};
+> > +
+> >  	clocks {
+> >  		mclk: clock@0 {
+> >  			compatible = "fixed-clock";
+> > --
+> > 2.15.1
+> >
