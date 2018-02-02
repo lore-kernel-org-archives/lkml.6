@@ -1,135 +1,330 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751638AbeBBPUs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 10:20:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50286 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751887AbeBBPU3 (ORCPT
+        id S1751941AbeBBPWy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 10:22:54 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38696 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751594AbeBBPWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 10:20:29 -0500
-Subject: Re: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag
- FS_IMA_NO_CACHE
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-        Christoph Hellwig <hch@infradead.org>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Dongsu Park <dongsu@kinvolk.io>, linux-kernel@vger.kernel.org
-Date: Fri, 02 Feb 2018 10:20:16 -0500
-In-Reply-To: <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
-References: <cover.1517314847.git.dongsu@kinvolk.io>
-         <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 2 Feb 2018 10:22:44 -0500
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH v1 13/13] mm: splice local lists onto the front of the
+ LRU
+To: daniel.m.jordan@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
+        Dave.Dice@oracle.com, dave@stgolabs.net, khandual@linux.vnet.ibm.com,
+        mgorman@suse.de, mhocko@kernel.org, pasha.tatashin@oracle.com,
+        steven.sistare@oracle.com, yossi.lev@oracle.com
+References: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
+ <20180131230413.27653-14-daniel.m.jordan@oracle.com>
+Date: Fri, 2 Feb 2018 16:22:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180131230413.27653-14-daniel.m.jordan@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 18020215-0012-0000-0000-000005AAC84F
+x-cbid: 18020215-0012-0000-0000-000005AAC89A
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020215-0013-0000-0000-0000192672A7
-Message-Id: <1517584816.3171.61.camel@linux.vnet.ibm.com>
+x-cbparentid: 18020215-0013-0000-0000-0000192672F6
+Message-Id: <765238a2-8970-e05d-4fe3-cdcb796aa399@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802020188
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miklos,
-
-On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
-> From: Alban Crequy <alban@kinvolk.io>
+On 01/02/2018 00:04, daniel.m.jordan@oracle.com wrote:
+> Now that release_pages is scaling better with concurrent removals from
+> the LRU, the performance results (included below) showed increased
+> contention on lru_lock in the add-to-LRU path.
 > 
-> This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
-> re-appraised and re-audited each time. Cached integrity results should
-> not be used.
+> To alleviate some of this contention, do more work outside the LRU lock.
+> Prepare a local list of pages to be spliced onto the front of the LRU,
+> including setting PageLRU in each page, before taking lru_lock.  Since
+> other threads use this page flag in certain checks outside lru_lock,
+> ensure each page's LRU links have been properly initialized before
+> setting the flag, and use memory barriers accordingly.
 > 
-> It is useful in FUSE because the userspace FUSE process can change the
-> underlying files at any time without notifying the kernel.
-
-Both IMA-measurement and IMA-appraisal cache the integrity results and
-are dependent on the kernel to detect when a file changes in order to
-clear the cached info and force the file to be re-evaluated.  This
-detection was dependent on i_version changing.  For filesystems that
-do not support i_version, remote or fuse filesystems, where the kernel
-does not detect the file change, the file was measured and the
-signature evaluated just once.
-
-With commit a2a2c3c8580a ("ima: Use i_version only when filesystem
-supports it"), which is being upstreamed in this open window,
-i_version is considered an optimization.  If i_version is not enabled,
-either because the local filesystem does not support it or the
-filesystem wasn't mounted with i_version, the file will now always be
-re-evaluated.
-
-That patch does not address FUSE or remote filesystems, as the kernel
-does not detect the change.  Further, even if the kernel could detect
-the change, FUSE filesystems by definition are untrusted.
-
-The original patches addressed FUSE filesystems, by defining a new IMA
-policy option, forcing the file to be re-evaluated based on the
-filesystem magic number.  All of the changes were in the IMA
-subsystem.  These patches are the result of Christoph's comment on the
-original patches saying, "ima has no business looking at either the
-name _or_ the magic number."
-
-Your help in resolving this problem is much appreciated!
-
-Mimi
-
+> Performance Results
 > 
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-integrity@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
-> Acked-by: Seth Forshee <seth.forshee@canonical.com>
-> Tested-by: Dongsu Park <dongsu@kinvolk.io>
-> Signed-off-by: Alban Crequy <alban@kinvolk.io>
+> This is a will-it-scale run of page_fault1 using 4 different kernels.
+> 
+>             kernel     kern #
+> 
+>           4.15-rc2          1
+>   large-zone-batch          2
+>      lru-lock-base          3
+>    lru-lock-splice          4
+> 
+> Each kernel builds on the last.  The first is a baseline, the second
+> makes zone->lock more scalable by increasing an order-0 per-cpu
+> pagelist's 'batch' and 'high' values to 310 and 1860 respectively
+> (courtesy of Aaron Lu's patch), the third scales lru_lock without
+> splicing pages (the previous patch in this series), and the fourth adds
+> page splicing (this patch).
+> 
+> N tasks mmap, fault, and munmap anonymous pages in a loop until the test
+> time has elapsed.
+> 
+> The process case generally does better than the thread case most likely
+> because of mmap_sem acting as a bottleneck.  There's ongoing work
+> upstream[*] to scale this lock, however, and once it goes in, my
+> hypothesis is the thread numbers here will improve.
+> 
+> kern #  ntask     proc      thr        proc    stdev         thr    stdev
+>                speedup  speedup       pgf/s                pgf/s
+>      1      1                       705,533    1,644     705,227    1,122
+>      2      1     2.5%     2.8%     722,912      453     724,807      728
+>      3      1     2.6%     2.6%     724,215      653     723,213      941
+>      4      1     2.3%     2.8%     721,746      272     724,944      728
+> 
+> kern #  ntask     proc      thr        proc    stdev         thr    stdev
+>                speedup  speedup       pgf/s                pgf/s
+>      1      4                     2,525,487    7,428   1,973,616   12,568
+>      2      4     2.6%     7.6%   2,590,699    6,968   2,123,570   10,350
+>      3      4     2.3%     4.4%   2,584,668   12,833   2,059,822   10,748
+>      4      4     4.7%     5.2%   2,643,251   13,297   2,076,808    9,506
+> 
+> kern #  ntask     proc      thr        proc    stdev         thr    stdev
+>                speedup  speedup       pgf/s                pgf/s
+>      1     16                     6,444,656   20,528   3,226,356   32,874
+>      2     16     1.9%    10.4%   6,566,846   20,803   3,560,437   64,019
+>      3     16    18.3%     6.8%   7,624,749   58,497   3,447,109   67,734
+>      4     16    28.2%     2.5%   8,264,125   31,677   3,306,679   69,443
+> 
+> kern #  ntask     proc      thr        proc    stdev         thr    stdev
+>                speedup  speedup       pgf/s                pgf/s
+>      1     32                    11,564,988   32,211   2,456,507   38,898
+>      2     32     1.8%     1.5%  11,777,119   45,418   2,494,064   27,964
+>      3     32    16.1%    -2.7%  13,426,746   94,057   2,389,934   40,186
+>      4     32    26.2%     1.2%  14,593,745   28,121   2,486,059   42,004
+> 
+> kern #  ntask     proc      thr        proc    stdev         thr    stdev
+>                speedup  speedup       pgf/s                pgf/s
+>      1     64                    12,080,629   33,676   2,443,043   61,973
+>      2     64     3.9%     9.9%  12,551,136  206,202   2,684,632   69,483
+>      3     64    15.0%    -3.8%  13,892,933  351,657   2,351,232   67,875
+>      4     64    21.9%     1.8%  14,728,765   64,945   2,485,940   66,839
+> 
+> [*] https://lwn.net/Articles/724502/  Range reader/writer locks
+>     https://lwn.net/Articles/744188/  Speculative page faults
+> 
+> Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 > ---
->  fs/fuse/inode.c    | 2 +-
->  include/linux/fs.h | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
+>  mm/memcontrol.c |   1 +
+>  mm/mlock.c      |   1 +
+>  mm/swap.c       | 113 ++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+>  mm/vmscan.c     |   1 +
+>  4 files changed, 112 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 624f18bb..0a9e5164 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
->  static struct file_system_type fuse_fs_type = {
->  	.owner		= THIS_MODULE,
->  	.name		= "fuse",
-> -	.fs_flags	= FS_HAS_SUBTYPE,
-> +	.fs_flags	= FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
->  	.mount		= fuse_mount,
->  	.kill_sb	= fuse_kill_sb_anon,
->  };
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 511fbaab..ced841ba 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2075,6 +2075,7 @@ struct file_system_type {
->  #define FS_BINARY_MOUNTDATA	2
->  #define FS_HAS_SUBTYPE		4
->  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
-> +#define FS_IMA_NO_CACHE		16	/* Force IMA to re-measure, re-appraise, re-audit files */
->  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
->  	struct dentry *(*mount) (struct file_system_type *, int,
->  		       const char *, void *);
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 99a54df760e3..6911626f29b2 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2077,6 +2077,7 @@ static void lock_page_lru(struct page *page, int *isolated)
+> 
+>  		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
+>  		ClearPageLRU(page);
+> +		smp_rmb(); /* Pairs with smp_wmb in __pagevec_lru_add */
+
+Why not include the call to smp_rmb() in del_page_from_lru_list() instead
+of spreading smp_rmb() before calls to del_page_from_lru_list() ?
+
+>  		del_page_from_lru_list(page, lruvec, page_lru(page));
+>  		*isolated = 1;
+>  	} else
+> diff --git a/mm/mlock.c b/mm/mlock.c
+> index 6ba6a5887aeb..da294c5bbc2c 100644
+> --- a/mm/mlock.c
+> +++ b/mm/mlock.c
+> @@ -109,6 +109,7 @@ static bool __munlock_isolate_lru_page(struct page *page, bool getpage)
+>  		if (getpage)
+>  			get_page(page);
+>  		ClearPageLRU(page);
+> +		smp_rmb(); /* Pairs with smp_wmb in __pagevec_lru_add */
+>  		del_page_from_lru_list(page, lruvec, page_lru(page));
+>  		return true;
+>  	}
+> diff --git a/mm/swap.c b/mm/swap.c
+> index a302224293ad..46a98dc8e9ad 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -220,6 +220,7 @@ static void pagevec_move_tail_fn(struct page *page, struct lruvec *lruvec,
+>  	int *pgmoved = arg;
+> 
+>  	if (PageLRU(page) && !PageUnevictable(page)) {
+> +		smp_rmb();	/* Pairs with smp_wmb in __pagevec_lru_add */
+>  		del_page_from_lru_list(page, lruvec, page_lru(page));
+>  		ClearPageActive(page);
+>  		add_page_to_lru_list_tail(page, lruvec, page_lru(page));
+> @@ -277,6 +278,7 @@ static void __activate_page(struct page *page, struct lruvec *lruvec,
+>  		int file = page_is_file_cache(page);
+>  		int lru = page_lru_base_type(page);
+> 
+> +		smp_rmb();	/* Pairs with smp_wmb in __pagevec_lru_add */
+>  		del_page_from_lru_list(page, lruvec, lru);
+>  		SetPageActive(page);
+>  		lru += LRU_ACTIVE;
+> @@ -544,6 +546,7 @@ static void lru_deactivate_file_fn(struct page *page, struct lruvec *lruvec,
+>  	file = page_is_file_cache(page);
+>  	lru = page_lru_base_type(page);
+> 
+> +	smp_rmb();	/* Pairs with smp_wmb in __pagevec_lru_add */
+>  	del_page_from_lru_list(page, lruvec, lru + active);
+>  	ClearPageActive(page);
+>  	ClearPageReferenced(page);
+> @@ -578,6 +581,7 @@ static void lru_lazyfree_fn(struct page *page, struct lruvec *lruvec,
+>  	    !PageSwapCache(page) && !PageUnevictable(page)) {
+>  		bool active = PageActive(page);
+> 
+> +		smp_rmb();	/* Pairs with smp_wmb in __pagevec_lru_add */
+>  		del_page_from_lru_list(page, lruvec,
+>  				       LRU_INACTIVE_ANON + active);
+>  		ClearPageActive(page);
+> @@ -903,6 +907,60 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
+>  	trace_mm_lru_insertion(page, lru);
+>  }
+> 
+> +#define	MAX_LRU_SPLICES 4
+> +
+> +struct lru_splice {
+> +	struct list_head list;
+> +	struct lruvec *lruvec;
+> +	enum lru_list lru;
+> +	int nid;
+> +	int zid;
+> +	size_t nr_pages;
+> +};
+> +
+> +/*
+> + * Adds a page to a local list for splicing, or else to the singletons
+> + * list for individual processing.
+> + *
+> + * Returns the new number of splices in the splices list.
+> + */
+> +size_t add_page_to_lru_splice(struct lru_splice *splices, size_t nr_splices,
+> +			      struct list_head *singletons, struct page *page)
+> +{
+> +	int i;
+> +	enum lru_list lru = page_lru(page);
+> +	enum zone_type zid = page_zonenum(page);
+> +	int nid = page_to_nid(page);
+> +	struct lruvec *lruvec;
+> +
+> +	VM_BUG_ON_PAGE(PageLRU(page), page);
+> +
+> +	lruvec = mem_cgroup_page_lruvec(page, NODE_DATA(nid));
+> +
+> +	for (i = 0; i < nr_splices; ++i) {
+> +		if (splices[i].lruvec == lruvec && splices[i].zid == zid) {
+> +			list_add(&page->lru, &splices[i].list);
+> +			splices[nr_splices].nr_pages += hpage_nr_pages(page);
+> +			return nr_splices;
+> +		}
+> +	}
+> +
+> +	if (nr_splices < MAX_LRU_SPLICES) {
+> +		INIT_LIST_HEAD(&splices[nr_splices].list);
+> +		splices[nr_splices].lruvec = lruvec;
+> +		splices[nr_splices].lru = lru;
+> +		splices[nr_splices].nid = nid;
+> +		splices[nr_splices].zid = zid;
+> +		splices[nr_splices].nr_pages = hpage_nr_pages(page);
+> +		list_add(&page->lru, &splices[nr_splices].list);
+> +		++nr_splices;
+> +	} else {
+> +		list_add(&page->lru, singletons);
+> +	}
+> +
+> +	return nr_splices;
+> +}
+> +
+>  /*
+>   * Add the passed pages to the LRU, then drop the caller's refcount
+>   * on them.  Reinitialises the caller's pagevec.
+> @@ -911,12 +969,59 @@ void __pagevec_lru_add(struct pagevec *pvec)
+>  {
+>  	int i;
+>  	struct pglist_data *pgdat = NULL;
+> -	struct lruvec *lruvec;
+>  	unsigned long flags = 0;
+> +	struct lru_splice splices[MAX_LRU_SPLICES];
+> +	size_t nr_splices = 0;
+> +	LIST_HEAD(singletons);
+> +	struct page *page, *next;
+> 
+> -	for (i = 0; i < pagevec_count(pvec); i++) {
+> -		struct page *page = pvec->pages[i];
+> -		struct pglist_data *pagepgdat = page_pgdat(page);
+> +	/*
+> +	 * Sort the pages into local lists to splice onto the LRU once we
+> +	 * hold lru_lock.  In the common case there should be few of these
+> +	 * local lists.
+> +	 */
+> +	for (i = 0; i < pagevec_count(pvec); ++i) {
+> +		page = pvec->pages[i];
+> +		nr_splices = add_page_to_lru_splice(splices, nr_splices,
+> +						    &singletons, page);
+> +	}
+> +
+> +	/*
+> +	 * Paired with read barriers where we check PageLRU and modify
+> +	 * page->lru, for example pagevec_move_tail_fn.
+> +	 */
+> +	smp_wmb();
+> +
+> +	for (i = 0; i < pagevec_count(pvec); i++)
+> +		SetPageLRU(pvec->pages[i]);
+> +
+> +	for (i = 0; i < nr_splices; ++i) {
+> +		struct lru_splice *s = &splices[i];
+> +		struct pglist_data *splice_pgdat = NODE_DATA(s->nid);
+> +
+> +		if (splice_pgdat != pgdat) {
+> +			if (pgdat)
+> +				spin_unlock_irqrestore(&pgdat->lru_lock, flags);
+> +			pgdat = splice_pgdat;
+> +			spin_lock_irqsave(&pgdat->lru_lock, flags);
+> +		}
+> +
+> +		update_lru_size(s->lruvec, s->lru, s->zid, s->nr_pages);
+> +		list_splice(&s->list, lru_head(&s->lruvec->lists[s->lru]));
+> +		update_page_reclaim_stat(s->lruvec, is_file_lru(s->lru),
+> +					 is_active_lru(s->lru));
+> +		/* XXX add splice tracepoint */
+> +	}
+> +
+> +       while (!list_empty(&singletons)) {
+> +		struct pglist_data *pagepgdat;
+> +		struct lruvec *lruvec;
+> +		struct list_head *list;
+> +
+> +		list = singletons.next;
+> +		page = list_entry(list, struct page, lru);
+> +		list_del(list);
+> +		pagepgdat = page_pgdat(page);
+> 
+>  		if (pagepgdat != pgdat) {
+>  			if (pgdat)
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 7f5ff0bb133f..338850ad03a6 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -1629,6 +1629,7 @@ int isolate_lru_page(struct page *page)
+>  			int lru = page_lru(page);
+>  			get_page(page);
+>  			ClearPageLRU(page);
+> +			smp_rmb(); /* Pairs with smp_wmb in __pagevec_lru_add */
+>  			del_page_from_lru_list(page, lruvec, lru);
+>  			ret = 0;
+>  		}
+> 
