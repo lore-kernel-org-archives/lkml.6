@@ -1,49 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751544AbeBBGWU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 01:22:20 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:59885 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750714AbeBBGWN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 01:22:13 -0500
-Subject: Re: [PATCH v6 17/41] dt-bindings: clock: Add bindings for DA8XX
- CFGCHIP clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-18-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <572e31a2-ac18-512b-03bb-82fffcf4d228@ti.com>
-Date: Fri, 2 Feb 2018 11:50:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1751463AbeBBGfX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 01:35:23 -0500
+Received: from mga11.intel.com ([192.55.52.93]:17699 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750732AbeBBGfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 01:35:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,447,1511856000";
+   d="scan'208";a="16423903"
+Date: Fri, 2 Feb 2018 14:34:49 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: kbuild-all@01.org,
+        syzbot+e2d6cfb305e9f3911dea@syzkaller.appspotmail.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Eric Biggers <ebiggers3@gmail.com>, james.morse@arm.com,
+        keun-o.park@darkmatter.ae, labbott@redhat.com, linux-mm@kvack.org,
+        mingo@kernel.org
+Subject: Re: [PATCH] socket: Provide bounce buffer for constant sized
+ put_cmsg()
+Message-ID: <201802021425.9b52psTS%fengguang.wu@intel.com>
+References: <20180201104143.GA10983@beast>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-18-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180201104143.GA10983@beast>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
-> +EMIFA clock source (ASYNC1)
-> +---------------------------
-> +Required properties:
-> +- compatible: shall be "ti,da850-async1-clksrc".
-> +- #clock-cells: from common clock binding; shall be set to 0.
-> +- clocks: phandles to the parent clocks corresponding to clock-names
-> +- clock-names: shall be "pll0_sysclk3", "div4.5"
+Hi Kees,
 
-Is this clock really referred to as aysnc1 in documentation? I don't get
-hits for async1 in OMAP-L138 TRM.
+I love your patch! Perhaps something to improve:
 
-Thanks,
-Sekhar
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.15 next-20180201]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Kees-Cook/socket-Provide-bounce-buffer-for-constant-sized-put_cmsg/20180202-113637
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> net/bluetooth/hci_sock.c:1406:17: sparse: incorrect type in initializer (invalid types) @@ expected void _val @@ got void _val @@
+   net/bluetooth/hci_sock.c:1406:17: expected void _val
+   net/bluetooth/hci_sock.c:1406:17: got void <noident>
+>> net/bluetooth/hci_sock.c:1406:17: sparse: expression using sizeof(void)
+   In file included from include/linux/compat.h:16:0,
+    from include/linux/ethtool.h:17,
+    from include/linux/netdevice.h:41,
+    from include/net/sock.h:51,
+    from include/net/bluetooth/bluetooth.h:29,
+    from net/bluetooth/hci_sock.c:32:
+   net/bluetooth/hci_sock.c: In function 'hci_sock_cmsg':
+   include/linux/socket.h:355:19: error: variable or field '_val' declared void
+    _val = 14- ^
+   net/bluetooth/hci_sock.c:1406:3: note: in expansion of macro 'put_cmsg'
+    put_cmsg(msg, SOL_HCI, HCI_CMSG_TSTAMP, len, data);
+    ^~~~~~~~
+   include/linux/socket.h:355:26: warning: dereferencing 'void pointer
+    _val = 20- ^~~~~~~
+   net/bluetooth/hci_sock.c:1406:3: note: in expansion of macro 'put_cmsg'
+    put_cmsg(msg, SOL_HCI, HCI_CMSG_TSTAMP, len, data);
+    ^~~~~~~~
+   include/linux/socket.h:355:26: error: void value not ignored as it ought to be
+    _val = 26- ^
+   net/bluetooth/hci_sock.c:1406:3: note: in expansion of macro 'put_cmsg'
+    put_cmsg(msg, SOL_HCI, HCI_CMSG_TSTAMP, len, data);
+    ^~~~~~~~
+
+vim +1406 net/bluetooth/hci_sock.c
+
+767c5eb5 Marcel Holtmann 2007-09-09  1405  
+767c5eb5 Marcel Holtmann 2007-09-09 @1406  		put_cmsg(msg, SOL_HCI, HCI_CMSG_TSTAMP, len, data);
+a61bbcf2 Patrick McHardy 2005-08-14  1407  	}
+^1da177e Linus Torvalds  2005-04-16  1408  }
+^1da177e Linus Torvalds  2005-04-16  1409  
+
+:::::: The code at line 1406 was first introduced by commit
+:::::: 767c5eb5d35aeb85987143f0a730bc21d3ecfb3d [Bluetooth] Add compat handling for timestamp structure
+
+:::::: TO: Marcel Holtmann <marcel@holtmann.org>
+:::::: CC: Marcel Holtmann <marcel@holtmann.org>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
