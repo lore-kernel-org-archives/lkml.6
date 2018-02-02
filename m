@@ -1,115 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751815AbeBBIAu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 03:00:50 -0500
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:47583 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751329AbeBBIAm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 03:00:42 -0500
-Subject: Re: [RFC PATCH 1/9] media: add request API core and UAPI
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Alexandre Courbot <acourbot@chromium.org>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20171215075625.27028-1-acourbot@chromium.org>
- <20171215075625.27028-2-acourbot@chromium.org>
- <20180126083936.5qxacbdprm6j7pcc@valkosipuli.retiisi.org.uk>
- <CAPBb6MVAaGPh-sxD0ZTMbo2Ejtp8Rpqb8+OaKxhAC=BaT360eQ@mail.gmail.com>
- <20180202073316.ovee5fbe45npksnt@paasikivi.fi.intel.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <6292179f-4b3d-573b-09c9-7a1efc101d44@xs4all.nl>
-Date: Fri, 2 Feb 2018 09:00:32 +0100
+        id S1751675AbeBBIJr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 03:09:47 -0500
+Received: from mga05.intel.com ([192.55.52.43]:19240 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750795AbeBBIJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 03:09:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,447,1511856000";
+   d="scan'208";a="27483279"
+Subject: Re: [PATCH v2] buffer: Avoid setting buffer bits that are already set
+From: kemi <kemi.wang@intel.com>
+To: Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>,
+        Darrick J Wong <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>
+Cc: Dave <dave.hansen@linux.intel.com>, Andi Kleen <andi.kleen@intel.com>,
+        Tim Chen <tim.c.chen@intel.com>, Ying Huang <ying.huang@intel.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+References: <1508807802-9691-1-git-send-email-kemi.wang@intel.com>
+ <f18ba82a-e715-a71c-4904-3adc9b8ea149@intel.com>
+Message-ID: <6e946728-23f5-d5df-c8d0-c9ec4251557c@intel.com>
+Date: Fri, 2 Feb 2018 16:07:28 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180202073316.ovee5fbe45npksnt@paasikivi.fi.intel.com>
+In-Reply-To: <f18ba82a-e715-a71c-4904-3adc9b8ea149@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfF16G2Y4QK9KDCtiIQEpYQiIJB4+0m2okkLsKiMlQvsKHewebJWiX4gIwtwx8qUKY2ePl8dnZC9bih2mM7JLKB4hMoMOCNYMzrH8NqaCgMmRI65eqMdT
- RYJZgVqk8hhip1LFE4IhbPxWUIiQO6FQMaYFPHpPyDxw6O7ZxYmEXzyhQq0RusRzEVcLbNflSXX37bN+KewQ3c5dzgsmjs8BFFhm8OVZTvz0JvJIHONjkC9h
- CmG2Zma7Hc6+m+9lzh4vrbLAFXOXAkIpR3xxeYK28LH1QRacxp2mHcyfrHcS9iVgFS0j1Yo3rM4ycSBw5Fiq82yoNHigw9ZVfbe5xHiDoUGnuHFzKsuyp7GS
- 7Xhdns7zwi9z12wKWxhLwWA2OhwNmRRZcUVu5Gkxg+Oqs6TY0g4sh26jawkJUYmGsAwB96ABER1sC8f6obcbLmPghaO6u9V0WbmcyAObAQdDVY9+Hb7AUVmf
- k5blrRYEIkuv2p+Lb16ituV9AxcYmSdeDdWySzczxGgyGVnulSVq9rGSwEESwV1JdWZ1EsAdB/Mtjvvc8l/avgwN3Y1o2FpUvmhWLqu75+kb6Gz7mopsGRJE
- e29kk5iT4zPgMEfRB2erp8vD
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/02/2018 08:33 AM, Sakari Ailus wrote:
+Hi, Jens
+  Could you help to merge this patch to your tree? Thanks
 
-<snip>
-
->>>> +struct media_request_entity_data *
->>>> +media_request_get_entity_data(struct media_request *req,
->>>> +                           struct media_entity *entity, void *fh)
->>>
->>> This makes the assumption that request data is bound to entities. How does
->>> this work with links?
->>>
->>> I wonder if it should rather be bound to graph objects, or certain graph
->>> objects. Having a standard way to bind request specific information e.g. to
->>> entities is definitely worth having, though.
->>>
->>> V4L2 framework specific information would be needed across the media graph
->>> and it'd be good to store it in a non-driver specific way. What I think
->>> you'd need is an interface that allows storing information based on two
->>> keys --- the request and e.g. a pointer provided by the caller. The V4L2
->>> framework would have one key, e.g. a pointer to an empty struct defined
->>> somewhere in the V4L2 framework could be used for the purpose.
->>>
->>> Going forward, the entire media graph state will be subject to changing
->>> through requests. This includes link state, media bus and pixel formats,
->>> cropping and scaling configurations, everything. Let's not try to go there
->>> yet in this patchset, but what I'm asking is to keep the goal in mind when
->>> implementating the request API.
+On 2017年11月03日 10:29, kemi wrote:
+> 
+> 
+> On 2017年10月24日 09:16, Kemi Wang wrote:
+>> It's expensive to set buffer flags that are already set, because that
+>> causes a costly cache line transition.
 >>
->> Yeah, I think a similar idea is brought up in the cover letter of the
->> next revision (although for different reasons). Entities are probably
->> not a one-fit for all use-cases.
+>> A common case is setting the "verified" flag during ext4 writes.
+>> This patch checks for the flag being set first.
 >>
->> For the case of links though, I believe that the "entity" that would
->> control them would be the media controller itself, since it is the one
->> that takes the MEDIA_IOC_SETUP_LINK ioctl. But even for this case, we
->> cannot use an entity to look up the media_device, so something more
->> generic like an opaque key would probably be needed.
+>> With the AIM7/creat-clo benchmark testing on a 48G ramdisk based-on ext4
+>> file system, we see 3.3%(15431->15936) improvement of aim7.jobs-per-min on
+>> a 2-sockets broadwell platform.
+>>
+>> What the benchmark does is: it forks 3000 processes, and each  process do
+>> the following:
+>> a) open a new file
+>> b) close the file
+>> c) delete the file
+>> until loop=100*1000 times.
+>>
+>> The original patch is contributed by Andi Kleen.
+>>
+>> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+>> Signed-off-by: Kemi Wang <kemi.wang@intel.com>
+>> Tested-by: Kemi Wang <kemi.wang@intel.com>
+>> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+>> ---
 > 
-> Perhaps in the near future we still need a little less than that. Changing
-> something that has a state in V4L2 will be troublesome and will require
-> managing state of what is now stream centric.
+> Seems that this patch is still not merged. Anything wrong with that? thanks
 > 
-> I still think that the framework would need to do the job of managing the
-> video buffers related to a request as well as controls without necessarily
-> trying to generalise that right now. But how to store these in a meaningful
-> way? Putting them to the request itself would be one option: you'll need to
-> dig the request up anyway when things are associated to it, and the driver
-> needs it when it is queued.
-> 
-> I wonder what Hans and Laurent think.
-
-I think this is something for the future. I want to avoid delaying the Request
-API for endless internal design discussions. The public API should be solid,
-but the internal framework will undoubtedly need to change in the future.
-
-That's OK. The reality is that there is a lot of demand for the Request API for
-stateless codecs, and that is what we should concentrate on.
-
-Should the framework manage the buffers? I don't even know what is meant with
-that exactly, let alone that I can give an answer.
-
-Let's stay focused: 1) solid uAPI, 2) stateless codec support. The internal
-framework shouldn't of course make it harder than it needs to to later extend
-the support to camera pipelines, but neither should we spend much time on it
-or we will never get this in.
-
-Regards,
-
-	Hans
+>>  include/linux/buffer_head.h | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+>> index c8dae55..211d8f5 100644
+>> --- a/include/linux/buffer_head.h
+>> +++ b/include/linux/buffer_head.h
+>> @@ -80,11 +80,14 @@ struct buffer_head {
+>>  /*
+>>   * macro tricks to expand the set_buffer_foo(), clear_buffer_foo()
+>>   * and buffer_foo() functions.
+>> + * To avoid reset buffer flags that are already set, because that causes
+>> + * a costly cache line transition, check the flag first.
+>>   */
+>>  #define BUFFER_FNS(bit, name)						\
+>>  static __always_inline void set_buffer_##name(struct buffer_head *bh)	\
+>>  {									\
+>> -	set_bit(BH_##bit, &(bh)->b_state);				\
+>> +	if (!test_bit(BH_##bit, &(bh)->b_state))			\
+>> +		set_bit(BH_##bit, &(bh)->b_state);              \
+>>  }									\
+>>  static __always_inline void clear_buffer_##name(struct buffer_head *bh)	\
+>>  {									\
+>>
