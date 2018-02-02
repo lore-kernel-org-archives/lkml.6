@@ -1,156 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751803AbeBBMrF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 07:47:05 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:60990 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbeBBMq7 (ORCPT
+        id S1751804AbeBBMuC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 07:50:02 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:24657 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751581AbeBBMt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 07:46:59 -0500
-Date: Fri, 2 Feb 2018 13:46:47 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Mel Gorman <mgorman@techsingularity.net>,
-        Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        srinivas.pandruvada@linux.intel.com
-Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
- candidate and the basis for SIS
-Message-ID: <20180202124647.GK2269@hirez.programming.kicks-ass.net>
-References: <20180130104555.4125-1-mgorman@techsingularity.net>
- <3838689.GpfBVtfPr0@aspire.rjw.lan>
- <20180201091104.GW2269@hirez.programming.kicks-ass.net>
- <8930678.7E2iWGoJnn@aspire.rjw.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8930678.7E2iWGoJnn@aspire.rjw.lan>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 2 Feb 2018 07:49:56 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180202124954epoutp037c7b5418b120b57c50d19118db1d3761~PgyTzD1Yg0618306183epoutp031
+X-AuditID: b6c32a39-47fff70000000fc5-30-5a745e705351
+From: Smitha T Murthy <smitha.t@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: kyungmin.park@samsung.com, kamil@wypas.org, jtp.park@samsung.com,
+        a.hajda@samsung.com, mchehab@kernel.org, pankaj.dubey@samsung.com,
+        krzk@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        Smitha T Murthy <smitha.t@samsung.com>
+Subject: [Patch v8 00/12] Add MFC v10.10 support
+Date: Fri, 02 Feb 2018 17:55:36 +0530
+Message-id: <1517574348-22111-1-git-send-email-smitha.t@samsung.com>
+X-Mailer: git-send-email 1.7.2.3
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCmgW5BXEmUQeNBK4tb686xWhxZe5XJ
+        YuaJdlaL8+c3sFucbXrDbrHp8TVWi8u75rBZ9GzYymqx9shddotlm/4wWSza+oXd4vAboOK7
+        e7YxOvB6bFrVyeaxeUm9R9+WVYwenzfJeVw50sgewBrFZZOSmpNZllqkb5fAlbH3wUq2gtvC
+        Ff13jjM1MN7k72Lk4JAQMJH4eUS5i5GLQ0hgB6PEgcP7mSGc74wSPz6uYupi5AQr+tPaxQKR
+        2M0o0XfpDhOE84NR4vnUKSwgVWwCOhLf3p9mA7FFBFIlXq1bywpSxAxSdOvbDbAiYQEDidMb
+        N7CD2CwCqhJTtl0Fi/MKuEisPrqEFWKdgsSrG2vZIew5bBJfl5VC2C4Sf9d8ZYGwhSVeHd/C
+        DvGDtMSlo7YQ4XKJPX9+gl0qIdDAKDH3eCMjRMJe4sCVOWC9zAJ8Eu++9rBC9PJKdLQJQZR4
+        SDSuPQs10lFi+jINkLCQQKzEyd+b2CcwSi5gZFjFKJZaUJybnlpsWGCqV5yYW1yal66XnJ+7
+        iREcs1qWOxiPnfM5xCjAwajEw5sgWxwlxJpYVlyZe4hRgoNZSYR3m29JlBBvSmJlVWpRfnxR
+        aU5q8SFGaQ4WJXHegACXKCGB9MSS1OzU1ILUIpgsEwenVAMjm3RsSPTFLwah/36eNW41C/b9
+        myp8+Zr9muTnn1n2TM+bsfr7Kfnkj50cuopV//a/26itLJDtVtUSyBIVuuHopAC7j8wzpu0N
+        uMu6acLpGx1K/LESbY4/8rhV73E16jB/Ndi8cf9BjYg1+qFf10/+wuw4b5fJkikhMR6bL8X/
+        vndbcdmGzNXFSizFGYmGWsxFxYkAGf60PdUCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprELMWRmVeSWpSXmKPExsVy+t9jAd2CuJIog+XNgha31p1jtTiy9iqT
+        xcwT7awW589vYLc42/SG3WLT42usFpd3zWGz6NmwldVi7ZG77BbLNv1hsli09Qu7xeE3QMV3
+        92xjdOD12LSqk81j85J6j74tqxg9Pm+S87hypJE9gDWKyyYlNSezLLVI3y6BK2Pvg5VsBbeF
+        K/rvHGdqYLzJ38XIySEhYCLxp7WLpYuRi0NIYCejRN/59YwQzg9GiRfT/jKCVLEJ6Eh8e3+a
+        DcQWEUiVWLv1PCtIETNIUdOBl+wgCWEBA4nTGzeA2SwCqhJTtl1lAbF5BVwkVh9dwgqxTkHi
+        1Y217BMYuRYwMqxilEwtKM5Nzy02KjDMSy3XK07MLS7NS9dLzs/dxAgMqW2Htfp2MN5fEn+I
+        UYCDUYmHN0G2OEqINbGsuDL3EKMEB7OSCO8235IoId6UxMqq1KL8+KLSnNTiQ4zSHCxK4ry3
+        845FCgmkJ5akZqemFqQWwWSZODilGhjruhduMFhQHDz539WoaTzcYZwRWevTlx5eN1FY9Fbd
+        gYDDl09cONzsLNfvO+PZ63OcrZ+3rJjCesl8Jf+UIMdN67P3rNx482j80qOCWTt2Gj6qcV7f
+        rm9zkeNJ8B31/d+/55yNbL/oHXV94t6HB+aazbwuk3aXzSjoq9Uy/WD1o2ePyWqvPN5xXoml
+        OCPRUIu5qDgRAO7jOJAlAgAA
+X-CMS-MailID: 20180202124952epcas1p4735e31b16819111d6d906711e0935231
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180202124952epcas1p4735e31b16819111d6d906711e0935231
+X-RootMTR: 20180202124952epcas1p4735e31b16819111d6d906711e0935231
+References: <CGME20180202124952epcas1p4735e31b16819111d6d906711e0935231@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 12:42:29PM +0100, Rafael J. Wysocki wrote:
-> > If you really care you can do async IPIs and do a custom serialization
-> > that only waits when you do back-to-back things, which should be fairly
-> > uncommon I'd think.
-> 
-> In this particular case we don't want to return to user space before the
-> MSR is actually written with the new value.
+This patch series adds MFC v10.10 support. MFC v10.10 is used in some
+of Exynos7 variants.
 
-Why not?
+This adds support for following:
 
-I was thinking of something like the below, which would in fact do
-exactly that.
+* Add support for HEVC encoder and decoder
+* Add support for VP9 decoder
+* Update Documentation for control id definitions
+* Update computation of min scratch buffer size requirement for V8 onwards
 
----
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 7edf7a0e5a96..f0caa5cc7adb 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -29,6 +29,7 @@
- #include <linux/debugfs.h>
- #include <linux/acpi.h>
- #include <linux/vmalloc.h>
-+#include <linux/smp.h>
- #include <trace/events/power.h>
- 
- #include <asm/div64.h>
-@@ -767,6 +768,40 @@ static void intel_pstate_hwp_set(unsigned int cpu)
- 	wrmsrl_on_cpu(cpu, MSR_HWP_REQUEST, value);
- }
- 
-+static void __intel_pstate_hwp_set_desired(int val)
-+{
-+	u64 value;
-+
-+	value = rdmsrl(MSR_HWP_REQUEST);
-+	value &= ~GENMASK_ULL(23, 16);
-+	value |= (val & 0xff) << 16;
-+	wrmsrl(MSR_HWP_REQUEST, val);
-+}
-+
-+static void __intel_pstate_hwp_func(void *data)
-+{
-+	__intel_pstate_hwp_set_desired((int)data);
-+}
-+
-+static DEFINE_PER_CPU_SHARED_ALIGNED(struct __call_single_data, csd_data);
-+
-+static void intel_pstate_hwp_set_desired(int cpu, int val)
-+{
-+	struct call_function_data *csd;
-+
-+	preempt_disable();
-+	csd = this_cpu_ptr(&csd_data);
-+	/* wait for previous invocation to complete */
-+	csd_lock_wait(csd);
-+
-+	csd->func = __intel_pstate_hwp_func;
-+	csd->info = (unsigned long)val;
-+
-+	smp_call_function_single_async(cpu, csd);
-+	preempt_enable();
-+}
-+
-+
- static int intel_pstate_hwp_save_state(struct cpufreq_policy *policy)
- {
- 	struct cpudata *cpu_data = all_cpu_data[policy->cpu];
-diff --git a/include/linux/smp.h b/include/linux/smp.h
-index 9fb239e12b82..2bc125ec6146 100644
---- a/include/linux/smp.h
-+++ b/include/linux/smp.h
-@@ -14,6 +14,11 @@
- #include <linux/init.h>
- #include <linux/llist.h>
- 
-+enum {
-+	CSD_FLAG_LOCK		= 0x01,
-+	CSD_FLAG_SYNCHRONOUS	= 0x02,
-+};
-+
- typedef void (*smp_call_func_t)(void *info);
- struct __call_single_data {
- 	struct llist_node llist;
-@@ -26,6 +31,11 @@ struct __call_single_data {
- typedef struct __call_single_data call_single_data_t
- 	__aligned(sizeof(struct __call_single_data));
- 
-+static __always_inline void csd_lock_wait(call_single_data_t *csd)
-+{
-+	smp_cond_load_acquire(&csd->flags, !(VAL & CSD_FLAG_LOCK));
-+}
-+
- /* total number of cpus in this system (may exceed NR_CPUS) */
- extern unsigned int total_cpus;
- 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 084c8b3a2681..af0ef9eb7679 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -22,11 +22,6 @@
- 
- #include "smpboot.h"
- 
--enum {
--	CSD_FLAG_LOCK		= 0x01,
--	CSD_FLAG_SYNCHRONOUS	= 0x02,
--};
--
- struct call_function_data {
- 	call_single_data_t	__percpu *csd;
- 	cpumask_var_t		cpumask;
-@@ -103,11 +98,6 @@ void __init call_function_init(void)
-  * previous function call. For multi-cpu calls its even more interesting
-  * as we'll have to ensure no other cpu is observing our csd.
-  */
--static __always_inline void csd_lock_wait(call_single_data_t *csd)
--{
--	smp_cond_load_acquire(&csd->flags, !(VAL & CSD_FLAG_LOCK));
--}
--
- static __always_inline void csd_lock(call_single_data_t *csd)
- {
- 	csd_lock_wait(csd);
+Changes since v7:
+ - Addressed review comments by Hans Verkuil <hverkuil@xs4all.nl>.
+ - Rebased on latest git://linuxtv.org/snawrocki/samsung.git
+   for-v4.16/media/next.
+ - Applied acked-by Hans on respective patches.
+
+Smitha T Murthy (12):
+  [media] s5p-mfc: Rename IS_MFCV8 macro
+  [media] s5p-mfc: Adding initial support for MFC v10.10
+  [media] s5p-mfc: Use min scratch buffer size as provided by F/W
+  [media] s5p-mfc: Support MFCv10.10 buffer requirements
+  [media] videodev2.h: Add v4l2 definition for HEVC
+  [media] v4l2-ioctl: add HEVC format description
+  Documentation: v4l: Documentation for HEVC v4l2 definition
+  [media] s5p-mfc: Add support for HEVC decoder
+  [media] s5p-mfc: Add VP9 decoder support
+  [media] v4l2: Add v4l2 control IDs for HEVC encoder
+  [media] s5p-mfc: Add support for HEVC encoder
+  Documention: v4l: Documentation for HEVC CIDs
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |   1 +
+ Documentation/media/uapi/v4l/extended-controls.rst | 410 +++++++++++++++
+ Documentation/media/uapi/v4l/pixfmt-compressed.rst |   5 +
+ drivers/media/platform/s5p-mfc/regs-mfc-v10.h      |  87 ++++
+ drivers/media/platform/s5p-mfc/regs-mfc-v8.h       |   2 +
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           |  28 ++
+ drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v6.c    |   9 +
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |  68 ++-
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c      |   6 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |  48 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       | 557 ++++++++++++++++++++-
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.h       |  14 +
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c    | 397 +++++++++++++--
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.h    |  15 +
+ drivers/media/v4l2-core/v4l2-ctrls.c               | 119 +++++
+ drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
+ include/uapi/linux/v4l2-controls.h                 |  93 +++-
+ include/uapi/linux/videodev2.h                     |   1 +
+ 18 files changed, 1783 insertions(+), 78 deletions(-)
+ create mode 100644 drivers/media/platform/s5p-mfc/regs-mfc-v10.h
+
+-- 
+2.7.4
