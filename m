@@ -1,103 +1,259 @@
-Return-Path: <aishpant@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517500026; cv=none;
-        d=google.com; s=arc-20160816;
-        b=nqCRYWFha2ZoZClZP7GPLNzlUe/OuPp6Iry7moQB3iLCrLhgoWZwcZzw9kdLhKdP33
-         4lEbRkCqZyLpsHhoA5dzkbd7Zmo1gnLEPYJC6o9TUA4Xq39eC39wLojMHW2RwR3htXTy
-         uOlY+EYRkR3ogUOBtrsY/l1I4Y12KwuatZGAk8YDe2c7+2JlXEAFR9q674cOzIK0jYUe
-         3h29uSkEaA/Ftixbi/WhXeiX+7tTcMtM+ST1cOKggMeQLNFCKiltYqi0CFvwZzYIB3Kv
-         X6Ikivo1yAH40u9iDSGZu4J+1+mdDATpMCaTtHnF4OeTLLwOB62vnwgsTDU0hBExqjv2
-         xvoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=HQ05xZaI9RX2C1WjcmQEY6wiUGOeZt+dADSJ+Z5ntbc=;
-        b=Krwdd6sXhONlyh+a2d/oHFU0lecyJpVolEX0kbkrh0CyvmKDonoY2Sbb+Mkd0mBDGY
-         1e5nfT/en/HOj0/wQonJ45DxjKbUhy6px7aMs7U7stjDD6l8t9olDXP4yorHJZIfTilS
-         9ytDJb6Yr3oSKF/ew5PeTDjZoyFBmeG6u+JNX2uzeHji2KR83gfw1i+z0l+DGH7k4owh
-         f1wbhdENrQwhkxWLYFX9KZ0nCda8btPbLVqEdDQQ0beuLm6wTu6zuTiV8TysuVhOaV9F
-         F5AatjO1ODIkiu/ye9Kh9DXieu9rPG5MBkyXa6690STcLmc6uiLB1sdYhO/CIQJTWqpG
-         eYPg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=qVKjww2d;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=qVKjww2d;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227+bpkaO1o9He7hxdLKZqm7YZhuM6wOeqO0K/ex5TAnmjgFJpIzqhGBjEkDWgyUuN1wo/sjqw==
-Date: Thu, 1 Feb 2018 21:16:56 +0530
-From: Aishwarya Pant <aishpant@gmail.com>
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Greg KH <gregkh@linuxfoundation.org>, Milo Kim <milo.kim@ti.com>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH 2/5] backlight: lp855x: document sysfs attributes
-Message-ID: <20180201154656.GB22817@mordor.localdomain>
-References: <cover.1516978005.git.aishpant@gmail.com>
- <09cd01366bf3b5c3030ad25450b46a9a3bc8a747.1516978005.git.aishpant@gmail.com>
- <20180201110642.qyjwyrdwglevlk5f@oak.lan>
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3351577-1517606680-2-11655780876626995427
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517606679; b=bDsBNn3eGQszKyvWnP67iIHwD4sabxAgFP9AWKhNaoZKs4N
+    P1Lt/aF+iNkV2d0cWCphaHdI+DjPD0Zy0V32yRcmyHoeAYlR+QGH13gedtMyLJaE
+    bNLNlSTIAdeYHQfRL7xO0tDG8DOjuCw+DLLyUnoczV8wJ4tCwx+QsYyLALwKYlFN
+    jgfJuf4nB2b8YCz+JC7e1kHS6JR5o/i4uv4kS71rFVvxYzJuHGF8ubGo5yuaOGRo
+    5t2sfAL8ZsRbEkpvyD7JD0C/XH1uIdZ354+Uu3HzhKxmc2JzAXJtP205ILzzP0k2
+    92p5RQy+l//dhuSOyrKM9ixceD4jmsxUS7xarSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1517606679; bh=gxQqMmqA6qJxyLqiffH2jl7O/ZRljMWZFbbXcj
+    VIH/g=; b=WbM2rjEueMNqhtk4ZRJHt7CEezym1QhmB2z4ETwkFkvyUTP2v4MMYw
+    4YD2oWlru37ZKSF8GBmHoOEdg+DtBRwEXt9g8mGjpoHtM+g1XJ4ZHPUfumUjJace
+    SVeW2cM7dq9aoj5TYnSeYh3ZmKCNYbwoXzBvNbxFDL7QNcP9Bk+OIJBvU8G+EXUY
+    X7FJn0lMgjugdmlCCkfHvvgl/HTRZSfSDwIDJ5sP9/fgQhYB5xbizTxB290I2Y6b
+    tBt60UNDliRYEuIss0ah8P0/SmMGEXsrXe2LbnSab7ap7jklTRolsMib55u4Cqb2
+    9nmkcmJhwAmPck14MIg5csxFhFo37cag==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=o/7YpOT2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=D6Lu/Nin;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=o/7YpOT2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=D6Lu/Nin;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752141AbeBBVYe (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 16:24:34 -0500
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:40602 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751846AbeBBVYa (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 2 Feb 2018 16:24:30 -0500
+X-Google-Smtp-Source: AH8x224sru8rxGpdIvwcPeDryDLEW8Imv6FfZabp+k2c3cq+BAsjYMkXt3Y8sJR8E9CokcCu+OzsTO5/S6doy/ggCCk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180201110642.qyjwyrdwglevlk5f@oak.lan>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180110070011.l4rcdcwb27witfem@madcap2.tricolour.ca>
+References: <20180109121620.wi7dq2423ugsraqv@madcap2.tricolour.ca>
+ <1515514736.3239.10.camel@redhat.com> <20180110070011.l4rcdcwb27witfem@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 2 Feb 2018 16:24:26 -0500
+Message-ID: <CAHC9VhQ=hX55e7ftkVQCogTZTcdSm3rm-+YNOgWomabbXV_sKg@mail.gmail.com>
+Subject: Re: RFC(V3): Audit Kernel Container IDs
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Simo Sorce <simo@redhat.com>, David Howells <dhowells@redhat.com>,
+        cgroups@vger.kernel.org, jlayton@redhat.com,
+        trondmy@primarydata.com, "Serge E. Hallyn" <serge@hallyn.com>,
+        mszeredi@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Audit <linux-audit@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Network Development <netdev@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590667129799888264?=
-X-GMAIL-MSGID: =?utf-8?q?1591214107527267104?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 11:06:42AM +0000, Daniel Thompson wrote:
-> On Fri, Jan 26, 2018 at 08:23:00PM +0530, Aishwarya Pant wrote:
-> > Add documentation for sysfs interface of Texas Instruments lp855x
-> > backlight driver by reading code and looking through git commit logs.
-> > 
-> > Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
-> > ---
-> >  .../ABI/testing/sysfs-class-backlight-lp855x          | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >  create mode 100644 Documentation/ABI/testing/sysfs-class-backlight-lp855x
-> > 
-> > diff --git a/Documentation/ABI/testing/sysfs-class-backlight-lp855x b/Documentation/ABI/testing/sysfs-class-backlight-lp855x
-> > new file mode 100644
-> > index 000000000000..5b9d38958875
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-class-backlight-lp855x
-> > @@ -0,0 +1,19 @@
-> > +sysfs interface for Texas Instruments lp855x backlight driver
-> > +------------------------------------------------------------
-> > +
-> > +What:		/sys/class/backlight/<backlight>/chip_id
-> > +Date:		Mar, 2012
-> > +KernelVersion:	v3.10
-> > +Contact:	Milo Kim <milo.kim@ti.com>
-> > +Description:
-> > +		(RO) Displays the lp8755x chip id. Possible values are:
-> > +		lp8550, lp8551, lp8552, lp8553, lp8555, lp8556 or lp8557.
-> > +
-> > +
-> > +What:		/sys/class/backlight/<backlight>/bl_ctl_mode
-> > +Date:		Mar, 2012
-> > +KernelVersion:	v3.10
-> > +Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-> > +Description:
-> > +		(RO) Displays whether the brightness is controlled by the pwm
-> > +		input("pwm based) or the i2c register("register based").
-> 
-> Since like the first patch in the series, these look like they are for
-> debugging. That thread is still active but whatever the outcome of that
-> thread please assume it also applies to this patch.
+On Wed, Jan 10, 2018 at 2:00 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-01-09 11:18, Simo Sorce wrote:
+>> On Tue, 2018-01-09 at 07:16 -0500, Richard Guy Briggs wrote:
+>> > Containers are a userspace concept.  The kernel knows nothing of them.
+>> >
+>> > The Linux audit system needs a way to be able to track the container
+>> > provenance of events and actions.  Audit needs the kernel's help to do
+>> > this.
+>> >
+>> > Since the concept of a container is entirely a userspace concept, a
+>> > registration from the userspace container orchestration system initiates
+>> > this.  This will define a point in time and a set of resources
+>> > associated with a particular container with an audit container
+>> > identifier.
+>> >
+>> > The registration is a u64 representing the audit container identifier
+>> > written to a special file in a pseudo filesystem (proc, since PID tree
+>> > already exists) representing a process that will become a parent process
+>> > in that container.  This write might place restrictions on mount
+>> > namespaces required to define a container, or at least careful checking
+>> > of namespaces in the kernel to verify permissions of the orchestrator so
+>> > it can't change its own container ID.  A bind mount of nsfs may be
+>> > necessary in the container orchestrator's mount namespace.  This write
+>> > can only happen once per process.
+>> >
+>> > Note: The justification for using a u64 is that it minimizes the
+>> > information printed in every audit record, reducing bandwidth and limits
+>> > comparisons to a single u64 which will be faster and less error-prone.
+>> >
+>> > Require CAP_AUDIT_CONTROL to be able to carry out the registration.  At
+>> > that time, record the target container's user-supplied audit container
+>> > identifier along with a target container's parent process (which may
+>> > become the target container's "init" process) process ID (referenced
+>> > from the initial PID namespace) in a new record AUDIT_CONTAINER with a
+>> > qualifying op=$action field.
+>> >
+>> > Issue a new auxilliary record AUDIT_CONTAINER_INFO for each valid
+>> > container ID present on an auditable action or event.
+>> >
+>> > Forked and cloned processes inherit their parent's audit container
+>> > identifier, referenced in the process' task_struct.  Since the audit
+>> > container identifier is inherited rather than written, it can still be
+>> > written once.  This will prevent tampering while allowing nesting.
+>> > (This can be implemented with an internal settable flag upon
+>> > registration that does not get copied across a fork/clone.)
+>> >
+>> > Mimic setns(2) and return an error if the process has already initiated
+>> > threading or forked since this registration should happen before the
+>> > process execution is started by the orchestrator and hence should not
+>> > yet have any threads or children.  If this is deemed overly restrictive,
+>> > switch all of the target's threads and children to the new containerID.
+>> >
+>> > Trust the orchestrator to judiciously use and restrict CAP_AUDIT_CONTROL.
+>> >
+>> > When a container ceases to exist because the last process in that
+>> > container has exited log the fact to balance the registration action.
+>> > (This is likely needed for certification accountability.)
+>> >
+>> > At this point it appears unnecessary to add a container session
+>> > identifier since this is all tracked from loginuid and sessionid to
+>> > communicate with the container orchestrator to spawn an additional
+>> > session into an existing container which would be logged.  It can be
+>> > added at a later date without breaking API should it be deemed
+>> > necessary.
+>> >
+>> > The following namespace logging actions are not needed for certification
+>> > purposes at this point, but are helpful for tracking namespace activity.
+>> > These are auxilliary records that are associated with namespace
+>> > manipulation syscalls unshare(2), clone(2) and setns(2), so the records
+>> > will only show up if explicit syscall rules have been added to document
+>> > this activity.
+>> >
+>> > Log the creation of every namespace, inheriting/adding its spawning
+>> > process' audit container identifier(s), if applicable.  Include the
+>> > spawning and spawned namespace IDs (device and inode number tuples).
+>> > [AUDIT_NS_CREATE, AUDIT_NS_DESTROY] [clone(2), unshare(2), setns(2)]
+>> > Note: At this point it appears only network namespaces may need to track
+>> > container IDs apart from processes since incoming packets may cause an
+>> > auditable event before being associated with a process.  Since a
+>> > namespace can be shared by processes in different containers, the
+>> > namespace will need to track all containers to which it has been
+>> > assigned.
+>> >
+>> > Upon registration, the target process' namespace IDs (in the form of a
+>> > nsfs device number and inode number tuple) will be recorded in an
+>> > AUDIT_NS_INFO auxilliary record.
+>> >
+>> > Log the destruction of every namespace that is no longer used by any
+>> > process, including the namespace IDs (device and inode number tuples).
+>> > [AUDIT_NS_DESTROY] [process exit, unshare(2), setns(2)]
+>> >
+>> > Issue a new auxilliary record AUDIT_NS_CHANGE listing (opt: op=$action)
+>> > the parent and child namespace IDs for any changes to a process'
+>> > namespaces. [setns(2)]
+>> > Note: It may be possible to combine AUDIT_NS_* record formats and
+>> > distinguish them with an op=$action field depending on the fields
+>> > required for each message type.
+>> >
+>> > The audit container identifier will need to be reaped from all
+>> > implicated namespaces upon the destruction of a container.
+>> >
+>> > This namespace information adds supporting information for tracking
+>> > events not attributable to specific processes.
+>> >
+>> > Changelog:
+>> >
+>> > (Upstream V3)
+>> > - switch back to u64 (from pmoore, can be expanded to u128 in future if
+>> >   need arises without breaking API.  u32 was originally proposed, up to
+>> >   c36 discussed)
+>> > - write-once, but children inherit audit container identifier and can
+>> >   then still be written once
+>> > - switch to CAP_AUDIT_CONTROL
+>> > - group namespace actions together, auxilliary records to namespace
+>> >   operations.
+>> >
+>> > (Upstream V2)
+>> > - switch from u64 to u128 UUID
+>> > - switch from "signal" and "trigger" to "register"
+>> > - restrict registration to single process or force all threads and
+>> >   children into same container
+>>
+>> I am trying to understand the back and forth on the ID size.
+>>
+>> From an orchestrator POV anything that requires tracking a node
+>> specific ID is not ideal.
+>>
+>> Orchestrators tend to span many nodes, and containers tend to have IDs
+>> that are either UUID or have a Hash (like SHA256) as identifier.
+>>
+>> The problem here is two-fold:
+>>
+>> a) Your auditing requires some mapping to be useful outside of the
+>> system.
+>> If you aggreggate audit logs outside of the system or you want to
+>> correlate the system audit logs with other components dealing with
+>> containers, now you need a place where you provide a mapping from your
+>> audit u64 to the ID a container has in the rest of the system.
+>>
+>> b) Now you need a mapping of some sort. The simplest way a container
+>> orchestrator can go about this is to just use the UUID or Hash
+>> representing their view of the container, truncate it to a u64 and use
+>> that for Audit. This means there are some chances there will be a
+>> collision and a duplicate u64 ID will be used by the orchestrator as
+>> the container ID. What happen in that case ?
+>
+> Paul, can you justify this somewhat larger inconvenience for some
+> relatively minor convenience on our part?
 
-All right, I'll wait for conclusion on that thread before I re-send the patchset
-with the updates.
+Done in direct response to Simo.
 
-Aishwarya
+But to be clear Richard, we've talked about this a few times, it's not
+a "minor convenience" on our part, it's a pretty big convenience once
+we starting having to route audit events and make decisions based on
+the audit container ID information.  Audit performance is less than
+awesome now, I'm working hard to not make it worse.
 
-> 
-> 
-> Daniel.
+> u64 vs u128 is easy for us to
+> accomodate in terms of scalar comparisons.  It doubles the information
+> in every container id field we print in audit records.
+
+... and slows down audit container ID checks.
+
+> A c36 is a bigger step.
+
+Yeah, we're not doing that, no way.
+
+-- 
+paul moore
+www.paul-moore.com
