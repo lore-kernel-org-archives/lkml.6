@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591667-2-6418448335892380662
+X-Cyrus-Session-Id: sloti22d1t05-2943005-1517591666-2-9025666127044159164
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591666; b=uYp+QghNeaINPuw46u8AB0HSRRVYWwpEuDPpNhwXnYa/PUk
-    H/O9kbcRzJmNC3BNPeCZZKOcCHySvx58I6BF4kdIHBW8OumZnMyjDxU7nyImtoHz
-    U2ln0R0/+3nCyrmquIwCxYppiKRRTpdRXdDfZVJW7SpMeKl0+xABTXj26fTZvSww
-    H4gwHhUMVGVqyV64qeyaOygXYCLYT/PT1x2Gu0M3MH9MCUNm7XDqkC8YI2OsZRNd
-    +jLXOaGwzn6VsV29KxCuB+ogiKjmiK28FzyeshcST/mfY4Q8pTdHtOHV9Dc8PeGl
-    CjSrbF2PcoLWr2+7Mu5RSlyb+wRuAa+lwI1X1RA==
+    t=1517591665; b=S5YX/ma702Ajo1UPmeji/ZHD9oDOxKTvYMxBpqAQtv+MCBb
+    QQ2YNFjsTwj/fiB273Ad34umLa00M1W4fc9x8l334/kXbv0stfSeWE9eTETcWpNQ
+    EIWWGTayyLBVKJUZ6blXr589TVjKFCUX8DCH2gSCksdORkibhnWHAgtqYno3SsuV
+    H10B6sV48BD10HgejhDqvh9w4LBrXOKm77hmiP9co6+CfRLSl121y1PULS1XawxY
+    PaOR7uMB8myWnbiX/ls5jn5QgKNuzY+BcuMhbsV5GTR0BUfDsYrSNs5wASQHQSvj
+    IXR47XXyxvW8WKMSVQ3uGKB4cNJE0izjLazuHNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591666; bh=iFN0n0HwSdAF4Fn/4QGgYy3O+N
-    Uw7ITnZUjbRB5lfXI=; b=HsurID/bgeAilNYH6j5hVWv46Y7lij4l0RsG0SQ5KU
-    d8u2ST9WEU06dHp4sjikKjebbRcpGICIcRnmpWzzK3O9aqLUpupA+LVMV2xo3NmF
-    H1pZgNzySoA6a3Od/+CH2GnwVrLbGOejTRqRIE41WE/A8+H3AFiiSEg/+3i3+1Wh
-    4GxSo2uzR6v9dBkSCmH2Iy2M4Zli2Q3htgV2k2mXGXCl9A4EApLkggmpt7jkFQqa
-    zSWHDPvpiEYGt9ZZoENDptv0R6k7RzWeKmIWJtpyHIdRQxcuLwxc8Af7FtSX1Lc/
-    Yvjn3bpaEduaVlo7kJYPKK6eqCK+99RE7xeBUFQb/RIQ==
+    :list-id; s=arctest; t=1517591665; bh=EY+5m2+u6p9C4WuvCbuyf9kSPM
+    4+GNLN3Y0xyeO1WFg=; b=oQkDrgWcc8vtZQDTIOTxBs0b9ZHN0pvPrVc84Y6uxo
+    UjBFg55ffgCqy5QLRhzpMaCscCcwM+OAd9iAGVxNFjlNnO2bsBkG/CJ8oml2nT32
+    vP+cf12jbQzUK/SzPMeY7gTGLErn6ms6Eo8uuRTmLFhnGVPGsewFABDZZGs8BEYT
+    76wY96ACjeMw7IXE/k8nOOLX9YL/7ayLZnUrRYuqBKFqbqBSufFVXb7E8hcktC+z
+    yMYaMtk8cqmYcUi9oJhM4uB+XWo9zR0l3BBQ67QzC6MwBF7qr6zI3A/2FQgvyPNL
+    jO2mlgQ5nve32+Dmlg7pxmvqjs0Adtl4MWqfppLrfYtw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,19 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753622AbeBBROZ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:14:25 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40404 "EHLO
+        id S1753616AbeBBROX (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Feb 2018 12:14:23 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40430 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753583AbeBBRON (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:14:13 -0500
+        with ESMTP id S1753588AbeBBROO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:14:14 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 151/156] iio: adc: stm32: fix scan of multiple channels with DMA
-Date: Fri,  2 Feb 2018 17:58:52 +0100
-Message-Id: <20180202140847.189804360@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>
+Subject: [PATCH 4.14 153/156] test_firmware: fix missing unlock on error in config_num_requests_store()
+Date: Fri,  2 Feb 2018 17:58:54 +0100
+Message-Id: <20180202140847.315236310@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
@@ -77,42 +76,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit 04e491ca9df60ffe8637d00d68e5ab8bc73b30d5 upstream.
+commit a5e1923356505e46476c2fb518559b7a4d9d25b1 upstream.
 
-By default, watermark is set to '1'. Watermark is used to fine tune
-cyclic dma buffer period. In case watermark is left untouched (e.g. 1)
-and several channels are being scanned, buffer period is wrongly set
-(e.g. to 1 sample). As a consequence, data is never pushed to upper layer.
-Fix buffer period size, by taking scan channels number into account.
+Add the missing unlock before return from function
+config_num_requests_store() in the error handling case.
 
-Fixes: 2763ea0585c9 ("iio: adc: stm32: add optional dma support")
-
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/stm32-adc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ lib/test_firmware.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/iio/adc/stm32-adc.c
-+++ b/drivers/iio/adc/stm32-adc.c
-@@ -1314,6 +1314,7 @@ static int stm32_adc_set_watermark(struc
- {
- 	struct stm32_adc *adc = iio_priv(indio_dev);
- 	unsigned int watermark = STM32_DMA_BUFFER_SIZE / 2;
-+	unsigned int rx_buf_sz = STM32_DMA_BUFFER_SIZE;
- 
- 	/*
- 	 * dma cyclic transfers are used, buffer is split into two periods.
-@@ -1322,7 +1323,7 @@ static int stm32_adc_set_watermark(struc
- 	 * - one buffer (period) driver can push with iio_trigger_poll().
- 	 */
- 	watermark = min(watermark, val * (unsigned)(sizeof(u16)));
--	adc->rx_buf_sz = watermark * 2;
-+	adc->rx_buf_sz = min(rx_buf_sz, watermark * 2 * adc->num_conv);
- 
- 	return 0;
- }
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -371,6 +371,7 @@ static ssize_t config_num_requests_store
+ 	if (test_fw_config->reqs) {
+ 		pr_err("Must call release_all_firmware prior to changing config\n");
+ 		rc = -EINVAL;
++		mutex_unlock(&test_fw_mutex);
+ 		goto out;
+ 	}
+ 	mutex_unlock(&test_fw_mutex);
