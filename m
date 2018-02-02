@@ -1,59 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752126AbeBBVYW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 16:24:22 -0500
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:37072 "EHLO fuzix.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751557AbeBBVYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 16:24:16 -0500
-Date: Fri, 2 Feb 2018 21:23:33 +0000
-From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        KarimAllah Ahmed <karahmed@amazon.de>, sironi@amazon.de,
-        the arch/x86 maintainers <x86@kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] KVM: x86: Reduce retpoline performance impact in
- slot_handle_level_range()
-Message-ID: <20180202212321.5186c13c@alans-desktop>
-In-Reply-To: <1517599033.31953.71.camel@infradead.org>
-References: <1517583559-424-1-git-send-email-dwmw@amazon.co.uk>
-        <CA+55aFwg88mxuOiJSh+xLnAfqEwAC-ReB9rdNx+r8fy=FTSHJw@mail.gmail.com>
-        <CA+55aFwqCc1UOkdBjEgiuL9fMkRj7RPrGFYQ376YhrqTUpLwrg@mail.gmail.com>
-        <1517599033.31953.71.camel@infradead.org>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        id S1752197AbeBBV0f (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 16:26:35 -0500
+Received: from mail-pl0-f49.google.com ([209.85.160.49]:42695 "EHLO
+        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeBBV01 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 16:26:27 -0500
+X-Google-Smtp-Source: AH8x226RTRSWmlC963oAXtPbwhjWcb3kTQNoZ2XC1HJoAeNUsJPqLvocIeUjK37rd+gJrMyyArO36g==
+Subject: Re: [PATCH] of: cache phandle nodes to decrease cost of
+ of_find_node_by_phandle()
+To: Chintan Pandya <cpandya@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
+ <5b84a166-c71b-3a41-9e7f-a7624a8441f6@codeaurora.org>
+ <38cdcae5-ec0f-d1be-b024-1990d4387731@gmail.com>
+ <9e23d32f-05a0-ce8a-41f8-9a1a3d66be37@codeaurora.org>
+ <fd9f5f63-b08e-602e-1510-85a65889f550@gmail.com>
+ <567731e8-8f89-bd6e-c3d4-e36400e69198@codeaurora.org>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <0db129ef-ffd8-96fe-46a7-55fb575272e3@gmail.com>
+Date: Fri, 2 Feb 2018 13:26:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <567731e8-8f89-bd6e-c3d4-e36400e69198@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Either way, that does look like a reasonable answer. I had looked at
-> the various one-line wrappers around slot_handle_level_range() and
-> thought "hm, those should be inline", but I hadn't made the next step
-> and pondered putting the whole thing inline. We'll give it a spin and
-> work out where the next performance bottleneck is. Thanks.
+On 02/01/18 21:59, Chintan Pandya wrote:
+> 
+> 
+> On 2/2/2018 12:40 AM, Frank Rowand wrote:
+>> On 02/01/18 02:31, Chintan Pandya wrote:
+>>>
+>>>>> Anyways, will fix this locally and share test results.
+>>>>
+>>>> Thanks, I look forward to the results.
+>>>>
+>>>
+>>> Set up for this time was slightly different. So, taken all the numbers again.
+>>>
+>>> Boot to shell time (in ms): Experiment 2
+>>> [1] Base            : 14.843805 14.784842 14.842338
+>>> [2] 64 sized fixed cache    : 14.189292 14.200003 14.266711
+>>> [3] Dynamic freeable cache    : 14.112412 14.064772 14.036052
+>>>
+>>> So, [3] (this patch) looks to be improving 750ms (on avg from base build).
+>>>
+>>
+>> Is this with the many debug options enabled?  If so, can you repeat with
+>> a normal configuration?
+> 
+> Could you share me the point of doing this experiment in perf mode ?
 
-In addition the problem with switch() is that gcc might decide in some
-cases that the best way to implement your switch is an indirect call
-from a lookup table.
 
-For the simple case how about wrapping the if into
+You had mentioned earlier in another thread:
 
-                call_likely(foo->bar, usualfunction, args)
+   My recent results were taken on debug_defconfig which has many performance
+   slowing code. So, gap between base-build and w/ the test patches would be
+   more than the actual production build.
 
-as a companion to 
+If you measure a large performance gain with a debug configuration, that
+may not represent the actual gain you will get with a production
+configuration, as you noted.
 
-                 foo->bar(args)
+My question was trying to determine whether the numbers reported above
+are for a debug configuration or a production configuration.  And if
+not a production configuration, I was requesting the numbers for a
+production configuration.  If the production configuration does not
+show a significant boot time reduction from the patch then there is
+less justification for adding complexity to the existing code.  I
+prefer to use simpler data structures and algorithms __if__ extra
+complexity does not provide any advantage.  The balance between
+complexity and benefits is a core software engineering issue.
 
-that can resolve to nothing special on architectures that don't need it,
-an if/else case on platforms with spectre, and potentially clever
-stuff on any platform where you can beat the compiler by knowing
-probabilities it can't infer ?
 
-Alan
+> I don't have a set up for taking these numbers in perf mode. For
+> that, I need to ask some other team and round trip follow ups. In my
+> set up, I rely on serial console logging which gets disabled in perf
+> mode.
+> 
+>>
+>> Thanks,
+>>
+>> Frank
+>>
+> 
+> Chintan
