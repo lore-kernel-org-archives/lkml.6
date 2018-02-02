@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752167AbeBBNKj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:10:39 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46606 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751910AbeBBNHo (ORCPT
+        id S1751720AbeBBNKw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:10:52 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44264 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751912AbeBBNHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 2 Feb 2018 08:07:44 -0500
 From: Philipp Rudo <prudo@linux.vnet.ibm.com>
@@ -15,16 +15,16 @@ Cc: prudo@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH 14/17] s390/kexec_file: Add kexec_file_load system call
-Date: Fri,  2 Feb 2018 14:07:15 +0100
+Subject: [PATCH 13/17] s390/kexec_file: Add purgatory
+Date: Fri,  2 Feb 2018 14:07:14 +0100
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
 References: <20180202130718.35509-1-prudo@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020213-0020-0000-0000-000003F1AF07
+x-cbid: 18020213-0008-0000-0000-000004C8CBFF
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020213-0021-0000-0000-000042841C0D
-Message-Id: <20180202130718.35509-15-prudo@linux.vnet.ibm.com>
+x-cbparentid: 18020213-0009-0000-0000-00001E5C6E4D
+Message-Id: <20180202130718.35509-14-prudo@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -36,244 +36,266 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the kexec_file_load system call to s390 as well as the arch
-specific functions common code requires to work. Loaders for the different
-file types will be added later.
+The common code expects the architecture to have a purgatory that runs
+between the two kernels. Add it now. For simplicity first skip crash
+support.
 
 Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
 ---
- arch/s390/Kconfig                     |   4 +
- arch/s390/kernel/Makefile             |   1 +
- arch/s390/kernel/compat_wrapper.c     |   1 +
- arch/s390/kernel/machine_kexec_file.c | 174 ++++++++++++++++++++++++++++++++++
- arch/s390/kernel/syscalls/syscall.tbl |   1 +
- 5 files changed, 181 insertions(+)
- create mode 100644 arch/s390/kernel/machine_kexec_file.c
+ arch/s390/Kbuild                  |  1 +
+ arch/s390/include/asm/purgatory.h | 17 +++++++
+ arch/s390/kernel/asm-offsets.c    |  5 ++
+ arch/s390/purgatory/Makefile      | 37 +++++++++++++++
+ arch/s390/purgatory/head.S        | 96 +++++++++++++++++++++++++++++++++++++++
+ arch/s390/purgatory/purgatory.c   | 38 ++++++++++++++++
+ 6 files changed, 194 insertions(+)
+ create mode 100644 arch/s390/include/asm/purgatory.h
+ create mode 100644 arch/s390/purgatory/Makefile
+ create mode 100644 arch/s390/purgatory/head.S
+ create mode 100644 arch/s390/purgatory/purgatory.c
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 0105ce28e246..baffd88109a5 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -51,6 +51,10 @@ config KEXEC
- 	def_bool y
- 	select KEXEC_CORE
- 
-+config KEXEC_FILE
-+	def_bool y
-+	select KEXEC_CORE
-+
- config AUDIT_ARCH
- 	def_bool y
- 
-diff --git a/arch/s390/kernel/Makefile b/arch/s390/kernel/Makefile
-index 909bce65cb2b..496d4711c186 100644
---- a/arch/s390/kernel/Makefile
-+++ b/arch/s390/kernel/Makefile
-@@ -60,6 +60,7 @@ obj-y	+= debug.o irq.o ipl.o dis.o diag.o vdso.o als.o
- obj-y	+= sysinfo.o jump_label.o lgr.o os_info.o machine_kexec.o pgm_check.o
- obj-y	+= runtime_instr.o cache.o fpu.o dumpstack.o guarded_storage.o sthyi.o
- obj-y	+= entry.o reipl.o relocate_kernel.o kdebugfs.o alternative.o
-+obj-y	+= machine_kexec_file.o
- 
- extra-y				+= head.o head64.o vmlinux.lds
- 
-diff --git a/arch/s390/kernel/compat_wrapper.c b/arch/s390/kernel/compat_wrapper.c
-index 11e9d8b5c1b0..607c5e9fba3d 100644
---- a/arch/s390/kernel/compat_wrapper.c
-+++ b/arch/s390/kernel/compat_wrapper.c
-@@ -182,3 +182,4 @@ COMPAT_SYSCALL_WRAP6(copy_file_range, int, fd_in, loff_t __user *, off_in, int,
- COMPAT_SYSCALL_WRAP2(s390_guarded_storage, int, command, struct gs_cb *, gs_cb);
- COMPAT_SYSCALL_WRAP5(statx, int, dfd, const char __user *, path, unsigned, flags, unsigned, mask, struct statx __user *, buffer);
- COMPAT_SYSCALL_WRAP4(s390_sthyi, unsigned long, code, void __user *, info, u64 __user *, rc, unsigned long, flags);
-+COMPAT_SYSCALL_WRAP5(kexec_file_load, int, kernel_fd, int, initrd_fd, unsigned long, cmdline_len, const char __user *, cmdline_ptr, unsigned long, flags)
-diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
+diff --git a/arch/s390/Kbuild b/arch/s390/Kbuild
+index 9fdff3fe1a42..091f14bc9af0 100644
+--- a/arch/s390/Kbuild
++++ b/arch/s390/Kbuild
+@@ -8,3 +8,4 @@ obj-$(CONFIG_APPLDATA_BASE)	+= appldata/
+ obj-y				+= net/
+ obj-$(CONFIG_PCI)		+= pci/
+ obj-$(CONFIG_NUMA)		+= numa/
++obj-y				+= purgatory/
+diff --git a/arch/s390/include/asm/purgatory.h b/arch/s390/include/asm/purgatory.h
 new file mode 100644
-index 000000000000..e6928cbed524
+index 000000000000..e297bcfc476f
 --- /dev/null
-+++ b/arch/s390/kernel/machine_kexec_file.c
-@@ -0,0 +1,174 @@
++++ b/arch/s390/include/asm/purgatory.h
+@@ -0,0 +1,17 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * s390 code for kexec_file_load system call
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
++ */
++
++#ifndef _S390_PURGATORY_H_
++#define _S390_PURGATORY_H_
++#ifndef __ASSEMBLY__
++
++#include <linux/purgatory.h>
++
++int verify_sha256_digest(void);
++
++#endif	/* __ASSEMBLY__ */
++#endif /* _S390_PURGATORY_H_ */
+diff --git a/arch/s390/kernel/asm-offsets.c b/arch/s390/kernel/asm-offsets.c
+index 587b195b588d..a22b478de567 100644
+--- a/arch/s390/kernel/asm-offsets.c
++++ b/arch/s390/kernel/asm-offsets.c
+@@ -10,6 +10,7 @@
+ #include <linux/kbuild.h>
+ #include <linux/kvm_host.h>
+ #include <linux/sched.h>
++#include <linux/purgatory.h>
+ #include <asm/idle.h>
+ #include <asm/vdso.h>
+ #include <asm/pgtable.h>
+@@ -203,5 +204,9 @@ int main(void)
+ 	OFFSET(__GMAP_ASCE, gmap, asce);
+ 	OFFSET(__SIE_PROG0C, kvm_s390_sie_block, prog0c);
+ 	OFFSET(__SIE_PROG20, kvm_s390_sie_block, prog20);
++	/* kexec_sha_region */
++	OFFSET(__KEXEC_SHA_REGION_START, kexec_sha_region, start);
++	OFFSET(__KEXEC_SHA_REGION_LEN, kexec_sha_region, len);
++	DEFINE(__KEXEC_SHA_REGION_SIZE, sizeof(struct kexec_sha_region));
+ 	return 0;
+ }
+diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
+new file mode 100644
+index 000000000000..c4b405d9c713
+--- /dev/null
++++ b/arch/s390/purgatory/Makefile
+@@ -0,0 +1,37 @@
++# SPDX-License-Identifier: GPL-2.0
++
++OBJECT_FILES_NON_STANDARD := y
++
++purgatory-y := head.o purgatory.o string.o sha256.o mem.o
++
++targets += $(purgatory-y) purgatory.ro kexec-purgatory.c
++PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
++
++$(obj)/sha256.o: $(srctree)/lib/sha256.c
++	$(call if_changed_rule,cc_o_c)
++
++$(obj)/mem.o: $(srctree)/arch/s390/lib/mem.S
++	$(call if_changed_rule,as_o_S)
++
++$(obj)/string.o: $(srctree)/arch/s390/lib/string.c
++	$(call if_changed_rule,cc_o_c)
++
++LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib
++LDFLAGS_purgatory.ro += -z nodefaultlib
++KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes
++KBUILD_CFLAGS += -Wno-pointer-sign -Wno-sign-compare
++KBUILD_CFLAGS += -fno-zero-initialized-in-bss -fno-builtin -ffreestanding
++KBUILD_CFLAGS += -c -MD -Os -m64
++KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
++
++$(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
++		$(call if_changed,ld)
++
++CMD_BIN2C = $(objtree)/scripts/basic/bin2c
++quiet_cmd_bin2c = BIN2C   $@
++      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
++
++$(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
++	$(call if_changed,bin2c)
++
++obj-y	+= kexec-purgatory.o
+diff --git a/arch/s390/purgatory/head.S b/arch/s390/purgatory/head.S
+new file mode 100644
+index 000000000000..8735409d0280
+--- /dev/null
++++ b/arch/s390/purgatory/head.S
+@@ -0,0 +1,96 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Purgatory setup code
 + *
 + * Copyright IBM Corp. 2018
 + *
 + * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
 + */
 +
-+#include <linux/elf.h>
-+#include <linux/kexec.h>
-+#include <asm/setup.h>
++#include <linux/linkage.h>
++#include <asm/asm-offsets.h>
++#include <asm/page.h>
++#include <asm/sigp.h>
 +
-+const struct kexec_file_ops * const kexec_file_loaders[] = {
-+	NULL,
-+};
-+
-+/*
-+ * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
-+ * and provide kbuf->mem by hand.
++/* The purgatory is the code running between two kernels. It's main purpose
++ * is to verify that the next kernel was not corrupted after load and to
++ * start it.
 + */
-+int arch_kexec_walk_mem(struct kexec_buf *kbuf,
-+			int (*func)(struct resource *, void *))
++
++.macro START_NEXT_KERNEL base
++	lg	%r4,kernel_entry-\base(%r13)
++	lg	%r5,load_psw_mask-\base(%r13)
++	ogr	%r4,%r5
++	stg	%r4,0(%r0)
++
++	xgr	%r0,%r0
++	diag	%r0,%r0,0x308
++.endm
++
++.text
++.align PAGE_SIZE
++ENTRY(purgatory_start)
++	/* The purgatory might be called after a diag308 so better set
++	 * architecture and addressing mode.
++	 */
++	lhi	%r1,1
++	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
++	sam64
++
++	larl	%r5,gprregs
++	stmg	%r6,%r15,0(%r5)
++
++	basr	%r13,0
++.base_crash:
++
++	/* Setup stack */
++	larl	%r15,purgatory_end
++	aghi	%r15,-160
++
++.do_checksum_verification:
++	brasl	%r14,verify_sha256_digest
++
++	cghi	%r2,0		/* checksum match */
++	jne	.disabled_wait
++
++	/* start normal kernel */
++	START_NEXT_KERNEL .base_crash
++
++.disabled_wait:
++	lpswe	disabled_wait_psw-.base_crash(%r13)
++
++
++load_psw_mask:
++	.long	0x00080000,0x80000000
++
++	.align	8
++disabled_wait_psw:
++	.quad	0x0002000180000000
++	.quad	0x0000000000000000 + .do_checksum_verification
++
++gprregs:
++	.rept	10
++	.quad	0
++	.endr
++
++purgatory_sha256_digest:
++	.global purgatory_sha256_digest
++	.rept	32	/* SHA256_DIGEST_SIZE */
++	.byte	0
++	.endr
++
++purgatory_sha_regions:
++	.global purgatory_sha_regions
++	.rept	16 * __KEXEC_SHA_REGION_SIZE	/* KEXEC_SEGMENTS_MAX */
++	.byte	0
++	.endr
++
++kernel_entry:
++	.global kernel_entry
++	.quad	0
++
++	.align	PAGE_SIZE
++stack:
++	.skip	PAGE_SIZE
++	.align	PAGE_SIZE
++purgatory_end:
+diff --git a/arch/s390/purgatory/purgatory.c b/arch/s390/purgatory/purgatory.c
+new file mode 100644
+index 000000000000..fec67b58b8be
+--- /dev/null
++++ b/arch/s390/purgatory/purgatory.c
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Purgatory code running between two kernels.
++ *
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
++ */
++
++#include <linux/kexec.h>
++#include <linux/sha256.h>
++#include <linux/string.h>
++#include <asm/purgatory.h>
++
++struct kexec_sha_region purgatory_sha_regions[KEXEC_SEGMENT_MAX];
++u8 purgatory_sha256_digest[SHA256_DIGEST_SIZE];
++
++u64 kernel_entry;
++
++int verify_sha256_digest(void)
 +{
-+	return 1;
-+}
++	struct kexec_sha_region *ptr, *end;
++	u8 digest[SHA256_DIGEST_SIZE];
++	struct sha256_state sctx;
 +
-+int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
-+				     Elf_Shdr *section,
-+				     const Elf_Shdr *relsec,
-+				     const Elf_Shdr *symtab)
-+{
-+	Elf_Rela *relas;
-+	int i;
++	sha256_init(&sctx);
++	end = purgatory_sha_regions + ARRAY_SIZE(purgatory_sha_regions);
 +
-+	relas = (void *)pi->ehdr + relsec->sh_offset;
++	for (ptr = purgatory_sha_regions; ptr < end; ptr++)
++		sha256_update(&sctx, (uint8_t *)(ptr->start), ptr->len);
 +
-+	for (i = 0; i < relsec->sh_size / sizeof(*relas); i++) {
-+		const Elf_Sym *sym;	/* symbol to relocate */
-+		unsigned long addr;	/* final location after relocation */
-+		unsigned long val;	/* relocated symbol value */
-+		void *loc;		/* tmp location to modify */
++	sha256_final(&sctx, digest);
 +
-+		sym = (void *)pi->ehdr + symtab->sh_offset;
-+		sym += ELF64_R_SYM(relas[i].r_info);
++	if (memcmp(digest, purgatory_sha256_digest, sizeof(digest)))
++		return 1;
 +
-+		if (sym->st_shndx == SHN_UNDEF)
-+			return -ENOEXEC;
-+
-+		if (sym->st_shndx == SHN_COMMON)
-+			return -ENOEXEC;
-+
-+		if (sym->st_shndx >= pi->ehdr->e_shnum &&
-+		    sym->st_shndx != SHN_ABS)
-+			return -ENOEXEC;
-+
-+		loc = pi->purgatory_buf;
-+		loc += section->sh_offset;
-+		loc += relas[i].r_offset;
-+
-+		val = sym->st_value;
-+		if (sym->st_shndx != SHN_ABS)
-+			val += pi->sechdrs[sym->st_shndx].sh_addr;
-+		val += relas[i].r_addend;
-+
-+		addr = section->sh_addr + relas[i].r_offset;
-+
-+		switch (ELF64_R_TYPE(relas[i].r_info)) {
-+		case R_390_8:		/* Direct 8 bit.   */
-+			*(u8 *)loc = val;
-+			break;
-+		case R_390_12:		/* Direct 12 bit.  */
-+			*(u16 *)loc &= 0xf000;
-+			*(u16 *)loc |= val & 0xfff;
-+			break;
-+		case R_390_16:		/* Direct 16 bit.  */
-+			*(u16 *)loc = val;
-+			break;
-+		case R_390_20:		/* Direct 20 bit.  */
-+			*(u32 *)loc &= 0xf00000ff;
-+			*(u32 *)loc |= (val & 0xfff) << 16;	/* DL */
-+			*(u32 *)loc |= (val & 0xff000) >> 4;	/* DH */
-+			break;
-+		case R_390_32:		/* Direct 32 bit.  */
-+			*(u32 *)loc = val;
-+			break;
-+		case R_390_64:		/* Direct 64 bit.  */
-+			*(u64 *)loc = val;
-+			break;
-+		case R_390_PC16:	/* PC relative 16 bit.  */
-+			*(u16 *)loc = (val - addr);
-+			break;
-+		case R_390_PC16DBL:	/* PC relative 16 bit shifted by 1.  */
-+			*(u16 *)loc = (val - addr) >> 1;
-+			break;
-+		case R_390_PC32DBL:	/* PC relative 32 bit shifted by 1.  */
-+			*(u32 *)loc = (val - addr) >> 1;
-+			break;
-+		case R_390_PC32:	/* PC relative 32 bit.  */
-+			*(u32 *)loc = (val - addr);
-+			break;
-+		case R_390_PC64:	/* PC relative 64 bit.  */
-+			*(u64 *)loc = (val - addr);
-+			break;
-+		default:
-+			break;
-+		}
-+	}
 +	return 0;
 +}
-+
-+int arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
-+				  unsigned long buf_len)
-+{
-+	struct kexec_file_ops *fops;
-+	int i, ret;
-+
-+	/* A kernel must be at least large enough to contain head.S. During
-+	 * load memory in head.S will be accessed, e.g. to register the next
-+	 * command line. If the next kernel were smaller the current kernel
-+	 * will panic at load.
-+	 *
-+	 * 0x11000 = sizeof(head.S)
-+	 */
-+	if (buf_len < 0x11000)
-+		return -ENOEXEC;
-+
-+	for (i = 0; i < ARRAY_SIZE(kexec_file_loaders); i++) {
-+		fops = kexec_file_loaders[i];
-+		if (!fops || !fops->probe)
-+			continue;
-+
-+		ret = fops->probe(buf, buf_len);
-+		if (!ret) {
-+			image->fops = fops;
-+			return ret;
-+		}
-+	}
-+
-+	return -ENOEXEC;
-+}
-+
-+void *arch_kexec_kernel_image_load(struct kimage *image)
-+{
-+	if (!image->fops || !image->fops->load)
-+		return ERR_PTR(-ENOEXEC);
-+
-+	if (image->cmdline_buf_len >= ARCH_COMMAND_LINE_SIZE)
-+		return ERR_PTR(-EINVAL);
-+
-+	return image->fops->load(image, image->kernel_buf,
-+				 image->kernel_buf_len, image->initrd_buf,
-+				 image->initrd_buf_len, image->cmdline_buf,
-+				 image->cmdline_buf_len);
-+}
-+
-+int arch_kimage_file_post_load_cleanup(struct kimage *image)
-+{
-+	if (!image->fops || !image->fops->cleanup)
-+		return 0;
-+
-+	return image->fops->cleanup(image->image_loader_data);
-+}
-+
-+#ifdef CONFIG_KEXEC_VERIFY_SIG
-+int arch_kexec_kernel_verify_sig(struct kimage *image, void *kernel,
-+				 unsigned long kernel_len)
-+{
-+	if (!image->fops || !image->fops->verify_sig)
-+		return -EKEYREJECTED;
-+
-+	return image->fops->verify_sig(kernel, kernel_len);
-+}
-+#endif /* CONFIG_KEXEC_VERIFY_SIG */
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index b38d48464368..8b210ead7956 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -388,3 +388,4 @@
- 378  common	s390_guarded_storage	sys_s390_guarded_storage	compat_sys_s390_guarded_storage
- 379  common	statx			sys_statx			compat_sys_statx
- 380  common	s390_sthyi		sys_s390_sthyi			compat_sys_s390_sthyi
-+381  common	kexec_file_load		sys_kexec_file_load		compat_sys_kexec_file_load
 -- 
 2.13.5
