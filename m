@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225izOx9Drrnh7w28KnHMgj9DLPOJ6bI33Qq5tK6zfqekoK3E/o/SpRwi85/AXHV2atPVeH6
-ARC-Seal: i=1; a=rsa-sha256; t=1517591220; cv=none;
+X-Google-Smtp-Source: AH8x227sCnM69l4ju+JoxkmfZukEP6CQGA8e25mLZeC7NBNHCKW+8ZXGV2y853tFYb3Dbs88O1Sl
+ARC-Seal: i=1; a=rsa-sha256; t=1517591217; cv=none;
         d=google.com; s=arc-20160816;
-        b=chiQM6EDKuyOMWg53bNh58aY6+NEhYLOWiCEtR6CMoKUkcDRFWXO3acgYhkhWXJGUR
-         qlMqhSO6DkUFZ8+Q2XXeGgVVUMBlGlU5dkzXk+7sxqVJlMu790NePvJbEPDqxCu8J06b
-         HBd73MZxEUc8n9nRKUgS3serdVodv62WUI/liGJUVrH66C0aDhEjaQGPXbISkRChO3Ml
-         p6HWGGBmItOPFkMofbopFZP42VCxKRMyKP4KP6pPKTuh1xrvP7mtEEgappr2/U+/Oxb8
-         Qsuv/ib2LqtFAk+WUAnzUXmbOvH9bSEbTy9attB7SvHbApjSIP304W3Ml8qIQBIsr827
-         ve1g==
+        b=r9k1Xvxm5eJSjLcQoQCT94u12If3ZrItD42GFcblU2miPgz40c5R0hzq1zTFDbeBt5
+         Du3NQh6184vIR0AtGjStsHxrUEPaGBWKdbhevQ4ap30bar19vqz4x5tEc3IWt1y+bTu6
+         IOzdb9fKD2d2+Tn/riNaveTa/E/HxmoU6Cvic2TZW8S0hf0FklqohRQpaAmyjANFze3r
+         o5f48IOzxW3G20zddbL1JXYaRtMzOZroIW+SxU3BvZM7+95pYXDE114LtfCrLDnAFKJJ
+         /mZa4Ikjw0jflhiby45zzg9QvPnNW2aDfn7U5TdkEinxZRM3g5685UcnkgeLaiULCffi
+         8mjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EMHZ1GlxNb/ezDwehqG7C5QpgmQZ6sRCXAqflso7T2w=;
-        b=S5RnlmKigxN4AsIl9bLlmDdgoulL3dJ/Cg6PQxwFpfQ5evP2v+/xBKUn7/QwfYG3to
-         7sRqRJF0I+iHTuAJg3YH55//sTSygTclRLcG0fhxzDugp63gSut35ejjEtjhtQgBZNTg
-         /7E2qhR3ucECf2lk/A8r1opQVLoUc94KoEIQiPYFyv5HbLklg+ecs6cezAbluVcbyVC2
-         DMzhRBnsm0QRxLILLUT8kOuVLjnsEnlQmfCWlLZWSX0TFU8Ai8sFP2LB+eTcYMQYOCdN
-         ZFnsg6bcdB8woXqbF4vLbLtvLvtlbH0fN2D5Qov8sGOun4ek+za4+J3SoUg4GE3DJepv
-         HhZg==
+        bh=7lZ3C2pPG7EA3gy9eR5cbyeu6c0h8r/7UM+KravkQ50=;
+        b=mpoFQFrndT3BqtPvtvejcXQAnjtFmqxYXPksd5cpiwJWrhGZGy3aNYHPWqu0i3hzYX
+         Cv6Nk/PC83nPakH/h/MZpePEzC9JyDGYzIS4tMAQ3OIvFQQEK0242HTwd+JjktE8a8/L
+         mz4SMzLbk1w4YzAgSYegncSd7hv/RGbea5IYYQOwlJay1tK23r+9JotPChmtlcz2QBNp
+         iMb9l85t0uc12BhK0RmebCpGKW0jBJpWI2xEztF4TG49dWnm0R2gOD7x84UdEMRlG0Rm
+         b5fV3XNPHSAMT+Im2vMFQhwNgIBfmh+vcM9Bs3iDR9fhriKM5BPqXpZHVTY9hEqdyQ79
+         iy5A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Martin Kaiser <martin@kaiser.cx>,
-	Fugang Duan <fugang.duan@nxp.com>
-Subject: [PATCH 4.9 85/86] serial: imx: Only wakeup via RTSDEN bit if the system has RTS/CTS
-Date: Fri,  2 Feb 2018 17:58:45 +0100
-Message-Id: <20180202140830.562797872@linuxfoundation.org>
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.9 84/86] usbip: vhci_hcd: clear just the USB_PORT_STAT_POWER bit
+Date: Fri,  2 Feb 2018 17:58:44 +0100
+Message-Id: <20180202140830.395431799@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -40,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309461447387498?=
-X-GMAIL-MSGID: =?utf-8?q?1591309731755310285?=
+X-GMAIL-THRID: =?utf-8?q?1591309727976197379?=
+X-GMAIL-MSGID: =?utf-8?q?1591309727976197379?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +47,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 38b1f0fb42f772b8c9aac53593883a18ff5eb9d7 upstream.
+Upstream commit 1c9de5bf4286 ("usbip: vhci-hcd: Add USB3 SuperSpeed
+support")
 
-The wakeup mechanism via RTSDEN bit relies on the system using the RTS/CTS
-lines, so only allow such wakeup method when the system actually has
-RTS/CTS support.
+vhci_hcd clears all the bits port_status bits instead of clearing
+just the USB_PORT_STAT_POWER bit when it handles ClearPortFeature:
+USB_PORT_FEAT_POWER. This causes vhci_hcd attach to fail in a bad
+state, leaving device unusable by the client. The device is still
+attached and however client can't use it.
 
-Fixes: bc85734b126f ("serial: imx: allow waking up on RTSD")
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Reviewed-by: Martin Kaiser <martin@kaiser.cx>
-Acked-by: Fugang Duan <fugang.duan@nxp.com>
+The problem was fixed as part of larger change to add  USB3 Super
+Speed support. This patch backports just the change to clear the
+USB_PORT_STAT_POWER.
+
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/serial/imx.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/usb/usbip/vhci_hcd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -2239,12 +2239,14 @@ static void serial_imx_enable_wakeup(str
- 		val &= ~UCR3_AWAKEN;
- 	writel(val, sport->port.membase + UCR3);
- 
--	val = readl(sport->port.membase + UCR1);
--	if (on)
--		val |= UCR1_RTSDEN;
--	else
--		val &= ~UCR1_RTSDEN;
--	writel(val, sport->port.membase + UCR1);
-+	if (sport->have_rtscts) {
-+		val = readl(sport->port.membase + UCR1);
-+		if (on)
-+			val |= UCR1_RTSDEN;
-+		else
-+			val &= ~UCR1_RTSDEN;
-+		writel(val, sport->port.membase + UCR1);
-+	}
- }
- 
- static int imx_serial_port_suspend_noirq(struct device *dev)
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -300,7 +300,7 @@ static int vhci_hub_control(struct usb_h
+ 		case USB_PORT_FEAT_POWER:
+ 			usbip_dbg_vhci_rh(
+ 				" ClearPortFeature: USB_PORT_FEAT_POWER\n");
+-			dum->port_status[rhport] = 0;
++			dum->port_status[rhport] &= ~USB_PORT_STAT_POWER;
+ 			dum->resuming = 0;
+ 			break;
+ 		case USB_PORT_FEAT_C_RESET:
