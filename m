@@ -1,74 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751792AbeBBULt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 15:11:49 -0500
-Received: from mout.web.de ([212.227.15.14]:63999 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750773AbeBBULl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 15:11:41 -0500
-Subject: [PATCH 2/2] HSI: ssi_protocol: Fix a typo in two comment lines
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: kernel-janitors@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>, Sebastian Reichel <sre@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, trivial@kernel.org
-References: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
-Message-ID: <74402fa6-dab4-e542-f49e-c20487580ca0@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 21:11:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751824AbeBBUNz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 15:13:55 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:46523 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751589AbeBBUNq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 15:13:46 -0500
+X-ME-Sender: <xms:ecZ0Ws0ItQ62BeqNib6lYjaAGQVbIQJBxOaZv6pFm_fidGidR_qdow>
+Date: Sat, 3 Feb 2018 07:13:41 +1100
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] leaking_addresses.pl changes for 4.16-rc1
+Message-ID: <20180202201341.GI29988@eros>
+References: <20180131024236.GA31627@eros>
+ <20180201204522.GD29988@eros>
+ <CA+55aFzG_KLCdZVb-qEC0786A3OK=tG-FFNzkMZC6dRtvn4uUw@mail.gmail.com>
+ <20180202094810.GG29988@eros>
 MIME-Version: 1.0
-In-Reply-To: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:Gc1D5EP+FbU4y2U90RVnMRJmdf4mIEbmDNmHMCcVFywEuh5t+0z
- aI+o3Uy4Po21hFey5Zrr6UX2msvwksNa4vR3lDQAX+YYH0JDxhRi1psukjdMpHIHC2EyFKF
- ZGWqah+ABMZrL1gfMvUDuy4qmW2q5x9cyC2xw5kFXt8KcVY5ObWov+f+dWxVpdOkDRAbdVb
- R2tJiK3aO7bPzToYjlOxw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:GMAvAWGDxLI=:/AK1KKoIvDE7vvKaqoovvX
- CfAmq3i6xO5xYnOsqcFersOF/9M0+IoSw0gL74QALKdRfMOVqPqt32kS8auu/kL5N9FzJlv7g
- /V/Ald1zd133SqXT6Ds8pwkekNp6t0NCOlLORghwFyH75W0s4+QbjdGSHanb1+hbzz6ginPQb
- OmutUyUXnSizj6lkOy+OSe/JxC4DxSWpo9jowgk/ialFIFY0BE+uAMnQfcUq3dvs92yHltcvJ
- 0NyOXukfk41HSBnGQt5h4tr5xIVtW3QdD5cAvPw61IaGDUJRSA+a7KFGYYkmd+4IaOOVxEDbU
- 25T93i7XOpxL7LJX0F95l7uCXgPPRevR20Ip1NtzVmNyjnzdEXN5I54FTttqs15M5hxF+tU/4
- jwh8ymAsvdo0V75PHwNFVXR+mb4Ga6wPgBBpgHr1BO9yOHKUxjzk6nPqjRySRpPYLY2wQEKE5
- FOwT+iWvFrNtiM8a7myDu1qghxlzDseg42Rk+BYCTGRtTgNWu3JgItHrYVQzrAKnAuoB+TMmQ
- ql57IATv1MoGbFDuNBrAxi+uyev19uXyr7YYcrj6gCYMjUjHjKm11vJkvcFZJO3TAxHq6/WwU
- UZS41/uJMUa+v2fCEFlJ7XVEmM6suIi69tDl7gjtxxmcTBv4pRHUMzIgHPSV78L0UV/w4pz+G
- J9IBgLJo2W6k5ldBvojtawEktVxkxnVkvnaHo74MwcIcoEmz8H8xY26f4O+Zod6j8Xl4IyHUd
- NWNTZ5wnJUwuQwuO/ngrmc8jhaJFddKOraC31DbTFJzLQBX9mh64+Mw/5HeGUWFeq6+vxLpyR
- zP1dL5/tetmdaJfxIjQoa6wmSqThHmKqpGQExUUsUCDsj1JKI8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180202094810.GG29988@eros>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 20:57:23 +0100
+On Fri, Feb 02, 2018 at 08:48:10PM +1100, Tobin C. Harding wrote:
+> On Thu, Feb 01, 2018 at 02:43:28PM -0800, Linus Torvalds wrote:
+> > On Thu, Feb 1, 2018 at 12:45 PM, Tobin C. Harding <me@tobin.cc> wrote:
+> > >
+> > > It has just come to my attention that I should have pushed these changes
+> > > to Linux next before requesting you to pull them.  Please feel free to
+> > > drop this request, I can try again next merge window after going through
+> > > linux next.
+> > 
+> > For something like this, I don't think it's a big deal.
+> > 
+> > A bigger deal is that it now wants perl-bigint, as of commit
+> > 8d8a77fb99bd ("leaking_addresses: add range check for vsyscall
+> > memory").
+> > 
+> > And that is not apparently a common enough perl module to be installed
+> > by default.
+> > 
+> > Sure, I just ran
+> > 
+> >     dnf install 'perl(bigint)'
+> > 
+> > and it did the right thing, but it does seem to be something of an
+> > inconvenience.
+> 
+> ok I'll try and find a work around so as not to use that.
+> 
+> > And things are *slow*, to the point of breakage. I get
+> > 
+> >   timed out parsing: /proc/kallsyms
+> >   timed out parsing: /proc/2177/smaps
+> >   timed out parsing: /proc/2238/smaps
+> >   timed out parsing: /proc/2336/smaps
+> >   ...
+> 
+> TL;DR it's working just not behaving very well.
+> 
+> I knew that was an issue, I've been running tests with 'smaps' included
+> in the skip files array.  However the patch I submitted to add this
+> included skipping /proc/kallsysms.  This got nacked.  I could not come
+> up with a _good_ solution before doing the pull request and thought it
+> better to have the 32-bit stuff in in light of all the drama this last
+> month.  The problem is that timeouts were added to catch binary files
+> choking the script but the default is too slow for large ASCII files.
+> Also we don't have a way to say 'scan this file once but not in every
+> processes sub directory' i.e smaps.  I needed feedback on this since I'm
+> not totally sure that all smaps files are generated the same.  Also I
+> think there may be a better way to not pass binary files than using the
+> timeout.
 
-Adjust two words in this description.
+oops, the timeout was to catch files that block on read (like /proc/kmsg).
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hsi/clients/ssi_protocol.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+So, adding 'smaps' to @skip_parse_files_any makes it run but I am unsure
+if this is correct.  I am under the impression that there will be
+various files that need skipping once the script is run on other peoples
+setups.
 
-diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi_protocol.c
-index 0bccea2fa119..6dbead863d07 100644
---- a/drivers/hsi/clients/ssi_protocol.c
-+++ b/drivers/hsi/clients/ssi_protocol.c
-@@ -993,8 +993,8 @@ static int ssip_pn_xmit(struct sk_buff *skb, struct net_device *dev)
- 		goto inc_dropped;
- 
- 	/*
--	 * Modem sends Phonet messages over SSI with its own endianess...
--	 * Assume that modem has the same endianess as we do.
-+	 * Modem sends Phonet messages over SSI with its own endianness.
-+	 * Assume that modem has the same endianness as we do.
- 	 */
- 	if (skb_cow_head(skb, 0))
- 		goto drop;
--- 
-2.16.1
+
+thanks,
+Tobin.
