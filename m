@@ -1,76 +1,47 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2879036-1517591104-2-15102711024655434743
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591104; b=Zsw1MvovB8Vw1e/5cTSjpHPz6Gttff5jEjg5uN3FuIJWvzw
-    syRoGgUW43YJ2iHiwIQWSnxMRPWYAdZKgoC0xODwYe5h7UYloPr0U8IWR5MBlOEz
-    X2MMl91pI7mpi29v6L20uFRwD1rwm9AnrgkWYMIMip6GxPoTbav3AjUneoVGJDNz
-    v28UHLWKJiMaiTiGiY2/E5fux5JFzlZxMR7MO4XZx2VnRS0DJcpQ2qPu2LB8OEeB
-    Y1jdXye/ZLdtYsqK0wf+jm/DlWiXnc37kHc14z20lbWGvTVqNUaxD+4ZUk963ADZ
-    +uW0aXC10FZFD4FKhUuuLTb+efgs536tAGuQyoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591104; bh=L1nuQyyM7o0Zh2B86Vv81RjQIt
-    ja4gsMYprwVdjTDP0=; b=u1uL1s+hsNkDeC6BY9TXXj1TucdbdRyCr9wZhqTnUT
-    Be487HVS/U51iJ1Hy3vWzeZ21G4ghW9ol4Ha61kE0H5TuEpjtdVJrSaJEVJDIQrc
-    knZWQ87UMRRsw2wRM28LcWlOLjwALPnvcWlJbFwOG45Z3Mf4VMRH7lSf9+5dmCxU
-    OocKlKdnlAH7n/oatp1+hQDrFbTMiXuk2/A4ktwl/MOOr1HI7R2r828Lh1DdZj2o
-    8GMWAEZqryKNH99v2I60B/KQtx+tOVvBEd0QEk8Hj2WXCdQmGgCpEqqDxphsDq53
-    EQMei4lX+iaI1hHl6/fyF82lJcmgOitLy7Rj0RM3xZLQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752906AbeBBREx (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:04:53 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36312 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752896AbeBBREu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:04:50 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x2244vjROc1UArWqbzFTr60LdqsRmlDcw/THxcbnPtqudXPInlU5Jan8OhisRQHQFvkJ2pq3X
+ARC-Seal: i=1; a=rsa-sha256; t=1517591102; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GQoXwASXhPMkixtHwFV5Wh5+fktHhT5UOryQOHyctS931nzyelDUS84AuMisuN/HEf
+         XZr4OnI6p7uZWJFvSZvMI35yYoZL9VIsQcZAAoHDJfo9OUugrOOf/tluwyCar+4bDYU3
+         NhM6szCZFR/EVOWAh2RT+dWnYtK+TILjyTftTkb++YRUi6Ajg1Q94ZRFVDXMt5Ruqp9I
+         DkGjhmg/V9P37ampCwsk25Eu4NpVD/TiaYMPqF3g07NaRh8kAvwsyyxwXNGb4FxIxB0/
+         O6gb3uABjieW7mXLzTCkHGJUkeL8+PMNKpk9swcJpfeAu+6VWxYcaTsTeYg+15Jo4Uhv
+         416g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=qZN/Um9NxwKsdkD6mA6WV5Eik6GJX726rJSKGekJex8=;
+        b=hdwSVptnE0qBRWRyq9oV075jdm15MwWvstaIOez0RHp6a/heTc95VSjxAsiVqxMQBN
+         KjAS2Y5zpErxj8vI457zTM5qxjXQ4I0z4OkQZXlKleBR4NOXBDi73Jd7mZGMK8jwiAe+
+         mEcUrdLrtlQS3so9G6RlIJTX1BEMEyHi4umgexXWna1SnZDGxgHiwb7F6GmW67k21f2S
+         XmfPj4nC3aAcz/GH/DtxfSS2T4JZ6fouo77XF58SXR2jPChxcD8+gjYw/5AtHKrr/2RF
+         dGaj8RQTHrv2avxW9BXj5hloK9/qGZI0H/fO1rOBMhaOsUoqQaHGZ5hREb0wEygPa1ll
+         KL1g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 4.9 15/86] mtd: nand: denali_pci: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Fri,  2 Feb 2018 17:57:35 +0100
-Message-Id: <20180202140824.274939148@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Abhishek Goel <huntbag@linux.vnet.ibm.com>,
+	Shuah Khan <shuahkh@osg.samsung.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 19/86] cpupower : Fix cpupower working when cpu0 is offline
+Date: Fri,  2 Feb 2018 17:57:39 +0100
+Message-Id: <20180202140824.536513876@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309607653259712?=
+X-GMAIL-MSGID: =?utf-8?q?1591309607653259712?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,36 +49,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Abhishek Goel <huntbag@linux.vnet.ibm.com>
 
-commit d822401d1c6898a4a4ee03977b78b8cec402e88a upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+[ Upstream commit dbdc468f35ee827cab2753caa1c660bdb832243a ]
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/mtd/nand/denali_pci.o
-see include/linux/module.h for more information
+cpuidle_monitor used to assume that cpu0 is always online which is not
+a valid assumption on POWER machines. This patch fixes this by getting
+the cpu on which the current thread is running, instead of always using
+cpu0 for monitoring which may not be online.
 
-This adds the license as "GPL v2", which matches the header of the file.
-
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
-
-Signed-off-by: Jesse Chan <jc@linux.com>
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/mtd/nand/denali_pci.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/nand/denali_pci.c
-+++ b/drivers/mtd/nand/denali_pci.c
-@@ -119,3 +119,7 @@ static struct pci_driver denali_pci_driv
- };
- 
- module_pci_driver(denali_pci_driver);
+--- a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+@@ -130,15 +130,18 @@ static struct cpuidle_monitor *cpuidle_r
+ {
+ 	int num;
+ 	char *tmp;
++	int this_cpu;
 +
-+MODULE_DESCRIPTION("PCI driver for Denali NAND controller");
-+MODULE_AUTHOR("Intel Corporation and its suppliers");
-+MODULE_LICENSE("GPL v2");
++	this_cpu = sched_getcpu();
+ 
+ 	/* Assume idle state count is the same for all CPUs */
+-	cpuidle_sysfs_monitor.hw_states_num = cpuidle_state_count(0);
++	cpuidle_sysfs_monitor.hw_states_num = cpuidle_state_count(this_cpu);
+ 
+ 	if (cpuidle_sysfs_monitor.hw_states_num <= 0)
+ 		return NULL;
+ 
+ 	for (num = 0; num < cpuidle_sysfs_monitor.hw_states_num; num++) {
+-		tmp = cpuidle_state_name(0, num);
++		tmp = cpuidle_state_name(this_cpu, num);
+ 		if (tmp == NULL)
+ 			continue;
+ 
+@@ -146,7 +149,7 @@ static struct cpuidle_monitor *cpuidle_r
+ 		strncpy(cpuidle_cstates[num].name, tmp, CSTATE_NAME_LEN - 1);
+ 		free(tmp);
+ 
+-		tmp = cpuidle_state_desc(0, num);
++		tmp = cpuidle_state_desc(this_cpu, num);
+ 		if (tmp == NULL)
+ 			continue;
+ 		strncpy(cpuidle_cstates[num].desc, tmp,	CSTATE_DESC_LEN - 1);
