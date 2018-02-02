@@ -1,77 +1,51 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2948269-1517591413-2-13220015460043400418
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517591413; b=mf9FzaeBm70PUcwwHDyUUE1Z0a9tXA8aZ6XVQOduQHiWudY
-    gW779UueRNIztrM0A/nM8d4j0viWVUc3rTQXrLvQDH/Ni1VEHXDA9BOsvtjAr+Mz
-    7Qwj6TTZJHy3z97CHSt8t8r+c4aRhuYcbtL1hoEhw7f0kaWmJMrwVO9RwGZwlQCK
-    1KEsT3u7vSC3gK/OMfnF9fGQajCfvVvtrA8m1SKyBdgB5QxZtFl+EHwM5Bptq/bp
-    IV+KnLoj66ulpFgGm79j7VDSKCkcDl6iTN1FSfRk74hAToMp31lUp5RCL8OmNW06
-    Ydz8R9m9jUHzUWzcye9kmIS6RJzbnIQSh6yG/Mg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517591413; bh=rfT31DRsrLOQRY3XyBN77dAWWs
-    6ODFGifoG9DYjSYFE=; b=XX0o8Xk7QatV0kKA67LqmDZ4u2pn8T8gbfQO9+VsAV
-    ZqA39jKU2TkS+5z8ad+ppQQ6IlHUZLgAkYeUj6LblFZCGEAXK8Fdu/8dhc4cRFi1
-    HK59T12jUq7l2p6rXdd8FmtEf58Pgz1AJHYPcSQSPRBpRdLlJ1TUN3QEWn1ddXKK
-    jEZJTY3fnyXbe25NSTptkBQr0RdwOB5w3OTup7RlqluhR6iPN5MLmo/NSVnRlbDW
-    s/1Kp2gfiQQQ/6xuyggU+aGxLG6OrJ4LdVDbGzkqGa3OgLahPvTxwBoxom7d+/m7
-    Lqzp+pgBMvMUrJN0cL+BYGYdBeeyFLkZcAY9aleNx2lw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753281AbeBBRKH (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:10:07 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38086 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752773AbeBBRKC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:10:02 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224onnmIjabCKEMupf8EFqgxpIJe1mIiZPHUasd4vDxHH1Y6L3QEsOvoWmbdX3QkEQ1axees
+ARC-Seal: i=1; a=rsa-sha256; t=1517591412; cv=none;
+        d=google.com; s=arc-20160816;
+        b=XKGx2x84fJ1/6ZkmV+uaIZnZ0H6KHA+CI2+9wFsG9THfd9swEJHiJfPs/FaTQRZO49
+         WUXEXjT5/rUaaiBFdUE5DDrtAiq9LB3xlEwdTW679G0bVwMnOxISf0YbaCZj/2nWP1J5
+         KSkyeYVB4VHzXiCG40NHupNpUwr01kffnfoNkdx3Jv6CJ5sAAaBDyX9JpjDGKA9gfy2v
+         mDbSAwUGhqj1kFWaXK3hDXm9X516GBvy/rwSByQilZMeDNl933Bl7FN3qT6SeS1WOeZ6
+         KbeBcP/OBND4/0zZNCocKsRFBVA8K/3sJ38SJ5SoLdBlhMSNHs2MbQH51cQJBcJBbE4L
+         11qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=ZxqOvjEEN5x5S5ppgGSqLaNjETdqAp71JM2rj7ppSNc=;
+        b=qCo6F9mcWTcuKX8qy0UHNDuc/7z/0WbXq8wQcD6L/2U0dyTv4pt3/k9Z7EnQOftWOX
+         5zyjnqjMyWunMISu+1M0MPjNhdCkazVgmBTu2QKA6cfRtjhF8JL2zHgiwihO2hJfLE5p
+         COMLjkUfKvV9rdPEIZKw3bda6aP+Vlmh8ZGslfS+3XCPrmD1e+FsEydj9h2qfLPNMVW/
+         sKHDPzlb5803lbBcFtCcxndu1NjEwZeVSZw18hX8l8440nbwVHOJCPoqsILroqSgYoL0
+         cBXNsqXWL8kvzcPu20iBSbXgLjSr/UpABLNwIDSHZCCzcP2w0JZmpma92lmp+SNim0DX
+         OrUA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 066/156] nvme-rdma: dont complete requests before a send work request has completed
-Date: Fri,  2 Feb 2018 17:57:27 +0100
-Message-Id: <20180202140843.274307950@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Liran Alon <liran.alon@oracle.com>,
+	Nikita Leshenko <nikita.leshchenko@oracle.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 036/156] KVM: nVMX/nSVM: Dont intercept #UD when running L2
+Date: Fri,  2 Feb 2018 17:56:57 +0100
+Message-Id: <20180202140841.939284771@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140840.242829545@linuxfoundation.org>
 References: <20180202140840.242829545@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309933569328457?=
+X-GMAIL-MSGID: =?utf-8?q?1591309933569328457?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,92 +53,104 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sagi Grimberg <sagi@grimberg.me>
+From: Liran Alon <liran.alon@oracle.com>
 
 
-[ Upstream commit 4af7f7ff92a42b6c713293c99e7982bcfcf51a70 ]
+[ Upstream commit ac9b305caa0df6f5b75d294e4b86c1027648991e ]
 
-In order to guarantee that the HCA will never get an access violation
-(either from invalidated rkey or from iommu) when retrying a send
-operation we must complete a request only when both send completion and
-the nvme cqe has arrived. We need to set the send/recv completions flags
-atomically because we might have more than a single context accessing the
-request concurrently (one is cq irq-poll context and the other is
-user-polling used in IOCB_HIPRI).
+When running L2, #UD should be intercepted by L1 or just forwarded
+directly to L2. It should not reach L0 x86 emulator.
+Therefore, set intercept for #UD only based on L1 exception-bitmap.
 
-Only then we are safe to invalidate the rkey (if needed), unmap the host
-buffers, and complete the IO.
+Also add WARN_ON_ONCE() on L0 #UD intercept handlers to make sure
+it is never reached while running L2.
 
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+This improves commit ae1f57670703 ("KVM: nVMX: Do not emulate #UD while
+in guest mode") by removing an unnecessary exit from L2 to L0 on #UD
+when L1 doesn't intercept it.
+
+In addition, SVM L0 #UD intercept handler doesn't handle correctly the
+case it is raised from L2. In this case, it should forward the #UD to
+guest instead of x86 emulator. As done in VMX #UD intercept handler.
+This commit fixes this issue as-well.
+
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/rdma.c |   28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+ arch/x86/kvm/svm.c |    9 ++++++++-
+ arch/x86/kvm/vmx.c |    9 ++++-----
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -67,6 +67,9 @@ struct nvme_rdma_request {
- 	struct nvme_request	req;
- 	struct ib_mr		*mr;
- 	struct nvme_rdma_qe	sqe;
-+	union nvme_result	result;
-+	__le16			status;
-+	refcount_t		ref;
- 	struct ib_sge		sge[1 + NVME_RDMA_MAX_INLINE_SEGMENTS];
- 	u32			num_sge;
- 	int			nents;
-@@ -1177,6 +1180,7 @@ static int nvme_rdma_map_data(struct nvm
- 	req->num_sge = 1;
- 	req->inline_data = false;
- 	req->mr->need_inval = false;
-+	refcount_set(&req->ref, 2); /* send and recv completions */
- 
- 	c->common.flags |= NVME_CMD_SGL_METABUF;
- 
-@@ -1213,8 +1217,19 @@ static int nvme_rdma_map_data(struct nvm
- 
- static void nvme_rdma_send_done(struct ib_cq *cq, struct ib_wc *wc)
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -362,6 +362,7 @@ static void recalc_intercepts(struct vcp
  {
--	if (unlikely(wc->status != IB_WC_SUCCESS))
-+	struct nvme_rdma_qe *qe =
-+		container_of(wc->wr_cqe, struct nvme_rdma_qe, cqe);
-+	struct nvme_rdma_request *req =
-+		container_of(qe, struct nvme_rdma_request, sqe);
-+	struct request *rq = blk_mq_rq_from_pdu(req);
+ 	struct vmcb_control_area *c, *h;
+ 	struct nested_state *g;
++	u32 h_intercept_exceptions;
+ 
+ 	mark_dirty(svm->vmcb, VMCB_INTERCEPTS);
+ 
+@@ -372,9 +373,14 @@ static void recalc_intercepts(struct vcp
+ 	h = &svm->nested.hsave->control;
+ 	g = &svm->nested;
+ 
++	/* No need to intercept #UD if L1 doesn't intercept it */
++	h_intercept_exceptions =
++		h->intercept_exceptions & ~(1U << UD_VECTOR);
 +
-+	if (unlikely(wc->status != IB_WC_SUCCESS)) {
- 		nvme_rdma_wr_error(cq, wc, "SEND");
-+		return;
-+	}
-+
-+	if (refcount_dec_and_test(&req->ref))
-+		nvme_end_request(rq, req->status, req->result);
+ 	c->intercept_cr = h->intercept_cr | g->intercept_cr;
+ 	c->intercept_dr = h->intercept_dr | g->intercept_dr;
+-	c->intercept_exceptions = h->intercept_exceptions | g->intercept_exceptions;
++	c->intercept_exceptions =
++		h_intercept_exceptions | g->intercept_exceptions;
+ 	c->intercept = h->intercept | g->intercept;
  }
  
- /*
-@@ -1359,14 +1374,19 @@ static int nvme_rdma_process_nvme_rsp(st
- 	}
- 	req = blk_mq_rq_to_pdu(rq);
+@@ -2189,6 +2195,7 @@ static int ud_interception(struct vcpu_s
+ {
+ 	int er;
  
--	if (rq->tag == tag)
--		ret = 1;
-+	req->status = cqe->status;
-+	req->result = cqe->result;
++	WARN_ON_ONCE(is_guest_mode(&svm->vcpu));
+ 	er = emulate_instruction(&svm->vcpu, EMULTYPE_TRAP_UD);
+ 	if (er == EMULATE_USER_EXIT)
+ 		return 0;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1891,7 +1891,7 @@ static void update_exception_bitmap(stru
+ {
+ 	u32 eb;
  
- 	if ((wc->wc_flags & IB_WC_WITH_INVALIDATE) &&
- 	    wc->ex.invalidate_rkey == req->mr->rkey)
- 		req->mr->need_inval = false;
+-	eb = (1u << PF_VECTOR) | (1u << UD_VECTOR) | (1u << MC_VECTOR) |
++	eb = (1u << PF_VECTOR) | (1u << MC_VECTOR) |
+ 	     (1u << DB_VECTOR) | (1u << AC_VECTOR);
+ 	if ((vcpu->guest_debug &
+ 	     (KVM_GUESTDBG_ENABLE | KVM_GUESTDBG_USE_SW_BP)) ==
+@@ -1909,6 +1909,8 @@ static void update_exception_bitmap(stru
+ 	 */
+ 	if (is_guest_mode(vcpu))
+ 		eb |= get_vmcs12(vcpu)->exception_bitmap;
++	else
++		eb |= 1u << UD_VECTOR;
  
--	nvme_end_request(rq, cqe->status, cqe->result);
-+	if (refcount_dec_and_test(&req->ref)) {
-+		if (rq->tag == tag)
-+			ret = 1;
-+		nvme_end_request(rq, req->status, req->result);
-+	}
-+
- 	return ret;
+ 	vmcs_write32(EXCEPTION_BITMAP, eb);
  }
+@@ -5919,10 +5921,7 @@ static int handle_exception(struct kvm_v
+ 		return 1;  /* already handled by vmx_vcpu_run() */
  
+ 	if (is_invalid_opcode(intr_info)) {
+-		if (is_guest_mode(vcpu)) {
+-			kvm_queue_exception(vcpu, UD_VECTOR);
+-			return 1;
+-		}
++		WARN_ON_ONCE(is_guest_mode(vcpu));
+ 		er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
+ 		if (er == EMULATE_USER_EXIT)
+ 			return 0;
