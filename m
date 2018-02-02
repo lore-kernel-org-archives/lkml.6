@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751873AbeBBMdN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 07:33:13 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54518 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbeBBMdH (ORCPT
+        id S1751918AbeBBMd1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 07:33:27 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36836 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751853AbeBBMdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 07:33:07 -0500
-X-Google-Smtp-Source: AH8x224+NP0T/mxsleFedb7mtl1/EWiPpu+n74bhX0PYtughhqs9+BG1JjbwhAes85BMJTJV9BjX2A==
-Date: Fri, 2 Feb 2018 13:33:03 +0100
+        Fri, 2 Feb 2018 07:33:12 -0500
+X-Google-Smtp-Source: AH8x227Y2aeBIekTGzhMmQhqP2D/diZSR5S88iZ0NEQEttH+cfjbzlY6s66xBMj4QsejT5E9l/p+RA==
+Date: Fri, 2 Feb 2018 13:33:09 +0100
 From: Christoffer Dall <christoffer.dall@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -24,59 +24,165 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Jayachandran C <jnair@caviumnetworks.com>,
         Jon Masters <jcm@redhat.com>,
         Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH v3 03/18] arm64: KVM: Increment PC after handling an SMC
- trap
-Message-ID: <20180202123303.GF21802@cbox>
+Subject: Re: [PATCH v3 04/18] arm/arm64: KVM: Consolidate the PSCI include
+ files
+Message-ID: <20180202123309.GG21802@cbox>
 References: <20180201114657.7323-1-marc.zyngier@arm.com>
- <20180201114657.7323-4-marc.zyngier@arm.com>
+ <20180201114657.7323-5-marc.zyngier@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180201114657.7323-4-marc.zyngier@arm.com>
+In-Reply-To: <20180201114657.7323-5-marc.zyngier@arm.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 11:46:42AM +0000, Marc Zyngier wrote:
-> When handling an SMC trap, the "preferred return address" is set
-> to that of the SMC, and not the next PC (which is a departure from
-> the behaviour of an SMC that isn't trapped).
+On Thu, Feb 01, 2018 at 11:46:43AM +0000, Marc Zyngier wrote:
+> As we're about to update the PSCI support, and because I'm lazy,
+> let's move the PSCI include file to include/kvm so that both
+> ARM architectures can find it.
 > 
-> Increment PC in the handler, as the guest is otherwise forever
-> stuck...
-> 
+Acked-by: Christoffer Dall <christoffer.dall@linaro.org>
 
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
-
-> Cc: stable@vger.kernel.org
-> Fixes: acfb3b883f6d ("arm64: KVM: Fix SMCCC handling of unimplemented SMC/HVC calls")
 > Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 > ---
->  arch/arm64/kvm/handle_exit.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  arch/arm/include/asm/kvm_psci.h                    | 27 ----------------------
+>  arch/arm/kvm/handle_exit.c                         |  2 +-
+>  arch/arm64/kvm/handle_exit.c                       |  3 ++-
+>  .../asm/kvm_psci.h => include/kvm/arm_psci.h       |  6 ++---
+>  virt/kvm/arm/arm.c                                 |  2 +-
+>  virt/kvm/arm/psci.c                                |  3 ++-
+>  6 files changed, 9 insertions(+), 34 deletions(-)
+>  delete mode 100644 arch/arm/include/asm/kvm_psci.h
+>  rename arch/arm64/include/asm/kvm_psci.h => include/kvm/arm_psci.h (89%)
 > 
+> diff --git a/arch/arm/include/asm/kvm_psci.h b/arch/arm/include/asm/kvm_psci.h
+> deleted file mode 100644
+> index 6bda945d31fa..000000000000
+> --- a/arch/arm/include/asm/kvm_psci.h
+> +++ /dev/null
+> @@ -1,27 +0,0 @@
+> -/*
+> - * Copyright (C) 2012 - ARM Ltd
+> - * Author: Marc Zyngier <marc.zyngier@arm.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> - */
+> -
+> -#ifndef __ARM_KVM_PSCI_H__
+> -#define __ARM_KVM_PSCI_H__
+> -
+> -#define KVM_ARM_PSCI_0_1	1
+> -#define KVM_ARM_PSCI_0_2	2
+> -
+> -int kvm_psci_version(struct kvm_vcpu *vcpu);
+> -int kvm_psci_call(struct kvm_vcpu *vcpu);
+> -
+> -#endif /* __ARM_KVM_PSCI_H__ */
+> diff --git a/arch/arm/kvm/handle_exit.c b/arch/arm/kvm/handle_exit.c
+> index a4bf0f6f024a..230ae4079108 100644
+> --- a/arch/arm/kvm/handle_exit.c
+> +++ b/arch/arm/kvm/handle_exit.c
+> @@ -21,7 +21,7 @@
+>  #include <asm/kvm_emulate.h>
+>  #include <asm/kvm_coproc.h>
+>  #include <asm/kvm_mmu.h>
+> -#include <asm/kvm_psci.h>
+> +#include <kvm/arm_psci.h>
+>  #include <trace/events/kvm.h>
+>  
+>  #include "trace.h"
 > diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-> index 520b0dad3c62..5493bbefbd0d 100644
+> index 5493bbefbd0d..588f910632a7 100644
 > --- a/arch/arm64/kvm/handle_exit.c
 > +++ b/arch/arm64/kvm/handle_exit.c
-> @@ -62,7 +62,16 @@ static int handle_hvc(struct kvm_vcpu *vcpu, struct kvm_run *run)
+> @@ -22,13 +22,14 @@
+>  #include <linux/kvm.h>
+>  #include <linux/kvm_host.h>
 >  
->  static int handle_smc(struct kvm_vcpu *vcpu, struct kvm_run *run)
->  {
-> +	/*
-> +	 * "If an SMC instruction executed at Non-secure EL1 is
-> +	 * trapped to EL2 because HCR_EL2.TSC is 1, the exception is a
-> +	 * Trap exception, not a Secure Monitor Call exception [...]"
-> +	 *
-> +	 * We need to advance the PC after the trap, as it would
-> +	 * otherwise return to the same address...
-> +	 */
->  	vcpu_set_reg(vcpu, 0, ~0UL);
-> +	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
->  	return 1;
->  }
+> +#include <kvm/arm_psci.h>
+> +
+>  #include <asm/esr.h>
+>  #include <asm/exception.h>
+>  #include <asm/kvm_asm.h>
+>  #include <asm/kvm_coproc.h>
+>  #include <asm/kvm_emulate.h>
+>  #include <asm/kvm_mmu.h>
+> -#include <asm/kvm_psci.h>
+>  #include <asm/debug-monitors.h>
+>  #include <asm/traps.h>
 >  
+> diff --git a/arch/arm64/include/asm/kvm_psci.h b/include/kvm/arm_psci.h
+> similarity index 89%
+> rename from arch/arm64/include/asm/kvm_psci.h
+> rename to include/kvm/arm_psci.h
+> index bc39e557c56c..2042bb909474 100644
+> --- a/arch/arm64/include/asm/kvm_psci.h
+> +++ b/include/kvm/arm_psci.h
+> @@ -15,8 +15,8 @@
+>   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>   */
+>  
+> -#ifndef __ARM64_KVM_PSCI_H__
+> -#define __ARM64_KVM_PSCI_H__
+> +#ifndef __KVM_ARM_PSCI_H__
+> +#define __KVM_ARM_PSCI_H__
+>  
+>  #define KVM_ARM_PSCI_0_1	1
+>  #define KVM_ARM_PSCI_0_2	2
+> @@ -24,4 +24,4 @@
+>  int kvm_psci_version(struct kvm_vcpu *vcpu);
+>  int kvm_psci_call(struct kvm_vcpu *vcpu);
+>  
+> -#endif /* __ARM64_KVM_PSCI_H__ */
+> +#endif /* __KVM_ARM_PSCI_H__ */
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index 15bf026eb182..af3e98fc377e 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/irqbypass.h>
+>  #include <trace/events/kvm.h>
+>  #include <kvm/arm_pmu.h>
+> +#include <kvm/arm_psci.h>
+>  
+>  #define CREATE_TRACE_POINTS
+>  #include "trace.h"
+> @@ -46,7 +47,6 @@
+>  #include <asm/kvm_mmu.h>
+>  #include <asm/kvm_emulate.h>
+>  #include <asm/kvm_coproc.h>
+> -#include <asm/kvm_psci.h>
+>  #include <asm/sections.h>
+>  
+>  #ifdef REQUIRES_VIRT
+> diff --git a/virt/kvm/arm/psci.c b/virt/kvm/arm/psci.c
+> index f1e363bab5e8..b322e46fd142 100644
+> --- a/virt/kvm/arm/psci.c
+> +++ b/virt/kvm/arm/psci.c
+> @@ -21,9 +21,10 @@
+>  
+>  #include <asm/cputype.h>
+>  #include <asm/kvm_emulate.h>
+> -#include <asm/kvm_psci.h>
+>  #include <asm/kvm_host.h>
+>  
+> +#include <kvm/arm_psci.h>
+> +
+>  #include <uapi/linux/psci.h>
+>  
+>  /*
 > -- 
 > 2.14.2
 > 
