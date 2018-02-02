@@ -1,231 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752196AbeBBO7j (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:59:39 -0500
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:5264 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeBBO7c (ORCPT
+        id S1752293AbeBBPAU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 10:00:20 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:51639 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752188AbeBBPAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:59:32 -0500
-X-IronPort-AV: E=Sophos;i="5.46,448,1511827200";
-   d="scan'208";a="330329713"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: tglx@linutronix.de, karahmed@amazon.de, sironi@amazon.de,
-        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
-        peterz@infradead.org
-Subject: [PATCH] KVM: x86: Reduce retpoline performance impact in slot_handle_level_range()
-Date: Fri,  2 Feb 2018 14:59:19 +0000
-Message-Id: <1517583559-424-1-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
+        Fri, 2 Feb 2018 10:00:13 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, kgdb-bugreport@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kdb: use memmove instead of overlapping memcpy
+Date: Fri,  2 Feb 2018 15:59:40 +0100
+Message-Id: <20180202145952.285505-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:SubtK34vEUDc40i3yM+YiUxps2AqvTjFoJI2E+eKnuXTdFr1/et
+ XbXaA1winbsP2TXTbsPES/SqobfFmOyFkr3tiFo0T//cHYip+hFoaOB4wOpEPB8YPqitFRo
+ sjbkU3U9zsfstUfWSoYDBHhnkaudJEP/CYDyA3wnxvgkjSkdRTiH+BhI/bxT+x/MPvcL3CE
+ fJEkCWDtDqKrtuozRPhiw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:A+JeHXP8Sro=:hYNGjcWM9negGh/4a6VPLt
+ 2V2CL/k1OQyICv5WnEwfLJ/mtUQyU+skqoYlp0QRO6F3bjsu4DtKqgZRgYo3w1kPjfw2SxzYX
+ oMVNjPozb75hOqxkgZnk/gyWCiQxGdOVLPzkj4gqqHP2lSHFIxTefR5f6GUBAw5ZpAuiymirO
+ tcYeaMO/HyhjIgAnJODgBrURFu7iCZHA/6bE67jE7xpEQ21MpJJ055OV0XZZ5wAwBQ//bSqGr
+ R4OFD6un2jk6RsYj0jg1pPxCRoFG77iqHW6LLuKF2fLSzsMR9Zf6+JMkyu2rKvpDohyreLRyc
+ BkRk+QSJTWE+CQs6zGK+L5lrL8qg1tSSzVU49xlNRMkXuqmuwCHzc9CguX/ttJyBBXJIGA99u
+ XdMqOJ+6vmGordLQgK4oKHBoSe3C0x4KZhNuSxuajE/pvDPN2z8TAHYMiN3Azwsv9a1z4+kVG
+ FeywOKnM2Mad9Ib5IKNXAi8BDcJxV8VL1bEfuuVNL/8PUfko0Q4B1qaEGDNSO8F4w5aucqdMP
+ xayzvpCbdfRiO13uejhvcQHInR1tnJuDs5JDC+hgLsbLrLNTMhGn+ObCba+6Vf+60rBgnSqhB
+ uTa91zU+xB0oRqD3sCkCnctoE4Fa8PYCkWmpBD/IvUG4Of7Z4lmXMo4GdcceAFiDWfyKmx5z3
+ DAS4BZjpObA8TjUukJ8/esmclWAXLjWyij2/98sgLdykqpcXnQhP7DZn5+jyR4iXxZGZJKOkS
+ emwv7FEkWFXAsbDVVwzU9Rjo6jvPgFqV+9ONEQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With retpoline, tight loops of "call this function for every XXX" are
-very much pessimised by taking a prediction miss *every* time.
+gcc discovered that the memcpy() arguments in kdbnearsym() overlap, so
+we should really use memmove(), which is defined to handle that correctly:
 
-This one showed up very high in our early testing, and it only has five
-things it'll ever call so make it take an 'op' enum instead of a
-function pointer and let's see how that works out...
+In function 'memcpy',
+    inlined from 'kdbnearsym' at /git/arm-soc/kernel/debug/kdb/kdb_support.c:132:4:
+/git/arm-soc/include/linux/string.h:353:9: error: '__builtin_memcpy' accessing 792 bytes at offsets 0 and 8 overlaps 784 bytes at offset 8 [-Werror=restrict]
+  return __builtin_memcpy(p, q, size);
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Not sure I like this. Better suggestions welcomed...
+ kernel/debug/kdb/kdb_support.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-In the general case, we have a few things we can do with the calls that
-retpoline turns into bottlenecks. This is one of them.
-
-Another option, if there are just one or two "likely" functions, is
-something along the lines of
-
- if (func == likelyfunc)
-    likelyfunc()
- else
-    (*func)(); // GCC does retpoline for this
-
-For things like kvm_x86_ops we really could just turn *all* of those
-into direct calls at runtime, like pvops does.
-
-There are some which land somewhere in the middle, like the default
-dma_ops. We probably want something like the 'likelyfunc' version
-above, except that we *also* want to flip the likelyfunc between the
-Intel and AMD IOMMU ops functions, at early boot. I'll see what I can
-come up with...
-
- arch/x86/kvm/mmu.c | 72 ++++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 48 insertions(+), 24 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 2b8eb4d..44f9de7 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -5055,12 +5055,21 @@ void kvm_mmu_uninit_vm(struct kvm *kvm)
- }
- 
- /* The return value indicates if tlb flush on all vcpus is needed. */
--typedef bool (*slot_level_handler) (struct kvm *kvm, struct kvm_rmap_head *rmap_head);
-+enum slot_handler_op {
-+	SLOT_RMAP_CLEAR_DIRTY,
-+	SLOT_RMAP_SET_DIRTY,
-+	SLOT_RMAP_WRITE_PROTECT,
-+	SLOT_ZAP_RMAPP,
-+	SLOT_ZAP_COLLAPSIBLE_SPTE,
-+};
-+
-+static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
-+					 struct kvm_rmap_head *rmap_head);
- 
- /* The caller should hold mmu-lock before calling this function. */
- static bool
- slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
--			slot_level_handler fn, int start_level, int end_level,
-+			enum slot_handler_op op, int start_level, int end_level,
- 			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
- {
- 	struct slot_rmap_walk_iterator iterator;
-@@ -5068,8 +5077,29 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 
- 	for_each_slot_rmap_range(memslot, start_level, end_level, start_gfn,
- 			end_gfn, &iterator) {
--		if (iterator.rmap)
--			flush |= fn(kvm, iterator.rmap);
-+		if (iterator.rmap) {
-+			switch (op) {
-+			case SLOT_RMAP_CLEAR_DIRTY:
-+				flush |= __rmap_clear_dirty(kvm, iterator.rmap);
-+				break;
-+
-+			case SLOT_RMAP_SET_DIRTY:
-+				flush |= __rmap_set_dirty(kvm, iterator.rmap);
-+				break;
-+
-+			case SLOT_RMAP_WRITE_PROTECT:
-+				flush |= __rmap_write_protect(kvm, iterator.rmap, false);
-+				break;
-+
-+			case SLOT_ZAP_RMAPP:
-+				flush |= kvm_zap_rmapp(kvm, iterator.rmap);
-+				break;
-+
-+			case SLOT_ZAP_COLLAPSIBLE_SPTE:
-+				flush |= kvm_mmu_zap_collapsible_spte(kvm, iterator.rmap);
-+				break;
-+			}
-+		}
- 
- 		if (need_resched() || spin_needbreak(&kvm->mmu_lock)) {
- 			if (flush && lock_flush_tlb) {
-@@ -5090,10 +5120,10 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 
- static bool
- slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
--		  slot_level_handler fn, int start_level, int end_level,
-+		  enum slot_handler_op op, int start_level, int end_level,
- 		  bool lock_flush_tlb)
- {
--	return slot_handle_level_range(kvm, memslot, fn, start_level,
-+	return slot_handle_level_range(kvm, memslot, op, start_level,
- 			end_level, memslot->base_gfn,
- 			memslot->base_gfn + memslot->npages - 1,
- 			lock_flush_tlb);
-@@ -5101,25 +5131,25 @@ slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 
- static bool
- slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
--		      slot_level_handler fn, bool lock_flush_tlb)
-+		      enum slot_handler_op op, bool lock_flush_tlb)
- {
--	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
-+	return slot_handle_level(kvm, memslot, op, PT_PAGE_TABLE_LEVEL,
- 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
- }
- 
- static bool
- slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
--			slot_level_handler fn, bool lock_flush_tlb)
-+			enum slot_handler_op op, bool lock_flush_tlb)
- {
--	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL + 1,
-+	return slot_handle_level(kvm, memslot, op, PT_PAGE_TABLE_LEVEL + 1,
- 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
- }
- 
- static bool
- slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
--		 slot_level_handler fn, bool lock_flush_tlb)
-+		 enum slot_handler_op op, bool lock_flush_tlb)
- {
--	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
-+	return slot_handle_level(kvm, memslot, op, PT_PAGE_TABLE_LEVEL,
- 				 PT_PAGE_TABLE_LEVEL, lock_flush_tlb);
- }
- 
-@@ -5140,7 +5170,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- 			if (start >= end)
- 				continue;
- 
--			slot_handle_level_range(kvm, memslot, kvm_zap_rmapp,
-+			slot_handle_level_range(kvm, memslot, SLOT_ZAP_RMAPP,
- 						PT_PAGE_TABLE_LEVEL, PT_MAX_HUGEPAGE_LEVEL,
- 						start, end - 1, true);
+diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
+index 5d8ef3a07ecd..1ad4370ccbf0 100644
+--- a/kernel/debug/kdb/kdb_support.c
++++ b/kernel/debug/kdb/kdb_support.c
+@@ -129,13 +129,13 @@ int kdbnearsym(unsigned long addr, kdb_symtab_t *symtab)
  		}
-@@ -5149,19 +5179,13 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- 	spin_unlock(&kvm->mmu_lock);
- }
- 
--static bool slot_rmap_write_protect(struct kvm *kvm,
--				    struct kvm_rmap_head *rmap_head)
--{
--	return __rmap_write_protect(kvm, rmap_head, false);
--}
--
- void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
- 				      struct kvm_memory_slot *memslot)
- {
- 	bool flush;
- 
- 	spin_lock(&kvm->mmu_lock);
--	flush = slot_handle_all_level(kvm, memslot, slot_rmap_write_protect,
-+	flush = slot_handle_all_level(kvm, memslot, SLOT_RMAP_WRITE_PROTECT,
- 				      false);
- 	spin_unlock(&kvm->mmu_lock);
- 
-@@ -5226,7 +5250,7 @@ void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
- 	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
- 	spin_lock(&kvm->mmu_lock);
- 	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
--			 kvm_mmu_zap_collapsible_spte, true);
-+			 SLOT_ZAP_COLLAPSIBLE_SPTE, true);
- 	spin_unlock(&kvm->mmu_lock);
- }
- 
-@@ -5236,7 +5260,7 @@ void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
- 	bool flush;
- 
- 	spin_lock(&kvm->mmu_lock);
--	flush = slot_handle_leaf(kvm, memslot, __rmap_clear_dirty, false);
-+	flush = slot_handle_leaf(kvm, memslot, SLOT_RMAP_CLEAR_DIRTY, false);
- 	spin_unlock(&kvm->mmu_lock);
- 
- 	lockdep_assert_held(&kvm->slots_lock);
-@@ -5258,7 +5282,7 @@ void kvm_mmu_slot_largepage_remove_write_access(struct kvm *kvm,
- 	bool flush;
- 
- 	spin_lock(&kvm->mmu_lock);
--	flush = slot_handle_large_level(kvm, memslot, slot_rmap_write_protect,
-+	flush = slot_handle_large_level(kvm, memslot, SLOT_RMAP_WRITE_PROTECT,
- 					false);
- 	spin_unlock(&kvm->mmu_lock);
- 
-@@ -5276,7 +5300,7 @@ void kvm_mmu_slot_set_dirty(struct kvm *kvm,
- 	bool flush;
- 
- 	spin_lock(&kvm->mmu_lock);
--	flush = slot_handle_all_level(kvm, memslot, __rmap_set_dirty, false);
-+	flush = slot_handle_all_level(kvm, memslot, SLOT_RMAP_SET_DIRTY, false);
- 	spin_unlock(&kvm->mmu_lock);
- 
- 	lockdep_assert_held(&kvm->slots_lock);
+ 		if (i >= ARRAY_SIZE(kdb_name_table)) {
+ 			debug_kfree(kdb_name_table[0]);
+-			memcpy(kdb_name_table, kdb_name_table+1,
++			memmove(kdb_name_table, kdb_name_table+1,
+ 			       sizeof(kdb_name_table[0]) *
+ 			       (ARRAY_SIZE(kdb_name_table)-1));
+ 		} else {
+ 			debug_kfree(knt1);
+ 			knt1 = kdb_name_table[i];
+-			memcpy(kdb_name_table+i, kdb_name_table+i+1,
++			memmove(kdb_name_table+i, kdb_name_table+i+1,
+ 			       sizeof(kdb_name_table[0]) *
+ 			       (ARRAY_SIZE(kdb_name_table)-i-1));
+ 		}
 -- 
-2.7.4
+2.9.0
