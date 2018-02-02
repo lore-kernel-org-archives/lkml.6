@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224QLcZwiFwA/YPv6PrfjYHA0kA+YrDmSscVpFT2De7KVB+ImzKwIs9t59DZmCZgoT0Ir0kj
-ARC-Seal: i=1; a=rsa-sha256; t=1517590843; cv=none;
+X-Google-Smtp-Source: AH8x224tiaIN8Ssb2nVd2lCVzGUAoeVD9euU28MqlDYy7tp94kYAJI/IMf58AxIltII8p3uNqO9/
+ARC-Seal: i=1; a=rsa-sha256; t=1517590838; cv=none;
         d=google.com; s=arc-20160816;
-        b=aB2Ke0jLPwlCG7m8VP8H/HqvpwqW3rTYcnFKqkVP34vNGfbp5/ddTiNi+QIL0ve2PM
-         GgmvazCvkHVIV6Nd9p/8KVXAMJ6JzDjLdHW5jB49BYBW+NpZJh/XNtUOF3ebNFBoF1zZ
-         bzCrIf4YAUOmpDDye+sIdYqIU2JxsPAtq2xYkwgUsyaAfYlpWiPRzSMAVk0eYAcIjOD3
-         8hg4wzwsKoZZHmJdAh/jocRnmQqdNhBfYTKKvtTfIS0uVHPwqLkJXbtfixQPVG0sWSai
-         w0Do9bSzLv52apAM6zsu7sVdh+N/UztotCK/2Qkm8N9lx+mIwxXcDyfiKPNcQHR96zyZ
-         3Pxw==
+        b=n1JRwsju8Abb3fedvfM+Jodksr6pQGrJVrAd2PVXt7FJ98/H77sHRGUrlp+d3nNm0a
+         hy4DHcQP9jxDtv047XL4geGn9TSZyEGFhc0qQqZdyQGpob5RIU4vbPrJ3P6oqYhwSnFu
+         +EsHNePe53FLlozeLfPtnYqd+OMV2k7rp11daKaE2kVO/2KZsDopw93D+Y5BsimwnXhd
+         1GuUxjvUX2KrDRiIVah0VxED9Rxpa/jL+Q8AcRh6RgAfow6H9kAtiYTpCezLHNzTQsWf
+         eVlkfSWbp0XjGzvOat5UPfGvQaJpgLXNEUYDDf41sNQoxNeLic/fIforBi4lXBVoTxbt
+         mc3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DANkScTzFWW4W02XwJjrPuFfY238tTcbPhy1sQU0sMs=;
-        b=QE2wH+MmuEAyeGX5ZJI3yw9vojnwhvGViWGxKl0pE3GdJxeR8V5VwhhQfqDZ0rsxq1
-         9QpxEVPB3II+ENFJtxPNtP8E/y3uNqqDALY4ugXSU8mZZpOBK0AUWbItCpthCR7raUKE
-         XHfbLlQ6dPUFBf7uFMlQX6MyKLexbpdWTbyoKuN+P9QDixQozdv6empnf8ftvMu/8xmc
-         oTTCkmKr0EWrUbeKi/4TJAIsxhr4GIqMMKB1p+xLoawY/mVWtB795QHyu3ZUhs38u8QO
-         l5N3xLsoUrzy91TCiRe3X3gdt0GTRHNW0upy1IefvGYd5BOIGxfXV/ek988t6nzsHpue
-         QKsQ==
+        bh=uccpZixSY6+G46tcKeRaUk6mpW6ToZIAP7rt8cxkvmI=;
+        b=NNhShFXJ17N8w8odGcZ5WSwS0JImcbsLrAs+22OSlBiozaKDhPTHp9GaBQ56fco7o0
+         ZhsJJwml0xwpbqkEj93wjBqkB6/JAGy08eYlawLnUNAeGecq+fvxO+bQe6OG4+t3uRvs
+         kcZf2fG240O1drs9pf8DJvjRfXPGlyCmL80tiUc+IU9Ywajs3KTUmdU215w4buzJGLS6
+         yV2Jj1WVOHax1PcAJxfSh37fTVyGPkTmPOAJpcZFT1ftzb9PzfNz3qlWagynBurEmc00
+         jKHWg4+byHz35RvuGvd+8IWbVt/NPmtQ+Dtro7pSWzkILsF7PQiYan0VDuT3+a1bhHBG
+         JT/Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nikita Leshenko <nikita.leshchenko@oracle.com>,
-	Liran Alon <liran.alon@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	Steve Rutherford <srutherford@google.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 25/67] KVM: x86: ioapic: Clear Remote IRR when entry is switched to edge-triggered
-Date: Fri,  2 Feb 2018 17:57:54 +0100
-Message-Id: <20180202140818.221321289@linuxfoundation.org>
+	syzbot+48340bb518e88849e2e3@syzkaller.appspotmail.com,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 4.4 09/67] bpf: fix 32-bit divide by zero
+Date: Fri,  2 Feb 2018 17:57:38 +0100
+Message-Id: <20180202140816.287771547@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -44,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309336556964423?=
-X-GMAIL-MSGID: =?utf-8?q?1591309336556964423?=
+X-GMAIL-THRID: =?utf-8?q?1591309331274938520?=
+X-GMAIL-MSGID: =?utf-8?q?1591309331274938520?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,56 +49,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikita Leshenko <nikita.leshchenko@oracle.com>
+From: Alexei Starovoitov <ast@kernel.org>
 
+[ upstream commit 68fda450a7df51cff9e5a4d4a4d9d0d5f2589153 ]
 
-[ Upstream commit a8bfec2930525808c01f038825d1df3904638631 ]
+due to some JITs doing if (src_reg == 0) check in 64-bit mode
+for div/mod operations mask upper 32-bits of src register
+before doing the check
 
-Some OSes (Linux, Xen) use this behavior to clear the Remote IRR bit for
-IOAPICs without an EOI register. They simulate the EOI message manually
-by changing the trigger mode to edge and then back to level, with the
-entry being masked during this.
-
-QEMU implements this feature in commit ed1263c363c9
-("ioapic: clear remote irr bit for edge-triggered interrupts")
-
-As a side effect, this commit removes an incorrect behavior where Remote
-IRR was cleared when the redirection table entry was rewritten. This is not
-consistent with the manual and also opens an opportunity for a strange
-behavior when a redirection table entry is modified from an interrupt
-handler that handles the same entry: The modification will clear the
-Remote IRR bit even though the interrupt handler is still running.
-
-Signed-off-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Reviewed-by: Steve Rutherford <srutherford@google.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 622582786c9e ("net: filter: x86: internal BPF JIT")
+Fixes: 7a12b5031c6b ("sparc64: Add eBPF JIT.")
+Reported-by: syzbot+48340bb518e88849e2e3@syzkaller.appspotmail.com
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/ioapic.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ kernel/bpf/verifier.c |   18 ++++++++++++++++++
+ net/core/filter.c     |    4 ++++
+ 2 files changed, 22 insertions(+)
 
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -296,8 +296,17 @@ static void ioapic_write_indirect(struct
- 		} else {
- 			e->bits &= ~0xffffffffULL;
- 			e->bits |= (u32) val;
--			e->fields.remote_irr = 0;
- 		}
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2248,6 +2248,24 @@ static int fixup_bpf_calls(struct verifi
+ 	int i, cnt, delta = 0;
+ 
+ 	for (i = 0; i < insn_cnt; i++, insn++) {
++		if (insn->code == (BPF_ALU | BPF_MOD | BPF_X) ||
++		    insn->code == (BPF_ALU | BPF_DIV | BPF_X)) {
++			/* due to JIT bugs clear upper 32-bits of src register
++			 * before div/mod operation
++			 */
++			insn_buf[0] = BPF_MOV32_REG(insn->src_reg, insn->src_reg);
++			insn_buf[1] = *insn;
++			cnt = 2;
++			new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
++			if (!new_prog)
++				return -ENOMEM;
 +
-+		/*
-+		 * Some OSes (Linux, Xen) assume that Remote IRR bit will
-+		 * be cleared by IOAPIC hardware when the entry is configured
-+		 * as edge-triggered. This behavior is used to simulate an
-+		 * explicit EOI on IOAPICs that don't have the EOI register.
-+		 */
-+		if (e->fields.trig_mode == IOAPIC_EDGE_TRIG)
-+			e->fields.remote_irr = 0;
++			delta    += cnt - 1;
++			env->prog = prog = new_prog;
++			insn      = new_prog->insnsi + i + delta;
++			continue;
++		}
 +
- 		mask_after = e->fields.mask;
- 		if (mask_before != mask_after)
- 			kvm_fire_mask_notifiers(ioapic->kvm, KVM_IRQCHIP_IOAPIC, index, mask_after);
+ 		if (insn->code != (BPF_JMP | BPF_CALL))
+ 			continue;
+ 
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -430,6 +430,10 @@ do_pass:
+ 			    convert_bpf_extensions(fp, &insn))
+ 				break;
+ 
++			if (fp->code == (BPF_ALU | BPF_DIV | BPF_X) ||
++			    fp->code == (BPF_ALU | BPF_MOD | BPF_X))
++				*insn++ = BPF_MOV32_REG(BPF_REG_X, BPF_REG_X);
++
+ 			*insn = BPF_RAW_INSN(fp->code, BPF_REG_A, BPF_REG_X, 0, fp->k);
+ 			break;
+ 
