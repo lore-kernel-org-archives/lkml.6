@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2261LE5ahtkNDx0a/2lVc4HROHde4JwZkISxfQvhftn+L2Y4eKGup0eJPHVG7FA/ifoam5nq
-ARC-Seal: i=1; a=rsa-sha256; t=1517591059; cv=none;
+X-Google-Smtp-Source: AH8x2240rmPo5UtJTU0usMjHiMP4Hw2xSS5qUdu5vcNWUSyq00ayAHZf53QfvVbaMN+OMmzPsVEn
+ARC-Seal: i=1; a=rsa-sha256; t=1517591056; cv=none;
         d=google.com; s=arc-20160816;
-        b=e3gt47hGzM/3rZYo7WITseB9betKmp6O9cPVjW+wrRmEZTsOrFGEnexKhsS5mQHQi1
-         RWc1RDgZZtR09CGrfGwjeh5YQvcHKWR5q0gFB2Hzp1fX2YQIO2dlaMsZ7oFSv9xE9J1e
-         xX645fFiCduK4wURknf1AQIRvEej2xT/m10SlKrRSe2n/2ybUWGFNDVrkHUfMTkAE5mV
-         djw7HnkUGGL2eCTK1nOnRrWeh6qbBZvmTTPyI7kgmhkeUw1b1AapBo1I2Td7YVkjSsTW
-         duIZUhHpxRemXPD6THDu3BBAHJW1HUhcaTlcMscnUvYsrvbxxrOKZbz00+QD2669rCpz
-         njiw==
+        b=OS9fa4tK3hDm3a9wxNVUpLYLMnmhyl8Rj+T/9aCio/12mdAFefKGmcEXgO3G1XyqrO
+         QBcI2fZLQBU73gI67SG2C+wRCVQWFOVRC2dsDiIJ3faHMNZYmmmO3ktpK/PaHX53X9Q3
+         FHyDYXwBH66PemXP/L3UISK2brs5dSjIRWTUzS9WSBQ/bOYWPpBhjjog2nYrhTP1oOaf
+         8b/DzhXEDNtWm43xlVtf7U4+JR0abmr8Bj7Bn9VAvKCFQsY0dAD5b7ZsWuFpZd82ha/B
+         GtC6olGZU1xzkE7QTruNdrIaIzXSsiNdSjjR8SbJHpZxBjSUqFfvtsCrJQmV014v0llr
+         +gDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VxA9EAacwlpZXWWzbZCxI7p75iRcrxu2MU0KjBlMyWc=;
-        b=bym7aLrgBtxV+qoE6ptuQh46heih3Bi3EAptTNyGGpwPbswVANk8yNp9L8u8ctAzeh
-         Wh5KGwfRwXasd0zdVodPKRxjzcX334wH2e5lu/76OEQDmjHJfNlvkcnvciF7jyWSRmEX
-         DeUDD/Vg3aRnDFHM2MOrK/Vp3XqDcfnxTEvxD2qRFbLUmSlONeg+WBbomvwwvgwVuffi
-         HwLVr1bHyAOkqjN2fB6qed+P+emirlKtys+eXgtty7R5oOWKW76HNlsXcKxy574i6fV9
-         +yrGnoc4DYjI/pKpf9I+JUajlMNAwWnBKtiwDcidcZAb8ZexhwVAprCa5RWpNc9F9E09
-         YRtw==
+        bh=vpL7JnOJtZBvWhUMx+VZwcGUuBH8cRMQzhoqZyElQAE=;
+        b=0W63/Syzne718QZ0f8Qr+y8hQWUFhs+G4fVCYBfwJ7ElyWFng1Qr8ssCrev6UvKe+Q
+         LPmvq2qLPs45P2CpbUDEmZP9/Md1fcXGX5jlF1zOtu7guxPyyUidK8M/pN3R30CKhOBv
+         /JFyfsnIkYWbqlsMMB/R1khRFgd/sDwV7+oQYzIXFmGl4yvElYmxLJWHgIpepeV8OBml
+         4/pvKb18xNQ/pgTnfTYid2SZ27y+MayE2+dnt/5bIrdq5Lt7yisfVE0+5CO0+Ktn+MNJ
+         eXjy2RC/i4c68mBhM/oQ51bNV61vOzhyGO336GJQT9S1O2kDqEotxl88IhB72kbn3UGS
+         +bOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
 	David Hildenbrand <david@redhat.com>,
 	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Nadav Amit <nadav.amit@gmail.com>,
 	Wanpeng Li <wanpeng.li@hotmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 37/86] KVM: VMX: Fix rflags cache during vCPU reset
-Date: Fri,  2 Feb 2018 17:57:57 +0100
-Message-Id: <20180202140825.916075600@linuxfoundation.org>
+Subject: [PATCH 4.9 36/86] KVM: X86: Fix softlockup when get the current kvmclock
+Date: Fri,  2 Feb 2018 17:57:56 +0100
+Message-Id: <20180202140825.835561072@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309345660400496?=
-X-GMAIL-MSGID: =?utf-8?q?1591309562695021988?=
+X-GMAIL-THRID: =?utf-8?q?1591309559973496793?=
+X-GMAIL-MSGID: =?utf-8?q?1591309559973496793?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,96 +51,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wanpeng Li <wanpeng.li@hotmail.com>
+From: Wanpeng Li <kernellwp@gmail.com>
 
 
-[ Upstream commit c37c28730bb031cc8a44a130c2555c0f3efbe2d0 ]
+[ Upstream commit e70b57a6ce4e8b92a56a615ae79bdb2bd66035e7 ]
 
-Reported by syzkaller:
+ watchdog: BUG: soft lockup - CPU#6 stuck for 22s! [qemu-system-x86:10185]
+ CPU: 6 PID: 10185 Comm: qemu-system-x86 Tainted: G           OE   4.14.0-rc4+ #4
+ RIP: 0010:kvm_get_time_scale+0x4e/0xa0 [kvm]
+ Call Trace:
+  get_time_ref_counter+0x5a/0x80 [kvm]
+  kvm_hv_process_stimers+0x120/0x5f0 [kvm]
+  kvm_arch_vcpu_ioctl_run+0x4b4/0x1690 [kvm]
+  kvm_vcpu_ioctl+0x33a/0x620 [kvm]
+  do_vfs_ioctl+0xa1/0x5d0
+  SyS_ioctl+0x79/0x90
+  entry_SYSCALL_64_fastpath+0x1e/0xa9
 
-   *** Guest State ***
-   CR0: actual=0x0000000080010031, shadow=0x0000000060000010, gh_mask=fffffffffffffff7
-   CR4: actual=0x0000000000002061, shadow=0x0000000000000000, gh_mask=ffffffffffffe8f1
-   CR3 = 0x000000002081e000
-   RSP = 0x000000000000fffa  RIP = 0x0000000000000000
-   RFLAGS=0x00023000         DR7 = 0x00000000000000
-          ^^^^^^^^^^
-   ------------[ cut here ]------------
-   WARNING: CPU: 6 PID: 24431 at /home/kernel/linux/arch/x86/kvm//x86.c:7302 kvm_arch_vcpu_ioctl_run+0x651/0x2ea0 [kvm]
-   CPU: 6 PID: 24431 Comm: reprotest Tainted: G        W  OE   4.14.0+ #26
-   RIP: 0010:kvm_arch_vcpu_ioctl_run+0x651/0x2ea0 [kvm]
-   RSP: 0018:ffff880291d179e0 EFLAGS: 00010202
-   Call Trace:
-    kvm_vcpu_ioctl+0x479/0x880 [kvm]
-    do_vfs_ioctl+0x142/0x9a0
-    SyS_ioctl+0x74/0x80
-    entry_SYSCALL_64_fastpath+0x23/0x9a
+This can be reproduced when running kvm-unit-tests/hyperv_stimer.flat and
+cpu-hotplug stress simultaneously. __this_cpu_read(cpu_tsc_khz) returns 0
+(set in kvmclock_cpu_down_prep()) when the pCPU is unhotplug which results
+in kvm_get_time_scale() gets into an infinite loop.
 
-The failed vmentry is triggered by the following beautified testcase:
+This patch fixes it by treating the unhotplug pCPU as not using master clock.
 
-    #include <unistd.h>
-    #include <sys/syscall.h>
-    #include <string.h>
-    #include <stdint.h>
-    #include <linux/kvm.h>
-    #include <fcntl.h>
-    #include <sys/ioctl.h>
-
-    long r[5];
-    int main()
-    {
-        struct kvm_debugregs dr = { 0 };
-
-        r[2] = open("/dev/kvm", O_RDONLY);
-        r[3] = ioctl(r[2], KVM_CREATE_VM, 0);
-        r[4] = ioctl(r[3], KVM_CREATE_VCPU, 7);
-        struct kvm_guest_debug debug = {
-                .control = 0xf0403,
-                .arch = {
-                        .debugreg[6] = 0x2,
-                        .debugreg[7] = 0x2
-                }
-        };
-        ioctl(r[4], KVM_SET_GUEST_DEBUG, &debug);
-        ioctl(r[4], KVM_RUN, 0);
-    }
-
-which testcase tries to setup the processor specific debug
-registers and configure vCPU for handling guest debug events through
-KVM_SET_GUEST_DEBUG.  The KVM_SET_GUEST_DEBUG ioctl will get and set
-rflags in order to set TF bit if single step is needed. All regs' caches
-are reset to avail and GUEST_RFLAGS vmcs field is reset to 0x2 during vCPU
-reset. However, the cache of rflags is not reset during vCPU reset. The
-function vmx_get_rflags() returns an unreset rflags cache value since
-the cache is marked avail, it is 0 after boot. Vmentry fails if the
-rflags reserved bit 1 is 0.
-
-This patch fixes it by resetting both the GUEST_RFLAGS vmcs field and
-its cache to 0x2 during vCPU reset.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Tested-by: Dmitry Vyukov <dvyukov@google.com>
+Reviewed-by: Radim Krčmář <rkrcmar@redhat.com>
 Reviewed-by: David Hildenbrand <david@redhat.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/x86.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -5194,7 +5194,7 @@ static void vmx_vcpu_reset(struct kvm_vc
- 		vmcs_write64(GUEST_IA32_DEBUGCTL, 0);
- 	}
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1751,10 +1751,13 @@ static u64 __get_kvmclock_ns(struct kvm
+ 	/* both __this_cpu_read() and rdtsc() should be on the same cpu */
+ 	get_cpu();
  
--	vmcs_writel(GUEST_RFLAGS, 0x02);
-+	kvm_set_rflags(vcpu, X86_EFLAGS_FIXED);
- 	kvm_rip_write(vcpu, 0xfff0);
+-	kvm_get_time_scale(NSEC_PER_SEC, __this_cpu_read(cpu_tsc_khz) * 1000LL,
+-			   &hv_clock.tsc_shift,
+-			   &hv_clock.tsc_to_system_mul);
+-	ret = __pvclock_read_cycles(&hv_clock, rdtsc());
++	if (__this_cpu_read(cpu_tsc_khz)) {
++		kvm_get_time_scale(NSEC_PER_SEC, __this_cpu_read(cpu_tsc_khz) * 1000LL,
++				   &hv_clock.tsc_shift,
++				   &hv_clock.tsc_to_system_mul);
++		ret = __pvclock_read_cycles(&hv_clock, rdtsc());
++	} else
++		ret = ktime_get_boot_ns() + ka->kvmclock_offset;
  
- 	vmcs_writel(GUEST_GDTR_BASE, 0);
+ 	put_cpu();
+ 
