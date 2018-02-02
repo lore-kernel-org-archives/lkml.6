@@ -1,72 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752269AbeBBQpQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 11:45:16 -0500
-Received: from mout.web.de ([212.227.15.14]:64223 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751732AbeBBQpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 11:45:09 -0500
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] i2c-ibm_iic: Delete an error message for a failed memory
- allocation in iic_probe()
-Message-ID: <3c085530-c0d4-e2b2-8dcd-393ef7571243@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 17:45:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752383AbeBBQqx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 11:46:53 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37972 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751732AbeBBQqp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 11:46:45 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D3D126050D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Fri, 2 Feb 2018 16:46:43 +0000
+From: Lina Iyer <ilina@codeaurora.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: tglx@linutronix.de, jason@lakedaemon.net, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org,
+        rnayak@codeaurora.org, asathyak@codeaurora.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC v2 2/3] dt-bindings/interrupt-controller: pdc:
+ descibe PDC device binding
+Message-ID: <20180202164643.GC5319@codeaurora.org>
+References: <20180202142200.6229-1-ilina@codeaurora.org>
+ <20180202142200.6229-3-ilina@codeaurora.org>
+ <396cfc2f-7deb-0c93-7178-d9f5524f110e@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:xNNIusdv6HpMBQdtHq/cwd2ML/Qb2eAOvEbZuCeYvm9pLZiTAO7
- 17Zb7vnWQuW4Xr5RZyPPSwgLgvF3rknsMp9zChMX599IvOXv3jzSa1VnDKxIBxQhPYpTLK1
- v7E6+AyGt5gEbCHpcq1Tyx383TuMywDrDUTUTbjQ3+AGD4cbBiWiXPuJAYF9Xm2Cw+jVQSX
- j3/OZDoBQ5WL+bm/TnWMQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:kRU13CNCSjI=:/XN8Lf1Hf6dIQzZ5T3JTAQ
- x2vUaYw5fhe0tHImPVbM+hhKX3sRSvnlZoMsn5tli4766hCau+YNXUlljjj88LWZani8Uc4Gs
- 7GAlxD97jdkk9jn2X+midmhkLIs0kNuZv2Af85WxF+mjSZWIY5pebUhqYn4wq0Cx1rtZ4OS+0
- gTUUgPMQT+cWuUg9dC/c5+H6mSjFU1VayuuFXcRvKxwBJuINW0wRyoHUZrqqOE4fmE0zfHRvR
- T3alPfoiGYqIlWBhlCLljv3v0KCzbDC11l+dUtSE+7V/NFdecSv55VlpN6eQ6bGYdQJ9HvPtm
- 70e7RVdYOV8TYzZsPRvcVMEqRz/az0I31UHuF78kVDW31g+NMaLNJZkUJkp6+Qo/6k7XYX8V/
- RQXvWmqOgdvizQe2OOe3mn1VM55ezzLyUmdiXZ3FjbnsgsvJ6vcoaXw5O7oShrJalC+UY4agI
- IsmTvbFcKsShSxUfahvbwu6/cdMagG2BqHmmARCQ+IfzjQAMk5eqL6zHGOjxxPvvEOOAr6sJs
- zsRi1bIJ8gAjAbaU3fTqwBP6wOh3Ti1SHzYx1RbPv3ISvAmBuJQ0WrX3s/7sBxg3EZLcngNLD
- GIbJmy3oRkA6cEvKbIi3w6dMzOrSARShrkJYQiPEnVbq1VLbsFrKq67ArIUhbPv96EofA08hf
- Dboxp0BwnooWwQS36SFC7npFvPaZJdAikGgIyHw23KBk1rcek/DO0n3xTAAWnfxosxQGIuV2O
- 5fYai3bYTXMtFXqtyk+A1zPv4+LvutNCmp2ocPxM1uY7BuIjZvJ54lMHyGOPWas4oKLOcQQ3J
- VlHMrYRBs8OXsP/BHpdQ+3dBHrGheZM5IfWujvMnhm78XDgv8I=
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <396cfc2f-7deb-0c93-7178-d9f5524f110e@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 17:24:57 +0100
+On Fri, Feb 02 2018 at 16:28 +0000, Marc Zyngier wrote:
+>On 02/02/18 14:21, Lina Iyer wrote:
+>> From: Archana Sathyakumar <asathyak@codeaurora.org>
+>>
+>> Add device binding documentation for the PDC Interrupt controller on
+>> QCOM SoC's like the SDM845. The interrupt-controller can be used to
+>> sense edge low interrupts and wakeup interrupts when the GIC is
+>> non-operational.
+>>
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> ---
+>>  .../bindings/interrupt-controller/qcom,pdc.txt     | 78 ++++++++++++++++++++++
+>>  1 file changed, 78 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+>> new file mode 100644
+>> index 000000000000..7bf40cb6a4f8
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+>> @@ -0,0 +1,78 @@
+>> +PDC interrupt controller
+>> +
+>> +Qualcomm Technologies Inc. SoCs based on the RPM Hardened architecture have a
+>> +Power Domain Controller (PDC) that is on always-on domain. In addition to
+>> +providing power control for the power domains, the hardware also has an
+>> +interrupt controller that can be used to help detect edge low interrupts as
+>> +well detect interrupts when the GIC is non-operational.
+>> +
+>> +GIC is parent interrupt controller at the highest level. Platform interrupt
+>> +controller PDC is next in hierarchy, followed by others. Drivers requiring
+>> +wakeup capabilities of their device interrupts routed through the PDC, must
+>> +specify PDC as their interrupt controller and request the PDC port associated
+>> +with the GIC interrupt. See example below.
+>> +
+>> +Properties:
+>> +
+>> +- compatible:
+>> +	Usage: required
+>> +	Value type: <string>
+>> +	Definition: Should contain "qcom,<soc>-pdc"
+>> +		    - "qcom,sdm845-pdc": For SDM845
+>> +
+>> +- reg:
+>> +	Usage: required
+>> +	Value type: <prop-encoded-array>
+>> +	Definition: Specifies the base physical address for PDC hardware.
+>> +
+>> +- interrupt-cells:
+>> +	Usage: required
+>> +	Value type: <u32>
+>> +	Definition: Specifies the number of cells needed to encode an interrupt
+>> +		    source.
+>> +		    The value must match that of the parent interrupt
+>> +		    controller defined in the DT.
+>> +		    The encoding of these cells are same as described in [1].
+>
+>There shouldn't be such a requirement. These are two independent pieces
+>of HW, and the first parameter doesn't mean anything for the PDC.
+>
+Wouldn't that be confusing - that we have different definitions for
+interrupts in the same DT? I agree that they are different interrupt
+controllers, but it just feels odd.
 
-Omit an extra message for a memory allocation failure in this function.
+I will change this to just take 2 cells.
 
-This issue was detected by using the Coccinelle software.
+>> +
+>> +- interrupt-parent:
+>> +	Usage: required
+>> +	Value type: <phandle>
+>> +	Definition: Specifies the interrupt parent necessary for hierarchical
+>> +		    domain to operate.
+>> +
+>> +- interrupt-controller:
+>> +	Usage: required
+>> +	Value type: <bool>
+>> +	Definition: Identifies the node as an interrupt controller.
+>> +
+>> +- qcom,pdc-range:
+>> +	Usage: required
+>> +	Value type: <u32 array>
+>> +	Definition: Specifies the PDC pin offset and the number of PDC ports.
+>> +		    The tuples indicates the valid mapping of valid PDC ports
+>> +		    and their hwirq mapping.
+>> +		    The first element of the tuple is the staring PDC port num.
+>> +		    The second element is the hwirq number for the PDC port.
+>> +		    The third element is the number of elements in sequence.
+>> +
+>> +Example:
+>> +
+>> +	pdc: interrupt-controller@b220000 {
+>> +		compatible = "qcom,sdm845-pdc";
+>> +		reg = <0xb220000 0x30000>;
+>> +		qcom,pdc-ranges = <0 512 94>, <94 641 15>, <115 662 7>;
+>> +		#interrupt-cells = <3>;
+>> +		interrupt-parent = <&intc>;
+>> +		interrupt-controller;
+>> +	};
+>> +
+>> +The DT binding of a device that wants to use the GIC SPI 514 as a wakeup
+>> +interrupt, would look like this -
+>> +
+>> +	wake-device {
+>> +		[...]
+>> +		interrupt-parent = <&pdc>;
+>> +		interrupt = <0 2 0>;
+>
+>Again: 0 is not a valid trigger value.
+>
+Ok.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/i2c/busses/i2c-ibm_iic.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-ibm_iic.c b/drivers/i2c/busses/i2c-ibm_iic.c
-index 961c5f42d956..1bd4d6dde0fe 100644
---- a/drivers/i2c/busses/i2c-ibm_iic.c
-+++ b/drivers/i2c/busses/i2c-ibm_iic.c
-@@ -702,10 +702,8 @@ static int iic_probe(struct platform_device *ofdev)
- 	int ret;
- 
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
--	if (!dev) {
--		dev_err(&ofdev->dev, "failed to allocate device data\n");
-+	if (!dev)
- 		return -ENOMEM;
--	}
- 
- 	platform_set_drvdata(ofdev, dev);
- 
--- 
-2.16.1
+Thanks,
+Lina
