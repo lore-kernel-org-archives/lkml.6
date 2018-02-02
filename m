@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2255AtQhPY8gz49XzpuumeUGPeAVSbXeEDvGSPjM9l48SRfOmtha5rbrMNxov5UANKZEWJaa
-ARC-Seal: i=1; a=rsa-sha256; t=1517590929; cv=none;
+X-Google-Smtp-Source: AH8x225/KIxKNJ9w+j6vTKGSpXk25jK2g7/qkZ+/huw6LxiX9gznOZ6A/+NeyGD9a9WNh6+ydOg7
+ARC-Seal: i=1; a=rsa-sha256; t=1517590926; cv=none;
         d=google.com; s=arc-20160816;
-        b=Dz+Tc7PdMFuH4e7zxPKQ3fRrBBIOoneL+2cn8kQ1HqXLKwnvFk8fF1JlhPqmhFlSZt
-         WQFpEU71kVSG1GB/i7IdMSKC6iKLBbcP1I6CyqLuQkdWmkinmMOdixFqF4SeHg7XSLhI
-         /eLyU/5ynQVJsXl35Usafmsm1ZUzRbL5nggGYyXcHL/MHkOQXpYHN+DFhVsAx69iwM+a
-         tg/ciMgTw6gkBJyam3T9PEDXQa//KbB5fA9g+2yjdjH7WjQxEIv/mhDwsXz0tnjTMMDO
-         ZS6CFupQd1whBlh8EZJPJh7yNis6Q0M8z6eVhAeaZxvKUvvBTyl6oXPZA5hLE7XhaIoG
-         x50w==
+        b=jh4yh7CEv4fTL5jJZtAOB7ST0g5oRKOa4qMtTDBN1EQFNOy+MTq3JjNuhfhDs59Ei5
+         txb3m6/bibPY7HramCXwYQrLNZbjq7xqQAQSsLT0JrlMBpDJYWOsDEsPjrzV3pMjopdp
+         67zpgEa4O6KleeS3BTZCfHAtUWrQeIU7vtqtMg+e4JKAky9drK4lw144N0ZtRIwRAkcg
+         uYt9wGCbZ7ysHrOM7OxQ3QvINC2gemgB5OJ6Zy/mmUU2S1XDlVSryyPtaKwVgOjHKeJn
+         bIFp/D1Y7tZtLkDhGtLCaIILIJuIPlYFj8qOQL1PbaUGjoD8tJ+0pd7yPk06zeMimdpS
+         OyHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GBDVX8OD8v38uOx4q5Plu7TTJSCgtnCJLLsOKcy7gSM=;
-        b=f8NU0vuMOiv5yHuhEIQtq5BqH3GpuJ+Tp3uyttFii0YeLoLfe+jYAgVYfN3t8C5G00
-         Dv1GPz+FTtPiBCFW1NqF4+obPVHZ/5XMtXT+sAbZTj4V8Gm1fUM1o5uJvY/B27t8lRFi
-         6TECHpIXIdhCmCpuPsVF683tz967SEvMSDpnAPF6OIvOI3wGZjY0qSnEJyMT59quAUoI
-         Njouf2StNWSLqA4xTWcFFHw/muABzbxY977dyEDgu2ZDQQUuCkIOxkN70sLjmWU/6woq
-         P5Cw/RHUEKMRQuOMmU4J4Nyjian0iEEXFzGo2HvETMq9A79cELLjV85dnsVeKucqQB/i
-         FlfQ==
+        bh=k0GqFqEzJHtmb08p0s/k+15hv7pmeaKFGv3gG3wvK2U=;
+        b=mrIbd3PIvCAXB/PbUJqubLgZHm+N3tXX28t+l1Y6HUioEHr1s8a9c6lfj+OAOstyOv
+         q2Br1fT3ZFTyrW2sj9q3bt4CspMCaZpgOYQ90ZZ8LD8UKKCUoza0sAyUhjFrPXrUsfNs
+         DR21Z1F6OFsSfNfFPYulwW1yDWqEqpa078jHq5KfcyJW2dXTqAaFiWodH0dBmGPpb0nB
+         elrupPHTqohGD8LVPFewuK5e8yCsknxJoRp67BmL7X9GVbvdWy2T4CKn4IXlI0KJTlwh
+         wbW2mC2RPZAlsHtQwl2MjZlkmYt8M7aLnMRfGSx28NbPhCbIymMRbWSih6l5pJQT8tRC
+         9D7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 28/67] cpufreq: Add Loongson machine dependencies
-Date: Fri,  2 Feb 2018 17:57:57 +0100
-Message-Id: <20180202140818.713827052@linuxfoundation.org>
+	Jia-Ju Bai <baijiaju1990@gmail.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 59/67] USB: serial: io_edgeport: fix possible sleep-in-atomic
+Date: Fri,  2 Feb 2018 17:58:28 +0100
+Message-Id: <20180202140821.795512462@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140815.091718203@linuxfoundation.org>
 References: <20180202140815.091718203@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309426016769835?=
-X-GMAIL-MSGID: =?utf-8?q?1591309426016769835?=
+X-GMAIL-THRID: =?utf-8?q?1591309422775128641?=
+X-GMAIL-MSGID: =?utf-8?q?1591309422775128641?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,50 +48,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
+commit c7b8f77872c73f69a16528a9eb87afefcccdc18b upstream.
 
-[ Upstream commit 0d307935fefa6389eb726c6362351c162c949101 ]
+According to drivers/usb/serial/io_edgeport.c, the driver may sleep
+under a spinlock.
+The function call path is:
+edge_bulk_in_callback (acquire the spinlock)
+   process_rcvd_data
+     process_rcvd_status
+       change_port_settings
+         send_iosp_ext_cmd
+           write_cmd_usb
+             usb_kill_urb --> may sleep
 
-The MIPS loongson cpufreq drivers don't build unless configured for the
-correct machine type, due to dependency on machine specific architecture
-headers and symbols in machine specific platform code.
+To fix it, the redundant usb_kill_urb() is removed from the error path
+after usb_submit_urb() fails.
 
-More specifically loongson1-cpufreq.c uses RST_CPU_EN and RST_CPU,
-neither of which is defined in asm/mach-loongson32/regs-clk.h unless
-CONFIG_LOONGSON1_LS1B=y, and loongson2_cpufreq.c references
-loongson2_clockmod_table[], which is only defined in
-arch/mips/loongson64/lemote-2f/clock.c, i.e. when
-CONFIG_LEMOTE_MACH2F=y.
+This possible bug is found by my static analysis tool (DSAC) and checked
+by my code review.
 
-Add these dependencies to Kconfig to avoid randconfig / allyesconfig
-build failures (e.g. when based on BMIPS which also has a cpufreq
-driver).
-
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/cpufreq/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/cpufreq/Kconfig
-+++ b/drivers/cpufreq/Kconfig
-@@ -236,6 +236,7 @@ endif
- if MIPS
- config LOONGSON2_CPUFREQ
- 	tristate "Loongson2 CPUFreq Driver"
-+	depends on LEMOTE_MACH2F
- 	help
- 	  This option adds a CPUFreq driver for loongson processors which
- 	  support software configurable cpu frequency.
-@@ -248,6 +249,7 @@ config LOONGSON2_CPUFREQ
- 
- config LOONGSON1_CPUFREQ
- 	tristate "Loongson1 CPUFreq Driver"
-+	depends on LOONGSON1_LS1B
- 	help
- 	  This option adds a CPUFreq driver for loongson1 processors which
- 	  support software configurable cpu frequency.
+---
+ drivers/usb/serial/io_edgeport.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -2219,7 +2219,6 @@ static int write_cmd_usb(struct edgeport
+ 		/* something went wrong */
+ 		dev_err(dev, "%s - usb_submit_urb(write command) failed, status = %d\n",
+ 			__func__, status);
+-		usb_kill_urb(urb);
+ 		usb_free_urb(urb);
+ 		atomic_dec(&CmdUrbs);
+ 		return status;
