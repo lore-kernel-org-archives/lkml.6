@@ -1,63 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755202AbeBBSlH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 13:41:07 -0500
-Received: from mga04.intel.com ([192.55.52.120]:47241 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755061AbeBBSkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 13:40:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,450,1511856000";
-   d="scan'208";a="28359778"
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Nikola Ciprich <nikola.ciprich@linuxbox.cz>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 8/8] parport: Replace short License header by SPDX identifier
-Date: Fri,  2 Feb 2018 20:39:55 +0200
-Message-Id: <20180202183955.85453-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180202183955.85453-1-andriy.shevchenko@linux.intel.com>
-References: <20180202183955.85453-1-andriy.shevchenko@linux.intel.com>
+        id S1755209AbeBBSlt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 13:41:49 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:35930 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754188AbeBBSlW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 13:41:22 -0500
+X-Google-Smtp-Source: AH8x224qIDKd2hF/0GreF9SiGGDyezEcW23vCX0es/Fum/dlJ8+jarON+014n5xkA+kuxl7g0sUuvQ==
+Date: Fri, 2 Feb 2018 13:41:20 -0500 (EST)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 7/7] Kbuild: lto: pass -m32/-m64 to to LDFINAL
+In-Reply-To: <20180202162104.2300532-7-arnd@arndb.de>
+Message-ID: <nycvar.YSQ.7.76.1802021336090.1842@knanqh.ubzr>
+References: <20180202161550.2106846-1-arnd@arndb.de> <20180202162104.2300532-7-arnd@arndb.de>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No functional changes involved.
+On Fri, 2 Feb 2018, Arnd Bergmann wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/parport/parport_serial.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+> Building randconfig kernels with a biarch compiler fails with LTO
+> when the final link uses a different target architecture compared
+> to the earlier compilation stages.
+> 
+> Setting -m32 or -m64 in ${LDFINAL} solves this problem, though my
+> feeling is that there is a better way to do this. There might also
+> be other from KBUILD_CFLAGS that we may need in LDFINAL.
 
-diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
-index e71340014638..ae9e01ef7599 100644
---- a/drivers/parport/parport_serial.c
-+++ b/drivers/parport/parport_serial.c
-@@ -1,20 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Support for common PCI multi-I/O cards (which is most of them)
-  *
-  * Copyright (C) 2001  Tim Waugh <twaugh@redhat.com>
-  *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version
-- * 2 of the License, or (at your option) any later version.
-- *
-- *
-  * Multi-function PCI cards are supposed to present separate logical
-  * devices on the bus.  A common thing to do seems to be to just use
-  * one logical device with lots of base address registers for both
-  * parallel ports and serial ports.  This driver is for dealing with
-  * that.
-- *
-  */
+On ARM I had the same problem as it requires explicit arch flags. I 
+therefore used this patch:
+
+----- >8
+Subject: [PATCH] LTO: scripts/gcc-ld: LTO on ARM needs arch specific gcc flags
+
+Otherwise the final link where code generation happens produces code
+for the wrong ISA when the default CPU configured into gcc is not the
+one we need.
+
+Also display the actual command when invoked with "make V=1".
+
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+
+diff --git a/scripts/gcc-ld b/scripts/gcc-ld
+index d95dd0be38..fa53be2a34 100755
+--- a/scripts/gcc-ld
++++ b/scripts/gcc-ld
+@@ -27,4 +27,10 @@ while [ "$1" != "" ] ; do
+ 	shift
+ done
  
- #include <linux/interrupt.h>
--- 
-2.15.1
+-exec $CC $ARGS
++case "${KBUILD_VERBOSE}" in
++*1*)
++	set -x
++	;;
++esac
++
++exec $CC $KBUILD_CFLAGS $ARGS
