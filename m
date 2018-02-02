@@ -1,54 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752118AbeBBOEI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:04:08 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:48300 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752085AbeBBODx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:03:53 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 3/3] ARM: sun8i: v3s: enable audio on Lichee Pi Zero Dock board
-Date: Fri,  2 Feb 2018 22:01:53 +0800
-Message-Id: <20180202140153.21549-4-icenowy@aosc.io>
-In-Reply-To: <20180202140153.21549-1-icenowy@aosc.io>
-References: <20180202140153.21549-1-icenowy@aosc.io>
+        id S1752132AbeBBOEf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:04:35 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35757 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751638AbeBBOE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 09:04:27 -0500
+Subject: Re: Is the hisilicon tree maintained ?
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <68abfa22-86fa-67db-b583-661c9f5672ce@linaro.org>
+ <5A744EBA.7030104@hisilicon.com>
+ <e7a0977d-5fee-b874-d6b7-21638bb9b885@linaro.org>
+ <5A745526.6040006@hisilicon.com>
+ <9f22e61e-a5d4-47b9-b8dd-71443b9aa408@linaro.org>
+ <5A746C4A.9050604@hisilicon.com>
+ <ce9f1703-d27b-5d57-bf32-497917fca361@linaro.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5A746FD6.5050603@hisilicon.com>
+Date: Fri, 2 Feb 2018 14:04:06 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
+MIME-Version: 1.0
+In-Reply-To: <ce9f1703-d27b-5d57-bf32-497917fca361@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.123]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Lichee Pi Zero Dock board has an audio jack and an onboard MIC.
+Hi Daniel,
 
-Enable them.
+On 2018/2/2 13:53, Daniel Lezcano wrote:
+> On 02/02/2018 14:48, Wei Xu wrote:
+>> Hi Daniel,
+>>
+>> On 2018/2/2 13:34, Daniel Lezcano wrote:
+>>> On 02/02/2018 13:10, Wei Xu wrote:
+>>>> Hi Daniel,
+>>>>
+>>>> On 2018/2/2 12:05, Daniel Lezcano wrote:
+>>>>> On 02/02/2018 12:42, Wei Xu wrote:
+>>>>>> Hi Daniel,
+>>>>>>
+>>>>>> On 2018/2/2 6:59, Daniel Lezcano wrote:
+>>>>>>>
+>>>>>>> Hi Wei Xu,
+>>>>>>>
+>>>>>>> I found in the MAINTAINERS file the hisilicon tree is at:
+>>>>>>>
+>>>>>>> https://github.com/hisilicon/linux-hisi
+>>>>>>>
+>>>>>>> But, (except I missed it) I didn't find any update since Nov, 2017.
+>>>>>>>
+>>>>>>> Is that tree maintained ?
+>>>>>>
+>>>>>> Yes. It is still maintained.
+>>>>>> You can find update from other branches or the tags like next/dt64.
+>>>>>> I will update the master when every rc1 is released.
+>>>>>
+>>>>> Is there a development branch for something else than the DT ?
+>>>>
+>>>> Sorry, no developing branch is there.
+>>>> But we will create one if needed like the topic-acpi-mbigen branch.
+>>>> And most of development branches are kept in another git repo.
+>>>
+>>> What is the purpose of this tree? Why not rely on arm-soc?
+>>
+>> Currently it is mainly a place to pick up the patches
+>> and save the pull request.
+> 
+> What is the other repo with development branches you mentioned above ?
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Sorry, they are private repos in the github hisilicon and are for the SoC
+enablement like hip06, hip07 and so on.
+But if you can share what kind of information you want, I can create a
+public branch in the hisilicon/linux-hisi repo if I have those.
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts
-index d1311098ea45..80f477738668 100644
---- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts
-+++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero-dock.dts
-@@ -55,6 +55,15 @@
- 	};
- };
- 
-+&codec {
-+	allwinner,audio-routing =
-+		"Headphone", "HP",
-+		"Headphone", "HPCOM",
-+		"MIC1", "Mic",
-+		"Mic",  "HBIAS";
-+	status = "okay";
-+};
-+
- &mmc1 {
- 	broken-cd;
- 	bus-width = <4>;
--- 
-2.15.1
+Best Regards,
+Wei
+
+> 
+> 
