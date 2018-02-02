@@ -1,178 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751716AbeBBCod (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Feb 2018 21:44:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56886 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751521AbeBBCoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Feb 2018 21:44:25 -0500
-Date: Fri, 2 Feb 2018 04:44:20 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@redhat.com>
-Cc: linux-kernel@vger.kernel.org, slp@redhat.com, bhe@redhat.com,
-        somlo@cmu.edu, xiaolong.ye@intel.com
-Subject: Re: [PATCH v11 4/4] fw_cfg: write vmcoreinfo details
-Message-ID: <20180202044330-mutt-send-email-mst@kernel.org>
-References: <20180201130300.9962-1-marcandre.lureau@redhat.com>
- <20180201130300.9962-5-marcandre.lureau@redhat.com>
+        id S1751829AbeBBCoq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Feb 2018 21:44:46 -0500
+Received: from mail-it0-f50.google.com ([209.85.214.50]:33152 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751644AbeBBCoa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Feb 2018 21:44:30 -0500
+X-Google-Smtp-Source: AH8x226hBA8BXH8tt2xjf6+2CPDhkGgX5YK/x7wj9MFlromtwCk/Rl4AAtAF+Xa93KtgH6wHLQb6iiR0q2yzMcGSsiw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180201130300.9962-5-marcandre.lureau@redhat.com>
+In-Reply-To: <CAPM=9twxZtrNO8r_cQtXrMjkZ1jfvRD_3-dVPXAkLObE99DBFg@mail.gmail.com>
+References: <CAPM=9tzdZucx_zkMESOfTV5tp9tP+g_tVkCmcQ7R9vYLaXq3Gw@mail.gmail.com>
+ <CA+55aFzZiPJEoOViZh4hdKC=y9iEv8xAU_aCE2SxBqENZNO9_w@mail.gmail.com> <CAPM=9twxZtrNO8r_cQtXrMjkZ1jfvRD_3-dVPXAkLObE99DBFg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 1 Feb 2018 18:44:29 -0800
+X-Google-Sender-Auth: qYiQB9nSvP72TGuOwqmsdiOjWqo
+Message-ID: <CA+55aFyEEKa48WADO0-5=vdGxGDug801u4C6+Cn7Gg6RoxCWZA@mail.gmail.com>
+Subject: Re: [git pull] drm pull for v4.16-rc1
+To: Dave Airlie <airlied@gmail.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 02:03:00PM +0100, Marc-André Lureau wrote:
-> @@ -314,6 +359,37 @@ struct fw_cfg_sysfs_entry {
->  	struct device *dev;
->  };
->  
-> +#ifdef CONFIG_CRASH_CORE
-> +static ssize_t write_vmcoreinfo(struct device *dev, const struct fw_cfg_file *f)
-> +{
-> +	struct vmci {
-> +		__le16 host_format;
-> +		__le16 guest_format;
-> +		__le32 size;
-> +		__le64 paddr;
-> +	} __packed;
-> +	static struct vmci *data;
-> +	ssize_t ret;
-> +
-> +	data = kmalloc(sizeof(struct vmci), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	*data = (struct vmci) {
-> +		.guest_format = cpu_to_le16(VMCOREINFO_FORMAT_ELF),
-> +		.size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
-> +		.paddr = cpu_to_le64(paddr_vmcoreinfo_note())
-> +	};
-> +	/* spare ourself reading host format support for now since we
-> +	 * don't know what else to format - host may ignore ours
-> +	 */
-> +	ret = fw_cfg_write_blob(dev, f->select, data, 0, sizeof(struct vmci));
-> +
-> +	kfree(data);
-> +	return ret;
-> +}
-> +#endif /* CONFIG_CRASH_CORE */
-> +
->  /* get fw_cfg_sysfs_entry from kobject member */
->  static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
->  {
+On Thu, Feb 1, 2018 at 6:22 PM, Dave Airlie <airlied@gmail.com> wrote:
+>
+> Turned out I was running on wayland instead of X.org and my cut-n-paste from
+> gedit to firefox got truncated, wierd. I'll go annoy some people, and make sure
+> it doesn't happen again.
 
-kmalloc during crash is I think a bad idea.
-How about preallocating on probe?
+Heh, so there's some Wayland clipboard buffer limit.
 
-diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index 33e0256..ffd81d1 100644
---- a/drivers/firmware/qemu_fw_cfg.c
-+++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -363,22 +363,33 @@ struct fw_cfg_sysfs_entry {
- };
- 
- #ifdef CONFIG_CRASH_CORE
-+
-+struct vmci {
-+	__le16 host_format;
-+	__le16 guest_format;
-+	__le32 size;
-+	__le64 paddr;
-+} *fw_cfg_vmcore_data;
-+
-+static int fw_cfg_vmcore_init(void)
-+{
-+	fw_cfg_vmcore_data = kmalloc(sizeof(*fw_cfg_vmcore_data), GFP_KERNEL);
-+	if (!fw_cfg_vmcore_data)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+static int fw_cfg_vmcore_cleanup(void)
-+{
-+	kfree(fw_cfg_vmcore_data);
-+}
-+
- static ssize_t write_vmcoreinfo(struct device *dev, const struct fw_cfg_file *f)
- {
--	struct vmci {
--		__le16 host_format;
--		__le16 guest_format;
--		__le32 size;
--		__le64 paddr;
--	} __packed;
- 	static struct vmci *data;
- 	ssize_t ret;
- 
--	data = kmalloc(sizeof(struct vmci), GFP_KERNEL);
--	if (!data)
--		return -ENOMEM;
--
--	*data = (struct vmci) {
-+	*fw_cfg_vmcore_data = (struct vmci) {
- 		.guest_format = cpu_to_le16(VMCOREINFO_FORMAT_ELF),
- 		.size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
- 		.paddr = cpu_to_le64(paddr_vmcoreinfo_note())
-@@ -386,11 +397,23 @@ static ssize_t write_vmcoreinfo(struct device *dev, const struct fw_cfg_file *f)
- 	/* spare ourself reading host format support for now since we
- 	 * don't know what else to format - host may ignore ours
- 	 */
--	ret = fw_cfg_write_blob(dev, f->select, data, 0, sizeof(struct vmci));
-+	ret = fw_cfg_write_blob(dev, f->select, fw_cfg_vmcore_data, 0,
-+				sizeof(*fw_cfg_vmcore_data));
- 
--	kfree(data);
- 	return ret;
- }
-+
-+#else
-+
-+static int fw_cfg_vmcore_init(void)
-+{
-+	return 0;
-+}
-+
-+static int fw_cfg_vmcore_cleanup(void)
-+{
-+}
-+
- #endif /* CONFIG_CRASH_CORE */
- 
- /* get fw_cfg_sysfs_entry from kobject member */
-@@ -725,11 +748,15 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
- 	if (fw_cfg_sel_ko)
- 		return -EBUSY;
- 
-+	err = fw_cfg_vmcore_init();
-+	if (err)
-+		goto err_sel;
-+
- 	/* create by_key and by_name subdirs of /sys/firmware/qemu_fw_cfg/ */
- 	err = -ENOMEM;
- 	fw_cfg_sel_ko = kobject_create_and_add("by_key", fw_cfg_top_ko);
- 	if (!fw_cfg_sel_ko)
--		goto err_sel;
-+		goto err_vmcore;
- 	fw_cfg_fname_kset = kset_create_and_add("by_name", NULL, fw_cfg_top_ko);
- 	if (!fw_cfg_fname_kset)
- 		goto err_name;
-@@ -764,6 +791,8 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
- 	fw_cfg_kset_unregister_recursive(fw_cfg_fname_kset);
- err_name:
- 	fw_cfg_kobj_cleanup(fw_cfg_sel_ko);
-+err_vmcore:
-+	fw_cfg_vmcore_cleanup();
- err_sel:
- 	return err;
- }
-@@ -776,6 +805,7 @@ static int fw_cfg_sysfs_remove(struct platform_device *pdev)
- 	fw_cfg_io_cleanup();
- 	fw_cfg_kset_unregister_recursive(fw_cfg_fname_kset);
- 	fw_cfg_kobj_cleanup(fw_cfg_sel_ko);
-+	fw_cfg_vmcore_cleanup();
- 	return 0;
- }
- 
+But that reminds me: is there any *standard* tool to programmatically
+feed into the clipboard?
+
+I occasionally do things like
+
+    git shortlog A..B | xsel
+
+in order to then paste it into some browser window or other.
+
+And sure, that works well. But I do it seldom enough that I never
+remember the command, and half the time it's not even installed
+because I've switched machines or something, and xsel is always some
+add-on.
+
+What's the thing "real" X people do/use?
+
+           Linus
