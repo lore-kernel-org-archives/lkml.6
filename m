@@ -1,188 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751675AbeBBJnt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 04:43:49 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:43466 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751567AbeBBJnp (ORCPT
+        id S1751730AbeBBJph (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 04:45:37 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46207 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750781AbeBBJpZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 04:43:45 -0500
-X-Google-Smtp-Source: AH8x225iDHEIk0cjLKY1GMlPMmERf7KTvzei7Azyp8/6VGrAfE8dgv28Hk2vK4XBE2hfLtwdUmUae69kxrLhIRqVKYA=
+        Fri, 2 Feb 2018 04:45:25 -0500
+X-Google-Smtp-Source: AH8x226lY06bAp/9W9yyTDAGCIMowcp6omHpySDGA7HPjQu+VwIAUhEp1l+0FB6EQFwQQAThoQ9Uhw==
+Subject: Re: [Xen-devel] [PATCHv2] xen-netfront: remove warning when unloading
+ module
+To: Eduardo Otubo <otubo@redhat.com>
+Cc: xen-devel@lists.xenproject.org, jgross@suse.com, wei.liu2@citrix.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        paul.durrant@citrix.com, cheshi@redhat.com, vkuznets@redhat.com,
+        mgamal@redhat.com, cavery@redhat.com, boris.ostrovsky@oracle.com
+References: <20171123141835.5820-1-otubo@redhat.com>
+ <fcbb9d8a-85b4-5543-6ebc-cd34a66729ff@gmail.com>
+ <20180202085428.GA26899@vader>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <d6f97273-a8e9-f56e-f6b7-30c15f4b1f3f@gmail.com>
+Date: Fri, 2 Feb 2018 11:45:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180202044330-mutt-send-email-mst@kernel.org>
-References: <20180201130300.9962-1-marcandre.lureau@redhat.com>
- <20180201130300.9962-5-marcandre.lureau@redhat.com> <20180202044330-mutt-send-email-mst@kernel.org>
-From: Marc-Andre Lureau <mlureau@redhat.com>
-Date: Fri, 2 Feb 2018 10:43:44 +0100
-Message-ID: <CAMxuvaxL5sGU9GAsdCX1bFhECUOF08ojcDBJ_bYDF2xaZU45pA@mail.gmail.com>
-Subject: Re: [PATCH v11 4/4] fw_cfg: write vmcoreinfo details
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
-        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180202085428.GA26899@vader>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
-
-On Fri, Feb 2, 2018 at 3:44 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Thu, Feb 01, 2018 at 02:03:00PM +0100, Marc-André Lureau wrote:
->> @@ -314,6 +359,37 @@ struct fw_cfg_sysfs_entry {
->>       struct device *dev;
->>  };
+On 02/02/2018 10:54 AM, Eduardo Otubo wrote:
+> On Wed, Jan 31, 2018 at 05:00:23PM +0200, Oleksandr Andrushchenko wrote:
+>> Hi, Eduardo!
 >>
->> +#ifdef CONFIG_CRASH_CORE
->> +static ssize_t write_vmcoreinfo(struct device *dev, const struct fw_cfg_file *f)
->> +{
->> +     struct vmci {
->> +             __le16 host_format;
->> +             __le16 guest_format;
->> +             __le32 size;
->> +             __le64 paddr;
->> +     } __packed;
->> +     static struct vmci *data;
->> +     ssize_t ret;
->> +
->> +     data = kmalloc(sizeof(struct vmci), GFP_KERNEL);
->> +     if (!data)
->> +             return -ENOMEM;
->> +
->> +     *data = (struct vmci) {
->> +             .guest_format = cpu_to_le16(VMCOREINFO_FORMAT_ELF),
->> +             .size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
->> +             .paddr = cpu_to_le64(paddr_vmcoreinfo_note())
->> +     };
->> +     /* spare ourself reading host format support for now since we
->> +      * don't know what else to format - host may ignore ours
->> +      */
->> +     ret = fw_cfg_write_blob(dev, f->select, data, 0, sizeof(struct vmci));
->> +
->> +     kfree(data);
->> +     return ret;
->> +}
->> +#endif /* CONFIG_CRASH_CORE */
->> +
->>  /* get fw_cfg_sysfs_entry from kobject member */
->>  static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
->>  {
+>> I am working on a frontend driver (PV DRM) and also seeing some strange
+>>
+>> things on driver unloading:
+>>
+>> xt# rmmod -f drm_xen_front.ko
+>> [ 3236.462497] [drm] Unregistering XEN PV vdispl
+>> [ 3236.485745] [drm:xen_drv_remove [drm_xen_front]] *ERROR* Backend state is
+>> InitWait while removing driver
+>> [ 3236.486950] vdispl vdispl-0: 22 freeing event channel 11
+>> [ 3236.496123] vdispl vdispl-0: failed to write error node for
+>> device/vdispl/0 (22 freeing event channel 11)
+>> [ 3236.496271] vdispl vdispl-0: 22 freeing event channel 12
+>> [ 3236.501633] vdispl vdispl-0: failed to write error node for
+>> device/vdispl/0 (22 freeing event channel 12)
+>>
+>> These are somewhat different from your use-case with grant references, but I
+>> have a question:
+>>
+>> do you really see that XenbusStateClosed and XenbusStateClosing are
+>>
+>> called? In my driver I can't see those and once I tried to dig deeper into
+>> the problem
+>>
+>> I saw that on driver removal it is disconnected from XenBus, so no backend
+>> state
+>>
+>> change events come in via .otherend_changed callback.
+>>
+>> The only difference I see here is that the backend is a user-space
+>> application
+>>
+>> Thank you,
+>> Oleksandr
+> To be honest, most of the things I assumed were true, according to some talks on
+> IRC with maintainers. Since I assumed it was true I started to write code based
+> on that and all the behaviors that followed were correct according to my
+> assumptions (and discussions).
 >
-> kmalloc during crash is I think a bad idea.
-> How about preallocating on probe?
-
-It doesn't kmalloc during crash, it kmalloc during boot. As such, I
-don't see a reason to change it.
-
->
-> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-> index 33e0256..ffd81d1 100644
-> --- a/drivers/firmware/qemu_fw_cfg.c
-> +++ b/drivers/firmware/qemu_fw_cfg.c
-> @@ -363,22 +363,33 @@ struct fw_cfg_sysfs_entry {
->  };
->
->  #ifdef CONFIG_CRASH_CORE
-> +
-> +struct vmci {
-> +       __le16 host_format;
-> +       __le16 guest_format;
-> +       __le32 size;
-> +       __le64 paddr;
-> +} *fw_cfg_vmcore_data;
-> +
-> +static int fw_cfg_vmcore_init(void)
-> +{
-> +       fw_cfg_vmcore_data = kmalloc(sizeof(*fw_cfg_vmcore_data), GFP_KERNEL);
-> +       if (!fw_cfg_vmcore_data)
-> +               return -ENOMEM;
-> +       return 0;
-> +}
-> +
-> +static int fw_cfg_vmcore_cleanup(void)
-> +{
-> +       kfree(fw_cfg_vmcore_data);
-> +}
-> +
->  static ssize_t write_vmcoreinfo(struct device *dev, const struct fw_cfg_file *f)
->  {
-> -       struct vmci {
-> -               __le16 host_format;
-> -               __le16 guest_format;
-> -               __le32 size;
-> -               __le64 paddr;
-> -       } __packed;
->         static struct vmci *data;
->         ssize_t ret;
->
-> -       data = kmalloc(sizeof(struct vmci), GFP_KERNEL);
-> -       if (!data)
-> -               return -ENOMEM;
-> -
-> -       *data = (struct vmci) {
-> +       *fw_cfg_vmcore_data = (struct vmci) {
->                 .guest_format = cpu_to_le16(VMCOREINFO_FORMAT_ELF),
->                 .size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
->                 .paddr = cpu_to_le64(paddr_vmcoreinfo_note())
-> @@ -386,11 +397,23 @@ static ssize_t write_vmcoreinfo(struct device *dev, const struct fw_cfg_file *f)
->         /* spare ourself reading host format support for now since we
->          * don't know what else to format - host may ignore ours
->          */
-> -       ret = fw_cfg_write_blob(dev, f->select, data, 0, sizeof(struct vmci));
-> +       ret = fw_cfg_write_blob(dev, f->select, fw_cfg_vmcore_data, 0,
-> +                               sizeof(*fw_cfg_vmcore_data));
->
-> -       kfree(data);
->         return ret;
->  }
-> +
-> +#else
-> +
-> +static int fw_cfg_vmcore_init(void)
-> +{
-> +       return 0;
-> +}
-> +
-> +static int fw_cfg_vmcore_cleanup(void)
-> +{
-> +}
-> +
->  #endif /* CONFIG_CRASH_CORE */
->
->  /* get fw_cfg_sysfs_entry from kobject member */
-> @@ -725,11 +748,15 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
->         if (fw_cfg_sel_ko)
->                 return -EBUSY;
->
-> +       err = fw_cfg_vmcore_init();
-> +       if (err)
-> +               goto err_sel;
-> +
->         /* create by_key and by_name subdirs of /sys/firmware/qemu_fw_cfg/ */
->         err = -ENOMEM;
->         fw_cfg_sel_ko = kobject_create_and_add("by_key", fw_cfg_top_ko);
->         if (!fw_cfg_sel_ko)
-> -               goto err_sel;
-> +               goto err_vmcore;
->         fw_cfg_fname_kset = kset_create_and_add("by_name", NULL, fw_cfg_top_ko);
->         if (!fw_cfg_fname_kset)
->                 goto err_name;
-> @@ -764,6 +791,8 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
->         fw_cfg_kset_unregister_recursive(fw_cfg_fname_kset);
->  err_name:
->         fw_cfg_kobj_cleanup(fw_cfg_sel_ko);
-> +err_vmcore:
-> +       fw_cfg_vmcore_cleanup();
->  err_sel:
->         return err;
->  }
-> @@ -776,6 +805,7 @@ static int fw_cfg_sysfs_remove(struct platform_device *pdev)
->         fw_cfg_io_cleanup();
->         fw_cfg_kset_unregister_recursive(fw_cfg_fname_kset);
->         fw_cfg_kobj_cleanup(fw_cfg_sel_ko);
-> +       fw_cfg_vmcore_cleanup();
->         return 0;
->  }
->
+> But if you find something else weird, please let me know and we can fix it.
+There is nothing wrong with the patch. One thing that
+I cannot get in my driver is that .otherend_changed callback
+is not called on .remove. Please see [1]
+>> On 11/23/2017 04:18 PM, Eduardo Otubo wrote:
+>>> v2:
+>>>    * Replace busy wait with wait_event()/wake_up_all()
+>>>    * Cannot garantee that at the time xennet_remove is called, the
+>>>      xen_netback state will not be XenbusStateClosed, so added a
+>>>      condition for that
+>>>    * There's a small chance for the xen_netback state is
+>>>      XenbusStateUnknown by the time the xen_netfront switches to Closed,
+>>>      so added a condition for that.
+>>>
+>>> When unloading module xen_netfront from guest, dmesg would output
+>>> warning messages like below:
+>>>
+>>>     [  105.236836] xen:grant_table: WARNING: g.e. 0x903 still in use!
+>>>     [  105.236839] deferring g.e. 0x903 (pfn 0x35805)
+>>>
+>>> This problem relies on netfront and netback being out of sync. By the time
+>>> netfront revokes the g.e.'s netback didn't have enough time to free all of
+>>> them, hence displaying the warnings on dmesg.
+>>>
+>>> The trick here is to make netfront to wait until netback frees all the g.e.'s
+>>> and only then continue to cleanup for the module removal, and this is done by
+>>> manipulating both device states.
+>>>
+>>> Signed-off-by: Eduardo Otubo <otubo@redhat.com>
+>>> ---
+>>>    drivers/net/xen-netfront.c | 18 ++++++++++++++++++
+>>>    1 file changed, 18 insertions(+)
+>>>
+>>> diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+>>> index 8b8689c6d887..391432e2725d 100644
+>>> --- a/drivers/net/xen-netfront.c
+>>> +++ b/drivers/net/xen-netfront.c
+>>> @@ -87,6 +87,8 @@ struct netfront_cb {
+>>>    /* IRQ name is queue name with "-tx" or "-rx" appended */
+>>>    #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
+>>> +static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
+>>> +
+>>>    struct netfront_stats {
+>>>    	u64			packets;
+>>>    	u64			bytes;
+>>> @@ -2021,10 +2023,12 @@ static void netback_changed(struct xenbus_device *dev,
+>>>    		break;
+>>>    	case XenbusStateClosed:
+>>> +		wake_up_all(&module_unload_q);
+>>>    		if (dev->state == XenbusStateClosed)
+>>>    			break;
+>>>    		/* Missed the backend's CLOSING state -- fallthrough */
+>>>    	case XenbusStateClosing:
+>>> +		wake_up_all(&module_unload_q);
+>>>    		xenbus_frontend_closed(dev);
+>>>    		break;
+>>>    	}
+>>> @@ -2130,6 +2134,20 @@ static int xennet_remove(struct xenbus_device *dev)
+>>>    	dev_dbg(&dev->dev, "%s\n", dev->nodename);
+>>> +	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
+>>> +		xenbus_switch_state(dev, XenbusStateClosing);
+>>> +		wait_event(module_unload_q,
+>>> +			   xenbus_read_driver_state(dev->otherend) ==
+>>> +			   XenbusStateClosing);
+>>> +
+>>> +		xenbus_switch_state(dev, XenbusStateClosed);
+>>> +		wait_event(module_unload_q,
+>>> +			   xenbus_read_driver_state(dev->otherend) ==
+>>> +			   XenbusStateClosed ||
+>>> +			   xenbus_read_driver_state(dev->otherend) ==
+>>> +			   XenbusStateUnknown);
+>>> +	}
+>>> +
+>>>    	xennet_disconnect_backend(info);
+>>>    	unregister_netdev(info->netdev);
+[1] https://patchwork.kernel.org/patch/10195163/
