@@ -1,107 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751546AbeBBHWD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 02:22:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33914 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750735AbeBBHV4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 02:21:56 -0500
-Date: Thu, 1 Feb 2018 23:21:39 -0800
-From: Ram Pai <linuxram@us.ibm.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, mpe@ellerman.id.au, mingo@redhat.com,
-        akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org, x86@kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dave.hansen@intel.com,
-        benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
-        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
-Subject: Re: [PATCH v11 3/3] mm, x86: display pkey in smaps only if arch
- supports pkeys
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <1517341452-11924-4-git-send-email-linuxram@us.ibm.com>
- <201802021225.JPjLbdCs%fengguang.wu@intel.com>
+        id S1751727AbeBBHWn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 02:22:43 -0500
+Received: from a.mx.secunet.com ([62.96.220.36]:44400 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751579AbeBBHWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 02:22:37 -0500
+Date: Fri, 2 Feb 2018 08:22:34 +0100
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+CC: syzbot <syzbot+e1a1577ca8bcb47b769a@syzkaller.appspotmail.com>,
+        "David Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: stack-out-of-bounds Read in xfrm_state_find (4)
+Message-ID: <20180202072234.knjilchejpb6uudo@gauss3.secunet.de>
+References: <001a1148251a36716f0564148ba9@google.com>
+ <20180201083418.rfarzrodccdy54xx@gauss3.secunet.de>
+ <CACT4Y+a1DEqBWSXvVC+=pV_J_aMnof3Ky5W5t1FpwiCHZUTqJA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <201802021225.JPjLbdCs%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-TM-AS-GCONF: 00
-x-cbid: 18020207-0016-0000-0000-0000051EA4FB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020207-0017-0000-0000-0000285B4C27
-Message-Id: <20180202072139.GD5411@ram.oc3035372033.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802020085
+In-Reply-To: <CACT4Y+a1DEqBWSXvVC+=pV_J_aMnof3Ky5W5t1FpwiCHZUTqJA@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 1C617599-0AF3-4398-92D9-7079867A4870
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 12:27:27PM +0800, kbuild test robot wrote:
-> Hi Ram,
+On Thu, Feb 01, 2018 at 11:30:00AM +0100, Dmitry Vyukov wrote:
+> On Thu, Feb 1, 2018 at 9:34 AM, Steffen Klassert
 > 
-> Thank you for the patch! Yet something to improve:
+> Hi Steffen,
 > 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.15 next-20180201]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> Please see the email footer:
 > 
-> url:    https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_0day-2Dci_linux_commits_Ram-2DPai_mm-2Dx86-2Dpowerpc-2DEnhancements-2Dto-2DMemory-2DProtection-2DKeys_20180202-2D120004&d=DwIBAg&c=jf_iaSHvJObTbx-siA1ZOg&r=m-UrKChQVkZtnPpjbF6YY99NbT8FBByQ-E-ygV8luxw&m=Fv3tEHet1bTUrDjOnzEhXvGM_4tGlkYhJHPBnWNWgVA&s=Z1W6CV2tfPmLYU8lVv1oDRl2cAyQA76KE2P064A2CQY&e=
-> config: x86_64-randconfig-x005-201804 (attached as .config)
-> compiler: gcc-7 (Debian 7.2.0-12) 7.2.1 20171025
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->    In file included from arch/x86/include/asm/mmu_context.h:8:0,
->                     from arch/x86/events/core.c:36:
-> >> include/linux/pkeys.h:16:23: error: expected identifier or '(' before numeric constant
->     #define vma_pkey(vma) 0
->                           ^
-> >> arch/x86/include/asm/mmu_context.h:298:19: note: in expansion of macro 'vma_pkey'
->     static inline int vma_pkey(struct vm_area_struct *vma)
->                       ^~~~~~~~
-> 
-> vim +16 include/linux/pkeys.h
-> 
->      7	
->      8	#ifdef CONFIG_ARCH_HAS_PKEYS
->      9	#include <asm/pkeys.h>
->     10	#else /* ! CONFIG_ARCH_HAS_PKEYS */
->     11	#define arch_max_pkey() (1)
->     12	#define execute_only_pkey(mm) (0)
->     13	#define arch_override_mprotect_pkey(vma, prot, pkey) (0)
->     14	#define PKEY_DEDICATED_EXECUTE_ONLY 0
->     15	#define ARCH_VM_PKEY_FLAGS 0
->   > 16	#define vma_pkey(vma) 0
+> > If you want to test a patch for this bug, please reply with:
+> > #syz test: git://repo/address.git branch
+> > and provide the patch inline or as an attachment.
 
-Oops. Thanks for catching the issue. The following fix will resolve the error.
+Thanks for the hint, I've overlooked this. This is very usefull
+for the case that I can not reproduce the bug, but I think I know
+how to fix it.
 
-diff --git a/arch/x86/include/asm/mmu_context.h
-b/arch/x86/include/asm/mmu_context.h
-index 6d16d15..c1aeb19 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -238,11 +238,6 @@ static inline int vma_pkey(struct vm_area_struct
-		*vma)
+There are two more cases that come to my mind where syzbot could
+help.
+
+1. I can not reproduce the bug and I don't know how to fix it,
+   but some debug output would be helpfull:
+
+   syz test-debug-patch-and-send-dmesg-output: git://repo/address.git branch
+
+2. I can not reproduce the bug and I have absolutely no idea what it
+   could be:
+
+   syz bisect: git://repo/address.git branch commit a commit b
+
+I don't know if this is possible, but it would bring the bugfixing
+process a bit coser to the case where a real user does a bug report.
+
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+
+Subject: [PATCH RFC] xfrm: Refuse to insert 32 bit userspace socket policies on 64 bit systems
+
+We don't have compat layer for xfrm, so userspace and kernel
+structures have different sizes in this case. This results in
+a broken confuguration, so refuse to configure socket policies
+when trying to insert from 32 bit userspace as we do it already
+with policies inserted via netlink.
+
+Reported-by: syzbot+e1a1577ca8bcb47b769a@syzkaller.appspotmail.com
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+---
+ net/xfrm/xfrm_state.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index a3785f538018..25861a4ef872 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -2056,6 +2056,11 @@ int xfrm_user_policy(struct sock *sk, int optname, u8 __user *optval, int optlen
+ 	struct xfrm_mgr *km;
+ 	struct xfrm_policy *pol = NULL;
  
-        return (vma->vm_flags & vma_pkey_mask) >> VM_PKEY_SHIFT;
-}
--#else
--static inline int vma_pkey(struct vm_area_struct *vma)
--{
--       return 0;
--}
- #endif
-
-RP
++#ifdef CONFIG_COMPAT
++	if (in_compat_syscall())
++		return -EOPNOTSUPP;
++#endif
++
+ 	if (optlen <= 0 || optlen > PAGE_SIZE)
+ 		return -EMSGSIZE;
+ 
+-- 
+2.14.1
