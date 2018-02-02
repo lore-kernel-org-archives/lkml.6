@@ -1,78 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2879036-1517590997-2-13298878348038848420
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enfr,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517590997; b=VuAc0YFCGIvz8dVXA+FWLHr9M375wpu7yJ61M3wRcBAxBUM
-    sgvlbkUV8yEemRZPdH7Ivz6qeRH5Wj8w9az6ZI6DXLE9mhcBZCEtTEg0IPj4YtC6
-    3f7fMN6b1FNnkTx6z456hpP5pYYzVVg3TtqoyyfVGchqfrBuCuuifxrz5mFB4fGP
-    qPlTPcNPirROz0qRPke7WItyxdIIiuGbu+4lk47p9b5dELxOYZslQVbeUpmsjd0a
-    FAc+4uaO3CIxsS/2L7hHczQMYU8nfr8bPzR0LycaF7xIQRCWzlBKmeBoOmAVmGs+
-    agRwu9FJzaQw+PZgquma/ovs8HxyWIxzTVH+2TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517590997; bh=bOU+5ugoaAaD/A7llAkxkttDoR
-    CLkB1ABhF11uvLhH4=; b=OMfGSTlsqLtYPQOSMbTLAawn0vLm35PqXRcwG6h3qG
-    lf4hXPJvgpzHGy01cfpyB/1rRzCnYzSfjn06IQrmdMjFN9mro/ubVHAKHpI69uOU
-    4OtM93QGrlhCg2gNF7FtobBctEUjaS3cJ01rtVsytyL+zXcfJAgVPklZS8iwmGzO
-    ACYnSAnT6rE47bNyzyqMs2ynddQwG6xwUeF2aeq72nvZ4ZnjyDjICvgKfHAKGrm/
-    dS/GTWJHzZ3IqmlpjtVUOOLDl0B/r435TYjPIlenGHc9G+Hr6nKQrzdTkmDrexWj
-    Q5rksDoYbc9mYTerQVYylnSOEFGv3MVBFMCR/wF03J+w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752797AbeBBRDF (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 12:03:05 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35570 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752791AbeBBRC4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Feb 2018 12:02:56 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226bA5xsvsMSY3LvrPTzu9tbau4jW08Qau/6QYgMoUHIBM2VKTO6siqz5ypQqcNFQRfc6/+d
+ARC-Seal: i=1; a=rsa-sha256; t=1517590996; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FCL31xpQCTRxZIyRPeK66wQEBCeMmAMd6Z6td9SYTHoeZ+COyaG5NYdc3SEfGZjIY9
+         fFlr+z0fYhW1NkD43dK2Cx6g//JkzXwjALdb3cCrZcIQufjP62kFqB9kdX6smOM9/+Rw
+         9m8c2xYWuhPMUhIaSTd75vPGZ0grf1BVVEaQM5U24Z2Gk2yXSCiQLlDkxjt2rcWzIcQi
+         fDgmHlwmleNg0TNSjg00BKVT5RqZ1wtEox+HJntzOKi/yaVOpkwuyPimYLmQpo8KvLm4
+         KKWNRWaFUTMdzXmyyJJqh/gOT6SSuDvnmDSk0dfHK7aCenjJJ/yoOLUpaRv9AokqNjT9
+         GTxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Lr48mmwxtB5B29Qgn7rujbMpdBuOJUIlOXG9RMGgadU=;
+        b=E34jUYyuBTiAl6NesoUKvgMGDrzI41BIjzdGWsrgM431jZe1r7zPxbt9lHexQSKW7r
+         JDk0AWq4PmcETWEkCakYnTw+loD9CeHjkoCm07sG1vIK/OIZqBimUD92TT5LJHqeoC4Q
+         bKmvN4IRBlqqM6eK843OSxeUHtbe84K7s+4OCIGCHfAm0XX5Et1hCZ/IWW1U7hh4v5Xv
+         9d/BOlhh6jGonoH3AgaTodyekXzrLhO9CqgOWVaooO2fYDm3RGnTc4DrVIUS56sBKHf6
+         u/wcgZuMImG7nvogi9LTJDijxMDkPMG0LQ9UoERtL3NjV743nE1oMJ2lCbsctMb4VPGn
+         K1pA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Doug Ledford <dledford@redhat.com>,
-        Marta Rybczynska <mrybczyn@kalray.eu>
-Subject: [PATCH 4.9 02/86] net/mlx5: Define interface bits for fencing UMR wqe
-Date: Fri,  2 Feb 2018 17:57:22 +0100
-Message-Id: <20180202140822.876617777@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Stephan Mueller <smueller@chronox.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 08/86] crypto: aesni - handle zero length dst buffer
+Date: Fri,  2 Feb 2018 17:57:28 +0100
+Message-Id: <20180202140823.517531749@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591309279717381300?=
+X-GMAIL-MSGID: =?utf-8?q?1591309496293593314?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,48 +48,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Max Gurtovoy <maxg@mellanox.com>
+From: Stephan Mueller <smueller@chronox.de>
 
-commit 1410a90ae449061b7e1ae19d275148f36948801b upstream.
+commit 9c674e1e2f9e24fa4392167efe343749008338e0 upstream.
 
-HW can implement UMR wqe re-transmission in various ways.
-Thus, add HCA cap to distinguish the needed fence for UMR to make
-sure that the wqe wouldn't fail on mkey checks.
+GCM can be invoked with a zero destination buffer. This is possible if
+the AAD and the ciphertext have zero lengths and only the tag exists in
+the source buffer (i.e. a source buffer cannot be zero). In this case,
+the GCM cipher only performs the authentication and no decryption
+operation.
 
-Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
-Acked-by: Leon Romanovsky <leon@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-Cc: Marta Rybczynska <mrybczyn@kalray.eu>
+When the destination buffer has zero length, it is possible that no page
+is mapped to the SG pointing to the destination. In this case,
+sg_page(req->dst) is an invalid access. Therefore, page accesses should
+only be allowed if the req->dst->length is non-zero which is the
+indicator that a page must exist.
+
+This fixes a crash that can be triggered by user space via AF_ALG.
+
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/mlx5/mlx5_ifc.h |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/x86/crypto/aesni-intel_glue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/mlx5/mlx5_ifc.h
-+++ b/include/linux/mlx5/mlx5_ifc.h
-@@ -737,6 +737,12 @@ enum {
- 	MLX5_CAP_PORT_TYPE_ETH = 0x1,
- };
+--- a/arch/x86/crypto/aesni-intel_glue.c
++++ b/arch/x86/crypto/aesni-intel_glue.c
+@@ -906,7 +906,7 @@ static int helper_rfc4106_encrypt(struct
  
-+enum {
-+	MLX5_CAP_UMR_FENCE_STRONG	= 0x0,
-+	MLX5_CAP_UMR_FENCE_SMALL	= 0x1,
-+	MLX5_CAP_UMR_FENCE_NONE		= 0x2,
-+};
-+
- struct mlx5_ifc_cmd_hca_cap_bits {
- 	u8         reserved_at_0[0x80];
- 
-@@ -838,7 +844,9 @@ struct mlx5_ifc_cmd_hca_cap_bits {
- 	u8         striding_rq[0x1];
- 	u8         reserved_at_201[0x2];
- 	u8         ipoib_basic_offloads[0x1];
--	u8         reserved_at_205[0xa];
-+	u8         reserved_at_205[0x5];
-+	u8         umr_fence[0x2];
-+	u8         reserved_at_20c[0x3];
- 	u8         drain_sigerr[0x1];
- 	u8         cmdif_checksum[0x2];
- 	u8         sigerr_cqe[0x1];
+ 	if (sg_is_last(req->src) &&
+ 	    req->src->offset + req->src->length <= PAGE_SIZE &&
+-	    sg_is_last(req->dst) &&
+++	    sg_is_last(req->dst) && req->dst->length &&
+ 	    req->dst->offset + req->dst->length <= PAGE_SIZE) {
+ 		one_entry_in_sg = 1;
+ 		scatterwalk_start(&src_sg_walk, req->src);
