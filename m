@@ -1,90 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751824AbeBBUNz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 15:13:55 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:46523 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751589AbeBBUNq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 15:13:46 -0500
-X-ME-Sender: <xms:ecZ0Ws0ItQ62BeqNib6lYjaAGQVbIQJBxOaZv6pFm_fidGidR_qdow>
-Date: Sat, 3 Feb 2018 07:13:41 +1100
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+        id S1751878AbeBBUOI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 15:14:08 -0500
+Received: from mout.web.de ([212.227.15.4]:53584 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751589AbeBBUOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 15:14:04 -0500
+To: kernel-janitors@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>, Sebastian Reichel <sre@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
 Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] leaking_addresses.pl changes for 4.16-rc1
-Message-ID: <20180202201341.GI29988@eros>
-References: <20180131024236.GA31627@eros>
- <20180201204522.GD29988@eros>
- <CA+55aFzG_KLCdZVb-qEC0786A3OK=tG-FFNzkMZC6dRtvn4uUw@mail.gmail.com>
- <20180202094810.GG29988@eros>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] HSI: ssi_protocol: Adjustments for two function
+ implementations
+Message-ID: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 21:08:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180202094810.GG29988@eros>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:JDlq3EBGET+P0eruisKifO2u/J/KyROkHVVv6Y7InRDGvCuV4e+
+ FOwREX1MhzZkJO+umce7BHP2pdZRmmqU3n0V7haTVzTr8N2gbo8FGmWoUlleF0RzC2f6qWo
+ bloIJn9Khjsb+5bVSNTRhbQ5lFtdVy+RFPzuvt54l2Vm15fDTAe5jVQ2ysb4l3FUXpVs4fb
+ xgTV+8iQ8XQsjiLg41avA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Rt+4IQ6jvHk=:BRHLeA6fWLaiKD8oLIJuIQ
+ OZuv6ID5uJH3QV9HzWThT7sBS1SORbDEXEvWtvZjHwitK82b0R06vmxz/hzxgRpFdshIJKZa5
+ TBK9iXdXJ3FNkF/ANpbsFahPRTS8FTbnAhDPPFs0JN7pBN+cww1NwRarKTPWtvRGPQrxqY2pZ
+ S7pLRDk8t3ABaynRpEcqLkg7/Ek7sCqJJy4mcTZjhdcVQ4iIG8YcLTjH9U+ng+Lbh7X7ib+F8
+ 6hBszMpku7nHNtylCjGTcE9alG+88HDOlFELZZROxvl5H7mC+DOLICn8KvIHefJTMqok60zMA
+ So8x2EpFnMWybLPayW6OEU4vyVQ88slfjaVE0gBLrbs+x6gZGO4rjqWTgM7ZMZ1wMEzGl+LGG
+ GLFilY5FRZ/UwwUQhr1MXdN4EzZwQqbBzkeX22B8fB0mnDuEhMqEe/lKXQzT7iK5SDEcZlJER
+ aygDeviBqN37h5DUSnJOEjN22jgE1kOhv4B+rMzEfKtpDIpUlUmaXehmvU9UEPzTaUAqcZqQ5
+ 6xr4ruufMvxL5rors2yHinsLdln4Bw/tW/2W9HpWQOBWRoRRm+kIRELDienSJITcoV9JxVEi0
+ rjKySTqWXwZOhMm/Qxc2GVxHiSHDi7zDe/rtuQy7ZuyXsel+3BSFs8gforsXUBM5Fhzh0mtM6
+ jOnr15miYyv4YcSowB7cm2BkE4FLIflkcV8nUBux7FsXAMTIhq+EQtWlALEwtTF9iGhmcz6WP
+ Cx395nNzdppoJDuTkjBrw2P/2d5cw/jnMibayQpZV226zMbOmlYLt6CPA0OIaeL4MEAaROdhK
+ Y6SvxupGz9c9qAukMf/6Pzo0eVE/xJWF4PMeuXJAh38BKQMr/M=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 08:48:10PM +1100, Tobin C. Harding wrote:
-> On Thu, Feb 01, 2018 at 02:43:28PM -0800, Linus Torvalds wrote:
-> > On Thu, Feb 1, 2018 at 12:45 PM, Tobin C. Harding <me@tobin.cc> wrote:
-> > >
-> > > It has just come to my attention that I should have pushed these changes
-> > > to Linux next before requesting you to pull them.  Please feel free to
-> > > drop this request, I can try again next merge window after going through
-> > > linux next.
-> > 
-> > For something like this, I don't think it's a big deal.
-> > 
-> > A bigger deal is that it now wants perl-bigint, as of commit
-> > 8d8a77fb99bd ("leaking_addresses: add range check for vsyscall
-> > memory").
-> > 
-> > And that is not apparently a common enough perl module to be installed
-> > by default.
-> > 
-> > Sure, I just ran
-> > 
-> >     dnf install 'perl(bigint)'
-> > 
-> > and it did the right thing, but it does seem to be something of an
-> > inconvenience.
-> 
-> ok I'll try and find a work around so as not to use that.
-> 
-> > And things are *slow*, to the point of breakage. I get
-> > 
-> >   timed out parsing: /proc/kallsyms
-> >   timed out parsing: /proc/2177/smaps
-> >   timed out parsing: /proc/2238/smaps
-> >   timed out parsing: /proc/2336/smaps
-> >   ...
-> 
-> TL;DR it's working just not behaving very well.
-> 
-> I knew that was an issue, I've been running tests with 'smaps' included
-> in the skip files array.  However the patch I submitted to add this
-> included skipping /proc/kallsysms.  This got nacked.  I could not come
-> up with a _good_ solution before doing the pull request and thought it
-> better to have the 32-bit stuff in in light of all the drama this last
-> month.  The problem is that timeouts were added to catch binary files
-> choking the script but the default is too slow for large ASCII files.
-> Also we don't have a way to say 'scan this file once but not in every
-> processes sub directory' i.e smaps.  I needed feedback on this since I'm
-> not totally sure that all smaps files are generated the same.  Also I
-> think there may be a better way to not pass binary files than using the
-> timeout.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 21:03:45 +0100
 
-oops, the timeout was to catch files that block on read (like /proc/kmsg).
+Two update suggestions were taken into account
+from static source code analysis.
 
-So, adding 'smaps' to @skip_parse_files_any makes it run but I am unsure
-if this is correct.  I am under the impression that there will be
-various files that need skipping once the script is run on other peoples
-setups.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in ssi_protocol_probe()
+  Fix a typo in two comment lines
 
+ drivers/hsi/clients/ssi_protocol.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-thanks,
-Tobin.
+-- 
+2.16.1
