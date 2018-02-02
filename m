@@ -1,80 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751998AbeBBNyK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:54:10 -0500
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:36975 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbeBBNyC (ORCPT
+        id S1752034AbeBBNyf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:54:35 -0500
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:37527 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeBBNya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 08:54:02 -0500
-X-Google-Smtp-Source: AH8x225/JzHhHX6zJSFJ3poR4s2H6SF3yWXzUKqgLEQVNIP4L2riBc/CzyWx2ww97mOtj3nNryBIHw==
-Subject: Re: Is the hisilicon tree maintained ?
-To: Wei Xu <xuwei5@hisilicon.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <68abfa22-86fa-67db-b583-661c9f5672ce@linaro.org>
- <5A744EBA.7030104@hisilicon.com>
- <e7a0977d-5fee-b874-d6b7-21638bb9b885@linaro.org>
- <5A745526.6040006@hisilicon.com>
- <9f22e61e-a5d4-47b9-b8dd-71443b9aa408@linaro.org>
- <5A746C4A.9050604@hisilicon.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <ce9f1703-d27b-5d57-bf32-497917fca361@linaro.org>
-Date: Fri, 2 Feb 2018 14:53:58 +0100
+        Fri, 2 Feb 2018 08:54:30 -0500
+Subject: Re: [PATCH v6 18/41] clk: davinci: New driver for TI DA8XX CFGCHIP
+ clocks
+From: Sekhar Nori <nsekhar@ti.com>
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Adam Ford <aford173@gmail.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-19-git-send-email-david@lechnology.com>
+ <c2138795-edcd-bb7d-094d-47dc049c33df@ti.com>
+Message-ID: <9f3640de-461e-de42-30ab-c1089f9dbc43@ti.com>
+Date: Fri, 2 Feb 2018 19:23:20 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <5A746C4A.9050604@hisilicon.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <c2138795-edcd-bb7d-094d-47dc049c33df@ti.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/02/2018 14:48, Wei Xu wrote:
-> Hi Daniel,
+On Friday 02 February 2018 06:49 PM, Sekhar Nori wrote:
+> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+>> +static const struct clk_ops da8xx_cfgchip_div4p5_clk_ops = {
+>> +	.enable		= da8xx_cfgchip_gate_clk_enable,
+>> +	.disable	= da8xx_cfgchip_gate_clk_disable,
+>> +	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
 > 
-> On 2018/2/2 13:34, Daniel Lezcano wrote:
->> On 02/02/2018 13:10, Wei Xu wrote:
->>> Hi Daniel,
->>>
->>> On 2018/2/2 12:05, Daniel Lezcano wrote:
->>>> On 02/02/2018 12:42, Wei Xu wrote:
->>>>> Hi Daniel,
->>>>>
->>>>> On 2018/2/2 6:59, Daniel Lezcano wrote:
->>>>>>
->>>>>> Hi Wei Xu,
->>>>>>
->>>>>> I found in the MAINTAINERS file the hisilicon tree is at:
->>>>>>
->>>>>> https://github.com/hisilicon/linux-hisi
->>>>>>
->>>>>> But, (except I missed it) I didn't find any update since Nov, 2017.
->>>>>>
->>>>>> Is that tree maintained ?
->>>>>
->>>>> Yes. It is still maintained.
->>>>> You can find update from other branches or the tags like next/dt64.
->>>>> I will update the master when every rc1 is released.
->>>>
->>>> Is there a development branch for something else than the DT ?
->>>
->>> Sorry, no developing branch is there.
->>> But we will create one if needed like the topic-acpi-mbigen branch.
->>> And most of development branches are kept in another git repo.
->>
->> What is the purpose of this tree? Why not rely on arm-soc?
-> 
-> Currently it is mainly a place to pick up the patches
-> and save the pull request.
+> I assume the reason for not using clk-gate.c is lack of regmap support
+> there?
 
-What is the other repo with development branches you mentioned above ?
+This is rather question for da8xx_cfgchip_gate_clk_ops. Sorry about the
+bad context.
 
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thanks,
+Sekhar
