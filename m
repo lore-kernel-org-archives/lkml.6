@@ -1,141 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751809AbeBBNOd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 08:14:33 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:52782 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751709AbeBBNOL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 08:14:11 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-scsi@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        QLogic-Storage-Upstream@cavium.com,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Manish Rangankar <Manish.Rangankar@cavium.com>,
-        Tomer Tayar <Tomer.Tayar@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ariel Elior <Ariel.Elior@cavium.com>, Arun Easi <arun.easi@cavium.com>,
-        Nilesh Javali <nilesh.javali@cavium.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] scsi: qedi: fix building with LTO
-Date: Fri,  2 Feb 2018 14:12:19 +0100
-Message-Id: <20180202131225.1658853-6-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180202131225.1658853-1-arnd@arndb.de>
-References: <20180202131225.1658853-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:X/vEzoBnno762QFfYBVKwukKJN1Hh/T597k/Iji1/SPkM5DuoFn
- mqtr0Cj96mJa16e0fqqLZ8IyUwQapSmcZuwBWu/qorXEx8ACCylNtFKCIICuYV/cmXWkvM2
- aJzsvmyYKtoBrIWXxGZMQPpvhSYzr3iYKME+vNIOfc3kkBxFHvislL+qbuVratdxAgWtsOI
- kAeMs21DaJVIZ3U6WKuWA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:eH6g0VIrow4=:5Xg9G5SUwszN+xwxnolInE
- xWgDu7l+fKaA0K4cA90HkeJM9kshrLrDp7L/Aux/b8Je0MsX9VHeKJQ4E6RYhPf8iNlpMeXxI
- j7mplH8Uo9BFlLTIeozP9yljVc02/1pfvHLSEADoVWKnYZ/Iz+U7OGZc1yKPbZEiV4oCltxGG
- v4L1mcqG4YLZr8zLO7W10zJXMbYDdUU/y325EzMoFMKGS47kRUXxRkBKwj/QE19GS3V04LgFA
- 32igcFL9We0qAWjk4fcwD2mLa8HjdctOX/sArsQLulk44WiGsT/HZXpAJOU+sia/OZsZ5EeBc
- BTIbz/a/vRUNVUeEVdNVmhnX+g96PGl/lWzeU4eNQBGOYcUEG9hjdCFhyuxiJqB/lOr6lPMFj
- 9f8KhZWLaU1TbJvfrnIOd0ViowDOGVLxFjJ9O8Chw0bUZHRPqvyPhiLDYtfkjHL9uZf6GtB5n
- hvqY4IIyzxfcZq61do/QWyW/Bu8OdOgSbXtw70VrWPiOUiUIqE7WE+HccjKFD7dzt0Pcl7TtP
- GZ1smro7b+/o4LKFw5VMVnNGSQE0UcS0fHhRbtpESMJ0GZq+zjzAaHB418on7wXH/+aw5YIQq
- o5kSYwj5XCb+dWdwLN2tDz0+bJRFh3j++8ASxGLsmwsCG3sCHzeYDqW3Au63hM/dO399i4pab
- 0ecs770buaYE8Z+S3aMvDpC8pEG48ZcBKcw3H/u+C2s3jQnGXmSgxvmli/18CDGVWvNLtWBgm
- W/dHI1iE7iJjgWvb5Uvmf8viEeT3qzwOG0zntg==
+        id S1751671AbeBBNSG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 08:18:06 -0500
+Received: from foss.arm.com ([217.140.101.70]:59136 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751416AbeBBNSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 08:18:00 -0500
+Subject: Re: [PATCH v3 18/18] arm64: Kill PSCI_GET_VERSION as a variant-2
+ workaround
+To: Hanjun Guo <guohanjun@huawei.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Jones <drjones@redhat.com>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        Jon Masters <jcm@redhat.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+References: <20180201114657.7323-1-marc.zyngier@arm.com>
+ <20180201114657.7323-19-marc.zyngier@arm.com>
+ <d130b0b5-edc3-b305-c33e-33f9954d0858@huawei.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <a341cd45-a4b5-2585-6adf-e9827b3e1a2a@arm.com>
+Date: Fri, 2 Feb 2018 13:17:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <d130b0b5-edc3-b305-c33e-33f9954d0858@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When link-time optimizations are enabled, qedi fails to build because
-of mismatched prototypes:
+On 02/02/18 04:05, Hanjun Guo wrote:
+> Hi Marc,
+> 
+> Thank you for keeping me in the loop, just minor comments below.
+> 
+> On 2018/2/1 19:46, Marc Zyngier wrote:
+>> Now that we've standardised on SMCCC v1.1 to perform the branch
+>> prediction invalidation, let's drop the previous band-aid.
+>> If vendors haven't updated their firmware to do SMCCC 1.1, they
+>> haven't updated PSCI either, so we don't loose anything.
+>>
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>  arch/arm64/kernel/bpi.S        | 24 -----------------------
+>>  arch/arm64/kernel/cpu_errata.c | 43 ++++++++++++------------------------------
+>>  arch/arm64/kvm/hyp/switch.c    | 14 --------------
+>>  3 files changed, 12 insertions(+), 69 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/bpi.S b/arch/arm64/kernel/bpi.S
+>> index fdeed629f2c6..e5de33513b5d 100644
+>> --- a/arch/arm64/kernel/bpi.S
+>> +++ b/arch/arm64/kernel/bpi.S
+>> @@ -54,30 +54,6 @@ ENTRY(__bp_harden_hyp_vecs_start)
+>>  	vectors __kvm_hyp_vector
+>>  	.endr
+>>  ENTRY(__bp_harden_hyp_vecs_end)
+>> -ENTRY(__psci_hyp_bp_inval_start)
+>> -	sub	sp, sp, #(8 * 18)
+>> -	stp	x16, x17, [sp, #(16 * 0)]
+>> -	stp	x14, x15, [sp, #(16 * 1)]
+>> -	stp	x12, x13, [sp, #(16 * 2)]
+>> -	stp	x10, x11, [sp, #(16 * 3)]
+>> -	stp	x8, x9, [sp, #(16 * 4)]
+>> -	stp	x6, x7, [sp, #(16 * 5)]
+>> -	stp	x4, x5, [sp, #(16 * 6)]
+>> -	stp	x2, x3, [sp, #(16 * 7)]
+>> -	stp	x0, x1, [sp, #(16 * 8)]
+>> -	mov	x0, #0x84000000
+>> -	smc	#0
+>> -	ldp	x16, x17, [sp, #(16 * 0)]
+>> -	ldp	x14, x15, [sp, #(16 * 1)]
+>> -	ldp	x12, x13, [sp, #(16 * 2)]
+>> -	ldp	x10, x11, [sp, #(16 * 3)]
+>> -	ldp	x8, x9, [sp, #(16 * 4)]
+>> -	ldp	x6, x7, [sp, #(16 * 5)]
+>> -	ldp	x4, x5, [sp, #(16 * 6)]
+>> -	ldp	x2, x3, [sp, #(16 * 7)]
+>> -	ldp	x0, x1, [sp, #(16 * 8)]
+>> -	add	sp, sp, #(8 * 18)
+>> -ENTRY(__psci_hyp_bp_inval_end)
+>>  
+>>  ENTRY(__qcom_hyp_sanitize_link_stack_start)
+>>  	stp     x29, x30, [sp, #-16]!
+>> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+>> index 9e77809a3b23..b8279a11f57b 100644
+>> --- a/arch/arm64/kernel/cpu_errata.c
+>> +++ b/arch/arm64/kernel/cpu_errata.c
+>> @@ -67,7 +67,6 @@ static int cpu_enable_trap_ctr_access(void *__unused)
+>>  DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
+>>  
+>>  #ifdef CONFIG_KVM
+>> -extern char __psci_hyp_bp_inval_start[], __psci_hyp_bp_inval_end[];
+>>  extern char __qcom_hyp_sanitize_link_stack_start[];
+>>  extern char __qcom_hyp_sanitize_link_stack_end[];
+>>  extern char __smccc_workaround_1_smc_start[];
+>> @@ -116,8 +115,6 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
+>>  	spin_unlock(&bp_lock);
+>>  }
+>>  #else
+>> -#define __psci_hyp_bp_inval_start		NULL
+>> -#define __psci_hyp_bp_inval_end			NULL
+>>  #define __qcom_hyp_sanitize_link_stack_start	NULL
+>>  #define __qcom_hyp_sanitize_link_stack_end	NULL
+>>  #define __smccc_workaround_1_smc_start		NULL
+>> @@ -164,14 +161,15 @@ static void call_hvc_arch_workaround_1(void)
+>>  	arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
+>>  }
+>>  
+>> -static bool check_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+>> +static int smccc_arch_workaround_1(void *data)
+>>  {
+>> +	const struct arm64_cpu_capabilities *entry = data;
+>>  	bp_hardening_cb_t cb;
+>>  	void *smccc_start, *smccc_end;
+>>  	struct arm_smccc_res res;
+>>  
+>>  	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
+> 
+> entry->matches() will be called twice in this function, another
+> one is in install_bp_hardening_cb() below, but install_bp_hardening_cb()
+> will be called in qcom_enable_link_stack_sanitization(), and
+> this is in the init path, so I think it's fine to keep as it is now.
 
-drivers/scsi/qedi/qedi_gbl.h:27:37: error: type of 'qedi_dbg_fops' does not match original declaration [-Werror=lto-type-mismatch]
- extern const struct file_operations qedi_dbg_fops;
-                                     ^
-drivers/scsi/qedi/qedi_debugfs.c:239:30: note: 'qedi_dbg_fops' was previously declared here
- const struct file_operations qedi_dbg_fops[] = {
-                              ^
-drivers/scsi/qedi/qedi_gbl.h:26:32: error: type of 'qedi_debugfs_ops' does not match original declaration [-Werror=lto-type-mismatch]
- extern struct qedi_debugfs_ops qedi_debugfs_ops;
-                                ^
-drivers/scsi/qedi/qedi_debugfs.c:102:25: note: 'qedi_debugfs_ops' was previously declared here
- struct qedi_debugfs_ops qedi_debugfs_ops[] = {
+That's on purpose. Otherwise we spam the firmware/hypervisor with probe
+calls for each entry that has the same capability. Not a big deal, but
+still. This should be addressed when we get Suzuki's rework.
 
-This changes the declaration to match the definition, and adapts the
-users as necessary. Since both array can be constant here, I'm adding
-the 'const' everywhere for consistency.
+> 
+>> -		return false;
+>> +		return 0;
+>>  
+>>  	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
+>>  		return false;
+> 
+> return 0;
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/scsi/qedi/qedi_dbg.h     | 2 +-
- drivers/scsi/qedi/qedi_debugfs.c | 4 ++--
- drivers/scsi/qedi/qedi_gbl.h     | 4 ++--
- drivers/scsi/qedi/qedi_main.c    | 4 ++--
- 4 files changed, 7 insertions(+), 7 deletions(-)
+Ah, indeed. Thanks.
 
-diff --git a/drivers/scsi/qedi/qedi_dbg.h b/drivers/scsi/qedi/qedi_dbg.h
-index c55572badfb0..358f40567849 100644
---- a/drivers/scsi/qedi/qedi_dbg.h
-+++ b/drivers/scsi/qedi/qedi_dbg.h
-@@ -134,7 +134,7 @@ struct qedi_debugfs_ops {
- }
- 
- void qedi_dbg_host_init(struct qedi_dbg_ctx *qedi,
--			struct qedi_debugfs_ops *dops,
-+			const struct qedi_debugfs_ops *dops,
- 			const struct file_operations *fops);
- void qedi_dbg_host_exit(struct qedi_dbg_ctx *qedi);
- void qedi_dbg_init(char *drv_name);
-diff --git a/drivers/scsi/qedi/qedi_debugfs.c b/drivers/scsi/qedi/qedi_debugfs.c
-index fd8a1eea3163..fd914ca4149a 100644
---- a/drivers/scsi/qedi/qedi_debugfs.c
-+++ b/drivers/scsi/qedi/qedi_debugfs.c
-@@ -19,7 +19,7 @@ static struct dentry *qedi_dbg_root;
- 
- void
- qedi_dbg_host_init(struct qedi_dbg_ctx *qedi,
--		   struct qedi_debugfs_ops *dops,
-+		   const struct qedi_debugfs_ops *dops,
- 		   const struct file_operations *fops)
- {
- 	char host_dirname[32];
-@@ -99,7 +99,7 @@ static struct qedi_list_of_funcs qedi_dbg_do_not_recover_ops[] = {
- 	{ NULL, NULL }
- };
- 
--struct qedi_debugfs_ops qedi_debugfs_ops[] = {
-+const struct qedi_debugfs_ops qedi_debugfs_ops[] = {
- 	{ "gbl_ctx", NULL },
- 	{ "do_not_recover", qedi_dbg_do_not_recover_ops},
- 	{ "io_trace", NULL },
-diff --git a/drivers/scsi/qedi/qedi_gbl.h b/drivers/scsi/qedi/qedi_gbl.h
-index f5b5a31999aa..a2aa06ed1620 100644
---- a/drivers/scsi/qedi/qedi_gbl.h
-+++ b/drivers/scsi/qedi/qedi_gbl.h
-@@ -23,8 +23,8 @@ extern uint qedi_io_tracing;
- extern struct scsi_host_template qedi_host_template;
- extern struct iscsi_transport qedi_iscsi_transport;
- extern const struct qed_iscsi_ops *qedi_ops;
--extern struct qedi_debugfs_ops qedi_debugfs_ops;
--extern const struct file_operations qedi_dbg_fops;
-+extern const struct qedi_debugfs_ops qedi_debugfs_ops[];
-+extern const struct file_operations qedi_dbg_fops[];
- extern struct device_attribute *qedi_shost_attrs[];
- 
- int qedi_alloc_sq(struct qedi_ctx *qedi, struct qedi_endpoint *ep);
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index 029e2e69b29f..e992f9d3ef00 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -2303,8 +2303,8 @@ static int __qedi_probe(struct pci_dev *pdev, int mode)
- 	}
- 
- #ifdef CONFIG_DEBUG_FS
--	qedi_dbg_host_init(&qedi->dbg_ctx, &qedi_debugfs_ops,
--			   &qedi_dbg_fops);
-+	qedi_dbg_host_init(&qedi->dbg_ctx, qedi_debugfs_ops,
-+			   qedi_dbg_fops);
- #endif
- 	QEDI_INFO(&qedi->dbg_ctx, QEDI_LOG_INFO,
- 		  "QLogic FastLinQ iSCSI Module qedi %s, FW %d.%d.%d.%d\n",
+	M.
 -- 
-2.9.0
+Jazz is not dead. It just smells funny...
