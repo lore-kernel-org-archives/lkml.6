@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226bA5xsvsMSY3LvrPTzu9tbau4jW08Qau/6QYgMoUHIBM2VKTO6siqz5ypQqcNFQRfc6/+d
-ARC-Seal: i=1; a=rsa-sha256; t=1517590996; cv=none;
+X-Google-Smtp-Source: AH8x226AGR4j7A2NYFd4UWc9pHjLfXEUFRQ9JoQHnNgWZUurs4MfZKgxPXjuM6HFAg79NMhXOkaa
+ARC-Seal: i=1; a=rsa-sha256; t=1517590993; cv=none;
         d=google.com; s=arc-20160816;
-        b=FCL31xpQCTRxZIyRPeK66wQEBCeMmAMd6Z6td9SYTHoeZ+COyaG5NYdc3SEfGZjIY9
-         fFlr+z0fYhW1NkD43dK2Cx6g//JkzXwjALdb3cCrZcIQufjP62kFqB9kdX6smOM9/+Rw
-         9m8c2xYWuhPMUhIaSTd75vPGZ0grf1BVVEaQM5U24Z2Gk2yXSCiQLlDkxjt2rcWzIcQi
-         fDgmHlwmleNg0TNSjg00BKVT5RqZ1wtEox+HJntzOKi/yaVOpkwuyPimYLmQpo8KvLm4
-         KKWNRWaFUTMdzXmyyJJqh/gOT6SSuDvnmDSk0dfHK7aCenjJJ/yoOLUpaRv9AokqNjT9
-         GTxw==
+        b=lGD0VXqda+lAAF5OhHBNbNGRYNNMonNI+nyTeW2mtfp7oW5rzSVgRop92eAyXstHoL
+         khO7NMwhN82ahd189V0RectzWP5Qwcm/24Q0WqYW/vs0J647KxsXTVSJKjmVbwIIXX5V
+         WayWsy4J2RdcwY7NeH+VTfWxxlIIngNtOEoYODEjGKFE1sWjrZOfkb2ggI1aSG3g5nyI
+         3Ps4vIkzuokxLLOg0yVfsDsbYiFxUg3I8j6y36Rp8fYQ6ZRhzbK6ELdLAQFhUcp9CuQQ
+         2e9w/tkNz3pfBJ+fftu3d/2lvp4ZPkj8fiQLH9hGQG0W58kviIAiduiWvGPFLHYxseQQ
+         oa/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Lr48mmwxtB5B29Qgn7rujbMpdBuOJUIlOXG9RMGgadU=;
-        b=E34jUYyuBTiAl6NesoUKvgMGDrzI41BIjzdGWsrgM431jZe1r7zPxbt9lHexQSKW7r
-         JDk0AWq4PmcETWEkCakYnTw+loD9CeHjkoCm07sG1vIK/OIZqBimUD92TT5LJHqeoC4Q
-         bKmvN4IRBlqqM6eK843OSxeUHtbe84K7s+4OCIGCHfAm0XX5Et1hCZ/IWW1U7hh4v5Xv
-         9d/BOlhh6jGonoH3AgaTodyekXzrLhO9CqgOWVaooO2fYDm3RGnTc4DrVIUS56sBKHf6
-         u/wcgZuMImG7nvogi9LTJDijxMDkPMG0LQ9UoERtL3NjV743nE1oMJ2lCbsctMb4VPGn
-         K1pA==
+        bh=+DfR06A8QmQt3m0cbz6W2mBcPHOGXgGMX3xZlwS7QCc=;
+        b=0IIN61V5OMfr+aFuaBe1qWY60LHaj3+z/ZiKcg6jdexr08BIt7BpVOx5tbVXXlPcKT
+         k1bxlKMFq/5vJDzNofz1PirLedDOIJKSgRbwkxwaoXprX3T8NNtJesSvTxKINg6Eh8iX
+         kePMv8NbBM6b9xWEEw6caCuJGTxnzRYylEkYY96vPB7Oid5NO4jPns+Tage8omgBzljd
+         NY2Tr+CEZ/MBagZqtFBCo82zCA3ISp2WpBNmi6kEmRT9kGEeOVkM22ALv6aIGTWsVHyl
+         YzSqdCdRyyW8DSfVR3bRK+0l4mAnPD9zVmMZCrZxZUczxfj9Rs6g3FwMkzp+GhO7Dq9E
+         XTuQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stephan Mueller <smueller@chronox.de>,
+	Hauke Mehrtens <hauke@hauke-m.de>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 08/86] crypto: aesni - handle zero length dst buffer
-Date: Fri,  2 Feb 2018 17:57:28 +0100
-Message-Id: <20180202140823.517531749@linuxfoundation.org>
+Subject: [PATCH 4.9 07/86] crypto: ecdh - fix typo in KPP dependency of CRYPTO_ECDH
+Date: Fri,  2 Feb 2018 17:57:27 +0100
+Message-Id: <20180202140823.373194917@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180202140822.679101338@linuxfoundation.org>
 References: <20180202140822.679101338@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591309279717381300?=
-X-GMAIL-MSGID: =?utf-8?q?1591309496293593314?=
+X-GMAIL-THRID: =?utf-8?q?1591309493854941730?=
+X-GMAIL-MSGID: =?utf-8?q?1591309493854941730?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,40 +48,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephan Mueller <smueller@chronox.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-commit 9c674e1e2f9e24fa4392167efe343749008338e0 upstream.
+commit b5b9007730ce1d90deaf25d7f678511550744bdc upstream.
 
-GCM can be invoked with a zero destination buffer. This is possible if
-the AAD and the ciphertext have zero lengths and only the tag exists in
-the source buffer (i.e. a source buffer cannot be zero). In this case,
-the GCM cipher only performs the authentication and no decryption
-operation.
+This fixes a typo in the CRYPTO_KPP dependency of CRYPTO_ECDH.
 
-When the destination buffer has zero length, it is possible that no page
-is mapped to the SG pointing to the destination. In this case,
-sg_page(req->dst) is an invalid access. Therefore, page accesses should
-only be allowed if the req->dst->length is non-zero which is the
-indicator that a page must exist.
-
-This fixes a crash that can be triggered by user space via AF_ALG.
-
-Signed-off-by: Stephan Mueller <smueller@chronox.de>
+Fixes: 3c4b23901a0c ("crypto: ecdh - Add ECDH software support")
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/crypto/aesni-intel_glue.c |    2 +-
+ crypto/Kconfig |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/crypto/aesni-intel_glue.c
-+++ b/arch/x86/crypto/aesni-intel_glue.c
-@@ -906,7 +906,7 @@ static int helper_rfc4106_encrypt(struct
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -120,7 +120,7 @@ config CRYPTO_DH
  
- 	if (sg_is_last(req->src) &&
- 	    req->src->offset + req->src->length <= PAGE_SIZE &&
--	    sg_is_last(req->dst) &&
-++	    sg_is_last(req->dst) && req->dst->length &&
- 	    req->dst->offset + req->dst->length <= PAGE_SIZE) {
- 		one_entry_in_sg = 1;
- 		scatterwalk_start(&src_sg_walk, req->src);
+ config CRYPTO_ECDH
+ 	tristate "ECDH algorithm"
+-	select CRYTPO_KPP
++	select CRYPTO_KPP
+ 	help
+ 	  Generic implementation of the ECDH algorithm
+ 
