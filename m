@@ -1,59 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752313AbeBBOyy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 09:54:54 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:52665 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752249AbeBBOyt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:54:49 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: x86@kernel.org
-Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 0/3] x86 bugfixes for LTO
-Date: Fri,  2 Feb 2018 15:54:28 +0100
-Message-Id: <20180202145434.100626-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:UPk4t5/qqaWPi69+X5ps5Mp7Rv0momQ3gBiVGTGa9CUyRk6/ETJ
- qYlslsYHCbj3xAIw6VF+mEfg7x8PbbALS9KpbiSz0/Km4r68ug+9pNfOiM+5vtSMUVqr5y5
- 51EaQifz5gOD5O1690WlWmCa09caUx/XPkh66UL+IG0C0r9xtAF1jCjgEY/bhbjDLgjqvgi
- 7gdk/cZC+Dwd5LlsuYrfQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:9KCHHH7zPf4=:wzsHu2s8prtKdAmxdmSgko
- zKeQ/7dmVjFmRcTUsHS0E65+eaFgfPlFRJ/kLbAhyg/coErS5xgtN6VS98kIvhH+sCuAzfVR3
- 0fWNcrg1iTEr4T3WsxkA4imTD77YbmtiDqdvgTQ1ItKaicjvJ+bt+q17kowPdlLkVw0Ld3A0o
- w27ZXzlSCi/W2+JZb4jqGqj88MaGoadCeBfDO+tjrycip4IjG5mRc/xskdw4RlyDwSYoAtbKO
- jcHdyo5j8mAppMT91GgoxE1amcfiAf6IIM19/TXYOL0elcs2dS8JI9QC5B9wQdFFxwLxR9jK+
- 9xdKl9FChsSGsjpdTq6wOUOWHwBgxyAdYgBN0QuNT7tnuFKaINm4dvagktbLhAVw3Q2pfhL2n
- E43es8xg79/4L2janB1HtnbDKQoqFkZkddg1+72bMw5iYd4BMSiTe2PBaQ4ZVdFDpiQHChrT5
- SH9IEJGTpPR327KdTu/oW2Bh93swxTKBQZ7j97ZfDzFMtHQNqyc3WS2xFBUvIpuVkl+S8KOgm
- 2JpO2CGgVqHLLTrx7ezpBtErkOFVbNV8AFExwcAd8j44PW6OKZYNoMZMnSOnMuBYRKKaQ7TZM
- N4AvoD4DMkLnrylR1OSgWb14C5V5ylm67UgDWIaSD4xkO327dtKqoic85MIgmRhXTkiR1FX1r
- QWNNc7ARzufLlKXoF4cZqW0PQagc41rJmJDbQA53JDhKfOVf9cQrgQbVzQ64l9Z/HouRg4zZJ
- biFgot6A6Bf8fiSunnT7sfVCgMK8sSwPP3sTIg==
+        id S1752353AbeBBOzE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 09:55:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752282AbeBBOyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Feb 2018 09:54:52 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D7C02178E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 2 Feb 2018 11:54:48 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Matthew Whitehead <tedheadster@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/perf : Add check for CPUID instruction before using
+Message-ID: <20180202145448.GD26905@kernel.org>
+References: <1517581851-6600-1-git-send-email-tedheadster@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517581851-6600-1-git-send-email-tedheadster@gmail.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here are three bugfixes for x86 that I needed to get LTO-enabled
-kernels to build reliably. I'm not sure abouto that first one
-though.
+Em Fri, Feb 02, 2018 at 09:30:51AM -0500, Matthew Whitehead escreveu:
+> We still officially support the ancient i486 cpu. First generation
+> versions of this processor do not have the CPUID instruction, though
+> later versions do. Therefore you must check that the cpu supports
+> it before using it. At present it fails with an "Illegal Instruction"
+> signal on the early processors.
+> 
+> This code was based on similar code in the gcc package.
 
-None of these are urgent, as they don't show up in mainline
-kernels and they don't indicate serious problems.
+Can you provide an URL for the code used as a reference, please?
 
-Arnd Bergmann (3):
-  x86: dumpstack: avoid uninitialized variable
-  x86: fix swsusp_arch_resume prototype
-  x86: error_inject: make  just_return_func globally visible
-
- arch/x86/kernel/dumpstack.c   | 2 +-
- arch/x86/lib/error-inject.c   | 1 +
- arch/x86/power/hibernate_32.c | 2 +-
- arch/x86/power/hibernate_64.c | 2 +-
- include/linux/suspend.h       | 2 ++
- kernel/power/power.h          | 3 ---
- 6 files changed, 6 insertions(+), 6 deletions(-)
-
--- 
-2.9.0
+- Arnaldo
+ 
+> Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
+> ---
+>  tools/perf/arch/x86/util/header.c | 51 +++++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/header.h          |  2 ++
+>  2 files changed, 53 insertions(+)
+> 
+> diff --git a/tools/perf/arch/x86/util/header.c b/tools/perf/arch/x86/util/header.c
+> index fb0d71afee8b..d4d12894c64d 100644
+> --- a/tools/perf/arch/x86/util/header.c
+> +++ b/tools/perf/arch/x86/util/header.c
+> @@ -7,6 +7,54 @@
+>  
+>  #include "../../util/header.h"
+>  
+> +/* This code based on gcc cpuid.h __get_cpuid_max() */
+> +unsigned int have_cpuid(void)
+> +{
+> +	unsigned int __eax, __ebx;
+> +
+> +#ifndef __x86_64__
+> +/* See if we can use cpuid.  On AMD64 we always can.  */
+> +#if __GNUC__ >= 3
+> +	__asm__ ("pushf{l|d}\n\t"
+> +		"pushf{l|d}\n\t"
+> +		"pop{l}\t%0\n\t"
+> +		"mov{l}\t{%0, %1|%1, %0}\n\t"
+> +		"xor{l}\t{%2, %0|%0, %2}\n\t"
+> +		"push{l}\t%0\n\t"
+> +		"popf{l|d}\n\t"
+> +		"pushf{l|d}\n\t"
+> +		"pop{l}\t%0\n\t"
+> +		"popf{l|d}\n\t"
+> +		: "=&r" (__eax), "=&r" (__ebx)
+> +		: "i" (0x00200000));
+> +#else
+> +/* Host GCCs older than 3.0 weren't supporting Intel asm syntax
+> + * nor alternatives in i386 code.
+> + */
+> +	__asm__ ("pushfl\n\t"
+> +		"pushfl\n\t"
+> +		"popl\t%0\n\t"
+> +		"movl\t%0, %1\n\t"
+> +		"xorl\t%2, %0\n\t"
+> +		"pushl\t%0\n\t"
+> +		"popfl\n\t"
+> +		"pushfl\n\t"
+> +		"popl\t%0\n\t"
+> +		"popfl\n\t"
+> +		: "=&r" (__eax), "=&r" (__ebx)
+> +		: "i" (0x00200000));
+> +#endif
+> +
+> +	if (!((__eax ^ __ebx) & 0x00200000))
+> +		return 0;
+> +	else
+> +		return 1;
+> +#endif
+> +
+> +/* All x86_64 support cpuid */
+> +	return 1;
+> +}
+> +
+>  static inline void
+>  cpuid(unsigned int op, unsigned int *a, unsigned int *b, unsigned int *c,
+>        unsigned int *d)
+> @@ -28,6 +76,9 @@ __get_cpuid(char *buffer, size_t sz, const char *fmt)
+>  	int nb;
+>  	char vendor[16];
+>  
+> +	if (!have_cpuid())
+> +		return -1;
+> +
+>  	cpuid(0, &lvl, &b, &c, &d);
+>  	strncpy(&vendor[0], (char *)(&b), 4);
+>  	strncpy(&vendor[4], (char *)(&d), 4);
+> diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
+> index f28aaaa3a440..ce31fca36077 100644
+> --- a/tools/perf/util/header.h
+> +++ b/tools/perf/util/header.h
+> @@ -171,6 +171,8 @@ int write_padded(struct feat_fd *fd, const void *bf,
+>  /*
+>   * arch specific callback
+>   */
+> +unsigned int have_cpuid(void);
+> +
+>  int get_cpuid(char *buffer, size_t sz);
+>  
+>  char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused);
+> -- 
+> 2.13.6
