@@ -1,112 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeBCP5e (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 10:57:34 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53503 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751963AbeBCP5Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 10:57:25 -0500
-From: Aaron Ma <aaron.ma@canonical.com>
-To: aaron.ma@canonical.com, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: Fix hid_report_len usage
-Date: Sat,  3 Feb 2018 23:57:15 +0800
-Message-Id: <20180203155715.2970-1-aaron.ma@canonical.com>
+        id S1752633AbeBCP7j (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 10:59:39 -0500
+Received: from m50-112.126.com ([123.125.50.112]:57224 "EHLO m50-112.126.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751932AbeBCP7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 10:59:30 -0500
+From: Zhang Bo <zbsdta@126.com>
+To: dmitry.torokhov@gmail.com
+Cc: robh@kernel.org, DRivshin@allworx.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhang.bo19@zte.com.cn,
+        andy.shevchenko@gmail.com, zbsdta@126.com
+Subject: [PATCH v2] Input: matrix_keypad - fix keypad does not response
+Date: Sat,  3 Feb 2018 23:58:16 +0800
+Message-Id: <20180203155816.18221-1-zbsdta@126.com>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180108024141.10590-2-aaron.ma@canonical.com>
-References: <20180108024141.10590-2-aaron.ma@canonical.com>
+X-CM-TRANSID: j9KowABHJjci3HVaxE+EAA--.4198S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGryrGFyxKr1UZFW3Jw43Jrb_yoW5Gr1kpr
+        W3G3Wqyr4UJ3Wj93yvqrWkuas8Gw4kZry2grn5W348Jrn0vr1UGrn3K3ySga4UArW0yanr
+        ZF4kZw15G3WqyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U5kuxUUUUU=
+X-Originating-IP: [123.139.75.126]
+X-CM-SenderInfo: h2evv3bd6rjloofrz/1tbikAPhSVpD3+vV1QAAsW
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Follow the change of return type u32 of hid_report_len,
-fix all the types of variables those get the return value of
-hid_report_len to u32, and all other code already uses u32.
+If matrix_keypad_stop() is calling and the keypad interrupt is triggered,
+disable_row_irqs() is called by both matrix_keypad_interrupt() and
+matrix_keypad_stop() at the same time. then disable_row_irqs() is called
+twice, and the device enter suspend state before keypad->work is executed.
+At this condition the device will start keypad and enable irq once after
+resume. and then irqs are disabled yet because irqs are disabled twice and
+only enable once.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Take lock around keypad->stopped and queue delayed work in
+matrix_keypad_start() and matrix_keypad_stop() to ensure irqs operation and
+scheduling scan work are in atomic operation.
+
+Signed-off-by: Zhang Bo <zbsdta@126.com>
 ---
- drivers/hid/hid-input.c      | 3 ++-
- drivers/hid/hid-multitouch.c | 5 +++--
- drivers/hid/hid-rmi.c        | 4 ++--
- drivers/hid/wacom_sys.c      | 4 ++--
- 4 files changed, 9 insertions(+), 7 deletions(-)
+Changes in v2:
+  - Change commit message and full name in the signed-off-by tag.
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 04d01b57d94c..d86398755b0d 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1368,7 +1368,8 @@ static void hidinput_led_worker(struct work_struct *work)
- 					      led_work);
- 	struct hid_field *field;
- 	struct hid_report *report;
--	int len, ret;
-+	int ret;
-+	u32 len;
- 	__u8 *buf;
+ drivers/input/keyboard/matrix_keypad.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
+index 1f316d66e6f7..13fe51824637 100644
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -169,7 +169,8 @@ static void matrix_keypad_scan(struct work_struct *work)
+ 	/* Enable IRQs again */
+ 	spin_lock_irq(&keypad->lock);
+ 	keypad->scan_pending = false;
+-	enable_row_irqs(keypad);
++	if (keypad->stopped == false)
++		enable_row_irqs(keypad);
+ 	spin_unlock_irq(&keypad->lock);
+ }
  
- 	field = hidinput_get_led_field(hid);
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 3b4739bde05d..2e1736ba2444 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -370,7 +370,8 @@ static const struct attribute_group mt_attribute_group = {
- static void mt_get_feature(struct hid_device *hdev, struct hid_report *report)
+@@ -202,14 +203,16 @@ static int matrix_keypad_start(struct input_dev *dev)
  {
- 	struct mt_device *td = hid_get_drvdata(hdev);
--	int ret, size = hid_report_len(report);
-+	int ret;
-+	u32 size = hid_report_len(report);
- 	u8 *buf;
+ 	struct matrix_keypad *keypad = input_get_drvdata(dev);
+ 
++	spin_lock_irq(&keypad->lock);
+ 	keypad->stopped = false;
+-	mb();
  
  	/*
-@@ -1183,7 +1184,7 @@ static void mt_set_input_mode(struct hid_device *hdev)
- 	struct hid_report_enum *re;
- 	struct mt_class *cls = &td->mtclass;
- 	char *buf;
--	int report_len;
-+	u32 report_len;
+ 	 * Schedule an immediate key scan to capture current key state;
+ 	 * columns will be activated and IRQs be enabled after the scan.
+ 	 */
+-	schedule_delayed_work(&keypad->work, 0);
++	if (keypad->scan_pending == false)
++		schedule_delayed_work(&keypad->work, 0);
++	spin_unlock_irq(&keypad->lock);
  
- 	if (td->inputmode < 0)
- 		return;
-diff --git a/drivers/hid/hid-rmi.c b/drivers/hid/hid-rmi.c
-index c6c05df3e8d2..9c9362149641 100644
---- a/drivers/hid/hid-rmi.c
-+++ b/drivers/hid/hid-rmi.c
-@@ -89,8 +89,8 @@ struct rmi_data {
- 	u8 *writeReport;
- 	u8 *readReport;
+ 	return 0;
+ }
+@@ -218,14 +221,17 @@ static void matrix_keypad_stop(struct input_dev *dev)
+ {
+ 	struct matrix_keypad *keypad = input_get_drvdata(dev);
  
--	int input_report_size;
--	int output_report_size;
-+	u32 input_report_size;
-+	u32 output_report_size;
++	spin_lock_irq(&keypad->lock);
+ 	keypad->stopped = true;
+-	mb();
+-	flush_work(&keypad->work.work);
+ 	/*
+ 	 * matrix_keypad_scan() will leave IRQs enabled;
+ 	 * we should disable them now.
+ 	 */
+-	disable_row_irqs(keypad);
++	if (keypad->scan_pending == false)
++		disable_row_irqs(keypad);
++	spin_unlock_irq(&keypad->lock);
++
++	flush_work(&keypad->work.work);
+ }
  
- 	unsigned long flags;
- 
-diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
-index 409543160af7..b54ef1ffcbec 100644
---- a/drivers/hid/wacom_sys.c
-+++ b/drivers/hid/wacom_sys.c
-@@ -219,7 +219,7 @@ static void wacom_feature_mapping(struct hid_device *hdev,
- 	unsigned int equivalent_usage = wacom_equivalent_usage(usage->hid);
- 	u8 *data;
- 	int ret;
--	int n;
-+	u32 n;
- 
- 	switch (equivalent_usage) {
- 	case HID_DG_CONTACTMAX:
-@@ -519,7 +519,7 @@ static int wacom_set_device_mode(struct hid_device *hdev,
- 	u8 *rep_data;
- 	struct hid_report *r;
- 	struct hid_report_enum *re;
--	int length;
-+	u32 length;
- 	int error = -ENOMEM, limit = 0;
- 
- 	if (wacom_wac->mode_report < 0)
+ #ifdef CONFIG_PM_SLEEP
 -- 
 2.14.3
