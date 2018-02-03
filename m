@@ -1,148 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeBCKps (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 05:45:48 -0500
-Received: from omr-m006e.mx.aol.com ([204.29.186.6]:58367 "EHLO
-        omr-m006e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeBCKpl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 05:45:41 -0500
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to handle looped node chain during
- recovery
-From: Gao Xiang <hsiangkao@aol.com>
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org,
-        Yunlei He <heyunlei@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20180203094439.3913-1-yuchao0@huawei.com>
- <6fe55970-6e30-d144-86d4-68d6fbd80cf3@aol.com>
-Message-ID: <3a4a4906-1f2a-197a-bfe1-f636f9b5243c@aol.com>
-Date: Sat, 3 Feb 2018 18:45:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+        id S1752165AbeBCKuh (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 05:50:37 -0500
+Received: from mout.web.de ([212.227.17.12]:62445 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750765AbeBCKu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 05:50:29 -0500
+To: linux-input@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Stefan Achatz <erazor_de@users.sourceforge.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] HID: Roccat: Delete an error message for a failed memory
+ allocation in nine functions
+Message-ID: <5df2ad06-296d-7552-d36d-dd8b09ad6f6d@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 11:50:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <6fe55970-6e30-d144-86d4-68d6fbd80cf3@aol.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-x-aol-global-disposition: G
-x-aol-sid: 3039ac1a32ae5a7592d222a4
-X-AOL-IP: 112.64.61.200
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:R7bbOLzkUjFUcQM8p2DPzoITUeS+3YF4qnTcmP3URDrpwDC7vfx
+ m/mFZlp38aw3MEGe5/xRJ7uYcjovyuCfbbDRsAET4CdGXe4MLtnOmfVQGj2vxy0RHX3hSq6
+ U6dZ7KWA0H5WVOeeJW/b9DU2fnnH7GRMlRSNhpgWqA2v1708bpAEllyxYRNDzNyOhD8cAl8
+ D/lpdCcyrB1iSCLTDh4Bw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Tc83A2nmIy8=:mfam44hm432kOFUfMoGvWo
+ hG0VfWEasus9bJdC0ghBnxbeQatQ1LMMR9f3sG69JDIA9oiD0PbupaQx5vrl+8/D86+e5riY2
+ tKhsPY5HgMtC7keqAk6IrFsGvm6G1BM5YFhjh5zMaW5tS9BDMEhx/etsIpQ31MPW6x8d2DIgB
+ XEFf7g+iWfojxGVv5SNYBLz3GtYApew74y92rW5gYkaWvNHHhZtruQVUU4GgB2YDJ116VU8hZ
+ TrxeCXUpUzMvHc+zsshQO4e0wYsWfPpMip5HN6ZnpBaOOKk0yp5hYBqKuLcv9lHJErCgk174v
+ +t7+2PV2d2WbBvc4UfOiaGTMbAovM8xSM8dJghtou8U84/zLPVn4vIWhGYeYKPdJAWfGqjlCa
+ ZpuAlyp5Ply+gjnHzIukx32zW5cS3Pph5SkKEdKEY52ZjHtNjrXHLKrQVY5kua0SCP7djxBw6
+ nsFKeowryLgWOnwfAcoosJi/jx3wtgCPEhXH4ThJm65duTvQpz34kQl/qOFBBevMGPDg7qT46
+ e1enbCuZJr6pj1VOXiqlEyIW2nSf/82vo2PPrqxZb28Eu0dEB6X7NkJR5e9hTV7BeR40OEPPZ
+ /6HAvOEMjG6xzMz9fqyY7+J8eN1FQYSxpvdUMxYsHgX0fezm9Yi/ey5z8nCMqu5e9vdQ1PHDJ
+ yGiPVkax3/4qNXr5WhqLD1HZUpvsUYE/zvishlFGwEk1zrxd9uY4jKLEX3EmPULwPUEvpj+H5
+ x3N7MK1wunF7IF6RviX6eyMAoRGzg6REi+o2x1hCwu3So9qRH/j3eUoQTAyyPoxrseUusbaEn
+ /uy1ffM9HwRUcuh1TLji9mUjgL+gSTa5TvDs+skkPqxvKh6ETw=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 11:45:15 +0100
 
+Omit an extra message for a memory allocation failure in these functions.
 
-On 2018/2/3 18:35, Gao Xiang wrote:
-> Hi Chao and YunLei,
->
->
-> On 2018/2/3 17:44, Chao Yu wrote:
->> There is no checksum in node block now, so bit-transition from hardware
->> can make node_footer.next_blkaddr being corrupted w/o any detection,
->> result in node chain becoming looped one.
->>
->> For this condition, during recovery, in order to avoid running into dead
->> loop, let's detect it and just skip out.
->>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>   fs/f2fs/recovery.c | 14 ++++++++++++++
->>   1 file changed, 14 insertions(+)
->>
->> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->> index b6d1ec620a8c..60dd0cee4820 100644
->> --- a/fs/f2fs/recovery.c
->> +++ b/fs/f2fs/recovery.c
->> @@ -243,6 +243,9 @@ static int find_fsync_dnodes(struct f2fs_sb_info 
->> *sbi, struct list_head *head,
->>       struct curseg_info *curseg;
->>       struct page *page = NULL;
->>       block_t blkaddr;
->> +    unsigned int loop_cnt = 0;
->> +    unsigned int free_blocks = sbi->user_block_count -
->> +                    valid_user_blocks(sbi);
-> There exists another way to detect loop more faster but only using two 
-> variables.
-> The algorithm is described as simply "B goes forward a steps only A 
-> goes forwards 2 steps".
-"B goes forward a step only when A goes forward 2(or constant x, more 
-than 1) steps".
+This issue was detected by using the Coccinelle software.
 
-> For example:
-> 1)
->    1   2  3  4   5   6     7
->    |             \             /
->    |                \------/
->   A, B
-> 2)
->    1  2  3  4   5   6     7
->     |   |        \             /
->    B   A        \------/
->  3)
->    1  2  3  4   5   6     7
->        |    |     \             /
->       B   A      \------/
->   4)
->    1  2  3  4   5   6     7
->        |       |\             /
->       B      A \------/
-> 5)....
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-roccat-arvo.c     | 5 ++---
+ drivers/hid/hid-roccat-isku.c     | 5 ++---
+ drivers/hid/hid-roccat-koneplus.c | 5 ++---
+ drivers/hid/hid-roccat-konepure.c | 5 ++---
+ drivers/hid/hid-roccat-kovaplus.c | 5 ++---
+ drivers/hid/hid-roccat-lua.c      | 5 ++---
+ drivers/hid/hid-roccat-pyra.c     | 5 ++---
+ drivers/hid/hid-roccat-ryos.c     | 5 ++---
+ drivers/hid/hid-roccat-savu.c     | 5 ++---
+ 9 files changed, 18 insertions(+), 27 deletions(-)
 
-
-Sorry, it seems the encoded diagram is in a mess, I try again.
-1)
-    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
-    |               \             /
-    |                \-----<-----/
-   A, B
-2)
-    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
-    |    |          \             /
-    |    |           \-----<-----/
-    B    A
-3)
-    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
-         |    |     \             /
-         |    |      \-----<-----/
-         B    A
-4)
-    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
-         |         |\             /
-         |         | \-----<-----/
-         B         A
-5)....
-if B catchs up A, there exists a cycle.
-
-
-Thanks,
-> B will equal A or beyoud A if and only if there has a cycle.
-> It's a more faster algorithm. :D
->
-> Thanks,
->
->>       int err = 0;
->>         /* get node pages in the current segment */
->> @@ -295,6 +298,17 @@ static int find_fsync_dnodes(struct f2fs_sb_info 
->> *sbi, struct list_head *head,
->>           if (IS_INODE(page) && is_dent_dnode(page))
->>               entry->last_dentry = blkaddr;
->>   next:
->> +        /* sanity check in order to detect looped node chain */
->> +        if (++loop_cnt >= free_blocks ||
->> +            blkaddr == next_blkaddr_of_node(page)) {
->> +            f2fs_msg(sbi->sb, KERN_NOTICE,
->> +                "%s: detect looped node chain, "
->> +                "blkaddr:%u, next:%u",
->> +                __func__, blkaddr, next_blkaddr_of_node(page));
->> +            err = -EINVAL;
->> +            break;
->> +        }
->> +
->>           /* check next segment */
->>           blkaddr = next_blkaddr_of_node(page);
->>           f2fs_put_page(page, 1);
->
+diff --git a/drivers/hid/hid-roccat-arvo.c b/drivers/hid/hid-roccat-arvo.c
+index 329c5d1270f9..8d1eccd4fffd 100644
+--- a/drivers/hid/hid-roccat-arvo.c
++++ b/drivers/hid/hid-roccat-arvo.c
+@@ -300,10 +300,9 @@ static int arvo_init_specials(struct hid_device *hdev)
+ 	}
+ 
+ 	arvo = kzalloc(sizeof(*arvo), GFP_KERNEL);
+-	if (!arvo) {
+-		hid_err(hdev, "can't alloc device descriptor\n");
++	if (!arvo)
+ 		return -ENOMEM;
+-	}
++
+ 	hid_set_drvdata(hdev, arvo);
+ 
+ 	retval = arvo_init_arvo_device_struct(usb_dev, arvo);
+diff --git a/drivers/hid/hid-roccat-isku.c b/drivers/hid/hid-roccat-isku.c
+index 02db537f8f3e..6f18925c72db 100644
+--- a/drivers/hid/hid-roccat-isku.c
++++ b/drivers/hid/hid-roccat-isku.c
+@@ -280,10 +280,9 @@ static int isku_init_specials(struct hid_device *hdev)
+ 	}
+ 
+ 	isku = kzalloc(sizeof(*isku), GFP_KERNEL);
+-	if (!isku) {
+-		hid_err(hdev, "can't alloc device descriptor\n");
++	if (!isku)
+ 		return -ENOMEM;
+-	}
++
+ 	hid_set_drvdata(hdev, isku);
+ 
+ 	retval = isku_init_isku_device_struct(usb_dev, isku);
+diff --git a/drivers/hid/hid-roccat-koneplus.c b/drivers/hid/hid-roccat-koneplus.c
+index 09e8fc72aa1d..3981553d02a6 100644
+--- a/drivers/hid/hid-roccat-koneplus.c
++++ b/drivers/hid/hid-roccat-koneplus.c
+@@ -385,10 +385,9 @@ static int koneplus_init_specials(struct hid_device *hdev)
+ 			== USB_INTERFACE_PROTOCOL_MOUSE) {
+ 
+ 		koneplus = kzalloc(sizeof(*koneplus), GFP_KERNEL);
+-		if (!koneplus) {
+-			hid_err(hdev, "can't alloc device descriptor\n");
++		if (!koneplus)
+ 			return -ENOMEM;
+-		}
++
+ 		hid_set_drvdata(hdev, koneplus);
+ 
+ 		retval = koneplus_init_koneplus_device_struct(usb_dev, koneplus);
+diff --git a/drivers/hid/hid-roccat-konepure.c b/drivers/hid/hid-roccat-konepure.c
+index 07de2f9014c6..529e6024e73f 100644
+--- a/drivers/hid/hid-roccat-konepure.c
++++ b/drivers/hid/hid-roccat-konepure.c
+@@ -89,10 +89,9 @@ static int konepure_init_specials(struct hid_device *hdev)
+ 	}
+ 
+ 	konepure = kzalloc(sizeof(*konepure), GFP_KERNEL);
+-	if (!konepure) {
+-		hid_err(hdev, "can't alloc device descriptor\n");
++	if (!konepure)
+ 		return -ENOMEM;
+-	}
++
+ 	hid_set_drvdata(hdev, konepure);
+ 
+ 	retval = roccat_common2_device_init_struct(usb_dev, konepure);
+diff --git a/drivers/hid/hid-roccat-kovaplus.c b/drivers/hid/hid-roccat-kovaplus.c
+index 43617fb28b87..da9c090542c6 100644
+--- a/drivers/hid/hid-roccat-kovaplus.c
++++ b/drivers/hid/hid-roccat-kovaplus.c
+@@ -452,10 +452,9 @@ static int kovaplus_init_specials(struct hid_device *hdev)
+ 			== USB_INTERFACE_PROTOCOL_MOUSE) {
+ 
+ 		kovaplus = kzalloc(sizeof(*kovaplus), GFP_KERNEL);
+-		if (!kovaplus) {
+-			hid_err(hdev, "can't alloc device descriptor\n");
++		if (!kovaplus)
+ 			return -ENOMEM;
+-		}
++
+ 		hid_set_drvdata(hdev, kovaplus);
+ 
+ 		retval = kovaplus_init_kovaplus_device_struct(usb_dev, kovaplus);
+diff --git a/drivers/hid/hid-roccat-lua.c b/drivers/hid/hid-roccat-lua.c
+index ac1a7313e259..0ccaa345de27 100644
+--- a/drivers/hid/hid-roccat-lua.c
++++ b/drivers/hid/hid-roccat-lua.c
+@@ -123,10 +123,9 @@ static int lua_init_specials(struct hid_device *hdev)
+ 	int retval;
+ 
+ 	lua = kzalloc(sizeof(*lua), GFP_KERNEL);
+-	if (!lua) {
+-		hid_err(hdev, "can't alloc device descriptor\n");
++	if (!lua)
+ 		return -ENOMEM;
+-	}
++
+ 	hid_set_drvdata(hdev, lua);
+ 
+ 	retval = lua_init_lua_device_struct(usb_dev, lua);
+diff --git a/drivers/hid/hid-roccat-pyra.c b/drivers/hid/hid-roccat-pyra.c
+index b30aa7b82bf8..c22cc42dadb6 100644
+--- a/drivers/hid/hid-roccat-pyra.c
++++ b/drivers/hid/hid-roccat-pyra.c
+@@ -404,10 +404,9 @@ static int pyra_init_specials(struct hid_device *hdev)
+ 			== USB_INTERFACE_PROTOCOL_MOUSE) {
+ 
+ 		pyra = kzalloc(sizeof(*pyra), GFP_KERNEL);
+-		if (!pyra) {
+-			hid_err(hdev, "can't alloc device descriptor\n");
++		if (!pyra)
+ 			return -ENOMEM;
+-		}
++
+ 		hid_set_drvdata(hdev, pyra);
+ 
+ 		retval = pyra_init_pyra_device_struct(usb_dev, pyra);
+diff --git a/drivers/hid/hid-roccat-ryos.c b/drivers/hid/hid-roccat-ryos.c
+index 47cc8f30ff6d..1153e07ae415 100644
+--- a/drivers/hid/hid-roccat-ryos.c
++++ b/drivers/hid/hid-roccat-ryos.c
+@@ -97,10 +97,9 @@ static int ryos_init_specials(struct hid_device *hdev)
+ 	}
+ 
+ 	ryos = kzalloc(sizeof(*ryos), GFP_KERNEL);
+-	if (!ryos) {
+-		hid_err(hdev, "can't alloc device descriptor\n");
++	if (!ryos)
+ 		return -ENOMEM;
+-	}
++
+ 	hid_set_drvdata(hdev, ryos);
+ 
+ 	retval = roccat_common2_device_init_struct(usb_dev, ryos);
+diff --git a/drivers/hid/hid-roccat-savu.c b/drivers/hid/hid-roccat-savu.c
+index 6dbf6e04dce7..3b39f6556708 100644
+--- a/drivers/hid/hid-roccat-savu.c
++++ b/drivers/hid/hid-roccat-savu.c
+@@ -69,10 +69,9 @@ static int savu_init_specials(struct hid_device *hdev)
+ 	}
+ 
+ 	savu = kzalloc(sizeof(*savu), GFP_KERNEL);
+-	if (!savu) {
+-		hid_err(hdev, "can't alloc device descriptor\n");
++	if (!savu)
+ 		return -ENOMEM;
+-	}
++
+ 	hid_set_drvdata(hdev, savu);
+ 
+ 	retval = roccat_common2_device_init_struct(usb_dev, savu);
+-- 
+2.16.1
