@@ -1,78 +1,66 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-992167-1518043069-2-4334647932226300601
+X-Cyrus-Session-Id: sloti22d1t05-750150-1517654504-2-3740039947593284031
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  T_RP_MATCHES_RCVD -0.01, T_TVD_MIME_EPI 0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='us-ascii'
+X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518043068; b=ox8ZMj1cfpPQfbmB01rYt4W24oFP38hUQs36FypqMLJbD8D
-    RQNxecAo3+bW29ZIeY84/ap/uqAm4yJFLBOqL0Wgn/8PfxGlBQC08oUdA9aKCyU0
-    gto1T5/3Vl7ubb+81kVLu/XfOKo664T955uM69wxR8GKBXzHanIvuDTEBKw995uw
-    zgEeHAT1wsXBinN1SWLPBJptux0gsnojeoPKwuL2hcJkZ7r4DsUEzO+Hp41iOoGF
-    PKAtOKrNzSLdGDOR5Ccbqg7aRNsWbFEd+b/HVQPit+GrnmGTqWVEg6SgZqojhI/l
-    Ua9E+G5V5whO5cbziKbDM8h0s0Dsht8uhvl7+nA==
+    t=1517654503; b=eWawQSlLtv1MEnSZGIZZmiw+T8v/dgR1XYXT4NG9WxJWGkh
+    KIosX6k1q3HM5sS5dKouhEeE5nwwXaUJqYA8vMJRVmKv98nz4y0+UX8KPmgD1+zh
+    mErJeQW3OwmmaCk9j1TjyR0Nt+aVI56RNrbn5lsMOSFORGPjrPbXrye6TEr/0mTN
+    2w06QlD8ejBaY5OgHnun/5tY91qR+6/YpyfaZDNI8xf7Ol2OHYy8Pj5sbvHD6INR
+    lvgX8eUr1nn/6JyBwyMBGWBLSZ3yGRiD5JuWBZDoNgxCqs7Z3+i+7ARqZXHbkapW
+    fcwAio6Pf0Vw8E/hg3Oi+lb0v1yG81w29x+WzzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1518043068; bh=NpSZSV41wxS5y6HKz1T0l0/rUjzv28yIvvi23h
-    o/ph0=; b=Nd5KoltXcSxn3FNntoAR/3Nkb9X9I4t8O0GVLLeAA+fuW/5YPUX+/N
-    xFNNNbKrXuZsDgkQClE16dkc4pMXadRYG23pLx6wz/iFeLl1oB5aNySxm3QwrT0P
-    fRg+2NrqvdYrHfdDJZAF0lP4o2sCrHslbgIE2bpfwAeVhXMgbj/iYlKdu+N0HZas
-    uRfp0YRsO1IrllorvRm9plowESSsk47Xl7TNw7f1wgFAFz1aRDzcw3Zi9Tqx1m36
-    Vej1OtDDYOKTsQira5TataOvmXrttaJovGiVWtLknvTNgLNaVyALy5GI+oWcELNG
-    W7Y1kPrZwOE5XSxTGfTfQo6S+ulCUwHg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1517654503; bh=4Gl3LnS6TemDwjJQopQ9w5Bn2o
+    mqHthS5l+gCtnWNGk=; b=hYDZqs6ngfNi2R498l5EHRPR5DQnDvUUlRpewwShY8
+    7nJ0dMcpLYnHkWTnSX/X4hNcwWAxqGzroqvCEGckt7ECwdQ1/TBkvFBxFS7SsICn
+    JM+6AfpCSBiFw44h1EoklW2PRz9lCRvBXFFaTWfE22yEpwySKCVzeZLJM/RDIzdx
+    lPpxvzyUcqk8zGQDL9xV1zILH3qmVe9zd2g4FwWmb5LFRJhAgeTvq69h4WrfAk3N
+    jdYu9RmajPPFIIMaevvxGwvx/876wu2VFR/wl5fdVKcnewNEZ4uesq5j8IzkzSWS
+    AlD4kbDRFsPi6IFdE18B7jeIIcfnbi7K76rcweE2SJag==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=orgdomain_pass;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gwMsrLQa;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=orgdomain_pass;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gwMsrLQa;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751023AbeBGWhp (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Feb 2018 17:37:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751153AbeBGWho (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 7 Feb 2018 17:37:44 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE5A12179F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AH8x226jFyRfNJcPEwEvWqW+R94bko7BB0PnJVcIi3Ogn+lFDObLaXKhluLQkDvXo+d910Bc9jnLPXLh37F0NaElLlw=
-MIME-Version: 1.0
-In-Reply-To: <20180207045201.GA22010@hao-dev>
-References: <1511764948-20972-15-git-send-email-hao.wu@intel.com>
- <CANk1AXS-ON+Pcxtk-AY1XxH8Paw2aFBjiqhuCz7cA4cyuAQMUA@mail.gmail.com>
- <20180202094213.GB17015@hao-dev> <20180203002626.GA51125@eluebber-mac02.jf.intel.com>
- <20180204093706.GA26184@hao-dev> <20180205183644.GA52136@eluebber-mac02.local>
- <20180206014700.GA3883@hao-dev> <CANk1AXRe85Ns1_cUPdn02yS9Gc6i5cYYhko7snvjfzxQSzUzNA@mail.gmail.com>
- <20180206064706.GB4882@hao-dev> <CANk1AXRe2hN6zQENmm_Try63S3qQr6FHg=x2J6GLam7oNZp9xw@mail.gmail.com>
- <20180207045201.GA22010@hao-dev>
-From: Alan Tull <atull@kernel.org>
-Date: Wed, 7 Feb 2018 16:37:02 -0600
-X-Gmail-Original-Message-ID: <CANk1AXSzPnQO_PkUBkUipwh7ZqKWyaDap8Sn5K7RbUNZa8DECg@mail.gmail.com>
-Message-ID: <CANk1AXSzPnQO_PkUBkUipwh7ZqKWyaDap8Sn5K7RbUNZa8DECg@mail.gmail.com>
-Subject: Re: [PATCH v3 14/21] fpga: dfl: add fpga manager platform driver for FME
-To: Wu Hao <hao.wu@intel.com>
-Cc: "Luebbers, Enno" <enno.luebbers@intel.com>,
+        id S1750790AbeBCKlh (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Feb 2018 05:41:37 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50231 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750842AbeBCKld (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Sat, 3 Feb 2018 05:41:33 -0500
+X-Google-Smtp-Source: AH8x225FhG5EKOpzbPVX9J1auarpYkBbozwWbGhUc2IJbiODg5LQ9UZiipBLVtGrtkscTEw6aPVYvQ==
+Date: Sat, 3 Feb 2018 11:41:24 +0100
+From: Moritz Fischer <mdf@kernel.org>
+To: "Luebbers, Enno" <enno.luebbers@intel.com>
+Cc: Wu Hao <hao.wu@intel.com>, Alan Tull <atull@kernel.org>,
         Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
         linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
@@ -81,207 +69,620 @@ Cc: "Luebbers, Enno" <enno.luebbers@intel.com>,
         Shiva Rao <shiva.rao@intel.com>,
         Christopher Rauer <christopher.rauer@intel.com>,
         Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3 14/21] fpga: dfl: add fpga manager platform driver for
+ FME
+Message-ID: <20180203104124.luniynyrr6iwxozd@derp-derp.local>
+References: <1511764948-20972-1-git-send-email-hao.wu@intel.com>
+ <1511764948-20972-15-git-send-email-hao.wu@intel.com>
+ <CANk1AXS-ON+Pcxtk-AY1XxH8Paw2aFBjiqhuCz7cA4cyuAQMUA@mail.gmail.com>
+ <20180202094213.GB17015@hao-dev>
+ <20180203002626.GA51125@eluebber-mac02.jf.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="baaqpsedxowg56qp"
+Content-Disposition: inline
+In-Reply-To: <20180203002626.GA51125@eluebber-mac02.jf.intel.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 6, 2018 at 10:52 PM, Wu Hao <hao.wu@intel.com> wrote:
-> On Tue, Feb 06, 2018 at 12:53:44PM -0600, Alan Tull wrote:
->> On Tue, Feb 6, 2018 at 12:47 AM, Wu Hao <hao.wu@intel.com> wrote:
->> > On Mon, Feb 05, 2018 at 10:25:54PM -0600, Alan Tull wrote:
->> >> On Mon, Feb 5, 2018 at 7:47 PM, Wu Hao <hao.wu@intel.com> wrote:
->> >> > On Mon, Feb 05, 2018 at 10:36:45AM -0800, Luebbers, Enno wrote:
->> >> >> Hi Hao,
->> >> >>
->> >> >> On Sun, Feb 04, 2018 at 05:37:06PM +0800, Wu Hao wrote:
->> >> >> > On Fri, Feb 02, 2018 at 04:26:26PM -0800, Luebbers, Enno wrote:
->> >> >> > > Hi Hao, Alan,
->> >> >> > >
->> >> >> > > On Fri, Feb 02, 2018 at 05:42:13PM +0800, Wu Hao wrote:
->> >> >> > > > On Thu, Feb 01, 2018 at 04:00:36PM -0600, Alan Tull wrote:
->> >> >> > > > > On Mon, Nov 27, 2017 at 12:42 AM, Wu Hao <hao.wu@intel.com> wrote:
->> >> >> > > > >
->> >> >> > > > > Hi Hao,
->> >> >> > > > >
->> >> >> > > > > A few comments below.   Besides that, looks good.
->> >> >> > > > >
->> >> >> > > > > > This patch adds fpga manager driver for FPGA Management Engine (FME). It
->> >> >> > > > > > implements fpga_manager_ops for FPGA Partial Reconfiguration function.
->> >> >> > > > > >
->> >> >> > > > > > Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
->> >> >> > > > > > Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
->> >> >> > > > > > Signed-off-by: Shiva Rao <shiva.rao@intel.com>
->> >> >> > > > > > Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
->> >> >> > > > > > Signed-off-by: Kang Luwei <luwei.kang@intel.com>
->> >> >> > > > > > Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
->> >> >> > > > > > Signed-off-by: Wu Hao <hao.wu@intel.com>
->> >> >> > > > > > ----
->> >> >> > > > > > v3: rename driver to dfl-fpga-fme-mgr
->> >> >> > > > > >     implemented status callback for fpga manager
->> >> >> > > > > >     rebased due to fpga api changes
->> >> >> > > > > > ---
->> >> >> > > > > >  .../ABI/testing/sysfs-platform-fpga-dfl-fme-mgr    |   8 +
->> >> >> > > > > >  drivers/fpga/Kconfig                               |   6 +
->> >> >> > > > > >  drivers/fpga/Makefile                              |   1 +
->> >> >> > > > > >  drivers/fpga/fpga-dfl-fme-mgr.c                    | 318 +++++++++++++++++++++
->> >> >> > > > > >  drivers/fpga/fpga-dfl.h                            |  39 ++-
->> >> >> > > > > >  5 files changed, 371 insertions(+), 1 deletion(-)
->> >> >> > > > > >  create mode 100644 Documentation/ABI/testing/sysfs-platform-fpga-dfl-fme-mgr
->> >> >> > > > > >  create mode 100644 drivers/fpga/fpga-dfl-fme-mgr.c
->> >> >> > > > > >
->> >> >> > > > > > diff --git a/Documentation/ABI/testing/sysfs-platform-fpga-dfl-fme-mgr b/Documentation/ABI/testing/sysfs-platform-fpga-dfl-fme-mgr
->> >> >> > > > > > new file mode 100644
->> >> >> > > > > > index 0000000..2d4f917
->> >> >> > > > > > --- /dev/null
->> >> >> > > > > > +++ b/Documentation/ABI/testing/sysfs-platform-fpga-dfl-fme-mgr
->> >> >> > > > > > @@ -0,0 +1,8 @@
->> >> >> > > > > > +What:          /sys/bus/platform/devices/fpga-dfl-fme-mgr.0/interface_id
->> >> >> > > > > > +Date:          November 2017
->> >> >> > > > > > +KernelVersion:  4.15
->> >> >> > > > > > +Contact:       Wu Hao <hao.wu@intel.com>
->> >> >> > > > > > +Description:   Read-only. It returns interface id of partial reconfiguration
->> >> >> > > > > > +               hardware. Userspace could use this information to check if
->> >> >> > > > > > +               current hardware is compatible with given image before FPGA
->> >> >> > > > > > +               programming.
->> >> >> > > > >
->> >> >> > > > > I'm a little confused by this.  I can understand that the PR bitstream
->> >> >> > > > > has a dependency on the FPGA's static image, but I don't understand
->> >> >> > > > > the dependency of the bistream on the hardware that is used to program
->> >> >> > > > > the bitstream to the FPGA.
->> >> >> > > >
->> >> >> > > > Sorry for the confusion, the interface_id is used to indicate the version of
->> >> >> > > > the hardware for partial reconfiguration (it's part of the static image of
->> >> >> > > > the FPGA device). Will improve the description on this.
->> >> >> > > >
->> >> >> > >
->> >> >> > > The interface_id expresses the compatibility of the static region with PR
->> >> >> > > bitstreams generated for it. It changes every time a new static region is
->> >> >> > > generated.
->> >> >> > >
->> >> >> > > Would it make more sense to have the interface_id exposed as part of the FME
->> >> >> > > device (which represents the static region)? I'm not sure - it kind of also
->> >> >> > > makes sense here, where you would have all the information in one place (if the
->> >> >> > > interface_id matches, I can use this component to program a bitstream).
->> >> >> >
->> >> >> > Hi Enno
->> >> >> >
->> >> >> > Yes, this interface is under fpga-dfl-fme-mgr.0, and fpga-dfl-fme-mgr.0 is
->> >> >> > under fpga-dfl-fme.0. It's part of the FME device for sure. From another
->> >> >> > point of view, it means if anyone wants to do PR on this Intel FPGA device,
->> >> >> > he needs to find the FME device firstly, and then check if any fpga manager
->> >> >> > created under this FME device, if yes, check the interface_id before PR via
->> >> >> > the FME device node ioctl.
->> >> >>
->> >> >> That sounds good, thank you!
->> >> >>
->> >> >> >
->> >> >> > >
->> >> >> > > Sorry for my limited understanding of the infrastructure - would this same
->> >> >> > > "fpga-dfl-fme-mgr.0" be used for PR if we had multiple PR regions? In that case
->> >> >> > > it would need to expose multiple interface_ids (or we'd have to track both
->> >> >> > > interface IDs and an identifier for the target PR region).
->> >> >> >
->> >> >> > Yes, the fpga manager could be shared with different PR regions.
->> >> >> >
->> >> >> > Sorry, I'm not sure where we need to expose multiple interface_ids and why.
->> >> >>
->> >> >> It's basically a question of how to determine bitstream compatibility - either,
->> >> >> there's a separate interface_id per reconfigurable region, or there is a single
->> >> >> interface_id for the entire device. Both make sense from a certain perspective.
->> >> >>
->> >> >> If there are multiple interface_ids per device (one per region), the driver
->> >> >> would need to expose all of them. If there's only a single one, the driver only
->> >> >> exposes that one ID - compatibility would be determined by looking at both that
->> >> >> single interface_id _and_ the identifier/number of the targeted region.
->> >> >>
->> >> >> I would prefer a separate interface_id per region - it seems more generic and
->> >> >> flexible.
->> >>
->> >> Hi Enno,
->> >>
->> >> I agree with this.
->> >>
->> >> >
->> >> > It's possible to have per region interface_id (or even both per dev interface_id
->> >> > and per region interface_id at the same time), but per FME PR sub feature
->> >> > implementation, it supports multiple PR regions, but only provide one interface
->> >> > id, so at least in this case, it's not per-region information per my
->> >> > understanding. We can consider it later when hardware really supports it. : )
->> >>
->> >> Hi Hao,
->> >>
->> >> I understand that in the case of this PR hardware, the region to
->> >> program is selected when the region_id to program is written to a PR
->> >> hardware control register.  For another example, Arria10 has a hard PR
->> >> hardware and the PR bitstream lands in the area of the FPGA for which
->> >> it was compiled.  In that case, for the PR bitstream to be compatible
->> >> with a PR region, the layout of the edge connections also needs to be
->> >> compatible, so compatibility is per-region in that case instead of
->> >> per-PR hardware.
->> >
->> > Hi Alan,
->> >
->> > Thanks a lot for the explanation. :)
->> >
->> > I fully understand the consideration of adding per-region interface_id.
->> >
->> >> And besides, as I said yesterday, the hard PR
->> >> hardware would not know what the static region ID is when this
->> >> framework is used with such a device.
->> >
->> > Yes, is it possible that hard PR hardware with different versions, requires
->> > different images or different methods for compatibility checking?
->>
->> Because it is really hardware and not something in the FPGA fabric,
->> the hard PR hardware isn't going to change versions very often.  It
->> has to be designed to be flexible and not add any constraints on the
->> PR regions.  If some feature is added or a bug is fixed, that's just a
->> driver issue at most and should not affect PR region compatibility.
->> PR region compatibility would only be dependent on the static FPGA
->> image and the regions that are created in it.  It could be exported in
->> terms of a single static region ID or per-region ID.
->>
->> >
->> >>
->> >> That's why I think making the id per-region may be more future proof,
->> >> even if it may see unnecessary in the case of the original blue bits
->> >> this was written for.
->> >
->> > I feel that per-PR hardware interface id is useful in some cases, and maybe
->> > in some cases, both per-PR hardware and per-region interface ids are needed
->> > for its compatibility checking, so shall we leave developers to decide to
->> > implement per-PR hardware or per-region or both interface ids based on their
->> > own hardware implementations? How do you think? :)
->>
->> That gives us 3 sets of id's.  Seems overly complicated and the
->> userspace would have to figure out which set of id's to use.  I want
->> to see an interface that isn't more complicated than it needs to be
->> but still can be expected to be ok for the future (as far as we can
->> anticipate).
->>
->> Would per-region id's cause any problems that you can see?  I
->> understand that the region id's would all be the same value for a
->> given PR hardware in your use case, but that doesn't seem like it
->> would be hard to implement or that it opens up some possible failure.
->
-> Hi Alan
->
-> No, I don't have any concern on per-region id at all. I will remove this
-> sysfs interface_id interface from this driver, and another patch to add
-> a common sysfs interface under the fpga-region. I feel maybe we can use
-> "compat_id" instead of "id" here to avoid confusion for that sysfs
-> interface under fpga-region, as we added a region_id to fpga_image_info,
-> and they have totally different purposes. How do you think?
+
+--baaqpsedxowg56qp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Hao,
 
-Sounds good.  Yes, that that would keep things clear.
+On Fri, Feb 02, 2018 at 04:26:26PM -0800, Luebbers, Enno wrote:
+> Hi Hao, Alan,
+>=20
+> On Fri, Feb 02, 2018 at 05:42:13PM +0800, Wu Hao wrote:
+> > On Thu, Feb 01, 2018 at 04:00:36PM -0600, Alan Tull wrote:
+> > > On Mon, Nov 27, 2017 at 12:42 AM, Wu Hao <hao.wu@intel.com> wrote:
+> > >=20
+> > > Hi Hao,
+> > >=20
+> > > A few comments below.   Besides that, looks good.
+> > >=20
+> > > > This patch adds fpga manager driver for FPGA Management Engine (FME=
+). It
+> > > > implements fpga_manager_ops for FPGA Partial Reconfiguration functi=
+on.
+> > > >
+> > > > Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+> > > > Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+> > > > Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+> > > > Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
+> > > > Signed-off-by: Kang Luwei <luwei.kang@intel.com>
+> > > > Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> > > > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > > > ----
+> > > > v3: rename driver to dfl-fpga-fme-mgr
+> > > >     implemented status callback for fpga manager
+> > > >     rebased due to fpga api changes
+> > > > ---
+> > > >  .../ABI/testing/sysfs-platform-fpga-dfl-fme-mgr    |   8 +
+> > > >  drivers/fpga/Kconfig                               |   6 +
+> > > >  drivers/fpga/Makefile                              |   1 +
+> > > >  drivers/fpga/fpga-dfl-fme-mgr.c                    | 318 +++++++++=
+++++++++++++
+> > > >  drivers/fpga/fpga-dfl.h                            |  39 ++-
+> > > >  5 files changed, 371 insertions(+), 1 deletion(-)
+> > > >  create mode 100644 Documentation/ABI/testing/sysfs-platform-fpga-d=
+fl-fme-mgr
+> > > >  create mode 100644 drivers/fpga/fpga-dfl-fme-mgr.c
+> > > >
+> > > > diff --git a/Documentation/ABI/testing/sysfs-platform-fpga-dfl-fme-=
+mgr b/Documentation/ABI/testing/sysfs-platform-fpga-dfl-fme-mgr
+> > > > new file mode 100644
+> > > > index 0000000..2d4f917
+> > > > --- /dev/null
+> > > > +++ b/Documentation/ABI/testing/sysfs-platform-fpga-dfl-fme-mgr
+> > > > @@ -0,0 +1,8 @@
+> > > > +What:          /sys/bus/platform/devices/fpga-dfl-fme-mgr.0/interf=
+ace_id
+> > > > +Date:          November 2017
+> > > > +KernelVersion:  4.15
+> > > > +Contact:       Wu Hao <hao.wu@intel.com>
+> > > > +Description:   Read-only. It returns interface id of partial recon=
+figuration
+> > > > +               hardware. Userspace could use this information to c=
+heck if
+> > > > +               current hardware is compatible with given image bef=
+ore FPGA
+> > > > +               programming.
+> > >=20
+> > > I'm a little confused by this.  I can understand that the PR bitstream
+> > > has a dependency on the FPGA's static image, but I don't understand
+> > > the dependency of the bistream on the hardware that is used to program
+> > > the bitstream to the FPGA.
+> >=20
+> > Sorry for the confusion, the interface_id is used to indicate the versi=
+on of
+> > the hardware for partial reconfiguration (it's part of the static image=
+ of
+> > the FPGA device). Will improve the description on this.
 
-Alan
+I'm not sure userland should be making the call on whether what you're
+trying to load is compatible or not. Isn't there a way to check this in
+your PR reconfiguration handler in-kernel?
 
->
-> Thanks
-> Hao
+> >=20
+>=20
+> The interface_id expresses the compatibility of the static region with PR
+> bitstreams generated for it. It changes every time a new static region is
+> generated.
+>=20
+> Would it make more sense to have the interface_id exposed as part of the =
+FME
+> device (which represents the static region)? I'm not sure - it kind of al=
+so
+> makes sense here, where you would have all the information in one place (=
+if the
+> interface_id matches, I can use this component to program a bitstream).
+>=20
+> Sorry for my limited understanding of the infrastructure - would this same
+> "fpga-dfl-fme-mgr.0" be used for PR if we had multiple PR regions? In tha=
+t case
+> it would need to expose multiple interface_ids (or we'd have to track both
+> interface IDs and an identifier for the target PR region).
+>=20
+> > >=20
+> > > > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > > > index 57da904..0171ecb 100644
+> > > > --- a/drivers/fpga/Kconfig
+> > > > +++ b/drivers/fpga/Kconfig
+> > > > @@ -150,6 +150,12 @@ config FPGA_DFL_FME
+> > > >           FPGA platform level management features. There shall be 1=
+ FME
+> > > >           per DFL based FPGA device.
+> > > >
+> > > > +config FPGA_DFL_FME_MGR
+> > > > +       tristate "FPGA DFL FME Manager Driver"
+> > > > +       depends on FPGA_DFL_FME
+> > > > +       help
+> > > > +         Say Y to enable FPGA Manager driver for FPGA Management E=
+ngine.
+> > > > +
+> > > >  config INTEL_FPGA_DFL_PCI
+> > > >         tristate "Intel FPGA DFL PCIe Device Driver"
+> > > >         depends on PCI && FPGA_DFL
+> > > > diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> > > > index cc75bb3..6378580 100644
+> > > > --- a/drivers/fpga/Makefile
+> > > > +++ b/drivers/fpga/Makefile
+> > > > @@ -31,6 +31,7 @@ obj-$(CONFIG_OF_FPGA_REGION)          +=3D of-fpg=
+a-region.o
+> > > >  # FPGA Device Feature List Support
+> > > >  obj-$(CONFIG_FPGA_DFL)                 +=3D fpga-dfl.o
+> > > >  obj-$(CONFIG_FPGA_DFL_FME)             +=3D fpga-dfl-fme.o
+> > > > +obj-$(CONFIG_FPGA_DFL_FME_MGR)         +=3D fpga-dfl-fme-mgr.o
+> > > >
+> > > >  fpga-dfl-fme-objs :=3D dfl-fme-main.o dfl-fme-pr.o
+> > > >
+> > > > diff --git a/drivers/fpga/fpga-dfl-fme-mgr.c b/drivers/fpga/fpga-df=
+l-fme-mgr.c
+> > > > new file mode 100644
+> > > > index 0000000..70356ce
+> > > > --- /dev/null
+> > > > +++ b/drivers/fpga/fpga-dfl-fme-mgr.c
+> > > > @@ -0,0 +1,318 @@
+> > > > +/*
+> > > > + * FPGA Manager Driver for FPGA Management Engine (FME)
+> > > > + *
+> > > > + * Copyright (C) 2017 Intel Corporation, Inc.
+> > > > + *
+> > > > + * Authors:
+> > > > + *   Kang Luwei <luwei.kang@intel.com>
+> > > > + *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> > > > + *   Wu Hao <hao.wu@intel.com>
+> > > > + *   Joseph Grecco <joe.grecco@intel.com>
+> > > > + *   Enno Luebbers <enno.luebbers@intel.com>
+> > > > + *   Tim Whisonant <tim.whisonant@intel.com>
+> > > > + *   Ananda Ravuri <ananda.ravuri@intel.com>
+> > > > + *   Christopher Rauer <christopher.rauer@intel.com>
+> > > > + *   Henry Mitchel <henry.mitchel@intel.com>
+> > > > + *
+> > > > + * This work is licensed under the terms of the GNU GPL version 2.
+> > > > + * SPDX-License-Identifier: GPL-2.0
+> > > > + */
+> > > > +
+> > > > +#include <linux/module.h>
+> > > > +#include <linux/iopoll.h>
+> > > > +#include <linux/fpga/fpga-mgr.h>
+> > > > +
+> > > > +#include "fpga-dfl.h"
+> > > > +#include "dfl-fme.h"
+> > > > +
+> > > > +#define PR_WAIT_TIMEOUT   8000000
+> > > > +#define PR_HOST_STATUS_IDLE    0
+> > > > +
+> > > > +struct fme_mgr_priv {
+> > > > +       void __iomem *ioaddr;
+> > > > +       u64 pr_error;
+> > > > +};
+> > > > +
+> > > > +static ssize_t interface_id_show(struct device *dev,
+> > > > +                                struct device_attribute *attr, cha=
+r *buf)
+> > > > +{
+> > > > +       struct fpga_manager *mgr =3D dev_get_drvdata(dev);
+> > > > +       struct fme_mgr_priv *priv =3D mgr->priv;
+> > > > +       u64 intfc_id_l, intfc_id_h;
+> > > > +
+> > > > +       intfc_id_l =3D readq(priv->ioaddr + FME_PR_INTFC_ID_L);
+> > > > +       intfc_id_h =3D readq(priv->ioaddr + FME_PR_INTFC_ID_H);
+> > > > +
+> > > > +       return scnprintf(buf, PAGE_SIZE, "%016llx%016llx\n",
+> > > > +                       (unsigned long long)intfc_id_h,
+> > > > +                       (unsigned long long)intfc_id_l);
+> > > > +}
+> > > > +static DEVICE_ATTR_RO(interface_id);
+> > > > +
+> > > > +static const struct attribute *fme_mgr_attrs[] =3D {
+> > > > +       &dev_attr_interface_id.attr,
+> > > > +       NULL,
+> > > > +};
+> > > > +
+> > > > +static u64 pr_error_to_mgr_status(u64 err)
+> > > > +{
+> > > > +       u64 status =3D 0;
+> > > > +
+> > > > +       if (err & FME_PR_ERR_OPERATION_ERR)
+> > > > +               status |=3D FPGA_MGR_STATUS_OPERATION_ERR;
+> > > > +       if (err & FME_PR_ERR_CRC_ERR)
+> > > > +               status |=3D FPGA_MGR_STATUS_CRC_ERR;
+> > > > +       if (err & FME_PR_ERR_INCOMPATIBLE_BS)
+> > > > +               status |=3D FPGA_MGR_STATUS_INCOMPATIBLE_IMAGE_ERR;
+> > > > +       if (err & FME_PR_ERR_PROTOCOL_ERR)
+> > > > +               status |=3D FPGA_MGR_STATUS_IP_PROTOCOL_ERR;
+> > > > +       if (err & FME_PR_ERR_FIFO_OVERFLOW)
+> > > > +               status |=3D FPGA_MGR_STATUS_FIFO_OVERFLOW_ERR;
+> > > > +
+> > > > +       return status;
+> > > > +}
+> > > > +
+> > > > +static u64 fme_mgr_pr_error_handle(void __iomem *fme_pr)
+> > > > +{
+> > > > +       u64 pr_status, pr_error;
+> > > > +
+> > > > +       pr_status =3D readq(fme_pr + FME_PR_STS);
+> > > > +       if (!(pr_status & FME_PR_STS_PR_STS))
+> > > > +               return 0;
+> > > > +
+> > > > +       pr_error =3D readq(fme_pr + FME_PR_ERR);
+> > > > +       writeq(pr_error, fme_pr + FME_PR_ERR);
+> > > > +
+> > > > +       return pr_error;
+> > > > +}
+> > > > +
+> > > > +static int fme_mgr_write_init(struct fpga_manager *mgr,
+> > > > +                             struct fpga_image_info *info,
+> > > > +                             const char *buf, size_t count)
+> > > > +{
+> > > > +       struct device *dev =3D &mgr->dev;
+> > > > +       struct fme_mgr_priv *priv =3D mgr->priv;
+> > > > +       void __iomem *fme_pr =3D priv->ioaddr;
+> > > > +       u64 pr_ctrl, pr_status;
+> > > > +
+> > > > +       if (!(info->flags & FPGA_MGR_PARTIAL_RECONFIG)) {
+> > > > +               dev_err(dev, "only support partial reconfiguration.=
+\n");
+> > >=20
+> > > supports
+> > >=20
+> > > > +               return -EINVAL;
+> > > > +       }
+> > > > +
+> > > > +       dev_dbg(dev, "resetting PR before initiated PR\n");
+> > > > +
+> > > > +       pr_ctrl =3D readq(fme_pr + FME_PR_CTRL);
+> > > > +       pr_ctrl |=3D FME_PR_CTRL_PR_RST;
+> > > > +       writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> > > > +
+> > > > +       if (readq_poll_timeout(fme_pr + FME_PR_CTRL, pr_ctrl,
+> > > > +                              pr_ctrl & FME_PR_CTRL_PR_RSTACK, 1,
+> > > > +                              PR_WAIT_TIMEOUT)) {
+> > > > +               dev_err(dev, "maximum PR timeout\n");
+> > >=20
+> > > We have two dev_err's with the same "maximum PR timeout" so the user
+> > > would not be able to see at which point the timeout occurred.
+> > >=20
+> > > I suggest to get rid of the word 'maximum' for both.  This one could
+> > > be 'reset ack timeout" or something similar.
+> >=20
+> > Sure, will switch to a more specific message per your suggestion. Thank=
+s.
+> >=20
+> > >=20
+> > > > +               return -ETIMEDOUT;
+> > > > +       }
+> > > > +
+> > > > +       pr_ctrl =3D readq(fme_pr + FME_PR_CTRL);
+> > > > +       pr_ctrl &=3D ~FME_PR_CTRL_PR_RST;
+> > > > +       writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> > > > +
+> > > > +       dev_dbg(dev,
+> > > > +               "waiting for PR resource in HW to be initialized an=
+d ready\n");
+> > > > +
+> > > > +       if (readq_poll_timeout(fme_pr + FME_PR_STS, pr_status,
+> > > > +                              (pr_status & FME_PR_STS_PR_STS) =3D=
+=3D
+> > > > +                              FME_PR_STS_PR_STS_IDLE, 1, PR_WAIT_T=
+IMEOUT)) {
+> > > > +               dev_err(dev, "maximum PR timeout\n");
+> > >=20
+> > > "PR_STS timeout"?  Or something better.
+> > >=20
+> > > > +               priv->pr_error =3D fme_mgr_pr_error_handle(fme_pr);
+> > > > +               return -ETIMEDOUT;
+> > > > +       }
+> > > > +
+> > > > +       dev_dbg(dev, "check and clear previous PR error\n");
+> > > > +       priv->pr_error =3D fme_mgr_pr_error_handle(fme_pr);
+> > > > +       if (priv->pr_error)
+> > > > +               dev_dbg(dev, "previous PR error detected %llx\n",
+> > > > +                       (unsigned long long)priv->pr_error);
+> > > > +
+> > > > +       dev_dbg(dev, "set PR port ID\n");
+> > > > +
+> > > > +       pr_ctrl =3D readq(fme_pr + FME_PR_CTRL);
+> > > > +       pr_ctrl &=3D ~FME_PR_CTRL_PR_RGN_ID;
+> > > > +       pr_ctrl |=3D FIELD_PREP(FME_PR_CTRL_PR_RGN_ID, info->region=
+_id);
+> > > > +       writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> > > > +
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > > +static int fme_mgr_write(struct fpga_manager *mgr,
+> > > > +                        const char *buf, size_t count)
+> > > > +{
+> > > > +       struct device *dev =3D &mgr->dev;
+> > > > +       struct fme_mgr_priv *priv =3D mgr->priv;
+> > > > +       void __iomem *fme_pr =3D priv->ioaddr;
+> > > > +       u64 pr_ctrl, pr_status, pr_data;
+> > > > +       int delay =3D 0, pr_credit, i =3D 0;
+> > > > +
+> > > > +       dev_dbg(dev, "start request\n");
+> > > > +
+> > > > +       pr_ctrl =3D readq(fme_pr + FME_PR_CTRL);
+> > > > +       pr_ctrl |=3D FME_PR_CTRL_PR_START;
+> > > > +       writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> > > > +
+> > > > +       dev_dbg(dev, "pushing data from bitstream to HW\n");
+> > > > +
+> > > > +       pr_status =3D readq(fme_pr + FME_PR_STS);
+> > > > +       pr_credit =3D FIELD_GET(FME_PR_STS_PR_CREDIT, pr_status);
+> > > > +
+> > > > +       while (count > 0) {
+> > > > +               while (pr_credit <=3D 1) {
+> > > > +                       if (delay++ > PR_WAIT_TIMEOUT) {
+> > > > +                               dev_err(dev, "maximum try\n");
+> > >=20
+> > > It looks like this is waiting for an entry in a queue and timing out
+> > > here.  Could you add a some comments for pr_credit above and this
+> > > loop?  Also a better error message, perhaps "PR credit timeout"?
+> >=20
+> > Driver needs to read the PR credit to know if it could push PR data
+> > to hardware or not. I will add more description here on this PR credit,
+> > and use "PR credit timeout" as error message.
+> >=20
+> > >=20
+> > > > +                               return -ETIMEDOUT;
+> > > > +                       }
+> > > > +                       udelay(1);
+> > > > +
+> > > > +                       pr_status =3D readq(fme_pr + FME_PR_STS);
+> > > > +                       pr_credit =3D FIELD_GET(FME_PR_STS_PR_CREDI=
+T, pr_status);
+> > > > +               }
+> > > > +
+> > > > +               if (count >=3D 4) {
+> > > > +                       pr_data =3D 0;
+> > > > +                       pr_data |=3D FIELD_PREP(FME_PR_DATA_PR_DATA=
+_RAW,
+> > > > +                                             *(((u32 *)buf) + i));
+> > > > +                       writeq(pr_data, fme_pr + FME_PR_DATA);
+> > > > +                       count -=3D 4;
+> > > > +                       pr_credit--;
+> > > > +                       i++;
+> > > > +               } else {
+> > > > +                       WARN_ON(1);
+> > > > +                       return -EINVAL;
+> > > > +               }
+> > > > +       }
+> > > > +
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > > +static int fme_mgr_write_complete(struct fpga_manager *mgr,
+> > > > +                                 struct fpga_image_info *info)
+> > > > +{
+> > > > +       struct device *dev =3D &mgr->dev;
+> > > > +       struct fme_mgr_priv *priv =3D mgr->priv;
+> > > > +       void __iomem *fme_pr =3D priv->ioaddr;
+> > > > +       u64 pr_ctrl;
+> > > > +
+> > > > +       pr_ctrl =3D readq(fme_pr + FME_PR_CTRL);
+> > > > +       pr_ctrl |=3D FME_PR_CTRL_PR_COMPLETE;
+> > > > +       writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> > > > +
+> > > > +       dev_dbg(dev, "green bitstream push complete\n");
+> > > > +       dev_dbg(dev, "waiting for HW to release PR resource\n");
+> > > > +
+> > > > +       if (readq_poll_timeout(fme_pr + FME_PR_CTRL, pr_ctrl,
+> > > > +                              !(pr_ctrl & FME_PR_CTRL_PR_START), 1,
+> > > > +                              PR_WAIT_TIMEOUT)) {
+> > > > +               dev_err(dev, "maximum try.\n");
+> > >=20
+> > > Some message specific to here also, please.
+> > >=20
+> > > > +               return -ETIMEDOUT;
+> > > > +       }
+> > > > +
+> > > > +       dev_dbg(dev, "PR operation complete, checking status\n");
+> > > > +       priv->pr_error =3D fme_mgr_pr_error_handle(fme_pr);
+> > > > +       if (priv->pr_error) {
+> > > > +               dev_dbg(dev, "PR error detected %llx\n",
+> > > > +                       (unsigned long long)priv->pr_error);
+> > > > +               return -EIO;
+> > > > +       }
+> > > > +
+> > > > +       dev_dbg(dev, "PR done successfully\n");
+> > > > +
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > > +static enum fpga_mgr_states fme_mgr_state(struct fpga_manager *mgr)
+> > > > +{
+> > > > +       return FPGA_MGR_STATE_UNKNOWN;
+> > > > +}
+> > > > +
+> > > > +static u64 fme_mgr_status(struct fpga_manager *mgr)
+> > > > +{
+> > > > +       struct fme_mgr_priv *priv =3D mgr->priv;
+> > > > +
+> > > > +       return pr_error_to_mgr_status(priv->pr_error);
+> > > > +}
+> > > > +
+> > > > +static const struct fpga_manager_ops fme_mgr_ops =3D {
+> > > > +       .write_init =3D fme_mgr_write_init,
+> > > > +       .write =3D fme_mgr_write,
+> > > > +       .write_complete =3D fme_mgr_write_complete,
+> > > > +       .state =3D fme_mgr_state,
+> > > > +       .status =3D fme_mgr_status,
+> > > > +};
+> > > > +
+> > > > +static int fme_mgr_probe(struct platform_device *pdev)
+> > > > +{
+> > > > +       struct device *dev =3D &pdev->dev;
+> > > > +       struct fme_mgr_priv *priv;
+> > > > +       struct fpga_manager *mgr;
+> > > > +       struct resource *res;
+> > > > +       int ret;
+> > > > +
+> > > > +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > > > +       if (!priv)
+> > > > +               return -ENOMEM;
+> > > > +
+> > > > +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > > +       priv->ioaddr =3D devm_ioremap(dev, res->start, resource_siz=
+e(res));
+> > > > +       if (IS_ERR(priv->ioaddr))
+> > > > +               return PTR_ERR(priv->ioaddr);
+> > > > +
+> > > > +       ret =3D sysfs_create_files(&pdev->dev.kobj, fme_mgr_attrs);
+> > > > +       if (ret)
+> > > > +               return ret;
+> > > > +
+> > > > +       mgr =3D devm_kzalloc(dev, sizeof(*mgr), GFP_KERNEL);
+> > > > +       if (!mgr)
+> > > > +               goto sysfs_remove_exit;
+> > > > +
+> > > > +       mgr->name =3D "DFL FPGA Manager";
+> > > > +       mgr->mops =3D &fme_mgr_ops;
+> > > > +       mgr->priv =3D priv;
+> > > > +       mgr->parent =3D dev;
+> > > > +       platform_set_drvdata(pdev, mgr);
+> > > > +
+> > > > +       ret =3D fpga_mgr_register(mgr);
+> > > > +       if (ret) {
+> > > > +               dev_err(dev, "unable to register FPGA manager\n");
+> > > > +               goto sysfs_remove_exit;
+> > > > +       }
+> > > > +
+> > > > +       return 0;
+> > > > +
+> > > > +sysfs_remove_exit:
+> > > > +       sysfs_remove_files(&pdev->dev.kobj, fme_mgr_attrs);
+> > > > +       return ret;
+> > > > +}
+> > > > +
+> > > > +static int fme_mgr_remove(struct platform_device *pdev)
+> > > > +{
+> > > > +       struct fpga_manager *mgr =3D platform_get_drvdata(pdev);
+> > > > +
+> > > > +       fpga_mgr_unregister(mgr);
+> > > > +       sysfs_remove_files(&pdev->dev.kobj, fme_mgr_attrs);
+> > > > +
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > > +static struct platform_driver fme_mgr_driver =3D {
+> > > > +       .driver =3D {
+> > > > +               .name    =3D FPGA_DFL_FME_MGR,
+> > > > +       },
+> > > > +       .probe   =3D fme_mgr_probe,
+> > > > +       .remove  =3D fme_mgr_remove,
+> > > > +};
+> > > > +
+> > > > +module_platform_driver(fme_mgr_driver);
+> > > > +
+> > > > +MODULE_DESCRIPTION("FPGA Manager for FPGA Management Engine");
+> > > > +MODULE_AUTHOR("Intel Corporation");
+> > > > +MODULE_LICENSE("GPL v2");
+> > > > +MODULE_ALIAS("platform:fpga-dfl-fme-mgr");
+> > > > diff --git a/drivers/fpga/fpga-dfl.h b/drivers/fpga/fpga-dfl.h
+> > > > index e5a1094..d45eb82 100644
+> > > > --- a/drivers/fpga/fpga-dfl.h
+> > > > +++ b/drivers/fpga/fpga-dfl.h
+> > > > @@ -130,7 +130,44 @@
+> > > >
+> > > >  /* FME Partial Reconfiguration Sub Feature Register Set */
+> > > >  #define FME_PR_DFH             DFH
+> > > > -#define FME_PR_SIZE            DFH_SIZE
+> > > > +#define FME_PR_CTRL            0x8
+> > > > +#define FME_PR_STS             0x10
+> > > > +#define FME_PR_DATA            0x18
+> > > > +#define FME_PR_ERR             0x20
+> > > > +#define FME_PR_INTFC_ID_H      0xA8
+> > > > +#define FME_PR_INTFC_ID_L      0xB0
+> > > > +#define FME_PR_SIZE            0xB8
+> > > > +
+> > > > +/* FME PR Control Register Bitfield */
+> > > > +#define FME_PR_CTRL_PR_RST     BIT(0)  /* Reset PR engine */
+> > > > +#define FME_PR_CTRL_PR_RSTACK  BIT(4)  /* Ack for PR engine reset =
+*/
+> > > > +#define FME_PR_CTRL_PR_RGN_ID  GENMASK_ULL(9, 7)       /* PR Regio=
+n ID */
+> > > > +#define FME_PR_CTRL_PR_START   BIT(12) /* Start to request for PR =
+service */
+> > > > +#define FME_PR_CTRL_PR_COMPLETE        BIT(13) /* PR data push com=
+plete notification */
+> > > > +
+> > > > +/* FME PR Status Register Bitfield */
+> > > > +/* Number of available entries in HW queue inside the PR engine. */
+> > > > +#define FME_PR_STS_PR_CREDIT   GENMASK_ULL(8, 0)
+> > > > +#define FME_PR_STS_PR_STS      BIT(16) /* PR operation status */
+> > > > +#define FME_PR_STS_PR_STS_IDLE 0
+> > > > +#define FME_PR_STS_PR_CTRLR_STS        GENMASK_ULL(22, 20)     /* =
+Controller status */
+> > > > +#define FME_PR_STS_PR_HOST_STS GENMASK_ULL(27, 24)     /* PR host =
+status */
+> > > > +
+> > > > +/* FME PR Data Register Bitfield */
+> > > > +/* PR data from the raw-binary file. */
+> > > > +#define FME_PR_DATA_PR_DATA_RAW        GENMASK_ULL(32, 0)
+> > > > +
+> > > > +/* FME PR Error Register */
+> > > > +/* Previous PR Operation errors detected. */
+> > > > +#define FME_PR_ERR_OPERATION_ERR       BIT(0)
+> > > > +/* CRC error detected. */
+> > > > +#define FME_PR_ERR_CRC_ERR             BIT(1)
+> > > > +/* Incompatible PR bitstream detected. */
+> > > > +#define FME_PR_ERR_INCOMPATIBLE_BS     BIT(2)
+> > > > +/* PR data push protocol violated. */
+> > > > +#define FME_PR_ERR_PROTOCOL_ERR                BIT(3)
+> > > > +/* PR data fifo overflow error detected */
+> > > > +#define FME_PR_ERR_FIFO_OVERFLOW       BIT(4)
+> > > >
+> > > >  /* FME HSSI Sub Feature Register Set */
+> > > >  #define FME_HSSI_DFH           DFH
+> > >=20
+> > > I see fpga-dfl.h as enumeration code which is separate from any driver
+> > > implementation specifics other than what's required for the DFL
+> > > enumeration scheme.    These PR engine #defines should move to a .h
+> > > that is dedicated to this specific PR hardware device. If someone else
+> > > adds a different PR device to the framework, their PR driver would
+> > > also have its own .h.  Same for any other modules that aren't central
+> > > to DFL enumeration.
+> >=20
+> > Sure, will move PR related register to a separated header file.
+> > DFL enumeration related registers, will still be kept in fpga-dfl.h.
+> >=20
+> > Thanks
+> > Hao
+> >=20
+> > >=20
+> > > Thanks,
+> > > Alan
+> > >=20
+> > > > --
+> > > > 1.8.3.1
+> > > >
+
+Thanks,
+Moritz
+
+--baaqpsedxowg56qp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEowQ4eJSlIZpNWnl2UVwKRFcJcNgFAlp1kdAACgkQUVwKRFcJ
+cNhgvggAxmGY16qldCFyq7Pbn8/0EX9Xrxo7iK2Qk+kQ4ppwV3yh8u5fwl6I8DCX
+YF7EDUzgRqzvOb30GRg/kkpjBnhSmyosi24RCxIZZ4/V7+8Iq9VdeODjym+Z7YAK
+XIy8klDBPcazumjtNxRMHJlN87F/e84R2xlPM7kjf//J1/dtaqHQAOM0d1ljkQU4
+bMuNvtnHN8XTOh2buJGPf7KqgYoCRuWhEkrD3ersXqWR3uokrbqtFEh8uSV5OiAI
+9kmoAaVs9eoD3uhCbnvDbXt25GeNKHbPJw8BSINccAI0ku4Wgu7fjSh/uXIWGtJG
+B9lftVO42501jkX2zUJxpU15fP94Yw==
+=REsw
+-----END PGP SIGNATURE-----
+
+--baaqpsedxowg56qp--
