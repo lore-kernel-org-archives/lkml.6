@@ -1,47 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752657AbeBCQ3B (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 11:29:01 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36172 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751644AbeBCQ2w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 11:28:52 -0500
-X-Google-Smtp-Source: AH8x224xjwvWAp9w3I45uyXyb0vGdDeEiBKfq3Xdp2V6d296ILMN8PNJaIWLpbcaVwqJZQzckPnML3l3nKG29lJA28E=
-MIME-Version: 1.0
-In-Reply-To: <1516258057.410.55.camel@sipsolutions.net>
-References: <alpine.LSU.2.11.1801171448510.5433@eggly.anvils> <1516258057.410.55.camel@sipsolutions.net>
-From: Kevin Groeneveld <kgroeneveld@gmail.com>
-Date: Sat, 3 Feb 2018 11:28:50 -0500
-Message-ID: <CABF+-6Ur0v=dbyXCFxWS0BeAJuivcANFeRr=g78DggWEL22H9w@mail.gmail.com>
-Subject: Re: [PATCH] cfg80211: stop demanding lots of new stuff
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Hugh Dickins <hughd@google.com>, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        id S1752686AbeBCQay (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 11:30:54 -0500
+Received: from mga02.intel.com ([134.134.136.20]:7954 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751644AbeBCQat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 11:30:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,455,1511856000";
+   d="scan'208";a="24461048"
+Message-ID: <1517675448.21379.2.camel@linux.intel.com>
+Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
+ candidate and the basis for SIS
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Mel Gorman <mgorman@techsingularity.net>,
+        Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>
+Date: Sat, 03 Feb 2018 08:30:48 -0800
+In-Reply-To: <20180202140817.GP2295@hirez.programming.kicks-ass.net>
+References: <20180130104555.4125-1-mgorman@techsingularity.net>
+         <3838689.GpfBVtfPr0@aspire.rjw.lan>
+         <20180201091104.GW2269@hirez.programming.kicks-ass.net>
+         <8930678.7E2iWGoJnn@aspire.rjw.lan>
+         <20180202124647.GK2269@hirez.programming.kicks-ass.net>
+         <20180202140817.GP2295@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-2.fc25) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 18, 2018 at 1:47 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Wed, 2018-01-17 at 14:55 -0800, Hugh Dickins wrote:
->> "make oldconfig" from 4.14 (when CONFIG_CFG80211_CERTIFICATION_ONUS
->> is not set) to 4.15-rc, gets into asking lots of new questions, and
->> configuring in unwanted stuff: I'm unsure of my Kconfig skills, but
->> it looks like CFG80211_REQUIRE_SIGNED_REGDB's "default y" needs to
->> be toned down when we don't even have CFG80211_CERTIFICATION_ONUS.
->
-> No, this is wrong - we want default configurations to be able to load a
-> signed regulatory database and validate the signature.
-
-I had a similar reaction as Hugh when I recently updated a kernel
-config from 4.14 to 4.15.  I barely understand the kernel config
-options in question so I don't really know what is right or wrong.
-But it seems strange to me that when you turn off
-CFG80211_CERTIFICATION_ONUS in menuconfig that the options which get
-hidden are forced on.  When options are hidden like this I assume
-(maybe incorrectly) that they are dependent on the option I just
-turned off and that the now hidden options will also be off.
-
-Kevin
+On Fri, 2018-02-02 at 15:08 +0100, Peter Zijlstra wrote:
+> On Fri, Feb 02, 2018 at 01:46:47PM +0100, Peter Zijlstra wrote:
+> 
+> > +static void __intel_pstate_hwp_set_desired(int val)
+> > +{
+> > +	u64 value;
+> > +
+> > +	value = rdmsrl(MSR_HWP_REQUEST);
+> > +	value &= ~GENMASK_ULL(23, 16);
+> > +	value |= (val & 0xff) << 16;
+> > +	wrmsrl(MSR_HWP_REQUEST, val);
+> > +}
+> 
+> Also, if we keep a software shadow of that MSR, we can avoid the
+> rdmsr, which might also help.
+The reason we don't keep a software shadow as users can use x86-energy-
+perf utility or via BMC to adjust.  CCed  to Len. 
