@@ -1,159 +1,151 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2021767-1517697341-2-12943888331013694049
+X-Cyrus-Session-Id: sloti22d1t05-1576794-1517683145-2-9223130415730227646
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='windows-1252'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517697340; b=aBOWCYWRFS+TLorT4jqF3bFEPPe0d41QBiOY0xoVKFotwRP
-    A1A0gvGAyxAJF0PHmpBDk8MLep7lFruixm2lyO9t3FDA6en5ozkMPUFNPiXO4KNr
-    52pjLJlqB6pHrkU9+v3HnVrynPgdAyYS45bl3U0lvaPOlIbimhJ8NpAQJ8v+R2q3
-    te55G/UFW0ipXABuJwuvFx6m8IuLL7rrDNY152qAr4+wlAIcsDMavQqUG4AjmEn9
-    fGAhbUMdCwP2S4c/Tl3ka8ZthD/b/uM45GIP/Vq5YDyQQT964TaDg46Bh24oP8Ks
-    DiEh1zz72E/RD8lg2y9BMywxb29XSvv/mn2n1ZQ==
+    t=1517683145; b=atvxh+ydXRs7sDgcs2hTEuTqW47vF5mfMNXn2rStWpAoBGB
+    YZfxzkFrZKtD0os9kk7A/M9yJaBSdmWGWh/0OWM7vGMbWJ0xWMrw7Rv840eMrbLF
+    ebw9auESUWbIJTDIREzsbkD1/vdopeIsKb7MQlAeAytCrcfTqMi0ue+OGVsoh+64
+    Smz0OQTONKGxCent5MoHg0duGEy5/sebTE4xd0SM9Fe1eNAOjc9Dn8SRbth5pvFx
+    E09EFzd5OqKURfLU3dywVFh1H1whQTwu2FJFPPMVUZjNCRlwrT7y479HW3XOE4am
+    RecMftESLG2RhQrqj3N11HAPwoxArJjGMxi4RXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:cc:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1517697340; bh=ne6Xb3GapCMyndyWItneb1dTScliMu9E7OtNOuuoUN0=; b=U
-    050xzSUvH1jqO5++E5jS6xYEPSPsG7BBWffEQAk2xsL/+v/m1VCPM/TjH5v46gXr
-    dWtWHqLtBtEo7mhB/JkkUTMJYpQyEdeoxkFUW07MsIDp78TUMXX6YH1CpHnViJZh
-    0qXDG/LEYvhHH5Adq9NsmSc+yVwgBhHLENWNLPBryUb99Dyb3yR69PUehsRfnD8l
-    nNQhvN7w9lDTKRrfV94VCvlr08b3GK+JlkFjE5sezy5FlPtCc7+S9DNXVsrC6viy
-    gTtda7H14qiwliflrJdKohk0nc8YnrepgUkrp+0FaghOKl7OyyGRBPP9zbGumC6k
-    1VaL8xUv0XPL2csgh84Tw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hgJ1hAWY x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1517683145; bh=6njxDI
+    PcFziSstrzVBdN6ej4VdumDKtniU3N6nlgk7M=; b=CAAZ+ufeB7y6qPhFInBnLa
+    IxWPRW6QzZOu5UPHfbhIubcda6XrFRx8ddlA86MLvaFxlIy/srpFGXEfr20AV3xE
+    CdOkwAwjXjz3s1ankYsviJtnMGYoI7zUoB8omXLSLvmYwUpA6iNLRtRU0tWjkCFK
+    Z+nMMEk+ucE4J1CLxMTkHpgULslF7gL3LLk4JP9TD8f9XY07yR5u0l5LipAj58uB
+    IhaEdR31yy8EzSrgsRI2Mtkv6RAQt3raQA8X5tRrhcSjIHMi/0o2Tg2WIW0lO+Hb
+    WUV1SDKMae8x5a2NX2OHD5sVAXb4yYZnHFZ7Y2oH7kGQM+6oLDJEiaRLs7NdTFPg
+    ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=oc+V1EGH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=U3HTpUrD;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hgJ1hAWY x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=oc+V1EGH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=U3HTpUrD;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754567AbeBCWfi (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Feb 2018 17:35:38 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34271 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752688AbeBCWfh (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 3 Feb 2018 17:35:37 -0500
-X-Google-Smtp-Source: AH8x2256mbqh1OIzYOMxkt4lXUttrVysPiv8N4t0miEjNFEJG2zcB0J8iWfupYES6p3Lw7Ky/cbUeA==
-Subject: Re: [PATCH AUTOSEL for 4.9 28/52] led: core: Fix brightness setting
- when setting delay_off=0
-To: Sasha Levin <Alexander.Levin@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        id S1754889AbeBCSiz (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Feb 2018 13:38:55 -0500
+Received: from mail-bl2nam02on0122.outbound.protection.outlook.com ([104.47.38.122]:14996
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752795AbeBCSDi (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Feb 2018 13:03:38 -0500
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Chunyan Zhang <zhang.lyra@gmail.com>,
+        Lvqiang Huang <Lvqiang.Huang@spreadtrum.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 07/52] ARM: 8731/1: Fix
+ csum_partial_copy_from_user() stack mismatch
+Thread-Topic: [PATCH AUTOSEL for 4.9 07/52] ARM: 8731/1: Fix
+ csum_partial_copy_from_user() stack mismatch
+Thread-Index: AQHTnRlPKCZyzZ52U0C81ei66K5liw==
+Date: Sat, 3 Feb 2018 18:03:36 +0000
+Message-ID: <20180203180303.8490-7-alexander.levin@microsoft.com>
 References: <20180203180303.8490-1-alexander.levin@microsoft.com>
- <20180203180303.8490-28-alexander.levin@microsoft.com>
- <fb170821-02d5-8aff-5985-9df303f4030a@gmail.com>
-Cc: Matthieu CASTET <matthieu.castet@parrot.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-X-Enigmail-Draft-Status: N1110
-Message-ID: <dba34443-fee8-e586-5a74-d2316dac9300@gmail.com>
-Date: Sat, 3 Feb 2018 23:34:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+In-Reply-To: <20180203180303.8490-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1091;7:rkHW50JmJFNAsabOJj1q0+vIALDafNCogoHchyyNKA7dZ7y21gwwtn0BK0Xg2cHTPpOPiMj/8iiB5+NQfmJ8YIJ+r0dgjU+9dG+qrf6EQrTs2mBND9+BbCPQlq0VeRof4KYwq+8qO0b6YwQKkeLOAWbGIqQW67Bzfw/h2o1IpCdQ9hf0bgoXm9emnvNEPGtKy5LRk87eoofXSjC/Qe5r4kINVTNpaeSQokmkVwkvaGaHNk+nDAkMyt6+JD1o5kpx
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: cd4ec4ef-05b1-4685-6896-08d56b307253
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1091;
+x-ms-traffictypediagnostic: BL0PR2101MB1091:
+x-microsoft-antispam-prvs: <BL0PR2101MB10913B792FD5DC4BB8449EB9FBF80@BL0PR2101MB1091.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL0PR2101MB1091;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1091;
+x-forefront-prvs: 05724A8921
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(346002)(376002)(366004)(39860400002)(199004)(189003)(86362001)(575784001)(106356001)(22452003)(4326008)(97736004)(25786009)(2950100002)(5660300001)(2906002)(81156014)(105586002)(3280700002)(8676002)(8936002)(6116002)(68736007)(81166006)(3660700001)(86612001)(39060400002)(2900100001)(107886003)(3846002)(102836004)(1076002)(26005)(6346003)(66066001)(10090500001)(76176011)(6506007)(10290500003)(14454004)(186003)(6486002)(59450400001)(6436002)(53936002)(72206003)(7736002)(316002)(305945005)(99286004)(110136005)(54906003)(36756003)(2501003)(5250100002)(6512007)(478600001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1091;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-message-info: 9aEte6MwJ6lqU/RxPCKGTtBpKQONHJWrePj5HdSCkl+Q/xKbBZYBdO4GWzPAZ7maAwd/b13AmS9sCZIdF5tFoQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <fb170821-02d5-8aff-5985-9df303f4030a@gmail.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd4ec4ef-05b1-4685-6896-08d56b307253
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:03:36.1120
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1091
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/03/2018 10:22 PM, Jacek Anaszewski wrote:
-> Hi Sasha,
-> 
-> All 3.18, 4.4 and 4.9 also require the follow-up
-> patch [0], similarly like autosel did it for 4.14,
-> since this one alone breaks the other use case.
+From: Chunyan Zhang <zhang.lyra@gmail.com>
 
-Actually after taking closer look, it turns out that
-the patch [0] applies cleanly only to 4.14.
+[ Upstream commit 36b0cb84ee858f02c256d26f0cb4229c78e3399e ]
 
-4.9 requires also the patch :
+An additional 'ip' will be pushed to the stack, for restoring the
+DACR later, if CONFIG_CPU_SW_DOMAIN_PAN defined.
 
-eb1610b4c273 ("led: core: Fix blink_brightness setting race")
+However, the fixup still get the err_ptr by add #8*4 to sp, which
+results in the fact that the code area pointed by the LR will be
+overwritten, or the kernel will crash if CONFIG_DEBUG_RODATA is enabled.
 
-3.18 and 4.4 shouldn't have the issue since it was introduced
-along with LED_BLINK_SW flag added in 4.7.
+This patch fixes the stack mismatch.
 
-Thanks,
-Jacek Anaszewski
+Fixes: a5e090acbf54 ("ARM: software-based priviledged-no-access support")
+Signed-off-by: Lvqiang Huang <Lvqiang.Huang@spreadtrum.com>
+Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ arch/arm/lib/csumpartialcopyuser.S | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> [0] https://lkml.org/lkml/2018/2/3/249
-> 
-> On 02/03/2018 07:03 PM, Sasha Levin wrote:
->> From: Matthieu CASTET <matthieu.castet@parrot.com>
->>
->> [ Upstream commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c ]
->>
->> With the current code, the following sequence won't work :
->> echo timer > trigger
->>
->> echo 0 >  delay_off
->> * at this point we call
->> ** led_delay_off_store
->> ** led_blink_set
->> *** stop timer
->> ** led_blink_setup
->> ** led_set_software_blink
->> *** if !delay_on, led off
->> *** if !delay_off, set led_set_brightness_nosleep <--- LED_BLINK_SW is set but timer is stop
->> *** otherwise start timer/set LED_BLINK_SW flag
->>
->> echo xxx > brightness
->> * led_set_brightness
->> ** if LED_BLINK_SW
->> *** if brightness=0, led off
->> *** else apply brightness if next timer <--- timer is stop, and will never apply new setting
->> ** otherwise set led_set_brightness_nosleep
->>
->> To fix that, when we delete the timer, we should clear LED_BLINK_SW.
->>
->> Cc: linux-leds@vger.kernel.org
->> Signed-off-by: Matthieu CASTET <matthieu.castet@parrot.com>
->> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
->> ---
->>  drivers/leds/led-core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->> index 3bce44893021..d70d4a5273b8 100644
->> --- a/drivers/leds/led-core.c
->> +++ b/drivers/leds/led-core.c
->> @@ -186,7 +186,7 @@ void led_blink_set(struct led_classdev *led_cdev,
->>  		   unsigned long *delay_on,
->>  		   unsigned long *delay_off)
->>  {
->> -	del_timer_sync(&led_cdev->blink_timer);
->> +	led_stop_software_blink(led_cdev);
->>  
->>  	led_cdev->flags &= ~LED_BLINK_ONESHOT;
->>  	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
->>
-> 
+diff --git a/arch/arm/lib/csumpartialcopyuser.S b/arch/arm/lib/csumpartialc=
+opyuser.S
+index 1712f132b80d..b83fdc06286a 100644
+--- a/arch/arm/lib/csumpartialcopyuser.S
++++ b/arch/arm/lib/csumpartialcopyuser.S
+@@ -85,7 +85,11 @@
+ 		.pushsection .text.fixup,"ax"
+ 		.align	4
+ 9001:		mov	r4, #-EFAULT
++#ifdef CONFIG_CPU_SW_DOMAIN_PAN
++		ldr	r5, [sp, #9*4]		@ *err_ptr
++#else
+ 		ldr	r5, [sp, #8*4]		@ *err_ptr
++#endif
+ 		str	r4, [r5]
+ 		ldmia	sp, {r1, r2}		@ retrieve dst, len
+ 		add	r2, r2, r1
+--=20
+2.11.0
