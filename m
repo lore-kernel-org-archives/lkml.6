@@ -1,74 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752001AbeBCITm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 03:19:42 -0500
-Received: from mout.web.de ([217.72.192.78]:63488 "EHLO mout.web.de"
+        id S1751774AbeBCIXd (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 03:23:33 -0500
+Received: from gum.cmpxchg.org ([85.214.110.215]:45498 "EHLO gum.cmpxchg.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750811AbeBCITc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 03:19:32 -0500
-To: linux-input@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] hid-saitek: Delete an error message for a failed memory
- allocation in saitek_probe()
-Message-ID: <e04a936f-9925-3808-9274-6cffe3c63cc3@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 09:19:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:WmQB9nTvWyJ0Jrr11nW3k2bRnnpANP5lB3yOee8Ceni+CXH4noO
- 2Sil/IyYbokBgFK56T0udxlqyrm4th6sUNx+rC6HZHQHmOX76yQMIWLXEq/+DdcHJ6vtd91
- WJFI8m/ZWfk6wAongaGOOascyd7/ff8ZchEpnoZOoQ7BDVJPU5i83w/ZQgu98fkxFlGFzNi
- PJ1H633CYndRyFvooaw5Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:T6YnQz+jcgQ=:2OyvTbP0NFnihn2DOgQoHg
- JJ3L1whnr2Kuo+GSOU6PSr/WfC4XU64HVwyl2uAnsj5jhLpj0u8yIUiR+fzIJ5euM3TdtMnsY
- k/Y3icjdUzE/rsY1FilJYpIqawWS+bRYb7IHmuLrxdKSkQlJfPm5MShnDYrkICYh79vC8o0Rd
- VGm+pjOVJdOzOhOV3RgGKtFdzMEv4YRGzyUGrA9BjgmZDo+OUR6z0zkSpr7zPLzsFlq4SAxsb
- eHZV4awbbw+dlWWV8IpSoonMoMtxKr/dPDq8unM+V1lMmeHcHVNUH9O8NlZ5SI+BgUuZ3Kjhx
- BaC/FSoQd9QOwWX2RzliF3qTXwvxmBcAjOs50C7sS6EIWOfBvTJgSYs7pG8KxneEp2haSrTdu
- IY+Hg3rV46Cfo91LcMUdhIMWRzcKVFeLUC3ZzuC1NPDzH6qe9Jq3Rcn0WzvjIhucC6KjMLkpJ
- xOcMn3vEC/D4cWgJ6omCqjzE9HdQH76XboweBLLaDylywW8wCwIk64gI09C0ejrOs9iZkH2aO
- npzCilEq9zHd7uhhHi8lb1QB6kopNxuTh9fKHBWuB0wMgpw/CI3y3incVOZ0dGzmX9zCL0j4V
- ZEr4Os2PmIc18yfLYFyjiQfunphX72QHGPivZow1nz+4m0a0s97jNI4oVJjOela1Yljt++N3R
- PH3BPEIsFY6bNbEB5KWTj8QzR8CpfUSA8SJma18UG8HqQh+EbfFOmcvVoB6/Vlxs9FeWaO6qC
- AUHjmtmEQg1FFjXaRwjE6OHCONqvqicKwpGpc55CDxNsS0UhV9z8ylhv7XZZMOfbmsXeGzKNP
- mebeXg8+DtNlHJu3jy25/c0Wde0NsTIew2lerT7cHxD5g/Gcu0=
+        id S1750725AbeBCIXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 03:23:25 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Tejun Heo <tj@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        linux-mm@kvack.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: [PATCH] mm: memcontrol: fix NR_WRITEBACK leak in memcg and system stats
+Date: Sat,  3 Feb 2018 03:23:53 -0500
+Message-Id: <20180203082353.17284-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 09:12:24 +0100
+After the ("a983b5ebee57 mm: memcontrol: fix excessive complexity in
+memory.stat reporting"), we observed slowly upward creeping
+NR_WRITEBACK counts over the course of several days, both the
+per-memcg stats as well as the system counter in e.g. /proc/meminfo.
 
-Omit an extra message for a memory allocation failure in this function.
+The conversion from full per-cpu stat counts to per-cpu cached atomic
+stat counts introduced an irq-unsafe RMW operation into the updates.
 
-This issue was detected by using the Coccinelle software.
+Most stat updates come from process context, but one notable exception
+is the NR_WRITEBACK counter. While writebacks are issued from process
+context, they are retired from (soft)irq context.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+When writeback completions interrupt the RMW counter updates of new
+writebacks being issued, the decs from the completions are lost.
+
+Since the global updates are routed through the joint lruvec API, both
+the memcg counters as well as the system counters are affected.
+
+This patch makes the joint stat and event API irq safe.
+
+Fixes: a983b5ebee57 ("mm: memcontrol: fix excessive complexity in memory.stat reporting")
+Debugged-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- drivers/hid/hid-saitek.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ include/linux/memcontrol.h | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/hid/hid-saitek.c b/drivers/hid/hid-saitek.c
-index 39e642686ff0..49355ceddd85 100644
---- a/drivers/hid/hid-saitek.c
-+++ b/drivers/hid/hid-saitek.c
-@@ -45,10 +45,8 @@ static int saitek_probe(struct hid_device *hdev,
- 	int ret;
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 882046863581..c46016bb25eb 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -523,9 +523,11 @@ static inline void __mod_memcg_state(struct mem_cgroup *memcg,
+ static inline void mod_memcg_state(struct mem_cgroup *memcg,
+ 				   int idx, int val)
+ {
+-	preempt_disable();
++	unsigned long flags;
++
++	local_irq_save(flags);
+ 	__mod_memcg_state(memcg, idx, val);
+-	preempt_enable();
++	local_irq_restore(flags);
+ }
  
- 	ssc = devm_kzalloc(&hdev->dev, sizeof(*ssc), GFP_KERNEL);
--	if (ssc == NULL) {
--		hid_err(hdev, "can't alloc saitek descriptor\n");
-+	if (!ssc)
- 		return -ENOMEM;
--	}
+ /**
+@@ -606,9 +608,11 @@ static inline void __mod_lruvec_state(struct lruvec *lruvec,
+ static inline void mod_lruvec_state(struct lruvec *lruvec,
+ 				    enum node_stat_item idx, int val)
+ {
+-	preempt_disable();
++	unsigned long flags;
++
++	local_irq_save(flags);
+ 	__mod_lruvec_state(lruvec, idx, val);
+-	preempt_enable();
++	local_irq_restore(flags);
+ }
  
- 	ssc->quirks = quirks;
- 	ssc->mode = -1;
+ static inline void __mod_lruvec_page_state(struct page *page,
+@@ -630,9 +634,11 @@ static inline void __mod_lruvec_page_state(struct page *page,
+ static inline void mod_lruvec_page_state(struct page *page,
+ 					 enum node_stat_item idx, int val)
+ {
+-	preempt_disable();
++	unsigned long flags;
++
++	local_irq_save(flags);
+ 	__mod_lruvec_page_state(page, idx, val);
+-	preempt_enable();
++	local_irq_restore(flags);
+ }
+ 
+ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
+@@ -659,9 +665,11 @@ static inline void __count_memcg_events(struct mem_cgroup *memcg,
+ static inline void count_memcg_events(struct mem_cgroup *memcg,
+ 				      int idx, unsigned long count)
+ {
+-	preempt_disable();
++	unsigned long flags;
++
++	local_irq_save(flags);
+ 	__count_memcg_events(memcg, idx, count);
+-	preempt_enable();
++	local_irq_restore(flags);
+ }
+ 
+ /* idx can be of type enum memcg_event_item or vm_event_item */
 -- 
 2.16.1
