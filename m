@@ -1,33 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754528AbeBCWCc (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 17:02:32 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:34228 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752680AbeBCWCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 17:02:25 -0500
-From: Heiko Stuebner <heiko@sntech.de>
-To: Klaus Goger <klaus.goger@theobroma-systems.com>
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] arm64: dts: rockchip: add i2s0-2ch-bus pins on rk3399
-Date: Sat, 03 Feb 2018 23:02:08 +0100
-Message-ID: <11961977.lyT0FEa4Za@phil>
-In-Reply-To: <20180203155016.51909-2-klaus.goger@theobroma-systems.com>
-References: <20180203155016.51909-1-klaus.goger@theobroma-systems.com> <20180203155016.51909-2-klaus.goger@theobroma-systems.com>
+        id S1754554AbeBCWKQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 17:10:16 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:51667 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1752465AbeBCWKH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 17:10:07 -0500
+Date: Sat, 3 Feb 2018 17:10:06 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: Ingo Molnar <mingo@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arch@vger.kernel.org>, <parri.andrea@gmail.com>,
+        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <boqun.feng@gmail.com>,
+        <will.deacon@arm.com>, <peterz@infradead.org>, <npiggin@gmail.com>,
+        <dhowells@redhat.com>, <elena.reshetova@intel.com>, <mhocko@suse.com>,
+        <akiyks@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL tools] Linux kernel memory model
+In-Reply-To: <20180203084809.GE3617@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1802031708380.29515-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Samstag, 3. Februar 2018, 16:50:15 CET schrieb Klaus Goger:
-> Add pin definition for I2S0 if used as a 2-channel only bus.
+On Sat, 3 Feb 2018, Paul E. McKenney wrote:
+
+> Please see below for an initial patch to this effect.  This activity
+> proved to be more productive than expected for these tests, which certainly
+> supports our assertion that locking needs more testing...
 > 
-> Signed-off-by: Klaus Goger <klaus.goger@theobroma-systems.com>
+> MP+polocks.litmus
+> MP+porevlocks.litmus
+> 
+> 	These are allowed by the current model, which surprised me a bit,
+> 	given that even powerpc would forbid them.  Is the rationale
+> 	that a lock-savvy compiler could pull accesses into the lock's
+> 	critical section and then reorder those accesses?  Or does this
+> 	constitute a bug in our model of locking?
+> 
+> 	(And these were allowed when I wrote recipes.txt, embarrassingly
+> 	enough...)
+> 
+> Z6.0+pooncelock+poonceLock+pombonce.litmus
+> 
+> 	This was forbidden when I wrote recipes.txt, but now is allowed.
+> 	The header comment for smp_mb__after_spinlock() makes it pretty
+> 	clear that it must be forbidden.  So this one is a bug in our
+> 	model of locking.
 
-applied for 4.17
+I just tried testing these under the most recent version of herd, and 
+all three were forbidden.
 
-
-Thanks
-Heiko
+Alan
