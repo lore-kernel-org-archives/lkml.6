@@ -1,78 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754654AbeBCWop (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 17:44:45 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:36199 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752688AbeBCWoj (ORCPT
+        id S1750747AbeBCWq1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 17:46:27 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45861 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750905AbeBCWqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 17:44:39 -0500
-X-Google-Smtp-Source: AH8x225k9DsvMGte+G0q+FQgOMfhpo54V+MEXlRUEYfW64Rp5V500J7F7+0hh/fGc+nMQjF8vcl1Q3DVoz08etzRLSM=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <94279d21d4f6094c19921ea09e7e5093ac3a829c.1517635943.git.rgb@redhat.com>
-References: <94279d21d4f6094c19921ea09e7e5093ac3a829c.1517635943.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 3 Feb 2018 17:44:36 -0500
-Message-ID: <CAHC9VhTYYoFZYunARVS1M7O5RmnFzKXWdw-A-Mk11-g3z89Msw@mail.gmail.com>
-Subject: Re: [PATCH] audit: update bugtracker and source URIs
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: linux-audit@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 3 Feb 2018 17:46:18 -0500
+X-Google-Smtp-Source: AH8x2272+vcFJMDoWXKgfDEwtStJw4xuhDfYX5XScqlHzj6hqrSmdM33lES0aC5ExdSUtFAqtcu8tw==
+From: Matthew Whitehead <tedheadster@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Whitehead <tedheadster@gmail.com>
+Subject: [PATCH 1/3] x86/Kconfig : Add missing i586-class cpus to X86_CMPXCHG64 Kconfig group
+Date: Sat,  3 Feb 2018 17:46:06 -0500
+Message-Id: <1517697968-19014-1-git-send-email-tedheadster@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 3, 2018 at 12:33 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Since the Linux Audit project has transitioned completely over to
-> github, update the MAINTAINERS file and the primary audit source file to
-> reflect that reality.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  MAINTAINERS    | 1 -
->  kernel/audit.c | 3 ++-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+Several i586-class cpus supporting this instruction are missing from
+the X86_CMPXCHG64 config group.
 
-Thanks for the revision, especially considering it was a really small
-nit.  I'll queue this up for after the merge window.
+Using a configuration with either M586TSC or M586MMX currently sets
+X86_MINIMUM_CPU_FAMILY=4 instead of the correct value 5.
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 845fc25..fba4875 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2479,7 +2479,6 @@ M:        Paul Moore <paul@paul-moore.com>
->  M:     Eric Paris <eparis@redhat.com>
->  L:     linux-audit@redhat.com (moderated for non-subscribers)
->  W:     https://github.com/linux-audit
-> -W:     https://people.redhat.com/sgrubb/audit
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
->  S:     Supported
->  F:     include/linux/audit.h
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 227db99..5c25449 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -38,7 +38,8 @@
->   *       6) Support low-overhead kernel-based filtering to minimize the
->   *          information that must be passed to user-space.
->   *
-> - * Example user-space utilities: http://people.redhat.com/sgrubb/audit/
-> + * Audit userspace, documentation, tests, and bug/issue trackers:
-> + *     https://github.com/linux-audit
->   */
->
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> --
-> 1.8.3.1
->
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
+Booting on an i486 it will fail to generate the "This kernel
+requires an i586 CPU, but only detected an i486 CPU" message and
+intentional halt as expected. It will instead just silently hang
+when it hits i586-specific instructions.
 
+The M586 cpu is not in this list because at least the Cyrix 5x86
+lacks this instruction, and perhaps others.
 
+Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
+---
+ arch/x86/Kconfig.cpu | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 65a9a47..ec64aa7 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -374,7 +374,7 @@ config X86_TSC
+ 
+ config X86_CMPXCHG64
+ 	def_bool y
+-	depends on X86_PAE || X86_64 || MCORE2 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MATOM
++	depends on X86_PAE || X86_64 || MCORE2 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || M586TSC || M586MMX || MATOM || MGEODE_LX || MGEODEGX1 || MK6 || MK7 || MK8
+ 
+ # this should be set for all -march=.. options where the compiler
+ # generates cmov.
 -- 
-paul moore
-www.paul-moore.com
+1.8.3.1
