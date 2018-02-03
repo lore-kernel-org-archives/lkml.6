@@ -1,99 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752222AbeBCK4A (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 05:56:00 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:32974 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752126AbeBCKzz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 05:55:55 -0500
+        id S1752294AbeBCLJz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 06:09:55 -0500
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:54625 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750921AbeBCLJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 06:09:47 -0500
+Subject: Re: i8042 AUX port [serio1] suspend takes a second on Dell XPS 13
+ 9360 and TUXEDO Book 1406
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        it+linux-input@molgen.mpg.de
+References: <5a74e1a7-2083-c6b2-f51a-f44908ac8bc4@molgen.mpg.de>
+ <20180130175017.72inurhk5l7tcvae@dtor-ws>
+ <20180130180736.ehucqywbz7zdl4v7@dtor-ws>
+ <a7c19320-4942-e41d-5323-0ac3693e7012@molgen.mpg.de>
+From: Paul Menzel <pmenzel+linux-input@molgen.mpg.de>
+Message-ID: <5d6a4804-d4d1-df4f-6b63-43ac6b00af96@molgen.mpg.de>
+Date: Sat, 3 Feb 2018 12:09:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Sat, 03 Feb 2018 16:25:53 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH 05/15] ARM: dts: ipq4019: Add ipq4019-ap-dk01-c2 board
- file
-In-Reply-To: <1517202689-14212-6-git-send-email-sricharan@codeaurora.org>
-References: <1517202689-14212-1-git-send-email-sricharan@codeaurora.org>
- <1517202689-14212-6-git-send-email-sricharan@codeaurora.org>
-Message-ID: <9afb20e560a7ebbcefcb801e7447a983@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <a7c19320-4942-e41d-5323-0ac3693e7012@molgen.mpg.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-01-29 10:41, Sricharan R wrote:
-> The board has a spi-nand interface on spi0 bus chipselect1.
+Dear Dmitry,
+
+
+Am 30.01.2018 um 19:39 schrieb Paul Menzel:
+
+> On 01/30/18 19:07, Dmitry Torokhov wrote:
+>> On Tue, Jan 30, 2018 at 09:52:45AM -0800, Dmitry Torokhov wrote:
+
+>>> On Tue, Jan 30, 2018 at 06:36:34PM +0100, Paul Menzel wrote:
+
+>>>> I do not know, when it started, but with Linux 4.14-rc8 and 4.15,
+>>>> benchmarking suspend and resume time with `sleepgraph.py` [1][2], 
+>>>> there is a
+>>>> regression, that i8042 AUX port [serio1] suspend takes a second on 
+>>>> Dell XPS
+>>>> 13 9360 and TUXEDO Book 1406.
+>>>
+>>> It would be really helpful to know when the regression started.
+>>
+>> So the reason it takes longer is because the touchpad does not want to
+>> talk to us for some reason and we wait until commands time out:
+>>
+>> [   94.591636] calling  serio1+ @ 2299, parent: i8042
+>> [   94.794292] psmouse serio1: Failed to disable mouse on isa0060/serio1
+>> [   95.593303] call serio1+ returned 0 after 974280 usecs
+>>
+>> but it is not clear why it happens, I do not think we changed anything
+>> in that path for a while, so it might be some other change affecting
+>> things indirectly. I'm afraid you'll have to narrow the scope, and
+>> ideally bisect.
 > 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> ---
->  arch/arm/boot/dts/Makefile                      |  1 +
->  arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts | 25
-> +++++++++++++++++++++++++
->  2 files changed, 26 insertions(+)
->  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index d0381e9..21ed56d 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -724,6 +724,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
->  	qcom-apq8084-ifc6540.dtb \
->  	qcom-apq8084-mtp.dtb \
->  	qcom-ipq4019-ap.dk01.1-c1.dtb \
-> +	qcom-ipq4019-ap.dk01.1-c2.dtb \
->  	qcom-ipq8064-ap148.dtb \
->  	qcom-msm8660-surf.dtb \
->  	qcom-msm8960-cdp.dtb \
-> diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts
-> b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts
-> new file mode 100644
-> index 0000000..e3442da
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2017, The Linux Foundation. All rights reserved.
-> +
-> +#include "qcom-ipq4019-ap.dk01.1.dtsi"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. IPQ40xx/AP-DK01.1-C2";
+> Thank you for looking into this. Just to note, that it worked with Linux 
+> 4.14.1 from Ubuntu 17.10, so it’s probably something in 4.15. Bisecting 
+> will take a bit, as the FTRACE stuff broke in Linux 4.15-rc1 and was 
+> only fixed in 4.15-rc9. Hopefully, it’s just one commit I need to 
+> backport. I’ll get back to you hopefully at the end of the week.
 
-  s/IPQ40xx/IPQ4019
+Unfortunately, I am unable to reproduce it currently. Also not with the 
+original Linux kernel versions I tried. I’ll report back, when I see it 
+the next time.
 
-> +
-> +	soc {
-> +		spi_0: spi@78b5000 { /* BLSP1 QUP1 */
-> +			status = "ok";
-> +			cs-gpios = <&tlmm 54 0>, <&tlmm 59 0>;
 
-  the base dk01 file has pinmux for 54 only.
-  for 59 pin, we need to add pinmux entry also.
+Kind regards,
 
-  Thanks,
-  Abhishek
-
-> +			num-cs = <2>;
-> +
-> +			mt29f@1 {
-> +				#address-cells = <1>;
-> +				#size-cells = <1>;
-> +				compatible = "spinand,mt29f";
-> +				reg = <1>;
-> +				spi-max-frequency = <24000000>;
-> +			};
-> +
-> +		};
-> +	};
-> +};
+Paul
