@@ -1,76 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753566AbeBCUUq (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 15:20:46 -0500
-Received: from mout.web.de ([212.227.17.12]:53266 "EHLO mout.web.de"
+        id S1753613AbeBCUXm (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 15:23:42 -0500
+Received: from mout.gmx.net ([212.227.15.18]:52243 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752777AbeBCUUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 15:20:37 -0500
-Subject: [PATCH 2/2] HID: picoLCD: Improve a size determination in
- picolcd_probe()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-input@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>,
-        Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <1ef884c9-9fbe-b95f-d318-b806639e6065@users.sourceforge.net>
-Message-ID: <2dd7d4d6-b4d4-b1fe-5ce2-974eb64d8c40@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 21:20:27 +0100
+        id S1752856AbeBCUXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 15:23:35 -0500
+To: Linux Kernel <linux-kernel@vger.kernel.org>
+From: =?UTF-8?Q?Toralf_F=c3=b6rster?= <toralf.foerster@gmx.de>
+Subject: Why is 4.14.17 not marked as "longterm" at https://www.kernel.org/ ?
+Message-ID: <1545064a-3276-5aa0-1f97-8d14466045a0@gmx.de>
+Date: Sat, 3 Feb 2018 21:23:33 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1ef884c9-9fbe-b95f-d318-b806639e6065@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:WEWraFERtioIWM+1tjhARAtvnvlRV43jflue0VuzsJ/l/E3A4L4
- KAjPJ55TypmnMqpyGuz35oTwYxUFnbbhIVDho2xn257Mc8yJbtkD7JoGvrNEqpSoij6QeaQ
- +mXqSPHRKHTTahXFDy+si9N2txtX5uVebhV4ljxMuhKjmxvixIZVEGNEW+mNLTeEPnGRFGg
- vx6BPRLyFIy9XyF/3oiLA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:eTOI7BbN2K4=:WLrJDtSQWgKLvnud/eDmLr
- aCcAwkZSbOQuPMuQP2eq3MFrj1/0OCurF3o5FIJt6eNpZvVVm+D6R5vj+N0gc2x6M5ulqA7oO
- 3dGBOAUOqh+8+18Q85TX69jFMg8qG9u7zDQi0Kb/OiePGveXRQ+HLsj7/XzIYv11cT0KXnvDm
- tBXWwbyY77tvFkZ8kbgKZsA+kw0/x8Zb7P6DSPcQxgUYBkbsJLYUW/iij7wAnnuB3n2xfyY4s
- OZQDF5uIhPyA+NuyAFyDo02M9I/n2OayaKk3IL1ICS7aNaFZ+dOYqPsMsjtDTFwAg9Z4jgFux
- 0DAC56mhFNidvTMt9nEmaOtnkmVqwIP6/ukQK/crVmEscaAUIDhH420pZVYjSDrmmesRKy4b5
- etJsR7+YU8tMUQ6HgQCHsnKao2ZFC7R46EL/XPIv4nNfrKRUp6fTGTXNqO9xclk6KwUP7RkcN
- gpOiKe+dwtQ6mhnMfSdnkUnIOY/LkuphcrpesmvwPqaYxWLggNMLWMJ7BPGSzfZhnkRKaXo7r
- KtCXWJZP5d/48JESY5ReIjnNdaFE4ZsNy+s4r1ptKXsMltNhwLy9d9gCMCsIGgj0KoRwLJx9B
- 3dcYF2agMj7XPRagFaemTlvnQBFlGu9l14tizgEcI2SkhdkV70s7BE9S+s2XNy8BGxm11NN0+
- wUVb9Lhkg6DPegchTVLRWGP0p1VJaATGepI8TE+sinqjabceAtrjYixvcQn3o/eUZ964ySE9W
- 89AsejyCYI2rijryuIqiQsFw7qIbgrPnLQbclqeyJ8uNHAfn9LsglMQCg+8h0/TyGC2cr8Rhg
- lPvyPfOS5TLZuNvASozZFSWlSdMk0la6tlR3s1zG7EUQzGCd84=
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:wjrog69Q9OgAQ/otKxWN9bHZjl78T2jBUcy7orqRZS8V1K8JzJf
+ nIA3iTDDWMjBmuqHNBpI3Pe1T3/QotrmgNKN9lA0ZXaK8EiuSE6Uvl3YiRse7PnPy4CPlcR
+ FR997jRze9G0JFmmMAxiyUpJqLe8B0FNsB+qmovm0h/3poVEn/ZY0zGAfxiNXZhIJecIrXm
+ gYhog6g4Vm5Jm+2EEeKRA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:7e3/e2LF0vg=:rkzy6rZ9VTjRUDIOOJ4YnG
+ PQWP8XfMd/XKN4F0bhhb/sxyhs/mYDwiZw91fC2FtS/+w/1Nn/rBxiatCJETA32+Yi/XIe0GF
+ HrLqHx87on7Gv0NuppDYSVy/MDB9mEaHzBN0bSXfWBRvvFPk+6Tt88GYS9gMoj+GWxCjDC8r8
+ iLCWuBvii32aZrXd09hBwSIUFym7uUWgWJD69D8yldDHTlX17dSj6QIn5idOPiMXj/7i47LL0
+ MpVTFRAvWBY7qGn/dHgxryMQuKAi7mIaa6KQ2ag1jB47CLSJ4dp1ZaxWK+ZO3OaSj/XSllm4L
+ hbMEolc9ybv1x2gsjimSv9ZtrzT38IH3c3uDsYX/HIcsyQ4CFDSmTZDtgPni6fdgxJittCMwO
+ a5CR3lB5eWP9LgkLirl4JWTjflqprvnwDXQwgUCpy8yDI3AbKFll1q8sikvFp5r2U5BKdw7E+
+ nHUQPcnAVGhv/5aSQMDC8V+Os3gQsQy5mWY21H+7kVF12zjtRKh8gsorslS/BFevEONl27Nnl
+ YLfrwAXPMIC3ecqSCveQMb0HiCRKVYOryujS1ggTk2f1H7iwQ2Mk+MAMF6RrNnCrYIjsy00Uu
+ TpAzwp49NARmbu8tto79X89REh8THfgzktia/y6Ft2u6McOcGiceqJnzfgP4cSPFjNSHjuRVm
+ 2FWHm3o4SokqpCseB1HWxVcapX62L7TSLow3tKvS82Xm0UbHaobVyb3T2tVodLbtBid/QV+Lw
+ GoBquug2kuEWP8EtiwBX130gj2n8bguAriIuhtwHLJnctUn2spFzieUCVw1nTomtL5hdTa7q0
+ JW9MGRgcgH+XujLFW6gkig/DU6bko/bOma/UQyClXMRuZ+kNt0=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 21:05:55 +0100
+It differs from the statement made at https://www.kernel.org/category/releases.html
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hid/hid-picolcd_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-picolcd_core.c b/drivers/hid/hid-picolcd_core.c
-index 5dc48ecc1b98..ff38016be6fb 100644
---- a/drivers/hid/hid-picolcd_core.c
-+++ b/drivers/hid/hid-picolcd_core.c
-@@ -547,7 +547,7 @@ static int picolcd_probe(struct hid_device *hdev,
- 	 * Let's allocate the picolcd data structure, set some reasonable
- 	 * defaults, and associate it with the device
- 	 */
--	data = kzalloc(sizeof(struct picolcd_data), GFP_KERNEL);
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (data == NULL) {
- 		error = -ENOMEM;
- 		goto err_no_cleanup;
 -- 
-2.16.1
+Toralf
+PGP C4EACDDE 0076E94E
