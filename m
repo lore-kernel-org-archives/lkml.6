@@ -1,58 +1,78 @@
-Return-Path: <prvs=56548c19e=karahmed@amazon.com>
-X-Google-Smtp-Source: AH8x22445JgLwBgOkCCqmnOA+bx2wpiW2NE1HH1/5maJrkB5ETSEOPojrrS+esyEd3baIm7470Gg
-ARC-Seal: i=1; a=rsa-sha256; t=1517669808; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AH8x226OHYKekj3/Rgp/nfsDS9RRK1x9oJyx0ef6i/kige7WZclS7N2lqw17py4SJfaW4bJdH5tD
+ARC-Seal: i=1; a=rsa-sha256; t=1517698464; cv=none;
         d=google.com; s=arc-20160816;
-        b=k/rqCaoXmRa10P2LI2t1ywo+i+zSKc5coIbf70lqGCZigOht7f+iMnTlaMfx4CnWsZ
-         p6FKwec6NsUbV5iuJ2I3RKHMEH3fUaiV4TI0f2Hgn4N5LemoYGVePfeCimk7EhswJ+Wh
-         2N2vv54jw2lqefZywISuGKjuo26IDc0ZxD9xLf9k/2yvBiYF1+KLWnx9qCLTfWD0BZCg
-         aCjG9DEiObwuvgteM4nr82vUJcWTR2d/TJcpFHuuOEbvLIc13Q0f1TdAr9z6jHOuAL75
-         Ys9puwbnSP7sQ/qp4EajF9ywkGBeKlDxjkhZqadg1UhPrDbinSo/7myaTPAZe4F0nqwr
-         0KxQ==
+        b=PHHWW0+Q4N6LwdVTJqHrsVHvb6Eb6J50w1MIKNFAI30PcxU/xE+EDG6lTEbYxJaklw
+         i/QSusnsc5OY/7GOydJhR+pll79Bs7CzEb/I1/0cOBy/tvqEA1wrdBbDjeQzHD0Lv83K
+         4iSqgHhqH6zzNkAF3UuX2yhS69eMrEgMi4AV8Z9+mipbXnPYaMRaf1V7Q8gbxtR3dawV
+         ACHGdvoSDbv6T6IUUhbiX0LUQ1jRp45ePxhEPM3YIre88VmkLc83Q/D0RGVKOiWV7sOC
+         0MWwIy/brVAf4Q3gshvLN90+3j/gXoDLtxmeNlnw+a4IRFjILDkJU5gB8wWd9GTUSyN7
+         vr+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=pu0s0JEkMnW51X+naLOlvQYMwM2aGRQhg9Uzg7K7HvY=;
-        b=owDrthbonWNjPlx+aKKd160KF3sJ5/y7QHjE/43tkJWYXCm3lLSwTUdAVGsS/AR9gZ
-         CIrdQIIN0gzGkAaiAXGxbWqor733UdTrEm+/aNmEnZE00T0jWXmW+DYGT1RfOFyme6lR
-         Tmm2s9FwhpkdMl7ZmnSG0xbTnC/9Hqhgpyoho4UG3XUlwc5zD0yH9Pi25eVYkdIOxXgB
-         ATx9jr9WWq8wBIpwjn08goKW/O4AdHPRSEoUV7NZhbz615A/gh6D7T4eWM6EoVQsQIYq
-         T4Fu8lPh0VFZRPeMf4gIqYTbyG9/rzOWx92t7uhWmM3QAnNhkAHvEZ6yDlJB3kqFtA7n
-         dD6A==
+        bh=36s8cP3wLIx8epx28EuwxOKzSSDPl8UvF2WTSCmkb0k=;
+        b=zybDFGrfSOMn+DoiYM4M5LPTAe1uRA0MmMq+vbUpvd/zq1Uoz7TL30l2Ti8IcrmzDH
+         NjjD5n5+x/wqUPkfZhBwmPLZzDH7WFHT21U1pqRFy0Ap/lIqZQFUzQk7Gn/ULSbOmqiG
+         kJ9sU9LK7R7joUn0m4lrRT7TjrcmVO0FJ0+JLgAWFTBTm4/GyloDNt915l90fH8Tc8uN
+         zFw3LeqogzVm6Ggn7joRw3AR5dAT0avrE3XRS+FNMiyuVNUQPTM59zrhLvu+wpMZP193
+         94qo/XS5/c1yLHt8Yk/1Yu4/Nfhh24NUzwIdbVv4BbCwu4OxpkM7rtLWPzXP6XwHUSle
+         cKWw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@amazon.de header.s=amazon201209 header.b=rQqrhJL4;
-       spf=pass (google.com: domain of prvs=56548c19e=karahmed@amazon.com designates 207.171.184.29 as permitted sender) smtp.mailfrom=prvs=56548c19e=karahmed@amazon.com;
-       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=amazon.de
+       spf=pass (google.com: domain of tipbot@zytor.com designates 65.50.211.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@amazon.de header.s=amazon201209 header.b=rQqrhJL4;
-       spf=pass (google.com: domain of prvs=56548c19e=karahmed@amazon.com designates 207.171.184.29 as permitted sender) smtp.mailfrom=prvs=56548c19e=karahmed@amazon.com;
-       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=amazon.de
-X-IronPort-AV: E=Sophos;i="5.46,454,1511827200";
-   d="scan'208";a="592757908"
-From: KarimAllah Ahmed <karahmed@amazon.de>
-To: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org
-Cc: KarimAllah Ahmed <karahmed@amazon.de>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, Andi Kleen <ak@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Ashok Raj <ashok.raj@intel.com>
-Subject: [PATCH v7] KVM: SVM: Allow direct access to MSR_IA32_SPEC_CTRL
-Date: Sat,  3 Feb 2018 15:56:23 +0100
-Message-Id: <1517669783-20732-1-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
+       spf=pass (google.com: domain of tipbot@zytor.com designates 65.50.211.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Sat, 3 Feb 2018 14:52:13 -0800
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for KarimAllah Ahmed <tipbot@zytor.com>
+Message-ID: <tip-b2ac58f90540e39324e7a29a7ad471407ae0bf48@git.kernel.org>
+Cc: dan.j.williams@intel.com, hpa@zytor.com, gregkh@linuxfoundation.org,
+        mingo@kernel.org, torvalds@linux-foundation.org,
+        konrad.wilk@oracle.com, tim.c.chen@linux.intel.com,
+        aarcange@redhat.com, dwmw@amazon.co.uk, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        arjan.van.de.ven@intel.com, asit.k.mallick@intel.com,
+        jun.nakajima@intel.com, ashok.raj@intel.com, karahmed@amazon.de,
+        dave.hansen@intel.com, ak@linux.intel.com, luto@kernel.org,
+        darren.kenny@oracle.com
+Reply-To: dave.hansen@intel.com, karahmed@amazon.de, ashok.raj@intel.com,
+        darren.kenny@oracle.com, ak@linux.intel.com, luto@kernel.org,
+        tglx@linutronix.de, aarcange@redhat.com, dwmw@amazon.co.uk,
+        tim.c.chen@linux.intel.com, jun.nakajima@intel.com,
+        arjan.van.de.ven@intel.com, asit.k.mallick@intel.com,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org,
+        konrad.wilk@oracle.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, dan.j.williams@intel.com,
+        gregkh@linuxfoundation.org, hpa@zytor.com
+In-Reply-To: <1517669783-20732-1-git-send-email-karahmed@amazon.de>
+References: <1517669783-20732-1-git-send-email-karahmed@amazon.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
+Git-Commit-ID: b2ac58f90540e39324e7a29a7ad471407ae0bf48
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591392137027542607?=
-X-GMAIL-MSGID: =?utf-8?q?1591392137027542607?=
+X-GMAIL-THRID: =?utf-8?q?1591422185408699926?=
+X-GMAIL-MSGID: =?utf-8?q?1591422185408699926?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+Commit-ID:  b2ac58f90540e39324e7a29a7ad471407ae0bf48
+Gitweb:     https://git.kernel.org/tip/b2ac58f90540e39324e7a29a7ad471407ae0bf48
+Author:     KarimAllah Ahmed <karahmed@amazon.de>
+AuthorDate: Sat, 3 Feb 2018 15:56:23 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 3 Feb 2018 23:06:52 +0100
+
+KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
 
 [ Based on a patch from Paolo Bonzini <pbonzini@redhat.com> ]
 
@@ -62,28 +82,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 - Save and restore SPEC_CTRL around VMExit and VMEntry only if the guest
   actually used it.
 
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Jun Nakajima <jun.nakajima@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
-v6:
-- ditch save_spec_ctrl_on_exit in favor of msr_write_intercepted
-v5:
-- Add SPEC_CTRL to direct_access_msrs.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: kvm@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Link: https://lkml.kernel.org/r/1517669783-20732-1-git-send-email-karahmed@amazon.de
+
 ---
  arch/x86/kvm/svm.c | 88 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 88 insertions(+)
@@ -236,5 +255,3 @@ index 254eefb..4e3c795 100644
  	/* Eliminate branch target predictions from guest mode */
  	vmexit_fill_RSB();
  
--- 
-2.7.4
