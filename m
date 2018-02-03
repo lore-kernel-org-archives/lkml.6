@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1486374-1517681662-2-1931233276993593523
+X-Cyrus-Session-Id: sloti22d1t05-1486374-1517681653-2-16274100226581556180
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517681661; b=gPBZzVYVzsCDCF+FcWzkJC+sV36NIFvofGbUqnC8oYJCym0
-    fE+1Lx6AmjgFl1SWF6lelHPhY/NZYk/ZzP9JozbcLW/HmmyhXZB/u4/X8zz1g25c
-    A91FT+hGIQCSLHf3/IDrFWcJA/lZJ/NsUYjSVfWTR6hkNwzQyflrw6RPPpc/l8ce
-    UjXCnSi8kyx3Vp1kWtZlum0iuhtY2i1aDO02WK/Z2WluFdXzYJ2g3ONoXWrx9DDh
-    O7n49u4EsniWB1nYcxzWDUehtjwVNU+3u8qph+whsSIjNyDms+jI7iVFKYEiRZ4W
-    BPH8l3mcF6V6wDFjtG5qV9TGywuhJxt7nhPELLA==
+    t=1517681652; b=nBarML+6eNWGRPTUEs928/akPUTDqBwrYUwxJhupUuFHpP0
+    3Dt58emHRuOGD6qX9Bsh43P7BawGNFbuovrTZTNBOa8o/ZhLJWEVicVNkovsihMj
+    ldDFMph51f4ozOKNMhradMP0dNH/BW/YGBepBMchPw7aaucERWbao9qOZiaCEFaC
+    3ylF1/mo3QmClgxJhbWIRb5U7isMjSI8woaclly2DMFqngr54DfWX5zzJiWyZqs3
+    YodgF/9HPKpyt5D3v9jOy7VlHfWpqHI9YnF2C3AfEp/lj9mCkInaoslMBx9nQBpG
+    NUDTTtFM8o9cSmlbGPD+Tqf2EAv/TTCpXsSLaJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1517681661; bh=F6J9Sk
-    NNdUhOj+jHZqRYfxYLf4LgdDsKFpqDcVBPOUA=; b=OAOBti1TxEpxHY0BK+e2TP
-    SRuVKBOETXtMnHR8sy/SNe3CBmPiEO6umLiXkdiShgIo4nPojvPy9eTtm5GuIchd
-    F595vvAqntwRGKTDZ1Ox1d6gTVaW50Y+7y99K5M1FWhucDx9/beDhv/XjM2hOVtr
-    Zp02YsDdiJG+VbIfkBg+ffrxnMbFBWBmZ8VdHR3FE4bJB/FYKHzmsBwyShCYvYc8
-    8GgvXDAwIacwsSLS9qab8nnsnhJYdY4ZCSPapGN/FYt8XiEAFqWaAwOv451FZOyC
-    YC7YBLo9gf2MvXzELvayu670qFT/dFS02D2IRVumv+AYxOcScLeYUU7vMHA7UihQ
+    :mime-version:sender:list-id; s=arctest; t=1517681652; bh=o3RbPU
+    P26UWtTWRend7VL/uoal2Mj13F/SEdK8ngx0E=; b=mV6xfPVxgEQ3ss+KHK1IHf
+    BMOlj7BnnqeDjeQDuXElqOtjnf8/n5MkntqNVafPj/SmCxhbXA0Tfoxg3Mt/m6Nz
+    uCvgJRrfNi4k++C+Q2jv6VKQm+0hO+ABOjafQKrJvhy+5XxSyCTXihI6ttNgWr2y
+    YdIQrDzg0YWnfHigPeRvisDX6iZU46U2pzt6jfDWddNUxb2KZCAOyjJOFCWeu8HG
+    q5p5+5DQfrqb9v13+pfVHEE0HyRVNDhVxnTM9CxVieBJ1AOMKNyhocpX9BX4wPoo
+    wWVTqu3yDZPMcNS/vErM6UGtBZsIug0U3Z2Ff2j+m7csB0Y5Wf/WP54yBJDbFpQA
     ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Y7f5PsOH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=IAVOm4xK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Y7f5PsOH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=IAVOm4xK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,27 +48,24 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753606AbeBCSHw (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Feb 2018 13:07:52 -0500
-Received: from mail-by2nam03on0122.outbound.protection.outlook.com ([104.47.42.122]:54457
+        id S1753644AbeBCSIT (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Feb 2018 13:08:19 -0500
+Received: from mail-by2nam03on0129.outbound.protection.outlook.com ([104.47.42.129]:52828
         "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753350AbeBCSFI (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Feb 2018 13:05:08 -0500
+        id S1753014AbeBCSFE (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Feb 2018 13:05:04 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Leon Romanovsky <leonro@mellanox.com>,
-        Nitzan Carmi <nitzanc@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+CC: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 32/52] IB/mlx4: Fix mlx4_ib_alloc_mr error
- flow
-Thread-Topic: [PATCH AUTOSEL for 4.9 32/52] IB/mlx4: Fix mlx4_ib_alloc_mr
- error flow
-Thread-Index: AQHTnRlYTWa6J05gv0KZ16v5Gh35FA==
-Date: Sat, 3 Feb 2018 18:03:51 +0000
-Message-ID: <20180203180303.8490-32-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 47/52] mdio-sun4i: Fix a memory leak
+Thread-Topic: [PATCH AUTOSEL for 4.9 47/52] mdio-sun4i: Fix a memory leak
+Thread-Index: AQHTnRldjpg/i15hAE62ojm8a6v/1A==
+Date: Sat, 3 Feb 2018 18:03:59 +0000
+Message-ID: <20180203180303.8490-47-alexander.levin@microsoft.com>
 References: <20180203180303.8490-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180203180303.8490-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -77,78 +74,71 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1012;7:OgxTzOVQAqB3cZdJWkbIGV2Sv7d7J0eWz7o89E5cRf1YrmEUoi5x5HyCG1/u1BqNJVY0AV3vHV0E0dyurkrJgN7ceDLQ9eVhEmCMwamTIcoBmdQHwv502ehchPJxm36zgf9eekO75rRzJzHp3BzIWPe2j0nwdksYkoDSHgSKSLbV3IhEZnGtN+bYK2Bj+dqiISlOydKsHuFJoUX3FAbdZnY6C7+nG+5wyNp0RfNOKE10pRvDfH4G/SJLqU6UH/iw
+x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1089;7:+JlfjFBk2RRt0ImfgXiDE5Cnf5ADu8LXpd6LEUz3PNiOJ+RKzGucnY75FgiWjG6B0R/1fd3WdcdzdY6d6XEn9Pl0YEOIHuvOiDzXDIkYmHdjgVuZT7aZseEyXKt/ZkpXcXEc8k6Bo6Z+YyYzpVlPt2v0RQ1KaqPCZk4kYK/3vltq946TdsD3w7w7YAcjxUinf1JZ3BjgvXsSPC5YsrUTLrWcM8FbhjAa4cVq3WQ4ubfGqTKJi6BkD0T8a+idCNEk
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 20fff3d6-6906-4191-ccff-08d56b309a61
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1012;
-x-ms-traffictypediagnostic: BL0PR2101MB1012:
-x-microsoft-antispam-prvs: <BL0PR2101MB1012FCE12AC9CD4238B4012EFBF80@BL0PR2101MB1012.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(8121501046)(5005006)(3231101)(2400082)(944501161)(93006095)(93001095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041288)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL0PR2101MB1012;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1012;
+x-ms-office365-filtering-correlation-id: c71b29b2-eccf-4b01-1cb5-08d56b30a2ae
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1089;
+x-ms-traffictypediagnostic: BL0PR2101MB1089:
+x-microsoft-antispam-prvs: <BL0PR2101MB1089B87E881F68AF8D8657B4FBF80@BL0PR2101MB1089.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(155761271638844);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL0PR2101MB1089;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1089;
 x-forefront-prvs: 05724A8921
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(396003)(346002)(39860400002)(39380400002)(199004)(189003)(316002)(26005)(54906003)(10290500003)(6512007)(6666003)(2900100001)(106356001)(2950100002)(76176011)(86612001)(86362001)(575784001)(81166006)(8936002)(6346003)(81156014)(107886003)(102836004)(4326008)(25786009)(110136005)(97736004)(22452003)(59450400001)(6506007)(53936002)(8676002)(5250100002)(6436002)(1076002)(186003)(2501003)(66066001)(6486002)(6116002)(7736002)(36756003)(2906002)(10090500001)(99286004)(72206003)(305945005)(105586002)(3846002)(3660700001)(478600001)(68736007)(14454004)(5660300001)(15760500003)(3280700002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1012;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(39860400002)(376002)(366004)(346002)(199004)(189003)(86362001)(106356001)(22452003)(4326008)(97736004)(25786009)(2950100002)(5660300001)(2906002)(81156014)(105586002)(3280700002)(8676002)(8936002)(6116002)(68736007)(81166006)(3660700001)(86612001)(2900100001)(107886003)(3846002)(1076002)(102836004)(26005)(6346003)(66066001)(10090500001)(76176011)(6506007)(10290500003)(186003)(6486002)(14454004)(59450400001)(6436002)(53936002)(72206003)(316002)(305945005)(7736002)(99286004)(54906003)(110136005)(36756003)(2501003)(5250100002)(6512007)(478600001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1089;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-message-info: qyRH7cqpI1M7TOS8JfDpOXX+4hTXR+K1blHqhcfOb9WhzKiKsffqNEsEDruZg8lPIXR5auzGpU+KLwjsyr+rgA==
+x-microsoft-antispam-message-info: m3vD/QbZwo6fNg47XAcXylPrFXngui56hceH0BuDrF2fk6vS3axiye0gO28GPSdWEBNHzDPE2VkWi2JmSCQQ7g==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20fff3d6-6906-4191-ccff-08d56b309a61
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:03:51.7058
+X-MS-Exchange-CrossTenant-Network-Message-Id: c71b29b2-eccf-4b01-1cb5-08d56b30a2ae
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:03:59.0495
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1012
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1089
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 5a371cf87e145b86efd32007e46146e78c1eff6d ]
+[ Upstream commit 56c0290202ab94a2f2780c449395d4ae8495fab4 ]
 
-ibmr.device is being set only after ib_alloc_mr() is successfully complete.
-Therefore, in case imlx4_mr_enable() returns with error, the error flow
-unwinder calls to mlx4_free_priv_pages(), which uses ibmr.device.
+If the probing of the regulator is deferred, the memory allocated by
+'mdiobus_alloc_size()' will be leaking.
+It should be freed before the next call to 'sun4i_mdio_probe()' which will
+reallocate it.
 
-Such usage causes to NULL dereference oops and to fix it, the IB device
-should be set in the mr struct earlier stage (e.g. prior to calling
-mlx4_free_priv_pages()).
-
-Fixes: 1b2cd0fc673c ("IB/mlx4: Support the new memory registration API")
-Signed-off-by: Nitzan Carmi <nitzanc@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 4bdcb1dd9feb ("net: Add MDIO bus driver for the Allwinner EMAC")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/infiniband/hw/mlx4/mr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/phy/mdio-sun4i.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/mr.c b/drivers/infiniband/hw/mlx4/m=
-r.c
-index 5d73989d9771..ae41623e0f13 100644
---- a/drivers/infiniband/hw/mlx4/mr.c
-+++ b/drivers/infiniband/hw/mlx4/mr.c
-@@ -406,7 +406,6 @@ struct ib_mr *mlx4_ib_alloc_mr(struct ib_pd *pd,
- 		goto err_free_mr;
+diff --git a/drivers/net/phy/mdio-sun4i.c b/drivers/net/phy/mdio-sun4i.c
+index 135296508a7e..6425ce04d3f9 100644
+--- a/drivers/net/phy/mdio-sun4i.c
++++ b/drivers/net/phy/mdio-sun4i.c
+@@ -118,8 +118,10 @@ static int sun4i_mdio_probe(struct platform_device *pd=
+ev)
 =20
- 	mr->max_pages =3D max_num_sg;
--
- 	err =3D mlx4_mr_enable(dev->dev, &mr->mmr);
- 	if (err)
- 		goto err_free_pl;
-@@ -417,6 +416,7 @@ struct ib_mr *mlx4_ib_alloc_mr(struct ib_pd *pd,
- 	return &mr->ibmr;
+ 	data->regulator =3D devm_regulator_get(&pdev->dev, "phy");
+ 	if (IS_ERR(data->regulator)) {
+-		if (PTR_ERR(data->regulator) =3D=3D -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
++		if (PTR_ERR(data->regulator) =3D=3D -EPROBE_DEFER) {
++			ret =3D -EPROBE_DEFER;
++			goto err_out_free_mdiobus;
++		}
 =20
- err_free_pl:
-+	mr->ibmr.device =3D pd->device;
- 	mlx4_free_priv_pages(mr);
- err_free_mr:
- 	(void) mlx4_mr_free(dev->dev, &mr->mmr);
+ 		dev_info(&pdev->dev, "no regulator found\n");
+ 		data->regulator =3D NULL;
 --=20
 2.11.0
