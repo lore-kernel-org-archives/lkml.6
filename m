@@ -1,80 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752556AbeBCPMD (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 10:12:03 -0500
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:57009 "EHLO
-        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1752039AbeBCPLx (ORCPT
+        id S1752590AbeBCPMd (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 10:12:33 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:37462 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752039AbeBCPM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 10:11:53 -0500
-Date: Sat, 3 Feb 2018 15:11:25 +0000
-From: Nicholas Mc Guire <der.herr@hofr.at>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Nicholas Mc Guire <hofrat@osadl.org>, Jonathan Corbet <corbet@lwn.net>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Documentation: i2c: drop unnecessary .owner field in
- examples
-Message-ID: <20180203151125.GA17486@osadl.at>
-References: <1516018126-16119-1-git-send-email-hofrat@osadl.org>
- <CAHp75VeamZDS=-bwGYn41y0pwKEptRE02W3bRe326Q34i68=yg@mail.gmail.com>
- <20180115202847.77s42fgc2zsdnc6s@ninjato>
+        Sat, 3 Feb 2018 10:12:27 -0500
+X-Google-Smtp-Source: AH8x227qshTIStxZg2VzfQdTQzSraTvivLCSdVLol/nX4dmjL0Bq/i0B/bh1PMTwQrWkLxD0OOp8DIlIV6wtb3I+X6w=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180115202847.77s42fgc2zsdnc6s@ninjato>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <aa6e25c7-dc55-a5bf-39cb-8b9453604111@oracle.com>
+References: <20180202153240.1190361-1-arnd@arndb.de> <aa6e25c7-dc55-a5bf-39cb-8b9453604111@oracle.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sat, 3 Feb 2018 16:12:26 +0100
+X-Google-Sender-Auth: U19QGXl6zMHn4IyZydIohMrxwzI
+Message-ID: <CAK8P3a2AdziKXR=4LwMzUdoL2q2WXYZZz1uM9yh6VX2FbpqnnA@mail.gmail.com>
+Subject: Re: [PATCH] xen: hypercall: fix out-of-bounds memcpy
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>, Nicolas Pitre <nico@linaro.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jan Beulich <jbeulich@suse.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 15, 2018 at 09:28:47PM +0100, Wolfram Sang wrote:
-> On Mon, Jan 15, 2018 at 10:24:52PM +0200, Andy Shevchenko wrote:
-> > On Mon, Jan 15, 2018 at 2:08 PM, Nicholas Mc Guire <hofrat@osadl.org> wrote:
-> > > From: Nicholas Mc Guire <hofrat@osadl.at>
-> > >
-> > >  Currently there are a few drivers that still set the .owner
-> > >  in the i2c_driver structure - all of which are reported by
-> > >  coccinelle (scripts/coccinelle/api/platform_no_drv_owner.cocci)
-> > >  and there are no cases that set the .onwer and do not call any
-> > >  of the functions that set the .owner field anyway in any of the
-> > >  drivers (checked by a modified coccinelle script based on the
-> > >  above) so it seems that the examples are no longer valid and
-> > >  .owner = THIS_MODULE, can be removed here.
-> > >
-> > >  While at it an obvious typo (new new) was also fixed.
-> > 
-> > AFAIU It is right only in case when someone does this, e.g.
-> > module_i2c_driver() macro. Otherwise the field is pretty valid and
-> > must be filled.
-> 
-> It gets filled with i2c_add_driver. module_i2c_driver uses
-> i2c_add_driver. I was about to suggest to keep the field in the old
-> driver and describe that it can be removed when using one of
-> i2c_add_driver or module_i2c_driver.
-> 
-> But then I realised that the kernel tree does not have any such old
-> drivers anymore and I couldn't even find out-of-tree code via some
-> search engines (I tried looking for "I2C_CLIENT_INSMOD").
-> 
-> I consider this obsolete and irrelevant these days. It might be good to
-> simply remove it to not confuse users.
-> 
-Not sure what the status of this is now - but I would
-want to clean up some of the coccinelle findings - as a pre-requisite
-it would make sense to either drop the examples inclusion of
-.owner = THIS_MODULE or add a note in the documentation making
-clear that this is only needed in case where the appropriate
-module initialization helpers are not used. Is there any good
-reason *not* to use these initialization helpers when upgrading
-a driver ? If not (and I could not find one) then it might simply
-be the right way to recommend using the initialization helpers and
-drop the .owner = THIS_MODULE from the examples.
+On Sat, Feb 3, 2018 at 12:33 AM, Boris Ostrovsky
+<boris.ostrovsky@oracle.com> wrote:
+> On 02/02/2018 10:32 AM, Arnd Bergmann wrote:
+>> The legacy hypercall handlers were originally added with
+>> a comment explaining that "copying the argument structures in
+>> HYPERVISOR_event_channel_op() and HYPERVISOR_physdev_op() into the local
+>> variable is sufficiently safe" and only made sure to not write
+>> past the end of the argument structure, the checks in linux/string.h
+>> disagree with that, when link-time optimizations are used:
+>>
+>> In function 'memcpy',
+>>     inlined from 'pirq_query_unmask' at drivers/xen/fallback.c:53:2,
+>>     inlined from '__startup_pirq' at drivers/xen/events/events_base.c:529:2,
+>>     inlined from 'restore_pirqs' at drivers/xen/events/events_base.c:1439:3,
+>>     inlined from 'xen_irq_resume' at drivers/xen/events/events_base.c:1581:2:
+>> include/linux/string.h:350:3: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
+>>    __read_overflow2();
+>>    ^
+>> make[3]: *** [ccLujFNx.ltrans15.ltrans.o] Error 1
+>> make[3]: Target 'all' not remade because of errors.
+>> lto-wrapper: fatal error: make returned 2 exit status
+>> compilation terminated.
+>> ld: error: lto-wrapper failed
+>>
+>> This changes the functions so that each argument is accessed with
+>> exactly the correct length based on the command code.
+>>
+>> Fixes: cf47a83fb06e ("xen/hypercall: fix hypercall fallback code for very old hypervisors")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  drivers/xen/fallback.c | 94 ++++++++++++++++++++++++++++----------------------
+>>  1 file changed, 53 insertions(+), 41 deletions(-)
+>>
 
-Anyway - cleaning up coccinelle findings would seem futile if the
-documentation may be the cause.
+>>       default:
+>> -             WARN_ON(rc != -ENOSYS);
+>> -             break;
+>> +             return -ENOSYS;
+>>       }
+>>
+>> +     memcpy(&op.u, arg, len);
+>> +     rc = _hypercall1(int, event_channel_op_compat, &op);
+>> +     memcpy(arg, &op.u, len);
+>
+>
+> We don't copy back for all commands, only those that are COPY_BACK.
 
-thx!
-hofrat
+Not sure what you mean. Is it harmful to copy back the data for the others
+in any way? Otherwise I wouldn't micro-optimize this.
+
+        Arnd
