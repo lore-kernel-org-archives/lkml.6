@@ -1,259 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754127AbeBCSxy (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 13:53:54 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:40781 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753467AbeBCSxq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 13:53:46 -0500
-X-Google-Smtp-Source: AH8x227hPuQuWXNRGypwWAxK4iyz7pQs1OLTr4oVCF80KN0jGh6LEX5hXtfKsnRzg9we+TMWusxyTdqKDUgiuXYrLzk=
+        id S1753193AbeBCTCY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 14:02:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34672 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752616AbeBCTCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 14:02:21 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C180721707
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Sat, 3 Feb 2018 14:02:17 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        linux-trace-users <linux-trace-users@vger.kernel.org>,
+        acme <acme@kernel.org>, Clark Williams <williams@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, bristot <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
+ events
+Message-ID: <20180203140217.2382df69@gandalf.local.home>
+In-Reply-To: <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
+References: <20180202230458.840252014@goodmis.org>
+        <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180131180945.18025-9-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com> <20180131180945.18025-9-jbrunet@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sat, 3 Feb 2018 19:53:24 +0100
-Message-ID: <CAFBinCD2TRRraJ7hGoLy2Y42-LAK1ZXyvOLbPCsf1Aip_ELJHQ@mail.gmail.com>
-Subject: Re: [PATCH 08/19] clk: meson: add regmap to the clock controllers
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 7:09 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> This change register a regmap in meson8b, gxbb and axg controllers.
-> The clock are still accessing their registers directly through iomem.
-> Once all clocks handled by these controllers have been move to regmap,
-> the regmap register will be removed and replaced with a syscon request.
-maybe you can add a comment that some of the registers from this area
-need to be accessed outside the clock driver (by the HDMI driver for
-example - which is the case on GX and Meson8/8b IIRC) if you have to
-re-spin this series
+On Sat, 3 Feb 2018 17:04:14 +0000 (UTC)
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-> ---
->  drivers/clk/meson/Kconfig   |  2 ++
->  drivers/clk/meson/axg.c     | 15 ++++++++++++++-
->  drivers/clk/meson/gxbb.c    | 33 +++++++++++++++++++++++----------
->  drivers/clk/meson/meson8b.c | 14 +++++++++++++-
->  4 files changed, 52 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index 33d148e19066..9735335b17a9 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -11,6 +11,7 @@ config COMMON_CLK_MESON8B
->         bool
->         depends on COMMON_CLK_AMLOGIC
->         select RESET_CONTROLLER
-> +       select REGMAP
->         help
->           Support for the clock controller on AmLogic S802 (Meson8),
->           S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
-> @@ -29,6 +30,7 @@ config COMMON_CLK_AXG
->         bool
->         depends on COMMON_CLK_AMLOGIC
->         select RESET_CONTROLLER
-> +       select REGMAP
->         help
->           Support for the clock controller on AmLogic A113D devices, aka axg.
->           Say Y if you want peripherals and CPU frequency scaling to work.
-> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-> index f84927e76f88..669d0ed84ebc 100644
-> --- a/drivers/clk/meson/axg.c
-> +++ b/drivers/clk/meson/axg.c
-> @@ -11,10 +11,11 @@
->
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/init.h>
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> -#include <linux/init.h>
-> +#include <linux/regmap.h>
->
->  #include "clkc.h"
->  #include "axg.h"
-> @@ -791,12 +792,19 @@ static const struct of_device_id clkc_match_table[] = {
->         {}
->  };
->
-> +static const struct regmap_config clkc_regmap_config = {
-> +       .reg_bits       = 32,
-> +       .val_bits       = 32,
-> +       .reg_stride     = 4,
-> +};
-> +
->  static int axg_clkc_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
->         const struct clkc_data *clkc_data;
->         struct resource *res;
->         void __iomem *clk_base;
-> +       struct regmap *map;
->         int ret, i;
->
->         clkc_data = of_device_get_match_data(dev);
-> @@ -807,12 +815,17 @@ static int axg_clkc_probe(struct platform_device *pdev)
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         if (!res)
->                 return -EINVAL;
-> +
->         clk_base = devm_ioremap(dev, res->start, resource_size(res));
->         if (!clk_base) {
->                 dev_err(dev, "Unable to map clk base\n");
->                 return -ENXIO;
->         }
->
-> +       map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
-> +       if (IS_ERR(map))
-> +               return PTR_ERR(map);
-> +
->         /* Populate base address for PLLs */
->         for (i = 0; i < clkc_data->clk_plls_count; i++)
->                 clkc_data->clk_plls[i]->base = clk_base;
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index 6609024eee00..e3faf0a0fdb7 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -19,10 +19,11 @@
->
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/init.h>
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> -#include <linux/init.h>
-> +#include <linux/regmap.h>
->
->  #include "clkc.h"
->  #include "gxbb.h"
-> @@ -1937,10 +1938,18 @@ static const struct of_device_id clkc_match_table[] = {
->         {},
->  };
->
-> +static const struct regmap_config clkc_regmap_config = {
-> +       .reg_bits       = 32,
-> +       .val_bits       = 32,
-> +       .reg_stride     = 4,
-> +};
-> +
->  static int gxbb_clkc_probe(struct platform_device *pdev)
->  {
->         const struct clkc_data *clkc_data;
-> +       struct resource *res;
->         void __iomem *clk_base;
-> +       struct regmap *map;
->         int ret, i;
->         struct device *dev = &pdev->dev;
->
-> @@ -1948,13 +1957,20 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
->         if (!clkc_data)
->                 return -EINVAL;
->
-> -       /*  Generic clocks and PLLs */
-> -       clk_base = of_iomap(dev->of_node, 0);
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res)
-> +               return -EINVAL;
-> +
-> +       clk_base = devm_ioremap(dev, res->start, resource_size(res));
->         if (!clk_base) {
->                 pr_err("%s: Unable to map clk base\n", __func__);
->                 return -ENXIO;
->         }
->
-> +       map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
-> +       if (IS_ERR(map))
-> +               return PTR_ERR(map);
-> +
->         /* Populate base address for PLLs */
->         for (i = 0; i < clkc_data->clk_plls_count; i++)
->                 clkc_data->clk_plls[i]->base = clk_base;
-> @@ -1991,17 +2007,14 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
->
->                 ret = devm_clk_hw_register(dev,
->                                            clkc_data->hw_onecell_data->hws[i]);
-> -               if (ret)
-> -                       goto iounmap;
-> +               if (ret) {
-> +                       dev_err(dev, "Clock registration failed\n");
-> +                       return ret;
-> +               }
->         }
->
-> -
->         return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->                                            clkc_data->hw_onecell_data);
-> -
-> -iounmap:
-> -       iounmap(clk_base);
-> -       return ret;
->  }
->
->  static struct platform_driver gxbb_driver = {
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index db017c29a84c..0981e970de3d 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -23,11 +23,12 @@
->
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/init.h>
->  #include <linux/of_address.h>
->  #include <linux/platform_device.h>
->  #include <linux/reset-controller.h>
->  #include <linux/slab.h>
-> -#include <linux/init.h>
-> +#include <linux/regmap.h>
->
->  #include "clkc.h"
->  #include "meson8b.h"
-> @@ -804,16 +805,27 @@ static const struct reset_control_ops meson8b_clk_reset_ops = {
->         .deassert = meson8b_clk_reset_deassert,
->  };
->
-> +static const struct regmap_config clkc_regmap_config = {
-> +       .reg_bits       = 32,
-> +       .val_bits       = 32,
-> +       .reg_stride     = 4,
-> +};
-> +
->  static int meson8b_clkc_probe(struct platform_device *pdev)
->  {
->         int ret, i;
->         struct clk_hw *parent_hw;
->         struct clk *parent_clk;
->         struct device *dev = &pdev->dev;
-> +       struct regmap *map;
->
->         if (!clk_base)
->                 return -ENXIO;
->
-> +       map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
-> +       if (IS_ERR(map))
-> +               return PTR_ERR(map);
-> +
->         /* Populate base address for PLLs */
->         for (i = 0; i < ARRAY_SIZE(meson8b_clk_plls); i++)
->                 meson8b_clk_plls[i]->base = clk_base;
-> --
-> 2.14.3
->
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> The approach proposed here will introduce an expectation that internal
+> function signatures never change in the kernel, else it would break user-space
+> tools hooking on those functions.
+
+I had this exact discussion with Linus. Linus, please correct me if I'm
+wrong.
+
+This is a case where he said if someone expected a function to be
+there, than too bad. Functions can come and go depending on if gcc
+inlines it or not. We already have this interface today. It's the
+function tracer. One could argue a tool requires a function to exist
+because it depends on a function being accessible to the function
+tracer.
+
+> 
+> The instrumentation infrastructure provided by this patchset might be useful
+> for "one off" scripts, but it does not address the "stable instrumentation"
+> expectations issue.
+
+Actually, it could work for adding a tracepoint.
+
+> 
+> The problem today is caused by widely used trace analysis tools that cannot
+> cope with changes to the kernel instrumentation, do not report the
+> instrumentation mismatch compared to their expectations, and we generally
+> don't expect users to ever update those tools to deal with newer kernels. Having
+> those tools hook on function names/arguments will not make this magically go
+> away. As soon as kernel code changes, widely used trace analysis tools will
+> start breaking left and right, and we will be back to square one. Only this time,
+> it's the internal function signature which will have become an ABI.
+
+>From those that were asking about having "trace markers" (ie.
+Facebook), they told us they can cope with kernel changes.
+
+If a user can't cope with the changes, then they need to have their own
+custom kernels.
+
+> 
+> A possible solution to this problem appears if we start considering trace
+> analysis tools as just that: "tooling", with the following properties:
+> 
+> 1) Tools need to validate that the instrumentation provided matches their
+>    expectations. This can be done by checking event/field names and/or version.
+>    Tools that fail to do that should be fixed.
+> 
+> 2) Tools need to report to the user when the instrumentation does not match
+>    their expectations, and hint users to upgrade in order to deal with change.
+> 
+> 3) Tools need to be backward compatible with respect to instrumentation: a
+>    user switching between older and newer kernels should not have to keep
+>    various copies of their tooling stack (graphical UI, analysis scripts,
+>    and so on).
+> 
+> If our goal is really to address this "stable instrumentation" issue, I don't
+> think hooking on functions helps in any way. I hope we can work on defining
+> instrumentation interface rules in order to deal with the fundamental problem
+> of requiring tooling to adapt to kernel changes.
+
+I think you may have mistaken my goal. It was not to establish stable
+instrumentation. In fact, it was the exact opposite. It was a way to
+avoid stable instrumentation but still be able to add trace events.
+
+The issue is that people are afraid to add tracepoints into their
+subsystem because they are afraid that they will become stable and
+limit their own development. The problem is that it hurts those that
+want to trace these subsystems who are perfectly fine with the
+tracepoints going away, and then they would need to change their tools.
+This change set was to help those that can customize their tools with
+new kernels. It was not to help those that just want their tools to
+work with all kernels.
+
+With that said, this actually can help those who want stable
+infrastructure as well. If there happens to be a function that is
+constantly used to create a dynamic function based event, it can then
+be shown to ask the sub system maintainer to add a static tracepoint
+there. As they can show that it is very useful to have.
+
+One problem we are having today is that too many trace events are being
+created, where there are a lot of them that have been used once and
+never used again. And people don't care about them. I want to slow down
+the addition of trace events if these function events can be used
+instead. And when they are not good enough, or we see that one is
+constantly being added, then we will know that we can add a trace event
+that would be useful in the future.
+
+-- Steve
