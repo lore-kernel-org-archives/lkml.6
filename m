@@ -1,100 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752834AbeBCPwb (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 10:52:31 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:56583 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752742AbeBCPvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 10:51:40 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 6/6] arm64: allwinner: h6: add support for Pine H64 board
-Date: Sat,  3 Feb 2018 23:49:42 +0800
-Message-Id: <20180203154942.63566-7-icenowy@aosc.io>
-In-Reply-To: <20180203154942.63566-1-icenowy@aosc.io>
-References: <20180203154942.63566-1-icenowy@aosc.io>
+        id S1752622AbeBCP5e (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 10:57:34 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53503 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751963AbeBCP5Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 10:57:25 -0500
+From: Aaron Ma <aaron.ma@canonical.com>
+To: aaron.ma@canonical.com, jikos@kernel.org,
+        benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: Fix hid_report_len usage
+Date: Sat,  3 Feb 2018 23:57:15 +0800
+Message-Id: <20180203155715.2970-1-aaron.ma@canonical.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180108024141.10590-2-aaron.ma@canonical.com>
+References: <20180108024141.10590-2-aaron.ma@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pine H64 is an Allwinner H6-based SBC from Pine64, with the following
-features:
+Follow the change of return type u32 of hid_report_len,
+fix all the types of variables those get the return value of
+hid_report_len to u32, and all other code already uses u32.
 
-- 1GiB/2GiB/4GiB LPDDR3 DRAM (in 4GiB situation only 3GiB is
-accessible)
-- AXP805 PMIC
-- Raspberry-Pi-compatible GPIO header, "Euler" GPIO header (not
-compatible with the "Euler" on Pine A64) and "Expansion" pin header
-- 2 USB 2.0 ports and 1 USB 3.0 ports
-- Audio jack
-- MicroSD slot and eMMC module slot
-- on-board SPI NOR flash
-- 1Gbps Ethernet port (via RTL8211E PHY)
-- HDMI port
-
-Adds initial support for it, including the UART on the Expansion pin
-header.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
 ---
-Changes in v2:
-- Switch to SPDX license identifier.
+ drivers/hid/hid-input.c      | 3 ++-
+ drivers/hid/hid-multitouch.c | 5 +++--
+ drivers/hid/hid-rmi.c        | 4 ++--
+ drivers/hid/wacom_sys.c      | 4 ++--
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
- arch/arm64/boot/dts/allwinner/Makefile             |  1 +
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 30 ++++++++++++++++++++++
- 2 files changed, 31 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index f505227b0250..addf245226f6 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -10,3 +10,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-new file mode 100644
-index 000000000000..dc850a1c0885
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -0,0 +1,30 @@
-+/*
-+ * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+ */
-+
-+/dts-v1/;
-+
-+#include "sun50i-h6.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Pine H64";
-+	compatible = "pine64,pine-h64", "allwinner,sun50i-h6";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_ph_pins>;
-+	status = "okay";
-+};
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index 04d01b57d94c..d86398755b0d 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -1368,7 +1368,8 @@ static void hidinput_led_worker(struct work_struct *work)
+ 					      led_work);
+ 	struct hid_field *field;
+ 	struct hid_report *report;
+-	int len, ret;
++	int ret;
++	u32 len;
+ 	__u8 *buf;
+ 
+ 	field = hidinput_get_led_field(hid);
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 3b4739bde05d..2e1736ba2444 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -370,7 +370,8 @@ static const struct attribute_group mt_attribute_group = {
+ static void mt_get_feature(struct hid_device *hdev, struct hid_report *report)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hdev);
+-	int ret, size = hid_report_len(report);
++	int ret;
++	u32 size = hid_report_len(report);
+ 	u8 *buf;
+ 
+ 	/*
+@@ -1183,7 +1184,7 @@ static void mt_set_input_mode(struct hid_device *hdev)
+ 	struct hid_report_enum *re;
+ 	struct mt_class *cls = &td->mtclass;
+ 	char *buf;
+-	int report_len;
++	u32 report_len;
+ 
+ 	if (td->inputmode < 0)
+ 		return;
+diff --git a/drivers/hid/hid-rmi.c b/drivers/hid/hid-rmi.c
+index c6c05df3e8d2..9c9362149641 100644
+--- a/drivers/hid/hid-rmi.c
++++ b/drivers/hid/hid-rmi.c
+@@ -89,8 +89,8 @@ struct rmi_data {
+ 	u8 *writeReport;
+ 	u8 *readReport;
+ 
+-	int input_report_size;
+-	int output_report_size;
++	u32 input_report_size;
++	u32 output_report_size;
+ 
+ 	unsigned long flags;
+ 
+diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
+index 409543160af7..b54ef1ffcbec 100644
+--- a/drivers/hid/wacom_sys.c
++++ b/drivers/hid/wacom_sys.c
+@@ -219,7 +219,7 @@ static void wacom_feature_mapping(struct hid_device *hdev,
+ 	unsigned int equivalent_usage = wacom_equivalent_usage(usage->hid);
+ 	u8 *data;
+ 	int ret;
+-	int n;
++	u32 n;
+ 
+ 	switch (equivalent_usage) {
+ 	case HID_DG_CONTACTMAX:
+@@ -519,7 +519,7 @@ static int wacom_set_device_mode(struct hid_device *hdev,
+ 	u8 *rep_data;
+ 	struct hid_report *r;
+ 	struct hid_report_enum *re;
+-	int length;
++	u32 length;
+ 	int error = -ENOMEM, limit = 0;
+ 
+ 	if (wacom_wac->mode_report < 0)
 -- 
-2.15.1
+2.14.3
