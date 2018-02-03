@@ -1,257 +1,217 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x226OHYKekj3/Rgp/nfsDS9RRK1x9oJyx0ef6i/kige7WZclS7N2lqw17py4SJfaW4bJdH5tD
-ARC-Seal: i=1; a=rsa-sha256; t=1517698464; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PHHWW0+Q4N6LwdVTJqHrsVHvb6Eb6J50w1MIKNFAI30PcxU/xE+EDG6lTEbYxJaklw
-         i/QSusnsc5OY/7GOydJhR+pll79Bs7CzEb/I1/0cOBy/tvqEA1wrdBbDjeQzHD0Lv83K
-         4iSqgHhqH6zzNkAF3UuX2yhS69eMrEgMi4AV8Z9+mipbXnPYaMRaf1V7Q8gbxtR3dawV
-         ACHGdvoSDbv6T6IUUhbiX0LUQ1jRp45ePxhEPM3YIre88VmkLc83Q/D0RGVKOiWV7sOC
-         0MWwIy/brVAf4Q3gshvLN90+3j/gXoDLtxmeNlnw+a4IRFjILDkJU5gB8wWd9GTUSyN7
-         vr+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=36s8cP3wLIx8epx28EuwxOKzSSDPl8UvF2WTSCmkb0k=;
-        b=zybDFGrfSOMn+DoiYM4M5LPTAe1uRA0MmMq+vbUpvd/zq1Uoz7TL30l2Ti8IcrmzDH
-         NjjD5n5+x/wqUPkfZhBwmPLZzDH7WFHT21U1pqRFy0Ap/lIqZQFUzQk7Gn/ULSbOmqiG
-         kJ9sU9LK7R7joUn0m4lrRT7TjrcmVO0FJ0+JLgAWFTBTm4/GyloDNt915l90fH8Tc8uN
-         zFw3LeqogzVm6Ggn7joRw3AR5dAT0avrE3XRS+FNMiyuVNUQPTM59zrhLvu+wpMZP193
-         94qo/XS5/c1yLHt8Yk/1Yu4/Nfhh24NUzwIdbVv4BbCwu4OxpkM7rtLWPzXP6XwHUSle
-         cKWw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 65.50.211.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 65.50.211.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Sat, 3 Feb 2018 14:52:13 -0800
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for KarimAllah Ahmed <tipbot@zytor.com>
-Message-ID: <tip-b2ac58f90540e39324e7a29a7ad471407ae0bf48@git.kernel.org>
-Cc: dan.j.williams@intel.com, hpa@zytor.com, gregkh@linuxfoundation.org,
-        mingo@kernel.org, torvalds@linux-foundation.org,
-        konrad.wilk@oracle.com, tim.c.chen@linux.intel.com,
-        aarcange@redhat.com, dwmw@amazon.co.uk, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        arjan.van.de.ven@intel.com, asit.k.mallick@intel.com,
-        jun.nakajima@intel.com, ashok.raj@intel.com, karahmed@amazon.de,
-        dave.hansen@intel.com, ak@linux.intel.com, luto@kernel.org,
-        darren.kenny@oracle.com
-Reply-To: dave.hansen@intel.com, karahmed@amazon.de, ashok.raj@intel.com,
-        darren.kenny@oracle.com, ak@linux.intel.com, luto@kernel.org,
-        tglx@linutronix.de, aarcange@redhat.com, dwmw@amazon.co.uk,
-        tim.c.chen@linux.intel.com, jun.nakajima@intel.com,
-        arjan.van.de.ven@intel.com, asit.k.mallick@intel.com,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org,
-        konrad.wilk@oracle.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, dan.j.williams@intel.com,
-        gregkh@linuxfoundation.org, hpa@zytor.com
-In-Reply-To: <1517669783-20732-1-git-send-email-karahmed@amazon.de>
-References: <1517669783-20732-1-git-send-email-karahmed@amazon.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
-Git-Commit-ID: b2ac58f90540e39324e7a29a7ad471407ae0bf48
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1576849-1517682483-2-10486782416146819152
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517682481; b=txcOSDLH/Fg5gn6svQgin+5AwZ8I7/9QdpXl/RAe62x0DJc
+    6ccO0Dzh3vV3adbGYiIb+HqirBt76pYmsva4wvAx3HvHLKhiM7LkPYlm1K7vXi3h
+    fDoIM8v9fBY4ZBnPB3leSJD+mc4oxRtyvrhJDAAE+rsFYMBPl/MVF5QdTOQXyxE+
+    aXNX/dH1NrUmDxVuVEj5D5utjC38Xwxn3pyWri32rPJ7hDLLzJ+7xptZtz03pg6d
+    kKpNJUlmhEVPSvo9cWYTcwfztgHjy69u57yaHIkjYsliXRmL8Rk3HIQkdzuMiKdd
+    BS4/dXYb/84sqtVJjaYTihuOlmYkR4QkCmX+FUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :content-type:content-transfer-encoding:mime-version:sender
+    :list-id; s=arctest; t=1517682481; bh=/QW/Krh3nJ0Qc6Lzj66dusfxWp
+    ESxCDof1hLZg4lJaU=; b=WDhSJngWR4bXC8LVuZ8n7gfrCcL9O5LTfYCAQN1rWv
+    cyEgUkY9EnreU69zvKl+j+tC0YmN2TLeqNT2gjuTSDa36TooRjBqcA8QDzQ++iwq
+    QoNq0f6o0df0QSnLeaOTsnvekj6s+q83qiiWJLVHmo0OTAt2B1rxG62g/3ABT9Oy
+    07+0brFh5dzMpSZKfXDYYKzC2mSq4OinAsj25LE1VahiFjQqsvtLpKDCFPRND8lL
+    WFNAk65Z7RYwEwnVK2MU63PNq38JV00O4aD2Z4pZEE9K1PvcHOxavZY1tuNEFGom
+    Tn0F4GQm7ySFO1SdNHQrZAMlSSKERt2Kj7vayycEiDPA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MyVujG5D x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MyVujG5D x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753983AbeBCS1x (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Feb 2018 13:27:53 -0500
+Received: from mail-bl2nam02on0113.outbound.protection.outlook.com ([104.47.38.113]:13185
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752742AbeBCSFC (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Feb 2018 13:05:02 -0500
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Andreas Platschek <andreas.platschek@opentech.at>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 01/52] dmaengine: fsl-edma: disable clks on
+ all error paths
+Thread-Topic: [PATCH AUTOSEL for 4.9 01/52] dmaengine: fsl-edma: disable clks
+ on all error paths
+Thread-Index: AQHTnRlNTmMyFAvtHE+vmgL9C+QYPQ==
+Date: Sat, 3 Feb 2018 18:03:32 +0000
+Message-ID: <20180203180303.8490-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BL0PR2101MB0993;7:yw2eeTGI3kjsR4zXZZYgrr/jiuvT92jFQSvDQyu5AQhaISO1icysKDa2dTMVvsnNI/g5g8XuMT1/YHahks7WQyA7O8iRA/RbCZ5kbLdvMqEa26yzDXYU+Rof7AqM2si9asBX8JMkp2S0pJq+iKpbt687hooGxZYq7/521UDIcS75DVu3ibW5GDzOVz8eaz31p4OrZtdDiKlI0NTwc7ZyBFB7ab7rkIOiNGcmFx2kqiMAjRO+1nJBkfQE7E56cK76
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 99bd1746-6f04-4c70-6d36-08d56b307050
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB0993;
+x-ms-traffictypediagnostic: BL0PR2101MB0993:
+x-microsoft-antispam-prvs: <BL0PR2101MB0993E1751CE7E762B90CD702FBF80@BL0PR2101MB0993.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:BL0PR2101MB0993;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB0993;
+x-forefront-prvs: 05724A8921
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(376002)(366004)(396003)(189003)(199004)(6436002)(186003)(3660700001)(8936002)(105586002)(2906002)(6346003)(6116002)(3280700002)(3846002)(97736004)(6486002)(1076002)(81156014)(86362001)(102836004)(2501003)(5250100002)(26005)(68736007)(10090500001)(81166006)(8676002)(59450400001)(53936002)(5660300001)(22452003)(305945005)(107886003)(7736002)(4326008)(86612001)(36756003)(99286004)(316002)(6512007)(10290500003)(72206003)(6506007)(14454004)(478600001)(25786009)(106356001)(2900100001)(54906003)(110136005)(66066001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB0993;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-message-info: dopPRudpCftUHrdQFZGhMouffjkA2AFPDXuHk61UU3QO4bQjwgrCzdsEQ1HM8ubgDpGk0SlWnOu3j8vqZlOLtA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99bd1746-6f04-4c70-6d36-08d56b307050
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:03:32.8464
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB0993
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591422185408699926?=
-X-GMAIL-MSGID: =?utf-8?q?1591422185408699926?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  b2ac58f90540e39324e7a29a7ad471407ae0bf48
-Gitweb:     https://git.kernel.org/tip/b2ac58f90540e39324e7a29a7ad471407ae0bf48
-Author:     KarimAllah Ahmed <karahmed@amazon.de>
-AuthorDate: Sat, 3 Feb 2018 15:56:23 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 3 Feb 2018 23:06:52 +0100
+From: Andreas Platschek <andreas.platschek@opentech.at>
 
-KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
+[ Upstream commit 2610acf46b9ed528ec2cacd717bc9d354e452b73 ]
 
-[ Based on a patch from Paolo Bonzini <pbonzini@redhat.com> ]
+Previously enabled clks are only disabled if clk_prepare_enable() fails.
+However, there are other error paths were the previously enabled
+clocks are not disabled.
 
-... basically doing exactly what we do for VMX:
+To fix the problem, fsl_disable_clocks() now takes the number of clocks
+that shall be disabled + unprepared. For existing calls were all clocks
+were already successfully prepared + enabled, DMAMUX_NR is passed to
+disable + unprepare all clocks.
 
-- Passthrough SPEC_CTRL to guests (if enabled in guest CPUID)
-- Save and restore SPEC_CTRL around VMExit and VMEntry only if the guest
-  actually used it.
+In error paths were only some clocks were successfully prepared +
+enabled the loop counter is passed, in order to disable + unprepare
+all successfully prepared + enabled clocks.
 
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jun Nakajima <jun.nakajima@intel.com>
-Cc: kvm@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Link: https://lkml.kernel.org/r/1517669783-20732-1-git-send-email-karahmed@amazon.de
+Found by Linux Driver Verification project (linuxtesting.org).
 
+Signed-off-by: Andreas Platschek <andreas.platschek@opentech.at>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/x86/kvm/svm.c | 88 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
+ drivers/dma/fsl-edma.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 254eefb..4e3c795 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -184,6 +184,8 @@ struct vcpu_svm {
- 		u64 gs_base;
- 	} host;
- 
-+	u64 spec_ctrl;
-+
- 	u32 *msrpm;
- 
- 	ulong nmi_iret_rip;
-@@ -249,6 +251,7 @@ static const struct svm_direct_access_msrs {
- 	{ .index = MSR_CSTAR,				.always = true  },
- 	{ .index = MSR_SYSCALL_MASK,			.always = true  },
- #endif
-+	{ .index = MSR_IA32_SPEC_CTRL,			.always = false },
- 	{ .index = MSR_IA32_PRED_CMD,			.always = false },
- 	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
- 	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
-@@ -882,6 +885,25 @@ static bool valid_msr_intercept(u32 index)
- 	return false;
+diff --git a/drivers/dma/fsl-edma.c b/drivers/dma/fsl-edma.c
+index 6775f2c74e25..c7568869284e 100644
+--- a/drivers/dma/fsl-edma.c
++++ b/drivers/dma/fsl-edma.c
+@@ -863,11 +863,11 @@ static void fsl_edma_irq_exit(
+ 	}
  }
- 
-+static bool msr_write_intercepted(struct kvm_vcpu *vcpu, unsigned msr)
-+{
-+	u8 bit_write;
-+	unsigned long tmp;
-+	u32 offset;
-+	u32 *msrpm;
-+
-+	msrpm = is_guest_mode(vcpu) ? to_svm(vcpu)->nested.msrpm:
-+				      to_svm(vcpu)->msrpm;
-+
-+	offset    = svm_msrpm_offset(msr);
-+	bit_write = 2 * (msr & 0x0f) + 1;
-+	tmp       = msrpm[offset];
-+
-+	BUG_ON(offset == MSR_INVALID);
-+
-+	return !!test_bit(bit_write,  &tmp);
-+}
-+
- static void set_msr_interception(u32 *msrpm, unsigned msr,
- 				 int read, int write)
+=20
+-static void fsl_disable_clocks(struct fsl_edma_engine *fsl_edma)
++static void fsl_disable_clocks(struct fsl_edma_engine *fsl_edma, int nr_cl=
+ocks)
  {
-@@ -1584,6 +1606,8 @@ static void svm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	u32 dummy;
- 	u32 eax = 1;
- 
-+	svm->spec_ctrl = 0;
-+
- 	if (!init_event) {
- 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
- 					   MSR_IA32_APICBASE_ENABLE;
-@@ -3605,6 +3629,13 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case MSR_VM_CR:
- 		msr_info->data = svm->nested.vm_cr_msr;
- 		break;
-+	case MSR_IA32_SPEC_CTRL:
-+		if (!msr_info->host_initiated &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS))
-+			return 1;
-+
-+		msr_info->data = svm->spec_ctrl;
-+		break;
- 	case MSR_IA32_UCODE_REV:
- 		msr_info->data = 0x01000065;
- 		break;
-@@ -3696,6 +3727,33 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 	case MSR_IA32_TSC:
- 		kvm_write_tsc(vcpu, msr);
- 		break;
-+	case MSR_IA32_SPEC_CTRL:
-+		if (!msr->host_initiated &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS))
-+			return 1;
-+
-+		/* The STIBP bit doesn't fault even if it's not advertised */
-+		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
-+			return 1;
-+
-+		svm->spec_ctrl = data;
-+
-+		if (!data)
-+			break;
-+
-+		/*
-+		 * For non-nested:
-+		 * When it's written (to non-zero) for the first time, pass
-+		 * it through.
-+		 *
-+		 * For nested:
-+		 * The handling of the MSR bitmap for L2 guests is done in
-+		 * nested_svm_vmrun_msrpm.
-+		 * We update the L1 MSR bit as well since it will end up
-+		 * touching the MSR anyway now.
-+		 */
-+		set_msr_interception(svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
-+		break;
- 	case MSR_IA32_PRED_CMD:
- 		if (!msr->host_initiated &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_IBPB))
-@@ -4964,6 +5022,15 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
- 
- 	local_irq_enable();
- 
-+	/*
-+	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
-+	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
-+	 * is no need to worry about the conditional branch over the wrmsr
-+	 * being speculatively taken.
-+	 */
-+	if (svm->spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
-+
- 	asm volatile (
- 		"push %%" _ASM_BP "; \n\t"
- 		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
-@@ -5056,6 +5123,27 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
- #endif
- 		);
- 
-+	/*
-+	 * We do not use IBRS in the kernel. If this vCPU has used the
-+	 * SPEC_CTRL MSR it may have left it on; save the value and
-+	 * turn it off. This is much more efficient than blindly adding
-+	 * it to the atomic save/restore list. Especially as the former
-+	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
-+	 *
-+	 * For non-nested case:
-+	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
-+	 * save it.
-+	 *
-+	 * For nested case:
-+	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
-+	 * save it.
-+	 */
-+	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
-+		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
-+
-+	if (svm->spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
- 
+ 	int i;
+=20
+-	for (i =3D 0; i < DMAMUX_NR; i++)
++	for (i =3D 0; i < nr_clocks; i++)
+ 		clk_disable_unprepare(fsl_edma->muxclk[i]);
+ }
+=20
+@@ -904,25 +904,25 @@ static int fsl_edma_probe(struct platform_device *pde=
+v)
+=20
+ 		res =3D platform_get_resource(pdev, IORESOURCE_MEM, 1 + i);
+ 		fsl_edma->muxbase[i] =3D devm_ioremap_resource(&pdev->dev, res);
+-		if (IS_ERR(fsl_edma->muxbase[i]))
++		if (IS_ERR(fsl_edma->muxbase[i])) {
++			/* on error: disable all previously enabled clks */
++			fsl_disable_clocks(fsl_edma, i);
+ 			return PTR_ERR(fsl_edma->muxbase[i]);
++		}
+=20
+ 		sprintf(clkname, "dmamux%d", i);
+ 		fsl_edma->muxclk[i] =3D devm_clk_get(&pdev->dev, clkname);
+ 		if (IS_ERR(fsl_edma->muxclk[i])) {
+ 			dev_err(&pdev->dev, "Missing DMAMUX block clock.\n");
++			/* on error: disable all previously enabled clks */
++			fsl_disable_clocks(fsl_edma, i);
+ 			return PTR_ERR(fsl_edma->muxclk[i]);
+ 		}
+=20
+ 		ret =3D clk_prepare_enable(fsl_edma->muxclk[i]);
+-		if (ret) {
+-			/* disable only clks which were enabled on error */
+-			for (; i >=3D 0; i--)
+-				clk_disable_unprepare(fsl_edma->muxclk[i]);
+-
+-			dev_err(&pdev->dev, "DMAMUX clk block failed.\n");
+-			return ret;
+-		}
++		if (ret)
++			/* on error: disable all previously enabled clks */
++			fsl_disable_clocks(fsl_edma, i);
+=20
+ 	}
+=20
+@@ -976,7 +976,7 @@ static int fsl_edma_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+ 			"Can't register Freescale eDMA engine. (%d)\n", ret);
+-		fsl_disable_clocks(fsl_edma);
++		fsl_disable_clocks(fsl_edma, DMAMUX_NR);
+ 		return ret;
+ 	}
+=20
+@@ -985,7 +985,7 @@ static int fsl_edma_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev,
+ 			"Can't register Freescale eDMA of_dma. (%d)\n", ret);
+ 		dma_async_device_unregister(&fsl_edma->dma_dev);
+-		fsl_disable_clocks(fsl_edma);
++		fsl_disable_clocks(fsl_edma, DMAMUX_NR);
+ 		return ret;
+ 	}
+=20
+@@ -1015,7 +1015,7 @@ static int fsl_edma_remove(struct platform_device *pd=
+ev)
+ 	fsl_edma_cleanup_vchan(&fsl_edma->dma_dev);
+ 	of_dma_controller_free(np);
+ 	dma_async_device_unregister(&fsl_edma->dma_dev);
+-	fsl_disable_clocks(fsl_edma);
++	fsl_disable_clocks(fsl_edma, DMAMUX_NR);
+=20
+ 	return 0;
+ }
+--=20
+2.11.0
