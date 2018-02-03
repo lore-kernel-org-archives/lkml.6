@@ -1,67 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753933AbeBCVRm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 16:17:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42228 "EHLO mail.kernel.org"
+        id S1753982AbeBCVUc (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 16:20:32 -0500
+Received: from mout.web.de ([212.227.17.12]:53391 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752802AbeBCVRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 16:17:35 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871F421707
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Sat, 3 Feb 2018 16:17:32 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        linux-trace-users <linux-trace-users@vger.kernel.org>,
-        acme <acme@kernel.org>, Clark Williams <williams@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, bristot <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
- events
-Message-ID: <20180203161732.4a65c66b@gandalf.local.home>
-In-Reply-To: <20180203205207.mpob4w6eyehhg2ky@ast-mbp>
-References: <20180202230458.840252014@goodmis.org>
-        <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
-        <20180203140217.2382df69@gandalf.local.home>
-        <20180203205207.mpob4w6eyehhg2ky@ast-mbp>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752489AbeBCVUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 16:20:24 -0500
+To: linux-input@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] HID: magicmouse: Delete an error message for a failed memory
+ allocation in magicmouse_probe()
+Message-ID: <79c01fa9-647c-5c34-41cc-3bc9c09f38ee@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 22:20:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:s7yU8BNNUdGmgrsluPiOw/y5NXmEr5IKfh1BJlSIte16WAManMx
+ sC0LFeiEyhRpAZI4xMnGPFeAO0zH7JyjX4aT/jiC7/h0uFt64n+HokOI/sYbK1IPL2CKnOz
+ TYEMWhbodoDlhZ/dQMQwlQi4L//pRJkqHHwCVjL9cJPV9e6runkpfvU1KxueLI6NwooFoee
+ vwc4yk5bxQZ60SULCo3Kg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ldjAtSBVzs0=:wsYHt9zav2dfFzZD1j59bn
+ AxxA6XoRlEB7N+EOrb6cTW/YCcWzC4biFlyA/2dupsa0h0FBPEo3E1NR/Y4KY2Nxl6VwY96ZG
+ ZKhnUmCP85pA1WdtCJ2SB56ks8AA2bzITp1G63900iDwcM1azA+wlsnYoQMKwvM8AemkM0cQE
+ 4AqJL5azJsDkOvnvkw6SmnEn2Xoy5avMuDxiRirFkKzFU1icatAgKkKgszZBLEICz+cTbrgu8
+ FFn9+Z+NzCtWbvb6x4m7zcbjkAoGS4ASMpzoPTIdl91YwwgtqUJgp+6I0wXmIk6p3GOmyZx8C
+ FQ11CIS6G/AnpWdpPW9PpUaxZSD9YM3C4A9HOHR3ltNWnv/eNcX7iBhNHCA4e5reNoewsH6OL
+ RvjtetbF7P1UV2r6bg48tU+tazG6u6xxJSTyffL/NlKTWPzymFNVFf41dFYU3zv1FTOmjoH0P
+ YVGAF2mbS44FVFDbMfg5b3VkO8kweJt/oR9htdAF8XJL90TUyIvMmgl1/C3Q9Q1MDKYXo+mTC
+ LGOi93kSq6l1ebTPzF+eoAwik0zsoetPPeI+ALTHFBhOfDH/86sDSxJKG/82V1U8kI0oP9bZA
+ 86h360iPJgjAJ/wkzSc9mnC9aUnzLH4SWoRM5esqLVcKCthdxCsEP5GczPDLZkBlKLEzpmn0W
+ YeyFgK7KwGoP+h5iPhjDwosykB2ohgQcqkgQnku1fpnwZw6ebx800B8mbIJVaUSoo1O06QKXz
+ CX9hlyWSdKysgGHtS9FaSC7yIQzzC+THL5hzZTJbX/do/x2/x+1C7bQERZYfyguqc/RTOAIV3
+ yf4YQY78QQYJmNftVav552cPFCKDEwuFxwcbfe8BtmdVccNxRY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 3 Feb 2018 12:52:08 -0800
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 22:15:05 +0100
 
-> It's a user space job.
+Omit an extra message for a memory allocation failure in this function.
 
-BTW, I asked around at DevConf.cz, and nobody I talked with (besides
-Arnaldo), have used eBPF. The "path to hello world" is quite high. This
-interface is extremely simple to use, and one doesn't need to install
-LLVM or other tools to interface with it.
+This issue was detected by using the Coccinelle software.
 
-I used the analogy, that eBPF is like C, and this is like Bash. One is
-much easier to get "Hello World!" out than the other.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-magicmouse.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-So personally, this is something I know I would use (note, I have
-never used eBPF either). But if I'm the only one to use this
-interface then I'll stop here (and not bother with the function graph
-return interface). If others think this would be helpful, I would ask
-them to speak up now.
-
-Thanks,
-
--- Steve
+diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
+index 42ed887ba0be..8d17a812c5ba 100644
+--- a/drivers/hid/hid-magicmouse.c
++++ b/drivers/hid/hid-magicmouse.c
+@@ -501,10 +501,8 @@ static int magicmouse_probe(struct hid_device *hdev,
+ 	int ret;
+ 
+ 	msc = devm_kzalloc(&hdev->dev, sizeof(*msc), GFP_KERNEL);
+-	if (msc == NULL) {
+-		hid_err(hdev, "can't alloc magicmouse descriptor\n");
++	if (!msc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	msc->scroll_accel = SCROLL_ACCEL_DEFAULT;
+ 
+-- 
+2.16.1
