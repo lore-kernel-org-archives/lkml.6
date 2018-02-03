@@ -1,37 +1,37 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1602359-1517683560-2-10875839622142061524
+X-Cyrus-Session-Id: sloti22d1t05-1576849-1517683556-2-6679061633458425284
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: cc='utf-8', plain='utf-8'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517683560; b=VDXdkOxUMZt4nsEtGW1Xosb6Bq5jXIr/eCehduUx/DBEShz
-    dk9Ex5Q+GnPUTq6Ze4AgRcIUJom069ZVlWj5HVWunQBlWh67i0MgiccptiSeZ9Pi
-    gXgI63MeA1ns4h2wkKqxYBr5m+qAPW6oIvK1tyfCrf0Y+krGch5tNoMHk2Vvcppj
-    HomQb8006vJvGZHZbXSuC+JXloKIePXZTkMHij+IHptKIomfrqWF3iy2flbdfa06
-    D+GnBkc1kQ/TvTQg8RJ2OVDEn3PbXgEBtyHmlqVyBIFQZgB4qpwQI+7JgI+n4fY8
-    utgvSLP0mCR67bOrrKbSieFl9kxH7iVdRJ4pkrQ==
+    t=1517683556; b=qLyOpjTGpyRfDgELxSDZuknB40m4fcborXFzEZOsI2XIfe5
+    Mm/Ppk718lSqGBAH7VNTCnktt5ZFnVDRC/3tDF/1oV4hVnZzriBUFZjHG1LcQt1Q
+    yrZozTE0RtwBSGIVwF9ZO4Fxv+zExnT97h3ZpRCaMyfvcOFyQKPAaDl0RHCT9Mzi
+    RCmu3IGsB4slWLT+tqB7p6gLJznBgx5m0X4YDnyoxd1J0SgS+f2kqYSRLpzaI7iC
+    yp21e6T9IcuQ1xofs5Nc4ZjeFNk9KFV+PmCX3/jt5Ucc6h7UKfabKJNfEBagKNeH
+    fKu7Y4NfOI7Jn8Sld268FaY2Xj+aNSFlZOhbiEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=
-    arctest; t=1517683560; bh=SwZTzmKxSh+BZs0hZwzayGInpIfzvqm/QU1PNs
-    BMucY=; b=OFN6wtu1pmFD07BTUZ0BgKZXcEac3TrCR+bDvlbZD7vVjwq3HFVHux
-    YDu8ldd4SjlwrAEAstI8AfYq0MXM1KJfOH0w0SYBSomE2OqRD/E3TYbzzYDq1SrR
-    mgL/JNurhlQmFc8ZjPE0Y2Bn/YjXGi3F179GgcKZt4Htt1z7uj+QMtz9H57FM1ut
-    wfpnDcqV5zz5J2uPEDlE3IKE5BWtsJY97uI7O9GfdQJvWp499lhiCXOfQMVRF9vC
-    76jBWA1nOoCPpPtmS7co0FdzXifSd7R5js7MZpN2O9PZCS2w5PEhjBXhUDetBYYV
-    dNZt+9y4SW7huo6eMeUUVNIWnJPuLBqw==
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1517683556; bh=OGhXWp
+    0iSTUCvgw8RbdrTNIwYFbeEv+dTn8w1T9iE/M=; b=WiR6u9sLen6TchD3x+rPSv
+    K08RaBEu8iarHCOh2LVi6t56JxeMGepunbiIH9sqPdA2/4hT+nceOJ3qjkwzWBJP
+    Yi1rNIOfCIsl15V36tz32zjaM650vYRbWlZhRtS3iyXSxlf4vA+JZMfly96YfyXi
+    P2FtJ4fmTVMAaOzol10k0ftup/d8FXqL1VzKbeZDkGHnkx6ZZbFB7YnJ+qnqfLXq
+    /4JgU9a8aaK5MMXVy+AGGWQDrI05lVzXhkN5CW2g0ip5c5THAQOW2wqZyqBeS3gz
+    S6lfxudABTYlS/zYcB/NLPHa4nCst2/XRSsiNiDKmQ/CkzVFS3gO2V2x2bK5q+Vw
+    ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=BT0nztcN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=g3Oh75LZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=BT0nztcN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=g3Oh75LZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755332AbeBCSpx (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Feb 2018 13:45:53 -0500
-Received: from mail-bl2nam02on0139.outbound.protection.outlook.com ([104.47.38.139]:53867
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S1753155AbeBCSpt (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Feb 2018 13:45:49 -0500
+Received: from mail-cys01nam02on0100.outbound.protection.outlook.com ([104.47.37.100]:41422
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753089AbeBCSCX (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Feb 2018 13:02:23 -0500
+        id S1753093AbeBCSCY (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Feb 2018 13:02:24 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: =?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?= <sz.lin@moxa.com>,
+CC: Sean Wang <sean.wang@mediatek.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 079/110] NET: usb: qmi_wwan: add support for
- YUGA CLM920-NC5 PID 0x9625
-Thread-Topic: [PATCH AUTOSEL for 4.14 079/110] NET: usb: qmi_wwan: add support
- for YUGA CLM920-NC5 PID 0x9625
-Thread-Index: AQHTnRj+r+5yksMO90+wiP3hBj62AQ==
-Date: Sat, 3 Feb 2018 18:01:20 +0000
-Message-ID: <20180203180015.29073-79-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 033/110] net: mediatek: setup proper state
+ for disabled GMAC on the default
+Thread-Topic: [PATCH AUTOSEL for 4.14 033/110] net: mediatek: setup proper
+ state for disabled GMAC on the default
+Thread-Index: AQHTnRjpnBkLAVw2306SiS0OUxCPuw==
+Date: Sat, 3 Feb 2018 18:00:44 +0000
+Message-ID: <20180203180015.29073-33-alexander.levin@microsoft.com>
 References: <20180203180015.29073-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180203180015.29073-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,58 +76,78 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1041;7:MttBaejxKdWs6udWD3KhdeFKqnCO5bjNkGlZGo2IDzMgxj+iXpyPXLuUNxLBI9hbMGxnyK9i0qjtL1Kx0neGBGKzP9DX6HLJ3FT1oxNNog1EQiCN1lLtLCe92NfcsebcKbr8saDHk9ptfV7IScplYkhqhnT+4mhk1hnAejpdXD+CZerAlptUdDo32Hl9v50YMUFqALGSC+tgUktNzUnmpoEi9Gv5SalOwDG3rCojAoeB0ueCLnbZ/7DTYO6Lwr1r
+x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1090;7:1zfZetemha3S3wx/8yEyEJBki0X1x5lNKoACzZk8eqiZeGNezbeOppCzK77QTt4ujdP10JLQapEQxjRHuA8e5Pauwrp0s0w/isJrTqaymhevs+XY7mdUvpWZpVxujk6o9MNNT2B2ptCukI6r5XcLftvzn1RhlGue69PatDBMyeujol5mBfvfIbi63M+hIoG2Vpm3SWstSaXwqu3/t3xt/VSSozE6aEW1ELNPmgmfibs/bn04dZKhOY6/gV/cQj+R
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c614dab6-76c5-435b-2249-08d56b303f88
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1041;
-x-ms-traffictypediagnostic: BL0PR2101MB1041:
-x-microsoft-antispam-prvs: <BL0PR2101MB104111998D7D4B18BE7889F2FBF80@BL0PR2101MB1041.namprd21.prod.outlook.com>
+x-ms-office365-filtering-correlation-id: 8476f540-4298-4081-0a93-08d56b301f75
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1090;
+x-ms-traffictypediagnostic: BL0PR2101MB1090:
+x-microsoft-antispam-prvs: <BL0PR2101MB1090FAB5F66B53B844378D2EFBF80@BL0PR2101MB1090.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(5005006)(8121501046)(3231101)(2400082)(944501161)(93006095)(93001095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BL0PR2101MB1041;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1041;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL0PR2101MB1090;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1090;
 x-forefront-prvs: 05724A8921
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(366004)(39860400002)(376002)(346002)(189003)(199004)(2501003)(305945005)(3660700001)(5250100002)(81156014)(99286004)(81166006)(36756003)(7736002)(10290500003)(106356001)(53936002)(5660300001)(316002)(22452003)(8936002)(54906003)(110136005)(3280700002)(478600001)(72206003)(4326008)(25786009)(107886003)(102836004)(97736004)(76176011)(6666003)(66066001)(6506007)(2950100002)(2900100001)(68736007)(8676002)(6116002)(3846002)(186003)(1076002)(6346003)(105586002)(26005)(10090500001)(2906002)(6512007)(86612001)(14454004)(86362001)(6436002)(6486002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1041;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(396003)(39380400002)(39860400002)(346002)(199004)(189003)(2900100001)(5660300001)(316002)(25786009)(4326008)(14454004)(2950100002)(478600001)(575784001)(107886003)(72206003)(6666003)(22452003)(10290500003)(186003)(3660700001)(86612001)(76176011)(86362001)(53936002)(3280700002)(106356001)(6436002)(6486002)(59450400001)(81166006)(81156014)(2501003)(6506007)(97736004)(26005)(7736002)(6512007)(6346003)(102836004)(105586002)(68736007)(8936002)(5250100002)(305945005)(36756003)(1076002)(6116002)(3846002)(8676002)(110136005)(66066001)(54906003)(2906002)(10090500001)(99286004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1090;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-message-info: 9eWTQRarP0NFbLV6nyt+SC6Gw0Xx4dHQA+Jg9aDRvbeBLwXHvsngB0yPPnXRMtq0iNv+LBLlRV5Eed4ev5Lhjg==
+x-microsoft-antispam-message-info: EfvSszZPbXi2W93xzVHkYdX76FFFs3keNj1dbNdS0dzRLPKmBkhG5bD173Gx+TXKUMambqbkA0G6gHMvQhBhuw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <80C4FF4DD607D3429AC8A0212ACCF9FF@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c614dab6-76c5-435b-2249-08d56b303f88
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:01:20.0190
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8476f540-4298-4081-0a93-08d56b301f75
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:00:44.7221
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1041
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1090
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogU1ogTGluICjmnpfkuIrmmbopIDxzei5saW5AbW94YS5jb20+DQoNClsgVXBzdHJlYW0g
-Y29tbWl0IGJkMzBmZmM0MTRlNTUxOTRlZDYxNDlmYWQ2OWExNDU1NTBjYjdjMTggXQ0KDQpUaGlz
-IHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgUElEIDB4OTYyNSBvZiBZVUdBIENMTTkyMC1OQzUuDQoN
-CllVR0EgQ0xNOTIwLU5DNSBuZWVkcyB0byBlbmFibGUgUU1JX1dXQU5fUVVJUktfRFRSIGJlZm9y
-ZSBRTUkgb3BlcmF0aW9uLg0KDQpxbWljbGkgLWQgL2Rldi9jZGMtd2RtMCAtcCAtLWRtcy1nZXQt
-cmV2aXNpb24NClsvZGV2L2NkYy13ZG0wXSBEZXZpY2UgcmV2aXNpb24gcmV0cmlldmVkOg0KICAg
-ICAgICBSZXZpc2lvbjogJ0NMTTkyMF9OQzUtVjEgIDEgIFtPY3QgMjMgMjAxNiAxOTowMDowMF0n
-DQoNClNpZ25lZC1vZmYtYnk6IFNaIExpbiAo5p6X5LiK5pm6KSA8c3oubGluQG1veGEuY29tPg0K
-QWNrZWQtYnk6IEJqw7hybiBNb3JrIDxiam9ybkBtb3JrLm5vPg0KU2lnbmVkLW9mZi1ieTogRGF2
-aWQgUy4gTWlsbGVyIDxkYXZlbUBkYXZlbWxvZnQubmV0Pg0KU2lnbmVkLW9mZi1ieTogU2FzaGEg
-TGV2aW4gPGFsZXhhbmRlci5sZXZpbkBtaWNyb3NvZnQuY29tPg0KLS0tDQogZHJpdmVycy9uZXQv
-dXNiL3FtaV93d2FuLmMgfCAxICsNCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCg0K
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3VzYi9xbWlfd3dhbi5jIGIvZHJpdmVycy9uZXQvdXNi
-L3FtaV93d2FuLmMNCmluZGV4IDNjNTk0ZGFlMzNlOC4uZTg2YzIyNzgwOTZmIDEwMDY0NA0KLS0t
-IGEvZHJpdmVycy9uZXQvdXNiL3FtaV93d2FuLmMNCisrKyBiL2RyaXZlcnMvbmV0L3VzYi9xbWlf
-d3dhbi5jDQpAQCAtMTEwMCw2ICsxMTAwLDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCB1c2JfZGV2
-aWNlX2lkIHByb2R1Y3RzW10gPSB7DQogCXtRTUlfRklYRURfSU5URigweDA1YzYsIDB4OTA4NCwg
-NCl9LA0KIAl7UU1JX0ZJWEVEX0lOVEYoMHgwNWM2LCAweDkyMGQsIDApfSwNCiAJe1FNSV9GSVhF
-RF9JTlRGKDB4MDVjNiwgMHg5MjBkLCA1KX0sDQorCXtRTUlfUVVJUktfU0VUX0RUUigweDA1YzYs
-IDB4OTYyNSwgNCl9LAkvKiBZVUdBIENMTTkyMC1OQzUgKi8NCiAJe1FNSV9GSVhFRF9JTlRGKDB4
-MDg0NiwgMHg2OGEyLCA4KX0sDQogCXtRTUlfRklYRURfSU5URigweDEyZDEsIDB4MTQwYywgMSl9
-LAkvKiBIdWF3ZWkgRTE3MyAqLw0KIAl7UU1JX0ZJWEVEX0lOVEYoMHgxMmQxLCAweDE0YWMsIDEp
-fSwJLyogSHVhd2VpIEUxODIwICovDQotLSANCjIuMTEuMA0K
+From: Sean Wang <sean.wang@mediatek.com>
+
+[ Upstream commit 7352e252b5bf40d59342494a70354a2d436fd0cd ]
+
+The current solution would setup fixed and force link of 1Gbps to the both
+GMAC on the default. However, The GMAC should always be put to link down
+state when the GMAC is disabled on certain target boards. Otherwise,
+the driver possibly receives unexpected data from the floating hardware
+connection through the unused GMAC. Although the driver had been added
+certain protection in RX path to get rid of such kind of unexpected data
+sent to the upper stack.
+
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethe=
+rnet/mediatek/mtk_eth_soc.c
+index 5e81a7263654..3fd71cf5cd60 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -1959,11 +1959,12 @@ static int mtk_hw_init(struct mtk_eth *eth)
+ 	/* set GE2 TUNE */
+ 	regmap_write(eth->pctl, GPIO_BIAS_CTRL, 0x0);
+=20
+-	/* GE1, Force 1000M/FD, FC ON */
+-	mtk_w32(eth, MAC_MCR_FIXED_LINK, MTK_MAC_MCR(0));
+-
+-	/* GE2, Force 1000M/FD, FC ON */
+-	mtk_w32(eth, MAC_MCR_FIXED_LINK, MTK_MAC_MCR(1));
++	/* Set linkdown as the default for each GMAC. Its own MCR would be set
++	 * up with the more appropriate value when mtk_phy_link_adjust call is
++	 * being invoked.
++	 */
++	for (i =3D 0; i < MTK_MAC_COUNT; i++)
++		mtk_w32(eth, 0, MTK_MAC_MCR(i));
+=20
+ 	/* Indicates CDM to parse the MTK special tag from CPU
+ 	 * which also is working out for untag packets.
+--=20
+2.11.0
