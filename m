@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753062AbeBCWqf (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 17:46:35 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:41770 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751806AbeBCWqT (ORCPT
+        id S1754065AbeBCWqs (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 17:46:48 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:37338 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751103AbeBCWqV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 17:46:19 -0500
-X-Google-Smtp-Source: AH8x226WFOxVoXxRqXzr/HeXGPEg1O76aiuxOwB6i5W7Cc+GQVGpew1RZPZ9hf8i66HJ66Qlp0NANQ==
+        Sat, 3 Feb 2018 17:46:21 -0500
+X-Google-Smtp-Source: AH8x224ctTgwambVaJIBfMPhQ4MU6yo9WzdIpa7oa/jJrLHOltGv2sEMAxquciup3lsaqsp3Yn6epQ==
 From: Matthew Whitehead <tedheadster@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Matthew Whitehead <tedheadster@gmail.com>
-Subject: [PATCH 2/3] x86/Kconfig : Exclude i586-class cpus lacking PAE support from HIGHMEM64G Kconfig group
-Date: Sat,  3 Feb 2018 17:46:07 -0500
-Message-Id: <1517697968-19014-2-git-send-email-tedheadster@gmail.com>
+Subject: [PATCH 3/3] x86/Kconfig : Explicitly enumerate i686-class cpus in Kconfig
+Date: Sat,  3 Feb 2018 17:46:08 -0500
+Message-Id: <1517697968-19014-3-git-send-email-tedheadster@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1517697968-19014-1-git-send-email-tedheadster@gmail.com>
 References: <1517697968-19014-1-git-send-email-tedheadster@gmail.com>
@@ -21,26 +21,34 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i586-class machines also lack support for Physical Address Extension (PAE),
-so add them to the exclusion list
+The X86_P6_NOP config class leaves out many i686-class cpus. Instead,
+explicitly enumerate all these cpus.
+
+Using a configuration with M686 currently sets X86_MINIMUM_CPU_FAMILY=5
+instead of the correct value 6.
+
+Booting on an i586 it will fail to generate the "This kernel
+requires an i686 CPU, but only detected an i586 CPU" message and
+intentional halt as expected. It will instead just silently hang
+when it hits i686-specific instructions.
 
 Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
 ---
- arch/x86/Kconfig | 2 +-
+ arch/x86/Kconfig.cpu | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 423e4b6..c45fe6d 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1359,7 +1359,7 @@ config HIGHMEM4G
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index ec64aa7..8b8d229 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -385,7 +385,7 @@ config X86_CMOV
+ config X86_MINIMUM_CPU_FAMILY
+ 	int
+ 	default "64" if X86_64
+-	default "6" if X86_32 && X86_P6_NOP
++	default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MCRUSOE || MCORE2 || MK7 || MK8)
+ 	default "5" if X86_32 && X86_CMPXCHG64
+ 	default "4"
  
- config HIGHMEM64G
- 	bool "64GB"
--	depends on !M486
-+	depends on !M486 && !M586 && !M586TSC && !M586MMX && !MGEODE_LX && !MGEODEGX1 && !MCYRIXIII && !MELAN && !MWINCHIPC6 && !WINCHIP3D && !MK6
- 	select X86_PAE
- 	---help---
- 	  Select this if you have a 32-bit processor and more than 4
 -- 
 1.8.3.1
