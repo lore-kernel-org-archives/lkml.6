@@ -1,81 +1,240 @@
-Return-Path: <gq@lvk.cs.msu.su>
-X-Google-Smtp-Source: AH8x224N3Ci9ORgChfFYs3bgdtojyML+ewtKnpF/cij8dAm3ZNTkAbmct4YF8Mnr7Z3JSR4AdjDi
-ARC-Seal: i=1; a=rsa-sha256; t=1517701838; cv=none;
+Return-Path: <prvs=56548c19e=karahmed@amazon.com>
+X-Google-Smtp-Source: AH8x22445JgLwBgOkCCqmnOA+bx2wpiW2NE1HH1/5maJrkB5ETSEOPojrrS+esyEd3baIm7470Gg
+ARC-Seal: i=1; a=rsa-sha256; t=1517669808; cv=none;
         d=google.com; s=arc-20160816;
-        b=wF4zWb+zGYI9hVQ4q6ucUqAT9Pmt6ttqUZP9mOnrxV+x8RAkum+LfGUsIQ3VAWQBcQ
-         YNbSpkeC/GrRLneR1fD5KL0Y6KOfRGYUMJo13LBcRfJLVI3D1VUp7+f5cvy5ZAg7OXTd
-         Qe1ckyzJ7cfYCIr2lJ5M0pMn8iC+YbqHUn7uKXEM9yUFDBsImBLNqYiaCH0U6VGg+AK4
-         Mqo3PucnCU3zEqyCPq1rydfa8o54/LudXdVyA7MlPyL92RdD4ShCuTdAndC0Tw4EhjwF
-         NlG/Y+fcCKG450eU8/XL4YFooolWsIXDOZIcUPO9JnBF62CkhtRSNlgcai/aUVrOOaJr
-         l7/w==
+        b=k/rqCaoXmRa10P2LI2t1ywo+i+zSKc5coIbf70lqGCZigOht7f+iMnTlaMfx4CnWsZ
+         p6FKwec6NsUbV5iuJ2I3RKHMEH3fUaiV4TI0f2Hgn4N5LemoYGVePfeCimk7EhswJ+Wh
+         2N2vv54jw2lqefZywISuGKjuo26IDc0ZxD9xLf9k/2yvBiYF1+KLWnx9qCLTfWD0BZCg
+         aCjG9DEiObwuvgteM4nr82vUJcWTR2d/TJcpFHuuOEbvLIc13Q0f1TdAr9z6jHOuAL75
+         Ys9puwbnSP7sQ/qp4EajF9ywkGBeKlDxjkhZqadg1UhPrDbinSo/7myaTPAZe4F0nqwr
+         0KxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=qMi/AfGg/egmXZEm7HDNmbxBrJNTtJTIZHn8/9Z1e3Y=;
-        b=XhuVlLdSsaBvmaU+Z+KxrGth7fIzgThax/K7iFq4Q5JwP+SQJKOZkVIwxtyJXDsBmD
-         Lu2KuVAfytJHE5kIpxKsUQLevuriXxxAguNcw1r/PVA1MXC6XU3yMQ8kci6eoZJmfdAF
-         TfQXHrx0JTq9Lx2PTkVC5OSbBIwmbCbsnlvGLFrvkes+H4jNW2naZoid5l/wQK7bcpTS
-         lkNANMiP5AP53kjVFplkz3euIz4pozCbTI6fvEflkEqiKofJLvaMlmlktzpiWcp5YtFl
-         l7x8RvFDjHK5H6x+of9959nDoTxVKAN6ZG5MXNkEY9h1nYk8aD8YZBwDPd+DzzN5ZO3l
-         s8Yg==
+        bh=pu0s0JEkMnW51X+naLOlvQYMwM2aGRQhg9Uzg7K7HvY=;
+        b=owDrthbonWNjPlx+aKKd160KF3sJ5/y7QHjE/43tkJWYXCm3lLSwTUdAVGsS/AR9gZ
+         CIrdQIIN0gzGkAaiAXGxbWqor733UdTrEm+/aNmEnZE00T0jWXmW+DYGT1RfOFyme6lR
+         Tmm2s9FwhpkdMl7ZmnSG0xbTnC/9Hqhgpyoho4UG3XUlwc5zD0yH9Pi25eVYkdIOxXgB
+         ATx9jr9WWq8wBIpwjn08goKW/O4AdHPRSEoUV7NZhbz615A/gh6D7T4eWM6EoVQsQIYq
+         T4Fu8lPh0VFZRPeMf4gIqYTbyG9/rzOWx92t7uhWmM3QAnNhkAHvEZ6yDlJB3kqFtA7n
+         dD6A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of gq@lvk.cs.msu.su designates 188.44.42.233 as permitted sender) smtp.mailfrom=gq@lvk.cs.msu.su
+       dkim=pass header.i=@amazon.de header.s=amazon201209 header.b=rQqrhJL4;
+       spf=pass (google.com: domain of prvs=56548c19e=karahmed@amazon.com designates 207.171.184.29 as permitted sender) smtp.mailfrom=prvs=56548c19e=karahmed@amazon.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=amazon.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of gq@lvk.cs.msu.su designates 188.44.42.233 as permitted sender) smtp.mailfrom=gq@lvk.cs.msu.su
-X-Spam-ASN: 
-From: Alexander Gerasiov <gq@redlab-i.ru>
-To: <linux-kernel@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Alan Cox <gnomes@lxorguk.ukuu.org.uk>, Alexander Gerasiov <gq@redlab-i.ru>
-Subject: [PATCH] parport_pc: Add support for WCH CH382L PCI-E single parallel port card.
-Date: Sun,  4 Feb 2018 02:50:22 +0300
-Message-Id: <1517701822-32462-1-git-send-email-gq@redlab-i.ru>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1517701060-31846-1-git-send-email-gq@redlab-i.ru>
-References: <1517701060-31846-1-git-send-email-gq@redlab-i.ru>
-X-AV-Checked: ClamAV using ClamSMTP
+       dkim=pass header.i=@amazon.de header.s=amazon201209 header.b=rQqrhJL4;
+       spf=pass (google.com: domain of prvs=56548c19e=karahmed@amazon.com designates 207.171.184.29 as permitted sender) smtp.mailfrom=prvs=56548c19e=karahmed@amazon.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=amazon.de
+X-IronPort-AV: E=Sophos;i="5.46,454,1511827200";
+   d="scan'208";a="592757908"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan Van De Ven <arjan.van.de.ven@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>, Andi Kleen <ak@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Ashok Raj <ashok.raj@intel.com>
+Subject: [PATCH v7] KVM: SVM: Allow direct access to MSR_IA32_SPEC_CTRL
+Date: Sat,  3 Feb 2018 15:56:23 +0100
+Message-Id: <1517669783-20732-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1572114236405083515?=
-X-GMAIL-MSGID: =?utf-8?q?1591425723005778105?=
+X-GMAIL-THRID: =?utf-8?q?1591392137027542607?=
+X-GMAIL-MSGID: =?utf-8?q?1591392137027542607?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-WCH CH382L is a PCI-E adapter with 1 parallel port. It is similair to CH382
-but serial ports are not soldered on board. Detected as
-Serial controller: Device 1c00:3050 (rev 10) (prog-if 05 [16850])
+[ Based on a patch from Paolo Bonzini <pbonzini@redhat.com> ]
 
-Signed-off-by: Alexander Gerasiov <gq@redlab-i.ru>
+... basically doing exactly what we do for VMX:
+
+- Passthrough SPEC_CTRL to guests (if enabled in guest CPUID)
+- Save and restore SPEC_CTRL around VMExit and VMEntry only if the guest
+  actually used it.
+
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- drivers/parport/parport_pc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+v6:
+- ditch save_spec_ctrl_on_exit in favor of msr_write_intercepted
+v5:
+- Add SPEC_CTRL to direct_access_msrs.
+---
+ arch/x86/kvm/svm.c | 88 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
-diff --git a/drivers/parport/parport_pc.c b/drivers/parport/parport_pc.c
-index 489492b608cf..380916bff9e0 100644
---- a/drivers/parport/parport_pc.c
-+++ b/drivers/parport/parport_pc.c
-@@ -2646,6 +2646,7 @@ enum parport_pc_pci_cards {
- 	netmos_9901,
- 	netmos_9865,
- 	quatech_sppxp100,
-+	wch_ch382l,
- };
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 254eefb..4e3c795 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -184,6 +184,8 @@ struct vcpu_svm {
+ 		u64 gs_base;
+ 	} host;
  
++	u64 spec_ctrl;
++
+ 	u32 *msrpm;
  
-@@ -2708,6 +2709,7 @@ static struct parport_pc_pci {
- 	/* netmos_9901 */               { 1, { { 0, -1 }, } },
- 	/* netmos_9865 */               { 1, { { 0, -1 }, } },
- 	/* quatech_sppxp100 */		{ 1, { { 0, 1 }, } },
-+	/* wch_ch382l */		{ 1, { { 2, -1 }, } },
- };
+ 	ulong nmi_iret_rip;
+@@ -249,6 +251,7 @@ static const struct svm_direct_access_msrs {
+ 	{ .index = MSR_CSTAR,				.always = true  },
+ 	{ .index = MSR_SYSCALL_MASK,			.always = true  },
+ #endif
++	{ .index = MSR_IA32_SPEC_CTRL,			.always = false },
+ 	{ .index = MSR_IA32_PRED_CMD,			.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
+@@ -882,6 +885,25 @@ static bool valid_msr_intercept(u32 index)
+ 	return false;
+ }
  
- static const struct pci_device_id parport_pc_pci_tbl[] = {
-@@ -2797,6 +2799,8 @@ static const struct pci_device_id parport_pc_pci_tbl[] = {
- 	/* Quatech SPPXP-100 Parallel port PCI ExpressCard */
- 	{ PCI_VENDOR_ID_QUATECH, PCI_DEVICE_ID_QUATECH_SPPXP_100,
- 	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, quatech_sppxp100 },
-+	/* WCH CH382L PCI-E single parallel port card */
-+	{ 0x1c00, 0x3050, 0x1c00, 0x3050, 0, 0, wch_ch382l },
- 	{ 0, } /* terminate list */
- };
- MODULE_DEVICE_TABLE(pci, parport_pc_pci_tbl);
++static bool msr_write_intercepted(struct kvm_vcpu *vcpu, unsigned msr)
++{
++	u8 bit_write;
++	unsigned long tmp;
++	u32 offset;
++	u32 *msrpm;
++
++	msrpm = is_guest_mode(vcpu) ? to_svm(vcpu)->nested.msrpm:
++				      to_svm(vcpu)->msrpm;
++
++	offset    = svm_msrpm_offset(msr);
++	bit_write = 2 * (msr & 0x0f) + 1;
++	tmp       = msrpm[offset];
++
++	BUG_ON(offset == MSR_INVALID);
++
++	return !!test_bit(bit_write,  &tmp);
++}
++
+ static void set_msr_interception(u32 *msrpm, unsigned msr,
+ 				 int read, int write)
+ {
+@@ -1584,6 +1606,8 @@ static void svm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	u32 dummy;
+ 	u32 eax = 1;
+ 
++	svm->spec_ctrl = 0;
++
+ 	if (!init_event) {
+ 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
+ 					   MSR_IA32_APICBASE_ENABLE;
+@@ -3605,6 +3629,13 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_VM_CR:
+ 		msr_info->data = svm->nested.vm_cr_msr;
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS))
++			return 1;
++
++		msr_info->data = svm->spec_ctrl;
++		break;
+ 	case MSR_IA32_UCODE_REV:
+ 		msr_info->data = 0x01000065;
+ 		break;
+@@ -3696,6 +3727,33 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+ 	case MSR_IA32_TSC:
+ 		kvm_write_tsc(vcpu, msr);
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr->host_initiated &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS))
++			return 1;
++
++		/* The STIBP bit doesn't fault even if it's not advertised */
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
++			return 1;
++
++		svm->spec_ctrl = data;
++
++		if (!data)
++			break;
++
++		/*
++		 * For non-nested:
++		 * When it's written (to non-zero) for the first time, pass
++		 * it through.
++		 *
++		 * For nested:
++		 * The handling of the MSR bitmap for L2 guests is done in
++		 * nested_svm_vmrun_msrpm.
++		 * We update the L1 MSR bit as well since it will end up
++		 * touching the MSR anyway now.
++		 */
++		set_msr_interception(svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
++		break;
+ 	case MSR_IA32_PRED_CMD:
+ 		if (!msr->host_initiated &&
+ 		    !guest_cpuid_has(vcpu, X86_FEATURE_IBPB))
+@@ -4964,6 +5022,15 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ 
+ 	local_irq_enable();
+ 
++	/*
++	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
++	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
++	 * is no need to worry about the conditional branch over the wrmsr
++	 * being speculatively taken.
++	 */
++	if (svm->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+ 		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
+@@ -5056,6 +5123,27 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ #endif
+ 		);
+ 
++	/*
++	 * We do not use IBRS in the kernel. If this vCPU has used the
++	 * SPEC_CTRL MSR it may have left it on; save the value and
++	 * turn it off. This is much more efficient than blindly adding
++	 * it to the atomic save/restore list. Especially as the former
++	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
++	 *
++	 * For non-nested case:
++	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 *
++	 * For nested case:
++	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 */
++	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++
++	if (svm->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+ 
 -- 
-2.11.0
+2.7.4
