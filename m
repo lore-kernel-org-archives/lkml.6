@@ -1,89 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752312AbeBCJvz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 04:51:55 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:54444 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750802AbeBCJvt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 04:51:49 -0500
-Date: Sat, 3 Feb 2018 17:51:37 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: dsterba@suse.cz, Nikolay Borisov <nborisov@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org
-Subject: Re: [PATCH 1/2] libcrc32c: Add crc32c_impl function
-Message-ID: <20180203095137.GD28936@gondor.apana.org.au>
-References: <1515404705-490-1-git-send-email-nborisov@suse.com>
- <1515404705-490-2-git-send-email-nborisov@suse.com>
- <20180202172942.GU18553@twin.jikos.cz>
+        id S1751918AbeBCKcp (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 05:32:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45180 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750741AbeBCKcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 05:32:36 -0500
+Date: Sat, 3 Feb 2018 11:32:33 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Martin =?UTF-8?B?SHVuZGVi?= =?UTF-8?B?w7hsbA==?=
+        <martin.hundeboll@prevas.dk>
+Subject: [GIT PULL] dmi fixes for v4.16
+Message-ID: <20180203113233.4a5c2fc0@endymion>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180202172942.GU18553@twin.jikos.cz>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 06:29:42PM +0100, David Sterba wrote:
-> Adding linux-crypto@vger.kernel.org to CC
-> 
-> Link to the 2/2 patch https://patchwork.kernel.org/patch/10149203/
-> 
-> On Mon, Jan 08, 2018 at 11:45:04AM +0200, Nikolay Borisov wrote:
-> > This function returns a string with the currently in-use implementation
-> > of the crc32c algorithm, i.e crc32c-generic (for unoptimised, generic
-> > implementation) or crc32c-intel for the sse optimised version. This
-> > will be used by btrfs.
-> > 
-> > Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-> > ---
-> >  include/linux/crc32c.h | 1 +
-> >  lib/libcrc32c.c        | 6 ++++++
-> >  2 files changed, 7 insertions(+)
-> > 
-> > diff --git a/include/linux/crc32c.h b/include/linux/crc32c.h
-> > index 357ae4611a45..bd21af828ff6 100644
-> > --- a/include/linux/crc32c.h
-> > +++ b/include/linux/crc32c.h
-> > @@ -5,6 +5,7 @@
-> >  #include <linux/types.h>
-> >  
-> >  extern u32 crc32c(u32 crc, const void *address, unsigned int length);
-> > +extern const char *crc32c_impl(void);
-> >  
-> >  /* This macro exists for backwards-compatibility. */
-> >  #define crc32c_le crc32c
-> > diff --git a/lib/libcrc32c.c b/lib/libcrc32c.c
-> > index 9f79547d1b97..eaf71e0e04be 100644
-> > --- a/lib/libcrc32c.c
-> > +++ b/lib/libcrc32c.c
-> > @@ -71,6 +71,12 @@ static void __exit libcrc32c_mod_fini(void)
-> >  	crypto_free_shash(tfm);
-> >  }
-> >  
-> > +const char *crc32c_impl(void)
-> > +{
-> > +	return crypto_tfm_alg_driver_name(crypto_shash_tfm(tfm));
-> > +}
-> > +EXPORT_SYMBOL(crc32c_impl);
+Hi Linus,
 
-You could just use crypto_shash_driver_name.
+Please pull dmi subsystem updates/fixes for Linux v4.16 from:
 
-> Crypto maintainers, would it be still possible to squeeze this patch to
-> 4.16? It's quite trivial, but as it is not in a code I maintain I'm not
-> comfortable to add it to my tree (unless I get an ACK).
-> 
-> The linked patch depends on that change and would let us get rid of some
-> custom crypto wrappers around crc32c.
+git://git.kernel.org/pub/scm/linux/kernel/git/jdelvare/staging.git dmi-for-linus
 
-I'm fine with the patch otherwise.
+ drivers/firmware/dmi-sysfs.c |  2 +-
+ drivers/firmware/dmi_scan.c  | 64 +++++++++++++++++++-------------------------
+ 2 files changed, 29 insertions(+), 37 deletions(-)
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+---------------
 
-Cheers,
+Ard Biesheuvel (1):
+      firmware: dmi: handle missing DMI data gracefully
+
+Jean Delvare (3):
+      firmware: dmi: Optimize dmi_matches
+      firmware: dmi_scan: Drop dmi_initialized
+      firmware: dmi_scan: Fix handling of empty DMI strings
+
+Thanks,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Jean Delvare
+SUSE L3 Support
