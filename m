@@ -1,113 +1,71 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-308045-1518284497-2-127054020484405672
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518284497; b=EIi/xYdBlS2jg1KHffxjuFu9TS0cYdUGOXxZZv0FHKHtqNw
-    8qITGl6plKqlFuSPscJ8+T0BaPOq2rEFFX0GWA5FmO3q+L061m5T7HWA3YhIf2Pe
-    NHZ+HSXMEqjZJ6l/4dmmyPaksznrd/bnU9t34inSWMYfu7dC1eQLgyo+7P4JOhqJ
-    jzdYioeVNVIqA7Jgn1i4K8R5EmEfq5/l/niL8uFinB8zxGVvybDsHnM7LmEPuYO9
-    CK4yl6fLNUwy0P+7LzEXxv+ng0Z6zYkwhtWxF7MvqZPLSje4P6E+i9GHTgOE/aeN
-    aB7NNWAnqKZrCaDCOBgnZShnKgEoQhdGpPo+sZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:message-id:in-reply-to
-    :references:subject:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518284497; bh=c
-    J6pzDhxd0zL9fi5B721tXI7UptVCeTr/dgyLkPpJnc=; b=pWZAy8bXMZmQCKolb
-    eI9Zkbc4oomC9mjjDLaH1QXJlC03yYkTtoYU47eR+EkTK90HX3VJ1XzzDNZF9tP4
-    BZ/UFnLoAsfeXkhP41ixgnQel7qonil2VxFMJibC7w67be91vp+k2v/1Q4QKldRq
-    wvqHoM89Q/JrQSvu94maZzBOtrIvk6kegXJK2GzeQ3JZFtjXmSDC4rcRRh3tdIDf
-    T23M9aRSDQ8pYKhlP+EFZ+yrRxW82TA1WjA9I3QTXbeVM8zkF3PmNHPHIr31TIVu
-    ghrMEDBEjSgvhbPSGyuHHOxoDlOlNSD14pF80rOSIxLrKkG8Gt3o19RndmPxGdNX
-    goBPw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=i2se.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=i2se.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=i2se.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=i2se.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Sat, 10 Feb 2018 18:35:01 +0100 (CET)
+Return-Path: <stefan.wahren@i2se.com>
+X-Google-Smtp-Source: AH8x22560dm0omH5EIOg+ujVYs1ZDmk9hqVefMMl3f+RV9axpijaakiFR4LCZgK43XW+H0Kq3wpV
+ARC-Seal: i=1; a=rsa-sha256; t=1517654888; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gjjO4YJwOhOegMQVnjt6ZtdyODQhdVIEC3o/qsx16ez9oVr74Sdrch5munqVoPBcQ/
+         jfh0kIv1USD3TYGNzt8lkTKExrgvJVM1zOuzSJStQSz6LsyqImSZJ4v3zDY3TG+suFry
+         CAUnPleij8fYpMuL+RQLFO2fj90vks4BhuEQ8kNBexLdcI18KSl7Vzx10CrH4d+jeEd0
+         4BJXgnaV6gOWHgU9mmP2YonfYJVOVp92owPFJPB2VNoXbeg+SqnmllqBcq/NoukK4o+v
+         dn9Vd8Tch9E1Ynp1Y8VbcLA0Tr8yIlZVwpwph/x+4JzoH/RNpkBU/pnQiJ8ICXZH4HSU
+         VRNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=importance:content-transfer-encoding:mime-version:subject
+         :references:in-reply-to:message-id:cc:to:from:date
+         :arc-authentication-results;
+        bh=hcQ3t4gJ0MKd9qJ7ffMCOarzJ7FfzXWBbqVBlMIhnIk=;
+        b=OaujMaw9qpKh3t4MWWD10cCF0pRXPhklZMZ/hDPq+FSR+36uChLRsf3hbuLWX0qZnU
+         D3O2r9g1SzIzumkV4C6m7Yp/dbptwIomNBWgcW4kDeQWulkA+otX4/mkwUFwLmQkmZhq
+         5+98iUyTLwD3JlZu6QZ6b7J6vKC8jTv+EBwsp/n8/5GbJrANDG7bZxaz7525d93AGzeu
+         95yOBi5yV9IeEBuYCG6RLJPJ1BjV5PEgUdKf0/41hcCHx5e54lKUue/R9hifAzCGtNad
+         /B3YMRgtsXb9Qja1R1g8wLESc7lp9OYp5mS2FnkK2jYgGydlX17QPSPA1l/MsHXaRmi2
+         wtMw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 212.227.126.130 is neither permitted nor denied by best guess record for domain of stefan.wahren@i2se.com) smtp.mailfrom=stefan.wahren@i2se.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 212.227.126.130 is neither permitted nor denied by best guess record for domain of stefan.wahren@i2se.com) smtp.mailfrom=stefan.wahren@i2se.com
+Date: Sat, 3 Feb 2018 11:48:01 +0100 (CET)
 From: Stefan Wahren <stefan.wahren@i2se.com>
 To: Eric Anholt <eric@anholt.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Arnd Bergmann <arnd@arndb.de>
-Message-ID: <1423690308.146028.1518284101597@email.1und1.de>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Phil Elwell <phil@raspberrypi.org>
+Cc: linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Message-ID: <618573530.47611.1517654881535@email.1und1.de>
 In-Reply-To: <20180202150225.314435-1-arnd@arndb.de>
 References: <20180202150225.314435-1-arnd@arndb.de>
 Subject: Re: [PATCH] staging: vc04_services: merge vchiq_kern_lib.c into
  vchiq_arm.c
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Priority: 3
 Importance: Medium
 X-Mailer: Open-Xchange Mailer v7.8.4-Rev21
 X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K0:EtIT8N8PlodsrO2KclE93aCjWm3P4iMIH8jmf9YTGMBLMBWFDUq
- fV1P4lj9LQk3oj2xDp7xms2YSlWoh4hVEN9VjBY8HdfHMLXpyJ34IiV68iiLk7EQija0/hR
- GAMrKFma5viHZ6xXnn9quylon0VRs4Dl1vu7DjkyLnrRaNlPtYnk/9aVJq4nnd9Kpc39LxZ
- +iMgfR5ZKkx3LU/Ee1RtQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:a33prFpjwDQ=:OsKy2ywLQT5tO4bfO13uKn
- k4rSTkOInBy4lz984x/GXK8DmO3/Ar38lijxw2ALKWb9iuIanWVmm/i8JQp66/JX/yQ4MrX1L
- urmhfSTIIzQ02wgRBRX2QS+XZf7vYwZDdLEDZ3eQM+yWCZhwZm6axAHAWIZDXIrXbXWt0FR1f
- MHV4eZ6y15ePyMLoF4vCtneGbjk+3z42YOZ4asZV2d1MmtiWykmPpH/hxtwUt9xPfbz2HvQLy
- Cx5TAB4UkqaSdHlsxPcekF4G1O2+/suC11YPWHmdIA0GTaDMgBz6a5D1VsKXJEA15iXPiLrja
- OQA6vXdo46gvtK8e/YEB76iBbzkP7gDGkMYN17ixG52SNoaSwAG/XKRvWZxvoW+N83DaheMPE
- ku4PMMj/E9A2lAbB4E/JeS3VWrn2Rh0kSniavTaNHw8GpDkQlcfms/FTaC/idRvePHvYNJrNG
- ylfDoVlx/6eICxWwrzFvxpFUH2bNA9xJjMdwjovMgUj57jKCE4LkbbImMIfiQOMWcgqsuK7iT
- lugRVPtPDpfLAbiUZA7VhRf83yRLcmgbRqHvIieLpcF6anzgSOqFZn4X8jwAFd+WoOTdX8PI7
- puegc6zPzLPc4U26RBS9x9lmn6/F/L6ARGsCsjLAoB8vljOdV7T60rYaTlAy29rzNiMz+CplL
- N5vd6oOnZBx7tkQ7oL+Y8yukQMy4oexYlb25lCQkHHeQooiGxPNXLVDIFJusaBFAHF2Dn3ORb
- qA6RHR5XEcISkADRvuW9vjn+3LNYtgnlu70gOM1/aPn4uV8CjTWVUJ/Mngdz7mFPYQPjCw8ml
- 1z2pX+j91xg3I4hz6oAXOkLxA9fYzt8lr9DkoJ9mGoU+49yo/deGKRSXbt56+l8N6abvH3TDu
- RnYQlXqT1osJHvFwpfOq3/V/xP4At4wxU/iTPFWzmhdS+wbJkYlyfsWVKHeBBNB5dC1Pyf+FA
- 3pgEgjyaaiw==
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Andi Kleen <ak@linux.intel.com>,
- Mikhail Shvetsov <lameli67@gmail.com>, Nicolas Pitre <nico@linaro.org>,
- Yamanappagouda Patil <goudapatilk@gmail.com>, phil@raspberrypi.org,
- linux-kernel@vger.kernel.org, Michael Zoran <mzoran@crowfest.net>,
- linux-rpi-kernel@lists.infradead.org,
- simran singhal <singhalsimran0@gmail.com>,
- Dan Carpenter <dan.carpenter@oracle.com>, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Provags-ID: V03:K0:+rHWqa3Hd4IezXKxtPD2Ho9ibvhOT+kZAmi2rxoj50mWGodCEEl
+ 2UKUE+v19cOal8XF05jKiuwFcf1YmghC/pdMi4jEZPZ/RbGSJs8TH6hrVTXXUdmYBIpTSLU
+ 7PsDzqzztFNPdhOd9qMX7KNSfn/8jx5sr6XKC2/EBAya46Z0qVeuhy3d5MX4u3XmwNvOOZu
+ P7dOxw6MGkkHsYJqMWQwA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:/R9E/j6CoGQ=:RRpBsYiEKyIRXFx1RTR1GO
+ fVT7W1z0eWl64GpaO+3CpojnY7tl7+vxK5RmNm+NvkZ8IQJMcdyMjCp99GrwFoNvX3EdJKgzr
+ Z9/x4CWzqAgiSnKsDiQ1F16vLkaHuLm9Ri7iZ9w/PdVMqFDqFhCiQA0nPrbJRUiYzmt21sDfk
+ HYzNAzUqpnqVlGpMyeRlZOUKak8q22WTb+bbOsjl2YaMF22CetztjvwGTrYEsE9tmqalKtzvB
+ P8G3Y/5RVAa0/fB+cI/opTEBbvIWV2XB8vV5KIv+i9lnxFHD6hgT7A4seCetF66RziD2jW0VU
+ sQoJmdoDCAVqbMoqokMSrqXjn8v/xchTtzNRc9i5QFl6NG4vxsbrjmn9or+jkXP6m9Ux7ZZKb
+ T/XjcsLjGm3d6n9AFCMA8DrIbfTidpETCqp1hW8C9MxCd2ClIF54nv+HK6h1ySIAk8GENgiKh
+ n3UjOY09WJuY8KbElg3XlrviYEg3d2ehMbnM+FE5feCfAlP2AxQXoeFNarLqV9sjJQVggjv9T
+ 1YXz8gr/mZgTpLiiSVkCr/stcd4rNvfUjXFQOmkM+RAOd2d77g2vMB8bORnEvEKBte+UyDkjO
+ Gc7sJHhteDqff1/Sa/8vlEbgBLZkyroQMBImbbvWDpaoywu7nYAiObfqIxi+myw3P/g4vqrzP
+ rnPh33iFJ/Uw5ytAlzOrspIQejDcnymZYFuH5Rxz/N5HBQXbLnNWDcPAgdSVIoHK0Z426fhY+
+ aLso5ppNrPGdTWBRiEHfQuSIp+aowy19EbvoEaAgXJuMbAVUTFHJDxVo3HI=
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591301905554073062?=
+X-GMAIL-MSGID: =?utf-8?q?1591376492197661707?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+[add Phil]
 
 > Arnd Bergmann <arnd@arndb.de> hat am 2. Februar 2018 um 16:01 geschrieben:
 > 
@@ -137,9 +95,847 @@ List-ID: <linux-kernel.vger.kernel.org>
 > up running into too many interdependencies that way.
 > 
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+> ---
+>  drivers/staging/vc04_services/Makefile             |   1 -
+>  .../vc04_services/interface/vchiq_arm/vchiq_arm.c  | 369 ++++++++++++++++++
+>  .../interface/vchiq_arm/vchiq_kern_lib.c           | 431 ---------------------
+>  3 files changed, 369 insertions(+), 432 deletions(-)
+>  delete mode 100644 drivers/staging/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c
+> 
+> diff --git a/drivers/staging/vc04_services/Makefile b/drivers/staging/vc04_services/Makefile
+> index 1ecb261e04ae..fb26b826e640 100644
+> --- a/drivers/staging/vc04_services/Makefile
+> +++ b/drivers/staging/vc04_services/Makefile
+> @@ -4,7 +4,6 @@ obj-$(CONFIG_BCM2835_VCHIQ)	+= vchiq.o
+>  vchiq-objs := \
+>     interface/vchiq_arm/vchiq_core.o  \
+>     interface/vchiq_arm/vchiq_arm.o \
+> -   interface/vchiq_arm/vchiq_kern_lib.o \
+>     interface/vchiq_arm/vchiq_2835_arm.o \
+>     interface/vchiq_arm/vchiq_debugfs.o \
+>     interface/vchiq_arm/vchiq_shim.o \
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> index c2c440009cac..f5cefda49b22 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> @@ -193,6 +193,375 @@ static const char *const ioctl_names[] = {
+>  vchiq_static_assert(ARRAY_SIZE(ioctl_names) ==
+>  		    (VCHIQ_IOC_MAX + 1));
+>  
+> +static VCHIQ_STATUS_T
+> +vchiq_blocking_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *data,
+> +	unsigned int size, VCHIQ_BULK_DIR_T dir);
+> +
+> +#define VCHIQ_INIT_RETRIES 10
+> +VCHIQ_STATUS_T vchiq_initialise(VCHIQ_INSTANCE_T *instance_out)
+> +{
+> +	VCHIQ_STATUS_T status = VCHIQ_ERROR;
+> +	VCHIQ_STATE_T *state;
+> +	VCHIQ_INSTANCE_T instance = NULL;
+> +	int i;
+> +
+> +	vchiq_log_trace(vchiq_core_log_level, "%s called", __func__);
+> +
+> +	/* VideoCore may not be ready due to boot up timing.
+> +	 * It may never be ready if kernel and firmware are mismatched,so don't
+> +	 * block forever.
+> +	 */
+> +	for (i = 0; i < VCHIQ_INIT_RETRIES; i++) {
+> +		state = vchiq_get_state();
+> +		if (state)
+> +			break;
+> +		udelay(500);
+> +	}
+> +	if (i == VCHIQ_INIT_RETRIES) {
+> +		vchiq_log_error(vchiq_core_log_level,
+> +			"%s: videocore not initialized\n", __func__);
+> +		goto failed;
+> +	} else if (i > 0) {
+> +		vchiq_log_warning(vchiq_core_log_level,
+> +			"%s: videocore initialized after %d retries\n",
+> +			__func__, i);
+> +	}
+> +
+> +	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
+> +	if (!instance) {
+> +		vchiq_log_error(vchiq_core_log_level,
+> +			"%s: error allocating vchiq instance\n", __func__);
+> +		goto failed;
+> +	}
+> +
+> +	instance->connected = 0;
+> +	instance->state = state;
+> +	mutex_init(&instance->bulk_waiter_list_mutex);
+> +	INIT_LIST_HEAD(&instance->bulk_waiter_list);
+> +
+> +	*instance_out = instance;
+> +
+> +	status = VCHIQ_SUCCESS;
+> +
+> +failed:
+> +	vchiq_log_trace(vchiq_core_log_level,
+> +		"%s(%p): returning %d", __func__, instance, status);
+> +
+> +	return status;
+> +}
+> +EXPORT_SYMBOL(vchiq_initialise);
+> +
+> +VCHIQ_STATUS_T vchiq_shutdown(VCHIQ_INSTANCE_T instance)
+> +{
+> +	VCHIQ_STATUS_T status;
+> +	VCHIQ_STATE_T *state = instance->state;
+> +
+> +	vchiq_log_trace(vchiq_core_log_level,
+> +		"%s(%p) called", __func__, instance);
+> +
+> +	if (mutex_lock_killable(&state->mutex) != 0)
+> +		return VCHIQ_RETRY;
+> +
+> +	/* Remove all services */
+> +	status = vchiq_shutdown_internal(state, instance);
+> +
+> +	mutex_unlock(&state->mutex);
+> +
+> +	vchiq_log_trace(vchiq_core_log_level,
+> +		"%s(%p): returning %d", __func__, instance, status);
+> +
+> +	if (status == VCHIQ_SUCCESS) {
+> +		struct list_head *pos, *next;
+> +
+> +		list_for_each_safe(pos, next,
+> +				&instance->bulk_waiter_list) {
+> +			struct bulk_waiter_node *waiter;
+> +
+> +			waiter = list_entry(pos,
+> +					struct bulk_waiter_node,
+> +					list);
+> +			list_del(pos);
+> +			vchiq_log_info(vchiq_arm_log_level,
+> +					"bulk_waiter - cleaned up %pK for pid %d",
+> +					waiter, waiter->pid);
+> +			kfree(waiter);
+> +		}
+> +		kfree(instance);
+> +	}
+> +
+> +	return status;
+> +}
+> +EXPORT_SYMBOL(vchiq_shutdown);
+> +
+> +static int vchiq_is_connected(VCHIQ_INSTANCE_T instance)
+> +{
+> +	return instance->connected;
+> +}
+> +
+> +VCHIQ_STATUS_T vchiq_connect(VCHIQ_INSTANCE_T instance)
+> +{
+> +	VCHIQ_STATUS_T status;
+> +	VCHIQ_STATE_T *state = instance->state;
+> +
+> +	vchiq_log_trace(vchiq_core_log_level,
+> +		"%s(%p) called", __func__, instance);
+> +
+> +	if (mutex_lock_killable(&state->mutex) != 0) {
+> +		vchiq_log_trace(vchiq_core_log_level,
+> +			"%s: call to mutex_lock failed", __func__);
+> +		status = VCHIQ_RETRY;
+> +		goto failed;
+> +	}
+> +	status = vchiq_connect_internal(state, instance);
+> +
+> +	if (status == VCHIQ_SUCCESS)
+> +		instance->connected = 1;
+> +
+> +	mutex_unlock(&state->mutex);
+> +
+> +failed:
+> +	vchiq_log_trace(vchiq_core_log_level,
+> +		"%s(%p): returning %d", __func__, instance, status);
+> +
+> +	return status;
+> +}
+> +EXPORT_SYMBOL(vchiq_connect);
+> +
+> +VCHIQ_STATUS_T vchiq_add_service(
+> +	VCHIQ_INSTANCE_T              instance,
+> +	const VCHIQ_SERVICE_PARAMS_T *params,
+> +	VCHIQ_SERVICE_HANDLE_T       *phandle)
+> +{
+> +	VCHIQ_STATUS_T status;
+> +	VCHIQ_STATE_T *state = instance->state;
+> +	VCHIQ_SERVICE_T *service = NULL;
+> +	int srvstate;
+> +
+> +	vchiq_log_trace(vchiq_core_log_level,
+> +		"%s(%p) called", __func__, instance);
+> +
+> +	*phandle = VCHIQ_SERVICE_HANDLE_INVALID;
+> +
+> +	srvstate = vchiq_is_connected(instance)
+> +		? VCHIQ_SRVSTATE_LISTENING
+> +		: VCHIQ_SRVSTATE_HIDDEN;
+> +
+> +	service = vchiq_add_service_internal(
+> +		state,
+> +		params,
+> +		srvstate,
+> +		instance,
+> +		NULL);
+> +
+> +	if (service) {
+> +		*phandle = service->handle;
+> +		status = VCHIQ_SUCCESS;
+> +	} else
+> +		status = VCHIQ_ERROR;
+> +
+> +	vchiq_log_trace(vchiq_core_log_level,
+> +		"%s(%p): returning %d", __func__, instance, status);
+> +
+> +	return status;
+> +}
+> +EXPORT_SYMBOL(vchiq_add_service);
+> +
+> +VCHIQ_STATUS_T vchiq_open_service(
+> +	VCHIQ_INSTANCE_T              instance,
+> +	const VCHIQ_SERVICE_PARAMS_T *params,
+> +	VCHIQ_SERVICE_HANDLE_T       *phandle)
+> +{
+> +	VCHIQ_STATUS_T   status = VCHIQ_ERROR;
+> +	VCHIQ_STATE_T   *state = instance->state;
+> +	VCHIQ_SERVICE_T *service = NULL;
+> +
+> +	vchiq_log_trace(vchiq_core_log_level,
+> +		"%s(%p) called", __func__, instance);
+> +
+> +	*phandle = VCHIQ_SERVICE_HANDLE_INVALID;
+> +
+> +	if (!vchiq_is_connected(instance))
+> +		goto failed;
+> +
+> +	service = vchiq_add_service_internal(state,
+> +		params,
+> +		VCHIQ_SRVSTATE_OPENING,
+> +		instance,
+> +		NULL);
+> +
+> +	if (service) {
+> +		*phandle = service->handle;
+> +		status = vchiq_open_service_internal(service, current->pid);
+> +		if (status != VCHIQ_SUCCESS) {
+> +			vchiq_remove_service(service->handle);
+> +			*phandle = VCHIQ_SERVICE_HANDLE_INVALID;
+> +		}
+> +	}
+> +
+> +failed:
+> +	vchiq_log_trace(vchiq_core_log_level,
+> +		"%s(%p): returning %d", __func__, instance, status);
+> +
+> +	return status;
+> +}
+> +EXPORT_SYMBOL(vchiq_open_service);
+> +
+> +VCHIQ_STATUS_T
+> +vchiq_queue_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle,
+> +	const void *data, unsigned int size, void *userdata)
+> +{
+> +	return vchiq_bulk_transfer(handle,
+> +		VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
+> +		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_TRANSMIT);
+> +}
+> +EXPORT_SYMBOL(vchiq_queue_bulk_transmit);
+> +
+> +VCHIQ_STATUS_T
+> +vchiq_queue_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data,
+> +	unsigned int size, void *userdata)
+> +{
+> +	return vchiq_bulk_transfer(handle,
+> +		VCHI_MEM_HANDLE_INVALID, data, size, userdata,
+> +		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_RECEIVE);
+> +}
+> +EXPORT_SYMBOL(vchiq_queue_bulk_receive);
+> +
+> +VCHIQ_STATUS_T
+> +vchiq_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle, const void *data,
+> +	unsigned int size, void *userdata, VCHIQ_BULK_MODE_T mode)
+> +{
+> +	VCHIQ_STATUS_T status;
+> +
+> +	switch (mode) {
+> +	case VCHIQ_BULK_MODE_NOCALLBACK:
+> +	case VCHIQ_BULK_MODE_CALLBACK:
+> +		status = vchiq_bulk_transfer(handle,
+> +			VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
+> +			mode, VCHIQ_BULK_TRANSMIT);
+> +		break;
+> +	case VCHIQ_BULK_MODE_BLOCKING:
+> +		status = vchiq_blocking_bulk_transfer(handle,
+> +			(void *)data, size, VCHIQ_BULK_TRANSMIT);
+> +		break;
+> +	default:
+> +		return VCHIQ_ERROR;
+> +	}
+> +
+> +	return status;
+> +}
+> +EXPORT_SYMBOL(vchiq_bulk_transmit);
+> +
+> +VCHIQ_STATUS_T
+> +vchiq_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data,
+> +	unsigned int size, void *userdata, VCHIQ_BULK_MODE_T mode)
+> +{
+> +	VCHIQ_STATUS_T status;
+> +
+> +	switch (mode) {
+> +	case VCHIQ_BULK_MODE_NOCALLBACK:
+> +	case VCHIQ_BULK_MODE_CALLBACK:
+> +		status = vchiq_bulk_transfer(handle,
+> +			VCHI_MEM_HANDLE_INVALID, data, size, userdata,
+> +			mode, VCHIQ_BULK_RECEIVE);
+> +		break;
+> +	case VCHIQ_BULK_MODE_BLOCKING:
+> +		status = vchiq_blocking_bulk_transfer(handle,
+> +			(void *)data, size, VCHIQ_BULK_RECEIVE);
+> +		break;
+> +	default:
+> +		return VCHIQ_ERROR;
+> +	}
+> +
+> +	return status;
+> +}
+> +EXPORT_SYMBOL(vchiq_bulk_receive);
+> +
+> +static VCHIQ_STATUS_T
+> +vchiq_blocking_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *data,
+> +	unsigned int size, VCHIQ_BULK_DIR_T dir)
+> +{
+> +	VCHIQ_INSTANCE_T instance;
+> +	VCHIQ_SERVICE_T *service;
+> +	VCHIQ_STATUS_T status;
+> +	struct bulk_waiter_node *waiter = NULL;
+> +	struct list_head *pos;
+> +
+> +	service = find_service_by_handle(handle);
+> +	if (!service)
+> +		return VCHIQ_ERROR;
+> +
+> +	instance = service->instance;
+> +
+> +	unlock_service(service);
+> +
+> +	mutex_lock(&instance->bulk_waiter_list_mutex);
+> +	list_for_each(pos, &instance->bulk_waiter_list) {
+> +		if (list_entry(pos, struct bulk_waiter_node,
+> +				list)->pid == current->pid) {
+> +			waiter = list_entry(pos,
+> +				struct bulk_waiter_node,
+> +				list);
+> +			list_del(pos);
+> +			break;
+> +		}
+> +	}
+> +	mutex_unlock(&instance->bulk_waiter_list_mutex);
+> +
+> +	if (waiter) {
+> +		VCHIQ_BULK_T *bulk = waiter->bulk_waiter.bulk;
+> +
+> +		if (bulk) {
+> +			/* This thread has an outstanding bulk transfer. */
+> +			if ((bulk->data != data) ||
+> +				(bulk->size != size)) {
+> +				/* This is not a retry of the previous one.
+> +				 * Cancel the signal when the transfer
+> +				 * completes.
+> +				 */
+> +				spin_lock(&bulk_waiter_spinlock);
+> +				bulk->userdata = NULL;
+> +				spin_unlock(&bulk_waiter_spinlock);
+> +			}
+> +		}
+> +	}
+> +
+> +	if (!waiter) {
+> +		waiter = kzalloc(sizeof(struct bulk_waiter_node), GFP_KERNEL);
+> +		if (!waiter) {
+> +			vchiq_log_error(vchiq_core_log_level,
+> +				"%s - out of memory", __func__);
+> +			return VCHIQ_ERROR;
+> +		}
+> +	}
+> +
+> +	status = vchiq_bulk_transfer(handle, VCHI_MEM_HANDLE_INVALID,
+> +		data, size, &waiter->bulk_waiter, VCHIQ_BULK_MODE_BLOCKING,
+> +		dir);
+> +	if ((status != VCHIQ_RETRY) || fatal_signal_pending(current) ||
+> +		!waiter->bulk_waiter.bulk) {
+> +		VCHIQ_BULK_T *bulk = waiter->bulk_waiter.bulk;
+> +
+> +		if (bulk) {
+> +			/* Cancel the signal when the transfer
+> +			 * completes.
+> +			 */
+> +			spin_lock(&bulk_waiter_spinlock);
+> +			bulk->userdata = NULL;
+> +			spin_unlock(&bulk_waiter_spinlock);
+> +		}
+> +		kfree(waiter);
+> +	} else {
+> +		waiter->pid = current->pid;
+> +		mutex_lock(&instance->bulk_waiter_list_mutex);
+> +		list_add(&waiter->list, &instance->bulk_waiter_list);
+> +		mutex_unlock(&instance->bulk_waiter_list_mutex);
+> +		vchiq_log_info(vchiq_arm_log_level,
+> +				"saved bulk_waiter %pK for pid %d",
+> +				waiter, current->pid);
+> +	}
+> +
+> +	return status;
+> +}
+>  /****************************************************************************
+>  *
+>  *   add_completion
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c
+> deleted file mode 100644
+> index 43c89a08bda9..000000000000
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c
+> +++ /dev/null
+> @@ -1,431 +0,0 @@
+> -/**
+> - * Copyright (c) 2010-2012 Broadcom. All rights reserved.
+> - *
+> - * Redistribution and use in source and binary forms, with or without
+> - * modification, are permitted provided that the following conditions
+> - * are met:
+> - * 1. Redistributions of source code must retain the above copyright
+> - *    notice, this list of conditions, and the following disclaimer,
+> - *    without modification.
+> - * 2. Redistributions in binary form must reproduce the above copyright
+> - *    notice, this list of conditions and the following disclaimer in the
+> - *    documentation and/or other materials provided with the distribution.
+> - * 3. The names of the above-listed copyright holders may not be used
+> - *    to endorse or promote products derived from this software without
+> - *    specific prior written permission.
+> - *
+> - * ALTERNATIVELY, this software may be distributed under the terms of the
+> - * GNU General Public License ("GPL") version 2, as published by the Free
+> - * Software Foundation.
+> - *
+> - * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+> - * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+> - * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+> - * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+> - * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+> - * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+> - * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+> - * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+> - * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+> - * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+> - * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+> - */
+> -
+> -/* ---- Include Files ---------------------------------------------------- */
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/module.h>
+> -#include <linux/mutex.h>
+> -
+> -#include "vchiq_core.h"
+> -#include "vchiq_arm.h"
+> -#include "vchiq_killable.h"
+> -
+> -/* ---- Public Variables ------------------------------------------------- */
+> -
+> -/* ---- Private Constants and Types -------------------------------------- */
+> -
+> -struct bulk_waiter_node {
+> -	struct bulk_waiter bulk_waiter;
+> -	int pid;
+> -	struct list_head list;
+> -};
+> -
+> -struct vchiq_instance_struct {
+> -	VCHIQ_STATE_T *state;
+> -
+> -	int connected;
+> -
+> -	struct list_head bulk_waiter_list;
+> -	struct mutex bulk_waiter_list_mutex;
+> -};
+> -
+> -static VCHIQ_STATUS_T
+> -vchiq_blocking_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *data,
+> -	unsigned int size, VCHIQ_BULK_DIR_T dir);
+> -
+> -#define VCHIQ_INIT_RETRIES 10
+> -VCHIQ_STATUS_T vchiq_initialise(VCHIQ_INSTANCE_T *instance_out)
+> -{
+> -	VCHIQ_STATUS_T status = VCHIQ_ERROR;
+> -	VCHIQ_STATE_T *state;
+> -	VCHIQ_INSTANCE_T instance = NULL;
+> -	int i;
+> -
+> -	vchiq_log_trace(vchiq_core_log_level, "%s called", __func__);
+> -
+> -	/* VideoCore may not be ready due to boot up timing.
+> -	 * It may never be ready if kernel and firmware are mismatched,so don't
+> -	 * block forever.
+> -	 */
+> -	for (i = 0; i < VCHIQ_INIT_RETRIES; i++) {
+> -		state = vchiq_get_state();
+> -		if (state)
+> -			break;
+> -		udelay(500);
+> -	}
+> -	if (i == VCHIQ_INIT_RETRIES) {
+> -		vchiq_log_error(vchiq_core_log_level,
+> -			"%s: videocore not initialized\n", __func__);
+> -		goto failed;
+> -	} else if (i > 0) {
+> -		vchiq_log_warning(vchiq_core_log_level,
+> -			"%s: videocore initialized after %d retries\n",
+> -			__func__, i);
+> -	}
+> -
+> -	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
+> -	if (!instance) {
+> -		vchiq_log_error(vchiq_core_log_level,
+> -			"%s: error allocating vchiq instance\n", __func__);
+> -		goto failed;
+> -	}
+> -
+> -	instance->connected = 0;
+> -	instance->state = state;
+> -	mutex_init(&instance->bulk_waiter_list_mutex);
+> -	INIT_LIST_HEAD(&instance->bulk_waiter_list);
+> -
+> -	*instance_out = instance;
+> -
+> -	status = VCHIQ_SUCCESS;
+> -
+> -failed:
+> -	vchiq_log_trace(vchiq_core_log_level,
+> -		"%s(%p): returning %d", __func__, instance, status);
+> -
+> -	return status;
+> -}
+> -EXPORT_SYMBOL(vchiq_initialise);
+> -
+> -VCHIQ_STATUS_T vchiq_shutdown(VCHIQ_INSTANCE_T instance)
+> -{
+> -	VCHIQ_STATUS_T status;
+> -	VCHIQ_STATE_T *state = instance->state;
+> -
+> -	vchiq_log_trace(vchiq_core_log_level,
+> -		"%s(%p) called", __func__, instance);
+> -
+> -	if (mutex_lock_killable(&state->mutex) != 0)
+> -		return VCHIQ_RETRY;
+> -
+> -	/* Remove all services */
+> -	status = vchiq_shutdown_internal(state, instance);
+> -
+> -	mutex_unlock(&state->mutex);
+> -
+> -	vchiq_log_trace(vchiq_core_log_level,
+> -		"%s(%p): returning %d", __func__, instance, status);
+> -
+> -	if (status == VCHIQ_SUCCESS) {
+> -		struct list_head *pos, *next;
+> -
+> -		list_for_each_safe(pos, next,
+> -				&instance->bulk_waiter_list) {
+> -			struct bulk_waiter_node *waiter;
+> -
+> -			waiter = list_entry(pos,
+> -					struct bulk_waiter_node,
+> -					list);
+> -			list_del(pos);
+> -			vchiq_log_info(vchiq_arm_log_level,
+> -					"bulk_waiter - cleaned up %pK for pid %d",
+> -					waiter, waiter->pid);
+> -			kfree(waiter);
+> -		}
+> -		kfree(instance);
+> -	}
+> -
+> -	return status;
+> -}
+> -EXPORT_SYMBOL(vchiq_shutdown);
+> -
+> -static int vchiq_is_connected(VCHIQ_INSTANCE_T instance)
+> -{
+> -	return instance->connected;
+> -}
+> -
+> -VCHIQ_STATUS_T vchiq_connect(VCHIQ_INSTANCE_T instance)
+> -{
+> -	VCHIQ_STATUS_T status;
+> -	VCHIQ_STATE_T *state = instance->state;
+> -
+> -	vchiq_log_trace(vchiq_core_log_level,
+> -		"%s(%p) called", __func__, instance);
+> -
+> -	if (mutex_lock_killable(&state->mutex) != 0) {
+> -		vchiq_log_trace(vchiq_core_log_level,
+> -			"%s: call to mutex_lock failed", __func__);
+> -		status = VCHIQ_RETRY;
+> -		goto failed;
+> -	}
+> -	status = vchiq_connect_internal(state, instance);
+> -
+> -	if (status == VCHIQ_SUCCESS)
+> -		instance->connected = 1;
+> -
+> -	mutex_unlock(&state->mutex);
+> -
+> -failed:
+> -	vchiq_log_trace(vchiq_core_log_level,
+> -		"%s(%p): returning %d", __func__, instance, status);
+> -
+> -	return status;
+> -}
+> -EXPORT_SYMBOL(vchiq_connect);
+> -
+> -VCHIQ_STATUS_T vchiq_add_service(
+> -	VCHIQ_INSTANCE_T              instance,
+> -	const VCHIQ_SERVICE_PARAMS_T *params,
+> -	VCHIQ_SERVICE_HANDLE_T       *phandle)
+> -{
+> -	VCHIQ_STATUS_T status;
+> -	VCHIQ_STATE_T *state = instance->state;
+> -	VCHIQ_SERVICE_T *service = NULL;
+> -	int srvstate;
+> -
+> -	vchiq_log_trace(vchiq_core_log_level,
+> -		"%s(%p) called", __func__, instance);
+> -
+> -	*phandle = VCHIQ_SERVICE_HANDLE_INVALID;
+> -
+> -	srvstate = vchiq_is_connected(instance)
+> -		? VCHIQ_SRVSTATE_LISTENING
+> -		: VCHIQ_SRVSTATE_HIDDEN;
+> -
+> -	service = vchiq_add_service_internal(
+> -		state,
+> -		params,
+> -		srvstate,
+> -		instance,
+> -		NULL);
+> -
+> -	if (service) {
+> -		*phandle = service->handle;
+> -		status = VCHIQ_SUCCESS;
+> -	} else
+> -		status = VCHIQ_ERROR;
+> -
+> -	vchiq_log_trace(vchiq_core_log_level,
+> -		"%s(%p): returning %d", __func__, instance, status);
+> -
+> -	return status;
+> -}
+> -EXPORT_SYMBOL(vchiq_add_service);
+> -
+> -VCHIQ_STATUS_T vchiq_open_service(
+> -	VCHIQ_INSTANCE_T              instance,
+> -	const VCHIQ_SERVICE_PARAMS_T *params,
+> -	VCHIQ_SERVICE_HANDLE_T       *phandle)
+> -{
+> -	VCHIQ_STATUS_T   status = VCHIQ_ERROR;
+> -	VCHIQ_STATE_T   *state = instance->state;
+> -	VCHIQ_SERVICE_T *service = NULL;
+> -
+> -	vchiq_log_trace(vchiq_core_log_level,
+> -		"%s(%p) called", __func__, instance);
+> -
+> -	*phandle = VCHIQ_SERVICE_HANDLE_INVALID;
+> -
+> -	if (!vchiq_is_connected(instance))
+> -		goto failed;
+> -
+> -	service = vchiq_add_service_internal(state,
+> -		params,
+> -		VCHIQ_SRVSTATE_OPENING,
+> -		instance,
+> -		NULL);
+> -
+> -	if (service) {
+> -		*phandle = service->handle;
+> -		status = vchiq_open_service_internal(service, current->pid);
+> -		if (status != VCHIQ_SUCCESS) {
+> -			vchiq_remove_service(service->handle);
+> -			*phandle = VCHIQ_SERVICE_HANDLE_INVALID;
+> -		}
+> -	}
+> -
+> -failed:
+> -	vchiq_log_trace(vchiq_core_log_level,
+> -		"%s(%p): returning %d", __func__, instance, status);
+> -
+> -	return status;
+> -}
+> -EXPORT_SYMBOL(vchiq_open_service);
+> -
+> -VCHIQ_STATUS_T
+> -vchiq_queue_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle,
+> -	const void *data, unsigned int size, void *userdata)
+> -{
+> -	return vchiq_bulk_transfer(handle,
+> -		VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
+> -		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_TRANSMIT);
+> -}
+> -EXPORT_SYMBOL(vchiq_queue_bulk_transmit);
+> -
+> -VCHIQ_STATUS_T
+> -vchiq_queue_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data,
+> -	unsigned int size, void *userdata)
+> -{
+> -	return vchiq_bulk_transfer(handle,
+> -		VCHI_MEM_HANDLE_INVALID, data, size, userdata,
+> -		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_RECEIVE);
+> -}
+> -EXPORT_SYMBOL(vchiq_queue_bulk_receive);
+> -
+> -VCHIQ_STATUS_T
+> -vchiq_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle, const void *data,
+> -	unsigned int size, void *userdata, VCHIQ_BULK_MODE_T mode)
+> -{
+> -	VCHIQ_STATUS_T status;
+> -
+> -	switch (mode) {
+> -	case VCHIQ_BULK_MODE_NOCALLBACK:
+> -	case VCHIQ_BULK_MODE_CALLBACK:
+> -		status = vchiq_bulk_transfer(handle,
+> -			VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
+> -			mode, VCHIQ_BULK_TRANSMIT);
+> -		break;
+> -	case VCHIQ_BULK_MODE_BLOCKING:
+> -		status = vchiq_blocking_bulk_transfer(handle,
+> -			(void *)data, size, VCHIQ_BULK_TRANSMIT);
+> -		break;
+> -	default:
+> -		return VCHIQ_ERROR;
+> -	}
+> -
+> -	return status;
+> -}
+> -EXPORT_SYMBOL(vchiq_bulk_transmit);
+> -
+> -VCHIQ_STATUS_T
+> -vchiq_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data,
+> -	unsigned int size, void *userdata, VCHIQ_BULK_MODE_T mode)
+> -{
+> -	VCHIQ_STATUS_T status;
+> -
+> -	switch (mode) {
+> -	case VCHIQ_BULK_MODE_NOCALLBACK:
+> -	case VCHIQ_BULK_MODE_CALLBACK:
+> -		status = vchiq_bulk_transfer(handle,
+> -			VCHI_MEM_HANDLE_INVALID, data, size, userdata,
+> -			mode, VCHIQ_BULK_RECEIVE);
+> -		break;
+> -	case VCHIQ_BULK_MODE_BLOCKING:
+> -		status = vchiq_blocking_bulk_transfer(handle,
+> -			(void *)data, size, VCHIQ_BULK_RECEIVE);
+> -		break;
+> -	default:
+> -		return VCHIQ_ERROR;
+> -	}
+> -
+> -	return status;
+> -}
+> -EXPORT_SYMBOL(vchiq_bulk_receive);
+> -
+> -static VCHIQ_STATUS_T
+> -vchiq_blocking_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *data,
+> -	unsigned int size, VCHIQ_BULK_DIR_T dir)
+> -{
+> -	VCHIQ_INSTANCE_T instance;
+> -	VCHIQ_SERVICE_T *service;
+> -	VCHIQ_STATUS_T status;
+> -	struct bulk_waiter_node *waiter = NULL;
+> -	struct list_head *pos;
+> -
+> -	service = find_service_by_handle(handle);
+> -	if (!service)
+> -		return VCHIQ_ERROR;
+> -
+> -	instance = service->instance;
+> -
+> -	unlock_service(service);
+> -
+> -	mutex_lock(&instance->bulk_waiter_list_mutex);
+> -	list_for_each(pos, &instance->bulk_waiter_list) {
+> -		if (list_entry(pos, struct bulk_waiter_node,
+> -				list)->pid == current->pid) {
+> -			waiter = list_entry(pos,
+> -				struct bulk_waiter_node,
+> -				list);
+> -			list_del(pos);
+> -			break;
+> -		}
+> -	}
+> -	mutex_unlock(&instance->bulk_waiter_list_mutex);
+> -
+> -	if (waiter) {
+> -		VCHIQ_BULK_T *bulk = waiter->bulk_waiter.bulk;
+> -
+> -		if (bulk) {
+> -			/* This thread has an outstanding bulk transfer. */
+> -			if ((bulk->data != data) ||
+> -				(bulk->size != size)) {
+> -				/* This is not a retry of the previous one.
+> -				 * Cancel the signal when the transfer
+> -				 * completes.
+> -				 */
+> -				spin_lock(&bulk_waiter_spinlock);
+> -				bulk->userdata = NULL;
+> -				spin_unlock(&bulk_waiter_spinlock);
+> -			}
+> -		}
+> -	}
+> -
+> -	if (!waiter) {
+> -		waiter = kzalloc(sizeof(struct bulk_waiter_node), GFP_KERNEL);
+> -		if (!waiter) {
+> -			vchiq_log_error(vchiq_core_log_level,
+> -				"%s - out of memory", __func__);
+> -			return VCHIQ_ERROR;
+> -		}
+> -	}
+> -
+> -	status = vchiq_bulk_transfer(handle, VCHI_MEM_HANDLE_INVALID,
+> -		data, size, &waiter->bulk_waiter, VCHIQ_BULK_MODE_BLOCKING,
+> -		dir);
+> -	if ((status != VCHIQ_RETRY) || fatal_signal_pending(current) ||
+> -		!waiter->bulk_waiter.bulk) {
+> -		VCHIQ_BULK_T *bulk = waiter->bulk_waiter.bulk;
+> -
+> -		if (bulk) {
+> -			/* Cancel the signal when the transfer
+> -			 * completes.
+> -			 */
+> -			spin_lock(&bulk_waiter_spinlock);
+> -			bulk->userdata = NULL;
+> -			spin_unlock(&bulk_waiter_spinlock);
+> -		}
+> -		kfree(waiter);
+> -	} else {
+> -		waiter->pid = current->pid;
+> -		mutex_lock(&instance->bulk_waiter_list_mutex);
+> -		list_add(&waiter->list, &instance->bulk_waiter_list);
+> -		mutex_unlock(&instance->bulk_waiter_list_mutex);
+> -		vchiq_log_info(vchiq_arm_log_level,
+> -				"saved bulk_waiter %pK for pid %d",
+> -				waiter, current->pid);
+> -	}
+> -
+> -	return status;
+> -}
+> -- 
+> 2.9.0
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
