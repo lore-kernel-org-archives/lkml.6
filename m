@@ -1,134 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753101AbeBCTfQ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 14:35:16 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38626 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752628AbeBCTfJ (ORCPT
+        id S1753365AbeBCUM5 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 15:12:57 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45244 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753168AbeBCUMi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 14:35:09 -0500
-X-Google-Smtp-Source: AH8x227krcRLxq69PzTp2BkDA/HDT0V1yUKSpmaSjywp8vqXvthHBbQ7i7WgGApXD3j5nk1S/M3Nxg==
-Date: Sat, 3 Feb 2018 11:35:04 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Zhang Bo <zbsdta@126.com>
-Cc: robh@kernel.org, DRivshin@allworx.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhang.bo19@zte.com.cn,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH v2] Input: matrix_keypad - fix keypad does not response
-Message-ID: <20180203193504.pnn7qx6zymu5qk5n@dtor-ws>
-References: <20180203155816.18221-1-zbsdta@126.com>
+        Sat, 3 Feb 2018 15:12:38 -0500
+Date: Sat, 3 Feb 2018 01:16:28 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Ildar Ismagilov <devix84@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] srcu: Prevent sdp->srcu_gp_seq_needed_exp counter
+ wrap
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180131193954.28386-1-devix84@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180203155816.18221-1-zbsdta@126.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180131193954.28386-1-devix84@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18020320-2213-0000-0000-000002672D87
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008466; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000248; SDB=6.00984559; UDB=6.00499431; IPR=6.00763838;
+ BA=6.00005810; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019353; XFM=3.00000015;
+ UTC=2018-02-03 20:12:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020320-2214-0000-0000-000058FDACA2
+Message-Id: <20180203091628.GF3617@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-03_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802030269
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zhang,
+On Wed, Jan 31, 2018 at 10:39:53PM +0300, Ildar Ismagilov wrote:
+> Signed-off-by: Ildar Ismagilov <devix84@gmail.com>
 
-On Sat, Feb 03, 2018 at 11:58:16PM +0800, Zhang Bo wrote:
-> If matrix_keypad_stop() is calling and the keypad interrupt is triggered,
-> disable_row_irqs() is called by both matrix_keypad_interrupt() and
-> matrix_keypad_stop() at the same time. then disable_row_irqs() is called
-> twice, and the device enter suspend state before keypad->work is executed.
-> At this condition the device will start keypad and enable irq once after
-> resume. and then irqs are disabled yet because irqs are disabled twice and
-> only enable once.
-> 
-> Take lock around keypad->stopped and queue delayed work in
-> matrix_keypad_start() and matrix_keypad_stop() to ensure irqs operation and
-> scheduling scan work are in atomic operation.
-> 
-> Signed-off-by: Zhang Bo <zbsdta@126.com>
-> ---
-> Changes in v2:
->   - Change commit message and full name in the signed-off-by tag.
-> 
->  drivers/input/keyboard/matrix_keypad.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
-> index 1f316d66e6f7..13fe51824637 100644
-> --- a/drivers/input/keyboard/matrix_keypad.c
-> +++ b/drivers/input/keyboard/matrix_keypad.c
-> @@ -169,7 +169,8 @@ static void matrix_keypad_scan(struct work_struct *work)
->  	/* Enable IRQs again */
->  	spin_lock_irq(&keypad->lock);
->  	keypad->scan_pending = false;
-> -	enable_row_irqs(keypad);
-> +	if (keypad->stopped == false)
-> +		enable_row_irqs(keypad);
->  	spin_unlock_irq(&keypad->lock);
->  }
->  
-> @@ -202,14 +203,16 @@ static int matrix_keypad_start(struct input_dev *dev)
->  {
->  	struct matrix_keypad *keypad = input_get_drvdata(dev);
->  
-> +	spin_lock_irq(&keypad->lock);
->  	keypad->stopped = false;
-> -	mb();
->  
->  	/*
->  	 * Schedule an immediate key scan to capture current key state;
->  	 * columns will be activated and IRQs be enabled after the scan.
->  	 */
-> -	schedule_delayed_work(&keypad->work, 0);
-> +	if (keypad->scan_pending == false)
+I did apply this for testing and review, thank you and good eyes!
 
-How can we have the pending scan if the keypad was disabled.
+However, I had to:
 
-> +		schedule_delayed_work(&keypad->work, 0);
-> +	spin_unlock_irq(&keypad->lock);
+1.	hand-edit it to make it work against the rcu/dev
+	branch of my -rcu tree:
+	git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
 
-I do not think the change to matrix_keypad_start() is needed. If device
-is quiesced we do not have issue of ISR racing with us here.
+2.	fill out the commit logs.
 
->  
->  	return 0;
->  }
-> @@ -218,14 +221,17 @@ static void matrix_keypad_stop(struct input_dev *dev)
->  {
->  	struct matrix_keypad *keypad = input_get_drvdata(dev);
->  
-> +	spin_lock_irq(&keypad->lock);
->  	keypad->stopped = true;
-> -	mb();
-> -	flush_work(&keypad->work.work);
->  	/*
->  	 * matrix_keypad_scan() will leave IRQs enabled;
->  	 * we should disable them now.
->  	 */
-> -	disable_row_irqs(keypad);
-> +	if (keypad->scan_pending == false)
-> +		disable_row_irqs(keypad);
-> +	spin_unlock_irq(&keypad->lock);
-> +
-> +	flush_work(&keypad->work.work);
+Please see below for the updated patch, and please let me know if I
+messed something up.
 
-This is wrong, you should not have moved the flush_work() here. The
-logic is as follows:
+In the future, could you please apply your patches against the rcu/dev
+branch of -rcu and provide more complete commit logs?  The commit log
+should describe the problem and how that problem is fixed.
 
-- set the "stopped" flag
-- ensure that ISR has completed
-- ensure that work item has finished (by doing flush_work()) - this will
-  make sure that interrupts are enabled (either ISR noticed "stopped
-  flag" and did not touch them, or ISR scheduled work and work item
-  re-enabled them)
-- finally disable IRQs
+Also, are you able to test these using rcutorture?  If not, let's get you
+set up for that, as I am prone to testing backlogs just now.  Plus I am
+writing this while 34,000 feet over Western Australia.  So it would mean
+fewer delays for you if you could test your own patches.  ;-)
 
-Your change breaks this.
+							Thanx, Paul
 
-As far as I can see, the only change that is needed is this at the
-beginning of matrix_keypad_stop():
+------------------------------------------------------------------------
 
-	spin_lock_irq(&keypad->lock);
-	keypad->stopped = true;
-	spin_unlock_irq(&keypad->lock);
+commit 753abb606ba61012c8838c73e2c888aea20efe13
+Author: Ildar Ismagilov <devix84@gmail.com>
+Date:   Wed Jan 31 22:39:53 2018 +0300
 
-Thanks.
+    srcu: Prevent sdp->srcu_gp_seq_needed_exp counter wrap
+    
+    SRCU checks each srcu_data structure's grace-period number for counter
+    wrap four times per cycle by default.  This frequency guarantees that
+    normal comparisons will detect potential wrap.  However, the expedited
+    grace-period number is not checked.  The consquences are not too horrible
+    (a failure to expedite a grace period when requested), but it would be
+    good to avoid such things.  This commit therefore adds this check to
+    the expedited grace-period number.
+    
+    Signed-off-by: Ildar Ismagilov <devix84@gmail.com>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
--- 
-Dmitry
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 2878387d4189..ad3e1aa5e6ea 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -579,6 +579,9 @@ static void srcu_gp_end(struct srcu_struct *sp)
+ 				if (ULONG_CMP_GE(gpseq,
+ 						 sdp->srcu_gp_seq_needed + 100))
+ 					sdp->srcu_gp_seq_needed = gpseq;
++				if (ULONG_CMP_GE(gpseq,
++						 sdp->srcu_gp_seq_needed_exp + 100))
++					sdp->srcu_gp_seq_needed_exp = gpseq;
+ 				spin_unlock_irqrestore_rcu_node(sdp, flags);
+ 			}
+ 	}
