@@ -1,156 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752111AbeBCLgb (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 06:36:31 -0500
-Received: from omr-m009e.mx.aol.com ([204.29.186.8]:41779 "EHLO
-        omr-m009e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751118AbeBCLgY (ORCPT
+        id S1752189AbeBCLh0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 06:37:26 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55044 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750842AbeBCLhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 06:36:24 -0500
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to handle looped node chain during
- recovery
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org,
-        Yunlei He <heyunlei@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20180203094439.3913-1-yuchao0@huawei.com>
- <6fe55970-6e30-d144-86d4-68d6fbd80cf3@aol.com>
- <3a4a4906-1f2a-197a-bfe1-f636f9b5243c@aol.com>
-From: Gao Xiang <hsiangkao@aol.com>
-Message-ID: <34884138-31e6-566d-5be3-d62f61a3416e@aol.com>
-Date: Sat, 3 Feb 2018 19:36:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sat, 3 Feb 2018 06:37:20 -0500
 MIME-Version: 1.0
-In-Reply-To: <3a4a4906-1f2a-197a-bfe1-f636f9b5243c@aol.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-x-aol-global-disposition: G
-x-aol-sid: 3039ac1add8d5a759eb541e1
-X-AOL-IP: 112.64.61.200
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Sat, 03 Feb 2018 17:07:19 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH 09/15] ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk04.1-c3
+ board file
+In-Reply-To: <1517202689-14212-10-git-send-email-sricharan@codeaurora.org>
+References: <1517202689-14212-1-git-send-email-sricharan@codeaurora.org>
+ <1517202689-14212-10-git-send-email-sricharan@codeaurora.org>
+Message-ID: <4a173ff2a74ed7d1555d52674cf64ddd@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-01-29 10:41, Sricharan R wrote:
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> ---
+>  arch/arm/boot/dts/Makefile                      |  1 +
+>  arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts | 14 ++++++++++++++
+>  2 files changed, 15 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 68e4b15..0104ba2 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -727,6 +727,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+>  	qcom-ipq4019-ap.dk01.1-c2.dtb \
+>  	qcom-ipq4019-ap.dk04.1-c1.dtb \
+>  	qcom-ipq4019-ap.dk04.1-c5.dtb \
+> +	qcom-ipq4019-ap.dk04.1-c3.dtb \
+>  	qcom-ipq8064-ap148.dtb \
+>  	qcom-msm8660-surf.dtb \
+>  	qcom-msm8960-cdp.dtb \
+> diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts
+> b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts
+> new file mode 100644
+> index 0000000..7a93fc4
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts
+> @@ -0,0 +1,14 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2017, The Linux Foundation. All rights reserved.
+> +
+> +#include "qcom-ipq4019-ap.dk04.1.dtsi"
+> +
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1-C3";
+> +
+> +	soc {
+> +		nand: qpic-nand@79b0000 {
+> +			status = "disabled";
+> +		};
 
-Sorry, I saw the related code entirely, please ignore these replies.
+  Normally we need to disable in base dtsi and enable in
+  board dtsi so that base dtsi will always work in all the
+  boards. Now If We load the base dtsi in any DK04 board
+  other than C1, then nand failure will come.
 
-
-On 2018/2/3 18:45, Gao Xiang wrote:
->
->
-> On 2018/2/3 18:35, Gao Xiang wrote:
->> Hi Chao and YunLei,
->>
->>
->> On 2018/2/3 17:44, Chao Yu wrote:
->>> There is no checksum in node block now, so bit-transition from hardware
->>> can make node_footer.next_blkaddr being corrupted w/o any detection,
->>> result in node chain becoming looped one.
->>>
->>> For this condition, during recovery, in order to avoid running into 
->>> dead
->>> loop, let's detect it and just skip out.
->>>
->>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>> ---
->>>   fs/f2fs/recovery.c | 14 ++++++++++++++
->>>   1 file changed, 14 insertions(+)
->>>
->>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>> index b6d1ec620a8c..60dd0cee4820 100644
->>> --- a/fs/f2fs/recovery.c
->>> +++ b/fs/f2fs/recovery.c
->>> @@ -243,6 +243,9 @@ static int find_fsync_dnodes(struct f2fs_sb_info 
->>> *sbi, struct list_head *head,
->>>       struct curseg_info *curseg;
->>>       struct page *page = NULL;
->>>       block_t blkaddr;
->>> +    unsigned int loop_cnt = 0;
->>> +    unsigned int free_blocks = sbi->user_block_count -
->>> +                    valid_user_blocks(sbi);
->> There exists another way to detect loop more faster but only using 
->> two variables.
->> The algorithm is described as simply "B goes forward a steps only A 
->> goes forwards 2 steps".
-> "B goes forward a step only when A goes forward 2(or constant x, more 
-> than 1) steps".
->
->> For example:
->> 1)
->>    1   2  3  4   5   6     7
->>    |             \             /
->>    |                \------/
->>   A, B
->> 2)
->>    1  2  3  4   5   6     7
->>     |   |        \             /
->>    B   A        \------/
->>  3)
->>    1  2  3  4   5   6     7
->>        |    |     \             /
->>       B   A      \------/
->>   4)
->>    1  2  3  4   5   6     7
->>        |       |\             /
->>       B      A \------/
->> 5)....
->>
->
->
-> Sorry, it seems the encoded diagram is in a mess, I try again.
-> 1)
->    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
->    |               \             /
->    |                \-----<-----/
->   A, B
-> 2)
->    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
->    |    |          \             /
->    |    |           \-----<-----/
->    B    A
-> 3)
->    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
->         |    |     \             /
->         |    |      \-----<-----/
->         B    A
-> 4)
->    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
->         |         |\             /
->         |         | \-----<-----/
->         B         A
-> 5)....
-> if B catchs up A, there exists a cycle.
->
->
-> Thanks,
->> B will equal A or beyoud A if and only if there has a cycle.
->> It's a more faster algorithm. :D
->>
->> Thanks,
->>
->>>       int err = 0;
->>>         /* get node pages in the current segment */
->>> @@ -295,6 +298,17 @@ static int find_fsync_dnodes(struct 
->>> f2fs_sb_info *sbi, struct list_head *head,
->>>           if (IS_INODE(page) && is_dent_dnode(page))
->>>               entry->last_dentry = blkaddr;
->>>   next:
->>> +        /* sanity check in order to detect looped node chain */
->>> +        if (++loop_cnt >= free_blocks ||
->>> +            blkaddr == next_blkaddr_of_node(page)) {
->>> +            f2fs_msg(sbi->sb, KERN_NOTICE,
->>> +                "%s: detect looped node chain, "
->>> +                "blkaddr:%u, next:%u",
->>> +                __func__, blkaddr, next_blkaddr_of_node(page));
->>> +            err = -EINVAL;
->>> +            break;
->>> +        }
->>> +
->>>           /* check next segment */
->>>           blkaddr = next_blkaddr_of_node(page);
->>>           f2fs_put_page(page, 1);
->>
->
+  Thanks,
+  Abhishek
