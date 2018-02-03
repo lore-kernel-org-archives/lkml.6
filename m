@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752372AbeBCIAC (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 03:00:02 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35606 "EHLO
+        id S1750899AbeBCIAM (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 03:00:12 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35634 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751956AbeBCH6t (ORCPT
+        with ESMTP id S1751988AbeBCH6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 02:58:49 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75EC96090E
+        Sat, 3 Feb 2018 02:58:55 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 795246079C
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From: Abhishek Sahu <absahu@codeaurora.org>
@@ -16,101 +16,79 @@ Cc: David Brown <david.brown@linaro.org>,
         Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org, Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 06/12] i2c: qup: proper error handling for i2c error in BAM mode
-Date: Sat,  3 Feb 2018 13:28:11 +0530
-Message-Id: <1517644697-30806-7-git-send-email-absahu@codeaurora.org>
+Subject: [PATCH 07/12] i2c: qup: use the complete transfer length to choose DMA mode
+Date: Sat,  3 Feb 2018 13:28:12 +0530
+Message-Id: <1517644697-30806-8-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
 References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the i2c error handling in BAM mode is not working
-properly in stress condition.
-
-1. After an error, the FIFO are being written with FLUSH and
-   EOT tags which should not be required since already these tags
-   have been written in BAM descriptor itself.
-
-2. QUP state is being moved to RESET in IRQ handler in case
-   of error. When QUP HW encounters an error in BAM mode then it
-   moves the QUP STATE to PAUSE state. In this case, I2C_FLUSH
-   command needs to be executed while moving to RUN_STATE by writing
-   to the QUP_STATE register with the I2C_FLUSH bit set to 1.
-
-3. In Error case, sometimes, QUP generates more than one
-   interrupt which will trigger the complete again. After an error,
-   the flush operation will be scheduled after doing
-   reinit_completion which should be triggered by BAM IRQ callback.
-   If the second QUP IRQ comes during this time then it will call
-   the complete and the transfer function will assume the all the
-   BAM HW descriptors have been completed.
-
-4. The release DMA is being called after each error which
-   will free the DMA tx and rx channels. The error like NACK is very
-   common in I2C transfer and every time this will be overhead. Now,
-   since the error handling is proper so this release channel can be
-   completely avoided.
+Currently each message length in complete transfer is being
+checked for determining DMA mode and if any of the message length
+is less than FIFO length then non DMA mode is being used which
+will increase overhead. DMA can be used for any length and it
+should be determined with complete transfer length. Now, this
+patch introduces DMA threshold length and the transfer will be
+done in DMA mode if the total length is greater than this
+threshold length.
 
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/i2c/busses/i2c-qup.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/i2c/busses/i2c-qup.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-index 094be6a..6227a5c 100644
+index 6227a5c..a91fc70 100644
 --- a/drivers/i2c/busses/i2c-qup.c
 +++ b/drivers/i2c/busses/i2c-qup.c
-@@ -228,9 +228,24 @@ static irqreturn_t qup_i2c_interrupt(int irq, void *dev)
- 	if (bus_err)
- 		writel(bus_err, qup->base + QUP_I2C_STATUS);
+@@ -192,6 +192,8 @@ struct qup_i2c_dev {
+ 	bool			is_dma;
+ 	/* To check if the current transfer is using DMA */
+ 	bool			use_dma;
++	/* The threshold length above which DMA will be used */
++	unsigned int		dma_threshold;
+ 	struct			dma_pool *dpool;
+ 	struct			qup_i2c_tag start_tag;
+ 	struct			qup_i2c_bam brx;
+@@ -1294,7 +1296,8 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+ 			   int num)
+ {
+ 	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
+-	int ret, len, idx = 0;
++	int ret, idx = 0;
++	unsigned int total_len = 0;
  
-+	/*
-+	 * Check for BAM mode and returns if already error has come for current
-+	 * transfer. In Error case, sometimes, QUP generates more than one
-+	 * interrupt.
-+	 */
-+	if (qup->use_dma && (qup->qup_err || qup->bus_err))
-+		return IRQ_HANDLED;
+ 	qup->bus_err = 0;
+ 	qup->qup_err = 0;
+@@ -1320,14 +1323,13 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+ 				goto out;
+ 			}
+ 
+-			len = (msgs[idx].len > qup->out_fifo_sz) ||
+-			      (msgs[idx].len > qup->in_fifo_sz);
+-
+-			if (is_vmalloc_addr(msgs[idx].buf) || !len)
++			if (is_vmalloc_addr(msgs[idx].buf))
+ 				break;
 +
- 	/* Reset the QUP State in case of error */
- 	if (qup_err || bus_err) {
--		writel(QUP_RESET_STATE, qup->base + QUP_STATE);
-+		/*
-+		 * Don’t reset the QUP state in case of BAM mode. The BAM
-+		 * flush operation needs to be scheduled in transfer function
-+		 * which will clear the remaining schedule descriptors in BAM
-+		 * HW FIFO and generates the BAM interrupt.
-+		 */
-+		if (!qup->use_dma)
-+			writel(QUP_RESET_STATE, qup->base + QUP_STATE);
- 		goto done;
- 	}
- 
-@@ -841,20 +856,12 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 			goto desc_err;
++			total_len += msgs[idx].len;
  		}
  
--		if (rx_buf)
--			writel(QUP_BAM_INPUT_EOT,
--			       qup->base + QUP_OUT_FIFO_BASE);
--
--		writel(QUP_BAM_FLUSH_STOP, qup->base + QUP_OUT_FIFO_BASE);
--
- 		qup_i2c_flush(qup);
- 
- 		/* wait for remaining interrupts to occur */
- 		if (!wait_for_completion_timeout(&qup->xfer, HZ))
- 			dev_err(qup->dev, "flush timed out\n");
- 
--		qup_i2c_rel_dma(qup);
--
- 		ret =  (qup->bus_err & QUP_I2C_NACK_FLAG) ? -ENXIO : -EIO;
+-		if (idx == num)
++		if (idx == num && total_len > qup->dma_threshold)
+ 			qup->use_dma = true;
  	}
  
+@@ -1587,6 +1589,7 @@ static int qup_i2c_probe(struct platform_device *pdev)
+ 
+ 	size = QUP_INPUT_FIFO_SIZE(io_mode);
+ 	qup->in_fifo_sz = qup->in_blk_sz * (2 << size);
++	qup->dma_threshold = min(qup->out_fifo_sz, qup->in_fifo_sz);
+ 
+ 	fs_div = ((src_clk_freq / clk_freq) / 2) - 3;
+ 	hs_div = 3;
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
