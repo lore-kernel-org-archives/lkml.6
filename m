@@ -1,91 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753353AbeBCUwS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 15:52:18 -0500
-Received: from mail-pl0-f48.google.com ([209.85.160.48]:37801 "EHLO
-        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752542AbeBCUwN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 15:52:13 -0500
-X-Google-Smtp-Source: AH8x2265hVtHHdlxwLXwHPsu5IEWrKcPx2f0sCUTXsLzfuvlisadVBdOTsMsvr/VhVpW/0/U6HVM0g==
-Date: Sat, 3 Feb 2018 12:52:08 -0800
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        linux-trace-users <linux-trace-users@vger.kernel.org>,
-        acme <acme@kernel.org>, Clark Williams <williams@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, bristot <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
- events
-Message-ID: <20180203205207.mpob4w6eyehhg2ky@ast-mbp>
-References: <20180202230458.840252014@goodmis.org>
- <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
- <20180203140217.2382df69@gandalf.local.home>
+        id S1753504AbeBCU4k (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 15:56:40 -0500
+Received: from mout.web.de ([212.227.17.12]:64893 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752542AbeBCU4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 15:56:32 -0500
+To: linux-input@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] HID: N-Trig: Adjustments for ntrig_probe()
+Message-ID: <86d02ef2-0ac2-5462-0ff0-a0cd87c3d1f7@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 21:56:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180203140217.2382df69@gandalf.local.home>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:yFR4es01fZMuger1pVBH/I4XhhOl4Ovd2Bdu9BfmyxFcFsc/7AR
+ 8cs6OCmMfQfx7dCSNRM/7gXJGEHkmDwTIEtqovxPUP0HHvMSTfnsZCqM2QmO7c7//Ay3cMH
+ mPCnOq4Zx8BYkgVSVtzF28U/jNzQ1eu4QkVTePCk888SLuU3qThr0xiTbOai26hOJIF7zF3
+ VbwasceriszEAOMTqvnzw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8TG6tg9FA+M=:Oqg2M1FCEeY2tp36mNOSei
+ GEwhbfxipoOOOs6ycvWpz2pc3QgCiQKG6nyITMTpvRZaCovYw4aPf4ETihI4apRIPc9rnsiuH
+ 78yM+J46UURv6RZ8iRr/FIQODT71TOF/0yyToewZEgxaPeRE00nqsoBitpD/TW/c6QzZRxWIm
+ m8cRJdcq2jU+Y1AMsxUW+SM3IcAi52FNFEyN8TnkLbBG5TTsBXeieqvNcsJGG8cqDgpmiWcXz
+ NcTG0bGOfhCk25UVDzPpgT6m5UxtCDmszHvTEJBiNJuk3oEHMPo7U/NZ0sajPZk3Z+nlZDZb1
+ J8wYTovIy6/p29TgMLD+s54lL+5Y61c8W+NjeOZyA1bEad1hq1EC+rqeoSqd1JI3iSkg7tgWV
+ QC3XNzOfCbiyVmbWFyAZrsHf8fmdQ9AfxVmDSDMSI+JiWG0/z2G+juBHctV1FUWrXrHDVXRj1
+ 5aH2+5d3vtd/l/usqsciXbAJDVFhNmIRbY6oyDHaL2IQk6YqX5603WlGeNTxB+kT3G/hzb34z
+ TD8X2aSdvltBubC6gZn2bFk/QMNXktfvXCYYCCaDFjCJnHJumgnM16sgsAJHWEH0xsjYM+Xhs
+ L7g7WXVsyiOxVb9OgnDikaUjg/To4kv9+czhni4vVhWWQev6hz/tq9issr7hTHb+aSuAc456o
+ c8LsS9+y863M0jav471xal31hZxVnvkJgSguEwNF6E2Lhtht0e2xHf7Kl6AMV5s22hP5ycutc
+ yYj0nMU6mnSz3mav0aqALC/DJ6RG/aOpwAYCdVP/K7oA88lwae/B25pzugWy5XcSKFGg6+muA
+ P0xv0fMdTPc9vUODlQDn7l/egE/8eOZyP1hOw3Xl9QGcMnxqkY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 03, 2018 at 02:02:17PM -0500, Steven Rostedt wrote:
-> 
-> From those that were asking about having "trace markers" (ie.
-> Facebook), they told us they can cope with kernel changes.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 21:54:32 +0100
 
-There is some misunderstanding here.
-We never asked for this interface.
-We're perfectly fine with existing kprobe/tracepoint+bpf.
-There are plenty of things to improve there, but this 'function based events'
-is not something we're interested in.
-I don't see how they are any better than kprobes and suffer from the same issues.
-We really dislike text based interfaces since they are good only
-for human access and very awkward to use from tools.
-We also dislike when kernel takes on challenge to do text language parsing.
-It's a user space job.
+Two update suggestions were taken into account
+from static source code analysis.
 
-> The issue is that people are afraid to add tracepoints into their
-> subsystem because they are afraid that they will become stable and
-> limit their own development.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-This is not true. Tracepoints are being added and they're being changed.
-We have a bunch of tools that use both kprobe and tracepoint hooks
-together with bpf programs to extract information from the kernel.
-They do break from time to time when we upgrade kernels (and we upgrade often),
-but keeping 'if kernel X do this, if kernel Y do that' inside the tool
-is perfectly fine.
-More often the tools have 'if kernel X ...' due to bpf verifier differences.
-It's constantly evolving and older kernels cannot load complex bpf
-programs written for the latest. So tools have to do some ugly workarounds.
+ drivers/hid/hid-ntrig.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> One problem we are having today is that too many trace events are being
-> created, where there are a lot of them that have been used once and
-> never used again. And people don't care about them.
-
-I don't think such issue exists. Please point an example of
-a tracepoint that was added and no one cares about it.
-
-As far as Mathieu's point about detecting the difference between kernels,
-yes, it's a real problem to solve. The tracepoint changes are
-easy to detect, but changes to function arguments are much harder.
-Hence we're using kprobes on functions that are unlikely to change
-and that works well.
-
-Also please note that kernel tracepoints are not different from tracing tool
-point of view than USDT tracepoints in user space apps.
-The tools attach to both of them and expect both to be more or less
-stable. Yet kernel tracepoints and USDT in apps _do_ change
-and tools have to deal with changes. It's actually harder with USDT.
+-- 
+2.16.1
