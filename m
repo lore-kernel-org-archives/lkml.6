@@ -1,88 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753207AbeBCXbE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 18:31:04 -0500
-Received: from mga05.intel.com ([192.55.52.43]:8451 "EHLO mga05.intel.com"
+        id S1752240AbeBCX5d (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 18:57:33 -0500
+Received: from m50-112.126.com ([123.125.50.112]:52795 "EHLO m50-112.126.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752886AbeBCXas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 18:30:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,457,1511856000";
-   d="scan'208";a="198436005"
-Subject: [PATCH 2/3] x86/entry: Clear registers for 64bit
- exceptions/interrupts
-From: Dan Williams <dan.j.williams@intel.com>
-To: tglx@linutronix.de
-Cc: Andi Kleen <ak@linux.intel.com>, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org
-Date: Sat, 03 Feb 2018 15:21:42 -0800
-Message-ID: <151770010215.7213.2691813454732314390.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <151770009169.7213.12476757146099518628.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151770009169.7213.12476757146099518628.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.17.1-9-g687f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        id S1750905AbeBCX50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 18:57:26 -0500
+Message-ID: <1517702239.2189.20.camel@126.com>
+Subject: Re: [PATCH v2] Input: matrix_keypad - fix keypad does not response
+From: Zhang Bo <zbsdta@126.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: robh@kernel.org, DRivshin@allworx.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhang.bo19@zte.com.cn,
+        andy.shevchenko@gmail.com
+Date: Sun, 04 Feb 2018 07:57:19 +0800
+In-Reply-To: <20180203193504.pnn7qx6zymu5qk5n@dtor-ws>
+References: <20180203155816.18221-1-zbsdta@126.com>
+         <20180203193504.pnn7qx6zymu5qk5n@dtor-ws>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: j9KowAAnkTRfTHZa1eKvAA--.5842S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGryDuw1kWF13CFy5WF4xXrb_yoWrXr4rpr
+        WrJ3Wqkr4UGw109wsFqrs29asYkw4vqry2grn5X348t3s0vr17Grn3K3ySga4DAr4Iyanr
+        Zr4kZrZ8JryqyFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnEfOUUUUU=
+X-Originating-IP: [123.139.75.126]
+X-CM-SenderInfo: h2evv3bd6rjloofrz/1tbiThbhSVpD4gFwEwAAsp
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
-
-Clear the 'extra' registers on entering the 64bit kernel for exceptions
-and interrupts. The common registers are not cleared since they are
-likely clobbered well before they can be exploited in a speculative
-execution attack.
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- arch/x86/entry/entry_64.S |    5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 46260e951da6..d73eedf1eb47 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -563,6 +563,7 @@ END(irq_entries_start)
- 	ALLOC_PT_GPREGS_ON_STACK
- 	SAVE_C_REGS
- 	SAVE_EXTRA_REGS
-+	CLEAR_EXTRA_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER
- 
- 	testb	$3, CS(%rsp)
-@@ -1121,6 +1122,7 @@ ENTRY(xen_failsafe_callback)
- 	ALLOC_PT_GPREGS_ON_STACK
- 	SAVE_C_REGS
- 	SAVE_EXTRA_REGS
-+	CLEAR_EXTRA_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER
- 	jmp	error_exit
- END(xen_failsafe_callback)
-@@ -1166,6 +1168,7 @@ ENTRY(paranoid_entry)
- 	cld
- 	SAVE_C_REGS 8
- 	SAVE_EXTRA_REGS 8
-+	CLEAR_EXTRA_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER 8
- 	movl	$1, %ebx
- 	movl	$MSR_GS_BASE, %ecx
-@@ -1218,6 +1221,7 @@ ENTRY(error_entry)
- 	cld
- 	SAVE_C_REGS 8
- 	SAVE_EXTRA_REGS 8
-+	CLEAR_EXTRA_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER 8
- 	xorl	%ebx, %ebx
- 	testb	$3, CS+8(%rsp)
-@@ -1416,6 +1420,7 @@ ENTRY(nmi)
- 	pushq	%r14		/* pt_regs->r14 */
- 	pushq	%r15		/* pt_regs->r15 */
- 	UNWIND_HINT_REGS
-+	CLEAR_EXTRA_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER
- 
- 	/*
+On Sat, 2018-02-03 at 11:35 -0800, Dmitry Torokhov wrote:
+Hi Dmitry Torokhov
+> > If matrix_keypad_stop() is calling and the keypad interrupt is
+> > triggered,
+> > disable_row_irqs() is called by both matrix_keypad_interrupt() and
+> > matrix_keypad_stop() at the same time. then disable_row_irqs() is
+> > called
+> > twice, and the device enter suspend state before keypad->work is
+> > executed.
+> > At this condition the device will start keypad and enable irq once
+> > after
+> > resume. and then irqs are disabled yet because irqs are disabled
+> > twice and
+> > only enable once.
+> > 
+> > Take lock around keypad->stopped and queue delayed work in
+> > matrix_keypad_start() and matrix_keypad_stop() to ensure irqs
+> > operation and
+> > scheduling scan work are in atomic operation.
+> > 
+> > Signed-off-by: Zhang Bo <zbsdta@126.com>
+> > ---
+> > Changes in v2:
+> >   - Change commit message and full name in the signed-off-by tag.
+> > 
+> >  drivers/input/keyboard/matrix_keypad.c | 18 ++++++++++++------
+> >  1 file changed, 12 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/input/keyboard/matrix_keypad.c
+> > b/drivers/input/keyboard/matrix_keypad.c
+> > index 1f316d66e6f7..13fe51824637 100644
+> > --- a/drivers/input/keyboard/matrix_keypad.c
+> > +++ b/drivers/input/keyboard/matrix_keypad.c
+> > @@ -169,7 +169,8 @@ static void matrix_keypad_scan(struct
+> > work_struct *work)
+> >  	/* Enable IRQs again */
+> >  	spin_lock_irq(&keypad->lock);
+> >  	keypad->scan_pending = false;
+> > -	enable_row_irqs(keypad);
+> > +	if (keypad->stopped == false)
+> > +		enable_row_irqs(keypad);
+> >  	spin_unlock_irq(&keypad->lock);
+> >  }
+> >  
+> > @@ -202,14 +203,16 @@ static int matrix_keypad_start(struct
+> > input_dev *dev)
+> >  {
+> >  	struct matrix_keypad *keypad = input_get_drvdata(dev);
+> >  
+> > +	spin_lock_irq(&keypad->lock);
+> >  	keypad->stopped = false;
+> > -	mb();
+> >  
+> >  	/*
+> >  	 * Schedule an immediate key scan to capture current key
+> > state;
+> >  	 * columns will be activated and IRQs be enabled after the
+> > scan.
+> >  	 */
+> > -	schedule_delayed_work(&keypad->work, 0);
+> > +	if (keypad->scan_pending == false)
+> 
+> How can we have the pending scan if the keypad was disabled.
+> 
+> > +		schedule_delayed_work(&keypad->work, 0);
+> > +	spin_unlock_irq(&keypad->lock);
+> 
+> I do not think the change to matrix_keypad_start() is needed. If
+> device
+> is quiesced we do not have issue of ISR racing with us here.
+> 
+you are right, irqs are disabled and worker is finished in
+matrix_keypad_stop(), so
+there is no pending scaning and the if condition here and lock are not
+needed.
+> >  
+> >  	return 0;
+> >  }
+> > @@ -218,14 +221,17 @@ static void matrix_keypad_stop(struct
+> > input_dev *dev)
+> >  {
+> >  	struct matrix_keypad *keypad = input_get_drvdata(dev);
+> >  
+> > +	spin_lock_irq(&keypad->lock);
+> >  	keypad->stopped = true;
+> > -	mb();
+> > -	flush_work(&keypad->work.work);
+> >  	/*
+> >  	 * matrix_keypad_scan() will leave IRQs enabled;
+> >  	 * we should disable them now.
+> >  	 */
+> > -	disable_row_irqs(keypad);
+> > +	if (keypad->scan_pending == false)
+> > +		disable_row_irqs(keypad);
+> > +	spin_unlock_irq(&keypad->lock);
+> > +
+> > +	flush_work(&keypad->work.work);
+> 
+> This is wrong, you should not have moved the flush_work() here. The
+> logic is as follows:
+> 
+> - set the "stopped" flag
+> - ensure that ISR has completed
+> - ensure that work item has finished (by doing flush_work()) - this
+> will
+>   make sure that interrupts are enabled (either ISR noticed "stopped
+>   flag" and did not touch them, or ISR scheduled work and work item
+>   re-enabled them)
+> - finally disable IRQs
+> 
+> Your change breaks this.
+> 
+> As far as I can see, the only change that is needed is this at the
+> beginning of matrix_keypad_stop():
+> 
+> 	spin_lock_irq(&keypad->lock);
+> 	keypad->stopped = true;
+> 	spin_unlock_irq(&keypad->lock);
+> 
+> Thanks.
+> 
+yes, only protecting keypad->stopped ensures irqs are disabled only
+once.
