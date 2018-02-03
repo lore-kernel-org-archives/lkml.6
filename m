@@ -1,150 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752011AbeBCIhE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 03:37:04 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45940 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbeBCIgz (ORCPT
+        id S1752053AbeBCJDI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 04:03:08 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41887 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750811AbeBCJCy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 03:36:55 -0500
-X-Google-Smtp-Source: AH8x225YnsKVDPqoSMJaF2FV/qvhkHMJGSM+dgrPi9FWH4WYbTrljV7mAHz5pDCLdUGG/DzyyvlZgw==
-Date: Sat, 3 Feb 2018 09:36:51 +0100
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Aaron Ma <aaron.ma@canonical.com>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        jikos@kernel.org, benjamin.tissoires@redhat.com
-Subject: Re: [PATCH 1/2] HID: core: i2c-hid: fix size check and type usage
-Message-ID: <20180203083651.GB707@gmail.com>
-References: <20180102173006.506-1-aaron.ma@canonical.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
-Content-Disposition: inline
-In-Reply-To: <20180102173006.506-1-aaron.ma@canonical.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Sat, 3 Feb 2018 04:02:54 -0500
+X-Google-Smtp-Source: AH8x225QPg86sXmkyllhul7J8iwjiJXCdIbEr6/BZvb0JLm1D8cIMoq54Y29vc792t7P9pdq4+5Kvw==
+From: linxiulei@gmail.com
+To: peterz@infradead.org, jolsa@redhat.com, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        tglx@linutronix.de, eranian@gmail.com, torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brendan.d.gregg@gmail.com, yang_oliver@hotmail.com,
+        jinli.zjl@alibaba-inc.com, "leilei.lin" <leilei.lin@alibaba-inc.com>
+Subject: [PATCH v4] perf/core: Fix installing cgroup event into cpu
+Date: Sat,  3 Feb 2018 17:02:46 +0800
+Message-Id: <20180203090246.44967-1-linxiulei@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "leilei.lin" <leilei.lin@alibaba-inc.com>
 
---0eh6TmSyL6TZE2Uz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Do not install cgroup event into the CPU context and schedule it
+if the cgroup is not running on this CPU
 
-Hi Aaron,
+While there is no task of cgroup running specified CPU, current
+kernel still install cgroup event into CPU context that causes
+another cgroup event can't be installed into this CPU.
 
-On Wed, Jan 03, 2018 at 01:30:05AM +0800, Aaron Ma wrote:
-> When convert char array with signed int, if the inbuf[x] is negative then
-> upper bits will be set to 1. Fix this by using u8 instead of char.
->=20
-> ret_size has to be at least 3, hid_input_report use it after minus 2 byte=
-s.
+This patch prevent scheduling events at __perf_install_in_context()
+and installing events at list_update_cgroup_event() if cgroup isn't
+running on specified CPU.
 
-At least 2?
-hid_input_report() checks (!size)
+Signed-off-by: leilei.lin <leilei.lin@alibaba-inc.com>
+---
+ v2: Set cpuctx->cgrp only if the same cgroup is running on this
+   CPU otherwise following events couldn't be activated immediately
+ v3: Enhance the comments and commit message
+ v4: Adjust to config
 
->=20
-> size should be more than 0 to keep memset safe.
->=20
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-> ---
->  drivers/hid/hid-core.c        |  4 ++--
->  drivers/hid/i2c-hid/i2c-hid.c | 10 +++++-----
->  2 files changed, 7 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 0c3f608131cf..992547771d96 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -1506,7 +1506,7 @@ int hid_report_raw_event(struct hid_device *hid, in=
-t type, u8 *data, int size,
->  	if (rsize > HID_MAX_BUFFER_SIZE)
->  		rsize =3D HID_MAX_BUFFER_SIZE;
-> =20
-> -	if (csize < rsize) {
-> +	if ((csize < rsize) && (csize > 0)) {
->  		dbg_hid("report %d is too short, (%d < %d)\n", report->id,
->  				csize, rsize);
->  		memset(cdata + csize, 0, rsize - csize);
-> @@ -1566,7 +1566,7 @@ int hid_input_report(struct hid_device *hid, int ty=
-pe, u8 *data, int size, int i
->  	report_enum =3D hid->report_enum + type;
->  	hdrv =3D hid->driver;
-> =20
-> -	if (!size) {
-> +	if (size <=3D 0) {
+ kernel/events/core.c | 50 +++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 37 insertions(+), 13 deletions(-)
 
-All code that is using hid_input_report() seems to check that no
-negative size is provided.
-
-If we want this check, maybe we should consider making size unsigned
-instead?
-
->  		dbg_hid("empty report\n");
->  		ret =3D -1;
->  		goto unlock;
-> diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-> index e054ee43c1e2..09404ffdb08b 100644
-> --- a/drivers/hid/i2c-hid/i2c-hid.c
-> +++ b/drivers/hid/i2c-hid/i2c-hid.c
-> @@ -144,10 +144,10 @@ struct i2c_hid {
->  						   * register of the HID
->  						   * descriptor. */
->  	unsigned int		bufsize;	/* i2c buffer size */
-> -	char			*inbuf;		/* Input buffer */
-> -	char			*rawbuf;	/* Raw Input buffer */
-> -	char			*cmdbuf;	/* Command buffer */
-> -	char			*argsbuf;	/* Command arguments buffer */
-> +	u8			*inbuf;		/* Input buffer */
-> +	u8			*rawbuf;	/* Raw Input buffer */
-> +	u8			*cmdbuf;	/* Command buffer */
-> +	u8			*argsbuf;	/* Command arguments buffer */
-
-Looks good
-
-> =20
->  	unsigned long		flags;		/* device flags */
->  	unsigned long		quirks;		/* Various quirks */
-> @@ -473,7 +473,7 @@ static void i2c_hid_get_input(struct i2c_hid *ihid)
-> =20
->  	ret_size =3D ihid->inbuf[0] | ihid->inbuf[1] << 8;
-> =20
-> -	if (!ret_size) {
-> +	if (ret_size <=3D 2) {
-
-if (ret_size < 2) ?
-
-
->  		/* host or device initiated RESET completed */
->  		if (test_and_clear_bit(I2C_HID_RESET_PENDING, &ihid->flags))
->  			wake_up(&ihid->wait);
-> --=20
-> 2.14.3
-
-
-Best regards
-Marcus Folkesson
-
---0eh6TmSyL6TZE2Uz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlp1dJ4ACgkQiIBOb1ld
-UjJwoQ/8CjhTg3RxsLsSW9f2be0hZ8HzlHBn2YkE6J97mt6kYV2twMaaN29slSNi
-t+c1w5EK4qFpMZbQ3yl4023fnEgZPrh52TpdiyJJXCb5sSqfaOuHVu1eBIgIEIRg
-bHbN+CpXpMhBHRy5mbCzWh6tRJfGT45wO9Sh9w+k3QMNVhh8XkHsBUbSUjEl6ozV
-8fnONxnArhXoVfYVfg+42QRg6FYImZT93LzNM1kQLg8F8azZgd0jug5mi2ickdH5
-VXG6iZ0hD7d8yZu6+o2TAS6rK4AVDHX3+ZqZ9maIb4hR6h7D4SibQ5qP4TbbASTt
-VNXrJVCI8vBg5Cm+lvVKwNXA5TO4VmJfv3CkQ7+4w9z3J5tzieAVUY7qy/MxhCu6
-rWEjxTm19m7zp6HkJff22DiljRBCIGP6NqvMpJf8X4uFBNtj2cUeRY5vwX9X1Ub1
-TO+0mvQh61SKdjEn6VXlqqz/vzpHCt7Nx/ENLpEL/EYOyj4GChvpsSVoLYjwsrxp
-WQl6ScEUS8c1Rx6WN859QqxUNCRsWwzNdN1jIncuMosBcM6i0AT/TxyHpp8yeLmM
-+29t1UyiuVHPqvmsylat1M7EO49BVfIKN/AEWEujngBsxhJrQZ6lNKNqoRvUunxM
-wABz7m0IU/W309MMd81f2zBFH5DtNKFU0YDxS36JRdcFvRHY6p4=
-=IoLX
------END PGP SIGNATURE-----
-
---0eh6TmSyL6TZE2Uz--
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 4df5b69..fd28d61 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -933,31 +933,41 @@ list_update_cgroup_event(struct perf_event *event,
+ {
+ 	struct perf_cpu_context *cpuctx;
+ 	struct list_head *cpuctx_entry;
++	struct perf_cgroup *cgrp;
+ 
+ 	if (!is_cgroup_event(event))
+ 		return;
+ 
+-	if (add && ctx->nr_cgroups++)
+-		return;
+-	else if (!add && --ctx->nr_cgroups)
+-		return;
+ 	/*
+ 	 * Because cgroup events are always per-cpu events,
+ 	 * this will always be called from the right CPU.
+ 	 */
+ 	cpuctx = __get_cpu_context(ctx);
+-	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
+-	/* cpuctx->cgrp is NULL unless a cgroup event is active in this CPU .*/
+-	if (add) {
+-		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
++	cgrp = perf_cgroup_from_task(current, ctx);
+ 
+-		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
+-		if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
++	/*
++	 * if only the cgroup is running on this cpu,
++	 * we put/remove this cgroup into cpu context.
++	 * Or it would case mismatch in following cgroup
++	 * events at event_filter_match()
++	 */
++	if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup)) {
++		if (add)
+ 			cpuctx->cgrp = cgrp;
+-	} else {
+-		list_del(cpuctx_entry);
+-		cpuctx->cgrp = NULL;
++		else
++			cpuctx->cgrp = NULL;
+ 	}
++
++	if (add && ctx->nr_cgroups++)
++		return;
++	else if (!add && --ctx->nr_cgroups)
++		return;
++
++	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
++	if (add)
++		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
++	else
++		list_del(cpuctx_entry);
+ }
+ 
+ #else /* !CONFIG_CGROUP_PERF */
+@@ -2311,6 +2321,20 @@ static int  __perf_install_in_context(void *info)
+ 		raw_spin_lock(&task_ctx->lock);
+ 	}
+ 
++#ifdef CONFIG_CGROUP_PERF
++	if (is_cgroup_event(event)) {
++		/*
++		 * Only care about cgroup events.
++		 *
++		 * If only the task belongs to cgroup of this event,
++		 * we will continue the installment
++		 */
++		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
++		reprogram = cgroup_is_descendant(cgrp->css.cgroup,
++					event->cgrp->css.cgroup);
++	}
++#endif
++
+ 	if (reprogram) {
+ 		ctx_sched_out(ctx, cpuctx, EVENT_TIME);
+ 		add_event_to_ctx(event, ctx);
+-- 
+2.8.4.31.g9ed660f
