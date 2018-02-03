@@ -1,219 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752159AbeBCB05 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 20:26:57 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37591 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752520AbeBCBZB (ORCPT
+        id S1751941AbeBCBbo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 20:31:44 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51920 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751582AbeBCBbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 20:25:01 -0500
-X-Google-Smtp-Source: AH8x224If9SCIkBCqQu6raVcynurcmigU8MVIwMs1Pd97FC3a6cu/10+2Jsy3o0G9NaxoBZPh6UX2g==
-From: Derek Basehore <dbasehore@chromium.org>
-To: linux-kernel@vger.kernel.org
-Cc: Soby.Mathew@arm.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        rafael.j.wysocki@intel.com, tglx@linutronix.de,
-        briannorris@chromium.org, marc.zyngier@arm.com,
-        Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH v4 4/5] irqchip/gic-v3-its: add ability to resend MAPC on resume
-Date: Fri,  2 Feb 2018 17:24:49 -0800
-Message-Id: <20180203012450.18378-5-dbasehore@chromium.org>
-X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
-In-Reply-To: <20180203012450.18378-1-dbasehore@chromium.org>
-References: <20180203012450.18378-1-dbasehore@chromium.org>
+        Fri, 2 Feb 2018 20:31:36 -0500
+Date: Fri, 2 Feb 2018 17:21:03 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: corbet@lwn.net, dhowells@redhat.com, will.deacon@arm.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, stern@rowland.harvard.edu,
+        boqun.feng@gmail.com, npiggin@gmail.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr
+Subject: Re: [PATCH 1/2] Documentation/memory-barriers.txt: cross-reference
+ "tools/memory-model/"
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1517562768-6238-1-git-send-email-parri.andrea@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517562768-6238-1-git-send-email-parri.andrea@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18020301-0044-0000-0000-000003DAE2F1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008463; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000248; SDB=6.00984193; UDB=6.00499213; IPR=6.00763471;
+ BA=6.00005809; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019343; XFM=3.00000015;
+ UTC=2018-02-03 01:31:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020301-0045-0000-0000-0000080A4FD3
+Message-Id: <20180203012103.GD3617@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-02_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802030015
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds functionality to resend the MAPC command to an ITS node on
-resume. If the ITS is powered down during suspend and the collections
-are not backed by memory, the ITS will lose that state. This just sets
-up the known state for the collections after the ITS is restored.
+On Fri, Feb 02, 2018 at 10:12:48AM +0100, Andrea Parri wrote:
+> Recent efforts led to the specification of a memory consistency model
+> for the Linux kernel [1], which "can (roughly speaking) be thought of
+> as an automated version of memory-barriers.txt" and which is (in turn)
+> "accompanied by extensive documentation on its use and its design".
+> 
+> Make sure that the (occasional) reader of memory-barriers.txt will be
+> aware of these developments.
+> 
+> [1] https://marc.info/?l=linux-kernel&m=151687290114799&w=2
+> 
+> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
 
-This feature is enabled via Kconfig and a device tree entry.
+I am inclined to pull in something along these lines, but would like
+some feedback on the wording, especially how "official" we want to
+make the memory model to be.
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
----
- arch/arm64/Kconfig               |  10 ++++
- drivers/irqchip/irq-gic-v3-its.c | 101 ++++++++++++++++++++++++---------------
- 2 files changed, 73 insertions(+), 38 deletions(-)
+Thoughts?
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 53612879fe56..f38f1a7b4266 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -571,6 +571,16 @@ config HISILICON_ERRATUM_161600802
- 
- 	  If unsure, say Y.
- 
-+config ARM_GIC500_COLLECTIONS_RESET
-+	bool "GIC-500 Collections: Workaround for GIC-500 Collections on suspend reset"
-+	default y
-+	help
-+	  The GIC-500 can store Collections state internally for the ITS. If
-+	  the ITS is reset on suspend (ie from power getting disabled), the
-+	  collections need to be reconfigured on resume.
-+
-+	  If unsure, say Y.
-+
- config QCOM_FALKOR_ERRATUM_E1041
- 	bool "Falkor E1041: Speculative instruction fetches might cause errant memory access"
- 	default y
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index e13515cdb68f..63764efa4dcc 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -48,6 +48,7 @@
- #define ITS_FLAGS_WORKAROUND_CAVIUM_22375	(1ULL << 1)
- #define ITS_FLAGS_WORKAROUND_CAVIUM_23144	(1ULL << 2)
- #define ITS_FLAGS_SAVE_SUSPEND_STATE		(1ULL << 3)
-+#define ITS_FLAGS_WORKAROUND_GIC500_MAPC	(1ULL << 4)
- 
- #define RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING	(1 << 0)
- 
-@@ -1950,52 +1951,53 @@ static void its_cpu_init_lpis(void)
- 	dsb(sy);
- }
- 
--static void its_cpu_init_collection(void)
-+static void its_cpu_init_collection(struct its_node *its)
- {
--	struct its_node *its;
--	int cpu;
--
--	spin_lock(&its_lock);
--	cpu = smp_processor_id();
--
--	list_for_each_entry(its, &its_nodes, entry) {
--		u64 target;
-+	int cpu = smp_processor_id();
-+	u64 target;
- 
--		/* avoid cross node collections and its mapping */
--		if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
--			struct device_node *cpu_node;
-+	/* avoid cross node collections and its mapping */
-+	if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
-+		struct device_node *cpu_node;
- 
--			cpu_node = of_get_cpu_node(cpu, NULL);
--			if (its->numa_node != NUMA_NO_NODE &&
--				its->numa_node != of_node_to_nid(cpu_node))
--				continue;
--		}
-+		cpu_node = of_get_cpu_node(cpu, NULL);
-+		if (its->numa_node != NUMA_NO_NODE &&
-+			its->numa_node != of_node_to_nid(cpu_node))
-+			return;
-+	}
- 
-+	/*
-+	 * We now have to bind each collection to its target
-+	 * redistributor.
-+	 */
-+	if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
- 		/*
--		 * We now have to bind each collection to its target
-+		 * This ITS wants the physical address of the
- 		 * redistributor.
- 		 */
--		if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
--			/*
--			 * This ITS wants the physical address of the
--			 * redistributor.
--			 */
--			target = gic_data_rdist()->phys_base;
--		} else {
--			/*
--			 * This ITS wants a linear CPU number.
--			 */
--			target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
--			target = GICR_TYPER_CPU_NUMBER(target) << 16;
--		}
-+		target = gic_data_rdist()->phys_base;
-+	} else {
-+		/* This ITS wants a linear CPU number. */
-+		target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
-+		target = GICR_TYPER_CPU_NUMBER(target) << 16;
-+	}
- 
--		/* Perform collection mapping */
--		its->collections[cpu].target_address = target;
--		its->collections[cpu].col_id = cpu;
-+	/* Perform collection mapping */
-+	its->collections[cpu].target_address = target;
-+	its->collections[cpu].col_id = cpu;
- 
--		its_send_mapc(its, &its->collections[cpu], 1);
--		its_send_invall(its, &its->collections[cpu]);
--	}
-+	its_send_mapc(its, &its->collections[cpu], 1);
-+	its_send_invall(its, &its->collections[cpu]);
-+}
-+
-+static void its_cpu_init_collections(void)
-+{
-+	struct its_node *its;
-+
-+	spin_lock(&its_lock);
-+
-+	list_for_each_entry(its, &its_nodes, entry)
-+		its_cpu_init_collection(its);
- 
- 	spin_unlock(&its_lock);
- }
-@@ -2997,6 +2999,18 @@ static bool __maybe_unused its_enable_quirk_hip07_161600802(void *data)
- 	return true;
- }
- 
-+static bool __maybe_unused its_enable_quirk_gic500_collections(void *data)
-+{
-+	struct its_node *its = data;
-+
-+	if (fwnode_property_present(its->fwnode_handle,
-+				    "collections-reset-on-suspend")) {
-+		its->flags |= ITS_FLAGS_WORKAROUND_GIC500_MAPC;
-+		return true;
-+	}
-+	return false;
-+}
-+
- static const struct gic_quirk its_quirks[] = {
- #ifdef CONFIG_CAVIUM_ERRATUM_22375
- 	{
-@@ -3042,6 +3056,14 @@ static const struct gic_quirk its_quirks[] = {
- 		.mask	= 0xffffffff,
- 		.init	= its_enable_quirk_hip07_161600802,
- 	},
-+#endif
-+#ifdef CONFIG_ARM_GIC500_COLLECTIONS_RESET
-+	{
-+		.desc	= "ITS: GIC-500 Collections Reset on Resume",
-+		.iidr	= 0x00000000,
-+		.mask	= 0xff000000,
-+		.init	= its_enable_quirk_gic500_collections,
-+	},
- #endif
- 	{
- 	}
-@@ -3129,6 +3151,9 @@ static void its_restore_enable(void)
- 			}
- 			writel_relaxed(ctx->ctlr, base + GITS_CTLR);
- 		}
-+
-+		if (its->flags & ITS_FLAGS_WORKAROUND_GIC500_MAPC)
-+			its_cpu_init_collection(its);
- 	}
- 	spin_unlock(&its_lock);
- }
-@@ -3395,7 +3420,7 @@ int its_cpu_init(void)
- 			return -ENXIO;
- 		}
- 		its_cpu_init_lpis();
--		its_cpu_init_collection();
-+		its_cpu_init_collections();
- 	}
- 
- 	return 0;
--- 
-2.16.0.rc1.238.g530d649a79-goog
+If I don't hear otherwise in a couple of days, I will pull this as is.
+
+							Thanx, Paul
+
+> ---
+>  Documentation/memory-barriers.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+> index a863009849a3b..8cc3f098f4a7d 100644
+> --- a/Documentation/memory-barriers.txt
+> +++ b/Documentation/memory-barriers.txt
+> @@ -17,7 +17,9 @@ meant as a guide to using the various memory barriers provided by Linux, but
+>  in case of any doubt (and there are many) please ask.
+> 
+>  To repeat, this document is not a specification of what Linux expects from
+> -hardware.
+> +hardware.  For such a specification, in the form of a memory consistency
+> +model, and for documentation about its usage and its design, the reader is
+> +referred to "tools/memory-model/".
+> 
+>  The purpose of this document is twofold:
+> 
+> -- 
+> 2.7.4
+> 
