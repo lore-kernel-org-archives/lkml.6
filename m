@@ -1,205 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752277AbeBCNi3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 08:38:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751839AbeBCNiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 08:38:23 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B93B21759
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Sat, 3 Feb 2018 22:38:17 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
- events
-Message-Id: <20180203223817.0c8cc485d8163ad84039cf02@kernel.org>
-In-Reply-To: <20180202230458.840252014@goodmis.org>
-References: <20180202230458.840252014@goodmis.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752415AbeBCNpA (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 08:45:00 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44094 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751530AbeBCNox (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 08:44:53 -0500
+X-Google-Smtp-Source: AH8x227VWSYZf4q2RKHL499/8p47h7zQY9tpz5XQrNUZaSn6D4byUvUDeAodKG7YBWNd/Lnu1X1YXA==
+Date: Sat, 3 Feb 2018 14:44:50 +0100
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Zhang Bo <zbsdta@126.com>
+Cc: dmitry.torokhov@gmail.com, DRivshin@allworx.com, robh@kernel.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhang.bo19@zte.com.cn
+Subject: Re: [PATCH] Input: matrix_keypad - fix keypad does not response
+Message-ID: <20180203134450.GC707@gmail.com>
+References: <20180203120046.10988-1-zbsdta@126.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s9fJI615cBHmzTOP"
+Content-Disposition: inline
+In-Reply-To: <20180203120046.10988-1-zbsdta@126.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 02 Feb 2018 18:04:58 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> 
-> At Kernel Summit back in October, we tried to bring up trace markers, which
-> would be nops within the kernel proper, that would allow modules to hook
-> arbitrary trace events to them. The reaction to this proposal was less than
-> favorable. We were told that we were trying to make a work around for a
-> problem, and not solving it. The problem in our minds is the notion of a
-> "stable trace event".
-> 
-> There are maintainers that do not want trace events, or more trace events in
-> their subsystems. This is due to the fact that trace events post an
-> interface to user space, and this interface could become required by some
-> tool. This may cause the trace event to become stable where it must not
-> break the tool, and thus prevent the code from changing.
-> 
-> Or, the trace event may just have to add padding for fields that tools
-> may require. The "success" field of the sched_wakeup trace event is one such
-> instance. There is no more "success" variable, but tools may fail if it were
-> to go away, so a "1" is simply added to the trace event wasting ring buffer
-> real estate.
-> 
-> I talked with Linus about this, and he told me that we already have these
-> markers in the kernel. They are from the mcount/__fentry__ used by function
-> tracing. Have the trace events be created by these, and see if this will
-> satisfy most areas that want trace events.
-> 
-> I decided to implement this idea, and here's the patch set.
-> 
-> Introducing "function based events". These are created dynamically by a
-> tracefs file called "function_events". By writing a pseudo prototype into
-> this file, you create an event.
+--s9fJI615cBHmzTOP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This seems very similar feature of what kprobe-based event does.
+Hi!
+On Sat, Feb 03, 2018 at 08:00:46PM +0800, Zhang Bo wrote:
+> From: zhangbo <zbsdta@126.com>
+>=20
+> If matrix_keypad_stop() is calling and the keypad interrupt is triggered,
+> disable_row_irqs() is called by both matrix_keypad_interrupt() and
+> matrix_keypad_stop() at the same time. then disable_row_irqs() is called
+> twice, and the device enter suspend state before keypad->work is executed.
+> At this condition the device will start keypad and enable irq once after
+> resume. and then irqs are disabled yet because irqs are disabled twice and
+> only enable once.
+>=20
+> Signed-off-by: zhangbo <zbsdta@126.com>
 
-Earlier version of kprobe-based event supported Nth argument, but I decided
-to drop it because we can not ensure the "function signature" from kernel
-binary. It has been passed to "perf probe", so that we can define line-level
-granularity. 
+Please use your full real name in the signed-off-by tag.
 
-Of course if it is easy to support "argN" again as it does if the arch's
-calling convention is clearly stated. (and now kprobe is based on ftrace
-if it is on the entry of functions)
-
-So my question is, what is the difference of those from the user perspective?
-Only event syntax is a problem?
-I'm very confusing...
-
-Thank you,
-
-> 
->  # mount -t tracefs nodev /sys/kernel/tracing
->  # cd /sys/kernel/tracing
->  # echo 'do_IRQ(symbol ip[16] | x64[6] irq_stack[16])' > function_events
->  # cat events/functions/do_IRQ/format
-> name: do_IRQ
-> ID: 1399
-> format:
-> 	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
-> 	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
-> 	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
-> 	field:int common_pid;	offset:4;	size:4;	signed:1;
-> 
-> 	field:unsigned long __parent_ip;	offset:8;	size:8;	signed:0;
-> 	field:unsigned long __ip;	offset:16;	size:8;	signed:0;
-> 	field:symbol ip;	offset:24;	size:8;	signed:0;
-> 	field:x64 irq_stack[6];	offset:32;	size:48;	signed:0;
-> 
-> print fmt: "%pS->%pS(ip=%pS, irq_stack=%llx:%llx:%llx:%llx:%llx:%llx)", REC->__ip, REC->__parent_ip,
-> REC->ip, REC->irq_stack[0], REC->irq_stack[1], REC->irq_stack[2], REC->irq_stack[3], REC->irq_stack[4],
-> REC->irq_stack[5]
-> 
->  # echo 1 > events/functions/do_IRQ/enable
->  # cat trace
->           <idle>-0     [003] d..3  3647.049344: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
->           <idle>-0     [003] d..3  3647.049433: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
->           <idle>-0     [003] d..3  3647.049672: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
->           <idle>-0     [003] d..3  3647.325709: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
->           <idle>-0     [003] d..3  3647.325929: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
->           <idle>-0     [003] d..3  3647.325993: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
->           <idle>-0     [003] d..3  3647.387571: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
->           <idle>-0     [003] d..3  3647.387791: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
->           <idle>-0     [003] d..3  3647.387874: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
-> 
-> And this is much more powerful than just this. We can show strings, and
-> index off of structures into other structures.
-> 
->   # echo '__vfs_read(symbol read+40[0]+16)' > function_events
-> 
->   # echo 1 > events/functions/__vfs_read/enable
->   # cat trace
->          sshd-1343  [005] ...2   199.734752: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
->          bash-1344  [003] ...2   199.734822: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
->          sshd-1343  [005] ...2   199.734835: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
->  avahi-daemon-910   [003] ...2   200.136740: vfs_read->__vfs_read(read=          (null))
->  avahi-daemon-910   [003] ...2   200.136750: vfs_read->__vfs_read(read=          (null))
-> 
-> And even read user space:
-> 
->   # echo 'SyS_openat(int dfd, string path, x32 flags, x16 mode)' > function_events
->   # echo 1 > events/functions/enable
->   # grep task_fork /proc/kallsyms 
-> ffffffff810d5a60 t task_fork_fair
-> ffffffff810dfc30 t task_fork_dl
->   # cat trace
->             grep-1820  [000] ...2  3926.107603: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, path=/proc/kallsyms, flags=100, mode=0)
-> 
-> These are fully functional events. That is, they work with ftrace,
-> trace-cmd, perf, histograms, triggers, and eBPF.
-> 
-> What's next? I need to rewrite the function graph tracer, and be able to add
-> dynamic events on function return.
-> 
-> I made this work with x86 with a simple function that only returns
-> 6 function parameters for x86_64 and 3 for x86_32. But this could easily
-> be extended.
-> 
-> Cheers!
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-> ftrace/dynamic-ftrace-events
-> 
-> Head SHA1: 30fbdffd5d38bd27b04fb911f7158f10a99be8c4
-> 
-> 
-> Steven Rostedt (VMware) (18):
->       tracing: Add function based events
->       tracing: Add documentation for function based events
->       tracing: Add simple arguments to function based events
->       tracing/x86: Add arch_get_func_args() function
->       tracing: Add hex print for dynamic ftrace based events
->       tracing: Add indirect offset to args of ftrace based events
->       tracing: Add dereferencing multiple fields per arg
->       tracing: Add "unsigned" to function based events
->       tracing: Add indexing of arguments for function based events
->       tracing: Make func_type enums for easier comparing of arg types
->       tracing: Add symbol type to function based events
->       tracing: Add accessing direct address from function based events
->       tracing: Add array type to function based events
->       tracing: Have char arrays be strings for function based events
->       tracing: Add string type for dynamic strings in function based events
->       tracing: Add NULL to skip args for function based events
->       tracing: Add indirect to indirect access for function based events
->       tracing/perf: Allow perf to use function based events
-> 
-> ----
->  Documentation/trace/function-based-events.rst |  426 ++++++++
->  arch/x86/kernel/ftrace.c                      |   28 +
->  include/linux/trace_events.h                  |    2 +
->  kernel/trace/Kconfig                          |   12 +
->  kernel/trace/Makefile                         |    1 +
->  kernel/trace/trace.h                          |   11 +
->  kernel/trace/trace_event_ftrace.c             | 1440 +++++++++++++++++++++++++
->  kernel/trace/trace_probe.h                    |   11 -
->  8 files changed, 1920 insertions(+), 11 deletions(-)
->  create mode 100644 Documentation/trace/function-based-events.rst
->  create mode 100644 kernel/trace/trace_event_ftrace.c
+> ---
+>  drivers/input/keyboard/matrix_keypad.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keybo=
+ard/matrix_keypad.c
+> index 1f316d66e6f7..13fe51824637 100644
+> --- a/drivers/input/keyboard/matrix_keypad.c
+> +++ b/drivers/input/keyboard/matrix_keypad.c
+> @@ -169,7 +169,8 @@ static void matrix_keypad_scan(struct work_struct *wo=
+rk)
+>  	/* Enable IRQs again */
+>  	spin_lock_irq(&keypad->lock);
+>  	keypad->scan_pending =3D false;
+> -	enable_row_irqs(keypad);
+> +	if (keypad->stopped =3D=3D false)
+> +		enable_row_irqs(keypad);
+>  	spin_unlock_irq(&keypad->lock);
+>  }
+> =20
+> @@ -202,14 +203,16 @@ static int matrix_keypad_start(struct input_dev *de=
+v)
+>  {
+>  	struct matrix_keypad *keypad =3D input_get_drvdata(dev);
+> =20
+> +	spin_lock_irq(&keypad->lock);
+>  	keypad->stopped =3D false;
+> -	mb();
+> =20
+>  	/*
+>  	 * Schedule an immediate key scan to capture current key state;
+>  	 * columns will be activated and IRQs be enabled after the scan.
+>  	 */
+> -	schedule_delayed_work(&keypad->work, 0);
+> +	if (keypad->scan_pending =3D=3D false)
+> +		schedule_delayed_work(&keypad->work, 0);
+> +	spin_unlock_irq(&keypad->lock);
+> =20
+>  	return 0;
+>  }
+> @@ -218,14 +221,17 @@ static void matrix_keypad_stop(struct input_dev *de=
+v)
+>  {
+>  	struct matrix_keypad *keypad =3D input_get_drvdata(dev);
+> =20
+> +	spin_lock_irq(&keypad->lock);
+>  	keypad->stopped =3D true;
+> -	mb();
+> -	flush_work(&keypad->work.work);
+>  	/*
+>  	 * matrix_keypad_scan() will leave IRQs enabled;
+>  	 * we should disable them now.
+>  	 */
+> -	disable_row_irqs(keypad);
+> +	if (keypad->scan_pending =3D=3D false)
+> +		disable_row_irqs(keypad);
+> +	spin_unlock_irq(&keypad->lock);
+> +
+> +	flush_work(&keypad->work.work);
+>  }
 
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Hum, I think we should use spin_lock_irqsave/spin_lock_irqrestore
+instead to be on the safe side.=20
+I don't see how we could guarantee that irqs is allways enabled when
+calling spin_lock_irq().
+
+
+> =20
+>  #ifdef CONFIG_PM_SLEEP
+> --=20
+> 2.14.3
+
+
+Best regards
+Marcus Folkesson
+>=20
+
+--s9fJI615cBHmzTOP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlp1vM0ACgkQiIBOb1ld
+UjLRFw//Z7zK/Z95Lly6nNtnCNkF6fqjB90Dco+4jWIEA5U4o0Mw46FlVmVn1gvm
+qzBxzOxAOeBiWoPh+nmmNjDcUuEVy4bMic1tIVCYMs0AL5Thp81lR0srtaDPJgEe
+vJGw2mOHhAszzbTongXjNuWLnHuXjShbsfoot5ZZCOjXZsvHkiFrPQwfGPwdmLbK
+l2qlTzRxxNmJEumN0mkBaQG6Gg0CIXBeYPpEYXlwRRoNZxoyZC4wmStQep0s+QyO
+36rAb1HOqGS61U6UWnj+acmcdlmH7q/ON7lDwDwfuFANOPCMc4SMS2l1l83tNEO/
+SAyHHQghu0oy7cMt/F+9CAKGWlZz1UYxw4po12cafYJonCB36nn1CGWy2NKCcFvi
+1GV3gXntjs/FPDuRInxYx2GyPRj4dEX1yCOWuAG/OcggNQJw8RzU26LU+mQceJ7B
+623+D3/c23ByA8EKvkZQuooWM4fAXw4YQKjMMOZWfv2poqp3DfE4pQcSNGqbzXhq
+HtOz1d0naVOPeCKiCBsFlVyaiXUPUD00pboPVGWYUVApMlMcwEr32JyRHands7Nb
+7TGfVldSTlGrceNazi+owqHREnGhA/M1N2QRg5NaHnd04Wzfl4i8nNCRfIgVHOEq
+0KIUmSb5uKfTi/Nhc8e4ZE+L4HiuM7YdbwT0wpWn4rRKKmcYLNo=
+=+2mh
+-----END PGP SIGNATURE-----
+
+--s9fJI615cBHmzTOP--
