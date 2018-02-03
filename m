@@ -1,118 +1,134 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-866468-1519070784-2-11265375577536171530
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519070784; b=hUbvK4olnfQs2+pVIB5frBBXmf1Kkfehl6oasGzXqU8rOIF
-    xW2/hbHTnyiajg6gl766zOUUIvCfWzngCu3mu7rNA76GRtuhqFwdCkRjqAv+CuOc
-    9O5jTI7MUthB7PM0zGe4eIYVRNP0z78brpP7yG99Q8eFfgAPBv5q8bEEED/rXaT9
-    jO+MDXATkTCku9gCVVT44g4Tr0Nr7xdKvoqy3q3wNOmOFxdz5mrZ+kFjV4DGBSWT
-    kvrE4N0Yqol1LR5ze7s55ahjatC7G1Lv1sVaFU0pPHrX1xrUQp9f3NLEJj84F3Bx
-    dwbjad3429Q//5Ti0gS4Sa4yDSgd3USmLCl2RLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1519070784; bh=AXiRN/ZojQ8ULmzhxuCartAuo0trE7Et/TgeSp
-    QdHS0=; b=UcfO/jVAMNklFQXzFau0cqQfD2I1/EhSttMCRiPCg+/6KfCx5fG1GY
-    JHiHCBVs54n8fMwOA79Nm9dbgiL/ZejlRd+fRWuCE3VkI8d24gWr4vFvBy43gcgy
-    0YzEhUu2WwZRd29dvAQsFE1nHcsNMKG9kOq9j/ggLuxbP4KQGcSzondkGLgfxYBf
-    JKbY/2tPJFQPwWlm9KKa1GK8AI90Rx9PkvdzyoGlKere/vrR0Bg1MPchMJqpHJvm
-    VuF4Tim7lTkS13J31xnGMLprbUR3blgnoyfaw+WtnPiKxIK4rk3UT1NcZbw9+mfY
-    UB+S3iAWjHEBib2rImUjOql0x2NL/Qkw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=j8x04ENk x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Rk0xVyWF;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=j8x04ENk x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Rk0xVyWF;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753727AbeBSUGX (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Feb 2018 15:06:23 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38042 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753611AbeBSUGW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Feb 2018 15:06:22 -0500
-X-Google-Smtp-Source: AH8x224Dz9QP6E9WfOmXIYQHGAQOFmSnmN20mRjq5OZ43c8hkB+z7FtwBS/t6ZpoMHRnWw1+GwKSZJzmdcAbm53/8sc=
+Return-Path: <ebiggers3@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517646647; cv=none;
+        d=google.com; s=arc-20160816;
+        b=uLcbg2QWHzdzxyTij4jxp82+rkX0fEtWocX5v6RQeCuWzU/0dW86TuEb+fnMkFlDta
+         +i1eI+3hZ8B7AzkHkP5cPFoJWMb2wpiuaOQZhOCOA2sfgQ2gOwbeXPTrAz/V1dcmB1NJ
+         V3uH7NeyQ1TOgfszHmiNNkfRzt77j5jFAqGkS4F3IBBwyoRu1bU4C1BfYTjU1hbgv/pk
+         5eQ3LVD1Vic3bSMln7be20SLW7c5c7eVa6GEl27VHek3ECfVhL8bYo5X7pvWBauJGk3w
+         7ZEDt0lzEjdb8q2K4fVEKPWPM4GRfe78DjdWUvHtPxjW0pxiass/Esjx0Qx+c2e3nuyC
+         Cp2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=1syQpqDBkF/Bh02HsGHapZqlWMfNqzTNFZMm1bEyYVw=;
+        b=oVLgHJUN9Kt7HyOmKvguHtkQtpTmawHV8Jup59chti4kvaPiUPrz7W8YH6KvabaZp2
+         +zb4eCYcn62rVns8tIX+v+CYD1za+Mp6Ss8lpbWe3UWUJwiVp6XHfO/9D5RY6d7ZYyKq
+         Dyguaco0ee+WKYpiobQ4ucmwe9LFVH6c8TaAyiOibV7z2G59Qn1E48iQoNRe3BWH4z5g
+         GrZZAeB9RDKSe5bHQO60wEjZlXtdkuEKgASuvDpHQvq65yahMu2t+Lx4vrVuZWx+gMJd
+         IPNEjOA6gxXlrn7AC/IPw5h7zl/bpg2oMV2k0dYNTji5L/Yr3euZe3UWVC4mY5r+IxAn
+         C9zA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nnP+JT3Y;
+       spf=pass (google.com: domain of ebiggers3@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ebiggers3@gmail.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nnP+JT3Y;
+       spf=pass (google.com: domain of ebiggers3@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ebiggers3@gmail.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x225ZzBSGxbBfsPGkz9eB4L2ug+RiGTitilO95LE8898s6SwCxUJF/FzvP04OHQ8gDQ5CLpt6ZQ==
+Date: Sat, 3 Feb 2018 00:30:44 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Secunia Research <vuln@secunia.com>,
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH 4.4 02/74] usbip: prevent vhci_hcd driver from leaking a
+ socket pointer address
+Message-ID: <20180203083044.GA6126@zzz.localdomain>
+References: <20180129123847.507563674@linuxfoundation.org>
+ <20180129123847.617716392@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <1519069941.3422.65.camel@codethink.co.uk>
-References: <20180129123847.507563674@linuxfoundation.org> <20180129123850.261403857@linuxfoundation.org>
- <1519069573.3422.63.camel@codethink.co.uk> <1519069941.3422.65.camel@codethink.co.uk>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 19 Feb 2018 12:06:19 -0800
-Message-ID: <CANn89iL=8vgByOoJ5bbFVF+DJN2-QrMn4ihE6cM42WaSxSwz4Q@mail.gmail.com>
-Subject: Re: [PATCH 4.4 60/74] ipv6: fix udpv6 sendmsg crash caused by too
- small MTU
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Mike Maloney <maloney@google.com>, stable@vger.kernel.org,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180129123847.617716392@linuxfoundation.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1590958705205797601?=
+X-GMAIL-MSGID: =?utf-8?q?1591367851204432946?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 19, 2018 at 11:52 AM, Ben Hutchings
-<ben.hutchings@codethink.co.uk> wrote:
-> On Mon, 2018-02-19 at 20:46 +0100, Ben Hutchings wrote:
->> On Mon, 2018-01-29 at 13:57 +0100, Greg Kroah-Hartman wrote:
->> > 4.4-stable review patch.  If anyone has any objections, please let me know.
->> >
->> > ------------------
->> >
->> > From: Mike Maloney <maloney@google.com>
->> >
->> >
->> > [ Upstream commit 749439bfac6e1a2932c582e2699f91d329658196 ]
->>
->> [...]
->> > --- a/net/ipv6/ip6_output.c
->> > +++ b/net/ipv6/ip6_output.c
->> > @@ -1246,14 +1246,16 @@ static int ip6_setup_cork(struct sock *s
->> >     v6_cork->tclass = tclass;
->> >     if (rt->dst.flags & DST_XFRM_TUNNEL)
->> >             mtu = np->pmtudisc >= IPV6_PMTUDISC_PROBE ?
->> > -                 rt->dst.dev->mtu : dst_mtu(&rt->dst);
->> > +                 READ_ONCE(rt->dst.dev->mtu) : dst_mtu(&rt->dst);
->> >     else
->> >             mtu = np->pmtudisc >= IPV6_PMTUDISC_PROBE ?
->> > -                 rt->dst.dev->mtu : dst_mtu(rt->dst.path);
->> > +                 READ_ONCE(rt->dst.dev->mtu) : dst_mtu(rt->dst.path);
->> >     if (np->frag_size < mtu) {
->> >             if (np->frag_size)
->> >                     mtu = np->frag_size;
->> >     }
->> > +   if (mtu < IPV6_MIN_MTU)
->> > +           return -EINVAL;
->>
->> This error path appears to leak a reference to rt->dst.
->
-> Never mind, I see that the callers release it.
+On Mon, Jan 29, 2018 at 01:56:07PM +0100, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Shuah Khan <shuahkh@osg.samsung.com>
+> 
+> commit 2f2d0088eb93db5c649d2a5e34a3800a8a935fc5 upstream.
+> 
+> When a client has a USB device attached over IP, the vhci_hcd driver is
+> locally leaking a socket pointer address via the
+> 
+> /sys/devices/platform/vhci_hcd/status file (world-readable) and in debug
+> output when "usbip --debug port" is run.
+> 
+> Fix it to not leak. The socket pointer address is not used at the moment
+> and it was made visible as a convenient way to find IP address from socket
+> pointer address by looking up /proc/net/{tcp,tcp6}.
+> 
+> As this opens a security hole, the fix replaces socket pointer address with
+> sockfd.
+> 
+> Reported-by: Secunia Research <vuln@secunia.com>
+> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> 
+> ---
+>  drivers/usb/usbip/usbip_common.h     |    1 +
+>  drivers/usb/usbip/vhci_sysfs.c       |   25 +++++++++++++++----------
+>  tools/usb/usbip/libsrc/vhci_driver.c |    8 ++++----
+>  3 files changed, 20 insertions(+), 14 deletions(-)
+> 
+> --- a/drivers/usb/usbip/usbip_common.h
+> +++ b/drivers/usb/usbip/usbip_common.h
+> @@ -261,6 +261,7 @@ struct usbip_device {
+>  	/* lock for status */
+>  	spinlock_t lock;
+>  
+> +	int sockfd;
+>  	struct socket *tcp_socket;
+>  
+>  	struct task_struct *tcp_rx;
+> --- a/drivers/usb/usbip/vhci_sysfs.c
+> +++ b/drivers/usb/usbip/vhci_sysfs.c
+> @@ -39,16 +39,20 @@ static ssize_t status_show(struct device
+>  
+>  	/*
+>  	 * output example:
+> -	 * prt sta spd dev socket           local_busid
+> -	 * 000 004 000 000         c5a7bb80 1-2.3
+> -	 * 001 004 000 000         d8cee980 2-3.4
+> +	 * port sta spd dev      sockfd local_busid
+> +	 * 0000 004 000 00000000 000003 1-2.3
+> +	 * 0001 004 000 00000000 000004 2-3.4
+>  	 *
+> -	 * IP address can be retrieved from a socket pointer address by looking
+> -	 * up /proc/net/{tcp,tcp6}. Also, a userland program may remember a
+> -	 * port number and its peer IP address.
+> +	 * Output includes socket fd instead of socket pointer address to
+> +	 * avoid leaking kernel memory address in:
+> +	 *	/sys/devices/platform/vhci_hcd.0/status and in debug output.
+> +	 * The socket pointer address is not used at the moment and it was
+> +	 * made visible as a convenient way to find IP address from socket
+> +	 * pointer address by looking up /proc/net/{tcp,tcp6}. As this opens
+> +	 * a security hole, the change is made to use sockfd instead.
+>  	 */
+>  	out += sprintf(out,
+> -		       "prt sta spd bus dev socket           local_busid\n");
+> +		       "prt sta spd bus dev sockfd local_busid\n");
+>  
+>  	for (i = 0; i < VHCI_NPORTS; i++) {
+>  		struct vhci_device *vdev = port_to_vdev(i);
+> @@ -60,11 +64,11 @@ static ssize_t status_show(struct device
+>  			out += sprintf(out, "%03u %08x ",
+>  				       vdev->speed, vdev->devid);
+>  			out += sprintf(out, "%16p ", vdev->ud.tcp_socket);
+> +			out += sprintf(out, "%06u", vdev->ud.sockfd);
+>  			out += sprintf(out, "%s", dev_name(&vdev->udev->dev));
 
-Yes, I agree this is quite confusing :/
+This backport is wrong; it's still printing the pointer...
+
+Eric
