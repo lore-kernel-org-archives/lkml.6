@@ -1,92 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752446AbeBCMPP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 07:15:15 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34618 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750842AbeBCMPG (ORCPT
+        id S1752167AbeBCMYm (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 07:24:42 -0500
+Received: from smtp1.de.adit-jv.com ([62.225.105.245]:41155 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751530AbeBCMYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 07:15:06 -0500
-X-Google-Smtp-Source: AH8x226yelO+Kcuy42IS3S/DxyRWC1K7F17Rtu/f6ZxgpFNVYJccJocmIJwbBZc/UdxfFaA/kRjFE+WzAQqzN78PyyY=
+        Sat, 3 Feb 2018 07:24:38 -0500
+Date: Sat, 3 Feb 2018 13:24:22 +0100
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
+To: Michal Hocko <mhocko@kernel.org>
+CC: Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hartley <james.hartley@mips.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: [PATCH v3 1/1] mm: page_alloc: skip over regions of invalid pfns
+ on UMA
+Message-ID: <20180203122422.GA11832@vmlxhi-102.adit-jv.com>
+References: <20180124143545.31963-1-erosca@de.adit-jv.com>
+ <20180124143545.31963-2-erosca@de.adit-jv.com>
+ <20180129184746.GK21609@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
-References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
- <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
- <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net> <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
- <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com> <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Sat, 3 Feb 2018 13:15:05 +0100
-Message-ID: <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
-Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
-To: David Ahern <dsahern@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>, David Miller <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Dan Streetman <ddstreet@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, tommi.t.rantala@nokia.com,
-        alexey.kodanev@oracle.com, Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        linux-sctp@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180129184746.GK21609@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 1, 2018 at 1:49 AM, Xin Long <lucien.xin@gmail.com> wrote:
-> On Tue, Jan 30, 2018 at 11:59 PM, David Ahern <dsahern@gmail.com> wrote:
->> On 1/30/18 1:57 PM, David Ahern wrote:
->>> On 1/30/18 1:08 PM, Daniel Borkmann wrote:
->>>> On 01/30/2018 07:32 PM, Cong Wang wrote:
->>>>> On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
->>>>>> Hello,
->>>>>>
->>>>>> The following program creates a hang in unregister_netdevice.
->>>>>> cleanup_net work hangs there forever periodically printing
->>>>>> "unregister_netdevice: waiting for lo to become free. Usage count = 3"
->>>>>> and creation of any new network namespaces hangs forever.
->>>>>
->>>>> Interestingly, this is not reproducible on net-next.
->>>>
->>>> The most recent change on netns refcnt was 4ee806d51176 ("net: tcp: close
->>>> sock if net namespace is exiting") in net/net-next from 5 days ago, maybe
->>>> fixed due to that?
->>>>
->>>
->>> This appears to be the commit introducing the refcnt leak:
->>>
->>> $ git bisect bad
->>> dbc2b5e9a09e9a6664679a667ff81cff6e5f2641 is the first bad commit
->>> commit dbc2b5e9a09e9a6664679a667ff81cff6e5f2641
->>> Author: Xin Long <lucien.xin@gmail.com>
->>> Date:   Fri May 12 14:39:52 2017 +0800
->>>
->>>     sctp: fix src address selection if using secondary addresses for ipv6
->>>
->>>
->>> v4.14 is bad. Running bisect in the background while doing other things....
->>>
->>
->> Interesting. The commit that avoids the refcnt leak is
->>
->> commit 955ec4cb3b54c7c389a9f830be7d3ae2056b9212
->> Author: David Ahern <dsahern@gmail.com>
->> Date:   Wed Jan 24 19:45:29 2018 -0800
->>
->>     net/ipv6: Do not allow route add with a device that is down
->>
->> That commit does not intentionally address the problem so it is just
->> masking the problematic code introduced by the commit above.
-> Thanks, David A.
->
-> I'm still on a trip. will look into this asap.
+Hello Michal,
 
-Alexey and Tommi already had the patches for this issue on
-both SCTP v4 and v6 dst_get, Thanks.
+On Mon, Jan 29, 2018 at 07:47:46PM +0100, Michal Hocko wrote:
+> On Wed 24-01-18 15:35:45, Eugeniu Rosca wrote:
+> [...]
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 76c9688b6a0a..4a3d5936a9a0 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -5344,14 +5344,12 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+> >  			goto not_early;
+> >  
+> >  		if (!early_pfn_valid(pfn)) {
+> > -#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+> >  			/*
+> >  			 * Skip to the pfn preceding the next valid one (or
+> >  			 * end_pfn), such that we hit a valid pfn (or end_pfn)
+> >  			 * on our next iteration of the loop.
+> >  			 */
+> >  			pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
+> > -#endif
+> >  			continue;
+> 
+> Wouldn't it be just simpler to have ifdef CONFIG_HAVE_MEMBLOCK rather
+> than define memblock_next_valid_pfn for !HAVE_MEMBLOCK and then do the
+> (pfn + 1 ) - 1 games.
+
+This sounds to me like you prefer the earlier v2 of this patch.
+
+To my understanding, the difference between v2 and v3 is mainly
+meaningful for architectures which don't define CONFIG_HAVE_MEMBLOCK.
+One of them is ARCH=tile (for which kbuild test robot reported a compile
+failure for v1 of my patch). Out of curiosity, I compiled
+mm/page_alloc.o for ARCH=tile using [PATCH v2] and [PATCH v3], then
+disassembled the objects using `objdump -D` and compared the results.
+
+What I see is that the disassembled versions of memmap_init_zone()
+fully match. To me, this means that the main difference between v2 and
+v3 is about code readability. This is definitely an important aspect
+too, but I must admit I don't have a very strong opinion here. I expect
+this to be arbitrated by MM developers and eventually by the MM
+gatekeepers/maintainers.
+
+For the record, to achieve the same boot time improvement, the
+alternatives on our side are:
+- enable CONFIG_NUMA, just to benefit from the ~140ms speedup in boot
+  time. Besides the increase of kernel image size, this also leads to
+  annoying "Numa node 0:" noise in backtrace and stackdump output,
+  which is not interesting for a non-NUMA system.
+- ship the patch to our customers, in spite of not being accepted by MM
+  community. This is a risky and unhealthy path, which we don't like.
+
+That said, I really hope this won't be the last comment in the thread
+and appropriate suggestions will come on how to go forward.
+
+Thank you,
+Eugeniu.
+
+> I am usually against ifdefs in the code but that
+> would require a larger surgery to memmap_init_zone.
+> 
+> To be completely honest, I would like to see HAVE_MEMBLOCK_NODE_MAP
+> gone.
+> 
+> Other than that, the patch looks sane to me.
+> 
+> >  		}
+> >  		if (!early_pfn_in_nid(pfn, nid))
+> > -- 
+> > 2.15.1
+> > 
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
