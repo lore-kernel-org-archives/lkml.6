@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1486374-1517681196-2-7671404699030970154
+X-Cyrus-Session-Id: sloti22d1t05-1483324-1517681196-2-10877165287443908629
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517681195; b=NaPEq9s0CmrTcVzxSDVsN6Z8i3St7lwrbDHqrmGlCieqLbE
-    qlHBsHH/qF0nlQpk+9wZG7ZsnCpLyiPepIMlzHuaw2nmwW1tXFDC62MJHajvGl1L
-    LYyDOqYg22xQ87n+Gmju8yGjbTMB7M953FVUKgyZORTO+FD61D2JUOJJyl2EjkAW
-    t4JnkChAh1x7dZw2q0BC0sCg4w3UFXhY8IX+mAqEx4aG54gLz4OvUYMoRb4SuJTf
-    YCEXtRfztFeCdsp6z295jaAoSzDDqKttA4+O4EJrVkAdmau0C6NWDZmldj9fS0hZ
-    2LSAxfOd78vlDvCLquEMOdZ9AC9o3vzQKfC93bw==
+    t=1517681195; b=I2KOSw+4E4uodKgESYt0g2ajES0EuK6Ua7J/D74cxyMhI2S
+    4+7Ep3z6+QsNOabJpUFb3IYSLYKYCw119WS6UFRksSi1Ecv7/8hY/+sxk25bA8fu
+    03RdHQWv0kSI4pg5gMurNiiNIzJrJ4GsCENOIB5AtE9mPg4Mxs717LqefUaxXgRj
+    zIPKvUhwNkZEzQg0iD0vgDNbHFbacikcUnecKk2UJ9U064l/9uajWul9NuhBe2BJ
+    NN8BfIH1/DLKEon09M0NE5TIiHftyTwXOQZ90LxAiN+GZPvlOK1DTtgQl0jzkSSJ
+    l7/Ojdas6bEQE4eG6tU/+MsPCq4vNtAbtemvgnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1517681195; bh=FHbIyE
-    yJwqnrE/evDvejxoXVdXbl70it2jlFc0peG6s=; b=va//WCCKeAPIXxUdUXqQr2
-    hKUdH4SkKpOYPwd9GJYo9fkUSUiKwAUKAHC0qcDh4G8WDwSPXLdbAW7oyLC4K5E1
-    yXniEUPX5X300YTMQ0HZUpMn1jwXLkjF62KeoJ63GZkJYF0CNoB8RpwN7V2dG1Uh
-    MTv6/vd81BfDPrq8zBJbO3E47rsnlRv7oZym2l6+bUjVcmZyHik8su1PfgjJlIaI
-    BoSo1irvnnqXB350vvBpaHMcSNDpXzULwOFqVrb2ow9XixwqfSJiEkrRYk4nuymf
-    47aSC6k4QSbu9vtkRarbP3k2oTuScLHbnsQMmoblF/OExO8Oy6G7Y5UxR3fLGNWw
+    :mime-version:sender:list-id; s=arctest; t=1517681195; bh=oYmyjE
+    DrUQw8x5OmdSp8+W9Z2m8Y4LJVRrxVp+T1swA=; b=p/nishmghv9s0TyYif+p0l
+    1ZetaSTyANv24CE6Nonc8d6JR5acnrBZMe9gZbV8N7O1/OvwUecDPz8v2HDxsQtj
+    sVltKT0ncbQohtBnPy0L77tuG2AdjGDeV8+7rSuvUy6T+Xw8K/s0bU7MVuvDOG4e
+    OeQgO6mDyjyh8ohcvDvUTZSclR231mcMF1nXhyRy5d+/qSBKGYXKq+dUMSxTazpk
+    yzUiZOTWFEjwr8twzdllpQfDlr+fMvLYsA5HwDxX4we2MDxW8VGuGVPT82hQ95ti
+    Bn5KyGhX0+vY7lp/dctXjf1OZqjDIKRQD60klAE1k1HgdPeLlMGOK5aqxKFyowdQ
     ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=H1+zix33 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eK3wpYer x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=H1+zix33 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eK3wpYer x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,25 +48,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753453AbeBCSG2 (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Feb 2018 13:06:28 -0500
-Received: from mail-bl2nam02on0090.outbound.protection.outlook.com ([104.47.38.90]:50784
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S1753460AbeBCSG3 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Feb 2018 13:06:29 -0500
+Received: from mail-by2nam03on0126.outbound.protection.outlook.com ([104.47.42.126]:45078
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753407AbeBCSFl (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Feb 2018 13:05:41 -0500
+        id S1753056AbeBCSFx (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Feb 2018 13:05:53 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>,
+CC: Yangbo Lu <yangbo.lu@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 21/52] ARM: dts: ls1021a: fix incorrect clock
- references
-Thread-Topic: [PATCH AUTOSEL for 4.9 21/52] ARM: dts: ls1021a: fix incorrect
- clock references
-Thread-Index: AQHTnRlUf/FdAs5SHkG3glcAVplypA==
-Date: Sat, 3 Feb 2018 18:03:45 +0000
-Message-ID: <20180203180303.8490-21-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 52/52] net: gianfar_ptp: move set_fipers() to
+ spinlock protecting area
+Thread-Topic: [PATCH AUTOSEL for 4.9 52/52] net: gianfar_ptp: move
+ set_fipers() to spinlock protecting area
+Thread-Index: AQHTnRlfSAbDwcKBFkqvzshyDDWEjQ==
+Date: Sat, 3 Feb 2018 18:04:01 +0000
+Message-ID: <20180203180303.8490-52-alexander.levin@microsoft.com>
 References: <20180203180303.8490-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180203180303.8490-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -75,94 +76,73 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1091;7:I9EY8DodRNyjB7ehA7+GBkM9IJQRiClO55uFe99K6KsgDzXeFlEOJhgTF4DR/0znoF/8V8yHM6BMqJMtJj7OULYQOpYZDe6EmavO6e5fOKFS/i1oP5ZdmeWM6ayqpVz7xzBdCX/TdAVq9NXgME6Y34Q4fB36ZONKnBDRyGlpS/wUAOoymfoqlH+QOQQhaV+vS9UtoJ+HzsUuYdUoh9rAjHl2VvEV0x5V3Ddco6qe4/sR6MoEgPacFVA2cgCmsF71
+x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1089;7:zzVJjDu1x32ejbZwSMh+uJ9xqhCOxhnwZl3ojaveoyrSLQl4+0euWioYZm1N930nAZPEyApO9+z7FselehIDqkACFHMOvbws/e9FSlnNOSEY7mHgrMErGoUWP16AmoqgVTiWydKb9ZjF3cmOy92QB9iRHMMQAovOXRv9WGTZzMafPEhI96RDoJTv9iSpspW9fmM89Pavj+A1/AJ7k86jKd+tV2qkal+TklH775dcwvEVdIsqgrcr/LF5XO2veNEo
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 08ce9d5e-c85e-4e62-b4d7-08d56b307791
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1091;
-x-ms-traffictypediagnostic: BL0PR2101MB1091:
-x-microsoft-antispam-prvs: <BL0PR2101MB109124D4B1D9C67E01D66C1AFBF80@BL0PR2101MB1091.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL0PR2101MB1091;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1091;
+x-ms-office365-filtering-correlation-id: dd916dbf-68c8-42ad-b941-08d56b30a470
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1089;
+x-ms-traffictypediagnostic: BL0PR2101MB1089:
+x-microsoft-antispam-prvs: <BL0PR2101MB1089421C7F8C6F68D8651431FBF80@BL0PR2101MB1089.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(185117386973197)(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL0PR2101MB1089;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1089;
 x-forefront-prvs: 05724A8921
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(346002)(376002)(366004)(39860400002)(199004)(189003)(86362001)(575784001)(106356001)(22452003)(4326008)(97736004)(25786009)(2950100002)(5660300001)(2906002)(81156014)(105586002)(3280700002)(8676002)(8936002)(6116002)(68736007)(81166006)(3660700001)(86612001)(2900100001)(107886003)(3846002)(102836004)(1076002)(26005)(6346003)(66066001)(10090500001)(76176011)(6506007)(10290500003)(14454004)(186003)(6486002)(59450400001)(6436002)(53936002)(72206003)(7736002)(316002)(305945005)(99286004)(110136005)(54906003)(36756003)(2501003)(5250100002)(6512007)(478600001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1091;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39380400002)(396003)(39860400002)(376002)(366004)(346002)(199004)(189003)(86362001)(106356001)(22452003)(4326008)(97736004)(25786009)(2950100002)(5660300001)(2906002)(81156014)(105586002)(3280700002)(8676002)(8936002)(6116002)(68736007)(81166006)(3660700001)(86612001)(2900100001)(107886003)(3846002)(1076002)(8656006)(102836004)(26005)(6346003)(66066001)(10090500001)(76176011)(6506007)(10290500003)(186003)(6486002)(14454004)(59450400001)(6436002)(53936002)(72206003)(316002)(305945005)(7736002)(99286004)(54906003)(110136005)(36756003)(2501003)(5250100002)(6512007)(478600001)(22906009)(217873001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1089;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-message-info: 3hPypQvL3qS/YnRgZiY2gSIdQUp4xIc8fvMBio3FDC0HevL5WDft8xhPpog+3HZtSrYLV8oIV7IuRHT6+UGdjg==
+x-microsoft-antispam-message-info: wdpncaCMgHu86zmv6xComopAkyZEZ6CCuFvciPsfTEgJUWzmDXACHMYJx1Sm40jDHglZwSz83dpgO6pUGlNmnQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08ce9d5e-c85e-4e62-b4d7-08d56b307791
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:03:45.0339
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd916dbf-68c8-42ad-b941-08d56b30a470
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:04:01.7995
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1091
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1089
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Yangbo Lu <yangbo.lu@nxp.com>
 
-[ Upstream commit 506e8a912661c97b41adc8a286b875d01323ec45 ]
+[ Upstream commit 11d827a993a969c3c6ec56758ff63a44ba19b466 ]
 
-dtc warns about two 'clocks' properties that have an extraneous '1'
-at the end:
+set_fipers() calling should be protected by spinlock in
+case that any interrupt breaks related registers setting
+and the function we expect. This patch is to move set_fipers()
+to spinlock protecting area in ptp_gianfar_adjtime().
 
-arch/arm/boot/dts/ls1021a-qds.dtb: Warning (clocks_property): arch/arm/boot=
-/dts/ls1021a-twr.dtb: Warning (clocks_property): Property 'clocks', cell 1 =
-is not a phandle reference in /soc/i2c@2180000/mux@77/i2c@4/sgtl5000@2a
-arch/arm/boot/dts/ls1021a-qds.dtb: Warning (clocks_property): Missing prope=
-rty '#clock-cells' in node /soc/interrupt-controller@1400000 or bad phandle=
- (referred from /soc/i2c@2180000/mux@77/i2c@4/sgtl5000@2a:clocks[1])
-Property 'clocks', cell 1 is not a phandle reference in /soc/i2c@2190000/sg=
-tl5000@a
-arch/arm/boot/dts/ls1021a-twr.dtb: Warning (clocks_property): Missing prope=
-rty '#clock-cells' in node /soc/interrupt-controller@1400000 or bad phandle=
- (referred from /soc/i2c@2190000/sgtl5000@a:clocks[1])
-
-The clocks that get referenced here are fixed-rate, so they do not
-take any argument, and dtc interprets the next cell as a phandle, which
-is invalid.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/arm/boot/dts/ls1021a-qds.dts | 2 +-
- arch/arm/boot/dts/ls1021a-twr.dts | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/freescale/gianfar_ptp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/ls1021a-qds.dts b/arch/arm/boot/dts/ls1021a-=
-qds.dts
-index 940875316d0f..67b4de0e3439 100644
---- a/arch/arm/boot/dts/ls1021a-qds.dts
-+++ b/arch/arm/boot/dts/ls1021a-qds.dts
-@@ -215,7 +215,7 @@
- 				reg =3D <0x2a>;
- 				VDDA-supply =3D <&reg_3p3v>;
- 				VDDIO-supply =3D <&reg_3p3v>;
--				clocks =3D <&sys_mclk 1>;
-+				clocks =3D <&sys_mclk>;
- 			};
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/ls1021a-twr.dts b/arch/arm/boot/dts/ls1021a-=
-twr.dts
-index a8b148ad1dd2..44715c8ef756 100644
---- a/arch/arm/boot/dts/ls1021a-twr.dts
-+++ b/arch/arm/boot/dts/ls1021a-twr.dts
-@@ -187,7 +187,7 @@
- 		reg =3D <0x0a>;
- 		VDDA-supply =3D <&reg_3p3v>;
- 		VDDIO-supply =3D <&reg_3p3v>;
--		clocks =3D <&sys_mclk 1>;
-+		clocks =3D <&sys_mclk>;
- 	};
- };
+diff --git a/drivers/net/ethernet/freescale/gianfar_ptp.c b/drivers/net/eth=
+ernet/freescale/gianfar_ptp.c
+index 57798814160d..ec4b6997f24a 100644
+--- a/drivers/net/ethernet/freescale/gianfar_ptp.c
++++ b/drivers/net/ethernet/freescale/gianfar_ptp.c
+@@ -314,11 +314,10 @@ static int ptp_gianfar_adjtime(struct ptp_clock_info =
+*ptp, s64 delta)
+ 	now =3D tmr_cnt_read(etsects);
+ 	now +=3D delta;
+ 	tmr_cnt_write(etsects, now);
++	set_fipers(etsects);
+=20
+ 	spin_unlock_irqrestore(&etsects->lock, flags);
+=20
+-	set_fipers(etsects);
+-
+ 	return 0;
+ }
 =20
 --=20
 2.11.0
