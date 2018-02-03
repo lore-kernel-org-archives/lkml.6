@@ -1,114 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752750AbeBCRDr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 12:03:47 -0500
-Received: from mail.efficios.com ([167.114.142.141]:33178 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752483AbeBCRDf (ORCPT
+        id S1752665AbeBCRIg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 12:08:36 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:57546 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752026AbeBCRI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 12:03:35 -0500
-Date: Sat, 3 Feb 2018 17:04:14 +0000 (UTC)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: rostedt <rostedt@goodmis.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        linux-trace-users <linux-trace-users@vger.kernel.org>,
-        acme <acme@kernel.org>, Clark Williams <williams@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, bristot <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Message-ID: <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180202230458.840252014@goodmis.org>
-References: <20180202230458.840252014@goodmis.org>
-Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
- events
+        Sat, 3 Feb 2018 12:08:27 -0500
+Subject: Re: [PATCH] xen: hypercall: fix out-of-bounds memcpy
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Juergen Gross <jgross@suse.com>, Nicolas Pitre <nico@linaro.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jan Beulich <jbeulich@suse.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180202153240.1190361-1-arnd@arndb.de>
+ <aa6e25c7-dc55-a5bf-39cb-8b9453604111@oracle.com>
+ <CAK8P3a2AdziKXR=4LwMzUdoL2q2WXYZZz1uM9yh6VX2FbpqnnA@mail.gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <1e3424f4-771b-51ad-3630-0faf47e388e0@oracle.com>
+Date: Sat, 3 Feb 2018 12:08:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAK8P3a2AdziKXR=4LwMzUdoL2q2WXYZZz1uM9yh6VX2FbpqnnA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.141]
-X-Mailer: Zimbra 8.7.11_GA_1854 (ZimbraWebClient - FF52 (Linux)/8.7.11_GA_1854)
-Thread-Topic: Dynamically created function based events
-Thread-Index: fPL43jEnYN/EOpqM6KhztwoU79a2+A==
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8794 signatures=668662
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802030229
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 2, 2018, at 6:04 PM, rostedt rostedt@goodmis.org wrote:
 
-> At Kernel Summit back in October, we tried to bring up trace markers, which
-> would be nops within the kernel proper, that would allow modules to hook
-> arbitrary trace events to them. The reaction to this proposal was less than
-> favorable. We were told that we were trying to make a work around for a
-> problem, and not solving it. The problem in our minds is the notion of a
-> "stable trace event".
+
+On 02/03/2018 10:12 AM, Arnd Bergmann wrote:
+> On Sat, Feb 3, 2018 at 12:33 AM, Boris Ostrovsky
+> <boris.ostrovsky@oracle.com> wrote:
+>> On 02/02/2018 10:32 AM, Arnd Bergmann wrote:
+>>> The legacy hypercall handlers were originally added with
+>>> a comment explaining that "copying the argument structures in
+>>> HYPERVISOR_event_channel_op() and HYPERVISOR_physdev_op() into the local
+>>> variable is sufficiently safe" and only made sure to not write
+>>> past the end of the argument structure, the checks in linux/string.h
+>>> disagree with that, when link-time optimizations are used:
+>>>
+>>> In function 'memcpy',
+>>>      inlined from 'pirq_query_unmask' at drivers/xen/fallback.c:53:2,
+>>>      inlined from '__startup_pirq' at drivers/xen/events/events_base.c:529:2,
+>>>      inlined from 'restore_pirqs' at drivers/xen/events/events_base.c:1439:3,
+>>>      inlined from 'xen_irq_resume' at drivers/xen/events/events_base.c:1581:2:
+>>> include/linux/string.h:350:3: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
+>>>     __read_overflow2();
+>>>     ^
+>>> make[3]: *** [ccLujFNx.ltrans15.ltrans.o] Error 1
+>>> make[3]: Target 'all' not remade because of errors.
+>>> lto-wrapper: fatal error: make returned 2 exit status
+>>> compilation terminated.
+>>> ld: error: lto-wrapper failed
+>>>
+>>> This changes the functions so that each argument is accessed with
+>>> exactly the correct length based on the command code.
+>>>
+>>> Fixes: cf47a83fb06e ("xen/hypercall: fix hypercall fallback code for very old hypervisors")
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>> ---
+>>>   drivers/xen/fallback.c | 94 ++++++++++++++++++++++++++++----------------------
+>>>   1 file changed, 53 insertions(+), 41 deletions(-)
+>>>
 > 
-> There are maintainers that do not want trace events, or more trace events in
-> their subsystems. This is due to the fact that trace events post an
-> interface to user space, and this interface could become required by some
-> tool. This may cause the trace event to become stable where it must not
-> break the tool, and thus prevent the code from changing.
+>>>        default:
+>>> -             WARN_ON(rc != -ENOSYS);
+>>> -             break;
+>>> +             return -ENOSYS;
+>>>        }
+>>>
+>>> +     memcpy(&op.u, arg, len);
+>>> +     rc = _hypercall1(int, event_channel_op_compat, &op);
+>>> +     memcpy(arg, &op.u, len);
+>>
+>>
+>> We don't copy back for all commands, only those that are COPY_BACK.
 > 
-> Or, the trace event may just have to add padding for fields that tools
-> may require. The "success" field of the sched_wakeup trace event is one such
-> instance. There is no more "success" variable, but tools may fail if it were
-> to go away, so a "1" is simply added to the trace event wasting ring buffer
-> real estate.
-> 
-> I talked with Linus about this, and he told me that we already have these
-> markers in the kernel. They are from the mcount/__fentry__ used by function
-> tracing. Have the trace events be created by these, and see if this will
-> satisfy most areas that want trace events.
+> Not sure what you mean. Is it harmful to copy back the data for the others
+> in any way? Otherwise I wouldn't micro-optimize this.
 
-The approach proposed here will introduce an expectation that internal
-function signatures never change in the kernel, else it would break user-space
-tools hooking on those functions.
 
-The instrumentation infrastructure provided by this patchset might be useful
-for "one off" scripts, but it does not address the "stable instrumentation"
-expectations issue.
+I should have checked the original commit for fallback.c --- the code 
+that it replaced was doing copybacks for all hypercalls and selective 
+copybacks is an optimization introduced in that commit.
 
-The problem today is caused by widely used trace analysis tools that cannot
-cope with changes to the kernel instrumentation, do not report the
-instrumentation mismatch compared to their expectations, and we generally
-don't expect users to ever update those tools to deal with newer kernels. Having
-those tools hook on function names/arguments will not make this magically go
-away. As soon as kernel code changes, widely used trace analysis tools will
-start breaking left and right, and we will be back to square one. Only this time,
-it's the internal function signature which will have become an ABI.
-
-A possible solution to this problem appears if we start considering trace
-analysis tools as just that: "tooling", with the following properties:
-
-1) Tools need to validate that the instrumentation provided matches their
-   expectations. This can be done by checking event/field names and/or version.
-   Tools that fail to do that should be fixed.
-
-2) Tools need to report to the user when the instrumentation does not match
-   their expectations, and hint users to upgrade in order to deal with change.
-
-3) Tools need to be backward compatible with respect to instrumentation: a
-   user switching between older and newer kernels should not have to keep
-   various copies of their tooling stack (graphical UI, analysis scripts,
-   and so on).
-
-If our goal is really to address this "stable instrumentation" issue, I don't
-think hooking on functions helps in any way. I hope we can work on defining
-instrumentation interface rules in order to deal with the fundamental problem
-of requiring tooling to adapt to kernel changes.
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+-boris
