@@ -1,74 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753982AbeBCVUc (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 16:20:32 -0500
-Received: from mout.web.de ([212.227.17.12]:53391 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752489AbeBCVUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 16:20:24 -0500
-To: linux-input@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] HID: magicmouse: Delete an error message for a failed memory
- allocation in magicmouse_probe()
-Message-ID: <79c01fa9-647c-5c34-41cc-3bc9c09f38ee@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 22:20:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754052AbeBCVa0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 16:30:26 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37000 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753981AbeBCVaU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 16:30:20 -0500
+X-Google-Smtp-Source: AH8x224s4dcer9+Aza5pZGXcIZ5YTz7IV0x7wARjEKaplFcxIkjA6+TZMKCQxfCIxx6zxquyvppntw==
+Date: Sat, 3 Feb 2018 13:30:15 -0800
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        linux-trace-users <linux-trace-users@vger.kernel.org>,
+        acme <acme@kernel.org>, Clark Williams <williams@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, bristot <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
+ events
+Message-ID: <20180203213013.b6png725tcehqai3@ast-mbp>
+References: <20180202230458.840252014@goodmis.org>
+ <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
+ <20180203140217.2382df69@gandalf.local.home>
+ <20180203205207.mpob4w6eyehhg2ky@ast-mbp>
+ <20180203160824.42a6c1bb@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:s7yU8BNNUdGmgrsluPiOw/y5NXmEr5IKfh1BJlSIte16WAManMx
- sC0LFeiEyhRpAZI4xMnGPFeAO0zH7JyjX4aT/jiC7/h0uFt64n+HokOI/sYbK1IPL2CKnOz
- TYEMWhbodoDlhZ/dQMQwlQi4L//pRJkqHHwCVjL9cJPV9e6runkpfvU1KxueLI6NwooFoee
- vwc4yk5bxQZ60SULCo3Kg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ldjAtSBVzs0=:wsYHt9zav2dfFzZD1j59bn
- AxxA6XoRlEB7N+EOrb6cTW/YCcWzC4biFlyA/2dupsa0h0FBPEo3E1NR/Y4KY2Nxl6VwY96ZG
- ZKhnUmCP85pA1WdtCJ2SB56ks8AA2bzITp1G63900iDwcM1azA+wlsnYoQMKwvM8AemkM0cQE
- 4AqJL5azJsDkOvnvkw6SmnEn2Xoy5avMuDxiRirFkKzFU1icatAgKkKgszZBLEICz+cTbrgu8
- FFn9+Z+NzCtWbvb6x4m7zcbjkAoGS4ASMpzoPTIdl91YwwgtqUJgp+6I0wXmIk6p3GOmyZx8C
- FQ11CIS6G/AnpWdpPW9PpUaxZSD9YM3C4A9HOHR3ltNWnv/eNcX7iBhNHCA4e5reNoewsH6OL
- RvjtetbF7P1UV2r6bg48tU+tazG6u6xxJSTyffL/NlKTWPzymFNVFf41dFYU3zv1FTOmjoH0P
- YVGAF2mbS44FVFDbMfg5b3VkO8kweJt/oR9htdAF8XJL90TUyIvMmgl1/C3Q9Q1MDKYXo+mTC
- LGOi93kSq6l1ebTPzF+eoAwik0zsoetPPeI+ALTHFBhOfDH/86sDSxJKG/82V1U8kI0oP9bZA
- 86h360iPJgjAJ/wkzSc9mnC9aUnzLH4SWoRM5esqLVcKCthdxCsEP5GczPDLZkBlKLEzpmn0W
- YeyFgK7KwGoP+h5iPhjDwosykB2ohgQcqkgQnku1fpnwZw6ebx800B8mbIJVaUSoo1O06QKXz
- CX9hlyWSdKysgGHtS9FaSC7yIQzzC+THL5hzZTJbX/do/x2/x+1C7bQERZYfyguqc/RTOAIV3
- yf4YQY78QQYJmNftVav552cPFCKDEwuFxwcbfe8BtmdVccNxRY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180203160824.42a6c1bb@gandalf.local.home>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 22:15:05 +0100
+On Sat, Feb 03, 2018 at 04:08:24PM -0500, Steven Rostedt wrote:
+> On Sat, 3 Feb 2018 12:52:08 -0800
+> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> 
+> > On Sat, Feb 03, 2018 at 02:02:17PM -0500, Steven Rostedt wrote:
+> > > 
+> > > From those that were asking about having "trace markers" (ie.
+> > > Facebook), they told us they can cope with kernel changes.  
+> > 
+> > There is some misunderstanding here.
+> > We never asked for this interface.
+> 
+> But you wanted trace markers? Just to confirm.
 
-Omit an extra message for a memory allocation failure in this function.
+what is a definition of 'trace marker' and how it's better than tracepoint?
 
-This issue was detected by using the Coccinelle software.
+> > We're perfectly fine with existing kprobe/tracepoint+bpf.
+> 
+> OK, so no new development in this was wanted? So the entire talk about
+> getting tracepoints into vfs and scheduling wasn't needed?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hid/hid-magicmouse.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I don't know who wants tracepoints in vfs.
+Improving scheduler tracepoints? yes. definitely,
+but it's not a technical problem and cannot be solved by technical means.
 
-diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
-index 42ed887ba0be..8d17a812c5ba 100644
---- a/drivers/hid/hid-magicmouse.c
-+++ b/drivers/hid/hid-magicmouse.c
-@@ -501,10 +501,8 @@ static int magicmouse_probe(struct hid_device *hdev,
- 	int ret;
- 
- 	msc = devm_kzalloc(&hdev->dev, sizeof(*msc), GFP_KERNEL);
--	if (msc == NULL) {
--		hid_err(hdev, "can't alloc magicmouse descriptor\n");
-+	if (!msc)
- 		return -ENOMEM;
--	}
- 
- 	msc->scroll_accel = SCROLL_ACCEL_DEFAULT;
- 
--- 
-2.16.1
+> > I don't see how they are any better than kprobes and suffer from the same issues.
+> 
+> One only needs to look at source code, to add these. You don't need to
+> know the specifics of a registers and such. That's a big +. Sure, we
+> could add this to kprobes as well. But this also doesn't need the
+> kprobe infrastructure.
+
+same goes for kprobes.
+with bcc it's even easier. we write tools like:
+int kprobe__inet_listen(struct pt_regs *ctx, struct socket *sock, int backlog)
+{ 
+  struct sock *sk = sock->sk;
+  ...
+and bcc knows that it needs to add kprobe to inet_listen()
+and this function has two arguments of the given types.
+Then sock->sk access is automatically replaced with bpf_probe_read, etc, etc.
+
+> Not if you are working in the embedded space and only have busybox as
+> your interface.
+
+did you notice bpfd project that does remote kprobe+bpf into an android phone?
+or phone is not an embedded space?
+
+> I've already cleaned up several tracepoints that have no path to them.
+
+Great. So you're making the same point as I do that tracepoints can and do change.
