@@ -1,60 +1,78 @@
-Return-Path: <prvs=5630c6a94=karahmed@amazon.com>
-X-Google-Smtp-Source: AH8x224Xg5X/WVhiXU1GwbiLX+1KLzX+nb+Y50uuKTjNUxQ+rcMAdkvGc0jP6mlIK8Vs7drOWVYk
-ARC-Seal: i=1; a=rsa-sha256; t=1517522411; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AH8x227d+q4gzZDTsmWzfwvxUIPl2DMFmxikFhvsvnNH8Yle6uRBzVm+ADkW+q4jw+exnWPGNwxe
+ARC-Seal: i=1; a=rsa-sha256; t=1517698498; cv=none;
         d=google.com; s=arc-20160816;
-        b=fSx8sitiH+HnJIVqlgFTNF/RBZ0G29qGaY1zByQFmspPzk+Xy8z7OZw3WSfUwCdOVZ
-         2/Kcy6nN6stDrfGuODhfSY3j+eRLLL4te0scImmr4+pzLb7KXHsfhaWVVUF7YWotFy5F
-         UoPi0CnFBcx/xa88WiWVUEIsu5FoEvUJQcn1j4YQg/DuBGKjQnevuIPJpQF0v/mf3d7v
-         j+WELof+FS1uZeBTwZVnp6FrL3y1jgUAkergQ6VgOCpLWq+5de3fsaWcdwc5H/FDHHTO
-         I+t3nReK73gC4Uqk9z5EfdtWb+OYAwtlM5yPAgtXq25f07Z3QQc5ojS5A08HrjYqi8aF
-         3M+A==
+        b=xSx6wgr7QKpZ5IAKEE9F9bnOJG02pvUU3GUa6UJdelImNylziSeSDcBVBVAN78YNhp
+         SVVvumunR1NH9PdQaeG5Yn2bfc4gmlqmDA9hW6VOKShqD6Rdd+roBAWIeiO8Slbk5Dem
+         We6RX6YDyiq0CmOHlEpbXIXYNDZIHWQqpWyQn/9FELEvBraTn5rd3BgFP2tr1xRIwuCr
+         eX0DP0GMP6M8EG8gycvXZouZGpqPgS6+o4i9aBnTh9Ua22hy9pgsvuau1YIZiYdziJLZ
+         vfClF0PRMNO94eGfCRU8ySOgTDY/OoxKf9vOcRRpB9YQG9rsOPvIBbZaW1I61sVA5IIT
+         S8MA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=EZ2GJW0AbChc6Wq/uCEcmgxU+i+doNcCvL15ZM/Y31I=;
-        b=U2ncRmoHVID5TQfEJ74Wgrd3EgAtP09+f1czWPB7N3/sJlNzaLIMGVR17A4449l9dG
-         Vv0yAa2tA4gNK2AuwlUiCnmQogyO7RluXOH2DSvVoeqBh52rWaBqRXtd89ECLw0j1WiY
-         FYrOjIGo1Ln6mVgLu3B7aMGC6ks0gnZAM8XVM04JZNUUZW+7JEL2+lVZ+09eW8grtG3w
-         qjRpROzcgOMWOoOULyU5Q9o8kXCUVxX76ls3grrOJJu8Nx/9fDHmf5woT/uS1xfgkF4Z
-         GKDGvg1QEHi2Q5kj2mOwgyDPId+vuNASNnh611Ynev0Wt3kpMX5DyCCmiAQLPkQ7KGqi
-         sdtg==
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+         :arc-authentication-results;
+        bh=SzJc+NY3CpiRnhK9mXIsdLNK35xHGtDR4zzpxMoISx4=;
+        b=OwRNOj7w6MMZuwxtOdUurhAf0ia94WbFJ4WUBgbhVLljs0fY4kiShPjCo+fY3gz+vZ
+         MEGOhThpqEvSYWvbbQKJufjqxNkl9jHh7+jBkpNC0A6JWtW+Us0e+wQ1BeUGWE268lcU
+         Wul5S+1CLSH3w4GkmykLnKxL4XPClc2agDyBuAXxqNrStFn7HHE6ihQe1pjbXN0pj5Mn
+         rKtsHgz5WF9DhLCdjOHq1hDM5ojWC4XO0s8u90xVg8xI03vlWIPaGxlNlA/u78ggzJOw
+         FqRD+ShmAGhqquG7Q6HsJTCmzbu0dw1X8v7kTuCMpNLa0xVCaGdt4GsN1Gdac/OaDaCo
+         pXEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@amazon.de header.s=amazon201209 header.b=KxhGPxAX;
-       spf=pass (google.com: domain of prvs=5630c6a94=karahmed@amazon.com designates 52.95.49.90 as permitted sender) smtp.mailfrom=prvs=5630c6a94=karahmed@amazon.com;
-       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=amazon.de
+       spf=pass (google.com: domain of tipbot@zytor.com designates 65.50.211.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@amazon.de header.s=amazon201209 header.b=KxhGPxAX;
-       spf=pass (google.com: domain of prvs=5630c6a94=karahmed@amazon.com designates 52.95.49.90 as permitted sender) smtp.mailfrom=prvs=5630c6a94=karahmed@amazon.com;
-       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=amazon.de
-X-IronPort-AV: E=Sophos;i="5.46,444,1511827200";
-   d="scan'208";a="330212994"
-From: KarimAllah Ahmed <karahmed@amazon.de>
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: KarimAllah Ahmed <karahmed@amazon.de>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, Andi Kleen <ak@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Ashok Raj <ashok.raj@intel.com>
-Subject: [PATCH v6 4/5] KVM: VMX: Allow direct access to MSR_IA32_SPEC_CTRL
-Date: Thu,  1 Feb 2018 22:59:45 +0100
-Message-Id: <1517522386-18410-5-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517522386-18410-1-git-send-email-karahmed@amazon.de>
-References: <1517522386-18410-1-git-send-email-karahmed@amazon.de>
+       spf=pass (google.com: domain of tipbot@zytor.com designates 65.50.211.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Sat, 3 Feb 2018 14:51:47 -0800
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for KarimAllah Ahmed <tipbot@zytor.com>
+Message-ID: <tip-d28b387fb74da95d69d2615732f50cceb38e9a4d@git.kernel.org>
+Cc: dave.hansen@intel.com, ak@linux.intel.com, ashok.raj@intel.com,
+        darren.kenny@oracle.com, pbonzini@redhat.com,
+        torvalds@linux-foundation.org, konrad.wilk@oracle.com,
+        dwmw@amazon.co.uk, jun.nakajima@intel.com, dan.j.williams@intel.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        arjan.van.de.ven@intel.com, tglx@linutronix.de,
+        gregkh@linuxfoundation.org, jmattson@google.com, karahmed@amazon.de,
+        luto@kernel.org, asit.k.mallick@intel.com, hpa@zytor.com,
+        aarcange@redhat.com, tim.c.chen@linux.intel.com
+Reply-To: tim.c.chen@linux.intel.com, aarcange@redhat.com, jmattson@google.com,
+        luto@kernel.org, karahmed@amazon.de, asit.k.mallick@intel.com,
+        hpa@zytor.com, arjan.van.de.ven@intel.com, tglx@linutronix.de,
+        gregkh@linuxfoundation.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        torvalds@linux-foundation.org, konrad.wilk@oracle.com,
+        jun.nakajima@intel.com, dwmw@amazon.co.uk, ak@linux.intel.com,
+        ashok.raj@intel.com, darren.kenny@oracle.com, pbonzini@redhat.com,
+        dave.hansen@intel.com
+In-Reply-To: <1517522386-18410-5-git-send-email-karahmed@amazon.de>
+References: <1517522386-18410-5-git-send-email-karahmed@amazon.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
+Git-Commit-ID: d28b387fb74da95d69d2615732f50cceb38e9a4d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591237580461918240?=
-X-GMAIL-MSGID: =?utf-8?q?1591237580461918240?=
+X-GMAIL-THRID: =?utf-8?q?1591422220389385539?=
+X-GMAIL-MSGID: =?utf-8?q?1591422220389385539?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+Commit-ID:  d28b387fb74da95d69d2615732f50cceb38e9a4d
+Gitweb:     https://git.kernel.org/tip/d28b387fb74da95d69d2615732f50cceb38e9a4d
+Author:     KarimAllah Ahmed <karahmed@amazon.de>
+AuthorDate: Thu, 1 Feb 2018 22:59:45 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 3 Feb 2018 23:06:52 +0100
+
+KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
 
 [ Based on a patch from Ashok Raj <ashok.raj@intel.com> ]
 
@@ -72,44 +90,28 @@ if we don't want to pass it through directly to the guest.
 
 [dwmw2: Clean up CPUID bits, save/restore manually, handle reset]
 
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Jun Nakajima <jun.nakajima@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
-v6:
-- got rid of save_spec_ctrl_on_exit
-- introduce msr_write_intercepted
-v5:
-- Also check for X86_FEATURE_SPEC_CTRL for the msr reads/writes
-v4:
-- Add IBRS to kvm_cpuid_8000_0008_ebx_x86_features
-- Handling nested guests
-v3:
-- Save/restore manually
-- Fix CPUID handling
-- Fix a copy & paste error in the name of SPEC_CTRL MSR in
-  disable_intercept.
-- support !cpu_has_vmx_msr_bitmap()
-v2:
-- remove 'host_spec_ctrl' in favor of only a comment (dwmw@).
-- special case writing '0' in SPEC_CTRL to avoid confusing live-migration
-  when the instance never used the MSR (dwmw@).
-- depend on X86_FEATURE_IBRS instead of X86_FEATURE_SPEC_CTRL (dwmw@).
-- add MSR_IA32_SPEC_CTRL to the list of MSRs to save (dropped it by accident).
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: kvm@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Link: https://lkml.kernel.org/r/1517522386-18410-5-git-send-email-karahmed@amazon.de
+
 ---
  arch/x86/kvm/cpuid.c |   9 +++--
  arch/x86/kvm/vmx.c   | 105 ++++++++++++++++++++++++++++++++++++++++++++++++++-
@@ -153,10 +155,10 @@ index 1909635..13f5d42 100644
  		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
  		break;
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index b13314a..5d8a6a91 100644
+index e5f75eb..bee4c49 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -594,6 +594,7 @@ struct vcpu_vmx {
+@@ -595,6 +595,7 @@ struct vcpu_vmx {
  #endif
  
  	u64 		      arch_capabilities;
@@ -164,7 +166,7 @@ index b13314a..5d8a6a91 100644
  
  	u32 vm_entry_controls_shadow;
  	u32 vm_exit_controls_shadow;
-@@ -1913,6 +1914,29 @@ static void update_exception_bitmap(struct kvm_vcpu *vcpu)
+@@ -1911,6 +1912,29 @@ static void update_exception_bitmap(struct kvm_vcpu *vcpu)
  }
  
  /*
@@ -194,7 +196,7 @@ index b13314a..5d8a6a91 100644
   * Check if MSR is intercepted for L01 MSR bitmap.
   */
  static bool msr_write_intercepted_l01(struct kvm_vcpu *vcpu, u32 msr)
-@@ -3264,6 +3288,14 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+@@ -3262,6 +3286,14 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
  	case MSR_IA32_TSC:
  		msr_info->data = guest_read_tsc(vcpu);
  		break;
@@ -209,7 +211,7 @@ index b13314a..5d8a6a91 100644
  	case MSR_IA32_ARCH_CAPABILITIES:
  		if (!msr_info->host_initiated &&
  		    !guest_cpuid_has(vcpu, X86_FEATURE_ARCH_CAPABILITIES))
-@@ -3377,6 +3409,37 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+@@ -3375,6 +3407,37 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
  	case MSR_IA32_TSC:
  		kvm_write_tsc(vcpu, msr_info);
  		break;
@@ -247,7 +249,7 @@ index b13314a..5d8a6a91 100644
  	case MSR_IA32_PRED_CMD:
  		if (!msr_info->host_initiated &&
  		    !guest_cpuid_has(vcpu, X86_FEATURE_IBPB) &&
-@@ -5702,6 +5765,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+@@ -5700,6 +5763,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
  	u64 cr0;
  
  	vmx->rmode.vm86_active = 0;
@@ -255,7 +257,7 @@ index b13314a..5d8a6a91 100644
  
  	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
  	kvm_set_cr8(vcpu, 0);
-@@ -9373,6 +9437,15 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+@@ -9371,6 +9435,15 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
  
  	vmx_arm_hv_timer(vcpu);
  
@@ -271,7 +273,7 @@ index b13314a..5d8a6a91 100644
  	vmx->__launched = vmx->loaded_vmcs->launched;
  	asm(
  		/* Store host registers */
-@@ -9491,6 +9564,27 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+@@ -9489,6 +9562,27 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
  #endif
  	      );
  
@@ -299,7 +301,7 @@ index b13314a..5d8a6a91 100644
  	/* Eliminate branch target predictions from guest mode */
  	vmexit_fill_RSB();
  
-@@ -10115,7 +10209,7 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
+@@ -10113,7 +10207,7 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
  	unsigned long *msr_bitmap_l1;
  	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
  	/*
@@ -308,7 +310,7 @@ index b13314a..5d8a6a91 100644
  	 *
  	 * 1. L0 gave a permission to L1 to actually passthrough the MSR. This
  	 *    ensures that we do not accidentally generate an L02 MSR bitmap
-@@ -10128,9 +10222,10 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
+@@ -10126,9 +10220,10 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
  	 *    the MSR.
  	 */
  	bool pred_cmd = msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
@@ -320,7 +322,7 @@ index b13314a..5d8a6a91 100644
  		return false;
  
  	page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->msr_bitmap);
-@@ -10164,6 +10259,12 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
+@@ -10162,6 +10257,12 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
  		}
  	}
  
@@ -346,5 +348,3 @@ index 4ec142e..ac38143 100644
  };
  
  static unsigned num_msrs_to_save;
--- 
-2.7.4
