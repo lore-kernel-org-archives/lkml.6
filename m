@@ -1,784 +1,171 @@
-Return-Path: <kernel-hardening-return-11563-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x225RrSVwJYoMcD592DvG2KD4zooLRnM44uE3w+a+XZ+URoadS//WIaDV7mHubR7bB7jtQQzU
-ARC-Seal: i=1; a=rsa-sha256; t=1517687038; cv=none;
-        d=google.com; s=arc-20160816;
-        b=EMI3llHwH8uKft22B9kHBC3PSPHK2ZVo0gL/KaRDtZL6D7OZeFvccr3caNIeIByXEw
-         SVz36Rv+6zzKIeiiMAA+gJjo6o+WysXIkLUoRyqihJH7OkPXunphfN3tSGQEAXAq8rzO
-         5ltcAPpDgP8CYyS8CU2xyby9fNe3lY3g1IXgI1iXoioekgT7qee5QMCBCanCXt/zo36y
-         +e6HpWbHXK45SmVJZX8sPqznNkhQblx/taKyaT1K7+fwMsEYudyxiZ/Uhh7M0GJJiY0r
-         NZa0nznttastQVks9LvS09Ckb/EfuSJps42ib02qiioeAIsbafr28WK8J6EMkf3YCG5H
-         ad1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=tuC0qV1SYOXNAkBnGqJoKweem1SKjTIqOG/vg+L/Je4=;
-        b=HivKcUIrliUEVxhrRZOwINCxW7Kx+43JjJztQIG59/4IXE37gJKyvXjSpq7sPRpdAJ
-         6ijB3T9bfPpA0Ll+LDfzEtuXKaQby1khJdJ6vRJMQEsD1raaDnPRdmAJVXIywpyh+CRt
-         MARH+PzO5wx//Hf1Umy3TMzpNMuVyIDdH8Kh/FFUotgddZOTywZBhnaUEfbICF5uleV5
-         kBchaxZRhg8XBwBg83txKFzp/HYR9fY7hbePT2ixuIC2L87nLR8n9362jHlO+XCTLscO
-         plswqDbMx+bo++z4HicecA80ZcafYKTR4C/ky2c6RgZ+FKIPwXyUaj/LX7ybMQ2BAeZb
-         kmKQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11563-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11563-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11563-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11563-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Igor Stoppa <igor.stoppa@huawei.com>
-To: <jglisse@redhat.com>, <keescook@chromium.org>, <mhocko@kernel.org>,
-	<labbott@redhat.com>, <hch@infradead.org>, <willy@infradead.org>
-CC: <cl@linux.com>, <linux-security-module@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
-Subject: [PATCH 1/6] genalloc: track beginning of allocations
-Date: Sat, 3 Feb 2018 21:42:53 +0200
-Message-ID: <20180203194258.28454-2-igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.9.3
-In-Reply-To: <20180203194258.28454-1-igor.stoppa@huawei.com>
-References: <20180203194258.28454-1-igor.stoppa@huawei.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1576849-1517682850-2-7051523176948020851
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517682850; b=W0oLz0tqScdlTGXaMHicSo8ts0kDM7nSxTnl1k2dMItX6PG
+    7wzJ67v4a2hTCp3ubtvQIP+krziKZyy048KClqof8o4v1jAfV1uyeGvfgqFjoN3K
+    diMKQTfD2dSOz0IzImlGuzPN70a5iu9SacR529ZHviw/06ygaLKr+Q4HjxJ2DTCH
+    l5yzEVB2adiE3MWbIyaBbAz5ym0cgRHyI1ob1lAooYaoPLN5NIa5DiOBDMpBxbJJ
+    QCMl0nk4MPP7I80pCQDDXbWfvIdY/oFNCdQkoGe8j4Gwq/INWZcJwthMpsrTmcMm
+    I5BN+8+68nl0dfz+5VimLrxgtFWlma/FH5VblTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :content-type:content-transfer-encoding:mime-version:sender
+    :list-id; s=arctest; t=1517682850; bh=IX8QpeT4iIJ+RW6Dya+PUuqkki
+    QQdzRDH0RGEi3pFuQ=; b=Fy9b9/MYLyYAMIMUfLTqYO20RCleUq9xqtKlMyFyDd
+    j8cf6GlXPkEVIYTfooX3ssE8fc27b94xqjp9c/7Cg0roRLpXFZiqXHN/T7CKvwAO
+    ICjYh7yyAGGSMdTQXi7NMdsXw58sXNmp3aPUnMfvyBnd5mOCUprn8J9Hbve5lUTR
+    MXcwWVCibgfzfELlZeNsz1cEtnEwjZKuFtY7G2MxR71i+O9M84AjJHdFseF+ShrO
+    r9Lmc1UTLb8gUlRyZ11iY2va8R0RWnlVnwgGCmigMm7z2rtrASqKB+K+pEX8wkd8
+    sJ1pij7H3ZkXzKD0XU/kZX3DlT0xWxpHn5D0SJ5WIv5A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=RkXPhQGS x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=RkXPhQGS x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754182AbeBCS1q (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Feb 2018 13:27:46 -0500
+Received: from mail-bl2nam02on0132.outbound.protection.outlook.com ([104.47.38.132]:63252
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753291AbeBCSGA (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Feb 2018 13:06:00 -0500
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Sascha Hauer <s.hauer@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 01/32] mtd: nand: gpmi: Fix failure when a
+ erased page has a bitflip at BBM
+Thread-Topic: [PATCH AUTOSEL for 4.4 01/32] mtd: nand: gpmi: Fix failure when
+ a erased page has a bitflip at BBM
+Thread-Index: AQHTnRlsFmK/y1a50UG/2sWBpUjJVg==
+Date: Sat, 3 Feb 2018 18:04:24 +0000
+Message-ID: <20180203180413.7438-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1089;7:fBwIsxKcKL6nsYRoLGjJp5CZvLHDCaUhATFOqDl9rbMdHhIjms4qBzL2a+FizIN0aMX/cLsWl3ltxJXB5rYL0vBAWKzE7MIBmX0n58iNfAa8oGB6UC3ZMC3HDcTr9cL4cahb/lBWbxcG07B9cTru/NjkPtszxVNTwpISOcnTERLbqst1WtUwJEGn4/SY0GEpqTkHv4r/tQsbNSGS/waTcCg+VJ74a4vYC4BkdSW/u1z/OmYqkfO5iLqeHA81EnHx
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 86afea67-0b8a-4ba1-dd7b-08d56b30a4b5
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1089;
+x-ms-traffictypediagnostic: BL0PR2101MB1089:
+x-microsoft-antispam-prvs: <BL0PR2101MB10896C0A2A976D5A6A52622BFBF80@BL0PR2101MB1089.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(58145275503218);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL0PR2101MB1089;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1089;
+x-forefront-prvs: 05724A8921
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(39860400002)(376002)(366004)(346002)(199004)(189003)(86362001)(575784001)(106356001)(22452003)(4326008)(97736004)(25786009)(6666003)(5660300001)(2906002)(81156014)(105586002)(3280700002)(8676002)(8936002)(6116002)(68736007)(81166006)(3660700001)(86612001)(2900100001)(107886003)(3846002)(1076002)(102836004)(26005)(6346003)(66066001)(10090500001)(6506007)(10290500003)(186003)(6486002)(14454004)(6436002)(53936002)(72206003)(316002)(305945005)(7736002)(99286004)(54906003)(110136005)(36756003)(2501003)(5250100002)(6512007)(478600001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1089;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-message-info: WY0FkqxLLXcipM2s9+tobbM+s8e25SPl72Uuj15ZwgYam3ETOWPTQdNjsKnyjQlw+k6I1aF+mrqFcQ4mQSAQpg==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.122.225.51]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86afea67-0b8a-4ba1-dd7b-08d56b30a4b5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:04:24.3308
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1089
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591410204194949623?=
-X-GMAIL-MSGID: =?utf-8?q?1591410204194949623?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The genalloc library is only capable of tracking if a certain unit of
-allocation is in use or not.
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-It is not capable of discerning where the memory associated to an
-allocation request begins and where it ends.
+[ Upstream commit fdf2e821052958a114618a95ab18a300d0b080cb ]
 
-The reason is that units of allocations are tracked by using a bitmap,
-where each bit represents that the unit is either allocated (1) or
-available (0).
+When erased subpages are read then the BCH decoder returns STATUS_ERASED
+if they are all empty, or STATUS_UNCORRECTABLE if there are bitflips.
+When there are bitflips, we have to set these bits again to show the
+upper layers a completely erased page. When a bitflip happens in the
+exact byte where the bad block marker is, then this byte is swapped
+with another byte in block_mark_swapping(). The correction code then
+detects a bitflip in another subpage and no longer corrects the bitflip
+where it really happens.
 
-The user of the API must keep track of how much space was requested, if
-it ever needs to be freed.
+Correct this behaviour by calling block_mark_swapping() after the
+bitflips have been corrected.
 
-This can cause errors being undetected.
-Ex:
-* Only a subset of the memory provided to an allocation request is freed
-* The memory from a subsequent allocation is freed
-* The memory being freed doesn't start at the beginning of an
-  allocation.
+In our case UBIFS failed with this bug because it expects erased
+pages to be really empty:
 
-The bitmap is used because it allows to perform lockless read/write
-access, where this is supported by hw through cmpxchg.
-Similarly, it is possible to scan the bitmap for a sufficiently long
-sequence of zeros, to identify zones available for allocation.
+UBIFS error (pid 187): ubifs_scan: corrupt empty space at LEB 36:118735
+UBIFS error (pid 187): ubifs_scanned_corruption: corruption at LEB 36:11873=
+5
+UBIFS error (pid 187): ubifs_scanned_corruption: first 8192 bytes from LEB =
+36:118735
+UBIFS error (pid 187): ubifs_scan: LEB 36 scanning failed
+UBIFS error (pid 187): do_commit: commit failed, error -117
 
---
-
-This patch doubles the space reserved in the bitmap for each allocation.
-By using 2 bits per allocation, it is possible to encode also the
-information of where the allocation starts:
-(msb to the left, lsb to the right, in the following "dictionary")
-
-11: first allocation unit in the allocation
-10: any subsequent allocation unit (if any) in the allocation
-00: available allocation unit
-01: invalid
-
-Ex, with the same notation as above - MSb.......LSb:
-
- ...000010111100000010101011   <-- Read in this direction.
-    \__|\__|\|\____|\______|
-       |   | |     |       \___ 4 used allocation units
-       |   | |     \___________ 3 empty allocation units
-       |   | \_________________ 1 used allocation unit
-       |   \___________________ 2 used allocation units
-       \_______________________ 2 empty allocation units
-
-Because of the encoding, the previous lockless operations are still
-possible. The only caveat is to change the parameter of the zero-finding
-function which establishes the alignment at which to perform the test
-for first zero.
-The original value of the parameter is 0, meaning that an allocation can
-start at any point in the bitmap, while the new value is 1, meaning that
-allocations can start only at even places (bit 0, bit 2, etc.)
-The number of zeroes to look for, must therefore be doubled.
-
-When it's time to free the memory associated to an allocation request,
-it's a matter of checking if the corresponding allocation unit is really
-the beginning of an allocation (both bits are set to 1).
-Looking for the ending can also be performed locklessly.
-It's sufficient to identify the first mapped allocation unit
-that is represented either as free (00) or busy (11).
-Even if the allocation status should change in the meanwhile, it doesn't
-matter, since it can only transition between free (00) and
-first-allocated (11).
-
-The parameter indicating to the *_free() function the size of the space
-that should be freed is not currently removed, to facilitate the
-transition, but it is verified, whenever it is not zero.
-If it is set to zero, then the free function will autonomously decide the
-size to be free, by scanning the bitmap.
-
-About the implementation: the patch introduces the concept of "bitmap
-entry", which has a 1:1 mapping with allocation units, while the code
-being patched has a 1:1 mapping between allocation units and bits.
-
-This means that, now, the bitmap can be extended (by following powers of
-2), to track also other properties of the allocations, if ever needed.
-
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/linux/genalloc.h |   4 +-
- lib/genalloc.c           | 417 ++++++++++++++++++++++++++++++++---------------
- 2 files changed, 289 insertions(+), 132 deletions(-)
+ drivers/mtd/nand/gpmi-nand/gpmi-nand.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/genalloc.h b/include/linux/genalloc.h
-index 872f930..dcaa33e 100644
---- a/include/linux/genalloc.h
-+++ b/include/linux/genalloc.h
-@@ -32,7 +32,7 @@
- 
- #include <linux/types.h>
- #include <linux/spinlock_types.h>
--#include <linux/atomic.h>
-+#include <linux/slab.h>
- 
- struct device;
- struct device_node;
-@@ -76,7 +76,7 @@ struct gen_pool_chunk {
- 	phys_addr_t phys_addr;		/* physical starting address of memory chunk */
- 	unsigned long start_addr;	/* start address of memory chunk */
- 	unsigned long end_addr;		/* end address of memory chunk (inclusive) */
--	unsigned long bits[0];		/* bitmap for allocating memory chunk */
-+	unsigned long entries[0];	/* bitmap for allocating memory chunk */
- };
- 
- /*
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index ca06adc..dde7830 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -36,114 +36,221 @@
- #include <linux/genalloc.h>
- #include <linux/of_device.h>
- 
-+#define ENTRY_ORDER 1UL
-+#define ENTRY_MASK ((1UL << ((ENTRY_ORDER) + 1UL)) - 1UL)
-+#define ENTRY_HEAD ENTRY_MASK
-+#define ENTRY_UNUSED 0UL
-+#define BITS_PER_ENTRY (1U << ENTRY_ORDER)
-+#define BITS_DIV_ENTRIES(x) ((x) >> ENTRY_ORDER)
-+#define ENTRIES_TO_BITS(x) ((x) << ENTRY_ORDER)
-+#define BITS_DIV_LONGS(x) ((x) / BITS_PER_LONG)
-+#define ENTRIES_DIV_LONGS(x) (BITS_DIV_LONGS(ENTRIES_TO_BITS(x)))
-+
-+#define ENTRIES_PER_LONG BITS_DIV_ENTRIES(BITS_PER_LONG)
-+
-+/* Binary pattern of 1010...1010 that spans one unsigned long. */
-+#define MASK (~0UL / 3 * 2)
-+
-+/**
-+ * get_bitmap_entry - extracts the specified entry from the bitmap
-+ * @map: pointer to a bitmap
-+ * @entry_index: the index of the desired entry in the bitmap
-+ *
-+ * Returns the requested bitmap.
-+ */
-+static inline unsigned long get_bitmap_entry(unsigned long *map,
-+					    int entry_index)
-+{
-+	return (map[ENTRIES_DIV_LONGS(entry_index)] >>
-+		ENTRIES_TO_BITS(entry_index % ENTRIES_PER_LONG)) &
-+		ENTRY_MASK;
-+}
-+
-+
-+/**
-+ * mem_to_units - convert references to memory into orders of allocation
-+ * @size: amount in bytes
-+ * @order: pow of 2 represented by each entry in the bitmap
-+ *
-+ * Returns the number of units representing the size.
-+ */
-+static inline unsigned long mem_to_units(unsigned long size,
-+					 unsigned long order)
-+{
-+	return (size + (1UL << order) - 1) >> order;
-+}
-+
-+/**
-+ * chunk_size - dimension of a chunk of memory
-+ * @chunk: pointer to the struct describing the chunk
-+ *
-+ * Returns the size of the chunk.
-+ */
- static inline size_t chunk_size(const struct gen_pool_chunk *chunk)
- {
- 	return chunk->end_addr - chunk->start_addr + 1;
- }
- 
--static int set_bits_ll(unsigned long *addr, unsigned long mask_to_set)
-+
-+/**
-+ * set_bits_ll - according to the mask, sets the bits specified by
-+ * value, at the address specified.
-+ * @addr: where to write
-+ * @mask: filter to apply for the bits to alter
-+ * @value: actual configuration of bits to store
-+ *
-+ * Returns 0 upon success, -EBUSY otherwise
-+ */
-+static int set_bits_ll(unsigned long *addr,
-+		       unsigned long mask, unsigned long value)
- {
--	unsigned long val, nval;
-+	unsigned long nval;
-+	unsigned long present;
-+	unsigned long target;
- 
- 	nval = *addr;
- 	do {
--		val = nval;
--		if (val & mask_to_set)
-+		present = nval;
-+		if (present & mask)
- 			return -EBUSY;
-+		target =  present | value;
- 		cpu_relax();
--	} while ((nval = cmpxchg(addr, val, val | mask_to_set)) != val);
--
-+	} while ((nval = cmpxchg(addr, present, target)) != target);
- 	return 0;
- }
- 
--static int clear_bits_ll(unsigned long *addr, unsigned long mask_to_clear)
-+
-+/**
-+ * cleart_bits_ll - according to the mask, clears the bits specified by
-+ * value, at the address specified.
-+ * @addr: where to write
-+ * @mask: filter to apply for the bits to alter
-+ * @value: actual configuration of bits to clear
-+ *
-+ * Returns 0 upon success, -EBUSY otherwise
-+ */
-+static int clear_bits_ll(unsigned long *addr,
-+			 unsigned long mask, unsigned long value)
- {
--	unsigned long val, nval;
-+	unsigned long nval;
-+	unsigned long present;
-+	unsigned long target;
- 
- 	nval = *addr;
-+	present = nval;
-+	if (unlikely((present & mask) ^ value))
-+		return -EBUSY;
- 	do {
--		val = nval;
--		if ((val & mask_to_clear) != mask_to_clear)
-+		present = nval;
-+		if (unlikely((present & mask) ^ value))
- 			return -EBUSY;
-+		target =  present & ~mask;
- 		cpu_relax();
--	} while ((nval = cmpxchg(addr, val, val & ~mask_to_clear)) != val);
--
-+	} while ((nval = cmpxchg(addr, present, target)) != target);
- 	return 0;
- }
- 
--/*
-- * bitmap_set_ll - set the specified number of bits at the specified position
-+
-+/**
-+ * get_boundary - verify that an allocation effectively
-+ * starts at the given address, then measure its length.
-  * @map: pointer to a bitmap
-- * @start: a bit position in @map
-- * @nr: number of bits to set
-+ * @start_entry: the index of the first entry in the bitmap
-+ * @nentries: number of entries to alter
-  *
-- * Set @nr bits start from @start in @map lock-lessly. Several users
-- * can set/clear the same bitmap simultaneously without lock. If two
-- * users set the same bit, one user will return remain bits, otherwise
-- * return 0.
-+ * Returns the length of an allocation, otherwise -EINVAL if the
-+ * parameters do not refer to a correct allocation.
-  */
--static int bitmap_set_ll(unsigned long *map, int start, int nr)
-+static int get_boundary(unsigned long *map, int start_entry, int nentries)
- {
--	unsigned long *p = map + BIT_WORD(start);
--	const int size = start + nr;
--	int bits_to_set = BITS_PER_LONG - (start % BITS_PER_LONG);
--	unsigned long mask_to_set = BITMAP_FIRST_WORD_MASK(start);
--
--	while (nr - bits_to_set >= 0) {
--		if (set_bits_ll(p, mask_to_set))
--			return nr;
--		nr -= bits_to_set;
--		bits_to_set = BITS_PER_LONG;
--		mask_to_set = ~0UL;
--		p++;
--	}
--	if (nr) {
--		mask_to_set &= BITMAP_LAST_WORD_MASK(size);
--		if (set_bits_ll(p, mask_to_set))
--			return nr;
--	}
-+	int i;
-+	unsigned long bitmap_entry;
- 
--	return 0;
-+
-+	if (unlikely(get_bitmap_entry(map, start_entry) != ENTRY_HEAD))
-+		return -EINVAL;
-+	for (i = start_entry + 1; i < nentries; i++) {
-+		bitmap_entry = get_bitmap_entry(map, i);
-+		if (bitmap_entry == ENTRY_HEAD ||
-+		    bitmap_entry == ENTRY_UNUSED)
-+			return i;
-+	}
-+	return nentries - start_entry;
- }
- 
-+
-+#define SET_BITS 1
-+#define CLEAR_BITS 0
-+
- /*
-- * bitmap_clear_ll - clear the specified number of bits at the specified position
-+ * alter_bitmap_ll - set or clear the entries associated to an allocation
-+ * @alteration: selection if the bits selected should be set or cleared
-  * @map: pointer to a bitmap
-- * @start: a bit position in @map
-- * @nr: number of bits to set
-+ * @start: the index of the first entry in the bitmap
-+ * @nentries: number of entries to alter
-  *
-- * Clear @nr bits start from @start in @map lock-lessly. Several users
-- * can set/clear the same bitmap simultaneously without lock. If two
-- * users clear the same bit, one user will return remain bits,
-- * otherwise return 0.
-+ * The modification happens lock-lessly.
-+ * Several users can write to the same map simultaneously, without lock.
-+ * If two users alter the same bit, one user will return remaining
-+ * entries, otherwise return 0.
-  */
--static int bitmap_clear_ll(unsigned long *map, int start, int nr)
-+static int alter_bitmap_ll(bool alteration, unsigned long *map,
-+			   int start_entry, int nentries)
- {
--	unsigned long *p = map + BIT_WORD(start);
--	const int size = start + nr;
--	int bits_to_clear = BITS_PER_LONG - (start % BITS_PER_LONG);
--	unsigned long mask_to_clear = BITMAP_FIRST_WORD_MASK(start);
--
--	while (nr - bits_to_clear >= 0) {
--		if (clear_bits_ll(p, mask_to_clear))
--			return nr;
--		nr -= bits_to_clear;
--		bits_to_clear = BITS_PER_LONG;
--		mask_to_clear = ~0UL;
--		p++;
--	}
--	if (nr) {
--		mask_to_clear &= BITMAP_LAST_WORD_MASK(size);
--		if (clear_bits_ll(p, mask_to_clear))
--			return nr;
-+	unsigned long start_bit;
-+	unsigned long end_bit;
-+	unsigned long mask;
-+	unsigned long value;
-+	int nbits;
-+	int bits_to_write;
-+	int index;
-+	int (*action)(unsigned long *addr,
-+		      unsigned long mask, unsigned long value);
-+
-+	action = (alteration == SET_BITS) ? set_bits_ll : clear_bits_ll;
-+
-+	/* Prepare for writing the initial part of the allocation, from
-+	 * starting entry, to the end of the UL bitmap element which
-+	 * contains it. It might be larger than the actual allocation.
-+	 */
-+	start_bit = ENTRIES_TO_BITS(start_entry);
-+	end_bit = ENTRIES_TO_BITS(start_entry + nentries);
-+	nbits = ENTRIES_TO_BITS(nentries);
-+	bits_to_write = BITS_PER_LONG - start_bit % BITS_PER_LONG;
-+	mask = BITMAP_FIRST_WORD_MASK(start_bit);
-+	/* Mark the beginning of the allocation. */
-+	value = MASK | (1UL << (start_bit % BITS_PER_LONG));
-+	index =  BITS_DIV_LONGS(start_bit);
-+
-+	/* Writes entries to the bitmap, as long as the reminder is
-+	 * positive or zero.
-+	 * Might be skipped if the entries to write do not reach the end
-+	 * of a bitmap UL unit.
-+	 */
-+	while (nbits >= bits_to_write) {
-+		if (action(map + index, mask, value & mask))
-+			return BITS_DIV_ENTRIES(nbits);
-+		nbits -= bits_to_write;
-+		bits_to_write = BITS_PER_LONG;
-+		mask = ~0UL;
-+		value = MASK;
-+		index++;
+diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi=
+-nand/gpmi-nand.c
+index 2064adac1d17..e2a239c1f40b 100644
+--- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+@@ -1029,9 +1029,6 @@ static int gpmi_ecc_read_page(struct mtd_info *mtd, s=
+truct nand_chip *chip,
+ 		return ret;
  	}
- 
-+	/* Takes care of the ending part of the entries to mark. */
-+	if (nbits > 0) {
-+		mask ^= BITMAP_FIRST_WORD_MASK((end_bit) % BITS_PER_LONG);
-+		bits_to_write = nbits;
-+		if (action(map + index, mask, value & mask))
-+			return BITS_DIV_ENTRIES(nbits);
-+	}
- 	return 0;
- }
- 
-+
- /**
-  * gen_pool_create - create a new special memory pool
-- * @min_alloc_order: log base 2 of number of bytes each bitmap bit represents
-+ * @min_alloc_order: log base 2 of number of bytes each bitmap entry represents
-  * @nid: node id of the node the pool structure should be allocated on, or -1
-  *
-  * Create a new special memory pool that can be used to manage special purpose
-@@ -183,10 +290,12 @@ int gen_pool_add_virt(struct gen_pool *pool, unsigned long virt, phys_addr_t phy
- 		 size_t size, int nid)
- {
- 	struct gen_pool_chunk *chunk;
--	int nbits = size >> pool->min_alloc_order;
--	int nbytes = sizeof(struct gen_pool_chunk) +
--				BITS_TO_LONGS(nbits) * sizeof(long);
-+	int nentries;
-+	int nbytes;
- 
-+	nentries = size >> pool->min_alloc_order;
-+	nbytes = sizeof(struct gen_pool_chunk) +
-+		 ENTRIES_DIV_LONGS(nentries) * sizeof(long);
- 	chunk = kzalloc_node(nbytes, GFP_KERNEL, nid);
- 	if (unlikely(chunk == NULL))
- 		return -ENOMEM;
-@@ -248,7 +357,7 @@ void gen_pool_destroy(struct gen_pool *pool)
- 		list_del(&chunk->next_chunk);
- 
- 		end_bit = chunk_size(chunk) >> order;
--		bit = find_next_bit(chunk->bits, end_bit, 0);
-+		bit = find_next_bit(chunk->entries, end_bit, 0);
- 		BUG_ON(bit < end_bit);
- 
- 		kfree(chunk);
-@@ -292,7 +401,7 @@ unsigned long gen_pool_alloc_algo(struct gen_pool *pool, size_t size,
- 	struct gen_pool_chunk *chunk;
- 	unsigned long addr = 0;
- 	int order = pool->min_alloc_order;
--	int nbits, start_bit, end_bit, remain;
-+	int nentries, start_entry, end_entry, remain;
- 
- #ifndef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	BUG_ON(in_nmi());
-@@ -301,29 +410,32 @@ unsigned long gen_pool_alloc_algo(struct gen_pool *pool, size_t size,
- 	if (size == 0)
- 		return 0;
- 
--	nbits = (size + (1UL << order) - 1) >> order;
-+	nentries = mem_to_units(size, order);
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(chunk, &pool->chunks, next_chunk) {
- 		if (size > atomic_long_read(&chunk->avail))
- 			continue;
- 
--		start_bit = 0;
--		end_bit = chunk_size(chunk) >> order;
-+		start_entry = 0;
-+		end_entry = chunk_size(chunk) >> order;
- retry:
--		start_bit = algo(chunk->bits, end_bit, start_bit,
--				 nbits, data, pool);
--		if (start_bit >= end_bit)
-+		start_entry = algo(chunk->entries, end_entry, start_entry,
-+				  nentries, data, pool);
-+		if (start_entry >= end_entry)
- 			continue;
--		remain = bitmap_set_ll(chunk->bits, start_bit, nbits);
-+		remain = alter_bitmap_ll(SET_BITS, chunk->entries,
-+					 start_entry, nentries);
- 		if (remain) {
--			remain = bitmap_clear_ll(chunk->bits, start_bit,
--						 nbits - remain);
--			BUG_ON(remain);
-+			remain = alter_bitmap_ll(CLEAR_BITS,
-+						 chunk->entries,
-+						 start_entry,
-+						 nentries - remain);
- 			goto retry;
- 		}
- 
--		addr = chunk->start_addr + ((unsigned long)start_bit << order);
--		size = nbits << order;
-+		addr = chunk->start_addr +
-+			((unsigned long)start_entry << order);
-+		size = nentries << order;
- 		atomic_long_sub(size, &chunk->avail);
- 		break;
- 	}
-@@ -365,7 +477,7 @@ EXPORT_SYMBOL(gen_pool_dma_alloc);
-  * gen_pool_free - free allocated special memory back to the pool
-  * @pool: pool to free to
-  * @addr: starting address of memory to free back to pool
-- * @size: size in bytes of memory to free
-+ * @size: size in bytes of memory to free or 0, for auto-detection
-  *
-  * Free previously allocated special memory back to the specified
-  * pool.  Can not be used in NMI handler on architectures without
-@@ -375,22 +487,29 @@ void gen_pool_free(struct gen_pool *pool, unsigned long addr, size_t size)
- {
- 	struct gen_pool_chunk *chunk;
- 	int order = pool->min_alloc_order;
--	int start_bit, nbits, remain;
-+	int start_entry, remaining_entries, nentries, remain;
-+	int boundary;
- 
- #ifndef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	BUG_ON(in_nmi());
- #endif
- 
--	nbits = (size + (1UL << order) - 1) >> order;
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(chunk, &pool->chunks, next_chunk) {
- 		if (addr >= chunk->start_addr && addr <= chunk->end_addr) {
- 			BUG_ON(addr + size - 1 > chunk->end_addr);
--			start_bit = (addr - chunk->start_addr) >> order;
--			remain = bitmap_clear_ll(chunk->bits, start_bit, nbits);
-+			start_entry = (addr - chunk->start_addr) >> order;
-+			remaining_entries = (chunk->end_addr - addr) >> order;
-+			boundary = get_boundary(chunk->entries, start_entry,
-+						remaining_entries);
-+			BUG_ON(boundary < 0);
-+			nentries = boundary - start_entry;
-+			BUG_ON(size &&
-+			       (nentries != mem_to_units(size, order)));
-+			remain = alter_bitmap_ll(CLEAR_BITS, chunk->entries,
-+						 start_entry, nentries);
- 			BUG_ON(remain);
--			size = nbits << order;
--			atomic_long_add(size, &chunk->avail);
-+			atomic_long_add(nentries << order, &chunk->avail);
- 			rcu_read_unlock();
- 			return;
- 		}
-@@ -517,9 +636,9 @@ EXPORT_SYMBOL(gen_pool_set_algo);
-  * gen_pool_first_fit - find the first available region
-  * of memory matching the size requirement (no alignment constraint)
-  * @map: The address to base the search on
-- * @size: The bitmap size in bits
-- * @start: The bitnumber to start searching at
-- * @nr: The number of zeroed bits we're looking for
-+ * @size: The number of allocation units in the bitmap
-+ * @start: The allocation unit to start searching at
-+ * @nr: The number of allocation units we're looking for
-  * @data: additional data - unused
-  * @pool: pool to find the fit region memory from
-  */
-@@ -527,7 +646,15 @@ unsigned long gen_pool_first_fit(unsigned long *map, unsigned long size,
- 		unsigned long start, unsigned int nr, void *data,
- 		struct gen_pool *pool)
- {
--	return bitmap_find_next_zero_area(map, size, start, nr, 0);
-+	unsigned long align_mask;
-+	unsigned long bit_index;
-+
-+	align_mask = roundup_pow_of_two(BITS_PER_ENTRY) - 1;
-+	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
-+					       ENTRIES_TO_BITS(start),
-+					       ENTRIES_TO_BITS(nr),
-+					       align_mask);
-+	return BITS_DIV_ENTRIES(bit_index);
- }
- EXPORT_SYMBOL(gen_pool_first_fit);
- 
-@@ -535,9 +662,9 @@ EXPORT_SYMBOL(gen_pool_first_fit);
-  * gen_pool_first_fit_align - find the first available region
-  * of memory matching the size requirement (alignment constraint)
-  * @map: The address to base the search on
-- * @size: The bitmap size in bits
-- * @start: The bitnumber to start searching at
-- * @nr: The number of zeroed bits we're looking for
-+ * @size: The number of allocation units in the bitmap
-+ * @start: The allocation unit to start searching at
-+ * @nr: The number of allocation units we're looking for
-  * @data: data for alignment
-  * @pool: pool to get order from
-  */
-@@ -547,21 +674,28 @@ unsigned long gen_pool_first_fit_align(unsigned long *map, unsigned long size,
- {
- 	struct genpool_data_align *alignment;
- 	unsigned long align_mask;
-+	unsigned long bit_index;
- 	int order;
- 
- 	alignment = data;
- 	order = pool->min_alloc_order;
--	align_mask = ((alignment->align + (1UL << order) - 1) >> order) - 1;
--	return bitmap_find_next_zero_area(map, size, start, nr, align_mask);
-+	align_mask = roundup_pow_of_two(
-+			ENTRIES_TO_BITS(mem_to_units(alignment->align,
-+						     order))) - 1;
-+	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
-+					       ENTRIES_TO_BITS(start),
-+					       ENTRIES_TO_BITS(nr),
-+					       align_mask);
-+	return BITS_DIV_ENTRIES(bit_index);
- }
- EXPORT_SYMBOL(gen_pool_first_fit_align);
- 
- /**
-  * gen_pool_fixed_alloc - reserve a specific region
-  * @map: The address to base the search on
-- * @size: The bitmap size in bits
-- * @start: The bitnumber to start searching at
-- * @nr: The number of zeroed bits we're looking for
-+ * @size: The number of allocation units in the bitmap
-+ * @start: The allocation unit to start searching at
-+ * @nr: The number of allocation units we're looking for
-  * @data: data for alignment
-  * @pool: pool to get order from
-  */
-@@ -571,20 +705,23 @@ unsigned long gen_pool_fixed_alloc(unsigned long *map, unsigned long size,
- {
- 	struct genpool_data_fixed *fixed_data;
- 	int order;
--	unsigned long offset_bit;
--	unsigned long start_bit;
-+	unsigned long offset;
-+	unsigned long align_mask;
-+	unsigned long bit_index;
- 
- 	fixed_data = data;
- 	order = pool->min_alloc_order;
--	offset_bit = fixed_data->offset >> order;
- 	if (WARN_ON(fixed_data->offset & ((1UL << order) - 1)))
- 		return size;
-+	offset = fixed_data->offset >> order;
-+	align_mask = roundup_pow_of_two(BITS_PER_ENTRY) - 1;
-+	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
-+					       ENTRIES_TO_BITS(start + offset),
-+					       ENTRIES_TO_BITS(nr), align_mask);
-+	if (bit_index != ENTRIES_TO_BITS(offset))
-+		return size;
- 
--	start_bit = bitmap_find_next_zero_area(map, size,
--			start + offset_bit, nr, 0);
--	if (start_bit != offset_bit)
--		start_bit = size;
--	return start_bit;
-+	return BITS_DIV_ENTRIES(bit_index);
- }
- EXPORT_SYMBOL(gen_pool_fixed_alloc);
- 
-@@ -593,9 +730,9 @@ EXPORT_SYMBOL(gen_pool_fixed_alloc);
-  * of memory matching the size requirement. The region will be aligned
-  * to the order of the size specified.
-  * @map: The address to base the search on
-- * @size: The bitmap size in bits
-- * @start: The bitnumber to start searching at
-- * @nr: The number of zeroed bits we're looking for
-+ * @size: The number of allocation units in the bitmap
-+ * @start: The allocation unit to start searching at
-+ * @nr: The number of allocation units we're looking for
-  * @data: additional data - unused
-  * @pool: pool to find the fit region memory from
-  */
-@@ -603,9 +740,15 @@ unsigned long gen_pool_first_fit_order_align(unsigned long *map,
- 		unsigned long size, unsigned long start,
- 		unsigned int nr, void *data, struct gen_pool *pool)
- {
--	unsigned long align_mask = roundup_pow_of_two(nr) - 1;
+=20
+-	/* handle the block mark swapping */
+-	block_mark_swapping(this, payload_virt, auxiliary_virt);
 -
--	return bitmap_find_next_zero_area(map, size, start, nr, align_mask);
-+	unsigned long align_mask;
-+	unsigned long bit_index;
-+
-+	align_mask = roundup_pow_of_two(ENTRIES_TO_BITS(nr)) - 1;
-+	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
-+					       ENTRIES_TO_BITS(start),
-+					       ENTRIES_TO_BITS(nr),
-+					       align_mask);
-+	return BITS_DIV_ENTRIES(bit_index);
- }
- EXPORT_SYMBOL(gen_pool_first_fit_order_align);
- 
-@@ -613,9 +756,9 @@ EXPORT_SYMBOL(gen_pool_first_fit_order_align);
-  * gen_pool_best_fit - find the best fitting region of memory
-  * macthing the size requirement (no alignment constraint)
-  * @map: The address to base the search on
-- * @size: The bitmap size in bits
-- * @start: The bitnumber to start searching at
-- * @nr: The number of zeroed bits we're looking for
-+ * @size: The number of allocation units in the bitmap
-+ * @start: The allocation unit to start searching at
-+ * @nr: The number of allocation units we're looking for
-  * @data: additional data - unused
-  * @pool: pool to find the fit region memory from
-  *
-@@ -626,27 +769,41 @@ unsigned long gen_pool_best_fit(unsigned long *map, unsigned long size,
- 		unsigned long start, unsigned int nr, void *data,
- 		struct gen_pool *pool)
- {
--	unsigned long start_bit = size;
-+	unsigned long start_bit = ENTRIES_TO_BITS(size);
- 	unsigned long len = size + 1;
- 	unsigned long index;
-+	unsigned long align_mask;
-+	unsigned long bit_index;
- 
--	index = bitmap_find_next_zero_area(map, size, start, nr, 0);
-+	align_mask = roundup_pow_of_two(BITS_PER_ENTRY) - 1;
-+	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
-+					       ENTRIES_TO_BITS(start),
-+					       ENTRIES_TO_BITS(nr),
-+					       align_mask);
-+	index = BITS_DIV_ENTRIES(bit_index);
- 
- 	while (index < size) {
--		int next_bit = find_next_bit(map, size, index + nr);
--		if ((next_bit - index) < len) {
--			len = next_bit - index;
--			start_bit = index;
-+		int next_bit;
-+
-+		next_bit = find_next_bit(map, ENTRIES_TO_BITS(size),
-+					 ENTRIES_TO_BITS(index + nr));
-+		if ((BITS_DIV_ENTRIES(next_bit) - index) < len) {
-+			len = BITS_DIV_ENTRIES(next_bit) - index;
-+			start_bit = ENTRIES_TO_BITS(index);
- 			if (len == nr)
--				return start_bit;
-+				return BITS_DIV_ENTRIES(start_bit);
- 		}
--		index = bitmap_find_next_zero_area(map, size,
--						   next_bit + 1, nr, 0);
-+		bit_index =
-+			bitmap_find_next_zero_area(map,
-+						   ENTRIES_TO_BITS(size),
-+						   next_bit + 1,
-+						   ENTRIES_TO_BITS(nr),
-+						   align_mask);
-+		index = BITS_DIV_ENTRIES(bit_index);
+ 	/* Loop over status bytes, accumulating ECC status. */
+ 	status =3D auxiliary_virt + nfc_geo->auxiliary_status_offset;
+=20
+@@ -1047,6 +1044,9 @@ static int gpmi_ecc_read_page(struct mtd_info *mtd, s=
+truct nand_chip *chip,
+ 		max_bitflips =3D max_t(unsigned int, max_bitflips, *status);
  	}
- 
--	return start_bit;
-+	return BITS_DIV_ENTRIES(start_bit);
- }
--EXPORT_SYMBOL(gen_pool_best_fit);
- 
- static void devm_gen_pool_release(struct device *dev, void *res)
- {
--- 
-2.9.3
+=20
++	/* handle the block mark swapping */
++	block_mark_swapping(this, buf, auxiliary_virt);
++
+ 	if (oob_required) {
+ 		/*
+ 		 * It's time to deliver the OOB bytes. See gpmi_ecc_read_oob()
+--=20
+2.11.0
