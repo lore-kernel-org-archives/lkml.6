@@ -1,54 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752599AbeBCP3U (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 10:29:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40738 "EHLO mail.kernel.org"
+        id S1752644AbeBCPam (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 10:30:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34030 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752547AbeBCP3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 10:29:06 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E60021707
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Sat, 3 Feb 2018 10:29:03 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        id S1751869AbeBCPaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 10:30:35 -0500
+Date: Sat, 3 Feb 2018 16:30:31 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Stephane Eranian <eranian@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: [PATCH 13/18] tracing: Add array type to function based events
-Message-ID: <20180203102903.070ae30a@gandalf.local.home>
-In-Reply-To: <20180203225615.6e1a21982335405dad13b99b@kernel.org>
-References: <20180202230458.840252014@goodmis.org>
-        <20180202231018.977452228@goodmis.org>
-        <20180203225615.6e1a21982335405dad13b99b@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 1/3] perf tools: Fix period/freq terms setup
+Message-ID: <20180203153031.GA5004@krava>
+References: <20180201083812.11359-1-jolsa@kernel.org>
+ <20180201083812.11359-2-jolsa@kernel.org>
+ <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 3 Feb 2018 22:56:15 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Fri, Feb 02, 2018 at 10:45:46AM -0800, Stephane Eranian wrote:
+> Jiri,
+> 
+> On Thu, Feb 1, 2018 at 12:38 AM, Jiri Olsa <jolsa@kernel.org> wrote:
+> > Stephane reported that we don't set properly PERIOD
+> > sample type for events with period term defined.
+> >
+> > Before:
+> >   $ perf record -e cpu/cpu-cycles,period=1000/u ls
+> >   $ perf evlist -v
+> >   cpu/cpu-cycles,period=1000/u: ... sample_type: IP|TID|TIME|PERIOD, ...
+> >
+> > After:
+> >   $ perf record -e cpu/cpu-cycles,period=1000/u ls
+> >   $ perf evlist -v
+> >   cpu/cpu-cycles,period=1000/u: ... sample_type: IP|TID|TIME, ...
+> >
+> > Setting PERIOD sample type based on period term setup.
+> >
+> there is still one problem remaining here. It has to do with the handling
+> of cycles:pp or :p or :ppp. Suppose I want to set a period for it while I am
+> also sampling on other events: Something like:
+> 
+> $ perf record -e
+> cycles:pp,instructions,cpu/event=0xd0,umaks=0x81,period=100000/ .....
+> 
+> I want to set the period for cycles:pp, but not for instructions. I
+> cannot use -c because
+> it would also force a period on instructions. I could use the raw hw
+> raw event code for cycles:pp.
+> But that does not work because recent kernels prevent use of hw
+> filters on events programmed
+> for PEBS, e.g., cpu/event=0xc2,umask=0x1,cmask=16,inv/pp is rejected.
+> PEBS does not support filters.
+> It works in the case of cycles:pp simply by the nature on the
+> underlying event and the stalls.
+> 
+> To get precise cycles, the only event syntax you can use is cycles:pp,
+> but then you cannot specify
+> an event-specific period. This needs to be fixed as well.
 
-> This idea looks good for kprobe events too.
-> I'll try to implement same one :)
+you can use p modifier behind like: cpu/.../pp
 
-We should have the two re-use the same code.
+> 
+> I'd like to be able to say:
+> 
+> $ perf record -e
+> cycles:pp:period=10000001,cpu/event=0xd0,umaks=0x81,period=100000/
+> 
+> Or something equivalent.
 
-In other words, I would like as much code sharing as possible.
+and you can specify terms for hw events like 'cycles'
 
--- Steve
+[jolsa@krava perf]$ sudo ./perf record -e 'cycles/period=10000001/pp,cpu/event=0xd0,umask=0x81,period=100000/'
+^C[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.579 MB perf.data (722 samples) ]
+
+[jolsa@krava perf]$ ./perf evlist -v
+cycles/period=10000001/pp: size: 112, { sample_period, sample_freq }: 10000001, sample_type: IP|TID|TIME|ID|CPU, read_format: ID, disabled: 1, inherit: 1, mmap: 1, comm: 1, task: 1, precise_ip: 2, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1
+cpu/event=0xd0,umask=0x81,period=100000/: type: 4, size: 112, config: 0x81d0, { sample_period, sample_freq }: 100000, sample_type: IP|TID|TIME|ID|CPU, read_format: ID, disabled: 1, inherit: 1, sample_id_all: 1, exclude_guest: 1
+
+jirka
