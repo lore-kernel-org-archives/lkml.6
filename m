@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1576794-1517682492-2-8467155752780481902
+X-Cyrus-Session-Id: sloti22d1t05-1576794-1517682469-2-5703816915345582677
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517682491; b=GR1SEGyUPxyCwARELZjvPRmUUPaJNjXn2jz2n5lrYeM43sS
-    MSMPXtseFpJuC8/4HgiZhSCUpj3J0z8tLHCBh3qgFb+Ov7sw0D/iyVSn0GfBj/ks
-    +X/39qUUD28Fja2w9KVPIttj4DAQMMKQ48+oVtTLi6AW/l5aMJjH70aBw+q+zvKs
-    4lT7ocHoAYdnjwLq1FNilZYGkVs1nvXJOkoXj/Ut+u0mo5OiqJ5EJUPtdng09Cre
-    EXR3TwLZgpymFXdjiDeDusK3kIOgndIRiK8E7BJwnXDQag/4LOkOI8mQBBFKX5Hq
-    MoryNvAHcUz1Y3NLa17f/QJzNdvqoqJyf/k4Deg==
+    t=1517682468; b=Q3pEF+hbnsqxQQSM5pJO18MG4EXX/x8k+iLlXDR7LIOfz6o
+    yyTwo8Mv0abCiMAFUJSxICt1GaEtoQMbTKzvH5Xo65PNhaf4/XbPBBFhyt18Aynf
+    xkXRV35i1igsVcn22JeK4NeKKMBMas9fBEBcVdLxknaTUf20JeJaitiDRcH8sAqD
+    DHLFHkeTFU4bKKtq/Gp2JkK5d/K4HgVT6oUFqGhn1KHgxEeC6bhRXE2siEJsaWTF
+    MeEz59892EqIUTb+2PcFjkjBfq3gWqymu2wGXWQtD/pawRw7njZc9b+ypbmpOizx
+    hMskbgqVbMrSUn+oKkrEdoXo5OBFWMwh10lPmwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1517682491; bh=6Tj59M
-    mjuJx0N47hPAg3yPm8X9AobRG2NW5Hkjz5g+4=; b=GdDv07zx3KaZTJuXISaGKt
-    4EuP9PvrNU604VCZrPmO+/8ChFKxLMIiWIug8V4Gq8YF8EbdhflDQxTRWbj7Dkvg
-    fElhnb+SzgVdjClPw7IqjKljFvAbOxZh0JO6Thel8I76VwT7C7+pycXW4HVVDN4R
-    IRUvXgSjHRhYMWqrJval9gh1k3JmlM/X644OgbiEEcyCFRffypUzAChjGzcaAH/b
-    JtpME1k1jBwCbNtuxLHtf5L0HMxJ9QFzCGEsubLfYXYTStIvimykJ/jNMjCwYK0u
-    vHWuHLK7Tg9vZCqVYggrtrKVIL+rE2GAnDj4mSHyDtTs686hId1C8xiZefLUGeUQ
+    :mime-version:sender:list-id; s=arctest; t=1517682468; bh=psDZls
+    Av9hzhGh9vUOCJYxtY9aWF+Y5f7442nUTgSZA=; b=RwaCpikUg7ST1GAESsIdlJ
+    zQXyLSd4ShlyckYHUW91dNyZ51Dw1eUX0NuH15ChNnUc/l1oHWMRk8wMsoiG5rq0
+    92PusY7rRWvpy0EkrCFoVfzTi7k0XoSpmxkYDRgtK7nUt0Qhua7+MfX1bw3gQW4Q
+    /eBHiR0SXfC41pspJR3MiHPd3Tbhd947VNEQB6GG9+ytfkXQAB64Y/610Yc+yWCq
+    DYunTr8Tk/3AlapX3vXc4w5raYc53PynpLUbed4INelk3hiNl0s1VkLsHMChWOL8
+    Z3KD/fL/vMBI3csswRUyQ10MkCRTFiq0oEneKgBXHLXcRunYq+2ma596h6Ra3MSA
     ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=UnP3fKOF x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=T3dpx1lO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=UnP3fKOF x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=T3dpx1lO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,26 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754538AbeBCS16 (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Feb 2018 13:27:58 -0500
-Received: from mail-bl2nam02on0095.outbound.protection.outlook.com ([104.47.38.95]:60480
+        id S1754483AbeBCS1d (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Feb 2018 13:27:33 -0500
+Received: from mail-bl2nam02on0139.outbound.protection.outlook.com ([104.47.38.139]:53600
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753331AbeBCSFC (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Feb 2018 13:05:02 -0500
+        id S1753004AbeBCSGC (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Feb 2018 13:06:02 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Sean Wang <sean.wang@mediatek.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Tushar Dave <tushar.n.dave@oracle.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 16/52] net: mediatek: setup proper state for
- disabled GMAC on the default
-Thread-Topic: [PATCH AUTOSEL for 4.9 16/52] net: mediatek: setup proper state
- for disabled GMAC on the default
-Thread-Index: AQHTnRlTFJJuQ7POrkyN0i+qUs5x4g==
-Date: Sat, 3 Feb 2018 18:03:41 +0000
-Message-ID: <20180203180303.8490-16-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 37/52] e1000: fix disabling already-disabled
+ warning
+Thread-Topic: [PATCH AUTOSEL for 4.9 37/52] e1000: fix disabling
+ already-disabled warning
+Thread-Index: AQHTnRlaoyrf8tHNnkqMdQG0+0qp9Q==
+Date: Sat, 3 Feb 2018 18:03:54 +0000
+Message-ID: <20180203180303.8490-37-alexander.levin@microsoft.com>
 References: <20180203180303.8490-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180203180303.8490-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,78 +76,236 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1091;7:TIy59vc1rnUtBMyijyQt3Ksln5svl9qN1jTi02TNyUkm7+8cVC66Ss+DPx9nMdwQs0sdVQfJ0x4oKjHbGMaTM3fMA5E624kQQlVk1lGnDWKe3YdakbNJzy497CDVK79cC/0MpF566exXyQ+tyGB95dH74qwBb+keZ2PjSwrduOPKlSAzeXZYL8uGAQJBs9Rsgn7uE/NU5uiGFwf1RwxTjLyJQmPfbc4rD4ijMEYET49sbU0/YrL0qnIQay0+t7D8
+x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1012;6:5uL8JPObHTdQUVGB4A73N0WmDSPFbeuNkFVhk5SyZgS1frxZosyo0kcglRrEs+FoWzt8nPb99Tyf3wWhj/PNgfR9AHrMFDJw/mVNIKEn1TyWiGgdSL4ExjZr5QX326rjFFgE7ntPluUL4FzD4zzlvxaO9XQZdCKYiFMnC24fHJDsGMdK8rS8UIrT00E3X7gMkopWOu5KawUBngPCuzGM3zE7rlX0/S3n1LHPwjLiyP9/slJgFG8gEvQAb6Sa9rYkd2fOG5LqMy6oa+YkZLBnz738IBajL4ib4eCmqwObRf16jcN+xC1SGjy0+0DdWMS5M/zKU61cXW1IcxUnVNVvPIUq5+5OyTj95FJ3lu/ijC3l5hRxMAqOo2exC3Nlaj2i;5:poDe6B5likSKU3acJbiajP6ywDJgBmUL1Re9URagaeVB/iLMGR5b5rxH8VQ8IbMZs3/rU65Ni54vgBg37tEAjuYLyWno3zRL+whgUvkm7I650jDRFOgjT4To8f9SOzOLjbN9Mjs0PK184NW7Cq84edcXASzooM9iRWPPK+apyNQ=;24:fBx84ynvYUAatAYDrboSwr7WNU1hUIVBVHhFfWnwAgDUx5v7Vslfdh+pnXoyIcl+dnMgRVjC/SxIVsvnVm61tj1yVFB8xQl0pfFze54Dh9g=;7:2BkpFWPAjl76EDlvfNU4+kqDjavNLgdsMOe85W16rrdcg4ScmzXnwohZbcNzysPvqIiFmot4Tg1dK5PTfXrnYoalrkl1wQDJiRh2lC7xd1XAhCsDrQ/0NG4f/k0clbEHyUrsPaJWEtm+3KX/9fUwnS2oS5SgDyKH1TuqYN0N2kFor6YHvOXvLzPYHCYsktSRLHET15bxWTyg3l3RSk285utxrHnqsQ62zWtvKwK3sy8vLH4RkY9Ewg35swAP74nN
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b6d9b14f-91fd-4dc5-6660-08d56b3075dd
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1091;
-x-ms-traffictypediagnostic: BL0PR2101MB1091:
-x-microsoft-antispam-prvs: <BL0PR2101MB109123852E7D366883EA081FFBF80@BL0PR2101MB1091.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL0PR2101MB1091;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1091;
+x-ms-office365-filtering-correlation-id: b6c41256-a11b-4f75-6a2f-08d56b309f70
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:BL0PR2101MB1012;
+x-ms-traffictypediagnostic: BL0PR2101MB1012:
+x-microsoft-antispam-prvs: <BL0PR2101MB1012D23F0EA8A47F1939CB6BFBF80@BL0PR2101MB1012.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(61425038)(6040501)(2401047)(8121501046)(5005006)(3231101)(2400082)(944501161)(93006095)(93001095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041288)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL0PR2101MB1012;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1012;
 x-forefront-prvs: 05724A8921
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(346002)(376002)(366004)(39860400002)(199004)(189003)(86362001)(575784001)(106356001)(22452003)(4326008)(97736004)(25786009)(2950100002)(5660300001)(2906002)(81156014)(105586002)(3280700002)(8676002)(8936002)(6116002)(68736007)(81166006)(3660700001)(86612001)(2900100001)(107886003)(3846002)(102836004)(1076002)(26005)(6346003)(66066001)(10090500001)(76176011)(6506007)(10290500003)(14454004)(186003)(6486002)(59450400001)(6436002)(53936002)(72206003)(7736002)(316002)(305945005)(99286004)(110136005)(54906003)(36756003)(2501003)(5250100002)(6512007)(478600001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1091;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(396003)(346002)(39860400002)(39380400002)(199004)(189003)(316002)(26005)(54906003)(10290500003)(6512007)(2900100001)(106356001)(2950100002)(76176011)(86612001)(86362001)(575784001)(81166006)(8936002)(6346003)(81156014)(107886003)(102836004)(4326008)(25786009)(110136005)(97736004)(22452003)(59450400001)(6506007)(53936002)(8676002)(5250100002)(6436002)(1076002)(186003)(2501003)(66066001)(6486002)(6116002)(7736002)(36756003)(2906002)(10090500001)(99286004)(72206003)(305945005)(105586002)(3846002)(3660700001)(478600001)(68736007)(14454004)(5660300001)(3280700002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1012;H:BL0PR2101MB1027.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-message-info: vA4vZeKKXg7uGW615u5gYVgSXrG1+D1Wr+9cnTvytyQVM9MnwWlCohV9ZK5cglBrYdfZJGT3mdjQdNFFIMZ6VA==
+x-microsoft-antispam-message-info: aokd851qoAQsxMFPskek+Vbtv/vgazHrka9ssLToQ1yQYI78L3yx6bvUW5n0eUdK2Wig5ve76Oz6ohBna3M92g==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6d9b14f-91fd-4dc5-6660-08d56b3075dd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:03:41.9714
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6c41256-a11b-4f75-6a2f-08d56b309f70
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2018 18:03:54.0495
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1091
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1012
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+From: Tushar Dave <tushar.n.dave@oracle.com>
 
-[ Upstream commit 7352e252b5bf40d59342494a70354a2d436fd0cd ]
+[ Upstream commit 0b76aae741abb9d16d2c0e67f8b1e766576f897d ]
 
-The current solution would setup fixed and force link of 1Gbps to the both
-GMAC on the default. However, The GMAC should always be put to link down
-state when the GMAC is disabled on certain target boards. Otherwise,
-the driver possibly receives unexpected data from the floating hardware
-connection through the unused GMAC. Although the driver had been added
-certain protection in RX path to get rid of such kind of unexpected data
-sent to the upper stack.
+This patch adds check so that driver does not disable already
+disabled device.
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[   44.637743] advantechwdt: Unexpected close, not stopping watchdog!
+[   44.997548] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/=
+i8042/serio1/input/input6
+[   45.013419] e1000 0000:00:03.0: disabling already-disabled device
+[   45.013447] ------------[ cut here ]------------
+[   45.014868] WARNING: CPU: 1 PID: 71 at drivers/pci/pci.c:1641 pci_disabl=
+e_device+0xa1/0x105:
+						pci_disable_device at drivers/pci/pci.c:1640
+[   45.016171] CPU: 1 PID: 71 Comm: rcu_perf_shutdo Not tainted 4.14.0-0133=
+0-g3c07399 #1
+[   45.017197] task: ffff88011bee9e40 task.stack: ffffc90000860000
+[   45.017987] RIP: 0010:pci_disable_device+0xa1/0x105:
+						pci_disable_device at drivers/pci/pci.c:1640
+[   45.018603] RSP: 0000:ffffc90000863e30 EFLAGS: 00010286
+[   45.019282] RAX: 0000000000000035 RBX: ffff88013a230008 RCX: 00000000000=
+00000
+[   45.020182] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000=
+00203
+[   45.021084] RBP: ffff88013a3f31e8 R08: 0000000000000001 R09: 00000000000=
+00000
+[   45.021986] R10: ffffffff827ec29c R11: 0000000000000002 R12: 00000000000=
+00001
+[   45.022946] R13: ffff88013a230008 R14: ffff880117802b20 R15: ffffc900008=
+63e8f
+[   45.023842] FS:  0000000000000000(0000) GS:ffff88013fd00000(0000) knlGS:=
+0000000000000000
+[   45.024863] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   45.025583] CR2: ffffc900006d4000 CR3: 000000000220f000 CR4: 00000000000=
+006a0
+[   45.026478] Call Trace:
+[   45.026811]  __e1000_shutdown+0x1d4/0x1e2:
+						__e1000_shutdown at drivers/net/ethernet/intel/e1000/e1000_main.c:516=
+2
+[   45.027344]  ? rcu_perf_cleanup+0x2a1/0x2a1:
+						rcu_perf_shutdown at kernel/rcu/rcuperf.c:627
+[   45.027883]  e1000_shutdown+0x14/0x3a:
+						e1000_shutdown at drivers/net/ethernet/intel/e1000/e1000_main.c:5235
+[   45.028351]  device_shutdown+0x110/0x1aa:
+						device_shutdown at drivers/base/core.c:2807
+[   45.028858]  kernel_power_off+0x31/0x64:
+						kernel_power_off at kernel/reboot.c:260
+[   45.029343]  rcu_perf_shutdown+0x9b/0xa7:
+						rcu_perf_shutdown at kernel/rcu/rcuperf.c:637
+[   45.029852]  ? __wake_up_common_lock+0xa2/0xa2:
+						autoremove_wake_function at kernel/sched/wait.c:376
+[   45.030414]  kthread+0x126/0x12e:
+						kthread at kernel/kthread.c:233
+[   45.030834]  ? __kthread_bind_mask+0x8e/0x8e:
+						kthread at kernel/kthread.c:190
+[   45.031399]  ? ret_from_fork+0x1f/0x30:
+						ret_from_fork at arch/x86/entry/entry_64.S:443
+[   45.031883]  ? kernel_init+0xa/0xf5:
+						kernel_init at init/main.c:997
+[   45.032325]  ret_from_fork+0x1f/0x30:
+						ret_from_fork at arch/x86/entry/entry_64.S:443
+[   45.032777] Code: 00 48 85 ed 75 07 48 8b ab a8 00 00 00 48 8d bb 98 00 =
+00 00 e8 aa d1 11 00 48 89 ea 48 89 c6 48 c7 c7 d8 e4 0b 82 e8 55 7d da ff =
+<0f> ff b9 01 00 00 00 31 d2 be 01 00 00 00 48 c7 c7 f0 b1 61 82
+[   45.035222] ---[ end trace c257137b1b1976ef ]---
+[   45.037838] ACPI: Preparing to enter system sleep state S5
+
+Signed-off-by: Tushar Dave <tushar.n.dave@oracle.com>
+Tested-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/intel/e1000/e1000.h      |  3 ++-
+ drivers/net/ethernet/intel/e1000/e1000_main.c | 27 ++++++++++++++++++++++-=
+----
+ 2 files changed, 24 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethe=
-rnet/mediatek/mtk_eth_soc.c
-index 4832223f1500..20de37a414fe 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -1842,11 +1842,12 @@ static int mtk_hw_init(struct mtk_eth *eth)
- 	/* set GE2 TUNE */
- 	regmap_write(eth->pctl, GPIO_BIAS_CTRL, 0x0);
+diff --git a/drivers/net/ethernet/intel/e1000/e1000.h b/drivers/net/etherne=
+t/intel/e1000/e1000.h
+index d7bdea79e9fa..8fd2458060a0 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000.h
++++ b/drivers/net/ethernet/intel/e1000/e1000.h
+@@ -331,7 +331,8 @@ struct e1000_adapter {
+ enum e1000_state_t {
+ 	__E1000_TESTING,
+ 	__E1000_RESETTING,
+-	__E1000_DOWN
++	__E1000_DOWN,
++	__E1000_DISABLED
+ };
 =20
--	/* GE1, Force 1000M/FD, FC ON */
--	mtk_w32(eth, MAC_MCR_FIXED_LINK, MTK_MAC_MCR(0));
--
--	/* GE2, Force 1000M/FD, FC ON */
--	mtk_w32(eth, MAC_MCR_FIXED_LINK, MTK_MAC_MCR(1));
-+	/* Set linkdown as the default for each GMAC. Its own MCR would be set
-+	 * up with the more appropriate value when mtk_phy_link_adjust call is
-+	 * being invoked.
-+	 */
-+	for (i =3D 0; i < MTK_MAC_COUNT; i++)
-+		mtk_w32(eth, 0, MTK_MAC_MCR(i));
+ #undef pr_fmt
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/et=
+hernet/intel/e1000/e1000_main.c
+index f42129d09e2c..dd112aa5cebb 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_main.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
+@@ -940,7 +940,7 @@ static int e1000_init_hw_struct(struct e1000_adapter *a=
+dapter,
+ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *e=
+nt)
+ {
+ 	struct net_device *netdev;
+-	struct e1000_adapter *adapter;
++	struct e1000_adapter *adapter =3D NULL;
+ 	struct e1000_hw *hw;
 =20
- 	/* Enable RX VLan Offloading */
- 	mtk_w32(eth, 1, MTK_CDMP_EG_CTRL);
+ 	static int cards_found;
+@@ -950,6 +950,7 @@ static int e1000_probe(struct pci_dev *pdev, const stru=
+ct pci_device_id *ent)
+ 	u16 tmp =3D 0;
+ 	u16 eeprom_apme_mask =3D E1000_EEPROM_APME;
+ 	int bars, need_ioport;
++	bool disable_dev =3D false;
+=20
+ 	/* do not allocate ioport bars when not needed */
+ 	need_ioport =3D e1000_is_need_ioport(pdev);
+@@ -1250,11 +1251,13 @@ err_mdio_ioremap:
+ 	iounmap(hw->ce4100_gbe_mdio_base_virt);
+ 	iounmap(hw->hw_addr);
+ err_ioremap:
++	disable_dev =3D !test_and_set_bit(__E1000_DISABLED, &adapter->flags);
+ 	free_netdev(netdev);
+ err_alloc_etherdev:
+ 	pci_release_selected_regions(pdev, bars);
+ err_pci_reg:
+-	pci_disable_device(pdev);
++	if (!adapter || disable_dev)
++		pci_disable_device(pdev);
+ 	return err;
+ }
+=20
+@@ -1272,6 +1275,7 @@ static void e1000_remove(struct pci_dev *pdev)
+ 	struct net_device *netdev =3D pci_get_drvdata(pdev);
+ 	struct e1000_adapter *adapter =3D netdev_priv(netdev);
+ 	struct e1000_hw *hw =3D &adapter->hw;
++	bool disable_dev;
+=20
+ 	e1000_down_and_stop(adapter);
+ 	e1000_release_manageability(adapter);
+@@ -1290,9 +1294,11 @@ static void e1000_remove(struct pci_dev *pdev)
+ 		iounmap(hw->flash_address);
+ 	pci_release_selected_regions(pdev, adapter->bars);
+=20
++	disable_dev =3D !test_and_set_bit(__E1000_DISABLED, &adapter->flags);
+ 	free_netdev(netdev);
+=20
+-	pci_disable_device(pdev);
++	if (disable_dev)
++		pci_disable_device(pdev);
+ }
+=20
+ /**
+@@ -5166,7 +5172,8 @@ static int __e1000_shutdown(struct pci_dev *pdev, boo=
+l *enable_wake)
+ 	if (netif_running(netdev))
+ 		e1000_free_irq(adapter);
+=20
+-	pci_disable_device(pdev);
++	if (!test_and_set_bit(__E1000_DISABLED, &adapter->flags))
++		pci_disable_device(pdev);
+=20
+ 	return 0;
+ }
+@@ -5210,6 +5217,10 @@ static int e1000_resume(struct pci_dev *pdev)
+ 		pr_err("Cannot enable PCI device from suspend\n");
+ 		return err;
+ 	}
++
++	/* flush memory to make sure state is correct */
++	smp_mb__before_atomic();
++	clear_bit(__E1000_DISABLED, &adapter->flags);
+ 	pci_set_master(pdev);
+=20
+ 	pci_enable_wake(pdev, PCI_D3hot, 0);
+@@ -5284,7 +5295,9 @@ static pci_ers_result_t e1000_io_error_detected(struc=
+t pci_dev *pdev,
+=20
+ 	if (netif_running(netdev))
+ 		e1000_down(adapter);
+-	pci_disable_device(pdev);
++
++	if (!test_and_set_bit(__E1000_DISABLED, &adapter->flags))
++		pci_disable_device(pdev);
+=20
+ 	/* Request a slot slot reset. */
+ 	return PCI_ERS_RESULT_NEED_RESET;
+@@ -5312,6 +5325,10 @@ static pci_ers_result_t e1000_io_slot_reset(struct p=
+ci_dev *pdev)
+ 		pr_err("Cannot re-enable PCI device after reset.\n");
+ 		return PCI_ERS_RESULT_DISCONNECT;
+ 	}
++
++	/* flush memory to make sure state is correct */
++	smp_mb__before_atomic();
++	clear_bit(__E1000_DISABLED, &adapter->flags);
+ 	pci_set_master(pdev);
+=20
+ 	pci_enable_wake(pdev, PCI_D3hot, 0);
 --=20
 2.11.0
