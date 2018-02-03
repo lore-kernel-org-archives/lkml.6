@@ -1,151 +1,165 @@
-Return-Path: <acme@kernel.org>
-X-Google-Smtp-Source: AH8x226fJbAW0mwc7A9Lhos32InWlDPojjaeOcxunmMByT7wWDEcb6Ise6sqat8TJ8LfHt/xZBVL
-ARC-Seal: i=1; a=rsa-sha256; t=1518139052; cv=none;
+Return-Path: <niveditas98@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517618337; cv=none;
         d=google.com; s=arc-20160816;
-        b=l3IBXOSQ1oi+MPM8bxNOeNzRYYLd6MMsdeNLv1TR9dhpJlmOlEyLjMxoD0okR1D3KP
-         AMUQXyKiSZSpNOb9f10eAfGIRaZE559NprRjfO4YWP/cFpfADks8uexWu1RrEaEHunA2
-         lLRyUz5mQTN0xe2NZRZQxUc1HXTjLAo0El5QnxzWuIZ2MYl9eKrffJ6H8pL19he19t/z
-         EabbUe3ROCz1zVtqRwpH2YefXB81Pa3CibH2sFr+z16TzNa42C5Q7WbeuMI5p2SGT1RG
-         76x9i/R2NhgZnWWme4nfMcUEVzdooUIB4y7UEL2ERCe7uY7lW8Am3Vbyq30wLstFvd92
-         mz9Q==
+        b=ZiPbVi8xKVpmB7SChsJU70CKxZZA2NbD9YHho8eJuYIcYhuyIsdPeRwkSLAhigY9Jw
+         Jk5t7ZfjBnbdRmJ5bj8qqSnxrI5yrM7UmLWPk7sC0udsQyFbxV5jC8vrdpqI7EzdUPsH
+         75OlGpffRr2rQ60MTosIAksIUwQ7lwXZdwzOMar9rwaLlZQEuSxAjn1X85yVX1AWdfJ5
+         dainw6ikc5tSwsnCptKF1BP8zxEZqDCXHgtcZt/HI5apRboGmYWAdIgr6sBc8uD5XwS/
+         a8GiKHrebgLLbEDd/v34t94wA7/4vAH98MjUXqWDwh44kZUtFet9TKb99hor8McUUWPn
+         Zu1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=n5oSBjD7fi0rFoD2jEcdMOoz3owsqUevA03Fm3L2Trc=;
-        b=lOvD1cUjp6rdajJdS2dF/c50SxhxSMN3pevTpPRLynSm8UuX03ybyxIhFghaA6gxRU
-         SjKDvveg3hWWM4WdGffQdf0dukWMGpWl6lpg6cgDGtO43dC4ReHclvJCa/3ByZ1GLFHR
-         4YSHcGGPfmYPRMevUz8qW6YgHaProk/ZLLS0mxhhwhoZm2B0ka0um5ZYUtlSNhBJ7IXW
-         2pXP0St7fO6MkCV9toI+YRCQsAdvbNngWTBpfoKJzaGErYtcs6AqIiDMkxSCpO6fxhEJ
-         57mQQwS7LvYaqnMJosDMgKOy8aVucVJPNJJaaoPk3eEfhNUkgQCBZRAs+qjTr0aeyvNj
-         YZYQ==
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=dPZ+G9ofmSnfLrS0kTNjWbHSBdzfQ2EIC7v4uIegrbo=;
+        b=lozfcLNlw19zOZUWa8wH/4p8dEQ7Cn5bMqzk9iL+v2TurMxE2tZCqL/6wAlHcXAHoF
+         /hzmZPSE/a7QhqsR9rUT2qDzTi7Zjk9ZCmFhm5Mz8D2AwDwhi9dVJ1TF6ILS/OQ1rYdF
+         exNwPuYkg2pOXN95Vgiq0pTq0cB8EkvJz4LW/wYYC33Zfb5eJHoDRdbs+8NmnvLNBydY
+         QPPbb0cWDeIn3agnRtjicbJqo7PevuGgEkKUSmFbyoa5BJofNAmwNTYR1VKYee+FoYme
+         WhLdBWmxBw8tLpeqEjqgcfAxh1dlUBUFhLBk3pfiV7ZE1RkNhYFU6+8rejnvKu+JHFrn
+         c6pg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of acme@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=acme@kernel.org
+       spf=pass (google.com: domain of niveditas98@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=niveditas98@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of acme@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=acme@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C98CA21789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Thu, 8 Feb 2018 22:17:28 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Arvind Sankar <nivedita@alum.mit.edu>
+       spf=pass (google.com: domain of niveditas98@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=niveditas98@gmail.com
+X-Google-Smtp-Source: AH8x226qQZxr1a54I4G6e3a/fxmoP8GYEVnTM1YR2U/1TMDdqa7SsvSTr30NuFUb9q/hOLlpKuhhNQ==
+Date: Fri, 2 Feb 2018 19:38:51 -0500
+From: Arvind Sankar <nivedita@alum.mit.edu>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>
+	Ingo Molnar <mingo@redhat.com>,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Subject: Re: [PATCH] tools: libsubcmd: Drop the less hack that was inherited
  from Git.
-Message-ID: <20180209011728.GB5132@kernel.org>
+Message-ID: <20180203003850.GA62570@rani.riverdale>
 References: <20180124003831.GA34667@rani.riverdale>
  <20180124205411.lpzcpqnuw3nlyg4n@treble>
  <20180125081652.GA23548@kernel.org>
- <20180209000009.GA54330@rani.riverdale>
+ <20180125132425.GA27283@rani.riverdale>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180209000009.GA54330@rani.riverdale>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180125132425.GA27283@rani.riverdale>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1590432180841544172?=
-X-GMAIL-MSGID: =?utf-8?q?1591884174700997265?=
+X-GMAIL-MSGID: =?utf-8?q?1591338165323639888?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Em Thu, Feb 08, 2018 at 07:00:10PM -0500, Arvind Sankar escreveu:
-> We inherited this hack with the original code from the Git project. The
-> select call is invalid as the two fd_set pointers should not be aliased.
-> 
-> We could fix it, but the Git project removed this hack in 2012 in commit
-> e8320f3 (pager: drop "wait for output to run less" hack). The bug it
-> worked around was apparently fixed in less back in June 2007.
-> 
-> So remove the hack from here as well.
+Hi, it looks like Sergey has put in a patch to fix the aliasing, looking
+at the linux-next tree.
 
-Ok, so e8320f3 was merged directly by Linus, I'll wait till perf/urgent
-pulls from upstream and then will merge this,
+Are we still looking to remove this hack altogether?
 
-Thanks,
+Thanks
 
-- Arnaldo
- 
-> Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-> ---
->  - Merge with commit ad343a98 (tools/lib/subcmd/pager.c: do not alias
->    select() params) by Sergey
+On Thu, Jan 25, 2018 at 08:24:26AM -0500, Arvind Sankar wrote:
+> Thanks.
 > 
->  tools/lib/subcmd/pager.c       | 20 --------------------
->  tools/lib/subcmd/run-command.c |  2 --
->  tools/lib/subcmd/run-command.h |  1 -
->  3 files changed, 23 deletions(-)
+> This was found because gcc 8 appears to be enabling -Wrestrict in -Wall,
+> so there is a build failure with mainline gcc.
 > 
-> diff --git a/tools/lib/subcmd/pager.c b/tools/lib/subcmd/pager.c
-> index 9997a8805a82..94d61d9b511f 100644
-> --- a/tools/lib/subcmd/pager.c
-> +++ b/tools/lib/subcmd/pager.c
-> @@ -1,5 +1,4 @@
->  // SPDX-License-Identifier: GPL-2.0
-> -#include <sys/select.h>
->  #include <stdlib.h>
->  #include <stdio.h>
->  #include <string.h>
-> @@ -23,24 +22,6 @@ void pager_init(const char *pager_env)
->  	subcmd_config.pager_env = pager_env;
->  }
->  
-> -static void pager_preexec(void)
-> -{
-> -	/*
-> -	 * Work around bug in "less" by not starting it until we
-> -	 * have real input
-> -	 */
-> -	fd_set in;
-> -	fd_set exception;
-> -
-> -	FD_ZERO(&in);
-> -	FD_ZERO(&exception);
-> -	FD_SET(0, &in);
-> -	FD_SET(0, &exception);
-> -	select(1, &in, NULL, &exception, NULL);
-> -
-> -	setenv("LESS", "FRSX", 0);
-> -}
-> -
->  static const char *pager_argv[] = { "sh", "-c", NULL, NULL };
->  static struct child_process pager_process;
->  
-> @@ -87,7 +68,6 @@ void setup_pager(void)
->  	pager_argv[2] = pager;
->  	pager_process.argv = pager_argv;
->  	pager_process.in = -1;
-> -	pager_process.preexec_cb = pager_preexec;
->  
->  	if (start_command(&pager_process))
->  		return;
-> diff --git a/tools/lib/subcmd/run-command.c b/tools/lib/subcmd/run-command.c
-> index 5cdac2162532..9e9dca717ed7 100644
-> --- a/tools/lib/subcmd/run-command.c
-> +++ b/tools/lib/subcmd/run-command.c
-> @@ -120,8 +120,6 @@ int start_command(struct child_process *cmd)
->  					unsetenv(*cmd->env);
->  			}
->  		}
-> -		if (cmd->preexec_cb)
-> -			cmd->preexec_cb();
->  		if (cmd->exec_cmd) {
->  			execv_cmd(cmd->argv);
->  		} else {
-> diff --git a/tools/lib/subcmd/run-command.h b/tools/lib/subcmd/run-command.h
-> index 17d969c6add3..6256268802b5 100644
-> --- a/tools/lib/subcmd/run-command.h
-> +++ b/tools/lib/subcmd/run-command.h
-> @@ -46,7 +46,6 @@ struct child_process {
->  	unsigned no_stderr:1;
->  	unsigned exec_cmd:1; /* if this is to be external sub-command */
->  	unsigned stdout_to_stderr:1;
-> -	void (*preexec_cb)(void);
->  };
->  
->  int start_command(struct child_process *);
-> -- 
-> 2.13.6
+> On Thu, Jan 25, 2018 at 05:16:52AM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Wed, Jan 24, 2018 at 02:54:11PM -0600, Josh Poimboeuf escreveu:
+> > > On Tue, Jan 23, 2018 at 07:38:37PM -0500, Arvind Sankar wrote:
+> > > > We inherited this hack with the original code from the Git project. The
+> > > > select call is invalid as the two fd_set pointers should not be aliased.
+> > > > 
+> > > > We could fix it, but the Git project removed this hack in 2012 in commit
+> > > > e8320f3 (pager: drop "wait for output to run less" hack). The bug it
+> > > > worked around was apparently fixed in less back in June 2007.
+> > > > 
+> > > > So remove the hack from here as well.
+> > > > 
+> > > > Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+> > > 
+> > > Looks good to me.
+> > > 
+> > >   Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> > > 
+> > > Libsubcmd is used by perf and objtool, so adding the perf maintainers to
+> > > CC.  Arnaldo, do you want to pick this one up?
+> > 
+> > Sure, I'll put it in my perf/core branch.
+> > 
+> > - Arnaldo
+> >  
+> > > > ---
+> > > >  tools/lib/subcmd/pager.c       | 17 -----------------
+> > > >  tools/lib/subcmd/run-command.c |  2 --
+> > > >  tools/lib/subcmd/run-command.h |  1 -
+> > > >  3 files changed, 20 deletions(-)
+> > > > 
+> > > > diff --git a/tools/lib/subcmd/pager.c b/tools/lib/subcmd/pager.c
+> > > > index 5ba754d17952..94d61d9b511f 100644
+> > > > --- a/tools/lib/subcmd/pager.c
+> > > > +++ b/tools/lib/subcmd/pager.c
+> > > > @@ -1,5 +1,4 @@
+> > > >  // SPDX-License-Identifier: GPL-2.0
+> > > > -#include <sys/select.h>
+> > > >  #include <stdlib.h>
+> > > >  #include <stdio.h>
+> > > >  #include <string.h>
+> > > > @@ -23,21 +22,6 @@ void pager_init(const char *pager_env)
+> > > >  	subcmd_config.pager_env = pager_env;
+> > > >  }
+> > > >  
+> > > > -static void pager_preexec(void)
+> > > > -{
+> > > > -	/*
+> > > > -	 * Work around bug in "less" by not starting it until we
+> > > > -	 * have real input
+> > > > -	 */
+> > > > -	fd_set in;
+> > > > -
+> > > > -	FD_ZERO(&in);
+> > > > -	FD_SET(0, &in);
+> > > > -	select(1, &in, NULL, &in, NULL);
+> > > > -
+> > > > -	setenv("LESS", "FRSX", 0);
+> > > > -}
+> > > > -
+> > > >  static const char *pager_argv[] = { "sh", "-c", NULL, NULL };
+> > > >  static struct child_process pager_process;
+> > > >  
+> > > > @@ -84,7 +68,6 @@ void setup_pager(void)
+> > > >  	pager_argv[2] = pager;
+> > > >  	pager_process.argv = pager_argv;
+> > > >  	pager_process.in = -1;
+> > > > -	pager_process.preexec_cb = pager_preexec;
+> > > >  
+> > > >  	if (start_command(&pager_process))
+> > > >  		return;
+> > > > diff --git a/tools/lib/subcmd/run-command.c b/tools/lib/subcmd/run-command.c
+> > > > index 5cdac2162532..9e9dca717ed7 100644
+> > > > --- a/tools/lib/subcmd/run-command.c
+> > > > +++ b/tools/lib/subcmd/run-command.c
+> > > > @@ -120,8 +120,6 @@ int start_command(struct child_process *cmd)
+> > > >  					unsetenv(*cmd->env);
+> > > >  			}
+> > > >  		}
+> > > > -		if (cmd->preexec_cb)
+> > > > -			cmd->preexec_cb();
+> > > >  		if (cmd->exec_cmd) {
+> > > >  			execv_cmd(cmd->argv);
+> > > >  		} else {
+> > > > diff --git a/tools/lib/subcmd/run-command.h b/tools/lib/subcmd/run-command.h
+> > > > index 17d969c6add3..6256268802b5 100644
+> > > > --- a/tools/lib/subcmd/run-command.h
+> > > > +++ b/tools/lib/subcmd/run-command.h
+> > > > @@ -46,7 +46,6 @@ struct child_process {
+> > > >  	unsigned no_stderr:1;
+> > > >  	unsigned exec_cmd:1; /* if this is to be external sub-command */
+> > > >  	unsigned stdout_to_stderr:1;
+> > > > -	void (*preexec_cb)(void);
+> > > >  };
+> > > >  
+> > > >  int start_command(struct child_process *);
+> > > > -- 
+> > > > 2.13.6
+> > > > 
+> > > 
+> > > -- 
+> > > Josh
