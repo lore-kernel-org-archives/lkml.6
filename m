@@ -1,98 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752727AbeBCQbq (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 11:31:46 -0500
-Received: from m15-42.126.com ([220.181.15.42]:10893 "EHLO m15-42.126.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752026AbeBCQbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 11:31:36 -0500
-X-Originating-IP: [123.139.75.126]
-Date: Sun, 4 Feb 2018 00:31:29 +0800 (CST)
-From: "Zhang Bo" <zbsdta@126.com>
-To: "Marcus Folkesson" <marcus.folkesson@gmail.com>
-Cc: dmitry.torokhov@gmail.com, DRivshin@allworx.com, robh@kernel.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhang.bo19@zte.com.cn
-Subject: Re: [PATCH] Input: matrix_keypad - fix keypad does not response
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
- 20160729(86883.8884) Copyright (c) 2002-2018 www.mailtech.cn 126com
-In-Reply-To: <20180203134450.GC707@gmail.com>
-References: <20180203120046.10988-1-zbsdta@126.com>
- <20180203134450.GC707@gmail.com>
-Content-Type: text/plain; charset=GBK
+        id S1752697AbeBCQll (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 11:41:41 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:18510
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751972AbeBCQla (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 11:41:30 -0500
+X-IronPort-AV: E=Sophos;i="5.46,455,1511823600";
+   d="scan'208";a="253519807"
+Date: Sat, 3 Feb 2018 17:41:28 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Julia Lawall <julia.lawall@lip6.fr>
+cc: Sean Wang <sean.wang@mediatek.com>, vinod.koul@intel.com,
+        dan.j.williams@intel.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kbuild-all@01.org, himanshujha199640@gmail.com
+Subject: Re: [PATCH] dmaengine: mediatek: fix zalloc-simple.cocci warnings
+In-Reply-To: <alpine.DEB.2.20.1802031658280.3390@hadrien>
+Message-ID: <alpine.DEB.2.20.1802031740370.7608@hadrien>
+References: <alpine.DEB.2.20.1802031658280.3390@hadrien>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Message-ID: <3527eac2.37b3.1615c822887.Coremail.zbsdta@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: KsqowABnGL_h43Va3lmRAA--.33772W
-X-CM-SenderInfo: h2evv3bd6rjloofrz/1tbijgHhSVpD3+f9kwAAso
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w13GVrig025195
 
-At 2018-02-03 21:44:50, "Marcus Folkesson" <marcus.folkesson@gmail.com> wrote:
->> diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
->> index 1f316d66e6f7..13fe51824637 100644
->> --- a/drivers/input/keyboard/matrix_keypad.c
->> +++ b/drivers/input/keyboard/matrix_keypad.c
->> @@ -169,7 +169,8 @@ static void matrix_keypad_scan(struct work_struct *work)
->>  	/* Enable IRQs again */
->>  	spin_lock_irq(&keypad->lock);
->>  	keypad->scan_pending = false;
->> -	enable_row_irqs(keypad);
->> +	if (keypad->stopped == false)
->> +		enable_row_irqs(keypad);
->>  	spin_unlock_irq(&keypad->lock);
->>  }
->>  
->> @@ -202,14 +203,16 @@ static int matrix_keypad_start(struct input_dev *dev)
->>  {
->>  	struct matrix_keypad *keypad = input_get_drvdata(dev);
->>  
->> +	spin_lock_irq(&keypad->lock);
->>  	keypad->stopped = false;
->> -	mb();
->>  
->>  	/*
->>  	 * Schedule an immediate key scan to capture current key state;
->>  	 * columns will be activated and IRQs be enabled after the scan.
->>  	 */
->> -	schedule_delayed_work(&keypad->work, 0);
->> +	if (keypad->scan_pending == false)
->> +		schedule_delayed_work(&keypad->work, 0);
->> +	spin_unlock_irq(&keypad->lock);
->>  
->>  	return 0;
->>  }
->> @@ -218,14 +221,17 @@ static void matrix_keypad_stop(struct input_dev *dev)
->>  {
->>  	struct matrix_keypad *keypad = input_get_drvdata(dev);
->>  
->> +	spin_lock_irq(&keypad->lock);
->>  	keypad->stopped = true;
->> -	mb();
->> -	flush_work(&keypad->work.work);
->>  	/*
->>  	 * matrix_keypad_scan() will leave IRQs enabled;
->>  	 * we should disable them now.
->>  	 */
->> -	disable_row_irqs(keypad);
->> +	if (keypad->scan_pending == false)
->> +		disable_row_irqs(keypad);
->> +	spin_unlock_irq(&keypad->lock);
->> +
->> +	flush_work(&keypad->work.work);
->>  }
->
->
->Hum, I think we should use spin_lock_irqsave/spin_lock_irqrestore
->instead to be on the safe side. 
->I don't see how we could guarantee that irqs is allways enabled when
->calling spin_lock_irq().
 
-spin_lock_irq and  spin_unlock_irq are called in matrix_keypad_stop and matrix_keypad_start
-which are in suspend and resume,  they run in process context, matrix_keypad_scan runs in
-worker which is in process context also.
+
+On Sat, 3 Feb 2018, Julia Lawall wrote:
+
+> From: Fengguang Wu <fengguang.wu@intel.com>
+>
+>  Use zeroing allocator rather than allocator followed by memset with 0
+>
+> Generated by: scripts/coccinelle/api/alloc/zalloc-simple.cocci
+>
+> Fixes: 73006a033ef0 ("dmaengine: mediatek: Add MediaTek High-Speed DMA controller for MT7622 and MT7623 SoC")
+> CC: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+> Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+> ---
+>
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on v4.15 next-20180202]
+> [if your patch is applied to the wrong git tree, please drop us a note to
+> help improve the system]
+>
+> url:
+> https://github.com/0day-ci/linux/commits/sean-wang-mediatek-com/dt-bindings-dmaengine-Add-MediaTek-High-Speed-DMA-controller-bindings/20180203-203814
+>
+> Please take the patch only if it's a positive warning. Thanks!
+>
+>  mtk-hsdma.c |    6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> --- a/drivers/dma/mediatek/mtk-hsdma.c
+> +++ b/drivers/dma/mediatek/mtk-hsdma.c
+> @@ -325,13 +325,11 @@ static int mtk_hsdma_alloc_pchan(struct
+>  	 * and [MTK_DMA_SIZE ... 2 * MTK_DMA_SIZE - 1] is for RX ring.
+>  	 */
+>  	pc->sz_ring = 2 * MTK_DMA_SIZE * sizeof(*ring->txd);
+> -	ring->txd = dma_alloc_coherent(hsdma2dev(hsdma),
+> -				       pc->sz_ring, &ring->tphys,
+> -				       GFP_ATOMIC | __GFP_ZERO);
+> +	ring->txd = dma_zalloc_coherent(hsdma2dev(hsdma), pc->sz_ring,
+> +					&ring->tphys, GFP_ATOMIC | __GFP_ZERO);
+
+Actually, __GFP_ZERO could be dropped as well.
+
+julia
+
+>  	if (!ring->txd)
+>  		return -ENOMEM;
+>
+> -	memset(ring->txd, 0, pc->sz_ring);
+>  	ring->rxd = &ring->txd[MTK_DMA_SIZE];
+>  	ring->rphys = ring->tphys + MTK_DMA_SIZE * sizeof(*ring->txd);
+>  	ring->cur_tptr = 0;
+>
