@@ -1,110 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751774AbeBCIXd (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 03:23:33 -0500
-Received: from gum.cmpxchg.org ([85.214.110.215]:45498 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750725AbeBCIXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 03:23:25 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Tejun Heo <tj@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        linux-mm@kvack.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH] mm: memcontrol: fix NR_WRITEBACK leak in memcg and system stats
-Date: Sat,  3 Feb 2018 03:23:53 -0500
-Message-Id: <20180203082353.17284-1-hannes@cmpxchg.org>
-X-Mailer: git-send-email 2.16.1
+        id S1752011AbeBCIhE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 03:37:04 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45940 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbeBCIgz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 03:36:55 -0500
+X-Google-Smtp-Source: AH8x225YnsKVDPqoSMJaF2FV/qvhkHMJGSM+dgrPi9FWH4WYbTrljV7mAHz5pDCLdUGG/DzyyvlZgw==
+Date: Sat, 3 Feb 2018 09:36:51 +0100
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Aaron Ma <aaron.ma@canonical.com>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        jikos@kernel.org, benjamin.tissoires@redhat.com
+Subject: Re: [PATCH 1/2] HID: core: i2c-hid: fix size check and type usage
+Message-ID: <20180203083651.GB707@gmail.com>
+References: <20180102173006.506-1-aaron.ma@canonical.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
+Content-Disposition: inline
+In-Reply-To: <20180102173006.506-1-aaron.ma@canonical.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the ("a983b5ebee57 mm: memcontrol: fix excessive complexity in
-memory.stat reporting"), we observed slowly upward creeping
-NR_WRITEBACK counts over the course of several days, both the
-per-memcg stats as well as the system counter in e.g. /proc/meminfo.
 
-The conversion from full per-cpu stat counts to per-cpu cached atomic
-stat counts introduced an irq-unsafe RMW operation into the updates.
+--0eh6TmSyL6TZE2Uz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Most stat updates come from process context, but one notable exception
-is the NR_WRITEBACK counter. While writebacks are issued from process
-context, they are retired from (soft)irq context.
+Hi Aaron,
 
-When writeback completions interrupt the RMW counter updates of new
-writebacks being issued, the decs from the completions are lost.
+On Wed, Jan 03, 2018 at 01:30:05AM +0800, Aaron Ma wrote:
+> When convert char array with signed int, if the inbuf[x] is negative then
+> upper bits will be set to 1. Fix this by using u8 instead of char.
+>=20
+> ret_size has to be at least 3, hid_input_report use it after minus 2 byte=
+s.
 
-Since the global updates are routed through the joint lruvec API, both
-the memcg counters as well as the system counters are affected.
+At least 2?
+hid_input_report() checks (!size)
 
-This patch makes the joint stat and event API irq safe.
+>=20
+> size should be more than 0 to keep memset safe.
+>=20
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+> ---
+>  drivers/hid/hid-core.c        |  4 ++--
+>  drivers/hid/i2c-hid/i2c-hid.c | 10 +++++-----
+>  2 files changed, 7 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 0c3f608131cf..992547771d96 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -1506,7 +1506,7 @@ int hid_report_raw_event(struct hid_device *hid, in=
+t type, u8 *data, int size,
+>  	if (rsize > HID_MAX_BUFFER_SIZE)
+>  		rsize =3D HID_MAX_BUFFER_SIZE;
+> =20
+> -	if (csize < rsize) {
+> +	if ((csize < rsize) && (csize > 0)) {
+>  		dbg_hid("report %d is too short, (%d < %d)\n", report->id,
+>  				csize, rsize);
+>  		memset(cdata + csize, 0, rsize - csize);
+> @@ -1566,7 +1566,7 @@ int hid_input_report(struct hid_device *hid, int ty=
+pe, u8 *data, int size, int i
+>  	report_enum =3D hid->report_enum + type;
+>  	hdrv =3D hid->driver;
+> =20
+> -	if (!size) {
+> +	if (size <=3D 0) {
 
-Fixes: a983b5ebee57 ("mm: memcontrol: fix excessive complexity in memory.stat reporting")
-Debugged-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- include/linux/memcontrol.h | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+All code that is using hid_input_report() seems to check that no
+negative size is provided.
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 882046863581..c46016bb25eb 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -523,9 +523,11 @@ static inline void __mod_memcg_state(struct mem_cgroup *memcg,
- static inline void mod_memcg_state(struct mem_cgroup *memcg,
- 				   int idx, int val)
- {
--	preempt_disable();
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	__mod_memcg_state(memcg, idx, val);
--	preempt_enable();
-+	local_irq_restore(flags);
- }
- 
- /**
-@@ -606,9 +608,11 @@ static inline void __mod_lruvec_state(struct lruvec *lruvec,
- static inline void mod_lruvec_state(struct lruvec *lruvec,
- 				    enum node_stat_item idx, int val)
- {
--	preempt_disable();
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	__mod_lruvec_state(lruvec, idx, val);
--	preempt_enable();
-+	local_irq_restore(flags);
- }
- 
- static inline void __mod_lruvec_page_state(struct page *page,
-@@ -630,9 +634,11 @@ static inline void __mod_lruvec_page_state(struct page *page,
- static inline void mod_lruvec_page_state(struct page *page,
- 					 enum node_stat_item idx, int val)
- {
--	preempt_disable();
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	__mod_lruvec_page_state(page, idx, val);
--	preempt_enable();
-+	local_irq_restore(flags);
- }
- 
- unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
-@@ -659,9 +665,11 @@ static inline void __count_memcg_events(struct mem_cgroup *memcg,
- static inline void count_memcg_events(struct mem_cgroup *memcg,
- 				      int idx, unsigned long count)
- {
--	preempt_disable();
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	__count_memcg_events(memcg, idx, count);
--	preempt_enable();
-+	local_irq_restore(flags);
- }
- 
- /* idx can be of type enum memcg_event_item or vm_event_item */
--- 
-2.16.1
+If we want this check, maybe we should consider making size unsigned
+instead?
+
+>  		dbg_hid("empty report\n");
+>  		ret =3D -1;
+>  		goto unlock;
+> diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+> index e054ee43c1e2..09404ffdb08b 100644
+> --- a/drivers/hid/i2c-hid/i2c-hid.c
+> +++ b/drivers/hid/i2c-hid/i2c-hid.c
+> @@ -144,10 +144,10 @@ struct i2c_hid {
+>  						   * register of the HID
+>  						   * descriptor. */
+>  	unsigned int		bufsize;	/* i2c buffer size */
+> -	char			*inbuf;		/* Input buffer */
+> -	char			*rawbuf;	/* Raw Input buffer */
+> -	char			*cmdbuf;	/* Command buffer */
+> -	char			*argsbuf;	/* Command arguments buffer */
+> +	u8			*inbuf;		/* Input buffer */
+> +	u8			*rawbuf;	/* Raw Input buffer */
+> +	u8			*cmdbuf;	/* Command buffer */
+> +	u8			*argsbuf;	/* Command arguments buffer */
+
+Looks good
+
+> =20
+>  	unsigned long		flags;		/* device flags */
+>  	unsigned long		quirks;		/* Various quirks */
+> @@ -473,7 +473,7 @@ static void i2c_hid_get_input(struct i2c_hid *ihid)
+> =20
+>  	ret_size =3D ihid->inbuf[0] | ihid->inbuf[1] << 8;
+> =20
+> -	if (!ret_size) {
+> +	if (ret_size <=3D 2) {
+
+if (ret_size < 2) ?
+
+
+>  		/* host or device initiated RESET completed */
+>  		if (test_and_clear_bit(I2C_HID_RESET_PENDING, &ihid->flags))
+>  			wake_up(&ihid->wait);
+> --=20
+> 2.14.3
+
+
+Best regards
+Marcus Folkesson
+
+--0eh6TmSyL6TZE2Uz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlp1dJ4ACgkQiIBOb1ld
+UjJwoQ/8CjhTg3RxsLsSW9f2be0hZ8HzlHBn2YkE6J97mt6kYV2twMaaN29slSNi
+t+c1w5EK4qFpMZbQ3yl4023fnEgZPrh52TpdiyJJXCb5sSqfaOuHVu1eBIgIEIRg
+bHbN+CpXpMhBHRy5mbCzWh6tRJfGT45wO9Sh9w+k3QMNVhh8XkHsBUbSUjEl6ozV
+8fnONxnArhXoVfYVfg+42QRg6FYImZT93LzNM1kQLg8F8azZgd0jug5mi2ickdH5
+VXG6iZ0hD7d8yZu6+o2TAS6rK4AVDHX3+ZqZ9maIb4hR6h7D4SibQ5qP4TbbASTt
+VNXrJVCI8vBg5Cm+lvVKwNXA5TO4VmJfv3CkQ7+4w9z3J5tzieAVUY7qy/MxhCu6
+rWEjxTm19m7zp6HkJff22DiljRBCIGP6NqvMpJf8X4uFBNtj2cUeRY5vwX9X1Ub1
+TO+0mvQh61SKdjEn6VXlqqz/vzpHCt7Nx/ENLpEL/EYOyj4GChvpsSVoLYjwsrxp
+WQl6ScEUS8c1Rx6WN859QqxUNCRsWwzNdN1jIncuMosBcM6i0AT/TxyHpp8yeLmM
++29t1UyiuVHPqvmsylat1M7EO49BVfIKN/AEWEujngBsxhJrQZ6lNKNqoRvUunxM
+wABz7m0IU/W309MMd81f2zBFH5DtNKFU0YDxS36JRdcFvRHY6p4=
+=IoLX
+-----END PGP SIGNATURE-----
+
+--0eh6TmSyL6TZE2Uz--
