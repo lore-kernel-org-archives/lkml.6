@@ -1,172 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752204AbeBCBFC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Feb 2018 20:05:02 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:45454 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751932AbeBCBEq (ORCPT
+        id S1752545AbeBCBIQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Feb 2018 20:08:16 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51047 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752332AbeBCBIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Feb 2018 20:04:46 -0500
-Date: Fri, 02 Feb 2018 20:04:45 -0500 (EST)
-Message-Id: <20180202.200445.403241076450005293.davem@davemloft.net>
-To: torvalds@linux-foundation.org
-CC: akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
-From: David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Fri, 2 Feb 2018 20:08:09 -0500
+X-Google-Smtp-Source: AH8x226yAQgw0UmUeyx+XjBq2a+t00EhR0xDFTnkYDJ8fsjqIInCecWtL+kfRVS1pMkFyMOmKtIghg==
+Date: Sat, 3 Feb 2018 02:08:00 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: corbet@lwn.net, stern@rowland.harvard.edu, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] MAINTAINERS: list file memory-barriers.txt within
+ the LKMM entry
+Message-ID: <20180203010800.GA6570@andrea>
+References: <1517562822-6293-1-git-send-email-parri.andrea@gmail.com>
+ <20180202235102.GC3617@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180202235102.GC3617@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 02, 2018 at 03:51:02PM -0800, Paul E. McKenney wrote:
+> On Fri, Feb 02, 2018 at 10:13:42AM +0100, Andrea Parri wrote:
+> > Now that a formal specification of the LKMM has become available to
+> > the developer, some concern about how to track changes to the model
+> > on the level of the "high-level documentation" was raised.
+> > 
+> > A first "mitigation" to this issue, suggested by Will, is to assign
+> > maintainership (and responsibility!!)  of such documentation (here,
+> > memory-barriers.txt) to the maintainers of the LKMM themselves.
+> > 
+> > Suggested-by: Will Deacon <will.deacon@arm.com>
+> > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> 
+> Very good, thank you, queued!  Please see below for the usual commit-log
+> rework.  BTW, in future submissions, could you please capitalize the
+> first word after the colon (":") in the subject line?  It is all too
+> easy for me to forget to change this, as Ingo can attest.  ;-)
 
-1) The bnx2x can hang if you give it a GSO packet with a segment size
-   which is too big for the hardware, detect and drop in this case.
-   From Daniel Axtens.
+Sorry, I'll do my best! ;-)
 
-2) Fix some overflows and pointer leaks in xtables, from Dmitry
-   Vyukov.
 
-3) Missing RCU locking in igmp, from Eric Dumazet.
+> 
+> If we are going to continue to use the LKMM acronym, should we make the
+> first line of the MAINTAINERS block look something like this?
 
-4) Fix RX checksum handling on r8152, it can only checksum UDP and
-   TCP packets.  From Hayes Wang.
+I've no strong opinion about whether we should, but it makes sense to me.
+(The acronym is currently defined (and heavily used) in explanation.txt.)
 
-5) Minor pacing tweak to TCP BBR congestion control, from Neal
-   Cardwell.
+Thanks,
+  Andrea
 
-6) Missing RCU annotations in cls_u32, from Paolo Abeni.
 
-Please pull, thanks a lot!
-      
-
-The following changes since commit 255442c93843f52b6891b21d0b485bf2c97f93c3:
-
-  Merge tag 'docs-4.16' of git://git.lwn.net/linux (2018-01-31 19:25:25 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
-
-for you to fetch changes up to edbe69ef2c90fc86998a74b08319a01c508bd497:
-
-  Revert "defer call to mem_cgroup_sk_alloc()" (2018-02-02 19:49:31 -0500)
-
-----------------------------------------------------------------
-Alexander Monakov (1):
-      net: pxa168_eth: add netconsole support
-
-Arnd Bergmann (3):
-      net: cxgb4: avoid memcpy beyond end of source buffer
-      net: qed: use correct strncpy() size
-      net: qlge: use memmove instead of skb_copy_to_linear_data
-
-Christian Brauner (1):
-      rtnetlink: remove check for IFLA_IF_NETNSID
-
-Colin Ian King (4):
-      be2net: remove redundant initialization of 'head' and pointer txq
-      net: jme: remove unused initialization of 'rxdesc'
-      lan78xx: remove redundant initialization of pointer 'phydev'
-      vmxnet3: remove redundant initialization of pointer 'rq'
-
-Daniel Axtens (2):
-      net: create skb_gso_validate_mac_len()
-      bnx2x: disable GSO where gso_size is too big for hardware
-
-David S. Miller (3):
-      Merge branch 'bnx2x-disable-GSO-on-too-large-packets'
-      Merge git://git.kernel.org/.../pablo/nf
-      Merge branch 'r8152-fix-rx-issues'
-
-Desnes Augusto Nunes do Rosario (1):
-      ibmvnic: fix firmware version when no firmware level has been provided by the VIOS server
-
-Dmitry Vyukov (3):
-      netfilter: x_tables: fix int overflow in xt_alloc_table_info()
-      netfilter: x_tables: fix pointer leaks to userspace
-      netfilter: ipt_CLUSTERIP: fix out-of-bounds accesses in clusterip_tg_check()
-
-Ed Swierk (1):
-      openvswitch: Remove padding from packet before L3+ conntrack processing
-
-Edwin Peer (1):
-      nfp: fix TLV offset calculation
-
-Eric Dumazet (3):
-      netfilter: x_tables: avoid out-of-bounds reads in xt_request_find_{match|target}
-      net: igmp: add a missing rcu locking section
-      soreuseport: fix mem leak in reuseport_add_sock()
-
-Geert Uytterhoeven (2):
-      net: bridge: Fix uninitialized error in br_fdb_sync_static()
-      inet: Avoid unitialized variable warning in inet_unhash()
-
-Hayes Wang (2):
-      r8152: fix wrong checksum status for received IPv4 packets
-      r8152: set rx mode early when linking on
-
-Jiri Pirko (1):
-      rocker: fix possible null pointer dereference in rocker_router_fib_event_work
-
-Jozsef Kadlecsik (1):
-      netfilter: ipset: Fix wraparound in hash:*net* types
-
-Neal Cardwell (1):
-      tcp_bbr: fix pacing_gain to always be unity when using lt_bw
-
-Paolo Abeni (2):
-      netfilter: on sockopt() acquire sock lock only in the required scope
-      cls_u32: add missing RCU annotation.
-
-Roman Gushchin (1):
-      Revert "defer call to mem_cgroup_sk_alloc()"
-
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c  | 18 ++++++++++++++++++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.h    |  2 +-
- drivers/net/ethernet/emulex/benet/be_main.c       |  3 +--
- drivers/net/ethernet/ibm/ibmvnic.c                |  6 +++++-
- drivers/net/ethernet/jme.c                        |  2 +-
- drivers/net/ethernet/marvell/pxa168_eth.c         | 12 ++++++++++++
- drivers/net/ethernet/netronome/nfp/nfp_net_ctrl.c |  2 +-
- drivers/net/ethernet/qlogic/qed/qed_debug.c       |  6 ++----
- drivers/net/ethernet/qlogic/qlge/qlge_main.c      |  3 +--
- drivers/net/ethernet/rocker/rocker_main.c         | 18 +++++++++---------
- drivers/net/usb/lan78xx.c                         |  2 +-
- drivers/net/usb/r8152.c                           | 13 ++++++-------
- drivers/net/vmxnet3/vmxnet3_drv.c                 |  6 ++----
- include/linux/skbuff.h                            | 16 ++++++++++++++++
- mm/memcontrol.c                                   | 14 ++++++++++++++
- net/bridge/br_fdb.c                               |  2 +-
- net/core/rtnetlink.c                              |  3 ---
- net/core/skbuff.c                                 | 63 ++++++++++++++++++++++++++++++++++++++++++++++++++-------------
- net/core/sock.c                                   |  5 +----
- net/core/sock_reuseport.c                         | 35 ++++++++++++++++++++---------------
- net/ipv4/igmp.c                                   |  4 ++++
- net/ipv4/inet_connection_sock.c                   |  1 -
- net/ipv4/inet_hashtables.c                        |  6 ++----
- net/ipv4/ip_sockglue.c                            | 14 ++++----------
- net/ipv4/netfilter/ipt_CLUSTERIP.c                | 16 +++++++++++++---
- net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c    |  6 +++++-
- net/ipv4/tcp_bbr.c                                |  6 +++---
- net/ipv6/ipv6_sockglue.c                          | 17 +++++------------
- net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.c    | 18 ++++++++++++------
- net/netfilter/ipset/ip_set_hash_ipportnet.c       | 26 +++++++++++++-------------
- net/netfilter/ipset/ip_set_hash_net.c             |  9 ++++-----
- net/netfilter/ipset/ip_set_hash_netiface.c        |  9 ++++-----
- net/netfilter/ipset/ip_set_hash_netnet.c          | 28 ++++++++++++++--------------
- net/netfilter/ipset/ip_set_hash_netport.c         | 19 ++++++++++---------
- net/netfilter/ipset/ip_set_hash_netportnet.c      | 35 ++++++++++++++++++-----------------
- net/netfilter/x_tables.c                          |  9 +++++++--
- net/netfilter/xt_IDLETIMER.c                      |  1 +
- net/netfilter/xt_LED.c                            |  1 +
- net/netfilter/xt_limit.c                          |  3 +--
- net/netfilter/xt_nfacct.c                         |  1 +
- net/netfilter/xt_statistic.c                      |  1 +
- net/openvswitch/conntrack.c                       | 34 ++++++++++++++++++++++++++++++++++
- net/sched/cls_u32.c                               | 12 +++++++-----
- net/sched/sch_tbf.c                               | 10 ----------
- 44 files changed, 326 insertions(+), 191 deletions(-)
+> 
+> 	LINUX KERNEL MEMORY CONSISTENCY MODEL (LKMM)
+> 
+> One alternative would be to start calling it LKMCM, though that does
+> look a bit like a Roman numeral.  ;-)
+> 
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> commit 2f80571625dc2d1977acdef79267ba1645b07c53
+> Author: Andrea Parri <parri.andrea@gmail.com>
+> Date:   Fri Feb 2 10:13:42 2018 +0100
+> 
+>     MAINTAINERS: List file memory-barriers.txt within the LKMM entry
+>     
+>     We now have a shiny new Linux-kernel memory model (LKMM) and the old
+>     tried-and-true Documentation/memory-barrier.txt.  It would be good to
+>     keep these automatically synchronized, but in the meantime we need at
+>     least let people know that they are related.  Will suggested adding the
+>     Documentation/memory-barrier.txt file to the LKMM maintainership list,
+>     thus making the LKMM maintainers responsible for both the old and the new.
+>     This commit follows Will's excellent suggestion.
+>     
+>     Suggested-by: Will Deacon <will.deacon@arm.com>
+>     Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ba4dc08fbe95..e6ad9b44e8fb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8101,6 +8101,7 @@ L:	linux-kernel@vger.kernel.org
+>  S:	Supported
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+>  F:	tools/memory-model/
+> +F:	Documentation/memory-barriers.txt
+>  
+>  LINUX SECURITY MODULE (LSM) FRAMEWORK
+>  M:	Chris Wright <chrisw@sous-sol.org>
+> 
