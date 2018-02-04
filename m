@@ -1,235 +1,432 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750846AbeBDG6b (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 01:58:31 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33620 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750747AbeBDG60 (ORCPT
+        id S1751624AbeBDHps (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 02:45:48 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:43787 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750764AbeBDHpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 01:58:26 -0500
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, mhocko@suse.com, hughd@google.com
-Subject: [PATCH] mm/migrate: Rename various page allocation helper functions
-Date: Sun,  4 Feb 2018 12:28:16 +0530
-X-Mailer: git-send-email 2.9.3
-X-TM-AS-GCONF: 00
-x-cbid: 18020406-0020-0000-0000-000003F2123B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020406-0021-0000-0000-0000428482AA
-Message-Id: <20180204065816.6885-1-khandual@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802040090
+        Sun, 4 Feb 2018 02:45:38 -0500
+X-Google-Smtp-Source: AH8x225dKucUM1YwB4sqSI+aNP8FKOm58PxfHrlbBdqySzxZslrdw3X7gPYijnxVgKm47VDOUR8TO3DjlvtsjRF7v9A=
+MIME-Version: 1.0
+In-Reply-To: <1516725385-24535-8-git-send-email-john.garry@huawei.com>
+References: <1516725385-24535-1-git-send-email-john.garry@huawei.com> <1516725385-24535-8-git-send-email-john.garry@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sun, 4 Feb 2018 08:45:37 +0100
+X-Google-Sender-Auth: Y7XlNeDwqdtTlaMatsPGCTcq8as
+Message-ID: <CAJZ5v0ghc1sthrMBobSXfNrxoKrjbie9qnKYnLdxnpLfZPzs8w@mail.gmail.com>
+Subject: Re: [PATCH v12 7/9] ACPI: Translate the I/O range of non-MMIO devices
+ before scanning
+To: John Garry <john.garry@huawei.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
+        Olof Johansson <olof@lixom.net>, Hanjun Guo <hanjun.guo@linaro.org>,
+        dann.frazier@canonical.com,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, Linux PCI <linux-pci@vger.kernel.org>,
+        Corey Minyard <minyard@acm.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Zhichang Yuan <yuanzhichang@hisilicon.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allocation helper functions for migrate_pages() remmain scattered with
-similar names making them really confusing. Rename these functions based
-on type of the intended migration. Function alloc_misplaced_dst_page()
-remains unchanged as its highly specialized. The renamed functions are
-listed below. Functionality of migration remains unchanged.
+On Tue, Jan 23, 2018 at 5:36 PM, John Garry <john.garry@huawei.com> wrote:
+> On some platforms(such as Hip06/Hip07), the legacy ISA/LPC devices access
+> I/O with some special host-local I/O ports known on x86. As their I/O space
+> are not memory mapped like PCI/PCIE MMIO host bridges, this patch is meant
+> to support a new class of I/O host controllers where the local IO ports of
+> the children devices are translated into the Indirect I/O address space.
+>
+> Through the handler attach callback, all the I/O translations are done
+> before starting the enumeration on children devices and the translated
+> addresses are replaced in the children resources.
 
-1. alloc_migrate_target -> new_page_alloc
-2. new_node_page -> new_page_alloc_othernode
-3. new_page -> new_page_alloc_keepnode
-4. alloc_new_node_page -> new_page_alloc_node
-5. new_page -> new_page_alloc_mempolicy
+The changelog is somewhat dry for a patch adding over 300 lines of new
+code and a new file for that matter.
 
-Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
----
-- Just renamed these function as suggested
-- Previous RFC discussions (https://patchwork.kernel.org/patch/10191331/)
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
+> Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+> ---
+>  drivers/acpi/arm64/Makefile          |   1 +
+>  drivers/acpi/arm64/acpi_indirectio.c | 273 +++++++++++++++++++++++++++++++++++
+>  drivers/acpi/internal.h              |   5 +
+>  drivers/acpi/scan.c                  |   1 +
+>  4 files changed, 280 insertions(+)
+>  create mode 100644 drivers/acpi/arm64/acpi_indirectio.c
+>
+> diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
+> index 1017def..f4a7f46 100644
+> --- a/drivers/acpi/arm64/Makefile
+> +++ b/drivers/acpi/arm64/Makefile
+> @@ -1,2 +1,3 @@
+>  obj-$(CONFIG_ACPI_IORT)        += iort.o
+>  obj-$(CONFIG_ACPI_GTDT)        += gtdt.o
+> +obj-$(CONFIG_INDIRECT_PIO)     += acpi_indirectio.o
+> diff --git a/drivers/acpi/arm64/acpi_indirectio.c b/drivers/acpi/arm64/acpi_indirectio.c
+> new file mode 100644
+> index 0000000..2649f57
+> --- /dev/null
+> +++ b/drivers/acpi/arm64/acpi_indirectio.c
+> @@ -0,0 +1,273 @@
 
- include/linux/page-isolation.h |  2 +-
- mm/internal.h                  |  2 +-
- mm/memory-failure.c            | 11 ++++++-----
- mm/memory_hotplug.c            |  5 +++--
- mm/mempolicy.c                 | 15 +++++++++------
- mm/migrate.c                   |  2 +-
- mm/page_alloc.c                |  2 +-
- mm/page_isolation.c            |  2 +-
- 8 files changed, 23 insertions(+), 18 deletions(-)
+SPDX license identifier here?
 
-diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
-index 4ae347cbc36d..2e77a88a37fc 100644
---- a/include/linux/page-isolation.h
-+++ b/include/linux/page-isolation.h
-@@ -63,6 +63,6 @@ undo_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
- int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
- 			bool skip_hwpoisoned_pages);
- 
--struct page *alloc_migrate_target(struct page *page, unsigned long private);
-+struct page *new_page_alloc(struct page *page, unsigned long private);
- 
- #endif
-diff --git a/mm/internal.h b/mm/internal.h
-index 62d8c34e63d5..ef03f0eed209 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -540,5 +540,5 @@ static inline bool is_migrate_highatomic_page(struct page *page)
- }
- 
- void setup_zone_pageset(struct zone *zone);
--extern struct page *alloc_new_node_page(struct page *page, unsigned long node);
-+extern struct page *new_page_alloc_node(struct page *page, unsigned long node);
- #endif	/* __MM_INTERNAL_H */
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 264e020ef60c..30789042e3cd 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1499,7 +1499,8 @@ int unpoison_memory(unsigned long pfn)
- }
- EXPORT_SYMBOL(unpoison_memory);
- 
--static struct page *new_page(struct page *p, unsigned long private)
-+static struct page *new_page_alloc_keepnode(struct page *p,
-+					unsigned long private)
- {
- 	int nid = page_to_nid(p);
- 
-@@ -1600,8 +1601,8 @@ static int soft_offline_huge_page(struct page *page, int flags)
- 		return -EBUSY;
- 	}
- 
--	ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
--				MIGRATE_SYNC, MR_MEMORY_FAILURE);
-+	ret = migrate_pages(&pagelist, new_page_alloc_keepnode, NULL,
-+			MPOL_MF_MOVE_ALL, MIGRATE_SYNC, MR_MEMORY_FAILURE);
- 	if (ret) {
- 		pr_info("soft offline: %#lx: hugepage migration failed %d, type %lx (%pGp)\n",
- 			pfn, ret, page->flags, &page->flags);
-@@ -1678,8 +1679,8 @@ static int __soft_offline_page(struct page *page, int flags)
- 			inc_node_page_state(page, NR_ISOLATED_ANON +
- 						page_is_file_cache(page));
- 		list_add(&page->lru, &pagelist);
--		ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
--					MIGRATE_SYNC, MR_MEMORY_FAILURE);
-+		ret = migrate_pages(&pagelist, new_page_alloc_keepnode, NULL,
-+			MPOL_MF_MOVE_ALL, MIGRATE_SYNC, MR_MEMORY_FAILURE);
- 		if (ret) {
- 			if (!list_empty(&pagelist))
- 				putback_movable_pages(&pagelist);
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 6a9bee33ffa7..f1dc28f5057e 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1341,7 +1341,8 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
- 	return 0;
- }
- 
--static struct page *new_node_page(struct page *page, unsigned long private)
-+static struct page *new_page_alloc_othernode(struct page *page,
-+					unsigned long private)
- {
- 	int nid = page_to_nid(page);
- 	nodemask_t nmask = node_states[N_MEMORY];
-@@ -1428,7 +1429,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- 		}
- 
- 		/* Allocate a new page from the nearest neighbor node */
--		ret = migrate_pages(&source, new_node_page, NULL, 0,
-+		ret = migrate_pages(&source, new_page_alloc_othernode, NULL, 0,
- 					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
- 		if (ret)
- 			putback_movable_pages(&source);
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index a8b7d59002e8..fd3fd1de9b3d 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -918,7 +918,7 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
- }
- 
- /* page allocation callback for NUMA node migration */
--struct page *alloc_new_node_page(struct page *page, unsigned long node)
-+struct page *new_page_alloc_node(struct page *page, unsigned long node)
- {
- 	if (PageHuge(page))
- 		return alloc_huge_page_node(page_hstate(compound_head(page)),
-@@ -962,7 +962,7 @@ static int migrate_to_node(struct mm_struct *mm, int source, int dest,
- 			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
- 
- 	if (!list_empty(&pagelist)) {
--		err = migrate_pages(&pagelist, alloc_new_node_page, NULL, dest,
-+		err = migrate_pages(&pagelist, new_page_alloc_node, NULL, dest,
- 					MIGRATE_SYNC, MR_SYSCALL);
- 		if (err)
- 			putback_movable_pages(&pagelist);
-@@ -1083,7 +1083,8 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
-  * list of pages handed to migrate_pages()--which is how we get here--
-  * is in virtual address order.
-  */
--static struct page *new_page(struct page *page, unsigned long start)
-+static struct page *new_page_alloc_mempolicy(struct page *page,
-+					unsigned long start)
- {
- 	struct vm_area_struct *vma;
- 	unsigned long uninitialized_var(address);
-@@ -1128,7 +1129,8 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
- 	return -ENOSYS;
- }
- 
--static struct page *new_page(struct page *page, unsigned long start)
-+static struct page *new_page_alloc_mempolicy(struct page *page,
-+					unsigned long start)
- {
- 	return NULL;
- }
-@@ -1213,8 +1215,9 @@ static long do_mbind(unsigned long start, unsigned long len,
- 
- 		if (!list_empty(&pagelist)) {
- 			WARN_ON_ONCE(flags & MPOL_MF_LAZY);
--			nr_failed = migrate_pages(&pagelist, new_page, NULL,
--				start, MIGRATE_SYNC, MR_MEMPOLICY_MBIND);
-+			nr_failed = migrate_pages(&pagelist,
-+				new_page_alloc_mempolicy, NULL, start,
-+				MIGRATE_SYNC, MR_MEMPOLICY_MBIND);
- 			if (nr_failed)
- 				putback_movable_pages(&pagelist);
- 		}
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 5d0dc7b85f90..c39e73fa9223 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1465,7 +1465,7 @@ static int do_move_pages_to_node(struct mm_struct *mm,
- 	if (list_empty(pagelist))
- 		return 0;
- 
--	err = migrate_pages(pagelist, alloc_new_node_page, NULL, node,
-+	err = migrate_pages(pagelist, new_page_alloc_node, NULL, node,
- 			MIGRATE_SYNC, MR_SYSCALL);
- 	if (err)
- 		putback_movable_pages(pagelist);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e2b42f603b1a..ea4609275b67 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7622,7 +7622,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
- 							&cc->migratepages);
- 		cc->nr_migratepages -= nr_reclaimed;
- 
--		ret = migrate_pages(&cc->migratepages, alloc_migrate_target,
-+		ret = migrate_pages(&cc->migratepages, new_page_alloc,
- 				    NULL, 0, cc->mode, MR_CMA);
- 	}
- 	if (ret < 0) {
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index 53d801235e22..345c7b1bea99 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -293,7 +293,7 @@ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
- 	return pfn < end_pfn ? -EBUSY : 0;
- }
- 
--struct page *alloc_migrate_target(struct page *page, unsigned long private)
-+struct page *new_page_alloc(struct page *page, unsigned long private)
- {
- 	return new_page_nodemask(page, numa_node_id(), &node_states[N_MEMORY]);
- }
--- 
-2.11.0
+> +/*
+> + * ACPI support for indirect-IO bus.
+> + *
+> + * Copyright (C) 2017 HiSilicon Limited, All Rights Reserved.
+> + * Author: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+> + * Author: Zhichang Yuan <yuanzhichang@hisilicon.com>
+> + * Author: John Garry <john.garry@huawei.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+
+And then you can skip the above.
+
+Also I would like to see some description of what's there in this file
+to appear here.
+
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/logic_pio.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/platform_device.h>
+> +
+> +ACPI_MODULE_NAME("indirect IO");
+> +
+> +#define ACPI_INDIRECTIO_NAME_LENGTH 255
+> +
+> +#define INDIRECT_IO_INFO(desc) ((unsigned long)&desc)
+> +
+> +struct acpi_indirectio_mfd_cell {
+> +       struct mfd_cell_acpi_match acpi_match;
+> +       char name[ACPI_INDIRECTIO_NAME_LENGTH];
+> +       char pnpid[ACPI_INDIRECTIO_NAME_LENGTH];
+> +};
+> +
+> +struct acpi_indirectio_host_data {
+> +       resource_size_t io_size;
+> +       resource_size_t io_start;
+> +};
+> +
+> +struct acpi_indirectio_device_desc {
+
+Why don't you use a consistent naming convention and call this
+acpi_indirect_io_device_desc (and analogously everywhere above and
+below)?
+
+> +       struct acpi_indirectio_host_data pdata; /* device relevant info data */
+> +       int (*pre_setup)(struct acpi_device *adev,
+> +                        struct acpi_indirectio_host_data *pdata);
+> +};
+> +
+> +static int acpi_translate_logicio_res(struct acpi_device *adev,
+> +               struct acpi_device *host, struct resource *resource)
+> +{
+> +       unsigned long sys_port;
+> +       struct device *dev = &adev->dev;
+> +       resource_size_t length = resource->end - resource->start;
+> +
+> +       sys_port = logic_pio_trans_hwaddr(&host->fwnode, resource->start,
+> +                                       length);
+> +
+> +       if (sys_port == -1) {
+
+Would if (sysp_port < 0) not work here?
+
+> +               dev_err(dev, "translate bus-addr(0x%llx) fail!\n",
+> +                       resource->start);
+
+That's not a very informative message.  What are users expected to do
+in response to seeing it?
+
+> +               return -EFAULT;
+> +       }
+> +
+> +       resource->start = sys_port;
+> +       resource->end = sys_port + length;
+> +
+> +       return 0;
+> +}
+> +
+> +/*
+> + * update/set the current I/O resource of the designated device node.
+> + * after this calling, the enumeration can be started as the I/O resource
+> + * had been translated to logicial I/O from bus-local I/O.
+> + *
+> + * @child: the device node to be updated the I/O resource;
+> + * @hostdev: the device node where 'adev' is attached, which can be not
+> + *  the parent of 'adev';
+> + * @res: double pointer to be set to the address of the updated resources
+> + * @num_res: address of the variable to contain the number of updated resources
+> + *
+> + * return 0 when successful, negative is for failure.
+> + */
+
+The above should be a proper kerneldoc comment.
+
+> +int acpi_indirectio_set_logicio_res(struct device *child,
+> +                                        struct device *hostdev,
+> +                                        const struct resource **res,
+> +                                        int *num_res)
+> +{
+> +       struct acpi_device *adev;
+> +       struct acpi_device *host;
+> +       struct resource_entry *rentry;
+> +       LIST_HEAD(resource_list);
+> +       struct resource *resources = NULL;
+> +       int count;
+> +       int i;
+> +       int ret = -EIO;
+> +
+> +       if (!child || !hostdev)
+> +               return -EINVAL;
+> +
+> +       host = to_acpi_device(hostdev);
+> +       adev = to_acpi_device(child);
+> +
+> +       /* check the device state */
+> +       if (!adev->status.present) {
+> +               dev_info(child, "ACPI: device is not present!\n");
+> +               return 0;
+> +       }
+> +       /* whether the child had been enumerated? */
+> +       if (acpi_device_enumerated(adev)) {
+> +               dev_info(child, "ACPI: had been enumerated!\n");
+> +               return 0;
+> +       }
+> +
+> +       count = acpi_dev_get_resources(adev, &resource_list, NULL, NULL);
+> +       if (count <= 0) {
+> +               dev_err(&adev->dev, "failed to get ACPI resources\n");
+> +               return count ? count : -EIO;
+> +       }
+> +
+> +       resources = kcalloc(count, sizeof(struct resource), GFP_KERNEL);
+> +       if (!resources) {
+> +               acpi_dev_free_resource_list(&resource_list);
+> +               return -ENOMEM;
+> +       }
+> +       count = 0;
+> +       list_for_each_entry(rentry, &resource_list, node)
+> +               resources[count++] = *rentry->res;
+> +
+> +       acpi_dev_free_resource_list(&resource_list);
+> +
+> +       /* translate the I/O resources */
+> +       for (i = 0; i < count; i++) {
+> +               if (resources[i].flags & IORESOURCE_IO) {
+> +                       ret = acpi_translate_logicio_res(adev, host,
+> +                                                       &resources[i]);
+
+You don't need to break this line as far as I'm concerned.
+
+> +                       if (ret) {
+> +                               kfree(resources);
+> +                               dev_err(child,
+> +                                       "Translate I/O range failed (%d)!\n",
+> +                                       ret);
+
+And this too.
+
+> +                               return ret;
+> +                       }
+> +               }
+> +       }
+> +       *res = resources;
+> +       *num_res = count;
+> +
+> +       return ret;
+> +}
+> +
+> +int
+
+Don't break the line here, please.
+
+> +acpi_indirectio_pre_setup(struct acpi_device *adev,
+> +                         struct acpi_indirectio_host_data *pdata)
+
+As a non-static function, this requires a kerneldoc comment.
+
+In particular, the comment should describe who and when is expected to
+call this function (and which also applies to the comment preceding
+the previous function).
+
+Apparently, they both need to be called before the initial namespace
+scan for the acpi_indirectio_attach() below to work, right?
+
+> +{
+> +       struct platform_device *pdev;
+> +       struct mfd_cell *mfd_cells;
+> +       struct logic_pio_hwaddr *range;
+> +       struct acpi_device *child;
+> +       struct acpi_indirectio_mfd_cell *acpi_indirectio_mfd_cells;
+> +       int size, ret, count = 0, cell_num = 0;
+> +
+> +       range = kzalloc(sizeof(*range), GFP_KERNEL);
+> +       if (!range)
+> +               return -ENOMEM;
+> +       range->fwnode = &adev->fwnode;
+> +       range->flags = PIO_INDIRECT;
+> +       range->size = pdata->io_size;
+> +       range->hw_start = pdata->io_start;
+> +
+> +       ret = logic_pio_register_range(range);
+> +       if (ret)
+> +               goto free_range;
+> +
+> +       list_for_each_entry(child, &adev->children, node)
+> +               cell_num++;
+> +
+> +       /* allocate the mfd cells */
+> +       size = sizeof(*mfd_cells) + sizeof(*acpi_indirectio_mfd_cells);
+> +       mfd_cells = kcalloc(cell_num, size, GFP_KERNEL);
+> +       if (!mfd_cells) {
+> +               ret = -ENOMEM;
+> +               goto free_range;
+> +       }
+> +
+> +       acpi_indirectio_mfd_cells = (struct acpi_indirectio_mfd_cell *)
+> +                                       &mfd_cells[cell_num];
+> +       /* Only consider the children of the host */
+> +       list_for_each_entry(child, &adev->children, node) {
+> +               struct mfd_cell *mfd_cell = &mfd_cells[count];
+> +               struct acpi_indirectio_mfd_cell *acpi_indirectio_mfd_cell =
+> +                                       &acpi_indirectio_mfd_cells[count];
+> +               const struct mfd_cell_acpi_match *acpi_match =
+> +                                       &acpi_indirectio_mfd_cell->acpi_match;
+> +               char *name = &acpi_indirectio_mfd_cell[count].name[0];
+> +               char *pnpid = &acpi_indirectio_mfd_cell[count].pnpid[0];
+> +               struct mfd_cell_acpi_match match = {
+> +                               .pnpid = pnpid,
+> +               };
+> +
+> +               snprintf(name, ACPI_INDIRECTIO_NAME_LENGTH, "indirect-io-%s",
+> +                        acpi_device_hid(child));
+> +               snprintf(pnpid, ACPI_INDIRECTIO_NAME_LENGTH, "%s",
+> +                        acpi_device_hid(child));
+> +
+> +               memcpy((void *)acpi_match, (void *)&match, sizeof(*acpi_match));
+> +               mfd_cell->name = name;
+> +               mfd_cell->acpi_match = acpi_match;
+> +
+> +               ret =
+> +               acpi_indirectio_set_logicio_res(&child->dev,
+> +                                               &adev->dev,
+> +                                               &mfd_cell->resources,
+> +                                               &mfd_cell->num_resources);
+> +               if (ret) {
+> +                       dev_err(&child->dev, "set resource failed (%d)\n", ret);
+> +                       goto free_mfd_res;
+> +               }
+> +               count++;
+> +       }
+> +
+> +       pdev = acpi_create_platform_device(adev, NULL);
+> +       if (IS_ERR_OR_NULL(pdev)) {
+> +               dev_err(&adev->dev, "Create platform device for host failed!\n");
+> +               ret = PTR_ERR(pdev);
+> +               goto free_mfd_res;
+> +       }
+> +       acpi_device_set_enumerated(adev);
+> +
+> +       ret = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
+> +                       mfd_cells, cell_num, NULL, 0, NULL);
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "failed to add mfd cells (%d)\n", ret);
+> +               goto free_mfd_res;
+> +       }
+> +
+> +       return ret;
+> +
+> +free_mfd_res:
+> +       while (cell_num--)
+> +               kfree(mfd_cells[cell_num].resources);
+> +       kfree(mfd_cells);
+> +free_range:
+> +       kfree(range);
+> +
+> +       return ret;
+> +}
+> +
+> +/* All the host devices which apply indirect-IO can be listed here. */
+> +static const struct acpi_device_id acpi_indirect_host_id[] = {
+> +       {""},
+> +};
+> +
+> +static int acpi_indirectio_attach(struct acpi_device *adev,
+> +                               const struct acpi_device_id *id)
+> +{
+> +       struct acpi_indirectio_device_desc *hostdata;
+> +       int ret;
+> +
+> +       hostdata = (struct acpi_indirectio_device_desc *)id->driver_data;
+> +       if (!hostdata || !hostdata->pre_setup)
+> +               return -EINVAL;
+> +
+> +       ret = hostdata->pre_setup(adev, &hostdata->pdata);
+> +
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       return 1;
+> +}
+> +
+> +static struct acpi_scan_handler acpi_indirect_handler = {
+
+acpi_indirect_io_handler?
+
+> +       .ids = acpi_indirect_host_id,
+> +       .attach = acpi_indirectio_attach,
+> +};
+> +
+> +void __init acpi_indirectio_scan_init(void)
+> +{
+> +       acpi_scan_add_handler(&acpi_indirect_handler);
+> +}
+> diff --git a/drivers/acpi/internal.h b/drivers/acpi/internal.h
+> index 1d0a501..d6b1a95 100644
+> --- a/drivers/acpi/internal.h
+> +++ b/drivers/acpi/internal.h
+> @@ -31,6 +31,11 @@
+>  void acpi_platform_init(void);
+>  void acpi_pnp_init(void);
+>  void acpi_int340x_thermal_init(void);
+> +#ifdef CONFIG_INDIRECT_PIO
+> +void acpi_indirectio_scan_init(void);
+> +#else
+> +static inline void acpi_indirectio_scan_init(void) {}
+> +#endif
+>  #ifdef CONFIG_ARM_AMBA
+>  void acpi_amba_init(void);
+>  #else
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index b0fe527..8ea6f69 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -2141,6 +2141,7 @@ int __init acpi_scan_init(void)
+>         acpi_amba_init();
+>         acpi_watchdog_init();
+>         acpi_init_lpit();
+> +       acpi_indirectio_scan_init();
+>
+>         acpi_scan_add_handler(&generic_device_handler);
+>
+> --
+> 1.9.1
+>
