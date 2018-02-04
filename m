@@ -1,59 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751826AbeBDJEM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 04:04:12 -0500
-Received: from mail-ot0-f181.google.com ([74.125.82.181]:39297 "EHLO
-        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbeBDJDe (ORCPT
+        id S1751822AbeBDJHa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 04:07:30 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34012 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeBDJHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 04:03:34 -0500
-X-Google-Smtp-Source: AH8x224lcQqt1eTtdWMRo5+jwUqhQc5GPcT18E9KplNRzRF1a1jCDhbxHjF1bsoj0Giue1tcytGFR38jliJQ9Dvdj9U=
+        Sun, 4 Feb 2018 04:07:13 -0500
+X-Google-Smtp-Source: AH8x227C2jwPFk4n9cnRqRPW2ZJ0bXUOnN/oQHSJwkU78Rde7umZDVbnlkdAlsgBGfz1qMyQlhhELw==
+Date: Sun, 4 Feb 2018 01:07:10 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
+        Doug Gilbert <dgilbert@interlog.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
+Subject: Re: scsi: sg: assorted memory corruptions
+Message-ID: <20180204090710.GA607@zzz.localdomain>
+References: <CACT4Y+b0pizvOAxtWQ-TGCRAYvHXdv79BAEaXh50W6vF8gBvkQ@mail.gmail.com>
+ <1516638634.2545.0.camel@wdc.com>
+ <097921fa-52c5-8b2b-f564-4b24d9720478@interlog.com>
+ <CACT4Y+aEx0ie3qjx6afCYV2vN7gYii0uupKWPXaNTnWUmhdHQw@mail.gmail.com>
+ <c0a7ec39-e357-9db6-cf12-ff9c46259f26@interlog.com>
+ <CACT4Y+bObXrFiB0Qn+nfkD8DZRiVck1GJ5U9UeQz+-y85gh70Q@mail.gmail.com>
+ <1517501859.3417.67.camel@codethink.co.uk>
+ <CACT4Y+ZEJ9_no0uQSXO66iyyUeJLn_zbPBEey62YkuzOEUMP2w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0jNVENRq-3QjF6nY9_5-0ff=6j_qneLqCQ57h6t1R4Fow@mail.gmail.com>
-References: <1516128664-23634-1-git-send-email-okaya@codeaurora.org>
- <f508e749-2976-ec6f-681a-553b79c4ab76@codeaurora.org> <20180116214939.GC10860@bhelgaas-glaptop.roam.corp.google.com>
- <fde756f4-eb74-4002-6ac4-a44405bad2da@codeaurora.org> <CAJZ5v0jNVENRq-3QjF6nY9_5-0ff=6j_qneLqCQ57h6t1R4Fow@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 4 Feb 2018 10:03:33 +0100
-X-Google-Sender-Auth: FN6VSA3yu28w6VpvI323fqj47Qk
-Message-ID: <CAJZ5v0gW7hHAAisSemyvgTyMxpqxmUTADLZTmpyERB+qSMoA=w@mail.gmail.com>
-Subject: Re: [PATCH] ACPI/PCI: pci_link: reduce verbosity when IRQ is enabled
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux PCI <linux-pci@vger.kernel.org>, Len Brown <lenb@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+ZEJ9_no0uQSXO66iyyUeJLn_zbPBEey62YkuzOEUMP2w@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 1, 2018 at 8:32 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Mon, Jan 29, 2018 at 8:01 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
->> Rafael,
->>
->> On 1/16/2018 4:49 PM, Bjorn Helgaas wrote:
->>> On Tue, Jan 16, 2018 at 01:53:00PM -0500, Sinan Kaya wrote:
->>>> Correcting linux-pci email.
->>>>
->>>> On 1/16/2018 1:51 PM, Sinan Kaya wrote:
->>>>> When ACPI Link object is enabled, the message is printed with a warning
->>>>> prefix. Some test tools are capturing warning and test error types as
->>>>> errors. Let's reduce the verbosity of success case.
->>>>>
->>>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->>> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->>>
->>> Looks like this was a result of 4d9391557b68 ("ACPI: add missing KERN_*
->>> constants to printks"), which I think added the wrong level in this case.
->>>
->>
->> Any chance of merging this for 4.16?
->
-> There is.
+On Thu, Feb 01, 2018 at 05:21:12PM +0100, 'Dmitry Vyukov' via syzkaller wrote:
+> On Thu, Feb 1, 2018 at 5:17 PM, Ben Hutchings
+> <ben.hutchings@codethink.co.uk> wrote:
+> > On Thu, 2018-02-01 at 08:04 +0100, Dmitry Vyukov wrote:
+> >> On Thu, Feb 1, 2018 at 7:03 AM, Douglas Gilbert <dgilbert@interlog.com> wrote:
+> >> > On 2018-01-30 07:22 AM, Dmitry Vyukov wrote:
+> > [...]
+> >> > > [1:0:0:0]    cd/dvd  QEMU     QEMU DVD-ROM     2.0.  /dev/sr0   /dev/sg1
+> >> > >
+> >> > > # readlink /sys/class/scsi_generic/sg0
+> >> > >
+> >> > > ../../devices/pci0000:00/0000:00:01.1/ata1/host0/target0:0:0/0:0:0:0/scsi_generic/sg0
+> >> > >
+> >> > > # cat /sys/class/scsi_generic/sg0/device/vendor
+> >> > > ATA
+> >> >
+> >> >
+> >> > ^^^^^
+> >> > That subsystem is the culprit IMO, most likely libata.
+> >> >
+> >> > Until you can show this test failing on something other than an
+> >> > ATA disk, then I will treat this issue as closed.
+> >>
+> >> Hi Doug,
+> >>
+> >> Why is bug in ATA not a bug? Is it long unused by everybody? I've got
+> >> it by running qemu with default flags...
+> >
+> > If the bug is in libata then it's not on Doug to fix it since he's only
+> > maintaining sg.
+> 
+> 
+> Then I think we need to CC ata maintainers rather than treat it as closed.
+> +Tejun, linux-ide@, you can see full thread here:
+> https://groups.google.com/forum/#!topic/syzkaller/9RNr9Gu0MyY
+> 
 
-This one is already there in the Linus' tree AFAICS.
+To get memory corruption it's actually sufficient just to submit "1-byte" reads;
+there's no need for the SG_NEXT_CMD_LEN ioctl or anything:
+
+	#include <fcntl.h>
+	#include <unistd.h>
+
+	int main()
+	{
+		int fd = open("/dev/sg0", O_RDWR);
+		char buf[43] = { [36] = 0x08 /* READ_6 */ };
+
+		for (;;)
+			write(fd, buf, sizeof(buf));
+	}
+
+(where /dev/sg0 is the default QEMU disk type, "82371SB PIIX3 IDE")
+
+The SCSI command descriptor block is the 6 bytes at indices 36-41, so index 42
+is the only data byte.
+
+Also this is a different bug from the crash in ata_bmdma_fill_sg() which is
+fixed by "libata: fix length validation of ATAPI-relayed SCSI commands".
+
+I'm guessing the driver is DMA'ing to somewhere it shouldn't be...
+
+Eric
