@@ -1,154 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752039AbeBDPJs (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 10:09:48 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:51612 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeBDPJl (ORCPT
+        id S1752003AbeBDPOE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 10:14:04 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52342 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751594AbeBDPN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 10:09:41 -0500
-Date: Sun, 4 Feb 2018 16:09:40 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] x86 updates for 4.16
-Message-ID: <alpine.DEB.2.21.1802041605570.1035@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 4 Feb 2018 10:13:57 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 87F536029D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
+Subject: Re: [PATCH] drm/bridge/synopsys: dsi: Add 1.31 version support
+To: Philippe CORNU <philippe.cornu@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sandy Huang <hjc@rock-chips.com>, Heiko Stubner <heiko@sntech.de>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-rockchip@lists.infradead.org"
+        <linux-rockchip@lists.infradead.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Vincent ABRIOU <vincent.abriou@st.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        Mickael REULIER <mickael.reulier@st.com>
+References: <20180122150819.22066-1-philippe.cornu@st.com>
+ <37f38992-0ad3-317f-5337-fbe018bf5f45@st.com>
+From: Archit <architt@codeaurora.org>
+Message-ID: <917ebadc-d5f0-ef98-eb50-5e9bf25d722b@codeaurora.org>
+Date: Sun, 4 Feb 2018 20:43:44 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <37f38992-0ad3-317f-5337-fbe018bf5f45@st.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Hi Phillipe,
 
-please pull the latest x86-urgent-for-linus git tree from:
+On Saturday 03 February 2018 03:49 AM, Philippe CORNU wrote:
+> Hi Archit, Andrzej, Laurent & Brian,
+> 
+> What is your opinion regarding this patch? Do you have any advice for
+> handling hw versions?
+> 
+> Do not hesitate to comment.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+The patch looks mostly good to me. One query below.
 
-A small set of changes:
+> 
+> Many thanks,
+> Philippe :-)
+> 
+> 
+> On 01/22/2018 04:08 PM, Philippe Cornu wrote:
+>> From: Philippe CORNU <philippe.cornu@st.com>
+>>
+>> Add support for the Synopsys DesignWare MIPI DSI version 1.31
+>> Two registers need to be updated/added for supporting 1.31:
+>> * PHY_TMR_CFG 0x9c (updated)
+>>     1.30 [31:24] phy_hs2lp_time
+>>          [23:16] phy_lp2hs_time
+>>          [14: 0] max_rd_time
+>>
+>>     1.31 [25:16] phy_hs2lp_time
+>>          [ 9: 0] phy_lp2hs_time
+>>
+>> * PHY_TMR_RD_CFG 0xf4 (new)
+>>     1.31 [14: 0] max_rd_time
+>>
+>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>> ---
+>>    drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 52 +++++++++++++++++++++++----
+>>    1 file changed, 46 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>> index 735f38429c06..20a2ca14a7ad 100644
+>> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>> @@ -25,7 +25,13 @@
+>>    #include <drm/bridge/dw_mipi_dsi.h>
+>>    #include <video/mipi_display.h>
+>>    
+>> +#define HWVER_130			0x31333000	/* IP version 1.30 */
+>> +#define HWVER_131			0x31333100	/* IP version 1.31 */
+>> +#define HWVER_OLDEST			HWVER_130
+>> +#define HWVER_NEWEST			HWVER_131
+>> +
+>>    #define DSI_VERSION			0x00
+>> +#define VERSION				GENMASK(31, 8)
+>>    
+>>    #define DSI_PWR_UP			0x04
+>>    #define RESET				0
+>> @@ -161,11 +167,12 @@
+>>    #define PHY_CLKHS2LP_TIME(lbcc)		(((lbcc) & 0x3ff) << 16)
+>>    #define PHY_CLKLP2HS_TIME(lbcc)		((lbcc) & 0x3ff)
+>>    
+>> -/* TODO Next register is slightly different between 1.30 & 1.31 IP version */
+>>    #define DSI_PHY_TMR_CFG			0x9c
+>> -#define PHY_HS2LP_TIME(lbcc)		(((lbcc) & 0xff) << 24)
+>> -#define PHY_LP2HS_TIME(lbcc)		(((lbcc) & 0xff) << 16)
+>> -#define MAX_RD_TIME(lbcc)		((lbcc) & 0x7fff)
+>> +#define PHY_HS2LP_TIME_V130(lbcc)	(((lbcc) & 0xff) << 24)
+>> +#define PHY_LP2HS_TIME_V130(lbcc)	(((lbcc) & 0xff) << 16)
+>> +#define MAX_RD_TIME_V130(lbcc)		((lbcc) & 0x7fff)
+>> +#define PHY_HS2LP_TIME_V131(lbcc)	(((lbcc) & 0x3ff) << 16)
+>> +#define PHY_LP2HS_TIME_V131(lbcc)	((lbcc) & 0x3ff)
+>>    
+>>    #define DSI_PHY_RSTZ			0xa0
+>>    #define PHY_DISFORCEPLL			0
+>> @@ -204,7 +211,9 @@
+>>    #define DSI_INT_ST1			0xc0
+>>    #define DSI_INT_MSK0			0xc4
+>>    #define DSI_INT_MSK1			0xc8
+>> +
+>>    #define DSI_PHY_TMR_RD_CFG		0xf4
+>> +#define MAX_RD_TIME_V131(lbcc)		((lbcc) & 0x7fff)
+>>    
+>>    #define PHY_STATUS_TIMEOUT_US		10000
+>>    #define CMD_PKT_STATUS_TIMEOUT_US	20000
+>> @@ -215,6 +224,7 @@ struct dw_mipi_dsi {
+>>    	struct drm_bridge *panel_bridge;
+>>    	struct device *dev;
+>>    	void __iomem *base;
+>> +	u32 hw_version;
+>>    
+>>    	struct clk *pclk;
+>>    	struct clk *px_clk;
+>> @@ -616,8 +626,14 @@ static void dw_mipi_dsi_dphy_timing_config(struct dw_mipi_dsi *dsi)
+>>    	 * note: DSI_PHY_TMR_CFG.MAX_RD_TIME should be in line with
+>>    	 * DSI_CMD_MODE_CFG.MAX_RD_PKT_SIZE_LP (see CMD_MODE_ALL_LP)
+>>    	 */
+>> -	dsi_write(dsi, DSI_PHY_TMR_CFG, PHY_HS2LP_TIME(0x40)
+>> -		  | PHY_LP2HS_TIME(0x40) | MAX_RD_TIME(10000));
+>> +	if (dsi->hw_version == HWVER_131) {
+>> +		dsi_write(dsi, DSI_PHY_TMR_CFG, PHY_HS2LP_TIME_V131(0x40) |
+>> +			  PHY_LP2HS_TIME_V131(0x40));
+>> +		dsi_write(dsi, DSI_PHY_TMR_RD_CFG, MAX_RD_TIME_V131(10000));
+>> +	} else {
+>> +		dsi_write(dsi, DSI_PHY_TMR_CFG, PHY_HS2LP_TIME_V130(0x40) |
+>> +			  PHY_LP2HS_TIME_V130(0x40) | MAX_RD_TIME_V130(10000));
+>> +	}
+>>    
+>>    	dsi_write(dsi, DSI_PHY_TMR_LPCLK_CFG, PHY_CLKHS2LP_TIME(0x40)
+>>    		  | PHY_CLKLP2HS_TIME(0x40));
+>> @@ -791,6 +807,28 @@ static const struct drm_bridge_funcs dw_mipi_dsi_bridge_funcs = {
+>>    	.attach	      = dw_mipi_dsi_bridge_attach,
+>>    };
+>>    
+>> +static void dsi_get_version(struct dw_mipi_dsi *dsi)
+>> +{
+>> +	u32 hw_version;
+>> +
+>> +	clk_prepare_enable(dsi->pclk);
+>> +	hw_version = dsi_read(dsi, DSI_VERSION) & VERSION;
+>> +	clk_disable_unprepare(dsi->pclk);
+>> +
+>> +	if (hw_version > HWVER_NEWEST) {
+>> +		DRM_DEBUG("hw version: use 0x%08x for this recent 0x%08x\n",
+>> +			  HWVER_NEWEST, hw_version);
+>> +		hw_version = HWVER_NEWEST;
+>> +
+>> +	} else if (hw_version < HWVER_OLDEST) {
+>> +		DRM_DEBUG("hw version: use 0x%08x for this old 0x%08x\n",
+>> +			  HWVER_OLDEST, hw_version);
+>> +		hw_version = HWVER_OLDEST;
 
-  - A fixup for kexec related to 5-level paging mode. That covers most of
-    the cases except kexec from a 5-level kernel to a 4-level kernel. The
-    latter needs more work and is going to come in 4.17
+I didn't understand the point of HWVER_NEWEST and HWVWER_OLDEST. We're
+not going to have a huge number of hw versions that we need to check if
+our version lies within a range. We should rather have a switch case
+which explicitly sets the hw_version vale based on what we read from
+the DSI_VERSION register.
 
-  - Two trivial fixes for build warnings triggered by LTO and gcc-8.
+The patch looks fine otherwise.
 
 Thanks,
+Archit
 
-	tglx
-
------------------->
-Arnd Bergmann (2):
-      x86/dumpstack: Avoid uninitlized variable
-      x86/power: Fix swsusp_arch_resume prototype
-
-Kirill A. Shutemov (1):
-      x86/kexec: Make kexec (mostly) work in 5-level paging mode
-
-
- arch/x86/kernel/dumpstack.c          | 2 +-
- arch/x86/kernel/relocate_kernel_64.S | 8 ++++++++
- arch/x86/power/hibernate_32.c        | 2 +-
- arch/x86/power/hibernate_64.c        | 2 +-
- include/linux/suspend.h              | 2 ++
- kernel/power/power.h                 | 3 ---
- 6 files changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index afbecff161d1..a2d8a3908670 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -109,7 +109,7 @@ void show_trace_log_lvl(struct task_struct *task, struct pt_regs *regs,
- 	struct stack_info stack_info = {0};
- 	unsigned long visit_mask = 0;
- 	int graph_idx = 0;
--	bool partial;
-+	bool partial = false;
- 
- 	printk("%sCall Trace:\n", log_lvl);
- 
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 307d3bac5f04..11eda21eb697 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -68,6 +68,9 @@ relocate_kernel:
- 	movq	%cr4, %rax
- 	movq	%rax, CR4(%r11)
- 
-+	/* Save CR4. Required to enable the right paging mode later. */
-+	movq	%rax, %r13
-+
- 	/* zero out flags, and disable interrupts */
- 	pushq $0
- 	popfq
-@@ -126,8 +129,13 @@ identity_mapped:
- 	/*
- 	 * Set cr4 to a known state:
- 	 *  - physical address extension enabled
-+	 *  - 5-level paging, if it was enabled before
- 	 */
- 	movl	$X86_CR4_PAE, %eax
-+	testq	$X86_CR4_LA57, %r13
-+	jz	1f
-+	orl	$X86_CR4_LA57, %eax
-+1:
- 	movq	%rax, %cr4
- 
- 	jmp 1f
-diff --git a/arch/x86/power/hibernate_32.c b/arch/x86/power/hibernate_32.c
-index c35fdb585c68..afc4ed7b1578 100644
---- a/arch/x86/power/hibernate_32.c
-+++ b/arch/x86/power/hibernate_32.c
-@@ -145,7 +145,7 @@ static inline void resume_init_first_level_page_table(pgd_t *pg_dir)
- #endif
- }
- 
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
- {
- 	int error;
- 
-diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
-index f910c514438f..0ef5e5204968 100644
---- a/arch/x86/power/hibernate_64.c
-+++ b/arch/x86/power/hibernate_64.c
-@@ -174,7 +174,7 @@ static int relocate_restore_code(void)
- 	return 0;
- }
- 
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
- {
- 	int error;
- 
-diff --git a/include/linux/suspend.h b/include/linux/suspend.h
-index cc22a24516d6..440b62f7502e 100644
---- a/include/linux/suspend.h
-+++ b/include/linux/suspend.h
-@@ -384,6 +384,8 @@ extern int swsusp_page_is_forbidden(struct page *);
- extern void swsusp_set_page_free(struct page *);
- extern void swsusp_unset_page_free(struct page *);
- extern unsigned long get_safe_page(gfp_t gfp_mask);
-+extern asmlinkage int swsusp_arch_suspend(void);
-+extern asmlinkage int swsusp_arch_resume(void);
- 
- extern void hibernation_set_ops(const struct platform_hibernation_ops *ops);
- extern int hibernate(void);
-diff --git a/kernel/power/power.h b/kernel/power/power.h
-index f29cd178df90..9e58bdc8a562 100644
---- a/kernel/power/power.h
-+++ b/kernel/power/power.h
-@@ -104,9 +104,6 @@ extern int in_suspend;
- extern dev_t swsusp_resume_device;
- extern sector_t swsusp_resume_block;
- 
--extern asmlinkage int swsusp_arch_suspend(void);
--extern asmlinkage int swsusp_arch_resume(void);
--
- extern int create_basic_memory_bitmaps(void);
- extern void free_basic_memory_bitmaps(void);
- extern int hibernate_preallocate_memory(void);
+>> +	}
+>> +
+>> +	dsi->hw_version = hw_version;
+>> +}
+>> +
+>>    static struct dw_mipi_dsi *
+>>    __dw_mipi_dsi_probe(struct platform_device *pdev,
+>>    		    const struct dw_mipi_dsi_plat_data *plat_data)
+>> @@ -870,6 +908,8 @@ __dw_mipi_dsi_probe(struct platform_device *pdev,
+>>    		clk_disable_unprepare(dsi->pclk);
+>>    	}
+>>    
+>> +	dsi_get_version(dsi);
+>> +
+>>    	pm_runtime_enable(dev);
+>>    
+>>    	dsi->dsi_host.ops = &dw_mipi_dsi_host_ops;
