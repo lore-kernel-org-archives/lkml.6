@@ -1,104 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751822AbeBDJHa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 04:07:30 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34012 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750855AbeBDJHN (ORCPT
+        id S1751653AbeBDJM1 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 04:12:27 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:35113 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750818AbeBDJMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 04:07:13 -0500
-X-Google-Smtp-Source: AH8x227C2jwPFk4n9cnRqRPW2ZJ0bXUOnN/oQHSJwkU78Rde7umZDVbnlkdAlsgBGfz1qMyQlhhELw==
-Date: Sun, 4 Feb 2018 01:07:10 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
-        Doug Gilbert <dgilbert@interlog.com>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
-Subject: Re: scsi: sg: assorted memory corruptions
-Message-ID: <20180204090710.GA607@zzz.localdomain>
-References: <CACT4Y+b0pizvOAxtWQ-TGCRAYvHXdv79BAEaXh50W6vF8gBvkQ@mail.gmail.com>
- <1516638634.2545.0.camel@wdc.com>
- <097921fa-52c5-8b2b-f564-4b24d9720478@interlog.com>
- <CACT4Y+aEx0ie3qjx6afCYV2vN7gYii0uupKWPXaNTnWUmhdHQw@mail.gmail.com>
- <c0a7ec39-e357-9db6-cf12-ff9c46259f26@interlog.com>
- <CACT4Y+bObXrFiB0Qn+nfkD8DZRiVck1GJ5U9UeQz+-y85gh70Q@mail.gmail.com>
- <1517501859.3417.67.camel@codethink.co.uk>
- <CACT4Y+ZEJ9_no0uQSXO66iyyUeJLn_zbPBEey62YkuzOEUMP2w@mail.gmail.com>
+        Sun, 4 Feb 2018 04:12:17 -0500
+X-Google-Smtp-Source: AH8x225JNUixYu6PQypUTYHxq9EWd4f0k1IGgyYxQz0Eo/qZSCeIJ721nAfpHs+xF6IN3LibczPIxLbcMF6WvtmVrLs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZEJ9_no0uQSXO66iyyUeJLn_zbPBEey62YkuzOEUMP2w@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180122162747.19103-1-ville.syrjala@linux.intel.com>
+References: <20180122162747.19103-1-ville.syrjala@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sun, 4 Feb 2018 10:12:16 +0100
+X-Google-Sender-Auth: ZMB9Vcc5VsxKVlSZEXGYsqfTe1w
+Message-ID: <CAJZ5v0gj6GT=kuQvTZifktuK887_o98t4voUUK0i_90Hnw0Tpg@mail.gmail.com>
+Subject: Re: [PATCH] Revert "cpuidle: Make drivers initialize polling state"
+To: Ville Syrjala <ville.syrjala@linux.intel.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w149CV1V028409
 
-On Thu, Feb 01, 2018 at 05:21:12PM +0100, 'Dmitry Vyukov' via syzkaller wrote:
-> On Thu, Feb 1, 2018 at 5:17 PM, Ben Hutchings
-> <ben.hutchings@codethink.co.uk> wrote:
-> > On Thu, 2018-02-01 at 08:04 +0100, Dmitry Vyukov wrote:
-> >> On Thu, Feb 1, 2018 at 7:03 AM, Douglas Gilbert <dgilbert@interlog.com> wrote:
-> >> > On 2018-01-30 07:22 AM, Dmitry Vyukov wrote:
-> > [...]
-> >> > > [1:0:0:0]    cd/dvd  QEMU     QEMU DVD-ROM     2.0.  /dev/sr0   /dev/sg1
-> >> > >
-> >> > > # readlink /sys/class/scsi_generic/sg0
-> >> > >
-> >> > > ../../devices/pci0000:00/0000:00:01.1/ata1/host0/target0:0:0/0:0:0:0/scsi_generic/sg0
-> >> > >
-> >> > > # cat /sys/class/scsi_generic/sg0/device/vendor
-> >> > > ATA
-> >> >
-> >> >
-> >> > ^^^^^
-> >> > That subsystem is the culprit IMO, most likely libata.
-> >> >
-> >> > Until you can show this test failing on something other than an
-> >> > ATA disk, then I will treat this issue as closed.
-> >>
-> >> Hi Doug,
-> >>
-> >> Why is bug in ATA not a bug? Is it long unused by everybody? I've got
-> >> it by running qemu with default flags...
-> >
-> > If the bug is in libata then it's not on Doug to fix it since he's only
-> > maintaining sg.
-> 
-> 
-> Then I think we need to CC ata maintainers rather than treat it as closed.
-> +Tejun, linux-ide@, you can see full thread here:
-> https://groups.google.com/forum/#!topic/syzkaller/9RNr9Gu0MyY
-> 
+On Mon, Jan 22, 2018 at 5:27 PM, Ville Syrjala
+<ville.syrjala@linux.intel.com> wrote:
+> From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+>
+> This reverts commit 1b39e3f813b4685c7a30ae964d5529a1b0e3a286.
+>
+> Makes my P3 machine oops somewhere in cpuidle. I suspect
+> CONFIG_ACPI=n may have something to do with this.
 
-To get memory corruption it's actually sufficient just to submit "1-byte" reads;
-there's no need for the SG_NEXT_CMD_LEN ioctl or anything:
+And if you don't do CONFIG_ACPI=n, does it still oops?
 
-	#include <fcntl.h>
-	#include <unistd.h>
+Anyway, there are later changes depending on this one, so reverting it
+won't work in general.
 
-	int main()
-	{
-		int fd = open("/dev/sg0", O_RDWR);
-		char buf[43] = { [36] = 0x08 /* READ_6 */ };
+Let me look deeper at this.
 
-		for (;;)
-			write(fd, buf, sizeof(buf));
-	}
-
-(where /dev/sg0 is the default QEMU disk type, "82371SB PIIX3 IDE")
-
-The SCSI command descriptor block is the 6 bytes at indices 36-41, so index 42
-is the only data byte.
-
-Also this is a different bug from the crash in ata_bmdma_fill_sg() which is
-fixed by "libata: fix length validation of ATAPI-relayed SCSI commands".
-
-I'm guessing the driver is DMA'ing to somewhere it shouldn't be...
-
-Eric
+Thanks,
+Rafael
