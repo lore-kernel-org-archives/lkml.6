@@ -1,118 +1,98 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3465232-1517865406-2-464019977435586205
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endasv,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517865405; b=lHJS7VdfB1DIQhUK0SrrkDW4OCMPnCtLRmpcpyW6xhQjfdj
-    ltJWZT5V9gvaOfNuJjJLq/4Z/d2cfdeRuKWzWodvt5zPiw17UhE2r1QKENBnv89s
-    h3jcm1z9v7bbxHSON9qWRqfd/Ri5Ma4sJAoNZWEipiv5sk3Zge2e3gRnUYVv1XSi
-    P8pOqXFiHuAUiQMbuY/TupIb8iYH4L69L2ZFLk7kMHawfaO5fAQudKrl/TUrAShI
-    HCKoJUIe0mTmuXCoEXxLrGgA3I5a2LUoHnkelRLSHd9RbE3SNbqehW2Lxd8spG9p
-    8VXPe7oIkoTYrOo9nL8wZhrbsgSG056mLu1GQZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1517865405; bh=+9rFMH0Xvzirl6s5gupAsrDzFCBXnFOR+bh1MC6aswQ=; b=N
-    dIVuLYurZpQQE7Xtc6Mo0/STyhT/Apf0YQz8MAFoviXQlx2se1EJin1Uaas4ApLJ
-    kqRWNXlgnwFW7RVATMRca6jNaqtCSYMtroQ/NF+UgJ+X6oXWQHt2TiDxtaChRa+F
-    00479tyajhWrfarn/8EQ7K21WSmRmtlnLlDPtsbdhrQN2w1hDMHhAS9sA+M22WHJ
-    EIRAaEiZoy7MZZSO+oolsdmBoLOZUpAQoioHzR4zpCCnNj5YbUk1VqhuHrgyZ1yt
-    +cu2Kzkkg1M4YTETUvnuJdPJ0iyq6BIb8MLfwneywOF9VteHxnzcxmYtBEoztjhr
-    O6ZhSZJZETg8Zk72UV2gQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=synopsys.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=synopsys.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=synopsys.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=synopsys.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752010AbeBEVQc (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Feb 2018 16:16:32 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:42014 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbeBEVQa (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 5 Feb 2018 16:16:30 -0500
-Subject: Re: [PATCH] usb: dwc2: gadget: Use true and false for boolean values
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        John Youn <John.Youn@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <balbi@kernel.org>
-CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-References: <20180123154531.GA22359@embeddedgus>
-From: John Youn <John.Youn@synopsys.com>
-Message-ID: <333168e1-f8b9-87bc-c6ba-a67c9112d686@synopsys.com>
-Date: Mon, 5 Feb 2018 13:12:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <linux@dominikbrodowski.net>
+X-Google-Smtp-Source: AH8x225r3a9G8t3H+hU+32af3Vik4o0NEvV+nlyHYgVw1Bs6HzSOJl7ZwqO4hX5XRKqrpzLTUG4K
+ARC-Seal: i=1; a=rsa-sha256; t=1517773282; cv=none;
+        d=google.com; s=arc-20160816;
+        b=WLxiRJRjnqpj+L+hz94Q3NLYF8MfUL3tw7S8nbQBvajhVd2/o6J+au2pTl4Yz0qyTA
+         eQzVctsnW5GCx48UT8COtvNVO87yi1L2L+EYenVtrtozjeB0MqFYHLd+zFBO/NJIXeBI
+         RcXU+ed55FUlZeTnntP801b9X05nWVfyv10JTAAK4NWthkckQIHJNRCNjkaEoWmdCg4k
+         qITHOh0aLBKWwKAbyHVJGeL5ATjK2Hyk0vQUJmHkH5Nu0f9vJt1i1XZLkdeGPmZgTy7C
+         30Ivp8AcJvnwUWkqcueISAg1gpd5/bfUjovg6QYThsj7iS8hudJZH2qinGmDj4LhGXHo
+         KosQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=AkMIERttXWK4WNHNk0+Hqbq+aRESUgYMpYo8aqtPSBo=;
+        b=RgUqLi/YX1ERPGd3f3PKmAPQfh+yZ9Mosep+Sc2to8qHNJpqIXaD8NnJDsD+ts28e/
+         Yt6Rx4CbNzHBjiTmeDVi5KXt8bPaBSmpbtr599njklwo40yMNCKqUdTDhy1tShe2QVYa
+         mdxv16s8guXipyBsltlMQLuvUVMXw5pKe+VFdN00+ugXPscCu7/DEzoIYDUrnzmpO2YM
+         6WQrm07q31ZWWDmyIn9fUWIJ4UpHnom/eWTCmSxNBuyfiKHVnQpNyee4kH7f79gUgo99
+         tZRvRVx/wgATOyFlqUNYIdVfvTL7GoE/mKE0aoWXn/yQYu1NHwUHQxKBhRFWN5eTifkv
+         Nrnw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 136.243.71.142 is neither permitted nor denied by best guess record for domain of linux@dominikbrodowski.net) smtp.mailfrom=linux@dominikbrodowski.net
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 136.243.71.142 is neither permitted nor denied by best guess record for domain of linux@dominikbrodowski.net) smtp.mailfrom=linux@dominikbrodowski.net
+Date: Sun, 4 Feb 2018 20:39:02 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: David Woodhouse <dwmw2@infradead.org>,
+	Tim Chen <tim.c.chen@linux.intel.com>
+Cc: mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, jpoimboe@redhat.com,
+	"Wieczorkiewicz, Pawel" <wipawel@amazon.de>,
+	David Woodhouse <dwmw@amazon.co.uk>, arjan@linux.intel.com,
+	karahmed@amazon.de, x86@kernel.org, bp@alien8.de,
+	peterz@infradead.org, pbonzini@redhat.com, ak@linux.intel.com,
+	torvalds@linux-foundation.org, gregkh@linux-foundation.org,
+	luto@kernel.org
+Subject: Re: [tip:x86/pti] x86/speculation: Use Indirect Branch Prediction
+ Barrier in context switch
+Message-ID: <20180204193901.GA29757@light.dominikbrodowski.net>
 MIME-Version: 1.0
-In-Reply-To: <20180123154531.GA22359@embeddedgus>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.9.130.156]
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2f5614a5-b7c4-52cf-a66f-6f62c2602bee@linux.intel.com>
+ <1517473913.18619.281.camel@infradead.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1590966106432961445?=
+X-GMAIL-MSGID: =?utf-8?q?1591500637153082436?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 01/23/2018 07:45 AM, Gustavo A. R. Silva wrote:
-> Assign true or false to boolean variables instead of an integer value.
+On Thu, Feb 01, 2018 at 08:31:53AM +0000, David Woodhouse wrote:
+> On Wed, 2018-01-31 at 08:03 +0100, Dominik Brodowski wrote:
+> > Whether a process needs protection by IBPB on context switches is a
+> > different question to whether a process should be allowed to be dumped,
+> > though the former may be a superset of the latter. Enable IBPB on all
+> > context switches to a different userspace process, until we have a clear
+> > mitigation strategy for userspace against Spectre-v2 designed and
+> > implemented.
+> >
+> > ...
+> >                 if (tsk && tsk->mm &&
+> > -                   tsk->mm->context.ctx_id != last_ctx_id &&
+> > -                   get_dumpable(tsk->mm) != SUID_DUMP_USER)
+> > +                   tsk->mm->context.ctx_id != last_ctx_id)
+> >                         indirect_branch_prediction_barrier();
 > 
-> This issue was detected with the help of Coccinelle.
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->   drivers/usb/dwc2/gadget.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> I understand your argument and I sympathise.
 > 
-> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-> index e4c3ce0..1f684dd 100644
-> --- a/drivers/usb/dwc2/gadget.c
-> +++ b/drivers/usb/dwc2/gadget.c
-> @@ -116,10 +116,10 @@ static inline void dwc2_gadget_incr_frame_num(struct dwc2_hsotg_ep *hs_ep)
->   {
->   	hs_ep->target_frame += hs_ep->interval;
->   	if (hs_ep->target_frame > DSTS_SOFFN_LIMIT) {
-> -		hs_ep->frame_overrun = 1;
-> +		hs_ep->frame_overrun = true;
->   		hs_ep->target_frame &= DSTS_SOFFN_LIMIT;
->   	} else {
-> -		hs_ep->frame_overrun = 0;
-> +		hs_ep->frame_overrun = false;
->   	}
->   }
->   
-> 
+> But that's going to hurt a *lot*, and we don't even have a viable
+> proof-of-concept for a user←→user Spectre v2 attack, do we? It's only
+> theoretical?
 
-+Felipe
+Wasn't the PoC in the Spectre paper user←→user (though on a different OS)?
+And what makes KVM←→KVM so much more likely/dangerous/..., that IBPB will
+be done there unconditionally (AFAICS)?
 
-Acked-by: John Youn <johnyoun@synopsys.com>
 
-Regards,
-John
+And, somewhat related, @Tim Chen:
+
+On Wed, Jan 31, 2018 at 03:25:44PM -0800, Tim Chen wrote:
+> For people who opt for more security, it is reasonable to consider
+> alternate policies to distinguish friend and foe so we know if we are coming
+> from a potentially hostile environment.  Ptrace is one means to do so, and probably
+> there are other ways depending on usages.  I hope we can have a discussion on what we should
+> use to determine if two processes are friend or foe.  Say do all the processes
+> from the same containers are considered friends with each other?
+
+To my understanding, the concept of "containers" is meant to be kept outside
+of the kernel. What *namespaces* / *control groups* can be considered
+friends with each other?
+
+
+Thanks,
+	Dominik
