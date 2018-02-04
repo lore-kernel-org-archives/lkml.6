@@ -1,54 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752572AbeBDUjg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 15:39:36 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:34540 "EHLO
+        id S1752604AbeBDUjr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 15:39:47 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:34544 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751724AbeBDUj1 (ORCPT
+        with ESMTP id S1751797AbeBDUj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 15:39:27 -0500
+        Sun, 4 Feb 2018 15:39:28 -0500
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
-Cc: Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [RFC PATCH 1/3] pcmcia: remove mailing list, update MAINTAINERS
-Date: Sun,  4 Feb 2018 21:12:04 +0100
-Message-Id: <20180204201206.2300-2-linux@dominikbrodowski.net>
+Subject: [RFC PATCH 0/3] pcmcia: odd fixes for v4.16-rc1
+Date: Sun,  4 Feb 2018 21:12:03 +0100
+Message-Id: <20180204201206.2300-1-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180204201206.2300-1-linux@dominikbrodowski.net>
-References: <20180204201206.2300-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In recent years, the linux-pcmcia mailing list gained a pretty bad
-signal-to-noise ratio. It does not seem worth the hassle to keep it
-any longer. Thanks to David for hosting the list for the last couple
-of years!
+In the past couple of years, the linux-pcmcia mailing list had a pretty bad
+signal-to-noise ratio. Therefore, it was shut down for good. This means an
+update to MAINTAINERS is in order. If no-one else steps in, I will try to
+route the few odd fixes for pcmcia upstream. Also, throw in two odd fixes
+to this patch set.
 
-Acked-by: David Woodhouse <dwmw2@infradead.org>
-CC: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- MAINTAINERS | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Arvind Yadav (1):
+  pcmcia: soc_common: Handle return value of clk_prepare_enable
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e3581413420c..3dc821ddfc6b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10641,11 +10641,9 @@ S:	Maintained
- F:	drivers/pci/dwc/*spear*
- 
- PCMCIA SUBSYSTEM
--P:	Linux PCMCIA Team
--L:	linux-pcmcia@lists.infradead.org
--W:	http://lists.infradead.org/mailman/listinfo/linux-pcmcia
-+M:	Dominik Brodowski <linux@dominikbrodowski.net>
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/brodo/pcmcia.git
--S:	Maintained
-+S:	Odd Fixes
- F:	Documentation/pcmcia/
- F:	tools/pcmcia/
- F:	drivers/pcmcia/
+Dominik Brodowski (2):
+  pcmcia: remove mailing list, update MAINTAINERS
+  pcmcia: use proper printk format for resource
+
+ MAINTAINERS                     | 6 ++----
+ drivers/pcmcia/rsrc_nonstatic.c | 2 +-
+ drivers/pcmcia/soc_common.c     | 8 ++++++--
+ 3 files changed, 9 insertions(+), 7 deletions(-)
+
 -- 
 2.16.1
