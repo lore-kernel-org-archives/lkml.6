@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752298AbeBDRzD (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 12:55:03 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37957 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752250AbeBDRyr (ORCPT
+        id S1752337AbeBDRzP (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 12:55:15 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37798 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752263AbeBDRyw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 12:54:47 -0500
-X-Google-Smtp-Source: AH8x225u7DjjDy/bh/WpWCf/blvYjMLpONqcWcSgnizFqtKLYe3tYP05BS7uDGCcpmR74xTuAP9kJg==
+        Sun, 4 Feb 2018 12:54:52 -0500
+X-Google-Smtp-Source: AH8x225ph7moTE4IPGTwanR2f7u1n3WC/kg+F/gS2Z3cYXw/kazDR6gQ4F3/750Q6LAb1J+DEnVMeg==
 From: Jagan Teki <jagannadh.teki@gmail.com>
 X-Google-Original-From: Jagan Teki <jagan@amarulasolutions.com>
 To: Shawn Guo <shawnguo@kernel.org>
@@ -19,9 +19,9 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Matteo Lisi <matteo.lisi@engicam.com>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 1/7] drm/panel: simple: add support for Ampire AM-800480AYTZQW-00H
-Date: Sun,  4 Feb 2018 23:19:25 +0530
-Message-Id: <1517766571-409-2-git-send-email-jagan@amarulasolutions.com>
+Subject: [PATCH v3 2/7] ARM: dts: imx6q-icore: Switch LVDS timings from panel-simple
+Date: Sun,  4 Feb 2018 23:19:26 +0530
+Message-Id: <1517766571-409-3-git-send-email-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517766571-409-1-git-send-email-jagan@amarulasolutions.com>
 References: <1517766571-409-1-git-send-email-jagan@amarulasolutions.com>
@@ -29,43 +29,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for the Ampire AM-800480AYTZQW-00H 7.0" WGA LCD,
-which can be supported by the simple panel driver.
+Switch to use ampire,am-800480aytzqw-00h LVDS timings from
+panel-simple instead hard coding the same in dts.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-Changes for v3:
-- collect Rob reiew tag 
-Changes for v2:
-- Updated binding info about optional properties, node and example
+Changes for v3, v2:
+- none
 
- .../display/panel/ampire,am-800480aytzqw-00h.txt   | 25 ++++++++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/ampire,am-800480aytzqw-00h.txt
+ arch/arm/boot/dts/imx6q-icore.dts    | 31 +++++++++++++++++--------------
+ arch/arm/boot/dts/imx6qdl-icore.dtsi |  2 +-
+ 2 files changed, 18 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/ampire,am-800480aytzqw-00h.txt b/Documentation/devicetree/bindings/display/panel/ampire,am-800480aytzqw-00h.txt
-new file mode 100644
-index 0000000..abb5eee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/ampire,am-800480aytzqw-00h.txt
-@@ -0,0 +1,25 @@
-+Ampire AM-800480AYTZQW-00H 7.0" WVGA TFT LCD panel
+diff --git a/arch/arm/boot/dts/imx6q-icore.dts b/arch/arm/boot/dts/imx6q-icore.dts
+index 5613dd9..c8e464e 100644
+--- a/arch/arm/boot/dts/imx6q-icore.dts
++++ b/arch/arm/boot/dts/imx6q-icore.dts
+@@ -48,6 +48,17 @@
+ / {
+ 	model = "Engicam i.CoreM6 Quad/Dual Starter Kit";
+ 	compatible = "engicam,imx6-icore", "fsl,imx6q";
 +
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-+
-+Required properties:
-+- compatible: should be "ampire,am-800480aytzqw-00h"
-+
-+Optional properties:
-+- backlight: phandle of the backlight device attached to the panel
-+
-+Optional nodes:
-+- Video port for LVDS panel input.
-+
-+Example:
 +	panel {
 +		compatible = "ampire,am-800480aytzqw-00h";
 +		backlight = <&backlight_lvds>;
@@ -76,50 +60,50 @@ index 0000000..abb5eee
 +			};
 +		};
 +	};
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 5591984..2ecc14b 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -412,6 +412,30 @@ static const struct panel_desc ampire_am_480272h3tmqw_t01h = {
- 	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
  };
  
-+static const struct display_timing ampire_am_800480aytzqw_00h_timing = {
-+	.pixelclock = { 27700000, 29200000, 39600000 },
-+	.hactive = { 800, 800, 800 },
-+	.hfront_porch = { 12, 40, 212 },
-+	.hback_porch = { 88, 88, 88 },
-+	.hsync_len = { 1, 2, 40 },
-+	.vactive = { 480, 480, 480 },
-+	.vfront_porch = { 1, 13, 88 },
-+	.vback_porch = { 32, 32, 32 },
-+	.vsync_len = { 1, 2, 3 },
-+	.flags = DISPLAY_FLAGS_DE_HIGH,
-+};
+ &can1 {
+@@ -71,22 +82,14 @@
+ 	status = "okay";
+ 
+ 	lvds-channel@0 {
+-		fsl,data-mapping = "spwg";
+-		fsl,data-width = <18>;
++		reg = <0>;
+ 		status = "okay";
+ 
+-		display-timings {
+-			native-mode = <&timing0>;
+-			timing0: timing0 {
+-				clock-frequency = <60000000>;
+-				hactive = <800>;
+-				vactive = <480>;
+-				hback-porch = <30>;
+-				hfront-porch = <30>;
+-				vback-porch = <5>;
+-				vfront-porch = <5>;
+-				hsync-len = <64>;
+-				vsync-len = <20>;
++		port@4 {
++			reg = <4>;
 +
-+static const struct panel_desc ampire_am_800480aytzqw_00h = {
-+	.timings = &ampire_am_800480aytzqw_00h_timing,
-+	.num_timings = 1,
-+	.bpc = 6,
-+	.size = {
-+		.width = 154,
-+		.height = 86,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
-+};
-+
- static const struct drm_display_mode ampire_am800480r3tmqwa1h_mode = {
- 	.clock = 33333,
- 	.hdisplay = 800,
-@@ -2028,6 +2052,9 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "ampire,am-480272h3tmqw-t01h",
- 		.data = &ampire_am_480272h3tmqw_t01h,
- 	}, {
-+		.compatible = "ampire,am-800480aytzqw-00h",
-+		.data = &ampire_am_800480aytzqw_00h,
-+	}, {
- 		.compatible = "ampire,am800480r3tmqwa1h",
- 		.data = &ampire_am800480r3tmqwa1h,
- 	}, {
++			lvds0_out: endpoint {
++				remote-endpoint = <&panel_in>;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/imx6qdl-icore.dtsi b/arch/arm/boot/dts/imx6qdl-icore.dtsi
+index a1b469c..5fd9e00 100644
+--- a/arch/arm/boot/dts/imx6qdl-icore.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-icore.dtsi
+@@ -49,7 +49,7 @@
+ 		reg = <0x10000000 0x80000000>;
+ 	};
+ 
+-	backlight {
++	backlight_lvds: backlight-lvds {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&pwm3 0 100000>;
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
 -- 
 2.7.4
