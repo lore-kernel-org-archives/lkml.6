@@ -1,44 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752639AbeBDUkN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 15:40:13 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:34546 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751991AbeBDUj2 (ORCPT
+        id S1752598AbeBDU7w (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 15:59:52 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38685 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751724AbeBDU7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 15:39:28 -0500
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/3] pcmcia: use proper printk format for resource
-Date: Sun,  4 Feb 2018 21:12:05 +0100
-Message-Id: <20180204201206.2300-3-linux@dominikbrodowski.net>
+        Sun, 4 Feb 2018 15:59:46 -0500
+X-Google-Smtp-Source: AH8x2269WxJHnKNPLCJKPX9YslMP7Bz7WbucPZIxW3uGM5XLJsSv34Z2cPjw2s4FWKS2+uunhhUAkw==
+From: Maxim Zhukov <mussitantesmortem@gmail.com>
+To: marcel@holtmann.org
+Cc: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Maxim Zhukov <mussitantesmortem@gmail.com>
+Subject: [PATCH 1/5] drivers: bluetooth: ath3k: replace hardcode numbers with define
+Date: Sun,  4 Feb 2018 23:59:30 +0300
+Message-Id: <20180204205934.12117-1-mussitantesmortem@gmail.com>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180204201206.2300-1-linux@dominikbrodowski.net>
-References: <20180204201206.2300-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Even though it is just in a dev_dbg statement, improve the printk format
-to use %pr instead of plain %p.
+Replaced the numbers with a readable define.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Signed-off-by: Maxim Zhukov <mussitantesmortem@gmail.com>
 ---
- drivers/pcmcia/rsrc_nonstatic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/ath3k.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pcmcia/rsrc_nonstatic.c b/drivers/pcmcia/rsrc_nonstatic.c
-index 5ef7b46a2578..49377d502b74 100644
---- a/drivers/pcmcia/rsrc_nonstatic.c
-+++ b/drivers/pcmcia/rsrc_nonstatic.c
-@@ -367,7 +367,7 @@ static int do_validate_mem(struct pcmcia_socket *s,
- 		}
+diff --git a/drivers/bluetooth/ath3k.c b/drivers/bluetooth/ath3k.c
+index 204afe66de92..0a5cfea44529 100644
+--- a/drivers/bluetooth/ath3k.c
++++ b/drivers/bluetooth/ath3k.c
+@@ -227,15 +227,16 @@ static int ath3k_load_firmware(struct usb_device *udev,
+ 		return -ENOMEM;
  	}
  
--	dev_dbg(&s->dev, "cs: memory probe 0x%06lx-0x%06lx: %p %p %u %u %u",
-+	dev_dbg(&s->dev, "cs: memory probe 0x%06lx-0x%06lx: %pr %pr %u %u %u",
- 		base, base+size-1, res1, res2, ret, info1, info2);
+-	memcpy(send_buf, firmware->data, 20);
++	memcpy(send_buf, firmware->data, FW_HDR_SIZE);
+ 	err = usb_control_msg(udev, pipe, USB_REQ_DFU_DNLOAD, USB_TYPE_VENDOR,
+-			      0, 0, send_buf, 20, USB_CTRL_SET_TIMEOUT);
++			      0, 0, send_buf, FW_HDR_SIZE,
++			      USB_CTRL_SET_TIMEOUT);
+ 	if (err < 0) {
+ 		BT_ERR("Can't change to loading configuration err");
+ 		goto error;
+ 	}
+-	sent += 20;
+-	count -= 20;
++	sent += FW_HDR_SIZE;
++	count -= FW_HDR_SIZE;
  
- 	free_region(res2);
+ 	pipe = usb_sndbulkpipe(udev, 0x02);
+ 
 -- 
 2.16.1
