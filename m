@@ -1,207 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752003AbeBDPOE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 10:14:04 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52342 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751594AbeBDPN5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 10:13:57 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 87F536029D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH] drm/bridge/synopsys: dsi: Add 1.31 version support
-To: Philippe CORNU <philippe.cornu@st.com>,
-        David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>, Heiko Stubner <heiko@sntech.de>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rockchip@lists.infradead.org"
-        <linux-rockchip@lists.infradead.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Ludovic BARRE <ludovic.barre@st.com>,
-        Mickael REULIER <mickael.reulier@st.com>
-References: <20180122150819.22066-1-philippe.cornu@st.com>
- <37f38992-0ad3-317f-5337-fbe018bf5f45@st.com>
-From: Archit <architt@codeaurora.org>
-Message-ID: <917ebadc-d5f0-ef98-eb50-5e9bf25d722b@codeaurora.org>
-Date: Sun, 4 Feb 2018 20:43:44 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1752057AbeBDPOz (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 10:14:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50016 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751594AbeBDPOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 10:14:44 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01A74217AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to handle looped node chain during
+ recovery
+To: Gao Xiang <hsiangkao@aol.com>, Chao Yu <yuchao0@huawei.com>,
+        jaegeuk@kernel.org, Yunlei He <heyunlei@huawei.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+References: <20180203094439.3913-1-yuchao0@huawei.com>
+ <6fe55970-6e30-d144-86d4-68d6fbd80cf3@aol.com>
+ <3a4a4906-1f2a-197a-bfe1-f636f9b5243c@aol.com>
+ <34884138-31e6-566d-5be3-d62f61a3416e@aol.com>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <250b6aaa-84ab-13b6-0da0-f47ba9b65b35@kernel.org>
+Date: Sun, 4 Feb 2018 23:14:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <37f38992-0ad3-317f-5337-fbe018bf5f45@st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <34884138-31e6-566d-5be3-d62f61a3416e@aol.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Phillipe,
+Well, that's classic algorithm for checking loop in a list, as well as
+other one we know, in order to decrease time complexity of these algorithms,
+their implementations are a little more complex.
 
-On Saturday 03 February 2018 03:49 AM, Philippe CORNU wrote:
-> Hi Archit, Andrzej, Laurent & Brian,
-> 
-> What is your opinion regarding this patch? Do you have any advice for
-> handling hw versions?
-> 
-> Do not hesitate to comment.
+But IMO, the issue we are trying to fix is really a corner case, and the
+performance in that path is not such critical, so I just intend to fix it
+with fewest codes.
 
-The patch looks mostly good to me. One query below.
-
+On 2018/2/3 19:36, Gao Xiang via Linux-f2fs-devel wrote:
 > 
-> Many thanks,
-> Philippe :-)
+> Sorry, I saw the related code entirely, please ignore these replies.
 > 
 > 
-> On 01/22/2018 04:08 PM, Philippe Cornu wrote:
->> From: Philippe CORNU <philippe.cornu@st.com>
+> On 2018/2/3 18:45, Gao Xiang wrote:
 >>
->> Add support for the Synopsys DesignWare MIPI DSI version 1.31
->> Two registers need to be updated/added for supporting 1.31:
->> * PHY_TMR_CFG 0x9c (updated)
->>     1.30 [31:24] phy_hs2lp_time
->>          [23:16] phy_lp2hs_time
->>          [14: 0] max_rd_time
 >>
->>     1.31 [25:16] phy_hs2lp_time
->>          [ 9: 0] phy_lp2hs_time
+>> On 2018/2/3 18:35, Gao Xiang wrote:
+>>> Hi Chao and YunLei,
+>>>
+>>>
+>>> On 2018/2/3 17:44, Chao Yu wrote:
+>>>> There is no checksum in node block now, so bit-transition from hardware
+>>>> can make node_footer.next_blkaddr being corrupted w/o any detection,
+>>>> result in node chain becoming looped one.
+>>>>
+>>>> For this condition, during recovery, in order to avoid running into dead
+>>>> loop, let's detect it and just skip out.
+>>>>
+>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>   fs/f2fs/recovery.c | 14 ++++++++++++++
+>>>>   1 file changed, 14 insertions(+)
+>>>>
+>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+>>>> index b6d1ec620a8c..60dd0cee4820 100644
+>>>> --- a/fs/f2fs/recovery.c
+>>>> +++ b/fs/f2fs/recovery.c
+>>>> @@ -243,6 +243,9 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>>>>       struct curseg_info *curseg;
+>>>>       struct page *page = NULL;
+>>>>       block_t blkaddr;
+>>>> +    unsigned int loop_cnt = 0;
+>>>> +    unsigned int free_blocks = sbi->user_block_count -
+>>>> +                    valid_user_blocks(sbi);
+>>> There exists another way to detect loop more faster but only using two variables.
+>>> The algorithm is described as simply "B goes forward a steps only A goes forwards 2 steps".
+>> "B goes forward a step only when A goes forward 2(or constant x, more than 1) steps".
 >>
->> * PHY_TMR_RD_CFG 0xf4 (new)
->>     1.31 [14: 0] max_rd_time
+>>> For example:
+>>> 1)
+>>>    1   2  3  4   5   6     7
+>>>    |             \             /
+>>>    |                \------/
+>>>   A, B
+>>> 2)
+>>>    1  2  3  4   5   6     7
+>>>     |   |        \             /
+>>>    B   A        \------/
+>>>  3)
+>>>    1  2  3  4   5   6     7
+>>>        |    |     \             /
+>>>       B   A      \------/
+>>>   4)
+>>>    1  2  3  4   5   6     7
+>>>        |       |\             /
+>>>       B      A \------/
+>>> 5)....
+>>>
 >>
->> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
->> ---
->>    drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 52 +++++++++++++++++++++++----
->>    1 file changed, 46 insertions(+), 6 deletions(-)
 >>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
->> index 735f38429c06..20a2ca14a7ad 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
->> @@ -25,7 +25,13 @@
->>    #include <drm/bridge/dw_mipi_dsi.h>
->>    #include <video/mipi_display.h>
->>    
->> +#define HWVER_130			0x31333000	/* IP version 1.30 */
->> +#define HWVER_131			0x31333100	/* IP version 1.31 */
->> +#define HWVER_OLDEST			HWVER_130
->> +#define HWVER_NEWEST			HWVER_131
->> +
->>    #define DSI_VERSION			0x00
->> +#define VERSION				GENMASK(31, 8)
->>    
->>    #define DSI_PWR_UP			0x04
->>    #define RESET				0
->> @@ -161,11 +167,12 @@
->>    #define PHY_CLKHS2LP_TIME(lbcc)		(((lbcc) & 0x3ff) << 16)
->>    #define PHY_CLKLP2HS_TIME(lbcc)		((lbcc) & 0x3ff)
->>    
->> -/* TODO Next register is slightly different between 1.30 & 1.31 IP version */
->>    #define DSI_PHY_TMR_CFG			0x9c
->> -#define PHY_HS2LP_TIME(lbcc)		(((lbcc) & 0xff) << 24)
->> -#define PHY_LP2HS_TIME(lbcc)		(((lbcc) & 0xff) << 16)
->> -#define MAX_RD_TIME(lbcc)		((lbcc) & 0x7fff)
->> +#define PHY_HS2LP_TIME_V130(lbcc)	(((lbcc) & 0xff) << 24)
->> +#define PHY_LP2HS_TIME_V130(lbcc)	(((lbcc) & 0xff) << 16)
->> +#define MAX_RD_TIME_V130(lbcc)		((lbcc) & 0x7fff)
->> +#define PHY_HS2LP_TIME_V131(lbcc)	(((lbcc) & 0x3ff) << 16)
->> +#define PHY_LP2HS_TIME_V131(lbcc)	((lbcc) & 0x3ff)
->>    
->>    #define DSI_PHY_RSTZ			0xa0
->>    #define PHY_DISFORCEPLL			0
->> @@ -204,7 +211,9 @@
->>    #define DSI_INT_ST1			0xc0
->>    #define DSI_INT_MSK0			0xc4
->>    #define DSI_INT_MSK1			0xc8
->> +
->>    #define DSI_PHY_TMR_RD_CFG		0xf4
->> +#define MAX_RD_TIME_V131(lbcc)		((lbcc) & 0x7fff)
->>    
->>    #define PHY_STATUS_TIMEOUT_US		10000
->>    #define CMD_PKT_STATUS_TIMEOUT_US	20000
->> @@ -215,6 +224,7 @@ struct dw_mipi_dsi {
->>    	struct drm_bridge *panel_bridge;
->>    	struct device *dev;
->>    	void __iomem *base;
->> +	u32 hw_version;
->>    
->>    	struct clk *pclk;
->>    	struct clk *px_clk;
->> @@ -616,8 +626,14 @@ static void dw_mipi_dsi_dphy_timing_config(struct dw_mipi_dsi *dsi)
->>    	 * note: DSI_PHY_TMR_CFG.MAX_RD_TIME should be in line with
->>    	 * DSI_CMD_MODE_CFG.MAX_RD_PKT_SIZE_LP (see CMD_MODE_ALL_LP)
->>    	 */
->> -	dsi_write(dsi, DSI_PHY_TMR_CFG, PHY_HS2LP_TIME(0x40)
->> -		  | PHY_LP2HS_TIME(0x40) | MAX_RD_TIME(10000));
->> +	if (dsi->hw_version == HWVER_131) {
->> +		dsi_write(dsi, DSI_PHY_TMR_CFG, PHY_HS2LP_TIME_V131(0x40) |
->> +			  PHY_LP2HS_TIME_V131(0x40));
->> +		dsi_write(dsi, DSI_PHY_TMR_RD_CFG, MAX_RD_TIME_V131(10000));
->> +	} else {
->> +		dsi_write(dsi, DSI_PHY_TMR_CFG, PHY_HS2LP_TIME_V130(0x40) |
->> +			  PHY_LP2HS_TIME_V130(0x40) | MAX_RD_TIME_V130(10000));
->> +	}
->>    
->>    	dsi_write(dsi, DSI_PHY_TMR_LPCLK_CFG, PHY_CLKHS2LP_TIME(0x40)
->>    		  | PHY_CLKLP2HS_TIME(0x40));
->> @@ -791,6 +807,28 @@ static const struct drm_bridge_funcs dw_mipi_dsi_bridge_funcs = {
->>    	.attach	      = dw_mipi_dsi_bridge_attach,
->>    };
->>    
->> +static void dsi_get_version(struct dw_mipi_dsi *dsi)
->> +{
->> +	u32 hw_version;
->> +
->> +	clk_prepare_enable(dsi->pclk);
->> +	hw_version = dsi_read(dsi, DSI_VERSION) & VERSION;
->> +	clk_disable_unprepare(dsi->pclk);
->> +
->> +	if (hw_version > HWVER_NEWEST) {
->> +		DRM_DEBUG("hw version: use 0x%08x for this recent 0x%08x\n",
->> +			  HWVER_NEWEST, hw_version);
->> +		hw_version = HWVER_NEWEST;
->> +
->> +	} else if (hw_version < HWVER_OLDEST) {
->> +		DRM_DEBUG("hw version: use 0x%08x for this old 0x%08x\n",
->> +			  HWVER_OLDEST, hw_version);
->> +		hw_version = HWVER_OLDEST;
-
-I didn't understand the point of HWVER_NEWEST and HWVWER_OLDEST. We're
-not going to have a huge number of hw versions that we need to check if
-our version lies within a range. We should rather have a switch case
-which explicitly sets the hw_version vale based on what we read from
-the DSI_VERSION register.
-
-The patch looks fine otherwise.
-
-Thanks,
-Archit
-
->> +	}
->> +
->> +	dsi->hw_version = hw_version;
->> +}
->> +
->>    static struct dw_mipi_dsi *
->>    __dw_mipi_dsi_probe(struct platform_device *pdev,
->>    		    const struct dw_mipi_dsi_plat_data *plat_data)
->> @@ -870,6 +908,8 @@ __dw_mipi_dsi_probe(struct platform_device *pdev,
->>    		clk_disable_unprepare(dsi->pclk);
->>    	}
->>    
->> +	dsi_get_version(dsi);
->> +
->>    	pm_runtime_enable(dev);
->>    
->>    	dsi->dsi_host.ops = &dw_mipi_dsi_host_ops;
+>> Sorry, it seems the encoded diagram is in a mess, I try again.
+>> 1)
+>>    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
+>>    |               \             /
+>>    |                \-----<-----/
+>>   A, B
+>> 2)
+>>    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
+>>    |    |          \             /
+>>    |    |           \-----<-----/
+>>    B    A
+>> 3)
+>>    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
+>>         |    |     \             /
+>>         |    |      \-----<-----/
+>>         B    A
+>> 4)
+>>    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
+>>         |         |\             /
+>>         |         | \-----<-----/
+>>         B         A
+>> 5)....
+>> if B catchs up A, there exists a cycle.
+>>
+>>
+>> Thanks,
+>>> B will equal A or beyoud A if and only if there has a cycle.
+>>> It's a more faster algorithm. :D
+>>>
+>>> Thanks,
+>>>
+>>>>       int err = 0;
+>>>>         /* get node pages in the current segment */
+>>>> @@ -295,6 +298,17 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>>>>           if (IS_INODE(page) && is_dent_dnode(page))
+>>>>               entry->last_dentry = blkaddr;
+>>>>   next:
+>>>> +        /* sanity check in order to detect looped node chain */
+>>>> +        if (++loop_cnt >= free_blocks ||
+>>>> +            blkaddr == next_blkaddr_of_node(page)) {
+>>>> +            f2fs_msg(sbi->sb, KERN_NOTICE,
+>>>> +                "%s: detect looped node chain, "
+>>>> +                "blkaddr:%u, next:%u",
+>>>> +                __func__, blkaddr, next_blkaddr_of_node(page));
+>>>> +            err = -EINVAL;
+>>>> +            break;
+>>>> +        }
+>>>> +
+>>>>           /* check next segment */
+>>>>           blkaddr = next_blkaddr_of_node(page);
+>>>>           f2fs_put_page(page, 1);
+>>>
+>>
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
