@@ -1,44 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752061AbeBDRtZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 12:49:25 -0500
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:34093 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbeBDRtR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 12:49:17 -0500
-X-Google-Smtp-Source: AH8x227IFsnRHvg/9PcdUWUS71rj01c7fa/jJJhqLcYDRADeGOllewQ/dEfRDLW9bj4XqiJcNqWW3GjJMTYXkk7QXhw=
+        id S1752071AbeBDRxG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 12:53:06 -0500
+Received: from mga17.intel.com ([192.55.52.151]:17281 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751597AbeBDRxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 12:53:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,460,1511856000";
+   d="scan'208";a="14931752"
+Subject: [PATCH v2 0/3] x86/entry: Clear registers to sanitize speculative
+ usages
+From: Dan Williams <dan.j.williams@intel.com>
+To: tglx@linutronix.de
+Cc: Andi Kleen <ak@linux.intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        luto@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        torvalds@linux-foundation.org
+Date: Sun, 04 Feb 2018 09:43:55 -0800
+Message-ID: <151776623555.23236.14152911329227555005.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
-From: =?UTF-8?B?7Jik64+Z7ZiE?= <zanywhale@gmail.com>
-Date: Mon, 5 Feb 2018 02:49:15 +0900
-Message-ID: <CAKCSxhPTyLEPAGgpU9isbh=6yXCPBXq9O7j22COs=FN9Ppz=8g@mail.gmail.com>
-Subject: [PATCH] Fix a typo in Documentation/device-mapper/dm-zoned.txt
-To: trivial@kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A trivial patch to fix a typo in Documentation/device-mapper/dm-zoned.txt
-Fix 'convnetional' to 'conventional'
+Changes since v1 [1]:
+* Move CLEAR_REGS_EXTRA_NOSPEC before TRACE_IRQS_OFF to protect tracing
+  users (Andy)
 
-Signed-off-by: Donghyeon Oh <zanywhale@gmail.com>
-Cc: Jiri Kosina <trivial@kernel.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+[1]: https://lkml.org/lkml/2018/2/3/397
 
-diff --git a/Documentation/device-mapper/dm-zoned.txt
-b/Documentation/device-mapper/dm-zoned.txt
-index 736fcc78d193..2be4add21298 100644
---- a/Documentation/device-mapper/dm-zoned.txt
-+++ b/Documentation/device-mapper/dm-zoned.txt
-@@ -97,7 +97,7 @@ the buffer zone assigned. If the accessed chunk has
-no mapping, or the
-accessed blocks are invalid, the read buffer is zeroed and the read
-operation terminated.
--After some time, the limited number of convnetional zones available may
-+After some time, the limited number of conventional zones available may
-be exhausted (all used to map chunks or buffer sequential zones) and
-unaligned writes to unbuffered chunks become impossible. To avoid this
-situation, a reclaim process regularly scans used conventional zones and
+---
+
+At entry userspace may have populated callee saved registers with values
+that could be useful in a speculative execution attack. Clear them to
+minimize the kernel's attack surface.
+
+Note, this is done to make it harder to find / manipulate exploitable
+sequences in the kernel.
+
+The clearing is limited to the 64-bit 'extra' registers since those are
+the most likely to survive with user populated values deep into the call
+chain. Normal register pressure likely clobbers values in the lower
+registers and the 32-bit case.
+
+As for cycle impact on my Sandy Bridge test system it can handle the xor
+sequence at 3.5 instructions per cycle.
+
+---
+
+Andi Kleen (2):
+      x86/entry: Clear registers for 64bit exceptions/interrupts
+      x86/entry: Clear registers for compat syscalls
+
+Dan Williams (1):
+      x86/entry: Clear extra registers beyond syscall arguments for 64bit kernels
+
+
+ arch/x86/entry/calling.h         |   17 +++++++++++++++++
+ arch/x86/entry/entry_64.S        |    6 ++++++
+ arch/x86/entry/entry_64_compat.S |    3 +++
+ 3 files changed, 26 insertions(+)
