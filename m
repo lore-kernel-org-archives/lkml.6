@@ -1,181 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752060AbeBDNAi (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 08:00:38 -0500
-Received: from mga11.intel.com ([192.55.52.93]:37088 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751651AbeBDNAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 08:00:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,458,1511856000";
-   d="scan'208";a="15322625"
-From: Wei Wang <wei.w.wang@intel.com>
-To: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        akpm@linux-foundation.org
-Cc: pbonzini@redhat.com, wei.w.wang@intel.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        huangzhichao@huawei.com
-Subject: [PATCH v26 1/2] mm: support reporting free page blocks
-Date: Sun,  4 Feb 2018 20:41:07 +0800
-Message-Id: <1517748068-25499-2-git-send-email-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517748068-25499-1-git-send-email-wei.w.wang@intel.com>
-References: <1517748068-25499-1-git-send-email-wei.w.wang@intel.com>
+        id S1751998AbeBDNCF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 08:02:05 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36697 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751283AbeBDNB5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 08:01:57 -0500
+X-Google-Smtp-Source: AH8x226LzduF9w8EGvELGaasFiUD9Jgl2kR7pNMO/sSQAfDpBEOJw1WS6IYyv1C9m0iJSHm2IxATt5bBdYOEfJEldxg=
+MIME-Version: 1.0
+In-Reply-To: <151770009703.7213.12036560755602017391.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <151770009169.7213.12476757146099518628.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151770009703.7213.12036560755602017391.stgit@dwillia2-desk3.amr.corp.intel.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Sun, 4 Feb 2018 08:01:56 -0500
+Message-ID: <CAMzpN2jeq+LDajvwSALpmaZKOChNX1uhRbuEJ3v97HyOEsH44A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86/entry: Clear extra registers beyond syscall
+ arguments for 64bit kernels
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to walk through the free page blocks in the
-system and report them via a callback function. Some page blocks may
-leave the free list after zone->lock is released, so it is the caller's
-responsibility to either detect or prevent the use of such pages.
+On Sat, Feb 3, 2018 at 6:21 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+> At entry userspace may have populated the extra registers outside the
+> syscall calling convention with values that could be useful in a
+> speculative execution attack. Clear them to minimize the kernel's attack
+> surface. Note, this only clears the extra registers and not the unused
+> registers for syscalls less than 6 arguments since those registers are
+> likely to be clobbered well before their values could be put to use
+> under speculation.
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Reported-by: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  arch/x86/entry/calling.h  |   17 +++++++++++++++++
+>  arch/x86/entry/entry_64.S |    1 +
+>  2 files changed, 18 insertions(+)
+>
+> diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+> index 3f48f695d5e6..daee2d19e73d 100644
+> --- a/arch/x86/entry/calling.h
+> +++ b/arch/x86/entry/calling.h
+> @@ -147,6 +147,23 @@ For 32-bit we have the following conventions - kernel is built with
+>         UNWIND_HINT_REGS offset=\offset
+>         .endm
+>
+> +       /*
+> +        * Sanitize extra registers of values that a speculation attack
+> +        * might want to exploit. In the CONFIG_FRAME_POINTER=y case,
+> +        * the expectation is that %ebp will be clobbered before it
+> +        * could be used.
+> +        */
+> +       .macro CLEAR_EXTRA_REGS_NOSPEC
+> +       xorq %r15, %r15
+> +       xorq %r14, %r14
+> +       xorq %r13, %r13
+> +       xorq %r12, %r12
+> +       xorl %ebx, %ebx
+> +#ifndef CONFIG_FRAME_POINTER
+> +       xorl %ebp, %ebp
+> +#endif
+> +       .endm
+> +
+>         .macro POP_EXTRA_REGS
+>         popq %r15
+>         popq %r14
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index c752abe89d80..46260e951da6 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -247,6 +247,7 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
+>         TRACE_IRQS_OFF
+>
+>         /* IRQs are off. */
+> +       CLEAR_EXTRA_REGS_NOSPEC
+>         movq    %rsp, %rdi
+>         call    do_syscall_64           /* returns with IRQs disabled */
+>
+>
 
-One use example of this patch is to accelerate live migration by skipping
-the transfer of free pages reported from the guest. A popular method used
-by the hypervisor to track which part of memory is written during live
-migration is to write-protect all the guest memory. So, those pages that
-are reported as free pages but are written after the report function
-returns will be captured by the hypervisor, and they will be added to the
-next round of memory transfer.
+Now that the fast syscall path is gone, all regs (except RSP
+obviously) are dead after being saved to pt_regs.
 
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Signed-off-by: Liang Li <liang.z.li@intel.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Michal Hocko <mhocko@kernel.org>
----
- include/linux/mm.h |  6 ++++
- mm/page_alloc.c    | 96 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 102 insertions(+)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ea818ff..e65ae2e 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1938,6 +1938,12 @@ extern void free_area_init_node(int nid, unsigned long * zones_size,
- 		unsigned long zone_start_pfn, unsigned long *zholes_size);
- extern void free_initmem(void);
- 
-+extern int walk_free_mem_block(void *opaque,
-+			       int min_order,
-+			       int (*report_pfn_range)(void *opaque,
-+						       unsigned long pfn,
-+						       unsigned long num));
-+
- /*
-  * Free reserved pages within range [PAGE_ALIGN(start), end & PAGE_MASK)
-  * into the buddy system. The freed pages will be poisoned with pattern
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 76c9688..0dc0853 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4899,6 +4899,102 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 	show_swap_cache_info();
- }
- 
-+/*
-+ * Walk through a free page list and report the found pfn range via the
-+ * callback.
-+ *
-+ * Return 0 if it completes the reporting. Otherwise, return the non-zero
-+ * value returned from the callback.
-+ */
-+static int walk_free_page_list(void *opaque,
-+			       struct zone *zone,
-+			       int order,
-+			       enum migratetype mt,
-+			       int (*report_pfn_range)(void *,
-+						       unsigned long,
-+						       unsigned long))
-+{
-+	struct page *page;
-+	struct list_head *list;
-+	unsigned long pfn, flags;
-+	int ret = 0;
-+
-+	spin_lock_irqsave(&zone->lock, flags);
-+	list = &zone->free_area[order].free_list[mt];
-+	list_for_each_entry(page, list, lru) {
-+		pfn = page_to_pfn(page);
-+		ret = report_pfn_range(opaque, pfn, 1 << order);
-+		if (ret)
-+			break;
-+	}
-+	spin_unlock_irqrestore(&zone->lock, flags);
-+
-+	return ret;
-+}
-+
-+/**
-+ * walk_free_mem_block - Walk through the free page blocks in the system
-+ * @opaque: the context passed from the caller
-+ * @min_order: the minimum order of free lists to check
-+ * @report_pfn_range: the callback to report the pfn range of the free pages
-+ *
-+ * If the callback returns a non-zero value, stop iterating the list of free
-+ * page blocks. Otherwise, continue to report.
-+ *
-+ * Please note that there are no locking guarantees for the callback and
-+ * that the reported pfn range might be freed or disappear after the
-+ * callback returns so the caller has to be very careful how it is used.
-+ *
-+ * The callback itself must not sleep or perform any operations which would
-+ * require any memory allocations directly (not even GFP_NOWAIT/GFP_ATOMIC)
-+ * or via any lock dependency. It is generally advisable to implement
-+ * the callback as simple as possible and defer any heavy lifting to a
-+ * different context.
-+ *
-+ * There is no guarantee that each free range will be reported only once
-+ * during one walk_free_mem_block invocation.
-+ *
-+ * pfn_to_page on the given range is strongly discouraged and if there is
-+ * an absolute need for that make sure to contact MM people to discuss
-+ * potential problems.
-+ *
-+ * The function itself might sleep so it cannot be called from atomic
-+ * contexts.
-+ *
-+ * In general low orders tend to be very volatile and so it makes more
-+ * sense to query larger ones first for various optimizations which like
-+ * ballooning etc... This will reduce the overhead as well.
-+ *
-+ * Return 0 if it completes the reporting. Otherwise, return the non-zero
-+ * value returned from the callback.
-+ */
-+int walk_free_mem_block(void *opaque,
-+			int min_order,
-+			int (*report_pfn_range)(void *opaque,
-+			unsigned long pfn,
-+			unsigned long num))
-+{
-+	struct zone *zone;
-+	int order;
-+	enum migratetype mt;
-+	int ret;
-+
-+	for_each_populated_zone(zone) {
-+		for (order = MAX_ORDER - 1; order >= min_order; order--) {
-+			for (mt = 0; mt < MIGRATE_TYPES; mt++) {
-+				ret = walk_free_page_list(opaque, zone,
-+							  order, mt,
-+							  report_pfn_range);
-+				if (ret)
-+					return ret;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(walk_free_mem_block);
-+
- static void zoneref_set_zone(struct zone *zone, struct zoneref *zoneref)
- {
- 	zoneref->zone = zone;
--- 
-2.7.4
+--
+Brian Gerst
