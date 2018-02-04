@@ -1,221 +1,299 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-199772-1517778199-2-3329395793310581087
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517778199; b=rhZiasIT9J9iXdSdTHfpcqLDceg0C0FMQaUVzlMYSHA1Gu5
-    SFVCxR+Odz8E6/7lNu1Ni9Xgu4zjjxBiLgLih63EmeFO3ECtfEsRII2WuT0kmA1M
-    Z9EYo+//nJKzbvW0GyJaWD6RsY/hzAw84HZdIx5SIn6zFYeoNv1Lq162HuWh4P6X
-    9ocVdH+yoiki1bCxQ5/oQv+Fx7PnkpsZAxMtuJgSU4rKqVHpER6kXl2rwq0eYvgf
-    vWMVp06i2OZWMwEvY/a7OVOesvYWDP4K6T8v2dRDmeGXU1jRBiGF0idRHSotvQAa
-    XtK9HJXeb1y0gmPpE/utbBHrSnPrV8ks3taoeaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:date
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1517778199; bh=F
-    tMfrdUwKFJjDSWVtew00a/rHyXAH3XNpc/EmlMtqcc=; b=tigIiGrtJN583JZza
-    7B8wb8V6Ev80R4OB42Ohv0AphxElxxSvkYRJHu2RosRoy+TYKpUc/+bQGwfkC/Ws
-    meVesTKKTJCZCFkYbz5j1qhy8zUQzuGiw2/4S2oteikDsPQYM5L1aWpGEQ0LCkFl
-    gpSHUIq6FMStkKPAsQvFhIi83dFlgcr2WMfETP8QZv8MlYg9ho/r3o16oMzw3Alf
-    rnU/5UVof6AIXzZ7GjxoOGbiWfaSHw6tciJMBZolE+wij0XoDYigJRhdmEB/zxX6
-    McA4gVzENg5VojpmLxcxdBW6Yg5cNsSNsxAG0Q2g2IR4mdxsy4lUw/QSege3MfC8
-    iG5kA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=XXXVaMCZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=K8Hh3ZJB;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=XXXVaMCZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=K8Hh3ZJB;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AH8x224ZLFYhpam7oyn9ibKLmRrw5ewOOHTlEhVyKRgaVfXOIWSlf+Bsofzm22aLQPKsrgBk4vxE5w==
-Message-ID: <1517778185.2292.10.camel@gmail.com>
-Subject: Re: [PATCH v4] Staging: iio: ade7758: Expand buf_lock to cover both
- buffer and state protection
-From: Shreeya Patel <shreeya.patel23498@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Date: Mon, 05 Feb 2018 02:33:05 +0530
-In-Reply-To: <20180204111022.0e6d08f6@archlinux>
-References: <1517671892-4045-1-git-send-email-shreeya.patel23498@gmail.com>
- <20180204111022.0e6d08f6@archlinux>
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, pmeerw@pmeerw.net, knaack.h@gmx.de
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <jic23@jic23.retrosnub.co.uk>
+X-Google-Smtp-Source: AH8x226wVnrVld6ypuqMeNQEpa6xZn/aAPSqgcnVI6T/VQS570w+fYIhwsM39V7PvNBPM0s4gSAa
+ARC-Seal: i=1; a=rsa-sha256; t=1517779373; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Oqqkg1CWqz3SsoGPVbKOb5fWI3ZHSzOUG4qWa+otuQIVWWxWE63LMbbj74hvU5fRh1
+         JnoxSm+SVoZtdweUfSV0MfjQ6FsUFGumCliHNqzYEff6d6zemaqdDt1SJIPH3fwDtXxC
+         ny5iZYRSDORuXG9VrdHXoApfDYS2l9+zIVrM606MNp7/T7ZialninnsFqHhKoA48QExy
+         J2f8esPcLsL6bR1VqYyBXH24+HbeqQx7tbAAoR5EFEZGVM15SnZkOXTVOcexRHfccclk
+         f3DnLNgJElJopUn2hpSHriWIwgDUTMy3cfHBgQJR5hFJolAVp7i79mvUjEsBqjTMYi4i
+         0F2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:from:cc:to:subject:content-transfer-encoding
+         :mime-version:references:in-reply-to:user-agent:date
+         :arc-authentication-results;
+        bh=7OlFV5VL8nsgvjyh6IrYvoIVopfgdholtTlZiweyLZc=;
+        b=iAvE7JviePLCcHeZ6212AB4mRBKC7PC0w9uJXBL1cP4QF+xf+04KaU7RncI3AIUHe5
+         3G46+nIdl+a8FSm/8TDr0zF2RLgnCcpJ5WzwMilpPquDeK2oAXO099hz7EIilHZ3oy2W
+         Ff+mWkykT3mMC01QT/tRZuID8ultpWP8t6k1qz7KI+NzT9Q7OtSRB/jXZJLUFw1bSv5N
+         5D1Da0o5QOAl6kye2fB1BPSWF0Gh9jqzMT5TCtRMjx//kE8ObXnA+Bk7KNhsATuf7vvu
+         nHVWQm6C6tPtc7zAg0/6ZbPTg4C0mgZfqiklhtnnUYgaTX3UslrwDC7N3li+EwQe9Evu
+         9Plw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of jic23@jic23.retrosnub.co.uk designates 178.18.118.26 as permitted sender) smtp.mailfrom=jic23@jic23.retrosnub.co.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of jic23@jic23.retrosnub.co.uk designates 178.18.118.26 as permitted sender) smtp.mailfrom=jic23@jic23.retrosnub.co.uk
+Date: Sun, 04 Feb 2018 21:22:47 +0000
+User-Agent: K-9 Mail for Android
+In-Reply-To: <1517778185.2292.10.camel@gmail.com>
+References: <1517671892-4045-1-git-send-email-shreeya.patel23498@gmail.com> <20180204111022.0e6d08f6@archlinux> <1517778185.2292.10.camel@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4] Staging: iio: ade7758: Expand buf_lock to cover both buffer and state protection
+To: Shreeya Patel <shreeya.patel23498@gmail.com>,Jonathan Cameron <jic23@kernel.org>
+CC: lars@metafoo.de,Michael.Hennerich@analog.com,knaack.h@gmx.de,pmeerw@pmeerw.net,gregkh@linuxfoundation.org,linux-iio@vger.kernel.org,devel@driverdev.osuosl.org,linux-kernel@vger.kernel.org
+From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Message-ID: <DB5C46AC-0A4E-4C0F-A80F-F730E8A21DAD@jic23.retrosnub.co.uk>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591394340588810531?=
+X-GMAIL-MSGID: =?utf-8?q?1591507023590717674?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gU3VuLCAyMDE4LTAyLTA0IGF0IDExOjEwICswMDAwLCBKb25hdGhhbiBDYW1lcm9uIHdyb3Rl
-Ogo+IE9uIFNhdCzCoMKgMyBGZWIgMjAxOCAyMTowMTozMiArMDUzMAo+IFNocmVleWEgUGF0ZWwg
-PHNocmVleWEucGF0ZWwyMzQ5OEBnbWFpbC5jb20+IHdyb3RlOgo+IAo+ID4gCj4gPiBpaW9fZGV2
-LT5tbG9jayBpcyB0byBiZSB1c2VkIG9ubHkgYnkgdGhlIElJTyBjb3JlIGZvciBwcm90ZWN0aW5n
-Cj4gPiBkZXZpY2UgbW9kZSBjaGFuZ2VzIGJldHdlZW4gSU5ESU9fRElSRUNUIGFuZCBJTkRJT19C
-VUZGRVIuCj4gPiAKPiA+IFRoaXMgcGF0Y2ggcmVwbGFjZXMgdGhlIHVzZSBvZiBtbG9jayB3aXRo
-IHRoZSBhbHJlYWR5IGVzdGFibGlzaGVkCj4gPiBidWZfbG9jayBtdXRleC4KPiA+IAo+ID4gSW50
-cm9kdWNpbmcgJ3VubG9ja2VkJyBmb3JtcyBvZiByZWFkIGFuZCB3cml0ZSByZWdpc3RlcnMuIFRo
-ZQo+ID4gcmVhZC93cml0ZSBmcmVxdWVuY3kgZnVuY3Rpb25zIG5vdyByZXF1aXJlIGJ1Zl9sb2Nr
-IHRvIGJlIGhlbGQuCj4gPiBUaGF0J3Mgbm90IG9idmlvdXMgc28gYXZvaWQgdGhpcyBidXQgbW92
-aW5nIHRoZSBsb2NraW5nIGluc2lkZQo+ID4gdGhlIGZ1bmN0aW9ucyB3aGVyZSBpdCBpcyB0aGVu
-IGNsZWFyIHRoYXQgdGhleSBhcmUgdGFraW5nIHRoZQo+ID4gdW5sb2NrZWQgZm9ybXMgb2YgdGhl
-IHJlZ2lzdGVyIHJlYWQvd3JpdGUuCj4gPiAKPiA+IEl0IGlzbid0IHJlYWRpbHkgYXBwYXJlbnQg
-dGhhdCB3cml0ZSBmcmVxdWVuY3kgZnVuY3Rpb24gcmVxdWlyZXMKPiA+IHRoZSBsb2NrcyB0byBi
-ZSB0YWtlbiwgc28gbW92ZSBpdCBpbnNpZGUgdGhlIGZ1bmN0aW9uIHRvIHdoZXJlIGl0Cj4gPiBp
-cyByZXF1aXJlZCB0byBwcm90ZWN0Lgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBTaHJlZXlhIFBh
-dGVsIDxzaHJlZXlhLnBhdGVsMjM0OThAZ21haWwuY29tPgo+IEhpIFNocmVleWEsCj4gCkhlbGxv
-IHNpciwKCj4gVW5mb3J0dW5hdGVseSB0aGlzIGludHJvZHVjZXMgYSBuZXcgYnVnIC0geW91IGVu
-ZCB1cCB1bmxvY2tpbmcKPiBhIG11dGV4IHRoYXQgeW91IG5ldmVyIGxvY2tlZCBpbiBvbmUgb2Yg
-dGhlIGVycm9yIHBhdGhzLgo+IFNlZSBpbmxpbmUuCkknbGwgbWFrZSB0aGlzIGNoYW5nZS4KPiAK
-PiBXZSBhcmUgYWxzbyBzdGlsbCB0YWtpbmcgdGhlIG1sb2NrIGFyb3VuZCB0aGUgcmVhZCBvZiB0
-aGUKPiBmcmVxdWVuY3kgd2hpY2ggZG9lc24ndCBtYWtlIGFueSBzZW5zZSBnaXZlbiB0aGVyZSBp
-cwo+IG5vIHJlYXNvbiB0byBwcm90ZWN0IHRoYXQgYWdhaW5zdCBzdGF0ZSBjaGFuZ2VzLgo+IEFy
-Z3VhYmx5IGZpeGluZyB0aGF0IGNvdWxkIGJlIGEgc2VwYXJhdGUgcGF0Y2ggYXMgaXQgbmV2ZXIK
-PiBtYWRlIG11Y2ggc2Vuc2UsIGJ1dCBpdCBzaG91bGQgcHJvYmFibHkgYmUgaW4gdGhpcyBzYW1l
-IHNlcmllcwo+IGF0IGxlYXN0LsKgwqBJIHdvdWxkIGhhdmUgbm8gcmVhbCBwcm9ibGVtIHdpdGgg
-aXQgYmVpbmcgaW4gaXQgdGhpcwo+IHNhbWUgcGF0Y2ggYXMgbG9uZyBhcyB0aGUgZGVzY3JpcHRp
-b24gYWJvdmUgbWVudGlvbnMgaXQuCj4gCj4gVGhhbmtzLAo+IAo+IEpvbmF0aGFuCj4gCj4gPiAK
-PiA+IC0tLQo+ID4gCj4gPiBDaGFuZ2VzIGluIHYyCj4gPiDCoCAtQWRkIHN0YXRpYyBrZXl3b3Jk
-IHRvIG5ld2x5IGludHJvZHVjZWQgZnVuY3Rpb25zIGFuZCByZW1vdmUgc29tZQo+ID4gYWRkZWQg
-Y29tbWVudHMgd2hpY2ggYXJlIG5vdCByZXF1aXJlZC4KPiA+IAo+ID4gQ2hhbmdlcyBpbiB2Mwo+
-ID4gwqAgLVJlbW92ZSBzb21lIHVzZWxlc3MgbWxvY2tzIGFuZCBzZW5kIGl0IGFzIGFub3RoZXIg
-cGF0Y2guCj4gPiBBbHNvIG1ha2UgdGhlIG5lY2Vzc2FyeSBjaGFuZ2UgaW4gdGhlIGN1cnJlbnQg
-cGF0Y2ggYXNzb2NpYXRlZAo+ID4gd2l0aMKgCj4gPiB0aGUgbmV3IHBhdGNoIHdpdGggY29tbWl0
-IGlkIDg4ZWJhMzMuIE1ha2UgY29tbWl0IG1lc3NhZ2UgbW9yZcKgCj4gPiBhcHByb3ByaWF0ZS4K
-PiA+IAo+ID4gQ2hhbmdlcyBpbiB2NAo+ID4gwqAgLVdyaXRlIGZyZXF1ZW5jeSBmdW5jdGlvbiBk
-byBub3QgcmVxdWlyZSBsb2NrIHNvIG1vdmUgaXQgaW5zaWRlCj4gPiB0aGUgZnVuY3Rpb24gdG8g
-d2hlcmUgaXQgaXMgcmVxdWlyZWQgdG8gcHJvdGVjdC4KPiA+IAo+ID4gCj4gPiDCoGRyaXZlcnMv
-c3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1OC5owqDCoMKgwqDCoMKgfMKgwqAyICstCj4gPiDCoGRy
-aXZlcnMvc3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1OF9jb3JlLmMgfCA0OQo+ID4gKysrKysrKysr
-KysrKysrKysrKysrKysrLS0tLS0tLS0KPiA+IMKgMiBmaWxlcyBjaGFuZ2VkLCAzOCBpbnNlcnRp
-b25zKCspLCAxMyBkZWxldGlvbnMoLSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3Rh
-Z2luZy9paW8vbWV0ZXIvYWRlNzc1OC5oCj4gPiBiL2RyaXZlcnMvc3RhZ2luZy9paW8vbWV0ZXIv
-YWRlNzc1OC5oCj4gPiBpbmRleCA2YWU3OGQ4Li4yZGU4MWI1IDEwMDY0NAo+ID4gLS0tIGEvZHJp
-dmVycy9zdGFnaW5nL2lpby9tZXRlci9hZGU3NzU4LmgKPiA+ICsrKyBiL2RyaXZlcnMvc3RhZ2lu
-Zy9paW8vbWV0ZXIvYWRlNzc1OC5oCj4gPiBAQCAtMTExLDcgKzExMSw3IEBACj4gPiDCoCAqIEB0
-cmlnOgkJZGF0YSByZWFkeSB0cmlnZ2VyIHJlZ2lzdGVyZWQgd2l0aCBpaW8KPiA+IMKgICogQHR4
-OgkJCXRyYW5zbWl0IGJ1ZmZlcgo+ID4gwqAgKiBAcng6CQkJcmVjZWl2ZSBidWZmZXIKPiA+IC0g
-KiBAYnVmX2xvY2s6CQltdXRleCB0byBwcm90ZWN0IHR4IGFuZCByeAo+ID4gKyAqIEBidWZfbG9j
-azoJCW11dGV4IHRvIHByb3RlY3QgdHgsIHJ4LCByZWFkIGFuZAo+ID4gd3JpdGUgZnJlcXVlbmN5
-Cj4gPiDCoCAqKi8KPiA+IMKgc3RydWN0IGFkZTc3NThfc3RhdGUgewo+ID4gwqAJc3RydWN0IHNw
-aV9kZXZpY2UJKnVzOwo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9paW8vbWV0ZXIv
-YWRlNzc1OF9jb3JlLmMKPiA+IGIvZHJpdmVycy9zdGFnaW5nL2lpby9tZXRlci9hZGU3NzU4X2Nv
-cmUuYwo+ID4gaW5kZXggMjI3ZGJmYy4uZmYxOWQ0NiAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMv
-c3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1OF9jb3JlLmMKPiA+ICsrKyBiL2RyaXZlcnMvc3RhZ2lu
-Zy9paW8vbWV0ZXIvYWRlNzc1OF9jb3JlLmMKPiA+IEBAIC0yNCwxNyArMjQsMjUgQEAKPiA+IMKg
-I2luY2x1ZGUgIm1ldGVyLmgiCj4gPiDCoCNpbmNsdWRlICJhZGU3NzU4LmgiCj4gPiDCoAo+ID4g
-LWludCBhZGU3NzU4X3NwaV93cml0ZV9yZWdfOChzdHJ1Y3QgZGV2aWNlICpkZXYsIHU4IHJlZ19h
-ZGRyZXNzLCB1OAo+ID4gdmFsKQo+ID4gK3N0YXRpYyBpbnQgX19hZGU3NzU4X3NwaV93cml0ZV9y
-ZWdfOChzdHJ1Y3QgZGV2aWNlICpkZXYsIHU4Cj4gPiByZWdfYWRkcmVzcywgdTggdmFsKQo+ID4g
-wqB7Cj4gPiAtCWludCByZXQ7Cj4gPiDCoAlzdHJ1Y3QgaWlvX2RldiAqaW5kaW9fZGV2ID0gZGV2
-X3RvX2lpb19kZXYoZGV2KTsKPiA+IMKgCXN0cnVjdCBhZGU3NzU4X3N0YXRlICpzdCA9IGlpb19w
-cml2KGluZGlvX2Rldik7Cj4gPiDCoAo+ID4gLQltdXRleF9sb2NrKCZzdC0+YnVmX2xvY2spOwo+
-ID4gwqAJc3QtPnR4WzBdID0gQURFNzc1OF9XUklURV9SRUcocmVnX2FkZHJlc3MpOwo+ID4gwqAJ
-c3QtPnR4WzFdID0gdmFsOwo+ID4gwqAKPiA+IC0JcmV0ID0gc3BpX3dyaXRlKHN0LT51cywgc3Qt
-PnR4LCAyKTsKPiA+ICsJcmV0dXJuIHNwaV93cml0ZShzdC0+dXMsIHN0LT50eCwgMik7Cj4gPiAr
-fQo+ID4gKwo+ID4gK2ludCBhZGU3NzU4X3NwaV93cml0ZV9yZWdfOChzdHJ1Y3QgZGV2aWNlICpk
-ZXYsIHU4IHJlZ19hZGRyZXNzLCB1OAo+ID4gdmFsKQo+ID4gK3sKPiA+ICsJaW50IHJldDsKPiA+
-ICsJc3RydWN0IGlpb19kZXYgKmluZGlvX2RldiA9IGRldl90b19paW9fZGV2KGRldik7Cj4gPiAr
-CXN0cnVjdCBhZGU3NzU4X3N0YXRlICpzdCA9IGlpb19wcml2KGluZGlvX2Rldik7Cj4gPiArCj4g
-PiArCW11dGV4X2xvY2soJnN0LT5idWZfbG9jayk7Cj4gPiArCXJldCA9IF9fYWRlNzc1OF9zcGlf
-d3JpdGVfcmVnXzgoZGV2LCByZWdfYWRkcmVzcywgdmFsKTsKPiA+IMKgCW11dGV4X3VubG9jaygm
-c3QtPmJ1Zl9sb2NrKTsKPiA+IMKgCj4gPiDCoAlyZXR1cm4gcmV0Owo+ID4gQEAgLTkxLDcgKzk5
-LDcgQEAgc3RhdGljIGludCBhZGU3NzU4X3NwaV93cml0ZV9yZWdfMjQoc3RydWN0IGRldmljZQo+
-ID4gKmRldiwgdTggcmVnX2FkZHJlc3MsCj4gPiDCoAlyZXR1cm4gcmV0Owo+ID4gwqB9Cj4gPiDC
-oAo+ID4gLWludCBhZGU3NzU4X3NwaV9yZWFkX3JlZ184KHN0cnVjdCBkZXZpY2UgKmRldiwgdTgg
-cmVnX2FkZHJlc3MsIHU4Cj4gPiAqdmFsKQo+ID4gK3N0YXRpYyBpbnQgX19hZGU3NzU4X3NwaV9y
-ZWFkX3JlZ184KHN0cnVjdCBkZXZpY2UgKmRldiwgdTgKPiA+IHJlZ19hZGRyZXNzLCB1OCAqdmFs
-KQo+ID4gwqB7Cj4gPiDCoAlzdHJ1Y3QgaWlvX2RldiAqaW5kaW9fZGV2ID0gZGV2X3RvX2lpb19k
-ZXYoZGV2KTsKPiA+IMKgCXN0cnVjdCBhZGU3NzU4X3N0YXRlICpzdCA9IGlpb19wcml2KGluZGlv
-X2Rldik7Cj4gPiBAQCAtMTExLDcgKzExOSw2IEBAIGludCBhZGU3NzU4X3NwaV9yZWFkX3JlZ184
-KHN0cnVjdCBkZXZpY2UgKmRldiwKPiA+IHU4IHJlZ19hZGRyZXNzLCB1OCAqdmFsKQo+ID4gwqAJ
-CX0sCj4gPiDCoAl9Owo+ID4gwqAKPiA+IC0JbXV0ZXhfbG9jaygmc3QtPmJ1Zl9sb2NrKTsKPiA+
-IMKgCXN0LT50eFswXSA9IEFERTc3NThfUkVBRF9SRUcocmVnX2FkZHJlc3MpOwo+ID4gwqAJc3Qt
-PnR4WzFdID0gMDsKPiA+IMKgCj4gPiBAQCAtMTI0LDcgKzEzMSwxOSBAQCBpbnQgYWRlNzc1OF9z
-cGlfcmVhZF9yZWdfOChzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gPiB1OCByZWdfYWRkcmVzcywgdTgg
-KnZhbCkKPiA+IMKgCSp2YWwgPSBzdC0+cnhbMF07Cj4gPiDCoAo+ID4gwqBlcnJvcl9yZXQ6Cj4g
-PiArCXJldHVybiByZXQ7Cj4gPiArfQo+ID4gKwo+ID4gK2ludCBhZGU3NzU4X3NwaV9yZWFkX3Jl
-Z184KHN0cnVjdCBkZXZpY2UgKmRldiwgdTggcmVnX2FkZHJlc3MsIHU4Cj4gPiAqdmFsKQo+ID4g
-K3sKPiA+ICsJc3RydWN0IGlpb19kZXYgKmluZGlvX2RldiA9IGRldl90b19paW9fZGV2KGRldik7
-Cj4gPiArCXN0cnVjdCBhZGU3NzU4X3N0YXRlICpzdCA9IGlpb19wcml2KGluZGlvX2Rldik7Cj4g
-PiArCWludCByZXQ7Cj4gPiArCj4gPiArCW11dGV4X2xvY2soJnN0LT5idWZfbG9jayk7Cj4gPiAr
-CXJldCA9IF9fYWRlNzc1OF9zcGlfcmVhZF9yZWdfOChkZXYsIHJlZ19hZGRyZXNzLCB2YWwpOwo+
-ID4gwqAJbXV0ZXhfdW5sb2NrKCZzdC0+YnVmX2xvY2spOwo+ID4gKwo+ID4gwqAJcmV0dXJuIHJl
-dDsKPiA+IMKgfQo+ID4gwqAKPiA+IEBAIC00ODAsMTAgKzQ5OSwxMiBAQCBzdGF0aWMgaW50IGFk
-ZTc3NThfcmVhZF9zYW1wX2ZyZXEoc3RydWN0Cj4gPiBkZXZpY2UgKmRldiwgaW50ICp2YWwpCj4g
-PiDCoAlyZXR1cm4gMDsKPiA+IMKgfQo+ID4gwqAKPiA+IC1zdGF0aWMgaW50IGFkZTc3NThfd3Jp
-dGVfc2FtcF9mcmVxKHN0cnVjdCBkZXZpY2UgKmRldiwgaW50IHZhbCkKPiA+ICtzdGF0aWMgaW50
-IGFkZTc3NThfd3JpdGVfc2FtcF9mcmVxKHN0cnVjdCBpaW9fZGV2ICppbmRpb19kZXYsIGludAo+
-ID4gdmFsKQo+ID4gwqB7Cj4gPiDCoAlpbnQgcmV0Owo+ID4gwqAJdTggcmVnLCB0Owo+ID4gKwlz
-dHJ1Y3QgYWRlNzc1OF9zdGF0ZSAqc3QgPSBpaW9fcHJpdihpbmRpb19kZXYpOwo+ID4gKwlzdHJ1
-Y3QgZGV2aWNlICpkZXYgPSAmaW5kaW9fZGV2LT5kZXY7Cj4gPiDCoAo+ID4gwqAJc3dpdGNoICh2
-YWwpIHsKPiA+IMKgCWNhc2UgMjYwNDA6Cj4gPiBAQCAtNTAzLDE2ICs1MjQsMjAgQEAgc3RhdGlj
-IGludCBhZGU3NzU4X3dyaXRlX3NhbXBfZnJlcShzdHJ1Y3QKPiA+IGRldmljZSAqZGV2LCBpbnQg
-dmFsKQo+ID4gwqAJCWdvdG8gb3V0Owo+IFRoaXMgZ290byBvdXQgcmVzdWx0cyBpbiBhbiB1bmxv
-Y2sgYnV0IHRoZSBsb2NrIGhhc24ndCBiZWVuIGxvY2tlZAo+IGZvciBhIGZldyBtb3JlIGxpbmVz
-Li4uCj4gCj4gQ2hhbmdlIHRoaXMgdG8gYSBkaXJlY3QgcmV0dXJuIGhlcmUgcmF0aGVyIHRoYW4g
-YSBnb3RvIHRvIGZpeCB0aGlzLgo+IHJldHVybiAtRUlOVkFMOwo+IAo+ID4gCj4gPiDCoAl9Cj4g
-PiDCoAo+ID4gLQlyZXQgPSBhZGU3NzU4X3NwaV9yZWFkX3JlZ184KGRldiwgQURFNzc1OF9XQVZN
-T0RFLCAmcmVnKTsKPiA+ICsJbXV0ZXhfbG9jaygmc3QtPmJ1Zl9sb2NrKTsKPiA+ICsKPiA+ICsJ
-cmV0ID0gX19hZGU3NzU4X3NwaV9yZWFkX3JlZ184KGRldiwgQURFNzc1OF9XQVZNT0RFLAo+ID4g
-JnJlZyk7Cj4gPiDCoAlpZiAocmV0KQo+ID4gwqAJCWdvdG8gb3V0OwoKSGVyZSwgY2FuIEkgbW92
-ZSB0aGUgYWJvdmUgbG9jayBhZnRlciB0aGUgY2FsbGluZyBvZiB0aGUgcmVhZCByZWdpc3Rlcgpi
-dXQgYmVmb3JlIHRoZSBpZihyZXQpIHN0YXRlbWVudD8KV2l0aCB0aGlzIHdlIGNhbiBhdm9pZCBs
-b2NrcyBvdmVyIHRoZSByZWFkIGNhc2VzLgpNb3N0bHksIHRoaXMgc2hvdWxkbid0IGNyZWF0ZSBh
-bnkgcHJvYmxlbSBidXQgeWV0IEkgdGhvdWdodCBvZiBmaXJzdApjb25maXJtaW5nIGl0IGZyb20g
-eW91LgoKVGhhbmsgeW91wqAKCj4gPiDCoAo+ID4gwqAJcmVnICY9IH4oNSA8PCAzKTsKPiA+IMKg
-CXJlZyB8PSB0IDw8IDU7Cj4gPiDCoAo+ID4gLQlyZXQgPSBhZGU3NzU4X3NwaV93cml0ZV9yZWdf
-OChkZXYsIEFERTc3NThfV0FWTU9ERSwgcmVnKTsKPiA+ICsJcmV0ID0gX19hZGU3NzU4X3NwaV93
-cml0ZV9yZWdfOChkZXYsIEFERTc3NThfV0FWTU9ERSwKPiA+IHJlZyk7Cj4gPiDCoAo+ID4gwqBv
-dXQ6Cj4gPiArCW11dGV4X3VubG9jaygmc3QtPmJ1Zl9sb2NrKTsKPiA+ICsKPiA+IMKgCXJldHVy
-biByZXQ7Cj4gPiDCoH0KPiA+IMKgCj4gPiBAQCAtNTQ1LDkgKzU3MCw5IEBAIHN0YXRpYyBpbnQg
-YWRlNzc1OF93cml0ZV9yYXcoc3RydWN0IGlpb19kZXYKPiA+ICppbmRpb19kZXYsCj4gPiDCoAlj
-YXNlIElJT19DSEFOX0lORk9fU0FNUF9GUkVROgo+ID4gwqAJCWlmICh2YWwyKQo+ID4gwqAJCQly
-ZXR1cm4gLUVJTlZBTDsKPiA+IC0JCW11dGV4X2xvY2soJmluZGlvX2Rldi0+bWxvY2spOwo+ID4g
-LQkJcmV0ID0gYWRlNzc1OF93cml0ZV9zYW1wX2ZyZXEoJmluZGlvX2Rldi0+ZGV2LAo+ID4gdmFs
-KTsKPiA+IC0JCW11dGV4X3VubG9jaygmaW5kaW9fZGV2LT5tbG9jayk7Cj4gPiArCj4gPiArCQly
-ZXQgPSBhZGU3NzU4X3dyaXRlX3NhbXBfZnJlcShpbmRpb19kZXYsIHZhbCk7Cj4gPiArCj4gPiDC
-oAkJcmV0dXJuIHJldDsKPiA+IMKgCWRlZmF1bHQ6Cj4gPiDCoAkJcmV0dXJuIC1FSU5WQUw7Cl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRldmVsIG1haWxp
-bmcgbGlzdApkZXZlbEBsaW51eGRyaXZlcnByb2plY3Qub3JnCmh0dHA6Ly9kcml2ZXJkZXYubGlu
-dXhkcml2ZXJwcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaXZlcmRldi1kZXZlbAo=
+
+
+On 4 February 2018 21:03:05 GMT, Shreeya Patel <shreeya=2Epatel23498@gmail=
+=2Ecom> wrote:
+>On Sun, 2018-02-04 at 11:10 +0000, Jonathan Cameron wrote:
+>> On Sat,=C2=A0=C2=A03 Feb 2018 21:01:32 +0530
+>> Shreeya Patel <shreeya=2Epatel23498@gmail=2Ecom> wrote:
+>>=20
+>> >=20
+>> > iio_dev->mlock is to be used only by the IIO core for protecting
+>> > device mode changes between INDIO_DIRECT and INDIO_BUFFER=2E
+>> >=20
+>> > This patch replaces the use of mlock with the already established
+>> > buf_lock mutex=2E
+>> >=20
+>> > Introducing 'unlocked' forms of read and write registers=2E The
+>> > read/write frequency functions now require buf_lock to be held=2E
+>> > That's not obvious so avoid this but moving the locking inside
+>> > the functions where it is then clear that they are taking the
+>> > unlocked forms of the register read/write=2E
+>> >=20
+>> > It isn't readily apparent that write frequency function requires
+>> > the locks to be taken, so move it inside the function to where it
+>> > is required to protect=2E
+>> >=20
+>> > Signed-off-by: Shreeya Patel <shreeya=2Epatel23498@gmail=2Ecom>
+>> Hi Shreeya,
+>>=20
+>Hello sir,
+>
+>> Unfortunately this introduces a new bug - you end up unlocking
+>> a mutex that you never locked in one of the error paths=2E
+>> See inline=2E
+>I'll make this change=2E
+>>=20
+>> We are also still taking the mlock around the read of the
+>> frequency which doesn't make any sense given there is
+>> no reason to protect that against state changes=2E
+>> Arguably fixing that could be a separate patch as it never
+>> made much sense, but it should probably be in this same series
+>> at least=2E=C2=A0=C2=A0I would have no real problem with it being in it=
+ this
+>> same patch as long as the description above mentions it=2E
+>>=20
+>> Thanks,
+>>=20
+>> Jonathan
+>>=20
+>> >=20
+>> > ---
+>> >=20
+>> > Changes in v2
+>> > =C2=A0 -Add static keyword to newly introduced functions and remove s=
+ome
+>> > added comments which are not required=2E
+>> >=20
+>> > Changes in v3
+>> > =C2=A0 -Remove some useless mlocks and send it as another patch=2E
+>> > Also make the necessary change in the current patch associated
+>> > with=C2=A0
+>> > the new patch with commit id 88eba33=2E Make commit message more=C2=
+=A0
+>> > appropriate=2E
+>> >=20
+>> > Changes in v4
+>> > =C2=A0 -Write frequency function do not require lock so move it insid=
+e
+>> > the function to where it is required to protect=2E
+>> >=20
+>> >=20
+>> > =C2=A0drivers/staging/iio/meter/ade7758=2Eh=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0|=C2=A0=C2=A02 +-
+>> > =C2=A0drivers/staging/iio/meter/ade7758_core=2Ec | 49
+>> > ++++++++++++++++++++++++--------
+>> > =C2=A02 files changed, 38 insertions(+), 13 deletions(-)
+>> >=20
+>> > diff --git a/drivers/staging/iio/meter/ade7758=2Eh
+>> > b/drivers/staging/iio/meter/ade7758=2Eh
+>> > index 6ae78d8=2E=2E2de81b5 100644
+>> > --- a/drivers/staging/iio/meter/ade7758=2Eh
+>> > +++ b/drivers/staging/iio/meter/ade7758=2Eh
+>> > @@ -111,7 +111,7 @@
+>> > =C2=A0 * @trig:		data ready trigger registered with iio
+>> > =C2=A0 * @tx:			transmit buffer
+>> > =C2=A0 * @rx:			receive buffer
+>> > - * @buf_lock:		mutex to protect tx and rx
+>> > + * @buf_lock:		mutex to protect tx, rx, read and
+>> > write frequency
+>> > =C2=A0 **/
+>> > =C2=A0struct ade7758_state {
+>> > =C2=A0	struct spi_device	*us;
+>> > diff --git a/drivers/staging/iio/meter/ade7758_core=2Ec
+>> > b/drivers/staging/iio/meter/ade7758_core=2Ec
+>> > index 227dbfc=2E=2Eff19d46 100644
+>> > --- a/drivers/staging/iio/meter/ade7758_core=2Ec
+>> > +++ b/drivers/staging/iio/meter/ade7758_core=2Ec
+>> > @@ -24,17 +24,25 @@
+>> > =C2=A0#include "meter=2Eh"
+>> > =C2=A0#include "ade7758=2Eh"
+>> > =C2=A0
+>> > -int ade7758_spi_write_reg_8(struct device *dev, u8 reg_address, u8
+>> > val)
+>> > +static int __ade7758_spi_write_reg_8(struct device *dev, u8
+>> > reg_address, u8 val)
+>> > =C2=A0{
+>> > -	int ret;
+>> > =C2=A0	struct iio_dev *indio_dev =3D dev_to_iio_dev(dev);
+>> > =C2=A0	struct ade7758_state *st =3D iio_priv(indio_dev);
+>> > =C2=A0
+>> > -	mutex_lock(&st->buf_lock);
+>> > =C2=A0	st->tx[0] =3D ADE7758_WRITE_REG(reg_address);
+>> > =C2=A0	st->tx[1] =3D val;
+>> > =C2=A0
+>> > -	ret =3D spi_write(st->us, st->tx, 2);
+>> > +	return spi_write(st->us, st->tx, 2);
+>> > +}
+>> > +
+>> > +int ade7758_spi_write_reg_8(struct device *dev, u8 reg_address, u8
+>> > val)
+>> > +{
+>> > +	int ret;
+>> > +	struct iio_dev *indio_dev =3D dev_to_iio_dev(dev);
+>> > +	struct ade7758_state *st =3D iio_priv(indio_dev);
+>> > +
+>> > +	mutex_lock(&st->buf_lock);
+>> > +	ret =3D __ade7758_spi_write_reg_8(dev, reg_address, val);
+>> > =C2=A0	mutex_unlock(&st->buf_lock);
+>> > =C2=A0
+>> > =C2=A0	return ret;
+>> > @@ -91,7 +99,7 @@ static int ade7758_spi_write_reg_24(struct device
+>> > *dev, u8 reg_address,
+>> > =C2=A0	return ret;
+>> > =C2=A0}
+>> > =C2=A0
+>> > -int ade7758_spi_read_reg_8(struct device *dev, u8 reg_address, u8
+>> > *val)
+>> > +static int __ade7758_spi_read_reg_8(struct device *dev, u8
+>> > reg_address, u8 *val)
+>> > =C2=A0{
+>> > =C2=A0	struct iio_dev *indio_dev =3D dev_to_iio_dev(dev);
+>> > =C2=A0	struct ade7758_state *st =3D iio_priv(indio_dev);
+>> > @@ -111,7 +119,6 @@ int ade7758_spi_read_reg_8(struct device *dev,
+>> > u8 reg_address, u8 *val)
+>> > =C2=A0		},
+>> > =C2=A0	};
+>> > =C2=A0
+>> > -	mutex_lock(&st->buf_lock);
+>> > =C2=A0	st->tx[0] =3D ADE7758_READ_REG(reg_address);
+>> > =C2=A0	st->tx[1] =3D 0;
+>> > =C2=A0
+>> > @@ -124,7 +131,19 @@ int ade7758_spi_read_reg_8(struct device *dev,
+>> > u8 reg_address, u8 *val)
+>> > =C2=A0	*val =3D st->rx[0];
+>> > =C2=A0
+>> > =C2=A0error_ret:
+>> > +	return ret;
+>> > +}
+>> > +
+>> > +int ade7758_spi_read_reg_8(struct device *dev, u8 reg_address, u8
+>> > *val)
+>> > +{
+>> > +	struct iio_dev *indio_dev =3D dev_to_iio_dev(dev);
+>> > +	struct ade7758_state *st =3D iio_priv(indio_dev);
+>> > +	int ret;
+>> > +
+>> > +	mutex_lock(&st->buf_lock);
+>> > +	ret =3D __ade7758_spi_read_reg_8(dev, reg_address, val);
+>> > =C2=A0	mutex_unlock(&st->buf_lock);
+>> > +
+>> > =C2=A0	return ret;
+>> > =C2=A0}
+>> > =C2=A0
+>> > @@ -480,10 +499,12 @@ static int ade7758_read_samp_freq(struct
+>> > device *dev, int *val)
+>> > =C2=A0	return 0;
+>> > =C2=A0}
+>> > =C2=A0
+>> > -static int ade7758_write_samp_freq(struct device *dev, int val)
+>> > +static int ade7758_write_samp_freq(struct iio_dev *indio_dev, int
+>> > val)
+>> > =C2=A0{
+>> > =C2=A0	int ret;
+>> > =C2=A0	u8 reg, t;
+>> > +	struct ade7758_state *st =3D iio_priv(indio_dev);
+>> > +	struct device *dev =3D &indio_dev->dev;
+>> > =C2=A0
+>> > =C2=A0	switch (val) {
+>> > =C2=A0	case 26040:
+>> > @@ -503,16 +524,20 @@ static int ade7758_write_samp_freq(struct
+>> > device *dev, int val)
+>> > =C2=A0		goto out;
+>> This goto out results in an unlock but the lock hasn't been locked
+>> for a few more lines=2E=2E=2E
+>>=20
+>> Change this to a direct return here rather than a goto to fix this=2E
+>> return -EINVAL;
+>>=20
+>> >=20
+>> > =C2=A0	}
+>> > =C2=A0
+>> > -	ret =3D ade7758_spi_read_reg_8(dev, ADE7758_WAVMODE, &reg);
+>> > +	mutex_lock(&st->buf_lock);
+>> > +
+>> > +	ret =3D __ade7758_spi_read_reg_8(dev, ADE7758_WAVMODE,
+>> > &reg);
+>> > =C2=A0	if (ret)
+>> > =C2=A0		goto out;
+>
+>Here, can I move the above lock after the calling of the read register
+>but before the if(ret) statement?
+>With this we can avoid locks over the read cases=2E
+>Mostly, this shouldn't create any problem but yet I thought of first
+>confirming it from you=2E
+
+Don't do that=2E We need to protect against another caller doing that read=
+ before the write is done=2E
+>
+>Thank you=C2=A0
+>
+>> > =C2=A0
+>> > =C2=A0	reg &=3D ~(5 << 3);
+>> > =C2=A0	reg |=3D t << 5;
+>> > =C2=A0
+>> > -	ret =3D ade7758_spi_write_reg_8(dev, ADE7758_WAVMODE, reg);
+>> > +	ret =3D __ade7758_spi_write_reg_8(dev, ADE7758_WAVMODE,
+>> > reg);
+>> > =C2=A0
+>> > =C2=A0out:
+>> > +	mutex_unlock(&st->buf_lock);
+>> > +
+>> > =C2=A0	return ret;
+>> > =C2=A0}
+>> > =C2=A0
+>> > @@ -545,9 +570,9 @@ static int ade7758_write_raw(struct iio_dev
+>> > *indio_dev,
+>> > =C2=A0	case IIO_CHAN_INFO_SAMP_FREQ:
+>> > =C2=A0		if (val2)
+>> > =C2=A0			return -EINVAL;
+>> > -		mutex_lock(&indio_dev->mlock);
+>> > -		ret =3D ade7758_write_samp_freq(&indio_dev->dev,
+>> > val);
+>> > -		mutex_unlock(&indio_dev->mlock);
+>> > +
+>> > +		ret =3D ade7758_write_samp_freq(indio_dev, val);
+>> > +
+>> > =C2=A0		return ret;
+>> > =C2=A0	default:
+>> > =C2=A0		return -EINVAL;
+>--
+>To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+>the body of a message to majordomo@vger=2Ekernel=2Eorg
+>More majordomo info at  http://vger=2Ekernel=2Eorg/majordomo-info=2Ehtml
+
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
