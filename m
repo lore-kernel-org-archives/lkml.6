@@ -1,239 +1,784 @@
-Return-Path: <kernel-hardening-return-11645-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x224/PJa6K6vtyqpCIMsaBLZqXUKFlyni7i5AbTIMQTZEuTnCZBl8sCt6PirYeoO7pUkmHRLX
-ARC-Seal: i=1; a=rsa-sha256; t=1517997865; cv=none;
+Return-Path: <kernel-hardening-return-11573-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x224L03NlEzBPClcR0e9eRxkbwnEM2mu+08fx0hUo1WJF0s3dBvFL8thlHKKryDzD6a8Vs8XW
+ARC-Seal: i=1; a=rsa-sha256; t=1517762915; cv=none;
         d=google.com; s=arc-20160816;
-        b=mNCRL5/5mc9fDetTqlb6pmpddSJkj0S5sfinFfKSId3EMwVRLWczJ9qj2EK6k3LFUb
-         Ko8p1kaz1yXyOSFnrA4NPJX+Qr7a7EUufQBcYnexZQ0CWhRMqbVhz97VVWlQCHTMlAmk
-         6Qs0q+UXL/rD2hWtg9d36Ly2Hln1jYOBBV/R+R4dIPf+DqxM0xzNlnsLA5PLpDd/Nbj7
-         COo6SLGGrvUpS2WXetMVFUWHDv5qCok1Q8rRfG0KaQ+ulW066ph1gdWwEPGbgOhTK2PS
-         2aM/WyIThsFdeU4MV8oMw4ZZUbYoc9mQ8npt/q5LorG98zmb1/SGPKmXyn77ajjxngvk
-         MlOg==
+        b=vCHtV8AfkGLely5vi54ksH/ZyjV0WIv3gF3H0TigeMZxLk9agDbRFrB2xvp66VoF+h
+         mjnZCzgKwnhAJSD6GuJNHdxPYH6pPX+wtCqkwY7tFfG6gUO8YqDxwGgmcdQFonzGgDdG
+         UpyHTXcgiDo3ofAsSTygr2AI/47vUPGMNKsv08PpIi5Y0IrVuBRlWGw1GWpU0hS1dAmg
+         OV5utjjaXm8RXXfy1btKLLVh35CdWCehVBxvNugfQgErlN7W3OzbkC90tOeEx+9HkB11
+         x682QSiMxFDNWYp1Obzk2kkL8JtiCitxJSK3fLCj2tl9R6yTBBOIuS7GbzZM5h0Q0IQc
+         cy2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=Gg5SNAhDyJk8gWsaogZbOf9jdT3OuNcNozP2d9zdfmA=;
-        b=Vu7Jf2XhzBb549POsNiQ3MFYbvdeKvWUOleoNV5wm6ucOjPAcyGRojznbQ1TqGjCd9
-         a93KogU0ES9OPKN6rNqxTZ3aJVmGp4VZ9jPGd6pA9PgE201/8X+6cvunEsynsWrhAqFB
-         waAKHhZXmXh6pzeWJryL6aSi9nhQ4bYc84N3M+W5qVPZUeh2qkKemf4hrDAw70hWJvel
-         IdnnBH0KtmLH06k3PRQOraHUwXIJ8rlBsISzFPLpG8NSotmwirCTutvtsXE8o5/AVtHu
-         mVdobgF3WRPN3HU1vLf/VnmAU7Pvn39ht6haVPAXKWIuMRgGJfBlOWV7fkyFyidUhTcu
-         cfEg==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=fCUznIlVqzSrt3y+eVc+6vHa0sornDoo+hvvxst+8xE=;
+        b=M6UNhX0o9LNkGr7yivAHsYq+n0FZBLgnlvjm0dfAYTYz+NwAt7jfgR8wrw3p36O67V
+         MGP3Y/JWT7Mir7YVZ9MPHb72N0SptGcdjLBBhFwvL/oIJAAl8kHkqUVP2s5TGz6JDOSQ
+         jJpm9evKy3J/ettEiuq59oECX9owE+nK5iiPbbxEuFGvt31GnpV9oRyuRZb2AvBIp/eT
+         WLEc+OzFzgyNAF1d0Pp18BzICD0bHKyQBZZmNIsVlN0aw196ZVhry3pDJsqZ2GFx8Oem
+         Y75W2sewVB2MN0BXREVewbEhrR9Vru02AEdpJPxG1xBLwaOPlkNBSJCcm0iDd9Ac0P3U
+         3DBA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11645-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11645-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11573-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11573-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11645-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11645-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11573-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11573-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,473,1511856000";
-   d="gz'50?scan'50,208,50";a="28825725"
-Date: Wed, 7 Feb 2018 18:03:39 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Igor Stoppa <igor.stoppa@huawei.com>
-Cc: kbuild-all@01.org, jglisse@redhat.com, keescook@chromium.org,
-	mhocko@kernel.org, labbott@redhat.com, hch@infradead.org,
-	willy@infradead.org, cl@linux.com,
-	linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-	Igor Stoppa <igor.stoppa@huawei.com>
-Subject: Re: [PATCH 4/6] Protectable Memory
-Message-ID: <201802071736.PLMzjgWI%fengguang.wu@intel.com>
-References: <20180204164732.28241-5-igor.stoppa@huawei.com>
+From: Igor Stoppa <igor.stoppa@huawei.com>
+To: <jglisse@redhat.com>, <keescook@chromium.org>, <mhocko@kernel.org>,
+	<labbott@redhat.com>, <hch@infradead.org>, <willy@infradead.org>
+CC: <cl@linux.com>, <linux-security-module@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
+Subject: [PATCH 1/6] genalloc: track beginning of allocations
+Date: Sun, 4 Feb 2018 18:47:27 +0200
+Message-ID: <20180204164732.28241-2-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.16.0
+In-Reply-To: <20180204164732.28241-1-igor.stoppa@huawei.com>
+References: <20180204164732.28241-1-igor.stoppa@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="d6Gm4EdcadzBjdND"
-Content-Disposition: inline
-In-Reply-To: <20180204164732.28241-5-igor.stoppa@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Originating-IP: [10.122.225.51]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590497635371449856?=
-X-GMAIL-MSGID: =?utf-8?q?1591736130300913212?=
+X-GMAIL-THRID: =?utf-8?q?1591489766378692364?=
+X-GMAIL-MSGID: =?utf-8?q?1591489766378692364?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The genalloc library is only capable of tracking if a certain unit of
+allocation is in use or not.
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It is not capable of discerning where the memory associated to an
+allocation request begins and where it ends.
 
-Hi Igor,
+The reason is that units of allocations are tracked by using a bitmap,
+where each bit represents that the unit is either allocated (1) or
+available (0).
 
-Thank you for the patch! Yet something to improve:
+The user of the API must keep track of how much space was requested, if
+it ever needs to be freed.
 
-[auto build test ERROR on kees/for-next/pstore]
-[also build test ERROR on v4.15]
-[cannot apply to linus/master mmotm/master next-20180206]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+This can cause errors being undetected.
+Ex:
+* Only a subset of the memory provided to an allocation request is freed
+* The memory from a subsequent allocation is freed
+* The memory being freed doesn't start at the beginning of an
+  allocation.
 
-url:    https://github.com/0day-ci/linux/commits/Igor-Stoppa/mm-security-ro-protection-for-dynamic-data/20180207-171252
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/pstore
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+The bitmap is used because it allows to perform lockless read/write
+access, where this is supported by hw through cmpxchg.
+Similarly, it is possible to scan the bitmap for a sufficiently long
+sequence of zeros, to identify zones available for allocation.
 
-Note: the linux-review/Igor-Stoppa/mm-security-ro-protection-for-dynamic-data/20180207-171252 HEAD 99d0cb7905216da7595ef08a781a9be16a8ce687 builds fine.
-      It only hurts bisectibility.
+--
 
-All errors (new ones prefixed by >>):
+This patch doubles the space reserved in the bitmap for each allocation.
+By using 2 bits per allocation, it is possible to encode also the
+information of where the allocation starts:
+(msb to the left, lsb to the right, in the following "dictionary")
 
->> mm/pmalloc.c:24:10: fatal error: pmalloc-selftest.h: No such file or directory
-    #include "pmalloc-selftest.h"
-             ^~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
+11: first allocation unit in the allocation
+10: any subsequent allocation unit (if any) in the allocation
+00: available allocation unit
+01: invalid
 
-vim +24 mm/pmalloc.c
+Ex, with the same notation as above - MSb.......LSb:
 
-    23	
-  > 24	#include "pmalloc-selftest.h"
-    25	
+ ...000010111100000010101011   <-- Read in this direction.
+    \__|\__|\|\____|\______|
+       |   | |     |       \___ 4 used allocation units
+       |   | |     \___________ 3 empty allocation units
+       |   | \_________________ 1 used allocation unit
+       |   \___________________ 2 used allocation units
+       \_______________________ 2 empty allocation units
 
+Because of the encoding, the previous lockless operations are still
+possible. The only caveat is to change the parameter of the zero-finding
+function which establishes the alignment at which to perform the test
+for first zero.
+The original value of the parameter is 0, meaning that an allocation can
+start at any point in the bitmap, while the new value is 1, meaning that
+allocations can start only at even places (bit 0, bit 2, etc.)
+The number of zeroes to look for, must therefore be doubled.
+
+When it's time to free the memory associated to an allocation request,
+it's a matter of checking if the corresponding allocation unit is really
+the beginning of an allocation (both bits are set to 1).
+Looking for the ending can also be performed locklessly.
+It's sufficient to identify the first mapped allocation unit
+that is represented either as free (00) or busy (11).
+Even if the allocation status should change in the meanwhile, it doesn't
+matter, since it can only transition between free (00) and
+first-allocated (11).
+
+The parameter indicating to the *_free() function the size of the space
+that should be freed is not currently removed, to facilitate the
+transition, but it is verified, whenever it is not zero.
+If it is set to zero, then the free function will autonomously decide the
+size to be free, by scanning the bitmap.
+
+About the implementation: the patch introduces the concept of "bitmap
+entry", which has a 1:1 mapping with allocation units, while the code
+being patched has a 1:1 mapping between allocation units and bits.
+
+This means that, now, the bitmap can be extended (by following powers of
+2), to track also other properties of the allocations, if ever needed.
+
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ include/linux/genalloc.h |   4 +-
+ lib/genalloc.c           | 417 ++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 289 insertions(+), 132 deletions(-)
 
---d6Gm4EdcadzBjdND
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-AAA=
-
---d6Gm4EdcadzBjdND--
+diff --git a/include/linux/genalloc.h b/include/linux/genalloc.h
+index 872f930f1b06..dcaa33e74b1c 100644
+--- a/include/linux/genalloc.h
++++ b/include/linux/genalloc.h
+@@ -32,7 +32,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/spinlock_types.h>
+-#include <linux/atomic.h>
++#include <linux/slab.h>
+ 
+ struct device;
+ struct device_node;
+@@ -76,7 +76,7 @@ struct gen_pool_chunk {
+ 	phys_addr_t phys_addr;		/* physical starting address of memory chunk */
+ 	unsigned long start_addr;	/* start address of memory chunk */
+ 	unsigned long end_addr;		/* end address of memory chunk (inclusive) */
+-	unsigned long bits[0];		/* bitmap for allocating memory chunk */
++	unsigned long entries[0];	/* bitmap for allocating memory chunk */
+ };
+ 
+ /*
+diff --git a/lib/genalloc.c b/lib/genalloc.c
+index ca06adc4f445..dde78307b093 100644
+--- a/lib/genalloc.c
++++ b/lib/genalloc.c
+@@ -36,114 +36,221 @@
+ #include <linux/genalloc.h>
+ #include <linux/of_device.h>
+ 
++#define ENTRY_ORDER 1UL
++#define ENTRY_MASK ((1UL << ((ENTRY_ORDER) + 1UL)) - 1UL)
++#define ENTRY_HEAD ENTRY_MASK
++#define ENTRY_UNUSED 0UL
++#define BITS_PER_ENTRY (1U << ENTRY_ORDER)
++#define BITS_DIV_ENTRIES(x) ((x) >> ENTRY_ORDER)
++#define ENTRIES_TO_BITS(x) ((x) << ENTRY_ORDER)
++#define BITS_DIV_LONGS(x) ((x) / BITS_PER_LONG)
++#define ENTRIES_DIV_LONGS(x) (BITS_DIV_LONGS(ENTRIES_TO_BITS(x)))
++
++#define ENTRIES_PER_LONG BITS_DIV_ENTRIES(BITS_PER_LONG)
++
++/* Binary pattern of 1010...1010 that spans one unsigned long. */
++#define MASK (~0UL / 3 * 2)
++
++/**
++ * get_bitmap_entry - extracts the specified entry from the bitmap
++ * @map: pointer to a bitmap
++ * @entry_index: the index of the desired entry in the bitmap
++ *
++ * Returns the requested bitmap.
++ */
++static inline unsigned long get_bitmap_entry(unsigned long *map,
++					    int entry_index)
++{
++	return (map[ENTRIES_DIV_LONGS(entry_index)] >>
++		ENTRIES_TO_BITS(entry_index % ENTRIES_PER_LONG)) &
++		ENTRY_MASK;
++}
++
++
++/**
++ * mem_to_units - convert references to memory into orders of allocation
++ * @size: amount in bytes
++ * @order: pow of 2 represented by each entry in the bitmap
++ *
++ * Returns the number of units representing the size.
++ */
++static inline unsigned long mem_to_units(unsigned long size,
++					 unsigned long order)
++{
++	return (size + (1UL << order) - 1) >> order;
++}
++
++/**
++ * chunk_size - dimension of a chunk of memory
++ * @chunk: pointer to the struct describing the chunk
++ *
++ * Returns the size of the chunk.
++ */
+ static inline size_t chunk_size(const struct gen_pool_chunk *chunk)
+ {
+ 	return chunk->end_addr - chunk->start_addr + 1;
+ }
+ 
+-static int set_bits_ll(unsigned long *addr, unsigned long mask_to_set)
++
++/**
++ * set_bits_ll - according to the mask, sets the bits specified by
++ * value, at the address specified.
++ * @addr: where to write
++ * @mask: filter to apply for the bits to alter
++ * @value: actual configuration of bits to store
++ *
++ * Returns 0 upon success, -EBUSY otherwise
++ */
++static int set_bits_ll(unsigned long *addr,
++		       unsigned long mask, unsigned long value)
+ {
+-	unsigned long val, nval;
++	unsigned long nval;
++	unsigned long present;
++	unsigned long target;
+ 
+ 	nval = *addr;
+ 	do {
+-		val = nval;
+-		if (val & mask_to_set)
++		present = nval;
++		if (present & mask)
+ 			return -EBUSY;
++		target =  present | value;
+ 		cpu_relax();
+-	} while ((nval = cmpxchg(addr, val, val | mask_to_set)) != val);
+-
++	} while ((nval = cmpxchg(addr, present, target)) != target);
+ 	return 0;
+ }
+ 
+-static int clear_bits_ll(unsigned long *addr, unsigned long mask_to_clear)
++
++/**
++ * cleart_bits_ll - according to the mask, clears the bits specified by
++ * value, at the address specified.
++ * @addr: where to write
++ * @mask: filter to apply for the bits to alter
++ * @value: actual configuration of bits to clear
++ *
++ * Returns 0 upon success, -EBUSY otherwise
++ */
++static int clear_bits_ll(unsigned long *addr,
++			 unsigned long mask, unsigned long value)
+ {
+-	unsigned long val, nval;
++	unsigned long nval;
++	unsigned long present;
++	unsigned long target;
+ 
+ 	nval = *addr;
++	present = nval;
++	if (unlikely((present & mask) ^ value))
++		return -EBUSY;
+ 	do {
+-		val = nval;
+-		if ((val & mask_to_clear) != mask_to_clear)
++		present = nval;
++		if (unlikely((present & mask) ^ value))
+ 			return -EBUSY;
++		target =  present & ~mask;
+ 		cpu_relax();
+-	} while ((nval = cmpxchg(addr, val, val & ~mask_to_clear)) != val);
+-
++	} while ((nval = cmpxchg(addr, present, target)) != target);
+ 	return 0;
+ }
+ 
+-/*
+- * bitmap_set_ll - set the specified number of bits at the specified position
++
++/**
++ * get_boundary - verify that an allocation effectively
++ * starts at the given address, then measure its length.
+  * @map: pointer to a bitmap
+- * @start: a bit position in @map
+- * @nr: number of bits to set
++ * @start_entry: the index of the first entry in the bitmap
++ * @nentries: number of entries to alter
+  *
+- * Set @nr bits start from @start in @map lock-lessly. Several users
+- * can set/clear the same bitmap simultaneously without lock. If two
+- * users set the same bit, one user will return remain bits, otherwise
+- * return 0.
++ * Returns the length of an allocation, otherwise -EINVAL if the
++ * parameters do not refer to a correct allocation.
+  */
+-static int bitmap_set_ll(unsigned long *map, int start, int nr)
++static int get_boundary(unsigned long *map, int start_entry, int nentries)
+ {
+-	unsigned long *p = map + BIT_WORD(start);
+-	const int size = start + nr;
+-	int bits_to_set = BITS_PER_LONG - (start % BITS_PER_LONG);
+-	unsigned long mask_to_set = BITMAP_FIRST_WORD_MASK(start);
+-
+-	while (nr - bits_to_set >= 0) {
+-		if (set_bits_ll(p, mask_to_set))
+-			return nr;
+-		nr -= bits_to_set;
+-		bits_to_set = BITS_PER_LONG;
+-		mask_to_set = ~0UL;
+-		p++;
+-	}
+-	if (nr) {
+-		mask_to_set &= BITMAP_LAST_WORD_MASK(size);
+-		if (set_bits_ll(p, mask_to_set))
+-			return nr;
+-	}
++	int i;
++	unsigned long bitmap_entry;
+ 
+-	return 0;
++
++	if (unlikely(get_bitmap_entry(map, start_entry) != ENTRY_HEAD))
++		return -EINVAL;
++	for (i = start_entry + 1; i < nentries; i++) {
++		bitmap_entry = get_bitmap_entry(map, i);
++		if (bitmap_entry == ENTRY_HEAD ||
++		    bitmap_entry == ENTRY_UNUSED)
++			return i;
++	}
++	return nentries - start_entry;
+ }
+ 
++
++#define SET_BITS 1
++#define CLEAR_BITS 0
++
+ /*
+- * bitmap_clear_ll - clear the specified number of bits at the specified position
++ * alter_bitmap_ll - set or clear the entries associated to an allocation
++ * @alteration: selection if the bits selected should be set or cleared
+  * @map: pointer to a bitmap
+- * @start: a bit position in @map
+- * @nr: number of bits to set
++ * @start: the index of the first entry in the bitmap
++ * @nentries: number of entries to alter
+  *
+- * Clear @nr bits start from @start in @map lock-lessly. Several users
+- * can set/clear the same bitmap simultaneously without lock. If two
+- * users clear the same bit, one user will return remain bits,
+- * otherwise return 0.
++ * The modification happens lock-lessly.
++ * Several users can write to the same map simultaneously, without lock.
++ * If two users alter the same bit, one user will return remaining
++ * entries, otherwise return 0.
+  */
+-static int bitmap_clear_ll(unsigned long *map, int start, int nr)
++static int alter_bitmap_ll(bool alteration, unsigned long *map,
++			   int start_entry, int nentries)
+ {
+-	unsigned long *p = map + BIT_WORD(start);
+-	const int size = start + nr;
+-	int bits_to_clear = BITS_PER_LONG - (start % BITS_PER_LONG);
+-	unsigned long mask_to_clear = BITMAP_FIRST_WORD_MASK(start);
+-
+-	while (nr - bits_to_clear >= 0) {
+-		if (clear_bits_ll(p, mask_to_clear))
+-			return nr;
+-		nr -= bits_to_clear;
+-		bits_to_clear = BITS_PER_LONG;
+-		mask_to_clear = ~0UL;
+-		p++;
+-	}
+-	if (nr) {
+-		mask_to_clear &= BITMAP_LAST_WORD_MASK(size);
+-		if (clear_bits_ll(p, mask_to_clear))
+-			return nr;
++	unsigned long start_bit;
++	unsigned long end_bit;
++	unsigned long mask;
++	unsigned long value;
++	int nbits;
++	int bits_to_write;
++	int index;
++	int (*action)(unsigned long *addr,
++		      unsigned long mask, unsigned long value);
++
++	action = (alteration == SET_BITS) ? set_bits_ll : clear_bits_ll;
++
++	/* Prepare for writing the initial part of the allocation, from
++	 * starting entry, to the end of the UL bitmap element which
++	 * contains it. It might be larger than the actual allocation.
++	 */
++	start_bit = ENTRIES_TO_BITS(start_entry);
++	end_bit = ENTRIES_TO_BITS(start_entry + nentries);
++	nbits = ENTRIES_TO_BITS(nentries);
++	bits_to_write = BITS_PER_LONG - start_bit % BITS_PER_LONG;
++	mask = BITMAP_FIRST_WORD_MASK(start_bit);
++	/* Mark the beginning of the allocation. */
++	value = MASK | (1UL << (start_bit % BITS_PER_LONG));
++	index =  BITS_DIV_LONGS(start_bit);
++
++	/* Writes entries to the bitmap, as long as the reminder is
++	 * positive or zero.
++	 * Might be skipped if the entries to write do not reach the end
++	 * of a bitmap UL unit.
++	 */
++	while (nbits >= bits_to_write) {
++		if (action(map + index, mask, value & mask))
++			return BITS_DIV_ENTRIES(nbits);
++		nbits -= bits_to_write;
++		bits_to_write = BITS_PER_LONG;
++		mask = ~0UL;
++		value = MASK;
++		index++;
+ 	}
+ 
++	/* Takes care of the ending part of the entries to mark. */
++	if (nbits > 0) {
++		mask ^= BITMAP_FIRST_WORD_MASK((end_bit) % BITS_PER_LONG);
++		bits_to_write = nbits;
++		if (action(map + index, mask, value & mask))
++			return BITS_DIV_ENTRIES(nbits);
++	}
+ 	return 0;
+ }
+ 
++
+ /**
+  * gen_pool_create - create a new special memory pool
+- * @min_alloc_order: log base 2 of number of bytes each bitmap bit represents
++ * @min_alloc_order: log base 2 of number of bytes each bitmap entry represents
+  * @nid: node id of the node the pool structure should be allocated on, or -1
+  *
+  * Create a new special memory pool that can be used to manage special purpose
+@@ -183,10 +290,12 @@ int gen_pool_add_virt(struct gen_pool *pool, unsigned long virt, phys_addr_t phy
+ 		 size_t size, int nid)
+ {
+ 	struct gen_pool_chunk *chunk;
+-	int nbits = size >> pool->min_alloc_order;
+-	int nbytes = sizeof(struct gen_pool_chunk) +
+-				BITS_TO_LONGS(nbits) * sizeof(long);
++	int nentries;
++	int nbytes;
+ 
++	nentries = size >> pool->min_alloc_order;
++	nbytes = sizeof(struct gen_pool_chunk) +
++		 ENTRIES_DIV_LONGS(nentries) * sizeof(long);
+ 	chunk = kzalloc_node(nbytes, GFP_KERNEL, nid);
+ 	if (unlikely(chunk == NULL))
+ 		return -ENOMEM;
+@@ -248,7 +357,7 @@ void gen_pool_destroy(struct gen_pool *pool)
+ 		list_del(&chunk->next_chunk);
+ 
+ 		end_bit = chunk_size(chunk) >> order;
+-		bit = find_next_bit(chunk->bits, end_bit, 0);
++		bit = find_next_bit(chunk->entries, end_bit, 0);
+ 		BUG_ON(bit < end_bit);
+ 
+ 		kfree(chunk);
+@@ -292,7 +401,7 @@ unsigned long gen_pool_alloc_algo(struct gen_pool *pool, size_t size,
+ 	struct gen_pool_chunk *chunk;
+ 	unsigned long addr = 0;
+ 	int order = pool->min_alloc_order;
+-	int nbits, start_bit, end_bit, remain;
++	int nentries, start_entry, end_entry, remain;
+ 
+ #ifndef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	BUG_ON(in_nmi());
+@@ -301,29 +410,32 @@ unsigned long gen_pool_alloc_algo(struct gen_pool *pool, size_t size,
+ 	if (size == 0)
+ 		return 0;
+ 
+-	nbits = (size + (1UL << order) - 1) >> order;
++	nentries = mem_to_units(size, order);
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(chunk, &pool->chunks, next_chunk) {
+ 		if (size > atomic_long_read(&chunk->avail))
+ 			continue;
+ 
+-		start_bit = 0;
+-		end_bit = chunk_size(chunk) >> order;
++		start_entry = 0;
++		end_entry = chunk_size(chunk) >> order;
+ retry:
+-		start_bit = algo(chunk->bits, end_bit, start_bit,
+-				 nbits, data, pool);
+-		if (start_bit >= end_bit)
++		start_entry = algo(chunk->entries, end_entry, start_entry,
++				  nentries, data, pool);
++		if (start_entry >= end_entry)
+ 			continue;
+-		remain = bitmap_set_ll(chunk->bits, start_bit, nbits);
++		remain = alter_bitmap_ll(SET_BITS, chunk->entries,
++					 start_entry, nentries);
+ 		if (remain) {
+-			remain = bitmap_clear_ll(chunk->bits, start_bit,
+-						 nbits - remain);
+-			BUG_ON(remain);
++			remain = alter_bitmap_ll(CLEAR_BITS,
++						 chunk->entries,
++						 start_entry,
++						 nentries - remain);
+ 			goto retry;
+ 		}
+ 
+-		addr = chunk->start_addr + ((unsigned long)start_bit << order);
+-		size = nbits << order;
++		addr = chunk->start_addr +
++			((unsigned long)start_entry << order);
++		size = nentries << order;
+ 		atomic_long_sub(size, &chunk->avail);
+ 		break;
+ 	}
+@@ -365,7 +477,7 @@ EXPORT_SYMBOL(gen_pool_dma_alloc);
+  * gen_pool_free - free allocated special memory back to the pool
+  * @pool: pool to free to
+  * @addr: starting address of memory to free back to pool
+- * @size: size in bytes of memory to free
++ * @size: size in bytes of memory to free or 0, for auto-detection
+  *
+  * Free previously allocated special memory back to the specified
+  * pool.  Can not be used in NMI handler on architectures without
+@@ -375,22 +487,29 @@ void gen_pool_free(struct gen_pool *pool, unsigned long addr, size_t size)
+ {
+ 	struct gen_pool_chunk *chunk;
+ 	int order = pool->min_alloc_order;
+-	int start_bit, nbits, remain;
++	int start_entry, remaining_entries, nentries, remain;
++	int boundary;
+ 
+ #ifndef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	BUG_ON(in_nmi());
+ #endif
+ 
+-	nbits = (size + (1UL << order) - 1) >> order;
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(chunk, &pool->chunks, next_chunk) {
+ 		if (addr >= chunk->start_addr && addr <= chunk->end_addr) {
+ 			BUG_ON(addr + size - 1 > chunk->end_addr);
+-			start_bit = (addr - chunk->start_addr) >> order;
+-			remain = bitmap_clear_ll(chunk->bits, start_bit, nbits);
++			start_entry = (addr - chunk->start_addr) >> order;
++			remaining_entries = (chunk->end_addr - addr) >> order;
++			boundary = get_boundary(chunk->entries, start_entry,
++						remaining_entries);
++			BUG_ON(boundary < 0);
++			nentries = boundary - start_entry;
++			BUG_ON(size &&
++			       (nentries != mem_to_units(size, order)));
++			remain = alter_bitmap_ll(CLEAR_BITS, chunk->entries,
++						 start_entry, nentries);
+ 			BUG_ON(remain);
+-			size = nbits << order;
+-			atomic_long_add(size, &chunk->avail);
++			atomic_long_add(nentries << order, &chunk->avail);
+ 			rcu_read_unlock();
+ 			return;
+ 		}
+@@ -517,9 +636,9 @@ EXPORT_SYMBOL(gen_pool_set_algo);
+  * gen_pool_first_fit - find the first available region
+  * of memory matching the size requirement (no alignment constraint)
+  * @map: The address to base the search on
+- * @size: The bitmap size in bits
+- * @start: The bitnumber to start searching at
+- * @nr: The number of zeroed bits we're looking for
++ * @size: The number of allocation units in the bitmap
++ * @start: The allocation unit to start searching at
++ * @nr: The number of allocation units we're looking for
+  * @data: additional data - unused
+  * @pool: pool to find the fit region memory from
+  */
+@@ -527,7 +646,15 @@ unsigned long gen_pool_first_fit(unsigned long *map, unsigned long size,
+ 		unsigned long start, unsigned int nr, void *data,
+ 		struct gen_pool *pool)
+ {
+-	return bitmap_find_next_zero_area(map, size, start, nr, 0);
++	unsigned long align_mask;
++	unsigned long bit_index;
++
++	align_mask = roundup_pow_of_two(BITS_PER_ENTRY) - 1;
++	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
++					       ENTRIES_TO_BITS(start),
++					       ENTRIES_TO_BITS(nr),
++					       align_mask);
++	return BITS_DIV_ENTRIES(bit_index);
+ }
+ EXPORT_SYMBOL(gen_pool_first_fit);
+ 
+@@ -535,9 +662,9 @@ EXPORT_SYMBOL(gen_pool_first_fit);
+  * gen_pool_first_fit_align - find the first available region
+  * of memory matching the size requirement (alignment constraint)
+  * @map: The address to base the search on
+- * @size: The bitmap size in bits
+- * @start: The bitnumber to start searching at
+- * @nr: The number of zeroed bits we're looking for
++ * @size: The number of allocation units in the bitmap
++ * @start: The allocation unit to start searching at
++ * @nr: The number of allocation units we're looking for
+  * @data: data for alignment
+  * @pool: pool to get order from
+  */
+@@ -547,21 +674,28 @@ unsigned long gen_pool_first_fit_align(unsigned long *map, unsigned long size,
+ {
+ 	struct genpool_data_align *alignment;
+ 	unsigned long align_mask;
++	unsigned long bit_index;
+ 	int order;
+ 
+ 	alignment = data;
+ 	order = pool->min_alloc_order;
+-	align_mask = ((alignment->align + (1UL << order) - 1) >> order) - 1;
+-	return bitmap_find_next_zero_area(map, size, start, nr, align_mask);
++	align_mask = roundup_pow_of_two(
++			ENTRIES_TO_BITS(mem_to_units(alignment->align,
++						     order))) - 1;
++	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
++					       ENTRIES_TO_BITS(start),
++					       ENTRIES_TO_BITS(nr),
++					       align_mask);
++	return BITS_DIV_ENTRIES(bit_index);
+ }
+ EXPORT_SYMBOL(gen_pool_first_fit_align);
+ 
+ /**
+  * gen_pool_fixed_alloc - reserve a specific region
+  * @map: The address to base the search on
+- * @size: The bitmap size in bits
+- * @start: The bitnumber to start searching at
+- * @nr: The number of zeroed bits we're looking for
++ * @size: The number of allocation units in the bitmap
++ * @start: The allocation unit to start searching at
++ * @nr: The number of allocation units we're looking for
+  * @data: data for alignment
+  * @pool: pool to get order from
+  */
+@@ -571,20 +705,23 @@ unsigned long gen_pool_fixed_alloc(unsigned long *map, unsigned long size,
+ {
+ 	struct genpool_data_fixed *fixed_data;
+ 	int order;
+-	unsigned long offset_bit;
+-	unsigned long start_bit;
++	unsigned long offset;
++	unsigned long align_mask;
++	unsigned long bit_index;
+ 
+ 	fixed_data = data;
+ 	order = pool->min_alloc_order;
+-	offset_bit = fixed_data->offset >> order;
+ 	if (WARN_ON(fixed_data->offset & ((1UL << order) - 1)))
+ 		return size;
++	offset = fixed_data->offset >> order;
++	align_mask = roundup_pow_of_two(BITS_PER_ENTRY) - 1;
++	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
++					       ENTRIES_TO_BITS(start + offset),
++					       ENTRIES_TO_BITS(nr), align_mask);
++	if (bit_index != ENTRIES_TO_BITS(offset))
++		return size;
+ 
+-	start_bit = bitmap_find_next_zero_area(map, size,
+-			start + offset_bit, nr, 0);
+-	if (start_bit != offset_bit)
+-		start_bit = size;
+-	return start_bit;
++	return BITS_DIV_ENTRIES(bit_index);
+ }
+ EXPORT_SYMBOL(gen_pool_fixed_alloc);
+ 
+@@ -593,9 +730,9 @@ EXPORT_SYMBOL(gen_pool_fixed_alloc);
+  * of memory matching the size requirement. The region will be aligned
+  * to the order of the size specified.
+  * @map: The address to base the search on
+- * @size: The bitmap size in bits
+- * @start: The bitnumber to start searching at
+- * @nr: The number of zeroed bits we're looking for
++ * @size: The number of allocation units in the bitmap
++ * @start: The allocation unit to start searching at
++ * @nr: The number of allocation units we're looking for
+  * @data: additional data - unused
+  * @pool: pool to find the fit region memory from
+  */
+@@ -603,9 +740,15 @@ unsigned long gen_pool_first_fit_order_align(unsigned long *map,
+ 		unsigned long size, unsigned long start,
+ 		unsigned int nr, void *data, struct gen_pool *pool)
+ {
+-	unsigned long align_mask = roundup_pow_of_two(nr) - 1;
+-
+-	return bitmap_find_next_zero_area(map, size, start, nr, align_mask);
++	unsigned long align_mask;
++	unsigned long bit_index;
++
++	align_mask = roundup_pow_of_two(ENTRIES_TO_BITS(nr)) - 1;
++	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
++					       ENTRIES_TO_BITS(start),
++					       ENTRIES_TO_BITS(nr),
++					       align_mask);
++	return BITS_DIV_ENTRIES(bit_index);
+ }
+ EXPORT_SYMBOL(gen_pool_first_fit_order_align);
+ 
+@@ -613,9 +756,9 @@ EXPORT_SYMBOL(gen_pool_first_fit_order_align);
+  * gen_pool_best_fit - find the best fitting region of memory
+  * macthing the size requirement (no alignment constraint)
+  * @map: The address to base the search on
+- * @size: The bitmap size in bits
+- * @start: The bitnumber to start searching at
+- * @nr: The number of zeroed bits we're looking for
++ * @size: The number of allocation units in the bitmap
++ * @start: The allocation unit to start searching at
++ * @nr: The number of allocation units we're looking for
+  * @data: additional data - unused
+  * @pool: pool to find the fit region memory from
+  *
+@@ -626,27 +769,41 @@ unsigned long gen_pool_best_fit(unsigned long *map, unsigned long size,
+ 		unsigned long start, unsigned int nr, void *data,
+ 		struct gen_pool *pool)
+ {
+-	unsigned long start_bit = size;
++	unsigned long start_bit = ENTRIES_TO_BITS(size);
+ 	unsigned long len = size + 1;
+ 	unsigned long index;
++	unsigned long align_mask;
++	unsigned long bit_index;
+ 
+-	index = bitmap_find_next_zero_area(map, size, start, nr, 0);
++	align_mask = roundup_pow_of_two(BITS_PER_ENTRY) - 1;
++	bit_index = bitmap_find_next_zero_area(map, ENTRIES_TO_BITS(size),
++					       ENTRIES_TO_BITS(start),
++					       ENTRIES_TO_BITS(nr),
++					       align_mask);
++	index = BITS_DIV_ENTRIES(bit_index);
+ 
+ 	while (index < size) {
+-		int next_bit = find_next_bit(map, size, index + nr);
+-		if ((next_bit - index) < len) {
+-			len = next_bit - index;
+-			start_bit = index;
++		int next_bit;
++
++		next_bit = find_next_bit(map, ENTRIES_TO_BITS(size),
++					 ENTRIES_TO_BITS(index + nr));
++		if ((BITS_DIV_ENTRIES(next_bit) - index) < len) {
++			len = BITS_DIV_ENTRIES(next_bit) - index;
++			start_bit = ENTRIES_TO_BITS(index);
+ 			if (len == nr)
+-				return start_bit;
++				return BITS_DIV_ENTRIES(start_bit);
+ 		}
+-		index = bitmap_find_next_zero_area(map, size,
+-						   next_bit + 1, nr, 0);
++		bit_index =
++			bitmap_find_next_zero_area(map,
++						   ENTRIES_TO_BITS(size),
++						   next_bit + 1,
++						   ENTRIES_TO_BITS(nr),
++						   align_mask);
++		index = BITS_DIV_ENTRIES(bit_index);
+ 	}
+ 
+-	return start_bit;
++	return BITS_DIV_ENTRIES(start_bit);
+ }
+-EXPORT_SYMBOL(gen_pool_best_fit);
+ 
+ static void devm_gen_pool_release(struct device *dev, void *res)
+ {
+-- 
+2.16.0
