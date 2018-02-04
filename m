@@ -1,30 +1,30 @@
-Return-Path: <BATV+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org>
-X-Google-Smtp-Source: AH8x227ms8+HyS3Dx3jyZMhB/KxLdFUmghg1cX97zuAXyn2mvbqRxR5wC8yN2u/Hd9Rwj+LBTvbP
-ARC-Seal: i=1; a=rsa-sha256; t=1517908518; cv=none;
+Return-Path: <BATV+fb13063d2e7e620cf64f+5278+infradead.org+dwmw2@twosheds.srs.infradead.org>
+X-Google-Smtp-Source: AH8x224MAk3Em6aZIaq4iHpPwAVQsFwVLtU7gFyc8fyfr68SnJUlAwV/K0lA05Sgqci3sdjSuEj/
+ARC-Seal: i=1; a=rsa-sha256; t=1517775788; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ik0tDj4uNHY2UGSBEi+Fy1Iz9JlP+dl1eW/D+3xMgEIvrLFJmCGonUlmNSmDC1J1S9
-         +xfN3CXnZchKGI/7a5hZVUfPRrtKfU91i+bxeWqyiQGDRlvv3mk2/lxe5I3ZrJKpAS44
-         BKOz0wLiUrqKeQtqPGL85lyST8nhXK4Z4IxZGd+AOfNzS1nuDqH8gCSFk4puXM4GwoMY
-         BaVZy+PcMkBnP42xJ3a1BcPSYfI50N7Q+uhtPAh1vwOyB2XoDK2ZtDAwVyS8n0HIwxQY
-         KWZ7UwbZTQjGWEDksyAgGYjIxxWFk30JyA8aWU8DZm7ZQS+BxPsxdngMqY3FDFkFWPWl
-         xiVA==
+        b=V3xVPYupk2Se3/x8ziGVeam1XqdvNlD39WWet5UA/uf/JZgowTngQmYyUU4JkP2yzj
+         t+s7oC3mj13rE40I+0sWOcEOlWuElbFEnL0IqYzXBUoDW0G+nmbed1Bl89cljtzGZCE+
+         f1hnnCp97zWcpTKs8Lb/WeOw91eSLH5DbzEA4rEUvZZa92djaoFN0M2w1HalRxdeWa7M
+         tXXIIPJnqFpX+o5FdgEpjc52DBvQhy5tNJPEcmDcvoXfQmopkjBYROu8Z9OoewTndJQH
+         cZHUIdsu5+1CI3cOAIyM6dQ6X8rBQ83bVwKJ9rQThU+c5bVEp6njeS6vmCMVMvPM0lR2
+         khZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:date:face:references:in-reply-to:cc:to:from:subject
          :message-id:dkim-signature:arc-authentication-results;
-        bh=JqiTj0LDdqEVquXaao4sjL2cpdKy+bOZeBeU6EoSeXg=;
-        b=LuzpwlbRHB5qnoqBv3akw6bf88ShkZ4eXn5O32u5SVX4AIiZUP1N8cncBJ3NZOaG5R
-         8lwOeN5D5IPHIDPy8mAu9y0/LC9rwqz4kjnkcBJRHG583M3gvHyfY9g6Chel0sJy+uwN
-         03eLMxiP7T86OAOpfmQTUpjXa1ed6p88o4272i5SydFMUekIzhGD0pGvX3mZwsRC5LBo
-         bG6a6NmWlUAtAeAOz3efy+Otr0P4XozkDVp4vKvlMr65+tRPJI00OF/AKFfFVaThcOr1
-         BUlZT5K4RGFFGP0bE941neBpOFnJ+H9k2by50vfyzfDHIMHoarNjTpK6hr0p7VktG/0Z
-         m2AA==
+        bh=UnlKav9O4+CeDPnsVekRgevuZSOz1MH90xroLMQrmpU=;
+        b=J7n469Kn1HnvQqsu3cpGBx0C/3IPGwuaMd+k1TmbtKHyOArLllHv2vX997aulcF0m+
+         7VYydhnrCh4PEeR24xQl/G1NKilx9Dnaat+bGAllvP4VhUXAjxAEOZcWuG3FW2Vgz2SS
+         jQqeM1mmuZ9IlmZ1MoAqjylHzGyEpXvnyYa9UbGjEiOpyYFnSoBOvjRs1p/MZ68AmGoP
+         ZO2995vvvXZnCkO/Rhu5TQbQSnDr0QNsrq0F9u5bqptTFXBOTuQmdyfwuZJbOkxZ7Pn8
+         jBOUvR/3qBF1of0oPfJpOwO6cTAt+FNUvqKLtYN2Ka8HEwTb+aBorI0spbi4TECj+cq7
+         pVlQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=KW8u09Wo;
-       spf=pass (google.com: best guess record for domain of batv+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org
+       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=qxbsuX2b;
+       spf=pass (google.com: best guess record for domain of batv+fb13063d2e7e620cf64f+5278+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+fb13063d2e7e620cf64f+5278+infradead.org+dwmw2@twosheds.srs.infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=KW8u09Wo;
-       spf=pass (google.com: best guess record for domain of batv+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org
-Message-ID: <1517908488.31953.198.camel@infradead.org>
+       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=qxbsuX2b;
+       spf=pass (google.com: best guess record for domain of batv+fb13063d2e7e620cf64f+5278+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+fb13063d2e7e620cf64f+5278+infradead.org+dwmw2@twosheds.srs.infradead.org
+Message-ID: <1517775753.31953.136.camel@infradead.org>
 Subject: Re: [RFC 09/10] x86/enter: Create macros to restrict/unrestrict
  Indirect Branch Speculation
 From: David Woodhouse <dwmw2@infradead.org>
@@ -60,56 +60,35 @@ References: <1516476182-5153-10-git-send-email-karahmed@amazon.de>
 	 <20180123102318.airsvcl5uckguo2z@gmail.com>
 	 <alpine.DEB.2.21.1802041801280.1035@nanos.tec.linutronix.de>
 Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-6fBrD9xtQM+ZSF9EkIi1"
-Date: Tue, 06 Feb 2018 09:14:48 +0000
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-cBgSS+TQx3GhfiOkr4H4"
+Date: Sun, 04 Feb 2018 20:22:33 +0000
 Mime-Version: 1.0
 X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
 X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1590140582166248265?=
-X-GMAIL-MSGID: =?utf-8?q?1591642442779522172?=
+X-GMAIL-MSGID: =?utf-8?q?1591503265545910707?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
---=-6fBrD9xtQM+ZSF9EkIi1
+--=-cBgSS+TQx3GhfiOkr4H4
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
+
+T24gU3VuLCAyMDE4LTAyLTA0IGF0IDE5OjQzICswMTAwLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6
+Cj4gCj4gX194ODZfcmV0dXJuX3RodW5rIHdvdWxkIGxvb2sgbGlrZSB0aGlzOgo+IAo+IF9feDg2
+X3JldHVybl90aHVuazoKPiDCoMKgwqDCoMKgwqDCoMKgdGVzdGzCoMKgwqAkMHhmLCBQRVJfQ1BV
+X1ZBUihjYWxsX2RlcHRoKQo+IMKgwqDCoMKgwqDCoMKgwqBqbnrCoMKgwqDCoMKgMWbCoMKgwqDC
+oMKgwqAKPiDCoMKgwqDCoMKgwqDCoMKgc3R1ZmZfcnNiCj4gwqDCoCAxOgo+IMKgwqDCoMKgwqDC
+oMKgwqBkZWNswqDCoMKgwqBQRVJfQ1BVX1ZBUihjYWxsX2RlcHRoKQo+IMKgwqDCoMKgwqDCoMKg
+wqByZXQKPiAKPiBUaGUgY2FsbF9kZXB0aCB2YXJpYWJsZSB3b3VsZCBiZSByZXNldCBvbiBjb250
+ZXh0IHN3aXRjaC4KCk5vdGUgdGhhdCB0aGUgJ2pueicgY2FuIGJlIHByZWRpY3RlZCB0YWtlbiB0
+aGVyZSwgYWxsb3dpbmcgdGhlIENQVSB0bwpzcGVjdWxhdGUgYWxsIHRoZSB3YXkgdG8gdGhlICdy
+ZXQnLi4uIGFuZCBiZXlvbmQuCgo=
 
 
-
-On Sun, 2018-02-04 at 19:43 +0100, Thomas Gleixner wrote:
-> Yet another possibility is to avoid the function entry and accouting magi=
-c
-> and use the generic gcc return thunk:
->=20
-> __x86_return_thunk:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0call L2
-> L1:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pause
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0lfence
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0jmp L1
-> L2:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0lea 8(%rsp), %rsp|lea 4(%=
-esp), %esp
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret
->=20
-> which basically refills the RSB on every return. That can be inline or
-> extern, but in both cases we should be able to patch it out.
->=20
-> I have no idea how that affects performance, but it might be worthwhile t=
-o
-> experiment with that.
-
-That was what I had in mind when I asked HJ to add -mfunction-return.
-
-I suspect the performance hit would be significant because it would
-cause a prediction miss on *every* return.
-
-But as I said, let's implement what we can without IBRS for Skylake,
-then we can compare the two options for performance, security coverage
-and general fugliness.
---=-6fBrD9xtQM+ZSF9EkIi1
+--=-cBgSS+TQx3GhfiOkr4H4
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Disposition: attachment; filename="smime.p7s"
 Content-Transfer-Encoding: base64
@@ -192,20 +171,20 @@ px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
 QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
 U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDYwOTE0NDhaMC8GCSqG
-SIb3DQEJBDEiBCD3zcjkYXj+z636NE6Xuo5c7N0PN5BC+2C50wDI9L2wFTCBvQYJKwYBBAGCNxAE
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDQyMDIyMzNaMC8GCSqG
+SIb3DQEJBDEiBCBAyoHnPBubkYn/W/mLWTYg5yc7AZuVBg4fqAF+R+LxWTCBvQYJKwYBBAGCNxAE
 MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
 VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
 IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
 jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
 cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
 aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBALCx10Td1RZq
-z1fAhykPk2zYyonMY+O1hVy7mjMeBMy+A1jSkOkAA1p0irruf3EuPr9XxOFrw7TnUURX4uFVZYUh
-zgzCoX12pXEjPvsFrfVJQHxDmnDgqSI6Bhycn4QhAZTeEKVdj/4IF2ywPHC/qlYJM8dNXFTMJ+qL
-R8ORTyq5iiCmkOaPWYIXdp6dzuTKzd0TcGHPOTxTBLJKhIhdGReCJpzRN7uP5Oh6zpQYEuv8rP2w
-xIe3gVXkWwFrIc/mcCGUY6VneBmO5Tvhs7YT2hSwKn35C5zf+C+iXjOkLywMmifgmVyee40Btacb
-9hdPfWKLtKAb8kKVAqSi8yo9cuwAAAAAAAA=
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAAOygEkbgW+d
+bS77I6Tksx83YvwYfr2Gzp9SkKPUk+PTa+boP/O5sq8rHCHnLPfD/hVdhyqPpguTO7Akwx1YRn7t
+T8fFuVYDHcCnBztvB2e7x9nksyPIVwCQMwMpELVcj/uATWdYOdzOs+2oUs0CdQn8Mdn7Laftvggm
+ROh7OYzpryMDZSnzd+n9YLN/4osC3KtJjmzROO5vMH+Na3DZrL/euAOVZ0TH39rA6ZzbtBDKXlbC
+h4b3VfsBl10zRDFddpiZ5d6/v1RUAEfP6+LNBktlpWSeJxLBLggad8fN8BsKWpwqLXqVI/3u+kfc
+4ss+14YrjglZ8q41Du3pe8sOuxoAAAAAAAA=
 
 
---=-6fBrD9xtQM+ZSF9EkIi1--
+--=-cBgSS+TQx3GhfiOkr4H4--
