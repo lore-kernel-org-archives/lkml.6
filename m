@@ -1,105 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750995AbeBDD6B (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 22:58:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750741AbeBDD5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 22:57:53 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E89B21734
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Sun, 4 Feb 2018 12:57:47 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
- events
-Message-Id: <20180204125747.70eb79dd0a69d30fb8a47fcd@kernel.org>
-In-Reply-To: <20180203102759.56d03ada@gandalf.local.home>
-References: <20180202230458.840252014@goodmis.org>
-        <20180203223817.0c8cc485d8163ad84039cf02@kernel.org>
-        <20180203102759.56d03ada@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1750916AbeBDEdZ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 23:33:25 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42683 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750744AbeBDEdT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 23:33:19 -0500
+X-Google-Smtp-Source: AH8x227fObMueGP1ZTlSOGjlhbaTVy9PUitFBfyswN+/Ph6WcCpD78woE5p74Nz2cLbBJi8+vTRc5g==
+From: Eric Biggers <ebiggers3@gmail.com>
+To: linux-ide@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, Mark Lord <mlord@pobox.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH] libata: fix length validation of ATAPI-relayed SCSI commands
+Date: Sat,  3 Feb 2018 20:30:56 -0800
+Message-Id: <20180204043056.16466-1-ebiggers3@gmail.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <001a114aa95cfa4339055cd4e8e0@google.com>
+References: <001a114aa95cfa4339055cd4e8e0@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 3 Feb 2018 10:27:59 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Eric Biggers <ebiggers@google.com>
 
-> On Sat, 3 Feb 2018 22:38:17 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > This seems very similar feature of what kprobe-based event does.
-> 
-> It is similar, but not the same as kprobes. It only focuses on
-> functions and their arguments, and should not require any disassembling
-> (no knowledge of regs required). Any need to see anything within the
-> function will still require kprobe based help.
+syzkaller reported a crash in ata_bmdma_fill_sg() when writing to
+/dev/sg1.  The immediate cause was that the ATA command's scatterlist
+was not DMA-mapped, which causes 'pi - 1' to underflow, resulting in a
+write to 'qc->ap->bmdma_prd[0xffffffff]'.
 
-Yes, I see that point.
+Strangely though, the flag ATA_QCFLAG_DMAMAP was set in qc->flags.  The
+root cause is that when __ata_scsi_queuecmd() is preparing to relay a
+SCSI command to an ATAPI device, it doesn't correctly validate the CDB
+length before copying it into the 16-byte buffer 'cdb' in 'struct
+ata_queued_cmd'.  Namely, it validates the fixed CDB length expected
+based on the SCSI opcode but not the actual CDB length, which can be
+larger due to the use of the SG_NEXT_CMD_LEN ioctl.  Since 'flags' is
+the next member in ata_queued_cmd, a buffer overflow corrupts it.
 
-> > Earlier version of kprobe-based event supported Nth argument, but I decided
-> > to drop it because we can not ensure the "function signature" from kernel
-> > binary. It has been passed to "perf probe", so that we can define line-level
-> > granularity. 
-> 
-> Sure, and if we get a wrong function, which can happen, the code is set
-> up not to break anything. You only get garbage output.
-> 
-> > 
-> > Of course if it is easy to support "argN" again as it does if the arch's
-> > calling convention is clearly stated. (and now kprobe is based on ftrace
-> > if it is on the entry of functions)
-> > 
-> > So my question is, what is the difference of those from the user perspective?
-> > Only event syntax is a problem?
-> > I'm very confusing...
-> 
-> Again, this is not a kprobe replacement. It is somewhat of a syntax
-> issue. I want this to be very simple and not need a disassembler. For
-> indexing of structures one may use gdb, but that's about it. You could
-> get the same info from counting what's in a structure itself.
+Fix it by requiring that the actual CDB length be <= 16 (ATAPI_CDB_LEN).
 
-OK, so it is a simpler version of function event...
+[Really it seems the length should be required to be <= dev->cdb_len,
+but the current behavior seems to have been intentionally introduced by
+commit 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands
+in 16-byte CDBs") to work around a userspace bug in mplayer.  Probably
+the workaround is no longer needed (mplayer was fixed in 2007), but
+continuing to allow lengths to up 16 appears harmless for now.]
 
-> I based some of the code from kprobes too. But I wanted this to be
-> simpler, and as such, not as powerful as kprobes. More of a "poor mans"
-> kprobe ;-) Where you are limited to functions and their arguments. If
-> you need more power, switch to kprobes. In other words, its just an
-> added stepping stone.
-> 
-> Also, this should work without kprobe support, only ftrace, and function
-> args from the arch.
+Here's a reproducer that works in QEMU when /dev/sg1 refers to the
+CD-ROM drive that qemu-system-x86_64 creates by default:
 
-Hmm, but implementation seems very far from current probe events, we need
-to consider how to unify it. Anyway, it is a very good time to do, because
-I found current probe-event fetch method is not good with retpoline/IBRS,
-it is full of indirect call.
+    #include <fcntl.h>
+    #include <sys/ioctl.h>
+    #include <unistd.h>
 
-I would like to convert it to eBPF if possible. It will be good for the
-performance with JIT, and we can collaborate on the same code with BPF
-people.
+    #define SG_NEXT_CMD_LEN 0x2283
 
-Thank you,
+    int main()
+    {
+	    char buf[53] = { [36] = 0x7e, [52] = 0x02 };
+	    int fd = open("/dev/sg1", O_RDWR);
+	    ioctl(fd, SG_NEXT_CMD_LEN, &(int){ 17 });
+	    write(fd, buf, sizeof(buf));
+    }
 
+The crash was:
+
+    BUG: unable to handle kernel paging request at ffff8cb97db37ffc
+    IP: ata_bmdma_fill_sg drivers/ata/libata-sff.c:2623 [inline]
+    IP: ata_bmdma_qc_prep+0xa4/0xc0 drivers/ata/libata-sff.c:2727
+    PGD fb6c067 P4D fb6c067 PUD 0
+    Oops: 0002 [#1] SMP
+    CPU: 1 PID: 150 Comm: syz_ata_bmdma_q Not tainted 4.15.0-next-20180202 #99
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
+    [...]
+    Call Trace:
+     ata_qc_issue+0x100/0x1d0 drivers/ata/libata-core.c:5421
+     ata_scsi_translate+0xc9/0x1a0 drivers/ata/libata-scsi.c:2024
+     __ata_scsi_queuecmd drivers/ata/libata-scsi.c:4326 [inline]
+     ata_scsi_queuecmd+0x8c/0x210 drivers/ata/libata-scsi.c:4375
+     scsi_dispatch_cmd+0xa2/0xe0 drivers/scsi/scsi_lib.c:1727
+     scsi_request_fn+0x24c/0x530 drivers/scsi/scsi_lib.c:1865
+     __blk_run_queue_uncond block/blk-core.c:412 [inline]
+     __blk_run_queue+0x3a/0x60 block/blk-core.c:432
+     blk_execute_rq_nowait+0x93/0xc0 block/blk-exec.c:78
+     sg_common_write.isra.7+0x272/0x5a0 drivers/scsi/sg.c:806
+     sg_write+0x1ef/0x340 drivers/scsi/sg.c:677
+     __vfs_write+0x31/0x160 fs/read_write.c:480
+     vfs_write+0xa7/0x160 fs/read_write.c:544
+     SYSC_write fs/read_write.c:589 [inline]
+     SyS_write+0x4d/0xc0 fs/read_write.c:581
+     do_syscall_64+0x5e/0x110 arch/x86/entry/common.c:287
+     entry_SYSCALL_64_after_hwframe+0x21/0x86
+
+Fixes: 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands in 16-byte CDBs")
+Reported-by: syzbot+1ff6f9fcc3c35f1c72a95e26528c8e7e3276e4da@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org> # v2.6.24+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ drivers/ata/libata-scsi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index 66be961c93a4e..47d421666451c 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -4309,7 +4309,9 @@ static inline int __ata_scsi_queuecmd(struct scsi_cmnd *scmd,
+ 		if (likely((scsi_op != ATA_16) || !atapi_passthru16)) {
+ 			/* relay SCSI command to ATAPI device */
+ 			int len = COMMAND_SIZE(scsi_op);
+-			if (unlikely(len > scmd->cmd_len || len > dev->cdb_len))
++			if (unlikely(len > scmd->cmd_len ||
++				     len > dev->cdb_len ||
++				     scmd->cmd_len > ATAPI_CDB_LEN))
+ 				goto bad_cdb_len;
+ 
+ 			xlat_func = atapi_xlat;
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.16.1
