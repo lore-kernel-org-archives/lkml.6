@@ -1,98 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752010AbeBDAPD (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 19:15:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750818AbeBDAOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 19:14:55 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21050217AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AH8x227VWvJBx4QQqzR+6pLaIrbpMfnLdnxUnudIqLefN/hjtl3cMq6wI/MGSVptJwvsVal0RBoCdGzAJhkWAxSma5g=
+        id S1752191AbeBDATa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 19:19:30 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50581 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750764AbeBDATV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 19:19:21 -0500
+X-Google-Smtp-Source: AH8x227/Vo9EjOFlUXO1Z9oGWv0xAH0lW93qBfacvmjm6FWh7GAFKIeHJYoW/mqBBa0ZojqYVbelFwIh7iPAQCDGVUM=
 MIME-Version: 1.0
-In-Reply-To: <151770009703.7213.12036560755602017391.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151770009169.7213.12476757146099518628.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151770009703.7213.12036560755602017391.stgit@dwillia2-desk3.amr.corp.intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Sun, 4 Feb 2018 00:14:34 +0000
-X-Gmail-Original-Message-ID: <CALCETrUtU7j3wHfvrSmiA0wkE4=gXXgFsTG3VXh3x3E8WHxvMg@mail.gmail.com>
-Message-ID: <CALCETrUtU7j3wHfvrSmiA0wkE4=gXXgFsTG3VXh3x3E8WHxvMg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] x86/entry: Clear extra registers beyond syscall
- arguments for 64bit kernels
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Andrew Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+In-Reply-To: <20180203153031.GA5004@krava>
+References: <20180201083812.11359-1-jolsa@kernel.org> <20180201083812.11359-2-jolsa@kernel.org>
+ <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com> <20180203153031.GA5004@krava>
+From: Stephane Eranian <eranian@google.com>
+Date: Sat, 3 Feb 2018 16:19:20 -0800
+Message-ID: <CABPqkBRyYXrsq_K4Fh2HbbC+GoGqtMypYeH9+TJ228dUaGnC5A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] perf tools: Fix period/freq terms setup
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w140JXAe008416
 
-On Sat, Feb 3, 2018 at 11:21 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> At entry userspace may have populated the extra registers outside the
-> syscall calling convention with values that could be useful in a
-> speculative execution attack. Clear them to minimize the kernel's attack
-> surface. Note, this only clears the extra registers and not the unused
-> registers for syscalls less than 6 arguments since those registers are
-> likely to be clobbered well before their values could be put to use
-> under speculation.
+On Sat, Feb 3, 2018 at 7:30 AM, Jiri Olsa <jolsa@redhat.com> wrote:
+> On Fri, Feb 02, 2018 at 10:45:46AM -0800, Stephane Eranian wrote:
+>> Jiri,
+>>
+>> On Thu, Feb 1, 2018 at 12:38 AM, Jiri Olsa <jolsa@kernel.org> wrote:
+>> > Stephane reported that we don't set properly PERIOD
+>> > sample type for events with period term defined.
+>> >
+>> > Before:
+>> >   $ perf record -e cpu/cpu-cycles,period=1000/u ls
+>> >   $ perf evlist -v
+>> >   cpu/cpu-cycles,period=1000/u: ... sample_type: IP|TID|TIME|PERIOD, ...
+>> >
+>> > After:
+>> >   $ perf record -e cpu/cpu-cycles,period=1000/u ls
+>> >   $ perf evlist -v
+>> >   cpu/cpu-cycles,period=1000/u: ... sample_type: IP|TID|TIME, ...
+>> >
+>> > Setting PERIOD sample type based on period term setup.
+>> >
+>> there is still one problem remaining here. It has to do with the handling
+>> of cycles:pp or :p or :ppp. Suppose I want to set a period for it while I am
+>> also sampling on other events: Something like:
+>>
+>> $ perf record -e
+>> cycles:pp,instructions,cpu/event=0xd0,umaks=0x81,period=100000/ .....
+>>
+>> I want to set the period for cycles:pp, but not for instructions. I
+>> cannot use -c because
+>> it would also force a period on instructions. I could use the raw hw
+>> raw event code for cycles:pp.
+>> But that does not work because recent kernels prevent use of hw
+>> filters on events programmed
+>> for PEBS, e.g., cpu/event=0xc2,umask=0x1,cmask=16,inv/pp is rejected.
+>> PEBS does not support filters.
+>> It works in the case of cycles:pp simply by the nature on the
+>> underlying event and the stalls.
+>>
+>> To get precise cycles, the only event syntax you can use is cycles:pp,
+>> but then you cannot specify
+>> an event-specific period. This needs to be fixed as well.
 >
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Reported-by: Andi Kleen <ak@linux.intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  arch/x86/entry/calling.h  |   17 +++++++++++++++++
->  arch/x86/entry/entry_64.S |    1 +
->  2 files changed, 18 insertions(+)
+> you can use p modifier behind like: cpu/.../pp
 >
-> diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-> index 3f48f695d5e6..daee2d19e73d 100644
-> --- a/arch/x86/entry/calling.h
-> +++ b/arch/x86/entry/calling.h
-> @@ -147,6 +147,23 @@ For 32-bit we have the following conventions - kernel is built with
->         UNWIND_HINT_REGS offset=\offset
->         .endm
+>>
+>> I'd like to be able to say:
+>>
+>> $ perf record -e
+>> cycles:pp:period=10000001,cpu/event=0xd0,umaks=0x81,period=100000/
+>>
+>> Or something equivalent.
 >
-> +       /*
-> +        * Sanitize extra registers of values that a speculation attack
-> +        * might want to exploit. In the CONFIG_FRAME_POINTER=y case,
-> +        * the expectation is that %ebp will be clobbered before it
-> +        * could be used.
-> +        */
-> +       .macro CLEAR_EXTRA_REGS_NOSPEC
-> +       xorq %r15, %r15
-> +       xorq %r14, %r14
-> +       xorq %r13, %r13
-> +       xorq %r12, %r12
-> +       xorl %ebx, %ebx
-> +#ifndef CONFIG_FRAME_POINTER
-> +       xorl %ebp, %ebp
-> +#endif
-> +       .endm
-> +
+> and you can specify terms for hw events like 'cycles'
+>
+> [jolsa@krava perf]$ sudo ./perf record -e 'cycles/period=10000001/pp,cpu/event=0xd0,umask=0x81,period=100000/'
+> ^C[ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.579 MB perf.data (722 samples) ]
+>
+Ok, I did not know about this syntax. It looks bizarre because you are
+using an event name as a PMU instance.
+Works for me.
+Thanks.
 
-Can we make the clears only happen if we have CONFIG_RETPOLINE?  Or is
-there maybe some reason why we want this even without retpolines on?
-
->         .macro POP_EXTRA_REGS
->         popq %r15
->         popq %r14
-> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-> index c752abe89d80..46260e951da6 100644
-> --- a/arch/x86/entry/entry_64.S
-> +++ b/arch/x86/entry/entry_64.S
-> @@ -247,6 +247,7 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
->         TRACE_IRQS_OFF
+> [jolsa@krava perf]$ ./perf evlist -v
+> cycles/period=10000001/pp: size: 112, { sample_period, sample_freq }: 10000001, sample_type: IP|TID|TIME|ID|CPU, read_format: ID, disabled: 1, inherit: 1, mmap: 1, comm: 1, task: 1, precise_ip: 2, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1
+> cpu/event=0xd0,umask=0x81,period=100000/: type: 4, size: 112, config: 0x81d0, { sample_period, sample_freq }: 100000, sample_type: IP|TID|TIME|ID|CPU, read_format: ID, disabled: 1, inherit: 1, sample_id_all: 1, exclude_guest: 1
 >
->         /* IRQs are off. */
-> +       CLEAR_EXTRA_REGS_NOSPEC
-
-Please put the clears before TRACE_IRQS_OFF to protect users that use tracing.
+> jirka
