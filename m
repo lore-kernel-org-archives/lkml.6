@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751653AbeBDCZt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 21:25:49 -0500
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:34902 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750738AbeBDCZm (ORCPT
+        id S1750899AbeBDCiG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 21:38:06 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42543 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeBDCiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 21:25:42 -0500
-X-Google-Smtp-Source: AH8x225/24834nEumHoOhy50UYstqJPOg5o+aKhcJp/WhfItYv9ubjCymAH96bPdYqfGo8AZg8G/0nCUGRA6doG2VYA=
+        Sat, 3 Feb 2018 21:38:02 -0500
+X-Google-Smtp-Source: AH8x226vPeCpRvh26bzoEXsZwvDCwWuiIRVD3refdT8EdgvqqUT+MyIQY6QkgIeIUaBpR3H1KFz/lQ4oiMXtNrQGo/M=
 MIME-Version: 1.0
-In-Reply-To: <20180203161732.4a65c66b@gandalf.local.home>
+In-Reply-To: <20180203213013.b6png725tcehqai3@ast-mbp>
 References: <20180202230458.840252014@goodmis.org> <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
  <20180203140217.2382df69@gandalf.local.home> <20180203205207.mpob4w6eyehhg2ky@ast-mbp>
- <20180203161732.4a65c66b@gandalf.local.home>
+ <20180203160824.42a6c1bb@gandalf.local.home> <20180203213013.b6png725tcehqai3@ast-mbp>
 From: Namhyung Kim <namhyung@kernel.org>
-Date: Sun, 4 Feb 2018 11:25:20 +0900
-X-Google-Sender-Auth: JZnq00P2YkSbYl5mOdRRGNRsnVQ
-Message-ID: <CAM9d7cgmWmo6S30fLg6Zdk5ic8a3UJOjYSo3C55CcG=NBz6mhQ@mail.gmail.com>
+Date: Sun, 4 Feb 2018 11:37:40 +0900
+X-Google-Sender-Auth: ivEJ-nfQq6atLhQ48HC-lL43zd4
+Message-ID: <CAM9d7cjF=Tc00XGmR=Bx91mexnh2svcU=U0mj5qQmQv_kx5GMw@mail.gmail.com>
 Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based events
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -39,33 +39,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve and Alexei,
+On Sun, Feb 4, 2018 at 6:30 AM, Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Sat, Feb 03, 2018 at 04:08:24PM -0500, Steven Rostedt wrote:
+>> OK, so no new development in this was wanted? So the entire talk about
+>> getting tracepoints into vfs and scheduling wasn't needed?
+>
+> I don't know who wants tracepoints in vfs.
 
-On Sun, Feb 4, 2018 at 6:17 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Sat, 3 Feb 2018 12:52:08 -0800
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
->
->> It's a user space job.
->
-> BTW, I asked around at DevConf.cz, and nobody I talked with (besides
-> Arnaldo), have used eBPF. The "path to hello world" is quite high. This
-> interface is extremely simple to use, and one doesn't need to install
-> LLVM or other tools to interface with it.
->
-> I used the analogy, that eBPF is like C, and this is like Bash. One is
-> much easier to get "Hello World!" out than the other.
->
-> So personally, this is something I know I would use (note, I have
-> never used eBPF either). But if I'm the only one to use this
-> interface then I'll stop here (and not bother with the function graph
-> return interface). If others think this would be helpful, I would ask
-> them to speak up now.
+AFAIK some people wanted to get some info (e.g. filename) from vfs.
 
-I'm interested in this.  From my understanding, it's basically
-function tracing + filter + custom argument info, right?
 
-Supporting arguments with complex type could be error-prone.
-We need to prevent malfunctions by invalid inputs.
+>> Not if you are working in the embedded space and only have busybox as
+>> your interface.
+>
+> did you notice bpfd project that does remote kprobe+bpf into an android phone?
+> or phone is not an embedded space?
+
+I never tried bpfd yet but it looks promissing.
+It'd be nice to have such setup working on a typical yocto environment.
+Anyway, I'd say that android phone is different that typical embedded
+systems. :)
 
 Thanks,
 Namhyung
