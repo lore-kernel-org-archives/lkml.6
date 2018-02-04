@@ -1,24 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751910AbeBDLVt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 06:21:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33222 "EHLO mail.kernel.org"
+        id S1751914AbeBDLYC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 06:24:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751723AbeBDLVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 06:21:41 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84212217AD
+        id S1750821AbeBDLXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 06:23:51 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 585C6217AD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 4 Feb 2018 11:21:36 +0000
+Date: Sun, 4 Feb 2018 11:23:46 +0000
 From: Jonathan Cameron <jic23@kernel.org>
-To: Andreas Klinger <ak@it-klinger.de>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: srf08: fix link error
- "devm_iio_triggered_buffer_setup" undefined
-Message-ID: <20180204112136.6c9ad790@archlinux>
-In-Reply-To: <20180201204924.GA26839@arbeit>
-References: <20180201204924.GA26839@arbeit>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] hid-sensor-accel-3d: Delete an error message for a
+ failed memory allocation in hid_accel_3d_probe()
+Message-ID: <20180204112346.0977e938@archlinux>
+In-Reply-To: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
+References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -27,43 +31,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Feb 2018 21:49:24 +0100
-Andreas Klinger <ak@it-klinger.de> wrote:
+On Wed, 31 Jan 2018 22:26:14 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-> Functions for triggered buffer support are needed by this module.
-> If they are not defined accidentally by another driver, there's an error
-> thrown out while linking.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 31 Jan 2018 22:20:56 +0100
 > 
-> Add a select of IIO_BUFFER and IIO_TRIGGERED_BUFFER in the Kconfig file.
+> Omit an extra message for a memory allocation failure in this function.
 > 
-> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Applied to the fixes-togreg-post-rc1 branch of iio.git with a fixes
-tag added.  Please always track down the patch that introduced the
-problem and add a fixes tag.  It makes it much easier for the stable
-trees to know when to apply the patch or not.
+Marcus,
 
-I put the patch that introduced the triggered support in the first
-place as that seemed likely to be the place that the issue was
-introduced.
+If making changes like this I would suggest only sending one until
+you have have a response from the relevant maintainer.
 
-Thanks,
+It would save you time as often these sorts of changes are
+a matter of personal taste and weighing up of costs vs gains
+- hence it is not obvious that they will be accepted.
 
 Jonathan
+
 > ---
->  drivers/iio/proximity/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/iio/accel/hid-sensor-accel-3d.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
-> index fcb1c4ba5e41..f726f9427602 100644
-> --- a/drivers/iio/proximity/Kconfig
-> +++ b/drivers/iio/proximity/Kconfig
-> @@ -68,6 +68,8 @@ config SX9500
->  
->  config SRF08
->  	tristate "Devantech SRF02/SRF08/SRF10 ultrasonic ranger sensor"
-> +	select IIO_BUFFER
-> +	select IIO_TRIGGERED_BUFFER
->  	depends on I2C
->  	help
->  	  Say Y here to build a driver for Devantech SRF02/SRF08/SRF10
+> diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
+> index c066a3bdbff7..3d0acde40285 100644
+> --- a/drivers/iio/accel/hid-sensor-accel-3d.c
+> +++ b/drivers/iio/accel/hid-sensor-accel-3d.c
+> @@ -383,11 +383,9 @@ static int hid_accel_3d_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  	indio_dev->channels = kmemdup(channel_spec, channel_size, GFP_KERNEL);
+> -
+> -	if (!indio_dev->channels) {
+> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
+> +	if (!indio_dev->channels)
+>  		return -ENOMEM;
+> -	}
+> +
+>  	ret = accel_3d_parse_report(pdev, hsdev,
+>  				(struct iio_chan_spec *)indio_dev->channels,
+>  				hsdev->usage, accel_state);
