@@ -1,101 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeBDATa (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 19:19:30 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:50581 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750764AbeBDATV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 19:19:21 -0500
-X-Google-Smtp-Source: AH8x227/Vo9EjOFlUXO1Z9oGWv0xAH0lW93qBfacvmjm6FWh7GAFKIeHJYoW/mqBBa0ZojqYVbelFwIh7iPAQCDGVUM=
-MIME-Version: 1.0
-In-Reply-To: <20180203153031.GA5004@krava>
-References: <20180201083812.11359-1-jolsa@kernel.org> <20180201083812.11359-2-jolsa@kernel.org>
- <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com> <20180203153031.GA5004@krava>
-From: Stephane Eranian <eranian@google.com>
-Date: Sat, 3 Feb 2018 16:19:20 -0800
-Message-ID: <CABPqkBRyYXrsq_K4Fh2HbbC+GoGqtMypYeH9+TJ228dUaGnC5A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] perf tools: Fix period/freq terms setup
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752502AbeBDAUL (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 19:20:11 -0500
+Received: from m50-110.126.com ([123.125.50.110]:42085 "EHLO m50-110.126.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752210AbeBDAUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Feb 2018 19:20:05 -0500
+From: Zhang Bo <zbsdta@126.com>
+To: dmitry.torokhov@gmail.com
+Cc: zbsdta@126.com, DRivshin@allworx.com, robh@kernel.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhang.bo19@zte.com.cn
+Subject: [PATCH v3] Input: matrix_keypad - fix keypad does not response
+Date: Sun,  4 Feb 2018 08:19:22 +0800
+Message-Id: <20180204001922.32084-1-zbsdta@126.com>
+X-Mailer: git-send-email 2.14.3
+X-CM-TRANSID: jdKowAB3EOyQUXZagIQwAA--.2S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Aw1rXF4UGFWfAw1fZw1fZwb_yoW8Xry3pr
+        W3Gw1vkr48J3Wj93yqq34v9a4DCw4kZrWagrn5W3s5X3s0qr15Krsak3yaga4UArW8t3ZF
+        vr4DZr15JF1qyr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UdrcfUUUUU=
+X-Originating-IP: [123.139.75.126]
+X-CM-SenderInfo: h2evv3bd6rjloofrz/1tbijgriSVpD3+lL1AAAsf
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w140JXAe008416
 
-On Sat, Feb 3, 2018 at 7:30 AM, Jiri Olsa <jolsa@redhat.com> wrote:
-> On Fri, Feb 02, 2018 at 10:45:46AM -0800, Stephane Eranian wrote:
->> Jiri,
->>
->> On Thu, Feb 1, 2018 at 12:38 AM, Jiri Olsa <jolsa@kernel.org> wrote:
->> > Stephane reported that we don't set properly PERIOD
->> > sample type for events with period term defined.
->> >
->> > Before:
->> >   $ perf record -e cpu/cpu-cycles,period=1000/u ls
->> >   $ perf evlist -v
->> >   cpu/cpu-cycles,period=1000/u: ... sample_type: IP|TID|TIME|PERIOD, ...
->> >
->> > After:
->> >   $ perf record -e cpu/cpu-cycles,period=1000/u ls
->> >   $ perf evlist -v
->> >   cpu/cpu-cycles,period=1000/u: ... sample_type: IP|TID|TIME, ...
->> >
->> > Setting PERIOD sample type based on period term setup.
->> >
->> there is still one problem remaining here. It has to do with the handling
->> of cycles:pp or :p or :ppp. Suppose I want to set a period for it while I am
->> also sampling on other events: Something like:
->>
->> $ perf record -e
->> cycles:pp,instructions,cpu/event=0xd0,umaks=0x81,period=100000/ .....
->>
->> I want to set the period for cycles:pp, but not for instructions. I
->> cannot use -c because
->> it would also force a period on instructions. I could use the raw hw
->> raw event code for cycles:pp.
->> But that does not work because recent kernels prevent use of hw
->> filters on events programmed
->> for PEBS, e.g., cpu/event=0xc2,umask=0x1,cmask=16,inv/pp is rejected.
->> PEBS does not support filters.
->> It works in the case of cycles:pp simply by the nature on the
->> underlying event and the stalls.
->>
->> To get precise cycles, the only event syntax you can use is cycles:pp,
->> but then you cannot specify
->> an event-specific period. This needs to be fixed as well.
->
-> you can use p modifier behind like: cpu/.../pp
->
->>
->> I'd like to be able to say:
->>
->> $ perf record -e
->> cycles:pp:period=10000001,cpu/event=0xd0,umaks=0x81,period=100000/
->>
->> Or something equivalent.
->
-> and you can specify terms for hw events like 'cycles'
->
-> [jolsa@krava perf]$ sudo ./perf record -e 'cycles/period=10000001/pp,cpu/event=0xd0,umask=0x81,period=100000/'
-> ^C[ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.579 MB perf.data (722 samples) ]
->
-Ok, I did not know about this syntax. It looks bizarre because you are
-using an event name as a PMU instance.
-Works for me.
-Thanks.
+If matrix_keypad_stop() is calling and the keypad interrupt is triggered,
+disable_row_irqs() is called by both matrix_keypad_interrupt() and
+matrix_keypad_stop() at the same time. then disable_row_irqs() is called
+twice, and the device enter suspend state before keypad->work is executed.
+At this condition the device will start keypad and enable irq once after
+resume. and then irqs are disabled yet because irqs are disabled twice and
+only enable once.
 
-> [jolsa@krava perf]$ ./perf evlist -v
-> cycles/period=10000001/pp: size: 112, { sample_period, sample_freq }: 10000001, sample_type: IP|TID|TIME|ID|CPU, read_format: ID, disabled: 1, inherit: 1, mmap: 1, comm: 1, task: 1, precise_ip: 2, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1
-> cpu/event=0xd0,umask=0x81,period=100000/: type: 4, size: 112, config: 0x81d0, { sample_period, sample_freq }: 100000, sample_type: IP|TID|TIME|ID|CPU, read_format: ID, disabled: 1, inherit: 1, sample_id_all: 1, exclude_guest: 1
->
-> jirka
+Take lock around keypad->stopped to ensure irqs operation is in atomic
+operation.
+
+Signed-off-by: Zhang Bo <zbsdta@126.com>
+---
+Changes in v3:
+  - delete no needed lock protection, only add lock in matrix_keypad_stop().
+Changes in v2:
+  - Change commit message and full name in the signed-off-by tag.
+
+ drivers/input/keyboard/matrix_keypad.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
+index 1f316d66e6f7..41614c185918 100644
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -218,8 +218,10 @@ static void matrix_keypad_stop(struct input_dev *dev)
+ {
+ 	struct matrix_keypad *keypad = input_get_drvdata(dev);
+ 
++	spin_lock_irq(&keypad->lock);
+ 	keypad->stopped = true;
+-	mb();
++	spin_unlock_irq(&keypad->lock);
++
+ 	flush_work(&keypad->work.work);
+ 	/*
+ 	 * matrix_keypad_scan() will leave IRQs enabled;
+-- 
+2.14.3
