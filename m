@@ -1,111 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeBDTjs (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 14:39:48 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37962 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751788AbeBDTjl (ORCPT
+        id S1752545AbeBDUBm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 15:01:42 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37676 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751797AbeBDUBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 14:39:41 -0500
-X-Google-Smtp-Source: AH8x226E2FVmGzdt1aHjrwvx+sgox0hgqix+w1VzkOJmGwUrbwyr9t3hIMjdiAvqYwEpKZQj/4S+3l2BrUp6ZXoAkuA=
+        Sun, 4 Feb 2018 15:01:33 -0500
+X-Google-Smtp-Source: AH8x227i38XpzJNoBxugNxwGrXKsuESP8FyD792y2bcmNwPJIeH+ZbcuNYr8sSwGVtn86flehoL+GQ==
+Date: Sun, 4 Feb 2018 21:01:29 +0100
+From: Tycho Andersen <tycho@tycho.ws>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+Subject: Re: [RFC 1/3] seccomp: add a return code to trap to userspace
+Message-ID: <20180204200129.2bgq5yfaimg6xdg5@cisco>
+References: <20180204104946.25559-1-tycho@tycho.ws>
+ <20180204104946.25559-2-tycho@tycho.ws>
+ <CALCETrWgu5n+SMqrsZQ7MVYPtzs8otuc7hpA5uPH+JNtFrMBkQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <292744194.15823.1517758204087.JavaMail.zimbra@efficios.com>
-References: <20180202230458.840252014@goodmis.org> <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
- <CA+55aFz1=qWvnJ2271SGwuezwQRBA2nZp8_BxFyR-R0VKKgXRw@mail.gmail.com> <292744194.15823.1517758204087.JavaMail.zimbra@efficios.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 4 Feb 2018 11:39:39 -0800
-X-Google-Sender-Auth: qke-JB3yaqIJ5EhPLGla8S-uaBI
-Message-ID: <CA+55aFwtCP3Nf86jwNFzdRy_m0GZWH5U2KBDutPDh1ZVATHLYg@mail.gmail.com>
-Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based events
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: rostedt <rostedt@goodmis.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        linux-trace-users <linux-trace-users@vger.kernel.org>,
-        acme <acme@kernel.org>, Clark Williams <williams@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, bristot <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWgu5n+SMqrsZQ7MVYPtzs8otuc7hpA5uPH+JNtFrMBkQ@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 4, 2018 at 7:30 AM, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> I agree with your arguments. A consequence of those arguments is that
-> function-based tracing should be expected to be used by kernel engineers
-> and experts who can adapt their scripts to follow code changes, and tune
-> the script based on their specific kernel version and configuration.
+Hi Andy,
 
-Honestly, I think that's largely the case already.
+On Sun, Feb 04, 2018 at 05:36:33PM +0000, Andy Lutomirski wrote:
+> > The actual implementation of this is fairly small, although getting the
+> > synchronization right was/is slightly complex. Also worth noting that there
+> > is one race still present:
+> >
+> >   1. a task does a SECCOMP_RET_USER_NOTIF
+> >   2. the userspace handler reads this notification
+> >   3. the task dies
+> >   4. a new task with the same pid starts
+> >   5. this new task does a SECCOMP_RET_USER_NOTIF, gets the same cookie id
+> >      that the previous one did
+> >   6. the userspace handler writes a response
+> 
+> I'm slightly confused.  I thought the id was never reused for a given
+> struct seccomp_filter.  (Also, shouldn't the id be u64, not u32?)
 
-The main source of tracing is done by experts at big cloud companies,
-I bet. People who do it for performance reasons, or to find some
-anomaly. They're pretty intimate with the kernel.
+Well, what happens when u32/64 overflows? Eventually it will wrap.
 
-There _are_ "generic MIS" uses for tracing, and I think those are
-places where we may want architectural trace points. Things like
-gathering IO statistics etc.
+> On very quick reading, I have a question.  What happens if a process
+> has two seccomp_filters attached, one of them returns
+> SECCOMP_RET_USER_NOTIF, and the *other* one has a listener?
 
-I personally think that one of the pain points with tracing has been
-exactly the fact that there are two *completely* different uses, and
-they have *completely* different requirements. There's the expert
-user, who basically wants tracepoints almost everywhere, and who is
-doing some really deep analysis of some random area.
+Good question, in seccomp_run_filters(), the first (lowest, last
+applied) filter who returns SECCOMP_RET_USER_NOTIF is the one that
+gets the notification and the other receives nothing.
 
-Then there's the "I just want an overview" MIS people, who care about
-things like "I want a histogram of packets sent according to criteria
-XYZ", who want some highlevel block IO performance, or who just want
-random system-wide statistics.
+I don't really have any reason to prefer this behavior, it's just what
+happened without much thought.
 
-One group really needs to tie in to _anything_, and by definition is
-going to delve deep into some very specific corner of the kernel,
-because they might be chasing a subtle bug and want to have traces to
-just _find_ it.
+Cheers,
 
-The other group is looking for a much higher-level thing, and isn't
-necessarily a kernel hacker, and just wants to know IO latencies or
-something for statistics.
-
-I think the function-based events is for that first group. We do not
-want to have actual explicit trace events for that group, because that
-group might want them _everywhere_.  That first group might want to
-know the latency of a packet or block command through one particular
-chain.
-
-The second group might want explicit trace points exactly because that
-group doesn't even care *how* a packet is sent or received, or what
-the path through the block layer is. It just wants to know "packet
-sent" or "latency between IO request and completion" or things like
-that.
-
-The first group cares about a particular kernel implementation and has
-the expertise to line things up for the particular kernel that is
-being deployed on a hundred thousand machines.
-
-The second group doesn't want to care about a particular kernel, just
-wants tools that work across them.
-
-This is why I pushed Steven towards this function-based events things.
-Because I'm *hoping* that this can actually resolve that conflict
-between the two groups. Function-based events are for the first group,
-while actual explicit trace points are for the second.
-
-(Obviously it's not entirely black-and-white, but I do think there is
-a pretty big difference between the two groups. And the first group
-will obviously use the explicit trace points _too_, generally to
-narrow down where they want to go with the function-based one).
-
-We'll see. Maybe I'm entirely wrong. But I'm hoping that the
-function-based one will end up being helpful.
-
-               Linus
+Tycho
