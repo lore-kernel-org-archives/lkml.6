@@ -1,87 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751878AbeBDLBS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 06:01:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750862AbeBDLBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 06:01:12 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC4A217AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 4 Feb 2018 11:01:07 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio/orientation: Delete an error message for a failed
- memory allocation in two functions
-Message-ID: <20180204110107.19861b13@archlinux>
-In-Reply-To: <ebf6c923-d641-8bf8-5544-630a5ee39980@users.sourceforge.net>
-References: <ebf6c923-d641-8bf8-5544-630a5ee39980@users.sourceforge.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751786AbeBDLLf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 06:11:35 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40730 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752043AbeBDLLU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 06:11:20 -0500
+X-Google-Smtp-Source: AH8x226iEiRFiDATHB63AzFpNrN2Wb7X6wKBJmd3o9AWeOpk1o6yE8Y1ajZMIF4tLTPaekfSjYvIrORQTjhEF7Wqr0c=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180204090710.GA607@zzz.localdomain>
+References: <CACT4Y+b0pizvOAxtWQ-TGCRAYvHXdv79BAEaXh50W6vF8gBvkQ@mail.gmail.com>
+ <1516638634.2545.0.camel@wdc.com> <097921fa-52c5-8b2b-f564-4b24d9720478@interlog.com>
+ <CACT4Y+aEx0ie3qjx6afCYV2vN7gYii0uupKWPXaNTnWUmhdHQw@mail.gmail.com>
+ <c0a7ec39-e357-9db6-cf12-ff9c46259f26@interlog.com> <CACT4Y+bObXrFiB0Qn+nfkD8DZRiVck1GJ5U9UeQz+-y85gh70Q@mail.gmail.com>
+ <1517501859.3417.67.camel@codethink.co.uk> <CACT4Y+ZEJ9_no0uQSXO66iyyUeJLn_zbPBEey62YkuzOEUMP2w@mail.gmail.com>
+ <20180204090710.GA607@zzz.localdomain>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Sun, 4 Feb 2018 12:10:58 +0100
+Message-ID: <CACT4Y+av=1SmyN8m+F26Xs3DLmd7zLgTB6OWX0MC3gVkiqRpNg@mail.gmail.com>
+Subject: Re: scsi: sg: assorted memory corruptions
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
+        Doug Gilbert <dgilbert@interlog.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Jan 2018 22:26:15 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+On Sun, Feb 4, 2018 at 10:07 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> On Thu, Feb 01, 2018 at 05:21:12PM +0100, 'Dmitry Vyukov' via syzkaller wrote:
+>> On Thu, Feb 1, 2018 at 5:17 PM, Ben Hutchings
+>> <ben.hutchings@codethink.co.uk> wrote:
+>> > On Thu, 2018-02-01 at 08:04 +0100, Dmitry Vyukov wrote:
+>> >> On Thu, Feb 1, 2018 at 7:03 AM, Douglas Gilbert <dgilbert@interlog.com> wrote:
+>> >> > On 2018-01-30 07:22 AM, Dmitry Vyukov wrote:
+>> > [...]
+>> >> > > [1:0:0:0]    cd/dvd  QEMU     QEMU DVD-ROM     2.0.  /dev/sr0   /dev/sg1
+>> >> > >
+>> >> > > # readlink /sys/class/scsi_generic/sg0
+>> >> > >
+>> >> > > ../../devices/pci0000:00/0000:00:01.1/ata1/host0/target0:0:0/0:0:0:0/scsi_generic/sg0
+>> >> > >
+>> >> > > # cat /sys/class/scsi_generic/sg0/device/vendor
+>> >> > > ATA
+>> >> >
+>> >> >
+>> >> > ^^^^^
+>> >> > That subsystem is the culprit IMO, most likely libata.
+>> >> >
+>> >> > Until you can show this test failing on something other than an
+>> >> > ATA disk, then I will treat this issue as closed.
+>> >>
+>> >> Hi Doug,
+>> >>
+>> >> Why is bug in ATA not a bug? Is it long unused by everybody? I've got
+>> >> it by running qemu with default flags...
+>> >
+>> > If the bug is in libata then it's not on Doug to fix it since he's only
+>> > maintaining sg.
+>>
+>>
+>> Then I think we need to CC ata maintainers rather than treat it as closed.
+>> +Tejun, linux-ide@, you can see full thread here:
+>> https://groups.google.com/forum/#!topic/syzkaller/9RNr9Gu0MyY
+>>
+>
+> To get memory corruption it's actually sufficient just to submit "1-byte" reads;
+> there's no need for the SG_NEXT_CMD_LEN ioctl or anything:
+>
+>         #include <fcntl.h>
+>         #include <unistd.h>
+>
+>         int main()
+>         {
+>                 int fd = open("/dev/sg0", O_RDWR);
+>                 char buf[43] = { [36] = 0x08 /* READ_6 */ };
+>
+>                 for (;;)
+>                         write(fd, buf, sizeof(buf));
+>         }
+>
+> (where /dev/sg0 is the default QEMU disk type, "82371SB PIIX3 IDE")
+>
+> The SCSI command descriptor block is the 6 bytes at indices 36-41, so index 42
+> is the only data byte.
+>
+> Also this is a different bug from the crash in ata_bmdma_fill_sg() which is
+> fixed by "libata: fix length validation of ATAPI-relayed SCSI commands".
+>
+> I'm guessing the driver is DMA'ing to somewhere it shouldn't be...
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 29 Jan 2018 22:20:07 +0100
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Same response as previous patch - it might not be adding much information,
-but it is adding some so we should keep it.
-
-Jonathan
-
-> ---
->  drivers/iio/orientation/hid-sensor-incl-3d.c  | 4 +---
->  drivers/iio/orientation/hid-sensor-rotation.c | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/orientation/hid-sensor-incl-3d.c b/drivers/iio/orientation/hid-sensor-incl-3d.c
-> index 1e5451d1ff88..742c0e0eb4cf 100644
-> --- a/drivers/iio/orientation/hid-sensor-incl-3d.c
-> +++ b/drivers/iio/orientation/hid-sensor-incl-3d.c
-> @@ -336,10 +336,8 @@ static int hid_incl_3d_probe(struct platform_device *pdev)
->  
->  	indio_dev->channels = kmemdup(incl_3d_channels,
->  				      sizeof(incl_3d_channels), GFP_KERNEL);
-> -	if (!indio_dev->channels) {
-> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
-> +	if (!indio_dev->channels)
->  		return -ENOMEM;
-> -	}
->  
->  	ret = incl_3d_parse_report(pdev, hsdev,
->  				   (struct iio_chan_spec *)indio_dev->channels,
-> diff --git a/drivers/iio/orientation/hid-sensor-rotation.c b/drivers/iio/orientation/hid-sensor-rotation.c
-> index a69db2002414..cbf5e406b1ee 100644
-> --- a/drivers/iio/orientation/hid-sensor-rotation.c
-> +++ b/drivers/iio/orientation/hid-sensor-rotation.c
-> @@ -277,10 +277,8 @@ static int hid_dev_rot_probe(struct platform_device *pdev)
->  	indio_dev->channels = devm_kmemdup(&pdev->dev, dev_rot_channels,
->  					   sizeof(dev_rot_channels),
->  					   GFP_KERNEL);
-> -	if (!indio_dev->channels) {
-> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
-> +	if (!indio_dev->channels)
->  		return -ENOMEM;
-> -	}
->  
->  	ret = dev_rot_parse_report(pdev, hsdev,
->  				   (struct iio_chan_spec *)indio_dev->channels,
+It would be good to add KASAN checks to the DMA code that issues
+transfers. This is another case where a silent memory corruption
+causes dozens of assorted crashes all over the kernel. If we add
+checks, KASAN would pinpoint the exact stack that issues the bad
+command. This may be the simplest way to debug this bug as well. I've
+filed https://bugzilla.kernel.org/show_bug.cgi?id=198661 for this.
