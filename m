@@ -1,61 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751857AbeBDMzH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 07:55:07 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40319 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeBDMy7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 07:54:59 -0500
-X-Google-Smtp-Source: AH8x225NkI0lOCKw0wiYMUMFjLI3mNsdN1g4DoBXwzMDNqK4DeBPykO8XcYXVe8UBMPzmWU6tmiAGg==
-Subject: Re: [PATCH 5/5] lightnvm: pblk: refactor bad block identification
-To: Javier Gonzalez <javier@cnexlabs.com>
-Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
- <1517364411-22386-5-git-send-email-javier@cnexlabs.com>
- <bdde0655-0904-0bf1-7029-51708fcff8b3@lightnvm.io>
- <F1AA3AA6-8F23-43A8-9C4C-5F684A80782C@cnexlabs.com>
- <33896b20-c555-7c60-ed47-28156f4c93bf@lightnvm.io>
- <DEB69E27-635B-4B4F-ABA4-08BEC14B291F@cnexlabs.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <71151484-9bee-512b-cfe4-dd5bdc1b4711@lightnvm.io>
-Date: Sun, 4 Feb 2018 13:54:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <DEB69E27-635B-4B4F-ABA4-08BEC14B291F@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        id S1751907AbeBDNAL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 08:00:11 -0500
+Received: from mga11.intel.com ([192.55.52.93]:37088 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750821AbeBDNAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 08:00:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,458,1511856000";
+   d="scan'208";a="15322608"
+From: Wei Wang <wei.w.wang@intel.com>
+To: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
+        akpm@linux-foundation.org
+Cc: pbonzini@redhat.com, wei.w.wang@intel.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        huangzhichao@huawei.com
+Subject: [PATCH v26 0/2] Virtio-balloon: support free page reporting
+Date: Sun,  4 Feb 2018 20:41:06 +0800
+Message-Id: <1517748068-25499-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/04/2018 11:37 AM, Javier Gonzalez wrote:
-> 
->> On 31 Jan 2018, at 19.24, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> On 01/31/2018 10:13 AM, Javier Gonzalez wrote:
->>>> On 31 Jan 2018, at 16.51, Matias Bjørling <mb@lightnvm.io> wrote:
->>>>
->>> I have a patches abstracting this, which I think it makes it cleaner. I can push it next week for review. I’m traveling this week. (If you want to get a glimpse I can point you to the code).
->>
->> Yes, please do. Thanks
-> 
-> This is the release candidate for 2.0 support based on 4.17. I'll rebase
-> on top of you 2.0 support. We'll see if all changes make it to 4.17
-> then.
-> 
-> https://github.com/OpenChannelSSD/linux/tree/for-4.17/spec20
-> 
-> Javier
-> 
+This patch series is separated from the previous "Virtio-balloon
+Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,  
+implemented by this series enables the virtio-balloon driver to report
+hints of guest free pages to the host. It can be used to accelerate live
+migration of VMs. Here is an introduction of this usage:
 
-Great. I look forward to be patches being cleaned up and posted. I do 
-see some nitpicks here and there, which we properly can take a couple of 
-stabs at.
+Live migration needs to transfer the VM's memory from the source machine
+to the destination round by round. For the 1st round, all the VM's memory
+is transferred. From the 2nd round, only the pieces of memory that were
+written by the guest (after the 1st round) are transferred. One method
+that is popularly used by the hypervisor to track which part of memory is
+written is to write-protect all the guest memory.
 
-One think that generally stands out to me is the "if 1.2 support", else, 
-... statements. These could be structured better by having dedicated 
-setup functions for 1.2 and 2.0.
+The second feature enables the optimization of the 1st round memory
+transfer - the hypervisor can skip the transfer of guest free pages in the
+1st round. It is not concerned that the memory pages are used after they
+are given to the hypervisor as a hint of the free pages, because they will
+be tracked by the hypervisor and transferred in the next round if they are
+used and written.
+
+* Tests
+- Migration time improvement
+Result:
+Live migration time is reduced to 14% with this optimization.
+Details
+Local live migration of 8GB idle guest, the legacy live migration takes
+~1817ms. With this optimization, it takes ~254ms, which reduces the time
+to 14%.
+- Workload tests
+Results:
+Running this feature has no impact on the linux compilation workload
+running inside the guest.
+Details:
+Set up a Ping-Pong local live migration, where the guest ceaselessy
+migrates between the source and destination. Linux compilation,
+i.e. make bzImage -j4, is performed during the Ping-Pong migration. The
+legacy case takes 5min14s to finish the compilation. With this
+optimization patched, it takes 5min12s.
+
+ChangeLog:
+v25->v26: virtio-balloon changes only
+    - remove kicking free page vq since the host now polls the vq after
+      initiating the reporting
+    - report_free_page_func: detach all the used buffers after sending
+      the stop cmd id. This avoids leaving the detaching burden (i.e.
+      overhead) to the next cmd id. Detaching here isn't considered
+      overhead since the stop cmd id has been sent, and host has already
+      moved formard.
+v24->v25:
+    - mm: change walk_free_mem_block to return 0 (instead of true) on
+          completing the report, and return a non-zero value from the
+          callabck, which stops the reporting.
+    - virtio-balloon:
+        - use enum instead of define for VIRTIO_BALLOON_VQ_INFLATE etc.
+        - avoid __virtio_clear_bit when bailing out;
+        - a new method to avoid reporting the some cmd id to host twice
+        - destroy_workqueue can cancel free page work when the feature is
+          negotiated;
+        - fail probe when the free page vq size is less than 2.
+v23->v24:
+    - change feature name VIRTIO_BALLOON_F_FREE_PAGE_VQ to
+      VIRTIO_BALLOON_F_FREE_PAGE_HINT
+    - kick when vq->num_free < half full, instead of "= half full"
+    - replace BUG_ON with bailing out
+    - check vb->balloon_wq in probe(), if null, bail out
+    - add a new feature bit for page poisoning
+    - solve the corner case that one cmd id being sent to host twice
+v22->v23:
+    - change to kick the device when the vq is half-way full;
+    - open-code batch_free_page_sg into add_one_sg;
+    - change cmd_id from "uint32_t" to "__virtio32";
+    - reserver one entry in the vq for the driver to send cmd_id, instead
+      of busywaiting for an available entry;
+    - add "stop_update" check before queue_work for prudence purpose for
+      now, will have a separate patch to discuss this flag check later;
+    - init_vqs: change to put some variables on stack to have simpler
+      implementation;
+    - add destroy_workqueue(vb->balloon_wq);
+
+v21->v22:
+    - add_one_sg: some code and comment re-arrangement
+    - send_cmd_id: handle a cornercase
+
+For previous ChangeLog, please reference
+https://lwn.net/Articles/743660/
+
+Wei Wang (2):
+  mm: support reporting free page blocks
+  virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+
+ drivers/virtio/virtio_balloon.c     | 255 +++++++++++++++++++++++++++++++-----
+ include/linux/mm.h                  |   6 +
+ include/uapi/linux/virtio_balloon.h |   7 +
+ mm/page_alloc.c                     |  96 ++++++++++++++
+ 4 files changed, 328 insertions(+), 36 deletions(-)
+
+-- 
+2.7.4
