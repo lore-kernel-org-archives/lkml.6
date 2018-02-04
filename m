@@ -1,80 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751955AbeBDNnR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 08:43:17 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33404 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750868AbeBDNnM (ORCPT
+        id S1751913AbeBDN60 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 08:58:26 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45450 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeBDN6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 08:43:12 -0500
+        Sun, 4 Feb 2018 08:58:16 -0500
+X-Google-Smtp-Source: AH8x225jyuD/hg3ztWDzsMjj9VrCKQc7oa3xfZqBMi/OVwUtQrzO9d+Va6HMMS39PUcDZNZfAhDGtQ==
+Date: Sun, 4 Feb 2018 14:58:12 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Masaki Ota <masaki.ota@jp.alps.com>, Jiri Kosina <jikos@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Cirque/ALPS touchpad documentation
+Message-ID: <20180204135812.5qnwgimcqsdhnkc7@pali>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Sun, 04 Feb 2018 08:43:10 -0500
-From: okaya@codeaurora.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux PCI <linux-pci@vger.kernel.org>, Len Brown <lenb@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-acpi-owner@vger.kernel.org
-Subject: Re: [PATCH] ACPI/PCI: pci_link: reduce verbosity when IRQ is enabled
-In-Reply-To: <CAJZ5v0gW7hHAAisSemyvgTyMxpqxmUTADLZTmpyERB+qSMoA=w@mail.gmail.com>
-References: <1516128664-23634-1-git-send-email-okaya@codeaurora.org>
- <f508e749-2976-ec6f-681a-553b79c4ab76@codeaurora.org>
- <20180116214939.GC10860@bhelgaas-glaptop.roam.corp.google.com>
- <fde756f4-eb74-4002-6ac4-a44405bad2da@codeaurora.org>
- <CAJZ5v0jNVENRq-3QjF6nY9_5-0ff=6j_qneLqCQ57h6t1R4Fow@mail.gmail.com>
- <CAJZ5v0gW7hHAAisSemyvgTyMxpqxmUTADLZTmpyERB+qSMoA=w@mail.gmail.com>
-Message-ID: <f941444fae6a217c8ecd90010062a04b@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xkn7ajb7dqqv5jz7"
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-04 04:03, Rafael J. Wysocki wrote:
-> On Thu, Feb 1, 2018 at 8:32 AM, Rafael J. Wysocki <rafael@kernel.org> 
-> wrote:
->> On Mon, Jan 29, 2018 at 8:01 PM, Sinan Kaya <okaya@codeaurora.org> 
->> wrote:
->>> Rafael,
->>> 
->>> On 1/16/2018 4:49 PM, Bjorn Helgaas wrote:
->>>> On Tue, Jan 16, 2018 at 01:53:00PM -0500, Sinan Kaya wrote:
->>>>> Correcting linux-pci email.
->>>>> 
->>>>> On 1/16/2018 1:51 PM, Sinan Kaya wrote:
->>>>>> When ACPI Link object is enabled, the message is printed with a 
->>>>>> warning
->>>>>> prefix. Some test tools are capturing warning and test error types 
->>>>>> as
->>>>>> errors. Let's reduce the verbosity of success case.
->>>>>> 
->>>>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->>>> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->>>> 
->>>> Looks like this was a result of 4d9391557b68 ("ACPI: add missing 
->>>> KERN_*
->>>> constants to printks"), which I think added the wrong level in this 
->>>> case.
->>>> 
->>> 
->>> Any chance of merging this for 4.16?
->> 
->> There is.
-> 
-> This one is already there in the Linus' tree AFAICS.
 
-You are right. I see it there. I have not seen an applied email. I 
-thought it was still outstanding.
+--xkn7ajb7dqqv5jz7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" 
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hi!
+
+Now I find on cirque website that there is some documentation for
+GlidePoint/ALPS touchpads/trackpads. The most interesting part is
+"GP-AN- 130823 INTERFACING TO GEN4 OVER I2C (PDF)" on website:
+http://www.cirque.com/gen4-dev-resources
+
+There is basic I2C and HID protocol information with Memory Table
+registers in section 7.
+
+Looking at mouse/alps.c and hid/hid-alps.c source code, it seems that
+those 0xC2C0 and other "random" numbers have real meaning. And it should
+be possible to set more configuration options for ALPS touchpads. There
+are some coordinate algorithms or configuration for sample rate, etc.
+
+PS/2 protocol description is completely missing in that documentation,
+but e.g. addresses passed to PS/2 function alps_command_mode_read_reg()
+perfectly matches addresses in above memory table (e.g. AuxDevicePresent
+=3D enable/disable trackstick, etc...).
+
+I have not know that there is released such documentation for ALPS
+devices, so I'm sending this email... maybe it can be useful for you
+too.
+
+On that page is also documentation with source code examples how to
+update firmware in touchpads.
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--xkn7ajb7dqqv5jz7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWncRbAAKCRCL8Mk9A+RD
+UtOqAJ9kAsuVIp3bq+qBF0NZWfzPM3IdnQCgtggUD0jNB9Q38l1viqMvbmcQ/1k=
+=Rrok
+-----END PGP SIGNATURE-----
+
+--xkn7ajb7dqqv5jz7--
