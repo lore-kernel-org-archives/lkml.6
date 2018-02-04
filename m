@@ -1,54 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeBDTUj (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 14:20:39 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:38516 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751797AbeBDTUe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 14:20:34 -0500
-Subject: Re: [PATCH] pvcalls-back: do not return error on inet_accept EAGAIN
-To: Stefano Stabellini <sstabellini@kernel.org>, jgross@suse.com
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <alpine.DEB.2.10.1802021728420.10160@sstabellini-ThinkPad-X260>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <936e4d18-3f0d-3fc5-2272-c1ad9a5c7022@oracle.com>
-Date: Sun, 4 Feb 2018 14:20:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752402AbeBDTW6 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 14:22:58 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:45565 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751788AbeBDTWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 14:22:51 -0500
+Date: Sun, 4 Feb 2018 20:22:46 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ken Lin <yungching0725@gmail.com>
+Cc: shawnguo@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: imx: Add support for Advantech DMS-BA16
+Message-ID: <20180204192246.GC24569@lunn.ch>
+References: <20180204184514.2396-1-yungching0725@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.10.1802021728420.10160@sstabellini-ThinkPad-X260>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8795 signatures=668662
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802040258
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180204184514.2396-1-yungching0725@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 05, 2018 at 02:45:14AM +0800, Ken Lin wrote:
+> Add support for Advantech DMS-BA16 board, which use
+> the Advantech BA-16 module.
+> 
+> Signed-off-by: Ken Lin <yungching0725@gmail.com>
+> ---
+>  arch/arm/boot/dts/Makefile           |   1 +
+>  arch/arm/boot/dts/imx6q-dms-ba16.dts | 154 +++++++++++++++++++++++++++++++++++
+>  2 files changed, 155 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/imx6q-dms-ba16.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index ade7a38543dc..d97511273f30 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -428,6 +428,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+>  	imx6q-b450v3.dtb \
+>  	imx6q-b650v3.dtb \
+>  	imx6q-b850v3.dtb \
+> +	imx6q-dms-ba16.dtb \
+>  	imx6q-cm-fx6.dtb \
+>  	imx6q-cubox-i.dtb \
+>  	imx6q-cubox-i-emmc-som-v15.dtb \
 
+Hi Ken
 
-On 02/02/2018 08:34 PM, Stefano Stabellini wrote:
-> When the client sends a regular blocking accept request, the backend is
-> expected to return only when the accept is completed, simulating a
-> blocking behavior, or return an error.
->
-> Specifically, on EAGAIN from inet_accept, the backend shouldn't return
-> "EAGAIN" to the client. Instead, it should simply continue the wait.
-> Otherwise, the client will send another accept request, which will cause
-> another EAGAIN to be sent back, which is a waste of resources and not
-> conforming to the expected behavior. Change the behavior by turning the
-> "goto error" into a return.
->
-> Signed-off-by: Stefano Stabellini <stefano@aporeto.com>
+I think the intention is to keep this list sorted. So dms puts it
+later, after cubox.
 
+> @@ -0,0 +1,154 @@
+> +/*
+> + * Copyright 2018 Advantech Corporation
+> + *
+> + * The code contained herein is licensed under the GNU General Public
+> + * License. You may obtain a copy of the GNU General Public License
+> + * Version 2 or later at the following locations:
+> + *
+> + * http://www.opensource.org/licenses/gpl-license.html
+> + * http://www.gnu.org/copyleft/gpl.html
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include "imx6q-ba16.dtsi"
+> +
+> +/ {
+> +	model = "Advantech DMS-BA16";
+> +	compatible = "fsl,imx6q-dms-ba16", "fsl,imx6q";
 
-I am looking at SYSCALL_DEFINE4(accept4) and sock->ops->accept (which *I 
-think* is inet_accept, at least in some cases) passes all errors 
-(including EAGAIN)  back to the caller. Is this a different case?
+This looks wrong. I would expect "advantech,imx6q-dms-ba16".
 
--boris
+     Andrew
