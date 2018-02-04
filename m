@@ -1,51 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752773AbeBDAx0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Feb 2018 19:53:26 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:40069 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752193AbeBDAxS (ORCPT
+        id S1752984AbeBDBZe (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Feb 2018 20:25:34 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:46922 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752934AbeBDBZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Feb 2018 19:53:18 -0500
-To: LKML <linux-kernel@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: Martin Mares <mj@ucw.cz>, Michal Vaner <vorner@vorner.cz>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] PCI: update location of pci.ids file
-Message-ID: <1703ad43-3bf3-b777-7e1c-0beb55b064e8@infradead.org>
-Date: Sat, 3 Feb 2018 16:53:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Sat, 3 Feb 2018 20:25:25 -0500
+X-Google-Smtp-Source: AH8x224UUX9ShmzDO19xClnipV53JouBWPrXedXwhenZiNjLgpfzE5JEzroERBPAl5Z5QlACBVSKBUbLJa5rXxuGkzI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CALCETrUtU7j3wHfvrSmiA0wkE4=gXXgFsTG3VXh3x3E8WHxvMg@mail.gmail.com>
+References: <151770009169.7213.12476757146099518628.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151770009703.7213.12036560755602017391.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CALCETrUtU7j3wHfvrSmiA0wkE4=gXXgFsTG3VXh3x3E8WHxvMg@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Sat, 3 Feb 2018 17:25:23 -0800
+Message-ID: <CAPcyv4jczornu9b1kjWEK6MZXNG81NFfwvy_4PL+CsUkLHo+uQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86/entry: Clear extra registers beyond syscall
+ arguments for 64bit kernels
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Sat, Feb 3, 2018 at 4:14 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> On Sat, Feb 3, 2018 at 11:21 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+>> At entry userspace may have populated the extra registers outside the
+>> syscall calling convention with values that could be useful in a
+>> speculative execution attack. Clear them to minimize the kernel's attack
+>> surface. Note, this only clears the extra registers and not the unused
+>> registers for syscalls less than 6 arguments since those registers are
+>> likely to be clobbered well before their values could be put to use
+>> under speculation.
+>>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>> Cc: x86@kernel.org
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+>> Reported-by: Andi Kleen <ak@linux.intel.com>
+>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>> ---
+>>  arch/x86/entry/calling.h  |   17 +++++++++++++++++
+>>  arch/x86/entry/entry_64.S |    1 +
+>>  2 files changed, 18 insertions(+)
+>>
+>> diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+>> index 3f48f695d5e6..daee2d19e73d 100644
+>> --- a/arch/x86/entry/calling.h
+>> +++ b/arch/x86/entry/calling.h
+>> @@ -147,6 +147,23 @@ For 32-bit we have the following conventions - kernel is built with
+>>         UNWIND_HINT_REGS offset=\offset
+>>         .endm
+>>
+>> +       /*
+>> +        * Sanitize extra registers of values that a speculation attack
+>> +        * might want to exploit. In the CONFIG_FRAME_POINTER=y case,
+>> +        * the expectation is that %ebp will be clobbered before it
+>> +        * could be used.
+>> +        */
+>> +       .macro CLEAR_EXTRA_REGS_NOSPEC
+>> +       xorq %r15, %r15
+>> +       xorq %r14, %r14
+>> +       xorq %r13, %r13
+>> +       xorq %r12, %r12
+>> +       xorl %ebx, %ebx
+>> +#ifndef CONFIG_FRAME_POINTER
+>> +       xorl %ebp, %ebp
+>> +#endif
+>> +       .endm
+>> +
+>
+> Can we make the clears only happen if we have CONFIG_RETPOLINE?  Or is
+> there maybe some reason why we want this even without retpolines on?
 
-Update the URL for the pci.ids file and add locations for its mirrors.
+We have the other Spectre variant1 mitigations on by default. I'm not
+opposed to adding a config to turn them all off, but I think we should
+be consistent either way, and I don't think CONFIG_RETPOLINE is the
+right config to gate those.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Martin Mares <mj@ucw.cz>
-Cc: Michal Vaner <vorner@vorner.cz>
----
- Documentation/PCI/pci.txt |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>>         .macro POP_EXTRA_REGS
+>>         popq %r15
+>>         popq %r14
+>> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+>> index c752abe89d80..46260e951da6 100644
+>> --- a/arch/x86/entry/entry_64.S
+>> +++ b/arch/x86/entry/entry_64.S
+>> @@ -247,6 +247,7 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
+>>         TRACE_IRQS_OFF
+>>
+>>         /* IRQs are off. */
+>> +       CLEAR_EXTRA_REGS_NOSPEC
+>
+> Please put the clears before TRACE_IRQS_OFF to protect users that use tracing.
 
---- linux-next-20180202.orig/Documentation/PCI/pci.txt
-+++ linux-next-20180202/Documentation/PCI/pci.txt
-@@ -570,7 +570,9 @@ your driver if they're helpful, or just
- The device IDs are arbitrary hex numbers (vendor controlled) and normally used
- only in a single location, the pci_device_id table.
- 
--Please DO submit new vendor/device IDs to http://pciids.sourceforge.net/.
-+Please DO submit new vendor/device IDs to http://pci-ids.ucw.cz/.
-+There are mirrors of the pci.ids file at http://pciids.sourceforge.net/
-+and https://github.com/pciutils/pciids.
- 
- 
- 
+Ok.
