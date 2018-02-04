@@ -1,86 +1,88 @@
-Return-Path: <kai.heng.feng@canonical.com>
-X-Google-Smtp-Source: AH8x226yzQ4SNK+d5WFNZ7Cmo9gfa/lmWeW26IGreSlSaub4t1ZUcHrfz7Of4iXkXRzC6MDFduOh
-ARC-Seal: i=1; a=rsa-sha256; t=1517762344; cv=none;
+Return-Path: <jackstocker.93@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517763080; cv=none;
         d=google.com; s=arc-20160816;
-        b=kN1hnTtwUHU/7zAEMuUrNsItdUFeQ8GBn4fwg0qhyy/+kAMzuV+rpveMXcXKKgvBt8
-         xcFf/kttQkegnlkNPOOECp99TSCryMmJED2/pFbcJGxIWxcwxMtRuxACWqSliFyN9ZNK
-         Q4j9UPbkSUBPPmQA3StI0Ms4qsLS3TuX+ZleIihRmgMjwBanGPpoi/ZjXTaK/bpcQ92X
-         7Z4bKqf7L1S9YNo9TTQTzHKHn3LK3x1vyBKc0Fc1/CfhB/2fGs0oR5ix6uyQDhiOFfy/
-         QCIHNZNm6cRQkGkrKT1he0XQhFK9ljszRbv6aE3T0YzgWUm9LhJC8ZYONaOToXYNZTwn
-         Wqyw==
+        b=g0361qv4Gz/J2PA69oB09ei40JwpDrK6GX7Km4LhmbYiW02644GetiZvEklHrJpE8F
+         Tawkht78fRWv2Cf14HC/n/lgk2TUfzP2+yHsXd8Gpfee0tGkw2QbaGKuwG2m/usekkcf
+         e9iICEmSjYGaAV7fpNsnx62ZezfMlWO0qQDj/WccrgBgucJyANFqVQZgxNUot/8Iyy8i
+         t5dXKYB6aCr5lxvSjhCgXQUx2aPX6kkQoPb1qQLzn6KCzTJVladOdm3gdoMMYwpXf5mB
+         jqS2dJasPUuhdyXe2Y0RJKrijRoNrSQ9uLBQi83qqgfnmxwmiCtwYZ3shwAFih0ur1u5
+         q4dQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:arc-authentication-results;
-        bh=SthLfjZyKxuiVNvPEf8Hfn+4+YEgqqFZVYs+KRwyojM=;
-        b=wC7u7chLhV24S9BgOFPt+dP/ST/aLokRAh/SMaVBRLY1Qz6s1pTsSIqkTbhNwhjYs5
-         WyTLvw5gDESV71jxqhIW71cUECWv4oLx7L5sxpRVjIld3s7MB6AyKjMdSn8uC7u+bITW
-         pQ1M1wx8kQ5ayOn63lBVhIyhqBrQS15KDM1tD0f2Q3vx7LZ/nvOAacIEpS4aq7aCgplx
-         vhxjJo0o5+xOchpFDXUSKTsaIGx/RH/XYVJpFzB8AYZkUQdq+1tVX0bdeHVPh96nwu4p
-         LaCoKU+qP1jeSpn2P1xY8zt0bL7AAE4dTaUnXHlvdcR5lhFRoPWIE+ReSqDXL+wfqRQh
-         BKuw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=AFdG9DnfaD/sjCXVBTbnSeLs7yTq/NLOyiURxSDUvDg=;
+        b=kyj+Z9rz/aBLVr3/asxjZgpgLrA40wj9oLJfoxnspTUGcjgSR7lQ5g5QYysRTx8QQV
+         8bPNCtYO9XM9jrhiFs4RArbkpNmWsaDW/7VfblsiwwqjltLTAuVnkzsIjWDSStSghveG
+         DybBEYnknE3kJj2PwPP19vMaIQTQoIEpgrHaHULSr8Kk9qMlsQGunAqcYf6yDAL8HiZs
+         3s1MKo3jBo9ayWuyQkFyaxoQ6IbNZjJ9voNBP2A/cZX2CNdvbS/s6wiLgNNOWymSOiWp
+         R1hHWdLysqHnrS4PIIy5f2G21HOrmQJ/KCS+5u1MWYBY+EWykIGL0YXNdxhuwYMwrypS
+         CamA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of kai.heng.feng@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=kai.heng.feng@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=L7FDuSQe;
+       spf=pass (google.com: domain of jackstocker.93@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jackstocker.93@gmail.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of kai.heng.feng@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=kai.heng.feng@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-Content-Type: text/plain;
-	charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH v2] Add delay-init quirk for Corsair K70 RGB keyboards
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <1517761102-6849-1-git-send-email-jackstocker.93@gmail.com>
-Date: Mon, 5 Feb 2018 00:38:56 +0800
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Felipe Balbi <felipe.balbi@linux.intel.com>,
- Seth Forshee <seth.forshee@canonical.com>,
- Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
- Sandeep Singh <sandeep.singh@amd.com>,
- Devin Heitmueller <dheitmueller@kernellabs.com>,
- Dmitry Fleytman <dmitry@daynix.com>,
- Samuel Thibault <samuel.thibault@ens-lyon.org>,
- linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <AE53BCA5-F49A-41ED-B6F4-1B5FF8B4391F@canonical.com>
-References: <14038CE4-3754-426C-AC53-0AFE58D095A3@canonical.com>
- <1517761102-6849-1-git-send-email-jackstocker.93@gmail.com>
-To: JackStocker <jackstocker.93@gmail.com>
-X-Mailer: Apple Mail (2.3445.5.20)
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=L7FDuSQe;
+       spf=pass (google.com: domain of jackstocker.93@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jackstocker.93@gmail.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x226zIZ/vyTqMebrgPdW0JAGeeWU615F47ewxK9/LMcesjACWNQCyU0rrfxnBjcRXCGhq3guAUA==
+From: JackStocker <jackstocker.93@gmail.com>
+To: 
+Cc: JackStocker <jackstocker.93@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Seth Forshee <seth.forshee@canonical.com>,
+	Dmitry Fleytman <dmitry@daynix.com>,
+	Devin Heitmueller <dheitmueller@kernellabs.com>,
+	Sandeep Singh <sandeep.singh@amd.com>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] Add delay-init quirk for Corsair K70 RGB keyboards
+Date: Sun,  4 Feb 2018 16:50:58 +0000
+Message-Id: <1517763059-9334-1-git-send-email-jackstocker.93@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <AE53BCA5-F49A-41ED-B6F4-1B5FF8B4391F@canonical.com>
+References: <AE53BCA5-F49A-41ED-B6F4-1B5FF8B4391F@canonical.com>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591305042869034715?=
-X-GMAIL-MSGID: =?utf-8?q?1591489168324731620?=
+X-GMAIL-MSGID: =?utf-8?q?1591489939818145075?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Following on from this patch: https://lkml.org/lkml/2017/11/3/516,
+Corsair K70 RGB keyboards also require the DELAY_INIT quirk to
+start correctly at boot.
 
+Device ids found here:
+usb 3-3: New USB device found, idVendor=1b1c, idProduct=1b13
+usb 3-3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+usb 3-3: Product: Corsair K70 RGB Gaming Keyboard
 
-> On 5 Feb 2018, at 12:18 AM, JackStocker <jackstocker.93@gmail.com> wrote:
-> 
-> Do you mean like this?
+Signed-off-by: JackStocker <jackstocker.93@gmail.com>
+---
+Changes in v3:
+  - Added correct v1 commit message.
+Changes in v2:
+  - Moved K70 entry above Strafe to preserve ascending order.
 
-Yes, with proper commit message.
+ drivers/usb/core/quirks.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> 
-> Signed-off-by: JackStocker <jackstocker.93@gmail.com>
-> ---
-> drivers/usb/core/quirks.c | 3 +++
-> 1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-> index a6aaf2f..0405d68 100644
-> --- a/drivers/usb/core/quirks.c
-> +++ b/drivers/usb/core/quirks.c
-> @@ -218,6 +218,9 @@ static const struct usb_device_id usb_quirk_list[] = {
-> 	{ USB_DEVICE(0x1a0a, 0x0200), .driver_info =
-> 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
-> 
-> +	/* Corsair K70 RGB */
-> +	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
-> +
-> 	/* Corsair Strafe RGB */
-> 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
-> 
-> -- 
-> 2.7.4
-> 
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index a6aaf2f..0405d68 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -218,6 +218,9 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	{ USB_DEVICE(0x1a0a, 0x0200), .driver_info =
+ 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+ 
++	/* Corsair K70 RGB */
++	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
++
+ 	/* Corsair Strafe RGB */
+ 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
+ 
+-- 
+2.7.4
