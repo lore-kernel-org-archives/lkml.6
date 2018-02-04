@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752179AbeBDSjF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 13:39:05 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33587 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752124AbeBDSi6 (ORCPT
+        id S1752212AbeBDSjX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 13:39:23 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40467 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751651AbeBDSjE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 13:38:58 -0500
-X-Google-Smtp-Source: AH8x226w9I2o9yEkY6DkQ8np9Yxd8sNWpdoe6BHs/CSqSaajxzP446ZIfrGXVvH1dKQdgB4e6AIcVA==
-Date: Sun, 4 Feb 2018 19:38:54 +0100
+        Sun, 4 Feb 2018 13:39:04 -0500
+X-Google-Smtp-Source: AH8x2259N12JwsRL7Q/KiuHWj5XFc1h7DBa71Qr/6rxmfx+ZiM2fv/qXyPuCp6HJ5/f3/ItVH0D1aQ==
+Date: Sun, 4 Feb 2018 19:39:01 +0100
 From: Christoffer Dall <christoffer.dall@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -24,174 +24,113 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Jayachandran C <jnair@caviumnetworks.com>,
         Jon Masters <jcm@redhat.com>,
         Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH v3 10/18] arm/arm64: KVM: Turn kvm_psci_version into a
- static inline
-Message-ID: <20180204183854.GN21802@cbox>
+Subject: Re: [PATCH v3 11/18] arm64: KVM: Report SMCCC_ARCH_WORKAROUND_1 BP
+ hardening support
+Message-ID: <20180204183901.GO21802@cbox>
 References: <20180201114657.7323-1-marc.zyngier@arm.com>
- <20180201114657.7323-11-marc.zyngier@arm.com>
+ <20180201114657.7323-12-marc.zyngier@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180201114657.7323-11-marc.zyngier@arm.com>
+In-Reply-To: <20180201114657.7323-12-marc.zyngier@arm.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 11:46:49AM +0000, Marc Zyngier wrote:
-> We're about to need kvm_psci_version in HYP too. So let's turn it
-> into a static inline, and pass the kvm structure as a second
-> parameter (so that HYP can do a kern_hyp_va on it).
+On Thu, Feb 01, 2018 at 11:46:50AM +0000, Marc Zyngier wrote:
+> A new feature of SMCCC 1.1 is that it offers firmware-based CPU
+> workarounds. In particular, SMCCC_ARCH_WORKAROUND_1 provides
+> BP hardening for CVE-2017-5715.
 > 
+> If the host has some mitigation for this issue, report that
+> we deal with it using SMCCC_ARCH_WORKAROUND_1, as we apply the
+> host workaround on every guest exit.
 
 Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
 
+> 
 > Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 > ---
->  arch/arm64/kvm/hyp/switch.c | 20 ++++++++++++--------
->  include/kvm/arm_psci.h      | 26 +++++++++++++++++++++++++-
->  virt/kvm/arm/psci.c         | 25 +++----------------------
->  3 files changed, 40 insertions(+), 31 deletions(-)
+>  arch/arm/include/asm/kvm_host.h   | 7 +++++++
+>  arch/arm64/include/asm/kvm_host.h | 6 ++++++
+>  include/linux/arm-smccc.h         | 5 +++++
+>  virt/kvm/arm/psci.c               | 9 ++++++++-
+>  4 files changed, 26 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-> index 036e1f3d77a6..408c04d789a5 100644
-> --- a/arch/arm64/kvm/hyp/switch.c
-> +++ b/arch/arm64/kvm/hyp/switch.c
-> @@ -19,6 +19,8 @@
->  #include <linux/jump_label.h>
->  #include <uapi/linux/psci.h>
+> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+> index e9d57060d88c..6c05e3b13081 100644
+> --- a/arch/arm/include/asm/kvm_host.h
+> +++ b/arch/arm/include/asm/kvm_host.h
+> @@ -309,4 +309,11 @@ static inline void kvm_fpsimd_flush_cpu_state(void) {}
 >  
-> +#include <kvm/arm_psci.h>
+>  static inline void kvm_arm_vhe_guest_enter(void) {}
+>  static inline void kvm_arm_vhe_guest_exit(void) {}
 > +
->  #include <asm/kvm_asm.h>
->  #include <asm/kvm_emulate.h>
->  #include <asm/kvm_hyp.h>
-> @@ -350,14 +352,16 @@ int __hyp_text __kvm_vcpu_run(struct kvm_vcpu *vcpu)
->  
->  	if (exit_code == ARM_EXCEPTION_TRAP &&
->  	    (kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC64 ||
-> -	     kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC32) &&
-> -	    vcpu_get_reg(vcpu, 0) == PSCI_0_2_FN_PSCI_VERSION) {
-> -		u64 val = PSCI_RET_NOT_SUPPORTED;
-> -		if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
-> -			val = 2;
-> -
-> -		vcpu_set_reg(vcpu, 0, val);
-> -		goto again;
-> +	     kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC32)) {
-> +		u32 val = vcpu_get_reg(vcpu, 0);
-> +
-> +		if (val == PSCI_0_2_FN_PSCI_VERSION) {
-> +			val = kvm_psci_version(vcpu, kern_hyp_va(vcpu->kvm));
-> +			if (unlikely(val == KVM_ARM_PSCI_0_1))
-> +				val = PSCI_RET_NOT_SUPPORTED;
-> +			vcpu_set_reg(vcpu, 0, val);
-> +			goto again;
-> +		}
->  	}
->  
->  	if (static_branch_unlikely(&vgic_v2_cpuif_trap) &&
-> diff --git a/include/kvm/arm_psci.h b/include/kvm/arm_psci.h
-> index 7b2e12697d4f..9b699f91171f 100644
-> --- a/include/kvm/arm_psci.h
-> +++ b/include/kvm/arm_psci.h
-> @@ -18,6 +18,7 @@
->  #ifndef __KVM_ARM_PSCI_H__
->  #define __KVM_ARM_PSCI_H__
->  
-> +#include <linux/kvm_host.h>
->  #include <uapi/linux/psci.h>
->  
->  #define KVM_ARM_PSCI_0_1	PSCI_VERSION(0, 1)
-> @@ -26,7 +27,30 @@
->  
->  #define KVM_ARM_PSCI_LATEST	KVM_ARM_PSCI_1_0
->  
-> -int kvm_psci_version(struct kvm_vcpu *vcpu);
-> +/*
-> + * We need the KVM pointer independently from the vcpu as we can call
-> + * this from HYP, and need to apply kern_hyp_va on it...
-> + */
-> +static inline int kvm_psci_version(struct kvm_vcpu *vcpu, struct kvm *kvm)
+> +static inline bool kvm_arm_harden_branch_predictor(void)
 > +{
-> +	/*
-> +	 * Our PSCI implementation stays the same across versions from
-> +	 * v0.2 onward, only adding the few mandatory functions (such
-> +	 * as FEATURES with 1.0) that are required by newer
-> +	 * revisions. It is thus safe to return the latest, unless
-> +	 * userspace has instructed us otherwise.
-> +	 */
-> +	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features)) {
-> +		if (kvm->arch.psci_version)
-> +			return kvm->arch.psci_version;
-> +
-> +		return KVM_ARM_PSCI_LATEST;
-> +	}
-> +
-> +	return KVM_ARM_PSCI_0_1;
+> +	/* No way to detect it yet, pretend it is not there. */
+> +	return false;
 > +}
 > +
+>  #endif /* __ARM_KVM_HOST_H__ */
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 10af386642c6..448d3b9a58cb 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -418,4 +418,10 @@ static inline void kvm_arm_vhe_guest_exit(void)
+>  {
+>  	local_daif_restore(DAIF_PROCCTX_NOIRQ);
+>  }
 > +
->  int kvm_hvc_call_handler(struct kvm_vcpu *vcpu);
+> +static inline bool kvm_arm_harden_branch_predictor(void)
+> +{
+> +	return cpus_have_const_cap(ARM64_HARDEN_BRANCH_PREDICTOR);
+> +}
+> +
+>  #endif /* __ARM64_KVM_HOST_H__ */
+> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+> index dc68aa5a7261..e1ef944ef1da 100644
+> --- a/include/linux/arm-smccc.h
+> +++ b/include/linux/arm-smccc.h
+> @@ -73,6 +73,11 @@
+>  			   ARM_SMCCC_SMC_32,				\
+>  			   0, 1)
 >  
->  struct kvm_one_reg;
+> +#define ARM_SMCCC_ARCH_WORKAROUND_1					\
+> +	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
+> +			   ARM_SMCCC_SMC_32,				\
+> +			   0, 0x8000)
+> +
+>  #ifndef __ASSEMBLY__
+>  
+>  #include <linux/linkage.h>
 > diff --git a/virt/kvm/arm/psci.c b/virt/kvm/arm/psci.c
-> index 53272e8e0d37..2efacbe7b1a2 100644
+> index 2efacbe7b1a2..22c24561d07d 100644
 > --- a/virt/kvm/arm/psci.c
 > +++ b/virt/kvm/arm/psci.c
-> @@ -124,7 +124,7 @@ static unsigned long kvm_psci_vcpu_on(struct kvm_vcpu *source_vcpu)
->  	if (!vcpu)
->  		return PSCI_RET_INVALID_PARAMS;
->  	if (!vcpu->arch.power_off) {
-> -		if (kvm_psci_version(source_vcpu) != KVM_ARM_PSCI_0_1)
-> +		if (kvm_psci_version(source_vcpu, kvm) != KVM_ARM_PSCI_0_1)
->  			return PSCI_RET_ALREADY_ON;
->  		else
->  			return PSCI_RET_INVALID_PARAMS;
-> @@ -233,25 +233,6 @@ static void kvm_psci_system_reset(struct kvm_vcpu *vcpu)
->  	kvm_prepare_system_event(vcpu, KVM_SYSTEM_EVENT_RESET);
->  }
->  
-> -int kvm_psci_version(struct kvm_vcpu *vcpu)
-> -{
-> -	/*
-> -	 * Our PSCI implementation stays the same across versions from
-> -	 * v0.2 onward, only adding the few mandatory functions (such
-> -	 * as FEATURES with 1.0) that are required by newer
-> -	 * revisions. It is thus safe to return the latest, unless
-> -	 * userspace has instructed us otherwise.
-> -	 */
-> -	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features)) {
-> -		if (vcpu->kvm->arch.psci_version)
-> -			return vcpu->kvm->arch.psci_version;
-> -
-> -		return KVM_ARM_PSCI_LATEST;
-> -	}
-> -
-> -	return KVM_ARM_PSCI_0_1;
-> -}
-> -
->  static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
+> @@ -406,13 +406,20 @@ int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
 >  {
->  	struct kvm *kvm = vcpu->kvm;
-> @@ -409,7 +390,7 @@ static int kvm_psci_0_1_call(struct kvm_vcpu *vcpu)
->   */
->  static int kvm_psci_call(struct kvm_vcpu *vcpu)
->  {
-> -	switch (kvm_psci_version(vcpu)) {
-> +	switch (kvm_psci_version(vcpu, vcpu->kvm)) {
->  	case KVM_ARM_PSCI_1_0:
->  		return kvm_psci_1_0_call(vcpu);
->  	case KVM_ARM_PSCI_0_2:
-> @@ -460,7 +441,7 @@ int kvm_arm_get_fw_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
->  		void __user *uaddr = (void __user *)(long)reg->addr;
->  		u64 val;
+>  	u32 func_id = smccc_get_function(vcpu);
+>  	u32 val = PSCI_RET_NOT_SUPPORTED;
+> +	u32 feature;
 >  
-> -		val = kvm_psci_version(vcpu);
-> +		val = kvm_psci_version(vcpu, vcpu->kvm);
->  		if (val == KVM_ARM_PSCI_0_1)
->  			return -EINVAL;
->  		if (copy_to_user(uaddr, &val, KVM_REG_SIZE(reg->id)))
+>  	switch (func_id) {
+>  	case ARM_SMCCC_VERSION_FUNC_ID:
+>  		val = ARM_SMCCC_VERSION_1_1;
+>  		break;
+>  	case ARM_SMCCC_ARCH_FEATURES_FUNC_ID:
+> -		/* Nothing supported yet */
+> +		feature = smccc_get_arg1(vcpu);
+> +		switch(feature) {
+> +		case ARM_SMCCC_ARCH_WORKAROUND_1:
+> +			if (kvm_arm_harden_branch_predictor())
+> +				val = 0;
+> +			break;
+> +		}
+>  		break;
+>  	default:
+>  		return kvm_psci_call(vcpu);
 > -- 
 > 2.14.2
 > 
