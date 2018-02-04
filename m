@@ -1,82 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752135AbeBDRVq (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 12:21:46 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:38446 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752088AbeBDRVe (ORCPT
+        id S1751880AbeBDRhC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 12:37:02 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36576 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751651AbeBDRgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 12:21:34 -0500
-X-Google-Smtp-Source: AH8x226K/4sTl6itV/XhYzRLaheomP9iq4/WAI0w/4/MSEMD1Gjm4as2NmVROfydKo42kEiPWrDYCw==
-Date: Sun, 4 Feb 2018 09:21:30 -0800
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, mingo@kernel.org,
-        akpm@linux-foundation.org, tglx@linutronix.de, peterz@infradead.org,
-        acme@kernel.org, corbet@lwn.net, mathieu.desnoyers@efficios.com,
-        namhyung@kernel.org, daniel@iogearbox.net, davem@davemloft.net
-Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
- events
-Message-ID: <20180204172128.swbgrr7uc72amxgh@ast-mbp>
-References: <20180202230458.840252014@goodmis.org>
- <20180203223817.0c8cc485d8163ad84039cf02@kernel.org>
- <20180203102759.56d03ada@gandalf.local.home>
- <20180204125747.70eb79dd0a69d30fb8a47fcd@kernel.org>
+        Sun, 4 Feb 2018 12:36:54 -0500
+X-Google-Smtp-Source: AH8x227yPYbd3TSP8zvVHP4/83xiBL7oJaVtGRE5BZTbXIhvY79htrtkHgUC9OaS//yDsEdSJq4pjWoi+tImz9a3NtA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180204125747.70eb79dd0a69d30fb8a47fcd@kernel.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180204104946.25559-2-tycho@tycho.ws>
+References: <20180204104946.25559-1-tycho@tycho.ws> <20180204104946.25559-2-tycho@tycho.ws>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Sun, 4 Feb 2018 17:36:33 +0000
+Message-ID: <CALCETrWgu5n+SMqrsZQ7MVYPtzs8otuc7hpA5uPH+JNtFrMBkQ@mail.gmail.com>
+Subject: Re: [RFC 1/3] seccomp: add a return code to trap to userspace
+To: Tycho Andersen <tycho@tycho.ws>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 04, 2018 at 12:57:47PM +0900, Masami Hiramatsu wrote:
-> 
-> > I based some of the code from kprobes too. But I wanted this to be
-> > simpler, and as such, not as powerful as kprobes. More of a "poor mans"
-> > kprobe ;-) Where you are limited to functions and their arguments. If
-> > you need more power, switch to kprobes. In other words, its just an
-> > added stepping stone.
-> > 
-> > Also, this should work without kprobe support, only ftrace, and function
-> > args from the arch.
-> 
-> Hmm, but implementation seems very far from current probe events, we need
-> to consider how to unify it. Anyway, it is a very good time to do, because
-> I found current probe-event fetch method is not good with retpoline/IBRS,
-> it is full of indirect call.
-> 
-> I would like to convert it to eBPF if possible. It will be good for the
-> performance with JIT, and we can collaborate on the same code with BPF
-> people.
+On Sun, Feb 4, 2018 at 10:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> This patch introduces a means for syscalls matched in seccomp to notify
+> some other task that a particular filter has been triggered.
 
-The current probe fetch method is indeed going to slow down due to
-retpoline, but this issue is going to affect not only this piece
-of code, but the rest of the kernel where indirect call performance
-matters a lot. Like networking stack where we have at least 4 indirect
-calls per packet.
-So I'd suggest to focus on finding a general method instead of coming
-with a specific solution for this kprobe fetching problem.
-Devirtualization approach works well and applicable in many cases.
-For networking stack deliver_skb() and __netif_receive_skb_core()
-can check if (pt_prev->func == ip_rcv || ipv6_rcv)
-and call them directly.
-The other approach I was thinking to explore is static_key-like
-for indirect calls. In many cases the target is rarely changed,
-so we can do arch specific rewrite of destination offset inside
-normal direct call instruction. That should be faster than retpoline.
+Neat!
 
-As far as emitting raw bpf insns instead of kprobe fetch methods
-there is a big problem with such apporach. Interpreter and all
-JITs take 'struct bpf_prog' that passed the verifier and not just
-random set of bpf instructions. BPF is not a generic assembler.
-BPF is an instruction set _with_ C calling convention.
-The registers and instructions must be used in certain way or
-things will horribly break.
-See Documentation/bpf/bpf_design_QA.txt for details.
-Long ago I wrote a patch that converted pred tree walk into
-raw bpf insns. If that patch made it into mainline back then
-it would have been a huge headache for us now.
-So if you plan on generating bpf programs they _must_ pass the verifier.
+>
+> The motivation for this is primarily for use with containers. For example,
+> if a container does an init_module(), we obviously don't want to load this
+> untrusted code, which may be compiled for the wrong version of the kernel
+> anyway. Instead, we could parse the module image, figure out which module
+> the container is trying to load and load it on the host.
+>
+> As another example, containers cannot mknod(), since this checks
+> capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
+> /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
+> coding some whitelist in the kernel. Another example is mount(), which has
+> many security restrictions for good reason, but configuration or runtime
+> knowledge could potentially be used to relax these restrictions.
+>
+> This patch adds functionality that is already possible via at least two
+> other means that I know about, both of which involve ptrace(): first, one
+> could ptrace attach, and then iterate through syscalls via PTRACE_SYSCALL.
+> Unfortunately this is slow, so a faster version would be to install a
+> filter that does SECCOMP_RET_TRACE, which triggers a PTRACE_EVENT_SECCOMP.
+> Since ptrace allows only one tracer, if the container runtime is that
+> tracer, users inside the container (or outside) trying to debug it will not
+> be able to use ptrace, which is annoying. It also means that older
+> distributions based on Upstart cannot boot inside containers using ptrace,
+> since upstart itself uses ptrace to start services.
+>
+> The actual implementation of this is fairly small, although getting the
+> synchronization right was/is slightly complex. Also worth noting that there
+> is one race still present:
+>
+>   1. a task does a SECCOMP_RET_USER_NOTIF
+>   2. the userspace handler reads this notification
+>   3. the task dies
+>   4. a new task with the same pid starts
+>   5. this new task does a SECCOMP_RET_USER_NOTIF, gets the same cookie id
+>      that the previous one did
+>   6. the userspace handler writes a response
+
+I'm slightly confused.  I thought the id was never reused for a given
+struct seccomp_filter.  (Also, shouldn't the id be u64, not u32?)
+
+On very quick reading, I have a question.  What happens if a process
+has two seccomp_filters attached, one of them returns
+SECCOMP_RET_USER_NOTIF, and the *other* one has a listener?
