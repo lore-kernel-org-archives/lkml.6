@@ -1,130 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752058AbeBDP3b (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 10:29:31 -0500
-Received: from mail.efficios.com ([167.114.142.141]:42725 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750995AbeBDP3Y (ORCPT
+        id S1752005AbeBDPfV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 10:35:21 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:41239 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750995AbeBDPfN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 10:29:24 -0500
-Date: Sun, 4 Feb 2018 15:30:04 +0000 (UTC)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: rostedt <rostedt@goodmis.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        linux-trace-users <linux-trace-users@vger.kernel.org>,
-        acme <acme@kernel.org>, Clark Williams <williams@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, bristot <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Message-ID: <292744194.15823.1517758204087.JavaMail.zimbra@efficios.com>
-In-Reply-To: <CA+55aFz1=qWvnJ2271SGwuezwQRBA2nZp8_BxFyR-R0VKKgXRw@mail.gmail.com>
-References: <20180202230458.840252014@goodmis.org> <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com> <CA+55aFz1=qWvnJ2271SGwuezwQRBA2nZp8_BxFyR-R0VKKgXRw@mail.gmail.com>
-Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
- events
+        Sun, 4 Feb 2018 10:35:13 -0500
+X-Google-Smtp-Source: AH8x225QYv2xnf0Z4/Nilcf78TSXqvEi09M7OR9zLJFiJsnxYYbfBYWAHpBgRlASL5NMkpnbIu81os1UQJGeTZQA5SE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.141]
-X-Mailer: Zimbra 8.7.11_GA_1854 (ZimbraWebClient - FF52 (Linux)/8.7.11_GA_1854)
-Thread-Topic: Dynamically created function based events
-Thread-Index: kaZ2eDvVBvH9B/whLMfJXn7eHtGXfQ==
+In-Reply-To: <1e3424f4-771b-51ad-3630-0faf47e388e0@oracle.com>
+References: <20180202153240.1190361-1-arnd@arndb.de> <aa6e25c7-dc55-a5bf-39cb-8b9453604111@oracle.com>
+ <CAK8P3a2AdziKXR=4LwMzUdoL2q2WXYZZz1uM9yh6VX2FbpqnnA@mail.gmail.com> <1e3424f4-771b-51ad-3630-0faf47e388e0@oracle.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sun, 4 Feb 2018 16:35:11 +0100
+X-Google-Sender-Auth: FSIE0SHXn1e2tGx4_hF7l_r48sM
+Message-ID: <CAK8P3a3v=SMcuOtG6xLt0rpAoPx-ox_TaQ=g+stNVWH4HBciHw@mail.gmail.com>
+Subject: Re: [PATCH] xen: hypercall: fix out-of-bounds memcpy
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>, Nicolas Pitre <nico@linaro.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jan Beulich <jbeulich@suse.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 3, 2018, at 4:43 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
-
-> On Sat, Feb 3, 2018 at 9:04 AM, Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
+On Sat, Feb 3, 2018 at 6:08 PM, Boris Ostrovsky
+<boris.ostrovsky@oracle.com> wrote:
+>
+>
+> On 02/03/2018 10:12 AM, Arnd Bergmann wrote:
 >>
->> The approach proposed here will introduce an expectation that internal
->> function signatures never change in the kernel, else it would break user-space
->> tools hooking on those functions.
-> 
-> No, I really don't think so.
-> 
-> There's two reasons for that:
-> 
-> The first is purely about kernel development. I, and every sane kernel
-> engineer, will simply laugh in the face of somebody who comes to us
-> and says "hey, I had this script that did low-level function tracing
-> on your kernel, and then you changed something, and now the random
-> function I was tracing has a new name and different arguments".
-> 
-> We'll just go "yeah, tough, change your script". Or more likely, not
-> even bother to reply at all.
-> 
-> But the bigger issue is actually simply just psychology. Exactly
-> *because* this is all implicit, and there are no explicit trace
-> points, it's _obvious_ to any user that there isn't something
-> long-term dependable that they hang their hat on.
-> 
-> Everybody *understands* that this is like a debugger: if you have a
-> gdb script that shows some information, and then you go around and
-> change the source code, then *obviously* you'll have to change your
-> debugger script too. You don't keep the source code static just to
-> make your gdb script happy., That would be silly.
-> 
-> In contrast, the explicit tracepoints really made people believe that
-> they have some long-term meaning.
-> 
-> So yes, we'll  make it obvious that hell no, random kernel functions
-> are not a long-term ABI. But honestly, I don't think we even need to
-> have a lot of "education" on this, simply because it's so obvious that
-> anybody who thinks it's some ABI is not going to be somebody we'll
-> have to worry about.
-> 
-> Because the kind of person thinking "Ooh, this is a stable ABI" won't
-> be doing interesting work anyway. That kind of person will be sitting
-> in a corner eating paste, not doing interesting kernel tracing.
+>> On Sat, Feb 3, 2018 at 12:33 AM, Boris Ostrovsky
+>> <boris.ostrovsky@oracle.com> wrote:
+>>>
+>>> On 02/02/2018 10:32 AM, Arnd Bergmann wrote:
+>>>>
+>>>> The legacy hypercall handlers were originally added with
+>>>> a comment explaining that "copying the argument structures in
+>>>> HYPERVISOR_event_channel_op() and HYPERVISOR_physdev_op() into the local
+>>>> variable is sufficiently safe" and only made sure to not write
+>>>> past the end of the argument structure, the checks in linux/string.h
+>>>> disagree with that, when link-time optimizations are used:
+>>>>
+>>>> In function 'memcpy',
+>>>>      inlined from 'pirq_query_unmask' at drivers/xen/fallback.c:53:2,
+>>>>      inlined from '__startup_pirq' at
+>>>> drivers/xen/events/events_base.c:529:2,
+>>>>      inlined from 'restore_pirqs' at
+>>>> drivers/xen/events/events_base.c:1439:3,
+>>>>      inlined from 'xen_irq_resume' at
+>>>> drivers/xen/events/events_base.c:1581:2:
+>>>> include/linux/string.h:350:3: error: call to '__read_overflow2' declared
+>>>> with attribute error: detected read beyond size of object passed as 2nd
+>>>> parameter
+>>>>     __read_overflow2();
+>>>>     ^
+>>>> make[3]: *** [ccLujFNx.ltrans15.ltrans.o] Error 1
+>>>> make[3]: Target 'all' not remade because of errors.
+>>>> lto-wrapper: fatal error: make returned 2 exit status
+>>>> compilation terminated.
+>>>> ld: error: lto-wrapper failed
+>>>>
+>>>> This changes the functions so that each argument is accessed with
+>>>> exactly the correct length based on the command code.
+>>>>
+>>>> Fixes: cf47a83fb06e ("xen/hypercall: fix hypercall fallback code for
+>>>> very old hypervisors")
+>>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>>> ---
+>>>>   drivers/xen/fallback.c | 94
+>>>> ++++++++++++++++++++++++++++----------------------
+>>>>   1 file changed, 53 insertions(+), 41 deletions(-)
+>>>>
+>>
+>>>>        default:
+>>>> -             WARN_ON(rc != -ENOSYS);
+>>>> -             break;
+>>>> +             return -ENOSYS;
+>>>>        }
+>>>>
+>>>> +     memcpy(&op.u, arg, len);
+>>>> +     rc = _hypercall1(int, event_channel_op_compat, &op);
+>>>> +     memcpy(arg, &op.u, len);
+>>>
+>>>
+>>>
+>>> We don't copy back for all commands, only those that are COPY_BACK.
+>>
+>>
+>> Not sure what you mean. Is it harmful to copy back the data for the others
+>> in any way? Otherwise I wouldn't micro-optimize this.
+>
+>
+>
+> I should have checked the original commit for fallback.c --- the code that
+> it replaced was doing copybacks for all hypercalls and selective copybacks
+> is an optimization introduced in that commit.
 
-I agree with your arguments. A consequence of those arguments is that
-function-based tracing should be expected to be used by kernel engineers
-and experts who can adapt their scripts to follow code changes, and tune
-the script based on their specific kernel version and configuration.
+It was not an optimization but a correctness fix to avoid overflowing
+the caller stack on the copy-back operation. What I tried to explain
+in my commit message is that the same fix is also needed on
+the copy-out before it. It's only a read access beyond the end
+of a local variable, but not both the static checks and kasan-stack
+get alarmed about it.
 
-On the other hand, system administrators and application developers who
-wish to tune and understand their workload will more likely fetch their
-analysis scripts/tools from a third-party. If those scripts hook on
-functions/arguments, it becomes really hard to ensure those will work
-with a myriad of kernel versions, configurations, and toolchain versions
-out there.
-
-The good news is that Steven's approach should allow us to deal with
-use-cases that are specific to kernel developers by simply using
-function tracing. That should take care of most "one off" and very
-specialized use-cases.
-
-My genuine concern here is that tools targeting sysadmins and application
-developers start hooking on kernel functions, and all goes well for a
-few months or years until someone changes that part of the code. Then
-all those wonderfully useful scripts that users depend on will end up
-being broken: in the best scenario those tools will detect the change
-and require to be updated, but in the worse case the tools will simply
-print bogus results that people will take for granted.
-
-This should therefore leave a door open to adding new tracepoints: cases
-where the data gathered is shown to be useful enough for tools targeting
-an audience wider than just kernel developers. To improve over the current
-situation, we should think about documenting some rules about how those
-tools should cope with tracepoints changing over time (event version,
-tools backward compatibility, and so on), and make sure the ABI exposes
-the information required to help tools cope with change.
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+       Arnd
