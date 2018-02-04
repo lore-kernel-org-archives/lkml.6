@@ -1,195 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeBDQiJ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 11:38:09 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:35367 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1751546AbeBDQiA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 11:38:00 -0500
-Date: Sun, 4 Feb 2018 11:37:59 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: Ingo Molnar <mingo@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arch@vger.kernel.org>, <parri.andrea@gmail.com>,
-        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <boqun.feng@gmail.com>,
-        <will.deacon@arm.com>, <peterz@infradead.org>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, <elena.reshetova@intel.com>, <mhocko@suse.com>,
-        <akiyks@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [GIT PULL tools] Linux kernel memory model
-In-Reply-To: <20180204101700.GA25520@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1802041119590.16222-100000@netrider.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        id S1752070AbeBDQrY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 11:47:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751546AbeBDQrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 11:47:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14DFF21785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Subject: [PATCH v2] ARM: dts: exynos: Add SPDX license identifiers
+Date: Sun,  4 Feb 2018 17:46:45 +0100
+Message-Id: <20180204164645.27865-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 4 Feb 2018, Paul E. McKenney wrote:
+Few files missed recent conversion of GPL v2.0 license statements to
+SPDX identifiers
 
-> --- a/tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus
-> +++ b/tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus
-> @@ -1,5 +1,11 @@
->  C CoRW+poonceonce+Once
->  
-> +(*
-> + * Test of read-write coherence, that is, whether or not a read from a
-> + * given variable followed by a write to that same variable are ordered.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-The syntax of this sentence is a little tortured.  Suggestion:
+---
 
-	... whether or not a read from a given variable and a later
-	write to that same variable are ordered.
+Changes since v1:
+1. Update also exynos4412-tmu-sensor-conf.dtsi, exynos4412-tiny4412.dts
+   and exynos4412-trats2.dts.
+---
+ arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi | 5 +----
+ arch/arm/boot/dts/exynos-syscon-restart.dtsi      | 5 +----
+ arch/arm/boot/dts/exynos4412-tiny4412.dts         | 7 ++-----
+ arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi | 6 +-----
+ arch/arm/boot/dts/exynos4412-trats2.dts           | 7 ++-----
+ arch/arm/boot/dts/exynos5800-peach-pi.dts         | 5 +----
+ arch/arm/boot/dts/exynos5800.dtsi                 | 5 +----
+ 7 files changed, 9 insertions(+), 31 deletions(-)
 
-> + * This should be ordered, that is, this test should be forbidden.
-
-s/This/They/
-
-> --- a/tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus
-> +++ b/tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus
-> @@ -1,5 +1,11 @@
->  C CoWR+poonceonce+Once
->  
-> +(*
-> + * Test of write-read coherence, that is, whether or not a write to a
-> + * given variable followed by a read from that same variable are ordered.
-
-Same syntax issue as above.
-
-> --- a/tools/memory-model/litmus-tests/ISA2+poonceonces.litmus
-> +++ b/tools/memory-model/litmus-tests/ISA2+poonceonces.litmus
-> @@ -1,5 +1,13 @@
->  C ISA2+poonceonces
->  
-> +(*
-> + * Given a release-acquire chain ordering the first process's store
-> + * against the last process's load, is ordering preserved if all of the
-> + * smp_store_release() invocations be replaced by WRITE_ONCE() and all
-
-s/be/are/
-
-> + * of the smp_load_acquire() invocations be replaced by READ_ONCE()?
-
-s/be/are/
-
-> --- a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-> +++ b/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-> @@ -1,5 +1,14 @@
->  C LB+ctrlonceonce+mbonceonce
->  
-> +(*
-> + * This litmus test demonstrates that lightweight ordering suffices for
-> + * the load-buffering pattern, in other words, preventing all processes
-> + * reading from the preceding process's write.  In this example, the
-> + * combination of a control dependency and a full memory barrier are to do
-
-s/are to/are enough to/
-
-> --- a/tools/memory-model/litmus-tests/MP+polocks.litmus
-> +++ b/tools/memory-model/litmus-tests/MP+polocks.litmus
-> @@ -1,5 +1,14 @@
->  C MP+polocks
->  
-> +(*
-> + * This litmus test demonstrates how lock acquisitions and releases can
-> + * stand in for smp_load_acquire() and smp_store_release(), respectively.
-> + * In other words, when holding a given lock (or indeed after relaasing a
-
-s/relaasing/releasing/
-
-> + * given lock), a CPU is not only guaranteed to see the accesses that other
-> + * CPOs made while previously holding that lock, it are also guaranteed
-
-s/CPO/CPU/
-s/are/is/
-
-> + * to see all prior accesses by those other CPUs.
-
-Doesn't say whether the test should be allowed.  This is true of several
-other litmus tests too.
-
-> --- a/tools/memory-model/litmus-tests/MP+porevlocks.litmus
-> +++ b/tools/memory-model/litmus-tests/MP+porevlocks.litmus
-> @@ -1,5 +1,14 @@
->  C MP+porevlocks
->  
-> +(*
-> + * This litmus test demonstrates how lock acquisitions and releases can
-> + * stand in for smp_load_acquire() and smp_store_release(), respectively.
-> + * In other words, when holding a given lock (or indeed after relaasing a
-
-s/relaasing/releasing
-
-> + * given lock), a CPU is not only guaranteed to see the accesses that other
-> + * CPOs made while previously holding that lock, it are also guaranteed
-
-s/CPO/CPU/
-s/are/is/
-
-> --- a/tools/memory-model/litmus-tests/R+poonceonces.litmus
-> +++ b/tools/memory-model/litmus-tests/R+poonceonces.litmus
-> @@ -1,5 +1,11 @@
->  C R+poonceonces
->  
-> +(*
-> + * This is the unordered (via smp_mb()) version of one of the classic
-
-Does "unordered (via smp_mb())" mean that the test uses smp_mb() to
-"unorder" the accesses, or does it mean that the test doesn't use smp_mb()
-to order the accesses?
-
-> --- a/tools/memory-model/litmus-tests/S+poonceonces.litmus
-> +++ b/tools/memory-model/litmus-tests/S+poonceonces.litmus
-> @@ -1,5 +1,13 @@
->  C S+poonceonces
->  
-> +(*
-> + * Starting with a two-process release-acquire chain ordering P0()'s
-> + * first store against P1()'s final load, if the smp_store_release()
-> + * is replaced by WRITE_ONCE() and the smp_load_acquire() replaced by
-> + * READ_ONCE(), is ordering preserved.  The answer is "of course not!",
-
-s/./?/
-
-> --- a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-> +++ b/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-> @@ -1,5 +1,12 @@
->  C SB+mbonceonces
->  
-> +(*
-> + * This litmus test demonstrates that full memory barriers suffice to
-> + * order the store-buffering pattern, where each process writes to the
-> + * variable that the preceding process read.  (Locking and RCU can also
-
-s/read/reads/
-
-> --- a/tools/memory-model/litmus-tests/SB+poonceonces.litmus
-> +++ b/tools/memory-model/litmus-tests/SB+poonceonces.litmus
-> @@ -1,5 +1,11 @@
->  C SB+poonceonces
->  
-> +(*
-> + * This litmus test demonstrates that at least some ordering is required
-> + * to order the store-buffering pattern, where each process writes to the
-> + * variable that the preceding process read.  This test should be allowed.
-
-s/read/reads/
-
-> --- a/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-> +++ b/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-> @@ -1,5 +1,11 @@
->  C Z6.0+pooncelock+pooncelock+pombonce
->  
-> +(*
-> + * This example demonstrates that a pair of accesses made by different
-> + * processes each while holding a given lock will not necessarily be
-> + * seen as ordered by a third process not holding that lock.
-> + *)
-
-Note that the outcome of this test will be changed by one of the
-patches in our "pending" list.
-
-Alan
+diff --git a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
+index 25186ac4188d..1dbf3bbff8d3 100644
+--- a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
++++ b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Samsung's Exynos SoC MFC (Video Codec) reserved memory common definition.
+  *
+  * Copyright (c) 2016 Samsung Electronics Co., Ltd
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ / {
+diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+index 09a2040054ed..4b3dd0549a54 100644
+--- a/arch/arm/boot/dts/exynos-syscon-restart.dtsi
++++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+@@ -1,9 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Samsung's Exynos SoC syscon reboot/poweroff nodes common definition.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ / {
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+index 5504398e6e37..01f37b5ac9c4 100644
+--- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * FriendlyARM's Exynos4412 based TINY4412 board device tree source
+  *
+@@ -5,11 +6,7 @@
+  *
+  * Device tree source file for FriendlyARM's TINY4412 board which is based on
+  * Samsung's Exynos4412 SoC.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
++ */
+ 
+ /dts-v1/;
+ #include "exynos4412.dtsi"
+diff --git a/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi b/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+index e3f7934d19d0..489b58c619ee 100644
+--- a/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
++++ b/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+@@ -1,12 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device tree sources for Exynos4412 TMU sensor configuration
+  *
+  * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  */
+ 
+ #include <dt-bindings/thermal/thermal_exynos.h>
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index f285790e8e04..7da66003a3e3 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Samsung's Exynos4412 based Trats 2 board device tree source
+  *
+@@ -6,11 +7,7 @@
+  *
+  * Device tree source file for Samsung's Trats 2 board which is based on
+  * Samsung's Exynos4412 SoC.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
++ */
+ 
+ /dts-v1/;
+ #include "exynos4412.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 0029ec27819c..c8a66a12dbeb 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Google Peach Pi Rev 10+ board device tree source
+  *
+  * Copyright (c) 2014 Google, Inc
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+index 9ddb6bacac5a..57d3b319fd65 100644
+--- a/arch/arm/boot/dts/exynos5800.dtsi
++++ b/arch/arm/boot/dts/exynos5800.dtsi
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * SAMSUNG EXYNOS5800 SoC device tree source
+  *
+@@ -7,10 +8,6 @@
+  * SAMSUNG EXYNOS5800 SoC device nodes are listed in this file.
+  * EXYNOS5800 based board files can include this file and provide
+  * values for board specfic bindings.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include "exynos5420.dtsi"
+-- 
+2.11.0
