@@ -1,51 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752288AbeBECay (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 21:30:54 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:57796 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751979AbeBECap (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 21:30:45 -0500
-Subject: Re: [PATCH 1/6] nvme-pci: move clearing host mem behind stopping
- queues
-To: Keith Busch <keith.busch@intel.com>
-Cc: axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1517554849-7802-1-git-send-email-jianchao.w.wang@oracle.com>
- <1517554849-7802-2-git-send-email-jianchao.w.wang@oracle.com>
- <20180202184605.GJ24417@localhost.localdomain>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <848639df-1a65-35fe-1c7d-d79cfe4ec581@oracle.com>
-Date: Mon, 5 Feb 2018 10:30:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752447AbeBECbP (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 21:31:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752294AbeBECbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 21:31:06 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E899208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+Cc: mhiramat@kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        orito.takao@socionext.com
+Subject: [PATCH] [BUGFIX] media: vb2: Fix videobuf2 to map correct area
+Date: Mon,  5 Feb 2018 11:30:41 +0900
+Message-Id: <151779784111.20697.5012233804870630070.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180202184605.GJ24417@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8795 signatures=668662
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=482
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802050030
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Keith
+Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
+Since the current code does ioremap the page address, if the offset > 0,
+it does not do ioremap the last page and results in kernel panic.
 
-Thanks for your kindly response and directive.
+This fixes to pass the page address + offset to ioremap so that ioremap
+can map correct area. Also, this uses __pfn_to_phys() to get the physical
+address of given PFN.
 
-On 02/03/2018 02:46 AM, Keith Busch wrote:
-> This one makes sense, though I would alter the change log to something
-> like:
-> 
->   This patch quiecses new IO prior to disabling device HMB access.
->   A controller using HMB may be relying on it to efficiently complete
->   IO commands
-Yes, I will change it next version.
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reported-by: Takao Orito <orito.takao@socionext.com>
+---
+ drivers/media/v4l2-core/videobuf2-vmalloc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sincerely
-Jianchao
+diff --git a/drivers/media/v4l2-core/videobuf2-vmalloc.c b/drivers/media/v4l2-core/videobuf2-vmalloc.c
+index 3a7c80cd1a17..896f2f378b40 100644
+--- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
++++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
+@@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(struct device *dev, unsigned long vaddr,
+ 			if (nums[i-1] + 1 != nums[i])
+ 				goto fail_map;
+ 		buf->vaddr = (__force void *)
+-				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
++			ioremap_nocache(__pfn_to_phys(nums[0]) + offset, size);
+ 	} else {
+ 		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
+ 					PAGE_KERNEL);
