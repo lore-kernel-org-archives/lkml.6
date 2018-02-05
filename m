@@ -1,75 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753388AbeBESBl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 13:01:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753028AbeBESBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 13:01:34 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C7E2172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sstabellini@kernel.org
-Date: Mon, 5 Feb 2018 10:01:32 -0800 (PST)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-cc: Stefano Stabellini <sstabellini@kernel.org>, jgross@suse.com,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pvcalls-back: do not return error on inet_accept
- EAGAIN
-In-Reply-To: <936e4d18-3f0d-3fc5-2272-c1ad9a5c7022@oracle.com>
-Message-ID: <alpine.DEB.2.10.1802050953570.10160@sstabellini-ThinkPad-X260>
-References: <alpine.DEB.2.10.1802021728420.10160@sstabellini-ThinkPad-X260> <936e4d18-3f0d-3fc5-2272-c1ad9a5c7022@oracle.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        id S1753376AbeBESE6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 13:04:58 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49154 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753155AbeBESEu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 13:04:50 -0500
+Subject: Re: [PATCH 3/4] lightnvm: add 2.0 geometry identification
+To: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>,
+        linux-block@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, javier@cnexlabs.com
+References: <20180205121505.27563-1-mb@lightnvm.io>
+ <20180205121505.27563-4-mb@lightnvm.io>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <b8ddae5a-064c-7468-d5e2-a5a20a93de19@infradead.org>
+Date: Mon, 5 Feb 2018 10:04:45 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-1047736138-1517853694=:10160"
+In-Reply-To: <20180205121505.27563-4-mb@lightnvm.io>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1047736138-1517853694=:10160
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-On Sun, 4 Feb 2018, Boris Ostrovsky wrote:
-> On 02/02/2018 08:34 PM, Stefano Stabellini wrote:
-> > When the client sends a regular blocking accept request, the backend is
-> > expected to return only when the accept is completed, simulating a
-> > blocking behavior, or return an error.
-> > 
-> > Specifically, on EAGAIN from inet_accept, the backend shouldn't return
-> > "EAGAIN" to the client. Instead, it should simply continue the wait.
-> > Otherwise, the client will send another accept request, which will cause
-> > another EAGAIN to be sent back, which is a waste of resources and not
-> > conforming to the expected behavior. Change the behavior by turning the
-> > "goto error" into a return.
-> > 
-> > Signed-off-by: Stefano Stabellini <stefano@aporeto.com>
+On 02/05/2018 04:15 AM, Matias Bjørling wrote:
+> Implement the geometry data structures for 2.0 and enable a drive
+> to be identified as one, including exposing the appropriate 2.0
+> sysfs entries.
 > 
+> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+> ---
+>  drivers/lightnvm/core.c      |   2 +-
+>  drivers/nvme/host/lightnvm.c | 334 +++++++++++++++++++++++++++++++++++++------
+>  include/linux/lightnvm.h     |  11 +-
+>  3 files changed, 295 insertions(+), 52 deletions(-)
 > 
-> I am looking at SYSCALL_DEFINE4(accept4) and sock->ops->accept (which *I
-> think* is inet_accept, at least in some cases) passes all errors (including
-> EAGAIN)  back to the caller. Is this a different case?
+> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+> index c72863b36439..250e74dfa120 100644
+> --- a/drivers/lightnvm/core.c
+> +++ b/drivers/lightnvm/core.c
+> @@ -934,7 +934,7 @@ static int nvm_init(struct nvm_dev *dev)
+>  	pr_debug("nvm: ver:%x nvm_vendor:%x\n",
+>  			dev->identity.ver_id, dev->identity.vmnt);
+>  
+> -	if (dev->identity.ver_id != 1) {
+> +	if (dev->identity.ver_id != 1 && dev->identity.ver_id != 2) {
+>  		pr_err("nvm: device not supported by kernel.");
+>  		goto err;
+>  	}
 
-Hi Boris,
+Hi,
+The pr_err() above could be a bit more informative to the user. E.g.,
+		pr_err("nvm: device ver_id %d not supported by kernel.",
+			dev->identity.ver_id);
 
-I didn't explain myself well. You are right that inet_accept passes all
-errors back to the caller, but this is different: not only it would be a
-waste of resources to do so, but the different behavior is specified in
-the PVCalls spec:
+BTW, isn't that line missing a '\n'?
 
-"The backend will reply to the request only when a new connection is
-successfully accepted, i.e. the backend does not return EAGAIN or
-EWOULDBLOCK."
-
-https://xenbits.xen.org/docs/unstable/misc/pvcalls.html
-
-Look under the "Accept" sub-chapter.
-
-Cheers,
-
-Stefano
---8323329-1047736138-1517853694=:10160--
+-- 
+~Randy
