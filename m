@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224xT+KhgsmSTLS71U69wfQdUuZZjHx/H7J4lcFQGnd0hdfNe1h9l9VxZysRHTCI7p7uyFbn
-ARC-Seal: i=1; a=rsa-sha256; t=1517855080; cv=none;
+X-Google-Smtp-Source: AH8x224hFM4iosN1VyZTkUZ124m9Ppdk/dnTeG/VHdmaIIyQH8TA5ri5j7z+nvxfCBcHsCpIxHHy
+ARC-Seal: i=1; a=rsa-sha256; t=1517855079; cv=none;
         d=google.com; s=arc-20160816;
-        b=p8ZhlSHkMN18TJYbkALYaxRw4kVtv9rxY0krh6XJiPN+BHclTpkkqPdO+nVU2XHo9w
-         MrSFHSz/7IyFk4FwkCSzRoaR3vvl8Hdukh14IJZXA/KCgkpV61uQ/PtsUPsaUI9XqrAW
-         cqeMifsNKrYPTk5focQJY3WW6n5EbEzJJzyH9grRrZ90bJ/JYDYLs7l51tcf5lh04uq2
-         b0YZflrBUU3iIrf6M2+r6+8ISXC9bil53Bcj9Y24Y3Yt78vcrhJHnUpmFdh3R2TImDqO
-         XdNKQ5EC9NO66p3zdCoB4HgtzStaxMqxvtpD1rJ9m8z3H6h9oACcGlZ0Fs3YsvdphzSu
-         jqrA==
+        b=gUtbnJGQdLpETm40QDdxc2yEuwNDEepd8IVjYEhFXsqp1bhwpSFVB0bptrEZ+xxYVb
+         3UY5iBcODzEh2+TWDaA1r/8CMWj8kojo7emrHh5z5b7bj2b5VVv/9TK0y23LM34/jQ5T
+         b5r3dGmZgcV//4qfK6lByqBFHoP3rCyP4+Snnz7Uw1pm7zlWYxB4hlWg7SZgBjThvs3o
+         urdn+qJMok5Ivz4ExxxmrTUhbzfGBd14PPk0c8sn9FS2qJZJXhSRfleSzuqxBMgZE1oH
+         6QfTpl95lPUX7HTXMhV/8KE4cWKvqm3VcSBnoSpNVVbR3rgy5p6QH06UeY3mmjP8yOPN
+         F/Zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bLRGGgxbbF1S/s+kS8Ha3QGxuYjsfbbaRVG4pJ4Xcoc=;
-        b=zObONtZyVRkZqa2B+fTVQiqLkUn5fOnrZAAUqKpWZSNFZugD9eS5rp8+fbmblv3Jey
-         psbqGHODM45Fjf2rVhIsFHQnnQnjL1/nqCWIQ1OeZ8g0A79TUi2pCDiigHU4ne3/LvJX
-         ELjyEkdAM9U+ELSCnzQDimxHA5Mnj+u56pV1rlkCmAOGHEBVMIXZyzGA3g21gNCU4GQ7
-         TCrUeaFLLKwTvVcQj49pLdqaP0VklyeO36CvjvZ7lp8bqXx/iGPMODBBTBH6gZjqK7/b
-         hs6DnWj89999UY5Z1V7tBFvtX+4ozO2AYh+qYDpsW16/NS8MHhGU99cErXFgh+Pjv6w4
-         pjxw==
+        bh=Cg3vyQrBfLswZHdI8rAdoKrDVk5fg8R8sy5pZzPXtjc=;
+        b=AR/JQIOWcg8rI5Ysp05/ePmjpispCrPO2XGO3mO6Qm1msa4vKAQA+aOYzsKfi4jvXt
+         PC/p/bufUz81dM81/qPj9M1Vec2kqQ2htsWoFTm8vKJr14tMPHGPmNZmo7UVkDfAL5S2
+         DIbP+rqe6ipIY3GLA4vXb2ROFtEpwjyUZWDRn+IDWnWRd+qEFNcai/dKysImAP4X0L5R
+         9NjcM+nkHMQXlpCmyALDK/6OQ1XAQ4vAlIsoXQsuYEuEoTTVPV4Y8TboQYoQPjGvAfmU
+         kTnQczzZ7HtGcRNN/hydwdHNK8AZ1bjCHL4arSthyLkwFiWSh5rfjlclG5XyglAa9i2l
+         DTOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,27 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
+	KarimAllah Ahmed <karahmed@amazon.de>,
+	David Woodhouse <dwmw@amazon.co.uk>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	linux-arch@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	alan@linux.intel.com
-Subject: [PATCH 4.14 38/64] x86: Implement array_index_mask_nospec
-Date: Mon,  5 Feb 2018 10:22:57 -0800
-Message-Id: <20180205182140.147895085@linuxfoundation.org>
+	Darren Kenny <darren.kenny@oracle.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	kvm@vger.kernel.org,
+	Dave Hansen <dave.hansen@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Asit Mallick <asit.k.mallick@intel.com>,
+	Arjan Van De Ven <arjan.van.de.ven@intel.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ashok Raj <ashok.raj@intel.com>
+Subject: [PATCH 4.14 62/64] KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
+Date: Mon,  5 Feb 2018 10:23:21 -0800
+Message-Id: <20180205182141.124780894@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -43,8 +55,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586408458686417?=
-X-GMAIL-MSGID: =?utf-8?q?1591586408458686417?=
+X-GMAIL-THRID: =?utf-8?q?1591586407289517446?=
+X-GMAIL-MSGID: =?utf-8?q?1591586407289517446?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,64 +64,188 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams dan.j.williams@intel.com
+From: KarimAllah Ahmed karahmed@amazon.de
 
-commit babdde2698d482b6c0de1eab4f697cf5856c5859
+commit b2ac58f90540e39324e7a29a7ad471407ae0bf48
 
-array_index_nospec() uses a mask to sanitize user controllable array
-indexes, i.e. generate a 0 mask if 'index' >= 'size', and a ~0 mask
-otherwise. While the default array_index_mask_nospec() handles the
-carry-bit from the (index - size) result in software.
+[ Based on a patch from Paolo Bonzini <pbonzini@redhat.com> ]
 
-The x86 array_index_mask_nospec() does the same, but the carry-bit is
-handled in the processor CF flag without conditional instructions in the
-control flow.
+... basically doing exactly what we do for VMX:
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+- Passthrough SPEC_CTRL to guests (if enabled in guest CPUID)
+- Save and restore SPEC_CTRL around VMExit and VMEntry only if the guest
+  actually used it.
+
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org
-Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727414808.33451.1873237130672785331.stgit@dwillia2-desk3.amr.corp.intel.com
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: kvm@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Link: https://lkml.kernel.org/r/1517669783-20732-1-git-send-email-karahmed@amazon.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/include/asm/barrier.h |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/x86/kvm/svm.c |   88 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -24,6 +24,30 @@
- #define wmb()	asm volatile("sfence" ::: "memory")
- #endif
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -184,6 +184,8 @@ struct vcpu_svm {
+ 		u64 gs_base;
+ 	} host;
  
-+/**
-+ * array_index_mask_nospec() - generate a mask that is ~0UL when the
-+ * 	bounds check succeeds and 0 otherwise
-+ * @index: array element index
-+ * @size: number of elements in array
-+ *
-+ * Returns:
-+ *     0 - (index < size)
-+ */
-+static inline unsigned long array_index_mask_nospec(unsigned long index,
-+		unsigned long size)
-+{
-+	unsigned long mask;
++	u64 spec_ctrl;
 +
-+	asm ("cmp %1,%2; sbb %0,%0;"
-+			:"=r" (mask)
-+			:"r"(size),"r" (index)
-+			:"cc");
-+	return mask;
+ 	u32 *msrpm;
+ 
+ 	ulong nmi_iret_rip;
+@@ -249,6 +251,7 @@ static const struct svm_direct_access_ms
+ 	{ .index = MSR_CSTAR,				.always = true  },
+ 	{ .index = MSR_SYSCALL_MASK,			.always = true  },
+ #endif
++	{ .index = MSR_IA32_SPEC_CTRL,			.always = false },
+ 	{ .index = MSR_IA32_PRED_CMD,			.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
+@@ -882,6 +885,25 @@ static bool valid_msr_intercept(u32 inde
+ 	return false;
+ }
+ 
++static bool msr_write_intercepted(struct kvm_vcpu *vcpu, unsigned msr)
++{
++	u8 bit_write;
++	unsigned long tmp;
++	u32 offset;
++	u32 *msrpm;
++
++	msrpm = is_guest_mode(vcpu) ? to_svm(vcpu)->nested.msrpm:
++				      to_svm(vcpu)->msrpm;
++
++	offset    = svm_msrpm_offset(msr);
++	bit_write = 2 * (msr & 0x0f) + 1;
++	tmp       = msrpm[offset];
++
++	BUG_ON(offset == MSR_INVALID);
++
++	return !!test_bit(bit_write,  &tmp);
 +}
 +
-+/* Override the default implementation from linux/nospec.h. */
-+#define array_index_mask_nospec array_index_mask_nospec
+ static void set_msr_interception(u32 *msrpm, unsigned msr,
+ 				 int read, int write)
+ {
+@@ -1587,6 +1609,8 @@ static void svm_vcpu_reset(struct kvm_vc
+ 	u32 dummy;
+ 	u32 eax = 1;
+ 
++	svm->spec_ctrl = 0;
 +
- #ifdef CONFIG_X86_PPRO_FENCE
- #define dma_rmb()	rmb()
- #else
+ 	if (!init_event) {
+ 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
+ 					   MSR_IA32_APICBASE_ENABLE;
+@@ -3591,6 +3615,13 @@ static int svm_get_msr(struct kvm_vcpu *
+ 	case MSR_VM_CR:
+ 		msr_info->data = svm->nested.vm_cr_msr;
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS))
++			return 1;
++
++		msr_info->data = svm->spec_ctrl;
++		break;
+ 	case MSR_IA32_UCODE_REV:
+ 		msr_info->data = 0x01000065;
+ 		break;
+@@ -3682,6 +3713,33 @@ static int svm_set_msr(struct kvm_vcpu *
+ 	case MSR_IA32_TSC:
+ 		kvm_write_tsc(vcpu, msr);
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr->host_initiated &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS))
++			return 1;
++
++		/* The STIBP bit doesn't fault even if it's not advertised */
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
++			return 1;
++
++		svm->spec_ctrl = data;
++
++		if (!data)
++			break;
++
++		/*
++		 * For non-nested:
++		 * When it's written (to non-zero) for the first time, pass
++		 * it through.
++		 *
++		 * For nested:
++		 * The handling of the MSR bitmap for L2 guests is done in
++		 * nested_svm_vmrun_msrpm.
++		 * We update the L1 MSR bit as well since it will end up
++		 * touching the MSR anyway now.
++		 */
++		set_msr_interception(svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
++		break;
+ 	case MSR_IA32_PRED_CMD:
+ 		if (!msr->host_initiated &&
+ 		    !guest_cpuid_has(vcpu, X86_FEATURE_IBPB))
+@@ -4950,6 +5008,15 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 
+ 	local_irq_enable();
+ 
++	/*
++	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
++	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
++	 * is no need to worry about the conditional branch over the wrmsr
++	 * being speculatively taken.
++	 */
++	if (svm->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+ 		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
+@@ -5042,6 +5109,27 @@ static void svm_vcpu_run(struct kvm_vcpu
+ #endif
+ 		);
+ 
++	/*
++	 * We do not use IBRS in the kernel. If this vCPU has used the
++	 * SPEC_CTRL MSR it may have left it on; save the value and
++	 * turn it off. This is much more efficient than blindly adding
++	 * it to the atomic save/restore list. Especially as the former
++	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
++	 *
++	 * For non-nested case:
++	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 *
++	 * For nested case:
++	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 */
++	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++
++	if (svm->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+ 
