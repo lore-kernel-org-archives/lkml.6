@@ -1,44 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753387AbeBERgq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 12:36:46 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:45834 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752999AbeBERgg (ORCPT
+        id S1753410AbeBERg7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 12:36:59 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:44897 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753361AbeBERgj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 12:36:36 -0500
-X-Google-Smtp-Source: AH8x227zBura0/v2vLAQH5HP+hxmo6Ou4v/6ei6I3qec4yfgp2rbjqP9eY8UdXYSsLwZZJR+uR0iO7rGiMumbou5RFM=
-MIME-Version: 1.0
-In-Reply-To: <1517851938-5892-1-git-send-email-amir73il@gmail.com>
-References: <1517851938-5892-1-git-send-email-amir73il@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
+        Mon, 5 Feb 2018 12:36:39 -0500
+X-Google-Smtp-Source: AH8x227RqiKjXQ9RXdLXP895qdRrXYGVfyKVF7YTLAAx3sgzV/pbTE8rOv2MZxr0YX3VnRDoQ6gpgQ==
 Date: Mon, 5 Feb 2018 09:36:35 -0800
-X-Google-Sender-Auth: N7veEVjFzqdvjd74VxIxHknCILo
-Message-ID: <CA+55aFzyqjGXBjVmb+A7EUJr35a3BdZgYN29dD-KZXzY7k4e6Q@mail.gmail.com>
-Subject: Re: [RFC][PATCH] <linux/stringhash.h>: fix end_name_hash() for 64bit long
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: George Spelvin <linux@sciencehorizons.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        weiping zhang <zhangweiping@didichuxing.com>
+Subject: [GIT PULL] remoteproc updates for v4.16
+Message-ID: <20180205173635.GA17344@builder>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 9:32 AM, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Assuming the fix is not moronic, I wouldn't even know where to begin testing
-> its affects, or how to prove if there really is a problem.
-> Any suggestions?
+The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
 
-So I *think* that this was on purpose, but it's a long time ago, and
-we've changed some of the hashing since.
+  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
 
-And I think you're wrong that it's a no-op on 32-bit. It's a very
-expensive and pointless multiplication there too, even if the *shift*
-ends up being a nop-op.
+are available in the Git repository at:
 
-The name hashing is pretty performance-sensitive.
+  git://github.com/andersson/remoteproc tags/rproc-v4.16
 
-                Linus
+for you to fetch changes up to 0a8b81cb2e413eff4cd9aeac7ef415150b699fb4:
+
+  remoteproc: Reset table_ptr on stop (2018-01-15 09:30:04 -0800)
+
+----------------------------------------------------------------
+remoteproc updates for v4.16
+
+This contains a few bug fixes and a cleanup up of the resource-table handling
+in the framework, which removes the need for drivers with no resource table to
+provide a fake one.
+
+----------------------------------------------------------------
+Bjorn Andersson (8):
+      remoteproc: Remove depricated crash completion
+      remoteproc: Cache resource table size
+      remoteproc: Clone rproc_ops in rproc_alloc()
+      remoteproc: Merge rproc_ops and rproc_fw_ops
+      remoteproc: Don't handle empty resource table
+      remoteproc: Move resource table load logic to find
+      remoteproc: Drop dangling find_rsc_table dummies
+      remoteproc: Reset table_ptr on stop
+
+weiping zhang (1):
+      virtio_remoteproc: correct put_device virtio_device.dev
+
+ drivers/remoteproc/qcom_adsp_pil.c         |  8 +--
+ drivers/remoteproc/qcom_common.c           | 19 -------
+ drivers/remoteproc/qcom_common.h           |  4 --
+ drivers/remoteproc/qcom_q6v5_pil.c         | 18 +------
+ drivers/remoteproc/qcom_wcnss.c            |  8 +--
+ drivers/remoteproc/remoteproc_core.c       | 83 ++++++++++++------------------
+ drivers/remoteproc/remoteproc_elf_loader.c | 59 ++++++++++-----------
+ drivers/remoteproc/remoteproc_internal.h   | 57 +++++++-------------
+ drivers/remoteproc/remoteproc_virtio.c     |  2 +-
+ drivers/remoteproc/st_slim_rproc.c         | 32 ++----------
+ include/linux/remoteproc.h                 | 21 ++++++--
+ 11 files changed, 107 insertions(+), 204 deletions(-)
