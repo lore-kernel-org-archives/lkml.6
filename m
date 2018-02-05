@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752884AbeBEBjL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:39:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43680 "EHLO mx2.suse.de"
+        id S1752700AbeBEBjW (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:39:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44135 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752715AbeBEB2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:28:30 -0500
+        id S1752686AbeBEB23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:28:29 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
 Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 34/64] arch/parisc: use mm locking wrappers
-Date: Mon,  5 Feb 2018 02:27:24 +0100
-Message-Id: <20180205012754.23615-35-dbueso@wotan.suse.de>
+Subject: [PATCH 14/64] fs/coredump: teach about range locking
+Date: Mon,  5 Feb 2018 02:27:04 +0100
+Message-Id: <20180205012754.23615-15-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -25,81 +25,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-This becomes quite straightforward with the mmrange in place.
+coredump_wait() needs mmap_sem such that zap_threads()
+is stable. The conversion is trivial as the mmap_sem
+is only used in the same function context. No change
+in semantics.
+
+In addition, we need an mmrange in exec_mmap() as mmap_sem
+is needed for de_thread() or coredump (for core_state and
+changing tsk->mm) scenarios. No change in semantics.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- arch/parisc/kernel/traps.c | 7 ++++---
- arch/parisc/mm/fault.c     | 8 ++++----
- 2 files changed, 8 insertions(+), 7 deletions(-)
+ fs/coredump.c |  5 +++--
+ fs/exec.c     | 18 ++++++++++--------
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/arch/parisc/kernel/traps.c b/arch/parisc/kernel/traps.c
-index c919e6c0a687..ac73697c7952 100644
---- a/arch/parisc/kernel/traps.c
-+++ b/arch/parisc/kernel/traps.c
-@@ -718,8 +718,9 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 1e2c87acac9b..ad91712498fc 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -412,17 +412,18 @@ static int coredump_wait(int exit_code, struct core_state *core_state)
+ 	struct task_struct *tsk = current;
+ 	struct mm_struct *mm = tsk->mm;
+ 	int core_waiters = -EBUSY;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
  
- 		if (user_mode(regs)) {
- 			struct vm_area_struct *vma;
-+			DEFINE_RANGE_LOCK_FULL(mmrange);
+ 	init_completion(&core_state->startup);
+ 	core_state->dumper.task = tsk;
+ 	core_state->dumper.next = NULL;
  
--			down_read(&current->mm->mmap_sem);
-+			mm_read_lock(current->mm, &mmrange);
- 			vma = find_vma(current->mm,regs->iaoq[0]);
- 			if (vma && (regs->iaoq[0] >= vma->vm_start)
- 				&& (vma->vm_flags & VM_EXEC)) {
-@@ -727,10 +728,10 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
- 				fault_address = regs->iaoq[0];
- 				fault_space = regs->iasq[0];
+-	if (down_write_killable(&mm->mmap_sem))
++	if (mm_write_lock_killable(mm, &mmrange))
+ 		return -EINTR;
  
--				up_read(&current->mm->mmap_sem);
-+				mm_read_unlock(current->mm, &mmrange);
- 				break; /* call do_page_fault() */
- 			}
--			up_read(&current->mm->mmap_sem);
-+			mm_read_unlock(current->mm, &mmrange);
- 		}
- 		/* Fall Through */
- 	case 27: 
-diff --git a/arch/parisc/mm/fault.c b/arch/parisc/mm/fault.c
-index 79db33a0cb0c..f4877e321c28 100644
---- a/arch/parisc/mm/fault.c
-+++ b/arch/parisc/mm/fault.c
-@@ -282,7 +282,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
- 	if (acc_type & VM_WRITE)
- 		flags |= FAULT_FLAG_WRITE;
- retry:
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
- 	vma = find_vma_prev(mm, address, &prev_vma);
- 	if (!vma || address < vma->vm_start)
- 		goto check_expansion;
-@@ -339,7 +339,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
- 			goto retry;
+ 	if (!mm->core_state)
+ 		core_waiters = zap_threads(tsk, mm, core_state, exit_code);
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
+ 
+ 	if (core_waiters > 0) {
+ 		struct core_thread *ptr;
+diff --git a/fs/exec.c b/fs/exec.c
+index e46752874b47..a61ac9e81169 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -294,12 +294,13 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
+ 	int err;
+ 	struct vm_area_struct *vma = NULL;
+ 	struct mm_struct *mm = bprm->mm;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	bprm->vma = vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
+ 	if (!vma)
+ 		return -ENOMEM;
+ 
+-	if (down_write_killable(&mm->mmap_sem)) {
++	if (mm_write_lock_killable(mm, &mmrange)) {
+ 		err = -EINTR;
+ 		goto err_free;
+ 	}
+@@ -324,11 +325,11 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
+ 
+ 	mm->stack_vm = mm->total_vm = 1;
+ 	arch_bprm_mm_init(mm, vma);
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
+ 	bprm->p = vma->vm_end - sizeof(void *);
+ 	return 0;
+ err:
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
+ err_free:
+ 	bprm->vma = NULL;
+ 	kmem_cache_free(vm_area_cachep, vma);
+@@ -739,7 +740,7 @@ int setup_arg_pages(struct linux_binprm *bprm,
+ 		bprm->loader -= stack_shift;
+ 	bprm->exec -= stack_shift;
+ 
+-	if (down_write_killable(&mm->mmap_sem))
++	if (mm_write_lock_killable(mm, &mmrange))
+ 		return -EINTR;
+ 
+ 	vm_flags = VM_STACK_FLAGS;
+@@ -796,7 +797,7 @@ int setup_arg_pages(struct linux_binprm *bprm,
+ 		ret = -EFAULT;
+ 
+ out_unlock:
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(setup_arg_pages);
+@@ -1011,6 +1012,7 @@ static int exec_mmap(struct mm_struct *mm)
+ {
+ 	struct task_struct *tsk;
+ 	struct mm_struct *old_mm, *active_mm;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	/* Notify parent that we're no longer interested in the old VM */
+ 	tsk = current;
+@@ -1025,9 +1027,9 @@ static int exec_mmap(struct mm_struct *mm)
+ 		 * through with the exec.  We must hold mmap_sem around
+ 		 * checking core_state and changing tsk->mm.
+ 		 */
+-		down_read(&old_mm->mmap_sem);
++		mm_read_lock(old_mm, &mmrange);
+ 		if (unlikely(old_mm->core_state)) {
+-			up_read(&old_mm->mmap_sem);
++			mm_read_unlock(old_mm, &mmrange);
+ 			return -EINTR;
  		}
  	}
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	return;
- 
- check_expansion:
-@@ -351,7 +351,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
-  * Something tried to access memory that isn't in our memory map..
-  */
- bad_area:
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- 	if (user_mode(regs)) {
- 		struct siginfo si;
-@@ -427,7 +427,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
- 	parisc_terminate("Bad Address (null pointer deref?)", regs, code, address);
- 
-   out_of_memory:
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	if (!user_mode(regs))
- 		goto no_context;
- 	pagefault_out_of_memory();
+@@ -1040,7 +1042,7 @@ static int exec_mmap(struct mm_struct *mm)
+ 	vmacache_flush(tsk);
+ 	task_unlock(tsk);
+ 	if (old_mm) {
+-		up_read(&old_mm->mmap_sem);
++		mm_read_unlock(old_mm, &mmrange);
+ 		BUG_ON(active_mm != old_mm);
+ 		setmax_mm_hiwater_rss(&tsk->signal->maxrss, old_mm);
+ 		mm_update_next_owner(old_mm);
 -- 
 2.13.6
