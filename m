@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752188AbeBEBXB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:23:01 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42980 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751979AbeBEBWz (ORCPT
+        id S1752277AbeBEBXY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:23:24 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41056 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751979AbeBEBXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:22:55 -0500
-X-Google-Smtp-Source: AH8x227Gq02zvSHkil/7SYvr/CfDA0QkIEGeyXaiqWpUdiFwoxQY9xx8Gq/kywzCF6leO88NZ9ZArQ==
+        Sun, 4 Feb 2018 20:23:16 -0500
+X-Google-Smtp-Source: AH8x226BIpoANnBCZRobJcZS2BbQgzO4qqQCBV6/jIZmU4XGYEOkXhvRub8zR3WryRLnW/y9C19dgg==
 From: Ulf Magnusson <ulfalizer@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
@@ -17,86 +17,57 @@ Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
         robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
         will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
         yamada.masahiro@socionext.com, Ulf Magnusson <ulfalizer@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH 00/20] Remove references to undefined symbols and fix two potential bugs
-Date: Mon,  5 Feb 2018 02:21:12 +0100
-Message-Id: <20180205012146.23981-1-ulfalizer@gmail.com>
+        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@free-electrons.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 01/20] ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
+Date: Mon,  5 Feb 2018 02:21:13 +0100
+Message-Id: <20180205012146.23981-2-ulfalizer@gmail.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
+References: <20180205012146.23981-1-ulfalizer@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The MACH_ARMADA_375 and MACH_ARMADA_38X boards select ARM_ERRATA_753970,
+but it was renamed to PL310_ERRATA_753970 by commit fa0ce4035d48 ("ARM:
+7162/1: errata: tidy up Kconfig options for PL310 errata workarounds").
 
-This patchset fixes most references to globally undefined symbols in Kconfig
-files, as reported by the
+Fix the selects to use the new name.
+
+Discovered with the
 https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-script. I will send emails in reply to the patchset for some cases where I'm
-not sure what the proper fix is.
+script.
 
-All of the fixes are independent. I just created a patchset to track them more
-easily.
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+---
+ arch/arm/mach-mvebu/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Summary of changes:
-
- - Commits 1 and 2 fix what looks like potential bugs: A broken (intended)
-   select of PL310_ERRATA_753970 for ARM/mvebu, and a misspelled dependency on
-   PPC_PSERIES in KVM/PPC.
-
- - Commits 3-5 remove leftover AVR32 stuff.
-
- - Commits 6 and 7 remove some selects of removed symbols from riscv.
-
- - Commits 8-17 remove various references to removed symbols.
-
- - Commits 18-20 fix some (harmless) malformed defaults.
-
-Ulf Magnusson (20):
-  ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
-  KVM: PPC: Book3S PR: Fix broken select due to misspelling
-  kconfig: Remove leftover references to AVR32 symbol
-  misc: atmel: Remove CPU_AT32AP700X (AVR32) reference
-  rtc: at32ap700x: Remove PLATFORM_AT32AP dependency
-  riscv: Remove ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE select
-  riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
-  s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select
-  clk: sunxi-ng: Remove SUNXI_CCU_* selects
-  lib/Kconfig: Remove leftover select of GENERIC_IO
-  usb: gadget: udc: Remove USB_GADGET_DUALSPEED select
-  ARM: debug: Remove ARCH_MSM dep. from UNCOMPRESS_INCLUDE
-  ore: Remove PNFS_OBJLAYOUT dependency
-  iio: gyro: mpu3050: Remove INPUT_MPU3050 dep. from I2C
-  phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB
-  auxdisplay: img-ascii-lcd: Remove MIPS_SEAD3 dep.
-  media: sec: Remove PLAT_S5P dependency
-  iwlwifi: fix malformed CONFIG_IWLWIFI_PCIE_RTPM default
-  ARC: Fix malformed ARC_EMUL_UNALIGNED default
-  x86/PCI: VMD: Fix malformed default
-
- arch/arc/Kconfig                           |  1 -
- arch/arm/Kconfig.debug                     |  2 +-
- arch/arm/mach-mvebu/Kconfig                |  4 ++--
- arch/powerpc/kvm/Kconfig                   |  2 +-
- arch/riscv/Kconfig                         |  2 --
- arch/s390/Kconfig                          |  1 -
- drivers/auxdisplay/Kconfig                 |  2 +-
- drivers/clk/sunxi-ng/Kconfig               |  7 -------
- drivers/cpufreq/Kconfig                    | 10 ----------
- drivers/iio/gyro/Kconfig                   |  1 -
- drivers/media/platform/Kconfig             |  2 +-
- drivers/misc/Kconfig                       |  1 -
- drivers/net/wireless/intel/iwlwifi/Kconfig |  1 -
- drivers/pci/host/Kconfig                   |  1 -
- drivers/phy/samsung/Kconfig                |  2 +-
- drivers/pwm/Kconfig                        |  2 +-
- drivers/rtc/Kconfig                        |  2 +-
- drivers/spi/Kconfig                        |  2 +-
- drivers/usb/gadget/udc/Kconfig             |  1 -
- drivers/video/console/Kconfig              |  2 +-
- fs/exofs/Kconfig.ore                       |  2 +-
- lib/Kconfig                                |  1 -
- 22 files changed, 12 insertions(+), 39 deletions(-)
-
+diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
+index 6b32dc527edc..2c20599cc350 100644
+--- a/arch/arm/mach-mvebu/Kconfig
++++ b/arch/arm/mach-mvebu/Kconfig
+@@ -41,7 +41,7 @@ config MACH_ARMADA_375
+ 	depends on ARCH_MULTI_V7
+ 	select ARMADA_370_XP_IRQ
+ 	select ARM_ERRATA_720789
+-	select ARM_ERRATA_753970
++	select PL310_ERRATA_753970
+ 	select ARM_GIC
+ 	select ARMADA_375_CLK
+ 	select HAVE_ARM_SCU
+@@ -57,7 +57,7 @@ config MACH_ARMADA_38X
+ 	bool "Marvell Armada 380/385 boards"
+ 	depends on ARCH_MULTI_V7
+ 	select ARM_ERRATA_720789
+-	select ARM_ERRATA_753970
++	select PL310_ERRATA_753970
+ 	select ARM_GIC
+ 	select ARM_GLOBAL_TIMER
+ 	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
 -- 
 2.14.1
