@@ -1,75 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753162AbeBEMtM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:49:12 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:59925 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753138AbeBEMs6 (ORCPT
+        id S1752944AbeBEMtZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:49:25 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33582 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753159AbeBEMtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:48:58 -0500
-Date: Mon, 5 Feb 2018 13:48:54 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Sistare <steven.sistare@oracle.com>
-Cc: subhra mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        dhaval.giani@oracle.com
-Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
- select_idle_sibling using SMT balance
-Message-ID: <20180205124854.GX2269@hirez.programming.kicks-ass.net>
-References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
- <20180201123335.GV2249@hirez.programming.kicks-ass.net>
- <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
- <20180202195943.GR2269@hirez.programming.kicks-ass.net>
- <25d67bd2-cbe7-2c2a-e89a-13a7ca5adc10@oracle.com>
+        Mon, 5 Feb 2018 07:49:10 -0500
+X-Google-Smtp-Source: AH8x2249QKD6DCInJXKFKDzA2AyttYwPwPGqgYcZzjnOnzlfR/7+VzCKYx3UNjC8zFV0UtViwL9Gpw==
+Date: Mon, 5 Feb 2018 13:49:02 +0100
+From: Miklos Szeredi <miklos@szeredi.hu>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs update for 4.16
+Message-ID: <20180205124902.GA19579@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <25d67bd2-cbe7-2c2a-e89a-13a7ca5adc10@oracle.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 04:06:32PM -0500, Steven Sistare wrote:
-> On 2/2/2018 2:59 PM, Peter Zijlstra wrote:
+Hi Linus,
 
-> > But then you get that atomic crud to contend on the cluster level, which
-> > is even worse than it contending on the core level.
-> 
-> True, but it can still be a net win if we make better scheduling decisions.
-> A saving grace is that the atomic counter is only updated if the cpu
-> makes a transition from idle to busy or vice versa.
+Please pull from:
 
-Which can still be a very high rate for some workloads. I always forget
-which, but there are plenty workloads that have very frequenct very
-short idle times. Mike, do you remember what comes apart when we take
-out the sysctl_sched_migration_cost test in idle_balance()?
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-linus
 
-> We need data for this type of system, showing improvements for normal
-> workloads, and showing little downside for a high context switch rate
-> torture test.
+This work from Amir adds NFS export capability to overlayfs.  NFS exporting an
+overlay filesystem is a challange because we want to keep track of any copy-up
+of a file or directory between encoding the file handle and decoding it.
 
-So core-wide atomics should, on architectures that can do atomics in L1,
-be relatively fast. Once you leave L1, atomic contention goes up a fair
-bit. And then there's architectures that simply don't do atomics in L1
-(like Power).
+This is achieved by indexing copied up objects by lower layer file handle.  The
+index is already used for hard links, this patchset extends the use to NFS file
+handle decoding.
 
-Testing on my SKL desktop, atomics contending between SMT siblings is
-basically free (weirdly enough my test says its cheaper), atomics
-contending on the L3 is 10x as expensive, and this is with only 4 cores.
+There's a VFS patch that splits out d_instantiate_anon() from d_obtain_alias().
+This is needed because overlayfs allocates d_fsdata for its dentries, so the
+plain d_alloc_anon() call in d_obtain_alias() is not sufficient to create a
+fully initialized overlay dentry.  The patch conflicts with f1ee616214cb ("VFS:
+don't keep disconnected dentries on d_anon"); fixup by "s/tmp/dentry/g" on the
+upstream version.
 
-If I test it on my 10 core IVB, I'm up to 20x, and I can't imagine that
-getting any better with bigger core count (my IVB does not show SMT
-contention as lower, but not particularly more expensive either).
+Thanks,
+Miklos
 
+---
+Amir Goldstein (50):
+      ovl: hash directory inodes for fsnotify
+      ovl: fix failure to fsync lower dir
+      ovl: take lower dir inode mutex outside upper sb_writers lock
+      ovl: fix another overlay: warning prefix
+      ovl: take mnt_want_write() for work/index dir setup
+      ovl: take mnt_want_write() for removing impure xattr
+      ovl: fix inconsistent d_ino for legacy merge dir
+      ovl: disable index when no xattr support
+      ovl: force r/o mount when index dir creation fails
+      ovl: store layer index in ovl_layer
+      ovl: factor out ovl_check_origin_fh()
+      ovl: simplify arguments to ovl_check_origin_fh()
+      ovl: generalize ovl_verify_origin() and helpers
+      ovl: update documentation of inodes index feature
+      ovl: add support for "nfs_export" configuration
+      ovl: verify stored origin fh matches lower dir
+      ovl: unbless lower st_ino of unverified origin
+      ovl: use directory index entries for consistency verification
+      ovl: verify whiteout index entries on mount
+      ovl: verify directory index entries on mount
+      ovl: cleanup temp index entries
+      ovl: create ovl_need_index() helper
+      ovl: index all non-dir on copy up for NFS export
+      ovl: index directories on copy up for NFS export
+      ovl: cleanup dir index when dir nlink drops to zero
+      ovl: whiteout index when union nlink drops to zero
+      ovl: whiteout orphan index entries on mount
+      ovl: factor out ovl_get_index_fh() helper
+      ovl: do not pass overlay dentry to ovl_get_inode()
+      ovl: use d_splice_alias() in place of d_add() in lookup
+      ovl: copy up of disconnected dentries
+      ovl: store 'has_upper' and 'opaque' as bit flags
+      ovl: document NFS export
+      ovl: encode pure upper file handles
+      ovl: decode pure upper file handles
+      ovl: decode connected upper dir file handles
+      ovl: encode non-indexed upper file handles
+      ovl: copy up before encoding non-connectable dir file handle
+      ovl: encode lower file handles
+      ovl: decode lower non-dir file handles
+      ovl: decode indexed non-dir file handles
+      ovl: decode lower file handles of unlinked but open files
+      ovl: decode indexed dir file handles
+      ovl: decode pure lower dir file handles
+      ovl: hash non-indexed dir by upper inode for NFS export
+      ovl: lookup connected ancestor of dir in inode cache
+      ovl: lookup indexed ancestor of lower dir
+      ovl: wire up NFS export operations
+      ovl: fix regression in fsnotify of overlay merge dir
+      ovl: check ERR_PTR() return value from ovl_encode_fh()
 
-So while I see the point of tracking these numbers (for SMT>2), I don't
-think its worth doing outside of the core, and then we still need some
-powerpc (or any other architecture with abysmal atomics) tested.
+Miklos Szeredi (1):
+      vfs: factor out helpers d_instantiate_anon() and d_alloc_anon()
 
-So what we can do is make this counting crud conditional on SMT>2 and
-possibly part of the topology flags such that an architecture can
-opt-out.
-
-Then select_idle_core can be augmented to remember the least-loaded core
-it encounters in its traversal, and go with that.
+---
+ Documentation/filesystems/overlayfs.txt | 106 ++++-
+ fs/dcache.c                             |  88 ++--
+ fs/overlayfs/Kconfig                    |  31 +-
+ fs/overlayfs/Makefile                   |   3 +-
+ fs/overlayfs/copy_up.c                  | 188 +++++++--
+ fs/overlayfs/dir.c                      | 175 ++++----
+ fs/overlayfs/export.c                   | 715 ++++++++++++++++++++++++++++++++
+ fs/overlayfs/inode.c                    | 106 +++--
+ fs/overlayfs/namei.c                    | 533 +++++++++++++++++-------
+ fs/overlayfs/overlayfs.h                |  66 ++-
+ fs/overlayfs/ovl_entry.h                |  11 +-
+ fs/overlayfs/readdir.c                  |  57 ++-
+ fs/overlayfs/super.c                    | 125 ++++--
+ fs/overlayfs/util.c                     | 108 +++--
+ include/linux/dcache.h                  |   2 +
+ 15 files changed, 1905 insertions(+), 409 deletions(-)
+ create mode 100644 fs/overlayfs/export.c
