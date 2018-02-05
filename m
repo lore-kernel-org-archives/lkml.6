@@ -1,64 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751991AbeBEUq7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 15:46:59 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60438 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751617AbeBEUqv (ORCPT
+        id S1751829AbeBEUtA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 15:49:00 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:41089 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751715AbeBEUsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:46:51 -0500
-Subject: Re: [PATCH] libnvdimm: remove redundant assignment to pointer 'dev'
-To: Dan Williams <dan.j.williams@intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: linux-nvdimm@lists.01.org, kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180205140852.14110-1-colin.king@canonical.com>
- <20180205182039.GA7891@linux.intel.com>
- <CAPcyv4geaysZ803Xtd27YGh0udww+95VaGP6r1Hdxx8SHxfX9w@mail.gmail.com>
-From: Colin Ian King <colin.king@canonical.com>
-Message-ID: <22ac2ac7-f75f-3cd0-30d7-8cfe7605c8fb@canonical.com>
-Date: Mon, 5 Feb 2018 20:46:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 5 Feb 2018 15:48:53 -0500
+X-Google-Smtp-Source: AH8x226oebPPczl5TsmMBCXZPLeR0b8myJmONGQ4Tyiv0JJDBQ90HLHhFoAH5gA4kE5iA2F/z3gYyw==
+Date: Mon, 5 Feb 2018 13:48:49 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Luca Abeni <luca.abeni@santannapisa.it>
+Cc: peterz@infradead.org, lizefan@huawei.com, mingo@redhat.com,
+        rostedt@goodmis.org, claudio@evidence.eu.com, bristot@redhat.com,
+        tommaso.cucinotta@santannapisa.it, juri.lelli@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 0/7] sched/deadline: fix cpusets bandwidth accounting
+Message-ID: <20180205204849.GA2621@xps15>
+References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+ <20180202141750.5652d2b7@luca>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4geaysZ803Xtd27YGh0udww+95VaGP6r1Hdxx8SHxfX9w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180202141750.5652d2b7@luca>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/18 18:44, Dan Williams wrote:
-> On Mon, Feb 5, 2018 at 10:20 AM, Ross Zwisler
-> <ross.zwisler@linux.intel.com> wrote:
->> On Mon, Feb 05, 2018 at 02:08:52PM +0000, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Pointer dev is being assigned a value that is never read, it is being
->>> re-assigned the same value later on, hence the initialization is redundant
->>> and can be removed.
->>>
->>> Cleans up clang warning:
->>> drivers/nvdimm/pfn_devs.c:307:17: warning: Value stored to 'dev' during
->>> its initialization is never read
->>>
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>
->> Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
->>
->> More importantly this fixes a potential NULL pointer dereference.  nd_pfn
->> is checked for NULL a few lines down, but we would have crashed here trying to
->> get nd_pfn->dev.
->>
+On Fri, Feb 02, 2018 at 02:17:50PM +0100, Luca Abeni wrote:
+> Hi Mathieu,
 > 
-> No we wouldn't crash. We're just calculating the address, not
-> de-referencing a NULL pointer.
-
-Indeed, it's just a warning clean up. Nothing more.
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> On Thu,  1 Feb 2018 09:51:02 -0700
+> Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
 > 
+> > This is the follow-up patchset to [1] that attempt to fix a problem
+> > reported by Steve Rostedt [2] where DL bandwidth accounting is not
+> > recomputed after CPUset and CPU hotplug operations.  When CPU hotplug and
+> > some CUPset manipulation take place root domains are destroyed and new ones
+> > created, loosing at the same time DL accounting information pertaining to
+> > utilisation.  Please see [1] for a full description of the approach.
+> 
+> I do not know the cgroup / cpuset code too much, so I have no useful
+> comments on your patches... But I think this patchset is a nice
+> improvemnt respect to the current situation.
+> 
+> [...]
+> > A notable addition is patch 7/7 - it addresses a problem seen when hot
+> > plugging out a CPU where a DL task is running (see changelog for full
+> > details).  The issue is unrelated to this patchset and will manifest
+> > itself on a mainline kernel.
+> 
+> I think I introduced this bug with my reclaiming patches, so I am
+> interested.
+> When a cpu is hot-plugged out, which code in the kernel is responsible
+> for migrating the tasks that are executing on such CPU?
+
+sched_cpu_deactivate()
+    cpuset_cpu_inactive()
+        cpuset_update_active_cpus()
+            cpuset_hotplug_workfn()
+                hotplug_update_tasks_legacy()
+                    hotplug_update_tasks()
+                        set_cpus_allowed_ptr()
+                            __set_cpus_allowed_ptr()
+
+
+> I was sure I
+> was handling all the relevant codepaths, but this bug clearly shows
+> that I was wrong.
+
+I remember reviewing your patchset and I too thought you had tackled all the
+cases.  In function __set_cpus_allowed_ptr() you'll notice two cases are
+handled, i.e the task is running or suspended.  I suspect the former to be the
+culprit but haven't investigated fully.
+
+Regards,
+Mathieu
+                                
+
+
+> 
+> 
+> 			Thanks,
+> 				Luca
