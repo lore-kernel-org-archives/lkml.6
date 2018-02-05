@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753008AbeBEMva (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:51:30 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:29225 "EHLO
+        id S1753064AbeBEMvk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:51:40 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:29226 "EHLO
         fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752710AbeBEMvX (ORCPT
+        with ESMTP id S1752743AbeBEMvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 5 Feb 2018 07:51:23 -0500
 From: Kishon Vijay Abraham I <kishon@ti.com>
@@ -15,9 +15,9 @@ CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Kishon Vijay Abraham I <kishon@ti.com>, <linux-mmc@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 03/16] mmc: sdhci-omap: Add custom set_uhs_signaling sdhci_host ops
-Date: Mon, 5 Feb 2018 18:20:16 +0530
-Message-ID: <20180205125029.21570-4-kishon@ti.com>
+Subject: [PATCH v2 01/16] mmc: sdhci-omap: Update 'power_mode' outside sdhci_omap_init_74_clocks
+Date: Mon, 5 Feb 2018 18:20:14 +0530
+Message-ID: <20180205125029.21570-2-kishon@ti.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180205125029.21570-1-kishon@ti.com>
 References: <20180205125029.21570-1-kishon@ti.com>
@@ -28,65 +28,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UHS-1 DDR50 and MMC DDR52 mode require DDR bit to be
-set in the configuration register (MMCHS_CON). Add
-sdhci-omap specific set_uhs_signaling ops to set
-this bit. Also while setting the UHSMS bit, clock should be
-disabled.
+Updating 'power_mode' in sdhci_omap_init_74_clocks results in
+'power_mode' never updated to MMC_POWER_OFF during card
+removal. This results in initialization sequence not sent to the
+card during re-insertion.
+Fix it here by adding sdhci_omap_set_power_mode to update power_mode.
+This function can also be used later to perform operations that
+are specific to a power mode (e.g, disable tuning during power off).
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- drivers/mmc/host/sdhci-omap.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-omap.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index df927f3faaf6..86b6cc0a5380 100644
+index 628bfe9a3d17..96985786cadf 100644
 --- a/drivers/mmc/host/sdhci-omap.c
 +++ b/drivers/mmc/host/sdhci-omap.c
-@@ -31,6 +31,7 @@
- #define SDHCI_OMAP_CON		0x12c
- #define CON_DW8			BIT(5)
- #define CON_DMA_MASTER		BIT(20)
-+#define CON_DDR			BIT(19)
- #define CON_CLKEXTFREE		BIT(16)
- #define CON_PADEN		BIT(15)
- #define CON_INIT		BIT(1)
-@@ -461,6 +462,26 @@ static void sdhci_omap_init_74_clocks(struct sdhci_host *host, u8 power_mode)
- 	enable_irq(host->irq);
+@@ -244,6 +244,12 @@ static int sdhci_omap_start_signal_voltage_switch(struct mmc_host *mmc,
+ 	return 0;
  }
  
-+static void sdhci_omap_set_uhs_signaling(struct sdhci_host *host,
-+					 unsigned int timing)
++static void sdhci_omap_set_power_mode(struct sdhci_omap_host *omap_host,
++				      u8 power_mode)
 +{
-+	u32 reg;
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
-+
-+	sdhci_omap_stop_clock(omap_host);
-+
-+	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_CON);
-+	if (timing == MMC_TIMING_UHS_DDR50 || timing == MMC_TIMING_MMC_DDR52)
-+		reg |= CON_DDR;
-+	else
-+		reg &= ~CON_DDR;
-+	sdhci_omap_writel(omap_host, SDHCI_OMAP_CON, reg);
-+
-+	sdhci_set_uhs_signaling(host, timing);
-+	sdhci_omap_start_clock(omap_host);
++	omap_host->power_mode = power_mode;
 +}
 +
- static struct sdhci_ops sdhci_omap_ops = {
- 	.set_clock = sdhci_omap_set_clock,
- 	.set_power = sdhci_omap_set_power,
-@@ -470,7 +491,7 @@ static struct sdhci_ops sdhci_omap_ops = {
- 	.set_bus_width = sdhci_omap_set_bus_width,
- 	.platform_send_init_74_clocks = sdhci_omap_init_74_clocks,
- 	.reset = sdhci_reset,
--	.set_uhs_signaling = sdhci_set_uhs_signaling,
-+	.set_uhs_signaling = sdhci_omap_set_uhs_signaling,
- };
+ static void sdhci_omap_set_bus_mode(struct sdhci_omap_host *omap_host,
+ 				    unsigned int mode)
+ {
+@@ -273,6 +279,7 @@ static void sdhci_omap_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
  
- static int sdhci_omap_set_capabilities(struct sdhci_omap_host *omap_host)
+ 	sdhci_omap_set_bus_mode(omap_host, ios->bus_mode);
+ 	sdhci_set_ios(mmc, ios);
++	sdhci_omap_set_power_mode(omap_host, ios->power_mode);
+ }
+ 
+ static u16 sdhci_omap_calc_divisor(struct sdhci_pltfm_host *host,
+@@ -401,8 +408,6 @@ static void sdhci_omap_init_74_clocks(struct sdhci_host *host, u8 power_mode)
+ 	sdhci_omap_writel(omap_host, SDHCI_OMAP_STAT, INT_CC_EN);
+ 
+ 	enable_irq(host->irq);
+-
+-	omap_host->power_mode = power_mode;
+ }
+ 
+ static struct sdhci_ops sdhci_omap_ops = {
+@@ -504,6 +509,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
+ 	omap_host->host = host;
+ 	omap_host->base = host->ioaddr;
+ 	omap_host->dev = dev;
++	omap_host->power_mode = MMC_POWER_UNDEFINED;
+ 	host->ioaddr += offset;
+ 
+ 	mmc = host->mmc;
 -- 
 2.11.0
