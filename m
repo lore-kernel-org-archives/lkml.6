@@ -1,68 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeBEXjB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 18:39:01 -0500
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:38786 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751774AbeBEXiw (ORCPT
+        id S1752021AbeBEXlb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 18:41:31 -0500
+Received: from mail-pg0-f50.google.com ([74.125.83.50]:39868 "EHLO
+        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750862AbeBEXlX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 18:38:52 -0500
-X-Google-Smtp-Source: AH8x227o7XluxnH0kB6FAz6h6FX5djl+w+atTe5S7ou6oUGK9bOtlAjQWgjVQlP8r/MYARRfoKtE+udi2LiKwheNmU8=
+        Mon, 5 Feb 2018 18:41:23 -0500
+X-Google-Smtp-Source: AH8x227qA7000ICGvyjUJC/uGLNjpcZUcPlup702X9cjvIHALfmra3qSmcBBisdcJ39af+DrwxF74A==
+Date: Mon, 5 Feb 2018 15:41:20 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Srinivas Ramana <sramana@codeaurora.org>
+Cc: linus.walleij@linaro.org, timur@codeaurora.org, sboyd@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: qcom: Add irq_enable callback for msm gpio
+Message-ID: <20180205234120.GG9465@builder>
+References: <1516626208-5655-1-git-send-email-sramana@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdY-3ab=o0TpURqa-MyTMJOd86SWqBaD4n7+KGYhgbYjzg@mail.gmail.com>
-References: <20180205012146.23981-1-ulfalizer@gmail.com> <20180205012146.23981-8-ulfalizer@gmail.com>
- <CACRpkdY-3ab=o0TpURqa-MyTMJOd86SWqBaD4n7+KGYhgbYjzg@mail.gmail.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Tue, 6 Feb 2018 00:38:51 +0100
-Message-ID: <CAFkk2KQzCE5KrUvyvL0Va+KT0O4BvT3PQAT2ZP4u3SGYUWcp2g@mail.gmail.com>
-Subject: Re: [PATCH 07/20] riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>, tfiga@chromium.org,
-        paul.burton@mips.com, Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans-Christian Egtvedt <egtvedt@samfundet.no>,
-        Vineet Gupta <vgupta@synopsys.com>, mgorman@techsingularity.net,
-        Christoph Hellwig <hch@lst.de>, mina86@mina86.com,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        Paul Mackerras <paulus@ozlabs.org>, Will Deacon <will.deacon@arm.com>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516626208-5655-1-git-send-email-sramana@codeaurora.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 12:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
->
->> The ARCH_WANT_OPTIONAL_GPIOLIB symbol was removed in commit 65053e1a7743
->> ("gpio: delete ARCH_[WANTS_OPTIONAL|REQUIRE]_GPIOLIB"). GPIOLIB should
->> just be selected explicitly if needed.
->>
->> Remove the ARCH_WANT_OPTIONAL_GPIOLIB select from RISCV.
->>
->> See commit 0145071b3314 ("x86: Do away with
->> ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") and commit da9a1c6767 ("arm64: do
->> away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") as well.
->>
->> Discovered with the
->> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
->> script.
->>
->> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->
-> This should probaly be replaced with
-> select GPIOLIB
->
-> Yours,
-> Linus Walleij
+On Mon 22 Jan 05:03 PST 2018, Srinivas Ramana wrote:
+> +static void msm_gpio_irq_enable(struct irq_data *d)
+> +{
+> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
+> +	const struct msm_pingroup *g;
+> +	unsigned long flags;
+> +	u32 val;
+> +
+> +	g = &pctrl->soc->groups[d->hwirq];
+> +
+> +	raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +
+> +	/*
+> +	 * clear the interrupt status bit before unmask to avoid
+> +	 * any erroneous interrupts that would have got latched
+> +	 * when the intterupt is not in use.
+> +	 */
+> +	val = readl(pctrl->regs + g->intr_status_reg);
+> +	val &= ~BIT(g->intr_status_bit);
+> +	writel(val, pctrl->regs + g->intr_status_reg);
+> +
+> +	val = readl(pctrl->regs + g->intr_cfg_reg);
+> +	val |= BIT(g->intr_enable_bit);
+> +	writel(val, pctrl->regs + g->intr_cfg_reg);
+> +
+> +	set_bit(d->hwirq, pctrl->enabled_irqs);
+> +
+> +	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> +}
 
-That'd make more sense if GPIOLIB is actually used. The select has
-been a no-op since mid-2016 at least, but maybe something else selects
-GPIOLIB.
 
-Cheers,
-Ulf
+Hi Srinivas,
+
+This makes sense, but I would prefer if you extract this code into a
+common:
+
+static void __msm_gpio_irq_unmask(struct msm_pinctrl *pctrl, bool status_clear)
+
+which you call from the two callbacks.
+
+Regards,
+Bjorn
