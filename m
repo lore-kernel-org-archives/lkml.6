@@ -1,159 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753377AbeBEQdL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 11:33:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35764 "EHLO mx1.redhat.com"
+        id S1753390AbeBEQdg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 11:33:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753136AbeBEQdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 11:33:04 -0500
-From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: bhe@redhat.com, slp@redhat.com, mst@redhat.com, somlo@cmu.edu,
-        xiaolong.ye@intel.com,
-        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v12 4/4] fw_cfg: write vmcoreinfo details
-Date: Mon,  5 Feb 2018 17:30:48 +0100
-Message-Id: <20180205163048.8942-5-marcandre.lureau@redhat.com>
-In-Reply-To: <20180205163048.8942-1-marcandre.lureau@redhat.com>
-References: <20180205163048.8942-1-marcandre.lureau@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1752999AbeBEQd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 11:33:28 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A23C9217AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Tue, 6 Feb 2018 01:33:22 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH 04/18] tracing/x86: Add arch_get_func_args() function
+Message-Id: <20180206013322.754e66a4c956383174418953@kernel.org>
+In-Reply-To: <20180202231017.612058326@goodmis.org>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231017.612058326@goodmis.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the "etc/vmcoreinfo" fw_cfg file is present and we are not running
-the kdump kernel, write the addr/size of the vmcoreinfo ELF note.
+On Fri, 02 Feb 2018 18:05:02 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
-Reviewed-by: Gabriel Somlo <somlo@cmu.edu>
----
- drivers/firmware/qemu_fw_cfg.c | 84 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> Add function to get the function arguments from pt_regs.
+> 
 
-diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index 19ee776a1e92..08309939cd94 100644
---- a/drivers/firmware/qemu_fw_cfg.c
-+++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -34,6 +34,8 @@
- #include <linux/io.h>
- #include <linux/ioport.h>
- #include <linux/delay.h>
-+#include <linux/crash_dump.h>
-+#include <linux/crash_core.h>
- 
- MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
- MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
-@@ -57,6 +59,8 @@ MODULE_LICENSE("GPL");
- /* fw_cfg "file name" is up to 56 characters (including terminating nul) */
- #define FW_CFG_MAX_FILE_PATH 56
- 
-+#define VMCOREINFO_FORMAT_ELF 0x1
-+
- /* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
- static u32 fw_cfg_rev;
- 
-@@ -195,6 +199,47 @@ static ssize_t fw_cfg_read_blob(struct device *dev, u16 key,
- 	return ret;
- }
- 
-+#ifdef CONFIG_CRASH_CORE
-+/* write chunk of given fw_cfg blob (caller responsible for sanity-check) */
-+static ssize_t fw_cfg_write_blob(struct device *dev, u16 key,
-+				 void *buf, loff_t pos, size_t count)
-+{
-+	u32 glk = -1U;
-+	acpi_status status;
-+	ssize_t ret = count;
-+
-+	/* If we have ACPI, ensure mutual exclusion against any potential
-+	 * device access by the firmware, e.g. via AML methods:
-+	 */
-+	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
-+	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
-+		/* Should never get here */
-+		WARN(1, "%s: Failed to lock ACPI!\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	mutex_lock(&fw_cfg_dev_lock);
-+	if (pos == 0) {
-+		ret = fw_cfg_dma_transfer(dev, buf, count, key << 16
-+					  | FW_CFG_DMA_CTL_SELECT
-+					  | FW_CFG_DMA_CTL_WRITE);
-+	} else {
-+		iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
-+		ret = fw_cfg_dma_transfer(dev, NULL, pos, FW_CFG_DMA_CTL_SKIP);
-+		if (ret < 0)
-+			goto end;
-+		ret = fw_cfg_dma_transfer(dev, buf, count, FW_CFG_DMA_CTL_WRITE);
-+	}
-+
-+end:
-+	mutex_unlock(&fw_cfg_dev_lock);
-+
-+	acpi_release_global_lock(glk);
-+
-+	return ret;
-+}
-+#endif /* CONFIG_CRASH_CORE */
-+
- /* clean up fw_cfg device i/o */
- static void fw_cfg_io_cleanup(void)
- {
-@@ -314,6 +359,37 @@ struct fw_cfg_sysfs_entry {
- 	struct device *dev;
- };
- 
-+#ifdef CONFIG_CRASH_CORE
-+static ssize_t write_vmcoreinfo(struct device *dev, const struct fw_cfg_file *f)
-+{
-+	struct vmci {
-+		__le16 host_format;
-+		__le16 guest_format;
-+		__le32 size;
-+		__le64 paddr;
-+	} __packed;
-+	static struct vmci *data;
-+	ssize_t ret;
-+
-+	data = kmalloc(sizeof(struct vmci), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	*data = (struct vmci) {
-+		.guest_format = cpu_to_le16(VMCOREINFO_FORMAT_ELF),
-+		.size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
-+		.paddr = cpu_to_le64(paddr_vmcoreinfo_note())
-+	};
-+	/* spare ourself reading host format support for now since we
-+	 * don't know what else to format - host may ignore ours
-+	 */
-+	ret = fw_cfg_write_blob(dev, f->select, data, 0, sizeof(struct vmci));
-+
-+	kfree(data);
-+	return ret;
-+}
-+#endif /* CONFIG_CRASH_CORE */
-+
- /* get fw_cfg_sysfs_entry from kobject member */
- static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
- {
-@@ -555,6 +631,14 @@ static int fw_cfg_register_file(struct device *dev, const struct fw_cfg_file *f)
- 	int err;
- 	struct fw_cfg_sysfs_entry *entry;
- 
-+#ifdef CONFIG_CRASH_CORE
-+	if (fw_cfg_dma_enabled() &&
-+		strcmp(f->name, "etc/vmcoreinfo") == 0 && !is_kdump_kernel()) {
-+		if (write_vmcoreinfo(dev, f) < 0)
-+			pr_warn("fw_cfg: failed to write vmcoreinfo");
-+	}
-+#endif
-+
- 	/* allocate new entry */
- 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
- 	if (!entry)
+Can we make it an independent feature in asm/ptrace.h so that
+other components (like kprobe-event) share it?
+E.g.
+
+static inline unsigned long regs_get_func_arg(struct pt_regs *regs,
+                                              unsigned int n)
+{
+	unsigned int offs[] = {
+#ifdef CONFIG_X86_64
+	offsetof(typeof(regs),di),
+	offsetof(typeof(regs),si),
+	offsetof(typeof(regs),dx),
+	offsetof(typeof(regs),cx),
+	offsetof(typeof(regs),r8),
+	offsetof(typeof(regs),r9),
+#else
+	offsetof(typeof(regs),ax),
+	offsetof(typeof(regs),dx),
+	offsetof(typeof(regs),cx),
+#endif
+	};
+
+	if (unlikely(n >= ARRAY_SIZE(offs))
+		return 0;
+	return *(unsigned long *)((unsigned long)regs + offs[n]);
+}
+
+And HAVE_REGS_GET_FUNC_ARG indicates this is defined on that arch.
+
+Thank you,
+
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  arch/x86/kernel/ftrace.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 01ebcb6f263e..5e845c8cf89d 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -46,6 +46,34 @@ int ftrace_arch_code_modify_post_process(void)
+>  	return 0;
+>  }
+>  
+> +int arch_get_func_args(struct pt_regs *regs,
+> +		       int start, int end, long *args)
+> +{
+> +#ifdef CONFIG_X86_64
+> +# define MAX_ARGS 6
+> +# define INIT_REGS				\
+> +	{	regs->di, regs->si, regs->dx,	\
+> +		regs->cx, regs->r8, regs->r9	\
+> +	}
+> +#else
+> +# define MAX_ARGS 3
+> +# define INIT_REGS				\
+> +	{	regs->ax, regs->dx, regs->cx	}
+> +#endif
+> +	if (!regs)
+> +		return MAX_ARGS;
+> +
+> +	{
+> +		long pt_args[] = INIT_REGS;
+> +		int i;
+> +
+> +		for (i = start; i <= end && i < MAX_ARGS; i++)
+> +			args[i - start] = pt_args[i];
+> +
+> +		return i - start;
+> +	}
+> +}
+> +
+>  union ftrace_code_union {
+>  	char code[MCOUNT_INSN_SIZE];
+>  	struct {
+> -- 
+> 2.15.1
+> 
+> 
+
+
 -- 
-2.16.0.rc1.1.gef27df75a1
+Masami Hiramatsu <mhiramat@kernel.org>
