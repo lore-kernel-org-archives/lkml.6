@@ -1,102 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753018AbeBENj5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 08:39:57 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:55167 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752782AbeBENjs (ORCPT
+        id S1753065AbeBENlh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 08:41:37 -0500
+Received: from mail.efficios.com ([167.114.142.141]:52580 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752607AbeBENlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 08:39:48 -0500
-Date: Mon, 5 Feb 2018 14:39:45 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/3] net: stmmac: dwmac-sun8i: drop V3s compatible and
- add V3 one
-Message-ID: <20180205133945.ac3im2fu42evuxtb@flea>
-References: <20180202180456.60378-1-icenowy@aosc.io>
- <20180202180456.60378-2-icenowy@aosc.io>
- <20180202221301.judzaafcu67h4c2v@flea.lan>
- <73B89FC1-9A58-4B08-80C0-971E1254CFD9@aosc.io>
+        Mon, 5 Feb 2018 08:41:31 -0500
+Date: Mon, 5 Feb 2018 13:42:14 +0000 (UTC)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Message-ID: <789113858.16035.1517838134232.JavaMail.zimbra@efficios.com>
+Subject: [GIT PULL] membarrier updates for 4.16-rc1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fbximhq3eqkurhe3"
-Content-Disposition: inline
-In-Reply-To: <73B89FC1-9A58-4B08-80C0-971E1254CFD9@aosc.io>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.141]
+X-Mailer: Zimbra 8.7.11_GA_1854 (ZimbraWebClient - FF52 (Linux)/8.7.11_GA_1854)
+Thread-Index: DsGz917rJ6HmlbmeUV5fSGITGEekTA==
+Thread-Topic: membarrier updates for 4.16-rc1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---fbximhq3eqkurhe3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit d8a5b80568a9cb66810e75b182018e9edb68e8ff:
 
-Hi,
+    Linux 4.15 (Sun Jan 28 13:20:33 2018 -0800)
 
-On Sat, Feb 03, 2018 at 03:23:28PM +0800, Icenowy Zheng wrote:
-> =E4=BA=8E 2018=E5=B9=B42=E6=9C=883=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=886=
-:13:01, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
-> >On Sat, Feb 03, 2018 at 02:04:54AM +0800, Icenowy Zheng wrote:
-> >> The V3s is just a differently packaged version of the V3 chip, which
-> >has
-> >> a MAC with the same capability with H3. The V3s just doesn't wire out
-> >> the external MII/RMII/RGMII bus. (V3 wired out it).
-> >>=20
-> >> Drop the compatible string of V3s in the dwmac-sun8i driver, and add
-> >a
-> >> V3 compatible string, which has all capabilities.
-> >>=20
-> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> >
-> >This breaks the DT ABI, so NAK.
->=20
-> I have asked this at IRC.
+are available in the Git repository at:
 
-One more reason why no one should ask questions like this on IRC.
+    https://git.kernel.org/pub/scm/linux/kernel/git/rseq/linux-rseq.git tags/v4.15-membarrier-20180129
 
-> The V3s compatible string is never used in any mainline
-> kernel, even not in any RC version.
+for you to fetch changes up to 04e4ffa593e410090c3a34e50d4c8082e11936af:
 
-$ git grep allwinner,sun8i-v3s-emac v4.15 | wc -l=20
-5
+    membarrier: selftest: Test private expedited sync core cmd (Wed Nov 8 13:09:32 2017 -0500)
 
-It is there already, and the fact that we have or don't have a DT in
-tree that use it doesn't matter. One could very well have written a DT
-for it and never submitted it.
+Thanks!
 
-Maxime
+Mathieu
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+----------------------------------------------------------------
 
---fbximhq3eqkurhe3
-Content-Type: application/pgp-signature; name="signature.asc"
+membarrier updates for 4.16
 
------BEGIN PGP SIGNATURE-----
+"powerpc: membarrier: Skip memory barrier in switch_mm()" takes care of
+a TODO that was left in the private expedited implementation when merged
+in 4.14: an extra memory barrier was added on context switch on powerpc.
+Ensure that the barrier is only performed when scheduling between
+different processes, only for threads belonging to processes that have
+registered their intent to use the private expedited command.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp4XqEACgkQ0rTAlCFN
-r3QwBw//W5q/rro8AEMOTUSyT1Wa46DMFbR4Ga5CbFq90hggClkVaY5ws8LsBnjA
-2mU1KMimjIumsvsQbIM6IL8uPVNi4YyS1PzdUQH1N5Nuwrl55XOxyx7KCFbsJnwg
-7dbgVzwf6LGL6wkwoIXwgvdpkmGmm2A2oRY46T7q6Ny+n962tRF+2LoOYsy1oVbf
-Z2JGL1t0vE2cDE6KK7ttn4gfGISTH7QM3IUY7+fCBegZoG8KOacQY4KYkhnI5z/U
-kpRGMVodxSnu+TmZ1yXNxEQcg78NY+NKnhY5OGd5p7JRJ/Eq8XnEQcl9HJsKzdsu
-QQfGbgY95C1MBvXnSukUxbE3PfGvVZd9ZD02o1CK7+ztsRyDl0JTN0efeH/Xc/On
-OzOzqWOADkfZZUodAOG6tdQwaK5x5Bk98qxsXmXtP/e4W28Q345oXOZOp6qFkwYX
-2UTsxOXXDkLuSuhCKpDU9hlDXFBJzDc8hD2uwIHa1igrlm5CcYxqskcrkBQnbY2u
-hM1olJehFapuWILdxNpuWL+8p6/S9S1BHgyyMrq2IqOAGc1EFQflv63tVuSHvX7s
-xK70jIZKrHwfzfwydozxGYbWERxaHDoPtVWnQHmqvD8Q8pCIQEV7PLIzjSbbZL2T
-r/LVc/4Q5tTQV33si5Kle2VvZEW4A1fL1nrzKv6Hb7Y59c6pBh0=
-=bw+O
------END PGP SIGNATURE-----
+"membarrier: provide GLOBAL_EXPEDITED command" adds new commands to
+membarrier for registration and use of membarrier across processes
+communicating through shared memory mappings. The non-expedited command
+has proven to be really too slow (taking 10ms and more to complete) for
+real-world use. The expedited version completes in a matter of
+microseconds. This patch renames the pre-existing MEMBARRIER_CMD_SHARED
+to MEMBARRIER_CMD_GLOBAL for consistency, keeping the old enum label
+as an alias for backward compatibility.
 
---fbximhq3eqkurhe3--
+"membarrier: Provide core serializing command" provides core
+serialization for JIT reclaim. We received positive feedback from
+Android developers that the proposed ABI fits their use-case.
+Only x86 32/64 and arm 64 implement this command so far. This is
+opt-in per architecture.
+
+The other patches add selftests and documentation.
+
+----------------------------------------------------------------
+
+Mathieu Desnoyers (11):
+  membarrier: selftest: Test private expedited cmd (v2)
+  powerpc: membarrier: Skip memory barrier in switch_mm() (v7)
+  membarrier: Document scheduler barrier requirements (v5)
+  membarrier: provide GLOBAL_EXPEDITED command (v3)
+  membarrier: selftest: Test global expedited cmd (v2)
+  Introduce sync_core_before_usermode (v2)
+  x86: Implement sync_core_before_usermode (v3)
+  membarrier: Provide core serializing command (v3)
+  membarrier: x86: Provide core serializing command (v4)
+  membarrier: arm64: Provide core serializing command
+  membarrier: selftest: Test private expedited sync core cmd
+
+ MAINTAINERS                                        |   1 +
+ arch/arm64/Kconfig                                 |   1 +
+ arch/arm64/kernel/entry.S                          |   4 +
+ arch/powerpc/Kconfig                               |   1 +
+ arch/powerpc/include/asm/membarrier.h              |  27 +++
+ arch/powerpc/mm/mmu_context.c                      |   7 +
+ arch/x86/Kconfig                                   |   2 +
+ arch/x86/entry/entry_32.S                          |   5 +
+ arch/x86/entry/entry_64.S                          |   4 +
+ arch/x86/include/asm/sync_core.h                   |  28 +++
+ arch/x86/mm/tlb.c                                  |   6 +
+ include/linux/sched/mm.h                           |  40 +++-
+ include/linux/sync_core.h                          |  21 ++
+ include/uapi/linux/membarrier.h                    |  74 ++++++-
+ init/Kconfig                                       |   9 +
+ kernel/sched/core.c                                |  57 +++--
+ kernel/sched/membarrier.c                          | 177 +++++++++++++--
+ .../testing/selftests/membarrier/membarrier_test.c | 237 +++++++++++++++++++--
+ 18 files changed, 633 insertions(+), 68 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/membarrier.h
+ create mode 100644 arch/x86/include/asm/sync_core.h
+ create mode 100644 include/linux/sync_core.h
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
