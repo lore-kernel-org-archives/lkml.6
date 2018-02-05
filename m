@@ -1,49 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224ux+GS3bdhWtj8SI0O2li6WPjqQsN4fiyxVY6ADDfmBcKJ4Ufh860ann2chR8BwdafQgSt
-ARC-Seal: i=1; a=rsa-sha256; t=1517855063; cv=none;
-        d=google.com; s=arc-20160816;
-        b=lKBEsdCACu/n0THQMP2IXhM+T1hjxqO3ZZcGwqVNz0HT11IN2bx9Y6K4E9U3kGQo3E
-         zUXG5dwHXV9S+34ac0uC2Uvz1XNecbkH1AQwe5YVs206H2aOwtIZT+c8cf0NbOQAKy7k
-         T2iYGTB+GGA0NXS5bGTzgjWm/Rkxu3vyTu0JNAtRa07YItpJUek7hRvl62eSA40ENaJY
-         Jab635gc+Pasf9SGN7cg2JsRaRfgDd1OCaBmomOXscfbRFIpmYUVga0Kc8KQEu9yMda1
-         sunn/0xz/TK2vmGCVzFdp/5+Lv6nrgsEe+rllqPfFm42YHm0a41xVifiHW7UUEu3ON3+
-         uxug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=hug5Dz2vfj8lfwWc9Rs8BvLai483990V3BqkIaizW18=;
-        b=DROdP+zBednEbwwHwyYN6Zk+d9oiHPyke00qwqhJGMZumeVz2dw4vb+++zfggNK6w8
-         aehkZczmzPE+2+qPnNcgM0Cq2OZr7gq+u4EgTns5SKCl3YmPNEO06TndplFxbrWs3s5O
-         y6evgtoA6Dohc8yZ4aZGmosuUPfeOy+jpRf+QHwt2tOcQGjIkPxA4mt9Nv+8rBIur+Rp
-         P/DWO6IUCPpjqZEwAmV/WLLqW6bBJa9vnBZDq9C886o4e2CACHXY1/8VLxW8Z8aonRfw
-         tTe238pXd5sjS9OFc04NWmqedpZX6OUKuu3/vOw2crcEdOAGsd3r+9JB2efS66TV6tc6
-         P7UA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3105817-1517855059-2-7943931526723383718
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517855059; b=CpQgRt9+GvQMN1yzdTFVQVUJGsSSTM30iXdmzP7S8H1pMsE
+    0gYlmRQRpjFX3stG2eubMVUaLqlYHxi4bBWM88LlsYGe+kNuIPe/yOknlAtJAMZd
+    oz+ecT4flRlKuwumF0KzEokFGwGj3Fo1Cad0xXFlFAWJxpjpMGnSSD1Z4D/IsqC4
+    BNzI8Uav/MFhZhuPkHX/JlNn3Mod7Vo+KX7vHc31RRrs+VPSRIWS9WQoFbIy/TJi
+    qQga08a2EKJys3tX/jX1z8kg8OGfqcOrJghS0+KFlFEVwcWKCEAN3JMVR8NmdfsO
+    Gkp0uc7/J1mfY+zKXTEGTtTytR3Fo9H3t8UbDvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517855059; bh=PJXfUU7XFxhXtnvgvIphH92qnV
+    V1UICb2r5rg5bRWTA=; b=A0rbJCYb/SlPD7/r+q1MOA0oW2mI1CBh1HOUGij3p5
+    +ID5PzOCJmxhyc4pQQbZhSmXgJsUtADfu0VeHT/1JI2zKYiTtnW3VIOlQP5dFtlJ
+    q8xCVI9w3i8VcgAK5UOuVBVkAep/9IX//rjXVldF76SkEwUh0GRb+qSdlaFqc+VL
+    /7T3DYDYyGE/+cjlWJYboI7L+mosjgoofqDBq9tQ4LqUEUWrhFgD2Svvbx4IXTmK
+    NItMM1/HgUSiJtsspHIPnbxGviii/e5u8nZ+ydhhINTdGTl3ZDb2/cbJQq995gCL
+    kokteW1proNJ8XwqRgfEI4tbwhBzYJQiagVCmoo+Suhg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753515AbeBESYP (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Feb 2018 13:24:15 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51412 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752582AbeBESYH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:24:07 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	karahmed@amazon.de,
-	peterz@infradead.org,
-	bp@alien8.de
-Subject: [PATCH 4.14 49/64] x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature bits on Intel
-Date: Mon,  5 Feb 2018 10:23:08 -0800
-Message-Id: <20180205182140.585051865@linuxfoundation.org>
+        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, gnomes@lxorguk.ukuu.org.uk,
+        ak@linux.intel.com, ashok.raj@intel.com, dave.hansen@intel.com,
+        karahmed@amazon.de, arjan@linux.intel.com,
+        torvalds@linux-foundation.org, peterz@infradead.org, bp@alien8.de,
+        pbonzini@redhat.com, tim.c.chen@linux.intel.com,
+        gregkh@linux-foundation.org
+Subject: [PATCH 4.14 09/64] x86/cpufeatures: Add Intel feature bits for Speculation Control
+Date: Mon,  5 Feb 2018 10:22:28 -0800
+Message-Id: <20180205182138.954064970@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586391485405299?=
-X-GMAIL-MSGID: =?utf-8?q?1591586391485405299?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,118 +85,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse dwmw@amazon.co.uk
 
-commit 7fcae1118f5fd44a862aa5c3525248e35ee67c3b
+commit fc67dd70adb711a45d2ef34e12d1a8be75edde61
 
-Despite the fact that all the other code there seems to be doing it, just
-using set_cpu_cap() in early_intel_init() doesn't actually work.
+Add three feature bits exposed by new microcode on Intel CPUs for
+speculation control.
 
-For CPUs with PKU support, setup_pku() calls get_cpu_cap() after
-c->c_init() has set those feature bits. That resets those bits back to what
-was queried from the hardware.
-
-Turning the bits off for bad microcode is easy to fix. That can just use
-setup_clear_cpu_cap() to force them off for all CPUs.
-
-I was less keen on forcing the feature bits *on* that way, just in case
-of inconsistencies. I appreciate that the kernel is going to get this
-utterly wrong if CPU features are not consistent, because it has already
-applied alternatives by the time secondary CPUs are brought up.
-
-But at least if setup_force_cpu_cap() isn't being used, we might have a
-chance of *detecting* the lack of the corresponding bit and either
-panicking or refusing to bring the offending CPU online.
-
-So ensure that the appropriate feature bits are set within get_cpu_cap()
-regardless of how many extra times it's called.
-
-Fixes: 2961298e ("x86/cpufeatures: Clean up Spectre v2 related CPUID flags")
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: ak@linux.intel.com
+Cc: ashok.raj@intel.com
+Cc: dave.hansen@intel.com
 Cc: karahmed@amazon.de
+Cc: arjan@linux.intel.com
+Cc: torvalds@linux-foundation.org
 Cc: peterz@infradead.org
 Cc: bp@alien8.de
-Link: https://lkml.kernel.org/r/1517322623-15261-1-git-send-email-dwmw@amazon.co.uk
+Cc: pbonzini@redhat.com
+Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
+Link: https://lkml.kernel.org/r/1516896855-7642-3-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/kernel/cpu/common.c |   21 +++++++++++++++++++++
- arch/x86/kernel/cpu/intel.c  |   27 ++++++++-------------------
- 2 files changed, 29 insertions(+), 19 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -726,6 +726,26 @@ static void apply_forced_caps(struct cpu
- 	}
- }
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -320,6 +320,9 @@
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
+ #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
+ #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
++#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* Speculation Control (IBRS + IBPB) */
++#define X86_FEATURE_STIBP		(18*32+27) /* Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
  
-+static void init_speculation_control(struct cpuinfo_x86 *c)
-+{
-+	/*
-+	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
-+	 * and they also have a different bit for STIBP support. Also,
-+	 * a hypervisor might have set the individual AMD bits even on
-+	 * Intel CPUs, for finer-grained selection of what's available.
-+	 *
-+	 * We use the AMD bits in 0x8000_0008 EBX as the generic hardware
-+	 * features, which are visible in /proc/cpuinfo and used by the
-+	 * kernel. So set those accordingly from the Intel bits.
-+	 */
-+	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
-+		set_cpu_cap(c, X86_FEATURE_IBRS);
-+		set_cpu_cap(c, X86_FEATURE_IBPB);
-+	}
-+	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
-+		set_cpu_cap(c, X86_FEATURE_STIBP);
-+}
-+
- void get_cpu_cap(struct cpuinfo_x86 *c)
- {
- 	u32 eax, ebx, ecx, edx;
-@@ -820,6 +840,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
- 
- 	init_scattered_cpuid_features(c);
-+	init_speculation_control(c);
- 
- 	/*
- 	 * Clear/Set all flags overridden by options, after probe.
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -175,28 +175,17 @@ static void early_init_intel(struct cpui
- 	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64))
- 		c->microcode = intel_get_microcode_revision();
- 
--	/*
--	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
--	 * and they also have a different bit for STIBP support. Also,
--	 * a hypervisor might have set the individual AMD bits even on
--	 * Intel CPUs, for finer-grained selection of what's available.
--	 */
--	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
--		set_cpu_cap(c, X86_FEATURE_IBRS);
--		set_cpu_cap(c, X86_FEATURE_IBPB);
--	}
--	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
--		set_cpu_cap(c, X86_FEATURE_STIBP);
--
- 	/* Now if any of them are set, check the blacklist and clear the lot */
--	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
-+	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
-+	     cpu_has(c, X86_FEATURE_INTEL_STIBP) ||
-+	     cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
- 	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
- 		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
--		clear_cpu_cap(c, X86_FEATURE_IBRS);
--		clear_cpu_cap(c, X86_FEATURE_IBPB);
--		clear_cpu_cap(c, X86_FEATURE_STIBP);
--		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
--		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
-+		setup_clear_cpu_cap(X86_FEATURE_IBRS);
-+		setup_clear_cpu_cap(X86_FEATURE_IBPB);
-+		setup_clear_cpu_cap(X86_FEATURE_STIBP);
-+		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
-+		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
- 	}
- 
- 	/*
+ /*
+  * BUG word(s)
