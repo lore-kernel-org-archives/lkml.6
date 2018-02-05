@@ -1,64 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753060AbeBENth (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 08:49:37 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33713 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752848AbeBENta (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 08:49:30 -0500
-X-Google-Smtp-Source: AH8x224UexyAj/JZh20g0oElR5VjlS0VGFtVPckZTR4s6G5IgdSs+2/uLYU14x2muFAjQb7Ank93VQ==
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] MMC fixes for v.4.16-rc1
-Date: Mon,  5 Feb 2018 14:49:26 +0100
-Message-Id: <1517838566-2345-1-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S1753071AbeBENvS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 08:51:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43760 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752461AbeBENvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 08:51:09 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40EFC2172D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Mon, 5 Feb 2018 22:51:05 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Pawel Osciak <pawel@osciak.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        orito.takao@socionext.com, Fumihiro ATSUMI <atsumi@infinitegra.co.jp>
+Subject: Re: [PATCH] [BUGFIX] media: vb2: Fix videobuf2 to map correct area
+Message-Id: <20180205225105.6eb3a8e5ed93c87bf6cfd14e@kernel.org>
+In-Reply-To: <2af9a288-86e8-100a-4459-bc913f3cb99d@samsung.com>
+References: <CGME20180205023108epcas5p18456b3ecc412b6709dc27fe5af14b1f6@epcas5p1.samsung.com>
+        <151779784111.20697.5012233804870630070.stgit@devbox>
+        <2af9a288-86e8-100a-4459-bc913f3cb99d@samsung.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, 05 Feb 2018 09:47:46 +0100
+Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 
-Here's a PR with a few MMC fixes intended for v4.16-rc1. Details about the
-highlights are as usual found in the signed tag.
+> Hi Masami,
+> 
+> On 2018-02-05 03:30, Masami Hiramatsu wrote:
+> > Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
+> > Since the current code does ioremap the page address, if the offset > 0,
+> > it does not do ioremap the last page and results in kernel panic.
+> >
+> > This fixes to pass the page address + offset to ioremap so that ioremap
+> > can map correct area. Also, this uses __pfn_to_phys() to get the physical
+> > address of given PFN.
+> >
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > Reported-by: Takao Orito <orito.takao@socionext.com>
+> > ---
+> >   drivers/media/v4l2-core/videobuf2-vmalloc.c |    2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/v4l2-core/videobuf2-vmalloc.c b/drivers/media/v4l2-core/videobuf2-vmalloc.c
+> > index 3a7c80cd1a17..896f2f378b40 100644
+> > --- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
+> > +++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
+> > @@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(struct device *dev, unsigned long vaddr,
+> >   			if (nums[i-1] + 1 != nums[i])
+> >   				goto fail_map;
+> >   		buf->vaddr = (__force void *)
+> > -				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
+> > +			ioremap_nocache(__pfn_to_phys(nums[0]) + offset, size);
+> 
+> Thanks for reporting this issue. However the above line doesn't look like
+> a proper fix. Please note that at the end of that function there is already
+> "buf->vaddr += offset;".
 
-Please pull this in!
+I see.
 
-Kind regards
-Ulf Hansson
+> 
+> IMHO the proper fix is to create a larger mapping, which would include the
+> in-page start offset:
+> 
+> ioremap_nocache(__pfn_to_phys(nums[0]), offset + size);
+
+Yes, sorry it's my mistake. I misunderstood ioremap_nocache(addr, size) remaps
+the PAGE of addr to PAGE of (addr+size). Yours is correct.
+
+Thank you,
+
+> BTW, thanks for updating "<< PAGE_SHIFT" to better __pfn_to_phys() macro!
+> 
+> >   	} else {
+> >   		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
+> >   					PAGE_KERNEL);
+> >
+> >
+> >
+> >
+> 
+> Best regards
+> -- 
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> 
 
 
-The following changes since commit 3da90b159b146672f830bcd2489dd3a1f4e9e089:
-
-  Merge tag 'f2fs-for-4.16-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs (2018-01-30 19:07:32 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.16-2
-
-for you to fetch changes up to 56174d9a21496fce64fcc6ba2f475734c20c12e4:
-
-  mmc: MMC_SDHI_{SYS,INTERNAL}_DMAC should depend on HAS_DMA (2018-01-31 11:27:23 +0100)
-
-----------------------------------------------------------------
-MMC host:
- - renesas_sdhi: Fix build error in case NO_DMA=y
- - sdhci: Implement a bounce buffer to address throughput regressions
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      mmc: MMC_SDHI_{SYS,INTERNAL}_DMAC should depend on HAS_DMA
-
-Linus Walleij (1):
-      mmc: sdhci: Implement an SDHCI-specific bounce buffer
-
- drivers/mmc/host/Kconfig |   4 +-
- drivers/mmc/host/sdhci.c | 164 ++++++++++++++++++++++++++++++++++++++++++++---
- drivers/mmc/host/sdhci.h |   3 +
- 3 files changed, 161 insertions(+), 10 deletions(-)
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
