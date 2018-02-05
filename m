@@ -1,104 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752135AbeBEWXI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 17:23:08 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60655 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752074AbeBEWW6 (ORCPT
+        id S1751910AbeBEWZI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 17:25:08 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36658 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750796AbeBEWZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 17:22:58 -0500
-X-ME-Sender: <xms:Qdl4WpzX63WXxWTgQXFn2mYWIhWlsrPFp7jkpQI5T9GM1YAlpkNfWw>
-Date: Tue, 6 Feb 2018 09:22:54 +1100
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Adam Borowski <kilobyte@angband.pl>
-Cc: Kees Cook <keescook@chromium.org>, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
-Message-ID: <20180205222254.GS29988@eros>
-References: <20180204174521.21383-1-kilobyte@angband.pl>
- <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
- <CAGXu5j+rWhT7_DH5Z96_7naPou96-6736x4mjq0r_8EG4iiQ_g@mail.gmail.com>
- <20180205201555.GQ29988@eros>
- <CAGXu5j+KSm3rOK46xiYPx8SRaO9T5LaeaXxOA3PSktJv4F__dg@mail.gmail.com>
- <20180205205817.72dy7e7xzjcnwmhs@angband.pl>
+        Mon, 5 Feb 2018 17:25:04 -0500
+X-Google-Smtp-Source: AH8x224PgtzmLbH0AR65tqDlGg6BVbOvcEXgWwsc2gQf5qJ/RM1TDD7vCzYCx0Bcp1iUi3YOyPS7aYxgn+POI335Cyo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180205205817.72dy7e7xzjcnwmhs@angband.pl>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CA+55aFyxgnVP1C3bgNDgX01NZi2x=FYjAw=YHAdn17ENS9P7bg@mail.gmail.com>
+References: <151776623555.23236.14152911329227555005.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151776624080.23236.1865339140666550495.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180205115836.otnviqbae3pxjk5g@gmail.com> <CAPcyv4gyP4LAzS=8-ZNfy5gX=QHKK7VpGmeYXoP=rbe47kOg9A@mail.gmail.com>
+ <CA+55aFyvGkuM33C8ki=5-11idWWK4tHKuPaSrSb0FPTaJmC_iQ@mail.gmail.com>
+ <CALCETrV_7dxKAgwNyfDbvQ+0nTJG6NJqbKkngZyU-VPA3fvg8Q@mail.gmail.com> <CA+55aFyxgnVP1C3bgNDgX01NZi2x=FYjAw=YHAdn17ENS9P7bg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 5 Feb 2018 14:25:02 -0800
+X-Google-Sender-Auth: gYKlyyONT7gFrFIhxgK8tcKYXwY
+Message-ID: <CA+55aFy=Nb0Qp50SbArw2S+9frMOeHNXs0WuaEwacfip41HK9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] x86/entry: Clear extra registers beyond syscall
+ arguments for 64bit kernels
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 09:58:17PM +0100, Adam Borowski wrote:
-> On Tue, Feb 06, 2018 at 07:32:32AM +1100, Kees Cook wrote:
-> > On Tue, Feb 6, 2018 at 7:15 AM, Tobin C. Harding <me@tobin.cc> wrote:
-> > > On Tue, Feb 06, 2018 at 05:57:17AM +1100, Kees Cook wrote:
-> > >> On Mon, Feb 5, 2018 at 8:44 PM, Petr Mladek <pmladek@suse.com> wrote:
-> > >> > On Sun 2018-02-04 18:45:21, Adam Borowski wrote:
-> > >> >> Like %pK already does, print "00000000" instead.
-> > >> >>
-> > >> >> This confused people -- the convention is that "(null)" means you tried to
-> > >> >> dereference a null pointer as opposed to printing the address.
-> > >
-> > > Leaving aside what is converting to %px.  If we consider that using %px
-> > > is meant to convey to us that we _really_ want the address, in hex hence
-> > > the 'x', then it is not surprising that we will get "00000000"'s for a
-> > > null pointer, right?  Yes it is different to before but since we are
-> > > changing the specifier does this not imply that there may be some
-> > > change?
-> > 
-> > I personally prefer 0000s, but if we're going to change this, we need
-> > to be aware of the difference.
-> 
-> It's easy to paint this bikeshed any color you guys want to: there's an "if"
-> already.  My preference is also 0000; NULL would be good, too -- I just
-> don't want (null) as that has a special meaning in usual userspace
-> implementations; (null) also fits well most other modes of %p as they show
-> some object the argument points to.  Confusion = wasted debugging time.
-> 
-> This is consistent with what we had before, with %pK special-cased.
-> 
-> > > In what is now to be expected fashion for %p the discussion appears to
-> > > have split into two different things - what to do with %px and what to
-> > > do with %pK :)
-> > 
-> > I say leave %pK alone. :)
-> 
-> As in, printing some random (hashed) value?
-> 
-> 
-> Let's recap:
-> 
-> Currently:
->               not-null              null
-> %pponies      object's description  (null)
-> %px           address               (null)
-> %pK           hash                  hash
-> 
-> I'd propose:
->               not-null              null
-> %pponies      object's description  (null)
-> %px           address               00000000
-> %pK           hash                  00000000
-> 
-> The initial patch in this thread changes printk("%px",0) from (null) to
-> 00000000; what Tobin complained about is that printk("%pK",0) prints a
-> random value.               
+On Mon, Feb 5, 2018 at 2:22 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> But I'm not timing it.
 
-Epic fail on my behalf, my first comment was _wrong_ and brought %pK
-into the discussion - bad Tobin, please crawl back under your rock.
+I lied.
 
-The original patch is good IMO and I AFAICT in everyone else's.
+I did this:
 
-	Tobin
+        for (i = 0; i < 100000; i++)
+                asm(".rept 16384\n"
+                "subq $128,%rsp\n\t"
+                "pushq %rbx\n\t"
+                "pushq %r10\n\t"
+                "pushq %r11\n\t"
+                "pushq %r12\n\t"
+                "pushq %r13\n\t"
+                "pushq %r14\n\t"
+                "pushq %r15\n\t"
+
+                "popq %r15\n\t"
+                "popq %r14\n\t"
+                "popq %r13\n\t"
+                "popq %r12\n\t"
+                "popq %r11\n\t"
+                "popq %r10\n\t"
+                "popq %rbx\n\t"
+                "addq $128,%rsp\n\t"
+                ".endr");
+
+and then I timed it like that, and with "xorq" of the register after
+each "pushq".
+
+And the timings came out the same, to within the (bad) timing I did.
+
+So I really do think you can just put the xor right next to the push,
+and it will be effectively free.
+
+            Linus
