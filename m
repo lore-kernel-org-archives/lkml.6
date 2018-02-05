@@ -1,63 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeBEIRB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 03:17:01 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39878 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750943AbeBEIQy (ORCPT
+        id S1752616AbeBEITb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 03:19:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54922 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751938AbeBEITZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:16:54 -0500
-Date: Mon, 5 Feb 2018 09:16:06 +0100
-From: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: s390 unistd.h & perf
-References: <20180202162322.GF26905@kernel.org>
+        Mon, 5 Feb 2018 03:19:25 -0500
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>
+References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
+ <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Message-ID: <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+Date: Mon, 5 Feb 2018 09:19:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180202162322.GF26905@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18020508-0016-0000-0000-0000051F6A32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020508-0017-0000-0000-0000285C1765
-Message-Id: <20180205081606.GA4612@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-05_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802050106
+In-Reply-To: <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+On 1 February 2018 at 17:36, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> Hi,
+> 
+> Sorry for joining the party late. Had a broken finger and was
+> offline for a bunch of weeks (and a buif backlog afterwards ...).
 
-On Fri, Feb 02, 2018 at 01:23:22PM -0300, Arnaldo Carvalho de Melo wrote:
-> 
-> 	I noticed, after fast forwarding my perf/urgent branch to
-> torvalds/master, that this appears in my perf build:
-> 
-> Warning: Kernel ABI header at 'tools/arch/s390/include/uapi/asm/unistd.h' differs from latest version at 'arch/s390/include/uapi/asm/unistd.h'
-> 
-> 	Looking at the log for that file I noticed this cset:
-> 
-> 4381f9f12e79 ("s390/syscalls: use generated syscall_table.h and unistd.h header files")
-> 
-> 	Can you please take a look how this affects the syscall table
-> generation process in tools/perf and how can we proceed to silence that
-> warning, i.e. to update the copy we have in tools/?
+Hi, no problem, hope it's fine now.
 
-I reworked the our system call table a bit to also have a text file containing
-the system calls.  For this, I also have an update for perf.  Will post these
-patches by end of this week.
+>> This is to allow clients running within VMs to be able to
+>> communicate with a compositor in the host. Clients will use the
+>> communication protocol that the compositor supports, and virtio-gpu
+>> will assist with making buffers available in both sides, and
+>> copying content as needed.
+> 
+> Why not use virtio-vsock to run the wayland protocol? I don't like
+> the idea to duplicate something with very simliar functionality in 
+> virtio-gpu.
 
-Thanks and kind regards,
-  Hendrik
+The reason for abandoning that approach was the type of objects that
+could be shared via virtio-vsock would be extremely limited. Besides
+that being potentially confusing to users, it would mean from the
+implementation side that either virtio-vsock would gain a dependency on
+the drm subsystem, or an appropriate abstraction for shareable buffers
+would need to be added for little gain.
+
+Another factor that was taken into account was that the complexity
+required for implementing passing protocol data around was very small
+when compared with the buffer sharing mechanism.
+
+>> It is expected that a service in the guest will act as a proxy, 
+>> interacting with virtio-gpu to support unmodified clients.
+> 
+> If you have a guest proxy anyway using virtio-sock for the protocol 
+> stream and virtio-gpu for buffer sharing (and some day 3d rendering
+> too) should work fine I think.
+
+If I understand correctly your proposal, virtio-gpu would be used for
+creating buffers that could be shared across domains, but something
+equivalent to SCM_RIGHTS would still be needed in virtio-vsock?
+
+If so, that's what was planned initially, with the concern being that we
+would be adding a bunch of complexity to virtio-vsock that would be only
+used in this specific use case. Then we would also need to figure out
+how virtio-vsock would be able to work with buffers from virtio-gpu
+(either direct dependency or a new abstraction).
+
+If the mechanics of passing presentation data were very complex, I think
+this approach would have more merit. But as you can see from the code,
+it isn't that bad.
+
+>> When the client notifies the compositor that it can read from that
+buffer,
+>> the proxy should copy the contents from the SHM region to the
+>> virtio-gpu resource and call DRM_VIRTGPU_TRANSFER_TO_HOST.
+> 
+> What is the plan for the host side? I see basically two options. 
+> Either implement the host wayland proxy directly in qemu. Or
+> implement it as separate process, which then needs some help from
+> qemu to get access to the buffers. The later would allow qemu running
+> independant from the desktop session.
+
+Regarding synchronizing buffers, this will stop becoming needed in
+subsequent commits as all shared memory is allocated in the host and
+mapped to the guest via KVM_SET_USER_MEMORY_REGION.
+
+This is already the case for buffers passed from the compositor to the
+clients (see patch 2/2), and I'm working on the equivalent for buffers
+from the guest to the host (clients still have to create buffers with
+DRM_VIRTGPU_RESOURCE_CREATE but they will be only backend by host memory
+so no calls to DRM_VIRTGPU_TRANSFER_TO_HOST are needed).
+
+But in the case that we still need a proxy for some reason on the host
+side, I think it would be better to have it in the same process where
+virtio-gpu is implemented. In crosvm's case it would be in a process
+separate from the main VMM, as device processes are isolated from each
+other with minijail (see
+https://chromium.googlesource.com/chromiumos/platform/crosvm/ ).
+
+Regards,
+
+Tomeu
