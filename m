@@ -1,173 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753352AbeBESIn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 13:08:43 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53994 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752738AbeBESIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 13:08:34 -0500
-Subject: Re: [PATCH 1/1] iommu/io-pgtable: use size_t return type for all
- foo_unmap
-To: Vivek Gautam <vivek.gautam@codeaurora.org>, will.deacon@arm.com,
-        joro@8bytes.org, iommu@lists.linux-foundation.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <1517853559-5869-1-git-send-email-vivek.gautam@codeaurora.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <9c91b0a0-3163-09c6-e0d8-6cb69fbf76b3@arm.com>
-Date: Mon, 5 Feb 2018 18:08:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753330AbeBESL7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 13:11:59 -0500
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:38381 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752743AbeBESLv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 13:11:51 -0500
+X-Google-Smtp-Source: AH8x227loabYtBLmwEXprSfRBwdY7OYF7XbDB1ch06cX2LGjRQtowinmDDI8/vTa76fc810s20XqVwx/S3M98vxw4BU=
 MIME-Version: 1.0
-In-Reply-To: <1517853559-5869-1-git-send-email-vivek.gautam@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180202101951.GS19535@localhost.localdomain>
+References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+ <1517503869-3179-2-git-send-email-mathieu.poirier@linaro.org> <20180202101951.GS19535@localhost.localdomain>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 5 Feb 2018 11:11:49 -0700
+Message-ID: <CANLsYkyJb9F14SBSatLHCwThWaO0dcMSddsCB_kHHAeEdunEtw@mail.gmail.com>
+Subject: Re: [PATCH V2 1/7] sched/topology: Adding function partition_sched_domains_locked()
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
+        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        "luca.abeni" <luca.abeni@santannapisa.it>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/18 17:59, Vivek Gautam wrote:
-> Unmap returns a size_t all throughout the IOMMU framework.
-> Make io-pgtable match this convention.
-> Moreover, there isn't a need to have a signed int return type
-> as we return 0 in case of failures.
+On 2 February 2018 at 03:19, Juri Lelli <juri.lelli@redhat.com> wrote:
+> Hi Mathieu,
+>
+> On 01/02/18 09:51, Mathieu Poirier wrote:
+>> Introducing function partition_sched_domains_locked() by taking
+>> the mutex locking code out of the original function.  That way
+>> the work done by partition_sched_domains_locked() can be reused
+>> without dropping the mutex lock.
+>>
+>> This patch doesn't change the functionality provided by the
+>> original code.
+>>
+>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> ---
+>
+> [...]
+>
+>> +/*
+>> + * Call with hotplug lock held
+>
+> Is this the one that we can actually check if it's locked with
+>
+> lockdep_assert_cpus_held()
+>
+> ?
 
-That makes sense (the code itself has always followed that convention, 
-even if the prototypes didn't), and at a glance it looks like you've 
-caught all the sites which need it.
+Hi Juri,
 
-Acked-by: Robin Murphy <robin.murphy@arm.com>
+You are correct - we could call lockdep_assert_cpus_held() but in my
+opinion it would be in a separate patch and probably outside the scope
+of this work.  The sole purpose of this patch is to get the
+locking/unlocking operations of mutex sched_domains_mutex out of
+function partition_sched_domains_locked().
 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> ---
->   drivers/iommu/io-pgtable-arm-v7s.c | 21 +++++++++++----------
->   drivers/iommu/io-pgtable-arm.c     | 24 ++++++++++++------------
->   drivers/iommu/io-pgtable.h         |  4 ++--
->   3 files changed, 25 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
-> index 2ca08dc9331c..10e4a3d11c02 100644
-> --- a/drivers/iommu/io-pgtable-arm-v7s.c
-> +++ b/drivers/iommu/io-pgtable-arm-v7s.c
-> @@ -357,8 +357,8 @@ static bool arm_v7s_pte_is_cont(arm_v7s_iopte pte, int lvl)
->   	return false;
->   }
->   
-> -static int __arm_v7s_unmap(struct arm_v7s_io_pgtable *, unsigned long,
-> -			   size_t, int, arm_v7s_iopte *);
-> +static size_t __arm_v7s_unmap(struct arm_v7s_io_pgtable *, unsigned long,
-> +			      size_t, int, arm_v7s_iopte *);
->   
->   static int arm_v7s_init_pte(struct arm_v7s_io_pgtable *data,
->   			    unsigned long iova, phys_addr_t paddr, int prot,
-> @@ -541,9 +541,10 @@ static arm_v7s_iopte arm_v7s_split_cont(struct arm_v7s_io_pgtable *data,
->   	return pte;
->   }
->   
-> -static int arm_v7s_split_blk_unmap(struct arm_v7s_io_pgtable *data,
-> -				   unsigned long iova, size_t size,
-> -				   arm_v7s_iopte blk_pte, arm_v7s_iopte *ptep)
-> +static size_t arm_v7s_split_blk_unmap(struct arm_v7s_io_pgtable *data,
-> +				      unsigned long iova, size_t size,
-> +				      arm_v7s_iopte blk_pte,
-> +				      arm_v7s_iopte *ptep)
->   {
->   	struct io_pgtable_cfg *cfg = &data->iop.cfg;
->   	arm_v7s_iopte pte, *tablep;
-> @@ -584,9 +585,9 @@ static int arm_v7s_split_blk_unmap(struct arm_v7s_io_pgtable *data,
->   	return size;
->   }
->   
-> -static int __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
-> -			    unsigned long iova, size_t size, int lvl,
-> -			    arm_v7s_iopte *ptep)
-> +static size_t __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
-> +			      unsigned long iova, size_t size, int lvl,
-> +			      arm_v7s_iopte *ptep)
->   {
->   	arm_v7s_iopte pte[ARM_V7S_CONT_PAGES];
->   	struct io_pgtable *iop = &data->iop;
-> @@ -656,8 +657,8 @@ static int __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
->   	return __arm_v7s_unmap(data, iova, size, lvl + 1, ptep);
->   }
->   
-> -static int arm_v7s_unmap(struct io_pgtable_ops *ops, unsigned long iova,
-> -			 size_t size)
-> +static size_t arm_v7s_unmap(struct io_pgtable_ops *ops, unsigned long iova,
-> +			    size_t size)
->   {
->   	struct arm_v7s_io_pgtable *data = io_pgtable_ops_to_data(ops);
->   
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index 51e5c43caed1..8faaaa04d7a7 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -268,9 +268,9 @@ static void __arm_lpae_set_pte(arm_lpae_iopte *ptep, arm_lpae_iopte pte,
->   		__arm_lpae_sync_pte(ptep, cfg);
->   }
->   
-> -static int __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> -			    unsigned long iova, size_t size, int lvl,
-> -			    arm_lpae_iopte *ptep);
-> +static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> +			       unsigned long iova, size_t size, int lvl,
-> +			       arm_lpae_iopte *ptep);
->   
->   static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
->   				phys_addr_t paddr, arm_lpae_iopte prot,
-> @@ -506,10 +506,10 @@ static void arm_lpae_free_pgtable(struct io_pgtable *iop)
->   	kfree(data);
->   }
->   
-> -static int arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
-> -				    unsigned long iova, size_t size,
-> -				    arm_lpae_iopte blk_pte, int lvl,
-> -				    arm_lpae_iopte *ptep)
-> +static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
-> +				       unsigned long iova, size_t size,
-> +				       arm_lpae_iopte blk_pte, int lvl,
-> +				       arm_lpae_iopte *ptep)
->   {
->   	struct io_pgtable_cfg *cfg = &data->iop.cfg;
->   	arm_lpae_iopte pte, *tablep;
-> @@ -560,9 +560,9 @@ static int arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
->   	return size;
->   }
->   
-> -static int __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> -			    unsigned long iova, size_t size, int lvl,
-> -			    arm_lpae_iopte *ptep)
-> +static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> +			       unsigned long iova, size_t size, int lvl,
-> +			       arm_lpae_iopte *ptep)
->   {
->   	arm_lpae_iopte pte;
->   	struct io_pgtable *iop = &data->iop;
-> @@ -606,8 +606,8 @@ static int __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   	return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep);
->   }
->   
-> -static int arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned long iova,
-> -			  size_t size)
-> +static size_t arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned long iova,
-> +			     size_t size)
->   {
->   	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
->   	arm_lpae_iopte *ptep = data->pgd;
-> diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
-> index cd2e1eafffe6..2df79093cad9 100644
-> --- a/drivers/iommu/io-pgtable.h
-> +++ b/drivers/iommu/io-pgtable.h
-> @@ -119,8 +119,8 @@ struct io_pgtable_cfg {
->   struct io_pgtable_ops {
->   	int (*map)(struct io_pgtable_ops *ops, unsigned long iova,
->   		   phys_addr_t paddr, size_t size, int prot);
-> -	int (*unmap)(struct io_pgtable_ops *ops, unsigned long iova,
-> -		     size_t size);
-> +	size_t (*unmap)(struct io_pgtable_ops *ops, unsigned long iova,
-> +			size_t size);
->   	phys_addr_t (*iova_to_phys)(struct io_pgtable_ops *ops,
->   				    unsigned long iova);
->   };
-> 
+Mathieu
+
+>
+>> + */
+>> +void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+>> +                          struct sched_domain_attr *dattr_new)
+>> +{
+>> +     mutex_lock(&sched_domains_mutex);
+>> +     partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+>>       mutex_unlock(&sched_domains_mutex);
+>>  }
+>
+> Best,
+>
+> - Juri
