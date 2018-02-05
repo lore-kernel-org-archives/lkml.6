@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753316AbeBEQAI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 11:00:08 -0500
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:40166 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752925AbeBEQAA (ORCPT
+        id S1753340AbeBEQA1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 11:00:27 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34181 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753025AbeBEQAB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 11:00:00 -0500
-X-Google-Smtp-Source: AH8x227DoqX2J6U4bdBtjqfqHDXU34waFdMvo52Hirr5OEEeL31lyN0TXnptI+faZTvMRl7PXjVPdg==
+        Mon, 5 Feb 2018 11:00:01 -0500
+X-Google-Smtp-Source: AH8x224o8CqUEwXdRlA4v8ks/z+yn7+fRMzOuonjvWhf9S2oSjQ2XFKJbqTUkiELtD0M6Q8uCecxHw==
 From: Christian Brauner <christian.brauner@ubuntu.com>
 To: netdev@vger.kernel.org
 Cc: stephen@networkplumber.org, w.bumiller@proxmox.com,
         ebiederm@xmission.com, jbenc@redhat.com, nicolas.dichtel@6wind.com,
         linux-kernel@vger.kernel.org, dsahern@gmail.com, davem@davemloft.net,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH net 0/1 v2] rtnetlink: require unique netns identifier
-Date: Mon,  5 Feb 2018 16:55:49 +0100
-Message-Id: <20180205155550.21432-1-christian.brauner@ubuntu.com>
+Subject: [PATCH net 1/1 v2] rtnetlink: require unique netns identifier
+Date: Mon,  5 Feb 2018 16:55:50 +0100
+Message-Id: <20180205155550.21432-2-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180205155550.21432-1-christian.brauner@ubuntu.com>
+References: <20180205155550.21432-1-christian.brauner@ubuntu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-Hey,
 
 Since we've added support for IFLA_IF_NETNSID for RTM_{DEL,GET,SET,NEW}LINK
 it is possible for userspace to send us requests with three different
@@ -36,15 +36,8 @@ minimal since the rtnetlink requests in question either won't allow
 IFLA_IF_NETNSID requests before 4.16 is out (RTM_{NEW,SET}LINK) or don't
 support IFLA_NET_NS_{PID,FD} (RTM_{DEL,GET}LINK) in the first place.
 
-We obviously cannot prevent users from passing both IFLA_NET_NS_PID and
-IFLA_NET_NS_FD since we have supported this somehow for a long time. So
-the check I'm proposing is to only fail when both IFLA_IF_NETNSID, and
-IFLA_NET_NS_PID or IFLA_NET_NS_FD are passed and they refer to different
-network namespaces.
-
-Thanks!
-Christian
-
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
 ChangeLog v1->v2:
 * return errno when the specified network namespace id is invalid
 * fill in struct netlink_ext_ack if the network namespace id is invalid
@@ -55,12 +48,117 @@ ChangeLog v1->v2:
 ChangeLog v0->v1:
 * report a descriptive error to userspace via struct netlink_ext_ack
 * do not fail when multiple properties specifiy the same network namespace
-
-Christian Brauner (1):
-  rtnetlink: require unique netns identifier
-
+---
  net/core/rtnetlink.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 69 insertions(+)
 
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 56af8e41abfc..c096c4ff9a00 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -1951,6 +1951,59 @@ static struct net *rtnl_link_get_net_capable(const struct sk_buff *skb,
+ 	return net;
+ }
+ 
++/* Verify that rtnetlink requests supporting network namespace ids
++ * do not pass additional properties referring to different network
++ * namespaces.
++ */
++static int rtnl_ensure_unique_netns(const struct sock *sk, struct nlattr *tb[],
++				    struct netlink_ext_ack *extack)
++{
++	int ret = -EINVAL;
++	struct net *net = NULL, *unique_net = NULL;
++
++	/* Requests without network namespace ids have been able to specify
++	 * multiple properties referring to different network namespaces so
++	 * don't regress them.
++	 */
++	if (!tb[IFLA_IF_NETNSID])
++		return 0;
++
++	/* Caller operates on the current network namespace. */
++	if (!tb[IFLA_NET_NS_PID] && !tb[IFLA_NET_NS_FD])
++		return 0;
++
++	unique_net = get_net_ns_by_id(sock_net(sk), nla_get_s32(tb[IFLA_IF_NETNSID]));
++	if (!unique_net) {
++		NL_SET_ERR_MSG(extack, "invalid network namespace id");
++		return ret;
++	}
++
++	if (tb[IFLA_NET_NS_PID]) {
++		net = get_net_ns_by_pid(nla_get_u32(tb[IFLA_NET_NS_PID]));
++		if (net != unique_net)
++			goto on_error;
++	}
++
++	if (tb[IFLA_NET_NS_FD]) {
++		net = get_net_ns_by_fd(nla_get_u32(tb[IFLA_NET_NS_FD]));
++		if (net != unique_net)
++			goto on_error;
++	}
++
++	ret = 0;
++
++on_error:
++	put_net(unique_net);
++
++	if (net && !IS_ERR(net))
++		put_net(net);
++
++	if (ret != 0)
++		NL_SET_ERR_MSG(extack, "multiple network namespaces specified");
++
++	return ret;
++}
++
+ static int validate_linkmsg(struct net_device *dev, struct nlattr *tb[])
+ {
+ 	if (dev) {
+@@ -2553,6 +2606,10 @@ static int rtnl_setlink(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	if (err < 0)
+ 		goto errout;
+ 
++	err = rtnl_ensure_unique_netns(NETLINK_CB(skb).sk, tb, extack);
++	if (err < 0)
++		goto errout;
++
+ 	if (tb[IFLA_IFNAME])
+ 		nla_strlcpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
+ 	else
+@@ -2649,6 +2706,10 @@ static int rtnl_dellink(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	if (err < 0)
+ 		return err;
+ 
++	err = rtnl_ensure_unique_netns(NETLINK_CB(skb).sk, tb, extack);
++	if (err < 0)
++		return err;
++
+ 	if (tb[IFLA_IFNAME])
+ 		nla_strlcpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
+ 
+@@ -2802,6 +2863,10 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	if (err < 0)
+ 		return err;
+ 
++	err = rtnl_ensure_unique_netns(NETLINK_CB(skb).sk, tb, extack);
++	if (err < 0)
++		return err;
++
+ 	if (tb[IFLA_IFNAME])
+ 		nla_strlcpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
+ 	else
+@@ -3045,6 +3110,10 @@ static int rtnl_getlink(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	if (err < 0)
+ 		return err;
+ 
++	err = rtnl_ensure_unique_netns(NETLINK_CB(skb).sk, tb, extack);
++	if (err < 0)
++		return err;
++
+ 	if (tb[IFLA_IF_NETNSID]) {
+ 		netnsid = nla_get_s32(tb[IFLA_IF_NETNSID]);
+ 		tgt_net = get_target_net(NETLINK_CB(skb).sk, netnsid);
 -- 
 2.14.1
