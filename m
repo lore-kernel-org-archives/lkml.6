@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3155980-1517855172-2-504921584415572309
+X-Cyrus-Session-Id: sloti22d1t05-3155980-1517855171-2-12610624531151040467
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517855171; b=F4PGEBMaCG1TJyiPqqNmFCCw+qad36FQ0WoyLoaLL+LIsD/
-    tgJMkCMwRlN6fYFc4qn2iw1F2xwXPH4qU4V7/B+a80o+ureO0XfnoAZjYIAeqQoP
-    +c2hJqzJeqv7MHQZSiQIkgqtaJBogkA1kMTY9zttX8ATu78uWGexESKKw4z8Wn/u
-    aBU9b7gDBgB9tcSlMXN24dMoazJX6wnPVUvpwt0ehdEGpd3JEqQ2ya0JSlgHs4ie
-    E1ETJWSqU8Pc5o2T0fEMXp9nzWKvJ5nxKR/mIlEjINJEv5k0dh3i6+jHdjO0RSHM
-    C9A7hYy5BMWMhSANhq+aHIDcm2H3i5KwUWU27bw==
+    t=1517855171; b=W/TmqFO9cmPDarVYdNllqCHCwZghU66aS4+2qJJqoCXuyYZ
+    AOaLkSbvl4m0BF18eux1zQs7u05Q/Z1EVF0/z64q6flhKCRbybk1tXmH5gTx8TYl
+    Bqi/HjBbxBC+6yYfeFqIJTSR87ZuAGGCTKFUU3FlM5F96496V50MBXnhrxbPybKI
+    o0Cc7OOEi0nw2gvRhZ27oceJDBpzh73MJrSMF9Zo5dP7eeuI0/6nTVCqiORIMa9b
+    lVdc8ZHB3F7ztLj8Z4cwRPv2NrHZpgHhOMVW+dq60SQVlXhNTSt/ot/4oXBXFVwc
+    uQRjAuvbqAYxXh7JlNKFrikmhHUQjhyAdvruFFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517855171; bh=f0YBKGdmqZZGYc6/6JYqVRjiit
-    tYISs0YIw+amZwpAE=; b=uyuJwhZpO1WJXCCXcxXGUrdzMwOr5mDTFiScyAuC8o
-    kHPFn06VO+YZ4AX1b1cIu+xOibL+TjLQ71o91kRLTr9Gzig4fTC3wAbDTq04rZ9E
-    2XP6Rfi+TYruKI8xeP1BagkTeEPUTwOPFCUYmaFy3Kokphf72AUyXZBSuM7N8sCu
-    eh6AjF8Zm3jYkPzjrlr7ZVLQ280MWwpQFWZg3ee3NNv0Q7Xg0hbCXY94qHMBz+Ls
-    QOd1Fn9uX+DlZKZrBGKeVqsbA0zBf6lSntBq7g9HEKYMPzKxvY8Hz4iQpatEJtgn
-    j4qXCsAkMFGKQxY0/7Lz3S41j1+fMCOzlaPE9V1JCeZg==
+    :list-id; s=arctest; t=1517855171; bh=kJWLpgn1U7bvZ5sb/7fWf0XDQk
+    3OlLfsrSouiuQOsOs=; b=uC7tBWXsKNEb01QxxZTsvOGy+P55XJxPno2RhCIoKz
+    i0mgS+Bh3kC2BTsKrLYdY5b96etjuLUM1ipRa+SSVCm8kUnG6bbHMSWSmHd95jq9
+    JKvA5jqb7gxE+eEG0FAOgcIwxLqk7N2qyTnCF6xpkNQQdo7hKuUKPecKmFdU/re6
+    A0nGiHHeO3gJzMRN6hUeSn6L+xgHBFS4XTIdKWOzIBvZCGZ6Hd9DGTygQKpXaK5r
+    Ktz+I9BuR6N0J6MohomE+6YVaE+b4gRPfR8N+cQBX505hhFgSdC/HqJB6BgS1WMZ
+    XRjYHTrQlbvgR4xIpRBb74KJ5XJ6cGFA0flrzmHGoqXA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753858AbeBES0E (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Feb 2018 13:26:04 -0500
+        id S1753846AbeBES0B (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Feb 2018 13:26:01 -0500
 Received: from mail.linuxfoundation.org ([140.211.169.12]:52852 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753393AbeBESZ6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:25:58 -0500
+        with ESMTP id S1753826AbeBESZ5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:25:57 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.15 20/60] pinctrl: pxa: pxa2xx: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Mon,  5 Feb 2018 10:22:53 -0800
-Message-Id: <20180205182214.758220705@linuxfoundation.org>
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.15 18/60] auxdisplay: img-ascii-lcd: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Mon,  5 Feb 2018 10:22:51 -0800
+Message-Id: <20180205182214.672318759@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
@@ -79,33 +79,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jesse Chan <jc@linux.com>
 
-commit 0b9335cbd38e3bd2025bcc23b5758df4ac035f75 upstream.
+commit 09c479f7f1fbfaf848e5813996793966cd50be81 upstream.
 
 This change resolves a new compile-time warning
 when built as a loadable module:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/pinctrl/pxa/pinctrl-pxa2xx.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/auxdisplay/img-ascii-lcd.o
 see include/linux/module.h for more information
 
-This adds the license as "GPL v2", which matches the header of the file.
+This adds the license as "GPL", which matches the header of the file.
 
 MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
 
 Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/pxa/pinctrl-pxa2xx.c |    4 ++++
+ drivers/auxdisplay/img-ascii-lcd.c |    4 ++++
  1 file changed, 4 insertions(+)
 
---- a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
-+++ b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
-@@ -436,3 +436,7 @@ int pxa2xx_pinctrl_exit(struct platform_
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pxa2xx_pinctrl_exit);
+--- a/drivers/auxdisplay/img-ascii-lcd.c
++++ b/drivers/auxdisplay/img-ascii-lcd.c
+@@ -441,3 +441,7 @@ static struct platform_driver img_ascii_
+ 	.remove	= img_ascii_lcd_remove,
+ };
+ module_platform_driver(img_ascii_lcd_driver);
 +
-+MODULE_AUTHOR("Robert Jarzmik <robert.jarzmik@free.fr>");
-+MODULE_DESCRIPTION("Marvell PXA2xx pinctrl driver");
-+MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Imagination Technologies ASCII LCD Display");
++MODULE_AUTHOR("Paul Burton <paul.burton@mips.com>");
++MODULE_LICENSE("GPL");
