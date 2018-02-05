@@ -1,114 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753081AbeBEOjV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 09:39:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752461AbeBEOjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:39:12 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08AE421734
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 5 Feb 2018 23:39:08 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, mingo@kernel.org,
-        akpm@linux-foundation.org, tglx@linutronix.de, peterz@infradead.org,
-        acme@kernel.org, corbet@lwn.net, mathieu.desnoyers@efficios.com,
-        namhyung@kernel.org, daniel@iogearbox.net, davem@davemloft.net
-Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
- events
-Message-Id: <20180205233908.f4f0a56203ffbcb27a51aa28@kernel.org>
-In-Reply-To: <20180204172128.swbgrr7uc72amxgh@ast-mbp>
-References: <20180202230458.840252014@goodmis.org>
-        <20180203223817.0c8cc485d8163ad84039cf02@kernel.org>
-        <20180203102759.56d03ada@gandalf.local.home>
-        <20180204125747.70eb79dd0a69d30fb8a47fcd@kernel.org>
-        <20180204172128.swbgrr7uc72amxgh@ast-mbp>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753133AbeBEOm1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:42:27 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:61613 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752612AbeBEOmS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 09:42:18 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180205144216epoutp02537658cd2cf7754905fc41e38978da65~QdQR4bo7W2587125871epoutp02b
+X-AuditID: b6c32a37-433ff70000001029-a1-5a786d47469c
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+        linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com,
+        linux-kernel@vger.kernel.org, krzk@kernel.org, tomasz.figa@gmail.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: samsung: Add git tree entry to MAINTAINERS
+Date: Mon, 05 Feb 2018 15:41:58 +0100
+Message-id: <20180205144158.10500-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.14.2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsWy7bCmga57bkWUwY951hYbZ6xntbj+5Tmr
+        xfnzG9gtPvbcY7W4vGsOm8WM8/uYLNYeuctucfGUq8XhN+2sFj/OdLNYrNr1h9GB2+P9jVZ2
+        j8t9vUweO2fdZffYtKqTzaNvyypGj8+b5ALYorhsUlJzMstSi/TtErgydj8/xl6wh7Vi//l3
+        bA2Mt1m6GDk5JARMJP5/PsncxcjFISSwg1Fi4YonjBDOd0aJJS8WMsFU/fu8gB0isYFR4kbj
+        KSjnF6PEnndn2UCq2AQMJXqP9jGC2CICshK3jv1kAyliFpjFJHHp7RqwUcICDhJ3Xz9hBbFZ
+        BFQlrv+5BxbnFbCWuNm0HuooeYn3C+6D3SEhMINN4sOXh1AJF4k5n94wQ9jCEq+ObwE6gwPI
+        lpa4dNQWor6fUeLEmmaYZkaJO+0ToJ6wljh8/CLYZmYBPol3X3tYIZp5JTrahCBKPCRObDkE
+        tctR4tyJu2C7hARiJfo/vmKZwCi5gJFhFaNYakFxbnpqsWGBsV5xYm5xaV66XnJ+7iZGcMRq
+        me9g3HDO5xCjAAejEg+vQEZFlBBrYllxZe4hRgkOZiURXqfr5VFCvCmJlVWpRfnxRaU5qcWH
+        GKU5WJTEeQMCXKKEBNITS1KzU1MLUotgskwcnFINjApf66zt9G9OLDCe2Zs+51V0r1eYxvbo
+        /Tf9dnLs+Kiu+sD+e5Dbjtpvfe3mezqub5i3VjYlcYr17zd7EuQtjoSKKiWJNs0/YX9Cb1mO
+        fuc6lf9d5m8fRP77NvfKJK8DLV4d2ZzurNPEunyrVaJNFTXvTWDwu2oSWOj95/OW8y/0Bc6w
+        /i/UUmIpzkg01GIuKk4EAGp/84XUAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42I5/e+xoK57bkWUwYzd2hYbZ6xntbj+5Tmr
+        xfnzG9gtPvbcY7W4vGsOm8WM8/uYLNYeuctucfGUq8XhN+2sFj/OdLNYrNr1h9GB2+P9jVZ2
+        j8t9vUweO2fdZffYtKqTzaNvyypGj8+b5ALYorhsUlJzMstSi/TtErgydj8/xl6wh7Vi//l3
+        bA2Mt1m6GDk5JARMJP59XsDexcjFISSwjlHiztK/jBDOL0aJ9Tu2MYFUsQkYSvQe7WMEsUUE
+        ZCVuHfvJBlLELDCLSWLL3f9sIAlhAQeJu6+fsILYLAKqEtf/3ANr5hWwlrjZtB5qnbzE+wX3
+        GScwci1gZFjFKJlaUJybnltsVGCYl1quV5yYW1yal66XnJ+7iREYSNsOa/XtYLy/JP4QowAH
+        oxIPb0ZWRZQQa2JZcWXuIUYJDmYlEV6n6+VRQrwpiZVVqUX58UWlOanFhxilOViUxHlv5x2L
+        FBJITyxJzU5NLUgtgskycXBKNTDWir4P3xm6nrGXV3zLRuMPt8wLSz0YHXcdSGNeUKgkf3Tb
+        L6Hpb9UeG7Hq+3ncOMlbkspX92AJ644Z+n57lfgv97xvFL3CcFSlSo3LTeH614KS75N87l/Y
+        vV1k8ZLA+ypCPq5/Z6rt+HL8q2T9kV+/WCVX5TI0CL9gC/rbvd/igt1Ol+qfEw4qsRRnJBpq
+        MRcVJwIADAbmYyACAAA=
+X-CMS-MailID: 20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4
+X-RootMTR: 20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4
+References: <CGME20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 4 Feb 2018 09:21:30 -0800
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+Add a missing git tree entry for drivers/clk/samsung.
 
-> On Sun, Feb 04, 2018 at 12:57:47PM +0900, Masami Hiramatsu wrote:
-> > 
-> > > I based some of the code from kprobes too. But I wanted this to be
-> > > simpler, and as such, not as powerful as kprobes. More of a "poor mans"
-> > > kprobe ;-) Where you are limited to functions and their arguments. If
-> > > you need more power, switch to kprobes. In other words, its just an
-> > > added stepping stone.
-> > > 
-> > > Also, this should work without kprobe support, only ftrace, and function
-> > > args from the arch.
-> > 
-> > Hmm, but implementation seems very far from current probe events, we need
-> > to consider how to unify it. Anyway, it is a very good time to do, because
-> > I found current probe-event fetch method is not good with retpoline/IBRS,
-> > it is full of indirect call.
-> > 
-> > I would like to convert it to eBPF if possible. It will be good for the
-> > performance with JIT, and we can collaborate on the same code with BPF
-> > people.
-> 
-> The current probe fetch method is indeed going to slow down due to
-> retpoline, but this issue is going to affect not only this piece
-> of code, but the rest of the kernel where indirect call performance
-> matters a lot. Like networking stack where we have at least 4 indirect
-> calls per packet.
-> So I'd suggest to focus on finding a general method instead of coming
-> with a specific solution for this kprobe fetching problem.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-OK.
-
-> Devirtualization approach works well and applicable in many cases.
-> For networking stack deliver_skb() and __netif_receive_skb_core()
-> can check if (pt_prev->func == ip_rcv || ipv6_rcv)
-> and call them directly.
-
-Yeah, if the options are limited, that works. (like replacing with
-switch-case)
-
-> The other approach I was thinking to explore is static_key-like
-> for indirect calls. In many cases the target is rarely changed,
-> so we can do arch specific rewrite of destination offset inside
-> normal direct call instruction. That should be faster than retpoline.
-
-I doubt it. Most of the indirect call uses are "ops->method" and
-it depends on "ops".
-
-> As far as emitting raw bpf insns instead of kprobe fetch methods
-> there is a big problem with such apporach. Interpreter and all
-> JITs take 'struct bpf_prog' that passed the verifier and not just
-> random set of bpf instructions. BPF is not a generic assembler.
-
-If you mean kernel/bpf/verifier.c, I'm happy with passing raw
-bpf insns generated by kprobe-fetch-method to it :)
-
-> BPF is an instruction set _with_ C calling convention.
-> The registers and instructions must be used in certain way or
-> things will horribly break.
-> See Documentation/bpf/bpf_design_QA.txt for details.
-> Long ago I wrote a patch that converted pred tree walk into
-> raw bpf insns. If that patch made it into mainline back then
-> it would have been a huge headache for us now.
-> So if you plan on generating bpf programs they _must_ pass the verifier.
-
-Yes, of course.
-Anyway, it is just an idea for retpoline/Spectre V2. (yeah, it
-is actual big issue, it makes the faster pointer-call method
-slower. Now we see switch-case may be faster than that in some cases.)
-
-I'm also considering to simplify it (or do it with branch and static
-function call) as Steve did on this series.
-
-Thank you,
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index aa71ab52fd76..502442dc08eb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12001,6 +12001,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
+ M:	Chanwoo Choi <cw00.choi@samsung.com>
+ S:	Supported
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
+ F:	drivers/clk/samsung/
+ F:	include/dt-bindings/clock/exynos*.h
+ F:	Documentation/devicetree/bindings/clock/exynos*.txt
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.14.2
