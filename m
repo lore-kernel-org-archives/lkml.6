@@ -1,115 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753837AbeBES7o (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 13:59:44 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34515 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753464AbeBES7c (ORCPT
+        id S1753648AbeBETC6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 14:02:58 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33406 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753546AbeBETCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 13:59:32 -0500
-X-Google-Smtp-Source: AH8x22612JKfspRuL+OdN/qeRAabItYIu3Lg41uQhIZ/rGHTEMmKkSFLczPXRrpaCP24tBq1tJJCAlHZ4Jh6q+uGP8Y=
+        Mon, 5 Feb 2018 14:02:42 -0500
+X-Google-Smtp-Source: AH8x226l7p519urMWJp8bBdsJK9lv69AJa5FfwSfuiEnEKzl5kW9BdvJqaulhpx7XYsigOHCNpozT35kZCeI9pyoOfc=
 MIME-Version: 1.0
-In-Reply-To: <20180202125231.GT19535@localhost.localdomain>
-References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
- <1517503869-3179-3-git-send-email-mathieu.poirier@linaro.org> <20180202125231.GT19535@localhost.localdomain>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 5 Feb 2018 11:59:30 -0700
-Message-ID: <CANLsYkwq9c+xS-TJrntWzKyCWWwQHfPRTv93SSbacmSjPPHhPA@mail.gmail.com>
-Subject: Re: [PATCH V2 2/7] cpuset: Rebuild root domain deadline accounting information
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
-        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        "luca.abeni" <luca.abeni@santannapisa.it>,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <20180205175906.GA8237@ulmo>
+References: <20180205124750.19305-1-thierry.reding@gmail.com>
+ <20180205125436.24005-1-thierry.reding@gmail.com> <CA+55aFy--bQRDZEUsBfiWhyP+Of3+s4zEcKo1T8cCoAMXBrwsw@mail.gmail.com>
+ <20180205175906.GA8237@ulmo>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 5 Feb 2018 20:02:40 +0100
+Message-ID: <CACRpkdYrG6=qwJgOTW2ccyq-UBSOkH+EBBui54PtGqJF7CMRDw@mail.gmail.com>
+Subject: Re: [PATCH] net: mediatek: Explicitly include pinctrl headers
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-gpio@vger.kernel.org, linux-next <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 February 2018 at 05:52, Juri Lelli <juri.lelli@redhat.com> wrote:
-> Hi Mathieu,
->
-> On 01/02/18 09:51, Mathieu Poirier wrote:
->> When the topology of root domains is modified by CPUset or CPUhotplug
->> operations information about the current deadline bandwidth held in the
->> root domain is lost.
->>
->> This patch address the issue by recalculating the lost deadline
->> bandwidth information by circling through the deadline tasks held in
->> CPUsets and adding their current load to the root domain they are
->> associated with.
->>
->> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->> ---
->
-> [...]
->
->> +static void update_tasks_root_domain(struct cpuset *cs)
->> +{
->> +     struct css_task_iter it;
->> +     struct task_struct *task;
->> +
->> +     css_task_iter_start(&cs->css, 0, &it);
->> +
->> +     while ((task = css_task_iter_next(&it)))
->> +             dl_add_task_root_domain(task);
->> +
->> +     css_task_iter_end(&it);
->> +}
->> +
->> +/*
->> + * Called with cpuset_mutex held (rebuild_sched_domains())
->> + * Called with hotplug lock held (rebuild_sched_domains_locked())
->> + * Called with sched_domains_mutex held (partition_and_rebuild_domains())
->> + */
->> +static void rebuild_root_domains(void)
->> +{
->> +     struct cpuset *cs = NULL;
->> +     struct cgroup_subsys_state *pos_css;
->> +
->> +     rcu_read_lock();
->> +
->> +     /*
->> +      * Clear default root domain DL accounting, it will be computed again
->> +      * if a task belongs to it.
->> +      */
->> +     dl_clear_root_domain(&def_root_domain);
->
-> Can't a __sched_setscheduler sneak in at this point, set a task to
-> DEADLINE, add its bandwidth to the rd...
+On Mon, Feb 5, 2018 at 6:59 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
 
-Let me think about that one for a bit.
+> Anyway, I think going with the pinctrl/devinfo.h include only is fine
+> for now. If it turns out that the Mediatek ethernet and Rockchip LVDS
+> drivers can just omit the bits fiddling with struct dev_pin_info, we can
+> swap out the pinctrl/devinfo.h include for pinctrl/consumer.h at that
+> time.
+>
+> LinusW: what are your thoughts on the struct dev_pin_info usage by these
+> drivers? Does their code seem redundant to you, too?
 
-Thanks for the review,
-Mathieu
+I don't think they should use struct dev_pin_info at all,
+that thing is for the device core only.
 
->
->> +
->> +     cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
->> +
->> +             if (cpumask_empty(cs->effective_cpus)) {
->> +                     pos_css = css_rightmost_descendant(pos_css);
->> +                     continue;
->> +             }
->> +
->> +             css_get(&cs->css);
->> +
->> +             rcu_read_unlock();
->> +
->> +             update_tasks_root_domain(cs);
->
-> ... and this adds it again?
->
->> +
->> +             rcu_read_lock();
->> +             css_put(&cs->css);
->> +     }
->> +     rcu_read_unlock();
->> +}
->
-> Best,
->
-> - Juri
+I like to think that <linux/pinctrl/consumer.h> is for drivers that
+explicitly grab and control pin control states so this driver should
+only include <linux/pinctrl/consumer.h>.
+
+Torvalds: can you do it like that instead? Either way will
+make the compile work again, we can also tidy it up later.
+(i.e. I will grep for includes of pinctrl/dev_info.h and replace
+it with consumer.h) at some point.
+
+It wasn't pretty that these drivers were relying on implicit
+#includes in the first place so either is anyway prettier than
+what it used to look like.
+
+In a way I kind of like this sideffect even if it broke some
+compiles.
+
+Yours,
+Linus Walleij
