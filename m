@@ -1,43 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752780AbeBEGIC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 01:08:02 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46012 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752614AbeBEGHa (ORCPT
+        id S1752800AbeBEGIO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 01:08:14 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36309 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752621AbeBEGHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:07:30 -0500
-X-Google-Smtp-Source: AH8x226neDeqrZ1hBAWTJDg6dRcU4NRjwbu5fWf6py0bl7agXDMlg5f+VEYt5cOiT4GI2hHvETg1Mw==
-Date: Mon, 5 Feb 2018 00:07:27 -0600
+        Mon, 5 Feb 2018 01:07:42 -0500
+X-Google-Smtp-Source: AH8x226UukiIj2C6cD8olS7P62Vubj80PsAoPV7H8oLPGt4nQo/6HV9T5/eMdScXwkt8gdjkNwWG1w==
+Date: Mon, 5 Feb 2018 00:07:40 -0600
 From: Rob Herring <robh@kernel.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: mark.rutland@arm.com, linux@armlinux.org.uk, andy.gross@linaro.org,
-        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        sboyd@codeaurora.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-Subject: Re: [PATCH 01/15] firmware: qcom: scm: Add ipq4019 soc compatible
-Message-ID: <20180205022530.xf64gqeijicewdla@rob-hp-laptop>
-References: <1517202689-14212-1-git-send-email-sricharan@codeaurora.org>
- <1517202689-14212-2-git-send-email-sricharan@codeaurora.org>
+To: Manish Narani <manish.narani@xilinx.com>
+Cc: michal.simek@xilinx.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com, anirudh@xilinx.com,
+        sgoud@xilinx.com, Manish Narani <mnarani@xilinx.com>
+Subject: Re: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning support for
+ ZynqMP Platform
+Message-ID: <20180205024420.iagez2mue2skrngq@rob-hp-laptop>
+References: <1517336073-18142-1-git-send-email-mnarani@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517202689-14212-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1517336073-18142-1-git-send-email-mnarani@xilinx.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 10:41:15AM +0530, Sricharan R wrote:
-> Add the compatible for ipq4019.
-> This does not need clocks to do scm calls.
+On Tue, Jan 30, 2018 at 11:44:33PM +0530, Manish Narani wrote:
+> This patch adds support of SD auto tuning for ZynqMP platform. Auto
+> tuning sequence sends tuning block to card when operating in UHS-1
+> modes. This resets the DLL and sends CMD19/CMD21 as a part of the auto
+> tuning process. Once the auto tuning process gets completed, reset the
+> DLL to load the newly obtained SDHC tuned tap value.
 > 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Manish Narani <mnarani@xilinx.com>
 > ---
->  Documentation/devicetree/bindings/firmware/qcom,scm.txt | 3 ++-
->  drivers/firmware/qcom_scm.c                             | 3 +++
->  2 files changed, 5 insertions(+), 1 deletion(-)
+>  .../devicetree/bindings/mmc/arasan,sdhci.txt       |   1 +
+>  drivers/mmc/host/sdhci-of-arasan.c                 | 219 ++++++++++++++++++++-
+>  2 files changed, 219 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> index 60481bf..7d29751 100644
+> --- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> @@ -14,6 +14,7 @@ Required Properties:
+>      - "arasan,sdhci-4.9a": generic Arasan SDHCI 4.9a PHY
+>      - "arasan,sdhci-5.1": generic Arasan SDHCI 5.1 PHY
+>      - "rockchip,rk3399-sdhci-5.1", "arasan,sdhci-5.1": rk3399 eMMC PHY
+> +    - "xlnx,zynqmp-8.9a": Xilinx ZynqMP 8.9a PHY
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This should be a separate patch.
+
+>        For this device it is strongly suggested to include arasan,soc-ctl-syscon.
+>    - reg: From mmc bindings: Register location and length.
+>    - clocks: From clock bindings: Handles to clock inputs.
