@@ -1,20 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751175AbeBEU1b (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 15:27:31 -0500
-Received: from gateway30.websitewelcome.com ([192.185.150.24]:45008 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750855AbeBEU1X (ORCPT
+        id S1751980AbeBEU1n (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 15:27:43 -0500
+Received: from gateway34.websitewelcome.com ([192.185.149.105]:13390 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750855AbeBEU1i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:27:23 -0500
-Date: Mon, 5 Feb 2018 14:27:22 -0600
+        Mon, 5 Feb 2018 15:27:38 -0500
+Date: Mon, 5 Feb 2018 14:27:37 -0600
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Jacob chen <jacob2.chen@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
         "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH v2 5/8] pci: cx88-input: use 64-bit arithmetic instead of
- 32-bit
-Message-ID: <9db3fe5d4564caf97acb5bee69e92727ada4a633.1517856716.git.gustavo@embeddedor.com>
+Subject: [PATCH v2 6/8] rockchip/rga: use 64-bit arithmetic instead of 32-bit
+Message-ID: <94fd0993cde02e18ee5d7f54707f8ce0d0341a0c.1517856716.git.gustavo@embeddedor.com>
 References: <cover.1517856716.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -29,59 +32,48 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.152.201.65
 X-Source-L: No
-X-Exim-ID: 1einMI-003Z0P-MT
+X-Exim-ID: 1einMX-003ZHA-IV
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.152.201.65]:47692
+X-Source-Sender: (embeddedgus) [189.152.201.65]:47696
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 27
+X-Email-Count: 32
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix LL to constant 1000000 in order to give the compiler
-complete information about the proper arithmetic to use. Notice
-that this constant is used in a context that expects an expression
-of type ktime_t (64 bits, signed).
+Cast p to dma_addr_t in order to avoid a potential integer overflow.
+This variable is being used in a context that expects an expression
+of type dma_addr_t (u64).
 
-The expression ir->polling * 1000000 is currently being evaluated
+The expression p << PAGE_SHIFT is currently being evaluated
 using 32-bit arithmetic.
 
-Addresses-Coverity-ID: 1392628
-Addresses-Coverity-ID: 1392630
+Addresses-Coverity-ID: 1458347
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
 Changes in v2:
- - Update subject and changelog to better reflect the proposed code changes.
- - Add suffix LL to constant instead of casting a variable.
+ - Update subject and changelog to better reflect the proposed code change.
 
- drivers/media/pci/cx88/cx88-input.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/rockchip/rga/rga-buf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
-index 4e9953e..6f4e692 100644
---- a/drivers/media/pci/cx88/cx88-input.c
-+++ b/drivers/media/pci/cx88/cx88-input.c
-@@ -180,7 +180,7 @@ static enum hrtimer_restart cx88_ir_work(struct hrtimer *timer)
- 	struct cx88_IR *ir = container_of(timer, struct cx88_IR, timer);
+diff --git a/drivers/media/platform/rockchip/rga/rga-buf.c b/drivers/media/platform/rockchip/rga/rga-buf.c
+index 49cacc7..a43b57a 100644
+--- a/drivers/media/platform/rockchip/rga/rga-buf.c
++++ b/drivers/media/platform/rockchip/rga/rga-buf.c
+@@ -140,7 +140,8 @@ void rga_buf_map(struct vb2_buffer *vb)
+ 		address = sg_phys(sgl);
  
- 	cx88_ir_handle_key(ir);
--	missed = hrtimer_forward_now(&ir->timer, ir->polling * 1000000);
-+	missed = hrtimer_forward_now(&ir->timer, ir->polling * 1000000LL);
- 	if (missed > 1)
- 		ir_dprintk("Missed ticks %ld\n", missed - 1);
+ 		for (p = 0; p < len; p++) {
+-			dma_addr_t phys = address + (p << PAGE_SHIFT);
++			dma_addr_t phys = address +
++					  ((dma_addr_t)p << PAGE_SHIFT);
  
-@@ -200,7 +200,7 @@ static int __cx88_ir_start(void *priv)
- 	if (ir->polling) {
- 		hrtimer_init(&ir->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 		ir->timer.function = cx88_ir_work;
--		hrtimer_start(&ir->timer, ir->polling * 1000000,
-+		hrtimer_start(&ir->timer, ir->polling * 1000000LL,
- 			      HRTIMER_MODE_REL);
- 	}
- 	if (ir->sampling) {
+ 			pages[mapped_size + p] = phys;
+ 		}
 -- 
 2.7.4
