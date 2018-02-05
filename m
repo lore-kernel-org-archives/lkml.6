@@ -1,79 +1,53 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3105817-1517855073-2-17456948219402780923
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517855072; b=O4t221/T+1icO4gnsIQimxDNA4ZqcKr6QemmaeujmP9D2V7
-    Yz7ZGsPOEXMAlGnOWBiSla26NopEOOPxrhezgEtfhy2zRh0iyGW8fhILXpGUlNKJ
-    4ql/1LakyWGDX6SBlFFoLKAg2yIHmOaD4VlibxZzvyeSndnCWHTx311mE94nvdMp
-    6jbh/e2enEXz7h0+1zBtRgZolrraofMvwxPRe7Z1nbgW9KUiOAkU++WlB423QbD3
-    FsR+j5JatcIIxAvbAm1FiupH4SCj7pioGMPQbYvXYDtvYZGq2HUELqVLDHW6TXeA
-    pkjdDgM7thFucGUM6C0RV+Ja4hPyEpmd980ca9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517855072; bh=WCHnhvpidFg53y7qI0h4iA+hgK
-    jTnAMgVyclJGoRjQs=; b=vHR+S67CJq4TGh2DuhDqiP5Mu+6SmV4JF3r3LTXg2S
-    2W/CMSjpKEehziZ6FnACogdidlw4epQqlh8KcnsnbcrcQyW7JH4q4t9oxFtv2/Nu
-    u0TNzq0tDm7FsH+Fm3cctWtX+FQan3KUCFdyDAcAR8yAZ+34ZpqC9SGXVsr+3rXb
-    3sD65uIScGwNv8xVPL3uVT1FtyBF7W/kep26GL7/pPqmbzNAW3b0HINC+lzBGgs9
-    PubtTC5rO3Naqq3PfmMKB0OoN5wxX623Vo7KxeEaMyhnaA/+KN2mDisE8pcNsFSN
-    wgb2sDcHvyEqVQfQo1wcy7SzBjbIUzuTb+EGeL2Sitjw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753547AbeBESY3 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Feb 2018 13:24:29 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51616 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753533AbeBESYW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:24:22 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227xsAPiBtyzO7m13gV5Fbk6gh26LqHAOpQ2zrpDPsmdeYEMdPOxUwf1ldG6Mv7m1F+s7Lvh
+ARC-Seal: i=1; a=rsa-sha256; t=1517855072; cv=none;
+        d=google.com; s=arc-20160816;
+        b=kwZhb+rYnKWYmRHNInQfD49YMQziq1vCxZc1tIn0iJmjCKoKUeYIRbqAjHS76TyYG0
+         gBVdJo8EQnbmgopkN0AHVI0eHlMrdnWquFdST6QxEfeVjGkH7PrIUq7/DHNUzJU36Jm5
+         ijqRVKgyVCCrMi6nVATvEwsDk7wMcFCafgCZlS92Zl5nj2pHMuLKa+TF6wHYNQ6DI8C+
+         8vNZmU6A4c1mTWuZ9SvnscdMf8o+MR1m2DnSF127cTXw4sfh7q3DWK4uVKVKumzZ2IOI
+         llgAD+fi9iKBKV3fwi69w8Il5Py/JSd3U2bETOeMfEV/9TeLkv9ojqvdvji1+AC9ToU0
+         KO8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=pveBboIOx+Vg6gGkX4w3pApchEvjKxF/ybgYf0Ax8iA=;
+        b=obzfzaeJnEorYlSo7NPN+qjm9IUiK5cG3d9up527a0vWQyt83y2CjwISTabA7xQSYX
+         X7ebEiA7p/Q3vx8PMo70mBbGXK17+yf73Loe2PpT9g1OOeNlUULoTUMYYiayqXZ6gYOk
+         fcRnkURP5D6FxZLHter/OX+bK6Lzgoz4TT9XGlZH5t1XZB9h0P+xlKFALVLbn90tBuI8
+         f6d47iB+BIWsTtt/iGGdiARr7u2DXrEReXx92+zPf5PYo9Xwpc9WdkkyA7TYoQAQwDP4
+         8gBe/HUg/uvjo5vLeKbnjMZ+OS62QdPjraEv+Xxr1E5POL9pWxXQBoRHNvSo0R284J82
+         8ivg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        kernel-janitors@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.14 48/64] x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
-Date: Mon,  5 Feb 2018 10:23:07 -0800
-Message-Id: <20180205182140.544674450@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Darren Kenny <darren.kenny@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.14 57/64] x86/speculation: Fix typo IBRS_ATT, which should be IBRS_ALL
+Date: Mon,  5 Feb 2018 10:23:16 -0800
+Message-Id: <20180205182140.919464937@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591586401088854671?=
+X-GMAIL-MSGID: =?utf-8?q?1591586401088854671?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,35 +55,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King colin.king@canonical.com
+From: Darren Kenny darren.kenny@oracle.com
 
-commit e698dcdfcda41efd0984de539767b4cddd235f1e
+commit af189c95a371b59f493dbe0f50c0a09724868881
 
-Trivial fix to spelling mistake in pr_err error message text.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 117cc7a908c83 ("x86/retpoline: Fill return stack buffer on vmexit")
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
+Link: https://lkml.kernel.org/r/20180202191220.blvgkgutojecxr3b@starbug-vm.ie.oracle.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
+
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
+ arch/x86/include/asm/nospec-branch.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -103,7 +103,7 @@ bool retpoline_module_ok(bool has_retpol
- 	if (spectre_v2_enabled == SPECTRE_V2_NONE || has_retpoline)
- 		return true;
- 
--	pr_err("System may be vunerable to spectre v2\n");
-+	pr_err("System may be vulnerable to spectre v2\n");
- 	spectre_v2_bad_module = true;
- 	return false;
- }
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -150,7 +150,7 @@ extern char __indirect_thunk_end[];
+  * On VMEXIT we must ensure that no RSB predictions learned in the guest
+  * can be followed in the host, by overwriting the RSB completely. Both
+  * retpoline and IBRS mitigations for Spectre v2 need this; only on future
+- * CPUs with IBRS_ATT *might* it be avoided.
++ * CPUs with IBRS_ALL *might* it be avoided.
+  */
+ static inline void vmexit_fill_RSB(void)
+ {
