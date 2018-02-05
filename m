@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225U156HsoPdidjX2OxqGzrlJ14Weashyz6UpjK8nqA+eTdURtFA2ywFZuZGUvjyDbiuyJ4z
-ARC-Seal: i=1; a=rsa-sha256; t=1517855039; cv=none;
+X-Google-Smtp-Source: AH8x226AWHBrW9v/QNFPa/h+eJfd1Co1/rOZ/uXDqKsusSt3c6fc9OsWeG+Y1sYp21mw2mBOtcXU
+ARC-Seal: i=1; a=rsa-sha256; t=1517855036; cv=none;
         d=google.com; s=arc-20160816;
-        b=WTW5nRDxi2aBrEBt29Xclkpv026/xcji8VUwHxhnW3yX7khX24g07QcYHX1AuBV5qk
-         WQfsVbHQI9QatfggVgmDdK2Jlin4ZMvdq55vuPaE5DTmNajIxhx/pSMCdhIfYJuunZUz
-         kw3MOG0Saf2r4pWIszOJyFz1eEtYcEnX38W6y/J7XhdqlkHrah6YYMW9Dqi+L6RP2pch
-         /lvmuzyO7ERZw6MEh1XKXhHZTKH6cpuXu7beG51P+ivS3QlswFiQ8Zvu51vraE65xHeP
-         g2i9XKXH5I4ymnV09vMAWpHEo++NmGnM1IBjlnKHrTdvw8bo6vFTxXCDgxmkvy3SCMG0
-         CeQw==
+        b=TChwEZfBoaB2TkbJ7ZxY+m85YNpTd95tadc4HCPjFcEOnhsZuZtVgzhY0IZsgeZAM3
+         CnM3XtajMlWSVqjDc0HIY0COHElnl9lmaVHDY5U/6ouVQzOPeezHYeLcXCmafBzLGj1q
+         CObpzlgNZSxmddV8nknzM88UbPYwB79DSOPKeAH3ZOn8bnus+0P8DDW4u7+KNj9ZwEkF
+         Euuz5xsvSqJZ4DJX1lqaetJCdiIJzlSZNhcWeH7wjb4cRgsHsWzEVJJeo4qunUhs1A88
+         pG3kJkzAQb9ZsGqyn9PEpE3MU0CbMdX6eikPN+nbZcYGHnTzsDKJ6AVgW+EdWIjOJnLS
+         EH7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZSkYOczDzmn+zADGzdkz9IpnhU/EuieanI8CO5n/zcM=;
-        b=pGd/SHnGDwSh62xeJtyIl3ClYJCUx3IWm9RNnJYnWBZ1nTR70ZAPOicDjtEwgN/tLR
-         rSwMLRuAhIqUhkk8Mqt8ikvUR8W/7Ty6Q/tJGIpAoc1UHCk2Zj6cGykTE0chGJRRYHt7
-         JDuhifuTrzpMOL+WtzJ7JYrni4BwCtVNMauH7QJQBfcB/gh/RHGEq4gzlNPNS9JBIT9q
-         6Os6aEvadFU5HobMN6/+LXsDtJA/1+t94cJQo/fUA821xYBF1fa2J6mgln0Mtvg1eFW3
-         pUUW74mcCD/J+wWC1QZb81okUbApynryMfXLjWI2iwJThejVv4Uxq/9ObJwU3nfsWbKD
-         WCxQ==
+        bh=s+f0rP4uvCmLGItl42kBI9H46YA7g2CqQMo8ppfWFts=;
+        b=dLE7Pt+P8zd49ehXZUZs04Jr+UjJN5q0tqLK6iqBKpUNTRo4xH2q/YSURm7idfZYVu
+         rp//nGsSQNonVyvUEd4FVLL8JNYJ92Z1wx+OXAThuESKzR2E3RJLpKnRf5SDX2Z0fz0d
+         K+YnoHNT6VglV7g8/qvm8LkFGaI8VgqIlbPaBCattm7NDeY82JLDrrdgo4YzcG7n86O3
+         XvJuxsQBG4hfTMpsGzCEfJSIEEItIk2cZIOa2hA8jUrrw4cmwcTCovd/ZZjk24fDjcv1
+         9ZtHVWdRnwmR0+qXChM9+UYl+AulMoQ443lOA2fmT4wnZqBgZwcJPVPO8NcaNFuzqyS4
+         OMjw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,26 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>,
+	Jeff Law <law@redhat.com>,
+	Waiman Long <longman@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Kees Cook <keescook@google.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: [PATCH 4.14 33/64] x86/entry/64: Remove the SYSCALL64 fast path
-Date: Mon,  5 Feb 2018 10:22:52 -0800
-Message-Id: <20180205182139.944731801@linuxfoundation.org>
+	Jiri Kosina <jikos@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Paul Turner <pjt@google.com>,
+	Greg Kroah-Hartman <gregkh@linux-foundation.org>
+Subject: [PATCH 4.14 04/64] x86/retpoline: Remove the esp/rsp thunk
+Date: Mon,  5 Feb 2018 10:22:23 -0800
+Message-Id: <20180205182138.752985501@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -43,8 +54,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586366090171464?=
-X-GMAIL-MSGID: =?utf-8?q?1591586366090171464?=
+X-GMAIL-THRID: =?utf-8?q?1591586362326987501?=
+X-GMAIL-MSGID: =?utf-8?q?1591586362326987501?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,195 +63,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Lutomirski luto@kernel.org
+From: Waiman Long longman@redhat.com
 
-commit 21d375b6b34ff511a507de27bf316b3dde6938d9
+commit 1df37383a8aeabb9b418698f0bcdffea01f4b1b2
 
-The SYCALLL64 fast path was a nice, if small, optimization back in the good
-old days when syscalls were actually reasonably fast.  Now there is PTI to
-slow everything down, and indirect branches are verboten, making everything
-messier.  The retpoline code in the fast path is particularly nasty.
+It doesn't make sense to have an indirect call thunk with esp/rsp as
+retpoline code won't work correctly with the stack pointer register.
+Removing it will help compiler writers to catch error in case such
+a thunk call is emitted incorrectly.
 
-Just get rid of the fast path. The slow path is barely slower.
-
-[ tglx: Split out the 'push all extra regs' part ]
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Fixes: 76b043848fd2 ("x86/retpoline: Add initial retpoline support")
+Suggested-by: Jeff Law <law@redhat.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
+Acked-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Kees Cook <keescook@google.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
-Link: https://lkml.kernel.org/r/462dff8d4d64dfbfc851fbf3130641809d980ecd.1517164461.git.luto@kernel.org
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
+Cc: Paul Turner <pjt@google.com>
+Link: https://lkml.kernel.org/r/1516658974-27852-1-git-send-email-longman@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/entry/entry_64.S   |  117 --------------------------------------------
- arch/x86/entry/syscall_64.c |    7 --
- 2 files changed, 2 insertions(+), 122 deletions(-)
+ arch/x86/include/asm/asm-prototypes.h |    1 -
+ arch/x86/lib/retpoline.S              |    1 -
+ 2 files changed, 2 deletions(-)
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -237,86 +237,11 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
- 
- 	TRACE_IRQS_OFF
- 
--	/*
--	 * If we need to do entry work or if we guess we'll need to do
--	 * exit work, go straight to the slow path.
--	 */
--	movq	PER_CPU_VAR(current_task), %r11
--	testl	$_TIF_WORK_SYSCALL_ENTRY|_TIF_ALLWORK_MASK, TASK_TI_flags(%r11)
--	jnz	entry_SYSCALL64_slow_path
--
--entry_SYSCALL_64_fastpath:
--	/*
--	 * Easy case: enable interrupts and issue the syscall.  If the syscall
--	 * needs pt_regs, we'll call a stub that disables interrupts again
--	 * and jumps to the slow path.
--	 */
--	TRACE_IRQS_ON
--	ENABLE_INTERRUPTS(CLBR_NONE)
--#if __SYSCALL_MASK == ~0
--	cmpq	$__NR_syscall_max, %rax
--#else
--	andl	$__SYSCALL_MASK, %eax
--	cmpl	$__NR_syscall_max, %eax
--#endif
--	ja	1f				/* return -ENOSYS (already in pt_regs->ax) */
--	movq	%r10, %rcx
--
--	/*
--	 * This call instruction is handled specially in stub_ptregs_64.
--	 * It might end up jumping to the slow path.  If it jumps, RAX
--	 * and all argument registers are clobbered.
--	 */
--#ifdef CONFIG_RETPOLINE
--	movq	sys_call_table(, %rax, 8), %rax
--	call	__x86_indirect_thunk_rax
--#else
--	call	*sys_call_table(, %rax, 8)
--#endif
--.Lentry_SYSCALL_64_after_fastpath_call:
--
--	movq	%rax, RAX(%rsp)
--1:
--
--	/*
--	 * If we get here, then we know that pt_regs is clean for SYSRET64.
--	 * If we see that no exit work is required (which we are required
--	 * to check with IRQs off), then we can go straight to SYSRET64.
--	 */
--	DISABLE_INTERRUPTS(CLBR_ANY)
--	TRACE_IRQS_OFF
--	movq	PER_CPU_VAR(current_task), %r11
--	testl	$_TIF_ALLWORK_MASK, TASK_TI_flags(%r11)
--	jnz	1f
--
--	LOCKDEP_SYS_EXIT
--	TRACE_IRQS_ON		/* user mode is traced as IRQs on */
--	movq	RIP(%rsp), %rcx
--	movq	EFLAGS(%rsp), %r11
--	addq	$6*8, %rsp	/* skip extra regs -- they were preserved */
--	UNWIND_HINT_EMPTY
--	jmp	.Lpop_c_regs_except_rcx_r11_and_sysret
--
--1:
--	/*
--	 * The fast path looked good when we started, but something changed
--	 * along the way and we need to switch to the slow path.  Calling
--	 * raise(3) will trigger this, for example.  IRQs are off.
--	 */
--	TRACE_IRQS_ON
--	ENABLE_INTERRUPTS(CLBR_ANY)
--	SAVE_EXTRA_REGS
--	movq	%rsp, %rdi
--	call	syscall_return_slowpath	/* returns with IRQs disabled */
--	jmp	return_from_SYSCALL_64
--
--entry_SYSCALL64_slow_path:
- 	/* IRQs are off. */
- 	SAVE_EXTRA_REGS
- 	movq	%rsp, %rdi
- 	call	do_syscall_64		/* returns with IRQs disabled */
- 
--return_from_SYSCALL_64:
- 	TRACE_IRQS_IRETQ		/* we're about to change IF */
- 
- 	/*
-@@ -389,7 +314,6 @@ syscall_return_via_sysret:
- 	/* rcx and r11 are already restored (see code above) */
- 	UNWIND_HINT_EMPTY
- 	POP_EXTRA_REGS
--.Lpop_c_regs_except_rcx_r11_and_sysret:
- 	popq	%rsi	/* skip r11 */
- 	popq	%r10
- 	popq	%r9
-@@ -420,47 +344,6 @@ syscall_return_via_sysret:
- 	USERGS_SYSRET64
- END(entry_SYSCALL_64)
- 
--ENTRY(stub_ptregs_64)
--	/*
--	 * Syscalls marked as needing ptregs land here.
--	 * If we are on the fast path, we need to save the extra regs,
--	 * which we achieve by trying again on the slow path.  If we are on
--	 * the slow path, the extra regs are already saved.
--	 *
--	 * RAX stores a pointer to the C function implementing the syscall.
--	 * IRQs are on.
--	 */
--	cmpq	$.Lentry_SYSCALL_64_after_fastpath_call, (%rsp)
--	jne	1f
--
--	/*
--	 * Called from fast path -- disable IRQs again, pop return address
--	 * and jump to slow path
--	 */
--	DISABLE_INTERRUPTS(CLBR_ANY)
--	TRACE_IRQS_OFF
--	popq	%rax
--	UNWIND_HINT_REGS extra=0
--	jmp	entry_SYSCALL64_slow_path
--
--1:
--	JMP_NOSPEC %rax				/* Called from C */
--END(stub_ptregs_64)
--
--.macro ptregs_stub func
--ENTRY(ptregs_\func)
--	UNWIND_HINT_FUNC
--	leaq	\func(%rip), %rax
--	jmp	stub_ptregs_64
--END(ptregs_\func)
--.endm
--
--/* Instantiate ptregs_stub for each ptregs-using syscall */
--#define __SYSCALL_64_QUAL_(sym)
--#define __SYSCALL_64_QUAL_ptregs(sym) ptregs_stub sym
--#define __SYSCALL_64(nr, sym, qual) __SYSCALL_64_QUAL_##qual(sym)
--#include <asm/syscalls_64.h>
--
- /*
-  * %rdi: prev task
-  * %rsi: next task
---- a/arch/x86/entry/syscall_64.c
-+++ b/arch/x86/entry/syscall_64.c
-@@ -7,14 +7,11 @@
- #include <asm/asm-offsets.h>
- #include <asm/syscall.h>
- 
--#define __SYSCALL_64_QUAL_(sym) sym
--#define __SYSCALL_64_QUAL_ptregs(sym) ptregs_##sym
--
--#define __SYSCALL_64(nr, sym, qual) extern asmlinkage long __SYSCALL_64_QUAL_##qual(sym)(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
-+#define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
- #include <asm/syscalls_64.h>
- #undef __SYSCALL_64
- 
--#define __SYSCALL_64(nr, sym, qual) [nr] = __SYSCALL_64_QUAL_##qual(sym),
-+#define __SYSCALL_64(nr, sym, qual) [nr] = sym,
- 
- extern long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
- 
+--- a/arch/x86/include/asm/asm-prototypes.h
++++ b/arch/x86/include/asm/asm-prototypes.h
+@@ -38,5 +38,4 @@ INDIRECT_THUNK(dx)
+ INDIRECT_THUNK(si)
+ INDIRECT_THUNK(di)
+ INDIRECT_THUNK(bp)
+-INDIRECT_THUNK(sp)
+ #endif /* CONFIG_RETPOLINE */
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -36,7 +36,6 @@ GENERATE_THUNK(_ASM_DX)
+ GENERATE_THUNK(_ASM_SI)
+ GENERATE_THUNK(_ASM_DI)
+ GENERATE_THUNK(_ASM_BP)
+-GENERATE_THUNK(_ASM_SP)
+ #ifdef CONFIG_64BIT
+ GENERATE_THUNK(r8)
+ GENERATE_THUNK(r9)
