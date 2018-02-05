@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752998AbeBEMQD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:16:03 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:36481 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752317AbeBEMPg (ORCPT
+        id S1753040AbeBEMQN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:16:13 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:41811 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752843AbeBEMPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:15:36 -0500
-X-Google-Smtp-Source: AH8x227WWSGCTUjSsAX4td4k5gtXPcMsZgBHxikVWKP4bNoTa/46hdNcG3cNK6MzzN6/bm2/uIKStQ==
+        Mon, 5 Feb 2018 07:15:40 -0500
+X-Google-Smtp-Source: AH8x227C45gGHxLH1uCpZqjiAlq3Kl+NKjuBs32Srq2HjCiGzAWWpAtP8oAfhKMMTGRvIpboHjxPQQ==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: linux-block@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, javier@cnexlabs.com,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH 1/4] lightnvm: make 1.2 data structures explicit
-Date: Mon,  5 Feb 2018 13:15:02 +0100
-Message-Id: <20180205121505.27563-2-mb@lightnvm.io>
+Subject: [PATCH 3/4] lightnvm: add 2.0 geometry identification
+Date: Mon,  5 Feb 2018 13:15:04 +0100
+Message-Id: <20180205121505.27563-4-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180205121505.27563-1-mb@lightnvm.io>
 References: <20180205121505.27563-1-mb@lightnvm.io>
@@ -25,186 +25,487 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the 1.2 data structures explicit, so it will be easy to identify
-the 2.0 data structures. Also fix the order of which the nvme_nvm_*
-are declared, such that they follow the nvme_nvm_command order.
+Implement the geometry data structures for 2.0 and enable a drive
+to be identified as one, including exposing the appropriate 2.0
+sysfs entries.
 
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/nvme/host/lightnvm.c | 82 ++++++++++++++++++++++----------------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
+ drivers/lightnvm/core.c      |   2 +-
+ drivers/nvme/host/lightnvm.c | 334 +++++++++++++++++++++++++++++++++++++------
+ include/linux/lightnvm.h     |  11 +-
+ 3 files changed, 295 insertions(+), 52 deletions(-)
 
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index c72863b36439..250e74dfa120 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -934,7 +934,7 @@ static int nvm_init(struct nvm_dev *dev)
+ 	pr_debug("nvm: ver:%x nvm_vendor:%x\n",
+ 			dev->identity.ver_id, dev->identity.vmnt);
+ 
+-	if (dev->identity.ver_id != 1) {
++	if (dev->identity.ver_id != 1 && dev->identity.ver_id != 2) {
+ 		pr_err("nvm: device not supported by kernel.");
+ 		goto err;
+ 	}
 diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index dc0b1335c7c6..60db3f1b59da 100644
+index 6412551ecc65..a9c010655ccc 100644
 --- a/drivers/nvme/host/lightnvm.c
 +++ b/drivers/nvme/host/lightnvm.c
-@@ -51,6 +51,21 @@ struct nvme_nvm_ph_rw {
- 	__le64			resv;
+@@ -184,6 +184,58 @@ struct nvme_nvm_bb_tbl {
+ 	__u8	blk[0];
  };
  
-+struct nvme_nvm_erase_blk {
-+	__u8			opcode;
-+	__u8			flags;
-+	__u16			command_id;
-+	__le32			nsid;
-+	__u64			rsvd[2];
-+	__le64			prp1;
-+	__le64			prp2;
-+	__le64			spba;
-+	__le16			length;
-+	__le16			control;
-+	__le32			dsmgmt;
-+	__le64			resv;
++struct nvme_nvm_id20_addrf {
++	__u8			grp_len;
++	__u8			pu_len;
++	__u8			chk_len;
++	__u8			lba_len;
++	__u8			resv[4];
 +};
 +
- struct nvme_nvm_identity {
- 	__u8			opcode;
- 	__u8			flags;
-@@ -89,33 +104,18 @@ struct nvme_nvm_setbbtbl {
- 	__u32			rsvd4[3];
- };
- 
--struct nvme_nvm_erase_blk {
--	__u8			opcode;
--	__u8			flags;
--	__u16			command_id;
--	__le32			nsid;
--	__u64			rsvd[2];
--	__le64			prp1;
--	__le64			prp2;
--	__le64			spba;
--	__le16			length;
--	__le16			control;
--	__le32			dsmgmt;
--	__le64			resv;
--};
--
- struct nvme_nvm_command {
- 	union {
- 		struct nvme_common_command common;
--		struct nvme_nvm_identity identity;
- 		struct nvme_nvm_ph_rw ph_rw;
-+		struct nvme_nvm_erase_blk erase;
-+		struct nvme_nvm_identity identity;
- 		struct nvme_nvm_getbbtbl get_bb;
- 		struct nvme_nvm_setbbtbl set_bb;
--		struct nvme_nvm_erase_blk erase;
- 	};
- };
- 
--struct nvme_nvm_id_group {
-+struct nvme_nvm_id12_grp {
- 	__u8			mtype;
- 	__u8			fmtype;
- 	__le16			res16;
-@@ -141,7 +141,7 @@ struct nvme_nvm_id_group {
- 	__u8			reserved[906];
- } __packed;
- 
--struct nvme_nvm_addr_format {
-+struct nvme_nvm_id12_addrf {
- 	__u8			ch_offset;
- 	__u8			ch_len;
- 	__u8			lun_offset;
-@@ -157,16 +157,16 @@ struct nvme_nvm_addr_format {
- 	__u8			res[4];
- } __packed;
- 
--struct nvme_nvm_id {
-+struct nvme_nvm_id12 {
- 	__u8			ver_id;
- 	__u8			vmnt;
- 	__u8			cgrps;
- 	__u8			res;
- 	__le32			cap;
- 	__le32			dom;
--	struct nvme_nvm_addr_format ppaf;
-+	struct nvme_nvm_id12_addrf ppaf;
- 	__u8			resv[228];
--	struct nvme_nvm_id_group group;
-+	struct nvme_nvm_id12_grp grp;
- 	__u8			resv2[2880];
- } __packed;
- 
-@@ -191,25 +191,25 @@ static inline void _nvme_nvm_check_size(void)
- {
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_identity) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_ph_rw) != 64);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_erase_blk) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_getbbtbl) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_setbbtbl) != 64);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_erase_blk) != 64);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_id_group) != 960);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_addr_format) != 16);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_id) != NVME_IDENTIFY_DATA_SIZE);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12_grp) != 960);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12_addrf) != 16);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12) != NVME_IDENTIFY_DATA_SIZE);
++struct nvme_nvm_id20 {
++	__u8			mjr;
++	__u8			mnr;
++	__u8			resv[6];
++
++	struct nvme_nvm_id20_addrf lbaf;
++
++	__u32			mccap;
++	__u8			resv2[12];
++
++	__u8			wit;
++	__u8			resv3[31];
++
++	/* Geometry */
++	__u16			num_grp;
++	__u16			num_pu;
++	__u32			num_chk;
++	__u32			clba;
++	__u8			resv4[52];
++
++	/* Write data requirements */
++	__u32			ws_min;
++	__u32			ws_opt;
++	__u32			mw_cunits;
++	__u32			maxoc;
++	__u32			maxocpu;
++	__u8			resv5[44];
++
++	/* Performance related metrics */
++	__u32			trdt;
++	__u32			trdm;
++	__u32			twrt;
++	__u32			twrm;
++	__u32			tcrst;
++	__u32			tcrsm;
++	__u8			resv6[40];
++
++	/* Reserved area */
++	__u8			resv7[2816];
++
++	/* Vendor specific */
++	__u8			vs[1024];
++};
++
+ /*
+  * Check we didn't inadvertently grow the command struct
+  */
+@@ -198,6 +250,8 @@ static inline void _nvme_nvm_check_size(void)
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12_addrf) != 16);
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12) != NVME_IDENTIFY_DATA_SIZE);
  	BUILD_BUG_ON(sizeof(struct nvme_nvm_bb_tbl) != 64);
++	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20_addrf) != 8);
++	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20) != NVME_IDENTIFY_DATA_SIZE);
  }
  
--static int init_grps(struct nvm_id *nvm_id, struct nvme_nvm_id *nvme_nvm_id)
-+static int init_grp(struct nvm_id *nvm_id, struct nvme_nvm_id12 *id12)
- {
--	struct nvme_nvm_id_group *src;
-+	struct nvme_nvm_id12_grp *src;
- 	struct nvm_id_group *grp;
- 	int sec_per_pg, sec_per_pl, pg_per_blk;
+ static int init_grp(struct nvm_id *nvm_id, struct nvme_nvm_id12 *id12)
+@@ -256,6 +310,49 @@ static int init_grp(struct nvm_id *nvm_id, struct nvme_nvm_id12 *id12)
+ 	return 0;
+ }
  
--	if (nvme_nvm_id->cgrps != 1)
-+	if (id12->cgrps != 1)
- 		return -EINVAL;
- 
--	src = &nvme_nvm_id->group;
-+	src = &id12->grp;
- 	grp = &nvm_id->grp;
- 
- 	grp->mtype = src->mtype;
-@@ -261,34 +261,34 @@ static int init_grps(struct nvm_id *nvm_id, struct nvme_nvm_id *nvme_nvm_id)
- static int nvme_nvm_identity(struct nvm_dev *nvmdev, struct nvm_id *nvm_id)
- {
- 	struct nvme_ns *ns = nvmdev->q->queuedata;
--	struct nvme_nvm_id *nvme_nvm_id;
-+	struct nvme_nvm_id12 *id;
- 	struct nvme_nvm_command c = {};
- 	int ret;
- 
- 	c.identity.opcode = nvme_nvm_admin_identity;
- 	c.identity.nsid = cpu_to_le32(ns->head->ns_id);
- 
--	nvme_nvm_id = kmalloc(sizeof(struct nvme_nvm_id), GFP_KERNEL);
--	if (!nvme_nvm_id)
-+	id = kmalloc(sizeof(struct nvme_nvm_id12), GFP_KERNEL);
-+	if (!id)
- 		return -ENOMEM;
- 
- 	ret = nvme_submit_sync_cmd(ns->ctrl->admin_q, (struct nvme_command *)&c,
--				nvme_nvm_id, sizeof(struct nvme_nvm_id));
-+				id, sizeof(struct nvme_nvm_id12));
- 	if (ret) {
- 		ret = -EIO;
- 		goto out;
- 	}
- 
--	nvm_id->ver_id = nvme_nvm_id->ver_id;
--	nvm_id->vmnt = nvme_nvm_id->vmnt;
--	nvm_id->cap = le32_to_cpu(nvme_nvm_id->cap);
--	nvm_id->dom = le32_to_cpu(nvme_nvm_id->dom);
--	memcpy(&nvm_id->ppaf, &nvme_nvm_id->ppaf,
++static int nvme_nvm_setup_12(struct nvm_dev *nvmdev, struct nvm_id *nvm_id,
++		struct nvme_nvm_id12 *id)
++{
 +	nvm_id->ver_id = id->ver_id;
 +	nvm_id->vmnt = id->vmnt;
 +	nvm_id->cap = le32_to_cpu(id->cap);
 +	nvm_id->dom = le32_to_cpu(id->dom);
 +	memcpy(&nvm_id->ppaf, &id->ppaf,
- 					sizeof(struct nvm_addr_format));
++					sizeof(struct nvm_addr_format));
++
++	return init_grp(nvm_id, id);
++}
++
++static int nvme_nvm_setup_20(struct nvm_dev *nvmdev, struct nvm_id *nvm_id,
++		struct nvme_nvm_id20 *id)
++{
++	nvm_id->ver_id = id->mjr;
++
++	nvm_id->num_ch = le16_to_cpu(id->num_grp);
++	nvm_id->num_lun = le16_to_cpu(id->num_pu);
++	nvm_id->num_chk = le32_to_cpu(id->num_chk);
++	nvm_id->clba = le32_to_cpu(id->clba);
++
++	nvm_id->ws_min = le32_to_cpu(id->ws_min);
++	nvm_id->ws_opt = le32_to_cpu(id->ws_opt);
++	nvm_id->mw_cunits = le32_to_cpu(id->mw_cunits);
++
++	nvm_id->trdt = le32_to_cpu(id->trdt);
++	nvm_id->trdm = le32_to_cpu(id->trdm);
++	nvm_id->tprt = le32_to_cpu(id->twrt);
++	nvm_id->tprm = le32_to_cpu(id->twrm);
++	nvm_id->tbet = le32_to_cpu(id->tcrst);
++	nvm_id->tbem = le32_to_cpu(id->tcrsm);
++
++	/* calculated values */
++	nvm_id->ws_per_chk = nvm_id->clba / nvm_id->ws_min;
++
++	/* 1.2 compatibility */
++	nvm_id->ws_seq = NVM_IO_SNGL_ACCESS;
++
++	return 0;
++}
++
+ static int nvme_nvm_identity(struct nvm_dev *nvmdev, struct nvm_id *nvm_id)
+ {
+ 	struct nvme_ns *ns = nvmdev->q->queuedata;
+@@ -277,14 +374,24 @@ static int nvme_nvm_identity(struct nvm_dev *nvmdev, struct nvm_id *nvm_id)
+ 		goto out;
+ 	}
  
--	ret = init_grps(nvm_id, nvme_nvm_id);
-+	ret = init_grp(nvm_id, id);
+-	nvm_id->ver_id = id->ver_id;
+-	nvm_id->vmnt = id->vmnt;
+-	nvm_id->cap = le32_to_cpu(id->cap);
+-	nvm_id->dom = le32_to_cpu(id->dom);
+-	memcpy(&nvm_id->ppaf, &id->ppaf,
+-					sizeof(struct nvm_addr_format));
+-
+-	ret = init_grp(nvm_id, id);
++	/*
++	 * The 1.2 and 2.0 specifications share the first byte in their geometry
++	 * command to make it possible to know what version a device implements.
++	 */
++	switch (id->ver_id) {
++	case 1:
++		ret = nvme_nvm_setup_12(nvmdev, nvm_id, id);
++		break;
++	case 2:
++		ret = nvme_nvm_setup_20(nvmdev, nvm_id,
++				(struct nvme_nvm_id20 *)id);
++		break;
++	default:
++		dev_err(ns->ctrl->device,
++			"OCSSD revision not supported (%d)\n",
++			nvm_id->ver_id);
++		ret = -EINVAL;
++	}
  out:
--	kfree(nvme_nvm_id);
-+	kfree(id);
+ 	kfree(id);
  	return ret;
+@@ -733,7 +840,7 @@ void nvme_nvm_unregister(struct nvme_ns *ns)
  }
  
+ static ssize_t nvm_dev_attr_show(struct device *dev,
+-				 struct device_attribute *dattr, char *page)
++		struct device_attribute *dattr, char *page)
+ {
+ 	struct nvme_ns *ns = nvme_get_ns_from_dev(dev);
+ 	struct nvm_dev *ndev = ns->ndev;
+@@ -748,10 +855,36 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+ 
+ 	if (strcmp(attr->name, "version") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->ver_id);
+-	} else if (strcmp(attr->name, "vendor_opcode") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", id->vmnt);
+ 	} else if (strcmp(attr->name, "capabilities") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->cap);
++	} else if (strcmp(attr->name, "read_typ") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdt);
++	} else if (strcmp(attr->name, "read_max") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdm);
++	} else {
++		return scnprintf(page,
++				 PAGE_SIZE,
++				 "Unhandled attr(%s) in `nvm_dev_attr_show`\n",
++				 attr->name);
++	}
++}
++
++static ssize_t nvm_dev_attr_show_12(struct device *dev,
++		struct device_attribute *dattr, char *page)
++{
++	struct nvme_ns *ns = nvme_get_ns_from_dev(dev);
++	struct nvm_dev *ndev = ns->ndev;
++	struct nvm_id *id;
++	struct attribute *attr;
++
++	if (!ndev)
++		return 0;
++
++	id = &ndev->identity;
++	attr = &dattr->attr;
++
++	if (strcmp(attr->name, "vendor_opcode") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->vmnt);
+ 	} else if (strcmp(attr->name, "device_mode") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->dom);
+ 	/* kept for compatibility */
+@@ -786,10 +919,6 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->csecs);
+ 	} else if (strcmp(attr->name, "oob_sector_size") == 0) {/* u32 */
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->sos);
+-	} else if (strcmp(attr->name, "read_typ") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdt);
+-	} else if (strcmp(attr->name, "read_max") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdm);
+ 	} else if (strcmp(attr->name, "prog_typ") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->tprt);
+ 	} else if (strcmp(attr->name, "prog_max") == 0) {
+@@ -808,48 +937,99 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+ 	} else {
+ 		return scnprintf(page,
+ 				 PAGE_SIZE,
+-				 "Unhandled attr(%s) in `nvm_dev_attr_show`\n",
++				 "Unhandled attr(%s) in `nvm_dev_attr_show_12`\n",
+ 				 attr->name);
+ 	}
+ }
+ 
+-#define NVM_DEV_ATTR_RO(_name)						\
++static ssize_t nvm_dev_attr_show_20(struct device *dev,
++		struct device_attribute *dattr, char *page)
++{
++	struct nvme_ns *ns = nvme_get_ns_from_dev(dev);
++	struct nvm_dev *ndev = ns->ndev;
++	struct nvm_id *id;
++	struct attribute *attr;
++
++	if (!ndev)
++		return 0;
++
++	id = &ndev->identity;
++	attr = &dattr->attr;
++
++	if (strcmp(attr->name, "groups") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_ch);
++	} else if (strcmp(attr->name, "punits") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_lun);
++	} else if (strcmp(attr->name, "chunks") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_chk);
++	} else if (strcmp(attr->name, "clba") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->clba);
++	} else if (strcmp(attr->name, "ws_min") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->ws_min);
++	} else if (strcmp(attr->name, "ws_opt") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->ws_opt);
++	} else if (strcmp(attr->name, "mw_cunits") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->mw_cunits);
++	} else if (strcmp(attr->name, "write_typ") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->tprt);
++	} else if (strcmp(attr->name, "write_max") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->tprm);
++	} else if (strcmp(attr->name, "reset_typ") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->tbet);
++	} else if (strcmp(attr->name, "reset_max") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->tbem);
++	} else {
++		return scnprintf(page,
++				 PAGE_SIZE,
++				 "Unhandled attr(%s) in `nvm_dev_attr_show_20`\n",
++				 attr->name);
++	}
++}
++
++#define NVM_DEV_ATTR_RO(_name)					\
+ 	DEVICE_ATTR(_name, S_IRUGO, nvm_dev_attr_show, NULL)
++#define NVM_DEV_ATTR_12_RO(_name)					\
++	DEVICE_ATTR(_name, S_IRUGO, nvm_dev_attr_show_12, NULL)
++#define NVM_DEV_ATTR_20_RO(_name)					\
++	DEVICE_ATTR(_name, S_IRUGO, nvm_dev_attr_show_20, NULL)
+ 
++/* general attributes */
+ static NVM_DEV_ATTR_RO(version);
+-static NVM_DEV_ATTR_RO(vendor_opcode);
+ static NVM_DEV_ATTR_RO(capabilities);
+-static NVM_DEV_ATTR_RO(device_mode);
+-static NVM_DEV_ATTR_RO(ppa_format);
+-static NVM_DEV_ATTR_RO(media_manager);
+ 
+-static NVM_DEV_ATTR_RO(media_type);
+-static NVM_DEV_ATTR_RO(flash_media_type);
+-static NVM_DEV_ATTR_RO(num_channels);
+-static NVM_DEV_ATTR_RO(num_luns);
+-static NVM_DEV_ATTR_RO(num_planes);
+-static NVM_DEV_ATTR_RO(num_blocks);
+-static NVM_DEV_ATTR_RO(num_pages);
+-static NVM_DEV_ATTR_RO(page_size);
+-static NVM_DEV_ATTR_RO(hw_sector_size);
+-static NVM_DEV_ATTR_RO(oob_sector_size);
+ static NVM_DEV_ATTR_RO(read_typ);
+ static NVM_DEV_ATTR_RO(read_max);
+-static NVM_DEV_ATTR_RO(prog_typ);
+-static NVM_DEV_ATTR_RO(prog_max);
+-static NVM_DEV_ATTR_RO(erase_typ);
+-static NVM_DEV_ATTR_RO(erase_max);
+-static NVM_DEV_ATTR_RO(multiplane_modes);
+-static NVM_DEV_ATTR_RO(media_capabilities);
+-static NVM_DEV_ATTR_RO(max_phys_secs);
+ 
+-static struct attribute *nvm_dev_attrs[] = {
++/* 1.2 values */
++static NVM_DEV_ATTR_12_RO(vendor_opcode);
++static NVM_DEV_ATTR_12_RO(device_mode);
++static NVM_DEV_ATTR_12_RO(ppa_format);
++static NVM_DEV_ATTR_12_RO(media_manager);
++static NVM_DEV_ATTR_12_RO(media_type);
++static NVM_DEV_ATTR_12_RO(flash_media_type);
++static NVM_DEV_ATTR_12_RO(num_channels);
++static NVM_DEV_ATTR_12_RO(num_luns);
++static NVM_DEV_ATTR_12_RO(num_planes);
++static NVM_DEV_ATTR_12_RO(num_blocks);
++static NVM_DEV_ATTR_12_RO(num_pages);
++static NVM_DEV_ATTR_12_RO(page_size);
++static NVM_DEV_ATTR_12_RO(hw_sector_size);
++static NVM_DEV_ATTR_12_RO(oob_sector_size);
++static NVM_DEV_ATTR_12_RO(prog_typ);
++static NVM_DEV_ATTR_12_RO(prog_max);
++static NVM_DEV_ATTR_12_RO(erase_typ);
++static NVM_DEV_ATTR_12_RO(erase_max);
++static NVM_DEV_ATTR_12_RO(multiplane_modes);
++static NVM_DEV_ATTR_12_RO(media_capabilities);
++static NVM_DEV_ATTR_12_RO(max_phys_secs);
++
++static struct attribute *nvm_dev_attrs_12[] = {
+ 	&dev_attr_version.attr,
++	&dev_attr_capabilities.attr,
++
+ 	&dev_attr_vendor_opcode.attr,
+-	&dev_attr_capabilities.attr,
+ 	&dev_attr_device_mode.attr,
+ 	&dev_attr_media_manager.attr,
+-
+ 	&dev_attr_ppa_format.attr,
+ 	&dev_attr_media_type.attr,
+ 	&dev_attr_flash_media_type.attr,
+@@ -870,22 +1050,82 @@ static struct attribute *nvm_dev_attrs[] = {
+ 	&dev_attr_multiplane_modes.attr,
+ 	&dev_attr_media_capabilities.attr,
+ 	&dev_attr_max_phys_secs.attr,
++
++	NULL,
++};
++
++static const struct attribute_group nvm_dev_attr_group_12 = {
++	.name		= "lightnvm",
++	.attrs		= nvm_dev_attrs_12,
++};
++
++/* 2.0 values */
++static NVM_DEV_ATTR_20_RO(groups);
++static NVM_DEV_ATTR_20_RO(punits);
++static NVM_DEV_ATTR_20_RO(chunks);
++static NVM_DEV_ATTR_20_RO(clba);
++static NVM_DEV_ATTR_20_RO(ws_min);
++static NVM_DEV_ATTR_20_RO(ws_opt);
++static NVM_DEV_ATTR_20_RO(mw_cunits);
++static NVM_DEV_ATTR_20_RO(write_typ);
++static NVM_DEV_ATTR_20_RO(write_max);
++static NVM_DEV_ATTR_20_RO(reset_typ);
++static NVM_DEV_ATTR_20_RO(reset_max);
++
++static struct attribute *nvm_dev_attrs_20[] = {
++	&dev_attr_version.attr,
++	&dev_attr_capabilities.attr,
++
++	&dev_attr_groups.attr,
++	&dev_attr_punits.attr,
++	&dev_attr_chunks.attr,
++	&dev_attr_clba.attr,
++	&dev_attr_ws_min.attr,
++	&dev_attr_ws_opt.attr,
++	&dev_attr_mw_cunits.attr,
++
++	&dev_attr_read_typ.attr,
++	&dev_attr_read_max.attr,
++	&dev_attr_write_typ.attr,
++	&dev_attr_write_max.attr,
++	&dev_attr_reset_typ.attr,
++	&dev_attr_reset_max.attr,
++
+ 	NULL,
+ };
+ 
+-static const struct attribute_group nvm_dev_attr_group = {
++static const struct attribute_group nvm_dev_attr_group_20 = {
+ 	.name		= "lightnvm",
+-	.attrs		= nvm_dev_attrs,
++	.attrs		= nvm_dev_attrs_20,
+ };
+ 
+ int nvme_nvm_register_sysfs(struct nvme_ns *ns)
+ {
+-	return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvm_dev_attr_group);
++	if (!ns->ndev)
++		return -EINVAL;
++
++	switch (ns->ndev->identity.ver_id) {
++	case 1:
++		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
++					&nvm_dev_attr_group_12);
++	case 2:
++		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
++					&nvm_dev_attr_group_20);
++	}
++
++	return -EINVAL;
+ }
+ 
+ void nvme_nvm_unregister_sysfs(struct nvme_ns *ns)
+ {
+-	sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvm_dev_attr_group);
++	switch (ns->ndev->identity.ver_id) {
++	case 1:
++		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
++					&nvm_dev_attr_group_12);
++		break;
++	case 2:
++		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
++					&nvm_dev_attr_group_20);
++		break;
++	}
+ }
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 94b704a8d83d..b717c000b712 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -184,10 +184,9 @@ struct nvm_id {
+ 	u16	csecs;
+ 	u16	sos;
+ 
+-	u16	ws_min;
+-	u16	ws_opt;
+-	u16	ws_seq;
+-	u16	ws_per_chk;
++	u32	ws_min;
++	u32	ws_opt;
++	u32	mw_cunits;
+ 
+ 	u32	trdt;
+ 	u32	trdm;
+@@ -199,6 +198,10 @@ struct nvm_id {
+ 	u32	mccap;
+ 	u16	cpar;
+ 
++	/* calculated values */
++	u16	ws_seq;
++	u16	ws_per_chk;
++
+ 	/* 1.2 compatibility */
+ 	u8	mtype;
+ 	u8	fmtype;
 -- 
 2.11.0
