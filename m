@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753295AbeBEPpX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:45:23 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:16402 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752925AbeBEPpO (ORCPT
+        id S1753324AbeBEPpj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:45:39 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:31807 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753136AbeBEPpT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:45:14 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180205154513epoutp0270c2a0ba7424db749809d07f71389e8a~QeHPCZl6u3222732227epoutp02K
-X-AuditID: b6c32a37-433ff70000001029-47-5a787c083c2a
+        Mon, 5 Feb 2018 10:45:19 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180205154516epoutp01c7d96b52a766fa0624aaeb8267fa98ed~QeHSbG9c32278922789epoutp01c
+X-AuditID: b6c32a35-891ff70000001031-88-5a787c0ca8df
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 To: broonie@kernel.org
 Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org,
@@ -16,124 +16,86 @@ Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org,
         krzk@kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com,
         linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/8] ASoC: samsung: i2s: Ensure names of supplied clocks are
- unique
-Date: Mon, 05 Feb 2018 16:43:57 +0100
-Message-id: <20180205154403.13520-3-s.nawrocki@samsung.com>
+Subject: [PATCH 3/8] ASoC: samsung: i2s: Prevent external abort on
+ exynos5433 I2S1 access
+Date: Mon, 05 Feb 2018 16:43:58 +0100
+Message-id: <20180205154403.13520-4-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.14.2
 In-reply-to: <20180205154403.13520-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEIsWRmVeSWpSXmKPExsWy7bCmgS5HTUWUwfRXihZXLh5istg4Yz2r
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsWy7bCmni5PTUWUwaYLIhZXLh5istg4Yz2r
         xdSHT9gs5h85x2rxdn83s8X58xvYLb5d6WCyuLxrDpvFjPP7mCzWHrnLbtG69wi7xeE37awW
-        F1d8YXLg9djwuYnNY+esu+wem1Z1snn0bVnF6PF5k1wAaxSXTUpqTmZZapG+XQJXRuffn8wF
-        0yUq7vc+Ym1g/C/cxcjJISFgItF5ppm5i5GLQ0hgB6PE7z1TGUESQgLfGSWefTCCKVp4YAUj
-        RNFuRok1Fy6wQRT9YpToes4BYrMJGEr0Hu0DaxYREJO4PacTbCqzwBkmien71jCBJIQFQiWO
-        9UA0swioSvw4+IYdxOYVsJaYtmEPC8Q2eYn3C+6DDeIUsJHYc28Z2GYJgR1sEou+/WKEKHKR
-        eLzgC1SDsMSr41uABnEA2dISl47aQtT3M0qcWNMM1TyDUeJO+wQmiAZricPHL7KC2MwCfBLv
-        vvawQjTzSnS0CUGUeEjs+LIYar6jxO/Vy9gg3gcaeu7GZpYJjFILGBlWMYqlFhTnpqcWGxYY
-        6xUn5haX5qXrJefnbmIEx7SW+Q7GDed8DjEKcDAq8fAKZFRECbEmlhVX5h5ilOBgVhLhdbpe
-        HiXEm5JYWZValB9fVJqTWnyIUZqDRUmcNyDAJUpIID2xJDU7NbUgtQgmy8TBKdXAyH/2Xtnz
-        fwbz7TmKdpg+Xi3s8urGU4Hv2//c5p8nFPBhc/mLyx/N9SqK/nclrK1fzWe4IDxOdGNS6VaD
-        xdPbra+/Y7xu+Pf+y9xtTV8/3tCwPrI0+eLSFJ7rzPxrCzbXHHvv6r5ZSSeza13TsaOOn48X
-        qm9P6npmrZ92fnNc9PyT7+7VWlZ4mCmxFGckGmoxFxUnAgCkjHfA5QIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFLMWRmVeSWpSXmKPExsVy+t9jAV32mooog+9rlS2uXDzEZLFxxnpW
+        F1d8YXLg9djwuYnNY+esu+wem1Z1snn0bVnF6PF5k1wAaxSXTUpqTmZZapG+XQJXxqeGQ4wF
+        HdwVH6Y9ZmpgnM/ZxcjJISFgIvHn81mmLkYuDiGBHYwS2z4+gHK+M0rcW/2XEaZq1eXNzBCJ
+        3YwSG473QTm/GCXO9b1jA6liEzCU6D3aB9YhIiAmcXtOJ1gRs8AZJonp+9YwgSSEBaIl1uzY
+        D9bAIqAq0bhlITOIzStgLfFmwVJWiHXyEu8X3AcbxClgI7Hn3jJGkEESAjvYJLZ8vgVV5CLx
+        6OZMKFtY4tXxLexdjBxAtrTEpaO2EPX9jBIn1jRDNc9glLjTPoEJosFa4vDxi2DNzAJ8Eu++
+        9rBCNPNKdLQJQZR4SPy9NB2q3FFiyauZ0IABGjpr5ny2CYxSCxgZVjGKpRYU56anFhsWGOoV
+        J+YWl+al6yXn525iBMe1lukOxinnfA4xCnAwKvHwCmRURAmxJpYVV+YeYpTgYFYS4XW6Xh4l
+        xJuSWFmVWpQfX1Sak1p8iFGag0VJnDcgwCVKSCA9sSQ1OzW1ILUIJsvEwSnVwCjbPvej4+P1
+        pWHSUUskbqyPOXwzZbPI1mdnMsz+3db4a50jxGe6aeq9/8ITHxqsmx/oujpvgb7Jjy07mLbp
+        RP4WVi7ZbLRAOPX3j+WplSfaJe6ZejItDC5ZItX6cIdvQubfE2Y7TzCe/5Jzau4yo+bmprkp
+        4vURc+Xt3S3d5ZmV1GfldM4/16fEUpyRaKjFXFScCADZUB6y5wIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJLMWRmVeSWpSXmKPExsVy+t9jAV3umooogzeTrS2uXDzEZLFxxnpW
         i6kPn7BZzD9yjtXi7f5uZovz5zewW3y70sFkcXnXHDaLGef3MVmsPXKX3aJ17xF2i8Nv2lkt
-        Lq74wuTA67HhcxObx85Zd9k9Nq3qZPPo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujM6/P5kL
-        pktU3O99xNrA+F+4i5GTQ0LARGLhgRWMXYxcHEICOxkl5jZ/gnJ+MUpM7e5lBaliEzCU6D3a
-        xwhiiwiISdye08kMUsQscIZJ4svES+wgCWGBUIljPRfYQGwWAVWJHwffgMV5Bawlpm3YwwKx
-        Tl7i/YL7YIM4BWwk9txbBmRzAG2zlmi6KTCBkWcBI8MqRsnUguLc9NxiowLDvNRyveLE3OLS
-        vHS95PzcTYzAENx2WKtvB+P9JfGHGAU4GJV4eDOyKqKEWBPLiitzDzFKcDArifA6XS+PEuJN
-        SaysSi3Kjy8qzUktPsQozcGiJM57O+9YpJBAemJJanZqakFqEUyWiYNTqoFx61KL4BP/Esyz
-        7m460fCP707ZMzc31tlPK9+e/LC/7rjIbmu90E9S+fy5X3bHfVl6cqHulAtcbyLSn58QeO8V
-        P6dO1is948KhJEPRiXvlpj2bvKHFQdyYWbjs/bmc+p26H47tfPvt9I/4KXkONzfGaPAfXXo7
-        9PfsCTo7Zi3d8YTPdIPa9mUF0kosxRmJhlrMRcWJAGS6T5A9AgAA
-X-CMS-MailID: 20180205154511epcas1p14dccb00b68fdb688f2c427c56e01c052
+        Lq74wuTA67HhcxObx85Zd9k9Nq3qZPPo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujE8NhxgL
+        OrgrPkx7zNTAOJ+zi5GTQ0LARGLV5c3MXYxcHEICOxkl9u09zA7h/GKUWL7tHxtIFZuAoUTv
+        0T5GEFtEQEzi9pxOsA5mgTNMEl8mXgLq4OAQFoiW2DjNGaSGRUBVonHLQmYQm1fAWuLNgqWs
+        ENvkJd4vuA82h1PARmLPvWWMIK1CQDVNNwUmMPIsYGRYxSiZWlCcm55bbFRgmJdarlecmFtc
+        mpeul5yfu4kRGIDbDmv17WC8vyT+EKMAB6MSD29GVkWUEGtiWXFl7iFGCQ5mJRFep+vlUUK8
+        KYmVValF+fFFpTmpxYcYpTlYlMR5b+cdixQSSE8sSc1OTS1ILYLJMnFwSjUwTld9l3q4yixz
+        Q+jTlR7X5p46cMCx+0HySsP3575uPCf6RP6NW5C2Tp2/6bEfP8Nzyta7PmgWXij54fbu79uM
+        dyvzbGh11udT2shp2uc0jf3fI6spv1Rf6qiYt+TUpQsy790VcPzKjhOagd3hWY497B+ijyyW
+        vbBi9t6r/gLx9svmLX+58NBvZyWW4oxEQy3mouJEADn2rM08AgAA
+X-CMS-MailID: 20180205154516epcas1p39c5977145e7b32879b935087ee3865f8
 X-Msg-Generator: CA
 CMS-TYPE: 101P
-X-CMS-RootMailID: 20180205154511epcas1p14dccb00b68fdb688f2c427c56e01c052
-X-RootMTR: 20180205154511epcas1p14dccb00b68fdb688f2c427c56e01c052
+X-CMS-RootMailID: 20180205154516epcas1p39c5977145e7b32879b935087ee3865f8
+X-RootMTR: 20180205154516epcas1p39c5977145e7b32879b935087ee3865f8
 References: <20180205154403.13520-1-s.nawrocki@samsung.com>
-        <CGME20180205154511epcas1p14dccb00b68fdb688f2c427c56e01c052@epcas1p1.samsung.com>
+        <CGME20180205154516epcas1p39c5977145e7b32879b935087ee3865f8@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to support multiple instances of the I2S IP block the platform
-device name is prepended to each clock registered by the driver.
-The clock-output-names property is now not used, this should not cause
-any issues as, for example, CDCLK clock is referenced through DT 'clocks'
-property, not by name.
-
-This change allows to have both I2S0 and I2S1 enabled simultaneously
-on exynos5433 and working properly when #clock-cells property is specified
-in respective DT nodes.
+It seems both PCLK_I2S1 and SCLK_I2S1 clocks need to be enabled before
+I2S1 control registers can be accessed on exynos5433, if SCLK clock
+is disabled an exception is triggered. To fix this parent clock of
+the RCLK_SRC clock is assigned to pri_dai->op_clk so required gate
+clock is handled by the runtime PM ops.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ sound/soc/samsung/i2s.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index aeba0ae890ea..b7d25a63da8b 100644
+index b7d25a63da8b..1c05170e4999 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -1193,11 +1193,13 @@ static void i2s_unregister_clock_provider(struct platform_device *pdev)
- 
- static int i2s_register_clock_provider(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
--	struct i2s_dai *i2s = dev_get_drvdata(dev);
-+	const char * const i2s_clk_desc[] = { "cdclk", "rclk_src", "prescaler" };
- 	const char *clk_name[2] = { "i2s_opclk0", "i2s_opclk1" };
- 	const char *p_names[2] = { NULL };
-+	struct device *dev = &pdev->dev;
-+	struct i2s_dai *i2s = dev_get_drvdata(dev);
- 	const struct samsung_i2s_variant_regs *reg_info = i2s->variant_regs;
-+	const char *i2s_clk_name[ARRAY_SIZE(i2s_clk_desc)];
- 	struct clk *rclksrc;
- 	int ret, i;
- 
-@@ -1214,30 +1216,35 @@ static int i2s_register_clock_provider(struct platform_device *pdev)
- 		clk_put(rclksrc);
+@@ -1328,6 +1328,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "failed to enable clock: %d\n", ret);
+ 		return ret;
  	}
- 
-+	for (i = 0; i < ARRAY_SIZE(i2s_clk_desc); i++)
-+		i2s_clk_name[i] = devm_kasprintf(dev, GFP_KERNEL, "%s_%s",
-+						dev_name(dev), i2s_clk_desc[i]);
 +
- 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
- 		/* Activate the prescaler */
- 		u32 val = readl(i2s->addr + I2SPSR);
- 		writel(val | PSR_PSREN, i2s->addr + I2SPSR);
+ 	pri_dai->dma_playback.addr = regs_base + I2STXD;
+ 	pri_dai->dma_capture.addr = regs_base + I2SRXD;
+ 	pri_dai->dma_playback.chan_name = "tx";
+@@ -1401,9 +1402,14 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
  
- 		i2s->clk_table[CLK_I2S_RCLK_SRC] = clk_register_mux(dev,
--				"i2s_rclksrc", p_names, ARRAY_SIZE(p_names),
-+				i2s_clk_name[CLK_I2S_RCLK_SRC], p_names,
-+				ARRAY_SIZE(p_names),
- 				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
- 				i2s->addr + I2SMOD, reg_info->rclksrc_off,
- 				1, 0, i2s->lock);
+ 	ret = i2s_register_clock_provider(pdev);
+-	if (!ret)
+-		return 0;
++	if (ret < 0)
++		goto err_disable_pm;
++
++	pri_dai->op_clk = clk_get_parent(pri_dai->clk_table[CLK_I2S_RCLK_SRC]);
++
++	return 0;
  
- 		i2s->clk_table[CLK_I2S_RCLK_PSR] = clk_register_divider(dev,
--				"i2s_presc", "i2s_rclksrc",
-+				i2s_clk_name[CLK_I2S_RCLK_PSR],
-+				i2s_clk_name[CLK_I2S_RCLK_SRC],
- 				CLK_SET_RATE_PARENT,
- 				i2s->addr + I2SPSR, 8, 6, 0, i2s->lock);
- 
--		p_names[0] = "i2s_presc";
-+		p_names[0] = i2s_clk_name[CLK_I2S_RCLK_PSR];
- 		i2s->clk_data.clk_num = 2;
- 	}
--	of_property_read_string_index(dev->of_node,
--				"clock-output-names", 0, &clk_name[0]);
- 
--	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(dev, clk_name[0],
--				p_names[0], CLK_SET_RATE_PARENT,
-+	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(dev,
-+				i2s_clk_name[CLK_I2S_CDCLK], p_names[0],
-+				CLK_SET_RATE_PARENT,
- 				i2s->addr + I2SMOD, reg_info->cdclkcon_off,
- 				CLK_GATE_SET_TO_DISABLE, i2s->lock);
- 
++err_disable_pm:
+ 	pm_runtime_disable(&pdev->dev);
+ err_disable_clk:
+ 	clk_disable_unprepare(pri_dai->clk);
 -- 
 2.14.2
