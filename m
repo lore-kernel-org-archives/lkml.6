@@ -1,52 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752183AbeBEH4w (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 02:56:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41038 "EHLO mail.kernel.org"
+        id S1752563AbeBEIA1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 03:00:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750949AbeBEH4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 02:56:41 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8840621795
+        id S1750943AbeBEIAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 03:00:18 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C335217B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Mon, 5 Feb 2018 15:56:22 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 BUGFIX] ARM: dts: imx6ull: fix the imx6ull-14x14-evk
- configuration
-Message-ID: <20180205075620.GO31354@dragon>
-References: <1516955159-21626-1-git-send-email-LW@KARO-electronics.de>
- <1516956738-24673-1-git-send-email-LW@KARO-electronics.de>
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AH8x22662dihbAKepffVZ77957IjMaiSuIPRoiNFwAhjUJC4Ng9Sblk05hm6wQ8eXR1btPSeRENZ8piBIXqUq3hoj4A=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1516956738-24673-1-git-send-email-LW@KARO-electronics.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180205012146.23981-16-ulfalizer@gmail.com>
+References: <20180205012146.23981-1-ulfalizer@gmail.com> <20180205012146.23981-16-ulfalizer@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 5 Feb 2018 09:00:15 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPecaWOgThH6YJ6bNG7u=OZtM+61QyVWD_JyV=8EkHf-gw@mail.gmail.com>
+Message-ID: <CAJKOXPecaWOgThH6YJ6bNG7u=OZtM+61QyVWD_JyV=8EkHf-gw@mail.gmail.com>
+Subject: Re: [PATCH 15/20] phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        tfiga@chromium.org, paul.burton@mips.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>, egtvedt@samfundet.no,
+        linus.walleij@linaro.org, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
+        yamada.masahiro@socionext.com, Kishon Vijay Abraham I <kishon@ti.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 09:52:18AM +0100, Lothar Waﬂmann wrote:
-> imx6ull-14x14-evk.dts currently includes the imx6ul.dtsi file for an
-> i.MX6ULL SoC which is plain wrong.
-> 
-> Rename the current imx6ul-14x14-evk.dts to .dtsi and include it from
-> imx6ul-14x14-evk.dts and imx6ull-14x14-evk.dts, so that both can
-> include the appropriate SoC specific (imx6ul.dtsi/imx6ull.dtsi) file.
-> 
-> Signed-off-by: Lothar Waﬂmann <LW@KARO-electronics.de>
+On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> Exynos4212 support was removed by commit bca9085e0ae9 ("ARM: dts:
+> exynos: remove Exynos4212 support (dead code)").
+>
+> Remove the SOC_EXYNOS4212 dependency from PHY_EXYNOS4X12_USB.
+>
+> Discovered with the
+> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+> script.
+>
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
+>  drivers/phy/samsung/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Which base is the patch generated against?  I cannot apply it to any
-branch in my tree.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Shawn
+Best regards,
+Krzysztof
