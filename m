@@ -1,48 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753163AbeBEOrA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 09:47:00 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35299 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753091AbeBEOqy (ORCPT
+        id S1753218AbeBEOrP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:47:15 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51638 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753153AbeBEOq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:46:54 -0500
-X-Google-Smtp-Source: AH8x224v4oXYERp/5HwHtCp99QG+Is9DRcqN2sR3ZLPt7HS2UP5UY9CaHMQVMWsC6mq2eEAuqepG7A==
+        Mon, 5 Feb 2018 09:46:58 -0500
+X-Google-Smtp-Source: AH8x2264q8LNe6wH+4red9vFOeaBMAt6J9wrO+GZAvfcJpj0fpNN7SXHrdHnh8ZMRAuTsFwtj2JpEQ==
 From: Georgi Djakov <georgi.djakov@linaro.org>
 To: andy.gross@linaro.org
 Cc: bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH 1/4] arm64: dts: qcom: msm8916: Add msm8916 A53 PLL DT node
-Date: Mon,  5 Feb 2018 16:46:48 +0200
-Message-Id: <20180205144651.5934-1-georgi.djakov@linaro.org>
+Subject: [PATCH 4/4] arm64: dts: qcom: msm8916: Add CPU frequency scaling support
+Date: Mon,  5 Feb 2018 16:46:51 +0200
+Message-Id: <20180205144651.5934-4-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180205144651.5934-1-georgi.djakov@linaro.org>
+References: <20180205144651.5934-1-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a device tree node for the A53 PLL, which exists on msm8916
-platforms.
+Add a CPU OPP table to allow CPU frequency scaling on msm8916 platforms.
 
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index e51b04900726..d3592b19cfc9 100644
+index 4539571a36b2..e4682779eec7 100644
 --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
 +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -326,6 +326,12 @@
- 			status = "disabled";
+@@ -113,6 +113,8 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
++			clocks = <&apcs 0>;
++			operating-points-v2 = <&cpu_opp_table>;
  		};
  
-+		a53pll: clock@b016000 {
-+			compatible = "qcom,msm8916-a53pll";
-+			reg = <0xb016000 0x40>;
-+			#clock-cells = <0>;
-+		};
+ 		CPU1: cpu@1 {
+@@ -122,6 +124,8 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
++			clocks = <&apcs 0>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 		};
+ 
+ 		CPU2: cpu@2 {
+@@ -131,6 +135,8 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
++			clocks = <&apcs 0>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 		};
+ 
+ 		CPU3: cpu@3 {
+@@ -140,6 +146,8 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
++			clocks = <&apcs 0>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 		};
+ 
+ 		L2_0: l2-cache {
+@@ -212,6 +220,24 @@
+ 
+ 	};
+ 
++	cpu_opp_table: cpu_opp_table {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
- 		apcs: syscon@b011000 {
- 			compatible = "syscon";
- 			reg = <0x0b011000 0x1000>;
++		opp-200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++		};
++		opp-400000000 {
++			opp-hz = /bits/ 64 <400000000>;
++		};
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++		};
++		opp-998400000 {
++			opp-hz = /bits/ 64 <998400000>;
++		};
++	};
++
+ 	gpu_opp_table: opp_table {
+ 		compatible = "operating-points-v2";
+ 
