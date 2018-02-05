@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226qhVIGL+nPSfW5+qwTmRLqnphvWfKcOMm0M0TupWIjit7XhwOPSFZpK8DzH+0GXMKLvjzT
-ARC-Seal: i=1; a=rsa-sha256; t=1517855140; cv=none;
+X-Google-Smtp-Source: AH8x227SmsrFSaPxR8cXD+rXKS431GHU+t0zR9mQEuNkfc3lqi0Cv99i6B6DasrZdeI7a7oMm/8F
+ARC-Seal: i=1; a=rsa-sha256; t=1517855139; cv=none;
         d=google.com; s=arc-20160816;
-        b=z7GYKjM57pEeuo+61P8YCHAMPJFbXaMXLnuxUYFe5wpzqZ8pucXpcpPFCCZARuxbuz
-         gAPi4dsJjYtTDxQ/C/GhypoLC6fr34qGR7DEzgNdwom5v6i6106liKraLT6zY10iWTRg
-         tF4gEMo/obRrMrPJuaila/0v8aWwAbW0/mk+SCljYIh5o7vu6f7IS/JCK9aHMvf2nb+N
-         3FeKvTtXtiUPorG0UwLRCcHNQC9jNHuXiC/U5hLQJqJ9JIOZSQdGsNG++P451OctNrw3
-         J8vLlXE8KSXB/469+lL020adllyElONH0fbyicsVz2oN0HdStsM+TfJKMOyWLQMsewRN
-         hgrA==
+        b=fN+bSj/kl5xcExAnmOZrlZMCaEWGxGH4uIZIdrzX3vWlsuZnvSH5ISuugv224MfnNk
+         gY0MweBMz9uKOr6WA1/vbXw8CfeEkiIi7hNIeRciH0WqVYLy5G7FQ3Qqfcaujc4TcRC7
+         9o3LczgSzkoFxJdiaNxW27vxBx3OlER6ENl4NQcMC+SyKtXvUo58rfqHNvtq7bJypKFh
+         6bG68CNDuMUdzRXN2lkULaCP1aMW+XYiZJNY/86sV3wdyM23K6dR5vLoXdpP8/Fa2Fjl
+         xyOtoGdCese6FetKN6Ma8afOSWD7ZYBIc8hWH0ySRNt7SjGa/2uK89V3LLYu91gjdUBm
+         VZMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RQeE7capP/jrjJMaLqf/QwkBdWS9xA5WfMUeJPjv+qU=;
-        b=WeUicLDMHGrNn6IIZNG8lRgbcY28j29LdUwMxumN7zNN7FjlytXIeOBevJWWI8Uh/m
-         k6ufY0bvTlgV4Kzx12QvnSCHiIBMJ5bhFYIhJHo4svLc/z6GXN8RqKqrK5rm4VspxJEf
-         WmCUofUwf2D5P5mxvfxfpLD73eBLNqWZiJbJ7EyNHJ7fQfLn7eB/Ck7CFLLhQdIQDc3J
-         teLdzYmQh/iS8qnw2u+95bBO7lmdPMNR/FHdn5teRkZCKwj1fGGBIeXqwYypOCGj7y91
-         aDd05tHqkhflTJBuSh7L4aCllsdNcSGsZgMq/ngAT0fMF4dtoNIOPPNy41rtJVOnnGSg
-         56Hw==
+        bh=YdC5uA6NRbgwvlNQRsunoP48JTn8lLBq2nUjHEaWCNE=;
+        b=GYZ7P/G97p3yTAcGSbZejYvzBztv98E4lIbnd4q37XinXbru+ebuxPfnVbtGnu3lMi
+         sY3BlD1LlH67r33RgMjZqQCbLeWgzA/2ch7ggVyb4wVXlMzzqJcfW7fbZmMjfNRJA6wT
+         8Dlk0bImmoLSZFRQ1j5FV+RJDuwbEa+kcAXo4eJPlJp2fNJ9jD5tagY+cDa4OiW1xL13
+         sRmhMm7WQwRzPYjL4nGN7PUX5N/QyfKdk+c+ON2SqG3DihuPBfPgbSDkfZqfFOCcDCu5
+         JC7uWt6bw16x4xvYfA1bafscbgmqH/WN2CW1XvWHnR0YDpEzK3KaGGyTUFPkH2entcVG
+         7uqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-arch@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>,
 	kernel-hardening@lists.openwall.com,
+	Al Viro <viro@zeniv.linux.org.uk>,
 	Andy Lutomirski <luto@kernel.org>,
+	torvalds@linux-foundation.org,
 	alan@linux.intel.com
-Subject: [PATCH 4.15 40/60] x86/syscall: Sanitize syscall table de-references under speculation
-Date: Mon,  5 Feb 2018 10:23:13 -0800
-Message-Id: <20180205182215.617155182@linuxfoundation.org>
+Subject: [PATCH 4.15 39/60] x86/get_user: Use pointer masking to limit speculation
+Date: Mon,  5 Feb 2018 10:23:12 -0800
+Message-Id: <20180205182215.573695155@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
@@ -44,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586416249692382?=
-X-GMAIL-MSGID: =?utf-8?q?1591586472160165292?=
+X-GMAIL-THRID: =?utf-8?q?1591586415777637486?=
+X-GMAIL-MSGID: =?utf-8?q?1591586470715331744?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,57 +57,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams dan.j.williams@intel.com
 
-commit 2fbd7af5af8665d18bcefae3e9700be07e22b681
+commit c7f631cb07e7da06ac1d231ca178452339e32a94
 
-The syscall table base is a user controlled function pointer in kernel
-space. Use array_index_nospec() to prevent any out of bounds speculation.
+Quoting Linus:
 
-While retpoline prevents speculating into a userspace directed target it
-does not stop the pointer de-reference, the concern is leaking memory
-relative to the syscall table base, by observing instruction cache
-behavior.
+    I do think that it would be a good idea to very expressly document
+    the fact that it's not that the user access itself is unsafe. I do
+    agree that things like "get_user()" want to be protected, but not
+    because of any direct bugs or problems with get_user() and friends,
+    but simply because get_user() is an excellent source of a pointer
+    that is obviously controlled from a potentially attacking user
+    space. So it's a prime candidate for then finding _subsequent_
+    accesses that can then be used to perturb the cache.
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Unlike the __get_user() case get_user() includes the address limit check
+near the pointer de-reference. With that locality the speculation can be
+mitigated with pointer narrowing rather than a barrier, i.e.
+array_index_nospec(). Where the narrowing is performed by:
+
+	cmp %limit, %ptr
+	sbb %mask, %mask
+	and %mask, %ptr
+
+With respect to speculation the value of %ptr is either less than %limit
+or NULL.
+
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-arch@vger.kernel.org
+Cc: Kees Cook <keescook@chromium.org>
 Cc: kernel-hardening@lists.openwall.com
 Cc: gregkh@linuxfoundation.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: torvalds@linux-foundation.org
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727417984.33451.1216731042505722161.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727417469.33451.11804043010080838495.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/entry/common.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/lib/getuser.S |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -21,6 +21,7 @@
- #include <linux/export.h>
- #include <linux/context_tracking.h>
- #include <linux/user-return-notifier.h>
-+#include <linux/nospec.h>
- #include <linux/uprobes.h>
- #include <linux/livepatch.h>
- #include <linux/syscalls.h>
-@@ -282,7 +283,8 @@ __visible void do_syscall_64(struct pt_r
- 	 * regs->orig_ax, which changes the behavior of some syscalls.
- 	 */
- 	if (likely((nr & __SYSCALL_MASK) < NR_syscalls)) {
--		regs->ax = sys_call_table[nr & __SYSCALL_MASK](
-+		nr = array_index_nospec(nr & __SYSCALL_MASK, NR_syscalls);
-+		regs->ax = sys_call_table[nr](
- 			regs->di, regs->si, regs->dx,
- 			regs->r10, regs->r8, regs->r9);
- 	}
-@@ -318,6 +320,7 @@ static __always_inline void do_syscall_3
- 	}
- 
- 	if (likely(nr < IA32_NR_syscalls)) {
-+		nr = array_index_nospec(nr, IA32_NR_syscalls);
- 		/*
- 		 * It's possible that a 32-bit syscall implementation
- 		 * takes a 64-bit parameter but nonetheless assumes that
+--- a/arch/x86/lib/getuser.S
++++ b/arch/x86/lib/getuser.S
+@@ -40,6 +40,8 @@ ENTRY(__get_user_1)
+ 	mov PER_CPU_VAR(current_task), %_ASM_DX
+ 	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
+ 	jae bad_get_user
++	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
++	and %_ASM_DX, %_ASM_AX
+ 	ASM_STAC
+ 1:	movzbl (%_ASM_AX),%edx
+ 	xor %eax,%eax
+@@ -54,6 +56,8 @@ ENTRY(__get_user_2)
+ 	mov PER_CPU_VAR(current_task), %_ASM_DX
+ 	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
+ 	jae bad_get_user
++	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
++	and %_ASM_DX, %_ASM_AX
+ 	ASM_STAC
+ 2:	movzwl -1(%_ASM_AX),%edx
+ 	xor %eax,%eax
+@@ -68,6 +72,8 @@ ENTRY(__get_user_4)
+ 	mov PER_CPU_VAR(current_task), %_ASM_DX
+ 	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
+ 	jae bad_get_user
++	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
++	and %_ASM_DX, %_ASM_AX
+ 	ASM_STAC
+ 3:	movl -3(%_ASM_AX),%edx
+ 	xor %eax,%eax
+@@ -83,6 +89,8 @@ ENTRY(__get_user_8)
+ 	mov PER_CPU_VAR(current_task), %_ASM_DX
+ 	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
+ 	jae bad_get_user
++	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
++	and %_ASM_DX, %_ASM_AX
+ 	ASM_STAC
+ 4:	movq -7(%_ASM_AX),%rdx
+ 	xor %eax,%eax
+@@ -94,6 +102,8 @@ ENTRY(__get_user_8)
+ 	mov PER_CPU_VAR(current_task), %_ASM_DX
+ 	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
+ 	jae bad_get_user_8
++	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
++	and %_ASM_DX, %_ASM_AX
+ 	ASM_STAC
+ 4:	movl -7(%_ASM_AX),%edx
+ 5:	movl -3(%_ASM_AX),%ecx
