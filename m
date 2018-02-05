@@ -1,84 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752440AbeBEEFZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 23:05:25 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:46583 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752208AbeBEEFS (ORCPT
+        id S1752374AbeBEEHn (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 23:07:43 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16813 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751979AbeBEEHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 23:05:18 -0500
-X-Google-Smtp-Source: AH8x224toKlr/EUcswGjqyX7C3aBNnbKwwsDxai8fZxtflRryAH9hLaUa6JTm/aWFVD+eVl4ZqpY5w==
-Date: Mon, 5 Feb 2018 09:35:15 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
-        egtvedt@samfundet.no, linus.walleij@linaro.org, vgupta@synopsys.com,
-        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
-        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
-        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
-        yamada.masahiro@socionext.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Christophe Leroy <christophe.leroy@c-s.fr>, linux-pm@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 03/20] kconfig: Remove leftover references to AVR32 symbol
-Message-ID: <20180205040515.GC28462@vireshk-i7>
-References: <20180205012146.23981-1-ulfalizer@gmail.com>
- <20180205012146.23981-4-ulfalizer@gmail.com>
+        Sun, 4 Feb 2018 23:07:39 -0500
+X-UUID: 7b2c3e2a3e994417a2ad146de51fef4b-20180205
+Message-ID: <1517803655.1173.12.camel@mtkswgap22>
+Subject: Re: [PATCH v2 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
+ device
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, Garlic Tseng <garlic.tseng@mediatek.com>
+Date: Mon, 5 Feb 2018 12:07:35 +0800
+In-Reply-To: <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
+References: <cover.1515639336.git.ryder.lee@mediatek.com>
+         <d6669277f5232446b4798a6b724074b18d5c21aa.1515639336.git.ryder.lee@mediatek.com>
+         <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180205012146.23981-4-ulfalizer@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-02-18, 02:21, Ulf Magnusson wrote:
-> The AVR32 symbol was removed in commit 26202873bb51 ("avr32: remove
-> support for AVR32 architecture"). Remove the remaining references to it
-> from the Kconfig files.
+On Sat, 2018-02-03 at 15:26 +0100, Matthias Brugger wrote:
 > 
-> No references remain to the removed AVR32_AT32AP_CPUFREQ symbol either,
-> so remove that one too.
+> On 01/31/2018 08:42 AM, Ryder Lee wrote:
+> > As the new MFD parent is in place, switch probing method to adapt it.
+> > 
+> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> >  drivers/clk/mediatek/clk-mt7622-aud.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+> > index 13f752d..8c18536 100644
+> > --- a/drivers/clk/mediatek/clk-mt7622-aud.c
+> > +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+> > @@ -142,11 +142,12 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+> >  {
+> >  	struct clk_onecell_data *clk_data;
+> >  	struct device_node *node = pdev->dev.of_node;
+> > +	struct device_node *pnode = pdev->dev.parent->of_node;
+> >  	int r;
+> >  
+> >  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
+> >  
+> > -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+> > +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
 > 
-> Discovered with the
-> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-> script.
+> We will need a fallback here for older device tree bindings.
 > 
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-> ---
->  drivers/cpufreq/Kconfig       | 10 ----------
->  drivers/pwm/Kconfig           |  2 +-
->  drivers/spi/Kconfig           |  2 +-
->  drivers/video/console/Kconfig |  2 +-
->  4 files changed, 3 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> index d8addbce40bc..608af20a3494 100644
-> --- a/drivers/cpufreq/Kconfig
-> +++ b/drivers/cpufreq/Kconfig
-> @@ -239,16 +239,6 @@ if PPC32 || PPC64
->  source "drivers/cpufreq/Kconfig.powerpc"
->  endif
->  
-> -if AVR32
-> -config AVR32_AT32AP_CPUFREQ
-> -	bool "CPU frequency driver for AT32AP"
-> -	depends on PLATFORM_AT32AP
-> -	default n
-> -	help
-> -	  This enables the CPU frequency driver for AT32AP processors.
-> -	  If in doubt, say N.
-> -endif
-> -
+> Regards,
+> Matthias
 
-https://lkml.kernel.org/r/20180118200202.11883-1-clabbe.montjoie@gmail.com
+Up to now, I didn't see both driver and bindings are used anywhere.
+Should I still care about that?
 
--- 
-viresh
+Thanks.
