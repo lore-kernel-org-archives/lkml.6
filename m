@@ -1,56 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753285AbeBEPOs convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:14:48 -0500
-Received: from prv-mh.provo.novell.com ([137.65.248.74]:33790 "EHLO
-        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753237AbeBEPOi (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:6:1>);
-        Mon, 5 Feb 2018 10:14:38 -0500
-Message-Id: <5A7882EA02000078001A552D@prv-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Mon, 05 Feb 2018 08:14:34 -0700
-From: "Jan Beulich" <JBeulich@suse.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "David Laight" <David.Laight@aculab.com>,
-        <xen-devel@lists.xenproject.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [Xen-devel] [PATCH] [v2] xen: hypercall: fix out-of-bounds
- memcpy
-References: <20180205150340.328921-1-arnd@arndb.de>
-In-Reply-To: <20180205150340.328921-1-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        id S1753255AbeBEPPk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:15:40 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:42539 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753037AbeBEPPc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 10:15:32 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: nico@linaro.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 2/2] x86: make __ibp_barrier visible
+Date: Mon,  5 Feb 2018 16:12:53 +0100
+Message-Id: <20180205151300.539874-3-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180205151300.539874-1-arnd@arndb.de>
+References: <20180205151300.539874-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:KZQT0FH1nAaojQPCyTPQCi7eKXrIHLjOGE0cGSR1vz8606thuJw
+ nUYsffLfXxVy4qlwS3vmWWhY4SYp2F2fRtVoVSh6lgeEIEH7me+bhpyiXyZEuZKVakEKUIb
+ +GbJDur/wmX4Cxuke3gIUa77jE0xflavd2TqByDE7KUeYCgWz9r/xMs4csfKDxj8p3L9Pu5
+ Ebry4maUxFkJNIWZN6sXw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:QnD3WMQzmSk=:Fh6bD7+Db7SB6d3eqHrF3J
+ j0qlyeWxUeFYxsjThT5wTLa6RjWV3BqyhXVDFWIBvOksDJyV3SxrM5YRjEmE85nUn3PFRZi1y
+ Ny/QRh/qM7cP8LeTxpN7iiP6wg+KJDnYPqkdnLqFzcGQrbOA4GPkqpxY7ZNvpWtEslAdGF3nu
+ opgzEG1U8ZDwKRVgucTR2K59YzU/0/ITE5A6ndGDb5E/ShEMkICHIHF7Y8OO4Z9ZWoG/5gAIY
+ v9tWLLqPteiu/C3fpYEyBukeIpCZmU++I41K4jSGLAtUjnXAr8rZRSoHhEv04Z6WT0FPh1+dB
+ 5AuTrBM1U6UQfEbit7nIiNcwmAwx+B+/GsWLyD3v3l6LCT+PitX4Qo1EEyhkYMW/Vg+HaLwO5
+ OfKPFC0AjGu5ymH1dfC0FyNL7lL6i2E9IS4HLIddWx8OWaDEuvOGhLsSqYRZgeefZJpORtwqt
+ datS3vPxEw6kXW72b/LByyc2fLUBy1knfZ6VmvQ1IRpP0xDAzktUHGc7YYl8Kotyh4287idE/
+ /bSmrEQ9M1ctrjl2RKJqYY6mNRiigxS9qDAtNauC/2kY4iQApEYJriOtDvNJlyNW1MRxeLtxE
+ pf9qNCZKqohlVS84YaCCw6sv2jc2UFXAxFvXWAGUrlNM13r5h9bexrbRmcER5kMICtOC3aP0d
+ D8SUP4Qht92OL2290g5iJKIEx/Sn0jlyJjohjhfVZyjBJTQ2WC8ZA8XCTQiKiJ/lo5mZonjcj
+ UVYg+jqx/J+y9X0EiibwVtpQNCVIKYkubtXiCQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 05.02.18 at 16:03, <arnd@arndb.de> wrote:
->  int xen_event_channel_op_compat(int cmd, void *arg)
->  {
-> -	struct evtchn_op op;
-> +	struct evtchn_op op = { .cmd = cmd, };
-> +	size_t len;
->  	int rc;
->  
-> -	op.cmd = cmd;
-> -	memcpy(&op.u, arg, sizeof(op.u));
-> -	rc = _hypercall1(int, event_channel_op_compat, &op);
-> -
-> -	switch (cmd) {
-> -	case EVTCHNOP_close:
-> -	case EVTCHNOP_send:
-> -	case EVTCHNOP_bind_vcpu:
-> -	case EVTCHNOP_unmask:
-> -		/* no output */
-> -		break;
-> +	if (cmd > ARRAY_SIZE(evtchnop_len))
-> +		return -ENOSYS;
+LTO linking was broken by the addition of __ibp_barrier, which only
+has relocations from assembler code, and not from C, so the linker
+decides to drop it:
 
->= perhaps?
+./ccfzUJ1l.ltrans0.ltrans.o:(.altinstr_replacement+0x42): undefined reference to `__ibp_barrier'
 
-Jan
+Fixes: 64e16720ea08 ("x86/speculation: Simplify indirect_branch_prediction_barrier()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/x86/kernel/cpu/bugs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 71949bf2de5a..c3f5fe1c6e83 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -338,7 +338,7 @@ ssize_t cpu_show_spectre_v2(struct device *dev,
+ }
+ #endif
+ 
+-void __ibp_barrier(void)
++void __visible __ibp_barrier(void)
+ {
+ 	__wrmsr(MSR_IA32_PRED_CMD, PRED_CMD_IBPB, 0);
+ }
+-- 
+2.9.0
