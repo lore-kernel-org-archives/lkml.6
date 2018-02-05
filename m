@@ -1,128 +1,166 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3587241-1517868120-5-16641195979315411074
+X-Cyrus-Session-Id: sloti22d1t05-1248312-1517802464-2-11763595051086452884
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517868120; b=LKYjnQ/ZHC+MoZi41D0ILchp0xTTLWOhQIy/7kvRU8C9hDb
-    040Ci/rDAvdit6psVMnEMuwP68uEceOb5A2JzH5Gnw9m2b4o9a5HotobGsiGcTuB
-    i/FuzpABYN+T9fEDsLEeqaPZMEeASaHNDrwL1ikL/8yv3IIRg+NfZFdDH0zdy0Fw
-    4MfyXy0QjF3vLitYc8ji7lnA5zPrKSm/FeStANVR+TQ4e3+9XujGFzW3riJYYoqW
-    GegaN4wiYeTu3iPPDEAPu0aTmqdgY/Wf3znOGJVS/Z4s7UTZIJxeqgVUASJkHpa4
-    BbxH5Ko0tJIdgo1sCb2GquYCVgppw5262bdPjkQ==
+    t=1517802463; b=wKOk0HflN0uLXGPFEXbCwmvAcb+WYl489SS4qnVy30RKOBG
+    5rF8UCeVAtJAmyjv/7r2ZU6JEyNwCIe0KTiqfLKkubE0wTIsgTgf2vhhaPVST8Fg
+    lMm7saeLwT2KTn8q6HVni7YLgEIgGZQMZ6GOIqwmIYHlILNsvVxzUw4WeUTXx8Na
+    shFz/rYsIH76oITMfonUiVnWzPyJP8z3CkQV0c+AdKxYsVL0an9dA5C1L0MLKY7H
+    FZYS7wnWtlfdyV9zSrK3vJ2d1MwgRPELNQ7gGYy/9l/9PK/C2ZbOTRX7bU5QUt6R
+    MVql35bRmIvn01EV2nLDR70WNpE+BWxzmFLaweA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1517868120; bh=CtKBGNW1bv6ZT9aH9OcUwZf3vvRVsbly0fR3kl
-    cF3Gg=; b=EI/LlPMiUJ2xhUaTeReA1WQxtLdVOtcB+GbJwgMDylYU1s519eZObd
-    QEK9sKoFzl6v5YEoCFVilitKmh8s2E1j2IQq5jq7e4x/ia/Ml4LOw1ub8hwHZ5dg
-    9+Ycz0Jd2AkWsBcu8cgjUlYV9JLC1MydGzL4TZFcNQK6bG8U0SL2QKwwacLgJL4A
-    JNzQIGlBB2bzRbzOvm76QhTvuPSufyjwJQTNxmbiBqAmnPFstoH0IKMSUe+JY5nE
-    hKVQ4b6a2mFL4tUNvGxYC5RQgqC6mSTEnjwBEjpts+hzJpc9NhKEOan1Y3lRBwxW
-    DVjhA6DiCKVhl/YbnkTqR0SjZfEIr5yw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b=PoOV/FY/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1517802463; bh=hRcfyzsQi3DYdOwj70nh4LF3vn
+    XTz4EEAdzmA9G00To=; b=RyfZE2DD66a/2AJfGuQnPOQtATceZt6K3bfyWeGTvv
+    6BEYfxtCbn8TtRs5SdEyV8q1NIY400Rty5U+H8D0HZ9l/APyo0PJe9y5ypg7xxOY
+    PLnfilsXBnpkDveujBGtnsUVdjB8AQYI3uL8E8+j7j7IVUhfA/ETJV2Ow5ql/qvK
+    tO7X7KQ5ET09yFDFtDF1nq1SIk3+sd89yjdt5PsLTMA9ecMcd8XjiS9fHgeqXzj6
+    WtaiUyZgAJmNUw4Sa7z6FOk7j8ZV6jHmA4ZxZ1rBfpw0lVf7gw1sZ/898CqcfsX/
+    Yl66JbkLfpvWUXsYueaoT7+qrcPHHjhDavLes8W9rkbw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=aXE0VzPc;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b=PoOV/FY/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=aXE0VzPc;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751575AbeBEWB4 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Feb 2018 17:01:56 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:45265 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750796AbeBEWBz (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 17:01:55 -0500
-X-Google-Smtp-Source: AH8x227CfCSLvQTh34EbuakTVskDOOysRHTJS/j+P866cz7vEEgayyxxLeq6QzNBZOX1BmPM4xGECIe9d+z8FeKDg3s=
-MIME-Version: 1.0
-In-Reply-To: <20180205144422.1ca67ab5@w520.home>
+        id S1752199AbeBEDr2 (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 4 Feb 2018 22:47:28 -0500
+Received: from mga07.intel.com ([134.134.136.100]:35426 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751979AbeBEDr1 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 4 Feb 2018 22:47:27 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,462,1511856000";
+   d="scan'208";a="201179859"
+Date: Mon, 5 Feb 2018 11:46:53 +0800
+From: Haozhong Zhang <haozhong.zhang@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: alex.williamson@redhat.com, Michal Hocko <mhocko@suse.com>,
+        jack@suse.cz, kvm@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de
+Subject: Re: [PATCH 3/3] vfio: disable filesystem-dax page pinning
+Message-ID: <20180205034653.mfnla2nq55ikkhav@hz-desktop>
+Mail-Followup-To: Dan Williams <dan.j.williams@intel.com>,
+        alex.williamson@redhat.com, Michal Hocko <mhocko@suse.com>,
+        jack@suse.cz, kvm@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de
 References: <151778551496.7139.17808629759104553625.stgit@dwillia2-desk3.amr.corp.intel.com>
  <151778553083.7139.6601964812589807125.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180205144422.1ca67ab5@w520.home>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 5 Feb 2018 14:01:53 -0800
-Message-ID: <CAPcyv4g+uC3HAnRpu-tfNdsBhon1dbXpte9P5DqWDBowoU08tw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] vfio: disable filesystem-dax page pinning
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Haozhong Zhang <haozhong.zhang@intel.com>,
-        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
-        KVM list <kvm@vger.kernel.org>, linux-nvdimm@lists.01.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, aik@ozlabs.ru
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <151778553083.7139.6601964812589807125.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: NeoMutt/20171027
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 5, 2018 at 1:44 PM, Alex Williamson
-<alex.williamson@redhat.com> wrote:
-> On Sun, 04 Feb 2018 15:05:30 -0800
-> Dan Williams <dan.j.williams@intel.com> wrote:
->
->> Filesystem-DAX is incompatible with 'longterm' page pinning. Without
->> page cache indirection a DAX mapping maps filesystem blocks directly.
->> This means that the filesystem must not modify a file's block map while
->> any page in a mapping is pinned. In order to prevent the situation of
->> userspace holding of filesystem operations indefinitely, disallow
->> 'longterm' Filesystem-DAX mappings.
->>
->> RDMA has the same conflict and the plan there is to add a 'with lease'
->> mechanism to allow the kernel to notify userspace that the mapping is
->> being torn down for block-map maintenance. Perhaps something similar can
->> be put in place for vfio.
->>
->> Note that xfs and ext4 still report:
->>
->>    "DAX enabled. Warning: EXPERIMENTAL, use at your own risk"
->>
->> ...at mount time, and resolving the dax-dma-vs-truncate problem is one
->> of the last hurdles to remove that designation.
->>
->> Cc: Alex Williamson <alex.williamson@redhat.com>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Christoph Hellwig <hch@lst.de>
->> Cc: kvm@vger.kernel.org
->> Cc: <stable@vger.kernel.org>
->> Reported-by: Haozhong Zhang <haozhong.zhang@intel.com>
->> Fixes: d475c6346a38 ("dax,ext2: replace XIP read and write with DAX I/O")
->> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->> ---
->>  drivers/vfio/vfio_iommu_type1.c |   18 +++++++++++++++---
->>  1 file changed, 15 insertions(+), 3 deletions(-)
->
-> This isn't without some expense, a vfio mapping and un-mapping unit
-> test incurs ~1.5% increase in system time losing access to gup_fast().
-> Also, I think tce_iommu_use_page() is going to have the same problem, it
-> provides the same sort of functionality for a different vfio IOMMU
-> backend.  Please take this through your tree and I'll add a todo list
-> item to see how we might improve this.
->
-> Acked-by: Alex Williamson <alex.williamson@redhat.com>
+On 02/04/18 15:05 -0800, Dan Williams wrote:
+> Filesystem-DAX is incompatible with 'longterm' page pinning. Without
+> page cache indirection a DAX mapping maps filesystem blocks directly.
+> This means that the filesystem must not modify a file's block map while
+> any page in a mapping is pinned. In order to prevent the situation of
+> userspace holding of filesystem operations indefinitely, disallow
+> 'longterm' Filesystem-DAX mappings.
+> 
+> RDMA has the same conflict and the plan there is to add a 'with lease'
+> mechanism to allow the kernel to notify userspace that the mapping is
+> being torn down for block-map maintenance. Perhaps something similar can
+> be put in place for vfio.
+> 
+> Note that xfs and ext4 still report:
+> 
+>    "DAX enabled. Warning: EXPERIMENTAL, use at your own risk"
+> 
+> ...at mount time, and resolving the dax-dma-vs-truncate problem is one
+> of the last hurdles to remove that designation.
+> 
+> Cc: Alex Williamson <alex.williamson@redhat.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: kvm@vger.kernel.org
+> Cc: <stable@vger.kernel.org>
+> Reported-by: Haozhong Zhang <haozhong.zhang@intel.com>
+> Fixes: d475c6346a38 ("dax,ext2: replace XIP read and write with DAX I/O")
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c |   18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index e30e29ae4819..45657e2b1ff7 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -338,11 +338,12 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  {
+>  	struct page *page[1];
+>  	struct vm_area_struct *vma;
+> +	struct vm_area_struct *vmas[1];
+>  	int ret;
+>  
+>  	if (mm == current->mm) {
+> -		ret = get_user_pages_fast(vaddr, 1, !!(prot & IOMMU_WRITE),
+> -					  page);
+> +		ret = get_user_pages_longterm(vaddr, 1, !!(prot & IOMMU_WRITE),
+> +					      page, vmas);
 
-Thanks Alex.
+vmas is not used subsequently if this branch is taken, so can we use
+NULL here?
+
+Thanks,
+Haozhong
+
+>  	} else {
+>  		unsigned int flags = 0;
+>  
+> @@ -351,7 +352,18 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  
+>  		down_read(&mm->mmap_sem);
+>  		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
+> -					    NULL, NULL);
+> +					    vmas, NULL);
+> +		/*
+> +		 * The lifetime of a vaddr_get_pfn() page pin is
+> +		 * userspace-controlled. In the fs-dax case this could
+> +		 * lead to indefinite stalls in filesystem operations.
+> +		 * Disallow attempts to pin fs-dax pages via this
+> +		 * interface.
+> +		 */
+> +		if (ret > 0 && vma_is_fsdax(vmas[0])) {
+> +			ret = -EOPNOTSUPP;
+> +			put_page(page[0]);
+> +		}
+>  		up_read(&mm->mmap_sem);
+>  	}
+>  
+> 
