@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751924AbeBEUa0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 15:30:26 -0500
-Received: from gateway23.websitewelcome.com ([192.185.48.104]:42907 "EHLO
+        id S1751974AbeBEUaf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 15:30:35 -0500
+Received: from gateway23.websitewelcome.com ([192.185.48.104]:26706 "EHLO
         gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751617AbeBEUaK (ORCPT
+        by vger.kernel.org with ESMTP id S1751655AbeBEUaL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:30:10 -0500
-Date: Mon, 5 Feb 2018 14:08:04 -0600
+        Mon, 5 Feb 2018 15:30:11 -0500
+Date: Mon, 5 Feb 2018 14:08:26 -0600
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH v2 3/8] i2c: max2175: use 64-bit arithmetic instead of 32-bit
-Message-ID: <fdeffeff7451f52fd903e4773c6b10fe21f707e4.1517856716.git.gustavo@embeddedor.com>
+Subject: [PATCH v2 4/8] i2c: ov9650: use 64-bit arithmetic instead of 32-bit
+Message-ID: <6f6fd607cf3428d6ab115f1deaa82c4963b170f1.1517856716.git.gustavo@embeddedor.com>
 References: <cover.1517856716.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -29,49 +28,88 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.152.201.65
 X-Source-L: No
-X-Exim-ID: 1ein3d-003ITZ-M9
+X-Exim-ID: 1ein3y-003ImH-VK
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.152.201.65]:46616
+X-Source-Sender: (embeddedgus) [189.152.201.65]:46630
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 21
+X-Email-Count: 24
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix LL to constant 2 in order to give the compiler complete
-information about the proper arithmetic to use. Notice that this
-constant is used in a context that expects an expression of type
-s64 (64 bits, signed).
+Add suffix ULL to constants 10000 and 1000000 in order to give the
+compiler complete information about the proper arithmetic to use.
+Notice that these constants are used in contexts that expect
+expressions of type u64 (64 bits, unsigned).
 
-The expression 2 * (clock_rate - abs_nco_freq) is currently being
-evaluated using 32-bit arithmetic.
+The following expressions:
 
-Addresses-Coverity-ID: 1446589
+(u64)(fi->interval.numerator * 10000)
+(u64)(iv->interval.numerator * 10000)
+fiv->interval.numerator * 1000000 / fiv->interval.denominator
+
+are currently being evaluated using 32-bit arithmetic.
+
+Notice that those casts to u64 for the first two expressions are only
+effective after such expressions are evaluated using 32-bit arithmetic,
+which leads to potential integer overflows. So based on those casts, it
+seems that the original intention of the code is to actually use 64-bit
+arithmetic instead of 32-bit.
+
+Also, notice that once the suffix ULL is added to the constants, the
+outer casts to u64 are no longer needed.
+
+Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
+Fixes: 84a15ded76ec ("[media] V4L: Add driver for OV9650/52 image sensors")
+Fixes: 79211c8ed19c ("remove abs64()")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
 Changes in v2:
  - Update subject and changelog to better reflect the proposed code changes.
- - Add suffix LL to constant instead of casting a variable.
+ - Add suffix ULL to constants instead of casting variables.
+ - Remove unnecessary casts to u64 as part of the code change.
+ - Extend the same code change to other similar expressions.
 
- drivers/media/i2c/max2175.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/ov9650.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/i2c/max2175.c b/drivers/media/i2c/max2175.c
-index 2f1966b..87cba15 100644
---- a/drivers/media/i2c/max2175.c
-+++ b/drivers/media/i2c/max2175.c
-@@ -643,7 +643,7 @@ static int max2175_set_nco_freq(struct max2175 *ctx, s32 nco_freq)
- 	if (abs_nco_freq < clock_rate / 2) {
- 		nco_val_desired = 2 * nco_freq;
- 	} else {
--		nco_val_desired = 2 * (clock_rate - abs_nco_freq);
-+		nco_val_desired = 2LL * (clock_rate - abs_nco_freq);
- 		if (nco_freq < 0)
- 			nco_val_desired = -nco_val_desired;
+diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
+index e519f27..e716e98 100644
+--- a/drivers/media/i2c/ov9650.c
++++ b/drivers/media/i2c/ov9650.c
+@@ -1130,7 +1130,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
+ 	if (fi->interval.denominator == 0)
+ 		return -EINVAL;
+ 
+-	req_int = (u64)(fi->interval.numerator * 10000) /
++	req_int = fi->interval.numerator * 10000ULL /
+ 		fi->interval.denominator;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ov965x_intervals); i++) {
+@@ -1139,7 +1139,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
+ 		if (mbus_fmt->width != iv->size.width ||
+ 		    mbus_fmt->height != iv->size.height)
+ 			continue;
+-		err = abs((u64)(iv->interval.numerator * 10000) /
++		err = abs(iv->interval.numerator * 10000ULL /
+ 			    iv->interval.denominator - req_int);
+ 		if (err < min_err) {
+ 			fiv = iv;
+@@ -1148,8 +1148,9 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
  	}
+ 	ov965x->fiv = fiv;
+ 
+-	v4l2_dbg(1, debug, &ov965x->sd, "Changed frame interval to %u us\n",
+-		 fiv->interval.numerator * 1000000 / fiv->interval.denominator);
++	v4l2_dbg(1, debug, &ov965x->sd, "Changed frame interval to %llu us\n",
++		 fiv->interval.numerator * 1000000ULL /
++		 fiv->interval.denominator);
+ 
+ 	return 0;
+ }
 -- 
 2.7.4
