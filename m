@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226S+NdUhhGLC03D9tdlYbqK8c4C36o+LU258t9fnqBqdySeYJZk1z2Temx/8IIQenxz8Or1
-ARC-Seal: i=1; a=rsa-sha256; t=1517855180; cv=none;
+X-Google-Smtp-Source: AH8x227psgZmNGnW/gQCObWXyIK3F5DCSeVMs2GM65kW03HBw5jhTq/pUWIwgQHA9/zafUlzfkwT
+ARC-Seal: i=1; a=rsa-sha256; t=1517855177; cv=none;
         d=google.com; s=arc-20160816;
-        b=C3VQo8OOOw9Rs58Put3J8IQ0I/J6BCao0i6EtIBXum3bZLYv3q6LEMoq8ngyqRXiqo
-         NieP9xDf+4sGp8z38Lthwk0mbGiZU4NZEOl3YSm84ae2UAeF8akBTNdJuCQDqK23Trea
-         lGvGLNskV5JX1xNp0N1r/mJgliuDylEWDzYeyHr1hl46i7lZKU4j36oaR8WhKRrUsOUu
-         AUgkrKK9/pOCi6l3Melz21zB94NgyxfLcwOoYKyz33t9QjX92dZCXoxgU8ncL/4oh8JL
-         h3KSxi0NWOTsMQJonbdRiLJMpHX7JTOQ7QUoyZhHZk9y6oZdBhAirzgG7SFKteNSQ5go
-         wJYQ==
+        b=tNKTBnROu/AoPfxzor9nYuoA6e2SW0Ql8BYanmCNTZ34dX5scLvxlW4tt85aI/pvAD
+         PI4xZNO4Bh1FlbNYXOKrAZEkSg6i4ABsYaYIr11t7XP2oo/xG4AWyt5lmHsgxfWZY+J2
+         NDYHLdBlg2rlwl2c21OYDgcbjgUCNmeUHAns47HlXUn8eyKSPkja1USNlDmKv+t2K8Qz
+         YP64swMBdsQhUIiosWLSXLCFlO5Okqg/XLSG0rgVFprMQFcwT8ZnBBPh1RjAhaF5joBz
+         OLIEDIa9W3AOMFmRVGsSUdykXbdkY7LD1ETG25KCGOuCmlIz1KqwPt0j+IzlNXFC2HyJ
+         Sgag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=drg7RdKqmrMTjmuSP1EEsh7fe7ZnAZsNWnuNRQqLYZI=;
-        b=IVf78aPNF8I8RXexJPeQmzAdgmFvIL6mWAmy07L1OLU+5Frt9GT8MGZAiTRjs1gBEN
-         b7FZNkHvxT0MJJKWJgPmMvHieYKki1RQHMM/SJxqkkYKqBXOziM2Bz4PT56s0dY1eKTe
-         Vdk4xPoPN4PRVyN0dW/oit61KYdw+7Q9WYXQUw050BSYVsRVcLIBFKWFtI4BRmlbXIW2
-         HbhACue5qplJHZWIJejTN4pCUZyaz+nLFJCxEwrGo/+tfAkHoyr0AVK2So6Zrl4IBgdb
-         AeooDPcvzzkZMKZVkHWC2p388ylbO4/+XQLUgM52VJNKxY3zkkOfCZq/PoFHYysQxhSI
-         FzZQ==
+        bh=NRnD/sbQbPrUxqLDM9ocaHdMng5izaXY9exfNzxwWoY=;
+        b=vAOWSJaqbDKQBh/BZGwoX3sG22HrmKMO7WoxXEssoJt/zpsckP7rxhJs5UXFdKYgg8
+         JV/wR5qFG9kw6t9GM0eggnhJmerXNQc6cZjOEVjESkDlmFYp3r3F85Y0TSts4nHESKT0
+         /JuvjxEyCjst2K4sa55kk1us0SV/fOPtlhTOcSXeG1vY8O62Zki6ihLnnI7WUB/H1c5K
+         ERiVCoWd9Vzru1jwZtAWINP7laceISHXjwboTDZJ29xwjfnb51m6LsY6+C5wp0e9ndme
+         NLZgwbNk5ooqh2P1Eg6ykBAEAe9rc3cEjW3paztLx9NSZAA1bpfcJggp9od7XmR2Oyff
+         pBXQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thomas Meyer <thomas@m3y3r.de>,
-	Richard Weinberger <richard@nod.at>,
-	Bernie Innocenti <codewiz@google.com>
-Subject: [PATCH 3.18 02/36] um: link vmlinux with -no-pie
-Date: Mon,  5 Feb 2018 10:23:30 -0800
-Message-Id: <20180205182351.879522463@linuxfoundation.org>
+	Robert Lippert <rlippert@google.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 18/36] hwmon: (pmbus) Use 64bit math for DIRECT format values
+Date: Mon,  5 Feb 2018 10:23:46 -0800
+Message-Id: <20180205182352.530993019@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586513942658403?=
-X-GMAIL-MSGID: =?utf-8?q?1591586513942658403?=
+X-GMAIL-THRID: =?utf-8?q?1591586511357995491?=
+X-GMAIL-MSGID: =?utf-8?q?1591586511357995491?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +49,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Meyer <thomas@m3y3r.de>
+From: Robert Lippert <roblip@gmail.com>
 
-commit 883354afbc109c57f925ccc19840055193da0cc0 upstream.
 
-Debian's gcc defaults to pie. The global Makefile already defines the -fno-pie option.
-Link UML dynamic kernel image also with -no-pie to fix the build.
+[ Upstream commit bd467e4eababe4c04272c1e646f066db02734c79 ]
 
-Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Cc: Bernie Innocenti <codewiz@google.com>
+Power values in the 100s of watt range can easily blow past
+32bit math limits when processing everything in microwatts.
+
+Use 64bit math instead to avoid these issues on common 32bit ARM
+BMC platforms.
+
+Fixes: 442aba78728e ("hwmon: PMBus device driver")
+Signed-off-by: Robert Lippert <rlippert@google.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/um/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/pmbus/pmbus_core.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/arch/um/Makefile
-+++ b/arch/um/Makefile
-@@ -116,7 +116,7 @@ archheaders:
- archprepare: include/generated/user_constants.h
+--- a/drivers/hwmon/pmbus/pmbus_core.c
++++ b/drivers/hwmon/pmbus/pmbus_core.c
+@@ -20,6 +20,7 @@
+  */
  
- LINK-$(CONFIG_LD_SCRIPT_STATIC) += -static
--LINK-$(CONFIG_LD_SCRIPT_DYN) += -Wl,-rpath,/lib
-+LINK-$(CONFIG_LD_SCRIPT_DYN) += -Wl,-rpath,/lib $(call cc-option, -no-pie)
+ #include <linux/kernel.h>
++#include <linux/math64.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/err.h>
+@@ -443,8 +444,8 @@ static long pmbus_reg2data_linear(struct
+ static long pmbus_reg2data_direct(struct pmbus_data *data,
+ 				  struct pmbus_sensor *sensor)
+ {
+-	long val = (s16) sensor->data;
+-	long m, b, R;
++	s64 b, val = (s16)sensor->data;
++	s32 m, R;
  
- CFLAGS_NO_HARDENING := $(call cc-option, -fno-PIC,) $(call cc-option, -fno-pic,) \
- 	$(call cc-option, -fno-stack-protector,) \
+ 	m = data->info->m[sensor->class];
+ 	b = data->info->b[sensor->class];
+@@ -472,11 +473,12 @@ static long pmbus_reg2data_direct(struct
+ 		R--;
+ 	}
+ 	while (R < 0) {
+-		val = DIV_ROUND_CLOSEST(val, 10);
++		val = div_s64(val + 5LL, 10L);  /* round closest */
+ 		R++;
+ 	}
+ 
+-	return (val - b) / m;
++	val = div_s64(val - b, m);
++	return clamp_val(val, LONG_MIN, LONG_MAX);
+ }
+ 
+ /*
+@@ -588,7 +590,8 @@ static u16 pmbus_data2reg_linear(struct
+ static u16 pmbus_data2reg_direct(struct pmbus_data *data,
+ 				 struct pmbus_sensor *sensor, long val)
+ {
+-	long m, b, R;
++	s64 b, val64 = val;
++	s32 m, R;
+ 
+ 	m = data->info->m[sensor->class];
+ 	b = data->info->b[sensor->class];
+@@ -605,18 +608,18 @@ static u16 pmbus_data2reg_direct(struct
+ 		R -= 3;		/* Adjust R and b for data in milli-units */
+ 		b *= 1000;
+ 	}
+-	val = val * m + b;
++	val64 = val64 * m + b;
+ 
+ 	while (R > 0) {
+-		val *= 10;
++		val64 *= 10;
+ 		R--;
+ 	}
+ 	while (R < 0) {
+-		val = DIV_ROUND_CLOSEST(val, 10);
++		val64 = div_s64(val64 + 5LL, 10L);  /* round closest */
+ 		R++;
+ 	}
+ 
+-	return val;
++	return (u16)clamp_val(val64, S16_MIN, S16_MAX);
+ }
+ 
+ static u16 pmbus_data2reg_vid(struct pmbus_data *data,
