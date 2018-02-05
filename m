@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753324AbeBEPpj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:45:39 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:31807 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753136AbeBEPpT (ORCPT
+        id S1753355AbeBEPp6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:45:58 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:35746 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753300AbeBEPpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:45:19 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180205154516epoutp01c7d96b52a766fa0624aaeb8267fa98ed~QeHSbG9c32278922789epoutp01c
-X-AuditID: b6c32a35-891ff70000001031-88-5a787c0ca8df
+        Mon, 5 Feb 2018 10:45:32 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180205154530epoutp046997131e5ab9998faeb3df3f8f4a46d6~QeHfs_Dyd3104731047epoutp04T
+X-AuditID: b6c32a45-3ebff70000001023-ce-5a787c1a1f57
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 To: broonie@kernel.org
 Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org,
@@ -16,86 +16,112 @@ Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org,
         krzk@kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com,
         linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/8] ASoC: samsung: i2s: Prevent external abort on
- exynos5433 I2S1 access
-Date: Mon, 05 Feb 2018 16:43:58 +0100
-Message-id: <20180205154403.13520-4-s.nawrocki@samsung.com>
+Subject: [PATCH 6/8] ASoC: samsung: i2s: Update clock-output-names property
+ documentation
+Date: Mon, 05 Feb 2018 16:44:01 +0100
+Message-id: <20180205154403.13520-7-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.14.2
 In-reply-to: <20180205154403.13520-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsWy7bCmni5PTUWUwaYLIhZXLh5istg4Yz2r
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEIsWRmVeSWpSXmKPExsWy7bCmua5UTUWUwYG1QhZXLh5istg4Yz2r
         xdSHT9gs5h85x2rxdn83s8X58xvYLb5d6WCyuLxrDpvFjPP7mCzWHrnLbtG69wi7xeE37awW
-        F1d8YXLg9djwuYnNY+esu+wem1Z1snn0bVnF6PF5k1wAaxSXTUpqTmZZapG+XQJXxqeGQ4wF
-        HdwVH6Y9ZmpgnM/ZxcjJISFgIvHn81mmLkYuDiGBHYwS2z4+gHK+M0rcW/2XEaZq1eXNzBCJ
-        3YwSG473QTm/GCXO9b1jA6liEzCU6D3aB9YhIiAmcXtOJ1gRs8AZJonp+9YwgSSEBaIl1uzY
-        D9bAIqAq0bhlITOIzStgLfFmwVJWiHXyEu8X3AcbxClgI7Hn3jJGkEESAjvYJLZ8vgVV5CLx
-        6OZMKFtY4tXxLexdjBxAtrTEpaO2EPX9jBIn1jRDNc9glLjTPoEJosFa4vDxi2DNzAJ8Eu++
-        9rBCNPNKdLQJQZR4SPy9NB2q3FFiyauZ0IABGjpr5ny2CYxSCxgZVjGKpRYU56anFhsWGOoV
-        J+YWl+al6yXn525iBMe1lukOxinnfA4xCnAwKvHwCmRURAmxJpYVV+YeYpTgYFYS4XW6Xh4l
-        xJuSWFmVWpQfX1Sak1p8iFGag0VJnDcgwCVKSCA9sSQ1OzW1ILUIJsvEwSnVwCjbPvej4+P1
-        pWHSUUskbqyPOXwzZbPI1mdnMsz+3db4a50jxGe6aeq9/8ITHxqsmx/oujpvgb7Jjy07mLbp
-        RP4WVi7ZbLRAOPX3j+WplSfaJe6ZejItDC5ZItX6cIdvQubfE2Y7TzCe/5Jzau4yo+bmprkp
-        4vURc+Xt3S3d5ZmV1GfldM4/16fEUpyRaKjFXFScCADZUB6y5wIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJLMWRmVeSWpSXmKPExsVy+t9jAV3umooogzeTrS2uXDzEZLFxxnpW
+        F1d8YXLg9djwuYnNY+esu+wem1Z1snn0bVnF6PF5k1wAaxSXTUpqTmZZapG+XQJXxpqJH9gK
+        FkhX7Dzewt7AuESsi5GTQ0LARGLOjSlsILaQwA5GiZZrtV2MXED2d0aJ2deOMcMUzT3/kRki
+        sZtRom/RLTYI5xejxOKZF5lAqtgEDCV6j/YxgtgiAmISt+d0gnUwC5xhkpi+bw1YkbBAtMTT
+        fzNZQGwWAVWJE22dYCt4BawlFt74wwixTl7i/YL7YDangI3EnnvLGEEGSQjsYJN4eWIKK0SR
+        i0R39wkmCFtY4tXxLewQtrTEs1UboRr6GSVOrGmGcmYwStxpnwDVYS1x+PhFsEnMAnwSHYf/
+        AnVzAMV5JTrahCBMD4mju3Ihqh0ltmzcCA0koJlnT0ZPYJRawMiwilEstaA4Nz212KjAUK84
+        Mbe4NC9dLzk/dxMjOKa1XHcwzjjnc4hRgINRiYdXIKMiSog1say4MvcQowQHs5IIr9P18igh
+        3pTEyqrUovz4otKc1OJDjNIcLErivG0BLlFCAumJJanZqakFqUUwWSYOTqkGxooMx8Dc+sVt
+        zl/2zGKf3rQ8NCHAUnLGcjd70cbgiY0srlZiRxau2f/Xb/nBh1Em3muYz89UbrFSk1vyLNBk
+        15Qlskv8D554KlHzd4V9lubKZaxz2eUqWpo2XjpmmKfnZT7732yVSToeBVtj75sJPLbPfHBi
+        46Ij+24sDlh+u27BoT0PTipK8yixFGckGmoxFxUnAgBjOU0z5QIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFLMWRmVeSWpSXmKPExsVy+t9jAV3Jmooog/ML2S2uXDzEZLFxxnpW
         i6kPn7BZzD9yjtXi7f5uZovz5zewW3y70sFkcXnXHDaLGef3MVmsPXKX3aJ17xF2i8Nv2lkt
-        Lq74wuTA67HhcxObx85Zd9k9Nq3qZPPo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujE8NhxgL
-        OrgrPkx7zNTAOJ+zi5GTQ0LARGLV5c3MXYxcHEICOxkl9u09zA7h/GKUWL7tHxtIFZuAoUTv
-        0T5GEFtEQEzi9pxOsA5mgTNMEl8mXgLq4OAQFoiW2DjNGaSGRUBVonHLQmYQm1fAWuLNgqWs
-        ENvkJd4vuA82h1PARmLPvWWMIK1CQDVNNwUmMPIsYGRYxSiZWlCcm55bbFRgmJdarlecmFtc
-        mpeul5yfu4kRGIDbDmv17WC8vyT+EKMAB6MSD29GVkWUEGtiWXFl7iFGCQ5mJRFep+vlUUK8
-        KYmVValF+fFFpTmpxYcYpTlYlMR5b+cdixQSSE8sSc1OTS1ILYLJMnFwSjUwTld9l3q4yixz
-        Q+jTlR7X5p46cMCx+0HySsP3575uPCf6RP6NW5C2Tp2/6bEfP8Nzyta7PmgWXij54fbu79uM
-        dyvzbGh11udT2shp2uc0jf3fI6spv1Rf6qiYt+TUpQsy790VcPzKjhOagd3hWY497B+ijyyW
-        vbBi9t6r/gLx9svmLX+58NBvZyWW4oxEQy3mouJEADn2rM08AgAA
-X-CMS-MailID: 20180205154516epcas1p39c5977145e7b32879b935087ee3865f8
+        Lq74wuTA67HhcxObx85Zd9k9Nq3qZPPo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujDUTP7AV
+        LJCu2Hm8hb2BcYlYFyMnh4SAicTc8x+Zuxi5OIQEdjJKPHp/mA3C+cUo8XdSCxNIFZuAoUTv
+        0T5GEFtEQEzi9pxOsA5mgTNMEl8mXmIHSQgLREs8/TeTBcRmEVCVONEGUsTJwStgLbHwxh9G
+        iHXyEu8X3AezOQVsJPbcWwZkcwBts5ZouikwgZFnASPDKkbJ1ILi3PTcYqMCo7zUcr3ixNzi
+        0rx0veT83E2MwBDcdlirfwfj4yXxhxgFOBiVeHgFMiqihFgTy4orcw8xSnAwK4nwOl0vjxLi
+        TUmsrEotyo8vKs1JLT7EKM3BoiTOy59/LFJIID2xJDU7NbUgtQgmy8TBKdXAmLBt8u7lx9Kf
+        z2f8Vid9MCnooWbr3kdfVNRvGdvNCl0pObNBdJOqy2b91mtiQWtmXuN7wXbPJpJjCd8Bd2up
+        9zwFOwtz/ip7mF089uQWq//yv6lzLKa8Vn3st0OuYZ5+3Kw3E3XyuJXa/h7eefVpb1e1eYDL
+        Up0WhmttK6dOi9hdyXO087onnxJLcUaioRZzUXEiAGkYFU09AgAA
+X-CMS-MailID: 20180205154529epcas2p3478546ef61294ac06cd9d8ed3d7e12c9
 X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180205154516epcas1p39c5977145e7b32879b935087ee3865f8
-X-RootMTR: 20180205154516epcas1p39c5977145e7b32879b935087ee3865f8
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180205154529epcas2p3478546ef61294ac06cd9d8ed3d7e12c9
+X-RootMTR: 20180205154529epcas2p3478546ef61294ac06cd9d8ed3d7e12c9
 References: <20180205154403.13520-1-s.nawrocki@samsung.com>
-        <CGME20180205154516epcas1p39c5977145e7b32879b935087ee3865f8@epcas1p3.samsung.com>
+        <CGME20180205154529epcas2p3478546ef61294ac06cd9d8ed3d7e12c9@epcas2p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems both PCLK_I2S1 and SCLK_I2S1 clocks need to be enabled before
-I2S1 control registers can be accessed on exynos5433, if SCLK clock
-is disabled an exception is triggered. To fix this parent clock of
-the RCLK_SRC clock is assigned to pri_dai->op_clk so required gate
-clock is handled by the runtime PM ops.
+The clock-output-names property is marked as deprecated. While at it,
+#clock-cells property's value is corrected in the example snippet
+and few typos are fixed.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/sound/samsung-i2s.txt          | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index b7d25a63da8b..1c05170e4999 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1328,6 +1328,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "failed to enable clock: %d\n", ret);
- 		return ret;
- 	}
-+
- 	pri_dai->dma_playback.addr = regs_base + I2STXD;
- 	pri_dai->dma_capture.addr = regs_base + I2SRXD;
- 	pri_dai->dma_playback.chan_name = "tx";
-@@ -1401,9 +1402,14 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	pm_runtime_enable(&pdev->dev);
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+index bf100cd0d0f7..5d7bb2735824 100644
+--- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+@@ -7,7 +7,7 @@ Required SoC Specific Properties:
+    - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+      secondary fifo, s/w reset control and internal mux for root clk src.
+    - samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
+-     playback, sterio channel capture, secondary fifo using internal
++     playback, stereo channel capture, secondary fifo using internal
+      or external dma, s/w reset control, internal mux for root clk src
+      and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
+      is to allow transfer of multiple channel audio data on single data line.
+@@ -25,7 +25,7 @@ Required SoC Specific Properties:
+   These strings correspond 1:1 with the ordered pairs in dmas.
+ - clocks: Handle to iis clock and RCLK source clk.
+ - clock-names:
+-  i2s0 uses some base clks from CMU and some are from audio subsystem internal
++  i2s0 uses some base clocks from CMU and some are from audio subsystem internal
+   clock controller. The clock names for i2s0 should be "iis", "i2s_opclk0" and
+   "i2s_opclk1" as shown in the example below.
+   i2s1 and i2s2 uses clocks from CMU. The clock names for i2s1 and i2s2 should
+@@ -36,8 +36,8 @@ Required SoC Specific Properties:
+ - #clock-cells: should be 1, this property must be present if the I2S device
+   is a clock provider in terms of the common clock bindings, described in
+   ../clock/clock-bindings.txt.
+-- clock-output-names: from the common clock bindings, names of the CDCLK
+-  I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
++- clock-output-names (deprecated): from the common clock bindings, names of
++  the CDCLK I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
+   "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices recpectively.
  
- 	ret = i2s_register_clock_provider(pdev);
--	if (!ret)
--		return 0;
-+	if (ret < 0)
-+		goto err_disable_pm;
-+
-+	pri_dai->op_clk = clk_get_parent(pri_dai->clk_table[CLK_I2S_RCLK_SRC]);
-+
-+	return 0;
+ There are following clocks available at the I2S device nodes:
+@@ -49,9 +49,10 @@ There are following clocks available at the I2S device nodes:
  
-+err_disable_pm:
- 	pm_runtime_disable(&pdev->dev);
- err_disable_clk:
- 	clk_disable_unprepare(pri_dai->clk);
+ Refer to the SoC datasheet for availability of the above clocks.
+ The CLK_I2S_RCLK_PSR and CLK_I2S_RCLK_SRC clocks are usually only available
+-in the IIS Multi Audio Interface (I2S0).
+-Note: Old DTs may not have the #clock-cells, clock-output-names properties
+-and then not use the I2S node as a clock supplier.
++in the IIS Multi Audio Interface.
++
++Note: Old DTs may not have the #clock-cells property and then not use the I2S
++node as a clock supplier.
+ 
+ Optional SoC Specific Properties:
+ 
+@@ -74,8 +75,7 @@ i2s0: i2s@3830000 {
+ 		<&clock_audss EXYNOS_I2S_BUS>,
+ 		<&clock_audss EXYNOS_SCLK_I2S>;
+ 	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+-	#clock-cells;
+-	clock-output-names = "i2s_cdclk0";
++	#clock-cells = <1>;
+ 	samsung,idma-addr = <0x03000000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2s0_bus>;
 -- 
 2.14.2
