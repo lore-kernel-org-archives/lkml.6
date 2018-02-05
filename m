@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226j/HEqGIDbLrlV8JOWaBlFX9Fi8PfRUqnOUpWOhKgeMtfF4Ar3D+0JfBU7P/FcyQ4P1lm1
-ARC-Seal: i=1; a=rsa-sha256; t=1517855175; cv=none;
+X-Google-Smtp-Source: AH8x225wwT2NYz3Q3R/lN0Wvwuhrz+//djEMUNQ1PnOxatsmok3jYpp5/Zq+gt56rBlCmrvu+MPe
+ARC-Seal: i=1; a=rsa-sha256; t=1517855174; cv=none;
         d=google.com; s=arc-20160816;
-        b=hV9MNYPBd9kJDDxFgIWMKMRubg3C1gNS+a8Ccc5Tgywf08v3ceFLFgF0anS6VagQUF
-         GldfwCdd2AY/dxjdQdjPVtlEn3MqjiMn5E97ba32hkVVl7AcYVPKlSowjPxrx328wtaN
-         3bhib1ycBRqrMBV8Sp4qGdwGV9tZAVmCsr+zpjRgrGoKT/Qs3ME0aU0r84M3KT/iFqZv
-         0Ajh9Xf1lp+fnozWxXnVGa4hFygD0XqpPJmcsczX3hPrvNYK82r2lr7hGhyoqv+5KAjy
-         SvurSzWLT1wchlRNqDsbRuG4GGRbzZPtXDagEeHTjE8fMfazde6N7vsIehpQRKOKmp6W
-         hGvQ==
+        b=wdWlKnkhSDylewsdxRoe8mN1DpYRxdysQatdQ/VAC5QAVrqOqel42g0JErTpWhiZK8
+         XklwF9MVuEEgYzdLELD33ib+7VjfbrS8Wjxglxn0nd+Yz0emrk8cKS8Q3K/SHBavBiX/
+         rRe8LJPO1uTV9gbIE7/QyHvEoptTDjtsXNzC0DdJ7FbDQTo8guQ+6+j3UmVcE5EVOh6m
+         /Uh9BR6UMxMyiSKkZgSGWIJzVLWAcsfFLAp+oHwZpcyUIMo5LxJTP4NiaYZo8Mn9DZ4r
+         nS1ZZU97BEist+lLJetlZ6KLzccleWbLRYvLaGbFm4++uZZ4NimoycM+2J+ssEXtdcLh
+         sHfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sPaXgRs0+e2nmPmqkYEskZf55YXJOSYg/iycc/xZV3M=;
-        b=PVs7wyiPoojAukhtv2alI0VO93TO3xx9Qf42HHICK1M09F/ZdfFuPnfHCAqKOpXCEf
-         A0761w8fN6GgCa8rBA/8kmjGcBqev/wDDwkpIFdZJKI+W2ZIFl/Mw5qAJPU0haVdv9QL
-         vZ8AiXpzc3RxNHHoQ7i9yGpzCXGRxjoRFCQ7buUWePmBToPUEwcdqM+EDgZK1mCpBRny
-         drlGGR2DNecQwdClohRWPov0Ps8I9aMUmV+tcwg2EPa8b/KorzyhKkpbxRQCIbHMSG3L
-         XWU+tAJU7/5LQRmszPAx9HpB6nTs62e4FqX7C/5aDIN8HbvuR6oU3bvFZvLPSKpyGqV7
-         iJcA==
+        bh=IWB9tiqsxRLgJlrED9n19y1p/z/hgSctqkjzNENr77Q=;
+        b=ZVIfqlHUQtpJIpAlyfW2I4A0yN7MLfiNG7Jj8nW+Tc5AZQyB095CmY7LAN+jTcJjRq
+         e99KfHv9iVb/ofXXNXaxWni/AsnWTex3L7oOFcbK6mo6wyWJMjAfBGqtuKYdVxvvjCms
+         tjMhm9Ra6A1lljlGXmNfp9MHIYx7wxHguvRqaFUUhdweoTUE/+D+BMvb45dw5MfepiYi
+         w8Yc/bDyY+cWgs/a6bkYISLLKP9e2lLCKyiO+2PPKyAerxap9g+FMnC++Xs2OVq18M7r
+         WSsqF+S2hZnmZZoCsjdlzbR8/i8hNlGFYsTquT54V18zIgm1AJisNwooZKZhPMrP/aBg
+         I4dg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chun-Yeow Yeoh <yeohchunyeow@gmail.com>,
-	Johannes Berg <johannes.berg@intel.com>,
+	Michael Lyle <mlyle@lyle.org>,
+	Vojtech Pavlik <vojtech@suse.com>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 13/36] mac80211: fix the update of path metric for RANN frame
-Date: Mon,  5 Feb 2018 10:23:41 -0800
-Message-Id: <20180205182352.318675842@linuxfoundation.org>
+Subject: [PATCH 3.18 12/36] bcache: check return value of register_shrinker
+Date: Mon,  5 Feb 2018 10:23:40 -0800
+Message-Id: <20180205182352.277832238@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586508577045984?=
-X-GMAIL-MSGID: =?utf-8?q?1591586508577045984?=
+X-GMAIL-THRID: =?utf-8?q?1591586507731769283?=
+X-GMAIL-MSGID: =?utf-8?q?1591586507731769283?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,79 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chun-Yeow Yeoh <yeohchunyeow@gmail.com>
+From: Michael Lyle <mlyle@lyle.org>
 
 
-[ Upstream commit fbbdad5edf0bb59786a51b94a9d006bc8c2da9a2 ]
+[ Upstream commit 6c4ca1e36cdc1a0a7a84797804b87920ccbebf51 ]
 
-The previous path metric update from RANN frame has not considered
-the own link metric toward the transmitting mesh STA. Fix this.
+register_shrinker is now __must_check, so check it to kill a warning.
+Caller of bch_btree_cache_alloc in super.c appropriately checks return
+value so this is fully plumbed through.
 
-Reported-by: Michael65535
-Signed-off-by: Chun-Yeow Yeoh <yeohchunyeow@gmail.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+This V2 fixes checkpatch warnings and improves the commit description,
+as I was too hasty getting the previous version out.
+
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Reviewed-by: Vojtech Pavlik <vojtech@suse.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/mesh_hwmp.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/md/bcache/btree.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -763,7 +763,7 @@ static void hwmp_rann_frame_process(stru
- 	struct mesh_path *mpath;
- 	u8 ttl, flags, hopcount;
- 	const u8 *orig_addr;
--	u32 orig_sn, metric, metric_txsta, interval;
-+	u32 orig_sn, new_metric, orig_metric, last_hop_metric, interval;
- 	bool root_is_gate;
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -808,7 +808,10 @@ int bch_btree_cache_alloc(struct cache_s
+ 	c->shrink.scan_objects = bch_mca_scan;
+ 	c->shrink.seeks = 4;
+ 	c->shrink.batch = c->btree_pages * 2;
+-	register_shrinker(&c->shrink);
++
++	if (register_shrinker(&c->shrink))
++		pr_warn("bcache: %s: could not register shrinker",
++				__func__);
  
- 	ttl = rann->rann_ttl;
-@@ -774,7 +774,7 @@ static void hwmp_rann_frame_process(stru
- 	interval = le32_to_cpu(rann->rann_interval);
- 	hopcount = rann->rann_hopcount;
- 	hopcount++;
--	metric = le32_to_cpu(rann->rann_metric);
-+	orig_metric = le32_to_cpu(rann->rann_metric);
- 
- 	/*  Ignore our own RANNs */
- 	if (ether_addr_equal(orig_addr, sdata->vif.addr))
-@@ -791,7 +791,10 @@ static void hwmp_rann_frame_process(stru
- 		return;
- 	}
- 
--	metric_txsta = airtime_link_metric_get(local, sta);
-+	last_hop_metric = airtime_link_metric_get(local, sta);
-+	new_metric = orig_metric + last_hop_metric;
-+	if (new_metric < orig_metric)
-+		new_metric = MAX_METRIC;
- 
- 	mpath = mesh_path_lookup(sdata, orig_addr);
- 	if (!mpath) {
-@@ -804,7 +807,7 @@ static void hwmp_rann_frame_process(stru
- 	}
- 
- 	if (!(SN_LT(mpath->sn, orig_sn)) &&
--	    !(mpath->sn == orig_sn && metric < mpath->rann_metric)) {
-+	    !(mpath->sn == orig_sn && new_metric < mpath->rann_metric)) {
- 		rcu_read_unlock();
- 		return;
- 	}
-@@ -822,7 +825,7 @@ static void hwmp_rann_frame_process(stru
- 	}
- 
- 	mpath->sn = orig_sn;
--	mpath->rann_metric = metric + metric_txsta;
-+	mpath->rann_metric = new_metric;
- 	mpath->is_root = true;
- 	/* Recording RANNs sender address to send individually
- 	 * addressed PREQs destined for root mesh STA */
-@@ -842,7 +845,7 @@ static void hwmp_rann_frame_process(stru
- 		mesh_path_sel_frame_tx(MPATH_RANN, flags, orig_addr,
- 				       orig_sn, 0, NULL, 0, broadcast_addr,
- 				       hopcount, ttl, interval,
--				       metric + metric_txsta, 0, sdata);
-+				       new_metric, 0, sdata);
- 	}
- 
- 	rcu_read_unlock();
+ 	return 0;
+ }
