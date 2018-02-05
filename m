@@ -1,68 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752926AbeBEMnh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:43:37 -0500
-Received: from mail-pg0-f50.google.com ([74.125.83.50]:34617 "EHLO
-        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752494AbeBEMn2 (ORCPT
+        id S1752964AbeBEMsD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:48:03 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:41431 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752582AbeBEMrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:43:28 -0500
-X-Google-Smtp-Source: AH8x226/Hw1/J7XZh+4h+G9m03SIvy3u60Hb73CXheNhEpQz+OK+usruECMsncmVo9vRiBvJ89MZDw==
-Date: Mon, 5 Feb 2018 21:43:23 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>,
-        huang ying <huang.ying.caritas@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Minchan Kim <minchan@kernel.org>, Seth Jennings <sjenning@redhat.com>,
-        Dan Streetman <ddstreet@ieee.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: bisected bd4c82c22c367e is the first bad commit (was [Bug
- 198617] New: zswap causing random applications to crash)
-Message-ID: <20180205124323.GB426@jagdpanzerIV>
-References: <20180130114841.aa2d3bd99526c03c6a5b5810@linux-foundation.org>
- <20180203013455.GA739@jagdpanzerIV>
- <CAC=cRTPyh-JTY=uOQf2dgmyPDyY-4+ryxkedp-iZMcFQZtnaqw@mail.gmail.com>
- <20180205013758.GA648@jagdpanzerIV>
- <87d11j4pdy.fsf@yhuang-dev.intel.com>
- <20180205123947.GA426@jagdpanzerIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180205123947.GA426@jagdpanzerIV>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Mon, 5 Feb 2018 07:47:55 -0500
+X-Google-Smtp-Source: AH8x224z1HUW6uF1ay0f/6MkClA9dO3a/yVM07+8ahN7DgxQbVQiFuurlAQ6cgy9wGdvKbOBoLJHRw==
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] pinctrl: Implicit inclusion fallout fixes
+Date: Mon,  5 Feb 2018 13:47:48 +0100
+Message-Id: <20180205124750.19305-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/05/18 21:39), Sergey Senozhatsky wrote:
-> > I have successfully reproduced the issue and find the problem.  The
-> > following patch fix the issue for me, can you try it?
-> 
-> That was quick ;)
-> 
-> > ---------------------------------8<-------------------------------
-> > From 4c52d531680f91572ebc6f4525a018e32a934ef0 Mon Sep 17 00:00:00 2001
-> > From: Huang Ying <huang.ying.caritas@gmail.com>
-> > Date: Mon, 5 Feb 2018 19:27:43 +0800
-> > Subject: [PATCH] fontswap thp fix
-> 
-> Seems to be fixing the problem on my x86 box. Executed several tests, no
-> crashes were observed. Can run more tests tomorrow.
-> 
-> 
-> ============================================================================
-> 
-> Probably unrelated, but may be it is related: my X server used to hang
-> sometimes (rarely) which I suspect was/is caused by nouveau driver. It,
-> surprisingly, didn't hang this time around. Nouveau spitted a number
-> of backtraces, but X server managed to survive it. Any chance that
-> nouveau-X server thing was caused by THP?
+From: Thierry Reding <treding@nvidia.com>
 
-No, wait. How could it be... I don't even use frontswap usually.
-Sorry for the silly question.
+Hi Linus,
 
-	-ss
+these are two patches to fix build errors I've run into that are fallout
+from your removal of the pinctrl/devinfo.h include from device.h. I sure
+can imagine that there are more like this, but these seem to be the
+common ones, judging by my own build tests and the kernel-build-reports
+mailing list.
+
+I'm sending these to you directly because I think it makes sense for you
+to apply these on top of 23c35f48f5fb ("pinctrl: remove include file
+from <linux/device.h>") rather than have these go in through their
+respective maintainer trees, so that the build gets fixed as quickly as
+possible.
+
+Thierry
+
+Thierry Reding (2):
+  drm/rockchip: lvds: Explicitly include pinctrl headers
+  mmc: meson-gx-mmc: Explicitly include pinctr/consumer.h
+
+ drivers/gpu/drm/rockchip/rockchip_lvds.c | 2 ++
+ drivers/mmc/host/meson-gx-mmc.c          | 1 +
+ 2 files changed, 3 insertions(+)
+
+-- 
+2.15.1
