@@ -1,178 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752779AbeBEKHi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 05:07:38 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45438 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752317AbeBEKH2 (ORCPT
+        id S1752823AbeBEKHq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 05:07:46 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40704 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752696AbeBEKHc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 05:07:28 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180205100726euoutp0264f21ee923b0e49038a0f526df08741d~QZgUOWqR30466304663euoutp02X
-X-AuditID: cbfec7f4-f790c6d0000075d3-58-5a782cddb4ca
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Subject: Re: [PATCH] drm/bridge/synopsys: dsi: Add read feature
-To: Philippe Cornu <philippe.cornu@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Bhumika Goyal <bhumirks@gmail.com>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
-        Heiko Stubner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Cc: Yannick Fertre <yannick.fertre@st.com>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-id: <81cb1f26-96f0-bdc6-28bc-4a7bda5a9459@samsung.com>
-Date: Mon, 05 Feb 2018 11:07:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-In-reply-to: <20180204213104.17834-1-philippe.cornu@st.com>
-Content-transfer-encoding: 8bit
-Content-language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTmt/vY1Vxc5+uUkbEIepgmSVzSnkTc7I+M+qNGYEMvGjmVXZ+B
-        OWeWj0wz07xqZa4s/5F8G1k6w6nzmTYR1CSbRmVWalSUtu0a+N93zved851zOBQmnyXWUxei
-        YjlNlCpSQTriDR2/+neOeycqd6X3eTA5fV0S5ul7E2J0GbMEozN0k8z3iVySqfk2RzDDi3Mk
-        s/zuE8GU5SczmTf1UqZmykwwQ89KrbLJZYyZvPKBYHretOLMtcx08iDNlmgHcXboRo6EbRbG
-        pWxJRjHBjpmfk2zjj0mCfZttlLC1+hT2r/ASZxvNdzHW8rMFY+drNgY7KR0Dw7jIC/Gcxnf/
-        eceIoi8eMe3rEn9XtEi1aN4lCzlQQPtD9688QsTuMDBRTWYhR0pOP0RgXGonxGAeweLMFPpf
-        UdncuEI8QnC9yYLbCBntDD9vTdgxRm+DDwv5uCiaRjBpLrN7uNAHoL81TWIjXGkdDub3pZgt
-        wGgtgumyQtKmIq3lf2tHrZiytt0P76ZSbGmc3gIm0yN7Izf6DJTftthHcqADYPaesOLsBW3D
-        MyvYA9LSR+1TAN0thVzL25UdjkBhn04iYhf4aKyTingDZGa0ScSCbATfczulYlCAYOnrHUxU
-        BUC7cZAQLdZCfkMRZpsUaBlkXJWLEhZ0w+OEmD4EBcty8RQ3EAjZlWQe8hJWnUxYdTJh1RLC
-        qiXuI7wKuXJxvDqc4/19eJWaj4sK9wmNVtcg6xOalowLTaiiY68B0RRSOMmYkASlnFDF80lq
-        AwIKU7jKDo9YU7IwVdIlThMdoomL5HgD8qRwhYdsn/LqWTkdrorlLnJcDKf5z0ooh/Va5F6g
-        qeP1Tn1j1T2eJ/e4G3tvV+yJL9eW1uU8qE8wrKmXdCxUhfYMeJ95nLox8JzmT+IpaV5xQtq+
-        F76pxVlBXZ9fNbb0d0YnHeqQWvwDp+s9jyuXTlc8SRtI9k3dujnZWW06+kofnLx7RJV+TM8H
-        bfIcYv0uu/WuO/Ea/dBXCl47FDgfofLbjml41T8N1PeBgAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsVy+t/xq7p3dCqiDC5/NLHoPXeSyWLjk9OM
-        Fk0db1ktmg6dYrP4dK+fzWLTx/esFle+vmez+P/oNavF3Em1Fp0Tl7BbbHp8jdXi8q45QGUP
-        /jNbPGh5wWpx5uoBFov2zlY2BwGP2Q0XWTwu9/UyeeycdZfdY3bHTFaPO9f2sHls//aA1eN+
-        93Emj81L6j3+ztrP4rH92jxmj6c/9jJ7fN4kF8ATxWWTkpqTWZZapG+XwJUx/Z14wWHJil+L
-        97I3MH4W7mLk5JAQMJFYvnM7K4QtJnHh3no2EFtIYAmjxMyz3iA2r4CgxI/J91i6GDk4mAXU
-        JaZMye1i5AIqecYoMafxHjtIjbCAvcT5A81MIAkRgRYWib1Pb7KBOMwCTYwSV77uYodomcAo
-        serKYmaQFjYBTYm/m0GqOIBW2Ek8elwPEmYRUJU4fXoZ2EWiAhESnSvns4DYnALWEm/nzwKz
-        mQXkJQ5eeQ5li0s0t95kmcAoOAvJsbMQjp2FpGMWko4FjCyrGEVSS4tz03OLDfWKE3OLS/PS
-        9ZLzczcxAqN127Gfm3cwXtoYfIhRgINRiYfXIr48Sog1say4MvcQowQHs5IIr9N1oBBvSmJl
-        VWpRfnxRaU5q8SFGaQ4WJXHe3j2rI4UE0hNLUrNTUwtSi2CyTBycUg2MU0O9xLyl9Y/tlTny
-        QqvEvPMz24wrGkxTwu49kl1xo2lhyNTekNaOvHlp66dq7WMuWhj7ITcrXcfu8RKVTu9JRc+C
-        5NrZAxc+mpvmx/Tmi8iLKJVrx2z4Jvq2LE82j3iZyWH8UcV5vmGxmFM/05mt35Nd78Ufibhi
-        9b49XPaSdcekhd5Wpg1KLMUZiYZazEXFiQCmT1RW0gIAAA==
-X-CMS-MailID: 20180205100724eucas1p2d8879483c71424965f76c25d09395268
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180204213219epcas2p429434ba0c87a0544dc5294facd80529b
-X-RootMTR: 20180204213219epcas2p429434ba0c87a0544dc5294facd80529b
-References: <CGME20180204213219epcas2p429434ba0c87a0544dc5294facd80529b@epcas2p4.samsung.com>
-        <20180204213104.17834-1-philippe.cornu@st.com>
+        Mon, 5 Feb 2018 05:07:32 -0500
+X-Google-Smtp-Source: AH8x225Hg9OLTa9QQlQumNAMnwpmq4tc7rUWVEp1Bgxrf17Y6yQopY/QT75m6QAjLn6P1UwO6Jd/aNrFNSnyRT4X3yU=
+MIME-Version: 1.0
+In-Reply-To: <1493295756-17812-1-git-send-email-martin.kepplinger@ginzinger.com>
+References: <1493295756-17812-1-git-send-email-martin.kepplinger@ginzinger.com>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Date: Mon, 5 Feb 2018 11:07:08 +0100
+Message-ID: <CAH9NwWeom2H89D5hUixxSL28YgDna_WS26boayzUBAPyVFUvTA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] input: touchscreen: ar1021_i2c: enable touch mode
+ during open
+To: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.02.2018 22:31, Philippe Cornu wrote:
-> This patch adds the DCS/GENERIC DSI read feature.
+Hi all.
+
+2017-04-27 14:22 GMT+02:00 Martin Kepplinger <martin.kepplinger@ginzinger.com>:
+> The device could as well be in command mode, in which this driver cannot
+> handle the device. When opening the device, let's make sure the device
+> will be in the mode we expect it to be for this driver.
 >
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+I run into issues caused by this change. It turns out that the device
+is non-functional
+after some warm-reboots and as a result I am not able to use xorg's
+evdev driver.
+So I have some questions about this change:
 
-If there will be no objections I will merge it at the end of the week.
+* Should we enable irq before calling i2c_master_send(..) as the chip raises an
+  irq if the command was processed?
 
- --
-Regards
-Andrzej
+* Would it be enough to send this command only once during driver
+lifetime? I can
+  see that on my system open gets called 3 times during boot-up.
 
+* What are the circumstances the touch device would be in an other state? In the
+  official kernel driver the userspace can send commands via sysfs.
+Also the driver
+  does set the touch enable mode as this patch does.
+
+
+> Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 > ---
-> Extra notes:
-> DSI read tests have been performed with DCS & GENERIC, short & long
-> commands, on two different panels.
-> The maximum fifo size (32*32-bit = 128 bytes on stm32) has been
-> verified too.
+>  drivers/input/touchscreen/ar1021_i2c.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 >
->  drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 58 +++++++++++++++++++++------
->  1 file changed, 45 insertions(+), 13 deletions(-)
+> diff --git a/drivers/input/touchscreen/ar1021_i2c.c b/drivers/input/touchscreen/ar1021_i2c.c
+> index 1a94d8b..2a76231 100644
+> --- a/drivers/input/touchscreen/ar1021_i2c.c
+> +++ b/drivers/input/touchscreen/ar1021_i2c.c
+> @@ -18,6 +18,12 @@
+>  #define AR1021_MAX_X   4095
+>  #define AR1021_MAX_Y   4095
 >
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-> index e9422d05e897..65aeb3f78b48 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-> @@ -397,18 +397,46 @@ static int dw_mipi_dsi_write(struct dw_mipi_dsi *dsi,
->  	return dw_mipi_dsi_gen_pkt_hdr_write(dsi, le32_to_cpu(word));
->  }
->  
-> +static int dw_mipi_dsi_read(struct dw_mipi_dsi *dsi,
-> +			    const struct mipi_dsi_msg *msg)
-> +{
-> +	int i, j, ret, len = msg->rx_len;
-> +	u8 *buf = msg->rx_buf;
-> +	u32 val;
+> +#define AR1021_CMD     0x55
+> +#define AR1021_TOUCH   0x80
 > +
-> +	/* Wait end of the read operation */
-> +	ret = readl_poll_timeout(dsi->base + DSI_CMD_PKT_STATUS,
-> +				 val, !(val & GEN_RD_CMD_BUSY),
-> +				 1000, CMD_PKT_STATUS_TIMEOUT_US);
-> +	if (ret) {
-> +		dev_err(dsi->dev, "Timeout during read operation\n");
-> +		return ret;
-> +	}
+> +#define AR1021_CMD_ENABLE_TOUCH                0x12
+> +#define AR1021_CMD_DISABLE_TOUCH       0x13
 > +
-> +	for (i = 0; i < len; i += 4) {
-> +		/* Read fifo must not be empty before all bytes are read */
-> +		ret = readl_poll_timeout(dsi->base + DSI_CMD_PKT_STATUS,
-> +					 val, !(val & GEN_PLD_R_EMPTY),
-> +					 1000, CMD_PKT_STATUS_TIMEOUT_US);
-> +		if (ret) {
-> +			dev_err(dsi->dev, "Read payload FIFO is empty\n");
-> +			return ret;
-> +		}
-> +
-> +		val = dsi_read(dsi, DSI_GEN_PLD_DATA);
-> +		for (j = 0; j < 4 && j + i < len; j++)
-> +			buf[i + j] = val >> (8 * j);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static ssize_t dw_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
->  					 const struct mipi_dsi_msg *msg)
+>  struct ar1021_i2c {
+>         struct i2c_client *client;
+>         struct input_dev *input;
+> @@ -58,6 +64,15 @@ static int ar1021_i2c_open(struct input_dev *dev)
 >  {
->  	struct dw_mipi_dsi *dsi = host_to_dsi(host);
->  	struct mipi_dsi_packet packet;
-> -	int ret;
-> -
-> -	if (msg->rx_buf || msg->rx_len) {
-> -		/* TODO dw drv improvements: implement read feature */
-> -		dev_warn(dsi->dev, "read operations not yet implemented\n");
-> -		return -EINVAL;
-> -	}
-> +	int ret, nb_bytes;
->  
->  	ret = mipi_dsi_create_packet(&packet, msg);
->  	if (ret) {
-> @@ -422,12 +450,16 @@ static ssize_t dw_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
->  	if (ret)
->  		return ret;
->  
-> -	/*
-> -	 * TODO Only transmitted size is returned as actual driver does
-> -	 * not support dcs/generic reads. Please update return value when
-> -	 * delivering the read feature.
-> -	 */
-> -	return packet.size;
-> +	if (msg->rx_buf && msg->rx_len) {
-> +		ret = dw_mipi_dsi_read(dsi, msg);
-> +		if (ret)
-> +			return ret;
-> +		nb_bytes = msg->rx_len;
-> +	} else {
-> +		nb_bytes = packet.size;
-> +	}
+>         struct ar1021_i2c *ar1021 = input_get_drvdata(dev);
+>         struct i2c_client *client = ar1021->client;
+> +       int error;
+> +       u8 cmd_enable_touch[3] = {AR1021_CMD,
+> +                                 0x01, /* number of bytes after this */
+> +                                 AR1021_CMD_ENABLE_TOUCH };
 > +
-> +	return nb_bytes;
->  }
->  
->  static const struct mipi_dsi_host_ops dw_mipi_dsi_host_ops = {
+> +       error = i2c_master_send(ar1021->client, cmd_enable_touch,
+> +                               sizeof(cmd_enable_touch));
+> +       if (error < 0)
+> +               return error;
+>
+>         enable_irq(client->irq);
+>
+> --
+> 2.1.4
+>
+
+-- 
+greets
+--
+Christian Gmeiner, MSc
+
+https://christian-gmeiner.info
