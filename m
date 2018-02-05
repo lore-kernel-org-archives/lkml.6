@@ -1,123 +1,76 @@
-Return-Path: <julia.lawall@lip6.fr>
-X-Google-Smtp-Source: AH8x226S0Qn6CF7QtudoB/Fj5NFQTYkcW4M5hF+aNOGgWohKyd14HbwlXhL+IS0aOQPM5zwOczAd
-ARC-Seal: i=1; a=rsa-sha256; t=1517824716; cv=none;
+Return-Path: <David.Laight@aculab.com>
+X-Google-Smtp-Source: AH8x224BwosThZuiLfZgJai8eyHGYO0jtPFjYPqI7/5+Sps+0TlDhdxvqXCY/fRFOKk8iFQlNq62
+ARC-Seal: i=1; a=rsa-sha256; t=1517825333; cv=none;
         d=google.com; s=arc-20160816;
-        b=sGM/GfzCaXuiEAGAKiyiZH+RT+Zq8Xvw2ZIH6Ap3cK4lnhDpoWuU63slFMHt4AoYF5
-         1hpQJHgcPV/Xzvm6b4LSkBuSRoxCQj2KAzxHyGCwoHBQWKl7sJluEvAXeT+wzBsuh/k9
-         B1ou3HwI4ALf7k8XFYfkBJ5Lv4tOFW0r2yAq8nlaMdT7+XSqu1Q6AuyR/mEU1du6+2K0
-         nGiO9x9mfE2bWABz6TYYy8Zn58exWqInXXx1QnLZyzkS4ZpVrILsT+ct/Zgb7wTbs0yF
-         44+TNxU3FNXphPgpXKK9Eq2LJ9vk7LroWbQvzWoLfoiUDRV/AhV+0ZhgucJELgd/Wuff
-         8L0w==
+        b=C02XQ4vQHnXLdRGerJDEE81rJ/fa+Ll4Ll5z8z1F6QpnHKwe+H08Qm81xUS3M2Vh5k
+         Vh0SNdJbq+O+AXOJdef5VPIq9CaLo4NWSCeoHA6RPaF4OyV6ks0GfVRKUxD8t58kOXNJ
+         xZgGXQjLRybmAEsvgLPQqoTqxS7unleVy0UvsAt4ERth9aHzVnajAE1YbRaULAJ3us5B
+         ubWemsYCwXKWJtq9yTWPmz05tc0PQb92i9QveAw1O+6UxyZMSI0qC4cG4iPOHujEFkTa
+         DPPERc+PiS4owPc9MWqTNpwEwPfhW/uYnOZvi6JZgn1/lLc5XhDCxT/eJB63a5HKbzsl
+         CcPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=y0qngTUMxhg5NdcBfET9upD/cifldjd2RRBLEiJzZZY=;
-        b=iUhtifkJerXdB1LT5ML9bt84QTnAEYMnozRE/7e+qjYXjJPxTzO6HjP6NswRhqhzTC
-         1TEKiiyGNMu0QGgoe/1zSs2j23uSfgx2Y/UiWXZUpns6WzrUM3IWxCUApWoDC+3qYeXj
-         xZePAxvQy37JGwHyTEvB88Gq+yPuBT9S96r5Wlmd4XL1B7ls2FsLquzfFLmlyy3Clq5C
-         64BNwk8Ltf33qTqJtBClI6gLa15qwwJz0rSk5XDbUCBC2dK2iZgWMS7G/SN/DCcmVTAq
-         1PZseXOvMOAR23bfhC/B0If6Y6gLo+8LqQSq5001j4AF4P4a2qVJ87qD13dJxVk7Xoey
-         4WDQ==
+        h=mime-version:content-transfer-encoding:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:arc-authentication-results;
+        bh=DBTaedwgylHScQO740w5UtHIlJy6PZWsMkABJ6I1cXk=;
+        b=F01oFv1JKrK/yK6oGtkqhlAhR6ltQGZzYxomrdMhhKL/MfkyD4SXQfWWlocIG97UYS
+         MuHIaweDWFNi8uH/IupdTkU/ph+buOylGEPhOTg4e8YcjQPA7kFMyPaDYkH8crXRKwn7
+         UR3woPV5UO5dUfPzwPoG5q1Pdnd+x8gFXSaanqKlnaMhu8y+9uBovP+mqzG6Zqr40MJz
+         duWaAkIkzjyv4yj9buHk9OOHEFkwb+iotg0mmZKdiRJAUuv2+eIQMFCyj3nqEX9G5DcJ
+         J3MsfOq/cVlRUrApzhzPdGSmUYBuQJHBvGkH63Mfh66l7hM9xgWaC3AP7tdApBRhX8mk
+         TqKg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 192.134.164.83 is neither permitted nor denied by domain of julia.lawall@lip6.fr) smtp.mailfrom=julia.lawall@lip6.fr
+       spf=pass (google.com: domain of david.laight@aculab.com designates 192.162.216.185 as permitted sender) smtp.mailfrom=David.Laight@aculab.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 192.134.164.83 is neither permitted nor denied by domain of julia.lawall@lip6.fr) smtp.mailfrom=julia.lawall@lip6.fr
-X-IronPort-AV: E=Sophos;i="5.46,464,1511823600";
-   d="scan'208";a="312058511"
-Date: Mon, 5 Feb 2018 10:58:32 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Linus Walleij <linus.walleij@linaro.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>,
-    Paul Gortmaker <paul.gortmaker@windriver.com>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Ingo Molnar <mingo@kernel.org>,
-    linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
-Subject: Re: [GIT PULL] pin control bulk changes for v4.16
-In-Reply-To: <CACRpkdb0P38+cvVeSw7imzehb5VM51fmxOBWJWgzdnuEP9ryDQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.20.1802051057120.3292@hadrien>
-References: <CACRpkdaTv4NBrRXeJE6dVi4W88+LZdsTCSzTHi0vdcKMW3Qfmw@mail.gmail.com> <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com> <CA+55aFztiKehjo7OQQFboAEfe_BrxJQG_5wxak2a_GdNBEFiMw@mail.gmail.com> <CA+55aFzhp2QW9JeMwV6=W4skf0CW6E+Zg4K90n3Bo+yZmz485Q@mail.gmail.com>
- <CACRpkdZGABVtdF1HWHfx-5JPyaEhtt+Q_sjM=bkJu6cZ5WfPCA@mail.gmail.com> <alpine.DEB.2.20.1802051023540.3292@hadrien> <CACRpkdb0P38+cvVeSw7imzehb5VM51fmxOBWJWgzdnuEP9ryDQ@mail.gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+       spf=pass (google.com: domain of david.laight@aculab.com designates 192.162.216.185 as permitted sender) smtp.mailfrom=David.Laight@aculab.com
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>, Linus Walleij
+	<linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@kernel.org>
+CC: linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>
+Subject: RE: [GIT PULL] pin control bulk changes for v4.16
+Thread-Topic: [GIT PULL] pin control bulk changes for v4.16
+Thread-Index: AQHTnHlGX5BFwqQW5U6SKO/d1u5b1aOVmHsQ
+Date: Mon, 5 Feb 2018 10:09:36 +0000
+Message-ID: <b82adbc32e4444debb947582d3a8291c@AcuMS.aculab.com>
+References: <CACRpkdaTv4NBrRXeJE6dVi4W88+LZdsTCSzTHi0vdcKMW3Qfmw@mail.gmail.com>
+ <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
+In-Reply-To: <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1591331743286572652?=
-X-GMAIL-MSGID: =?utf-8?q?1591554570006332675?=
+X-GMAIL-MSGID: =?utf-8?q?1591555217296989502?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-
-On Mon, 5 Feb 2018, Linus Walleij wrote:
-
-> On Mon, Feb 5, 2018 at 10:27 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
-> > On Mon, 5 Feb 2018, Linus Walleij wrote:
->
-> >> We definitely need some better tooling to find these things,
-> >> using Ingo's head and your occasional frustration is not going to
-> >> scale.
-> >>
-> >> Julia: do you have ideas on tooling that can loosen #include
-> >> deps and advise on when to replace #includes with forward
-> >> declarations of structs (etc) to bring down rebuild-triggering
-> >> dependencies?
-> >
-> > Could you explain more?  Is the point that you want to remove an include
-> > but it has one declaration that you need, and so you want to bring it down
-> > into the .c file?  Would the need for that actually indicate that the
-> > include file is designed incorrectly?
-> >
-> > Can one assume that each include is self contained, ie it includes the
-> > things that it needs and does not rely on the .c file having included
-> > other things beforehand?
->
-> Usually (in my limited experience, le's see what Ingo and Torvalds
-> say) the problem manifests mainly in include files including other
-> include files.
->
-> So say <linux/foo.h>:
->
-> #include <linux/bar.h>
->
-> struct foo {
->    struct bar *barp;
-> };
->
-> Since this is only putting a pointer inside its struct and doesn't
-> need the information on the whole structs, as the size of a pointer
-> is well known we can reduce it to:
->
-> struct bar;
->
-> struct foo {
->    struct bar *barp;
-> };
->
-> And thus as <linux/bar.h> is not even included, it can change
-> all it wants, our foo.h include file is not affected, neither will
-> any driver just casually #including <linux/foo.h> need to be
-> rebuilt.
->
-> This type of case (and variations on this theme) is the reason
-> we put a bunch of forward-declarations in kernel .h-files
-> just to break dependencies to stuff just referenced by pointer.
->
-> There is a counter-pattern saying "files should #include the
-> headers prototypes, structs (etc) it uses" that drives a truck
-> through this approach. But IMO when done properly, this
-> forward-declaring approach is quite readable.
->
-> I have very limited idea of where, whether in the preprocessor
-> or the compiler itself, the decision to treat struct bar *barp
-> as "just some pointer" happens, but it is a real neat trick, the
-> dependency chain is broken in CPP AFAICT anyways, and cuts
-> down the rebuilds.
-
-OK, thanks for the explanation.  It seems like a very interesting problem.
-I will think about it and see if something can be done.  It seems like it
-may need careful checking by a human, due to macros, ifdefs, etc, but
-perhaps it can at least be heplful to narrow down the opportunities.
-
-julia
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDIgRmVicnVhcnkgMjAxOCAyMjo1Nw0KLi4u
+DQo+IEkgYWxzbyB3b25kZXIgaWYgdGhlcmUgYXJlIGFueSBhdXRvbWF0ZWQgdG9vbHMgdGhhdCB0
+cnkgdG8gZmluZCB0aGVzZQ0KPiBraW5kcyBvZiBjcmF6eSB0aGluZ3MuIEkgc3VzcGVjdCBhIGxv
+dCBvZiBvdXIgYnVpbGQgdGltZXMgaXMgdGhlIHBvb3INCj4gY29tcGlsZXIganVzdCByZWFkaW5n
+IGFuZCBwYXJzaW5nIGhlYWRlciBmaWxlcyBvdmVyIGFuZCBvdmVyIGFnYWluLA0KPiBhbmQgYSBs
+b3Qgb2YgdGhlbSBhcmUgcHJvYmFibHkgbm90IG5lZWRlZC4NCg0KSSd2ZSBjb3VudGVkIHN5c3Rl
+bSBjYWxscyBkdXJpbmcgYSBOZXRCU0Qga2VybmVsIGJ1aWxkLCBJIGltYWdpbmUgTGludXggaXMN
+Cm11Y2ggdGhlIHNhbWUuDQpNb3N0IG9mIHRoZSBjYWxscyB3ZXJlIG9wZW4oKSwgYW5kIG1vc3Qg
+b2YgdGhvc2UgZmFpbGluZyBvcGVucy4NCkkgc3VzcGVjdGVkIHRoYXQgbW9zdCBjYW1lIGZyb20g
+c2VhcmNoaW5nIHRoZSAtSSBwYXRoIHRvIGZpbmQgaGVhZGVycy4NCkJ1aWxkIG92ZXIgTkZTIGFu
+ZCB0aGUgY29zdCBpcyBldmVuIG1vcmUgc2lnbmlmaWNhbnQgKGV2ZXJ5IGRpcmVjdG9yeQ0KbmFt
+ZSBpbiB0aGUgcGF0aCAodXNlZCB0bykgcmVxdWlyZSBhbiBORlMgbWVzc2FnZSBleGNoYW5nZSku
+DQoNCglEYXZpZA0KDQo=
