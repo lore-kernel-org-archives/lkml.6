@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753042AbeBEBmx (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:42:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43856 "EHLO mx2.suse.de"
+        id S1753073AbeBEBnG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:43:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43855 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752395AbeBEB2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752593AbeBEB2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Feb 2018 20:28:07 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 12/64] fs/userfaultfd: teach userfaultfd_must_wait() about range locking
-Date: Mon,  5 Feb 2018 02:27:02 +0100
-Message-Id: <20180205012754.23615-13-dbueso@wotan.suse.de>
+Subject: [PATCH 10/64] kernel/exit: teach exit_mm() about range locking
+Date: Mon,  5 Feb 2018 02:27:00 +0100
+Message-Id: <20180205012754.23615-11-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -25,87 +25,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-And make use of mm_is_locked() which is why we pass down the
-vmf->lockrange.
+... and use mm locking wrappers -- no change is semantics.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- fs/userfaultfd.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ kernel/exit.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index e3089865fd52..883fbffb284e 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -217,13 +217,14 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
- 					 struct vm_area_struct *vma,
- 					 unsigned long address,
- 					 unsigned long flags,
--					 unsigned long reason)
-+					 unsigned long reason,
-+					 struct range_lock *mmrange)
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 42ca71a44c9a..a9540f157eb2 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -495,6 +495,7 @@ static void exit_mm(void)
  {
- 	struct mm_struct *mm = ctx->mm;
- 	pte_t *pte;
- 	bool ret = true;
+ 	struct mm_struct *mm = current->mm;
+ 	struct core_state *core_state;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
  
--	VM_BUG_ON(!rwsem_is_locked(&mm->mmap_sem));
-+	VM_BUG_ON(!mm_is_locked(mm, mmrange));
- 
- 	pte = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
- 	if (!pte)
-@@ -247,7 +248,8 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
- 					 struct vm_area_struct *vma,
- 					 unsigned long address,
- 					 unsigned long flags,
--					 unsigned long reason)
-+					 unsigned long reason,
-+					 struct range_lock *mmrange)
- {
- 	return false;	/* should never get here */
- }
-@@ -263,7 +265,8 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
- static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
- 					 unsigned long address,
- 					 unsigned long flags,
--					 unsigned long reason)
-+					 unsigned long reason,
-+					 struct range_lock *mmrange)
- {
- 	struct mm_struct *mm = ctx->mm;
- 	pgd_t *pgd;
-@@ -273,7 +276,7 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
- 	pte_t *pte;
- 	bool ret = true;
- 
--	VM_BUG_ON(!rwsem_is_locked(&mm->mmap_sem));
-+	VM_BUG_ON(!mm_is_locked(mm, mmrange));
- 
- 	pgd = pgd_offset(mm, address);
- 	if (!pgd_present(*pgd))
-@@ -365,7 +368,7 @@ int handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	 * Coredumping runs without mmap_sem so we can only check that
- 	 * the mmap_sem is held, if PF_DUMPCORE was not set.
+ 	mm_release(current, mm);
+ 	if (!mm)
+@@ -507,12 +508,12 @@ static void exit_mm(void)
+ 	 * will increment ->nr_threads for each thread in the
+ 	 * group with ->mm != NULL.
  	 */
--	WARN_ON_ONCE(!rwsem_is_locked(&mm->mmap_sem));
-+	WARN_ON_ONCE(!mm_is_locked(mm, vmf->lockrange));
+-	down_read(&mm->mmap_sem);
++        mm_read_lock(mm, &mmrange);
+ 	core_state = mm->core_state;
+ 	if (core_state) {
+ 		struct core_thread self;
  
- 	ctx = vmf->vma->vm_userfaultfd_ctx.ctx;
- 	if (!ctx)
-@@ -473,11 +476,12 @@ int handle_userfault(struct vm_fault *vmf, unsigned long reason)
+-		up_read(&mm->mmap_sem);
++	        mm_read_unlock(mm, &mmrange);
  
- 	if (!is_vm_hugetlb_page(vmf->vma))
- 		must_wait = userfaultfd_must_wait(ctx, vmf->address, vmf->flags,
--						  reason);
-+						  reason, vmf->lockrange);
- 	else
- 		must_wait = userfaultfd_huge_must_wait(ctx, vmf->vma,
- 						       vmf->address,
--						       vmf->flags, reason);
-+						       vmf->flags, reason,
-+						       vmf->lockrange);
- 	up_read(&mm->mmap_sem);
- 
- 	if (likely(must_wait && !READ_ONCE(ctx->released) &&
+ 		self.task = current;
+ 		self.next = xchg(&core_state->dumper.next, &self);
+@@ -530,14 +531,14 @@ static void exit_mm(void)
+ 			freezable_schedule();
+ 		}
+ 		__set_current_state(TASK_RUNNING);
+-		down_read(&mm->mmap_sem);
++		mm_read_lock(mm, &mmrange);
+ 	}
+ 	mmgrab(mm);
+ 	BUG_ON(mm != current->active_mm);
+ 	/* more a memory barrier than a real lock */
+ 	task_lock(current);
+ 	current->mm = NULL;
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	enter_lazy_tlb(mm, current);
+ 	task_unlock(current);
+ 	mm_update_next_owner(mm);
 -- 
 2.13.6
