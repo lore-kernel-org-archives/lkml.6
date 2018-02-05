@@ -1,102 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752823AbeBEKHq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 05:07:46 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40704 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752696AbeBEKHc (ORCPT
+        id S1752858AbeBEKJ7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 05:09:59 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:45306 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752324AbeBEKJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 05:07:32 -0500
-X-Google-Smtp-Source: AH8x225Hg9OLTa9QQlQumNAMnwpmq4tc7rUWVEp1Bgxrf17Y6yQopY/QT75m6QAjLn6P1UwO6Jd/aNrFNSnyRT4X3yU=
+        Mon, 5 Feb 2018 05:09:50 -0500
+Date: Mon, 5 Feb 2018 11:09:31 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rostedt <rostedt@goodmis.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        linux-trace-users <linux-trace-users@vger.kernel.org>,
+        acme <acme@kernel.org>, Clark Williams <williams@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, bristot <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
+ events
+Message-ID: <20180205100930.GH2249@hirez.programming.kicks-ass.net>
+References: <20180202230458.840252014@goodmis.org>
+ <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
+ <CA+55aFz1=qWvnJ2271SGwuezwQRBA2nZp8_BxFyR-R0VKKgXRw@mail.gmail.com>
+ <292744194.15823.1517758204087.JavaMail.zimbra@efficios.com>
+ <CA+55aFwtCP3Nf86jwNFzdRy_m0GZWH5U2KBDutPDh1ZVATHLYg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1493295756-17812-1-git-send-email-martin.kepplinger@ginzinger.com>
-References: <1493295756-17812-1-git-send-email-martin.kepplinger@ginzinger.com>
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Mon, 5 Feb 2018 11:07:08 +0100
-Message-ID: <CAH9NwWeom2H89D5hUixxSL28YgDna_WS26boayzUBAPyVFUvTA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] input: touchscreen: ar1021_i2c: enable touch mode
- during open
-To: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwtCP3Nf86jwNFzdRy_m0GZWH5U2KBDutPDh1ZVATHLYg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all.
+On Sun, Feb 04, 2018 at 11:39:39AM -0800, Linus Torvalds wrote:
+> Then there's the "I just want an overview" MIS people, who care about
+> things like "I want a histogram of packets sent according to criteria
+> XYZ", who want some highlevel block IO performance, or who just want
+> random system-wide statistics.
 
-2017-04-27 14:22 GMT+02:00 Martin Kepplinger <martin.kepplinger@ginzinger.com>:
-> The device could as well be in command mode, in which this driver cannot
-> handle the device. When opening the device, let's make sure the device
-> will be in the mode we expect it to be for this driver.
->
+> The second group might want explicit trace points exactly because that
+> group doesn't even care *how* a packet is sent or received, or what
+> the path through the block layer is. It just wants to know "packet
+> sent" or "latency between IO request and completion" or things like
+> that.
 
-I run into issues caused by this change. It turns out that the device
-is non-functional
-after some warm-reboots and as a result I am not able to use xorg's
-evdev driver.
-So I have some questions about this change:
+So a large sticking point here as been the scheduler tracepoints; which
+I'm rather unhappy with.
 
-* Should we enable irq before calling i2c_master_send(..) as the chip raises an
-  irq if the command was processed?
+As a result of adding SCHED_DEADLINE the existing tracepoints no longer
+are sufficient (they don't provide any deadline specific information).
 
-* Would it be enough to send this command only once during driver
-lifetime? I can
-  see that on my system open gets called 3 times during boot-up.
+So the MIS people that are intersted in deadline tasks are unhappy.
 
-* What are the circumstances the touch device would be in an other state? In the
-  official kernel driver the userspace can send commands via sysfs.
-Also the driver
-  does set the touch enable mode as this patch does.
+My own preference is to just add the deadline information to the
+existing tracepoints, but then people complain these become too big
+(which is slow etc..), saying sched_switch is a high rate tracepoint
+(true of course) (not to mention that changing the tracepoint will
+probably break something, but they'll just have to cope).
 
+So they've proposed all kinds of horrible alternatives that are all
+variations of multiple tracepoints in the same location that fragment
+the information, each of which I hate.
 
-> Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-> ---
->  drivers/input/touchscreen/ar1021_i2c.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/drivers/input/touchscreen/ar1021_i2c.c b/drivers/input/touchscreen/ar1021_i2c.c
-> index 1a94d8b..2a76231 100644
-> --- a/drivers/input/touchscreen/ar1021_i2c.c
-> +++ b/drivers/input/touchscreen/ar1021_i2c.c
-> @@ -18,6 +18,12 @@
->  #define AR1021_MAX_X   4095
->  #define AR1021_MAX_Y   4095
->
-> +#define AR1021_CMD     0x55
-> +#define AR1021_TOUCH   0x80
-> +
-> +#define AR1021_CMD_ENABLE_TOUCH                0x12
-> +#define AR1021_CMD_DISABLE_TOUCH       0x13
-> +
->  struct ar1021_i2c {
->         struct i2c_client *client;
->         struct input_dev *input;
-> @@ -58,6 +64,15 @@ static int ar1021_i2c_open(struct input_dev *dev)
->  {
->         struct ar1021_i2c *ar1021 = input_get_drvdata(dev);
->         struct i2c_client *client = ar1021->client;
-> +       int error;
-> +       u8 cmd_enable_touch[3] = {AR1021_CMD,
-> +                                 0x01, /* number of bytes after this */
-> +                                 AR1021_CMD_ENABLE_TOUCH };
-> +
-> +       error = i2c_master_send(ar1021->client, cmd_enable_touch,
-> +                               sizeof(cmd_enable_touch));
-> +       if (error < 0)
-> +               return error;
->
->         enable_irq(client->irq);
->
-> --
-> 2.1.4
->
+I'm ok with having the _one_ tracepoint, but I don't want 3+
+sched_switch tracepoints, each having a different set of information
+depending on what people want, that way lies madness.
 
--- 
-greets
---
-Christian Gmeiner, MSc
+As a run-around, Steve then suggested to decouple the trace-hook from
+the actual trace-event. Let the scheduler only provide the hook, nothing
+else. And then allow users to create their own events with the specific
+data they need for their specific use-case.
 
-https://christian-gmeiner.info
+Various options have been floated, ebpf, modules, whatever.
+
+At this point I'm well tired of all this and would just as soon rip out
+all tracepoints entire; but of course, the scheduler has some very
+useful information for MIS people, so we can't realy do that either.
+
+/sadface
