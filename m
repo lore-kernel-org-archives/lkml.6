@@ -1,52 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753234AbeBEOrX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 09:47:23 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35308 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753109AbeBEOq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:46:56 -0500
-X-Google-Smtp-Source: AH8x227ND5AgdArL4lIY7qjyi5pgmiBQDTxWjmqZqZYZEuy1Ln1X4QsBMiTH7+JkODeuuNqJU06mDQ==
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: andy.gross@linaro.org
-Cc: bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH 2/4] arm64: dts: qcom: msm8916: Probe the APCS mailbox driver
-Date: Mon,  5 Feb 2018 16:46:49 +0200
-Message-Id: <20180205144651.5934-2-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180205144651.5934-1-georgi.djakov@linaro.org>
-References: <20180205144651.5934-1-georgi.djakov@linaro.org>
+        id S1753138AbeBEOtA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:49:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752914AbeBEOsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 09:48:53 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7577321734
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 5 Feb 2018 11:48:50 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [resend, PATCH v2] perf tools: substitute yet another strtoull()
+Message-ID: <20180205144850.GA10162@kernel.org>
+References: <20180129130359.1490-1-andriy.shevchenko@linux.intel.com>
+ <20180129154605.GA7759@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180129154605.GA7759@krava>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The APCS block was exposed until now as a syscon, but now we have a
-proper driver for this block. Add the compatible string of the new
-driver to probe and register the mailbox functionality.
+Em Mon, Jan 29, 2018 at 04:46:05PM +0100, Jiri Olsa escreveu:
+> On Mon, Jan 29, 2018 at 03:03:59PM +0200, Andy Shevchenko wrote:
+> > Instead of home grown function let's use what library provides us.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+thanks, applied.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index d3592b19cfc9..5414f53a0fa1 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -332,9 +332,10 @@
- 			#clock-cells = <0>;
- 		};
- 
--		apcs: syscon@b011000 {
--			compatible = "syscon";
--			reg = <0x0b011000 0x1000>;
-+		apcs: mailbox@b011000 {
-+			compatible = "qcom,msm8916-apcs-kpss-global", "syscon";
-+			reg = <0xb011000 0x1000>;
-+			#mbox-cells = <1>;
- 		};
- 
- 		blsp1_uart2: serial@78b0000 {
+- Arnaldo
