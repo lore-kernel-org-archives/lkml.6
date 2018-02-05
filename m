@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226U+3f0vVtGeEH5Gn3DhZWOj3wa5W6E+jJRsXIpDz0Xn+L8pWlYwqNMIvHP9xdo3spuc5em
-ARC-Seal: i=1; a=rsa-sha256; t=1517855215; cv=none;
+X-Google-Smtp-Source: AH8x224mLV6qV/8KzvMsuM33TNtkDGf4o2lngatQ04i+NG9TVeIvdI2NyVSEyWoxnsFk8zoyJ+r3
+ARC-Seal: i=1; a=rsa-sha256; t=1517855214; cv=none;
         d=google.com; s=arc-20160816;
-        b=weAjQPDw2cx2pZ2Dzte/4xTHnIl0aF0EQDtL6QZ0AV5Zt2/w15xVSo3b2tAkazTWYe
-         7p00Xt5KTL490WiSTLMhfNdHT1JuYWa/BwcHCVLW3iY5v3td7du+SjMoEe1bFvdLfVKm
-         h6MtLJGUngmY17zl/S2eTAbR7Dvp165RS6bfXM0asRxZb1GiUl9NXMu+ni2sVWgpja1j
-         PQXIrN9IotHZznX7XBZtZ2GWUl/7sTLaH58PXUfGw7x5kaAPpXBsjc+f5PUMtY2hCJOH
-         W2K51tzVBSZKF2wjF9bFrNQrbaTbagJz7YRcklOFBOnmbuQC/s+IizW2OFBoT5Ifh2IR
-         9LPg==
+        b=Df45BortNh2YVg1hi3fHYvfs90gXUL6hreFfhjNyVKv1bboMHEWee0FwrIr2QKfwHC
+         Mhe6DNV+OsDQTGsjasTJhnQFpIajEmGZSOR/zQBzWIbnDsa5TwvtamRLFBgeTpDnnDDl
+         SD/xowPFViq/iHkqYgKo33ieWJe6eRuVBe5QNGlIwrr9UG5nH3YYG+IYd0B/cMnhFRtX
+         AItIsUrSHahG/pPND8sePgfzCfzccWn6Lvo4CZS9Owj/2oM5Xd///Mz/BOzVfDvR1pNp
+         cLeHdpTQxnPZ4O1xXWiEwd8LCWbxWjULfNplIldcDCjUY4j9phlzkKlHb1ibmgKznX4O
+         NaQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gUUQCxLBQHbL4gfEKSRjT4Oc1s5M3lebQJMvnOWBNTk=;
-        b=mjoc4BRI3GbRl12PSZLkdD4tKQT9xpdMnkcbxCP5a2se36+82+cd/afp0nlsUfQ9pq
-         kgPWN8Jsd9E8JZ7ufgon9N8sJFewCvcXjJ4iEZnehSpLvLE9jNaOU/4k9UQIAnEunVdQ
-         nonfzvkNbQGMCQLdO6L8NcHo+foQONJoeQdlDELvQYh0/AHivsd3sW3fvHp8d7gSqW1o
-         nM9Bv+NddQWAXkViApdBfP9rVeE9rxSXC8sDvrAfvOWJrONDR+/d784TPhTHf85PfHyk
-         v6CyXfBo9o0Si5XxYkUH9mm24+DoAiOXPCGqLFnv3qbSgQJ6zvKrrS32HBOTE2f8gTa5
-         cVTQ==
+        bh=hDfoq3IEUTa2KKz57hVlgx2NpMwLrYxqzeBoHUZh9Hw=;
+        b=b8j3ikG3Mlv70LspT3KFwvlNYzm8Z5LPwJHld9qKAfRlduA8zuel21gjc+meZItcEm
+         P+D3CA5nrqJ5RG3uTutDLcbX2W/BtJcjzg6/qWpLzzgHyAQ8jEd/18w+Nsugd4m++c03
+         e5hs4ibSxIHDjXDpQU2pWtwrwrPK2lpNv47NkUogad2GulAWqb1OidIAQHPKCjSFnmyN
+         PZARJUwQlY2vqQ/0HbPusm3okmNHPCilz58n7tvcuY9NjuK5kL3t0zUzZ1I2bYrlV2IZ
+         SZudguQ7UdRcRWspIWJmgZAUE7eaLPXiQYRGGVh2DgghpmmWTL02ryN58EoA4EH/xaCS
+         dXFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 3.18 35/36] spi: imx: do not access registers while clocks disabled
-Date: Mon,  5 Feb 2018 10:24:03 -0800
-Message-Id: <20180205182353.218567254@linuxfoundation.org>
+	Mark Salyzyn <salyzyn@android.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Stephen Smalley <sds@tycho.nsa.gov>,
+	selinux@tycho.nsa.gov,
+	linux-security-module@vger.kernel.org,
+	Eric Paris <eparis@parisplace.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH 3.18 34/36] selinux: general protection fault in sock_has_perm
+Date: Mon,  5 Feb 2018 10:24:02 -0800
+Message-Id: <20180205182353.178669604@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -39,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586550983169827?=
-X-GMAIL-MSGID: =?utf-8?q?1591586550983169827?=
+X-GMAIL-THRID: =?utf-8?q?1591586549162811799?=
+X-GMAIL-MSGID: =?utf-8?q?1591586549162811799?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,49 +54,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Mark Salyzyn <salyzyn@android.com>
 
-commit d593574aff0ab846136190b1729c151c736727ec upstream.
+In the absence of commit a4298e4522d6 ("net: add SOCK_RCU_FREE socket
+flag") and all the associated infrastructure changes to take advantage
+of a RCU grace period before freeing, there is a heightened
+possibility that a security check is performed while an ill-timed
+setsockopt call races in from user space.  It then is prudent to null
+check sk_security, and if the case, reject the permissions.
 
-Since clocks are disabled except during message transfer clocks
-are also disabled when spi_imx_remove gets called. Accessing
-registers leads to a freeeze at least on a i.MX 6ULL. Enable
-clocks before disabling accessing the MXC_CSPICTRL register.
+Because of the nature of this problem, hard to duplicate, no clear
+path, this patch is a simplified band-aid for stable trees lacking the
+infrastructure for the series of commits leading up to providing a
+suitable RCU grace period.  This adjustment is orthogonal to
+infrastructure improvements that may nullify the needed check, but
+could be added as good code hygiene in all trees.
 
-Fixes: 9e556dcc55774 ("spi: spi-imx: only enable the clocks when we start to transfer a message")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 14233 Comm: syz-executor2 Not tainted 4.4.112-g5f6325b #28
+task: ffff8801d1095f00 task.stack: ffff8800b5950000
+RIP: 0010:[<ffffffff81b69b7e>]  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0 security/selinux/hooks.c:4069
+RSP: 0018:ffff8800b5957ce0  EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 1ffff10016b2af9f RCX: ffffffff81b69b51
+RDX: 0000000000000002 RSI: 0000000000000000 RDI: 0000000000000010
+RBP: ffff8800b5957de0 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000000 R11: 1ffff10016b2af68 R12: ffff8800b5957db8
+R13: 0000000000000000 R14: ffff8800b7259f40 R15: 00000000000000d7
+FS:  00007f72f5ae2700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000a2fa38 CR3: 00000001d7980000 CR4: 0000000000160670
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Stack:
+ ffffffff81b69a1f ffff8800b5957d58 00008000b5957d30 0000000041b58ab3
+ ffffffff83fc82f2 ffffffff81b69980 0000000000000246 ffff8801d1096770
+ ffff8801d3165668 ffffffff8157844b ffff8801d1095f00
+ ffff880000000001
+Call Trace:
+[<ffffffff81b6a19d>] selinux_socket_setsockopt+0x4d/0x80 security/selinux/hooks.c:4338
+[<ffffffff81b4873d>] security_socket_setsockopt+0x7d/0xb0 security/security.c:1257
+[<ffffffff82df1ac8>] SYSC_setsockopt net/socket.c:1757 [inline]
+[<ffffffff82df1ac8>] SyS_setsockopt+0xe8/0x250 net/socket.c:1746
+[<ffffffff83776499>] entry_SYSCALL_64_fastpath+0x16/0x92
+Code: c2 42 9b b6 81 be 01 00 00 00 48 c7 c7 a0 cb 2b 84 e8
+f7 2f 6d ff 49 8d 7d 10 48 b8 00 00 00 00 00 fc ff df 48 89
+fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 83 01 00
+00 41 8b 75 10 31
+RIP  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0 security/selinux/hooks.c:4069
+RSP <ffff8800b5957ce0>
+---[ end trace 7b5aaf788fef6174 ]---
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: selinux@tycho.nsa.gov
+Cc: linux-security-module@vger.kernel.org
+Cc: Eric Paris <eparis@parisplace.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-imx.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ security/selinux/hooks.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -1220,12 +1220,23 @@ static int spi_imx_remove(struct platfor
- {
- 	struct spi_master *master = platform_get_drvdata(pdev);
- 	struct spi_imx_data *spi_imx = spi_master_get_devdata(master);
-+	int ret;
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3969,6 +3969,8 @@ static int sock_has_perm(struct task_str
+ 	struct lsm_network_audit net = {0,};
+ 	u32 tsid = task_sid(task);
  
- 	spi_bitbang_stop(&spi_imx->bitbang);
- 
-+	ret = clk_enable(spi_imx->clk_per);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_enable(spi_imx->clk_ipg);
-+	if (ret) {
-+		clk_disable(spi_imx->clk_per);
-+		return ret;
-+	}
-+
- 	writel(0, spi_imx->base + MXC_CSPICTRL);
--	clk_unprepare(spi_imx->clk_ipg);
--	clk_unprepare(spi_imx->clk_per);
-+	clk_disable_unprepare(spi_imx->clk_ipg);
-+	clk_disable_unprepare(spi_imx->clk_per);
- 	spi_imx_sdma_exit(spi_imx);
- 	spi_master_put(master);
++	if (!sksec)
++		return -EFAULT;
+ 	if (sksec->sid == SECINITSID_KERNEL)
+ 		return 0;
  
