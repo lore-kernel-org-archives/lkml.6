@@ -1,57 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753267AbeBEP7m (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:59:42 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36676 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753221AbeBEP7d (ORCPT
+        id S1753316AbeBEQAI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 11:00:08 -0500
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:40166 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbeBEQAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:59:33 -0500
-X-Google-Smtp-Source: AH8x224AEYOO+4VwHqtfpN7Wt/Z4hg68qK+2hlTvHrhwbTYbX8lig61X6vREV7w4M5Fn8jSw0nbNEWA6j7+K2rAtbF8=
-MIME-Version: 1.0
-In-Reply-To: <20180205155001.GI30338@tassilo.jf.intel.com>
-References: <20180205151300.539874-1-arnd@arndb.de> <20180205151300.539874-2-arnd@arndb.de>
- <20180205155001.GI30338@tassilo.jf.intel.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 5 Feb 2018 16:59:32 +0100
-X-Google-Sender-Auth: vbr2dXNstxX6lBqD4hBb0V0WIZA
-Message-ID: <CAK8P3a3gNstYGm5KqAZ5T7kQL0raUC0OOrcLwYD3wc+thwmEkw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] modpost: don't add warnings for LTO-generated symbols
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Jessica Yu <jeyu@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wanlong Gao <wanlong.gao@gmail.com>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 5 Feb 2018 11:00:00 -0500
+X-Google-Smtp-Source: AH8x227DoqX2J6U4bdBtjqfqHDXU34waFdMvo52Hirr5OEEeL31lyN0TXnptI+faZTvMRl7PXjVPdg==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: netdev@vger.kernel.org
+Cc: stephen@networkplumber.org, w.bumiller@proxmox.com,
+        ebiederm@xmission.com, jbenc@redhat.com, nicolas.dichtel@6wind.com,
+        linux-kernel@vger.kernel.org, dsahern@gmail.com, davem@davemloft.net,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH net 0/1 v2] rtnetlink: require unique netns identifier
+Date: Mon,  5 Feb 2018 16:55:49 +0100
+Message-Id: <20180205155550.21432-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 4:50 PM, Andi Kleen <ak@linux.intel.com> wrote:
-> On Mon, Feb 05, 2018 at 04:12:52PM +0100, Arnd Bergmann wrote:
->> WARNING: vmlinux.o(.data+0x12e0): Section mismatch in reference from the variable pfkey_net_ops.lto_priv.2992 to the function .init.text:pfkey_net_init.lto_priv.2977()
->> The variable pfkey_net_ops.lto_priv.2992 references
->> the function __init pfkey_net_init.lto_priv.2977()
->> If the reference is valid then annotate the
->> variable with __init* or __refdata (see linux/init.h) or name the variable:
->> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
->
-> A better fix would be to ensure modpost always runs on already LD_FINALed
-> objects, so it never sees LTO.
->
-> Otherwise you would need to teach modpost about the LTO symbol table
-> and some other magic. I did that once, but it turned out to be very
-> ugly.
+Hey,
 
-I'm not sure I understand what that means. Do you mean that with LD_FINAL,
-those symbol references are completely eliminated so we don't need to worry
-about them any more?
+Since we've added support for IFLA_IF_NETNSID for RTM_{DEL,GET,SET,NEW}LINK
+it is possible for userspace to send us requests with three different
+properties to identify a target network namespace. This affects at least
+RTM_{NEW,SET}LINK. Each of them could potentially refer to a different
+network namespace which is confusing. For legacy reasons the kernel will
+pick the IFLA_NET_NS_PID property first and then look for the
+IFLA_NET_NS_FD property but there is no reason to extend this type of
+behavior to network namespace ids. The regression potential is quite
+minimal since the rtnetlink requests in question either won't allow
+IFLA_IF_NETNSID requests before 4.16 is out (RTM_{NEW,SET}LINK) or don't
+support IFLA_NET_NS_{PID,FD} (RTM_{DEL,GET}LINK) in the first place.
 
-I got about a dozen section mismatch errors with LTO in cases where the
-calling function gets a specialized version of a structure, and my oneline
-patch above addresses them all.
+We obviously cannot prevent users from passing both IFLA_NET_NS_PID and
+IFLA_NET_NS_FD since we have supported this somehow for a long time. So
+the check I'm proposing is to only fail when both IFLA_IF_NETNSID, and
+IFLA_NET_NS_PID or IFLA_NET_NS_FD are passed and they refer to different
+network namespaces.
 
-        Arnd
+Thanks!
+Christian
+
+ChangeLog v1->v2:
+* return errno when the specified network namespace id is invalid
+* fill in struct netlink_ext_ack if the network namespace id is invalid
+* rename rtnl_ensure_unique_netns_attr() to rtnl_ensure_unique_netns() to
+  indicate that a request without any network namespace identifying attributes
+  is also considered valid.
+
+ChangeLog v0->v1:
+* report a descriptive error to userspace via struct netlink_ext_ack
+* do not fail when multiple properties specifiy the same network namespace
+
+Christian Brauner (1):
+  rtnetlink: require unique netns identifier
+
+ net/core/rtnetlink.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+
+-- 
+2.14.1
