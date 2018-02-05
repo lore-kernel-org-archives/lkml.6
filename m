@@ -1,76 +1,50 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3105817-1517855127-2-8223154980869212880
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517855127; b=Vuz0RzfyD7Aycpnfk9hhze/sZVDi4hp1Z0s96jPclMyeiRz
-    MIaH3Wop/w9Ukr1VPZQV4mlPX3ohX/8MqPmay3Ra2iQNru6x26lQI4jPVYG9FJQR
-    rOWkYkKJjdhMued9cr85oWJ3q1jptsUVOuU1L/Vo6bTtimTxA8yDjT8P2LNbtpfa
-    q5u1UILHBfzAOnPkoemYM3812X5NcQImThqH4801fE+f15qKroR2wHf2PgttG9On
-    1Ove8/+TpSmZy48z5qh1bDFsKx18qBbdwt7zubocOEjVZnzTZb8G26ZIlPUICml7
-    YbTVPTgNMnBQeKLpmHox5FOqxB1Scb9Fqm5z/kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517855127; bh=Bk5zjdfWEFwVkyHDWq2Y+YxYhN
-    nsDx7YHJ55/ZgTgbQ=; b=QCbHrCt39gBxgrBsOhwruHV0wcMOa77NQRgBfqdUqc
-    syS4AdtNifXe5C/HY5BB5sMqy+sl3Ndg5lfbLTHlXvtkqmTjkUzqiEgFExraG17V
-    Rx4ij/RqBUbT6a5MyQUka2DX3BH5n0Bn+n3kxneDx3SOGJ+JEIofZRQdiQEFnQgz
-    x0By3uSI7o+lmmdZgj2JJznw+uXFMBQXdMWJ8m6ChdRkJkhX5U5E3JIIES0FuE6+
-    FveKBYmgFNKdHeCIr56dR9Pgh5MFb0ECYNJBzL0MFuKjh8c+TEEwtl3YA5KVtmdm
-    hMWCkCJr+iRZLDBfgDfcesApA8XypatqqW6uT4o5gZlw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753744AbeBESZY (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Feb 2018 13:25:24 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52552 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753719AbeBESZS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:25:18 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224VSpH/GpOZvysCmQDZY2L8vzMijzEl+xaKlx/JFBxc/xg/3OnFJLnDq3PDzyhiKPr/+oEb
+ARC-Seal: i=1; a=rsa-sha256; t=1517855123; cv=none;
+        d=google.com; s=arc-20160816;
+        b=1HEwHCndJqIHFPi0xx4foqC+X4od9LrJwkUli7h13Vmtv7IHYyhqjFctJpvUU9oGQg
+         CRAg9E7Ik680iiNeKUDEfilwsPeiOkQO+eBHj9m299PlM4zhk+t2fBmB19/e/5pnHlAQ
+         FFEHMMWTw+/rtl0DTmCrEc0myjOxcuR7AzR/orzyjitVyEUc5Jx7sPWkWs33uhg7OzqJ
+         Z+6OYQjhfbx2U9sYxkVJUvVPixMkMCBABDW1NhiDkyWSPULXkweJiIBV3EIsPw2X064L
+         Ec3xNk7JtDz3bIYCIi/RdjSiGf6f4veGPHZ5ukr2Gr/GZIWW4dSNXhTyBr9xYWNb8IZs
+         iHow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=FAuwZyi8au73C0dbbRUIQLPjc1bXaa7zKjPj62q3uKQ=;
+        b=W52XE7/yx6pmEBTefO9b/ZavT9fPdlNZks+XGFKWQcF3yWro3HGRxxAtOCPhUrWPYX
+         G197VIe1ELf8dbQGaumWUVO2wp4DSgoIpnWTnIHiVVZ/QVkQfVPYL/oxcPJAc5YuibuF
+         VTL4uTlU2mvBkgiOFXp2CjXwH2D02caiHNLI3jxV0af1/tlVoOYZRQvHbrRYnjSSsFWe
+         2XK5tKXJ/I9wFPq4ScNedwu/FnSvCzLm8v6dOvOJalQ7k02YfyhcaVM5Qp2mK58M+cPt
+         cj0q5BtuGf7neuVp5uQiRePpAMvirASAp/58qmnhlSWoc6zbXf78ewRCjcnf1zy8M1qb
+         LQyQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        William Grant <william.grant@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.15 27/60] x86/mm: Fix overlap of i386 CPU_ENTRY_AREA with FIX_BTMAP
-Date: Mon,  5 Feb 2018 10:23:00 -0800
-Message-Id: <20180205182215.052460372@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: [PATCH 4.15 31/60] x86/asm: Move status from thread_struct to thread_info
+Date: Mon,  5 Feb 2018 10:23:04 -0800
+Message-Id: <20180205182215.226459184@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591586384640420219?=
+X-GMAIL-MSGID: =?utf-8?q?1591586454296632915?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,67 +52,170 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: William Grant william.grant@canonical.com
+From: Andy Lutomirski luto@kernel.org
 
-commit 55f49fcb879fbeebf2a8c1ac7c9e6d90df55f798
+commit 37a8f7c38339b22b69876d6f5a0ab851565284e3
 
-Since commit 92a0f81d8957 ("x86/cpu_entry_area: Move it out of the
-fixmap"), i386's CPU_ENTRY_AREA has been mapped to the memory area just
-below FIXADDR_START. But already immediately before FIXADDR_START is the
-FIX_BTMAP area, which means that early_ioremap can collide with the entry
-area.
+The TS_COMPAT bit is very hot and is accessed from code paths that mostly
+also touch thread_info::flags.  Move it into struct thread_info to improve
+cache locality.
 
-It's especially bad on PAE where FIX_BTMAP_BEGIN gets aligned to exactly
-match CPU_ENTRY_AREA_BASE, so the first early_ioremap slot clobbers the
-IDT and causes interrupts during early boot to reset the system.
+The only reason it was in thread_struct is that there was a brief period
+during which arch-specific fields were not allowed in struct thread_info.
 
-The overlap wasn't a problem before the CPU entry area was introduced,
-as the fixmap has classically been preceded by the pkmap or vmalloc
-areas, neither of which is used until early_ioremap is out of the
-picture.
+Linus suggested further changing:
 
-Relocate CPU_ENTRY_AREA to below FIX_BTMAP, not just below the permanent
-fixmap area.
+  ti->status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
 
-Fixes: commit 92a0f81d8957 ("x86/cpu_entry_area: Move it out of the fixmap")
-Signed-off-by: William Grant <william.grant@canonical.com>
+to:
+
+  if (unlikely(ti->status & (TS_COMPAT|TS_I386_REGS_POKED)))
+          ti->status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
+
+on the theory that frequently dirtying the cacheline even in pure 64-bit
+code that never needs to modify status hurts performance.  That could be a
+reasonable followup patch, but I suspect it matters less on top of this
+patch.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/7041d181-a019-e8b9-4e4e-48215f841e2c@canonical.com
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
+Link: https://lkml.kernel.org/r/03148bcc1b217100e6e8ecf6a5468c45cf4304b6.1517164461.git.luto@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/include/asm/fixmap.h           |    6 ++++--
- arch/x86/include/asm/pgtable_32_types.h |    5 +++--
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ arch/x86/entry/common.c            |    4 ++--
+ arch/x86/include/asm/processor.h   |    2 --
+ arch/x86/include/asm/syscall.h     |    6 +++---
+ arch/x86/include/asm/thread_info.h |    3 ++-
+ arch/x86/kernel/process_64.c       |    4 ++--
+ arch/x86/kernel/ptrace.c           |    2 +-
+ arch/x86/kernel/signal.c           |    2 +-
+ 7 files changed, 11 insertions(+), 12 deletions(-)
 
---- a/arch/x86/include/asm/fixmap.h
-+++ b/arch/x86/include/asm/fixmap.h
-@@ -137,8 +137,10 @@ enum fixed_addresses {
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -206,7 +206,7 @@ __visible inline void prepare_exit_to_us
+ 	 * special case only applies after poking regs and before the
+ 	 * very next return to user mode.
+ 	 */
+-	current->thread.status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
++	ti->status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
+ #endif
  
- extern void reserve_top_address(unsigned long reserve);
+ 	user_enter_irqoff();
+@@ -304,7 +304,7 @@ static __always_inline void do_syscall_3
+ 	unsigned int nr = (unsigned int)regs->orig_ax;
  
--#define FIXADDR_SIZE	(__end_of_permanent_fixed_addresses << PAGE_SHIFT)
--#define FIXADDR_START	(FIXADDR_TOP - FIXADDR_SIZE)
-+#define FIXADDR_SIZE		(__end_of_permanent_fixed_addresses << PAGE_SHIFT)
-+#define FIXADDR_START		(FIXADDR_TOP - FIXADDR_SIZE)
-+#define FIXADDR_TOT_SIZE	(__end_of_fixed_addresses << PAGE_SHIFT)
-+#define FIXADDR_TOT_START	(FIXADDR_TOP - FIXADDR_TOT_SIZE)
+ #ifdef CONFIG_IA32_EMULATION
+-	current->thread.status |= TS_COMPAT;
++	ti->status |= TS_COMPAT;
+ #endif
  
- extern int fixmaps_set;
+ 	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY) {
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -460,8 +460,6 @@ struct thread_struct {
+ 	unsigned short		gsindex;
+ #endif
  
---- a/arch/x86/include/asm/pgtable_32_types.h
-+++ b/arch/x86/include/asm/pgtable_32_types.h
-@@ -44,8 +44,9 @@ extern bool __vmalloc_start_set; /* set
-  */
- #define CPU_ENTRY_AREA_PAGES	(NR_CPUS * 40)
+-	u32			status;		/* thread synchronous flags */
+-
+ #ifdef CONFIG_X86_64
+ 	unsigned long		fsbase;
+ 	unsigned long		gsbase;
+--- a/arch/x86/include/asm/syscall.h
++++ b/arch/x86/include/asm/syscall.h
+@@ -60,7 +60,7 @@ static inline long syscall_get_error(str
+ 	 * TS_COMPAT is set for 32-bit syscall entries and then
+ 	 * remains set until we return to user mode.
+ 	 */
+-	if (task->thread.status & (TS_COMPAT|TS_I386_REGS_POKED))
++	if (task->thread_info.status & (TS_COMPAT|TS_I386_REGS_POKED))
+ 		/*
+ 		 * Sign-extend the value so (int)-EFOO becomes (long)-EFOO
+ 		 * and will match correctly in comparisons.
+@@ -116,7 +116,7 @@ static inline void syscall_get_arguments
+ 					 unsigned long *args)
+ {
+ # ifdef CONFIG_IA32_EMULATION
+-	if (task->thread.status & TS_COMPAT)
++	if (task->thread_info.status & TS_COMPAT)
+ 		switch (i) {
+ 		case 0:
+ 			if (!n--) break;
+@@ -177,7 +177,7 @@ static inline void syscall_set_arguments
+ 					 const unsigned long *args)
+ {
+ # ifdef CONFIG_IA32_EMULATION
+-	if (task->thread.status & TS_COMPAT)
++	if (task->thread_info.status & TS_COMPAT)
+ 		switch (i) {
+ 		case 0:
+ 			if (!n--) break;
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -55,6 +55,7 @@ struct task_struct;
  
--#define CPU_ENTRY_AREA_BASE				\
--	((FIXADDR_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1)) & PMD_MASK)
-+#define CPU_ENTRY_AREA_BASE						\
-+	((FIXADDR_TOT_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1))   \
-+	 & PMD_MASK)
+ struct thread_info {
+ 	unsigned long		flags;		/* low level flags */
++	u32			status;		/* thread synchronous flags */
+ };
  
- #define PKMAP_BASE		\
- 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
+ #define INIT_THREAD_INFO(tsk)			\
+@@ -221,7 +222,7 @@ static inline int arch_within_stack_fram
+ #define in_ia32_syscall() true
+ #else
+ #define in_ia32_syscall() (IS_ENABLED(CONFIG_IA32_EMULATION) && \
+-			   current->thread.status & TS_COMPAT)
++			   current_thread_info()->status & TS_COMPAT)
+ #endif
+ 
+ /*
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -557,7 +557,7 @@ static void __set_personality_x32(void)
+ 	 * Pretend to come from a x32 execve.
+ 	 */
+ 	task_pt_regs(current)->orig_ax = __NR_x32_execve | __X32_SYSCALL_BIT;
+-	current->thread.status &= ~TS_COMPAT;
++	current_thread_info()->status &= ~TS_COMPAT;
+ #endif
+ }
+ 
+@@ -571,7 +571,7 @@ static void __set_personality_ia32(void)
+ 	current->personality |= force_personality32;
+ 	/* Prepare the first "return" to user space */
+ 	task_pt_regs(current)->orig_ax = __NR_ia32_execve;
+-	current->thread.status |= TS_COMPAT;
++	current_thread_info()->status |= TS_COMPAT;
+ #endif
+ }
+ 
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -935,7 +935,7 @@ static int putreg32(struct task_struct *
+ 		 */
+ 		regs->orig_ax = value;
+ 		if (syscall_get_nr(child, regs) >= 0)
+-			child->thread.status |= TS_I386_REGS_POKED;
++			child->thread_info.status |= TS_I386_REGS_POKED;
+ 		break;
+ 
+ 	case offsetof(struct user32, regs.eflags):
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -787,7 +787,7 @@ static inline unsigned long get_nr_resta
+ 	 * than the tracee.
+ 	 */
+ #ifdef CONFIG_IA32_EMULATION
+-	if (current->thread.status & (TS_COMPAT|TS_I386_REGS_POKED))
++	if (current_thread_info()->status & (TS_COMPAT|TS_I386_REGS_POKED))
+ 		return __NR_ia32_restart_syscall;
+ #endif
+ #ifdef CONFIG_X86_X32_ABI
