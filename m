@@ -1,98 +1,158 @@
-Return-Path: <linux@dominikbrodowski.net>
-X-Google-Smtp-Source: AH8x225r3a9G8t3H+hU+32af3Vik4o0NEvV+nlyHYgVw1Bs6HzSOJl7ZwqO4hX5XRKqrpzLTUG4K
-ARC-Seal: i=1; a=rsa-sha256; t=1517773282; cv=none;
+Return-Path: <BATV+fec07a82e6eb9b7438c0+5279+infradead.org+dwmw2@twosheds.srs.infradead.org>
+X-Google-Smtp-Source: AH8x227992w0MulRuEWADbu2vHhdFEBaH5d8hpXp2Qf6yQd4mR+72WcCG2MBPdlNpV0AONfc9IS7
+ARC-Seal: i=1; a=rsa-sha256; t=1517840374; cv=none;
         d=google.com; s=arc-20160816;
-        b=WLxiRJRjnqpj+L+hz94Q3NLYF8MfUL3tw7S8nbQBvajhVd2/o6J+au2pTl4Yz0qyTA
-         eQzVctsnW5GCx48UT8COtvNVO87yi1L2L+EYenVtrtozjeB0MqFYHLd+zFBO/NJIXeBI
-         RcXU+ed55FUlZeTnntP801b9X05nWVfyv10JTAAK4NWthkckQIHJNRCNjkaEoWmdCg4k
-         qITHOh0aLBKWwKAbyHVJGeL5ATjK2Hyk0vQUJmHkH5Nu0f9vJt1i1XZLkdeGPmZgTy7C
-         30Ivp8AcJvnwUWkqcueISAg1gpd5/bfUjovg6QYThsj7iS8hudJZH2qinGmDj4LhGXHo
-         KosQ==
+        b=WVcZI529aJx8lJxrNZJUC9cOnU5Yyf2XpbeZtZJ1b+LZE4ykoQ/yTggMJQaW41b7sj
+         2aUTjML1wDlGN7grmfjZKlN5rWEL4K9oxQQxzmONjP/v5ZBgtFfhTqzAg0bFAk9J2jNr
+         xpLjiM8JRxWecm/Ktd+BbAlqxkXPattmPA4arVMuhotr3vx8sewwMonqo5LAG0SMqcan
+         4a1Y4oG063GM8/a3rHFAkcwo6KjkawR/hpp4/10UOO/8ipqcjG3qJzwyRQhX2WTVrP+D
+         dxhxn8+cSeJeaVqJqh5qLPp9OVTi35PVYzKa9KgB/GEfNb6Y9hZzY8LdYupGl+f8L9QP
+         YaQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=AkMIERttXWK4WNHNk0+Hqbq+aRESUgYMpYo8aqtPSBo=;
-        b=RgUqLi/YX1ERPGd3f3PKmAPQfh+yZ9Mosep+Sc2to8qHNJpqIXaD8NnJDsD+ts28e/
-         Yt6Rx4CbNzHBjiTmeDVi5KXt8bPaBSmpbtr599njklwo40yMNCKqUdTDhy1tShe2QVYa
-         mdxv16s8guXipyBsltlMQLuvUVMXw5pKe+VFdN00+ugXPscCu7/DEzoIYDUrnzmpO2YM
-         6WQrm07q31ZWWDmyIn9fUWIJ4UpHnom/eWTCmSxNBuyfiKHVnQpNyee4kH7f79gUgo99
-         tZRvRVx/wgATOyFlqUNYIdVfvTL7GoE/mKE0aoWXn/yQYu1NHwUHQxKBhRFWN5eTifkv
-         Nrnw==
+        h=mime-version:date:face:references:in-reply-to:to:from:subject
+         :message-id:dkim-signature:arc-authentication-results;
+        bh=d9KNtw49NXtqXIG+2aOIAI5bU0pPu81pe9yeAOuu2ZI=;
+        b=LAU4s69ACeFqblmcSlnVo7w5NEgCg9qbQLS8p+tRsPRtipawlZ8HNRVz4DXijpuZGc
+         OQrNa5018Grnp/jbdKSB3/+BTbJWi+K5NFxr+pzvYtbTiqjPusjl23fI4Vw1IHaBSH8Q
+         BM0CwbGpR+XJ4qHYAmN66zYB9UwcK6nZGzZ3C+5gnIQIMwIuDrZXVBJ9UV9o49bNwQkO
+         bNH1hb3xtPfnMdEzDot1rOXp716+hMYAepWYuEXUnNid+ywj6ST9sI+QlxKxjtOeKUMi
+         eYX3Qkt0AXDAkOZQBVsyzKP2MzzntQedVPXccxLH2thp0lgzDR6Nw26/yMe7CkNR2bC9
+         hFcg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 136.243.71.142 is neither permitted nor denied by best guess record for domain of linux@dominikbrodowski.net) smtp.mailfrom=linux@dominikbrodowski.net
+       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=j1L4ms1h;
+       spf=pass (google.com: best guess record for domain of batv+fec07a82e6eb9b7438c0+5279+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+fec07a82e6eb9b7438c0+5279+infradead.org+dwmw2@twosheds.srs.infradead.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 136.243.71.142 is neither permitted nor denied by best guess record for domain of linux@dominikbrodowski.net) smtp.mailfrom=linux@dominikbrodowski.net
-Date: Sun, 4 Feb 2018 20:39:02 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: David Woodhouse <dwmw2@infradead.org>,
-	Tim Chen <tim.c.chen@linux.intel.com>
-Cc: mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, jpoimboe@redhat.com,
-	"Wieczorkiewicz, Pawel" <wipawel@amazon.de>,
-	David Woodhouse <dwmw@amazon.co.uk>, arjan@linux.intel.com,
-	karahmed@amazon.de, x86@kernel.org, bp@alien8.de,
-	peterz@infradead.org, pbonzini@redhat.com, ak@linux.intel.com,
-	torvalds@linux-foundation.org, gregkh@linux-foundation.org,
-	luto@kernel.org
+       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=j1L4ms1h;
+       spf=pass (google.com: best guess record for domain of batv+fec07a82e6eb9b7438c0+5279+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+fec07a82e6eb9b7438c0+5279+infradead.org+dwmw2@twosheds.srs.infradead.org
+Message-ID: <1517840309.31953.153.camel@infradead.org>
 Subject: Re: [tip:x86/pti] x86/speculation: Use Indirect Branch Prediction
  Barrier in context switch
-Message-ID: <20180204193901.GA29757@light.dominikbrodowski.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2f5614a5-b7c4-52cf-a66f-6f62c2602bee@linux.intel.com>
- <1517473913.18619.281.camel@infradead.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+From: David Woodhouse <dwmw2@infradead.org>
+To: mingo@kernel.org, hpa@zytor.com, tim.c.chen@linux.intel.com,
+ linux-kernel@vger.kernel.org, tglx@linutronix.de, luto@kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mm <linux-mm@kvack.org>
+In-Reply-To: <tip-18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7@git.kernel.org>
+References: <1517263487-3708-1-git-send-email-dwmw@amazon.co.uk>
+	 <tip-18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7@git.kernel.org>
+Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-cOwTiFdsZGvl+8FSjYsf"
+Date: Mon, 05 Feb 2018 14:18:29 +0000
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1590966106432961445?=
-X-GMAIL-MSGID: =?utf-8?q?1591500637153082436?=
+X-GMAIL-MSGID: =?utf-8?q?1591570986011062076?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 08:31:53AM +0000, David Woodhouse wrote:
-> On Wed, 2018-01-31 at 08:03 +0100, Dominik Brodowski wrote:
-> > Whether a process needs protection by IBPB on context switches is a
-> > different question to whether a process should be allowed to be dumped,
-> > though the former may be a superset of the latter. Enable IBPB on all
-> > context switches to a different userspace process, until we have a clear
-> > mitigation strategy for userspace against Spectre-v2 designed and
-> > implemented.
-> >
-> > ...
-> >                 if (tsk && tsk->mm &&
-> > -                   tsk->mm->context.ctx_id != last_ctx_id &&
-> > -                   get_dumpable(tsk->mm) != SUID_DUMP_USER)
-> > +                   tsk->mm->context.ctx_id != last_ctx_id)
-> >                         indirect_branch_prediction_barrier();
-> 
-> 
-> I understand your argument and I sympathise.
-> 
-> But that's going to hurt a *lot*, and we don't even have a viable
-> proof-of-concept for a user←→user Spectre v2 attack, do we? It's only
-> theoretical?
 
-Wasn't the PoC in the Spectre paper user←→user (though on a different OS)?
-And what makes KVM←→KVM so much more likely/dangerous/..., that IBPB will
-be done there unconditionally (AFAICS)?
+--=-cOwTiFdsZGvl+8FSjYsf
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 2018-01-30 at 14:39 -0800, tip-bot for Tim Chen wrote:
+> Thanks to the reviewers and Andy Lutomirski for the suggestion of
+> using ctx_id which got rid of the problem of mm pointer recycling.
+
+That one doesn't backport well to 4.9. Suggestions welcome.
+--=-cOwTiFdsZGvl+8FSjYsf
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDUxNDE4MjlaMC8GCSqG
+SIb3DQEJBDEiBCDDi+J6jCp0moBQwzuzmNG+t2MuiLgZvbp8N4mC5hrVRTCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAJ8+brGJD4uQ
+kgl4JGaj19ydIsiv3NkVyoe+RUTXz8aK6BAN/wlltKp4TT1lvGAWSJYtUgIlgweSGY7ntulC5VY8
+MQGYB7TmyjBxsq1Pb8vgDgCy6sslNtXe+Ng95LHBS95+iAUQ/ertdsK3nh1NsjyTY6gZDnAj4m6v
+fpzYcP3dXvf2o+06qXu3SDSuoppORr7YZlBbKEaBTG5mSQm4tKxk2nwXfKCMGrBzQVTY7RRWZBEP
+o2jfCdyCnI/Q6Fzv8Yg7thCOJlzv5Xu7TylU3yEtiTnJU9CFiraZeIVlUgHAMJ2RMSl2ZU/KK7PR
+yaNwpOvQeHte/Ch+pJLPRXXAK9UAAAAAAAA=
 
 
-And, somewhat related, @Tim Chen:
-
-On Wed, Jan 31, 2018 at 03:25:44PM -0800, Tim Chen wrote:
-> For people who opt for more security, it is reasonable to consider
-> alternate policies to distinguish friend and foe so we know if we are coming
-> from a potentially hostile environment.  Ptrace is one means to do so, and probably
-> there are other ways depending on usages.  I hope we can have a discussion on what we should
-> use to determine if two processes are friend or foe.  Say do all the processes
-> from the same containers are considered friends with each other?
-
-To my understanding, the concept of "containers" is meant to be kept outside
-of the kernel. What *namespaces* / *control groups* can be considered
-friends with each other?
-
-
-Thanks,
-	Dominik
+--=-cOwTiFdsZGvl+8FSjYsf--
