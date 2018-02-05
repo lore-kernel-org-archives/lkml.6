@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeBEB0Z (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:26:25 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:42198 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752556AbeBEBZW (ORCPT
+        id S1752581AbeBEB0h (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:26:37 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43878 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752650AbeBEBZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:25:22 -0500
-X-Google-Smtp-Source: AH8x224cw17FQvO2dE5fM23qUeTyxSUl5OjaJJsx77qEah/8hNNHV/+DaljtShZaDu0LsJfmshkKQQ==
+        Sun, 4 Feb 2018 20:25:14 -0500
+X-Google-Smtp-Source: AH8x225PQ5OXXo5q2sBf3XgnK3L0Y9BVB12VHjq60zuTqq31KhcX8pVxKdfttPy/Sk6OMyENSGC+nw==
 From: Ulf Magnusson <ulfalizer@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
@@ -17,18 +17,10 @@ Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
         robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
         will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
         yamada.masahiro@socionext.com, Ulf Magnusson <ulfalizer@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-media@vger.kernel.org
-Subject: [PATCH 17/20] media: sec: Remove PLAT_S5P dependency
-Date: Mon,  5 Feb 2018 02:21:29 +0100
-Message-Id: <20180205012146.23981-18-ulfalizer@gmail.com>
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH 16/20] auxdisplay: img-ascii-lcd: Remove MIPS_SEAD3 dep.
+Date: Mon,  5 Feb 2018 02:21:28 +0100
+Message-Id: <20180205012146.23981-17-ulfalizer@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
 References: <20180205012146.23981-1-ulfalizer@gmail.com>
@@ -36,10 +28,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PLAT_S5P symbol was removed in commit d78c16ccde96 ("ARM: SAMSUNG:
-Remove remaining legacy code").
+The MIPS_SEAD3 symbol was removed in commit 64601cb1343f ("leds: Remove SEAD-3
+driver").
 
-Remove the PLAT_S5P dependency from VIDEO_SAMSUNG_S5P_CEC.
+Remove the MIPS_SEAD3 dependency from IMG_ASCII_LCD.
 
 Discovered with the
 https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
@@ -47,21 +39,21 @@ script.
 
 Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- drivers/media/platform/Kconfig | 2 +-
+ drivers/auxdisplay/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 614fbef08ddc..8b4cd02e2938 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -582,7 +582,7 @@ config CEC_GPIO
- 
- config VIDEO_SAMSUNG_S5P_CEC
-        tristate "Samsung S5P CEC driver"
--       depends on PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST
-+       depends on ARCH_EXYNOS || COMPILE_TEST
-        select CEC_CORE
-        select CEC_NOTIFIER
-        ---help---
+diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
+index 2c2ed9cf8796..3cba78d36eec 100644
+--- a/drivers/auxdisplay/Kconfig
++++ b/drivers/auxdisplay/Kconfig
+@@ -137,7 +137,7 @@ config CFAG12864B_RATE
+ config IMG_ASCII_LCD
+ 	tristate "Imagination Technologies ASCII LCD Display"
+ 	depends on HAS_IOMEM
+-	default y if MIPS_MALTA || MIPS_SEAD3
++	default y if MIPS_MALTA
+ 	select SYSCON
+ 	help
+ 	  Enable this to support the simple ASCII LCD displays found on
 -- 
 2.14.1
