@@ -1,118 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752651AbeBEItl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 03:49:41 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:24923 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752208AbeBEIte (ORCPT
+        id S1752689AbeBEIv4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 03:51:56 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:44998 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751885AbeBEIvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:49:34 -0500
-X-IronPort-AV: E=Sophos;i="5.44,434,1505804400";
-   d="scan'208";a="8484705"
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>, <linux-fbdev@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>,
-        <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <b.zolnierkie@samsung.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [RESEND][PATCH] video: fbdev: atmel_lcdfb: convert to use GPIO descriptors
-Date: Mon, 5 Feb 2018 09:47:55 +0100
-Message-ID: <20180205084755.6011-1-ludovic.desroches@microchip.com>
-X-Mailer: git-send-email 2.12.2
+        Mon, 5 Feb 2018 03:51:47 -0500
+Date: Mon, 5 Feb 2018 09:51:24 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        KarimAllah Ahmed <karahmed@amazon.de>, sironi@amazon.de,
+        the arch/x86 maintainers <x86@kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Paul Turner <pjt@google.com>
+Subject: Re: [PATCH] KVM: x86: Reduce retpoline performance impact in
+ slot_handle_level_range()
+Message-ID: <20180205085124.GF2249@hirez.programming.kicks-ass.net>
+References: <1517583559-424-1-git-send-email-dwmw@amazon.co.uk>
+ <CA+55aFwg88mxuOiJSh+xLnAfqEwAC-ReB9rdNx+r8fy=FTSHJw@mail.gmail.com>
+ <CA+55aFwqCc1UOkdBjEgiuL9fMkRj7RPrGFYQ376YhrqTUpLwrg@mail.gmail.com>
+ <1517599033.31953.71.camel@infradead.org>
+ <20180202212321.5186c13c@alans-desktop>
+ <1517669207.31953.120.camel@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1517669207.31953.120.camel@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use GPIO descriptors instead of relying on the old method.
+On Sat, Feb 03, 2018 at 02:46:47PM +0000, David Woodhouse wrote:
+> > For the simple case how about wrapping the if into
+> > 
+> >                 call_likely(foo->bar, usualfunction, args)
+> > 
+> > as a companion to 
+> > 
+> >                  foo->bar(args)
+> > 
+> > that can resolve to nothing special on architectures that don't need it,
+> > an if/else case on platforms with spectre, and potentially clever
+> > stuff on any platform where you can beat the compiler by knowing
+> > probabilities it can't infer ?
+> 
+> Yeah. I'm keen on being able to use something like alternatives to
+> *change* 'usualfunction' at runtime though. I suspect it'll be a win
+> for stuff like dma_ops.
+> 
+> But I'm also keen to actually base such things on real data, not just
+> go randomly "optimising" stuff just because we can. Let's try to make
+> sure we fix up the real bottlenecks, and not just go crazy.
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
----
- drivers/video/fbdev/atmel_lcdfb.c | 30 ++++++++++++------------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
+Google has a fairly long history of using feedback driven optimization
+compiles for the kernel. They were also the ones that developed perf
+autofdo tooling IIRC.
 
-diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
-index 3dee267d7c75..ef3d4198014f 100644
---- a/drivers/video/fbdev/atmel_lcdfb.c
-+++ b/drivers/video/fbdev/atmel_lcdfb.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/backlight.h>
- #include <linux/gfp.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -61,8 +62,7 @@ struct atmel_lcdfb_info {
- };
- 
- struct atmel_lcdfb_power_ctrl_gpio {
--	int gpio;
--	int active_low;
-+	struct gpio_desc *gpiod;
- 
- 	struct list_head list;
- };
-@@ -1018,7 +1018,7 @@ static void atmel_lcdfb_power_control_gpio(struct atmel_lcdfb_pdata *pdata, int
- 	struct atmel_lcdfb_power_ctrl_gpio *og;
- 
- 	list_for_each_entry(og, &pdata->pwr_gpios, list)
--		gpio_set_value(og->gpio, on);
-+		gpiod_set_value(og->gpiod, on);
- }
- 
- static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
-@@ -1031,11 +1031,11 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
- 	struct device_node *display_np;
- 	struct device_node *timings_np;
- 	struct display_timings *timings;
--	enum of_gpio_flags flags;
- 	struct atmel_lcdfb_power_ctrl_gpio *og;
- 	bool is_gpio_power = false;
- 	int ret = -ENOENT;
--	int i, gpio;
-+	int i;
-+	struct gpio_desc *gpiod;
- 
- 	sinfo->config = (struct atmel_lcdfb_config*)
- 		of_match_device(atmel_lcdfb_dt_ids, dev)->data;
-@@ -1072,28 +1072,22 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
- 
- 	INIT_LIST_HEAD(&pdata->pwr_gpios);
- 	ret = -ENOMEM;
--	for (i = 0; i < of_gpio_named_count(display_np, "atmel,power-control-gpio"); i++) {
--		gpio = of_get_named_gpio_flags(display_np, "atmel,power-control-gpio",
--					       i, &flags);
--		if (gpio < 0)
-+	for (i = 0; i < gpiod_count(dev, "atmel,power-control"); i++) {
-+		gpiod = devm_gpiod_get_index_optional(dev,
-+				"atmel,power-control", i, GPIOD_ASIS);
-+		if (!gpiod)
- 			continue;
- 
- 		og = devm_kzalloc(dev, sizeof(*og), GFP_KERNEL);
- 		if (!og)
- 			goto put_display_node;
- 
--		og->gpio = gpio;
--		og->active_low = flags & OF_GPIO_ACTIVE_LOW;
-+		og->gpiod = gpiod;
- 		is_gpio_power = true;
--		ret = devm_gpio_request(dev, gpio, "lcd-power-control-gpio");
--		if (ret) {
--			dev_err(dev, "request gpio %d failed\n", gpio);
--			goto put_display_node;
--		}
- 
--		ret = gpio_direction_output(gpio, og->active_low);
-+		ret = gpiod_direction_output(gpiod, gpiod_is_active_low(gpiod));
- 		if (ret) {
--			dev_err(dev, "set direction output gpio %d failed\n", gpio);
-+			dev_err(dev, "set direction output gpio atmel,power-control[%d] failed\n", i);
- 			goto put_display_node;
- 		}
- 		list_add(&og->list, &pdata->pwr_gpios);
--- 
-2.12.2
+https://gcc.gnu.org/wiki/AutoFDO/Tutorial
+
+One of the things pjt promised was a series of patches doing the
+proposed optimization for the scheduler code based on their results.
