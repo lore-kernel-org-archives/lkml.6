@@ -1,104 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753818AbeBES5K (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 13:57:10 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:46874 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753380AbeBESZE (ORCPT
+        id S1753837AbeBES7o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 13:59:44 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34515 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753464AbeBES7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 13:25:04 -0500
-X-Google-Smtp-Source: AH8x225bQU4dGDdHXkDsgYQ3h2gwReWvUBNEtGAsd9MLJbr2lsogn3iWi+Rz9cu97zXn8fnnqgvtHtArJ5YGlJfSaQo=
+        Mon, 5 Feb 2018 13:59:32 -0500
+X-Google-Smtp-Source: AH8x22612JKfspRuL+OdN/qeRAabItYIu3Lg41uQhIZ/rGHTEMmKkSFLczPXRrpaCP24tBq1tJJCAlHZ4Jh6q+uGP8Y=
 MIME-Version: 1.0
-References: <1517828686-29070-1-git-send-email-wanpengli@tencent.com> <CALMp9eQNB+2KLAR2Tv+By2oTthRLvAQMmJiEs61kFNrZDct3_g@mail.gmail.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 05 Feb 2018 18:24:52 +0000
-Message-ID: <CALMp9eSXvMmRj15q26_=VpJhYfUL_gHP-ce4h9bCv0N55JtT1w@mail.gmail.com>
-Subject: Re: [PATCH] KVM: nVMX: Fix CR4 after VMLAUNCH/VMRESUME failure
-To: kvm list <kvm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180202125231.GT19535@localhost.localdomain>
+References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+ <1517503869-3179-3-git-send-email-mathieu.poirier@linaro.org> <20180202125231.GT19535@localhost.localdomain>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 5 Feb 2018 11:59:30 -0700
+Message-ID: <CANLsYkwq9c+xS-TJrntWzKyCWWwQHfPRTv93SSbacmSjPPHhPA@mail.gmail.com>
+Subject: Re: [PATCH V2 2/7] cpuset: Rebuild root domain deadline accounting information
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
+        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        "luca.abeni" <luca.abeni@santannapisa.it>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w15IxGuA005860
 
-[Resending as plain text]
-
-On Mon, Feb 5, 2018 at 10:21 AM Jim Mattson <jmattson@google.com> wrote:
-
-> This is incorrect. In the event of an early VM-entry failure (e.g. a
-> VM-entry failure for "VM entry with invalid control field(s)"), no host
-> state should be loaded from the VMCS12. Of course, no guest state should
-> have been loaded from the VMCS12 either, but that's a problem we have with
-> deferring some VMCS12 control field checks to the hardware.
-
-> CR4 should be unchanged from the time of the VMLAUNCH/VMRESUME. There is
-> no guarantee that vmcs12->host_cr4 holds the correct value.
-
-
-> On Mon, Feb 5, 2018 at 3:05 AM Wanpeng Li <kernellwp@gmail.com> wrote:
-
->> From: Wanpeng Li <wanpengli@tencent.com>
-
->> In L0, Haswell client host:
-
->>   nested_vmx_exit_reflected failed vm entry 7
->>   WARNING: CPU: 6 PID: 6797 at kvm/arch/x86/kvm//vmx.c:6206
->> handle_desc+0x2d/0x40 [kvm_intel]
->>   CPU: 6 PID: 6797 Comm: qemu-system-x86 Tainted: G        W  OE
->> 4.15.0+ #4
->>   RIP: 0010:handle_desc+0x2d/0x40 [kvm_intel]
->>   Call Trace:
->>    vmx_handle_exit+0xbd/0xe20 [kvm_intel]
->>    ? kvm_arch_vcpu_ioctl_run+0xcde/0x1c00 [kvm]
->>    kvm_arch_vcpu_ioctl_run+0xd5a/0x1c00 [kvm]
->>    kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
->>    ? kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
->>    ? __fget+0xfc/0x210
->>    ? __fget+0xfc/0x210
->>    do_vfs_ioctl+0xa4/0x6a0
->>    ? __fget+0x11d/0x210
->>    SyS_ioctl+0x79/0x90
->>    entry_SYSCALL_64_fastpath+0x25/0x9c
-
->> This can be reproduced by running kvm-unit-tests/run_tests.sh
->> vmx_controls in
->> L1. UMIP CPUID bit is exposed to the L1 UMIP aware guest since it is
->> emulated
->> by enabling descriptor-table exits on L0. There is a vmentry fail when
->> L0 tries to run L2 directly, the L1 guest architectural CR4 is not
->> restored
->> after this failure since commit 4f350c6dbcb (kvm: nVMX: Handle deferred
->> early
->> VMLAUNCH/VMRESUME failure properly). The L2 is kvm-unit-tests which will
->> not
->> write CR4 w/ X86_CR4_UMIP bit. After another L1 access descriptor vmexit,
->> we
->> check L2's architectural CR4 instead of L1's architectural CR4. This
->> patch
->> fixes it by restoring L1's architectural CR4 after L0's VMLAUNCH/VMRESUME
->> failure.
-
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+On 2 February 2018 at 05:52, Juri Lelli <juri.lelli@redhat.com> wrote:
+> Hi Mathieu,
+>
+> On 01/02/18 09:51, Mathieu Poirier wrote:
+>> When the topology of root domains is modified by CPUset or CPUhotplug
+>> operations information about the current deadline bandwidth held in the
+>> root domain is lost.
+>>
+>> This patch address the issue by recalculating the lost deadline
+>> bandwidth information by circling through the deadline tasks held in
+>> CPUsets and adding their current load to the root domain they are
+>> associated with.
+>>
+>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 >> ---
->>   arch/x86/kvm/vmx.c | 1 +
->>   1 file changed, 1 insertion(+)
+>
+> [...]
+>
+>> +static void update_tasks_root_domain(struct cpuset *cs)
+>> +{
+>> +     struct css_task_iter it;
+>> +     struct task_struct *task;
+>> +
+>> +     css_task_iter_start(&cs->css, 0, &it);
+>> +
+>> +     while ((task = css_task_iter_next(&it)))
+>> +             dl_add_task_root_domain(task);
+>> +
+>> +     css_task_iter_end(&it);
+>> +}
+>> +
+>> +/*
+>> + * Called with cpuset_mutex held (rebuild_sched_domains())
+>> + * Called with hotplug lock held (rebuild_sched_domains_locked())
+>> + * Called with sched_domains_mutex held (partition_and_rebuild_domains())
+>> + */
+>> +static void rebuild_root_domains(void)
+>> +{
+>> +     struct cpuset *cs = NULL;
+>> +     struct cgroup_subsys_state *pos_css;
+>> +
+>> +     rcu_read_lock();
+>> +
+>> +     /*
+>> +      * Clear default root domain DL accounting, it will be computed again
+>> +      * if a task belongs to it.
+>> +      */
+>> +     dl_clear_root_domain(&def_root_domain);
+>
+> Can't a __sched_setscheduler sneak in at this point, set a task to
+> DEADLINE, add its bandwidth to the rd...
 
->> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
->> index 23789c9..9fc0492 100644
->> --- a/arch/x86/kvm/vmx.c
->> +++ b/arch/x86/kvm/vmx.c
->> @@ -11633,6 +11633,7 @@ static void nested_vmx_vmexit(struct kvm_vcpu
->> *vcpu, u32 exit_reason,
->>           */
->>          nested_vmx_failValid(vcpu, VMXERR_ENTRY_INVALID_CONTROL_FIELD);
+Let me think about that one for a bit.
 
->> +       vcpu->arch.cr4 = vmcs12->host_cr4;
->>          load_vmcs12_mmu_host_state(vcpu, vmcs12);
+Thanks for the review,
+Mathieu
 
->>          /*
->> --
->> 2.7.4
+>
+>> +
+>> +     cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
+>> +
+>> +             if (cpumask_empty(cs->effective_cpus)) {
+>> +                     pos_css = css_rightmost_descendant(pos_css);
+>> +                     continue;
+>> +             }
+>> +
+>> +             css_get(&cs->css);
+>> +
+>> +             rcu_read_unlock();
+>> +
+>> +             update_tasks_root_domain(cs);
+>
+> ... and this adds it again?
+>
+>> +
+>> +             rcu_read_lock();
+>> +             css_put(&cs->css);
+>> +     }
+>> +     rcu_read_unlock();
+>> +}
+>
+> Best,
+>
+> - Juri
