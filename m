@@ -1,37 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752537AbeBEVk1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 16:40:27 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:51579 "EHLO
+        id S1752551AbeBEVkm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 16:40:42 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:45547 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752297AbeBEVkD (ORCPT
+        with ESMTP id S1752489AbeBEVk3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 16:40:03 -0500
-Date: Mon, 5 Feb 2018 13:28:12 -0800
+        Mon, 5 Feb 2018 16:40:29 -0500
+Date: Mon, 5 Feb 2018 13:28:41 -0800
 From: tip-bot for Mathieu Desnoyers <tipbot@zytor.com>
-Message-ID: <tip-e61938a921a46347d7725badc40ec436ebfff977@git.kernel.org>
-Cc: mpe@ellerman.id.au, tglx@linutronix.de, ghackmann@google.com,
-        boqun.feng@gmail.com, mingo@kernel.org, peterz@infradead.org,
-        parri.andrea@gmail.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        luto@kernel.org, will.deacon@arm.com, mathieu.desnoyers@efficios.com,
-        linux@armlinux.org.uk, avi@scylladb.com, torvalds@linux-foundation.org,
-        paulmck@linux.vnet.ibm.com, arnd@arndb.de, davejwatson@fb.com,
-        paulus@samba.org, sehr@google.com, ahh@google.com,
-        maged.michael@gmail.com, benh@kernel.crashing.org
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, parri.andrea@gmail.com,
-        peterz@infradead.org, mingo@kernel.org, boqun.feng@gmail.com,
-        ghackmann@google.com, mpe@ellerman.id.au, tglx@linutronix.de,
-        paulmck@linux.vnet.ibm.com, torvalds@linux-foundation.org,
-        avi@scylladb.com, linux@armlinux.org.uk,
-        mathieu.desnoyers@efficios.com, will.deacon@arm.com, luto@kernel.org,
-        maged.michael@gmail.com, sehr@google.com, ahh@google.com,
-        davejwatson@fb.com, paulus@samba.org, arnd@arndb.de,
-        benh@kernel.crashing.org
-In-Reply-To: <20180129202020.8515-7-mathieu.desnoyers@efficios.com>
-References: <20180129202020.8515-7-mathieu.desnoyers@efficios.com>
+Message-ID: <tip-ac1ab12a3e6e878274e7107c8c6f326694a1c1f3@git.kernel.org>
+Cc: paulmck@linux.vnet.ibm.com, hpa@zytor.com, tglx@linutronix.de,
+        linux@armlinux.org.uk, paulus@samba.org, parri.andrea@gmail.com,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, sehr@google.com, ahh@google.com,
+        luto@kernel.org, avi@scylladb.com, mathieu.desnoyers@efficios.com,
+        mingo@kernel.org, mpe@ellerman.id.au, will.deacon@arm.com,
+        davejwatson@fb.com, benh@kernel.crashing.org, arnd@arndb.de,
+        ghackmann@google.com, maged.michael@gmail.com, boqun.feng@gmail.com
+Reply-To: hpa@zytor.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de,
+        sehr@google.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
+        torvalds@linux-foundation.org, parri.andrea@gmail.com,
+        paulus@samba.org, linux@armlinux.org.uk, ahh@google.com,
+        avi@scylladb.com, luto@kernel.org, mathieu.desnoyers@efficios.com,
+        arnd@arndb.de, benh@kernel.crashing.org, will.deacon@arm.com,
+        davejwatson@fb.com, mpe@ellerman.id.au, mingo@kernel.org,
+        boqun.feng@gmail.com, maged.michael@gmail.com, ghackmann@google.com
+In-Reply-To: <20180129202020.8515-8-mathieu.desnoyers@efficios.com>
+References: <20180129202020.8515-8-mathieu.desnoyers@efficios.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] locking: Introduce sync_core_before_usermode()
-Git-Commit-ID: e61938a921a46347d7725badc40ec436ebfff977
+Subject: [tip:sched/urgent] lockin/x86: Implement
+ sync_core_before_usermode()
+Git-Commit-ID: ac1ab12a3e6e878274e7107c8c6f326694a1c1f3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -44,22 +44,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e61938a921a46347d7725badc40ec436ebfff977
-Gitweb:     https://git.kernel.org/tip/e61938a921a46347d7725badc40ec436ebfff977
+Commit-ID:  ac1ab12a3e6e878274e7107c8c6f326694a1c1f3
+Gitweb:     https://git.kernel.org/tip/ac1ab12a3e6e878274e7107c8c6f326694a1c1f3
 Author:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-AuthorDate: Mon, 29 Jan 2018 15:20:15 -0500
+AuthorDate: Mon, 29 Jan 2018 15:20:16 -0500
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 5 Feb 2018 21:34:50 +0100
+CommitDate: Mon, 5 Feb 2018 21:34:57 +0100
 
-locking: Introduce sync_core_before_usermode()
+lockin/x86: Implement sync_core_before_usermode()
 
-Introduce an architecture function that ensures the current CPU
-issues a core serializing instruction before returning to usermode.
-
-This is needed for the membarrier "sync_core" command.
-
-Architectures defining the sync_core_before_usermode() static inline
-need to select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE.
+Ensure that a core serializing instruction is issued before returning to
+user-mode. x86 implements return to user-space through sysexit, sysrel,
+and sysretq, which are not core serializing.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Acked-by: Thomas Gleixner <tglx@linutronix.de>
@@ -84,48 +80,56 @@ Cc: Russell King <linux@armlinux.org.uk>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux-api@vger.kernel.org
 Cc: linux-arch@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180129202020.8515-7-mathieu.desnoyers@efficios.com
+Link: http://lkml.kernel.org/r/20180129202020.8515-8-mathieu.desnoyers@efficios.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/sync_core.h | 21 +++++++++++++++++++++
- init/Kconfig              |  3 +++
- 2 files changed, 24 insertions(+)
+ arch/x86/Kconfig                 |  1 +
+ arch/x86/include/asm/sync_core.h | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-diff --git a/include/linux/sync_core.h b/include/linux/sync_core.h
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 423e4b6..31030ad 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -61,6 +61,7 @@ config X86
+ 	select ARCH_HAS_SG_CHAIN
+ 	select ARCH_HAS_STRICT_KERNEL_RWX
+ 	select ARCH_HAS_STRICT_MODULE_RWX
++	select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+ 	select ARCH_HAS_UBSAN_SANITIZE_ALL
+ 	select ARCH_HAS_ZONE_DEVICE		if X86_64
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+diff --git a/arch/x86/include/asm/sync_core.h b/arch/x86/include/asm/sync_core.h
 new file mode 100644
-index 0000000..013da4b
+index 0000000..c67caaf
 --- /dev/null
-+++ b/include/linux/sync_core.h
-@@ -0,0 +1,21 @@
++++ b/arch/x86/include/asm/sync_core.h
+@@ -0,0 +1,28 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_SYNC_CORE_H
-+#define _LINUX_SYNC_CORE_H
++#ifndef _ASM_X86_SYNC_CORE_H
++#define _ASM_X86_SYNC_CORE_H
 +
-+#ifdef CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-+#include <asm/sync_core.h>
-+#else
++#include <linux/preempt.h>
++#include <asm/processor.h>
++#include <asm/cpufeature.h>
++
 +/*
-+ * This is a dummy sync_core_before_usermode() implementation that can be used
-+ * on all architectures which return to user-space through core serializing
-+ * instructions.
-+ * If your architecture returns to user-space through non-core-serializing
-+ * instructions, you need to write your own functions.
++ * Ensure that a core serializing instruction is issued before returning
++ * to user-mode. x86 implements return to user-space through sysexit,
++ * sysrel, and sysretq, which are not core serializing.
 + */
 +static inline void sync_core_before_usermode(void)
 +{
++	/* With PTI, we unconditionally serialize before running user code. */
++	if (static_cpu_has(X86_FEATURE_PTI))
++		return;
++	/*
++	 * Return from interrupt and NMI is done through iret, which is core
++	 * serializing.
++	 */
++	if (in_irq() || in_nmi())
++		return;
++	sync_core();
 +}
-+#endif
 +
-+#endif /* _LINUX_SYNC_CORE_H */
-+
-diff --git a/init/Kconfig b/init/Kconfig
-index 837adcf..535421f 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1918,3 +1918,6 @@ config ASN1
- 	  functions to call on what tags.
- 
- source "kernel/Kconfig.locks"
-+
-+config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-+	bool
++#endif /* _ASM_X86_SYNC_CORE_H */
