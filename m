@@ -1,67 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeBEQjD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 11:39:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48086 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752925AbeBEQiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 11:38:54 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD69217BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AH8x226irGw7X73C1bP/hJ3Wu8VUeyl8ZY2OfYedMhyRtMfqUEoMfbDmKDrhgeVzqkA5OaLox6YcR5Y278AD/yFCmkM=
-MIME-Version: 1.0
-In-Reply-To: <20180205162659.kimgef6dkskc6quq@gmail.com>
-References: <151770009169.7213.12476757146099518628.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151770009703.7213.12036560755602017391.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CAMzpN2jeq+LDajvwSALpmaZKOChNX1uhRbuEJ3v97HyOEsH44A@mail.gmail.com>
- <CAPcyv4gy=Oq5=ZXCvs0mgziwfgEb2p+pE9BJZZP47W+4yrz0Vg@mail.gmail.com>
- <CA+55aFzC03b5VASq3xjLhU4WAA=gwqKNT2i6-9OBPQd-G_AHEA@mail.gmail.com> <20180205162659.kimgef6dkskc6quq@gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Mon, 5 Feb 2018 16:38:33 +0000
-X-Gmail-Original-Message-ID: <CALCETrU4S3owtVF5_zVMxH_dXox6HXBbb-Q3+GzTQ-RU_xqgcw@mail.gmail.com>
-Message-ID: <CALCETrU4S3owtVF5_zVMxH_dXox6HXBbb-Q3+GzTQ-RU_xqgcw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] x86/entry: Clear extra registers beyond syscall
- arguments for 64bit kernels
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Brian Gerst <brgerst@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753257AbeBEQoe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 11:44:34 -0500
+Received: from mx-fe5-210.meituan.com ([103.37.138.210]:60777 "EHLO
+        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753099AbeBEQoY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 11:44:24 -0500
+Authentication-Results: dx-it-mx02.dx.sankuai.com (amavisd-new);
+        dkim=pass (1024-bit key) header.d=meituan.com
+DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com 4B6FA298038D
+From: Wang Long <wanglong19@meituan.com>
+To: tytso@mit.edu, jack@suse.com
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wanglong19@meituan.com
+Subject: [PATCH] jbd2: set to NULL after kmem_cache_destroy
+Date: Mon,  5 Feb 2018 21:39:17 +0800
+Message-Id: <1517837957-1636-1-git-send-email-wanglong19@meituan.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 4:26 PM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Linus Torvalds <torvalds@linux-foundation.org> wrote:
->
->> [...]
->>
->> But as the commit message says, the system call argument registers are
->> also likely to be aggressively clobbered unless used, since the low
->> registers are preferred for code generation (smaller code, and many of
->> them are special anyway in various ways and have forced uses for
->> shifts, function arguments, or just are special in general like %rax).
->>
->> So the actual argument registers tend to not be an issue anyway.
->
+Signed-off-by: Wang Long <wanglong19@meituan.com>
+---
+ fs/jbd2/journal.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
->
-> So I submit that we should probably extend the register clearing/sanitization to
-> R10 and R11 as well, because while they are technically caller-saved and freely
-> clobberable, in practice they don't get clobbered all that often and there might
-> be various code paths into complex system calls where these R10/R11 values survive
-> just fine and can be used in Spectre gadgets.
-
-
-Maybe R11, but we have to be careful, since R11 is used as scratch
-space in a bunch of the asm.  Clearing R10 is mostly useless in the
-syscall path because we'll just unconditionally reload it in
-do_syscall_64().  If we manage to change the way syscall wrappers
-work, then we can think about clearing R10 and maybe even more regs.
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index 93016bb..38dc24c 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -2649,11 +2649,14 @@ static int __init jbd2_journal_init_handle_cache(void)
+ 
+ static void jbd2_journal_destroy_handle_cache(void)
+ {
+-	if (jbd2_handle_cache)
++	if (jbd2_handle_cache) {
+ 		kmem_cache_destroy(jbd2_handle_cache);
+-	if (jbd2_inode_cache)
++		jbd2_handle_cache = NULL;
++	}
++	if (jbd2_inode_cache) {
+ 		kmem_cache_destroy(jbd2_inode_cache);
+-
++		jbd2_inode_cache = NULL;
++	}
+ }
+ 
+ /*
+-- 
+1.8.3.1
