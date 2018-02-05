@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752686AbeBEJPI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 04:15:08 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:65237 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeBEJO5 (ORCPT
+        id S1752740AbeBEJQV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 04:16:21 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:46261 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750962AbeBEJQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 04:14:57 -0500
-X-IronPort-AV: E=Sophos;i="5.44,434,1505804400";
-   d="scan'208";a="8485440"
-Subject: Re: [PATCH] video: fbdev: convert to use GPIO descriptors
+        Mon, 5 Feb 2018 04:16:19 -0500
+X-IronPort-AV: E=Sophos;i="5.46,464,1511852400";
+   d="scan'208";a="11065128"
+Subject: Re: [RESEND][PATCH] video: fbdev: atmel_lcdfb: convert to use GPIO
+ descriptors
 To: Ludovic Desroches <ludovic.desroches@microchip.com>,
         <linux-arm-kernel@lists.infradead.org>, <linux-fbdev@vger.kernel.org>,
         <dri-devel@lists.freedesktop.org>
 CC: <alexandre.belloni@free-electrons.com>, <linux-kernel@vger.kernel.org>,
         <linus.walleij@linaro.org>, <b.zolnierkie@samsung.com>
-References: <20180205082335.5727-1-ludovic.desroches@microchip.com>
+References: <20180205084755.6011-1-ludovic.desroches@microchip.com>
 From: Nicolas Ferre <nicolas.ferre@microchip.com>
 Organization: microchip
-Message-ID: <ac7174c4-e213-1f14-4cf7-1701c0f8b452@microchip.com>
-Date: Mon, 5 Feb 2018 10:15:21 +0100
+Message-ID: <eb7bfe44-b197-bc02-a3fc-f91f040d97ec@microchip.com>
+Date: Mon, 5 Feb 2018 10:16:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180205082335.5727-1-ludovic.desroches@microchip.com>
+In-Reply-To: <20180205084755.6011-1-ludovic.desroches@microchip.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -31,14 +32,14 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 at 09:23, Ludovic Desroches wrote:
+On 05/02/2018 at 09:47, Ludovic Desroches wrote:
 > Use GPIO descriptors instead of relying on the old method.
 > 
 > Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
 Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Thanks!
+On this resent patch as well ;-)
 
 > ---
 >  drivers/video/fbdev/atmel_lcdfb.c | 30 ++++++++++++------------------
