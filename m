@@ -1,290 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752641AbeBEJsI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 04:48:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39426 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752779AbeBEJru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 04:47:50 -0500
-Date: Mon, 5 Feb 2018 10:47:42 +0100
-From: Andrew Jones <drjones@redhat.com>
-To: Christoffer Dall <christoffer.dall@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jayachandran C <jnair@caviumnetworks.com>,
-        Jon Masters <jcm@redhat.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH v3 08/18] arm/arm64: KVM: Add PSCI version selection API
-Message-ID: <20180205094742.dxcejlvmpndwcupg@hawk.localdomain>
-References: <20180201114657.7323-1-marc.zyngier@arm.com>
- <20180201114657.7323-9-marc.zyngier@arm.com>
- <20180202201706.dj6jmff7lh7bleze@kamzik.brq.redhat.com>
- <20180203115932.24c4bcfb@why.wild-wind.fr.eu.org>
- <20180204123701.GK21802@cbox>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180204123701.GK21802@cbox>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+        id S1752734AbeBEJuJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 04:50:09 -0500
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:36632 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752476AbeBEJuA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 04:50:00 -0500
+X-Google-Smtp-Source: AH8x227w1MMsQyE3EShqO8IFgs3LanSRPFAx/KpmW4AEdyKQX8wPkiJMzMEGXWGXb49o7mftEViIbg==
+Message-ID: <1517824196.3153.41.camel@baylibre.com>
+Subject: Re: [PATCH 17/19] clk: meson: rework meson8b cpu clock
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Date: Mon, 05 Feb 2018 10:49:56 +0100
+In-Reply-To: <CAFBinCCpfpJQVkKvuBgS5T_AB+LNC3xXMCAUVYy38h=0Ge39Sg@mail.gmail.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com>
+         <20180131180945.18025-18-jbrunet@baylibre.com>
+         <CAFBinCCpfpJQVkKvuBgS5T_AB+LNC3xXMCAUVYy38h=0Ge39Sg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 04, 2018 at 01:37:01PM +0100, Christoffer Dall wrote:
-> On Sat, Feb 03, 2018 at 11:59:32AM +0000, Marc Zyngier wrote:
-> > On Fri, 2 Feb 2018 21:17:06 +0100
-> > Andrew Jones <drjones@redhat.com> wrote:
-> > 
-> > > On Thu, Feb 01, 2018 at 11:46:47AM +0000, Marc Zyngier wrote:
-> > > > Although we've implemented PSCI 1.0 and 1.1, nothing can select them
-> > > > Since all the new PSCI versions are backward compatible, we decide to
-> > > > default to the latest version of the PSCI implementation. This is no
-> > > > different from doing a firmware upgrade on KVM.
-> > > > 
-> > > > But in order to give a chance to hypothetical badly implemented guests
-> > > > that would have a fit by discovering something other than PSCI 0.2,
-> > > > let's provide a new API that allows userspace to pick one particular
-> > > > version of the API.
-> > > > 
-> > > > This is implemented as a new class of "firmware" registers, where
-> > > > we expose the PSCI version. This allows the PSCI version to be
-> > > > save/restored as part of a guest migration, and also set to
-> > > > any supported version if the guest requires it.
-> > > > 
-> > > > Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> > > > ---
-> > > >  Documentation/virtual/kvm/api.txt      |  3 +-
-> > > >  Documentation/virtual/kvm/arm/psci.txt | 30 +++++++++++++++
-> > > >  arch/arm/include/asm/kvm_host.h        |  3 ++
-> > > >  arch/arm/include/uapi/asm/kvm.h        |  6 +++
-> > > >  arch/arm/kvm/guest.c                   | 13 +++++++
-> > > >  arch/arm64/include/asm/kvm_host.h      |  3 ++
-> > > >  arch/arm64/include/uapi/asm/kvm.h      |  6 +++
-> > > >  arch/arm64/kvm/guest.c                 | 14 ++++++-
-> > > >  include/kvm/arm_psci.h                 |  9 +++++
-> > > >  virt/kvm/arm/psci.c                    | 68 +++++++++++++++++++++++++++++++++-
-> > > >  10 files changed, 151 insertions(+), 4 deletions(-)
-> > > >  create mode 100644 Documentation/virtual/kvm/arm/psci.txt
-> > > > 
-> > > > diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-> > > > index 57d3ee9e4bde..334905202141 100644
-> > > > --- a/Documentation/virtual/kvm/api.txt
-> > > > +++ b/Documentation/virtual/kvm/api.txt
-> > > > @@ -2493,7 +2493,8 @@ Possible features:
-> > > >  	  and execute guest code when KVM_RUN is called.
-> > > >  	- KVM_ARM_VCPU_EL1_32BIT: Starts the CPU in a 32bit mode.
-> > > >  	  Depends on KVM_CAP_ARM_EL1_32BIT (arm64 only).
-> > > > -	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 for the CPU.
-> > > > +	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 (or a future revision
-> > > > +          backward compatible with v0.2) for the CPU.
-> > > >  	  Depends on KVM_CAP_ARM_PSCI_0_2.
-> > > >  	- KVM_ARM_VCPU_PMU_V3: Emulate PMUv3 for the CPU.
-> > > >  	  Depends on KVM_CAP_ARM_PMU_V3.
-> > > > diff --git a/Documentation/virtual/kvm/arm/psci.txt b/Documentation/virtual/kvm/arm/psci.txt
-> > > > new file mode 100644
-> > > > index 000000000000..aafdab887b04
-> > > > --- /dev/null
-> > > > +++ b/Documentation/virtual/kvm/arm/psci.txt
-> > > > @@ -0,0 +1,30 @@
-> > > > +KVM implements the PSCI (Power State Coordination Interface)
-> > > > +specification in order to provide services such as CPU on/off, reset
-> > > > +and power-off to the guest.
-> > > > +
-> > > > +The PSCI specification is regularly updated to provide new features,
-> > > > +and KVM implements these updates if they make sense from a virtualization
-> > > > +point of view.
-> > > > +
-> > > > +This means that a guest booted on two different versions of KVM can
-> > > > +observe two different "firmware" revisions. This could cause issues if
-> > > > +a given guest is tied to a particular PSCI revision (unlikely), or if
-> > > > +a migration causes a different PSCI version to be exposed out of the
-> > > > +blue to an unsuspecting guest.
-> > > > +
-> > > > +In order to remedy this situation, KVM exposes a set of "firmware
-> > > > +pseudo-registers" that can be manipulated using the GET/SET_ONE_REG
-> > > > +interface. These registers can be saved/restored by userspace, and set
-> > > > +to a convenient value if required.
-> > > > +
-> > > > +The following register is defined:
-> > > > +
-> > > > +* KVM_REG_ARM_PSCI_VERSION:
-> > > > +
-> > > > +  - Only valid if the vcpu has the KVM_ARM_VCPU_PSCI_0_2 feature set
-> > > > +    (and thus has already been initialized)
-> > > > +  - Returns the current PSCI version on GET_ONE_REG (defaulting to the
-> > > > +    highest PSCI version implemented by KVM and compatible with v0.2)
-> > > > +  - Allows any PSCI version implemented by KVM and compatible with
-> > > > +    v0.2 to be set with SET_ONE_REG
-> > > > +  - Affects the whole VM (even if the register view is per-vcpu)  
-> > > 
-> > 
-> > Hi Drew,
-> > 
-> > Thanks for looking into this, and for the exhaustive data.
-> > 
-> > > 
-> > > I've put some more thought and experimentation into this. I think we
-> > > should change to a vcpu feature bit. The feature bit would be used to
-> > > force compat mode, v0.2, so KVM would still enable the new PSCI
-> > > version by default. Below are two tables describing why I think we
-> > > should switch to something other than a new sysreg, and below those
-> > > tables are notes as to why I think we should use a vcpu feature. The
-> > > asterisks in the tables point out behaviors that aren't what we want.
-> > > While both tables have an asterisk, the sysreg approach's issue is
-> > > bug. The vcpu feature approach's issue is risk incurred from an
-> > > unsupported migration, albeit one that is hard to detect without a
-> > > new machine type.
-> > > 
-> > >  +-----------------------------------------------------------------------+
-> > >  |                          sysreg approach                              |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | migration        | userspace | works |             notes              |
-> > >  |                  |  change   |       |                                |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | new    -> new    |   NO      |  YES  | Expected                       |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | old    -> new    |   NO      |  YES  | PSCI 1.0 is backward compatible|
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | new    -> old    |   NO      |  NO   | Migration fails due to the new |
-> > >  |                  |           |       | sysreg. Migration shouldn't    |
-> > >  |                  |           |       | have been attempted, but no    |
-> > >  |                  |           |       | way to know without a new      |
-> > >  |                  |           |       | machine type.                  |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | compat -> old    |   YES     |  NO*  | Even when setting PSCI version |
-> > >  |                  |           |       | to 0.2, we add a new sysreg,   |
-> > >  |                  |           |       | so migration will still fail.  |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | old    -> compat |   YES     |  YES  | It's OK for the destination to |
-> > >  |                  |           |       | support more sysregs than the  |
-> > >  |                  |           |       | source sends.                  |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  
-> > >  
-> > >  +-----------------------------------------------------------------------+
-> > >  |                        vcpu feature approach                          |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | migration        | userspace | works |             notes              |
-> > >  |                  |  change   |       |                                |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | new    -> new    |   NO      |  YES  | Expected                       |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | old    -> new    |   NO      |  YES  | PSCI 1.0 is backward compatible|
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | new    -> old    |   NO      |  YES* | Migrates, but it's not safe    |
-> > >  |                  |           |       | for the guest kernel, and no   |
-> > >  |                  |           |       | way to know without a new      |
-> > >  |                  |           |       | machine type.                  |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | compat -> old    |   YES     |  YES  | Expected                       |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > >  | old    -> compat |   YES     |  YES  | Expected                       |
-> > >  +------------------+-----------+-------+--------------------------------+
-> > > 
-> > > 
-> > > Notes as to why the vcpu feature approach was selected:
-> > > 
-> > > 1) While this is VM state, and thus a VM control would be a more natural
-> > >    fit, a new vcpu feature bit would be much less new code. We also
-> > >    already have a PSCI vcpu feature bit, so a new one will actually fit
-> > >    quite well.
-> > > 
-> > > 2) No new state needs to be migrated, as we already migrate the feature
-> > >    bitmap. Unlike, KVM, QEMU doesn't track the max number of features,
-> > >    so bumping it one more in KVM doesn't require a QEMU change.
-> > > 
-> > > 
-> > > If we switch to a vcpu feature bit, then I think this patch can be
-> > > replaced with something like this
-> > 
-> > A couple of remarks:
-> > 
-> > - My worry with this feature bit  is that it is a point fix, and it
-> >   doesn't scale. Come PSCI 1.2 and WORKAROUND_2, what do we do? Add
-> >   another feature bit that says "force to 1.0"? I'd really like
-> >   something we can live with in the long run, and "KVM as firmware"
-> >   needs to be able to evolve without requiring a new userspace
-> >   interface each time we rev it.
-> > 
-> > - The "compat->old" entry in your sysreg table is not quite fair. In
-> >   the feature table, you teach userspace about the new feature bit. You
-> >   could just as well teach userspace about the new sysreg. Yes, things
-> >   may be different in QEMU, but that's not what we're talking about
-> >   here.
-> > 
-> > - Allowing a guest to migrate in an unsafe way seems worse than failing
-> >   a migration unexpectedly. Or at least not any better.
-> > 
-> > To be clear: I'm not dismissing the idea at all, but I want to make sure
-> > we're not cornering ourselves into an uncomfortable place.
-> > 
-> > Christoffer, Peter, what are your thoughts on this?
-> > 
+On Sat, 2018-02-03 at 19:46 +0100, Martin Blumenstingl wrote:
+> Hi Jerome,
 > 
-> Taking a step back, the only reasons why this patch isn't simply
-> enabling PSCI v1.0 by default (without any selection method) are that we
-> (1) want to support guests that complain about PSCI_VERSION != 0.2
-> (which isn't completely outside the realm of a reasonable implementation
-> if you read the description of PSCI_VERSION in the 0.2 spec) and (2) to
-> provide migration support for guests that call
-> PSCI_1_0_FN_PSCI_FEATURES.
+> On Wed, Jan 31, 2018 at 7:09 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > Instead of migrating meson cpu_clk to clk_regmap, like the other meson
+> > clock drivers, we take advantage of the massive rework to get rid of it
+> > completely, and solve (the first part) of the related FIXME notice.
+> > 
+> > As pointed out in the code comments, the cpu_clk should be modeled with
+> > dividers and muxes it is made of, instead of one big composite clock.
+> > 
+> > The other issue pointed out in the FIXME note, around cpu notifier,
+> > remains unsolved, until CCR comes up.
+> > 
+> > AFAIK, the cpu_clk was not working correctly to enable dvfs on meson8b.
+> > This change being just a re-implementation, hopefully cleaner, of the
+> > cpu_clk, the problem remains unsolved as well.
 > 
-> If we ignore (1) because we don't know of any guests where this is an
-> issue, then it's all about (2), migration from "new -> old".
+> I can confirm that I have seen system lock-ups when using the cpu_clk
+> implementation
+> your patch doesn't fully solve this (I still get some lock-ups), but I
+> still think it's a step forward!
 > 
-> As far as I can tell, the use case we are worried about here is updating
-> the kernel (and not QEMU) on half of your data center and then trying to
-> migrate from the upgraded kernel machine to a legacy (and potentially
-> variant 2 vulnerable) machine.  For this specific move from PSCI 0.2 to
-> 1.0 with the included mitigation, I don't really think this is an
-> important use case to support.
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > 
-> In terms of the more general approach to "KVM firmware upgrades" and
-> migration, I think something like the proposed FW register interface
-> here should work, but I'm concerned about the lack of opportunity from
-> userspace to predict a migration failure.  But I don't understand why
-> this requires a new machine type?  Why can't we simply provide a KVM
-> capability that libvirt etc. can query for?
+> I have some minor comments below, with these addressed:
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Right, just exposing (or not) a property (which will become a libvirt
-capability) should work for the management layers to determine if a
-migration will fail, and then not attempt it. We just tend to avoid
-allowing new properties from appearing in old machine types, and thus
-new machine types would be the only ones exposing it. I'm not sure if
-we need to be so strict though.
+Thanks for reviewing this Martin.
+I happy that changing the implementation of the cpu clock improve the situation.
+However, thinking about it, I'm not really confortable upstreaming something
+that we know is not stable yet, especially when it comes to the cpu clock.
+
+To start, and until when get a stable solution, I would prefer to put the whole
+thing in read-only mode, and removing the notifier. The RW WIP is available here
+on the ML, so nothing is lost.
+
+As a second step to progress on getting this clock stable, we could try to keep
+in the PLL Read-Only, but have the dividers in RW w/o a notifier : The goal
+would be to determine if we need to park the clock on xtal while changing the
+dividers. If we do, the notifier should probably be on SCALE_OUT_SEL instead of
+SYS_PLL.
+
+This should already allow to adjust the clock quite lot, maybe it would be an
+interesting first step for a working dvfs on meson8.
+
+Once we get this stable, we'll be able to throw the sys_pll in the mix.
+
+Would you agree with this approach Martin ?
 
 > 
-> Also, is it generally true that we can't expose any additional system
-> registers from KVM without breaking migration and we don't have any
-> method to deal with that in userspace and upper layers?  If that's true,
-> that's a bigger problem in general and something we should work on
-> trying to solve.  If it's not true, then there should be some method to
-> deal with the FW register already (like capabilities).
 
-Capabilities can certainly be added for anything that need them, including
-a new sysreg. QEMU just currently manages the sysregs as an array,
-without concern for which ones are old and which ones are new. Of course
-that can be changed. It may not even be that difficult to do, we just
-need to filter registers before adding the array to the migration
-stream.
+[...]
+
+> > +struct clk_regmap meson8b_cpu_div = {
+> > +       .data = &(struct clk_regmap_div_data){
+> > +               .offset =  HHI_SYS_CPU_CLK_CNTL1,
+> > +               .shift = 20,
+> > +               .width = 9,
+> > +               .table = cpu_div_table,
+> > +               .flags = CLK_DIVIDER_ALLOW_ZERO,
+> 
+> looking at the Amlogic GPL kernel sources: [0]
+> they allow programming this divider with 0, however it seems that it's
+> not allowed to select this in the mux below
+> during my tests this seems to have worked fine because the first
+> parent of the mux below is cpu_in - which has the same rate as this
+> divider with register value 0. in this scenario the common clock
+> framework chooses the parent it finds first (cpu_in in this case -
+> which is fine)
+
+(It was a while ago but I think) I put this flag to avoid warning on boot
+because the register value could be 0 by default, when the clock is not used.
+
+When the clock is set by the CCF, it won't ever put 0 because zero is not part
+of the divider table provided with this clock. So, as soon as a set_rate() call
+reaches this clock, the zero value will go away and won't ever come back.
 
 > 
-> Given the urgency of adding mitigation towards variant 2 which is the
-> driver for this work, I think we should drop the compat functionality in
-> this series and work this out later on if needed.  I think we can just
-> tweak the previous patch to enable PSCI 1.0 by default and drop this
-> patch for the current merge window.
+> > +       },
+> > +       .hw.init = &(struct clk_init_data){
+> > +               .name = "cpu_div",
+> 
+> I suggest to call this "cpu_scale_div", so it matches the value we
+> find in the public S805 datasheet on page 31: [1] (the same goes for
+> the variable name above and the CLKID #define)
 
-I agree. Without planning to wait for the userspace changes, then I
-guess we don't need to wait for a decision on how to do them yet either.
+No problem, will do.
 
-Thanks,
-drew
+> 
+> > +               .ops = &clk_regmap_divider_ops,
+> > +               .parent_names = (const char *[]){ "cpu_in_sel" },
+> > +               .num_parents = 1,
+> > +               .flags = CLK_SET_RATE_PARENT,
+> > +       },
+> > +};
+> > +
+> > +struct clk_regmap meson8b_cpu_out_sel = {
+> > +       .data = &(struct clk_regmap_mux_data){
+> > +               .offset = HHI_SYS_CPU_CLK_CNTL0,
+> > +               .mask = 0x3,
+> > +               .shift = 2,
+> > +       },
+> > +       .hw.init = &(struct clk_init_data){
+> > +               .name = "cpu_out_sel",
+> 
+> I suggest to call this "cpu_scale_out_sel", so it matches the value we
+> find in the public S805 datasheet on page 34: [1] (the same goes for
+> the variable name above and the CLKID #define)
+
+Sure.
