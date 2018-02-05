@@ -1,97 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753311AbeBEQXy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 11:23:54 -0500
-Received: from mga04.intel.com ([192.55.52.120]:24776 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753063AbeBEQXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 11:23:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,465,1511856000";
-   d="scan'208";a="198749455"
-Message-ID: <1517847823.22495.41.camel@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] platform/x86: intel-vbtn: Remove redundant
- inclusions
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Platform Driver <platform-driver-x86@vger.kernel.org>,
-        AceLan Kao <acelan.kao@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Mon, 05 Feb 2018 18:23:43 +0200
-In-Reply-To: <20180131190432.GF8676@fury>
-References: <20180131175407.18301-1-andriy.shevchenko@linux.intel.com>
-         <20180131185051.GC8676@fury>
-         <CAHp75VdFh06kL=4fpoKogyX6K08SyX1zkJOjzmVcGqUWFA+2Ew@mail.gmail.com>
-         <20180131190432.GF8676@fury>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.3-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1753126AbeBEQZb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 11:25:31 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:58221 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752972AbeBEQZW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 11:25:22 -0500
+Date: Mon, 5 Feb 2018 17:25:20 +0100
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: Jingoo Han <jingoohan1@gmail.com>
+Cc: "'Andy Shevchenko'" <andy.shevchenko@gmail.com>,
+        "'Kishon Vijay Abraham I'" <kishon@ti.com>,
+        "'Joao Pinto'" <Joao.Pinto@synopsys.com>,
+        "'Lorenzo Pieralisi'" <lorenzo.pieralisi@arm.com>,
+        "'Bjorn Helgaas'" <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] PCI: designware-ep: Return an error when requesting
+ a too large BAR size
+Message-ID: <20180205162519.GA3044@axis.com>
+References: <20180201161119.3852-1-niklas.cassel@axis.com>
+ <20180201161119.3852-4-niklas.cassel@axis.com>
+ <CAHp75VdX5=kzKFunM-Kbw7KOBt3+xik_pxhX1EZdO9eA3QHrBQ@mail.gmail.com>
+ <000601d39b8e$f58a76f0$e09f64d0$@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000601d39b8e$f58a76f0$e09f64d0$@gmail.com>
+User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-01-31 at 11:04 -0800, Darren Hart wrote:
-> On Wed, Jan 31, 2018 at 08:59:20PM +0200, Andy Shevchenko wrote:
-> > On Wed, Jan 31, 2018 at 8:50 PM, Darren Hart <dvhart@infradead.org>
+On Thu, Feb 01, 2018 at 02:00:40PM -0500, Jingoo Han wrote:
+> On Thursday, February 1, 2018 1:58 PM, Andy Shevchenko wrote:
+> > 
+> > On Thu, Feb 1, 2018 at 6:11 PM, Niklas Cassel <niklas.cassel@axis.com>
 > > wrote:
-> > > On Wed, Jan 31, 2018 at 07:54:06PM +0200, Andy Shevchenko wrote:
-> > > > Some headers are not needed since the driver can be built as
-> > > > module.
-> > > > Remove them.
-> > > 
-> > > Removing init because it's included by module.h, and removing
-> > > acpi_bus.h
-> > > because it's included by acpi.h - but not because it can be built
-> > > as a
-> > > module - right?  Just checking, the wording in the commit msg
-> > > seemed odd
-> > > to me.
 > > 
-> > Correct. I'll rephrase this in place.
-
-
-My gosh, I forgot to do this and can't rebase anymore. Sorry.
-
-> > > These removals seem appropriate to me, but so we have it recorded
-> > > here -
-> > > in general, including headers that you explicitly make use of is
-> > > good
-> > > practice, and not depending on others to include them. But in this
-> > > case,
-> > > the implicit includes are reasonable expectations as they are
-> > > tightly
-> > > coupled with the parent include.
+> > include/linux/sizes.h:
 > > 
-> > There are two classes of headers (at least?):
-> > - let say "user-visible" ones, which drivers usually include like
-> > you
-> > pointed above
-> > - low level ones, which in most cases are not supposed to be
-> > included directly
+> > +SZ_4G  0x100000000ULL
 > > 
-> > So, for first class I agree with you, and acpi_bus.h in this case
-> > can
-> > be considered as an example of second class.
+> > > +       if (size > 0x100000000ULL) {
+> > 
+> > #include <linux/sizes.h>
+> > 
+> > if (size > SZ_4G) {
 > 
-> Agreed, acpi_bus.h is tightly coupled with acpi.h. The practice I've
-> seen from others and want to discourage / avoid is including acpi.h
-> and
-> then deleting ... say...  spinlock.h because somewhere somehow acpi.h
-> also pulls it in. They are not tightly coupled conceptually, so
-> spinlock.h should remain in the include list if the file uses
-> spinlocks
-> directly. I think we're in violent agreement here :-)
+> I like this one for the readability.
+> Thank you.
+> 
 
-It's a problem of header organization I think. AFAIK Plan 9 has an idea
-that each header is independent, and each C module has to include
-headers in appropriate order. (Always trade off between flexibility and
-strict hierarchy).
+I liked it too, however both variants
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+if (size > 0x100000000ULL) {
+
+if (size > SZ_4G) {
+
+result in:
+
+drivers/pci/dwc/pcie-designware-ep.c:131:11: warning:
+  comparison is always false due to limited range of data type [-Wtype-limits]
+
+when compiling with W=1 on a platform with 32-bit size_t.
+
+
+The annoying thing here is that a BAR can be 64-bit,
+yet the parameter size is defined as a size_t,
+so the error will only show on 32-bit and not on 64-bit.
+
+What do you think about:
+
+if (upper_32_bits(size)) {
+	dev_err(pci->dev, "can't handle BAR larger than 4GB\n");
+	return -EINVAL;
+}
+
+That should compile without warnings for both
+32-bit size_t and 64-bit size_t.
+
+
+Regards,
+Niklas
