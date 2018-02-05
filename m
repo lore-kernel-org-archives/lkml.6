@@ -1,69 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753189AbeBEOQF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 09:16:05 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51096 "EHLO
+        id S1753203AbeBEOQR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:16:17 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51108 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753172AbeBEOPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:15:55 -0500
-Date: Mon, 5 Feb 2018 14:15:39 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: efault@gmx.de, linux-kernel@vger.kernel.org,
-        alexander.levin@verizon.com, tglx@linutronix.de, mingo@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: Runqueue spinlock recursion on arm64 v4.15
-Message-ID: <20180205141538.4l3nbdmkejys7ok4@lakrids.cambridge.arm.com>
-References: <20180202192704.nqwjsthl3agszhzt@lakrids.cambridge.arm.com>
- <20180202195506.GP2269@hirez.programming.kicks-ass.net>
- <20180202220726.23d4ljxxdysafbxd@salmiak>
- <20180205133600.etr32unq6amsa6af@lakrids.cambridge.arm.com>
- <20180205140201.GY2269@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180205140201.GY2269@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1752933AbeBEOQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 09:16:04 -0500
+From: Will Deacon <will.deacon@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH] nospec: Move array_index_nospec parameter checking into separate macro
+Date: Mon,  5 Feb 2018 14:16:06 +0000
+Message-Id: <1517840166-15399-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 03:02:01PM +0100, Peter Zijlstra wrote:
-> On Mon, Feb 05, 2018 at 01:36:00PM +0000, Mark Rutland wrote:
-> > On Fri, Feb 02, 2018 at 10:07:26PM +0000, Mark Rutland wrote:
-> > > On Fri, Feb 02, 2018 at 08:55:06PM +0100, Peter Zijlstra wrote:
-> > > > On Fri, Feb 02, 2018 at 07:27:04PM +0000, Mark Rutland wrote:
-> > > > > ... in some cases, owner_cpu is -1, so I guess we're racing with an
-> > > > > unlock. I only ever see this on the runqueue locks in wake up functions.
-> > > > 
-> > > > So runqueue locks are special in that the owner changes over a contex
-> > > > switch, maybe something goes funny there?
-> > > 
-> > > Aha! I think that's it!
-> > > 
-> > > In finish_lock_switch() we do:
-> > > 
-> > > 	smp_store_release(&prev->on_cpu, 0);
-> > > 	...
-> > > 	rq->lock.owner = current;
-> > > 
-> > > As soon as we update prev->on_cpu, prev can be scheduled on another CPU, and
-> > > can thus see a stale value for rq->lock.owner (e.g. if it tries to wake up
-> > > another task on that rq).
-> > 
-> > I hacked in a forced vCPU preemption between the two using a sled of WFE
-> > instructions, and now I can trigger the problem in seconds rather than
-> > hours.
-> > 
-> > With the patch below applied, things seem to fine so far.
-> > 
-> > So I'm pretty sure this is it. I'll clean up the patch text and resend
-> > that in a bit.
-> 
-> Also try and send it against an up-to-date scheduler tree, we just
-> moved some stuff around just about there.
+For architectures providing their own implementation of
+array_index_mask_nospec in asm/barrier.h, attempting to use WARN_ONCE to
+complain about out-of-range parameters using WARN_ON results in a mess
+of mutually-dependent include files.
 
-Ah, will do. I guess I should base on TIP sched/urgent?
+Rather than unpick the dependencies, simply have the core code in nospec.h
+perform the checking for us.
 
-Thanks,
-Mark.
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ include/linux/nospec.h | 36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+index b99bced39ac2..fbc98e2c8228 100644
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -20,20 +20,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
+ 						    unsigned long size)
+ {
+ 	/*
+-	 * Warn developers about inappropriate array_index_nospec() usage.
+-	 *
+-	 * Even if the CPU speculates past the WARN_ONCE branch, the
+-	 * sign bit of @index is taken into account when generating the
+-	 * mask.
+-	 *
+-	 * This warning is compiled out when the compiler can infer that
+-	 * @index and @size are less than LONG_MAX.
+-	 */
+-	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
+-			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
+-		return 0;
+-
+-	/*
+ 	 * Always calculate and emit the mask even if the compiler
+ 	 * thinks the mask is not needed. The compiler does not take
+ 	 * into account the value of @index under speculation.
+@@ -44,6 +30,26 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
+ #endif
+ 
+ /*
++ * Warn developers about inappropriate array_index_nospec() usage.
++ *
++ * Even if the CPU speculates past the WARN_ONCE branch, the
++ * sign bit of @index is taken into account when generating the
++ * mask.
++ *
++ * This warning is compiled out when the compiler can infer that
++ * @index and @size are less than LONG_MAX.
++ */
++#define array_index_mask_nospec_check(index, size)				\
++({										\
++	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
++	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
++		_mask = 0;							\
++	else									\
++		_mask = array_index_mask_nospec(index, size);			\
++	_mask;									\
++})
++
++/*
+  * array_index_nospec - sanitize an array index after a bounds check
+  *
+  * For a code sequence like:
+@@ -61,7 +67,7 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
+ ({									\
+ 	typeof(index) _i = (index);					\
+ 	typeof(size) _s = (size);					\
+-	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
++	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
+ 									\
+ 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
+ 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
+-- 
+2.1.4
