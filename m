@@ -1,50 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224VOqNFfVFQ8eGHWp4rI+9BZZ+dH3t7AvOU5wAmhAFSeOX00y/qCK+oUhgpzPQRwUthVv/a
-ARC-Seal: i=1; a=rsa-sha256; t=1517855057; cv=none;
-        d=google.com; s=arc-20160816;
-        b=NgsZG06rEWbN8XEzs1AaDqa/8SDl1C5FaefML4zE308rpEJEhQJX6FlY/KwCNgC79n
-         U1Nkjb/9U9QO/4uL2v6wlqdLKPG6gXxNC5cw6BWLiFe5f1SvxDo/G84twtk/a7ExVMQs
-         sA4vZYdAFk/fPNO5EHOLszVAHRahCi6Ldx2TYIthhv4XiursAfXit6R1Knu0W0NP4cr4
-         raTrqq441FdT+k2AXDAlH8VX+JfbzVle46mp84pM9RSzjAOWdRSAY/tbp5U4FRuBooJq
-         AAjFfHzL1Ak7Au3wraEZqDOZgW4MhNxki+KYLdg5gDuYvWUA5ePkMiJ1W67PBUrrIbUE
-         Wr4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=t+ldpO8OvW/VkJ0TPkCxSogMPH8nsZqZlGLL4bslJWw=;
-        b=HsEUPJG2nTbOqJi6Q69mHJAKuNZXMjh5H0/YSFoxV+PW87G2LMhRrKwRAGKTXB/k5k
-         jTLgq+1vpCprgmzf8nYjgXr/k9E4hDiUrKPYpxvcw5lXfgfYBXKAUYm9pZk/e2Fi+dAF
-         usRCIXKBCmQIYq8IkcO1DK+/p4n3hnFHqtypm+Hq0WVvTJjOPfFNVNNTisCkmCEoGOaj
-         kRtR0Zsw72UaakgZOtZNBc7o1O/7+crEWlhD8EQJMe1fYYNlmAbHgx430qjrtBvZcEe0
-         8bwlHEPKg8IIDtIW7kXKfiC/V7MvKTInpYND0GlPlF47AcbtX/F2mndlPlS1P93syH/G
-         T/0Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3071467-1517855055-2-8003418041851901956
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517855054; b=qppUdpi4bP87cqf8E9QYfojm7UD02zpJxaCjhuz1G/XRebu
+    cmnaZvhIK+k/0hxGRfDJmVI0g7gq9Qu4stEnjVmdZ7pVC/h3DpaNPDapAvPDqhLa
+    AF/hPMw3yRelZhVTe+rJdUo+vlTRX49ZFED9mB2SUIR7QbmX5ITD5Qm/N6GYyYXO
+    StjT8KPS5QOUvYLYLdpGCVKXIETdjxXU1mQgjZc+wqHxg2BgbBfzU8iT8yoCUjwM
+    g6Ptnh73WLE88x7b1PP9h8fDvoMTZijZHQGq3PVwnt6uKvkKUKfcRLn8LFsatAcA
+    HbiLLr0AJD1sVVCBSxxnKSt2DP0uPVvcoIYZQ0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517855054; bh=Ub/IuJEG3pb4bS3kjVNhMHqttz
+    babDsjadqO3ccTYXk=; b=nWAIao0yHjzEVzedFq+dDgp658b1glEXYm5GimP8zD
+    2v+TQXOutVsTd8zq0vjCX3KeASBHAtl9SdmUgQvG0tr3Wvl7NTnYPIUeRd85xWH4
+    KcT3J0O87KVOPDKXTak9AyPZhN64b39NY+x5PJnM7q0t7rO4Zke9b9/3lkkODaX4
+    pkEaFFMLkOFQMibN47u0JVHQ3Yty3EOPFnlr+s2xnrG7twRW2CivW84mFvtMyA2d
+    W/p4n6mah5md9y2Gi2ot1GGO8eKI1w4oz9RiCHdRv86m8lX/qHtAIti6TDv/YVao
+    uDB7qMcnem9FyjQq3X23EvPI05v1cavC1A8el4/JWpgw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753506AbeBESYL (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Feb 2018 13:24:11 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51268 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753499AbeBESYE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:24:04 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: [PATCH 4.14 35/64] x86/asm: Move status from thread_struct to thread_info
-Date: Mon,  5 Feb 2018 10:22:54 -0800
-Message-Id: <20180205182140.021211346@linuxfoundation.org>
+        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, gnomes@lxorguk.ukuu.org.uk,
+        ak@linux.intel.com, ashok.raj@intel.com, dave.hansen@intel.com,
+        karahmed@amazon.de, arjan@linux.intel.com,
+        torvalds@linux-foundation.org, peterz@infradead.org, bp@alien8.de,
+        pbonzini@redhat.com, tim.c.chen@linux.intel.com,
+        gregkh@linux-foundation.org
+Subject: [PATCH 4.14 08/64] x86/cpufeatures: Add CPUID_7_EDX CPUID leaf
+Date: Mon,  5 Feb 2018 10:22:27 -0800
+Message-Id: <20180205182138.910331112@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586384640420219?=
-X-GMAIL-MSGID: =?utf-8?q?1591586384640420219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,170 +83,146 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Lutomirski luto@kernel.org
+From: David Woodhouse dwmw@amazon.co.uk
 
-commit 37a8f7c38339b22b69876d6f5a0ab851565284e3
+commit 95ca0ee8636059ea2800dfbac9ecac6212d6b38f
 
-The TS_COMPAT bit is very hot and is accessed from code paths that mostly
-also touch thread_info::flags.  Move it into struct thread_info to improve
-cache locality.
+This is a pure feature bits leaf. There are two AVX512 feature bits in it
+already which were handled as scattered bits, and three more from this leaf
+are going to be added for speculation control features.
 
-The only reason it was in thread_struct is that there was a brief period
-during which arch-specific fields were not allowed in struct thread_info.
-
-Linus suggested further changing:
-
-  ti->status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
-
-to:
-
-  if (unlikely(ti->status & (TS_COMPAT|TS_I386_REGS_POKED)))
-          ti->status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
-
-on the theory that frequently dirtying the cacheline even in pure 64-bit
-code that never needs to modify status hurts performance.  That could be a
-reasonable followup patch, but I suspect it matters less on top of this
-patch.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
-Link: https://lkml.kernel.org/r/03148bcc1b217100e6e8ecf6a5468c45cf4304b6.1517164461.git.luto@kernel.org
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: ak@linux.intel.com
+Cc: ashok.raj@intel.com
+Cc: dave.hansen@intel.com
+Cc: karahmed@amazon.de
+Cc: arjan@linux.intel.com
+Cc: torvalds@linux-foundation.org
+Cc: peterz@infradead.org
+Cc: bp@alien8.de
+Cc: pbonzini@redhat.com
+Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
+Link: https://lkml.kernel.org/r/1516896855-7642-2-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/entry/common.c            |    4 ++--
- arch/x86/include/asm/processor.h   |    2 --
- arch/x86/include/asm/syscall.h     |    6 +++---
- arch/x86/include/asm/thread_info.h |    3 ++-
- arch/x86/kernel/process_64.c       |    4 ++--
- arch/x86/kernel/ptrace.c           |    2 +-
- arch/x86/kernel/signal.c           |    2 +-
- 7 files changed, 11 insertions(+), 12 deletions(-)
+ arch/x86/include/asm/cpufeature.h        |    7 +++++--
+ arch/x86/include/asm/cpufeatures.h       |    8 +++++---
+ arch/x86/include/asm/disabled-features.h |    3 ++-
+ arch/x86/include/asm/required-features.h |    3 ++-
+ arch/x86/kernel/cpu/common.c             |    1 +
+ arch/x86/kernel/cpu/scattered.c          |    2 --
+ 6 files changed, 15 insertions(+), 9 deletions(-)
 
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -208,7 +208,7 @@ __visible inline void prepare_exit_to_us
- 	 * special case only applies after poking regs and before the
- 	 * very next return to user mode.
- 	 */
--	current->thread.status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
-+	ti->status &= ~(TS_COMPAT|TS_I386_REGS_POKED);
- #endif
- 
- 	user_enter_irqoff();
-@@ -306,7 +306,7 @@ static __always_inline void do_syscall_3
- 	unsigned int nr = (unsigned int)regs->orig_ax;
- 
- #ifdef CONFIG_IA32_EMULATION
--	current->thread.status |= TS_COMPAT;
-+	ti->status |= TS_COMPAT;
- #endif
- 
- 	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY) {
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -459,8 +459,6 @@ struct thread_struct {
- 	unsigned short		gsindex;
- #endif
- 
--	u32			status;		/* thread synchronous flags */
--
- #ifdef CONFIG_X86_64
- 	unsigned long		fsbase;
- 	unsigned long		gsbase;
---- a/arch/x86/include/asm/syscall.h
-+++ b/arch/x86/include/asm/syscall.h
-@@ -60,7 +60,7 @@ static inline long syscall_get_error(str
- 	 * TS_COMPAT is set for 32-bit syscall entries and then
- 	 * remains set until we return to user mode.
- 	 */
--	if (task->thread.status & (TS_COMPAT|TS_I386_REGS_POKED))
-+	if (task->thread_info.status & (TS_COMPAT|TS_I386_REGS_POKED))
- 		/*
- 		 * Sign-extend the value so (int)-EFOO becomes (long)-EFOO
- 		 * and will match correctly in comparisons.
-@@ -116,7 +116,7 @@ static inline void syscall_get_arguments
- 					 unsigned long *args)
- {
- # ifdef CONFIG_IA32_EMULATION
--	if (task->thread.status & TS_COMPAT)
-+	if (task->thread_info.status & TS_COMPAT)
- 		switch (i) {
- 		case 0:
- 			if (!n--) break;
-@@ -177,7 +177,7 @@ static inline void syscall_set_arguments
- 					 const unsigned long *args)
- {
- # ifdef CONFIG_IA32_EMULATION
--	if (task->thread.status & TS_COMPAT)
-+	if (task->thread_info.status & TS_COMPAT)
- 		switch (i) {
- 		case 0:
- 			if (!n--) break;
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -55,6 +55,7 @@ struct task_struct;
- 
- struct thread_info {
- 	unsigned long		flags;		/* low level flags */
-+	u32			status;		/* thread synchronous flags */
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -29,6 +29,7 @@ enum cpuid_leafs
+ 	CPUID_8000_000A_EDX,
+ 	CPUID_7_ECX,
+ 	CPUID_8000_0007_EBX,
++	CPUID_7_EDX,
  };
  
- #define INIT_THREAD_INFO(tsk)			\
-@@ -221,7 +222,7 @@ static inline int arch_within_stack_fram
- #define in_ia32_syscall() true
- #else
- #define in_ia32_syscall() (IS_ENABLED(CONFIG_IA32_EMULATION) && \
--			   current->thread.status & TS_COMPAT)
-+			   current_thread_info()->status & TS_COMPAT)
- #endif
+ #ifdef CONFIG_X86_FEATURE_NAMES
+@@ -79,8 +80,9 @@ extern const char * const x86_bug_flags[
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 15, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
++	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
+ 	   REQUIRED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 18))
++	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
+ 
+ #define DISABLED_MASK_BIT_SET(feature_bit)				\
+ 	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
+@@ -101,8 +103,9 @@ extern const char * const x86_bug_flags[
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 15, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
++	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
+ 	   DISABLED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 18))
++	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
+ 
+ #define cpu_has(c, bit)							\
+ 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -13,7 +13,7 @@
+ /*
+  * Defines x86 CPU feature bits
+  */
+-#define NCAPINTS			18	   /* N 32-bit words worth of info */
++#define NCAPINTS			19	   /* N 32-bit words worth of info */
+ #define NBUGINTS			1	   /* N 32-bit bug flags */
  
  /*
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -557,7 +557,7 @@ static void __set_personality_x32(void)
- 	 * Pretend to come from a x32 execve.
- 	 */
- 	task_pt_regs(current)->orig_ax = __NR_x32_execve | __X32_SYSCALL_BIT;
--	current->thread.status &= ~TS_COMPAT;
-+	current_thread_info()->status &= ~TS_COMPAT;
- #endif
- }
+@@ -206,8 +206,6 @@
+ #define X86_FEATURE_RETPOLINE		( 7*32+12) /* Generic Retpoline mitigation for Spectre variant 2 */
+ #define X86_FEATURE_RETPOLINE_AMD	( 7*32+13) /* AMD Retpoline mitigation for Spectre variant 2 */
+ #define X86_FEATURE_INTEL_PPIN		( 7*32+14) /* Intel Processor Inventory Number */
+-#define X86_FEATURE_AVX512_4VNNIW	( 7*32+16) /* AVX-512 Neural Network Instructions */
+-#define X86_FEATURE_AVX512_4FMAPS	( 7*32+17) /* AVX-512 Multiply Accumulation Single precision */
  
-@@ -571,7 +571,7 @@ static void __set_personality_ia32(void)
- 	current->personality |= force_personality32;
- 	/* Prepare the first "return" to user space */
- 	task_pt_regs(current)->orig_ax = __NR_ia32_execve;
--	current->thread.status |= TS_COMPAT;
-+	current_thread_info()->status |= TS_COMPAT;
- #endif
- }
+ #define X86_FEATURE_MBA			( 7*32+18) /* Memory Bandwidth Allocation */
+ #define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* Fill RSB on context switches */
+@@ -319,6 +317,10 @@
+ #define X86_FEATURE_SUCCOR		(17*32+ 1) /* Uncorrectable error containment and recovery */
+ #define X86_FEATURE_SMCA		(17*32+ 3) /* Scalable MCA */
  
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -935,7 +935,7 @@ static int putreg32(struct task_struct *
- 		 */
- 		regs->orig_ax = value;
- 		if (syscall_get_nr(child, regs) >= 0)
--			child->thread.status |= TS_I386_REGS_POKED;
-+			child->thread_info.status |= TS_I386_REGS_POKED;
- 		break;
++/* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
++#define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
++#define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
++
+ /*
+  * BUG word(s)
+  */
+--- a/arch/x86/include/asm/disabled-features.h
++++ b/arch/x86/include/asm/disabled-features.h
+@@ -71,6 +71,7 @@
+ #define DISABLED_MASK15	0
+ #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57)
+ #define DISABLED_MASK17	0
+-#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 18)
++#define DISABLED_MASK18	0
++#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
  
- 	case offsetof(struct user32, regs.eflags):
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -787,7 +787,7 @@ static inline unsigned long get_nr_resta
- 	 * than the tracee.
- 	 */
- #ifdef CONFIG_IA32_EMULATION
--	if (current->thread.status & (TS_COMPAT|TS_I386_REGS_POKED))
-+	if (current_thread_info()->status & (TS_COMPAT|TS_I386_REGS_POKED))
- 		return __NR_ia32_restart_syscall;
- #endif
- #ifdef CONFIG_X86_X32_ABI
+ #endif /* _ASM_X86_DISABLED_FEATURES_H */
+--- a/arch/x86/include/asm/required-features.h
++++ b/arch/x86/include/asm/required-features.h
+@@ -106,6 +106,7 @@
+ #define REQUIRED_MASK15	0
+ #define REQUIRED_MASK16	(NEED_LA57)
+ #define REQUIRED_MASK17	0
+-#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 18)
++#define REQUIRED_MASK18	0
++#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
+ 
+ #endif /* _ASM_X86_REQUIRED_FEATURES_H */
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -745,6 +745,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		cpuid_count(0x00000007, 0, &eax, &ebx, &ecx, &edx);
+ 		c->x86_capability[CPUID_7_0_EBX] = ebx;
+ 		c->x86_capability[CPUID_7_ECX] = ecx;
++		c->x86_capability[CPUID_7_EDX] = edx;
+ 	}
+ 
+ 	/* Extended state features: level 0x0000000d */
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -21,8 +21,6 @@ struct cpuid_bit {
+ static const struct cpuid_bit cpuid_bits[] = {
+ 	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
+ 	{ X86_FEATURE_EPB,		CPUID_ECX,  3, 0x00000006, 0 },
+-	{ X86_FEATURE_AVX512_4VNNIW,    CPUID_EDX,  2, 0x00000007, 0 },
+-	{ X86_FEATURE_AVX512_4FMAPS,    CPUID_EDX,  3, 0x00000007, 0 },
+ 	{ X86_FEATURE_CAT_L3,		CPUID_EBX,  1, 0x00000010, 0 },
+ 	{ X86_FEATURE_CAT_L2,		CPUID_EBX,  2, 0x00000010, 0 },
+ 	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
