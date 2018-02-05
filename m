@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224rXzMTjr21oJlPe38HurcA++hioPeL9v2NAfHW0b6gYg0q4GFde2pMz86SAfTrr5Rf7/Ke
-ARC-Seal: i=1; a=rsa-sha256; t=1517855042; cv=none;
+X-Google-Smtp-Source: AH8x224d6sKKDXcW1omfQEiEh9fEs2AMrgBxISVUOvuMAp+NzebEsESypky15ZzjLQicf2H9zsDO
+ARC-Seal: i=1; a=rsa-sha256; t=1517855041; cv=none;
         d=google.com; s=arc-20160816;
-        b=lgRg/6l6ivExLaAZ8K1LWhG821dBaxkTM50V2o3igWw+bPkdr4MhSbB/deHKN/rtc+
-         I7RuAGFx2TAeKlufjqbQC/7YciWKGlLVwAj5eeC9WIKuj29ceNFdOtuCjqwjt6Y8gEx4
-         Z6RZRqFZ3oE0F7LE9+6QDkSFKaZjmeN+lkN4JP4Op114Feauxrr6jrgyYIIPjScbEEHr
-         rcRKL7KOZ4z9XeYPNM5tvDfDPH4nUSM034JiWa9BV/ZBzKHO9OY84eIgJcLPmNJnJKbj
-         uUBHXRW0CGg7vXklx7vmscsCqGexL9rasjdofs0tfQc5Vf8XHI3H1hnEnLxMWN3WPDkK
-         Is+w==
+        b=Lbeigp6pUEV3egdOO8nHPpSuNU949j0uMZU2eUNSMUve8EEnFXkDtLA3cgh4o49Bg0
+         N/L+Bn6+eF/n1mJIDUlkY/92QEqq/go1rMYk66AZxETXEflk0TxctOdH0+66p6+bf8Z8
+         Pj9jkvwzvMsiTsIaeQZixUnLIvJBI2rpfrXEQIst38Dcux4zli7AbefcAlHTD8tqm9HB
+         uD49qNJdLF0EYG7LruqUbHcjn0huRRmnXcfat1Qb/xToFGjRMow9SWUXACRMDozbJlrs
+         5iQFvgS7djltZZWxrFIEsRUmbVl2z+2xRfRBfS3I8cY/UEuFZoyQ4v8nj9WorEyqUrZF
+         RuMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=of0FQ1lexdSFh/STXrA6+djCaMJDhpxdA/kTh32LK2Y=;
-        b=msv2S2xzwvJitCGlq0jE2HFsBQtbWi1Yoh7/P9OwQygxiTSvzod8Irgkt5DxCAYQYs
-         vgoW4mmuykc2QgLKzDQ5+VUy5b7JjdQy0Y7nT9qKOH5XOfbAt7tTfURYesioil+PvvS2
-         3Y+p0hwjq3AESQxMF0AYey/CWxXcx+BDqdpKn5dg8wx5k8qnqpnTZEzhB9kFadufPDio
-         +kzcx5NJQCkrFKAAv/PMOyD5yOLD2VrZvXgguN8Gytk/aFqXj8IStk3zS6g9MMiEFwA8
-         P8f4AvtT9EqyLq9tSlQnfr1fWJ3F+3IpcmUTnK8ijL+knuNMZdvV0xpWQkjECsoVlPaV
-         ahxA==
+        bh=6Ute/cXyzOGvFlCfltv0bLuNKs+Vd4lAVeK1lLdob0s=;
+        b=sJumxl5/edlXwQFd2HMNzScqyxCZDqGmFmjl2yeSx3akWT/7gZfAVKUo+cyGM8KSXd
+         XUEk8CTKr+r0KP3V0gqFEv8DwLSjO0iUDV0voXzTd53S7lpO/XnPGs9qI3ne5nO1roCS
+         ssBZ+nhh99UbDKaxvbrvTYRADo5836KT7dMqu14//UdaiktgRAD6D9jCMq51FTXg5nuN
+         z+n2DzoHNq0noFPiPh7kJ8cD5aBAMWh2eByddL8BQxamceHlfuUSLrlxA51+QRmzrpbF
+         lLZAmdxZYHb9Z/Ah/5wg1sZSk0DimReeiS6Yky0KDiIiccSwEigVLvR8SczikCOZtsBu
+         M9Sg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -45,9 +45,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Arjan Van De Ven <arjan.van.de.ven@intel.com>,
 	Tim Chen <tim.c.chen@linux.intel.com>
-Subject: [PATCH 4.14 06/64] KVM: VMX: Make indirect call speculation safe
-Date: Mon,  5 Feb 2018 10:22:25 -0800
-Message-Id: <20180205182138.829766515@linuxfoundation.org>
+Subject: [PATCH 4.14 05/64] KVM: x86: Make indirect calls in emulator speculation safe
+Date: Mon,  5 Feb 2018 10:22:24 -0800
+Message-Id: <20180205182138.793954774@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -56,8 +56,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586369408444524?=
-X-GMAIL-MSGID: =?utf-8?q?1591586369408444524?=
+X-GMAIL-THRID: =?utf-8?q?1591586367842666106?=
+X-GMAIL-MSGID: =?utf-8?q?1591586367842666106?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -67,9 +67,9 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Peter Zijlstra peterz@infradead.org
 
-commit c940a3fb1e2e9b7d03228ab28f375fb5a47ff699
+commit 1a29b5b7f347a1a9230c1e0af5b37e3e571588ab
 
-Replace indirect call with CALL_NOSPEC.
+Replace the indirect calls with CALL_NOSPEC.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -91,29 +91,44 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
 Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Link: https://lkml.kernel.org/r/20180125095843.645776917@infradead.org
+Link: https://lkml.kernel.org/r/20180125095843.595615683@infradead.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- arch/x86/kvm/vmx.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9118,14 +9118,14 @@ static void vmx_handle_external_intr(str
- #endif
- 			"pushf\n\t"
- 			__ASM_SIZE(push) " $%c[cs]\n\t"
--			"call *%[entry]\n\t"
-+			CALL_NOSPEC
- 			:
- #ifdef CONFIG_X86_64
- 			[sp]"=&r"(tmp),
- #endif
- 			ASM_CALL_CONSTRAINT
- 			:
--			[entry]"r"(entry),
-+			THUNK_TARGET(entry),
- 			[ss]"i"(__KERNEL_DS),
- 			[cs]"i"(__KERNEL_CS)
- 			);
+---
+ arch/x86/kvm/emulate.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -25,6 +25,7 @@
+ #include <asm/kvm_emulate.h>
+ #include <linux/stringify.h>
+ #include <asm/debugreg.h>
++#include <asm/nospec-branch.h>
+ 
+ #include "x86.h"
+ #include "tss.h"
+@@ -1021,8 +1022,8 @@ static __always_inline u8 test_cc(unsign
+ 	void (*fop)(void) = (void *)em_setcc + 4 * (condition & 0xf);
+ 
+ 	flags = (flags & EFLAGS_MASK) | X86_EFLAGS_IF;
+-	asm("push %[flags]; popf; call *%[fastop]"
+-	    : "=a"(rc) : [fastop]"r"(fop), [flags]"r"(flags));
++	asm("push %[flags]; popf; " CALL_NOSPEC
++	    : "=a"(rc) : [thunk_target]"r"(fop), [flags]"r"(flags));
+ 	return rc;
+ }
+ 
+@@ -5350,9 +5351,9 @@ static int fastop(struct x86_emulate_ctx
+ 	if (!(ctxt->d & ByteOp))
+ 		fop += __ffs(ctxt->dst.bytes) * FASTOP_SIZE;
+ 
+-	asm("push %[flags]; popf; call *%[fastop]; pushf; pop %[flags]\n"
++	asm("push %[flags]; popf; " CALL_NOSPEC " ; pushf; pop %[flags]\n"
+ 	    : "+a"(ctxt->dst.val), "+d"(ctxt->src.val), [flags]"+D"(flags),
+-	      [fastop]"+S"(fop), ASM_CALL_CONSTRAINT
++	      [thunk_target]"+S"(fop), ASM_CALL_CONSTRAINT
+ 	    : "c"(ctxt->src2.val));
+ 
+ 	ctxt->eflags = (ctxt->eflags & ~EFLAGS_MASK) | (flags & EFLAGS_MASK);
