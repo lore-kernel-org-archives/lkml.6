@@ -1,102 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753177AbeBEPUu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:20:50 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33374 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752808AbeBEPUn (ORCPT
+        id S1753153AbeBEPWr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:22:47 -0500
+Received: from tartarus.angband.pl ([89.206.35.136]:48874 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbeBEPWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:20:43 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Olivier Moysan <olivier.moysan@st.com>
-Cc: olivier moysan <olivier.moysan@st.com>,
-        Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        kernel@stlinux.com, linux-kernel@vger.kernel.org,
-        olivier.moysan@st.com, arnaud.pouliquen@st.com,
-        benjamin.gaignard@st.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: stm32: add of dependency for stm32 drivers" to the asoc tree
-In-Reply-To: <1517827785-6275-1-git-send-email-olivier.moysan@st.com>
-Message-Id: <E1eiiYs-0007FQ-II@debutante>
-Date: Mon, 05 Feb 2018 15:20:02 +0000
+        Mon, 5 Feb 2018 10:22:40 -0500
+Date: Mon, 5 Feb 2018 16:22:19 +0100
+From: Adam Borowski <kilobyte@angband.pl>
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
+Message-ID: <20180205152218.hxgozi67zka4hgkf@angband.pl>
+References: <20180204174521.21383-1-kilobyte@angband.pl>
+ <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
+ <20180205100305.GO29988@eros>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180205100305.GO29988@eros>
+X-Junkbait: aaron@angband.pl, zzyx@angband.pl
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, Feb 05, 2018 at 09:03:05PM +1100, Tobin C. Harding wrote:
+> On Mon, Feb 05, 2018 at 10:44:38AM +0100, Petr Mladek wrote:
+> > On Sun 2018-02-04 18:45:21, Adam Borowski wrote:
+> > > Like %pK already does, print "00000000" instead.
+> > >
+> > > This confused people -- the convention is that "(null)" means you tried to
+> > > dereference a null pointer as opposed to printing the address.
+> > 
+> > By other words, this avoids regressions when people convert
+> > %x to %px. Do I get it right, please?
 
-   ASoC: stm32: add of dependency for stm32 drivers
+It's a regression in the sense that it confuses people.  %px never could
+dereference a pointer so the information provided doesn't change, merely its
+presentation.
 
-has been applied to the asoc tree at
+> > > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> > > index 77ee6ced11b1..d7a708f82559 100644
+> > > --- a/lib/vsprintf.c
+> > > +++ b/lib/vsprintf.c
+> > > @@ -1849,7 +1849,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+> > >  {
+> > >  	const int default_width = 2 * sizeof(void *);
+> > >  
+> > > -	if (!ptr && *fmt != 'K') {
+> > > +	if (!ptr && *fmt != 'K' && *fmt != 'x') {
+> 
+> I don't know if it matters but with this it won't be immediately
+> apparent that a null pointer was printed (since zero could hash to
+> anything).
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+My change touches %px only, where your concern doesn't apply.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+You're right, though, when it comes to %pK:
+    printk("%%pK: %pK, %%px: %px\n", 0, 0);
+says
+    %pK: 00000000ba8bdc0a, %px: 0000000000000000
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+So what should we do?  Avoid hashing 0?  Print a special value?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 748bce8e6c7ebae2d89314a42e0c4b65232a0ce9 Mon Sep 17 00:00:00 2001
-From: Olivier Moysan <olivier.moysan@st.com>
-Date: Mon, 5 Feb 2018 11:49:45 +0100
-Subject: [PATCH] ASoC: stm32: add of dependency for stm32 drivers
-
-Add of dependency for STM32 ASoC drivers.
-DFSDM of dependency is already inherited
-from STM32_DFSDM_ADC dependency.
-
-Signed-off-by: olivier moysan <olivier.moysan@st.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/stm/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/stm/Kconfig b/sound/soc/stm/Kconfig
-index 3ad881fc40a1..48f9ddd94016 100644
---- a/sound/soc/stm/Kconfig
-+++ b/sound/soc/stm/Kconfig
-@@ -2,7 +2,7 @@ menu "STMicroelectronics STM32 SOC audio support"
- 
- config SND_SOC_STM32_SAI
- 	tristate "STM32 SAI interface (Serial Audio Interface) support"
--	depends on ARCH_STM32 || COMPILE_TEST
-+	depends on (ARCH_STM32 && OF) || COMPILE_TEST
- 	depends on SND_SOC
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	select REGMAP_MMIO
-@@ -11,7 +11,7 @@ config SND_SOC_STM32_SAI
- 
- config SND_SOC_STM32_I2S
- 	tristate "STM32 I2S interface (SPI/I2S block) support"
--	depends on ARCH_STM32 || COMPILE_TEST
-+	depends on (ARCH_STM32 && OF) || COMPILE_TEST
- 	depends on SND_SOC
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	select REGMAP_MMIO
-@@ -20,7 +20,7 @@ config SND_SOC_STM32_I2S
- 
- config SND_SOC_STM32_SPDIFRX
- 	tristate "STM32 S/PDIF receiver (SPDIFRX) support"
--	depends on ARCH_STM32 || COMPILE_TEST
-+	depends on (ARCH_STM32 && OF) || COMPILE_TEST
- 	depends on SND_SOC
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	select REGMAP_MMIO
+Meow!
 -- 
-2.15.1
+⢀⣴⠾⠻⢶⣦⠀ The bill with 3 years prison for mentioning Polish concentration
+⣾⠁⢰⠒⠀⣿⡁ camps is back.  What about KL Warschau (operating until 1956)?
+⢿⡄⠘⠷⠚⠋⠀ Zgoda?  Łambinowice?  Most ex-German KLs?  If those were "soviet
+⠈⠳⣄⠀⠀⠀⠀ puppets", Bereza Kartuska?  Sikorski's camps in UK (thanks Brits!)?
