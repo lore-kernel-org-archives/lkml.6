@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224lyWCD8Zvou5gjJNNwR7n0/NkbGJC2dNHmmA6Mpjf8cwii4Y11/v8pxIQLJEpzattBwJtb
-ARC-Seal: i=1; a=rsa-sha256; t=1517855201; cv=none;
+X-Google-Smtp-Source: AH8x226W2rObVVWTg/t+DDIX0OknOa1Ec5HV65HeITSlQGeD8MzTv62gVwhGwitWOnJ0DVxc5P+C
+ARC-Seal: i=1; a=rsa-sha256; t=1517855200; cv=none;
         d=google.com; s=arc-20160816;
-        b=PSlbONlQSU4lrkNLqmf03Tf0tgV4y5Z9zm02Qi8rtXhqqBPqOHwmtSN2/bOY3pc2RG
-         wPdekp2HzTQOZmeIn+BPHeCHhxqbKszmsb5jFteKAsoFCOETSInhgyb9wZ8c9XEwIMmV
-         wEQzBxuOFqg3jeYfLSFaq64/nhPgDGa9Gzgsv1bntJ83/pVHynJUG6eiflNXeAvS/WqN
-         BbLGZIp8wocRERlCf272eSoE6adrwImhuHT6BnZ+BSXLYLqmdXmoneyG1Ah60JyZ6fDk
-         Jr0QvKPqNgOyQo2OHD5SQznGEfwSeJrFihVInBK3rI08k2vN6FJj7OeCP9CZdebEwX0k
-         7eUA==
+        b=0fN6WeflL9LASFnU3dwbAAqnml1LQ22VT7CKfQnovvb2bpi8gvm9/Lo90kzxe9NAIg
+         p/G0oUGnHrun0OyOBKxspPrik8lS0auz7YRIgPmXzHgtBcw0YbEvevkCBtWMRLbSQMMX
+         JU6jobCjVTJlP8K+G7n2wXb7Mj/yftLI6hLTIXF7G2kyrmZ6GQMN7E0TQl0WnfIrBi0y
+         IaOZBFehWJnaDSD2UdraaznPwttMIq/oUDXYmHS8lTTVcapQZECGZvKz5I/BmIvj/uDn
+         3MCe6wqWY/xuN0PgSl6T89AX8rQ3MGHneS7xoCgnppvfrOEjjC7GHw/4Twx6Rjd+k7pE
+         EGvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F+7DGlCEkLSsKyboW9EQbQ0fIuJF/LkK6BmVjCMqxdo=;
-        b=fUka31d11flA3e3mpk6S0qKBokOw5hKTL7gkI4+nnpBP5e0KADYbKuvx6pOM/Oa1DD
-         ZM9VUY5kghCO+zGNubeZojtFNW63C66d/0IXcdntEVrVeDjhJot0pnfLER2N2U+mrhk8
-         MzKGGxC8063rNeW+/5qVjTETqqgd+RwvE6dim9TTpGrSFu662A+RRIP+zvU6T5ACQJOO
-         2sLd0EQjDQgDjOBYHPfTU9MshkIIO6ae52tRXNdP98tXkcx2ztTXgNs7L6NAACusJ9Gu
-         orS8PAbeus3xjWi6myx4G40KOGAI1LquMp/6qI7Vk4U3eiX17RohYKhN1fcBg8Ew7y6f
-         5TCQ==
+        bh=GbuENqsHb5wtaiLt+l3ztwLtau2zNsEKPAjaSEj+Bd0=;
+        b=aR6qdg/9sq2jA/WAoyu4eFzMVF4dnHYXBDpgcww139v35WH/ZJellO1NhfZ89nLHbT
+         ERbHF8wZDLB9EKJvi+4AJfhkeF5mefx9uI7bqGWMLY3wDfH3pp5L7vKiUE8g4radHJEb
+         2OIvF5ApzdpFU4luckd5aoXLGMvMU40afLdsl3PJA1zPvQHYPc6ossH/T9qkKsUp4DJG
+         Cvu6Br2zy23uKPX/Vg++cTfFGn7d4oBV30JCWlRQqDOnoqpoM+9NikA3MhEj7U2VKrWB
+         vsxqFHa6sZcv0exdlILMhtlF+QJJ/aaUs7H9IOVU+E0WJxOwgatcatGU/z7jGzfYcRKK
+         vCFA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"=?UTF-8?q?Chu . Mike=20 [ =E6=9C=B1=E5=A0=85=E5=AE=9C ] ?=" <Mike-Chu@prolific.com.tw>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 3.18 25/36] USB: serial: pl2303: new device id for Chilitag
-Date: Mon,  5 Feb 2018 10:23:53 -0800
-Message-Id: <20180205182352.810460407@linuxfoundation.org>
+	Larry Finger <Larry.Finger@lwfinger.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 24/36] staging: rtl8188eu: Fix incorrect response to SIOCGIWESSID
+Date: Mon,  5 Feb 2018 10:23:52 -0800
+Message-Id: <20180205182352.772803284@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586535876811663?=
-X-GMAIL-MSGID: =?utf-8?q?1591586535876811663?=
+X-GMAIL-THRID: =?utf-8?q?1591586534802592888?=
+X-GMAIL-MSGID: =?utf-8?q?1591586534802592888?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,38 +48,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit d08dd3f3dd2ae351b793fc5b76abdbf0fd317b12 upstream.
 
-This adds a new device id for Chilitag devices to the pl2303 driver.
+[ Upstream commit b77992d2df9e47144354d1b25328b180afa33442 ]
 
-Reported-by: "Chu.Mike [朱堅宜]" <Mike-Chu@prolific.com.tw>
-Acked-by: Johan Hovold <johan@kernel.org>
+When not associated with an AP, wifi device drivers should respond to the
+SIOCGIWESSID ioctl with a zero-length string for the SSID, which is the
+behavior expected by dhcpcd.
+
+Currently, this driver returns an error code (-1) from the ioctl call,
+which causes dhcpcd to assume that the device is not a wireless interface
+and therefore it fails to work correctly with it thereafter.
+
+This problem was reported and tested at
+https://github.com/lwfinger/rtl8188eu/issues/234.
+
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/serial/pl2303.c |    1 +
- drivers/usb/serial/pl2303.h |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -39,6 +39,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ2) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_DCU11) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ3) },
-+	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_CHILITAG) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_PHAROS) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ALDIGA) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MMX) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -17,6 +17,7 @@
- #define PL2303_PRODUCT_ID_DCU11		0x1234
- #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
- #define PL2303_PRODUCT_ID_RSAQ3		0xaaa2
-+#define PL2303_PRODUCT_ID_CHILITAG	0xaaa8
- #define PL2303_PRODUCT_ID_ALDIGA	0x0611
- #define PL2303_PRODUCT_ID_MMX		0x0612
- #define PL2303_PRODUCT_ID_GPRS		0x0609
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -1396,19 +1396,13 @@ static int rtw_wx_get_essid(struct net_d
+ 	if ((check_fwstate(pmlmepriv, _FW_LINKED)) ||
+ 	    (check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE))) {
+ 		len = pcur_bss->Ssid.SsidLength;
+-
+-		wrqu->essid.length = len;
+-
+ 		memcpy(extra, pcur_bss->Ssid.Ssid, len);
+-
+-		wrqu->essid.flags = 1;
+ 	} else {
+-		ret = -1;
+-		goto exit;
++		len = 0;
++		*extra = 0;
+ 	}
+-
+-exit:
+-
++	wrqu->essid.length = len;
++	wrqu->essid.flags = 1;
+ 
+ 	return ret;
+ }
