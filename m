@@ -1,82 +1,53 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3105817-1517855139-2-4555990025805689861
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517855138; b=Gmb9AzyAANSZ6l7bEFZiOK/W1HW3/SHgGiKQiwtA8HRuA0F
-    mmIthgPv47BCpnnLUH9MEWx3YpRJETT6I/917Hl8U6tS218zZCBRADyotLkDrarV
-    kqQm5f4FFYCQmFQVJziXM10Aca1zHpDO2XNk7OGQ0P07FKCCcSi5k+Gx/mI/GVWq
-    yalF8SBnmgndZKlV3kW1pq25b4cODqVI7Nejfcctq03ChaDy0eQ/oACdZsaAI2Y+
-    vF8MjkEbD2Rv1JB1dFkItRpugQyQhfkO1b6ARAe1W5YLZigsnYwe6pYGfKEW5LQ5
-    XUnb06818MNF3G5sO1RlkT2oc+l8z1lPRZrz7Aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517855138; bh=09/PbkygGmAFzIJpwdtdEAnbE5
-    2sOj1uzEmJNapbLqI=; b=qJCozqUgioigUQ8vVuwtqiIEKaiKMwVxiow2iKofhq
-    qa8oh6a206CRjlFbCflG+GeMIgnHnEDdX9j3SLKT0r+EJhXF9WedWABnCE+nPKsr
-    6oS/G9Tpld+VRoXpEQvAIa0jpQT3eAyOR3HlePuD1zgzPK6cxmVDsGakrBfzClDh
-    jABPnZ0+YUefcFES0An2skV4TikvqmQBD3r/STfLNXiZEGMCYzJIXNSHHXHCyKAc
-    jIGeWO7lHaM4x431AH3HClB4SI6Igaaq0ZriTYGDBWJUMh19LPjKHWngf0zqYrma
-    qkasR/GrxB0qejRxIHMXfPaRXEw4Y8IE4yZwEwGRcPXA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753765AbeBESZe (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Feb 2018 13:25:34 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52602 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753469AbeBESZZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:25:25 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x225bhuM/eb6dGuIJE4ZxugqIxwP8GuAE2EFn8q/Bzj7D0i8POBJyefg5oa6LB7MYvl8Fu0eI
+ARC-Seal: i=1; a=rsa-sha256; t=1517855137; cv=none;
+        d=google.com; s=arc-20160816;
+        b=mYEyYRoikKY1rXqrHj4jd2u2/kVaDRvNWAkgi1jT2qNgtaVMf42lLovmZDZOcT8jnp
+         mze1PwH9VjCtH0pegbdLDd+Uh9iumaaTGxNjfxlSFAIXCEhv2bQEoCyuhDJEbLQ9DH3g
+         oPeywSNTtbejvyyPPFi/X4XWDjQk3zS+joMjsryKX/m60swctmtefttCTe7TfoXpoP7n
+         AXvbBJMQzSJl7aFmifskGazBm2saDdGARZTBg3lTOR6TZlMYFS9lmmByPkw7ojlVW6Ie
+         4rNDPM7AOi/Zgd4ZOIN+u5n+aeOSsQxeyQqcrXeG4GbR6XHfhsEmY4CAEjf8+vPYTUak
+         Dj9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=yRjh/MvDz0ntci2XwxUhFweShO+CRFgvlJuZiRb1w5Q=;
+        b=xsZ1al8BLXLUuOF2xZgeg/GKFcJ14mBiiYTxYzz7iRexk3AJdDOTE6ZjTDFzqbWOmN
+         zXlgA2JT25vmIErRwLjY9tU11/xvGF+tfJRcbz7czZM41/hp2FpeWtU3/UVpXa3vI/Nn
+         IeYrfVePnSCE6DhAenzsZ73cARK17xfaQlqVb7r2QVgQQzBgAtMpMHL14BaKB64w6O2o
+         SE0IYX2pTZheqM0LpOrlEaePRb0j1XnEsv7wWVsLGjY3PjANrY4aEABTIeSkn0DgHw/0
+         cktg7XAuyLjdv4Gl3573feinc2yznu1GJ832ikipEg20QQSSSV75JnMWvI910mg3lWc9
+         XETA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>, linux-arch@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel-hardening@lists.openwall.com, torvalds@linux-foundation.org,
-        alan@linux.intel.com
-Subject: [PATCH 4.15 32/60] Documentation: Document array_index_nospec
-Date: Mon,  5 Feb 2018 10:23:05 -0800
-Message-Id: <20180205182215.274202516@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andi Kleen <ak@linux.intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-arch@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>,
+	kernel-hardening@lists.openwall.com,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	alan@linux.intel.com
+Subject: [PATCH 4.15 38/60] x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
+Date: Mon,  5 Feb 2018 10:23:11 -0800
+Message-Id: <20180205182215.530222682@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591586413682850821?=
+X-GMAIL-MSGID: =?utf-8?q?1591586468962831718?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -84,122 +55,168 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mark Rutland mark.rutland@arm.com
+From: Dan Williams dan.j.williams@intel.com
 
-commit f84a56f73dddaeac1dba8045b007f742f61cd2da
+commit 304ec1b050310548db33063e567123fae8fd0301
 
-Document the rationale and usage of the new array_index_nospec() helper.
+Quoting Linus:
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+    I do think that it would be a good idea to very expressly document
+    the fact that it's not that the user access itself is unsafe. I do
+    agree that things like "get_user()" want to be protected, but not
+    because of any direct bugs or problems with get_user() and friends,
+    but simply because get_user() is an excellent source of a pointer
+    that is obviously controlled from a potentially attacking user
+    space. So it's a prime candidate for then finding _subsequent_
+    accesses that can then be used to perturb the cache.
+
+__uaccess_begin_nospec() covers __get_user() and copy_from_iter() where the
+limit check is far away from the user pointer de-reference. In those cases
+a barrier_nospec() prevents speculation with a potential pointer to
+privileged memory. uaccess_try_nospec covers get_user_try.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
 Cc: linux-arch@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: gregkh@linuxfoundation.org
+Cc: Kees Cook <keescook@chromium.org>
 Cc: kernel-hardening@lists.openwall.com
-Cc: torvalds@linux-foundation.org
+Cc: gregkh@linuxfoundation.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727413645.33451.15878817161436755393.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727416953.33451.10508284228526170604.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- Documentation/speculation.txt |   90 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ arch/x86/include/asm/uaccess.h    |    6 +++---
+ arch/x86/include/asm/uaccess_32.h |    6 +++---
+ arch/x86/include/asm/uaccess_64.h |   12 ++++++------
+ arch/x86/lib/usercopy_32.c        |    4 ++--
+ 4 files changed, 14 insertions(+), 14 deletions(-)
 
---- /dev/null
-+++ b/Documentation/speculation.txt
-@@ -0,0 +1,90 @@
-+This document explains potential effects of speculation, and how undesirable
-+effects can be mitigated portably using common APIs.
-+
-+===========
-+Speculation
-+===========
-+
-+To improve performance and minimize average latencies, many contemporary CPUs
-+employ speculative execution techniques such as branch prediction, performing
-+work which may be discarded at a later stage.
-+
-+Typically speculative execution cannot be observed from architectural state,
-+such as the contents of registers. However, in some cases it is possible to
-+observe its impact on microarchitectural state, such as the presence or
-+absence of data in caches. Such state may form side-channels which can be
-+observed to extract secret information.
-+
-+For example, in the presence of branch prediction, it is possible for bounds
-+checks to be ignored by code which is speculatively executed. Consider the
-+following code:
-+
-+	int load_array(int *array, unsigned int index)
-+	{
-+		if (index >= MAX_ARRAY_ELEMS)
-+			return 0;
-+		else
-+			return array[index];
-+	}
-+
-+Which, on arm64, may be compiled to an assembly sequence such as:
-+
-+	CMP	<index>, #MAX_ARRAY_ELEMS
-+	B.LT	less
-+	MOV	<returnval>, #0
-+	RET
-+  less:
-+	LDR	<returnval>, [<array>, <index>]
-+	RET
-+
-+It is possible that a CPU mis-predicts the conditional branch, and
-+speculatively loads array[index], even if index >= MAX_ARRAY_ELEMS. This
-+value will subsequently be discarded, but the speculated load may affect
-+microarchitectural state which can be subsequently measured.
-+
-+More complex sequences involving multiple dependent memory accesses may
-+result in sensitive information being leaked. Consider the following
-+code, building on the prior example:
-+
-+	int load_dependent_arrays(int *arr1, int *arr2, int index)
-+	{
-+		int val1, val2,
-+
-+		val1 = load_array(arr1, index);
-+		val2 = load_array(arr2, val1);
-+
-+		return val2;
-+	}
-+
-+Under speculation, the first call to load_array() may return the value
-+of an out-of-bounds address, while the second call will influence
-+microarchitectural state dependent on this value. This may provide an
-+arbitrary read primitive.
-+
-+====================================
-+Mitigating speculation side-channels
-+====================================
-+
-+The kernel provides a generic API to ensure that bounds checks are
-+respected even under speculation. Architectures which are affected by
-+speculation-based side-channels are expected to implement these
-+primitives.
-+
-+The array_index_nospec() helper in <linux/nospec.h> can be used to
-+prevent information from being leaked via side-channels.
-+
-+A call to array_index_nospec(index, size) returns a sanitized index
-+value that is bounded to [0, size) even under cpu speculation
-+conditions.
-+
-+This can be used to protect the earlier load_array() example:
-+
-+	int load_array(int *array, unsigned int index)
-+	{
-+		if (index >= MAX_ARRAY_ELEMS)
-+			return 0;
-+		else {
-+			index = array_index_nospec(index, MAX_ARRAY_ELEMS);
-+			return array[index];
-+		}
-+	}
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -450,7 +450,7 @@ do {									\
+ ({									\
+ 	int __gu_err;							\
+ 	__inttype(*(ptr)) __gu_val;					\
+-	__uaccess_begin();						\
++	__uaccess_begin_nospec();					\
+ 	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
+ 	__uaccess_end();						\
+ 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
+@@ -557,7 +557,7 @@ struct __large_struct { unsigned long bu
+  *	get_user_ex(...);
+  * } get_user_catch(err)
+  */
+-#define get_user_try		uaccess_try
++#define get_user_try		uaccess_try_nospec
+ #define get_user_catch(err)	uaccess_catch(err)
+ 
+ #define get_user_ex(x, ptr)	do {					\
+@@ -591,7 +591,7 @@ extern void __cmpxchg_wrong_size(void)
+ 	__typeof__(ptr) __uval = (uval);				\
+ 	__typeof__(*(ptr)) __old = (old);				\
+ 	__typeof__(*(ptr)) __new = (new);				\
+-	__uaccess_begin();						\
++	__uaccess_begin_nospec();					\
+ 	switch (size) {							\
+ 	case 1:								\
+ 	{								\
+--- a/arch/x86/include/asm/uaccess_32.h
++++ b/arch/x86/include/asm/uaccess_32.h
+@@ -29,21 +29,21 @@ raw_copy_from_user(void *to, const void
+ 		switch (n) {
+ 		case 1:
+ 			ret = 0;
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_asm_nozero(*(u8 *)to, from, ret,
+ 					      "b", "b", "=q", 1);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 2:
+ 			ret = 0;
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_asm_nozero(*(u16 *)to, from, ret,
+ 					      "w", "w", "=r", 2);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 4:
+ 			ret = 0;
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_asm_nozero(*(u32 *)to, from, ret,
+ 					      "l", "k", "=r", 4);
+ 			__uaccess_end();
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -55,31 +55,31 @@ raw_copy_from_user(void *dst, const void
+ 		return copy_user_generic(dst, (__force void *)src, size);
+ 	switch (size) {
+ 	case 1:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm_nozero(*(u8 *)dst, (u8 __user *)src,
+ 			      ret, "b", "b", "=q", 1);
+ 		__uaccess_end();
+ 		return ret;
+ 	case 2:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm_nozero(*(u16 *)dst, (u16 __user *)src,
+ 			      ret, "w", "w", "=r", 2);
+ 		__uaccess_end();
+ 		return ret;
+ 	case 4:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm_nozero(*(u32 *)dst, (u32 __user *)src,
+ 			      ret, "l", "k", "=r", 4);
+ 		__uaccess_end();
+ 		return ret;
+ 	case 8:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
+ 			      ret, "q", "", "=r", 8);
+ 		__uaccess_end();
+ 		return ret;
+ 	case 10:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
+ 			       ret, "q", "", "=r", 10);
+ 		if (likely(!ret))
+@@ -89,7 +89,7 @@ raw_copy_from_user(void *dst, const void
+ 		__uaccess_end();
+ 		return ret;
+ 	case 16:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
+ 			       ret, "q", "", "=r", 16);
+ 		if (likely(!ret))
+--- a/arch/x86/lib/usercopy_32.c
++++ b/arch/x86/lib/usercopy_32.c
+@@ -331,7 +331,7 @@ do {									\
+ 
+ unsigned long __copy_user_ll(void *to, const void *from, unsigned long n)
+ {
+-	__uaccess_begin();
++	__uaccess_begin_nospec();
+ 	if (movsl_is_ok(to, from, n))
+ 		__copy_user(to, from, n);
+ 	else
+@@ -344,7 +344,7 @@ EXPORT_SYMBOL(__copy_user_ll);
+ unsigned long __copy_from_user_ll_nocache_nozero(void *to, const void __user *from,
+ 					unsigned long n)
+ {
+-	__uaccess_begin();
++	__uaccess_begin_nospec();
+ #ifdef CONFIG_X86_INTEL_USERCOPY
+ 	if (n > 64 && static_cpu_has(X86_FEATURE_XMM2))
+ 		n = __copy_user_intel_nocache(to, from, n);
