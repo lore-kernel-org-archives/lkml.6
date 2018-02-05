@@ -1,124 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752944AbeBEMtZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:49:25 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33582 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753159AbeBEMtK (ORCPT
+        id S1753008AbeBEMva (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:51:30 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:29225 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752710AbeBEMvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:49:10 -0500
-X-Google-Smtp-Source: AH8x2249QKD6DCInJXKFKDzA2AyttYwPwPGqgYcZzjnOnzlfR/7+VzCKYx3UNjC8zFV0UtViwL9Gpw==
-Date: Mon, 5 Feb 2018 13:49:02 +0100
-From: Miklos Szeredi <miklos@szeredi.hu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs update for 4.16
-Message-ID: <20180205124902.GA19579@veci.piliscsaba.redhat.com>
+        Mon, 5 Feb 2018 07:51:23 -0500
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Kishon Vijay Abraham I <kishon@ti.com>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2 03/16] mmc: sdhci-omap: Add custom set_uhs_signaling sdhci_host ops
+Date: Mon, 5 Feb 2018 18:20:16 +0530
+Message-ID: <20180205125029.21570-4-kishon@ti.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180205125029.21570-1-kishon@ti.com>
+References: <20180205125029.21570-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+UHS-1 DDR50 and MMC DDR52 mode require DDR bit to be
+set in the configuration register (MMCHS_CON). Add
+sdhci-omap specific set_uhs_signaling ops to set
+this bit. Also while setting the UHSMS bit, clock should be
+disabled.
 
-Please pull from:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-linus
-
-This work from Amir adds NFS export capability to overlayfs.  NFS exporting an
-overlay filesystem is a challange because we want to keep track of any copy-up
-of a file or directory between encoding the file handle and decoding it.
-
-This is achieved by indexing copied up objects by lower layer file handle.  The
-index is already used for hard links, this patchset extends the use to NFS file
-handle decoding.
-
-There's a VFS patch that splits out d_instantiate_anon() from d_obtain_alias().
-This is needed because overlayfs allocates d_fsdata for its dentries, so the
-plain d_alloc_anon() call in d_obtain_alias() is not sufficient to create a
-fully initialized overlay dentry.  The patch conflicts with f1ee616214cb ("VFS:
-don't keep disconnected dentries on d_anon"); fixup by "s/tmp/dentry/g" on the
-upstream version.
-
-Thanks,
-Miklos
-
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
-Amir Goldstein (50):
-      ovl: hash directory inodes for fsnotify
-      ovl: fix failure to fsync lower dir
-      ovl: take lower dir inode mutex outside upper sb_writers lock
-      ovl: fix another overlay: warning prefix
-      ovl: take mnt_want_write() for work/index dir setup
-      ovl: take mnt_want_write() for removing impure xattr
-      ovl: fix inconsistent d_ino for legacy merge dir
-      ovl: disable index when no xattr support
-      ovl: force r/o mount when index dir creation fails
-      ovl: store layer index in ovl_layer
-      ovl: factor out ovl_check_origin_fh()
-      ovl: simplify arguments to ovl_check_origin_fh()
-      ovl: generalize ovl_verify_origin() and helpers
-      ovl: update documentation of inodes index feature
-      ovl: add support for "nfs_export" configuration
-      ovl: verify stored origin fh matches lower dir
-      ovl: unbless lower st_ino of unverified origin
-      ovl: use directory index entries for consistency verification
-      ovl: verify whiteout index entries on mount
-      ovl: verify directory index entries on mount
-      ovl: cleanup temp index entries
-      ovl: create ovl_need_index() helper
-      ovl: index all non-dir on copy up for NFS export
-      ovl: index directories on copy up for NFS export
-      ovl: cleanup dir index when dir nlink drops to zero
-      ovl: whiteout index when union nlink drops to zero
-      ovl: whiteout orphan index entries on mount
-      ovl: factor out ovl_get_index_fh() helper
-      ovl: do not pass overlay dentry to ovl_get_inode()
-      ovl: use d_splice_alias() in place of d_add() in lookup
-      ovl: copy up of disconnected dentries
-      ovl: store 'has_upper' and 'opaque' as bit flags
-      ovl: document NFS export
-      ovl: encode pure upper file handles
-      ovl: decode pure upper file handles
-      ovl: decode connected upper dir file handles
-      ovl: encode non-indexed upper file handles
-      ovl: copy up before encoding non-connectable dir file handle
-      ovl: encode lower file handles
-      ovl: decode lower non-dir file handles
-      ovl: decode indexed non-dir file handles
-      ovl: decode lower file handles of unlinked but open files
-      ovl: decode indexed dir file handles
-      ovl: decode pure lower dir file handles
-      ovl: hash non-indexed dir by upper inode for NFS export
-      ovl: lookup connected ancestor of dir in inode cache
-      ovl: lookup indexed ancestor of lower dir
-      ovl: wire up NFS export operations
-      ovl: fix regression in fsnotify of overlay merge dir
-      ovl: check ERR_PTR() return value from ovl_encode_fh()
+ drivers/mmc/host/sdhci-omap.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-Miklos Szeredi (1):
-      vfs: factor out helpers d_instantiate_anon() and d_alloc_anon()
-
----
- Documentation/filesystems/overlayfs.txt | 106 ++++-
- fs/dcache.c                             |  88 ++--
- fs/overlayfs/Kconfig                    |  31 +-
- fs/overlayfs/Makefile                   |   3 +-
- fs/overlayfs/copy_up.c                  | 188 +++++++--
- fs/overlayfs/dir.c                      | 175 ++++----
- fs/overlayfs/export.c                   | 715 ++++++++++++++++++++++++++++++++
- fs/overlayfs/inode.c                    | 106 +++--
- fs/overlayfs/namei.c                    | 533 +++++++++++++++++-------
- fs/overlayfs/overlayfs.h                |  66 ++-
- fs/overlayfs/ovl_entry.h                |  11 +-
- fs/overlayfs/readdir.c                  |  57 ++-
- fs/overlayfs/super.c                    | 125 ++++--
- fs/overlayfs/util.c                     | 108 +++--
- include/linux/dcache.h                  |   2 +
- 15 files changed, 1905 insertions(+), 409 deletions(-)
- create mode 100644 fs/overlayfs/export.c
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index df927f3faaf6..86b6cc0a5380 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -31,6 +31,7 @@
+ #define SDHCI_OMAP_CON		0x12c
+ #define CON_DW8			BIT(5)
+ #define CON_DMA_MASTER		BIT(20)
++#define CON_DDR			BIT(19)
+ #define CON_CLKEXTFREE		BIT(16)
+ #define CON_PADEN		BIT(15)
+ #define CON_INIT		BIT(1)
+@@ -461,6 +462,26 @@ static void sdhci_omap_init_74_clocks(struct sdhci_host *host, u8 power_mode)
+ 	enable_irq(host->irq);
+ }
+ 
++static void sdhci_omap_set_uhs_signaling(struct sdhci_host *host,
++					 unsigned int timing)
++{
++	u32 reg;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
++
++	sdhci_omap_stop_clock(omap_host);
++
++	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_CON);
++	if (timing == MMC_TIMING_UHS_DDR50 || timing == MMC_TIMING_MMC_DDR52)
++		reg |= CON_DDR;
++	else
++		reg &= ~CON_DDR;
++	sdhci_omap_writel(omap_host, SDHCI_OMAP_CON, reg);
++
++	sdhci_set_uhs_signaling(host, timing);
++	sdhci_omap_start_clock(omap_host);
++}
++
+ static struct sdhci_ops sdhci_omap_ops = {
+ 	.set_clock = sdhci_omap_set_clock,
+ 	.set_power = sdhci_omap_set_power,
+@@ -470,7 +491,7 @@ static struct sdhci_ops sdhci_omap_ops = {
+ 	.set_bus_width = sdhci_omap_set_bus_width,
+ 	.platform_send_init_74_clocks = sdhci_omap_init_74_clocks,
+ 	.reset = sdhci_reset,
+-	.set_uhs_signaling = sdhci_set_uhs_signaling,
++	.set_uhs_signaling = sdhci_omap_set_uhs_signaling,
+ };
+ 
+ static int sdhci_omap_set_capabilities(struct sdhci_omap_host *omap_host)
+-- 
+2.11.0
