@@ -1,77 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752770AbeBEBni (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:43:38 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62675 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752648AbeBEBm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:42:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,462,1511856000";
-   d="scan'208";a="15834004"
-From: "Huang\, Ying" <ying.huang@intel.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: huang ying <huang.ying.caritas@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michal Hocko" <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
-        Minchan Kim <minchan@kernel.org>, Seth Jennings <sjenning@redhat.com>,
-        Dan Streetman <ddstreet@ieee.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: bisected bd4c82c22c367e is the first bad commit (was [Bug 198617] New: zswap causing random applications to crash)
-References: <20180130114841.aa2d3bd99526c03c6a5b5810@linux-foundation.org>
-        <20180203013455.GA739@jagdpanzerIV>
-        <CAC=cRTPyh-JTY=uOQf2dgmyPDyY-4+ryxkedp-iZMcFQZtnaqw@mail.gmail.com>
-        <20180205013758.GA648@jagdpanzerIV>
-Date: Mon, 05 Feb 2018 09:42:23 +0800
-In-Reply-To: <20180205013758.GA648@jagdpanzerIV> (Sergey Senozhatsky's message
-        of "Mon, 5 Feb 2018 10:37:58 +0900")
-Message-ID: <87shag43gg.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1752375AbeBEBqh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:46:37 -0500
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:40413 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751982AbeBEBqa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:46:30 -0500
+X-Google-Smtp-Source: AH8x225avF8ktZK95X7ueuqkHR3Dq8WjW7YESj7ZNHL9KrJeOQ7JUInFBRktmMqhXqYy6gMGe/Lu+ziPgVwF4Vq8Qk0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+In-Reply-To: <20180205012146.23981-13-ulfalizer@gmail.com>
+References: <20180205012146.23981-1-ulfalizer@gmail.com> <20180205012146.23981-13-ulfalizer@gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Mon, 5 Feb 2018 02:46:28 +0100
+Message-ID: <CAFkk2KQVCxSiQf8D1Dcp0SKcKuu7wn3m6P0+DKoyjNEaFb=F=g@mail.gmail.com>
+Subject: Re: [PATCH 12/20] ARM: debug: Remove ARCH_MSM dep. from UNCOMPRESS_INCLUDE
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        tfiga@chromium.org, paul.burton@mips.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
+        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> writes:
-
-> Hi,
+On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> The ARCH_MSM symbol was removed in commit c0c89fafa289 ("ARM: Remove
+> mach-msm and associated ARM architecture code"), but a default in
+> UNCOMPRESS_INCLUDE still depends on it.
 >
-> On (02/04/18 22:21), huang ying wrote:
-> [..]
->> >> After disabling zswap no crashes at all.
->> >>
->> >> /etc/systemd/swap.conf
->> >> zswap_enabled=1
->> >> zswap_compressor=lz4      # lzo lz4
->> >> zswap_max_pool_percent=25 # 1-99
->> >> zswap_zpool=zbud          # zbud z3fold
->> >
-> [..]
->> Can you give me some detailed steps to reproduce this?  Like the
->> kernel configuration file, swap configuration, etc.  Any kernel
->> WARNING during testing?  Can you reproduce this with a real swap
->> device instead of zswap?
+> Remove the ARCH_MSM dependency from the default in UNCOMPRESS_INCLUDE.
 >
-> No warnings (at least no warnings with my .config). Tested it only with
-> zram based swap (I'm running swap-less x86 systems, so zram is the easiest
-> way). It seems it's THP + frontswap that makes things unstable, rather
-> than THP + swap.
+> Discovered with the
+> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+> script.
 >
-> Kernel zswap boot params:
-> zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=10 zswap.zpool=zbud
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
+>  arch/arm/Kconfig.debug | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Then I add a 4G zram swap and run a silly memory hogger. I don't think
-> you'll have any problems reproducing it, but just in case I attached my
-> .config
+> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> index 78a647080ebc..20c601a045d2 100644
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@ -1825,7 +1825,7 @@ config DEBUG_UNCOMPRESS
+>
+>  config UNCOMPRESS_INCLUDE
+>         string
+> -       default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
+> +       default "debug/uncompress.h" if ARCH_MULTIPLATFORM || \
+>                                         PLAT_SAMSUNG || ARM_SINGLE_ARMV7M
+>         default "mach/uncompress.h"
+>
+> --
+> 2.14.1
+>
 
-Thanks for your information!  I will try to reproduce it today!
+These globally undefined symbols (with no historical definitions that
+I could find) are also referenced in this file:
 
-Best Regards,
-Huang, Ying
+DEBUG_OMAP4UART2
+DEBUG_OMAP4UART1
+DEBUG_OMAP5UART1
+DEBUG_OMAP5UART2
+DEBUG_OMAP3UART2
+DEBUG_OMAP3UART1
 
-> 	-ss
+Cheers,
+Ulf
