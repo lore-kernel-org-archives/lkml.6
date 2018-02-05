@@ -1,80 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752856AbeBEL6r (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 06:58:47 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50270 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751979AbeBEL6k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 06:58:40 -0500
-X-Google-Smtp-Source: AH8x224aWPTI+L1/7QnMj3WvoGISsMiUj2emwxYGKUFTIjrfan46RUo6ZcSaJU8lso1jVkEH8gLr8A==
-Date: Mon, 5 Feb 2018 12:58:36 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: tglx@linutronix.de, Andi Kleen <ak@linux.intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        luto@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH v2 1/3] x86/entry: Clear extra registers beyond syscall
- arguments for 64bit kernels
-Message-ID: <20180205115836.otnviqbae3pxjk5g@gmail.com>
-References: <151776623555.23236.14152911329227555005.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151776624080.23236.1865339140666550495.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1752875AbeBEMBI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:01:08 -0500
+Received: from mga07.intel.com ([134.134.136.100]:44119 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752260AbeBEMBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 07:01:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,464,1511856000";
+   d="scan'208";a="24926821"
+From: "Huang\, Ying" <ying.huang@intel.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: huang ying <huang.ying.caritas@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Michal Hocko" <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
+        Minchan Kim <minchan@kernel.org>, Seth Jennings <sjenning@redhat.com>,
+        Dan Streetman <ddstreet@ieee.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: bisected bd4c82c22c367e is the first bad commit (was [Bug 198617] New: zswap causing random applications to crash)
+References: <20180130114841.aa2d3bd99526c03c6a5b5810@linux-foundation.org>
+        <20180203013455.GA739@jagdpanzerIV>
+        <CAC=cRTPyh-JTY=uOQf2dgmyPDyY-4+ryxkedp-iZMcFQZtnaqw@mail.gmail.com>
+        <20180205013758.GA648@jagdpanzerIV>
+Date: Mon, 05 Feb 2018 20:00:57 +0800
+In-Reply-To: <20180205013758.GA648@jagdpanzerIV> (Sergey Senozhatsky's message
+        of "Mon, 5 Feb 2018 10:37:58 +0900")
+Message-ID: <87d11j4pdy.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <151776624080.23236.1865339140666550495.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> writes:
 
-* Dan Williams <dan.j.williams@intel.com> wrote:
+> Hi,
+>
+> On (02/04/18 22:21), huang ying wrote:
+> [..]
+>> >> After disabling zswap no crashes at all.
+>> >>
+>> >> /etc/systemd/swap.conf
+>> >> zswap_enabled=1
+>> >> zswap_compressor=lz4      # lzo lz4
+>> >> zswap_max_pool_percent=25 # 1-99
+>> >> zswap_zpool=zbud          # zbud z3fold
+>> >
+> [..]
+>> Can you give me some detailed steps to reproduce this?  Like the
+>> kernel configuration file, swap configuration, etc.  Any kernel
+>> WARNING during testing?  Can you reproduce this with a real swap
+>> device instead of zswap?
+>
+> No warnings (at least no warnings with my .config). Tested it only with
+> zram based swap (I'm running swap-less x86 systems, so zram is the easiest
+> way). It seems it's THP + frontswap that makes things unstable, rather
+> than THP + swap.
+>
+> Kernel zswap boot params:
+> zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=10 zswap.zpool=zbud
+>
+> Then I add a 4G zram swap and run a silly memory hogger. I don't think
+> you'll have any problems reproducing it, but just in case I attached my
+> .config
 
-> +	/*
-> +	 * Sanitize extra registers of values that a speculation attack
-> +	 * might want to exploit. In the CONFIG_FRAME_POINTER=y case,
-> +	 * the expectation is that %ebp will be clobbered before it
-> +	 * could be used.
-> +	 */
-> +	.macro CLEAR_EXTRA_REGS_NOSPEC
-> +	xorq %r15, %r15
-> +	xorq %r14, %r14
-> +	xorq %r13, %r13
-> +	xorq %r12, %r12
-> +	xorl %ebx, %ebx
-> +#ifndef CONFIG_FRAME_POINTER
-> +	xorl %ebp, %ebp
-> +#endif
+I have successfully reproduced the issue and find the problem.  The
+following patch fix the issue for me, can you try it?
 
-BTW., is there any reason behind the order of the clearing of these registers? 
-This ordering seems rather random:
+Best Regards,
+Huang, Ying
 
- - The canonical register order is: RBX, RBP, R12, R13, R14, R15, which is also 
-   their push-order on the stack.
+---------------------------------8<-------------------------------
+>From 4c52d531680f91572ebc6f4525a018e32a934ef0 Mon Sep 17 00:00:00 2001
+From: Huang Ying <huang.ying.caritas@gmail.com>
+Date: Mon, 5 Feb 2018 19:27:43 +0800
+Subject: [PATCH] fontswap thp fix
 
- - The CLEAR_EXTRA_REGS_NOSPEC order appears to be the reverse order (pop-order), 
-   but with RBX and RBP reversed.
+---
+ mm/page_io.c |  2 +-
+ mm/vmscan.c  | 16 +++++++++++++---
+ 2 files changed, 14 insertions(+), 4 deletions(-)
 
-So since this is a 'push side' primitive I'd use the regular (push-) ordering 
-instead:
-
-	.macro CLEAR_EXTRA_REGS_NOSPEC
-	xorl %ebx, %ebx
-	xorl %ebp, %ebp
-	xorq %r12, %r12
-	xorq %r13, %r13
-	xorq %r14, %r14
-	xorq %r15, %r15
-
-It obviously doesn't matter to correctness - only to readability.
-
-There's also a (very) small micro-optimization argument in favor of the regular 
-order: the earlier registers are more likely to be utilized by C functions, so the 
-sooner we clear them, the less potential interaction these clearing instructions 
-are going to have with any later use.
-
-Thanks,
-
-	Ingo
+diff --git a/mm/page_io.c b/mm/page_io.c
+index b41cf9644585..6dca817ae7a0 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -250,7 +250,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+ 		unlock_page(page);
+ 		goto out;
+ 	}
+-	if (frontswap_store(page) == 0) {
++	if (!PageTransHuge(page) && frontswap_store(page) == 0) {
+ 		set_page_writeback(page);
+ 		unlock_page(page);
+ 		end_page_writeback(page);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index bee53495a829..d1c1e00b08bb 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -55,6 +55,7 @@
+ 
+ #include <linux/swapops.h>
+ #include <linux/balloon_compaction.h>
++#include <linux/frontswap.h>
+ 
+ #include "internal.h"
+ 
+@@ -1063,14 +1064,23 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 					/* cannot split THP, skip it */
+ 					if (!can_split_huge_page(page, NULL))
+ 						goto activate_locked;
++					/*
++					 * Split THP if frontswap enabled,
++					 * because it cannot process THP
++					 */
++					if (frontswap_enabled()) {
++						if (split_huge_page_to_list(
++							page, page_list))
++							goto activate_locked;
++					}
+ 					/*
+ 					 * Split pages without a PMD map right
+ 					 * away. Chances are some or all of the
+ 					 * tail pages can be freed without IO.
+ 					 */
+-					if (!compound_mapcount(page) &&
+-					    split_huge_page_to_list(page,
+-								    page_list))
++					else if (!compound_mapcount(page) &&
++						 split_huge_page_to_list(page,
++							page_list))
+ 						goto activate_locked;
+ 				}
+ 				if (!add_to_swap(page)) {
+-- 
+2.15.1
