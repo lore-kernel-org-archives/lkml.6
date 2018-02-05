@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752861AbeBEBiu (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:38:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43856 "EHLO mx2.suse.de"
+        id S1752909AbeBEBjC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:39:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44139 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752719AbeBEB2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752721AbeBEB2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Feb 2018 20:28:30 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 31/64] arch/sparc: use mm locking wrappers
-Date: Mon,  5 Feb 2018 02:27:21 +0100
-Message-Id: <20180205012754.23615-32-dbueso@wotan.suse.de>
+Subject: [PATCH 38/64] arch/blackfin: use mm locking wrappers
+Date: Mon,  5 Feb 2018 02:27:28 +0100
+Message-Id: <20180205012754.23615-39-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -29,169 +29,71 @@ This becomes quite straightforward with the mmrange in place.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- arch/sparc/mm/fault_32.c | 18 +++++++++---------
- arch/sparc/mm/fault_64.c | 12 ++++++------
- arch/sparc/vdso/vma.c    |  5 +++--
- 3 files changed, 18 insertions(+), 17 deletions(-)
+ arch/blackfin/kernel/ptrace.c | 5 +++--
+ arch/blackfin/kernel/trace.c  | 7 ++++---
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/sparc/mm/fault_32.c b/arch/sparc/mm/fault_32.c
-index ebb2406dbe7c..1f63a37b6f81 100644
---- a/arch/sparc/mm/fault_32.c
-+++ b/arch/sparc/mm/fault_32.c
-@@ -204,7 +204,7 @@ asmlinkage void do_sparc_fault(struct pt_regs *regs, int text_fault, int write,
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
- 
- retry:
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
- 
- 	if (!from_user && address >= PAGE_OFFSET)
- 		goto bad_area;
-@@ -281,7 +281,7 @@ asmlinkage void do_sparc_fault(struct pt_regs *regs, int text_fault, int write,
- 		}
- 	}
- 
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	return;
- 
- 	/*
-@@ -289,7 +289,7 @@ asmlinkage void do_sparc_fault(struct pt_regs *regs, int text_fault, int write,
- 	 * Fix it, but check if it's kernel or user first..
- 	 */
- bad_area:
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- bad_area_nosemaphore:
- 	/* User mode accesses just cause a SIGSEGV */
-@@ -338,7 +338,7 @@ asmlinkage void do_sparc_fault(struct pt_regs *regs, int text_fault, int write,
-  * us unable to handle the page fault gracefully.
-  */
- out_of_memory:
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	if (from_user) {
- 		pagefault_out_of_memory();
- 		return;
-@@ -346,7 +346,7 @@ asmlinkage void do_sparc_fault(struct pt_regs *regs, int text_fault, int write,
- 	goto no_context;
- 
- do_sigbus:
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	do_fault_siginfo(BUS_ADRERR, SIGBUS, regs, text_fault);
- 	if (!from_user)
- 		goto no_context;
-@@ -394,7 +394,7 @@ static void force_user_fault(unsigned long address, int write)
- 
- 	code = SEGV_MAPERR;
- 
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
- 	vma = find_vma(mm, address);
- 	if (!vma)
- 		goto bad_area;
-@@ -419,15 +419,15 @@ static void force_user_fault(unsigned long address, int write)
- 	case VM_FAULT_OOM:
- 		goto do_sigbus;
- 	}
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	return;
- bad_area:
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	__do_fault_siginfo(code, SIGSEGV, tsk->thread.kregs, address);
- 	return;
- 
- do_sigbus:
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	__do_fault_siginfo(BUS_ADRERR, SIGBUS, tsk->thread.kregs, address);
- }
- 
-diff --git a/arch/sparc/mm/fault_64.c b/arch/sparc/mm/fault_64.c
-index e0a3c36b0fa1..d674c2d6b51a 100644
---- a/arch/sparc/mm/fault_64.c
-+++ b/arch/sparc/mm/fault_64.c
-@@ -335,7 +335,7 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
- 
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
- 
--	if (!down_read_trylock(&mm->mmap_sem)) {
-+	if (!mm_read_trylock(mm, &mmrange)) {
- 		if ((regs->tstate & TSTATE_PRIV) &&
- 		    !search_exception_tables(regs->tpc)) {
- 			insn = get_fault_insn(regs, insn);
-@@ -343,7 +343,7 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
- 		}
- 
- retry:
--		down_read(&mm->mmap_sem);
-+		mm_read_lock(mm, &mmrange);
- 	}
- 
- 	if (fault_code & FAULT_CODE_BAD_RA)
-@@ -476,7 +476,7 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
- 			goto retry;
- 		}
- 	}
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- 	mm_rss = get_mm_rss(mm);
- #if defined(CONFIG_TRANSPARENT_HUGEPAGE)
-@@ -507,7 +507,7 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
- 	 */
- bad_area:
- 	insn = get_fault_insn(regs, insn);
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- handle_kernel_fault:
- 	do_kernel_fault(regs, si_code, fault_code, insn, address);
-@@ -519,7 +519,7 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
-  */
- out_of_memory:
- 	insn = get_fault_insn(regs, insn);
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	if (!(regs->tstate & TSTATE_PRIV)) {
- 		pagefault_out_of_memory();
- 		goto exit_exception;
-@@ -532,7 +532,7 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
- 
- do_sigbus:
- 	insn = get_fault_insn(regs, insn);
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- 	/*
- 	 * Send a sigbus, regardless of whether we were in kernel
-diff --git a/arch/sparc/vdso/vma.c b/arch/sparc/vdso/vma.c
-index f51595f861b8..35b888bc2f54 100644
---- a/arch/sparc/vdso/vma.c
-+++ b/arch/sparc/vdso/vma.c
-@@ -178,8 +178,9 @@ static int map_vdso(const struct vdso_image *image,
+diff --git a/arch/blackfin/kernel/ptrace.c b/arch/blackfin/kernel/ptrace.c
+index a6827095b99a..e6657ab61afc 100644
+--- a/arch/blackfin/kernel/ptrace.c
++++ b/arch/blackfin/kernel/ptrace.c
+@@ -121,15 +121,16 @@ is_user_addr_valid(struct task_struct *child, unsigned long start, unsigned long
+ 	bool valid;
  	struct vm_area_struct *vma;
- 	unsigned long text_start, addr = 0;
- 	int ret = 0;
+ 	struct sram_list_struct *sraml;
 +	DEFINE_RANGE_LOCK_FULL(mmrange);
  
--	down_write(&mm->mmap_sem);
-+	mm_write_lock(mm, &mmrange);
+ 	/* overflow */
+ 	if (start + len < start)
+ 		return -EIO;
  
- 	/*
- 	 * First, get an unmapped region: then randomize it, and make sure that
-@@ -235,7 +236,7 @@ static int map_vdso(const struct vdso_image *image,
- 	if (ret)
- 		current->mm->context.vdso = NULL;
+-	down_read(&child->mm->mmap_sem);
++	mm_read_lock(child->mm, &mmrange);
+ 	vma = find_vma(child->mm, start);
+ 	valid = vma && start >= vma->vm_start && start + len <= vma->vm_end;
+-	up_read(&child->mm->mmap_sem);
++	mm_read_unlock(child->mm, &mmrange);
+ 	if (valid)
+ 		return 0;
  
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 	return ret;
- }
+diff --git a/arch/blackfin/kernel/trace.c b/arch/blackfin/kernel/trace.c
+index 151f22196ab6..9bf938b14601 100644
+--- a/arch/blackfin/kernel/trace.c
++++ b/arch/blackfin/kernel/trace.c
+@@ -33,6 +33,7 @@ void decode_address(char *buf, unsigned long address)
+ 	struct mm_struct *mm;
+ 	unsigned long offset;
+ 	struct rb_node *n;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
  
+ #ifdef CONFIG_KALLSYMS
+ 	unsigned long symsize;
+@@ -124,7 +125,7 @@ void decode_address(char *buf, unsigned long address)
+ 			continue;
+ 
+ 		mm = t->mm;
+-		if (!down_read_trylock(&mm->mmap_sem))
++		if (!mm_read_trylock(mm, &mmrange))
+ 			goto __continue;
+ 
+ 		for (n = rb_first(&mm->mm_rb); n; n = rb_next(n)) {
+@@ -166,7 +167,7 @@ void decode_address(char *buf, unsigned long address)
+ 					sprintf(buf, "[ %s vma:0x%lx-0x%lx]",
+ 						name, vma->vm_start, vma->vm_end);
+ 
+-				up_read(&mm->mmap_sem);
++				mm_read_unlock(mm, &mmrange);
+ 				task_unlock(t);
+ 
+ 				if (buf[0] == '\0')
+@@ -176,7 +177,7 @@ void decode_address(char *buf, unsigned long address)
+ 			}
+ 		}
+ 
+-		up_read(&mm->mmap_sem);
++		mm_read_unlock(mm, &mmrange);
+ __continue:
+ 		task_unlock(t);
+ 	}
 -- 
 2.13.6
