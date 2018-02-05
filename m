@@ -1,77 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753133AbeBEOm1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 09:42:27 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:61613 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752612AbeBEOmS (ORCPT
+        id S1753029AbeBEOqb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:46:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57348 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752612AbeBEOqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:42:18 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180205144216epoutp02537658cd2cf7754905fc41e38978da65~QdQR4bo7W2587125871epoutp02b
-X-AuditID: b6c32a37-433ff70000001029-a1-5a786d47469c
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-        linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com,
-        linux-kernel@vger.kernel.org, krzk@kernel.org, tomasz.figa@gmail.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] clk: samsung: Add git tree entry to MAINTAINERS
-Date: Mon, 05 Feb 2018 15:41:58 +0100
-Message-id: <20180205144158.10500-1-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.14.2
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsWy7bCmga57bkWUwY951hYbZ6xntbj+5Tmr
-        xfnzG9gtPvbcY7W4vGsOm8WM8/uYLNYeuctucfGUq8XhN+2sFj/OdLNYrNr1h9GB2+P9jVZ2
-        j8t9vUweO2fdZffYtKqTzaNvyypGj8+b5ALYorhsUlJzMstSi/TtErgydj8/xl6wh7Vi//l3
-        bA2Mt1m6GDk5JARMJP5/PsncxcjFISSwg1Fi4YonjBDOd0aJJS8WMsFU/fu8gB0isYFR4kbj
-        KSjnF6PEnndn2UCq2AQMJXqP9jGC2CICshK3jv1kAyliFpjFJHHp7RqwUcICDhJ3Xz9hBbFZ
-        BFQlrv+5BxbnFbCWuNm0HuooeYn3C+6D3SEhMINN4sOXh1AJF4k5n94wQ9jCEq+ObwE6gwPI
-        lpa4dNQWor6fUeLEmmaYZkaJO+0ToJ6wljh8/CLYZmYBPol3X3tYIZp5JTrahCBKPCRObDkE
-        tctR4tyJu2C7hARiJfo/vmKZwCi5gJFhFaNYakFxbnpqsWGBsV5xYm5xaV66XnJ+7iZGcMRq
-        me9g3HDO5xCjAAejEg+vQEZFlBBrYllxZe4hRgkOZiURXqfr5VFCvCmJlVWpRfnxRaU5qcWH
-        GKU5WJTEeQMCXKKEBNITS1KzU1MLUotgskwcnFINjApf66zt9G9OLDCe2Zs+51V0r1eYxvbo
-        /Tf9dnLs+Kiu+sD+e5Dbjtpvfe3mezqub5i3VjYlcYr17zd7EuQtjoSKKiWJNs0/YX9Cb1mO
-        fuc6lf9d5m8fRP77NvfKJK8DLV4d2ZzurNPEunyrVaJNFTXvTWDwu2oSWOj95/OW8y/0Bc6w
-        /i/UUmIpzkg01GIuKk4EAGp/84XUAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42I5/e+xoK57bkWUwYzd2hYbZ6xntbj+5Tmr
-        xfnzG9gtPvbcY7W4vGsOm8WM8/uYLNYeuctucfGUq8XhN+2sFj/OdLNYrNr1h9GB2+P9jVZ2
-        j8t9vUweO2fdZffYtKqTzaNvyypGj8+b5ALYorhsUlJzMstSi/TtErgydj8/xl6wh7Vi//l3
-        bA2Mt1m6GDk5JARMJP59XsDexcjFISSwjlHiztK/jBDOL0aJ9Tu2MYFUsQkYSvQe7WMEsUUE
-        ZCVuHfvJBlLELDCLSWLL3f9sIAlhAQeJu6+fsILYLAKqEtf/3ANr5hWwlrjZtB5qnbzE+wX3
-        GScwci1gZFjFKJlaUJybnltsVGCYl1quV5yYW1yal66XnJ+7iREYSNsOa/XtYLy/JP4QowAH
-        oxIPb0ZWRZQQa2JZcWXuIUYJDmYlEV6n6+VRQrwpiZVVqUX58UWlOanFhxilOViUxHlv5x2L
-        FBJITyxJzU5NLUgtgskycXBKNTDWir4P3xm6nrGXV3zLRuMPt8wLSz0YHXcdSGNeUKgkf3Tb
-        L6Hpb9UeG7Hq+3ncOMlbkspX92AJ644Z+n57lfgv97xvFL3CcFSlSo3LTeH614KS75N87l/Y
-        vV1k8ZLA+ypCPq5/Z6rt+HL8q2T9kV+/WCVX5TI0CL9gC/rbvd/igt1Ol+qfEw4qsRRnJBpq
-        MRcVJwIADAbmYyACAAA=
-X-CMS-MailID: 20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4
-X-RootMTR: 20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4
-References: <CGME20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4@epcas1p4.samsung.com>
+        Mon, 5 Feb 2018 09:46:23 -0500
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
+References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
+ <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+Message-ID: <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+Date: Mon, 5 Feb 2018 15:46:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a missing git tree entry for drivers/clk/samsung.
+On 02/05/2018 01:20 PM, Gerd Hoffmann wrote:
+>    Hi,
+> 
+>>> Why not use virtio-vsock to run the wayland protocol? I don't like
+>>> the idea to duplicate something with very simliar functionality in
+>>> virtio-gpu.
+>>
+>> The reason for abandoning that approach was the type of objects that
+>> could be shared via virtio-vsock would be extremely limited. Besides
+>> that being potentially confusing to users, it would mean from the
+>> implementation side that either virtio-vsock would gain a dependency on
+>> the drm subsystem, or an appropriate abstraction for shareable buffers
+>> would need to be added for little gain.
+> 
+> Well, no.  The idea is that virtio-vsock and virtio-gpu are used largely
+> as-is, without knowing about each other.  The guest wayland proxy which
+> does the buffer management talks to both devices.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Note that the proxy won't know anything about buffers if clients opt-in 
+for zero-copy support (they allocate the buffers in a way that allows 
+for sharing with the host).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aa71ab52fd76..502442dc08eb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12001,6 +12001,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
- M:	Chanwoo Choi <cw00.choi@samsung.com>
- S:	Supported
- L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
- F:	drivers/clk/samsung/
- F:	include/dt-bindings/clock/exynos*.h
- F:	Documentation/devicetree/bindings/clock/exynos*.txt
--- 
-2.14.2
+>>> If you have a guest proxy anyway using virtio-sock for the protocol
+>>> stream and virtio-gpu for buffer sharing (and some day 3d rendering
+>>> too) should work fine I think.
+>>
+>> If I understand correctly your proposal, virtio-gpu would be used for
+>> creating buffers that could be shared across domains, but something
+>> equivalent to SCM_RIGHTS would still be needed in virtio-vsock?
+> 
+> Yes, the proxy would send a reference to the buffer over virtio-vsock.
+> I was more thinking about a struct specifying something like
+> "ressource-id 42 on virtio-gpu-pci device in slot 1:23.0" instead of
+> using SCM_RIGHTS.
+
+Can you extend on this? I'm having trouble figuring out how this could 
+work in a way that keeps protocol data together with the resources it 
+refers to.
+
+>> If the mechanics of passing presentation data were very complex, I think
+>> this approach would have more merit. But as you can see from the code,
+>> it isn't that bad.
+> 
+> Well, the devil is in the details.  If you have multiple connections you
+> don't want one being able to stall the others for example.  There are
+> reasons took quite a while to bring virtio-vsock to the state where it
+> is today.
+
+Yes, but at the same time there are use cases that virtio-vsock has to 
+support but aren't important in this scenario.
+
+>>> What is the plan for the host side? I see basically two options. Either
+>>> implement the host wayland proxy directly in qemu. Or
+>>> implement it as separate process, which then needs some help from
+>>> qemu to get access to the buffers. The later would allow qemu running
+>>> independant from the desktop session.
+>>
+>> Regarding synchronizing buffers, this will stop becoming needed in
+>> subsequent commits as all shared memory is allocated in the host and
+>> mapped to the guest via KVM_SET_USER_MEMORY_REGION.
+>
+> --verbose please.  The qemu patches linked from the cover letter not
+> exactly helpful in understanding how all this is supposed to work.
+
+A client will allocate a buffer with DRM_VIRTGPU_RESOURCE_CREATE, export 
+it and pass the FD to the compositor (via the proxy).
+
+During resource creation, QEMU would allocate a shmem buffer and map it 
+into the guest with KVM_SET_USER_MEMORY_REGION.
+
+The client would mmap that resource and render to it. Because it's 
+backed by host memory, the compositor would be able to read it without 
+any further copies.
+
+>> This is already the case for buffers passed from the compositor to the
+>> clients (see patch 2/2), and I'm working on the equivalent for buffers
+>> from the guest to the host (clients still have to create buffers with
+>> DRM_VIRTGPU_RESOURCE_CREATE but they will be only backend by host memory
+>> so no calls to DRM_VIRTGPU_TRANSFER_TO_HOST are needed).
+> 
+> Same here.  --verbose please.
+
+When a FD comes from the compositor, QEMU mmaps it and maps that virtual 
+address to the guest via KVM_SET_USER_MEMORY_REGION.
+
+When the guest proxy reads from the winsrv socket, it will get a FD that 
+wraps the buffer referenced above.
+
+When the client reads from the guest proxy, it would get a FD that 
+references that same buffer and would mmap it. At that point, the client 
+is reading from the same physical pages where the compositor wrote to.
+
+To be clear, I'm not against solving this via some form of restricted FD 
+passing in virtio-vsock, but Stefan (added to CC) thought that it would 
+be cleaner to do it all within virtio-gpu. This is the thread where it 
+was discussed:
+
+https://lkml.kernel.org/r/<2d73a3e1-af70-83a1-0e84-98b5932ea20c@collabora.com>
+
+Thanks,
+
+Tomeu
