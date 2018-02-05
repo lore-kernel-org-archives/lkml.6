@@ -1,89 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752323AbeBEVgu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 16:36:50 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:51695 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbeBEVgp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 16:36:45 -0500
-Date: Mon, 5 Feb 2018 13:34:14 -0800
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-kif2fdkcaewj8iqw6lwyil8s@git.kernel.org>
-Cc: rkrcmar@redhat.com, dsahern@gmail.com, borntraeger@de.ibm.com,
-        namhyung@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, wangnan0@huawei.com, acme@redhat.com,
-        mingo@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com
-Reply-To: namhyung@kernel.org, borntraeger@de.ibm.com, dsahern@gmail.com,
-        rkrcmar@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, wangnan0@huawei.com, acme@redhat.com,
-        adrian.hunter@intel.com, jolsa@kernel.org, mingo@kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tooling headers: Synchronize updated s390 kvm
- UAPI headers
-Git-Commit-ID: 9a3853587c2bb0a38c2ce80a613ace5e84ae4337
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1752103AbeBEVhT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 16:37:19 -0500
+Received: from gate.crashing.org ([63.228.1.57]:38925 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752358AbeBEVhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 16:37:07 -0500
+Message-ID: <1517866584.2312.140.camel@kernel.crashing.org>
+Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
+ device tree parsing
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Ryder Lee <ryder.lee@mediatek.com>, Rob Herring <robh+dt@kernel.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Date: Tue, 06 Feb 2018 08:36:24 +1100
+In-Reply-To: <1517563970.24622.9.camel@mtkswgap22>
+References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
+         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
+         <1517563970.24622.9.camel@mtkswgap22>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9a3853587c2bb0a38c2ce80a613ace5e84ae4337
-Gitweb:     https://git.kernel.org/tip/9a3853587c2bb0a38c2ce80a613ace5e84ae4337
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 2 Feb 2018 16:43:45 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 2 Feb 2018 16:43:45 -0300
+On Fri, 2018-02-02 at 17:32 +0800, Ryder Lee wrote:
+> On Wed, 2018-01-31 at 10:02 -0600, Rob Herring wrote:
+> > On Wed, Jan 31, 2018 at 1:41 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> > > A root complex usually consist of a host bridge and multiple P2P bridges,
+> > > and someone may express that in the form of a root node with many subnodes
+> > > and list all four interrupts for each slot (child node) in the root node
+> > > like this:
+> > > 
+> > >          pcie-controller {
+> > >                  ...
+> > >                  interrupt-map-mask = <0xf800 0 0 7>;
+> > >                  interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
+> > >                                   0x0800 0 0 {INTx} &{interrupt parent} ...>;
+> > > 
+> > >                  pcie@0,0 {
+> > >                          reg = <0x0000 0 0 0 0>;
+> > >                          ...
+> > >                  };
+> > > 
+> > >                  pcie@1,0 {
+> > >                          reg = <0x0800 0 0 0 0>;
+> > >                          ...
+> > >                  };
+> > >          };
+> > > 
+> > > As shown above, we'd like to propagate IRQs from a root port to the devices
+> > > in the hierarchy below it in this way.  However, it seems that the current
+> > > parser couldn't handle such cases and will get something unexpected below:
+> > > 
+> > >          pcieport 0000:00:01.0: assign IRQ: got 213
+> > >          igb 0000:01:00.0: assign IRQ: got 212
+> > > 
+> > > There is a device which is connected to 2nd slot, but the port doesn't share
+> > > the same IRQ with its downstream devices.  The problem here is that, if the
+> > > loop found a P2P bridge, it wouldn't check whether the reg property exists
+> > > in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
+> > > thus the subsequent flow couldn't correctly resolve them.
 
-tooling headers: Synchronize updated s390 kvm UAPI headers
+I don't really understand the problem explanation here. Something
+doesn't look right as you shouldn't have to change that function, but I
+just don't get what you a
 
-The 35b3fde6203b ("KVM: s390: wire up bpb feature") was noticed by the
-perf build process:
-
-  Warning: Kernel ABI header at 'tools/arch/s390/include/uapi/asm/kvm.h' differs from latest version at 'arch/s390/include/uapi/asm/kvm.h'
-
-The changes in this cset don't cause or require changes in tools/perf/,
-so just update the copy to silence the build warning.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-kif2fdkcaewj8iqw6lwyil8s@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/arch/s390/include/uapi/asm/kvm.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/tools/arch/s390/include/uapi/asm/kvm.h b/tools/arch/s390/include/uapi/asm/kvm.h
-index 38535a57..4cdaa55 100644
---- a/tools/arch/s390/include/uapi/asm/kvm.h
-+++ b/tools/arch/s390/include/uapi/asm/kvm.h
-@@ -224,6 +224,7 @@ struct kvm_guest_debug_arch {
- #define KVM_SYNC_RICCB  (1UL << 7)
- #define KVM_SYNC_FPRS   (1UL << 8)
- #define KVM_SYNC_GSCB   (1UL << 9)
-+#define KVM_SYNC_BPBC   (1UL << 10)
- /* length and alignment of the sdnx as a power of two */
- #define SDNXC 8
- #define SDNXL (1UL << SDNXC)
-@@ -247,7 +248,9 @@ struct kvm_sync_regs {
- 	};
- 	__u8  reserved[512];	/* for future vector expansion */
- 	__u32 fpc;		/* valid on KVM_SYNC_VRS or KVM_SYNC_FPRS */
--	__u8 padding1[52];	/* riccb needs to be 64byte aligned */
-+	__u8 bpbc : 1;		/* bp mode */
-+	__u8 reserved2 : 7;
-+	__u8 padding1[51];	/* riccb needs to be 64byte aligned */
- 	__u8 riccb[64];		/* runtime instrumentation controls block */
- 	__u8 padding2[192];	/* sdnx needs to be 256byte aligned */
- 	union {
+Cheers,
+Ben.
