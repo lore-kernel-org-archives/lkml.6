@@ -1,107 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752517AbeBEE4g (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 23:56:36 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:35108 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752253AbeBEE43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 23:56:29 -0500
-Date: Sun, 4 Feb 2018 22:56:24 -0600
-From: Matthew Thode <mthode@mthode.org>
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: thinkpad_acpi: suppress warning about palm
- detection
-Message-ID: <20180205045624.t5g2c2o7l3dkokzl@gentoo.org>
-References: <20180112110445.1876-1-dh.herrmann@gmail.com>
- <CAHp75Vc66ZfRmOoOKJRODpV0mS2aZru=b-r0cr8SKYH=hm+W6Q@mail.gmail.com>
- <CANq1E4RGo091oaG=0owKVfxOV8wR2qQ=nXfXzZsRxg6Q7_C8zw@mail.gmail.com>
- <20180113063309.iryfhufpilas3jnf@mthode.org>
+        id S1752537AbeBEE5P (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 23:57:15 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60494 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752253AbeBEE5K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 23:57:10 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11B3F601C4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH 1/1] scsi: ufs: make sure all interrupts are processed
+From: "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+To: Avri Altman <Avri.Altman@wdc.com>,
+        "subhashj@codeaurora.org" <subhashj@codeaurora.org>,
+        "cang@codeaurora.org" <cang@codeaurora.org>,
+        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
+        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
+        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1517288066-13171-1-git-send-email-asutoshd@codeaurora.org>
+ <DM5PR04MB1085C5039CA525D6FB77DBE3FCFB0@DM5PR04MB1085.namprd04.prod.outlook.com>
+ <6ca20a27-3c10-bf0e-35e7-542b7ab77356@codeaurora.org>
+Message-ID: <b336fa7b-e79e-95b8-ea21-7b1e2b01677d@codeaurora.org>
+Date: Mon, 5 Feb 2018 10:27:02 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hax7konvqwaawvau"
-Content-Disposition: inline
-In-Reply-To: <20180113063309.iryfhufpilas3jnf@mthode.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <6ca20a27-3c10-bf0e-35e7-542b7ab77356@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2/2/2018 8:53 AM, Asutosh Das (asd) wrote:
+> On 1/31/2018 1:09 PM, Avri Altman wrote:
+>> Hi,
+>> Can you elaborate how this can even happen?
+>> Isn't the interrupt aggregation capability should attend for those cases?
+>>
+>> Thanks,
+>> Avri
+>>
+>>> -----Original Message-----
+>>> From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-
+>>> owner@vger.kernel.org] On Behalf Of Asutosh Das
+>>> Sent: Tuesday, January 30, 2018 6:54 AM
+>>> To: subhashj@codeaurora.org; cang@codeaurora.org;
+>>> vivek.gautam@codeaurora.org; rnayak@codeaurora.org;
+>>> vinholikatti@gmail.com; jejb@linux.vnet.ibm.com;
+>>> martin.petersen@oracle.com
+>>> Cc: linux-scsi@vger.kernel.org; Venkat Gopalakrishnan
+>>> <venkatg@codeaurora.org>; Asutosh Das <asutoshd@codeaurora.org>; open
+>>> list <linux-kernel@vger.kernel.org>
+>>> Subject: [PATCH 1/1] scsi: ufs: make sure all interrupts are processed
+>>>
+>>> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>>>
+>>> As multiple requests are submitted to the ufs host controller in 
+>>> parallel there
+>>> could be instances where the command completion interrupt arrives 
+>>> later for a
+>>> request that is already processed earlier as the corresponding 
+>>> doorbell was
+>>> cleared when handling the previous interrupt. Read the interrupt 
+>>> status in a
+>>> loop after processing the received interrupt to catch such interrupts 
+>>> and handle
+>>> it.
+>>>
+>>> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+>>> ---
+>>>   drivers/scsi/ufs/ufshcd.c | 27 +++++++++++++++++++--------
+>>>   1 file changed, 19 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index
+>>> 8af2af3..58d81de 100644
+>>> --- a/drivers/scsi/ufs/ufshcd.c
+>>> +++ b/drivers/scsi/ufs/ufshcd.c
+>>> @@ -5357,19 +5357,30 @@ static irqreturn_t ufshcd_intr(int irq, void 
+>>> *__hba)
+>>>       u32 intr_status, enabled_intr_status;
+>>>       irqreturn_t retval = IRQ_NONE;
+>>>       struct ufs_hba *hba = __hba;
+>>> +    int retries = hba->nutrs;
+>>>
+>>>       spin_lock(hba->host->host_lock);
+>>>       intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
+>>> -    enabled_intr_status =
+>>> -        intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
+>>>
+>>> -    if (intr_status)
+>>> -        ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
+>>> +    /*
+>>> +     * There could be max of hba->nutrs reqs in flight and in worst 
+>>> case
+>>> +     * if the reqs get finished 1 by 1 after the interrupt status is
+>>> +     * read, make sure we handle them by checking the interrupt status
+>>> +     * again in a loop until we process all of the reqs before 
+>>> returning.
+>>> +     */
+>>> +    do {
+>>> +        enabled_intr_status =
+>>> +            intr_status & ufshcd_readl(hba,
+>>> REG_INTERRUPT_ENABLE);
+>>> +        if (intr_status)
+>>> +            ufshcd_writel(hba, intr_status,
+>>> REG_INTERRUPT_STATUS);
+>>> +        if (enabled_intr_status) {
+>>> +            ufshcd_sl_intr(hba, enabled_intr_status);
+>>> +            retval = IRQ_HANDLED;
+>>> +        }
+>>> +
+>>> +        intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
+>>> +    } while (intr_status && --retries);
+>>>
+>>> -    if (enabled_intr_status) {
+>>> -        ufshcd_sl_intr(hba, enabled_intr_status);
+>>> -        retval = IRQ_HANDLED;
+>>> -    }
+>>>       spin_unlock(hba->host->host_lock);
+>>>       return retval;
+>>>   }
+>>> -- 
+>>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+>>> Inc.
+>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+>>> Linux
+>>> Foundation Collaborative Project.
+>>
+> 
+> Hi
+> yes - interrupt aggregation makes sense here. But there were some 
+> performance concerns with it; well, I don't have the data to back that 
+> up now though.
+> However, I can code it up and check it.
+> Will post it in some time.
+> 
+> -asd
+> 
+Hi Avri,
+I went through the UFS HCI - v2.1 spec. Specifically, in sec 7.2.3 it 
+explicitly mentions that the software should determine if new TRs were 
+completed since the interrupt status was last read/cleared. This step is 
+independent of aggregation.
 
---hax7konvqwaawvau
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So I think the above implementation makes sense. Please let me know if I 
+understood your concern correctly.
 
-On 18-01-13 00:33:09, Matthew Thode wrote:
-> On 18-01-12 15:07:12, David Herrmann wrote:
-> > Hi Andy
-> >=20
-> > On Fri, Jan 12, 2018 at 2:50 PM, Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Fri, Jan 12, 2018 at 1:04 PM, David Herrmann <dh.herrmann@gmail.co=
-m> wrote:
-> > >> Cc: Matthew Thode <mthode@mthode.org>
-> > >
-> > > Shouldn't be Suggested-by or even Signed-off-by?
-> >=20
-> > The patch is different (Matthew originally suppressed the ACPI event),
-> > so I did not copy the sign-off. Please add Suggested-by, if that is an
-> > acceptable tag.
-> >=20
-> > >> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
-> > >
-> > >
-> > >> +       case TP_HKEY_EV_PALM_DETECTED:
-> > >> +       case TP_HKEY_EV_PALM_UNDETECTED:
-> > >
-> > >> +               /* palm detected hovering the keyboard, forward to u=
-ser-space
-> > >> +                * via netlink for consumption */
-> > >
-> > > Comment style is
-> > > /*
-> > >  * Multi line comment.
-> > >  * This is an example.
-> > >  */
-> >=20
-> > All other 6 comments in this function follow the style I used here, so
-> > I tried to be consistent. But feel free to amend this change.
-> >=20
->=20
-> I'm fine with a signed-off-by or tested-by or suggested-by.  There is a
-> spelling mistake though, 'hoveres' should be hovers.
->=20
+-asd
 
-Is there anything else I can do here?  I'm not sure any of us have the
-ability to find out what lenovo actually wants this for.
-
---=20
-Matthew Thode (prometheanfire)
-
---hax7konvqwaawvau
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEExFR3cOKGRpGbcMHPZKN76q4ZpOgFAlp34/cACgkQZKN76q4Z
-pOi9HQ//X/e7XumXEd4wWQ/ivljJdoee2/TopBs94TuJZkQSpHYslhgbDWk+FeKq
-guFgAnA7uMkkNBmmM1Y4fZv95le1EZ1KczUq6j/OOcFUek/NANcg99/MqkdXbHjv
-puXwG9IXkzjBPcnLQFvh+5o0Hy8NYdpibhbp5BXmmfFnF7brANMiqiz7pk7iKqBd
-XQTHRT6tS296XbKlwh5n7mruVSTlacObk04l/UxDZfP5LvVXvaGnlSGJdj+IHqpE
-r+6R+QX/i9SFiNKy+xwztDR83JywfZvALgr7IMoTZSjrWPAwtCDRfRcNGIMbXdvb
-ANLUk1l0wyWaPWLL2ybw61qEY9Wb30vwsOoZ0mXRHhW/NdczBnQfA8HXbtW8LzgN
-F2p6SvaMBY8xErSNrp6Fnj/bejAcSquW7R5gK0M4ENu8uaNP+OmG5mRfOKr3Jogu
-putGiy6HcTavY7h9BFPAkp5YsCuxJ1Xpk+3tqrpU2DKrTR5wM7PAQqN0W6wro58d
-k6hX4/M2LLp6tOKthIjcSyXDDWLv7vZPKB9fFP59XGZWfnHfmaPzfcwbozy5FPzS
-I2/uqm55uPBv+kdEZAxXmPXdwjUoNYoDLViNgfe+YQpqZaJCfjTviOutePIADLV7
-UVhs7GYNbwQEZMNnCPgKCZX8v+UvDFJc8KqN99fZXoSp4zMLSVw=
-=7V0W
------END PGP SIGNATURE-----
-
---hax7konvqwaawvau--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
