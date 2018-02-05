@@ -1,118 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752758AbeBEIZV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 03:25:21 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:18855 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752733AbeBEIZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:25:11 -0500
-X-IronPort-AV: E=Sophos;i="5.46,464,1511852400";
-   d="scan'208";a="11064009"
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>, <linux-fbdev@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>,
-        <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <b.zolnierkie@samsung.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [PATCH] video: fbdev: convert to use GPIO descriptors
-Date: Mon, 5 Feb 2018 09:23:35 +0100
-Message-ID: <20180205082335.5727-1-ludovic.desroches@microchip.com>
-X-Mailer: git-send-email 2.12.2
+        id S1752637AbeBEI2g (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 03:28:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751938AbeBEI2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 03:28:31 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D79217AA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Mon, 5 Feb 2018 16:28:11 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: =?iso-8859-1?Q?Beno=EEt_Th=E9baudeau?=
+        <benoit.thebaudeau.dev@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Subject: Re: [PATCH v3 1/2] ARM: dts: imx25-pinfunc: Use consistent naming
+ for eSDHC
+Message-ID: <20180205082809.GT31354@dragon>
+References: <20180131213544.4508-1-benoit.thebaudeau.dev@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180131213544.4508-1-benoit.thebaudeau.dev@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use GPIO descriptors instead of relying on the old method.
+On Wed, Jan 31, 2018 at 10:35:43PM +0100, Benoît Thébaudeau wrote:
+> This file had several naming inconsistencies for eSDHC:
+>  - the instances were named sometimes SDn, sometimes SDHCn, whereas they
+>    are named ESDHCn in the reference manual, e.g.:
+>      MX25_PAD_SD1_CMD__SD1_CMD
+>      MX25_PAD_D15__SDHC1_DAT7
+>  - the data ports were named sometimes DATAn, sometimes DATn like in the
+>    reference manual, e.g.:
+>      MX25_PAD_SD1_DATA0__SD1_DATA0
+>      MX25_PAD_D15__SDHC1_DAT7
+>  - in one case, the clock port was named DAT_CLK instead of CLK:
+>      MX25_PAD_CSI_D7__SDHC2_DAT_CLK
+> 
+> This change:
+>  - introduces new definitions using the naming from the reference
+>    manual,
+>  - keeps definitions using the legacy naming in order not to break
+>    compatibility for out-of-tree users (they can be removed later),
+>  - updates the in-tree files that were using the legacy naming.
+> 
+> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Benoît Thébaudeau <benoit.thebaudeau.dev@gmail.com>
+> Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
----
- drivers/video/fbdev/atmel_lcdfb.c | 30 ++++++++++++------------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
-index 3dee267d7c75..ef3d4198014f 100644
---- a/drivers/video/fbdev/atmel_lcdfb.c
-+++ b/drivers/video/fbdev/atmel_lcdfb.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/backlight.h>
- #include <linux/gfp.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -61,8 +62,7 @@ struct atmel_lcdfb_info {
- };
- 
- struct atmel_lcdfb_power_ctrl_gpio {
--	int gpio;
--	int active_low;
-+	struct gpio_desc *gpiod;
- 
- 	struct list_head list;
- };
-@@ -1018,7 +1018,7 @@ static void atmel_lcdfb_power_control_gpio(struct atmel_lcdfb_pdata *pdata, int
- 	struct atmel_lcdfb_power_ctrl_gpio *og;
- 
- 	list_for_each_entry(og, &pdata->pwr_gpios, list)
--		gpio_set_value(og->gpio, on);
-+		gpiod_set_value(og->gpiod, on);
- }
- 
- static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
-@@ -1031,11 +1031,11 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
- 	struct device_node *display_np;
- 	struct device_node *timings_np;
- 	struct display_timings *timings;
--	enum of_gpio_flags flags;
- 	struct atmel_lcdfb_power_ctrl_gpio *og;
- 	bool is_gpio_power = false;
- 	int ret = -ENOENT;
--	int i, gpio;
-+	int i;
-+	struct gpio_desc *gpiod;
- 
- 	sinfo->config = (struct atmel_lcdfb_config*)
- 		of_match_device(atmel_lcdfb_dt_ids, dev)->data;
-@@ -1072,28 +1072,22 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
- 
- 	INIT_LIST_HEAD(&pdata->pwr_gpios);
- 	ret = -ENOMEM;
--	for (i = 0; i < of_gpio_named_count(display_np, "atmel,power-control-gpio"); i++) {
--		gpio = of_get_named_gpio_flags(display_np, "atmel,power-control-gpio",
--					       i, &flags);
--		if (gpio < 0)
-+	for (i = 0; i < gpiod_count(dev, "atmel,power-control"); i++) {
-+		gpiod = devm_gpiod_get_index_optional(dev,
-+				"atmel,power-control", i, GPIOD_ASIS);
-+		if (!gpiod)
- 			continue;
- 
- 		og = devm_kzalloc(dev, sizeof(*og), GFP_KERNEL);
- 		if (!og)
- 			goto put_display_node;
- 
--		og->gpio = gpio;
--		og->active_low = flags & OF_GPIO_ACTIVE_LOW;
-+		og->gpiod = gpiod;
- 		is_gpio_power = true;
--		ret = devm_gpio_request(dev, gpio, "lcd-power-control-gpio");
--		if (ret) {
--			dev_err(dev, "request gpio %d failed\n", gpio);
--			goto put_display_node;
--		}
- 
--		ret = gpio_direction_output(gpio, og->active_low);
-+		ret = gpiod_direction_output(gpiod, gpiod_is_active_low(gpiod));
- 		if (ret) {
--			dev_err(dev, "set direction output gpio %d failed\n", gpio);
-+			dev_err(dev, "set direction output gpio atmel,power-control[%d] failed\n", i);
- 			goto put_display_node;
- 		}
- 		list_add(&og->list, &pdata->pwr_gpios);
--- 
-2.12.2
+Applied both, thanks.
