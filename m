@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752507AbeBEBmR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:42:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43468 "EHLO mx2.suse.de"
+        id S1752982AbeBEBma (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:42:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44091 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752665AbeBEB2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:28:21 -0500
+        id S1752444AbeBEB2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:28:17 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
 Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 16/64] virt: use mm locking wrappers
-Date: Mon,  5 Feb 2018 02:27:06 +0100
-Message-Id: <20180205012754.23615-17-dbueso@wotan.suse.de>
+Subject: [PATCH 17/64] kernel: use mm locking wrappers
+Date: Mon,  5 Feb 2018 02:27:07 +0100
+Message-Id: <20180205012754.23615-18-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -25,162 +25,275 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-No change in semantics.
+Most of the users are already aware of mmrange, so conversion
+is straightforward. For those who don't, they all use mmap_sem
+in the same function context. No change in semantics.
+
+The dup_mmap() needs two ranges, one for the new and old mms.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- virt/kvm/arm/mmu.c  | 17 ++++++++++-------
- virt/kvm/async_pf.c |  4 ++--
- virt/kvm/kvm_main.c |  9 +++++----
- 3 files changed, 17 insertions(+), 13 deletions(-)
+ kernel/acct.c               |  5 +++--
+ kernel/events/core.c        |  5 +++--
+ kernel/events/uprobes.c     | 17 +++++++++--------
+ kernel/fork.c               | 16 ++++++++++------
+ kernel/futex.c              |  4 ++--
+ kernel/sched/fair.c         |  5 +++--
+ kernel/trace/trace_output.c |  5 +++--
+ 7 files changed, 33 insertions(+), 24 deletions(-)
 
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index ec62d1cccab7..9a866a639c2c 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -815,9 +815,10 @@ void stage2_unmap_vm(struct kvm *kvm)
- 	struct kvm_memslots *slots;
- 	struct kvm_memory_slot *memslot;
- 	int idx;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
+diff --git a/kernel/acct.c b/kernel/acct.c
+index addf7732fb56..bc8826f68002 100644
+--- a/kernel/acct.c
++++ b/kernel/acct.c
+@@ -538,14 +538,15 @@ void acct_collect(long exitcode, int group_dead)
  
- 	idx = srcu_read_lock(&kvm->srcu);
--	down_read(&current->mm->mmap_sem);
-+	mm_read_lock(current->mm, &mmrange);
- 	spin_lock(&kvm->mmu_lock);
+ 	if (group_dead && current->mm) {
+ 		struct vm_area_struct *vma;
++		DEFINE_RANGE_LOCK_FULL(mmrange);
  
- 	slots = kvm_memslots(kvm);
-@@ -825,7 +826,7 @@ void stage2_unmap_vm(struct kvm *kvm)
- 		stage2_unmap_memslot(kvm, memslot);
- 
- 	spin_unlock(&kvm->mmu_lock);
--	up_read(&current->mm->mmap_sem);
-+	mm_read_unlock(current->mm, &mmrange);
- 	srcu_read_unlock(&kvm->srcu, idx);
- }
- 
-@@ -1317,6 +1318,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	pgprot_t mem_type = PAGE_S2;
- 	bool logging_active = memslot_is_logging(memslot);
- 	unsigned long flags = 0;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	write_fault = kvm_is_write_fault(vcpu);
- 	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
-@@ -1328,11 +1330,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	}
- 
- 	/* Let's check if we will get back a huge page backed by hugetlbfs */
--	down_read(&current->mm->mmap_sem);
-+	mm_read_lock(current->mm, &mmrange);
- 	vma = find_vma_intersection(current->mm, hva, hva + 1);
- 	if (unlikely(!vma)) {
- 		kvm_err("Failed to find VMA for hva 0x%lx\n", hva);
+-		down_read(&current->mm->mmap_sem);
++		mm_read_lock(current->mm, &mmrange);
+ 		vma = current->mm->mmap;
+ 		while (vma) {
+ 			vsize += vma->vm_end - vma->vm_start;
+ 			vma = vma->vm_next;
+ 		}
 -		up_read(&current->mm->mmap_sem);
 +		mm_read_unlock(current->mm, &mmrange);
- 		return -EFAULT;
  	}
  
-@@ -1353,7 +1355,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 		    ((memslot->base_gfn << PAGE_SHIFT) & ~PMD_MASK))
- 			force_pte = true;
- 	}
--	up_read(&current->mm->mmap_sem);
-+	mm_read_unlock(current->mm, &mmrange);
- 
- 	/* We need minimum second+third level pages */
- 	ret = mmu_topup_memory_cache(memcache, KVM_MMU_CACHE_MIN_PAGES,
-@@ -1889,6 +1891,7 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
- 	hva_t reg_end = hva + mem->memory_size;
- 	bool writable = !(mem->flags & KVM_MEM_READONLY);
- 	int ret = 0;
+ 	spin_lock_irq(&current->sighand->siglock);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index f0549e79978b..b21d0942d225 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8264,6 +8264,7 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
+ 	struct mm_struct *mm = NULL;
+ 	unsigned int count = 0;
+ 	unsigned long flags;
 +	DEFINE_RANGE_LOCK_FULL(mmrange);
  
- 	if (change != KVM_MR_CREATE && change != KVM_MR_MOVE &&
- 			change != KVM_MR_FLAGS_ONLY)
-@@ -1902,7 +1905,7 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
- 	    (KVM_PHYS_SIZE >> PAGE_SHIFT))
- 		return -EFAULT;
- 
--	down_read(&current->mm->mmap_sem);
-+	mm_read_lock(current->mm, &mmrange);
  	/*
- 	 * A memory region could potentially cover multiple VMAs, and any holes
- 	 * between them, so iterate over all of them to find out if we can map
-@@ -1970,7 +1973,7 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
- 		stage2_flush_memslot(kvm, memslot);
- 	spin_unlock(&kvm->mmu_lock);
- out:
--	up_read(&current->mm->mmap_sem);
-+	mm_read_unlock(current->mm, &mmrange);
- 	return ret;
- }
+ 	 * We may observe TASK_TOMBSTONE, which means that the event tear-down
+@@ -8279,7 +8280,7 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
+ 	if (!mm)
+ 		goto restart;
  
-diff --git a/virt/kvm/async_pf.c b/virt/kvm/async_pf.c
-index 4cd2b93bb20c..ed559789d7cb 100644
---- a/virt/kvm/async_pf.c
-+++ b/virt/kvm/async_pf.c
-@@ -87,11 +87,11 @@ static void async_pf_execute(struct work_struct *work)
- 	 * mm and might be done in another context, so we must
- 	 * access remotely.
- 	 */
 -	down_read(&mm->mmap_sem);
 +	mm_read_lock(mm, &mmrange);
- 	get_user_pages_remote(NULL, mm, addr, 1, FOLL_WRITE, NULL, NULL,
- 			      &locked, &mmrange);
- 	if (locked)
--		up_read(&mm->mmap_sem);
-+		mm_read_unlock(mm, &mmrange);
  
- 	kvm_async_page_present_sync(vcpu, apf);
+ 	raw_spin_lock_irqsave(&ifh->lock, flags);
+ 	list_for_each_entry(filter, &ifh->list, entry) {
+@@ -8299,7 +8300,7 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
+ 	event->addr_filters_gen++;
+ 	raw_spin_unlock_irqrestore(&ifh->lock, flags);
  
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 86ec078f4c3b..92fd944e7e3a 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1222,6 +1222,7 @@ EXPORT_SYMBOL_GPL(kvm_is_visible_gfn);
- unsigned long kvm_host_page_size(struct kvm *kvm, gfn_t gfn)
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ 	mmput(mm);
+ 
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 60e12b39182c..df6da03d5dc1 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -818,7 +818,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
+ 		if (err && is_register)
+ 			goto free;
+ 
+-		down_write(&mm->mmap_sem);
++		mm_write_lock(mm, &mmrange);
+ 		vma = find_vma(mm, info->vaddr);
+ 		if (!vma || !valid_vma(vma, is_register) ||
+ 		    file_inode(vma->vm_file) != uprobe->inode)
+@@ -842,7 +842,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
+ 		}
+ 
+  unlock:
+-		up_write(&mm->mmap_sem);
++		mm_write_unlock(mm, &mmrange);
+  free:
+ 		mmput(mm);
+ 		info = free_map_info(info);
+@@ -984,7 +984,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+ 	int err = 0;
+ 	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 		unsigned long vaddr;
+ 		loff_t offset;
+@@ -1001,7 +1001,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+ 		vaddr = offset_to_vaddr(vma, uprobe->offset);
+ 		err |= remove_breakpoint(uprobe, mm, vaddr, &mmrange);
+ 	}
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ 	return err;
+ }
+@@ -1150,8 +1150,9 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
  {
  	struct vm_area_struct *vma;
+ 	int ret;
 +	DEFINE_RANGE_LOCK_FULL(mmrange);
- 	unsigned long addr, size;
  
- 	size = PAGE_SIZE;
-@@ -1230,7 +1231,7 @@ unsigned long kvm_host_page_size(struct kvm *kvm, gfn_t gfn)
- 	if (kvm_is_error_hva(addr))
- 		return PAGE_SIZE;
+-	if (down_write_killable(&mm->mmap_sem))
++	if (mm_write_lock_killable(mm, &mmrange))
+ 		return -EINTR;
  
--	down_read(&current->mm->mmap_sem);
-+	mm_read_lock(current->mm, &mmrange);
- 	vma = find_vma(current->mm, addr);
- 	if (!vma)
- 		goto out;
-@@ -1238,7 +1239,7 @@ unsigned long kvm_host_page_size(struct kvm *kvm, gfn_t gfn)
- 	size = vma_kernel_pagesize(vma);
+ 	if (mm->uprobes_state.xol_area) {
+@@ -1181,7 +1182,7 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
+ 	/* pairs with get_xol_area() */
+ 	smp_store_release(&mm->uprobes_state.xol_area, area); /* ^^^ */
+  fail:
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
  
- out:
--	up_read(&current->mm->mmap_sem);
-+	mm_read_unlock(current->mm, &mmrange);
- 
- 	return size;
+ 	return ret;
  }
-@@ -1494,7 +1495,7 @@ static kvm_pfn_t hva_to_pfn(unsigned long addr, bool atomic, bool *async,
- 	if (npages == 1)
- 		return pfn;
+@@ -1748,7 +1749,7 @@ static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+ 	struct vm_area_struct *vma;
+ 	DEFINE_RANGE_LOCK_FULL(mmrange);
  
--	down_read(&current->mm->mmap_sem);
-+	mm_read_lock(current->mm, &mmrange);
- 	if (npages == -EHWPOISON ||
- 	    (!async && check_user_page_hwpoison(addr, &mmrange))) {
- 		pfn = KVM_PFN_ERR_HWPOISON;
-@@ -1519,7 +1520,7 @@ static kvm_pfn_t hva_to_pfn(unsigned long addr, bool atomic, bool *async,
- 		pfn = KVM_PFN_ERR_FAULT;
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	vma = find_vma(mm, bp_vaddr);
+ 	if (vma && vma->vm_start <= bp_vaddr) {
+ 		if (valid_vma(vma, false)) {
+@@ -1766,7 +1767,7 @@ static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+ 
+ 	if (!uprobe && test_and_clear_bit(MMF_RECALC_UPROBES, &mm->flags))
+ 		mmf_recalc_uprobes(mm);
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ 	return uprobe;
+ }
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 2113e252cb9d..060554e33111 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -401,9 +401,11 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 	int retval;
+ 	unsigned long charge;
+ 	LIST_HEAD(uf);
++	DEFINE_RANGE_LOCK_FULL(old_mmrange);
++	DEFINE_RANGE_LOCK_FULL(mmrange); /* for the new mm */
+ 
+ 	uprobe_start_dup_mmap();
+-	if (down_write_killable(&oldmm->mmap_sem)) {
++	if (mm_write_lock_killable(oldmm, &old_mmrange)) {
+ 		retval = -EINTR;
+ 		goto fail_uprobe_end;
  	}
- exit:
--	up_read(&current->mm->mmap_sem);
-+	mm_read_unlock(current->mm, &mmrange);
- 	return pfn;
- }
+@@ -412,7 +414,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 	/*
+ 	 * Not linked in yet - no deadlock potential:
+ 	 */
+-	down_write_nested(&mm->mmap_sem, SINGLE_DEPTH_NESTING);
++        mm_write_lock_nested(mm, &mmrange, SINGLE_DEPTH_NESTING);
  
+ 	/* No ordering required: file already has been exposed. */
+ 	RCU_INIT_POINTER(mm->exe_file, get_mm_exe_file(oldmm));
+@@ -522,9 +524,9 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 	arch_dup_mmap(oldmm, mm);
+ 	retval = 0;
+ out:
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
+ 	flush_tlb_mm(oldmm);
+-	up_write(&oldmm->mmap_sem);
++	mm_write_unlock(oldmm, &old_mmrange);
+ 	dup_userfaultfd_complete(&uf);
+ fail_uprobe_end:
+ 	uprobe_end_dup_mmap();
+@@ -554,9 +556,11 @@ static inline void mm_free_pgd(struct mm_struct *mm)
+ #else
+ static int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
+ {
+-	down_write(&oldmm->mmap_sem);
++	DEFINE_RANGE_LOCK_FULL(mmrange);
++
++	mm_write_lock(oldmm, &mmrange);
+ 	RCU_INIT_POINTER(mm->exe_file, get_mm_exe_file(oldmm));
+-	up_write(&oldmm->mmap_sem);
++	mm_write_unlock(oldmm, &mmrange);
+ 	return 0;
+ }
+ #define mm_alloc_pgd(mm)	(0)
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 09a0d86f80a0..6764240e87bb 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -727,10 +727,10 @@ static int fault_in_user_writeable(u32 __user *uaddr)
+ 	int ret;
+ 	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	ret = fixup_user_fault(current, mm, (unsigned long)uaddr,
+ 			       FAULT_FLAG_WRITE, NULL, &mmrange);
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ 	return ret < 0 ? ret : 0;
+ }
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 7b6535987500..01f8c533aa21 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2470,6 +2470,7 @@ void task_numa_work(struct callback_head *work)
+ 	struct vm_area_struct *vma;
+ 	unsigned long start, end;
+ 	unsigned long nr_pte_updates = 0;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 	long pages, virtpages;
+ 
+ 	SCHED_WARN_ON(p != container_of(work, struct task_struct, numa_work));
+@@ -2521,7 +2522,7 @@ void task_numa_work(struct callback_head *work)
+ 		return;
+ 
+ 
+-	if (!down_read_trylock(&mm->mmap_sem))
++	if (!mm_read_trylock(mm, &mmrange))
+ 		return;
+ 	vma = find_vma(mm, start);
+ 	if (!vma) {
+@@ -2589,7 +2590,7 @@ void task_numa_work(struct callback_head *work)
+ 		mm->numa_scan_offset = start;
+ 	else
+ 		reset_ptenuma_scan(p);
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ 	/*
+ 	 * Make sure tasks use at least 32x as much time to run other code
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 90db994ac900..0c3f5193de41 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -395,8 +395,9 @@ static int seq_print_user_ip(struct trace_seq *s, struct mm_struct *mm,
+ 
+ 	if (mm) {
+ 		const struct vm_area_struct *vma;
++		DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+-		down_read(&mm->mmap_sem);
++		mm_read_lock(mm, &mmrange);
+ 		vma = find_vma(mm, ip);
+ 		if (vma) {
+ 			file = vma->vm_file;
+@@ -408,7 +409,7 @@ static int seq_print_user_ip(struct trace_seq *s, struct mm_struct *mm,
+ 				trace_seq_printf(s, "[+0x%lx]",
+ 						 ip - vmstart);
+ 		}
+-		up_read(&mm->mmap_sem);
++		mm_read_unlock(mm, &mmrange);
+ 	}
+ 	if (ret && ((sym_flags & TRACE_ITER_SYM_ADDR) || !file))
+ 		trace_seq_printf(s, " <" IP_FMT ">", ip);
 -- 
 2.13.6
