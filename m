@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752650AbeBEB0s (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:26:48 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39377 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752265AbeBEBZm (ORCPT
+        id S1752586AbeBEB07 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:26:59 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35791 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752166AbeBEBZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:25:42 -0500
-X-Google-Smtp-Source: AH8x225RH7B+9ONnNP1DBjpLnyY0KhH1jwz/DEBFf2J8B8RGTl+nEqgZE8InIvncUhwGB5dUkJqtNQ==
+        Sun, 4 Feb 2018 20:25:35 -0500
+X-Google-Smtp-Source: AH8x224bQAuCYw008dVJVaDwpcAxJcQcKcuQy4rQ80DL15Qz2+StpvqEHEzHGcjdjGHXK21ljKG0cg==
 From: Ulf Magnusson <ulfalizer@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
@@ -17,11 +17,10 @@ Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
         robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
         will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
         yamada.masahiro@socionext.com, Ulf Magnusson <ulfalizer@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: [PATCH 20/20] x86/PCI: VMD: Fix malformed default
-Date: Mon,  5 Feb 2018 02:21:32 +0100
-Message-Id: <20180205012146.23981-21-ulfalizer@gmail.com>
+        linux-snps-arc@lists.infradead.org
+Subject: [PATCH 19/20] ARC: Fix malformed ARC_EMUL_UNALIGNED default
+Date: Mon,  5 Feb 2018 02:21:31 +0100
+Message-Id: <20180205012146.23981-20-ulfalizer@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
 References: <20180205012146.23981-1-ulfalizer@gmail.com>
@@ -33,8 +32,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 effect here, due to undefined symbols (N in this case) evaluating to n
 in a tristate sense.
 
-Remove the default from VMD instead of changing it. bool and tristate
-symbols implicitly default to n.
+Remove the default from ARC_EMUL_UNALIGNED instead of changing it. bool
+and tristate symbols implicitly default to n.
 
 Discovered with the
 https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
@@ -42,20 +41,20 @@ script.
 
 Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- drivers/pci/host/Kconfig | 1 -
+ arch/arc/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-index a4ed7484d127..dc8a2a175f19 100644
---- a/drivers/pci/host/Kconfig
-+++ b/drivers/pci/host/Kconfig
-@@ -215,7 +215,6 @@ config PCIE_TANGO_SMP8759
- config VMD
- 	depends on PCI_MSI && X86_64 && SRCU
- 	tristate "Intel Volume Management Device Driver"
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index f3a80cf164cc..d76bf4a83740 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -484,7 +484,6 @@ config ARC_CURR_IN_REG
+ 
+ config ARC_EMUL_UNALIGNED
+ 	bool "Emulate unaligned memory access (userspace only)"
 -	default N
- 	---help---
- 	  Adds support for the Intel Volume Management Device (VMD). VMD is a
- 	  secondary PCI host bridge that allows PCI Express root ports,
+ 	select SYSCTL_ARCH_UNALIGN_NO_WARN
+ 	select SYSCTL_ARCH_UNALIGN_ALLOW
+ 	depends on ISA_ARCOMPACT
 -- 
 2.14.1
