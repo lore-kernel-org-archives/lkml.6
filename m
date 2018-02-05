@@ -1,65 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752995AbeBEN6W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 08:58:22 -0500
-Received: from smtp-out4.electric.net ([192.162.216.185]:52249 "EHLO
-        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752461AbeBEN6O (ORCPT
+        id S1753054AbeBEOBq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:01:46 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:55741 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752461AbeBEOBj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 08:58:14 -0500
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Arnd Bergmann'" <arnd@arndb.de>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, Nicolas Pitre <nico@linaro.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Jan Beulich <jbeulich@suse.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] xen: hypercall: fix out-of-bounds memcpy
-Thread-Topic: [PATCH] xen: hypercall: fix out-of-bounds memcpy
-Thread-Index: AQHTnH5MZeMmOwTXYkSEccagX73Jx6OVu3wggAAHrYCAABaB8A==
-Date: Mon, 5 Feb 2018 13:58:55 +0000
-Message-ID: <b24d41d767554cd5bdbd7cd4fc83d30c@AcuMS.aculab.com>
-References: <20180202153240.1190361-1-arnd@arndb.de>
- <aa6e25c7-dc55-a5bf-39cb-8b9453604111@oracle.com>
- <1eddce614f604c518b9bf238a2f92e4b@AcuMS.aculab.com>
- <CAK8P3a0z72S6mY7Q7RBJ_EMCbF9DOi+RdVaUEsB_qo+rGurQ1g@mail.gmail.com>
-In-Reply-To: <CAK8P3a0z72S6mY7Q7RBJ_EMCbF9DOi+RdVaUEsB_qo+rGurQ1g@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
+        Mon, 5 Feb 2018 09:01:39 -0500
+Date: Mon, 5 Feb 2018 15:01:34 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        tfiga@chromium.org, paul.burton@mips.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
+        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, Tony Lindgren <tony@atomide.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 05/20] rtc: at32ap700x: Remove PLATFORM_AT32AP dependency
+Message-ID: <20180205140134.GN3404@piout.net>
+References: <20180205012146.23981-1-ulfalizer@gmail.com>
+ <20180205012146.23981-6-ulfalizer@gmail.com>
+ <CAFkk2KRmK=fw=WYwr3eC8RJh7nxsUvC=uUnz7UCni72H9sHv4g@mail.gmail.com>
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFkk2KRmK=fw=WYwr3eC8RJh7nxsUvC=uUnz7UCni72H9sHv4g@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w15DwPYR019467
 
-From: Arnd Bergmann
-> Sent: 05 February 2018 12:37
-....
-> > Are the EVTCHNOP_xxx values dense?
-> > In which case an array is almost certainly better than the switch statement.
+Hi,
+
+On 05/02/2018 at 02:42:38 +0100, Ulf Magnusson wrote:
+> On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> > The PLATFORM_AT32AP symbol went away when AVR32 was removed in
+> > commit 26202873bb51 ("avr32: remove support for AVR32 architecture").
+> >
+> > Remove the RTC_DRV_AT32AP700X dependency from RTC_DRV_AT32AP700X.
+> >
+> > Discovered with the
+> > https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+> > script.
+> >
+> > Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> > ---
+> >  drivers/rtc/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> > index b71cc7b5fbc9..1f5f3bd82ab6 100644
+> > --- a/drivers/rtc/Kconfig
+> > +++ b/drivers/rtc/Kconfig
+> > @@ -1404,7 +1404,7 @@ config RTC_DRV_PL031
+> >
+> >  config RTC_DRV_AT32AP700X
+> >         tristate "AT32AP700X series RTC"
+> > -       depends on PLATFORM_AT32AP || COMPILE_TEST
+> > +       depends on COMPILE_TEST
+> >         help
+> >           Driver for the internal RTC (Realtime Clock) on Atmel AVR32
+> >           AT32AP700x family processors.
+> > --
+> > 2.14.1
+> >
 > 
-> They are, yes. PHYSDEVOP_xxx are also consecutive by start at '4'.
-> Dan made the same comment earlier, and I replied that my I had
-> considered it but went for the more failsafe route. I also verified my
-> assumption now that gcc in fact is smart enough to turn this
-> into a table by itself:
+> RTC_DRV_AT32AP700X could probably be removed along with
+> ./drivers/rtc/rtc-at32ap700x.c as well.
+> 
 
-I've never spotted that optimisation, must be fairly new.
+Note that the driver is already removed in Linus' tree.
 
-	David
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
