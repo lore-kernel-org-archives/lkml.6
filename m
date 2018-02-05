@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752814AbeBEBa3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:30:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44135 "EHLO mx2.suse.de"
+        id S1752824AbeBEBal (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:30:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43681 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752696AbeBEB3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752421AbeBEB3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Feb 2018 20:29:35 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
@@ -12,10 +12,10 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mhocko@kernel.org, kirill.shutemov@linux.intel.com,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbuesO@suse.de>
-Subject: [PATCH 64/64] mm: convert mmap_sem to range mmap_lock
-Date: Mon,  5 Feb 2018 02:27:54 +0100
-Message-Id: <20180205012754.23615-65-dbueso@wotan.suse.de>
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 58/64] drivers/infiniband: use mm locking wrappers
+Date: Mon,  5 Feb 2018 02:27:48 +0100
+Message-Id: <20180205012754.23615-59-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -25,247 +25,349 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-With mmrange now in place and everyone using the mm
-locking wrappers, we can convert the rwsem to a the
-range locking scheme. Every single user of mmap_sem
-will use a full range, which means that there is no
-more parallelism than what we already had. This is
-the worst case scenario. Prefetching has been blindly
-converted (for now).
+This becomes quite straightforward with the mmrange in place.
 
-This lays out the foundations for later mm address
-space locking scalability.
-
-Signed-off-by: Davidlohr Bueso <dbuesO@suse.de>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- arch/ia64/mm/fault.c     |  2 +-
- arch/x86/events/core.c   |  2 +-
- arch/x86/kernel/tboot.c  |  2 +-
- arch/x86/mm/fault.c      |  2 +-
- include/linux/mm.h       | 51 +++++++++++++++++++++++++-----------------------
- include/linux/mm_types.h |  4 ++--
- kernel/fork.c            |  2 +-
- mm/init-mm.c             |  2 +-
- mm/memory.c              |  2 +-
- 9 files changed, 36 insertions(+), 33 deletions(-)
+ drivers/infiniband/core/umem.c             | 16 +++++++++-------
+ drivers/infiniband/core/umem_odp.c         | 11 ++++++-----
+ drivers/infiniband/hw/hfi1/user_pages.c    | 15 +++++++++------
+ drivers/infiniband/hw/mlx4/main.c          |  5 +++--
+ drivers/infiniband/hw/mlx5/main.c          |  5 +++--
+ drivers/infiniband/hw/qib/qib_user_pages.c | 10 ++++++----
+ drivers/infiniband/hw/usnic/usnic_uiom.c   | 16 +++++++++-------
+ 7 files changed, 45 insertions(+), 33 deletions(-)
 
-diff --git a/arch/ia64/mm/fault.c b/arch/ia64/mm/fault.c
-index 9d379a9a9a5c..fd495bbb3726 100644
---- a/arch/ia64/mm/fault.c
-+++ b/arch/ia64/mm/fault.c
-@@ -95,7 +95,7 @@ ia64_do_page_fault (unsigned long address, unsigned long isr, struct pt_regs *re
- 		| (((isr >> IA64_ISR_W_BIT) & 1UL) << VM_WRITE_BIT));
+diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+index fd9601ed5b84..bdbb345916d0 100644
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -164,7 +164,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
  
- 	/* mmap_sem is performance critical.... */
--	prefetchw(&mm->mmap_sem);
-+	prefetchw(&mm->mmap_lock);
+ 	npages = ib_umem_num_pages(umem);
+ 
+-	down_write(&current->mm->mmap_sem);
++	mm_write_lock(current->mm, &mmrange);
+ 
+ 	locked     = npages + current->mm->pinned_vm;
+ 	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+@@ -237,7 +237,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+ 	} else
+ 		current->mm->pinned_vm = locked;
+ 
+-	up_write(&current->mm->mmap_sem);
++	mm_write_unlock(current->mm, &mmrange);
+ 	if (vma_list)
+ 		free_page((unsigned long) vma_list);
+ 	free_page((unsigned long) page_list);
+@@ -249,10 +249,11 @@ EXPORT_SYMBOL(ib_umem_get);
+ static void ib_umem_account(struct work_struct *work)
+ {
+ 	struct ib_umem *umem = container_of(work, struct ib_umem, work);
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+-	down_write(&umem->mm->mmap_sem);
++	mm_write_lock(umem->mm, &mmrange);
+ 	umem->mm->pinned_vm -= umem->diff;
+-	up_write(&umem->mm->mmap_sem);
++	mm_write_unlock(umem->mm, &mmrange);
+ 	mmput(umem->mm);
+ 	kfree(umem);
+ }
+@@ -267,6 +268,7 @@ void ib_umem_release(struct ib_umem *umem)
+ 	struct mm_struct *mm;
+ 	struct task_struct *task;
+ 	unsigned long diff;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	if (umem->odp_data) {
+ 		ib_umem_odp_release(umem);
+@@ -295,7 +297,7 @@ void ib_umem_release(struct ib_umem *umem)
+ 	 * we defer the vm_locked accounting to the system workqueue.
+ 	 */
+ 	if (context->closing) {
+-		if (!down_write_trylock(&mm->mmap_sem)) {
++		if (!mm_write_trylock(mm, &mmrange)) {
+ 			INIT_WORK(&umem->work, ib_umem_account);
+ 			umem->mm   = mm;
+ 			umem->diff = diff;
+@@ -304,10 +306,10 @@ void ib_umem_release(struct ib_umem *umem)
+ 			return;
+ 		}
+ 	} else
+-		down_write(&mm->mmap_sem);
++		mm_write_lock(mm, &mmrange);
+ 
+ 	mm->pinned_vm -= diff;
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
+ 	mmput(mm);
+ out:
+ 	kfree(umem);
+diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
+index 0572953260e8..3b5f6814ba41 100644
+--- a/drivers/infiniband/core/umem_odp.c
++++ b/drivers/infiniband/core/umem_odp.c
+@@ -334,16 +334,17 @@ int ib_umem_odp_get(struct ib_ucontext *context, struct ib_umem *umem,
+ 	if (access & IB_ACCESS_HUGETLB) {
+ 		struct vm_area_struct *vma;
+ 		struct hstate *h;
++		DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+-		down_read(&mm->mmap_sem);
++		mm_read_lock(mm, &mmrange);
+ 		vma = find_vma(mm, ib_umem_start(umem));
+ 		if (!vma || !is_vm_hugetlb_page(vma)) {
+-			up_read(&mm->mmap_sem);
++			mm_read_unlock(mm, &mmrange);
+ 			return -EINVAL;
+ 		}
+ 		h = hstate_vma(vma);
+ 		umem->page_shift = huge_page_shift(h);
+-		up_read(&mm->mmap_sem);
++		mm_read_unlock(mm, &mmrange);
+ 		umem->hugetlb = 1;
+ 	} else {
+ 		umem->hugetlb = 0;
+@@ -674,7 +675,7 @@ int ib_umem_odp_map_dma_pages(struct ib_umem *umem, u64 user_virt, u64 bcnt,
+ 				(bcnt + BIT(page_shift) - 1) >> page_shift,
+ 				PAGE_SIZE / sizeof(struct page *));
+ 
+-		down_read(&owning_mm->mmap_sem);
++		mm_read_lock(owning_mm, &mmrange);
+ 		/*
+ 		 * Note: this might result in redundent page getting. We can
+ 		 * avoid this by checking dma_list to be 0 before calling
+@@ -685,7 +686,7 @@ int ib_umem_odp_map_dma_pages(struct ib_umem *umem, u64 user_virt, u64 bcnt,
+ 		npages = get_user_pages_remote(owning_process, owning_mm,
+ 				user_virt, gup_num_pages,
+ 				flags, local_page_list, NULL, NULL, &mmrange);
+-		up_read(&owning_mm->mmap_sem);
++		mm_read_unlock(owning_mm, &mmrange);
+ 
+ 		if (npages < 0)
+ 			break;
+diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/hw/hfi1/user_pages.c
+index e341e6dcc388..1a6103d4f367 100644
+--- a/drivers/infiniband/hw/hfi1/user_pages.c
++++ b/drivers/infiniband/hw/hfi1/user_pages.c
+@@ -76,6 +76,7 @@ bool hfi1_can_pin_pages(struct hfi1_devdata *dd, struct mm_struct *mm,
+ 	unsigned int usr_ctxts =
+ 			dd->num_rcv_contexts - dd->first_dyn_alloc_ctxt;
+ 	bool can_lock = capable(CAP_IPC_LOCK);
++	DEFINE_RANGE_LOCK_FULL(mmrange);
  
  	/*
- 	 * If we're in an interrupt or have no user context, we must not take the fault..
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 140d33288e78..9b94559160b2 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2144,7 +2144,7 @@ static void x86_pmu_event_mapped(struct perf_event *event, struct mm_struct *mm)
- 	 * For now, this can't happen because all callers hold mmap_sem
- 	 * for write.  If this changes, we'll need a different solution.
- 	 */
--	lockdep_assert_held_exclusive(&mm->mmap_sem);
-+	lockdep_assert_held_exclusive(&mm->mmap_lock);
+ 	 * Calculate per-cache size. The calculation below uses only a quarter
+@@ -91,9 +92,9 @@ bool hfi1_can_pin_pages(struct hfi1_devdata *dd, struct mm_struct *mm,
+ 	/* Convert to number of pages */
+ 	size = DIV_ROUND_UP(size, PAGE_SIZE);
  
- 	if (atomic_inc_return(&mm->context.perf_rdpmc_allowed) == 1)
- 		on_each_cpu_mask(mm_cpumask(mm), refresh_pce, NULL, 1);
-diff --git a/arch/x86/kernel/tboot.c b/arch/x86/kernel/tboot.c
-index a2486f444073..ec23bc6a1eb0 100644
---- a/arch/x86/kernel/tboot.c
-+++ b/arch/x86/kernel/tboot.c
-@@ -104,7 +104,7 @@ static struct mm_struct tboot_mm = {
- 	.pgd            = swapper_pg_dir,
- 	.mm_users       = ATOMIC_INIT(2),
- 	.mm_count       = ATOMIC_INIT(1),
--	.mmap_sem       = __RWSEM_INITIALIZER(init_mm.mmap_sem),
-+	.mmap_lock       = __RANGE_LOCK_TREE_INITIALIZER(init_mm.mmap_lock),
- 	.page_table_lock =  __SPIN_LOCK_UNLOCKED(init_mm.page_table_lock),
- 	.mmlist         = LIST_HEAD_INIT(init_mm.mmlist),
- };
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 87bdcb26a907..c025dbf349a1 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1258,7 +1258,7 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 	 * Detect and handle instructions that would cause a page fault for
- 	 * both a tracked kernel page and a userspace page.
- 	 */
--	prefetchw(&mm->mmap_sem);
-+	prefetchw(&mm->mmap_lock);
- 
- 	if (unlikely(kmmio_fault(regs, address)))
- 		return;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0b9867e8a35d..a0c2f4b17e3c 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2699,73 +2699,76 @@ static inline void setup_nr_node_ids(void) {}
-  * Address space locking wrappers.
-  */
- static inline bool mm_is_locked(struct mm_struct *mm,
--				struct range_lock *range)
-+				struct range_lock *mmrange)
- {
--	return rwsem_is_locked(&mm->mmap_sem);
-+	return range_is_locked(&mm->mmap_lock, mmrange);
- }
- 
- /* Reader wrappers */
- static inline int mm_read_trylock(struct mm_struct *mm,
--				  struct range_lock *range)
-+				  struct range_lock *mmrange)
- {
--	return down_read_trylock(&mm->mmap_sem);
-+	return range_read_trylock(&mm->mmap_lock, mmrange);
- }
- 
--static inline void mm_read_lock(struct mm_struct *mm, struct range_lock *range)
-+static inline void mm_read_lock(struct mm_struct *mm,
-+				struct range_lock *mmrange)
- {
 -	down_read(&mm->mmap_sem);
-+        range_read_lock(&mm->mmap_lock, mmrange);
- }
- 
- static inline void mm_read_lock_nested(struct mm_struct *mm,
--				       struct range_lock *range, int subclass)
-+				       struct range_lock *mmrange, int subclass)
- {
--	down_read_nested(&mm->mmap_sem, subclass);
-+        range_read_lock_nested(&mm->mmap_lock, mmrange, subclass);
- }
- 
- static inline void mm_read_unlock(struct mm_struct *mm,
--				  struct range_lock *range)
-+				  struct range_lock *mmrange)
- {
++	mm_read_lock(mm, &mmrange);
+ 	pinned = mm->pinned_vm;
 -	up_read(&mm->mmap_sem);
-+	range_read_unlock(&mm->mmap_lock, mmrange);
- }
++	mm_read_unlock(mm, &mmrange);
  
- /* Writer wrappers */
- static inline int mm_write_trylock(struct mm_struct *mm,
--				   struct range_lock *range)
-+				   struct range_lock *mmrange)
+ 	/* First, check the absolute limit against all pinned pages. */
+ 	if (pinned + npages >= ulimit && !can_lock)
+@@ -106,14 +107,15 @@ int hfi1_acquire_user_pages(struct mm_struct *mm, unsigned long vaddr, size_t np
+ 			    bool writable, struct page **pages)
  {
--	return down_write_trylock(&mm->mmap_sem);
-+	return range_write_trylock(&mm->mmap_lock, mmrange);
- }
+ 	int ret;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
  
--static inline void mm_write_lock(struct mm_struct *mm, struct range_lock *range)
-+static inline void mm_write_lock(struct mm_struct *mm,
-+				 struct range_lock *mmrange)
- {
+ 	ret = get_user_pages_fast(vaddr, npages, writable, pages);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -	down_write(&mm->mmap_sem);
-+	range_write_lock(&mm->mmap_lock, mmrange);
- }
- 
- static inline int mm_write_lock_killable(struct mm_struct *mm,
--					 struct range_lock *range)
-+					 struct range_lock *mmrange)
- {
--	return down_write_killable(&mm->mmap_sem);
-+	return range_write_lock_killable(&mm->mmap_lock, mmrange);
- }
- 
- static inline void mm_downgrade_write(struct mm_struct *mm,
--				      struct range_lock *range)
-+				      struct range_lock *mmrange)
- {
--	downgrade_write(&mm->mmap_sem);
-+	range_downgrade_write(&mm->mmap_lock, mmrange);
- }
- 
- static inline void mm_write_unlock(struct mm_struct *mm,
--				   struct range_lock *range)
-+				   struct range_lock *mmrange)
- {
++	mm_write_lock(mm, &mmrange);
+ 	mm->pinned_vm += ret;
 -	up_write(&mm->mmap_sem);
-+        range_write_unlock(&mm->mmap_lock, mmrange);
- }
++	mm_write_unlock(mm, &mmrange);
  
- static inline void mm_write_lock_nested(struct mm_struct *mm,
--					struct range_lock *range, int subclass)
-+					struct range_lock *mmrange,
-+					int subclass)
+ 	return ret;
+ }
+@@ -122,6 +124,7 @@ void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
+ 			     size_t npages, bool dirty)
  {
--	down_write_nested(&mm->mmap_sem, subclass);
-+        range_write_lock_nested(&mm->mmap_lock, mmrange, subclass);
+ 	size_t i;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	for (i = 0; i < npages; i++) {
+ 		if (dirty)
+@@ -130,8 +133,8 @@ void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
+ 	}
+ 
+ 	if (mm) { /* during close after signal, mm can be NULL */
+-		down_write(&mm->mmap_sem);
++		mm_write_lock(mm, &mmrange);
+ 		mm->pinned_vm -= npages;
+-		up_write(&mm->mmap_sem);
++		mm_write_unlock(mm, &mmrange);
+ 	}
+ }
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index 8d2ee9322f2e..3124717bda45 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -1188,6 +1188,7 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+ 	struct mlx4_ib_ucontext *context = to_mucontext(ibcontext);
+ 	struct task_struct *owning_process  = NULL;
+ 	struct mm_struct   *owning_mm       = NULL;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	owning_process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
+ 	if (!owning_process)
+@@ -1219,7 +1220,7 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+ 	/* need to protect from a race on closing the vma as part of
+ 	 * mlx4_ib_vma_close().
+ 	 */
+-	down_write(&owning_mm->mmap_sem);
++	mm_write_lock(owning_mm, &mmrange);
+ 	for (i = 0; i < HW_BAR_COUNT; i++) {
+ 		vma = context->hw_bar_info[i].vma;
+ 		if (!vma)
+@@ -1239,7 +1240,7 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+ 		context->hw_bar_info[i].vma->vm_ops = NULL;
+ 	}
+ 
+-	up_write(&owning_mm->mmap_sem);
++	mm_write_unlock(owning_mm, &mmrange);
+ 	mmput(owning_mm);
+ 	put_task_struct(owning_process);
+ }
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index 4236c8086820..303fed2657fe 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -1902,6 +1902,7 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+ 	struct mlx5_ib_ucontext *context = to_mucontext(ibcontext);
+ 	struct task_struct *owning_process  = NULL;
+ 	struct mm_struct   *owning_mm       = NULL;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	owning_process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
+ 	if (!owning_process)
+@@ -1931,7 +1932,7 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+ 	/* need to protect from a race on closing the vma as part of
+ 	 * mlx5_ib_vma_close.
+ 	 */
+-	down_write(&owning_mm->mmap_sem);
++	mm_write_lock(owning_mm, &mmrange);
+ 	mutex_lock(&context->vma_private_list_mutex);
+ 	list_for_each_entry_safe(vma_private, n, &context->vma_private_list,
+ 				 list) {
+@@ -1948,7 +1949,7 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+ 		kfree(vma_private);
+ 	}
+ 	mutex_unlock(&context->vma_private_list_mutex);
+-	up_write(&owning_mm->mmap_sem);
++	mm_write_unlock(owning_mm, &mmrange);
+ 	mmput(owning_mm);
+ 	put_task_struct(owning_process);
+ }
+diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
+index 6bcb4f9f9b30..13b7f6f93560 100644
+--- a/drivers/infiniband/hw/qib/qib_user_pages.c
++++ b/drivers/infiniband/hw/qib/qib_user_pages.c
+@@ -136,24 +136,26 @@ int qib_get_user_pages(unsigned long start_page, size_t num_pages,
+ 	int ret;
+ 	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+-	down_write(&current->mm->mmap_sem);
++	mm_write_lock(current->mm, &mmrange);
+ 
+ 	ret = __qib_get_user_pages(start_page, num_pages, p, &mmrange);
+ 
+-	up_write(&current->mm->mmap_sem);
++	mm_write_unlock(current->mm, &mmrange);
+ 
+ 	return ret;
  }
  
--#define mm_write_nest_lock(mm, range, nest_lock)		\
--	down_write_nest_lock(&(mm)->mmap_sem, nest_lock)
-+#define mm_write_lock_nest_lock(mm, range, nest_lock)		\
-+	range_write_lock_nest_lock(&(mm)->mmap_lock, mmrange, nest_lock)
+ void qib_release_user_pages(struct page **p, size_t num_pages)
+ {
++	DEFINE_RANGE_LOCK_FULL(mmrange);
++
+ 	if (current->mm) /* during close after signal, mm can be NULL */
+-		down_write(&current->mm->mmap_sem);
++		mm_write_lock(current->mm, &mmrange);
  
- #endif /* __KERNEL__ */
- #endif /* _LINUX_MM_H */
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index fd1af6b9591d..fd9545fe4735 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -8,7 +8,7 @@
- #include <linux/list.h>
- #include <linux/spinlock.h>
- #include <linux/rbtree.h>
--#include <linux/rwsem.h>
-+#include <linux/range_lock.h>
- #include <linux/completion.h>
- #include <linux/cpumask.h>
- #include <linux/uprobes.h>
-@@ -393,7 +393,7 @@ struct mm_struct {
- 	int map_count;				/* number of VMAs */
+ 	__qib_release_user_pages(p, num_pages, 1);
  
- 	spinlock_t page_table_lock;		/* Protects page tables and some counters */
--	struct rw_semaphore mmap_sem;
-+	struct range_lock_tree mmap_lock;
- 
- 	struct list_head mmlist;		/* List of maybe swapped mm's.	These are globally strung
- 						 * together off init_mm.mmlist, and are protected
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 060554e33111..252a1fe18f16 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -899,7 +899,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	mm->vmacache_seqnum = 0;
- 	atomic_set(&mm->mm_users, 1);
- 	atomic_set(&mm->mm_count, 1);
--	init_rwsem(&mm->mmap_sem);
-+	range_lock_tree_init(&mm->mmap_lock);
- 	INIT_LIST_HEAD(&mm->mmlist);
- 	mm->core_state = NULL;
- 	mm_pgtables_bytes_init(mm);
-diff --git a/mm/init-mm.c b/mm/init-mm.c
-index f94d5d15ebc0..c4aee632702f 100644
---- a/mm/init-mm.c
-+++ b/mm/init-mm.c
-@@ -20,7 +20,7 @@ struct mm_struct init_mm = {
- 	.pgd		= swapper_pg_dir,
- 	.mm_users	= ATOMIC_INIT(2),
- 	.mm_count	= ATOMIC_INIT(1),
--	.mmap_sem	= __RWSEM_INITIALIZER(init_mm.mmap_sem),
-+	.mmap_lock	= __RANGE_LOCK_TREE_INITIALIZER(init_mm.mmap_lock),
- 	.page_table_lock =  __SPIN_LOCK_UNLOCKED(init_mm.page_table_lock),
- 	.mmlist		= LIST_HEAD_INIT(init_mm.mmlist),
- 	.user_ns	= &init_user_ns,
-diff --git a/mm/memory.c b/mm/memory.c
-index e3bf2879f7c3..d4fc526d82a4 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4568,7 +4568,7 @@ void __might_fault(const char *file, int line)
- 	__might_sleep(file, line, 0);
- #if defined(CONFIG_DEBUG_ATOMIC_SLEEP)
- 	if (current->mm)
--		might_lock_read(&current->mm->mmap_sem);
-+		might_lock_read(&current->mm->mmap_lock);
- #endif
+ 	if (current->mm) {
+ 		current->mm->pinned_vm -= num_pages;
+-		up_write(&current->mm->mmap_sem);
++		mm_write_unlock(current->mm, &mmrange);
+ 	}
  }
- EXPORT_SYMBOL(__might_fault);
+diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
+index 5f36c6d2e21b..7cb05133311c 100644
+--- a/drivers/infiniband/hw/usnic/usnic_uiom.c
++++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
+@@ -57,10 +57,11 @@ static void usnic_uiom_reg_account(struct work_struct *work)
+ {
+ 	struct usnic_uiom_reg *umem = container_of(work,
+ 						struct usnic_uiom_reg, work);
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+-	down_write(&umem->mm->mmap_sem);
++	mm_write_lock(umem->mm, &mmrange);
+ 	umem->mm->locked_vm -= umem->diff;
+-	up_write(&umem->mm->mmap_sem);
++	mm_write_unlock(umem->mm, &mmrange);
+ 	mmput(umem->mm);
+ 	kfree(umem);
+ }
+@@ -126,7 +127,7 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
+ 
+ 	npages = PAGE_ALIGN(size + (addr & ~PAGE_MASK)) >> PAGE_SHIFT;
+ 
+-	down_write(&current->mm->mmap_sem);
++	mm_write_lock(current->mm, &mmrange);
+ 
+ 	locked = npages + current->mm->locked_vm;
+ 	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+@@ -189,7 +190,7 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
+ 	else
+ 		current->mm->locked_vm = locked;
+ 
+-	up_write(&current->mm->mmap_sem);
++	mm_write_unlock(current->mm, &mmrange);
+ 	free_page((unsigned long) page_list);
+ 	return ret;
+ }
+@@ -425,6 +426,7 @@ void usnic_uiom_reg_release(struct usnic_uiom_reg *uiomr, int closing)
+ {
+ 	struct mm_struct *mm;
+ 	unsigned long diff;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	__usnic_uiom_reg_release(uiomr->pd, uiomr, 1);
+ 
+@@ -445,7 +447,7 @@ void usnic_uiom_reg_release(struct usnic_uiom_reg *uiomr, int closing)
+ 	 * we defer the vm_locked accounting to the system workqueue.
+ 	 */
+ 	if (closing) {
+-		if (!down_write_trylock(&mm->mmap_sem)) {
++		if (!mm_write_trylock(mm, &mmrange)) {
+ 			INIT_WORK(&uiomr->work, usnic_uiom_reg_account);
+ 			uiomr->mm = mm;
+ 			uiomr->diff = diff;
+@@ -454,10 +456,10 @@ void usnic_uiom_reg_release(struct usnic_uiom_reg *uiomr, int closing)
+ 			return;
+ 		}
+ 	} else
+-		down_write(&mm->mmap_sem);
++		mm_write_lock(mm, &mmrange);
+ 
+ 	current->mm->locked_vm -= diff;
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
+ 	mmput(mm);
+ 	kfree(uiomr);
+ }
 -- 
 2.13.6
