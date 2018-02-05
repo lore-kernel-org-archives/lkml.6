@@ -1,70 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeBEVjA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 16:39:00 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:41959 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752005AbeBEViv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 16:38:51 -0500
-Date: Mon, 5 Feb 2018 13:37:43 -0800
-From: tip-bot for Ravi Bangoria <tipbot@zytor.com>
-Message-ID: <tip-2fe2230d4183d2c311bbb7b426491ac486216a16@git.kernel.org>
-Cc: mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, namhyung@kernel.org, acme@redhat.com,
-        alexander.shishkin@linux.intel.com, ravi.bangoria@linux.vnet.ibm.com,
-        jolsa@redhat.com
-Reply-To: namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-        acme@redhat.com, mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, jolsa@redhat.com,
-        ravi.bangoria@linux.vnet.ibm.com
-In-Reply-To: <20180130053053.13214-2-ravi.bangoria@linux.vnet.ibm.com>
-References: <20180130053053.13214-2-ravi.bangoria@linux.vnet.ibm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Add trace/beauty/generated/ into
- .gitignore
-Git-Commit-ID: 2fe2230d4183d2c311bbb7b426491ac486216a16
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752263AbeBEVjW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 16:39:22 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41900 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752060AbeBEVjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 16:39:13 -0500
+Date: Mon, 5 Feb 2018 15:39:11 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Nicolas Pitre <nico@linaro.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        bpetkov@suse.de,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/urgent] x86/dumpstack: Avoid uninitlized variable
+Message-ID: <20180205213911.2auyud6a3k2ng7jx@treble>
+References: <20180202145634.200291-1-arnd@arndb.de>
+ <tip-ebfc15019cfa72496c674ffcb0b8ef10790dcddc@git.kernel.org>
+ <CAK8P3a3MMwRQ00YxuPhEmNzqiMn4+VX48b82831i+kCqruCMfQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <CAK8P3a3MMwRQ00YxuPhEmNzqiMn4+VX48b82831i+kCqruCMfQ@mail.gmail.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2fe2230d4183d2c311bbb7b426491ac486216a16
-Gitweb:     https://git.kernel.org/tip/2fe2230d4183d2c311bbb7b426491ac486216a16
-Author:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-AuthorDate: Tue, 30 Jan 2018 11:00:52 +0530
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 5 Feb 2018 13:58:02 -0300
+On Mon, Feb 05, 2018 at 10:21:06PM +0100, Arnd Bergmann wrote:
+> On Fri, Feb 2, 2018 at 11:36 PM, tip-bot for Arnd Bergmann
+> <tipbot@zytor.com> wrote:
+> > Commit-ID:  ebfc15019cfa72496c674ffcb0b8ef10790dcddc
+> > Gitweb:     https://git.kernel.org/tip/ebfc15019cfa72496c674ffcb0b8ef10790dcddc
+> > Author:     Arnd Bergmann <arnd@arndb.de>
+> > AuthorDate: Fri, 2 Feb 2018 15:56:17 +0100
+> > Committer:  Thomas Gleixner <tglx@linutronix.de>
+> > CommitDate: Fri, 2 Feb 2018 23:33:50 +0100
+> >
+> > x86/dumpstack: Avoid uninitlized variable
+> >
+> > In some configurations, 'partial' does not get initialized, as shown by
+> > this gcc-8 warning:
+> >
+> > arch/x86/kernel/dumpstack.c: In function 'show_trace_log_lvl':
+> > arch/x86/kernel/dumpstack.c:156:4: error: 'partial' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> >     show_regs_if_on_stack(&stack_info, regs, partial);
+> >     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >
+> > This initializes it to false, to get the previous behavior in this case.
+> >
+> > Fixes: a9cdbe72c4e8 ("x86/dumpstack: Fix partial register dumps")
+> 
+> 
+> I just noticed my annotation got lost when I sent the patch. I originally
+> meant to ask Josh to double-check whether it should be 'false' or 'true'
+> here, or if we maybe need a larger change.
+> 
+> Josh, could you take a look? Unfortunately I did not really understand
+> your original commit, so I don't know what the safe choice is here
+> in those cases in which 'partial' is uninitialized.
 
-perf tools: Add trace/beauty/generated/ into .gitignore
+I think it doesn't matter, it seems to be a false positive warning.
 
-No functionality changes.
+The 'partial' variable is only used when 'regs' is non-NULL, and 'regs'
+is only set in unwind_get_entry_regs() after 'partial' gets initialized.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20180130053053.13214-2-ravi.bangoria@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/.gitignore b/tools/perf/.gitignore
-index 643cc4ba..3e5135d 100644
---- a/tools/perf/.gitignore
-+++ b/tools/perf/.gitignore
-@@ -31,5 +31,6 @@ config.mak.autogen
- .config-detected
- util/intel-pt-decoder/inat-tables.c
- arch/*/include/generated/
-+trace/beauty/generated/
- pmu-events/pmu-events.c
- pmu-events/jevents
+-- 
+Josh
