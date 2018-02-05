@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753313AbeBEMz0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:55:26 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:29249 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753015AbeBEMvf (ORCPT
+        id S1753095AbeBEMzj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:55:39 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:63854 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752866AbeBEMv0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:51:35 -0500
+        Mon, 5 Feb 2018 07:51:26 -0500
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -15,43 +15,222 @@ CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Kishon Vijay Abraham I <kishon@ti.com>, <linux-mmc@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 07/16] mmc: sdhci_omap: Fix sdhci-omap quirks
-Date: Mon, 5 Feb 2018 18:20:20 +0530
-Message-ID: <20180205125029.21570-8-kishon@ti.com>
+Subject: [PATCH v2 04/16] mmc: sdhci-omap: Add tuning support
+Date: Mon, 5 Feb 2018 18:20:17 +0530
+Message-ID: <20180205125029.21570-5-kishon@ti.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180205125029.21570-1-kishon@ti.com>
 References: <20180205125029.21570-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add SDHCI_QUIRK2_PRESET_VALUE_BROKEN quirk as setting preset values loads
-incorrect CLKD values (for UHS modes).
+MMC tuning procedure is required to support SD card
+UHS1-SDR104 mode and EMMC HS200 mode.
 
-Remove SDHCI_QUIRK2_NO_1_8_V quirk as sdhci-omap now supports UHS modes.
+SDR104/HS200 DLL Tuning Procedure for AM572x platform is mentioned
+in Figure 25-51. SDR104/HS200 DLL Tuning Procedure of
+AM572x Sitara Processors Silicon Revision 2.0, 1.1 TRM
+(SPRUHZ6I - October 2014–Revised April 2017 [1]).
+
+The tuning function sdhci_omap_execute_tuning() will only be
+called by the MMC/SD core if the corresponding speed modes
+are supported by the OMAP silicon which is set in the mmc
+host "caps" field.
+
+[1] -> http://www.ti.com/lit/ug/spruhz6i/spruhz6i.pdf
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- drivers/mmc/host/sdhci-omap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mmc/host/sdhci-omap.c | 130 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 130 insertions(+)
 
 diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 8b6170cd689b..d5a9e688dc1b 100644
+index 86b6cc0a5380..36e0626d3de2 100644
 --- a/drivers/mmc/host/sdhci-omap.c
 +++ b/drivers/mmc/host/sdhci-omap.c
-@@ -710,8 +710,8 @@ static const struct sdhci_pltfm_data sdhci_omap_pdata = {
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
--	.quirks2 = SDHCI_QUIRK2_NO_1_8_V |
--		   SDHCI_QUIRK2_ACMD23_BROKEN |
-+	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN |
-+		   SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
- 		   SDHCI_QUIRK2_RSP_136_HAS_CRC,
- 	.ops = &sdhci_omap_ops,
+@@ -37,6 +37,13 @@
+ #define CON_INIT		BIT(1)
+ #define CON_OD			BIT(0)
+ 
++#define SDHCI_OMAP_DLL		0x0134
++#define DLL_SWT			BIT(20)
++#define DLL_FORCE_SR_C_SHIFT	13
++#define DLL_FORCE_SR_C_MASK	(0x7f << DLL_FORCE_SR_C_SHIFT)
++#define DLL_FORCE_VALUE		BIT(12)
++#define DLL_CALIB		BIT(1)
++
+ #define SDHCI_OMAP_CMD		0x20c
+ 
+ #define SDHCI_OMAP_PSTATE	0x0224
+@@ -63,12 +70,16 @@
+ 
+ #define SDHCI_OMAP_AC12		0x23c
+ #define AC12_V1V8_SIGEN		BIT(19)
++#define AC12_SCLK_SEL		BIT(23)
+ 
+ #define SDHCI_OMAP_CAPA		0x240
+ #define CAPA_VS33		BIT(24)
+ #define CAPA_VS30		BIT(25)
+ #define CAPA_VS18		BIT(26)
+ 
++#define SDHCI_OMAP_CAPA2	0x0244
++#define CAPA2_TSDR50		BIT(13)
++
+ #define SDHCI_OMAP_TIMEOUT	1		/* 1 msec */
+ 
+ #define SYSCTL_CLKD_MAX		0x3FF
+@@ -77,6 +88,8 @@
+ #define IOV_3V0			3000000		/* 300000 uV */
+ #define IOV_3V3			3300000		/* 330000 uV */
+ 
++#define MAX_PHASE_DELAY		0x7C
++
+ struct sdhci_omap_data {
+ 	u32 offset;
  };
+@@ -198,6 +211,120 @@ static void sdhci_omap_conf_bus_power(struct sdhci_omap_host *omap_host,
+ 	}
+ }
+ 
++static inline void sdhci_omap_set_dll(struct sdhci_omap_host *omap_host,
++				      int count)
++{
++	int i;
++	u32 reg;
++
++	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_DLL);
++	reg |= DLL_FORCE_VALUE;
++	reg &= ~DLL_FORCE_SR_C_MASK;
++	reg |= (count << DLL_FORCE_SR_C_SHIFT);
++	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
++
++	reg |= DLL_CALIB;
++	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
++	for (i = 0; i < 1000; i++) {
++		reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_DLL);
++		if (reg & DLL_CALIB)
++			break;
++	}
++	reg &= ~DLL_CALIB;
++	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
++}
++
++static void sdhci_omap_disable_tuning(struct sdhci_omap_host *omap_host)
++{
++	u32 reg;
++
++	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_AC12);
++	reg &= ~AC12_SCLK_SEL;
++	sdhci_omap_writel(omap_host, SDHCI_OMAP_AC12, reg);
++
++	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_DLL);
++	reg &= ~(DLL_FORCE_VALUE | DLL_SWT);
++	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
++}
++
++static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
++	struct device *dev = omap_host->dev;
++	struct mmc_ios *ios = &mmc->ios;
++	u32 start_window = 0, max_window = 0;
++	u8 cur_match, prev_match = 0;
++	u32 length = 0, max_len = 0;
++	u32 phase_delay = 0;
++	int ret = 0;
++	u32 reg;
++
++	pltfm_host = sdhci_priv(host);
++	omap_host = sdhci_pltfm_priv(pltfm_host);
++	dev = omap_host->dev;
++
++	/* clock tuning is not needed for upto 52MHz */
++	if (ios->clock <= 52000000)
++		return 0;
++
++	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_CAPA2);
++	if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
++		return 0;
++
++	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_DLL);
++	reg |= DLL_SWT;
++	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
++
++	while (phase_delay <= MAX_PHASE_DELAY) {
++		sdhci_omap_set_dll(omap_host, phase_delay);
++
++		cur_match = !mmc_send_tuning(mmc, opcode, NULL);
++		if (cur_match) {
++			if (prev_match) {
++				length++;
++			} else {
++				start_window = phase_delay;
++				length = 1;
++			}
++		}
++
++		if (length > max_len) {
++			max_window = start_window;
++			max_len = length;
++		}
++
++		prev_match = cur_match;
++		phase_delay += 4;
++	}
++
++	if (!max_len) {
++		dev_err(dev, "Unable to find match\n");
++		ret = -EIO;
++		goto tuning_error;
++	}
++
++	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_AC12);
++	if (!(reg & AC12_SCLK_SEL)) {
++		ret = -EIO;
++		goto tuning_error;
++	}
++
++	phase_delay = max_window + 4 * (max_len >> 1);
++	sdhci_omap_set_dll(omap_host, phase_delay);
++
++	goto ret;
++
++tuning_error:
++	dev_err(dev, "Tuning failed\n");
++	sdhci_omap_disable_tuning(omap_host);
++
++ret:
++	sdhci_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
++	return ret;
++}
++
+ static int sdhci_omap_card_busy(struct mmc_host *mmc)
+ {
+ 	u32 reg, ac12;
+@@ -299,6 +426,8 @@ static int sdhci_omap_start_signal_voltage_switch(struct mmc_host *mmc,
+ static void sdhci_omap_set_power_mode(struct sdhci_omap_host *omap_host,
+ 				      u8 power_mode)
+ {
++	if (omap_host->bus_mode == MMC_POWER_OFF)
++		sdhci_omap_disable_tuning(omap_host);
+ 	omap_host->power_mode = power_mode;
+ }
+ 
+@@ -635,6 +764,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
+ 					sdhci_omap_start_signal_voltage_switch;
+ 	host->mmc_host_ops.set_ios = sdhci_omap_set_ios;
+ 	host->mmc_host_ops.card_busy = sdhci_omap_card_busy;
++	host->mmc_host_ops.execute_tuning = sdhci_omap_execute_tuning;
+ 
+ 	sdhci_read_caps(host);
+ 	host->caps |= SDHCI_CAN_DO_ADMA2;
 -- 
 2.11.0
