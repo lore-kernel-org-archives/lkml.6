@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752521AbeBEB34 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:29:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43385 "EHLO mx2.suse.de"
+        id S1752817AbeBEBaG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:30:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43456 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752370AbeBEB2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:28:02 -0500
+        id S1752648AbeBEB2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:28:18 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
 Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 01/64] interval-tree: build unconditionally
-Date: Mon,  5 Feb 2018 02:26:51 +0100
-Message-Id: <20180205012754.23615-2-dbueso@wotan.suse.de>
+Subject: [PATCH 18/64] mm/ksm: teach about range locking
+Date: Mon,  5 Feb 2018 02:27:08 +0100
+Message-Id: <20180205012754.23615-19-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -25,108 +25,166 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-In preparation for range locking, this patch gets rid of
-CONFIG_INTERVAL_TREE option as we will unconditionally
-build it.
+Conversion is straightforward as most calls use mmap_sem
+within the same function context. No changes in semantics.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- drivers/gpu/drm/Kconfig      |  2 --
- drivers/gpu/drm/i915/Kconfig |  1 -
- lib/Kconfig                  | 14 --------------
- lib/Kconfig.debug            |  1 -
- lib/Makefile                 |  3 +--
- 5 files changed, 1 insertion(+), 20 deletions(-)
+ mm/ksm.c | 40 +++++++++++++++++++++++-----------------
+ 1 file changed, 23 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index deeefa7a1773..eac89dc17199 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -168,7 +168,6 @@ config DRM_RADEON
- 	select HWMON
- 	select BACKLIGHT_CLASS_DEVICE
- 	select BACKLIGHT_LCD_SUPPORT
--	select INTERVAL_TREE
- 	help
- 	  Choose this option if you have an ATI Radeon graphics card.  There
- 	  are both PCI and AGP versions.  You don't need to choose this to
-@@ -189,7 +188,6 @@ config DRM_AMDGPU
- 	select HWMON
- 	select BACKLIGHT_CLASS_DEVICE
- 	select BACKLIGHT_LCD_SUPPORT
--	select INTERVAL_TREE
- 	select CHASH
- 	help
- 	  Choose this option if you have a recent AMD Radeon graphics card.
-diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-index dfd95889f4b7..520a613ec69f 100644
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@ -3,7 +3,6 @@ config DRM_I915
- 	depends on DRM
- 	depends on X86 && PCI
- 	select INTEL_GTT
--	select INTERVAL_TREE
- 	# we need shmfs for the swappable backing store, and in particular
- 	# the shmem_readpage() which depends upon tmpfs
- 	select SHMEM
-diff --git a/lib/Kconfig b/lib/Kconfig
-index e96089499371..18b56ed167c4 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -362,20 +362,6 @@ config TEXTSEARCH_FSM
- config BTREE
- 	bool
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 66c350cd9799..c7d62c367ffc 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -526,11 +526,11 @@ static void break_cow(struct rmap_item *rmap_item)
+ 	 */
+ 	put_anon_vma(rmap_item->anon_vma);
  
--config INTERVAL_TREE
--	bool
--	help
--	  Simple, embeddable, interval-tree. Can find the start of an
--	  overlapping range in log(n) time and then iterate over all
--	  overlapping nodes. The algorithm is implemented as an
--	  augmented rbtree.
--
--	  See:
--
--		Documentation/rbtree.txt
--
--	  for more information.
--
- config RADIX_TREE_MULTIORDER
- 	bool
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	vma = find_mergeable_vma(mm, addr);
+ 	if (vma)
+ 		break_ksm(vma, addr, &mmrange);
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ }
  
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 6088408ef26c..c888f03569e7 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1716,7 +1716,6 @@ config RBTREE_TEST
- config INTERVAL_TREE_TEST
- 	tristate "Interval tree test"
- 	depends on DEBUG_KERNEL
--	select INTERVAL_TREE
- 	help
- 	  A benchmark measuring the performance of the interval tree library
+ static struct page *get_mergeable_page(struct rmap_item *rmap_item)
+@@ -539,8 +539,9 @@ static struct page *get_mergeable_page(struct rmap_item *rmap_item)
+ 	unsigned long addr = rmap_item->address;
+ 	struct vm_area_struct *vma;
+ 	struct page *page;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
  
-diff --git a/lib/Makefile b/lib/Makefile
-index a90d4fcd748f..1c1f8e3ccaa8 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -39,7 +39,7 @@ obj-y += bcd.o div64.o sort.o parser.o debug_locks.o random32.o \
- 	 gcd.o lcm.o list_sort.o uuid.o flex_array.o iov_iter.o clz_ctz.o \
- 	 bsearch.o find_bit.o llist.o memweight.o kfifo.o \
- 	 percpu-refcount.o percpu_ida.o rhashtable.o reciprocal_div.o \
--	 once.o refcount.o usercopy.o errseq.o bucket_locks.o
-+	 once.o refcount.o usercopy.o errseq.o bucket_locks.o interval_tree.o
- obj-$(CONFIG_STRING_SELFTEST) += test_string.o
- obj-y += string_helpers.o
- obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
-@@ -84,7 +84,6 @@ obj-$(CONFIG_DEBUG_LOCKING_API_SELFTESTS) += locking-selftest.o
- obj-$(CONFIG_GENERIC_HWEIGHT) += hweight.o
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	vma = find_mergeable_vma(mm, addr);
+ 	if (!vma)
+ 		goto out;
+@@ -556,7 +557,7 @@ static struct page *get_mergeable_page(struct rmap_item *rmap_item)
+ out:
+ 		page = NULL;
+ 	}
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	return page;
+ }
  
- obj-$(CONFIG_BTREE) += btree.o
--obj-$(CONFIG_INTERVAL_TREE) += interval_tree.o
- obj-$(CONFIG_ASSOCIATIVE_ARRAY) += assoc_array.o
- obj-$(CONFIG_DEBUG_PREEMPT) += smp_processor_id.o
- obj-$(CONFIG_DEBUG_LIST) += list_debug.o
+@@ -936,7 +937,7 @@ static int unmerge_and_remove_all_rmap_items(void)
+ 	for (mm_slot = ksm_scan.mm_slot;
+ 			mm_slot != &ksm_mm_head; mm_slot = ksm_scan.mm_slot) {
+ 		mm = mm_slot->mm;
+-		down_read(&mm->mmap_sem);
++		mm_read_lock(mm, &mmrange);
+ 		for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 			if (ksm_test_exit(mm))
+ 				break;
+@@ -949,7 +950,7 @@ static int unmerge_and_remove_all_rmap_items(void)
+ 		}
+ 
+ 		remove_trailing_rmap_items(mm_slot, &mm_slot->rmap_list);
+-		up_read(&mm->mmap_sem);
++		mm_read_unlock(mm, &mmrange);
+ 
+ 		spin_lock(&ksm_mmlist_lock);
+ 		ksm_scan.mm_slot = list_entry(mm_slot->mm_list.next,
+@@ -972,7 +973,7 @@ static int unmerge_and_remove_all_rmap_items(void)
+ 	return 0;
+ 
+ error:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	spin_lock(&ksm_mmlist_lock);
+ 	ksm_scan.mm_slot = &ksm_mm_head;
+ 	spin_unlock(&ksm_mmlist_lock);
+@@ -1251,8 +1252,9 @@ static int try_to_merge_with_ksm_page(struct rmap_item *rmap_item,
+ 	struct mm_struct *mm = rmap_item->mm;
+ 	struct vm_area_struct *vma;
+ 	int err = -EFAULT;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	vma = find_mergeable_vma(mm, rmap_item->address);
+ 	if (!vma)
+ 		goto out;
+@@ -1268,7 +1270,7 @@ static int try_to_merge_with_ksm_page(struct rmap_item *rmap_item,
+ 	rmap_item->anon_vma = vma->anon_vma;
+ 	get_anon_vma(vma->anon_vma);
+ out:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	return err;
+ }
+ 
+@@ -2071,12 +2073,13 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
+ 	 */
+ 	if (ksm_use_zero_pages && (checksum == zero_checksum)) {
+ 		struct vm_area_struct *vma;
++		DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+-		down_read(&mm->mmap_sem);
++		mm_read_lock(mm, &mmrange);
+ 		vma = find_mergeable_vma(mm, rmap_item->address);
+ 		err = try_to_merge_one_page(vma, page,
+ 					    ZERO_PAGE(rmap_item->address));
+-		up_read(&mm->mmap_sem);
++		mm_read_unlock(mm, &mmrange);
+ 		/*
+ 		 * In case of failure, the page was not really empty, so we
+ 		 * need to continue. Otherwise we're done.
+@@ -2154,6 +2157,7 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
+ 	struct vm_area_struct *vma;
+ 	struct rmap_item *rmap_item;
+ 	int nid;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	if (list_empty(&ksm_mm_head.mm_list))
+ 		return NULL;
+@@ -2210,7 +2214,7 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
+ 	}
+ 
+ 	mm = slot->mm;
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	if (ksm_test_exit(mm))
+ 		vma = NULL;
+ 	else
+@@ -2244,7 +2248,7 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
+ 					ksm_scan.address += PAGE_SIZE;
+ 				} else
+ 					put_page(*page);
+-				up_read(&mm->mmap_sem);
++				mm_read_unlock(mm, &mmrange);
+ 				return rmap_item;
+ 			}
+ 			put_page(*page);
+@@ -2282,10 +2286,10 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
+ 
+ 		free_mm_slot(slot);
+ 		clear_bit(MMF_VM_MERGEABLE, &mm->flags);
+-		up_read(&mm->mmap_sem);
++		mm_read_unlock(mm, &mmrange);
+ 		mmdrop(mm);
+ 	} else {
+-		up_read(&mm->mmap_sem);
++		mm_read_unlock(mm, &mmrange);
+ 		/*
+ 		 * up_read(&mm->mmap_sem) first because after
+ 		 * spin_unlock(&ksm_mmlist_lock) run, the "mm" may
+@@ -2474,8 +2478,10 @@ void __ksm_exit(struct mm_struct *mm)
+ 		clear_bit(MMF_VM_MERGEABLE, &mm->flags);
+ 		mmdrop(mm);
+ 	} else if (mm_slot) {
+-		down_write(&mm->mmap_sem);
+-		up_write(&mm->mmap_sem);
++		DEFINE_RANGE_LOCK_FULL(mmrange);
++
++		mm_write_lock(mm, &mmrange);
++		mm_write_unlock(mm, &mmrange);
+ 	}
+ }
+ 
 -- 
 2.13.6
