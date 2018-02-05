@@ -1,59 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753279AbeBEPr1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:47:27 -0500
-Received: from mail-ot0-f173.google.com ([74.125.82.173]:34026 "EHLO
-        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752914AbeBEPrT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:47:19 -0500
-X-Google-Smtp-Source: AH8x227rmtZ0ppUyePhMMhlTsruWKsfbuLZXRTuT3/QhNna5VNRiQl19Dxp787FoPeAvrD3A4rdwxkA2A63XAQWb+hU=
+        id S1753299AbeBEPu2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:50:28 -0500
+Received: from mga02.intel.com ([134.134.136.20]:31284 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752767AbeBEPuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 10:50:16 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,465,1511856000";
+   d="scan'208";a="171790858"
+Date: Mon, 5 Feb 2018 07:50:01 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jessica Yu <jeyu@kernel.org>, Kees Cook <keescook@chromium.org>,
+        nico@linaro.org, linux-kernel@vger.kernel.org,
+        Wanlong Gao <wanlong.gao@gmail.com>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 1/2] modpost: don't add warnings for LTO-generated symbols
+Message-ID: <20180205155001.GI30338@tassilo.jf.intel.com>
+References: <20180205151300.539874-1-arnd@arndb.de>
+ <20180205151300.539874-2-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <5A7882EA02000078001A552D@prv-mh.provo.novell.com>
-References: <20180205150340.328921-1-arnd@arndb.de> <5A7882EA02000078001A552D@prv-mh.provo.novell.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 5 Feb 2018 16:47:18 +0100
-X-Google-Sender-Auth: i-u9ytppIXJy9_X_j47qfTxnXiU
-Message-ID: <CAK8P3a3Lj_cEc40vAe9LiX3RwvvKVvCxxYsMPxxHn0BcenQt7Q@mail.gmail.com>
-Subject: Re: [Xen-devel] [PATCH] [v2] xen: hypercall: fix out-of-bounds memcpy
-To: Jan Beulich <JBeulich@suse.com>
-Cc: David Laight <David.Laight@aculab.com>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180205151300.539874-2-arnd@arndb.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 4:14 PM, Jan Beulich <JBeulich@suse.com> wrote:
->>>> On 05.02.18 at 16:03, <arnd@arndb.de> wrote:
->>  int xen_event_channel_op_compat(int cmd, void *arg)
->>  {
->> -     struct evtchn_op op;
->> +     struct evtchn_op op = { .cmd = cmd, };
->> +     size_t len;
->>       int rc;
->>
->> -     op.cmd = cmd;
->> -     memcpy(&op.u, arg, sizeof(op.u));
->> -     rc = _hypercall1(int, event_channel_op_compat, &op);
->> -
->> -     switch (cmd) {
->> -     case EVTCHNOP_close:
->> -     case EVTCHNOP_send:
->> -     case EVTCHNOP_bind_vcpu:
->> -     case EVTCHNOP_unmask:
->> -             /* no output */
->> -             break;
->> +     if (cmd > ARRAY_SIZE(evtchnop_len))
->> +             return -ENOSYS;
->
->>= perhaps?
+On Mon, Feb 05, 2018 at 04:12:52PM +0100, Arnd Bergmann wrote:
+> WARNING: vmlinux.o(.data+0x12e0): Section mismatch in reference from the variable pfkey_net_ops.lto_priv.2992 to the function .init.text:pfkey_net_init.lto_priv.2977()
+> The variable pfkey_net_ops.lto_priv.2992 references
+> the function __init pfkey_net_init.lto_priv.2977()
+> If the reference is valid then annotate the
+> variable with __init* or __refdata (see linux/init.h) or name the variable:
+> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
 
-Argh, of course. This is why I preferred the switch/case version, I knew
-I'd screw this up somehow ;-)
+A better fix would be to ensure modpost always runs on already LD_FINALed
+objects, so it never sees LTO.
 
-       Arnd
+Otherwise you would need to teach modpost about the LTO symbol table
+and some other magic. I did that once, but it turned out to be very
+ugly.
+
+-Andi
