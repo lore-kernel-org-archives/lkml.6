@@ -1,330 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752465AbeBEBbF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:31:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43458 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752805AbeBEB3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:29:31 -0500
-From: Davidlohr Bueso <dbueso@suse.de>
-To: akpm@linux-foundation.org, mingo@kernel.org
-Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
-        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
-        mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 57/64] drivers/gpu: use mm locking wrappers
-Date: Mon,  5 Feb 2018 02:27:47 +0100
-Message-Id: <20180205012754.23615-58-dbueso@wotan.suse.de>
-X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
-References: <20180205012754.23615-1-dbueso@wotan.suse.de>
+        id S1752835AbeBEBbR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:31:17 -0500
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:41937 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752575AbeBEBa7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:30:59 -0500
+X-Google-Smtp-Source: AH8x225PslVZEvVM3aCfG/wsPi6rUvPqr0sAxID6nWwbP3Z3eHggEvJc5bkfqun/7I9EyqploB04w80vFkbxioC8eOU=
+MIME-Version: 1.0
+In-Reply-To: <20180205012146.23981-8-ulfalizer@gmail.com>
+References: <20180205012146.23981-1-ulfalizer@gmail.com> <20180205012146.23981-8-ulfalizer@gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Mon, 5 Feb 2018 02:30:57 +0100
+Message-ID: <CAFkk2KSUeepo0mSKeV9r2uMO1=euVV2L6QpsMAO0Ew6znG+BRQ@mail.gmail.com>
+Subject: Re: [PATCH 07/20] riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
+        egtvedt@samfundet.no, Linus Walleij <linus.walleij@linaro.org>,
+        vgupta@synopsys.com, mgorman@techsingularity.net, hch@lst.de,
+        mina86@mina86.com, robh@kernel.org, sboyd@codeaurora.org,
+        paulus@ozlabs.org, will.deacon@arm.com, tony@atomide.com,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> The ARCH_WANT_OPTIONAL_GPIOLIB symbol was removed in commit 65053e1a7743
+> ("gpio: delete ARCH_[WANTS_OPTIONAL|REQUIRE]_GPIOLIB"). GPIOLIB should
+> just be selected explicitly if needed.
+>
+> Remove the ARCH_WANT_OPTIONAL_GPIOLIB select from RISCV.
+>
+> See commit 0145071b3314 ("x86: Do away with
+> ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") and commit da9a1c6767 ("arm64: do
+> away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") as well.
+>
+> Discovered with the
+> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+> script.
+>
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
+>  arch/riscv/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index ff69c77b9e78..716e90e60e5c 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -19,7 +19,6 @@ config RISCV
+>         select GENERIC_STRNLEN_USER
+>         select GENERIC_SMP_IDLE_THREAD
+>         select GENERIC_ATOMIC64 if !64BIT || !RISCV_ISA_A
+> -       select ARCH_WANT_OPTIONAL_GPIOLIB
+>         select HAVE_MEMBLOCK
+>         select HAVE_MEMBLOCK_NODE_MAP
+>         select HAVE_DMA_API_DEBUG
+> --
+> 2.14.1
+>
 
-This becomes quite straightforward with the mmrange in place.
-Those mmap_sem users that don't know about mmrange are updated
-trivially as the sem is used in the same context of the caller.
+There's also a select of a globally undefined symbol RISCV_IRQ_INTC
+here. I couldn't dig up any historical or unmerged definition for it
+either. Googling just gets you the select.
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  | 7 ++++---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 8 ++++----
- drivers/gpu/drm/amd/amdkfd/kfd_events.c | 5 +++--
- drivers/gpu/drm/i915/i915_gem.c         | 5 +++--
- drivers/gpu/drm/i915/i915_gem_userptr.c | 9 +++++----
- drivers/gpu/drm/radeon/radeon_cs.c      | 5 +++--
- drivers/gpu/drm/radeon/radeon_gem.c     | 7 ++++---
- drivers/gpu/drm/radeon/radeon_mn.c      | 7 ++++---
- drivers/gpu/drm/ttm/ttm_bo_vm.c         | 4 ++--
- 9 files changed, 32 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-index bd67f4cb8e6c..cda7ea8503b7 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-@@ -257,9 +257,10 @@ struct amdgpu_mn *amdgpu_mn_get(struct amdgpu_device *adev)
- 	struct mm_struct *mm = current->mm;
- 	struct amdgpu_mn *rmn;
- 	int r;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	mutex_lock(&adev->mn_lock);
--	if (down_write_killable(&mm->mmap_sem)) {
-+	if (mm_write_lock_killable(mm, &mmrange)) {
- 		mutex_unlock(&adev->mn_lock);
- 		return ERR_PTR(-EINTR);
- 	}
-@@ -289,13 +290,13 @@ struct amdgpu_mn *amdgpu_mn_get(struct amdgpu_device *adev)
- 	hash_add(adev->mn_hash, &rmn->node, (unsigned long)mm);
- 
- release_locks:
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 	mutex_unlock(&adev->mn_lock);
- 
- 	return rmn;
- 
- free_rmn:
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 	mutex_unlock(&adev->mn_lock);
- 	kfree(rmn);
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-index bd464a599341..95467ef0df45 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-@@ -696,7 +696,7 @@ int amdgpu_ttm_tt_get_user_pages(struct ttm_tt *ttm, struct page **pages)
- 	if (!(gtt->userflags & AMDGPU_GEM_USERPTR_READONLY))
- 		flags |= FOLL_WRITE;
- 
--	down_read(&current->mm->mmap_sem);
-+	mm_read_lock(current->mm, &mmrange);
- 
- 	if (gtt->userflags & AMDGPU_GEM_USERPTR_ANONONLY) {
- 		/* check that we only use anonymous memory
-@@ -706,7 +706,7 @@ int amdgpu_ttm_tt_get_user_pages(struct ttm_tt *ttm, struct page **pages)
- 
- 		vma = find_vma(gtt->usermm, gtt->userptr);
- 		if (!vma || vma->vm_file || vma->vm_end < end) {
--			up_read(&current->mm->mmap_sem);
-+			mm_read_unlock(current->mm, &mmrange);
- 			return -EPERM;
- 		}
- 	}
-@@ -735,12 +735,12 @@ int amdgpu_ttm_tt_get_user_pages(struct ttm_tt *ttm, struct page **pages)
- 
- 	} while (pinned < ttm->num_pages);
- 
--	up_read(&current->mm->mmap_sem);
-+	mm_read_unlock(current->mm, &mmrange);
- 	return 0;
- 
- release_pages:
- 	release_pages(pages, pinned);
--	up_read(&current->mm->mmap_sem);
-+	mm_read_unlock(current->mm, &mmrange);
- 	return r;
- }
- 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_events.c b/drivers/gpu/drm/amd/amdkfd/kfd_events.c
-index 93aae5c1e78b..ca516482b145 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_events.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_events.c
-@@ -851,6 +851,7 @@ void kfd_signal_iommu_event(struct kfd_dev *dev, unsigned int pasid,
- 	 */
- 	struct kfd_process *p = kfd_lookup_process_by_pasid(pasid);
- 	struct mm_struct *mm;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	if (!p)
- 		return; /* Presumably process exited. */
-@@ -866,7 +867,7 @@ void kfd_signal_iommu_event(struct kfd_dev *dev, unsigned int pasid,
- 
- 	memset(&memory_exception_data, 0, sizeof(memory_exception_data));
- 
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
- 	vma = find_vma(mm, address);
- 
- 	memory_exception_data.gpu_id = dev->id;
-@@ -893,7 +894,7 @@ void kfd_signal_iommu_event(struct kfd_dev *dev, unsigned int pasid,
- 		}
- 	}
- 
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 	mmput(mm);
- 
- 	mutex_lock(&p->event_mutex);
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index dd89abd2263d..61d958934efd 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -1758,8 +1758,9 @@ i915_gem_mmap_ioctl(struct drm_device *dev, void *data,
- 	if (args->flags & I915_MMAP_WC) {
- 		struct mm_struct *mm = current->mm;
- 		struct vm_area_struct *vma;
-+		DEFINE_RANGE_LOCK_FULL(mmrange);
- 
--		if (down_write_killable(&mm->mmap_sem)) {
-+		if (mm_write_lock_killable(mm, &mmrange)) {
- 			i915_gem_object_put(obj);
- 			return -EINTR;
- 		}
-@@ -1769,7 +1770,7 @@ i915_gem_mmap_ioctl(struct drm_device *dev, void *data,
- 				pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
- 		else
- 			addr = -ENOMEM;
--		up_write(&mm->mmap_sem);
-+		mm_write_unlock(mm, &mmrange);
- 
- 		/* This may race, but that's ok, it only gets set */
- 		WRITE_ONCE(obj->frontbuffer_ggtt_origin, ORIGIN_CPU);
-diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
-index 881bcc7d663a..3886b74638f7 100644
---- a/drivers/gpu/drm/i915/i915_gem_userptr.c
-+++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
-@@ -205,6 +205,7 @@ i915_mmu_notifier_find(struct i915_mm_struct *mm)
- {
- 	struct i915_mmu_notifier *mn;
- 	int err = 0;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	mn = mm->mn;
- 	if (mn)
-@@ -214,7 +215,7 @@ i915_mmu_notifier_find(struct i915_mm_struct *mm)
- 	if (IS_ERR(mn))
- 		err = PTR_ERR(mn);
- 
--	down_write(&mm->mm->mmap_sem);
-+	mm_write_lock(mm->mm, &mmrange);
- 	mutex_lock(&mm->i915->mm_lock);
- 	if (mm->mn == NULL && !err) {
- 		/* Protected by mmap_sem (write-lock) */
-@@ -231,7 +232,7 @@ i915_mmu_notifier_find(struct i915_mm_struct *mm)
- 		err = 0;
- 	}
- 	mutex_unlock(&mm->i915->mm_lock);
--	up_write(&mm->mm->mmap_sem);
-+	mm_write_unlock(mm->mm, &mmrange);
- 
- 	if (mn && !IS_ERR(mn)) {
- 		destroy_workqueue(mn->wq);
-@@ -514,7 +515,7 @@ __i915_gem_userptr_get_pages_worker(struct work_struct *_work)
- 		if (mmget_not_zero(mm)) {
- 			DEFINE_RANGE_LOCK_FULL(mmrange);
- 
--			down_read(&mm->mmap_sem);
-+			mm_read_lock(mm, &mmrange);
- 			while (pinned < npages) {
- 				ret = get_user_pages_remote
- 					(work->task, mm,
-@@ -527,7 +528,7 @@ __i915_gem_userptr_get_pages_worker(struct work_struct *_work)
- 
- 				pinned += ret;
- 			}
--			up_read(&mm->mmap_sem);
-+			mm_read_unlock(mm, &mmrange);
- 			mmput(mm);
- 		}
- 	}
-diff --git a/drivers/gpu/drm/radeon/radeon_cs.c b/drivers/gpu/drm/radeon/radeon_cs.c
-index 1ae31dbc61c6..71a19881b04a 100644
---- a/drivers/gpu/drm/radeon/radeon_cs.c
-+++ b/drivers/gpu/drm/radeon/radeon_cs.c
-@@ -79,6 +79,7 @@ static int radeon_cs_parser_relocs(struct radeon_cs_parser *p)
- 	unsigned i;
- 	bool need_mmap_lock = false;
- 	int r;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	if (p->chunk_relocs == NULL) {
- 		return 0;
-@@ -190,12 +191,12 @@ static int radeon_cs_parser_relocs(struct radeon_cs_parser *p)
- 		p->vm_bos = radeon_vm_get_bos(p->rdev, p->ib.vm,
- 					      &p->validated);
- 	if (need_mmap_lock)
--		down_read(&current->mm->mmap_sem);
-+		mm_read_lock(current->mm, &mmrange);
- 
- 	r = radeon_bo_list_validate(p->rdev, &p->ticket, &p->validated, p->ring);
- 
- 	if (need_mmap_lock)
--		up_read(&current->mm->mmap_sem);
-+		mm_read_unlock(current->mm, &mmrange);
- 
- 	return r;
- }
-diff --git a/drivers/gpu/drm/radeon/radeon_gem.c b/drivers/gpu/drm/radeon/radeon_gem.c
-index a9962ffba720..3e169fa1750e 100644
---- a/drivers/gpu/drm/radeon/radeon_gem.c
-+++ b/drivers/gpu/drm/radeon/radeon_gem.c
-@@ -292,6 +292,7 @@ int radeon_gem_userptr_ioctl(struct drm_device *dev, void *data,
- 	struct radeon_bo *bo;
- 	uint32_t handle;
- 	int r;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	if (offset_in_page(args->addr | args->size))
- 		return -EINVAL;
-@@ -336,17 +337,17 @@ int radeon_gem_userptr_ioctl(struct drm_device *dev, void *data,
- 	}
- 
- 	if (args->flags & RADEON_GEM_USERPTR_VALIDATE) {
--		down_read(&current->mm->mmap_sem);
-+		mm_read_lock(current->mm, &mmrange);
- 		r = radeon_bo_reserve(bo, true);
- 		if (r) {
--			up_read(&current->mm->mmap_sem);
-+			mm_read_unlock(current->mm, &mmrange);
- 			goto release_object;
- 		}
- 
- 		radeon_ttm_placement_from_domain(bo, RADEON_GEM_DOMAIN_GTT);
- 		r = ttm_bo_validate(&bo->tbo, &bo->placement, &ctx);
- 		radeon_bo_unreserve(bo);
--		up_read(&current->mm->mmap_sem);
-+		mm_read_unlock(current->mm, &mmrange);
- 		if (r)
- 			goto release_object;
- 	}
-diff --git a/drivers/gpu/drm/radeon/radeon_mn.c b/drivers/gpu/drm/radeon/radeon_mn.c
-index abd24975c9b1..9b10cacc5b14 100644
---- a/drivers/gpu/drm/radeon/radeon_mn.c
-+++ b/drivers/gpu/drm/radeon/radeon_mn.c
-@@ -186,8 +186,9 @@ static struct radeon_mn *radeon_mn_get(struct radeon_device *rdev)
- 	struct mm_struct *mm = current->mm;
- 	struct radeon_mn *rmn;
- 	int r;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
--	if (down_write_killable(&mm->mmap_sem))
-+	if (mm_write_lock_killable(mm, &mmrange))
- 		return ERR_PTR(-EINTR);
- 
- 	mutex_lock(&rdev->mn_lock);
-@@ -216,13 +217,13 @@ static struct radeon_mn *radeon_mn_get(struct radeon_device *rdev)
- 
- release_locks:
- 	mutex_unlock(&rdev->mn_lock);
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 
- 	return rmn;
- 
- free_rmn:
- 	mutex_unlock(&rdev->mn_lock);
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 	kfree(rmn);
- 
- 	return ERR_PTR(r);
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-index 08a3c324242e..2b2a1668fbe3 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-@@ -67,7 +67,7 @@ static int ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
- 			goto out_unlock;
- 
- 		ttm_bo_reference(bo);
--		up_read(&vmf->vma->vm_mm->mmap_sem);
-+		mm_read_unlock(vmf->vma->vm_mm, vmf->lockrange);
- 		(void) dma_fence_wait(bo->moving, true);
- 		ttm_bo_unreserve(bo);
- 		ttm_bo_unref(&bo);
-@@ -137,7 +137,7 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
- 		if (vmf->flags & FAULT_FLAG_ALLOW_RETRY) {
- 			if (!(vmf->flags & FAULT_FLAG_RETRY_NOWAIT)) {
- 				ttm_bo_reference(bo);
--				up_read(&vmf->vma->vm_mm->mmap_sem);
-+				mm_read_unlock(vmf->vma->vm_mm, vmf->lockrange);
- 				(void) ttm_bo_wait_unreserved(bo);
- 				ttm_bo_unref(&bo);
- 			}
--- 
-2.13.6
+Cheers,
+Ulf
