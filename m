@@ -1,57 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752447AbeBECbP (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 21:31:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752294AbeBECbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 21:31:06 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E899208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-Cc: mhiramat@kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        orito.takao@socionext.com
-Subject: [PATCH] [BUGFIX] media: vb2: Fix videobuf2 to map correct area
-Date: Mon,  5 Feb 2018 11:30:41 +0900
-Message-Id: <151779784111.20697.5012233804870630070.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1752278AbeBECdc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 21:33:32 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44891 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752105AbeBECd0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 21:33:26 -0500
+X-Google-Smtp-Source: AH8x2254efJfVEsnRCqrSkjV+wkZ2J9Vw9Hl+jZN3HR2OhYARtNUAzNbpjFxV55ixGr9gWQzAqOBRg==
+From: Alexandre Courbot <acourbot@chromium.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: [PATCH] media: v4l2_fh.h: add missing kconfig.h include
+Date: Mon,  5 Feb 2018 11:33:04 +0900
+Message-Id: <20180205023304.157171-1-acourbot@chromium.org>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
-Since the current code does ioremap the page address, if the offset > 0,
-it does not do ioremap the last page and results in kernel panic.
+v4l2_fh.h uses the IS_ENABLED() macro and thus should include kconfig.h.
 
-This fixes to pass the page address + offset to ioremap so that ioremap
-can map correct area. Also, this uses __pfn_to_phys() to get the physical
-address of given PFN.
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reported-by: Takao Orito <orito.takao@socionext.com>
+Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/v4l2-core/videobuf2-vmalloc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/media/v4l2-fh.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/v4l2-core/videobuf2-vmalloc.c b/drivers/media/v4l2-core/videobuf2-vmalloc.c
-index 3a7c80cd1a17..896f2f378b40 100644
---- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
-+++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
-@@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(struct device *dev, unsigned long vaddr,
- 			if (nums[i-1] + 1 != nums[i])
- 				goto fail_map;
- 		buf->vaddr = (__force void *)
--				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
-+			ioremap_nocache(__pfn_to_phys(nums[0]) + offset, size);
- 	} else {
- 		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
- 					PAGE_KERNEL);
+diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
+index 62633e7d2630..ea73fef8bdc0 100644
+--- a/include/media/v4l2-fh.h
++++ b/include/media/v4l2-fh.h
+@@ -22,6 +22,7 @@
+ #define V4L2_FH_H
+ 
+ #include <linux/fs.h>
++#include <linux/kconfig.h>
+ #include <linux/list.h>
+ #include <linux/videodev2.h>
+ 
+-- 
+2.16.0.rc1.238.g530d649a79-goog
