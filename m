@@ -1,104 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753184AbeBEO0A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 09:26:00 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5174 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752924AbeBEOZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:25:51 -0500
-Subject: Re: [PATCH v12 7/9] ACPI: Translate the I/O range of non-MMIO devices
- before scanning
+        id S1753069AbeBEO2A (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:28:00 -0500
+Received: from mx1.mthode.org ([216.82.208.22]:43558 "EHLO mx1.mthode.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752461AbeBEO1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 09:27:52 -0500
+Date: Mon, 5 Feb 2018 08:27:49 -0600
+From: Matthew Thode <mthode@mthode.org>
 To: Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <1516725385-24535-1-git-send-email-john.garry@huawei.com>
- <1516725385-24535-8-git-send-email-john.garry@huawei.com>
- <0a30452f-34eb-d0b5-2001-ab6b866c53e2@huawei.com>
- <CAHp75VfXoAHNH2BnfNLbFfdCqUk3rxU_QWfxTx7ZyLgV0qxotQ@mail.gmail.com>
-CC: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Bjorn Helgaas" <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Hanjun Guo <hanjun.guo@linaro.org>, <dann.frazier@canonical.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, <linux-pci@vger.kernel.org>,
-        Corey Minyard <minyard@acm.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        "Randy Dunlap" <rdunlap@infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <62634aa6-ad3c-93c2-e6fa-9e163d4004ca@huawei.com>
-Date: Mon, 5 Feb 2018 14:25:20 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+        David Herrmann <dh.herrmann@gmail.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: thinkpad_acpi: suppress warning about palm
+ detection
+Message-ID: <20180205142749.gnmzqgr4m3wuwjod@mthode.org>
+References: <20180112110445.1876-1-dh.herrmann@gmail.com>
+ <CAHp75Vc66ZfRmOoOKJRODpV0mS2aZru=b-r0cr8SKYH=hm+W6Q@mail.gmail.com>
+ <CANq1E4RGo091oaG=0owKVfxOV8wR2qQ=nXfXzZsRxg6Q7_C8zw@mail.gmail.com>
+ <20180113063309.iryfhufpilas3jnf@mthode.org>
+ <20180205050116.isaz6pmgsquzjmqr@mthode.org>
+ <20180205113400.qpqdkpv5bbvdwg22@khazad-dum.debian.net>
+ <CAHp75VfQ7fkt2u0G50LvaMH7GBqe2CwKG_J9E4gV27ZhsYFxoQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VfXoAHNH2BnfNLbFfdCqUk3rxU_QWfxTx7ZyLgV0qxotQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="boibaykout7xcpas"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfQ7fkt2u0G50LvaMH7GBqe2CwKG_J9E4gV27ZhsYFxoQ@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 13:16, Andy Shevchenko wrote:
-> On Thu, Feb 1, 2018 at 1:32 PM, John Garry <john.garry@huawei.com> wrote:
->
->
 
-Hi Andy,
+--boibaykout7xcpas
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I'm not going through all patch, by one thing I would like you to pay
-> attention on, i.e.
-> printing resource_size_t and struct resource
->
->>> +               dev_err(dev, "translate bus-addr(0x%llx) fail!\n",
->>> +                       resource->start);
->
-> resource_size_t is dynamic width type, you will see a compiler
-> warning. For this we have
-> %pap specifier.
->
-> Moreover, in some cases it's useful to print struct resource via %pR or %pr.
+On 18-02-05 15:08:25, Andy Shevchenko wrote:
+> On Mon, Feb 5, 2018 at 1:34 PM, Henrique de Moraes Holschuh
+> <hmh@hmh.eng.br> wrote:
+> >> > I'm fine with a signed-off-by or tested-by or suggested-by.  There i=
+s a
+> >> > spelling mistake though, 'hoveres' should be hovers.
+> >>
+> >> Is there anything else I can do here?  I'm not sure any of us have the
+> >> ability to find out what lenovo actualy wants this for.
+> >
+> > I have already acked the patch, so Darren or Andy should pick it up
+> > sooner or later for merging into the subsystem tree...
+> >
+> > But if you wouldn't mind doing so, you could send a V2 with all acks,
+> > tested-by/suggested-by/whatever added, as well as that minor spelling
+> > mistake correction...  I am not sure this is necessary, though.
+> >
+>=20
+> > Andy, Daren?
+>=20
+> The following one already in for-next, meaning it's about to be upstream =
+soon
+> 587d8628fb71 platform/x86: thinkpad_acpi: suppress warning about palm det=
+ection
+>=20
 
-I have already fixed this up in my rework.
+Thanks, if there's nothing left for me to do I'll just leave it then.
 
->
-> Consider reading kernel documentation about these (printk-formats.rst).
->
->>> +struct acpi_indirectio_host_data {
->>> +       resource_size_t io_size;
->>> +       resource_size_t io_start;
->>> +};
->
-> Why not utilize struct resource?
->
-> If it's coming from platform / firmware it should *never* have types
-> like size_t, unsigned long, resource_size_t, etc.
+--=20
+Matthew Thode
 
-This is not coming from firmware, but it is a struct which we define in 
-the kernel per host, describing that host bus address range for translation.
+--boibaykout7xcpas
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In fact, generally io_start is 0 and the io_size would be 
-PIO_INDIRECT_SIZE, so I'll consider removing it for now.
+-----BEGIN PGP SIGNATURE-----
 
->
->>> +/* All the host devices which apply indirect-IO can be listed here. */
->>> +static const struct acpi_device_id acpi_indirect_host_id[] = {
->>> +       {""},
->>> +};
->
-> The idea of terminator is to be such (remove comma there). And it's
-> basically redundant to have an empty string there. Moreover, it's a
-> waste of resources in ro section.
+iQIzBAABCgAdFiEExFR3cOKGRpGbcMHPZKN76q4ZpOgFAlp4aeQACgkQZKN76q4Z
+pOib/g/+PRD4Tost6uPNKz/VsikuQN+fpwCbjiabzFPpoLU9vwIxOVHPHNXFv/K4
+3CDJmsyHa+YveN2oGTnxxaAXlS9QGeU06vEy94qpFwR5aVsEz2muwb/pafS7OByB
+aE2glW4mlhQsb/UxVyr+hUqOd+m9FEx+fvg8SyF+E1wdIACr9yL6Wj7H3I77Xbe1
+OJBJhCW+6lWS8L/5Ad9u8qLCmflTXlMCLQOBtXAGcpE46qtDlaY3+1EqweIu/FQ2
+i3rkUk0/iBdHgdLwl5kVCh5jCkrEMcUrS6gUjyHo0MV5zs3SGVFJ9hmu+3gavuHK
+XvcCkwiqZq7MdYQKgT2acIjWjl3FbjVMxi1JbceOP/6YG2+gOwbihniHhN0EKTF7
+O4XfwYnvTUiH50hZNNfW8tUYZp2nleU53rOS6Gpyz2nfaR6aZfB2ZTZravRrdGCs
+gxewPbfWzZaLe4ajJkzr9O8/3s1Eak+TT+1AFyS4DtlFywtwSWRlJ5iqF0ufdZaQ
+x4raf4h1baKdqfshHcN912ovW9m/MKIKmFI31Bfsk62q693sodnI8ETf6+3deF4I
+atfzOCFrtoTq4VAs6S33gcjJlhbxMsOhJJw0UdJG+rZ0o1WSTIOBSX8BWIAtLmap
+HVp7g74c9xyf/MkSES6vfbzbIKh8thzrglJMqwMQZs/veGEbfW4=
+=ojOD
+-----END PGP SIGNATURE-----
 
-OK, the comma should be removed. So what is the preferred acpi device id 
-array sentinel? I see {}, {"", 0}, and {""} used.
-
->
-
-thank you,
-John
+--boibaykout7xcpas--
