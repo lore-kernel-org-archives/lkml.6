@@ -1,84 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753005AbeBEMig (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:38:36 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36528 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752943AbeBEMi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:38:27 -0500
-Subject: Re: [PATCH v12 7/9] ACPI: Translate the I/O range of non-MMIO devices
- before scanning
-To: Joe Perches <joe@perches.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <1516725385-24535-1-git-send-email-john.garry@huawei.com>
- <1516725385-24535-8-git-send-email-john.garry@huawei.com>
- <CAJZ5v0ghc1sthrMBobSXfNrxoKrjbie9qnKYnLdxnpLfZPzs8w@mail.gmail.com>
- <8beedbb3-9098-6440-9ddf-e64b2a8e5151@huawei.com>
- <1517832650.7489.256.camel@perches.com>
-CC: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, "Arnd Bergmann" <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        "dann.frazier@canonical.com" <dann.frazier@canonical.com>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, Linux PCI <linux-pci@vger.kernel.org>,
-        Corey Minyard <minyard@acm.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <af37de60-a016-f8e3-9e17-d4e7d345f3fb@huawei.com>
-Date: Mon, 5 Feb 2018 12:17:20 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1753049AbeBEMkB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:40:01 -0500
+Received: from mail-pl0-f49.google.com ([209.85.160.49]:42832 "EHLO
+        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752955AbeBEMjx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 07:39:53 -0500
+X-Google-Smtp-Source: AH8x224Z4p+lfmuYLVK351diHVBzuxm7E2qnSgDJBCpOcsl/GEvWmGmKWVTuWyIsRIZjQcxfG8C1zw==
+Date: Mon, 5 Feb 2018 21:39:47 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        huang ying <huang.ying.caritas@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Minchan Kim <minchan@kernel.org>, Seth Jennings <sjenning@redhat.com>,
+        Dan Streetman <ddstreet@ieee.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: bisected bd4c82c22c367e is the first bad commit (was [Bug
+ 198617] New: zswap causing random applications to crash)
+Message-ID: <20180205123947.GA426@jagdpanzerIV>
+References: <20180130114841.aa2d3bd99526c03c6a5b5810@linux-foundation.org>
+ <20180203013455.GA739@jagdpanzerIV>
+ <CAC=cRTPyh-JTY=uOQf2dgmyPDyY-4+ryxkedp-iZMcFQZtnaqw@mail.gmail.com>
+ <20180205013758.GA648@jagdpanzerIV>
+ <87d11j4pdy.fsf@yhuang-dev.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1517832650.7489.256.camel@perches.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d11j4pdy.fsf@yhuang-dev.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 12:10, Joe Perches wrote:
-> On Mon, 2018-02-05 at 11:01 +0000, John Garry wrote:
->> On 04/02/2018 07:45, Rafael J. Wysocki wrote:
->>> +       /* translate the I/O resources */
->>>> +       for (i = 0; i < count; i++) {
->>>> +               if (resources[i].flags & IORESOURCE_IO) {
->>>> +                       ret = acpi_translate_logicio_res(adev, host,
->>>> +                                                       &resources[i]);
->>>
->>> You don't need to break this line as far as I'm concerned.
->>
->> This is just to keep checkpatch happy. I could move the complete
->> function call to a single line. And also shortening some symbols will help.
->
-> This could also use continue as well
->
-> 	/* translate the I/O resources */
-> 	for (i = 0; i < count; i++) {
-> 		if (!(resources[i].flags & IORESOURCE_IO))
-> 			continue;
-> 		ret = acpi_translate_logicio_res(adev, host, &resources[i]);
-> 		if (ret) {
-> 			kfree(resources);
-> 			dev_err(child, "Translate I/O range failed (%d)!\n",
-> 				ret);
-> 			return ret;
-> 		}
-> 	}
+On (02/05/18 20:00), Huang, Ying wrote:
+[..]
+> I have successfully reproduced the issue and find the problem.  The
+> following patch fix the issue for me, can you try it?
 
-Sure, that reduces the indentation as well.
+That was quick ;)
 
-cheers
+> ---------------------------------8<-------------------------------
+> From 4c52d531680f91572ebc6f4525a018e32a934ef0 Mon Sep 17 00:00:00 2001
+> From: Huang Ying <huang.ying.caritas@gmail.com>
+> Date: Mon, 5 Feb 2018 19:27:43 +0800
+> Subject: [PATCH] fontswap thp fix
 
->
->
-> .
->
+Seems to be fixing the problem on my x86 box. Executed several tests, no
+crashes were observed. Can run more tests tomorrow.
+
+
+============================================================================
+
+Probably unrelated, but may be it is related: my X server used to hang
+sometimes (rarely) which I suspect was/is caused by nouveau driver. It,
+surprisingly, didn't hang this time around. Nouveau spitted a number
+of backtraces, but X server managed to survive it. Any chance that
+nouveau-X server thing was caused by THP?
+
+
+[  308.986648] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+[  308.986653] nouveau 0000:01:00.0: swiotlb: coherent allocation failed, size=2097152
+[  308.986657] CPU: 5 PID: 343 Comm: Xorg Not tainted 4.15.0-next-20180205-dbg-00021-ga1282bf979c4-dirty #2480
+[  308.986659] Call Trace:
+[  308.986667]  dump_stack+0x46/0x59
+[  308.986671]  swiotlb_alloc_coherent+0x164/0x174
+[  308.986675]  ttm_dma_pool_get_pages+0x16e/0x3ce
+[  308.986679]  ttm_dma_populate+0x108/0x2af
+[  308.986681]  ttm_tt_bind+0x32/0x57
+[  308.986684]  ttm_bo_handle_move_mem+0x120/0x328
+[  308.986687]  ? ttm_bo_mem_space+0x170/0x3a0
+[  308.986690]  ttm_bo_validate+0x7b/0xd9
+[  308.986694]  ? __mutex_trylock_or_owner+0x43/0x54
+[  308.986697]  ttm_bo_init_reserved+0x31f/0x38a
+[  308.986700]  ttm_bo_init+0x52/0x76
+[  308.986703]  ? nouveau_bo_invalidate_caches+0x8/0x8
+[  308.986706]  nouveau_bo_new+0x4a8/0x4c7
+[  308.986709]  ? nouveau_bo_invalidate_caches+0x8/0x8
+[  308.986712]  nouveau_gem_new+0x49/0xcc
+[  308.986715]  nouveau_gem_ioctl_new+0x3e/0x9f
+[  308.986717]  ? nouveau_gem_new+0xcc/0xcc
+[  308.986720]  drm_ioctl_kernel+0x64/0xa0
+[  308.986723]  drm_ioctl+0x1d6/0x2a8
+[  308.986725]  ? nouveau_gem_new+0xcc/0xcc
+[  308.986729]  ? _raw_spin_unlock_irq+0x13/0x24
+[  308.986732]  ? free_swap_slot+0xad/0xc2
+[  308.986735]  nouveau_drm_ioctl+0x71/0xa4
+[  308.986738]  vfs_ioctl+0x1e/0x2b
+[  308.986741]  do_vfs_ioctl+0x505/0x518
+[  308.986745]  ? __fget+0x5d/0x67
+[  308.986747]  SyS_ioctl+0x3e/0x5a
+[  308.986751]  do_syscall_64+0x17f/0x196
+[  308.986754]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[  308.986757] RIP: 0033:0x7f0395218d87
+[  308.986759] RSP: 002b:00007ffc210c4c48 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[  308.986761] RAX: ffffffffffffffda RBX: 000056213e828350 RCX: 00007f0395218d87
+[  308.986764] RDX: 00007ffc210c4ca0 RSI: 00000000c0306480 RDI: 000000000000000b
+[  308.986765] RBP: 00007ffc210c4ca0 R08: 0000000000000004 R09: 0000000000000006
+[  308.986767] R10: 000056213e320010 R11: 0000000000000246 R12: 00000000c0306480
+[  308.986769] R13: 000000000000000b R14: 00007ffc210c4d60 R15: 000056213e35e770
+[  309.264408] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+[  309.264412] nouveau 0000:01:00.0: swiotlb: coherent allocation failed, size=2097152
+[  309.264416] CPU: 4 PID: 343 Comm: Xorg Not tainted 4.15.0-next-20180205-dbg-00021-ga1282bf979c4-dirty #2480
+[  309.264418] Call Trace:
+[  309.264425]  dump_stack+0x46/0x59
+[  309.264429]  swiotlb_alloc_coherent+0x164/0x174
+[  309.264434]  ttm_dma_pool_get_pages+0x16e/0x3ce
+[  309.264437]  ttm_dma_populate+0x108/0x2af
+[  309.264440]  ttm_tt_bind+0x32/0x57
+[  309.264442]  ttm_bo_handle_move_mem+0x120/0x328
+[  309.264445]  ? ttm_bo_mem_space+0x170/0x3a0
+[  309.264448]  ttm_bo_validate+0x7b/0xd9
+[  309.264452]  ? __mutex_trylock_or_owner+0x43/0x54
+[  309.264454]  ttm_bo_init_reserved+0x31f/0x38a
+[  309.264457]  ttm_bo_init+0x52/0x76
+[  309.264461]  ? nouveau_bo_invalidate_caches+0x8/0x8
+[  309.264463]  nouveau_bo_new+0x4a8/0x4c7
+[  309.264466]  ? nouveau_bo_invalidate_caches+0x8/0x8
+[  309.264469]  nouveau_gem_new+0x49/0xcc
+[  309.264471]  nouveau_gem_ioctl_new+0x3e/0x9f
+[  309.264474]  ? nouveau_gem_new+0xcc/0xcc
+[  309.264477]  drm_ioctl_kernel+0x64/0xa0
+[  309.264479]  drm_ioctl+0x1d6/0x2a8
+[  309.264482]  ? nouveau_gem_new+0xcc/0xcc
+[  309.264485]  nouveau_drm_ioctl+0x71/0xa4
+[  309.264489]  vfs_ioctl+0x1e/0x2b
+[  309.264491]  do_vfs_ioctl+0x505/0x518
+[  309.264495]  ? __fget+0x5d/0x67
+[  309.264497]  SyS_ioctl+0x3e/0x5a
+[  309.264500]  do_syscall_64+0x17f/0x196
+[  309.264504]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[  309.264506] RIP: 0033:0x7f0395218d87
+[  309.264508] RSP: 002b:00007ffc210c4c48 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[  309.264511] RAX: ffffffffffffffda RBX: 000056213e828350 RCX: 00007f0395218d87
+[  309.264513] RDX: 00007ffc210c4ca0 RSI: 00000000c0306480 RDI: 000000000000000b
+[  309.264515] RBP: 00007ffc210c4ca0 R08: 0000000000000004 R09: 00007f03954ddad0
+[  309.264517] R10: 00007f03913786a1 R11: 0000000000000246 R12: 00000000c0306480
+[  309.264518] R13: 000000000000000b R14: 00007ffc210c4d60 R15: 000056213e35e770
+
+	-ss
