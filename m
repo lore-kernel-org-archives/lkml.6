@@ -1,48 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x22424cNNl3hZImvFjKj0vd1nM09bWqm5lsNuNPj2xd/IZEa40KJoWm7czxnHdT1j78Ze/JTP
-ARC-Seal: i=1; a=rsa-sha256; t=1517855016; cv=none;
-        d=google.com; s=arc-20160816;
-        b=b2PSRHiftqQG4ywhJiBFD5zyUpohdbCY2WZsP0Hrp/0cyeq3u9E4Pfo9tAzRkINlDA
-         QrKK1zOC+jKGe5fEJHh29vyEw6rTVlpNnL8MD3eLALncGzemYgwgEPcb4IIz8RM2C3qA
-         lXdSZ4fsrQ/V8eVDbGsXxKrVndBlWumwUExXl9I8FHHJDNk0LWjtR8GlzVwkJwrY6tMY
-         u5uaoztYBDyYrtN7XvFmU4rrRKK9ZA1s1KGbPG0AoueWEbB5xFCVcMNHQnJ8s1N5jd5w
-         m5T6FvUZzxebsQPS/cPp+Xcj8Q9DpzA1uTawafSpXhBqy692Kyd0guFRiMBuN/byASwN
-         NdkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=DZgHG9AHzSklLQu9yhnWMuvP4o90v7lYl/ljai/ixs0=;
-        b=Psr/mKb4EAZ4RVws3a5bcqsvW6+msL/iYlSgEaesR3ytrSwjh3peWzpyqIFb7ZWOUY
-         rZlneqk4xx8Q32hlAnAizvP1vsZ+UU6D5TtdECVoWSd4WiIZz2S3Tdm0JkA3uLzRzELy
-         LhF9n1A4T5pD7xMNl7GDnFFn+1VsSH8W8F7XGxIldEt1fRCQ+1S8aDTMwJVOx3cLxqo4
-         qKDIXKiSUthi4aIy3R+4O4O3KLkFOkY1YZWG2h2g3fd9kjE2Yke4tdNBBzX+slkUCkLS
-         20hjVnDd7wBRL+vuN5FM14i+6zZ906+FejkkIFwT2gG5YTRlhMBk0a1QyfFIMVxYseki
-         A6dw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3071467-1517855015-2-17576840224675717680
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enfrro,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517855015; b=Kw3Vzw+uR9X0NKArrAnJmMHBlP463sFoi7YBI5UObG+usLe
+    zwjA4Hq5Jt3SgZjfUyg4RFObwa9CaHC4YNVEHw7I2K/52EWxC1yCM8QeQRQp7wm/
+    5sFYZ4bYdxTPsWuPUc/Oq4ubvvT8Xg/R1GQumPooNY8CsJCV0hl4M53CZYj9D/Ij
+    XX2EUhflQnFT7qKOuMF4WgUkCuIy4DlExDHyQsB2E0GzwM8h6QGXfb7AQEn3A2ak
+    uYzMGEei5cpgNdis8OkTzZcjd/iSNBKNcJxyNw3bghKx5CdKXCtmkE5TrpicuAv/
+    UTkywpRQEzyQ3IoTuOjTMnUDLFdFWltcxN/vj3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517855015; bh=VlWrIoWlfdDTft5/U35CLNMAMN
+    Bi1fmv4wsoMN/IARA=; b=rnzE+YErXKVAwWkLwcWxtlOcegdtU6GmPV/sLa3tRv
+    TsWD3K95oQIHjOlNqWPBfMpIjOXhD9tyI4/Q6dpRNIjM8CnOyL5GTIYV5T0tK9kE
+    k8IgrCFGYrmEAh5KI+OKxec0J49kMEy+bdUPZH/T2xIbumGlmokQipyJeVvOVq8S
+    8t9BQmUvDqOUQIQknP9XkMDKjCJg4IdOOvlFasZ8OdCjmbdibmOXq4CUm2iLgpye
+    G3Ero4GmWRhwfHKy7JUeZd28rQWuytRNbmSB0IETDdCtm5Pj/iSrahxEzIPy69Gx
+    tqx1EFQlAnvgyEPzp0qlOUNrGEmIyhuMpleH/n+czZCA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752999AbeBESXc (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Feb 2018 13:23:32 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50824 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753363AbeBESXa (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:23:30 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andi Kleen <ak@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH 4.14 18/64] x86/cpu/bugs: Make retpoline module warning conditional
-Date: Mon,  5 Feb 2018 10:22:37 -0800
-Message-Id: <20180205182139.309136422@linuxfoundation.org>
+        stable@vger.kernel.org, KarimAllah Ahmed <karahmed@amazon.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        gnomes@lxorguk.ukuu.org.uk, ak@linux.intel.com,
+        ashok.raj@intel.com, dave.hansen@intel.com, arjan@linux.intel.com,
+        torvalds@linux-foundation.org, peterz@infradead.org, bp@alien8.de,
+        pbonzini@redhat.com, tim.c.chen@linux.intel.com,
+        gregkh@linux-foundation.org
+Subject: [PATCH 4.14 14/64] x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support
+Date: Mon,  5 Feb 2018 10:22:33 -0800
+Message-Id: <20180205182139.157163812@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586341940305144?=
-X-GMAIL-MSGID: =?utf-8?q?1591586341940305144?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,64 +82,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner tglx@linutronix.de
+From: David Woodhouse dwmw@amazon.co.uk
 
-commit e383095c7fe8d218e00ec0f83e4b95ed4e627b02
+commit 20ffa1caecca4db8f79fe665acdeaa5af815a24d
 
-If sysfs is disabled and RETPOLINE not defined:
+Expose indirect_branch_prediction_barrier() for use in subsequent patches.
 
-arch/x86/kernel/cpu/bugs.c:97:13: warning: ‘spectre_v2_bad_module’ defined but not used
-[-Wunused-variable]
- static bool spectre_v2_bad_module;
+[ tglx: Add IBPB status to spectre_v2 sysfs file ]
 
-Hide it.
-
-Fixes: caf7501a1b4e ("module/retpoline: Warn about missing retpoline in module")
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
+Co-developed-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: ak@linux.intel.com
+Cc: ashok.raj@intel.com
+Cc: dave.hansen@intel.com
+Cc: arjan@linux.intel.com
+Cc: torvalds@linux-foundation.org
+Cc: peterz@infradead.org
+Cc: bp@alien8.de
+Cc: pbonzini@redhat.com
+Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
+Link: https://lkml.kernel.org/r/1516896855-7642-8-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- arch/x86/kernel/cpu/bugs.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
 
+---
+ arch/x86/include/asm/cpufeatures.h   |    2 ++
+ arch/x86/include/asm/nospec-branch.h |   13 +++++++++++++
+ arch/x86/kernel/cpu/bugs.c           |   10 +++++++++-
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -210,6 +210,8 @@
+ #define X86_FEATURE_MBA			( 7*32+18) /* Memory Bandwidth Allocation */
+ #define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* Fill RSB on context switches */
+ 
++#define X86_FEATURE_IBPB		( 7*32+21) /* Indirect Branch Prediction Barrier enabled*/
++
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+ #define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -218,5 +218,18 @@ static inline void vmexit_fill_RSB(void)
+ #endif
+ }
+ 
++static inline void indirect_branch_prediction_barrier(void)
++{
++	asm volatile(ALTERNATIVE("",
++				 "movl %[msr], %%ecx\n\t"
++				 "movl %[val], %%eax\n\t"
++				 "movl $0, %%edx\n\t"
++				 "wrmsr",
++				 X86_FEATURE_IBPB)
++		     : : [msr] "i" (MSR_IA32_PRED_CMD),
++			 [val] "i" (PRED_CMD_IBPB)
++		     : "eax", "ecx", "edx", "memory");
++}
++
+ #endif /* __ASSEMBLY__ */
+ #endif /* __NOSPEC_BRANCH_H__ */
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -94,9 +94,10 @@ static const char *spectre_v2_strings[]
- #define pr_fmt(fmt)     "Spectre V2 : " fmt
- 
- static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
--static bool spectre_v2_bad_module;
- 
- #ifdef RETPOLINE
-+static bool spectre_v2_bad_module;
+@@ -263,6 +263,13 @@ retpoline_auto:
+ 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+ 		pr_info("Filling RSB on context switch\n");
+ 	}
 +
- bool retpoline_module_ok(bool has_retpoline)
- {
- 	if (spectre_v2_enabled == SPECTRE_V2_NONE || has_retpoline)
-@@ -106,6 +107,13 @@ bool retpoline_module_ok(bool has_retpol
- 	spectre_v2_bad_module = true;
- 	return false;
++	/* Initialize Indirect Branch Prediction Barrier if supported */
++	if (boot_cpu_has(X86_FEATURE_SPEC_CTRL) ||
++	    boot_cpu_has(X86_FEATURE_AMD_PRED_CMD)) {
++		setup_force_cpu_cap(X86_FEATURE_IBPB);
++		pr_info("Enabling Indirect Branch Prediction Barrier\n");
++	}
  }
-+
-+static inline const char *spectre_v2_module_string(void)
-+{
-+	return spectre_v2_bad_module ? " - vulnerable module loaded" : "";
-+}
-+#else
-+static inline const char *spectre_v2_module_string(void) { return ""; }
- #endif
  
- static void __init spec2_print_if_insecure(const char *reason)
-@@ -300,7 +308,7 @@ ssize_t cpu_show_spectre_v2(struct devic
+ #undef pr_fmt
+@@ -292,7 +299,8 @@ ssize_t cpu_show_spectre_v2(struct devic
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
  		return sprintf(buf, "Not affected\n");
  
- 	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IPBP" : "",
--		       spectre_v2_bad_module ? " - vulnerable module loaded" : "");
-+		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IBPB" : "",
-+		       spectre_v2_module_string());
+-	return sprintf(buf, "%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IPBP" : "",
+ 		       spectre_v2_bad_module ? " - vulnerable module loaded" : "");
  }
  #endif
