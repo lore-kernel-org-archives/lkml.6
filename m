@@ -1,71 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeBEKwe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 05:52:34 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57000 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752253AbeBEKw1 (ORCPT
+        id S1752719AbeBEK5S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 05:57:18 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54680 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751705AbeBEK5N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 05:52:27 -0500
-From: Olivier Moysan <olivier.moysan@st.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
-CC: <arnaud.pouliquen@st.com>, <benjamin.gaignard@st.com>
-Subject: [PATCH v2 1/1] ASoC: stm32: add of dependency for stm32 drivers
-Date: Mon, 5 Feb 2018 11:49:45 +0100
-Message-ID: <1517827785-6275-1-git-send-email-olivier.moysan@st.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 5 Feb 2018 05:57:13 -0500
+X-Google-Smtp-Source: AH8x226cKfGvXUYVWetyVgrFU55ovz5hqobcfJ/IB9nfcpigLig/CVu8ZTzpeKPMB7ICUhNaNaY5rg==
+Date: Mon, 5 Feb 2018 11:57:08 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Wen Yang <wen.yang99@zte.com.cn>
+Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn
+Subject: Re: [PATCH] sched/rt: Make update_curr_rt() more accurate
+Message-ID: <20180205105708.upjcsok3zbk5zxlk@gmail.com>
+References: <1517800721-42092-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.16]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-05_02:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517800721-42092-1-git-send-email-wen.yang99@zte.com.cn>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add of dependency for STM32 ASoC drivers.
-DFSDM of dependency is already inherited
-from STM32_DFSDM_ADC dependency.
 
-Signed-off-by: olivier moysan <olivier.moysan@st.com>
----
- sound/soc/stm/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+* Wen Yang <wen.yang99@zte.com.cn> wrote:
 
-diff --git a/sound/soc/stm/Kconfig b/sound/soc/stm/Kconfig
-index 3ad881f..48f9ddd 100644
---- a/sound/soc/stm/Kconfig
-+++ b/sound/soc/stm/Kconfig
-@@ -2,7 +2,7 @@ menu "STMicroelectronics STM32 SOC audio support"
- 
- config SND_SOC_STM32_SAI
- 	tristate "STM32 SAI interface (Serial Audio Interface) support"
--	depends on ARCH_STM32 || COMPILE_TEST
-+	depends on (ARCH_STM32 && OF) || COMPILE_TEST
- 	depends on SND_SOC
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	select REGMAP_MMIO
-@@ -11,7 +11,7 @@ config SND_SOC_STM32_SAI
- 
- config SND_SOC_STM32_I2S
- 	tristate "STM32 I2S interface (SPI/I2S block) support"
--	depends on ARCH_STM32 || COMPILE_TEST
-+	depends on (ARCH_STM32 && OF) || COMPILE_TEST
- 	depends on SND_SOC
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	select REGMAP_MMIO
-@@ -20,7 +20,7 @@ config SND_SOC_STM32_I2S
- 
- config SND_SOC_STM32_SPDIFRX
- 	tristate "STM32 S/PDIF receiver (SPDIFRX) support"
--	depends on ARCH_STM32 || COMPILE_TEST
-+	depends on (ARCH_STM32 && OF) || COMPILE_TEST
- 	depends on SND_SOC
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	select REGMAP_MMIO
--- 
-1.9.1
+> rq->clock_task may be updated between the two calls of 
+> rq_clock_task() in update_curr_rt(). Calling rq_clock_task() only
+> once makes it more accurate and efficient, taking update_curr() as
+> reference.
+> 
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+> ---
+>  kernel/sched/rt.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 4056c19..d6d2a65 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -950,12 +950,13 @@ static void update_curr_rt(struct rq *rq)
+>  {
+>  	struct task_struct *curr = rq->curr;
+>  	struct sched_rt_entity *rt_se = &curr->rt;
+> +	u64 now = rq_clock_task(rq);
+>  	u64 delta_exec;
+>  
+>  	if (curr->sched_class != &rt_sched_class)
+>  		return;
+>  
+> -	delta_exec = rq_clock_task(rq) - curr->se.exec_start;
+> +	delta_exec = now - curr->se.exec_start;
+
+Small nit: shouldn't we calculate 'now' after the return?
+
+OTOH that 'return' should only be triggered statistically AFAICS, i.e. very 
+rarely.
+
+Thanks,
+
+	Ingo
