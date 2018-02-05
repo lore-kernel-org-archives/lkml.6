@@ -1,109 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752721AbeBEIZJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 03:25:09 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54285 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752653AbeBEIYs (ORCPT
+        id S1752758AbeBEIZV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 03:25:21 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:18855 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752733AbeBEIZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:24:48 -0500
-Date: Mon, 5 Feb 2018 09:24:45 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
-        bhumirks@gmail.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pali.rohar@gmail.com, sre@kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
-        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
-        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
-Subject: [PATCHv3] tlv320dac33: Add device tree bindings
-Message-ID: <20180205082445.GA18274@amd>
-References: <20180129230539.GA18280@amd>
- <20180131190112.GA31608@amd>
- <20b9ff40-a869-a165-07a2-2a103830efb3@ti.com>
+        Mon, 5 Feb 2018 03:25:11 -0500
+X-IronPort-AV: E=Sophos;i="5.46,464,1511852400";
+   d="scan'208";a="11064009"
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-fbdev@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>,
+        <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>,
+        <b.zolnierkie@samsung.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [PATCH] video: fbdev: convert to use GPIO descriptors
+Date: Mon, 5 Feb 2018 09:23:35 +0100
+Message-ID: <20180205082335.5727-1-ludovic.desroches@microchip.com>
+X-Mailer: git-send-email 2.12.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
-Content-Disposition: inline
-In-Reply-To: <20b9ff40-a869-a165-07a2-2a103830efb3@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use GPIO descriptors instead of relying on the old method.
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+---
+ drivers/video/fbdev/atmel_lcdfb.c | 30 ++++++++++++------------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
-
-This adds device tree bindings for tlv320dac33.c.
-
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
-diff --git a/Documentation/devicetree/bindings/sound/tlv320dac33.txt b/Docu=
-mentation/devicetree/bindings/sound/tlv320dac33.txt
-new file mode 100644
-index 0000000..aee0a87
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/tlv320dac33.txt
-@@ -0,0 +1,32 @@
-+Texas Instruments - tlv320dac33 Codec module
-+
-+The tlv320dac33 serial control bus communicates through I2C protocols.
-+
-+Required properties:
-+
-+- compatible - "ti,tlv320dac33"
-+- reg - I2C slave address
-+- ti,burst-bclkdiv - BCLK divider value in burst mode. Valid range is 1..2=
-55.
-+
-+Optional properties:
-+
-+- reset-gpios      - gpio pin to power the device, active high.
-+
-+- interrupts       - The interrupt output from the device.
-+- interrupt-parent - The parent interrupt controller.
-+
-+- ti,keep-bclk     - Keep the BCLK running in FIFO modes.
-+
-+Example:
-+
-+tlv320dac33: audio-codec@19 {
-+	compatible =3D "ti,tlv320dac33";
-+	reg =3D <0x19>;
-+
-+	interrupt-parent =3D <&gpio2>;
-+	interrupts =3D <21 1>; /* gpio_53, IRQF_TRIGGER_RISING */
-+	reset-gpios =3D <&gpio2 28 0>; /* gpio_60 */
-+
-+	ti,keep-bclk;
-+	ti,burst-bclkdiv =3D <3>;
-+};
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlp4FM0ACgkQMOfwapXb+vJT6ACfZrAjoIfkKc9TKF1tlIzEA8Sk
-cKYAnAv9gqLDfOA72y09pHSPWQbczpjH
-=w2H9
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
+diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
+index 3dee267d7c75..ef3d4198014f 100644
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -18,6 +18,7 @@
+ #include <linux/delay.h>
+ #include <linux/backlight.h>
+ #include <linux/gfp.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -61,8 +62,7 @@ struct atmel_lcdfb_info {
+ };
+ 
+ struct atmel_lcdfb_power_ctrl_gpio {
+-	int gpio;
+-	int active_low;
++	struct gpio_desc *gpiod;
+ 
+ 	struct list_head list;
+ };
+@@ -1018,7 +1018,7 @@ static void atmel_lcdfb_power_control_gpio(struct atmel_lcdfb_pdata *pdata, int
+ 	struct atmel_lcdfb_power_ctrl_gpio *og;
+ 
+ 	list_for_each_entry(og, &pdata->pwr_gpios, list)
+-		gpio_set_value(og->gpio, on);
++		gpiod_set_value(og->gpiod, on);
+ }
+ 
+ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+@@ -1031,11 +1031,11 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+ 	struct device_node *display_np;
+ 	struct device_node *timings_np;
+ 	struct display_timings *timings;
+-	enum of_gpio_flags flags;
+ 	struct atmel_lcdfb_power_ctrl_gpio *og;
+ 	bool is_gpio_power = false;
+ 	int ret = -ENOENT;
+-	int i, gpio;
++	int i;
++	struct gpio_desc *gpiod;
+ 
+ 	sinfo->config = (struct atmel_lcdfb_config*)
+ 		of_match_device(atmel_lcdfb_dt_ids, dev)->data;
+@@ -1072,28 +1072,22 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+ 
+ 	INIT_LIST_HEAD(&pdata->pwr_gpios);
+ 	ret = -ENOMEM;
+-	for (i = 0; i < of_gpio_named_count(display_np, "atmel,power-control-gpio"); i++) {
+-		gpio = of_get_named_gpio_flags(display_np, "atmel,power-control-gpio",
+-					       i, &flags);
+-		if (gpio < 0)
++	for (i = 0; i < gpiod_count(dev, "atmel,power-control"); i++) {
++		gpiod = devm_gpiod_get_index_optional(dev,
++				"atmel,power-control", i, GPIOD_ASIS);
++		if (!gpiod)
+ 			continue;
+ 
+ 		og = devm_kzalloc(dev, sizeof(*og), GFP_KERNEL);
+ 		if (!og)
+ 			goto put_display_node;
+ 
+-		og->gpio = gpio;
+-		og->active_low = flags & OF_GPIO_ACTIVE_LOW;
++		og->gpiod = gpiod;
+ 		is_gpio_power = true;
+-		ret = devm_gpio_request(dev, gpio, "lcd-power-control-gpio");
+-		if (ret) {
+-			dev_err(dev, "request gpio %d failed\n", gpio);
+-			goto put_display_node;
+-		}
+ 
+-		ret = gpio_direction_output(gpio, og->active_low);
++		ret = gpiod_direction_output(gpiod, gpiod_is_active_low(gpiod));
+ 		if (ret) {
+-			dev_err(dev, "set direction output gpio %d failed\n", gpio);
++			dev_err(dev, "set direction output gpio atmel,power-control[%d] failed\n", i);
+ 			goto put_display_node;
+ 		}
+ 		list_add(&og->list, &pdata->pwr_gpios);
+-- 
+2.12.2
