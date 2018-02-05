@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225/2VrGju246N/CaYWmtZSFLTzfJr+jm1WjmC9iCZG5uZXxKQDj0iAuHk6ARuUqgUpUyLck
-ARC-Seal: i=1; a=rsa-sha256; t=1517855201; cv=none;
+X-Google-Smtp-Source: AH8x2278Tr1q+QjjuyX5NYc7YFaLVZuXKkQJZBlB+1wFP6+yIWN4lKcXZgcpHfC5ETwTNwe1GZth
+ARC-Seal: i=1; a=rsa-sha256; t=1517855202; cv=none;
         d=google.com; s=arc-20160816;
-        b=GC5Mg+eEPsIcXfZKo70HosRSlH1STVNcS8TOGB4651ePzGe1TZKXlAwnQD96I9y7y7
-         Xy8hezUALeQe9+nWAalT6kssdRtUuldsZPu5aaQRMyqDjztgvTHr5ZMHt6omPLelGcTM
-         bzuT11mkGD5hm0hEr5wumlVK8xO0BPSK6LT9uJ9sTnXXkwaX6OOb5744BAxYqWyt4gg5
-         q8og+vfm0nzY4xCL4LIjRA2wJG7DQv2Z737eA8V/CMuBXD3IEfI+Q+9vE9qcPBfLWFEH
-         aUciDsX6DqCNXxr13ostOsheYXxUE0J2rsL1ojaqLYRenw0EiPedE/bUuil2TIzsu9WI
-         ZysQ==
+        b=mqhhAlLUVQcfeopHLs2tGY3d3mTZvs5pw1co/FG4PRRKQYnYofz9xUb4uclkYBMme8
+         n8To4WXSwsevQtFO+F2FAKNPm0d/yeQiucVBBUAgG3xhHmErVgG48JJOsaL8NwDlQ9fa
+         T+sLPOh42l+wG4xZbFmoupg2wW11QV9PQ6H5U5oiL+Ufuc+srAvBVv4Dp9ZGqVLOiOoC
+         Xr4s38MbYbqoAAvxJq3acCuHwKRNf3ybpXayM5UcGpV4q64o/d4BRv5AHlh6xFou5VoM
+         A8Rli7tdn8DfNiUQu4W3FnTH5KZmfxNTjqRykrXc+262OuWYFZSmdwegWBusUNQJiFpf
+         yxOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LB8eLrBSVjlassscluMwBXPQGTxkVNd0tzVW6sUgNyU=;
-        b=NS+0JP6gVy349FI48Q2xNOL5s13JOs+g/gXPS//dsVFVXN5XxI8sBPkL43oaKmnxnE
-         0L8POGzclKPndySN51xHdbypTbp2AtVpj/08W7aYU+kh0dRkwVFNU0BIp+7MHN54XRBT
-         xvoGsFt6IsQeBWIn0pFKqmjCIKD6KbAqNnK4sXLBqcKlwOWit70M08lzCKQ8FqqzdLhe
-         4DX8w7JnlO7FNcj2DB8NR3Mb249ZBOMFQPuQtga5CdJ279T2rXbalpynhV2oKdOwQoDD
-         H+8xmGla0cv/D3p8VPhEouT/h4T0x46QDhPDbIn+3dzLEwVrlEeQW23NtcXbzAMJSzQK
-         LOdg==
+        bh=BryjAROTk3op3XlqgJM6hcD/kwKlz4EquuHTahXRcUU=;
+        b=e7/Ev7JjwzgjjT7PtAwh/DItKLw+kYRVnB7qBfN/ac8x5PoKESYO24xGQnMSpXOs4C
+         RCOlDH3V0DHtViYTCozO9A56KhsD3ciirN7oMTalE8CNcGkW3k32NB3phPorl6CweizF
+         4z+51mNUhfRF+M88QBUl7Q0HkIdgJGDaG6IxLXTTtaiOda/EHmu19bzdOXCQPjTTuxCA
+         XJa4jU6v58eeEsNjO5pZaImiONe9OfbNbCKDson8Hm41I5mMs7ChWA83l73uTk/QztkI
+         rNsaq54n45H5zKqvm1HslPQc2BUi8u8djs2QXI28EjZZjvIYjT167huxcr5NwFEsrEvj
+         WwRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 3.18 27/36] CDC-ACM: apply quirk for card reader
-Date: Mon,  5 Feb 2018 10:23:55 -0800
-Message-Id: <20180205182352.889258576@linuxfoundation.org>
+	Jia-Ju Bai <baijiaju1990@gmail.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 3.18 28/36] USB: serial: io_edgeport: fix possible sleep-in-atomic
+Date: Mon,  5 Feb 2018 10:23:56 -0800
+Message-Id: <20180205182352.930525626@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -38,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586536083805102?=
-X-GMAIL-MSGID: =?utf-8?q?1591586536083805102?=
+X-GMAIL-THRID: =?utf-8?q?1591586537099525145?=
+X-GMAIL-MSGID: =?utf-8?q?1591586537099525145?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -47,29 +48,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-commit df1cc78a52491f71d8170d513d0f6f114faa1bda upstream.
+commit c7b8f77872c73f69a16528a9eb87afefcccdc18b upstream.
 
-This devices drops random bytes from messages if you talk to it
-too fast.
+According to drivers/usb/serial/io_edgeport.c, the driver may sleep
+under a spinlock.
+The function call path is:
+edge_bulk_in_callback (acquire the spinlock)
+   process_rcvd_data
+     process_rcvd_status
+       change_port_settings
+         send_iosp_ext_cmd
+           write_cmd_usb
+             usb_kill_urb --> may sleep
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
+To fix it, the redundant usb_kill_urb() is removed from the error path
+after usb_submit_urb() fails.
+
+This possible bug is found by my static analysis tool (DSAC) and checked
+by my code review.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/serial/io_edgeport.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1712,6 +1712,9 @@ static const struct usb_device_id acm_id
- 	{ USB_DEVICE(0x0ace, 0x1611), /* ZyDAS 56K USB MODEM - new version */
- 	.driver_info = SINGLE_RX_URB, /* firmware bug */
- 	},
-+	{ USB_DEVICE(0x11ca, 0x0201), /* VeriFone Mx870 Gadget Serial */
-+	.driver_info = SINGLE_RX_URB,
-+	},
- 	{ USB_DEVICE(0x22b8, 0x7000), /* Motorola Q Phone */
- 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
- 	},
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -2219,7 +2219,6 @@ static int write_cmd_usb(struct edgeport
+ 		/* something went wrong */
+ 		dev_err(dev, "%s - usb_submit_urb(write command) failed, status = %d\n",
+ 			__func__, status);
+-		usb_kill_urb(urb);
+ 		usb_free_urb(urb);
+ 		atomic_dec(&CmdUrbs);
+ 		return status;
