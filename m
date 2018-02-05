@@ -1,78 +1,49 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3105817-1517855171-2-9569527547783498979
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517855170; b=uJLUe6rQB1L00JwgRwJ4j8FKTM9MVqKlVltnorX8ybjWgGC
-    ehgHP7/MqBS+0IGpnAR0bRaCbNV8u9IBU8XsZzeIIDLJvPUoPy/P+91I6AGZg3IJ
-    ZLur8XazKJExtPrx6YxALY2qOMo2N5dgflkoekZ1D36JmKFfVyCyXATHaxHeNkVX
-    wJeFadtzPE0i8GiSzqtGNJrX1NaFgpUW3RqryJPJpZ6OadwWN/A0K82QK7y7xYQa
-    1OcvI+VpYL9c7Eia6RRqPS8oN79r10F6/HVT0aufGOWS2OUtMV8IF62UXLeYzPZF
-    RIJacPmHbkpop+/Dbkw0bsWZ2ToKF6titUbraGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1517855170; bh=Y16dwcD1cbS4DU/rJguSjJTcl/
-    zDq9J6t1HAvLj7KH8=; b=wZURiZQQfZIuJxYUaabAaQ1OTOR7/rNrUXdwQBFDyK
-    r3OBBG1pIO7G8ZNKLvR7PxEqsZcuZowxm+jl2wWbkWoadf/xdrSMKnqlUpEjYnop
-    7FFezEYZ2DhrSi4KMh3d3ILFrYTmI1F4yLPRoVW5VAz8O5Pe1zRJGT27BlayBA/e
-    vIQXI8sQtsG17CwSair2QOM3poVylJZPIP4paIOXDOJsgdr+6dOCaj1zijN55QYv
-    6Kpy4ke0SAaO+E18UGiFLLp7ACl7FNrQ+Bn8732M2OqRtAh+K2PwZWuyGu0+acDC
-    0c6gBxVNJGq+pzKCKrUnglJ6XEHF6aMnNn82Xo+OtRhw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753834AbeBES0A (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Feb 2018 13:26:00 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52984 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753303AbeBESZ5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:25:57 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x2271oonb+8WfAw2p7G+OWQ7aez+ANbpIR1Q6YRSHPSmoffY1PKjDAVtSsgjFHWCZKQvfBs2l
+ARC-Seal: i=1; a=rsa-sha256; t=1517855170; cv=none;
+        d=google.com; s=arc-20160816;
+        b=i2sGdyrnYdRIGvq7o46ZT2isjnu+JUOslLeARwhwFGf3phkES9pWcMlLrsiXu9QhsT
+         cQJbQrM2s/glq1MJOMxhy/5E2Qygq72k5wsytYaRGQuRbniVQpttGqkn0jbiCMXgtp4q
+         BLD2V8hSlcRDcbKTqKNMSMAK90IJw1jfkRowSvAVgmbziabEVam1cqB6/9PThNu+ZosA
+         gATItRWI5dvOpKS+0ju9iVARiIcpKyrw4kgq6i1qY53BZGtmDLUs4e96DFjrXfhKZS3R
+         1ZFlTHuWt5sFdovuEKNLRdLasylDB4AcLYDMnnb7YPrtnQP0/5W44dLtRz9iqfWn4uJV
+         dvZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/q+vbY6vljct3Ij9Z3knpqR88K4gLQ9yCKf7jtRGIyA=;
+        b=Lg2QMJceRqY8AFf7Y3g4QYMn8C+dTf93evfcNayhnQV7/qnZTHACXJ+LUYqGCVnJW1
+         MX6fD61pc9IASS4VbbpSNFWcX9dTtbob+ZrkphvcYj8VQn5UGMOcSvZ67haVNDl1MHsQ
+         ePh9aD4Tgw6XhJdaxelGu/CMt0Lt3OaHJRQRe7SUGadtodKSiVjRQE77oZM+SCfU7UzK
+         mBeIyNcSl+UoAx2bjJpI/ZD1/eNA8R0aNePrc/SS5Ee8pOlzzyl6b1kRFqxoZdwHu+j5
+         Fpav6KgbvtsS2vYyeJYq4jMZSyiDnhgA85LHgKJBNbzMrhufWUvOC5yJVWsDC9EjQ3IU
+         /45g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Honig <ahonig@google.com>, kvm@vger.kernel.org,
-        Jim Mattson <jmattson@google.com>
-Subject: [PATCH 4.15 49/60] x86/kvm: Update spectre-v1 mitigation
-Date: Mon,  5 Feb 2018 10:23:22 -0800
-Message-Id: <20180205182216.252016631@linuxfoundation.org>
+	stable@vger.kernel.org,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	karahmed@amazon.de,
+	peterz@infradead.org,
+	bp@alien8.de
+Subject: [PATCH 4.15 50/60] x86/retpoline: Avoid retpolines for built-in __init functions
+Date: Mon,  5 Feb 2018 10:23:23 -0800
+Message-Id: <20180205182216.300380140@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591586398360196413?=
+X-GMAIL-MSGID: =?utf-8?q?1591586503630066131?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,68 +51,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams dan.j.williams@intel.com
+From: David Woodhouse dwmw@amazon.co.uk
 
-commit 085331dfc6bbe3501fb936e657331ca943827600
+commit 66f793099a636862a71c59d4a6ba91387b155e0c
 
-Commit 75f139aaf896 "KVM: x86: Add memory barrier on vmcs field lookup"
-added a raw 'asm("lfence");' to prevent a bounds check bypass of
-'vmcs_field_to_offset_table'.
+There's no point in building init code with retpolines, since it runs before
+any potentially hostile userspace does. And before the retpoline is actually
+ALTERNATIVEd into place, for much of it.
 
-The lfence can be avoided in this path by using the array_index_nospec()
-helper designed for these types of fixes.
-
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Andrew Honig <ahonig@google.com>
-Cc: kvm@vger.kernel.org
-Cc: Jim Mattson <jmattson@google.com>
-Link: https://lkml.kernel.org/r/151744959670.6342.3001723920950249067.stgit@dwillia2-desk3.amr.corp.intel.com
+Cc: karahmed@amazon.de
+Cc: peterz@infradead.org
+Cc: bp@alien8.de
+Link: https://lkml.kernel.org/r/1517484441-1420-2-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/kvm/vmx.c |   20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ include/linux/init.h |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -34,6 +34,7 @@
- #include <linux/tboot.h>
- #include <linux/hrtimer.h>
- #include <linux/frame.h>
-+#include <linux/nospec.h>
- #include "kvm_cache_regs.h"
- #include "x86.h"
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -5,6 +5,13 @@
+ #include <linux/compiler.h>
+ #include <linux/types.h>
  
-@@ -898,21 +899,18 @@ static const unsigned short vmcs_field_t
++/* Built-in __init functions needn't be compiled with retpoline */
++#if defined(RETPOLINE) && !defined(MODULE)
++#define __noretpoline __attribute__((indirect_branch("keep")))
++#else
++#define __noretpoline
++#endif
++
+ /* These macros are used to mark some functions or 
+  * initialized data (doesn't apply to uninitialized data)
+  * as `initialization' functions. The kernel can take this
+@@ -40,7 +47,7 @@
  
- static inline short vmcs_field_to_offset(unsigned long field)
- {
--	BUILD_BUG_ON(ARRAY_SIZE(vmcs_field_to_offset_table) > SHRT_MAX);
-+	const size_t size = ARRAY_SIZE(vmcs_field_to_offset_table);
-+	unsigned short offset;
- 
--	if (field >= ARRAY_SIZE(vmcs_field_to_offset_table))
-+	BUILD_BUG_ON(size > SHRT_MAX);
-+	if (field >= size)
- 		return -ENOENT;
- 
--	/*
--	 * FIXME: Mitigation for CVE-2017-5753.  To be replaced with a
--	 * generic mechanism.
--	 */
--	asm("lfence");
--
--	if (vmcs_field_to_offset_table[field] == 0)
-+	field = array_index_nospec(field, size);
-+	offset = vmcs_field_to_offset_table[field];
-+	if (offset == 0)
- 		return -ENOENT;
--
--	return vmcs_field_to_offset_table[field];
-+	return offset;
- }
- 
- static inline struct vmcs12 *get_vmcs12(struct kvm_vcpu *vcpu)
+ /* These are for everybody (although not all archs will actually
+    discard it in modules) */
+-#define __init		__section(.init.text) __cold  __latent_entropy
++#define __init		__section(.init.text) __cold  __latent_entropy __noretpoline
+ #define __initdata	__section(.init.data)
+ #define __initconst	__section(.init.rodata)
+ #define __exitdata	__section(.exit.data)
