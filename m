@@ -1,93 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752942AbeBEMU1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:20:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53140 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752291AbeBEMUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:20:19 -0500
-Date: Mon, 5 Feb 2018 13:20:17 +0100
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
-        kernel@collabora.com, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
-        Jason Wang <jasowang@redhat.com>
-Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
-Message-ID: <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
-References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
- <20180126135803.29781-2-tomeu.vizoso@collabora.com>
- <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
- <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+        id S1752901AbeBEMXT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:23:19 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38282 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752260AbeBEMXL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 07:23:11 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 512326090E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+Subject: Re: [PATCH] of: cache phandle nodes to decrease cost of
+ of_find_node_by_phandle()
+To: Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
+ <5b84a166-c71b-3a41-9e7f-a7624a8441f6@codeaurora.org>
+ <38cdcae5-ec0f-d1be-b024-1990d4387731@gmail.com>
+ <9e23d32f-05a0-ce8a-41f8-9a1a3d66be37@codeaurora.org>
+ <fd9f5f63-b08e-602e-1510-85a65889f550@gmail.com>
+ <567731e8-8f89-bd6e-c3d4-e36400e69198@codeaurora.org>
+ <0db129ef-ffd8-96fe-46a7-55fb575272e3@gmail.com>
+From: Chintan Pandya <cpandya@codeaurora.org>
+Message-ID: <0a178f4b-75fe-0564-7b0e-596f52fca1dc@codeaurora.org>
+Date: Mon, 5 Feb 2018 17:53:06 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <0db129ef-ffd8-96fe-46a7-55fb575272e3@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
 
-> > Why not use virtio-vsock to run the wayland protocol? I don't like
-> > the idea to duplicate something with very simliar functionality in
-> > virtio-gpu.
 > 
-> The reason for abandoning that approach was the type of objects that
-> could be shared via virtio-vsock would be extremely limited. Besides
-> that being potentially confusing to users, it would mean from the
-> implementation side that either virtio-vsock would gain a dependency on
-> the drm subsystem, or an appropriate abstraction for shareable buffers
-> would need to be added for little gain.
+> My question was trying to determine whether the numbers reported above
+> are for a debug configuration or a production configuration.
+My reported numbers are from debug configuration.
 
-Well, no.  The idea is that virtio-vsock and virtio-gpu are used largely
-as-is, without knowing about each other.  The guest wayland proxy which
-does the buffer management talks to both devices.
+> not a production configuration, I was requesting the numbers for a
+> production configuration.
+I'm working on it. But please expect some delay in my response for this. 
+As I mentioned earlier, I need to work with few teams to get these numbers.
 
-> > If you have a guest proxy anyway using virtio-sock for the protocol
-> > stream and virtio-gpu for buffer sharing (and some day 3d rendering
-> > too) should work fine I think.
+
+> show a significant boot time reduction from the patch then there is
+> less justification for adding complexity to the existing code.  I
+> prefer to use simpler data structures and algorithms __if__ extra
+> complexity does not provide any advantage.  The balance between
+> complexity and benefits is a core software engineering issue.
 > 
-> If I understand correctly your proposal, virtio-gpu would be used for
-> creating buffers that could be shared across domains, but something
-> equivalent to SCM_RIGHTS would still be needed in virtio-vsock?
-
-Yes, the proxy would send a reference to the buffer over virtio-vsock.
-I was more thinking about a struct specifying something like
-"ressource-id 42 on virtio-gpu-pci device in slot 1:23.0" instead of
-using SCM_RIGHTS.
-
-> If the mechanics of passing presentation data were very complex, I think
-> this approach would have more merit. But as you can see from the code,
-> it isn't that bad.
-
-Well, the devil is in the details.  If you have multiple connections you
-don't want one being able to stall the others for example.  There are
-reasons took quite a while to bring virtio-vsock to the state where it
-is today.
-
-> > What is the plan for the host side? I see basically two options. Either
-> > implement the host wayland proxy directly in qemu. Or
-> > implement it as separate process, which then needs some help from
-> > qemu to get access to the buffers. The later would allow qemu running
-> > independant from the desktop session.
+Ok
 > 
-> Regarding synchronizing buffers, this will stop becoming needed in
-> subsequent commits as all shared memory is allocated in the host and
-> mapped to the guest via KVM_SET_USER_MEMORY_REGION.
+>> I don't have a set up for taking these numbers in perf mode. For
+>> that, I need to ask some other team and round trip follow ups. In my
+>> set up, I rely on serial console logging which gets disabled in perf
+>> mode.
+>>
+>>>
+>>> Thanks,
+>>>
+>>> Frank
+>>>
+>>
+>> Chintan
+> 
 
---verbose please.  The qemu patches linked from the cover letter not
-exactly helpful in understanding how all this is supposed to work.
-
-> This is already the case for buffers passed from the compositor to the
-> clients (see patch 2/2), and I'm working on the equivalent for buffers
-> from the guest to the host (clients still have to create buffers with
-> DRM_VIRTGPU_RESOURCE_CREATE but they will be only backend by host memory
-> so no calls to DRM_VIRTGPU_TRANSFER_TO_HOST are needed).
-
-Same here.  --verbose please.
-
-cheers,
-  Gerd
+Chintan
+-- 
+Qualcom India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
