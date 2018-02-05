@@ -1,81 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752996AbeBENQO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 08:16:14 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36729 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752324AbeBENQE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 08:16:04 -0500
-X-Google-Smtp-Source: AH8x225n3h0LciXW0PlQ18kAGUOjhho2vE26klGpoZAg3B1xbJOPqYpWm/rMxE46eDsKugMwc1+pCFjm9AqMa1HW9Is=
-MIME-Version: 1.0
-In-Reply-To: <0a30452f-34eb-d0b5-2001-ab6b866c53e2@huawei.com>
-References: <1516725385-24535-1-git-send-email-john.garry@huawei.com>
- <1516725385-24535-8-git-send-email-john.garry@huawei.com> <0a30452f-34eb-d0b5-2001-ab6b866c53e2@huawei.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 5 Feb 2018 15:16:03 +0200
-Message-ID: <CAHp75VfXoAHNH2BnfNLbFfdCqUk3rxU_QWfxTx7ZyLgV0qxotQ@mail.gmail.com>
-Subject: Re: [PATCH v12 7/9] ACPI: Translate the I/O range of non-MMIO devices
- before scanning
-To: John Garry <john.garry@huawei.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>, Hanjun Guo <hanjun.guo@linaro.org>,
-        dann.frazier@canonical.com,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, linux-pci@vger.kernel.org,
-        Corey Minyard <minyard@acm.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752873AbeBEN2N (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 08:28:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38030 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752316AbeBEN2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 08:28:05 -0500
+From: "Jerome Marchand" <jmarchan@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Jerome Marchand <jmarchan@redhat.com>
+Subject: [PATCH v4] arm64: fix unwind_frame() for filtered out fn for function graph tracing
+Date: Mon,  5 Feb 2018 14:28:01 +0100
+Message-Id: <20180205132801.7442-1-jmarchan@redhat.com>
+In-Reply-To: <20180112104832.9417-1-jmarchan@redhat.com>
+References: <20180112104832.9417-1-jmarchan@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 1, 2018 at 1:32 PM, John Garry <john.garry@huawei.com> wrote:
+From: Pratyush Anand <panand@redhat.com>
 
+Change since v3:
+ - Exit unwind_frame() if frame->graph != -1
 
-I'm not going through all patch, by one thing I would like you to pay
-attention on, i.e.
-printing resource_size_t and struct resource
+Change since v2:
+- Set frame.graph = current->curr_ret_stack in profile_pc
+- Check that frame->graph != -1 in unwind_frame
 
->> +               dev_err(dev, "translate bus-addr(0x%llx) fail!\n",
->> +                       resource->start);
+do_task_stat() calls get_wchan(), which further does unwind_frame().
+unwind_frame() restores frame->pc to original value in case function
+graph tracer has modified a return address (LR) in a stack frame to hook
+a function return. However, if function graph tracer has hit a filtered
+function, then we can't unwind it as ftrace_push_return_trace() has
+biased the index(frame->graph) with a 'huge negative'
+offset(-FTRACE_NOTRACE_DEPTH).
 
-resource_size_t is dynamic width type, you will see a compiler
-warning. For this we have
-%pap specifier.
+Moreover, arm64 stack walker defines index(frame->graph) as unsigned
+int, which can not compare a -ve number.
 
-Moreover, in some cases it's useful to print struct resource via %pR or %pr.
+Similar problem we can have with calling of walk_stackframe() from
+save_stack_trace_tsk() or dump_backtrace().
 
-Consider reading kernel documentation about these (printk-formats.rst).
+This patch fixes unwind_frame() to test the index for -ve value and
+restore index accordingly before we can restore frame->pc.
 
->> +struct acpi_indirectio_host_data {
->> +       resource_size_t io_size;
->> +       resource_size_t io_start;
->> +};
+Reproducer:
 
-Why not utilize struct resource?
+cd /sys/kernel/debug/tracing/
+echo schedule > set_graph_notrace
+echo 1 > options/display-graph
+echo wakeup > current_tracer
+ps -ef | grep -i agent
 
-If it's coming from platform / firmware it should *never* have types
-like size_t, unsigned long, resource_size_t, etc.
+Above commands result in:
+Unable to handle kernel paging request at virtual address ffff801bd3d1e000
+pgd = ffff8003cbe97c00
+[ffff801bd3d1e000] *pgd=0000000000000000, *pud=0000000000000000
+Internal error: Oops: 96000006 [#1] SMP
+[...]
+CPU: 5 PID: 11696 Comm: ps Not tainted 4.11.0+ #33
+[...]
+task: ffff8003c21ba000 task.stack: ffff8003cc6c0000
+PC is at unwind_frame+0x12c/0x180
+LR is at get_wchan+0xd4/0x134
+pc : [<ffff00000808892c>] lr : [<ffff0000080860b8>] pstate: 60000145
+sp : ffff8003cc6c3ab0
+x29: ffff8003cc6c3ab0 x28: 0000000000000001
+x27: 0000000000000026 x26: 0000000000000026
+x25: 00000000000012d8 x24: 0000000000000000
+x23: ffff8003c1c04000 x22: ffff000008c83000
+x21: ffff8003c1c00000 x20: 000000000000000f
+x19: ffff8003c1bc0000 x18: 0000fffffc593690
+x17: 0000000000000000 x16: 0000000000000001
+x15: 0000b855670e2b60 x14: 0003e97f22cf1d0f
+x13: 0000000000000001 x12: 0000000000000000
+x11: 00000000e8f4883e x10: 0000000154f47ec8
+x9 : 0000000070f367c0 x8 : 0000000000000000
+x7 : 00008003f7290000 x6 : 0000000000000018
+x5 : 0000000000000000 x4 : ffff8003c1c03cb0
+x3 : ffff8003c1c03ca0 x2 : 00000017ffe80000
+x1 : ffff8003cc6c3af8 x0 : ffff8003d3e9e000
 
->> +/* All the host devices which apply indirect-IO can be listed here. */
->> +static const struct acpi_device_id acpi_indirect_host_id[] = {
->> +       {""},
->> +};
+Process ps (pid: 11696, stack limit = 0xffff8003cc6c0000)
+Stack: (0xffff8003cc6c3ab0 to 0xffff8003cc6c4000)
+[...]
+[<ffff00000808892c>] unwind_frame+0x12c/0x180
+[<ffff000008305008>] do_task_stat+0x864/0x870
+[<ffff000008305c44>] proc_tgid_stat+0x3c/0x48
+[<ffff0000082fde0c>] proc_single_show+0x5c/0xb8
+[<ffff0000082b27e0>] seq_read+0x160/0x414
+[<ffff000008289e6c>] __vfs_read+0x58/0x164
+[<ffff00000828b164>] vfs_read+0x88/0x144
+[<ffff00000828c2e8>] SyS_read+0x60/0xc0
+[<ffff0000080834a0>] __sys_trace_return+0x0/0x4
 
-The idea of terminator is to be such (remove comma there). And it's
-basically redundant to have an empty string there. Moreover, it's a
-waste of resources in ro section.
+fixes: 20380bb390a4 (arm64: ftrace: fix a stack tracer's output under function graph tracer)
+Signed-off-by: Pratyush Anand <panand@redhat.com>
+Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
+---
+ arch/arm64/include/asm/stacktrace.h | 2 +-
+ arch/arm64/kernel/stacktrace.c      | 7 +++++++
+ arch/arm64/kernel/time.c            | 2 +-
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm64/include/asm/stacktrace.h b/arch/arm64/include/asm/stacktrace.h
+index 6ad30776e984..99390755c0c4 100644
+--- a/arch/arm64/include/asm/stacktrace.h
++++ b/arch/arm64/include/asm/stacktrace.h
+@@ -27,7 +27,7 @@ struct stackframe {
+ 	unsigned long fp;
+ 	unsigned long pc;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	unsigned int graph;
++	int graph;
+ #endif
+ };
+ 
+diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
+index 76809ccd309c..2c74ff76b0cd 100644
+--- a/arch/arm64/kernel/stacktrace.c
++++ b/arch/arm64/kernel/stacktrace.c
+@@ -59,6 +59,13 @@ int notrace unwind_frame(struct task_struct *tsk, struct stackframe *frame)
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	if (tsk->ret_stack &&
+ 			(frame->pc == (unsigned long)return_to_handler)) {
++		if (frame->graph == -1) {
++			WARN_ON(1);
++			return -EINVAL;
++		}
++		if (frame->graph < -1)
++			frame->graph += FTRACE_NOTRACE_DEPTH;
++
+ 		/*
+ 		 * This is a case where function graph tracer has
+ 		 * modified a return address (LR) in a stack frame
+diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
+index a4391280fba9..f258636273c9 100644
+--- a/arch/arm64/kernel/time.c
++++ b/arch/arm64/kernel/time.c
+@@ -52,7 +52,7 @@ unsigned long profile_pc(struct pt_regs *regs)
+ 	frame.fp = regs->regs[29];
+ 	frame.pc = regs->pc;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	frame.graph = -1; /* no task info */
++	frame.graph = current->curr_ret_stack;
+ #endif
+ 	do {
+ 		int ret = unwind_frame(NULL, &frame);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.13.6
