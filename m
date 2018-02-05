@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227CK6lHxUo9cBhnQnbEVUf8X9CfP8yno5fiiS/ghv+Zgs+QYPFknbnfYf6L7TA2WBpYElFn
-ARC-Seal: i=1; a=rsa-sha256; t=1517855134; cv=none;
+X-Google-Smtp-Source: AH8x224V+izoH3yjw0M4+4f2LDO0ByC5fX8n8lDHYNYnF2M+x99kfIc4EBpfs+eoHPd0RKhYWgOa
+ARC-Seal: i=1; a=rsa-sha256; t=1517855130; cv=none;
         d=google.com; s=arc-20160816;
-        b=05Tq4l6DaUY3Emjq00TInzczooNXCSMGzbozMMisvVtXraY5wQy1rVxLdVr/wCr+1X
-         z0wHhqMk/iF1ha7kGuRGK27+abKR3VxdXczsUwsJgdTtThA5UL6tV0cX91LGiQ3VM0ZJ
-         uy/fSTZdDm73fJFhDuTVw6ouZtGzab8VLiTF1rw1NYe9bzVu+a7Yk7yE447tAZ0TdE/y
-         0dmNB/SW2YNQhUcdFsjcuMPqXj7N6wJZeOtLYTaiyYaBph6JfoHxy2UjXSFnFXGRkFuO
-         mtrSnyTatS60yC6UsMdQJV1DiYmDmCuz9D7KARpuDcNShWDMscUsiE9klAnW99aBOcQ9
-         etbw==
+        b=FZMH2STVOUsr9fjX88gVSgFHuOcrQY3Ub/Xi8lBQh1GYZdzpNjBSa76hGvNcfvKNS0
+         dF6nKSM0LFPEVOf7tP1uApLUnYvK8MUYlUg71EXgvii2bfBcIYwrjRQItAAAnlaTcoM/
+         J3hwGdKb+fTKNI+ysGYOKiZ68mIxRU92DIZRhF1k6KktnD2MxeJkdf2mUmfL+ly8IKoQ
+         9fS6pMvD1UdB2vnIn6ecFfWbXiXaZDPd/amoccme3vD1at456LhGekE/JYQucHEaphCC
+         mxePXCcMR7krVX0Sr2u7dlol+dPgeay8E9xjJVZ9PabPGZUDPQRdo2Bk4Jdx/Klw0cYa
+         r/bQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AjWaYYVRHVrrbCDSTkPUaDmfm98xKdt76jMFyP/RDJ8=;
-        b=ceGrtnOqqJgpZXmKAO0tpTd8gvSQsxsAVqIIkvVQnIOlECQWS3ZgB/t+GNQrErNaqe
-         59d4j2Y+rpvIt++KzZ6O+anu1pyZOxna9OPfoILAhSArtKsVwRZOZmWnF5A4+Pt4SrkD
-         l528qaJyujj7aiXriHLic1iqkja+pUYmOH87C9C7IrQveNpErXxgiZrlKOr/fkzudSgz
-         bmBr6nrxdmBcNCZC30wUMazWP3OniXFFIdFkNtR50LnMKIii9LzRRC6yJjuAqvz2zYxK
-         IpbHmVz7t8sktWSVMcCbZifrD2rJJonPcVHjtsK43NAxFSqEmFoSQ/kSGROlv6eN7Ffx
-         oIfg==
+        bh=bxvlyPkS+FnMftW/LAA0UOx5CA5GtA2Q82vaMWMJ0k0=;
+        b=UCRCaRfnS1mu6Rv/bGQGQTBrlSNFD+J0QHXr9tef5/Gbs26QMs0Fd3Q6ubQ9FY6Ldh
+         edJVnpmZgd8egP4iskPywlqeoUyeCnINQwD6WvanHbtrz8uzvLVxNuvdRmP7KyVHIjQp
+         5le7CJNLU+LBWq6NLqYfRRnKQBlrKcLC1KQrQPYKSFibYqHbck6tNVeLoj1elt9e8XZh
+         BWGnTvxY42P6ktcDiWDUkWE+45tleie8kAuetjlGNv5bQwDCRwyxZVSR+ZPDPdmpDQOj
+         +1xTXEdAsktYYJXUPbJhPgsPwJbjnTuTzYkQOckM3bdDM3ycb/EAmhkwB+1rmyfZXYpb
+         JLCg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,6 +26,8 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andi Kleen <ak@linux.intel.com>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -34,11 +36,10 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Kees Cook <keescook@chromium.org>,
 	kernel-hardening@lists.openwall.com,
 	Al Viro <viro@zeniv.linux.org.uk>,
-	torvalds@linux-foundation.org,
 	alan@linux.intel.com
-Subject: [PATCH 4.15 37/60] x86/usercopy: Replace open coded stac/clac with __uaccess_{begin, end}
-Date: Mon,  5 Feb 2018 10:23:10 -0800
-Message-Id: <20180205182215.491244329@linuxfoundation.org>
+Subject: [PATCH 4.15 35/60] x86: Introduce barrier_nospec
+Date: Mon,  5 Feb 2018 10:23:08 -0800
+Message-Id: <20180205182215.404154263@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
@@ -47,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586412411529132?=
-X-GMAIL-MSGID: =?utf-8?q?1591586465957615680?=
+X-GMAIL-THRID: =?utf-8?q?1591586409621203264?=
+X-GMAIL-MSGID: =?utf-8?q?1591586461564066664?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,15 +59,21 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams dan.j.williams@intel.com
 
-commit b5c4ae4f35325d520b230bab6eb3310613b72ac1
+commit b3d7ad85b80bbc404635dca80f5b129f6242bc7a
 
-In preparation for converting some __uaccess_begin() instances to
-__uacess_begin_nospec(), make sure all 'from user' uaccess paths are
-using the _begin(), _end() helpers rather than open-coded stac() and
-clac().
+Rename the open coded form of this instruction sequence from
+rdtsc_ordered() into a generic barrier primitive, barrier_nospec().
+
+One of the mitigations for Spectre variant1 vulnerabilities is to fence
+speculative execution after successfully validating a bounds check. I.e.
+force the result of a bounds check to resolve in the instruction pipeline
+to ensure speculative execution honors that result before potentially
+operating on out-of-bounds data.
 
 No functional changes.
 
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Andi Kleen <ak@linux.intel.com>
 Suggested-by: Ingo Molnar <mingo@redhat.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -76,48 +83,38 @@ Cc: Kees Cook <keescook@chromium.org>
 Cc: kernel-hardening@lists.openwall.com
 Cc: gregkh@linuxfoundation.org
 Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: torvalds@linux-foundation.org
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727416438.33451.17309465232057176966.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727415361.33451.9049453007262764675.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/lib/usercopy_32.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/barrier.h |    4 ++++
+ arch/x86/include/asm/msr.h     |    3 +--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/x86/lib/usercopy_32.c
-+++ b/arch/x86/lib/usercopy_32.c
-@@ -331,12 +331,12 @@ do {									\
+--- a/arch/x86/include/asm/barrier.h
++++ b/arch/x86/include/asm/barrier.h
+@@ -48,6 +48,10 @@ static inline unsigned long array_index_
+ /* Override the default implementation from linux/nospec.h. */
+ #define array_index_mask_nospec array_index_mask_nospec
  
- unsigned long __copy_user_ll(void *to, const void *from, unsigned long n)
- {
--	stac();
-+	__uaccess_begin();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user(to, from, n);
- 	else
- 		n = __copy_user_intel(to, from, n);
--	clac();
-+	__uaccess_end();
- 	return n;
- }
- EXPORT_SYMBOL(__copy_user_ll);
-@@ -344,7 +344,7 @@ EXPORT_SYMBOL(__copy_user_ll);
- unsigned long __copy_from_user_ll_nocache_nozero(void *to, const void __user *from,
- 					unsigned long n)
- {
--	stac();
-+	__uaccess_begin();
- #ifdef CONFIG_X86_INTEL_USERCOPY
- 	if (n > 64 && static_cpu_has(X86_FEATURE_XMM2))
- 		n = __copy_user_intel_nocache(to, from, n);
-@@ -353,7 +353,7 @@ unsigned long __copy_from_user_ll_nocach
++/* Prevent speculative execution past this barrier. */
++#define barrier_nospec() alternative_2("", "mfence", X86_FEATURE_MFENCE_RDTSC, \
++					   "lfence", X86_FEATURE_LFENCE_RDTSC)
++
+ #ifdef CONFIG_X86_PPRO_FENCE
+ #define dma_rmb()	rmb()
  #else
- 	__copy_user(to, from, n);
- #endif
--	clac();
-+	__uaccess_end();
- 	return n;
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -214,8 +214,7 @@ static __always_inline unsigned long lon
+ 	 * that some other imaginary CPU is updating continuously with a
+ 	 * time stamp.
+ 	 */
+-	alternative_2("", "mfence", X86_FEATURE_MFENCE_RDTSC,
+-			  "lfence", X86_FEATURE_LFENCE_RDTSC);
++	barrier_nospec();
+ 	return rdtsc();
  }
- EXPORT_SYMBOL(__copy_from_user_ll_nocache_nozero);
+ 
