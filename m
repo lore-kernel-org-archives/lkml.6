@@ -1,49 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752005AbeBEWuJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 17:50:09 -0500
-Received: from mail-pg0-f52.google.com ([74.125.83.52]:37412 "EHLO
-        mail-pg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750796AbeBEWt7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 17:49:59 -0500
-X-Google-Smtp-Source: AH8x226j+MOQoB6agueiOGquUScS05ZsR6ezRmZpkPjdwr7Mq9Awq1zCP+pF9T+eSUOLBKbkijnzPQ==
-Date: Mon, 5 Feb 2018 14:49:55 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>
-Cc: Masaki Ota <masaki.ota@jp.alps.com>, linux-input@vger.kernel.org,
+        id S1752046AbeBEWvj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 17:51:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750796AbeBEWvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 17:51:32 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62ABF20B80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sstabellini@kernel.org
+Date: Mon, 5 Feb 2018 14:51:24 -0800 (PST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
+To: boris.ostrovsky@oracle.com, jgross@suse.com
+cc: sstabellini@kernel.org, xen-devel@lists.xenproject.org,
         linux-kernel@vger.kernel.org
-Subject: Re: ALPS Trackpoint & pressure
-Message-ID: <20180205224955.GB46524@dtor-ws>
-References: <20180204150839.b5qm4wb26vic35st@pali>
+Subject: [PATCH 0/2] pvcalls-front improvements
+Message-ID: <alpine.DEB.2.10.1802051448460.10160@sstabellini-ThinkPad-X260>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180204150839.b5qm4wb26vic35st@pali>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 04, 2018 at 04:08:39PM +0100, Pali Rohár wrote:
-> Hi! Now playing again with trackpoint connected to ALPS rushmore
-> touchpad and I'm seeking a nice feature. Via ALPS PS/2 protocol it
-> reports pressure of trackpoint. Parser for it is already implemented in
-> alps.c and value is assigned to variable "z". When I just move
-> trackpoint z is zero, when I push trackpoint while moving, then z is
-> number higher, maximally 32. Variable "z" is set, but unused.
-> 
-> Do we have some input interface which can be used to report this
-> pressure of trackpoint to userspace? I can use this feature e.g. as
-> additional button...
+Hi all,
 
-We could either do the conversion in kernel and emit BTN_LEFT, or
-report ABS_PRESSURE and see if userspace will be able to handle
-REL_X/REL_Y/ABS_PRESSURE device.
+this small series introduces a per socket refcount to increase the
+efficiency on socket release operations, and makes releasing passive
+sockets safe.
 
-Adding Peter.
+Cheers,
 
--- 
-Dmitry
+Stefano
+
+
+Stefano Stabellini (2):
+      pvcalls-front: introduce a per sock_mapping refcount
+      pvcalls-front: wait for other operations to return when release passive sockets
+
+ drivers/xen/pvcalls-front.c | 196 +++++++++++++++++++-------------------------
+ 1 file changed, 84 insertions(+), 112 deletions(-)
