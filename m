@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224CRmhD3d6jsY/w6iHQ4zCTbsDE8lyOyQgbWpfE9IWyxzHY4HtGKhZhpuJdlch7OyvsHBud
+X-Google-Smtp-Source: AH8x225gl9BCxH0b2EHeUuNAemfHTNOVteELkzkqCztYDGsiDMKLkP3FBXmBqZHYequsRroW6nWx
 ARC-Seal: i=1; a=rsa-sha256; t=1517855109; cv=none;
         d=google.com; s=arc-20160816;
-        b=k6zt2iNkhTkyiuWgIE4HDnXetbf8ivReIvDobN9KbKdirN4JRnWHAZ4kE1bDS2H9/b
-         sA7PcG4qHXqL2XAyOS+kKpFMMYZDrSJYCuqzEZKbmxzC7BE5K6IBRVDP6CfEiSuKCu+p
-         uJX8hPepo9lLLmNGxnpR4Us4yTfM0Jof4lPQYs9iKGUNY/hO9Pq+kdiQ1eWK4Lo+1XIk
-         Q6Z7+b2/MzyEAU0RyYiOVDqupxGteAn9zp2rZa7pYMiXtTFuCYft5DDZajCoKpOKj3DS
-         yqsVPMp1UnpYLt8SYPMBM086ipc9ynPTotfjdDeSndnfSytzt0jXzNZ+SAtJJfuuyo9X
-         eeBA==
+        b=kciAqQP7oCRP8Ws/mTmBWBJa9dmUcKOviQF9rlg8k8rXMCCdCiyTrB5oroxFN3RMVU
+         kVSCdRxXQ4/BhOPo4iXomAjVvfjkp1Nv41HBoBCUOfJwGKbrrflbpvKKc20VwEtPtoiY
+         00GglTsz08LdYy1go2dXd/Pf3scXEmUrXYmzH5s4pxqK5lcvjqIXwvc9Knk4Azb86Y3c
+         Sk8/MmqWU6vXqmv6MDRwSYpLDJ/hXzLVq0gbywXnrn3wgrqzEUbDuZquevU3vt19KV7X
+         NNZQ8R/iI37QqfoB94Ubj/DEsUVZQ8eOC8Kg3D0JB9qYpwvZVQUxEu1nYwx/iBTeIb0L
+         TR9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aTYL96qcPpF/Bl/fYkuhDMcduWAxIUQF3PrsC/SbLRI=;
-        b=J6T9j6lsSsvqLLUcJpl5iqPzp+HK+4YLJuJVoWFx6l83cAgOYWS05zG0OupfsjYABn
-         ULqt1ZJAFyA2GMHji7l+11xSnM2ZboaR7WOhijl+pOAAMrgkHtRVfz8R6axEQkTnNPy9
-         F58p8m9aQkOo47xv5W2HHw8SYW58ZYBXGd6sErl3crArgmhBQZ43/6kihgxDUQJcDZm9
-         0GCSJQxZvJisDBaDcvmd1HiYRXhK11cOPe2H1VSp5XSnaC9JwzFameqx6OOMlmergxnF
-         cjDsrGLlHmv4WrF2v2MjK++vjMmckCXogterROgx1AWokzelrhe0A1BxooFvP8/5vuZ/
-         GG0w==
+        bh=wn4/Y5s15j2exljyjEC6P+eWAjeeoEfvcPRWBYzC07I=;
+        b=Ds6LpWG1WYXrOmkRPuUVpqfUjhjeXNAHnWNfRbDHcxpgsGJFwolChrF92dPmqO8lr2
+         UxFsiAMXcKmtC79ts9cMJOxuE8zP+5mc/ESmcm8oTL3lijK+7oAacZatI1Hn/70hx46E
+         CkE+VI3z6qNEYik7S652pHOZLwP1kjvqmqwLT+IT078csuV+UxnvHTWnaXB1rOWBlJHE
+         RsXXg6p4pjL3RqYLb2QRUhzHufQVpBxQRtfkdUnACcfAekq/VrkG4NSwrArGiSz3DP3p
+         JYTUC4qj72H+gFaHMbBvy57PVw8gXMWB8edRYgfbbewjyQYae20sXpoi/JEDpckpD9wS
+         lWJw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,11 +28,10 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@suse.de>,
-	Dave Hansen <dave.hansen@intel.com>,
 	gnomes@lxorguk.ukuu.org.uk,
 	ak@linux.intel.com,
 	ashok.raj@intel.com,
+	dave.hansen@intel.com,
 	karahmed@amazon.de,
 	arjan@linux.intel.com,
 	torvalds@linux-foundation.org,
@@ -41,9 +40,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	pbonzini@redhat.com,
 	tim.c.chen@linux.intel.com,
 	gregkh@linux-foundation.org
-Subject: [PATCH 4.15 08/60] x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown
-Date: Mon,  5 Feb 2018 10:22:41 -0800
-Message-Id: <20180205182214.261733948@linuxfoundation.org>
+Subject: [PATCH 4.15 09/60] x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early Spectre v2 microcodes
+Date: Mon,  5 Feb 2018 10:22:42 -0800
+Message-Id: <20180205182214.305086493@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
@@ -52,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586334764895819?=
-X-GMAIL-MSGID: =?utf-8?q?1591586439122027728?=
+X-GMAIL-THRID: =?utf-8?q?1591586336170736700?=
+X-GMAIL-MSGID: =?utf-8?q?1591586438786121742?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -63,25 +62,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse dwmw@amazon.co.uk
 
-commit fec9434a12f38d3aeafeb75711b71d8a1fdef621
+commit a5b2966364538a0e68c9fa29bc0a3a1651799035
 
-Also, for CPUs which don't speculate at all, don't report that they're
-vulnerable to the Spectre variants either.
+This doesn't refuse to load the affected microcodes; it just refuses to
+use the Spectre v2 mitigation features if they're detected, by clearing
+the appropriate feature bits.
 
-Leave the cpu_no_meltdown[] match table with just X86_VENDOR_AMD in it
-for now, even though that could be done with a simple comparison, on the
-assumption that we'll have more to add.
+The AMD CPUID bits are handled here too, because hypervisors *may* have
+been exposing those bits even on Intel chips, for fine-grained control
+of what's available.
 
-Based on suggestions from Dave Hansen and Alan Cox.
+It is non-trivial to use x86_match_cpu() for this table because that
+doesn't handle steppings. And the approach taken in commit bd9240a18
+almost made me lose my lunch.
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
 Cc: gnomes@lxorguk.ukuu.org.uk
 Cc: ak@linux.intel.com
 Cc: ashok.raj@intel.com
+Cc: dave.hansen@intel.com
 Cc: karahmed@amazon.de
 Cc: arjan@linux.intel.com
 Cc: torvalds@linux-foundation.org
@@ -90,82 +91,93 @@ Cc: bp@alien8.de
 Cc: pbonzini@redhat.com
 Cc: tim.c.chen@linux.intel.com
 Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1516896855-7642-6-git-send-email-dwmw@amazon.co.uk
+Link: https://lkml.kernel.org/r/1516896855-7642-7-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/kernel/cpu/common.c |   48 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/intel.c |   66 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -47,6 +47,8 @@
- #include <asm/pat.h>
- #include <asm/microcode.h>
- #include <asm/microcode_intel.h>
-+#include <asm/intel-family.h>
-+#include <asm/cpu_device_id.h>
- 
- #ifdef CONFIG_X86_LOCAL_APIC
- #include <asm/uv/uv.h>
-@@ -877,6 +879,41 @@ static void identify_cpu_without_cpuid(s
- #endif
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -102,6 +102,59 @@ static void probe_xeon_phi_r3mwait(struc
+ 		ELF_HWCAP2 |= HWCAP2_RING3MWAIT;
  }
  
-+static const __initdata struct x86_cpu_id cpu_no_speculation[] = {
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CEDARVIEW,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CLOVERVIEW,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_LINCROFT,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_PENWELL,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_PINEVIEW,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_CENTAUR,	5 },
-+	{ X86_VENDOR_INTEL,	5 },
-+	{ X86_VENDOR_NSC,	5 },
-+	{ X86_VENDOR_ANY,	4 },
-+	{}
++/*
++ * Early microcode releases for the Spectre v2 mitigation were broken.
++ * Information taken from;
++ * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/01/microcode-update-guidance.pdf
++ * - https://kb.vmware.com/s/article/52345
++ * - Microcode revisions observed in the wild
++ * - Release note from 20180108 microcode release
++ */
++struct sku_microcode {
++	u8 model;
++	u8 stepping;
++	u32 microcode;
++};
++static const struct sku_microcode spectre_bad_microcodes[] = {
++	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x84 },
++	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x84 },
++	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x84 },
++	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x84 },
++	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
++	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
++	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
++	{ INTEL_FAM6_SKYLAKE_MOBILE,	0x03,	0xc2 },
++	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
++	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
++	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
++	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
++	{ INTEL_FAM6_BROADWELL_XEON_D,	0x03,	0x07000011 },
++	{ INTEL_FAM6_BROADWELL_X,	0x01,	0x0b000025 },
++	{ INTEL_FAM6_HASWELL_ULT,	0x01,	0x21 },
++	{ INTEL_FAM6_HASWELL_GT3E,	0x01,	0x18 },
++	{ INTEL_FAM6_HASWELL_CORE,	0x03,	0x23 },
++	{ INTEL_FAM6_HASWELL_X,		0x02,	0x3b },
++	{ INTEL_FAM6_HASWELL_X,		0x04,	0x10 },
++	{ INTEL_FAM6_IVYBRIDGE_X,	0x04,	0x42a },
++	/* Updated in the 20180108 release; blacklist until we know otherwise */
++	{ INTEL_FAM6_ATOM_GEMINI_LAKE,	0x01,	0x22 },
++	/* Observed in the wild */
++	{ INTEL_FAM6_SANDYBRIDGE_X,	0x06,	0x61b },
++	{ INTEL_FAM6_SANDYBRIDGE_X,	0x07,	0x712 },
 +};
 +
-+static const __initdata struct x86_cpu_id cpu_no_meltdown[] = {
-+	{ X86_VENDOR_AMD },
-+	{}
-+};
-+
-+static bool __init cpu_vulnerable_to_meltdown(struct cpuinfo_x86 *c)
++static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
 +{
-+	u64 ia32_cap = 0;
++	int i;
 +
-+	if (x86_match_cpu(cpu_no_meltdown))
-+		return false;
-+
-+	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
-+		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
-+
-+	/* Rogue Data Cache Load? No! */
-+	if (ia32_cap & ARCH_CAP_RDCL_NO)
-+		return false;
-+
-+	return true;
++	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
++		if (c->x86_model == spectre_bad_microcodes[i].model &&
++		    c->x86_mask == spectre_bad_microcodes[i].stepping)
++			return (c->microcode <= spectre_bad_microcodes[i].microcode);
++	}
++	return false;
 +}
 +
- /*
-  * Do minimum CPU detection early.
-  * Fields really needed: vendor, cpuid_level, family, model, mask,
-@@ -924,11 +961,12 @@ static void __init early_identify_cpu(st
+ static void early_init_intel(struct cpuinfo_x86 *c)
+ {
+ 	u64 misc_enable;
+@@ -122,6 +175,19 @@ static void early_init_intel(struct cpui
+ 	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64))
+ 		c->microcode = intel_get_microcode_revision();
  
- 	setup_force_cpu_cap(X86_FEATURE_ALWAYS);
- 
--	if (c->x86_vendor != X86_VENDOR_AMD)
--		setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
--
--	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
--	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-+	if (!x86_match_cpu(cpu_no_speculation)) {
-+		if (cpu_vulnerable_to_meltdown(c))
-+			setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
-+		setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
-+		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
++	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
++	     cpu_has(c, X86_FEATURE_STIBP) ||
++	     cpu_has(c, X86_FEATURE_AMD_SPEC_CTRL) ||
++	     cpu_has(c, X86_FEATURE_AMD_PRED_CMD) ||
++	     cpu_has(c, X86_FEATURE_AMD_STIBP)) && bad_spectre_microcode(c)) {
++		pr_warn("Intel Spectre v2 broken microcode detected; disabling SPEC_CTRL\n");
++		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
++		clear_cpu_cap(c, X86_FEATURE_STIBP);
++		clear_cpu_cap(c, X86_FEATURE_AMD_SPEC_CTRL);
++		clear_cpu_cap(c, X86_FEATURE_AMD_PRED_CMD);
++		clear_cpu_cap(c, X86_FEATURE_AMD_STIBP);
 +	}
- 
- 	fpu__init_system(c);
- 
++
+ 	/*
+ 	 * Atom erratum AAE44/AAF40/AAG38/AAH41:
+ 	 *
