@@ -1,97 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753022AbeBEGOO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 01:14:14 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33996 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752828AbeBEGIg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:08:36 -0500
-X-Google-Smtp-Source: AH8x226RqPtlKhrtzp5EzgXa4Qe2dzMQhlBoflcZgwsw65+IG7jxTBLuqZ7C7v/lfvHW5AnM2ARedQ==
-Date: Mon, 5 Feb 2018 00:08:34 -0600
-From: Rob Herring <robh@kernel.org>
-To: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
-Cc: broonie@kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wakasugi.jb@om.asahi-kasei.co.jp, shengjiu.wang@nxp.com,
-        daniel.baluta@nxp.com, mihai.serban@gmail.com, linux-imx@nxp.com,
-        Mihai Serban <mihai.serban@nxp.com>
-Subject: Re: [PATCH] ASoC: codecs: Add support for AK4458 DAC driver
-Message-ID: <20180205060834.7fwbqnyzrfze4cli@rob-hp-laptop>
-References: <1517404809-25250-1-git-send-email-cosmin.samoila@nxp.com>
+        id S1752468AbeBEGVD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 01:21:03 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4763 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750784AbeBEGU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 01:20:56 -0500
+Subject: Re: [PATCH v9 5/7] arm64: kvm: Introduce KVM_ARM_SET_SERROR_ESR ioctl
+To: James Morse <james.morse@arm.com>
+CC: "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "bp@alien8.de" <bp@alien8.de>,
+        "robert.moore@intel.com" <robert.moore@intel.com>,
+        "lv.zheng@intel.com" <lv.zheng@intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        Huangshaoyu <huangshaoyu@huawei.com>
+References: <0184EA26B2509940AA629AE1405DD7F201A9E8EA@DGGEMA503-MBS.china.huawei.com>
+ <5A70C5A0.1050600@arm.com>
+From: gengdongjiu <gengdongjiu@huawei.com>
+Message-ID: <d1b17dae-9d9c-970a-d164-a41c618d449b@huawei.com>
+Date: Mon, 5 Feb 2018 14:19:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517404809-25250-1-git-send-email-cosmin.samoila@nxp.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <5A70C5A0.1050600@arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.68.147]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 03:20:09PM +0200, Cosmin-Gabriel Samoila wrote:
-> The AK4458 is a 32-bit 8ch Premium DAC that corresponds
-> to a 768kHz PCM input and an 11.2MHz DSD input at maximum.
-> It supports I2S, DSD and TDM modes with 24 or 32 bit MSB
-> or 16, 24, 32 LSB formats. Its datasheet is available here:
-> https://www.akm.com/akm/en/file/datasheet/AK4458VN.pdf
+James,
+   Thank you for your time to reply me.
+
+On 2018/1/31 3:21, James Morse wrote:
+> Hi gengdongjiu,
 > 
-> Signed-off-by: Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>
-> Signed-off-by: Mihai Serban <mihai.serban@nxp.com>
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Signed-off-by: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
-> ---
->  Documentation/devicetree/bindings/sound/ak4458.txt |   23 +
-
-Separate patch please.
-
->  sound/soc/codecs/Kconfig                           |   18 +
->  sound/soc/codecs/Makefile                          |    6 +
->  sound/soc/codecs/ak4458-i2c.c                      |   79 ++
->  sound/soc/codecs/ak4458-spi.c                      |   61 ++
->  sound/soc/codecs/ak4458.c                          | 1132 ++++++++++++++++++++
->  sound/soc/codecs/ak4458.h                          |  127 +++
->  7 files changed, 1446 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/ak4458.txt
->  create mode 100644 sound/soc/codecs/ak4458-i2c.c
->  create mode 100644 sound/soc/codecs/ak4458-spi.c
->  create mode 100644 sound/soc/codecs/ak4458.c
->  create mode 100644 sound/soc/codecs/ak4458.h
+> On 24/01/18 20:06, gengdongjiu wrote:
+>>> On 06/01/18 16:02, Dongjiu Geng wrote:
+>>>> The ARM64 RAS SError Interrupt(SEI) syndrome value is specific to the
+>>>> guest and user space needs a way to tell KVM this value. So we add a
+>>>> new ioctl. Before user space specifies the Exception Syndrome Register
+>>>> ESR(ESR), it firstly checks that whether KVM has the capability to set
+>>>> the guest ESR, If has, will set it. Otherwise, nothing to do.
+>>>>
+>>>> For this ESR specifying, Only support for AArch64, not support AArch32.
+>>>
+>>> After this patch user-space can trigger an SError in the guest. If it wants to migrate the guest, how does the pending SError get migrated?
+>>>
+>>> I think we need to fix migration first. Andrew Jones suggested using
+>>> KVM_GET/SET_VCPU_EVENTS:
+>>> https://www.spinics.net/lists/arm-kernel/msg616846.html
+>>>
+>>> Given KVM uses kvm_inject_vabt() on v8.0 hardware too, we should cover systems without the v8.2 RAS Extensions with the same API. I
+>>> think this means a bit to read/write whether SError is pending, and another to indicate the ESR should be set/read.
+>>> CPUs without the v8.2 RAS Extensions can reject pending-SError that had an ESR.
+>>
+>> For the CPUs without the v8.2 RAS Extensions, its ESR is always 0, 
+>> we only can inject a SError with ESR 0 to guest, cannot set its ESR.
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/ak4458.txt b/Documentation/devicetree/bindings/sound/ak4458.txt
-> new file mode 100644
-> index 0000000..b9e6eb3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/ak4458.txt
-> @@ -0,0 +1,23 @@
-> +AK4458 audio DAC
-> +
-> +This device supports both I2C and SPI modes.
-> +
-> +Required properties:
-> +
-> +- compatible : "asahi-kasei,ak4458"
-> +- reg : The I2C address of the device for I2C, the chip select number for SPI.
-> +- asahi-kasei,pdn-gpios: A GPIO specifier for the GPIO controlling
-> +	the power down & reset pin.
+> 0? It's always implementation-defined. On Juno it seems to be always-0, but
+> other systems may behave differently. (Juno may generate another ESR value when
+> I'm not watching it...)
+For the armv8.0 cpu without RAS Extensions, it does not have vsesr_el2, so when guest take a virtual SError,
+its ESR is 0, can not control the virtual SError's syndrom value, it does not have such registers to control that.
 
-reset-gpios like the Asahi Kasei ADC under review.
- 
-> +- asahi-kasei,mute-gpios: A GPIO specifier for the GPIO controlling
-> +	the soft mute pin.
+Does Juno not have RAS Extension? if yes, I think we can only inject an SError, but can not change its ESR value, because it does not have vsesr_el2.
 
-State the active state.
+> 
+> Just because we can't control the ESR doesn't mean injecting an SError isn't
+> something user-space may want to do.
+yes, we may need to support user-space injects an SError even through CPU does not have RAS Extension.
 
-> +
-> +Example:
-> +
-> +&i2c {
-> +	ak4458: ak4458@10 {
+> If we tackle migration of pending-SError first, I think that will give us the
+> API to create a new pending SError with/without an ESR as appropriate.
 
-dac@10
+sure, we should. Last week, I checked the KVM_GET/SET_VCPU_EVENTS IOCTL, it should meet our migration requirements
 
-> +		compatible = "asahi-kasei,ak4458";
-> +		reg = <0x10>;
-> +		asahi-kasei,pdn-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>
-> +		asahi-kasei,mute-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>
-> +	};
-> +};
+> 
+> 
+>> About how about to use the KVM_GET/SET_VCPU_EVENTS, I will check the code, and
+>> consider your suggestion at the same time.
+> 
+> (Not my suggestion, It was Andrew Jones idea.)
+Got it.
+
+> 
+>> The IOCTL KVM_GET/SET_VCPU_EVENTS has been used by X86.
+> 
+> We would be re-using the struct to have values with slightly different meanings.
+> But for migration the upshot is the same, call KVM_GET_VCPU_EVENTS on one
+> system, and pass the struct to KVM_SET_VCPU_EVENTS on the new system. If we're
+> lucky Qemu may be able to do this in shared x86/arm64 code.
+> 
+Thanks for the reminder, I know your meaning.
+In the x86, the kvm_vcpu_events includes exception/interrupt/nmi/smi. For the RAS, we
+only involves the exception, so Qemu handling logic is different. Anyway, I will try to
+share code for the two platform in Qemu.
+
+
+/* for KVM_GET/SET_VCPU_EVENTS */
+struct kvm_vcpu_events {
+	struct {
+		__u8 injected;
+		__u8 nr;
+		__u8 has_error_code;
+		__u8 pad;
+		__u32 error_code;
+	} exception;
+	struct {
+		__u8 injected;
+		__u8 nr;
+		__u8 soft;
+		__u8 shadow;
+	} interrupt;
+	struct {
+		__u8 injected;
+		__u8 pending;
+		__u8 masked;
+		__u8 pad;
+	} nmi;
+	__u32 sipi_vector;
+	__u32 flags;
+	struct {
+		__u8 smm;
+		__u8 pending;
+		__u8 smm_inside_nmi;
+		__u8 latched_init;
+	} smi;
+	__u32 reserved[9];
+};
+
+> 
+>>>> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c index
+>>>> 5c7f657..738ae90 100644
+>>>> --- a/arch/arm64/kvm/guest.c
+>>>> +++ b/arch/arm64/kvm/guest.c
+>>>> @@ -277,6 +277,11 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+>>>>  	return -EINVAL;
+>>>>  }
+>>>>
+>>>> +int kvm_arm_set_sei_esr(struct kvm_vcpu *vcpu, u32 *syndrome) {
+>>>> +	return -EINVAL;
+>>>> +}
+>>>
+>>> Does nothing in the patch that adds the support? This is a bit odd.
+>>> (oh, its hiding in patch 6...)
+>>
+>> To make this patch simple and small, I add it in patch 6.
+> 
+> But that made the functionality of this patch: A new API to return -EINVAL from
+> the kernel.
+> 
+> Swapping the patches round would have avoided this.
+> Regardless, I think this will fold out in a rebase.
+yes, I will, thanks for your kind suggestion.
+
+> 
+> 
+> Thanks,
+> 
+> James
+> 
+> .
+> 
