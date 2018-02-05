@@ -1,86 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752265AbeBEFGt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 00:06:49 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42151 "EHLO
+        id S1752329AbeBEFTq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 00:19:46 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:42254 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750718AbeBEFGq (ORCPT
+        with ESMTP id S1750718AbeBEFTi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 00:06:46 -0500
-X-Google-Smtp-Source: AH8x224fm+wqk3/27fijb2mA1dnSreZCM5PPgUW7zEeuRLEM3yk1PiYeY9I1OVl17O4gvWmCy4nxDw==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.9\))
-Subject: Re: [PATCH v3] ACPI: Parse entire table as a term_list for Dell XPS
- 9570 and Precision M5530
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAJZ5v0ha9xZVSvUjUPO5ebM+JhPH7jk6W=M8AheirqOrhf8Ezg@mail.gmail.com>
-Date: Mon, 5 Feb 2018 13:06:37 +0800
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mon, 5 Feb 2018 00:19:38 -0500
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: rjw@rjwysocki.net
+Cc: lenb@kernel.org, andy.shevchenko@gmail.com, erik.schmauss@intel.com,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
         Mario Limonciello <mario.limonciello@dell.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <334D3FD8-FF56-410C-8B33-B973EDFDD7D7@canonical.com>
-References: <20180131045634.13328-1-kai.heng.feng@canonical.com>
- <CAJZ5v0ha9xZVSvUjUPO5ebM+JhPH7jk6W=M8AheirqOrhf8Ezg@mail.gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-X-Mailer: Apple Mail (2.3445.6.9)
+Subject: [PATCH v4] ACPI: Parse entire table as a term_list for Dell XPS 9570 and Precision M5530
+Date: Mon,  5 Feb 2018 13:19:24 +0800
+Message-Id: <20180205051924.10186-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
+of box.
 
+The touchpad relies on its _INI method to update its _HID value from
+XXXX0000 to SYNA2393.
+Also, the _STA relies on value of I2CN to report correct status.
 
-> On Feb 4, 2018, at 4:26 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> 
-> On Wed, Jan 31, 2018 at 5:56 AM, Kai-Heng Feng
-> <kai.heng.feng@canonical.com> wrote:
->> The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
->> of box.
->> 
->> The touchpad relies on its _INI method to update its _HID value from
->> XXXX0000 to SYNA2393.
->> Also, the _STA relies on value of I2CN to report correct status.
->> 
->> Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
->> correctly set up, and _INI can get run. The ACPI table in this machine
->> is designed to get parsed this way.
->> 
->> Also, change the quirk table to a more generic name.
->> 
->> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198515
->> Cc: Mario Limonciello <mario.limonciello@dell.com>
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->> v3: Put the function under right #ifdef, comment adjustment
->> 
->> v2: Andy's suggestion, merge to a single quirk table.
->> 
->> drivers/acpi/bus.c | 40 +++++++++++++++++++++++++++++++++-------
->> 1 file changed, 33 insertions(+), 7 deletions(-)
->> 
->> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
->> index 4d0979e02a28..7cb18bc2b59a 100644
->> --- a/drivers/acpi/bus.c
->> +++ b/drivers/acpi/bus.c
->> @@ -66,10 +66,39 @@ static int set_copy_dsdt(const struct dmi_system_id *id)
->>        return 0;
->> }
->> #endif
->> +static int set_gbl_term_list(const struct dmi_system_id *id)
->> +{
->> +       pr_notice("%s detected - parse the entire table as a term_list\n",
->> +                 id->ident);
-> 
-> This is not a useful message for a user (who may not know what
-> trem_list is).  Care to change it to something more useful, or even
-> drop it?
+Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
+correctly set up, and _INI can get run. The ACPI table in this machine
+is designed to get parsed this way.
 
-Yes, I think it should be dropped. The information is already in the
-commit log and comment section, if the user really wants to know
-more.
+Also, change the quirk table to a more generic name.
 
-Kai-Heng
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198515
+Cc: Mario Limonciello <mario.limonciello@dell.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+v4: Remove unnecessary message for user.
+
+v3: Put the function under right #ifdef, comment adjustment
+
+v2: Andy's suggestion, merge to a single quirk table.
+ drivers/acpi/bus.c | 38 +++++++++++++++++++++++++++++++-------
+ 1 file changed, 31 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index f87ed3be779a..11c6dda233d6 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -66,10 +66,37 @@ static int set_copy_dsdt(const struct dmi_system_id *id)
+ 	return 0;
+ }
+ #endif
++static int set_gbl_term_list(const struct dmi_system_id *id)
++{
++	acpi_gbl_parse_table_as_term_list = 1;
++	return 0;
++}
+ 
+-static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
++static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
++	/*
++	 * Touchpad on Dell XPS 9570/Precision M5530 doesn't work under I2C
++	 * mode.
++	 * https://bugzilla.kernel.org/show_bug.cgi?id=198515
++	 */
++	{
++		.callback = set_gbl_term_list,
++		.ident = "Dell Precision M5530",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Precision M5530"),
++		},
++	},
++	{
++		.callback = set_gbl_term_list,
++		.ident = "Dell XPS 15 9570",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "XPS 15 9570"),
++		},
++	},
+ 	/*
+ 	 * Invoke DSDT corruption work-around on all Toshiba Satellite.
++	 * DSDT will be copied to memory.
+ 	 * https://bugzilla.kernel.org/show_bug.cgi?id=14679
+ 	 */
+ 	{
+@@ -83,7 +110,7 @@ static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
+ 	{}
+ };
+ #else
+-static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
++static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
+ 	{}
+ };
+ #endif
+@@ -1019,11 +1046,8 @@ void __init acpi_early_init(void)
+ 
+ 	acpi_permanent_mmap = true;
+ 
+-	/*
+-	 * If the machine falls into the DMI check table,
+-	 * DSDT will be copied to memory
+-	 */
+-	dmi_check_system(dsdt_dmi_table);
++	/* Check machine-specific quirks */
++	dmi_check_system(acpi_quirks_dmi_table);
+ 
+ 	status = acpi_reallocate_root_table();
+ 	if (ACPI_FAILURE(status)) {
+-- 
+2.15.1
