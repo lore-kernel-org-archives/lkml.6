@@ -1,61 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752761AbeBEJnz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 04:43:55 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:63087 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751705AbeBEJns (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 04:43:48 -0500
-Subject: Re: [PATCH v6 17/41] dt-bindings: clock: Add bindings for DA8XX
- CFGCHIP clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-18-git-send-email-david@lechnology.com>
- <572e31a2-ac18-512b-03bb-82fffcf4d228@ti.com>
- <26fd0f01-ed14-6544-7443-e88c69ca9acb@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <f57cae4e-560a-0ea4-16dd-bdf8696d4f7b@ti.com>
-Date: Mon, 5 Feb 2018 15:12:35 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1752264AbeBEJoy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 04:44:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40342 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751834AbeBEJos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 04:44:48 -0500
+Date: Mon, 5 Feb 2018 10:44:38 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Adam Borowski <kilobyte@angband.pl>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        "Tobin C. Harding" <me@tobin.cc>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
+Message-ID: <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
+References: <20180204174521.21383-1-kilobyte@angband.pl>
 MIME-Version: 1.0
-In-Reply-To: <26fd0f01-ed14-6544-7443-e88c69ca9acb@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180204174521.21383-1-kilobyte@angband.pl>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 02 February 2018 11:20 PM, David Lechner wrote:
-> On 02/02/2018 12:20 AM, Sekhar Nori wrote:
->> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
->>> +EMIFA clock source (ASYNC1)
->>> +---------------------------
->>> +Required properties:
->>> +- compatible: shall be "ti,da850-async1-clksrc".
->>> +- #clock-cells: from common clock binding; shall be set to 0.
->>> +- clocks: phandles to the parent clocks corresponding to clock-names
->>> +- clock-names: shall be "pll0_sysclk3", "div4.5"
->>
->> Is this clock really referred to as aysnc1 in documentation? I don't get
->> hits for async1 in OMAP-L138 TRM.
->>
-> 
-> It looks like it is only called ASYNC1 in the datasheet, not the TRM.
-> 
-> Table 6-5. Maximum Internal Clock Frequencies at Each Voltage Operating
-> Point
+Hi,
 
-I see it now. Its fine to use async1 then.
+I add people who actively commented on adding %px modifier,
+see the thread starting at
+https://lkml.kernel.org/r/1511921105-3647-5-git-send-email-me@tobin.cc
 
-Thanks,
-Sekhar
+Just for reference. It seems to be related to the commit 9f36e2c448007b54
+("printk: use %pK for /proc/kallsyms and /proc/modules").
+
+
+On Sun 2018-02-04 18:45:21, Adam Borowski wrote:
+> Like %pK already does, print "00000000" instead.
+>
+> This confused people -- the convention is that "(null)" means you tried to
+> dereference a null pointer as opposed to printing the address.
+
+By other words, this avoids regressions when people convert
+%x to %px. Do I get it right, please?
+
+> Signed-off-by: Adam Borowski <kilobyte@angband.pl>
+> ---
+>  lib/vsprintf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 77ee6ced11b1..d7a708f82559 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -1849,7 +1849,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+>  {
+>  	const int default_width = 2 * sizeof(void *);
+>  
+> -	if (!ptr && *fmt != 'K') {
+> +	if (!ptr && *fmt != 'K' && *fmt != 'x') {
+>  		/*
+>  		 * Print (null) with the same width as a pointer so it makes
+>  		 * tabular output look nice.
+> -- 
+> 2.15.1
+> 
