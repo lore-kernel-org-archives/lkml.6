@@ -1,5 +1,5 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1634197-1517936503-5-11705007704487797847
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3213742-1517857011-2-9592449742189379647
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,185 +7,342 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517936502; b=KD0IQHTMga0d2Ocrz0XVQJ3xJOROkry0NEnjnZS8YWVjUNm
-    9EHECEOHHtRbjZfNKVgjYwGT4ZVqrybL13yTw8u489OGOV1wENQI+wKYOyW79kcx
-    Xi8vzfs/cFVcE/xk0+wcZEGyRSBa1biE7D2yIuLEZd5+s3rkTvPzhEOB+CEirvE7
-    t6yOjIiBsRfJDTkXhlpyK4L0b1Bz7pfWez8gRw/DsfcLk3Me6i81COBgU13MQzCW
-    p21cAYK/a1HvIGVqhJ1uyfuN8B3DmpHzYVjI6RWByj8+LLXDNnRdlRcN990JYDqG
-    x5bQbrV9LPzB6A5mGxK7cLqd6Zi0rZwwrqzljXQ==
+    t=1517857010; b=DMS8zROSxBpDtpZOfSBC4jf/Wpp8TsaGB3QUKzU/5QrUErz
+    cdyr2tuOgtHi1uRk//TPj08MJZEkV7jVaGehAX6OwST+Bd0ly6yl07IatQZL563f
+    n9tQmGpjRYHjdWre3vFuOY9uemQv1DOCMXLXOUO777ylb1qttWn2TXP9mp1N/0je
+    TOmG9pH949hN4yazuF9M5Wq0UFQyONafs1oUwDEoAQa0//T7qjvi0qZHcZlPYyZJ
+    o+YmYIlRFYRva3PqWjLh9Yfw0RJBmL3HCE5GIssUXn3Ypxcp8xvB7yEScbRY/AP4
+    vQDE6Xwe274Yqj9WJ0qLmJbyV7S0IwLM2xCWCSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1517936502; bh=jT5xgizu3XlzpZ3Mlvg8tMH863
-    7qZjQv6VuOZlImQ/A=; b=brdWmnH4Wq/ZMv/RDv5BLCXJy4bO+fx6NMBE4Sm02+
-    GDc4/r3Dt9NiO59n12L/qTkxc1vmRBcan5vAE22eKHN0UsNdVcEUyc193G9T8Cr/
-    qQSh6+vogp58rhEGb2Omcb9A6CSC11k+PotJZtFs0Ulj/44Q37AN4RXy9MSz72WX
-    sK99lAwL/Irk1PdUzI3JT2D+BD5zqvL3nPITokiFm3xncu+UAaVYgMiJsLa2eC7z
-    eFnG3pPzuNTiaWCQxfUNdJ5Q+k23/xFKcD7oLqdtm2lqnY2qFO22LmMWAJ+JHw4F
-    a8/MC0hWuUwFHYg7NA0BLrxDYLUEIKfKYB7/m+d72SbA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1517857010; bh=9l5XrfiakBzOuwvOiVAe3PJXbi
+    5CgcSy/j2+LE5VCUg=; b=LVjxNgS/NzWJ7QZpLcd7YeJC76UOtN1sXrziktfOa4
+    1gwzKQ2/IHXv10lNd5yIin3/w9w6xy+FyRyWalrsT72V4pA6Vmmlajmi87VV/zXm
+    VKi13J0zBgp+m5vhGYrauSHBj7QhL2vWXiQnsjm9JVuy+aGyp8Nfmbe2pfoCM4Vm
+    1AHXuc8dyW4BlcfwR3aLdTNJdmklJL6J2AeyljVfKblcMJWp9rf5tEOYyUeI8my9
+    4ZWQlUbNxtFzFu+C4OpxHRvKc0R3GLm7c3CE9r7tBEBwsKaxei+GcGVYR/fpG75h
+    1sJJa8Od3BrLqoRTje+RZjuBxef38wDF3r/3WHs1qHbw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753023AbeBFRAn (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 12:00:43 -0500
-Received: from mail.efficios.com ([167.114.142.141]:41077 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753346AbeBFRAf (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 6 Feb 2018 12:00:35 -0500
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrew Hunter <ahh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Avi Kivity <avi@scylladb.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, David Sehr <sehr@google.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Maged Michael <maged.michael@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: [RFC PATCH] membarrier-sync-core: Document architecture support
-Date: Tue,  6 Feb 2018 12:00:13 -0500
-Message-Id: <1517936413-19675-1-git-send-email-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 1.9.1
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1753769AbeBESzk (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Feb 2018 13:55:40 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52438 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753699AbeBESZJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:25:09 -0500
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.15 00/60] 4.15.2-stable review
+Date: Mon,  5 Feb 2018 10:22:33 -0800
+Message-Id: <20180205182213.902626065@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.1
+User-Agent: quilt/0.65
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.15.2-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.15.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.15.2-rc1
+X-KernelTest-Deadline: 2018-02-07T18:22+00:00
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Ensure we gather architecture requirements about each architecture supporting
-the "sync_core" membarrier command in a single file under Documentation/features.
+This is the start of the stable review cycle for the 4.15.2 release.
+There are 60 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-[ This patch applies on top of tip sched/core. ]
+Responses should be made by Wed Feb  7 18:21:57 UTC 2018.
+Anything received after that time might be too late.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrea Parri <parri.andrea@gmail.com>
-Cc: Andrew Hunter <ahh@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Avi Kivity <avi@scylladb.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Dave Watson <davejwatson@fb.com>
-Cc: David Sehr <sehr@google.com>
-Cc: Greg Hackmann <ghackmann@google.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Maged Michael <maged.michael@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-api@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
----
- .../sched/membarrier-sync-core/arch-support.txt    | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/features/sched/membarrier-sync-core/arch-support.txt
+The whole patch series can be found in one patch at:
+	kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.15.2-rc1.gz
+or in the git tree and branch at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.15.y
+and the diffstat can be found below.
 
-diff --git a/Documentation/features/sched/membarrier-sync-core/arch-support.txt b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
-new file mode 100644
-index 0000000..2c815a7
---- /dev/null
-+++ b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
-@@ -0,0 +1,62 @@
-+#
-+# Feature name:          membarrier-sync-core
-+#         Kconfig:       ARCH_HAS_MEMBARRIER_SYNC_CORE
-+#         description:   arch supports core serializing membarrier
-+#
-+# Architecture requirements
-+#
-+# * arm64
-+#
-+# Rely on eret context synchronization when returning from IPI handler, and
-+# when returning to user-space.
-+#
-+# * x86
-+#
-+# x86-32 uses IRET as return from interrupt, which takes care of the IPI.
-+# However, it uses both IRET and SYSEXIT to go back to user-space. The IRET
-+# instruction is core serializing, but not SYSEXIT.
-+#
-+# x86-64 uses IRET as return from interrupt, which takes care of the IPI.
-+# However, it can return to user-space through either SYSRETL (compat code),
-+# SYSRETQ, or IRET.
-+#
-+# Given that neither SYSRET{L,Q}, nor SYSEXIT, are core serializing, we rely
-+# instead on write_cr3() performed by switch_mm() to provide core serialization
-+# after changing the current mm, and deal with the special case of kthread ->
-+# uthread (temporarily keeping current mm into active_mm) by issuing a
-+# sync_core_before_usermode() in that specific case.
-+#
-+    -----------------------
-+    |         arch |status|
-+    -----------------------
-+    |       alpha: | TODO |
-+    |         arc: | TODO |
-+    |         arm: | TODO |
-+    |       arm64: |  ok  |
-+    |    blackfin: | TODO |
-+    |         c6x: | TODO |
-+    |        cris: | TODO |
-+    |         frv: | TODO |
-+    |       h8300: | TODO |
-+    |     hexagon: | TODO |
-+    |        ia64: | TODO |
-+    |        m32r: | TODO |
-+    |        m68k: | TODO |
-+    |       metag: | TODO |
-+    |  microblaze: | TODO |
-+    |        mips: | TODO |
-+    |     mn10300: | TODO |
-+    |       nios2: | TODO |
-+    |    openrisc: | TODO |
-+    |      parisc: | TODO |
-+    |     powerpc: | TODO |
-+    |        s390: | TODO |
-+    |       score: | TODO |
-+    |          sh: | TODO |
-+    |       sparc: | TODO |
-+    |        tile: | TODO |
-+    |          um: | TODO |
-+    |   unicore32: | TODO |
-+    |         x86: |  ok  |
-+    |      xtensa: | TODO |
-+    -----------------------
--- 
-1.9.1
+thanks,
 
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.15.2-rc1
+
+Ian Abbott <abbotti@mev.co.uk>
+    fpga: region: release of_parse_phandle nodes after use
+
+Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+    serial: core: mark port as initialized after successful IRQ change
+
+KarimAllah Ahmed <karahmed@amazon.de>
+    KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
+
+KarimAllah Ahmed <karahmed@amazon.de>
+    KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
+
+KarimAllah Ahmed <karahmed@amazon.de>
+    KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES
+
+Ashok Raj <ashok.raj@intel.com>
+    KVM/x86: Add IBPB support
+
+KarimAllah Ahmed <karahmed@amazon.de>
+    KVM/x86: Update the reverse_cpuid list to include CPUID_7_EDX
+
+Darren Kenny <darren.kenny@oracle.com>
+    x86/speculation: Fix typo IBRS_ATT, which should be IBRS_ALL
+
+Arnd Bergmann <arnd@arndb.de>
+    x86/pti: Mark constant arrays as __initconst
+
+KarimAllah Ahmed <karahmed@amazon.de>
+    x86/spectre: Simplify spectre_v2 command line parsing
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/retpoline: Avoid retpolines for built-in __init functions
+
+Dan Williams <dan.j.williams@intel.com>
+    x86/kvm: Update spectre-v1 mitigation
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: VMX: make MSR bitmaps per-VCPU
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    x86/paravirt: Remove 'noreplace-paravirt' cmdline option
+
+Tim Chen <tim.c.chen@linux.intel.com>
+    x86/speculation: Use Indirect Branch Prediction Barrier in context switch
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature bits on Intel
+
+Colin Ian King <colin.king@canonical.com>
+    x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
+
+Dan Williams <dan.j.williams@intel.com>
+    x86/spectre: Report get_user mitigation for spectre_v1
+
+Dan Williams <dan.j.williams@intel.com>
+    nl80211: Sanitize array index in parse_txq_params
+
+Dan Williams <dan.j.williams@intel.com>
+    vfs, fdtable: Prevent bounds-check bypass via speculative execution
+
+Dan Williams <dan.j.williams@intel.com>
+    x86/syscall: Sanitize syscall table de-references under speculation
+
+Dan Williams <dan.j.williams@intel.com>
+    x86/get_user: Use pointer masking to limit speculation
+
+Dan Williams <dan.j.williams@intel.com>
+    x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
+
+Dan Williams <dan.j.williams@intel.com>
+    x86/usercopy: Replace open coded stac/clac with __uaccess_{begin, end}
+
+Dan Williams <dan.j.williams@intel.com>
+    x86: Introduce __uaccess_begin_nospec() and uaccess_try_nospec
+
+Dan Williams <dan.j.williams@intel.com>
+    x86: Introduce barrier_nospec
+
+Dan Williams <dan.j.williams@intel.com>
+    x86: Implement array_index_mask_nospec
+
+Dan Williams <dan.j.williams@intel.com>
+    array_index_nospec: Sanitize speculative array de-references
+
+Mark Rutland <mark.rutland@arm.com>
+    Documentation: Document array_index_nospec
+
+Andy Lutomirski <luto@kernel.org>
+    x86/asm: Move 'status' from thread_struct to thread_info
+
+Andy Lutomirski <luto@kernel.org>
+    x86/entry/64: Push extra regs right away
+
+Andy Lutomirski <luto@kernel.org>
+    x86/entry/64: Remove the SYSCALL64 fast path
+
+Dou Liyang <douly.fnst@cn.fujitsu.com>
+    x86/spectre: Check CONFIG_RETPOLINE in command line parser
+
+William Grant <william.grant@canonical.com>
+    x86/mm: Fix overlap of i386 CPU_ENTRY_AREA with FIX_BTMAP
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    objtool: Warn on stripped section symbol
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    objtool: Add support for alternatives at the end of a section
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    objtool: Improve retpoline alternative handling
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: VMX: introduce alloc_loaded_vmcs
+
+Jim Mattson <jmattson@google.com>
+    KVM: nVMX: Eliminate vmcs02 pool
+
+Jesse Chan <jc@linux.com>
+    ASoC: pcm512x: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+
+Jesse Chan <jc@linux.com>
+    pinctrl: pxa: pxa2xx: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+
+Linus Walleij <linus.walleij@linaro.org>
+    iio: adc/accel: Fix up module licenses
+
+Jesse Chan <jc@linux.com>
+    auxdisplay: img-ascii-lcd: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+
+Borislav Petkov <bp@suse.de>
+    x86/speculation: Simplify indirect_branch_prediction_barrier()
+
+Borislav Petkov <bp@alien8.de>
+    x86/retpoline: Simplify vmexit_fill_RSB()
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/cpufeatures: Clean up Spectre v2 related CPUID flags
+
+Thomas Gleixner <tglx@linutronix.de>
+    x86/cpu/bugs: Make retpoline module warning conditional
+
+Borislav Petkov <bp@suse.de>
+    x86/bugs: Drop one "mitigation" from dmesg
+
+Borislav Petkov <bp@suse.de>
+    x86/nospec: Fix header guards names
+
+Borislav Petkov <bp@suse.de>
+    x86/alternative: Print unadorned pointers
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early Spectre v2 microcodes
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/msr: Add definitions for new speculation control MSRs
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/cpufeatures: Add AMD feature bits for Speculation Control
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/cpufeatures: Add Intel feature bits for Speculation Control
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/cpufeatures: Add CPUID_7_EDX CPUID leaf
+
+Andi Kleen <ak@linux.intel.com>
+    module/retpoline: Warn about missing retpoline in module
+
+Peter Zijlstra <peterz@infradead.org>
+    KVM: VMX: Make indirect call speculation safe
+
+Peter Zijlstra <peterz@infradead.org>
+    KVM: x86: Make indirect calls in emulator speculation safe
+
+
+-------------
+
+Diffstat:
+
+ Documentation/admin-guide/kernel-parameters.txt |   2 -
+ Documentation/speculation.txt                   |  90 ++++
+ Makefile                                        |   4 +-
+ arch/x86/entry/common.c                         |   9 +-
+ arch/x86/entry/entry_32.S                       |   3 +-
+ arch/x86/entry/entry_64.S                       | 130 +----
+ arch/x86/entry/syscall_64.c                     |   7 +-
+ arch/x86/include/asm/asm-prototypes.h           |   3 +
+ arch/x86/include/asm/barrier.h                  |  28 +
+ arch/x86/include/asm/cpufeature.h               |   7 +-
+ arch/x86/include/asm/cpufeatures.h              |  22 +-
+ arch/x86/include/asm/disabled-features.h        |   3 +-
+ arch/x86/include/asm/fixmap.h                   |   6 +-
+ arch/x86/include/asm/msr-index.h                |  12 +
+ arch/x86/include/asm/msr.h                      |   3 +-
+ arch/x86/include/asm/nospec-branch.h            |  86 +--
+ arch/x86/include/asm/pgtable_32_types.h         |   5 +-
+ arch/x86/include/asm/processor.h                |   5 +-
+ arch/x86/include/asm/required-features.h        |   3 +-
+ arch/x86/include/asm/syscall.h                  |   6 +-
+ arch/x86/include/asm/thread_info.h              |   3 +-
+ arch/x86/include/asm/tlbflush.h                 |   2 +
+ arch/x86/include/asm/uaccess.h                  |  15 +-
+ arch/x86/include/asm/uaccess_32.h               |   6 +-
+ arch/x86/include/asm/uaccess_64.h               |  12 +-
+ arch/x86/kernel/alternative.c                   |  28 +-
+ arch/x86/kernel/cpu/bugs.c                      | 134 +++--
+ arch/x86/kernel/cpu/common.c                    |  70 ++-
+ arch/x86/kernel/cpu/intel.c                     |  66 +++
+ arch/x86/kernel/cpu/scattered.c                 |   2 -
+ arch/x86/kernel/process_64.c                    |   4 +-
+ arch/x86/kernel/ptrace.c                        |   2 +-
+ arch/x86/kernel/signal.c                        |   2 +-
+ arch/x86/kvm/cpuid.c                            |  22 +-
+ arch/x86/kvm/cpuid.h                            |   1 +
+ arch/x86/kvm/emulate.c                          |   9 +-
+ arch/x86/kvm/svm.c                              | 116 +++++
+ arch/x86/kvm/vmx.c                              | 660 ++++++++++++++----------
+ arch/x86/kvm/x86.c                              |   1 +
+ arch/x86/lib/Makefile                           |   1 +
+ arch/x86/lib/getuser.S                          |  10 +
+ arch/x86/lib/retpoline.S                        |  56 ++
+ arch/x86/lib/usercopy_32.c                      |   8 +-
+ arch/x86/mm/tlb.c                               |  33 +-
+ drivers/auxdisplay/img-ascii-lcd.c              |   4 +
+ drivers/fpga/fpga-region.c                      |  13 +-
+ drivers/iio/accel/kxsd9-i2c.c                   |   3 +
+ drivers/iio/adc/qcom-vadc-common.c              |   4 +
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c            |   4 +
+ drivers/tty/serial/serial_core.c                |   2 +
+ include/linux/fdtable.h                         |   5 +-
+ include/linux/init.h                            |   9 +-
+ include/linux/module.h                          |   9 +
+ include/linux/nospec.h                          |  72 +++
+ kernel/module.c                                 |  11 +
+ net/wireless/nl80211.c                          |   9 +-
+ scripts/mod/modpost.c                           |   9 +
+ sound/soc/codecs/pcm512x-spi.c                  |   4 +
+ tools/objtool/check.c                           |  89 ++--
+ tools/objtool/orc_gen.c                         |   5 +
+ 60 files changed, 1312 insertions(+), 637 deletions(-)
