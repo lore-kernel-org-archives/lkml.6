@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224TUjW923MlkwT/ywUB4Pm+qGN7J72UBXbN28SeNMvzdKQ1tJysCCEAFS8vgdVblw5uqYq5
+X-Google-Smtp-Source: AH8x226j/HEqGIDbLrlV8JOWaBlFX9Fi8PfRUqnOUpWOhKgeMtfF4Ar3D+0JfBU7P/FcyQ4P1lm1
 ARC-Seal: i=1; a=rsa-sha256; t=1517855175; cv=none;
         d=google.com; s=arc-20160816;
-        b=ynTien2wnuBBLLWwfRIVX/deCB28FlLcab8j6AuvqPhl2tnbw2aSRdPMT7Slt5GcdZ
-         AeIdNhKqvLmcUZbMoH7u39YUQzZg+W/Q7dygCHDsBfRpcMeF5WFDT9swnTUC8Nk/LP0+
-         r6vfgoK4bzr2lLphsnxeDcQLDbtQMAdmqQRcSAirHB4Jyl6zo92MfDHMKX/Df/MHgaM9
-         ttBMgTrmOq+g0JSg6Aza4Q1rblWmI2iTQWeRj/51SGWx4Ydc55lHwmNehJ3zK17wR1CT
-         +RvhqNRDH5WHyVvOFklh3oJ7gCRz39mlUOsyulCUnph1bhEqfcFQCGOyimz8Btj4fj51
-         iRvA==
+        b=hV9MNYPBd9kJDDxFgIWMKMRubg3C1gNS+a8Ccc5Tgywf08v3ceFLFgF0anS6VagQUF
+         GldfwCdd2AY/dxjdQdjPVtlEn3MqjiMn5E97ba32hkVVl7AcYVPKlSowjPxrx328wtaN
+         3bhib1ycBRqrMBV8Sp4qGdwGV9tZAVmCsr+zpjRgrGoKT/Qs3ME0aU0r84M3KT/iFqZv
+         0Ajh9Xf1lp+fnozWxXnVGa4hFygD0XqpPJmcsczX3hPrvNYK82r2lr7hGhyoqv+5KAjy
+         SvurSzWLT1wchlRNqDsbRuG4GGRbzZPtXDagEeHTjE8fMfazde6N7vsIehpQRKOKmp6W
+         hGvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pBCp7yP4DP9lON1sn9LGGO5NDGaC0wQbd6QkdkrLCvk=;
-        b=UIZ4UFd5/UpLiEqFie62hNEjENfcIOA7cwSleOT53yzebBCKsXrBODHAQnJ11FmBi9
-         TDIIGBQqI0tI+F+RPRojpXXsGP4YPpQKjYDDd6Tef2qet0mO6KRxS6DOUpp3zc/zau8y
-         jMQa9UW7Ha1fTnN0kudlS0TYSl0MT+OlBWxvGBw1fAz8wkmoqnUUNucDRhWxD2mZts9m
-         dHsVy2jpSsbUYy9Vjrxf8UYBvtESiA1CnKtPXSC87hDyKkvOLEzci5OsN9H424hSP+Y9
-         BNYfU8K9GU0D93rN/CKKdKHREMJSTQNb0c839LByKjztemg6DwrZQfZAudsMBtbbHOU+
-         olJA==
+        bh=sPaXgRs0+e2nmPmqkYEskZf55YXJOSYg/iycc/xZV3M=;
+        b=PVs7wyiPoojAukhtv2alI0VO93TO3xx9Qf42HHICK1M09F/ZdfFuPnfHCAqKOpXCEf
+         A0761w8fN6GgCa8rBA/8kmjGcBqev/wDDwkpIFdZJKI+W2ZIFl/Mw5qAJPU0haVdv9QL
+         vZ8AiXpzc3RxNHHoQ7i9yGpzCXGRxjoRFCQ7buUWePmBToPUEwcdqM+EDgZK1mCpBRny
+         drlGGR2DNecQwdClohRWPov0Ps8I9aMUmV+tcwg2EPa8b/KorzyhKkpbxRQCIbHMSG3L
+         XWU+tAJU7/5LQRmszPAx9HpB6nTs62e4FqX7C/5aDIN8HbvuR6oU3bvFZvLPSKpyGqV7
+         iJcA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Nadav Amit <nadav.amit@gmail.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
+	Chun-Yeow Yeoh <yeohchunyeow@gmail.com>,
+	Johannes Berg <johannes.berg@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 14/36] KVM: VMX: Fix rflags cache during vCPU reset
-Date: Mon,  5 Feb 2018 10:23:42 -0800
-Message-Id: <20180205182352.360835097@linuxfoundation.org>
+Subject: [PATCH 3.18 13/36] mac80211: fix the update of path metric for RANN frame
+Date: Mon,  5 Feb 2018 10:23:41 -0800
+Message-Id: <20180205182352.318675842@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -44,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586509002098278?=
-X-GMAIL-MSGID: =?utf-8?q?1591586509002098278?=
+X-GMAIL-THRID: =?utf-8?q?1591586508577045984?=
+X-GMAIL-MSGID: =?utf-8?q?1591586508577045984?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,96 +49,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wanpeng Li <wanpeng.li@hotmail.com>
+From: Chun-Yeow Yeoh <yeohchunyeow@gmail.com>
 
 
-[ Upstream commit c37c28730bb031cc8a44a130c2555c0f3efbe2d0 ]
+[ Upstream commit fbbdad5edf0bb59786a51b94a9d006bc8c2da9a2 ]
 
-Reported by syzkaller:
+The previous path metric update from RANN frame has not considered
+the own link metric toward the transmitting mesh STA. Fix this.
 
-   *** Guest State ***
-   CR0: actual=0x0000000080010031, shadow=0x0000000060000010, gh_mask=fffffffffffffff7
-   CR4: actual=0x0000000000002061, shadow=0x0000000000000000, gh_mask=ffffffffffffe8f1
-   CR3 = 0x000000002081e000
-   RSP = 0x000000000000fffa  RIP = 0x0000000000000000
-   RFLAGS=0x00023000         DR7 = 0x00000000000000
-          ^^^^^^^^^^
-   ------------[ cut here ]------------
-   WARNING: CPU: 6 PID: 24431 at /home/kernel/linux/arch/x86/kvm//x86.c:7302 kvm_arch_vcpu_ioctl_run+0x651/0x2ea0 [kvm]
-   CPU: 6 PID: 24431 Comm: reprotest Tainted: G        W  OE   4.14.0+ #26
-   RIP: 0010:kvm_arch_vcpu_ioctl_run+0x651/0x2ea0 [kvm]
-   RSP: 0018:ffff880291d179e0 EFLAGS: 00010202
-   Call Trace:
-    kvm_vcpu_ioctl+0x479/0x880 [kvm]
-    do_vfs_ioctl+0x142/0x9a0
-    SyS_ioctl+0x74/0x80
-    entry_SYSCALL_64_fastpath+0x23/0x9a
-
-The failed vmentry is triggered by the following beautified testcase:
-
-    #include <unistd.h>
-    #include <sys/syscall.h>
-    #include <string.h>
-    #include <stdint.h>
-    #include <linux/kvm.h>
-    #include <fcntl.h>
-    #include <sys/ioctl.h>
-
-    long r[5];
-    int main()
-    {
-        struct kvm_debugregs dr = { 0 };
-
-        r[2] = open("/dev/kvm", O_RDONLY);
-        r[3] = ioctl(r[2], KVM_CREATE_VM, 0);
-        r[4] = ioctl(r[3], KVM_CREATE_VCPU, 7);
-        struct kvm_guest_debug debug = {
-                .control = 0xf0403,
-                .arch = {
-                        .debugreg[6] = 0x2,
-                        .debugreg[7] = 0x2
-                }
-        };
-        ioctl(r[4], KVM_SET_GUEST_DEBUG, &debug);
-        ioctl(r[4], KVM_RUN, 0);
-    }
-
-which testcase tries to setup the processor specific debug
-registers and configure vCPU for handling guest debug events through
-KVM_SET_GUEST_DEBUG.  The KVM_SET_GUEST_DEBUG ioctl will get and set
-rflags in order to set TF bit if single step is needed. All regs' caches
-are reset to avail and GUEST_RFLAGS vmcs field is reset to 0x2 during vCPU
-reset. However, the cache of rflags is not reset during vCPU reset. The
-function vmx_get_rflags() returns an unreset rflags cache value since
-the cache is marked avail, it is 0 after boot. Vmentry fails if the
-rflags reserved bit 1 is 0.
-
-This patch fixes it by resetting both the GUEST_RFLAGS vmcs field and
-its cache to 0x2 during vCPU reset.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Tested-by: Dmitry Vyukov <dvyukov@google.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-by: Michael65535
+Signed-off-by: Chun-Yeow Yeoh <yeohchunyeow@gmail.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/mesh_hwmp.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4569,7 +4569,7 @@ static void vmx_vcpu_reset(struct kvm_vc
- 	vmcs_writel(GUEST_SYSENTER_ESP, 0);
- 	vmcs_writel(GUEST_SYSENTER_EIP, 0);
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -763,7 +763,7 @@ static void hwmp_rann_frame_process(stru
+ 	struct mesh_path *mpath;
+ 	u8 ttl, flags, hopcount;
+ 	const u8 *orig_addr;
+-	u32 orig_sn, metric, metric_txsta, interval;
++	u32 orig_sn, new_metric, orig_metric, last_hop_metric, interval;
+ 	bool root_is_gate;
  
--	vmcs_writel(GUEST_RFLAGS, 0x02);
-+	kvm_set_rflags(vcpu, X86_EFLAGS_FIXED);
- 	kvm_rip_write(vcpu, 0xfff0);
+ 	ttl = rann->rann_ttl;
+@@ -774,7 +774,7 @@ static void hwmp_rann_frame_process(stru
+ 	interval = le32_to_cpu(rann->rann_interval);
+ 	hopcount = rann->rann_hopcount;
+ 	hopcount++;
+-	metric = le32_to_cpu(rann->rann_metric);
++	orig_metric = le32_to_cpu(rann->rann_metric);
  
- 	vmcs_writel(GUEST_GDTR_BASE, 0);
+ 	/*  Ignore our own RANNs */
+ 	if (ether_addr_equal(orig_addr, sdata->vif.addr))
+@@ -791,7 +791,10 @@ static void hwmp_rann_frame_process(stru
+ 		return;
+ 	}
+ 
+-	metric_txsta = airtime_link_metric_get(local, sta);
++	last_hop_metric = airtime_link_metric_get(local, sta);
++	new_metric = orig_metric + last_hop_metric;
++	if (new_metric < orig_metric)
++		new_metric = MAX_METRIC;
+ 
+ 	mpath = mesh_path_lookup(sdata, orig_addr);
+ 	if (!mpath) {
+@@ -804,7 +807,7 @@ static void hwmp_rann_frame_process(stru
+ 	}
+ 
+ 	if (!(SN_LT(mpath->sn, orig_sn)) &&
+-	    !(mpath->sn == orig_sn && metric < mpath->rann_metric)) {
++	    !(mpath->sn == orig_sn && new_metric < mpath->rann_metric)) {
+ 		rcu_read_unlock();
+ 		return;
+ 	}
+@@ -822,7 +825,7 @@ static void hwmp_rann_frame_process(stru
+ 	}
+ 
+ 	mpath->sn = orig_sn;
+-	mpath->rann_metric = metric + metric_txsta;
++	mpath->rann_metric = new_metric;
+ 	mpath->is_root = true;
+ 	/* Recording RANNs sender address to send individually
+ 	 * addressed PREQs destined for root mesh STA */
+@@ -842,7 +845,7 @@ static void hwmp_rann_frame_process(stru
+ 		mesh_path_sel_frame_tx(MPATH_RANN, flags, orig_addr,
+ 				       orig_sn, 0, NULL, 0, broadcast_addr,
+ 				       hopcount, ttl, interval,
+-				       metric + metric_txsta, 0, sdata);
++				       new_metric, 0, sdata);
+ 	}
+ 
+ 	rcu_read_unlock();
