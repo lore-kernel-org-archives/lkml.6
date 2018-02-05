@@ -1,80 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751801AbeBEUl1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 15:41:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750949AbeBEUlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:41:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53B7121748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=djwong@kernel.org
-Date: Mon, 5 Feb 2018 12:41:18 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>
-Subject: [GIT PULL] xfs: updates for 4.16
-Message-ID: <20180205204118.GI4849@magnolia>
-References: <20180131181311.GC4860@magnolia>
+        id S1751991AbeBEUq7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 15:46:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60438 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751617AbeBEUqv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 15:46:51 -0500
+Subject: Re: [PATCH] libnvdimm: remove redundant assignment to pointer 'dev'
+To: Dan Williams <dan.j.williams@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: linux-nvdimm@lists.01.org, kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180205140852.14110-1-colin.king@canonical.com>
+ <20180205182039.GA7891@linux.intel.com>
+ <CAPcyv4geaysZ803Xtd27YGh0udww+95VaGP6r1Hdxx8SHxfX9w@mail.gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
+Message-ID: <22ac2ac7-f75f-3cd0-30d7-8cfe7605c8fb@canonical.com>
+Date: Mon, 5 Feb 2018 20:46:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180131181311.GC4860@magnolia>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAPcyv4geaysZ803Xtd27YGh0udww+95VaGP6r1Hdxx8SHxfX9w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 05/02/18 18:44, Dan Williams wrote:
+> On Mon, Feb 5, 2018 at 10:20 AM, Ross Zwisler
+> <ross.zwisler@linux.intel.com> wrote:
+>> On Mon, Feb 05, 2018 at 02:08:52PM +0000, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> Pointer dev is being assigned a value that is never read, it is being
+>>> re-assigned the same value later on, hence the initialization is redundant
+>>> and can be removed.
+>>>
+>>> Cleans up clang warning:
+>>> drivers/nvdimm/pfn_devs.c:307:17: warning: Value stored to 'dev' during
+>>> its initialization is never read
+>>>
+>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>
+>> Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+>>
+>> More importantly this fixes a potential NULL pointer dereference.  nd_pfn
+>> is checked for NULL a few lines down, but we would have crashed here trying to
+>> get nd_pfn->dev.
+>>
+> 
+> No we wouldn't crash. We're just calculating the address, not
+> de-referencing a NULL pointer.
 
-As promised, here's a (much smaller) second pull request for the second
-week of the merge cycle.  This time around we have a couple patches
-shutting off unsupported fs configurations, and a couple of cleanups.
+Indeed, it's just a warning clean up. Nothing more.
 
-Last, we turn off EXPERIMENTAL for the reverse mapping btree, since
-the primary downstream user of that information (online fsck) is now
-upstream and I haven't seen any major failures in a few kernel
-releases.
-
-Let me know if you encounter any merge problems; I checked against this
-morning's master and didn't see any.
-
---D
-
-The following changes since commit 1e369b0e199bbfbab5218e1c1443d839700d8884:
-
-  xfs: remove experimental tag for reflinks (2018-01-29 07:27:24 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-4.16-merge-5
-
-for you to fetch changes up to 76883f7988e6d06a97232e979bc7aaa7846a134b:
-
-  xfs: remove experimental tag for reverse mapping (2018-02-01 21:07:26 -0800)
-
-----------------------------------------------------------------
-Changes since last update:
- - Print scrub build status in the xfs build info.
- - Explicitly call out the remaining two scenarios where we don't
-   support
-   reflink and never have.
- - Remove EXPERIMENTAL tag from reverse mapping btree!
-
-----------------------------------------------------------------
-Darrick J. Wong (4):
-      xfs: fix u32 type usage in sb validation function
-      xfs: don't allow DAX on reflink filesystems
-      xfs: don't allow reflink + realtime filesystems
-      xfs: remove experimental tag for reverse mapping
-
-Eric Sandeen (1):
-      xfs: add scrub to XFS_BUILD_OPTIONS
-
- fs/xfs/libxfs/xfs_sb.c |  4 ++--
- fs/xfs/xfs_super.c     | 24 +++++++++++++++---------
- fs/xfs/xfs_super.h     |  7 +++++++
- 3 files changed, 24 insertions(+), 11 deletions(-)
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
