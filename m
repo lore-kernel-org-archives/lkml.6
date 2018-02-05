@@ -1,30 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752764AbeBELPp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 06:15:45 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:32852 "EHLO
+        id S1752871AbeBELQE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 06:16:04 -0500
+Received: from twosheds.infradead.org ([90.155.92.209]:32892 "EHLO
         twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750949AbeBELPj (ORCPT
+        with ESMTP id S1750949AbeBELPy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 06:15:39 -0500
-Message-ID: <1517829328.31953.144.camel@infradead.org>
-Subject: Re: [PATCH] Fix typo IBRS_ATT, which should be IBRS_ALL
+        Mon, 5 Feb 2018 06:15:54 -0500
+Message-ID: <1517829346.31953.146.camel@infradead.org>
+Subject: Re: [9/8] KVM: x86: limit MSR_IA32_SPEC_CTRL access based on CPUID
+ availability
 From: David Woodhouse <dwmw2@infradead.org>
-To: Darren Kenny <darren.kenny@oracle.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Arjan van de Ven <arjan@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>, Andi Kleen <ak@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+To: Ingo Molnar <mingo@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jim Mattson <jmattson@google.com>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Anthony Liguori <aliguori@amazon.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-In-Reply-To: <20180205110008.j42yy4ncs3jogynx@starbug-vm.ie.oracle.com>
-References: <20180202191220.blvgkgutojecxr3b@starbug-vm.ie.oracle.com>
-         <1517614932.31953.80.camel@infradead.org>
-         <20180205110008.j42yy4ncs3jogynx@starbug-vm.ie.oracle.com>
+In-Reply-To: <20180205111034.ie6vbui62wx2irkl@gmail.com>
+References: <20180109120311.27565-10-pbonzini@redhat.com>
+         <6dc02278-7004-1794-3705-69c8cad86be4@oracle.com>
+         <CALMp9eSVC=LO-SrPkA3m6eSpgJ6X4rNCRCf3uvtJEdMG_B72cQ@mail.gmail.com>
+         <beb9f9b4-7bc0-4a3a-73c2-0828febbd06c@oracle.com>
+         <CALMp9eT6i9bhG005S5sqV-Y1RUhsc+AXE42ww8Ej+TXSjD6tEg@mail.gmail.com>
+         <1517332457.18619.132.camel@infradead.org>
+         <alpine.DEB.2.20.1801301842310.1797@nanos>
+         <75049dca-3389-9cc7-44e3-a487a797c605@redhat.com>
+         <20180205111034.ie6vbui62wx2irkl@gmail.com>
 Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-uxazuAMvsRD31FCsVVcx"
-Date: Mon, 05 Feb 2018 11:15:28 +0000
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-J3cqJBbH/Xkwvs1tytD0"
+Date: Mon, 05 Feb 2018 11:15:46 +0000
 Mime-Version: 1.0
 X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
 X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
@@ -33,32 +43,20 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-uxazuAMvsRD31FCsVVcx
+--=-J3cqJBbH/Xkwvs1tytD0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2018-02-05 at 11:00 +0000, Darren Kenny wrote:
-> On Fri, Feb 02, 2018 at 11:42:12PM +0000, David Woodhouse wrote:
-> >=20
-> > On Fri, 2018-02-02 at 19:12 +0000, Darren Kenny wrote:
-> > >=20
-> > > Fixes a typo in commit 117cc7a908c83697b0b737d15ae1eb5943afe35b
-> > > ("x86/retpoline: Fill return stack buffer on vmexit")
-> > >=20
-> > > Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
-> > > Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> > Not strictly a typo; that was the original name for it. "IBRS all
-> > the
-> > time". But yes, it should be IBRS_ALL now.
-> >=20
-> > Acked-by: David Woodhouse <dwmw@amazon.co.uk>
-> Thanks David.
+On Mon, 2018-02-05 at 12:10 +0100, Ingo Molnar wrote:
 >=20
-> I'll send out another patch with this snippet of information in it
-> too, and including your Acked-by.
+> Can this branch still be rebased, to fix the SoB chain of:
+>=20
+> =C2=A0 de3a0021a606 ("KVM: nVMX: Eliminate vmcs02 pool")
+>=20
+> ?
 
-It's in Linus's tree already.
---=-uxazuAMvsRD31FCsVVcx
+It can't. Linus pulled it already.
+--=-J3cqJBbH/Xkwvs1tytD0
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Disposition: attachment; filename="smime.p7s"
 Content-Transfer-Encoding: base64
@@ -141,20 +139,20 @@ px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
 QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
 U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDUxMTE1MjhaMC8GCSqG
-SIb3DQEJBDEiBCAAyxOeGBf25/qt2mRC3qCSh8QVZBbhQblEuz9ep/11FzCBvQYJKwYBBAGCNxAE
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDUxMTE1NDZaMC8GCSqG
+SIb3DQEJBDEiBCDUKwU1xywtOuUBYGtKopaS2sOIcRRgn9gnc3Rl42vjVTCBvQYJKwYBBAGCNxAE
 MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
 VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
 IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
 jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
 cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
 aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAFpNWH79gLTc
-lfZYCIv28HnKv/Ey3xt0NYKOlzBDbqRBQz3UQhoL2cdLCiud2N2yj44l0Gc9EVQExnCm31Os4J60
-lBZONTvcU29JgMUY1KdXxzGBVFljAlfU5jikZsMMoXw/UJ64kaVfl77F53+i1COP1ROIzDaW9ONN
-mg3d/Z/cNNNCXLt5E3/fRhpzs0KrwNkBUY7TYVqA87xp5Tpb9U/VJcg8FwzlD260pERGLbEVQCjd
-oK4UZ6qV+kM7ctNPP4XhEqgJ04eyW8OHaREKv98xxyOUYH8tNO3ZDnVtMB2znx2PEt4p/a+Hb8T3
-bcgmctuehHIxYKzh2WsLblr8OkAAAAAAAAA=
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBACturDniBUUt
+3f99lEq7r2SGy/holJI3NlbUFi4ytfqL518HAJCAiwcF1tJiQMgvWE4mBtJIy1JfCFfKUxAKOyE5
+sabKK0WtKXNPMnGmSkInjJBSWbWhjA1vjZUInN5oyUg2RSb7eR+gxC/hzlcMLSfb/6io+mR+sVJ9
+V6u6qsMSotL7IuHIZ6iMANosF3qp/lrsXzYrqlUQ99MNwa13VDSpqULBfJwqjU+HslobgwZeLR/F
+U8EfC7j7CUQ7g/6ZwIfle7ngcEWL9aRdIbNsWXroTgJuav+gTK8KyIo5qp2F1VA/aYTRfo7ZxjoF
+LEbLJQnbq2DUuU4wKckNMtVeM4IAAAAAAAA=
 
 
---=-uxazuAMvsRD31FCsVVcx--
+--=-J3cqJBbH/Xkwvs1tytD0--
