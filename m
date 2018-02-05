@@ -1,69 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752819AbeBEGIT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 01:08:19 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46025 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752691AbeBEGHh (ORCPT
+        id S1752441AbeBEGIl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 01:08:41 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:43996 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752260AbeBEGI3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:07:37 -0500
-X-Google-Smtp-Source: AH8x2246JTUks4wiCU1Xrgb1X7mO+3qgUBpsyWRCfBnu3RQ73sS/27Kenq13m1jEc51+RmjirWbTRg==
-Date: Mon, 5 Feb 2018 00:07:35 -0600
+        Mon, 5 Feb 2018 01:08:29 -0500
+X-Google-Smtp-Source: AH8x2249E11kAb720OvW+5c2jP68O48epTnrEZXzkr+U6TOgsVjcq2FV+w2CIfXbNjqQtPWyiF3TFg==
+Date: Mon, 5 Feb 2018 00:08:27 -0600
 From: Rob Herring <robh@kernel.org>
-To: Joel Stanley <joel@jms.id.au>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Eddie James <eajames@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: fsi: Add optional property
- no-scan-on-init
-Message-ID: <20180205023654.77yq7j22ovby2ql5@rob-hp-laptop>
-References: <20180130055116.17411-1-joel@jms.id.au>
- <20180130055116.17411-2-joel@jms.id.au>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 1/4] soc: samsung: pmu: Populate children syscon nodes
+Message-ID: <20180205060827.vhftmdpucrkv2n5f@rob-hp-laptop>
+References: <20180130211819.17139-1-krzk@kernel.org>
+ <20180130211819.17139-2-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180130055116.17411-2-joel@jms.id.au>
+In-Reply-To: <20180130211819.17139-2-krzk@kernel.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 04:21:15PM +1030, Joel Stanley wrote:
-> From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+On Tue, Jan 30, 2018 at 10:18:16PM +0100, Krzysztof Kozlowski wrote:
+> The syscon poweroff and restart nodes logically belong to the Power
+> Management Unit so populate possible children.
 > 
-> Add an optional FSI master property 'no-scan-on-init.  This
-> can be specified to indicate that a master should not be
-> automatically scanned at init time.  This is required in cases
-> where a scan could interfere with another FSI master on the same
-> bus.
+> This also requires providing compatibles for Exynos5410 and Exynos7 so
+> the PMU device and its children will be instantiated for them as well.
+> Just like Exynos5433, these chipsets are not yet supported by the PMU
+> driver.
 > 
-> Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
-> Acked-by: Jeremy Kerr <jk@ozlabs.org>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  Documentation/devicetree/bindings/fsi/fsi.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/fsi/fsi.txt b/Documentation/devicetree/bindings/fsi/fsi.txt
-> index 4eaf488d4015..ab516c673a4b 100644
-> --- a/Documentation/devicetree/bindings/fsi/fsi.txt
-> +++ b/Documentation/devicetree/bindings/fsi/fsi.txt
-> @@ -56,6 +56,13 @@ addresses (link index and slave ID), and no size:
->      #address-cells = <2>;
->      #size-cells = <0>;
->  
-> +An optional boolean property can be added to indicate that a particular master
-> +should not scan for connected devices at initialization time.  This is
-> +necessary in cases where a scan could cause arbitration issues with other
-> +masters that may be present on the bus.
-> +
-> +    no-scan-on-init;
-> +
-
-The formatting here is a bit strange compared to most bindings, but no 
-point in reformatting the document to add one property.
+>  Documentation/devicetree/bindings/arm/samsung/pmu.txt | 6 ++++++
+>  drivers/soc/samsung/exynos-pmu.c                      | 7 +++++++
+>  2 files changed, 13 insertions(+)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
-
-Rob
