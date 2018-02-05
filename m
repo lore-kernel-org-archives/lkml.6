@@ -1,60 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753648AbeBETC6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 14:02:58 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33406 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753546AbeBETCm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 14:02:42 -0500
-X-Google-Smtp-Source: AH8x226l7p519urMWJp8bBdsJK9lv69AJa5FfwSfuiEnEKzl5kW9BdvJqaulhpx7XYsigOHCNpozT35kZCeI9pyoOfc=
+        id S1753471AbeBETFX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 14:05:23 -0500
+Received: from bues.ch ([80.190.117.144]:52960 "EHLO bues.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753804AbeBETFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 14:05:09 -0500
+Date: Mon, 5 Feb 2018 19:22:57 +0100
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Adric Blake <promarbler14@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jhogan@kernel.org
+Subject: Re: B43 driver no longer works in Linux 4.15 (bisected)
+Message-ID: <20180205192257.46400baf@wiggum>
+In-Reply-To: <CAE1jjefXcbuz5nWxo-BOPBRC7EM6KrXd=G7u-4b74tB5DuYGCQ@mail.gmail.com>
+References: <CAE1jjefXcbuz5nWxo-BOPBRC7EM6KrXd=G7u-4b74tB5DuYGCQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180205175906.GA8237@ulmo>
-References: <20180205124750.19305-1-thierry.reding@gmail.com>
- <20180205125436.24005-1-thierry.reding@gmail.com> <CA+55aFy--bQRDZEUsBfiWhyP+Of3+s4zEcKo1T8cCoAMXBrwsw@mail.gmail.com>
- <20180205175906.GA8237@ulmo>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 5 Feb 2018 20:02:40 +0100
-Message-ID: <CACRpkdYrG6=qwJgOTW2ccyq-UBSOkH+EBBui54PtGqJF7CMRDw@mail.gmail.com>
-Subject: Re: [PATCH] net: mediatek: Explicitly include pinctrl headers
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-gpio@vger.kernel.org, linux-next <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/J2aicKjT07+LcOHxFU4kEBg"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 6:59 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
+--Sig_/J2aicKjT07+LcOHxFU4kEBg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Anyway, I think going with the pinctrl/devinfo.h include only is fine
-> for now. If it turns out that the Mediatek ethernet and Rockchip LVDS
-> drivers can just omit the bits fiddling with struct dev_pin_info, we can
-> swap out the pinctrl/devinfo.h include for pinctrl/consumer.h at that
-> time.
->
-> LinusW: what are your thoughts on the struct dev_pin_info usage by these
-> drivers? Does their code seem redundant to you, too?
+On Mon, 5 Feb 2018 13:14:28 -0500
+Adric Blake <promarbler14@gmail.com> wrote:
 
-I don't think they should use struct dev_pin_info at all,
-that thing is for the device core only.
+> In the time between Linux 4.15-rc8 and -rc9, my wireless driver, b43, wou=
+ld
+> no longer load automatically. When I modprobe the b43 (and ssb) modules,
+> the device still didn't appear in NetworkManager. Comparing the kernel lo=
+gs
+> between working (4.14.16-lts) and nonworking (4.15) kernels reveals that
+> there is zero output from the ssb module, and no devices recognized by the
+> b43 driver:
 
-I like to think that <linux/pinctrl/consumer.h> is for drivers that
-explicitly grab and control pin control states so this driver should
-only include <linux/pinctrl/consumer.h>.
 
-Torvalds: can you do it like that instead? Either way will
-make the compile work again, we can also tidy it up later.
-(i.e. I will grep for includes of pinctrl/dev_info.h and replace
-it with consumer.h) at some point.
+Thanks for your bug report.
+A fix for this exists already:
+https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git/=
+commit/?id=3Da9e6d44ddeccd3522670e641f1ed9b068e746ff7
 
-It wasn't pretty that these drivers were relying on implicit
-#includes in the first place so either is anyway prettier than
-what it used to look like.
+--=20
+Michael
 
-In a way I kind of like this sideffect even if it broke some
-compiles.
+--Sig_/J2aicKjT07+LcOHxFU4kEBg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Yours,
-Linus Walleij
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlp4oQEACgkQ9TK+HZCN
+iw4n1A//RftVm50NGnVnIkixEMD/TjUR76NkS+hSKOKRriBlTdGhlkjBoSeKe07T
+MGi2RtyZUMlYwutqcd8k/dQDyHUcP8YAB8OV8TSoW4kLstE8o0wJErcuTQ9PW+NB
+Glgh5Zkm9JVeyydzEpTSF6ZKoJwWV4odmzS42K58QUMEr4TzVxVQukWADMW8CmEm
+qMWD0FuzHv6aAt2Tr4k/ztayr8LXhkB6vfD7/5twJoNyeiuPfSZCxp9DhF7r54/X
+LtVRyNbcWQmMkYyKYLTraE7uPkrfHstJi5mhX1+B+OvtI4VMVbLXbWyYbsecWMCZ
+kol3k3kq3uT1+0gU6OhnPT8cbP7q/fi4DPiDIxaP/uKyb2yoifW+bCCVq72OMvFl
+RgAFdtBvmFyCLWPzXfhxHbc+pZu5yRRtGGwm0pQEKb/HEH8hZZe4aFRJkSrgveuu
+iukwoRPb+C8TDrBpDqO3Yd6WsgSyasMHz5OBdniStWHk8AH5A8l4joNilh1QfnEu
+giCWybycpILclz7VgsiyL9C9QgPr0o1pwT+4jPWGoQKukTIFbVynbZ+/jcetivae
+dKqvZ6B3bKUIAOb1Iz2Kxyf97VRkGAb80HWLEgYHSUKU6ey6CMry4bmIBlml51vI
+vdUSCvOpHbRjJtusbVn9jLdw/O8g5IIykEzSe9w4D59RNKVn4nI=
+=5OQo
+-----END PGP SIGNATURE-----
+
+--Sig_/J2aicKjT07+LcOHxFU4kEBg--
