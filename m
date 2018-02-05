@@ -1,53 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753257AbeBEQoe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 11:44:34 -0500
-Received: from mx-fe5-210.meituan.com ([103.37.138.210]:60777 "EHLO
-        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753099AbeBEQoY (ORCPT
+        id S1753193AbeBEQtq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 11:49:46 -0500
+Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:56083 "EHLO
+        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752986AbeBEQth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 11:44:24 -0500
-Authentication-Results: dx-it-mx02.dx.sankuai.com (amavisd-new);
-        dkim=pass (1024-bit key) header.d=meituan.com
-DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com 4B6FA298038D
-From: Wang Long <wanglong19@meituan.com>
-To: tytso@mit.edu, jack@suse.com
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wanglong19@meituan.com
-Subject: [PATCH] jbd2: set to NULL after kmem_cache_destroy
-Date: Mon,  5 Feb 2018 21:39:17 +0800
-Message-Id: <1517837957-1636-1-git-send-email-wanglong19@meituan.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 5 Feb 2018 11:49:37 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2F/AAADinhamGOa6ERdGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQngQAoCoNbmFKCAokTkE0KhTsCGoIzWBQBAQEBAQEBAQIBAhA?=
+ =?us-ascii?q?BAQEBAQgLCwYoL4I4IoJKAQEBBCMRRQwEAgEIEQQBAQECAiMDAgICHyUBCAgCB?=
+ =?us-ascii?q?AENBQiKFQMVvzSCJ4c2DYExgXgBAQEBAQEBAQEBAQEBAQEBAQEBAQEdgQ+DW4I?=
+ =?us-ascii?q?Vgz+DLoJrRASBdhAjgl2CZQWjZz6QFVWEfoJKkXaONIlCgTw2gXNwgxiCZSWBb?=
+ =?us-ascii?q?XiNX4EXAQEB?=
+X-IPAS-Result: =?us-ascii?q?A2F/AAADinhamGOa6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?ngQAoCoNbmFKCAokTkE0KhTsCGoIzWBQBAQEBAQEBAQIBAhABAQEBAQgLCwYoL?=
+ =?us-ascii?q?4I4IoJKAQEBBCMRRQwEAgEIEQQBAQECAiMDAgICHyUBCAgCBAENBQiKFQMVvzS?=
+ =?us-ascii?q?CJ4c2DYExgXgBAQEBAQEBAQEBAQEBAQEBAQEBAQEdgQ+DW4IVgz+DLoJrRASBd?=
+ =?us-ascii?q?hAjgl2CZQWjZz6QFVWEfoJKkXaONIlCgTw2gXNwgxiCZSWBbXiNX4EXAQEB?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.172
+X-IronPort-AV: E=Sophos;i="5.46,465,1511848800";
+   d="scan'208";a="125730741"
+X-DLP: DLP_GlobalPCIDSS
+To: <andy.shevchenko@gmail.com>, <pali.rohar@gmail.com>
+CC: <dvhart@infradead.org>, <linux-kernel@vger.kernel.org>,
+        <platform-driver-x86@vger.kernel.org>
+Subject: RE: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap
+ rather than globally
+Thread-Topic: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap
+ rather than globally
+Thread-Index: AQHTnbEBZ5a/3jHsuUK3gXwyW5b5oKOUseSAgAFVFtA=
+Date: Mon, 5 Feb 2018 16:49:35 +0000
+Message-ID: <9b01161fb81043b79cf9ade8ec348fff@ausx13mpc120.AMER.DELL.COM>
+References: <1517420855-19374-1-git-send-email-mario.limonciello@dell.com>
+ <20180204120922.fds52i22griw2h6e@pali>
+ <CAHp75VcnDKP=kNPh7pU1v_f0+oP64ByKAOmkZzXNUVaXg=wDSg@mail.gmail.com>
+In-Reply-To: <CAHp75VcnDKP=kNPh7pU1v_f0+oP64ByKAOmkZzXNUVaXg=wDSg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w15GoFTJ022361
 
-Signed-off-by: Wang Long <wanglong19@meituan.com>
----
- fs/jbd2/journal.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> -----Original Message-----
+> From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
+> Sent: Sunday, February 4, 2018 8:28 AM
+> To: Pali Rohár <pali.rohar@gmail.com>
+> Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; Darren Hart
+> <dvhart@infradead.org>; LKML <linux-kernel@vger.kernel.org>; Platform Driver
+> <platform-driver-x86@vger.kernel.org>
+> Subject: Re: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap rather
+> than globally
+> 
+> On Sun, Feb 4, 2018 at 2:09 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+> > On Wednesday 31 January 2018 11:47:35 Mario Limonciello wrote:
+> >> There is no longer a need for the buffer to be defined in
+> >> first 4GB physical address space.
+> >>
+> >> Furthermore there may be race conditions with multiple different functions
+> >> working on a module wide buffer causing incorrect results.
+> >>
+> >> Fixes: 549b4930f057658dc50d8010e66219233119a4d8
+> 
+> He-h, I had to notice this earlier...
+> 
+> > Ok, you can add my:
+> > Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
+> 
+> Thanks and sorry, Pali, it's in for-next already, can't rebase.
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 93016bb..38dc24c 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -2649,11 +2649,14 @@ static int __init jbd2_journal_init_handle_cache(void)
- 
- static void jbd2_journal_destroy_handle_cache(void)
- {
--	if (jbd2_handle_cache)
-+	if (jbd2_handle_cache) {
- 		kmem_cache_destroy(jbd2_handle_cache);
--	if (jbd2_inode_cache)
-+		jbd2_handle_cache = NULL;
-+	}
-+	if (jbd2_inode_cache) {
- 		kmem_cache_destroy(jbd2_inode_cache);
--
-+		jbd2_inode_cache = NULL;
-+	}
- }
- 
- /*
--- 
-1.8.3.1
+Andy,
+Since it's already in for-next it's probably too late to add the stable CC too right?
+
+So what's the proper time now to send this to @stable?  And should I just forward existing
+patch?
+
+Thanks,
