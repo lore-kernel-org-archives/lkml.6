@@ -1,89 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752989AbeBENqs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 08:46:48 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:55388 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752612AbeBENql (ORCPT
+        id S1753060AbeBENth (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 08:49:37 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:33713 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752848AbeBENta (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 08:46:41 -0500
-Date: Mon, 5 Feb 2018 14:46:38 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
-        egtvedt@samfundet.no, linus.walleij@linaro.org, vgupta@synopsys.com,
-        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
-        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
-        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
-        yamada.masahiro@socionext.com, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 09/20] clk: sunxi-ng: Remove SUNXI_CCU_* selects
-Message-ID: <20180205134638.ugngvfmdixnpxihk@flea>
-References: <20180205012146.23981-1-ulfalizer@gmail.com>
- <20180205012146.23981-10-ulfalizer@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qibptpmrcb5iyvxp"
-Content-Disposition: inline
-In-Reply-To: <20180205012146.23981-10-ulfalizer@gmail.com>
-User-Agent: NeoMutt/20171215
+        Mon, 5 Feb 2018 08:49:30 -0500
+X-Google-Smtp-Source: AH8x224UexyAj/JZh20g0oElR5VjlS0VGFtVPckZTR4s6G5IgdSs+2/uLYU14x2muFAjQb7Ank93VQ==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] MMC fixes for v.4.16-rc1
+Date: Mon,  5 Feb 2018 14:49:26 +0100
+Message-Id: <1517838566-2345-1-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---qibptpmrcb5iyvxp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Here's a PR with a few MMC fixes intended for v4.16-rc1. Details about the
+highlights are as usual found in the signed tag.
 
-Hi Ulf,
+Please pull this in!
 
-On Mon, Feb 05, 2018 at 02:21:21AM +0100, Ulf Magnusson wrote:
-> The selected symbols were removed in commit 06e226c7fb23 ("clk:
-> sunxi-ng: Move all clock types to a library").
->=20
-> Remove the selects from SUN4I_A10_CCU.
->=20
-> Discovered with the
-> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefin=
-ed.py
-> script.
->=20
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+Kind regards
+Ulf Hansson
 
-This has already been submitted by Corentin:
-https://patchwork.kernel.org/patch/10175435/
 
-Thanks!
-Maxime
+The following changes since commit 3da90b159b146672f830bcd2489dd3a1f4e9e089:
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+  Merge tag 'f2fs-for-4.16-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs (2018-01-30 19:07:32 -0800)
 
---qibptpmrcb5iyvxp
-Content-Type: application/pgp-signature; name="signature.asc"
+are available in the git repository at:
 
------BEGIN PGP SIGNATURE-----
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.16-2
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp4YD4ACgkQ0rTAlCFN
-r3QtyA/9Fm+szM2mf5g406tyFmVHFdbHaTDP5jD54fhjBPPK1Jg0uw8Ig9dpFOe5
-m4Bcq7rPAMfjAYHOAd+FCv7P0oT4/K7n3NQ/9I7e1WqMNAKzqNyN/WcloDjFS/gK
-lhxPPorybKvvChE2ZddU9w5oC4AETILJ5B+gveN2IsTO3YDJv2Ufly8YmS4+OyO9
-AtNh84XQ1lTen1W9HvS9S3hCJwXHYMq1cMoVS83azCMMBBM38D5DOoeMaJID2kR8
-N8LHkVxrtYMB7tE9mjTRRHDWqIxRQww0B+/5qUcFN513NgQxsOcSmIJp9xu9N4qw
-Ypk74ydvysGOylvBmn69tdW5Q4BYY9w0HEPBxNwbEVrsr4Ez8Ij8aKY4YD2uPm0S
-5svM5KJBA1vXi244n4689MnC+EYdrGwzDtYK0H1F1p24yRAtdXRgDxVHoz+9A10L
-dvMVCeSsqBm+WQlXnCiIItbLHRyAYeuxsV75ANnQDiqNN1GsDvsYMLcSXjXBgPhp
-vyDMkzgCYQwDvDCQ0sdIPg5niDiKONdIGWyADPNiy7s/It2hT0dGofezV/yC8Odl
-uX8pV4yvd8rdBTNSS566kjYaqyTUyPegwov651837ZzxOZwyVBEM/GYOt90po6Se
-79uIi7P/koSCTRbe9zEFrUkcdh9hGR2h9Uxvho0kjjhxXYCPB+s=
-=vQgV
------END PGP SIGNATURE-----
+for you to fetch changes up to 56174d9a21496fce64fcc6ba2f475734c20c12e4:
 
---qibptpmrcb5iyvxp--
+  mmc: MMC_SDHI_{SYS,INTERNAL}_DMAC should depend on HAS_DMA (2018-01-31 11:27:23 +0100)
+
+----------------------------------------------------------------
+MMC host:
+ - renesas_sdhi: Fix build error in case NO_DMA=y
+ - sdhci: Implement a bounce buffer to address throughput regressions
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      mmc: MMC_SDHI_{SYS,INTERNAL}_DMAC should depend on HAS_DMA
+
+Linus Walleij (1):
+      mmc: sdhci: Implement an SDHCI-specific bounce buffer
+
+ drivers/mmc/host/Kconfig |   4 +-
+ drivers/mmc/host/sdhci.c | 164 ++++++++++++++++++++++++++++++++++++++++++++---
+ drivers/mmc/host/sdhci.h |   3 +
+ 3 files changed, 161 insertions(+), 10 deletions(-)
