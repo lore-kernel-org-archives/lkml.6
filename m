@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226ZgJU2sHNUoa+LHJRQk7P94nZTCZ5ZaoH5wBKi9N3CY90eiOOZuhl5JNm0OP33KkCKC8dh
-ARC-Seal: i=1; a=rsa-sha256; t=1517855199; cv=none;
+X-Google-Smtp-Source: AH8x225VIFP8V1++VRMfguaYTHk1u45nsyphCkFZK/+1xltL5Wz1CIMtgKqU4KIiqxIsJ3P+NRQj
+ARC-Seal: i=1; a=rsa-sha256; t=1517855196; cv=none;
         d=google.com; s=arc-20160816;
-        b=tqGKnV/k3E2y0BiOX2kZykRfzNr0SjlSqhfMv0MMYoP0Ziqc2arYhy+eXuTvSrIew2
-         umbWXw+20DYDAppsXXIJrKrZU1gMWPLnYAXPQgTGSboG2bdTAYl64rETwk+1Uqys9eo1
-         qgkfmsV0dNe4Aaip6gPOuN7b2gaKAz4OLiwal2DeqbzbQjNrx1n17pk7bmNLE2olpUra
-         Eq36hOri6FuY9W7rGW2DwZ/NweclVy7Wjo7ZkJ7xKUFdstW1dGPVdG8FbH9fI3ReKqxf
-         dimWUou+QVXZND5Ko3IVK5g4W5cdfpK4SOvOoZaCgUkSybiTx5W2vPflNyhTnVzigVsk
-         2mZA==
+        b=H2A40zQHcV8KIkiU1CNOPuEU+wJWK2ju8BnMS2GJ0H+Gs39tj0NoGUudH9blQHRDFP
+         WkJA50torXM7KLy0dKQ8OBaTdceAsnO5SHi8HZzFQwYfzhZY6J7T1/cORgXi1ZOGRctQ
+         Vm+tZys0tmN7VOpY5OI7hQzVuXximX9q8p1SMSjDNRAIEIlpoq+IpsJvyYO3bsjZAvxP
+         uUrHTeyTfUj24gUlpedJZydBYR5/4MrjepembOI/5UFOkN56qpd+miep7PL7LH5GJ1N+
+         GqlcPHtsm2NvCHXSlZbqUQLId9kmHGU4G2vI7u1seUVLKHwlfr4/cNZH66AX4bzOfhRa
+         62kQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4nfBtmBjo+wWFFlagVE9Mko577TjbW5qVc2yOmsEXQ8=;
-        b=oLmpEsF280LvoLZpKS8NnN/C58MBDWDpwOtYIHBOLwkva0ygkoCb7RgmyFsVMCXJUM
-         qIof4+kWkHF9nEEOe5Qxcrrx4U1/qo/mAfJlzqXE93blNt0P9nO/xQWLnrZcoZ58cYq7
-         J5tVU+6P3f9ix9wAiSjHKPBBpLdMIx5er1vcYgNH+0DML01954gpHSsy/LeBrIjCu+SB
-         mQXiAWrRc/jp8fjioiOA2YM5kpw9VMoLTDOCksplKEhfb4+liyFL0+TN8Iq3YAijpQlA
-         vqONacvMGyrscmu+36a3+z9tKqczO4jAcXgGSWG6pjYX3/MKtpJTWWXpvJMMT5HcJtVy
-         Hgfg==
+        bh=sDhfQeAh+s4tf1BXbMDE1yiW24obADgkSzmzJtQ+VRQ=;
+        b=cfBizMem95wAZY+rgA2suv/NWxWSLLdHD9j56EJs5i8EMZ6ESwDAMoxORRZ/0kfdld
+         yKFIXKLLrn550q4ufr8B01TrNPlI2t2zrq8BQ0Zsp3R3WYSDVgvCVkkVye4Snzu4YCrC
+         FXftGYNOZIXKAsnahaCqJZpdB0oRoR/uKUNkClL1Ntz8dbiOdxYpEhPrU5WHmuX2qd+t
+         TeOXRhtPza8YZrHIkJ5qWZzA3mNDSmA7Q32KS/NZ1J9KrZtBrUTy6wiNNGjWBILfZgYd
+         KyQROWthTxbCPDqrbTGV9ClpLPC+dftDBavjDjYn1LXH0ZCp4zg6xc/3xnILoZAJ89cX
+         R/fA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Lubomir Rintel <lkundrak@v3.sk>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+	Subhash Jadavani <subhashj@codeaurora.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 22/36] media: usbtv: add a new usbid
-Date: Mon,  5 Feb 2018 10:23:50 -0800
-Message-Id: <20180205182352.685325588@linuxfoundation.org>
+Subject: [PATCH 3.18 21/36] scsi: ufs: ufshcd: fix potential NULL pointer dereference in ufshcd_config_vreg
+Date: Mon,  5 Feb 2018 10:23:49 -0800
+Message-Id: <20180205182352.646980455@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586533859693591?=
-X-GMAIL-MSGID: =?utf-8?q?1591586533859693591?=
+X-GMAIL-THRID: =?utf-8?q?1591586530787759656?=
+X-GMAIL-MSGID: =?utf-8?q?1591586530787759656?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
 
-[ Upstream commit 04226916d2360f56d57ad00bc48d2d1854d1e0b0 ]
+[ Upstream commit 727535903bea924c4f73abb202c4b3e85fff0ca4 ]
 
-A new usbid of UTV007 is found in a newly bought device.
+_vreg_ is being dereferenced before it is null checked, hence there is a
+potential null pointer dereference.
 
-The usbid is 1f71:3301.
+Fix this by moving the pointer dereference after _vreg_ has been null
+checked.
 
-The ID on the chip is:
-UTV007
-A89029.1
-1520L18K1
+This issue was detected with the help of Coccinelle.
 
-Both video and audio is tested with the modified usbtv driver.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Acked-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes: aa4976130934 ("ufs: Add regulator enable support")
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/usbtv/usbtv-core.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/ufs/ufshcd.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/media/usb/usbtv/usbtv-core.c
-+++ b/drivers/media/usb/usbtv/usbtv-core.c
-@@ -127,6 +127,7 @@ static void usbtv_disconnect(struct usb_
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -4287,12 +4287,15 @@ static int ufshcd_config_vreg(struct dev
+ 		struct ufs_vreg *vreg, bool on)
+ {
+ 	int ret = 0;
+-	struct regulator *reg = vreg->reg;
+-	const char *name = vreg->name;
++	struct regulator *reg;
++	const char *name;
+ 	int min_uV, uA_load;
  
- static struct usb_device_id usbtv_id_table[] = {
- 	{ USB_DEVICE(0x1b71, 0x3002) },
-+	{ USB_DEVICE(0x1f71, 0x3301) },
- 	{}
- };
- MODULE_DEVICE_TABLE(usb, usbtv_id_table);
+ 	BUG_ON(!vreg);
+ 
++	reg = vreg->reg;
++	name = vreg->name;
++
+ 	if (regulator_count_voltages(reg) > 0) {
+ 		min_uV = on ? vreg->min_uV : 0;
+ 		ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
