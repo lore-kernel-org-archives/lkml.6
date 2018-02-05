@@ -1,79 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeBEU1n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 15:27:43 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.105]:13390 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750855AbeBEU1i (ORCPT
+        id S1752023AbeBEU15 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 15:27:57 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:36912 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeBEU1s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:27:38 -0500
-Date: Mon, 5 Feb 2018 14:27:37 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Jacob chen <jacob2.chen@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH v2 6/8] rockchip/rga: use 64-bit arithmetic instead of 32-bit
-Message-ID: <94fd0993cde02e18ee5d7f54707f8ce0d0341a0c.1517856716.git.gustavo@embeddedor.com>
-References: <cover.1517856716.git.gustavo@embeddedor.com>
+        Mon, 5 Feb 2018 15:27:48 -0500
+X-Google-Smtp-Source: AH8x225QHAZBTIEVBDOBwY1q9wR220bL/ys4qi8qG6CR3/yCAVE6RQbxI7yb3JYMqa1Ywcu4dDsLqIyeA+bpUf9rXKo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1517856716.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.201.65
-X-Source-L: No
-X-Exim-ID: 1einMX-003ZHA-IV
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.152.201.65]:47696
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 32
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <1517850115-24340-2-git-send-email-daniel.baluta@nxp.com>
+References: <1517850115-24340-1-git-send-email-daniel.baluta@nxp.com> <1517850115-24340-2-git-send-email-daniel.baluta@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 5 Feb 2018 18:27:47 -0200
+Message-ID: <CAOMZO5AvGLQfAAQsRzud15DmG21eyuCR9SOdSBD__VYDHxPZzg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] ASoC: codecs: Add support for AK5558 ADC driver
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        wakasugi.jb@om.asahi-kasei.co.jp, shengjiu.wang@nxp.com,
+        Mihai Serban <mihai.serban@gmail.com>, cosmin.samoila@nxp.com,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Mihai Serban <mihai.serban@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cast p to dma_addr_t in order to avoid a potential integer overflow.
-This variable is being used in a context that expects an expression
-of type dma_addr_t (u64).
+On Mon, Feb 5, 2018 at 3:01 PM, Daniel Baluta <daniel.baluta@nxp.com> wrote:
+> AK5558 is a 32-bit, 768 kHZ sampling, differential input ADC
+> for digital audio systems.
+>
+> Datasheet is available at:
+>
+> https://www.akm.com/akm/en/file/datasheet/AK5558VN.pdf
+>
+> Initial patch includes support for normal and TDM modes.
+>
+> Signed-off-by: Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>
+> [initial coding for 3.18 kernel]
+> Signed-off-by: Mihai Serban <mihai.serban@nxp.com>
+> [cleanups and porting to 4.9 kernel]
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> [tdm support]
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> [pm support, cleanups and porting to latest kernel]
 
-The expression p << PAGE_SHIFT is currently being evaluated
-using 32-bit arithmetic.
-
-Addresses-Coverity-ID: 1458347
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2:
- - Update subject and changelog to better reflect the proposed code change.
-
- drivers/media/platform/rockchip/rga/rga-buf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/rockchip/rga/rga-buf.c b/drivers/media/platform/rockchip/rga/rga-buf.c
-index 49cacc7..a43b57a 100644
---- a/drivers/media/platform/rockchip/rga/rga-buf.c
-+++ b/drivers/media/platform/rockchip/rga/rga-buf.c
-@@ -140,7 +140,8 @@ void rga_buf_map(struct vb2_buffer *vb)
- 		address = sg_phys(sgl);
- 
- 		for (p = 0; p < len; p++) {
--			dma_addr_t phys = address + (p << PAGE_SHIFT);
-+			dma_addr_t phys = address +
-+					  ((dma_addr_t)p << PAGE_SHIFT);
- 
- 			pages[mapped_size + p] = phys;
- 		}
--- 
-2.7.4
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
