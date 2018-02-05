@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225fCiceVHG90e63ocuBjnKmCwqPyekwZ8KV6v5daxifdACu/8WcVvgFEol0FfZ7BbVoEMGx
-ARC-Seal: i=1; a=rsa-sha256; t=1517855094; cv=none;
+X-Google-Smtp-Source: AH8x227LdTN6xb3cwZkim+livharCqWk+75DmBrm2WHBfxvvYb4cx8d6Jb34yZDnBy9zXGsWNCao
+ARC-Seal: i=1; a=rsa-sha256; t=1517855092; cv=none;
         d=google.com; s=arc-20160816;
-        b=oqEZVz8R+R2eybbPPr5+DscPXJ6ptjFFNgQWxMCm/dZGPs6G3V/KSEbaAWJKxKZ747
-         GhoqDAWc2c1Wwajq/slp/9y5Ri545SwKAE16oy5ileTjNPSODYgBUZntBqBrDAYdK3Bi
-         YvVgxcHPeQTW4H4Ef6rwmqT3ohW46xfKlgp3K9sJB21Ww4bYYtGqt7xCLIJF75TDixs4
-         mdaBCjCdBL0DIhXlKTO5AS5TDS+T96lSlP3pi+whHX/CB/zvFND/mA2cYvg9QM6iKOzO
-         xxn2b8bq79wQvszzdAYJ4/Z0bwibAwaQ+SPHGu8IdfGnM9iq6u4u4J4ELQI12AcoELKl
-         CgqQ==
+        b=Flvkn3m5vRDSsoTqRQhYsB5Wq1s2xxgmOZc7ewSAT/42cWmmh15ZNeuFuSYfE0IbHH
+         Edks2Zs1/uZA5vaLKC4KqfFgjNoC2nqePVZsa30IoVZi608LVGDKHSBDRQaAbIBczuV4
+         GHZvj+zV96ECzF5jWSBbtyyr7XyDafbPdMmnYiybPfwUvxpRhwK8kRmR5SzW5GXVYCBC
+         XUaHCXbrxpzGariFYIPuiXjq0eczidk8VYg8PPG+hiuuVK32B1c/UpxI14il9FpPNeZ8
+         tqXXpeFq9bQm/zYJIsDBsua+ML7padOYsiL4fmJ6sqvaBFV0L/GKvDHqQMZZgZrCCrsa
+         78UQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LxR3sAtbUWrUKWNfajd8JWqV3/OXPOj2uSRD253vRTw=;
-        b=ApNcSob+dXxazsu1l8AAFUbamLCu/7OgQQK1OQiPeXx/DseSoOnJQJm7qOqnVq6fXT
-         qPjIyNf69lE+x+Cb6wKdiaYwthrhwQYw6+zB1s5UU0HKWu1T0QhbI2OWcNR6kwZO9VrK
-         hVOR1Md3LhGFyWt1iVnM4iQXOuP0YUhO6k7NjuSx5g929uP6miY8qKwsC6jWq57VwZ0D
-         /XBUoToNEe+CXF6urEv4qf9/NLsNDmuu1jLQu1AHHDjMXRRQgs9McQwCpdSjV6q6Hfp1
-         eRlQ3TN1iP80HJ3fSqIahPtKwHiylFeU4H3usOY7/C2OefS0t+mIdHqV73EvQ4aW+Qvo
-         ltGQ==
+        bh=YoXPp7RhRi70Bz1EZwfmF9kShonOvlCtwQnvzfJCH10=;
+        b=J+kCf/7h13rWFX0s5yN6RE8vO+nZcvNgBNoB+ddPYjxejU5OjvgTtqRz8suJhoIAUt
+         EJLtQudCUryQNdS4tY361vp5iRhZWaQPR3D+uTxNaeKBfiBA1Z5VfoM50IMqmU7yOYwK
+         Y1DTIjXdcFneFV9fFaagT6f/dajhqEVv5p0GISNbRnXhR0K4Z+gs9a3hd7hhCBZPe16k
+         cZtuchs6e7WkmpzxoiYLjr5Y6yuQ23zJPtMDWWXRBuC58mGEPvJMaWJOpqbxSXGIKumq
+         hqZzLzPhXlaFYvMkOhj4gd4RlBTcWVFIR7iKJZGAds2/1BCfeU9Rs0eHCNoU+5KDcYNo
+         ohiw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -41,9 +41,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	tim.c.chen@linux.intel.com,
 	pjt@google.com,
 	gregkh@linux-foundation.org
-Subject: [PATCH 4.15 12/60] x86/nospec: Fix header guards names
-Date: Mon,  5 Feb 2018 10:22:45 -0800
-Message-Id: <20180205182214.432175952@linuxfoundation.org>
+Subject: [PATCH 4.15 11/60] x86/alternative: Print unadorned pointers
+Date: Mon,  5 Feb 2018 10:22:44 -0800
+Message-Id: <20180205182214.391249322@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
@@ -52,8 +52,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586339077269588?=
-X-GMAIL-MSGID: =?utf-8?q?1591586424362965906?=
+X-GMAIL-THRID: =?utf-8?q?1591586338745413455?=
+X-GMAIL-MSGID: =?utf-8?q?1591586420763949642?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -63,11 +63,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Borislav Petkov bp@suse.de
 
-commit 7a32fc51ca938e67974cbb9db31e1a43f98345a9
+commit 0e6c16c652cadaffd25a6bb326ec10da5bcec6b4
 
-... to adhere to the _ASM_X86_ naming scheme.
-
-No functional change.
+After commit ad67b74d2469 ("printk: hash addresses printed with %p")
+pointers are being hashed when printed. However, this makes the alternative
+debug output completely useless. Switch to %px in order to see the
+unadorned kernel pointers.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -84,29 +85,67 @@ Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: tim.c.chen@linux.intel.com
 Cc: gregkh@linux-foundation.org
 Cc: pjt@google.com
-Link: https://lkml.kernel.org/r/20180126121139.31959-3-bp@alien8.de
+Link: https://lkml.kernel.org/r/20180126121139.31959-2-bp@alien8.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/include/asm/nospec-branch.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/alternative.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -298,7 +298,7 @@ recompute_jump(struct alt_instr *a, u8 *
+ 	tgt_rip  = next_rip + o_dspl;
+ 	n_dspl = tgt_rip - orig_insn;
  
--#ifndef __NOSPEC_BRANCH_H__
--#define __NOSPEC_BRANCH_H__
-+#ifndef _ASM_X86_NOSPEC_BRANCH_H_
-+#define _ASM_X86_NOSPEC_BRANCH_H_
+-	DPRINTK("target RIP: %p, new_displ: 0x%x", tgt_rip, n_dspl);
++	DPRINTK("target RIP: %px, new_displ: 0x%x", tgt_rip, n_dspl);
  
- #include <asm/alternative.h>
- #include <asm/alternative-asm.h>
-@@ -232,4 +232,4 @@ static inline void indirect_branch_predi
+ 	if (tgt_rip - orig_insn >= 0) {
+ 		if (n_dspl - 2 <= 127)
+@@ -355,7 +355,7 @@ static void __init_or_module noinline op
+ 	add_nops(instr + (a->instrlen - a->padlen), a->padlen);
+ 	local_irq_restore(flags);
+ 
+-	DUMP_BYTES(instr, a->instrlen, "%p: [%d:%d) optimized NOPs: ",
++	DUMP_BYTES(instr, a->instrlen, "%px: [%d:%d) optimized NOPs: ",
+ 		   instr, a->instrlen - a->padlen, a->padlen);
  }
  
- #endif /* __ASSEMBLY__ */
--#endif /* __NOSPEC_BRANCH_H__ */
-+#endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
+@@ -376,7 +376,7 @@ void __init_or_module noinline apply_alt
+ 	u8 *instr, *replacement;
+ 	u8 insnbuf[MAX_PATCH_LEN];
+ 
+-	DPRINTK("alt table %p -> %p", start, end);
++	DPRINTK("alt table %px, -> %px", start, end);
+ 	/*
+ 	 * The scan order should be from start to end. A later scanned
+ 	 * alternative code can overwrite previously scanned alternative code.
+@@ -400,14 +400,14 @@ void __init_or_module noinline apply_alt
+ 			continue;
+ 		}
+ 
+-		DPRINTK("feat: %d*32+%d, old: (%p, len: %d), repl: (%p, len: %d), pad: %d",
++		DPRINTK("feat: %d*32+%d, old: (%px len: %d), repl: (%px, len: %d), pad: %d",
+ 			a->cpuid >> 5,
+ 			a->cpuid & 0x1f,
+ 			instr, a->instrlen,
+ 			replacement, a->replacementlen, a->padlen);
+ 
+-		DUMP_BYTES(instr, a->instrlen, "%p: old_insn: ", instr);
+-		DUMP_BYTES(replacement, a->replacementlen, "%p: rpl_insn: ", replacement);
++		DUMP_BYTES(instr, a->instrlen, "%px: old_insn: ", instr);
++		DUMP_BYTES(replacement, a->replacementlen, "%px: rpl_insn: ", replacement);
+ 
+ 		memcpy(insnbuf, replacement, a->replacementlen);
+ 		insnbuf_sz = a->replacementlen;
+@@ -433,7 +433,7 @@ void __init_or_module noinline apply_alt
+ 				 a->instrlen - a->replacementlen);
+ 			insnbuf_sz += a->instrlen - a->replacementlen;
+ 		}
+-		DUMP_BYTES(insnbuf, insnbuf_sz, "%p: final_insn: ", instr);
++		DUMP_BYTES(insnbuf, insnbuf_sz, "%px: final_insn: ", instr);
+ 
+ 		text_poke_early(instr, insnbuf, insnbuf_sz);
+ 	}
