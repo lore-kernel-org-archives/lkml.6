@@ -1,78 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753588AbeBETGf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 14:06:35 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35802 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753514AbeBETGV (ORCPT
+        id S1753756AbeBETH1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 14:07:27 -0500
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:37538 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753461AbeBETHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 14:06:21 -0500
-X-Google-Smtp-Source: AH8x224nmr0YbbGV90q6eIS28xAjb4a7+22FttqLYqD+wS0nHIHBf7v1cBhNiSaZHNQKHmNkpqaThw==
-From: Ulf Magnusson <ulfalizer@gmail.com>
-To: clabbe.montjoie@gmail.com, linux-kernel@vger.kernel.org
-Cc: viresh.kumar@linaro.org, matthias.bgg@gmail.com,
-        linux-pwm@vger.kernel.org, thierry.reding@gmail.com,
-        ulfalizer@gmail.com, Mark Brown <broonie@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Sean Paul <seanpaul@chromium.org>, linux-spi@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH v3 03/20] kconfig: Remove leftover references to AVR32 symbol
-Date: Mon,  5 Feb 2018 20:05:39 +0100
-Message-Id: <20180205190552.14282-1-ulfalizer@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180205081151.GA11907@Red>
-References: <20180205081151.GA11907@Red>
+        Mon, 5 Feb 2018 14:07:07 -0500
+X-Google-Smtp-Source: AH8x225qrR2VMJOp6HnZRa/03Rg96vlAYy5QEfsnQ+0gEbo+9iJoTnFgd23L43JEj1wLafRdmmTYYQ==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: v4.15 and I/O hang with BFQ
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <3E34D175-88F9-4114-B627-A11262A7B470@linaro.org>
+Date: Mon, 5 Feb 2018 20:07:03 +0100
+Cc: Ming Lei <ming.lei@redhat.com>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Ivan Kozik <ivan@ludios.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Linus Walleij <linus.walleij@linaro.org>,
+        SERENA ZIVIANI <169364@studenti.unimore.it>
+Message-Id: <6BCE8A16-7D00-4B55-8E2D-0DDC7C187C14@linaro.org>
+References: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
+ <20180130081925.GA25183@ming.t460p>
+ <38bd4dbe280bd0934abde764fe0916cd@natalenko.name>
+ <20180130144002.GA14401@ming.t460p>
+ <3E34D175-88F9-4114-B627-A11262A7B470@linaro.org>
+To: bfq-iosched@googlegroups.com
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w15J7Xdk008498
 
-The AVR32 symbol was removed in commit 26202873bb51 ("avr32: remove
-support for AVR32 architecture"). Remove the remaining references to it
-from the Kconfig files.
 
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
----
-Changes in v3:
-Removal of the AVR32 dependency in PWM_ATMEL is already pending:
-https://lkml.org/lkml/2018/1/18/699
 
-Changes in v2:
-Removal of AVR32_AT32AP_CPUFREQ is already pending in
-https://marc.info/?i=20180118200202.11883-1-clabbe.montjoie%40gmail.com (which
-also does it properly -- I forgot to search for related files here). Just
-remove the other references.
+> Il giorno 30 gen 2018, alle ore 16:40, Paolo Valente <paolo.valente@linaro.org> ha scritto:
+> 
+> 
+> 
+>> Il giorno 30 gen 2018, alle ore 15:40, Ming Lei <ming.lei@redhat.com> ha scritto:
+>> 
+>> On Tue, Jan 30, 2018 at 03:30:28PM +0100, Oleksandr Natalenko wrote:
+>>> Hi.
+>>> 
+>> ...
+>>>  systemd-udevd-271   [000] ....     4.311033: bfq_insert_requests: insert
+>>> rq->0
+>>>  systemd-udevd-271   [000] ...1     4.311037: blk_mq_do_dispatch_sched:
+>>> not get rq, 1
+>>>         cfdisk-408   [000] ....    13.484220: bfq_insert_requests: insert
+>>> rq->1
+>>>   kworker/0:1H-174   [000] ....    13.484253: blk_mq_do_dispatch_sched:
+>>> not get rq, 1
+>>> ===
+>>> 
+>>> Looks the same, right?
+>> 
+>> Yeah, same with before.
+>> 
+> 
+> Hi guys,
+> sorry for the delay with this fix.  We are proceeding very slowly on
+> this, because I'm super busy.  Anyway, now I can at least explain in
+> more detail the cause that leads to this hang.  Commit 'a6a252e64914
+> ("blk-mq-sched: decide how to handle flush rq via RQF_FLUSH_SEQ")'
+> makes all non-flush re-prepared requests be re-inserted into the I/O
+> scheduler.  With this change, I/O schedulers may get the same request
+> inserted again, even several times, without a finish_request invoked
+> on the request before each re-insertion.
+> 
+> For the I/O scheduler, every such re-prepared request is equivalent
+> to the insertion of a new request. For schedulers like mq-deadline
+> or kyber this fact causes no problems. In contrast, it confuses a stateful
+> scheduler like BFQ, which preserves states for an I/O request until
+> finish_request is invoked on it. In particular, BFQ has no way
+> to know that the above re-insertions concerns the same, already dispatched
+> request. So it may get stuck waiting for the completion of these
+> re-inserted requests forever, thus preventing any other queue of
+> requests to be served.
+> 
+> We are trying to address this issue by adding the hook requeue_request
+> to bfq interface.
+> 
+> Unfortunately, with our current implementation of requeue_request in
+> place, bfq eventually gets to an incoherent state.  This is apparently
+> caused by a requeue of an I/O request, immediately followed by a
+> completion of the same request.  This seems rather absurd, and drives
+> bfq crazy.  But this is something for which we don't have definite
+> results yet.
+> 
+> We're working on it, sorry again for the delay.
+> 
 
- drivers/spi/Kconfig           | 2 +-
- drivers/video/console/Kconfig | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Ok, patch arriving ... Please test it.
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 603783976b81..c1e455d46c7f 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -72,7 +72,7 @@ config SPI_ARMADA_3700
- config SPI_ATMEL
- 	tristate "Atmel SPI Controller"
- 	depends on HAS_DMA
--	depends on (ARCH_AT91 || AVR32 || COMPILE_TEST)
-+	depends on (ARCH_AT91 || COMPILE_TEST)
- 	help
- 	  This selects a driver for the Atmel SPI Controller, present on
- 	  many AT32 (AVR32) and AT91 (ARM) chips.
-diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
-index 7f1f1fbcef9e..be63759b6027 100644
---- a/drivers/video/console/Kconfig
-+++ b/drivers/video/console/Kconfig
-@@ -7,7 +7,7 @@ menu "Console display driver support"
- config VGA_CONSOLE
- 	bool "VGA text console" if EXPERT || !X86
- 	depends on !4xx && !PPC_8xx && !SPARC && !M68K && !PARISC && !FRV && \
--		!SUPERH && !BLACKFIN && !AVR32 && !MN10300 && !CRIS && \
-+		!SUPERH && !BLACKFIN && !MN10300 && !CRIS && \
- 		(!ARM || ARCH_FOOTBRIDGE || ARCH_INTEGRATOR || ARCH_NETWINDER) && \
- 		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC
- 	default y
--- 
-2.14.1
+Thanks,
+Paolo
+
+> Thanks,
+> Paolo
+> 
+>> -- 
+>> Ming
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "bfq-iosched" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to bfq-iosched+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
