@@ -1,55 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752155AbeBET5h (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 14:57:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752057AbeBET5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 14:57:03 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D230217B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 10/10] perf tools: Add trace/beauty/generated/ into .gitignore
-Date: Mon,  5 Feb 2018 16:56:20 -0300
-Message-Id: <20180205195620.9010-11-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180205195620.9010-1-acme@kernel.org>
-References: <20180205195620.9010-1-acme@kernel.org>
+        id S1752177AbeBET5u (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 14:57:50 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42680 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752125AbeBET5c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 14:57:32 -0500
+X-Google-Smtp-Source: AH8x2277XX0rEWupTWQqyJJ9SFHRufrqUciHc5DyQhCWoeWYGjY9qUWTOuEAQGiwsgE/KpfBsSR95w==
+From: Sangwon Hong <qpakzk@gmail.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Taeung Song <treeze.taeung@gmail.com>, Sangwon Hong <qpakzk@gmail.com>
+Subject: [PATCH 1/2] perf trace: Detail usages on the man page
+Date: Tue,  6 Feb 2018 04:56:28 +0900
+Message-Id: <1517860589-19387-1-git-send-email-qpakzk@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+There're no descriptions about how to use perf trace with options and commands on the man page, so detail usages
 
-No functionality changes.
-
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20180130053053.13214-2-ravi.bangoria@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Taeung Song <treeze.taeung@gmail.com>
+Signed-off-by: Sangwon Hong <qpakzk@gmail.com>
 ---
- tools/perf/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/Documentation/perf-trace.txt | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/.gitignore b/tools/perf/.gitignore
-index 643cc4ba6872..3e5135dded16 100644
---- a/tools/perf/.gitignore
-+++ b/tools/perf/.gitignore
-@@ -31,5 +31,6 @@ config.mak.autogen
- .config-detected
- util/intel-pt-decoder/inat-tables.c
- arch/*/include/generated/
-+trace/beauty/generated/
- pmu-events/pmu-events.c
- pmu-events/jevents
+diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
+index 33a88e9..2608d16 100644
+--- a/tools/perf/Documentation/perf-trace.txt
++++ b/tools/perf/Documentation/perf-trace.txt
+@@ -8,8 +8,10 @@ perf-trace - strace inspired tool
+ SYNOPSIS
+ --------
+ [verse]
+-'perf trace'
+-'perf trace record'
++'perf trace' [<options>] [<command>]
++'perf trace' [<options>] -- <command> [<options>]
++'perf trace record' [<options>] [<command>]
++'perf trace record' [<options>] -- <command> [<options>]
+ 
+ DESCRIPTION
+ -----------
 -- 
-2.14.3
+2.7.4
