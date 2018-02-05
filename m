@@ -1,104 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753260AbeBEPdm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:33:42 -0500
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40741 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752925AbeBEPdf (ORCPT
+        id S1753211AbeBEPhu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:37:50 -0500
+Received: from mail-pg0-f50.google.com ([74.125.83.50]:43653 "EHLO
+        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752914AbeBEPhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:33:35 -0500
-X-Google-Smtp-Source: AH8x226M8WOvfPM8yG5Otwhi9MYTwE2KIKBZkCoN2oeVJTOuLmRpWCCoO7sdfZ557bFSrPiIawGJKgvxbHgRjjT8Ce0=
-MIME-Version: 1.0
-In-Reply-To: <CAMRc=McJsneYdh8zDmYcUsFLiAyOmSeyOKhKfim4or7LwyEH1w@mail.gmail.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-41-git-send-email-david@lechnology.com> <335d92c8-1af2-da64-e366-95d7513ad69d@lechnology.com>
- <CAMRc=McJsneYdh8zDmYcUsFLiAyOmSeyOKhKfim4or7LwyEH1w@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 5 Feb 2018 16:33:34 +0100
-Message-ID: <CAMRc=MdtgYB6Fa3ZeARncTDWfEXrZ4EYFXC0Lf=RHv0-ZSZf5A@mail.gmail.com>
-Subject: Re: [PATCH v6 40/41] ARM: da8xx-dt: switch to device tree clocks
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 5 Feb 2018 10:37:42 -0500
+X-Google-Smtp-Source: AH8x227a9VY7PPkR0UW4+9Anrdg1mpAKWB7fI1QCJXwStuUR0fz8kvn9nlRQhflQ/jaL6otzc6Zu8g==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 1/3] x86/entry: Clear extra registers beyond syscall arguments for 64bit kernels
+From: Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15C202)
+In-Reply-To: <20180205114250.zd3nbe5yl2mnd54m@gmail.com>
+Date: Mon, 5 Feb 2018 07:37:40 -0800
+Cc: Dan Williams <dan.j.williams@intel.com>, tglx@linutronix.de,
+        Andi Kleen <ak@linux.intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        luto@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        torvalds@linux-foundation.org
+Message-Id: <6CCF65EF-325A-4207-9C5E-2CD2D8E2A7E4@amacapital.net>
+References: <151776623555.23236.14152911329227555005.stgit@dwillia2-desk3.amr.corp.intel.com> <151776624080.23236.1865339140666550495.stgit@dwillia2-desk3.amr.corp.intel.com> <20180205114250.zd3nbe5yl2mnd54m@gmail.com>
+To: Ingo Molnar <mingo@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w15Fc1GC023361
 
-2018-02-05 15:04 GMT+01:00 Bartosz Golaszewski <brgl@bgdev.pl>:
-> 2018-01-24 4:26 GMT+01:00 David Lechner <david@lechnology.com>:
->> On 01/20/2018 11:14 AM, David Lechner wrote:
->>>
->>> This removes all of the clock init code from da8xx-dt.c. This includes
->>> all of the OF_DEV_AUXDATA that was just used for looking up clocks.
->>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
->>> ---
->>>
->>> v6 changes:
->>> - removed misleading statement from commit message
->>>
->>>   arch/arm/mach-davinci/da8xx-dt.c | 61
->>> +---------------------------------------
->>>   1 file changed, 1 insertion(+), 60 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-davinci/da8xx-dt.c
->>> b/arch/arm/mach-davinci/da8xx-dt.c
->>
->>
->>>   static void __init da850_init_machine(void)
->>>   {
->>> -       /* All existing boards use 100MHz SATA refclkpn */
->>> -       static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
->>> -
->>> -       int ret;
->>> -
->>> -       ret = da8xx_register_usb20_phy_clk(false);
->>> -       if (ret)
->>> -               pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
->>> -                       __func__, ret);
->>> -       ret = da8xx_register_usb11_phy_clk(false);
->>> -       if (ret)
->>> -               pr_warn("%s: registering USB 1.1 PHY clock failed: %d",
->>> -                       __func__, ret);
->>> -
->>> -       ret = da850_register_sata_refclk(sata_refclkpn);
->>> -       if (ret)
->>> -               pr_warn("%s: registering SATA REFCLK failed: %d",
->>> -                       __func__, ret);
->>> -
->>> -       of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
->>> +       of_platform_default_populate(NULL, NULL, NULL);
->>
->>
->> of_platform_default_populate() can actually be removed completely.
->> of_platform_default_populate_init() is called implicitly during
->> arch_initcall_sync
->>
->>>         davinci_pm_init();
->>>         pdata_quirks_init();
->>>   }
->
-> Hi David,
->
-> this patch breaks nand on da850-lcdk (and probably on da850-evm) since
-> the nand driver can no longer clk_get() the nand clock. We would need
-> to keep the dev_auxdata at least for aemif.
->
-> Thanks,
-> Bartosz
 
-Actually scratch that last e-mail, I missed the fact that the nand
-node is only there in the board dts files. I've just sent you a patch
-that enables nand on da850-lcdk. Please include it in your series.
-I'll do the same for evm shortly.
 
-Thanks,
-Bartosz
+> On Feb 5, 2018, at 3:42 AM, Ingo Molnar <mingo@kernel.org> wrote:
+> 
+> 
+> * Dan Williams <dan.j.williams@intel.com> wrote:
+> 
+>> +    /*
+>> +     * Sanitize extra registers of values that a speculation attack
+>> +     * might want to exploit. In the CONFIG_FRAME_POINTER=y case,
+>> +     * the expectation is that %ebp will be clobbered before it
+>> +     * could be used.
+>> +     */
+>> +    .macro CLEAR_EXTRA_REGS_NOSPEC
+>> +    xorq %r15, %r15
+>> +    xorq %r14, %r14
+>> +    xorq %r13, %r13
+>> +    xorq %r12, %r12
+>> +    xorl %ebx, %ebx
+>> +#ifndef CONFIG_FRAME_POINTER
+>> +    xorl %ebp, %ebp
+>> +#endif
+>> +    .endm
+> 
+> Yeah, so this series look pretty good to me, but there's one small detail: I think 
+> RBP should be cleared unconditionally here, even in the CONFIG_FRAME_POINTERS=y 
+> case, because:
+
+ENCODE_FRAME_POINTER should take care of rbp, though.
