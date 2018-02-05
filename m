@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224x+tMyAKY00/14eJ4920rjWvSrnAiztXKZJT+XLyT6TDeSjuC6RaZ2ztOwLoDNYj82+xnc
-ARC-Seal: i=1; a=rsa-sha256; t=1517855148; cv=none;
+X-Google-Smtp-Source: AH8x226vnY0e9TvcTHLquKmQT+V6Zut6p6PbzDIWEEEjp26uWeT241Aa9x67egI0MA/1vbfCXALk
+ARC-Seal: i=1; a=rsa-sha256; t=1517855146; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y0gdGQvNCv5f/zmRZGzhf/SZgpGxu0kCiWZW6X0G7tMcluTHuMH7H7MqoxaUi7ReRg
-         a0HyHNuN5PhyHZJYAXD/7pURzsdfgDAJRaRzaqvk7lLp5pcGVVlN2xOcn6aXUfdJFyzM
-         AL/pzGm5NumhPZqGcYAZkcqFpuFOWYcuUgjtUrq4r+1gNsGn23Iq5Do1zY9Gqka7GY4I
-         w8WDAODp2rXBcBTukN6nkkYF+3h1FD2Dcwu4pgrq4ocfS1e1krUq6bs2zpVD0hmWEsP+
-         a/ZjCvY7Spty1WNqbGKBeJIrQzrBpMxZUvz+fyEU5ESUuhF8viTX/coYxS+HF5TGOS0a
-         L/gA==
+        b=Rvsn0TPjVlcoo5O7OWxS+/Yqb2ib1OCI8cG+tpMMTLPdne5MGQNdL/BBgN+hy504qa
+         YDZ+gpWyWMV3ug5SxPP3BfOqQOkgdTB8H2sCqU/4P5V8boS9SL7eY1JXP5NUU/8yqpK0
+         R/lW8kTymWkHW5jxxExr5XTzT4DA/K/jcBJJ33/9Pa60+J/4skeTCYSgMPBjwQnbSXHT
+         gkUGCOOafyTiyPk/MSTdrLHXqssrF7mwcJ4ISuFs8Q/8CjisUMs1xvQrQe6ymviieHSS
+         b6yyI6lOXADSDndI8FdO4Gc8TlG339ECSJptZDGpXjoxbjXceNGB+4eFUQ8yH8gfu9YQ
+         HrUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5Mssj9LRNZfsnjBCsEwQbGOX3qBc0x1rWsQizdmxsns=;
-        b=XpLGn6zCrI9hfK5Ga5qOAN4JdTdLyUxU9LdxJCOAT9UKEm4oyL7pbus6ZIw4x9fGir
-         /2l8g1x+M2d6xAGrDQLwSURtfydDRDf+N6yGrLK8rJn4BoPsOWm3W28YJUZv2Z9/ROnW
-         O7c6L0OSfYXivA6t/Vf8L6tk88OsJSY+8GZqtmgAS72w4I4bdGIls9wI2ZTA0iS2XNy/
-         ddXWubgsDoZPyg6i6nseJBLlh5Y9prhprr5F/34VKpmNOVnGoH2PyQTzbxAbbFkhmGUG
-         fTisDHuL+2i54mPGIPUSOAv1lbnRVfiEYFpxQPj5SnhD5UcDVwduOLnQt4RCigIvvtZM
-         WE+g==
+        bh=8uGjGHnBcU6zMqDg8spWzadbsir+dDDwE3ORpkj3JR4=;
+        b=ZyfEUlbGPPIwHhRDPpgLOkjHP/u1RAttKSSb9d4TlkjlnehMwjz8w+/zsRqdze+5/1
+         XLmlSs0YeyEupjPx/LJrB47DU8EktfzI1s2jM/jxr1CFEnt8i+HRYOEWMsCT0rHry0Sq
+         +bShA1d/ThQT3CQ7yoOIS11j6fV5FJ1G+XEpgt9DcNIuC6P77IUSjJ7d3oPUpXnXoVCD
+         U8sFKMq0mYChRFUKQsn5R/gilbiuxKVDODpO/hmuzEk3oGBWDSShikHiFcaPW4pwIftE
+         xu690jgrJkRc7pzCFqEJq1sfz9erQpf+XUH5W+ymqZUcHcOB/Fe1fVmRZd6LsKn/h+X0
+         EW+w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
-	David Woodhouse <dwmw@amazon.co.uk>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Dan Williams <dan.j.williams@intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	ak@linux.intel.com,
-	dave.hansen@intel.com,
-	karahmed@amazon.de,
-	arjan@linux.intel.com,
+	linux-arch@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
 	torvalds@linux-foundation.org,
-	peterz@infradead.org,
-	bp@alien8.de,
-	pbonzini@redhat.com,
-	tim.c.chen@linux.intel.com,
-	gregkh@linux-foundation.org
-Subject: [PATCH 4.15 17/60] x86/speculation: Simplify indirect_branch_prediction_barrier()
-Date: Mon,  5 Feb 2018 10:22:50 -0800
-Message-Id: <20180205182214.630922743@linuxfoundation.org>
+	alan@linux.intel.com
+Subject: [PATCH 4.15 43/60] x86/spectre: Report get_user mitigation for spectre_v1
+Date: Mon,  5 Feb 2018 10:23:16 -0800
+Message-Id: <20180205182215.744093198@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
@@ -50,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586347373832119?=
-X-GMAIL-MSGID: =?utf-8?q?1591586480167120712?=
+X-GMAIL-THRID: =?utf-8?q?1591586389420695022?=
+X-GMAIL-MSGID: =?utf-8?q?1591586478239782838?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,79 +53,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov bp@suse.de
+From: Dan Williams dan.j.williams@intel.com
 
-commit 64e16720ea0879f8ab4547e3b9758936d483909b
+commit edfbae53dab8348fca778531be9f4855d2ca0360
 
-Make it all a function which does the WRMSR instead of having a hairy
-inline asm.
+Reflect the presence of get_user(), __get_user(), and 'syscall' protections
+in sysfs. The expectation is that new and better tooling will allow the
+kernel to grow more usages of array_index_nospec(), for now, only claim
+mitigation for __user pointer de-references.
 
-[dwmw2: export it, fix CONFIG_RETPOLINE issues]
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reported-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: ak@linux.intel.com
-Cc: dave.hansen@intel.com
-Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
+Cc: linux-arch@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com
+Cc: gregkh@linuxfoundation.org
 Cc: torvalds@linux-foundation.org
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1517070274-12128-4-git-send-email-dwmw@amazon.co.uk
+Cc: alan@linux.intel.com
+Link: https://lkml.kernel.org/r/151727420158.33451.11658324346540434635.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/include/asm/nospec-branch.h |   13 ++++---------
- arch/x86/include/asm/processor.h     |    3 +++
- arch/x86/kernel/cpu/bugs.c           |    6 ++++++
- 3 files changed, 13 insertions(+), 9 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -164,15 +164,10 @@ static inline void vmexit_fill_RSB(void)
- 
- static inline void indirect_branch_prediction_barrier(void)
- {
--	asm volatile(ALTERNATIVE("",
--				 "movl %[msr], %%ecx\n\t"
--				 "movl %[val], %%eax\n\t"
--				 "movl $0, %%edx\n\t"
--				 "wrmsr",
--				 X86_FEATURE_USE_IBPB)
--		     : : [msr] "i" (MSR_IA32_PRED_CMD),
--			 [val] "i" (PRED_CMD_IBPB)
--		     : "eax", "ecx", "edx", "memory");
-+	alternative_input("",
-+			  "call __ibp_barrier",
-+			  X86_FEATURE_USE_IBPB,
-+			  ASM_NO_INPUT_CLOBBER("eax", "ecx", "edx", "memory"));
- }
- 
- #endif /* __ASSEMBLY__ */
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -971,4 +971,7 @@ bool xen_set_default_idle(void);
- 
- void stop_this_cpu(void *dummy);
- void df_debug(struct pt_regs *regs, long error_code);
-+
-+void __ibp_barrier(void);
-+
- #endif /* _ASM_X86_PROCESSOR_H */
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -311,3 +311,9 @@ ssize_t cpu_show_spectre_v2(struct devic
- 		       spectre_v2_module_string());
+@@ -297,7 +297,7 @@ ssize_t cpu_show_spectre_v1(struct devic
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
+ 		return sprintf(buf, "Not affected\n");
+-	return sprintf(buf, "Vulnerable\n");
++	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
  }
- #endif
-+
-+void __ibp_barrier(void)
-+{
-+	__wrmsr(MSR_IA32_PRED_CMD, PRED_CMD_IBPB, 0);
-+}
-+EXPORT_SYMBOL_GPL(__ibp_barrier);
+ 
+ ssize_t cpu_show_spectre_v2(struct device *dev,
