@@ -1,88 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753193AbeBEQtq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 11:49:46 -0500
-Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:56083 "EHLO
-        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752986AbeBEQth (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 11:49:37 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2F/AAADinhamGOa6ERdGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQngQAoCoNbmFKCAokTkE0KhTsCGoIzWBQBAQEBAQEBAQIBAhA?=
- =?us-ascii?q?BAQEBAQgLCwYoL4I4IoJKAQEBBCMRRQwEAgEIEQQBAQECAiMDAgICHyUBCAgCB?=
- =?us-ascii?q?AENBQiKFQMVvzSCJ4c2DYExgXgBAQEBAQEBAQEBAQEBAQEBAQEBAQEdgQ+DW4I?=
- =?us-ascii?q?Vgz+DLoJrRASBdhAjgl2CZQWjZz6QFVWEfoJKkXaONIlCgTw2gXNwgxiCZSWBb?=
- =?us-ascii?q?XiNX4EXAQEB?=
-X-IPAS-Result: =?us-ascii?q?A2F/AAADinhamGOa6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?ngQAoCoNbmFKCAokTkE0KhTsCGoIzWBQBAQEBAQEBAQIBAhABAQEBAQgLCwYoL?=
- =?us-ascii?q?4I4IoJKAQEBBCMRRQwEAgEIEQQBAQECAiMDAgICHyUBCAgCBAENBQiKFQMVvzS?=
- =?us-ascii?q?CJ4c2DYExgXgBAQEBAQEBAQEBAQEBAQEBAQEBAQEdgQ+DW4IVgz+DLoJrRASBd?=
- =?us-ascii?q?hAjgl2CZQWjZz6QFVWEfoJKkXaONIlCgTw2gXNwgxiCZSWBbXiNX4EXAQEB?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.172
-X-IronPort-AV: E=Sophos;i="5.46,465,1511848800";
-   d="scan'208";a="125730741"
-X-DLP: DLP_GlobalPCIDSS
-To: <andy.shevchenko@gmail.com>, <pali.rohar@gmail.com>
-CC: <dvhart@infradead.org>, <linux-kernel@vger.kernel.org>,
-        <platform-driver-x86@vger.kernel.org>
-Subject: RE: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap
- rather than globally
-Thread-Topic: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap
- rather than globally
-Thread-Index: AQHTnbEBZ5a/3jHsuUK3gXwyW5b5oKOUseSAgAFVFtA=
-Date: Mon, 5 Feb 2018 16:49:35 +0000
-Message-ID: <9b01161fb81043b79cf9ade8ec348fff@ausx13mpc120.AMER.DELL.COM>
-References: <1517420855-19374-1-git-send-email-mario.limonciello@dell.com>
- <20180204120922.fds52i22griw2h6e@pali>
- <CAHp75VcnDKP=kNPh7pU1v_f0+oP64ByKAOmkZzXNUVaXg=wDSg@mail.gmail.com>
-In-Reply-To: <CAHp75VcnDKP=kNPh7pU1v_f0+oP64ByKAOmkZzXNUVaXg=wDSg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
+        id S1753314AbeBEQuD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 11:50:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752986AbeBEQtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 11:49:55 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0703821734
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 5 Feb 2018 11:49:52 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Adam Borowski <kilobyte@angband.pl>
+Cc: "Tobin C. Harding" <me@tobin.cc>, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
+Message-ID: <20180205114952.6af99dff@gandalf.local.home>
+In-Reply-To: <20180205152218.hxgozi67zka4hgkf@angband.pl>
+References: <20180204174521.21383-1-kilobyte@angband.pl>
+        <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
+        <20180205100305.GO29988@eros>
+        <20180205152218.hxgozi67zka4hgkf@angband.pl>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w15GoFTJ022361
 
-> -----Original Message-----
-> From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
-> Sent: Sunday, February 4, 2018 8:28 AM
-> To: Pali Rohár <pali.rohar@gmail.com>
-> Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; Darren Hart
-> <dvhart@infradead.org>; LKML <linux-kernel@vger.kernel.org>; Platform Driver
-> <platform-driver-x86@vger.kernel.org>
-> Subject: Re: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap rather
-> than globally
-> 
-> On Sun, Feb 4, 2018 at 2:09 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
-> > On Wednesday 31 January 2018 11:47:35 Mario Limonciello wrote:
-> >> There is no longer a need for the buffer to be defined in
-> >> first 4GB physical address space.
-> >>
-> >> Furthermore there may be race conditions with multiple different functions
-> >> working on a module wide buffer causing incorrect results.
-> >>
-> >> Fixes: 549b4930f057658dc50d8010e66219233119a4d8
-> 
-> He-h, I had to notice this earlier...
-> 
-> > Ok, you can add my:
-> > Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
-> 
-> Thanks and sorry, Pali, it's in for-next already, can't rebase.
+On Mon, 5 Feb 2018 16:22:19 +0100
+Adam Borowski <kilobyte@angband.pl> wrote:
 
-Andy,
-Since it's already in for-next it's probably too late to add the stable CC too right?
+> My change touches %px only, where your concern doesn't apply.
+> 
+> You're right, though, when it comes to %pK:
+>     printk("%%pK: %pK, %%px: %px\n", 0, 0);
+> says
+>     %pK: 00000000ba8bdc0a, %px: 0000000000000000
+> 
+> So what should we do?  Avoid hashing 0?  Print a special value?
 
-So what's the proper time now to send this to @stable?  And should I just forward existing
-patch?
+My personal opinion is that NULL should stay NULL and not be hashed.
+What security issue could be leaked by a NULL? I'm not a security
+person, that's a real question.
 
-Thanks,
+-- Steve
