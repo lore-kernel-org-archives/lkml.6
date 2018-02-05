@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753945AbeBESvd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 13:51:33 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:15450 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753657AbeBESr6 (ORCPT
+        id S1753839AbeBESvo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 13:51:44 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:23891 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753636AbeBESr6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 5 Feb 2018 13:47:58 -0500
 X-IronPort-AV: E=Sophos;i="5.46,465,1511827200";
-   d="scan'208";a="706879261"
+   d="scan'208";a="330725241"
 From: KarimAllah Ahmed <karahmed@amazon.de>
 To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc: KarimAllah Ahmed <karahmed@amazon.de>,
         Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [RFC 04/12] KVM/VMX: Use the new host mapping API for pi_desc_page
-Date: Mon,  5 Feb 2018 19:47:23 +0100
-Message-Id: <1517856451-2932-5-git-send-email-karahmed@amazon.de>
+Subject: [RFC 01/12] KVM: Introduce helper functions to map/unmap guest memory
+Date: Mon,  5 Feb 2018 19:47:20 +0100
+Message-Id: <1517856451-2932-2-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517856451-2932-1-git-send-email-karahmed@amazon.de>
 References: <1517856451-2932-1-git-send-email-karahmed@amazon.de>
@@ -27,13 +27,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For nested guests the pi_desc_page was mapped to the host kernel using
-kvm_vcpu_gpa_to_page which assumes that all guest memory is backed by a
-"struct page". This breaks guests that have their memory outside the kernel
-control.
-
-Switch to the new host mapping API which takes care of this use-case as
-well.
+Introduce helper functions to map and unmap guest memory into host kernel
+memory. These helper functions support mapping guest memory both that are
+managed by the host kernel (i.e. have a "struct page") and the ones that
+are not managed by the kernel (i.e. does not have a "struct page").
 
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
@@ -41,97 +38,125 @@ Cc: kvm@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 ---
- arch/x86/kvm/vmx.c | 40 ++++++++++++++++++----------------------
- 1 file changed, 18 insertions(+), 22 deletions(-)
+ include/linux/kvm_host.h | 18 ++++++++++++++
+ virt/kvm/kvm_main.c      | 62 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 6bd0c45..40d73f4 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -453,7 +453,7 @@ struct nested_vmx {
- 	 */
- 	struct kvm_host_mapping apic_access_mapping;
- 	struct kvm_host_mapping virtual_apic_mapping;
--	struct page *pi_desc_page;
-+	struct kvm_host_mapping pi_desc_mapping;
- 	struct pi_desc *pi_desc;
- 	bool pi_pending;
- 	u16 posted_intr_nv;
-@@ -7501,12 +7501,11 @@ static void free_nested(struct vcpu_vmx *vmx)
- 	/* Unpin physical memory we referred to in the vmcs02 */
- 	if (vmx->nested.apic_access_mapping.pfn)
- 		kvm_release_host_mapping(&vmx->nested.apic_access_mapping, true);
-+
- 	if (vmx->nested.virtual_apic_mapping.pfn)
- 		kvm_release_host_mapping(&vmx->nested.virtual_apic_mapping, true);
--	if (vmx->nested.pi_desc_page) {
--		kunmap(vmx->nested.pi_desc_page);
--		kvm_release_page_dirty(vmx->nested.pi_desc_page);
--		vmx->nested.pi_desc_page = NULL;
-+	if (vmx->nested.pi_desc_mapping.pfn) {
-+		kvm_release_host_mapping(&vmx->nested.pi_desc_mapping, true);
- 		vmx->nested.pi_desc = NULL;
- 	}
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 6bdd4b9..45d2854 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -204,6 +204,12 @@ enum {
+ 	READING_SHADOW_PAGE_TABLES,
+ };
  
-@@ -10041,7 +10040,6 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu,
- 					struct vmcs12 *vmcs12)
++struct kvm_host_mapping {
++	struct page *page;
++	void *kaddr;
++	kvm_pfn_t pfn;
++};
++
+ /*
+  * Sometimes a large or cross-page mmio needs to be broken up into separate
+  * exits for userspace servicing.
+@@ -700,6 +706,10 @@ struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu);
+ struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn_t gfn);
+ kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn);
+ kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn);
++bool kvm_vcpu_gfn_to_host_mapping(struct kvm_vcpu *vcpu, gfn_t gfn,
++				  struct kvm_host_mapping *mapping,
++				  bool kernel_access);
++void kvm_release_host_mapping(struct kvm_host_mapping *mapping, bool dirty);
+ struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn);
+ unsigned long kvm_vcpu_gfn_to_hva(struct kvm_vcpu *vcpu, gfn_t gfn);
+ unsigned long kvm_vcpu_gfn_to_hva_prot(struct kvm_vcpu *vcpu, gfn_t gfn, bool *writable);
+@@ -990,6 +1000,14 @@ static inline hpa_t pfn_to_hpa(kvm_pfn_t pfn)
+ 	return (hpa_t)pfn << PAGE_SHIFT;
+ }
+ 
++static inline bool kvm_vcpu_gpa_to_host_mapping(struct kvm_vcpu *vcpu, gpa_t gpa,
++						struct kvm_host_mapping *mapping,
++						bool kernel_access)
++{
++	return kvm_vcpu_gfn_to_host_mapping(vcpu, gpa_to_gfn(gpa), mapping,
++					    kernel_access);
++}
++
+ static inline struct page *kvm_vcpu_gpa_to_page(struct kvm_vcpu *vcpu,
+ 						gpa_t gpa)
  {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
--	struct page *page;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 210bf82..2b9f93d 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1653,6 +1653,68 @@ struct page *gfn_to_page(struct kvm *kvm, gfn_t gfn)
+ }
+ EXPORT_SYMBOL_GPL(gfn_to_page);
  
- 	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES)) {
- 		/*
-@@ -10097,24 +10095,22 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu,
- 	}
- 
- 	if (nested_cpu_has_posted_intr(vmcs12)) {
--		if (vmx->nested.pi_desc_page) { /* shouldn't happen */
--			kunmap(vmx->nested.pi_desc_page);
--			kvm_release_page_dirty(vmx->nested.pi_desc_page);
--			vmx->nested.pi_desc_page = NULL;
--		}
--		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->posted_intr_desc_addr);
--		if (is_error_page(page))
-+		if (vmx->nested.pi_desc_mapping.pfn) /* shouldn't happen */
-+			kvm_release_host_mapping(&vmx->nested.pi_desc_mapping, true);
++bool kvm_vcpu_gfn_to_host_mapping(struct kvm_vcpu *vcpu, gfn_t gfn,
++				  struct kvm_host_mapping *mapping,
++				  bool kernel_access)
++{
++	void *kaddr = NULL;
++	kvm_pfn_t pfn;
++	struct page *page = NULL;
 +
-+		if (!kvm_vcpu_gpa_to_host_mapping(vcpu, vmcs12->posted_intr_desc_addr,
-+						  &vmx->nested.pi_desc_mapping, true))
- 			return;
--		vmx->nested.pi_desc_page = page;
--		vmx->nested.pi_desc = kmap(vmx->nested.pi_desc_page);
++	pfn = kvm_vcpu_gfn_to_pfn(vcpu, gfn);
 +
-+		vmx->nested.pi_desc = vmx->nested.pi_desc_mapping.kaddr;
- 		vmx->nested.pi_desc =
- 			(struct pi_desc *)((void *)vmx->nested.pi_desc +
- 			(unsigned long)(vmcs12->posted_intr_desc_addr &
- 			(PAGE_SIZE - 1)));
- 		vmcs_write64(POSTED_INTR_DESC_ADDR,
--			page_to_phys(vmx->nested.pi_desc_page) +
--			(unsigned long)(vmcs12->posted_intr_desc_addr &
--			(PAGE_SIZE - 1)));
-+			     (vmx->nested.pi_desc_mapping.pfn << PAGE_SHIFT) +
-+			     (unsigned long)(vmcs12->posted_intr_desc_addr &
-+					     (PAGE_SIZE - 1)));
- 	}
- 	if (cpu_has_vmx_msr_bitmap() &&
- 	    nested_cpu_has(vmcs12, CPU_BASED_USE_MSR_BITMAPS) &&
-@@ -11675,12 +11671,12 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
- 	/* Unpin physical memory we referred to in vmcs02 */
- 	if (vmx->nested.apic_access_mapping.pfn)
- 		kvm_release_host_mapping(&vmx->nested.apic_access_mapping, true);
++	if (pfn_valid(pfn)) {
++		page = kvm_pfn_to_page(pfn);
++		if (is_error_page(page))
++			return false;
 +
- 	if (vmx->nested.virtual_apic_mapping.pfn)
- 		kvm_release_host_mapping(&vmx->nested.virtual_apic_mapping, true);
--	if (vmx->nested.pi_desc_page) {
--		kunmap(vmx->nested.pi_desc_page);
--		kvm_release_page_dirty(vmx->nested.pi_desc_page);
--		vmx->nested.pi_desc_page = NULL;
++		if (kernel_access) {
++			kaddr = kmap(page);
++			if (!kaddr)
++				return false;
++		}
 +
-+	if (vmx->nested.pi_desc_mapping.pfn) {
-+		kvm_release_host_mapping(&vmx->nested.pi_desc_mapping, true);
- 		vmx->nested.pi_desc = NULL;
- 	}
- 
++		mapping->kaddr = kaddr;
++		mapping->page = page;
++		mapping->pfn = pfn;
++		return true;
++	}
++
++	kaddr = memremap(pfn << PAGE_SHIFT, PAGE_SIZE, MEMREMAP_WB);
++	if (!kaddr)
++		return false;
++
++	mapping->page = NULL;
++	mapping->kaddr = kaddr;
++	mapping->pfn = pfn;
++
++	return true;
++}
++EXPORT_SYMBOL_GPL(kvm_vcpu_gfn_to_kaddr);
++
++void kvm_release_host_mapping(struct kvm_host_mapping *mapping, bool dirty)
++{
++	if (mapping->page) {
++		if (mapping->kaddr)
++			kunmap(mapping->page);
++
++		if (dirty)
++			kvm_release_page_dirty(mapping->page);
++		else
++			kvm_release_page_clean(mapping->page);
++	} else {
++		if (mapping->kaddr)
++			memunmap(mapping->kaddr);
++
++		if (dirty)
++			kvm_release_pfn_dirty(mapping->pfn);
++		else
++			kvm_release_pfn_clean(mapping->pfn);
++	}
++
++	memset(mapping, 0, sizeof(*mapping));
++}
++
+ struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn)
+ {
+ 	kvm_pfn_t pfn;
 -- 
 2.7.4
