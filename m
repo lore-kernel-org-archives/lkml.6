@@ -1,69 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeBEEHn (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 23:07:43 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:16813 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751979AbeBEEHj (ORCPT
+        id S1752422AbeBEEPc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 23:15:32 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:33885 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752166AbeBEEPY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 23:07:39 -0500
-X-UUID: 7b2c3e2a3e994417a2ad146de51fef4b-20180205
-Message-ID: <1517803655.1173.12.camel@mtkswgap22>
-Subject: Re: [PATCH v2 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
- device
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, Garlic Tseng <garlic.tseng@mediatek.com>
-Date: Mon, 5 Feb 2018 12:07:35 +0800
-In-Reply-To: <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
-         <d6669277f5232446b4798a6b724074b18d5c21aa.1515639336.git.ryder.lee@mediatek.com>
-         <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Sun, 4 Feb 2018 23:15:24 -0500
+X-Google-Smtp-Source: AH8x224xF/OS3q8cL7+TkXtreB+Dz9JIA/jTr1QSJbkqfEKu4JJ18hnkbe2kuNt8vMER0z12DC3BDA4OAzR1CuXl6l8=
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
+References: <20180205012146.23981-1-ulfalizer@gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Mon, 5 Feb 2018 05:15:23 +0100
+Message-ID: <CAFkk2KQ89ZZJEaOi-Z1FbZVVgJJdqc1+0VUeptiQ9SSam=2yRA@mail.gmail.com>
+Subject: Re: [PATCH 00/20] Remove references to undefined symbols and fix two
+ potential bugs
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hch@lst.de
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        tfiga@chromium.org, paul.burton@mips.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
+        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
+        mgorman@techsingularity.net, mina86@mina86.com, robh@kernel.org,
+        sboyd@codeaurora.org, paulus@ozlabs.org, will.deacon@arm.com,
+        Tony Lindgren <tony@atomide.com>, Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-02-03 at 15:26 +0100, Matthias Brugger wrote:
-> 
-> On 01/31/2018 08:42 AM, Ryder Lee wrote:
-> > As the new MFD parent is in place, switch probing method to adapt it.
-> > 
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/clk-mt7622-aud.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-> > index 13f752d..8c18536 100644
-> > --- a/drivers/clk/mediatek/clk-mt7622-aud.c
-> > +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-> > @@ -142,11 +142,12 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
-> >  {
-> >  	struct clk_onecell_data *clk_data;
-> >  	struct device_node *node = pdev->dev.of_node;
-> > +	struct device_node *pnode = pdev->dev.parent->of_node;
-> >  	int r;
-> >  
-> >  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
-> >  
-> > -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-> > +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
-> 
-> We will need a fallback here for older device tree bindings.
-> 
-> Regards,
-> Matthias
+On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> Hello,
+>
+> This patchset fixes most references to globally undefined symbols in Kconfig
+> files, as reported by the
+> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+> script. I will send emails in reply to the patchset for some cases where I'm
+> not sure what the proper fix is.
+>
+> All of the fixes are independent. I just created a patchset to track them more
+> easily.
+>
+> Summary of changes:
+>
+>  - Commits 1 and 2 fix what looks like potential bugs: A broken (intended)
+>    select of PL310_ERRATA_753970 for ARM/mvebu, and a misspelled dependency on
+>    PPC_PSERIES in KVM/PPC.
+>
+>  - Commits 3-5 remove leftover AVR32 stuff.
+>
+>  - Commits 6 and 7 remove some selects of removed symbols from riscv.
+>
+>  - Commits 8-17 remove various references to removed symbols.
+>
+>  - Commits 18-20 fix some (harmless) malformed defaults.
+>
+> Ulf Magnusson (20):
+>   ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
+>   KVM: PPC: Book3S PR: Fix broken select due to misspelling
+>   kconfig: Remove leftover references to AVR32 symbol
+>   misc: atmel: Remove CPU_AT32AP700X (AVR32) reference
+>   rtc: at32ap700x: Remove PLATFORM_AT32AP dependency
+>   riscv: Remove ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE select
+>   riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
+>   s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select
+>   clk: sunxi-ng: Remove SUNXI_CCU_* selects
+>   lib/Kconfig: Remove leftover select of GENERIC_IO
+>   usb: gadget: udc: Remove USB_GADGET_DUALSPEED select
+>   ARM: debug: Remove ARCH_MSM dep. from UNCOMPRESS_INCLUDE
+>   ore: Remove PNFS_OBJLAYOUT dependency
+>   iio: gyro: mpu3050: Remove INPUT_MPU3050 dep. from I2C
+>   phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB
+>   auxdisplay: img-ascii-lcd: Remove MIPS_SEAD3 dep.
+>   media: sec: Remove PLAT_S5P dependency
+>   iwlwifi: fix malformed CONFIG_IWLWIFI_PCIE_RTPM default
+>   ARC: Fix malformed ARC_EMUL_UNALIGNED default
+>   x86/PCI: VMD: Fix malformed default
+>
+>  arch/arc/Kconfig                           |  1 -
+>  arch/arm/Kconfig.debug                     |  2 +-
+>  arch/arm/mach-mvebu/Kconfig                |  4 ++--
+>  arch/powerpc/kvm/Kconfig                   |  2 +-
+>  arch/riscv/Kconfig                         |  2 --
+>  arch/s390/Kconfig                          |  1 -
+>  drivers/auxdisplay/Kconfig                 |  2 +-
+>  drivers/clk/sunxi-ng/Kconfig               |  7 -------
+>  drivers/cpufreq/Kconfig                    | 10 ----------
+>  drivers/iio/gyro/Kconfig                   |  1 -
+>  drivers/media/platform/Kconfig             |  2 +-
+>  drivers/misc/Kconfig                       |  1 -
+>  drivers/net/wireless/intel/iwlwifi/Kconfig |  1 -
+>  drivers/pci/host/Kconfig                   |  1 -
+>  drivers/phy/samsung/Kconfig                |  2 +-
+>  drivers/pwm/Kconfig                        |  2 +-
+>  drivers/rtc/Kconfig                        |  2 +-
+>  drivers/spi/Kconfig                        |  2 +-
+>  drivers/usb/gadget/udc/Kconfig             |  1 -
+>  drivers/video/console/Kconfig              |  2 +-
+>  fs/exofs/Kconfig.ore                       |  2 +-
+>  lib/Kconfig                                |  1 -
+>  22 files changed, 12 insertions(+), 39 deletions(-)
+>
+> --
+> 2.14.1
+>
 
-Up to now, I didn't see both driver and bindings are used anywhere.
-Should I still care about that?
+Another one that looks like a potential bug:
 
-Thanks.
+b49efd762482 ("dma-mapping: move dma_mark_clean to dma-direct.h")
+selects ARCH_HAS_DMA_MARK_CLEAN for ia64 but never defines it. It's
+used in include/linux/dma-direct.h:
+
+  #ifdef CONFIG_ARCH_HAS_DMA_MARK_CLEAN
+  void dma_mark_clean(void *addr, size_t size);
+  #else
+  static inline void dma_mark_clean(void *addr, size_t size)
+  {
+  }
+  #endif /* CONFIG_ARCH_HAS_DMA_MARK_CLEAN */
+
+Cheers,
+Ulf
