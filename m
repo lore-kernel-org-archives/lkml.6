@@ -1,94 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752851AbeBELK1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 06:10:27 -0500
-Received: from outbound-smtp20.blacknight.com ([46.22.139.247]:48403 "EHLO
-        outbound-smtp20.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752498AbeBELKU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 06:10:20 -0500
-Date: Mon, 5 Feb 2018 11:10:18 +0000
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>, Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] sched/fair: Use a recently used CPU as an idle
- candidate and the basis for SIS
-Message-ID: <20180205111018.pwm7nlt6rgulyfbt@techsingularity.net>
-References: <20180130104555.4125-1-mgorman@techsingularity.net>
- <20180201091104.GW2269@hirez.programming.kicks-ass.net>
- <1517491092.18051.52.camel@linux.intel.com>
- <2447536.u3g27UoP4q@aspire.rjw.lan>
- <1517583264.18051.60.camel@linux.intel.com>
- <20180202194801.mhvuwzbz6pauf63f@techsingularity.net>
- <1517601697.83171.361.camel@linux.intel.com>
+        id S1752922AbeBELLV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 06:11:21 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5173 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752271AbeBELLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 06:11:15 -0500
+Subject: Re: [PATCH 1/2] f2fs: enable to gc page whose inode already atomic
+ commit
+To: Yunlong Song <yunlong.song@huawei.com>, Chao Yu <chao@kernel.org>,
+        <jaegeuk@kernel.org>, <yunlong.song@icloud.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+ <a094cd40-d042-2a43-4e9a-e34c31e61d28@kernel.org>
+ <f4e7b403-4945-a7f9-6bdc-214dc61c9160@huawei.com>
+ <312d70f3-b1ae-9ced-44cb-fde83de362ff@huawei.com>
+ <b39adaf3-f727-e6ad-ef0d-4789cdc38de5@huawei.com>
+ <f3c1c01d-3d82-5546-7aec-73c2e69cd17a@huawei.com>
+ <3182ade9-4153-9e47-f8a5-5c87371a3900@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <6716d2f9-ee89-0f30-2332-5aee48530a12@huawei.com>
+Date: Mon, 5 Feb 2018 19:10:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <1517601697.83171.361.camel@linux.intel.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <3182ade9-4153-9e47-f8a5-5c87371a3900@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 12:01:37PM -0800, Srinivas Pandruvada wrote:
-> > Sure, but the lack on detection when tasks are low utilisation but
-> > still
-> > latency/throughput sensitive is problematic. Users shouldn't have to
-> > know they need to disable HWP or set performance goernor out of the
-> > box.
-> > It's only going to get worse as sockets get larger.
->
-> I am not saying that we shouldn't do anything. Can you give me some
-> workloads which you care the most?
+On 2018/2/5 17:37, Yunlong Song wrote:
 > 
-
-The proprietary workloads I'm aware of are useless to the discussion
-as they cannot be trivially reproduced and are typically only available
-under NDA. However, hints can be gotten by looking at the number of cases
-where recommended tunings limits C-states, set the performance governor,
-alter intel_pstate setpoint (if not HWP) etc.
-
-For the purposes of illustration, dbench at low thread counts does
-a reasonable job even though it's not that interesting a workload in
-general. With ext4 in particular, the journalling thread interactions
-bounce tasks around the machine and the short sleeps for IO both combine
-to have relatively low utilisation on individual CPUs. It's less pronounced
-on xfs as it bounces less due to using kworkers instead of kthreads.
-
-> > 
-> > > There are totally different way HWP is handled in client an
-> > > servers.
-> > > If you set desired all heuristics they collected will be dumped, so
-> > > they suggest don't set desired when you are in autonomous mode. If
-> > > we
-> > > really want a boost set the EPP. We know that EPP makes lots of
-> > > measurable difference.
-> > > 
-> > 
-> > Sure boosting EPP makes a difference -- it's essentially what the
-> > performance
-> > goveror does and I know that can be done by a user but it's still
-> > basically a
-> > cop-out. Default performance for low utilisation or lightly loaded
-> > machines
-> > is poor. Maybe it should be set based on the ACPI preferred profile
-> > but
-> > that information is not always available. It would be nice if *some*
-> > sort of hint about new migrations or tasks waking from IO would be
-> > desirable.
-> EPP is a range not a single value. So you don't need to make EPP=0 as a
-> performance governor. PeterZ gave me some scheduler change to
-> experiment, which can be used as hint to play with EPP. 
+>> OK, details as I explained before:
+>>
+>> atomic_commit				GC
+>> - file_write_and_wait_range
+>> 					- move_data_block
+>> 					 - f2fs_submit_page_write
+>> 					  - f2fs_update_data_blkaddr
+>> 					   - set_page_dirty
+>>   - fsync_node_pages
+>>
+>> 1. atomic writes data page #1 & update node #1
+>> 2. GC data page #2 & update node #2
+>> 3. page #1 & node #1 & #2 can be committed into nand flash before page #2 be
+>> committed.
+>>
+>> After a sudden pow-cut, database transaction will be inconsistent. So I think
+>> there will be better to exclude gc/atomic_write to each other, with a lock
+>> instead of flag checking.
+>>
 > 
+> I do not understand why this transaction is inconsistent, is it a
+> problem that page #2 is not committed into nand flash? Since normal
 
-I know EPP is a range, default from bios usually appear to be 6 or 7 but
-I didn't do much experiementation to see if there is another value that
-works better. Even if there is, the default may need to change as not many
-people even know what EPP is or how it should be tuned.
+Yes, node #2 contains newly updated LBAx of page #2, but if page #2 is not
+committed to LBAx, after recovery, page #2 's block address in node #2 will
+point to LBAx which contains random data, result in corrupted db file.
 
--- 
-Mel Gorman
-SUSE Labs
+> gc also has this problem:
+> 
+> Suppose that there is db file A, f2fs_gc moves data page #1 of db file
+> A. But if write checkpoint only commit node page #1 and then a sudden
+
+f2fs will ensure GCed data being persisted during checkpoint, so migrated page
+#1 and updated node #1 will both be committed in this checkpoint.
+
+Please check WB_DATA_TYPE macro to see how we define data type that cp
+guarantees to writeback.
+
+> power-cut happens. Data page #1 is not committed to nand flash, but
+> node page #1 is committed. Is the db transaction broken and
+> inconsistent?
+> 
+> Come back to your example, I think data page 2 of atomic file does not
+> belong to this transaction, so even node page 2 is committed, it is just
+
+If node #2 is committed only, it will be harmful to db transaction due to the
+reason I said above.
+
+Thanks,
+
+> the same problem as what I have listed above(db file A), and it does not
+> break this transaction.
+> 
+>> Thanks,
+>>
+>>>>>>
+>>>>>> So how about just using dio_rwsem[WRITE] during atomic committing to exclude
+>>>>>> GCing data block of atomic opened file?
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>>>
+>>>>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>>>>>> ---
+>>>>>>>     fs/f2fs/data.c | 5 ++---
+>>>>>>>     fs/f2fs/gc.c   | 6 ++++--
+>>>>>>>     2 files changed, 6 insertions(+), 5 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>>>>>> index 7435830..edafcb6 100644
+>>>>>>> --- a/fs/f2fs/data.c
+>>>>>>> +++ b/fs/f2fs/data.c
+>>>>>>> @@ -1580,14 +1580,13 @@ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
+>>>>>>>     		return true;
+>>>>>>>     	if (S_ISDIR(inode->i_mode))
+>>>>>>>     		return true;
+>>>>>>> -	if (f2fs_is_atomic_file(inode))
+>>>>>>> -		return true;
+>>>>>>>     	if (fio) {
+>>>>>>>     		if (is_cold_data(fio->page))
+>>>>>>>     			return true;
+>>>>>>>     		if (IS_ATOMIC_WRITTEN_PAGE(fio->page))
+>>>>>>>     			return true;
+>>>>>>> -	}
+>>>>>>> +	} else if (f2fs_is_atomic_file(inode))
+>>>>>>> +		return true;
+>>>>>>>     	return false;
+>>>>>>>     }
+>>>>>>>     
+>>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>>>> index b9d93fd..84ab3ff 100644
+>>>>>>> --- a/fs/f2fs/gc.c
+>>>>>>> +++ b/fs/f2fs/gc.c
+>>>>>>> @@ -622,7 +622,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>>>>>>>     	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>>>>>>>     		goto out;
+>>>>>>>     
+>>>>>>> -	if (f2fs_is_atomic_file(inode))
+>>>>>>> +	if (f2fs_is_atomic_file(inode) &&
+>>>>>>> +		!f2fs_is_commit_atomic_write(inode))
+>>>>>>>     		goto out;
+>>>>>>>     
+>>>>>>>     	if (f2fs_is_pinned_file(inode)) {
+>>>>>>> @@ -729,7 +730,8 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+>>>>>>>     	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>>>>>>>     		goto out;
+>>>>>>>     
+>>>>>>> -	if (f2fs_is_atomic_file(inode))
+>>>>>>> +	if (f2fs_is_atomic_file(inode) &&
+>>>>>>> +		!f2fs_is_commit_atomic_write(inode))
+>>>>>>>     		goto out;
+>>>>>>>     	if (f2fs_is_pinned_file(inode)) {
+>>>>>>>     		if (gc_type == FG_GC)
+>>>>>>>
+>>>>>>
+>>>>>> .
+>>>>>>
+>>>>>
+>>>>
+>>>>
+>>>> .
+>>>>
+>>>
+>>
+>>
+>> .
+>>
+> 
