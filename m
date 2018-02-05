@@ -1,238 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752923AbeBEMKn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:10:43 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35654 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752574AbeBEMKf (ORCPT
+        id S1752988AbeBEMK7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:10:59 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40023 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752891AbeBEMKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:10:35 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 17FE760364
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From: Can Guo <cang@codeaurora.org>
-To: subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Gilad Broner <gbroner@codeaurora.org>,
-        Can Guo <cang@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Noa Rubens <noag@codeaurora.org>,
-        Sujit Reddy Thumma <sthumma@codeaurora.org>,
-        Maya Erez <merez@codeaurora.org>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] scsi: ufs-qcom: add number of lanes per direction
-Date: Mon,  5 Feb 2018 20:02:07 +0800
-Message-Id: <20180205121021.11012-1-cang@codeaurora.org>
-X-Mailer: git-send-email 2.15.0.windows.1
+        Mon, 5 Feb 2018 07:10:41 -0500
+X-Google-Smtp-Source: AH8x226UqR9dfWfJ9Fnf0yG2Rb7u1s9mRufLKKNEj9EB/Fh1WGxDxmocNktPj3OJwUozYdULvRY89A==
+Date: Mon, 5 Feb 2018 13:10:36 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jim Mattson <jmattson@google.com>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Anthony Liguori <aliguori@amazon.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [9/8] KVM: x86: limit MSR_IA32_SPEC_CTRL access based on CPUID
+ availability
+Message-ID: <20180205121036.aevgzwoituzbtif6@gmail.com>
+References: <20180109120311.27565-10-pbonzini@redhat.com>
+ <6dc02278-7004-1794-3705-69c8cad86be4@oracle.com>
+ <CALMp9eSVC=LO-SrPkA3m6eSpgJ6X4rNCRCf3uvtJEdMG_B72cQ@mail.gmail.com>
+ <beb9f9b4-7bc0-4a3a-73c2-0828febbd06c@oracle.com>
+ <CALMp9eT6i9bhG005S5sqV-Y1RUhsc+AXE42ww8Ej+TXSjD6tEg@mail.gmail.com>
+ <1517332457.18619.132.camel@infradead.org>
+ <alpine.DEB.2.20.1801301842310.1797@nanos>
+ <75049dca-3389-9cc7-44e3-a487a797c605@redhat.com>
+ <20180205111034.ie6vbui62wx2irkl@gmail.com>
+ <1517829346.31953.146.camel@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1517829346.31953.146.camel@infradead.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gilad Broner <gbroner@codeaurora.org>
 
-Different platforms may have different number of lanes for the UFS link.
-Add parameter to device tree specifying how many lanes should be
-configured for the UFS link. And don't print err message for clocks
-that are optional, this leads to unnecessary confusion about failure.
+* David Woodhouse <dwmw2@infradead.org> wrote:
 
-Signed-off-by: Gilad Broner <gbroner@codeaurora.org>
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
+> On Mon, 2018-02-05 at 12:10 +0100, Ingo Molnar wrote:
+> > 
+> > Can this branch still be rebased, to fix the SoB chain of:
+> > 
+> >   de3a0021a606 ("KVM: nVMX: Eliminate vmcs02 pool")
+> > 
+> > ?
+> 
+> It can't. Linus pulled it already.
 
-diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-index 5357919..4cee3f9 100644
---- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-+++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-@@ -31,6 +31,9 @@ Optional properties:
- 			  defined or a value in the array is "0" then it is assumed
- 			  that the frequency is set by the parent clock or a
- 			  fixed rate clock source.
-+- lanes-per-direction:	number of lanes available per direction - either 1 or 2.
-+			Note that it is assume same number of lanes is used both directions at once.
-+			If not specified, default is 2 lanes per direction.
- 
- Note: If above properties are not defined it can be assumed that the supply
- regulators or clocks are always on.
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 4cdffa4..84d37e9 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -50,13 +50,10 @@ static int ufs_qcom_host_clk_get(struct device *dev,
- 	int err = 0;
- 
- 	clk = devm_clk_get(dev, name);
--	if (IS_ERR(clk)) {
-+	if (IS_ERR(clk))
- 		err = PTR_ERR(clk);
--		dev_err(dev, "%s: failed to get %s err %d",
--				__func__, name, err);
--	} else {
-+	else
- 		*clk_out = clk;
--	}
- 
- 	return err;
- }
-@@ -78,9 +75,11 @@ static void ufs_qcom_disable_lane_clks(struct ufs_qcom_host *host)
- 	if (!host->is_lane_clks_enabled)
- 		return;
- 
--	clk_disable_unprepare(host->tx_l1_sync_clk);
-+	if (host->tx_l1_sync_clk)
-+		clk_disable_unprepare(host->tx_l1_sync_clk);
- 	clk_disable_unprepare(host->tx_l0_sync_clk);
--	clk_disable_unprepare(host->rx_l1_sync_clk);
-+	if (host->rx_l1_sync_clk)
-+		clk_disable_unprepare(host->rx_l1_sync_clk);
- 	clk_disable_unprepare(host->rx_l0_sync_clk);
- 
- 	host->is_lane_clks_enabled = false;
-@@ -104,21 +103,21 @@ static int ufs_qcom_enable_lane_clks(struct ufs_qcom_host *host)
- 	if (err)
- 		goto disable_rx_l0;
- 
--	err = ufs_qcom_host_clk_enable(dev, "rx_lane1_sync_clk",
--		host->rx_l1_sync_clk);
--	if (err)
--		goto disable_tx_l0;
-+	if (host->hba->lanes_per_direction > 1) {
-+		err = ufs_qcom_host_clk_enable(dev, "rx_lane1_sync_clk",
-+			host->rx_l1_sync_clk);
-+		if (err)
-+			goto disable_tx_l0;
- 
--	err = ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
--		host->tx_l1_sync_clk);
--	if (err)
--		goto disable_rx_l1;
-+		/* The tx lane1 clk could be muxed, hence keep this optional */
-+		if (host->tx_l1_sync_clk)
-+			ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
-+						 host->tx_l1_sync_clk);
-+	}
- 
- 	host->is_lane_clks_enabled = true;
- 	goto out;
- 
--disable_rx_l1:
--	clk_disable_unprepare(host->rx_l1_sync_clk);
- disable_tx_l0:
- 	clk_disable_unprepare(host->tx_l0_sync_clk);
- disable_rx_l0:
-@@ -134,21 +133,34 @@ static int ufs_qcom_init_lane_clks(struct ufs_qcom_host *host)
- 
- 	err = ufs_qcom_host_clk_get(dev,
- 			"rx_lane0_sync_clk", &host->rx_l0_sync_clk);
--	if (err)
-+	if (err) {
-+		dev_err(dev, "%s: failed to get rx_lane0_sync_clk, err %d",
-+				__func__, err);
- 		goto out;
-+	}
- 
- 	err = ufs_qcom_host_clk_get(dev,
- 			"tx_lane0_sync_clk", &host->tx_l0_sync_clk);
--	if (err)
-+	if (err) {
-+		dev_err(dev, "%s: failed to get tx_lane0_sync_clk, err %d",
-+				__func__, err);
- 		goto out;
-+	}
- 
--	err = ufs_qcom_host_clk_get(dev, "rx_lane1_sync_clk",
--		&host->rx_l1_sync_clk);
--	if (err)
--		goto out;
-+	/* In case of single lane per direction, don't read lane1 clocks */
-+	if (host->hba->lanes_per_direction > 1) {
-+		err = ufs_qcom_host_clk_get(dev, "rx_lane1_sync_clk",
-+			&host->rx_l1_sync_clk);
-+		if (err) {
-+			dev_err(dev, "%s: failed to get rx_lane1_sync_clk, err %d",
-+					__func__, err);
-+			goto out;
-+		}
- 
--	err = ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
--		&host->tx_l1_sync_clk);
-+		/* The tx lane1 clk could be muxed, hence keep this optional */
-+		ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
-+					&host->tx_l1_sync_clk);
-+	}
- out:
- 	return err;
- }
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index b0ade73..b9e1ecd 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -39,6 +39,7 @@
- 
- #include <linux/async.h>
- #include <linux/devfreq.h>
-+#include <linux/of.h>
- 
- #include "ufshcd.h"
- #include "unipro.h"
-@@ -74,6 +75,8 @@
- /* Interrupt aggregation default timeout, unit: 40us */
- #define INT_AGGR_DEF_TO	0x02
- 
-+#define UFSHCD_DEFAULT_LANES_PER_DIRECTION		2
-+
- #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
- 	({                                                              \
- 		int _ret;                                               \
-@@ -5530,6 +5533,21 @@ static struct devfreq_dev_profile ufs_devfreq_profile = {
- 	.get_dev_status	= ufshcd_devfreq_get_dev_status,
- };
- 
-+static void ufshcd_init_lanes_per_dir(struct ufs_hba *hba)
-+{
-+	struct device *dev = hba->dev;
-+	int ret;
-+
-+	ret = of_property_read_u32(dev->of_node, "lanes-per-direction",
-+		&hba->lanes_per_direction);
-+	if (ret) {
-+		dev_dbg(hba->dev,
-+			"%s: failed to read lanes-per-direction, ret=%d\n",
-+			__func__, ret);
-+		hba->lanes_per_direction = UFSHCD_DEFAULT_LANES_PER_DIRECTION;
-+	}
-+}
-+
- /**
-  * ufshcd_init - Driver initialization routine
-  * @hba: per-adapter instance
-@@ -5553,6 +5571,8 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 	hba->mmio_base = mmio_base;
- 	hba->irq = irq;
- 
-+	ufshcd_init_lanes_per_dir(hba);
-+
- 	err = ufshcd_hba_init(hba);
- 	if (err)
- 		goto out_error;
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index c40a0e7..3d9bdc7 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -500,6 +500,9 @@ struct ufs_hba {
- 
- 	bool wlun_dev_clr_ua;
- 
-+	/* Number of lanes available (1 or 2) for Rx/Tx */
-+	u32 lanes_per_direction;
-+
- 	struct ufs_pa_layer_attr pwr_info;
- 	struct ufs_pwr_mode_info max_pwr_info;
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Ah, indeed, freshly so in 35277995e179 - never mind then!
+
+Thanks,
+
+	Ingo
