@@ -1,121 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752162AbeBEXTr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 18:19:47 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:33394 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752058AbeBEXTj (ORCPT
+        id S1751984AbeBEXYv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 18:24:51 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35557 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751774AbeBEXYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 18:19:39 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R401e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SxlA7uj_1517872711;
-From: Yang Shi <yang.shi@linux.alibaba.com>
-To: tglx@linutronix.de, longman@redhat.com
-Cc: yang.shi@linux.alibaba.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4 v6] lib: debugobjects: handle objects free in a batch outside the loop
-Date: Tue,  6 Feb 2018 07:18:28 +0800
-Message-Id: <1517872708-24207-5-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1517872708-24207-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1517872708-24207-1-git-send-email-yang.shi@linux.alibaba.com>
+        Mon, 5 Feb 2018 18:24:43 -0500
+X-Google-Smtp-Source: AH8x224Cqux57f3RQH0WWsedVd1Ln108rIDFZJbOJ7d/6JNsWOAjq5ZWGMwA9cB9bVBeU6Se2rmBog==
+Date: Tue, 6 Feb 2018 00:24:39 +0100
+From: Christian Brauner <christian.brauner@canonical.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>,
+        netdev@vger.kernel.org, stephen@networkplumber.org,
+        w.bumiller@proxmox.com, ebiederm@xmission.com, jbenc@redhat.com,
+        nicolas.dichtel@6wind.com, linux-kernel@vger.kernel.org,
+        dsahern@gmail.com, davem@davemloft.net
+Subject: Re: [PATCH net 1/1 v2] rtnetlink: require unique netns identifier
+Message-ID: <20180205232438.GA8695@gmail.com>
+References: <20180205155550.21432-1-christian.brauner@ubuntu.com>
+ <20180205155550.21432-2-christian.brauner@ubuntu.com>
+ <2eac607b-e847-1b21-b3cb-6a45130138ee@virtuozzo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2eac607b-e847-1b21-b3cb-6a45130138ee@virtuozzo.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are nested loops on debug objects free path, sometimes it may take
-over hundred thousands of loops, then cause soft lockup with
-!CONFIG_PREEMPT occasionally, like below:
+On Tue, Feb 06, 2018 at 12:47:46AM +0300, Kirill Tkhai wrote:
+> On 05.02.2018 18:55, Christian Brauner wrote:
+> > Since we've added support for IFLA_IF_NETNSID for RTM_{DEL,GET,SET,NEW}LINK
+> > it is possible for userspace to send us requests with three different
+> > properties to identify a target network namespace. This affects at least
+> > RTM_{NEW,SET}LINK. Each of them could potentially refer to a different
+> > network namespace which is confusing. For legacy reasons the kernel will
+> > pick the IFLA_NET_NS_PID property first and then look for the
+> > IFLA_NET_NS_FD property but there is no reason to extend this type of
+> > behavior to network namespace ids. The regression potential is quite
+> > minimal since the rtnetlink requests in question either won't allow
+> > IFLA_IF_NETNSID requests before 4.16 is out (RTM_{NEW,SET}LINK) or don't
+> > support IFLA_NET_NS_{PID,FD} (RTM_{DEL,GET}LINK) in the first place.
+> >> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > ---
+> > ChangeLog v1->v2:
+> > * return errno when the specified network namespace id is invalid
+> > * fill in struct netlink_ext_ack if the network namespace id is invalid
+> > * rename rtnl_ensure_unique_netns_attr() to rtnl_ensure_unique_netns() to
+> >   indicate that a request without any network namespace identifying attributes
+> >   is also considered valid.
+> > 
+> > ChangeLog v0->v1:
+> > * report a descriptive error to userspace via struct netlink_ext_ack
+> > * do not fail when multiple properties specifiy the same network namespace
+> > ---
+> >  net/core/rtnetlink.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 69 insertions(+)
+> > 
+> > diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+> > index 56af8e41abfc..c096c4ff9a00 100644
+> > --- a/net/core/rtnetlink.c
+> > +++ b/net/core/rtnetlink.c
+> > @@ -1951,6 +1951,59 @@ static struct net *rtnl_link_get_net_capable(const struct sk_buff *skb,
+> >  	return net;
+> >  }
+> >  
+> > +/* Verify that rtnetlink requests supporting network namespace ids
+> > + * do not pass additional properties referring to different network
+> > + * namespaces.
+> > + */
+> > +static int rtnl_ensure_unique_netns(const struct sock *sk, struct nlattr *tb[],
+> > +				    struct netlink_ext_ack *extack)
+> > +{
+> > +	int ret = -EINVAL;
+> > +	struct net *net = NULL, *unique_net = NULL;
+> > +
+> > +	/* Requests without network namespace ids have been able to specify
+> > +	 * multiple properties referring to different network namespaces so
+> > +	 * don't regress them.
+> > +	 */
+> > +	if (!tb[IFLA_IF_NETNSID])
+> > +		return 0;
+> > +
+> > +	/* Caller operates on the current network namespace. */
+> > +	if (!tb[IFLA_NET_NS_PID] && !tb[IFLA_NET_NS_FD])
+> > +		return 0;
+> > +
+> > +	unique_net = get_net_ns_by_id(sock_net(sk), nla_get_s32(tb[IFLA_IF_NETNSID]));
+> > +	if (!unique_net) {
+> > +		NL_SET_ERR_MSG(extack, "invalid network namespace id");
+> > +		return ret;
+> > +	}
+> > +
+> > +	if (tb[IFLA_NET_NS_PID]) {
+> > +		net = get_net_ns_by_pid(nla_get_u32(tb[IFLA_NET_NS_PID]));
+> > +		if (net != unique_net)
+> > +			goto on_error;
+> > +	}
+> > +
+> > +	if (tb[IFLA_NET_NS_FD]) {
+> > +		net = get_net_ns_by_fd(nla_get_u32(tb[IFLA_NET_NS_FD]));
+> > +		if (net != unique_net)
+> > +			goto on_error;
+> > +	}
+> > +
+> > +	ret = 0;
+> > +
+> > +on_error:
+> > +	put_net(unique_net);
+> > +
+> > +	if (net && !IS_ERR(net))
+> > +		put_net(net);
+> 
+> 1)When we have tb[IFLA_NET_NS_PID and tb[IFLA_NET_NS_FD] both set and pointing
+> to the same net, this function increments net::count in get_net_ns_by_pid() and
+> in get_net_ns_by_fd(), i.e. twice. But only single put_net(net) will be called.
+> So, after this function net::count will be incremented by 1, and it never will
+> die.
 
-NMI watchdog: BUG: soft lockup - CPU#15 stuck for 22s!
-[stress-ng-getde:110342]
+Thanks for spotting this, Kirill.
 
- CPU: 15 PID: 110342 Comm: stress-ng-getde Tainted: G
-E   4.9.44-003.ali3000.alios7.x86_64.debug #1
- Hardware name: Dell Inc. PowerEdge R720xd/0X6FFV, BIOS
-1.6.0 03/07/2013
+> 
+> 2)The whole approach does not seem good for me. The first reason is it's racy.
+> Even if rtnl_ensure_unique_netns() returns 0, this does not guarantees that
+> tb[IFLA_IF_NETNSID] and tb[IFLA_NET_NS_PID] will be point the same net later,
+> as the pid may die or do setns(). Racy check is worse than no check at all.
+> 
+> The second reason is after this patch get_net_ns_by_id/get_net_ns_by_pid()/
+> get_net_ns_by_fd() will be called twice: the first time is in your check
+> and the second time is where they are actually used. This is not good for
+> performance.
 
-Call Trace:
-  [<ffffffff8141177e>] debug_check_no_obj_freed+0x13e/0x220
-  [<ffffffff811f8751>] __free_pages_ok+0x1f1/0x5c0
-  [<ffffffff811fa785>] __free_pages+0x25/0x40
-  [<ffffffff812638db>] __free_slab+0x19b/0x270
-  [<ffffffff812639e9>] discard_slab+0x39/0x50
-  [<ffffffff812679f7>] __slab_free+0x207/0x270
-  [<ffffffff81269966>] ___cache_free+0xa6/0xb0
-  [<ffffffff8126c267>] qlist_free_all+0x47/0x80
-  [<ffffffff8126c5a9>] quarantine_reduce+0x159/0x190
-  [<ffffffff8126b3bf>] kasan_kmalloc+0xaf/0xc0
-  [<ffffffff8126b8a2>] kasan_slab_alloc+0x12/0x20
-  [<ffffffff81265e8a>] kmem_cache_alloc+0xfa/0x360
-  [<ffffffff812abc8f>] ? getname_flags+0x4f/0x1f0
-  [<ffffffff812abc8f>] getname_flags+0x4f/0x1f0
-  [<ffffffff812abe42>] getname+0x12/0x20
-  [<ffffffff81298da9>] do_sys_open+0xf9/0x210
-  [<ffffffff81298ede>] SyS_open+0x1e/0x20
-  [<ffffffff817d6e01>] entry_SYSCALL_64_fastpath+0x1f/0xc2
+If this is really a performance problem we can simply fix this by
+performing the check when the target network namespace is retrieved in
+each request. The intention for doing it in one function at the
+beginning of each request was to make it generic and easily
+understandable.
 
-The code path might be called in either atomic or non-atomic context,
-and in_atomic() can't tell if current context is atomic or not on
-!PREEMPT kernel, so cond_resched() can't be used to prevent from the
-softlockup.
+> 
+> What is the problem people pass several different tb[xxx] in one call? We
+> may just describe the order of tb[xxx] in man page and their priorities,
+> and ignore the rest after the first not zero tb[xxx] is found, and do that
+> in the place, where net from tb[xxx] in actually used. This is the thing
+> we already do.
+> 
+> Comparing to classic Linux interface such as syscalls, it's usual behavior
+> for them to ignore one argument, when another is set. Nobody confuses.
 
-Utilize the global free list to defer objects free outside of the loop in
-a batch to save some cycles in the loop.
+>From what I gather from recent discussions I had here using pids and
+fds to perform operations on network namespaces in netlink requests is
+not the future. Specifically, using pids and fds will not be extended to
+existing or future requests that do not already support it.
 
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Waiman Long <longman@redhat.com>
----
- lib/debugobjects.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+It also very much smells like a security liability if what you've
+outlined above is true: a user sends a request with a pid and the task
+dies and the pid gets recycled. Now, we can't easily fix this by simply
+ignoring pids and fds from here on since this would likely break a bunch
+of userspace programs but we can ensure that if a network namespace
+identifier is passed that no other way of retrieving the target network
+namespace is passed. Especially with requests that already support pids
+and fds. It's either that or reversing the order meaning that if a
+network namespace identifier is passed then it should take precedence
+over the other identifiers. Furthermore, this would also clearly
+indicate that netns ids are the preferred way to perform operations on
+network namespaces via netlink requests.
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 09f2469..b1b42bd 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -776,12 +776,12 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
- {
- 	unsigned long flags, oaddr, saddr, eaddr, paddr, chunks;
- 	struct hlist_node *tmp;
--	HLIST_HEAD(freelist);
- 	struct debug_obj_descr *descr;
- 	enum debug_obj_state state;
- 	struct debug_bucket *db;
- 	struct debug_obj *obj;
- 	int cnt, max_loops = 0;
-+	bool work = false;
- 
- 	saddr = (unsigned long) address;
- 	eaddr = saddr + size;
-@@ -812,18 +812,12 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
- 				goto repeat;
- 			default:
- 				hlist_del(&obj->node);
--				hlist_add_head(&obj->node, &freelist);
-+				work |= __free_object(obj);
- 				break;
- 			}
- 		}
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
- 
--		/* Now free them */
--		hlist_for_each_entry_safe(obj, tmp, &freelist, node) {
--			hlist_del(&obj->node);
--			free_object(obj);
--		}
--
- 		if (cnt > debug_objects_maxchain)
- 			debug_objects_maxchain = cnt;
- 
-@@ -832,6 +826,10 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
- 
- 	if (max_loops > debug_objects_maxloops)
- 		debug_objects_maxloops = max_loops;
-+
-+	/* Schedule work to move free objs to pool list */
-+	if (work)
-+		schedule_work(&debug_obj_work);
- }
- 
- void debug_check_no_obj_freed(const void *address, unsigned long size)
--- 
-1.8.3.1
+I also do not think that your suggestion of making guarantees in what
+order additional netlink properties are evaluated is a good one. I don't
+think we want to give userspace the impression that sticking a pid, fd,
+and netnsid into the same netlink request is something that we actively
+support.
+
+What is certainly a good point is that if pids and fds are as you said
+inherently racy then we shouldn't perform the check but do what my
+original patch did and simply refuse to combine netns ids with pids
+and/or fds.
+
+Thanks for the comments!
+Christian
