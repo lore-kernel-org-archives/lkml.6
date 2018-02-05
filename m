@@ -1,128 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752422AbeBEEPc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 23:15:32 -0500
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:33885 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752166AbeBEEPY (ORCPT
+        id S1752506AbeBEEPw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 23:15:52 -0500
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:51384 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752448AbeBEEPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 23:15:24 -0500
-X-Google-Smtp-Source: AH8x224xF/OS3q8cL7+TkXtreB+Dz9JIA/jTr1QSJbkqfEKu4JJ18hnkbe2kuNt8vMER0z12DC3BDA4OAzR1CuXl6l8=
+        Sun, 4 Feb 2018 23:15:44 -0500
+X-Google-Smtp-Source: AH8x2265V55e03b5Cjdvt0aNigB0aT8m3H2vTIsYOp325bGFKccv7/v1y57pL7ii/Ar6zU/aNndIBlN1pLHipMpNtL4=
 MIME-Version: 1.0
-In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
-References: <20180205012146.23981-1-ulfalizer@gmail.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Mon, 5 Feb 2018 05:15:23 +0100
-Message-ID: <CAFkk2KQ89ZZJEaOi-Z1FbZVVgJJdqc1+0VUeptiQ9SSam=2yRA@mail.gmail.com>
-Subject: Re: [PATCH 00/20] Remove references to undefined symbols and fix two
- potential bugs
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hch@lst.de
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        tfiga@chromium.org, paul.burton@mips.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
-        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
-        mgorman@techsingularity.net, mina86@mina86.com, robh@kernel.org,
-        sboyd@codeaurora.org, paulus@ozlabs.org, will.deacon@arm.com,
-        Tony Lindgren <tony@atomide.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        linux-riscv@lists.infradead.org
+In-Reply-To: <80377ECBC5453840BA8C7155328B5377D3410B5D@RTITMBSV06.realtek.com.tw>
+References: <CAB4CAweXip+hDprJc6biwR=UtGF1xu-06HdB4ddzg9UZGL+Ngw@mail.gmail.com>
+ <CAB4CAwf8zFc8DtzjceATaZbrHJakioPHp7MPb+h7Sa1ySB-_RQ@mail.gmail.com>
+ <CAB4CAwfXF3RSiAMsjOe5RkAT8dh__A3677XuDwxwrarxdrZpZQ@mail.gmail.com>
+ <80377ECBC5453840BA8C7155328B5377D340AC54@RTITMBSV06.realtek.com.tw>
+ <CAB4CAwdRgjT+rk9WJbZzu7Ltw8CL3oAM1VeWvNz_uWYvY1Pmrg@mail.gmail.com>
+ <CAB4CAwd=_J42gLoet1EQBws6ztCidqtdQrKGQ0hmx3BGzhZijg@mail.gmail.com> <80377ECBC5453840BA8C7155328B5377D3410B5D@RTITMBSV06.realtek.com.tw>
+From: Chris Chiu <chiu@endlessm.com>
+Date: Mon, 5 Feb 2018 12:15:42 +0800
+Message-ID: <CAB4CAwftpXnue4-4N3SjcuTUNFCs527Rb7uLWtvnE=zk5c4ezg@mail.gmail.com>
+Subject: Re: r8169 take too long to complete driver initialization
+To: Hau <hau@realtek.com>
+Cc: nic_swsd <nic_swsd@realtek.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
-> Hello,
+On Fri, Feb 2, 2018 at 7:49 PM, Hau <hau@realtek.com> wrote:
 >
-> This patchset fixes most references to globally undefined symbols in Kconfig
-> files, as reported by the
-> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-> script. I will send emails in reply to the patchset for some cases where I'm
-> not sure what the proper fix is.
+>> -----Original Message-----
+>> From: Chris Chiu [mailto:chiu@endlessm.com]
+>> Sent: Friday, February 2, 2018 10:03 AM
+>> To: Hau <hau@realtek.com>
+>> Cc: nic_swsd <nic_swsd@realtek.com>; netdev@vger.kernel.org; Linux
+>> Kernel <linux-kernel@vger.kernel.org>; Linux Upstreaming Team
+>> <linux@endlessm.com>
+>> Subject: Re: r8169 take too long to complete driver initialization
+>>
+>> On Tue, Jan 30, 2018 at 8:07 PM, Chris Chiu <chiu@endlessm.com> wrote:
+>> > On Mon, Jan 29, 2018 at 11:24 PM, Hau <hau@realtek.com> wrote:
+>> >> Hi Chris,
+>> >>
+>> >> Could you test following patch?
+>> >>
+>> >>  DECLARE_RTL_COND(rtl_ocp_tx_cond)
+>> >>  {
+>> >>         void __iomem *ioaddr = tp->mmio_addr;
+>> >>
+>> >> -       return RTL_R8(IBISR0) & 0x02;
+>> >> +       return RTL_R8(IBISR0) & 0x20;
+>> >>  }
+>> >>
+>> >>  static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)  {
+>> >>         void __iomem *ioaddr = tp->mmio_addr;
+>> >>
+>> >>         RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
+>> >> -       rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
+>> >> +       rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
+>> >>         RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
+>> >>         RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);  }
+>> >>
+>> >> Thanks.
+>> >>
+>> >
+>> > Yes. It completes the initialization in 70 ms. So it means the
+>> > rtl_ocp_tx_cond are waiting for incorrect register bit? Can you help work
+>> out a patch for this?
+>> >
+>> > Chris
+>> >
+>> >
+>>
+>> Gentle ping,
+>> cheers.
+>>
+>> Chris
+>>
 >
-> All of the fixes are independent. I just created a patchset to track them more
-> easily.
+> I have submitted the patch to kernel team.
+> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=086ca23d03c0d2f4088f472386778d293e15c5f6
 >
-> Summary of changes:
->
->  - Commits 1 and 2 fix what looks like potential bugs: A broken (intended)
->    select of PL310_ERRATA_753970 for ARM/mvebu, and a misspelled dependency on
->    PPC_PSERIES in KVM/PPC.
->
->  - Commits 3-5 remove leftover AVR32 stuff.
->
->  - Commits 6 and 7 remove some selects of removed symbols from riscv.
->
->  - Commits 8-17 remove various references to removed symbols.
->
->  - Commits 18-20 fix some (harmless) malformed defaults.
->
-> Ulf Magnusson (20):
->   ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
->   KVM: PPC: Book3S PR: Fix broken select due to misspelling
->   kconfig: Remove leftover references to AVR32 symbol
->   misc: atmel: Remove CPU_AT32AP700X (AVR32) reference
->   rtc: at32ap700x: Remove PLATFORM_AT32AP dependency
->   riscv: Remove ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE select
->   riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
->   s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select
->   clk: sunxi-ng: Remove SUNXI_CCU_* selects
->   lib/Kconfig: Remove leftover select of GENERIC_IO
->   usb: gadget: udc: Remove USB_GADGET_DUALSPEED select
->   ARM: debug: Remove ARCH_MSM dep. from UNCOMPRESS_INCLUDE
->   ore: Remove PNFS_OBJLAYOUT dependency
->   iio: gyro: mpu3050: Remove INPUT_MPU3050 dep. from I2C
->   phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB
->   auxdisplay: img-ascii-lcd: Remove MIPS_SEAD3 dep.
->   media: sec: Remove PLAT_S5P dependency
->   iwlwifi: fix malformed CONFIG_IWLWIFI_PCIE_RTPM default
->   ARC: Fix malformed ARC_EMUL_UNALIGNED default
->   x86/PCI: VMD: Fix malformed default
->
->  arch/arc/Kconfig                           |  1 -
->  arch/arm/Kconfig.debug                     |  2 +-
->  arch/arm/mach-mvebu/Kconfig                |  4 ++--
->  arch/powerpc/kvm/Kconfig                   |  2 +-
->  arch/riscv/Kconfig                         |  2 --
->  arch/s390/Kconfig                          |  1 -
->  drivers/auxdisplay/Kconfig                 |  2 +-
->  drivers/clk/sunxi-ng/Kconfig               |  7 -------
->  drivers/cpufreq/Kconfig                    | 10 ----------
->  drivers/iio/gyro/Kconfig                   |  1 -
->  drivers/media/platform/Kconfig             |  2 +-
->  drivers/misc/Kconfig                       |  1 -
->  drivers/net/wireless/intel/iwlwifi/Kconfig |  1 -
->  drivers/pci/host/Kconfig                   |  1 -
->  drivers/phy/samsung/Kconfig                |  2 +-
->  drivers/pwm/Kconfig                        |  2 +-
->  drivers/rtc/Kconfig                        |  2 +-
->  drivers/spi/Kconfig                        |  2 +-
->  drivers/usb/gadget/udc/Kconfig             |  1 -
->  drivers/video/console/Kconfig              |  2 +-
->  fs/exofs/Kconfig.ore                       |  2 +-
->  lib/Kconfig                                |  1 -
->  22 files changed, 12 insertions(+), 39 deletions(-)
->
-> --
-> 2.14.1
 >
 
-Another one that looks like a potential bug:
+Cool. Thanks for this.
 
-b49efd762482 ("dma-mapping: move dma_mark_clean to dma-direct.h")
-selects ARCH_HAS_DMA_MARK_CLEAN for ia64 but never defines it. It's
-used in include/linux/dma-direct.h:
+Chris
 
-  #ifdef CONFIG_ARCH_HAS_DMA_MARK_CLEAN
-  void dma_mark_clean(void *addr, size_t size);
-  #else
-  static inline void dma_mark_clean(void *addr, size_t size)
-  {
-  }
-  #endif /* CONFIG_ARCH_HAS_DMA_MARK_CLEAN */
-
-Cheers,
-Ulf
+> ------Please consider the environment before printing this e-mail.
+>
+>> >>> -----Original Message-----
+>> >>> From: Chris Chiu [mailto:chiu@endlessm.com]
+>> >>> Sent: Monday, January 29, 2018 6:12 PM
+>> >>> To: nic_swsd <nic_swsd@realtek.com>; netdev@vger.kernel.org; Linux
+>> >>> Kernel <linux-kernel@vger.kernel.org>; Linux Upstreaming Team
+>> >>> <linux@endlessm.com>
+>> >>> Subject: Re: r8169 take too long to complete driver initialization
+>> >>>
+>> >>> On Fri, Jan 5, 2018 at 10:17 AM, Chris Chiu <chiu@endlessm.com> wrote:
+>> >>> > On Wed, Dec 20, 2017 at 4:41 PM, Chris Chiu <chiu@endlessm.com>
+>> wrote:
+>> >>> >> Hi,
+>> >>> >>     We've hit a suspend/resume issue on a Acer desktop caused by
+>> >>> >> r8169 driver. The dmseg
+>> >>> >>
+>> https://gist.github.com/mschiu77/b741849b5070281daaead8dfee312d1a
+>> >>> >> shows it's still in msleep() within a mutex lock.
+>> >>> >>     After looking into the code, it's caused by the
+>> >>> >> rtl8168ep_stop_cmac() which is waiting 100 seconds for
+>> >>> >> rtl_ocp_tx_cond. The following dmesg states that the r8169 driver
+>> >>> >> is loaded.
+>> >>> >>
+>> >>> >> [   20.270526] r8169 Gigabit Ethernet driver 2.3LK-NAPI loaded
+>> >>> >>
+>> >>> >> But it takes > 100 seconds to get the following messages
+>> >>> >>
+>> >>> >> [  140.400223] r8169 0000:02:00.0 (unnamed net_device)
+>> >>> >> (uninitialized): rtl_ocp_tx_cond == 1 (loop: 2000, delay: 50).
+>> >>> >> [  140.413294] r8169 0000:02:00.0 eth0: RTL8168ep/8111ep at
+>> >>> >> 0xffffb16c80db1000, f8:0f:41:ea:74:0d, XID 10200800 IRQ 46 [
+>> >>> >> 140.413297] r8169 0000:02:00.0 eth0: jumbo features [frames: 9200
+>> >>> >> bytes, tx checksumming: ko]
+>> >>> >>
+>> >>> >> So any trial to suspend the machine during this period would
+>> >>> >> always get device/resource busy message then abort. Is this
+>> >>> >> rtl_ocp_tx_cond necessary? Because the ethernet is still working
+>> >>> >> and I don't see any problem. I don't know it should be considered
+>> >>> >> normal or not. Please let me know if any more information
+>> >>> >> required. Thanks
+>> >>> >>
+>> >>> >> Chris
+>> >>> >
+>> >>> > gentle ping,
+>> >>> >
+>> >>> > cheers.
+>> >>>
+>> >>> Hi,
+>> >>>     Just found a r8168 driver which seems to be authrized by realtek
+>> >>> for cross comparison. I tried applying the patch to latest 4.15
+>> >>> kernel and the driver done it's initialization in faily short time. The patch
+>> file is here
+>> >>>     https://gist.github.com/mschiu77/fcf406e64a1a437f46cf2be643f1057d.
+>> >>>
+>> >>>     In mainline r8169.c, the IBISR0 register need to be polled in
+>> >>> the rtl8168ep_stop_cmac().
+>> >>> In the patch file, there's also the same IBISR0 polling code in
+>> >>> Dash2DisableTx(), but it's been bypassed since the chipset maches
+>> >>> HW_DASH_SUPPORT_TYPE_2.
+>> >>> Per the rtl_chip_info[] in r8168_n.c, CFG_METHOD_23/27/28 are
+>> >>> HW_DASH_SUPPORT_TYPE_2, and they happens to be the only 3 named
+>> >>> RTL8168EP/8111EP in the rtl_chip_info[].
+>> >>>
+>> >>>     To find the same matches in r8169.c, RTL_GIGA_MAC_VER_49/50/51
+>> >>> seems share the same config. Can anyone clarify if the
+>> >>> rtl_ocp_tx_cond() really necessary for 8168EP/8111EP?
+>> >>> Or we can just ignore the condition check for
+>> RTL_GIGA_MAC_VER_49/50/51?
+>> >>>
+>> >>> Chris
+>> >>>
+>> >>> ------Please consider the environment before printing this e-mail.
