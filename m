@@ -1,119 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752711AbeBEGHk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 01:07:40 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:39859 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752621AbeBEGHS (ORCPT
+        id S1752763AbeBEGH5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 01:07:57 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33321 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750861AbeBEGH2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:07:18 -0500
-X-Google-Smtp-Source: AH8x227R7kcNNFAawv+ohAd0MWBeRaS+Dj2ezdoRVPnGxmgvFLcILSgi8ngxTOtG8ZfbjVDb2fpWLw==
-Date: Mon, 5 Feb 2018 00:07:16 -0600
+        Mon, 5 Feb 2018 01:07:28 -0500
+X-Google-Smtp-Source: AH8x224EFpIs/ZSFy4leJp7PlUf6RgMhKDqwvCaWNoKUvcz/DCIKUCxq5CtaEG4KfhCMUNMV3wUgRQ==
+Date: Mon, 5 Feb 2018 00:07:26 -0600
 From: Rob Herring <robh@kernel.org>
-To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] ARM: dts: imx6ull: add support for the esai interface
-Message-ID: <20180205020815.birkvwie45lcohjf@rob-hp-laptop>
-References: <1516955032-21167-1-git-send-email-LW@KARO-electronics.de>
- <1516955032-21167-3-git-send-email-LW@KARO-electronics.de>
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/2] of: change overlay apply input data from EDT to FDT
+Message-ID: <20180205060726.s5kvcvzlxat42wa2@rob-hp-laptop>
+References: <1517194414-19932-1-git-send-email-frowand.list@gmail.com>
+ <1517194414-19932-2-git-send-email-frowand.list@gmail.com>
+ <CABGGisyx_aXCxKO5x-5M5mEM7s=jMYZDaQZ9jdL6hapMCOyM=Q@mail.gmail.com>
+ <d2ad9f6f-bf66-10bc-6156-cb006ab9447d@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1516955032-21167-3-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <d2ad9f6f-bf66-10bc-6156-cb006ab9447d@gmail.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 09:23:51AM +0100, Lothar Waﬂmann wrote:
-> The address space taken by the UART8 on the i.MX6UL is used for the
-> ESAI interface on i.MX6ULL.
+On Mon, Jan 29, 2018 at 04:01:38PM -0800, Frank Rowand wrote:
+> On 01/29/18 06:42, Rob Herring wrote:
+> > On Sun, Jan 28, 2018 at 8:53 PM,  <frowand.list@gmail.com> wrote:
+> >> From: Frank Rowand <frank.rowand@sony.com>
+> >>
+> >> Move duplicating and unflattening of an overlay flattened devicetree
+> >> (FDT) into the overlay application code.  To accomplish this,
+> >> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+> >>
+> >> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+> >> code, which is thus responsible for freeing the duplicate FDT.  The
+> >> caller of of_overlay_fdt_apply() remains responsible for freeing the
+> >> original FDT.
+> >>
+> >> The unflattened device tree (aka expanded device tree, EDT) now
+> > 
+> > Not really a fan of a new acronym.
+> > 
+> >> belongs to devicetree code, which is thus responsible for freeing
+> >> the EDT.
+> >>
+> >> These ownership changes prevent early freeing of the duplicated FDT
+> >> or the EDT, which could result in use after free errors.
+> >>
+> >> of_overlay_fdt_apply() is a private function for the anticipated
+> >> overlay loader.
+> >>
+> >> Update unittest.c to use of_overlay_fdt_apply() instead of
+> >> of_overlay_apply().
+> >>
+> >> Move overlay fragments from artificial locations in
+> >> drivers/of/unittest-data/tests-overlay.dtsi into one devicetree
+> >> source file per overlay.  This led to changes in
+> >> drivers/of/unitest-data/Makefile and drivers/of/unitest.c.
 > 
-> Since the ESAI unit on i.MX6ULL has two more bits in the TFCR register
-> (TFIN, TAENB) it deserves to get its own compatible string, though the
-> bits are currently not used by the driver.
+> I should have reversed the cause and effect in that sentence to
+> instead be:
 > 
-> Signed-off-by: Lothar Waﬂmann <LW@KARO-electronics.de>
-> ---
->  Documentation/devicetree/bindings/sound/fsl,esai.txt |  4 ++--
->  arch/arm/boot/dts/imx6ull.dtsi                       | 17 +++++++++++++++++
->  sound/soc/fsl/fsl_esai.c                             |  1 +
->  3 files changed, 20 insertions(+), 2 deletions(-)
-
-As mentioned, this really should be 3 patches. At least split out the 
-dts file.
-
+>   The changes to drivers/of/unittest.c require the test overlays
+>   to be in FDT form instead of unflattened devicetree form.  Move
+>   overlay fragments from artificial locations in
+>   drivers/of/unittest-data/tests-overlay.dtsi into one
+>   devicetree source file per overlay and thus create
+>   one FDT per overlay.
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/fsl,esai.txt b/Documentation/devicetree/bindings/sound/fsl,esai.txt
-> index cacd18b..4103f46 100644
-> --- a/Documentation/devicetree/bindings/sound/fsl,esai.txt
-> +++ b/Documentation/devicetree/bindings/sound/fsl,esai.txt
-> @@ -7,8 +7,8 @@ other DSPs. It has up to six transmitters and four receivers.
->  
->  Required properties:
->  
-> -  - compatible		: Compatible list, must contain "fsl,imx35-esai" or
-> -			  "fsl,vf610-esai"
-> +  - compatible		: Compatible list, must contain "fsl,imx35-esai",
-> +			  "fsl,vf610-esai" or "fsl,imx6ull-esai"
-
-Please reformat as on compatible per line.
-
->  
->    - reg			: Offset and length of the register set for the device.
->  
-> diff --git a/arch/arm/boot/dts/imx6ull.dtsi b/arch/arm/boot/dts/imx6ull.dtsi
-> index abc815f..8724fdb2 100644
-> --- a/arch/arm/boot/dts/imx6ull.dtsi
-> +++ b/arch/arm/boot/dts/imx6ull.dtsi
-> @@ -47,6 +47,23 @@
->  		aips-bus@2000000 {
->  			spba-bus@2000000 {
->  				/delete-node/ serial@2024000;
-> +
-> +				esai: esai@2024000 {
-> +					compatible = "fsl,imx6ull-esai", "fsl,imx35-esai";
-> +					reg = <0x02024000 0x4000>;
-> +					interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-> +					clocks = <&clks IMX6ULL_CLK_ESAI_IPG>,
-> +						 <&clks IMX6ULL_CLK_ESAI_MEM>,
-> +						 <&clks IMX6ULL_CLK_ESAI_EXTAL>,
-> +						 <&clks IMX6ULL_CLK_ESAI_IPG>,
-> +						 <&clks IMX6UL_CLK_SPBA>;
-> +					clock-names = "core", "mem", "extal",
-> +						      "fsys", "spba";
-> +					dmas = <&sdma 0 21 0>,
-> +					       <&sdma 47 21 0>;
-> +					dma-names = "rx", "tx";
-> +					status = "disabled";
-
-Don't show status in examples.
-
-> +				};
->  			};
->  		};
->  
-> diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
-> index cef79a1..5b6a53f 100644
-> --- a/sound/soc/fsl/fsl_esai.c
-> +++ b/sound/soc/fsl/fsl_esai.c
-> @@ -910,6 +910,7 @@ static int fsl_esai_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id fsl_esai_dt_ids[] = {
-> +	{ .compatible = "fsl,imx6ull-esai", },
->  	{ .compatible = "fsl,imx35-esai", },
->  	{ .compatible = "fsl,vf610-esai", },
->  	{}
-> -- 
-> 2.1.4
 > 
+> > Why the rearranging? That should be a separate patch.
+> Bisectability.
+> 
+> I can make the changes to the devicetree files in a second patch.
+> After the first patch, there will be 29 self test fails.
+> 
+> I will make the change unless you respond back to this saying not to.
+
+One patch is fine for me. Unit test is special.
+
+Rob
