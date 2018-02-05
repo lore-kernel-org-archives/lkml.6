@@ -1,97 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752413AbeBEBcc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:32:32 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:40099 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752608AbeBEBbl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:31:41 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0SxhLN0q_1517794295;
-Subject: Re: [PATCH 1/2] /proc/kcore: Fix SMAP violation when dumping vsyscall
- user page
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, jolsa@kernel.org
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1517294579-117473-1-git-send-email-zhang.jia@linux.alibaba.com>
-From: Jia Zhang <zhang.jia@linux.alibaba.com>
-Message-ID: <0d22814f-203c-65d8-6277-e133279e53fd@linux.alibaba.com>
-Date: Mon, 5 Feb 2018 09:32:12 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1517294579-117473-1-git-send-email-zhang.jia@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752421AbeBEBcn (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:32:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44098 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752796AbeBEB3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:29:25 -0500
+From: Davidlohr Bueso <dbueso@suse.de>
+To: akpm@linux-foundation.org, mingo@kernel.org
+Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
+        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
+        mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 50/64] arch/unicore32: use mm locking wrappers
+Date: Mon,  5 Feb 2018 02:27:40 +0100
+Message-Id: <20180205012754.23615-51-dbueso@wotan.suse.de>
+X-Mailer: git-send-email 2.12.3
+In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
+References: <20180205012754.23615-1-dbueso@wotan.suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-The maintainers are too busy to review this patchset. You are the author
-of the commit df04abfd181a. Please help to review this patchset.
+This becomes quite straightforward with the mmrange in place.
 
-Thanks,
-Jia
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ arch/unicore32/mm/fault.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On 2018/1/30 下午2:42, Jia Zhang wrote:
-> The commit df04abfd181a
-> ("fs/proc/kcore.c: Add bounce buffer for ktext data") introduces a
-> bounce buffer to work around CONFIG_HARDENED_USERCOPY=y. However,
-> accessing vsyscall user page will cause SMAP violation in this way.
-> 
-> In order to fix this issue, simply replace memcpy() with copy_from_user()
-> may work, but using a common way to handle this sort of user page may be
-> useful for future.
-> 
-> Currently, only vsyscall page requires KCORE_USER.
-> 
-> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-> ---
->  arch/x86/mm/init_64.c | 2 +-
->  fs/proc/kcore.c       | 4 ++++
->  include/linux/kcore.h | 1 +
->  3 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 4a83728..dab78f6 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1187,7 +1187,7 @@ void __init mem_init(void)
->  
->  	/* Register memory areas for /proc/kcore */
->  	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
-> -			 PAGE_SIZE, KCORE_OTHER);
-> +		   PAGE_SIZE, KCORE_USER);
->  
->  	mem_init_print_info(NULL);
->  }
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index 4bc85cb..e4b0204 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -510,6 +510,10 @@ static void elf_kcore_store_hdr(char *bufp, int nphdr, int dataoff)
->  			/* we have to zero-fill user buffer even if no read */
->  			if (copy_to_user(buffer, buf, tsz))
->  				return -EFAULT;
-> +		} else if (m->type == KCORE_USER) {
-> +			/* user page is handled prior to normal kernel page */
-> +			if (copy_to_user(buffer, (char *)start, tsz))
-> +				return -EFAULT;
->  		} else {
->  			if (kern_addr_valid(start)) {
->  				unsigned long n;
-> diff --git a/include/linux/kcore.h b/include/linux/kcore.h
-> index 7ff25a8..80db19d 100644
-> --- a/include/linux/kcore.h
-> +++ b/include/linux/kcore.h
-> @@ -10,6 +10,7 @@ enum kcore_type {
->  	KCORE_VMALLOC,
->  	KCORE_RAM,
->  	KCORE_VMEMMAP,
-> +	KCORE_USER,
->  	KCORE_OTHER,
->  };
->  
-> 
+diff --git a/arch/unicore32/mm/fault.c b/arch/unicore32/mm/fault.c
+index dd35b6191798..f806ade79afd 100644
+--- a/arch/unicore32/mm/fault.c
++++ b/arch/unicore32/mm/fault.c
+@@ -233,12 +233,12 @@ static int do_pf(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	 * validly references user space from well defined areas of the code,
+ 	 * we can bug out early if this is from code which shouldn't.
+ 	 */
+-	if (!down_read_trylock(&mm->mmap_sem)) {
++	if (!mm_read_trylock(mm, &mmrange)) {
+ 		if (!user_mode(regs)
+ 		    && !search_exception_tables(regs->UCreg_pc))
+ 			goto no_context;
+ retry:
+-		down_read(&mm->mmap_sem);
++		mm_read_lock(mm, &mmrange);
+ 	} else {
+ 		/*
+ 		 * The above down_read_trylock() might have succeeded in
+@@ -275,7 +275,7 @@ static int do_pf(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 		}
+ 	}
+ 
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ 	/*
+ 	 * Handle the "normal" case first - VM_FAULT_MAJOR
+-- 
+2.13.6
