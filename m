@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752277AbeBEBXY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:23:24 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41056 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751979AbeBEBXQ (ORCPT
+        id S1752345AbeBEBXi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:23:38 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:40391 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752274AbeBEBXZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:23:16 -0500
-X-Google-Smtp-Source: AH8x226BIpoANnBCZRobJcZS2BbQgzO4qqQCBV6/jIZmU4XGYEOkXhvRub8zR3WryRLnW/y9C19dgg==
+        Sun, 4 Feb 2018 20:23:25 -0500
+X-Google-Smtp-Source: AH8x224Mx1VjvOuUBC2MbQXg4Fav96n3Za+FsQlgWmrEIUeL56tx3XH0rxb4dqyauEq5ej5CfPLW0Q==
 From: Ulf Magnusson <ulfalizer@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
@@ -17,14 +17,12 @@ Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
         robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
         will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
         yamada.masahiro@socionext.com, Ulf Magnusson <ulfalizer@gmail.com>,
-        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@free-electrons.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 01/20] ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
-Date: Mon,  5 Feb 2018 02:21:13 +0100
-Message-Id: <20180205012146.23981-2-ulfalizer@gmail.com>
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 02/20] KVM: PPC: Book3S PR: Fix broken select due to misspelling
+Date: Mon,  5 Feb 2018 02:21:14 +0100
+Message-Id: <20180205012146.23981-3-ulfalizer@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
 References: <20180205012146.23981-1-ulfalizer@gmail.com>
@@ -32,11 +30,12 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MACH_ARMADA_375 and MACH_ARMADA_38X boards select ARM_ERRATA_753970,
-but it was renamed to PL310_ERRATA_753970 by commit fa0ce4035d48 ("ARM:
-7162/1: errata: tidy up Kconfig options for PL310 errata workarounds").
+Commit 76d837a4c0f9 ("KVM: PPC: Book3S PR: Don't include SPAPR TCE code
+on non-pseries platforms") added a reference to the globally undefined
+symbol PPC_SERIES. Looking at the rest of the commit, PPC_PSERIES was
+probably intended.
 
-Fix the selects to use the new name.
+Change PPC_SERIES to PPC_PSERIES.
 
 Discovered with the
 https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
@@ -44,30 +43,21 @@ script.
 
 Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- arch/arm/mach-mvebu/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/kvm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
-index 6b32dc527edc..2c20599cc350 100644
---- a/arch/arm/mach-mvebu/Kconfig
-+++ b/arch/arm/mach-mvebu/Kconfig
-@@ -41,7 +41,7 @@ config MACH_ARMADA_375
- 	depends on ARCH_MULTI_V7
- 	select ARMADA_370_XP_IRQ
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_375_CLK
- 	select HAVE_ARM_SCU
-@@ -57,7 +57,7 @@ config MACH_ARMADA_38X
- 	bool "Marvell Armada 380/385 boards"
- 	depends on ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARM_GLOBAL_TIMER
- 	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
+diff --git a/arch/powerpc/kvm/Kconfig b/arch/powerpc/kvm/Kconfig
+index f884a0529dfe..68a0e9d5b440 100644
+--- a/arch/powerpc/kvm/Kconfig
++++ b/arch/powerpc/kvm/Kconfig
+@@ -69,7 +69,7 @@ config KVM_BOOK3S_64
+ 	select KVM_BOOK3S_64_HANDLER
+ 	select KVM
+ 	select KVM_BOOK3S_PR_POSSIBLE if !KVM_BOOK3S_HV_POSSIBLE
+-	select SPAPR_TCE_IOMMU if IOMMU_SUPPORT && (PPC_SERIES || PPC_POWERNV)
++	select SPAPR_TCE_IOMMU if IOMMU_SUPPORT && (PPC_PSERIES || PPC_POWERNV)
+ 	---help---
+ 	  Support running unmodified book3s_64 and book3s_32 guest kernels
+ 	  in virtual machines on book3s_64 host processors.
 -- 
 2.14.1
