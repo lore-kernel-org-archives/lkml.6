@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752223AbeBEBZV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:25:21 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44450 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752556AbeBEBYh (ORCPT
+        id S1752492AbeBEB0M (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:26:12 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33781 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752476AbeBEBZK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:24:37 -0500
-X-Google-Smtp-Source: AH8x227lVL36+0V1L7KsYlo29gVRNu5kcx8LlbKZrztTebz/42Fd/SCavEwTYkqHb8V57oTComFe4w==
+        Sun, 4 Feb 2018 20:25:10 -0500
+X-Google-Smtp-Source: AH8x225j5mJUWyiBkzsiqZPKJvrx0QVGef+8cuMxNVrVePwm1/7u9st1Mw9APP0n72vt7G2ARzQSdA==
 From: Ulf Magnusson <ulfalizer@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
@@ -17,18 +17,14 @@ Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
         robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
         will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
         yamada.masahiro@socionext.com, Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Terrell <terrelln@fb.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>, Dave Airlie <airlied@redhat.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Bart Van Assche <bart.vanassche@wdc.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: [PATCH 10/20] lib/Kconfig: Remove leftover select of GENERIC_IO
-Date: Mon,  5 Feb 2018 02:21:22 +0100
-Message-Id: <20180205012146.23981-11-ulfalizer@gmail.com>
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH 15/20] phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB
+Date: Mon,  5 Feb 2018 02:21:27 +0100
+Message-Id: <20180205012146.23981-16-ulfalizer@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
 References: <20180205012146.23981-1-ulfalizer@gmail.com>
@@ -36,10 +32,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GENERIC_IO was removed by commit 9de8da47742b ("kconfig: kill off
-GENERIC_IO option"), but HAS_IOMEM still selects it.
+Exynos4212 support was removed by commit bca9085e0ae9 ("ARM: dts:
+exynos: remove Exynos4212 support (dead code)").
 
-Remove the select of GENERIC_IO from HAS_IOMEM.
+Remove the SOC_EXYNOS4212 dependency from PHY_EXYNOS4X12_USB.
 
 Discovered with the
 https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
@@ -47,20 +43,21 @@ script.
 
 Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- lib/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/phy/samsung/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/Kconfig b/lib/Kconfig
-index e96089499371..8ce8bcad6eff 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -396,7 +396,6 @@ config ASSOCIATIVE_ARRAY
- config HAS_IOMEM
+diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+index b7e0645a7bd9..2a5d33cb0e7e 100644
+--- a/drivers/phy/samsung/Kconfig
++++ b/drivers/phy/samsung/Kconfig
+@@ -49,7 +49,7 @@ config PHY_EXYNOS4210_USB2
+ config PHY_EXYNOS4X12_USB2
  	bool
- 	depends on !NO_IOMEM
--	select GENERIC_IO
- 	default y
+ 	depends on PHY_SAMSUNG_USB2
+-	default SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412
++	default SOC_EXYNOS3250 || SOC_EXYNOS4412
  
- config HAS_IOPORT_MAP
+ config PHY_EXYNOS5250_USB2
+ 	bool
 -- 
 2.14.1
