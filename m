@@ -1,116 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752329AbeBEFTq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 00:19:46 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42254 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750718AbeBEFTi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 00:19:38 -0500
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: rjw@rjwysocki.net
-Cc: lenb@kernel.org, andy.shevchenko@gmail.com, erik.schmauss@intel.com,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mario Limonciello <mario.limonciello@dell.com>
-Subject: [PATCH v4] ACPI: Parse entire table as a term_list for Dell XPS 9570 and Precision M5530
-Date: Mon,  5 Feb 2018 13:19:24 +0800
-Message-Id: <20180205051924.10186-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S1752380AbeBEF10 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 00:27:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750724AbeBEF1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 00:27:19 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D01B21734
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Mon, 5 Feb 2018 13:27:00 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Frank Li <Frank.li@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Ian Ray <ian.ray@ge.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: imx6q-bx50v3: Enable secure-reg-access
+Message-ID: <20180205052659.GA31354@dragon>
+References: <20180115160722.17206-1-sebastian.reichel@collabora.co.uk>
+ <20180202071819.GE25699@dragon>
+ <20180202111004.mnv3elblyjxkbyzz@earth.universe>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180202111004.mnv3elblyjxkbyzz@earth.universe>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
-of box.
+On Fri, Feb 02, 2018 at 12:10:04PM +0100, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Fri, Feb 02, 2018 at 03:18:20PM +0800, Shawn Guo wrote:
+> > + Frank
+> > 
+> > On Mon, Jan 15, 2018 at 05:07:22PM +0100, Sebastian Reichel wrote:
+> > > From: Peter Senna Tschudin <peter.senna@collabora.com>
+> > > 
+> > > Add secure-reg-access on device tree include file for Bx50 devices
+> > > to enable PMU and hardware counters for perf.
+> > > 
+> > > Signed-off-by: Peter Senna Tschudin <peter.senna@collabora.com>
+> > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> > > ---
+> > >  arch/arm/boot/dts/imx6q-bx50v3.dtsi | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/imx6q-bx50v3.dtsi b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
+> > > index 86cfd4481e72..ccaaee83e2fa 100644
+> > > --- a/arch/arm/boot/dts/imx6q-bx50v3.dtsi
+> > > +++ b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
+> > > @@ -43,6 +43,13 @@
+> > >  #include "imx6q-ba16.dtsi"
+> > >  
+> > >  / {
+> > > +	soc {
+> > > +		pmu {
+> > > +			compatible = "arm,cortex-a9-pmu";
+> > > +			secure-reg-access;
+> > 
+> > I'm not sure this could be a board level configuration.  Shouldn't this
+> > property just be added into pmu node in imx6qdl.dtsi?
+> 
+> This cannot become part of imx6qdl.dtsi for two reasons:
+> 
+> 1. It's not safe to be enabled on imx6qdl in secure state, see
+>    excerpt from DT binding documentation below
+> 2. We cannot enable it by default, since DTS format does not provide
+>    a method to unset it in board files using a imx6qdl in secure
+>    mode.
+> 
+> Here is an extract from the DT documentation for the PMU node:
+> 
+> - secure-reg-access : Indicates that the ARMv7 Secure Debug Enable Register
+> 		      (SDER) is accessible. This will cause the driver to do
+> 		      any setup required that is only possible in ARMv7 secure
+> 		      state. If not present the ARMv7 SDER will not be touched,
+> 		      which means the PMU may fail to operate unless external
+> 		      code (bootloader or security monitor) has performed the
+> 		      appropriate initialisation. Note that this property is
+> 		      not valid for non-ARMv7 CPUs or ARMv7 CPUs booting Linux
+> 		      in Non-secure state.
+> 
+> For B450v3, B650v3 and B850v3 it's safe to enable the bit and it
+> improves debugging capabilities a lot.
 
-The touchpad relies on its _INI method to update its _HID value from
-XXXX0000 to SYNA2393.
-Also, the _STA relies on value of I2CN to report correct status.
+Okay.  Then please label the pmu node in imx6qdl.dtsi and referencing
+the node in board dts without duplicating soc node and compatible.
 
-Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
-correctly set up, and _INI can get run. The ACPI table in this machine
-is designed to get parsed this way.
-
-Also, change the quirk table to a more generic name.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198515
-Cc: Mario Limonciello <mario.limonciello@dell.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v4: Remove unnecessary message for user.
-
-v3: Put the function under right #ifdef, comment adjustment
-
-v2: Andy's suggestion, merge to a single quirk table.
- drivers/acpi/bus.c | 38 +++++++++++++++++++++++++++++++-------
- 1 file changed, 31 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-index f87ed3be779a..11c6dda233d6 100644
---- a/drivers/acpi/bus.c
-+++ b/drivers/acpi/bus.c
-@@ -66,10 +66,37 @@ static int set_copy_dsdt(const struct dmi_system_id *id)
- 	return 0;
- }
- #endif
-+static int set_gbl_term_list(const struct dmi_system_id *id)
-+{
-+	acpi_gbl_parse_table_as_term_list = 1;
-+	return 0;
-+}
- 
--static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
-+static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
-+	/*
-+	 * Touchpad on Dell XPS 9570/Precision M5530 doesn't work under I2C
-+	 * mode.
-+	 * https://bugzilla.kernel.org/show_bug.cgi?id=198515
-+	 */
-+	{
-+		.callback = set_gbl_term_list,
-+		.ident = "Dell Precision M5530",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Precision M5530"),
-+		},
-+	},
-+	{
-+		.callback = set_gbl_term_list,
-+		.ident = "Dell XPS 15 9570",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "XPS 15 9570"),
-+		},
-+	},
- 	/*
- 	 * Invoke DSDT corruption work-around on all Toshiba Satellite.
-+	 * DSDT will be copied to memory.
- 	 * https://bugzilla.kernel.org/show_bug.cgi?id=14679
- 	 */
- 	{
-@@ -83,7 +110,7 @@ static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
- 	{}
- };
- #else
--static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
-+static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
- 	{}
- };
- #endif
-@@ -1019,11 +1046,8 @@ void __init acpi_early_init(void)
- 
- 	acpi_permanent_mmap = true;
- 
--	/*
--	 * If the machine falls into the DMI check table,
--	 * DSDT will be copied to memory
--	 */
--	dmi_check_system(dsdt_dmi_table);
-+	/* Check machine-specific quirks */
-+	dmi_check_system(acpi_quirks_dmi_table);
- 
- 	status = acpi_reallocate_root_table();
- 	if (ACPI_FAILURE(status)) {
--- 
-2.15.1
+Shawn
