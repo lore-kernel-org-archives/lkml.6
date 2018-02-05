@@ -1,51 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753299AbeBEPu2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:50:28 -0500
-Received: from mga02.intel.com ([134.134.136.20]:31284 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752767AbeBEPuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:50:16 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,465,1511856000";
-   d="scan'208";a="171790858"
-Date: Mon, 5 Feb 2018 07:50:01 -0800
-From: Andi Kleen <ak@linux.intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jessica Yu <jeyu@kernel.org>, Kees Cook <keescook@chromium.org>,
-        nico@linaro.org, linux-kernel@vger.kernel.org,
-        Wanlong Gao <wanlong.gao@gmail.com>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 1/2] modpost: don't add warnings for LTO-generated symbols
-Message-ID: <20180205155001.GI30338@tassilo.jf.intel.com>
-References: <20180205151300.539874-1-arnd@arndb.de>
- <20180205151300.539874-2-arnd@arndb.de>
+        id S1753317AbeBEPu5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:50:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58584 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752767AbeBEPuv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 10:50:51 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4EBC6022B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Mon, 5 Feb 2018 15:50:48 +0000
+From: Lina Iyer <ilina@codeaurora.org>
+To: tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        sboyd@codeaurora.org, rnayak@codeaurora.org, asathyak@codeaurora.org,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC v2 3/3] drivers: irqchip: pdc: log PDC info in FTRACE
+Message-ID: <20180205155048.GA22036@codeaurora.org>
+References: <20180202142200.6229-1-ilina@codeaurora.org>
+ <20180202142200.6229-4-ilina@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180205151300.539874-2-arnd@arndb.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180202142200.6229-4-ilina@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 04:12:52PM +0100, Arnd Bergmann wrote:
-> WARNING: vmlinux.o(.data+0x12e0): Section mismatch in reference from the variable pfkey_net_ops.lto_priv.2992 to the function .init.text:pfkey_net_init.lto_priv.2977()
-> The variable pfkey_net_ops.lto_priv.2992 references
-> the function __init pfkey_net_init.lto_priv.2977()
-> If the reference is valid then annotate the
-> variable with __init* or __refdata (see linux/init.h) or name the variable:
-> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+Hi Steve,
 
-A better fix would be to ensure modpost always runs on already LD_FINALed
-objects, so it never sees LTO.
+On Fri, Feb 02 2018 at 14:22 +0000, Lina Iyer wrote:
+>From: Archana Sathyakumar <asathyak@codeaurora.org>
+>
+>Log key PDC pin configuration in FTRACE.
+>
+>Cc: Steven Rostedt <rostedt@goodmis.org>
+>Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
+>Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>---
+> drivers/irqchip/qcom-pdc.c |  7 ++++++
+> include/trace/events/pdc.h | 55 ++++++++++++++++++++++++++++++++++++++++++++++
+> 2 files changed, 62 insertions(+)
+> create mode 100644 include/trace/events/pdc.h
+>
+>diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+>index a392380eada6..7f177ad88713 100644
+>--- a/drivers/irqchip/qcom-pdc.c
+>+++ b/drivers/irqchip/qcom-pdc.c
+>@@ -26,6 +26,8 @@
+> #include <linux/platform_device.h>
+> #include <linux/slab.h>
+> #include <linux/types.h>
+>+#define CREATE_TRACE_POINTS
+>+#include "trace/events/pdc.h"
+>
+In addition to this PDC patch, there are a few drivers with FTRACE
+support coming for up QCOM SoCs. Would it make sense to open up a new
+sub-folder for SoC specific FTRACE like say,
+trace/events/soc/
+trace/events/soc/qcom/
 
-Otherwise you would need to teach modpost about the LTO symbol table
-and some other magic. I did that once, but it turned out to be very
-ugly.
+What would be your recommendation?
 
--Andi
+At the very least, I am thinking of renaming this file to
+trace/events/qcom-pdc.h.
+
+Thanks,
+Lina
