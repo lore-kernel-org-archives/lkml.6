@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752755AbeBEB2w (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:28:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43469 "EHLO mx2.suse.de"
+        id S1752626AbeBEB3E (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:29:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43468 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752562AbeBEB2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752560AbeBEB2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Feb 2018 20:28:03 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 07/64] mm/hugetlb: teach hugetlb_fault() about range locking
-Date: Mon,  5 Feb 2018 02:26:57 +0100
-Message-Id: <20180205012754.23615-8-dbueso@wotan.suse.de>
+Subject: [PATCH 05/64] mm,khugepaged: prepare passing of rangelock field to vm_fault
+Date: Mon,  5 Feb 2018 02:26:55 +0100
+Message-Id: <20180205012754.23615-6-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -25,147 +25,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-Such that we can pass the mmrange along to vm_fault for
-page in userfault range (handle_userfault()) which gets
-funky with mmap_sem - just look at the locking rules.
+When collapsing huge pages from swapin, a vm_fault structure is built
+and passed to do_swap_page(). The new range field of the vm_fault
+structure must be set correctly when dealing with range_lock.
+
+We teach the main workhorse, khugepaged_scan_mm_slot(), to pass on
+a full range lock.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- include/linux/hugetlb.h |  9 +++++----
- mm/gup.c                |  3 ++-
- mm/hugetlb.c            | 16 +++++++++++-----
- mm/memory.c             |  2 +-
- 4 files changed, 19 insertions(+), 11 deletions(-)
+ mm/khugepaged.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 36fa6a2a82e3..df0a89a95bdc 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -91,7 +91,7 @@ int copy_hugetlb_page_range(struct mm_struct *, struct mm_struct *, struct vm_ar
- long follow_hugetlb_page(struct mm_struct *, struct vm_area_struct *,
- 			 struct page **, struct vm_area_struct **,
- 			 unsigned long *, unsigned long *, long, unsigned int,
--			 int *);
-+			 int *, struct range_lock *);
- void unmap_hugepage_range(struct vm_area_struct *,
- 			  unsigned long, unsigned long, struct page *);
- void __unmap_hugepage_range_final(struct mmu_gather *tlb,
-@@ -106,7 +106,8 @@ int hugetlb_report_node_meminfo(int, char *);
- void hugetlb_show_meminfo(void);
- unsigned long hugetlb_total_pages(void);
- int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
--			unsigned long address, unsigned int flags);
-+		  unsigned long address, unsigned int flags,
-+		  struct range_lock *mmrange);
- int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm, pte_t *dst_pte,
- 				struct vm_area_struct *dst_vma,
- 				unsigned long dst_addr,
-@@ -170,7 +171,7 @@ static inline unsigned long hugetlb_total_pages(void)
- 	return 0;
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index b7e2268dfc9a..0b91ce730160 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -873,7 +873,8 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
+ static bool __collapse_huge_page_swapin(struct mm_struct *mm,
+ 					struct vm_area_struct *vma,
+ 					unsigned long address, pmd_t *pmd,
+-					int referenced)
++					int referenced,
++					struct range_lock *mmrange)
+ {
+ 	int swapped_in = 0, ret = 0;
+ 	struct vm_fault vmf = {
+@@ -882,6 +883,7 @@ static bool __collapse_huge_page_swapin(struct mm_struct *mm,
+ 		.flags = FAULT_FLAG_ALLOW_RETRY,
+ 		.pmd = pmd,
+ 		.pgoff = linear_page_index(vma, address),
++		.lockrange = mmrange,
+ 	};
+ 
+ 	/* we only decide to swapin, if there is enough young ptes */
+@@ -926,9 +928,10 @@ static bool __collapse_huge_page_swapin(struct mm_struct *mm,
  }
  
--#define follow_hugetlb_page(m,v,p,vs,a,b,i,w,n)	({ BUG(); 0; })
-+#define follow_hugetlb_page(m,v,p,vs,a,b,i,w,n,r) ({ BUG(); 0; })
- #define follow_huge_addr(mm, addr, write)	ERR_PTR(-EINVAL)
- #define copy_hugetlb_page_range(src, dst, vma)	({ BUG(); 0; })
- static inline void hugetlb_report_meminfo(struct seq_file *m)
-@@ -189,7 +190,7 @@ static inline void hugetlb_show_meminfo(void)
- #define pud_huge(x)	0
- #define is_hugepage_only_range(mm, addr, len)	0
- #define hugetlb_free_pgd_range(tlb, addr, end, floor, ceiling) ({BUG(); 0; })
--#define hugetlb_fault(mm, vma, addr, flags)	({ BUG(); 0; })
-+#define hugetlb_fault(mm, vma, addr, flags,mmrange)	({ BUG(); 0; })
- #define hugetlb_mcopy_atomic_pte(dst_mm, dst_pte, dst_vma, dst_addr, \
- 				src_addr, pagep)	({ BUG(); 0; })
- #define huge_pte_offset(mm, address, sz)	0
-diff --git a/mm/gup.c b/mm/gup.c
-index 01983a7b3750..3d1b6dd11616 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -684,7 +684,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 			if (is_vm_hugetlb_page(vma)) {
- 				i = follow_hugetlb_page(mm, vma, pages, vmas,
- 						&start, &nr_pages, i,
--						gup_flags, nonblocking);
-+						gup_flags, nonblocking,
-+						mmrange);
- 				continue;
- 			}
- 		}
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 7c204e3d132b..fd22459e89ef 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3675,7 +3675,8 @@ int huge_add_to_page_cache(struct page *page, struct address_space *mapping,
- 
- static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
- 			   struct address_space *mapping, pgoff_t idx,
--			   unsigned long address, pte_t *ptep, unsigned int flags)
-+			   unsigned long address, pte_t *ptep, unsigned int flags,
-+			   struct range_lock *mmrange)
+ static void collapse_huge_page(struct mm_struct *mm,
+-				   unsigned long address,
+-				   struct page **hpage,
+-				   int node, int referenced)
++			       unsigned long address,
++			       struct page **hpage,
++			       int node, int referenced,
++			       struct range_lock *mmrange)
  {
- 	struct hstate *h = hstate_vma(vma);
- 	int ret = VM_FAULT_SIGBUS;
-@@ -3716,6 +3717,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
- 				.vma = vma,
- 				.address = address,
- 				.flags = flags,
-+				.lockrange = mmrange,
- 				/*
- 				 * Hard to debug if it ends up being
- 				 * used by a callee that assumes
-@@ -3869,7 +3871,8 @@ u32 hugetlb_fault_mutex_hash(struct hstate *h, struct mm_struct *mm,
- #endif
- 
- int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
--			unsigned long address, unsigned int flags)
-+		  unsigned long address, unsigned int flags,
-+		  struct range_lock *mmrange)
+ 	pmd_t *pmd, _pmd;
+ 	pte_t *pte;
+@@ -986,7 +989,7 @@ static void collapse_huge_page(struct mm_struct *mm,
+ 	 * If it fails, we release mmap_sem and jump out_nolock.
+ 	 * Continuing to collapse causes inconsistency.
+ 	 */
+-	if (!__collapse_huge_page_swapin(mm, vma, address, pmd, referenced)) {
++	if (!__collapse_huge_page_swapin(mm, vma, address, pmd, referenced, mmrange)) {
+ 		mem_cgroup_cancel_charge(new_page, memcg, true);
+ 		up_read(&mm->mmap_sem);
+ 		goto out_nolock;
+@@ -1093,7 +1096,8 @@ static void collapse_huge_page(struct mm_struct *mm,
+ static int khugepaged_scan_pmd(struct mm_struct *mm,
+ 			       struct vm_area_struct *vma,
+ 			       unsigned long address,
+-			       struct page **hpage)
++			       struct page **hpage,
++			       struct range_lock *mmrange)
  {
- 	pte_t *ptep, entry;
- 	spinlock_t *ptl;
-@@ -3912,7 +3915,8 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 
- 	entry = huge_ptep_get(ptep);
- 	if (huge_pte_none(entry)) {
--		ret = hugetlb_no_page(mm, vma, mapping, idx, address, ptep, flags);
-+		ret = hugetlb_no_page(mm, vma, mapping, idx, address, ptep,
-+				      flags, mmrange);
- 		goto out_mutex;
+ 	pmd_t *pmd;
+ 	pte_t *pte, *_pte;
+@@ -1207,7 +1211,8 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
+ 	if (ret) {
+ 		node = khugepaged_find_target_node();
+ 		/* collapse_huge_page will return with the mmap_sem released */
+-		collapse_huge_page(mm, address, hpage, node, referenced);
++		collapse_huge_page(mm, address, hpage, node, referenced,
++				   mmrange);
  	}
+ out:
+ 	trace_mm_khugepaged_scan_pmd(mm, page, writable, referenced,
+@@ -1658,6 +1663,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages,
+ 	struct mm_struct *mm;
+ 	struct vm_area_struct *vma;
+ 	int progress = 0;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
  
-@@ -4140,7 +4144,8 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
- long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
- 			 struct page **pages, struct vm_area_struct **vmas,
- 			 unsigned long *position, unsigned long *nr_pages,
--			 long i, unsigned int flags, int *nonblocking)
-+			 long i, unsigned int flags, int *nonblocking,
-+			 struct range_lock *mmrange)
- {
- 	unsigned long pfn_offset;
- 	unsigned long vaddr = *position;
-@@ -4221,7 +4226,8 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
- 						FAULT_FLAG_ALLOW_RETRY);
- 				fault_flags |= FAULT_FLAG_TRIED;
+ 	VM_BUG_ON(!pages);
+ 	VM_BUG_ON(NR_CPUS != 1 && !spin_is_locked(&khugepaged_mm_lock));
+@@ -1731,7 +1737,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages,
+ 			} else {
+ 				ret = khugepaged_scan_pmd(mm, vma,
+ 						khugepaged_scan.address,
+-						hpage);
++						hpage, &mmrange);
  			}
--			ret = hugetlb_fault(mm, vma, vaddr, fault_flags);
-+			ret = hugetlb_fault(mm, vma, vaddr, fault_flags,
-+					    mmrange);
- 			if (ret & VM_FAULT_ERROR) {
- 				err = vm_fault_to_errno(ret, flags);
- 				remainder = 0;
-diff --git a/mm/memory.c b/mm/memory.c
-index b3561a052939..2d087b0e174d 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4136,7 +4136,7 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 		mem_cgroup_oom_enable();
- 
- 	if (unlikely(is_vm_hugetlb_page(vma)))
--		ret = hugetlb_fault(vma->vm_mm, vma, address, flags);
-+		ret = hugetlb_fault(vma->vm_mm, vma, address, flags, mmrange);
- 	else
- 		ret = __handle_mm_fault(vma, address, flags, mmrange);
- 
+ 			/* move to next address */
+ 			khugepaged_scan.address += HPAGE_PMD_SIZE;
 -- 
 2.13.6
