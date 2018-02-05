@@ -1,63 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752834AbeBEKd1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 05:33:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44335 "EHLO mx2.suse.de"
+        id S1752709AbeBEKhv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 05:37:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752574AbeBEKdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 05:33:19 -0500
-Date: Mon, 5 Feb 2018 11:33:18 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: jpoimboe@redhat.com, jikos@kernel.org, Jason Baron <jbaron@akamai.com>,
-        jeyu@kernel.org, Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: PATCH v6 3/6] livepatch: Initial support for dynamic structures
-Message-ID: <20180205103318.m77bzxq5wykykmkn@pathway.suse.cz>
-References: <20180125160203.28959-1-pmladek@suse.com>
- <20180125160203.28959-4-pmladek@suse.com>
- <alpine.LSU.2.21.1801311637140.7649@pobox.suse.cz>
+        id S1752250AbeBEKhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 05:37:42 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80852217AA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Mon, 5 Feb 2018 18:37:20 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        open list <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 BUGFIX] ARM: dts: imx6ull: fix the imx6ull-14x14-evk
+ configuration
+Message-ID: <20180205103716.GY31354@dragon>
+References: <1516955159-21626-1-git-send-email-LW@KARO-electronics.de>
+ <1516956738-24673-1-git-send-email-LW@KARO-electronics.de>
+ <20180205075620.GO31354@dragon>
+ <20180205105543.1711274c@karo-electronics.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1801311637140.7649@pobox.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180205105543.1711274c@karo-electronics.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-01-31 16:39:04, Miroslav Benes wrote:
-> On Thu, 25 Jan 2018, Petr Mladek wrote:
+On Mon, Feb 05, 2018 at 10:55:43AM +0100, Lothar Waﬂmann wrote:
+> Hi,
 > 
-> > From: Jason Baron <jbaron@akamai.com>
+> On Mon, 5 Feb 2018 15:56:22 +0800 Shawn Guo wrote:
+> > On Fri, Jan 26, 2018 at 09:52:18AM +0100, Lothar Waﬂmann wrote:
+> > > imx6ull-14x14-evk.dts currently includes the imx6ul.dtsi file for an
+> > > i.MX6ULL SoC which is plain wrong.
+> > > 
+> > > Rename the current imx6ul-14x14-evk.dts to .dtsi and include it from
+> > > imx6ul-14x14-evk.dts and imx6ull-14x14-evk.dts, so that both can
+> > > include the appropriate SoC specific (imx6ul.dtsi/imx6ull.dtsi) file.
+> > > 
+> > > Signed-off-by: Lothar Waﬂmann <LW@KARO-electronics.de>
 > > 
-> > We are going to add a feature called atomic replace. It will allow to
-> > create a patch that would replace all already registered patches.
-> > For this, we will need to dynamically create funcs' and objects'
-> > for functions that are not longer patched.
-> > 
-> > This patch adds basic framework to handle such dynamic structures.
-> > 
-> > diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-> > index e5db2ba7e2a5..21cad200f949 100644
-> > --- a/include/linux/livepatch.h
-> > +++ b/include/linux/livepatch.h
-> > @@ -35,12 +35,22 @@
-> >  #define KLP_UNPATCHED	 0
-> >  #define KLP_PATCHED	 1
-> >  
-> > +/*
-> > + * Function type is used to distinguish dynamically allocated structures
-> > + * and limit some operations.
-> > + */
-> > +enum klp_func_type {
-> > +	KLP_FUNC_ANY = -1,	/* Substitute any type */
-> > +	KLP_FUNC_ORIGINAL = 0,  /* Original statically defined structure */
-> 
-> Wouldn't KLP_FUNC_STATIC be better? KLP_FUNC_ORIGINAL confused me couple 
-> of times.
+> > Which base is the patch generated against?  I cannot apply it to any
+> > branch in my tree.
+> >
+> The patch was generated against next-20180118 but also applies to
+> next-20180205.
 
-OK, I am going to use KLP_FUNC_STATIC in v7.
+It looks like you would really want this go into 4.16 as a fix?  In that
+case, I will need to wait for v4.16-rc1 to apply it.
 
-Best Regards,
-Petr
+Shawn
