@@ -1,23 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754027AbeBEStO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 13:49:14 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:14366 "EHLO
+        id S1753880AbeBEStc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 13:49:32 -0500
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:14405 "EHLO
         smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753979AbeBESsz (ORCPT
+        with ESMTP id S1753898AbeBEStF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 13:48:55 -0500
+        Mon, 5 Feb 2018 13:49:05 -0500
 X-IronPort-AV: E=Sophos;i="5.46,465,1511827200";
-   d="scan'208";a="718190591"
+   d="scan'208";a="718190670"
 From: KarimAllah Ahmed <karahmed@amazon.de>
 To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc: KarimAllah Ahmed <karahmed@amazon.de>,
         Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [RFC 00/12] KVM/X86: Introduce a new guest mapping API
-Date: Mon,  5 Feb 2018 19:47:19 +0100
-Message-Id: <1517856451-2932-1-git-send-email-karahmed@amazon.de>
+Subject: [RFC 10/12] KVM/VMX: Use the new host mapping API for synic_clear_sint_msg_pending
+Date: Mon,  5 Feb 2018 19:47:29 +0100
+Message-Id: <1517856451-2932-11-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517856451-2932-1-git-send-email-karahmed@amazon.de>
+References: <1517856451-2932-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -25,46 +27,50 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guest memory can either be directly managed by the kernel (i.e. have a "struct
-page") or they can simply live outside kernel control (i.e. do not have a
-"struct page"). KVM mostly support these two modes, except in a few places
-where the code seems to assume that guest memory must have a "struct page".
-
-This patchset introduces a new mapping function to map guest memory into host
-kernel memory. Ideally I should also get rid of all guest mapping functions
-that end up converting a guest address to a page, but I decided to get feedback
-on this first and see if this is an acceptable API.
-
-Most of the offending code paths that has been updated are in the nested code
-base. Mostly because I stumbled upon this code while looking at the nested MSR
-bitmap handling for the IBRS patches. There are also offending code paths in
-SVM code, but I will do that once the interface is accepted.
-
-KarimAllah Ahmed (12):
-  KVM: Introduce helper functions to map/unmap guest memory
-  KVM/VMX: Use the new host mapping API for apic_access_page
-  KVM/VMX: Use the new host mapping API for virtual_apic_page
-  KVM/VMX: Use the new host mapping API for pi_desc_page
-  KVM/VMX: Use the new host mapping API for mapping nested vmptr
-  KVM/VMX: Use the new host mapping API for handle_vmptrld
-  KVM/VMX: Use the new host mapping API for mapping L12 MSR bitmap
-  KVM/VMX: Use the new host mapping API for mapping nested PML
-  KVM/VMX: Use the new host mapping API for cmpxchg_emulated
-  KVM/VMX: Use the new host mapping API for synic_clear_sint_msg_pending
-  KVM/VMX: Use the new host mapping API for synic_deliver_msg
-  KVM/VMX: Remove kvm_vcpu_gpa_to_page as it is now unused
-
- arch/x86/kvm/hyperv.c    |  24 +++----
- arch/x86/kvm/vmx.c       | 159 ++++++++++++++++++++---------------------------
- arch/x86/kvm/x86.c       |  12 ++--
- include/linux/kvm_host.h |  18 +++++-
- virt/kvm/kvm_main.c      |  62 ++++++++++++++++++
- 5 files changed, 161 insertions(+), 114 deletions(-)
-
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: kvm@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+ arch/x86/kvm/hyperv.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index dc97f25..408428a 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -137,25 +137,25 @@ static void synic_clear_sint_msg_pending(struct kvm_vcpu_hv_synic *synic,
+ 					u32 sint)
+ {
+ 	struct kvm_vcpu *vcpu = synic_to_vcpu(synic);
+-	struct page *page;
++	struct kvm_host_mapping mapping;
+ 	gpa_t gpa;
+ 	struct hv_message *msg;
+ 	struct hv_message_page *msg_page;
+ 
+ 	gpa = synic->msg_page & PAGE_MASK;
+-	page = kvm_vcpu_gfn_to_page(vcpu, gpa >> PAGE_SHIFT);
+-	if (is_error_page(page)) {
++
++
++	if (!kvm_vcpu_gpa_to_host_mapping(vcpu, gpa, &mapping, true)) {
+ 		vcpu_err(vcpu, "Hyper-V SynIC can't get msg page, gpa 0x%llx\n",
+ 			 gpa);
+ 		return;
+ 	}
+-	msg_page = kmap_atomic(page);
++	msg_page = mapping.kaddr;
+ 
+ 	msg = &msg_page->sint_message[sint];
+ 	msg->header.message_flags.msg_pending = 0;
+ 
+-	kunmap_atomic(msg_page);
+-	kvm_release_page_dirty(page);
++	kvm_release_host_mapping(&mapping, true);
+ 	kvm_vcpu_mark_page_dirty(vcpu, gpa >> PAGE_SHIFT);
+ }
+ 
 -- 
 2.7.4
