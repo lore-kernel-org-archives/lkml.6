@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227EOs+yEeLXp1iLJw7hpVir1PXl+58NxcZzK/5lwmCwv2jIq1c+OZjQsjPRxOAx0yEqjY5q
-ARC-Seal: i=1; a=rsa-sha256; t=1517855216; cv=none;
+X-Google-Smtp-Source: AH8x226U+3f0vVtGeEH5Gn3DhZWOj3wa5W6E+jJRsXIpDz0Xn+L8pWlYwqNMIvHP9xdo3spuc5em
+ARC-Seal: i=1; a=rsa-sha256; t=1517855215; cv=none;
         d=google.com; s=arc-20160816;
-        b=lGoFqh/X7k9CBc4QHjxx6CIHiHZy+ike3+bOdPu7dMNRZyuBgc8dWvLGlnezY8snUg
-         mOzrLU0JFZA1T4598OzxTku94dqDrxtW4RZULyX22Njv0kKaH4Dm3WtOEC5circHmrjT
-         F/V8pJ25pJ/Ssk0QcA+rCiDBqiLSqaKkhl1RpZPQJN2LQbVOgPw/dqloHs5t5xN52t1U
-         6CdnVG0als+UJA52/+ZUHdpUWFXi2jBCp4eOvXXzKJygLZ5DC6P7rv425c8k7MPljk1c
-         064ZVrCHv/gsPVb3bQX5oKcXkW/iLZkW1jUjMcemm7JpiEiy7oid+RjyIAU11jD4IjDQ
-         Psfg==
+        b=weAjQPDw2cx2pZ2Dzte/4xTHnIl0aF0EQDtL6QZ0AV5Zt2/w15xVSo3b2tAkazTWYe
+         7p00Xt5KTL490WiSTLMhfNdHT1JuYWa/BwcHCVLW3iY5v3td7du+SjMoEe1bFvdLfVKm
+         h6MtLJGUngmY17zl/S2eTAbR7Dvp165RS6bfXM0asRxZb1GiUl9NXMu+ni2sVWgpja1j
+         PQXIrN9IotHZznX7XBZtZ2GWUl/7sTLaH58PXUfGw7x5kaAPpXBsjc+f5PUMtY2hCJOH
+         W2K51tzVBSZKF2wjF9bFrNQrbaTbagJz7YRcklOFBOnmbuQC/s+IizW2OFBoT5Ifh2IR
+         9LPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rUnzaXbFQ+okJ34RrskJhY63HIJRr+sS2YdbexPt7Uw=;
-        b=k8FL/S2BWcSOrMXgiG34w23/Se/oDvy0q0IYoMRhJ7pZqW7eXWo2zvO5eFpq91ra8k
-         M0YZ3GaOgHc3OQAu/qBiQ4iLXfWgLombdO5Z/fyqXyciHFpfnHDwjg4lnUQ8fkRXKI/P
-         PWKB6DqScS8YHJjXZ7bKsPFkCVhmnEAqTMWTcGuX6/D7pgVmo+SCjbSM8MlHkaVNx4wv
-         InEeVzdGUIwFCUH7T7Dr/ucrCOxC24f2a7HFK2Y5iBuvIFapUbbyOs+fg4urgFHwDR9m
-         vpIKeRjKE0EpEfnhVkXe7WWlj0Li/kbVs5IKUYeXLI4UITmtn85L16FP6rNyZmlbXQuo
-         UXYA==
+        bh=gUUQCxLBQHbL4gfEKSRjT4Oc1s5M3lebQJMvnOWBNTk=;
+        b=mjoc4BRI3GbRl12PSZLkdD4tKQT9xpdMnkcbxCP5a2se36+82+cd/afp0nlsUfQ9pq
+         kgPWN8Jsd9E8JZ7ufgon9N8sJFewCvcXjJ4iEZnehSpLvLE9jNaOU/4k9UQIAnEunVdQ
+         nonfzvkNbQGMCQLdO6L8NcHo+foQONJoeQdlDELvQYh0/AHivsd3sW3fvHp8d7gSqW1o
+         nM9Bv+NddQWAXkViApdBfP9rVeE9rxSXC8sDvrAfvOWJrONDR+/d784TPhTHf85PfHyk
+         v6CyXfBo9o0Si5XxYkUH9mm24+DoAiOXPCGqLFnv3qbSgQJ6zvKrrS32HBOTE2f8gTa5
+         cVTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jesse Chan <jc@linux.com>,
+	Stefan Agner <stefan@agner.ch>,
 	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 3.18 36/36] ASoC: pcm512x: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Mon,  5 Feb 2018 10:24:04 -0800
-Message-Id: <20180205182353.256658352@linuxfoundation.org>
+Subject: [PATCH 3.18 35/36] spi: imx: do not access registers while clocks disabled
+Date: Mon,  5 Feb 2018 10:24:03 -0800
+Message-Id: <20180205182353.218567254@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586352448084681?=
-X-GMAIL-MSGID: =?utf-8?q?1591586551287067434?=
+X-GMAIL-THRID: =?utf-8?q?1591586550983169827?=
+X-GMAIL-MSGID: =?utf-8?q?1591586550983169827?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,35 +48,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Stefan Agner <stefan@agner.ch>
 
-commit 0cab20cec0b663b7be8e2be5998d5a4113647f86 upstream.
+commit d593574aff0ab846136190b1729c151c736727ec upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+Since clocks are disabled except during message transfer clocks
+are also disabled when spi_imx_remove gets called. Accessing
+registers leads to a freeeze at least on a i.MX 6ULL. Enable
+clocks before disabling accessing the MXC_CSPICTRL register.
 
-WARNING: modpost: missing MODULE_LICENSE() in sound/soc/codecs/snd-soc-pcm512x-spi.o
-see include/linux/module.h for more information
-
-This adds the license as "GPL v2", which matches the header of the file.
-
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
-
-Signed-off-by: Jesse Chan <jc@linux.com>
+Fixes: 9e556dcc55774 ("spi: spi-imx: only enable the clocks when we start to transfer a message")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/pcm512x-spi.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/spi/spi-imx.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/sound/soc/codecs/pcm512x-spi.c
-+++ b/sound/soc/codecs/pcm512x-spi.c
-@@ -67,3 +67,7 @@ static struct spi_driver pcm512x_spi_dri
- };
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -1220,12 +1220,23 @@ static int spi_imx_remove(struct platfor
+ {
+ 	struct spi_master *master = platform_get_drvdata(pdev);
+ 	struct spi_imx_data *spi_imx = spi_master_get_devdata(master);
++	int ret;
  
- module_spi_driver(pcm512x_spi_driver);
+ 	spi_bitbang_stop(&spi_imx->bitbang);
+ 
++	ret = clk_enable(spi_imx->clk_per);
++	if (ret)
++		return ret;
 +
-+MODULE_DESCRIPTION("ASoC PCM512x codec driver - SPI");
-+MODULE_AUTHOR("Mark Brown <broonie@kernel.org>");
-+MODULE_LICENSE("GPL v2");
++	ret = clk_enable(spi_imx->clk_ipg);
++	if (ret) {
++		clk_disable(spi_imx->clk_per);
++		return ret;
++	}
++
+ 	writel(0, spi_imx->base + MXC_CSPICTRL);
+-	clk_unprepare(spi_imx->clk_ipg);
+-	clk_unprepare(spi_imx->clk_per);
++	clk_disable_unprepare(spi_imx->clk_ipg);
++	clk_disable_unprepare(spi_imx->clk_per);
+ 	spi_imx_sdma_exit(spi_imx);
+ 	spi_master_put(master);
+ 
