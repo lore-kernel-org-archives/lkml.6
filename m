@@ -1,73 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751910AbeBEWZI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 17:25:08 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36658 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750796AbeBEWZE (ORCPT
+        id S1752003AbeBEW1D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 17:27:03 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43882 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750796AbeBEW0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 17:25:04 -0500
-X-Google-Smtp-Source: AH8x224PgtzmLbH0AR65tqDlGg6BVbOvcEXgWwsc2gQf5qJ/RM1TDD7vCzYCx0Bcp1iUi3YOyPS7aYxgn+POI335Cyo=
+        Mon, 5 Feb 2018 17:26:55 -0500
+X-Google-Smtp-Source: AH8x227pxGAyU/0aIYa6OEQzfqPH5Bvf7xuklIaBToQdvWrFOiw52nM8jVsoUX1/K0dApQBWw714e4R1UghmF9itmB4=
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFyxgnVP1C3bgNDgX01NZi2x=FYjAw=YHAdn17ENS9P7bg@mail.gmail.com>
-References: <151776623555.23236.14152911329227555005.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151776624080.23236.1865339140666550495.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180205115836.otnviqbae3pxjk5g@gmail.com> <CAPcyv4gyP4LAzS=8-ZNfy5gX=QHKK7VpGmeYXoP=rbe47kOg9A@mail.gmail.com>
- <CA+55aFyvGkuM33C8ki=5-11idWWK4tHKuPaSrSb0FPTaJmC_iQ@mail.gmail.com>
- <CALCETrV_7dxKAgwNyfDbvQ+0nTJG6NJqbKkngZyU-VPA3fvg8Q@mail.gmail.com> <CA+55aFyxgnVP1C3bgNDgX01NZi2x=FYjAw=YHAdn17ENS9P7bg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 5 Feb 2018 14:25:02 -0800
-X-Google-Sender-Auth: gYKlyyONT7gFrFIhxgK8tcKYXwY
-Message-ID: <CA+55aFy=Nb0Qp50SbArw2S+9frMOeHNXs0WuaEwacfip41HK9Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] x86/entry: Clear extra registers beyond syscall
- arguments for 64bit kernels
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>, X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+References: <1517856451-2932-1-git-send-email-karahmed@amazon.de> <1517856451-2932-4-git-send-email-karahmed@amazon.de>
+In-Reply-To: <1517856451-2932-4-git-send-email-karahmed@amazon.de>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 05 Feb 2018 22:26:44 +0000
+Message-ID: <CALMp9eRhHfoy7cL0x3qUMOHn4DUacHGc_497ac1QMPbiGU9O5g@mail.gmail.com>
+Subject: Re: [RFC 03/12] KVM/VMX: Use the new host mapping API for virtual_apic_page
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 2:22 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> But I'm not timing it.
+On Mon, Feb 5, 2018 at 10:48 AM KarimAllah Ahmed <karahmed@amazon.de> wrote:
 
-I lied.
+> @@ -5264,9 +5264,8 @@ static void
+vmx_complete_nested_posted_interrupt(struct kvm_vcpu *vcpu)
 
-I did this:
+>          max_irr = find_last_bit((unsigned long
+*)vmx->nested.pi_desc->pir, 256);
+>          if (max_irr != 256) {
+> -               vapic_page = kmap(vmx->nested.virtual_apic_page);
+> +               vapic_page = vmx->nested.virtual_apic_mapping.kaddr;
+>                  __kvm_apic_update_irr(vmx->nested.pi_desc->pir,
+vapic_page);
+> -               kunmap(vmx->nested.virtual_apic_page);
 
-        for (i = 0; i < 100000; i++)
-                asm(".rept 16384\n"
-                "subq $128,%rsp\n\t"
-                "pushq %rbx\n\t"
-                "pushq %r10\n\t"
-                "pushq %r11\n\t"
-                "pushq %r12\n\t"
-                "pushq %r13\n\t"
-                "pushq %r14\n\t"
-                "pushq %r15\n\t"
+Your kernel mapping now survives exits to userspace. I didn't think that
+was kosher, but I'd be happy to hear that I'm wrong.
 
-                "popq %r15\n\t"
-                "popq %r14\n\t"
-                "popq %r13\n\t"
-                "popq %r12\n\t"
-                "popq %r11\n\t"
-                "popq %r10\n\t"
-                "popq %rbx\n\t"
-                "addq $128,%rsp\n\t"
-                ".endr");
+> @@ -7502,10 +7501,8 @@ static void free_nested(struct vcpu_vmx *vmx)
+>          /* Unpin physical memory we referred to in the vmcs02 */
+>          if (vmx->nested.apic_access_mapping.pfn)
 
-and then I timed it like that, and with "xorq" of the register after
-each "pushq".
+kvm_release_host_mapping(&vmx->nested.apic_access_mapping, true);
+> -       if (vmx->nested.virtual_apic_page) {
+> -               kvm_release_page_dirty(vmx->nested.virtual_apic_page);
+> -               vmx->nested.virtual_apic_page = NULL;
+> -       }
+> +       if (vmx->nested.virtual_apic_mapping.pfn)
+> +
+kvm_release_host_mapping(&vmx->nested.virtual_apic_mapping, true);
 
-And the timings came out the same, to within the (bad) timing I did.
-
-So I really do think you can just put the xor right next to the push,
-and it will be effectively free.
-
-            Linus
+Is the host PFN guaranteed to be non-zero?
