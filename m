@@ -1,77 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751910AbeBEUHD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 15:07:03 -0500
-Received: from gateway30.websitewelcome.com ([192.185.149.4]:26599 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751853AbeBEUG4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:06:56 -0500
-Date: Mon, 5 Feb 2018 14:06:55 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH v2 2/8] dvb-frontends: ves1820: use 64-bit arithmetic instead
- of 32-bit
-Message-ID: <6e8742889d7c7f087e1b698409370bb5da5cd7ff.1517856716.git.gustavo@embeddedor.com>
-References: <cover.1517856716.git.gustavo@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1517856716.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.201.65
-X-Source-L: No
-X-Exim-ID: 1ein2V-003HTV-Dk
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.152.201.65]:46578
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 17
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1751575AbeBEUKa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 15:10:30 -0500
+Received: from sauhun.de ([88.99.104.3]:34223 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751015AbeBEUKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 15:10:25 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: [PATCH 1/4] v4l: vsp1: fix mask creation for MULT_ALPHA_RATIO
+Date: Mon,  5 Feb 2018 21:09:58 +0100
+Message-Id: <20180205201002.23621-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
+References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix ULL to constant 10 in order to give the compiler complete
-information about the proper arithmetic to use. Notice that this
-constant is used in a context that expects an expression of type
-u64 (64 bits, unsigned).
+Due to a typo, the mask was destroyed by a comparison instead of a bit
+shift. No regression since the mask has not been used yet.
 
-The expression fpxin = state->config->xin * 10 is currently being
-evaluated using 32-bit arithmetic.
-
-Addresses-Coverity-ID: 200604
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Changes in v2:
- - Update subject and changelog to better reflect the proposed code changes.
- - Add suffix ULL to constant instead of casting a variable.
+Only build tested. To be applied individually per subsystem.
 
- drivers/media/dvb-frontends/ves1820.c | 2 +-
+ drivers/media/platform/vsp1/vsp1_regs.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/ves1820.c b/drivers/media/dvb-frontends/ves1820.c
-index 1d89792..1760098 100644
---- a/drivers/media/dvb-frontends/ves1820.c
-+++ b/drivers/media/dvb-frontends/ves1820.c
-@@ -137,7 +137,7 @@ static int ves1820_set_symbolrate(struct ves1820_state *state, u32 symbolrate)
- 		NDEC = 3;
+diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
+index 26c4ffad2f4656..b1912c83a1dae2 100644
+--- a/drivers/media/platform/vsp1/vsp1_regs.h
++++ b/drivers/media/platform/vsp1/vsp1_regs.h
+@@ -225,7 +225,7 @@
+ #define VI6_RPF_MULT_ALPHA_P_MMD_RATIO	(1 << 8)
+ #define VI6_RPF_MULT_ALPHA_P_MMD_IMAGE	(2 << 8)
+ #define VI6_RPF_MULT_ALPHA_P_MMD_BOTH	(3 << 8)
+-#define VI6_RPF_MULT_ALPHA_RATIO_MASK	(0xff < 0)
++#define VI6_RPF_MULT_ALPHA_RATIO_MASK	(0xff << 0)
+ #define VI6_RPF_MULT_ALPHA_RATIO_SHIFT	0
  
- 	/* yeuch! */
--	fpxin = state->config->xin * 10;
-+	fpxin = state->config->xin * 10ULL;
- 	fptmp = fpxin; do_div(fptmp, 123);
- 	if (symbolrate < fptmp)
- 		SFIL = 1;
+ /* -----------------------------------------------------------------------------
 -- 
-2.7.4
+2.11.0
