@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226v48xlLcea1xHsuuES1uGnVl2hG2GSqbix2dUKIOQob+J50VmJLQduI4crmMUj9EufxdVy
-ARC-Seal: i=1; a=rsa-sha256; t=1517855115; cv=none;
+X-Google-Smtp-Source: AH8x224CRmhD3d6jsY/w6iHQ4zCTbsDE8lyOyQgbWpfE9IWyxzHY4HtGKhZhpuJdlch7OyvsHBud
+ARC-Seal: i=1; a=rsa-sha256; t=1517855109; cv=none;
         d=google.com; s=arc-20160816;
-        b=EZ8KB1fz1MWC4iyzhXe4EdlFFG2b+CXHuEJd4bpUiTNIE9+8eaon2ZPsW+EOjRFeEM
-         DnPqOyRN9ioG99ZPYsNzXckV9Vfz//IG/AQpJ+EnzkwEwoHe7jDuwdqQTtilEwzD3Mdx
-         2bjTcfQFv+HfOzwL/0fBiA5uY1yTAjzlY2G1uRDhk+kDpNXdM0WWcmBM3diouLH5OkYD
-         YYhrdqZi76jb6FZnbb0Nt3UhlZZDAfpa5WkVE3TYFSSNoQlYWnb466hDg2iUgCor0VCj
-         hqhKXUHhhSnZmqMpdmqmBTTSvvkojLLB3HOhh0V0VDctZgwl09VaPbHb9ldn7a/EJsEs
-         bFAw==
+        b=k6zt2iNkhTkyiuWgIE4HDnXetbf8ivReIvDobN9KbKdirN4JRnWHAZ4kE1bDS2H9/b
+         sA7PcG4qHXqL2XAyOS+kKpFMMYZDrSJYCuqzEZKbmxzC7BE5K6IBRVDP6CfEiSuKCu+p
+         uJX8hPepo9lLLmNGxnpR4Us4yTfM0Jof4lPQYs9iKGUNY/hO9Pq+kdiQ1eWK4Lo+1XIk
+         Q6Z7+b2/MzyEAU0RyYiOVDqupxGteAn9zp2rZa7pYMiXtTFuCYft5DDZajCoKpOKj3DS
+         yqsVPMp1UnpYLt8SYPMBM086ipc9ynPTotfjdDeSndnfSytzt0jXzNZ+SAtJJfuuyo9X
+         eeBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nMRA/GgkDZztbw6u5v7Cz/6+f/3N0qFadu618zEra0g=;
-        b=B5rFND0NStgqQmvaQqa7Lwal8rtyDJpCt52WuAAVYLUhHUVEmXYi8doGVlCqjd37Uq
-         NzllMpEk+DZBK1ESI86/xYfyz7a9L4WttwVUNiDCcn7BDOPTnZBs8KGGAr5vJAtPf82q
-         vm9iWY5E+5yBQE1/1IRLTMNXQqJb2TnAj3TI8eOMcnDhmw+2w1390WUIcgW2OH4JJM80
-         EBRFPGuDdmIpbz7WiOXsU+B6WEbidRf1CiL3eJ2NgH8D2BXJ/1CXGv3+AdaFYan94enE
-         T7Gz+ApZi4hYQjVr+KF9/REaI0v0dOtFT30nLH1PRJDR8DCmk/g44ICxkX0mXEJf2lXM
-         8kRw==
+        bh=aTYL96qcPpF/Bl/fYkuhDMcduWAxIUQF3PrsC/SbLRI=;
+        b=J6T9j6lsSsvqLLUcJpl5iqPzp+HK+4YLJuJVoWFx6l83cAgOYWS05zG0OupfsjYABn
+         ULqt1ZJAFyA2GMHji7l+11xSnM2ZboaR7WOhijl+pOAAMrgkHtRVfz8R6axEQkTnNPy9
+         F58p8m9aQkOo47xv5W2HHw8SYW58ZYBXGd6sErl3crArgmhBQZ43/6kihgxDUQJcDZm9
+         0GCSJQxZvJisDBaDcvmd1HiYRXhK11cOPe2H1VSp5XSnaC9JwzFameqx6OOMlmergxnF
+         cjDsrGLlHmv4WrF2v2MjK++vjMmckCXogterROgx1AWokzelrhe0A1BxooFvP8/5vuZ/
+         GG0w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,24 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juergen Gross <jgross@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 25/60] objtool: Add support for alternatives at the end of a section
-Date: Mon,  5 Feb 2018 10:22:58 -0800
-Message-Id: <20180205182214.970097989@linuxfoundation.org>
+	Borislav Petkov <bp@suse.de>,
+	Dave Hansen <dave.hansen@intel.com>,
+	gnomes@lxorguk.ukuu.org.uk,
+	ak@linux.intel.com,
+	ashok.raj@intel.com,
+	karahmed@amazon.de,
+	arjan@linux.intel.com,
+	torvalds@linux-foundation.org,
+	peterz@infradead.org,
+	bp@alien8.de,
+	pbonzini@redhat.com,
+	tim.c.chen@linux.intel.com,
+	gregkh@linux-foundation.org
+Subject: [PATCH 4.15 08/60] x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown
+Date: Mon,  5 Feb 2018 10:22:41 -0800
+Message-Id: <20180205182214.261733948@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
@@ -49,8 +52,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586357239310339?=
-X-GMAIL-MSGID: =?utf-8?q?1591586444833781099?=
+X-GMAIL-THRID: =?utf-8?q?1591586334764895819?=
+X-GMAIL-MSGID: =?utf-8?q?1591586439122027728?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,125 +61,111 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf jpoimboe@redhat.com
+From: David Woodhouse dwmw@amazon.co.uk
 
-commit 17bc33914bcc98ba3c6b426fd1c49587a25c0597
+commit fec9434a12f38d3aeafeb75711b71d8a1fdef621
 
-Now that the previous patch gave objtool the ability to read retpoline
-alternatives, it shows a new warning:
+Also, for CPUs which don't speculate at all, don't report that they're
+vulnerable to the Spectre variants either.
 
-  arch/x86/entry/entry_64.o: warning: objtool: .entry_trampoline: don't know how to handle alternatives at end of section
+Leave the cpu_no_meltdown[] match table with just X86_VENDOR_AMD in it
+for now, even though that could be done with a simple comparison, on the
+assumption that we'll have more to add.
 
-This is due to the JMP_NOSPEC in entry_SYSCALL_64_trampoline().
+Based on suggestions from Dave Hansen and Alan Cox.
 
-Previously, objtool ignored this situation because it wasn't needed, and
-it would have required a bit of extra code.  Now that this case exists,
-add proper support for it.
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/2a30a3c2158af47d891a76e69bb1ef347e0443fd.1517284349.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: ak@linux.intel.com
+Cc: ashok.raj@intel.com
+Cc: karahmed@amazon.de
+Cc: arjan@linux.intel.com
+Cc: torvalds@linux-foundation.org
+Cc: peterz@infradead.org
+Cc: bp@alien8.de
+Cc: pbonzini@redhat.com
+Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
+Link: https://lkml.kernel.org/r/1516896855-7642-6-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- tools/objtool/check.c |   53 +++++++++++++++++++++++++++++---------------------
- 1 file changed, 31 insertions(+), 22 deletions(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -594,7 +594,7 @@ static int handle_group_alt(struct objto
- 			    struct instruction *orig_insn,
- 			    struct instruction **new_insn)
- {
--	struct instruction *last_orig_insn, *last_new_insn, *insn, *fake_jump;
-+	struct instruction *last_orig_insn, *last_new_insn, *insn, *fake_jump = NULL;
- 	unsigned long dest_off;
+---
+ arch/x86/kernel/cpu/common.c |   48 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 43 insertions(+), 5 deletions(-)
+
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -47,6 +47,8 @@
+ #include <asm/pat.h>
+ #include <asm/microcode.h>
+ #include <asm/microcode_intel.h>
++#include <asm/intel-family.h>
++#include <asm/cpu_device_id.h>
  
- 	last_orig_insn = NULL;
-@@ -610,28 +610,30 @@ static int handle_group_alt(struct objto
- 		last_orig_insn = insn;
- 	}
- 
--	if (!next_insn_same_sec(file, last_orig_insn)) {
--		WARN("%s: don't know how to handle alternatives at end of section",
--		     special_alt->orig_sec->name);
--		return -1;
--	}
--
--	fake_jump = malloc(sizeof(*fake_jump));
--	if (!fake_jump) {
--		WARN("malloc failed");
--		return -1;
-+	if (next_insn_same_sec(file, last_orig_insn)) {
-+		fake_jump = malloc(sizeof(*fake_jump));
-+		if (!fake_jump) {
-+			WARN("malloc failed");
-+			return -1;
-+		}
-+		memset(fake_jump, 0, sizeof(*fake_jump));
-+		INIT_LIST_HEAD(&fake_jump->alts);
-+		clear_insn_state(&fake_jump->state);
-+
-+		fake_jump->sec = special_alt->new_sec;
-+		fake_jump->offset = -1;
-+		fake_jump->type = INSN_JUMP_UNCONDITIONAL;
-+		fake_jump->jump_dest = list_next_entry(last_orig_insn, list);
-+		fake_jump->ignore = true;
- 	}
--	memset(fake_jump, 0, sizeof(*fake_jump));
--	INIT_LIST_HEAD(&fake_jump->alts);
--	clear_insn_state(&fake_jump->state);
--
--	fake_jump->sec = special_alt->new_sec;
--	fake_jump->offset = -1;
--	fake_jump->type = INSN_JUMP_UNCONDITIONAL;
--	fake_jump->jump_dest = list_next_entry(last_orig_insn, list);
--	fake_jump->ignore = true;
- 
- 	if (!special_alt->new_len) {
-+		if (!fake_jump) {
-+			WARN("%s: empty alternative at end of section",
-+			     special_alt->orig_sec->name);
-+			return -1;
-+		}
-+
- 		*new_insn = fake_jump;
- 		return 0;
- 	}
-@@ -654,8 +656,14 @@ static int handle_group_alt(struct objto
- 			continue;
- 
- 		dest_off = insn->offset + insn->len + insn->immediate;
--		if (dest_off == special_alt->new_off + special_alt->new_len)
-+		if (dest_off == special_alt->new_off + special_alt->new_len) {
-+			if (!fake_jump) {
-+				WARN("%s: alternative jump to end of section",
-+				     special_alt->orig_sec->name);
-+				return -1;
-+			}
- 			insn->jump_dest = fake_jump;
-+		}
- 
- 		if (!insn->jump_dest) {
- 			WARN_FUNC("can't find alternative jump destination",
-@@ -670,7 +678,8 @@ static int handle_group_alt(struct objto
- 		return -1;
- 	}
- 
--	list_add(&fake_jump->list, &last_new_insn->list);
-+	if (fake_jump)
-+		list_add(&fake_jump->list, &last_new_insn->list);
- 
- 	return 0;
+ #ifdef CONFIG_X86_LOCAL_APIC
+ #include <asm/uv/uv.h>
+@@ -877,6 +879,41 @@ static void identify_cpu_without_cpuid(s
+ #endif
  }
+ 
++static const __initdata struct x86_cpu_id cpu_no_speculation[] = {
++	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CEDARVIEW,	X86_FEATURE_ANY },
++	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CLOVERVIEW,	X86_FEATURE_ANY },
++	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_LINCROFT,	X86_FEATURE_ANY },
++	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_PENWELL,	X86_FEATURE_ANY },
++	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_PINEVIEW,	X86_FEATURE_ANY },
++	{ X86_VENDOR_CENTAUR,	5 },
++	{ X86_VENDOR_INTEL,	5 },
++	{ X86_VENDOR_NSC,	5 },
++	{ X86_VENDOR_ANY,	4 },
++	{}
++};
++
++static const __initdata struct x86_cpu_id cpu_no_meltdown[] = {
++	{ X86_VENDOR_AMD },
++	{}
++};
++
++static bool __init cpu_vulnerable_to_meltdown(struct cpuinfo_x86 *c)
++{
++	u64 ia32_cap = 0;
++
++	if (x86_match_cpu(cpu_no_meltdown))
++		return false;
++
++	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
++		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
++
++	/* Rogue Data Cache Load? No! */
++	if (ia32_cap & ARCH_CAP_RDCL_NO)
++		return false;
++
++	return true;
++}
++
+ /*
+  * Do minimum CPU detection early.
+  * Fields really needed: vendor, cpuid_level, family, model, mask,
+@@ -924,11 +961,12 @@ static void __init early_identify_cpu(st
+ 
+ 	setup_force_cpu_cap(X86_FEATURE_ALWAYS);
+ 
+-	if (c->x86_vendor != X86_VENDOR_AMD)
+-		setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
+-
+-	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
+-	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
++	if (!x86_match_cpu(cpu_no_speculation)) {
++		if (cpu_vulnerable_to_meltdown(c))
++			setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
++		setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
++		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
++	}
+ 
+ 	fpu__init_system(c);
+ 
