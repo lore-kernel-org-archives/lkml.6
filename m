@@ -1,149 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753158AbeBEOFx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 09:05:53 -0500
-Received: from mail-edgeDD24.fraunhofer.de ([192.102.167.24]:57903 "EHLO
-        mail-edgeDD24.fraunhofer.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752607AbeBEOFp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:05:45 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GiAADHYXha/xoBYJlcGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYNRZnAyg1uKJHSNOYICl0iCGAojhRgCGoIuVBgBAQEBAQEBAQI?=
- =?us-ascii?q?DaCiFJQEFIxFFEAIBCBgCAiYCAgIwFRACBAENijkBEL9sgieEFgEBhFqCBgEBA?=
- =?us-ascii?q?QEBAQEDAQEBAQEBAQEBGgWBD4NbgQ6BB4FYgWeDLoUiF4MAgmUFil+JW49lBgK?=
- =?us-ascii?q?BHYZ6jViCHoYmg26IBY1tigmBPB86gVBxgxiCVBwZgTIBOo4fgRcBAQE?=
-X-IPAS-Result: =?us-ascii?q?A2GiAADHYXha/xoBYJlcGQEBAQEBAQEBAQEBAQcBAQEBAYN?=
- =?us-ascii?q?RZnAyg1uKJHSNOYICl0iCGAojhRgCGoIuVBgBAQEBAQEBAQIDaCiFJQEFIxFFE?=
- =?us-ascii?q?AIBCBgCAiYCAgIwFRACBAENijkBEL9sgieEFgEBhFqCBgEBAQEBAQEDAQEBAQE?=
- =?us-ascii?q?BAQEBGgWBD4NbgQ6BB4FYgWeDLoUiF4MAgmUFil+JW49lBgKBHYZ6jViCHoYmg?=
- =?us-ascii?q?26IBY1tigmBPB86gVBxgxiCVBwZgTIBOo4fgRcBAQE?=
-X-IronPort-AV: E=Sophos;i="5.46,464,1511823600";
-   d="scan'208";a="1203385"
-X-IronPort-AV: E=Sophos;i="5.46,464,1511823600";
-   d="scan'208";a="9560639"
-From: "Auer, Lukas" <lukas.auer@aisec.fraunhofer.de>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aymen.sghaier@nxp.com" <aymen.sghaier@nxp.com>,
-        "horia.geanta@nxp.com" <horia.geanta@nxp.com>,
-        "pure.logic@nexus-software.ie" <pure.logic@nexus-software.ie>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-CC: "peng.fan@nxp.com" <peng.fan@nxp.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "ryan.harkin@linaro.org" <ryan.harkin@linaro.org>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "rui.silva@linaro.org" <rui.silva@linaro.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH v3 2/5] crypto: caam: Fix endless loop when RNG is
- already initialized
-Thread-Topic: [PATCH v3 2/5] crypto: caam: Fix endless loop when RNG is
- already initialized
-Thread-Index: AQHTmjdPDFt5DoJeZkev9KNOEKfDKqOVzIwA
-Date: Mon, 5 Feb 2018 13:54:43 +0000
-Message-ID: <1517838882.2601.12.camel@aisec.fraunhofer.de>
-References: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
-         <1517364040-27607-3-git-send-email-pure.logic@nexus-software.ie>
-         <VI1PR0402MB334297558BB1984131546B1D98FA0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-         <78ad6a62-190c-e4fe-dd23-e1d058f9bbb2@nexus-software.ie>
-         <1517576063.2002.19.camel@aisec.fraunhofer.de>
-         <VI1PR0402MB3342899B009D1A6CC0569CFE98FE0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR0402MB3342899B009D1A6CC0569CFE98FE0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.80.233.51]
-x-tm-as-product-ver: SMEX-11.0.0.4179-8.200.1013-23642.006
-x-tm-as-result: No--28.683800-8.000000-31
-x-tm-as-user-approved-sender: No
-x-tm-as-user-blocked-sender: No
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <77ED0A1B7A0D954C88D393EDE2337E77@xch.fraunhofer.de>
+        id S1753043AbeBEOLZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:11:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752607AbeBEOLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 09:11:16 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11638217AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Mon, 5 Feb 2018 14:11:11 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mips@linux-mips.org,
+        Paul Burton <paul.burton@mips.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] MIPS: Generic: Support GIC in EIC mode
+Message-ID: <20180205141110.GC8479@saruman>
+References: <1515148270-9391-1-git-send-email-matt.redfearn@mips.com>
+ <1515148270-9391-4-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="GPJrCs/72TxItFYR"
+Content-Disposition: inline
+In-Reply-To: <1515148270-9391-4-git-send-email-matt.redfearn@mips.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w15E65NC021757
 
-On Mon, 2018-02-05 at 08:45 +0000, Horia Geantă wrote:
-> On 2/2/2018 2:54 PM, Auer, Lukas wrote:
-> > On Fri, 2018-02-02 at 11:20 +0000, Bryan O'Donoghue wrote:
-> > > On 01/02/18 12:16, Horia Geantă wrote:
-> > > > If the loop cannot exit based on value of "ret" != -EAGAIN,
-> > > > then it
-> > > > means
-> > > > caam_probe() will eventually fail due to ret == -EAGAIN:
-> > > > 	if (ret) {
-> > > > 		dev_err(dev, "failed to instantiate RNG");
-> > > > 		goto caam_remove;
-> > > > 	}
-> > > 
-> > > For me it's an endless loop applying the first two
-> > > 
-> > > https://patchwork.ozlabs.org/patch/866460/
-> > > https://patchwork.ozlabs.org/patch/866462/
-> > > 
-> > > but not this one
-> > > 
-> > > https://patchwork.ozlabs.org/patch/865890/
-> > > 
-> 
-> [snip]
-> > 
-> > I think the problem lies in the instantiate_rng() function. If the
-> > driver is unable to acquire DEC0 it'll return -ENODEV. This should
-> > terminate the while loop in the probe function. However, the return
-> > value is never checked and is instead overwritten with -EAGAIN,
-> > causing
-> > the endless loop.
-> > 
-> > This problem only occurs if u-boot instantiates only one of the
-> > state
-> > handles (ent_delay doesn't get incremented) and the kernel runs in
-> > non-
-> > secure mode (DEC0 can't get acquired). Instantiating all state
-> > handles
-> > in u-boot therefore fixes this problem. In addition, the return
-> > value
-> > in instantiate_rng() should be handled correctly by including
-> > 
-> > if (ret)
-> > 	break;
-> > 
-> > right after "ret = run_descriptor_deco0(ctrldev, desc, &status);".
-> > 
-> 
-> Indeed, the error path is incorrect and should be fixed as you
-> mentioned.
-> I will send a patch replacing this one.
-> Note that this fixes only the error path, meaning caam_probe() won't
-> go into an
-> endless loop and instead will return -ENODEV, due to being unable to
-> acquire
-> control of DECO0.
-> 
-> There are still a few hurdles to cross for CAAM to work in a TZ
-> environment.
-> 
-> For e.g. could you please check / confirm whether DECO0MIDR (DECO0
-> MID registers
-> @0xA0, @0xA4) are set such that Linux kernel is allowed to r/w DECO0-
-> related
-> registers?
-> 
-> Thanks,
-> Horia
 
-On my board DECO0 MID ms is set to 0x8001, which I believe (going by
-the structure of the other MID registers, since some of the bits are
-only marked as reserved) is a MID of 1 (A7 cores) in secure mode.
-Changing this to 0x9 for a MID of 1 in non-secure mode still fails the
-DEC0 acquisition step in the probe call.
+--GPJrCs/72TxItFYR
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So unfortunately I am not sure what / if other steps are required to
-use the CAAM in non-secure mode. Running a quick test with openssl
-speed (using CAAM with cryptodev), it at least seems to be working.
+On Fri, Jan 05, 2018 at 10:31:07AM +0000, Matt Redfearn wrote:
+> The GIC supports running in External Interrupt Controller (EIC) mode,
+> and will signal this via cpu_has_veic if enabled in hardware. Currently
+> the generic kernel will panic if cpu_has_veic is set - but the GIC can
+> legitimately set this flag if either configured to boot in EIC mode, or
+> if the GIC driver enables this mode. Make the kernel not panic in this
+> case, and instead just check if the GIC is present. If so, use it's CPU
+> local interrupt routing functions. If an EIC is present, but it is not
+> the GIC, then the kernel does not know how to get the VIRQ for the CPU
+> local interrupts and should panic. Support for alternative EICs being
+> present is needed here for the generic kernel to support them.
+>=20
+> Suggested-by: Paul Burton <paul.burton@mips.com>
+> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 
-Thanks,
-Lukas
+Applied for 4.16,
+
+Thanks
+James
+
+> ---
+>=20
+>  arch/mips/generic/irq.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/arch/mips/generic/irq.c b/arch/mips/generic/irq.c
+> index 394f8161e462..cb7fdaeef426 100644
+> --- a/arch/mips/generic/irq.c
+> +++ b/arch/mips/generic/irq.c
+> @@ -22,10 +22,10 @@ int get_c0_fdc_int(void)
+>  {
+>  	int mips_cpu_fdc_irq;
+> =20
+> -	if (cpu_has_veic)
+> -		panic("Unimplemented!");
+> -	else if (mips_gic_present())
+> +	if (mips_gic_present())
+>  		mips_cpu_fdc_irq =3D gic_get_c0_fdc_int();
+> +	else if (cpu_has_veic)
+> +		panic("Unimplemented!");
+>  	else if (cp0_fdc_irq >=3D 0)
+>  		mips_cpu_fdc_irq =3D MIPS_CPU_IRQ_BASE + cp0_fdc_irq;
+>  	else
+> @@ -38,10 +38,10 @@ int get_c0_perfcount_int(void)
+>  {
+>  	int mips_cpu_perf_irq;
+> =20
+> -	if (cpu_has_veic)
+> -		panic("Unimplemented!");
+> -	else if (mips_gic_present())
+> +	if (mips_gic_present())
+>  		mips_cpu_perf_irq =3D gic_get_c0_perfcount_int();
+> +	else if (cpu_has_veic)
+> +		panic("Unimplemented!");
+>  	else if (cp0_perfcount_irq >=3D 0)
+>  		mips_cpu_perf_irq =3D MIPS_CPU_IRQ_BASE + cp0_perfcount_irq;
+>  	else
+> @@ -54,10 +54,10 @@ unsigned int get_c0_compare_int(void)
+>  {
+>  	int mips_cpu_timer_irq;
+> =20
+> -	if (cpu_has_veic)
+> -		panic("Unimplemented!");
+> -	else if (mips_gic_present())
+> +	if (mips_gic_present())
+>  		mips_cpu_timer_irq =3D gic_get_c0_compare_int();
+> +	else if (cpu_has_veic)
+> +		panic("Unimplemented!");
+>  	else
+>  		mips_cpu_timer_irq =3D MIPS_CPU_IRQ_BASE + cp0_compare_irq;
+> =20
+> --=20
+> 2.7.4
+>=20
+>=20
+
+--GPJrCs/72TxItFYR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlp4Zf4ACgkQbAtpk944
+dnpmqRAAgGyAzHlWAHXSmt3JsBdhMG6TDEiC45tPdIp9aoieDRduQYtyPnf4t094
+XCZ1w0kOnTn7rEPYX5+sN776jf0vhZbBZRHwBqaqJ1IWl5uOIrFJ76FeVBsWMu4f
+vGSG5HbsmB+3bN/qN9eRqHag87w/bacok3GYHZSh+IY5pVsrTJ94c9jNbwcstrMb
+NAQwEN/mg+rUmxsqqWBs0HEvESpMQu2DEars03R77SoxiT/1uAcoUqzG9MtqxlgM
+2DFq2LZyPcvV2/MN2MW33sggoft2qhJFWXVCgYXfstujBXCjQ/ejpBQz/mVoPJH6
+4c9/ZHgjmlNozSQFYJihIiX/5wotkj0F9uPmL6sJkgNk09XjhYTuGFHEMPeM2wij
+aa7wtvws+u9irEpmCG+HyayresjEf80LLYCsLtgv0QKLF6KT7w2Oyw2j2b/ryjzo
+0zoXHDHoUm5AJGvRiEAaqvFgqQL8mW6DWQ+6YfHxaChnoucxBPsVvpF5WD4mWqMj
+HuAMIGeQNbX7foxrG7jj/whxuAWxZA3UixYjReFYMZ585v0czTtOUumjbkUBN/2L
+m1qryQ99U/uZrhl8G8aKrx5JTFFegkd7zOj1Y6oL2sXfSiISSKPP4BKU/t/vo4yn
+tCoRSDaa4yt/rFxvgvtieTY1/Czj7OP5RWkGOJJiOBNCnqL+NNk=
+=yjFj
+-----END PGP SIGNATURE-----
+
+--GPJrCs/72TxItFYR--
