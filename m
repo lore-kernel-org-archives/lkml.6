@@ -1,116 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752716AbeBEIsC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 03:48:02 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49563 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752671AbeBEIrv (ORCPT
+        id S1752651AbeBEItl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 03:49:41 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:24923 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752208AbeBEIte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:47:51 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180205084749euoutp02b764ac51e341b059a5b4ca0fd8d1d062~QYazLX81g3071430714euoutp02q
-X-AuditID: cbfec7f1-f793a6d00000326b-0d-5a781a342249
-Subject: Re: [PATCH] [BUGFIX] media: vb2: Fix videobuf2 to map correct area
-To: Masami Hiramatsu <mhiramat@kernel.org>,
-        Pawel Osciak <pawel@osciak.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        orito.takao@socionext.com, Fumihiro ATSUMI <atsumi@infinitegra.co.jp>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <2af9a288-86e8-100a-4459-bc913f3cb99d@samsung.com>
-Date: Mon, 05 Feb 2018 09:47:46 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.5.2
-MIME-version: 1.0
-In-reply-to: <151779784111.20697.5012233804870630070.stgit@devbox>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-Content-transfer-encoding: 7bit
-Content-language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djPc7omUhVRBjdn81ncv7uEyeJs0xt2
-        i8u75rBZ9GzYymqxbNMfJovFy9Us7t35wG4x5e1PdgcOjxUvPjN7bFrVyebx+NdLNo++LasY
-        PU5M/87i8XmTXABbFJdNSmpOZllqkb5dAlfGlav/WArO8FU8Wj+fvYHxHXcXIyeHhICJxIN7
-        G9ggbDGJC/fWA9lcHEICSxkl/kzfxwrhfGaUWNvUzwrTcX3aD2aIxDJGiQ/HjrNDOM8ZJTr6
-        rjGCVAkLeEt03j7BAmKLCFRI7Gh7xARSxCywhVFi1sr3YAk2AUOJrrddYMt5Bewkti67D7aC
-        RUBVYkHHT7BBogIxEv83zmSHqBGU+DH5Hlgvp4CTRPe+x2D1zAJWEs/+tULZ8hKb17xlhrDF
-        JZpbb7KALJYQeMwmsaj5IQvEDy4S77/MY4awhSVeHd/CDmHLSHR2HGSCsPsZJZpatSHsGYwS
-        597yQtjWEoePX4Raxicxadt0oDkcQHFeiY42IYgSD4mGGa+hxjhK9Hz8wgQJoamMEo++7GOf
-        wCg/C8k/s5D8MAvJD7OQ/LCAkWUVo0hqaXFuemqxkV5xYm5xaV66XnJ+7iZGYPo5/e/4xx2M
-        709YHWIU4GBU4uG1iC+PEmJNLCuuzD3EKMHBrCTC63QdKMSbklhZlVqUH19UmpNafIhRmoNF
-        SZzXNqotUkggPbEkNTs1tSC1CCbLxMEp1cBo1FStzqe5covP2fj6d0IGBycLf5v/TytYsjHs
-        6TKT9l1KM5XFFDkCD617sstDZ0v0oszdZsuKjygoHjti65a1eob3BbboB1t0vm5S/91fUC56
-        cg/PgfRp16U29tasuVfZoZfv+saK11o6JEPvxp5FV3oOhtyu4Lj8Zu1EryuCm+W5NphcUDJV
-        YinOSDTUYi4qTgQAY3e6KjsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsVy+t/xa7rGUhVRBgv79C3u313CZHG26Q27
-        xeVdc9gsejZsZbVYtukPk8Xi5WoW9+58YLeY8vYnuwOHx4oXn5k9Nq3qZPN4/Oslm0ffllWM
-        Hiemf2fx+LxJLoAtissmJTUnsyy1SN8ugSvjytV/LAVn+CoerZ/P3sD4jruLkZNDQsBE4vq0
-        H8wQtpjEhXvr2UBsIYEljBLvP0R2MXIB2c8ZJU6ufAeWEBbwlui8fYIFxBYRqJB48foOI0gR
-        s8AWRok9fVNZIDqmM0os+jGJCaSKTcBQouttF1g3r4CdxNZl91lBbBYBVYkFHT8ZQWxRgRiJ
-        Bc2HmCFqBCV+TL4HtoFTwEmie99jsHpmATOJLy8PQ9nyEpvXvGWGsMUlmltvskxgFJyFpH0W
-        kpZZSFpmIWlZwMiyilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzBSth37uXkH46WNwYcYBTgY
-        lXh4LeLLo4RYE8uKK3MPMUpwMCuJ8DpdBwrxpiRWVqUW5ccXleakFh9ilOZgURLn7d2zOlJI
-        ID2xJDU7NbUgtQgmy8TBKdXAOFv1kc2MV2lVTV19ktV7wsVMWL5IT1dbI7RhV8f5xzEtr3J3
-        nSmyKPy4ZvbtmweeTow7MW9plEbErbmuHX2Xv4of+VO7Wr+nJoTXIX+etc+CG4n3PY+uOfB7
-        9QehiX3atwMO2ywNNyz5+0Jh2dXNucWdm8IizTaXLFE9vWvlTYOd/Et+npg+z0KJpTgj0VCL
-        uag4EQA8/pEVkAIAAA==
-X-CMS-MailID: 20180205084747eucas1p1ce06b2b7a8180f2df8975a6ee05a475a
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180205023108epcas5p18456b3ecc412b6709dc27fe5af14b1f6
-X-RootMTR: 20180205023108epcas5p18456b3ecc412b6709dc27fe5af14b1f6
-References: <CGME20180205023108epcas5p18456b3ecc412b6709dc27fe5af14b1f6@epcas5p1.samsung.com>
-        <151779784111.20697.5012233804870630070.stgit@devbox>
+        Mon, 5 Feb 2018 03:49:34 -0500
+X-IronPort-AV: E=Sophos;i="5.44,434,1505804400";
+   d="scan'208";a="8484705"
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-fbdev@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>,
+        <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>,
+        <b.zolnierkie@samsung.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [RESEND][PATCH] video: fbdev: atmel_lcdfb: convert to use GPIO descriptors
+Date: Mon, 5 Feb 2018 09:47:55 +0100
+Message-ID: <20180205084755.6011-1-ludovic.desroches@microchip.com>
+X-Mailer: git-send-email 2.12.2
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+Use GPIO descriptors instead of relying on the old method.
 
-On 2018-02-05 03:30, Masami Hiramatsu wrote:
-> Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
-> Since the current code does ioremap the page address, if the offset > 0,
-> it does not do ioremap the last page and results in kernel panic.
->
-> This fixes to pass the page address + offset to ioremap so that ioremap
-> can map correct area. Also, this uses __pfn_to_phys() to get the physical
-> address of given PFN.
->
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Reported-by: Takao Orito <orito.takao@socionext.com>
-> ---
->   drivers/media/v4l2-core/videobuf2-vmalloc.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/v4l2-core/videobuf2-vmalloc.c b/drivers/media/v4l2-core/videobuf2-vmalloc.c
-> index 3a7c80cd1a17..896f2f378b40 100644
-> --- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
-> +++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
-> @@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(struct device *dev, unsigned long vaddr,
->   			if (nums[i-1] + 1 != nums[i])
->   				goto fail_map;
->   		buf->vaddr = (__force void *)
-> -				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
-> +			ioremap_nocache(__pfn_to_phys(nums[0]) + offset, size);
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+---
+ drivers/video/fbdev/atmel_lcdfb.c | 30 ++++++++++++------------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
-Thanks for reporting this issue. However the above line doesn't look like
-a proper fix. Please note that at the end of that function there is already
-"buf->vaddr += offset;".
-
-IMHO the proper fix is to create a larger mapping, which would include the
-in-page start offset:
-
-ioremap_nocache(__pfn_to_phys(nums[0]), offset + size);
-
-BTW, thanks for updating "<< PAGE_SHIFT" to better __pfn_to_phys() macro!
-
->   	} else {
->   		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
->   					PAGE_KERNEL);
->
->
->
->
-
-Best regards
+diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
+index 3dee267d7c75..ef3d4198014f 100644
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -18,6 +18,7 @@
+ #include <linux/delay.h>
+ #include <linux/backlight.h>
+ #include <linux/gfp.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -61,8 +62,7 @@ struct atmel_lcdfb_info {
+ };
+ 
+ struct atmel_lcdfb_power_ctrl_gpio {
+-	int gpio;
+-	int active_low;
++	struct gpio_desc *gpiod;
+ 
+ 	struct list_head list;
+ };
+@@ -1018,7 +1018,7 @@ static void atmel_lcdfb_power_control_gpio(struct atmel_lcdfb_pdata *pdata, int
+ 	struct atmel_lcdfb_power_ctrl_gpio *og;
+ 
+ 	list_for_each_entry(og, &pdata->pwr_gpios, list)
+-		gpio_set_value(og->gpio, on);
++		gpiod_set_value(og->gpiod, on);
+ }
+ 
+ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+@@ -1031,11 +1031,11 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+ 	struct device_node *display_np;
+ 	struct device_node *timings_np;
+ 	struct display_timings *timings;
+-	enum of_gpio_flags flags;
+ 	struct atmel_lcdfb_power_ctrl_gpio *og;
+ 	bool is_gpio_power = false;
+ 	int ret = -ENOENT;
+-	int i, gpio;
++	int i;
++	struct gpio_desc *gpiod;
+ 
+ 	sinfo->config = (struct atmel_lcdfb_config*)
+ 		of_match_device(atmel_lcdfb_dt_ids, dev)->data;
+@@ -1072,28 +1072,22 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+ 
+ 	INIT_LIST_HEAD(&pdata->pwr_gpios);
+ 	ret = -ENOMEM;
+-	for (i = 0; i < of_gpio_named_count(display_np, "atmel,power-control-gpio"); i++) {
+-		gpio = of_get_named_gpio_flags(display_np, "atmel,power-control-gpio",
+-					       i, &flags);
+-		if (gpio < 0)
++	for (i = 0; i < gpiod_count(dev, "atmel,power-control"); i++) {
++		gpiod = devm_gpiod_get_index_optional(dev,
++				"atmel,power-control", i, GPIOD_ASIS);
++		if (!gpiod)
+ 			continue;
+ 
+ 		og = devm_kzalloc(dev, sizeof(*og), GFP_KERNEL);
+ 		if (!og)
+ 			goto put_display_node;
+ 
+-		og->gpio = gpio;
+-		og->active_low = flags & OF_GPIO_ACTIVE_LOW;
++		og->gpiod = gpiod;
+ 		is_gpio_power = true;
+-		ret = devm_gpio_request(dev, gpio, "lcd-power-control-gpio");
+-		if (ret) {
+-			dev_err(dev, "request gpio %d failed\n", gpio);
+-			goto put_display_node;
+-		}
+ 
+-		ret = gpio_direction_output(gpio, og->active_low);
++		ret = gpiod_direction_output(gpiod, gpiod_is_active_low(gpiod));
+ 		if (ret) {
+-			dev_err(dev, "set direction output gpio %d failed\n", gpio);
++			dev_err(dev, "set direction output gpio atmel,power-control[%d] failed\n", i);
+ 			goto put_display_node;
+ 		}
+ 		list_add(&og->list, &pdata->pwr_gpios);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.12.2
