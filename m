@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752982AbeBEBma (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:42:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44091 "EHLO mx2.suse.de"
+        id S1752896AbeBEBmm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:42:42 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44092 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752444AbeBEB2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752500AbeBEB2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Feb 2018 20:28:17 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 17/64] kernel: use mm locking wrappers
-Date: Mon,  5 Feb 2018 02:27:07 +0100
-Message-Id: <20180205012754.23615-18-dbueso@wotan.suse.de>
+Subject: [PATCH 11/64] prctl: teach about range locking
+Date: Mon,  5 Feb 2018 02:27:01 +0100
+Message-Id: <20180205012754.23615-12-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -25,275 +25,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-Most of the users are already aware of mmrange, so conversion
-is straightforward. For those who don't, they all use mmap_sem
-in the same function context. No change in semantics.
-
-The dup_mmap() needs two ranges, one for the new and old mms.
+And pass along pointers where needed. No changes in
+semantics by using mm locking helpers.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- kernel/acct.c               |  5 +++--
- kernel/events/core.c        |  5 +++--
- kernel/events/uprobes.c     | 17 +++++++++--------
- kernel/fork.c               | 16 ++++++++++------
- kernel/futex.c              |  4 ++--
- kernel/sched/fair.c         |  5 +++--
- kernel/trace/trace_output.c |  5 +++--
- 7 files changed, 33 insertions(+), 24 deletions(-)
+ kernel/sys.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/acct.c b/kernel/acct.c
-index addf7732fb56..bc8826f68002 100644
---- a/kernel/acct.c
-+++ b/kernel/acct.c
-@@ -538,14 +538,15 @@ void acct_collect(long exitcode, int group_dead)
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 31a2866b7abd..a9c659c42bd6 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1769,6 +1769,7 @@ static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
+ 	struct file *old_exe, *exe_file;
+ 	struct inode *inode;
+ 	int err;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
  
- 	if (group_dead && current->mm) {
+ 	exe = fdget(fd);
+ 	if (!exe.file)
+@@ -1797,7 +1798,7 @@ static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
+ 	if (exe_file) {
  		struct vm_area_struct *vma;
-+		DEFINE_RANGE_LOCK_FULL(mmrange);
  
--		down_read(&current->mm->mmap_sem);
-+		mm_read_lock(current->mm, &mmrange);
- 		vma = current->mm->mmap;
- 		while (vma) {
- 			vsize += vma->vm_end - vma->vm_start;
- 			vma = vma->vm_next;
+-		down_read(&mm->mmap_sem);
++	        mm_read_lock(mm, &mmrange);
+ 		for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 			if (!vma->vm_file)
+ 				continue;
+@@ -1806,7 +1807,7 @@ static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
+ 				goto exit_err;
  		}
--		up_read(&current->mm->mmap_sem);
-+		mm_read_unlock(current->mm, &mmrange);
+ 
+-		up_read(&mm->mmap_sem);
++		mm_read_unlock(mm, &mmrange);
+ 		fput(exe_file);
  	}
  
- 	spin_lock_irq(&current->sighand->siglock);
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f0549e79978b..b21d0942d225 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8264,6 +8264,7 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
- 	struct mm_struct *mm = NULL;
- 	unsigned int count = 0;
- 	unsigned long flags;
+@@ -1820,7 +1821,7 @@ static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
+ 	fdput(exe);
+ 	return err;
+ exit_err:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	fput(exe_file);
+ 	goto exit;
+ }
+@@ -1923,6 +1924,7 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+ 	unsigned long user_auxv[AT_VECTOR_SIZE];
+ 	struct mm_struct *mm = current->mm;
+ 	int error;
 +	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	BUILD_BUG_ON(sizeof(user_auxv) != sizeof(mm->saved_auxv));
+ 	BUILD_BUG_ON(sizeof(struct prctl_mm_map) > 256);
+@@ -1959,7 +1961,7 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+ 			return error;
+ 	}
+ 
+-	down_write(&mm->mmap_sem);
++	mm_write_lock(mm, &mmrange);
  
  	/*
- 	 * We may observe TASK_TOMBSTONE, which means that the event tear-down
-@@ -8279,7 +8280,7 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
- 	if (!mm)
- 		goto restart;
+ 	 * We don't validate if these members are pointing to
+@@ -1996,7 +1998,7 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+ 	if (prctl_map.auxv_size)
+ 		memcpy(mm->saved_auxv, user_auxv, sizeof(user_auxv));
  
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
- 
- 	raw_spin_lock_irqsave(&ifh->lock, flags);
- 	list_for_each_entry(filter, &ifh->list, entry) {
-@@ -8299,7 +8300,7 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
- 	event->addr_filters_gen++;
- 	raw_spin_unlock_irqrestore(&ifh->lock, flags);
- 
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- 	mmput(mm);
- 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 60e12b39182c..df6da03d5dc1 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -818,7 +818,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
- 		if (err && is_register)
- 			goto free;
- 
--		down_write(&mm->mmap_sem);
-+		mm_write_lock(mm, &mmrange);
- 		vma = find_vma(mm, info->vaddr);
- 		if (!vma || !valid_vma(vma, is_register) ||
- 		    file_inode(vma->vm_file) != uprobe->inode)
-@@ -842,7 +842,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
- 		}
- 
-  unlock:
--		up_write(&mm->mmap_sem);
-+		mm_write_unlock(mm, &mmrange);
-  free:
- 		mmput(mm);
- 		info = free_map_info(info);
-@@ -984,7 +984,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
- 	int err = 0;
- 	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
- 	for (vma = mm->mmap; vma; vma = vma->vm_next) {
- 		unsigned long vaddr;
- 		loff_t offset;
-@@ -1001,7 +1001,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
- 		vaddr = offset_to_vaddr(vma, uprobe->offset);
- 		err |= remove_breakpoint(uprobe, mm, vaddr, &mmrange);
- 	}
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- 	return err;
- }
-@@ -1150,8 +1150,9 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
- {
- 	struct vm_area_struct *vma;
- 	int ret;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
--	if (down_write_killable(&mm->mmap_sem))
-+	if (mm_write_lock_killable(mm, &mmrange))
- 		return -EINTR;
- 
- 	if (mm->uprobes_state.xol_area) {
-@@ -1181,7 +1182,7 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
- 	/* pairs with get_xol_area() */
- 	smp_store_release(&mm->uprobes_state.xol_area, area); /* ^^^ */
-  fail:
 -	up_write(&mm->mmap_sem);
 +	mm_write_unlock(mm, &mmrange);
- 
- 	return ret;
+ 	return 0;
  }
-@@ -1748,7 +1749,7 @@ static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+ #endif /* CONFIG_CHECKPOINT_RESTORE */
+@@ -2038,6 +2040,7 @@ static int prctl_set_mm(int opt, unsigned long addr,
+ 	struct prctl_mm_map prctl_map;
  	struct vm_area_struct *vma;
- 	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 	int error;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
  
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
- 	vma = find_vma(mm, bp_vaddr);
- 	if (vma && vma->vm_start <= bp_vaddr) {
- 		if (valid_vma(vma, false)) {
-@@ -1766,7 +1767,7 @@ static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+ 	if (arg5 || (arg4 && (opt != PR_SET_MM_AUXV &&
+ 			      opt != PR_SET_MM_MAP &&
+@@ -2063,7 +2066,7 @@ static int prctl_set_mm(int opt, unsigned long addr,
  
- 	if (!uprobe && test_and_clear_bit(MMF_RECALC_UPROBES, &mm->flags))
- 		mmf_recalc_uprobes(mm);
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
+ 	error = -EINVAL;
  
- 	return uprobe;
- }
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 2113e252cb9d..060554e33111 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -401,9 +401,11 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
- 	int retval;
- 	unsigned long charge;
- 	LIST_HEAD(uf);
-+	DEFINE_RANGE_LOCK_FULL(old_mmrange);
-+	DEFINE_RANGE_LOCK_FULL(mmrange); /* for the new mm */
+-	down_write(&mm->mmap_sem);
++	mm_write_lock(mm, &mmrange);
+ 	vma = find_vma(mm, addr);
  
- 	uprobe_start_dup_mmap();
--	if (down_write_killable(&oldmm->mmap_sem)) {
-+	if (mm_write_lock_killable(oldmm, &old_mmrange)) {
- 		retval = -EINTR;
- 		goto fail_uprobe_end;
- 	}
-@@ -412,7 +414,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
- 	/*
- 	 * Not linked in yet - no deadlock potential:
- 	 */
--	down_write_nested(&mm->mmap_sem, SINGLE_DEPTH_NESTING);
-+        mm_write_lock_nested(mm, &mmrange, SINGLE_DEPTH_NESTING);
+ 	prctl_map.start_code	= mm->start_code;
+@@ -2156,7 +2159,7 @@ static int prctl_set_mm(int opt, unsigned long addr,
  
- 	/* No ordering required: file already has been exposed. */
- 	RCU_INIT_POINTER(mm->exe_file, get_mm_exe_file(oldmm));
-@@ -522,9 +524,9 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
- 	arch_dup_mmap(oldmm, mm);
- 	retval = 0;
+ 	error = 0;
  out:
 -	up_write(&mm->mmap_sem);
 +	mm_write_unlock(mm, &mmrange);
- 	flush_tlb_mm(oldmm);
--	up_write(&oldmm->mmap_sem);
-+	mm_write_unlock(oldmm, &old_mmrange);
- 	dup_userfaultfd_complete(&uf);
- fail_uprobe_end:
- 	uprobe_end_dup_mmap();
-@@ -554,9 +556,11 @@ static inline void mm_free_pgd(struct mm_struct *mm)
- #else
- static int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
- {
--	down_write(&oldmm->mmap_sem);
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
-+
-+	mm_write_lock(oldmm, &mmrange);
- 	RCU_INIT_POINTER(mm->exe_file, get_mm_exe_file(oldmm));
--	up_write(&oldmm->mmap_sem);
-+	mm_write_unlock(oldmm, &mmrange);
- 	return 0;
+ 	return error;
  }
- #define mm_alloc_pgd(mm)	(0)
-diff --git a/kernel/futex.c b/kernel/futex.c
-index 09a0d86f80a0..6764240e87bb 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -727,10 +727,10 @@ static int fault_in_user_writeable(u32 __user *uaddr)
- 	int ret;
- 	DEFINE_RANGE_LOCK_FULL(mmrange);
  
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
- 	ret = fixup_user_fault(current, mm, (unsigned long)uaddr,
- 			       FAULT_FLAG_WRITE, NULL, &mmrange);
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- 	return ret < 0 ? ret : 0;
- }
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7b6535987500..01f8c533aa21 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -2470,6 +2470,7 @@ void task_numa_work(struct callback_head *work)
- 	struct vm_area_struct *vma;
- 	unsigned long start, end;
- 	unsigned long nr_pte_updates = 0;
+@@ -2196,6 +2199,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 	struct task_struct *me = current;
+ 	unsigned char comm[sizeof(me->comm)];
+ 	long error;
 +	DEFINE_RANGE_LOCK_FULL(mmrange);
- 	long pages, virtpages;
  
- 	SCHED_WARN_ON(p != container_of(work, struct task_struct, numa_work));
-@@ -2521,7 +2522,7 @@ void task_numa_work(struct callback_head *work)
- 		return;
- 
- 
--	if (!down_read_trylock(&mm->mmap_sem))
-+	if (!mm_read_trylock(mm, &mmrange))
- 		return;
- 	vma = find_vma(mm, start);
- 	if (!vma) {
-@@ -2589,7 +2590,7 @@ void task_numa_work(struct callback_head *work)
- 		mm->numa_scan_offset = start;
- 	else
- 		reset_ptenuma_scan(p);
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- 	/*
- 	 * Make sure tasks use at least 32x as much time to run other code
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 90db994ac900..0c3f5193de41 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -395,8 +395,9 @@ static int seq_print_user_ip(struct trace_seq *s, struct mm_struct *mm,
- 
- 	if (mm) {
- 		const struct vm_area_struct *vma;
-+		DEFINE_RANGE_LOCK_FULL(mmrange);
- 
--		down_read(&mm->mmap_sem);
-+		mm_read_lock(mm, &mmrange);
- 		vma = find_vma(mm, ip);
- 		if (vma) {
- 			file = vma->vm_file;
-@@ -408,7 +409,7 @@ static int seq_print_user_ip(struct trace_seq *s, struct mm_struct *mm,
- 				trace_seq_printf(s, "[+0x%lx]",
- 						 ip - vmstart);
- 		}
--		up_read(&mm->mmap_sem);
-+		mm_read_unlock(mm, &mmrange);
- 	}
- 	if (ret && ((sym_flags & TRACE_ITER_SYM_ADDR) || !file))
- 		trace_seq_printf(s, " <" IP_FMT ">", ip);
+ 	error = security_task_prctl(option, arg2, arg3, arg4, arg5);
+ 	if (error != -ENOSYS)
+@@ -2379,13 +2383,13 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 	case PR_SET_THP_DISABLE:
+ 		if (arg3 || arg4 || arg5)
+ 			return -EINVAL;
+-		if (down_write_killable(&me->mm->mmap_sem))
++		if (mm_write_lock_killable(me->mm, &mmrange))
+ 			return -EINTR;
+ 		if (arg2)
+ 			set_bit(MMF_DISABLE_THP, &me->mm->flags);
+ 		else
+ 			clear_bit(MMF_DISABLE_THP, &me->mm->flags);
+-		up_write(&me->mm->mmap_sem);
++		mm_write_unlock(me->mm, &mmrange);
+ 		break;
+ 	case PR_MPX_ENABLE_MANAGEMENT:
+ 		if (arg2 || arg3 || arg4 || arg5)
 -- 
 2.13.6
