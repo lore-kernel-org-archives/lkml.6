@@ -1,129 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753004AbeBENgM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 08:36:12 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50566 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752612AbeBENgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 08:36:04 -0500
-Date: Mon, 5 Feb 2018 13:36:00 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: efault@gmx.de, linux-kernel@vger.kernel.org,
-        alexander.levin@verizon.com, tglx@linutronix.de, mingo@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: Runqueue spinlock recursion on arm64 v4.15
-Message-ID: <20180205133600.etr32unq6amsa6af@lakrids.cambridge.arm.com>
-References: <20180202192704.nqwjsthl3agszhzt@lakrids.cambridge.arm.com>
- <20180202195506.GP2269@hirez.programming.kicks-ass.net>
- <20180202220726.23d4ljxxdysafbxd@salmiak>
+        id S1753056AbeBENhI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 08:37:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752607AbeBENhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 08:37:02 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3477821734
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Mon, 5 Feb 2018 13:36:57 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: TXx9: use IS_BUILTIN() for CONFIG_LEDS_CLASS
+Message-ID: <20180205133656.GB8479@saruman>
+References: <1517225205-10374-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="OwLcNYc0lM97+oe1"
 Content-Disposition: inline
-In-Reply-To: <20180202220726.23d4ljxxdysafbxd@salmiak>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1517225205-10374-1-git-send-email-matt.redfearn@mips.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 10:07:26PM +0000, Mark Rutland wrote:
-> On Fri, Feb 02, 2018 at 08:55:06PM +0100, Peter Zijlstra wrote:
-> > On Fri, Feb 02, 2018 at 07:27:04PM +0000, Mark Rutland wrote:
-> > > ... in some cases, owner_cpu is -1, so I guess we're racing with an
-> > > unlock. I only ever see this on the runqueue locks in wake up functions.
-> > 
-> > So runqueue locks are special in that the owner changes over a contex
-> > switch, maybe something goes funny there?
-> 
-> Aha! I think that's it!
-> 
-> In finish_lock_switch() we do:
-> 
-> 	smp_store_release(&prev->on_cpu, 0);
-> 	...
-> 	rq->lock.owner = current;
-> 
-> As soon as we update prev->on_cpu, prev can be scheduled on another CPU, and
-> can thus see a stale value for rq->lock.owner (e.g. if it tries to wake up
-> another task on that rq).
 
-I hacked in a forced vCPU preemption between the two using a sled of WFE
-instructions, and now I can trigger the problem in seconds rather than
-hours.
+--OwLcNYc0lM97+oe1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-With the patch below applied, things seem to fine so far.
+On Mon, Jan 29, 2018 at 11:26:45AM +0000, Matt Redfearn wrote:
+> When commit b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
+> added board support for the RBTX4939, it added a call to
+> led_classdev_register even if the LED class is built as a module.
+> Built-in arch code cannot call module code directly like this. Commit
+> b33b44073734 ("MIPS: TXX9: use IS_ENABLED() macro") subsequently
+> changed the inclusion of this code to a single check that
+> CONFIG_LEDS_CLASS is either builtin or a module, but the same issue
+> remains.
+> This leads to MIPS allmodconfig builds failing when CONFIG_MACH_TX49XX=3Dy
+> is set:
+>=20
+> arch/mips/txx9/rbtx4939/setup.o: In function `rbtx4939_led_probe':
+> setup.c:(.init.text+0xc0): undefined reference to `of_led_classdev_regist=
+er'
+> make: *** [Makefile:999: vmlinux] Error 1
+>=20
+> Fix this by using the IS_BUILTIN() macro instead.
+>=20
+> Fixes: b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
+> Fixes: b33b44073734 ("MIPS: TXX9: use IS_ENABLED() macro")
+>=20
+> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 
-So I'm pretty sure this is it. I'll clean up the patch text and resend
-that in a bit.
+Thanks, applied
 
-Thanks,
-Mark.
+Cheers
+James
 
-> I guess the below (completely untested) would fix that. I'll try to give it a
-> go next week.
-> 
-> Thanks,
-> Mark.
-> 
-> ---->8----
-> From 3ef7e7466d09d2270d2a353d032ff0f9bc0488a7 Mon Sep 17 00:00:00 2001
-> From: Mark Rutland <mark.rutland@arm.com>
-> Date: Fri, 2 Feb 2018 21:56:17 +0000
-> Subject: [PATCH] sched/core: avoid spurious spinlock recursion splats
-> 
-> The runqueue locks are special in that the owner changes over a context switch.
-> To ensure that this is account for in CONFIG_DEBUG_SPINLOCK builds,
-> finish_lock_switch updates rq->lock.owner while the lock is held.
-> 
-> However, this happens *after* prev->on_cpu is cleared, which allows prev to be
-> scheduled on another CPU. If prev then attempts to acquire the same rq lock, it
-> will see itself as the owner.
-> 
-> This can be seen in virtual environments, where the vCPU can be preempted for
-> an arbitrarily long period between updating prev->on_cpu and rq->lock.owner.
-> 
-> We can avoid this issue by updating rq->lock.owner first. The release of
-> prev->on_cpu will ensure that the new owner is visible to prev if it is
-> scheduled on another CPU.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
+>=20
 > ---
->  kernel/sched/sched.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index b19552a212de..4f0d2e3701c3 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1342,6 +1342,10 @@ static inline void prepare_lock_switch(struct rq *rq, struct task_struct *next)
->  
->  static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
+>=20
+>  arch/mips/txx9/rbtx4939/setup.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/mips/txx9/rbtx4939/setup.c b/arch/mips/txx9/rbtx4939/se=
+tup.c
+> index 8b937300fb7f..fd26fadc8617 100644
+> --- a/arch/mips/txx9/rbtx4939/setup.c
+> +++ b/arch/mips/txx9/rbtx4939/setup.c
+> @@ -186,7 +186,7 @@ static void __init rbtx4939_update_ioc_pen(void)
+> =20
+>  #define RBTX4939_MAX_7SEGLEDS	8
+> =20
+> -#if IS_ENABLED(CONFIG_LEDS_CLASS)
+> +#if IS_BUILTIN(CONFIG_LEDS_CLASS)
+>  static u8 led_val[RBTX4939_MAX_7SEGLEDS];
+>  struct rbtx4939_led_data {
+>  	struct led_classdev cdev;
+> @@ -261,7 +261,7 @@ static inline void rbtx4939_led_setup(void)
+> =20
+>  static void __rbtx4939_7segled_putc(unsigned int pos, unsigned char val)
 >  {
-> +#ifdef CONFIG_DEBUG_SPINLOCK
-> +	/* this is a valid case when another task releases the spinlock */
-> +	rq->lock.owner = current;
-> +#endif
->  #ifdef CONFIG_SMP
->  	/*
->  	 * After ->on_cpu is cleared, the task can be moved to a different CPU.
-> @@ -1355,10 +1359,6 @@ static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
->  	 */
->  	smp_store_release(&prev->on_cpu, 0);
->  #endif
-> -#ifdef CONFIG_DEBUG_SPINLOCK
-> -	/* this is a valid case when another task releases the spinlock */
-> -	rq->lock.owner = current;
-> -#endif
->  	/*
->  	 * If we are tracking spinlock dependencies then we have to
->  	 * fix up the runqueue lock - which gets 'carried over' from
-> -- 
-> 2.11.0
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> -#if IS_ENABLED(CONFIG_LEDS_CLASS)
+> +#if IS_BUILTIN(CONFIG_LEDS_CLASS)
+>  	unsigned long flags;
+>  	local_irq_save(flags);
+>  	/* bit7: reserved for LED class */
+> --=20
+> 2.7.4
+>=20
+
+--OwLcNYc0lM97+oe1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlp4XfgACgkQbAtpk944
+dnpwvw/6AqqBb8XqMxPvcfVvboO83hEPlc84gOXz/wT4BL60ZSFQ+JeM88/1EkjO
+q8E4ANaepHmqUKobnomWyc4TdBtXIFrYxyKel/ipP9rN7v1tWahOznPle2hazHnN
+y+5tvqw8seJVRer0ewDU6jXkp9jIIYkn/QIBp42uhMHjYLw4+hR/cIEKIZnVz7qY
+xf2Q5v/p7BvOe2UCAO9Cb8TcYCxzMWh48MkhQeUq6aw22KwEaI1RViUBybsXkBw6
+CGvIFOg43KgdfDew9S3ebTWa/hbFYSMraiccFb/7hev+fM9HkB0/eLl289DoRPE5
+7omAiRyqqVBqi0yePJjEXvcyjH1hkRZFCZ7qKuZ//jDgd/ArzZuN4JBE+25RM+yZ
+Qp83EQueg+8vErSDDT+S+E2druqNIPXFwL/tp11x8aGJu9fnM/M1e9n/G/FywQph
+wrbWJztxo3JzsRNGe8thQOyqpiDW5vuiNYaxHHXv+/zrPZbAzNxy6rzo7gYpdIhP
+PKs0CxBb3urmuCX4WOaM3B0/ZSukoQO+U/a7sbUxjiCINuXZjHqoc4QNpBtjPrBL
+Fo0Oi9SyJp8iO4v7Nod9hbyUl9a05+qMl+6Lfoefic4nFc3g82KfXI96HptpKWfo
+aGTnP1+AFOicYpUVuCSLfTNQoFG+Z6SHPs56GKKhlxRvjh0yUnQ=
+=PTko
+-----END PGP SIGNATURE-----
+
+--OwLcNYc0lM97+oe1--
