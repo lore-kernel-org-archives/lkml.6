@@ -1,113 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753756AbeBETH1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 14:07:27 -0500
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:37538 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753461AbeBETHH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 14:07:07 -0500
-X-Google-Smtp-Source: AH8x225qrR2VMJOp6HnZRa/03Rg96vlAYy5QEfsnQ+0gEbo+9iJoTnFgd23L43JEj1wLafRdmmTYYQ==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: v4.15 and I/O hang with BFQ
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <3E34D175-88F9-4114-B627-A11262A7B470@linaro.org>
-Date: Mon, 5 Feb 2018 20:07:03 +0100
-Cc: Ming Lei <ming.lei@redhat.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Ivan Kozik <ivan@ludios.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Linus Walleij <linus.walleij@linaro.org>,
-        SERENA ZIVIANI <169364@studenti.unimore.it>
-Message-Id: <6BCE8A16-7D00-4B55-8E2D-0DDC7C187C14@linaro.org>
-References: <9ad0d544ab2b12f87f44eb4ef88e23a2@natalenko.name>
- <20180130081925.GA25183@ming.t460p>
- <38bd4dbe280bd0934abde764fe0916cd@natalenko.name>
- <20180130144002.GA14401@ming.t460p>
- <3E34D175-88F9-4114-B627-A11262A7B470@linaro.org>
-To: bfq-iosched@googlegroups.com
-X-Mailer: Apple Mail (2.3445.5.20)
+        id S1753726AbeBETIB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 14:08:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44788 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753769AbeBETHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 14:07:24 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99CB7217B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AH8x226moKuOKpbWQEvx/GfphrAXvtGz08BQjXEEYyv4rXSGhc6Hguwcg9eKFN03t2IEOnTGCA2ZEOmZ/ndVq2JNkOA=
+MIME-Version: 1.0
+In-Reply-To: <20180205170500.8992-1-s.nawrocki@samsung.com>
+References: <CGME20180205170523epcas1p31ebef69e5d5db0a1ef2f1c3b5ac544ae@epcas1p3.samsung.com>
+ <20180205170500.8992-1-s.nawrocki@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 5 Feb 2018 20:07:21 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPep2iuCcoxZACoH3U=N2=tiXpZa=Ok3D+b8ZzprcTrtrg@mail.gmail.com>
+Message-ID: <CAJKOXPep2iuCcoxZACoH3U=N2=tiXpZa=Ok3D+b8ZzprcTrtrg@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: samsung: Add the DT binding files entry to MAINTAINERS
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com,
+        sbkim73@samsung.com, linux-kernel@vger.kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w15J7Xdk008498
 
+On Mon, Feb 5, 2018 at 6:05 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> This patch adds missing DT binding files to the Samsung ASoC
+> drivers entry.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> Il giorno 30 gen 2018, alle ore 16:40, Paolo Valente <paolo.valente@linaro.org> ha scritto:
-> 
-> 
-> 
->> Il giorno 30 gen 2018, alle ore 15:40, Ming Lei <ming.lei@redhat.com> ha scritto:
->> 
->> On Tue, Jan 30, 2018 at 03:30:28PM +0100, Oleksandr Natalenko wrote:
->>> Hi.
->>> 
->> ...
->>>  systemd-udevd-271   [000] ....     4.311033: bfq_insert_requests: insert
->>> rq->0
->>>  systemd-udevd-271   [000] ...1     4.311037: blk_mq_do_dispatch_sched:
->>> not get rq, 1
->>>         cfdisk-408   [000] ....    13.484220: bfq_insert_requests: insert
->>> rq->1
->>>   kworker/0:1H-174   [000] ....    13.484253: blk_mq_do_dispatch_sched:
->>> not get rq, 1
->>> ===
->>> 
->>> Looks the same, right?
->> 
->> Yeah, same with before.
->> 
-> 
-> Hi guys,
-> sorry for the delay with this fix.  We are proceeding very slowly on
-> this, because I'm super busy.  Anyway, now I can at least explain in
-> more detail the cause that leads to this hang.  Commit 'a6a252e64914
-> ("blk-mq-sched: decide how to handle flush rq via RQF_FLUSH_SEQ")'
-> makes all non-flush re-prepared requests be re-inserted into the I/O
-> scheduler.  With this change, I/O schedulers may get the same request
-> inserted again, even several times, without a finish_request invoked
-> on the request before each re-insertion.
-> 
-> For the I/O scheduler, every such re-prepared request is equivalent
-> to the insertion of a new request. For schedulers like mq-deadline
-> or kyber this fact causes no problems. In contrast, it confuses a stateful
-> scheduler like BFQ, which preserves states for an I/O request until
-> finish_request is invoked on it. In particular, BFQ has no way
-> to know that the above re-insertions concerns the same, already dispatched
-> request. So it may get stuck waiting for the completion of these
-> re-inserted requests forever, thus preventing any other queue of
-> requests to be served.
-> 
-> We are trying to address this issue by adding the hook requeue_request
-> to bfq interface.
-> 
-> Unfortunately, with our current implementation of requeue_request in
-> place, bfq eventually gets to an incoherent state.  This is apparently
-> caused by a requeue of an I/O request, immediately followed by a
-> completion of the same request.  This seems rather absurd, and drives
-> bfq crazy.  But this is something for which we don't have definite
-> results yet.
-> 
-> We're working on it, sorry again for the delay.
-> 
-
-Ok, patch arriving ... Please test it.
-
-Thanks,
-Paolo
-
-> Thanks,
-> Paolo
-> 
->> -- 
->> Ming
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "bfq-iosched" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to bfq-iosched+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+Best regards,
+Krzysztof
