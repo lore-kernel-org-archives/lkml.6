@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752880AbeBEBed (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:34:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43855 "EHLO mx2.suse.de"
+        id S1752892AbeBEBen (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:34:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43856 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752510AbeBEB3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:29:15 -0500
+        id S1752606AbeBEB3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:29:14 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
 Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 54/64] arch/arm: use mm locking wrappers
-Date: Mon,  5 Feb 2018 02:27:44 +0100
-Message-Id: <20180205012754.23615-55-dbueso@wotan.suse.de>
+Subject: [PATCH 36/64] arch/mips: use mm locking wrappers
+Date: Mon,  5 Feb 2018 02:27:26 +0100
+Message-Id: <20180205012754.23615-37-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -26,280 +26,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Davidlohr Bueso <dave@stgolabs.net>
 
 This becomes quite straightforward with the mmrange in place.
-For those mmap_sem users that need mmrange, we simply add it
-to the function as the mmap_sem usage is in the same context.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- arch/arm/kernel/process.c          |  5 +++--
- arch/arm/kernel/swp_emulate.c      |  5 +++--
- arch/arm/lib/uaccess_with_memcpy.c | 18 ++++++++++--------
- arch/arm/mm/fault.c                |  6 +++---
- arch/arm64/kernel/traps.c          |  5 +++--
- arch/arm64/kernel/vdso.c           | 12 +++++++-----
- arch/arm64/mm/fault.c              |  6 +++---
- 7 files changed, 32 insertions(+), 25 deletions(-)
+ arch/mips/kernel/traps.c |  5 +++--
+ arch/mips/kernel/vdso.c  |  4 ++--
+ arch/mips/mm/c-octeon.c  |  5 +++--
+ arch/mips/mm/c-r4k.c     |  5 +++--
+ arch/mips/mm/fault.c     | 10 +++++-----
+ 5 files changed, 16 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
-index 1523cb18b109..39fd5bd204d7 100644
---- a/arch/arm/kernel/process.c
-+++ b/arch/arm/kernel/process.c
-@@ -424,6 +424,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	unsigned long addr;
- 	unsigned long hint;
- 	int ret = 0;
+diff --git a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
+index 0ae4a731cc12..a7d1d2417844 100644
+--- a/arch/mips/kernel/traps.c
++++ b/arch/mips/kernel/traps.c
+@@ -746,6 +746,7 @@ int process_fpemu_return(int sig, void __user *fault_addr, unsigned long fcr31)
+ {
+ 	struct siginfo si;
+ 	struct vm_area_struct *vma;
 +	DEFINE_RANGE_LOCK_FULL(mmrange);
  
- 	if (!signal_page)
- 		signal_page = get_signal_page();
-@@ -433,7 +434,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	npages = 1; /* for sigpage */
- 	npages += vdso_total_pages;
+ 	clear_siginfo(&si);
+ 	switch (sig) {
+@@ -766,13 +767,13 @@ int process_fpemu_return(int sig, void __user *fault_addr, unsigned long fcr31)
+ 	case SIGSEGV:
+ 		si.si_addr = fault_addr;
+ 		si.si_signo = sig;
+-		down_read(&current->mm->mmap_sem);
++		mm_read_lock(current->mm, &mmrange);
+ 		vma = find_vma(current->mm, (unsigned long)fault_addr);
+ 		if (vma && (vma->vm_start <= (unsigned long)fault_addr))
+ 			si.si_code = SEGV_ACCERR;
+ 		else
+ 			si.si_code = SEGV_MAPERR;
+-		up_read(&current->mm->mmap_sem);
++		mm_read_unlock(current->mm, &mmrange);
+ 		force_sig_info(sig, &si, current);
+ 		return 1;
+ 
+diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
+index 56b7c29991db..beaf63864e70 100644
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -104,7 +104,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	int ret;
+ 	DEFINE_RANGE_LOCK_FULL(mmrange);
  
 -	if (down_write_killable(&mm->mmap_sem))
 +	if (mm_write_lock_killable(mm, &mmrange))
  		return -EINTR;
- 	hint = sigpage_addr(mm, npages);
- 	addr = get_unmapped_area(NULL, hint, npages << PAGE_SHIFT, 0, 0);
-@@ -460,7 +461,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	arm_install_vdso(mm, addr + PAGE_SIZE);
  
-  up_fail:
+ 	/* Map delay slot emulation page */
+@@ -177,6 +177,6 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	ret = 0;
+ 
+ out:
 -	up_write(&mm->mmap_sem);
 +	mm_write_unlock(mm, &mmrange);
  	return ret;
  }
- #endif
-diff --git a/arch/arm/kernel/swp_emulate.c b/arch/arm/kernel/swp_emulate.c
-index 3bda08bee674..e01a469393fb 100644
---- a/arch/arm/kernel/swp_emulate.c
-+++ b/arch/arm/kernel/swp_emulate.c
-@@ -111,13 +111,14 @@ static const struct file_operations proc_status_fops = {
- static void set_segfault(struct pt_regs *regs, unsigned long addr)
+diff --git a/arch/mips/mm/c-octeon.c b/arch/mips/mm/c-octeon.c
+index 0e45b061e514..e4f6db4a8755 100644
+--- a/arch/mips/mm/c-octeon.c
++++ b/arch/mips/mm/c-octeon.c
+@@ -136,11 +136,12 @@ static void octeon_flush_icache_range(unsigned long start, unsigned long end)
+ static void octeon_flush_cache_sigtramp(unsigned long addr)
  {
- 	siginfo_t info;
+ 	struct vm_area_struct *vma;
 +	DEFINE_RANGE_LOCK_FULL(mmrange);
  
 -	down_read(&current->mm->mmap_sem);
 +	mm_read_lock(current->mm, &mmrange);
- 	if (find_vma(current->mm, addr) == NULL)
- 		info.si_code = SEGV_MAPERR;
- 	else
- 		info.si_code = SEGV_ACCERR;
+ 	vma = find_vma(current->mm, addr);
+ 	octeon_flush_icache_all_cores(vma);
 -	up_read(&current->mm->mmap_sem);
 +	mm_read_unlock(current->mm, &mmrange);
+ }
  
- 	info.si_signo = SIGSEGV;
- 	info.si_errno = 0;
-diff --git a/arch/arm/lib/uaccess_with_memcpy.c b/arch/arm/lib/uaccess_with_memcpy.c
-index 9b4ed1728616..24464fa0a78a 100644
---- a/arch/arm/lib/uaccess_with_memcpy.c
-+++ b/arch/arm/lib/uaccess_with_memcpy.c
-@@ -89,6 +89,7 @@ __copy_to_user_memcpy(void __user *to, const void *from, unsigned long n)
+ 
+diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
+index 6f534b209971..7f9c9c91dbc1 100644
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -999,8 +999,9 @@ static void r4k_flush_cache_sigtramp(unsigned long addr)
  {
- 	unsigned long ua_flags;
- 	int atomic;
+ 	struct flush_cache_sigtramp_args args;
+ 	int npages;
 +	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	if (uaccess_kernel()) {
- 		memcpy((void *)to, from, n);
-@@ -99,7 +100,7 @@ __copy_to_user_memcpy(void __user *to, const void *from, unsigned long n)
- 	atomic = faulthandler_disabled();
- 
- 	if (!atomic)
--		down_read(&current->mm->mmap_sem);
-+		mm_read_lock(current->mm, &mmrange);
- 	while (n) {
- 		pte_t *pte;
- 		spinlock_t *ptl;
-@@ -107,11 +108,11 @@ __copy_to_user_memcpy(void __user *to, const void *from, unsigned long n)
- 
- 		while (!pin_page_for_write(to, &pte, &ptl)) {
- 			if (!atomic)
--				up_read(&current->mm->mmap_sem);
-+				mm_read_unlock(current->mm, &mmrange);
- 			if (__put_user(0, (char __user *)to))
- 				goto out;
- 			if (!atomic)
--				down_read(&current->mm->mmap_sem);
-+				mm_read_lock(current->mm, &mmrange);
- 		}
- 
- 		tocopy = (~(unsigned long)to & ~PAGE_MASK) + 1;
-@@ -131,7 +132,7 @@ __copy_to_user_memcpy(void __user *to, const void *from, unsigned long n)
- 			spin_unlock(ptl);
- 	}
- 	if (!atomic)
--		up_read(&current->mm->mmap_sem);
-+		mm_read_unlock(current->mm, &mmrange);
- 
- out:
- 	return n;
-@@ -161,23 +162,24 @@ static unsigned long noinline
- __clear_user_memset(void __user *addr, unsigned long n)
- {
- 	unsigned long ua_flags;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	if (uaccess_kernel()) {
- 		memset((void *)addr, 0, n);
- 		return 0;
- 	}
  
 -	down_read(&current->mm->mmap_sem);
 +	mm_read_lock(current->mm, &mmrange);
- 	while (n) {
- 		pte_t *pte;
- 		spinlock_t *ptl;
- 		int tocopy;
  
- 		while (!pin_page_for_write(addr, &pte, &ptl)) {
--			up_read(&current->mm->mmap_sem);
-+			mm_read_unlock(current->mm, &mmrange);
- 			if (__put_user(0, (char __user *)addr))
- 				goto out;
--			down_read(&current->mm->mmap_sem);
-+			mm_read_lock(current->mm, &mmrange);
- 		}
+ 	npages = get_user_pages_fast(addr, 1, 0, &args.page);
+ 	if (npages < 1)
+@@ -1013,7 +1014,7 @@ static void r4k_flush_cache_sigtramp(unsigned long addr)
  
- 		tocopy = (~(unsigned long)addr & ~PAGE_MASK) + 1;
-@@ -195,7 +197,7 @@ __clear_user_memset(void __user *addr, unsigned long n)
- 		else
- 			spin_unlock(ptl);
- 	}
+ 	put_page(args.page);
+ out:
 -	up_read(&current->mm->mmap_sem);
 +	mm_read_unlock(current->mm, &mmrange);
+ }
  
- out:
- 	return n;
-diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-index 99ae40b5851a..6ce3e0707db5 100644
---- a/arch/arm/mm/fault.c
-+++ b/arch/arm/mm/fault.c
-@@ -291,11 +291,11 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 	 * validly references user space from well defined areas of the code,
- 	 * we can bug out early if this is from code which shouldn't.
- 	 */
--	if (!down_read_trylock(&mm->mmap_sem)) {
-+	if (!mm_read_trylock(mm, &mmrange)) {
- 		if (!user_mode(regs) && !search_exception_tables(regs->ARM_pc))
- 			goto no_context;
+ static void r4k_flush_icache_all(void)
+diff --git a/arch/mips/mm/fault.c b/arch/mips/mm/fault.c
+index 1433edd01d09..510abb6b433a 100644
+--- a/arch/mips/mm/fault.c
++++ b/arch/mips/mm/fault.c
+@@ -98,7 +98,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+ 	if (user_mode(regs))
+ 		flags |= FAULT_FLAG_USER;
  retry:
--		down_read(&mm->mmap_sem);
-+		mm_read_lock(mm, &mmrange);
- 	} else {
- 		/*
- 		 * The above down_read_trylock() might have succeeded in
-@@ -348,7 +348,7 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	vma = find_vma(mm, address);
+ 	if (!vma)
+ 		goto bad_area;
+@@ -192,7 +192,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
  		}
  	}
  
 -	up_read(&mm->mmap_sem);
 +	mm_read_unlock(mm, &mmrange);
+ 	return;
  
- 	/*
- 	 * Handle the "normal" case first - VM_FAULT_MAJOR
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index bbb0fde2780e..bf185655b142 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -351,13 +351,14 @@ void force_signal_inject(int signal, int code, struct pt_regs *regs,
- void arm64_notify_segfault(struct pt_regs *regs, unsigned long addr)
- {
- 	int code;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
--	down_read(&current->mm->mmap_sem);
-+	mm_read_lock(current->mm, &mmrange);
- 	if (find_vma(current->mm, addr) == NULL)
- 		code = SEGV_MAPERR;
- 	else
- 		code = SEGV_ACCERR;
--	up_read(&current->mm->mmap_sem);
-+	mm_read_unlock(current->mm, &mmrange);
- 
- 	force_signal_inject(SIGSEGV, code, regs, addr);
- }
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 2d419006ad43..1b0006fe9668 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -94,8 +94,9 @@ int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
- 
- 	};
- 	void *ret;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
--	if (down_write_killable(&mm->mmap_sem))
-+	if (mm_write_lock_killable(mm, &mmrange))
- 		return -EINTR;
- 	current->mm->context.vdso = (void *)addr;
- 
-@@ -104,7 +105,7 @@ int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
- 				       VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYEXEC,
- 				       &spec);
- 
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 
- 	return PTR_ERR_OR_ZERO(ret);
- }
-@@ -178,12 +179,13 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
- 	struct mm_struct *mm = current->mm;
- 	unsigned long vdso_base, vdso_text_len, vdso_mapping_len;
- 	void *ret;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	vdso_text_len = vdso_pages << PAGE_SHIFT;
- 	/* Be sure to map the data page */
- 	vdso_mapping_len = vdso_text_len + PAGE_SIZE;
- 
--	if (down_write_killable(&mm->mmap_sem))
-+	if (mm_write_lock_killable(mm, &mmrange))
- 		return -EINTR;
- 	vdso_base = get_unmapped_area(NULL, 0, vdso_mapping_len, 0, 0);
- 	if (IS_ERR_VALUE(vdso_base)) {
-@@ -206,12 +208,12 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
- 		goto up_fail;
- 
- 
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 	return 0;
- 
- up_fail:
- 	mm->context.vdso = NULL;
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 	return PTR_ERR(ret);
- }
- 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 1f3ad9e4f214..555d533d52ab 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -434,11 +434,11 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 	 * validly references user space from well defined areas of the code,
- 	 * we can bug out early if this is from code which shouldn't.
- 	 */
--	if (!down_read_trylock(&mm->mmap_sem)) {
-+	if (!mm_read_trylock(mm, &mmrange)) {
- 		if (!user_mode(regs) && !search_exception_tables(regs->pc))
- 			goto no_context;
- retry:
--		down_read(&mm->mmap_sem);
-+		mm_read_lock(mm, &mmrange);
- 	} else {
- 		/*
- 		 * The above down_read_trylock() might have succeeded in which
-@@ -477,7 +477,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 			goto retry;
- 		}
- 	}
+ /*
+@@ -200,7 +200,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+  * Fix it, but check if it's kernel or user first..
+  */
+ bad_area:
 -	up_read(&mm->mmap_sem);
 +	mm_read_unlock(mm, &mmrange);
  
- 	/*
- 	 * Handle the "normal" (no error) case first.
+ bad_area_nosemaphore:
+ 	/* User mode accesses just cause a SIGSEGV */
+@@ -256,14 +256,14 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+ 	 * We ran out of memory, call the OOM killer, and return the userspace
+ 	 * (which will retry the fault, or kill us if we got oom-killed).
+ 	 */
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	if (!user_mode(regs))
+ 		goto no_context;
+ 	pagefault_out_of_memory();
+ 	return;
+ 
+ do_sigbus:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ 	/* Kernel mode? Handle exceptions or die */
+ 	if (!user_mode(regs))
 -- 
 2.13.6
