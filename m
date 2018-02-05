@@ -1,74 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752416AbeBEEy0 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 23:54:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43506 "EHLO mail.kernel.org"
+        id S1752517AbeBEE4g (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 23:56:36 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:35108 "EHLO smtp.gentoo.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751979AbeBEEyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 23:54:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E7021748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 5 Feb 2018 13:54:14 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        orito.takao@socionext.com, masami.hiramatsu@linaro.org
-Subject: Re: [PATCH] [BUGFIX] media: vb2: Fix videobuf2 to map correct area
-Message-Id: <20180205135414.fa6a6044e5c869e30bb40ff1@kernel.org>
-In-Reply-To: <151779784111.20697.5012233804870630070.stgit@devbox>
-References: <151779784111.20697.5012233804870630070.stgit@devbox>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752253AbeBEE43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 23:56:29 -0500
+Date: Sun, 4 Feb 2018 22:56:24 -0600
+From: Matthew Thode <mthode@mthode.org>
+To: David Herrmann <dh.herrmann@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: thinkpad_acpi: suppress warning about palm
+ detection
+Message-ID: <20180205045624.t5g2c2o7l3dkokzl@gentoo.org>
+References: <20180112110445.1876-1-dh.herrmann@gmail.com>
+ <CAHp75Vc66ZfRmOoOKJRODpV0mS2aZru=b-r0cr8SKYH=hm+W6Q@mail.gmail.com>
+ <CANq1E4RGo091oaG=0owKVfxOV8wR2qQ=nXfXzZsRxg6Q7_C8zw@mail.gmail.com>
+ <20180113063309.iryfhufpilas3jnf@mthode.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hax7konvqwaawvau"
+Content-Disposition: inline
+In-Reply-To: <20180113063309.iryfhufpilas3jnf@mthode.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  5 Feb 2018 11:30:41 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
-> Since the current code does ioremap the page address, if the offset > 0,
-> it does not do ioremap the last page and results in kernel panic.
-> 
-> This fixes to pass the page address + offset to ioremap so that ioremap
-> can map correct area. Also, this uses __pfn_to_phys() to get the physical
-> address of given PFN.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Reported-by: Takao Orito <orito.takao@socionext.com>
+--hax7konvqwaawvau
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oops, I've missed the original reporter.
+On 18-01-13 00:33:09, Matthew Thode wrote:
+> On 18-01-12 15:07:12, David Herrmann wrote:
+> > Hi Andy
+> >=20
+> > On Fri, Jan 12, 2018 at 2:50 PM, Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Fri, Jan 12, 2018 at 1:04 PM, David Herrmann <dh.herrmann@gmail.co=
+m> wrote:
+> > >> Cc: Matthew Thode <mthode@mthode.org>
+> > >
+> > > Shouldn't be Suggested-by or even Signed-off-by?
+> >=20
+> > The patch is different (Matthew originally suppressed the ACPI event),
+> > so I did not copy the sign-off. Please add Suggested-by, if that is an
+> > acceptable tag.
+> >=20
+> > >> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+> > >
+> > >
+> > >> +       case TP_HKEY_EV_PALM_DETECTED:
+> > >> +       case TP_HKEY_EV_PALM_UNDETECTED:
+> > >
+> > >> +               /* palm detected hovering the keyboard, forward to u=
+ser-space
+> > >> +                * via netlink for consumption */
+> > >
+> > > Comment style is
+> > > /*
+> > >  * Multi line comment.
+> > >  * This is an example.
+> > >  */
+> >=20
+> > All other 6 comments in this function follow the style I used here, so
+> > I tried to be consistent. But feel free to amend this change.
+> >=20
+>=20
+> I'm fine with a signed-off-by or tested-by or suggested-by.  There is a
+> spelling mistake though, 'hoveres' should be hovers.
+>=20
 
-Reported-by: Fumihiro ATSUMI <atsumi@infinitegra.co.jp>
+Is there anything else I can do here?  I'm not sure any of us have the
+ability to find out what lenovo actually wants this for.
 
-Thank you,
+--=20
+Matthew Thode (prometheanfire)
 
-> ---
->  drivers/media/v4l2-core/videobuf2-vmalloc.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf2-vmalloc.c b/drivers/media/v4l2-core/videobuf2-vmalloc.c
-> index 3a7c80cd1a17..896f2f378b40 100644
-> --- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
-> +++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
-> @@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(struct device *dev, unsigned long vaddr,
->  			if (nums[i-1] + 1 != nums[i])
->  				goto fail_map;
->  		buf->vaddr = (__force void *)
-> -				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
-> +			ioremap_nocache(__pfn_to_phys(nums[0]) + offset, size);
->  	} else {
->  		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
->  					PAGE_KERNEL);
-> 
+--hax7konvqwaawvau
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+iQIzBAABCgAdFiEExFR3cOKGRpGbcMHPZKN76q4ZpOgFAlp34/cACgkQZKN76q4Z
+pOi9HQ//X/e7XumXEd4wWQ/ivljJdoee2/TopBs94TuJZkQSpHYslhgbDWk+FeKq
+guFgAnA7uMkkNBmmM1Y4fZv95le1EZ1KczUq6j/OOcFUek/NANcg99/MqkdXbHjv
+puXwG9IXkzjBPcnLQFvh+5o0Hy8NYdpibhbp5BXmmfFnF7brANMiqiz7pk7iKqBd
+XQTHRT6tS296XbKlwh5n7mruVSTlacObk04l/UxDZfP5LvVXvaGnlSGJdj+IHqpE
+r+6R+QX/i9SFiNKy+xwztDR83JywfZvALgr7IMoTZSjrWPAwtCDRfRcNGIMbXdvb
+ANLUk1l0wyWaPWLL2ybw61qEY9Wb30vwsOoZ0mXRHhW/NdczBnQfA8HXbtW8LzgN
+F2p6SvaMBY8xErSNrp6Fnj/bejAcSquW7R5gK0M4ENu8uaNP+OmG5mRfOKr3Jogu
+putGiy6HcTavY7h9BFPAkp5YsCuxJ1Xpk+3tqrpU2DKrTR5wM7PAQqN0W6wro58d
+k6hX4/M2LLp6tOKthIjcSyXDDWLv7vZPKB9fFP59XGZWfnHfmaPzfcwbozy5FPzS
+I2/uqm55uPBv+kdEZAxXmPXdwjUoNYoDLViNgfe+YQpqZaJCfjTviOutePIADLV7
+UVhs7GYNbwQEZMNnCPgKCZX8v+UvDFJc8KqN99fZXoSp4zMLSVw=
+=7V0W
+-----END PGP SIGNATURE-----
+
+--hax7konvqwaawvau--
