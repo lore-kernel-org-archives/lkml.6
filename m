@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752852AbeBEBcz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:32:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43456 "EHLO mx2.suse.de"
+        id S1752362AbeBEBdR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:33:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44168 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752793AbeBEB3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752792AbeBEB3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Feb 2018 20:29:23 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 52/64] arch/openrisc: use mm locking wrappers
-Date: Mon,  5 Feb 2018 02:27:42 +0100
-Message-Id: <20180205012754.23615-53-dbueso@wotan.suse.de>
+Subject: [PATCH 45/64] arch/m32r: use mm locking wrappers
+Date: Mon,  5 Feb 2018 02:27:35 +0100
+Message-Id: <20180205012754.23615-46-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -29,86 +29,52 @@ This becomes quite straightforward with the mmrange in place.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- arch/openrisc/kernel/dma.c |  6 ++++--
- arch/openrisc/mm/fault.c   | 10 +++++-----
- 2 files changed, 9 insertions(+), 7 deletions(-)
+ arch/m32r/mm/fault.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/openrisc/kernel/dma.c b/arch/openrisc/kernel/dma.c
-index a945f00011b4..9fee5388f647 100644
---- a/arch/openrisc/kernel/dma.c
-+++ b/arch/openrisc/kernel/dma.c
-@@ -87,6 +87,7 @@ or1k_dma_alloc(struct device *dev, size_t size,
- {
- 	unsigned long va;
- 	void *page;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 	struct mm_walk walk = {
- 		.pte_entry = page_set_nocache,
- 		.mm = &init_mm
-@@ -106,7 +107,7 @@ or1k_dma_alloc(struct device *dev, size_t size,
- 		 * We need to iterate through the pages, clearing the dcache for
- 		 * them and setting the cache-inhibit bit.
- 		 */
--		if (walk_page_range(va, va + size, &walk)) {
-+		if (walk_page_range(va, va + size, &walk, &mmrange)) {
- 			free_pages_exact(page, size);
- 			return NULL;
- 		}
-@@ -120,6 +121,7 @@ or1k_dma_free(struct device *dev, size_t size, void *vaddr,
- 	      dma_addr_t dma_handle, unsigned long attrs)
- {
- 	unsigned long va = (unsigned long)vaddr;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 	struct mm_walk walk = {
- 		.pte_entry = page_clear_nocache,
- 		.mm = &init_mm
-@@ -127,7 +129,7 @@ or1k_dma_free(struct device *dev, size_t size, void *vaddr,
- 
- 	if ((attrs & DMA_ATTR_NON_CONSISTENT) == 0) {
- 		/* walk_page_range shouldn't be able to fail here */
--		WARN_ON(walk_page_range(va, va + size, &walk));
-+		WARN_ON(walk_page_range(va, va + size, &walk, &mmrange));
+diff --git a/arch/m32r/mm/fault.c b/arch/m32r/mm/fault.c
+index 0129aea46729..2c6b58ecfc53 100644
+--- a/arch/m32r/mm/fault.c
++++ b/arch/m32r/mm/fault.c
+@@ -137,11 +137,11 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 	 * source.  If this is invalid we can skip the address space check,
+ 	 * thus avoiding the deadlock.
+ 	 */
+-	if (!down_read_trylock(&mm->mmap_sem)) {
++	if (!mm_read_trylock(mm, &mmrange)) {
+ 		if ((error_code & ACE_USERMODE) == 0 &&
+ 		    !search_exception_tables(regs->psw))
+ 			goto bad_area_nosemaphore;
+-		down_read(&mm->mmap_sem);
++		mm_read_lock(mm, &mmrange);
  	}
  
- 	free_pages_exact(vaddr, size);
-diff --git a/arch/openrisc/mm/fault.c b/arch/openrisc/mm/fault.c
-index 75ddb1e8e7e7..81f6d509bf64 100644
---- a/arch/openrisc/mm/fault.c
-+++ b/arch/openrisc/mm/fault.c
-@@ -109,7 +109,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long address,
- 		goto no_context;
- 
- retry:
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
  	vma = find_vma(mm, address);
- 
- 	if (!vma)
-@@ -198,7 +198,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long address,
- 		}
- 	}
- 
+@@ -213,7 +213,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 	else
+ 		tsk->min_flt++;
+ 	set_thread_fault_code(0);
 -	up_read(&mm->mmap_sem);
 +	mm_read_unlock(mm, &mmrange);
  	return;
  
- 	/*
-@@ -207,7 +207,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long address,
- 	 */
- 
+ /*
+@@ -221,7 +221,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code,
+  * Fix it, but check if it's kernel or user first..
+  */
  bad_area:
 -	up_read(&mm->mmap_sem);
 +	mm_read_unlock(mm, &mmrange);
  
  bad_area_nosemaphore:
- 
-@@ -270,14 +270,14 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long address,
- 	__asm__ __volatile__("l.nop 42");
- 	__asm__ __volatile__("l.nop 1");
- 
+ 	/* User mode accesses just cause a SIGSEGV */
+@@ -274,14 +274,14 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code,
+  * us unable to handle the page fault gracefully.
+  */
+ out_of_memory:
 -	up_read(&mm->mmap_sem);
 +	mm_read_unlock(mm, &mmrange);
- 	if (!user_mode(regs))
+ 	if (!(error_code & ACE_USERMODE))
  		goto no_context;
  	pagefault_out_of_memory();
  	return;
@@ -117,7 +83,7 @@ index 75ddb1e8e7e7..81f6d509bf64 100644
 -	up_read(&mm->mmap_sem);
 +	mm_read_unlock(mm, &mmrange);
  
- 	/*
- 	 * Send a sigbus, regardless of whether we were in kernel
+ 	/* Kernel mode? Handle exception or die */
+ 	if (!(error_code & ACE_USERMODE))
 -- 
 2.13.6
