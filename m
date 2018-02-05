@@ -1,100 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753071AbeBENvS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 08:51:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752461AbeBENvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 08:51:09 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40EFC2172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 5 Feb 2018 22:51:05 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Pawel Osciak <pawel@osciak.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        orito.takao@socionext.com, Fumihiro ATSUMI <atsumi@infinitegra.co.jp>
-Subject: Re: [PATCH] [BUGFIX] media: vb2: Fix videobuf2 to map correct area
-Message-Id: <20180205225105.6eb3a8e5ed93c87bf6cfd14e@kernel.org>
-In-Reply-To: <2af9a288-86e8-100a-4459-bc913f3cb99d@samsung.com>
-References: <CGME20180205023108epcas5p18456b3ecc412b6709dc27fe5af14b1f6@epcas5p1.samsung.com>
-        <151779784111.20697.5012233804870630070.stgit@devbox>
-        <2af9a288-86e8-100a-4459-bc913f3cb99d@samsung.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1753120AbeBENwC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 08:52:02 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35994 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752782AbeBENvx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 08:51:53 -0500
+X-Google-Smtp-Source: AH8x225b59JFePhSN/jRCsKYSYYHmBkv7/K5AlwkLlXyf8EOIc2ZJf9QI+uDPeViQT69al8qoI4ESQ==
+From: Masayoshi Mizuma <msys.mizuma@gmail.com>
+Subject: [PATCH] [RESEND] x86/smpboot: avoid warning messages while
+ hot-removing physical cpu
+To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Message-ID: <de21ed2c-2efe-87be-01ca-a613c78c1027@gmail.com>
+Date: Mon, 5 Feb 2018 08:51:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 05 Feb 2018 09:47:46 +0100
-Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-> Hi Masami,
-> 
-> On 2018-02-05 03:30, Masami Hiramatsu wrote:
-> > Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
-> > Since the current code does ioremap the page address, if the offset > 0,
-> > it does not do ioremap the last page and results in kernel panic.
-> >
-> > This fixes to pass the page address + offset to ioremap so that ioremap
-> > can map correct area. Also, this uses __pfn_to_phys() to get the physical
-> > address of given PFN.
-> >
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > Reported-by: Takao Orito <orito.takao@socionext.com>
-> > ---
-> >   drivers/media/v4l2-core/videobuf2-vmalloc.c |    2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/v4l2-core/videobuf2-vmalloc.c b/drivers/media/v4l2-core/videobuf2-vmalloc.c
-> > index 3a7c80cd1a17..896f2f378b40 100644
-> > --- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
-> > +++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
-> > @@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(struct device *dev, unsigned long vaddr,
-> >   			if (nums[i-1] + 1 != nums[i])
-> >   				goto fail_map;
-> >   		buf->vaddr = (__force void *)
-> > -				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
-> > +			ioremap_nocache(__pfn_to_phys(nums[0]) + offset, size);
-> 
-> Thanks for reporting this issue. However the above line doesn't look like
-> a proper fix. Please note that at the end of that function there is already
-> "buf->vaddr += offset;".
+When a physical cpu is hot-removed, the following warning message
+are shown while the uncore device is removing in uncore_pci_remove().
 
-I see.
+WARNING: CPU: 120 PID: 5 at arch/x86/events/intel/uncore.c:988
+uncore_pci_remove+0xf1/0x110
+...
+CPU: 120 PID: 5 Comm: kworker/u1024:0 Not tainted 4.15.0-rc8 #1
+Workqueue: kacpi_hotplug acpi_hotplug_work_fn
+...
+Call Trace:
+pci_device_remove+0x36/0xb0
+device_release_driver_internal+0x145/0x210
+pci_stop_bus_device+0x76/0xa0
+pci_stop_root_bus+0x44/0x60
+acpi_pci_root_remove+0x1f/0x80
+acpi_bus_trim+0x54/0x90
+acpi_bus_trim+0x2e/0x90
+acpi_device_hotplug+0x2bc/0x4b0
+acpi_hotplug_work_fn+0x1a/0x30
+process_one_work+0x141/0x340
+worker_thread+0x47/0x3e0
+kthread+0xf5/0x130
 
-> 
-> IMHO the proper fix is to create a larger mapping, which would include the
-> in-page start offset:
-> 
-> ioremap_nocache(__pfn_to_phys(nums[0]), offset + size);
+When uncore_pci_remove() runs, it tries to get package id to
+clear the value of uncore_extra_pci_dev[].dev[] by using
+topology_phys_to_logical_pkg(). The warning messesage are
+shown because topology_phys_to_logical_pkg() returns -1.
 
-Yes, sorry it's my mistake. I misunderstood ioremap_nocache(addr, size) remaps
-the PAGE of addr to PAGE of (addr+size). Yours is correct.
+  arch/x86/events/intel/uncore.c:
+  static void uncore_pci_remove(struct pci_dev *pdev)
+  {
+  ...
+          phys_id = uncore_pcibus_to_physid(pdev->bus);
+  ...
+                  pkg = topology_phys_to_logical_pkg(phys_id); //returns -1
+                  for (i = 0; i < UNCORE_EXTRA_PCI_DEV_MAX; i++) {
+                          if (uncore_extra_pci_dev[pkg].dev[i] == pdev) {
+                                  uncore_extra_pci_dev[pkg].dev[i] = NULL;
+                                  break;
+                          }
+                  }
+                  WARN_ON_ONCE(i >= UNCORE_EXTRA_PCI_DEV_MAX); //HERE!!
 
-Thank you,
+topology_phys_to_logical_pkg() tries to find
+cpuinfo_x86->phys_proc_id that matches the phys_pkg argument.
 
-> BTW, thanks for updating "<< PAGE_SHIFT" to better __pfn_to_phys() macro!
-> 
-> >   	} else {
-> >   		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
-> >   					PAGE_KERNEL);
-> >
-> >
-> >
-> >
-> 
-> Best regards
-> -- 
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
-> 
+  arch/x86/kernel/smpboot.c:
+  int topology_phys_to_logical_pkg(unsigned int phys_pkg)
+  {
+          int cpu;
+  
+          for_each_possible_cpu(cpu) {
+                  struct cpuinfo_x86 *c = &cpu_data(cpu);
+  
+                  if (c->initialized && c->phys_proc_id == phys_pkg)
+                          return c->logical_proc_id;
+          }
+          return -1;
+  }
 
+However, the phys_proc_id is already set to 0 by remove_siblinginfo()
+when the cpu was offlined.
+So, topology_phys_to_logical_pkg() cannot find correct the
+logical_proc_id and always returns -1.
+As the result, uncore_pci_remove() calls WARN_ON_ONCE() and the warning
+messages are shown.
 
+To avoid this, remove the setting from remove_siblinginfo().
+There is no influence about the removing because phys_proc_id is not
+used after it is hot-removed and it is re-set while hot-addeding.
+
+Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+ 
+---
+ arch/x86/kernel/smpboot.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index ed556d5..844279c 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1431,7 +1431,6 @@ static void remove_siblinginfo(int cpu)
+ 	cpumask_clear(cpu_llc_shared_mask(cpu));
+ 	cpumask_clear(topology_sibling_cpumask(cpu));
+ 	cpumask_clear(topology_core_cpumask(cpu));
+-	c->phys_proc_id = 0;
+ 	c->cpu_core_id = 0;
+ 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
+ 	recompute_smt_state();
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+1.8.3.1
+
+- Masayoshi
