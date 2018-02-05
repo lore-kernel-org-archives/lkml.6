@@ -1,58 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753215AbeBEQSV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 11:18:21 -0500
-Received: from mga12.intel.com ([192.55.52.136]:45986 "EHLO mga12.intel.com"
+        id S1753263AbeBEQWe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 11:22:34 -0500
+Received: from mga18.intel.com ([134.134.136.126]:59606 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752925AbeBEQSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 11:18:15 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1752999AbeBEQW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 11:22:26 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,465,1511856000";
-   d="scan'208";a="28925566"
-Message-ID: <1517847491.22495.36.camel@linux.intel.com>
-Subject: Re: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure ACPI
- driver
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Darren Hart <dvhart@infradead.org>
-Cc: platform-driver-x86@vger.kernel.org,
-        AceLan Kao <acelan.kao@canonical.com>, linux-kernel@vger.kernel.org,
-        pali.rohar@gmail.com, Mario Limonciello <mario.limonciello@dell.com>,
-        Rafael Wysocki <rjw@rjwysocki.net>
-Date: Mon, 05 Feb 2018 18:18:11 +0200
-In-Reply-To: <20180131213726.GB21498@fury>
-References: <20180131182614.19524-1-andriy.shevchenko@linux.intel.com>
-         <20180131213726.GB21498@fury>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.3-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="171800306"
+Date: Mon, 5 Feb 2018 08:22:11 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jessica Yu <jeyu@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wanlong Gao <wanlong.gao@gmail.com>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 1/2] modpost: don't add warnings for LTO-generated symbols
+Message-ID: <20180205162211.GM30338@tassilo.jf.intel.com>
+References: <20180205151300.539874-1-arnd@arndb.de>
+ <20180205151300.539874-2-arnd@arndb.de>
+ <20180205155001.GI30338@tassilo.jf.intel.com>
+ <CAK8P3a3gNstYGm5KqAZ5T7kQL0raUC0OOrcLwYD3wc+thwmEkw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3gNstYGm5KqAZ5T7kQL0raUC0OOrcLwYD3wc+thwmEkw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-01-31 at 13:37 -0800, Darren Hart wrote:
-> On Wed, Jan 31, 2018 at 08:26:14PM +0200, Andy Shevchenko wrote:
-> > Remove code duplication by converting driver to pure ACPI one.
+On Mon, Feb 05, 2018 at 04:59:32PM +0100, Arnd Bergmann wrote:
+> On Mon, Feb 5, 2018 at 4:50 PM, Andi Kleen <ak@linux.intel.com> wrote:
+> > On Mon, Feb 05, 2018 at 04:12:52PM +0100, Arnd Bergmann wrote:
+> >> WARNING: vmlinux.o(.data+0x12e0): Section mismatch in reference from the variable pfkey_net_ops.lto_priv.2992 to the function .init.text:pfkey_net_init.lto_priv.2977()
+> >> The variable pfkey_net_ops.lto_priv.2992 references
+> >> the function __init pfkey_net_init.lto_priv.2977()
+> >> If the reference is valid then annotate the
+> >> variable with __init* or __refdata (see linux/init.h) or name the variable:
+> >> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+> >
+> > A better fix would be to ensure modpost always runs on already LD_FINALed
+> > objects, so it never sees LTO.
+> >
+> > Otherwise you would need to teach modpost about the LTO symbol table
+> > and some other magic. I did that once, but it turned out to be very
+> > ugly.
 > 
+> I'm not sure I understand what that means. Do you mean that with LD_FINAL,
+> those symbol references are completely eliminated so we don't need to worry
+> about them any more?
 
-I have fixed couple issues, but...
+Yes there should not be any .lto_priv references after LDFINAL, it will
+be just like any other ELF object. We also need to do the same
+thing before objtool.
 
-> +Rafael
 > 
-> I don't see any reason *not* to do this, it seems the acpi driver
-> model provides
-> some of the boilerplate stuff we were doing manually before as a
-> platform
-> device. I'm scratching my head wondering why we did this as a
-> platform-driver in
-> the first place now...
+> I got about a dozen section mismatch errors with LTO in cases where the
+> calling function gets a specialized version of a structure, and my oneline
+> patch above addresses them all.
 
-...I still keep in my review queue in a hope that someone can actually
-test this on real hardware.
+Not sure I follow here. .lto_priv should be anything LTO, not just
+some specific optimizations.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+-Andi
