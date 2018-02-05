@@ -1,58 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754091AbeBESks convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 13:40:48 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:45371 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753896AbeBESi5 (ORCPT
+        id S1753633AbeBESoV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 13:44:21 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46717 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753975AbeBESoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 13:38:57 -0500
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: RE: [PATCH] arc: dts: use 'atmel' as manufacturer for at24 in
- axs10x_mb
-Thread-Topic: [PATCH] arc: dts: use 'atmel' as manufacturer for at24 in
- axs10x_mb
-Thread-Index: AQHTlVvm/SdiZv61U0qKPJ6JiV5gQaOWNaxQ
-Date: Mon, 5 Feb 2018 18:38:51 +0000
-Message-ID: <4881796E12491D4BB15146FE0209CE646802914A@DE02WEMBXB.internal.synopsys.com>
-References: <20180124213955.4975-1-brgl@bgdev.pl>
-In-Reply-To: <20180124213955.4975-1-brgl@bgdev.pl>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.178.24]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 5 Feb 2018 13:44:08 -0500
+X-Google-Smtp-Source: AH8x227J4gpR1AhN83H8RTV16fwidZXI6UbyShMIXaqFUDeAha1pL8lNodsTydIT7PR5DE6XFWQo3Om3CC1J/s+a/Po=
 MIME-Version: 1.0
+In-Reply-To: <20180205182039.GA7891@linux.intel.com>
+References: <20180205140852.14110-1-colin.king@canonical.com> <20180205182039.GA7891@linux.intel.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 5 Feb 2018 10:44:07 -0800
+Message-ID: <CAPcyv4geaysZ803Xtd27YGh0udww+95VaGP6r1Hdxx8SHxfX9w@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm: remove redundant assignment to pointer 'dev'
+To: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Colin King <colin.king@canonical.com>, linux-nvdimm@lists.01.org,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartosz, all,
+On Mon, Feb 5, 2018 at 10:20 AM, Ross Zwisler
+<ross.zwisler@linux.intel.com> wrote:
+> On Mon, Feb 05, 2018 at 02:08:52PM +0000, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Pointer dev is being assigned a value that is never read, it is being
+>> re-assigned the same value later on, hence the initialization is redundant
+>> and can be removed.
+>>
+>> Cleans up clang warning:
+>> drivers/nvdimm/pfn_devs.c:307:17: warning: Value stored to 'dev' during
+>> its initialization is never read
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>
+> Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+>
+> More importantly this fixes a potential NULL pointer dereference.  nd_pfn
+> is checked for NULL a few lines down, but we would have crashed here trying to
+> get nd_pfn->dev.
+>
 
-> -----Original Message-----
-> From: Bartosz Golaszewski [mailto:brgl@bgdev.pl]
-> Sent: Thursday, January 25, 2018 12:40 AM
-> To: Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Russell King <linux@armlinux.org.uk>; Alexey
-> Brodkin <Alexey.Brodkin@synopsys.com>; Vineet Gupta <Vineet.Gupta1@synopsys.com>
-> Cc: devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-snps-arc@lists.infradead.org; Bartosz Golaszewski
-> <brgl@bgdev.pl>
-> Subject: [PATCH] arc: dts: use 'atmel' as manufacturer for at24 in axs10x_mb
-> 
-> Using compatible strings without the <manufacturer> part for at24 is
-> now deprecated. Use a correct 'atmel,<model>' value.
-
-Even though I agree with this change itself I think it may worth
-mentioning an explicit commit that deprecated manufacturer'less parts.
-
--Alexey
- 
+No we wouldn't crash. We're just calculating the address, not
+de-referencing a NULL pointer.
