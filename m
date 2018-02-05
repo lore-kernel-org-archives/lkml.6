@@ -1,154 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752873AbeBEN2N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 08:28:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38030 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752316AbeBEN2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 08:28:05 -0500
-From: "Jerome Marchand" <jmarchan@redhat.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Jerome Marchand <jmarchan@redhat.com>
-Subject: [PATCH v4] arm64: fix unwind_frame() for filtered out fn for function graph tracing
-Date: Mon,  5 Feb 2018 14:28:01 +0100
-Message-Id: <20180205132801.7442-1-jmarchan@redhat.com>
-In-Reply-To: <20180112104832.9417-1-jmarchan@redhat.com>
-References: <20180112104832.9417-1-jmarchan@redhat.com>
+        id S1753004AbeBENgM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 08:36:12 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50566 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752612AbeBENgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 08:36:04 -0500
+Date: Mon, 5 Feb 2018 13:36:00 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: efault@gmx.de, linux-kernel@vger.kernel.org,
+        alexander.levin@verizon.com, tglx@linutronix.de, mingo@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: Runqueue spinlock recursion on arm64 v4.15
+Message-ID: <20180205133600.etr32unq6amsa6af@lakrids.cambridge.arm.com>
+References: <20180202192704.nqwjsthl3agszhzt@lakrids.cambridge.arm.com>
+ <20180202195506.GP2269@hirez.programming.kicks-ass.net>
+ <20180202220726.23d4ljxxdysafbxd@salmiak>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180202220726.23d4ljxxdysafbxd@salmiak>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pratyush Anand <panand@redhat.com>
+On Fri, Feb 02, 2018 at 10:07:26PM +0000, Mark Rutland wrote:
+> On Fri, Feb 02, 2018 at 08:55:06PM +0100, Peter Zijlstra wrote:
+> > On Fri, Feb 02, 2018 at 07:27:04PM +0000, Mark Rutland wrote:
+> > > ... in some cases, owner_cpu is -1, so I guess we're racing with an
+> > > unlock. I only ever see this on the runqueue locks in wake up functions.
+> > 
+> > So runqueue locks are special in that the owner changes over a contex
+> > switch, maybe something goes funny there?
+> 
+> Aha! I think that's it!
+> 
+> In finish_lock_switch() we do:
+> 
+> 	smp_store_release(&prev->on_cpu, 0);
+> 	...
+> 	rq->lock.owner = current;
+> 
+> As soon as we update prev->on_cpu, prev can be scheduled on another CPU, and
+> can thus see a stale value for rq->lock.owner (e.g. if it tries to wake up
+> another task on that rq).
 
-Change since v3:
- - Exit unwind_frame() if frame->graph != -1
+I hacked in a forced vCPU preemption between the two using a sled of WFE
+instructions, and now I can trigger the problem in seconds rather than
+hours.
 
-Change since v2:
-- Set frame.graph = current->curr_ret_stack in profile_pc
-- Check that frame->graph != -1 in unwind_frame
+With the patch below applied, things seem to fine so far.
 
-do_task_stat() calls get_wchan(), which further does unwind_frame().
-unwind_frame() restores frame->pc to original value in case function
-graph tracer has modified a return address (LR) in a stack frame to hook
-a function return. However, if function graph tracer has hit a filtered
-function, then we can't unwind it as ftrace_push_return_trace() has
-biased the index(frame->graph) with a 'huge negative'
-offset(-FTRACE_NOTRACE_DEPTH).
+So I'm pretty sure this is it. I'll clean up the patch text and resend
+that in a bit.
 
-Moreover, arm64 stack walker defines index(frame->graph) as unsigned
-int, which can not compare a -ve number.
+Thanks,
+Mark.
 
-Similar problem we can have with calling of walk_stackframe() from
-save_stack_trace_tsk() or dump_backtrace().
-
-This patch fixes unwind_frame() to test the index for -ve value and
-restore index accordingly before we can restore frame->pc.
-
-Reproducer:
-
-cd /sys/kernel/debug/tracing/
-echo schedule > set_graph_notrace
-echo 1 > options/display-graph
-echo wakeup > current_tracer
-ps -ef | grep -i agent
-
-Above commands result in:
-Unable to handle kernel paging request at virtual address ffff801bd3d1e000
-pgd = ffff8003cbe97c00
-[ffff801bd3d1e000] *pgd=0000000000000000, *pud=0000000000000000
-Internal error: Oops: 96000006 [#1] SMP
-[...]
-CPU: 5 PID: 11696 Comm: ps Not tainted 4.11.0+ #33
-[...]
-task: ffff8003c21ba000 task.stack: ffff8003cc6c0000
-PC is at unwind_frame+0x12c/0x180
-LR is at get_wchan+0xd4/0x134
-pc : [<ffff00000808892c>] lr : [<ffff0000080860b8>] pstate: 60000145
-sp : ffff8003cc6c3ab0
-x29: ffff8003cc6c3ab0 x28: 0000000000000001
-x27: 0000000000000026 x26: 0000000000000026
-x25: 00000000000012d8 x24: 0000000000000000
-x23: ffff8003c1c04000 x22: ffff000008c83000
-x21: ffff8003c1c00000 x20: 000000000000000f
-x19: ffff8003c1bc0000 x18: 0000fffffc593690
-x17: 0000000000000000 x16: 0000000000000001
-x15: 0000b855670e2b60 x14: 0003e97f22cf1d0f
-x13: 0000000000000001 x12: 0000000000000000
-x11: 00000000e8f4883e x10: 0000000154f47ec8
-x9 : 0000000070f367c0 x8 : 0000000000000000
-x7 : 00008003f7290000 x6 : 0000000000000018
-x5 : 0000000000000000 x4 : ffff8003c1c03cb0
-x3 : ffff8003c1c03ca0 x2 : 00000017ffe80000
-x1 : ffff8003cc6c3af8 x0 : ffff8003d3e9e000
-
-Process ps (pid: 11696, stack limit = 0xffff8003cc6c0000)
-Stack: (0xffff8003cc6c3ab0 to 0xffff8003cc6c4000)
-[...]
-[<ffff00000808892c>] unwind_frame+0x12c/0x180
-[<ffff000008305008>] do_task_stat+0x864/0x870
-[<ffff000008305c44>] proc_tgid_stat+0x3c/0x48
-[<ffff0000082fde0c>] proc_single_show+0x5c/0xb8
-[<ffff0000082b27e0>] seq_read+0x160/0x414
-[<ffff000008289e6c>] __vfs_read+0x58/0x164
-[<ffff00000828b164>] vfs_read+0x88/0x144
-[<ffff00000828c2e8>] SyS_read+0x60/0xc0
-[<ffff0000080834a0>] __sys_trace_return+0x0/0x4
-
-fixes: 20380bb390a4 (arm64: ftrace: fix a stack tracer's output under function graph tracer)
-Signed-off-by: Pratyush Anand <panand@redhat.com>
-Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
----
- arch/arm64/include/asm/stacktrace.h | 2 +-
- arch/arm64/kernel/stacktrace.c      | 7 +++++++
- arch/arm64/kernel/time.c            | 2 +-
- 3 files changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/include/asm/stacktrace.h b/arch/arm64/include/asm/stacktrace.h
-index 6ad30776e984..99390755c0c4 100644
---- a/arch/arm64/include/asm/stacktrace.h
-+++ b/arch/arm64/include/asm/stacktrace.h
-@@ -27,7 +27,7 @@ struct stackframe {
- 	unsigned long fp;
- 	unsigned long pc;
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--	unsigned int graph;
-+	int graph;
- #endif
- };
- 
-diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
-index 76809ccd309c..2c74ff76b0cd 100644
---- a/arch/arm64/kernel/stacktrace.c
-+++ b/arch/arm64/kernel/stacktrace.c
-@@ -59,6 +59,13 @@ int notrace unwind_frame(struct task_struct *tsk, struct stackframe *frame)
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 	if (tsk->ret_stack &&
- 			(frame->pc == (unsigned long)return_to_handler)) {
-+		if (frame->graph == -1) {
-+			WARN_ON(1);
-+			return -EINVAL;
-+		}
-+		if (frame->graph < -1)
-+			frame->graph += FTRACE_NOTRACE_DEPTH;
-+
- 		/*
- 		 * This is a case where function graph tracer has
- 		 * modified a return address (LR) in a stack frame
-diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
-index a4391280fba9..f258636273c9 100644
---- a/arch/arm64/kernel/time.c
-+++ b/arch/arm64/kernel/time.c
-@@ -52,7 +52,7 @@ unsigned long profile_pc(struct pt_regs *regs)
- 	frame.fp = regs->regs[29];
- 	frame.pc = regs->pc;
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--	frame.graph = -1; /* no task info */
-+	frame.graph = current->curr_ret_stack;
- #endif
- 	do {
- 		int ret = unwind_frame(NULL, &frame);
--- 
-2.13.6
+> I guess the below (completely untested) would fix that. I'll try to give it a
+> go next week.
+> 
+> Thanks,
+> Mark.
+> 
+> ---->8----
+> From 3ef7e7466d09d2270d2a353d032ff0f9bc0488a7 Mon Sep 17 00:00:00 2001
+> From: Mark Rutland <mark.rutland@arm.com>
+> Date: Fri, 2 Feb 2018 21:56:17 +0000
+> Subject: [PATCH] sched/core: avoid spurious spinlock recursion splats
+> 
+> The runqueue locks are special in that the owner changes over a context switch.
+> To ensure that this is account for in CONFIG_DEBUG_SPINLOCK builds,
+> finish_lock_switch updates rq->lock.owner while the lock is held.
+> 
+> However, this happens *after* prev->on_cpu is cleared, which allows prev to be
+> scheduled on another CPU. If prev then attempts to acquire the same rq lock, it
+> will see itself as the owner.
+> 
+> This can be seen in virtual environments, where the vCPU can be preempted for
+> an arbitrarily long period between updating prev->on_cpu and rq->lock.owner.
+> 
+> We can avoid this issue by updating rq->lock.owner first. The release of
+> prev->on_cpu will ensure that the new owner is visible to prev if it is
+> scheduled on another CPU.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> ---
+>  kernel/sched/sched.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index b19552a212de..4f0d2e3701c3 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1342,6 +1342,10 @@ static inline void prepare_lock_switch(struct rq *rq, struct task_struct *next)
+>  
+>  static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
+>  {
+> +#ifdef CONFIG_DEBUG_SPINLOCK
+> +	/* this is a valid case when another task releases the spinlock */
+> +	rq->lock.owner = current;
+> +#endif
+>  #ifdef CONFIG_SMP
+>  	/*
+>  	 * After ->on_cpu is cleared, the task can be moved to a different CPU.
+> @@ -1355,10 +1359,6 @@ static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
+>  	 */
+>  	smp_store_release(&prev->on_cpu, 0);
+>  #endif
+> -#ifdef CONFIG_DEBUG_SPINLOCK
+> -	/* this is a valid case when another task releases the spinlock */
+> -	rq->lock.owner = current;
+> -#endif
+>  	/*
+>  	 * If we are tracking spinlock dependencies then we have to
+>  	 * fix up the runqueue lock - which gets 'carried over' from
+> -- 
+> 2.11.0
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
