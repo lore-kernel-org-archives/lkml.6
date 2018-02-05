@@ -1,124 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752859AbeBELYm convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 06:24:42 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2106 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752253AbeBELYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 06:24:35 -0500
-From: gengdongjiu <gengdongjiu@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "bp@alien8.de" <bp@alien8.de>,
-        "robert.moore@intel.com" <robert.moore@intel.com>,
-        "lv.zheng@intel.com" <lv.zheng@intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        Huangshaoyu <huangshaoyu@huawei.com>,
-        "Liujun (Jun Liu)" <liujun88@hisilicon.com>
-Subject: Re: [PATCH v9 3/7] acpi: apei: Add SEI notification type support
- for ARMv8
-Thread-Topic: [PATCH v9 3/7] acpi: apei: Add SEI notification type support
- for ARMv8
-Thread-Index: AdOec8IPP3yhjBs7S8ikN8+tj1CENQ==
-Date: Mon, 5 Feb 2018 11:24:26 +0000
-Message-ID: <0184EA26B2509940AA629AE1405DD7F201AC71DE@DGGEMA503-MBS.china.huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.142.68.147]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752870AbeBELeO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 06:34:14 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:35051 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750949AbeBELeF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 06:34:05 -0500
+X-ME-Sender: <xms:LEF4WsYBMZHn1aPvnlNu3ryH5VAyJ16dofN1xQr2Jvoeiw7lDvFjSQ>
+Date: Mon, 5 Feb 2018 09:34:00 -0200
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+To: Matthew Thode <mthode@mthode.org>
+Cc: David Herrmann <dh.herrmann@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: thinkpad_acpi: suppress warning about palm
+ detection
+Message-ID: <20180205113400.qpqdkpv5bbvdwg22@khazad-dum.debian.net>
+References: <20180112110445.1876-1-dh.herrmann@gmail.com>
+ <CAHp75Vc66ZfRmOoOKJRODpV0mS2aZru=b-r0cr8SKYH=hm+W6Q@mail.gmail.com>
+ <CANq1E4RGo091oaG=0owKVfxOV8wR2qQ=nXfXzZsRxg6Q7_C8zw@mail.gmail.com>
+ <20180113063309.iryfhufpilas3jnf@mthode.org>
+ <20180205050116.isaz6pmgsquzjmqr@mthode.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180205050116.isaz6pmgsquzjmqr@mthode.org>
+X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
+ 0BD9 E811 39CB 4807
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+> > I'm fine with a signed-off-by or tested-by or suggested-by.  There is a
+> > spelling mistake though, 'hoveres' should be hovers.
 > 
-> > Yes, I know you are dong that. Your serial's patch will consider all above
-> things, right?
-> 
-> Assuming I got it right, yes. It currently makes the race Xie XiuQi spotted worse,
-> which I want to fix too. (details on the cover letter)
+> Is there anything else I can do here?  I'm not sure any of us have the
+> ability to find out what lenovo actualy wants this for.
 
-Ok.
+I have already acked the patch, so Darren or Andy should pick it up
+sooner or later for merging into the subsystem tree...
 
-> 
-> 
-> > If your patch can be consider that, this patch can based on your patchset.
-> thanks.
-> 
-> I'd like to pick these patches onto the end of that series, but first I want to
-> know what NOTIFY_SEI means for any OS. The ACPI spec doesn't say, and
-> because its asynchronous, route-able and mask-able, there are many more
-> corners than NOTFIY_SEA.
-> 
-> This thing is a notification using an emulated SError exception. (emulated
-> because physical-SError must be routed to EL3 for firmware-first, and
-> virtual-SError belongs to EL2).
-> 
-> Does your firmware emulate SError exactly as the TakeException() pseudo code
-> in the Arm-Arm?
+But if you wouldn't mind doing so, you could send a V2 with all acks,
+tested-by/suggested-by/whatever added, as well as that minor spelling
+mistake correction...  I am not sure this is necessary, though.
 
-Yes, it is.
+Andy, Daren?
 
-> Is the emulated SError routed following the routing rules for HCR_EL2.{AMO,
-> TGE}?
-
-Yes, it is.
-
-> What does your firmware do when it wants to emulate SError but its masked?
-> (e.g.1: The physical-SError interrupted EL2 and the SPSR shows EL2 had
-> PSTATE.A  set.
->  e.g.2: The physical-SError interrupted EL2 but HCR_EL2 indicates the
-> emulated  SError should go to EL1. This effectively masks SError.)
-
-Currently we does not consider much about the mask status(SPSR).
-I remember that you ever suggested firmware should reboot if the mask status is set(SPSR), right?
-I ever suggest our firmware team to evaluate that, but there is no response.
-
-I CC "liu jun" <liujun88@hisilicon.com> who is our UEFI firmware Architect, if you have firmware requirements, you can
-raise again.
-
-> 
-> Answers to these let us determine whether a bug is in the firmware or the
-> kernel. If firmware is expecting the OS to do something special, I'd like to know
-> about it from the beginning!
-
-I know your meaning, thanks for raising it again.
-
-> 
-> 
-> >>> Expose API ghes_notify_sei() to external users. External modules can
-> >>> call this exposed API to parse APEI table and handle the SEI
-> >>> notification.
-> >>
-> >> external modules? You mean called by the arch code when it gets this
-> NOTIFY_SEI?
-> 
-> > yes, called by kernel ARCH code, such as below, I remember I have discussed
-> with you.
-> 
-> Sure. The phrase 'external modules' usually means the '.ko' files that live in
-> /lib/modules, nothing outside the kernel tree should be doing this stuff.
-
-I will rename 'external modules' to other name. Thanks.
-
-> 
-> 
-> Thanks,
-> 
-> James
+-- 
+  Henrique Holschuh
