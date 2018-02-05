@@ -1,31 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752599AbeBEVlb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 16:41:31 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:49521 "EHLO
+        id S1752602AbeBEVlz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 16:41:55 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:49303 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752582AbeBEVlQ (ORCPT
+        with ESMTP id S1752203AbeBEVkz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 16:41:16 -0500
-Date: Mon, 5 Feb 2018 13:36:52 -0800
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-11974914e8e6d44387b4b23fa6dbd40c94baeb8d@git.kernel.org>
-Cc: jolsa@kernel.org, kan.liang@intel.com, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
-        ak@linux.intel.com, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, dsahern@gmail.com, acme@redhat.com,
-        eranian@google.com, namhyung@kernel.org
-Reply-To: ak@linux.intel.com, tglx@linutronix.de, mingo@kernel.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, kan.liang@intel.com,
-        jolsa@kernel.org, namhyung@kernel.org, eranian@google.com,
-        acme@redhat.com, dsahern@gmail.com, peterz@infradead.org,
-        alexander.shishkin@linux.intel.com
-In-Reply-To: <20180201083812.11359-4-jolsa@kernel.org>
-References: <20180201083812.11359-4-jolsa@kernel.org>
+        Mon, 5 Feb 2018 16:40:55 -0500
+Date: Mon, 5 Feb 2018 13:29:07 -0800
+From: tip-bot for Mathieu Desnoyers <tipbot@zytor.com>
+Message-ID: <tip-70216e18e519a54a2f13569e8caff99a092a92d6@git.kernel.org>
+Cc: parri.andrea@gmail.com, paulmck@linux.vnet.ibm.com,
+        mathieu.desnoyers@efficios.com, hpa@zytor.com, davejwatson@fb.com,
+        tglx@linutronix.de, will.deacon@arm.com, peterz@infradead.org,
+        luto@kernel.org, ahh@google.com, mpe@ellerman.id.au, avi@scylladb.com,
+        maged.michael@gmail.com, mingo@kernel.org, boqun.feng@gmail.com,
+        linux-kernel@vger.kernel.org, benh@kernel.crashing.org,
+        linux@armlinux.org.uk, torvalds@linux-foundation.org,
+        ghackmann@google.com, paulus@samba.org, sehr@google.com
+Reply-To: mpe@ellerman.id.au, peterz@infradead.org, will.deacon@arm.com,
+        luto@kernel.org, ahh@google.com, davejwatson@fb.com,
+        tglx@linutronix.de, parri.andrea@gmail.com, paulmck@linux.vnet.ibm.com,
+        mathieu.desnoyers@efficios.com, hpa@zytor.com, paulus@samba.org,
+        sehr@google.com, torvalds@linux-foundation.org, linux@armlinux.org.uk,
+        benh@kernel.crashing.org, ghackmann@google.com,
+        maged.michael@gmail.com, mingo@kernel.org, boqun.feng@gmail.com,
+        linux-kernel@vger.kernel.org, avi@scylladb.com
+In-Reply-To: <20180129202020.8515-9-mathieu.desnoyers@efficios.com>
+References: <20180129202020.8515-9-mathieu.desnoyers@efficios.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] x86/events/intel/ds: Add PERF_SAMPLE_PERIOD into
- PEBS_FREERUNNING_FLAGS
-Git-Commit-ID: 11974914e8e6d44387b4b23fa6dbd40c94baeb8d
+Subject: [tip:sched/urgent] membarrier: Provide core serializing command,
+ *_SYNC_CORE
+Git-Commit-ID: 70216e18e519a54a2f13569e8caff99a092a92d6
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,49 +44,323 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  11974914e8e6d44387b4b23fa6dbd40c94baeb8d
-Gitweb:     https://git.kernel.org/tip/11974914e8e6d44387b4b23fa6dbd40c94baeb8d
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 1 Feb 2018 09:38:12 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 5 Feb 2018 13:48:44 -0300
+Commit-ID:  70216e18e519a54a2f13569e8caff99a092a92d6
+Gitweb:     https://git.kernel.org/tip/70216e18e519a54a2f13569e8caff99a092a92d6
+Author:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+AuthorDate: Mon, 29 Jan 2018 15:20:17 -0500
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 5 Feb 2018 21:35:03 +0100
 
-x86/events/intel/ds: Add PERF_SAMPLE_PERIOD into PEBS_FREERUNNING_FLAGS
+membarrier: Provide core serializing command, *_SYNC_CORE
 
-Stephane reported that we don't support period for enabling large PEBS
-data, which there's no reason for. Adding PERF_SAMPLE_PERIOD into
-freerunning flags.
+Provide core serializing membarrier command to support memory reclaim
+by JIT.
 
-Tested it with:
+Each architecture needs to explicitly opt into that support by
+documenting in their architecture code how they provide the core
+serializing instructions required when returning from the membarrier
+IPI, and after the scheduler has updated the curr->mm pointer (before
+going back to user-space). They should then select
+ARCH_HAS_MEMBARRIER_SYNC_CORE to enable support for that command on
+their architecture.
 
-  # perf record -e cycles:P -c 100 --no-timestamp -C 0 --period
+Architectures selecting this feature need to either document that
+they issue core serializing instructions when returning to user-space,
+or implement their architecture-specific sync_core_before_usermode().
 
-Reported-by: Stephane Eranian <eranian@google.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Kan Liang <kan.liang@intel.com>
-Tested-by: Stephane Eranian <eranian@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180201083812.11359-4-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrea Parri <parri.andrea@gmail.com>
+Cc: Andrew Hunter <ahh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Avi Kivity <avi@scylladb.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: David Sehr <sehr@google.com>
+Cc: Greg Hackmann <ghackmann@google.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Maged Michael <maged.michael@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-api@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180129202020.8515-9-mathieu.desnoyers@efficios.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/perf_event.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/sched/mm.h        | 18 ++++++++++++++
+ include/uapi/linux/membarrier.h | 32 ++++++++++++++++++++++++-
+ init/Kconfig                    |  3 +++
+ kernel/sched/core.c             | 18 ++++++++++----
+ kernel/sched/membarrier.c       | 53 +++++++++++++++++++++++++++++++----------
+ 5 files changed, 106 insertions(+), 18 deletions(-)
 
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 8e4ea143..78f91ec 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -93,7 +93,8 @@ struct amd_nb {
- 	PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_STREAM_ID | \
- 	PERF_SAMPLE_DATA_SRC | PERF_SAMPLE_IDENTIFIER | \
- 	PERF_SAMPLE_TRANSACTION | PERF_SAMPLE_PHYS_ADDR | \
--	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER)
-+	PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER | \
-+	PERF_SAMPLE_PERIOD)
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index 1c4e40c..03a1690 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -7,6 +7,7 @@
+ #include <linux/sched.h>
+ #include <linux/mm_types.h>
+ #include <linux/gfp.h>
++#include <linux/sync_core.h>
  
- #define PEBS_REGS \
- 	(PERF_REG_X86_AX | \
+ /*
+  * Routines for handling mm_structs
+@@ -223,12 +224,26 @@ enum {
+ 	MEMBARRIER_STATE_PRIVATE_EXPEDITED			= (1U << 1),
+ 	MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY			= (1U << 2),
+ 	MEMBARRIER_STATE_GLOBAL_EXPEDITED			= (1U << 3),
++	MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY	= (1U << 4),
++	MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE		= (1U << 5),
++};
++
++enum {
++	MEMBARRIER_FLAG_SYNC_CORE	= (1U << 0),
+ };
+ 
+ #ifdef CONFIG_ARCH_HAS_MEMBARRIER_CALLBACKS
+ #include <asm/membarrier.h>
+ #endif
+ 
++static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
++{
++	if (likely(!(atomic_read(&mm->membarrier_state) &
++		     MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE)))
++		return;
++	sync_core_before_usermode();
++}
++
+ static inline void membarrier_execve(struct task_struct *t)
+ {
+ 	atomic_set(&t->mm->membarrier_state, 0);
+@@ -244,6 +259,9 @@ static inline void membarrier_arch_switch_mm(struct mm_struct *prev,
+ static inline void membarrier_execve(struct task_struct *t)
+ {
+ }
++static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
++{
++}
+ #endif
+ 
+ #endif /* _LINUX_SCHED_MM_H */
+diff --git a/include/uapi/linux/membarrier.h b/include/uapi/linux/membarrier.h
+index d252506..5891d76 100644
+--- a/include/uapi/linux/membarrier.h
++++ b/include/uapi/linux/membarrier.h
+@@ -73,7 +73,7 @@
+  *                          to and return from the system call
+  *                          (non-running threads are de facto in such a
+  *                          state). This only covers threads from the
+- *                          same processes as the caller thread. This
++ *                          same process as the caller thread. This
+  *                          command returns 0 on success. The
+  *                          "expedited" commands complete faster than
+  *                          the non-expedited ones, they never block,
+@@ -86,6 +86,34 @@
+  *                          Register the process intent to use
+  *                          MEMBARRIER_CMD_PRIVATE_EXPEDITED. Always
+  *                          returns 0.
++ * @MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE:
++ *                          In addition to provide memory ordering
++ *                          guarantees described in
++ *                          MEMBARRIER_CMD_PRIVATE_EXPEDITED, ensure
++ *                          the caller thread, upon return from system
++ *                          call, that all its running threads siblings
++ *                          have executed a core serializing
++ *                          instruction. (architectures are required to
++ *                          guarantee that non-running threads issue
++ *                          core serializing instructions before they
++ *                          resume user-space execution). This only
++ *                          covers threads from the same process as the
++ *                          caller thread. This command returns 0 on
++ *                          success. The "expedited" commands complete
++ *                          faster than the non-expedited ones, they
++ *                          never block, but have the downside of
++ *                          causing extra overhead. If this command is
++ *                          not implemented by an architecture, -EINVAL
++ *                          is returned. A process needs to register its
++ *                          intent to use the private expedited sync
++ *                          core command prior to using it, otherwise
++ *                          this command returns -EPERM.
++ * @MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE:
++ *                          Register the process intent to use
++ *                          MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE.
++ *                          If this command is not implemented by an
++ *                          architecture, -EINVAL is returned.
++ *                          Returns 0 on success.
+  * @MEMBARRIER_CMD_SHARED:
+  *                          Alias to MEMBARRIER_CMD_GLOBAL. Provided for
+  *                          header backward compatibility.
+@@ -101,6 +129,8 @@ enum membarrier_cmd {
+ 	MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED		= (1 << 2),
+ 	MEMBARRIER_CMD_PRIVATE_EXPEDITED			= (1 << 3),
+ 	MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED		= (1 << 4),
++	MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE		= (1 << 5),
++	MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE	= (1 << 6),
+ 
+ 	/* Alias for header backward compatibility. */
+ 	MEMBARRIER_CMD_SHARED			= MEMBARRIER_CMD_GLOBAL,
+diff --git a/init/Kconfig b/init/Kconfig
+index 535421f..e37f4b2 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1415,6 +1415,9 @@ config USERFAULTFD
+ config ARCH_HAS_MEMBARRIER_CALLBACKS
+ 	bool
+ 
++config ARCH_HAS_MEMBARRIER_SYNC_CORE
++	bool
++
+ config EMBEDDED
+ 	bool "Embedded system"
+ 	option allnoconfig_y
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 11bf4d4..ee420d7 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2704,13 +2704,21 @@ static struct rq *finish_task_switch(struct task_struct *prev)
+ 
+ 	fire_sched_in_preempt_notifiers(current);
+ 	/*
+-	 * When transitioning from a kernel thread to a userspace
+-	 * thread, mmdrop()'s implicit full barrier is required by the
+-	 * membarrier system call, because the current ->active_mm can
+-	 * become the current mm without going through switch_mm().
++	 * When switching through a kernel thread, the loop in
++	 * membarrier_{private,global}_expedited() may have observed that
++	 * kernel thread and not issued an IPI. It is therefore possible to
++	 * schedule between user->kernel->user threads without passing though
++	 * switch_mm(). Membarrier requires a barrier after storing to
++	 * rq->curr, before returning to userspace, so provide them here:
++	 *
++	 * - a full memory barrier for {PRIVATE,GLOBAL}_EXPEDITED, implicitly
++	 *   provided by mmdrop(),
++	 * - a sync_core for SYNC_CORE.
+ 	 */
+-	if (mm)
++	if (mm) {
++		membarrier_mm_sync_core_before_usermode(mm);
+ 		mmdrop(mm);
++	}
+ 	if (unlikely(prev_state == TASK_DEAD)) {
+ 		if (prev->sched_class->task_dead)
+ 			prev->sched_class->task_dead(prev);
+diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
+index d2087d5..5d07626 100644
+--- a/kernel/sched/membarrier.c
++++ b/kernel/sched/membarrier.c
+@@ -26,11 +26,20 @@
+  * Bitmask made from a "or" of all commands within enum membarrier_cmd,
+  * except MEMBARRIER_CMD_QUERY.
+  */
++#ifdef CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE
++#define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK	\
++	(MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE \
++	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE)
++#else
++#define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK	0
++#endif
++
+ #define MEMBARRIER_CMD_BITMASK	\
+ 	(MEMBARRIER_CMD_GLOBAL | MEMBARRIER_CMD_GLOBAL_EXPEDITED \
+ 	| MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED \
+ 	| MEMBARRIER_CMD_PRIVATE_EXPEDITED	\
+-	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED)
++	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED	\
++	| MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK)
+ 
+ static void ipi_mb(void *info)
+ {
+@@ -104,15 +113,23 @@ static int membarrier_global_expedited(void)
+ 	return 0;
+ }
+ 
+-static int membarrier_private_expedited(void)
++static int membarrier_private_expedited(int flags)
+ {
+ 	int cpu;
+ 	bool fallback = false;
+ 	cpumask_var_t tmpmask;
+ 
+-	if (!(atomic_read(&current->mm->membarrier_state)
+-			& MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY))
+-		return -EPERM;
++	if (flags & MEMBARRIER_FLAG_SYNC_CORE) {
++		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
++			return -EINVAL;
++		if (!(atomic_read(&current->mm->membarrier_state) &
++		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY))
++			return -EPERM;
++	} else {
++		if (!(atomic_read(&current->mm->membarrier_state) &
++		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY))
++			return -EPERM;
++	}
+ 
+ 	if (num_online_cpus() == 1)
+ 		return 0;
+@@ -205,20 +222,29 @@ static int membarrier_register_global_expedited(void)
+ 	return 0;
+ }
+ 
+-static int membarrier_register_private_expedited(void)
++static int membarrier_register_private_expedited(int flags)
+ {
+ 	struct task_struct *p = current;
+ 	struct mm_struct *mm = p->mm;
++	int state = MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY;
++
++	if (flags & MEMBARRIER_FLAG_SYNC_CORE) {
++		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
++			return -EINVAL;
++		state = MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY;
++	}
+ 
+ 	/*
+ 	 * We need to consider threads belonging to different thread
+ 	 * groups, which use the same mm. (CLONE_VM but not
+ 	 * CLONE_THREAD).
+ 	 */
+-	if (atomic_read(&mm->membarrier_state)
+-			& MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY)
++	if (atomic_read(&mm->membarrier_state) & state)
+ 		return 0;
+ 	atomic_or(MEMBARRIER_STATE_PRIVATE_EXPEDITED, &mm->membarrier_state);
++	if (flags & MEMBARRIER_FLAG_SYNC_CORE)
++		atomic_or(MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE,
++			  &mm->membarrier_state);
+ 	if (!(atomic_read(&mm->mm_users) == 1 && get_nr_threads(p) == 1)) {
+ 		/*
+ 		 * Ensure all future scheduler executions will observe the
+@@ -226,8 +252,7 @@ static int membarrier_register_private_expedited(void)
+ 		 */
+ 		synchronize_sched();
+ 	}
+-	atomic_or(MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY,
+-			&mm->membarrier_state);
++	atomic_or(state, &mm->membarrier_state);
+ 	return 0;
+ }
+ 
+@@ -283,9 +308,13 @@ SYSCALL_DEFINE2(membarrier, int, cmd, int, flags)
+ 	case MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED:
+ 		return membarrier_register_global_expedited();
+ 	case MEMBARRIER_CMD_PRIVATE_EXPEDITED:
+-		return membarrier_private_expedited();
++		return membarrier_private_expedited(0);
+ 	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED:
+-		return membarrier_register_private_expedited();
++		return membarrier_register_private_expedited(0);
++	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE:
++		return membarrier_private_expedited(MEMBARRIER_FLAG_SYNC_CORE);
++	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE:
++		return membarrier_register_private_expedited(MEMBARRIER_FLAG_SYNC_CORE);
+ 	default:
+ 		return -EINVAL;
+ 	}
