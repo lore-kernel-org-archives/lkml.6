@@ -1,72 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753016AbeBEOQ2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 09:16:28 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41003 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753191AbeBEOQG (ORCPT
+        id S1753097AbeBEOSH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:18:07 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:41230 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752710AbeBEOSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:16:06 -0500
-X-Google-Smtp-Source: AH8x227CJhhNolSXgPHrUvf6GqorJTawVkIRTJ1wmjrz/WGWkmtk8z6bCMcMdFA4rg9WYEngCuf2XEJoU24XXm7wllY=
+        Mon, 5 Feb 2018 09:18:02 -0500
+X-Google-Smtp-Source: AH8x226o4AYaqHAn/M/4x1c55pxocJYv6uV8/LA75M+yUnhXuKiqTAVf8LupiEYEEEKx3AsiVN7JbusUaKOlfj9IkQI=
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegvt5W-q0W8_VRML-MNW6+n2ZQYW+51utRXDDKSbvsqf3w@mail.gmail.com>
-References: <cover.1517314847.git.dongsu@kinvolk.io> <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
- <1517584816.3171.61.camel@linux.vnet.ibm.com> <1517585624.3171.64.camel@linux.vnet.ibm.com>
- <CAJfpegvt5W-q0W8_VRML-MNW6+n2ZQYW+51utRXDDKSbvsqf3w@mail.gmail.com>
-From: Alban Crequy <alban@kinvolk.io>
-Date: Mon, 5 Feb 2018 15:16:04 +0100
-Message-ID: <CADZs7q6cXaRqsapPOA_h62ayny+AtJ02Zr3tbQxVGA7JoChiyA@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag FS_IMA_NO_CACHE
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>, linux-integrity@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Dongsu Park <dongsu@kinvolk.io>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <b24d41d767554cd5bdbd7cd4fc83d30c@AcuMS.aculab.com>
+References: <20180202153240.1190361-1-arnd@arndb.de> <aa6e25c7-dc55-a5bf-39cb-8b9453604111@oracle.com>
+ <1eddce614f604c518b9bf238a2f92e4b@AcuMS.aculab.com> <CAK8P3a0z72S6mY7Q7RBJ_EMCbF9DOi+RdVaUEsB_qo+rGurQ1g@mail.gmail.com>
+ <b24d41d767554cd5bdbd7cd4fc83d30c@AcuMS.aculab.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 5 Feb 2018 15:18:00 +0100
+X-Google-Sender-Auth: BW4mqc7dgiMWfY-xAiekcXh4vSA
+Message-ID: <CAK8P3a3pVqfuJ57eDndTTajFQchVUoas3=YcDW64xLLgvjbz4Q@mail.gmail.com>
+Subject: Re: [PATCH] xen: hypercall: fix out-of-bounds memcpy
+To: David Laight <David.Laight@aculab.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, Nicolas Pitre <nico@linaro.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jan Beulich <jbeulich@suse.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 2, 2018 at 5:10 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Fri, Feb 2, 2018 at 4:33 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->> On Fri, 2018-02-02 at 10:20 -0500, Mimi Zohar wrote:
->>> Hi Miklos,
->>>
->>> On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
->>> > From: Alban Crequy <alban@kinvolk.io>
->>> >
->>> > This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
->>> > re-appraised and re-audited each time. Cached integrity results should
->>> > not be used.
->>> >
->>> > It is useful in FUSE because the userspace FUSE process can change the
->>> > underlying files at any time without notifying the kernel.
+On Mon, Feb 5, 2018 at 2:58 PM, David Laight <David.Laight@aculab.com> wrote:
+> From: Arnd Bergmann
+>> Sent: 05 February 2018 12:37
+> ....
+>> > Are the EVTCHNOP_xxx values dense?
+>> > In which case an array is almost certainly better than the switch statement.
+>>
+>> They are, yes. PHYSDEVOP_xxx are also consecutive by start at '4'.
+>> Dan made the same comment earlier, and I replied that my I had
+>> considered it but went for the more failsafe route. I also verified my
+>> assumption now that gcc in fact is smart enough to turn this
+>> into a table by itself:
 >
-> I don't really have an understanding what IMA is doing, I think the
-> same thing applies to any network filesystem (i.e. ones with
-> d_revalidate).
->
-> Isn't that the case?
+> I've never spotted that optimisation, must be fairly new.
 
-Hi Miklos,
+Indeed, I checked again and found that most compilers have a
+less efficient jump table based version, the output I posted was
+from gcc-8, this is what I get with gcc-4.8 through gcc-7:
 
->From my limited understanding, network filesystems might need that
-too, yes. I don't know if there are people interested in using both
-IMA and network filesystems. If so, they would have to write that
-patch and test it.
+xen_event_channel_op_compat:
+        pushq   %r13    #
+        pushq   %r12    #
+        pushq   %rbp    #
+        pushq   %rbx    #
+        movl    $-38, %ebx      #, <retval>
+        subq    $32, %rsp       #,
+# /git/arm-soc/drivers/xen/fallback.c:14:       switch (cmd) {
+        cmpl    $9, %edi        #, cmd
+# /git/arm-soc/drivers/xen/fallback.c:10:       struct evtchn_op op =
+{ .cmd = cmd, };
+        movq    $0, 8(%rsp)     #, MEM[(struct evtchn_op *)&op + 4B]
+        movq    $0, 16(%rsp)    #, MEM[(struct evtchn_op *)&op + 4B]
+        movq    $0, 24(%rsp)    #, MEM[(struct evtchn_op *)&op + 4B]
+        movl    %edi, 4(%rsp)   # cmd, op.cmd
+# /git/arm-soc/drivers/xen/fallback.c:14:       switch (cmd) {
+        ja      .L1     #,
+        movl    %edi, %eax      # cmd, cmd
+        jmp     *.L4(,%rax,8)   #
+        .section        .rodata
+        .align 8
+        .align 4
+.L4:
+        .quad   .L9
+        .quad   .L9
+        .quad   .L9
+        .quad   .L5
+        .quad   .L5
+        .quad   .L6
+        .quad   .L7
+        .quad   .L7
+        .quad   .L7
+        .quad   .L5
+        .text
+.L7:
+# /git/arm-soc/drivers/xen/fallback.c:31:               len =
+sizeof(struct evtchn_alloc_unbound);
+        movl    $8, %r12d       #, len
+.L3:
+# /git/arm-soc/drivers/xen/fallback.c:49:       memcpy(&op.u, arg, len);
+        leaq    8(%rsp), %r13   #, tmp98
+        movq    %r12, %rdx      # len,
+        movq    %rsi, %rbp      # arg, arg
+        movq    %r13, %rdi      # tmp98,
+        call    __memcpy        #
+# /git/arm-soc/drivers/xen/fallback.c:50:       rc = _hypercall1(int,
+event_channel_op_compat, &op);
+        leaq    4(%rsp), %rdi   #, tmp104
+#APP
+# 50 "/git/arm-soc/drivers/xen/fallback.c" 1
+        call hypercall_page+512 #
+# 0 "" 2
+# /git/arm-soc/drivers/xen/fallback.c:51:       memcpy(arg, &op.u, len);
+#NO_APP
+        movq    %r12, %rdx      # len,
+        movq    %r13, %rsi      # tmp98,
+        movq    %rbp, %rdi      # arg,
+# /git/arm-soc/drivers/xen/fallback.c:50:       rc = _hypercall1(int,
+event_channel_op_compat, &op);
+        movl    %eax, %ebx      # __res.7_3, <retval>
+# /git/arm-soc/drivers/xen/fallback.c:51:       memcpy(arg, &op.u, len);
+        call    __memcpy        #
+.L1:
+# /git/arm-soc/drivers/xen/fallback.c:54: }
+        addq    $32, %rsp       #,
+        movl    %ebx, %eax      # <retval>,
+        popq    %rbx    #
+        popq    %rbp    #
+        popq    %r12    #
+        popq    %r13    #
+        ret
+.L5:
+# /git/arm-soc/drivers/xen/fallback.c:25:               len =
+sizeof(struct evtchn_close);
+        movl    $4, %r12d       #, len
+        jmp     .L3     #
+.L9:
+# /git/arm-soc/drivers/xen/fallback.c:16:               len =
+sizeof(struct evtchn_bind_interdomain);
+        movl    $12, %r12d      #, len
+        jmp     .L3     #
+.L6:
+# /git/arm-soc/drivers/xen/fallback.c:37:               len =
+sizeof(struct evtchn_status);
+        movl    $24, %r12d      #, len
+# /git/arm-soc/drivers/xen/fallback.c:38:               break;
+        jmp     .L3     #
+        .size   xen_event_channel_op_compat, .-xen_event_channel_op_compat
+        .p2align 4,,15
 
-It is not a new issue, for neither network filesystems or FUSE. But I
-am more interested in the FUSE use case because FUSE can be mounted by
-unprivileged users either today with fusermount installed with setuid,
-or soon with the coming patches to allow FUSE mounts in a non-init
-user namespace. That makes the issue more visible than for network
-filesystems where unprivileged users cannot mount.
+which isn't all that bad, but gets slightly worse when you compile with
+-mindirect-branch=thunk-extern, the total size now grows from 474
+bytes with gcc-8 to 525 bytes with gcc-7+retpoline.
 
-Cheers,
-Alban
+        Arnd
