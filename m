@@ -1,103 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751878AbeBEWI5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 17:08:57 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:36752 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750796AbeBEWIt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 17:08:49 -0500
-Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
- select_idle_sibling using SMT balance
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        dhaval.giani@oracle.com
-References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
- <20180201123335.GV2249@hirez.programming.kicks-ass.net>
- <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
- <20180202171708.GN2269@hirez.programming.kicks-ass.net>
- <93db4b69-5ec6-732f-558e-5e64d9ba0cf9@oracle.com>
- <20180205121947.GW2269@hirez.programming.kicks-ass.net>
-From: Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <930364e4-bbfe-8c8f-d095-0dd4256a5104@oracle.com>
-Date: Mon, 5 Feb 2018 14:09:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1751981AbeBEWLA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 17:11:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750855AbeBEWKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 17:10:55 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52DD9217B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AH8x226klYH4pXFFLR3e/FLOOQCpsBAgPlz4AqWqqTS/HitZn7pmlnE4kJTDmO559Lome3SHeyNKjlP0qIadW2v64n4=
 MIME-Version: 1.0
-In-Reply-To: <20180205121947.GW2269@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8796 signatures=668662
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802050272
+In-Reply-To: <CA+55aFyvGkuM33C8ki=5-11idWWK4tHKuPaSrSb0FPTaJmC_iQ@mail.gmail.com>
+References: <151776623555.23236.14152911329227555005.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151776624080.23236.1865339140666550495.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180205115836.otnviqbae3pxjk5g@gmail.com> <CAPcyv4gyP4LAzS=8-ZNfy5gX=QHKK7VpGmeYXoP=rbe47kOg9A@mail.gmail.com>
+ <CA+55aFyvGkuM33C8ki=5-11idWWK4tHKuPaSrSb0FPTaJmC_iQ@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Mon, 5 Feb 2018 22:10:34 +0000
+X-Gmail-Original-Message-ID: <CALCETrV_7dxKAgwNyfDbvQ+0nTJG6NJqbKkngZyU-VPA3fvg8Q@mail.gmail.com>
+Message-ID: <CALCETrV_7dxKAgwNyfDbvQ+0nTJG6NJqbKkngZyU-VPA3fvg8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] x86/entry: Clear extra registers beyond syscall
+ arguments for 64bit kernels
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 5, 2018 at 9:58 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Feb 5, 2018 at 1:33 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+>>
+>> On a suggestion from Arjan it also appears worthwhile to interleave
+>> 'mov' with 'xor'. Perf stat says that this test gets 3.45 instructions
+>> per cycle:
+>
+> Ugh.
+>
+> A "xor %reg/reg" is two bytes (three for the high regs due to REX
+> prefix). A "mov $0" is 7 bytes because unlike most of the ALU ops,
+> "mov" doesn't have a 8-bit expanding immediate.
+>
+> So replacing those xors with movq's will add at least four bytes per
+> replacement.  So you may well end up adding an L1 cache miss.
+>
+> At which point "3.45 ipc" vs "2.88 ipc" is pretty much a non-issue.
+>
+> I suspect that a bigger win would be if you try to interleave those
+> "xor" instructions with the "pushq" instructions in the entry code.
+> Because those push instructions tend to be limited by the LSU store
+> bandwidth, so you can probably put in xor instructions almost for free
+> in there.
+>
 
+At the risk of over-optimizing a dead horse, what about:
 
-On 02/05/2018 04:19 AM, Peter Zijlstra wrote:
-> On Fri, Feb 02, 2018 at 09:37:02AM -0800, Subhra Mazumdar wrote:
->> In the scheme of SMT balance, if the idle cpu search is done _not_ in the
->> last run core, then we need a random cpu to start from. If the idle cpu
->> search is done in the last run core we can start the search from last run
->> cpu. Since we need the random index for the first case I just did it for
->> both.
-> That shouldn't be too hard to fix. I think we can simply transpose the
-> CPU number. That is, something like:
->
->    cpu' = core'_id + (cpu - core_id)
->
-> should work for most sane cases. We don't give any guarantees this will
-> in fact work, but (almost) all actual CPU enumeration schemes I've seen
-> this should work for.
->
-> And if it doesn't work, we're not worse of than we are now.
->
-> I just couldn't readily find a place where we need to do this for cores
-> with the current code. But I think we have one place between LLCs where
-> it can be done:
->
-> ---
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 7b6535987500..eb8b8d0a026c 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6109,7 +6109,7 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
->   	if (!static_branch_likely(&sched_smt_present))
->   		return -1;
->   
-> -	for_each_cpu(cpu, cpu_smt_mask(target)) {
-> +	for_each_cpu_wrap(cpu, cpu_smt_mask(target), target) {
->   		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
->   			continue;
->   		if (idle_cpu(cpu))
-> @@ -6357,8 +6357,17 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
->   		if (cpu == prev_cpu)
->   			goto pick_cpu;
->   
-> -		if (wake_affine(affine_sd, p, prev_cpu, sync))
-> -			new_cpu = cpu;
-> +		if (wake_affine(affine_sd, p, prev_cpu, sync)) {
-> +			/*
-> +			 * Transpose prev_cpu's offset into this cpu's
-> +			 * LLC domain to retain the 'random' search offset
-> +			 * for for_each_cpu_wrap().
-> +			 */
-> +			new_cpu = per_cpu(sd_llc_id, cpu) +
-> +				  (prev_cpu - per_cpu(sd_llc_id, prev_cpu));
-> +			if (unlikely(!cpus_share_cache(new_cpu, cpu)))
-> +				new_cpu = cpu;
-> +		}
->   	}
->   
->   	if (sd && !(sd_flag & SD_BALANCE_FORK)) {
-The pseudo random is also used for choosing a random core to compare 
-with, how will transposing achieve that?
+xorl %ebx, %ebx
+movq %ebx, %r10
+xorl %r11, %r11
+movq %ebx, %r12
 
-Thanks,
-Subhra
+etc.
+
+We'll have a cycle of latency from xor to mov, but I'd be rather
+surprised if the CPU can't hide that.
