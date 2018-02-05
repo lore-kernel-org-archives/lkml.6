@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224dKZYVR0ejqitlgsWs25ZqS/TPTo9Htc9ZRyUNQ02gfgBX6ZkDbEAdHeqp1cgugcB2DJWV
-ARC-Seal: i=1; a=rsa-sha256; t=1517855164; cv=none;
+X-Google-Smtp-Source: AH8x22599e52XvxYbd7No7FC2p3cfUIMmKKMc6g7Wj7ltjOYm0ZkcjRaefRBaCQUn4i3AyxEMIya
+ARC-Seal: i=1; a=rsa-sha256; t=1517855163; cv=none;
         d=google.com; s=arc-20160816;
-        b=vgP7zrFoVGODj68wwoLb6vyZmO3LRiJZQaxxpQs5Usg28uJkH0voCkjlUu4YSn2Ipq
-         L8YdZtzEaPg8AU6BKN2/85ikno4qnu+klT9v5WmPhZVii8cDBoGocZi1i/y6lYj8tUZ0
-         W+4fgy9K1nhZiS7Dhf+bzJdqcc4ghsASLK8d87k4+xNqrc8mRMrD7mMduJHvsN2SUPdh
-         D3DupLaBAfeOXhWtX6gsFi7UoXxzsATa9CZ6DBvd+eQL0yG9QcNmyHKvEg2rKqOxDsjT
-         Kk6979KBBvdy6LFo8XhmgOEGthSyH13OZu+jKgnuPS4cyElB15yOkM5E8JEL6RutGu/r
-         5WAA==
+        b=ivE6mnKOzQ98UGE06UNypYuQBUru2i1Nciiz0MEOHbINsiwPbpdGo57GbV/VXM3jmN
+         8uip9gYLKL4EBJxP5/O9mytaUj4xxc7eTCRcbS39AwYrpVeI90m1E2Ah5Yqo1xHlFiwn
+         LodRXnprDXPC2r/VGyPCWt1rF6yr3aFBIm98P9DJuOtzgv2FUY4AuwjHYtTbtjaDynhL
+         yhgn6/6p1fDHPE1ornWzZlxkNKwhdZNOktGy5N/gsz9qGwiDpv4UU2HfdAgw1vQWij3T
+         gsr9Oi6a1DV5JMVmG3U0CZf4+K0oUilTinssQht5Kt09c/0VlwpUzqw5rdegZ8l/YAcN
+         wovg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uf1cdP+LO/sksZnLqMycFEl2zJBIQzYAEMWuY8/BOcQ=;
-        b=mHk/JuEvYHqEKzguI2rNAde5Xz4GUrrigVW7gRygoDad2nY0hfkAaLwaUoviXFXYbO
-         +MCGNlWvNbd8nqEa4EsT6hThW2RAb1e78fcfzcZfXGoBNWEIKThEhdO1kLpcPIepWxI2
-         khkr4V2U1BXVTtAyHhuW+k6NIKdaDfeaWF3e3GDi99RfrvEwgXmRihSbjBbgiS/paVGn
-         UY1bkG6m1FXCubUiEwjnw7vJjY3BkNqFuOU98NdMAgI6Ip+g2CoTcYKg7swVW/p8omU9
-         T+Ab3qkznI2z2du6PLjbNcWarSmkpUepBr/vtuW1345Z1CeFwYF3xjNle/070AE3uzVE
-         1gjQ==
+        bh=fE8MEG9prrX9oGz2J3iue0ZwGYviTbEbw3Bx47lvOvE=;
+        b=nzhrRiulIuO4lDSgiU8yPwLpvBmfarsuQGJ8vv1bsRpoUQgFhLVeh6YIv4R3IQxWbx
+         WNq5Jk+DnTStIWH1IKGsPFQ2qduYqccAGc0Jzii/inBm07e2AxkbXoz/ktscWSYo8QI7
+         JU8wHMYLoR8v97rhXoqEV6DZUmsLgUqfXQvaUoG3+PadlPSW3JLEUmVvW7czl1Lr8e4h
+         DW807tpCmQsghN5DfSZq/rNT/OXoPvknMdPpqE0cZftvwss4qM/0YsCqS/LTHJDMKkL1
+         cMdRWh80Uhz1AeD1RawfdbBx9keygWODSs85zbAXG62c9oi06UrzsvGL3Uzt9yFPiAd2
+         br9g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Darren Kenny <darren.kenny@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@suse.de>,
+	Thomas Garnier <thgarnie@google.com>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.15 53/60] x86/speculation: Fix typo IBRS_ATT, which should be IBRS_ALL
-Date: Mon,  5 Feb 2018 10:23:26 -0800
-Message-Id: <20180205182216.639155003@linuxfoundation.org>
+Subject: [PATCH 4.15 52/60] x86/pti: Mark constant arrays as __initconst
+Date: Mon,  5 Feb 2018 10:23:25 -0800
+Message-Id: <20180205182216.503443700@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586401088854671?=
-X-GMAIL-MSGID: =?utf-8?q?1591586496574575383?=
+X-GMAIL-THRID: =?utf-8?q?1591586399778869328?=
+X-GMAIL-MSGID: =?utf-8?q?1591586495869056228?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,36 +53,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Darren Kenny darren.kenny@oracle.com
+From: Arnd Bergmann arnd@arndb.de
 
-commit af189c95a371b59f493dbe0f50c0a09724868881
+commit 4bf5d56d429cbc96c23d809a08f63cd29e1a702e
 
-Fixes: 117cc7a908c83 ("x86/retpoline: Fill return stack buffer on vmexit")
-Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+I'm seeing build failures from the two newly introduced arrays that
+are marked 'const' and '__initdata', which are mutually exclusive:
+
+arch/x86/kernel/cpu/common.c:882:43: error: 'cpu_no_speculation' causes a section type conflict with 'e820_table_firmware_init'
+arch/x86/kernel/cpu/common.c:895:43: error: 'cpu_no_meltdown' causes a section type conflict with 'e820_table_firmware_init'
+
+The correct annotation is __initconst.
+
+Fixes: fec9434a12f3 ("x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Thomas Garnier <thgarnie@google.com>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180202191220.blvgkgutojecxr3b@starbug-vm.ie.oracle.com
+Link: https://lkml.kernel.org/r/20180202213959.611210-1-arnd@arndb.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/include/asm/nospec-branch.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/common.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -150,7 +150,7 @@ extern char __indirect_thunk_end[];
-  * On VMEXIT we must ensure that no RSB predictions learned in the guest
-  * can be followed in the host, by overwriting the RSB completely. Both
-  * retpoline and IBRS mitigations for Spectre v2 need this; only on future
-- * CPUs with IBRS_ATT *might* it be avoided.
-+ * CPUs with IBRS_ALL *might* it be avoided.
-  */
- static inline void vmexit_fill_RSB(void)
- {
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -900,7 +900,7 @@ static void identify_cpu_without_cpuid(s
+ #endif
+ }
+ 
+-static const __initdata struct x86_cpu_id cpu_no_speculation[] = {
++static const __initconst struct x86_cpu_id cpu_no_speculation[] = {
+ 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CEDARVIEW,	X86_FEATURE_ANY },
+ 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CLOVERVIEW,	X86_FEATURE_ANY },
+ 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_LINCROFT,	X86_FEATURE_ANY },
+@@ -913,7 +913,7 @@ static const __initdata struct x86_cpu_i
+ 	{}
+ };
+ 
+-static const __initdata struct x86_cpu_id cpu_no_meltdown[] = {
++static const __initconst struct x86_cpu_id cpu_no_meltdown[] = {
+ 	{ X86_VENDOR_AMD },
+ 	{}
+ };
