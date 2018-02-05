@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753201AbeBEMwR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:52:17 -0500
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:11512 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753067AbeBEMvm (ORCPT
+        id S1753220AbeBEMwV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:52:21 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:63872 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752743AbeBEMvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:51:42 -0500
+        Mon, 5 Feb 2018 07:51:41 -0500
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -15,71 +15,82 @@ CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Kishon Vijay Abraham I <kishon@ti.com>, <linux-mmc@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 05/16] mmc: sdhci-omap: Workaround for Errata i802
-Date: Mon, 5 Feb 2018 18:20:18 +0530
-Message-ID: <20180205125029.21570-6-kishon@ti.com>
+Subject: [PATCH v2 09/16] mmc: sdhci: Add quirk to disable HW timeout
+Date: Mon, 5 Feb 2018 18:20:22 +0530
+Message-ID: <20180205125029.21570-10-kishon@ti.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180205125029.21570-1-kishon@ti.com>
 References: <20180205125029.21570-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Errata i802 in AM572x Sitara Processors Silicon Revision 2.0, 1.1
-(SPRZ429K July 2014–Revised March 2017 [1]) mentions
-DCRC error interrupts (MMCHS_STAT[21] DCRC=0x1) can occur
-during the tuning procedure and it has to be disabled during the
-tuning procedure Implement workaround for Errata i802 here..
-
-[1] -> http://www.ti.com/lit/er/sprz429k/sprz429k.pdf
+Add quirk to disable HW timeout if the requested timeout is more than
+the maximum obtainable timeout.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- drivers/mmc/host/sdhci-omap.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/mmc/host/sdhci.c | 12 ++++++++++++
+ drivers/mmc/host/sdhci.h |  7 +++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 36e0626d3de2..e24ae903f7ba 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -257,6 +257,7 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 	u32 start_window = 0, max_window = 0;
- 	u8 cur_match, prev_match = 0;
- 	u32 length = 0, max_len = 0;
-+	u32 ier = host->ier;
- 	u32 phase_delay = 0;
- 	int ret = 0;
- 	u32 reg;
-@@ -277,6 +278,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 	reg |= DLL_SWT;
- 	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 070aff9c108f..1aa74b4682f3 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -735,6 +735,12 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+ 		DBG("Too large timeout 0x%x requested for CMD%d!\n",
+ 		    count, cmd->opcode);
+ 		count = 0xE;
++		if (host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
++			host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
++			sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
++			sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
++			host->hw_timeout_disabled = true;
++		}
+ 	}
  
-+	/*
-+	 * OMAP5/DRA74X/DRA72x Errata i802:
-+	 * DCRC error interrupts (MMCHS_STAT[21] DCRC=0x1) can occur
-+	 * during the tuning procedure. So disable it during the
-+	 * tuning procedure.
-+	 */
-+	ier &= ~SDHCI_INT_DATA_CRC;
-+	sdhci_writel(host, ier, SDHCI_INT_ENABLE);
-+	sdhci_writel(host, ier, SDHCI_SIGNAL_ENABLE);
+ 	return count;
+@@ -2349,6 +2355,12 @@ static bool sdhci_request_done(struct sdhci_host *host)
+ 	}
+ 
+ 	sdhci_del_timer(host, mrq);
++	if (sdhci_data_line_cmd(mrq->cmd) && host->hw_timeout_disabled) {
++		host->ier |= SDHCI_INT_DATA_TIMEOUT;
++		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
++		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
++		host->hw_timeout_disabled = false;
++	}
+ 
+ 	/*
+ 	 * Always unmap the data buffers if they were mapped by
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index afab26fd70e6..3a967a56fcc3 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -437,6 +437,11 @@ struct sdhci_host {
+ #define SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN		(1<<15)
+ /* Controller has CRC in 136 bit Command Response */
+ #define SDHCI_QUIRK2_RSP_136_HAS_CRC			(1<<16)
++/*
++ * Disable HW timeout if the requested timeout is more than the maximum
++ * obtainable timeout
++ */
++#define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
+ 
+ 	int irq;		/* Device IRQ */
+ 	void __iomem *ioaddr;	/* Mapped address */
+@@ -522,6 +527,8 @@ struct sdhci_host {
+ 	unsigned int            ocr_avail_mmc;
+ 	u32 ocr_mask;		/* available voltages */
+ 
++	bool			hw_timeout_disabled;
 +
- 	while (phase_delay <= MAX_PHASE_DELAY) {
- 		sdhci_omap_set_dll(omap_host, phase_delay);
+ 	unsigned		timing;		/* Current timing */
  
-@@ -322,6 +333,8 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 
- ret:
- 	sdhci_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-+	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-+	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
- 	return ret;
- }
- 
+ 	u32			thread_isr;
 -- 
 2.11.0
