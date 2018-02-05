@@ -1,114 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeBEITb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 03:19:31 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54922 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751938AbeBEITZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:19:25 -0500
-Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
-        kernel@collabora.com, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
-        Jason Wang <jasowang@redhat.com>
-References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
- <20180126135803.29781-2-tomeu.vizoso@collabora.com>
- <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Message-ID: <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
-Date: Mon, 5 Feb 2018 09:19:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752644AbeBEIYj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 03:24:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36512 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751938AbeBEIYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 03:24:32 -0500
+Date: Mon, 5 Feb 2018 09:24:23 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH 01/18] tracing: Add function based events
+Message-ID: <20180205082423.GB1253@krava>
+References: <20180202230458.840252014@goodmis.org>
+ <20180202231017.160509978@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180202231017.160509978@goodmis.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1 February 2018 at 17:36, Gerd Hoffmann <kraxel@redhat.com> wrote:
-> Hi,
-> 
-> Sorry for joining the party late. Had a broken finger and was
-> offline for a bunch of weeks (and a buif backlog afterwards ...).
+On Fri, Feb 02, 2018 at 06:04:59PM -0500, Steven Rostedt wrote:
 
-Hi, no problem, hope it's fine now.
+SNIP
 
->> This is to allow clients running within VMs to be able to
->> communicate with a compositor in the host. Clients will use the
->> communication protocol that the compositor supports, and virtio-gpu
->> will assist with making buffers available in both sides, and
->> copying content as needed.
-> 
-> Why not use virtio-vsock to run the wayland protocol? I don't like
-> the idea to duplicate something with very simliar functionality in 
-> virtio-gpu.
+> +static int create_function_event(int argc, char **argv)
+> +{
+> +	struct func_event *func_event, *fe;
+> +	enum func_states state = FUNC_STATE_INIT;
+> +	char *token;
+> +	char *ptr;
+> +	char last;
+> +	int ret = -EINVAL;
+> +	int i;
+> +
+> +	func_event = kzalloc(sizeof(*func_event), GFP_KERNEL);
+> +	if (!func_event)
+> +		return -ENOMEM;
+> +
+> +	INIT_LIST_HEAD(&func_event->files);
+> +	func_event->ops.func = func_event_call;
+> +	func_event->ops.flags = FTRACE_OPS_FL_SAVE_REGS;
+> +
+> +	for (i = 0; i < argc; i++) {
+> +		ptr = argv[i];
+> +		last = 0;
+> +		for (token = next_token(&ptr, &last); token;
+> +		     token = next_token(&ptr, &last)) {
+> +			state = process_event(func_event, token, state);
+> +			if (state == FUNC_STATE_ERROR)
+> +				goto fail;
+> +		}
+> +	}
+> +	if (state != FUNC_STATE_END)
+> +		goto fail;
+> +
+> +	ret = -EALREADY;
+> +	list_for_each_entry(fe, &func_events, list) {
+> +		if (strcmp(fe->func, func_event->func) == 0)
+> +			goto fail;
+> +	}
+> +
+> +	ret = ftrace_set_filter(&func_event->ops, func_event->func,
+> +				strlen(func_event->func), 0);
+> +	if (ret < 0)
+> +		goto fail;
+> +
+> +	ret = func_event_create(func_event);
+> +	if (ret < 0)
+> +		goto fail;
+> +
+> +	list_add_tail(&func_event->list, &func_events);
+> +	return 0;
 
-The reason for abandoning that approach was the type of objects that
-could be shared via virtio-vsock would be extremely limited. Besides
-that being potentially confusing to users, it would mean from the
-implementation side that either virtio-vsock would gain a dependency on
-the drm subsystem, or an appropriate abstraction for shareable buffers
-would need to be added for little gain.
+should this be done under 'func_event_mutex' ?
 
-Another factor that was taken into account was that the complexity
-required for implementing passing protocol data around was very small
-when compared with the buffer sharing mechanism.
+I tried and crashed the system by running 2 scripts with:
 
->> It is expected that a service in the guest will act as a proxy, 
->> interacting with virtio-gpu to support unmodified clients.
-> 
-> If you have a guest proxy anyway using virtio-sock for the protocol 
-> stream and virtio-gpu for buffer sharing (and some day 3d rendering
-> too) should work fine I think.
+  echo 'ip_rcv(u64 skb, u64 dev)' > /sys/kernel/debug/tracing/function_events
+  echo 'SyS_openat(int dfd, string buf, x32 flags, x32 mode)' >> /sys/kernel/debug/tracing/function_events
+  echo 'SyS_open(x8[32] buf, x32 flags, x32 mode)' >> /sys/kernel/debug/tracing/function_events
 
-If I understand correctly your proposal, virtio-gpu would be used for
-creating buffers that could be shared across domains, but something
-equivalent to SCM_RIGHTS would still be needed in virtio-vsock?
+jirka
 
-If so, that's what was planned initially, with the concern being that we
-would be adding a bunch of complexity to virtio-vsock that would be only
-used in this specific use case. Then we would also need to figure out
-how virtio-vsock would be able to work with buffers from virtio-gpu
-(either direct dependency or a new abstraction).
 
-If the mechanics of passing presentation data were very complex, I think
-this approach would have more merit. But as you can see from the code,
-it isn't that bad.
-
->> When the client notifies the compositor that it can read from that
-buffer,
->> the proxy should copy the contents from the SHM region to the
->> virtio-gpu resource and call DRM_VIRTGPU_TRANSFER_TO_HOST.
-> 
-> What is the plan for the host side? I see basically two options. 
-> Either implement the host wayland proxy directly in qemu. Or
-> implement it as separate process, which then needs some help from
-> qemu to get access to the buffers. The later would allow qemu running
-> independant from the desktop session.
-
-Regarding synchronizing buffers, this will stop becoming needed in
-subsequent commits as all shared memory is allocated in the host and
-mapped to the guest via KVM_SET_USER_MEMORY_REGION.
-
-This is already the case for buffers passed from the compositor to the
-clients (see patch 2/2), and I'm working on the equivalent for buffers
-from the guest to the host (clients still have to create buffers with
-DRM_VIRTGPU_RESOURCE_CREATE but they will be only backend by host memory
-so no calls to DRM_VIRTGPU_TRANSFER_TO_HOST are needed).
-
-But in the case that we still need a proxy for some reason on the host
-side, I think it would be better to have it in the same process where
-virtio-gpu is implemented. In crosvm's case it would be in a process
-separate from the main VMM, as device processes are isolated from each
-other with minijail (see
-https://chromium.googlesource.com/chromiumos/platform/crosvm/ ).
-
-Regards,
-
-Tomeu
+[  376.727159] general protection fault: 0000 [#1] SMP PTI
+[  376.732992] Modules linked in: intel_rapl sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul igb ghash_clmulni_intel intel_cstate ptp intel_uncore pps_core iTCO_wdt iTCO_vendor_support ipmi_ssif ipmi_si ipmi_devintf ipmi_msghandler shpchp ioatdma cdc_ether usbnet mii intel_rapl_perf i2c_i801 tpm_tis tpm_tis_core dca tpm lpc_ich wmi xfs libcrc32c mgag200 i2c_algo_bit drm_kms_helper ttm crc32c_intel drm megaraid_sas
+[  376.779583] CPU: 9 PID: 1285 Comm: t.sh Not tainted 4.15.0-rc9idle+ #32
+[  376.786956] Hardware name: IBM System x3650 M4 : -[7915E2G]-/00Y7683, BIOS -[VVE124AUS-1.30]- 11/21/2012
+[  376.797545] RIP: 0010:__unregister_trace_event+0xe/0x70
+[  376.803376] RSP: 0018:ffffa643043cbc50 EFLAGS: 00010286
+[  376.809206] RAX: dead000000000100 RBX: ffff91b6340c2480 RCX: ffffffffbf2ebf50
+[  376.817170] RDX: dead000000000200 RSI: ffffffffbf2ed540 RDI: ffff91b6340c2480
+[  376.825135] RBP: ffff91b6340c2460 R08: 0000000000000001 R09: 0000000000000000
+[  376.833099] R10: ffffa643043cbc78 R11: 0000000000000000 R12: ffff91b6340c2400
+[  376.841062] R13: ffff91b6326f8600 R14: dead000000000200 R15: dead000000000100
+[  376.849028] FS:  00007ff3644bcb40(0000) GS:ffff91b63fac0000(0000) knlGS:0000000000000000
+[  376.858058] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  376.864469] CR2: 000055c83b531008 CR3: 00000004736d0003 CR4: 00000000000606e0
+[  376.872433] Call Trace:
+[  376.875168]  event_remove+0x72/0x120
+[  376.879159]  trace_remove_event_call+0x79/0xd0
+[  376.884117]  func_event_open+0xb1/0xd0
+[  376.888302]  ? free_func_event+0x70/0x70
+[  376.892673]  do_dentry_open+0x1b1/0x2d0
+[  376.896954]  path_openat+0x602/0x14e0
+[  376.901041]  do_filp_open+0x9b/0x110
+[  376.905032]  ? __vfs_write+0x33/0x170
+[  376.909119]  ? __check_object_size+0xaf/0x1b0
+[  376.913981]  ? do_sys_open+0x1bd/0x250
+[  376.918164]  do_sys_open+0x1bd/0x250
+[  376.922156]  entry_SYSCALL_64_fastpath+0x20/0x83
+[  376.927299] RIP: 0033:0x7ff363ba01c0
+[  376.931287] RSP: 002b:00007ffdf21e4978 EFLAGS: 00000246
+[  376.931290] Code: e0 d9 2e bf e9 94 aa 6e 00 0f 1f 40 00 48 c7 c7 e0 d9 2e bf e9 54 5c f7 ff 0f 1f 40 00 53 48 8b 07 48 89 fb 48 8b 57 08 48 85 c0 <48> 89 02 74 04 48 89 50 08 48 b8 00 01 00 00 00 00 ad de 48 8d 
+[  376.958209] RIP: __unregister_trace_event+0xe/0x70 RSP: ffffa643043cbc50
+[  376.965711] ---[ end trace b3dd6064ee6bc2f4 ]---
