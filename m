@@ -1,48 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752737AbeBEGHt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 01:07:49 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37358 "EHLO
+        id S1752780AbeBEGIC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 01:08:02 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46012 "EHLO
         mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752597AbeBEGHW (ORCPT
+        with ESMTP id S1752614AbeBEGHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:07:22 -0500
-X-Google-Smtp-Source: AH8x2247ebD4MFwulGQLtODF8c/4hp9Ik64JKE49kKpFi+zjn+96m0lOrFyJwtyFWmxY5p3KwJt0yQ==
-Date: Mon, 5 Feb 2018 00:07:20 -0600
+        Mon, 5 Feb 2018 01:07:30 -0500
+X-Google-Smtp-Source: AH8x226neDeqrZ1hBAWTJDg6dRcU4NRjwbu5fWf6py0bl7agXDMlg5f+VEYt5cOiT4GI2hHvETg1Mw==
+Date: Mon, 5 Feb 2018 00:07:27 -0600
 From: Rob Herring <robh@kernel.org>
-To: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: lee.jones@linaro.org, thierry.reding@gmail.com,
-        alexandre.torgue@st.com, benjamin.gaignard@linaro.org,
-        mark.rutland@arm.com, linux@armlinux.org.uk, mcoquelin.stm32@gmail.com,
-        benjamin.gaignard@st.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v2 3/8] dt-bindings: mfd: stm32-timers: add support for
- dmas
-Message-ID: <20180205060720.v3sfw44orngsyltq@rob-hp-laptop>
-References: <1516979499-3665-1-git-send-email-fabrice.gasnier@st.com>
- <1516979499-3665-4-git-send-email-fabrice.gasnier@st.com>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: mark.rutland@arm.com, linux@armlinux.org.uk, andy.gross@linaro.org,
+        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        sboyd@codeaurora.org, bjorn.andersson@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+Subject: Re: [PATCH 01/15] firmware: qcom: scm: Add ipq4019 soc compatible
+Message-ID: <20180205022530.xf64gqeijicewdla@rob-hp-laptop>
+References: <1517202689-14212-1-git-send-email-sricharan@codeaurora.org>
+ <1517202689-14212-2-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1516979499-3665-4-git-send-email-fabrice.gasnier@st.com>
+In-Reply-To: <1517202689-14212-2-git-send-email-sricharan@codeaurora.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 04:11:34PM +0100, Fabrice Gasnier wrote:
-> Add support for DMAs to STM32 timers. STM32 Timers can support up to 7
-> dma requests: up to 4 channels, update, compare and trigger.
-> DMAs may be used to transfer data from pwm capture for instance.
-> DMA support is made optional, PWM capture support is also an option.
-> This is much more wise system-wide to avoid shortage on DMA request
-> lines as there's significant amount of timer instances that can
-> request up to 7 channels.
+On Mon, Jan 29, 2018 at 10:41:15AM +0530, Sricharan R wrote:
+> Add the compatible for ipq4019.
+> This does not need clocks to do scm calls.
 > 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 > ---
->  .../devicetree/bindings/mfd/stm32-timers.txt         | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+>  Documentation/devicetree/bindings/firmware/qcom,scm.txt | 3 ++-
+>  drivers/firmware/qcom_scm.c                             | 3 +++
+>  2 files changed, 5 insertions(+), 1 deletion(-)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
