@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752700AbeBEBjW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:39:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44135 "EHLO mx2.suse.de"
+        id S1753051AbeBEBjc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:39:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43681 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752686AbeBEB23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752675AbeBEB23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Feb 2018 20:28:29 -0500
 From: Davidlohr Bueso <dbueso@suse.de>
 To: akpm@linux-foundation.org, mingo@kernel.org
@@ -13,9 +13,9 @@ Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
         mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 14/64] fs/coredump: teach about range locking
-Date: Mon,  5 Feb 2018 02:27:04 +0100
-Message-Id: <20180205012754.23615-15-dbueso@wotan.suse.de>
+Subject: [PATCH 21/64] mm: teach drop/take_all_locks() about range locking
+Date: Mon,  5 Feb 2018 02:27:11 +0100
+Message-Id: <20180205012754.23615-22-dbueso@wotan.suse.de>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
 References: <20180205012754.23615-1-dbueso@wotan.suse.de>
@@ -25,125 +25,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-coredump_wait() needs mmap_sem such that zap_threads()
-is stable. The conversion is trivial as the mmap_sem
-is only used in the same function context. No change
-in semantics.
-
-In addition, we need an mmrange in exec_mmap() as mmap_sem
-is needed for de_thread() or coredump (for core_state and
-changing tsk->mm) scenarios. No change in semantics.
+And use the mm locking helpers. No changes in semantics.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- fs/coredump.c |  5 +++--
- fs/exec.c     | 18 ++++++++++--------
- 2 files changed, 13 insertions(+), 10 deletions(-)
+ include/linux/mm.h |  6 ++++--
+ mm/mmap.c          | 12 +++++++-----
+ mm/mmu_notifier.c  |  9 +++++----
+ 3 files changed, 16 insertions(+), 11 deletions(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 1e2c87acac9b..ad91712498fc 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -412,17 +412,18 @@ static int coredump_wait(int exit_code, struct core_state *core_state)
- 	struct task_struct *tsk = current;
- 	struct mm_struct *mm = tsk->mm;
- 	int core_waiters = -EBUSY;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	init_completion(&core_state->startup);
- 	core_state->dumper.task = tsk;
- 	core_state->dumper.next = NULL;
- 
--	if (down_write_killable(&mm->mmap_sem))
-+	if (mm_write_lock_killable(mm, &mmrange))
- 		return -EINTR;
- 
- 	if (!mm->core_state)
- 		core_waiters = zap_threads(tsk, mm, core_state, exit_code);
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 
- 	if (core_waiters > 0) {
- 		struct core_thread *ptr;
-diff --git a/fs/exec.c b/fs/exec.c
-index e46752874b47..a61ac9e81169 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -294,12 +294,13 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
- 	int err;
- 	struct vm_area_struct *vma = NULL;
- 	struct mm_struct *mm = bprm->mm;
-+	DEFINE_RANGE_LOCK_FULL(mmrange);
- 
- 	bprm->vma = vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
- 	if (!vma)
- 		return -ENOMEM;
- 
--	if (down_write_killable(&mm->mmap_sem)) {
-+	if (mm_write_lock_killable(mm, &mmrange)) {
- 		err = -EINTR;
- 		goto err_free;
- 	}
-@@ -324,11 +325,11 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
- 
- 	mm->stack_vm = mm->total_vm = 1;
- 	arch_bprm_mm_init(mm, vma);
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 	bprm->p = vma->vm_end - sizeof(void *);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fc4e7fdc3e76..0b9867e8a35d 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2198,8 +2198,10 @@ static inline int check_data_rlimit(unsigned long rlim,
  	return 0;
- err:
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- err_free:
- 	bprm->vma = NULL;
- 	kmem_cache_free(vm_area_cachep, vma);
-@@ -739,7 +740,7 @@ int setup_arg_pages(struct linux_binprm *bprm,
- 		bprm->loader -= stack_shift;
- 	bprm->exec -= stack_shift;
+ }
  
--	if (down_write_killable(&mm->mmap_sem))
-+	if (mm_write_lock_killable(mm, &mmrange))
- 		return -EINTR;
+-extern int mm_take_all_locks(struct mm_struct *mm);
+-extern void mm_drop_all_locks(struct mm_struct *mm);
++extern int mm_take_all_locks(struct mm_struct *mm,
++			     struct range_lock *mmrange);
++extern void mm_drop_all_locks(struct mm_struct *mm,
++			      struct range_lock *mmrange);
  
- 	vm_flags = VM_STACK_FLAGS;
-@@ -796,7 +797,7 @@ int setup_arg_pages(struct linux_binprm *bprm,
- 		ret = -EFAULT;
+ extern void set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file);
+ extern struct file *get_mm_exe_file(struct mm_struct *mm);
+diff --git a/mm/mmap.c b/mm/mmap.c
+index f61d49cb791e..8f0eb88a5d5e 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3461,12 +3461,13 @@ static void vm_lock_mapping(struct mm_struct *mm, struct address_space *mapping)
+  *
+  * mm_take_all_locks() can fail if it's interrupted by signals.
+  */
+-int mm_take_all_locks(struct mm_struct *mm)
++int mm_take_all_locks(struct mm_struct *mm,
++		      struct range_lock *mmrange)
+ {
+ 	struct vm_area_struct *vma;
+ 	struct anon_vma_chain *avc;
+ 
+-	BUG_ON(down_read_trylock(&mm->mmap_sem));
++	BUG_ON(mm_read_trylock(mm, mmrange));
+ 
+ 	mutex_lock(&mm_all_locks_mutex);
+ 
+@@ -3497,7 +3498,7 @@ int mm_take_all_locks(struct mm_struct *mm)
+ 	return 0;
  
  out_unlock:
--	up_write(&mm->mmap_sem);
-+	mm_write_unlock(mm, &mmrange);
- 	return ret;
+-	mm_drop_all_locks(mm);
++	mm_drop_all_locks(mm, mmrange);
+ 	return -EINTR;
  }
- EXPORT_SYMBOL(setup_arg_pages);
-@@ -1011,6 +1012,7 @@ static int exec_mmap(struct mm_struct *mm)
+ 
+@@ -3541,12 +3542,13 @@ static void vm_unlock_mapping(struct address_space *mapping)
+  * The mmap_sem cannot be released by the caller until
+  * mm_drop_all_locks() returns.
+  */
+-void mm_drop_all_locks(struct mm_struct *mm)
++void mm_drop_all_locks(struct mm_struct *mm,
++		       struct range_lock *mmrange)
  {
- 	struct task_struct *tsk;
- 	struct mm_struct *old_mm, *active_mm;
+ 	struct vm_area_struct *vma;
+ 	struct anon_vma_chain *avc;
+ 
+-	BUG_ON(down_read_trylock(&mm->mmap_sem));
++	BUG_ON(mm_read_trylock(mm, mmrange));
+ 	BUG_ON(!mutex_is_locked(&mm_all_locks_mutex));
+ 
+ 	for (vma = mm->mmap; vma; vma = vma->vm_next) {
+diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
+index 3e8a1a10607e..da99c01b8149 100644
+--- a/mm/mmu_notifier.c
++++ b/mm/mmu_notifier.c
+@@ -274,6 +274,7 @@ static int do_mmu_notifier_register(struct mmu_notifier *mn,
+ {
+ 	struct mmu_notifier_mm *mmu_notifier_mm;
+ 	int ret;
 +	DEFINE_RANGE_LOCK_FULL(mmrange);
  
- 	/* Notify parent that we're no longer interested in the old VM */
- 	tsk = current;
-@@ -1025,9 +1027,9 @@ static int exec_mmap(struct mm_struct *mm)
- 		 * through with the exec.  We must hold mmap_sem around
- 		 * checking core_state and changing tsk->mm.
- 		 */
--		down_read(&old_mm->mmap_sem);
-+		mm_read_lock(old_mm, &mmrange);
- 		if (unlikely(old_mm->core_state)) {
--			up_read(&old_mm->mmap_sem);
-+			mm_read_unlock(old_mm, &mmrange);
- 			return -EINTR;
- 		}
- 	}
-@@ -1040,7 +1042,7 @@ static int exec_mmap(struct mm_struct *mm)
- 	vmacache_flush(tsk);
- 	task_unlock(tsk);
- 	if (old_mm) {
--		up_read(&old_mm->mmap_sem);
-+		mm_read_unlock(old_mm, &mmrange);
- 		BUG_ON(active_mm != old_mm);
- 		setmax_mm_hiwater_rss(&tsk->signal->maxrss, old_mm);
- 		mm_update_next_owner(old_mm);
+ 	BUG_ON(atomic_read(&mm->mm_users) <= 0);
+ 
+@@ -283,8 +284,8 @@ static int do_mmu_notifier_register(struct mmu_notifier *mn,
+ 		goto out;
+ 
+ 	if (take_mmap_sem)
+-		down_write(&mm->mmap_sem);
+-	ret = mm_take_all_locks(mm);
++	        mm_write_lock(mm, &mmrange);
++	ret = mm_take_all_locks(mm, &mmrange);
+ 	if (unlikely(ret))
+ 		goto out_clean;
+ 
+@@ -309,10 +310,10 @@ static int do_mmu_notifier_register(struct mmu_notifier *mn,
+ 	hlist_add_head(&mn->hlist, &mm->mmu_notifier_mm->list);
+ 	spin_unlock(&mm->mmu_notifier_mm->lock);
+ 
+-	mm_drop_all_locks(mm);
++	mm_drop_all_locks(mm, &mmrange);
+ out_clean:
+ 	if (take_mmap_sem)
+-		up_write(&mm->mmap_sem);
++		mm_write_unlock(mm, &mmrange);
+ 	kfree(mmu_notifier_mm);
+ out:
+ 	BUG_ON(atomic_read(&mm->mm_users) <= 0);
 -- 
 2.13.6
