@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225nbAswlp+k/Xwj9pK+sF1hoIJf4DjBLNFyz1ux2bcwLPYadWoG9HEFPQu5GgNYvdguWRr1
-ARC-Seal: i=1; a=rsa-sha256; t=1517855209; cv=none;
+X-Google-Smtp-Source: AH8x227aVT7XqwuL2tIi8Gf1stB+aSttI/SskIZNGHqZ6xHG8wwTpvA46oF3eq22QOdt+JSDNB2L
+ARC-Seal: i=1; a=rsa-sha256; t=1517855208; cv=none;
         d=google.com; s=arc-20160816;
-        b=IDFsU+N3kdS1VaKw2DKOEudbhVomKg8E+BVo1aOfy84v9K3H5IMJL1uD1YFpD0kzCB
-         UmmBYCcYH3PtIS0ZtyWqqm9EiTYGMHN37WfYH65WlIvQHZWBRrCjwSz8Y044zquicf1v
-         9RRVTZyl3iJThy/OdUkXR8dnpdM4FIPL5z+L5iaQ0XtFeNcmgX+ATwJZnNSpc6yCht3y
-         u1zffem06D4Js9l5zzZk7U4SxA8dPLpLwCvhvb7Esv5VVyl47/NxUJ/dw8Us72uyYrKI
-         S7pgBbnmnfN8Is+VnZirulKlPA1I2djXyVp+RgV4GSTAM381+qkGKNCBh0PebmcM5S+j
-         ujoA==
+        b=vF4Ng3eO6PAXmaXlbx8Ei8w3PNwZ1T9ph0LChe+g4lGTTDQWr3VEdTzb9w+Vg639hH
+         OGZT0dwPEPLQngdVw190X7JkM3Zl6X2YSHLDrJVQuGFSUsNkYq5c+xy87N7JfymaJoKX
+         5SD7JQ8PCIROn9C2ErvzoYkyjyGNdbjaDM+SoqCiAwAq16h/gPVA3rqfgj1BkXLxcs5s
+         O3+D3TZl7U/5PE3+N1+dXy/owKOB7pzt1bJ4RKSfdxqRRwW4JidS90QHGxkPoXMN2xrk
+         vvfucKXDSpLZXVHqnl38AwnXlVf+csqmYRQNfje2qxGxJuDjkugZqZA96wEm6Jw3Lw4z
+         aPpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wc1xz1RmsiS59FTELuBK/TD/kmky94KyJ15FtCeK/go=;
-        b=KhB/OMtRBSCSO9mhOuZmBY5sG7/YvxGaQpj02k9lNmqXUmdOmxX13yPAo3uNn4phCe
-         YES5FBggA9SuuKV6Z7LRNhrpr7y3jAuq/kT97g/lxptVPxdiyvnmv83BJyLpc5e4GpBB
-         sj2YM+iCYVBQ3RF6RwlnVHZlvaSThxOSIgpo2VlNOw4JfEKqL08hnKx2nrYqoFCuchLH
-         AQWZQkVVVce2Cmh4rieWK91MaWJ9zrjXvUB/R/yW5hzeN/5aGNSB4+j0vsPeQ+PxvLmC
-         sizkJV+x34GnouVQ5UqWeY1woNYvBTV6ST/fq8D6KyE2hQFxxk4ck1W1gT7GswvnuBqd
-         v5bw==
+        bh=jAF2UsNdnV7/SWSk5Quoc/3fglYKJOUgkbOI3ye0lR4=;
+        b=F+F9JC1svd3QpgPNq5OPzJ+AKAAMZ/O7fE70ZjJy00vrCfPCQETJ/xf/WIPs6HI4w8
+         a4J4v5LovxQWo78fsEhHm1mxjuHlWLoWcTqTFNC3Rzbl2bROJpvXeYfqxwI/ZyU+NSi8
+         Gvx1cE+jX6hQNAyJbmbg9u1001eVbtk2zZKHrFk8GM01zpWazQWWokG7P25Z1Ma7fp/1
+         8k/UQ0BNyHw8897Il3fNujnIleb3WQslM73XtUf3G8Upllnz120t2osoxcfru7ntucpV
+         PGpDukwxIf/gjgqYVA3Zi2bZXMvhb79B5iVSb9KJX6zo45dVNXGYti1WTnoCdmxKyaNp
+         mZHg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lyude Paul <lyude@redhat.com>,
-	Todd Fujinaka <todd.fujinaka@intel.com>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	Aaron Brown <aaron.f.brown@intel.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: [PATCH 3.18 08/36] igb: Free IRQs when device is hotplugged
-Date: Mon,  5 Feb 2018 10:23:36 -0800
-Message-Id: <20180205182352.120195471@linuxfoundation.org>
+	Jesse Chan <jc@linux.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 3.18 07/36] gpio: iop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Mon,  5 Feb 2018 10:23:35 -0800
+Message-Id: <20180205182352.080280951@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -42,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586544069318963?=
-X-GMAIL-MSGID: =?utf-8?q?1591586544069318963?=
+X-GMAIL-THRID: =?utf-8?q?1591586542587761596?=
+X-GMAIL-MSGID: =?utf-8?q?1591586542587761596?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,88 +48,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Jesse Chan <jc@linux.com>
 
-commit 888f22931478a05bc81ceb7295c626e1292bf0ed upstream.
+commit 97b03136e1b637d7a9d2274c099e44ecf23f1103 upstream.
 
-Recently I got a Caldigit TS3 Thunderbolt 3 dock, and noticed that upon
-hotplugging my kernel would immediately crash due to igb:
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-[  680.825801] kernel BUG at drivers/pci/msi.c:352!
-[  680.828388] invalid opcode: 0000 [#1] SMP
-[  680.829194] Modules linked in: igb(O) thunderbolt i2c_algo_bit joydev vfat fat btusb btrtl btbcm btintel bluetooth ecdh_generic hp_wmi sparse_keymap rfkill wmi_bmof iTCO_wdt intel_rapl x86_pkg_temp_thermal coretemp crc32_pclmul snd_pcm rtsx_pci_ms mei_me snd_timer memstick snd pcspkr mei soundcore i2c_i801 tpm_tis psmouse shpchp wmi tpm_tis_core tpm video hp_wireless acpi_pad rtsx_pci_sdmmc mmc_core crc32c_intel serio_raw rtsx_pci mfd_core xhci_pci xhci_hcd i2c_hid i2c_core [last unloaded: igb]
-[  680.831085] CPU: 1 PID: 78 Comm: kworker/u16:1 Tainted: G           O     4.15.0-rc3Lyude-Test+ #6
-[  680.831596] Hardware name: HP HP ZBook Studio G4/826B, BIOS P71 Ver. 01.03 06/09/2017
-[  680.832168] Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-[  680.832687] RIP: 0010:free_msi_irqs+0x180/0x1b0
-[  680.833271] RSP: 0018:ffffc9000030fbf0 EFLAGS: 00010286
-[  680.833761] RAX: ffff8803405f9c00 RBX: ffff88033e3d2e40 RCX: 000000000000002c
-[  680.834278] RDX: 0000000000000000 RSI: 00000000000000ac RDI: ffff880340be2178
-[  680.834832] RBP: 0000000000000000 R08: ffff880340be1ff0 R09: ffff8803405f9c00
-[  680.835342] R10: 0000000000000000 R11: 0000000000000040 R12: ffff88033d63a298
-[  680.835822] R13: ffff88033d63a000 R14: 0000000000000060 R15: ffff880341959000
-[  680.836332] FS:  0000000000000000(0000) GS:ffff88034f440000(0000) knlGS:0000000000000000
-[  680.836817] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  680.837360] CR2: 000055e64044afdf CR3: 0000000001c09002 CR4: 00000000003606e0
-[  680.837954] Call Trace:
-[  680.838853]  pci_disable_msix+0xce/0xf0
-[  680.839616]  igb_reset_interrupt_capability+0x5d/0x60 [igb]
-[  680.840278]  igb_remove+0x9d/0x110 [igb]
-[  680.840764]  pci_device_remove+0x36/0xb0
-[  680.841279]  device_release_driver_internal+0x157/0x220
-[  680.841739]  pci_stop_bus_device+0x7d/0xa0
-[  680.842255]  pci_stop_bus_device+0x2b/0xa0
-[  680.842722]  pci_stop_bus_device+0x3d/0xa0
-[  680.843189]  pci_stop_and_remove_bus_device+0xe/0x20
-[  680.843627]  trim_stale_devices+0xf3/0x140
-[  680.844086]  trim_stale_devices+0x94/0x140
-[  680.844532]  trim_stale_devices+0xa6/0x140
-[  680.845031]  ? get_slot_status+0x90/0xc0
-[  680.845536]  acpiphp_check_bridge.part.5+0xfe/0x140
-[  680.846021]  acpiphp_hotplug_notify+0x175/0x200
-[  680.846581]  ? free_bridge+0x100/0x100
-[  680.847113]  acpi_device_hotplug+0x8a/0x490
-[  680.847535]  acpi_hotplug_work_fn+0x1a/0x30
-[  680.848076]  process_one_work+0x182/0x3a0
-[  680.848543]  worker_thread+0x2e/0x380
-[  680.848963]  ? process_one_work+0x3a0/0x3a0
-[  680.849373]  kthread+0x111/0x130
-[  680.849776]  ? kthread_create_worker_on_cpu+0x50/0x50
-[  680.850188]  ret_from_fork+0x1f/0x30
-[  680.850601] Code: 43 14 85 c0 0f 84 d5 fe ff ff 31 ed eb 0f 83 c5 01 39 6b 14 0f 86 c5 fe ff ff 8b 7b 10 01 ef e8 b7 e4 d2 ff 48 83 78 70 00 74 e3 <0f> 0b 49 8d b5 a0 00 00 00 e8 62 6f d3 ff e9 c7 fe ff ff 48 8b
-[  680.851497] RIP: free_msi_irqs+0x180/0x1b0 RSP: ffffc9000030fbf0
+WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-iop.o
+see include/linux/module.h for more information
 
-As it turns out, normally the freeing of IRQs that would fix this is called
-inside of the scope of __igb_close(). However, since the device is
-already gone by the point we try to unregister the netdevice from the
-driver due to a hotplug we end up seeing that the netif isn't present
-and thus, forget to free any of the device IRQs.
+This adds the license as "GPL", which matches the header of the file.
 
-So: make sure that if we're in the process of dismantling the netdev, we
-always allow __igb_close() to be called so that IRQs may be freed
-normally. Additionally, only allow igb_close() to be called from
-__igb_close() if it hasn't already been called for the given adapter.
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: 9474933caf21 ("igb: close/suspend race in netif_device_detach")
-Cc: Todd Fujinaka <todd.fujinaka@intel.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Jesse Chan <jc@linux.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/intel/igb/igb_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-iop.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -3172,7 +3172,7 @@ static int __igb_close(struct net_device
- 
- static int igb_close(struct net_device *netdev)
- {
--	if (netif_device_present(netdev))
-+	if (netif_device_present(netdev) || netdev->dismantle)
- 		return __igb_close(netdev, false);
- 	return 0;
+--- a/drivers/gpio/gpio-iop.c
++++ b/drivers/gpio/gpio-iop.c
+@@ -130,3 +130,7 @@ static int __init iop3xx_gpio_init(void)
+ 	return platform_driver_register(&iop3xx_gpio_driver);
  }
+ arch_initcall(iop3xx_gpio_init);
++
++MODULE_DESCRIPTION("GPIO handling for Intel IOP3xx processors");
++MODULE_AUTHOR("Lennert Buytenhek <buytenh@wantstofly.org>");
++MODULE_LICENSE("GPL");
