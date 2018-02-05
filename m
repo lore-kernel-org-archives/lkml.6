@@ -1,120 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753084AbeBEBjx (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:39:53 -0500
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:43614 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752823AbeBEBhp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:37:45 -0500
-X-Google-Smtp-Source: AH8x226YMwPeYlGltTfs8anvfG9fo8eKZ8sXZlNS5kfoB8rpdW3CA8CKnLr3AdcCvElWs8u1sOuy+S+H6LQwsvnNDBM=
-MIME-Version: 1.0
-In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
-References: <20180205012146.23981-1-ulfalizer@gmail.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Mon, 5 Feb 2018 02:37:43 +0100
-Message-ID: <CAFkk2KQV3VHfuFfAc9+eJ_GUQeebbvCV==2CF_zbg6_Ht7ohOg@mail.gmail.com>
-Subject: Re: [PATCH 00/20] Remove references to undefined symbols and fix two
- potential bugs
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        tfiga@chromium.org, paul.burton@mips.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
-        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
-        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
-        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
-        will.deacon@arm.com, Tony Lindgren <tony@atomide.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1752906AbeBEBh4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:37:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44092 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752745AbeBEB2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:28:37 -0500
+From: Davidlohr Bueso <dbueso@suse.de>
+To: akpm@linux-foundation.org, mingo@kernel.org
+Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
+        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
+        mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 30/64] arch/tile: use mm locking wrappers
+Date: Mon,  5 Feb 2018 02:27:20 +0100
+Message-Id: <20180205012754.23615-31-dbueso@wotan.suse.de>
+X-Mailer: git-send-email 2.12.3
+In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
+References: <20180205012754.23615-1-dbueso@wotan.suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
-> Hello,
->
-> This patchset fixes most references to globally undefined symbols in Kconfig
-> files, as reported by the
-> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-> script. I will send emails in reply to the patchset for some cases where I'm
-> not sure what the proper fix is.
->
-> All of the fixes are independent. I just created a patchset to track them more
-> easily.
->
-> Summary of changes:
->
->  - Commits 1 and 2 fix what looks like potential bugs: A broken (intended)
->    select of PL310_ERRATA_753970 for ARM/mvebu, and a misspelled dependency on
->    PPC_PSERIES in KVM/PPC.
->
->  - Commits 3-5 remove leftover AVR32 stuff.
->
->  - Commits 6 and 7 remove some selects of removed symbols from riscv.
->
->  - Commits 8-17 remove various references to removed symbols.
->
->  - Commits 18-20 fix some (harmless) malformed defaults.
->
-> Ulf Magnusson (20):
->   ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
->   KVM: PPC: Book3S PR: Fix broken select due to misspelling
->   kconfig: Remove leftover references to AVR32 symbol
->   misc: atmel: Remove CPU_AT32AP700X (AVR32) reference
->   rtc: at32ap700x: Remove PLATFORM_AT32AP dependency
->   riscv: Remove ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE select
->   riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
->   s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select
->   clk: sunxi-ng: Remove SUNXI_CCU_* selects
->   lib/Kconfig: Remove leftover select of GENERIC_IO
->   usb: gadget: udc: Remove USB_GADGET_DUALSPEED select
->   ARM: debug: Remove ARCH_MSM dep. from UNCOMPRESS_INCLUDE
->   ore: Remove PNFS_OBJLAYOUT dependency
->   iio: gyro: mpu3050: Remove INPUT_MPU3050 dep. from I2C
->   phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB
->   auxdisplay: img-ascii-lcd: Remove MIPS_SEAD3 dep.
->   media: sec: Remove PLAT_S5P dependency
->   iwlwifi: fix malformed CONFIG_IWLWIFI_PCIE_RTPM default
->   ARC: Fix malformed ARC_EMUL_UNALIGNED default
->   x86/PCI: VMD: Fix malformed default
->
->  arch/arc/Kconfig                           |  1 -
->  arch/arm/Kconfig.debug                     |  2 +-
->  arch/arm/mach-mvebu/Kconfig                |  4 ++--
->  arch/powerpc/kvm/Kconfig                   |  2 +-
->  arch/riscv/Kconfig                         |  2 --
->  arch/s390/Kconfig                          |  1 -
->  drivers/auxdisplay/Kconfig                 |  2 +-
->  drivers/clk/sunxi-ng/Kconfig               |  7 -------
->  drivers/cpufreq/Kconfig                    | 10 ----------
->  drivers/iio/gyro/Kconfig                   |  1 -
->  drivers/media/platform/Kconfig             |  2 +-
->  drivers/misc/Kconfig                       |  1 -
->  drivers/net/wireless/intel/iwlwifi/Kconfig |  1 -
->  drivers/pci/host/Kconfig                   |  1 -
->  drivers/phy/samsung/Kconfig                |  2 +-
->  drivers/pwm/Kconfig                        |  2 +-
->  drivers/rtc/Kconfig                        |  2 +-
->  drivers/spi/Kconfig                        |  2 +-
->  drivers/usb/gadget/udc/Kconfig             |  1 -
->  drivers/video/console/Kconfig              |  2 +-
->  fs/exofs/Kconfig.ore                       |  2 +-
->  lib/Kconfig                                |  1 -
->  22 files changed, 12 insertions(+), 39 deletions(-)
->
-> --
-> 2.14.1
->
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-Since 05a4a9527931 ("kernel/watchdog: split up config options"),
-lib/Kconfig.debug references a globally undefined symbol
-HARDLOCK_DETECTOR_ARCH. My guess is that it was supposed to be defined
-alongside HARDLOCK_DETECTOR_PERF in the same file.
+This becomes quite straightforward with the mmrange in place.
 
-Cheers,
-Ulf
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ arch/tile/kernel/stack.c |  5 +++--
+ arch/tile/mm/elf.c       | 12 +++++++-----
+ arch/tile/mm/fault.c     | 12 ++++++------
+ arch/tile/mm/pgtable.c   |  6 ++++--
+ 4 files changed, 20 insertions(+), 15 deletions(-)
+
+diff --git a/arch/tile/kernel/stack.c b/arch/tile/kernel/stack.c
+index 94ecbc6676e5..acd4a1ee8df1 100644
+--- a/arch/tile/kernel/stack.c
++++ b/arch/tile/kernel/stack.c
+@@ -378,6 +378,7 @@ void tile_show_stack(struct KBacktraceIterator *kbt)
+ {
+ 	int i;
+ 	int have_mmap_sem = 0;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	if (!start_backtrace())
+ 		return;
+@@ -398,7 +399,7 @@ void tile_show_stack(struct KBacktraceIterator *kbt)
+ 		if (kbt->task == current && address < PAGE_OFFSET &&
+ 		    !have_mmap_sem && kbt->task->mm && !in_interrupt()) {
+ 			have_mmap_sem =
+-				down_read_trylock(&kbt->task->mm->mmap_sem);
++				mm_read_trylock(kbt->task->mm, &mmrange);
+ 		}
+ 
+ 		describe_addr(kbt, address, have_mmap_sem,
+@@ -415,7 +416,7 @@ void tile_show_stack(struct KBacktraceIterator *kbt)
+ 	if (kbt->end == KBT_LOOP)
+ 		pr_err("Stack dump stopped; next frame identical to this one\n");
+ 	if (have_mmap_sem)
+-		up_read(&kbt->task->mm->mmap_sem);
++		mm_read_unlock(kbt->task->mm, &mmrange);
+ 	end_backtrace();
+ }
+ EXPORT_SYMBOL(tile_show_stack);
+diff --git a/arch/tile/mm/elf.c b/arch/tile/mm/elf.c
+index 889901824400..9aba9813cdb8 100644
+--- a/arch/tile/mm/elf.c
++++ b/arch/tile/mm/elf.c
+@@ -44,6 +44,7 @@ static int notify_exec(struct mm_struct *mm)
+ 	char *buf, *path;
+ 	struct vm_area_struct *vma;
+ 	struct file *exe_file;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	if (!sim_is_simulator())
+ 		return 1;
+@@ -60,10 +61,10 @@ static int notify_exec(struct mm_struct *mm)
+ 	if (IS_ERR(path))
+ 		goto done_put;
+ 
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	for (vma = current->mm->mmap; ; vma = vma->vm_next) {
+ 		if (vma == NULL) {
+-			up_read(&mm->mmap_sem);
++			mm_read_unlock(mm, &mmrange);
+ 			goto done_put;
+ 		}
+ 		if (vma->vm_file == exe_file)
+@@ -91,7 +92,7 @@ static int notify_exec(struct mm_struct *mm)
+ 			}
+ 		}
+ 	}
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ 	sim_notify_exec(path);
+ done_put:
+@@ -119,6 +120,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	int retval = 0;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	/*
+ 	 * Notify the simulator that an exec just occurred.
+@@ -128,7 +130,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
+ 	if (!notify_exec(mm))
+ 		sim_notify_exec(bprm->filename);
+ 
+-	down_write(&mm->mmap_sem);
++	mm_write_lock(mm, &mmrange);
+ 
+ 	retval = setup_vdso_pages();
+ 
+@@ -149,7 +151,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
+ 	}
+ #endif
+ 
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
+ 
+ 	return retval;
+ }
+diff --git a/arch/tile/mm/fault.c b/arch/tile/mm/fault.c
+index 09f053eb146f..f4ce0806653a 100644
+--- a/arch/tile/mm/fault.c
++++ b/arch/tile/mm/fault.c
+@@ -383,7 +383,7 @@ static int handle_page_fault(struct pt_regs *regs,
+ 	 * source.  If this is invalid we can skip the address space check,
+ 	 * thus avoiding the deadlock.
+ 	 */
+-	if (!down_read_trylock(&mm->mmap_sem)) {
++	if (!mm_read_trylock(mm, &mmrange)) {
+ 		if (is_kernel_mode &&
+ 		    !search_exception_tables(regs->pc)) {
+ 			vma = NULL;  /* happy compiler */
+@@ -391,7 +391,7 @@ static int handle_page_fault(struct pt_regs *regs,
+ 		}
+ 
+ retry:
+-		down_read(&mm->mmap_sem);
++		mm_read_lock(mm, &mmrange);
+ 	}
+ 
+ 	vma = find_vma(mm, address);
+@@ -482,7 +482,7 @@ static int handle_page_fault(struct pt_regs *regs,
+ 	}
+ #endif
+ 
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	return 1;
+ 
+ /*
+@@ -490,7 +490,7 @@ static int handle_page_fault(struct pt_regs *regs,
+  * Fix it, but check if it's kernel or user first..
+  */
+ bad_area:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ bad_area_nosemaphore:
+ 	/* User mode accesses just cause a SIGSEGV */
+@@ -557,14 +557,14 @@ static int handle_page_fault(struct pt_regs *regs,
+  * us unable to handle the page fault gracefully.
+  */
+ out_of_memory:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	if (is_kernel_mode)
+ 		goto no_context;
+ 	pagefault_out_of_memory();
+ 	return 0;
+ 
+ do_sigbus:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 
+ 	/* Kernel mode? Handle exceptions or die */
+ 	if (is_kernel_mode)
+diff --git a/arch/tile/mm/pgtable.c b/arch/tile/mm/pgtable.c
+index ec5576fd3a86..2aab41fe69cf 100644
+--- a/arch/tile/mm/pgtable.c
++++ b/arch/tile/mm/pgtable.c
+@@ -430,7 +430,9 @@ void start_mm_caching(struct mm_struct *mm)
+  */
+ static unsigned long update_priority_cached(struct mm_struct *mm)
+ {
+-	if (mm->context.priority_cached && down_write_trylock(&mm->mmap_sem)) {
++	DEFINE_RANGE_LOCK_FULL(mmrange);
++
++	if (mm->context.priority_cached && mm_write_trylock(mm, &mmrange)) {
+ 		struct vm_area_struct *vm;
+ 		for (vm = mm->mmap; vm; vm = vm->vm_next) {
+ 			if (hv_pte_get_cached_priority(vm->vm_page_prot))
+@@ -438,7 +440,7 @@ static unsigned long update_priority_cached(struct mm_struct *mm)
+ 		}
+ 		if (vm == NULL)
+ 			mm->context.priority_cached = 0;
+-		up_write(&mm->mmap_sem);
++		mm_write_unlock(mm, &mmrange);
+ 	}
+ 	return mm->context.priority_cached;
+ }
+-- 
+2.13.6
