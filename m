@@ -1,96 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753418AbeBERsh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 12:48:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38100 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752925AbeBERsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 12:48:30 -0500
-Date: Mon, 5 Feb 2018 11:48:29 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 1/3] x86/entry: Clear extra registers beyond syscall
- arguments for 64bit kernels
-Message-ID: <20180205174829.d7rflcxigbx2snra@treble>
-References: <151776623555.23236.14152911329227555005.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151776624080.23236.1865339140666550495.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180205114250.zd3nbe5yl2mnd54m@gmail.com>
- <6CCF65EF-325A-4207-9C5E-2CD2D8E2A7E4@amacapital.net>
- <20180205163046.zeic6bqhkypbsutt@gmail.com>
- <CALCETrVt3S5v_1QNYBQyMW-FZxhyQ3c6u6m=FPWKR7qaPs6q2Q@mail.gmail.com>
- <20180205172638.briyyjtbxxd7wyjh@treble>
- <CALCETrXs=PUu5TtEnCYVh3n180tH0NPm9DE0pd7ZdneAJBcy1g@mail.gmail.com>
+        id S1753424AbeBERtY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 12:49:24 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53816 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752722AbeBERtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 12:49:16 -0500
+Date: Mon, 5 Feb 2018 17:49:11 +0000
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v3 1/3] sched/fair: add util_est on top of PELT
+Message-ID: <20180205174911.GE5739@e110439-lin>
+References: <20180123180847.4477-1-patrick.bellasi@arm.com>
+ <20180123180847.4477-2-patrick.bellasi@arm.com>
+ <20180129163642.GF2228@hirez.programming.kicks-ass.net>
+ <20180130124632.GC5739@e110439-lin>
+ <20180130130432.GC2269@hirez.programming.kicks-ass.net>
+ <20180130140132.GI2295@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrXs=PUu5TtEnCYVh3n180tH0NPm9DE0pd7ZdneAJBcy1g@mail.gmail.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <20180130140132.GI2295@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 05:31:39PM +0000, Andy Lutomirski wrote:
-> On Mon, Feb 5, 2018 at 5:26 PM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > On Mon, Feb 05, 2018 at 04:37:26PM +0000, Andy Lutomirski wrote:
-> >> On Mon, Feb 5, 2018 at 4:30 PM, Ingo Molnar <mingo@kernel.org> wrote:
-> >> >
-> >> > * Andy Lutomirski <luto@amacapital.net> wrote:
-> >> >
-> >> >>
-> >> >>
-> >> >> > On Feb 5, 2018, at 3:42 AM, Ingo Molnar <mingo@kernel.org> wrote:
-> >> >> >
-> >> >> >
-> >> >> > * Dan Williams <dan.j.williams@intel.com> wrote:
-> >> >> >
-> >> >> >> +    /*
-> >> >> >> +     * Sanitize extra registers of values that a speculation attack
-> >> >> >> +     * might want to exploit. In the CONFIG_FRAME_POINTER=y case,
-> >> >> >> +     * the expectation is that %ebp will be clobbered before it
-> >> >> >> +     * could be used.
-> >> >> >> +     */
-> >> >> >> +    .macro CLEAR_EXTRA_REGS_NOSPEC
-> >> >> >> +    xorq %r15, %r15
-> >> >> >> +    xorq %r14, %r14
-> >> >> >> +    xorq %r13, %r13
-> >> >> >> +    xorq %r12, %r12
-> >> >> >> +    xorl %ebx, %ebx
-> >> >> >> +#ifndef CONFIG_FRAME_POINTER
-> >> >> >> +    xorl %ebp, %ebp
-> >> >> >> +#endif
-> >> >> >> +    .endm
-> >> >> >
-> >> >> > Yeah, so this series look pretty good to me, but there's one small detail: I think
-> >> >> > RBP should be cleared unconditionally here, even in the CONFIG_FRAME_POINTERS=y
-> >> >> > case, because:
-> >> >>
-> >> >> ENCODE_FRAME_POINTER should take care of rbp, though.
-> >> >
-> >> > AFAICS there's various entry paths where it's not used I think: for example the
-> >> > compat system calls in entry_64_compat.S don't seem to encode RBP in such a
-> >> > fashion (unless I missed some macro side effect).
-> >>
-> >> Then that's a separate bug that should be fixed.  Josh?
-> >
-> > We don't encode the frame pointer on syscalls, because "fast path"
-> > (though that's obviously no longer a consideration).
+On 30-Jan 15:01, Peter Zijlstra wrote:
+> On Tue, Jan 30, 2018 at 02:04:32PM +0100, Peter Zijlstra wrote:
+> > On Tue, Jan 30, 2018 at 12:46:33PM +0000, Patrick Bellasi wrote:
+> > > > Aside from that being whitespace challenged, did you also try:
+> > > > 
+> > > > 	if ((unsigned)((util_est - util_last) + LIM - 1) < (2 * LIM - 1))
+> > > 
+> > > No, since the above code IMO is so much "easy to parse for humans" :)
+> > 
+> > Heh, true. Although that's fixable by wrapping it in some helper with a
+> > comment.
+> > 
+> > > But, mainly because since the cache alignment update, also while testing on a
+> > > "big" Intel machine I cannot see regressions on hackbench.
+> > > 
+> > > This is the code I get on my Xeon E5-2690 v2:
+> > > 
+> > >        if (abs(util_est - util_last) <= (SCHED_CAPACITY_SCALE / 100))
+> > >    6ba0:       8b 86 7c 02 00 00       mov    0x27c(%rsi),%eax
+> > >    6ba6:       48 29 c8                sub    %rcx,%rax
+> > >    6ba9:       48 99                   cqto
+> > >    6bab:       48 31 d0                xor    %rdx,%rax
+> > >    6bae:       48 29 d0                sub    %rdx,%rax
+> > >    6bb1:       48 83 f8 0a             cmp    $0xa,%rax
+> > >    6bb5:       7e 1d                   jle    6bd4 <dequeue_task_fair+0x7e4>
+> > > 
+> > > Does it look so bad?
+> > 
+> > Its not terrible, and I think your GCC is far more clever than the one I
 > 
-> Should we start encoding the frame pointer?
+> To clarify; my GCC at the time generated conditional branches to compute
+> the absolute value; and in that case the thing I proposed wins hands
+> down because its unconditional.
+> 
+> However the above is also unconditional and then the difference is much
+> less important.
 
-Perhaps, but I should clarify it's not a bug.  For syscalls, we instead
-just standardized the location of the last stack frame.  But that's a
-bit fragile and I was never too happy with it.
+I've finally convinced myself that we can live with the "parsing
+complexity" of your proposal... and wrapped into an inline it turned
+out to be not so bad.
 
-Encoding the frame pointer would be a lot more straightforward, though
-we'd still need to figure out a way to detect the "end" of the stack for
-kthreads.  We could probably encode that information as well: "here's
-the end, but there are no pt_regs".  Could just be an "encoded" NULL.
+> > used at the time. But that's 4 dependent instructions (cqto,xor,sub,cmp)
+> > whereas the one I proposed uses only 2 (add,cmp).
+
+The ARM64 generated code is also simpler.
+
+> > Now, my proposal is, as you say, somewhat hard to read, and it also
+> > doesn't work right when our values are 'big' (which they will not be in
+> > our case, because util has a very definite bound), and I suspect you're
+> > right that ~2 cycles here will not be measurable.
+
+Indeed, I cannot see noticeable differences if not just a slightly
+improvement...
+
+> > 
+> > So yeah.... whatever ;-)
+
+... I'm going to post a v4 using your proposal ;-)
+
+Thanks Patrick
 
 -- 
-Josh
+#include <best/regards.h>
+
+Patrick Bellasi
