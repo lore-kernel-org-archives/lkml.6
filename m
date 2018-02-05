@@ -1,74 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753362AbeBERSR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 12:18:17 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:36034 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752787AbeBERSI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 12:18:08 -0500
-Subject: Re: [PATCH 19/20] ARC: Fix malformed ARC_EMUL_UNALIGNED default
-To: Ulf Magnusson <ulfalizer@gmail.com>, <linux-kernel@vger.kernel.org>
-CC: <robh@kernel.org>, <linux-snps-arc@lists.infradead.org>,
-        <linux-kbuild@vger.kernel.org>, <tony@atomide.com>,
-        <linus.walleij@linaro.org>, <sboyd@codeaurora.org>,
-        <mina86@mina86.com>, <tfiga@chromium.org>, <paulus@ozlabs.org>,
-        <yamada.masahiro@socionext.com>, <paul.burton@mips.com>,
-        <npiggin@gmail.com>, <will.deacon@arm.com>, <egtvedt@samfundet.no>,
-        <mgorman@techsingularity.net>, <hch@lst.de>,
-        <m.szyprowski@samsung.com>
-Newsgroups: gmane.linux.kernel.arc,gmane.linux.kernel,gmane.linux.kbuild.devel
-References: <20180205012146.23981-1-ulfalizer@gmail.com>
- <20180205012146.23981-20-ulfalizer@gmail.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <2e1dcff1-8bf6-39ce-9646-2441a78a3e34@synopsys.com>
-Date: Mon, 5 Feb 2018 09:17:53 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753233AbeBER0t (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 12:26:49 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37062 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752582AbeBER0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 12:26:40 -0500
+Date: Mon, 5 Feb 2018 11:26:38 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Andrew Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 1/3] x86/entry: Clear extra registers beyond syscall
+ arguments for 64bit kernels
+Message-ID: <20180205172638.briyyjtbxxd7wyjh@treble>
+References: <151776623555.23236.14152911329227555005.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151776624080.23236.1865339140666550495.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180205114250.zd3nbe5yl2mnd54m@gmail.com>
+ <6CCF65EF-325A-4207-9C5E-2CD2D8E2A7E4@amacapital.net>
+ <20180205163046.zeic6bqhkypbsutt@gmail.com>
+ <CALCETrVt3S5v_1QNYBQyMW-FZxhyQ3c6u6m=FPWKR7qaPs6q2Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180205012146.23981-20-ulfalizer@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.84]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrVt3S5v_1QNYBQyMW-FZxhyQ3c6u6m=FPWKR7qaPs6q2Q@mail.gmail.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/04/2018 05:21 PM, Ulf Magnusson wrote:
-> 'default N' should be 'default n', though they happen to have the same
-> effect here, due to undefined symbols (N in this case) evaluating to n
-> in a tristate sense.
+On Mon, Feb 05, 2018 at 04:37:26PM +0000, Andy Lutomirski wrote:
+> On Mon, Feb 5, 2018 at 4:30 PM, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > * Andy Lutomirski <luto@amacapital.net> wrote:
+> >
+> >>
+> >>
+> >> > On Feb 5, 2018, at 3:42 AM, Ingo Molnar <mingo@kernel.org> wrote:
+> >> >
+> >> >
+> >> > * Dan Williams <dan.j.williams@intel.com> wrote:
+> >> >
+> >> >> +    /*
+> >> >> +     * Sanitize extra registers of values that a speculation attack
+> >> >> +     * might want to exploit. In the CONFIG_FRAME_POINTER=y case,
+> >> >> +     * the expectation is that %ebp will be clobbered before it
+> >> >> +     * could be used.
+> >> >> +     */
+> >> >> +    .macro CLEAR_EXTRA_REGS_NOSPEC
+> >> >> +    xorq %r15, %r15
+> >> >> +    xorq %r14, %r14
+> >> >> +    xorq %r13, %r13
+> >> >> +    xorq %r12, %r12
+> >> >> +    xorl %ebx, %ebx
+> >> >> +#ifndef CONFIG_FRAME_POINTER
+> >> >> +    xorl %ebp, %ebp
+> >> >> +#endif
+> >> >> +    .endm
+> >> >
+> >> > Yeah, so this series look pretty good to me, but there's one small detail: I think
+> >> > RBP should be cleared unconditionally here, even in the CONFIG_FRAME_POINTERS=y
+> >> > case, because:
+> >>
+> >> ENCODE_FRAME_POINTER should take care of rbp, though.
+> >
+> > AFAICS there's various entry paths where it's not used I think: for example the
+> > compat system calls in entry_64_compat.S don't seem to encode RBP in such a
+> > fashion (unless I missed some macro side effect).
 > 
-> Remove the default from ARC_EMUL_UNALIGNED instead of changing it. bool
-> and tristate symbols implicitly default to n.
-> 
-> Discovered with the
-> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-> script.
-> 
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> Then that's a separate bug that should be fixed.  Josh?
 
+We don't encode the frame pointer on syscalls, because "fast path"
+(though that's obviously no longer a consideration).
 
-Added to ARC for-curr.
-
-Thx,
--Vineet
-
-> ---
->   arch/arc/Kconfig | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-> index f3a80cf164cc..d76bf4a83740 100644
-> --- a/arch/arc/Kconfig
-> +++ b/arch/arc/Kconfig
-> @@ -484,7 +484,6 @@ config ARC_CURR_IN_REG
->   
->   config ARC_EMUL_UNALIGNED
->   	bool "Emulate unaligned memory access (userspace only)"
-> -	default N
->   	select SYSCTL_ARCH_UNALIGN_NO_WARN
->   	select SYSCTL_ARCH_UNALIGN_ALLOW
->   	depends on ISA_ARCOMPACT
-> 
+-- 
+Josh
