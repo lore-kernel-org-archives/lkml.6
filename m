@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226lYt8zAXXX+dWfrF9W413/Gp+LudFEdmIxlHMSClhZmHvsgXP0jPIi50LwL4c10uKg8B+J
-ARC-Seal: i=1; a=rsa-sha256; t=1517855206; cv=none;
+X-Google-Smtp-Source: AH8x224M5FXGm1+2SrzpDxagliUJyIdxPcDnrENcroIdvWtyzwRge0QQlaSw+aYPY5C1RM2Un/m6
+ARC-Seal: i=1; a=rsa-sha256; t=1517855204; cv=none;
         d=google.com; s=arc-20160816;
-        b=sukbrHg3XWEXeJw8FAQE+uleLM/1FamrAtQFmipl7w85Qnfc0bxTZTHreC8vkF83RF
-         MggXFTBydACpQd6Qn/tK6yHsO3emyzB+X+iDFSRrdPT2Ium3KgV+MMFRu6y+l7SMst7a
-         ou1ZbDToOBl2x8qLN3RcDJ3ZLm9i9/LKxyTT4aqmFK9vencdNSt8IufBrIfBWzghe3qQ
-         cpShZoZoHmW8Xa+GVpHej92VVrnBFp1JnK9oTRHk6w6mw6JBoigKBlipVNjgQvfW6FbM
-         bEKobnN99dVqzN+Hu/PwlsE28e31c7zlSSAyhiF+s10yuSy7x9Np8Stb/EOg6gyiHCdr
-         RCfg==
+        b=tmRthkqFxfGOv02VhKa1XnRnc6dYXj5a5ft/CPWAf3KbgpDn0zlg91xr9b+T4QnMMZ
+         ouU3RGvWp1FUUjl0nlT8dqkJDAvyMUTB8qvSb5+iKUpeakvIlDoADmPFGyfHtbA+5Xkc
+         5urEWGZQlhDWBPPMCKwednlUCuTPFY1RHo4GqP1vjSsFnuYL4zQqFzLEjkZCq6s1JqB6
+         tVWlD3Ery/iKU9v8ZK/fpQMS6xfpou1Rm8ku1Yk6HPMYNij9yrVO3jSTeQQas+YsM3eH
+         DAmWOitS0eRsHmC/0Xn8G1ioEWxtWDsACBoa3CmMVb5B8xsFsLP3QnQyhJPRvtITsTHF
+         PZLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LIubY83QVA5QVTlIsKFFdxRMlnT5E3AYpUCy+ud16Ls=;
-        b=xARAGcmTV2k5z2kO3GW24Wu3BUtPFZgX/3Azq3WxKksSXIvwZ29g649sN/WAv7NT5r
-         AuRL39sSAM8AdDKfh3FLo26ghX933ebuh3DkHFPspvkreOYMqoW5iC7GJI0d3yze5svj
-         SK9APoZOlpA70dDKyztOFpr0yC2xnphPu/00SU54hpjWFsAxHNIMMM3jQYJvGIsyNJRz
-         shDke9+Oy6U91SrDNRU0vSVEobiw5ZxBu+8KOWRFAGpuzo63AFrJw0QsS7m2H9cKa9BV
-         TwnmNOhjq98F/lCbZCpnEA0fyNg+Jxewp6ZprJO/rXbNB0YD0IuoerTgQG68x43GiWNB
-         mgsw==
+        bh=zQHY5nwGaxK4NRSz567Qq1RhisFpqmP+0NvKkhGsQMc=;
+        b=v8jpeA1McR+KHGEIfRLbjrTYoCG9d3ZzlxkiCaDt+jFAflZCkMrGOqrpPtAByZB6zU
+         jI2j21Mxj4/HW5ektgXsZEc822iQOnSUrt7HSuQ+jDXArZ/Y2uS5Hsbyd7fXvr9pXcDJ
+         +xOFcfwEjOFnjjGrCma8x8YnpiJigWst2FQMNy2GFjcjxkEyzKtiIYw4KIqiWU2f6ZdS
+         Pob9Py/LxNJDaY9GtM41HMLcEOCVhmx0SWtyP2vSQ1sxIf4PLh9zUIHp5UTgTO9LSXr6
+         1kOUpRZaMAPrEh7FlPzlcE7Zo/yWvcqQ7VjROUw1IrL3H+FK6LLH/vX8mCZkWgBPp6LE
+         s9RQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 3.18 05/36] loop: fix concurrent lo_open/lo_release
-Date: Mon,  5 Feb 2018 10:23:33 -0800
-Message-Id: <20180205182352.000065756@linuxfoundation.org>
+	Hans-Werner Hilse <hwhilse@gmail.com>,
+	Richard Weinberger <richard@nod.at>,
+	Greg Hackmann <ghackmann@google.com>,
+	Bernie Innocenti <codewiz@google.com>,
+	Lorenzo Colitti <lorenzo@google.com>
+Subject: [PATCH 3.18 04/36] um: Remove copy&paste code from init.h
+Date: Mon,  5 Feb 2018 10:23:32 -0800
+Message-Id: <20180205182351.958233875@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586540486743447?=
-X-GMAIL-MSGID: =?utf-8?q?1591586540486743447?=
+X-GMAIL-THRID: =?utf-8?q?1591586538575049961?=
+X-GMAIL-MSGID: =?utf-8?q?1591586538575049961?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,52 +51,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Richard Weinberger <richard@nod.at>
 
-commit ae6650163c66a7eff1acd6eb8b0f752dcfa8eba5 upstream.
+commit 30b11ee9ae23d78de66b9ae315880af17a64ba83 upstream.
 
-范龙飞 reports that KASAN can report a use-after-free in __lock_acquire.
-The reason is due to insufficient serialization in lo_release(), which
-will continue to use the loop device even after it has decremented the
-lo_refcnt to zero.
+As we got rid of the __KERNEL__ abuse, we can directly
+include linux/compiler.h now.
+This also allows gcc 5 to build UML.
 
-In the meantime, another process can come in, open the loop device
-again as it is being shut down. Confusion ensues.
-
-Reported-by: 范龙飞 <long7573@126.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Reported-by: Hans-Werner Hilse <hwhilse@gmail.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Cc: Greg Hackmann <ghackmann@google.com>
+Cc: Bernie Innocenti <codewiz@google.com>
+Cc: Lorenzo Colitti <lorenzo@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/um/include/shared/init.h |   22 +---------------------
+ 1 file changed, 1 insertion(+), 21 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1512,9 +1512,8 @@ out:
- 	return err;
- }
+--- a/arch/um/include/shared/init.h
++++ b/arch/um/include/shared/init.h
+@@ -40,28 +40,8 @@
+ typedef int (*initcall_t)(void);
+ typedef void (*exitcall_t)(void);
  
--static void lo_release(struct gendisk *disk, fmode_t mode)
-+static void __lo_release(struct loop_device *lo)
- {
--	struct loop_device *lo = disk->private_data;
- 	int err;
- 
- 	mutex_lock(&lo->lo_ctl_mutex);
-@@ -1542,6 +1541,13 @@ out:
- 	mutex_unlock(&lo->lo_ctl_mutex);
- }
- 
-+static void lo_release(struct gendisk *disk, fmode_t mode)
-+{
-+	mutex_lock(&loop_index_mutex);
-+	__lo_release(disk->private_data);
-+	mutex_unlock(&loop_index_mutex);
-+}
+-#ifdef __UM_HOST__
+-#ifndef __section
+-# define __section(S) __attribute__ ((__section__(#S)))
+-#endif
+-
+-#if __GNUC__ == 3
+-
+-#if __GNUC_MINOR__ >= 3
+-# define __used			__attribute__((__used__))
+-#else
+-# define __used			__attribute__((__unused__))
+-#endif
+-
+-#else
+-#if __GNUC__ == 4
+-# define __used			__attribute__((__used__))
+-#endif
+-#endif
+-
+-#else
+ #include <linux/compiler.h>
+-#endif
 +
- static const struct block_device_operations lo_fops = {
- 	.owner =	THIS_MODULE,
- 	.open =		lo_open,
+ /* These are for everybody (although not all archs will actually
+    discard it in modules) */
+ #define __init		__section(.init.text)
