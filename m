@@ -1,68 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753356AbeBERAj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 12:00:39 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:41186 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753292AbeBERAY (ORCPT
+        id S1753238AbeBEREQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 12:04:16 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48942 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752582AbeBEREK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 12:00:24 -0500
-Date: Mon, 5 Feb 2018 09:00:06 -0800
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Wang Long <wanglong19@meituan.com>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] jbd2: set to NULL after kmem_cache_destroy
-Message-ID: <20180205170006.GA4838@magnolia>
-References: <1517837957-1636-1-git-send-email-wanglong19@meituan.com>
+        Mon, 5 Feb 2018 12:04:10 -0500
+Date: Mon, 5 Feb 2018 18:03:58 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Sistare <steven.sistare@oracle.com>
+Cc: subhra mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        dhaval.giani@oracle.com, tim.c.chen@linux.intel.com
+Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
+ select_idle_sibling using SMT balance
+Message-ID: <20180205170358.GT2295@hirez.programming.kicks-ass.net>
+References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
+ <20180201123335.GV2249@hirez.programming.kicks-ass.net>
+ <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
+ <20180202195943.GR2269@hirez.programming.kicks-ass.net>
+ <25d67bd2-cbe7-2c2a-e89a-13a7ca5adc10@oracle.com>
+ <20180205124854.GX2269@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517837957-1636-1-git-send-email-wanglong19@meituan.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8796 signatures=668662
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=753
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802050214
+In-Reply-To: <20180205124854.GX2269@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 09:39:17PM +0800, Wang Long wrote:
-> Signed-off-by: Wang Long <wanglong19@meituan.com>
-> ---
->  fs/jbd2/journal.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 93016bb..38dc24c 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -2649,11 +2649,14 @@ static int __init jbd2_journal_init_handle_cache(void)
->  
->  static void jbd2_journal_destroy_handle_cache(void)
->  {
-> -	if (jbd2_handle_cache)
-> +	if (jbd2_handle_cache) {
->  		kmem_cache_destroy(jbd2_handle_cache);
+On Mon, Feb 05, 2018 at 01:48:54PM +0100, Peter Zijlstra wrote:
+> So while I see the point of tracking these numbers (for SMT>2), I don't
+> think its worth doing outside of the core, and then we still need some
+> powerpc (or any other architecture with abysmal atomics) tested.
 
-kmem_cache_destroy already handles null pointers, so you can remove the
-conditional test entirely.
+FWIW Power has another 'fun' feature, their cores have asymmetric SMT.
 
---D
+Their cores have a static power level, based on _which_ SMT sibling is
+running, not how many. A single SMT2 runs (much) slower than a single
+SMT0.
 
-> -	if (jbd2_inode_cache)
-> +		jbd2_handle_cache = NULL;
-> +	}
-> +	if (jbd2_inode_cache) {
->  		kmem_cache_destroy(jbd2_inode_cache);
-> -
-> +		jbd2_inode_cache = NULL;
-> +	}
->  }
->  
->  /*
-> -- 
-> 1.8.3.1
-> 
+So that random selection stuff really doesn't work well for them. Now
+'sadly' x86 can also have ASYM_PACKING set on its SMT domain, so I'm
+going to have to figure out what to do about all that.
