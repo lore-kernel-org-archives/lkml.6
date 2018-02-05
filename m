@@ -1,71 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752205AbeBEBGk (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:06:40 -0500
-Received: from ozlabs.org ([103.22.144.67]:59917 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751916AbeBEBGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:06:32 -0500
-Date: Mon, 5 Feb 2018 12:06:30 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ashok Raj <ashok.raj@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        Brijesh Singh <brijesh.singh@amd.com>
-Subject: linux-next: manual merge of the kvm tree with Linus' tree
-Message-ID: <20180205120630.4c924d00@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752188AbeBEBXB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:23:01 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:42980 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751979AbeBEBWz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:22:55 -0500
+X-Google-Smtp-Source: AH8x227Gq02zvSHkil/7SYvr/CfDA0QkIEGeyXaiqWpUdiFwoxQY9xx8Gq/kywzCF6leO88NZ9ZArQ==
+From: Ulf Magnusson <ulfalizer@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
+        m.szyprowski@samsung.com, egtvedt@samfundet.no,
+        linus.walleij@linaro.org, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
+        yamada.masahiro@socionext.com, Ulf Magnusson <ulfalizer@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH 00/20] Remove references to undefined symbols and fix two potential bugs
+Date: Mon,  5 Feb 2018 02:21:12 +0100
+Message-Id: <20180205012146.23981-1-ulfalizer@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Hello,
 
-Today's linux-next merge of the kvm tree got a conflict in:
+This patchset fixes most references to globally undefined symbols in Kconfig
+files, as reported by the
+https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+script. I will send emails in reply to the patchset for some cases where I'm
+not sure what the proper fix is.
 
-  arch/x86/kvm/svm.c
+All of the fixes are independent. I just created a patchset to track them more
+easily.
 
-between commit:
+Summary of changes:
 
-  15d45071523d ("KVM/x86: Add IBPB support")
+ - Commits 1 and 2 fix what looks like potential bugs: A broken (intended)
+   select of PL310_ERRATA_753970 for ARM/mvebu, and a misspelled dependency on
+   PPC_PSERIES in KVM/PPC.
 
-from Linus' tree and commit:
+ - Commits 3-5 remove leftover AVR32 stuff.
 
-  70cd94e60c73 ("KVM: SVM: VMRUN should use associated ASID when SEV is enabled")
+ - Commits 6 and 7 remove some selects of removed symbols from riscv.
 
-from the kvm tree.
+ - Commits 8-17 remove various references to removed symbols.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+ - Commits 18-20 fix some (harmless) malformed defaults.
+
+Ulf Magnusson (20):
+  ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
+  KVM: PPC: Book3S PR: Fix broken select due to misspelling
+  kconfig: Remove leftover references to AVR32 symbol
+  misc: atmel: Remove CPU_AT32AP700X (AVR32) reference
+  rtc: at32ap700x: Remove PLATFORM_AT32AP dependency
+  riscv: Remove ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE select
+  riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
+  s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select
+  clk: sunxi-ng: Remove SUNXI_CCU_* selects
+  lib/Kconfig: Remove leftover select of GENERIC_IO
+  usb: gadget: udc: Remove USB_GADGET_DUALSPEED select
+  ARM: debug: Remove ARCH_MSM dep. from UNCOMPRESS_INCLUDE
+  ore: Remove PNFS_OBJLAYOUT dependency
+  iio: gyro: mpu3050: Remove INPUT_MPU3050 dep. from I2C
+  phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB
+  auxdisplay: img-ascii-lcd: Remove MIPS_SEAD3 dep.
+  media: sec: Remove PLAT_S5P dependency
+  iwlwifi: fix malformed CONFIG_IWLWIFI_PCIE_RTPM default
+  ARC: Fix malformed ARC_EMUL_UNALIGNED default
+  x86/PCI: VMD: Fix malformed default
+
+ arch/arc/Kconfig                           |  1 -
+ arch/arm/Kconfig.debug                     |  2 +-
+ arch/arm/mach-mvebu/Kconfig                |  4 ++--
+ arch/powerpc/kvm/Kconfig                   |  2 +-
+ arch/riscv/Kconfig                         |  2 --
+ arch/s390/Kconfig                          |  1 -
+ drivers/auxdisplay/Kconfig                 |  2 +-
+ drivers/clk/sunxi-ng/Kconfig               |  7 -------
+ drivers/cpufreq/Kconfig                    | 10 ----------
+ drivers/iio/gyro/Kconfig                   |  1 -
+ drivers/media/platform/Kconfig             |  2 +-
+ drivers/misc/Kconfig                       |  1 -
+ drivers/net/wireless/intel/iwlwifi/Kconfig |  1 -
+ drivers/pci/host/Kconfig                   |  1 -
+ drivers/phy/samsung/Kconfig                |  2 +-
+ drivers/pwm/Kconfig                        |  2 +-
+ drivers/rtc/Kconfig                        |  2 +-
+ drivers/spi/Kconfig                        |  2 +-
+ drivers/usb/gadget/udc/Kconfig             |  1 -
+ drivers/video/console/Kconfig              |  2 +-
+ fs/exofs/Kconfig.ore                       |  2 +-
+ lib/Kconfig                                |  1 -
+ 22 files changed, 12 insertions(+), 39 deletions(-)
 
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/kvm/svm.c
-index 4e3c79530526,1bf20e9160bd..000000000000
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@@ -533,7 -573,9 +577,10 @@@ struct svm_cpu_data 
-  	struct kvm_ldttss_desc *tss_desc;
-  
-  	struct page *save_area;
- +	struct vmcb *current_vmcb;
-+ 
-+ 	/* index = sev_asid, value = vmcb pointer */
-+ 	struct vmcb **sev_vmcbs;
-  };
-  
-  static DEFINE_PER_CPU(struct svm_cpu_data *, svm_data);
+2.14.1
