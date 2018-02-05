@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225t8EOVPDzibBflIEC2FR79u+/PjIEWW8FKNLiQVmdEl9AcgA2CQR5+2UT9NTwxQ9Vm2FiU
-ARC-Seal: i=1; a=rsa-sha256; t=1517855032; cv=none;
+X-Google-Smtp-Source: AH8x227Q6wbGm20+orxMDCjKrlD0v9AYkLwwLTkSouUs1P24IdUXqPx7xCqQ76PZGtdz/WCqLYHJ
+ARC-Seal: i=1; a=rsa-sha256; t=1517855027; cv=none;
         d=google.com; s=arc-20160816;
-        b=IrcJ2gHLo4BWten2RTW611iMyGAL/5JEgUYGmTLnMZOU/YPULw68x+7N4/5BYpHeLl
-         0Y3JHzHk1h1iRPRLDrv47jMtTCDBTEWek5ARPZHeCq7ElOjIMG0AOHgJRj6rzUJUZWg3
-         iQNsOFhi1UHafliurFtjeC7krnBn1rKfNuTcBs1XDsImDcjA8ZFPWjlFv+Irp0mZ6vec
-         c0qIaTDj8tPH5k7EqRqiJTp1RtUXiqflpiFoOxRpBIXFx7HuBA7tNVBTVaGWeN0cjhAw
-         NSmBzd0YfiCmrYZWvYxxPN0RuvxwnIgwdm7uT82y8eA4EUfpil3W2LdHZd0GP0vXQWSH
-         DNvA==
+        b=E4UdD1lrPfFkNNs1Zooh5aJLuJb0sH0K28prMDsApRlIlykKyRCE73tDWYa6FENovN
+         NorvA8cIuGTgnETicfl50mCIveXiyfWiffphUIhHhWEi98j1E/K5SfXlMnCAV+GoLjIj
+         Pm5OtkboUEzyLciD9a6vKNASQrorptDptv70XBiV76acgSNGbPdOkvDw0W/Xsj5enGMK
+         uF6WVvOMeXMWqkpuPVX4h2zkwQmnJiJQ5TmNBZ2iBi1ps2tDcSDnejgy2DbQeN2mZkYj
+         OUHfUWA3lyo82FdYZWS9aFgHakrMNKhdEZNFZksRG3L6IUA/tQG9+25NbtSh9ZiOMErJ
+         Zs6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZZubJTTOLhLL1OsXqj2oHrbesRtDuFeanKjVAPe6Sm4=;
-        b=XUNYxiXzpsVgfssdxTnGmpFSbVBvNP863cdFcaFhJOab4sU312uz6I3158TWOaCdzH
-         fyg5kNoy7qEoXPUB1JLWAP4JfIGrJ4PvYLUh3BGGLf1ME/oa04rCGALPSo0kgjec9uSq
-         w+9JpJv/ZRDCUmqVMpJCqhMNpVEArz1Lk4yVhZ5X61UsFTl+uelgNoMHUAje/124JPO2
-         F5rRPQRGUXPI9bOygSHhSN5sFUkiepMblikOjIfk14sso6jWyC71uPQGpD2nGD79Uel6
-         QjtPcZ4W9HmDbwoHTo2deyBLk/UcabiMwcsMaGN9fUXEanDtCLEnSawVhq29nq9tr8bJ
-         KqpQ==
+        bh=wFFienIaCc7/7qjRkpnSAxz3MvbLESpu0SkB3x1QKew=;
+        b=qaqDcDAwqzfG8iCffoWKyltdPZxj73pDHdq3fXtaSSm9sXElUIPx4sMshPg1uTB4nv
+         OpsfyTOLEZaAFZJCkg+ofY0ceGt99P9htfjleiuJHaX/RAvuvrxqoYX2a/UzyGNJF2ri
+         tOt5C53+2ncCTOrYMCXWY4OdUyQXeVvUCcq2W8RDGLZV3EdUunE3JFPFZdjWZVfA1Wk6
+         ONeA/neCnrmA3c67Jr69lLkNr/NlIABMEzZINizINzBel94dsujyKxnl+p9V7+qfsgtM
+         LdQGU09Ip+myvnIHhwy5246AqhCkAqj/N1RbMY3TvLvt3pXzsurq4jn7Opehn62LO9z0
+         NTgA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juergen Gross <jgross@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 30/64] objtool: Warn on stripped section symbol
-Date: Mon,  5 Feb 2018 10:22:49 -0800
-Message-Id: <20180205182139.819380740@linuxfoundation.org>
+	Jim Mattson <jmattson@google.com>,
+	Mark Kanda <mark.kanda@oracle.com>,
+	Ameya More <ameya.more@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.14 26/64] KVM: nVMX: Eliminate vmcs02 pool
+Date: Mon,  5 Feb 2018 10:22:45 -0800
+Message-Id: <20180205182139.629817730@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -49,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586358442456996?=
-X-GMAIL-MSGID: =?utf-8?q?1591586358442456996?=
+X-GMAIL-THRID: =?utf-8?q?1591586353728512441?=
+X-GMAIL-MSGID: =?utf-8?q?1591586353728512441?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,49 +52,282 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf jpoimboe@redhat.com
+From: Jim Mattson jmattson@google.com
 
-commit 830c1e3d16b2c1733cd1ec9c8f4d47a398ae31bc
+commit de3a0021a60635de96aa92713c1a31a96747d72c
 
-With the following fix:
+The potential performance advantages of a vmcs02 pool have never been
+realized. To simplify the code, eliminate the pool. Instead, a single
+vmcs02 is allocated per VCPU when the VCPU enters VMX operation.
 
-  2a0098d70640 ("objtool: Fix seg fault with gold linker")
-
-... a seg fault was avoided, but the original seg fault condition in
-objtool wasn't fixed.  Replace the seg fault with an error message.
-
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/dc4585a70d6b975c99fc51d1957ccdde7bd52f3a.1517284349.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: stable@vger.kernel.org       # prereq for Spectre mitigation
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Mark Kanda <mark.kanda@oracle.com>
+Reviewed-by: Ameya More <ameya.more@oracle.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/orc_gen.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/kvm/vmx.c |  146 ++++++++---------------------------------------------
+ 1 file changed, 23 insertions(+), 123 deletions(-)
 
---- a/tools/objtool/orc_gen.c
-+++ b/tools/objtool/orc_gen.c
-@@ -98,6 +98,11 @@ static int create_orc_entry(struct secti
- 	struct orc_entry *orc;
- 	struct rela *rela;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -182,7 +182,6 @@ module_param(ple_window_max, int, S_IRUG
+ extern const ulong vmx_return;
  
-+	if (!insn_sec->sym) {
-+		WARN("missing symbol for section %s", insn_sec->name);
-+		return -1;
-+	}
+ #define NR_AUTOLOAD_MSRS 8
+-#define VMCS02_POOL_SIZE 1
+ 
+ struct vmcs {
+ 	u32 revision_id;
+@@ -223,7 +222,7 @@ struct shared_msr_entry {
+  * stored in guest memory specified by VMPTRLD, but is opaque to the guest,
+  * which must access it using VMREAD/VMWRITE/VMCLEAR instructions.
+  * More than one of these structures may exist, if L1 runs multiple L2 guests.
+- * nested_vmx_run() will use the data here to build a vmcs02: a VMCS for the
++ * nested_vmx_run() will use the data here to build the vmcs02: a VMCS for the
+  * underlying hardware which will be used to run L2.
+  * This structure is packed to ensure that its layout is identical across
+  * machines (necessary for live migration).
+@@ -406,13 +405,6 @@ struct __packed vmcs12 {
+  */
+ #define VMCS12_SIZE 0x1000
+ 
+-/* Used to remember the last vmcs02 used for some recently used vmcs12s */
+-struct vmcs02_list {
+-	struct list_head list;
+-	gpa_t vmptr;
+-	struct loaded_vmcs vmcs02;
+-};
+-
+ /*
+  * The nested_vmx structure is part of vcpu_vmx, and holds information we need
+  * for correct emulation of VMX (i.e., nested VMX) on this vcpu.
+@@ -437,15 +429,15 @@ struct nested_vmx {
+ 	 */
+ 	bool sync_shadow_vmcs;
+ 
+-	/* vmcs02_list cache of VMCSs recently used to run L2 guests */
+-	struct list_head vmcs02_pool;
+-	int vmcs02_num;
+ 	bool change_vmcs01_virtual_x2apic_mode;
+ 	/* L2 must run next, and mustn't decide to exit to L1. */
+ 	bool nested_run_pending;
 +
- 	/* populate ORC data */
- 	orc = (struct orc_entry *)u_sec->data->d_buf + idx;
- 	memcpy(orc, o, sizeof(*orc));
++	struct loaded_vmcs vmcs02;
++
+ 	/*
+-	 * Guest pages referred to in vmcs02 with host-physical pointers, so
+-	 * we must keep them pinned while L2 runs.
++	 * Guest pages referred to in the vmcs02 with host-physical
++	 * pointers, so we must keep them pinned while L2 runs.
+ 	 */
+ 	struct page *apic_access_page;
+ 	struct page *virtual_apic_page;
+@@ -6964,94 +6956,6 @@ static int handle_monitor(struct kvm_vcp
+ }
+ 
+ /*
+- * To run an L2 guest, we need a vmcs02 based on the L1-specified vmcs12.
+- * We could reuse a single VMCS for all the L2 guests, but we also want the
+- * option to allocate a separate vmcs02 for each separate loaded vmcs12 - this
+- * allows keeping them loaded on the processor, and in the future will allow
+- * optimizations where prepare_vmcs02 doesn't need to set all the fields on
+- * every entry if they never change.
+- * So we keep, in vmx->nested.vmcs02_pool, a cache of size VMCS02_POOL_SIZE
+- * (>=0) with a vmcs02 for each recently loaded vmcs12s, most recent first.
+- *
+- * The following functions allocate and free a vmcs02 in this pool.
+- */
+-
+-/* Get a VMCS from the pool to use as vmcs02 for the current vmcs12. */
+-static struct loaded_vmcs *nested_get_current_vmcs02(struct vcpu_vmx *vmx)
+-{
+-	struct vmcs02_list *item;
+-	list_for_each_entry(item, &vmx->nested.vmcs02_pool, list)
+-		if (item->vmptr == vmx->nested.current_vmptr) {
+-			list_move(&item->list, &vmx->nested.vmcs02_pool);
+-			return &item->vmcs02;
+-		}
+-
+-	if (vmx->nested.vmcs02_num >= max(VMCS02_POOL_SIZE, 1)) {
+-		/* Recycle the least recently used VMCS. */
+-		item = list_last_entry(&vmx->nested.vmcs02_pool,
+-				       struct vmcs02_list, list);
+-		item->vmptr = vmx->nested.current_vmptr;
+-		list_move(&item->list, &vmx->nested.vmcs02_pool);
+-		return &item->vmcs02;
+-	}
+-
+-	/* Create a new VMCS */
+-	item = kzalloc(sizeof(struct vmcs02_list), GFP_KERNEL);
+-	if (!item)
+-		return NULL;
+-	item->vmcs02.vmcs = alloc_vmcs();
+-	item->vmcs02.shadow_vmcs = NULL;
+-	if (!item->vmcs02.vmcs) {
+-		kfree(item);
+-		return NULL;
+-	}
+-	loaded_vmcs_init(&item->vmcs02);
+-	item->vmptr = vmx->nested.current_vmptr;
+-	list_add(&(item->list), &(vmx->nested.vmcs02_pool));
+-	vmx->nested.vmcs02_num++;
+-	return &item->vmcs02;
+-}
+-
+-/* Free and remove from pool a vmcs02 saved for a vmcs12 (if there is one) */
+-static void nested_free_vmcs02(struct vcpu_vmx *vmx, gpa_t vmptr)
+-{
+-	struct vmcs02_list *item;
+-	list_for_each_entry(item, &vmx->nested.vmcs02_pool, list)
+-		if (item->vmptr == vmptr) {
+-			free_loaded_vmcs(&item->vmcs02);
+-			list_del(&item->list);
+-			kfree(item);
+-			vmx->nested.vmcs02_num--;
+-			return;
+-		}
+-}
+-
+-/*
+- * Free all VMCSs saved for this vcpu, except the one pointed by
+- * vmx->loaded_vmcs. We must be running L1, so vmx->loaded_vmcs
+- * must be &vmx->vmcs01.
+- */
+-static void nested_free_all_saved_vmcss(struct vcpu_vmx *vmx)
+-{
+-	struct vmcs02_list *item, *n;
+-
+-	WARN_ON(vmx->loaded_vmcs != &vmx->vmcs01);
+-	list_for_each_entry_safe(item, n, &vmx->nested.vmcs02_pool, list) {
+-		/*
+-		 * Something will leak if the above WARN triggers.  Better than
+-		 * a use-after-free.
+-		 */
+-		if (vmx->loaded_vmcs == &item->vmcs02)
+-			continue;
+-
+-		free_loaded_vmcs(&item->vmcs02);
+-		list_del(&item->list);
+-		kfree(item);
+-		vmx->nested.vmcs02_num--;
+-	}
+-}
+-
+-/*
+  * The following 3 functions, nested_vmx_succeed()/failValid()/failInvalid(),
+  * set the success or error code of an emulated VMX instruction, as specified
+  * by Vol 2B, VMX Instruction Reference, "Conventions".
+@@ -7232,6 +7136,12 @@ static int enter_vmx_operation(struct kv
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	struct vmcs *shadow_vmcs;
+ 
++	vmx->nested.vmcs02.vmcs = alloc_vmcs();
++	vmx->nested.vmcs02.shadow_vmcs = NULL;
++	if (!vmx->nested.vmcs02.vmcs)
++		goto out_vmcs02;
++	loaded_vmcs_init(&vmx->nested.vmcs02);
++
+ 	if (cpu_has_vmx_msr_bitmap()) {
+ 		vmx->nested.msr_bitmap =
+ 				(unsigned long *)__get_free_page(GFP_KERNEL);
+@@ -7254,9 +7164,6 @@ static int enter_vmx_operation(struct kv
+ 		vmx->vmcs01.shadow_vmcs = shadow_vmcs;
+ 	}
+ 
+-	INIT_LIST_HEAD(&(vmx->nested.vmcs02_pool));
+-	vmx->nested.vmcs02_num = 0;
+-
+ 	hrtimer_init(&vmx->nested.preemption_timer, CLOCK_MONOTONIC,
+ 		     HRTIMER_MODE_REL_PINNED);
+ 	vmx->nested.preemption_timer.function = vmx_preemption_timer_fn;
+@@ -7271,6 +7178,9 @@ out_cached_vmcs12:
+ 	free_page((unsigned long)vmx->nested.msr_bitmap);
+ 
+ out_msr_bitmap:
++	free_loaded_vmcs(&vmx->nested.vmcs02);
++
++out_vmcs02:
+ 	return -ENOMEM;
+ }
+ 
+@@ -7423,7 +7333,7 @@ static void free_nested(struct vcpu_vmx
+ 		vmx->vmcs01.shadow_vmcs = NULL;
+ 	}
+ 	kfree(vmx->nested.cached_vmcs12);
+-	/* Unpin physical memory we referred to in current vmcs02 */
++	/* Unpin physical memory we referred to in the vmcs02 */
+ 	if (vmx->nested.apic_access_page) {
+ 		kvm_release_page_dirty(vmx->nested.apic_access_page);
+ 		vmx->nested.apic_access_page = NULL;
+@@ -7439,7 +7349,7 @@ static void free_nested(struct vcpu_vmx
+ 		vmx->nested.pi_desc = NULL;
+ 	}
+ 
+-	nested_free_all_saved_vmcss(vmx);
++	free_loaded_vmcs(&vmx->nested.vmcs02);
+ }
+ 
+ /* Emulate the VMXOFF instruction */
+@@ -7482,8 +7392,6 @@ static int handle_vmclear(struct kvm_vcp
+ 			vmptr + offsetof(struct vmcs12, launch_state),
+ 			&zero, sizeof(zero));
+ 
+-	nested_free_vmcs02(vmx, vmptr);
+-
+ 	nested_vmx_succeed(vcpu);
+ 	return kvm_skip_emulated_instruction(vcpu);
+ }
+@@ -8395,10 +8303,11 @@ static bool nested_vmx_exit_reflected(st
+ 
+ 	/*
+ 	 * The host physical addresses of some pages of guest memory
+-	 * are loaded into VMCS02 (e.g. L1's Virtual APIC Page). The CPU
+-	 * may write to these pages via their host physical address while
+-	 * L2 is running, bypassing any address-translation-based dirty
+-	 * tracking (e.g. EPT write protection).
++	 * are loaded into the vmcs02 (e.g. vmcs12's Virtual APIC
++	 * Page). The CPU may write to these pages via their host
++	 * physical address while L2 is running, bypassing any
++	 * address-translation-based dirty tracking (e.g. EPT write
++	 * protection).
+ 	 *
+ 	 * Mark them dirty on every exit from L2 to prevent them from
+ 	 * getting out of sync with dirty tracking.
+@@ -10894,20 +10803,15 @@ static int enter_vmx_non_root_mode(struc
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+-	struct loaded_vmcs *vmcs02;
+ 	u32 msr_entry_idx;
+ 	u32 exit_qual;
+ 
+-	vmcs02 = nested_get_current_vmcs02(vmx);
+-	if (!vmcs02)
+-		return -ENOMEM;
+-
+ 	enter_guest_mode(vcpu);
+ 
+ 	if (!(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS))
+ 		vmx->nested.vmcs01_debugctl = vmcs_read64(GUEST_IA32_DEBUGCTL);
+ 
+-	vmx_switch_vmcs(vcpu, vmcs02);
++	vmx_switch_vmcs(vcpu, &vmx->nested.vmcs02);
+ 	vmx_segment_cache_clear(vmx);
+ 
+ 	if (prepare_vmcs02(vcpu, vmcs12, from_vmentry, &exit_qual)) {
+@@ -11522,10 +11426,6 @@ static void nested_vmx_vmexit(struct kvm
+ 	vm_exit_controls_reset_shadow(vmx);
+ 	vmx_segment_cache_clear(vmx);
+ 
+-	/* if no vmcs02 cache requested, remove the one we used */
+-	if (VMCS02_POOL_SIZE == 0)
+-		nested_free_vmcs02(vmx, vmx->nested.current_vmptr);
+-
+ 	/* Update any VMCS fields that might have changed while L2 ran */
+ 	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
+ 	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.nr);
