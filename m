@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752533AbeBEBYa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:24:30 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39226 "EHLO
+        id S1752570AbeBEBYl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:24:41 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45604 "EHLO
         mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752408AbeBEBYQ (ORCPT
+        with ESMTP id S1752422AbeBEBYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:24:16 -0500
-X-Google-Smtp-Source: AH8x225y9GkVrP0VOaRjq/MFjmkKl0O2tWJVMX4GHqZY+RNPtBeWseFfnSHslV6sY+S+4PJCbYpseA==
+        Sun, 4 Feb 2018 20:24:21 -0500
+X-Google-Smtp-Source: AH8x2265SiLoQ0/3vjBfJ9nYA2N/CyCLhKWm8YeZEfRnWA9a48RX0/90Ay0bUXf4DxD86Vsqr2NgUQ==
 From: Ulf Magnusson <ulfalizer@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
@@ -17,11 +17,11 @@ Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
         robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
         will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
         yamada.masahiro@socionext.com, Ulf Magnusson <ulfalizer@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH 07/20] riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
-Date: Mon,  5 Feb 2018 02:21:19 +0100
-Message-Id: <20180205012146.23981-8-ulfalizer@gmail.com>
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org
+Subject: [PATCH 08/20] s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select
+Date: Mon,  5 Feb 2018 02:21:20 +0100
+Message-Id: <20180205012146.23981-9-ulfalizer@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
 References: <20180205012146.23981-1-ulfalizer@gmail.com>
@@ -29,15 +29,11 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ARCH_WANT_OPTIONAL_GPIOLIB symbol was removed in commit 65053e1a7743
-("gpio: delete ARCH_[WANTS_OPTIONAL|REQUIRE]_GPIOLIB"). GPIOLIB should
-just be selected explicitly if needed.
+The ARCH_WANTS_PROT_NUMA_PROT_NONE symbol was removed by
+commit 6a33979d5bd7 ("mm: remove misleading ARCH_USES_NUMA_PROT_NONE"),
+but S390 still selects it.
 
-Remove the ARCH_WANT_OPTIONAL_GPIOLIB select from RISCV.
-
-See commit 0145071b3314 ("x86: Do away with
-ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") and commit da9a1c6767 ("arm64: do
-away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") as well.
+Remove the ARCH_WANTS_PROT_NUMA_PROT_NONE select from the S390 symbol.
 
 Discovered with the
 https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
@@ -45,20 +41,20 @@ script.
 
 Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- arch/riscv/Kconfig | 1 -
+ arch/s390/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index ff69c77b9e78..716e90e60e5c 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -19,7 +19,6 @@ config RISCV
- 	select GENERIC_STRNLEN_USER
- 	select GENERIC_SMP_IDLE_THREAD
- 	select GENERIC_ATOMIC64 if !64BIT || !RISCV_ISA_A
--	select ARCH_WANT_OPTIONAL_GPIOLIB
- 	select HAVE_MEMBLOCK
- 	select HAVE_MEMBLOCK_NODE_MAP
- 	select HAVE_DMA_API_DEBUG
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 0105ce28e246..bb090b7992e4 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -112,7 +112,6 @@ config S390
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF
+ 	select ARCH_WANTS_DYNAMIC_TASK_STRUCT
+-	select ARCH_WANTS_PROT_NUMA_PROT_NONE
+ 	select ARCH_WANTS_UBSAN_NO_NULL
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+ 	select BUILDTIME_EXTABLE_SORT
 -- 
 2.14.1
