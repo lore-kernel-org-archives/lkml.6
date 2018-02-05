@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224BMCx5jeZiAaMpz01f6oFDEqivHCyp7zHF2fq0dRhf51Xf9nRdSGlk03bR8WPGQvYlzcGV
-ARC-Seal: i=1; a=rsa-sha256; t=1517855105; cv=none;
+X-Google-Smtp-Source: AH8x226RJyZWtocyYYdcIN0SiRYDTe669dGIkODRp2XG/TxqzLAcezGfizM5wP6uRaCyO2mF1ymO
+ARC-Seal: i=1; a=rsa-sha256; t=1517855102; cv=none;
         d=google.com; s=arc-20160816;
-        b=ezBlGp6FJSC4at2i+pdDmqd130wGv2UutAQHdC66clfNQI6QgIVSeHlsMiORBY5K8j
-         lG6KW5krvP4rjds2TjlDyruvReH0L/oP7Dy8ZDGhShRhldQpeud2mz7dWDUUezUzeVUU
-         1+clJ+JjVpOaovZL5Ofn//BIcsxa/mVtNZNEJ7xEnHztrJC1b6/QrmNtue7ZwcLhw16c
-         kBJzxGirNmb9qyVZt4sQoWYxpiz6L+GG7HI9kCCzZTiEUw/TazYG3aVggGQzcOCYTFhb
-         VEG2DAvMEe+i2J0tWnAPGMpIioBX8M7mQotpODeuYcalLGYYELlg1tYIokHMXzf1+5ME
-         FjtQ==
+        b=Z/KDDcRF7t0VK8RZpXu+GZdGYk1pRQ2yHiTp1of8EfF0sLG1fOGgJ+STYxEYaYZwb0
+         nAYlxVJHW3ebUbeM3ylaDtBxvRcHVtDiw9DW4zieGGty+LYZ+1X2xJSE1SOqa5OcQDw6
+         aYmAnqLNI/7Iz/m5I+Ef18NHwajy/F+HhqUg7R5Mx+kuBN9JMESUi9bdmXhtMZtqTH9H
+         Hybq1I+MGsKlqXpdql0mYuXN8LZyeb2EVX80ZxM9AAcrkSSDsgQsP6w40i141IFO6GNl
+         wVYNXzEsVrDXEjY79FzGekwEuDRo7Y03XzE0Rj5Ey2YfpiWHMXDUhjrA3p+LmeeQVNEb
+         jf6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uvBZAPmMgWNXDug/y30tVuAg3HeBQPXhP/NDlJLOK7U=;
-        b=KvH3+YMjbzOOAEv3rd7ei0dz6eQzMgN8cJPsoYVWHV14FH2VwuJghnA8Ya7T45qUh6
-         JZuHNjXjXzCmjEc+xEWZIFE0bb05jcpwssLLZo1rNJmhHYo9VduyHNWL21NpxOF3LCyr
-         L5g4E8e2QvIwW4nUXyw9UgAiok4FwIOQ7SzAtKcdPVjpk35p81ulSZRTQ9Sy90+jEuf1
-         dhD7JtwSyyfi95y3c91LTVKrIYudTeVWmINLfCyHprzZv6dfIPedR66m7XGafapMzmix
-         knC5v/jyAzJi2m2JCQQQuPoRKleukOGVObJsOoyk2LYwf2xBUo0M4wfqb5u/EG2N67F8
-         FwwA==
+        bh=WlX3nvf+9wHwVvOm8UOijYwFMSbZCb9hLCuompoGUHU=;
+        b=imJMvMYjSCLMplVhFe1SQkZTbrQD8F8FlupspodW+kJPnwoTlhW2Rv4KWt1cwxNN2T
+         pW6sqED6bmwc9xo784IMOwHriGown0wMw5lOV7+NJ7PIpPeJ60q9V8WuAxn5HRMWkbER
+         iUYeG44rIagQ30INDuZ2trrLu482Rntw52t0TRsansO6Y8XuDIr2LA0A9XZ99Rddf46w
+         FUSyMofgLcIZndFdcpyyNDEuj7xyCb/shvL1ucf8IvH+Yrz54j5JqhiHT4edUDBr9YF4
+         flDjWWSFqneLV9gS1LMbbK3doHnrFFqNcunuoETEQmNa0pLamF17JU+wFHnfrnL/DzxZ
+         xRRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,7 +28,7 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
+	Borislav Petkov <bp@suse.de>,
 	gnomes@lxorguk.ukuu.org.uk,
 	ak@linux.intel.com,
 	ashok.raj@intel.com,
@@ -41,9 +41,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	pbonzini@redhat.com,
 	tim.c.chen@linux.intel.com,
 	gregkh@linux-foundation.org
-Subject: [PATCH 4.15 06/60] x86/cpufeatures: Add AMD feature bits for Speculation Control
-Date: Mon,  5 Feb 2018 10:22:39 -0800
-Message-Id: <20180205182214.184700336@linuxfoundation.org>
+Subject: [PATCH 4.15 05/60] x86/cpufeatures: Add Intel feature bits for Speculation Control
+Date: Mon,  5 Feb 2018 10:22:38 -0800
+Message-Id: <20180205182214.137394985@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
 References: <20180205182213.902626065@linuxfoundation.org>
@@ -52,8 +52,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586376831893912?=
-X-GMAIL-MSGID: =?utf-8?q?1591586434983325316?=
+X-GMAIL-THRID: =?utf-8?q?1591586373896648108?=
+X-GMAIL-MSGID: =?utf-8?q?1591586432187549946?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -63,15 +63,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse dwmw@amazon.co.uk
 
-commit 5d10cbc91d9eb5537998b65608441b592eec65e7
+commit fc67dd70adb711a45d2ef34e12d1a8be75edde61
 
-AMD exposes the PRED_CMD/SPEC_CTRL MSRs slightly differently to Intel.
-See http://lkml.kernel.org/r/2b3e25cc-286d-8bd0-aeaf-9ac4aae39de8@amd.com
+Add three feature bits exposed by new microcode on Intel CPUs for
+speculation control.
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 Cc: gnomes@lxorguk.ukuu.org.uk
 Cc: ak@linux.intel.com
 Cc: ashok.raj@intel.com
@@ -84,7 +84,7 @@ Cc: bp@alien8.de
 Cc: pbonzini@redhat.com
 Cc: tim.c.chen@linux.intel.com
 Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1516896855-7642-4-git-send-email-dwmw@amazon.co.uk
+Link: https://lkml.kernel.org/r/1516896855-7642-3-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
@@ -94,13 +94,13 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/arch/x86/include/asm/cpufeatures.h
 +++ b/arch/x86/include/asm/cpufeatures.h
-@@ -269,6 +269,9 @@
- #define X86_FEATURE_CLZERO		(13*32+ 0) /* CLZERO instruction */
- #define X86_FEATURE_IRPERF		(13*32+ 1) /* Instructions Retired Count */
- #define X86_FEATURE_XSAVEERPTR		(13*32+ 2) /* Always save/restore FP error pointers */
-+#define X86_FEATURE_AMD_PRED_CMD	(13*32+12) /* Prediction Command MSR (AMD) */
-+#define X86_FEATURE_AMD_SPEC_CTRL	(13*32+14) /* Speculation Control MSR only (AMD) */
-+#define X86_FEATURE_AMD_STIBP		(13*32+15) /* Single Thread Indirect Branch Predictors (AMD) */
+@@ -320,6 +320,9 @@
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
+ #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
+ #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
++#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* Speculation Control (IBRS + IBPB) */
++#define X86_FEATURE_STIBP		(18*32+27) /* Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
  
- /* Thermal and Power Management Leaf, CPUID level 0x00000006 (EAX), word 14 */
- #define X86_FEATURE_DTHERM		(14*32+ 0) /* Digital Thermal Sensor */
+ /*
+  * BUG word(s)
