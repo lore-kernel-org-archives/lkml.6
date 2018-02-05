@@ -1,52 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753219AbeBEPcQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:32:16 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33429 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752924AbeBEPcJ (ORCPT
+        id S1753260AbeBEPdm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:33:42 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:40741 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbeBEPdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:32:09 -0500
-X-Google-Smtp-Source: AH8x225dr0igwuOuEkpQcL+oFhjFOoEJg68MiP2SOK3GGoO50pKup4uXURANSej6v86WlSK/N9OV4w==
+        Mon, 5 Feb 2018 10:33:35 -0500
+X-Google-Smtp-Source: AH8x226M8WOvfPM8yG5Otwhi9MYTwE2KIKBZkCoN2oeVJTOuLmRpWCCoO7sdfZ557bFSrPiIawGJKgvxbHgRjjT8Ce0=
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=McJsneYdh8zDmYcUsFLiAyOmSeyOKhKfim4or7LwyEH1w@mail.gmail.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-41-git-send-email-david@lechnology.com> <335d92c8-1af2-da64-e366-95d7513ad69d@lechnology.com>
+ <CAMRc=McJsneYdh8zDmYcUsFLiAyOmSeyOKhKfim4or7LwyEH1w@mail.gmail.com>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH] ARM: dts: da850-lcdk: add clock properties to the nand node
-Date: Mon,  5 Feb 2018 16:32:04 +0100
-Message-Id: <20180205153204.20317-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.16.1
+Date: Mon, 5 Feb 2018 16:33:34 +0100
+Message-ID: <CAMRc=MdtgYB6Fa3ZeARncTDWfEXrZ4EYFXC0Lf=RHv0-ZSZf5A@mail.gmail.com>
+Subject: Re: [PATCH v6 40/41] ARM: da8xx-dt: switch to device tree clocks
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+2018-02-05 15:04 GMT+01:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> 2018-01-24 4:26 GMT+01:00 David Lechner <david@lechnology.com>:
+>> On 01/20/2018 11:14 AM, David Lechner wrote:
+>>>
+>>> This removes all of the clock init code from da8xx-dt.c. This includes
+>>> all of the OF_DEV_AUXDATA that was just used for looking up clocks.
+>>>
+>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>> ---
+>>>
+>>> v6 changes:
+>>> - removed misleading statement from commit message
+>>>
+>>>   arch/arm/mach-davinci/da8xx-dt.c | 61
+>>> +---------------------------------------
+>>>   1 file changed, 1 insertion(+), 60 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-davinci/da8xx-dt.c
+>>> b/arch/arm/mach-davinci/da8xx-dt.c
+>>
+>>
+>>>   static void __init da850_init_machine(void)
+>>>   {
+>>> -       /* All existing boards use 100MHz SATA refclkpn */
+>>> -       static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
+>>> -
+>>> -       int ret;
+>>> -
+>>> -       ret = da8xx_register_usb20_phy_clk(false);
+>>> -       if (ret)
+>>> -               pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
+>>> -                       __func__, ret);
+>>> -       ret = da8xx_register_usb11_phy_clk(false);
+>>> -       if (ret)
+>>> -               pr_warn("%s: registering USB 1.1 PHY clock failed: %d",
+>>> -                       __func__, ret);
+>>> -
+>>> -       ret = da850_register_sata_refclk(sata_refclkpn);
+>>> -       if (ret)
+>>> -               pr_warn("%s: registering SATA REFCLK failed: %d",
+>>> -                       __func__, ret);
+>>> -
+>>> -       of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
+>>> +       of_platform_default_populate(NULL, NULL, NULL);
+>>
+>>
+>> of_platform_default_populate() can actually be removed completely.
+>> of_platform_default_populate_init() is called implicitly during
+>> arch_initcall_sync
+>>
+>>>         davinci_pm_init();
+>>>         pdata_quirks_init();
+>>>   }
+>
+> Hi David,
+>
+> this patch breaks nand on da850-lcdk (and probably on da850-evm) since
+> the nand driver can no longer clk_get() the nand clock. We would need
+> to keep the dev_auxdata at least for aemif.
+>
+> Thanks,
+> Bartosz
 
-Make nand work with the common clock framework by specifying which
-clock should be used and what name to look up.
+Actually scratch that last e-mail, I missed the fact that the nand
+node is only there in the board dts files. I've just sent you a patch
+that enables nand on da850-lcdk. Please include it in your series.
+I'll do the same for evm shortly.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/boot/dts/da850-lcdk.dts | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
-index a1f4d6d5a569..2e725c57a0fe 100644
---- a/arch/arm/boot/dts/da850-lcdk.dts
-+++ b/arch/arm/boot/dts/da850-lcdk.dts
-@@ -264,6 +264,9 @@
- 			reg = <0 0x02000000 0x02000000
- 			       1 0x00000000 0x00008000>;
- 
-+			clocks = <&psc0 3>;
-+			clock-names = "aemif";
-+
- 			ti,davinci-chipselect = <1>;
- 			ti,davinci-mask-ale = <0>;
- 			ti,davinci-mask-cle = <0>;
--- 
-2.16.1
+Thanks,
+Bartosz
