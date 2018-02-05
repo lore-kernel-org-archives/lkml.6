@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225JhP6txUGNB3LaMRQbN4X8Qi3dwMAfRmV/HI2JUF8kYNALa7sNbHM4yORVlOChVtRcleZ7
-ARC-Seal: i=1; a=rsa-sha256; t=1517855017; cv=none;
+X-Google-Smtp-Source: AH8x22424cNNl3hZImvFjKj0vd1nM09bWqm5lsNuNPj2xd/IZEa40KJoWm7czxnHdT1j78Ze/JTP
+ARC-Seal: i=1; a=rsa-sha256; t=1517855016; cv=none;
         d=google.com; s=arc-20160816;
-        b=0XSzJfroSBsTzS3FfUe7SOXJNVpm5FUgycPQuHGYhh0b6bKMerXO4+BEUbzTOgvTje
-         b9HwsZgDap7FF866GSNerjXXwA5qB6ajbODErg9kC02+gMNF5XnxCigBIb10CXmC1j8K
-         WkOyAvkgI1FHuItYoxAZDRAno3K4NuaVLfyMkWyP7oxgxJLEIcO49J2+JicdaMTfcywT
-         6CQtjTxu0Hj71MgTOWFOJAIVr5JcBRdvDBPFISuHB3NU6iGgBf5hFt97AotnbWRd+SJH
-         pwsbqLs5i8BataltNchxId/BjXUIuTENK8uUSHB5MwBEStrRCsAOOmRfyP8VfBQdSi8r
-         3OSg==
+        b=b2PSRHiftqQG4ywhJiBFD5zyUpohdbCY2WZsP0Hrp/0cyeq3u9E4Pfo9tAzRkINlDA
+         QrKK1zOC+jKGe5fEJHh29vyEw6rTVlpNnL8MD3eLALncGzemYgwgEPcb4IIz8RM2C3qA
+         lXdSZ4fsrQ/V8eVDbGsXxKrVndBlWumwUExXl9I8FHHJDNk0LWjtR8GlzVwkJwrY6tMY
+         u5uaoztYBDyYrtN7XvFmU4rrRKK9ZA1s1KGbPG0AoueWEbB5xFCVcMNHQnJ8s1N5jd5w
+         m5T6FvUZzxebsQPS/cPp+Xcj8Q9DpzA1uTawafSpXhBqy692Kyd0guFRiMBuN/byASwN
+         NdkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SmqzN49mh8DoEUxQHsEVFd88niRMGxozCnZMT30Sgt0=;
-        b=rGq67h6680Qe1H/AvDKCBvfmiiD7C58dRAzVvw7JXEMLQvUnPy4IOrfIiGum6UW6Cs
-         ELnE2qZEAranjZOUm6PStus1AHJywAE9lbAQWa4rLhw4Nclcu6cZ+yoE+PdMbYL/dTmv
-         Cp7rJroDvFTNbLY/tg8iZTKjzsM2S3zQ7xKUyzcewXvaxtUZ9qksbm/TaWtRWqKnDITq
-         KDulpIoMhRKZ845DRn2+PN2oWHTTJQuaIDX4Ro7CAC/YWCk8I5lLBFVI2bW1B+EvTUM6
-         KmP3yCaoYfgMmXn2bAJJsXW6jR+NiSL2S0SppVvfig+bZy8qNMSe3VDL+g+i+wQzZEXi
-         4s7A==
+        bh=DZgHG9AHzSklLQu9yhnWMuvP4o90v7lYl/ljai/ixs0=;
+        b=Psr/mKb4EAZ4RVws3a5bcqsvW6+msL/iYlSgEaesR3ytrSwjh3peWzpyqIFb7ZWOUY
+         rZlneqk4xx8Q32hlAnAizvP1vsZ+UU6D5TtdECVoWSd4WiIZz2S3Tdm0JkA3uLzRzELy
+         LhF9n1A4T5pD7xMNl7GDnFFn+1VsSH8W8F7XGxIldEt1fRCQ+1S8aDTMwJVOx3cLxqo4
+         qKDIXKiSUthi4aIy3R+4O4O3KLkFOkY1YZWG2h2g3fd9kjE2Yke4tdNBBzX+slkUCkLS
+         20hjVnDd7wBRL+vuN5FM14i+6zZ906+FejkkIFwT2gG5YTRlhMBk0a1QyfFIMVxYseki
+         A6dw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Woodhouse <dwmw@amazon.co.uk>,
+	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	ak@linux.intel.com,
-	dave.hansen@intel.com,
-	karahmed@amazon.de,
-	arjan@linux.intel.com,
-	torvalds@linux-foundation.org,
-	peterz@infradead.org,
-	bp@alien8.de,
-	pbonzini@redhat.com,
-	tim.c.chen@linux.intel.com,
-	gregkh@linux-foundation.org
-Subject: [PATCH 4.14 19/64] x86/cpufeatures: Clean up Spectre v2 related CPUID flags
-Date: Mon,  5 Feb 2018 10:22:38 -0800
-Message-Id: <20180205182139.351313184@linuxfoundation.org>
+	Andi Kleen <ak@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH 4.14 18/64] x86/cpu/bugs: Make retpoline module warning conditional
+Date: Mon,  5 Feb 2018 10:22:37 -0800
+Message-Id: <20180205182139.309136422@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -49,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586342823554380?=
-X-GMAIL-MSGID: =?utf-8?q?1591586342823554380?=
+X-GMAIL-THRID: =?utf-8?q?1591586341940305144?=
+X-GMAIL-MSGID: =?utf-8?q?1591586341940305144?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,169 +50,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse dwmw@amazon.co.uk
+From: Thomas Gleixner tglx@linutronix.de
 
-commit 2961298efe1ea1b6fc0d7ee8b76018fa6c0bcef2
+commit e383095c7fe8d218e00ec0f83e4b95ed4e627b02
 
-We want to expose the hardware features simply in /proc/cpuinfo as "ibrs",
-"ibpb" and "stibp". Since AMD has separate CPUID bits for those, use them
-as the user-visible bits.
+If sysfs is disabled and RETPOLINE not defined:
 
-When the Intel SPEC_CTRL bit is set which indicates both IBRS and IBPB
-capability, set those (AMD) bits accordingly. Likewise if the Intel STIBP
-bit is set, set the AMD STIBP that's used for the generic hardware
-capability.
+arch/x86/kernel/cpu/bugs.c:97:13: warning: ‘spectre_v2_bad_module’ defined but not used
+[-Wunused-variable]
+ static bool spectre_v2_bad_module;
 
-Hide the rest from /proc/cpuinfo by putting "" in the comments. Including
-RETPOLINE and RETPOLINE_AMD which shouldn't be visible there. There are
-patches to make the sysfs vulnerabilities information non-readable by
-non-root, and the same should apply to all information about which
-mitigations are actually in use. Those *shouldn't* appear in /proc/cpuinfo.
+Hide it.
 
-The feature bit for whether IBPB is actually used, which is needed for
-ALTERNATIVEs, is renamed to X86_FEATURE_USE_IBPB.
-
-Originally-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Fixes: caf7501a1b4e ("module/retpoline: Warn about missing retpoline in module")
+Reported-by: Borislav Petkov <bp@alien8.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: ak@linux.intel.com
-Cc: dave.hansen@intel.com
-Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1517070274-12128-2-git-send-email-dwmw@amazon.co.uk
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/x86/include/asm/cpufeatures.h   |   18 +++++++++---------
- arch/x86/include/asm/nospec-branch.h |    2 +-
- arch/x86/kernel/cpu/bugs.c           |    7 +++----
- arch/x86/kernel/cpu/intel.c          |   31 +++++++++++++++++++++----------
- 4 files changed, 34 insertions(+), 24 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -203,14 +203,14 @@
- #define X86_FEATURE_PROC_FEEDBACK	( 7*32+ 9) /* AMD ProcFeedbackInterface */
- #define X86_FEATURE_SME			( 7*32+10) /* AMD Secure Memory Encryption */
- #define X86_FEATURE_PTI			( 7*32+11) /* Kernel Page Table Isolation enabled */
--#define X86_FEATURE_RETPOLINE		( 7*32+12) /* Generic Retpoline mitigation for Spectre variant 2 */
--#define X86_FEATURE_RETPOLINE_AMD	( 7*32+13) /* AMD Retpoline mitigation for Spectre variant 2 */
-+#define X86_FEATURE_RETPOLINE		( 7*32+12) /* "" Generic Retpoline mitigation for Spectre variant 2 */
-+#define X86_FEATURE_RETPOLINE_AMD	( 7*32+13) /* "" AMD Retpoline mitigation for Spectre variant 2 */
- #define X86_FEATURE_INTEL_PPIN		( 7*32+14) /* Intel Processor Inventory Number */
- 
- #define X86_FEATURE_MBA			( 7*32+18) /* Memory Bandwidth Allocation */
--#define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* Fill RSB on context switches */
-+#define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* "" Fill RSB on context switches */
- 
--#define X86_FEATURE_IBPB		( 7*32+21) /* Indirect Branch Prediction Barrier enabled*/
-+#define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-@@ -271,9 +271,9 @@
- #define X86_FEATURE_CLZERO		(13*32+ 0) /* CLZERO instruction */
- #define X86_FEATURE_IRPERF		(13*32+ 1) /* Instructions Retired Count */
- #define X86_FEATURE_XSAVEERPTR		(13*32+ 2) /* Always save/restore FP error pointers */
--#define X86_FEATURE_AMD_PRED_CMD	(13*32+12) /* Prediction Command MSR (AMD) */
--#define X86_FEATURE_AMD_SPEC_CTRL	(13*32+14) /* Speculation Control MSR only (AMD) */
--#define X86_FEATURE_AMD_STIBP		(13*32+15) /* Single Thread Indirect Branch Predictors (AMD) */
-+#define X86_FEATURE_IBPB		(13*32+12) /* Indirect Branch Prediction Barrier */
-+#define X86_FEATURE_IBRS		(13*32+14) /* Indirect Branch Restricted Speculation */
-+#define X86_FEATURE_STIBP		(13*32+15) /* Single Thread Indirect Branch Predictors */
- 
- /* Thermal and Power Management Leaf, CPUID level 0x00000006 (EAX), word 14 */
- #define X86_FEATURE_DTHERM		(14*32+ 0) /* Digital Thermal Sensor */
-@@ -325,8 +325,8 @@
- /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
- #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
- #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
--#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* Speculation Control (IBRS + IBPB) */
--#define X86_FEATURE_STIBP		(18*32+27) /* Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
-+#define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
- 
- /*
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -225,7 +225,7 @@ static inline void indirect_branch_predi
- 				 "movl %[val], %%eax\n\t"
- 				 "movl $0, %%edx\n\t"
- 				 "wrmsr",
--				 X86_FEATURE_IBPB)
-+				 X86_FEATURE_USE_IBPB)
- 		     : : [msr] "i" (MSR_IA32_PRED_CMD),
- 			 [val] "i" (PRED_CMD_IBPB)
- 		     : "eax", "ecx", "edx", "memory");
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -273,9 +273,8 @@ retpoline_auto:
- 	}
+@@ -94,9 +94,10 @@ static const char *spectre_v2_strings[]
+ #define pr_fmt(fmt)     "Spectre V2 : " fmt
  
- 	/* Initialize Indirect Branch Prediction Barrier if supported */
--	if (boot_cpu_has(X86_FEATURE_SPEC_CTRL) ||
--	    boot_cpu_has(X86_FEATURE_AMD_PRED_CMD)) {
--		setup_force_cpu_cap(X86_FEATURE_IBPB);
-+	if (boot_cpu_has(X86_FEATURE_IBPB)) {
-+		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 		pr_info("Enabling Indirect Branch Prediction Barrier\n");
- 	}
+ static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
+-static bool spectre_v2_bad_module;
+ 
+ #ifdef RETPOLINE
++static bool spectre_v2_bad_module;
++
+ bool retpoline_module_ok(bool has_retpoline)
+ {
+ 	if (spectre_v2_enabled == SPECTRE_V2_NONE || has_retpoline)
+@@ -106,6 +107,13 @@ bool retpoline_module_ok(bool has_retpol
+ 	spectre_v2_bad_module = true;
+ 	return false;
  }
-@@ -308,7 +307,7 @@ ssize_t cpu_show_spectre_v2(struct devic
++
++static inline const char *spectre_v2_module_string(void)
++{
++	return spectre_v2_bad_module ? " - vulnerable module loaded" : "";
++}
++#else
++static inline const char *spectre_v2_module_string(void) { return ""; }
+ #endif
+ 
+ static void __init spec2_print_if_insecure(const char *reason)
+@@ -300,7 +308,7 @@ ssize_t cpu_show_spectre_v2(struct devic
  		return sprintf(buf, "Not affected\n");
  
  	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IBPB" : "",
-+		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 		       spectre_v2_module_string());
+-		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IPBP" : "",
+-		       spectre_v2_bad_module ? " - vulnerable module loaded" : "");
++		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IBPB" : "",
++		       spectre_v2_module_string());
  }
  #endif
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -175,17 +175,28 @@ static void early_init_intel(struct cpui
- 	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64))
- 		c->microcode = intel_get_microcode_revision();
- 
--	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
--	     cpu_has(c, X86_FEATURE_STIBP) ||
--	     cpu_has(c, X86_FEATURE_AMD_SPEC_CTRL) ||
--	     cpu_has(c, X86_FEATURE_AMD_PRED_CMD) ||
--	     cpu_has(c, X86_FEATURE_AMD_STIBP)) && bad_spectre_microcode(c)) {
--		pr_warn("Intel Spectre v2 broken microcode detected; disabling SPEC_CTRL\n");
--		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
-+	/*
-+	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
-+	 * and they also have a different bit for STIBP support. Also,
-+	 * a hypervisor might have set the individual AMD bits even on
-+	 * Intel CPUs, for finer-grained selection of what's available.
-+	 */
-+	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
-+		set_cpu_cap(c, X86_FEATURE_IBRS);
-+		set_cpu_cap(c, X86_FEATURE_IBPB);
-+	}
-+	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
-+		set_cpu_cap(c, X86_FEATURE_STIBP);
-+
-+	/* Now if any of them are set, check the blacklist and clear the lot */
-+	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
-+	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
-+		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
-+		clear_cpu_cap(c, X86_FEATURE_IBRS);
-+		clear_cpu_cap(c, X86_FEATURE_IBPB);
- 		clear_cpu_cap(c, X86_FEATURE_STIBP);
--		clear_cpu_cap(c, X86_FEATURE_AMD_SPEC_CTRL);
--		clear_cpu_cap(c, X86_FEATURE_AMD_PRED_CMD);
--		clear_cpu_cap(c, X86_FEATURE_AMD_STIBP);
-+		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
-+		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
- 	}
- 
- 	/*
