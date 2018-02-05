@@ -1,67 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeBEG7L (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 01:59:11 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:40259 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752450AbeBEG6t (ORCPT
+        id S1752536AbeBEHCK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 02:02:10 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:60637 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750943AbeBEHCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:58:49 -0500
-X-Google-Smtp-Source: AH8x225gowk0HQANfNb76UkXWEdf4kve2FtZUcdUFSri3n9E6q/7jTMdx9eIgcqZslNDp1cBDiSTEA==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH v2 2/2] KVM: X86: Avoid traversing all the cpus for pv tlb flush when steal time is disabled
-Date: Sun,  4 Feb 2018 22:57:58 -0800
-Message-Id: <1517813878-22248-2-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517813878-22248-1-git-send-email-wanpengli@tencent.com>
-References: <1517813878-22248-1-git-send-email-wanpengli@tencent.com>
+        Mon, 5 Feb 2018 02:02:03 -0500
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Rob Herring <robh@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
+        Olivier BIDEAU <olivier.bideau@st.com>
+Subject: Re: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock
+ Controller (RCC) bindings
+Thread-Topic: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock
+ Controller (RCC) bindings
+Thread-Index: AQHTnC6xOopTFeaJM06WENWOkBZn+aOVRqYAgAAOggA=
+Date: Mon, 5 Feb 2018 07:01:29 +0000
+Message-ID: <19273eb9-0c8c-cd2a-d100-f25f25e93234@st.com>
+References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+ <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
+ <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
+In-Reply-To: <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1343AFFC232B3B47A40BB9BA097D506F@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-05_01:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1572EAt031572
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Hi Rob,
 
-Avoid traversing all the cpus for pv tlb flush when steal time 
-is disabled since pv tlb flush depends on the field in steal time 
-for shared data.
+Thanks for reviewing.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kernel/kvm.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index f2a09cf..4f3c997 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -546,7 +546,8 @@ static void __init kvm_guest_init(void)
- 	}
- 
- 	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
--			!kvm_para_has_feature(KVM_FEATURE_PV_DEDICATED))
-+			!kvm_para_has_feature(KVM_FEATURE_PV_DEDICATED) &&
-+			kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
- 		pv_mmu_ops.flush_tlb_others = kvm_flush_tlb_others;
- 
- 	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
-@@ -635,7 +636,8 @@ static __init int kvm_setup_pv_tlb_flush(void)
- 	int cpu;
- 
- 	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
--			!kvm_para_has_feature(KVM_FEATURE_PV_DEDICATED)) {
-+			!kvm_para_has_feature(KVM_FEATURE_PV_DEDICATED) &&
-+			kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
- 		for_each_possible_cpu(cpu) {
- 			zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
- 				GFP_KERNEL, cpu_to_node(cpu));
--- 
-2.7.4
+On 02/05/2018 07:09 AM, Rob Herring wrote:
+> On Fri, Feb 02, 2018 at 03:03:29PM +0100, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> The RCC block is responsible of the management of the clock and reset
+>> generation for the complete circuit.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>> ---
+>>   .../devicetree/bindings/mfd/st,stm32-rcc.txt       | 85 ++++++++++++++++++++++
+>>   1 file changed, 85 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt b/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
+>> new file mode 100644
+>> index 0000000..28017a1
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
+>> @@ -0,0 +1,85 @@
+>> +STMicroelectronics STM32 Peripheral Reset Clock Controller
+>> +==========================================================
+>> +
+>> +The RCC IP is both a reset and a clock controller.
+>> +
+>> +Please also refer to reset.txt for common reset controller binding usage.
+>> +
+>> +Please also refer to clock-bindings.txt for common clock controller
+>> +binding usage.
+>> +
+>> +
+>> +Required properties:
+>> +- compatible: "simple-mfd", "syscon"
+>
+>> +- reg: should be register base and length as documented in the datasheet
+>> +
+>> +- Sub-nodes:
+>> +  - compatible: "st,stm32mp1-rcc-clk"
+>> +	- #clock-cells: 1, device nodes should specify the clock in their
+>> +	  "clocks" property, containing a phandle to the clock device node,
+>> +	  an index specifying the clock to use.
+>> +
+>> +  - compatible: "st,stm32mp1-rcc-rst"
+>> +	- #reset-cells: Shall be 1
+>> +
+>> +Example:
+>> +	rcc: rcc@50000000 {
+>> +		compatible = "syscon", "simple-mfd";
+>> +		reg = <0x50000000 0x1000>;
+>> +
+>> +		rcc_clk: rcc-clk@50000000 {
+>> +			#clock-cells = <1>;
+>> +			compatible = "st,stm32mp1-rcc-clk";
+>> +		};
+>> +
+>> +		rcc_rst: rcc-reset@50000000 {
+> You should not have the same unit-address twice.
+>
+> IMO, this should just be:
+>
+> 	rcc: rcc@50000000 {
+> 		compatible = "st-stm32mp1-rcc";
+> 		reg = <0x50000000 0x1000>;
+> 		#clock-cells = <1>;
+> 		#reset-cells = <1>;
+> 	};
+>
+> There's no reason a node can't provide more than 1 function.
+RCC is an dedicated IP for clocks and resets, but also for power 
+management (patches will be sent later)
+Then i need to probe 3 drivers with same IP.
+It's also a way to avoid use of 'CLK_OF_DECLARE_DRIVER' and i need it to 
+probe the 3th driver.
+
+BR
+Gabriel
+
+>
+>
+>> +			#reset-cells = <1>;
+>> +			compatible = "st,stm32mp1-rcc-rst";
+>> +		};
+>> +	};
+>> +
+>> +Specifying clocks
+>> +=================
+>> +
+>> +All available clocks are defined as preprocessor macros in
+>> +dt-bindings/clock/stm32mp1-clks.h header and can be used in device
+>> +tree sources.
+>> +
+>> +Example:
+>> +
+>> +	/* Accessing DMA1 clock */
+>> +	... {
+>> +		clocks = <&rcc_clk DMA1>
+>> +	};
+>> +
+>> +	/* Accessing SPI6 kernel clock */
+>> +	... {
+>> +		clocks = <&rcc_clk SPI6_K>
+>> +	};
+> Other than the path to header, the clock binding explains all this. No
+> need to duplicate here.
+ok
+>> +
+>> +Specifying softreset control of devices
+>> +=======================================
+>> +
+>> +Device nodes should specify the reset channel required in their "resets"
+>> +property, containing a phandle to the reset device node and an index specifying
+>> +which channel to use.
+>> +The index is the bit number within the RCC registers bank, starting from RCC
+>> +base address.
+>> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
+>> +Where bit_offset is the bit offset within the register.
+>> +
+>> +For example on STM32MP1, for LTDC reset:
+>> + ltdc = APB4_RSTSETR_offset / 4 * 32 + LTDC_bit_offset
+>> +      = 0x180 / 4 * 32 + 0 = 3072
+>> +
+>> +The list of valid indices for STM32MP1 is available in:
+>> +include/dt-bindings/reset-controller/stm32mp1-resets.h
+>> +
+>> +This file implements defines like:
+>> +#define LTDC_R	3072
+>> +
+>> +example:
+>> +
+>> +	ltdc {
+>> +		resets = <&rcc_rst LTDC_R>;
+>> +	};
+>> -- 
+>> 1.9.1
+>>
