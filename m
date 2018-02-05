@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752492AbeBEB0M (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:26:12 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33781 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752476AbeBEBZK (ORCPT
+        id S1752210AbeBEB0Z (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:26:25 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:42198 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752556AbeBEBZW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:25:10 -0500
-X-Google-Smtp-Source: AH8x225j5mJUWyiBkzsiqZPKJvrx0QVGef+8cuMxNVrVePwm1/7u9st1Mw9APP0n72vt7G2ARzQSdA==
+        Sun, 4 Feb 2018 20:25:22 -0500
+X-Google-Smtp-Source: AH8x224cw17FQvO2dE5fM23qUeTyxSUl5OjaJJsx77qEah/8hNNHV/+DaljtShZaDu0LsJfmshkKQQ==
 From: Ulf Magnusson <ulfalizer@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
@@ -17,14 +17,18 @@ Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
         robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
         will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
         yamada.masahiro@socionext.com, Ulf Magnusson <ulfalizer@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 15/20] phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB
-Date: Mon,  5 Feb 2018 02:21:27 +0100
-Message-Id: <20180205012146.23981-16-ulfalizer@gmail.com>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        linux-media@vger.kernel.org
+Subject: [PATCH 17/20] media: sec: Remove PLAT_S5P dependency
+Date: Mon,  5 Feb 2018 02:21:29 +0100
+Message-Id: <20180205012146.23981-18-ulfalizer@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
 References: <20180205012146.23981-1-ulfalizer@gmail.com>
@@ -32,10 +36,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Exynos4212 support was removed by commit bca9085e0ae9 ("ARM: dts:
-exynos: remove Exynos4212 support (dead code)").
+The PLAT_S5P symbol was removed in commit d78c16ccde96 ("ARM: SAMSUNG:
+Remove remaining legacy code").
 
-Remove the SOC_EXYNOS4212 dependency from PHY_EXYNOS4X12_USB.
+Remove the PLAT_S5P dependency from VIDEO_SAMSUNG_S5P_CEC.
 
 Discovered with the
 https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
@@ -43,21 +47,21 @@ script.
 
 Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- drivers/phy/samsung/Kconfig | 2 +-
+ drivers/media/platform/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-index b7e0645a7bd9..2a5d33cb0e7e 100644
---- a/drivers/phy/samsung/Kconfig
-+++ b/drivers/phy/samsung/Kconfig
-@@ -49,7 +49,7 @@ config PHY_EXYNOS4210_USB2
- config PHY_EXYNOS4X12_USB2
- 	bool
- 	depends on PHY_SAMSUNG_USB2
--	default SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412
-+	default SOC_EXYNOS3250 || SOC_EXYNOS4412
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index 614fbef08ddc..8b4cd02e2938 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -582,7 +582,7 @@ config CEC_GPIO
  
- config PHY_EXYNOS5250_USB2
- 	bool
+ config VIDEO_SAMSUNG_S5P_CEC
+        tristate "Samsung S5P CEC driver"
+-       depends on PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST
++       depends on ARCH_EXYNOS || COMPILE_TEST
+        select CEC_CORE
+        select CEC_NOTIFIER
+        ---help---
 -- 
 2.14.1
