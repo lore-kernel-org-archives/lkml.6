@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeBEB07 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:26:59 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35791 "EHLO
+        id S1752726AbeBEB1N (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:27:13 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:41288 "EHLO
         mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752166AbeBEBZf (ORCPT
+        with ESMTP id S1752154AbeBEBZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:25:35 -0500
-X-Google-Smtp-Source: AH8x224bQAuCYw008dVJVaDwpcAxJcQcKcuQy4rQ80DL15Qz2+StpvqEHEzHGcjdjGHXK21ljKG0cg==
+        Sun, 4 Feb 2018 20:25:31 -0500
+X-Google-Smtp-Source: AH8x227iFTmusdEZxD0Dd3Z/N+Y7BwheAcUVqfescvnFfZIRU+dva9PKeLC2/HjhXlU+ebhg08dLUw==
 From: Ulf Magnusson <ulfalizer@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
@@ -17,10 +17,15 @@ Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
         robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
         will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
         yamada.masahiro@socionext.com, Ulf Magnusson <ulfalizer@gmail.com>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH 19/20] ARC: Fix malformed ARC_EMUL_UNALIGNED default
-Date: Mon,  5 Feb 2018 02:21:31 +0100
-Message-Id: <20180205012146.23981-20-ulfalizer@gmail.com>
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH 18/20] iwlwifi: fix malformed CONFIG_IWLWIFI_PCIE_RTPM default
+Date: Mon,  5 Feb 2018 02:21:30 +0100
+Message-Id: <20180205012146.23981-19-ulfalizer@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
 References: <20180205012146.23981-1-ulfalizer@gmail.com>
@@ -28,12 +33,12 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'default N' should be 'default n', though they happen to have the same
-effect here, due to undefined symbols (N in this case) evaluating to n
-in a tristate sense.
+'default false' should be 'default n', though they happen to have the
+same effect here, due to undefined symbols ('false' in this case)
+evaluating to n in a tristate sense.
 
-Remove the default from ARC_EMUL_UNALIGNED instead of changing it. bool
-and tristate symbols implicitly default to n.
+Remove the default instead of changing it. bool and tristate symbols
+implicitly default to n.
 
 Discovered with the
 https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
@@ -41,20 +46,20 @@ script.
 
 Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- arch/arc/Kconfig | 1 -
+ drivers/net/wireless/intel/iwlwifi/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index f3a80cf164cc..d76bf4a83740 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -484,7 +484,6 @@ config ARC_CURR_IN_REG
- 
- config ARC_EMUL_UNALIGNED
- 	bool "Emulate unaligned memory access (userspace only)"
--	default N
- 	select SYSCTL_ARCH_UNALIGN_NO_WARN
- 	select SYSCTL_ARCH_UNALIGN_ALLOW
- 	depends on ISA_ARCOMPACT
+diff --git a/drivers/net/wireless/intel/iwlwifi/Kconfig b/drivers/net/wireless/intel/iwlwifi/Kconfig
+index c5f2ddf9b0fe..e5a2fc738ac3 100644
+--- a/drivers/net/wireless/intel/iwlwifi/Kconfig
++++ b/drivers/net/wireless/intel/iwlwifi/Kconfig
+@@ -91,7 +91,6 @@ config IWLWIFI_BCAST_FILTERING
+ config IWLWIFI_PCIE_RTPM
+        bool "Enable runtime power management mode for PCIe devices"
+        depends on IWLMVM && PM && EXPERT
+-       default false
+        help
+          Say Y here to enable runtime power management for PCIe
+          devices.  If enabled, the device will go into low power mode
 -- 
 2.14.1
