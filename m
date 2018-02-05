@@ -1,47 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226+NL8SCePo4s5wQ86ZMTGKbQCWWiDCmI/ANQhmwRYfIf0F9V/9ut5h4WHn9LqGYgqe47o2
-ARC-Seal: i=1; a=rsa-sha256; t=1517855024; cv=none;
-        d=google.com; s=arc-20160816;
-        b=uh8JyZXBXs2FV5CTiMqv98FHDtfg5SIqVmhBrYPi+NnhskS+L3MEoD0tdlKTQOQemB
-         WIAmE6iazsg+yNSVVrWg4hRlIAdqX0GWehEMeSQ27gmtlH2Bf8rs2nUS6DjHWuyRw4QK
-         EJufoAQ9GHnbye1lUgenMfQMqaf4m7Ld63LQTB+bswI5Vp6kKuFFWqAoK/XW4kH/z+F6
-         ZLH+VPBU08Dz7z4YlEfL6mQaf5culVHSQ6j5JoayXUK4VpZzICtZGM8GmZSlsrfDIBvH
-         nTvbw+a6Wy8pY0bUlV8ZCjKu7o4AkIj2marzHu69RpiAqnnAAUtfo+mT+bHBexKZyJq8
-         kUHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=NIPMOZNZjv4wzovplAPDlIIMSmXbNLnsFsqH3nS3/0k=;
-        b=EcNHmVFCsuSYFRCgygfMb2010FSvE1NRBhkjVWh0MSvXrRwoamV6B9xHo+/9KxP1Lf
-         RouxOxcfP2JHNI0AxGxwxRrRCJP09B5aarbDQGvhg9Oe+FI0VoA1YYlXW+i6VXrhC8uu
-         YXfWtY7HrfCgF0TwxK8B3q1kl2I0+J1owgq3AKpb7cN/LFJY7ZhqknYTIwSMdodx7CE2
-         eBg3C2QpHRCPvDl41Vob9jQl1WR2z7u4MlDfbEN4dT1J5mdsDmZ3ovEWksA5qvlxu4x/
-         0AD2pyd6RCqZLuuv9dGd3kL7bJgGmF/QHTfDHsdCMg0Yhp12RIjjwqtO+KCY6QwpLgJT
-         eXfw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3105817-1517855023-2-11741680212721964117
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517855023; b=w8gm0GHFNkxPNgiXin1Wu67YKljOL9WELXoxgrXrgmkDRu4
+    qKWDnzBUZq+o93ufIMSr9D54dkiz/mBNxX1G/OhiBQ4LU3Bpph0V8eSvVyDkoZPk
+    6SWtMzgUmashK6H8wpn870SrIll0k4aSRKyFv2ZMu/AmLir6XtyF2uWKnC67jM9X
+    8M+3wz4YJpiFh+qTVfGG2+qke4lI6OulShPqwRb9oCx01MyNFtoGuW5juNCdO1UP
+    mCa60aDX/Ra3fSER8uIHMZQH62J6NlBM3muN3zfok9ZewMXcuCjavOpdSjQWKJgk
+    GQhI2zzaqwToaNbFv2wGRgxMKkxZ/w3Q9lVeLnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517855023; bh=tUOidZBzB+h3cf2k/ciWTfo30Z
+    EDQ16WeAm3X802jrg=; b=KsTLgI3miAQw3WH27QWIS6syM7/Gc3w7W2cpkGM2eL
+    JKRz3pyYahI8KFLgJK70F5Xl4lPksB8J+jfgoNKDjXWgW0aweXRAlIfLPpvjrXYh
+    zfXOFFCwn7ZPOEFBmlVSuQeo07b2ZC96gq71PFRQbvZenqXPVHCo1HNTJceLjxwC
+    DWwRYHliNYDtbMQzy6sMGvXaGey0Lus7tO71dXEUeeaOUUBSt4eGHAptO/0NNwj8
+    1ZHdfQUsCeFKueXRfPWdXFJA85gIcoLW3hCjkfsGEDrYZae3UJpgLwruyTucGehH
+    MyrzzUa29oGKhKjFqIl+niU9UYnwaQG+M9hR1XSPuGew==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753438AbeBESXj (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Feb 2018 13:23:39 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50926 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753411AbeBESXd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:23:33 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 23/64] iio: adc/accel: Fix up module licenses
-Date: Mon,  5 Feb 2018 10:22:42 -0800
-Message-Id: <20180205182139.510841768@linuxfoundation.org>
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>, riel@redhat.com,
+        ak@linux.intel.com, peterz@infradead.org,
+        David Woodhouse <dwmw2@infradead.org>, jikos@kernel.org,
+        luto@amacapital.net, dave.hansen@intel.com,
+        torvalds@linux-foundation.org, keescook@google.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        tim.c.chen@linux.intel.com, pjt@google.com,
+        gregkh@linux-foundation.org
+Subject: [PATCH 4.14 16/64] x86/nospec: Fix header guards names
+Date: Mon,  5 Feb 2018 10:22:35 -0800
+Message-Id: <20180205182139.233497002@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586349907258531?=
-X-GMAIL-MSGID: =?utf-8?q?1591586349907258531?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,48 +84,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Borislav Petkov bp@suse.de
 
-commit 9a0ebbc93547d88f422905c34dcceebe928f3e9e upstream.
+commit 7a32fc51ca938e67974cbb9db31e1a43f98345a9
 
-The module license checker complains about these two so just fix
-it up. They are both GPLv2, both written by me or using code
-I extracted while refactoring from the GPLv2 drivers.
+... to adhere to the _ASM_X86_ naming scheme.
 
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+No functional change.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: riel@redhat.com
+Cc: ak@linux.intel.com
+Cc: peterz@infradead.org
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: jikos@kernel.org
+Cc: luto@amacapital.net
+Cc: dave.hansen@intel.com
+Cc: torvalds@linux-foundation.org
+Cc: keescook@google.com
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
+Cc: pjt@google.com
+Link: https://lkml.kernel.org/r/20180126121139.31959-3-bp@alien8.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/iio/accel/kxsd9-i2c.c      |    3 +++
- drivers/iio/adc/qcom-vadc-common.c |    4 ++++
- 2 files changed, 7 insertions(+)
 
---- a/drivers/iio/accel/kxsd9-i2c.c
-+++ b/drivers/iio/accel/kxsd9-i2c.c
-@@ -63,3 +63,6 @@ static struct i2c_driver kxsd9_i2c_drive
- 	.id_table	= kxsd9_i2c_id,
- };
- module_i2c_driver(kxsd9_i2c_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("KXSD9 accelerometer I2C interface");
---- a/drivers/iio/adc/qcom-vadc-common.c
-+++ b/drivers/iio/adc/qcom-vadc-common.c
-@@ -5,6 +5,7 @@
- #include <linux/math64.h>
- #include <linux/log2.h>
- #include <linux/err.h>
-+#include <linux/module.h>
+---
+ arch/x86/include/asm/nospec-branch.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
  
- #include "qcom-vadc-common.h"
+-#ifndef __NOSPEC_BRANCH_H__
+-#define __NOSPEC_BRANCH_H__
++#ifndef _ASM_X86_NOSPEC_BRANCH_H_
++#define _ASM_X86_NOSPEC_BRANCH_H_
  
-@@ -229,3 +230,6 @@ int qcom_vadc_decimation_from_dt(u32 val
- 	return __ffs64(value / VADC_DECIMATION_MIN);
+ #include <asm/alternative.h>
+ #include <asm/alternative-asm.h>
+@@ -232,4 +232,4 @@ static inline void indirect_branch_predi
  }
- EXPORT_SYMBOL(qcom_vadc_decimation_from_dt);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Qualcomm ADC common functionality");
+ 
+ #endif /* __ASSEMBLY__ */
+-#endif /* __NOSPEC_BRANCH_H__ */
++#endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
