@@ -1,82 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752654AbeBEJIm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 04:08:42 -0500
-Received: from foss.arm.com ([217.140.101.70]:47756 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750949AbeBEJIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 04:08:36 -0500
-Subject: Re: [PATCH v3 12/18] arm64: KVM: Add SMCCC_ARCH_WORKAROUND_1 fast
- handling
-To: Christoffer Dall <christoffer.dall@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Jones <drjones@redhat.com>, Hanjun Guo <guohanjun@huawei.com>,
-        Jayachandran C <jnair@caviumnetworks.com>,
-        Jon Masters <jcm@redhat.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-References: <20180201114657.7323-1-marc.zyngier@arm.com>
- <20180201114657.7323-13-marc.zyngier@arm.com> <20180204183907.GP21802@cbox>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <1d30fe51-22dd-6938-2f8f-c823858a3bbd@arm.com>
-Date: Mon, 5 Feb 2018 09:08:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180204183907.GP21802@cbox>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        id S1752292AbeBEJLo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 04:11:44 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:45550 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750949AbeBEJLg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 04:11:36 -0500
+X-UUID: 309db1e771124bc08ddad7dceadc7bf4-20180205
+Message-ID: <1517821892.12510.32.camel@mtkswgap22>
+Subject: Re: [PATCH v2 4/5] dt-bindings: clock: mediatek: update audsys
+ documentation to adapt MFD device
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: <devicetree@vger.kernel.org>, Garlic Tseng <garlic.tseng@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
+        "Mark Brown" <broonie@kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date: Mon, 5 Feb 2018 17:11:32 +0800
+In-Reply-To: <20180205060833.p56dun5i4bvs3jye@rob-hp-laptop>
+References: <cover.1515639336.git.ryder.lee@mediatek.com>
+         <8651585c91ee40f6ab3e30b893bcfb90fe5c2c25.1515639336.git.ryder.lee@mediatek.com>
+         <20180205060833.p56dun5i4bvs3jye@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/18 18:39, Christoffer Dall wrote:
-> On Thu, Feb 01, 2018 at 11:46:51AM +0000, Marc Zyngier wrote:
->> We want SMCCC_ARCH_WORKAROUND_1 to be fast. As fast as possible.
->> So let's intercept it as early as we can by testing for the
->> function call number as soon as we've identified a HVC call
->> coming from the guest.
+On Mon, 2018-02-05 at 00:08 -0600, Rob Herring wrote:
+> On Wed, Jan 31, 2018 at 03:42:44PM +0800, Ryder Lee wrote:
+> > As the MediaTek audio hardware block that expose functionalities that are
+> > handled by separate subsystems in the kernel, and there are registers that
+> > are shared between related drivers.
+> > 
+> > Switch the current device to an MFD device, add more descriptions about the
+> > subsystem and modify example accordingly.
+> > 
+> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> >  .../bindings/arm/mediatek/mediatek,audsys.txt      | 37 ++++++++++++++++++----
+> >  1 file changed, 30 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > index 9b8f578..677af40 100644
+> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > @@ -1,22 +1,45 @@
+> > -MediaTek AUDSYS controller
+> > +MediaTek Audio Subsystem
+> >  ============================
+> > +The audio subsystem is one of the multi-function blocks of MediaTek SoCs.
+> > +It contains a system controller, which provides a number registers giving
+> > +access to two features: AUDSYS clocks and Audio Front End (AFE) components.
+> >  
+> > +For the top level node:
+> > +- compatible: must be: "syscon", "simple-mfd";
 > 
-> Hmmm.  How often is this expected to happen and what is the expected
-> extra cost of doing the early-exit handling in the C code vs. here?
+> This should have some SoC specific compatible.
 
-Pretty often. On each context switch of a Linux guest, for example. It
-is almost as bad as if we were trapping all VM ops. Moving it to C is
-definitely visible on something like hackbench (I remember something
-like a 10-12% degradation on Seattle, but I'd need to rerun the tests to
-give you something accurate). It is the whole GPR save/restore dance
-that costs us a lot (31 registers for the guest, 12 for the host), plus
-some the extra SError synchronization that doesn't come for free either.
+As we don't have a specific driver (compatible string) for it and if we
+need to add that I think the term '*-audsys' is very suitable here, but
+unfortunately, it has already picked for clock driver (see child node).
 
-> I think we'd be better off if we only had a single early-exit path (and
-> we should move the FP/SIMD trap to that path as well), but if there's a
-> measurable benefit of having this logic in assembly as opposed to in the
-> C code, then I'm ok with this as well.
+I also took ../../marvell/*-system-controller.txt as examples for my
+case. Thus, I'm not sure should we still need a new one here?
 
-I agree that the multiplication of "earlier than early" paths is
-becoming annoying. Moving the FP/SIMD stuff to C would be less
-problematic, as we have patches to move some of that to load/put, and
-we'd only take the trap once per time slice (as opposed to once per
-entry at the moment).
+> > +- reg: register area of the Audio Subsystem
+> > +
+> > +Required sub-nodes:
+> > +
+> > +AUDSYS clocks:
+> > +-------
+> >  The MediaTek AUDSYS controller provides various clocks to the system.
+> >  
+> >  Required Properties:
+> >  
+> >  - compatible: Should be one of:
+> > -	- "mediatek,mt7622-audsys", "syscon"
+> > +	- "mediatek,mt2701-audsys";
+> > +	- "mediatek,mt7622-audsys";
+> >  - #clock-cells: Must be 1
+> >  
+> >  The AUDSYS controller uses the common clk binding from
+> >  Documentation/devicetree/bindings/clock/clock-bindings.txt
+> >  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> 
+> There's no register range associated with the clocks? If there is, add a 
+> reg property.
 
-Here, we're trying hard to do exactly nothing, because each instruction
-is just an extra overhead (we've already nuked the BP). I even
-considered inserting that code as part of the per-CPU-type vectors (and
-leave the rest of the KVM code alone), but it felt like a step too far.
+No, we don't need reg property here, as the two sub-drivers will obtain
+the regmap  which is propagated from the parent.
 
-> The code in this patch looks fine otherwise.
+Thanks
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> >  
+> > +AFE components:
+> > +-------
+> > +For common binding part and usage, refer to
+> > +../sonud/mt2701-afe-pcm.txt.
+> > +
+> >  Example:
+> >  
+> > -audsys: audsys@11220000 {
+> > -	compatible = "mediatek,mt7622-audsys", "syscon";
+> > -	reg = <0 0x11220000 0 0x1000>;
+> > -	#clock-cells = <1>;
+> > -};
+> > +	audio-subsystem@11220000 {
+> > +		compatible = "syscon", "simple-mfd";
+> > +		reg = <0 0x11220000 0 0x2000>;
+> > +
+> > +		audsys: clock {
+> > +			compatible = "mediatek,mt2701-audsys";
+> > +			#clock-cells = <1>;
+> > +		};
+> > +
+> > +		...
+> > +	};
+> > -- 
+> > 1.9.1
+> > 
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
