@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752785AbeBEJdx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 04:33:53 -0500
-Received: from mail-sn1nam02on0083.outbound.protection.outlook.com ([104.47.36.83]:12000
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1752748AbeBEJdq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 04:33:46 -0500
+Received: from mail-sn1nam01on0048.outbound.protection.outlook.com ([104.47.32.48]:7146
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752271AbeBEJdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 04:33:40 -0500
+        id S1751705AbeBEJdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 04:33:39 -0500
 Authentication-Results: spf=fail (sender IP is 192.88.168.50)
  smtp.mailfrom=nxp.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none header.from=nxp.com;
@@ -17,607 +17,102 @@ To: <rui.zhang@intel.com>, <edubezval@gmail.com>, <robh+dt@kernel.org>,
 CC: <Linux-imx@nxp.com>, <linux-pm@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH V3 2/2] thermal: imx: add i.MX7 thermal sensor support
-Date: Mon, 5 Feb 2018 16:12:27 +0800
-Message-ID: <1517818347-7436-2-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V3 1/2] ARM: dts: imx7s: add temperature monitor support
+Date: Mon, 5 Feb 2018 16:12:26 +0800
+Message-ID: <1517818347-7436-1-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517818347-7436-1-git-send-email-Anson.Huang@nxp.com>
-References: <1517818347-7436-1-git-send-email-Anson.Huang@nxp.com>
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131622968173320131;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
-X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39380400002)(39860400002)(376002)(396003)(2980300002)(1110001)(1109001)(339900001)(189003)(199004)(26826003)(110136005)(16586007)(316002)(2201001)(6666003)(51416003)(86362001)(76176011)(498600001)(59450400001)(50466002)(48376002)(97736004)(356003)(5660300001)(54906003)(2950100002)(72206003)(305945005)(53936002)(68736007)(81166006)(2906002)(8936002)(8676002)(81156014)(450100002)(105606002)(106466001)(4326008)(50226002)(36756003)(336011)(77096007)(85426001)(26005)(47776003)(104016004)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR03MB1423;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD026;1:rs2R/245mz67PcbO+UeW4127lRYrjtYNfVCtu2Orepi0k9deUROwv17RSdnK3WX8HCokzqz5P6TsmqOzMn4X8Nv++m+ib+YeCafqlxTlA4viYZASR96T5pGJdeJiUlyK
+X-Matching-Connectors: 131622968174276956;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
+X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(376002)(396003)(346002)(2980300002)(1110001)(1109001)(339900001)(199004)(189003)(36756003)(104016004)(305945005)(107886003)(450100002)(51416003)(68736007)(4326008)(356003)(8936002)(81156014)(97736004)(81166006)(8676002)(72206003)(2906002)(48376002)(105606002)(50466002)(26826003)(50226002)(85426001)(2201001)(498600001)(47776003)(106466001)(336011)(26005)(77096007)(54906003)(86362001)(53936002)(110136005)(16586007)(316002)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB469;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11OLC009;1:L3g5ZdqOKEjJTsA3zVd13cecGSDR2HZ6kr2QCirHBnINNzPB4NamYoXe7aJ8rFm4JOZulD75oW/k+y3qszEzDcXmrCuVHe6tSVNcmykGBFj0qxPjmu6CICLt+p3pTW6m
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a43a6c99-0d02-42ea-2e23-08d56c7b88a7
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603307);SRVR:CY1PR03MB1423;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB1423;3:X7UgRWuHu03/bVdIGGzo3U3Qg5nBHsBqIpmmMR4lZaRj7J0iMt/kzXWb6yA292octdSVmxaZNH19V8xZ5g/B5aGcWe5VZE+MakGKoR5k31b2j1SZcssLyoRsGCMyuhP9+nNDrgqWYC31kx5/Km9o7KfMearYufROA5aetjfALIo5e153h4CBCzzApFBxJY+I5HBQdzsuV8c16ltCs5df8Mdi9An+ubJeLKH53s5NLRvPmmZcg1lqYR9/Vx17v/6EcGp4X9hz1SOxf/Siz5JzK/ylPOnB+DuESAfu9HAnyMud3Lj8Jwd3pdQyonf3HHCbTFjz++CHYRoZ8el75O2S73AoXi3UIeK3RneddfXG5FM=;25:NA/bcaZudCdjGEJkW41Ju6CMF4aWszdCJDpuW4xtjY8NAcOh2tASZpm+PyVMVH+nwxhYhCbbk3tE5DfL/hweGE8KHGv4VKu051MN7+YcqE2hu8vyR30kJ+Ov0yJGmykmAzc99haG/NcRvMch/LOqL5PIFGD8jTDe7nOaFpf1Lf7mxI1yBpMeqGxxKc3gSu6DccWGyYJx+dnUl8D0osc5XCknRFd5S64g9xzn4V1/8iwnphyWMs0Yw7Ykg2C3/MFvs66Rpsx0wsr8HEvTlIvGHxWwfX8l9XQzwu1Vs/7Ze2efJ/72cDdShUbK/KUVHlEnROOXKFdZKWzJ2Bn8qDrQzQ==
-X-MS-TrafficTypeDiagnostic: CY1PR03MB1423:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB1423;31:oInpfuYwq2ZepECtt079wwOS2xTNoIzPWhW2uzCIfi+Vlbbso9ucSB9zORoWv3L9qM5qb+bkYvk6u6D5mrL5sVOkwgHIoH8MbO/DyByC6AQjvOTrQAh2eMr7ouDMHGYxaYoekPTR6QU5YO5i6ptc8DqLLoKI7TjH+irmGSioxDKj9YZjz3vBAEbNVEH3gFVDA+AyUpWO71C0bKhb4LqYW+5emcM45Bas8EYnM4fF9cE=;4:niFSqXK9AuiuFlZA6Gec4yazqNw+7JQ4KN+Da02/g2JE9zuyBcgM550wiP4V06dL4r3yb4g8rHYX/sikpZsPR/DEZn+p+IWF9bb/lRRdZO75ufjUlgrpfBNO6X9gp+OnLy/FsTKJ8isQGHJVOXJwu751Wvwwj2RtEQurBjQ+G8JiYRaLsYdq8GqnLCDNhlhiBgD8iYM9QR28rLHhw4Wkvy00JGUwMhSECblaTyC0P5htnWRtTHrFoZI7dVjlPHykhCOtc0L8kcsmC5E0MPG/Ofq4aZrSLgkd9D/VlJsMpN25m5QAHAIzOubJgJ0qB2zx
-X-Microsoft-Antispam-PRVS: <CY1PR03MB14234B45799B64058320C089F5FE0@CY1PR03MB1423.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: f8394c50-7d6c-4fcd-0ffe-08d56c7b88c4
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603307);SRVR:BLUPR03MB469;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB469;3:DkT++lRxQS+4UOTxXvufyLirjeaHFlAPvdSvXsissfPnQUEiTeorRFZj2albwOgZHvotcYaFY/HhOd4gSHNZnbHK8tbjHNFCZi99Hr2Gj0fv77bEMeVZpwwj/HQ5emk+kSVwe5pRXu2yLVcgoBwfgPh1i4Eovq2kHQcIo+N3GJKu2CZQRE1yp0WMB5y1Wc3OZrU7Bsn4XJ1WqpyAPymkC5Zahn/Y98NC6dCze+HvcefyjMu4pphK1vKTkbDsuGJBCj4c5w9SSXfNQAsrlyxhNSeK1AYLvhf+BXOLL6oRfs++AHRExiffIEk04i7Tb48g8mTu4VkQi5gP6D1gAURJEzfnBlFrjs078RqcYIik0SQ=;25:HsKHD/Z+UUIKuDpWNgHcirdS8DVjmD4Pt84jI2AYM/Km8uLJfNxJUoRTnWeyyFKbiaBU9LzVSVzL+0gGlwTCpusnWpqgiiBwUs9PYU7haEtQ2ZHh7VrKArpBpczSIK9xkeOGz2wi64FGjihu4KAcrktYEFLhrmD+o8VwqH74zmcB1pyJ+d8pss1eSSxvms71nWqGcZULtdJpMAKq9TJI/CVh3mNzRzMywENnuhX/AbXg5BwniHwFu9Lbk2MZ9CLCOAggKjxQIRxgfyHENSwCZeljSQyVlp/0BOMzddMvBke0CppP1xhk41vU6MUQWmYRohZdN4mKPYCzR0i5EvZR5g==
+X-MS-TrafficTypeDiagnostic: BLUPR03MB469:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB469;31:Tob4/govB1O3fsHNXoHTAPXYXe0Evk6SBWs4qo5f4a1FzIDrxsMpMTTTwMO1QkIc49REY7AqCHOb5t3zetYnEcjNcS5rtANQrhCLyW5wRicnAhwDPbu0YQgRH1uGE4QmAu5aPAvz7yxkPfBG/YAYWx3w86kSmjTGq6JZi6VifuQVHdeEBMiR+1XtnN7HApqqnP7M0Ih8p0V+wPFoTxB6K9pnNguc8yRVhA02nEBM/HQ=;4:mS4yhPXmHnBHw+hObReMRquq5tbYQqd5qk1mXjix1LPRCaW6b5BLmiPTo1ycAYUp2idJCP28KXvPx4FTZZuVRKq2GoAV9QEZ/Mqwycip3oYUoPnLzse7WEJ01yVxDW5b4JLOZZEOPzdltLziZLIBuIcHkHSAe4nUfx4GeLG1ZNGLtXfwHt2IUzISgv2gOYVb+ubQ0oj7nR8xAccKJ0BXxHjEwFaC3r+mJ42Dey8KKNHtpsARg6UnKL502uQ3j/YQK59/5Hor6gPqnJkjfWClvGhifFrqlojkWJOC4cHeLej7wV/xWFEM2H3Dfx1S6QDS
+X-Microsoft-Antispam-PRVS: <BLUPR03MB469B601D55F72A0FBFE147EF5FE0@BLUPR03MB469.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231101)(2400082)(944501161)(6055026)(6096035)(20161123561025)(20161123559100)(20161123556025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123565025)(20161123563025)(201708071742011);SRVR:CY1PR03MB1423;BCL:0;PCL:0;RULEID:(400006);SRVR:CY1PR03MB1423;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231101)(2400082)(944501161)(6055026)(6096035)(20161123559100)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123563025)(20161123561025)(20161123556025)(20161123565025)(201708071742011);SRVR:BLUPR03MB469;BCL:0;PCL:0;RULEID:(400006);SRVR:BLUPR03MB469;
 X-Forefront-PRVS: 0574D4712B
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR03MB1423;23:JYJPA1fxXFvcUjgg3ExAeJLXR5CNamiaVYRiwQkUy?=
- =?us-ascii?Q?ArkvKsbBnnushWtqJ9FVXN9VDvU9RukK9xznDE4pG7xIyb2gLgNJXprARDvx?=
- =?us-ascii?Q?FpbY1LEj5HyGGTv4iYn5aPuRWxXm6FZggXDvc3SsMFtlci8cYpEga7nnNWCu?=
- =?us-ascii?Q?NUZapleSebcuErF5KSWXIZSkEKaPX1mhUGvOPvM9PKdCA2kC9NuRfApBAQZ9?=
- =?us-ascii?Q?up7Evb+QPBqXt7qlJDdA9dPTupJ4Fj+j3GeemKIE7JMrcCTw4CfUBUJs3hhH?=
- =?us-ascii?Q?rieu2Er1yjZAnGNz2Rum6QFtxgtbA+G6ykNfgsIDVXEZ88lshmxh1WwUvlp3?=
- =?us-ascii?Q?WVYOOZSh89Go9u3ih99mlt5CCsXn/c2Ac/SLIcCsPob6Z6hX12WTfM6KJ5mM?=
- =?us-ascii?Q?MX6GNoVxSZxPm8wP6WADOlB3bdnkvpvrMFF3TYN6xd0DDytdI+KaU7rR5gZW?=
- =?us-ascii?Q?1WNB0feeNGmAg3iJlREJ6/wMh1H8HiNz0JBc3WqaKY6bBtMwYI0Jglgsrgp6?=
- =?us-ascii?Q?ePe0DeNpzVmzpHfTwIrOAhuaHA6KO8yAy+mdqoB/gdFYEPieNw5kULTH26VH?=
- =?us-ascii?Q?uyEURjnBCCsMFihCLWHBk8kjt5VkucYR5XaSCiGNGASsZ0/spGVQThhRrb/C?=
- =?us-ascii?Q?4FoNhRgKQlVavJiaujbCtpPaQUXWqQ3qdLeRi8nUgKQE0S6dMXa4sjtkCGCd?=
- =?us-ascii?Q?fPIYiU/WFAIAfZaeVpsSPNsBUcEAcDRQ9Afe8Nye+8UtGcookChOcZc+cTPU?=
- =?us-ascii?Q?J0qMuPz4ME4GuRblh/zYqnRqJuUcMjbKJTARMSKMURJYQPI07s9TM+BqGkSy?=
- =?us-ascii?Q?i4hqOInqU7ramKRyDOusujUXUGrIcXKe5egKEXUfCseRkF663FrwZ0MhTO+c?=
- =?us-ascii?Q?Q0zOy1SNMR5gvGfrX/KDQm8paWRd0IEqMyvzmOPj0ajLn5v9J4K2Sjr7REv+?=
- =?us-ascii?Q?HUXRl6bVR57kiyXp4r6RSS7tAxm4udN/qxmMLOU5MLaAtUNZhebsdxJ03ib8?=
- =?us-ascii?Q?IMNL+4EUJv22noIdOiw6QkKSz1VB8jPhcwBD6v3GIoBNPMfF6S2+shdyWBLg?=
- =?us-ascii?Q?gjfy8kXwe0BUt9QIBhbpNLwNNqjRQRZmXKy2BDWl8jTb3mxMKFHY5qQz/lVx?=
- =?us-ascii?Q?CjQUmTowXXbA/TvqeLfflvUNecMSoLVT5UKCXWuMVYAvNPItATh9MRZcq/eV?=
- =?us-ascii?Q?6Jardhtd4LtMhBum8ujKXSmPVLl6D2iSPpm?=
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB1423;6:anqDlISfIxLlglG0Cihb3IRSdCLZhu+7DF/7wnKPeaXhsIQfzBbCdLe5ca51v4chpVNaaJ2qT38+nPjFxWC+JvxFa0UAe21s9GdamI8Kc+86u8pxl7nWph7zUW+Gk5S87w9g2/q9dlYbrtXFF8nwhtecSCnwTEkGTy9RQUZP/W+K7ew8CEjRNQu7FHBf6jaByW92x2m3BCzY5ZSOWtY99B/UNLEgd5QfYim7+G1WKh+9JqyUfwUMJpz8Y+qaj6PomjHALaOv7LUREO7PQ29ej5WBB4pE8NDlJlyZrvr6Ku2ulAjxsrSI8U2uWupj4oG0AejfmxOTo/94rMgnDQhC0dkANrQcIq6wemKCHTkcjLc=;5:7YY3/hwLjxAd80MaIHnEBbeDIf/HCtC3H5Cf3HRwJivYYu6VjcW9NP0vrcUXiyfMRxxjMSZPgoh5/e0QA0aqtDQCZ77fPXjy3ZHp2Xe7tciToRaTqOoqgOyaxspUd17TT7FeyfK+iT1BJ3TffKmif25i8drwbGOaeAKAXtKsUw0=;24:zq05LJ768+RujinYrZERMNZPYrQMLDvZGYi/zihx3WloyM0H6nZXpbh1DSDbbT2SkzQzJW/BFkVCIfunnsMdzPjhIQcdwWJHAc9zLr+EuCw=;7:dHYbOOZMQv7sIs9eONJNPrtVkAwv5Iy40sFuBn4XRg1V1WBltxCJlckbmYMQu7SV9dyrCxW/r6nKyPr362cGAnEj0FTGNfcBKBUzIqT1Yph6XKrPUHS03ejwv/Jp/9HyfkevucH5YahzgdVCXmQKjNIx0MOPmn9MxGQcgGJP9rkryzWyBFIolZTysPtLe5NQGneskVNdrMS7WTd83fae4AAdLiwoVq15gLAtilRm73xs0gm0sZ40Jy8OKRb+q0DC
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR03MB469;23:fzJeBklnlKZYVnYnWeZrGckLA0WpE7bLfwQmH9RVeJ?=
+ =?us-ascii?Q?uTp6o7+NrwieVzGKhibLMIT/mHpP1OcAqLWgVCvyi/KZWy7pYMp4nfb6+UYc?=
+ =?us-ascii?Q?oUVRjy/LvD3XyqUfzCKWsDBlgeBjYtA6Kpk5IlDkACpHF5sAnkWXHxhLyuCb?=
+ =?us-ascii?Q?xzKa16iZ77v+79tigN11MNx4avu/lYmYkZRf/ldwGSFoHaWyAl4eczB6Vsp2?=
+ =?us-ascii?Q?AB7TvmJv7ZqAxKSYrspEt4Z+biKbKRMgIKcCybCvyKIw8+oUuAtMb51F4dZe?=
+ =?us-ascii?Q?dBicgqre1bUuOkCJuOH2MIAM5gZfylCJ4r7ppK6YI8tMPbRdkUs8xnkAGvpf?=
+ =?us-ascii?Q?PQXIycGgxIBquGe/y5t6jQtg6sFl2M7PQJg4A9Hs6iwZXkTBY5j677UzJaOG?=
+ =?us-ascii?Q?z9AWxT2cy3dbmGbfZKjmh7guXyxbJt5MisQIj9zar1vuIuCFb9IhYYRYttl/?=
+ =?us-ascii?Q?Z5SknXKlARA3/6MGJUShUzaiHYxTnCaF48OLbpNhc0ybHng1k03dm6mhcoyy?=
+ =?us-ascii?Q?Fj9ybC7UHnEisLe2QUDpAM0omR/Zavid1GfIkEV+DCatPZF5SV7Y1Cx3oYKX?=
+ =?us-ascii?Q?AifY1UmaW4yTgbwodOdwyh8UQG0qKRcAtBrntbTG2RnmTJ7ZDE+ExH2sFD7Q?=
+ =?us-ascii?Q?2ZuRNrP6cuxhzZp6IeE5HJa9n+ldubz6KLv8i7jbxE0DEYLvjkYsIsQicXSZ?=
+ =?us-ascii?Q?4sYbh8H0XqxYeFql786zvXdyVHMR8N0uBzRKaWBhy/xAkQA5vSazb5cQXqME?=
+ =?us-ascii?Q?49O9CottA75wJ2BjFrmt+cHNUXIwLFVh8NbvWpePTb3k10qsCEWMlDWURb/K?=
+ =?us-ascii?Q?2w8cn61r4gK7kfIvI8s6KQKLDsze9ejXPPWse5Jixbldqt62suMWuyPVZeQu?=
+ =?us-ascii?Q?5GO1tQN1qvEJg58tazphmvn4kGnliHX8dKTYai4uc9TjJkq4cU1XaDsGaapu?=
+ =?us-ascii?Q?kcIBUO4qYikJHyht5Kew5E1033bJo9gaGINcFJ68QWmPltrLTPNNo1EeCsrM?=
+ =?us-ascii?Q?ZrgvOi9Q2H397jzUi80rHPilgXSAaAelku6Mryk1ZAZZ3d8aMgFS41jE7/0X?=
+ =?us-ascii?Q?4AeIJf3PaU43MnG/kpcJmi7V7kn4HfXKVdQPM622jM2d4MdA=3D=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB469;6:sIjZDLkkEZhsLCGavfnCssSNKNC7iopJFi3NolKsYo+LCNQl2dYEA/wRYRmBmPTj6yKrb6013u43ztSZLcU0BGNWOemxTuAjsm8Lrh3hH9DVV5PYkwoGQs+LyljpeOzQcMhB0pxt9jK9FKLmLCimoWlpTMkCgTdbB9hbtN/Mcx3R/IV6gytSBUQSlGKypuXOPRpMfnyfLA/wiCoSs57QyiF3w7Wjf0x83gAimSvLluzfw1dpcCaHUHEulnFph4b8DQEg/rJLZIuUrzS33YzT/5o2DqZ+F45Bs+kQm1lTKRH4h4v3Hbe/jWk6UplM/wij/l6nwp3cQxTwda5UJOKNCEsdqvOwPKQGFxE2hJJ37lM=;5:8L4+usgh2X+2g5gAsGyQutAELIQV2fqW3VFKiwehgjum5Sf87Vr71O+9QqhtaeS1gFyUwUwsetiC/53Z3NLAXfS9QljyrkJp6Ar2NZ8Gi167nwdTsCCi0s8kFW8+4mBHLOXXsyFN1EXjJrZi4dC17xZGeQwRFPB9kv6x5HA3uCg=;24:r647fEjS3BZ8ae89NU612gQT9FlI7DCEQKDs5VREHMuz8PQ/ACkcG6ks6Rqt19uz9iP3hu0imsYPrD1ltDP8AivxK1h+TBF8aanHLBcw4NQ=;7:BrLIdx5pvPXsrUAUp9+XPcdhFl11OIMU+A+UI3pbDzfvtdJdCUHeLJGmkv3ufWWMkzx1AZYVZyTmj8Hs5zJjzwZCZHSzvUfHIlQVAY+XzDtmN+fb/eSrhHxNWZ0ntFEyb3oFd+nd0PeRRqbDne22vpzs0aBqKjiEP20xF3/5+tqctMoEfh0xNwe3gIHYVf695fQsBH5bxUwc+ftdDFo1j8eXPFKSI0UJ2H9GIiKoLDuBI2S9dbKz1exwyq+aYO9m
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2018 09:33:32.5272
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2018 09:33:32.7321
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a43a6c99-0d02-42ea-2e23-08d56c7b88a7
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8394c50-7d6c-4fcd-0ffe-08d56c7b88c4
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[192.88.168.50];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR03MB1423
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB469
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds i.MX7 thermal sensor support, most
-of the i.MX7 thermal sensor functions are same with
-i.MX6 except the registers offset/layout, so we move
-those registers offset/layout definitions to soc data
-structure.
-
-i.MX7 uses single calibration data @25C, the calibration
-data is located at OCOTP offset 0x4F0, bit[17:9], the
-formula is as below:
-
-Tmeas = (Nmeas - n1) + 25; n1 is the fuse value for 25C.
+Add i.MX7 temperature monitor support.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
 changes since V2:
-	Add bindind doc changes in this patch according to review comments.
- .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
- drivers/thermal/imx_thermal.c                      | 314 ++++++++++++++++-----
- 2 files changed, 254 insertions(+), 69 deletions(-)
+	Remove binding doc changes in this patch.
+ arch/arm/boot/dts/imx7s.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/thermal/imx-thermal.txt b/Documentation/devicetree/bindings/thermal/imx-thermal.txt
-index 28be51a..79f97bc 100644
---- a/Documentation/devicetree/bindings/thermal/imx-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/imx-thermal.txt
-@@ -1,8 +1,13 @@
- * Temperature Monitor (TEMPMON) on Freescale i.MX SoCs
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index 82ad26e..2e2eda53 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -497,9 +497,29 @@
+ 			};
  
- Required properties:
--- compatible : "fsl,imx6q-tempmon" for i.MX6Q, "fsl,imx6sx-tempmon" for i.MX6SX.
--  i.MX6SX has two more IRQs than i.MX6Q, one is IRQ_LOW and the other is IRQ_PANIC,
-+- compatible : must be one of following:
-+  - "fsl,imx6q-tempmon" for i.MX6Q,
-+  - "fsl,imx6sx-tempmon" for i.MX6SX,
-+  - "fsl,imx7-tempmon" for i.MX7S/D.
-+- interrupts : the interrupt output of the controller:
-+  i.MX6Q has one IRQ which will be triggered when temperature is higher than high threshold,
-+  i.MX6SX and i.MX7S/D have two more IRQs than i.MX6Q, one is IRQ_LOW and the other is IRQ_PANIC,
-   when temperature is below than low threshold, IRQ_LOW will be triggered, when temperature
-   is higher than panic threshold, system will auto reboot by SRC module.
- - fsl,tempmon : phandle pointer to system controller that contains TEMPMON
-diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
-index e7d4ffc..c95fa82 100644
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -31,34 +31,58 @@
- #define REG_CLR		0x8
- #define REG_TOG		0xc
- 
--#define MISC0				0x0150
--#define MISC0_REFTOP_SELBIASOFF		(1 << 3)
--#define MISC1				0x0160
--#define MISC1_IRQ_TEMPHIGH		(1 << 29)
-+/* i.MX6 specific */
-+#define IMX6_MISC0				0x0150
-+#define IMX6_MISC0_REFTOP_SELBIASOFF		(1 << 3)
-+#define IMX6_MISC1				0x0160
-+#define IMX6_MISC1_IRQ_TEMPHIGH			(1 << 29)
- /* Below LOW and PANIC bits are only for TEMPMON_IMX6SX */
--#define MISC1_IRQ_TEMPLOW		(1 << 28)
--#define MISC1_IRQ_TEMPPANIC		(1 << 27)
--
--#define TEMPSENSE0			0x0180
--#define TEMPSENSE0_ALARM_VALUE_SHIFT	20
--#define TEMPSENSE0_ALARM_VALUE_MASK	(0xfff << TEMPSENSE0_ALARM_VALUE_SHIFT)
--#define TEMPSENSE0_TEMP_CNT_SHIFT	8
--#define TEMPSENSE0_TEMP_CNT_MASK	(0xfff << TEMPSENSE0_TEMP_CNT_SHIFT)
--#define TEMPSENSE0_FINISHED		(1 << 2)
--#define TEMPSENSE0_MEASURE_TEMP		(1 << 1)
--#define TEMPSENSE0_POWER_DOWN		(1 << 0)
--
--#define TEMPSENSE1			0x0190
--#define TEMPSENSE1_MEASURE_FREQ		0xffff
--/* Below TEMPSENSE2 is only for TEMPMON_IMX6SX */
--#define TEMPSENSE2			0x0290
--#define TEMPSENSE2_LOW_VALUE_SHIFT	0
--#define TEMPSENSE2_LOW_VALUE_MASK	0xfff
--#define TEMPSENSE2_PANIC_VALUE_SHIFT	16
--#define TEMPSENSE2_PANIC_VALUE_MASK	0xfff0000
-+#define IMX6_MISC1_IRQ_TEMPLOW			(1 << 28)
-+#define IMX6_MISC1_IRQ_TEMPPANIC		(1 << 27)
+ 			ocotp: ocotp-ctrl@30350000 {
++				#address-cells = <1>;
++				#size-cells = <1>;
+ 				compatible = "fsl,imx7d-ocotp", "syscon";
+ 				reg = <0x30350000 0x10000>;
+ 				clocks = <&clks IMX7D_OCOTP_CLK>;
 +
-+#define IMX6_TEMPSENSE0				0x0180
-+#define IMX6_TEMPSENSE0_ALARM_VALUE_SHIFT	20
-+#define IMX6_TEMPSENSE0_ALARM_VALUE_MASK	(0xfff << 20)
-+#define IMX6_TEMPSENSE0_TEMP_CNT_SHIFT		8
-+#define IMX6_TEMPSENSE0_TEMP_CNT_MASK		(0xfff << 8)
-+#define IMX6_TEMPSENSE0_FINISHED		(1 << 2)
-+#define IMX6_TEMPSENSE0_MEASURE_TEMP		(1 << 1)
-+#define IMX6_TEMPSENSE0_POWER_DOWN		(1 << 0)
++				tempmon_calib: calib@3c {
++					reg = <0x3c 0x4>;
++				};
 +
-+#define IMX6_TEMPSENSE1				0x0190
-+#define IMX6_TEMPSENSE1_MEASURE_FREQ		0xffff
-+#define IMX6_TEMPSENSE1_MEASURE_FREQ_SHIFT	0
- 
--#define OCOTP_MEM0			0x0480
--#define OCOTP_ANA1			0x04e0
-+/* Below TEMPSENSE2 is only for TEMPMON_IMX6SX */
-+#define IMX6_TEMPSENSE2				0x0290
-+#define IMX6_TEMPSENSE2_LOW_VALUE_SHIFT		0
-+#define IMX6_TEMPSENSE2_LOW_VALUE_MASK		0xfff
-+#define IMX6_TEMPSENSE2_PANIC_VALUE_SHIFT	16
-+#define IMX6_TEMPSENSE2_PANIC_VALUE_MASK	0xfff0000
++				tempmon_temp_grade: temp-grade@10 {
++					reg = <0x10 0x4>;
++				};
++			};
 +
-+/* i.MX7 specific */
-+#define IMX7_ANADIG_DIGPROG			0x800
-+#define IMX7_TEMPSENSE0				0x300
-+#define IMX7_TEMPSENSE0_PANIC_ALARM_SHIFT	18
-+#define IMX7_TEMPSENSE0_PANIC_ALARM_MASK	(0x1ff << 18)
-+#define IMX7_TEMPSENSE0_HIGH_ALARM_SHIFT	9
-+#define IMX7_TEMPSENSE0_HIGH_ALARM_MASK		(0x1ff << 9)
-+#define IMX7_TEMPSENSE0_LOW_ALARM_SHIFT		0
-+#define IMX7_TEMPSENSE0_LOW_ALARM_MASK		0x1ff
-+
-+#define IMX7_TEMPSENSE1				0x310
-+#define IMX7_TEMPSENSE1_MEASURE_FREQ_SHIFT	16
-+#define IMX7_TEMPSENSE1_MEASURE_FREQ_MASK	(0xffff << 16)
-+#define IMX7_TEMPSENSE1_FINISHED		(1 << 11)
-+#define IMX7_TEMPSENSE1_MEASURE_TEMP		(1 << 10)
-+#define IMX7_TEMPSENSE1_POWER_DOWN		(1 << 9)
-+#define IMX7_TEMPSENSE1_TEMP_VALUE_SHIFT	0
-+#define IMX7_TEMPSENSE1_TEMP_VALUE_MASK		0x1ff
-+
-+#define IMX6_OCOTP_MEM0				0x0480
-+#define IMX6_OCOTP_ANA1				0x04e0
-+#define IMX7_OCOTP_TESTER3			0x0440
-+#define IMX7_OCOTP_ANA1				0x04f0
++			tempmon: tempmon {
++				compatible = "fsl,imx7-tempmon";
++				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
++				fsl,tempmon =<&anatop>;
++				nvmem-cells = <&tempmon_calib>,
++					<&tempmon_temp_grade>;
++				nvmem-cell-names = "calib", "temp_grade";
++				clocks = <&clks IMX7D_PLL_SYS_MAIN_CLK>;
+ 			};
  
- /* The driver supports 1 passive trip point and 1 critical trip point */
- enum imx_thermal_trip {
-@@ -76,17 +100,114 @@ enum imx_thermal_trip {
- 
- #define TEMPMON_IMX6Q			1
- #define TEMPMON_IMX6SX			2
-+#define TEMPMON_IMX7			3
- 
- struct thermal_soc_data {
- 	u32 version;
-+
-+	u32 sensor_ctrl;
-+	u32 power_down_mask;
-+	u32 measure_temp_mask;
-+
-+	u32 measure_freq_ctrl;
-+	u32 measure_freq_mask;
-+	u32 measure_freq_shift;
-+
-+	u32 temp_data;
-+	u32 temp_value_mask;
-+	u32 temp_value_shift;
-+	u32 temp_valid_mask;
-+
-+	u32 panic_alarm_ctrl;
-+	u32 panic_alarm_mask;
-+	u32 panic_alarm_shift;
-+
-+	u32 high_alarm_ctrl;
-+	u32 high_alarm_mask;
-+	u32 high_alarm_shift;
-+
-+	u32 low_alarm_ctrl;
-+	u32 low_alarm_mask;
-+	u32 low_alarm_shift;
- };
- 
- static struct thermal_soc_data thermal_imx6q_data = {
- 	.version = TEMPMON_IMX6Q,
-+
-+	.sensor_ctrl = IMX6_TEMPSENSE0,
-+	.power_down_mask = IMX6_TEMPSENSE0_POWER_DOWN,
-+	.measure_temp_mask = IMX6_TEMPSENSE0_MEASURE_TEMP,
-+
-+	.measure_freq_ctrl = IMX6_TEMPSENSE1,
-+	.measure_freq_shift = IMX6_TEMPSENSE1_MEASURE_FREQ_SHIFT,
-+	.measure_freq_mask = IMX6_TEMPSENSE1_MEASURE_FREQ,
-+
-+	.temp_data = IMX6_TEMPSENSE0,
-+	.temp_value_mask = IMX6_TEMPSENSE0_TEMP_CNT_MASK,
-+	.temp_value_shift = IMX6_TEMPSENSE0_TEMP_CNT_SHIFT,
-+	.temp_valid_mask = IMX6_TEMPSENSE0_FINISHED,
-+
-+	.high_alarm_ctrl = IMX6_TEMPSENSE0,
-+	.high_alarm_mask = IMX6_TEMPSENSE0_ALARM_VALUE_MASK,
-+	.high_alarm_shift = IMX6_TEMPSENSE0_ALARM_VALUE_SHIFT,
- };
- 
- static struct thermal_soc_data thermal_imx6sx_data = {
- 	.version = TEMPMON_IMX6SX,
-+
-+	.sensor_ctrl = IMX6_TEMPSENSE0,
-+	.power_down_mask = IMX6_TEMPSENSE0_POWER_DOWN,
-+	.measure_temp_mask = IMX6_TEMPSENSE0_MEASURE_TEMP,
-+
-+	.measure_freq_ctrl = IMX6_TEMPSENSE1,
-+	.measure_freq_shift = IMX6_TEMPSENSE1_MEASURE_FREQ_SHIFT,
-+	.measure_freq_mask = IMX6_TEMPSENSE1_MEASURE_FREQ,
-+
-+	.temp_data = IMX6_TEMPSENSE0,
-+	.temp_value_mask = IMX6_TEMPSENSE0_TEMP_CNT_MASK,
-+	.temp_value_shift = IMX6_TEMPSENSE0_TEMP_CNT_SHIFT,
-+	.temp_valid_mask = IMX6_TEMPSENSE0_FINISHED,
-+
-+	.high_alarm_ctrl = IMX6_TEMPSENSE0,
-+	.high_alarm_mask = IMX6_TEMPSENSE0_ALARM_VALUE_MASK,
-+	.high_alarm_shift = IMX6_TEMPSENSE0_ALARM_VALUE_SHIFT,
-+
-+	.panic_alarm_ctrl = IMX6_TEMPSENSE2,
-+	.panic_alarm_mask = IMX6_TEMPSENSE2_PANIC_VALUE_MASK,
-+	.panic_alarm_shift = IMX6_TEMPSENSE2_PANIC_VALUE_SHIFT,
-+
-+	.low_alarm_ctrl = IMX6_TEMPSENSE2,
-+	.low_alarm_mask = IMX6_TEMPSENSE2_LOW_VALUE_MASK,
-+	.low_alarm_shift = IMX6_TEMPSENSE2_LOW_VALUE_SHIFT,
-+};
-+
-+static struct thermal_soc_data thermal_imx7_data = {
-+	.version = TEMPMON_IMX7,
-+
-+	.sensor_ctrl = IMX7_TEMPSENSE1,
-+	.power_down_mask = IMX7_TEMPSENSE1_POWER_DOWN,
-+	.measure_temp_mask = IMX7_TEMPSENSE1_MEASURE_TEMP,
-+
-+	.measure_freq_ctrl = IMX7_TEMPSENSE1,
-+	.measure_freq_shift = IMX7_TEMPSENSE1_MEASURE_FREQ_SHIFT,
-+	.measure_freq_mask = IMX7_TEMPSENSE1_MEASURE_FREQ_MASK,
-+
-+	.temp_data = IMX7_TEMPSENSE1,
-+	.temp_value_mask = IMX7_TEMPSENSE1_TEMP_VALUE_MASK,
-+	.temp_value_shift = IMX7_TEMPSENSE1_TEMP_VALUE_SHIFT,
-+	.temp_valid_mask = IMX7_TEMPSENSE1_FINISHED,
-+
-+	.panic_alarm_ctrl = IMX7_TEMPSENSE1,
-+	.panic_alarm_mask = IMX7_TEMPSENSE0_PANIC_ALARM_MASK,
-+	.panic_alarm_shift = IMX7_TEMPSENSE0_PANIC_ALARM_SHIFT,
-+
-+	.high_alarm_ctrl = IMX7_TEMPSENSE0,
-+	.high_alarm_mask = IMX7_TEMPSENSE0_HIGH_ALARM_MASK,
-+	.high_alarm_shift = IMX7_TEMPSENSE0_HIGH_ALARM_SHIFT,
-+
-+	.low_alarm_ctrl = IMX7_TEMPSENSE0,
-+	.low_alarm_mask = IMX7_TEMPSENSE0_LOW_ALARM_MASK,
-+	.low_alarm_shift = IMX7_TEMPSENSE0_LOW_ALARM_SHIFT,
- };
- 
- struct imx_thermal_data {
-@@ -112,30 +233,41 @@ static void imx_set_panic_temp(struct imx_thermal_data *data,
- 			       int panic_temp)
- {
- 	struct regmap *map = data->tempmon;
-+	const struct thermal_soc_data *soc_data = data->socdata;
- 	int critical_value;
- 
- 	critical_value = (data->c2 - panic_temp) / data->c1;
--	regmap_write(map, TEMPSENSE2 + REG_CLR, TEMPSENSE2_PANIC_VALUE_MASK);
--	regmap_write(map, TEMPSENSE2 + REG_SET, critical_value <<
--			TEMPSENSE2_PANIC_VALUE_SHIFT);
-+
-+	regmap_write(map, soc_data->panic_alarm_ctrl + REG_CLR,
-+		     soc_data->panic_alarm_mask);
-+	regmap_write(map, soc_data->panic_alarm_ctrl + REG_SET,
-+		     critical_value << soc_data->panic_alarm_shift);
- }
- 
- static void imx_set_alarm_temp(struct imx_thermal_data *data,
- 			       int alarm_temp)
- {
- 	struct regmap *map = data->tempmon;
-+	const struct thermal_soc_data *soc_data = data->socdata;
- 	int alarm_value;
- 
- 	data->alarm_temp = alarm_temp;
--	alarm_value = (data->c2 - alarm_temp) / data->c1;
--	regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_ALARM_VALUE_MASK);
--	regmap_write(map, TEMPSENSE0 + REG_SET, alarm_value <<
--			TEMPSENSE0_ALARM_VALUE_SHIFT);
-+
-+	if (data->socdata->version == TEMPMON_IMX7)
-+		alarm_value = alarm_temp / 1000 + data->c1 - 25;
-+	else
-+		alarm_value = (data->c2 - alarm_temp) / data->c1;
-+
-+	regmap_write(map, soc_data->high_alarm_ctrl + REG_CLR,
-+		     soc_data->high_alarm_mask);
-+	regmap_write(map, soc_data->high_alarm_ctrl + REG_SET,
-+		     alarm_value << soc_data->high_alarm_shift);
- }
- 
- static int imx_get_temp(struct thermal_zone_device *tz, int *temp)
- {
- 	struct imx_thermal_data *data = tz->devdata;
-+	const struct thermal_soc_data *soc_data = data->socdata;
- 	struct regmap *map = data->tempmon;
- 	unsigned int n_meas;
- 	bool wait;
-@@ -143,16 +275,18 @@ static int imx_get_temp(struct thermal_zone_device *tz, int *temp)
- 
- 	if (data->mode == THERMAL_DEVICE_ENABLED) {
- 		/* Check if a measurement is currently in progress */
--		regmap_read(map, TEMPSENSE0, &val);
--		wait = !(val & TEMPSENSE0_FINISHED);
-+		regmap_read(map, soc_data->temp_data, &val);
-+		wait = !(val & soc_data->temp_valid_mask);
- 	} else {
- 		/*
- 		 * Every time we measure the temperature, we will power on the
- 		 * temperature sensor, enable measurements, take a reading,
- 		 * disable measurements, power off the temperature sensor.
- 		 */
--		regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_POWER_DOWN);
--		regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_MEASURE_TEMP);
-+		regmap_write(map, soc_data->sensor_ctrl + REG_CLR,
-+			    soc_data->power_down_mask);
-+		regmap_write(map, soc_data->sensor_ctrl + REG_SET,
-+			    soc_data->measure_temp_mask);
- 
- 		wait = true;
- 	}
-@@ -164,22 +298,28 @@ static int imx_get_temp(struct thermal_zone_device *tz, int *temp)
- 	if (wait)
- 		usleep_range(20, 50);
- 
--	regmap_read(map, TEMPSENSE0, &val);
-+	regmap_read(map, soc_data->temp_data, &val);
- 
- 	if (data->mode != THERMAL_DEVICE_ENABLED) {
--		regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_MEASURE_TEMP);
--		regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_POWER_DOWN);
-+		regmap_write(map, soc_data->sensor_ctrl + REG_CLR,
-+			     soc_data->measure_temp_mask);
-+		regmap_write(map, soc_data->sensor_ctrl + REG_SET,
-+			     soc_data->power_down_mask);
- 	}
- 
--	if ((val & TEMPSENSE0_FINISHED) == 0) {
-+	if ((val & soc_data->temp_valid_mask) == 0) {
- 		dev_dbg(&tz->device, "temp measurement never finished\n");
- 		return -EAGAIN;
- 	}
- 
--	n_meas = (val & TEMPSENSE0_TEMP_CNT_MASK) >> TEMPSENSE0_TEMP_CNT_SHIFT;
-+	n_meas = (val & soc_data->temp_value_mask)
-+		>> soc_data->temp_value_shift;
- 
- 	/* See imx_init_calib() for formula derivation */
--	*temp = data->c2 - n_meas * data->c1;
-+	if (data->socdata->version == TEMPMON_IMX7)
-+		*temp = (n_meas - data->c1 + 25) * 1000;
-+	else
-+		*temp = data->c2 - n_meas * data->c1;
- 
- 	/* Update alarm value to next higher trip point for TEMPMON_IMX6Q */
- 	if (data->socdata->version == TEMPMON_IMX6Q) {
-@@ -223,21 +363,26 @@ static int imx_set_mode(struct thermal_zone_device *tz,
- {
- 	struct imx_thermal_data *data = tz->devdata;
- 	struct regmap *map = data->tempmon;
-+	const struct thermal_soc_data *soc_data = data->socdata;
- 
- 	if (mode == THERMAL_DEVICE_ENABLED) {
- 		tz->polling_delay = IMX_POLLING_DELAY;
- 		tz->passive_delay = IMX_PASSIVE_DELAY;
- 
--		regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_POWER_DOWN);
--		regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_MEASURE_TEMP);
-+		regmap_write(map, soc_data->sensor_ctrl + REG_CLR,
-+			     soc_data->power_down_mask);
-+		regmap_write(map, soc_data->sensor_ctrl + REG_SET,
-+			     soc_data->measure_temp_mask);
- 
- 		if (!data->irq_enabled) {
- 			data->irq_enabled = true;
- 			enable_irq(data->irq);
- 		}
- 	} else {
--		regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_MEASURE_TEMP);
--		regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_POWER_DOWN);
-+		regmap_write(map, soc_data->sensor_ctrl + REG_CLR,
-+			     soc_data->measure_temp_mask);
-+		regmap_write(map, soc_data->sensor_ctrl + REG_SET,
-+			     soc_data->power_down_mask);
- 
- 		tz->polling_delay = 0;
- 		tz->passive_delay = 0;
-@@ -359,6 +504,15 @@ static int imx_init_calib(struct platform_device *pdev, u32 val)
- 	}
- 
- 	/*
-+	 * On i.MX7, we only use the calibration data at 25C to get the temp,
-+	 * Tmeas = ( Nmeas - n1) + 25; n1 is the fuse value for 25C.
-+	 */
-+	if (data->socdata->version == TEMPMON_IMX7) {
-+		data->c1 = (val >> 9) & 0x1ff;
-+		return 0;
-+	}
-+
-+	/*
- 	 * Sensor data layout:
- 	 *   [31:20] - sensor value @ 25C
- 	 * Use universal formula now and only need sensor value @ 25C
-@@ -426,6 +580,7 @@ static void imx_init_temp_grade(struct platform_device *pdev, u32 val)
- 
- static int imx_init_from_tempmon_data(struct platform_device *pdev)
- {
-+	const struct imx_thermal_data *data = platform_get_drvdata(pdev);
- 	struct regmap *map;
- 	int ret;
- 	u32 val;
-@@ -438,7 +593,11 @@ static int imx_init_from_tempmon_data(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = regmap_read(map, OCOTP_ANA1, &val);
-+	if (data->socdata->version == TEMPMON_IMX7)
-+		ret = regmap_read(map, IMX7_OCOTP_ANA1, &val);
-+	else
-+		ret = regmap_read(map, IMX6_OCOTP_ANA1, &val);
-+
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to read sensor data: %d\n", ret);
- 		return ret;
-@@ -447,7 +606,11 @@ static int imx_init_from_tempmon_data(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_read(map, OCOTP_MEM0, &val);
-+	/* use OTP for thermal grade */
-+	if (data->socdata->version == TEMPMON_IMX7)
-+		ret = regmap_read(map, IMX7_OCOTP_TESTER3, &val);
-+	else
-+		ret = regmap_read(map, IMX6_OCOTP_MEM0, &val);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to read sensor data: %d\n", ret);
- 		return ret;
-@@ -500,6 +663,7 @@ static irqreturn_t imx_thermal_alarm_irq_thread(int irq, void *dev)
- static const struct of_device_id of_imx_thermal_match[] = {
- 	{ .compatible = "fsl,imx6q-tempmon", .data = &thermal_imx6q_data, },
- 	{ .compatible = "fsl,imx6sx-tempmon", .data = &thermal_imx6sx_data, },
-+	{ .compatible = "fsl,imx7-tempmon", .data = &thermal_imx7_data, },
- 	{ /* end */ }
- };
- MODULE_DEVICE_TABLE(of, of_imx_thermal_match);
-@@ -531,14 +695,15 @@ static int imx_thermal_probe(struct platform_device *pdev)
- 
- 	/* make sure the IRQ flag is clear before enabling irq on i.MX6SX */
- 	if (data->socdata->version == TEMPMON_IMX6SX) {
--		regmap_write(map, MISC1 + REG_CLR, MISC1_IRQ_TEMPHIGH |
--			MISC1_IRQ_TEMPLOW | MISC1_IRQ_TEMPPANIC);
-+		regmap_write(map, IMX6_MISC1 + REG_CLR,
-+			IMX6_MISC1_IRQ_TEMPHIGH | IMX6_MISC1_IRQ_TEMPLOW
-+			| IMX6_MISC1_IRQ_TEMPPANIC);
- 		/*
- 		 * reset value of LOW ALARM is incorrect, set it to lowest
- 		 * value to avoid false trigger of low alarm.
- 		 */
--		regmap_write(map, TEMPSENSE2 + REG_SET,
--			TEMPSENSE2_LOW_VALUE_MASK);
-+		regmap_write(map, data->socdata->low_alarm_ctrl + REG_SET,
-+			     data->socdata->low_alarm_mask);
- 	}
- 
- 	data->irq = platform_get_irq(pdev, 0);
-@@ -565,11 +730,17 @@ static int imx_thermal_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Make sure sensor is in known good state for measurements */
--	regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_POWER_DOWN);
--	regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_MEASURE_TEMP);
--	regmap_write(map, TEMPSENSE1 + REG_CLR, TEMPSENSE1_MEASURE_FREQ);
--	regmap_write(map, MISC0 + REG_SET, MISC0_REFTOP_SELBIASOFF);
--	regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_POWER_DOWN);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_CLR,
-+		     data->socdata->power_down_mask);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_CLR,
-+		     data->socdata->measure_temp_mask);
-+	regmap_write(map, data->socdata->measure_freq_ctrl + REG_CLR,
-+		     data->socdata->measure_freq_mask);
-+	if (data->socdata->version != TEMPMON_IMX7)
-+		regmap_write(map, IMX6_MISC0 + REG_SET,
-+			IMX6_MISC0_REFTOP_SELBIASOFF);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_SET,
-+		     data->socdata->power_down_mask);
- 
- 	data->policy = cpufreq_cpu_get(0);
- 	if (!data->policy) {
-@@ -634,16 +805,20 @@ static int imx_thermal_probe(struct platform_device *pdev)
- 		 data->temp_passive / 1000);
- 
- 	/* Enable measurements at ~ 10 Hz */
--	regmap_write(map, TEMPSENSE1 + REG_CLR, TEMPSENSE1_MEASURE_FREQ);
-+	regmap_write(map, data->socdata->measure_freq_ctrl + REG_CLR,
-+		     data->socdata->measure_freq_mask);
- 	measure_freq = DIV_ROUND_UP(32768, 10); /* 10 Hz */
--	regmap_write(map, TEMPSENSE1 + REG_SET, measure_freq);
-+	regmap_write(map, data->socdata->measure_freq_ctrl + REG_SET,
-+		     measure_freq << data->socdata->measure_freq_shift);
- 	imx_set_alarm_temp(data, data->temp_passive);
- 
- 	if (data->socdata->version == TEMPMON_IMX6SX)
- 		imx_set_panic_temp(data, data->temp_critical);
- 
--	regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_POWER_DOWN);
--	regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_MEASURE_TEMP);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_CLR,
-+		     data->socdata->power_down_mask);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_SET,
-+		     data->socdata->measure_temp_mask);
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, data->irq,
- 			imx_thermal_alarm_irq, imx_thermal_alarm_irq_thread,
-@@ -669,7 +844,8 @@ static int imx_thermal_remove(struct platform_device *pdev)
- 	struct regmap *map = data->tempmon;
- 
- 	/* Disable measurements */
--	regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_POWER_DOWN);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_SET,
-+		     data->socdata->power_down_mask);
- 	if (!IS_ERR(data->thermal_clk))
- 		clk_disable_unprepare(data->thermal_clk);
- 
-@@ -692,8 +868,10 @@ static int imx_thermal_suspend(struct device *dev)
- 	 * temperature will be read as the thermal sensor is powered
- 	 * down.
- 	 */
--	regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_MEASURE_TEMP);
--	regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_POWER_DOWN);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_CLR,
-+		     data->socdata->measure_temp_mask);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_SET,
-+		     data->socdata->power_down_mask);
- 	data->mode = THERMAL_DEVICE_DISABLED;
- 	clk_disable_unprepare(data->thermal_clk);
- 
-@@ -710,8 +888,10 @@ static int imx_thermal_resume(struct device *dev)
- 	if (ret)
- 		return ret;
- 	/* Enabled thermal sensor after resume */
--	regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_POWER_DOWN);
--	regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_MEASURE_TEMP);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_CLR,
-+		     data->socdata->power_down_mask);
-+	regmap_write(map, data->socdata->sensor_ctrl + REG_SET,
-+		     data->socdata->measure_temp_mask);
- 	data->mode = THERMAL_DEVICE_ENABLED;
- 
- 	return 0;
+ 			anatop: anatop@30360000 {
 -- 
 2.7.4
