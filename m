@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227O4n+j2/bhbIcjqxCTfrUEarsEjIVHDVZT40nhtOriTth0aUBxJxi9tLHapeBjxaYkWUH1
-ARC-Seal: i=1; a=rsa-sha256; t=1517855064; cv=none;
+X-Google-Smtp-Source: AH8x224ux+GS3bdhWtj8SI0O2li6WPjqQsN4fiyxVY6ADDfmBcKJ4Ufh860ann2chR8BwdafQgSt
+ARC-Seal: i=1; a=rsa-sha256; t=1517855063; cv=none;
         d=google.com; s=arc-20160816;
-        b=GvY3g3ArCM3EtmPKuqhGCdGu6Br/VPNEZlZp/Zz06xH05jWmjO2anRM8iZ4feqFTNl
-         jzZSsosnkzuN/ro+/SztYGO/RfWqTQKreEBJRXhFDdQbk4Rfl3xTze6vcyIhpQ/E3DeR
-         4mNo9Iw11+10JXPLB4AA3axU5UftKaL6eZ3pZdX0d1lh0vfDq9kJFqoDeXYsjNHZNeFA
-         EbLzMohI1v8C/IRx/yDrI9C5WJDrqTnA5NSLrsGBlw/u5Yu715CEN/SRJSG1PZlbSbpy
-         sfH4iE6bCLutf6o127zFPB2MXrTDVVOEld1wJwiY5quRlRRJAqpuoWFPCW1HFVKiLrIL
-         0Aow==
+        b=lKBEsdCACu/n0THQMP2IXhM+T1hjxqO3ZZcGwqVNz0HT11IN2bx9Y6K4E9U3kGQo3E
+         zUXG5dwHXV9S+34ac0uC2Uvz1XNecbkH1AQwe5YVs206H2aOwtIZT+c8cf0NbOQAKy7k
+         T2iYGTB+GGA0NXS5bGTzgjWm/Rkxu3vyTu0JNAtRa07YItpJUek7hRvl62eSA40ENaJY
+         Jab635gc+Pasf9SGN7cg2JsRaRfgDd1OCaBmomOXscfbRFIpmYUVga0Kc8KQEu9yMda1
+         sunn/0xz/TK2vmGCVzFdp/5+Lv6nrgsEe+rllqPfFm42YHm0a41xVifiHW7UUEu3ON3+
+         uxug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=L3MLPIweNmlCjJrO366WPGCXeOSnw7TLJZJuYhgwIH8=;
-        b=EKVwOzLRYqFuDn67za18l1ZQ7qhZM6n0bHDhmeRqgVAmf8KHXOWxGOgcuvTH3kqPL4
-         JQFyvfreSTwFSd2qQOOKVjz7ncXPv/azQYJyrESkDd3A0a++hJD4p/InQFFEE7jFXgRE
-         Qcmqd/ceBic6x7YxEA9duVaohXTbuYLNZKxR6NJtFj4svhwDh0LMRNregcMuX9P7emF0
-         WhOBZ2OdgZhrHAnxOe5Ty1cBSsfhI+hLJKoaNmsQbvl+4kA7uYRCJF4sz3nP/63J2P4H
-         PWFmT9lFnUJN1dmM+touZ8n07UtiArCJc1IawB8w7QSw2yTSsH+O0sme55VVJ9ICBd8f
-         lmNg==
+        bh=hug5Dz2vfj8lfwWc9Rs8BvLai483990V3BqkIaizW18=;
+        b=DROdP+zBednEbwwHwyYN6Zk+d9oiHPyke00qwqhJGMZumeVz2dw4vb+++zfggNK6w8
+         aehkZczmzPE+2+qPnNcgM0Cq2OZr7gq+u4EgTns5SKCl3YmPNEO06TndplFxbrWs3s5O
+         y6evgtoA6Dohc8yZ4aZGmosuUPfeOy+jpRf+QHwt2tOcQGjIkPxA4mt9Nv+8rBIur+Rp
+         P/DWO6IUCPpjqZEwAmV/WLLqW6bBJa9vnBZDq9C886o4e2CACHXY1/8VLxW8Z8aonRfw
+         tTe238pXd5sjS9OFc04NWmqedpZX6OUKuu3/vOw2crcEdOAGsd3r+9JB2efS66TV6tc6
+         P7UA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tim Chen <tim.c.chen@linux.intel.com>,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	ak@linux.intel.com,
 	karahmed@amazon.de,
-	arjan@linux.intel.com,
-	torvalds@linux-foundation.org,
-	linux@dominikbrodowski.net,
 	peterz@infradead.org,
-	bp@alien8.de,
-	luto@kernel.org,
-	pbonzini@redhat.com,
-	gregkh@linux-foundation.org
-Subject: [PATCH 4.14 50/64] x86/speculation: Use Indirect Branch Prediction Barrier in context switch
-Date: Mon,  5 Feb 2018 10:23:09 -0800
-Message-Id: <20180205182140.626426187@linuxfoundation.org>
+	bp@alien8.de
+Subject: [PATCH 4.14 49/64] x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature bits on Intel
+Date: Mon,  5 Feb 2018 10:23:08 -0800
+Message-Id: <20180205182140.585051865@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -50,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586392620719805?=
-X-GMAIL-MSGID: =?utf-8?q?1591586392620719805?=
+X-GMAIL-THRID: =?utf-8?q?1591586391485405299?=
+X-GMAIL-MSGID: =?utf-8?q?1591586391485405299?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,136 +51,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tim Chen tim.c.chen@linux.intel.com
+From: David Woodhouse dwmw@amazon.co.uk
 
-commit 18bf3c3ea8ece8f03b6fc58508f2dfd23c7711c7
+commit 7fcae1118f5fd44a862aa5c3525248e35ee67c3b
 
-Flush indirect branches when switching into a process that marked itself
-non dumpable. This protects high value processes like gpg better,
-without having too high performance overhead.
+Despite the fact that all the other code there seems to be doing it, just
+using set_cpu_cap() in early_intel_init() doesn't actually work.
 
-If done naïvely, we could switch to a kernel idle thread and then back
-to the original process, such as:
+For CPUs with PKU support, setup_pku() calls get_cpu_cap() after
+c->c_init() has set those feature bits. That resets those bits back to what
+was queried from the hardware.
 
-    process A -> idle -> process A
+Turning the bits off for bad microcode is easy to fix. That can just use
+setup_clear_cpu_cap() to force them off for all CPUs.
 
-In such scenario, we do not have to do IBPB here even though the process
-is non-dumpable, as we are switching back to the same process after a
-hiatus.
+I was less keen on forcing the feature bits *on* that way, just in case
+of inconsistencies. I appreciate that the kernel is going to get this
+utterly wrong if CPU features are not consistent, because it has already
+applied alternatives by the time secondary CPUs are brought up.
 
-To avoid the redundant IBPB, which is expensive, we track the last mm
-user context ID. The cost is to have an extra u64 mm context id to track
-the last mm we were using before switching to the init_mm used by idle.
-Avoiding the extra IBPB is probably worth the extra memory for this
-common scenario.
+But at least if setup_force_cpu_cap() isn't being used, we might have a
+chance of *detecting* the lack of the corresponding bit and either
+panicking or refusing to bring the offending CPU online.
 
-For those cases where tlb_defer_switch_to_init_mm() returns true (non
-PCID), lazy tlb will defer switch to init_mm, so we will not be changing
-the mm for the process A -> idle -> process A switch. So IBPB will be
-skipped for this case.
+So ensure that the appropriate feature bits are set within get_cpu_cap()
+regardless of how many extra times it's called.
 
-Thanks to the reviewers and Andy Lutomirski for the suggestion of
-using ctx_id which got rid of the problem of mm pointer recycling.
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Fixes: 2961298e ("x86/cpufeatures: Clean up Spectre v2 related CPUID flags")
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: ak@linux.intel.com
 Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
-Cc: linux@dominikbrodowski.net
 Cc: peterz@infradead.org
 Cc: bp@alien8.de
-Cc: luto@kernel.org
-Cc: pbonzini@redhat.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1517263487-3708-1-git-send-email-dwmw@amazon.co.uk
+Link: https://lkml.kernel.org/r/1517322623-15261-1-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/include/asm/tlbflush.h |    2 ++
- arch/x86/mm/tlb.c               |   33 ++++++++++++++++++++++++++++++++-
- 2 files changed, 34 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/common.c |   21 +++++++++++++++++++++
+ arch/x86/kernel/cpu/intel.c  |   27 ++++++++-------------------
+ 2 files changed, 29 insertions(+), 19 deletions(-)
 
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -174,6 +174,8 @@ struct tlb_state {
- 	struct mm_struct *loaded_mm;
- 	u16 loaded_mm_asid;
- 	u16 next_asid;
-+	/* last user mm's ctx id */
-+	u64 last_ctx_id;
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -726,6 +726,26 @@ static void apply_forced_caps(struct cpu
+ 	}
+ }
+ 
++static void init_speculation_control(struct cpuinfo_x86 *c)
++{
++	/*
++	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
++	 * and they also have a different bit for STIBP support. Also,
++	 * a hypervisor might have set the individual AMD bits even on
++	 * Intel CPUs, for finer-grained selection of what's available.
++	 *
++	 * We use the AMD bits in 0x8000_0008 EBX as the generic hardware
++	 * features, which are visible in /proc/cpuinfo and used by the
++	 * kernel. So set those accordingly from the Intel bits.
++	 */
++	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
++		set_cpu_cap(c, X86_FEATURE_IBRS);
++		set_cpu_cap(c, X86_FEATURE_IBPB);
++	}
++	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
++		set_cpu_cap(c, X86_FEATURE_STIBP);
++}
++
+ void get_cpu_cap(struct cpuinfo_x86 *c)
+ {
+ 	u32 eax, ebx, ecx, edx;
+@@ -820,6 +840,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
+ 
+ 	init_scattered_cpuid_features(c);
++	init_speculation_control(c);
  
  	/*
- 	 * We can be in one of several states:
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -6,13 +6,14 @@
- #include <linux/interrupt.h>
- #include <linux/export.h>
- #include <linux/cpu.h>
-+#include <linux/debugfs.h>
+ 	 * Clear/Set all flags overridden by options, after probe.
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -175,28 +175,17 @@ static void early_init_intel(struct cpui
+ 	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64))
+ 		c->microcode = intel_get_microcode_revision();
  
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-+#include <asm/nospec-branch.h>
- #include <asm/cache.h>
- #include <asm/apic.h>
- #include <asm/uv/uv.h>
--#include <linux/debugfs.h>
- 
- /*
-  *	TLB flushing, formerly SMP-only
-@@ -247,6 +248,27 @@ void switch_mm_irqs_off(struct mm_struct
- 	} else {
- 		u16 new_asid;
- 		bool need_flush;
-+		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
-+
-+		/*
-+		 * Avoid user/user BTB poisoning by flushing the branch
-+		 * predictor when switching between processes. This stops
-+		 * one process from doing Spectre-v2 attacks on another.
-+		 *
-+		 * As an optimization, flush indirect branches only when
-+		 * switching into processes that disable dumping. This
-+		 * protects high value processes like gpg, without having
-+		 * too high performance overhead. IBPB is *expensive*!
-+		 *
-+		 * This will not flush branches when switching into kernel
-+		 * threads. It will also not flush if we switch to idle
-+		 * thread and back to the same process. It will flush if we
-+		 * switch to a different non-dumpable process.
-+		 */
-+		if (tsk && tsk->mm &&
-+		    tsk->mm->context.ctx_id != last_ctx_id &&
-+		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
-+			indirect_branch_prediction_barrier();
- 
- 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
- 			/*
-@@ -292,6 +314,14 @@ void switch_mm_irqs_off(struct mm_struct
- 			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
- 		}
- 
-+		/*
-+		 * Record last user mm's context id, so we can avoid
-+		 * flushing branch buffer with IBPB if we switch back
-+		 * to the same user.
-+		 */
-+		if (next != &init_mm)
-+			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
-+
- 		this_cpu_write(cpu_tlbstate.loaded_mm, next);
- 		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
+-	/*
+-	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
+-	 * and they also have a different bit for STIBP support. Also,
+-	 * a hypervisor might have set the individual AMD bits even on
+-	 * Intel CPUs, for finer-grained selection of what's available.
+-	 */
+-	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
+-		set_cpu_cap(c, X86_FEATURE_IBRS);
+-		set_cpu_cap(c, X86_FEATURE_IBPB);
+-	}
+-	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
+-		set_cpu_cap(c, X86_FEATURE_STIBP);
+-
+ 	/* Now if any of them are set, check the blacklist and clear the lot */
+-	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
++	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
++	     cpu_has(c, X86_FEATURE_INTEL_STIBP) ||
++	     cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
+ 	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
+ 		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
+-		clear_cpu_cap(c, X86_FEATURE_IBRS);
+-		clear_cpu_cap(c, X86_FEATURE_IBPB);
+-		clear_cpu_cap(c, X86_FEATURE_STIBP);
+-		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
+-		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_IBRS);
++		setup_clear_cpu_cap(X86_FEATURE_IBPB);
++		setup_clear_cpu_cap(X86_FEATURE_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
++		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
  	}
-@@ -369,6 +399,7 @@ void initialize_tlbstate_and_flush(void)
- 	write_cr3(build_cr3(mm->pgd, 0));
  
- 	/* Reinitialize tlbstate. */
-+	this_cpu_write(cpu_tlbstate.last_ctx_id, mm->context.ctx_id);
- 	this_cpu_write(cpu_tlbstate.loaded_mm_asid, 0);
- 	this_cpu_write(cpu_tlbstate.next_asid, 1);
- 	this_cpu_write(cpu_tlbstate.ctxs[0].ctx_id, mm->context.ctx_id);
+ 	/*
