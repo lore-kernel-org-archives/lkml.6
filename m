@@ -1,109 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752559AbeBEFBY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 00:01:24 -0500
-Received: from mx1.mthode.org ([216.82.208.22]:38612 "EHLO mx1.mthode.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750854AbeBEFBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 00:01:17 -0500
-Date: Sun, 4 Feb 2018 23:01:16 -0600
-From: Matthew Thode <mthode@mthode.org>
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: thinkpad_acpi: suppress warning about palm
- detection
-Message-ID: <20180205050116.isaz6pmgsquzjmqr@mthode.org>
-References: <20180112110445.1876-1-dh.herrmann@gmail.com>
- <CAHp75Vc66ZfRmOoOKJRODpV0mS2aZru=b-r0cr8SKYH=hm+W6Q@mail.gmail.com>
- <CANq1E4RGo091oaG=0owKVfxOV8wR2qQ=nXfXzZsRxg6Q7_C8zw@mail.gmail.com>
- <20180113063309.iryfhufpilas3jnf@mthode.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7fnz55mbyfs4jstu"
-Content-Disposition: inline
-In-Reply-To: <20180113063309.iryfhufpilas3jnf@mthode.org>
-User-Agent: NeoMutt/20171215
+        id S1752265AbeBEFGt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 00:06:49 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:42151 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750718AbeBEFGq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 00:06:46 -0500
+X-Google-Smtp-Source: AH8x224fm+wqk3/27fijb2mA1dnSreZCM5PPgUW7zEeuRLEM3yk1PiYeY9I1OVl17O4gvWmCy4nxDw==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.9\))
+Subject: Re: [PATCH v3] ACPI: Parse entire table as a term_list for Dell XPS
+ 9570 and Precision M5530
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <CAJZ5v0ha9xZVSvUjUPO5ebM+JhPH7jk6W=M8AheirqOrhf8Ezg@mail.gmail.com>
+Date: Mon, 5 Feb 2018 13:06:37 +0800
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <334D3FD8-FF56-410C-8B33-B973EDFDD7D7@canonical.com>
+References: <20180131045634.13328-1-kai.heng.feng@canonical.com>
+ <CAJZ5v0ha9xZVSvUjUPO5ebM+JhPH7jk6W=M8AheirqOrhf8Ezg@mail.gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+X-Mailer: Apple Mail (2.3445.6.9)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---7fnz55mbyfs4jstu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 18-01-13 00:33:09, Matthew Thode wrote:
-> On 18-01-12 15:07:12, David Herrmann wrote:
-> > Hi Andy
-> >=20
-> > On Fri, Jan 12, 2018 at 2:50 PM, Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Fri, Jan 12, 2018 at 1:04 PM, David Herrmann <dh.herrmann@gmail.co=
-m> wrote:
-> > >> Cc: Matthew Thode <mthode@mthode.org>
-> > >
-> > > Shouldn't be Suggested-by or even Signed-off-by?
-> >=20
-> > The patch is different (Matthew originally suppressed the ACPI event),
-> > so I did not copy the sign-off. Please add Suggested-by, if that is an
-> > acceptable tag.
-> >=20
-> > >> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
-> > >
-> > >
-> > >> +       case TP_HKEY_EV_PALM_DETECTED:
-> > >> +       case TP_HKEY_EV_PALM_UNDETECTED:
-> > >
-> > >> +               /* palm detected hovering the keyboard, forward to u=
-ser-space
-> > >> +                * via netlink for consumption */
-> > >
-> > > Comment style is
-> > > /*
-> > >  * Multi line comment.
-> > >  * This is an example.
-> > >  */
-> >=20
-> > All other 6 comments in this function follow the style I used here, so
-> > I tried to be consistent. But feel free to amend this change.
-> >=20
->=20
-> I'm fine with a signed-off-by or tested-by or suggested-by.  There is a
-> spelling mistake though, 'hoveres' should be hovers.
->=20
+> On Feb 4, 2018, at 4:26 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> 
+> On Wed, Jan 31, 2018 at 5:56 AM, Kai-Heng Feng
+> <kai.heng.feng@canonical.com> wrote:
+>> The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
+>> of box.
+>> 
+>> The touchpad relies on its _INI method to update its _HID value from
+>> XXXX0000 to SYNA2393.
+>> Also, the _STA relies on value of I2CN to report correct status.
+>> 
+>> Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
+>> correctly set up, and _INI can get run. The ACPI table in this machine
+>> is designed to get parsed this way.
+>> 
+>> Also, change the quirk table to a more generic name.
+>> 
+>> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198515
+>> Cc: Mario Limonciello <mario.limonciello@dell.com>
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>> ---
+>> v3: Put the function under right #ifdef, comment adjustment
+>> 
+>> v2: Andy's suggestion, merge to a single quirk table.
+>> 
+>> drivers/acpi/bus.c | 40 +++++++++++++++++++++++++++++++++-------
+>> 1 file changed, 33 insertions(+), 7 deletions(-)
+>> 
+>> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+>> index 4d0979e02a28..7cb18bc2b59a 100644
+>> --- a/drivers/acpi/bus.c
+>> +++ b/drivers/acpi/bus.c
+>> @@ -66,10 +66,39 @@ static int set_copy_dsdt(const struct dmi_system_id *id)
+>>        return 0;
+>> }
+>> #endif
+>> +static int set_gbl_term_list(const struct dmi_system_id *id)
+>> +{
+>> +       pr_notice("%s detected - parse the entire table as a term_list\n",
+>> +                 id->ident);
+> 
+> This is not a useful message for a user (who may not know what
+> trem_list is).  Care to change it to something more useful, or even
+> drop it?
 
-Is there anything else I can do here?  I'm not sure any of us have the
-ability to find out what lenovo actualy wants this for.
+Yes, I think it should be dropped. The information is already in the
+commit log and comment section, if the user really wants to know
+more.
 
-Sorry for the double reply, dmarc can be hell.
-
---=20
-Matthew Thode
-
---7fnz55mbyfs4jstu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEExFR3cOKGRpGbcMHPZKN76q4ZpOgFAlp35RsACgkQZKN76q4Z
-pOh0Tw/+PFKElFvPV+ior11CLK4haH+IwI5WirzZiz6t7FFTPGCaT0DXPEEV3YND
-2QoCk4qvk9FwYwZ3h4lamsoQ339dsXeCy/+uD7Z/TBM9KFfX1MhkBV3bPQI/cRkE
-7kqfLd7JcJgwgORAL6eHc0artWNh0WBF2OeeGk7EpFU0MLibsJ7ys7KdXLtu+eig
-IVfrXXjnVx67uE/KrS3GURIT38awoaXcEDDDutevAHVTkQnsoldfKQuSILsUYnS1
-tn2oYsXcYmdcOizX7vc7rSi+aDFagiL+yY4gKcILQ/DHtTnwc8ZvPo1kRDfVw6Rx
-fLnYwX+oVJ/gcuZR2cKLKUemxKbWYzSNRKVcQQI8ad/7KRoHPnviHR/FRF3Wzo5J
-UjkSY2NFD7BAIkAh9hHrEWNGfwPXyCCCOHOvUyBw/nave2lDaGtcVssV5bn2b66u
-GL6nhuw+Z2rT9DUJeGpLOoFtflbw1yNxu7YQJbTWWEfj9DkbxUT49Rgb+EuFuMwV
-oYIDnwgjf4l8FO0f8wWx55EeTNIrSv1lOLjPWPDHXvcpwzA0b7vjbY3oG+lyyvqT
-GcuGNNrOD7dc7F7Ou+2b8OL6z3gDuK+WBfcOQVN7xQ0xq6RWg0tHx99ivrpemmyf
-+D/iSKIOVKkHFXaH5xastcoWoVw3ct9pYJD/6BbtEXZ8D2qNUy0=
-=uKZt
------END PGP SIGNATURE-----
-
---7fnz55mbyfs4jstu--
+Kai-Heng
