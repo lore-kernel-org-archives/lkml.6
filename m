@@ -1,43 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753050AbeBEGNH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 01:13:07 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36759 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752519AbeBEGIk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:08:40 -0500
-X-Google-Smtp-Source: AH8x22550MNCs5OwNfx2BmN8ne4/Db2DE0GFyqs0WkwiYm0UkUmV4MWrKr2CywOuUobGq/C9bSYJaQ==
-Date: Mon, 5 Feb 2018 00:08:37 -0600
-From: Rob Herring <robh@kernel.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: andy.gross@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] Documentation: dt-bindings: arm: Document kryo385
- cpu
-Message-ID: <20180205060837.m4wwnh3dhav75d5y@rob-hp-laptop>
-References: <20180131161941.29865-1-rnayak@codeaurora.org>
- <20180131161941.29865-2-rnayak@codeaurora.org>
+        id S1752992AbeBEGNh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 01:13:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50496 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753087AbeBEGNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 01:13:00 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27BE021734
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Mon, 5 Feb 2018 14:12:38 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: rui.zhang@intel.com, edubezval@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, kernel@pengutronix.de, fabio.estevam@nxp.com,
+        linux@armlinux.org.uk, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, aisheng.dong@nxp.com,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V2 1/2] ARM: dts: imx7s: add temperature monitor support
+Message-ID: <20180205061237.GE31354@dragon>
+References: <1516954180-26029-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180131161941.29865-2-rnayak@codeaurora.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1516954180-26029-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 09:49:39PM +0530, Rajendra Nayak wrote:
-> Document the compatible string for the Kryo385 cpus found in qualcomm
-> SoCs.
+On Fri, Jan 26, 2018 at 04:09:39PM +0800, Anson Huang wrote:
+> Add i.MX7 temperature monitor support.
 > 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 > ---
->  Documentation/devicetree/bindings/arm/cpus.txt | 1 +
->  1 file changed, 1 insertion(+)
+> no changes since V1.
+>  .../devicetree/bindings/thermal/imx-thermal.txt      |  5 +++--
 
-"dt-bindings: arm: " for the subject prefix. Otherwise,
+The bindings doc should be a separate patch or part of related
+imx-thermal driver patch ...
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+>  arch/arm/boot/dts/imx7s.dtsi                         | 20 ++++++++++++++++++++
+
+..., and shouldn't be mixed with dts changes.
+
+Shawn
