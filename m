@@ -1,73 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753086AbeBENAo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 08:00:44 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:58344 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752962AbeBENAc (ORCPT
+        id S1752953AbeBENDR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 08:03:17 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:42649 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752743AbeBENDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 08:00:32 -0500
-Date: Mon, 5 Feb 2018 12:59:44 +0000
-From: Darren Kenny <darren.kenny@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>, Andi Kleen <ak@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2] Correct use of IBRS_ATT name, should be IBRS_ALL
-Message-ID: <20180205125944.gxlukhmeo2xsqisj@starbug-vm.ie.oracle.com>
-References: <20180205110220.ky2ih34egygmg4xs@starbug-vm.ie.oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180205110220.ky2ih34egygmg4xs@starbug-vm.ie.oracle.com>
-User-Agent: NeoMutt/20171215
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8795 signatures=668662
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802050166
+        Mon, 5 Feb 2018 08:03:10 -0500
+X-Google-Smtp-Source: AH8x226c8SIJsJckLhlI7SNy7ytnRXE7AaTKyfuawnsyXfCHliTJw/BZTZS9DX0ta9VMOTYm07kDbA==
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] pwm: Changes for v4.16-rc1
+Date: Mon,  5 Feb 2018 14:03:05 +0100
+Message-Id: <20180205130305.25069-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please ignore this, didn't realise it had been already applied - guess I
-looked in the wrong place.
+Hi Linus,
+
+The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+
+  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git tags/pwm/for-4.16-rc1
+
+for you to fetch changes up to bccaa3f917c90917a758020dfbdd9027290a7c4e:
+
+  pwm: meson: Add clock source configuration for Meson-AXG (2017-12-05 09:51:36 +0100)
 
 Thanks,
+Thierry
 
-Darren.
+----------------------------------------------------------------
+pwm: Changes for v4.16-rc1
 
-On Mon, Feb 05, 2018 at 11:02:20AM +0000, Darren Kenny wrote:
->Fixes a comment in commit 117cc7a908c83697b0b737d15ae1eb5943afe35b
->("x86/retpoline: Fill return stack buffer on vmexit")
->
->While the original name was "IBRS All The Time" (IBRS_ATT),
->the publicly documented name is IBRS_ALL, we should be using that.
->
->Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
->Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
->Acked-by: David Woodhouse <dwmw@amazon.co.uk>
->---
->arch/x86/include/asm/nospec-branch.h | 2 +-
->1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
->index 4ad4108..5b778d2 100644
->--- a/arch/x86/include/asm/nospec-branch.h
->+++ b/arch/x86/include/asm/nospec-branch.h
->@@ -201,7 +201,7 @@ extern char __indirect_thunk_end[];
-> * On VMEXIT we must ensure that no RSB predictions learned in the guest
-> * can be followed in the host, by overwriting the RSB completely. Both
-> * retpoline and IBRS mitigations for Spectre v2 need this; only on future
->- * CPUs with IBRS_ATT *might* it be avoided.
->+ * CPUs with IBRS_ALL *might* it be avoided.
-> */
->static inline void vmexit_fill_RSB(void)
->{
->-- 
->2.9.5
->
+The Meson PWM controller driver gains support for the AXG series and a
+minor bug is fixed for the STMPE driver.
+
+To round things off, the class is now set for PWM channels exported via
+sysfs which allows non-root access, provided that the system has been
+configured accordingly.
+
+----------------------------------------------------------------
+Axel Lin (1):
+      pwm: stmpe: Fix wrong register offset for hwpwm=2 case
+
+Gottfried Haider (1):
+      pwm: Set class for exported channels in sysfs
+
+Jian Hu (2):
+      dt-bindings: pwm: Update bindings for the Meson-AXG
+      pwm: meson: Add clock source configuration for Meson-AXG
+
+ .../devicetree/bindings/pwm/pwm-meson.txt          |  2 ++
+ drivers/pwm/pwm-meson.c                            | 26 ++++++++++++++++++++++
+ drivers/pwm/pwm-stmpe.c                            |  2 +-
+ drivers/pwm/sysfs.c                                |  1 +
+ 4 files changed, 30 insertions(+), 1 deletion(-)
