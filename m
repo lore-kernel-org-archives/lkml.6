@@ -1,32 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752643AbeBEIMB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 03:12:01 -0500
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:55676 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeBEILz (ORCPT
+        id S1752665AbeBEIMP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 03:12:15 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:46655 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752616AbeBEIMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:11:55 -0500
-X-Google-Smtp-Source: AH8x226OKmkjinlD3PpcfYvyAHC88gSlbldLJbGhWO300FrkVUCA57I2d1keNsPPTci8Le0VjyGvQA==
-Date: Mon, 5 Feb 2018 09:11:51 +0100
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: ulfalizer@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        thierry.reding@gmail.com, matthias.bgg@gmail.com
-Subject: Re: [PATCH v2 03/20] kconfig: Remove leftover references to AVR32
- symbol
-Message-ID: <20180205081151.GA11907@Red>
-Reply-To: 20180205044441.4440-1-ulfalizer@gmail.com
+        Mon, 5 Feb 2018 03:12:00 -0500
+X-UUID: 59cd3242152246d7b55c600707fd316a-20180205
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <rui.zhang@intel.com>, <edubezval@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Shunli Wang <shunli.wang@mediatek.com>
+Subject: [PATCH 1/2] dt-bindings: thermal: add binding for MT7622 SoC
+Date: Mon, 5 Feb 2018 16:11:51 +0800
+Message-ID: <0b7dabc3b2c7ed93b88ec0923c2cce2f84fba5b1.1517817887.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+From: Sean Wang <sean.wang@mediatek.com>
 
-This conflict also with https://lkml.org/lkml/2018/1/18/699
+Add devicetree bindings for MediaTek MT7622 thermal controller
 
-Regards
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+---
+ Documentation/devicetree/bindings/thermal/mediatek-thermal.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt b/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt
+index 0d73ea5..41d6a44 100644
+--- a/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt
+@@ -12,6 +12,7 @@ Required properties:
+   - "mediatek,mt8173-thermal" : For MT8173 family of SoCs
+   - "mediatek,mt2701-thermal" : For MT2701 family of SoCs
+   - "mediatek,mt2712-thermal" : For MT2712 family of SoCs
++  - "mediatek,mt7622-thermal" : For MT7622 SoC
+ - reg: Address range of the thermal controller
+ - interrupts: IRQ for the thermal controller
+ - clocks, clock-names: Clocks needed for the thermal controller. required
+-- 
+2.7.4
