@@ -1,79 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752766AbeBELFo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 06:05:44 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42803 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750949AbeBELFf (ORCPT
+        id S1752682AbeBELIS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 06:08:18 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:9230 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750949AbeBELIL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 06:05:35 -0500
-X-Google-Smtp-Source: AH8x226JUAZ9n/nIv7uBZkA9m15KFsOwGbq6JOpwc0Cr7k2eQ+Gt2WXOqjlIbRD5DWNQjn5EX99gdg==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH] KVM: nVMX: Fix CR4 after VMLAUNCH/VMRESUME failure
-Date: Mon,  5 Feb 2018 03:04:46 -0800
-Message-Id: <1517828686-29070-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 5 Feb 2018 06:08:11 -0500
+Subject: Re: [PATCH v6 20/41] ARM: da830: add new clock init using common
+ clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-21-git-send-email-david@lechnology.com>
+ <4b2f45f5-7f0d-f0e6-6854-9992e19f45f2@ti.com>
+ <e5eb68e8-eb53-331d-5941-95df7d295074@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <4fc7b926-a21f-d49a-005e-44ad7f06e2e7@ti.com>
+Date: Mon, 5 Feb 2018 16:36:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <e5eb68e8-eb53-331d-5941-95df7d295074@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On Friday 02 February 2018 11:33 PM, David Lechner wrote:
+> On 02/02/2018 08:12 AM, Sekhar Nori wrote:
+>> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+>>>   void __init da830_init_time(void)
+>>>   {
+>>> +#ifdef CONFIG_COMMON_CLK
+>>> +    void __iomem *pll0, *psc0, *psc1;
+>>> +    struct clk *clk;
+>>> +
+>>> +    pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
+>>> +    psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
+>>> +    psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
+>>> +
+>>> +    da8xx_register_cfgchip();
+>>> +
+>>> +    clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
+>>> +
+>>> +    da830_pll_clk_init(pll0);
+>>> +
+>>> +    da830_psc_clk_init(psc0, psc1);
+>>> +
+>>
+>>> +    clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0,
+>>> 1, 1);
+>>> +    clk_register_clkdev(clk, NULL, "i2c_davinci.1");
+>>> +
+>>> +    clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk",
+>>> 0, 1, 1);
+>>> +    clk_register_clkdev(clk, "timer0", NULL);
+>>> +
+>>> +    clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk",
+>>> 0, 1, 1);
+>>> +    clk_register_clkdev(clk, NULL, "davinci-wdt");
+>>
+>> Isn't this better done in da830_pll_clk_init() ? I think we can get rid
+>> of the dummy fixed factor clock too and directly use the pll0_auxclk.
+> 
+> 
+> I considered it, but I kind of like keeping the fixed factor clocks for
+> debugging purposes. If you just have "pll0_auxclk" the enable count is
+> not helpful because you don't know which driver did the enabling.
 
-In L0, Haswell client host:
+I think it is better to more or less reflect the hardware here. We would
+not be doing this in the DT case, for example.
 
- nested_vmx_exit_reflected failed vm entry 7
- WARNING: CPU: 6 PID: 6797 at kvm/arch/x86/kvm//vmx.c:6206 handle_desc+0x2d/0x40 [kvm_intel]
- CPU: 6 PID: 6797 Comm: qemu-system-x86 Tainted: G        W  OE    4.15.0+ #4
- RIP: 0010:handle_desc+0x2d/0x40 [kvm_intel]
- Call Trace:
-  vmx_handle_exit+0xbd/0xe20 [kvm_intel]
-  ? kvm_arch_vcpu_ioctl_run+0xcde/0x1c00 [kvm]
-  kvm_arch_vcpu_ioctl_run+0xd5a/0x1c00 [kvm]
-  kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
-  ? kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
-  ? __fget+0xfc/0x210
-  ? __fget+0xfc/0x210
-  do_vfs_ioctl+0xa4/0x6a0
-  ? __fget+0x11d/0x210
-  SyS_ioctl+0x79/0x90
-  entry_SYSCALL_64_fastpath+0x25/0x9c
+I see your point on debugging. Such code can perhaps be temporarily
+introduced if really debugging such an issue. This will be the case with
+any shared clock.
 
-This can be reproduced by running kvm-unit-tests/run_tests.sh vmx_controls in 
-L1. UMIP CPUID bit is exposed to the L1 UMIP aware guest since it is emulated 
-by enabling descriptor-table exits on L0. There is a vmentry fail when 
-L0 tries to run L2 directly, the L1 guest architectural CR4 is not restored 
-after this failure since commit 4f350c6dbcb (kvm: nVMX: Handle deferred early 
-VMLAUNCH/VMRESUME failure properly). The L2 is kvm-unit-tests which will not 
-write CR4 w/ X86_CR4_UMIP bit. After another L1 access descriptor vmexit, we 
-check L2's architectural CR4 instead of L1's architectural CR4. This patch 
-fixes it by restoring L1's architectural CR4 after L0's VMLAUNCH/VMRESUME 
-failure.
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kvm/vmx.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 23789c9..9fc0492 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -11633,6 +11633,7 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
- 	 */
- 	nested_vmx_failValid(vcpu, VMXERR_ENTRY_INVALID_CONTROL_FIELD);
- 
-+	vcpu->arch.cr4 = vmcs12->host_cr4;
- 	load_vmcs12_mmu_host_state(vcpu, vmcs12);
- 
- 	/*
--- 
-2.7.4
+Thanks,
+Sekhar
