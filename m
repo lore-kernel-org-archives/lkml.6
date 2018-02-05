@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2267oG33mEH/1S7/N19C5396XOOcmqYvaVhnuHubCbAR12kI/26FMid3/03wNNQrYjDWkQja
-ARC-Seal: i=1; a=rsa-sha256; t=1517855019; cv=none;
+X-Google-Smtp-Source: AH8x225JhP6txUGNB3LaMRQbN4X8Qi3dwMAfRmV/HI2JUF8kYNALa7sNbHM4yORVlOChVtRcleZ7
+ARC-Seal: i=1; a=rsa-sha256; t=1517855017; cv=none;
         d=google.com; s=arc-20160816;
-        b=0cKscrRT5rS2HT+ng++NmnkU9GFv3W+9f0gxvWl0nTSowc4DozJdwniBD7C2oa4c+6
-         XzJauKLBD0k36afwICdZ17j5xq9vmXqI++e7sFncGUeitSMa2CxUw4p8Ztkhb/PrKSVw
-         T0X+BTb+eAeRoJbbNWv8wAql282OCR9X7DXPD9azS4SQyqnVgQQcxFezZXveLlalTBiq
-         kXTXk38YSEWKzPStWxtKa6TgrZYzkTt8r4/5ZfkTWINM6iI5G/hJkjd5weOjBSCM0oXU
-         GNuCtVDIwt48j47Ma2pXJmF82eAI5xA5zDc+NC596xD7p/4JMN+SWZ/RgyrW3cvx0bLC
-         /8TA==
+        b=0XSzJfroSBsTzS3FfUe7SOXJNVpm5FUgycPQuHGYhh0b6bKMerXO4+BEUbzTOgvTje
+         b9HwsZgDap7FF866GSNerjXXwA5qB6ajbODErg9kC02+gMNF5XnxCigBIb10CXmC1j8K
+         WkOyAvkgI1FHuItYoxAZDRAno3K4NuaVLfyMkWyP7oxgxJLEIcO49J2+JicdaMTfcywT
+         6CQtjTxu0Hj71MgTOWFOJAIVr5JcBRdvDBPFISuHB3NU6iGgBf5hFt97AotnbWRd+SJH
+         pwsbqLs5i8BataltNchxId/BjXUIuTENK8uUSHB5MwBEStrRCsAOOmRfyP8VfBQdSi8r
+         3OSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nr4xJiKzuULqMq0iYox61TZdzc55xroZCyFV1FqwoU0=;
-        b=JZoEXm6WCHkxhCuP4kNWkStprFH6suowBQhxQBAklFHFaj9eWQmleCHjKLDKREAE3U
-         DQK1Gr52YHgMj6838oLjUzWeefAwXKmN3qU0hKfyDTGhEzQDyRiPjG9qT0Vh9ZOwajna
-         jGS56RgfJKFQZX+JKiqJPwpUYV4yh0qNpoeRA1HZNOYIYRy17XXPon99V4bW6SNxnI6Q
-         9o+TQjjDcfDR87pwFcHQI10Xpfye0K7JkCVjy6wJVtrYWcPPEkz/Evzbw8/SvFNbCv+b
-         sVWGHH95kOhI8USJBiXjeEhknVHYLe2HmWwbli2ft/z5Y5FzmFRGLt93FBWbYTKhG1hz
-         aScg==
+        bh=SmqzN49mh8DoEUxQHsEVFd88niRMGxozCnZMT30Sgt0=;
+        b=rGq67h6680Qe1H/AvDKCBvfmiiD7C58dRAzVvw7JXEMLQvUnPy4IOrfIiGum6UW6Cs
+         ELnE2qZEAranjZOUm6PStus1AHJywAE9lbAQWa4rLhw4Nclcu6cZ+yoE+PdMbYL/dTmv
+         Cp7rJroDvFTNbLY/tg8iZTKjzsM2S3zQ7xKUyzcewXvaxtUZ9qksbm/TaWtRWqKnDITq
+         KDulpIoMhRKZ845DRn2+PN2oWHTTJQuaIDX4Ro7CAC/YWCk8I5lLBFVI2bW1B+EvTUM6
+         KmP3yCaoYfgMmXn2bAJJsXW6jR+NiSL2S0SppVvfig+bZy8qNMSe3VDL+g+i+wQzZEXi
+         4s7A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,7 +26,6 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	ak@linux.intel.com,
@@ -39,9 +38,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	pbonzini@redhat.com,
 	tim.c.chen@linux.intel.com,
 	gregkh@linux-foundation.org
-Subject: [PATCH 4.14 20/64] x86/retpoline: Simplify vmexit_fill_RSB()
-Date: Mon,  5 Feb 2018 10:22:39 -0800
-Message-Id: <20180205182139.389522570@linuxfoundation.org>
+Subject: [PATCH 4.14 19/64] x86/cpufeatures: Clean up Spectre v2 related CPUID flags
+Date: Mon,  5 Feb 2018 10:22:38 -0800
+Message-Id: <20180205182139.351313184@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -50,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586344767454537?=
-X-GMAIL-MSGID: =?utf-8?q?1591586344767454537?=
+X-GMAIL-THRID: =?utf-8?q?1591586342823554380?=
+X-GMAIL-MSGID: =?utf-8?q?1591586342823554380?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,18 +58,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov bp@alien8.de
+From: David Woodhouse dwmw@amazon.co.uk
 
-commit 1dde7415e99933bb7293d6b2843752cbdb43ec11
+commit 2961298efe1ea1b6fc0d7ee8b76018fa6c0bcef2
 
-Simplify it to call an asm-function instead of pasting 41 insn bytes at
-every call site. Also, add alignment to the macro as suggested here:
+We want to expose the hardware features simply in /proc/cpuinfo as "ibrs",
+"ibpb" and "stibp". Since AMD has separate CPUID bits for those, use them
+as the user-visible bits.
 
-  https://support.google.com/faqs/answer/7625886
+When the Intel SPEC_CTRL bit is set which indicates both IBRS and IBPB
+capability, set those (AMD) bits accordingly. Likewise if the Intel STIBP
+bit is set, set the AMD STIBP that's used for the generic hardware
+capability.
 
-[dwmw2: Clean up comments, let it clobber %ebx and just tell the compiler]
+Hide the rest from /proc/cpuinfo by putting "" in the comments. Including
+RETPOLINE and RETPOLINE_AMD which shouldn't be visible there. There are
+patches to make the sysfs vulnerabilities information non-readable by
+non-root, and the same should apply to all information about which
+mitigations are actually in use. Those *shouldn't* appear in /proc/cpuinfo.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
+The feature bit for whether IBPB is actually used, which is needed for
+ALTERNATIVEs, is renamed to X86_FEATURE_USE_IBPB.
+
+Originally-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: ak@linux.intel.com
@@ -83,223 +93,134 @@ Cc: bp@alien8.de
 Cc: pbonzini@redhat.com
 Cc: tim.c.chen@linux.intel.com
 Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1517070274-12128-3-git-send-email-dwmw@amazon.co.uk
+Link: https://lkml.kernel.org/r/1517070274-12128-2-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/entry/entry_32.S             |    3 -
- arch/x86/entry/entry_64.S             |    3 -
- arch/x86/include/asm/asm-prototypes.h |    3 +
- arch/x86/include/asm/nospec-branch.h  |   70 +++-------------------------------
- arch/x86/lib/Makefile                 |    1 
- arch/x86/lib/retpoline.S              |   56 +++++++++++++++++++++++++++
- 6 files changed, 71 insertions(+), 65 deletions(-)
+ arch/x86/include/asm/cpufeatures.h   |   18 +++++++++---------
+ arch/x86/include/asm/nospec-branch.h |    2 +-
+ arch/x86/kernel/cpu/bugs.c           |    7 +++----
+ arch/x86/kernel/cpu/intel.c          |   31 +++++++++++++++++++++----------
+ 4 files changed, 34 insertions(+), 24 deletions(-)
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -252,7 +252,8 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
- 	 */
--	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	/* Clobbers %ebx */
-+	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -203,14 +203,14 @@
+ #define X86_FEATURE_PROC_FEEDBACK	( 7*32+ 9) /* AMD ProcFeedbackInterface */
+ #define X86_FEATURE_SME			( 7*32+10) /* AMD Secure Memory Encryption */
+ #define X86_FEATURE_PTI			( 7*32+11) /* Kernel Page Table Isolation enabled */
+-#define X86_FEATURE_RETPOLINE		( 7*32+12) /* Generic Retpoline mitigation for Spectre variant 2 */
+-#define X86_FEATURE_RETPOLINE_AMD	( 7*32+13) /* AMD Retpoline mitigation for Spectre variant 2 */
++#define X86_FEATURE_RETPOLINE		( 7*32+12) /* "" Generic Retpoline mitigation for Spectre variant 2 */
++#define X86_FEATURE_RETPOLINE_AMD	( 7*32+13) /* "" AMD Retpoline mitigation for Spectre variant 2 */
+ #define X86_FEATURE_INTEL_PPIN		( 7*32+14) /* Intel Processor Inventory Number */
  
- 	/* restore callee-saved registers */
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -495,7 +495,8 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
- 	 */
--	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	/* Clobbers %rbx */
-+	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
+ #define X86_FEATURE_MBA			( 7*32+18) /* Memory Bandwidth Allocation */
+-#define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* Fill RSB on context switches */
++#define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* "" Fill RSB on context switches */
  
- 	/* restore callee-saved registers */
---- a/arch/x86/include/asm/asm-prototypes.h
-+++ b/arch/x86/include/asm/asm-prototypes.h
-@@ -38,4 +38,7 @@ INDIRECT_THUNK(dx)
- INDIRECT_THUNK(si)
- INDIRECT_THUNK(di)
- INDIRECT_THUNK(bp)
-+asmlinkage void __fill_rsb(void);
-+asmlinkage void __clear_rsb(void);
-+
- #endif /* CONFIG_RETPOLINE */
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -7,50 +7,6 @@
- #include <asm/alternative-asm.h>
- #include <asm/cpufeatures.h>
+-#define X86_FEATURE_IBPB		( 7*32+21) /* Indirect Branch Prediction Barrier enabled*/
++#define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
  
--/*
-- * Fill the CPU return stack buffer.
-- *
-- * Each entry in the RSB, if used for a speculative 'ret', contains an
-- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-- *
-- * This is required in various cases for retpoline and IBRS-based
-- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-- * eliminate potentially bogus entries from the RSB, and sometimes
-- * purely to ensure that it doesn't get empty, which on some CPUs would
-- * allow predictions from other (unwanted!) sources to be used.
-- *
-- * We define a CPP macro such that it can be used from both .S files and
-- * inline assembly. It's possible to do a .macro and then include that
-- * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
-- */
--
--#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
--#define RSB_FILL_LOOPS		16	/* To avoid underflow */
--
--/*
-- * Google experimented with loop-unrolling and this turned out to be
-- * the optimal version — two calls, each with their own speculation
-- * trap should their return address end up getting used, in a loop.
-- */
--#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
--	mov	$(nr/2), reg;			\
--771:						\
--	call	772f;				\
--773:	/* speculation trap */			\
--	pause;					\
--	lfence;					\
--	jmp	773b;				\
--772:						\
--	call	774f;				\
--775:	/* speculation trap */			\
--	pause;					\
--	lfence;					\
--	jmp	775b;				\
--774:						\
--	dec	reg;				\
--	jnz	771b;				\
--	add	$(BITS_PER_LONG/8) * nr, sp;
--
- #ifdef __ASSEMBLY__
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+@@ -271,9 +271,9 @@
+ #define X86_FEATURE_CLZERO		(13*32+ 0) /* CLZERO instruction */
+ #define X86_FEATURE_IRPERF		(13*32+ 1) /* Instructions Retired Count */
+ #define X86_FEATURE_XSAVEERPTR		(13*32+ 2) /* Always save/restore FP error pointers */
+-#define X86_FEATURE_AMD_PRED_CMD	(13*32+12) /* Prediction Command MSR (AMD) */
+-#define X86_FEATURE_AMD_SPEC_CTRL	(13*32+14) /* Speculation Control MSR only (AMD) */
+-#define X86_FEATURE_AMD_STIBP		(13*32+15) /* Single Thread Indirect Branch Predictors (AMD) */
++#define X86_FEATURE_IBPB		(13*32+12) /* Indirect Branch Prediction Barrier */
++#define X86_FEATURE_IBRS		(13*32+14) /* Indirect Branch Restricted Speculation */
++#define X86_FEATURE_STIBP		(13*32+15) /* Single Thread Indirect Branch Predictors */
+ 
+ /* Thermal and Power Management Leaf, CPUID level 0x00000006 (EAX), word 14 */
+ #define X86_FEATURE_DTHERM		(14*32+ 0) /* Digital Thermal Sensor */
+@@ -325,8 +325,8 @@
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
+ #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
+ #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
+-#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* Speculation Control (IBRS + IBPB) */
+-#define X86_FEATURE_STIBP		(18*32+27) /* Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
++#define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
  
  /*
-@@ -121,17 +77,10 @@
- #endif
- .endm
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -225,7 +225,7 @@ static inline void indirect_branch_predi
+ 				 "movl %[val], %%eax\n\t"
+ 				 "movl $0, %%edx\n\t"
+ 				 "wrmsr",
+-				 X86_FEATURE_IBPB)
++				 X86_FEATURE_USE_IBPB)
+ 		     : : [msr] "i" (MSR_IA32_PRED_CMD),
+ 			 [val] "i" (PRED_CMD_IBPB)
+ 		     : "eax", "ecx", "edx", "memory");
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -273,9 +273,8 @@ retpoline_auto:
+ 	}
  
-- /*
--  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
--  * monstrosity above, manually.
--  */
--.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
-+/* This clobbers the BX register */
-+.macro FILL_RETURN_BUFFER nr:req ftr:req
- #ifdef CONFIG_RETPOLINE
--	ANNOTATE_NOSPEC_ALTERNATIVE
--	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
--		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
--		\ftr
--.Lskip_rsb_\@:
-+	ALTERNATIVE "", "call __clear_rsb", \ftr
- #endif
- .endm
- 
-@@ -206,15 +155,10 @@ extern char __indirect_thunk_end[];
- static inline void vmexit_fill_RSB(void)
- {
- #ifdef CONFIG_RETPOLINE
--	unsigned long loops;
--
--	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
--		      ALTERNATIVE("jmp 910f",
--				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
--				  X86_FEATURE_RETPOLINE)
--		      "910:"
--		      : "=r" (loops), ASM_CALL_CONSTRAINT
--		      : : "memory" );
-+	alternative_input("",
-+			  "call __fill_rsb",
-+			  X86_FEATURE_RETPOLINE,
-+			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
- #endif
+ 	/* Initialize Indirect Branch Prediction Barrier if supported */
+-	if (boot_cpu_has(X86_FEATURE_SPEC_CTRL) ||
+-	    boot_cpu_has(X86_FEATURE_AMD_PRED_CMD)) {
+-		setup_force_cpu_cap(X86_FEATURE_IBPB);
++	if (boot_cpu_has(X86_FEATURE_IBPB)) {
++		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+ 		pr_info("Enabling Indirect Branch Prediction Barrier\n");
+ 	}
  }
+@@ -308,7 +307,7 @@ ssize_t cpu_show_spectre_v2(struct devic
+ 		return sprintf(buf, "Not affected\n");
  
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -27,6 +27,7 @@ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) +=
- lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o
- lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
- lib-$(CONFIG_RETPOLINE) += retpoline.o
-+OBJECT_FILES_NON_STANDARD_retpoline.o :=y
- 
- obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
- 
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -7,6 +7,7 @@
- #include <asm/alternative-asm.h>
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
-+#include <asm/bitsperlong.h>
- 
- .macro THUNK reg
- 	.section .text.__x86.indirect_thunk
-@@ -46,3 +47,58 @@ GENERATE_THUNK(r13)
- GENERATE_THUNK(r14)
- GENERATE_THUNK(r15)
+ 	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IBPB" : "",
++		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 		       spectre_v2_module_string());
+ }
  #endif
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -175,17 +175,28 @@ static void early_init_intel(struct cpui
+ 	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64))
+ 		c->microcode = intel_get_microcode_revision();
+ 
+-	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
+-	     cpu_has(c, X86_FEATURE_STIBP) ||
+-	     cpu_has(c, X86_FEATURE_AMD_SPEC_CTRL) ||
+-	     cpu_has(c, X86_FEATURE_AMD_PRED_CMD) ||
+-	     cpu_has(c, X86_FEATURE_AMD_STIBP)) && bad_spectre_microcode(c)) {
+-		pr_warn("Intel Spectre v2 broken microcode detected; disabling SPEC_CTRL\n");
+-		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
++	/*
++	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
++	 * and they also have a different bit for STIBP support. Also,
++	 * a hypervisor might have set the individual AMD bits even on
++	 * Intel CPUs, for finer-grained selection of what's available.
++	 */
++	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
++		set_cpu_cap(c, X86_FEATURE_IBRS);
++		set_cpu_cap(c, X86_FEATURE_IBPB);
++	}
++	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
++		set_cpu_cap(c, X86_FEATURE_STIBP);
 +
-+/*
-+ * Fill the CPU return stack buffer.
-+ *
-+ * Each entry in the RSB, if used for a speculative 'ret', contains an
-+ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-+ *
-+ * This is required in various cases for retpoline and IBRS-based
-+ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-+ * eliminate potentially bogus entries from the RSB, and sometimes
-+ * purely to ensure that it doesn't get empty, which on some CPUs would
-+ * allow predictions from other (unwanted!) sources to be used.
-+ *
-+ * Google experimented with loop-unrolling and this turned out to be
-+ * the optimal version - two calls, each with their own speculation
-+ * trap should their return address end up getting used, in a loop.
-+ */
-+.macro STUFF_RSB nr:req sp:req
-+	mov	$(\nr / 2), %_ASM_BX
-+	.align 16
-+771:
-+	call	772f
-+773:						/* speculation trap */
-+	pause
-+	lfence
-+	jmp	773b
-+	.align 16
-+772:
-+	call	774f
-+775:						/* speculation trap */
-+	pause
-+	lfence
-+	jmp	775b
-+	.align 16
-+774:
-+	dec	%_ASM_BX
-+	jnz	771b
-+	add	$((BITS_PER_LONG/8) * \nr), \sp
-+.endm
-+
-+#define RSB_FILL_LOOPS		16	/* To avoid underflow */
-+
-+ENTRY(__fill_rsb)
-+	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
-+	ret
-+END(__fill_rsb)
-+EXPORT_SYMBOL_GPL(__fill_rsb)
-+
-+#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
-+
-+ENTRY(__clear_rsb)
-+	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
-+	ret
-+END(__clear_rsb)
-+EXPORT_SYMBOL_GPL(__clear_rsb)
++	/* Now if any of them are set, check the blacklist and clear the lot */
++	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
++	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
++		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
++		clear_cpu_cap(c, X86_FEATURE_IBRS);
++		clear_cpu_cap(c, X86_FEATURE_IBPB);
+ 		clear_cpu_cap(c, X86_FEATURE_STIBP);
+-		clear_cpu_cap(c, X86_FEATURE_AMD_SPEC_CTRL);
+-		clear_cpu_cap(c, X86_FEATURE_AMD_PRED_CMD);
+-		clear_cpu_cap(c, X86_FEATURE_AMD_STIBP);
++		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
++		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
+ 	}
+ 
+ 	/*
