@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2268dHqsKfyFQAzNKujpD2Tzk7Dd7kbarB0SNFsCMMceNdmjzRKd4QG4RNgaYF9p1WcqAK4y
-ARC-Seal: i=1; a=rsa-sha256; t=1517855026; cv=none;
+X-Google-Smtp-Source: AH8x226v2Tn77IKu43xWUnfd0VLdeURlPRyUO+RZHyIbA4eg4+i+hF+oCiVLkGhRJhH3uPUH4h1/
+ARC-Seal: i=1; a=rsa-sha256; t=1517855025; cv=none;
         d=google.com; s=arc-20160816;
-        b=cdd6ihqHGYLM+EBpzW4ARX/DL16uVW7q4qnqPhvOkqcqq6SYlNNrZuZXuYjQrEk7Gp
-         vLxg6nE2LVU3fDrLuT/aMRfgDzktC9LPPKjNA8jp1ye9m4kP1YaBNfwiqe8lr/nHOYrq
-         FZCmIp5slWTx+vZVa6tphxRVy4C7G3TNL+FIasgdbmrc45jaCwQhyLWWvubZyT30CVUT
-         uM/iNecudr0c3GrxzQmAVSthiDXAm3NTpl9ed18L3KJd8X3Czp5QO8f5FZWARGBsJbG7
-         2LruhoLU8OGbINFAU1JnuuOWY6fbbUHFffJh3t2PXD/fSPvjrfw8vzl9ITYe080fsvL6
-         OVBg==
+        b=wGM9JiY0JMEjBJtofZrRwXev8F0iNqV0gi27Nk6+5FCveQSCNnTrTTIptKlyZ+CNVX
+         IRKm4jb3bw+3n7lZBhQemJSMFWLJt5YsB/CzNn8Clo33KGdgQnKekS+35jGAlC56K0Jq
+         bpOUFshwKJ4Oyj2teHnf07zMJuXhQOJFDW1k8pzOycckaQ2F/Ac9K5ApUOtl+MUCfAHq
+         lqCqr+cwE1YZAaMKDaW0lyQQ3Oue4ec8lw0GA/UZyrL4mIk7sK6o3h+6G/+ZXvgKUUZV
+         5jsaTTgcCMNwzKXHl4BS/swcbpEcAf2hKenrTcrVMEhy93hnXmzA2TWpau5eLIIH8t4W
+         MwYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3V0eBuu1plxw9O23BWms7s5cA/dtKSBhDCFfiEXItnc=;
-        b=ip07JWKZCzM4+MvPIx+4Ek74kTafVbj6H89vkptqVBLtHlrLUAgvsdSDG27/7k3pxn
-         HIULgqKy2u+N2jZNP14rPoiagJPgHSSY4hCcBa+GNgKyDAxfMuEz7AXzDKbkXlIshDpu
-         dIGn5RUK/XjQ61CxhjHLohFkhReGBrYmvJKwhk0TfkGGMyHs++OiQ7QAH17r1IcalPQb
-         SpqpebXUsH7PVcdsq8p0GC1Kvgzg7GfaV3hpmNx7lWb18/MaM0hU9Qba4slQ+dqTXLv1
-         o8iL6vVd5wVan1+q8qC3fkKU21AjN5iobueuqRJlStspGVFZfxnEPvvhwR+eXxI2vw3f
-         7AWQ==
+        bh=Az4f1Nr+qAgYT8nINVy48eJW5eLw1KvXit/a9BrlAOM=;
+        b=Dw70ZtRPlmMNNYtesVnQUsyp0nkIRcrIGBrs0bEaXOYMFJ+FsIgqwbbdLhFvY7XrSi
+         dBxgnqt5fV4owf2/yL5FQBivBr3jTUZdsjldLc7Anq6xvtoBki/wuOZATlbeUIz9ZeaH
+         PPqn7fPfjqYz6+FTHUc4IAzbr+/XZkOUsgmqfl9IEfe5c4li6vJJdOVIjrMVS2O0n98b
+         YCOZtbgQ4sEvhp+ZevFNCKr1GQ3bRGc6nzpBsmZK0zaPfF8Dd6S5GO0uifqpfMtAlh4H
+         Edo8Mj5HEGStA+ZuIizAtK7MzCOYl+qkJZK5KCH7U4nHeJhQ3oK5N63hScWVIz7pXW8P
+         7x3A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Jesse Chan <jc@linux.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 25/64] ASoC: pcm512x: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Mon,  5 Feb 2018 10:22:44 -0800
-Message-Id: <20180205182139.593107028@linuxfoundation.org>
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 24/64] pinctrl: pxa: pxa2xx: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Mon,  5 Feb 2018 10:22:43 -0800
+Message-Id: <20180205182139.555066353@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586352448084681?=
-X-GMAIL-MSGID: =?utf-8?q?1591586352448084681?=
+X-GMAIL-THRID: =?utf-8?q?1591586351354677781?=
+X-GMAIL-MSGID: =?utf-8?q?1591586351354677781?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,12 +50,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jesse Chan <jc@linux.com>
 
-commit 0cab20cec0b663b7be8e2be5998d5a4113647f86 upstream.
+commit 0b9335cbd38e3bd2025bcc23b5758df4ac035f75 upstream.
 
 This change resolves a new compile-time warning
 when built as a loadable module:
 
-WARNING: modpost: missing MODULE_LICENSE() in sound/soc/codecs/snd-soc-pcm512x-spi.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/pinctrl/pxa/pinctrl-pxa2xx.o
 see include/linux/module.h for more information
 
 This adds the license as "GPL v2", which matches the header of the file.
@@ -63,20 +63,20 @@ This adds the license as "GPL v2", which matches the header of the file.
 MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
 
 Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/pcm512x-spi.c |    4 ++++
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c |    4 ++++
  1 file changed, 4 insertions(+)
 
---- a/sound/soc/codecs/pcm512x-spi.c
-+++ b/sound/soc/codecs/pcm512x-spi.c
-@@ -70,3 +70,7 @@ static struct spi_driver pcm512x_spi_dri
- };
- 
- module_spi_driver(pcm512x_spi_driver);
+--- a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
++++ b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
+@@ -436,3 +436,7 @@ int pxa2xx_pinctrl_exit(struct platform_
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pxa2xx_pinctrl_exit);
 +
-+MODULE_DESCRIPTION("ASoC PCM512x codec driver - SPI");
-+MODULE_AUTHOR("Mark Brown <broonie@kernel.org>");
++MODULE_AUTHOR("Robert Jarzmik <robert.jarzmik@free.fr>");
++MODULE_DESCRIPTION("Marvell PXA2xx pinctrl driver");
 +MODULE_LICENSE("GPL v2");
