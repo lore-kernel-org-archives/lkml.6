@@ -1,93 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752380AbeBEF10 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 00:27:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46470 "EHLO mail.kernel.org"
+        id S1752495AbeBEF3j (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 00:29:39 -0500
+Received: from mga05.intel.com ([192.55.52.43]:41306 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750724AbeBEF1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 00:27:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D01B21734
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Mon, 5 Feb 2018 13:27:00 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Sascha Hauer <kernel@pengutronix.de>, Frank Li <Frank.li@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Ian Ray <ian.ray@ge.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: imx6q-bx50v3: Enable secure-reg-access
-Message-ID: <20180205052659.GA31354@dragon>
-References: <20180115160722.17206-1-sebastian.reichel@collabora.co.uk>
- <20180202071819.GE25699@dragon>
- <20180202111004.mnv3elblyjxkbyzz@earth.universe>
+        id S1750861AbeBEF3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 00:29:31 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,463,1511856000";
+   d="scan'208";a="31995893"
+Date: Mon, 5 Feb 2018 13:30:13 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: RFC: eliminate zone->lock contention for will-it-scale/page_fault1
+ on big server
+Message-ID: <20180205053013.GB16980@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180202111004.mnv3elblyjxkbyzz@earth.universe>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180124023050.20097-1-aaron.lu@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 12:10:04PM +0100, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Fri, Feb 02, 2018 at 03:18:20PM +0800, Shawn Guo wrote:
-> > + Frank
-> > 
-> > On Mon, Jan 15, 2018 at 05:07:22PM +0100, Sebastian Reichel wrote:
-> > > From: Peter Senna Tschudin <peter.senna@collabora.com>
-> > > 
-> > > Add secure-reg-access on device tree include file for Bx50 devices
-> > > to enable PMU and hardware counters for perf.
-> > > 
-> > > Signed-off-by: Peter Senna Tschudin <peter.senna@collabora.com>
-> > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> > > ---
-> > >  arch/arm/boot/dts/imx6q-bx50v3.dtsi | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/imx6q-bx50v3.dtsi b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
-> > > index 86cfd4481e72..ccaaee83e2fa 100644
-> > > --- a/arch/arm/boot/dts/imx6q-bx50v3.dtsi
-> > > +++ b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
-> > > @@ -43,6 +43,13 @@
-> > >  #include "imx6q-ba16.dtsi"
-> > >  
-> > >  / {
-> > > +	soc {
-> > > +		pmu {
-> > > +			compatible = "arm,cortex-a9-pmu";
-> > > +			secure-reg-access;
-> > 
-> > I'm not sure this could be a board level configuration.  Shouldn't this
-> > property just be added into pmu node in imx6qdl.dtsi?
-> 
-> This cannot become part of imx6qdl.dtsi for two reasons:
-> 
-> 1. It's not safe to be enabled on imx6qdl in secure state, see
->    excerpt from DT binding documentation below
-> 2. We cannot enable it by default, since DTS format does not provide
->    a method to unset it in board files using a imx6qdl in secure
->    mode.
-> 
-> Here is an extract from the DT documentation for the PMU node:
-> 
-> - secure-reg-access : Indicates that the ARMv7 Secure Debug Enable Register
-> 		      (SDER) is accessible. This will cause the driver to do
-> 		      any setup required that is only possible in ARMv7 secure
-> 		      state. If not present the ARMv7 SDER will not be touched,
-> 		      which means the PMU may fail to operate unless external
-> 		      code (bootloader or security monitor) has performed the
-> 		      appropriate initialisation. Note that this property is
-> 		      not valid for non-ARMv7 CPUs or ARMv7 CPUs booting Linux
-> 		      in Non-secure state.
-> 
-> For B450v3, B650v3 and B850v3 it's safe to enable the bit and it
-> improves debugging capabilities a lot.
+In addition the the two patches, there are two more patches that I would
+like to get some feedback.
 
-Okay.  Then please label the pmu node in imx6qdl.dtsi and referencing
-the node in board dts without duplicating soc node and compatible.
+The two patches are more radical: the 3rd deals with free path
+zone->lock contention by avoiding doing any merge for order0 pages while
+the 4th deals with allocation path zone->lock contention by taking
+pcp->batch pages off the free_area order0 list without the need to
+iterate the list.
 
-Shawn
+Both patches are developed based on "the most time consuming part of
+operations under zone->lock is cache misses on struct page".
+
+The 3rd patch may be controversial but doesn't have correctness problem;
+the 4th is in an early stage and serves only as a proof-of-concept.
+
+Your comments are appreciated, thanks.
