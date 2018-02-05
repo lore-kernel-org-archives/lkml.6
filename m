@@ -1,59 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752800AbeBEGIO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 01:08:14 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36309 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752621AbeBEGHm (ORCPT
+        id S1752819AbeBEGIT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 01:08:19 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46025 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752691AbeBEGHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:07:42 -0500
-X-Google-Smtp-Source: AH8x226UukiIj2C6cD8olS7P62Vubj80PsAoPV7H8oLPGt4nQo/6HV9T5/eMdScXwkt8gdjkNwWG1w==
-Date: Mon, 5 Feb 2018 00:07:40 -0600
+        Mon, 5 Feb 2018 01:07:37 -0500
+X-Google-Smtp-Source: AH8x2246JTUks4wiCU1Xrgb1X7mO+3qgUBpsyWRCfBnu3RQ73sS/27Kenq13m1jEc51+RmjirWbTRg==
+Date: Mon, 5 Feb 2018 00:07:35 -0600
 From: Rob Herring <robh@kernel.org>
-To: Manish Narani <manish.narani@xilinx.com>
-Cc: michal.simek@xilinx.com, adrian.hunter@intel.com,
-        ulf.hansson@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com, anirudh@xilinx.com,
-        sgoud@xilinx.com, Manish Narani <mnarani@xilinx.com>
-Subject: Re: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning support for
- ZynqMP Platform
-Message-ID: <20180205024420.iagez2mue2skrngq@rob-hp-laptop>
-References: <1517336073-18142-1-git-send-email-mnarani@xilinx.com>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Eddie James <eajames@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: fsi: Add optional property
+ no-scan-on-init
+Message-ID: <20180205023654.77yq7j22ovby2ql5@rob-hp-laptop>
+References: <20180130055116.17411-1-joel@jms.id.au>
+ <20180130055116.17411-2-joel@jms.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517336073-18142-1-git-send-email-mnarani@xilinx.com>
+In-Reply-To: <20180130055116.17411-2-joel@jms.id.au>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 11:44:33PM +0530, Manish Narani wrote:
-> This patch adds support of SD auto tuning for ZynqMP platform. Auto
-> tuning sequence sends tuning block to card when operating in UHS-1
-> modes. This resets the DLL and sends CMD19/CMD21 as a part of the auto
-> tuning process. Once the auto tuning process gets completed, reset the
-> DLL to load the newly obtained SDHC tuned tap value.
+On Tue, Jan 30, 2018 at 04:21:15PM +1030, Joel Stanley wrote:
+> From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
 > 
-> Signed-off-by: Manish Narani <mnarani@xilinx.com>
+> Add an optional FSI master property 'no-scan-on-init.  This
+> can be specified to indicate that a master should not be
+> automatically scanned at init time.  This is required in cases
+> where a scan could interfere with another FSI master on the same
+> bus.
+> 
+> Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+> Acked-by: Jeremy Kerr <jk@ozlabs.org>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 > ---
->  .../devicetree/bindings/mmc/arasan,sdhci.txt       |   1 +
->  drivers/mmc/host/sdhci-of-arasan.c                 | 219 ++++++++++++++++++++-
->  2 files changed, 219 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/fsi/fsi.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> index 60481bf..7d29751 100644
-> --- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> +++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> @@ -14,6 +14,7 @@ Required Properties:
->      - "arasan,sdhci-4.9a": generic Arasan SDHCI 4.9a PHY
->      - "arasan,sdhci-5.1": generic Arasan SDHCI 5.1 PHY
->      - "rockchip,rk3399-sdhci-5.1", "arasan,sdhci-5.1": rk3399 eMMC PHY
-> +    - "xlnx,zynqmp-8.9a": Xilinx ZynqMP 8.9a PHY
+> diff --git a/Documentation/devicetree/bindings/fsi/fsi.txt b/Documentation/devicetree/bindings/fsi/fsi.txt
+> index 4eaf488d4015..ab516c673a4b 100644
+> --- a/Documentation/devicetree/bindings/fsi/fsi.txt
+> +++ b/Documentation/devicetree/bindings/fsi/fsi.txt
+> @@ -56,6 +56,13 @@ addresses (link index and slave ID), and no size:
+>      #address-cells = <2>;
+>      #size-cells = <0>;
+>  
+> +An optional boolean property can be added to indicate that a particular master
+> +should not scan for connected devices at initialization time.  This is
+> +necessary in cases where a scan could cause arbitration issues with other
+> +masters that may be present on the bus.
+> +
+> +    no-scan-on-init;
+> +
 
-This should be a separate patch.
+The formatting here is a bit strange compared to most bindings, but no 
+point in reformatting the document to add one property.
 
->        For this device it is strongly suggested to include arasan,soc-ctl-syscon.
->    - reg: From mmc bindings: Register location and length.
->    - clocks: From clock bindings: Handles to clock inputs.
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+Rob
