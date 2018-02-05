@@ -1,244 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753159AbeBEOM4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 09:12:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752914AbeBEOMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:12:47 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6E5217AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Mon, 5 Feb 2018 22:12:28 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Ken Lin <yungching0725@gmail.com>
-Cc: kernel@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: imx: Add support for Advantech DMS-BA16
-Message-ID: <20180205141227.GA31354@dragon>
-References: <20180204184514.2396-1-yungching0725@gmail.com>
+        id S1753074AbeBEOOs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 09:14:48 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:38216 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752607AbeBEOOi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 09:14:38 -0500
+X-Google-Smtp-Source: AH8x224EYwngsear6ySSlQNICFfFnHGcuh6jkB7bE1tu2wQ8sRtb7Mp/96ESpvarIG/FDZ3XvR4Egg==
+Subject: Re: [PATCH] mm, meminit: Serially initialise deferred memory if
+ trace_buf_size is specified
+To: pasha.tatashin@oracle.com, Koki.Sanagi@us.fujitsu.com
+Cc: mgorman@techsingularity.net, mhocko@kernel.org, yasu.isimatu@gmail.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, steven.sistare@oracle.com
+References: <20171115141329.ieoqvyoavmv6gnea@techsingularity.net>
+ <20171115142816.zxdgkad3ch2bih6d@dhcp22.suse.cz>
+ <20171115144314.xwdi2sbcn6m6lqdo@techsingularity.net>
+ <20171115145716.w34jaez5ljb3fssn@dhcp22.suse.cz>
+ <06a33f82-7f83-7721-50ec-87bf1370c3d4@gmail.com>
+ <20171116085433.qmz4w3y3ra42j2ih@dhcp22.suse.cz>
+ <20171116100633.moui6zu33ctzpjsf@techsingularity.net>
+ <CAOAebxt8ZjfCXND=1=UJQETbjVUGPJVcqKFuwGsrwyM2Mq1dhQ@mail.gmail.com>
+ <20171117213206.eekbiiexygig7466@techsingularity.net>
+ <CAOAebxtK=pc+-hpAOtu0GG446F5+t_5xsa_j+p7KAL6HtMc9Qg@mail.gmail.com>
+ <20171206105000.4aefxr3uzvutulvb@techsingularity.net>
+ <9ED437F7446DF74B826BE56C7BB1B89E95C1459F@G05USEXSUYA02.g05.fujitsu.local>
+ <CAOAebxuHPieDWLyRmPauvuF7dkW=0GeigG=EfWQEb_cgrGgm0Q@mail.gmail.com>
+From: Masayoshi Mizuma <msys.mizuma@gmail.com>
+Message-ID: <2e02170f-038c-04e6-8dc4-2f68551cf3a1@gmail.com>
+Date: Mon, 5 Feb 2018 09:14:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180204184514.2396-1-yungching0725@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAOAebxuHPieDWLyRmPauvuF7dkW=0GeigG=EfWQEb_cgrGgm0Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 02:45:14AM +0800, Ken Lin wrote:
-> Add support for Advantech DMS-BA16 board, which use
-> the Advantech BA-16 module.
+Hello Pavel,
+
+> Yes, the patch is here:
+> https://lkml.org/lkml/2018/1/12/600
+
+I tested your patch in my box and it worked well.
+Please feel free to add the following.
+
+Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+
+You may repost the patch after adding your reply for
+Andrew's comment as [PATCH 0/1]...
+
+- Masayoshi
+
+Wed, 31 Jan 2018 13:24:55 -0500 Pavel Tatashin wrote:
+> Hi Koki,
 > 
-> Signed-off-by: Ken Lin <yungching0725@gmail.com>
-> ---
->  arch/arm/boot/dts/Makefile           |   1 +
->  arch/arm/boot/dts/imx6q-dms-ba16.dts | 154 +++++++++++++++++++++++++++++++++++
->  2 files changed, 155 insertions(+)
->  create mode 100644 arch/arm/boot/dts/imx6q-dms-ba16.dts
+> Yes, the patch is here:
+> https://lkml.org/lkml/2018/1/12/600
 > 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index ade7a38543dc..d97511273f30 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -428,6 +428,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
->  	imx6q-b450v3.dtb \
->  	imx6q-b650v3.dtb \
->  	imx6q-b850v3.dtb \
-> +	imx6q-dms-ba16.dtb \
->  	imx6q-cm-fx6.dtb \
->  	imx6q-cubox-i.dtb \
->  	imx6q-cubox-i-emmc-som-v15.dtb \
-> diff --git a/arch/arm/boot/dts/imx6q-dms-ba16.dts b/arch/arm/boot/dts/imx6q-dms-ba16.dts
-> new file mode 100644
-> index 000000000000..4c5e17a17cbd
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6q-dms-ba16.dts
-> @@ -0,0 +1,154 @@
-> +/*
-> + * Copyright 2018 Advantech Corporation
-> + *
-> + * The code contained herein is licensed under the GNU General Public
-> + * License. You may obtain a copy of the GNU General Public License
-> + * Version 2 or later at the following locations:
-> + *
-> + * http://www.opensource.org/licenses/gpl-license.html
-> + * http://www.gnu.org/copyleft/gpl.html
-> + */
-
-Please use SPDX tag.
-
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include "imx6q-ba16.dtsi"
-> +
-> +/ {
-> +	model = "Advantech DMS-BA16";
-> +	compatible = "fsl,imx6q-dms-ba16", "fsl,imx6q";
-> +
-> +	clocks {
-> +		mclk: clock@0 {
-
-Please give it an unique name like clock-xxx and put it directly under
-root, and drop unit-address and 'reg' property.
-
-> +			compatible = "fixed-clock";
-> +			reg = <0>;
-> +			#clock-cells = <0>;
-> +			clock-frequency = <22000000>;
-> +		};
-> +	};
-> +
-> +	sound {
-> +		compatible = "fsl,imx6q-ba16-sgtl5000",
-> +			     "fsl,imx-audio-sgtl5000";
-> +		model = "imx6q-ba16-sgtl5000";
-> +		ssi-controller = <&ssi1>;
-> +		audio-codec = <&sgtl5000>;
-> +		audio-routing =
-> +			"MIC_IN", "Mic Jack",
-> +			"Mic Jack", "Mic Bias",
-> +			"Headphone Jack", "HP_OUT";
-> +		mux-int-port = <1>;
-> +		mux-ext-port = <4>;
-> +	};
-> +
-> +	reg_usb_otg_vbus: regulator-usbotgvbus {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "usb_otg_vbus";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_usbotgvbus>;
-> +		gpio = <&gpio4 15 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +
-> +	pinctrl_usbotgvbus: usbotgvbusgrp {
-
-Please sort pinctrl entries alphabetically.
-
-> +		fsl,pins = <
-> +			MX6QDL_PAD_KEY_ROW4__GPIO4_IO15 0x000b0
-> +			MX6QDL_PAD_GPIO_1__USB_OTG_ID   0x17059
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c1_gpio: i2c1gpiogrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_CSI0_DAT8__GPIO5_IO26        0x1b0b0
-> +			MX6QDL_PAD_CSI0_DAT9__GPIO5_IO27        0x1b0b0
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c2_gpio: i2c2gpiogrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_KEY_COL3__GPIO4_IO12 0x1b0b0
-> +			MX6QDL_PAD_KEY_ROW3__GPIO4_IO13 0x1b0b0
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c3_gpio: i2c3gpiogrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_3__GPIO1_IO03   0x1b0b0
-> +			MX6QDL_PAD_GPIO_6__GPIO1_IO06   0x1b0b0
-> +		>;
-> +	};
-> +};
-> +
-> +&ecspi5 {
-> +	fsl,spi-num-chipselects = <1>;
-
-The property is obsoleted, and shouldn't be needed any more.
-
-> +	cs-gpios = <&gpio1 17 0>;
-
-Use polarity defines in dt-bindings/gpio/gpio.h.
-
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_ecspi5>;
-> +	status = "okay";
-> +
-> +	m25_eeprom: m25p80@0 {
-> +		compatible = "atmel,at25";
-> +		spi-max-frequency = <20000000>;
-> +		size = <0x8000>;
-> +		pagesize = <64>;
-> +		reg = <0>;
-> +		address-width = <16>;
-> +	};
-> +};
-> +
-> +&i2c1 {
-> +	clock-frequency = <100000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c1>;
-> +	status = "okay";
-> +
-> +	sgtl5000: codec@0a {
-
-Drop the leading zeros in unit-address.
-
-> +		compatible = "fsl,sgtl5000";
-> +		reg = <0x0a>;
-> +		clocks = <&mclk>;
-> +		lrclk-strength = <0x3>;
-> +		VDDA-supply = <&reg_1p8v>;
-> +		VDDIO-supply = <&reg_3p3v>;
-> +	};
-> +};
-> +
-> +&usbotg {
-> +	vbus-supply = <&reg_usb_otg_vbus>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usbotg>;
-> +	dr_mode = "otg";
-> +	disable-over-current;
-> +	status = "okay";
-> +};
-> +
-> +&sata {
-> +	fsl,no-spread-spectrum;
-> +	fsl,transmit-atten-16ths = <12>;
-> +	fsl,transmit-boost-mdB = <3330>;
-> +	fsl,transmit-level-mV = <1133>;
-> +	fsl,receive-dpll-mode = <1>;
-> +	status = "okay";
-> +};
-> +
-> +&usdhc4 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usdhc4>;
-> +	bus-width = <8>;
-> +	cd-gpios = <&gpio6 11 1>;
-
-Polarity defines.
-
-> +	no-1-8-v;
-> +	keep-power-in-suspend;
-> +	enable-sdio-wakeup;
-
-Use property 'wakeup-source' instead.
-
-> +	status = "okay";
-> +};
-> +
-> +&pwm2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_pwm2>;
-> +	status = "okay";
-> +};
-
-Please sort these labelled nodes alphabetically.
-
-Shawn
-
-> +
-> -- 
-> 2.11.0
+> It has not been reviewed yet.
+> 
+> Pavel
+> 
+> On Wed, Jan 31, 2018 at 12:28 PM, Koki.Sanagi@us.fujitsu.com
+> <Koki.Sanagi@us.fujitsu.com> wrote:
+>> Pavel,
+>>
+>> I assume you are working on the fix.
+>> Do you have any progress ?
+>>
+>> Koki
+>>
+>>>> -----Original Message-----
+>>>> From: Mel Gorman [mailto:mgorman@techsingularity.net]
+>>>> Sent: Wednesday, December 06, 2017 5:50 AM
+>>>> To: Pavel Tatashin <pasha.tatashin@oracle.com>
+>>>> Cc: Michal Hocko <mhocko@kernel.org>; YASUAKI ISHIMATSU
+>>>> <yasu.isimatu@gmail.com>; Andrew Morton <akpm@linux-foundation.org>;
+>>>> Linux Memory Management List <linux-mm@kvack.org>; linux-
+>>>> kernel@vger.kernel.org; Sanagi, Koki <Koki.Sanagi@us.fujitsu.com>; Steve
+>>>> Sistare <steven.sistare@oracle.com>
+>>>> Subject: Re: [PATCH] mm, meminit: Serially initialise deferred memory if
+>>>> trace_buf_size is specified
+>>>>
+>>>> On Wed, Nov 29, 2017 at 10:41:59PM -0500, Pavel Tatashin wrote:
+>>>>> Hi Mel,
+>>>>>
+>>>>> Thank you very much for your feedback, my replies below:
+>>>>>
+>>>>>> A lack of involvement from admins is indeed desirable. For example,
+>>>>>> while I might concede on using a disable-everything-switch, I would
+>>>>>> not be happy to introduce a switch that specified how much memory
+>>>>>> per node to initialise.
+>>>>>>
+>>>>>> For the forth approach, I really would be only thinking of a blunt
+>>>>>> "initialise everything instead of going OOM". I was wary of making
+>>>>>> things too complicated and I worried about some side-effects I'll cover later.
+>>>>>
+>>>>> I see, I misunderstood your suggestion. Switching to serial
+>>>>> initialization when OOM works, however, boot time becomes
+>>>>> unpredictable, with some configurations boot is fast with others it is
+>>>>> slow. All of that depends on whether predictions in
+>>>>> reset_deferred_meminit() were good or not which is not easy to debug
+>>>>> for users. Also, overtime predictions in reset_deferred_meminit() can
+>>>>> become very off, and I do not think that we want to continuously
+>>>>> adjust this function.
+>>>>>
+>>>>
+>>>> You could increase the probabilty of a report by doing a WARN_ON_ONCE if the
+>>>> serialised meminit is used.
+>>>>
+>>>>>>> With this approach we could always init a very small amount of
+>>>>>>> struct pages, and allow the rest to be initialized on demand as
+>>>>>>> boot requires until deferred struct pages are initialized. Since,
+>>>>>>> having deferred pages feature assumes that the machine is large,
+>>>>>>> there is no drawback of having some extra byte of dead code,
+>>>>>>> especially that all the checks can be permanently switched of via
+>>>>>>> static branches once deferred init is complete.
+>>>>>>>
+>>>>>>
+>>>>>> This is where I fear there may be dragons. If we minimse the number
+>>>>>> of struct pages and initialise serially as necessary, there is a
+>>>>>> danger that we'll allocate remote memory in cases where local memory
+>>>>>> would have done because a remote node had enough memory.
+>>>>>
+>>>>> True, but is not what we have now has the same issue as well? If one
+>>>>> node is gets out of memory we start using memory from another node,
+>>>>> before deferred pages are initialized?
+>>>>>
+>>>>
+>>>> It's possible but I'm not aware of it happening currently.
+>>>>
+>>>>>  To offset that risk, it would be
+>>>>>> necessary at boot-time to force allocations from local node where
+>>>>>> possible and initialise more memory as necessary. That starts
+>>>>>> getting complicated because we'd need to adjust gfp-flags in the
+>>>>>> fast path with init-and-retry logic in the slow path and that could
+>>>>>> be a constant penalty. We could offset that in the fast path by
+>>>>>> using static branches
+>>>>>
+>>>>> I will try to implement this, and see how complicated the patch will
+>>>>> be, if it gets too complicated for the problem I am trying to solve we
+>>>>> can return to one of your suggestions.
+>>>>>
+>>>>> I was thinking to do something like this:
+>>>>>
+>>>>> Start with every small amount of initialized pages in every node.
+>>>>> If allocation fails, initialize enough struct pages to cover this
+>>>>> particular allocation with struct pages rounded up to section size but
+>>>>> in every single node.
+>>>>>
+>>>>
+>>>> Ok, just make sure it's all in the slow paths of the allocator when the alternative
+>>>> is to fail the allocation.
+>>>>
+>>>>>> but it's getting more and
+>>>>>> more complex for what is a minor optimisation -- shorter boot times
+>>>>>> on large machines where userspace itself could take a *long* time to
+>>>>>> get up and running (think database reading in 1TB of data from disk as it
+>>>> warms up).
+>>>>>
+>>>>> On M6-32 with 32T [1] of memory it saves over 4 minutes of boot time,
+>>>>> and this is on SPARC with 8K pages, on x86 it would be around of 8
+>>>>> minutes because of twice as many pages. This feature improves
+>>>>> availability for larger machines quite a bit. Overtime, systems are
+>>>>> growing, so I expect this feature to become a default configuration in
+>>>>> the next several years on server configs.
+>>>>>
+>>>>
+>>>> Ok, when developing the series originally, I had no machine even close to 32T of
+>>>> memory.
+>>>>
+>>>> --
+>>>> Mel Gorman
+>>>> SUSE Labs
+>>
+>> --
+>> To unsubscribe, send a message with 'unsubscribe linux-mm' in
+>> the body to majordomo@kvack.org.  For more info on Linux MM,
+>> see: http://www.linux-mm.org/ .
+>> Don't email: <a hrefmailto:"dont@kvack.org"> email@kvack.org </a>
