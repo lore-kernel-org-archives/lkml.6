@@ -1,152 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752752AbeBEJjF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 04:39:05 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5172 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751705AbeBEJi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 04:38:58 -0500
-Subject: Re: [PATCH 1/2] f2fs: enable to gc page whose inode already atomic
- commit
-To: Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>,
-        <jaegeuk@kernel.org>, <yunlong.song@icloud.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
- <a094cd40-d042-2a43-4e9a-e34c31e61d28@kernel.org>
- <f4e7b403-4945-a7f9-6bdc-214dc61c9160@huawei.com>
- <312d70f3-b1ae-9ced-44cb-fde83de362ff@huawei.com>
- <b39adaf3-f727-e6ad-ef0d-4789cdc38de5@huawei.com>
- <f3c1c01d-3d82-5546-7aec-73c2e69cd17a@huawei.com>
-From: Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <3182ade9-4153-9e47-f8a5-5c87371a3900@huawei.com>
-Date: Mon, 5 Feb 2018 17:37:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1752761AbeBEJnz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 04:43:55 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:63087 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751705AbeBEJns (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 04:43:48 -0500
+Subject: Re: [PATCH v6 17/41] dt-bindings: clock: Add bindings for DA8XX
+ CFGCHIP clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-18-git-send-email-david@lechnology.com>
+ <572e31a2-ac18-512b-03bb-82fffcf4d228@ti.com>
+ <26fd0f01-ed14-6544-7443-e88c69ca9acb@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <f57cae4e-560a-0ea4-16dd-bdf8696d4f7b@ti.com>
+Date: Mon, 5 Feb 2018 15:12:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <f3c1c01d-3d82-5546-7aec-73c2e69cd17a@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <26fd0f01-ed14-6544-7443-e88c69ca9acb@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.111.220.140]
-X-CFilter-Loop: Reflected
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> OK, details as I explained before:
-> 
-> atomic_commit				GC
-> - file_write_and_wait_range
-> 					- move_data_block
-> 					 - f2fs_submit_page_write
-> 					  - f2fs_update_data_blkaddr
-> 					   - set_page_dirty
->   - fsync_node_pages
-> 
-> 1. atomic writes data page #1 & update node #1
-> 2. GC data page #2 & update node #2
-> 3. page #1 & node #1 & #2 can be committed into nand flash before page #2 be
-> committed.
-> 
-> After a sudden pow-cut, database transaction will be inconsistent. So I think
-> there will be better to exclude gc/atomic_write to each other, with a lock
-> instead of flag checking.
-> 
-
-I do not understand why this transaction is inconsistent, is it a
-problem that page #2 is not committed into nand flash? Since normal
-gc also has this problem:
-
-Suppose that there is db file A, f2fs_gc moves data page #1 of db file
-A. But if write checkpoint only commit node page #1 and then a sudden
-power-cut happens. Data page #1 is not committed to nand flash, but
-node page #1 is committed. Is the db transaction broken and
-inconsistent?
-
-Come back to your example, I think data page 2 of atomic file does not
-belong to this transaction, so even node page 2 is committed, it is just
-the same problem as what I have listed above(db file A), and it does not
-break this transaction.
-
-> Thanks,
-> 
->>>>>
->>>>> So how about just using dio_rwsem[WRITE] during atomic committing to exclude
->>>>> GCing data block of atomic opened file?
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>>>>> ---
->>>>>>     fs/f2fs/data.c | 5 ++---
->>>>>>     fs/f2fs/gc.c   | 6 ++++--
->>>>>>     2 files changed, 6 insertions(+), 5 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>>> index 7435830..edafcb6 100644
->>>>>> --- a/fs/f2fs/data.c
->>>>>> +++ b/fs/f2fs/data.c
->>>>>> @@ -1580,14 +1580,13 @@ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
->>>>>>     		return true;
->>>>>>     	if (S_ISDIR(inode->i_mode))
->>>>>>     		return true;
->>>>>> -	if (f2fs_is_atomic_file(inode))
->>>>>> -		return true;
->>>>>>     	if (fio) {
->>>>>>     		if (is_cold_data(fio->page))
->>>>>>     			return true;
->>>>>>     		if (IS_ATOMIC_WRITTEN_PAGE(fio->page))
->>>>>>     			return true;
->>>>>> -	}
->>>>>> +	} else if (f2fs_is_atomic_file(inode))
->>>>>> +		return true;
->>>>>>     	return false;
->>>>>>     }
->>>>>>     
->>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>>> index b9d93fd..84ab3ff 100644
->>>>>> --- a/fs/f2fs/gc.c
->>>>>> +++ b/fs/f2fs/gc.c
->>>>>> @@ -622,7 +622,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>>>>>     	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>>>     		goto out;
->>>>>>     
->>>>>> -	if (f2fs_is_atomic_file(inode))
->>>>>> +	if (f2fs_is_atomic_file(inode) &&
->>>>>> +		!f2fs_is_commit_atomic_write(inode))
->>>>>>     		goto out;
->>>>>>     
->>>>>>     	if (f2fs_is_pinned_file(inode)) {
->>>>>> @@ -729,7 +730,8 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>>>>>     	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>>>     		goto out;
->>>>>>     
->>>>>> -	if (f2fs_is_atomic_file(inode))
->>>>>> +	if (f2fs_is_atomic_file(inode) &&
->>>>>> +		!f2fs_is_commit_atomic_write(inode))
->>>>>>     		goto out;
->>>>>>     	if (f2fs_is_pinned_file(inode)) {
->>>>>>     		if (gc_type == FG_GC)
->>>>>>
->>>>>
->>>>> .
->>>>>
->>>>
->>>
->>>
->>> .
->>>
+On Friday 02 February 2018 11:20 PM, David Lechner wrote:
+> On 02/02/2018 12:20 AM, Sekhar Nori wrote:
+>> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+>>> +EMIFA clock source (ASYNC1)
+>>> +---------------------------
+>>> +Required properties:
+>>> +- compatible: shall be "ti,da850-async1-clksrc".
+>>> +- #clock-cells: from common clock binding; shall be set to 0.
+>>> +- clocks: phandles to the parent clocks corresponding to clock-names
+>>> +- clock-names: shall be "pll0_sysclk3", "div4.5"
+>>
+>> Is this clock really referred to as aysnc1 in documentation? I don't get
+>> hits for async1 in OMAP-L138 TRM.
 >>
 > 
+> It looks like it is only called ASYNC1 in the datasheet, not the TRM.
 > 
-> .
-> 
+> Table 6-5. Maximum Internal Clock Frequencies at Each Voltage Operating
+> Point
 
--- 
+I see it now. Its fine to use async1 then.
+
 Thanks,
-Yunlong Song
+Sekhar
