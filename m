@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2267dXtmBvyb+7vxjmWTd1rYxJ/Je1QXKyTqADdZ9Idhao7XgG7PQ9pAB9XKFcWk5JX0wBq3
-ARC-Seal: i=1; a=rsa-sha256; t=1517855085; cv=none;
+X-Google-Smtp-Source: AH8x225ps5KVrvqIDRQ75gkSI39K9ONfRO7xP8Rh9V0SacPXvLuE7mDpPx0VX5/mOKQi54b9MgQy
+ARC-Seal: i=1; a=rsa-sha256; t=1517855083; cv=none;
         d=google.com; s=arc-20160816;
-        b=aCW5rPfgurj791PgQfWtZHAyZRkoMDaQ0LS08s9sj1AExga+IXMcf4OcmsQMUtZxm0
-         7vvuzhuK1MPoNIEF3TFNFl1UrnNe2FYPpkbFVqFNv4Y+UVgUxpU6/4CNleoOFmMW0gz+
-         lzJLmg0Flfo+hwHhd83erWvC4r6tUIABL+JbSQFMq6OUVES55Lmuqyh6QCuRyUaQKPKp
-         OhMDKLU6M6qMH4nl3ebSTtHn2LwDWGJfuI1rF7yBpzdlqM9Ytrz4VetPAiuNYKCLxAgb
-         V0S27y5ArkEtvq7DWTOcZslYmRqV+fjkiL/wBH/21jQ4MTEqijn+jcNIdok18wLNxFN/
-         e5OQ==
+        b=fXTlf8zHu7EdNkEncp2cVUpuGMGugVRrxB4ydrYwt8R2tdI8Ffyo4LG5lDFxuglC9/
+         xfYREkpU7U27LhQhjpoaGOsJwIwOuqzdO/qdH4yWlZFwdvFI0HEuDOWA4jEqO/f4zbSY
+         EMtDuBhT+9s85NmYuQ6fmynujxRAonipNfUHO1MeuN23BU0OfUs1X4L8Vxi2v3/KYVK1
+         6orq6801JusjC+QOOJyoptnCM+Vrgk0yIQUrrNHxYiq4AI0m0sUOlgO6mTHfQbEleSwh
+         Em52rH3l+tvnTlQCaCtXDTLGvqETU2/HlAh0e+v+gMtRQ4As3oipdhe2NMSYnRjFIwny
+         np3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HTA95mwAamUeHzjDOPQmMdQlqpnfRkGrVziTxailmJc=;
-        b=YA/ABSH38ZKzhr/m5SKniBlx7AZOJc1B1P0M3Yr27sBtAu2xeJv7I+q37gTX2TcrMF
-         E3Zalc3TIN+ER86Y0BOvXCd77/o2IEIoYqijc68VSQfpGTv+47aw9AXiVfTf5J+R0mun
-         gKDBTLwr2ZIgIFufkK/pFWhUhA5gra7mwfX60ad06fSdDtTf99sgwwQCXuibEGN9Aq8d
-         8FhFy0HnpNn0BrRKSV2JB0yxrLKowvYDi7y8VP3s6T7N6uSMECHJlATISc/4DodHDv4u
-         Y+wU1YvUAXF7m95wZkD56SHn6EevmkbK9vhPif23mzjWyA9JFwhPePX+3H2MGHnaDTVu
-         gfkw==
+        bh=gv3YsLBde5kO5fcOgG3nph0DxcXgKnXEQL/6Q7ntYTk=;
+        b=l+MkMWBeO5iWjshKyoLVS+oN8ygJL0f90oupKJaN0Uua9mlKzJV3DPmG7F+8g3sSEj
+         VtHLko7QKbNMbQLG3zubp6UYpTOLIke3OjpNssATvnf9R5jNFb3+wJZgVJRbmOKVdqf8
+         GCoJdsl0XJ3H/yfMwRolsNslxjEYO5jI4uvHpedxhPV1m/9pSiwunk+h0p0M4UMCXA8U
+         mE41X8MVyjwzH+35GNgb9QZW4PzxuCRq8KbzIhPQwwoZVV8PWxwLVq4wDBgQm6Z2poNv
+         1+mkxUEQp4ymHy9S52eOfD/ewmNts5J4wMex0TD6XZ//guzhkTK5gTX3/A8r4bAufEAu
+         Po7w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,19 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andi Kleen <ak@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-arch@vger.kernel.org,
+	Tom Lendacky <thomas.lendacky@amd.com>,
 	Kees Cook <keescook@chromium.org>,
 	kernel-hardening@lists.openwall.com,
 	Al Viro <viro@zeniv.linux.org.uk>,
+	torvalds@linux-foundation.org,
 	alan@linux.intel.com
-Subject: [PATCH 4.14 42/64] x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
-Date: Mon,  5 Feb 2018 10:23:01 -0800
-Message-Id: <20180205182140.302820196@linuxfoundation.org>
+Subject: [PATCH 4.14 41/64] x86/usercopy: Replace open coded stac/clac with __uaccess_{begin, end}
+Date: Mon,  5 Feb 2018 10:23:00 -0800
+Message-Id: <20180205182140.266128654@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -46,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586413682850821?=
-X-GMAIL-MSGID: =?utf-8?q?1591586413682850821?=
+X-GMAIL-THRID: =?utf-8?q?1591586412411529132?=
+X-GMAIL-MSGID: =?utf-8?q?1591586412411529132?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,166 +58,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams dan.j.williams@intel.com
 
-commit 304ec1b050310548db33063e567123fae8fd0301
+commit b5c4ae4f35325d520b230bab6eb3310613b72ac1
 
-Quoting Linus:
+In preparation for converting some __uaccess_begin() instances to
+__uacess_begin_nospec(), make sure all 'from user' uaccess paths are
+using the _begin(), _end() helpers rather than open-coded stac() and
+clac().
 
-    I do think that it would be a good idea to very expressly document
-    the fact that it's not that the user access itself is unsafe. I do
-    agree that things like "get_user()" want to be protected, but not
-    because of any direct bugs or problems with get_user() and friends,
-    but simply because get_user() is an excellent source of a pointer
-    that is obviously controlled from a potentially attacking user
-    space. So it's a prime candidate for then finding _subsequent_
-    accesses that can then be used to perturb the cache.
+No functional changes.
 
-__uaccess_begin_nospec() covers __get_user() and copy_from_iter() where the
-limit check is far away from the user pointer de-reference. In those cases
-a barrier_nospec() prevents speculation with a potential pointer to
-privileged memory. uaccess_try_nospec covers get_user_try.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Andi Kleen <ak@linux.intel.com>
+Suggested-by: Ingo Molnar <mingo@redhat.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-arch@vger.kernel.org
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: kernel-hardening@lists.openwall.com
 Cc: gregkh@linuxfoundation.org
 Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: torvalds@linux-foundation.org
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727416953.33451.10508284228526170604.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727416438.33451.17309465232057176966.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/include/asm/uaccess.h    |    6 +++---
- arch/x86/include/asm/uaccess_32.h |    6 +++---
- arch/x86/include/asm/uaccess_64.h |   12 ++++++------
- arch/x86/lib/usercopy_32.c        |    4 ++--
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ arch/x86/lib/usercopy_32.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -450,7 +450,7 @@ do {									\
- ({									\
- 	int __gu_err;							\
- 	__inttype(*(ptr)) __gu_val;					\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
- 	__uaccess_end();						\
- 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-@@ -557,7 +557,7 @@ struct __large_struct { unsigned long bu
-  *	get_user_ex(...);
-  * } get_user_catch(err)
-  */
--#define get_user_try		uaccess_try
-+#define get_user_try		uaccess_try_nospec
- #define get_user_catch(err)	uaccess_catch(err)
- 
- #define get_user_ex(x, ptr)	do {					\
-@@ -591,7 +591,7 @@ extern void __cmpxchg_wrong_size(void)
- 	__typeof__(ptr) __uval = (uval);				\
- 	__typeof__(*(ptr)) __old = (old);				\
- 	__typeof__(*(ptr)) __new = (new);				\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	switch (size) {							\
- 	case 1:								\
- 	{								\
---- a/arch/x86/include/asm/uaccess_32.h
-+++ b/arch/x86/include/asm/uaccess_32.h
-@@ -29,21 +29,21 @@ raw_copy_from_user(void *to, const void
- 		switch (n) {
- 		case 1:
- 			ret = 0;
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_asm_nozero(*(u8 *)to, from, ret,
- 					      "b", "b", "=q", 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
- 			ret = 0;
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_asm_nozero(*(u16 *)to, from, ret,
- 					      "w", "w", "=r", 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
- 			ret = 0;
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_asm_nozero(*(u32 *)to, from, ret,
- 					      "l", "k", "=r", 4);
- 			__uaccess_end();
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -55,31 +55,31 @@ raw_copy_from_user(void *dst, const void
- 		return copy_user_generic(dst, (__force void *)src, size);
- 	switch (size) {
- 	case 1:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u8 *)dst, (u8 __user *)src,
- 			      ret, "b", "b", "=q", 1);
- 		__uaccess_end();
- 		return ret;
- 	case 2:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u16 *)dst, (u16 __user *)src,
- 			      ret, "w", "w", "=r", 2);
- 		__uaccess_end();
- 		return ret;
- 	case 4:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u32 *)dst, (u32 __user *)src,
- 			      ret, "l", "k", "=r", 4);
- 		__uaccess_end();
- 		return ret;
- 	case 8:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
- 			      ret, "q", "", "=r", 8);
- 		__uaccess_end();
- 		return ret;
- 	case 10:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 10);
- 		if (likely(!ret))
-@@ -89,7 +89,7 @@ raw_copy_from_user(void *dst, const void
- 		__uaccess_end();
- 		return ret;
- 	case 16:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 16);
- 		if (likely(!ret))
 --- a/arch/x86/lib/usercopy_32.c
 +++ b/arch/x86/lib/usercopy_32.c
-@@ -331,7 +331,7 @@ do {									\
+@@ -331,12 +331,12 @@ do {									\
  
  unsigned long __copy_user_ll(void *to, const void *from, unsigned long n)
  {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
+-	stac();
++	__uaccess_begin();
  	if (movsl_is_ok(to, from, n))
  		__copy_user(to, from, n);
  	else
+ 		n = __copy_user_intel(to, from, n);
+-	clac();
++	__uaccess_end();
+ 	return n;
+ }
+ EXPORT_SYMBOL(__copy_user_ll);
 @@ -344,7 +344,7 @@ EXPORT_SYMBOL(__copy_user_ll);
  unsigned long __copy_from_user_ll_nocache_nozero(void *to, const void __user *from,
  					unsigned long n)
  {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
+-	stac();
++	__uaccess_begin();
  #ifdef CONFIG_X86_INTEL_USERCOPY
  	if (n > 64 && static_cpu_has(X86_FEATURE_XMM2))
  		n = __copy_user_intel_nocache(to, from, n);
+@@ -353,7 +353,7 @@ unsigned long __copy_from_user_ll_nocach
+ #else
+ 	__copy_user(to, from, n);
+ #endif
+-	clac();
++	__uaccess_end();
+ 	return n;
+ }
+ EXPORT_SYMBOL(__copy_from_user_ll_nocache_nozero);
