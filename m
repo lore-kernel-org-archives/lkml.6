@@ -1,70 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeBEHC5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 02:02:57 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:37246 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750943AbeBEHCu (ORCPT
+        id S1752529AbeBEHFD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 02:05:03 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:19287 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751938AbeBEHEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 02:02:50 -0500
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Rob Herring <robh@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
-        Olivier BIDEAU <olivier.bideau@st.com>
-Subject: Re: [PATCH 02/14] dt-bindings: clock: add STM32MP1 clocks
-Thread-Topic: [PATCH 02/14] dt-bindings: clock: add STM32MP1 clocks
-Thread-Index: AQHTnC6ywg+QQEoQ4kW2YLQICP7Gm6OVRqeAgAAOw4A=
-Date: Mon, 5 Feb 2018 07:02:24 +0000
-Message-ID: <ec89b70e-1500-df15-639c-59165fb2014b@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
- <1517580222-23301-3-git-send-email-gabriel.fernandez@st.com>
- <20180205042348.2f7ssmzkajeky5l7@rob-hp-laptop>
-In-Reply-To: <20180205042348.2f7ssmzkajeky5l7@rob-hp-laptop>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2FE57713DFCCF143B32B19D42387C69F@st.com>
+        Mon, 5 Feb 2018 02:04:55 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w1574dLq027218
+X-Nifty-SrcIP: [209.85.217.182]
+X-Google-Smtp-Source: AH8x227dd/ng4rL08/xiIHAe49zI5zDsTDSGiiiok3+pTzXrQAoB8bH9mg6CGjjixBKxDLhFo4l2wqI5aO6eeECSOl4=
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-05_01:,,
- signatures=0
+In-Reply-To: <1517812899.3118.372.camel@oracle.com>
+References: <cover.a7e2d48abd08947a9bb46ef5d18a8f33066cc40d.1516356501.git-series.knut.omang@oracle.com>
+ <c271ba8f99393585d69db71f40db3c01c44769e4.1516356501.git-series.knut.omang@oracle.com>
+ <1517812899.3118.372.camel@oracle.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 5 Feb 2018 16:03:58 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS8QG947WpFn6bCnNVLj=x7jbAyLKVRS429wP+1jYbOUA@mail.gmail.com>
+Message-ID: <CAK7LNAS8QG947WpFn6bCnNVLj=x7jbAyLKVRS429wP+1jYbOUA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] runchecks: Generalize make C={1,2} to support
+ multiple checkers
+To: Knut Omang <knut.omang@oracle.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        =?UTF-8?B?SMOla29uIEJ1Z2dl?= <haakon.bugge@oracle.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        John Haxby <john.haxby@oracle.com>,
+        =?UTF-8?B?w4VzbXVuZCDDmHN0dm9sZA==?= <asmund.ostvold@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+        cocci@systeme.lip6.fr, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1572xhR031891
 
-
-
-On 02/05/2018 07:09 AM, Rob Herring wrote:
-> On Fri, Feb 02, 2018 at 03:03:30PM +0100, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+2018-02-05 15:41 GMT+09:00 Knut Omang <knut.omang@oracle.com>:
+> On Fri, 2018-01-19 at 11:14 +0100, Knut Omang wrote:
+>> Add scripts/runchecks which has generic support for running
+>> checker tools in a convenient and user friendly way that
+>> the author hopes can contribute to rein in issues detected
+>> by these tools in a manageable and convenient way.
 >>
->> This patch adds the clock binding entry for STM32MP1
+>> scripts/runchecks provides the following basic functionality:
 >>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->> ---
->>   include/dt-bindings/clock/stm32mp1-clks.h | 248 ++++++++++++++++++++++++++++++
->>   1 file changed, 248 insertions(+)
->>   create mode 100644 include/dt-bindings/clock/stm32mp1-clks.h
-> You can squash this into the previous patch.
-Ok Thanks!
+>> * Makes it possible to selectively suppress output from individual
+>>   checks on a per file or per subsystem basis.
+>> * Unifies output and suppression input from different tools
+>>   by providing a single unified syntax and presentation for the
+>>   underlying tools in the style of "scripts/checkpatch.pl --show-types".
+>> * Allows selective run of one, or more (or all) configured tools
+>>   for each file.
+>>
+>> In the Makefile system, the sparse specific setup has been replaced
+>> by setup for runchecks.
+>
+> Hi all,
+>
+> - Anything more I can/need to do to bring this forward?
+> - Any quiet concerns?
+>
+> I realize it is a subsystem crossing change,
 
-BR
-Gabriel
+Is it?  Only Kbuild this is related to.
+
+
+> and a lot going on elsewhere,
+> nevertheless I believe this is a time saver in the slightly longer run,
+> as it allows automation of checking, even without a "perfect"
+> code base to begin with.
+>
+
+Sorry for the delay.
+
+I have not been able to find time to dive into the detail yet.
+(Actually, I tried to do that for v2 or v3, where Python code was so dirty,
+then consumed my time to figure out what the code was trying to do)
+
+
+I find my concern here:
+https://lkml.org/lkml/2018/1/5/497
+
+
+Anyway, I will take a look again when I find some time.
+You do not need to take care of the detail until I request to do so.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
