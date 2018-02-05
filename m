@@ -1,150 +1,77 @@
-Return-Path: <aishpant@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517815181; cv=none;
+Return-Path: <hal@dev.mellanox.co.il>
+ARC-Seal: i=1; a=rsa-sha256; t=1517836617; cv=none;
         d=google.com; s=arc-20160816;
-        b=qUPgSMtlUmERZZLIUFycSk545B3qUyA+/eqIqZU20dvnavupiH38h2vMTk2vbU27CW
-         H/w0LTrVFUC5bHSyCbEQ+VCxmHpC8x7qMHl5QdPGRB7DRRvPv5vkWlTLgh3QQ+z6LI75
-         vDTxeq4+Mt3SVXxI+yzeB3cDJ1biKX0pPIWJpds7Xaoos9oUIQ0TMa3J/teXa8bgYJ6T
-         GQHA8KBE7yFD5OmvV+EDGjz/DhS9v4g5J8bOUKrJvVibIIE8ScgxjoYSi9uyJu/vPNTu
-         AehXClWHOlY6xVfqlsoHuYrfjMhDMEhqREtTcrKhZYdvr0732WMY084jBh0o6+gzXjRs
-         qkXg==
+        b=sCf+goKe6VItAJASZYbN3FkJ1gfS370/WmhhQx3gl9wm2w729aBU1ocnP6tBX5/noq
+         mH8h4VU2SMpsew+yShR7L+mM/jdd2dV6ixHbjLF6FrLrXxwU9/Yn0XRpcJdXPPwGNusE
+         B2NweaFWejXdzCj4NcQT2QETV5FD71XhaDkhfkOsus5+0uf240q16lw4fi1rocKB2LHm
+         z9jwHsUbSZ6m4+1NAvKLHv88+fYDrXmP1rfNmoudiuFXKO9+2X/StTKN51bN/sV/py8Y
+         joQBU7EOck/Z3CXruZ9O1f2BZvKVocuvqXcOj41ITdYP+EzGSmtvrv07ZviPzFP5kiZI
+         wQrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=lBvA/n2jcDejt/woGcsRBBlG1crV3kIN7hOBvjKHrmY=;
-        b=UWQXg3M/a6zTVgRTblK7rKMHg/2IVNPXWerRav3TJ0LcLa96dyr9BA4XGC+4I1F+VT
-         INggL8VCFeo1/Okr5G7b7CwcfBrZ+OYagYjo2LthZsd++huQme/JHLXkFQlcJ5TYr6sf
-         rzm4RZzCwCQK6iX3W+eI/Cug4EmCDPhtc+VZQKqzSEqf2mSqdA7rQJtlx7il61t7Mk8h
-         uFEMWEdWAmsanOyaE4TqBRJwmqgEz6EqMrk9jtYy3hQ73mek5QBTbKJFJpQw9lIksJf8
-         Q1aHAqTi81QQxNdrWx08lb4AaG2ZWheBiqstQt1rMdQ5ILFuDqAfUPNtlfG/3P9v5ULV
-         LbHw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=Vm0JmHttD2p3FYqD53xpdp/kko1lE7Puw9FD8HsWPbw=;
+        b=yfm8pSvA+C4iIyUWaU2jUSySkXZijqwX+zTYrij9mSCp8aoRo9n7J7Vw8t9t6zyitr
+         nrezZaNxU9kLM0VsbXaPbhIYAuu7cIQw8onnNa4fVigzOUcHIm/Dtosr8y/sEr81ki/n
+         P4Z3wTYWn5OFOQzdCD3ea/z8fAHH2XonVvWa7tiCb4jZBcKOEnVsuWSjGetbV5i8yXov
+         U8skDJlh15mnMTeHkmVPIVrwi1IhdNxP2POSQ3dIvHwHmJ0KRjoZq9eDh5LIGJ+1z4Qm
+         c0uXpSbz6gIPKb1qTq34Heiao0DoCqvxFZibHQH1aajXfPdY+B23gcrjAfsVNEGPJcWg
+         GCiQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kB8dkfz3;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@dev-mellanox-co-il.20150623.gappssmtp.com header.s=20150623 header.b=qjoo0Z/2;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of hal@dev.mellanox.co.il) smtp.mailfrom=hal@dev.mellanox.co.il;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=mellanox.co.il
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kB8dkfz3;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x224mmL2EAL6bjPKFc8LjEZTzYS+QWPFxJK5CxI6MiuHMiJ1koCyyuqmPERlQSHHC2Yp+v8xUPw==
-Date: Mon, 5 Feb 2018 12:49:34 +0530
-From: Aishwarya Pant <aishpant@gmail.com>
-To: Hal Rosenstock <hal@dev.mellanox.co.il>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg KH <gregkh@linuxfoundation.org>, linux-doc@vger.kernel.org,
-	Julia Lawall <julia.lawall@lip6.fr>
+       dkim=pass header.i=@dev-mellanox-co-il.20150623.gappssmtp.com header.s=20150623 header.b=qjoo0Z/2;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of hal@dev.mellanox.co.il) smtp.mailfrom=hal@dev.mellanox.co.il;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=mellanox.co.il
+X-Google-Smtp-Source: AH8x224/p+Hez2arTIns9bxdzntqvWkxDZjefmrg2xF3KWprTMcflW18/eTuOQF0b2JMenTTGrsMug==
 Subject: Re: [PATCH] Documentation/ABI: update infiniband sysfs interfaces
-Message-ID: <20180205071934.GA9185@mordor.localdomain>
+To: Aishwarya Pant <aishpant@gmail.com>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Greg KH <gregkh@linuxfoundation.org>,
+ linux-doc@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 References: <20180201133233.GA21266@mordor.localdomain>
  <64f953cc-7831-1164-28b5-5319e72e600f@dev.mellanox.co.il>
+ <20180205071934.GA9185@mordor.localdomain>
+From: Hal Rosenstock <hal@dev.mellanox.co.il>
+Message-ID: <6aca6ebc-4e58-79c7-6767-9e370c8ef71d@dev.mellanox.co.il>
+Date: Mon, 5 Feb 2018 08:16:55 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64f953cc-7831-1164-28b5-5319e72e600f@dev.mellanox.co.il>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180205071934.GA9185@mordor.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591205652334607577?=
-X-GMAIL-MSGID: =?utf-8?q?1591544571181673945?=
+X-GMAIL-MSGID: =?utf-8?q?1591567049412705067?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 12:48:18PM -0500, Hal Rosenstock wrote:
-> On 2/1/2018 8:32 AM, Aishwarya Pant wrote:
-> > Add documentation for core and hardware specific infiniband interfaces.
-> > The descriptions have been collected from git commit logs, reading
-> > through code and data sheets. Some drivers have incomplete doc and are
-> > annotated with the comment '[to be documented]'.
-> > 
-> > Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
-> > ---
-> >  Documentation/ABI/testing/sysfs-class-infiniband | 755 +++++++++++++++++++++++
-> >  1 file changed, 755 insertions(+)
-> > 
-> > diff --git a/Documentation/ABI/testing/sysfs-class-infiniband b/Documentation/ABI/testing/sysfs-class-infiniband
-> > index a86abe66a316..2e150169633b 100644
-> > --- a/Documentation/ABI/testing/sysfs-class-infiniband
-> > +++ b/Documentation/ABI/testing/sysfs-class-infiniband
-> > @@ -1,3 +1,194 @@
-> > +sysfs interface common for all infiniband devices
-> > +-------------------------------------------------
-> > +
-> > +What:		/sys/class/infiniband/<device>/node_type
-> > +What:		/sys/class/infiniband/<device>/node_guid
-> > +What:		/sys/class/infiniband/<device>/sys_image_guid
-> > +Date:		Apr, 2005
-> > +KernelVersion:	v2.6.12
-> > +Contact:	linux-rdma@vger.kernel.org
-> > +Description:
-> > +		node_type:	(RO) Node type (CA, RNIC, usNIC, usNIC UDP,
-> > +				switch or router)
-> > +
-> > +		node_guid:	(RO) Node GUID
-> > +
-> > +		sys_image_guid:	(RO) System image GUID
-> > +
-> > +
-> > +What:		/sys/class/infiniband/<device>/node_desc
-> > +Date:		Feb, 2006
-> > +KernelVersion:	v2.6.17
-> > +Contact:	linux-rdma@vger.kernel.org
-> > +Description:
-> > +		(RW) Update the node description with information such as the
-> > +		node's hostname, so that IB network management software can tie
-> > +		its view to the real world.
-> > +
-> > +
-> > +What:		/sys/class/infiniband/<device>/fw_ver
-> > +Date:		Jun, 2016
-> > +KernelVersion:	v4.10
-> > +Contact:	linux-rdma@vger.kernel.org
-> > +Description:
-> > +		(RO) Display firmware version
-> > +
-> > +
-> > +What:		/sys/class/infiniband/<device>/ports/<port-num>/lid
-> > +What:		/sys/class/infiniband/<device>/ports/<port-num>/rate
-> > +What:		/sys/class/infiniband/<device>/ports/<port-num>/lid_mask_count
-> > +What:		/sys/class/infiniband/<device>/ports/<port-num>/sm_sl
-> > +What:		/sys/class/infiniband/<device>/ports/<port-num>/sm_lid
-> > +What:		/sys/class/infiniband/<device>/ports/<port-num>/state
-> > +What:		/sys/class/infiniband/<device>/ports/<port-num>/phys_state
-> > +What:		/sys/class/infiniband/<device>/ports/<port-num>/cap_mask
-> > +Date:		Apr, 2005
-> > +KernelVersion:	v2.6.12
-> > +Contact:	linux-rdma@vger.kernel.org
-> > +Description:
-> > +
-> > +		lid:		(RO) Port LID
-> > +
-> > +		rate:		(RO) Port data rate (active width * active
-> > +				speed)
-> > +
-> > +		lid_mask_count:	(RO) Port LID mask count
-> > +
-> > +		sm_slL		(RO) Subnet manager SL for port's subnet
+On 2/5/2018 2:19 AM, Aishwarya Pant wrote:
+>>> +		cap_mask:	(RO) Port capability mask
+>> 2 bits here are settable: IsCommunicationManagementSupported and IsSM.
+> Hi
 > 
-> Typo sm_sl:
+> Sorry, I don't quite understand this. cap_mask is a read only value which
+> indicates the supported functions. So the two bits-
+> IsCommunicationManagementSupported and IsSM, should not be setttable?
+
+In terms of IB, PortInfo:CapabilityMask is RO from perspective of SM.
+
+In linux, IsSM is settable via open of issmN file. An SM will do this to
+set the IsSM bit.
+
+It is similar in terms of IsCommunicationManagementSupported bit where
+bit is set when CM module is loaded in kernel (in cm_add_one).
+
+-- Hal
+
+> Aishwarya
 > 
-> > +
-> > +		sm_lid:		(RO) Subnet manager LID for port's subnet
-> > +
-> > +		state:		(RO) Port state (DOWN, INIT, ARMED, ACTIVE or
-> > +				ACTIVE_DEFER> +
-> > +		phys_state:	(RO) Port physical state (Sleep, Polling,
-> > +				LinkUp, etc)
-> > +
-> > +		cap_mask:	(RO) Port capability mask
+> <snip>
 > 
-> 2 bits here are settable: IsCommunicationManagementSupported and IsSM.
-
-Hi
-
-Sorry, I don't quite understand this. cap_mask is a read only value which
-indicates the supported functions. So the two bits-
-IsCommunicationManagementSupported and IsSM, should not be setttable?
-
-Aishwarya
-
-<snip>
