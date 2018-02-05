@@ -1,193 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751946AbeBEWRG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 17:17:06 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:50626 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751175AbeBEWQ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 17:16:59 -0500
+        id S1752029AbeBEWRZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 17:17:25 -0500
+Received: from mga04.intel.com ([192.55.52.120]:42658 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751981AbeBEWRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 17:17:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,466,1511856000";
+   d="scan'208";a="171899784"
+Subject: Re: [RFC PATCH 1/2] __free_one_page: skip merge for order-0 page
+ unless compaction is in progress
+To: Aaron Lu <aaron.lu@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20180124023050.20097-1-aaron.lu@intel.com>
+ <20180205053013.GB16980@intel.com> <20180205053139.GC16980@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Kemi Wang <kemi.wang@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <57fd532f-8fb7-33c4-914a-fb816db47ea9@intel.com>
+Date: Mon, 5 Feb 2018 14:17:18 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date: Mon, 05 Feb 2018 23:16:57 +0100
-From: stefan@agner.ch
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        shijie.huang@arm.com
-Cc: han.xu@nxp.com, max.oss.09@gmail.com, richard@nod.at,
-        linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
-        dwmw2@infradead.org
-Subject: Re: [PATCH] mtd: nand: gpmi: fall back to legacy mode if no ECC
- information present
-In-Reply-To: <33bcf28ff1c613886c950465160e5a97@agner.ch>
-References: <20180129144440.13648-1-stefan@agner.ch>
- <20180130142348.35f1bce3@bbrezillon>
- <d7a812de1b96be3460230efde4914ec1@agner.ch>
- <20180131105705.17bbe858@bbrezillon>
- <33bcf28ff1c613886c950465160e5a97@agner.ch>
-Message-ID: <4952bf96840ae5b0caba7b8f472e2b1b@agner.ch>
-User-Agent: Roundcube Webmail/1.3.3
+In-Reply-To: <20180205053139.GC16980@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On 02/04/2018 09:31 PM, Aaron Lu wrote:
+> Running will-it-scale/page_fault1 process mode workload on a 2 sockets
+> Intel Skylake server showed severe lock contention of zone->lock, as
+> high as about 80%(43% on allocation path and 38% on free path) CPU
+> cycles are burnt spinning. With perf, the most time consuming part inside
+> that lock on free path is cache missing on page structures, mostly on
+> the to-be-freed page's buddy due to merging.
+> 
+> One way to avoid this overhead is not do any merging at all for order-0
+> pages and leave the need for high order pages to compaction.
 
-[Also adding Huang]
+I think the RFC here is: we *know* this hurts high-order allocations and
+Aaron demonstrated that it does make the latency worse.  But,
+unexpectedly, it didn't totally crater them.
 
-On 31.01.2018 22:18, stefan@agner.ch wrote:
-> I accidentally removed ML/cc before, re-adding.
-> 
-> On 31.01.2018 10:57, Boris Brezillon wrote:
->> On Wed, 31 Jan 2018 10:19:05 +0100
->> stefan@agner.ch wrote:
->>
->>> On 30.01.2018 14:23, Boris Brezillon wrote:
->>> > Hi Stefan,
->>> >
->>> > On Mon, 29 Jan 2018 15:44:40 +0100
->>> > Stefan Agner <stefan@agner.ch> wrote:
->>> >
->>> >> In case fsl,use-minimum-ecc is set, the driver tries to determine
->>> >> ECC layout by using the ECC information provided by the MTD stack.
->>> >> However, in case the NAND chip does not provide any information,
->>> >> the driver currently fails with:
->>> >>   nand: device found, Manufacturer ID: 0xc2, Chip ID: 0xf1
->>> >>   nand: Macronix NAND 128MiB 3,3V 8-bit
->>> >>   nand: 128 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
->>> >>   gpmi-nand 1806000.gpmi-nand: Error setting BCH geometry : 1
->>> >>   gpmi-nand: probe of 1806000.gpmi-nand failed with error 1
->>> >>
->>> >> Fall back to implementation specific default mode if no ECC
->>> >> information are provided by the NAND chip and fsl,use-minimum-ecc
->>> >> is specified.
->>> >
->>> > Hm, this sounds a bit fragile: if we ever fix the Macronix driver
->>> > (which should be done BTW) to set the appropriate ECC requirements, it
->>> > will break all platforms that were relying on this 'fall back to legacy
->>> > logic'.
->>>
->>> I see. It is just that downstream behaves that way, hence we sell
->>> modules which use minimal ECC on ONFI enabled chips and legacy (maximum
->>> ECC which fits into OOB) on modules with non-ONFI chips.
->>
->> And I guess you use the same DT for both variants of the board :-/
->>
-> 
-> Actually we only have two SKUs, and they differ also otherwise so I have
-> two DTs anyway.
-> 
->>>
->>> Currently we operate the above Macronix chip with 8-bit ECC since quite
->>> a while.
->>
->> Honestly, I don't see a good solution here except adding an extra DT or
->> live-patching it from the bootloader, because, even if this hack works
->> for you know, it might not in the future.
-> 
-> Extra DT is fine for Linux.
-> 
-> The problem is more with U-Boot, where I tried to add minimal ECC
-> support via Kconfig symbol and align with Linux behavior. For U-Boot I
-> would really prefer to have a single binary for all SKUs...
-> 
-> I already sent a first patchset
-> https://patchwork.ozlabs.org/patch/867180/
-> 
-> I guess it should be somehow possible to do a board specific selection
-> of ECC. But this is a discussion for another thread.
-> 
->>
->> In the future, if you plan to have boards with different variants of
->> NANDs, I recommend that you always maximize ECC, this way you won't
->> have this kind of issues.
-> 
-> Makes sense. Unfortunately, for those products we already ship, changing
-> would be rather painful.
-> 
->>
->>>
->>> > So, if what you really want is legacy_set_geometry(), don't specify
->>> > "fsl,use-minimum-ecc" in your DT and you should be good. Otherwise, fix
->>> > the Macronix driver to initialize ->ecc_{strength,step_size}_ds
->>> > appropriately.
->>>
->>> The datasheet says:
->>> • High Reliability
->>> - Endurance: 100K cycles (with 1-bit ECC per 528-byte)
->>>
->>> So we would set ecc_strenght to 1?
->>
->> If the datasheet says so, then yes, you should have
->> ->ecc_strength_ds = 1 and ->ecc_step_size_ds = 512.
->>
->>> But then there is almost no room for
->>> wear leveling. I remember that I dumped the fixed bits once on such a
->>> chip, and there were several blocks from factory which needed one bit
->>> fixed...
->>
->> Well, that's a different issue. You might want to maximize the ECC
->> strength for your specific board. In this case, you should not specify
->> "fsl,use-minimum-ecc" in your DT, or, if the driver supports it (but I
->> doubt it does), you should add "nand-ecc-maximize". Alternatively, if
->> you want to keep some of the OOB space, you can ask for a specific ECC
->> config with the "nand-ecc-strength" and "nand-ecc-step-size" properties.
-> 
-> Different issue, but in the end all I care about: Does wear leveling
-> work properly.
-> 
-> The NAND chip documentation also mentions that typical access is per
-> page (2K), I guess if one uses a single ECC across the complete page
-> then 4-bits are available, which should allow a somewhat decent wear
-> leveling.
-> 
-> I guess we can go with nand-ecc-strength/nand-ecc-step-size for that
-> chip for now.
+So, is the harm to large allocations worth the performance benefit
+afforded to smaller ones by this patch?  How would we make a decision on
+something like that?
 
-This seems not to be the case for the driver in question gpmi_nand_init
-calls:
-nand_scan_ident -> nand_dt_init (which fills
-chip->ecc.strength/chip->ecc.size)
-
-then
-
-gpmi_init_last -> gpmi_set_geometry -> bch_set_geometry ->
-legacy_set_geometry/set_geometry_by_ecc_info
-
-In both cases struct bch_geometry is calculated and overwrites
-ecc.strength/ecc.size (without considering either of them,
-set_geometry_by_ecc_info is considering ecc_strength_ds/ecc_step_ds
-though).
-
-I guess we would have to add a third option in case device tree
-specifies strength/size, and validate whether it can be reasonably
-fulfilled?
-
-E.g. extend common_nfc_set_geometry:
-
-
- int common_nfc_set_geometry(struct gpmi_nand_data *this)
- {
-+	struct nand_chip *chip = &this->nand;
-+
-+	if (chip->ecc.strength set && chip->ecc.strength set)
-+		return set_geometry_by_ecc_dt_info(this);
-+
- 	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
- 				|| legacy_set_geometry(this))
- 		return set_geometry_by_ecc_info(this);
- 
- 	return 0;
- }
-
---
-Stefan
-
-
-> 
-> However, in Linux we should at least fix the device tree bindings
-> documentation for "fsl,use-minimum-ecc" then.
-> 
-> --
-> Stefan
+If nothing else, this would make a nice companion topic to Daniel
+Jordan's "lru_lock scalability" proposal for LSF/MM.
