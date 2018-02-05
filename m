@@ -1,87 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752664AbeBEIrt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 03:47:49 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55069 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752195AbeBEIrk (ORCPT
+        id S1752716AbeBEIsC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 03:48:02 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49563 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752671AbeBEIrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:47:40 -0500
-X-Google-Smtp-Source: AH8x224y1Do8v1SfVQ3ks9UkpdelLPBJkJm0oEw3Kg4UEZZWSuKZK9iYI6WeNze4BUQgcdEsj6UhYw==
-Date: Mon, 5 Feb 2018 09:47:36 +0100
-From: Tycho Andersen <tycho@tycho.ws>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
-Subject: Re: [RFC 1/3] seccomp: add a return code to trap to userspace
-Message-ID: <20180205084736.biqc4mflczsix6wm@cisco>
-References: <20180204104946.25559-1-tycho@tycho.ws>
- <20180204104946.25559-2-tycho@tycho.ws>
- <CALCETrWgu5n+SMqrsZQ7MVYPtzs8otuc7hpA5uPH+JNtFrMBkQ@mail.gmail.com>
- <20180204200129.2bgq5yfaimg6xdg5@cisco>
- <CALCETrV81yr_zhuBbCTE8NgYx42oq=qvP=nLMsST0iS2wtOZng@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrV81yr_zhuBbCTE8NgYx42oq=qvP=nLMsST0iS2wtOZng@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Mon, 5 Feb 2018 03:47:51 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180205084749euoutp02b764ac51e341b059a5b4ca0fd8d1d062~QYazLX81g3071430714euoutp02q
+X-AuditID: cbfec7f1-f793a6d00000326b-0d-5a781a342249
+Subject: Re: [PATCH] [BUGFIX] media: vb2: Fix videobuf2 to map correct area
+To: Masami Hiramatsu <mhiramat@kernel.org>,
+        Pawel Osciak <pawel@osciak.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        orito.takao@socionext.com, Fumihiro ATSUMI <atsumi@infinitegra.co.jp>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <2af9a288-86e8-100a-4459-bc913f3cb99d@samsung.com>
+Date: Mon, 05 Feb 2018 09:47:46 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.5.2
+MIME-version: 1.0
+In-reply-to: <151779784111.20697.5012233804870630070.stgit@devbox>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+Content-transfer-encoding: 7bit
+Content-language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djPc7omUhVRBjdn81ncv7uEyeJs0xt2
+        i8u75rBZ9GzYymqxbNMfJovFy9Us7t35wG4x5e1PdgcOjxUvPjN7bFrVyebx+NdLNo++LasY
+        PU5M/87i8XmTXABbFJdNSmpOZllqkb5dAlfGlav/WArO8FU8Wj+fvYHxHXcXIyeHhICJxIN7
+        G9ggbDGJC/fWA9lcHEICSxkl/kzfxwrhfGaUWNvUzwrTcX3aD2aIxDJGiQ/HjrNDOM8ZJTr6
+        rjGCVAkLeEt03j7BAmKLCFRI7Gh7xARSxCywhVFi1sr3YAk2AUOJrrddYMt5Bewkti67D7aC
+        RUBVYkHHT7BBogIxEv83zmSHqBGU+DH5Hlgvp4CTRPe+x2D1zAJWEs/+tULZ8hKb17xlhrDF
+        JZpbb7KALJYQeMwmsaj5IQvEDy4S77/MY4awhSVeHd/CDmHLSHR2HGSCsPsZJZpatSHsGYwS
+        597yQtjWEoePX4Raxicxadt0oDkcQHFeiY42IYgSD4mGGa+hxjhK9Hz8wgQJoamMEo++7GOf
+        wCg/C8k/s5D8MAvJD7OQ/LCAkWUVo0hqaXFuemqxkV5xYm5xaV66XnJ+7iZGYPo5/e/4xx2M
+        709YHWIU4GBU4uG1iC+PEmJNLCuuzD3EKMHBrCTC63QdKMSbklhZlVqUH19UmpNafIhRmoNF
+        SZzXNqotUkggPbEkNTs1tSC1CCbLxMEp1cBo1FStzqe5covP2fj6d0IGBycLf5v/TytYsjHs
+        6TKT9l1KM5XFFDkCD617sstDZ0v0oszdZsuKjygoHjti65a1eob3BbboB1t0vm5S/91fUC56
+        cg/PgfRp16U29tasuVfZoZfv+saK11o6JEPvxp5FV3oOhtyu4Lj8Zu1EryuCm+W5NphcUDJV
+        YinOSDTUYi4qTgQAY3e6KjsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsVy+t/xa7rGUhVRBgv79C3u313CZHG26Q27
+        xeVdc9gsejZsZbVYtukPk8Xi5WoW9+58YLeY8vYnuwOHx4oXn5k9Nq3qZPN4/Oslm0ffllWM
+        Hiemf2fx+LxJLoAtissmJTUnsyy1SN8ugSvjytV/LAVn+CoerZ/P3sD4jruLkZNDQsBE4vq0
+        H8wQtpjEhXvr2UBsIYEljBLvP0R2MXIB2c8ZJU6ufAeWEBbwlui8fYIFxBYRqJB48foOI0gR
+        s8AWRok9fVNZIDqmM0os+jGJCaSKTcBQouttF1g3r4CdxNZl91lBbBYBVYkFHT8ZQWxRgRiJ
+        Bc2HmCFqBCV+TL4HtoFTwEmie99jsHpmATOJLy8PQ9nyEpvXvGWGsMUlmltvskxgFJyFpH0W
+        kpZZSFpmIWlZwMiyilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzBSth37uXkH46WNwYcYBTgY
+        lXh4LeLLo4RYE8uKK3MPMUpwMCuJ8DpdBwrxpiRWVqUW5ccXleakFh9ilOZgURLn7d2zOlJI
+        ID2xJDU7NbUgtQgmy8TBKdXAOFv1kc2MV2lVTV19ktV7wsVMWL5IT1dbI7RhV8f5xzEtr3J3
+        nSmyKPy4ZvbtmweeTow7MW9plEbErbmuHX2Xv4of+VO7Wr+nJoTXIX+etc+CG4n3PY+uOfB7
+        9QehiX3atwMO2ywNNyz5+0Jh2dXNucWdm8IizTaXLFE9vWvlTYOd/Et+npg+z0KJpTgj0VCL
+        uag4EQA8/pEVkAIAAA==
+X-CMS-MailID: 20180205084747eucas1p1ce06b2b7a8180f2df8975a6ee05a475a
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180205023108epcas5p18456b3ecc412b6709dc27fe5af14b1f6
+X-RootMTR: 20180205023108epcas5p18456b3ecc412b6709dc27fe5af14b1f6
+References: <CGME20180205023108epcas5p18456b3ecc412b6709dc27fe5af14b1f6@epcas5p1.samsung.com>
+        <151779784111.20697.5012233804870630070.stgit@devbox>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 04, 2018 at 08:33:25PM +0000, Andy Lutomirski wrote:
-> On Sun, Feb 4, 2018 at 8:01 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > Hi Andy,
-> >
-> > On Sun, Feb 04, 2018 at 05:36:33PM +0000, Andy Lutomirski wrote:
-> >> > The actual implementation of this is fairly small, although getting the
-> >> > synchronization right was/is slightly complex. Also worth noting that there
-> >> > is one race still present:
-> >> >
-> >> >   1. a task does a SECCOMP_RET_USER_NOTIF
-> >> >   2. the userspace handler reads this notification
-> >> >   3. the task dies
-> >> >   4. a new task with the same pid starts
-> >> >   5. this new task does a SECCOMP_RET_USER_NOTIF, gets the same cookie id
-> >> >      that the previous one did
-> >> >   6. the userspace handler writes a response
-> >>
-> >> I'm slightly confused.  I thought the id was never reused for a given
-> >> struct seccomp_filter.  (Also, shouldn't the id be u64, not u32?)
-> >
-> > Well, what happens when u32/64 overflows? Eventually it will wrap.
-> 
-> I think we can safely assume that u64 won't overflow.  Even if we
-> processed one user return notification on a given seccomp_filter every
-> nanosecond (which would be insanely fast), that's 584 years.
+Hi Masami,
 
-Yes, fair point r.e. u64. I'll make the change.
+On 2018-02-05 03:30, Masami Hiramatsu wrote:
+> Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
+> Since the current code does ioremap the page address, if the offset > 0,
+> it does not do ioremap the last page and results in kernel panic.
+>
+> This fixes to pass the page address + offset to ioremap so that ioremap
+> can map correct area. Also, this uses __pfn_to_phys() to get the physical
+> address of given PFN.
+>
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Reported-by: Takao Orito <orito.takao@socionext.com>
+> ---
+>   drivers/media/v4l2-core/videobuf2-vmalloc.c |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/v4l2-core/videobuf2-vmalloc.c b/drivers/media/v4l2-core/videobuf2-vmalloc.c
+> index 3a7c80cd1a17..896f2f378b40 100644
+> --- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
+> +++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
+> @@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(struct device *dev, unsigned long vaddr,
+>   			if (nums[i-1] + 1 != nums[i])
+>   				goto fail_map;
+>   		buf->vaddr = (__force void *)
+> -				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
+> +			ioremap_nocache(__pfn_to_phys(nums[0]) + offset, size);
 
-> >
-> >> On very quick reading, I have a question.  What happens if a process
-> >> has two seccomp_filters attached, one of them returns
-> >> SECCOMP_RET_USER_NOTIF, and the *other* one has a listener?
-> >
-> > Good question, in seccomp_run_filters(), the first (lowest, last
-> > applied) filter who returns SECCOMP_RET_USER_NOTIF is the one that
-> > gets the notification and the other receives nothing.
-> >
-> > I don't really have any reason to prefer this behavior, it's just what
-> > happened without much thought.
-> 
-> Hmm.  This won't nest right.  Maybe we should just disallow a
-> user-notification-using filter from being applied if there is already
-> one in the stack.  Then, if anyone cares about making these things
-> nest right, they can fix it.
+Thanks for reporting this issue. However the above line doesn't look like
+a proper fix. Please note that at the end of that function there is already
+"buf->vaddr += offset;".
 
-Sounds fine to me, I'll add a check.
+IMHO the proper fix is to create a larger mapping, which would include the
+in-page start offset:
 
-Cheers,
+ioremap_nocache(__pfn_to_phys(nums[0]), offset + size);
 
-Tycho
+BTW, thanks for updating "<< PAGE_SHIFT" to better __pfn_to_phys() macro!
+
+>   	} else {
+>   		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
+>   					PAGE_KERNEL);
+>
+>
+>
+>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
