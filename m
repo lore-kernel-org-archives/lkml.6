@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227Kw47JGB3/RyRlgj7yPoHkQRTAihxdN1lRBtRi6H469dO1zY7ZXtZnFQ9rtffLXG3auQkD
-ARC-Seal: i=1; a=rsa-sha256; t=1517855020; cv=none;
+X-Google-Smtp-Source: AH8x2267oG33mEH/1S7/N19C5396XOOcmqYvaVhnuHubCbAR12kI/26FMid3/03wNNQrYjDWkQja
+ARC-Seal: i=1; a=rsa-sha256; t=1517855019; cv=none;
         d=google.com; s=arc-20160816;
-        b=S+7HbdF9SYC01Dd3cfpDQ+6omBSLE7Fdoai/nMURnBTA7voFuM4i3BwHwiuEIuiGTV
-         tZkTEks2W5q+M8ZoX1UelWZveg7f80912i6fe7dAVBep83PnLUAJr/uf0uGKXfZhothx
-         iNFfVqe1nnHSfhJ6MRLM8CpntJA20lrn9B1xoLzqvGWbwi05yj94rjbUa4+z56op1TTH
-         s1atn8BWnbi3P6gQjdYfGCwuRjBChWm/rwzavY07ByzyMD3CQ0+FaNGX9+wNzkDc4opA
-         7BuCVxRiTFGoa+JUxFVsBAywLAbOBQxd/+/rE1IYTRYX3pRTc80wv0zbFTHL3ucO7lvs
-         /SWQ==
+        b=0cKscrRT5rS2HT+ng++NmnkU9GFv3W+9f0gxvWl0nTSowc4DozJdwniBD7C2oa4c+6
+         XzJauKLBD0k36afwICdZ17j5xq9vmXqI++e7sFncGUeitSMa2CxUw4p8Ztkhb/PrKSVw
+         T0X+BTb+eAeRoJbbNWv8wAql282OCR9X7DXPD9azS4SQyqnVgQQcxFezZXveLlalTBiq
+         kXTXk38YSEWKzPStWxtKa6TgrZYzkTt8r4/5ZfkTWINM6iI5G/hJkjd5weOjBSCM0oXU
+         GNuCtVDIwt48j47Ma2pXJmF82eAI5xA5zDc+NC596xD7p/4JMN+SWZ/RgyrW3cvx0bLC
+         /8TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1Sc0lw0t+rh67154D/TBQd0+lE1/BBSwMqfoZIORYiw=;
-        b=Y53HFmLocw7SSnWT6oVwWuPAH/5MxbgKHvzDhirPTgix/OjmZU4qlhPauho2gODpFn
-         XNWFljtPv6LppW6HQfle+kQ3kS4pV6AllFkPcv8loS1210C59fTt1D6Rvc0l/TbbJK7b
-         Vhz2xnkRAGvB7drN+dR1ZpC37B14z46ifqmZsRwCT4SC2dmhIas5a9IQMg6WD+gHJDeA
-         DGZgbJw3hTmbriiJ1WAMwJicwqQ2Y0mhhNyBojmuBz1PgecXarJLFDq0/s3Y5Oh6iXag
-         Yry6beAGrQnitwyXWGSuciVU5WPA5EfKFbsy1qHyHO1LGTBXCCxeBPh7dmT56vtahLDG
-         Qa9Q==
+        bh=nr4xJiKzuULqMq0iYox61TZdzc55xroZCyFV1FqwoU0=;
+        b=JZoEXm6WCHkxhCuP4kNWkStprFH6suowBQhxQBAklFHFaj9eWQmleCHjKLDKREAE3U
+         DQK1Gr52YHgMj6838oLjUzWeefAwXKmN3qU0hKfyDTGhEzQDyRiPjG9qT0Vh9ZOwajna
+         jGS56RgfJKFQZX+JKiqJPwpUYV4yh0qNpoeRA1HZNOYIYRy17XXPon99V4bW6SNxnI6Q
+         9o+TQjjDcfDR87pwFcHQI10Xpfye0K7JkCVjy6wJVtrYWcPPEkz/Evzbw8/SvFNbCv+b
+         sVWGHH95kOhI8USJBiXjeEhknVHYLe2HmWwbli2ft/z5Y5FzmFRGLt93FBWbYTKhG1hz
+         aScg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>
-Subject: [PATCH 4.14 03/64] powerpc/64s: Allow control of RFI flush via debugfs
-Date: Mon,  5 Feb 2018 10:22:22 -0800
-Message-Id: <20180205182138.714615532@linuxfoundation.org>
+	Borislav Petkov <bp@suse.de>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	ak@linux.intel.com,
+	dave.hansen@intel.com,
+	karahmed@amazon.de,
+	arjan@linux.intel.com,
+	torvalds@linux-foundation.org,
+	peterz@infradead.org,
+	bp@alien8.de,
+	pbonzini@redhat.com,
+	tim.c.chen@linux.intel.com,
+	gregkh@linux-foundation.org
+Subject: [PATCH 4.14 20/64] x86/retpoline: Simplify vmexit_fill_RSB()
+Date: Mon,  5 Feb 2018 10:22:39 -0800
+Message-Id: <20180205182139.389522570@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -39,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586346194152818?=
-X-GMAIL-MSGID: =?utf-8?q?1591586346194152818?=
+X-GMAIL-THRID: =?utf-8?q?1591586344767454537?=
+X-GMAIL-MSGID: =?utf-8?q?1591586344767454537?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,70 +59,247 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Borislav Petkov bp@alien8.de
 
-commit 236003e6b5443c45c18e613d2b0d776a9f87540e upstream.
+commit 1dde7415e99933bb7293d6b2843752cbdb43ec11
 
-Expose the state of the RFI flush (enabled/disabled) via debugfs, and
-allow it to be enabled/disabled at runtime.
+Simplify it to call an asm-function instead of pasting 41 insn bytes at
+every call site. Also, add alignment to the macro as suggested here:
 
-eg: $ cat /sys/kernel/debug/powerpc/rfi_flush
-    1
-    $ echo 0 > /sys/kernel/debug/powerpc/rfi_flush
-    $ cat /sys/kernel/debug/powerpc/rfi_flush
-    0
+  https://support.google.com/faqs/answer/7625886
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+[dwmw2: Clean up comments, let it clobber %ebx and just tell the compiler]
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: ak@linux.intel.com
+Cc: dave.hansen@intel.com
+Cc: karahmed@amazon.de
+Cc: arjan@linux.intel.com
+Cc: torvalds@linux-foundation.org
+Cc: peterz@infradead.org
+Cc: bp@alien8.de
+Cc: pbonzini@redhat.com
+Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
+Link: https://lkml.kernel.org/r/1517070274-12128-3-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- arch/powerpc/kernel/setup_64.c |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
 
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -38,6 +38,7 @@
- #include <linux/memory.h>
- #include <linux/nmi.h>
+---
+ arch/x86/entry/entry_32.S             |    3 -
+ arch/x86/entry/entry_64.S             |    3 -
+ arch/x86/include/asm/asm-prototypes.h |    3 +
+ arch/x86/include/asm/nospec-branch.h  |   70 +++-------------------------------
+ arch/x86/lib/Makefile                 |    1 
+ arch/x86/lib/retpoline.S              |   56 +++++++++++++++++++++++++++
+ 6 files changed, 71 insertions(+), 65 deletions(-)
+
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -252,7 +252,8 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	/* Clobbers %ebx */
++	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
  
-+#include <asm/debugfs.h>
- #include <asm/io.h>
- #include <asm/kdump.h>
- #include <asm/prom.h>
-@@ -885,6 +886,35 @@ void __init setup_rfi_flush(enum l1d_flu
- 		rfi_flush_enable(enable);
+ 	/* restore callee-saved registers */
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -495,7 +495,8 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	/* Clobbers %rbx */
++	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
+ 
+ 	/* restore callee-saved registers */
+--- a/arch/x86/include/asm/asm-prototypes.h
++++ b/arch/x86/include/asm/asm-prototypes.h
+@@ -38,4 +38,7 @@ INDIRECT_THUNK(dx)
+ INDIRECT_THUNK(si)
+ INDIRECT_THUNK(di)
+ INDIRECT_THUNK(bp)
++asmlinkage void __fill_rsb(void);
++asmlinkage void __clear_rsb(void);
++
+ #endif /* CONFIG_RETPOLINE */
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -7,50 +7,6 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/cpufeatures.h>
+ 
+-/*
+- * Fill the CPU return stack buffer.
+- *
+- * Each entry in the RSB, if used for a speculative 'ret', contains an
+- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
+- *
+- * This is required in various cases for retpoline and IBRS-based
+- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
+- * eliminate potentially bogus entries from the RSB, and sometimes
+- * purely to ensure that it doesn't get empty, which on some CPUs would
+- * allow predictions from other (unwanted!) sources to be used.
+- *
+- * We define a CPP macro such that it can be used from both .S files and
+- * inline assembly. It's possible to do a .macro and then include that
+- * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
+- */
+-
+-#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
+-#define RSB_FILL_LOOPS		16	/* To avoid underflow */
+-
+-/*
+- * Google experimented with loop-unrolling and this turned out to be
+- * the optimal version — two calls, each with their own speculation
+- * trap should their return address end up getting used, in a loop.
+- */
+-#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
+-	mov	$(nr/2), reg;			\
+-771:						\
+-	call	772f;				\
+-773:	/* speculation trap */			\
+-	pause;					\
+-	lfence;					\
+-	jmp	773b;				\
+-772:						\
+-	call	774f;				\
+-775:	/* speculation trap */			\
+-	pause;					\
+-	lfence;					\
+-	jmp	775b;				\
+-774:						\
+-	dec	reg;				\
+-	jnz	771b;				\
+-	add	$(BITS_PER_LONG/8) * nr, sp;
+-
+ #ifdef __ASSEMBLY__
+ 
+ /*
+@@ -121,17 +77,10 @@
+ #endif
+ .endm
+ 
+- /*
+-  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
+-  * monstrosity above, manually.
+-  */
+-.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
++/* This clobbers the BX register */
++.macro FILL_RETURN_BUFFER nr:req ftr:req
+ #ifdef CONFIG_RETPOLINE
+-	ANNOTATE_NOSPEC_ALTERNATIVE
+-	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
+-		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
+-		\ftr
+-.Lskip_rsb_\@:
++	ALTERNATIVE "", "call __clear_rsb", \ftr
+ #endif
+ .endm
+ 
+@@ -206,15 +155,10 @@ extern char __indirect_thunk_end[];
+ static inline void vmexit_fill_RSB(void)
+ {
+ #ifdef CONFIG_RETPOLINE
+-	unsigned long loops;
+-
+-	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
+-		      ALTERNATIVE("jmp 910f",
+-				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
+-				  X86_FEATURE_RETPOLINE)
+-		      "910:"
+-		      : "=r" (loops), ASM_CALL_CONSTRAINT
+-		      : : "memory" );
++	alternative_input("",
++			  "call __fill_rsb",
++			  X86_FEATURE_RETPOLINE,
++			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
+ #endif
  }
  
-+#ifdef CONFIG_DEBUG_FS
-+static int rfi_flush_set(void *data, u64 val)
-+{
-+	if (val == 1)
-+		rfi_flush_enable(true);
-+	else if (val == 0)
-+		rfi_flush_enable(false);
-+	else
-+		return -EINVAL;
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -27,6 +27,7 @@ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) +=
+ lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o
+ lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
+ lib-$(CONFIG_RETPOLINE) += retpoline.o
++OBJECT_FILES_NON_STANDARD_retpoline.o :=y
+ 
+ obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
+ 
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -7,6 +7,7 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
++#include <asm/bitsperlong.h>
+ 
+ .macro THUNK reg
+ 	.section .text.__x86.indirect_thunk
+@@ -46,3 +47,58 @@ GENERATE_THUNK(r13)
+ GENERATE_THUNK(r14)
+ GENERATE_THUNK(r15)
+ #endif
 +
-+	return 0;
-+}
++/*
++ * Fill the CPU return stack buffer.
++ *
++ * Each entry in the RSB, if used for a speculative 'ret', contains an
++ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
++ *
++ * This is required in various cases for retpoline and IBRS-based
++ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
++ * eliminate potentially bogus entries from the RSB, and sometimes
++ * purely to ensure that it doesn't get empty, which on some CPUs would
++ * allow predictions from other (unwanted!) sources to be used.
++ *
++ * Google experimented with loop-unrolling and this turned out to be
++ * the optimal version - two calls, each with their own speculation
++ * trap should their return address end up getting used, in a loop.
++ */
++.macro STUFF_RSB nr:req sp:req
++	mov	$(\nr / 2), %_ASM_BX
++	.align 16
++771:
++	call	772f
++773:						/* speculation trap */
++	pause
++	lfence
++	jmp	773b
++	.align 16
++772:
++	call	774f
++775:						/* speculation trap */
++	pause
++	lfence
++	jmp	775b
++	.align 16
++774:
++	dec	%_ASM_BX
++	jnz	771b
++	add	$((BITS_PER_LONG/8) * \nr), \sp
++.endm
 +
-+static int rfi_flush_get(void *data, u64 *val)
-+{
-+	*val = rfi_flush ? 1 : 0;
-+	return 0;
-+}
++#define RSB_FILL_LOOPS		16	/* To avoid underflow */
 +
-+DEFINE_SIMPLE_ATTRIBUTE(fops_rfi_flush, rfi_flush_get, rfi_flush_set, "%llu\n");
++ENTRY(__fill_rsb)
++	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
++	ret
++END(__fill_rsb)
++EXPORT_SYMBOL_GPL(__fill_rsb)
 +
-+static __init int rfi_flush_debugfs_init(void)
-+{
-+	debugfs_create_file("rfi_flush", 0600, powerpc_debugfs_root, NULL, &fops_rfi_flush);
-+	return 0;
-+}
-+device_initcall(rfi_flush_debugfs_init);
-+#endif
++#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
 +
- ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	if (rfi_flush)
++ENTRY(__clear_rsb)
++	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
++	ret
++END(__clear_rsb)
++EXPORT_SYMBOL_GPL(__clear_rsb)
