@@ -1,45 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753216AbeBEPJb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:09:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:21162 "EHLO mga04.intel.com"
+        id S1753245AbeBEPKY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:10:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752914AbeBEPJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:09:24 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,465,1511856000";
-   d="scan'208";a="27411002"
-Date: Mon, 5 Feb 2018 08:13:14 -0700
-From: Keith Busch <keith.busch@intel.com>
-To: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc: axboe@fb.com, linux-kernel@vger.kernel.org, hch@lst.de,
-        linux-nvme@lists.infradead.org, sagi@grimberg.me
-Subject: Re: [PATCH 2/6] nvme-pci: fix the freeze and quiesce for shutdown
- and reset case
-Message-ID: <20180205151314.GP24417@localhost.localdomain>
-References: <1517554849-7802-1-git-send-email-jianchao.w.wang@oracle.com>
- <1517554849-7802-3-git-send-email-jianchao.w.wang@oracle.com>
- <20180202182413.GH24417@localhost.localdomain>
- <d93d115b-bdb1-24c0-71be-72f1b7563e5a@oracle.com>
+        id S1752991AbeBEPKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 10:10:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C71712075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 5 Feb 2018 10:10:11 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        linux-trace-users <linux-trace-users@vger.kernel.org>,
+        acme <acme@kernel.org>, Clark Williams <williams@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, bristot <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH 00/18] [ANNOUNCE] Dynamically created function based
+ events
+Message-ID: <20180205101011.720f9493@gandalf.local.home>
+In-Reply-To: <20180205100930.GH2249@hirez.programming.kicks-ass.net>
+References: <20180202230458.840252014@goodmis.org>
+        <261141691.15507.1517677454208.JavaMail.zimbra@efficios.com>
+        <CA+55aFz1=qWvnJ2271SGwuezwQRBA2nZp8_BxFyR-R0VKKgXRw@mail.gmail.com>
+        <292744194.15823.1517758204087.JavaMail.zimbra@efficios.com>
+        <CA+55aFwtCP3Nf86jwNFzdRy_m0GZWH5U2KBDutPDh1ZVATHLYg@mail.gmail.com>
+        <20180205100930.GH2249@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d93d115b-bdb1-24c0-71be-72f1b7563e5a@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 10:26:03AM +0800, jianchao.wang wrote:
-> > Freezing is not just for shutdown. It's also used so
-> > blk_mq_update_nr_hw_queues will work if the queue count changes across
-> > resets.
-> blk_mq_update_nr_hw_queues will freeze the queue itself. Please refer to.
-> static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
+On Mon, 5 Feb 2018 11:09:31 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Yes, but how many requests are you letting enter to their demise by
-freezing on the wrong side of the reset? We don't use the nuclear option
-out of convenience.
+> As a run-around, Steve then suggested to decouple the trace-hook from
+> the actual trace-event. Let the scheduler only provide the hook, nothing
+> else. And then allow users to create their own events with the specific
+> data they need for their specific use-case.
+
+Actually, we can make the raw tracepoint callback no longer 'notrace',
+and then we can extend all tracepoints as well with this.
+
+One issue I hit was the structure randomization for security. If the
+structures are randomized, it becomes much more difficult to find
+specific aspects of task_struct.
+
+-- Steve
