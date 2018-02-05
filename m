@@ -1,72 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751864AbeBEU0r (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 15:26:47 -0500
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:35792 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750855AbeBEU0k (ORCPT
+        id S1751175AbeBEU1b (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 15:27:31 -0500
+Received: from gateway30.websitewelcome.com ([192.185.150.24]:45008 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750855AbeBEU1X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:26:40 -0500
-X-Google-Smtp-Source: AH8x227lrn/bDbUVFjNb/KY8fpMYfQn1awX52d1WYUA8wMQJ42Z9sSvsSLuz1QAxJpCrYLFpbOVDkKYXrdCxA75NPR0=
+        Mon, 5 Feb 2018 15:27:23 -0500
+Date: Mon, 5 Feb 2018 14:27:22 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH v2 5/8] pci: cx88-input: use 64-bit arithmetic instead of
+ 32-bit
+Message-ID: <9db3fe5d4564caf97acb5bee69e92727ada4a633.1517856716.git.gustavo@embeddedor.com>
+References: <cover.1517856716.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <1517850115-24340-3-git-send-email-daniel.baluta@nxp.com>
-References: <1517850115-24340-1-git-send-email-daniel.baluta@nxp.com> <1517850115-24340-3-git-send-email-daniel.baluta@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 5 Feb 2018 18:26:38 -0200
-Message-ID: <CAOMZO5D_5E9H6dJw8ivOgvOqxNvAZ72qhADCoG7VAZ7QwiOcUw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] ASoC: ak5558: Add bindings for AK5558 ADC
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        wakasugi.jb@om.asahi-kasei.co.jp, shengjiu.wang@nxp.com,
-        Mihai Serban <mihai.serban@gmail.com>, cosmin.samoila@nxp.com,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1517856716.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.201.65
+X-Source-L: No
+X-Exim-ID: 1einMI-003Z0P-MT
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.152.201.65]:47692
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 27
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 3:01 PM, Daniel Baluta <daniel.baluta@nxp.com> wrote:
-> Document the bindings for AK5558 ADC.
->
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
->  Documentation/devicetree/bindings/sound/ak5558.txt | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/ak5558.txt
->
-> diff --git a/Documentation/devicetree/bindings/sound/ak5558.txt b/Documentation/devicetree/bindings/sound/ak5558.txt
-> new file mode 100644
-> index 0000000..7d67ca6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/ak5558.txt
-> @@ -0,0 +1,22 @@
-> +AK5558 8 channel differential 32-bit delta-sigma ADC
-> +
-> +This device supports I2C mode only.
-> +
-> +Required properties:
-> +
-> +- compatible : "asahi-kasei,ak5558"
-> +- reg : The I2C address of the device.
-> +
-> +Optional properties:
-> +
-> +- reset-gpios: A GPIO specifier for the power down & reset pin.
-> +
-> +Example:
-> +
-> +&i2c {
-> +       ak5558: adc@10 {
+Add suffix LL to constant 1000000 in order to give the compiler
+complete information about the proper arithmetic to use. Notice
+that this constant is used in a context that expects an expression
+of type ktime_t (64 bits, signed).
 
-If I understood well Rob's suggestion was to make it only:
+The expression ir->polling * 1000000 is currently being evaluated
+using 32-bit arithmetic.
 
-adc@10 {
+Addresses-Coverity-ID: 1392628
+Addresses-Coverity-ID: 1392630
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Update subject and changelog to better reflect the proposed code changes.
+ - Add suffix LL to constant instead of casting a variable.
 
-Other than that:
+ drivers/media/pci/cx88/cx88-input.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
+index 4e9953e..6f4e692 100644
+--- a/drivers/media/pci/cx88/cx88-input.c
++++ b/drivers/media/pci/cx88/cx88-input.c
+@@ -180,7 +180,7 @@ static enum hrtimer_restart cx88_ir_work(struct hrtimer *timer)
+ 	struct cx88_IR *ir = container_of(timer, struct cx88_IR, timer);
+ 
+ 	cx88_ir_handle_key(ir);
+-	missed = hrtimer_forward_now(&ir->timer, ir->polling * 1000000);
++	missed = hrtimer_forward_now(&ir->timer, ir->polling * 1000000LL);
+ 	if (missed > 1)
+ 		ir_dprintk("Missed ticks %ld\n", missed - 1);
+ 
+@@ -200,7 +200,7 @@ static int __cx88_ir_start(void *priv)
+ 	if (ir->polling) {
+ 		hrtimer_init(&ir->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ 		ir->timer.function = cx88_ir_work;
+-		hrtimer_start(&ir->timer, ir->polling * 1000000,
++		hrtimer_start(&ir->timer, ir->polling * 1000000LL,
+ 			      HRTIMER_MODE_REL);
+ 	}
+ 	if (ir->sampling) {
+-- 
+2.7.4
