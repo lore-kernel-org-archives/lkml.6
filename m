@@ -1,81 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752404AbeBEBcO (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:32:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43468 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752315AbeBEB32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:29:28 -0500
-From: Davidlohr Bueso <dbueso@suse.de>
-To: akpm@linux-foundation.org, mingo@kernel.org
-Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
-        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
-        mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 59/64] drivers/iommu: use mm locking helpers
-Date: Mon,  5 Feb 2018 02:27:49 +0100
-Message-Id: <20180205012754.23615-60-dbueso@wotan.suse.de>
-X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
-References: <20180205012754.23615-1-dbueso@wotan.suse.de>
+        id S1752413AbeBEBcc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:32:32 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:40099 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752608AbeBEBbl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:31:41 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0SxhLN0q_1517794295;
+Subject: Re: [PATCH 1/2] /proc/kcore: Fix SMAP violation when dumping vsyscall
+ user page
+To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, jolsa@kernel.org
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+References: <1517294579-117473-1-git-send-email-zhang.jia@linux.alibaba.com>
+From: Jia Zhang <zhang.jia@linux.alibaba.com>
+Message-ID: <0d22814f-203c-65d8-6277-e133279e53fd@linux.alibaba.com>
+Date: Mon, 5 Feb 2018 09:32:12 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1517294579-117473-1-git-send-email-zhang.jia@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+Hi Jiri,
 
-This becomes quite straightforward with the mmrange in place.
+The maintainers are too busy to review this patchset. You are the author
+of the commit df04abfd181a. Please help to review this patchset.
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- drivers/iommu/amd_iommu_v2.c | 4 ++--
- drivers/iommu/intel-svm.c    | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Thanks,
+Jia
 
-diff --git a/drivers/iommu/amd_iommu_v2.c b/drivers/iommu/amd_iommu_v2.c
-index 15a7103fd84c..d3aee158d251 100644
---- a/drivers/iommu/amd_iommu_v2.c
-+++ b/drivers/iommu/amd_iommu_v2.c
-@@ -523,7 +523,7 @@ static void do_fault(struct work_struct *work)
- 		flags |= FAULT_FLAG_WRITE;
- 	flags |= FAULT_FLAG_REMOTE;
- 
--	down_read(&mm->mmap_sem);
-+	mm_read_lock(mm, &mmrange);
- 	vma = find_extend_vma(mm, address, &mmrange);
- 	if (!vma || address < vma->vm_start)
- 		/* failed to get a vma in the right range */
-@@ -535,7 +535,7 @@ static void do_fault(struct work_struct *work)
- 
- 	ret = handle_mm_fault(vma, address, flags, &mmrange);
- out:
--	up_read(&mm->mmap_sem);
-+	mm_read_unlock(mm, &mmrange);
- 
- 	if (ret & VM_FAULT_ERROR)
- 		/* failed to service fault */
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 6a74386ee83f..c4d0d2398052 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -643,7 +643,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
- 		if (!is_canonical_address(address))
- 			goto bad_req;
- 
--		down_read(&svm->mm->mmap_sem);
-+		mm_read_lock(svm->mm, &mmrange);
- 		vma = find_extend_vma(svm->mm, address, &mmrange);
- 		if (!vma || address < vma->vm_start)
- 			goto invalid;
-@@ -658,7 +658,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
- 
- 		result = QI_RESP_SUCCESS;
- 	invalid:
--		up_read(&svm->mm->mmap_sem);
-+		mm_read_unlock(svm->mm, &mmrange);
- 		mmput(svm->mm);
- 	bad_req:
- 		/* Accounting for major/minor faults? */
--- 
-2.13.6
+On 2018/1/30 下午2:42, Jia Zhang wrote:
+> The commit df04abfd181a
+> ("fs/proc/kcore.c: Add bounce buffer for ktext data") introduces a
+> bounce buffer to work around CONFIG_HARDENED_USERCOPY=y. However,
+> accessing vsyscall user page will cause SMAP violation in this way.
+> 
+> In order to fix this issue, simply replace memcpy() with copy_from_user()
+> may work, but using a common way to handle this sort of user page may be
+> useful for future.
+> 
+> Currently, only vsyscall page requires KCORE_USER.
+> 
+> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> ---
+>  arch/x86/mm/init_64.c | 2 +-
+>  fs/proc/kcore.c       | 4 ++++
+>  include/linux/kcore.h | 1 +
+>  3 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index 4a83728..dab78f6 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1187,7 +1187,7 @@ void __init mem_init(void)
+>  
+>  	/* Register memory areas for /proc/kcore */
+>  	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
+> -			 PAGE_SIZE, KCORE_OTHER);
+> +		   PAGE_SIZE, KCORE_USER);
+>  
+>  	mem_init_print_info(NULL);
+>  }
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index 4bc85cb..e4b0204 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -510,6 +510,10 @@ static void elf_kcore_store_hdr(char *bufp, int nphdr, int dataoff)
+>  			/* we have to zero-fill user buffer even if no read */
+>  			if (copy_to_user(buffer, buf, tsz))
+>  				return -EFAULT;
+> +		} else if (m->type == KCORE_USER) {
+> +			/* user page is handled prior to normal kernel page */
+> +			if (copy_to_user(buffer, (char *)start, tsz))
+> +				return -EFAULT;
+>  		} else {
+>  			if (kern_addr_valid(start)) {
+>  				unsigned long n;
+> diff --git a/include/linux/kcore.h b/include/linux/kcore.h
+> index 7ff25a8..80db19d 100644
+> --- a/include/linux/kcore.h
+> +++ b/include/linux/kcore.h
+> @@ -10,6 +10,7 @@ enum kcore_type {
+>  	KCORE_VMALLOC,
+>  	KCORE_RAM,
+>  	KCORE_VMEMMAP,
+> +	KCORE_USER,
+>  	KCORE_OTHER,
+>  };
+>  
+> 
