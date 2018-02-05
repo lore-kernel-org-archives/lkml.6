@@ -1,89 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752071AbeBEUbO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 15:31:14 -0500
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:36324 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751414AbeBEUbG (ORCPT
+        id S1751946AbeBEUcm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 15:32:42 -0500
+Received: from mail-ua0-f180.google.com ([209.85.217.180]:46579 "EHLO
+        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751617AbeBEUce (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:31:06 -0500
-X-Google-Smtp-Source: AH8x226WcWw/kEMkgH5p+VRlJlTabm98W4GKbmGrt8YTKeuXTlSuDMReuOj5RhPYM/7HeV9hHoCnL3eSv6K9wnNbijc=
+        Mon, 5 Feb 2018 15:32:34 -0500
+X-Google-Smtp-Source: AH8x227GOwmmfnJCbKjtIJBsXO703hT/qKKy/Sv5m2pjb39/G3EtySCLYUc7eF2DSOsCT2o6cDFC15m1F7Yq5NGH9Lc=
 MIME-Version: 1.0
-In-Reply-To: <20180205140134.GN3404@piout.net>
-References: <20180205012146.23981-1-ulfalizer@gmail.com> <20180205012146.23981-6-ulfalizer@gmail.com>
- <CAFkk2KRmK=fw=WYwr3eC8RJh7nxsUvC=uUnz7UCni72H9sHv4g@mail.gmail.com> <20180205140134.GN3404@piout.net>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Mon, 5 Feb 2018 21:31:04 +0100
-Message-ID: <CAFkk2KRt0wWY0Q6S-R-wKa6iKrmnmj6HRfDmDrHu942joEPpRg@mail.gmail.com>
-Subject: Re: [PATCH 05/20] rtc: at32ap700x: Remove PLATFORM_AT32AP dependency
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        tfiga@chromium.org, paul.burton@mips.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
-        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
-        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
-        robh@kernel.org, sboyd@codeaurora.org,
-        Paul Mackerras <paulus@ozlabs.org>, will.deacon@arm.com,
-        Tony Lindgren <tony@atomide.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org
+In-Reply-To: <20180205201555.GQ29988@eros>
+References: <20180204174521.21383-1-kilobyte@angband.pl> <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
+ <CAGXu5j+rWhT7_DH5Z96_7naPou96-6736x4mjq0r_8EG4iiQ_g@mail.gmail.com> <20180205201555.GQ29988@eros>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 6 Feb 2018 07:32:32 +1100
+X-Google-Sender-Auth: am-Oe35Gq8Ra1NQm8Q_QqoL_w9w
+Message-ID: <CAGXu5j+KSm3rOK46xiYPx8SRaO9T5LaeaXxOA3PSktJv4F__dg@mail.gmail.com>
+Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: Petr Mladek <pmladek@suse.com>, Adam Borowski <kilobyte@angband.pl>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 3:01 PM, Alexandre Belloni
-<alexandre.belloni@free-electrons.com> wrote:
-> Hi,
->
-> On 05/02/2018 at 02:42:38 +0100, Ulf Magnusson wrote:
->> On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
->> > The PLATFORM_AT32AP symbol went away when AVR32 was removed in
->> > commit 26202873bb51 ("avr32: remove support for AVR32 architecture").
+On Tue, Feb 6, 2018 at 7:15 AM, Tobin C. Harding <me@tobin.cc> wrote:
+> On Tue, Feb 06, 2018 at 05:57:17AM +1100, Kees Cook wrote:
+>> On Mon, Feb 5, 2018 at 8:44 PM, Petr Mladek <pmladek@suse.com> wrote:
+>> > Hi,
 >> >
->> > Remove the RTC_DRV_AT32AP700X dependency from RTC_DRV_AT32AP700X.
+>> > I add people who actively commented on adding %px modifier,
+>> > see the thread starting at
+>> > https://lkml.kernel.org/r/1511921105-3647-5-git-send-email-me@tobin.cc
 >> >
->> > Discovered with the
->> > https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
->> > script.
+>> > Just for reference. It seems to be related to the commit 9f36e2c448007b54
+>> > ("printk: use %pK for /proc/kallsyms and /proc/modules").
 >> >
->> > Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->> > ---
->> >  drivers/rtc/Kconfig | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
 >> >
->> > diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
->> > index b71cc7b5fbc9..1f5f3bd82ab6 100644
->> > --- a/drivers/rtc/Kconfig
->> > +++ b/drivers/rtc/Kconfig
->> > @@ -1404,7 +1404,7 @@ config RTC_DRV_PL031
+>> > On Sun 2018-02-04 18:45:21, Adam Borowski wrote:
+>> >> Like %pK already does, print "00000000" instead.
+>> >>
+>> >> This confused people -- the convention is that "(null)" means you tried to
+>> >> dereference a null pointer as opposed to printing the address.
 >> >
->> >  config RTC_DRV_AT32AP700X
->> >         tristate "AT32AP700X series RTC"
->> > -       depends on PLATFORM_AT32AP || COMPILE_TEST
->> > +       depends on COMPILE_TEST
->> >         help
->> >           Driver for the internal RTC (Realtime Clock) on Atmel AVR32
->> >           AT32AP700x family processors.
->> > --
->> > 2.14.1
->> >
+>> > By other words, this avoids regressions when people convert
+>> > %x to %px. Do I get it right, please?
 >>
->> RTC_DRV_AT32AP700X could probably be removed along with
->> ./drivers/rtc/rtc-at32ap700x.c as well.
->>
+>> Nothing should be converting from %x to %px, it's %p to %px. %p print
+>> "(null)" for 0x0, so it would be surprising for a conversion from %p
+>> to %px to change that. (Though generally speaking "(null)" is never
+>> useful...)
 >
-> Note that the driver is already removed in Linus' tree.
->
->
-> --
-> Alexandre Belloni, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> http://bootlin.com
+> Leaving aside what is converting to %px.  If we consider that using %px
+> is meant to convey to us that we _really_ want the address, in hex hence
+> the 'x', then it is not surprising that we will get "00000000"'s for a
+> null pointer, right?  Yes it is different to before but since we are
+> changing the specifier does this not imply that there may be some
+> change?
 
-That got rid of the config symbol too. This patch is moot then.
+I personally prefer 0000s, but if we're going to change this, we need
+to be aware of the difference.
 
-Cheers,
-Ulf
+> In what is now to be expected fashion for %p the discussion appears to
+> have split into two different things - what to do with %px and what to
+> do with %pK :)
+
+I say leave %pK alone. :)
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
