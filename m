@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753196AbeBEPob (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 10:44:31 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:16323 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752924AbeBEPoZ (ORCPT
+        id S1753254AbeBEPpD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 10:45:03 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:14988 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbeBEPo4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 10:44:25 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180205154423epoutp02c9f70bc18d938e59cc9b841bd9d0db53~QeGg03eSS3221532215epoutp02J
-X-AuditID: b6c32a45-403ff70000001023-45-5a787bd6b5b2
+        Mon, 5 Feb 2018 10:44:56 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180205154454epoutp0389fafd63e83d3c966a764e25ff67b305~QeG9boVkh3105131051epoutp03w
+X-AuditID: b6c32a39-467ff70000000fc5-2d-5a787bf5e3aa
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 To: broonie@kernel.org
 Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org,
@@ -16,65 +16,88 @@ Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org,
         krzk@kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com,
         linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 0/8] ASoC: samsung: Add HDMI sound support for tm2 board
-Date: Mon, 05 Feb 2018 16:43:55 +0100
-Message-id: <20180205154403.13520-1-s.nawrocki@samsung.com>
+Subject: [PATCH 1/8] ASoC: samsung: i2s: Ensure the RCLK rate is properly
+ determined
+Date: Mon, 05 Feb 2018 16:43:56 +0100
+Message-id: <20180205154403.13520-2-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.14.2
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsWy7bCmqe616ooogx+3BC2uXDzEZLFxxnpW
+In-reply-to: <20180205154403.13520-1-s.nawrocki@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsWy7bCmge7X6ooog5OntCyuXDzEZLFxxnpW
         i6kPn7BZzD9yjtXi7f5uZovz5zewW3y70sFkcXnXHDaLGef3MVmsPXKX3aJ17xF2i8Nv2lkt
-        Lq74wuTA67HhcxObx85Zd9k9Nq3qZPPo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujAPPLzMV
-        XOCsOPl1EmsD41z2LkZODgkBE4l5Hx6wdjFycQgJ7GCU2D+rDywhJPCdUeLjHtsuRg6woiXz
-        yyBqdjNK3J32ghHC+cUosat5ChtIA5uAoUTv0T5GEFtEQEzi9pxOZpAiZoEzTBLT961hAkkI
-        C3hIzFx6DayBRUBV4tmBJrBtvALWEivu7maGOEle4v2C+2AbJASWsEks+76QCSLhIjHh3CGo
-        ImGJV8e3QP0gLfFs1Uaohn5GiRNrmqGcGYwSd9onQHVbSxw+fpEVxGYW4JPoOPyXHeI5XomO
-        NiGIEg+JvvtLoBY4SnxesIoJEhaxEkfmXmaawCi5gJFhFaNYakFxbnpqsVGBoV5xYm5xaV66
-        XnJ+7iZGcOxque5gnHHO5xCjAAejEg+vQEZFlBBrYllxZe4hRgkOZiURXqfr5VFCvCmJlVWp
-        RfnxRaU5qcWHGKU5WJTEedsCXKKEBNITS1KzU1MLUotgskwcnFINjDVbvp+YuV4rZ9mV1JcH
-        KjzvtUfUuCbknslNErUIvFiTzZTQtHTSKRvOVMkXlyvelNvXnnXcufdvw4VNFvf8TW5vqEov
-        bnaMOJD0bl6B6oIg1gcKZ/dfX7CNKUebz0YtZvaqNK8N7oeV02adar8yjeuCHG/WEb7i+xNl
-        e75X6M6fx7+A7Y3kWyWW4oxEQy3mouJEADKLEzHZAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprILMWRmVeSWpSXmKPExsVy+t9jAd2r1RVRBpO3KlhcuXiIyWLjjPWs
-        FlMfPmGzmH/kHKvF2/3dzBbnz29gt/h2pYPJ4vKuOWwWM87vY7JYe+Quu0Xr3iPsFofftLNa
-        XFzxhcmB12PD5yY2j52z7rJ7bFrVyebRt2UVo8fnTXIBrFFcNimpOZllqUX6dglcGQeeX2Yq
-        uMBZcfLrJNYGxrnsXYwcHBICJhJL5pd1MXJyCAnsZJR4PZO3i5ELyP7FKPFy00FmkASbgKFE
-        79E+RhBbREBM4vacTmaQImaBM0wSXyZeYgdJCAt4SMxceo0NxGYRUJV4dqAJLM4rYC2x4u5u
-        sEESAvIS7xfcZ5zAyLWAkWEVo2RqQXFuem6xUYFRXmq5XnFibnFpXrpecn7uJkZgQG07rNW/
-        g/HxkvhDjAIcjEo8vAIZFVFCrIllxZW5hxglOJiVRHidrpdHCfGmJFZWpRblxxeV5qQWH2KU
-        5mBREuflzz8WKSSQnliSmp2aWpBaBJNl4uCUamAsuCmf8K1+38tOid66zC+8Qb82x7GXZP9O
-        DMlMW/ySXzD2ct/d8ut/64vyU6wKZ5mskGSYor+F5ac2V4/e3h+Tb7BMWbhLjjnK0ED3nAD3
-        n6Y7xdnHz90ss305W8f949QNdtV7/xg+m2m6TV1bqVhJOG2GgK7epDvLDK782fk63CXNY94s
-        zRAlluKMREMt5qLiRABPC88oJAIAAA==
-X-CMS-MailID: 20180205154421epcas2p16072f713ea81f72b3f8230f6a9d412cf
+        Lq74wuTA67HhcxObx85Zd9k9Nq3qZPPo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujOl/nrIU
+        rOatWLqzj6mB8RFXFyMnh4SAiUTXxTfMXYxcHEICOxglzn+5zAbhfGeUmHW/lx2masLaqYwQ
+        id2MEvPffmCHcH4xSrQeXs4CUsUmYCjRe7SPEcQWERCTuD2nE2wus8AZJonp+9YwgSSEBcIk
+        Fi8/ygxiswioSjx79YEVxOYVsJbYc+kMK8Q6eYn3C+6DDeIUsJHYc28Z2GoJgT1sEifvvmaD
+        KHKR6Lm7iwnCFpZ4dXwL0EkcQLa0xKWjthD1/YwSJ9Y0QzXPYJS40z4BqsFa4vDxi2DbmAX4
+        JN597WGFaOaV6GgTgijxkJgycwoLhO0osf/aJrC9QiBDfz6TnMAotYCRYRWjWGpBcW56arFh
+        galecWJucWleul5yfu4mRnBUa1nuYDx2zucQowAHoxIPr0BGRZQQa2JZcWXuIUYJDmYlEV6n
+        6+VRQrwpiZVVqUX58UWlOanFhxilOViUxHkDAlyihATSE0tSs1NTC1KLYLJMHJxSDYz5uq+S
+        WV0n6u/9Ia4oapS3s6QqXPS59j95Sd65HVP3c2kJuD2z65oYf/rufFe3+cayX/vXnQrP9T8+
+        ZUt8VdBfJkXbi10fKroXrP7xNHDd3sZ5vDdizonrHbkoUby1Uc1NZl2AiU5k9rJVgqs+bfP6
+        /fXK9tKYXpk/ToxSHxbZlMbs9TJV8VdiKc5INNRiLipOBACCyOCZ5gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFLMWRmVeSWpSXmKPExsVy+t9jAd2v1RVRBs86mC2uXDzEZLFxxnpW
+        i6kPn7BZzD9yjtXi7f5uZovz5zewW3y70sFkcXnXHDaLGef3MVmsPXKX3aJ17xF2i8Nv2lkt
+        Lq74wuTA67HhcxObx85Zd9k9Nq3qZPPo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujOl/nrIU
+        rOatWLqzj6mB8RFXFyMnh4SAicSEtVMZuxi5OIQEdjJK9M7uZoJwfjFKTDr4iQ2kik3AUKL3
+        aB8jiC0iICZxe04nM0gRs8AZJokvEy+xgySEBcIkFi8/ygxiswioSjx79YEVxOYVsJbYc+kM
+        K8Q6eYn3C+6DDeIUsJHYc28ZkM0BtM1aoummwARGngWMDKsYJVMLinPTc4uNCgzzUsv1ihNz
+        i0vz0vWS83M3MQJDcNthrb4djPeXxB9iFOBgVOLhzciqiBJiTSwrrsw9xCjBwawkwut0vTxK
+        iDclsbIqtSg/vqg0J7X4EKM0B4uSOO/tvGORQgLpiSWp2ampBalFMFkmDk6pBsalUZqzqt4Y
+        rp/2QF7mx5Ppl1/dKJrtOtXoiP2xqdJmU2Q0eW/LTVN1U5Ze0bJfq/G5zIyKqSwnZ//gn854
+        2WdVHoPn6lNvzT8vkHXM1G+1OHJy9bVz768c5mrk7bkTYtyi/n6N850YAfZ5fdUm1/JmrUj5
+        ZOLy4qP5j1eq+xLCvGW+sFeHsjxXYinOSDTUYi4qTgQARxnJpz0CAAA=
+X-CMS-MailID: 20180205154453epcas1p10046e1103497692c86c0899a5ef11781
 X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180205154421epcas2p16072f713ea81f72b3f8230f6a9d412cf
-X-RootMTR: 20180205154421epcas2p16072f713ea81f72b3f8230f6a9d412cf
-References: <CGME20180205154421epcas2p16072f713ea81f72b3f8230f6a9d412cf@epcas2p1.samsung.com>
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180205154453epcas1p10046e1103497692c86c0899a5ef11781
+X-RootMTR: 20180205154453epcas1p10046e1103497692c86c0899a5ef11781
+References: <20180205154403.13520-1-s.nawrocki@samsung.com>
+        <CGME20180205154453epcas1p10046e1103497692c86c0899a5ef11781@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for HDMI audio on exynos5433 tm2 board, it
-includes a few fixes for the I2S driver and an extension of the existing
-card driver to support the I2S1<->HDMI transmitter path.
+If the RCLK mux clock configuration is specified in DT and no set_sysclk()
+callback is used in the sound card driver the sclk_srcrate field will remain
+set to 0, leading to an incorrect PSR divider setting.
+To fix this the frequency value is retrieved from the CLK_I2S_RCLK_SRC clock,
+so the actual RCLK mux selection is taken into account.
 
-Sylwester Nawrocki (8):
-  ASoC: samsung: i2s: Ensure the RCLK rate is properly determined
-  ASoC: samsung: i2s: Ensure names of supplied clocks are unique
-  ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access
-  ASoC: samsung: i2s: Define the parameters list for SAMSUNG_I2S_OPCLK
-  ASoC: samsung: Add support for HDMI audio on TM2 board
-  ASoC: samsung: i2s: Update clock-output-names property documentation
-  ASoC: samsung: Add missing #sound-dai-cells property documentation
-  ASoC: samsung,tm2-audio DT binding documentation update
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/samsung/i2s.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
- .../bindings/sound/samsung,tm2-audio.txt           |  14 +-
- .../devicetree/bindings/sound/samsung-i2s.txt      |  22 +--
- sound/soc/samsung/i2s-regs.h                       |  11 +-
- sound/soc/samsung/i2s.c                            |  50 ++++--
- sound/soc/samsung/i2s.h                            |  11 +-
- sound/soc/samsung/tm2_wm5110.c                     | 180 ++++++++++++++++++---
- 6 files changed, 229 insertions(+), 59 deletions(-)
-
---
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 233f1c9a4b6c..aeba0ae890ea 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -656,8 +656,12 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 		tmp |= mod_slave;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBS_CFS:
+-		/* Set default source clock in Master mode */
+-		if (i2s->rclk_srcrate == 0)
++		/*
++		 * Set default source clock in Master mode, only when the
++		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
++		 * clock configuration assigned in DT is not overwritten.
++		 */
++		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
+ 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
+ 							0, SND_SOC_CLOCK_IN);
+ 		break;
+@@ -881,6 +885,11 @@ static int config_setup(struct i2s_dai *i2s)
+ 		return 0;
+ 
+ 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
++		struct clk *rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
++
++		if (i2s->rclk_srcrate == 0 && rclksrc && !IS_ERR(rclksrc))
++			i2s->rclk_srcrate = clk_get_rate(rclksrc);
++
+ 		psr = i2s->rclk_srcrate / i2s->frmclk / rfs;
+ 		writel(((psr - 1) << 8) | PSR_PSREN, i2s->addr + I2SPSR);
+ 		dev_dbg(&i2s->pdev->dev,
+-- 
 2.14.2
