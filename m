@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226BIVZJWH9smymqiqZtkkv3YpOKmDKY7CbFT/D+kLoh/AHb23+hpuaAEsgrO9HBQ6XtwU7k
-ARC-Seal: i=1; a=rsa-sha256; t=1517855078; cv=none;
+X-Google-Smtp-Source: AH8x225/mIO0OqSM43d03FQhWfZxa5W/AHpxef+n/b342yauWM646vnLeFH8kvDDD3Kl0XhD8LsB
+ARC-Seal: i=1; a=rsa-sha256; t=1517855077; cv=none;
         d=google.com; s=arc-20160816;
-        b=VdkX01iDHapk7Q0SQfC9Mro2p3QX0TtDY/0lbEJoxUdNg4hvvrLjCRccomxDSHDISm
-         /fm/dX737Sfzn86SkK2j2DiTxbELfjO/HuqlgUP3puUCbn0C9jQFZTugaWQQV+kIDDJK
-         5rB88Sy/p57Stppn8sQ7qePhN2KZGgGMUX2jP+HRnCaUXyUOnWnV38BlXTv/1pAtRYDD
-         BgZGZkd+ZFqEIILM0LxmweEM33Z8xErs9iEMh2GoXD68YxLE86KwEyVGG+4hlarwQLIX
-         gBvT+YnwExkDEqa57URRunG4yzz7sk+nJI2CfnME1comy+8Rc+UN/17ZomohUiPAPzAe
-         VeYA==
+        b=WUOVvK4HI1h5g/JuRFKvmEeXDD9YAyTN7/1YPd3kBJ12lAINBHlIeyS1GDFsZ8g+bL
+         SkpVKiTgUXdwoa2F87HZpK6/kKW7uCCwoZDcp00sw3jIpBU3WtcjANn+QYAymcpHIe+Q
+         mljHDN1VkD4dytzGx6meAylSCp/Y7k9HzM5yUHLlSgNJbXHg+XGlWjcgTJNKrYpCXx+R
+         wS8Fn1LeSHCuBE/oKfrHfxnDHD7/5ZgHFnW0j6XOK/Vd3dTIBNWXwE1zkzQ1tX1NjRsj
+         TwjBLIo8sxPxfhbzbkdki4xpyqlClzNSlwXIkymXx3OakvY0OvM7Fr1iK7NiaDeIog9a
+         cbzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/uVrSaIqyF+vmYUqJJxS03x6J6Xm007ro/2+BulBefo=;
-        b=GLMOs2Xpz+bQhlmwR8FvuAK5pimXTx+8HyT0zaiJyjBxwzPcV8h31bM74T4FEFBQLH
-         i9Z+cmgvs0nod5pmORKBQf5ddnLYCWg8/3yQo2G5uPtMAXXQiiOdqtPLS9W17TFQn+iE
-         /1bd9ggeTWKQrE+Heb1dm5VbcDth4mAOlpN2+wRW/0nc7idvQqI8t+XTK6bxs5f2MepN
-         V2CidbDZ3OgSWfH6fkMykI0bYtNy/qUHx2g/TlIjDJqFg3/1VUmnIxsfVRWjqmJpdSgq
-         I8jO+PYapDjI1vvmApk3clynSCtyuHU3k9LmcRZHGdnGmDox98TuFB1d/5FMgr582Hhj
-         tL7Q==
+        bh=ActlnlEvKD3legRWIdnaUvV8QSebXYqP+C7yhZPi1cs=;
+        b=PGCGwXEeP4J4sQOkP+EFn8+zZvH8498o0naUuy+jQXwA1nsnNIHR3oeklPEPkG11/J
+         F6wIO+T8dNaVTjQ+DM3hWOBh2GbJBHVnYg/Zi0gh/085bAyRiiFNU0oVH+g6yjY5etwZ
+         aV+eL0E9zNZB530qkyoU0gamuE7YNPAjUedfieyJwsC7FCow/Arab/gEQ4aYmTQm0uGb
+         +PfhRiTmTNW+p/4qQ73brGPlU1qzRIxB5OnakUazwotRTzBg/sd4BugJbKPoNkpfvYCT
+         IZYmni/BURVcoY8tXLqfVfD06XcuBj1GZOWoHUuXsvZMtrHCQlFv5No+HOnIkiIwBu41
+         O6tw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,25 +29,25 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	KarimAllah Ahmed <karahmed@amazon.de>,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	Paolo Bonzini <pbonzini@redhat.com>,
 	Darren Kenny <darren.kenny@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	Jim Mattson <jmattson@google.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
 	Andrea Arcangeli <aarcange@redhat.com>,
 	Andi Kleen <ak@linux.intel.com>,
 	Jun Nakajima <jun.nakajima@intel.com>,
 	kvm@vger.kernel.org,
 	Dave Hansen <dave.hansen@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Andy Lutomirski <luto@kernel.org>,
 	Asit Mallick <asit.k.mallick@intel.com>,
 	Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
 	Dan Williams <dan.j.williams@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
 	Ashok Raj <ashok.raj@intel.com>
-Subject: [PATCH 4.14 61/64] KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
-Date: Mon,  5 Feb 2018 10:23:20 -0800
-Message-Id: <20180205182141.086249854@linuxfoundation.org>
+Subject: [PATCH 4.14 60/64] KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES
+Date: Mon,  5 Feb 2018 10:23:19 -0800
+Message-Id: <20180205182141.047844255@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
@@ -56,8 +56,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586406687204486?=
-X-GMAIL-MSGID: =?utf-8?q?1591586406687204486?=
+X-GMAIL-THRID: =?utf-8?q?1591586405280602404?=
+X-GMAIL-MSGID: =?utf-8?q?1591586405280602404?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -67,275 +67,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: KarimAllah Ahmed karahmed@amazon.de
 
-commit d28b387fb74da95d69d2615732f50cceb38e9a4d
+commit 28c1c9fabf48d6ad596273a11c46e0d0da3e14cd
 
-[ Based on a patch from Ashok Raj <ashok.raj@intel.com> ]
+Intel processors use MSR_IA32_ARCH_CAPABILITIES MSR to indicate RDCL_NO
+(bit 0) and IBRS_ALL (bit 1). This is a read-only MSR. By default the
+contents will come directly from the hardware, but user-space can still
+override it.
 
-Add direct access to MSR_IA32_SPEC_CTRL for guests. This is needed for
-guests that will only mitigate Spectre V2 through IBRS+IBPB and will not
-be using a retpoline+IBPB based approach.
-
-To avoid the overhead of saving and restoring the MSR_IA32_SPEC_CTRL for
-guests that do not actually use the MSR, only start saving and restoring
-when a non-zero is written to it.
-
-No attempt is made to handle STIBP here, intentionally. Filtering STIBP
-may be added in a future patch, which may require trapping all writes
-if we don't want to pass it through directly to the guest.
-
-[dwmw2: Clean up CPUID bits, save/restore manually, handle reset]
+[dwmw2: The bit in kvm_cpuid_7_0_edx_x86_features can be unconditional]
 
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Reviewed-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jun Nakajima <jun.nakajima@intel.com>
 Cc: kvm@vger.kernel.org
 Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Asit Mallick <asit.k.mallick@intel.com>
 Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
 Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Ashok Raj <ashok.raj@intel.com>
-Link: https://lkml.kernel.org/r/1517522386-18410-5-git-send-email-karahmed@amazon.de
+Link: https://lkml.kernel.org/r/1517522386-18410-4-git-send-email-karahmed@amazon.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- arch/x86/kvm/cpuid.c |    9 ++--
- arch/x86/kvm/vmx.c   |  105 ++++++++++++++++++++++++++++++++++++++++++++++++++-
- arch/x86/kvm/x86.c   |    2 
- 3 files changed, 110 insertions(+), 6 deletions(-)
+ arch/x86/kvm/cpuid.c |    2 +-
+ arch/x86/kvm/vmx.c   |   15 +++++++++++++++
+ arch/x86/kvm/x86.c   |    1 +
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -367,7 +367,7 @@ static inline int __do_cpuid_ent(struct
- 
- 	/* cpuid 0x80000008.ebx */
- 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
--		F(IBPB);
-+		F(IBPB) | F(IBRS);
- 
- 	/* cpuid 0xC0000001.edx */
- 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
-@@ -394,7 +394,8 @@ static inline int __do_cpuid_ent(struct
+@@ -394,7 +394,7 @@ static inline int __do_cpuid_ent(struct
  
  	/* cpuid 7.0.edx*/
  	const u32 kvm_cpuid_7_0_edx_x86_features =
--		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(ARCH_CAPABILITIES);
-+		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
-+		F(ARCH_CAPABILITIES);
+-		F(AVX512_4VNNIW) | F(AVX512_4FMAPS);
++		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(ARCH_CAPABILITIES);
  
  	/* all calls to cpuid_count() should be made on the same cpu */
  	get_cpu();
-@@ -630,9 +631,11 @@ static inline int __do_cpuid_ent(struct
- 			g_phys_as = phys_as;
- 		entry->eax = g_phys_as | (virt_as << 8);
- 		entry->edx = 0;
--		/* IBPB isn't necessarily present in hardware cpuid */
-+		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
- 		if (boot_cpu_has(X86_FEATURE_IBPB))
- 			entry->ebx |= F(IBPB);
-+		if (boot_cpu_has(X86_FEATURE_IBRS))
-+			entry->ebx |= F(IBRS);
- 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
- 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
- 		break;
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -584,6 +584,7 @@ struct vcpu_vmx {
+@@ -583,6 +583,8 @@ struct vcpu_vmx {
+ 	u64 		      msr_guest_kernel_gs_base;
  #endif
  
- 	u64 		      arch_capabilities;
-+	u64 		      spec_ctrl;
- 
++	u64 		      arch_capabilities;
++
  	u32 vm_entry_controls_shadow;
  	u32 vm_exit_controls_shadow;
-@@ -1906,6 +1907,29 @@ static void update_exception_bitmap(stru
- }
- 
- /*
-+ * Check if MSR is intercepted for currently loaded MSR bitmap.
-+ */
-+static bool msr_write_intercepted(struct kvm_vcpu *vcpu, u32 msr)
-+{
-+	unsigned long *msr_bitmap;
-+	int f = sizeof(unsigned long);
-+
-+	if (!cpu_has_vmx_msr_bitmap())
-+		return true;
-+
-+	msr_bitmap = to_vmx(vcpu)->loaded_vmcs->msr_bitmap;
-+
-+	if (msr <= 0x1fff) {
-+		return !!test_bit(msr, msr_bitmap + 0x800 / f);
-+	} else if ((msr >= 0xc0000000) && (msr <= 0xc0001fff)) {
-+		msr &= 0x1fff;
-+		return !!test_bit(msr, msr_bitmap + 0xc00 / f);
-+	}
-+
-+	return true;
-+}
-+
-+/*
-  * Check if MSR is intercepted for L01 MSR bitmap.
-  */
- static bool msr_write_intercepted_l01(struct kvm_vcpu *vcpu, u32 msr)
-@@ -3259,6 +3283,14 @@ static int vmx_get_msr(struct kvm_vcpu *
+ 	u32 secondary_exec_control;
+@@ -3257,6 +3259,12 @@ static int vmx_get_msr(struct kvm_vcpu *
  	case MSR_IA32_TSC:
  		msr_info->data = guest_read_tsc(vcpu);
  		break;
-+	case MSR_IA32_SPEC_CTRL:
++	case MSR_IA32_ARCH_CAPABILITIES:
 +		if (!msr_info->host_initiated &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS) &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
++		    !guest_cpuid_has(vcpu, X86_FEATURE_ARCH_CAPABILITIES))
 +			return 1;
-+
-+		msr_info->data = to_vmx(vcpu)->spec_ctrl;
++		msr_info->data = to_vmx(vcpu)->arch_capabilities;
 +		break;
- 	case MSR_IA32_ARCH_CAPABILITIES:
- 		if (!msr_info->host_initiated &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_ARCH_CAPABILITIES))
-@@ -3372,6 +3404,37 @@ static int vmx_set_msr(struct kvm_vcpu *
- 	case MSR_IA32_TSC:
- 		kvm_write_tsc(vcpu, msr_info);
+ 	case MSR_IA32_SYSENTER_CS:
+ 		msr_info->data = vmcs_read32(GUEST_SYSENTER_CS);
  		break;
-+	case MSR_IA32_SPEC_CTRL:
-+		if (!msr_info->host_initiated &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_IBRS) &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
+@@ -3392,6 +3400,11 @@ static int vmx_set_msr(struct kvm_vcpu *
+ 		vmx_disable_intercept_for_msr(vmx->vmcs01.msr_bitmap, MSR_IA32_PRED_CMD,
+ 					      MSR_TYPE_W);
+ 		break;
++	case MSR_IA32_ARCH_CAPABILITIES:
++		if (!msr_info->host_initiated)
 +			return 1;
-+
-+		/* The STIBP bit doesn't fault even if it's not advertised */
-+		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
-+			return 1;
-+
-+		vmx->spec_ctrl = data;
-+
-+		if (!data)
-+			break;
-+
-+		/*
-+		 * For non-nested:
-+		 * When it's written (to non-zero) for the first time, pass
-+		 * it through.
-+		 *
-+		 * For nested:
-+		 * The handling of the MSR bitmap for L2 guests is done in
-+		 * nested_vmx_merge_msr_bitmap. We should not touch the
-+		 * vmcs02.msr_bitmap here since it gets completely overwritten
-+		 * in the merging. We update the vmcs01 here for L1 as well
-+		 * since it will end up touching the MSR anyway now.
-+		 */
-+		vmx_disable_intercept_for_msr(vmx->vmcs01.msr_bitmap,
-+					      MSR_IA32_SPEC_CTRL,
-+					      MSR_TYPE_RW);
++		vmx->arch_capabilities = data;
 +		break;
- 	case MSR_IA32_PRED_CMD:
- 		if (!msr_info->host_initiated &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_IBPB) &&
-@@ -5697,6 +5760,7 @@ static void vmx_vcpu_reset(struct kvm_vc
- 	u64 cr0;
- 
- 	vmx->rmode.vm86_active = 0;
-+	vmx->spec_ctrl = 0;
- 
- 	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
- 	kvm_set_cr8(vcpu, 0);
-@@ -9360,6 +9424,15 @@ static void __noclone vmx_vcpu_run(struc
- 
- 	vmx_arm_hv_timer(vcpu);
- 
-+	/*
-+	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
-+	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
-+	 * is no need to worry about the conditional branch over the wrmsr
-+	 * being speculatively taken.
-+	 */
-+	if (vmx->spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
-+
- 	vmx->__launched = vmx->loaded_vmcs->launched;
- 	asm(
- 		/* Store host registers */
-@@ -9478,6 +9551,27 @@ static void __noclone vmx_vcpu_run(struc
- #endif
- 	      );
- 
-+	/*
-+	 * We do not use IBRS in the kernel. If this vCPU has used the
-+	 * SPEC_CTRL MSR it may have left it on; save the value and
-+	 * turn it off. This is much more efficient than blindly adding
-+	 * it to the atomic save/restore list. Especially as the former
-+	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
-+	 *
-+	 * For non-nested case:
-+	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
-+	 * save it.
-+	 *
-+	 * For nested case:
-+	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
-+	 * save it.
-+	 */
-+	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
-+		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
-+
-+	if (vmx->spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
- 
-@@ -10109,7 +10203,7 @@ static inline bool nested_vmx_merge_msr_
- 	unsigned long *msr_bitmap_l1;
- 	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
- 	/*
--	 * pred_cmd is trying to verify two things:
-+	 * pred_cmd & spec_ctrl are trying to verify two things:
- 	 *
- 	 * 1. L0 gave a permission to L1 to actually passthrough the MSR. This
- 	 *    ensures that we do not accidentally generate an L02 MSR bitmap
-@@ -10122,9 +10216,10 @@ static inline bool nested_vmx_merge_msr_
- 	 *    the MSR.
- 	 */
- 	bool pred_cmd = msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
-+	bool spec_ctrl = msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
- 
- 	if (!nested_cpu_has_virt_x2apic_mode(vmcs12) &&
--	    !pred_cmd)
-+	    !pred_cmd && !spec_ctrl)
- 		return false;
- 
- 	page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->msr_bitmap);
-@@ -10158,6 +10253,12 @@ static inline bool nested_vmx_merge_msr_
- 		}
+ 	case MSR_IA32_CR_PAT:
+ 		if (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_IA32_PAT) {
+ 			if (!kvm_mtrr_valid(vcpu, MSR_IA32_CR_PAT, data))
+@@ -5652,6 +5665,8 @@ static int vmx_vcpu_setup(struct vcpu_vm
+ 		++vmx->nmsrs;
  	}
  
-+	if (spec_ctrl)
-+		nested_vmx_disable_intercept_for_msr(
-+					msr_bitmap_l1, msr_bitmap_l0,
-+					MSR_IA32_SPEC_CTRL,
-+					MSR_TYPE_R | MSR_TYPE_W);
-+
- 	if (pred_cmd)
- 		nested_vmx_disable_intercept_for_msr(
- 					msr_bitmap_l1, msr_bitmap_l0,
++	if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
++		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, vmx->arch_capabilities);
+ 
+ 	vm_exit_controls_init(vmx, vmcs_config.vmexit_ctrl);
+ 
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -1006,7 +1006,7 @@ static u32 msrs_to_save[] = {
+@@ -1006,6 +1006,7 @@ static u32 msrs_to_save[] = {
  #endif
  	MSR_IA32_TSC, MSR_IA32_CR_PAT, MSR_VM_HSAVE_PA,
  	MSR_IA32_FEATURE_CONTROL, MSR_IA32_BNDCFGS, MSR_TSC_AUX,
--	MSR_IA32_ARCH_CAPABILITIES
-+	MSR_IA32_SPEC_CTRL, MSR_IA32_ARCH_CAPABILITIES
++	MSR_IA32_ARCH_CAPABILITIES
  };
  
  static unsigned num_msrs_to_save;
