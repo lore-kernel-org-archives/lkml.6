@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226b3HSPWp6FYgSeHWcB9HcBrIZhiy1qjZi+KBhkRvTzM73Hc5hBWxAoCwW0o+yqLyUE9X4p
-ARC-Seal: i=1; a=rsa-sha256; t=1517855177; cv=none;
+X-Google-Smtp-Source: AH8x224Z/K6OXQ/NGj7fsLNqxK/Vx9QeoZrbAMi1stj4Wgt9Ij880y+8NeU/pAyTCLWfEKJAR4/M
+ARC-Seal: i=1; a=rsa-sha256; t=1517855176; cv=none;
         d=google.com; s=arc-20160816;
-        b=Tu8exc9xtEIvGZukdI4zN9bR5DxSpwRanwD5QBGU8I/oqj+Y1izgKvsYS+qBEvZZoW
-         PvnLqCE+jU8GUWv7jqVi/wQ4Ii7tgr/+8DpM8UJ590mLoKZzHXs4/BuCrQeFdqz92uEn
-         P8xh9KwuO2qMJDAW/DTvqfETJ5GJYEK5AHkLkAnnklou4jOL5of9QsuGdIroOBYlh50j
-         +Kjb5Ohvlele2MrA/laTmS+ZabRRImemZbYS6L13hCAf6ROtHphePVEsVLPYeOh7T42Q
-         OdJkLZOWZwmGTLDWtPRAjs6LvCE7s7Zz1I5Lfjl5HzCdRTurijfqbYtpQXfhcHP8P6DT
-         EKwg==
+        b=UWtDGpc/huXeO1oWGsDAHVgufzq7/0EMYmVtN8Zi21msVIMYEZDH9nf5xdJWDbbkuM
+         jw/6dm48eyIprlWJmWVDSoob34S45HFcBt7cBTh6Z24MiXaP+hMoxyvloC8r8w7LIpFs
+         Ucm98FRC95DCVHgaw0Q9ofJrGKQK70BSdk1P/jSNTOcAPzqFwKB0PYUT5PN49R4y3EZI
+         dT/BMacKgV6jhEzrKi0ZB9jm4iDBXWTzhc7Lob84LthbSETHAxE+4ZdzOXQ4myq1NEBg
+         NywU/hqclExvOJ082eLSXv/k3w/PsUZ5xkwYlCxX03JuoCnGe4T+0R3tvIZAEAgeRKeD
+         RyqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4DiAwErhwRCpoNES4hM4vINKU7Ny/EMQCuR7TaJOoW0=;
-        b=SK5gpkwU8nn24u/g2q6xsMFdPY8DBlS+SZ3QXyC/EPZ0n5Y2zILr4p5FaZfQljYinI
-         MpIn+Drehd7R7TB1ZnQOujuEqdp82sj2XQP1ixvt+61kcs57FwCULQ2ANEB+hqcORhnX
-         /94XxqQl4SAcFSrfMaV1uahkVcTScnpZf3oClfYq8U6XzEdUZHDURiua3RmY/jMcTHRX
-         OAnxrcXfARvMQLTqBvlutCAWvy+F2Lnw8tfFCwaegipJ39oo2UFe18icVZoknEDzdidv
-         YsCLaiKe6rqptKgEL/yzvckX/aRUuvO1G+j0XMpJWzPBtHO14B4h5TKw8zWLUCFogmj7
-         czNg==
+        bh=sEwPz79Ghg6r59zw8dmqb9BZV1dJCUsMvWIohBqzzU8=;
+        b=Art1Hl0/iwhrR1JqiEis2a2BH6wOG7kT4qdWOoHMILXMSgROQWpYEazSM7bysnGCX3
+         +9VtI4P0Rq0EdUKtPhERjCuDnsbyaH5Lv3qsv1MY8Xi1jeo38iUm20nwRH7K8310DWho
+         JrnIR3/P0ZldlWypiByZQzsIVcgJk7wAKUbZiteHhWwkRTWhleU1LMv/WBU4CVLo9Tu6
+         L8bH2pFj2alEaKfPr4lqF/zHxixT2ma/MsinwuwahMZWWjVf7zw2yvWPuBWADepXYPB0
+         W9+5BtDS7SQ6Ry1pWnLuSadXdA2xYRV8Q8PrBF/LG7vM321iUlopRhSYjUmuKxfYLjog
+         /RNA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrew Elble <aweits@rit.edu>,
+	Trond Myklebust <trond.myklebust@primarydata.com>,
 	"J. Bruce Fields" <bfields@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 17/36] nfsd: check for use of the closed special stateid
-Date: Mon,  5 Feb 2018 10:23:45 -0800
-Message-Id: <20180205182352.487845785@linuxfoundation.org>
+Subject: [PATCH 3.18 16/36] nfsd: CLOSE SHOULD return the invalid special stateid for NFSv4.x (x>0)
+Date: Mon,  5 Feb 2018 10:23:44 -0800
+Message-Id: <20180205182352.444636113@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586509815031429?=
-X-GMAIL-MSGID: =?utf-8?q?1591586509815031429?=
+X-GMAIL-THRID: =?utf-8?q?1591586509499085907?=
+X-GMAIL-MSGID: =?utf-8?q?1591586509499085907?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,48 +49,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrew Elble <aweits@rit.edu>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
 
-[ Upstream commit ae254dac721d44c0bfebe2795df87459e2e88219 ]
+[ Upstream commit fb500a7cfee7f2f447d2bbf30cb59629feab6ac1 ]
 
-Prevent the use of the closed (invalid) special stateid by clients.
-
-Signed-off-by: Andrew Elble <aweits@rit.edu>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfsd/nfs4state.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/nfsd/nfs4state.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 --- a/fs/nfsd/nfs4state.c
 +++ b/fs/nfsd/nfs4state.c
-@@ -71,6 +71,7 @@ static u64 current_sessionid = 1;
- #define ZERO_STATEID(stateid) (!memcmp((stateid), &zero_stateid, sizeof(stateid_t)))
- #define ONE_STATEID(stateid)  (!memcmp((stateid), &one_stateid, sizeof(stateid_t)))
- #define CURRENT_STATEID(stateid) (!memcmp((stateid), &currentstateid, sizeof(stateid_t)))
-+#define CLOSE_STATEID(stateid)  (!memcmp((stateid), &close_stateid, sizeof(stateid_t)))
+@@ -62,6 +62,9 @@ static const stateid_t zero_stateid = {
+ static const stateid_t currentstateid = {
+ 	.si_generation = 1,
+ };
++static const stateid_t close_stateid = {
++	.si_generation = 0xffffffffU,
++};
  
- /* forward declarations */
- static bool check_for_locks(struct nfs4_file *fp, struct nfs4_lockowner *lowner);
-@@ -4414,7 +4415,8 @@ static __be32 nfsd4_validate_stateid(str
- 	struct nfs4_stid *s;
- 	__be32 status = nfserr_bad_stateid;
+ static u64 current_sessionid = 1;
  
--	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid))
-+	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid) ||
-+		CLOSE_STATEID(stateid))
- 		return status;
- 	/* Client debugging aid. */
- 	if (!same_clid(&stateid->si_opaque.so_clid, &cl->cl_clientid)) {
-@@ -4472,7 +4474,8 @@ nfsd4_lookup_stateid(struct nfsd4_compou
- 	else if (typemask & NFS4_DELEG_STID)
- 		typemask |= NFS4_REVOKED_DELEG_STID;
+@@ -4901,6 +4904,11 @@ nfsd4_close(struct svc_rqst *rqstp, stru
  
--	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid))
-+	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid) ||
-+		CLOSE_STATEID(stateid))
- 		return nfserr_bad_stateid;
- 	status = lookup_clientid(&stateid->si_opaque.so_clid, cstate, nn);
- 	if (status == nfserr_stale_clientid) {
+ 	nfsd4_close_open_stateid(stp);
+ 
++	/* See RFC5661 sectionm 18.2.4 */
++	if (stp->st_stid.sc_client->cl_minorversion)
++		memcpy(&close->cl_stateid, &close_stateid,
++				sizeof(close->cl_stateid));
++
+ 	/* put reference from nfs4_preprocess_seqid_op */
+ 	nfs4_put_stid(&stp->st_stid);
+ out:
