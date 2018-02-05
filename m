@@ -1,201 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753344AbeBESWD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 13:22:03 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53814 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752738AbeBESVy (ORCPT
+        id S1753398AbeBESYe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 13:24:34 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:33935 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753404AbeBESXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 13:21:54 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67844601C4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH 1/1] iommu/io-pgtable: use size_t return type for all
- foo_unmap
-To: Robin Murphy <robin.murphy@arm.com>, will.deacon@arm.com,
-        joro@8bytes.org, iommu@lists.linux-foundation.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <1517853559-5869-1-git-send-email-vivek.gautam@codeaurora.org>
- <9c91b0a0-3163-09c6-e0d8-6cb69fbf76b3@arm.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <42553426-78dd-bd3a-bd73-92a444534fde@codeaurora.org>
-Date: Mon, 5 Feb 2018 23:51:47 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 5 Feb 2018 13:23:32 -0500
+X-Google-Smtp-Source: AH8x225EuCBJ6/yAgMuaD9ri/3No/VQIO0li+aqPDllrJ9gwEHvYEa0WIIEAGHopw8Kq1IcYGv4bVzgRh/gQRaCw5mQ=
 MIME-Version: 1.0
-In-Reply-To: <9c91b0a0-3163-09c6-e0d8-6cb69fbf76b3@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+From: Adric Blake <promarbler14@gmail.com>
+Date: Mon, 5 Feb 2018 13:23:31 -0500
+Message-ID: <CAE1jjefE1qjgcHMik36Na0OYoFON+kCi5cEDSq=y11HdsyPn0Q@mail.gmail.com>
+Subject: B43 driver no longer works in Linux 4.15 (bisected)
+To: m@bues.ch
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jhogan@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+In the time between Linux 4.15-rc8 and -rc9, my wireless driver, b43,
+would no longer load automatically. When I modprobe the b43 (and ssb)
+modules, the device still didn't appear in NetworkManager. Comparing
+the kernel logs between working (4.14.16-lts) and nonworking (4.15)
+kernels reveals that there is zero output from the ssb module, and no
+devices recognized by the b43 driver:
 
+Compare:
 
-On 2/5/2018 11:38 PM, Robin Murphy wrote:
-> On 05/02/18 17:59, Vivek Gautam wrote:
->> Unmap returns a size_t all throughout the IOMMU framework.
->> Make io-pgtable match this convention.
->> Moreover, there isn't a need to have a signed int return type
->> as we return 0 in case of failures.
->
-> That makes sense (the code itself has always followed that convention, 
-> even if the prototypes didn't), and at a glance it looks like you've 
-> caught all the sites which need it.
+working:
 
-Yes, all the foo_unmap() sites.
->
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
+ kernel: ssb: Found chip with id 0x4312, rev 0x01 and package 0x00
+ kernel: ssb: Core 0 found: ChipCommon (cc 0x800, rev 0x16, vendor 0x4243)
+ kernel: ssb: Core 1 found: IEEE 802.11 (cc 0x812, rev 0x0F, vendor 0x4243)
+ kernel: ssb: Core 2 found: PCMCIA (cc 0x80D, rev 0x0A, vendor 0x4243)
+ kernel: ssb: Core 3 found: PCI-E (cc 0x820, rev 0x09, vendor 0x4243)
+ kernel: ssb: Sonics Silicon Backplane found on PCI device 0000:0c:00.0
+ kernel: b43-phy0: Broadcom 4312 WLAN found (core revision 15)
+ kernel: b43-phy0: Found PHY: Analog 6, Type 5 (LP), Revision 1
+ kernel: b43-phy0: Found Radio: Manuf 0x17F, ID 0x2062, Revision 2, Version 0
+ kernel: Broadcom 43xx driver loaded [ Features: PNLS ]
+ kernel: b43-phy0: Loading firmware version 784.2 (2012-08-15 21:35:19)
 
-Thanks Robin
+vs nonworking, with manual modprobe:
 
-Regards
-Vivek
+ kernel: platform regulatory.0: Direct firmware load for regulatory.db
+failed with error -2
+ kernel: cfg80211: failed to load regulatory.db
+ kernel: Broadcom 43xx driver loaded [ Features: NLS ]
 
->
->> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->> ---
->>   drivers/iommu/io-pgtable-arm-v7s.c | 21 +++++++++++----------
->>   drivers/iommu/io-pgtable-arm.c     | 24 ++++++++++++------------
->>   drivers/iommu/io-pgtable.h         |  4 ++--
->>   3 files changed, 25 insertions(+), 24 deletions(-)
->>
->> diff --git a/drivers/iommu/io-pgtable-arm-v7s.c 
->> b/drivers/iommu/io-pgtable-arm-v7s.c
->> index 2ca08dc9331c..10e4a3d11c02 100644
->> --- a/drivers/iommu/io-pgtable-arm-v7s.c
->> +++ b/drivers/iommu/io-pgtable-arm-v7s.c
->> @@ -357,8 +357,8 @@ static bool arm_v7s_pte_is_cont(arm_v7s_iopte 
->> pte, int lvl)
->>       return false;
->>   }
->>   -static int __arm_v7s_unmap(struct arm_v7s_io_pgtable *, unsigned 
->> long,
->> -               size_t, int, arm_v7s_iopte *);
->> +static size_t __arm_v7s_unmap(struct arm_v7s_io_pgtable *, unsigned 
->> long,
->> +                  size_t, int, arm_v7s_iopte *);
->>     static int arm_v7s_init_pte(struct arm_v7s_io_pgtable *data,
->>                   unsigned long iova, phys_addr_t paddr, int prot,
->> @@ -541,9 +541,10 @@ static arm_v7s_iopte arm_v7s_split_cont(struct 
->> arm_v7s_io_pgtable *data,
->>       return pte;
->>   }
->>   -static int arm_v7s_split_blk_unmap(struct arm_v7s_io_pgtable *data,
->> -                   unsigned long iova, size_t size,
->> -                   arm_v7s_iopte blk_pte, arm_v7s_iopte *ptep)
->> +static size_t arm_v7s_split_blk_unmap(struct arm_v7s_io_pgtable *data,
->> +                      unsigned long iova, size_t size,
->> +                      arm_v7s_iopte blk_pte,
->> +                      arm_v7s_iopte *ptep)
->>   {
->>       struct io_pgtable_cfg *cfg = &data->iop.cfg;
->>       arm_v7s_iopte pte, *tablep;
->> @@ -584,9 +585,9 @@ static int arm_v7s_split_blk_unmap(struct 
->> arm_v7s_io_pgtable *data,
->>       return size;
->>   }
->>   -static int __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
->> -                unsigned long iova, size_t size, int lvl,
->> -                arm_v7s_iopte *ptep)
->> +static size_t __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
->> +                  unsigned long iova, size_t size, int lvl,
->> +                  arm_v7s_iopte *ptep)
->>   {
->>       arm_v7s_iopte pte[ARM_V7S_CONT_PAGES];
->>       struct io_pgtable *iop = &data->iop;
->> @@ -656,8 +657,8 @@ static int __arm_v7s_unmap(struct 
->> arm_v7s_io_pgtable *data,
->>       return __arm_v7s_unmap(data, iova, size, lvl + 1, ptep);
->>   }
->>   -static int arm_v7s_unmap(struct io_pgtable_ops *ops, unsigned long 
->> iova,
->> -             size_t size)
->> +static size_t arm_v7s_unmap(struct io_pgtable_ops *ops, unsigned 
->> long iova,
->> +                size_t size)
->>   {
->>       struct arm_v7s_io_pgtable *data = io_pgtable_ops_to_data(ops);
->>   diff --git a/drivers/iommu/io-pgtable-arm.c 
->> b/drivers/iommu/io-pgtable-arm.c
->> index 51e5c43caed1..8faaaa04d7a7 100644
->> --- a/drivers/iommu/io-pgtable-arm.c
->> +++ b/drivers/iommu/io-pgtable-arm.c
->> @@ -268,9 +268,9 @@ static void __arm_lpae_set_pte(arm_lpae_iopte 
->> *ptep, arm_lpae_iopte pte,
->>           __arm_lpae_sync_pte(ptep, cfg);
->>   }
->>   -static int __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->> -                unsigned long iova, size_t size, int lvl,
->> -                arm_lpae_iopte *ptep);
->> +static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->> +                   unsigned long iova, size_t size, int lvl,
->> +                   arm_lpae_iopte *ptep);
->>     static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
->>                   phys_addr_t paddr, arm_lpae_iopte prot,
->> @@ -506,10 +506,10 @@ static void arm_lpae_free_pgtable(struct 
->> io_pgtable *iop)
->>       kfree(data);
->>   }
->>   -static int arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
->> -                    unsigned long iova, size_t size,
->> -                    arm_lpae_iopte blk_pte, int lvl,
->> -                    arm_lpae_iopte *ptep)
->> +static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable 
->> *data,
->> +                       unsigned long iova, size_t size,
->> +                       arm_lpae_iopte blk_pte, int lvl,
->> +                       arm_lpae_iopte *ptep)
->>   {
->>       struct io_pgtable_cfg *cfg = &data->iop.cfg;
->>       arm_lpae_iopte pte, *tablep;
->> @@ -560,9 +560,9 @@ static int arm_lpae_split_blk_unmap(struct 
->> arm_lpae_io_pgtable *data,
->>       return size;
->>   }
->>   -static int __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->> -                unsigned long iova, size_t size, int lvl,
->> -                arm_lpae_iopte *ptep)
->> +static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->> +                   unsigned long iova, size_t size, int lvl,
->> +                   arm_lpae_iopte *ptep)
->>   {
->>       arm_lpae_iopte pte;
->>       struct io_pgtable *iop = &data->iop;
->> @@ -606,8 +606,8 @@ static int __arm_lpae_unmap(struct 
->> arm_lpae_io_pgtable *data,
->>       return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep);
->>   }
->>   -static int arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned 
->> long iova,
->> -              size_t size)
->> +static size_t arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned 
->> long iova,
->> +                 size_t size)
->>   {
->>       struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
->>       arm_lpae_iopte *ptep = data->pgd;
->> diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
->> index cd2e1eafffe6..2df79093cad9 100644
->> --- a/drivers/iommu/io-pgtable.h
->> +++ b/drivers/iommu/io-pgtable.h
->> @@ -119,8 +119,8 @@ struct io_pgtable_cfg {
->>   struct io_pgtable_ops {
->>       int (*map)(struct io_pgtable_ops *ops, unsigned long iova,
->>              phys_addr_t paddr, size_t size, int prot);
->> -    int (*unmap)(struct io_pgtable_ops *ops, unsigned long iova,
->> -             size_t size);
->> +    size_t (*unmap)(struct io_pgtable_ops *ops, unsigned long iova,
->> +            size_t size);
->>       phys_addr_t (*iova_to_phys)(struct io_pgtable_ops *ops,
->>                       unsigned long iova);
->>   };
->>
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I had my suspicions at this point, but I had a lull and decided to
+bisect it anyways.
+I bisected to this "first bad commit:"
+
+commit 58eae1416b804d900014d84feadda7195007cc30
+Author: James Hogan <jhogan@kernel.org>
+Date:   Mon Jan 15 21:17:14 2018 +0000
+
+    ssb: Disable PCI host for PCI_DRIVERS_GENERIC
+
+    Since commit d41e6858ba58 ("MIPS: Kconfig: Set default MIPS system type
+    as generic") changed the default MIPS platform to the "generic"
+    platform, which uses PCI_DRIVERS_GENERIC instead of PCI_DRIVERS_LEGACY,
+    various files in drivers/ssb/ have failed to build.
+
+    This is particularly due to the existence of struct pci_controller being
+    dependent on PCI_DRIVERS_LEGACY since commit c5611df96804 ("MIPS: PCI:
+    Introduce CONFIG_PCI_DRIVERS_LEGACY"), so add that dependency to Kconfig
+    to prevent these files being built for the "generic" platform including
+    all{yes,mod}config builds.
+
+    Fixes: c5611df96804 ("MIPS: PCI: Introduce CONFIG_PCI_DRIVERS_LEGACY")
+    Signed-off-by: James Hogan <jhogan@kernel.org>
+    Cc: Michael Buesch <m@bues.ch>
+    Cc: Ralf Baechle <ralf@linux-mips.org>
+    Cc: Paul Burton <paul.burton@mips.com>
+    Cc: Matt Redfearn <matt.redfearn@imgtec.com>
+    Cc: Guenter Roeck <linux@roeck-us.net>
+    Cc: linux-wireless@vger.kernel.org
+    Cc: linux-mips@linux-mips.org
+    Tested-by: Guenter Roeck <linux@roeck-us.net>
+    Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+:040000 040000 b7b4c5908ec800fbba19a9615049648d488a5771
+18d76731ebb799fc1892d01da59d4c268229d51e M    drivers
+
+Since it was just a one-line Kconfig change, i investigated further,
+and noted how a dependency change affects the build:
+
+ missing config: SSB_B43_PCI_BRIDGE
+ caused by missing dependency config: SSB_PCIHOST_POSSIBLE
+ disabling pseudo-config: B43_PCI_AUTOSELECT
+
+ also missing config: CONFIG_SSB_DRIVER_PCICORE
+ caused by missing dependency config: SSB_DRIVER_PCICORE_POSSIBLE
+ which is missing because of missing dependency config: SSB_PCIHOST
+ which is missing because of missing dependency config: SSB_PCIHOST_POSSIBLE
+ disabling pseudo-config: B43_PCICORE_AUTOSELECT
+
+The responsible config SSB_PCIHOST_POSSIBLE was disabled because
+PCI_DRIVERS_LEGACY is not enabled. The PCI_DRIVERS_LEGACY config
+dependency was added by the "bad" commit, which was apparently made to
+fix build errors that resulted from a change a year ago. The problem,
+as far as I can tell, is that the PCI_DRIVERS_LEGACY config is meant
+to enable a MIPS-only API, but then it also disables building for
+hardware that is not exclusive to MIPS, thus disabling my driver.
+
+A solution would be to revert that commit, but the commit/kconfig
+needs to be fixed....
+
+Anyways, here is my device details from the working kernel, from the
+output of lspci -vv
+
+0c:00.0 Network controller: Broadcom Limited BCM4312 802.11b/g LP-PHY (rev 01)
+    Subsystem: Dell Wireless 1397 WLAN Mini-Card
+    Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
+ParErr- Stepping- SERR+ FastB2B- DisINTx-
+    Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+    Latency: 0, Cache Line Size: 64 bytes
+    Interrupt: pin A routed to IRQ 17
+    Region 0: Memory at f69fc000 (64-bit, non-prefetchable) [size=16K]
+    Capabilities: [40] Power Management version 3
+        Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=0mA
+PME(D0+,D1-,D2-,D3hot+,D3cold+)
+        Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=2 PME-
+    Capabilities: [58] Vendor Specific Information: Len=78 <?>
+    Capabilities: [e8] MSI: Enable- Count=1/1 Maskable- 64bit+
+        Address: 0000000000000000  Data: 0000
+    Capabilities: [d0] Express (v1) Endpoint, MSI 00
+        DevCap:    MaxPayload 128 bytes, PhantFunc 0, Latency L0s
+<4us, L1 unlimited
+            ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset-
+SlotPowerLimit 6.500W
+        DevCtl:    Report errors: Correctable- Non-Fatal- Fatal- Unsupported-
+            RlxdOrd- ExtTag+ PhantFunc- AuxPwr- NoSnoop-
+            MaxPayload 128 bytes, MaxReadReq 128 bytes
+        DevSta:    CorrErr+ UncorrErr- FatalErr- UnsuppReq+ AuxPwr- TransPend-
+        LnkCap:    Port #0, Speed 2.5GT/s, Width x1, ASPM L0s L1, Exit
+Latency L0s <4us, L1 <64us
+            ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp-
+        LnkCtl:    ASPM L0s L1 Enabled; RCB 64 bytes Disabled- CommClk+
+            ExtSynch- ClockPM+ AutWidDis- BWInt- AutBWInt-
+        LnkSta:    Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk+
+DLActive- BWMgmt- ABWMgmt-
+    Capabilities: [100 v1] Advanced Error Reporting
+        UESta:    DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt-
+RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+        UEMsk:    DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt-
+RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+        UESvrt:    DLP+ SDES- TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt-
+RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+        CESta:    RxErr+ BadTLP- BadDLLP- Rollover+ Timeout+ NonFatalErr-
+        CEMsk:    RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
+        AERCap:    First Error Pointer: 14, ECRCGenCap+ ECRCGenEn-
+ECRCChkCap+ ECRCChkEn-
+            MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
+        HeaderLog: 00000000 00000000 00000000 00000000
+    Capabilities: [13c v1] Virtual Channel
+        Caps:    LPEVC=0 RefClk=100ns PATEntryBits=1
+        Arb:    Fixed- WRR32- WRR64- WRR128-
+        Ctrl:    ArbSelect=Fixed
+        Status:    InProgress-
+        VC0:    Caps:    PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+            Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+            Ctrl:    Enable+ ID=0 ArbSelect=Fixed TC/VC=01
+            Status:    NegoPending- InProgress-
+    Capabilities: [160 v1] Device Serial Number 09-5e-5f-ff-ff-b8-00-22
+    Capabilities: [16c v1] Power Budgeting <?>
+    Kernel driver in use: b43-pci-bridge
+    Kernel modules: ssb
+
+Anyways, if it's relevant, those kernels are from Arch Linux.
+
+Hopefully this isn't caught by spam filters this time... Sorry if it
+sends twice.
