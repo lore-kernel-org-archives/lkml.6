@@ -1,88 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752860AbeBEMUA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:20:00 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:35937 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbeBEMTw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:19:52 -0500
-Date: Mon, 5 Feb 2018 13:19:47 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        dhaval.giani@oracle.com
-Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
- select_idle_sibling using SMT balance
-Message-ID: <20180205121947.GW2269@hirez.programming.kicks-ass.net>
-References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
- <20180201123335.GV2249@hirez.programming.kicks-ass.net>
- <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
- <20180202171708.GN2269@hirez.programming.kicks-ass.net>
- <93db4b69-5ec6-732f-558e-5e64d9ba0cf9@oracle.com>
+        id S1752942AbeBEMU1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:20:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53140 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752291AbeBEMUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 07:20:19 -0500
+Date: Mon, 5 Feb 2018 13:20:17 +0100
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+Message-ID: <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
+ <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93db4b69-5ec6-732f-558e-5e64d9ba0cf9@oracle.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 09:37:02AM -0800, Subhra Mazumdar wrote:
-> In the scheme of SMT balance, if the idle cpu search is done _not_ in the
-> last run core, then we need a random cpu to start from. If the idle cpu
-> search is done in the last run core we can start the search from last run
-> cpu. Since we need the random index for the first case I just did it for
-> both.
+  Hi,
 
-That shouldn't be too hard to fix. I think we can simply transpose the
-CPU number. That is, something like:
+> > Why not use virtio-vsock to run the wayland protocol? I don't like
+> > the idea to duplicate something with very simliar functionality in
+> > virtio-gpu.
+> 
+> The reason for abandoning that approach was the type of objects that
+> could be shared via virtio-vsock would be extremely limited. Besides
+> that being potentially confusing to users, it would mean from the
+> implementation side that either virtio-vsock would gain a dependency on
+> the drm subsystem, or an appropriate abstraction for shareable buffers
+> would need to be added for little gain.
 
-  cpu' = core'_id + (cpu - core_id)
+Well, no.  The idea is that virtio-vsock and virtio-gpu are used largely
+as-is, without knowing about each other.  The guest wayland proxy which
+does the buffer management talks to both devices.
 
-should work for most sane cases. We don't give any guarantees this will
-in fact work, but (almost) all actual CPU enumeration schemes I've seen
-this should work for.
+> > If you have a guest proxy anyway using virtio-sock for the protocol
+> > stream and virtio-gpu for buffer sharing (and some day 3d rendering
+> > too) should work fine I think.
+> 
+> If I understand correctly your proposal, virtio-gpu would be used for
+> creating buffers that could be shared across domains, but something
+> equivalent to SCM_RIGHTS would still be needed in virtio-vsock?
 
-And if it doesn't work, we're not worse of than we are now.
+Yes, the proxy would send a reference to the buffer over virtio-vsock.
+I was more thinking about a struct specifying something like
+"ressource-id 42 on virtio-gpu-pci device in slot 1:23.0" instead of
+using SCM_RIGHTS.
 
-I just couldn't readily find a place where we need to do this for cores
-with the current code. But I think we have one place between LLCs where
-it can be done:
+> If the mechanics of passing presentation data were very complex, I think
+> this approach would have more merit. But as you can see from the code,
+> it isn't that bad.
 
----
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7b6535987500..eb8b8d0a026c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6109,7 +6109,7 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
- 	if (!static_branch_likely(&sched_smt_present))
- 		return -1;
- 
--	for_each_cpu(cpu, cpu_smt_mask(target)) {
-+	for_each_cpu_wrap(cpu, cpu_smt_mask(target), target) {
- 		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
- 			continue;
- 		if (idle_cpu(cpu))
-@@ -6357,8 +6357,17 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 		if (cpu == prev_cpu)
- 			goto pick_cpu;
- 
--		if (wake_affine(affine_sd, p, prev_cpu, sync))
--			new_cpu = cpu;
-+		if (wake_affine(affine_sd, p, prev_cpu, sync)) {
-+			/*
-+			 * Transpose prev_cpu's offset into this cpu's
-+			 * LLC domain to retain the 'random' search offset
-+			 * for for_each_cpu_wrap().
-+			 */
-+			new_cpu = per_cpu(sd_llc_id, cpu) +
-+				  (prev_cpu - per_cpu(sd_llc_id, prev_cpu));
-+			if (unlikely(!cpus_share_cache(new_cpu, cpu)))
-+				new_cpu = cpu;
-+		}
- 	}
- 
- 	if (sd && !(sd_flag & SD_BALANCE_FORK)) {
+Well, the devil is in the details.  If you have multiple connections you
+don't want one being able to stall the others for example.  There are
+reasons took quite a while to bring virtio-vsock to the state where it
+is today.
+
+> > What is the plan for the host side? I see basically two options. Either
+> > implement the host wayland proxy directly in qemu. Or
+> > implement it as separate process, which then needs some help from
+> > qemu to get access to the buffers. The later would allow qemu running
+> > independant from the desktop session.
+> 
+> Regarding synchronizing buffers, this will stop becoming needed in
+> subsequent commits as all shared memory is allocated in the host and
+> mapped to the guest via KVM_SET_USER_MEMORY_REGION.
+
+--verbose please.  The qemu patches linked from the cover letter not
+exactly helpful in understanding how all this is supposed to work.
+
+> This is already the case for buffers passed from the compositor to the
+> clients (see patch 2/2), and I'm working on the equivalent for buffers
+> from the guest to the host (clients still have to create buffers with
+> DRM_VIRTGPU_RESOURCE_CREATE but they will be only backend by host memory
+> so no calls to DRM_VIRTGPU_TRANSFER_TO_HOST are needed).
+
+Same here.  --verbose please.
+
+cheers,
+  Gerd
