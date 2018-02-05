@@ -1,53 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeBEEsj (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 23:48:39 -0500
-Received: from ozlabs.org ([103.22.144.67]:37257 "EHLO ozlabs.org"
+        id S1752416AbeBEEy0 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 23:54:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752199AbeBEEs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 23:48:28 -0500
-Date: Mon, 5 Feb 2018 15:48:21 +1100
-From: Paul Mackerras <paulus@ozlabs.org>
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
-        egtvedt@samfundet.no, linus.walleij@linaro.org, vgupta@synopsys.com,
-        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
-        robh@kernel.org, sboyd@codeaurora.org, will.deacon@arm.com,
-        tony@atomide.com, npiggin@gmail.com, yamada.masahiro@socionext.com,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 02/20] KVM: PPC: Book3S PR: Fix broken select due to
- misspelling
-Message-ID: <20180205044821.3zvs7cfhdr3eu2qa@oak.ozlabs.ibm.com>
-References: <20180205012146.23981-1-ulfalizer@gmail.com>
- <20180205012146.23981-3-ulfalizer@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180205012146.23981-3-ulfalizer@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1751979AbeBEEyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 23:54:19 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E7021748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Mon, 5 Feb 2018 13:54:14 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        orito.takao@socionext.com, masami.hiramatsu@linaro.org
+Subject: Re: [PATCH] [BUGFIX] media: vb2: Fix videobuf2 to map correct area
+Message-Id: <20180205135414.fa6a6044e5c869e30bb40ff1@kernel.org>
+In-Reply-To: <151779784111.20697.5012233804870630070.stgit@devbox>
+References: <151779784111.20697.5012233804870630070.stgit@devbox>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 02:21:14AM +0100, Ulf Magnusson wrote:
-> Commit 76d837a4c0f9 ("KVM: PPC: Book3S PR: Don't include SPAPR TCE code
-> on non-pseries platforms") added a reference to the globally undefined
-> symbol PPC_SERIES. Looking at the rest of the commit, PPC_PSERIES was
-> probably intended.
-> 
-> Change PPC_SERIES to PPC_PSERIES.
-> 
-> Discovered with the
-> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-> script.
-> 
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+On Mon,  5 Feb 2018 11:30:41 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Acked-by: Paul Mackerras <paulus@ozlabs.org>
+> Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
+> Since the current code does ioremap the page address, if the offset > 0,
+> it does not do ioremap the last page and results in kernel panic.
+> 
+> This fixes to pass the page address + offset to ioremap so that ioremap
+> can map correct area. Also, this uses __pfn_to_phys() to get the physical
+> address of given PFN.
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Reported-by: Takao Orito <orito.takao@socionext.com>
 
-Which tree is this series going into?
+Oops, I've missed the original reporter.
 
-Paul.
+Reported-by: Fumihiro ATSUMI <atsumi@infinitegra.co.jp>
+
+Thank you,
+
+> ---
+>  drivers/media/v4l2-core/videobuf2-vmalloc.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/v4l2-core/videobuf2-vmalloc.c b/drivers/media/v4l2-core/videobuf2-vmalloc.c
+> index 3a7c80cd1a17..896f2f378b40 100644
+> --- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
+> +++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
+> @@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(struct device *dev, unsigned long vaddr,
+>  			if (nums[i-1] + 1 != nums[i])
+>  				goto fail_map;
+>  		buf->vaddr = (__force void *)
+> -				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
+> +			ioremap_nocache(__pfn_to_phys(nums[0]) + offset, size);
+>  	} else {
+>  		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
+>  					PAGE_KERNEL);
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
