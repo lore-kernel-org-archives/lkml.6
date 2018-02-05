@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753258AbeBEMwv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:52:51 -0500
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:63881 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753135AbeBEMvz (ORCPT
+        id S1753272AbeBEMw7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:52:59 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:11996 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753136AbeBEMv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:51:55 -0500
+        Mon, 5 Feb 2018 07:51:56 -0500
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -15,9 +15,9 @@ CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Kishon Vijay Abraham I <kishon@ti.com>, <linux-mmc@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 13/16] dt-bindings: sdhci-omap: Add K2G specific binding
-Date: Mon, 5 Feb 2018 18:20:26 +0530
-Message-ID: <20180205125029.21570-14-kishon@ti.com>
+Subject: [PATCH v2 15/16] mmc: sdhci-omap: Add SPDX identifier
+Date: Mon, 5 Feb 2018 18:20:28 +0530
+Message-ID: <20180205125029.21570-16-kishon@ti.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180205125029.21570-1-kishon@ti.com>
 References: <20180205125029.21570-1-kishon@ti.com>
@@ -28,27 +28,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add binding for the TI's sdhci-omap controller present in K2G.
+The SPDX identifier is a legally binding shorthand, which can be used
+instead of the full boiler plate text. Update sdhci-omap driver with the
+correct SPDX license identifier.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/mmc/sdhci-omap.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mmc/host/sdhci-omap.c | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-index 51775a372c06..8d09b837e350 100644
---- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-@@ -4,7 +4,9 @@ Refer to mmc.txt for standard MMC bindings.
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index 863f6736c2fe..d44918172197 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -1,21 +1,7 @@
+-/**
+- * SDHCI Controller driver for TI's OMAP SoCs
+- *
+- * Copyright (C) 2017 Texas Instruments
+- * Author: Kishon Vijay Abraham I <kishon@ti.com>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 of
+- * the License as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018 Texas Instruments
++// SDHCI Controller driver for TI's OMAP SoCs
++// Author: Kishon Vijay Abraham I <kishon@ti.com>
  
- Required properties:
- - compatible: Should be "ti,dra7-sdhci" for DRA7 and DRA72 controllers
-+	      Should be "ti,k2g-sdhci" for K2G
- - ti,hwmods: Must be "mmc<n>", <n> is controller instance starting 1
-+	     (Not required for K2G).
- 
- Example:
- 	mmc1: mmc@4809c000 {
+ #include <linux/delay.h>
+ #include <linux/mmc/slot-gpio.h>
 -- 
 2.11.0
