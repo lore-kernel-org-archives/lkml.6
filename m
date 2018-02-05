@@ -1,76 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752835AbeBEBbR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Feb 2018 20:31:17 -0500
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:41937 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752575AbeBEBa7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Feb 2018 20:30:59 -0500
-X-Google-Smtp-Source: AH8x225PslVZEvVM3aCfG/wsPi6rUvPqr0sAxID6nWwbP3Z3eHggEvJc5bkfqun/7I9EyqploB04w80vFkbxioC8eOU=
-MIME-Version: 1.0
-In-Reply-To: <20180205012146.23981-8-ulfalizer@gmail.com>
-References: <20180205012146.23981-1-ulfalizer@gmail.com> <20180205012146.23981-8-ulfalizer@gmail.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Mon, 5 Feb 2018 02:30:57 +0100
-Message-ID: <CAFkk2KSUeepo0mSKeV9r2uMO1=euVV2L6QpsMAO0Ew6znG+BRQ@mail.gmail.com>
-Subject: Re: [PATCH 07/20] riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
-        egtvedt@samfundet.no, Linus Walleij <linus.walleij@linaro.org>,
-        vgupta@synopsys.com, mgorman@techsingularity.net, hch@lst.de,
-        mina86@mina86.com, robh@kernel.org, sboyd@codeaurora.org,
-        paulus@ozlabs.org, will.deacon@arm.com, tony@atomide.com,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1752575AbeBEBbi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Feb 2018 20:31:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44112 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752803AbeBEB33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:29:29 -0500
+From: Davidlohr Bueso <dbueso@suse.de>
+To: akpm@linux-foundation.org, mingo@kernel.org
+Cc: peterz@infradead.org, ldufour@linux.vnet.ibm.com, jack@suse.cz,
+        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
+        mawilcox@microsoft.com, mgorman@techsingularity.net, dave@stgolabs.net,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 55/64] arch/riscv: use mm locking wrappers
+Date: Mon,  5 Feb 2018 02:27:45 +0100
+Message-Id: <20180205012754.23615-56-dbueso@wotan.suse.de>
+X-Mailer: git-send-email 2.12.3
+In-Reply-To: <20180205012754.23615-1-dbueso@wotan.suse.de>
+References: <20180205012754.23615-1-dbueso@wotan.suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
-> The ARCH_WANT_OPTIONAL_GPIOLIB symbol was removed in commit 65053e1a7743
-> ("gpio: delete ARCH_[WANTS_OPTIONAL|REQUIRE]_GPIOLIB"). GPIOLIB should
-> just be selected explicitly if needed.
->
-> Remove the ARCH_WANT_OPTIONAL_GPIOLIB select from RISCV.
->
-> See commit 0145071b3314 ("x86: Do away with
-> ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") and commit da9a1c6767 ("arm64: do
-> away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") as well.
->
-> Discovered with the
-> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-> script.
->
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-> ---
->  arch/riscv/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index ff69c77b9e78..716e90e60e5c 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -19,7 +19,6 @@ config RISCV
->         select GENERIC_STRNLEN_USER
->         select GENERIC_SMP_IDLE_THREAD
->         select GENERIC_ATOMIC64 if !64BIT || !RISCV_ISA_A
-> -       select ARCH_WANT_OPTIONAL_GPIOLIB
->         select HAVE_MEMBLOCK
->         select HAVE_MEMBLOCK_NODE_MAP
->         select HAVE_DMA_API_DEBUG
-> --
-> 2.14.1
->
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-There's also a select of a globally undefined symbol RISCV_IRQ_INTC
-here. I couldn't dig up any historical or unmerged definition for it
-either. Googling just gets you the select.
+This becomes quite straightforward with the mmrange in place.
 
-Cheers,
-Ulf
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ arch/riscv/kernel/vdso.c |  5 +++--
+ arch/riscv/mm/fault.c    | 10 +++++-----
+ 2 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/arch/riscv/kernel/vdso.c b/arch/riscv/kernel/vdso.c
+index 582cb153eb24..4bbb6e0425df 100644
+--- a/arch/riscv/kernel/vdso.c
++++ b/arch/riscv/kernel/vdso.c
+@@ -69,10 +69,11 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
+ 	struct mm_struct *mm = current->mm;
+ 	unsigned long vdso_base, vdso_len;
+ 	int ret;
++	DEFINE_RANGE_LOCK_FULL(mmrange);
+ 
+ 	vdso_len = (vdso_pages + 1) << PAGE_SHIFT;
+ 
+-	down_write(&mm->mmap_sem);
++	mm_write_lock(mm, &mmrange);
+ 	vdso_base = get_unmapped_area(NULL, 0, vdso_len, 0, 0);
+ 	if (IS_ERR_VALUE(vdso_base)) {
+ 		ret = vdso_base;
+@@ -94,7 +95,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
+ 		mm->context.vdso = NULL;
+ 
+ end:
+-	up_write(&mm->mmap_sem);
++	mm_write_unlock(mm, &mmrange);
+ 	return ret;
+ }
+ 
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index 75d15e73ba39..6f78080e987c 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -79,7 +79,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, addr);
+ 
+ retry:
+-	down_read(&mm->mmap_sem);
++	mm_read_lock(mm, &mmrange);
+ 	vma = find_vma(mm, addr);
+ 	if (unlikely(!vma))
+ 		goto bad_area;
+@@ -170,7 +170,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ 		}
+ 	}
+ 
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	return;
+ 
+ 	/*
+@@ -178,7 +178,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ 	 * Fix it, but check if it's kernel or user first.
+ 	 */
+ bad_area:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	/* User mode accesses just cause a SIGSEGV */
+ 	if (user_mode(regs)) {
+ 		do_trap(regs, SIGSEGV, code, addr, tsk);
+@@ -206,14 +206,14 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ 	 * (which will retry the fault, or kill us if we got oom-killed).
+ 	 */
+ out_of_memory:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	if (!user_mode(regs))
+ 		goto no_context;
+ 	pagefault_out_of_memory();
+ 	return;
+ 
+ do_sigbus:
+-	up_read(&mm->mmap_sem);
++	mm_read_unlock(mm, &mmrange);
+ 	/* Kernel mode? Handle exceptions or die */
+ 	if (!user_mode(regs))
+ 		goto no_context;
+-- 
+2.13.6
