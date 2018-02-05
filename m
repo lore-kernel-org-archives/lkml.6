@@ -1,41 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752746AbeBEJGC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 04:06:02 -0500
-Received: from mail-pl0-f41.google.com ([209.85.160.41]:35318 "EHLO
-        mail-pl0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752264AbeBEJFu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 04:05:50 -0500
-X-Google-Smtp-Source: AH8x227mdHYqo5JL87UcpKi2SE8Llk5ABitb092OQWefcxBcVInipLhFvghbAUh7oNTWwAIU7EJ8Pw==
-Date: Mon, 5 Feb 2018 14:35:46 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Bo Yan <byan@nvidia.com>, Saravana Kannan <skannan@codeaurora.org>,
-        sgurrappadi@nvidia.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: skip cpufreq resume if it's not suspended
-Message-ID: <20180205090546.GE28462@vireshk-i7>
-References: <1516744675-21233-1-git-send-email-byan@nvidia.com>
- <dc33ef16-9684-3d8d-f4cc-6e24697f007f@nvidia.com>
- <20180205040118.GB28462@vireshk-i7>
- <1710637.vo8uP0oTBm@aspire.rjw.lan>
+        id S1752654AbeBEJIm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 04:08:42 -0500
+Received: from foss.arm.com ([217.140.101.70]:47756 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750949AbeBEJIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 04:08:36 -0500
+Subject: Re: [PATCH v3 12/18] arm64: KVM: Add SMCCC_ARCH_WORKAROUND_1 fast
+ handling
+To: Christoffer Dall <christoffer.dall@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Jones <drjones@redhat.com>, Hanjun Guo <guohanjun@huawei.com>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        Jon Masters <jcm@redhat.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+References: <20180201114657.7323-1-marc.zyngier@arm.com>
+ <20180201114657.7323-13-marc.zyngier@arm.com> <20180204183907.GP21802@cbox>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <1d30fe51-22dd-6938-2f8f-c823858a3bbd@arm.com>
+Date: Mon, 5 Feb 2018 09:08:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1710637.vo8uP0oTBm@aspire.rjw.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180204183907.GP21802@cbox>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-02-18, 09:50, Rafael J. Wysocki wrote:
-> By design (which I admit may be confusing) it should be fine to call
-> dpm_resume_end() after a failing dpm_suspend_start(), whatever the reason
-> for the failure is.  cpufreq_suspend/resume() don't take that into account,
-> everybody else does.
+On 04/02/18 18:39, Christoffer Dall wrote:
+> On Thu, Feb 01, 2018 at 11:46:51AM +0000, Marc Zyngier wrote:
+>> We want SMCCC_ARCH_WORKAROUND_1 to be fast. As fast as possible.
+>> So let's intercept it as early as we can by testing for the
+>> function call number as soon as we've identified a HVC call
+>> coming from the guest.
+> 
+> Hmmm.  How often is this expected to happen and what is the expected
+> extra cost of doing the early-exit handling in the C code vs. here?
 
-Hmm, I see. Can't do much then, just fix the only broken piece of code :)
+Pretty often. On each context switch of a Linux guest, for example. It
+is almost as bad as if we were trapping all VM ops. Moving it to C is
+definitely visible on something like hackbench (I remember something
+like a 10-12% degradation on Seattle, but I'd need to rerun the tests to
+give you something accurate). It is the whole GPR save/restore dance
+that costs us a lot (31 registers for the guest, 12 for the host), plus
+some the extra SError synchronization that doesn't come for free either.
 
+> I think we'd be better off if we only had a single early-exit path (and
+> we should move the FP/SIMD trap to that path as well), but if there's a
+> measurable benefit of having this logic in assembly as opposed to in the
+> C code, then I'm ok with this as well.
+
+I agree that the multiplication of "earlier than early" paths is
+becoming annoying. Moving the FP/SIMD stuff to C would be less
+problematic, as we have patches to move some of that to load/put, and
+we'd only take the trap once per time slice (as opposed to once per
+entry at the moment).
+
+Here, we're trying hard to do exactly nothing, because each instruction
+is just an extra overhead (we've already nuked the BP). I even
+considered inserting that code as part of the per-CPU-type vectors (and
+leave the rest of the KVM code alone), but it felt like a step too far.
+
+> The code in this patch looks fine otherwise.
+
+Thanks,
+
+	M.
 -- 
-viresh
+Jazz is not dead. It just smells funny...
