@@ -1,52 +1,79 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225MwSqszMTINVU7gU0SqcetUVNk1wdE+4oXT3P3/eFTaZh0w2oTFBaSXIYUCnKTJGUbEjoM
-ARC-Seal: i=1; a=rsa-sha256; t=1517855073; cv=none;
-        d=google.com; s=arc-20160816;
-        b=JMPuegA67OEwlDs64C9PNsRw3MR8iSMAg/TvQxnJnr2BQbfUn1YHelj/wnqGwLJit8
-         mBn1Ev7mDCYij5gQwRLCCIpRGZxQWeXNLspxnLv0mHI2rpy+zbTVWAouuVQ6A+fpQGTE
-         vYmnyQeSXD7NJv10i6KxlrZTEn+jau1l7ClJ46QKkoeUUOMuAfiRECVwjX5OV55CJ2mg
-         9IMa8prFY8sWnE01/0G6sDI6os/P+Mz7WaWUE61OxeN44vDqWXFbisvYwa0s3zsHJG/F
-         xe/BQ3FcA8DhBqllSp3o867xFo0LuS3YMYCgal+JZDxPCiRZlRa867cC4pLdtrYaZNTK
-         CTzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=gKdcx2UVn79k53srqQtu0Y7zRZOEITvgEmbZeqKxPEY=;
-        b=jSDqYO3GWPIRdueTx6ACrO096q+fWDXOjG904LaBhvm33qivZ4onHO4hBT6q/8hH2k
-         hJ32e2tIgGdevpVeauA8W6w0E49f4ZrccBeVD4krkNc7BlJEm3rBjPqw8Rn5Jlzx2qro
-         gPyImY6pALnL+jrGy9fG9Tl3SDhu1UfKVE+5CwJiEQZnfkAiKQqubkfsBZzlRU1Txfu0
-         rnzJNE7SLNdCTshT9TMAb/wc35vo6CXSL5lj3iuy8+okaN3rggXfUCC9yGzsDk3Y0LD/
-         EECErbigkbGd7B0hioLj4PWNnQ/E9C4D5ia/VWKb6Il239uMlm+ssSoDk+QkRn1BXNCa
-         dGtA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3105817-1517855073-2-17456948219402780923
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517855072; b=O4t221/T+1icO4gnsIQimxDNA4ZqcKr6QemmaeujmP9D2V7
+    Yz7ZGsPOEXMAlGnOWBiSla26NopEOOPxrhezgEtfhy2zRh0iyGW8fhILXpGUlNKJ
+    4ql/1LakyWGDX6SBlFFoLKAg2yIHmOaD4VlibxZzvyeSndnCWHTx311mE94nvdMp
+    6jbh/e2enEXz7h0+1zBtRgZolrraofMvwxPRe7Z1nbgW9KUiOAkU++WlB423QbD3
+    FsR+j5JatcIIxAvbAm1FiupH4SCj7pioGMPQbYvXYDtvYZGq2HUELqVLDHW6TXeA
+    pkjdDgM7thFucGUM6C0RV+Ja4hPyEpmd980ca9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1517855072; bh=WCHnhvpidFg53y7qI0h4iA+hgK
+    jTnAMgVyclJGoRjQs=; b=vHR+S67CJq4TGh2DuhDqiP5Mu+6SmV4JF3r3LTXg2S
+    2W/CMSjpKEehziZ6FnACogdidlw4epQqlh8KcnsnbcrcQyW7JH4q4t9oxFtv2/Nu
+    u0TNzq0tDm7FsH+Fm3cctWtX+FQan3KUCFdyDAcAR8yAZ+34ZpqC9SGXVsr+3rXb
+    3sD65uIScGwNv8xVPL3uVT1FtyBF7W/kep26GL7/pPqmbzNAW3b0HINC+lzBGgs9
+    PubtTC5rO3Naqq3PfmMKB0OoN5wxX623Vo7KxeEaMyhnaA/+KN2mDisE8pcNsFSN
+    wgb2sDcHvyEqVQfQo1wcy7SzBjbIUzuTb+EGeL2Sitjw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753547AbeBESY3 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Feb 2018 13:24:29 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51616 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753533AbeBESYW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:24:22 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	KarimAllah Ahmed <karahmed@amazon.de>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Jim Mattson <jmattson@google.com>,
-	kvm@vger.kernel.org,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 4.14 58/64] KVM/x86: Update the reverse_cpuid list to include CPUID_7_EDX
-Date: Mon,  5 Feb 2018 10:23:17 -0800
-Message-Id: <20180205182140.960125155@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>,
+        kernel-janitors@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.14 48/64] x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
+Date: Mon,  5 Feb 2018 10:23:07 -0800
+Message-Id: <20180205182140.544674450@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182138.571333346@linuxfoundation.org>
 References: <20180205182138.571333346@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586402222751006?=
-X-GMAIL-MSGID: =?utf-8?q?1591586402222751006?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,66 +81,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: KarimAllah Ahmed karahmed@amazon.de
+From: Colin Ian King colin.king@canonical.com
 
-commit b7b27aa011a1df42728d1768fc181d9ce69e6911
+commit e698dcdfcda41efd0984de539767b4cddd235f1e
 
-[dwmw2: Stop using KF() for bits in it, too]
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Trivial fix to spelling mistake in pr_err error message text.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Cc: kvm@vger.kernel.org
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Link: https://lkml.kernel.org/r/1517522386-18410-2-git-send-email-karahmed@amazon.de
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/x86/kvm/cpuid.c |    8 +++-----
- arch/x86/kvm/cpuid.h |    1 +
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -67,9 +67,7 @@ u64 kvm_supported_xcr0(void)
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -103,7 +103,7 @@ bool retpoline_module_ok(bool has_retpol
+ 	if (spectre_v2_enabled == SPECTRE_V2_NONE || has_retpoline)
+ 		return true;
  
- #define F(x) bit(X86_FEATURE_##x)
- 
--/* These are scattered features in cpufeatures.h. */
--#define KVM_CPUID_BIT_AVX512_4VNNIW     2
--#define KVM_CPUID_BIT_AVX512_4FMAPS     3
-+/* For scattered features from cpufeatures.h; we currently expose none */
- #define KF(x) bit(KVM_CPUID_BIT_##x)
- 
- int kvm_update_cpuid(struct kvm_vcpu *vcpu)
-@@ -392,7 +390,7 @@ static inline int __do_cpuid_ent(struct
- 
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--		KF(AVX512_4VNNIW) | KF(AVX512_4FMAPS);
-+		F(AVX512_4VNNIW) | F(AVX512_4FMAPS);
- 
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
-@@ -477,7 +475,7 @@ static inline int __do_cpuid_ent(struct
- 			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
- 				entry->ecx &= ~F(PKU);
- 			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
--			entry->edx &= get_scattered_cpuid_leaf(7, 0, CPUID_EDX);
-+			cpuid_mask(&entry->edx, CPUID_7_EDX);
- 		} else {
- 			entry->ebx = 0;
- 			entry->ecx = 0;
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -54,6 +54,7 @@ static const struct cpuid_reg reverse_cp
- 	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
- 	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
- 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
-+	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
- };
- 
- static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+-	pr_err("System may be vunerable to spectre v2\n");
++	pr_err("System may be vulnerable to spectre v2\n");
+ 	spectre_v2_bad_module = true;
+ 	return false;
+ }
