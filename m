@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753232AbeBEMw0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 07:52:26 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:29253 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753045AbeBEMvk (ORCPT
+        id S1753258AbeBEMwv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 07:52:51 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:63881 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753135AbeBEMvz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 07:51:40 -0500
+        Mon, 5 Feb 2018 07:51:55 -0500
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -15,9 +15,9 @@ CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Kishon Vijay Abraham I <kishon@ti.com>, <linux-mmc@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 08/16] mmc: sdhci-omap: Add support to override f_max and iodelay from pdata
-Date: Mon, 5 Feb 2018 18:20:21 +0530
-Message-ID: <20180205125029.21570-9-kishon@ti.com>
+Subject: [PATCH v2 13/16] dt-bindings: sdhci-omap: Add K2G specific binding
+Date: Mon, 5 Feb 2018 18:20:26 +0530
+Message-ID: <20180205125029.21570-14-kishon@ti.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180205125029.21570-1-kishon@ti.com>
 References: <20180205125029.21570-1-kishon@ti.com>
@@ -28,120 +28,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DRA74x EVM Rev H EVM comes with revision 2.0 silicon. However, earlier
-versions of EVM can come with either revision 1.1 or revision 1.0 of
-silicon.
-
-The device-tree file is written to support rev 2.0 of silicon.
-pdata-quirks are used to then override the settings needed for
-PG 1.1 silicon.
-
-PG 1.1 silicon has limitations w.r.t frequencies at which MMC1/2/3
-can operate as well as different IOdelay numbers.
-
-Add support in sdhci-omap driver to get platform data if available
-(added using pdata quirks) and override the data (max-frequency and
-iodelay data) obtained from device tree.
+Add binding for the TI's sdhci-omap controller present in K2G.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/mmc/host/sdhci-omap.c            | 21 ++++++++++++++++++++-
- include/linux/platform_data/sdhci-omap.h | 22 ++++++++++++++++++++++
- 2 files changed, 42 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/platform_data/sdhci-omap.h
+ Documentation/devicetree/bindings/mmc/sdhci-omap.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index d5a9e688dc1b..c2570db3f7a2 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -22,6 +22,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/platform_data/sdhci-omap.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-@@ -99,6 +100,7 @@ struct sdhci_omap_data {
- };
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+index 51775a372c06..8d09b837e350 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
++++ b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+@@ -4,7 +4,9 @@ Refer to mmc.txt for standard MMC bindings.
  
- struct sdhci_omap_host {
-+	char			*version;
- 	void __iomem		*base;
- 	struct device		*dev;
- 	struct	regulator	*pbias;
-@@ -732,12 +734,21 @@ static struct pinctrl_state
- 				  u32 *caps, u32 capmask)
- {
- 	struct device *dev = omap_host->dev;
-+	char *version = omap_host->version;
- 	struct pinctrl_state *pinctrl_state = ERR_PTR(-ENODEV);
-+	char str[20];
+ Required properties:
+ - compatible: Should be "ti,dra7-sdhci" for DRA7 and DRA72 controllers
++	      Should be "ti,k2g-sdhci" for K2G
+ - ti,hwmods: Must be "mmc<n>", <n> is controller instance starting 1
++	     (Not required for K2G).
  
- 	if (!(*caps & capmask))
- 		goto ret;
- 
--	pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, mode);
-+	if (version) {
-+		snprintf(str, 20, "%s-%s", mode, version);
-+		pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, str);
-+	}
-+
-+	if (IS_ERR(pinctrl_state))
-+		pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, mode);
-+
- 	if (IS_ERR(pinctrl_state)) {
- 		dev_err(dev, "no pinctrl state for %s mode", mode);
- 		*caps &= ~capmask;
-@@ -840,6 +851,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	struct mmc_host *mmc;
- 	const struct of_device_id *match;
- 	struct sdhci_omap_data *data;
-+	struct sdhci_omap_platform_data *platform_data;
- 
- 	match = of_match_device(omap_sdhci_match, dev);
- 	if (!match)
-@@ -874,6 +886,13 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_pltfm_free;
- 
-+	platform_data = dev_get_platdata(dev);
-+	if (platform_data) {
-+		omap_host->version = platform_data->version;
-+		if (platform_data->max_freq)
-+			mmc->f_max = platform_data->max_freq;
-+	}
-+
- 	pltfm_host->clk = devm_clk_get(dev, "fck");
- 	if (IS_ERR(pltfm_host->clk)) {
- 		ret = PTR_ERR(pltfm_host->clk);
-diff --git a/include/linux/platform_data/sdhci-omap.h b/include/linux/platform_data/sdhci-omap.h
-new file mode 100644
-index 000000000000..92abd53dcd00
---- /dev/null
-+++ b/include/linux/platform_data/sdhci-omap.h
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 Texas Instruments
-+// SDHCI Controller Platform Data for TI's OMAP SoCs
-+// Author: Kishon Vijay Abraham I <kishon@ti.com>
-+
-+#ifndef __SDHCI_OMAP_PDATA_H__
-+#define __SDHCI_OMAP_PDATA_H__
-+
-+struct sdhci_omap_platform_data {
-+	const char *name;
-+
-+	/*
-+	 * set if your board has components or wiring that limits the
-+	 * maximum frequency on the MMC bus
-+	 */
-+	unsigned int max_freq;
-+
-+	/* string specifying a particular variant of hardware */
-+	char *version;
-+};
-+
-+#endif
+ Example:
+ 	mmc1: mmc@4809c000 {
 -- 
 2.11.0
