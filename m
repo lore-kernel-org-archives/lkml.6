@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225ttRxD3DT7PRDnsEmfVIxz2pA+Q495GjXQnKYLw+B6T2j/ewpV9J8ONXeSQpoVzKcQn3fz
+X-Google-Smtp-Source: AH8x2250e1SN+FHB/gaLW7OSz3aQR6m+qBdoqOWxQZ6g/Gk1IxHS4zRM7dEdGlG9+t/koYvTGQ5T
 ARC-Seal: i=1; a=rsa-sha256; t=1517855171; cv=none;
         d=google.com; s=arc-20160816;
-        b=fvmWehOtm9IbLrJSlaJyta0bIIzyMU5oWTm2X4Ettd93sr16wHl1Fe3CjidkI/W5g4
-         yfPzhrN9z+BNgCUSF9GK2nzyonHgQ0S342qniofod41MSy8VufLsGVSE/YmnL++7Be6m
-         sj2oXTw/Gi/6thnmNrYD6o211+g21XBCR39SDo94k9FpSyrnm3A5Fj12CSTmqQZ+4rPi
-         GIW3Rc3PutKsIyB2sUW+9PZpr+4ZcPNY6HCjJ7nw7XDxi2LEJDqEMTjugYlnxlThfMPp
-         f4E38YJatMrQmXWuXplinjUJyUQZfrwYu7YdoShRYNuL+gasUFHq9YW+esLobBCHNCZy
-         PDCg==
+        b=KIJX7f02cAxNrPdb3NJuTLz1EU9TM63T1rVmgzuhq2h0i6HhNVkf5SaINzbomHhttz
+         MX1I48T5kiJnehnv2eantu2AxXixX7zYHDdqpMWKjK7d7K6g+Odw5fYzhZRJRZy7+38g
+         jj+sVElzY4x66D9TGp6PulTe5ofTnrXJgj9ub+XOrhj5zqYoJuxZPQel7hqlpf8riJP9
+         ELZqBAN4fulxOsu4sVKZ5ZJ9fz0zbgC82cHbJhr/67sWQEMQQqbbZ7yqJMcaZY5DRr0f
+         9cJ6gkPJiZKnLQI7R47S7TI52GfLvD3Q7h3s1JKTNjWEtHKvpxDXGvwUBgdjgaKULCog
+         xBWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F/hzGlasSPkrikwKxwcuFv62Bp1IbBw1FrasY0gb8bg=;
-        b=z7SidumJ+VJ5fVOVsB3+v3QSzEsYo65qjR5gAVT6kFBHZ/pzj8noQk4U+k4SNA47xs
-         AQiMD39ZCpzws1lMEK7Gc6VlBF3/8qhzjP0HHFWYi2cNj6bduniG5YHEVJxRrdKsgcPw
-         FXz4g+9CaO/pjT+fgc/TFSFikkGHbJ8mFCyn6m0Glzaq9FuQ6keVTCPMGs2vSgbZ1TZB
-         W+KNRXwy7GW/4JRSMD/sEHC1OX3N2yW3YHP4wQWKo/oXYqpq+iuKTVdeuCoLHahdExhz
-         6nGKbZJ3nck5BiqaxTa4ZI8uwkrBga53aChefx5cPYo9lE/sOdalicKgRltAF9qScPfs
-         imjg==
+        bh=Tgr556sEa3w78jb1yunaM5XIxyU+K5Wd6U8bGOUa754=;
+        b=BjQ30HwB+P8Wow/1kN5DUGiFOt6FCWsJ5QZALxH7h4cSxBd6j0bVB0z437l1+P/otv
+         mWjj4jqhbwns+WqyedcD0lKFw5QT+3YVpK+zHykrQ6H1LEkzRbV6wUBCkjS2Y7dR2A4H
+         /2+7ToFSOHzCLTsJg0vKcAV/3rm3rKxO75VtzqluOmoV+ZkyPx3K5lsdZYtRALlCgDIv
+         gxtu1PFkGUFkH/bEMzvVPvtqyaPU6vJr75YUwWF89M+/cG0UM2jQy3LHLwlse0LOFBXC
+         or7emkjOsOgHWaAnY11vL3gQICOHXF3X1nzPQFO7+c5Ur+iQZeYMMrNPFgnSOCQGnvcL
+         cVAA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 104.132.1.108 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liran Alon <liran.alon@oracle.com>,
-	Nikita Leshenko <nikita.leshchenko@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 10/36] KVM: x86: Dont re-execute instruction when not passing CR2 value
-Date: Mon,  5 Feb 2018 10:23:38 -0800
-Message-Id: <20180205182352.204595814@linuxfoundation.org>
+	Benson Leung <bleung@chromium.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Bo Hu <bohu@google.com>
+Subject: [PATCH 3.18 01/36] Input: do not emit unneeded EV_SYN when suspending
+Date: Mon,  5 Feb 2018 10:23:29 -0800
+Message-Id: <20180205182351.842876188@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
 References: <20180205182351.774761393@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591586504784976644?=
-X-GMAIL-MSGID: =?utf-8?q?1591586504784976644?=
+X-GMAIL-THRID: =?utf-8?q?1591586503946015842?=
+X-GMAIL-MSGID: =?utf-8?q?1591586503946015842?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,53 +49,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liran Alon <liran.alon@oracle.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
+commit 00159f19a5057cb779146afce1cceede692af346 upstream.
 
-[ Upstream commit 9b8ae63798cb97e785a667ff27e43fa6220cb734 ]
+Do not emit EV_SYN/SYN_REPORT on suspend if there were no keys that are
+still pressed as we are suspending the device (and in all other cases when
+input core is forcibly releasing keys via input_dev_release_keys() call).
 
-In case of instruction-decode failure or emulation failure,
-x86_emulate_instruction() will call reexecute_instruction() which will
-attempt to use the cr2 value passed to x86_emulate_instruction().
-However, when x86_emulate_instruction() is called from
-emulate_instruction(), cr2 is not passed (passed as 0) and therefore
-it doesn't make sense to execute reexecute_instruction() logic at all.
-
-Fixes: 51d8b66199e9 ("KVM: cleanup emulate_instruction")
-
-Signed-off-by: Liran Alon <liran.alon@oracle.com>
-Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Bo Hu <bohu@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/kvm_host.h |    3 ++-
- arch/x86/kvm/vmx.c              |    2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -849,7 +849,8 @@ int x86_emulate_instruction(struct kvm_v
- static inline int emulate_instruction(struct kvm_vcpu *vcpu,
- 			int emulation_type)
+---
+ drivers/input/input.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -668,6 +668,7 @@ EXPORT_SYMBOL(input_close_device);
+  */
+ static void input_dev_release_keys(struct input_dev *dev)
  {
--	return x86_emulate_instruction(vcpu, 0, emulation_type, NULL, 0);
-+	return x86_emulate_instruction(vcpu, 0,
-+			emulation_type | EMULTYPE_NO_REEXECUTE, NULL, 0);
++	bool need_sync = false;
+ 	int code;
+ 
+ 	if (is_event_supported(EV_KEY, dev->evbit, EV_MAX)) {
+@@ -675,9 +676,11 @@ static void input_dev_release_keys(struc
+ 			if (is_event_supported(code, dev->keybit, KEY_MAX) &&
+ 			    __test_and_clear_bit(code, dev->key)) {
+ 				input_pass_event(dev, EV_KEY, code, 0);
++				need_sync = true;
+ 			}
+ 		}
+-		input_pass_event(dev, EV_SYN, SYN_REPORT, 1);
++		if (need_sync)
++			input_pass_event(dev, EV_SYN, SYN_REPORT, 1);
+ 	}
  }
  
- void kvm_enable_efer_bits(u64);
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -5707,7 +5707,7 @@ static int handle_invalid_guest_state(st
- 		if (test_bit(KVM_REQ_EVENT, &vcpu->requests))
- 			return 1;
- 
--		err = emulate_instruction(vcpu, EMULTYPE_NO_REEXECUTE);
-+		err = emulate_instruction(vcpu, 0);
- 
- 		if (err == EMULATE_USER_EXIT) {
- 			++vcpu->stat.mmio_exits;
