@@ -1,64 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752555AbeBFCbL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:31:11 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35480 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeBFCbG (ORCPT
+        id S1752599AbeBFCba (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:31:30 -0500
+Received: from mx-fe5-210.meituan.com ([103.37.138.210]:41547 "EHLO
+        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752568AbeBFCbX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:31:06 -0500
-X-Google-Smtp-Source: AH8x224fPKqDSUJ2tXpzhm8f3++3MNwzicviCG4WMxlY0/ZJcJqBY4eRz3s9164ToXqzAFep3r+8zw==
-Date: Tue, 6 Feb 2018 11:31:00 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        huang ying <huang.ying.caritas@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Minchan Kim <minchan@kernel.org>, Seth Jennings <sjenning@redhat.com>,
-        Dan Streetman <ddstreet@ieee.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: bisected bd4c82c22c367e is the first bad commit (was [Bug
- 198617] New: zswap causing random applications to crash)
-Message-ID: <20180206023100.GA462@jagdpanzerIV>
-References: <20180130114841.aa2d3bd99526c03c6a5b5810@linux-foundation.org>
- <20180203013455.GA739@jagdpanzerIV>
- <CAC=cRTPyh-JTY=uOQf2dgmyPDyY-4+ryxkedp-iZMcFQZtnaqw@mail.gmail.com>
- <20180205013758.GA648@jagdpanzerIV>
- <87d11j4pdy.fsf@yhuang-dev.intel.com>
- <20180205123947.GA426@jagdpanzerIV>
- <20180205162428.99efbedb5a6e19bee19ba954@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180205162428.99efbedb5a6e19bee19ba954@linux-foundation.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Mon, 5 Feb 2018 21:31:23 -0500
+DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com A6A2D2975C00
+From: Wang Long <wanglong19@meituan.com>
+To: darrick.wong@oracle.com, tytso@mit.edu, jack@suse.com
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] jbd2: remove the conditional test
+Date: Mon,  5 Feb 2018 22:24:39 +0800
+Message-Id: <1517840679-5902-1-git-send-email-wanglong19@meituan.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/05/18 16:24), Andrew Morton wrote:
-> On Mon, 5 Feb 2018 21:39:47 +0900 Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
-> 
-> > > ---------------------------------8<-------------------------------
-> > > From 4c52d531680f91572ebc6f4525a018e32a934ef0 Mon Sep 17 00:00:00 2001
-> > > From: Huang Ying <huang.ying.caritas@gmail.com>
-> > > Date: Mon, 5 Feb 2018 19:27:43 +0800
-> > > Subject: [PATCH] fontswap thp fix
-> > 
-> > Seems to be fixing the problem on my x86 box. Executed several tests, no
-> > crashes were observed. Can run more tests tomorrow.
-> 
-> Thanks.  I queued this for 4.16 with a cc:stable and a Fixes:
-> bd4c82c22c367e068 ("mm, THP, swap: delay splitting THP after swapped
-> out").
-> 
-> Can we please have a changelog ;)
+kmem_cache_destroy already handles null pointers, so we can remove the
+conditional test entirely.
 
-Thanks!
+This patch also set NULL after the kmem_cache_destroy in function
+jbd2_journal_destroy_handle_cache.
 
-Tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Wang Long <wanglong19@meituan.com>
+---
+ fs/jbd2/journal.c     | 18 +++++++-----------
+ fs/jbd2/revoke.c      | 12 ++++--------
+ fs/jbd2/transaction.c |  6 ++----
+ 3 files changed, 13 insertions(+), 23 deletions(-)
 
-	-ss
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index 93016bb..3c27a61a 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -2286,8 +2286,7 @@ static void jbd2_journal_destroy_slabs(void)
+ 	int i;
+ 
+ 	for (i = 0; i < JBD2_MAX_SLABS; i++) {
+-		if (jbd2_slab[i])
+-			kmem_cache_destroy(jbd2_slab[i]);
++		kmem_cache_destroy(jbd2_slab[i]);
+ 		jbd2_slab[i] = NULL;
+ 	}
+ }
+@@ -2388,10 +2387,8 @@ static int jbd2_journal_init_journal_head_cache(void)
+ 
+ static void jbd2_journal_destroy_journal_head_cache(void)
+ {
+-	if (jbd2_journal_head_cache) {
+-		kmem_cache_destroy(jbd2_journal_head_cache);
+-		jbd2_journal_head_cache = NULL;
+-	}
++	kmem_cache_destroy(jbd2_journal_head_cache);
++	jbd2_journal_head_cache = NULL;
+ }
+ 
+ /*
+@@ -2649,11 +2646,10 @@ static int __init jbd2_journal_init_handle_cache(void)
+ 
+ static void jbd2_journal_destroy_handle_cache(void)
+ {
+-	if (jbd2_handle_cache)
+-		kmem_cache_destroy(jbd2_handle_cache);
+-	if (jbd2_inode_cache)
+-		kmem_cache_destroy(jbd2_inode_cache);
+-
++	kmem_cache_destroy(jbd2_handle_cache);
++	jbd2_handle_cache = NULL;
++	kmem_cache_destroy(jbd2_inode_cache);
++	jbd2_inode_cache = NULL;
+ }
+ 
+ /*
+diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
+index 696ef15..240779e 100644
+--- a/fs/jbd2/revoke.c
++++ b/fs/jbd2/revoke.c
+@@ -180,14 +180,10 @@ static struct jbd2_revoke_record_s *find_revoke_record(journal_t *journal,
+ 
+ void jbd2_journal_destroy_revoke_caches(void)
+ {
+-	if (jbd2_revoke_record_cache) {
+-		kmem_cache_destroy(jbd2_revoke_record_cache);
+-		jbd2_revoke_record_cache = NULL;
+-	}
+-	if (jbd2_revoke_table_cache) {
+-		kmem_cache_destroy(jbd2_revoke_table_cache);
+-		jbd2_revoke_table_cache = NULL;
+-	}
++	kmem_cache_destroy(jbd2_revoke_record_cache);
++	jbd2_revoke_record_cache = NULL;
++	kmem_cache_destroy(jbd2_revoke_table_cache);
++	jbd2_revoke_table_cache = NULL;
+ }
+ 
+ int __init jbd2_journal_init_revoke_caches(void)
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index ac31103..3b642e0 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -49,10 +49,8 @@ int __init jbd2_journal_init_transaction_cache(void)
+ 
+ void jbd2_journal_destroy_transaction_cache(void)
+ {
+-	if (transaction_cache) {
+-		kmem_cache_destroy(transaction_cache);
+-		transaction_cache = NULL;
+-	}
++	kmem_cache_destroy(transaction_cache);
++	transaction_cache = NULL;
+ }
+ 
+ void jbd2_journal_free_transaction(transaction_t *transaction)
+-- 
+1.8.3.1
