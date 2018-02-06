@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752838AbeBFJyb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:54:31 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:37286 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752719AbeBFJxc (ORCPT
+        id S1752856AbeBFJyk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:54:40 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:50654 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752702AbeBFJx3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:53:32 -0500
-X-UUID: ab271e6af053436786d6394c497ed031-20180206
+        Tue, 6 Feb 2018 04:53:29 -0500
+X-UUID: 35e4b6840df349dd875aeab26330d599-20180206
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 15/16] arm64: dts: mt7622: add High-Speed DMA device nodes
-Date: Tue, 6 Feb 2018 17:53:04 +0800
-Message-ID: <40c5f7cdd094166d4a3eb1f36f89cdb8edf6d243.1517910489.git.sean.wang@mediatek.com>
+Subject: [PATCH v2 10/16] arm64: dts: mt7622: add ethernet device nodes
+Date: Tue, 6 Feb 2018 17:52:59 +0800
+Message-ID: <04aff866db96fd7ae4e1d85166f8a722f4b79b77.1517910489.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1517910489.git.sean.wang@mediatek.com>
 References: <cover.1517910489.git.sean.wang@mediatek.com>
@@ -28,33 +28,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-add High-Speed DMA (HSDMA) nodes
+add ethernet device nodes which enable GMAC1 with SGMII interface
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt7622.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 22 ++++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi     | 31 ++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+index 59a9c36..b80e8c7 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+@@ -249,6 +249,28 @@
+ 	status = "okay";
+ };
+ 
++&eth {
++	pinctrl-names = "default";
++	pinctrl-0 = <&eth_pins>;
++	status = "okay";
++
++	gmac1: mac@1 {
++		compatible = "mediatek,eth-mac";
++		reg = <1>;
++		phy-handle = <&phy5>;
++	};
++
++	mdio-bus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		phy5: ethernet-phy@5 {
++			reg = <5>;
++			phy-mode = "sgmii";
++		};
++	};
++};
++
+ &i2c1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c1_pins>;
 diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-index 6cf67dd..ed7ee78 100644
+index 9e11baf..a3a409b 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-@@ -712,6 +712,16 @@
+@@ -477,6 +477,37 @@
  		#reset-cells = <1>;
  	};
  
-+	hsdma: dma-controller@1b007000 {
-+		compatible = "mediatek,mt7622-hsdma";
-+		reg = <0 0x1b007000 0 0x1000>;
-+		interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&ethsys CLK_ETH_HSDMA_EN>;
-+		clock-names = "hsdma";
++	eth: ethernet@1b100000 {
++		compatible = "mediatek,mt7622-eth",
++			     "mediatek,mt2701-eth",
++			     "syscon";
++		reg = <0 0x1b100000 0 0x20000>;
++		interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 224 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 225 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&topckgen CLK_TOP_ETH_SEL>,
++			 <&ethsys CLK_ETH_ESW_EN>,
++			 <&ethsys CLK_ETH_GP0_EN>,
++			 <&ethsys CLK_ETH_GP1_EN>,
++			 <&ethsys CLK_ETH_GP2_EN>,
++			 <&sgmiisys CLK_SGMII_TX250M_EN>,
++			 <&sgmiisys CLK_SGMII_RX250M_EN>,
++			 <&sgmiisys CLK_SGMII_CDR_REF>,
++			 <&sgmiisys CLK_SGMII_CDR_FB>,
++			 <&topckgen CLK_TOP_SGMIIPLL>,
++			 <&apmixedsys CLK_APMIXED_ETH2PLL>;
++		clock-names = "ethif", "esw", "gp0", "gp1", "gp2",
++			      "sgmii_tx250m", "sgmii_rx250m",
++			      "sgmii_cdr_ref", "sgmii_cdr_fb", "sgmii_ck",
++			      "eth2pll";
 +		power-domains = <&scpsys MT7622_POWER_DOMAIN_ETHSYS>;
-+		#dma-cells = <1>;
++		mediatek,ethsys = <&ethsys>;
++		mediatek,sgmiisys = <&sgmiisys>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
 +	};
 +
- 	eth: ethernet@1b100000 {
- 		compatible = "mediatek,mt7622-eth",
- 			     "mediatek,mt2701-eth",
+ 	sgmiisys: sgmiisys@1b128000 {
+ 		compatible = "mediatek,mt7622-sgmiisys",
+ 			     "syscon";
 -- 
 2.7.4
