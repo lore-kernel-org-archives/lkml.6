@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753045AbeBFQ7t (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:59:49 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51744 "EHLO huawei.com"
+        id S1753162AbeBFQ77 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:59:59 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51749 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753145AbeBFQ4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753093AbeBFQ4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Feb 2018 11:56:12 -0500
 From: John Garry <john.garry@huawei.com>
 To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
@@ -14,9 +14,9 @@ To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
         <zhangshaokun@hisilicon.com>, <linux-arm-kernel@lists.infradead.org>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 9/9] perf utils: add HiSilicon hip08 JSON file
-Date: Wed, 7 Feb 2018 01:45:04 +0800
-Message-ID: <1517939104-230881-10-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 3/9] perf vendor events arm64: Relocate ThunderX2 JSON
+Date: Wed, 7 Feb 2018 01:44:58 +0800
+Message-ID: <1517939104-230881-4-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
 References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
@@ -28,174 +28,164 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the HiSilicon hip08 JSON file. This platform
-follows the ARMv8 recommended IMPLEMENTATION DEFINED events,
-where applicable.
-
-The brief description is kept for readability for arch defined
-events, but is not strictly required.
+Since jevents now supports vendor subdirectory, relocate
+the ThunderX2 JSON to Cavium subdirectory.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- .../arch/arm64/hisilicon/hip08/core-imp-def.json   | 140 +++++++++++++++++++++
- tools/perf/pmu-events/arch/arm64/mapfile.csv       |   1 +
- 2 files changed, 141 insertions(+)
- create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
+ .../arch/arm64/cavium/thunderx2-imp-def.json       | 62 ----------------------
+ .../arch/arm64/cavium/thunderx2/core-imp-def.json  | 62 ++++++++++++++++++++++
+ tools/perf/pmu-events/arch/arm64/mapfile.csv       |  2 +-
+ 3 files changed, 63 insertions(+), 63 deletions(-)
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
 
-diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
+diff --git a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json
+deleted file mode 100644
+index 2db45c4..0000000
+--- a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json
++++ /dev/null
+@@ -1,62 +0,0 @@
+-[
+-    {
+-        "PublicDescription": "Attributable Level 1 data cache access, read",
+-        "EventCode": "0x40",
+-        "EventName": "l1d_cache_rd",
+-        "BriefDescription": "L1D cache read",
+-    },
+-    {
+-        "PublicDescription": "Attributable Level 1 data cache access, write ",
+-        "EventCode": "0x41",
+-        "EventName": "l1d_cache_wr",
+-        "BriefDescription": "L1D cache write",
+-    },
+-    {
+-        "PublicDescription": "Attributable Level 1 data cache refill, read",
+-        "EventCode": "0x42",
+-        "EventName": "l1d_cache_refill_rd",
+-        "BriefDescription": "L1D cache refill read",
+-    },
+-    {
+-        "PublicDescription": "Attributable Level 1 data cache refill, write",
+-        "EventCode": "0x43",
+-        "EventName": "l1d_cache_refill_wr",
+-        "BriefDescription": "L1D refill write",
+-    },
+-    {
+-        "PublicDescription": "Attributable Level 1 data TLB refill, read",
+-        "EventCode": "0x4C",
+-        "EventName": "l1d_tlb_refill_rd",
+-        "BriefDescription": "L1D tlb refill read",
+-    },
+-    {
+-        "PublicDescription": "Attributable Level 1 data TLB refill, write",
+-        "EventCode": "0x4D",
+-        "EventName": "l1d_tlb_refill_wr",
+-        "BriefDescription": "L1D tlb refill write",
+-    },
+-    {
+-        "PublicDescription": "Attributable Level 1 data or unified TLB access, read",
+-        "EventCode": "0x4E",
+-        "EventName": "l1d_tlb_rd",
+-        "BriefDescription": "L1D tlb read",
+-    },
+-    {
+-        "PublicDescription": "Attributable Level 1 data or unified TLB access, write",
+-        "EventCode": "0x4F",
+-        "EventName": "l1d_tlb_wr",
+-        "BriefDescription": "L1D tlb write",
+-    },
+-    {
+-        "PublicDescription": "Bus access read",
+-        "EventCode": "0x60",
+-        "EventName": "bus_access_rd",
+-        "BriefDescription": "Bus access read",
+-   },
+-   {
+-        "PublicDescription": "Bus access write",
+-        "EventCode": "0x61",
+-        "EventName": "bus_access_wr",
+-        "BriefDescription": "Bus access write",
+-   }
+-]
+diff --git a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
 new file mode 100644
-index 0000000..ca0be5e
+index 0000000..2db45c4
 --- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
-@@ -0,0 +1,140 @@
++++ b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+@@ -0,0 +1,62 @@
 +[
 +    {
-+        "ArchStdEvent": "0x40",
-+        "BriefDescription": "L1D cache access, read"
++        "PublicDescription": "Attributable Level 1 data cache access, read",
++        "EventCode": "0x40",
++        "EventName": "l1d_cache_rd",
++        "BriefDescription": "L1D cache read",
 +    },
 +    {
-+        "ArchStdEvent": "0x41",
-+        "BriefDescription": "L1D cache access, write"
++        "PublicDescription": "Attributable Level 1 data cache access, write ",
++        "EventCode": "0x41",
++        "EventName": "l1d_cache_wr",
++        "BriefDescription": "L1D cache write",
 +    },
 +    {
-+        "ArchStdEvent": "0x42",
-+        "BriefDescription": "L1D cache refill, read"
++        "PublicDescription": "Attributable Level 1 data cache refill, read",
++        "EventCode": "0x42",
++        "EventName": "l1d_cache_refill_rd",
++        "BriefDescription": "L1D cache refill read",
 +    },
 +    {
-+        "ArchStdEvent": "0x43",
-+        "BriefDescription": "L1D cache refill, write"
++        "PublicDescription": "Attributable Level 1 data cache refill, write",
++        "EventCode": "0x43",
++        "EventName": "l1d_cache_refill_wr",
++        "BriefDescription": "L1D refill write",
 +    },
 +    {
-+        "ArchStdEvent": "0x46",
-+        "BriefDescription": "L1D cache Write-Back, victim"
++        "PublicDescription": "Attributable Level 1 data TLB refill, read",
++        "EventCode": "0x4C",
++        "EventName": "l1d_tlb_refill_rd",
++        "BriefDescription": "L1D tlb refill read",
 +    },
 +    {
-+        "ArchStdEvent": "0x47",
-+        "BriefDescription": "L1D cache Write-Back, cleaning and coherency"
++        "PublicDescription": "Attributable Level 1 data TLB refill, write",
++        "EventCode": "0x4D",
++        "EventName": "l1d_tlb_refill_wr",
++        "BriefDescription": "L1D tlb refill write",
 +    },
 +    {
-+        "ArchStdEvent": "0x48",
-+        "BriefDescription": "L1D cache invalidate"
++        "PublicDescription": "Attributable Level 1 data or unified TLB access, read",
++        "EventCode": "0x4E",
++        "EventName": "l1d_tlb_rd",
++        "BriefDescription": "L1D tlb read",
 +    },
 +    {
-+        "ArchStdEvent": "0x4C",
-+        "BriefDescription": "L1D tlb refill, read"
++        "PublicDescription": "Attributable Level 1 data or unified TLB access, write",
++        "EventCode": "0x4F",
++        "EventName": "l1d_tlb_wr",
++        "BriefDescription": "L1D tlb write",
 +    },
 +    {
-+        "ArchStdEvent": "0x4D",
-+        "BriefDescription": "L1D tlb refill, write"
-+    },
-+    {
-+        "ArchStdEvent": "0x4E",
-+        "BriefDescription": "L1D tlb access, read"
-+    },
-+    {
-+        "ArchStdEvent": "0x4F",
-+        "BriefDescription": "L1D tlb access, write"
-+    },
-+    {
-+        "ArchStdEvent": "0x50",
-+        "BriefDescription": "L2D cache access, read"
-+    },
-+    {
-+        "ArchStdEvent": "0x51",
-+        "BriefDescription": "L2D cache access, write"
-+    },
-+    {
-+        "ArchStdEvent": "0x52",
-+        "BriefDescription": "L2D cache refill, read"
-+    },
-+    {
-+        "ArchStdEvent": "0x53",
-+        "BriefDescription": "L2D cache refill, write"
-+    },
-+    {
-+        "ArchStdEvent": "0x56",
-+        "BriefDescription": "L2D cache Write-Back, victim"
-+    },
-+    {
-+        "ArchStdEvent": "0x57",
-+        "BriefDescription": "L2D cache Write-Back, cleaning and coherency"
-+    },
-+    {
-+        "ArchStdEvent": "0x58",
-+        "BriefDescription": "L2D cache invalidate"
-+    },
-+    {
-+        "PublicDescription": "Level 1 instruction cache prefetch access count",
-+        "EventCode": "0x102e",
-+        "EventName": "L1I_CACHE_PRF",
-+        "BriefDescription": "L1I cache prefetch access count",
-+    },
-+    {
-+        "PublicDescription": "Level 1 instruction cache miss due to prefetch access count",
-+        "EventCode": "0x102f",
-+        "EventName": "L1I_CACHE_PRF_REFILL",
-+        "BriefDescription": "L1I cache miss due to prefetch access count",
-+    },
-+    {
-+        "PublicDescription": "Instruction queue is empty",
-+        "EventCode": "0x1043",
-+        "EventName": "IQ_IS_EMPTY",
-+        "BriefDescription": "Instruction queue is empty",
-+    },
-+    {
-+        "PublicDescription": "Instruction fetch stall cycles",
-+        "EventCode": "0x1044",
-+        "EventName": "IF_IS_STALL",
-+        "BriefDescription": "Instruction fetch stall cycles",
-+    },
-+    {
-+        "PublicDescription": "Instructions can receive, but not send",
-+        "EventCode": "0x2014",
-+        "EventName": "FETCH_BUBBLE",
-+        "BriefDescription": "Instructions can receive, but not send",
-+    },
-+    {
-+        "PublicDescription": "Prefetch request from LSU",
-+        "EventCode": "0x6013",
-+        "EventName": "PRF_REQ",
-+        "BriefDescription": "Prefetch request from LSU",
-+    },
-+    {
-+        "PublicDescription": "Hit on prefetched data",
-+        "EventCode": "0x6014",
-+        "EventName": "HIT_ON_PRF",
-+        "BriefDescription": "Hit on prefetched data",
-+    },
-+    {
-+        "PublicDescription": "Cycles of that the number of issuing micro operations are less than 4",
-+        "EventCode": "0x7001",
-+        "EventName": "EXE_STALL_CYCLE",
-+        "BriefDescription": "Cycles of that the number of issue ups are less than 4",
-+    },
-+    {
-+        "PublicDescription": "No any micro operation is issued and meanwhile any load operation is not resolved",
-+        "EventCode": "0x7004",
-+        "EventName": "MEM_STALL_ANYLOAD",
-+        "BriefDescription": "No any micro operation is issued and meanwhile any load operation is not resolved",
-+    },
-+    {
-+        "PublicDescription": "No any micro operation is issued and meanwhile there is any load operation missing L1 cache and pending data refill",
-+        "EventCode": "0x7006",
-+        "EventName": "MEM_STALL_L1MISS",
-+        "BriefDescription": "No any micro operation is issued and meanwhile there is any load operation missing L1 cache and pending data refill",
-+    },
-+    {
-+        "PublicDescription": "No any micro operation is issued and meanwhile there is any load operation missing both L1 and L2 cache and pending data refill from L3 cache",
-+        "EventCode": "0x7007",
-+        "EventName": "MEM_STALL_L2MISS",
-+        "BriefDescription": "No any micro operation is issued and meanwhile there is any load operation missing both L1 and L2 cache and pending data refill from L3 cache",
-+    },
++        "PublicDescription": "Bus access read",
++        "EventCode": "0x60",
++        "EventName": "bus_access_rd",
++        "BriefDescription": "Bus access read",
++   },
++   {
++        "PublicDescription": "Bus access write",
++        "EventCode": "0x61",
++        "EventName": "bus_access_wr",
++        "BriefDescription": "Bus access write",
++   }
 +]
 diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-index cf14e23..8f11aeb 100644
+index e61c9ca..952a05c 100644
 --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
 +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-@@ -14,3 +14,4 @@
+@@ -12,5 +12,5 @@
+ #
+ #
  #Family-model,Version,Filename,EventType
- 0x00000000410fd03[[:xdigit:]],v1,arm/cortex-a53,core
- 0x00000000420f5160,v1,cavium/thunderx2,core
-+0x00000000480fd010,v1,hisilicon/hip08,core
+-0x00000000420f5160,v1,cavium,core
++0x00000000420f5160,v1,cavium/thunderx2,core
+ 0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
 -- 
 1.9.1
