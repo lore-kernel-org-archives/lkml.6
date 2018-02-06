@@ -1,163 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753372AbeBFRBw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 12:01:52 -0500
-Received: from gateway36.websitewelcome.com ([192.185.188.18]:25244 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752650AbeBFRAG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 12:00:06 -0500
-Date: Tue, 06 Feb 2018 10:35:42 -0600
-Message-ID: <20180206103542.Horde.31PkL6hVZU4E1wZePDF8kId@gator4166.hostgator.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] platform: vivid-cec: use 64-bit arithmetic
- instead of 32-bit
-References: <cover.1517856716.git.gustavo@embeddedor.com>
- <cca3c728f123d714dc8e4ed87510aeb2e2d63db6.1517856716.git.gustavo@embeddedor.com>
- <dc931d9d-8cbd-bbd2-0199-b1846e41f274@xs4all.nl>
- <20180205155419.Horde.WgpJoLkqF8wsBtPMp9n7V8U@gator4166.hostgator.com>
- <238647bc-106d-8dbf-569e-82e7968f887d@xs4all.nl>
-In-Reply-To: <238647bc-106d-8dbf-569e-82e7968f887d@xs4all.nl>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-MIME-Version: 1.0
-Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 108.167.133.22
-X-Source-L: Yes
-X-Exim-ID: 1ej6De-000XJ4-KG
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:29319
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 1
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1753099AbeBFRC0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 12:02:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752809AbeBFQy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:54:59 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9ADE21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 21/21] perf test: Fix test trace+probe_libc_inet_pton.sh for s390x
+Date: Tue,  6 Feb 2018 13:53:50 -0300
+Message-Id: <20180206165350.2570-22-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180206165350.2570-1-acme@kernel.org>
+References: <20180206165350.2570-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
-Quoting Hans Verkuil <hverkuil@xs4all.nl>:
+On Intel test case trace+probe_libc_inet_pton.sh succeeds and the
+output is:
 
-> On 02/05/18 22:54, Gustavo A. R. Silva wrote:
->> Hi Hans,
->>
->> Quoting Hans Verkuil <hverkuil@xs4all.nl>:
->>
->>> On 02/05/2018 09:36 PM, Gustavo A. R. Silva wrote:
->>>> Add suffix ULL to constant 10 in order to give the compiler complete
->>>> information about the proper arithmetic to use. Notice that this
->>>> constant is used in a context that expects an expression of type
->>>> u64 (64 bits, unsigned).
->>>>
->>>> The expression len * 10 * CEC_TIM_DATA_BIT_TOTAL is currently being
->>>> evaluated using 32-bit arithmetic.
->>>>
->>>> Also, remove unnecessary parentheses and add a code comment to make it
->>>> clear what is the reason of the code change.
->>>>
->>>> Addresses-Coverity-ID: 1454996
->>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>> ---
->>>> Changes in v2:
->>>>  - Update subject and changelog to better reflect the proposed  
->>>> code changes.
->>>>  - Add suffix ULL to constant instead of casting a variable.
->>>>  - Remove unncessary parentheses.
->>>
->>> unncessary -> unnecessary
->>>
->>
->> Thanks for this.
->>
->>>>  - Add code comment.
->>>>
->>>>  drivers/media/platform/vivid/vivid-cec.c | 11 +++++++++--
->>>>  1 file changed, 9 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/media/platform/vivid/vivid-cec.c
->>>> b/drivers/media/platform/vivid/vivid-cec.c
->>>> index b55d278..614787b 100644
->>>> --- a/drivers/media/platform/vivid/vivid-cec.c
->>>> +++ b/drivers/media/platform/vivid/vivid-cec.c
->>>> @@ -82,8 +82,15 @@ static void vivid_cec_pin_adap_events(struct
->>>> cec_adapter *adap, ktime_t ts,
->>>>
->>>>  	if (adap == NULL)
->>>>  		return;
->>>> -	ts = ktime_sub_us(ts, (CEC_TIM_START_BIT_TOTAL +
->>>> -			       len * 10 * CEC_TIM_DATA_BIT_TOTAL));
->>>> +
->>>> +	/*
->>>> +	 * Suffix ULL on constant 10 makes the expression
->>>> +	 * CEC_TIM_START_BIT_TOTAL + 10ULL * len * CEC_TIM_DATA_BIT_TOTAL
->>>> +	 * be evaluated using 64-bit unsigned arithmetic (u64), which
->>>> +	 * is what ktime_sub_us expects as second argument.
->>>> +	 */
->>>
->>> That's not really the comment that I was looking for. It still doesn't
->>> explain *why* this is needed at all. How about something like this:
->>>
->>
->> In MHO the reason for the change is simply the discrepancy between the
->> arithmetic expected by
->> the function ktime_sub_us and the arithmetic in which the expression
->> is being evaluated. And this
->> has nothing to do with any particular tool.
->
-> Hmm, you have a point.
->
-> OK, I've looked at the other patches in this patch series as well, and
-> the only thing I would like to see changed is the 'Addresses-Coverity-ID'
-> line in the patches: patch 4 says:
->
-> Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
->
-> but that's the only one that mentions the specific coverity error.
-> It would be nice if that can be added to the other patches as well so
-> we have a record of the actual coverity error.
->
+[root@f27 perf]# ./perf trace --no-syscalls
+                  -e probe_libc:inet_pton/max-stack=3/ ping -6 -c 1 ::1
+PING ::1(::1) 56 data bytes
+64 bytes from ::1: icmp_seq=1 ttl=64 time=0.037 ms
 
-OK. I'll send v3 of the whole patch series shortly.
+ --- ::1 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.037/0.037/0.037/0.000 ms
+     0.000 probe_libc:inet_pton:(7fa40ac618a0))
+              __GI___inet_pton (/usr/lib64/libc-2.26.so)
+              getaddrinfo (/usr/lib64/libc-2.26.so)
+              main (/usr/bin/ping)
 
-Thank you!
+The kernel stack unwinder is used, it is specified implicitly
+as call-graph=fp (frame pointer).
 
->>
->>> /*
->>>  * Add the ULL suffix to the constant 10 to work around a false Coverity
->>>  * "Unintentional integer overflow" warning. Coverity isn't smart enough
->>>  * to understand that len is always <= 16, so there is no chance of an
->>>  * integer overflow.
->>>  */
->>>
->>
->> :P
->>
->> In my opinion it is not a good idea to tie the code to a particular tool.
->> There are only three appearances of the word 'Coverity' in the whole
->> code base, and, honestly I don't want to add more.
->>
->> So I think I will document this issue as a FP in the Coverity platform.
->
-> FP?
->
+On s390x only dwarf is available for stack unwinding. It is also
+done in user space. This requires different parameter setup
+and result checking for s390x and Intel.
 
-False Positive.
+This patch adds separate perf trace setup and result checking
+for Intel and s390x. On s390x specify this command line to
+get a call-graph and handle the different call graph result
+checking:
 
-> Regards,
->
-> 	Hans
+[root@s35lp76 perf]# ./perf trace --no-syscalls
+	-e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+PING ::1(::1) 56 data bytes
+64 bytes from ::1: icmp_seq=1 ttl=64 time=0.041 ms
 
---
-Gustavo
+ --- ::1 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.041/0.041/0.041/0.000 ms
+     0.000 probe_libc:inet_pton:(3ffb9942060))
+            __GI___inet_pton (/usr/lib64/libc-2.26.so)
+            gaih_inet (inlined)
+            __GI_getaddrinfo (inlined)
+            main (/usr/bin/ping)
+            __libc_start_main (/usr/lib64/libc-2.26.so)
+            _start (/usr/bin/ping)
+[root@s35lp76 perf]#
+
+Before:
+[root@s8360047 perf]# ./perf test -vv 58
+58: probe libc's inet_pton & backtrace it with ping       :
+ --- start ---
+test child forked, pid 26349
+PING ::1(::1) 56 data bytes
+64 bytes from ::1: icmp_seq=1 ttl=64 time=0.079 ms
+ --- ::1 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.079/0.079/0.079/0.000 ms
+0.000 probe_libc:inet_pton:(3ff925c2060))
+test child finished with -1
+ ---- end ----
+probe libc's inet_pton & backtrace it with ping: FAILED!
+[root@s8360047 perf]#
+
+After:
+[root@s35lp76 perf]# ./perf test -vv 57
+57: probe libc's inet_pton & backtrace it with ping       :
+ --- start ---
+test child forked, pid 38708
+PING ::1(::1) 56 data bytes
+64 bytes from ::1: icmp_seq=1 ttl=64 time=0.038 ms
+ --- ::1 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.038/0.038/0.038/0.000 ms
+0.000 probe_libc:inet_pton:(3ff87342060))
+__GI___inet_pton (/usr/lib64/libc-2.26.so)
+gaih_inet (inlined)
+__GI_getaddrinfo (inlined)
+main (/usr/bin/ping)
+__libc_start_main (/usr/lib64/libc-2.26.so)
+_start (/usr/bin/ping)
+test child finished with 0
+ ---- end ----
+probe libc's inet_pton & backtrace it with ping: Ok
+[root@s35lp76 perf]#
+
+On Intel the test case runs unchanged and succeeds.
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180117083831.101001-1-tmricht@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ .../perf/tests/shell/trace+probe_libc_inet_pton.sh | 23 +++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
+index 8b3da21a08f1..c446c894b297 100755
+--- a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
+@@ -22,10 +22,23 @@ trace_libc_inet_pton_backtrace() {
+ 	expected[4]="rtt min.*"
+ 	expected[5]="[0-9]+\.[0-9]+[[:space:]]+probe_libc:inet_pton:\([[:xdigit:]]+\)"
+ 	expected[6]=".*inet_pton[[:space:]]\($libc\)$"
+-	expected[7]="getaddrinfo[[:space:]]\($libc\)$"
+-	expected[8]=".*\(.*/bin/ping.*\)$"
+-
+-	perf trace --no-syscalls -e probe_libc:inet_pton/max-stack=3/ ping -6 -c 1 ::1 2>&1 | grep -v ^$ | while read line ; do
++	case "$(uname -m)" in
++	s390x)
++		eventattr='call-graph=dwarf'
++		expected[7]="gaih_inet[[:space:]]\(inlined\)$"
++		expected[8]="__GI_getaddrinfo[[:space:]]\(inlined\)$"
++		expected[9]="main[[:space:]]\(.*/bin/ping.*\)$"
++		expected[10]="__libc_start_main[[:space:]]\($libc\)$"
++		expected[11]="_start[[:space:]]\(.*/bin/ping.*\)$"
++		;;
++	*)
++		eventattr='max-stack=3'
++		expected[7]="getaddrinfo[[:space:]]\($libc\)$"
++		expected[8]=".*\(.*/bin/ping.*\)$"
++		;;
++	esac
++
++	perf trace --no-syscalls -e probe_libc:inet_pton/$eventattr/ ping -6 -c 1 ::1 2>&1 | grep -v ^$ | while read line ; do
+ 		echo $line
+ 		echo "$line" | egrep -q "${expected[$idx]}"
+ 		if [ $? -ne 0 ] ; then
+@@ -33,7 +46,7 @@ trace_libc_inet_pton_backtrace() {
+ 			exit 1
+ 		fi
+ 		let idx+=1
+-		[ $idx -eq 9 ] && break
++		[ -z "${expected[$idx]}" ] && break
+ 	done
+ }
+ 
+-- 
+2.14.3
