@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753257AbeBFQ5o (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:57:44 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51701 "EHLO huawei.com"
+        id S1753340AbeBFQ55 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:57:57 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51534 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752488AbeBFQ4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:56:07 -0500
+        id S1752589AbeBFQ4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:56:03 -0500
 From: John Garry <john.garry@huawei.com>
 To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
         <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
@@ -14,9 +14,9 @@ To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
         <zhangshaokun@hisilicon.com>, <linux-arm-kernel@lists.infradead.org>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 8/9] perf utils: fixup ARM Cortex A53 JSONs to use ARMv8 recommended events
-Date: Wed, 7 Feb 2018 01:45:03 +0800
-Message-ID: <1517939104-230881-9-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 2/9] perf utils: add support for pmu events vendor sub-directory
+Date: Wed, 7 Feb 2018 01:44:57 +0800
+Message-ID: <1517939104-230881-3-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
 References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
@@ -28,300 +28,178 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the ARM Cortex-A53 json to use event definitions
-from the ARMv8 recommended events.
+For some architectures (like arm), it is required to support
+a vendor sub-directory and not locate all the JSONs for a
+specific vendor in the same folder.
 
-The brief description is kept for readability for arch standard events,
-but is not strictly required.
+This is because all the events for the same vendor will be
+placed in the same pmu events table, which may cause conflict.
+This conflict would be in the instance that a vendor's custom
+implemented events do have the same meaning on different platforms,
+so events in the pmu table would conflict. In addition, per list
+command may show events which are not even supported for a given
+platform.
 
-In addition to this change, other changes were made:
-- remove stray ','
-- remove mirrored events in memory.json and bus.json
-- fixed indentation to be consistent with other ARM
-  JSONs
+This patch adds support for a arch/vendor/platform directory
+hierarchy, while maintaining backwards-compatibility for existing
+arch/platform structure. In this, each platform would always have
+its own pmu events table.
+
+In generated file pmu_events.c, each platform table name is in
+the format pme{_vendor}_platform, like this:
+
+struct pmu_events_map pmu_events_map[] = {
+{
+	.cpuid = "0x00000000420f5160",
+	.version = "v1",
+	.type = "core",
+	.table = pme_cavium_thunderx2
+},
+{
+	.cpuid = 0,
+	.version = 0,
+	.type = 0,
+	.table = 0,
+},
+};
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- .../arch/arm64/arm/cortex-a53/branch.json          | 15 ++++---
- .../pmu-events/arch/arm64/arm/cortex-a53/bus.json  | 24 +++--------
- .../arch/arm64/arm/cortex-a53/cache.json           | 40 +++++++++----------
- .../arch/arm64/arm/cortex-a53/memory.json          | 14 +------
- .../arch/arm64/arm/cortex-a53/other.json           | 46 +++++++++++-----------
- .../arch/arm64/arm/cortex-a53/pipeline.json        | 20 +++++-----
- 6 files changed, 67 insertions(+), 92 deletions(-)
+ tools/perf/pmu-events/README    |  4 +++
+ tools/perf/pmu-events/jevents.c | 70 ++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 70 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
-index 3b62087..efcebaa 100644
---- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
-@@ -1,25 +1,24 @@
- [
--  {,
--    "EventCode": "0x7A",
--    "EventName": "BR_INDIRECT_SPEC",
--    "BriefDescription": "Branch speculatively executed - Indirect branch"
-+  {
-+    "ArchStdEvent":  "0x7A",
-+    "BriefDescription": "Branch speculatively executed, indirect branch"
-   },
--  {,
-+  {
-     "EventCode": "0xC9",
-     "EventName": "BR_COND",
-     "BriefDescription": "Conditional branch executed"
-   },
--  {,
-+  {
-     "EventCode": "0xCA",
-     "EventName": "BR_INDIRECT_MISPRED",
-     "BriefDescription": "Indirect branch mispredicted"
-   },
--  {,
-+  {
-     "EventCode": "0xCB",
-     "EventName": "BR_INDIRECT_MISPRED_ADDR",
-     "BriefDescription": "Indirect branch mispredicted because of address miscompare"
-   },
--  {,
-+  {
-     "EventCode": "0xCC",
-     "EventName": "BR_COND_MISPRED",
-     "BriefDescription": "Conditional branch mispredicted"
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
-index 480d9f7..bbbc930 100644
---- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
-@@ -1,22 +1,10 @@
- [
--  {,
--    "EventCode": "0x60",
--    "EventName": "BUS_ACCESS_LD",
--    "BriefDescription": "Bus access - Read"
-+  {
-+        "ArchStdEvent": "0x60",
-+        "BriefDescription": "Bus access read"
-   },
--  {,
--    "EventCode": "0x61",
--    "EventName": "BUS_ACCESS_ST",
--    "BriefDescription": "Bus access - Write"
--  },
--  {,
--    "EventCode": "0xC0",
--    "EventName": "EXT_MEM_REQ",
--    "BriefDescription": "External memory request"
--  },
--  {,
--    "EventCode": "0xC1",
--    "EventName": "EXT_MEM_REQ_NC",
--    "BriefDescription": "Non-cacheable external memory request"
-+  {
-+        "ArchStdEvent": "0x61",
-+        "BriefDescription": "Bus access write"
-   }
- ]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
-index 11baad6..5dfbec4 100644
---- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
-@@ -1,27 +1,27 @@
- [
--  {,
--    "EventCode": "0xC2",
--    "EventName": "PREFETCH_LINEFILL",
--    "BriefDescription": "Linefill because of prefetch"
-+  {
-+        "EventCode": "0xC2",
-+        "EventName": "PREFETCH_LINEFILL",
-+        "BriefDescription": "Linefill because of prefetch"
-   },
--  {,
--    "EventCode": "0xC3",
--    "EventName": "PREFETCH_LINEFILL_DROP",
--    "BriefDescription": "Instruction Cache Throttle occurred"
-+  {
-+        "EventCode": "0xC3",
-+        "EventName": "PREFETCH_LINEFILL_DROP",
-+        "BriefDescription": "Instruction Cache Throttle occurred"
-   },
--  {,
--    "EventCode": "0xC4",
--    "EventName": "READ_ALLOC_ENTER",
--    "BriefDescription": "Entering read allocate mode"
-+  {
-+        "EventCode": "0xC4",
-+        "EventName": "READ_ALLOC_ENTER",
-+        "BriefDescription": "Entering read allocate mode"
-   },
--  {,
--    "EventCode": "0xC5",
--    "EventName": "READ_ALLOC",
--    "BriefDescription": "Read allocate mode"
-+  {
-+        "EventCode": "0xC5",
-+        "EventName": "READ_ALLOC",
-+        "BriefDescription": "Read allocate mode"
-   },
--  {,
--    "EventCode": "0xC8",
--    "EventName": "EXT_SNOOP",
--    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
-+  {
-+        "EventCode": "0xC8",
-+        "EventName": "EXT_SNOOP",
-+        "BriefDescription": "SCU Snooped data from another CPU for this CPU"
-   }
- ]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
-index 480d9f7..25ae642 100644
---- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
-@@ -1,20 +1,10 @@
- [
--  {,
--    "EventCode": "0x60",
--    "EventName": "BUS_ACCESS_LD",
--    "BriefDescription": "Bus access - Read"
--  },
--  {,
--    "EventCode": "0x61",
--    "EventName": "BUS_ACCESS_ST",
--    "BriefDescription": "Bus access - Write"
--  },
--  {,
-+  {
-     "EventCode": "0xC0",
-     "EventName": "EXT_MEM_REQ",
-     "BriefDescription": "External memory request"
-   },
--  {,
-+  {
-     "EventCode": "0xC1",
-     "EventName": "EXT_MEM_REQ_NC",
-     "BriefDescription": "Non-cacheable external memory request"
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
-index 73a2240..4eb17a8 100644
---- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
-@@ -1,32 +1,30 @@
- [
--  {,
--    "EventCode": "0x86",
--    "EventName": "EXC_IRQ",
--    "BriefDescription": "Exception taken, IRQ"
-+  {
-+        "ArchStdEvent": "0x86",
-+        "BriefDescription": "Exception taken, IRQ"
-   },
--  {,
--    "EventCode": "0x87",
--    "EventName": "EXC_FIQ",
--    "BriefDescription": "Exception taken, FIQ"
-+  {
-+        "ArchStdEvent": "0x87",
-+        "BriefDescription": "Exception taken, FIQ"
-   },
--  {,
--    "EventCode": "0xC6",
--    "EventName": "PRE_DECODE_ERR",
--    "BriefDescription": "Pre-decode error"
-+  {
-+        "EventCode": "0xC6",
-+        "EventName": "PRE_DECODE_ERR",
-+        "BriefDescription": "Pre-decode error"
-   },
--  {,
--    "EventCode": "0xD0",
--    "EventName": "L1I_CACHE_ERR",
--    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
-+  {
-+        "EventCode": "0xD0",
-+        "EventName": "L1I_CACHE_ERR",
-+        "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
-   },
--  {,
--    "EventCode": "0xD1",
--    "EventName": "L1D_CACHE_ERR",
--    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
-+  {
-+        "EventCode": "0xD1",
-+        "EventName": "L1D_CACHE_ERR",
-+        "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
-   },
--  {,
--    "EventCode": "0xD2",
--    "EventName": "TLB_ERR",
--    "BriefDescription": "TLB memory error"
-+  {
-+        "EventCode": "0xD2",
-+        "EventName": "TLB_ERR",
-+        "BriefDescription": "TLB memory error"
-   }
- ]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
-index 3149fb9..f45a6b5 100644
---- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
-@@ -1,50 +1,50 @@
- [
--  {,
-+  {
-     "EventCode": "0xC7",
-     "EventName": "STALL_SB_FULL",
-     "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
-   },
--  {,
-+  {
-     "EventCode": "0xE0",
-     "EventName": "OTHER_IQ_DEP_STALL",
-     "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
-   },
--  {,
-+  {
-     "EventCode": "0xE1",
-     "EventName": "IC_DEP_STALL",
-     "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
-   },
--  {,
-+  {
-     "EventCode": "0xE2",
-     "EventName": "IUTLB_DEP_STALL",
-     "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
-   },
--  {,
-+  {
-     "EventCode": "0xE3",
-     "EventName": "DECODE_DEP_STALL",
-     "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
-   },
--  {,
-+  {
-     "EventCode": "0xE4",
-     "EventName": "OTHER_INTERLOCK_STALL",
-     "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
-   },
--  {,
-+  {
-     "EventCode": "0xE5",
-     "EventName": "AGU_DEP_STALL",
-     "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
-   },
--  {,
-+  {
-     "EventCode": "0xE6",
-     "EventName": "SIMD_DEP_STALL",
-     "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
-   },
--  {,
-+  {
-     "EventCode": "0xE7",
-     "EventName": "LD_DEP_STALL",
-     "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
-   },
--  {,
-+  {
-     "EventCode": "0xE8",
-     "EventName": "ST_DEP_STALL",
-     "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
+diff --git a/tools/perf/pmu-events/README b/tools/perf/pmu-events/README
+index 2407abc..655286f 100644
+--- a/tools/perf/pmu-events/README
++++ b/tools/perf/pmu-events/README
+@@ -28,6 +28,10 @@ sub directory. Thus for the Silvermont X86 CPU:
+ 	Cache.json 	Memory.json 	Virtual-Memory.json
+ 	Frontend.json 	Pipeline.json
+ 
++The JSONs folder for a CPU model/family may be placed in the root arch
++folder, or may be placed in a vendor sub-folder under the arch folder
++for instances where the arch and vendor are not the same.
++
+ Using the JSON files and the mapfile, 'jevents' generates the C source file,
+ 'pmu-events.c', which encodes the two sets of tables:
+ 
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index 9e0a21e..eb183b1 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -588,7 +588,7 @@ static char *file_name_to_table_name(char *fname)
+ 	 * Derive rest of table name from basename of the JSON file,
+ 	 * replacing hyphens and stripping out .json suffix.
+ 	 */
+-	n = asprintf(&tblname, "pme_%s", basename(fname));
++	n = asprintf(&tblname, "pme_%s", fname);
+ 	if (n < 0) {
+ 		pr_info("%s: asprintf() error %s for file %s\n", prog,
+ 				strerror(errno), fname);
+@@ -598,7 +598,7 @@ static char *file_name_to_table_name(char *fname)
+ 	for (i = 0; i < strlen(tblname); i++) {
+ 		c = tblname[i];
+ 
+-		if (c == '-')
++		if (c == '-' || c == '/')
+ 			tblname[i] = '_';
+ 		else if (c == '.') {
+ 			tblname[i] = '\0';
+@@ -755,15 +755,65 @@ static int get_maxfds(void)
+ static FILE *eventsfp;
+ static char *mapfile;
+ 
++static int is_leaf_dir(const char *fpath)
++{
++	DIR *d;
++	struct dirent *dir;
++	int res = 1;
++
++	d = opendir(fpath);
++	if (!d)
++		return 0;
++
++	while ((dir = readdir(d)) != NULL) {
++		if (dir->d_type == DT_DIR && dir->d_name[0] != '.') {
++			res = 0;
++			break;
++		} else if (dir->d_type == DT_UNKNOWN) {
++			char path[PATH_MAX];
++			struct stat st;
++
++			sprintf(path, "%s/%s", fpath, dir->d_name);
++			if (stat(path, &st))
++				break;
++
++			if (S_ISDIR(st.st_mode)) {
++				res = 0;
++				break;
++			}
++		}
++	}
++
++	closedir(d);
++
++	return res;
++}
++
+ static int process_one_file(const char *fpath, const struct stat *sb,
+ 			    int typeflag, struct FTW *ftwbuf)
+ {
+-	char *tblname, *bname  = (char *) fpath + ftwbuf->base;
++	char *tblname, *bname;
+ 	int is_dir  = typeflag == FTW_D;
+ 	int is_file = typeflag == FTW_F;
+ 	int level   = ftwbuf->level;
+ 	int err = 0;
+ 
++	if (level == 2 && is_dir) {
++		/*
++		 * For level 2 directory, bname will include parent name,
++		 * like vendor/platform. So search back from platform dir
++		 * to find this.
++		 */
++		bname = (char *) fpath + ftwbuf->base - 2;
++		for (;;) {
++			if (*bname == '/')
++				break;
++			bname--;
++		}
++		bname++;
++	} else
++		bname = (char *) fpath + ftwbuf->base;
++
+ 	pr_debug("%s %d %7jd %-20s %s\n",
+ 		 is_file ? "f" : is_dir ? "d" : "x",
+ 		 level, sb->st_size, bname, fpath);
+@@ -773,7 +823,7 @@ static int process_one_file(const char *fpath, const struct stat *sb,
+ 		return 0;
+ 
+ 	/* model directory, reset topic */
+-	if (level == 1 && is_dir) {
++	if (level == 1 && is_dir && is_leaf_dir(fpath)) {
+ 		if (close_table)
+ 			print_events_table_suffix(eventsfp);
+ 
+@@ -791,6 +841,18 @@ static int process_one_file(const char *fpath, const struct stat *sb,
+ 
+ 		print_events_table_prefix(eventsfp, tblname);
+ 		return 0;
++	} else if (level == 2 && is_dir) {
++		if (close_table)
++			print_events_table_suffix(eventsfp);
++
++		tblname = file_name_to_table_name(bname);
++		if (!tblname) {
++			pr_info("%s: Error determining table name for %s, exiting\n",
++				prog, bname);
++			return -1;
++		}
++
++		print_events_table_prefix(eventsfp, tblname);
+ 	}
+ 
+ 	/*
 -- 
 1.9.1
