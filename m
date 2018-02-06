@@ -1,72 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752026AbeBFNxX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 08:53:23 -0500
-Received: from sauhun.de ([88.99.104.3]:37952 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750990AbeBFNxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:53:12 -0500
-Date: Tue, 6 Feb 2018 14:53:10 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
- with a mask
-Message-ID: <20180206135310.deiaz55xemc26xn4@ninjato>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
- <20180206131044.oso33fvv553trrd7@mwanda>
- <alpine.DEB.2.20.1802061414340.3306@hadrien>
- <20180206132335.luut6em3kut7f7ej@mwanda>
- <alpine.DEB.2.20.1802061439110.3306@hadrien>
+        id S1752111AbeBFNxj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 08:53:39 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:57072 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751995AbeBFNxU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 08:53:20 -0500
+Subject: Re: [PATCH] ARM: dts: da850-evm: add clock properties to the nand
+ node
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180205155222.22189-1-brgl@bgdev.pl>
+ <3f171f6a-bcea-65ec-d56d-f6ae24660f34@ti.com>
+ <CAMpxmJUDbwkcJt_kx9GX+qY10xiGAp-j3+kXM-q3WP1VGwr0UQ@mail.gmail.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <54dbdb98-e0e4-c8c9-fec4-2f050745d9be@ti.com>
+Date: Tue, 6 Feb 2018 19:21:54 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nv4vdnzmkzj6i6tc"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1802061439110.3306@hadrien>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAMpxmJUDbwkcJt_kx9GX+qY10xiGAp-j3+kXM-q3WP1VGwr0UQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tuesday 06 February 2018 06:38 PM, Bartosz Golaszewski wrote:
+> 2018-02-06 12:07 GMT+01:00 Sekhar Nori <nsekhar@ti.com>:
+>> On Monday 05 February 2018 09:22 PM, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> Make nand work with the common clock framework by specifying which
+>>> clock should be used and what name to look up.
+>>>
+>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>> ---
+>>>  arch/arm/boot/dts/da850-evm.dts | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
+>>> index a86a8a1816f2..2602ad8e99ee 100644
+>>> --- a/arch/arm/boot/dts/da850-evm.dts
+>>> +++ b/arch/arm/boot/dts/da850-evm.dts
+>>> @@ -296,6 +296,9 @@
+>>>                       reg = <0 0x02000000 0x02000000
+>>>                              1 0x00000000 0x00008000>;
+>>>
+>>> +                     clocks = <&psc0 3>;
+>>> +                     clock-names = "aemif";
+>>
+>> Looks like this is being added only to satisfy the devm_clk_get() call
+>> in nand_davinci_probe() which I think is superfluous since we also
+>> enable the same clock in aemif_probe().
+>>
+>> Perhaps the better solution is to drip the clk code in
+>> drivers/mtd/nand/davinci_nand.c and shift legacy code to start using
+>> drivers/memory/aemif.c as well? This way we can also drop
+>> arch/arm/mach-davinci/aemif.c
+>>
+>> Thanks,
+>> Sekhar
+> 
+> Yes, this sounds good, but I think we should leave it for later as an
+> additional improvement, once everything else is in place. I think
+> these patches should be applied together with David's series in order
+> to not break the support on davinci boards and the aemif work would go
+> in later as a follow-up. How about that?
 
---nv4vdnzmkzj6i6tc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+No, I dont think we should add temporary hacks to DT to work around
+driver issues (I do think its a hack since the clock belongs to aemif
+module not NAND flash).
 
-Hi Julia,
+An easier driver hack might be to not treat devm_clk_get() failure in
+davinci_nand.c as catastrophic. It will safely fail in DT case and we
+should get the clock in legacy boot case.
 
-> and got the results below.  I can make a version for the kernel shortly.
+I think we are looking at a driver update dependency anyway.
 
-It should probably take care of right-shifting, too?
+> 
+> Also: I don't have any keystone board to test whether such changes
+> don't break the nand support there. Would you be able to test this?
+
+Yes, I have access to those boards.
 
 Thanks,
-
-   Wolfram
-
-
---nv4vdnzmkzj6i6tc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp5s0IACgkQFA3kzBSg
-KbZnMhAAtcrOwmDhNVIvu1qLxCpz0Xl6aCJJhY0/KEasBtIo5m/FnhexSgHvEEob
-O1I2LBjvA4zVL97MC/HFwVQswap8pi9UiGitOE/eq1rKeUa6htla/YLFEXKCesAx
-hj/W26/hc755ZjIzo5uQN9/sno6YV2E9nVeEvW+9mtnWyglwek1cT6Lhd1Oaqt3N
-c86qDxwPgSAiu20rwkb6HSVoRDFGzLYJXgnlgKajQorK05iIkosiUvwOYVj8pjR7
-JvygMZBIE4Qo3jjVCyDZ7rWiWWUdjV3Suk54TPuttPOEzcyyFMy72lWyP6liN9CD
-qVRLx7q8eRtOJux+rrm/HwlRjL+rFFTq2mplbhZPDsW2Pzwj/KjSqdXSQa1DGael
-uAREsa2dfWTtrXasUfvsFYNIIdeaFuCvjXzLP0QTQG52NG/80Lr+/NzDuIXKz573
-xo4IgwA3WLGPcglZRjDpYyjyHxjY2gx4aV+qoMo8Pjyz+hqeggUb2mMRHDJ1p60+
-4DxF+TjefKuwBhcZ4UQOAOo2rU8Cm0ToJDx5fw1swge9KL9H9QO71MT7zW6k43+U
-9XLN5z7ZUXqO+7fH11tUuU3n/WLvMXwHiRkIP8gbX0Xavyyc1C5EecFpw3r9Uwqr
-4uXuZVvNkUYWddXemoLVnzIGJf8jC3onir7DqXfg53T8QMVqjZE=
-=yQRN
------END PGP SIGNATURE-----
-
---nv4vdnzmkzj6i6tc--
+Sekhar
