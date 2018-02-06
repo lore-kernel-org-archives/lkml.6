@@ -1,97 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752593AbeBFCZu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:25:50 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51961 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752568AbeBFCZh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:25:37 -0500
-X-Google-Smtp-Source: AH8x2272Q6hLFFX3MItmKxT0lepu4h1p9R/bU/e4w+qIyZOx3m47FV/p8x+DfONGkgJDmMqYc/s4qfETTUerFVmp+xM=
-MIME-Version: 1.0
-In-Reply-To: <CAOMZO5CzDXxyzG9yC+26X4Ubek0bWMa_gxfBc4iQpBGxhbQ5DA@mail.gmail.com>
-References: <20180206000501.14641-1-yungching0725@gmail.com> <CAOMZO5CzDXxyzG9yC+26X4Ubek0bWMa_gxfBc4iQpBGxhbQ5DA@mail.gmail.com>
-From: Yung-Ching LIN <yungching0725@gmail.com>
-Date: Mon, 5 Feb 2018 18:25:36 -0800
-Message-ID: <CACGtqyy1gtkZ+RD2aBzNZFGSXZTJAut5j+2yai8mWNHN1pkj+A@mail.gmail.com>
-Subject: Re: [v2] ARM: dts: imx: Add support for Advantech DMS-BA16
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752611AbeBFC00 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:26:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752105AbeBFC0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 21:26:18 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1FD7214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Tue, 6 Feb 2018 11:26:14 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] apparent bogosity in
+ unregister_ftrace_function_probe_func()
+Message-Id: <20180206112614.80e2a9cbfc55954ab904c3e3@kernel.org>
+In-Reply-To: <20180205175433.6cd369db@gandalf.local.home>
+References: <20180127031706.GE13338@ZenIV.linux.org.uk>
+        <CAJwJo6YD4ds-AHZRm-zEyGCnu+PS-6g_FFeAmHDfaKQxQAUr=A@mail.gmail.com>
+        <20180127170748.GF13338@ZenIV.linux.org.uk>
+        <20180129225942.f2aec926e2ea223c52c34169@kernel.org>
+        <20180205175433.6cd369db@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabio,
+On Mon, 5 Feb 2018 17:54:33 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Thank you for your comments.
-Will provide the v3 for the fixes
+> On Mon, 29 Jan 2018 22:59:42 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > On Sat, 27 Jan 2018 17:07:48 +0000
+> > Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> > 
+> > > On Sat, Jan 27, 2018 at 01:59:56PM +0000, Dmitry Safonov wrote:  
+> > > >   
+> > > > > Incidentally, shouldn't filter_parse_regex("*[ab]", 5, &s, &not)
+> > > > > end up with s = "*[ab]"?  We are returning MATCH_GLOB, after all,
+> > > > > so we want the entire pattern there...  I would've assumed that
+> > > > > this is what the code in unregister_ftrace_function_probe_func()
+> > > > > is trying to compensate for, the first oddity predates MATCH_GLOB...  
+> > > > 
+> > > > No, I don't think filter_parse_regex() should return the full regex..
+> > > > ftrace_match() expects search would be processed string, not a glob.
+> > > > So, this unnecessary assignment broke unregistering multiple kprobs
+> > > > with a middle/end pattern..  
+> > > 
+> > > For substring - sure, but what about something like "*a*b" and "a*b"?
+> > > AFAICS, filter_parse_regex() ends up with identical results in both
+> > > cases - MATCH_GLOB and *search = "a*b".  And no way for the caller
+> > > to tell one from another.
+> > > 
+> > > IOW, it's a different bug sometimes obscured by the one in
+> > > unregister_ftrace_function_probe_func().  filter_parse_regex()
+> > > ought to revert to *search = buff; when it decides to return
+> > > MATCH_GLOB.  Or something like
+> > >         for (i = 0; i < len; i++) {
+> > >                 if (buff[i] == '*') {
+> > >                         if (!i) {
+> > >                                 type = MATCH_END_ONLY;
+> > >                         } else if (i == len - 1) {
+> > >                                 if (type == MATCH_END_ONLY)
+> > >                                         type = MATCH_MIDDLE_ONLY;
+> > >                                 else
+> > >                                         type = MATCH_FRONT_ONLY;
+> > >                                 buff[i] = 0;
+> > >                                 break;
+> > >                         } else {        /* pattern continues, use full glob */
+> > >                                 return MATCH_GLOB;
+> > >                         }
+> > >                 } else if (strchr("[?\\", buff[i])) {
+> > >                         return MATCH_GLOB;
+> > >                 }
+> > >         }
+> > >         if (buff[0] == '*')
+> > >                 *search = buff + 1;
+> > > for that matter - i.e. delay that "we want everything past the first character"
+> > > until we are certain it's not a MATCH_GLOB.  
+> > 
+> > Looks nice to me!
+> > 
+> 
+> I'll implement this code giving Al credit and referencing this email
+> thread. Anyone have objections to that?
 
-On Mon, Feb 5, 2018 at 4:13 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> Hi Ken,
->
-> On Mon, Feb 5, 2018 at 10:05 PM, Ken Lin <yungching0725@gmail.com> wrote:
->
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index ade7a38543dc..585c3da4a47a 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -435,6 +435,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
->>         imx6q-dfi-fs700-m60.dtb \
->>         imx6q-display5-tianma-tm070-1280x768.dtb \
->>         imx6q-dmo-edmqmx6.dtb \
->> +       imx6q-dms-ba16.dtb \
->>         imx6q-evi.dtb \
->>         imx6q-gk802.dtb \
->>         imx6q-gw51xx.dtb \
->> diff --git a/arch/arm/boot/dts/imx6q-dms-ba16.dts b/arch/arm/boot/dts/imx6q-dms-ba16.dts
->> new file mode 100644
->> index 000000000000..055b88a6096d
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/imx6q-dms-ba16.dts
->> @@ -0,0 +1,146 @@
->> +/*
->> + * Copyright 2018 Advantech Corporation
->> + *
->> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->
-> You should put the SPDX line as the first line and it should start with //:
->
-> // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->
->> + */
->> +
->> +
->
-> No need for two blank lines. One is enough.
->
->> +/dts-v1/;
->> +
-> ...
->
->> +&ecspi5 {
->> +       num-cs = <1>;
->
-> You can remove this property.
->
->
->> +       cs-gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
->> +       pinctrl-names = "default";
->> +       pinctrl-0 = <&pinctrl_ecspi5>;
->> +       status = "okay";
->> +
->> +       m25_eeprom: m25p80@0 {
->> +               compatible = "atmel,at25";
->
-> According to Documentation/devicetree/bindings/eeprom/at25.txt this
-> should have the following format:
->
-> compatible : Should be "<vendor>,<type>", and generic value "atmel,at25".
+No, that code looks good to me. :)
+
+BTW, did you also remove "search = buff;" line in 
+unregister_ftrace_function_probe_func() too?
+
+Thanks!
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
