@@ -1,337 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeBFJ1f (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:27:35 -0500
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:37686 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752213AbeBFJ11 (ORCPT
+        id S1752539AbeBFJ3B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:29:01 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46571 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752302AbeBFJ2t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:27:27 -0500
-X-Google-Smtp-Source: AH8x227SjH+HPuArrUtU2C0IvuuL+Ew78Sy9L0pKSxrJ4+LTc5CpWmtptoTk9qpy/eJwHvYbMRYcszT5vibqWSuQr4Y=
-MIME-Version: 1.0
-In-Reply-To: <bf06b0c0-b188-68ba-737b-f42d33c0d5dc@lightnvm.io>
-References: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
- <1517364411-22386-4-git-send-email-javier@cnexlabs.com> <bf06b0c0-b188-68ba-737b-f42d33c0d5dc@lightnvm.io>
-From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
-Date: Tue, 6 Feb 2018 10:27:25 +0100
-Message-ID: <CANr-nt1+=ikX6XUh3FKG_vgcBWzVkzdrWei82YRdHPTVPpxwuw@mail.gmail.com>
-Subject: Re: [PATCH 4/5] lightnvm: pblk: add padding distribution sysfs attribute
-To: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-Cc: =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 6 Feb 2018 04:28:49 -0500
+X-Google-Smtp-Source: AH8x2268F8epp31CLfRSFrAlWrIO6Y1GCA0iUv8gOKB3pxdRGX2fJalOPPZxxfVAgYq85oaHYv4njQ==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, arnd@arndb.de
+Cc: chunyan.zhang@spreadtrum.com, orson.zhai@spreadtrum.com,
+        mathieu.poirier@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        broonie@kernel.org, baolin.wang@linaro.org
+Subject: [PATCH 1/7] arm64: dts: Add hwspinlock node for Spreadtrum SC9860
+Date: Tue,  6 Feb 2018 17:28:20 +0800
+Message-Id: <410b2f2d3f3f019c96ec31213647c41cd7f1174d.1517908478.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w169Rhx1019792
 
-Hi Matias,
+The Spreadtrum SC9860 platform only has one hardware spinlock device,
+which is located on AON system of Spreadtrum SC9860 platform.
 
-On Wed, Jan 31, 2018 at 9:44 AM, Matias Bjørling <mb@lightnvm.io> wrote:
-> On 01/31/2018 03:06 AM, Javier González wrote:
->>
->> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
->>
->> When pblk receives a sync, all data up to that point in the write buffer
->> must be comitted to persistent storage, and as flash memory comes with a
->> minimal write size there is a significant cost involved both in terms
->> of time for completing the sync and in terms of write amplification
->> padded sectors for filling up to the minimal write size.
->>
->> In order to get a better understanding of the costs involved for syncs,
->> Add a sysfs attribute to pblk: padded_dist, showing a normalized
->> distribution of sectors padded. In order to facilitate measurements of
->> specific workloads during the lifetime of the pblk instance, the
->> distribution can be reset by writing 0 to the attribute.
->>
->> Do this by introducing counters for each possible padding:
->> {0..(minimal write size - 1)} and calculate the normalized distribution
->> when showing the attribute.
->>
->> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
->> Signed-off-by: Javier González <javier@cnexlabs.com>
->> ---
->>   drivers/lightnvm/pblk-init.c  | 16 ++++++++--
->>   drivers/lightnvm/pblk-rb.c    | 15 +++++-----
->>   drivers/lightnvm/pblk-sysfs.c | 68
->> +++++++++++++++++++++++++++++++++++++++++++
->>   drivers/lightnvm/pblk.h       |  6 +++-
->>   4 files changed, 95 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
->> index 7eedc5daebc8..a5e3510c0f38 100644
->> --- a/drivers/lightnvm/pblk-init.c
->> +++ b/drivers/lightnvm/pblk-init.c
->> @@ -921,6 +921,7 @@ static void pblk_free(struct pblk *pblk)
->>   {
->>         pblk_luns_free(pblk);
->>         pblk_lines_free(pblk);
->> +       kfree(pblk->pad_dist);
->>         pblk_line_meta_free(pblk);
->>         pblk_core_free(pblk);
->>         pblk_l2p_free(pblk);
->> @@ -998,11 +999,13 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
->> struct gendisk *tdisk,
->>         pblk->pad_rst_wa = 0;
->>         pblk->gc_rst_wa = 0;
->>   +     atomic_long_set(&pblk->nr_flush, 0);
->> +       pblk->nr_flush_rst = 0;
->> +
->>   #ifdef CONFIG_NVM_DEBUG
->>         atomic_long_set(&pblk->inflight_writes, 0);
->>         atomic_long_set(&pblk->padded_writes, 0);
->>         atomic_long_set(&pblk->padded_wb, 0);
->> -       atomic_long_set(&pblk->nr_flush, 0);
->>         atomic_long_set(&pblk->req_writes, 0);
->>         atomic_long_set(&pblk->sub_writes, 0);
->>         atomic_long_set(&pblk->sync_writes, 0);
->> @@ -1034,10 +1037,17 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
->> struct gendisk *tdisk,
->>                 goto fail_free_luns;
->>         }
->>   +     pblk->pad_dist = kzalloc((pblk->min_write_pgs - 1) *
->> sizeof(atomic64_t),
->> +                                GFP_KERNEL);
->> +       if (!pblk->pad_dist) {
->> +               ret = -ENOMEM;
->> +               goto fail_free_line_meta;
->> +       }
->> +
->>         ret = pblk_core_init(pblk);
->>         if (ret) {
->>                 pr_err("pblk: could not initialize core\n");
->> -               goto fail_free_line_meta;
->> +               goto fail_free_pad_dist;
->>         }
->>         ret = pblk_l2p_init(pblk);
->> @@ -1097,6 +1107,8 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
->> struct gendisk *tdisk,
->>         pblk_l2p_free(pblk);
->>   fail_free_core:
->>         pblk_core_free(pblk);
->> +fail_free_pad_dist:
->> +       kfree(pblk->pad_dist);
->>   fail_free_line_meta:
->>         pblk_line_meta_free(pblk);
->>   fail_free_luns:
->> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
->> index 7044b5599cc4..264372d7b537 100644
->> --- a/drivers/lightnvm/pblk-rb.c
->> +++ b/drivers/lightnvm/pblk-rb.c
->> @@ -437,9 +437,7 @@ static int pblk_rb_may_write_flush(struct pblk_rb *rb,
->> unsigned int nr_entries,
->>         if (bio->bi_opf & REQ_PREFLUSH) {
->>                 struct pblk *pblk = container_of(rb, struct pblk, rwb);
->>   -#ifdef CONFIG_NVM_DEBUG
->>                 atomic_long_inc(&pblk->nr_flush);
->> -#endif
->>                 if (pblk_rb_flush_point_set(&pblk->rwb, bio, mem))
->>                         *io_ret = NVM_IO_OK;
->>         }
->> @@ -620,14 +618,17 @@ unsigned int pblk_rb_read_to_bio(struct pblk_rb *rb,
->> struct nvm_rq *rqd,
->>                         pr_err("pblk: could not pad page in write bio\n");
->>                         return NVM_IO_ERR;
->>                 }
->> +
->> +               if (pad < pblk->min_write_pgs)
->> +                       atomic64_inc(&pblk->pad_dist[pad - 1]);
->> +               else
->> +                       pr_warn("pblk: padding more than min. sectors\n");
->
->
-> Curious, when would this happen? Would it be an implementation error or
-> something a user did wrong?
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ arch/arm64/boot/dts/sprd/whale2.dtsi |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-This would be an implementation error - and this check is just a
-safeguard to make sure we won't go out of bounds when updating the
-statistics.
-
->
->
->> +
->> +               atomic64_add(pad, &pblk->pad_wa);
->>         }
->>   -     atomic64_add(pad, &((struct pblk *)
->> -                       (container_of(rb, struct pblk, rwb)))->pad_wa);
->> -
->>   #ifdef CONFIG_NVM_DEBUG
->> -       atomic_long_add(pad, &((struct pblk *)
->> -                       (container_of(rb, struct pblk,
->> rwb)))->padded_writes);
->> +       atomic_long_add(pad, &pblk->padded_writes);
->>   #endif
->>         return NVM_IO_OK;
->> diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
->> index 4804bbd32d5f..f902ac00d071 100644
->> --- a/drivers/lightnvm/pblk-sysfs.c
->> +++ b/drivers/lightnvm/pblk-sysfs.c
->> @@ -341,6 +341,38 @@ static ssize_t pblk_sysfs_get_write_amp_trip(struct
->> pblk *pblk, char *page)
->>                 atomic64_read(&pblk->pad_wa) - pblk->pad_rst_wa, page);
->>   }
->>   +static ssize_t pblk_sysfs_get_padding_dist(struct pblk *pblk, char
->> *page)
->> +{
->> +       int sz = 0;
->> +       unsigned long long total;
->> +       unsigned long long total_buckets = 0;
->> +       int buckets = pblk->min_write_pgs - 1;
->> +       int i;
->> +
->> +       total = atomic64_read(&pblk->nr_flush) - pblk->nr_flush_rst;
->> +
->> +       for (i = 0; i < buckets; i++)
->> +               total_buckets += atomic64_read(&pblk->pad_dist[i]);
->> +
->
->
-> total_buckets are first used later. The calculation could be moved below the
-> next statement.
-
-I saw that you fixed this on the core branch, thanks.
-
->
->
->> +       if (!total) {
->> +               for (i = 0; i < (buckets + 1); i++)
->> +                       sz += snprintf(page + sz, PAGE_SIZE - sz,
->> +                               "%d:0 ", i);
->> +               sz += snprintf(page + sz, PAGE_SIZE - sz, "\n");
->> +
->> +               return sz;
->> +       }
->> +
->> +       sz += snprintf(page + sz, PAGE_SIZE - sz, "0:%lld%% ",
->> +               ((total - total_buckets) * 100) / total);
->> +       for (i = 0; i < buckets; i++)
->> +               sz += snprintf(page + sz, PAGE_SIZE - sz, "%d:%lld%% ", i
->> + 1,
->> +                       (atomic64_read(&pblk->pad_dist[i]) * 100) /
->> total);
->> +       sz += snprintf(page + sz, PAGE_SIZE - sz, "\n");
->> +
->> +       return sz;
->> +}
->> +
->>   #ifdef CONFIG_NVM_DEBUG
->>   static ssize_t pblk_sysfs_stats_debug(struct pblk *pblk, char *page)
->>   {
->> @@ -427,6 +459,32 @@ static ssize_t pblk_sysfs_set_write_amp_trip(struct
->> pblk *pblk,
->>   }
->>     +static ssize_t pblk_sysfs_set_padding_dist(struct pblk *pblk,
->> +                       const char *page, size_t len)
->> +{
->> +       size_t c_len;
->> +       int reset_value;
->> +       int buckets = pblk->min_write_pgs - 1;
->> +       int i;
->> +
->> +       c_len = strcspn(page, "\n");
->> +       if (c_len >= len)
->> +               return -EINVAL;
->> +
->> +       if (kstrtouint(page, 0, &reset_value))
->> +               return -EINVAL;
->> +
->> +       if (reset_value !=  0)
->> +               return -EINVAL;
->> +
->> +       for (i = 0; i < buckets; i++)
->> +               atomic64_set(&pblk->pad_dist[i], 0);
->> +
->> +       pblk->nr_flush_rst = atomic64_read(&pblk->nr_flush);
->> +
->> +       return len;
->> +}
->> +
->>   static struct attribute sys_write_luns = {
->>         .name = "write_luns",
->>         .mode = 0444,
->> @@ -487,6 +545,11 @@ static struct attribute sys_write_amp_trip = {
->>         .mode = 0644,
->>   };
->>   +static struct attribute sys_padding_dist = {
->> +       .name = "padding_dist",
->> +       .mode = 0644,
->> +};
->> +
->>   #ifdef CONFIG_NVM_DEBUG
->>   static struct attribute sys_stats_debug_attr = {
->>         .name = "stats",
->> @@ -507,6 +570,7 @@ static struct attribute *pblk_attrs[] = {
->>         &sys_lines_info_attr,
->>         &sys_write_amp_mileage,
->>         &sys_write_amp_trip,
->> +       &sys_padding_dist,
->>   #ifdef CONFIG_NVM_DEBUG
->>         &sys_stats_debug_attr,
->>   #endif
->> @@ -540,6 +604,8 @@ static ssize_t pblk_sysfs_show(struct kobject *kobj,
->> struct attribute *attr,
->>                 return pblk_sysfs_get_write_amp_mileage(pblk, buf);
->>         else if (strcmp(attr->name, "write_amp_trip") == 0)
->>                 return pblk_sysfs_get_write_amp_trip(pblk, buf);
->> +       else if (strcmp(attr->name, "padding_dist") == 0)
->> +               return pblk_sysfs_get_padding_dist(pblk, buf);
->>   #ifdef CONFIG_NVM_DEBUG
->>         else if (strcmp(attr->name, "stats") == 0)
->>                 return pblk_sysfs_stats_debug(pblk, buf);
->> @@ -558,6 +624,8 @@ static ssize_t pblk_sysfs_store(struct kobject *kobj,
->> struct attribute *attr,
->>                 return pblk_sysfs_set_sec_per_write(pblk, buf, len);
->>         else if (strcmp(attr->name, "write_amp_trip") == 0)
->>                 return pblk_sysfs_set_write_amp_trip(pblk, buf, len);
->> +       else if (strcmp(attr->name, "padding_dist") == 0)
->> +               return pblk_sysfs_set_padding_dist(pblk, buf, len);
->>         return 0;
->>   }
->>   diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
->> index 4b7d8618631f..88720e2441c0 100644
->> --- a/drivers/lightnvm/pblk.h
->> +++ b/drivers/lightnvm/pblk.h
->> @@ -626,12 +626,16 @@ struct pblk {
->>         u64 gc_rst_wa;
->>         u64 pad_rst_wa;
->>   +     /* Counters used for calculating padding distribution */
->> +       atomic64_t *pad_dist;           /* Padding distribution buckets */
->> +       u64 nr_flush_rst;               /* Flushes reset value for pad
->> dist.*/
->> +       atomic_long_t nr_flush;         /* Number of flush/fua I/O */
->> +
->>   #ifdef CONFIG_NVM_DEBUG
->>         /* Non-persistent debug counters, 4kb sector I/Os */
->>         atomic_long_t inflight_writes;  /* Inflight writes (user and gc)
->> */
->>         atomic_long_t padded_writes;    /* Sectors padded due to flush/fua
->> */
->>         atomic_long_t padded_wb;        /* Sectors padded in write buffer
->> */
->> -       atomic_long_t nr_flush;         /* Number of flush/fua I/O */
->>         atomic_long_t req_writes;       /* Sectors stored on write buffer
->> */
->>         atomic_long_t sub_writes;       /* Sectors submitted from buffer
->> */
->>         atomic_long_t sync_writes;      /* Sectors synced to media */
->>
->
-> Looks good to me. Let me know if you want to send a new patch, or if I may
-> make the change when I pick it up.
-
-Thanks for the review, i saw that you already reworked the patch a bit
-on your core branch.
-However, i found a build issue when building for i386, so i'll fix
-that and submit a V2(that includes your update)
-
-> Also, should the padding be stored in the on-disk metadata as well?
-
-I don't see the need to do this, as I believe one would only be
-interested in measuring the padding distribution on specific workloads
-- and this would not require persisting the counters.
-
-Thanks, Hans
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 328009c..b9cc0fb 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -6,6 +6,8 @@
+  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+  */
+ 
++#include <dt-bindings/clock/sprd,sc9860-clk.h>
++
+ / {
+ 	interrupt-parent = <&gic>;
+ 	#address-cells = <2>;
+@@ -104,6 +106,21 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		aon {
++			compatible = "simple-bus";
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++
++			hwlock: hwspinlock@40500000 {
++				compatible = "sprd,hwspinlock-r3p0";
++				reg = <0 0x40500000 0 0x1000>;
++				#hwlock-cells = <1>;
++				clock-names = "enable";
++				clocks = <&aon_gate CLK_SPLK_EB>;
++			};
++		};
+ 	};
+ 
+ 	ext_32k: ext_32k {
+-- 
+1.7.9.5
