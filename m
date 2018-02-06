@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753339AbeBFS3Q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:29:16 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36348 "EHLO mx1.redhat.com"
+        id S1753194AbeBFS30 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:29:26 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36344 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753232AbeBFS1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753228AbeBFS1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Feb 2018 13:27:48 -0500
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -12,66 +12,58 @@ Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 15/17] perf tools: Check if we read regular file in dso__load
-Date: Tue,  6 Feb 2018 19:18:11 +0100
-Message-Id: <20180206181813.10943-16-jolsa@kernel.org>
+Subject: [PATCH 10/17] perf tools: Generalize machine__set_kernel_mmap function
+Date: Tue,  6 Feb 2018 19:18:06 +0100
+Message-Id: <20180206181813.10943-11-jolsa@kernel.org>
 In-Reply-To: <20180206181813.10943-1-jolsa@kernel.org>
 References: <20180206181813.10943-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current code in dso__load calls the is_regular_file function,
-but it checks its return value only after calling symsrc__init.
+So it could be called without event object, just with start
+and end values. It will be used in following patch.
 
-That can make symsrc__init block in elf_* functions on reading
-the file if the file happens to be device and not regular one.
-
-Make the check before calling symsrc__init.
-
-Link: http://lkml.kernel.org/n/tip-qm0sl764xzwvzgz0abqt6m46@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-u4hu7m5fmwwsscy6ki70hhq6@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/symbol.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ tools/perf/util/machine.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index fe15dafaef66..ea002b27b39d 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1580,9 +1580,7 @@ int dso__load(struct dso *dso, struct map *map)
- 	for (i = 0; i < DSO_BINARY_TYPE__SYMTAB_CNT; i++) {
- 		struct symsrc *ss = &ss_[ss_pos];
- 		bool next_slot = false;
--		bool is_reg;
- 		bool nsexit;
--		int sirc;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index f5c79110f0d1..7838fe56b0c9 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1260,15 +1260,15 @@ int machine__create_kernel_maps(struct machine *machine)
+ 	return 0;
+ }
  
- 		enum dso_binary_type symtab_type = binary_type_symtab[i];
+-static void machine__set_kernel_mmap_len(struct machine *machine,
+-					 union perf_event *event)
++static void machine__set_kernel_mmap(struct machine *machine,
++				     u64 start, u64 end)
+ {
+ 	int i;
  
-@@ -1599,18 +1597,15 @@ int dso__load(struct dso *dso, struct map *map)
- 		if (nsexit)
- 			nsinfo__mountns_exit(&nsc);
- 
--		is_reg = is_regular_file(name);
--		sirc = symsrc__init(ss, dso, name, symtab_type);
-+		if (!is_regular_file(name))
-+			continue;
+ 	for (i = 0; i < MAP__NR_TYPES; i++) {
+-		machine->vmlinux_maps[i]->start = event->mmap.start;
+-		machine->vmlinux_maps[i]->end   = (event->mmap.start +
+-						   event->mmap.len);
++		machine->vmlinux_maps[i]->start = start;
++		machine->vmlinux_maps[i]->end   = end;
 +
-+		if (symsrc__init(ss, dso, name, symtab_type) < 0)
-+			continue;
+ 		/*
+ 		 * Be a bit paranoid here, some perf.data file came with
+ 		 * a zero sized synthesized MMAP event for the kernel.
+@@ -1373,7 +1373,8 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
+ 		if (strstr(kernel->long_name, "vmlinux"))
+ 			dso__set_short_name(kernel, "[kernel.vmlinux]", false);
  
- 		if (nsexit)
- 			nsinfo__mountns_enter(dso->nsinfo, &nsc);
+-		machine__set_kernel_mmap_len(machine, event);
++		machine__set_kernel_mmap(machine, event->mmap.start,
++					 event->mmap.start + event->mmap.len);
  
--		if (!is_reg || sirc < 0) {
--			if (sirc >= 0)
--				symsrc__destroy(ss);
--			continue;
--		}
--
- 		if (!syms_ss && symsrc__has_symtab(ss)) {
- 			syms_ss = ss;
- 			next_slot = true;
+ 		/*
+ 		 * Avoid using a zero address (kptr_restrict) for the ref reloc
 -- 
 2.13.6
