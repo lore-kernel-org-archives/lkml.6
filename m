@@ -1,93 +1,109 @@
-Return-Path: <pombredanne@nexb.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518427953; cv=none;
+Return-Path: <prvs=568516f6c=stanislav.nijnikov@wdc.com>
+X-Google-Smtp-Source: AH8x224fkdKQIbW1Dv7HmdrObU6z/T+a6gXXtCF5/S1zlh4Gj/R9g8slgcTe6A//lLZGRlVr0K2o
+ARC-Seal: i=1; a=rsa-sha256; t=1517933207; cv=none;
         d=google.com; s=arc-20160816;
-        b=ENvp9PiOz3Jg8W/U21WlysrOcJktFLUtdhMoJBXARi5ppFx7hF83sGSihQ3qtE8sjX
-         A/DQfa8mudoClJWs9RTWXrtzHHeyEoNkWchy3O3Jc/xGTnKrX+TYujwCKuzt+L4XfWZC
-         l4I9kmvuPwa9YLaMsAH/KvRxKMiUPGn0GO8BGpwZZZgydT+8mfpW+VvitcRiOKpuAggA
-         6zwy0E+K9n/32tjhxt6ZIRqJ1OGRHMgIcIehfx4p3CgA2oUub3sVbuglodzK3YNpePZT
-         Xwi925AjWu7daVTS3D2inNPnzdEzn5eMtBtbxkJb5JuiEfU3LaNOJXJn9LG+K270xloV
-         UcLQ==
+        b=j19es/LS7HEy7wEhvHGsRQfIaitjKvtjy73YBGvfzZLD9pfdzlQ4sgdB9Vi1eA/2pb
+         WVjqwhTBaV5eE44WoKBOGgCYuhmn7TmP3cky4XraMZxZEanVJSQ/R6TLlsKLrLhv5Teo
+         Ek0DKLb94c4qEmtFo/PkqlDMOfTHwFnzPURl8s6x3H0G9FM8MU0dHcmeugh/sdvh/cYw
+         a44yGLQj7a8MjD+dIDo4IqrzYq8D/PilsfPy8jocEVJl6MGu9F2LFm2XtvIA+om5cJUj
+         VMq0s46q75dOu0EERr+L8u4tVTGRqQPyIjXUU2acPYIXeUz+KtqsL6rfzyXYky1sVVIe
+         MEoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=GsnwT8Pov+d4FcSQhnhuvjcgROEnuAsalffIDMw1k9Y=;
-        b=WwFLxHQLtjMbYXCSGlPFhSxneCoXwzN330HJ67+fBv9nmpQBYein9NONyV71aX6Y+o
-         rlcPipRVZXmLNUU0dJWXcCzO7E8r4bH4gwZ2emb842mS/8bTu24+cPGH2ObKIPtntTmb
-         g1qXYJk2wI0Q/rUrrl8uMcy56yw8/cDNkKOqlP0Q5SOsvS/JZjQdeelDe8QbOgFzpuNM
-         JA99dIC9ad6H2+2yR8YeY8qo3O2GJlfU+ZgsGT6AviW9vYkTznqYYlmOK0YnHG0vGNxA
-         5ell2hLbMQFR8wRMr5hTaCpvHZ9LjoQjzWXags9HLEgJoJFHstK6EnR2xzP3zjAjCEME
-         RNOg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=4cU88MDpoPBtSIMcWlHT7f0S5PIvGlj2rhzhUAdS0mk=;
+        b=zUF/kUVjKQpW2WNyUmHpI2LRWvP3fcg0GmCHadJMnwrf3vpChgWDq0IsnxP1ozkmd3
+         I3fao8Df8aUtVKtXYIQDze8iTEA8d8nhAKo/EctnQE21o8WNXthaTzI5ij5BdXtZhMb8
+         /j4mQUc/cPoHAZ4AjeAeD2bHZSnjhmsQTp0o1Mv0STVEwRHDfC0Syl3mGygjeuw6Nc3J
+         /Hri2X0RYlaLDyiZ7wT8JF22qlM0+9Mbvb05QTfo47xGIJgHEPH1yg1FLXSKf5RedNRm
+         hh7IJMcD7ivHq+No4l/C/1iAwiLraIkcfN1txzpa0s6rb5B4XO1anFLoolczfYIXXOuM
+         iY5A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nexb-com.20150623.gappssmtp.com header.s=20150623 header.b=NXwmzXXq;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of pombredanne@nexb.com) smtp.mailfrom=pombredanne@nexb.com
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=SXbsTyfX;
+       spf=pass (google.com: domain of prvs=568516f6c=stanislav.nijnikov@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=568516f6c=stanislav.nijnikov@wdc.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nexb-com.20150623.gappssmtp.com header.s=20150623 header.b=NXwmzXXq;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of pombredanne@nexb.com) smtp.mailfrom=pombredanne@nexb.com
-X-Google-Smtp-Source: AH8x225S8fxZkHGwM+1dKqr3yuLgOwTqfvj/4UpQCesURdM82FlcJMRJbbAxpNz/C9d5ad+5oavjjeAj8vFNek6NPtM=
-MIME-Version: 1.0
-In-Reply-To: <20180212010602.GC44666@jaegeuk-macbookpro.roam.corp.google.com>
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=SXbsTyfX;
+       spf=pass (google.com: domain of prvs=568516f6c=stanislav.nijnikov@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=568516f6c=stanislav.nijnikov@wdc.com
+X-IronPort-AV: E=Sophos;i="5.46,469,1511798400";
+   d="scan'208";a="167144235"
+From: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+To: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	jaegeuk@kernel.org
+Cc: alex.lemberg@wdc.com,
+	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+Subject: [PATCH v5 08/11] scsi: host template attribute groups
+Date: Tue,  6 Feb 2018 18:06:20 +0200
+Message-Id: <1517933183-30892-9-git-send-email-stanislav.nijnikov@wdc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517933183-30892-1-git-send-email-stanislav.nijnikov@wdc.com>
 References: <1517933183-30892-1-git-send-email-stanislav.nijnikov@wdc.com>
- <1517933183-30892-2-git-send-email-stanislav.nijnikov@wdc.com> <20180212010602.GC44666@jaegeuk-macbookpro.roam.corp.google.com>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Mon, 12 Feb 2018 10:31:52 +0100
-Message-ID: <CAOFm3uFHiOm9nfM=PGcynDigJpxg3Ou3_j5kHf4xhbergc6JwQ@mail.gmail.com>
-Subject: Re: [PATCH v5 01/11] scsi: ufs: sysfs: attribute group for existing
- sysfs entries.
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>, linux-scsi@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, alex.lemberg@wdc.com,
-	Russell King <rmk@armlinux.org.uk>, Christoph Hellwig <hch@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591668315913733623?=
-X-GMAIL-MSGID: =?utf-8?q?1592187109829102281?=
+X-GMAIL-THRID: =?utf-8?q?1591668330658484083?=
+X-GMAIL-MSGID: =?utf-8?q?1591668330658484083?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Dear Stanislav,
+The patch introduces an additional field in the scsi_host_template
+structure - struct attribute_group **sdev_group.
+This field allows to define groups of attributes. It will provide an
+ability to use binary attributes as well as device attributes and
+to group them under subfolders if necessary.
 
-On Mon, Feb 12, 2018 at 2:06 AM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> On 02/06, Stanislav Nijnikov wrote:
->> This patch introduces attribute group to show existing sysfs entries.
->>
->> Signed-off-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+Signed-off-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/scsi/scsi_sysfs.c | 12 ++++++++++++
+ include/scsi/scsi_host.h  |  6 ++++++
+ 2 files changed, 18 insertions(+)
 
-<snip>
-
->> --- /dev/null
->> +++ b/drivers/scsi/ufs/ufs-sysfs.c
->> @@ -0,0 +1,156 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
-
-I commend you for using license ids here. But there is an issue with
-your attempt to use the latest and greatest license ids from SPDX:
-GPL-2.0-only is not a documented license id in our doc [1]
-Until this is updated (help welcomed including patching a few 10K+
-files) , this should be GPL-2.0 instead to avoid confusion and keep
-things homogeneous and tidy.
-
-FYI, using only the doc as the reference was brought forward by
-Russell King and Christoph Hellwig and in particular with this:
-
-On Thu, Nov 9, 2017 at 5:44 PM, Russell King <rmk@armlinux.org.uk> wrote:
-
-> I'd be more comfortable if we could have something in the kernel tree
-> that identifies the SPDX tags and their meaning, maybe with the
-> _standard_ file header for that license included, so there is no
-> argument about what any particular SPDX tag means.
-
-Based on this, Thomas Gleixner updated the doc alright following this
-important point. So, in case of doubt the doc should be the reference
-for this and nothing else. And if there are issue with the doc, then
-we can fix it with a patch ;)
-
-CC: Russell King <rmk@armlinux.org.uk>
-CC: Christoph Hellwig <hch@infradead.org>
-CC: Thomas Gleixner <tglx@linutronix.de>
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
+diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+index cbc0fe2..fe5d1cb 100644
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -1309,6 +1309,13 @@ int scsi_sysfs_add_sdev(struct scsi_device *sdev)
+ 		}
+ 	}
+ 
++	if (sdev->host->hostt->sdev_groups) {
++		error = sysfs_create_groups(&sdev->sdev_gendev.kobj,
++			sdev->host->hostt->sdev_groups);
++			if (error)
++				return error;
++	}
++
+ 	scsi_autopm_put_device(sdev);
+ 	return error;
+ }
+@@ -1326,6 +1333,11 @@ void __scsi_remove_device(struct scsi_device *sdev)
+ 	if (sdev->sdev_state == SDEV_DEL)
+ 		return;
+ 
++	if (sdev->host->hostt->sdev_groups) {
++		sysfs_remove_groups(&sdev->sdev_gendev.kobj,
++			sdev->host->hostt->sdev_groups);
++	}
++
+ 	if (sdev->is_visible) {
+ 		/*
+ 		 * If scsi_internal_target_block() is running concurrently,
+diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
+index 1a1df0d..1931758 100644
+--- a/include/scsi/scsi_host.h
++++ b/include/scsi/scsi_host.h
+@@ -477,6 +477,12 @@ struct scsi_host_template {
+ 	struct device_attribute **sdev_attrs;
+ 
+ 	/*
++	 * Pointer to the SCSI device attribute groups for this host,
++	 * NULL terminated.
++	 */
++	const struct attribute_group **sdev_groups;
++
++	/*
+ 	 * List of hosts per template.
+ 	 *
+ 	 * This is only for use by scsi_module.c for legacy templates.
 -- 
-Cordially
-Philippe Ombredanne
+2.7.4
