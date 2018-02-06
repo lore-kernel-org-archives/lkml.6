@@ -1,82 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752755AbeBFQy5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:54:57 -0500
-Received: from gateway24.websitewelcome.com ([192.185.50.66]:35147 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752961AbeBFQvU (ORCPT
+        id S1753201AbeBFQzI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:55:08 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:37296 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753010AbeBFQv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:51:20 -0500
-Date: Tue, 6 Feb 2018 10:51:18 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Jacob chen <jacob2.chen@rock-chips.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH v3 6/8] rockchip/rga: use 64-bit arithmetic instead of 32-bit
-Message-ID: <94fd0993cde02e18ee5d7f54707f8ce0d0341a0c.1517929336.git.gustavo@embeddedor.com>
-References: <cover.1517929336.git.gustavo@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1517929336.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1ej6Sl-000pK8-9Q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.4.238]:46798
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 36
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 6 Feb 2018 11:51:56 -0500
+X-Google-Smtp-Source: AH8x224pK9uLLAydMvFKt8Cs+02ZYY5WUdrqPEI6qplc2k1Htt+MO3lJ4JCczgP2VYFV3ljccwXOsg==
+From: konstantin@linuxfoundation.org
+To: corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Subject: [PATCH] Documentation/process: tweak pgp maintainer guide
+Date: Tue,  6 Feb 2018 11:51:19 -0500
+Message-Id: <20180206165119.18272-1-konstantin@linuxfoundation.org>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cast p to dma_addr_t in order to avoid a potential integer overflow.
-This variable is being used in a context that expects an expression
-of type dma_addr_t (u64).
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
 
-The expression p << PAGE_SHIFT is currently being evaluated
-using 32-bit arithmetic.
+Based on the feedback provided:
 
-Addresses-Coverity-ID: 1458347 ("Unintentional integer overflow")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+- Uniformly use lowercase k in "Linux kernel"
+- Give a one-sentence explanation of what subkeys are
+- Explain what signed commits might be useful for even if upstream
+  developers do not use them for much of anything
+- Admonish to set up gpg-agent if signed commits are turned on in
+  git config
+- Fix a typo reported by Luc Van Oostenryck
+
+Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
 ---
-Changes in v2:
- - Update subject and changelog to better reflect the proposed code change.
+ Documentation/process/maintainer-pgp-guide.rst | 50 +++++++++++++++++---------
+ 1 file changed, 34 insertions(+), 16 deletions(-)
 
-Changes in v3:
- - Mention the specific Coverity report in the commit message.
-
- drivers/media/platform/rockchip/rga/rga-buf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/rockchip/rga/rga-buf.c b/drivers/media/platform/rockchip/rga/rga-buf.c
-index 49cacc7..a43b57a 100644
---- a/drivers/media/platform/rockchip/rga/rga-buf.c
-+++ b/drivers/media/platform/rockchip/rga/rga-buf.c
-@@ -140,7 +140,8 @@ void rga_buf_map(struct vb2_buffer *vb)
- 		address = sg_phys(sgl);
+diff --git a/Documentation/process/maintainer-pgp-guide.rst b/Documentation/process/maintainer-pgp-guide.rst
+index 28674eb42b95..b453561a7148 100644
+--- a/Documentation/process/maintainer-pgp-guide.rst
++++ b/Documentation/process/maintainer-pgp-guide.rst
+@@ -18,10 +18,10 @@ The role of PGP in Linux Kernel development
+ ===========================================
  
- 		for (p = 0; p < len; p++) {
--			dma_addr_t phys = address + (p << PAGE_SHIFT);
-+			dma_addr_t phys = address +
-+					  ((dma_addr_t)p << PAGE_SHIFT);
+ PGP helps ensure the integrity of the code that is produced by the Linux
+-Kernel development community and, to a lesser degree, establish trusted
++kernel development community and, to a lesser degree, establish trusted
+ communication channels between developers via PGP-signed email exchange.
  
- 			pages[mapped_size + p] = phys;
- 		}
+-The Linux Kernel source code is available in two main formats:
++The Linux kernel source code is available in two main formats:
+ 
+ - Distributed source repositories (git)
+ - Periodic release snapshots (tarballs)
+@@ -53,7 +53,7 @@ want to make sure that by placing trust into developers we do not simply
+ shift the blame for potential future security incidents to someone else.
+ The goal is to provide a set of guidelines developers can use to create
+ a secure working environment and safeguard the PGP keys used to
+-establish the integrity of the Linux Kernel itself.
++establish the integrity of the Linux kernel itself.
+ 
+ .. _pgp_tools:
+ 
+@@ -139,7 +139,7 @@ Protect your master PGP key
+ ===========================
+ 
+ This guide assumes that you already have a PGP key that you use for Linux
+-Kernel development purposes. If you do not yet have one, please see the
++kernel development purposes. If you do not yet have one, please see the
+ "`Protecting Code Integrity`_" document mentioned earlier for guidance
+ on how to create a new one.
+ 
+@@ -149,7 +149,9 @@ You should also make a new key if your current one is weaker than 2048 bits
+ Master key vs. Subkeys
+ ----------------------
+ 
+-It is important to understand the following:
++Subkeys are fully independent PGP keypairs that are tied to the "master"
++key using certifying key signatures (certificates). It is important to
++understand the following:
+ 
+ 1. There are no technical differences between the "master key" and "subkeys."
+ 2. At creation time, we assign functional limitations to each key by
+@@ -742,17 +744,29 @@ How to work with signed commits
+ -------------------------------
+ 
+ It is easy to create signed commits, but it is much more difficult to
+-use them in Linux Kernel development, since it relies on patches sent to
++use them in Linux kernel development, since it relies on patches sent to
+ the mailing list, and this workflow does not preserve PGP commit
+-signatures.
+-
+-If you have your working git tree publicly available at some git hosting
+-service (kernel.org, infradead.org, ozlabs.org, or others), then the
+-recommendation is that you sign all your git commits even if upstream
+-developers do not directly benefit from this practice. Should there ever
+-be a need to perform code forensics or track code provenance, even
+-externally maintained trees carrying PGP commit signatures will be
+-extremely valuable for such purposes.
++signatures. Furthermore, when rebasing your repository to match
++upstream, even your own PGP commit signatures will end up discarded. For
++this reason, most kernel developers don't bother signing their commits
++and will ignore signed commits in any external repositories that they
++rely upon in their work.
++
++However, if you have your working git tree publicly available at some
++git hosting service (kernel.org, infradead.org, ozlabs.org, or others),
++then the recommendation is that you sign all your git commits even if
++upstream developers do not directly benefit from this practice.
++
++We recommend this for the following reasons:
++
++1. Should there ever be a need to perform code forensics or track code
++   provenance, even externally maintained trees carrying PGP commit
++   signatures will be valuable for such purposes.
++2. If you ever need to re-clone your local repository (for example,
++   after a disk failure), this lets you easily verify the repository
++   integrity before resuming your work.
++3. If someone needs to cherry-pick your commits, this allows them to
++   quickly verify their integrity before applying them.
+ 
+ Creating signed commits
+ ~~~~~~~~~~~~~~~~~~~~~~~
+@@ -770,6 +784,10 @@ You can tell git to always sign commits::
+ 
+     git config --global commit.gpgSign true
+ 
++.. note::
++
++    Make sure you configure ``gpg-agent`` before you turn this on.
++
+ .. _verify_identities:
+ 
+ How to verify kernel developer identities
+@@ -882,7 +900,7 @@ Locate the ID of the master key in the output, in our example
+ ``C94035C21B4F2AEB``. Now display the key of Linus Torvalds that you
+ have on your keyring::
+ 
+-    $ git --list-key torvalds@kernel.org
++    $ gpg --list-key torvalds@kernel.org
+     pub   rsa2048 2011-09-20 [SC]
+           ABAF11C65A2970B130ABE3C479BE3E4300411886
+     uid           [ unknown] Linus Torvalds <torvalds@kernel.org>
 -- 
-2.7.4
+2.13.6
