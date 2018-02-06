@@ -1,141 +1,120 @@
-Return-Path: <bp@alien8.de>
-X-Google-Smtp-Source: AH8x227L19ePt2cctIQWTJgljcvuzGSdROAO2SK6eQ2cesq4RkfOsVjMqxPUlxpuy6GmEVS7IxVO
-ARC-Seal: i=1; a=rsa-sha256; t=1518119545; cv=none;
+Return-Path: <rolf.neugebauer@docker.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517926176; cv=none;
         d=google.com; s=arc-20160816;
-        b=d2qCjsaqEjte8y/vewMMyipkG2m41+YJQwVvzNQQzzb2hTysmd/O8z9LJiI+xZ8Lgv
-         vg3WTFG+4J9vpxJEhkruidaxw8TiQ9It0cGkAWXr6qpvOIfxFnkC5Bk+isKXMzsZ4dB9
-         B+EKwVCHeC80VwrFoJIop27b8okffdnDq5FzYJQMFIR6b5GvU13hS2ngQstft/JG8rs8
-         EOW4mUcIAx+RbscW4xxXg9fLm6z0BtatXAyfUwNjg3wI3eVjCR05EpZ9ZZfEnxRNkErS
-         /IUEkGw3bCYXFy9WK2zRyI+fIx682Tc4oXOugQ0/7TaijDcIzvTw5VmKmkSDasaDPmDu
-         uf9g==
+        b=R9/qptrDmZAnQrxke0wtcxm6b94tbzV0VNj8qhoE0KMygzwCTD2PrSJ3bOBGb+a0S9
+         KhNXSlfg8kJsWC6Z9uLYtpRKj1pLRGwkSdLYWEKnNIaJVdqKm3ic8A5y/+Xod6dNFbjY
+         lrwO/JYXXQL9l/rCbekt38RHcPayZ8QqjABsTGAT8T1JdOEtTK7T/walpOeDI0r6dLXN
+         zqfkwAXXHvD/t06i8JFuXNjClZJj1QODIvK8bS2JjJUKFrl+vJqjusveV8RJXk3tSFM8
+         DpFV3GL+VfAymYADkDpUG6qtB68nYMGPK6OV6wUNUR+23UN12UJ24SbT3G7xRT5uF3Xe
+         /H2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=JUfDU45YX/Ddn3z4TQyQ7aEln+P4N3QQG4HyBgxZofM=;
-        b=0ycOllCE5r1pCS9ap8/ARKMRYZymSmCNME4aKhRjQP6eGTfSl1G42CplfHoAPA4ENg
-         JSQJ3MvqOYGR4kTK8SmuJeF5dnDJR0JvsUHTJ5uezE7RcOM18o4gAnvQfFvFSahoOvft
-         XMfUGib/ujMuaQfexXYT2DpP0AgHSN8Yy1CV3p6reqsInOWhlkksKQqrE2n7mXqqwDCg
-         tDyg3IQnb8+iZVSNO7ZSMCV4k+j9FnVCnFFvyomX7cgxaQoFuwjWkEZ/qFqPR8QHoo3J
-         YcDVl0ygW7vnpIrEUgi9BH0wiVrrJL4Lay6Do4jjj80v1A/PaHDM8Jk22THCAJR11RUU
-         EDFw==
+        h=to:subject:message-id:date:from:mime-version:dkim-signature
+         :arc-authentication-results;
+        bh=BvXj21syNZNeG3rmFXoxClbMkcvSL5xtfzBbetaeN3A=;
+        b=Gjw6TIBZflo0GApbDoxnAUgh0JwRJncj+xHH9ujo/ALrrA7mJJDXfNnz+AKd1BhQoB
+         1j1qaVzCE0ntbMW7CBbN0qAFyGeF9xNq/B6fcdm8hhEhQWg68vRcLdPPPH6rb4kOnGYy
+         a7W55IRl++D8MT88FwN3b1nEjQ0CZU/zFfdy/j1MJPVKaB0FDnG3n54hgeiyUnIKsP+C
+         pgqwP4/V+a1CsMCMN3rgn75ECu9CxKtWPwUeORQOWOfQaCbc/VbWKnwkc35FrqndvNtD
+         /t9P7wPchuyXm/cvjGr7bzVSoJ59nN7Z3d58qhCv2xktozG+3i+98Z5MhpamPnn4wGXf
+         X2dw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bp@alien8.de designates 5.9.137.197 as permitted sender) smtp.mailfrom=bp@alien8.de
+       dkim=pass header.i=@docker.com header.s=google header.b=Lt+oTFXt;
+       spf=pass (google.com: domain of rolf.neugebauer@docker.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=rolf.neugebauer@docker.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=docker.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bp@alien8.de designates 5.9.137.197 as permitted sender) smtp.mailfrom=bp@alien8.de
-Date: Thu, 8 Feb 2018 20:52:05 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ashok Raj <ashok.raj@intel.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-	Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] x86/microcode: Check if any new features are present
- after a microcode reload.
-Message-ID: <20180208195204.GE577@pd.tnic>
-References: <1518115986-158190-1-git-send-email-ashok.raj@intel.com>
+       dkim=pass header.i=@docker.com header.s=google header.b=Lt+oTFXt;
+       spf=pass (google.com: domain of rolf.neugebauer@docker.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=rolf.neugebauer@docker.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=docker.com
+X-Google-Smtp-Source: AH8x226rWm5zmbnKixHO0u/IdCkmxpiqOQD03/vc/nT7o7mKsnfhHXqUARhEuckE4fo6gOs+eQO9emKF7K6aAt5h1Rw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1518115986-158190-1-git-send-email-ashok.raj@intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+From: Rolf Neugebauer <rolf.neugebauer@docker.com>
+Date: Tue, 6 Feb 2018 14:09:35 +0000
+Message-ID: <CA+pO-2c6z6uc8EO7LwWkGe3g_ygMwfS=VfQPNHzvS4H7RJOt-w@mail.gmail.com>
+Subject: x86/microcode/intel: Division by zero panic in 4.9.79 and 4.4.114
+To: Borislav Petkov <bp@alien8.de>, Jia Zhang <zhang.jia@linux.alibaba.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Greg KH <gregkh@linuxfoundation.org>, Rolf Neugebauer <rolf.neugebauer@docker.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591859989696630713?=
-X-GMAIL-MSGID: =?utf-8?q?1591863720984887201?=
+X-GMAIL-THRID: =?utf-8?q?1591660958258362388?=
+X-GMAIL-MSGID: =?utf-8?q?1591660958258362388?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 08, 2018 at 10:53:06AM -0800, Ashok Raj wrote:
-> When microcode is loaded later after system boot, new microcode could enumerate
-> new features. It might not be possible to use these new features unless they are
-> loaded during early boot via initrd or from the BIOS in some cases.
-> 
-> This patch attempts to simply check if there are any differences in feature set
-> and warns user to use early microcode load before using the new features.
-> 
-> Suggested-by: Andi Kleen <andi.kleen@intel.com>
-> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: David Woodhouse <dwmw@amazon.co.uk>
-> Cc: Arjan van de Ven <arjan@linux.intel.com>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Tim Chen <tim.c.chen@linux.intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> ---
->  arch/x86/kernel/cpu/microcode/intel.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-> index f7c55b0..0e07035 100644
-> --- a/arch/x86/kernel/cpu/microcode/intel.c
-> +++ b/arch/x86/kernel/cpu/microcode/intel.c
-> @@ -39,6 +39,7 @@
->  #include <asm/tlbflush.h>
->  #include <asm/setup.h>
->  #include <asm/msr.h>
-> +#include "../kernel/cpu/cpu.h" /* get_cpu_cap() */
->  
->  static const char ucode_path[] = "kernel/x86/microcode/GenuineIntel.bin";
->  
-> @@ -776,7 +777,7 @@ static int apply_microcode_intel(int cpu)
->  {
->  	struct microcode_intel *mc;
->  	struct ucode_cpu_info *uci;
-> -	struct cpuinfo_x86 *c;
-> +	struct cpuinfo_x86 *c, new_cpuinfo;
->  	static int prev_rev;
->  	u32 rev;
->  
-> @@ -804,17 +805,23 @@ static int apply_microcode_intel(int cpu)
->  		return -1;
->  	}
->  
-> +	c = &cpu_data(cpu);
->  	if (rev != prev_rev) {
->  		pr_info("updated to revision 0x%x, date = %04x-%02x-%02x\n",
->  			rev,
->  			mc->hdr.date & 0xffff,
->  			mc->hdr.date >> 24,
->  			(mc->hdr.date >> 16) & 0xff);
-> +		memset(&new_cpuinfo, 0, sizeof (struct cpuinfo_x86));
-> +		get_cpu_cap(&new_cpuinfo);
-> +		if (memcmp(&c->x86_capability, &new_cpuinfo.x86_capability,
-> +			sizeof(new_cpuinfo.x86_capability))) {
-> +				pr_warn_once("New features found in loaded microcode, but will be ignored\n");
-> +				pr_warn_once("Please consider either early loading through initrd/built-in or a potential BIOS update.\n");
-> +		}
+The backport of 7e702d17ed1 ("x86/microcode/intel: Extend BDW
+late-loading further with LLC size check") to 4.9.79 and 4.4.14 causes
+a division by zero panic on some single vCPU machine types on Google
+Cloud (e.g. g1-small and n1-standard-1):
 
-A bunch of notes about this:
+[    1.591435] divide error: 0000 [#1] SMP
+[    1.591961] Modules linked in:
+[    1.592546] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.9.79-linuxkit #1
+[    1.593461] Hardware name: Google Google Compute Engine/Google
+Compute Engine, BIOS Google 01/01/2011
+[    1.595135] task: ffffa01b2b63c040 task.stack: ffffb24f40010000
+[    1.596683] RIP: 0010:[<ffffffffb7d88ce3>]  [<ffffffffb7d88ce3>]
+init_intel_microcode+0x49/0x5a
+[    1.598018] RSP: 0000:ffffb24f40013e48  EFLAGS: 00010206
+[    1.599016] RAX: 0000000001400000 RBX: 00000000ffffffea RCX: 0000000000000000
+[    1.600093] RDX: 0000000000000000 RSI: ffffa01b2fffa9a8 RDI: ffffffffb7d8888b
+[    1.601222] RBP: 00000000ffffffff R08: ffffa01b2fffa9a1 R09: 000000000000005f
+[    1.602330] R10: 0000000000000067 R11: ffffa01b22164177 R12: 0000000000000000
+[    1.603291] R13: ffffffffb7d787b6 R14: 0000000000000000 R15: 0000000000000000
+[    1.604406] FS:  0000000000000000(0000) GS:ffffa01b2fc00000(0000)
+knlGS:0000000000000000
+[    1.606154] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.607493] CR2: 0000000000000000 CR3: 000000002ac0a000 CR4: 0000000000040630
+[    1.609310] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    1.611122] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    1.613008] Stack:
+[    1.613445]  ffffffffb7d888c1 0000000000000000 ffffffffb7d1ba40
+0000000000000000
+[    1.615423]  0000000000000000 ffffffffb7d787b6 0000000000000000
+0000000000000000
+[    1.617049]  ffffffffb74fed89 00000000fffffff4 00000000ffffffff
+4eae7bc133547c47
+[    1.617904] Call Trace:
+[    1.618198]  [<ffffffffb7d888c1>] ? microcode_init+0x36/0x1de
+[    1.619264]  [<ffffffffb7d787b6>] ? set_debug_rodata+0xc/0xc
+[    1.620143]  [<ffffffffb74fed89>] ? driver_register+0xaf/0xb4
+[    1.621841]  [<ffffffffb7d8888b>] ? save_microcode_in_initrd+0x3c/0x3c
+[    1.623424]  [<ffffffffb70021b7>] ? do_one_initcall+0x98/0x130
+[    1.624659]  [<ffffffffb7d787b6>] ? set_debug_rodata+0xc/0xc
+[    1.626303]  [<ffffffffb7d79091>] ? kernel_init_freeable+0x166/0x1e7
+[    1.627674]  [<ffffffffb77ce3d7>] ? rest_init+0x6e/0x6e
+[    1.628942]  [<ffffffffb77ce3e1>] ? kernel_init+0xa/0xe6
+[    1.630243]  [<ffffffffb77d8587>] ? ret_from_fork+0x57/0x70
+[    1.631592] Code: 16 0f b6 35 a0 ac fb ff 48 c7 c7 c4 ea 99 b7 e8
+82 3e 41 ff 31 c0 c3 8b 05 3b ad fb ff 0f b7 0d 54 ad fb ff 31 d2 c1
+e0 0a 48 98 <48> f7 f1 89 05 f4 6a 14 00 48 c7 c0 00 d8 c2 b7 c3 4c 8d
+54 24
+[    1.638875] RIP  [<ffffffffb7d88ce3>] init_intel_microcode+0x49/0x5a
+[    1.640382]  RSP <ffffb24f40013e48>
+[    1.641320] ---[ end trace e88ef332e19594b9 ]---
+[    1.642418] Kernel panic - not syncing: Fatal exception
+[    1.644581] Kernel Offset: 0x36000000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[    1.647312] ---[ end Kernel panic - not syncing: Fatal exception
 
-1. this checking happens per-CPU. Instead, it should happen per CPU
-until the first CPU which encounters a CPUID bit change, prints the
-warning and then doesn't do it anymore. I'm going to also heavily
-assume this will happen immediately on the BSP and we simply forget all
-heterogeneous BSP/AP configurations which are simply bollocks.
+On these machines x86_max_cores is zero:
 
-2. the part until memcmp() needs to be a generic function in
-cpu/common.c or so which gets called by the microcode loader. This will
-facilitate doing 1. too.
+[    0.227977] ftrace: allocating 35563 entries in 139 pages
+[    0.273941] smpboot: x86_max_cores == zero !?!?
+[    0.274645] smpboot: Max logical packages: 1
 
-3. (2) needs to happen in the generic microcode driver -
-arch/x86/kernel/cpu/microcode/core.c - not in intel.c For that to
-happen, you need a prepatch which changes the ->apply_microcode()
-functions to return a new value UCODE_UPDATED when the late update
-succeeds in the vendor driver.
 
-In the UCODE_UPDATED case, you call the common.c function which checks
-whether it has ran already and if not, gets caps, checks and prints. If
-it has, you don't need to do anything.
+4.9.78 (and earlier) as well as 4.4.13 (and earlier) worked fine so
+this seems like a regression in stable.
 
-And those three changes sound like three nicely separated patches to me.
+4.14.16 and 4.15 (to which the above patch was backported as well)
+work fine, but I noticed significant code changes for these kernels
+around where x86_max_cores is set.
 
-Anyway, something along those lines...
+The obvious quick fix/hack is to check for x86_max_cores in
+calc_llc_size_per_core() and return 0. I'm happy to submit a patch for
+this, but a more correct fix might be back porting the relevant
+changes around where  x86_max_cores is set.
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Thanks
+Rolf
