@@ -1,52 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752337AbeBFCkY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:40:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47432 "EHLO mail.kernel.org"
+        id S1752493AbeBFCoN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:44:13 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:47444 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752533AbeBFCkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:40:14 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3622C21734
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 5 Feb 2018 21:40:11 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] apparent bogosity in
- unregister_ftrace_function_probe_func()
-Message-ID: <20180205214011.2d55866e@vmware.local.home>
-In-Reply-To: <20180206112614.80e2a9cbfc55954ab904c3e3@kernel.org>
-References: <20180127031706.GE13338@ZenIV.linux.org.uk>
-        <CAJwJo6YD4ds-AHZRm-zEyGCnu+PS-6g_FFeAmHDfaKQxQAUr=A@mail.gmail.com>
-        <20180127170748.GF13338@ZenIV.linux.org.uk>
-        <20180129225942.f2aec926e2ea223c52c34169@kernel.org>
-        <20180205175433.6cd369db@gandalf.local.home>
-        <20180206112614.80e2a9cbfc55954ab904c3e3@kernel.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752187AbeBFCoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 21:44:07 -0500
+Date: Tue, 06 Feb 2018 10:43:48 +0800
+In-Reply-To: <20180202194935.vdqkgch6mowqi2px@flea.lan>
+References: <20180202140153.21549-1-icenowy@aosc.io> <20180202140153.21549-3-icenowy@aosc.io> <20180202194935.vdqkgch6mowqi2px@flea.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH 2/3] ARM: dts: sun8i: add audio codec support into V3s DTSI
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+CC: Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <8F4EA09E-F5DC-4F7A-951B-25DA36848FD1@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Feb 2018 11:26:14 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> No, that code looks good to me. :)
-> 
-> BTW, did you also remove "search = buff;" line in 
-> unregister_ftrace_function_probe_func() too?
 
-That's a separate bug, and should be a separate patch. Dmitry mentioned
-that he was preparing a patch to fix that.
+于 2018年2月3日 GMT+08:00 上午3:49:35, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Fri, Feb 02, 2018 at 10:01:52PM +0800, Icenowy Zheng wrote:
+>> Allwinner V3s SoC features an internal audio codec like the one in
+>H3,
+>> and a analog codec like the one in H3/A23 (but much simpler).
+>> 
+>> Add them in the DTSI file.
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  arch/arm/boot/dts/sun8i-v3s.dtsi | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>> 
+>> diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi
+>b/arch/arm/boot/dts/sun8i-v3s.dtsi
+>> index 20edebd983f0..f6c534efaef9 100644
+>> --- a/arch/arm/boot/dts/sun8i-v3s.dtsi
+>> +++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+>> @@ -354,6 +354,25 @@
+>>  			status = "disabled";
+>>  		};
+>>  
+>> +		codec: codec@01c22c00 {
+>> +			#sound-dai-cells = <0>;
+>> +			compatible = "allwinner,sun8i-v3s-codec";
+>> +			reg = <0x01c22c00 0x400>;
+>> +			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
+>> +			clock-names = "apb", "codec";
+>> +			resets = <&ccu RST_BUS_CODEC>;
+>> +			dmas = <&dma 15>, <&dma 15>;
+>> +			dma-names = "rx", "tx";
+>> +			allwinner,codec-analog-controls = <&codec_analog>;
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		codec_analog: codec-analog@01c23000 {
+>> +			compatible = "allwinner,sun8i-v3s-codec-analog";
+>> +			reg = <0x01c23000 0x4>;
+>
+>This should be the whole size of the memory region.
 
-Dmitry did you have a patch and added selftests to check it? If not,
-I'll whip one up.
+OK. (Although on the datasheet digital part and analog
+part is listed as one region.)
 
-Thanks,
-
--- Steve
+>
+>Maxime
