@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752529AbeBFJd1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:33:27 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55322 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752183AbeBFJdV (ORCPT
+        id S1752642AbeBFJdc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:33:32 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42050 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752199AbeBFJdX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:33:21 -0500
+        Tue, 6 Feb 2018 04:33:23 -0500
 From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 To: rostedt@goodmis.org
 Cc: mingo@redhat.com, srikar@linux.vnet.ibm.com, oleg@redhat.com,
@@ -14,14 +14,16 @@ Cc: mingo@redhat.com, srikar@linux.vnet.ibm.com, oleg@redhat.com,
         keescook@chromium.org, namhyung@kernel.org,
         linux-kernel@vger.kernel.org,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH 1/2] trace_uprobe: Use %lx to display offset
-Date: Tue,  6 Feb 2018 15:04:29 +0530
+Subject: [PATCH 2/2] trace_uprobe: Simplify probes_seq_show()
+Date: Tue,  6 Feb 2018 15:04:30 +0530
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180206093430.7550-1-ravi.bangoria@linux.vnet.ibm.com>
+References: <20180206093430.7550-1-ravi.bangoria@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020609-0016-0000-0000-0000051FD947
+x-cbid: 18020609-0040-0000-0000-0000040CD32C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020609-0017-0000-0000-0000285C8AD4
-Message-Id: <20180206093430.7550-1-ravi.bangoria@linux.vnet.ibm.com>
+x-cbparentid: 18020609-0041-0000-0000-000026108066
+Message-Id: <20180206093430.7550-2-ravi.bangoria@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-06_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -33,39 +35,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kees suggested that, 'offset' is unsigned long, not a pointer,
-thus %lx should be used to print it, not the %px. Also, I don't
-see any reason to prepend offset with 0s. Replace %px with %lx.
+Simplify probes_seq_show() function. We are using %lx to display
+the offset and we don't prepend unnecessary 0s in the offset.
 
-Before patch:
-  # echo "p:probe_a/main /tmp/a.out:0x594" > uprobe_events
-  # cat uprobe_events
-    p:probe_a/main /tmp/a.out:0x0000000000000594
-
-After patch:
-  # echo "p:probe_a/main /tmp/a.out:0x594" > uprobe_events
-  # cat uprobe_events
-    p:probe_a/main /tmp/a.out:0x594
-
-Fixes: 0e4d819d0893 ("trace_uprobe: Display correct offset in uprobe_events")
-Suggested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 ---
- kernel/trace/trace_uprobe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_uprobe.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
 diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 268029ae1be6..c2c965398893 100644
+index c2c965398893..c12a3957e1ee 100644
 --- a/kernel/trace/trace_uprobe.c
 +++ b/kernel/trace/trace_uprobe.c
-@@ -608,7 +608,7 @@ static int probes_seq_show(struct seq_file *m, void *v)
+@@ -602,24 +602,9 @@ static int probes_seq_show(struct seq_file *m, void *v)
+ 	char c = is_ret_probe(tu) ? 'r' : 'p';
+ 	int i;
  
- 	/* Don't print "0x  (null)" when offset is 0 */
- 	if (tu->offset) {
--		seq_printf(m, "0x%px", (void *)tu->offset);
-+		seq_printf(m, "0x%lx", tu->offset);
- 	} else {
- 		switch (sizeof(void *)) {
- 		case 4:
+-	seq_printf(m, "%c:%s/%s", c, tu->tp.call.class->system,
+-			trace_event_name(&tu->tp.call));
+-	seq_printf(m, " %s:", tu->filename);
+-
+-	/* Don't print "0x  (null)" when offset is 0 */
+-	if (tu->offset) {
+-		seq_printf(m, "0x%lx", tu->offset);
+-	} else {
+-		switch (sizeof(void *)) {
+-		case 4:
+-			seq_printf(m, "0x00000000");
+-			break;
+-		case 8:
+-		default:
+-			seq_printf(m, "0x0000000000000000");
+-			break;
+-		}
+-	}
++	seq_printf(m, "%c:%s/%s %s:0x%lx", c, tu->tp.call.class->system,
++			trace_event_name(&tu->tp.call), tu->filename,
++			tu->offset);
+ 
+ 	for (i = 0; i < tu->tp.nr_args; i++)
+ 		seq_printf(m, " %s=%s", tu->tp.args[i].name, tu->tp.args[i].comm);
 -- 
 2.13.6
