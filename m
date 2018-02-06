@@ -1,43 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753255AbeBFSwG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:52:06 -0500
-Received: from mail-qk0-f171.google.com ([209.85.220.171]:42874 "EHLO
-        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753026AbeBFSv7 (ORCPT
+        id S1753347AbeBFSyv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:54:51 -0500
+Received: from mail-pf0-f170.google.com ([209.85.192.170]:37011 "EHLO
+        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753047AbeBFSyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:51:59 -0500
-X-Google-Smtp-Source: AH8x2272809omLx+q+8tlUYF7snCb/KlLJ6hQikHMo4y0RrRzwTxsDQXJQOXu6muynLJcRaseYbEXRSyKBb0FF8s1ys=
+        Tue, 6 Feb 2018 13:54:44 -0500
+X-Google-Smtp-Source: AH8x226R22FN581Uh71IyfJkHsLyda2ykmfOwB1ZXyD4tbPYCPdc9rd1wV2lpTWRYfeGpDXgFjRMCg==
+Date: Tue, 6 Feb 2018 10:54:40 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: andy.gross@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: sdm845: Add minimal dts/dtsi files for
+ sdm845 SoC and MTP
+Message-ID: <20180206185440.GJ9465@builder>
+References: <20180125163216.29018-1-rnayak@codeaurora.org>
+ <20180125163216.29018-2-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <151790891868.9432.1307772484552574756.stgit@warthog.procyon.org.uk>
-References: <151790891868.9432.1307772484552574756.stgit@warthog.procyon.org.uk>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 6 Feb 2018 20:51:58 +0200
-Message-ID: <CAHp75Vd4i+=xyM80beqznuQbqwp_VSVOi0=-44u7WGpkVvw7mw@mail.gmail.com>
-Subject: Re: [PATCH] printk: Print error pointers as negative integers for %p
-To: David Howells <dhowells@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Tobin C. Harding" <me@tobin.cc>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180125163216.29018-2-rnayak@codeaurora.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 11:21 AM, David Howells <dhowells@redhat.com> wrote:
-> The new hashing feature of unadorned printk("%p") makes it hard to spot if
-> the pointer actually carries an error value.  Make %p print any pointer
-> that matches IS_ERR() as a negative integer.
->
-> Should I set SMALL and the field_width as well, I wonder?
+On Thu 25 Jan 08:32 PST 2018, Rajendra Nayak wrote:
+> +		spmi_bus: qcom,spmi@c440000 {
+[..]
+> +		};
+> +
 
-> +               spec.type = FORMAT_TYPE_INT;
+While we have the chance, please remove this empty line.
 
-_LONG ?
+> +	};
+> +};
 
-For sake of consistency.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+Bjorn
