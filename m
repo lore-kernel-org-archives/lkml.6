@@ -1,83 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753974AbeBFVBb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 16:01:31 -0500
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:39547 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752514AbeBFVB2 (ORCPT
+        id S1754066AbeBFVDd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 16:03:33 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54457 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753382AbeBFVDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 16:01:28 -0500
-X-Google-Smtp-Source: AH8x2272BLn0RC1YaNWMhZx0IBpuaZ2RbqtIloxVYME/fQ5iJZ5x55R+I/BSf3u/H8hX18xgm5wGZUIzXF+Oq+ncx5o=
+        Tue, 6 Feb 2018 16:03:31 -0500
+X-Google-Smtp-Source: AH8x224HuMaFG6S6JhhxDFFoBvfKx80BEn5GrfMhhXheJUHiU7iP3xiYpOJ2MGaA1RS0BJlPfSNNrnuOepvEiT2x2s4=
 MIME-Version: 1.0
-In-Reply-To: <1517949734-27314-1-git-send-email-clabbe@baylibre.com>
-References: <1517949734-27314-1-git-send-email-clabbe@baylibre.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Tue, 6 Feb 2018 13:01:26 -0800
-Message-ID: <CAKgT0Uc-br8akeUyjf0FenLPLxDdq14D1rppjvb1yfNU33t+Mw@mail.gmail.com>
-Subject: Re: [Intel-wired-lan] [PATCH] Documentation: networking: Update ixgb
- kconfig select documentation
-To: Corentin Labbe <clabbe@baylibre.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+In-Reply-To: <3630ba30-eb18-0829-7b0c-f0a786232969@xs4all.nl>
+References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+ <1517948874-21681-6-git-send-email-tharvey@gateworks.com> <3630ba30-eb18-0829-7b0c-f0a786232969@xs4all.nl>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Tue, 6 Feb 2018 13:03:29 -0800
+Message-ID: <CAJ+vNU1SWma59YwvRO7jDAu2=ndgSU6CgYtKs0792+oqDAEtrQ@mail.gmail.com>
+Subject: Re: [PATCH v8 5/7] media: i2c: Add TDA1997x HDMI receiver driver
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 12:42 PM, Corentin Labbe <clabbe@baylibre.com> wrote:
-> Update documentation on how to enable ixgb and ixgb DCB.
-> Simply remove NETDEV_10000 and replace it with the new used kconfig names.
+On Tue, Feb 6, 2018 at 12:38 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 02/06/2018 09:27 PM, Tim Harvey wrote:
+>> Add support for the TDA1997x HDMI receivers.
+>>
+>> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+>> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+>> ---
+>
+> <snip>
+>
+>> +static int tda1997x_get_dv_timings_cap(struct v4l2_subdev *sd,
+>> +                                    struct v4l2_dv_timings_cap *cap)
+>> +{
+>> +     if (cap->pad != TDA1997X_PAD_SOURCE)
+>> +             return -EINVAL;
+>> +
+>> +     *cap = tda1997x_dv_timings_cap;
+>> +     return 0;
+>> +}
+>> +
+>> +static int tda1997x_enum_dv_timings(struct v4l2_subdev *sd,
+>> +                                 struct v4l2_enum_dv_timings *timings)
+>> +{
+>> +     if (timings->pad != TDA1997X_PAD_SOURCE)
+>> +             return -EINVAL;
+>> +
+>> +     return v4l2_enum_dv_timings_cap(timings, &tda1997x_dv_timings_cap,
+>> +                                     NULL, NULL);
+>> +}
+>
+> You shouldn't need this pad test: it's done in the v4l2-subdev.c core code
+> already. But please double-check :-)
+>
 
-Minor typo in the patch description. I assume you mean "ixgb and ixgbe
-DCB". Also you might want to mention ixgbe somewhere in the patch
-title.
+oh right - forgot to check that. Yes, v4l2-subdev.c has pad bounds
+checking on all ops I use so I can remove them.
+
+> Can you post the output of the v4l2-compliance test? I'm curious to see it.
+
+it's in the cover letter (should I move it to the driver patch for
+subsequent submittals?)
 
 >
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->  Documentation/networking/ixgb.txt  | 3 ++-
->  Documentation/networking/ixgbe.txt | 7 ++++---
->  2 files changed, 6 insertions(+), 4 deletions(-)
+> Can you also try to run v4l2-compliance -m /dev/mediaX? That also tests
+> whether the right entity types are set (note: testing for that should
+> also happen in the subdev compliance test, but I haven't done that yet).
 >
-> diff --git a/Documentation/networking/ixgb.txt b/Documentation/networking/ixgb.txt
-> index 09f71d71920a..b10f360c57d4 100644
-> --- a/Documentation/networking/ixgb.txt
-> +++ b/Documentation/networking/ixgb.txt
-> @@ -70,7 +70,8 @@ select m for "Intel(R) PRO/10GbE support" located at:
->        Location:
->          -> Device Drivers
->            -> Network device support (NETDEVICES [=y])
-> -            -> Ethernet (10000 Mbit) (NETDEV_10000 [=y])
-> +            -> Ethernet driver support (ETHERNET [=y])
-> +              -> Intel devices (NET_VENDOR_INTEL [=y])
->  1. make modules && make modules_install
->
->  2. Load the module:
-> diff --git a/Documentation/networking/ixgbe.txt b/Documentation/networking/ixgbe.txt
-> index 687835415707..90a3860cca3d 100644
-> --- a/Documentation/networking/ixgbe.txt
-> +++ b/Documentation/networking/ixgbe.txt
-> @@ -253,9 +253,10 @@ Additional Configurations
->
->          -> Device Drivers
->            -> Network device support (NETDEVICES [=y])
-> -            -> Ethernet (10000 Mbit) (NETDEV_10000 [=y])
-> -              -> Intel(R) 10GbE PCI Express adapters support
-> -                -> Data Center Bridging (DCB) Support
-> +            -> Ethernet driver (ETHERNET [=y])
-> +              -> Intel devices (NET_VENDOR_INTEL [=y])
-> +                -> Intel(R) 10GbE PCI Express adapters support (IXGBE [=y])
-> +                  -> Data Center Bridging (DCB) Support (IXGBE_DCB [=y])
->
->    After these options are selected, you must rebuild your kernel and your
->    modules.
-> --
-> 2.13.6
->
-> _______________________________________________
-> Intel-wired-lan mailing list
-> Intel-wired-lan@osuosl.org
-> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
+
+root@ventana:~# v4l2-compliance -m0
+v4l2-compliance SHA   : b2f8f9049056eb6f9e028927dacb2c715a062df8
+Media Driver Info:
+        Driver name      : imx-media
+        Model            : imx-media
+        Serial           :
+        Bus info         :
+        Media version    : 4.15.0
+        Hardware revision: 0x00000000 (0)
+        Driver version   : 4.15.0
+
+Compliance test for device /dev/media0:
+
+Required ioctls:
+        test MEDIA_IOC_DEVICE_INFO: OK
+
+Allow for multiple opens:
+        test second /dev/media0 open: OK
+        test MEDIA_IOC_DEVICE_INFO: OK
+        test for unlimited opens: OK
+
+Media Controller ioctls:
+                fail: v4l2-test-media.cpp(141): ent.function ==
+MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
+        test MEDIA_IOC_G_TOPOLOGY: FAIL
+                fail: v4l2-test-media.cpp(256):
+v2_entities_set.find(ent.id) == v2_entities_set.end()
+        test MEDIA_IOC_ENUM_ENTITIES/LINKS: FAIL
+        test MEDIA_IOC_SETUP_LINK: OK
+
+Total: 7, Succeeded: 5, Failed: 2, Warnings: 0
+
+foiled again!
+
+Is something missing after v4l2_i2c_subdev_init() or is this perhaps
+something missing in the imx media drivers?
+
+        v4l2_i2c_subdev_init(sd, client, &tda1997x_subdev_ops);
+        snprintf(sd->name, sizeof(sd->name), "%s %d-%04x",
+                 id->name, i2c_adapter_id(client->adapter),
+                 client->addr);
+        sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
+        sd->entity.ops = &tda1997x_media_ops;
+
+Regards,
+
+Tim
