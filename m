@@ -1,120 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752736AbeBFRkn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 12:40:43 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:33765 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752468AbeBFRk0 (ORCPT
+        id S1752650AbeBFRrm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 12:47:42 -0500
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:34251 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752468AbeBFRrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 12:40:26 -0500
-From: Stefan Agner <stefan@agner.ch>
-To: han.xu@nxp.com, boris.brezillon@free-electrons.com
-Cc: marek.vasut@gmail.com, richard@nod.at, dwmw2@infradead.org,
-        cyrille.pitchen@wedev4u.fr, max.oss.09@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 2/2] mtd: nand: gpmi: add support for specific ECC strength
-Date: Tue,  6 Feb 2018 18:40:21 +0100
-Message-Id: <20180206174021.5947-2-stefan@agner.ch>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180206174021.5947-1-stefan@agner.ch>
-References: <20180206174021.5947-1-stefan@agner.ch>
+        Tue, 6 Feb 2018 12:47:37 -0500
+X-Google-Smtp-Source: AH8x224ZFh3ErHOSfzs5fTUPyran7zpPm3q8nZslpFBucHCLcpRrVIynap1EAu57pQdfXUoadG1TAQ==
+Subject: Re: [PATCH v1 0/1] spi_ks8995: use regmap to access chip registers.
+To: Andrew Lunn <andrew@lunn.ch>, Sven Van Asbroeck <thesven73@gmail.com>,
+        Woojung.Huh@microchip.com, Tristram.Ha@microchip.com
+Cc: Sven Van Asbroeck <svendev@arcx.com>, helmut.buchsbaum@gmail.com,
+        Maarten.Blomme@flir.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org
+References: <1517930036-17618-1-git-send-email-svendev@arcx.com>
+ <20180206161447.GF12679@lunn.ch>
+ <CAGngYiWYChnZmU7n9i1+nbY+1oWGXQGOopBhNiPHPUoYvTdgaw@mail.gmail.com>
+ <20180206165009.GJ12679@lunn.ch>
+ <CAGngYiWR-ayfg4KiH4yzoey+7P-jjV9MjEv8STmS65aC9JTX5Q@mail.gmail.com>
+ <20180206170526.GK12679@lunn.ch>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <2f18b10f-1c84-f386-2b13-12163c0fd8a5@gmail.com>
+Date: Tue, 6 Feb 2018 09:47:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180206170526.GK12679@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for specified ECC strength/size using device tree
-properties nand-ecc-strength/nand-ecc-step-size.
+On 02/06/2018 09:05 AM, Andrew Lunn wrote:
+> On Tue, Feb 06, 2018 at 11:58:17AM -0500, Sven Van Asbroeck wrote:
+>> On Tue, Feb 6, 2018 at 11:50 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+>>> And a DSA driver does not need to be complex. You can start simple,
+>>> and add more features later.
+>>
+>> I see. Would it be possible/practical to start with just phy_read/write,
+>> port_enable/disable in dsa_switch_ops ? And just add a sysfs bin file
+>> for userspace register access ?
+> 
+> I would NACK sysfs bin file. Do it right, or don't do it at all.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- .../devicetree/bindings/mtd/gpmi-nand.txt          |  5 ++++
- drivers/mtd/nand/gpmi-nand/gpmi-nand.c             | 29 ++++++++++++++--------
- 2 files changed, 24 insertions(+), 10 deletions(-)
+Sven, there is a standard ethtool register dump interface that can be
+used to provide register dumps, if necessary, that might fit your use case.
 
-diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-index eb2d9919d063..ea6e9b735160 100644
---- a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-@@ -46,6 +46,11 @@ Optional properties:
-                        partitions written from Linux with this feature
-                        turned on may not be accessible by the BootROM
-                        code.
-+  - nand-ecc-strength: integer representing the number of bits to correct
-+                       per ECC step. Needs to be a multiple of 2.
-+  - nand-ecc-step-size: integer representing the number of data bytes
-+                       that are covered by a single ECC step. The driver
-+                       supports 512 and 1024.
- 
- The device tree may optionally contain sub-nodes describing partitions of the
- address space. See partition.txt for more detail.
-diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-index 50f8d4a1b983..8cb378358e11 100644
---- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-+++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-@@ -198,17 +198,15 @@ static inline bool gpmi_check_ecc(struct gpmi_nand_data *this)
-  *
-  * We may have available oob space in this case.
-  */
--static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
-+static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
-+			unsigned int ecc_strength, unsigned int ecc_step)
- {
- 	struct bch_geometry *geo = &this->bch_geometry;
- 	struct nand_chip *chip = &this->nand;
- 	struct mtd_info *mtd = nand_to_mtd(chip);
- 	unsigned int block_mark_bit_offset;
- 
--	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
--		return -EINVAL;
--
--	switch (chip->ecc_step_ds) {
-+	switch (ecc_step) {
- 	case SZ_512:
- 		geo->gf_len = 13;
- 		break;
-@@ -221,8 +219,8 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
- 			chip->ecc_strength_ds, chip->ecc_step_ds);
- 		return -EINVAL;
- 	}
--	geo->ecc_chunk_size = chip->ecc_step_ds;
--	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
-+	geo->ecc_chunk_size = ecc_step;
-+	geo->ecc_strength = round_up(ecc_strength, 2);
- 	if (!gpmi_check_ecc(this))
- 		return -EINVAL;
- 
-@@ -230,7 +228,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
- 	if (geo->ecc_chunk_size < mtd->oobsize) {
- 		dev_err(this->dev,
- 			"unsupported nand chip. ecc size: %d, oob size : %d\n",
--			chip->ecc_step_ds, mtd->oobsize);
-+			ecc_step, mtd->oobsize);
- 		return -EINVAL;
- 	}
- 
-@@ -423,9 +421,20 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
- 
- int common_nfc_set_geometry(struct gpmi_nand_data *this)
- {
-+	struct nand_chip *chip = &this->nand;
-+
-+	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
-+		return set_geometry_by_ecc_info(this, chip->ecc.strength,
-+						chip->ecc.size);
-+
- 	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
--				|| legacy_set_geometry(this))
--		return set_geometry_by_ecc_info(this);
-+				|| legacy_set_geometry(this)) {
-+		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-+			return -EINVAL;
-+
-+		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
-+						chip->ecc_step_ds);
-+	}
- 
- 	return 0;
- }
+Aside from the phy_read/write, port_enable/disable, you will likely need
+to have a get_tag_protocol() implementation returning
+DSA_TAG_PROTO_NONE, and a setup() operation, other should be entirely
+optional for now.
+
+Out of curiosity, are there any break out boards with a KS8995 switch
+available that we could e.g: plug to a Raspberry Pi or any similar board?
+
+> 
+> I think i would first want to know what Tristam/Microchip plans
+> are. Does he intend to keep on working on the patches from last year?
+
+Yes, this would be good to keep alive, the patches look good, they just
+need to get in now.
 -- 
-2.16.1
+Florian
