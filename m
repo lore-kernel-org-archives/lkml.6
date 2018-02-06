@@ -1,67 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752277AbeBFHh5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 02:37:57 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:5687 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752039AbeBFHhu (ORCPT
+        id S1752463AbeBFHnG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 02:43:06 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45069 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752185AbeBFHm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 02:37:50 -0500
-X-IronPort-AV: E=Sophos;i="5.46,467,1511852400";
-   d="scan'208";a="11195013"
-Date: Tue, 6 Feb 2018 08:37:29 +0100
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        <linux-fbdev@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [RESEND][PATCH] video: fbdev: atmel_lcdfb: convert to use GPIO
- descriptors
-Message-ID: <20180206073729.GI2580@rfolt0960.corp.atmel.com>
-Mail-Followup-To: Linus Walleij <linus.walleij@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fbdev@vger.kernel.org,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <20180205084755.6011-1-ludovic.desroches@microchip.com>
- <CACRpkdajUDNkODAGU=6SHRJz-q5-+sFRy7Qi9=QLc-HF1NEHWQ@mail.gmail.com>
+        Tue, 6 Feb 2018 02:42:57 -0500
+X-Google-Smtp-Source: AH8x224Noplnw0lZ4Q1XNxL6IdceiOmiPxDO5USckhOeZWp2hlev+0P3n6Qlf5hKoaYa9jVAFRBNsA==
+Date: Tue, 6 Feb 2018 08:42:53 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
+        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        "luca.abeni" <luca.abeni@santannapisa.it>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/7] sched/topology: Adding function
+ partition_sched_domains_locked()
+Message-ID: <20180206074253.GA19535@localhost.localdomain>
+References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
+ <1517503869-3179-2-git-send-email-mathieu.poirier@linaro.org>
+ <20180202101951.GS19535@localhost.localdomain>
+ <CANLsYkyJb9F14SBSatLHCwThWaO0dcMSddsCB_kHHAeEdunEtw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdajUDNkODAGU=6SHRJz-q5-+sFRy7Qi9=QLc-HF1NEHWQ@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CANLsYkyJb9F14SBSatLHCwThWaO0dcMSddsCB_kHHAeEdunEtw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 12:56:04PM +0100, Linus Walleij wrote:
-> On Mon, Feb 5, 2018 at 9:47 AM, Ludovic Desroches
-> <ludovic.desroches@microchip.com> wrote:
-> 
-> > Use GPIO descriptors instead of relying on the old method.
+On 05/02/18 11:11, Mathieu Poirier wrote:
+> On 2 February 2018 at 03:19, Juri Lelli <juri.lelli@redhat.com> wrote:
+> > Hi Mathieu,
 > >
-> > Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> > On 01/02/18 09:51, Mathieu Poirier wrote:
+> >> Introducing function partition_sched_domains_locked() by taking
+> >> the mutex locking code out of the original function.  That way
+> >> the work done by partition_sched_domains_locked() can be reused
+> >> without dropping the mutex lock.
+> >>
+> >> This patch doesn't change the functionality provided by the
+> >> original code.
+> >>
+> >> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >> ---
+> >
+> > [...]
+> >
+> >> +/*
+> >> + * Call with hotplug lock held
+> >
+> > Is this the one that we can actually check if it's locked with
+> >
+> > lockdep_assert_cpus_held()
+> >
+> > ?
 > 
-> Ah there it is :D
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Hi Juri,
 > 
-> PS: why not move it all over to use DRI/DRM/KMS? It's becoming
-> easier and easier.
+> You are correct - we could call lockdep_assert_cpus_held() but in my
+> opinion it would be in a separate patch and probably outside the scope
+> of this work.  The sole purpose of this patch is to get the
+> locking/unlocking operations of mutex sched_domains_mutex out of
+> function partition_sched_domains_locked().
 
-It concerns old products, that's why it's not converted yet.
+Fair enough. I just thought though that, since you are adding the comment
+above, we could as well add an explicit check for hotplug lock.
 
-Regards
+Best,
 
-Ludovic
-
-> 
-> Yours,
-> Linus Walleij
+- Juri
