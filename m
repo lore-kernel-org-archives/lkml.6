@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753222AbeBFRAN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 12:00:13 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51743 "EHLO huawei.com"
+        id S1752885AbeBFRAY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 12:00:24 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51562 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752927AbeBFQ4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:56:09 -0500
+        id S1753088AbeBFQ4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:56:02 -0500
 From: John Garry <john.garry@huawei.com>
 To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
         <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
@@ -14,12 +14,10 @@ To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
         <zhangshaokun@hisilicon.com>, <linux-arm-kernel@lists.infradead.org>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 7/9] perf utils: fixup Cavium ThunderX2 JSON to use ARMv8 recommended events
-Date: Wed, 7 Feb 2018 01:45:02 +0800
-Message-ID: <1517939104-230881-8-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 0/9] perf events patches for improved ARM64 support
+Date: Wed, 7 Feb 2018 01:44:55 +0800
+Message-ID: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
-References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.67.212.75]
@@ -28,103 +26,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the Cavium ThunderX2 JSON to use event definitions
-from the ARMv8 recommended events.
+This patchset adds support for some perf events features,
+targeted at ARM64, implemented in a generic fashion.
 
-The brief description is kept for readability for arch standard events,
-but is not strictly required.
+The two main features are as follows:
+- support for arch/vendor/platform pmu events directory structure
+- support for parsing standard architecture pmu events
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- .../arch/arm64/cavium/thunderx2/core-imp-def.json  | 60 ++++++++--------------
- 1 file changed, 20 insertions(+), 40 deletions(-)
+On the back of these, the Cavium ThunderX2, ARM Cortex-A53,
+and HiSilicon hip08 JSONs are relocated/added/updated.
 
-diff --git a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-index 2db45c4..f47bf0f 100644
---- a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-+++ b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-@@ -1,62 +1,42 @@
- [
-     {
--        "PublicDescription": "Attributable Level 1 data cache access, read",
--        "EventCode": "0x40",
--        "EventName": "l1d_cache_rd",
--        "BriefDescription": "L1D cache read",
-+        "ArchStdEvent": "0x40",
-+        "BriefDescription": "L1D cache access, read"
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data cache access, write ",
--        "EventCode": "0x41",
--        "EventName": "l1d_cache_wr",
--        "BriefDescription": "L1D cache write",
-+        "ArchStdEvent": "0x41",
-+        "BriefDescription": "L1D cache access, write"
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data cache refill, read",
--        "EventCode": "0x42",
--        "EventName": "l1d_cache_refill_rd",
--        "BriefDescription": "L1D cache refill read",
-+        "ArchStdEvent": "0x42",
-+        "BriefDescription": "L1D cache refill, read"
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data cache refill, write",
--        "EventCode": "0x43",
--        "EventName": "l1d_cache_refill_wr",
--        "BriefDescription": "L1D refill write",
-+        "ArchStdEvent": "0x43",
-+        "BriefDescription": "L1D cache refill, write"
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data TLB refill, read",
--        "EventCode": "0x4C",
--        "EventName": "l1d_tlb_refill_rd",
--        "BriefDescription": "L1D tlb refill read",
-+        "ArchStdEvent": "0x4C",
-+        "BriefDescription": "L1D cache refill, inner"
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data TLB refill, write",
--        "EventCode": "0x4D",
--        "EventName": "l1d_tlb_refill_wr",
--        "BriefDescription": "L1D tlb refill write",
-+        "ArchStdEvent": "0x4D",
-+        "BriefDescription": "L1D tlb refill, write"
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data or unified TLB access, read",
--        "EventCode": "0x4E",
--        "EventName": "l1d_tlb_rd",
--        "BriefDescription": "L1D tlb read",
-+        "ArchStdEvent": "0x4E",
-+        "BriefDescription": "L1D tlb access, read"
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data or unified TLB access, write",
--        "EventCode": "0x4F",
--        "EventName": "l1d_tlb_wr",
--        "BriefDescription": "L1D tlb write",
-+        "ArchStdEvent": "0x4F",
-+        "BriefDescription": "L1D tlb access, write"
-     },
-     {
--        "PublicDescription": "Bus access read",
--        "EventCode": "0x60",
--        "EventName": "bus_access_rd",
--        "BriefDescription": "Bus access read",
-+        "ArchStdEvent": "0x60",
-+        "BriefDescription": "Bus access read"
-    },
-    {
--        "PublicDescription": "Bus access write",
--        "EventCode": "0x61",
--        "EventName": "bus_access_wr",
--        "BriefDescription": "Bus access write",
-+        "ArchStdEvent": "0x61",
-+        "BriefDescription": "Bus access write"
-    }
- ]
+In addition, there are a patch to drop mutli-mapfile.csv support.
+
+Differences to RFC:
+- reworked patch for arch standard events
+	- added arch standard event keyword support
+	- use some macros to make the code more condense
+	- use <linux/list_head.h>
+- standardised some function names
+- updated README
+- for patch to support vendor subdir, add check for
+  unknown dirent type
+ -add patch to drop mutliple mapfile.csv support
+ - dealt with new cortex a53 JSONs
+
+John Garry (9):
+  perf vendor events: drop incomplete multiple mapfile support
+  perf utils: add support for pmu events vendor sub-directory
+  perf vendor events arm64: Relocate ThunderX2 JSON
+  perf vendor events arm64: Relocate Cortex A53 JSONs
+  perf utils: add support for arch standard events
+  perf utils: add armv8-recommended.json
+  perf utils: fixup Cavium ThunderX2 JSON to use ARMv8 recommended
+    events
+  perf utils: fixup ARM Cortex A53 JSONs to use ARMv8 recommended events
+  perf utils: add HiSilicon hip08 JSON file
+
+ tools/perf/pmu-events/Build                        |   1 +
+ tools/perf/pmu-events/README                       |  15 +-
+ .../arch/arm64/arm/cortex-a53/branch.json          |  26 ++
+ .../pmu-events/arch/arm64/arm/cortex-a53/bus.json  |  10 +
+ .../arch/arm64/arm/cortex-a53/cache.json           |  27 ++
+ .../arch/arm64/arm/cortex-a53/memory.json          |  12 +
+ .../arch/arm64/arm/cortex-a53/other.json           |  30 ++
+ .../arch/arm64/arm/cortex-a53/pipeline.json        |  52 +++
+ .../pmu-events/arch/arm64/armv8-recommended.json   | 452 +++++++++++++++++++++
+ .../arch/arm64/cavium/thunderx2-imp-def.json       |  62 ---
+ .../arch/arm64/cavium/thunderx2/core-imp-def.json  |  42 ++
+ .../pmu-events/arch/arm64/cortex-a53/branch.json   |  27 --
+ .../perf/pmu-events/arch/arm64/cortex-a53/bus.json |  22 -
+ .../pmu-events/arch/arm64/cortex-a53/cache.json    |  27 --
+ .../pmu-events/arch/arm64/cortex-a53/memory.json   |  22 -
+ .../pmu-events/arch/arm64/cortex-a53/other.json    |  32 --
+ .../pmu-events/arch/arm64/cortex-a53/pipeline.json |  52 ---
+ .../arch/arm64/hisilicon/hip08/core-imp-def.json   | 140 +++++++
+ tools/perf/pmu-events/arch/arm64/mapfile.csv       |   5 +-
+ tools/perf/pmu-events/jevents.c                    | 265 +++++++++++-
+ 20 files changed, 1050 insertions(+), 271 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/armv8-recommended.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
+
 -- 
 1.9.1
