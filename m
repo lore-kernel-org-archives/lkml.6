@@ -1,148 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752117AbeBFFm2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 00:42:28 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:21082 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750751AbeBFFmT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 00:42:19 -0500
-X-UUID: 0ab2b4c53df543f7a6b0f52e2c0c11f7-20180206
-Message-ID: <1517895732.23319.21.camel@mtkswgap22>
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-CC: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Date: Tue, 6 Feb 2018 13:42:12 +0800
-In-Reply-To: <1517892624.2312.167.camel@kernel.crashing.org>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-         <1517563970.24622.9.camel@mtkswgap22>
-         <1517866584.2312.140.camel@kernel.crashing.org>
-         <1517884738.16010.27.camel@mtkswgap22>
-         <1517889903.2312.151.camel@kernel.crashing.org>
-         <1517891471.20869.6.camel@mtkswgap22>
-         <1517892624.2312.167.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1752156AbeBFFvY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 00:51:24 -0500
+Received: from ozlabs.org ([103.22.144.67]:37751 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750841AbeBFFvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 00:51:15 -0500
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Ram Pai <linuxram@us.ibm.com>, kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, mingo@redhat.com, akpm@linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
+        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
+Subject: Re: [PATCH v11 3/3] mm, x86: display pkey in smaps only if arch supports pkeys
+In-Reply-To: <20180202072139.GD5411@ram.oc3035372033.ibm.com>
+References: <1517341452-11924-4-git-send-email-linuxram@us.ibm.com> <201802021225.JPjLbdCs%fengguang.wu@intel.com> <20180202072139.GD5411@ram.oc3035372033.ibm.com>
+Date: Tue, 06 Feb 2018 16:51:12 +1100
+Message-ID: <878tc64qen.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-06 at 15:50 +1100, Benjamin Herrenschmidt wrote:
-> On Tue, 2018-02-06 at 12:31 +0800, Ryder Lee wrote:
-> > On Tue, 2018-02-06 at 15:05 +1100, Benjamin Herrenschmidt wrote:
-> > > On Tue, 2018-02-06 at 10:38 +0800, Ryder Lee wrote:
-> > > > 
-> > > > I think the code should look at the bridge address <0x0800 ...> we list
-> > > > in bindings for resolving interrupts in this case, but it seems like it
-> > > > use the 'pdev->defvn << 8' which is not really we want and will lead to
-> > > > mismatch.
-> > > > 
-> > > > 		interrupt-map-mask = <0xf800 0 0 7>;
-> > > > 		interrupt-map = <0x0000 0 0 1 ...>,
-> > > > 				<0x0000 0 0 2 ...>,
-> > > > 				<0x0000 0 0 3 ...>,
-> > > > 				<0x0000 0 0 4 ...>,
-> > > > 
-> > > > 				 0x0800 0 0 1 ...>,
-> > > > 				 0x0800 0 0 2 ...>,
-> > > > 				 0x0800 0 0 3 ...>,
-> > > > 				 0x0800 0 0 4 ...>;
-> > > > 		...
-> > > > 		pcie@1,0 {
-> > > > 			reg = <0x0800 0 0 0 0>;
-> > > > 			...
-> > > > 		};
-> > > > 
-> > > > 
-> > > > Or, alternatively, we could add a interrupt-map property in both child
-> > > > and root node to solve this. The below example is my original version as
-> > > > I don't want to change that function either.
-> > > 
-> > > The code looks at devfn because it's meant to work for PCI including
-> > > when the devices dont have a device node in the DT.
-> > > 
-> > > What I'm trying to figure out is what is it that your parent and
-> > > children are representing here. Which is/are the root complex ?
-> > 
-> > This is a single root complex with 2 root port (children in DT).
-> > 
-> > > What is the actual topology as visible on the PCIe bus (is lspci output
-> > > basically) and how does that map to your representation ?
-> > 
-> > # lspci
-> > 00:00.0 Class 0604: 14c3:0801 //1st slot - pcie@0,0
-> > 00:01.0 Class 0604: 14c3:0801 //2nd slot - pcie@1,0
-> > 
-> > 01:00.0 Class 0280: 14c3:7603 //A device which is connected to 1st slot
-> > 02:00.0 Class 0200: 8086:1521 //A 4 func device which is connected to
-> > 2nd slot
-> > 02:00.1 Class 0200: 8086:1521
-> > 02:00.2 Class 0200: 8086:1521
-> > 02:00.3 Class 0200: 8086:1521
-> 
-> Ok so that's a rather standard setup. The "devfn << 8" of your root
-> ports should be the exact same thing as their first reg property entry,
-> I'm not sure why you have a mismatch here.
+Ram Pai <linuxram@us.ibm.com> writes:
 
-I've added some log after 'for loop':
+> On Fri, Feb 02, 2018 at 12:27:27PM +0800, kbuild test robot wrote:
+>> Hi Ram,
+>> 
+>> Thank you for the patch! Yet something to improve:
+>> 
+>> [auto build test ERROR on linus/master]
+>> [also build test ERROR on v4.15 next-20180201]
+>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>> 
+>> url:    https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_0day-2Dci_linux_commits_Ram-2DPai_mm-2Dx86-2Dpowerpc-2DEnhancements-2Dto-2DMemory-2DProtection-2DKeys_20180202-2D120004&d=DwIBAg&c=jf_iaSHvJObTbx-siA1ZOg&r=m-UrKChQVkZtnPpjbF6YY99NbT8FBByQ-E-ygV8luxw&m=Fv3tEHet1bTUrDjOnzEhXvGM_4tGlkYhJHPBnWNWgVA&s=Z1W6CV2tfPmLYU8lVv1oDRl2cAyQA76KE2P064A2CQY&e=
+>> config: x86_64-randconfig-x005-201804 (attached as .config)
+>> compiler: gcc-7 (Debian 7.2.0-12) 7.2.1 20171025
+>> reproduce:
+>>         # save the attached .config to linux build tree
+>>         make ARCH=x86_64 
+>> 
+>> All error/warnings (new ones prefixed by >>):
+>> 
+>>    In file included from arch/x86/include/asm/mmu_context.h:8:0,
+>>                     from arch/x86/events/core.c:36:
+>> >> include/linux/pkeys.h:16:23: error: expected identifier or '(' before numeric constant
+>>     #define vma_pkey(vma) 0
+>>                           ^
+>> >> arch/x86/include/asm/mmu_context.h:298:19: note: in expansion of macro 'vma_pkey'
+>>     static inline int vma_pkey(struct vm_area_struct *vma)
+>>                       ^~~~~~~~
+>> 
+>> vim +16 include/linux/pkeys.h
+>> 
+>>      7	
+>>      8	#ifdef CONFIG_ARCH_HAS_PKEYS
+>>      9	#include <asm/pkeys.h>
+>>     10	#else /* ! CONFIG_ARCH_HAS_PKEYS */
+>>     11	#define arch_max_pkey() (1)
+>>     12	#define execute_only_pkey(mm) (0)
+>>     13	#define arch_override_mprotect_pkey(vma, prot, pkey) (0)
+>>     14	#define PKEY_DEDICATED_EXECUTE_ONLY 0
+>>     15	#define ARCH_VM_PKEY_FLAGS 0
+>>   > 16	#define vma_pkey(vma) 0
+>
+> Oops. Thanks for catching the issue. The following fix will resolve the error.
+>
+> diff --git a/arch/x86/include/asm/mmu_context.h
+> b/arch/x86/include/asm/mmu_context.h
+> index 6d16d15..c1aeb19 100644
+> --- a/arch/x86/include/asm/mmu_context.h
+> +++ b/arch/x86/include/asm/mmu_context.h
+> @@ -238,11 +238,6 @@ static inline int vma_pkey(struct vm_area_struct
+> 		*vma)
+>  
+>         return (vma->vm_flags & vma_pkey_mask) >> VM_PKEY_SHIFT;
+> }
+> -#else
+> -static inline int vma_pkey(struct vm_area_struct *vma)
+> -{
+> -       return 0;
+> -}
+>  #endif
 
-pr_err("busn=0x%x, devfn=0x%x, reg=0x%x\n", pdev->bus->number, pdev->devfn, of_pci_get_devfn(ppnode));
+That's not working for me (i386_defconfig):
 
-and got these:
+  In file included from ../include/linux/pkeys.h:6:0,
+                   from ../arch/x86/kernel/fpu/xstate.c:9:
+  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
+  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
+    return __pkru_allows_pkey(vma_pkey(vma), write);
+                              ^~~~~~~~
+  In file included from ../include/linux/pkeys.h:6:0,
+                   from ../fs/proc/task_mmu.c:21:
+  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
+  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
+    return __pkru_allows_pkey(vma_pkey(vma), write);
+                              ^~~~~~~~
+  In file included from ../include/linux/pkeys.h:6:0,
+                   from ../mm/mmap.c:46:
+  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
+  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
+    return __pkru_allows_pkey(vma_pkey(vma), write);
+                              ^~~~~~~~
+  In file included from ../include/linux/pkeys.h:6:0,
+                   from ../mm/mprotect.c:27:
+  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
+  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
+    return __pkru_allows_pkey(vma_pkey(vma), write);
+                              ^~~~~~~~
+  In file included from ../include/linux/pkeys.h:6:0,
+                   from ../arch/x86/kernel/fpu/core.c:15:
+  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
+  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
+    return __pkru_allows_pkey(vma_pkey(vma), write);
+                              ^~~~~~~~
 
-[    5.651836] busn=0x0, devfn=0x0, reg=0x0
-[    5.651936] pcieport 0000:00:00.0: assign IRQ: got 213
-...
-[    5.652398] busn=0x0, devfn=0x8, reg=0x0
-[    5.652487] pcieport 0000:00:01.0: assign IRQ: got 214
-
-...
-[    5.653025] busn=0x2, devfn=0x0, reg=0x8
-[    5.653058] igb 0000:02:00.0: assign IRQ: got 213
-
-[    5.724582] busn=0x2, devfn=0x1, reg=0x8
-[    5.724634] igb 0000:02:00.1: assign IRQ: got 213
-
-> However, that map only represents the INTA..D lines going to the root
-> ports, not how these get mapped to children of the root ports.
-> 
-> of_irq_parse_pci() will implement standard swizzling if you don't have
-> nodes for your devices at all. If you do, however, the code assumes
-> you have a correct and complete interrupt tree in the device-tree.
-> 
-> That means that you need in each "p2p bridge", including your root
-> ports, an interrupt-map that will map the children INTA...D of that
-> bridge to the parent INTA...D of that bridge.
-> 
-> Alternatively, you can make the maps in the root ports point directly
-> to the parent PIC. If you chose to do that, then the interrupt-map in
-> your root complex becomes only useful to represent the root ports own
-> interrutps (hotplug, AER,...) and could be replaced by just having
-> interrupt-parent & interrupts in those root port nodes.
-> 
-
-Thanks for explanation.
-
-So I guess the better way to achieve my aim - one IRQ per slot that is
-connected to all INTx and get propagated through the bridges (and for
-those root ports own interrupts (PME ..)} is to add interrupt-map
-properties in both parent and root port nodes.
-
-Something like this: https://patchwork.kernel.org/patch/9970923/ ,right?
-
-Ryder
+cheers
