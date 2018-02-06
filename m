@@ -1,66 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753206AbeBFShY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:37:24 -0500
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:42743 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752755AbeBFShO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:37:14 -0500
-X-Google-Smtp-Source: AH8x227VlKH/6zdePOBN0KrxFYouvnnqls40w489opXV4C8s16+9rkVZWDefcZZ2KT4dhisKDhD8XxPO2M/l55ITn88=
+        id S1753157AbeBFSmR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:42:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48643 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752852AbeBFSmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 13:42:10 -0500
+Date: Tue, 6 Feb 2018 10:32:54 -0800
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: Davidlohr Bueso <dbueso@suse.de>, akpm@linux-foundation.org,
+        mingo@kernel.org, peterz@infradead.org, jack@suse.cz,
+        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/64] mm: teach pagefault paths about range locking
+Message-ID: <20180206183254.zsm276etjarud3lj@linux-n805>
+Mail-Followup-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        Davidlohr Bueso <dbueso@suse.de>, akpm@linux-foundation.org,
+        mingo@kernel.org, peterz@infradead.org, jack@suse.cz,
+        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20180205012754.23615-1-dbueso@wotan.suse.de>
+ <20180205012754.23615-7-dbueso@wotan.suse.de>
+ <7217f6dc-bce0-e73f-7d63-a328180d6ca7@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180126221808.GE28313@codeaurora.org>
-References: <20180125163216.29018-1-rnayak@codeaurora.org> <20180125163216.29018-3-rnayak@codeaurora.org>
- <20180126221808.GE28313@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 6 Feb 2018 10:37:12 -0800
-X-Google-Sender-Auth: QJFpQkdOZaqEUx5CLjJlyGPdGyM
-Message-ID: <CAD=FV=WcCnQJc25=sKWtOi=ZWi=ium6DVsexuQnsLDL=aJE6-Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: sdm845: Add serial console support
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <7217f6dc-bce0-e73f-7d63-a328180d6ca7@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 05 Feb 2018, Laurent Dufour wrote:
 
-On Fri, Jan 26, 2018 at 2:18 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 01/25, Rajendra Nayak wrote:
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
->> new file mode 100644
->> index 000000000000..b97f99e6f4b4
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
->> @@ -0,0 +1,32 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +&tlmm {
+>> --- a/drivers/misc/sgi-gru/grufault.c
+>> +++ b/drivers/misc/sgi-gru/grufault.c
+>> @@ -189,7 +189,8 @@ static void get_clear_fault_map(struct gru_state *gru,
+>>   */
+>>  static int non_atomic_pte_lookup(struct vm_area_struct *vma,
+>>  				 unsigned long vaddr, int write,
+>> -				 unsigned long *paddr, int *pageshift)
+>> +				 unsigned long *paddr, int *pageshift,
+>> +				 struct range_lock *mmrange)
+>>  {
+>>  	struct page *page;
+>>
+>> @@ -198,7 +199,8 @@ static int non_atomic_pte_lookup(struct vm_area_struct *vma,
+>>  #else
+>>  	*pageshift = PAGE_SHIFT;
+>>  #endif
+>> -	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page, NULL) <= 0)
+>> +	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0,
+>> +			   &page, NULL, mmrange) <= 0)
 >
-> I'm not the maintainer, but I find this approach to the pins
-> really annoying. I have to flip to another file to figure out how
-> a board has configured the pins. And we may bring in a bunch of
-> settings that we don't ever use on some board too. Why can't we
-> put the settings in the board file directly?
+>There is no need to pass down the range here since underlying called
+>__get_user_pages_locked() is told to not unlock the mmap_sem.
+>In general get_user_pages() doesn't need a range parameter.
 
-I'm not so familiar with how things work with Qualcomm, but in general
-I think putting this in the "board" file is a bad idea.  I'd be OK
-with putting this directly in the SoC file (though it might get
-unwieldy?), but not moving things to the board file as was done with
-v2 of this patch.
+Yeah, you're right. At least it was a productive exercise for auditing.
 
-Said another way: nearly board that uses SDM845 that uses UART2 will
-have the same definitions for these pins so we shouldn't be
-duplicating it across every board, right?
-
-I'll also respond to the v2 patch so it's obvious there is feedback there...
-
--Doug
+Thanks,
+Davidlohr
