@@ -1,59 +1,324 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753312AbeBFUgd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 15:36:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753050AbeBFUgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 15:36:32 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABFE321788
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x225T91SQk2tCdJlyIfTUpWkq4O7GYhCsrEkgS0+u7wKaIVGWGb1+Lils0Ye1qtCktu3j7u/ApedXxTo/GbfV/qA=
-MIME-Version: 1.0
-In-Reply-To: <20180126221808.GE28313@codeaurora.org>
-References: <20180125163216.29018-1-rnayak@codeaurora.org> <20180125163216.29018-3-rnayak@codeaurora.org>
- <20180126221808.GE28313@codeaurora.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 6 Feb 2018 14:36:10 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKEgYLMEbSj37rNV-Zu+vd7pEPQJm4pD3zP8atZBR03aw@mail.gmail.com>
-Message-ID: <CAL_JsqKEgYLMEbSj37rNV-Zu+vd7pEPQJm4pD3zP8atZBR03aw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: sdm845: Add serial console support
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1753446AbeBFUiI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 15:38:08 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38611 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753028AbeBFUiG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 15:38:06 -0500
+X-Google-Smtp-Source: AH8x227MrkmnYyoMcdBqo/wq6TF7VQgOQmuhikyy+GyY3M+c73X2OpTK+mGB56aHM4Nyn5jATN50dw==
+From: Corentin Labbe <clabbe@baylibre.com>
+To: dledford@redhat.com, hal.rosenstock@gmail.com, sean.hefty@intel.com,
+        swise@chelsio.com, joe@perches.com
+Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH v2] IB/cxgb3: remove cxio_dbg.c
+Date: Tue,  6 Feb 2018 20:37:31 +0000
+Message-Id: <1517949451-24264-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 4:18 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 01/25, Rajendra Nayak wrote:
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
->> new file mode 100644
->> index 000000000000..b97f99e6f4b4
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
->> @@ -0,0 +1,32 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +&tlmm {
->
-> I'm not the maintainer, but I find this approach to the pins
-> really annoying. I have to flip to another file to figure out how
-> a board has configured the pins. And we may bring in a bunch of
-> settings that we don't ever use on some board too. Why can't we
-> put the settings in the board file directly?
+cxio_dbg.c is uncompiled since commit 2b540355cd2f ("RDMA/cxgb3: cleanups")
+10 years after, we could remove it.
 
-FYI, there's a pending dtc change to allow deleting unreferenced nodes
-which can solve the bloat problem.
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Acked-by: Steve Wise <swise@opengridcomputing.com>
+---
 
-Rob
+Changes since v1:
+- Remove also all DEBUG code as suggested by Joe Perches
+
+ drivers/infiniband/hw/cxgb3/Kconfig    |   9 --
+ drivers/infiniband/hw/cxgb3/Makefile   |   2 -
+ drivers/infiniband/hw/cxgb3/cxio_dbg.c | 206 ---------------------------------
+ drivers/infiniband/hw/cxgb3/cxio_hal.h |   9 --
+ drivers/infiniband/hw/cxgb3/iwch_cq.c  |   6 -
+ 5 files changed, 232 deletions(-)
+ delete mode 100644 drivers/infiniband/hw/cxgb3/cxio_dbg.c
+
+diff --git a/drivers/infiniband/hw/cxgb3/Kconfig b/drivers/infiniband/hw/cxgb3/Kconfig
+index 431be733fbbe..a7b77cb3d5d5 100644
+--- a/drivers/infiniband/hw/cxgb3/Kconfig
++++ b/drivers/infiniband/hw/cxgb3/Kconfig
+@@ -16,12 +16,3 @@ config INFINIBAND_CXGB3
+ 
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called iw_cxgb3.
+-
+-config INFINIBAND_CXGB3_DEBUG
+-	bool "Verbose debugging output"
+-	depends on INFINIBAND_CXGB3
+-	default n
+-	---help---
+-	  This option causes the Chelsio RDMA driver to produce copious
+-	  amounts of debug messages.  Select this if you are developing
+-	  the driver or trying to diagnose a problem.
+diff --git a/drivers/infiniband/hw/cxgb3/Makefile b/drivers/infiniband/hw/cxgb3/Makefile
+index 2c66d35d19bd..66fe0917aba0 100644
+--- a/drivers/infiniband/hw/cxgb3/Makefile
++++ b/drivers/infiniband/hw/cxgb3/Makefile
+@@ -5,5 +5,3 @@ obj-$(CONFIG_INFINIBAND_CXGB3) += iw_cxgb3.o
+ 
+ iw_cxgb3-y :=  iwch_cm.o iwch_ev.o iwch_cq.o iwch_qp.o iwch_mem.o \
+ 	       iwch_provider.o iwch.o cxio_hal.o cxio_resource.o
+-
+-ccflags-$(CONFIG_INFINIBAND_CXGB3_DEBUG) += -DDEBUG
+diff --git a/drivers/infiniband/hw/cxgb3/cxio_dbg.c b/drivers/infiniband/hw/cxgb3/cxio_dbg.c
+deleted file mode 100644
+index 97dbe728520a..000000000000
+--- a/drivers/infiniband/hw/cxgb3/cxio_dbg.c
++++ /dev/null
+@@ -1,206 +0,0 @@
+-/*
+- * Copyright (c) 2006 Chelsio, Inc. All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+- */
+-#ifdef DEBUG
+-#include <linux/types.h>
+-#include <linux/slab.h>
+-#include "common.h"
+-#include "cxgb3_ioctl.h"
+-#include "cxio_hal.h"
+-#include "cxio_wr.h"
+-
+-void cxio_dump_tpt(struct cxio_rdev *rdev, u32 stag)
+-{
+-	struct ch_mem_range *m;
+-	u64 *data;
+-	int rc;
+-	int size = 32;
+-
+-	m = kmalloc(sizeof(*m) + size, GFP_ATOMIC);
+-	if (!m)
+-		return;
+-
+-	m->mem_id = MEM_PMRX;
+-	m->addr = (stag>>8) * 32 + rdev->rnic_info.tpt_base;
+-	m->len = size;
+-	pr_debug("%s TPT addr 0x%x len %d\n", __func__, m->addr, m->len);
+-	rc = rdev->t3cdev_p->ctl(rdev->t3cdev_p, RDMA_GET_MEM, m);
+-	if (rc) {
+-		pr_debug("%s toectl returned error %d\n", __func__, rc);
+-		kfree(m);
+-		return;
+-	}
+-
+-	data = (u64 *)m->buf;
+-	while (size > 0) {
+-		pr_debug("TPT %08x: %016llx\n",
+-			 m->addr, (unsigned long long)*data);
+-		size -= 8;
+-		data++;
+-		m->addr += 8;
+-	}
+-	kfree(m);
+-}
+-
+-void cxio_dump_pbl(struct cxio_rdev *rdev, u32 pbl_addr, uint len, u8 shift)
+-{
+-	struct ch_mem_range *m;
+-	u64 *data;
+-	int rc;
+-	int size, npages;
+-
+-	shift += 12;
+-	npages = (len + (1ULL << shift) - 1) >> shift;
+-	size = npages * sizeof(u64);
+-
+-	m = kmalloc(sizeof(*m) + size, GFP_ATOMIC);
+-	if (!m)
+-		return;
+-
+-	m->mem_id = MEM_PMRX;
+-	m->addr = pbl_addr;
+-	m->len = size;
+-	pr_debug("%s PBL addr 0x%x len %d depth %d\n",
+-		 __func__, m->addr, m->len, npages);
+-	rc = rdev->t3cdev_p->ctl(rdev->t3cdev_p, RDMA_GET_MEM, m);
+-	if (rc) {
+-		pr_debug("%s toectl returned error %d\n", __func__, rc);
+-		kfree(m);
+-		return;
+-	}
+-
+-	data = (u64 *)m->buf;
+-	while (size > 0) {
+-		pr_debug("PBL %08x: %016llx\n",
+-			 m->addr, (unsigned long long)*data);
+-		size -= 8;
+-		data++;
+-		m->addr += 8;
+-	}
+-	kfree(m);
+-}
+-
+-void cxio_dump_wqe(union t3_wr *wqe)
+-{
+-	__be64 *data = (__be64 *)wqe;
+-	uint size = (uint)(be64_to_cpu(*data) & 0xff);
+-
+-	if (size == 0)
+-		size = 8;
+-	while (size > 0) {
+-		pr_debug("WQE %p: %016llx\n",
+-			 data, (unsigned long long)be64_to_cpu(*data));
+-		size--;
+-		data++;
+-	}
+-}
+-
+-void cxio_dump_wce(struct t3_cqe *wce)
+-{
+-	__be64 *data = (__be64 *)wce;
+-	int size = sizeof(*wce);
+-
+-	while (size > 0) {
+-		pr_debug("WCE %p: %016llx\n",
+-			 data, (unsigned long long)be64_to_cpu(*data));
+-		size -= 8;
+-		data++;
+-	}
+-}
+-
+-void cxio_dump_rqt(struct cxio_rdev *rdev, u32 hwtid, int nents)
+-{
+-	struct ch_mem_range *m;
+-	int size = nents * 64;
+-	u64 *data;
+-	int rc;
+-
+-	m = kmalloc(sizeof(*m) + size, GFP_ATOMIC);
+-	if (!m)
+-		return;
+-
+-	m->mem_id = MEM_PMRX;
+-	m->addr = ((hwtid)<<10) + rdev->rnic_info.rqt_base;
+-	m->len = size;
+-	pr_debug("%s RQT addr 0x%x len %d\n", __func__, m->addr, m->len);
+-	rc = rdev->t3cdev_p->ctl(rdev->t3cdev_p, RDMA_GET_MEM, m);
+-	if (rc) {
+-		pr_debug("%s toectl returned error %d\n", __func__, rc);
+-		kfree(m);
+-		return;
+-	}
+-
+-	data = (u64 *)m->buf;
+-	while (size > 0) {
+-		pr_debug("RQT %08x: %016llx\n",
+-			 m->addr, (unsigned long long)*data);
+-		size -= 8;
+-		data++;
+-		m->addr += 8;
+-	}
+-	kfree(m);
+-}
+-
+-void cxio_dump_tcb(struct cxio_rdev *rdev, u32 hwtid)
+-{
+-	struct ch_mem_range *m;
+-	int size = TCB_SIZE;
+-	u32 *data;
+-	int rc;
+-
+-	m = kmalloc(sizeof(*m) + size, GFP_ATOMIC);
+-	if (!m)
+-		return;
+-
+-	m->mem_id = MEM_CM;
+-	m->addr = hwtid * size;
+-	m->len = size;
+-	pr_debug("%s TCB %d len %d\n", __func__, m->addr, m->len);
+-	rc = rdev->t3cdev_p->ctl(rdev->t3cdev_p, RDMA_GET_MEM, m);
+-	if (rc) {
+-		pr_debug("%s toectl returned error %d\n", __func__, rc);
+-		kfree(m);
+-		return;
+-	}
+-
+-	data = (u32 *)m->buf;
+-	while (size > 0) {
+-		printk("%2u: %08x %08x %08x %08x %08x %08x %08x %08x\n",
+-			m->addr,
+-			*(data+2), *(data+3), *(data),*(data+1),
+-			*(data+6), *(data+7), *(data+4), *(data+5));
+-		size -= 32;
+-		data += 8;
+-		m->addr += 32;
+-	}
+-	kfree(m);
+-}
+-#endif
+diff --git a/drivers/infiniband/hw/cxgb3/cxio_hal.h b/drivers/infiniband/hw/cxgb3/cxio_hal.h
+index 7e70c5492262..c64e50b5a548 100644
+--- a/drivers/infiniband/hw/cxgb3/cxio_hal.h
++++ b/drivers/infiniband/hw/cxgb3/cxio_hal.h
+@@ -202,13 +202,4 @@ int iwch_cxgb3_ofld_send(struct t3cdev *tdev, struct sk_buff *skb);
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+-#ifdef DEBUG
+-void cxio_dump_tpt(struct cxio_rdev *rev, u32 stag);
+-void cxio_dump_pbl(struct cxio_rdev *rev, u32 pbl_addr, uint len, u8 shift);
+-void cxio_dump_wqe(union t3_wr *wqe);
+-void cxio_dump_wce(struct t3_cqe *wce);
+-void cxio_dump_rqt(struct cxio_rdev *rdev, u32 hwtid, int nents);
+-void cxio_dump_tcb(struct cxio_rdev *rdev, u32 hwtid);
+-#endif
+-
+ #endif
+diff --git a/drivers/infiniband/hw/cxgb3/iwch_cq.c b/drivers/infiniband/hw/cxgb3/iwch_cq.c
+index dd5348e48806..0a8542c20804 100644
+--- a/drivers/infiniband/hw/cxgb3/iwch_cq.c
++++ b/drivers/infiniband/hw/cxgb3/iwch_cq.c
+@@ -200,9 +200,6 @@ int iwch_poll_cq(struct ib_cq *ibcq, int num_entries, struct ib_wc *wc)
+ 
+ 	spin_lock_irqsave(&chp->lock, flags);
+ 	for (npolled = 0; npolled < num_entries; ++npolled) {
+-#ifdef DEBUG
+-		int i=0;
+-#endif
+ 
+ 		/*
+ 		 * Because T3 can post CQEs that are _not_ associated
+@@ -211,9 +208,6 @@ int iwch_poll_cq(struct ib_cq *ibcq, int num_entries, struct ib_wc *wc)
+ 		 */
+ 		do {
+ 			err = iwch_poll_cq_one(rhp, chp, wc + npolled);
+-#ifdef DEBUG
+-			BUG_ON(++i > 1000);
+-#endif
+ 		} while (err == -EAGAIN);
+ 		if (err <= 0)
+ 			break;
+-- 
+2.13.6
