@@ -1,348 +1,105 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3213742-1517857011-2-9592449742189379647
+X-Cyrus-Session-Id: sloti22d1t05-1311000-1517927569-2-17242193736327085881
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517857010; b=DMS8zROSxBpDtpZOfSBC4jf/Wpp8TsaGB3QUKzU/5QrUErz
-    cdyr2tuOgtHi1uRk//TPj08MJZEkV7jVaGehAX6OwST+Bd0ly6yl07IatQZL563f
-    n9tQmGpjRYHjdWre3vFuOY9uemQv1DOCMXLXOUO777ylb1qttWn2TXP9mp1N/0je
-    TOmG9pH949hN4yazuF9M5Wq0UFQyONafs1oUwDEoAQa0//T7qjvi0qZHcZlPYyZJ
-    o+YmYIlRFYRva3PqWjLh9Yfw0RJBmL3HCE5GIssUXn3Ypxcp8xvB7yEScbRY/AP4
-    vQDE6Xwe274Yqj9WJ0qLmJbyV7S0IwLM2xCWCSQ==
+    t=1517927569; b=Wn2Xh2vgzlkOGoyr/6hah4ycOa1thKvLC3KlYDefHRqhBpy
+    6H83ZDI/SMV89hQ+hBfBee0T+F86GIHhP3cMTMjhbyxOMGxBoCAcv+2pcPSThsSM
+    I7HcvB65KX6/gwBbYBWdRffUXJhO2vtBpR/+LZMnzCgeH7JdJZvRPsXBhb5cNZXt
+    5FTeT/HX52Lz81or+JqeJ6S1ld8pCmVr7TiEkYtVmDNH7W6Wyj2/gOQ4nRv3EJRO
+    ykIQzt9oFULD1OE5900NkOaSH2scQScl7AYWe5ELSIhgdETjaS8wxckQTR9nDwKj
+    uuuKsNQJ9ySoifvjWU+jzLENexxn7ArwdXmmPDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1517857010; bh=9l5XrfiakBzOuwvOiVAe3PJXbi
-    5CgcSy/j2+LE5VCUg=; b=LVjxNgS/NzWJ7QZpLcd7YeJC76UOtN1sXrziktfOa4
-    1gwzKQ2/IHXv10lNd5yIin3/w9w6xy+FyRyWalrsT72V4pA6Vmmlajmi87VV/zXm
-    VKi13J0zBgp+m5vhGYrauSHBj7QhL2vWXiQnsjm9JVuy+aGyp8Nfmbe2pfoCM4Vm
-    1AHXuc8dyW4BlcfwR3aLdTNJdmklJL6J2AeyljVfKblcMJWp9rf5tEOYyUeI8my9
-    4ZWQlUbNxtFzFu+C4OpxHRvKc0R3GLm7c3CE9r7tBEBwsKaxei+GcGVYR/fpG75h
-    1sJJa8Od3BrLqoRTje+RZjuBxef38wDF3r/3WHs1qHbw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1517927569; bh=3CI4eaMSVWH6vqn7RX80WXejXxtx0AQbxK1/t0MxE1A=; b=Q
+    waZec14BHLi8foKXC38MAuINIzGPLEHTyjgLvejPiYLTQFTPqWiPEH77MX/Wisnz
+    usau8Mt4k6Hk7mDasN/Zp8vnyCdLBDxPjBXAAzswnnv+wiSI+AXr6UVNC7ZgjgnA
+    kFLPi1O6mVzWfD3v1ZH8t8ifwFt14w8EpkNmR4dKv8pOG0RZPt+FxqCTb+g/tMzE
+    1bjD6Jtw0kcBy7FYn4P40TOCKTEjTvVnRVi2oSTX11Ni88UAenWgX1u/RNPmQYi3
+    tJGSG1Vd3XBFXgfSQ4leXD9HpRBoTgFIix80s8NG28SEXyISUZ+TR3yv6jwNY+Og
+    peH3YDJzFNn6Wedra+7kg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=FhCeowiE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=p/7lNtaD;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=FhCeowiE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=p/7lNtaD;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753769AbeBESzk (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Feb 2018 13:55:40 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52438 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753699AbeBESZJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 13:25:09 -0500
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuahkh@osg.samsung.com, patches@kernelci.org,
+        id S1752374AbeBFOcr (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 09:32:47 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44478 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752326AbeBFOcp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 09:32:45 -0500
+X-Google-Smtp-Source: AH8x225wLoAsQwcIrCXH2N9/7R7hQb0zY36OExW8k2GwjZDZ28gmARQXDvC50Yuta/gYUoZ8xZnTOA==
+Subject: Re: [PATCH 4.15 00/60] 4.15.2-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuahkh@osg.samsung.com, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Subject: [PATCH 4.15 00/60] 4.15.2-stable review
-Date: Mon,  5 Feb 2018 10:22:33 -0800
-Message-Id: <20180205182213.902626065@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.1
-User-Agent: quilt/0.65
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.15.2-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.15.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.15.2-rc1
-X-KernelTest-Deadline: 2018-02-07T18:22+00:00
+References: <20180205182213.902626065@linuxfoundation.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <b16b6d88-345d-0da6-b914-403b9d0780a1@roeck-us.net>
+Date: Tue, 6 Feb 2018 06:32:43 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.15.2 release.
-There are 60 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Wed Feb  7 18:21:57 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.15.2-rc1.gz
-or in the git tree and branch at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.15.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.15.2-rc1
-
-Ian Abbott <abbotti@mev.co.uk>
-    fpga: region: release of_parse_phandle nodes after use
-
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-    serial: core: mark port as initialized after successful IRQ change
-
-KarimAllah Ahmed <karahmed@amazon.de>
-    KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
-
-KarimAllah Ahmed <karahmed@amazon.de>
-    KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
-
-KarimAllah Ahmed <karahmed@amazon.de>
-    KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES
-
-Ashok Raj <ashok.raj@intel.com>
-    KVM/x86: Add IBPB support
-
-KarimAllah Ahmed <karahmed@amazon.de>
-    KVM/x86: Update the reverse_cpuid list to include CPUID_7_EDX
-
-Darren Kenny <darren.kenny@oracle.com>
-    x86/speculation: Fix typo IBRS_ATT, which should be IBRS_ALL
-
-Arnd Bergmann <arnd@arndb.de>
-    x86/pti: Mark constant arrays as __initconst
-
-KarimAllah Ahmed <karahmed@amazon.de>
-    x86/spectre: Simplify spectre_v2 command line parsing
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/retpoline: Avoid retpolines for built-in __init functions
-
-Dan Williams <dan.j.williams@intel.com>
-    x86/kvm: Update spectre-v1 mitigation
-
-Paolo Bonzini <pbonzini@redhat.com>
-    KVM: VMX: make MSR bitmaps per-VCPU
-
-Josh Poimboeuf <jpoimboe@redhat.com>
-    x86/paravirt: Remove 'noreplace-paravirt' cmdline option
-
-Tim Chen <tim.c.chen@linux.intel.com>
-    x86/speculation: Use Indirect Branch Prediction Barrier in context switch
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature bits on Intel
-
-Colin Ian King <colin.king@canonical.com>
-    x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
-
-Dan Williams <dan.j.williams@intel.com>
-    x86/spectre: Report get_user mitigation for spectre_v1
-
-Dan Williams <dan.j.williams@intel.com>
-    nl80211: Sanitize array index in parse_txq_params
-
-Dan Williams <dan.j.williams@intel.com>
-    vfs, fdtable: Prevent bounds-check bypass via speculative execution
-
-Dan Williams <dan.j.williams@intel.com>
-    x86/syscall: Sanitize syscall table de-references under speculation
-
-Dan Williams <dan.j.williams@intel.com>
-    x86/get_user: Use pointer masking to limit speculation
-
-Dan Williams <dan.j.williams@intel.com>
-    x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
-
-Dan Williams <dan.j.williams@intel.com>
-    x86/usercopy: Replace open coded stac/clac with __uaccess_{begin, end}
-
-Dan Williams <dan.j.williams@intel.com>
-    x86: Introduce __uaccess_begin_nospec() and uaccess_try_nospec
-
-Dan Williams <dan.j.williams@intel.com>
-    x86: Introduce barrier_nospec
-
-Dan Williams <dan.j.williams@intel.com>
-    x86: Implement array_index_mask_nospec
-
-Dan Williams <dan.j.williams@intel.com>
-    array_index_nospec: Sanitize speculative array de-references
-
-Mark Rutland <mark.rutland@arm.com>
-    Documentation: Document array_index_nospec
-
-Andy Lutomirski <luto@kernel.org>
-    x86/asm: Move 'status' from thread_struct to thread_info
-
-Andy Lutomirski <luto@kernel.org>
-    x86/entry/64: Push extra regs right away
-
-Andy Lutomirski <luto@kernel.org>
-    x86/entry/64: Remove the SYSCALL64 fast path
-
-Dou Liyang <douly.fnst@cn.fujitsu.com>
-    x86/spectre: Check CONFIG_RETPOLINE in command line parser
-
-William Grant <william.grant@canonical.com>
-    x86/mm: Fix overlap of i386 CPU_ENTRY_AREA with FIX_BTMAP
-
-Josh Poimboeuf <jpoimboe@redhat.com>
-    objtool: Warn on stripped section symbol
-
-Josh Poimboeuf <jpoimboe@redhat.com>
-    objtool: Add support for alternatives at the end of a section
-
-Josh Poimboeuf <jpoimboe@redhat.com>
-    objtool: Improve retpoline alternative handling
-
-Paolo Bonzini <pbonzini@redhat.com>
-    KVM: VMX: introduce alloc_loaded_vmcs
-
-Jim Mattson <jmattson@google.com>
-    KVM: nVMX: Eliminate vmcs02 pool
-
-Jesse Chan <jc@linux.com>
-    ASoC: pcm512x: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-
-Jesse Chan <jc@linux.com>
-    pinctrl: pxa: pxa2xx: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-
-Linus Walleij <linus.walleij@linaro.org>
-    iio: adc/accel: Fix up module licenses
-
-Jesse Chan <jc@linux.com>
-    auxdisplay: img-ascii-lcd: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-
-Borislav Petkov <bp@suse.de>
-    x86/speculation: Simplify indirect_branch_prediction_barrier()
-
-Borislav Petkov <bp@alien8.de>
-    x86/retpoline: Simplify vmexit_fill_RSB()
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/cpufeatures: Clean up Spectre v2 related CPUID flags
-
-Thomas Gleixner <tglx@linutronix.de>
-    x86/cpu/bugs: Make retpoline module warning conditional
-
-Borislav Petkov <bp@suse.de>
-    x86/bugs: Drop one "mitigation" from dmesg
-
-Borislav Petkov <bp@suse.de>
-    x86/nospec: Fix header guards names
-
-Borislav Petkov <bp@suse.de>
-    x86/alternative: Print unadorned pointers
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early Spectre v2 microcodes
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/msr: Add definitions for new speculation control MSRs
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/cpufeatures: Add AMD feature bits for Speculation Control
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/cpufeatures: Add Intel feature bits for Speculation Control
-
-David Woodhouse <dwmw@amazon.co.uk>
-    x86/cpufeatures: Add CPUID_7_EDX CPUID leaf
-
-Andi Kleen <ak@linux.intel.com>
-    module/retpoline: Warn about missing retpoline in module
-
-Peter Zijlstra <peterz@infradead.org>
-    KVM: VMX: Make indirect call speculation safe
-
-Peter Zijlstra <peterz@infradead.org>
-    KVM: x86: Make indirect calls in emulator speculation safe
-
-
--------------
-
-Diffstat:
-
- Documentation/admin-guide/kernel-parameters.txt |   2 -
- Documentation/speculation.txt                   |  90 ++++
- Makefile                                        |   4 +-
- arch/x86/entry/common.c                         |   9 +-
- arch/x86/entry/entry_32.S                       |   3 +-
- arch/x86/entry/entry_64.S                       | 130 +----
- arch/x86/entry/syscall_64.c                     |   7 +-
- arch/x86/include/asm/asm-prototypes.h           |   3 +
- arch/x86/include/asm/barrier.h                  |  28 +
- arch/x86/include/asm/cpufeature.h               |   7 +-
- arch/x86/include/asm/cpufeatures.h              |  22 +-
- arch/x86/include/asm/disabled-features.h        |   3 +-
- arch/x86/include/asm/fixmap.h                   |   6 +-
- arch/x86/include/asm/msr-index.h                |  12 +
- arch/x86/include/asm/msr.h                      |   3 +-
- arch/x86/include/asm/nospec-branch.h            |  86 +--
- arch/x86/include/asm/pgtable_32_types.h         |   5 +-
- arch/x86/include/asm/processor.h                |   5 +-
- arch/x86/include/asm/required-features.h        |   3 +-
- arch/x86/include/asm/syscall.h                  |   6 +-
- arch/x86/include/asm/thread_info.h              |   3 +-
- arch/x86/include/asm/tlbflush.h                 |   2 +
- arch/x86/include/asm/uaccess.h                  |  15 +-
- arch/x86/include/asm/uaccess_32.h               |   6 +-
- arch/x86/include/asm/uaccess_64.h               |  12 +-
- arch/x86/kernel/alternative.c                   |  28 +-
- arch/x86/kernel/cpu/bugs.c                      | 134 +++--
- arch/x86/kernel/cpu/common.c                    |  70 ++-
- arch/x86/kernel/cpu/intel.c                     |  66 +++
- arch/x86/kernel/cpu/scattered.c                 |   2 -
- arch/x86/kernel/process_64.c                    |   4 +-
- arch/x86/kernel/ptrace.c                        |   2 +-
- arch/x86/kernel/signal.c                        |   2 +-
- arch/x86/kvm/cpuid.c                            |  22 +-
- arch/x86/kvm/cpuid.h                            |   1 +
- arch/x86/kvm/emulate.c                          |   9 +-
- arch/x86/kvm/svm.c                              | 116 +++++
- arch/x86/kvm/vmx.c                              | 660 ++++++++++++++----------
- arch/x86/kvm/x86.c                              |   1 +
- arch/x86/lib/Makefile                           |   1 +
- arch/x86/lib/getuser.S                          |  10 +
- arch/x86/lib/retpoline.S                        |  56 ++
- arch/x86/lib/usercopy_32.c                      |   8 +-
- arch/x86/mm/tlb.c                               |  33 +-
- drivers/auxdisplay/img-ascii-lcd.c              |   4 +
- drivers/fpga/fpga-region.c                      |  13 +-
- drivers/iio/accel/kxsd9-i2c.c                   |   3 +
- drivers/iio/adc/qcom-vadc-common.c              |   4 +
- drivers/pinctrl/pxa/pinctrl-pxa2xx.c            |   4 +
- drivers/tty/serial/serial_core.c                |   2 +
- include/linux/fdtable.h                         |   5 +-
- include/linux/init.h                            |   9 +-
- include/linux/module.h                          |   9 +
- include/linux/nospec.h                          |  72 +++
- kernel/module.c                                 |  11 +
- net/wireless/nl80211.c                          |   9 +-
- scripts/mod/modpost.c                           |   9 +
- sound/soc/codecs/pcm512x-spi.c                  |   4 +
- tools/objtool/check.c                           |  89 ++--
- tools/objtool/orc_gen.c                         |   5 +
- 60 files changed, 1312 insertions(+), 637 deletions(-)
+On 02/05/2018 10:22 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.15.2 release.
+> There are 60 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Feb  7 18:21:57 UTC 2018.
+> Anything received after that time might be too late.
+> 
+
+Crap, the previous log was for 4.14. Here is the correct one.
+
+Build results:
+	total: 147 pass: 146 fail: 1
+Failed builds:
+	mips:allmodconfig
+Qemu test results:
+	total: 126 pass: 126 fail: 0
+
+... meaning the MIPS build did not magically fix itself. Sorry for the confusion.
+
+Guenter
