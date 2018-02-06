@@ -1,47 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752214AbeBFEAb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 23:00:31 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:46749 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752132AbeBFEA1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 23:00:27 -0500
-X-Google-Smtp-Source: AH8x227NHIsWKne/jqvYuOAogew/4ZEyXe72Wpy1mf0FOkobhHMW4MOkihQAiqWkNsq8zNqStZbkptiqdOsUBiq7Vws=
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0HBYckf4eQUONg6yzai3emGYODAu6mTFpY+s6RUJ2NbA@mail.gmail.com>
-References: <a63f2b482281004df854d8345cb18368224880b6.1514200190.git.baolin.wang@linaro.org>
- <CAK8P3a0HBYckf4eQUONg6yzai3emGYODAu6mTFpY+s6RUJ2NbA@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Tue, 6 Feb 2018 12:00:26 +0800
-Message-ID: <CAMz4kuLPsF-aeK9uEeeBd1irz0CPVGhR=wYEtkYM1-3Ktzb1Dg@mail.gmail.com>
-Subject: Re: [RESEND PATCH] rtc: Fix overflow when converting time64_t to rtc_time
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Mark Brown <broonie@kernel.org>, linux-rtc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S1752370AbeBFEGK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 23:06:10 -0500
+Received: from gate.crashing.org ([63.228.1.57]:36825 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752155AbeBFEGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 23:06:03 -0500
+Message-ID: <1517889903.2312.151.camel@kernel.crashing.org>
+Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
+ device tree parsing
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Date: Tue, 06 Feb 2018 15:05:03 +1100
+In-Reply-To: <1517884738.16010.27.camel@mtkswgap22>
+References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
+         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
+         <1517563970.24622.9.camel@mtkswgap22>
+         <1517866584.2312.140.camel@kernel.crashing.org>
+         <1517884738.16010.27.camel@mtkswgap22>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+On Tue, 2018-02-06 at 10:38 +0800, Ryder Lee wrote:
+> 
+> I think the code should look at the bridge address <0x0800 ...> we list
+> in bindings for resolving interrupts in this case, but it seems like it
+> use the 'pdev->defvn << 8' which is not really we want and will lead to
+> mismatch.
+> 
+> 		interrupt-map-mask = <0xf800 0 0 7>;
+> 		interrupt-map = <0x0000 0 0 1 ...>,
+> 				<0x0000 0 0 2 ...>,
+> 				<0x0000 0 0 3 ...>,
+> 				<0x0000 0 0 4 ...>,
+> 
+> 				 0x0800 0 0 1 ...>,
+> 				 0x0800 0 0 2 ...>,
+> 				 0x0800 0 0 3 ...>,
+> 				 0x0800 0 0 4 ...>;
+> 		...
+> 		pcie@1,0 {
+> 			reg = <0x0800 0 0 0 0>;
+> 			...
+> 		};
+> 
+> 
+> Or, alternatively, we could add a interrupt-map property in both child
+> and root node to solve this. The below example is my original version as
+> I don't want to change that function either.
 
-On 26 January 2018 at 17:24, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Jan 26, 2018 at 6:06 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> If we convert one large time values to rtc_time, in the original formula
->> 'days * 86400' can be overflowed in 'unsigned int' type to make the formula
->> get one incorrect remain seconds value. Thus we can use div_s64_rem()
->> function to avoid this situation.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+The code looks at devfn because it's meant to work for PCI including
+when the devices dont have a device node in the DT.
 
-Could you apply this patch? Since it was pending for a while and it is
-a bug fix. Thanks.
+What I'm trying to figure out is what is it that your parent and
+children are representing here. Which is/are the root complex ?
 
--- 
-Baolin.wang
-Best Regards
+What is the actual topology as visible on the PCIe bus (is lspci output
+basically) and how does that map to your representation ?
+
+> 		interrupt-map-mask = <0xf800 0 0 0>;
+> 		interrupt-map = <0x0000 0 0 0 ...>,
+> 				 0x0800 0 0 0 ...>;
+> 		...
+> 		pcie@1,0 {
+> 			reg = <0x0800 0 0 0 0>;
+> 			#interrupt-cells = <1>;
+> 			interrupt-map-mask = <0 0 0 0>;
+> 			interrupt-map = <0 0 0 0 ...>;
+> 			...
+> 		};
+> 
+> However, I can't find any other similar case in documentation.
+> 
+> Thanks.
