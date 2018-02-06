@@ -1,115 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752738AbeBFEvd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 23:51:33 -0500
-Received: from gate.crashing.org ([63.228.1.57]:45099 "EHLO gate.crashing.org"
+        id S1752758AbeBFEvn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 23:51:43 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:50393 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752680AbeBFEvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 23:51:11 -0500
-Message-ID: <1517892624.2312.167.camel@kernel.crashing.org>
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-mediatek@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Date: Tue, 06 Feb 2018 15:50:24 +1100
-In-Reply-To: <1517891471.20869.6.camel@mtkswgap22>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-         <1517563970.24622.9.camel@mtkswgap22>
-         <1517866584.2312.140.camel@kernel.crashing.org>
-         <1517884738.16010.27.camel@mtkswgap22>
-         <1517889903.2312.151.camel@kernel.crashing.org>
-         <1517891471.20869.6.camel@mtkswgap22>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752528AbeBFEve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 23:51:34 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 09/10] ARM: sun8i: h3: fix ALL-H3-CC H3 ver VDD-CPUX voltage
+Date: Tue,  6 Feb 2018 12:49:04 +0800
+Message-Id: <20180206044905.30508-10-icenowy@aosc.io>
+In-Reply-To: <20180206044905.30508-1-icenowy@aosc.io>
+References: <20180206044905.30508-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-06 at 12:31 +0800, Ryder Lee wrote:
-> On Tue, 2018-02-06 at 15:05 +1100, Benjamin Herrenschmidt wrote:
-> > On Tue, 2018-02-06 at 10:38 +0800, Ryder Lee wrote:
-> > > 
-> > > I think the code should look at the bridge address <0x0800 ...> we list
-> > > in bindings for resolving interrupts in this case, but it seems like it
-> > > use the 'pdev->defvn << 8' which is not really we want and will lead to
-> > > mismatch.
-> > > 
-> > > 		interrupt-map-mask = <0xf800 0 0 7>;
-> > > 		interrupt-map = <0x0000 0 0 1 ...>,
-> > > 				<0x0000 0 0 2 ...>,
-> > > 				<0x0000 0 0 3 ...>,
-> > > 				<0x0000 0 0 4 ...>,
-> > > 
-> > > 				 0x0800 0 0 1 ...>,
-> > > 				 0x0800 0 0 2 ...>,
-> > > 				 0x0800 0 0 3 ...>,
-> > > 				 0x0800 0 0 4 ...>;
-> > > 		...
-> > > 		pcie@1,0 {
-> > > 			reg = <0x0800 0 0 0 0>;
-> > > 			...
-> > > 		};
-> > > 
-> > > 
-> > > Or, alternatively, we could add a interrupt-map property in both child
-> > > and root node to solve this. The below example is my original version as
-> > > I don't want to change that function either.
-> > 
-> > The code looks at devfn because it's meant to work for PCI including
-> > when the devices dont have a device node in the DT.
-> > 
-> > What I'm trying to figure out is what is it that your parent and
-> > children are representing here. Which is/are the root complex ?
-> 
-> This is a single root complex with 2 root port (children in DT).
-> 
-> > What is the actual topology as visible on the PCIe bus (is lspci output
-> > basically) and how does that map to your representation ?
-> 
-> # lspci
-> 00:00.0 Class 0604: 14c3:0801 //1st slot - pcie@0,0
-> 00:01.0 Class 0604: 14c3:0801 //2nd slot - pcie@1,0
-> 
-> 01:00.0 Class 0280: 14c3:7603 //A device which is connected to 1st slot
-> 02:00.0 Class 0200: 8086:1521 //A 4 func device which is connected to
-> 2nd slot
-> 02:00.1 Class 0200: 8086:1521
-> 02:00.2 Class 0200: 8086:1521
-> 02:00.3 Class 0200: 8086:1521
+The VDD-CPUX voltage of ALL-H3-CC H3 ver should be 1.2V, not the 3.3V
+currently defined in the device tree.
 
-Ok so that's a rather standard setup. The "devfn << 8" of your root
-ports should be the exact same thing as their first reg property entry,
-I'm not sure why you have a mismatch here.
+Fix the voltage in the device tree.
 
-However, that map only represents the INTA..D lines going to the root
-ports, not how these get mapped to children of the root ports.
+Fixes: 6ca358645d4d ("ARM: dts: sun8i: h3: Add dts file for Libre Computer Board ALL-H3-CC H3 ver.")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+New patch in v2.
 
-of_irq_parse_pci() will implement standard swizzling if you don't have
-nodes for your devices at all. If you do, however, the code assumes
-you have a correct and complete interrupt tree in the device-tree.
+ arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-That means that you need in each "p2p bridge", including your root
-ports, an interrupt-map that will map the children INTA...D of that
-bridge to the parent INTA...D of that bridge.
-
-Alternatively, you can make the maps in the root ports point directly
-to the parent PIC. If you chose to do that, then the interrupt-map in
-your root complex becomes only useful to represent the root ports own
-interrutps (hotplug, AER,...) and could be replaced by just having
-interrupt-parent & interrupts in those root port nodes.
-
-Cheers,
-Ben.
+diff --git a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
+index d406571a0dd6..ca974d872357 100644
+--- a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
++++ b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
+@@ -102,8 +102,8 @@
+ 	reg_vdd_cpux: vdd-cpux {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd-cpux";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 		vin-supply = <&reg_vcc5v0>;
+-- 
+2.15.1
