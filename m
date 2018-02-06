@@ -1,65 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeBFKon (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 05:44:43 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33620 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752246AbeBFKoc (ORCPT
+        id S1752750AbeBFKsn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 05:48:43 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:35973 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752246AbeBFKsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 05:44:32 -0500
-Date: Tue, 6 Feb 2018 11:44:27 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: linux-pci@vger.kernel.org
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-        Koen Vandeputte <koen.vandeputte@ncentric.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, Ian Ray <ian.ray@ge.com>,
-        Nandor Han <nandor.han@ge.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [v2] PCI: dwc: fix enumeration end when reaching root subordinate
-Message-ID: <20180206104427.bqonr2f7zm5whibq@earth.universe>
+        Tue, 6 Feb 2018 05:48:37 -0500
+X-Google-Smtp-Source: AH8x225+hLZVS/6YIHoBdFVXr/MQUE6RryteTpoALXBLvXCIO3Gx4chXdI5bXCzFjjn0mEXsn/LZEA==
+Date: Tue, 6 Feb 2018 11:48:34 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Dan Williams <dan.j.williams@intel.com>, tglx@linutronix.de,
+        Andi Kleen <ak@linux.intel.com>, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, luto@kernel.org
+Subject: Re: [PATCH v3 2/3] x86/entry: Clear registers for 64bit
+ exceptions/interrupts
+Message-ID: <20180206104834.h34mme4m5p6c5jcr@gmail.com>
+References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180206090455.GA15925@isilmar-4.linta.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dkjnczvd7igqg2os"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1516008968-26285-1-git-send-email-koen.vandeputte@ncentric.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180206090455.GA15925@isilmar-4.linta.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---dkjnczvd7igqg2os
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
 
-Hi,
+> On Mon, Feb 05, 2018 at 05:18:11PM -0800, Dan Williams wrote:
+> > @@ -1178,6 +1180,7 @@ ENTRY(paranoid_entry)
+> >  	cld
+> >  	SAVE_C_REGS 8
+> >  	SAVE_EXTRA_REGS 8
+> > +	CLEAR_REGS_NOSPEC
+> >  	ENCODE_FRAME_POINTER 8
+> >  	movl	$1, %ebx
+> >  	movl	$MSR_GS_BASE, %ecx
+> > @@ -1185,7 +1188,6 @@ ENTRY(paranoid_entry)
+> >  	testl	%edx, %edx
+> >  	js	1f				/* negative -> in kernel */
+> >  	SWAPGS
+> > -	xorl	%ebx, %ebx
+> 
+> Here, %ebx will be filled with $1 (see code snipped above) *after* the
+> call to CLEAR_REGS_NOSPEC. That's what this line has been clearing in the
+> past. So I'm not sure whether this line should be removed.
 
-This patch fixes network support for GE Healthcare B850v3, which has
-two network cards attached to a PCIe switch and is
+Good point - I have fixed this bug in the tip:x86/pti version of the patch.
 
-Tested-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Thanks,
 
--- Sebastian
-
---dkjnczvd7igqg2os
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlp5hwYACgkQ2O7X88g7
-+po4EQ/9GpcSyPnlyP6a0BFbPZMG9j0K06rRgPZJHJ42cvPHtYqK4WihbrGQqfxE
-Ra05LGxyjkSP18n7hfyVwJYcuEnAwua/Vvc6F0aypJ7nenZThLt56t3CUzoj1NES
-gyh/w3pdEDjKaZPERs3aFg3QryncXnuGCRgw1HPpmYxPtIF9tNpl+QWO9K2hTRO9
-B5erSMy/7FE2YxFijqrfFe3D5gduxaOOogZQZkU4W0CquNfavmVuYlq1Y4D3QEk8
-QSwUAv45e7dcLtrV4zqPTPCFJK3RGM9wDYxHJF5tOLEK1oANpMRl1Ny9XFA7r671
-n9nIQ0yicmwn+5GyC7AC35c9BCTjccW1hpChrV5I8sY0vTWlZ7t9YM2MhS6INeaB
-WzOmFaQkUu7SwESXPZR+3twkvKdhnrvXG6tcWm6AhT5EXEzGC+nXayy5FQogIHOn
-RlqsktDFTtrbNNdkjrYBtifeOnD82MVy/VzqJU/EvWIKdK5wyjXCLh0yEjIyMf1V
-053B1u2js6txusiPqEqOKglbUurj5C2z0zTojn8yTr5TEsO5dVjW9h1fq7Ed1Jse
-W95WzUN3pMBDUe6XVzQfG9UpIntgoTzxwuLVaxNX30XcTurmN5+cR9q8tdLYJtEN
-dk2MMJSBFN8LozZUPQ2MDbCkYcwkVJdBzAdiVBa5rPiQYur+0O0=
-=HPWt
------END PGP SIGNATURE-----
-
---dkjnczvd7igqg2os--
+	Ingo
