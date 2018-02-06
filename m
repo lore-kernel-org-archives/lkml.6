@@ -1,109 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753391AbeBFTvq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 14:51:46 -0500
-Received: from esa2.dell-outbound.iphmx.com ([68.232.149.220]:8508 "EHLO
-        esa2.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751632AbeBFTvo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 14:51:44 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GEAQDeBnpahz+a6ERcGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQngQAoCoNbmFWCAokTjkqCAwqFOwIagkJYFAEBAQEBAQEBAgE?=
- =?us-ascii?q?CEAEBAQgNCQgoL4I4IoJKAQEBBCMROgsMBAIBCBEEAQEBAgIREgMCAgIfJQEIC?=
- =?us-ascii?q?AIEDgUIihUDFbUdgieHOw2BMYIGAQEBAQEBAQEBAQEBAQEBAQEBAQEBHYEPg1u?=
- =?us-ascii?q?CFYY3NoJrRASBKg0/ECMFDYJLgmUFimKJXo8wPpBthH6CJ4YnhBmHXo45iUeBP?=
- =?us-ascii?q?DaBc3BSgkaCVRAMggZ4jE+BJYECFQEBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2GEAQDeBnpahz+a6ERcGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?ngQAoCoNbmFWCAokTjkqCAwqFOwIagkJYFAEBAQEBAQEBAgECEAEBAQgNCQgoL?=
- =?us-ascii?q?4I4IoJKAQEBBCMROgsMBAIBCBEEAQEBAgIREgMCAgIfJQEICAIEDgUIihUDFbU?=
- =?us-ascii?q?dgieHOw2BMYIGAQEBAQEBAQEBAQEBAQEBAQEBAQEBHYEPg1uCFYY3NoJrRASBK?=
- =?us-ascii?q?g0/ECMFDYJLgmUFimKJXo8wPpBthH6CJ4YnhBmHXo45iUeBPDaBc3BSgkaCVRA?=
- =?us-ascii?q?MggZ4jE+BJYECFQEBAQ?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.187
-X-IronPort-AV: E=Sophos;i="5.46,469,1511848800";
-   d="scan'208";a="1212117566"
-X-DLP: DLP_GlobalPCIDSS
-To: <pmenzel+platform-driver-x86@molgen.mpg.de>
-CC: <pali.rohar@gmail.com>, <it+platform-driver-x86@molgen.mpg.de>,
-        <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: dell-smbios makes wireless card unusable on Dell XPS 13 9360
-Thread-Topic: dell-smbios makes wireless card unusable on Dell XPS 13 9360
-Thread-Index: AQHTn2JDQNvMUU6uc0OEu0w66Mk5pKOXhwfwgABoIgD//9gmoA==
-Date: Tue, 6 Feb 2018 19:51:41 +0000
-Message-ID: <675694ab854f40548d57d7943cb4475f@ausx13mpc120.AMER.DELL.COM>
-References: <7a59dd8f-c6a1-e412-931f-629ac5aa2800@molgen.mpg.de>
- <3e2d3a0bb0f8495b8b77d282a371b28c@ausx13mpc120.AMER.DELL.COM>
- <9b358453-915f-0721-1541-6ff793f5e811@molgen.mpg.de>
-In-Reply-To: <9b358453-915f-0721-1541-6ff793f5e811@molgen.mpg.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
+        id S1753406AbeBFTxM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 14:53:12 -0500
+Received: from mout.web.de ([212.227.15.14]:51235 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752765AbeBFTxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 14:53:11 -0500
+To: linux-input@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] hid-a4tech: Delete an error message for a failed memory
+ allocation in a4_probe()
+Message-ID: <236c998d-02d4-f120-3d03-4619a2bb89d9@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 20:52:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:YHdnb06PTueNkCfRCzbaaacZ5s0XIqzvLBSBRrCaeYJakMbpRAq
+ EnH9FKbGt/R6Z2TLMxSvajvD14X7KIZc/WZ/jzpxU9yt5sIKOahb7eogxHL3pQ2KKmHj6SP
+ AkybrWSyHtV0fqqM8c00A/s/yQkwAFzo/WGC34+d4+r5z5N55HBLlBes+sOphIsWPJ578nT
+ qcCYe1E0RiUTXsjjodM9A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nn816PF6jFU=:+ovSlKWET5KrdwOb8U1pDc
+ bIzSfvG7B5vNEZkBLxvllmiASrn5e00utKchQvoY7Jtm2bih+vrgNMtlOOaYdLHBNcu/j95KP
+ lz3czrNInF10JIBCZySEWnIdviaPVrwWCdI5uW2qwdQunCGXuJ2ue4xz7liDrg8/2ZwpU+yHX
+ 36ndpptkDsTmTnqePrgtgnm2KartRSBX9+HwpPmUV/egxCgW0w6VGzv7r/FsiXU4WJCvCRJRQ
+ DJI6lFGKCNFzBFZD3TC8sKPzSw8q69ZNh5xTxEYKUkdKnoAalQF9/iEU8v1/BDbSfH3g0SzcE
+ aE/PLo9Rd5GmHVUEu3VWoBu38BJ/ugvY1u6OZK2WwF1/G7g06LpMNtsGpk1n3rBwyiylfVP1U
+ CLmmjdc6eues/Qkdfj5XNi/VJ4KJtQ56dPSl+dt1Utq7ybRn82GSCl5rLxlFhVtsTSA3XBYDX
+ Qdyt7rVQjq5UuGNTwRe5rphW91IECM9Dn+oLDD+/0ffDFOeJXu71AEtncyTPo2rnarZ5HPwJz
+ XOgcDPY/2qdwU5NfyU13JmIJBrIPHH8g3oT+sbS9F75ZDehgoDRsepTNPkDA+wNu11+JbfM2/
+ hcjwImx5c2EUdmtlEY32Pjf1k6ISgiJ2KaY91aEGLULCRQA3B4l3A6N5gUI4QoeTFCDYY0ETo
+ Oagf/fPk2/jPd7zl073FoN175lLjciVkOxRGtlKOl6nI1hxPPfORAU1U4efQV1SVKmSQrYyXx
+ DmlIPGBRSZRpnjChi8HxTE05h/JuemSce2ZNXangaEUiPD8e3x5sTZDCYFm3JOY91fllxWGSb
+ gPR0AUE9nviYK/dVUw5rkxnYluebJVGg2PygJKbf78lf0d9BC4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w16JppB6024073
 
-> -----Original Message-----
-> From: platform-driver-x86-owner@vger.kernel.org [mailto:platform-driver-x86-
-> owner@vger.kernel.org] On Behalf Of Paul Menzel
-> Sent: Tuesday, February 6, 2018 10:08 AM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> Cc: Pali Rohár <pali.rohar@gmail.com>; it+platform-driver-x86@molgen.mpg.de;
-> platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: dell-smbios makes wireless card unusable on Dell XPS 13 9360
-> 
-> Dear Mario,
-> 
-> 
-> On 02/06/18 16:58, Mario.Limonciello@dell.com wrote:
-> 
-> >> -----Original Message-----
-> >> From: Paul Menzel [mailto:pmenzel+platform-driver-x86@molgen.mpg.de]
-> >> Sent: Tuesday, February 6, 2018 9:50 AM
-> >> To: Pali Rohár <pali.rohar@gmail.com>; Limonciello, Mario
-> >> <Mario_Limonciello@Dell.com>; it+platform-driver-x86@molgen.mpg.de
-> >> Cc: platform-driver-x86@vger.kernel.org; Linux Kernel Mailing List <linux-
-> >> kernel@vger.kernel.org>
-> >> Subject: dell-smbios makes wireless card unusable on Dell XPS 13 9360
-> 
-> >> Adding `dell-smbios` to `/etc/modules` on the Dell XPS 13 9360, it seems
-> >> to badly effect the Wireless LAN device, causing it to be absent or to
-> >> not work.
-> >>
-> >> In one case, the whole system lagged, that means, the log in screen
-> >> stayed grayed out for 15 seconds, and the mouse pointer stopped moving
-> >> every 20(?) seconds for some seconds.
-> >
-> > Can you please confirm if you're indicating this is a regression in 4.15?
-> > Or was this present in earlier kernels too?
-> 
-> Yes, it happened with Ubuntu’s 4.13 too. My original message had one log
-> attached where the Wifi wasn’t visible at all.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 20:48:04 +0100
 
-Looking at that log it looks to me that the ath10k firmware crashed, not that
-dell-smbios lagging caused the crash.
+Omit an extra message for a memory allocation failure in this function.
 
-[   15.262226] ath10k_pci 0000:3a:00.0: firmware crashed! (uuid a6c40788-b7ad-4f6a-890a-62e62c1f6e5f)
-[   15.262233] ath10k_pci 0000:3a:00.0: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
-[   15.262235] ath10k_pci 0000:3a:00.0: kconfig debug 0 debugfs 1 tracing 1 dfs 0 testmode 0
-[   15.262645] ath10k_pci 0000:3a:00.0: firmware ver WLAN.RM.4.4-00022-QCARMSWPZ-2 api 6 features wowlan,ignore-otp crc32 4d458559
-[   15.262941] ath10k_pci 0000:3a:00.0: board_file api 2 bmi_id N/A crc32 0e26ef70
-[   15.262943] ath10k_pci 0000:3a:00.0: htt-ver 0.0 wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
-[   15.274887] ath10k_pci 0000:3a:00.0: failed to get memcpy hi address for firmware address 4: -16
-[   15.274900] ath10k_pci 0000:3a:00.0: failed to read firmware dump area: -16
-[   15.274909] ath10k_pci 0000:3a:00.0: Copy Engine register dump:
+This issue was detected by using the Coccinelle software.
 
-Do you have a strong correlation with dell-smbios loading and the wireless
-firmware crashing?  You're the first account I've heard of this.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-a4tech.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Also why are you putting it in /etc/modules rather than letting the udev
-rules load from modaliases?  Or did you artificially prevent that in some way?
+diff --git a/drivers/hid/hid-a4tech.c b/drivers/hid/hid-a4tech.c
+index 9428ea7cdf8a..7a364f17f39e 100644
+--- a/drivers/hid/hid-a4tech.c
++++ b/drivers/hid/hid-a4tech.c
+@@ -91,10 +91,8 @@ static int a4_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	int ret;
+ 
+ 	a4 = devm_kzalloc(&hdev->dev, sizeof(*a4), GFP_KERNEL);
+-	if (a4 == NULL) {
+-		hid_err(hdev, "can't alloc device descriptor\n");
++	if (!a4)
+ 		return -ENOMEM;
+-	}
+ 
+ 	a4->quirks = id->driver_data;
+ 
+-- 
+2.16.1
