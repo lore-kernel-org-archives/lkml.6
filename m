@@ -1,143 +1,129 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2131322-1518464858-2-10148327188727347879
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518464858; b=cRREkhtQf7RkdPF6JeSKVPH+dFT6w1gxEnMdJIGSNlXBQlK
-    3RUAg2UVo6UQqNH3uVDyE1LDA0m0v+jQoqdC2Bcfdg6fNAZz53e7FEYo6FZSWd7a
-    1OxLwiMpG1vqjwQ8HxWH5tPLYH/vDdJ1LtR+Xx66RxC+742f5M1zUJoNXRAu22SM
-    VKqgCv8BPOnQICpvJ/m041udK84dQ2yAQP43CsfMDIhOX4rJpM/3e/HZCcX5ewD1
-    mEFuHvvKMumTWA8wT12qgz4DMQbwlDbqq1PmGUTa31V2uLnqRJCE2mjj9cnUv+jo
-    7YKOQLsjjUmW8VJFqHpYMNOTE3hVJN3S+htdZRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1518464858; bh=uGpgTk1/zR1xKQmFRtDD2vBh2mOBJENxy6MIw7pYFVU=; b=M
-    Ac7GMSj34UEbPl8FutHSm+PCOOjWEr8OJNh4T8D4/LganNoAb129exiF9hyceW8I
-    b19piy5lfN+Z7oxm5Jsbi1c9BHu6aL7W43hZGfJS6lLfs9UcZkIMPl2B2bEhMcRW
-    ZuQnzkHyURpGPgQr/vUDaZ/K+M3Q1cYF+rvn2msXDlKLIi5jfY5K+HVdL29onBUH
-    c+dkjiXobMjGlnKj+2V9Sa0/GfToDb2H48ch1uudOoFIykfSkPPSwhj5wu2NeleD
-    /bM1yUHavjP4GvDyJ85gUlhyvFw6tJLkwqMjBT/dIGFwzuxj8d7q6xcTM3F7dzgW
-    es29mILjMdC4eulhmuyjA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=np8FCjzY;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=np8FCjzY;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751150AbeBLTqT (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Feb 2018 14:46:19 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34443 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751034AbeBLTqS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 12 Feb 2018 14:46:18 -0500
-X-Google-Smtp-Source: AH8x225HMfxTcUwrD/EhWE6axuksswwVNuDhjJ0vlFDeQYp/dj5kbkcn2toyVo19w3NGGbndk5RQ/g==
-Subject: Re: [PATCH] extcon: intel-int3496: Fix oops on probe
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <CGME20180211232639epcas2p4495c006e2063cde1ce86710767cd8e97@epcas2p4.samsung.com>
- <20180211232633.13565-1-hdegoede@redhat.com> <5A80D36D.9050206@samsung.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <fefa2805-9fd6-6e4c-b12e-265a37d654cb@redhat.com>
-Date: Mon, 12 Feb 2018 20:46:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <5A80D36D.9050206@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <prvs=568516f6c=stanislav.nijnikov@wdc.com>
+X-Google-Smtp-Source: AH8x224aNX8pK7IP1eiTfBJXXqkawSU7bvFNE3XhmyohK0hZRj+oSa2XMG8Ri12VKcHunXoZLWPN
+ARC-Seal: i=1; a=rsa-sha256; t=1517933192; cv=none;
+        d=google.com; s=arc-20160816;
+        b=EYZJpfOhTV9YMzKFl1HVhYukiRV7Du9BTvAhV6M7Xj1DOXxsqv7xgy3wLmmtCYKdEt
+         v8a8aLqvOArMM9KwWGyqxe57jLt0y420PCpKEfUz3WrTx3BKHpNwqntOJ/vfXXjga7WO
+         Ur2c06XWObQlxpdJRFI1glrYeA3IjVLIKLtlf6pIc/cgtsYuTEDADHCmASBLXXOyNL7P
+         arf978m4yTwbWQ81I1Cv6lgD1OHcKnHHuaiUYWMCI+FRuPkw2EDD/4/aLoa5hfAPzhzf
+         9MW2BNl+ElPLoqbfSOG54ocDvV4FVIJc+iGBEm11hxlOwvUJ49H49WV6I0voTMNTo/ds
+         oHfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=Km4K9Gv7ml9GwiVaCQ82xHsTUTwr3uZXrQ9f6NpReiE=;
+        b=eOZ+WduwkFUnPwTETaT8z3DrJUPGrz9O/mdssztLoiIv6GdFNWgFRMuCESGD3oppkS
+         uZ8z4NqBCCGF3j1GrBXsToSMikp+PeJQFhky/BXErJkP8ehfeUa0Y014v0vCPChO16Xm
+         QbK5fyjkxgyFfewhL01IyqwT/AawkDBf4bBH/miQH+HfbUn6Oyd8pa0LuT5u8GjBesZz
+         z1i8E91XTsqnD0rS7l/SJgQhx63NPAjp7+8xVW5M6tyEwBafWKrKfD7PBH6ExcssEKYm
+         7pwTfXKWHThLkmt3KY0Fjb8Pj9vFV40uffzGRv+lPLDHvIRjF28eAdj8SFZ5QDR5qbNC
+         XifQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=K35liTxn;
+       spf=pass (google.com: domain of prvs=568516f6c=stanislav.nijnikov@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=568516f6c=stanislav.nijnikov@wdc.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=K35liTxn;
+       spf=pass (google.com: domain of prvs=568516f6c=stanislav.nijnikov@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=568516f6c=stanislav.nijnikov@wdc.com
+X-IronPort-AV: E=Sophos;i="5.46,469,1511798400";
+   d="scan'208";a="167144201"
+From: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+To: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	jaegeuk@kernel.org
+Cc: alex.lemberg@wdc.com,
+	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+Subject: [PATCH v5 00/11] ufs: sysfs: read-only access to device
+Date: Tue,  6 Feb 2018 18:06:12 +0200
+Message-Id: <1517933183-30892-1-git-send-email-stanislav.nijnikov@wdc.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591668315307524736?=
+X-GMAIL-MSGID: =?utf-8?q?1591668315307524736?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+This patch introduces sysfs entries that will provide read-only access to
+device management data that could be received with UFS query requests.
+User-space applications will be able to read UFS device descriptors,
+flags and attributes. This will allow to get full UFS device configuration
+and its status. The descriptors are provided as set of files representing
+its parameters. The flags are using "true"/"false" representation of
+their value. The attributes are shown as hexadecimal value. The
+descriptors, attributes and flags are placed in separate subfolders under
+the UFS device sysfs entry (/sys/bus/platform/drivers/ufshcd/*/). The
+string descriptor subfolder contains five string descriptors defined by
+UFS specification 2.1. The LUN specific descriptor and attribute are 
+placed under corresponding SCSI device sysfs entries
+(/sys/class/scsi_device/*/device/).
+In addition the patch presents an additional field in the
+scsi_host_template structure - struct attribute_group **sdev_group.
+This field allows to define groups of attributes. It will provide an
+ability to use binary attributes in addition to device attributes and
+to group them under subfolders if necessary.
 
-On 12-02-18 00:36, Chanwoo Choi wrote:
-> On 2018년 02월 12일 08:26, Hans de Goede wrote:
->> Commit 41d600274fbf ("extcon: int3496: process id-pin first so that we
->> start with the right status") starts the work on the workqueue before
->> registration to make sure we've a valid cable state directly after
->> registration.
->>
->> But that commit moves the queuing of the work to before we even alloc the
->> extcon, causing a NULL pointer deref in the worker.
->>
->> This commit moves the queuing of the work to after we alloc the extcon,
->> fixing the NULL pointer deref.
->>
->> Fixes: 41d600274fbf ("extcon: int3496: process id-pin first ...")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->>   drivers/extcon/extcon-intel-int3496.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/extcon/extcon-intel-int3496.c b/drivers/extcon/extcon-intel-int3496.c
->> index b23ee9d993a3..673bb26a9a2a 100644
->> --- a/drivers/extcon/extcon-intel-int3496.c
->> +++ b/drivers/extcon/extcon-intel-int3496.c
->> @@ -131,15 +131,15 @@ static int int3496_probe(struct platform_device *pdev)
->>   	if (IS_ERR(data->gpio_usb_mux))
->>   		dev_info(dev, "can't request USB MUX GPIO\n");
->>   
->> +	data->edev = devm_extcon_dev_allocate(dev, int3496_cable);
->> +	if (IS_ERR(data->edev))
->> +		return -ENOMEM;
->> +
->>   	/* process id-pin first so that we start with the right status */
->>   	queue_delayed_work(system_wq, &data->work, 0);
->>   	flush_delayed_work(&data->work);
->>   
->>   	/* register extcon device */
->> -	data->edev = devm_extcon_dev_allocate(dev, int3496_cable);
->> -	if (IS_ERR(data->edev))
->> -		return -ENOMEM;
->> -
->>   	ret = devm_extcon_dev_register(dev, data->edev);
->>   	if (ret < 0) {
->>   		dev_err(dev, "can't register extcon device: %d\n", ret);
->>
-> 
-> Instead, You better to send v3 after merging your patch[1] and this patch.
-> [1] extcon: int3496: process id-pin first so that we start with the right status
+Changelog:
+v4 -> v5
+Added "scsi: " to clarify the patch naming
+The scsi: ufs: sysfs: unit descriptor was split to two patches
+"scsi: host template attribute groups" and "scsi: ufs: sysfs: unit
+descriptor"
+The "const" modificator was added to the sdev_groups member type and
+all corresponding data structures. The type conversions in the relative
+calls of sysfs_create_groups/sysfs_remove_groups were cleared.
+The ufs_desc_param_size enumeration was replaced with numeric constants
+The UFS_LUN_ATTRIBUTE macro was removed
+The be*_to_cpu function calls were replaced with corresponding 
+get_unaligned_be* calls
+The legal information was cut leaving only the SPDX line and the
+copyright information
 
-Ok, I've rebased my tree on top of 4.16-rc1 and prepared a v3. During the
-rebase I noticed that a patch for the axp288-extcon driver which was supposed
-to get dropped did end up in 4.16-rc1, so I will also (resend) a revert for that.
+v3 -> v4
+Additional patch that introduces default attributes group for the
+existing ufs sysfs entries (rpm_lvl and spm_lvl)
+The ufs_sysfs_read_desc_param function calls to ufshcd_read_desc_param
+insted of ufshcd_query_descriptor_retry to avoid code duplication.
+The code was updated to remove the checkpatch error "ERROR: Macros 
+with complex values should be enclosed in parentheses"
+Added "_" to macros parameters to remove "#undef DEVICE_CLASS"
+The legal information was updated to satisfy the SPDX requirements
+The date in Documentation/ABI/testing/sysfs-driver-ufs was updated.
 
-Also another extcon-axp288 driver patch seems to not have made it into 4.16-rc1,
-so I will resend that too.
+v2 -> v3
+The Makefile is updated to make ufs-sysfs.c part of the ufshcd module.
+The unnecessary EXPORT_SYMBOL were removed
+Added a legal info header to the new files
+The date in Documentation/ABI/testing/sysfs-driver-ufs was updated.
 
-Regards,
+v1 -> v2
+Provided additional description for the changes
 
-Hans
+Stanislav Nijnikov (11):
+  scsi: ufs: sysfs: attribute group for existing sysfs entries.
+  scsi: ufs: sysfs: device descriptor
+  scsi: ufs: sysfs: interconnect descriptor
+  scsi: ufs: sysfs: geometry descriptor
+  scsi: ufs: sysfs: health descriptor
+  scsi: ufs: sysfs: power descriptor
+  scsi: ufs: sysfs: string descriptors
+  scsi: host template attribute groups
+  scsi: ufs: sysfs: unit descriptor
+  scsi: ufs: sysfs: flags
+  scsi: ufs: sysfs: attributes
+
+ Documentation/ABI/testing/sysfs-driver-ufs | 804 +++++++++++++++++++++++++++++
+ drivers/scsi/scsi_sysfs.c                  |  12 +
+ drivers/scsi/ufs/Makefile                  |   3 +-
+ drivers/scsi/ufs/ufs-sysfs.c               | 737 ++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufs-sysfs.h               |  17 +
+ drivers/scsi/ufs/ufs.h                     | 115 ++++-
+ drivers/scsi/ufs/ufshcd.c                  | 218 ++------
+ drivers/scsi/ufs/ufshcd.h                  |  34 ++
+ include/scsi/scsi_host.h                   |   6 +
+ 9 files changed, 1755 insertions(+), 191 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-ufs
+ create mode 100644 drivers/scsi/ufs/ufs-sysfs.c
+ create mode 100644 drivers/scsi/ufs/ufs-sysfs.h
+
+-- 
+2.7.4
