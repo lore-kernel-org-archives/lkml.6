@@ -1,129 +1,742 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752501AbeBFCjP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:39:15 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:3684 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752141AbeBFCjI (ORCPT
+        id S1752547AbeBFCkQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:40:16 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37373 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752141AbeBFCkJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:39:08 -0500
-X-UUID: 12113ef83dfd429e835f985cb5f1107e-20180206
-Message-ID: <1517884738.16010.27.camel@mtkswgap22>
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-CC: Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Date: Tue, 6 Feb 2018 10:38:58 +0800
-In-Reply-To: <1517866584.2312.140.camel@kernel.crashing.org>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-         <1517563970.24622.9.camel@mtkswgap22>
-         <1517866584.2312.140.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK: N
+        Mon, 5 Feb 2018 21:40:09 -0500
+X-Google-Smtp-Source: AH8x225W0KUmDnZ5qdTT4GWNTdG7WJkmi5f4NQyqHZIO3CZhL1X+KkE7Be6qxTbfDVwsNT0RJhrSxw==
+From: Joel Fernandes <joelaf@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joel Fernandes <joelaf@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, kernel-team@android.com
+Subject: [RFC] tracing: Improve design of preemptirq tracepoints and its users
+Date: Mon,  5 Feb 2018 18:39:50 -0800
+Message-Id: <20180206023950.64030-1-joelaf@google.com>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-06 at 08:36 +1100, Benjamin Herrenschmidt wrote:
-> On Fri, 2018-02-02 at 17:32 +0800, Ryder Lee wrote:
-> > On Wed, 2018-01-31 at 10:02 -0600, Rob Herring wrote:
-> > > On Wed, Jan 31, 2018 at 1:41 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> > > > A root complex usually consist of a host bridge and multiple P2P bridges,
-> > > > and someone may express that in the form of a root node with many subnodes
-> > > > and list all four interrupts for each slot (child node) in the root node
-> > > > like this:
-> > > > 
-> > > >          pcie-controller {
-> > > >                  ...
-> > > >                  interrupt-map-mask = <0xf800 0 0 7>;
-> > > >                  interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
-> > > >                                   0x0800 0 0 {INTx} &{interrupt parent} ...>;
-> > > > 
-> > > >                  pcie@0,0 {
-> > > >                          reg = <0x0000 0 0 0 0>;
-> > > >                          ...
-> > > >                  };
-> > > > 
-> > > >                  pcie@1,0 {
-> > > >                          reg = <0x0800 0 0 0 0>;
-> > > >                          ...
-> > > >                  };
-> > > >          };
-> > > > 
-> > > > As shown above, we'd like to propagate IRQs from a root port to the devices
-> > > > in the hierarchy below it in this way.  However, it seems that the current
-> > > > parser couldn't handle such cases and will get something unexpected below:
-> > > > 
-> > > >          pcieport 0000:00:01.0: assign IRQ: got 213
-> > > >          igb 0000:01:00.0: assign IRQ: got 212
-> > > > 
-> > > > There is a device which is connected to 2nd slot, but the port doesn't share
-> > > > the same IRQ with its downstream devices.  The problem here is that, if the
-> > > > loop found a P2P bridge, it wouldn't check whether the reg property exists
-> > > > in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
-> > > > thus the subsequent flow couldn't correctly resolve them.
-> 
-> I don't really understand the problem explanation here. Something
-> doesn't look right as you shouldn't have to change that function, but I
-> just don't get what you a
-> 
-> Cheers,
-> Ben.
-> 
+This patch detaches the preemptirq tracepoints from the tracers and
+keeps it separate. With this, several ifdefs are cleaner, and lockdep
+and other users can use the preemptirq tracepoints by registering probes
+onto them. This makes it much cleaner, but not just that: PROVE_LOCKING
+and CONFIG_IRQSOFF_TRACER can be enabled now at the same time and we
+get rid of all the horrific ifdeferry around PROVE_LOCKING.
 
-I think the code should look at the bridge address <0x0800 ...> we list
-in bindings for resolving interrupts in this case, but it seems like it
-use the 'pdev->defvn << 8' which is not really we want and will lead to
-mismatch.
+In the patch we introduce a new CONFIG option PREEMPTIRQ_TRACEPOINTS
+as a single point for registering probes onto the tracepoints. With this,
+the web of config options for preempt/irq toggle tracepoints and its
+users becomes:
 
-		interrupt-map-mask = <0xf800 0 0 7>;
-		interrupt-map = <0x0000 0 0 1 ...>,
-				<0x0000 0 0 2 ...>,
-				<0x0000 0 0 3 ...>,
-				<0x0000 0 0 4 ...>,
+ PREEMPT_TRACER   PREEMPTIRQ_EVENTS  IRQSOFF_TRACER PROVE_LOCKING
+       |                 |     \         |           |
+       \    (selects)    /      \        \ (selects) /
+      TRACE_PREEMPT_TOGGLE       ----> TRACE_IRQFLAGS
+                      \                  /
+                       \ (depends on)   /
+                     PREEMPTIRQ_TRACEPOINTS
 
-				 0x0800 0 0 1 ...>,
-				 0x0800 0 0 2 ...>,
-				 0x0800 0 0 3 ...>,
-				 0x0800 0 0 4 ...>;
-		...
-		pcie@1,0 {
-			reg = <0x0800 0 0 0 0>;
-			...
-		};
+Three user's of the tracepoints exist after this: lockdep, the
+preemptirq tracers and preemptirq trace events. I did sanity testing on
+all of these to see expected results.
 
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zilstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-team@android.com
+Signed-off-by: Joel Fernandes <joelaf@google.com>
+---
+ include/linux/ftrace.h            |  11 +-
+ include/linux/irqflags.h          |  11 +-
+ include/linux/lockdep.h           |   6 +-
+ include/linux/preempt.h           |   2 +-
+ include/trace/events/preemptirq.h |  23 +++--
+ init/main.c                       |   2 +-
+ kernel/locking/lockdep.c          |  30 ++----
+ kernel/sched/core.c               |   2 +-
+ kernel/trace/Kconfig              |  19 +++-
+ kernel/trace/Makefile             |   2 +-
+ kernel/trace/trace_irqsoff.c      | 206 +++++++++-----------------------------
+ kernel/trace/trace_preemptirq.c   |  70 +++++++++++++
+ 12 files changed, 169 insertions(+), 215 deletions(-)
+ create mode 100644 kernel/trace/trace_preemptirq.c
 
-Or, alternatively, we could add a interrupt-map property in both child
-and root node to solve this. The below example is my original version as
-I don't want to change that function either.
-
-		interrupt-map-mask = <0xf800 0 0 0>;
-		interrupt-map = <0x0000 0 0 0 ...>,
-				 0x0800 0 0 0 ...>;
-		...
-		pcie@1,0 {
-			reg = <0x0800 0 0 0 0>;
-			#interrupt-cells = <1>;
-			interrupt-map-mask = <0 0 0 0>;
-			interrupt-map = <0 0 0 0 ...>;
-			...
-		};
-
-However, I can't find any other similar case in documentation.
-
-Thanks.
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 3319df9727aa..7488ada6e4e3 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -709,16 +709,7 @@ static inline unsigned long get_lock_parent_ip(void)
+ 	return CALLER_ADDR2;
+ }
+ 
+-#ifdef CONFIG_IRQSOFF_TRACER
+-  extern void time_hardirqs_on(unsigned long a0, unsigned long a1);
+-  extern void time_hardirqs_off(unsigned long a0, unsigned long a1);
+-#else
+-  static inline void time_hardirqs_on(unsigned long a0, unsigned long a1) { }
+-  static inline void time_hardirqs_off(unsigned long a0, unsigned long a1) { }
+-#endif
+-
+-#if defined(CONFIG_PREEMPT_TRACER) || \
+-	(defined(CONFIG_DEBUG_PREEMPT) && defined(CONFIG_PREEMPTIRQ_EVENTS))
++#ifdef CONFIG_TRACE_PREEMPT_TOGGLE
+   extern void trace_preempt_on(unsigned long a0, unsigned long a1);
+   extern void trace_preempt_off(unsigned long a0, unsigned long a1);
+ #else
+diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
+index 1b3996ff3f16..9d72181d4a94 100644
+--- a/include/linux/irqflags.h
++++ b/include/linux/irqflags.h
+@@ -15,9 +15,16 @@
+ #include <linux/typecheck.h>
+ #include <asm/irqflags.h>
+ 
+-#ifdef CONFIG_TRACE_IRQFLAGS
++/* Currently trace_softirqs_on/off is used only by lockdep */
++#ifdef CONFIG_PROVE_LOCKING
+   extern void trace_softirqs_on(unsigned long ip);
+   extern void trace_softirqs_off(unsigned long ip);
++#else
++# define trace_softirqs_on(ip)	do { } while (0)
++# define trace_softirqs_off(ip)	do { } while (0)
++#endif
++
++#ifdef CONFIG_TRACE_IRQFLAGS
+   extern void trace_hardirqs_on(void);
+   extern void trace_hardirqs_off(void);
+ # define trace_hardirq_context(p)	((p)->hardirq_context)
+@@ -44,8 +51,6 @@ do {						\
+ #else
+ # define trace_hardirqs_on()		do { } while (0)
+ # define trace_hardirqs_off()		do { } while (0)
+-# define trace_softirqs_on(ip)		do { } while (0)
+-# define trace_softirqs_off(ip)		do { } while (0)
+ # define trace_hardirq_context(p)	0
+ # define trace_softirq_context(p)	0
+ # define trace_hardirqs_enabled(p)	0
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 3251d9c0d313..1a6dcc95bba8 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -266,7 +266,7 @@ struct held_lock {
+ /*
+  * Initialization, self-test and debugging-output methods:
+  */
+-extern void lockdep_info(void);
++extern void lockdep_init(void);
+ extern void lockdep_reset(void);
+ extern void lockdep_reset_lock(struct lockdep_map *lock);
+ extern void lockdep_free_key_range(void *start, unsigned long size);
+@@ -408,7 +408,7 @@ static inline void lockdep_on(void)
+ # define lock_downgrade(l, i)			do { } while (0)
+ # define lock_set_class(l, n, k, s, i)		do { } while (0)
+ # define lock_set_subclass(l, s, i)		do { } while (0)
+-# define lockdep_info()				do { } while (0)
++# define lockdep_init()				do { } while (0)
+ # define lockdep_init_map(lock, name, key, sub) \
+ 		do { (void)(name); (void)(key); } while (0)
+ # define lockdep_set_class(lock, key)		do { (void)(key); } while (0)
+@@ -535,7 +535,7 @@ do {								\
+ 
+ #endif /* CONFIG_LOCKDEP */
+ 
+-#ifdef CONFIG_TRACE_IRQFLAGS
++#ifdef CONFIG_PROVE_LOCKING
+ extern void print_irqtrace_events(struct task_struct *curr);
+ #else
+ static inline void print_irqtrace_events(struct task_struct *curr)
+diff --git a/include/linux/preempt.h b/include/linux/preempt.h
+index 5bd3f151da78..c01813c3fbe9 100644
+--- a/include/linux/preempt.h
++++ b/include/linux/preempt.h
+@@ -150,7 +150,7 @@
+  */
+ #define in_atomic_preempt_off() (preempt_count() != PREEMPT_DISABLE_OFFSET)
+ 
+-#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_PREEMPT_TRACER)
++#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_TOGGLE)
+ extern void preempt_count_add(int val);
+ extern void preempt_count_sub(int val);
+ #define preempt_count_dec_and_test() \
+diff --git a/include/trace/events/preemptirq.h b/include/trace/events/preemptirq.h
+index 9c4eb33c5a1d..9a0d4ceeb166 100644
+--- a/include/trace/events/preemptirq.h
++++ b/include/trace/events/preemptirq.h
+@@ -1,4 +1,4 @@
+-#ifdef CONFIG_PREEMPTIRQ_EVENTS
++#ifdef CONFIG_PREEMPTIRQ_TRACEPOINTS
+ 
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM preemptirq
+@@ -32,7 +32,7 @@ DECLARE_EVENT_CLASS(preemptirq_template,
+ 		  (void *)((unsigned long)(_stext) + __entry->parent_offs))
+ );
+ 
+-#ifndef CONFIG_PROVE_LOCKING
++#ifdef CONFIG_TRACE_IRQFLAGS
+ DEFINE_EVENT(preemptirq_template, irq_disable,
+ 	     TP_PROTO(unsigned long ip, unsigned long parent_ip),
+ 	     TP_ARGS(ip, parent_ip));
+@@ -40,9 +40,14 @@ DEFINE_EVENT(preemptirq_template, irq_disable,
+ DEFINE_EVENT(preemptirq_template, irq_enable,
+ 	     TP_PROTO(unsigned long ip, unsigned long parent_ip),
+ 	     TP_ARGS(ip, parent_ip));
++#else
++#define trace_irq_enable(...)
++#define trace_irq_disable(...)
++#define trace_irq_enable_rcuidle(...)
++#define trace_irq_disable_rcuidle(...)
+ #endif
+ 
+-#ifdef CONFIG_DEBUG_PREEMPT
++#ifdef CONFIG_TRACE_PREEMPT_TOGGLE
+ DEFINE_EVENT(preemptirq_template, preempt_disable,
+ 	     TP_PROTO(unsigned long ip, unsigned long parent_ip),
+ 	     TP_ARGS(ip, parent_ip));
+@@ -50,22 +55,22 @@ DEFINE_EVENT(preemptirq_template, preempt_disable,
+ DEFINE_EVENT(preemptirq_template, preempt_enable,
+ 	     TP_PROTO(unsigned long ip, unsigned long parent_ip),
+ 	     TP_ARGS(ip, parent_ip));
++#else
++#define trace_preempt_enable(...)
++#define trace_preempt_disable(...)
++#define trace_preempt_enable_rcuidle(...)
++#define trace_preempt_disable_rcuidle(...)
+ #endif
+ 
+ #endif /* _TRACE_PREEMPTIRQ_H */
+ 
+ #include <trace/define_trace.h>
+ 
+-#endif /* !CONFIG_PREEMPTIRQ_EVENTS */
+-
+-#if !defined(CONFIG_PREEMPTIRQ_EVENTS) || defined(CONFIG_PROVE_LOCKING)
++#else /* !CONFIG_PREEMPTIRQ_TRACEPOINTS */
+ #define trace_irq_enable(...)
+ #define trace_irq_disable(...)
+ #define trace_irq_enable_rcuidle(...)
+ #define trace_irq_disable_rcuidle(...)
+-#endif
+-
+-#if !defined(CONFIG_PREEMPTIRQ_EVENTS) || !defined(CONFIG_DEBUG_PREEMPT)
+ #define trace_preempt_enable(...)
+ #define trace_preempt_disable(...)
+ #define trace_preempt_enable_rcuidle(...)
+diff --git a/init/main.c b/init/main.c
+index a8100b954839..33f1b998f82e 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -643,7 +643,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 		panic("Too many boot %s vars at `%s'", panic_later,
+ 		      panic_param);
+ 
+-	lockdep_info();
++	lockdep_init();
+ 
+ 	/*
+ 	 * Need to run this when irqs are enabled, because it wants
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 521659044719..70d5e3fee887 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -55,6 +55,7 @@
+ 
+ #include "lockdep_internals.h"
+ 
++#include <trace/events/preemptirq.h>
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/lock.h>
+ 
+@@ -2837,10 +2838,9 @@ static void __trace_hardirqs_on_caller(unsigned long ip)
+ 	debug_atomic_inc(hardirqs_on_events);
+ }
+ 
+-__visible void trace_hardirqs_on_caller(unsigned long ip)
++static void lockdep_hardirqs_on(void *none, unsigned long ignore,
++				unsigned long ip)
+ {
+-	time_hardirqs_on(CALLER_ADDR0, ip);
+-
+ 	if (unlikely(!debug_locks || current->lockdep_recursion))
+ 		return;
+ 
+@@ -2879,23 +2879,15 @@ __visible void trace_hardirqs_on_caller(unsigned long ip)
+ 	__trace_hardirqs_on_caller(ip);
+ 	current->lockdep_recursion = 0;
+ }
+-EXPORT_SYMBOL(trace_hardirqs_on_caller);
+-
+-void trace_hardirqs_on(void)
+-{
+-	trace_hardirqs_on_caller(CALLER_ADDR0);
+-}
+-EXPORT_SYMBOL(trace_hardirqs_on);
+ 
+ /*
+  * Hardirqs were disabled:
+  */
+-__visible void trace_hardirqs_off_caller(unsigned long ip)
++static void lockdep_hardirqs_off(void *none, unsigned long ignore,
++				 unsigned long ip)
+ {
+ 	struct task_struct *curr = current;
+ 
+-	time_hardirqs_off(CALLER_ADDR0, ip);
+-
+ 	if (unlikely(!debug_locks || current->lockdep_recursion))
+ 		return;
+ 
+@@ -2917,13 +2909,6 @@ __visible void trace_hardirqs_off_caller(unsigned long ip)
+ 	} else
+ 		debug_atomic_inc(redundant_hardirqs_off);
+ }
+-EXPORT_SYMBOL(trace_hardirqs_off_caller);
+-
+-void trace_hardirqs_off(void)
+-{
+-	trace_hardirqs_off_caller(CALLER_ADDR0);
+-}
+-EXPORT_SYMBOL(trace_hardirqs_off);
+ 
+ /*
+  * Softirqs will be enabled:
+@@ -4329,8 +4314,11 @@ void lockdep_reset_lock(struct lockdep_map *lock)
+ 	raw_local_irq_restore(flags);
+ }
+ 
+-void __init lockdep_info(void)
++void __init lockdep_init(void)
+ {
++	register_trace_irq_disable(lockdep_hardirqs_off, NULL);
++	register_trace_irq_enable(lockdep_hardirqs_on, NULL);
++
+ 	printk("Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar\n");
+ 
+ 	printk("... MAX_LOCKDEP_SUBCLASSES:  %lu\n", MAX_LOCKDEP_SUBCLASSES);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index a7bf32aabfda..35944d21a527 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3065,7 +3065,7 @@ u64 scheduler_tick_max_deferment(void)
+ #endif
+ 
+ #if defined(CONFIG_PREEMPT) && (defined(CONFIG_DEBUG_PREEMPT) || \
+-				defined(CONFIG_PREEMPT_TRACER))
++				defined(CONFIG_TRACE_PREEMPT_TOGGLE))
+ /*
+  * If the value passed in is equal to the current preempt count
+  * then we just disabled preemption. Start timing the latency.
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index f54dc62b599c..b5c0817a4163 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -159,18 +159,28 @@ config FUNCTION_GRAPH_TRACER
+ 	  the return value. This is done by setting the current return
+ 	  address on the current task structure into a stack of calls.
+ 
++config TRACE_PREEMPT_TOGGLE
++	bool
++	help
++	  Enables hooks which will be called when preemption is first disabled,
++	  and last enabled.
++
++config PREEMPTIRQ_TRACEPOINTS
++	bool
++	depends on TRACE_PREEMPT_TOGGLE || TRACE_IRQFLAGS
++	default y
++	help
++	  Create preempt/irq toggle tracepoints if needed, so that other parts
++	  of the kernel can use them to generate or add hooks to them.
+ 
+ config PREEMPTIRQ_EVENTS
+ 	bool "Enable trace events for preempt and irq disable/enable"
+ 	select TRACE_IRQFLAGS
+-	depends on DEBUG_PREEMPT || !PROVE_LOCKING
++	select TRACE_PREEMPT_TOGGLE if PREEMPT
+ 	depends on TRACING
+ 	default n
+ 	help
+ 	  Enable tracing of disable and enable events for preemption and irqs.
+-	  For tracing preempt disable/enable events, DEBUG_PREEMPT must be
+-	  enabled. For tracing irq disable/enable events, PROVE_LOCKING must
+-	  be disabled.
+ 
+ config IRQSOFF_TRACER
+ 	bool "Interrupts-off Latency Tracer"
+@@ -207,6 +217,7 @@ config PREEMPT_TRACER
+ 	select RING_BUFFER_ALLOW_SWAP
+ 	select TRACER_SNAPSHOT
+ 	select TRACER_SNAPSHOT_PER_CPU_SWAP
++	select TRACE_PREEMPT_TOGGLE
+ 	help
+ 	  This option measures the time spent in preemption-off critical
+ 	  sections, with microsecond accuracy.
+diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
+index e2538c7638d4..84a0cb222f20 100644
+--- a/kernel/trace/Makefile
++++ b/kernel/trace/Makefile
+@@ -35,7 +35,7 @@ obj-$(CONFIG_TRACING) += trace_printk.o
+ obj-$(CONFIG_TRACING_MAP) += tracing_map.o
+ obj-$(CONFIG_CONTEXT_SWITCH_TRACER) += trace_sched_switch.o
+ obj-$(CONFIG_FUNCTION_TRACER) += trace_functions.o
+-obj-$(CONFIG_PREEMPTIRQ_EVENTS) += trace_irqsoff.o
++obj-$(CONFIG_PREEMPTIRQ_TRACEPOINTS) += trace_preemptirq.o
+ obj-$(CONFIG_IRQSOFF_TRACER) += trace_irqsoff.o
+ obj-$(CONFIG_PREEMPT_TRACER) += trace_irqsoff.o
+ obj-$(CONFIG_SCHED_TRACER) += trace_sched_wakeup.o
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index 03ecb4465ee4..e3cec13dd935 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -16,7 +16,6 @@
+ 
+ #include "trace.h"
+ 
+-#define CREATE_TRACE_POINTS
+ #include <trace/events/preemptirq.h>
+ 
+ #if defined(CONFIG_IRQSOFF_TRACER) || defined(CONFIG_PREEMPT_TRACER)
+@@ -450,66 +449,6 @@ void stop_critical_timings(void)
+ }
+ EXPORT_SYMBOL_GPL(stop_critical_timings);
+ 
+-#ifdef CONFIG_IRQSOFF_TRACER
+-#ifdef CONFIG_PROVE_LOCKING
+-void time_hardirqs_on(unsigned long a0, unsigned long a1)
+-{
+-	if (!preempt_trace() && irq_trace())
+-		stop_critical_timing(a0, a1);
+-}
+-
+-void time_hardirqs_off(unsigned long a0, unsigned long a1)
+-{
+-	if (!preempt_trace() && irq_trace())
+-		start_critical_timing(a0, a1);
+-}
+-
+-#else /* !CONFIG_PROVE_LOCKING */
+-
+-/*
+- * We are only interested in hardirq on/off events:
+- */
+-static inline void tracer_hardirqs_on(void)
+-{
+-	if (!preempt_trace() && irq_trace())
+-		stop_critical_timing(CALLER_ADDR0, CALLER_ADDR1);
+-}
+-
+-static inline void tracer_hardirqs_off(void)
+-{
+-	if (!preempt_trace() && irq_trace())
+-		start_critical_timing(CALLER_ADDR0, CALLER_ADDR1);
+-}
+-
+-static inline void tracer_hardirqs_on_caller(unsigned long caller_addr)
+-{
+-	if (!preempt_trace() && irq_trace())
+-		stop_critical_timing(CALLER_ADDR0, caller_addr);
+-}
+-
+-static inline void tracer_hardirqs_off_caller(unsigned long caller_addr)
+-{
+-	if (!preempt_trace() && irq_trace())
+-		start_critical_timing(CALLER_ADDR0, caller_addr);
+-}
+-
+-#endif /* CONFIG_PROVE_LOCKING */
+-#endif /*  CONFIG_IRQSOFF_TRACER */
+-
+-#ifdef CONFIG_PREEMPT_TRACER
+-static inline void tracer_preempt_on(unsigned long a0, unsigned long a1)
+-{
+-	if (preempt_trace() && !irq_trace())
+-		stop_critical_timing(a0, a1);
+-}
+-
+-static inline void tracer_preempt_off(unsigned long a0, unsigned long a1)
+-{
+-	if (preempt_trace() && !irq_trace())
+-		start_critical_timing(a0, a1);
+-}
+-#endif /* CONFIG_PREEMPT_TRACER */
+-
+ #ifdef CONFIG_FUNCTION_TRACER
+ static bool function_enabled;
+ 
+@@ -659,10 +598,28 @@ static void irqsoff_tracer_stop(struct trace_array *tr)
+ }
+ 
+ #ifdef CONFIG_IRQSOFF_TRACER
++/*
++ * We are only interested in hardirq on/off events:
++ */
++static void tracer_hardirqs_on(void *none, unsigned long a0, unsigned long a1)
++{
++	if (!preempt_trace() && irq_trace())
++		stop_critical_timing(a0, a1);
++}
++
++static void tracer_hardirqs_off(void *none, unsigned long a0, unsigned long a1)
++{
++	if (!preempt_trace() && irq_trace())
++		start_critical_timing(a0, a1);
++}
++
+ static int irqsoff_tracer_init(struct trace_array *tr)
+ {
+ 	trace_type = TRACER_IRQS_OFF;
+ 
++	register_trace_irq_disable(tracer_hardirqs_off, NULL);
++	register_trace_irq_enable(tracer_hardirqs_on, NULL);
++
+ 	return __irqsoff_tracer_init(tr);
+ }
+ static struct tracer irqsoff_tracer __read_mostly =
+@@ -686,14 +643,31 @@ static struct tracer irqsoff_tracer __read_mostly =
+ };
+ # define register_irqsoff(trace) register_tracer(&trace)
+ #else
++static inline void tracer_hardirqs_on(unsigned long a0, unsigned long a1) { }
++static inline void tracer_hardirqs_off(unsigned long a0, unsigned long a1) { }
+ # define register_irqsoff(trace) do { } while (0)
+-#endif
++#endif /*  CONFIG_IRQSOFF_TRACER */
+ 
+ #ifdef CONFIG_PREEMPT_TRACER
++static void tracer_preempt_on(void *none, unsigned long a0, unsigned long a1)
++{
++	if (preempt_trace() && !irq_trace())
++		stop_critical_timing(a0, a1);
++}
++
++static void tracer_preempt_off(void *none, unsigned long a0, unsigned long a1)
++{
++	if (preempt_trace() && !irq_trace())
++		start_critical_timing(a0, a1);
++}
++
+ static int preemptoff_tracer_init(struct trace_array *tr)
+ {
+ 	trace_type = TRACER_PREEMPT_OFF;
+ 
++	register_trace_preempt_disable(tracer_preempt_off, NULL);
++	register_trace_preempt_enable(tracer_preempt_on, NULL);
++
+ 	return __irqsoff_tracer_init(tr);
+ }
+ 
+@@ -718,16 +692,22 @@ static struct tracer preemptoff_tracer __read_mostly =
+ };
+ # define register_preemptoff(trace) register_tracer(&trace)
+ #else
++static inline void tracer_preempt_on(unsigned long a0, unsigned long a1) { }
++static inline void tracer_preempt_off(unsigned long a0, unsigned long a1) { }
+ # define register_preemptoff(trace) do { } while (0)
+-#endif
++#endif /* CONFIG_PREEMPT_TRACER */
+ 
+-#if defined(CONFIG_IRQSOFF_TRACER) && \
+-	defined(CONFIG_PREEMPT_TRACER)
++#if defined(CONFIG_IRQSOFF_TRACER) && defined(CONFIG_PREEMPT_TRACER)
+ 
+ static int preemptirqsoff_tracer_init(struct trace_array *tr)
+ {
+ 	trace_type = TRACER_IRQS_OFF | TRACER_PREEMPT_OFF;
+ 
++	register_trace_irq_disable(tracer_hardirqs_off, NULL);
++	register_trace_irq_enable(tracer_hardirqs_on, NULL);
++	register_trace_preempt_disable(tracer_preempt_off, NULL);
++	register_trace_preempt_enable(tracer_preempt_on, NULL);
++
+ 	return __irqsoff_tracer_init(tr);
+ }
+ 
+@@ -766,99 +746,3 @@ __init static int init_irqsoff_tracer(void)
+ }
+ core_initcall(init_irqsoff_tracer);
+ #endif /* IRQSOFF_TRACER || PREEMPTOFF_TRACER */
+-
+-#ifndef CONFIG_IRQSOFF_TRACER
+-static inline void tracer_hardirqs_on(void) { }
+-static inline void tracer_hardirqs_off(void) { }
+-static inline void tracer_hardirqs_on_caller(unsigned long caller_addr) { }
+-static inline void tracer_hardirqs_off_caller(unsigned long caller_addr) { }
+-#endif
+-
+-#ifndef CONFIG_PREEMPT_TRACER
+-static inline void tracer_preempt_on(unsigned long a0, unsigned long a1) { }
+-static inline void tracer_preempt_off(unsigned long a0, unsigned long a1) { }
+-#endif
+-
+-#if defined(CONFIG_TRACE_IRQFLAGS) && !defined(CONFIG_PROVE_LOCKING)
+-/* Per-cpu variable to prevent redundant calls when IRQs already off */
+-static DEFINE_PER_CPU(int, tracing_irq_cpu);
+-
+-void trace_hardirqs_on(void)
+-{
+-	if (!this_cpu_read(tracing_irq_cpu))
+-		return;
+-
+-	trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
+-	tracer_hardirqs_on();
+-
+-	this_cpu_write(tracing_irq_cpu, 0);
+-}
+-EXPORT_SYMBOL(trace_hardirqs_on);
+-
+-void trace_hardirqs_off(void)
+-{
+-	if (this_cpu_read(tracing_irq_cpu))
+-		return;
+-
+-	this_cpu_write(tracing_irq_cpu, 1);
+-
+-	trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
+-	tracer_hardirqs_off();
+-}
+-EXPORT_SYMBOL(trace_hardirqs_off);
+-
+-__visible void trace_hardirqs_on_caller(unsigned long caller_addr)
+-{
+-	if (!this_cpu_read(tracing_irq_cpu))
+-		return;
+-
+-	trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
+-	tracer_hardirqs_on_caller(caller_addr);
+-
+-	this_cpu_write(tracing_irq_cpu, 0);
+-}
+-EXPORT_SYMBOL(trace_hardirqs_on_caller);
+-
+-__visible void trace_hardirqs_off_caller(unsigned long caller_addr)
+-{
+-	if (this_cpu_read(tracing_irq_cpu))
+-		return;
+-
+-	this_cpu_write(tracing_irq_cpu, 1);
+-
+-	trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
+-	tracer_hardirqs_off_caller(caller_addr);
+-}
+-EXPORT_SYMBOL(trace_hardirqs_off_caller);
+-
+-/*
+- * Stubs:
+- */
+-
+-void trace_softirqs_on(unsigned long ip)
+-{
+-}
+-
+-void trace_softirqs_off(unsigned long ip)
+-{
+-}
+-
+-inline void print_irqtrace_events(struct task_struct *curr)
+-{
+-}
+-#endif
+-
+-#if defined(CONFIG_PREEMPT_TRACER) || \
+-	(defined(CONFIG_DEBUG_PREEMPT) && defined(CONFIG_PREEMPTIRQ_EVENTS))
+-void trace_preempt_on(unsigned long a0, unsigned long a1)
+-{
+-	trace_preempt_enable_rcuidle(a0, a1);
+-	tracer_preempt_on(a0, a1);
+-}
+-
+-void trace_preempt_off(unsigned long a0, unsigned long a1)
+-{
+-	trace_preempt_disable_rcuidle(a0, a1);
+-	tracer_preempt_off(a0, a1);
+-}
+-#endif
+diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+new file mode 100644
+index 000000000000..bec9926acb00
+--- /dev/null
++++ b/kernel/trace/trace_preemptirq.c
+@@ -0,0 +1,70 @@
++/*
++ * preemptoff and irqoff tracepoints
++ *
++ * Copyright (C) 2017 Joel Fernandes <joelaf@google.com>
++ */
++
++#include <linux/kallsyms.h>
++#include <linux/uaccess.h>
++#include <linux/module.h>
++#include <linux/ftrace.h>
++
++#define CREATE_TRACE_POINTS
++#include <trace/events/preemptirq.h>
++
++#ifdef CONFIG_TRACE_IRQFLAGS
++/* Per-cpu variable to prevent redundant calls when IRQs already off */
++static DEFINE_PER_CPU(int, tracing_irq_cpu);
++
++void trace_hardirqs_on(void)
++{
++	if (!this_cpu_read(tracing_irq_cpu))
++		return;
++
++	trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
++	this_cpu_write(tracing_irq_cpu, 0);
++}
++EXPORT_SYMBOL(trace_hardirqs_on);
++
++void trace_hardirqs_off(void)
++{
++	if (this_cpu_read(tracing_irq_cpu))
++		return;
++
++	this_cpu_write(tracing_irq_cpu, 1);
++	trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
++}
++EXPORT_SYMBOL(trace_hardirqs_off);
++
++__visible void trace_hardirqs_on_caller(unsigned long caller_addr)
++{
++	if (!this_cpu_read(tracing_irq_cpu))
++		return;
++
++	trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
++	this_cpu_write(tracing_irq_cpu, 0);
++}
++EXPORT_SYMBOL(trace_hardirqs_on_caller);
++
++__visible void trace_hardirqs_off_caller(unsigned long caller_addr)
++{
++	if (this_cpu_read(tracing_irq_cpu))
++		return;
++
++	this_cpu_write(tracing_irq_cpu, 1);
++	trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
++}
++EXPORT_SYMBOL(trace_hardirqs_off_caller);
++#endif /* CONFIG_TRACE_IRQFLAGS */
++
++#ifdef CONFIG_TRACE_PREEMPT_TOGGLE
++void trace_preempt_on(unsigned long a0, unsigned long a1)
++{
++	trace_preempt_enable_rcuidle(a0, a1);
++}
++
++void trace_preempt_off(unsigned long a0, unsigned long a1)
++{
++	trace_preempt_disable_rcuidle(a0, a1);
++}
++#endif
+-- 
+2.16.0.rc1.238.g530d649a79-goog
