@@ -1,75 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753849AbeBFXSL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 18:18:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753537AbeBFXSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 18:18:10 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3261D2178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 6 Feb 2018 18:18:07 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: sztsian@gmail.com
-Cc: johannes.berg@intel.com, johannes@sipsolutions.net,
-        linux-kernel@vger.kernel.org, zsun@redhat.com,
-        Vladislav Valtchev <vladislav.valtchev@gmail.com>
-Subject: Re: [PATCH 1/2] trace-cmd: Fix the detection for swig
-Message-ID: <20180206181807.2d35393e@gandalf.local.home>
-In-Reply-To: <20180204032014.6962-2-sztsian@gmail.com>
-References: <20180204032014.6962-1-sztsian@gmail.com>
-        <20180204032014.6962-2-sztsian@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753884AbeBFXUK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 18:20:10 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58096 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753840AbeBFXUH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 18:20:07 -0500
+From: Colin King <colin.king@canonical.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: ccp - Make function ccp_get_dma_chan_attr static
+Date: Tue,  6 Feb 2018 23:20:01 +0000
+Message-Id: <20180206232001.14102-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  4 Feb 2018 11:20:13 +0800
-sztsian@gmail.com wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Zamir SUN <sztsian@gmail.com>
-> 
-> The current detection for swig will cause output to be
-> /usr/bin/swig
-> y
-> So this will never be equal to y. With this patch, the swig path is
-> removed from output, so the detection can work as expected.
-> 
-> Fixes 3bf187a43b7e6302592552ecbc294e5820249687
+Function ccp_get_dma_chan_attr is local to the source and does not
+need to be in global scope, so make it static.
 
-Hi Zamir,
+Cleans up sparse warning:
+drivers/crypto/ccp/ccp-dmaengine.c:41:14: warning: symbol
+'ccp_get_dma_chan_attr' was not declared. Should it be static?
 
-Actually, a fix was already sent to me:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/ccp/ccp-dmaengine.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- http://lkml.kernel.org/r/20171220180748.17273-18-vladislav.valtchev@gmail.com
-
-I'm working on add that one.
-
-Thanks!
-
--- Steve
-
+diff --git a/drivers/crypto/ccp/ccp-dmaengine.c b/drivers/crypto/ccp/ccp-dmaengine.c
+index 8b9da58459df..67155cb21636 100644
+--- a/drivers/crypto/ccp/ccp-dmaengine.c
++++ b/drivers/crypto/ccp/ccp-dmaengine.c
+@@ -38,7 +38,7 @@ static unsigned int dma_chan_attr = CCP_DMA_DFLT;
+ module_param(dma_chan_attr, uint, 0444);
+ MODULE_PARM_DESC(dma_chan_attr, "Set DMA channel visibility: 0 (default) = device defaults, 1 = make private, 2 = make public");
  
-> 
-> Signed-off-by: Zamir SUN (Red Hat) <sztsian@gmail.com>
-> ---
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index a5d2c38..7c0d1a6 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -105,7 +105,7 @@ PYTHON_GUI	:= ctracecmd.so ctracecmdgui.so
->  PYTHON_VERS ?= python
->  
->  # Can build python?
-> -ifeq ($(shell sh -c "pkg-config --cflags $(PYTHON_VERS) > /dev/null 2>&1 && which swig && echo y"), y)
-> +ifeq ($(shell sh -c "pkg-config --cflags $(PYTHON_VERS) > /dev/null 2>&1 && which swig > /dev/null && echo y"), y)
->  	PYTHON_PLUGINS := plugin_python.so
->  	BUILD_PYTHON := $(PYTHON) $(PYTHON_PLUGINS)
->  	PYTHON_SO_INSTALL := ctracecmd.install
+-unsigned int ccp_get_dma_chan_attr(struct ccp_device *ccp)
++static unsigned int ccp_get_dma_chan_attr(struct ccp_device *ccp)
+ {
+ 	switch (dma_chan_attr) {
+ 	case CCP_DMA_DFLT:
+-- 
+2.15.1
