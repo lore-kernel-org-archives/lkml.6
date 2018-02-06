@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752861AbeBFMAg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 07:00:36 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:48467 "EHLO
+        id S1752896AbeBFMAx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 07:00:53 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:38859 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752403AbeBFMA2 (ORCPT
+        with ESMTP id S1752246AbeBFMAo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 07:00:28 -0500
-Date: Tue, 6 Feb 2018 03:56:02 -0800
+        Tue, 6 Feb 2018 07:00:44 -0500
+Date: Tue, 6 Feb 2018 03:56:27 -0800
 From: tip-bot for Mel Gorman <tipbot@zytor.com>
-Message-ID: <tip-3b76c4a33959ca98a573cd9c94c8690d123912ca@git.kernel.org>
-Cc: tglx@linutronix.de, peterz@infradead.org, mgorman@techsingularity.net,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        mingo@kernel.org, matt@codeblueprint.co.uk, hpa@zytor.com,
-        efault@gmx.de
-Reply-To: mgorman@techsingularity.net, peterz@infradead.org,
-        tglx@linutronix.de, efault@gmx.de, hpa@zytor.com,
-        matt@codeblueprint.co.uk, mingo@kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180130104555.4125-3-mgorman@techsingularity.net>
-References: <20180130104555.4125-3-mgorman@techsingularity.net>
+Message-ID: <tip-806486c377e33ab662de6d47902e9e2a32b79368@git.kernel.org>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        matt@codeblueprint.co.uk, peterz@infradead.org, efault@gmx.de,
+        hpa@zytor.com, tglx@linutronix.de, mgorman@techsingularity.net,
+        mingo@kernel.org
+Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com, efault@gmx.de,
+        mgorman@techsingularity.net, matt@codeblueprint.co.uk,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org
+In-Reply-To: <20180130104555.4125-4-mgorman@techsingularity.net>
+References: <20180130104555.4125-4-mgorman@techsingularity.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/fair: Restructure wake_affine*() to return
- a CPU id
-Git-Commit-ID: 3b76c4a33959ca98a573cd9c94c8690d123912ca
+Subject: [tip:sched/urgent] sched/fair: Do not migrate if the prev_cpu is
+ idle
+Git-Commit-ID: 806486c377e33ab662de6d47902e9e2a32b79368
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,18 +36,55 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3b76c4a33959ca98a573cd9c94c8690d123912ca
-Gitweb:     https://git.kernel.org/tip/3b76c4a33959ca98a573cd9c94c8690d123912ca
+Commit-ID:  806486c377e33ab662de6d47902e9e2a32b79368
+Gitweb:     https://git.kernel.org/tip/806486c377e33ab662de6d47902e9e2a32b79368
 Author:     Mel Gorman <mgorman@techsingularity.net>
-AuthorDate: Tue, 30 Jan 2018 10:45:53 +0000
+AuthorDate: Tue, 30 Jan 2018 10:45:54 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 6 Feb 2018 10:20:35 +0100
+CommitDate: Tue, 6 Feb 2018 10:20:36 +0100
 
-sched/fair: Restructure wake_affine*() to return a CPU id
+sched/fair: Do not migrate if the prev_cpu is idle
 
-This is a preparation patch that has wake_affine*() return a CPU ID instead of
-a boolean. The intent is to allow the wake_affine() helpers to be avoided
-if a decision is already made. This patch has no functional change.
+wake_affine_idle() prefers to move a task to the current CPU if the
+wakeup is due to an interrupt. The expectation is that the interrupt
+data is cache hot and relevant to the waking task as well as avoiding
+a search. However, there is no way to determine if there was cache hot
+data on the previous CPU that may exceed the interrupt data. Furthermore,
+round-robin delivery of interrupts can migrate tasks around a socket where
+each CPU is under-utilised.  This can interact badly with cpufreq which
+makes decisions based on per-cpu data. It has been observed on machines
+with HWP that p-states are not boosted to their maximum levels even though
+the workload is latency and throughput sensitive.
+
+This patch uses the previous CPU for the task if it's idle and cache-affine
+with the current CPU even if the current CPU is idle due to the wakup
+being related to the interrupt. This reduces migrations at the cost of
+the interrupt data not being cache hot when the task wakes.
+
+A variety of workloads were tested on various machines and no adverse
+impact was noticed that was outside noise. dbench on ext4 on UMA showed
+roughly 10% reduction in the number of CPU migrations and it is a case
+where interrupts are frequent for IO competions. In most cases, the
+difference in performance is quite small but variability is often
+reduced. For example, this is the result for pgbench running on a UMA
+machine with different numbers of clients.
+
+                          4.15.0-rc9             4.15.0-rc9
+                            baseline              waprev-v1
+ Hmean     1     22096.28 (   0.00%)    22734.86 (   2.89%)
+ Hmean     4     74633.42 (   0.00%)    75496.77 (   1.16%)
+ Hmean     7    115017.50 (   0.00%)   113030.81 (  -1.73%)
+ Hmean     12   126209.63 (   0.00%)   126613.40 (   0.32%)
+ Hmean     16   131886.91 (   0.00%)   130844.35 (  -0.79%)
+ Stddev    1       636.38 (   0.00%)      417.11 (  34.46%)
+ Stddev    4       614.64 (   0.00%)      583.24 (   5.11%)
+ Stddev    7       542.46 (   0.00%)      435.45 (  19.73%)
+ Stddev    12      173.93 (   0.00%)      171.50 (   1.40%)
+ Stddev    16      671.42 (   0.00%)      680.30 (  -1.32%)
+ CoeffVar  1         2.88 (   0.00%)        1.83 (  36.26%)
+
+Note that the different in performance is marginal but for low utilisation,
+there is less variability.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -56,100 +93,30 @@ Cc: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Mike Galbraith <efault@gmx.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180130104555.4125-3-mgorman@techsingularity.net
+Link: http://lkml.kernel.org/r/20180130104555.4125-4-mgorman@techsingularity.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c | 35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+ kernel/sched/fair.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0a551dfe..4c400d7 100644
+index 4c400d7..db45b35 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5692,7 +5692,7 @@ static int wake_wide(struct task_struct *p)
-  *			  scheduling latency of the CPUs. This seems to work
-  *			  for the overloaded case.
-  */
--static bool
-+static int
- wake_affine_idle(int this_cpu, int prev_cpu, int sync)
- {
- 	/*
-@@ -5702,15 +5702,15 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
+@@ -5700,9 +5700,15 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
+ 	 * context. Only allow the move if cache is shared. Otherwise an
+ 	 * interrupt intensive workload could force all tasks onto one
  	 * node depending on the IO topology or IRQ affinity settings.
++	 *
++	 * If the prev_cpu is idle and cache affine then avoid a migration.
++	 * There is no guarantee that the cache hot data from an interrupt
++	 * is more important than cache hot data on the prev_cpu and from
++	 * a cpufreq perspective, it's better to have higher utilisation
++	 * on one CPU.
  	 */
  	if (idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
--		return true;
-+		return this_cpu;
+-		return this_cpu;
++		return idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
  
  	if (sync && cpu_rq(this_cpu)->nr_running == 1)
--		return true;
-+		return this_cpu;
- 
--	return false;
-+	return nr_cpumask_bits;
- }
- 
--static bool
-+static int
- wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 		   int this_cpu, int prev_cpu, int sync)
- {
-@@ -5724,7 +5724,7 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 		unsigned long current_load = task_h_load(current);
- 
- 		if (current_load > this_eff_load)
--			return true;
-+			return this_cpu;
- 
- 		this_eff_load -= current_load;
- 	}
-@@ -5741,28 +5741,28 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
- 	prev_eff_load *= capacity_of(this_cpu);
- 
--	return this_eff_load <= prev_eff_load;
-+	return this_eff_load <= prev_eff_load ? this_cpu : nr_cpumask_bits;
- }
- 
- static int wake_affine(struct sched_domain *sd, struct task_struct *p,
- 		       int prev_cpu, int sync)
- {
- 	int this_cpu = smp_processor_id();
--	bool affine = false;
-+	int target = nr_cpumask_bits;
- 
- 	if (sched_feat(WA_IDLE))
--		affine = wake_affine_idle(this_cpu, prev_cpu, sync);
-+		target = wake_affine_idle(this_cpu, prev_cpu, sync);
- 
--	if (sched_feat(WA_WEIGHT) && !affine)
--		affine = wake_affine_weight(sd, p, this_cpu, prev_cpu, sync);
-+	if (sched_feat(WA_WEIGHT) && target == nr_cpumask_bits)
-+		target = wake_affine_weight(sd, p, this_cpu, prev_cpu, sync);
- 
- 	schedstat_inc(p->se.statistics.nr_wakeups_affine_attempts);
--	if (affine) {
--		schedstat_inc(sd->ttwu_move_affine);
--		schedstat_inc(p->se.statistics.nr_wakeups_affine);
--	}
-+	if (target == nr_cpumask_bits)
-+		return prev_cpu;
- 
--	return affine;
-+	schedstat_inc(sd->ttwu_move_affine);
-+	schedstat_inc(p->se.statistics.nr_wakeups_affine);
-+	return target;
- }
- 
- static inline unsigned long task_util(struct task_struct *p);
-@@ -6355,8 +6355,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 		if (cpu == prev_cpu)
- 			goto pick_cpu;
- 
--		if (wake_affine(affine_sd, p, prev_cpu, sync))
--			new_cpu = cpu;
-+		new_cpu = wake_affine(affine_sd, p, prev_cpu, sync);
- 	}
- 
- 	if (sd && !(sd_flag & SD_BALANCE_FORK)) {
+ 		return this_cpu;
