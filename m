@@ -1,199 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752760AbeBFL2w (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 06:28:52 -0500
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:43985 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752278AbeBFL2p (ORCPT
+        id S1752278AbeBFLfA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 06:35:00 -0500
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:54613 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752248AbeBFLew (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 06:28:45 -0500
-X-Google-Smtp-Source: AH8x2262b81/uiOkEEDdhmgKzN613s8DIAGlNFoE0mLg65m3PfYOHYUlx+JFPG8qKcgSTQiRuybrC4TQO1SeADiB3Q4=
+        Tue, 6 Feb 2018 06:34:52 -0500
+X-Google-Smtp-Source: AH8x227HMJ57qrZqQaLqSrP33AOfldcEs23CvVfJ08RkxsO0ZnYp4A9vkDXW90B283YQHlLSsZgYJg==
+Subject: Re: [PATCH 5/8] thermal/drivers/cpu_cooling: Introduce the cpu idle
+ cooling driver
+To: Daniel Thompson <daniel.thompson@linaro.org>, edubezval@gmail.com
+Cc: kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
+        viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>, Javi Merino <javi.merino@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>
+References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
+ <1516721671-16360-6-git-send-email-daniel.lezcano@linaro.org>
+ <d1cc42d4-f79a-e7ac-d8bb-42e889e8a4fe@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <0b58fe4c-e505-f5b9-74a6-17ada2052cc0@linaro.org>
+Date: Tue, 6 Feb 2018 12:34:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <3aaf482e-0f4f-9001-8df1-1ccd2004ce02@lightnvm.io>
-References: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
- <1517364411-22386-4-git-send-email-javier@cnexlabs.com> <bf06b0c0-b188-68ba-737b-f42d33c0d5dc@lightnvm.io>
- <CANr-nt1+=ikX6XUh3FKG_vgcBWzVkzdrWei82YRdHPTVPpxwuw@mail.gmail.com> <3aaf482e-0f4f-9001-8df1-1ccd2004ce02@lightnvm.io>
-From: Hans Holmberg <hans@owltronix.com>
-Date: Tue, 6 Feb 2018 12:28:44 +0100
-Message-ID: <CANr-nt3gLZ5Ly_BKEuvF-3OZG8EGJm8oRtkaj0dMc1-_yMfXZw@mail.gmail.com>
-Subject: Re: [PATCH 4/5] lightnvm: pblk: add padding distribution sysfs attribute
-To: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-Cc: =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d1cc42d4-f79a-e7ac-d8bb-42e889e8a4fe@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w16BSuhU027475
 
-On Tue, Feb 6, 2018 at 11:50 AM, Matias Bjørling <mb@lightnvm.io> wrote:
-> On 02/06/2018 10:27 AM, Hans Holmberg wrote:
->>
->> Hi Matias,
->>
->> On Wed, Jan 31, 2018 at 9:44 AM, Matias Bjørling <mb@lightnvm.io> wrote:
->>>
->>> On 01/31/2018 03:06 AM, Javier González wrote:
->>>>
->>>>
->>>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
->>>>
->>>> When pblk receives a sync, all data up to that point in the write buffer
->>>> must be comitted to persistent storage, and as flash memory comes with a
->>>> minimal write size there is a significant cost involved both in terms
->>>> of time for completing the sync and in terms of write amplification
->>>> padded sectors for filling up to the minimal write size.
->>>>
->>>> In order to get a better understanding of the costs involved for syncs,
->>>> Add a sysfs attribute to pblk: padded_dist, showing a normalized
->>>> distribution of sectors padded. In order to facilitate measurements of
->>>> specific workloads during the lifetime of the pblk instance, the
->>>> distribution can be reset by writing 0 to the attribute.
->>>>
->>>> Do this by introducing counters for each possible padding:
->>>> {0..(minimal write size - 1)} and calculate the normalized distribution
->>>> when showing the attribute.
->>>>
->>>> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
->>>> Signed-off-by: Javier González <javier@cnexlabs.com>
->>>> ---
->>>>    drivers/lightnvm/pblk-init.c  | 16 ++++++++--
->>>>    drivers/lightnvm/pblk-rb.c    | 15 +++++-----
->>>>    drivers/lightnvm/pblk-sysfs.c | 68
->>>> +++++++++++++++++++++++++++++++++++++++++++
->>>>    drivers/lightnvm/pblk.h       |  6 +++-
->>>>    4 files changed, 95 insertions(+), 10 deletions(-)
->>>>
->>>> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
->>>> index 7eedc5daebc8..a5e3510c0f38 100644
->>>> --- a/drivers/lightnvm/pblk-init.c
->>>> +++ b/drivers/lightnvm/pblk-init.c
->>>> @@ -921,6 +921,7 @@ static void pblk_free(struct pblk *pblk)
->>>>    {
->>>>          pblk_luns_free(pblk);
->>>>          pblk_lines_free(pblk);
->>>> +       kfree(pblk->pad_dist);
->>>>          pblk_line_meta_free(pblk);
->>>>          pblk_core_free(pblk);
->>>>          pblk_l2p_free(pblk);
->>>> @@ -998,11 +999,13 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
->>>> struct gendisk *tdisk,
->>>>          pblk->pad_rst_wa = 0;
->>>>          pblk->gc_rst_wa = 0;
->>>>    +     atomic_long_set(&pblk->nr_flush, 0);
->>>> +       pblk->nr_flush_rst = 0;
->>>> +
->>>>    #ifdef CONFIG_NVM_DEBUG
->>>>          atomic_long_set(&pblk->inflight_writes, 0);
->>>>          atomic_long_set(&pblk->padded_writes, 0);
->>>>          atomic_long_set(&pblk->padded_wb, 0);
->>>> -       atomic_long_set(&pblk->nr_flush, 0);
->>>>          atomic_long_set(&pblk->req_writes, 0);
->>>>          atomic_long_set(&pblk->sub_writes, 0);
->>>>          atomic_long_set(&pblk->sync_writes, 0);
->>>> @@ -1034,10 +1037,17 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
->>>> struct gendisk *tdisk,
->>>>                  goto fail_free_luns;
->>>>          }
->>>>    +     pblk->pad_dist = kzalloc((pblk->min_write_pgs - 1) *
->>>> sizeof(atomic64_t),
->>>> +                                GFP_KERNEL);
->>>> +       if (!pblk->pad_dist) {
->>>> +               ret = -ENOMEM;
->>>> +               goto fail_free_line_meta;
->>>> +       }
->>>> +
->>>>          ret = pblk_core_init(pblk);
->>>>          if (ret) {
->>>>                  pr_err("pblk: could not initialize core\n");
->>>> -               goto fail_free_line_meta;
->>>> +               goto fail_free_pad_dist;
->>>>          }
->>>>          ret = pblk_l2p_init(pblk);
->>>> @@ -1097,6 +1107,8 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
->>>> struct gendisk *tdisk,
->>>>          pblk_l2p_free(pblk);
->>>>    fail_free_core:
->>>>          pblk_core_free(pblk);
->>>> +fail_free_pad_dist:
->>>> +       kfree(pblk->pad_dist);
->>>>    fail_free_line_meta:
->>>>          pblk_line_meta_free(pblk);
->>>>    fail_free_luns:
->>>> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
->>>> index 7044b5599cc4..264372d7b537 100644
->>>> --- a/drivers/lightnvm/pblk-rb.c
->>>> +++ b/drivers/lightnvm/pblk-rb.c
->>>> @@ -437,9 +437,7 @@ static int pblk_rb_may_write_flush(struct pblk_rb
->>>> *rb,
->>>> unsigned int nr_entries,
->>>>          if (bio->bi_opf & REQ_PREFLUSH) {
->>>>                  struct pblk *pblk = container_of(rb, struct pblk, rwb);
->>>>    -#ifdef CONFIG_NVM_DEBUG
->>>>                  atomic_long_inc(&pblk->nr_flush);
->>>> -#endif
->>>>                  if (pblk_rb_flush_point_set(&pblk->rwb, bio, mem))
->>>>                          *io_ret = NVM_IO_OK;
->>>>          }
->>>> @@ -620,14 +618,17 @@ unsigned int pblk_rb_read_to_bio(struct pblk_rb
->>>> *rb,
->>>> struct nvm_rq *rqd,
->>>>                          pr_err("pblk: could not pad page in write
->>>> bio\n");
->>>>                          return NVM_IO_ERR;
->>>>                  }
->>>> +
->>>> +               if (pad < pblk->min_write_pgs)
->>>> +                       atomic64_inc(&pblk->pad_dist[pad - 1]);
->>>> +               else
->>>> +                       pr_warn("pblk: padding more than min.
->>>> sectors\n");
->>>
->>>
->>>
->>> Curious, when would this happen? Would it be an implementation error or
->>> something a user did wrong?
->>
->>
->> This would be an implementation error - and this check is just a
->> safeguard to make sure we won't go out of bounds when updating the
->> statistics.
->>
+On 05/02/2018 14:54, Daniel Thompson wrote:
+> On 23/01/18 15:34, Daniel Lezcano wrote:
+>> +/**
+>> + * cpuidle_cooling_get_max_state - Get the maximum state
+>> + * @cdev  : the thermal cooling device
+>> + * @state : a pointer to the state variable to be filled
+>> + *
+>> + * The function gives always 100 as the injection ratio is percentile
+>> + * based for consistency accros different platforms.
+>> + *
+>> + * The function can not fail, it returns always zero.
+>> + */
+>> +static int cpuidle_cooling_get_max_state(struct
+>> thermal_cooling_device *cdev,
+>> +                     unsigned long *state)
+>> +{
+>> +    /*
+>> +     * Depending on the configuration or the hardware, the running
+>> +     * cycle and the idle cycle could be different. We want unify
+>> +     * that to an 0..100 interval, so the set state interface will
+>> +     * be the same whatever the platform is.
+>> +     *
+>> +     * The state 100% will make the cluster 100% ... idle. A 0%
+>> +     * injection ratio means no idle injection at all and 50%
+>> +     * means for 10ms of idle injection, we have 10ms of running
+>> +     * time.
+>> +     */
+>> +    *state = 100;
+> 
+> Doesn't this requires DTs to be changed?
+> 
+> Basically the existing bindings for cpu cooling dictate that
+> cooling-max-levels == num OPPs - 1 .
 >
-> Ah, does it make sense to have such defensive programming, when the value is
-> never persisted? An 64 bit integer is quite large, and if only used for
-> workloads for a single instance, it would practically never trigger, and if
-> it did, do one care?
+> Likewise I think cooling-max-levels *defines* the scale used by the
+> cooling maps in the DT. Introducing an alternative scale means that the
+> OPP limits in the cooling-map will be misinterpreted when we bind the
+> cooling device.
 
-Ah, sorry for being unclear,  it's not for checking if the pad
-counters overflow  - I wanted to make sure that we won't index
-pad_dist with negative numbers if we mess up the padding calculations
-in the future.
+The DT binding for the cpuidle cooling device just need to bind to the
+thermal-zone, it does not care about the cooling-max-levels which is a
+binding for the cpufreq cooling device. That makes both cooling devices
+to be able to co-exists with the same DT.
 
->
-> <snip>
->
->>>
->>> Looks good to me. Let me know if you want to send a new patch, or if I
->>> may
->>> make the change when I pick it up.
->>
->>
->> Thanks for the review, i saw that you already reworked the patch a bit
->> on your core branch.
->> However, i found a build issue when building for i386, so i'll fix
->> that and submit a V2(that includes your update)
->
->
-> Ok. I assume this is the kbuild mail I asked about a couple of days ago.
-> I'll wait for v2.
+However, as you mentioned it in the previous emails, new DT bindings
+will need to be defined in order to extend the features. That is
+something I would like to put apart in the discussion in order to be
+focused in the thermal mitigation aspect of the cooling device.
 
-I did see that particular mail, but it's most likely the same issue
-that the V2 will fix.
+The DT bindings discussions can be long and end up as a non-removable
+definition, so that is something IMO which should be discussed in a
+specific series.
 
-Thanks,
-Hans
+> Note that we get away with this on Hikey because its mainline cooling
+> map is, AFAICT, deeply sub-optimal and doesn't set any cooling limits.
+> If its cooling map has been tuned (as the Exynos ones are) then I
+> suspect there could be overheating problems when the cpuidle (or combo)
+> CPU coolers are enabled.
+
+Yes, that's a good point but from my POV, if we select here the cpuidle
+cooling device then we should also change the cooling mapping which is
+optimized for the cpufreq cooling device, a cooling device we
+deliberately disabled by choosing the cpuidle cooling device.
+
+The DT aspect is complex to solve, that's why I propose this first
+simple approach to introduce the feature with current DT bindings.
+
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
