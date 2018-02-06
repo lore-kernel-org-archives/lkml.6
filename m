@@ -1,103 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeBFQoZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:44:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48852 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752171AbeBFQoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:44:15 -0500
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net] rxrpc: Fix received abort handling
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 06 Feb 2018 16:44:12 +0000
-Message-ID: <151793545229.24105.9015810583725369029.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        id S1752621AbeBFQq6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:46:58 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.5]:39811 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752364AbeBFQqv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:46:51 -0500
+Date: Tue, 6 Feb 2018 10:46:49 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Jacob chen <jacob2.chen@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>, Antti Palosaari <crope@iki.fi>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH v3 0/8] use 64-bit arithmetic instead of 32-bit
+Message-ID: <cover.1517929336.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1ej6OP-000kDo-Vv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.4.238]:46606
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AF_RXRPC is incorrectly sending back to the server any abort it receives
-for a client connection.  This is due to the final-ACK offload to the
-connection event processor patch.  The abort code is copied into the
-last-call information on the connection channel and then the event
-processor is set.
+Add suffix LL and ULL to various constants in order to give the compiler
+complete information about the proper arithmetic to use. Such constants
+are used in contexts that expect expressions of type u64 (64 bits, unsigned)
+and s64 (64 bits, signed).
 
-Instead, the following should be done:
+The mentioned expressions are currently being evaluated using 32-bit
+arithmetic, wich in some cases can lead to unintentional integer
+overflows.
 
- (1) In the case of a final-ACK for a successful call, the ACK should be
-     scheduled as before.
+This patchset addresses the following "Unintentional integer overflow"
+Coverity reports:
+CIDs: 200604, 1056807, 1056808, 1271223, 1324146
+CIDs: 1392628, 1392630, 1446589, 1454996, 1458347
 
- (2) In the case of a locally generated ABORT, the ABORT details should be
-     cached for sending in response to further packets related to that
-     call and no further action scheduled at call disconnect time.
+Thank you
 
- (3) In the case of an ACK received from the peer, the call should be
-     considered dead, no ABORT should be transmitted at this time.  In
-     response to further non-ABORT packets from the peer relating to this
-     call, an RX_USER_ABORT ABORT should be transmitted.
+Changes in v2:
+ - Update subject and changelog to better reflect the proposed code changes.
+ - Add suffix ULL and LL to constants instead of casting variables.
+ - Extend the proposed code changes to other similar cases that had not
+   previously been considered in v1 of this patchset.
 
- (4) In the case of a call killed due to network error, an RX_USER_ABORT
-     ABORT should be cached for transmission in response to further
-     packets, but no ABORT should be sent at this time.
+Changes in v3:
+ - Mention the specific Coverity report in all commit messages.
 
-Fixes: 3136ef49a14c ("rxrpc: Delay terminal ACK transmission on a client call")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Gustavo A. R. Silva (8):
+  rtl2832: use 64-bit arithmetic instead of 32-bit in
+    rtl2832_set_frontend
+  dvb-frontends: ves1820: use 64-bit arithmetic instead of 32-bit
+  i2c: max2175: use 64-bit arithmetic instead of 32-bit
+  i2c: ov9650: use 64-bit arithmetic instead of 32-bit
+  pci: cx88-input: use 64-bit arithmetic instead of 32-bit
+  rockchip/rga: use 64-bit arithmetic instead of 32-bit
+  platform: sh_veu: use 64-bit arithmetic instead of 32-bit
+  platform: vivid-cec: use 64-bit arithmetic instead of 32-bit
 
- net/rxrpc/conn_client.c |    3 ++-
- net/rxrpc/conn_object.c |   16 ++++++++++++----
- 2 files changed, 14 insertions(+), 5 deletions(-)
+ drivers/media/dvb-frontends/rtl2832.c         |  4 ++--
+ drivers/media/dvb-frontends/ves1820.c         |  2 +-
+ drivers/media/i2c/max2175.c                   |  2 +-
+ drivers/media/i2c/ov9650.c                    |  9 +++++----
+ drivers/media/pci/cx88/cx88-input.c           |  4 ++--
+ drivers/media/platform/rockchip/rga/rga-buf.c |  3 ++-
+ drivers/media/platform/sh_veu.c               |  4 ++--
+ drivers/media/platform/vivid/vivid-cec.c      | 11 +++++++++--
+ 8 files changed, 24 insertions(+), 15 deletions(-)
 
-diff --git a/net/rxrpc/conn_client.c b/net/rxrpc/conn_client.c
-index 7f74ca3059f8..064175068059 100644
---- a/net/rxrpc/conn_client.c
-+++ b/net/rxrpc/conn_client.c
-@@ -834,7 +834,8 @@ void rxrpc_disconnect_client_call(struct rxrpc_call *call)
- 	 * can be skipped if we find a follow-on call.  The first DATA packet
- 	 * of the follow on call will implicitly ACK this call.
- 	 */
--	if (test_bit(RXRPC_CALL_EXPOSED, &call->flags)) {
-+	if (call->completion == RXRPC_CALL_SUCCEEDED &&
-+	    test_bit(RXRPC_CALL_EXPOSED, &call->flags)) {
- 		unsigned long final_ack_at = jiffies + 2;
- 
- 		WRITE_ONCE(chan->final_ack_at, final_ack_at);
-diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
-index c628351eb900..ccbac190add1 100644
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -177,13 +177,21 @@ void __rxrpc_disconnect_call(struct rxrpc_connection *conn,
- 		 * through the channel, whilst disposing of the actual call record.
- 		 */
- 		trace_rxrpc_disconnect_call(call);
--		if (call->abort_code) {
--			chan->last_abort = call->abort_code;
--			chan->last_type = RXRPC_PACKET_TYPE_ABORT;
--		} else {
-+		switch (call->completion) {
-+		case RXRPC_CALL_SUCCEEDED:
- 			chan->last_seq = call->rx_hard_ack;
- 			chan->last_type = RXRPC_PACKET_TYPE_ACK;
-+			break;
-+		case RXRPC_CALL_LOCALLY_ABORTED:
-+			chan->last_abort = call->abort_code;
-+			chan->last_type = RXRPC_PACKET_TYPE_ABORT;
-+			break;
-+		default:
-+			chan->last_abort = RX_USER_ABORT;
-+			chan->last_type = RXRPC_PACKET_TYPE_ABORT;
-+			break;
- 		}
-+
- 		/* Sync with rxrpc_conn_retransmit(). */
- 		smp_wmb();
- 		chan->last_call = chan->call_id;
+-- 
+2.7.4
