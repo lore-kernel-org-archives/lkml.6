@@ -1,245 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752905AbeBFMmE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 07:42:04 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33968 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752388AbeBFMl4 (ORCPT
+        id S1753020AbeBFMnX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 07:43:23 -0500
+Received: from mail02.iobjects.de ([188.40.134.68]:49794 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752597AbeBFMnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 07:41:56 -0500
-Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
-        kernel@collabora.com, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
-        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
-References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
- <20180126135803.29781-2-tomeu.vizoso@collabora.com>
- <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
- <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
- <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
- <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
- <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Message-ID: <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
-Date: Tue, 6 Feb 2018 13:41:52 +0100
+        Tue, 6 Feb 2018 07:43:15 -0500
+Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
+To: Paolo Valente <paolo.valente@linaro.org>,
+        Mike Galbraith <efault@gmx.de>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>, ming.lei@redhat.com,
+        ivan@ludios.org, 169364@studenti.unimore.it,
+        Serena Ziviani <ziviani.serena@gmail.com>
+References: <20180205190510.5499-1-paolo.valente@linaro.org>
+ <20180205190510.5499-2-paolo.valente@linaro.org>
+ <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
+ <1517903761.9843.12.camel@gmx.de>
+ <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
+ <1517918234.25841.31.camel@gmx.de>
+ <BE442D49-D280-4B35-89ED-43C729263F2A@linaro.org>
+From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <7770589c-32e0-6bdb-530a-34c642e46630@applied-asynchrony.com>
+Date: Tue, 6 Feb 2018 13:43:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <BE442D49-D280-4B35-89ED-43C729263F2A@linaro.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/05/2018 05:03 PM, Gerd Hoffmann wrote:
-> On Mon, Feb 05, 2018 at 03:46:17PM +0100, Tomeu Vizoso wrote:
->> On 02/05/2018 01:20 PM, Gerd Hoffmann wrote:
->>>     Hi,
->>>
->>>>> Why not use virtio-vsock to run the wayland protocol? I don't like
->>>>> the idea to duplicate something with very simliar functionality in
->>>>> virtio-gpu.
->>>>
->>>> The reason for abandoning that approach was the type of objects that
->>>> could be shared via virtio-vsock would be extremely limited. Besides
->>>> that being potentially confusing to users, it would mean from the
->>>> implementation side that either virtio-vsock would gain a dependency on
->>>> the drm subsystem, or an appropriate abstraction for shareable buffers
->>>> would need to be added for little gain.
->>>
->>> Well, no.  The idea is that virtio-vsock and virtio-gpu are used largely
->>> as-is, without knowing about each other.  The guest wayland proxy which
->>> does the buffer management talks to both devices.
->>
->> Note that the proxy won't know anything about buffers if clients opt-in for
->> zero-copy support (they allocate the buffers in a way that allows for
->> sharing with the host).
+On 02/06/18 13:26, Paolo Valente wrote:
+(..)
+> As Oleksadr asked too, is it deadline or mq-deadline?
+
+You can use deadline as alias as long as blk-mq is active.
+This doesn't work when mq-deadline is built as a module, but that
+doesn't seem to be the problem here.
+ 
+>> [  484.179292] BUG: unable to handle kernel paging request at ffffffffa0817000
+>> [  484.179436] IP: __trace_note_message+0x1f/0xd0
+>> [  484.179576] PGD 1e0c067 P4D 1e0c067 PUD 1e0d063 PMD 3faff2067 PTE 0
+>> [  484.179719] Oops: 0000 [#1] SMP PTI
+>> [  484.179861] Dumping ftrace buffer:
+>> [  484.180011]    (ftrace buffer empty)
+>> [  484.180138] Modules linked in: fuse(E) ebtable_filter(E) ebtables(E) af_packet(E) bridge(E) stp(E) llc(E) iscsi_ibft(E) iscsi_boot_sysfs(E) nf_conntrack_ipv6(E) nf_defrag_ipv6(E) ipt_REJECT(E) xt_tcpudp(E) iptable_filter(E) ip6table_mangle(E) nf_conntrack_netbios_ns(E) nf_conntrack_broadcast(E) nf_conntrack_ipv4(E) nf_defrag_ipv4(E) ip_tables(E) xt_conntrack(E) nf_conntrack(E) ip6table_filter(E) ip6_tables(E) x_tables(E) nls_iso8859_1(E) nls_cp437(E) intel_rapl(E) x86_pkg_temp_thermal(E) intel_powerclamp(E) snd_hda_codec_hdmi(E) coretemp(E) kvm_intel(E) snd_hda_codec_realtek(E) kvm(E) snd_hda_codec_generic(E) snd_hda_intel(E) snd_hda_codec(E) sr_mod(E) snd_hwdep(E) cdrom(E) joydev(E) snd_hda_core(E) snd_pcm(E) snd_timer(E) irqbypass(E) snd(E) crct10dif_pclmul(E) crc32_pclmul(E) crc32c_intel(E) r8169(E)
+>> [  484.180740]  iTCO_wdt(E) ghash_clmulni_intel(E) mii(E) iTCO_vendor_support(E) pcbc(E) aesni_intel(E) soundcore(E) aes_x86_64(E) shpchp(E) crypto_simd(E) lpc_ich(E) glue_helper(E) i2c_i801(E) mei_me(E) mfd_core(E) mei(E) cryptd(E) intel_smartconnect(E) pcspkr(E) fan(E) thermal(E) nfsd(E) auth_rpcgss(E) nfs_acl(E) lockd(E) grace(E) sunrpc(E) hid_logitech_hidpp(E) hid_logitech_dj(E) uas(E) usb_storage(E) hid_generic(E) usbhid(E) nouveau(E) wmi(E) i2c_algo_bit(E) drm_kms_helper(E) syscopyarea(E) sysfillrect(E) sysimgblt(E) fb_sys_fops(E) ahci(E) xhci_pci(E) ehci_pci(E) libahci(E) ttm(E) ehci_hcd(E) xhci_hcd(E) libata(E) drm(E) usbcore(E) video(E) button(E) sd_mod(E) vfat(E) fat(E) virtio_blk(E) virtio_mmio(E) virtio_pci(E) virtio_ring(E) virtio(E) ext4(E) crc16(E) mbcache(E) jbd2(E) loop(E) sg(E) dm_multipath(E)
+>> [  484.181421]  dm_mod(E) scsi_dh_rdac(E) scsi_dh_emc(E) scsi_dh_alua(E) scsi_mod(E) efivarfs(E) autofs4(E)
+>> [  484.181583] CPU: 3 PID: 500 Comm: kworker/3:1H Tainted: G            E    4.15.0.ge237f98-master #609
+>> [  484.181746] Hardware name: MEDION MS-7848/MS-7848, BIOS M7848W08.20C 09/23/2013
+>> [  484.181910] Workqueue: kblockd blk_mq_requeue_work
+>> [  484.182076] RIP: 0010:__trace_note_message+0x1f/0xd0
+>> [  484.182250] RSP: 0018:ffff8803f45bfc20 EFLAGS: 00010282
+>> [  484.182436] RAX: 0000000000000000 RBX: ffffffffa0817000 RCX: 00000000ffff8803
+>> [  484.182622] RDX: ffffffff81bf514d RSI: 0000000000000000 RDI: ffffffffa0817000
+>> [  484.182810] RBP: ffff8803f45bfc80 R08: 0000000000000041 R09: ffff8803f69cc5d0
+>> [  484.182998] R10: ffff8803f80b47d0 R11: 0000000000001000 R12: ffff8803f45e8000
+>> [  484.183185] R13: 000000000000000d R14: 0000000000000000 R15: ffff8803fba112c0
+>> [  484.183372] FS:  0000000000000000(0000) GS:ffff88041ecc0000(0000) knlGS:0000000000000000
+>> [  484.183561] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [  484.183747] CR2: ffffffffa0817000 CR3: 0000000001e0a006 CR4: 00000000001606e0
+>> [  484.183934] Call Trace:
+>> [  484.184122]  bfq_put_queue+0xd3/0xe0
+>> [  484.184305]  bfq_finish_requeue_request+0x72/0x350
+>> [  484.184493]  __blk_mq_requeue_request+0x8f/0x120
+>> [  484.184678]  blk_mq_dispatch_rq_list+0x342/0x550
+>> [  484.184866]  ? kyber_dispatch_request+0xd0/0xd0
+>> [  484.185053]  blk_mq_sched_dispatch_requests+0xf7/0x180
+>> [  484.185238]  __blk_mq_run_hw_queue+0x58/0xd0
+>> [  484.185429]  __blk_mq_delay_run_hw_queue+0x99/0xa0
+>> [  484.185614]  blk_mq_run_hw_queue+0x54/0xf0
+>> [  484.185805]  blk_mq_run_hw_queues+0x4b/0x60
+>> [  484.185994]  blk_mq_requeue_work+0x13a/0x150
+>> [  484.186192]  process_one_work+0x147/0x350
+>> [  484.186383]  worker_thread+0x47/0x3e0
+>> [  484.186572]  kthread+0xf8/0x130
+>> [  484.186760]  ? rescuer_thread+0x360/0x360
+>> [  484.186948]  ? kthread_stop+0x120/0x120
+>> [  484.187137]  ret_from_fork+0x35/0x40
+>> [  484.187321] Code: ff 48 89 44 24 10 e9 58 fd ff ff 90 55 48 89 e5 41 55 41 54 53 48 89 fb 48 83 ec 48 48 89 4c 24 30 4c 89 44 24 38 4c 89 4c 24 40 <83> 3f 02 0f 85 87 00 00 00 f6 43 21 04 75 0b 48 83 c4 48 5b 41 
+>> [  484.187525] RIP: __trace_note_message+0x1f/0xd0 RSP: ffff8803f45bfc20
+>> [  484.187727] CR2: ffffffffa0817000
 > 
-> Hmm?  I'm assuming the wayland client (in the guest) talks to the
-> wayland proxy, using the wayland protocol, like it would talk to a
-> wayland display server.  Buffers must be passed from client to
-> server/proxy somehow, probably using fd passing, so where is the
-> problem?
-> 
-> Or did I misunderstand the role of the proxy?
+> ok, right in the middle of bfq this time ... Was this the first OOPS in your kernel log?
 
-Hi Gerd,
+A much more interesting question to me is why there is kyber in the middle. :)
 
-it's starting to look to me that we're talking a bit past the other, so 
-I have pasted below a few words describing my current plan regarding the 
-3 key scenarios that I'm addressing.
-
-I mention below KVM_SET_USER_MEMORY_REGION, but I guess we can discuss 
-alternatives such as the one you are proposing using PCI BARs at a later 
-stage.
-
-I really think that whatever we come up with needs to support 3D clients 
-as well.
-
-
-Creation of shareable buffer by guest
--------------------------------------------------
-
-1. Client requests virtio driver to create a buffer suitable for sharing 
-with host (DRM_VIRTGPU_RESOURCE_CREATE)
-
-2. Virtio driver creates a new resource ID and passes the request to 
-QEMU (VIRTIO_GPU_CMD_RESOURCE_CREATE_2D)
-
-3. QEMU creates a shmem file (for example with mkostemp), associates 
-that FD with the ID of this resource
-
-4. QEMU maps that buffer to the guest's address space 
-(KVM_SET_USER_MEMORY_REGION), passes the guest PFN to the virtio driver
-
-5. DRM_VIRTGPU_RESOURCE_CREATE returns the resource id just created
-
-6. Client mmaps it with DRM_IOCTL_VIRTGPU_MAP+mmap and can render to it
-
-7. Gets a FD with DRM_IOCTL_PRIME_HANDLE_TO_FD that can be sent around
-
-
-Send of shareable buffer by guest
----------------------------------------------
-
-1. Client sends the host a message that refers to this buffer, passing 
-the FD using SCM_RIGHTS
-
-2. Guest proxy passes the message (serialized data + FDs) on to the 
-virtio driver responsable for winsrv support
-
-3. virtio driver puts the data and the resource ids corresponding to the 
-FDs in a virtqueue, kicks it
-
-4. QEMU pops data+buffers from the virtqueue, looks up shmem FD for each 
-resource, sends data + FDs to the compositor with SCM_RIGHTS
-
-
-Reception of buffer from the compositor
------------------------------------------------------
-
-1. QEMU reads from the socket and gets a FD via SCM_RIGHTS
-
-2. QEMU mmaps the FD and maps the resulting pointer to the guest via 
-KVM_SET_USER_MEMORY_REGION
-
-3. QEMU sends the guest PFN along the presentation data to the virtio 
-driver (VIRTIO_GPU_CMD_WINSRV_RX)
-
-4. Virtio driver wraps a FD around that PFN, puts it in a queue
-
-5. Guest proxy calls DRM_IOCTL_VIRTGPU_WINSRV_RX and gets data plus that FD
-
-6. Guest proxy sends that data + FD to the client via SCM_RIGHTS
-
-7. Client gets FD, mmaps it and reads the data from the compositor
-
-
-
-Thanks,
-
-Tomeu
-
-
->>>>> If you have a guest proxy anyway using virtio-sock for the protocol
->>>>> stream and virtio-gpu for buffer sharing (and some day 3d rendering
->>>>> too) should work fine I think.
->>>>
->>>> If I understand correctly your proposal, virtio-gpu would be used for
->>>> creating buffers that could be shared across domains, but something
->>>> equivalent to SCM_RIGHTS would still be needed in virtio-vsock?
->>>
->>> Yes, the proxy would send a reference to the buffer over virtio-vsock.
->>> I was more thinking about a struct specifying something like
->>> "ressource-id 42 on virtio-gpu-pci device in slot 1:23.0" instead of
->>> using SCM_RIGHTS.
->>
->> Can you extend on this? I'm having trouble figuring out how this could work
->> in a way that keeps protocol data together with the resources it refers to.
-> 
-> Don't know much about the wayland protocol.  Assuming you are passing
-> buffers as file handles, together with some information what kind of
-> buffer this is (sysv shm, dma-buf, ...).
-> 
-> We have a proxy on both ends.  One running in the guest, one on the host
-> (be it qemu or some external one).  So these two have to agree on how to
-> pass buffers from one to the other.  One way would be to have them talk
-> a simple meta protocol to each other, with "here comes a chunk wayland
-> protocol to pass along" and "here is a buffer mgmt message".  Possibly
-> it is better to extend the wayland protocol to also cover this new kind
-> of buffer, so you don't need the meta protocol.
-> 
-> The proxies would talk normal wayland protocol to the client (in the
-> guest) and the server (on the host).  They will have to transform the
-> buffer into something they can pass along using the wayland protocol.
-> 
->>>>> What is the plan for the host side? I see basically two options. Either
->>>>> implement the host wayland proxy directly in qemu. Or
->>>>> implement it as separate process, which then needs some help from
->>>>> qemu to get access to the buffers. The later would allow qemu running
->>>>> independant from the desktop session.
->>>>
->>>> Regarding synchronizing buffers, this will stop becoming needed in
->>>> subsequent commits as all shared memory is allocated in the host and
->>>> mapped to the guest via KVM_SET_USER_MEMORY_REGION.
->>>
->>> --verbose please.  The qemu patches linked from the cover letter not
->>> exactly helpful in understanding how all this is supposed to work.
->>
->> A client will allocate a buffer with DRM_VIRTGPU_RESOURCE_CREATE, export it
->> and pass the FD to the compositor (via the proxy).
->>
->> During resource creation, QEMU would allocate a shmem buffer and map it into
->> the guest with KVM_SET_USER_MEMORY_REGION.
-> 
-> So the buffer magically shows up somewhere in the physical address space
-> of the guest?  That kind if magic usually isn't a very good idea.
-> 
->> When a FD comes from the compositor, QEMU mmaps it and maps that virtual
->> address to the guest via KVM_SET_USER_MEMORY_REGION.
->>
->> When the guest proxy reads from the winsrv socket, it will get a FD that
->> wraps the buffer referenced above.
->>
->> When the client reads from the guest proxy, it would get a FD that
->> references that same buffer and would mmap it. At that point, the client is
->> reading from the same physical pages where the compositor wrote to.
-> 
-> Hmm.  I allways assumed the wayland client allocates the buffers, not
-> the server.  Is that wrong?
-> 
-> What is your plan for 3d acceleration support?
-> 
->> To be clear, I'm not against solving this via some form of restricted FD
->> passing in virtio-vsock, but Stefan (added to CC) thought that it would be
->> cleaner to do it all within virtio-gpu.
-> 
-> Well, when targeting 3d acceleration it makes alot of sense to use
-> virtio-gpu.  And it makes sense to have 2d and 3d modes work as simliar
-> as possible.  That is not the direction you are taking with your
-> proposal though ...
-> 
-> If you don't plan for 3d support I'm wondering whenever virtio-gpu is a
-> good pick.  Mapping trickery aside, you wouldn't get linear buffers
-> which can easily be shared between host and guest, because guest buffers
-> are not required to be linear in guest physical memory.  One copy will
-> be needed, from (scattered) guest physical memory buffer to (linear)
-> host buffer.
-> 
-> One possible alternative would be to build on stdvga.  It has a pci
-> memory bar, it has a drm driver (bochs) which allows allocating drm
-> buffers in that bar.  They are linear buffers in both guest physical and
-> host virtual memory.  If we add an option to qemu to allocate the memory
-> bar in sysv shared memory it can easily be exported to other processes
-> on the host.  The wayland client in the guest can map it directly too,
-> it only needs to create a drm buffer and mmap it.  You can get zero-copy
-> without having to play mapping tricks.
-> 
-> cheers,
->    Gerd
-> 
-> 
+Holger
