@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753128AbeBFM7e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 07:59:34 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:61993 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752921AbeBFM7Z (ORCPT
+        id S1752904AbeBFM7z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 07:59:55 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:55237 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753120AbeBFM7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 07:59:25 -0500
+        Tue, 6 Feb 2018 07:59:32 -0500
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>
@@ -14,9 +14,9 @@ CC: Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>, <linux-omap@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH v2 10/15] ARM: dts: dra76-evm: Add "vqmmc-supply" property for mmc2
-Date: Tue, 6 Feb 2018 18:28:01 +0530
-Message-ID: <20180206125806.19350-11-kishon@ti.com>
+Subject: [PATCH v2 12/15] ARM: dts: dra71-evm: Select pull down for mmc1_clk line in default mode
+Date: Tue, 6 Feb 2018 18:28:03 +0530
+Message-ID: <20180206125806.19350-13-kishon@ti.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180206125806.19350-1-kishon@ti.com>
 References: <20180206125806.19350-1-kishon@ti.com>
@@ -27,25 +27,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "vqmmc-supply" property for mmc2 to indicate the supply connected
-to the IO lines.
+During a short period when the bus voltage is switched from 3.3v to 1.8v,
+(to enumerate UHS mode), the mmc module is disabled and the mmc IO lines
+are kept in a state according to the programmed pad mux pull type.
+
+According to 4.2.4.2 Timing to Switch Signal Voltage in "SD Specifications
+Part 1 Physical Layer Specification Version 5.00 February 22, 2016", the
+host should hold CLK low for at least 5ms.
+
+In order to keep the card line low during voltage switch, the pad mux of
+mmc1_clk line should be configured to pull down.
+
+This is specific only to dra71-evm (and not all dra72 based boards) since
+mmc1_clk line in dra71-evm is not connected to an external pullup.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- arch/arm/boot/dts/dra76-evm.dts | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/dra71-evm.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/dra76-evm.dts b/arch/arm/boot/dts/dra76-evm.dts
-index 088853001c81..2deb96405d06 100644
---- a/arch/arm/boot/dts/dra76-evm.dts
-+++ b/arch/arm/boot/dts/dra76-evm.dts
-@@ -322,6 +322,7 @@
- &mmc2 {
+diff --git a/arch/arm/boot/dts/dra71-evm.dts b/arch/arm/boot/dts/dra71-evm.dts
+index 64363f75c01a..ebc4bbae981e 100644
+--- a/arch/arm/boot/dts/dra71-evm.dts
++++ b/arch/arm/boot/dts/dra71-evm.dts
+@@ -50,6 +50,19 @@
+ 	};
+ };
+ 
++&dra7_pmx_core {
++	mmc1_pins_default: mmc1_pins_default {
++		pinctrl-single,pins = <
++			DRA7XX_CORE_IOPAD(0x3754, PIN_INPUT_PULLDOWN | MUX_MODE0) /* mmc1_clk.clk */
++			DRA7XX_CORE_IOPAD(0x3758, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_cmd.cmd */
++			DRA7XX_CORE_IOPAD(0x375c, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat0.dat0 */
++			DRA7XX_CORE_IOPAD(0x3760, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat1.dat1 */
++			DRA7XX_CORE_IOPAD(0x3764, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat2.dat2 */
++			DRA7XX_CORE_IOPAD(0x3768, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat3.dat3 */
++		>;
++	};
++};
++
+ &i2c1 {
  	status = "okay";
- 	vmmc-supply = <&vio_1v8>;
-+	vqmmc-supply = <&vio_1v8>;
- 	bus-width = <8>;
- 	pinctrl-names = "default", "hs", "ddr_1_8v", "hs200_1_8v";
- 	pinctrl-0 = <&mmc2_pins_default>;
+ 	clock-frequency = <400000>;
 -- 
 2.11.0
