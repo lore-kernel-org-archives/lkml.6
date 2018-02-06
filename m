@@ -1,172 +1,153 @@
-Return-Path: <tglx@linutronix.de>
-X-Google-Smtp-Source: AG47ELtbZLeJkFNVTRRG/F0nXuVJkoMe98/22AVrSCgUneAGqMiyMXFBwe1G68W456ODgm5FZE7m
-ARC-Seal: i=1; a=rsa-sha256; t=1519836594; cv=none;
+Return-Path: <mka@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1517954383; cv=none;
         d=google.com; s=arc-20160816;
-        b=g9c/pZXsZkoTNQhNkZx1Yxu4+YsxaMiMUmMj7NFlFIzxphiisQTBa/jIkyRDE/1+Y/
-         YkN8lq9EPR6BSLs/dr4PxRxFWVGKF4mVfvvXf/cyDCTbE5YlDq6LB06f4ObCkJXAPjZS
-         2vNtZhEEHR8jLHYiTg2rBsxx6ls/s0PywxnMpzmPtQPshwEs8nzreOqwzuzpxSamDkGP
-         sCNQryHGMHGr+g7fdwhZgb8TROfMstPLlKU6tploH22xAXO7zGrepk5cpnTxmTj4uDSX
-         iXWYHYXnPc8KHHv0o1Y2VOpkfUe0dBxdm71wZePJrW/EoGEQK/Q1/vaNk0ray08YFtMq
-         tvVg==
+        b=MyB/wIwnO0JVbj2Yz8F3Tol3z5/0sAa+uLYlhNdDIJZ/cCW3Vbb0HtpJpT0INVcutH
+         85+8FRXgW9Q8RKgcMIDS1laNLajpzHbm47KOCEWfELkPAmXuQLQNelfoj/TiDEx4rxvz
+         79AuituPMpZs+0KRaXdnXlDq7ddek/HtH7ePstNi8ZHLHgukKI3IQCm0/sSosqI21Rkh
+         jq4OtVJQLLWz4dBgg0HFF+Dly2j/y3+cieIUio09lro638quBEMPd5PeD7/cNZ9dzjd9
+         /K0bMk5XyXYV5sGz9ByjTaQ6bF4ejdNVZjMBlZyQME4dvQRP2qMjQogOcGLxvB3qCl/g
+         Ugkg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=HMRvxqpyciqVIGkxCdscmP6b0P742Bk4rxfeXhZwaeQ=;
-        b=ODeae/3wi//x1M6Ri1f1kcVH9mUNsuEUkJCAKdCvvqsjLtzEOpN7LPvR6xtrqtYsm5
-         5o6mK1UD+t2SIJLnDe7Eb3BH8WBp57Lv4jxspjo9wv5BHNCtaCH95t5boinjuKwCee1a
-         txx/Xs32fYWEid9+jJQ6dXfr4geS0+y/o15PZnr013LGMlne1V5j5F+iAZhCAiKkK4gi
-         yqghzJ737D/luRZX7WE96UA+ICQ+15KToa7f4bZAKmpMrvuY5Al7qLi6bpK7bgNXIOZ2
-         QOpAf195ynyZctu0SVp1JVtvLh+1YZGMw9prJFThQ4CdSjHSEi6FZlsk0B45PbW1zJ8w
-         MtCw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=xp8hQavziYlNevfu0WPqQwJNulYewkTUliHpYjUg1es=;
+        b=OlsU1/OiMlB4bn/3ZFUgQ3SrOBnXwbABvhmu9gSjtuADOPfq/SEfh2Ksv8Nj2xWkhi
+         971dHSf3/bM2yL9Bv25RHJnq3Z2dNZwOmLcKuVGpAPNOsmcBMH8xkWXHTtxM4px8JizN
+         MUZOJZv5Ng3j9QG5ntSJ/XpQUDHmizEvChdFAh1MnQSuaT0L2NzxGUugBghGyjWqtRZk
+         UejUB7K/ewtiGDwSJUujP/1ulBEB5gxl+Pjaa+NRy03RfJwUkFjHo9mUe1MaOrlQWkD4
+         k2N/m55F6diJCL+FHG8CJgy2vgUyLRrvITS9wFD/qnXUp0sQw3J6FWnJcGNnrOLn9I/x
+         MTbg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+       dkim=pass header.i=@chromium.org header.s=google header.b=QYYvn1HM;
+       spf=pass (google.com: domain of mka@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mka@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
-Date: Wed, 28 Feb 2018 17:49:47 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-    Keith Busch <keith.busch@intel.com>
-Subject: Re: [PATCH 4.4 33/53] x86/apic/vector: Fix off by one in error
- path
-In-Reply-To: <alpine.DEB.2.21.1802171433390.2087@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1802281730310.1392@nanos.tec.linutronix.de>
-References: <20180122083910.299610926@linuxfoundation.org>  <20180122083911.776154720@linuxfoundation.org> <1518814661.3422.42.camel@codethink.co.uk> <alpine.DEB.2.21.1802171433390.2087@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+       dkim=pass header.i=@chromium.org header.s=google header.b=QYYvn1HM;
+       spf=pass (google.com: domain of mka@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mka@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AH8x224eJB/lSc9sNuV7QFGldYuoAPDoJq23diEvPcAx306rHhqrCKTnJoyFn3O9BOsXgRS5ds8Lig==
+Date: Tue, 6 Feb 2018 13:59:41 -0800
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, David Woodhouse <dwmw@amazon.co.ku>,
+	Razvan Ghitulete <rga@amazon.de>,
+	Guenter Roeck <groeck@chromium.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Greg Hackmann <ghackmann@google.com>
+Subject: Re: [PATCH 4.4 05/53] x86/asm: Use register variable to get stack
+ pointer value
+Message-ID: <20180206215941.GA99249@google.com>
+References: <20180122083910.299610926@linuxfoundation.org>
+ <20180122083910.527513802@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1929272789-1519836591=:1392"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180122083910.527513802@linuxfoundation.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590281458787974242?=
-X-GMAIL-MSGID: =?utf-8?q?1593664176588114559?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
+X-GMAIL-THRID: =?utf-8?q?1590281391571990781?=
+X-GMAIL-MSGID: =?utf-8?q?1591690535233972232?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Greg,
 
---8323329-1929272789-1519836591=:1392
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+El Mon, Jan 22, 2018 at 09:39:57AM +0100 Greg Kroah-Hartman ha dit:
 
-On Sat, 17 Feb 2018, Thomas Gleixner wrote:
-> On Fri, 16 Feb 2018, Ben Hutchings wrote:
-> > On Mon, 2018-01-22 at 09:40 +0100, Greg Kroah-Hartman wrote:
-> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Thomas Gleixner <tglx@linutronix.de>
-> > > 
-> > > commit 45d55e7bac4028af93f5fa324e69958a0b868e96 upstream.
-> > > 
-> > > Keith reported the following warning:
-> > > 
-> > > WARNING: CPU: 28 PID: 1420 at kernel/irq/matrix.c:222 irq_matrix_remove_managed+0x10f/0x120
-> > >   x86_vector_free_irqs+0xa1/0x180
-> > >   x86_vector_alloc_irqs+0x1e4/0x3a0
-> > >   msi_domain_alloc+0x62/0x130
-> > > 
-> > > The reason for this is that if the vector allocation fails the error
-> > > handling code tries to free the failed vector as well, which causes the
-> > > above imbalance warning to trigger.
-> > > 
-> > > Adjust the error path to handle this correctly.
-> > > 
-> > > Fixes: b5dc8e6c21e7 ("x86/irq: Use hierarchical irqdomain to manage CPU interrupt vectors")
-> > > Reported-by: Keith Busch <keith.busch@intel.com>
-> > > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > > Tested-by: Keith Busch <keith.busch@intel.com>
-> > > Cc: stable@vger.kernel.org
-> > > Link: https://lkml.kernel.org/r/alpine.DEB.2.20.1801161217300.1823@nanos
-> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > 
-> > > ---
-> > >  arch/x86/kernel/apic/vector.c |    7 +++++--
-> > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > 
-> > > --- a/arch/x86/kernel/apic/vector.c
-> > > +++ b/arch/x86/kernel/apic/vector.c
-> > > @@ -359,14 +359,17 @@ static int x86_vector_alloc_irqs(struct
-> > >  		irq_data->chip_data = data;
-> > >  		irq_data->hwirq = virq + i;
-> > >  		err = assign_irq_vector_policy(virq + i, node, data, info);
-> > > -		if (err)
-> > > +		if (err) {
-> > > +			irq_data->chip_data = NULL;
-> > > +			free_apic_chip_data(data);
-> > >  			goto error;
-> > 
-> > This doesn't look quite right for 4.4.y (or any stable branch before
-> > 4.15.y).  When virq is a legacy IRQ this function doesn't allocate
-> > "data" and shouldn't free it.
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
 > 
-> Bah. I'm a moron. Lemme look at that.
+> ------------------
+> 
+> From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> 
+> commit 196bd485ee4f03ce4c690bfcf38138abfcd0a4bc upstream.
+> 
+> Currently we use current_stack_pointer() function to get the value
+> of the stack pointer register. Since commit:
+> 
+>   f5caf621ee35 ("x86/asm: Fix inline asm call constraints for Clang")
+> 
+> ... we have a stack register variable declared. It can be used instead of
+> current_stack_pointer() function which allows to optimize away some
+> excessive "mov %rsp, %<dst>" instructions:
+> 
+>  -mov    %rsp,%rdx
+>  -sub    %rdx,%rax
+>  -cmp    $0x3fff,%rax
+>  -ja     ffffffff810722fd <ist_begin_non_atomic+0x2d>
+> 
+>  +sub    %rsp,%rax
+>  +cmp    $0x3fff,%rax
+>  +ja     ffffffff810722fa <ist_begin_non_atomic+0x2a>
+> 
+> Remove current_stack_pointer(), rename __asm_call_sp to current_stack_pointer
+> and use it instead of the removed function.
+> 
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Link: http://lkml.kernel.org/r/20170929141537.29167-1-aryabinin@virtuozzo.com
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> [dwmw2: We want ASM_CALL_CONSTRAINT for retpoline]
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.ku>
+> Signed-off-by: Razvan Ghitulete <rga@amazon.de>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Delta patch which fixes this below.
+We recently merged this patch to the Chrome OS kernel tree and it
+broke our x86 builds with clang:
 
-Thanks,
+arch/x86/include/asm/asm.h:116:50: error: register 'rsp' unsuitable for global register variables on this target
+register unsigned long current_stack_pointer asm(_ASM_SP);
+                                                 ^
+arch/x86/include/asm/asm.h:41:18: note: expanded from macro '_ASM_SP'
+#define _ASM_SP         __ASM_REG(sp)
+                        ^
+arch/x86/include/asm/asm.h:24:32: note: expanded from macro '__ASM_REG'
+#define __ASM_REG(reg)         __ASM_SEL_RAW(e##reg, r##reg)
+                               ^
+arch/x86/include/asm/asm.h:19:29: note: expanded from macro '__ASM_SEL_RAW'
+# define __ASM_SEL_RAW(a,b) __ASM_FORM_RAW(b)
+                            ^
+arch/x86/include/asm/asm.h:10:32: note: expanded from macro '__ASM_FORM_RAW'
+# define __ASM_FORM_RAW(x)     #x
+                               ^
+<scratch space>:4:1: note: expanded from here
+"rsp"
+^
+1 error generated.
 
-	tglx
 
-8<----------------------------------
-Subject: x86/apic/vector: Handle legacy irq data correctly
-From: Thomas Gleixner <tglx@linutronix.de>
+This can be fixed by also integrating the following patch:
 
-The backport of upstream commit 45d55e7bac40 ("x86/apic/vector: Fix off by
-one in error path") missed to fixup the legacy interrupt data which is not
-longer available upstream.
+commit 520a13c530aeb5f63e011d668c42db1af19ed349
+Author: Josh Poimboeuf <jpoimboe@redhat.com>
+Date:   Thu Sep 28 16:58:26 2017 -0500
 
-Handle legacy irq data correctly by clearing the legacy storage to prevent
-use after free.
+    x86/asm: Fix inline asm call constraints for GCC 4.4
 
-Fixes: 7fd133539289 ("x86/apic/vector: Fix off by one in error path") - 4.4.y
-Fixes: c557481a9491 ("x86/apic/vector: Fix off by one in error path") - 4.9.y
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
----
+Admittedly a v4.4 kernel built with clang + LTS merges is a very
+special case and we can fix this in Chrome OS by integrating the above
+patch locally. Still it would be good to get it into stable to avoid
+others from running into this, especially since the fix is very
+simple.
 
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -91,8 +91,12 @@ static struct apic_chip_data *alloc_apic
- 	return NULL;
- }
- 
--static void free_apic_chip_data(struct apic_chip_data *data)
-+static void free_apic_chip_data(unsigned int virq, struct apic_chip_data *data)
- {
-+#ifdef	CONFIG_X86_IO_APIC
-+	if (virq  < nr_legacy_irqs())
-+		legacy_irq_data[virq] = NULL;
-+#endif
- 	if (data) {
- 		free_cpumask_var(data->domain);
- 		free_cpumask_var(data->old_domain);
-@@ -316,11 +320,7 @@ static void x86_vector_free_irqs(struct
- 			apic_data = irq_data->chip_data;
- 			irq_domain_reset_irq_data(irq_data);
- 			raw_spin_unlock_irqrestore(&vector_lock, flags);
--			free_apic_chip_data(apic_data);
--#ifdef	CONFIG_X86_IO_APIC
--			if (virq + i < nr_legacy_irqs())
--				legacy_irq_data[virq + i] = NULL;
--#endif
-+			free_apic_chip_data(virq + i, apic_data);
- 		}
- 	}
- }
-@@ -361,7 +361,7 @@ static int x86_vector_alloc_irqs(struct
- 		err = assign_irq_vector_policy(virq + i, node, data, info);
- 		if (err) {
- 			irq_data->chip_data = NULL;
--			free_apic_chip_data(data);
-+			free_apic_chip_data(virq + i, data);
- 			goto error;
- 		}
- 	}
+Actually I just noticed that the patch also isn't in v4.9, which could
+extend the number of affected 'users' significantly, so I think we
+almost certainly want Josh's patch in stable.
 
---8323329-1929272789-1519836591=:1392--
+Thanks
+
+Matthias
