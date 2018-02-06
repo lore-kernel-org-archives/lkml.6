@@ -1,91 +1,202 @@
-Return-Path: <groeck7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517944438; cv=none;
+Return-Path: <BATV+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org>
+X-Google-Smtp-Source: AH8x226GxLI55FeC0s2rDovasv3rxVPwKeZrwtuoXDiIaXZH8D3GU5TcgIDhpY58nSBhWRJjL4mh
+ARC-Seal: i=1; a=rsa-sha256; t=1517944650; cv=none;
         d=google.com; s=arc-20160816;
-        b=BriUKog3XSpq9zgsZDrLsaTXtq6rd2bVK0xsgJ5/qwqTv1VDWDFYHwPMWMRHOrSGAM
-         cQDn40tJnpsiZNejz/HtNpdcEAGvRDo+6qLLVCYOHoeubUloNu4M29rTXPx5PpSu6rrQ
-         WSTki94zvunHKaRgCOzZJKq5ZoRbcX6/CEFmA03KskIJGx/N3YYaGkJst2M43sstxNTH
-         BwwaBqc9ZauNkZ7L5GCQQMqHxx3p0jcmIyv9JOs/O7X8F2GqEcXHQ9AN2oWAjJ2j1gqD
-         9IeYY9nfMGWsE2vT1aeH1SWOk2z0eQAuLxfUDgj5sGedbSiPMcAdr9iEao7KUvqJ3zZP
-         8SZQ==
+        b=dtkTu4uRH7U2ODVt+X7k67czF44M6KoUHiXTqACo9aw9N5ZF362ZaVjpjfyMTnR+LQ
+         uc6LpW7RBIfu9M2w6DHqPm8caKjw8Td/xATY1BxP9uRyyB/LERwHTfS7sWRWFwFeyf8v
+         gD8kiSqPwelpIlHf5jvAIfsXLGhge1bGea4sASd3iCmdcbS/EYx7zYTGKX5TQMoGA1lO
+         on6/1OqclTmEWTAiU9k51A0vRaOFajPZContsOlfuRRZrfZrm2FkypAM1tnKz/JCHl1q
+         djUqm3LdCVI/385XAiiYTDwBcQa1d680UHCcNxvrEf0MwU0QD3GaedTFV6SLniA4iVEx
+         6uSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:sender:dkim-signature:arc-authentication-results;
-        bh=V8+oVW7nZy1Ao/tCJDOT9+orbqYilvKj3ah0OKv9Os8=;
-        b=vesHvZrO3kxAfOp8cGu7jFEcQbYZ6KKcpxLlcUt6VGS4t1AEBxJk497uReUgw7hdII
-         QpRBTgGNNP5EL1tvjZWx4k5G3fWEdvcPLSWsprTdduId5tasuqaThnk+vQa7NWoLN+Lb
-         7FlpJ7l/gM1fQ6fTo/GrJXMZ5H4pGSR17YTG4mulGqLBM+URkMI02sN3cEupTbQAJkdI
-         K9ess61n10zYvyvu5UitfOAq3GxSjaKWqf1rzF/o9kjd/mgrf9HFYIhPEXVsTonE/vpP
-         MwOUsD7pbrdfJAW5+uD9y+nPf5qL3yw7rnjYhTxBp26AT/fiw0PzOncPG04SiFuCtPIt
-         eZBw==
+        h=mime-version:date:face:references:in-reply-to:cc:to:from:subject
+         :message-id:dkim-signature:arc-authentication-results;
+        bh=vUBKuv2wDSOHI1BQu8ZqlmRQAsJ+BOaErU5Gu4xjjbg=;
+        b=Cy/X2tS7BY8MlYnvtQxqHGmYZ1+qEKDty35HxO1BuZ9HMFN7X58tAnxowI+OUzB6+M
+         GQwpqW51Zb5uqMA+wjoe3AbffTlFYvqLWyJ5nPZ9/l1tcUjB1IfATuHNhhHK1DOZ2SXX
+         nZeVXTnMMQ/Bw6Cc3pXR3dE1A4CMJZZ5RAvTzmrlT9qae4+afhZXZ7LZ5k+s+a8nred5
+         paaVavVoyd5CtgF+ZQUXsf+7CV/Is9py9t+mFADNl3UccZoC1VR50dLGQjiWV+S5QxWy
+         B0Fxs1Cqp374x9p3w79FgjfkUmTS4GuyBv1Xu2Vkiat6odhx6e4Wdy0GiS45LxPxtm6L
+         GZXw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Dm+BiGPY;
-       spf=pass (google.com: domain of groeck7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=groeck7@gmail.com
+       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=bKeRVcAl;
+       spf=pass (google.com: best guess record for domain of batv+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Dm+BiGPY;
-       spf=pass (google.com: domain of groeck7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=groeck7@gmail.com
-X-Google-Smtp-Source: AH8x2270RcAEiB0CdE/VNz0XhJ1Ggx28fxUnJ2umz+i7Dv4Ii2Osimg/iBMejgSnwHP2dTEtgQURLA==
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 6 Feb 2018 11:13:55 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, whiteheadm@acm.org,
-	Hugh Dickins <hughd@google.com>, dave.hansen@linux.intel.com,
-	jikos@kernel.org, Borislav Petkov <bp@alien8.de>,
-	Kees Cook <keescook@chromium.org>, Jamie Iles <jamie@jamieiles.com>,
-	eduval@amazon.com, labbott@redhat.com,
-	Rik van Riel <riel@surriel.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=bKeRVcAl;
+       spf=pass (google.com: best guess record for domain of batv+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+77f4f383f85eee7fbfc0+5280+infradead.org+dwmw2@twosheds.srs.infradead.org
+Message-ID: <1517944648.3677.18.camel@infradead.org>
 Subject: Re: [BUG] x86 : i486 reporting to be vulnerable to
  Meltdown/Spectre_V1/Spectre_V2
-Message-ID: <20180206191355.GA7424@roeck-us.net>
+From: David Woodhouse <dwmw2@infradead.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, whiteheadm@acm.org,
+ Hugh Dickins <hughd@google.com>, dave.hansen@linux.intel.com,
+ jikos@kernel.org, Borislav Petkov <bp@alien8.de>,  Kees Cook
+ <keescook@chromium.org>, Jamie Iles <jamie@jamieiles.com>,
+ eduval@amazon.com,  labbott@redhat.com, Rik van Riel <riel@surriel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <20180206191355.GA7424@roeck-us.net>
 References: <CAP8WD_YnJnQW9o+t2jn6HRrY3kKQMRD44joP=thPYO5vS4ev7Q@mail.gmail.com>
- <1517643438.31953.108.camel@infradead.org>
- <CAP8WD_Yrp5g6YZwV+XQTx93YpTakWEL8MD+p0bZDaPi3-r88JQ@mail.gmail.com>
- <20180206190233.GA10476@kroah.com>
- <1517944227.3677.15.camel@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1517944227.3677.15.camel@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+	 <1517643438.31953.108.camel@infradead.org>
+	 <CAP8WD_Yrp5g6YZwV+XQTx93YpTakWEL8MD+p0bZDaPi3-r88JQ@mail.gmail.com>
+	 <20180206190233.GA10476@kroah.com> <1517944227.3677.15.camel@infradead.org>
+	 <20180206191355.GA7424@roeck-us.net>
+Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-v+plH1PternDpPCFeWeB"
+Date: Tue, 06 Feb 2018 19:17:28 +0000
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591354140743903681?=
-X-GMAIL-MSGID: =?utf-8?q?1591680107758232664?=
+X-GMAIL-MSGID: =?utf-8?q?1591680329600172390?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 06, 2018 at 07:10:27PM +0000, David Woodhouse wrote:
-> 
-> 
-> On Tue, 2018-02-06 at 11:02 -0800, Greg Kroah-Hartman wrote:
-> > .
-> > > 
-> > > David
-> > >   I believe I got the patch(es) you mention in in the stable 4.15.1 kernel:
-> > > 
-> > > Pull x86/pti updates from Thomas Gleixner: "Another set of melted
-> > > spectrum related changes"
-> > > (commit 6304672b7f0a5c010002e63a075160856dc4f88d).
-> > > 
-> > > Unfortunately, the symptoms I reported remain on at least the i486 and i686.
-> > 
-> > Can you try 4.15.2-rc1?  Or how about Linus's kernel tree now?  There
-> > was a lot of spectrum patches merged just this week that were not in
-> > 4.15.1.
-> 
-> No, for the 486 it *should* have worked. The interesting commit
-> is fec9434a12 ("x86/pti: Do not enable PTI on CPUs which are not
-> vulnerable to Meltdown") which is indeed pulled in with the merge
-> commit that Matthew mentions.
-> 
 
-I disagree.
+--=-v+plH1PternDpPCFeWeB
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-$ git describe
-v4.15.1-61-g7ab5513e4cbc
-$ git log --oneline v4.15.1.. | grep Melt
-3472b3689bab x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown
+On Tue, 2018-02-06 at 11:13 -0800, Guenter Roeck wrote:
+> On Tue, Feb 06, 2018 at 07:10:27PM +0000, David Woodhouse wrote:
+> >=20
+> >=20
+> >=20
+> > On Tue, 2018-02-06 at 11:02 -0800, Greg Kroah-Hartman wrote:
+> > >=20
+> > > .
+> > > >=20
+> > > > =C2=A0
+> > > > David
+> > > > =C2=A0=C2=A0 I believe I got the patch(es) you mention in in the st=
+able 4.15.1 kernel:
+> > > > =C2=A0
+> > > > Pull x86/pti updates from Thomas Gleixner: "Another set of melted
+> > > > spectrum related changes"
+> > > > (commit 6304672b7f0a5c010002e63a075160856dc4f88d).
+> > > > =C2=A0
+> > > > Unfortunately, the symptoms I reported remain on at least the i486 =
+and i686.
+> > > Can you try 4.15.2-rc1?=C2=A0 Or how about Linus's kernel tree now?=
+=C2=A0 There
+> > > was a lot of spectrum patches merged just this week that were not in
+> > > 4.15.1.
+> > No, for the 486 it *should* have worked. The interesting commit
+> > is=C2=A0fec9434a12 ("x86/pti: Do not enable PTI on CPUs which are not
+> > vulnerable to Meltdown") which is indeed pulled in with the merge
+> > commit that Matthew mentions.
+> >=20
+> I disagree.
+>=20
+> $ git describe
+> v4.15.1-61-g7ab5513e4cbc
+> $ git log --oneline v4.15.1.. | grep Melt
+> 3472b3689bab x86/pti: Do not enable PTI on CPUs which are not vulnerable =
+to Meltdown
 
-Guenter
+Ah right, for 4.15.1 perhaps yes. I was looking at Matthew's 'commit
+6304672b7f0a5c010002e63a075160856dc4f88d' which isn't in 4.15.1 at all;
+that's the commit in Linus' tree where he pulled in the fix. So *that*
+one should have had it.
+
+--=-v+plH1PternDpPCFeWeB
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDYxOTE3MjhaMC8GCSqG
+SIb3DQEJBDEiBCDYI0iaD6J8t/Iga05CmLenxvYZOGzhzffYMEvl631i/jCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAA5KvE8MaBwW
+Y/MD2yPHTqGMe01NINTg61Tp7vhwSUaXsjcLE+4jXp16hERyptfWLl06F1T43HCV4k+Nxo6I7HV1
+Q320Rfii8AAPeMn5owVr8CsmnO07I5NbAvGqrjWHCyOHDyOl/0yuayOJTRLRFMBvI/IcOawpaVbN
+CdwdZNoIhtIuyJZzNr3YupHUnJqTSiMMP62tGCCo8oQFIrEGnHWHh8/bVWLGnurqCRcpQMKA6ehd
+X+czAVYrkcxc5g/QN8ZOVxqeF+dwpN7UH5Wx++vpoKo9d/OqQ8jpkfRP1kSNfGKJHMA7TS6zOuKD
+Bx1Qysj65UGaMcruL+NfDsuqHaAAAAAAAAA=
+
+
+--=-v+plH1PternDpPCFeWeB--
