@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752946AbeBFJ4M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:56:12 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:44470 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752669AbeBFJxZ (ORCPT
+        id S1752966AbeBFJ4Y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:56:24 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:40453 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752661AbeBFJxY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:53:25 -0500
-X-UUID: d8cff251467d4b21b1e98281d5b6f6b1-20180206
+        Tue, 6 Feb 2018 04:53:24 -0500
+X-UUID: e72de57cb78e435595f3e57b83efa3b1-20180206
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 07/16] arm64: dts: mt7622: turn uart0 clock to real ones
-Date: Tue, 6 Feb 2018 17:52:56 +0800
-Message-ID: <e0646e211fa947a34d1cfff1cc98f00efd42f2a0.1517910489.git.sean.wang@mediatek.com>
+        Sean Wang <sean.wang@mediatek.com>, Mark Brown <broonie@kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Subject: [PATCH v2 05/16] arm64: dts: mt7622: add PMIC MT6380 related nodes
+Date: Tue, 6 Feb 2018 17:52:54 +0800
+Message-ID: <38270e84210144d52178def5ec7364b966a616eb.1517910489.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1517910489.git.sean.wang@mediatek.com>
 References: <cover.1517910489.git.sean.wang@mediatek.com>
@@ -28,47 +29,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-This patch also cleans up two oscillators that provide clocks for MT7623.
-Switch the uart clocks to the real ones while at it.
+Enable pwrap and MT6380 on mt7622-rfb1 board. Also add all mt6380
+regulator nodes in an alone file to allow similar boards using MT6380
+able to resue the configuration.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Cc: Mark Brown <broonie@kernel.org>
 Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
 ---
- arch/arm64/boot/dts/mediatek/mt7622.dtsi | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt6380.dtsi     | 86 ++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts |  8 +++
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi     | 12 ++++
+ 3 files changed, 106 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6380.dtsi
 
+diff --git a/arch/arm64/boot/dts/mediatek/mt6380.dtsi b/arch/arm64/boot/dts/mediatek/mt6380.dtsi
+new file mode 100644
+index 0000000..53b335d
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt6380.dtsi
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * dts file for MediaTek MT6380 regulator
++ *
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Chenglin Xu <chenglin.xu@mediatek.com>
++ *	   Sean Wang <sean.wang@mediatek.com>
++ */
++
++&pwrap {
++	regulators {
++		compatible = "mediatek,mt6380-regulator";
++
++		mt6380_vcpu_reg: buck-vcore1 {
++			regulator-name = "vcore1";
++			regulator-min-microvolt = < 600000>;
++			regulator-max-microvolt = <1393750>;
++			regulator-ramp-delay = <6250>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		mt6380_vcore_reg: buck-vcore {
++			regulator-name = "vcore";
++			regulator-min-microvolt = <600000>;
++			regulator-max-microvolt = <1393750>;
++			regulator-ramp-delay = <6250>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		mt6380_vrf_reg: buck-vrf {
++			regulator-name = "vrf";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1575000>;
++			regulator-ramp-delay = <0>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		mt6380_vm_reg: ldo-vm {
++			regulator-name = "vm";
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1400000>;
++			regulator-ramp-delay = <0>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		mt6380_va_reg: ldo-va {
++			regulator-name = "va";
++			regulator-min-microvolt = <2200000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-ramp-delay = <0>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		mt6380_vphy_reg: ldo-vphy {
++			regulator-name = "vphy";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-ramp-delay = <0>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		mt6380_vddr_reg: ldo-vddr {
++			regulator-name = "vddr";
++			regulator-min-microvolt = <1240000>;
++			regulator-max-microvolt = <1840000>;
++			regulator-ramp-delay = <0>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		mt6380_vt_reg: ldo-vt {
++			regulator-name = "vt";
++			regulator-min-microvolt = <2200000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-ramp-delay = <0>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+index bd1093a..4615af6 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+@@ -10,6 +10,7 @@
+ #include <dt-bindings/input/input.h>
+ 
+ #include "mt7622.dtsi"
++#include "mt6380.dtsi"
+ 
+ / {
+ 	model = "MediaTek MT7622 RFB1 board";
+@@ -222,6 +223,13 @@
+ 	};
+ };
+ 
++&pwrap {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pmic_bus_pins>;
++
++	status = "okay";
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
 diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-index 65eb417..845fc11 100644
+index 8211bf7..c387c4c 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-@@ -88,18 +88,6 @@
- 		};
+@@ -102,6 +102,18 @@
+ 		#reset-cells = <1>;
  	};
  
--	uart_clk: dummy25m {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <25000000>;
--	};
--
--	bus_clk: dummy280m {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <280000000>;
--	};
--
- 	pwrap_clk: dummy40m {
- 		compatible = "fixed-clock";
- 		clock-frequency = <40000000>;
-@@ -231,7 +219,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>, <&bus_clk>;
-+		clocks = <&topckgen CLK_TOP_UART_SEL>,
-+			 <&pericfg CLK_PERI_UART1_PD>;
- 		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
++	pwrap: pwrap@10001000 {
++		compatible = "mediatek,mt7622-pwrap";
++		reg = <0 0x10001000 0 0x250>;
++		reg-names = "pwrap";
++		clocks = <&infracfg CLK_INFRA_PMIC_PD>,<&pwrap_clk>;
++		clock-names = "spi","wrap";
++		resets = <&infracfg MT7622_INFRA_PMIC_WRAP_RST>;
++		reset-names = "pwrap";
++		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
++		status = "disabled";
++	};
++
+ 	pericfg: pericfg@10002000 {
+ 		compatible = "mediatek,mt7622-pericfg",
+ 			     "syscon";
 -- 
 2.7.4
