@@ -1,71 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752612AbeBFIrx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 03:47:53 -0500
-Received: from mout.gmx.net ([212.227.17.22]:51555 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751835AbeBFIrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 03:47:46 -0500
-Message-ID: <1517906853.9843.17.camel@gmx.de>
-Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
-From: Mike Galbraith <efault@gmx.de>
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, alban.browaeys@gmail.com,
-        ming.lei@redhat.com, ivan@ludios.org, 169364@studenti.unimore.it,
-        Serena Ziviani <ziviani.serena@gmail.com>
-Date: Tue, 06 Feb 2018 09:47:33 +0100
-In-Reply-To: <34a0aa9dead3a082615899b2830f60f1@natalenko.name>
-References: <20180205190510.5499-1-paolo.valente@linaro.org>
-         <20180205190510.5499-2-paolo.valente@linaro.org>
-         <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
-         <1517903761.9843.12.camel@gmx.de>
-         <34a0aa9dead3a082615899b2830f60f1@natalenko.name>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:86YeTEQAq/DVYGz/StIiwD2puus3K1YUR9kWgEvSFibtHI5tbqB
- UzurjHaId/gX9RWAnlyF44io2qwScq36WiFgSm185FF7rR0UqINISzf9wbUv5YFvYhzpBFF
- D26v47qfFgphRVY6hd7kaPJvjanFcYI+I7xt6VFkhDVAscHWE5yQnyihf1CSC6AXoES1OZD
- XnWtVjnqpry62dutOYPig==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:cSUvQVqRL0Q=:l4WLUhbskrqg3rVOgcE1uq
- L7RFVuX084ANbjrm0kWSDa4sdx8h0N+k24YocuJ48Y0TA+C++7PLOeRvmgaahOSeuxWNCEUZY
- hoqZuRJ4xRDKaPMcatbE0Nt6c9HK2Oiwz4TRZ8LvV5C7wVMmFeVEmuCQjWFSJUuc9OQwQ0SxR
- rL5fuSZuM+J/XanagV3YOGZn3zyIvkeX81/PWBwqt+QTB5GqR5Z8cdgrehjk088e60pidpvix
- xWCWCwoj4SnUO8Xbp+HbG0KhpJmDod1hOt944C5oCRsmmDS4y7IGho6UkPVyzwh3xVVw0TOuT
- Yg0VVRTXNTJQUIosqIpmqC7BoVAOd/0V4JHwIq8kgtJ6magxqKBWXZIY5Nw0aiAryyBVMFJGH
- S6ZAkHopY+S+O2cVBFq2qgdJTRWOi2hikA7FvZZTCeCch+GVHRMb4sfye4Z0O2g4FXweaVMVt
- 65isqlrYr1HlQFBMrcVyKvAsUs/zbEUYQN9TyysGNPxOG/+qJMJADZkKRCNqdIpGK4fVY4ZL4
- 4O8TDHEdFf5Y8M2QDjvcX2HtDG8x6MeuGy72KCUoUnJ+SZT4tZG6xzzmxkunVW1cEgn1CyKEK
- wJUohG23QGUt+JQ8J4o3nwljDy7vsiBFiDtRq/LUPLZcPAMsG74RXi6Vx66ZI49Ea8c4PS6JZ
- kINBl9PWSouHBO/avAF+lNoJ892HA+0rZTXzTYWRrutMx/UtHZLABMIS3Ja43NCS4G+333tED
- rQcLpIIYC72j7lXGDqL+3Sb8lDl1DF3rrms62LwvxgVRMu0xsJrVCWewIWQYj/v4EgQ1h2cQ/
- 1OfnkjDi4PHK1HETG9jtCEmx/qiUc3exT0GUm3PzLB08Tv+KpUzsr1XsttaO9r/N2E34xtx6u
- s9OzzF1kHTIYP/QZTTbCu4yC2qxxhZmGV8343oSyPr6bIHkMRTYteO9aB5qGSL
+        id S1752562AbeBFIs6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 03:48:58 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38294 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752583AbeBFIsv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 03:48:51 -0500
+X-Google-Smtp-Source: AH8x227yJUiZ5KCXC7fYcKDvx5VJJCBlayq6oIx/WraIzhrYy+KIUNM/mk2gvGNF+h8l0yeSgB2wiA==
+Date: Tue, 6 Feb 2018 09:48:47 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Brian Gerst <brgerst@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH 1/3] x86/entry: Clear extra registers beyond syscall
+ arguments for 64bit kernels
+Message-ID: <20180206084847.6lzfnumwlf3ehmvh@gmail.com>
+References: <151770009169.7213.12476757146099518628.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151770009703.7213.12036560755602017391.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CAMzpN2jeq+LDajvwSALpmaZKOChNX1uhRbuEJ3v97HyOEsH44A@mail.gmail.com>
+ <CAPcyv4gy=Oq5=ZXCvs0mgziwfgEb2p+pE9BJZZP47W+4yrz0Vg@mail.gmail.com>
+ <CA+55aFzC03b5VASq3xjLhU4WAA=gwqKNT2i6-9OBPQd-G_AHEA@mail.gmail.com>
+ <20180205162659.kimgef6dkskc6quq@gmail.com>
+ <20180205200550.mhimujp7wltuwzod@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180205200550.mhimujp7wltuwzod@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-06 at 09:37 +0100, Oleksandr Natalenko wrote:
-> Hi.
+
+* Ingo Molnar <mingo@kernel.org> wrote:
+
+> [...] so I implemented a real, per function register usage tracking.
 > 
-> 06.02.2018 08:56, Mike Galbraith wrote:
-> > I was doing kbuilds, and it blew up on me twice.  Switching back to cfq
-> > seemed to confirm it was indeed the patch causing trouble, but that's
-> > by no means a certainty.
+> For the x86 defconfig kernel the results are:
 > 
-> Just to note, I was using v4.15.1, not the latest git HEAD. Are you able 
-> to reproduce it on the stable kernel?
+>   r11: used in   1704 fns, not used in  43310 fns, usage ratio:    3.8%
+>   r10: used in   3809 fns, not used in  41205 fns, usage ratio:    8.5%
+>   r15: used in   6599 fns, not used in  38415 fns, usage ratio:   14.7%
+>    r9: used in   8120 fns, not used in  36894 fns, usage ratio:   18.0%
+>   r14: used in   9243 fns, not used in  35771 fns, usage ratio:   20.5%
+>    r8: used in  12614 fns, not used in  32400 fns, usage ratio:   28.0%
+>   r13: used in  12708 fns, not used in  32306 fns, usage ratio:   28.2%
+>   r12: used in  17144 fns, not used in  27870 fns, usage ratio:   38.1%
+>   rbp: used in  23289 fns, not used in  21725 fns, usage ratio:   51.7%
+>   rcx: used in  23897 fns, not used in  21117 fns, usage ratio:   53.1%
+>   rbx: used in  29226 fns, not used in  15788 fns, usage ratio:   64.9%
+>   rdx: used in  33205 fns, not used in  11809 fns, usage ratio:   73.8%
+>   rsi: used in  35415 fns, not used in   9599 fns, usage ratio:   78.7%
+>   rdi: used in  40628 fns, not used in   4386 fns, usage ratio:   90.3%
+>   rax: used in  43120 fns, not used in   1894 fns, usage ratio:   95.8%
 
-I didn't even try to wedge it into 4.15.1, tested it as posted.
+So here's the next (and probably final) chapter of x86-64 register allocation 
+statistics: out of curiosity I let this analysis run overnight on all 4 kernel 
+configs, to see the register usage patterns of the distro and allyesconfig kernels 
+as well.
 
->  Also, assuming this issue might be 
-> unrelated to the BFQ itself, did you manage to reproduce the trouble 
-> with another blk-mq scheduler (not CFQ, but mq-deadline/Kyber)?
+Here's all the per function register allocation probabilities in a single table:
 
-I can give another scheduler a go this afternoon.
+  REG      allnoconfig       localconfig      distroconfig      allyesconfig
+  --------------------------------------------------------------------------
+  rax:           94.6%             95.8%             94.3%             96.2%
+  rbx:           46.9%             64.9%             67.6%             90.4%
+  rcx:           47.8%             53.1%             57.9%             52.7%
+  rdx:           66.0%             73.8%             76.0%             74.3%
+  rbp:           36.2%             51.7%             55.5%             81.5%
+  rsi:           64.8%             78.7%             81.3%             85.0%
+  rdi:           79.9%             90.3%             92.1%             94.3%
+   r8:           21.9%             28.0%             31.9%             29.7%
+   r9:           13.9%             18.0%             20.4%             18.3%
+  r10:            9.3%              8.5%              8.4%              4.7%
+  r11:            4.9%              3.8%              4.5%              1.6%
+  r12:           25.6%             38.1%             42.4%             69.3%
+  r13:           18.3%             28.2%             31.5%             57.1%
+  r14:           13.3%             20.5%             22.8%             46.1%
+  r15:            9.3%             14.7%             16.4%             36.6%
 
-	-Mike
+These numbers underline the overall conclusions that we have reached so far:
+
+ - We should clear all of R10-R15 in syscalls and R8-R15 in parameter-less
+   entries (IRQs, NMIs, exceptions, etc.) - like the latest series from Dan does.
+
+ - We should probably strive to clear R8-R9 for system calls that don't use it -
+   which is ~98% of them. In particular R9 with its comparatively low (~20%)
+   allocation probability could survive deep into the kernel: 5-deep call chains
+   still have a ~30% chance to have R9 intact - and call chains as deep as 10 
+   could still realistically have a ~10% residual probability to have R9 intact.
+   We don't do this yet.
+
+ - Smaller kernels are statistically easier to attack via Spectre, as long as the
+   gadget is present in the smaller kernel. In particular heavily stripped down
+   64-bit kernels might be attackable via R8-R9 (21%,14%) and also RBP (36%) to a 
+   certain degree. This means that the RBP clearing introduced by this series is 
+   very much relevant: because RBP is not part of the C function call calling 
+   arguments ABI its allocation frequency is much lower than that of other GP 
+   registers. Unfortunately R8/R9 values will survive through system calls, 
+   because we restore them in do_syscall_64().
+
+There's a somewhat surprising pattern as well: the register allocation probability 
+of R10 and R11 _decreases_ as the kernel gets more complex. For all other 
+registers the allocation probability increases with increasing kernel complexity, 
+which is intuitive: larger functions with higher register pressure will use more 
+registers.
+
+So this result is counter-intuitive - my best guess is that it's some sort of GCC 
+register allocation artifact. Here's the comparison of the code generation of a 
+distro versus an allyesconfig kernel:
+
+  #                             distro-config        allyesconfig
+  #
+  # nr of =y .config options:            4871                9553
+  # nr of functions:                   190477              249340
+  # nr of instructions:              10329411            20223765
+  # nr of register uses:             16907185            33413619
+  #
+  # instructions per function:             54                  81
+  #
+  #
+  # r10 used in:                        15404 fns           11300 fns
+  # r10 not used in:                   167714 fns          228114 fns
+  # r10 usage ratio:                      8.4%                4.7%
+  #
+  # r11 used in:                         8224 fns            3876 fns
+  # r11 not used in:                   174894 fns          235538 fns
+  # r11 usage ratio:                     4.5%                 1.6%
+
+I don't know which kernel option (out of thousands) causes R10/R11 to be used much 
+less frequently in a significantly larger kernel.
+
+Note that even the absolute count of functions with R10/R11 use decreases in the 
+allyesconfig kernel, so I don't think it can be caused by the extra 
+instrumentation bloat of features like CONFIG_GCOV_KERNEL=y.
+
+The basic inlining and optimization settings are the same and neither has 
+branch-instrumentation enabled:
+
+  #                           distro-config       allyesconfig
+  #
+  CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING=y       CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING=y
+  CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y            CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
+  # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set        # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+  CONFIG_OPTIMIZE_INLINING=y                      CONFIG_OPTIMIZE_INLINING=y
+
+  CONFIG_BRANCH_PROFILE_NONE=y                    CONFIG_BRANCH_PROFILE_NONE=y
+
+While no-one will build and boot an allyesconfig kernel (other than me), the 
+numbers are still indicative: we should keep in mind the possibility that a Linux 
+distro enabling seemingly benign non-default kernel options can lower the 
+allocation probability of R10/R11 significantly.
+
+Thanks,
+
+	Ingo
