@@ -1,112 +1,190 @@
-Return-Path: <ulfalizer@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518049009; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AH8x2244rjnH3djUCkMplmX6SfcVFWp+aIrKrw8YfJrbEDhZnSsNBDzYroi3Q6fR7Hc6z4mJIZIF
+ARC-Seal: i=1; a=rsa-sha256; t=1517877367; cv=none;
         d=google.com; s=arc-20160816;
-        b=WxpSlOSQGDTahUibgKYqzKADXdcr2ASt2pLSyif8i4G5ri7IpuxdTW1b41qnHVNk7R
-         zZP6aVkr45Ysfeekq+7HmqpcIS7HaK9qsC8QNwxkw3Tvs/vbMnTxpiSM5AfdQp06m5zm
-         Esypr7V9HwGBFROduOLJGw/SHXO6kJG2gm+U+nmJFpxc1mxz4zVfm6rGXCqCQfSI++sl
-         57YdgM3bRXFRvGU9Vqq5W71O8ggSmB24O5bvTsmWSLRZX1buDzzhZKZv4/6Pa/1SrGwT
-         Kv2PCFc6GeKQrto3hL72AJWx6yf580zbpBSx/038ovOfu/mmBA+lDGK2Ya8RYe1r8/jY
-         3nRA==
+        b=KJj3q9BuHSwlzhcB5Pv0sZII5WuufrC6oPoJwaYUYTLmqC6/tyWdxUb3YrMwaJQ8v2
+         KB1Z+T9wlVgfafLKBq+XujrX4JASLxnZtFUydx8pi2In6ndXzcQOHnHMHAsNZNfMDDp6
+         ynPpITuQ6bHFsqPsPIqCnsbpABR8GkwTOEmF041u9u5fzqB61V8JrFLE9uqdmbXX+ykK
+         TMLQQPljtYrjmclxUGAeqSbNSYvXpOYcQqqy4unE6amtb79M9A+7o2wqdLDRa/wlvGzo
+         gGCMjBF9zmvvkjNARXFVb+RooAvDR/4sYfkA/2NAGxqQnlFhPTxSYnU8+mJpRMTmPbFr
+         1ZYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=h4P+DXkDzofwetB0X0Gfo6pmDtgOrYbS7m8kphFEzsQ=;
-        b=f8D9Trvi9tmj2C0Fcm8ch5yfTmlb0TSNUK3oI3IVYHMup7gSDgjq+zermOVafHHE57
-         xzCrGQeL+A1bMA5FDmVOoWqLQRGe3xY7VThNsKBJ9TMFktIuwIqsvWqRHFYhLf41TsL8
-         pZqmabQ4CM8/sMBGgbp3QG90DA9pqNmfPrwCr85Ly1assA/n1OCp8MiJFPMqn+OPXhgN
-         n/wEGjL2mn7ZH84eRJ6Muh95Mfgf3a44uN6ksC4GOlSQ+GonAAGDYTHcsCFqpt6YYJes
-         /qzQjMGXVAracGcqlGI5rQu/BLoUzhEtxrFS5MOKTT0KkxLwtil11BS/k8/DG6hWxASJ
-         OhYQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=OgysUZNJJuQDhed5u2YwuFH43q8TTfIJ3GyWfIBQjIM=;
+        b=O0RG415lGuDndwyzSmwq7r8fg2WukzpmLpkg0LT20P64htSv/nAM/1vP0F/xNQ5GDd
+         28e/UNM7MSCWjk24GpxKLN8mPFRa75NUyyUGGcyvfh/7SLEasuJESIHmnkqhAlYQ3rqX
+         kZKKm8Pycgqa3AI6rTGamcArRSVd0T+Pt8v59henlIYoCII9bj7i4c+XRFWH2kcQkuRq
+         2TGhXVBQTyv0Ks64nSldBhJDFfZr9xYN3GwJUTbfGCVMNzAVVCt8YTZRhYcwGyXCjIyM
+         TJb8ebcEadWymDj6/7x3UemsCqyDKLMLYQeYDl76RwWM9qChXqO6kSp0aWZ6QyZbcTeO
+         8dVg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RhXBjZj7;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=CMKz2JAQ;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RhXBjZj7;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227GGn0P873C/MXwUTRFri4RICmkpSxl8yf3dmutC2hQcWiD2vZgzXgihGAo9cGri1u2P/wdIdzZcpEBb3AbXUs=
-MIME-Version: 1.0
-In-Reply-To: <1517877294-4826-15-git-send-email-yamada.masahiro@socionext.com>
-References: <1517877294-4826-1-git-send-email-yamada.masahiro@socionext.com> <1517877294-4826-15-git-send-email-yamada.masahiro@socionext.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Thu, 8 Feb 2018 01:16:49 +0100
-Message-ID: <CAFkk2KSA3=Mt1=jssDLju0scGw42teyarRX6yF3+FtgjnXYuwA@mail.gmail.com>
-Subject: Re: [PATCH 14/14] kconfig: test: check if recursive inclusion is detected
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
-	Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Michal Marek <michal.lkml@markovi.net>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=CMKz2JAQ;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w160ZHAs011351
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 13/14] kconfig: test: check if recursive dependencies are detected
+Date: Tue,  6 Feb 2018 09:34:53 +0900
+Message-Id: <1517877294-4826-14-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517877294-4826-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1517877294-4826-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591609808664876806?=
-X-GMAIL-MSGID: =?utf-8?q?1591789758450830849?=
+X-GMAIL-THRID: =?utf-8?q?1591609778492159314?=
+X-GMAIL-MSGID: =?utf-8?q?1591609778492159314?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 6, 2018 at 1:34 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> If recursive inclusion is detected, it should fail with error messages.
-> Test this.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
->  scripts/kconfig/tests/err_recursive_inc/Kconfig         |  1 +
->  scripts/kconfig/tests/err_recursive_inc/Kconfig.inc     |  1 +
->  scripts/kconfig/tests/err_recursive_inc/__init__.py     | 10 ++++++++++
->  scripts/kconfig/tests/err_recursive_inc/expected_stderr |  4 ++++
->  4 files changed, 16 insertions(+)
->  create mode 100644 scripts/kconfig/tests/err_recursive_inc/Kconfig
->  create mode 100644 scripts/kconfig/tests/err_recursive_inc/Kconfig.inc
->  create mode 100644 scripts/kconfig/tests/err_recursive_inc/__init__.py
->  create mode 100644 scripts/kconfig/tests/err_recursive_inc/expected_stderr
->
-> diff --git a/scripts/kconfig/tests/err_recursive_inc/Kconfig b/scripts/kconfig/tests/err_recursive_inc/Kconfig
-> new file mode 100644
-> index 0000000..3ce7a3f
-> --- /dev/null
-> +++ b/scripts/kconfig/tests/err_recursive_inc/Kconfig
-> @@ -0,0 +1 @@
-> +source "Kconfig.inc"
-> diff --git a/scripts/kconfig/tests/err_recursive_inc/Kconfig.inc b/scripts/kconfig/tests/err_recursive_inc/Kconfig.inc
-> new file mode 100644
-> index 0000000..1fab1c1
-> --- /dev/null
-> +++ b/scripts/kconfig/tests/err_recursive_inc/Kconfig.inc
-> @@ -0,0 +1 @@
-> +source "Kconfig"
-> diff --git a/scripts/kconfig/tests/err_recursive_inc/__init__.py b/scripts/kconfig/tests/err_recursive_inc/__init__.py
-> new file mode 100644
-> index 0000000..1dae64f
-> --- /dev/null
-> +++ b/scripts/kconfig/tests/err_recursive_inc/__init__.py
-> @@ -0,0 +1,10 @@
-> +"""
-> +Detect recursive inclusion error
-> +================================
-> +
-> +If recursive inclusion is detected, it should fail with error messages.
-> +"""
-> +
-> +def test(conf):
-> +    assert conf.oldaskconfig() != 0
-> +    assert conf.stderr_contains('expected_stderr')
-> diff --git a/scripts/kconfig/tests/err_recursive_inc/expected_stderr b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
-> new file mode 100644
-> index 0000000..b256c91
-> --- /dev/null
-> +++ b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
-> @@ -0,0 +1,4 @@
-> +Kconfig:1: recursive inclusion detected. Inclusion path:
-> +  current file : 'Kconfig'
-> +  included from: 'Kconfig.inc:1'
-> +  included from: 'Kconfig:3'
-> --
-> 2.7.4
->
+Recursive dependency should be detected and warned.  Test this.
 
-Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/kconfig/tests/warn_recursive_dep/Kconfig   | 62 ++++++++++++++++++++++
+ .../kconfig/tests/warn_recursive_dep/__init__.py   | 10 ++++
+ .../tests/warn_recursive_dep/expected_stderr       | 33 ++++++++++++
+ 3 files changed, 105 insertions(+)
+ create mode 100644 scripts/kconfig/tests/warn_recursive_dep/Kconfig
+ create mode 100644 scripts/kconfig/tests/warn_recursive_dep/__init__.py
+ create mode 100644 scripts/kconfig/tests/warn_recursive_dep/expected_stderr
+
+diff --git a/scripts/kconfig/tests/warn_recursive_dep/Kconfig b/scripts/kconfig/tests/warn_recursive_dep/Kconfig
+new file mode 100644
+index 0000000..9ab2474
+--- /dev/null
++++ b/scripts/kconfig/tests/warn_recursive_dep/Kconfig
+@@ -0,0 +1,62 @@
++# depends on itself
++
++config A
++	bool "A"
++	depends on A
++
++# select itself
++
++config B
++	bool
++	select B
++
++# depends on each other
++
++config C1
++	bool "C1
++	depends on C2
++
++config C2
++	bool "C2"
++	depends on C1
++
++# depends on and select
++
++config D1
++	bool "D1"
++	depends on D2
++	select D2
++
++config D2
++	bool
++
++# depends on and imply
++# This is not recursive dependency
++
++config E1
++	bool "E1"
++	depends on E2
++	imply E2
++
++config E2
++	bool "E2"
++
++# property
++
++config F1
++	bool "F1"
++	default F2
++
++config F2
++	bool "F2"
++	depends on F1
++
++# menu
++
++menu "menu depending on its content"
++	depends on G
++
++config G
++	bool "G"
++
++endmenu
+diff --git a/scripts/kconfig/tests/warn_recursive_dep/__init__.py b/scripts/kconfig/tests/warn_recursive_dep/__init__.py
+new file mode 100644
+index 0000000..cdf2c13
+--- /dev/null
++++ b/scripts/kconfig/tests/warn_recursive_dep/__init__.py
+@@ -0,0 +1,10 @@
++"""
++Warn recursive inclusion
++========================
++
++Recursive dependency should be warned.
++"""
++
++def test(conf):
++    assert conf.oldaskconfig() == 0
++    assert conf.stderr_contains('expected_stderr')
+diff --git a/scripts/kconfig/tests/warn_recursive_dep/expected_stderr b/scripts/kconfig/tests/warn_recursive_dep/expected_stderr
+new file mode 100644
+index 0000000..ea47cae
+--- /dev/null
++++ b/scripts/kconfig/tests/warn_recursive_dep/expected_stderr
+@@ -0,0 +1,33 @@
++Kconfig:16:warning: multi-line strings not supported
++Kconfig:9:error: recursive dependency detected!
++Kconfig:9:	symbol B is selected by B
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:3:error: recursive dependency detected!
++Kconfig:3:	symbol A depends on A
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:15:error: recursive dependency detected!
++Kconfig:15:	symbol C1 depends on C2
++Kconfig:19:	symbol C2 depends on C1
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:30:error: recursive dependency detected!
++Kconfig:30:	symbol D2 is selected by D1
++Kconfig:25:	symbol D1 depends on D2
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:59:error: recursive dependency detected!
++Kconfig:59:	symbol G depends on G
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:50:error: recursive dependency detected!
++Kconfig:50:	symbol F2 depends on F1
++Kconfig:48:	symbol F1 default value contains F2
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
+-- 
+2.7.4
