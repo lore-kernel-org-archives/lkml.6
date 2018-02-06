@@ -1,69 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752551AbeBFCaA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:30:00 -0500
-Received: from mx-fe5-210.meituan.com ([103.37.138.210]:36007 "EHLO
-        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752165AbeBFC3w (ORCPT
+        id S1752555AbeBFCbL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:31:11 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35480 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752105AbeBFCbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:29:52 -0500
-DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com 336A22975CE3
-Subject: Re: [PATCH] jbd2: set to NULL after kmem_cache_destroy
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1517837957-1636-1-git-send-email-wanglong19@meituan.com>
- <20180205170006.GA4838@magnolia>
-From: Wang Long <wanglong19@meituan.com>
-Message-ID: <1fb20a12-8482-fea8-1db2-ff764216ea19@meituan.com>
-Date: Tue, 6 Feb 2018 10:29:40 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.5.2
+        Mon, 5 Feb 2018 21:31:06 -0500
+X-Google-Smtp-Source: AH8x224fPKqDSUJ2tXpzhm8f3++3MNwzicviCG4WMxlY0/ZJcJqBY4eRz3s9164ToXqzAFep3r+8zw==
+Date: Tue, 6 Feb 2018 11:31:00 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        huang ying <huang.ying.caritas@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Minchan Kim <minchan@kernel.org>, Seth Jennings <sjenning@redhat.com>,
+        Dan Streetman <ddstreet@ieee.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: bisected bd4c82c22c367e is the first bad commit (was [Bug
+ 198617] New: zswap causing random applications to crash)
+Message-ID: <20180206023100.GA462@jagdpanzerIV>
+References: <20180130114841.aa2d3bd99526c03c6a5b5810@linux-foundation.org>
+ <20180203013455.GA739@jagdpanzerIV>
+ <CAC=cRTPyh-JTY=uOQf2dgmyPDyY-4+ryxkedp-iZMcFQZtnaqw@mail.gmail.com>
+ <20180205013758.GA648@jagdpanzerIV>
+ <87d11j4pdy.fsf@yhuang-dev.intel.com>
+ <20180205123947.GA426@jagdpanzerIV>
+ <20180205162428.99efbedb5a6e19bee19ba954@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20180205170006.GA4838@magnolia>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180205162428.99efbedb5a6e19bee19ba954@linux-foundation.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (02/05/18 16:24), Andrew Morton wrote:
+> On Mon, 5 Feb 2018 21:39:47 +0900 Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+> 
+> > > ---------------------------------8<-------------------------------
+> > > From 4c52d531680f91572ebc6f4525a018e32a934ef0 Mon Sep 17 00:00:00 2001
+> > > From: Huang Ying <huang.ying.caritas@gmail.com>
+> > > Date: Mon, 5 Feb 2018 19:27:43 +0800
+> > > Subject: [PATCH] fontswap thp fix
+> > 
+> > Seems to be fixing the problem on my x86 box. Executed several tests, no
+> > crashes were observed. Can run more tests tomorrow.
+> 
+> Thanks.  I queued this for 4.16 with a cc:stable and a Fixes:
+> bd4c82c22c367e068 ("mm, THP, swap: delay splitting THP after swapped
+> out").
+> 
+> Can we please have a changelog ;)
 
-On 6/2/2018 1:00 AM, Darrick J. Wong wrote:
-> On Mon, Feb 05, 2018 at 09:39:17PM +0800, Wang Long wrote:
->> Signed-off-by: Wang Long <wanglong19@meituan.com>
->> ---
->>   fs/jbd2/journal.c | 9 ++++++---
->>   1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
->> index 93016bb..38dc24c 100644
->> --- a/fs/jbd2/journal.c
->> +++ b/fs/jbd2/journal.c
->> @@ -2649,11 +2649,14 @@ static int __init jbd2_journal_init_handle_cache(void)
->>   
->>   static void jbd2_journal_destroy_handle_cache(void)
->>   {
->> -	if (jbd2_handle_cache)
->> +	if (jbd2_handle_cache) {
->>   		kmem_cache_destroy(jbd2_handle_cache);
-> kmem_cache_destroy already handles null pointers, so you can remove the
-> conditional test entirely.
->
-> --D
-Thanks, I will send another patch to remove all conditional test in 
-module JBD2.
->> -	if (jbd2_inode_cache)
->> +		jbd2_handle_cache = NULL;
->> +	}
->> +	if (jbd2_inode_cache) {
->>   		kmem_cache_destroy(jbd2_inode_cache);
->> -
->> +		jbd2_inode_cache = NULL;
->> +	}
->>   }
->>   
->>   /*
->> -- 
->> 1.8.3.1
->>
+Thanks!
+
+Tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+
+	-ss
