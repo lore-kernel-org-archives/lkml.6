@@ -1,205 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753340AbeBFQ55 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:57:57 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51534 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752589AbeBFQ4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:56:03 -0500
-From: John Garry <john.garry@huawei.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
-        <namhyung@kernel.org>, <ak@linux.intel.com>, <wcohen@redhat.com>,
-        <will.deacon@arm.com>, <ganapatrao.kulkarni@cavium.com>
-CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        <zhangshaokun@hisilicon.com>, <linux-arm-kernel@lists.infradead.org>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 2/9] perf utils: add support for pmu events vendor sub-directory
-Date: Wed, 7 Feb 2018 01:44:57 +0800
-Message-ID: <1517939104-230881-3-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
-References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
+        id S1752926AbeBFQ6e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:58:34 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52930 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753010AbeBFQ6T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:58:19 -0500
+X-Google-Smtp-Source: AH8x227GJUJRI8SQK5ROXyEAy9YrHGdNHc1K0HphItEombJ0C/80IcMu/KTfHsAj1KhwdCfXJK/JB6JaMzEjMzNJEU4=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180206165009.GJ12679@lunn.ch>
+References: <1517930036-17618-1-git-send-email-svendev@arcx.com>
+ <20180206161447.GF12679@lunn.ch> <CAGngYiWYChnZmU7n9i1+nbY+1oWGXQGOopBhNiPHPUoYvTdgaw@mail.gmail.com>
+ <20180206165009.GJ12679@lunn.ch>
+From: Sven Van Asbroeck <thesven73@gmail.com>
+Date: Tue, 6 Feb 2018 11:58:17 -0500
+Message-ID: <CAGngYiWR-ayfg4KiH4yzoey+7P-jjV9MjEv8STmS65aC9JTX5Q@mail.gmail.com>
+Subject: Re: [PATCH v1 0/1] spi_ks8995: use regmap to access chip registers.
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Sven Van Asbroeck <svendev@arcx.com>, Woojung.Huh@microchip.com,
+        Tristram.Ha@microchip.com, f.fainelli@gmail.com,
+        helmut.buchsbaum@gmail.com, Maarten.Blomme@flir.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some architectures (like arm), it is required to support
-a vendor sub-directory and not locate all the JSONs for a
-specific vendor in the same folder.
+On Tue, Feb 6, 2018 at 11:50 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+> And a DSA driver does not need to be complex. You can start simple,
+> and add more features later.
 
-This is because all the events for the same vendor will be
-placed in the same pmu events table, which may cause conflict.
-This conflict would be in the instance that a vendor's custom
-implemented events do have the same meaning on different platforms,
-so events in the pmu table would conflict. In addition, per list
-command may show events which are not even supported for a given
-platform.
-
-This patch adds support for a arch/vendor/platform directory
-hierarchy, while maintaining backwards-compatibility for existing
-arch/platform structure. In this, each platform would always have
-its own pmu events table.
-
-In generated file pmu_events.c, each platform table name is in
-the format pme{_vendor}_platform, like this:
-
-struct pmu_events_map pmu_events_map[] = {
-{
-	.cpuid = "0x00000000420f5160",
-	.version = "v1",
-	.type = "core",
-	.table = pme_cavium_thunderx2
-},
-{
-	.cpuid = 0,
-	.version = 0,
-	.type = 0,
-	.table = 0,
-},
-};
-
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- tools/perf/pmu-events/README    |  4 +++
- tools/perf/pmu-events/jevents.c | 70 ++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 70 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/pmu-events/README b/tools/perf/pmu-events/README
-index 2407abc..655286f 100644
---- a/tools/perf/pmu-events/README
-+++ b/tools/perf/pmu-events/README
-@@ -28,6 +28,10 @@ sub directory. Thus for the Silvermont X86 CPU:
- 	Cache.json 	Memory.json 	Virtual-Memory.json
- 	Frontend.json 	Pipeline.json
- 
-+The JSONs folder for a CPU model/family may be placed in the root arch
-+folder, or may be placed in a vendor sub-folder under the arch folder
-+for instances where the arch and vendor are not the same.
-+
- Using the JSON files and the mapfile, 'jevents' generates the C source file,
- 'pmu-events.c', which encodes the two sets of tables:
- 
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index 9e0a21e..eb183b1 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -588,7 +588,7 @@ static char *file_name_to_table_name(char *fname)
- 	 * Derive rest of table name from basename of the JSON file,
- 	 * replacing hyphens and stripping out .json suffix.
- 	 */
--	n = asprintf(&tblname, "pme_%s", basename(fname));
-+	n = asprintf(&tblname, "pme_%s", fname);
- 	if (n < 0) {
- 		pr_info("%s: asprintf() error %s for file %s\n", prog,
- 				strerror(errno), fname);
-@@ -598,7 +598,7 @@ static char *file_name_to_table_name(char *fname)
- 	for (i = 0; i < strlen(tblname); i++) {
- 		c = tblname[i];
- 
--		if (c == '-')
-+		if (c == '-' || c == '/')
- 			tblname[i] = '_';
- 		else if (c == '.') {
- 			tblname[i] = '\0';
-@@ -755,15 +755,65 @@ static int get_maxfds(void)
- static FILE *eventsfp;
- static char *mapfile;
- 
-+static int is_leaf_dir(const char *fpath)
-+{
-+	DIR *d;
-+	struct dirent *dir;
-+	int res = 1;
-+
-+	d = opendir(fpath);
-+	if (!d)
-+		return 0;
-+
-+	while ((dir = readdir(d)) != NULL) {
-+		if (dir->d_type == DT_DIR && dir->d_name[0] != '.') {
-+			res = 0;
-+			break;
-+		} else if (dir->d_type == DT_UNKNOWN) {
-+			char path[PATH_MAX];
-+			struct stat st;
-+
-+			sprintf(path, "%s/%s", fpath, dir->d_name);
-+			if (stat(path, &st))
-+				break;
-+
-+			if (S_ISDIR(st.st_mode)) {
-+				res = 0;
-+				break;
-+			}
-+		}
-+	}
-+
-+	closedir(d);
-+
-+	return res;
-+}
-+
- static int process_one_file(const char *fpath, const struct stat *sb,
- 			    int typeflag, struct FTW *ftwbuf)
- {
--	char *tblname, *bname  = (char *) fpath + ftwbuf->base;
-+	char *tblname, *bname;
- 	int is_dir  = typeflag == FTW_D;
- 	int is_file = typeflag == FTW_F;
- 	int level   = ftwbuf->level;
- 	int err = 0;
- 
-+	if (level == 2 && is_dir) {
-+		/*
-+		 * For level 2 directory, bname will include parent name,
-+		 * like vendor/platform. So search back from platform dir
-+		 * to find this.
-+		 */
-+		bname = (char *) fpath + ftwbuf->base - 2;
-+		for (;;) {
-+			if (*bname == '/')
-+				break;
-+			bname--;
-+		}
-+		bname++;
-+	} else
-+		bname = (char *) fpath + ftwbuf->base;
-+
- 	pr_debug("%s %d %7jd %-20s %s\n",
- 		 is_file ? "f" : is_dir ? "d" : "x",
- 		 level, sb->st_size, bname, fpath);
-@@ -773,7 +823,7 @@ static int process_one_file(const char *fpath, const struct stat *sb,
- 		return 0;
- 
- 	/* model directory, reset topic */
--	if (level == 1 && is_dir) {
-+	if (level == 1 && is_dir && is_leaf_dir(fpath)) {
- 		if (close_table)
- 			print_events_table_suffix(eventsfp);
- 
-@@ -791,6 +841,18 @@ static int process_one_file(const char *fpath, const struct stat *sb,
- 
- 		print_events_table_prefix(eventsfp, tblname);
- 		return 0;
-+	} else if (level == 2 && is_dir) {
-+		if (close_table)
-+			print_events_table_suffix(eventsfp);
-+
-+		tblname = file_name_to_table_name(bname);
-+		if (!tblname) {
-+			pr_info("%s: Error determining table name for %s, exiting\n",
-+				prog, bname);
-+			return -1;
-+		}
-+
-+		print_events_table_prefix(eventsfp, tblname);
- 	}
- 
- 	/*
--- 
-1.9.1
+I see. Would it be possible/practical to start with just phy_read/write,
+port_enable/disable in dsa_switch_ops ? And just add a sysfs bin file
+for userspace register access ?
