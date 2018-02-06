@@ -1,82 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeBFQ5O (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:57:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43234 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752988AbeBFQyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:54:54 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8D42179F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 19/21] perf tools: Substitute yet another strtoull()
-Date: Tue,  6 Feb 2018 13:53:48 -0300
-Message-Id: <20180206165350.2570-20-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180206165350.2570-1-acme@kernel.org>
-References: <20180206165350.2570-1-acme@kernel.org>
+        id S1753322AbeBFQ5W (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:57:22 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51532 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753136AbeBFQ4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:56:02 -0500
+From: John Garry <john.garry@huawei.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <ak@linux.intel.com>, <wcohen@redhat.com>,
+        <will.deacon@arm.com>, <ganapatrao.kulkarni@cavium.com>
+CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        <zhangshaokun@hisilicon.com>, <linux-arm-kernel@lists.infradead.org>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH 1/9] perf vendor events: drop incomplete multiple mapfile support
+Date: Wed, 7 Feb 2018 01:44:56 +0800
+Message-ID: <1517939104-230881-2-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
+References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Currently jevents supports multiple mapfiles, but this
+is only in the form where mapfile basename starts with
+'mapfile.csv'
 
-Instead of home grown function let's use what library provides us.
+At the moment, no architectures actually use multiple mapfiles,
+so drop the support for now.
 
-Signed-off-by: Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20180129130359.1490-1-andriy.shevchenko@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This patch also solves a nuisance where, when the mapfile is
+edited and the text editor may create a backup, jevents may
+use the backup, as shown:
+jevents: Many mapfiles? Using pmu-events/arch/arm64/mapfile.csv~, ignoring pmu-events/arch/arm64/mapfile.csv
+
+Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- tools/perf/util/util.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+ tools/perf/pmu-events/README    |  5 ++---
+ tools/perf/pmu-events/jevents.c | 10 ++--------
+ 2 files changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 443892dabedb..1019bbc5dbd8 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -340,35 +340,15 @@ size_t hex_width(u64 v)
- 	return n;
- }
+diff --git a/tools/perf/pmu-events/README b/tools/perf/pmu-events/README
+index c2ee3e4..2407abc 100644
+--- a/tools/perf/pmu-events/README
++++ b/tools/perf/pmu-events/README
+@@ -11,9 +11,8 @@ tree tools/perf/pmu-events/arch/foo.
+ 	- Regular files with '.json' extension in the name are assumed to be
+ 	  JSON files, each of which describes a set of PMU events.
  
--static int hex(char ch)
--{
--	if ((ch >= '0') && (ch <= '9'))
--		return ch - '0';
--	if ((ch >= 'a') && (ch <= 'f'))
--		return ch - 'a' + 10;
--	if ((ch >= 'A') && (ch <= 'F'))
--		return ch - 'A' + 10;
--	return -1;
--}
--
- /*
-  * While we find nice hex chars, build a long_val.
-  * Return number of chars processed.
-  */
- int hex2u64(const char *ptr, u64 *long_val)
- {
--	const char *p = ptr;
--	*long_val = 0;
--
--	while (*p) {
--		const int hex_val = hex(*p);
-+	char *p;
+-	- Regular files with basename starting with 'mapfile.csv' are assumed
+-	  to be a CSV file that maps a specific CPU to its set of PMU events.
+-	  (see below for mapfile format)
++	- The CSV file that maps a specific CPU to its set of PMU events is to
++	  be named 'mapfile.csv' (see below for mapfile format).
  
--		if (hex_val < 0)
--			break;
--
--		*long_val = (*long_val << 4) | hex_val;
--		p++;
--	}
-+	*long_val = strtoull(ptr, &p, 16);
+ 	- Directories are traversed, but all other files are ignored.
  
- 	return p - ptr;
- }
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index b578aa2..9e0a21e 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -798,16 +798,10 @@ static int process_one_file(const char *fpath, const struct stat *sb,
+ 	 * after processing all JSON files (so we can write out the
+ 	 * mapping table after all PMU events tables).
+ 	 *
+-	 * TODO: Allow for multiple mapfiles? Punt for now.
+ 	 */
+ 	if (level == 1 && is_file) {
+-		if (!strncmp(bname, "mapfile.csv", 11)) {
+-			if (mapfile) {
+-				pr_info("%s: Many mapfiles? Using %s, ignoring %s\n",
+-						prog, mapfile, fpath);
+-			} else {
+-				mapfile = strdup(fpath);
+-			}
++		if (!strcmp(bname, "mapfile.csv")) {
++			mapfile = strdup(fpath);
+ 			return 0;
+ 		}
+ 
 -- 
-2.14.3
+1.9.1
