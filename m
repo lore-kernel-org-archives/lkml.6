@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeBFJ3V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:29:21 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:40740 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752302AbeBFJ3D (ORCPT
+        id S1752761AbeBFJ3f (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:29:35 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36510 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752314AbeBFJ3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:29:03 -0500
-X-Google-Smtp-Source: AH8x2274GOg7dTzzn7k0QRa+tKBXixumaUUc7ihLppadaaDPer0wl4NT3eYplOgYSGWRiL37GWNotQ==
+        Tue, 6 Feb 2018 04:29:11 -0500
+X-Google-Smtp-Source: AH8x225pdnYcTLT7qvUyxAFNYMVXgtu7vuWMDu+ESRC2Eg4w9gRMVn/Qg3O17RJsg3LJWz4O6wsrWA==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
         will.deacon@arm.com, arnd@arndb.de
@@ -15,9 +15,9 @@ Cc: chunyan.zhang@spreadtrum.com, orson.zhai@spreadtrum.com,
         mathieu.poirier@linaro.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         broonie@kernel.org, baolin.wang@linaro.org
-Subject: [PATCH 5/7] arm64: dts: Add watchdog device node for Spreadtrum SC9860
-Date: Tue,  6 Feb 2018 17:28:24 +0800
-Message-Id: <9b1a2b944df46b7127dce3baa237e1bfbc5ed2b6.1517908478.git.baolin.wang@linaro.org>
+Subject: [PATCH 7/7] arm64: dts: Add SC2731 PMIC dts file for Spreadtrum SC9860
+Date: Tue,  6 Feb 2018 17:28:26 +0800
+Message-Id: <46ddcf7e35d89c232b13f80234ceb05ae254da2a.1517908478.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <410b2f2d3f3f019c96ec31213647c41cd7f1174d.1517908478.git.baolin.wang@linaro.org>
 References: <410b2f2d3f3f019c96ec31213647c41cd7f1174d.1517908478.git.baolin.wang@linaro.org>
@@ -27,33 +27,207 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the watchdog device node for Spreadtrum SC9860 platform to
-watch the system's stability.
+The Spreadtrum SC9860 platform has one SC2731 PMIC, and the SC2731
+PMIC integrates all mobile handset power management, audio codec,
+battery management and user interface support function in a single
+chip.
+
+This patch adds the SC2731 dts file, as well as adding the RTC and
+regulator device node for this PMIC.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- arch/arm64/boot/dts/sprd/whale2.dtsi |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/sprd/sc2731.dtsi      |  169 +++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/sp9860g-1h10.dts |    1 +
+ 2 files changed, 170 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/sprd/sc2731.dtsi
 
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index 3dc6389..f2cdf4d 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -141,6 +141,15 @@
- 				compatible = "sprd,sc9860-pinctrl";
- 				reg = <0 0x402a0000 0 0x10000>;
- 			};
+diff --git a/arch/arm64/boot/dts/sprd/sc2731.dtsi b/arch/arm64/boot/dts/sprd/sc2731.dtsi
+new file mode 100644
+index 0000000..4331006
+--- /dev/null
++++ b/arch/arm64/boot/dts/sprd/sc2731.dtsi
+@@ -0,0 +1,169 @@
++/*
++ * Spreadtrum SC2731 PMIC dts file
++ *
++ * Copyright (C) 2018, Spreadtrum Communications Inc.
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
 +
-+			watchdog@40310000 {
-+				compatible = "sprd,sp9860-wdt";
-+				reg = <0 0x40310000 0 0x1000>;
-+				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
-+				timeout-sec = <12>;
-+				clock-names = "enable";
-+				clocks = <&aon_gate CLK_APCPU_WDG_EB>;
++&adi_bus {
++	sc2731_pmic: pmic@0 {
++		compatible = "sprd,sc2731";
++		reg = <0>;
++		spi-max-frequency = <26000000>;
++		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		rtc@280 {
++			compatible = "sprd,sc27xx-rtc", "sprd,sc2731-rtc";
++			reg = <0x280>;
++			interrupt-parent = <&sc2731_pmic>;
++			interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		regulators {
++			compatible = "sprd,sc27xx-regulator";
++
++			vddarm0: BUCK_CPU0 {
++				regulator-name = "vddarm0";
++				regulator-min-microvolt = <400000>;
++				regulator-max-microvolt = <1996875>;
++				regulator-ramp-delay = <25000>;
++				regulator-always-on;
 +			};
- 		};
- 	};
++
++			vddarm1: BUCK_CPU1 {
++				regulator-name = "vddarm1";
++				regulator-min-microvolt = <400000>;
++				regulator-max-microvolt = <1996875>;
++				regulator-ramp-delay = <25000>;
++				regulator-always-on;
++			};
++
++			dcdcrf: BUCK_RF {
++				regulator-name = "dcdcrf";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <2196875>;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-always-on;
++			};
++
++			vddcama0: LDO_CAMA0 {
++				regulator-name = "vddcama0";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3750000>;
++				regulator-enable-ramp-delay = <100>;
++			};
++
++			vddcama1: LDO_CAMA1 {
++				regulator-name = "vddcama1";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3750000>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddcammot: LDO_CAMMOT {
++				regulator-name = "vddcammot";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3750000>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddvldo: LDO_VLDO {
++				regulator-name = "vddvldo";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3750000>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddemmccore: LDO_EMMCCORE {
++				regulator-name = "vddemmccore";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3750000>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++				regulator-boot-on;
++			};
++
++			vddsdcore: LDO_SDCORE {
++				regulator-name = "vddsdcore";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3750000>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddsdio: LDO_SDIO {
++				regulator-name = "vddsdio";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3750000>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddwifipa: LDO_WIFIPA {
++				regulator-name = "vddwifipa";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3750000>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddusb33: LDO_USB33 {
++				regulator-name = "vddusb33";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3750000>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddcamd0: LDO_CAMD0 {
++				regulator-name = "vddcamd0";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1793750>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddcamd1: LDO_CAMD1 {
++				regulator-name = "vddcamd1";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1793750>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddcon: LDO_CON {
++				regulator-name = "vddcon";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1793750>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddcamio: LDO_CAMIO {
++				regulator-name = "vddcamio";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1793750>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++			};
++
++			vddsram: LDO_SRAM {
++				regulator-name = "vddsram";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1793750>;
++				regulator-enable-ramp-delay = <100>;
++				regulator-ramp-delay = <25000>;
++				regulator-always-on;
++			};
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
+index 550f323..3bd18e3 100644
+--- a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
++++ b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
+@@ -9,6 +9,7 @@
+ /dts-v1/;
  
+ #include "sc9860.dtsi"
++#include "sc2731.dtsi"
+ 
+ / {
+ 	model = "Spreadtrum SP9860G 3GFHD Board";
 -- 
 1.7.9.5
