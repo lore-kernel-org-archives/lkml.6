@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752891AbeBFQuq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:50:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45924 "EHLO
+        id S1752833AbeBFQu4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:50:56 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41280 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752702AbeBFQu1 (ORCPT
+        by vger.kernel.org with ESMTP id S1752854AbeBFQu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:50:27 -0500
+        Tue, 6 Feb 2018 11:50:26 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v7 02/24] x86/mm: Define CONFIG_SPECULATIVE_PAGE_FAULT
-Date: Tue,  6 Feb 2018 17:49:48 +0100
+Subject: [PATCH v7 01/24] mm: Introduce CONFIG_SPECULATIVE_PAGE_FAULT
+Date: Tue,  6 Feb 2018 17:49:47 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020616-0008-0000-0000-000004CA06D1
+x-cbid: 18020616-0020-0000-0000-000003F2EA99
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020616-0009-0000-0000-00001E5DB460
-Message-Id: <1517935810-31177-3-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18020616-0021-0000-0000-0000428562A9
+Message-Id: <1517935810-31177-2-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-06_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,26 +46,28 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce CONFIG_SPECULATIVE_PAGE_FAULT which turns on the Speculative Page
-Fault handler when building for 64bits with SMP.
+This configuration variable will be used to build the code needed to
+handle speculative page fault.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
+By default it is turned off, and activated depending on architecture
+support.
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- arch/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ mm/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index d9878f1f3bac..cb3a0e8dbf27 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -29,6 +29,7 @@ config X86_64
- 	select HAVE_ARCH_SOFT_DIRTY
- 	select MODULES_USE_ELF_RELA
- 	select X86_DEV_DMA_OPS
-+	select SPECULATIVE_PAGE_FAULT if SMP
+diff --git a/mm/Kconfig b/mm/Kconfig
+index c782e8fb7235..42be0d92336e 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -760,3 +760,6 @@ config GUP_BENCHMARK
+ 	  performance of get_user_pages_fast().
  
- #
- # Arch settings
+ 	  See tools/testing/selftests/vm/gup_benchmark.c
++
++config SPECULATIVE_PAGE_FAULT
++       bool
 -- 
 2.7.4
