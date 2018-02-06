@@ -1,111 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752527AbeBFCqB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:46:01 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:32935 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752187AbeBFCpv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:45:51 -0500
-X-Google-Smtp-Source: AH8x226DWxPnkAI7296EZei9k06P1fOU9jRSLLCH0vfzxdnCSz2hf3FgGx1vcOKvTuB0NNjNnDtKGvWEifAPG44oAxA=
+        id S1752196AbeBFCsl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:48:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750879AbeBFCsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 21:48:35 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1C821734
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 5 Feb 2018 21:48:32 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] apparent bogosity in
+ unregister_ftrace_function_probe_func()
+Message-ID: <20180205214832.62e83cbd@vmware.local.home>
+In-Reply-To: <CAJwJo6aYu2qAHcrYD8mTn43+4Z5ikJ6qoM7SxPtG=NuVcYtauQ@mail.gmail.com>
+References: <20180127031706.GE13338@ZenIV.linux.org.uk>
+        <CAJwJo6YD4ds-AHZRm-zEyGCnu+PS-6g_FFeAmHDfaKQxQAUr=A@mail.gmail.com>
+        <20180127170748.GF13338@ZenIV.linux.org.uk>
+        <20180129225942.f2aec926e2ea223c52c34169@kernel.org>
+        <20180205175433.6cd369db@gandalf.local.home>
+        <20180206112614.80e2a9cbfc55954ab904c3e3@kernel.org>
+        <20180205214011.2d55866e@vmware.local.home>
+        <CAJwJo6aYu2qAHcrYD8mTn43+4Z5ikJ6qoM7SxPtG=NuVcYtauQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1510584031-36240-3-git-send-email-pbonzini@redhat.com>
-References: <1510584031-36240-1-git-send-email-pbonzini@redhat.com> <1510584031-36240-3-git-send-email-pbonzini@redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Tue, 6 Feb 2018 10:45:50 +0800
-Message-ID: <CANRm+CwnyTiZFD9D0JEhaBbmEPX91EHMTRQ4Z5ZFUZ3fzjVj9A@mail.gmail.com>
-Subject: Re: [PATCH 2/5] KVM: x86: add support for UMIP
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2017-11-13 22:40 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
-> Add the CPUID bits, make the CR4.UMIP bit not reserved anymore, and
-> add UMIP support for instructions that are already emulated by KVM.
->
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  arch/x86/include/asm/kvm_host.h | 2 +-
->  arch/x86/kvm/cpuid.c            | 4 ++--
->  arch/x86/kvm/emulate.c          | 8 ++++++++
->  arch/x86/kvm/x86.c              | 3 +++
->  4 files changed, 14 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index c73e493adf07..1b005ccf4d0b 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -86,7 +86,7 @@
->                           | X86_CR4_PGE | X86_CR4_PCE | X86_CR4_OSFXSR | X86_CR4_PCIDE \
->                           | X86_CR4_OSXSAVE | X86_CR4_SMEP | X86_CR4_FSGSBASE \
->                           | X86_CR4_OSXMMEXCPT | X86_CR4_LA57 | X86_CR4_VMXE \
-> -                         | X86_CR4_SMAP | X86_CR4_PKE))
-> +                         | X86_CR4_SMAP | X86_CR4_PKE | X86_CR4_UMIP))
->
->  #define CR8_RESERVED_BITS (~(unsigned long)X86_CR8_TPR)
->
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 0099e10eb045..77fb8732b47b 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -387,8 +387,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
->
->         /* cpuid 7.0.ecx*/
->         const u32 kvm_cpuid_7_0_ecx_x86_features =
-> -               F(AVX512VBMI) | F(LA57) | F(PKU) |
-> -               0 /*OSPKE*/ | F(AVX512_VPOPCNTDQ);
-> +               F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
-> +               F(AVX512_VPOPCNTDQ) | F(UMIP);
->
->         /* cpuid 7.0.edx*/
->         const u32 kvm_cpuid_7_0_edx_x86_features =
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index d90cdc77e077..d27339332ac8 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -3725,6 +3725,10 @@ static int emulate_store_desc_ptr(struct x86_emulate_ctxt *ctxt,
->  {
->         struct desc_ptr desc_ptr;
->
-> +       if ((ctxt->ops->get_cr(ctxt, 4) & X86_CR4_UMIP) &&
-> +           ctxt->ops->cpl(ctxt) > 0)
-> +               return emulate_gp(ctxt, 0);
-> +
->         if (ctxt->mode == X86EMUL_MODE_PROT64)
->                 ctxt->op_bytes = 8;
->         get(ctxt, &desc_ptr);
-> @@ -3784,6 +3788,10 @@ static int em_lidt(struct x86_emulate_ctxt *ctxt)
->
->  static int em_smsw(struct x86_emulate_ctxt *ctxt)
->  {
-> +       if ((ctxt->ops->get_cr(ctxt, 4) & X86_CR4_UMIP) &&
-> +           ctxt->ops->cpl(ctxt) > 0)
-> +               return emulate_gp(ctxt, 0);
-> +
->         if (ctxt->dst.type == OP_MEM)
->                 ctxt->dst.bytes = 2;
->         ctxt->dst.val = ctxt->ops->get_cr(ctxt, 0);
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 03869eb7fcd6..cda567aadd28 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -791,6 +791,9 @@ int kvm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
->         if (!guest_cpuid_has(vcpu, X86_FEATURE_LA57) && (cr4 & X86_CR4_LA57))
->                 return 1;
->
-> +       if (!guest_cpuid_has(vcpu, X86_FEATURE_UMIP) && (cr4 & X86_CR4_UMIP))
-> +               return 1;
+On Tue, 6 Feb 2018 02:44:03 +0000
+Dmitry Safonov <0x7f454c46@gmail.com> wrote:
 
-There is a scenario here, UMIP CPUID is not exposed to the guest since
-it depends on SECONDARY_EXEC_DESC is set, however, SECONDARY_EXEC_DESC
-depends on guest sets the X86_CR4_UMIP bit, the function kvm_set_cr4()
-will inject a #GP and fails to set X86_CR4_UMIP bit since UMIP CPUID
-is not exposed to the guest. This scenario can be observed when
-running kvm-unit-tests/umip.flat in the L1.
 
-Regards,
-Wanpeng Li
+> Yes, I've planned to do this..
+> As it's merge-window now I thought doing this a week later.
+> So, it's up to you - just let me know so we will not end doing the same fix :)
+> 
+
+If you haven't done it already, I'll just do it. As it will not be much
+more work with the tests I'll add for Al's updates.
+
+Note, these are bug fixes (and will mark them for stable), and I plan to
+send to Linus as soon as they are ready. They don't need to wait for the
+merge window.
+
+Thanks!
+
+-- Steve
