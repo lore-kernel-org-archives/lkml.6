@@ -1,246 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753493AbeBFWKN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 17:10:13 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33584 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753329AbeBFWKI (ORCPT
+        id S1753525AbeBFWLd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 17:11:33 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39895 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753133AbeBFWLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:10:08 -0500
-X-Google-Smtp-Source: AH8x225/3RnOqRVCFrJNaFFWkyBgiF3oaVB2d2jZtd670aNkDJNLpv/oS0Er0PxMCItKaxi65r2Z81cmibNHleW/U2g=
-MIME-Version: 1.0
-In-Reply-To: <34fea40b-4943-e8a8-6bf5-ca200122123d@arm.com>
-References: <20180203012450.18378-1-dbasehore@chromium.org>
- <20180203012450.18378-5-dbasehore@chromium.org> <34fea40b-4943-e8a8-6bf5-ca200122123d@arm.com>
-From: "dbasehore ." <dbasehore@chromium.org>
-Date: Tue, 6 Feb 2018 14:10:06 -0800
-X-Google-Sender-Auth: u7WUbl4X6Ihs4gdMdaEdCkL1Q2s
-Message-ID: <CAGAzgso3jx9en=B8xeGakWSq1VRNHY9Y_848E=H4r5a_2kD66A@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] irqchip/gic-v3-its: add ability to resend MAPC on resume
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        Soby Mathew <Soby.Mathew@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Brian Norris <briannorris@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 6 Feb 2018 17:11:30 -0500
+X-Google-Smtp-Source: AH8x224kn1khOQQAYca4aA4V4H3CgFxP7BQXHrZPNUc07MY322Tx7dSndKf3q8T/NtyIAOJZ8dPOgQ==
+From: Ulf Magnusson <ulfalizer@gmail.com>
+To: helgaas@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
+        egtvedt@samfundet.no, linus.walleij@linaro.org, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
+        yamada.masahiro@socionext.com, lorenzo.pieralisi@arm.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        Ulf Magnusson <ulfalizer@gmail.com>
+Subject: [PATCH v2 20/20] x86/PCI: VMD: Fix malformed Kconfig default
+Date: Tue,  6 Feb 2018 23:11:06 +0100
+Message-Id: <20180206221106.16620-1-ulfalizer@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <0180206191126.GB98765@bhelgaas-glaptop.roam.corp.google.com>
+References: <0180206191126.GB98765@bhelgaas-glaptop.roam.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 8:40 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On 03/02/18 01:24, Derek Basehore wrote:
->> This adds functionality to resend the MAPC command to an ITS node on
->> resume. If the ITS is powered down during suspend and the collections
->> are not backed by memory, the ITS will lose that state. This just sets
->> up the known state for the collections after the ITS is restored.
->>
->> This feature is enabled via Kconfig and a device tree entry.
->>
->> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
->> ---
->>  arch/arm64/Kconfig               |  10 ++++
->>  drivers/irqchip/irq-gic-v3-its.c | 101 ++++++++++++++++++++++++---------------
->>  2 files changed, 73 insertions(+), 38 deletions(-)
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index 53612879fe56..f38f1a7b4266 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -571,6 +571,16 @@ config HISILICON_ERRATUM_161600802
->>
->>         If unsure, say Y.
->>
->> +config ARM_GIC500_COLLECTIONS_RESET
->> +     bool "GIC-500 Collections: Workaround for GIC-500 Collections on suspend reset"
->> +     default y
->> +     help
->> +       The GIC-500 can store Collections state internally for the ITS. If
->> +       the ITS is reset on suspend (ie from power getting disabled), the
->> +       collections need to be reconfigured on resume.
->> +
->> +       If unsure, say Y.
->> +
->>  config QCOM_FALKOR_ERRATUM_E1041
->>       bool "Falkor E1041: Speculative instruction fetches might cause errant memory access"
->>       default y
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->> index e13515cdb68f..63764efa4dcc 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -48,6 +48,7 @@
->>  #define ITS_FLAGS_WORKAROUND_CAVIUM_22375    (1ULL << 1)
->>  #define ITS_FLAGS_WORKAROUND_CAVIUM_23144    (1ULL << 2)
->>  #define ITS_FLAGS_SAVE_SUSPEND_STATE         (1ULL << 3)
->> +#define ITS_FLAGS_WORKAROUND_GIC500_MAPC     (1ULL << 4)
->>
->>  #define RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING  (1 << 0)
->>
->> @@ -1950,52 +1951,53 @@ static void its_cpu_init_lpis(void)
->>       dsb(sy);
->>  }
->>
->> -static void its_cpu_init_collection(void)
->> +static void its_cpu_init_collection(struct its_node *its)
->>  {
->> -     struct its_node *its;
->> -     int cpu;
->> -
->> -     spin_lock(&its_lock);
->> -     cpu = smp_processor_id();
->> -
->> -     list_for_each_entry(its, &its_nodes, entry) {
->> -             u64 target;
->> +     int cpu = smp_processor_id();
->> +     u64 target;
->>
->> -             /* avoid cross node collections and its mapping */
->> -             if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
->> -                     struct device_node *cpu_node;
->> +     /* avoid cross node collections and its mapping */
->> +     if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
->> +             struct device_node *cpu_node;
->>
->> -                     cpu_node = of_get_cpu_node(cpu, NULL);
->> -                     if (its->numa_node != NUMA_NO_NODE &&
->> -                             its->numa_node != of_node_to_nid(cpu_node))
->> -                             continue;
->> -             }
->> +             cpu_node = of_get_cpu_node(cpu, NULL);
->> +             if (its->numa_node != NUMA_NO_NODE &&
->> +                     its->numa_node != of_node_to_nid(cpu_node))
->> +                     return;
->> +     }
->>
->> +     /*
->> +      * We now have to bind each collection to its target
->> +      * redistributor.
->> +      */
->> +     if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
->>               /*
->> -              * We now have to bind each collection to its target
->> +              * This ITS wants the physical address of the
->>                * redistributor.
->>                */
->> -             if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
->> -                     /*
->> -                      * This ITS wants the physical address of the
->> -                      * redistributor.
->> -                      */
->> -                     target = gic_data_rdist()->phys_base;
->> -             } else {
->> -                     /*
->> -                      * This ITS wants a linear CPU number.
->> -                      */
->> -                     target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
->> -                     target = GICR_TYPER_CPU_NUMBER(target) << 16;
->> -             }
->> +             target = gic_data_rdist()->phys_base;
->> +     } else {
->> +             /* This ITS wants a linear CPU number. */
->> +             target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
->> +             target = GICR_TYPER_CPU_NUMBER(target) << 16;
->> +     }
->>
->> -             /* Perform collection mapping */
->> -             its->collections[cpu].target_address = target;
->> -             its->collections[cpu].col_id = cpu;
->> +     /* Perform collection mapping */
->> +     its->collections[cpu].target_address = target;
->> +     its->collections[cpu].col_id = cpu;
->>
->> -             its_send_mapc(its, &its->collections[cpu], 1);
->> -             its_send_invall(its, &its->collections[cpu]);
->> -     }
->> +     its_send_mapc(its, &its->collections[cpu], 1);
->> +     its_send_invall(its, &its->collections[cpu]);
->> +}
->> +
->> +static void its_cpu_init_collections(void)
->> +{
->> +     struct its_node *its;
->> +
->> +     spin_lock(&its_lock);
->> +
->> +     list_for_each_entry(its, &its_nodes, entry)
->> +             its_cpu_init_collection(its);
->>
->>       spin_unlock(&its_lock);
->>  }
->> @@ -2997,6 +2999,18 @@ static bool __maybe_unused its_enable_quirk_hip07_161600802(void *data)
->>       return true;
->>  }
->>
->> +static bool __maybe_unused its_enable_quirk_gic500_collections(void *data)
->> +{
->> +     struct its_node *its = data;
->> +
->> +     if (fwnode_property_present(its->fwnode_handle,
->> +                                 "collections-reset-on-suspend")) {
->> +             its->flags |= ITS_FLAGS_WORKAROUND_GIC500_MAPC;
->> +             return true;
->> +     }
->> +     return false;
->> +}
->> +
->>  static const struct gic_quirk its_quirks[] = {
->>  #ifdef CONFIG_CAVIUM_ERRATUM_22375
->>       {
->> @@ -3042,6 +3056,14 @@ static const struct gic_quirk its_quirks[] = {
->>               .mask   = 0xffffffff,
->>               .init   = its_enable_quirk_hip07_161600802,
->>       },
->> +#endif
->> +#ifdef CONFIG_ARM_GIC500_COLLECTIONS_RESET
->> +     {
->> +             .desc   = "ITS: GIC-500 Collections Reset on Resume",
->> +             .iidr   = 0x00000000,
->> +             .mask   = 0xff000000,
->> +             .init   = its_enable_quirk_gic500_collections,
->> +     },
->>  #endif
->>       {
->>       }
->> @@ -3129,6 +3151,9 @@ static void its_restore_enable(void)
->>                       }
->>                       writel_relaxed(ctx->ctlr, base + GITS_CTLR);
->>               }
->> +
->> +             if (its->flags & ITS_FLAGS_WORKAROUND_GIC500_MAPC)
->> +                     its_cpu_init_collection(its);
->>       }
->>       spin_unlock(&its_lock);
->>  }
->> @@ -3395,7 +3420,7 @@ int its_cpu_init(void)
->>                       return -ENXIO;
->>               }
->>               its_cpu_init_lpis();
->> -             its_cpu_init_collection();
->> +             its_cpu_init_collections();
->>       }
->>
->>       return 0;
->>
->
-> I wonder if a better way to implement this is simply to bite the bullet
-> and implement the letter of the architecture:
->
-> If GITS_TYPER.HCC != 0, then collections 0...HCC-1 are held in HW, and
-> the rest in a SW-managed table. That would allow us to deal with this
-> without a quirk (which I asked for initially, apologies for changing my
-> mind).
->
-> We still the same DT flag to tell us we're going to be reset on suspend.
+'default N' should be 'default n', though they happen to have the same
+effect here, due to undefined symbols (N in this case) evaluating to n
+in a tristate sense.
 
-So this would just be under the generic reset-on-suspend flag that I
-added in patch 2/5?
+Remove the default instead of changing it. bool and tristate symbols
+implicitly default to n.
 
->
-> Thanks,
->
->         M.
-> --
-> Jazz is not dead. It just smells funny...
+Discovered with the
+https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+script.
+
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+---
+Changes in v2:
+Make it clear that Kconfig is involved.
+
+ drivers/pci/host/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+index a4ed7484d127..dc8a2a175f19 100644
+--- a/drivers/pci/host/Kconfig
++++ b/drivers/pci/host/Kconfig
+@@ -215,7 +215,6 @@ config PCIE_TANGO_SMP8759
+ config VMD
+ 	depends on PCI_MSI && X86_64 && SRCU
+ 	tristate "Intel Volume Management Device Driver"
+-	default N
+ 	---help---
+ 	  Adds support for the Intel Volume Management Device (VMD). VMD is a
+ 	  secondary PCI host bridge that allows PCI Express root ports,
+-- 
+2.14.1
