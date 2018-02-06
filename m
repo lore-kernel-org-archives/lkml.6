@@ -1,324 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753446AbeBFUiI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 15:38:08 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38611 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753028AbeBFUiG (ORCPT
+        id S1753509AbeBFUid (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 15:38:33 -0500
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:46776 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753147AbeBFUib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 15:38:06 -0500
-X-Google-Smtp-Source: AH8x227MrkmnYyoMcdBqo/wq6TF7VQgOQmuhikyy+GyY3M+c73X2OpTK+mGB56aHM4Nyn5jATN50dw==
-From: Corentin Labbe <clabbe@baylibre.com>
-To: dledford@redhat.com, hal.rosenstock@gmail.com, sean.hefty@intel.com,
-        swise@chelsio.com, joe@perches.com
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v2] IB/cxgb3: remove cxio_dbg.c
-Date: Tue,  6 Feb 2018 20:37:31 +0000
-Message-Id: <1517949451-24264-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 6 Feb 2018 15:38:31 -0500
+Subject: Re: [PATCH v8 5/7] media: i2c: Add TDA1997x HDMI receiver driver
+To: Tim Harvey <tharvey@gateworks.com>, linux-media@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+ <1517948874-21681-6-git-send-email-tharvey@gateworks.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <3630ba30-eb18-0829-7b0c-f0a786232969@xs4all.nl>
+Date: Tue, 6 Feb 2018 21:38:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <1517948874-21681-6-git-send-email-tharvey@gateworks.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNSWjbEAm7Gq+UQ4isp+swmT3UEh+0ueo7elNYn6oJ3DQRd1LwHFN42pAmL+/2k9daaHABz8im9KeSTayqqas6TO1c/2Zyy5QeNVMELR4ay6D4IYENmJ
+ NczFzvzxEiicAjKLOGEI0u8h7C2XRJXaIAglKV5kzSZ9Sgm8G1VLpSC3o8Z2VdWRUK2o448lDBA/0tHu0L6RmF5AylEvj9IV6Gkxue2ngXg4PPgXci1+m5Jf
+ v7TGKt0gPhHiiQ6xo8jWQEo1h84hM7cBK4FaAWVvtlTBipAVlmwMuCWHVq9x8ybOo5bAo2occzelOz5HKVGNvhbBQHQ1TvPjrb/jpfgZ0q5VOZGZiTdU+bFA
+ O4Xkj6IKLcXIniDVfI566DWRSCtx1pJEjm6XsTmqhRl+0RsbmFRnRRnHcUjjbUja323efgSDZDFbMMbybXvR4NMif19N1rDFp3ayEJi3kh1V5j+VR1xKkSM7
+ y637RZQwFHmiO2NZ
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cxio_dbg.c is uncompiled since commit 2b540355cd2f ("RDMA/cxgb3: cleanups")
-10 years after, we could remove it.
+On 02/06/2018 09:27 PM, Tim Harvey wrote:
+> Add support for the TDA1997x HDMI receivers.
+> 
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> ---
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-Acked-by: Steve Wise <swise@opengridcomputing.com>
----
+<snip>
 
-Changes since v1:
-- Remove also all DEBUG code as suggested by Joe Perches
+> +static int tda1997x_get_dv_timings_cap(struct v4l2_subdev *sd,
+> +				       struct v4l2_dv_timings_cap *cap)
+> +{
+> +	if (cap->pad != TDA1997X_PAD_SOURCE)
+> +		return -EINVAL;
+> +
+> +	*cap = tda1997x_dv_timings_cap;
+> +	return 0;
+> +}
+> +
+> +static int tda1997x_enum_dv_timings(struct v4l2_subdev *sd,
+> +				    struct v4l2_enum_dv_timings *timings)
+> +{
+> +	if (timings->pad != TDA1997X_PAD_SOURCE)
+> +		return -EINVAL;
+> +
+> +	return v4l2_enum_dv_timings_cap(timings, &tda1997x_dv_timings_cap,
+> +					NULL, NULL);
+> +}
 
- drivers/infiniband/hw/cxgb3/Kconfig    |   9 --
- drivers/infiniband/hw/cxgb3/Makefile   |   2 -
- drivers/infiniband/hw/cxgb3/cxio_dbg.c | 206 ---------------------------------
- drivers/infiniband/hw/cxgb3/cxio_hal.h |   9 --
- drivers/infiniband/hw/cxgb3/iwch_cq.c  |   6 -
- 5 files changed, 232 deletions(-)
- delete mode 100644 drivers/infiniband/hw/cxgb3/cxio_dbg.c
+You shouldn't need this pad test: it's done in the v4l2-subdev.c core code
+already. But please double-check :-)
 
-diff --git a/drivers/infiniband/hw/cxgb3/Kconfig b/drivers/infiniband/hw/cxgb3/Kconfig
-index 431be733fbbe..a7b77cb3d5d5 100644
---- a/drivers/infiniband/hw/cxgb3/Kconfig
-+++ b/drivers/infiniband/hw/cxgb3/Kconfig
-@@ -16,12 +16,3 @@ config INFINIBAND_CXGB3
- 
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called iw_cxgb3.
--
--config INFINIBAND_CXGB3_DEBUG
--	bool "Verbose debugging output"
--	depends on INFINIBAND_CXGB3
--	default n
--	---help---
--	  This option causes the Chelsio RDMA driver to produce copious
--	  amounts of debug messages.  Select this if you are developing
--	  the driver or trying to diagnose a problem.
-diff --git a/drivers/infiniband/hw/cxgb3/Makefile b/drivers/infiniband/hw/cxgb3/Makefile
-index 2c66d35d19bd..66fe0917aba0 100644
---- a/drivers/infiniband/hw/cxgb3/Makefile
-+++ b/drivers/infiniband/hw/cxgb3/Makefile
-@@ -5,5 +5,3 @@ obj-$(CONFIG_INFINIBAND_CXGB3) += iw_cxgb3.o
- 
- iw_cxgb3-y :=  iwch_cm.o iwch_ev.o iwch_cq.o iwch_qp.o iwch_mem.o \
- 	       iwch_provider.o iwch.o cxio_hal.o cxio_resource.o
--
--ccflags-$(CONFIG_INFINIBAND_CXGB3_DEBUG) += -DDEBUG
-diff --git a/drivers/infiniband/hw/cxgb3/cxio_dbg.c b/drivers/infiniband/hw/cxgb3/cxio_dbg.c
-deleted file mode 100644
-index 97dbe728520a..000000000000
---- a/drivers/infiniband/hw/cxgb3/cxio_dbg.c
-+++ /dev/null
-@@ -1,206 +0,0 @@
--/*
-- * Copyright (c) 2006 Chelsio, Inc. All rights reserved.
-- *
-- * This software is available to you under a choice of one of two
-- * licenses.  You may choose to be licensed under the terms of the GNU
-- * General Public License (GPL) Version 2, available from the file
-- * COPYING in the main directory of this source tree, or the
-- * OpenIB.org BSD license below:
-- *
-- *     Redistribution and use in source and binary forms, with or
-- *     without modification, are permitted provided that the following
-- *     conditions are met:
-- *
-- *      - Redistributions of source code must retain the above
-- *        copyright notice, this list of conditions and the following
-- *        disclaimer.
-- *
-- *      - Redistributions in binary form must reproduce the above
-- *        copyright notice, this list of conditions and the following
-- *        disclaimer in the documentation and/or other materials
-- *        provided with the distribution.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-- * SOFTWARE.
-- */
--#ifdef DEBUG
--#include <linux/types.h>
--#include <linux/slab.h>
--#include "common.h"
--#include "cxgb3_ioctl.h"
--#include "cxio_hal.h"
--#include "cxio_wr.h"
--
--void cxio_dump_tpt(struct cxio_rdev *rdev, u32 stag)
--{
--	struct ch_mem_range *m;
--	u64 *data;
--	int rc;
--	int size = 32;
--
--	m = kmalloc(sizeof(*m) + size, GFP_ATOMIC);
--	if (!m)
--		return;
--
--	m->mem_id = MEM_PMRX;
--	m->addr = (stag>>8) * 32 + rdev->rnic_info.tpt_base;
--	m->len = size;
--	pr_debug("%s TPT addr 0x%x len %d\n", __func__, m->addr, m->len);
--	rc = rdev->t3cdev_p->ctl(rdev->t3cdev_p, RDMA_GET_MEM, m);
--	if (rc) {
--		pr_debug("%s toectl returned error %d\n", __func__, rc);
--		kfree(m);
--		return;
--	}
--
--	data = (u64 *)m->buf;
--	while (size > 0) {
--		pr_debug("TPT %08x: %016llx\n",
--			 m->addr, (unsigned long long)*data);
--		size -= 8;
--		data++;
--		m->addr += 8;
--	}
--	kfree(m);
--}
--
--void cxio_dump_pbl(struct cxio_rdev *rdev, u32 pbl_addr, uint len, u8 shift)
--{
--	struct ch_mem_range *m;
--	u64 *data;
--	int rc;
--	int size, npages;
--
--	shift += 12;
--	npages = (len + (1ULL << shift) - 1) >> shift;
--	size = npages * sizeof(u64);
--
--	m = kmalloc(sizeof(*m) + size, GFP_ATOMIC);
--	if (!m)
--		return;
--
--	m->mem_id = MEM_PMRX;
--	m->addr = pbl_addr;
--	m->len = size;
--	pr_debug("%s PBL addr 0x%x len %d depth %d\n",
--		 __func__, m->addr, m->len, npages);
--	rc = rdev->t3cdev_p->ctl(rdev->t3cdev_p, RDMA_GET_MEM, m);
--	if (rc) {
--		pr_debug("%s toectl returned error %d\n", __func__, rc);
--		kfree(m);
--		return;
--	}
--
--	data = (u64 *)m->buf;
--	while (size > 0) {
--		pr_debug("PBL %08x: %016llx\n",
--			 m->addr, (unsigned long long)*data);
--		size -= 8;
--		data++;
--		m->addr += 8;
--	}
--	kfree(m);
--}
--
--void cxio_dump_wqe(union t3_wr *wqe)
--{
--	__be64 *data = (__be64 *)wqe;
--	uint size = (uint)(be64_to_cpu(*data) & 0xff);
--
--	if (size == 0)
--		size = 8;
--	while (size > 0) {
--		pr_debug("WQE %p: %016llx\n",
--			 data, (unsigned long long)be64_to_cpu(*data));
--		size--;
--		data++;
--	}
--}
--
--void cxio_dump_wce(struct t3_cqe *wce)
--{
--	__be64 *data = (__be64 *)wce;
--	int size = sizeof(*wce);
--
--	while (size > 0) {
--		pr_debug("WCE %p: %016llx\n",
--			 data, (unsigned long long)be64_to_cpu(*data));
--		size -= 8;
--		data++;
--	}
--}
--
--void cxio_dump_rqt(struct cxio_rdev *rdev, u32 hwtid, int nents)
--{
--	struct ch_mem_range *m;
--	int size = nents * 64;
--	u64 *data;
--	int rc;
--
--	m = kmalloc(sizeof(*m) + size, GFP_ATOMIC);
--	if (!m)
--		return;
--
--	m->mem_id = MEM_PMRX;
--	m->addr = ((hwtid)<<10) + rdev->rnic_info.rqt_base;
--	m->len = size;
--	pr_debug("%s RQT addr 0x%x len %d\n", __func__, m->addr, m->len);
--	rc = rdev->t3cdev_p->ctl(rdev->t3cdev_p, RDMA_GET_MEM, m);
--	if (rc) {
--		pr_debug("%s toectl returned error %d\n", __func__, rc);
--		kfree(m);
--		return;
--	}
--
--	data = (u64 *)m->buf;
--	while (size > 0) {
--		pr_debug("RQT %08x: %016llx\n",
--			 m->addr, (unsigned long long)*data);
--		size -= 8;
--		data++;
--		m->addr += 8;
--	}
--	kfree(m);
--}
--
--void cxio_dump_tcb(struct cxio_rdev *rdev, u32 hwtid)
--{
--	struct ch_mem_range *m;
--	int size = TCB_SIZE;
--	u32 *data;
--	int rc;
--
--	m = kmalloc(sizeof(*m) + size, GFP_ATOMIC);
--	if (!m)
--		return;
--
--	m->mem_id = MEM_CM;
--	m->addr = hwtid * size;
--	m->len = size;
--	pr_debug("%s TCB %d len %d\n", __func__, m->addr, m->len);
--	rc = rdev->t3cdev_p->ctl(rdev->t3cdev_p, RDMA_GET_MEM, m);
--	if (rc) {
--		pr_debug("%s toectl returned error %d\n", __func__, rc);
--		kfree(m);
--		return;
--	}
--
--	data = (u32 *)m->buf;
--	while (size > 0) {
--		printk("%2u: %08x %08x %08x %08x %08x %08x %08x %08x\n",
--			m->addr,
--			*(data+2), *(data+3), *(data),*(data+1),
--			*(data+6), *(data+7), *(data+4), *(data+5));
--		size -= 32;
--		data += 8;
--		m->addr += 32;
--	}
--	kfree(m);
--}
--#endif
-diff --git a/drivers/infiniband/hw/cxgb3/cxio_hal.h b/drivers/infiniband/hw/cxgb3/cxio_hal.h
-index 7e70c5492262..c64e50b5a548 100644
---- a/drivers/infiniband/hw/cxgb3/cxio_hal.h
-+++ b/drivers/infiniband/hw/cxgb3/cxio_hal.h
-@@ -202,13 +202,4 @@ int iwch_cxgb3_ofld_send(struct t3cdev *tdev, struct sk_buff *skb);
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
--#ifdef DEBUG
--void cxio_dump_tpt(struct cxio_rdev *rev, u32 stag);
--void cxio_dump_pbl(struct cxio_rdev *rev, u32 pbl_addr, uint len, u8 shift);
--void cxio_dump_wqe(union t3_wr *wqe);
--void cxio_dump_wce(struct t3_cqe *wce);
--void cxio_dump_rqt(struct cxio_rdev *rdev, u32 hwtid, int nents);
--void cxio_dump_tcb(struct cxio_rdev *rdev, u32 hwtid);
--#endif
--
- #endif
-diff --git a/drivers/infiniband/hw/cxgb3/iwch_cq.c b/drivers/infiniband/hw/cxgb3/iwch_cq.c
-index dd5348e48806..0a8542c20804 100644
---- a/drivers/infiniband/hw/cxgb3/iwch_cq.c
-+++ b/drivers/infiniband/hw/cxgb3/iwch_cq.c
-@@ -200,9 +200,6 @@ int iwch_poll_cq(struct ib_cq *ibcq, int num_entries, struct ib_wc *wc)
- 
- 	spin_lock_irqsave(&chp->lock, flags);
- 	for (npolled = 0; npolled < num_entries; ++npolled) {
--#ifdef DEBUG
--		int i=0;
--#endif
- 
- 		/*
- 		 * Because T3 can post CQEs that are _not_ associated
-@@ -211,9 +208,6 @@ int iwch_poll_cq(struct ib_cq *ibcq, int num_entries, struct ib_wc *wc)
- 		 */
- 		do {
- 			err = iwch_poll_cq_one(rhp, chp, wc + npolled);
--#ifdef DEBUG
--			BUG_ON(++i > 1000);
--#endif
- 		} while (err == -EAGAIN);
- 		if (err <= 0)
- 			break;
--- 
-2.13.6
+Can you post the output of the v4l2-compliance test? I'm curious to see it.
+
+Can you also try to run v4l2-compliance -m /dev/mediaX? That also tests
+whether the right entity types are set (note: testing for that should
+also happen in the subdev compliance test, but I haven't done that yet).
+
+Regards,
+
+	Hans
