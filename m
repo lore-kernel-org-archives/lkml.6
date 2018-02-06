@@ -1,121 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752711AbeBFJgH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:36:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55004 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752141AbeBFJf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:35:57 -0500
-Date: Tue, 6 Feb 2018 10:35:53 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Stephane Eranian <eranian@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>, Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 1/3] perf tools: Fix period/freq terms setup
-Message-ID: <20180206093553.GA8065@krava>
-References: <20180201083812.11359-1-jolsa@kernel.org>
- <20180201083812.11359-2-jolsa@kernel.org>
- <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com>
- <20180202202849.GA8297@kernel.org>
- <20180202204004.GB8297@kernel.org>
- <CABPqkBQniVqi_7OuEmWQohWSsnp17BkDMRYgOE1RQYE00GpuVw@mail.gmail.com>
- <20180205151720.GA29340@krava>
- <CABPqkBRDVfoTEfR-4XLkYKKbPenpFfQ0QkibSBO1iTTAYQbzLA@mail.gmail.com>
- <20180205211340.GD25353@kernel.org>
- <CABPqkBQ272K=f7eYzk1MkgG04sy_szkMuyyTmyNEVSyBdYo-Og@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBQ272K=f7eYzk1MkgG04sy_szkMuyyTmyNEVSyBdYo-Og@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752401AbeBFJia (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:38:30 -0500
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:53226 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752263AbeBFJiH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 04:38:07 -0500
+X-Google-Smtp-Source: AH8x2246vkHCo1LTcXUsIQTiaUIOkXE17QW+T7hTT7H48yAal76OxFYLXLWkFxaIiqlTOkduTsUu+A==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <1517903761.9843.12.camel@gmx.de>
+Date: Tue, 6 Feb 2018 10:38:03 +0100
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>, ming.lei@redhat.com,
+        ivan@ludios.org, 169364@studenti.unimore.it,
+        Serena Ziviani <ziviani.serena@gmail.com>
+Message-Id: <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
+References: <20180205190510.5499-1-paolo.valente@linaro.org>
+ <20180205190510.5499-2-paolo.valente@linaro.org>
+ <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
+ <1517903761.9843.12.camel@gmx.de>
+To: Mike Galbraith <efault@gmx.de>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-On Mon, Feb 05, 2018 at 06:51:05PM -0800, Stephane Eranian wrote:
-
-SNIP
-
-> >
-> Looks like this is working then, great!
-> 
-> Now, related to profiling and reporting. There is still an issue I
-> keep running into
-> with grouping. I want to sample on N events, where N > number of  hw counters.
-> Yet I want the same output as perf report --group, i.e., side-by-side
-> profiles as
-> opposed to showing me one event profile at a time (which is not very useful).
-> 
-> You should not require events to belong to the same group to support this. Many
-> other tools support such output (e.g., VTUNE, Gooda). It is still very
-> valuable even
-> though events may not have been measured at the same time.
-> 
-> Let me use a simple (and silly but portable) example.
-> Today if I do on  Intel x86:
-> 
->  $ perf record -e branches,branches,branches,branches,branches my_test
-> 
-> And I do:
-> 
-> $ perf report --group
-> It will show me 5 distinct profiles.
-> 
-> I would like perf to show me a single profile where the 5 events are
-> side-by-side.
-> 
-> Similar to what I get if I do instead:
-> $ perf record -e '{branches,branches,branches,branches}' my_test
-> $ perf report --group
-> 
-> But here, I would have to ensure all events fits in a group to allow
-> the reporting
-> I want. So that would limit me to 4 events.
-> 
-> I think perf report --group should work regardless of how the events
-> were grouped.
-> Is there already a way to work around this?
-
-no workaround.. please try attached patch, it seems
-to work for what you described
-
-thanks,
-jirka
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w169cYXQ021384
 
 
----
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 4ad5dc649716..35a013992092 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -937,6 +937,7 @@ int cmd_report(int argc, const char **argv)
- 		"perf report [<options>]",
- 		NULL
- 	};
-+	bool group_set = false;
- 	struct report report = {
- 		.tool = {
- 			.sample		 = process_sample_event,
-@@ -1056,7 +1057,7 @@ int cmd_report(int argc, const char **argv)
- 		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
- 	OPT_BOOLEAN(0, "show-total-period", &symbol_conf.show_total_period,
- 		    "Show a column with the sum of periods"),
--	OPT_BOOLEAN(0, "group", &symbol_conf.event_group,
-+	OPT_BOOLEAN_SET(0, "group", &symbol_conf.event_group, &group_set,
- 		    "Show event group information together"),
- 	OPT_CALLBACK_NOOPT('b', "branch-stack", &branch_mode, "",
- 		    "use branch records for per branch histogram filling",
-@@ -1173,6 +1174,9 @@ int cmd_report(int argc, const char **argv)
- 	has_br_stack = perf_header__has_feat(&session->header,
- 					     HEADER_BRANCH_STACK);
- 
-+	if (group_set && !session->evlist->nr_groups)
-+		perf_evlist__set_leader(session->evlist);
-+
- 	if (itrace_synth_opts.last_branch)
- 		has_br_stack = true;
- 
+
+> Il giorno 06 feb 2018, alle ore 08:56, Mike Galbraith <efault@gmx.de> ha scritto:
+> 
+> On Tue, 2018-02-06 at 08:44 +0100, Oleksandr Natalenko wrote:
+>> Hi, Paolo.
+>> 
+>> I can confirm that this patch fixes cfdisk hang for me. I've also tried 
+>> to trigger the issue Mike has encountered, but with no luck (maybe, I 
+>> wasn't insistent enough, just was doing dd on usb-storage device in the 
+>> VM).
+> 
+> I was doing kbuilds, and it blew up on me twice.  Switching back to cfq
+> seemed to confirm it was indeed the patch causing trouble, but that's
+> by no means a certainty.
+> 
+
+Hi Mike,
+as you can imagine, I didn't get any failure in my pre-submission
+tests on this patch.  In addition, it is not that easy to link this
+patch, which just adds some internal bfq housekeeping in case of a
+requeue, with a corruption of external lists for general I/O
+management.
+
+In this respect, as Oleksandr comments point out, by switching from
+cfq to bfq, you switch between much more than two schedulers.  Anyway,
+who knows ...
+
+Maybe this report will ring a bell with some block-layer expert, or,
+hopefully, next feedback will help puzzle this out.
+
+Thanks,
+Paolo
+
+
+> 	-Mike
