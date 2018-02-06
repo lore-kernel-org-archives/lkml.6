@@ -1,143 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754011AbeBFVJb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 16:09:31 -0500
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:53802 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753156AbeBFVJ3 (ORCPT
+        id S1754080AbeBFVUk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 16:20:40 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39697 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753971AbeBFVUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 16:09:29 -0500
-Subject: Re: [PATCH v8 5/7] media: i2c: Add TDA1997x HDMI receiver driver
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
- <1517948874-21681-6-git-send-email-tharvey@gateworks.com>
- <3630ba30-eb18-0829-7b0c-f0a786232969@xs4all.nl>
- <CAJ+vNU1SWma59YwvRO7jDAu2=ndgSU6CgYtKs0792+oqDAEtrQ@mail.gmail.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <1ff2a81e-04f7-02eb-6ba2-70227665839b@xs4all.nl>
-Date: Tue, 6 Feb 2018 22:09:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAJ+vNU1SWma59YwvRO7jDAu2=ndgSU6CgYtKs0792+oqDAEtrQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfPc9k8/g2db2f95tja+HFEllbSL5r2ZH9reY+TegSOtJCAlyd8S94WiUmIC/cNyO3pq6lr+kypoPKZI+gx44WI4tRu4gOxbeJnMxDJXkh65nUl3xZ8XP
- O24p5Z+6TseO2a23PkwfBX1xRoO9UbH0rtZwYjulwbJHKyiQ9Qo8IAIVKa0V67pWQLcohY8AiLXE6Q64SVglrqtS8B4CI9FwYHHhJ9Px1oAVOatvtax8hwBu
- 8jo469sufwonOU9bMI3uhy1+KJ/FP9uki9uuvL05xyfJnh1AnbFkvFiwEHoiATFlevbPrNYWiLXtxJavuOHrRtPPFTy0GKwbLrjd3/Rk7eXPsn+CLTO1EM54
- WYkheqalukjc2x3lK2Zje5hKDBvTkKUpTwzlXn0CiJew44oZFpyGxDHZxifmaBK4qPuqrU5J1DIF4dB1WaFFT8UbWTIia5+11qbPxZDaO3wRl9maV6QGa7Mr
- GBsHwo8UM3HZ5FKP
+        Tue, 6 Feb 2018 16:20:36 -0500
+X-Google-Smtp-Source: AH8x227kI1YlKOPvJ92M+/h2rwAEJBAKeEIPPt2z8d6B5L2BNbbmpFlo6KsvpRfbLuKM1+BLKF6n3Q==
+From: Artem Savkov <artem.savkov@gmail.com>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Artem Savkov <artem.savkov@gmail.com>
+Subject: [PATCH 2/2] sun4i_ss_prng: convert lock to _bh in sun4i_ss_prng_generate
+Date: Tue,  6 Feb 2018 22:20:22 +0100
+Message-Id: <20180206212022.1309-3-artem.savkov@gmail.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180206212022.1309-1-artem.savkov@gmail.com>
+References: <20180206212022.1309-1-artem.savkov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/06/2018 10:03 PM, Tim Harvey wrote:
-> On Tue, Feb 6, 2018 at 12:38 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> On 02/06/2018 09:27 PM, Tim Harvey wrote:
->>> Add support for the TDA1997x HDMI receivers.
->>>
->>> Cc: Hans Verkuil <hverkuil@xs4all.nl>
->>> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
->>> ---
->>
->> <snip>
->>
->>> +static int tda1997x_get_dv_timings_cap(struct v4l2_subdev *sd,
->>> +                                    struct v4l2_dv_timings_cap *cap)
->>> +{
->>> +     if (cap->pad != TDA1997X_PAD_SOURCE)
->>> +             return -EINVAL;
->>> +
->>> +     *cap = tda1997x_dv_timings_cap;
->>> +     return 0;
->>> +}
->>> +
->>> +static int tda1997x_enum_dv_timings(struct v4l2_subdev *sd,
->>> +                                 struct v4l2_enum_dv_timings *timings)
->>> +{
->>> +     if (timings->pad != TDA1997X_PAD_SOURCE)
->>> +             return -EINVAL;
->>> +
->>> +     return v4l2_enum_dv_timings_cap(timings, &tda1997x_dv_timings_cap,
->>> +                                     NULL, NULL);
->>> +}
->>
->> You shouldn't need this pad test: it's done in the v4l2-subdev.c core code
->> already. But please double-check :-)
->>
-> 
-> oh right - forgot to check that. Yes, v4l2-subdev.c has pad bounds
-> checking on all ops I use so I can remove them.
-> 
->> Can you post the output of the v4l2-compliance test? I'm curious to see it.
-> 
-> it's in the cover letter (should I move it to the driver patch for
-> subsequent submittals?)
+Lockdep detects a possible deadlock in sun4i_ss_prng_generate() and
+throws an "inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage" warning.
+Disabling softirqs to fix this.
 
-Ah, it was all the way down after the MC topology. That's why I missed it.
+Fixes: b8ae5c7387ad ("crypto: sun4i-ss - support the Security System PRNG")
+Signed-off-by: Artem Savkov <artem.savkov@gmail.com>
+---
+ drivers/crypto/sunxi-ss/sun4i-ss-prng.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
->>
->> Can you also try to run v4l2-compliance -m /dev/mediaX? That also tests
->> whether the right entity types are set (note: testing for that should
->> also happen in the subdev compliance test, but I haven't done that yet).
->>
-> 
-> root@ventana:~# v4l2-compliance -m0
-> v4l2-compliance SHA   : b2f8f9049056eb6f9e028927dacb2c715a062df8
-> Media Driver Info:
->         Driver name      : imx-media
->         Model            : imx-media
->         Serial           :
->         Bus info         :
->         Media version    : 4.15.0
->         Hardware revision: 0x00000000 (0)
->         Driver version   : 4.15.0
-> 
-> Compliance test for device /dev/media0:
-> 
-> Required ioctls:
->         test MEDIA_IOC_DEVICE_INFO: OK
-> 
-> Allow for multiple opens:
->         test second /dev/media0 open: OK
->         test MEDIA_IOC_DEVICE_INFO: OK
->         test for unlimited opens: OK
-> 
-> Media Controller ioctls:
->                 fail: v4l2-test-media.cpp(141): ent.function ==
-> MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
->         test MEDIA_IOC_G_TOPOLOGY: FAIL
->                 fail: v4l2-test-media.cpp(256):
-> v2_entities_set.find(ent.id) == v2_entities_set.end()
->         test MEDIA_IOC_ENUM_ENTITIES/LINKS: FAIL
->         test MEDIA_IOC_SETUP_LINK: OK
-> 
-> Total: 7, Succeeded: 5, Failed: 2, Warnings: 0
-> 
-> foiled again!
-> 
-> Is something missing after v4l2_i2c_subdev_init() or is this perhaps
-> something missing in the imx media drivers?
-> 
->         v4l2_i2c_subdev_init(sd, client, &tda1997x_subdev_ops);
->         snprintf(sd->name, sizeof(sd->name), "%s %d-%04x",
->                  id->name, i2c_adapter_id(client->adapter),
->                  client->addr);
->         sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
->         sd->entity.ops = &tda1997x_media_ops;
-
-Yeah, I was afraid of that. Anyway, I saw some issues in the subdev compliance.
-I'll reply to the cover letter about that.
-
-Regards,
-
-	Hans
+diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-prng.c b/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
+index 5754e0b92fb0..63d636424161 100644
+--- a/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
++++ b/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
+@@ -28,7 +28,7 @@ int sun4i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
+ 	algt = container_of(alg, struct sun4i_ss_alg_template, alg.rng);
+ 	ss = algt->ss;
+ 
+-	spin_lock(&ss->slock);
++	spin_lock_bh(&ss->slock);
+ 
+ 	writel(mode, ss->base + SS_CTL);
+ 
+@@ -51,6 +51,6 @@ int sun4i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
+ 	}
+ 
+ 	writel(0, ss->base + SS_CTL);
+-	spin_unlock(&ss->slock);
++	spin_unlock_bh(&ss->slock);
+ 	return 0;
+ }
+-- 
+2.15.1
