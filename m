@@ -1,97 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752472AbeBFEb1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 23:31:27 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:49123 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752132AbeBFEbS (ORCPT
+        id S1752534AbeBFEoQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 23:44:16 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50886 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752267AbeBFEoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 23:31:18 -0500
-X-UUID: 963e207655334e778e305d170991c098-20180206
-Message-ID: <1517891471.20869.6.camel@mtkswgap22>
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-CC: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Date: Tue, 6 Feb 2018 12:31:11 +0800
-In-Reply-To: <1517889903.2312.151.camel@kernel.crashing.org>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-         <1517563970.24622.9.camel@mtkswgap22>
-         <1517866584.2312.140.camel@kernel.crashing.org>
-         <1517884738.16010.27.camel@mtkswgap22>
-         <1517889903.2312.151.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 5 Feb 2018 23:44:07 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7312060558
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH v6 14/15] cpufreq: Add module to register cpufreq on Krait
+ CPUs
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, robh@kernel.org
+References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+ <1517890108-8140-15-git-send-email-sricharan@codeaurora.org>
+ <20180206042642.GG28462@vireshk-i7>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <993dcf5e-a9b4-9434-08cf-7d385589800b@codeaurora.org>
+Date: Tue, 6 Feb 2018 10:13:59 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <20180206042642.GG28462@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-06 at 15:05 +1100, Benjamin Herrenschmidt wrote:
-> On Tue, 2018-02-06 at 10:38 +0800, Ryder Lee wrote:
-> > 
-> > I think the code should look at the bridge address <0x0800 ...> we list
-> > in bindings for resolving interrupts in this case, but it seems like it
-> > use the 'pdev->defvn << 8' which is not really we want and will lead to
-> > mismatch.
-> > 
-> > 		interrupt-map-mask = <0xf800 0 0 7>;
-> > 		interrupt-map = <0x0000 0 0 1 ...>,
-> > 				<0x0000 0 0 2 ...>,
-> > 				<0x0000 0 0 3 ...>,
-> > 				<0x0000 0 0 4 ...>,
-> > 
-> > 				 0x0800 0 0 1 ...>,
-> > 				 0x0800 0 0 2 ...>,
-> > 				 0x0800 0 0 3 ...>,
-> > 				 0x0800 0 0 4 ...>;
-> > 		...
-> > 		pcie@1,0 {
-> > 			reg = <0x0800 0 0 0 0>;
-> > 			...
-> > 		};
-> > 
-> > 
-> > Or, alternatively, we could add a interrupt-map property in both child
-> > and root node to solve this. The below example is my original version as
-> > I don't want to change that function either.
+Hi Viresh,
+
+On 2/6/2018 9:56 AM, Viresh Kumar wrote:
+> On 06-02-18, 09:38, Sricharan R wrote:
+>> diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
+>> new file mode 100644
+>> index 0000000..5b988d4
+>> --- /dev/null
+>> +++ b/drivers/cpufreq/qcom-cpufreq.c
+>> @@ -0,0 +1,161 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> +
+>> +#include <linux/cpu.h>
+>> +#include <linux/err.h>
+>> +#include <linux/init.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_opp.h>
+>> +#include <linux/slab.h>
+>> +#include "cpufreq-dt.h"
+>> +#include <linux/nvmem-consumer.h>
 > 
-> The code looks at devfn because it's meant to work for PCI including
-> when the devices dont have a device node in the DT.
+> I don't think you need all of these anymore, isn't it ? Can you cross check
+> which ones are really required? For example, cpufreq-dt.h isn't required for
+> sure.
 > 
-> What I'm trying to figure out is what is it that your parent and
-> children are representing here. Which is/are the root complex ?
+ oops. Had this in mind to fix the headers. But missed it. Sorry,
+ will fix and repost.
 
-This is a single root complex with 2 root port (children in DT).
+>> +static int __init qcom_cpufreq_driver_init(void)
+>> +{
+>> +	struct device *cpu_dev;
+>> +	struct device_node *np;
+>> +	struct nvmem_cell *pvs_nvmem;
+>> +	int ret;
+>> +
+>> +	cpu_dev = get_cpu_device(0);
+>> +	if (!cpu_dev)
+>> +		return -ENODEV;
+>> +
+>> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+>> +	if (!np)
+>> +		return -ENOENT;
+>> +
+>> +	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
+>> +		of_node_put(np);
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	pvs_nvmem = of_nvmem_cell_get(np, NULL);
+>> +	if (IS_ERR(pvs_nvmem)) {
+>> +		dev_err(cpu_dev, "Could not get nvmem cell\n");
+>> +		return PTR_ERR(pvs_nvmem);
+>> +	}
+>> +
+>> +	of_node_put(np);
+>> +
+>> +	ret = qcom_cpufreq_populate_opps(pvs_nvmem);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return PTR_ERR(platform_device_register_simple("cpufreq-dt",
+>> +						       -1, NULL, 0));
+> 
+> Wanna do proper error handling here? For example, unset OPP name on failure here
+> so that resources get freed ?
+> 
 
-> What is the actual topology as visible on the PCIe bus (is lspci output
-> basically) and how does that map to your representation ?
+ ok, will fix things here.
 
-# lspci
-00:00.0 Class 0604: 14c3:0801 //1st slot - pcie@0,0
-00:01.0 Class 0604: 14c3:0801 //2nd slot - pcie@1,0
+Regards,
+  Sricharan
 
-01:00.0 Class 0280: 14c3:7603 //A device which is connected to 1st slot
-02:00.0 Class 0200: 8086:1521 //A 4 func device which is connected to
-2nd slot
-02:00.1 Class 0200: 8086:1521
-02:00.2 Class 0200: 8086:1521
-02:00.3 Class 0200: 8086:1521
-
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
