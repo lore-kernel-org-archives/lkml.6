@@ -1,60 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752689AbeBFQPJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:15:09 -0500
-Received: from mout.web.de ([212.227.15.3]:51085 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752650AbeBFQPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:15:00 -0500
-To: linux-input@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/3] HID-Lenovo: Adjustments for three function
- implementations
-Message-ID: <06e2d590-f980-0022-c476-6b999239ff9f@users.sourceforge.net>
-Date: Tue, 6 Feb 2018 17:14:51 +0100
+        id S1752721AbeBFQQS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:16:18 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39374 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752369AbeBFQQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:16:14 -0500
+Subject: Re: [PATCH 10/20] lib/Kconfig: Remove leftover select of GENERIC_IO
+To: Ulf Magnusson <ulfalizer@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
+        m.szyprowski@samsung.com, egtvedt@samfundet.no,
+        linus.walleij@linaro.org, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
+        yamada.masahiro@socionext.com,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Terrell <terrelln@fb.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>, Dave Airlie <airlied@redhat.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Bart Van Assche <bart.vanassche@wdc.com>
+References: <20180205012146.23981-1-ulfalizer@gmail.com>
+ <20180205012146.23981-11-ulfalizer@gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <f39ad6ff-b4f7-0901-21e4-1469ed0ed9f2@arm.com>
+Date: Tue, 6 Feb 2018 16:16:07 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180205012146.23981-11-ulfalizer@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:U4s3fSvmxJpUXwvFqY0BR+fj775n6wDbqUgQMKGI/Xgkkw7cvr5
- edrOqxhzevHmIkdVJzRB3KLrSCGTvcuiqZHkMxCd4JHgQgquuncLa7zVDCUEx8duuA278bJ
- SiqnGQ443jXMf8RHi1ETqCO9ZBMB5PZvKdwO3eMPMf1Vr/9AICMdnTnDkZNItobWau8gdMk
- F8LBd25AYrhhyQBKLxloA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:R8CPy9PSuGk=:4HvrePYF7tcZgrZVCozUF+
- HVqQ4R2gnBAMK+/gctFfRnYL6zux/AHksLQhXt1VpPvzh6dxzbDDVjZGouBv6DsG1QFSw/Cqg
- C43xiw/OIa6T4CbmMYaQA42Ly5Eg/9LdBRyiNX6rFxnNdUm8TVhFVkbJqzrY6jMNsYqw0r4Cc
- UyNQVvk8x4GeTqcdTgzcHVwbWLpD/IlaCr3dcTI8dDcSxITZBz9OfHseVI8aPWQMUde27lpke
- SqGsLoYlUNVL+exsvGubqvD7JecNj99hnDTfAqmVaQDMmaj1dD730p3kl7IEnWYtj1qwkH27A
- gAAgJVrMvRSYgY2++roaJGM5WeVjxBOPGZiHdfnoeZT5Y2K75md3PTfe290nGVAAFqOpzLXTK
- baeRpxifCG6sDI3rRfgXPETZCYzZV80iuXTyiI2R9zPM3rzFdmR+u4s1gUhSJQjKC/sUJivLw
- 1pkYfAs9uJCvKtyduhiCywKShxFwQYU4Ra106t7l08aiFi/6ml4gleNWpzYbEnCwE9f6A1svS
- tA7SCVRCPLK7T0oZDWoFJDVfTweWLUoPFrcNxcYsSZrUcvAZjD2d3jS8qyY+uDfEEsEp4GyJN
- Da5l6ndUq1ho0PGa9RiQQ+TeqYFSDfMTmhhUIL9gyF0sQoOz1hIuTGfggEuCfYVzQRrGscV8y
- JzKwu+Xtd+xYozUBxD4qVWddJBVWnC8ezXZfYJxnox3x7ftFNP2/oJNSeR934pO+HKYDck+XM
- bkuW4ugNw3qca5+LKtrvR80d4va1/3fwzXg4vlieJNJGvCf7SsnQkD9PnOgA/eOzOZyV89ED4
- blK2CAwaC1G1J4VRS92CF3xRbV4UEaQ+yZFIErjqpKmzzqvTUE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Feb 2018 17:12:34 +0100
+On 05/02/18 01:21, Ulf Magnusson wrote:
+> GENERIC_IO was removed by commit 9de8da47742b ("kconfig: kill off
+> GENERIC_IO option"), but HAS_IOMEM still selects it.
+> 
+> Remove the select of GENERIC_IO from HAS_IOMEM.
+> 
+> Discovered with the
+> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+> script.
 
-Three update suggestions were taken into account
-from static source code analysis.
+Since I also stumbled over this and tried to fix it,
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in two functions
-  Improve a size determination in lenovo_probe_tpkbd()
-  Adjust four checks for null pointers
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 
- drivers/hid/hid-lenovo.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
--- 
-2.16.1
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
+>   lib/Kconfig | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/lib/Kconfig b/lib/Kconfig
+> index e96089499371..8ce8bcad6eff 100644
+> --- a/lib/Kconfig
+> +++ b/lib/Kconfig
+> @@ -396,7 +396,6 @@ config ASSOCIATIVE_ARRAY
+>   config HAS_IOMEM
+>   	bool
+>   	depends on !NO_IOMEM
+> -	select GENERIC_IO
+>   	default y
+>   
+>   config HAS_IOPORT_MAP
+> 
