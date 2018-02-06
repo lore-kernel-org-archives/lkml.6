@@ -1,59 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeBFCWM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:22:12 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:45215 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeBFCWB (ORCPT
+        id S1752593AbeBFCZu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:25:50 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51961 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752568AbeBFCZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:22:01 -0500
-X-Google-Smtp-Source: AH8x226+jBfUwEw6DPPt9S5zRdbeRCf2oPy5glNcshBgzvGHqSevZo+pLfx60cjfz120dGagsUu5UA==
-Subject: Re: Please apply these tiny, 4-month-old patches.
-Date: Tue, 06 Feb 2018 02:19:35 -0000
-From: Michael Witten <mfwitten@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: David Miller <davem@davemloft.net>, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, stephen@networkplumber.org,
-        eric.dumazet@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <2f491ac7f47a42bd94ae8983b1e303ca-mfwitten@gmail.com>
-In-Reply-To: <20180206014217.GA17702@lunn.ch>
-References: <45aab5effc0c424a992646a97cf2ec14-mfwitten@gmail.com>
-            <14527e6c082e4ea282a3f833118c68df-mfwitten@gmail.com>
-            <5603fa86b280465ca559a6b316ac2637-mfwitten@gmail.com>
-            <20180205.201211.2134769499352656499.davem@davemloft.net>
-            <dda70cc5d68b42d092c0173a11b87425-mfwitten@gmail.com>
-            <20180206014217.GA17702@lunn.ch>
+        Mon, 5 Feb 2018 21:25:37 -0500
+X-Google-Smtp-Source: AH8x2272Q6hLFFX3MItmKxT0lepu4h1p9R/bU/e4w+qIyZOx3m47FV/p8x+DfONGkgJDmMqYc/s4qfETTUerFVmp+xM=
+MIME-Version: 1.0
+In-Reply-To: <CAOMZO5CzDXxyzG9yC+26X4Ubek0bWMa_gxfBc4iQpBGxhbQ5DA@mail.gmail.com>
+References: <20180206000501.14641-1-yungching0725@gmail.com> <CAOMZO5CzDXxyzG9yC+26X4Ubek0bWMa_gxfBc4iQpBGxhbQ5DA@mail.gmail.com>
+From: Yung-Ching LIN <yungching0725@gmail.com>
+Date: Mon, 5 Feb 2018 18:25:36 -0800
+Message-ID: <CACGtqyy1gtkZ+RD2aBzNZFGSXZTJAut5j+2yai8mWNHN1pkj+A@mail.gmail.com>
+Subject: Re: [v2] ARM: dts: imx: Add support for Advantech DMS-BA16
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Feb 2018 02:42:17 +0100, Andrew Lunn wrote:
+Hi Fabio,
 
->>> Please learn how the community works, and how to interact with
->>> developers and maintainers in that community appropriately.
->>
->> I already tried that.
->>
->> If you're unwilling to be an effective maintainer, then please hand
->> off the responsibiilty to someone else.
+Thank you for your comments.
+Will provide the v3 for the fixes
+
+On Mon, Feb 5, 2018 at 4:13 PM, Fabio Estevam <festevam@gmail.com> wrote:
+> Hi Ken,
 >
-> Could i suggest you read:
+> On Mon, Feb 5, 2018 at 10:05 PM, Ken Lin <yungching0725@gmail.com> wrote:
 >
-> https://www.kernel.org/doc/Documentation/networking/netdev-FAQ.txt
+>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>> index ade7a38543dc..585c3da4a47a 100644
+>> --- a/arch/arm/boot/dts/Makefile
+>> +++ b/arch/arm/boot/dts/Makefile
+>> @@ -435,6 +435,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+>>         imx6q-dfi-fs700-m60.dtb \
+>>         imx6q-display5-tianma-tm070-1280x768.dtb \
+>>         imx6q-dmo-edmqmx6.dtb \
+>> +       imx6q-dms-ba16.dtb \
+>>         imx6q-evi.dtb \
+>>         imx6q-gk802.dtb \
+>>         imx6q-gw51xx.dtb \
+>> diff --git a/arch/arm/boot/dts/imx6q-dms-ba16.dts b/arch/arm/boot/dts/imx6q-dms-ba16.dts
+>> new file mode 100644
+>> index 000000000000..055b88a6096d
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/imx6q-dms-ba16.dts
+>> @@ -0,0 +1,146 @@
+>> +/*
+>> + * Copyright 2018 Advantech Corporation
+>> + *
+>> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 >
-> And in particular, the bit about netdev being closed.
+> You should put the SPDX line as the first line and it should start with //:
 >
-> I suggest you wait a week for netdev to open, and then submit the
-> patches again. Actual patches, which cleanly apply to net-next.
-
-Thank you kindly for the suggestion.
-
-However, I'm fully versed on the scripture.
-
-I'm glad to report that the patches apply cleanly to `net-next'; the
-actual patches are, of course, still available in my previous emails.
-Also, as already described, they can be easily fetched from GitHub.
-
-Sincerely,
-Michael Witten
+> // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>
+>> + */
+>> +
+>> +
+>
+> No need for two blank lines. One is enough.
+>
+>> +/dts-v1/;
+>> +
+> ...
+>
+>> +&ecspi5 {
+>> +       num-cs = <1>;
+>
+> You can remove this property.
+>
+>
+>> +       cs-gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
+>> +       pinctrl-names = "default";
+>> +       pinctrl-0 = <&pinctrl_ecspi5>;
+>> +       status = "okay";
+>> +
+>> +       m25_eeprom: m25p80@0 {
+>> +               compatible = "atmel,at25";
+>
+> According to Documentation/devicetree/bindings/eeprom/at25.txt this
+> should have the following format:
+>
+> compatible : Should be "<vendor>,<type>", and generic value "atmel,at25".
