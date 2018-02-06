@@ -1,151 +1,223 @@
-Return-Path: <l4stpr0gr4m@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518002777; cv=none;
-        d=google.com; s=arc-20160816;
-        b=B4QZI8ol6t1DZuLoliRNAjYWiKISq+jsv1tiuMdHUuGSxoPSIOsrbMHGvJ1EHEPP3m
-         m4JBPkQUPw4z+rts6N3Bs6xuuFthWvBixroZ/C1hSpksZ+PsxK78CpJ03GsefHmawAI7
-         mOROQ/B1r0vl5GvLCjUlKPXmCbHQ9meH5AYQ85BsXERJ5XvtaGxjGsjmJTlDz9IHjgsw
-         OMEqAHkxpdhG/40QBbFv4aaXwaAC7ieRNJ1jhJ/idERaSSWtSHZkO+SACljuUJFWgX4B
-         5tNJAAZvbPizAbp6xWxOz7APO265jgRnlBqngpFn6S2MLKKJ/ZTG+jmwdLADPe70q9X3
-         e9jQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=whWL/jpe0kDtGREYS4rED6MAO2jQk9w1VPEb8q128cE=;
-        b=bXvbD7yScp0njXwRbufZIlHRiAgIUU6PcDLSCUe44+j2S8IP1eUALcvyspfV/7Myij
-         wkRvybmyOtOVkyk50DXbQUGv7+9NdMdiBchtAsSn/s7glXzAgR6I1ScNkqjloDbhPidQ
-         snhL+wjTbcGRseUxWtAfsULHdvNv18YzIm5J3IZPgIjBLJyNQ/n5kfL4iyDUiS/gDK0A
-         GmzXNOhN5QJpYtuSB9O6m8iSbxD2P8MYlUq/MckDpbjS6VmqRfF0zOkTMtp/ZFPzvKhH
-         9QQ0336LlYzcQWzDRUQwsJE0HoYkdVBWtlEjtFG67o5Rn/1U8lby/QIfhjHT6gDbofx2
-         pNZQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=okXInZVK;
-       spf=pass (google.com: domain of l4stpr0gr4m@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=l4stpr0gr4m@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=okXInZVK;
-       spf=pass (google.com: domain of l4stpr0gr4m@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=l4stpr0gr4m@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x225zwxYDM4/B8MzyROqmwD4IxI6oNHxo5d+bfbZLXWc7qzfgQ4pcMMWjjYeT9z/3t+809ISaC6VvhTJrMyljWQk=
-MIME-Version: 1.0
-In-Reply-To: <20180207110926.dzokcw2dwlinh2io@mwanda>
-References: <1517952214-3434-1-git-send-email-l4stpr0gr4m@gmail.com> <20180207110926.dzokcw2dwlinh2io@mwanda>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1442588-1517932690-2-16234401171566548084
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517932689; b=Zj12lnkxnvQmwtkYGokrv9M0yNzOAwldrhtzwB3yaWUKXey
+    R5SDkX2xGoXrzQYxqhBjeIM2pMS3sirbKoswxAU8MsgKhnSLJm/EVnOKCJNg3DZJ
+    1ZKb4dYIHNS7f8ACCDzD1l8XUjESc9UrXGe0LDjBDmq3EIsc/yXnSFNwiwCuDrqn
+    Pt+riawnO11YCkyr3R9rOfVDzDkgxNCs5MrfODarWh3tDjVprDRO0w8EQ9Tk+iPS
+    C84PVDTO2hb+V9tcLURWZ5l6CayUm9J7bglbWw8OllDqr1/03fujWD1rN0Al+cyq
+    HjussBKfj6LsEDkXfN/yPb+h1zpkWhtTJO2HPYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1517932689; bh=b
+    F8jJUPVgi1a1jFreGw3cyCgb4YaMW2IzS4gYNY5l8g=; b=RVJdl4T18JEKJ21WY
+    hOjBwXwxzxQSsyOnVWhmJmuPkfaYDu7kEmGl+MYdzWT3gmxn6b8j1kjvgJpCYlqP
+    4THrr5bZkRaYB9IRgv/Folbig4M3IvPhGugkdRRqk3T8cmibKBd5mIp+AvGEF80V
+    qwATsEMF1UuS+BZSPfqTPGwlASrb6jAjXYF3IhYstq9i5Du1IPGQkQaVR7eKw6M1
+    rKaT4QV4hZO+WKOk1zyRDfIWiJank5sbHMI0mf1Eejtr4AGz6MuFXxscvsE9MQYP
+    rn+zkg50K8/qw8MX4DKdjaTp9G5pyvBVOVLWsq+oMPHzhXZrmRETcreO5oGmczGM
+    Q+VPw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=iMm9qlnE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=idFaAyV5;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=iMm9qlnE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=idFaAyV5;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AH8x224uubXSy/U102HkHcziwf1oj5zjwc6lAf6sY8W0sXzei0q4MyGKYYN542ZkMimOuil28ivqXA==
 From: Kangmin Park <l4stpr0gr4m@gmail.com>
-Date: Wed, 7 Feb 2018 20:26:16 +0900
-Message-ID: <CAKW4uUz0X4h7=n+vnRGbe3uuOTChuSMjasbSBFPcxC-MYRh1vg@mail.gmail.com>
-Subject: Re: [PATCH] Update rf_type_definition
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, arnd@arndb.de,
-	linux-kernel@vger.kernel.org, justin@jvreeland.com, davem@davemloft.net,
-	hdegoede@redhat.com, himanshujha199640@gmail.com, hadess@hadess.net,
-	joe@perches.com, colin.king@canonical.com, Larry.Finger@lwfinger.net
-Content-Type: multipart/alternative; boundary="001a1148cede4751ce05649d90df"
+To: gregkh@linuxfoundation.org
+Subject: [PATCH] Resolve RF Type mismatch
+Date: Wed,  7 Feb 2018 00:57:13 +0900
+Message-Id: <1517932633-7832-1-git-send-email-l4stpr0gr4m@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, arnd@arndb.de, linux-kernel@vger.kernel.org,
+ justin@jvreeland.com, davem@davemloft.net, hdegoede@redhat.com,
+ hadess@hadess.net, pr0gr4m <l4stpr0gr4m@gmail.com>, joe@perches.com,
+ Larry.Finger@lwfinger.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591688275498143058?=
-X-GMAIL-MSGID: =?utf-8?q?1591741280508349361?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---001a1148cede4751ce05649d90df
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: pr0gr4m <l4stpr0gr4m@gmail.com>
 
-Thank you for your feedback. I learned a lot.
-I thought I had to fix all warnings by checkpatch.pl.
-If the patch is not good, I'll resubmit patch v3 which just fix space
-required error by checkpatch later.
+---
+ drivers/staging/rtl8723bs/hal/odm.h               | 17 +++++++++--------
+ drivers/staging/rtl8723bs/hal/rtl8723b_dm.c       | 16 ++++++++++++++--
+ drivers/staging/rtl8723bs/include/rtw_rf.h        | 15 ++++++++++-----
+ drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 12 ++++++++++--
+ 4 files changed, 43 insertions(+), 17 deletions(-)
 
-Regards.
-Kangmin Park.
+diff --git a/drivers/staging/rtl8723bs/hal/odm.h b/drivers/staging/rtl8723bs/hal/odm.h
+index 87a76ba..dbb78fe 100644
+--- a/drivers/staging/rtl8723bs/hal/odm.h
++++ b/drivers/staging/rtl8723bs/hal/odm.h
+@@ -511,14 +511,15 @@ typedef enum tag_ODM_RF_Path_Bit_Definition {
+ 
+ 
+ typedef enum tag_ODM_RF_Type_Definition {
+-	ODM_1T1R	=	0,
+-	ODM_1T2R	=	1,
+-	ODM_2T2R	=	2,
+-	ODM_2T3R	=	3,
+-	ODM_2T4R	=	4,
+-	ODM_3T3R	=	5,
+-	ODM_3T4R	=	6,
+-	ODM_4T4R	=	7,
++	ODM_1T1R		=	0,
++	ODM_1T2R		=	1,
++	ODM_2T2R		=	2,
++	ODM_2T2R_GREEN	=	3,
++	ODM_2T3R		=	4,
++	ODM_2T4R		=	5,
++	ODM_3T3R		=	6,
++	ODM_3T4R		=	7,
++	ODM_4T4R		=	8,
+ } ODM_RF_TYPE_E;
+ 
+ 
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c b/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c
+index b162559..20dcdcd 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c
+@@ -64,10 +64,22 @@ static void Init_ODM_ComInfo_8723b(struct adapter *Adapter)
+ 
+ 	if (pHalData->rf_type == RF_1T1R) {
+ 		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_1T1R);
+-	} else if (pHalData->rf_type == RF_2T2R) {
+-		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T2R);
+ 	} else if (pHalData->rf_type == RF_1T2R) {
+ 		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_1T2R);
++	} else if (pHalData->rf_type == RF_2T2R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T2R);
++	} else if (pHalData->rf_type == RF_2T2R_GREEN) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T2R_GREEN);
++	} else if (pHalData->rf_type == RF_2T3R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T3R);
++	} else if (pHalData->rf_type == RF_2T4R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T4R);
++	} else if (pHalData->rf_type == RF_3T3R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_3T3R);
++	} else if (pHalData->rf_type == RF_3T4R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_3T4R);
++	} else if (pHalData->rf_type == RF_4T4R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_4T4R);
+ 	}
+ 
+ 	pdmpriv->InitODMFlag = ODM_RF_CALIBRATION|ODM_RF_TX_PWR_TRACK;
+diff --git a/drivers/staging/rtl8723bs/include/rtw_rf.h b/drivers/staging/rtl8723bs/include/rtw_rf.h
+index f9becab..7ef113d1 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_rf.h
++++ b/drivers/staging/rtl8723bs/include/rtw_rf.h
+@@ -146,12 +146,17 @@ enum PROTECTION_MODE {
+ 
+ /* 2007/11/15 MH Define different RF type. */
+ enum RT_RF_TYPE_DEFINITION {
+-	RF_1T2R = 0,
+-	RF_2T4R = 1,
++	RF_1T1R = 0,
++	RF_1T2R = 1,
+ 	RF_2T2R = 2,
+-	RF_1T1R = 3,
+-	RF_2T2R_GREEN = 4,
+-	RF_MAX_TYPE = 5,
++	RF_2T2R_GREEN = 3,
++	RF_2T3R = 4,
++	RF_2T4R = 5,
++	RF_3T3R = 6,
++	RF_3T4R = 7,
++	RF_4T4R = 8,
++
++	RF_MAX_TYPE = 0xF
+ };
+ 
+ u32 rtw_ch2freq(u32 ch);
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+index 51d48de..520d2f6 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+@@ -3299,7 +3299,7 @@ static int cfg80211_rtw_sched_scan_stop(struct wiphy *wiphy,
+ 
+ static void rtw_cfg80211_init_ht_capab(struct ieee80211_sta_ht_cap *ht_cap, enum nl80211_band band, u8 rf_type)
+ {
+-
++#define MAX_BIT_RATE_40MHZ_MCS23	450	/* Mbps */
+ #define MAX_BIT_RATE_40MHZ_MCS15	300	/* Mbps */
+ #define MAX_BIT_RATE_40MHZ_MCS7		150	/* Mbps */
+ 
+@@ -3338,7 +3338,7 @@ static void rtw_cfg80211_init_ht_capab(struct ieee80211_sta_ht_cap *ht_cap, enum
+ 
+ 		ht_cap->mcs.rx_highest = cpu_to_le16(MAX_BIT_RATE_40MHZ_MCS7);
+ 	}
+-	else if ((rf_type == RF_1T2R) || (rf_type ==RF_2T2R))
++	else if ((rf_type == RF_1T2R) || (rf_type == RF_2T2R) || (rf_type == RF_2T2R_GREEN))
+ 	{
+ 		ht_cap->mcs.rx_mask[0] = 0xFF;
+ 		ht_cap->mcs.rx_mask[1] = 0xFF;
+@@ -3346,6 +3346,14 @@ static void rtw_cfg80211_init_ht_capab(struct ieee80211_sta_ht_cap *ht_cap, enum
+ 
+ 		ht_cap->mcs.rx_highest = cpu_to_le16(MAX_BIT_RATE_40MHZ_MCS15);
+ 	}
++	else if ((rf_type == RF_2T3R) || (rf_type == RF_3T3R))
++	{
++		ht_cap->mcs.rx_mask[0] = 0xFF;
++		ht_cap->mcs.rx_mask[1] = 0xFF;
++		ht_cap->mcs.rx_mask[2] = 0xFF;
++
++		ht_cap->mcs.rx_highest = cpu_to_le16(MAX_BIT_RATE_40MHZ_MCS23);
++	}
+ 	else
+ 	{
+ 		DBG_8192C("%s, error rf_type =%d\n", __func__, rf_type);
+-- 
+2.7.4
 
-
-2018. 2. 7. =EC=98=A4=ED=9B=84 8:14=EC=97=90 "Dan Carpenter" <dan.carpenter=
-@oracle.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
-
-This is better.  But the subject should say [PATCH v2] and we need a
-driver prefix.
-
-On Wed, Feb 07, 2018 at 06:23:34AM +0900, l4stpr0gr4m@gmail.com wrote:
-> From: Kangmin Park <l4stpr0gr4m@gmail.com>
->
-> enum RT_RF_TYPE_DEFINITION on rtl8723bs/include/rtw_rf.h
-> is different from enum tag_HAL_RF_Type_Definition on
-> rtl8723bs/include/HalVerDef.h
->
-> So, update them to be the same reference from
-> enum rf_type on rtlwifi/wifi.h which recent version.
->
-> As a result, ODM_RF_TYPE_E needs to be updated as well
-> Therefore, it is updated reference from enum odm_rf_type
-> on rtlwifi/phydm/phydm_pre_define.h too.
-> And update some additional code to check more
-> chip versions that resulted from it.
->
-> Also, fixed some space required errors and
-> line over 80 characters warnings by checkpatch.pl.
-
-Don't do this.  It's considered unrelated white space change and it
-makes the code hard to review.
-
-To be honest, I don't know the code well enough to say if this patch is
-a good idea generally...  It seems risky and I wish someone would test
-it or a maintainer would Ack it.
-
-regards,
-dan carpenter
-
---001a1148cede4751ce05649d90df
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"auto"><div>Thank you for your feedback. I learned a lot.<div di=
-r=3D"auto">I thought I had to fix all warnings by <a href=3D"http://checkpa=
-tch.pl">checkpatch.pl</a>.</div><div dir=3D"auto">If the patch is not good,=
- I&#39;ll resubmit patch v3 which just fix space required error by checkpat=
-ch later.</div><div dir=3D"auto"><br></div><div dir=3D"auto">Regards.</div>=
-<div dir=3D"auto">Kangmin Park.</div><br><div class=3D"gmail_extra"><br><di=
-v class=3D"gmail_quote">2018. 2. 7. =EC=98=A4=ED=9B=84 8:14=EC=97=90 &quot;=
-Dan Carpenter&quot; &lt;<a href=3D"mailto:dan.carpenter@oracle.com">dan.car=
-penter@oracle.com</a>&gt;=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:<br type=3D"=
-attribution"><blockquote class=3D"quote" style=3D"margin:0 0 0 .8ex;border-=
-left:1px #ccc solid;padding-left:1ex">This is better.=C2=A0 But the subject=
- should say [PATCH v2] and we need a<br>
-driver prefix.<br>
-<div class=3D"quoted-text"><br>
-On Wed, Feb 07, 2018 at 06:23:34AM +0900, <a href=3D"mailto:l4stpr0gr4m@gma=
-il.com">l4stpr0gr4m@gmail.com</a> wrote:<br>
-</div><div class=3D"quoted-text">&gt; From: Kangmin Park &lt;<a href=3D"mai=
-lto:l4stpr0gr4m@gmail.com">l4stpr0gr4m@gmail.com</a>&gt;<br>
-&gt;<br>
-&gt; enum RT_RF_TYPE_DEFINITION on rtl8723bs/include/rtw_rf.h<br>
-&gt; is different from enum tag_HAL_RF_Type_Definition on<br>
-&gt; rtl8723bs/include/HalVerDef.h<br>
-&gt;<br>
-&gt; So, update them to be the same reference from<br>
-&gt; enum rf_type on rtlwifi/wifi.h which recent version.<br>
-&gt;<br>
-&gt; As a result, ODM_RF_TYPE_E needs to be updated as well<br>
-&gt; Therefore, it is updated reference from enum odm_rf_type<br>
-&gt; on rtlwifi/phydm/phydm_pre_<wbr>define.h too.<br>
-&gt; And update some additional code to check more<br>
-&gt; chip versions that resulted from it.<br>
-&gt;<br>
-&gt; Also, fixed some space required errors and<br>
-&gt; line over 80 characters warnings by <a href=3D"http://checkpatch.pl" r=
-el=3D"noreferrer" target=3D"_blank">checkpatch.pl</a>.<br>
-<br>
-</div>Don&#39;t do this.=C2=A0 It&#39;s considered unrelated white space ch=
-ange and it<br>
-makes the code hard to review.<br>
-<br>
-To be honest, I don&#39;t know the code well enough to say if this patch is=
-<br>
-a good idea generally...=C2=A0 It seems risky and I wish someone would test=
-<br>
-it or a maintainer would Ack it.<br>
-<br>
-regards,<br>
-dan carpenter<br>
-<br>
-</blockquote></div><br></div></div></div>
-
---001a1148cede4751ce05649d90df--
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
