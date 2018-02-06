@@ -1,72 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752375AbeBFOLY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 09:11:24 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37804 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751991AbeBFOLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 09:11:15 -0500
-Date: Tue, 6 Feb 2018 14:11:19 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Message-ID: <20180206141118.GC22740@arm.com>
-References: <20180206114048.6c8ced1c@canb.auug.org.au>
- <750091485.16756.1517921554396.JavaMail.zimbra@efficios.com>
- <20180206135512.GB22740@arm.com>
- <1815310787.16844.1517926010063.JavaMail.zimbra@efficios.com>
+        id S1752237AbeBFOMc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 09:12:32 -0500
+Received: from mga17.intel.com ([192.55.52.151]:32797 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751848AbeBFOMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 09:12:22 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,468,1511856000";
+   d="scan'208";a="25101155"
+Date: Tue, 6 Feb 2018 22:16:14 +0800
+From: Yu Chen <yu.c.chen@intel.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rui Zhang <rui.zhang@intel.com>
+Subject: Re: [PATCH 3/3][RFC/RFT] PM / sleep: Do not delay the
+ synchronization of MTRR during resume
+Message-ID: <20180206141614.GA912@yu-chen.sh.intel.com>
+References: <cover.1509438899.git.yu.c.chen@intel.com>
+ <cbb3b328b1a07e61635c59db958b83318ca18dbd.1509438899.git.yu.c.chen@intel.com>
+ <1613777.Al2QaFApID@aspire.rjw.lan>
+ <20171213160242.GB29572@yu-chen.sh.intel.com>
+ <20180206140417.GA14526@wunner.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1815310787.16844.1517926010063.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180206140417.GA14526@wunner.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 02:06:50PM +0000, Mathieu Desnoyers wrote:
-> ----- On Feb 6, 2018, at 8:55 AM, Will Deacon will.deacon@arm.com wrote:
-> > On Tue, Feb 06, 2018 at 12:52:34PM +0000, Mathieu Desnoyers wrote:
-> >> One approach I would consider for this is to duplicate this
-> >> comment and add it just above the "eret" instruction within the
-> >> macro:
-> >> 
-> >> 	/*
-> >> 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on eret context synchronization
-> >> 	 * when returning from IPI handler, and when returning to user-space.
-> >> 	 */
-> >> 
-> >> Or perhaps Will has something else in mind ?
+On Tue, Feb 06, 2018 at 03:04:17PM +0100, Lukas Wunner wrote:
+> On Thu, Dec 14, 2017 at 12:02:42AM +0800, Yu Chen wrote:
+> > On Wed, Dec 13, 2017 at 01:31:50AM +0100, Rafael J. Wysocki wrote:
+> > > On Tuesday, October 31, 2017 10:58:50 AM CET Yu Chen wrote:
+> [snip]
+> > > > In one word, with the patch applied, the cpu online time during resume
+> > > > has decreased by about 6 seconds on a bogus MTRR platform, and decreased
+> > > > by about 600ms on a 88 cpus Xeon platform after resumed.
+> > > > 
+> > > > Cc: Len Brown <len.brown@intel.com>
+> > > > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > Cc: Rui Zhang <rui.zhang@intel.com>
+> > > > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> > > 
+> > > It will be better to combine this with patch [2/3] IMO, because that makes
+> > > it clear why the changes in that patch are needed.
+> > > 
+> > > Also you can define the new flag in mtrr/main.c, set it in
+> > > arch_enable_nonboot_cpus_begin() and clear it in
+> > > arch_enable_nonboot_cpus_end().  It is better to put it into the
+> > > arch-specific code as the flag itself is arch-specific.
+> > > 
+> > > Then, of course, you don't need patch [1/3] and all can be done in one
+> > >  patch.
 > > 
-> > To be honest with you, I'd just drop the comment entirely. entry.S is
-> > terrifying these days and nobody should have to go in there to understand
-> > why we select ARCH_HAS_MEMBARRIER_SYNC_CORE. If you really feel a justification
-> > is needed, I'd be happy with a line in the Kconfig file.
+> > Ok, will rewrite the patch, thanks! 
 > 
-> My concern is that someone wanting to optimize away a few cycles by changing
-> eret to something else in the future will not be looking at Kconfig: that
-> person will be staring at entry.S.
-
-That person will probably also be me, or somebody who sits within punching
-distance. I really wouldn't worry about it. There a bunch of other
-things that will break if we don't use ERET here and, if it's a real
-concern, we're making the *huge* assumption that developers actually
-read and pay attention to comments.
-
-> One alternative presented by PeterZ on irc is to do like ppc: define a
-> macro for eret, and stick all appropriate comments near the macro. This
-> way, it won't hurt when reading the code, but at least it keeps the
-> comments near the instruction being discussed.
-
-For the sake of avoiding the conflict, can we just drop it for now, please?
-Having an "eret" macro isn't obvious, because people won't realise that it's
-a macro. Having "exception_return" is cryptic as hell to people familiar
-with the ISA.
-
-Will
+> Just for the record, this series cuts down resume time from system sleep
+> by 4-5 seconds on my MacBookPro9,1.  Great work, looking forward to this
+> being respun and merged.
+> 
+> Tested-by: Lukas Wunner <lukas@wunner.de>
+>
+Thanks Lukas,
+I've sent the latest patch at:
+https://patchwork.kernel.org/patch/10150077/
+> Thanks,
+> 
+> Lukas
