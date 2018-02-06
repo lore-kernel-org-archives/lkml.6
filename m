@@ -1,251 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeBFQcO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:32:14 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39584 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752364AbeBFQcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:32:07 -0500
-Subject: Re: [PATCH 3/3] sched: update blocked load when newly idle
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-References: <20180201181041.GF2269@hirez.programming.kicks-ass.net>
- <1517905943-24528-1-git-send-email-vincent.guittot@linaro.org>
- <1517905943-24528-3-git-send-email-vincent.guittot@linaro.org>
- <2e84ae36-9fb7-2fc5-3acd-45b362b6fb94@arm.com>
- <CAKfTPtB4Te+CvCZx2HwuZKX-HOyCgJryFq8300dZTMCW=jtKqA@mail.gmail.com>
-From: Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <82f3151c-c806-fca0-47fa-8ddd6874b16a@arm.com>
-Date: Tue, 6 Feb 2018 16:32:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752633AbeBFQep (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:34:45 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2233 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752236AbeBFQei (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:34:38 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 06 Feb 2018 08:35:21 -0800
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v3 02/11] clk: tegra: retrieve regulator info from framework
+Date: Tue, 6 Feb 2018 18:34:03 +0200
+Message-ID: <1517934852-23255-3-git-send-email-pdeschrijver@nvidia.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtB4Te+CvCZx2HwuZKX-HOyCgJryFq8300dZTMCW=jtKqA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.21.24.170]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
+ (10.26.138.13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/06/2018 04:17 PM, Vincent Guittot wrote:
-> On 6 February 2018 at 15:32, Valentin Schneider
-> <valentin.schneider@arm.com> wrote:
->> Hi Vincent,
->>
->> On 02/06/2018 08:32 AM, Vincent Guittot wrote:
->>> When NEWLY_IDLE load balance is not triggered, we might need to update the
->>> blocked load anyway. We can kick an ilb so an idle CPU will take care of
->>> updating blocked load or we can try to update them locally before entering
->>> idle. In the latter case, we reuse part of the nohz_idle_balance.
->>>
->>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->>> ---
->>>  kernel/sched/fair.c | 102 ++++++++++++++++++++++++++++++++++++++++++----------
->>>  1 file changed, 84 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index 6998528..256defe 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -8829,6 +8829,9 @@ update_next_balance(struct sched_domain *sd, unsigned long *next_balance)
->>>               *next_balance = next;
->>>  }
->>>
->>> +static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags, enum cpu_idle_type idle);
->>> +static void kick_ilb(unsigned int flags);
->>> +
->>>  /*
->>>   * idle_balance is called by schedule() if this_cpu is about to become
->>>   * idle. Attempts to pull tasks from other CPUs.
->>> @@ -8863,12 +8866,26 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
->>>
->>>       if (this_rq->avg_idle < sysctl_sched_migration_cost ||
->>>           !this_rq->rd->overload) {
->>> +             unsigned long has_blocked = READ_ONCE(nohz.has_blocked);
->>> +             unsigned long next = READ_ONCE(nohz.next_blocked);
->>
->> Ditto on 'next' - there's next_balance referenced in here so it'd be nice to make clear which is which.
->>
->>> +
->>>               rcu_read_lock();
->>>               sd = rcu_dereference_check_sched_domain(this_rq->sd);
->>>               if (sd)
->>>                       update_next_balance(sd, &next_balance);
->>>               rcu_read_unlock();
->>>
->>> +             /*
->>> +              * Update blocked idle load if it has not been done for a
->>> +              * while. Try to do it locally before entering idle but kick a
->>> +              * ilb if it takes too much time and/or might delay next local
->>> +              * wake up
->>> +              */
->>> +             if (has_blocked && time_after_eq(jiffies, next) &&
->>> +                             (this_rq->avg_idle < sysctl_sched_migration_cost ||
->>> +                             !_nohz_idle_balance(this_rq, NOHZ_STATS_KICK, CPU_NEWLY_IDLE)))
->>
->> "this_rq->avg_idle < sysctl_sched_migration_cost" is used twice now, how about storing it in an "idle_too_short" variable ?
-> 
-> In fact it's already the 3rd time
-> Why do you want it to be stored in an "idle_too_short" variable ?
+The CVB table contains calibration data for the CPU DFLL based on
+process charaterization. The regulator step and offset parameters depend
+on the regulator supplying vdd-cpu , not on the specific Tegra SKU.
+Hence than hardcoding those regulator parameters in the CVB table,
+retrieve them from the regulator framework and store them as part of the
+tegra_dfll_soc_data struct.
 
-I meant that locally in idle_balance() to not write the same thing twice. TBH that's me being nitpicky (and liking explicit variables).
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-dfll.h               |  2 ++
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 42 +++++++++++++++++++++++++-----
+ drivers/clk/tegra/cvb.c                    | 16 +++++++++---
+ drivers/clk/tegra/cvb.h                    |  6 ++---
+ 4 files changed, 53 insertions(+), 13 deletions(-)
 
-> 
->>
->>> +                     kick_ilb(NOHZ_STATS_KICK);
->>> +
->>>               goto out;
->>>       }
->>>
->>> @@ -9393,30 +9410,24 @@ static void rebalance_domains(struct rq *rq, enum cpu_idle_type idle)
->>>
->>>  #ifdef CONFIG_NO_HZ_COMMON
->>>  /*
->>> - * In CONFIG_NO_HZ_COMMON case, the idle balance kickee will do the
->>> - * rebalancing for all the cpus for whom scheduler ticks are stopped.
->>> + * Internal function that runs load balance for all idle cpus. The load balance
->>> + * can be a simple update of blocked load or a complete load balance with
->>> + * tasks movement depending of flags.
->>> + * For newly idle mode, we abort the loop if it takes too much time and return
->>> + * false to notify that the loop has not be completed and a ilb should be kick.
->>>   */
->>> -static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>> +static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags, enum cpu_idle_type idle)
->>>  {
->>>       /* Earliest time when we have to do rebalance again */
->>>       unsigned long now = jiffies;
->>>       unsigned long next_balance = now + 60*HZ;
->>> -     unsigned long next_stats = now + msecs_to_jiffies(LOAD_AVG_PERIOD);
->>> +     bool has_blocked_load = false;
->>>       int update_next_balance = 0;
->>>       int this_cpu = this_rq->cpu;
->>> -     unsigned int flags;
->>>       int balance_cpu;
->>> +     int ret = false;
->>>       struct rq *rq;
->>> -
->>> -     if (!(atomic_read(nohz_flags(this_cpu)) & NOHZ_KICK_MASK))
->>> -             return false;
->>> -
->>> -     if (idle != CPU_IDLE) {
->>> -             atomic_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
->>> -             return false;
->>> -     }
->>> -
->>> -     flags = atomic_fetch_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
->>> +     u64 curr_cost = 0;
->>>
->>>       SCHED_WARN_ON((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
->>>
->>> @@ -9431,6 +9442,10 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>>       WRITE_ONCE(nohz.has_blocked, 0);
->>>
->>>       for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
->>> +             u64 t0, domain_cost;
->>> +
->>> +             t0 = sched_clock_cpu(this_cpu);
->>> +
->>>               if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
->>>                       continue;
->>>
->>> @@ -9444,6 +9459,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>>                       goto abort;
->>>               }
->>>
->>> +             /*
->>> +              * If the update is done while CPU becomes idle, we abort
->>> +              * the update when its cost is higher than the average idle
->>> +              * time in orde to not delay a possible wake up.
->>> +              */
->>> +             if (idle == CPU_NEWLY_IDLE && this_rq->avg_idle < curr_cost) {
->>> +                     has_blocked_load = true;
->>> +                     goto abort;
->>> +             }
->>> +
->>>               rq = cpu_rq(balance_cpu);
->>>
->>>               update_blocked_averages(rq->cpu);
->>> @@ -9456,10 +9481,10 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>>               if (time_after_eq(jiffies, rq->next_balance)) {
->>>                       struct rq_flags rf;
->>>
->>> -                     rq_lock_irq(rq, &rf);
->>> +                     rq_lock_irqsave(rq, &rf);
->>>                       update_rq_clock(rq);
->>>                       cpu_load_update_idle(rq);
->>> -                     rq_unlock_irq(rq, &rf);
->>> +                     rq_unlock_irqrestore(rq, &rf);
->>>
->>>                       if (flags & NOHZ_BALANCE_KICK)
->>>                               rebalance_domains(rq, CPU_IDLE);
->>> @@ -9469,15 +9494,27 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>>                       next_balance = rq->next_balance;
->>>                       update_next_balance = 1;
->>>               }
->>> +
->>> +             domain_cost = sched_clock_cpu(this_cpu) - t0;
->>> +             curr_cost += domain_cost;
->>> +
->>> +     }
->>> +
->>> +     /* Newly idle CPU doesn't need an update */
->>> +     if (idle != CPU_NEWLY_IDLE) {
->>> +             update_blocked_averages(this_cpu);
->>> +             has_blocked_load |= this_rq->has_blocked_load;
->>>       }
->>>
->>> -     update_blocked_averages(this_cpu);
->>>       if (flags & NOHZ_BALANCE_KICK)
->>>               rebalance_domains(this_rq, CPU_IDLE);
->>>
->>>       WRITE_ONCE(nohz.next_blocked,
->>>               now + msecs_to_jiffies(LOAD_AVG_PERIOD));
->>>
->>> +     /* The full idle balance loop has been done */
->>> +     ret = true;
->>> +
->>>  abort:
->>>       /* There is still blocked load, enable periodic update */
->>>       if (has_blocked_load)
->>> @@ -9491,6 +9528,35 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>>       if (likely(update_next_balance))
->>>               nohz.next_balance = next_balance;
->>>
->>> +     return ret;
->>> +}
->>> +
->>> +/*
->>> + * In CONFIG_NO_HZ_COMMON case, the idle balance kickee will do the
->>> + * rebalancing for all the cpus for whom scheduler ticks are stopped.
->>> + */
->>> +static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>> +{
->>> +     int this_cpu = this_rq->cpu;
->>> +     unsigned int flags;
->>> +
->>> +     if (!(atomic_read(nohz_flags(this_cpu)) & NOHZ_KICK_MASK))
->>> +             return false;
->>> +
->>> +     if (idle != CPU_IDLE) {
->>> +             atomic_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
->>> +             return false;
->>> +     }
->>> +
->>> +     /*
->>> +      * barrier, pairs with nohz_balance_enter_idle(), ensures ...
->>> +      */
->>> +     flags = atomic_fetch_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
->>> +     if (!(flags & NOHZ_KICK_MASK))
->>> +             return false;
->>> +
->>> +     _nohz_idle_balance(this_rq, flags, idle);
->>> +
->>>       return true;
->>>  }
->>>  #else
->>>
+diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+index 83352c8..e7cbc5b 100644
+--- a/drivers/clk/tegra/clk-dfll.h
++++ b/drivers/clk/tegra/clk-dfll.h
+@@ -21,6 +21,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/reset.h>
+ #include <linux/types.h>
++#include "cvb.h"
+ 
+ /**
+  * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFLL driver
+@@ -35,6 +36,7 @@ struct tegra_dfll_soc_data {
+ 	struct device *dev;
+ 	unsigned long max_freq;
+ 	const struct cvb_table *cvb;
++	struct rail_alignment alignment;
+ 
+ 	void (*init_clock_trimmers)(void);
+ 	void (*set_clock_trimmers_high)(void);
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 269d359..e2dbb79 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -22,6 +22,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
+ #include <soc/tegra/fuse.h>
+ 
+ #include "clk.h"
+@@ -42,9 +43,6 @@
+ 		.process_id = -1,
+ 		.min_millivolts = 900,
+ 		.max_millivolts = 1260,
+-		.alignment = {
+-			.step_uv = 10000, /* 10mV */
+-		},
+ 		.speedo_scale = 100,
+ 		.voltage_scale = 1000,
+ 		.entries = {
+@@ -82,6 +80,34 @@
+ 	},
+ };
+ 
++static int get_alignment_from_regulator(struct device *dev,
++					struct rail_alignment *align)
++{
++	int min_uV, max_uV, n_voltages, ret;
++	struct regulator *reg;
++
++	reg = devm_regulator_get(dev, "vdd-cpu");
++	if (IS_ERR(reg))
++		return PTR_ERR(reg);
++
++	ret = regulator_get_constraint_voltages(reg, &min_uV, &max_uV);
++	if (!ret)
++		align->offset_uv = min_uV;
++	else
++		return ret;
++
++	align->step_uv = regulator_get_linear_step(reg);
++	if (!align->step_uv && !ret) {
++		n_voltages = regulator_count_voltages(reg);
++		if (n_voltages > 1)
++			align->step_uv = (max_uV - min_uV) / (n_voltages - 1);
++	}
++
++	devm_regulator_put(reg);
++
++	return 0;
++}
++
+ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ {
+ 	int process_id, speedo_id, speedo_value, err;
+@@ -108,10 +134,14 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	soc->max_freq = cpu_max_freq_table[speedo_id];
++	err = get_alignment_from_regulator(&pdev->dev, &soc->alignment);
++	if (err < 0)
++		return err;
+ 
+-	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
+-					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
+-					   process_id, speedo_id, speedo_value,
++	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
++					   fcpu_data->cpu_cvb_tables_size,
++					   &soc->alignment, process_id,
++					   speedo_id, speedo_value,
+ 					   soc->max_freq);
+ 	if (IS_ERR(soc->cvb)) {
+ 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
+diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
+index da9e8e7..2aa9639 100644
+--- a/drivers/clk/tegra/cvb.c
++++ b/drivers/clk/tegra/cvb.c
+@@ -62,11 +62,17 @@ static int round_voltage(int mv, const struct rail_alignment *align, int up)
+ }
+ 
+ static int build_opp_table(struct device *dev, const struct cvb_table *table,
++			   struct rail_alignment *align,
+ 			   int speedo_value, unsigned long max_freq)
+ {
+-	const struct rail_alignment *align = &table->alignment;
+ 	int i, ret, dfll_mv, min_mv, max_mv;
+ 
++	if (!align->step_uv)
++		return -EINVAL;
++
++	if (!align->offset_uv)
++		return -EINVAL;
++
+ 	min_mv = round_voltage(table->min_millivolts, align, UP);
+ 	max_mv = round_voltage(table->max_millivolts, align, DOWN);
+ 
+@@ -109,8 +115,9 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
+  */
+ const struct cvb_table *
+ tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
+-			size_t count, int process_id, int speedo_id,
+-			int speedo_value, unsigned long max_freq)
++			size_t count, struct rail_alignment *align,
++			int process_id, int speedo_id, int speedo_value,
++			unsigned long max_freq)
+ {
+ 	size_t i;
+ 	int ret;
+@@ -124,7 +131,8 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
+ 		if (table->process_id != -1 && table->process_id != process_id)
+ 			continue;
+ 
+-		ret = build_opp_table(dev, table, speedo_value, max_freq);
++		ret = build_opp_table(dev, table, align, speedo_value,
++				      max_freq);
+ 		return ret ? ERR_PTR(ret) : table;
+ 	}
+ 
+diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
+index c1f0779..bcf15a0 100644
+--- a/drivers/clk/tegra/cvb.h
++++ b/drivers/clk/tegra/cvb.h
+@@ -49,7 +49,6 @@ struct cvb_table {
+ 
+ 	int min_millivolts;
+ 	int max_millivolts;
+-	struct rail_alignment alignment;
+ 
+ 	int speedo_scale;
+ 	int voltage_scale;
+@@ -59,8 +58,9 @@ struct cvb_table {
+ 
+ const struct cvb_table *
+ tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
+-			size_t count, int process_id, int speedo_id,
+-			int speedo_value, unsigned long max_freq);
++			size_t count, struct rail_alignment *align,
++			int process_id, int speedo_id, int speedo_value,
++			unsigned long max_freq);
+ void tegra_cvb_remove_opp_table(struct device *dev,
+ 				const struct cvb_table *table,
+ 				unsigned long max_freq);
+-- 
+1.9.1
