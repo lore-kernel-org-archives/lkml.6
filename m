@@ -1,166 +1,162 @@
-Return-Path: <ulfalizer@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518048549; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AH8x225WJZ6omiLTD9p5bBmzl3stJtMAf/LUqqB0BbIcnHw42TTTXFLmg6iWNe+9WcUu1k+CD7Z/
+ARC-Seal: i=1; a=rsa-sha256; t=1517877367; cv=none;
         d=google.com; s=arc-20160816;
-        b=q7QCx+omEKVPlFE1PKywlYJt+ODn+xvSFfIjujdG00ifkkW8r6U++zVE9gmwEXPMCU
-         OKK7otJ7rhi73CXngK9NdzCOBNtvV0Ee+EFQu6ooEYA5T0qdQIsQfSr4ad9mJwwjW3g9
-         KWDfc05ogG4G/S9rd87/+IpjBGin7BB9GBFZSeWEqcmRbFlQ4cqcxvjipD24DAWASy1f
-         u9qawYxY+XhfAMfpMz6AjT49tSZQ7XoKiMroMAfUgOMkaqhmDivxDL4L5XCkFBA9CgP4
-         pvIbN4MGbd79NNl0YGKWCNKw4fGCp7VQ5HjZwib3QBkoWPnWXwHEIIkEHKTnhthbgL4e
-         iLGw==
+        b=NmUDJXUF/OhVrPMkSyP/bxQneQ5tmHqD2577eu6HFYTNR+gap+luytK+GQMF6zH6b2
+         YnXHY51pj6peZRTydNOVjdcECzn4ex1lCVCqQS44GLB9a2UJtibOgu+EOx2neKWtT5r4
+         VtKT/dvg2DTwR24uVYwtL9gAihhUqeJCCC0k8WSlt9k2lXddEqlwLiegulwwuYJxVl+b
+         fTgZOeTiRYoIGQbhzVUcXDsc/5CtOMKiIRreG8138dlFc+sR1X0jXprb8bKpyrFDOJV4
+         RAh57WIfNxiE3uq/Db70DtwIhEj4ljfcBKRwXGUpTf+otpB6aY++enKUv8iG94+KIwWh
+         RVxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=v118VcUwLFs3DMgiDhxltFyw1kThWSYaahq7m5clhfY=;
-        b=xvdLkyXVgKbbHga1eIogHtKSPDZwG/IYSLHKZhBaJuJWtM5Z3Qm+4L2RyP/vsw/iA7
-         X0pgESHwhfhDf/712biw/r24Ow6v2h5H+wsBBn4gPo4KnBCLk/MKBLAzkPLZ4A4oXc3J
-         QJ89y4xK/cLrVVDOu6bQdXq+PESWHImPbGBJ1z4bKod6HWbD3KdfuRQFxJvuY7xOX5g3
-         DeT8JdkQKtNZ5BF+/bOBfau/N61EduOvJD0cmEwKtDtjSlOztYi9R99FnQ7D4FLbZVMB
-         65L7DLW67j9eh4rHc2qOVQhSRy1fO8JoCXGauw8zl9mjK3Ev5wwVnWou2+d5vV5t6Yhz
-         mCmA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=0tMiHBIy1G322QUF9DUnzHnXWHn+vjfiFlPgF9g/e+U=;
+        b=g4G7JiAsLTKMIZ/0L0y51ocz0BsQbBTQOhn5HzK9UFZnRko+nALQmZNTqcFcwyVoCV
+         kCTI3FM/MgSF0udE6jk8rhBZgCOu80yt+nNdL6BsfraVw9SuIPIGRveasOJsNhHg8uQ3
+         PVEi/KH0Ib0FDsFH3KP+MZFTpRdN4jLmjZwIgSfuVeA/gptT27TvC6EZG2xjHgtJPGjT
+         JtRYJLGUrjn5sO6g6//9XQGqOoIPDYQwMpDXQRiUCwn6mF4zOBq6prQVA9/Ir++rRUa9
+         A2dZGqFsarJoSLfLomFtwiA1KZrkojX9z3pEOiSlS5jsZ+D9zCSeqrLqS2pV3K2TKSxm
+         P60Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XRWlg44X;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=uji2Pv9h;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XRWlg44X;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227T8cdpRt8/72CZCu/XQKVfkzljpBkuNk9CdNDDtLmB5NbsPNoBGD4CcrTDOh3hV8r7rxml7ZXGK98fTCS98ps=
-MIME-Version: 1.0
-In-Reply-To: <1517877294-4826-11-git-send-email-yamada.masahiro@socionext.com>
-References: <1517877294-4826-1-git-send-email-yamada.masahiro@socionext.com> <1517877294-4826-11-git-send-email-yamada.masahiro@socionext.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Thu, 8 Feb 2018 01:09:09 +0100
-Message-ID: <CAFkk2KSnXQXjPRStKUk7QCoGuXGrD3HqMUfL9aurkia3_3kYEA@mail.gmail.com>
-Subject: Re: [PATCH 10/14] kconfig: test: check if new symbols in choice are asked
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
-	Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Michal Marek <michal.lkml@markovi.net>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=uji2Pv9h;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w160ZHAo011351
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 09/14] kconfig: test: test automatic submenu creation
+Date: Tue,  6 Feb 2018 09:34:49 +0900
+Message-Id: <1517877294-4826-10-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517877294-4826-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1517877294-4826-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591609778323035647?=
-X-GMAIL-MSGID: =?utf-8?q?1591789276341071591?=
+X-GMAIL-THRID: =?utf-8?q?1591609778638341632?=
+X-GMAIL-MSGID: =?utf-8?q?1591609778638341632?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 6, 2018 at 1:34 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> If new choice values are added with new dependency, and they become
-> visible during user configuration, oldconfig should recognize them
-> as (NEW), and ask the user for choice.
->
-> This issue was fixed by commit 5d09598d488f ("kconfig: fix new choices
-> being skipped upon config update").
->
-> This is a subtle corner case.  Add a test case to avoid breakage.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
->  scripts/kconfig/tests/new_choice_with_dep/Kconfig  | 37 ++++++++++++++++++++++
->  .../kconfig/tests/new_choice_with_dep/__init__.py  | 14 ++++++++
->  scripts/kconfig/tests/new_choice_with_dep/config   |  3 ++
->  .../tests/new_choice_with_dep/expected_stdout      | 10 ++++++
->  4 files changed, 64 insertions(+)
->  create mode 100644 scripts/kconfig/tests/new_choice_with_dep/Kconfig
->  create mode 100644 scripts/kconfig/tests/new_choice_with_dep/__init__.py
->  create mode 100644 scripts/kconfig/tests/new_choice_with_dep/config
->  create mode 100644 scripts/kconfig/tests/new_choice_with_dep/expected_stdout
->
-> diff --git a/scripts/kconfig/tests/new_choice_with_dep/Kconfig b/scripts/kconfig/tests/new_choice_with_dep/Kconfig
-> new file mode 100644
-> index 0000000..53ef1b8
-> --- /dev/null
-> +++ b/scripts/kconfig/tests/new_choice_with_dep/Kconfig
-> @@ -0,0 +1,37 @@
-> +config A
-> +       bool "A"
-> +       help
-> +         This is a new symbol.
-> +
-> +choice
-> +       prompt "Choice ?"
-> +       depends on A
-> +       help
-> +         "depends on A" has been newly added.
-> +
-> +config CHOICE_B
-> +       bool "Choice B"
-> +
-> +config CHOICE_C
-> +       bool "Choice C"
-> +       help
-> +         This is a new symbol, so should be asked.
-> +
-> +endchoice
-> +
-> +choice
-> +       prompt "Choice2 ?"
-> +
-> +config CHOICE_D
-> +       bool "Choice D"
-> +
-> +config CHOICE_E
-> +       bool "Choice E"
-> +
-> +config CHOICE_F
-> +       bool "Choice F"
-> +       depends on A
-> +       help
-> +         This is a new symbol, so should be asked.
-> +
-> +endchoice
-> diff --git a/scripts/kconfig/tests/new_choice_with_dep/__init__.py b/scripts/kconfig/tests/new_choice_with_dep/__init__.py
-> new file mode 100644
-> index 0000000..4306ccf
-> --- /dev/null
-> +++ b/scripts/kconfig/tests/new_choice_with_dep/__init__.py
-> @@ -0,0 +1,14 @@
-> +"""
-> +Ask new choice values when they become visible
-> +==============================================
-> +
-> +If new choice values are added with new dependency, and they become
-> +visible during user configuration, oldconfig should recognize them
-> +as (NEW), and ask the user for choice.
-> +
-> +Related Linux commit: 5d09598d488f081e3be23f885ed65cbbe2d073b5
-> +"""
-> +
-> +def test(conf):
-> +    assert conf.oldconfig('config', 'y') == 0
-> +    assert conf.stdout_contains('expected_stdout')
-> diff --git a/scripts/kconfig/tests/new_choice_with_dep/config b/scripts/kconfig/tests/new_choice_with_dep/config
-> new file mode 100644
-> index 0000000..47ef95d
-> --- /dev/null
-> +++ b/scripts/kconfig/tests/new_choice_with_dep/config
-> @@ -0,0 +1,3 @@
-> +CONFIG_CHOICE_B=y
-> +# CONFIG_CHOICE_D is not set
-> +CONFIG_CHOICE_E=y
-> diff --git a/scripts/kconfig/tests/new_choice_with_dep/expected_stdout b/scripts/kconfig/tests/new_choice_with_dep/expected_stdout
-> new file mode 100644
-> index 0000000..358d5cf
-> --- /dev/null
-> +++ b/scripts/kconfig/tests/new_choice_with_dep/expected_stdout
-> @@ -0,0 +1,10 @@
-> +A (A) [N/y/?] (NEW)
-> +  Choice ?
-> +  > 1. Choice B (CHOICE_B)
-> +    2. Choice C (CHOICE_C) (NEW)
-> +  choice[1-2?]:
-> +Choice2 ?
-> +  1. Choice D (CHOICE_D)
-> +> 2. Choice E (CHOICE_E)
-> +  3. Choice F (CHOICE_F) (NEW)
-> +choice[1-3?]:
-> --
-> 2.7.4
->
+If a symbols has dependency on the preceding symbol, the menu entry
+should become the submenu of the preceding one, and displayed with
+deeper indentation.
 
-Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+This is done by restructuring the menu tree in menu_finalize().
+It is a bit complicated computation, so let's add a test case.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ .../kconfig/tests/auto_submenu_creation/Kconfig    | 50 ++++++++++++++++++++++
+ .../tests/auto_submenu_creation/__init__.py        | 12 ++++++
+ .../tests/auto_submenu_creation/expected_stdout    | 10 +++++
+ 3 files changed, 72 insertions(+)
+ create mode 100644 scripts/kconfig/tests/auto_submenu_creation/Kconfig
+ create mode 100644 scripts/kconfig/tests/auto_submenu_creation/__init__.py
+ create mode 100644 scripts/kconfig/tests/auto_submenu_creation/expected_stdout
+
+diff --git a/scripts/kconfig/tests/auto_submenu_creation/Kconfig b/scripts/kconfig/tests/auto_submenu_creation/Kconfig
+new file mode 100644
+index 0000000..9e11502
+--- /dev/null
++++ b/scripts/kconfig/tests/auto_submenu_creation/Kconfig
+@@ -0,0 +1,50 @@
++config A
++	bool "A"
++	default y
++
++config A0
++	bool "A0"
++	depends on A
++	default y
++	help
++	  This depends on A, so should be a submenu of A.
++
++config A0_0
++	bool "A1_0"
++	depends on A0
++	help
++	  Submenus are created recursively.
++	  This should be a submenu of A0.
++
++config A1
++	bool "A1"
++	depends on A
++	default y
++	help
++	  This should line up with A0.
++
++choice
++	prompt "choice"
++	depends on A1
++	help
++	  Choice should become a submenu as well.
++
++config A1_0
++	bool "A1_0"
++
++config A1_1
++	bool "A1_1"
++
++endchoice
++
++config B
++	bool "B"
++	help
++	  This is independent of A.
++
++config C
++	bool "C"
++	depends on A
++	help
++	  This depends on A, but not a consecutive item, so should not
++	  be a submenu.
+diff --git a/scripts/kconfig/tests/auto_submenu_creation/__init__.py b/scripts/kconfig/tests/auto_submenu_creation/__init__.py
+new file mode 100644
+index 0000000..dda866d
+--- /dev/null
++++ b/scripts/kconfig/tests/auto_submenu_creation/__init__.py
+@@ -0,0 +1,12 @@
++"""
++Create submenu for symbols that depend on the preceding one
++===========================================================
++
++If a symbols has dependency on the preceding symbol, the menu entry
++should become the submenu of the preceding one, and displayed with
++deeper indentation.
++"""
++
++def test(conf):
++    assert conf.oldaskconfig() == 0
++    assert conf.stdout_contains('expected_stdout')
+diff --git a/scripts/kconfig/tests/auto_submenu_creation/expected_stdout b/scripts/kconfig/tests/auto_submenu_creation/expected_stdout
+new file mode 100644
+index 0000000..bf5236f
+--- /dev/null
++++ b/scripts/kconfig/tests/auto_submenu_creation/expected_stdout
+@@ -0,0 +1,10 @@
++A (A) [Y/n/?] (NEW) 
++  A0 (A0) [Y/n/?] (NEW) 
++    A1_0 (A0_0) [N/y/?] (NEW) 
++  A1 (A1) [Y/n/?] (NEW) 
++    choice
++    > 1. A1_0 (A1_0) (NEW)
++      2. A1_1 (A1_1) (NEW)
++    choice[1-2?]: 
++B (B) [N/y/?] (NEW) 
++C (C) [N/y/?] (NEW) 
+-- 
+2.7.4
