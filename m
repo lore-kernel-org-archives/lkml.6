@@ -1,75 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752898AbeBFS0b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:26:31 -0500
-Received: from mga17.intel.com ([192.55.52.151]:46567 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752702AbeBFS0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:26:22 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,469,1511856000";
-   d="scan'208";a="15495016"
-Date: Tue, 6 Feb 2018 20:26:17 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        x86 <x86@kernel.org>, Jiri Koshina <jikos@kernel.org>
-Subject: Re: [PATCH] x86: PM: Make APM idle driver initialize polling state
-Message-ID: <20180206182617.GQ5453@intel.com>
-References: <20180122162747.19103-1-ville.syrjala@linux.intel.com>
- <36158666.hf5grRdGNf@aspire.rjw.lan>
- <20180206163134.GO5453@intel.com>
- <1862424.1bTBpgPzTf@aspire.rjw.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1862424.1bTBpgPzTf@aspire.rjw.lan>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+        id S1753105AbeBFS0l (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:26:41 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752761AbeBFS00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 13:26:26 -0500
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 12/17] perf tools: Rename __map_groups__fixup_end to map_groups__fixup_end
+Date: Tue,  6 Feb 2018 19:18:08 +0100
+Message-Id: <20180206181813.10943-13-jolsa@kernel.org>
+In-Reply-To: <20180206181813.10943-1-jolsa@kernel.org>
+References: <20180206181813.10943-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 07:02:58PM +0100, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Update the APM driver overlooked by commit 1b39e3f813b4 (cpuidle: Make
-> drivers initialize polling state) to initialize the polling state like
-> the other cpuidle drivers modified by that commit to prevent cpuidle
-> from crashing.
-> 
-> Fixes: 1b39e3f813b4 (cpuidle: Make drivers initialize polling state)
-> Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Tested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+There's no need to keep the '__' prefix now when there's
+map_groups__fixup_end function gone.
 
-And maybe?
+Link: http://lkml.kernel.org/n/tip-xq9wpm97spnpaxfjhaz1a03n@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/util/machine.c    | 2 +-
+ tools/perf/util/symbol-elf.c | 2 +-
+ tools/perf/util/symbol.c     | 2 +-
+ tools/perf/util/symbol.h     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-Cc: <stable@vger.kernel.org> # v4.14+
-
-> ---
->  arch/x86/kernel/apm_32.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> Index: linux-pm/arch/x86/kernel/apm_32.c
-> ===================================================================
-> --- linux-pm.orig/arch/x86/kernel/apm_32.c
-> +++ linux-pm/arch/x86/kernel/apm_32.c
-> @@ -2389,6 +2389,7 @@ static int __init apm_init(void)
->  	if (HZ != 100)
->  		idle_period = (idle_period * HZ) / 100;
->  	if (idle_threshold < 100) {
-> +		cpuidle_poll_state_init(&apm_idle_driver);
->  		if (!cpuidle_register_driver(&apm_idle_driver))
->  			if (cpuidle_register_device(&apm_cpuidle_device))
->  				cpuidle_unregister_driver(&apm_idle_driver);
-> 
-
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 279eeb87c594..441d09d97f3d 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1005,7 +1005,7 @@ int __machine__load_kallsyms(struct machine *machine, const char *filename,
+ 		 * kernel, with modules between them, fixup the end of all
+ 		 * sections.
+ 		 */
+-		__map_groups__fixup_end(&machine->kmaps, type);
++		map_groups__fixup_end(&machine->kmaps, type);
+ 	}
+ 
+ 	return ret;
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 2de770511e70..6d1e4dc2709f 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1124,7 +1124,7 @@ int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+ 			 * We need to fixup this here too because we create new
+ 			 * maps here, for things like vsyscall sections.
+ 			 */
+-			__map_groups__fixup_end(kmaps, map->type);
++			map_groups__fixup_end(kmaps, map->type);
+ 		}
+ 	}
+ 	err = nr;
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index dcb81176669a..fe15dafaef66 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -228,7 +228,7 @@ void symbols__fixup_end(struct rb_root *symbols)
+ 		curr->end = roundup(curr->start, 4096) + 4096;
+ }
+ 
+-void __map_groups__fixup_end(struct map_groups *mg, enum map_type type)
++void map_groups__fixup_end(struct map_groups *mg, enum map_type type)
+ {
+ 	struct maps *maps = &mg->maps[type];
+ 	struct map *next, *curr;
+diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+index 0563f33c1eb3..cf955f1d1718 100644
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -316,7 +316,7 @@ void __symbols__insert(struct rb_root *symbols, struct symbol *sym, bool kernel)
+ void symbols__insert(struct rb_root *symbols, struct symbol *sym);
+ void symbols__fixup_duplicate(struct rb_root *symbols);
+ void symbols__fixup_end(struct rb_root *symbols);
+-void __map_groups__fixup_end(struct map_groups *mg, enum map_type type);
++void map_groups__fixup_end(struct map_groups *mg, enum map_type type);
+ 
+ typedef int (*mapfn_t)(u64 start, u64 len, u64 pgoff, void *data);
+ int file__read_maps(int fd, bool exe, mapfn_t mapfn, void *data,
 -- 
-Ville Syrjälä
-Intel OTC
+2.13.6
