@@ -1,125 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeBFFvY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 00:51:24 -0500
-Received: from ozlabs.org ([103.22.144.67]:37751 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750841AbeBFFvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 00:51:15 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Ram Pai <linuxram@us.ibm.com>, kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, mingo@redhat.com, akpm@linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
-        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
-Subject: Re: [PATCH v11 3/3] mm, x86: display pkey in smaps only if arch supports pkeys
-In-Reply-To: <20180202072139.GD5411@ram.oc3035372033.ibm.com>
-References: <1517341452-11924-4-git-send-email-linuxram@us.ibm.com> <201802021225.JPjLbdCs%fengguang.wu@intel.com> <20180202072139.GD5411@ram.oc3035372033.ibm.com>
-Date: Tue, 06 Feb 2018 16:51:12 +1100
-Message-ID: <878tc64qen.fsf@concordia.ellerman.id.au>
+        id S1752179AbeBFFz4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 00:55:56 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56700 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbeBFFzv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 00:55:51 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9ABB56014B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH 05/15] ARM: dts: ipq4019: Add ipq4019-ap-dk01-c2 board
+ file
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: mark.rutland@arm.com, robh@kernel.org, devicetree@vger.kernel.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, linux@armlinux.org.uk,
+        bjorn.andersson@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, linux-arm-msm-owner@vger.kernel.org,
+        linux-soc@vger.kernel.org, sboyd@codeaurora.org,
+        linux-kernel@vger.kernel.org
+References: <1517202689-14212-1-git-send-email-sricharan@codeaurora.org>
+ <1517202689-14212-6-git-send-email-sricharan@codeaurora.org>
+ <9afb20e560a7ebbcefcb801e7447a983@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <508a5777-a009-15d9-6d5a-bed1b1bfa1e7@codeaurora.org>
+Date: Tue, 6 Feb 2018 11:25:43 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <9afb20e560a7ebbcefcb801e7447a983@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ram Pai <linuxram@us.ibm.com> writes:
+Hi Abhishek,
 
-> On Fri, Feb 02, 2018 at 12:27:27PM +0800, kbuild test robot wrote:
->> Hi Ram,
->> 
->> Thank you for the patch! Yet something to improve:
->> 
->> [auto build test ERROR on linus/master]
->> [also build test ERROR on v4.15 next-20180201]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->> 
->> url:    https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_0day-2Dci_linux_commits_Ram-2DPai_mm-2Dx86-2Dpowerpc-2DEnhancements-2Dto-2DMemory-2DProtection-2DKeys_20180202-2D120004&d=DwIBAg&c=jf_iaSHvJObTbx-siA1ZOg&r=m-UrKChQVkZtnPpjbF6YY99NbT8FBByQ-E-ygV8luxw&m=Fv3tEHet1bTUrDjOnzEhXvGM_4tGlkYhJHPBnWNWgVA&s=Z1W6CV2tfPmLYU8lVv1oDRl2cAyQA76KE2P064A2CQY&e=
->> config: x86_64-randconfig-x005-201804 (attached as .config)
->> compiler: gcc-7 (Debian 7.2.0-12) 7.2.1 20171025
->> reproduce:
->>         # save the attached .config to linux build tree
->>         make ARCH=x86_64 
->> 
->> All error/warnings (new ones prefixed by >>):
->> 
->>    In file included from arch/x86/include/asm/mmu_context.h:8:0,
->>                     from arch/x86/events/core.c:36:
->> >> include/linux/pkeys.h:16:23: error: expected identifier or '(' before numeric constant
->>     #define vma_pkey(vma) 0
->>                           ^
->> >> arch/x86/include/asm/mmu_context.h:298:19: note: in expansion of macro 'vma_pkey'
->>     static inline int vma_pkey(struct vm_area_struct *vma)
->>                       ^~~~~~~~
->> 
->> vim +16 include/linux/pkeys.h
->> 
->>      7	
->>      8	#ifdef CONFIG_ARCH_HAS_PKEYS
->>      9	#include <asm/pkeys.h>
->>     10	#else /* ! CONFIG_ARCH_HAS_PKEYS */
->>     11	#define arch_max_pkey() (1)
->>     12	#define execute_only_pkey(mm) (0)
->>     13	#define arch_override_mprotect_pkey(vma, prot, pkey) (0)
->>     14	#define PKEY_DEDICATED_EXECUTE_ONLY 0
->>     15	#define ARCH_VM_PKEY_FLAGS 0
->>   > 16	#define vma_pkey(vma) 0
->
-> Oops. Thanks for catching the issue. The following fix will resolve the error.
->
-> diff --git a/arch/x86/include/asm/mmu_context.h
-> b/arch/x86/include/asm/mmu_context.h
-> index 6d16d15..c1aeb19 100644
-> --- a/arch/x86/include/asm/mmu_context.h
-> +++ b/arch/x86/include/asm/mmu_context.h
-> @@ -238,11 +238,6 @@ static inline int vma_pkey(struct vm_area_struct
-> 		*vma)
->  
->         return (vma->vm_flags & vma_pkey_mask) >> VM_PKEY_SHIFT;
-> }
-> -#else
-> -static inline int vma_pkey(struct vm_area_struct *vma)
-> -{
-> -       return 0;
-> -}
->  #endif
+On 2/3/2018 4:25 PM, Abhishek Sahu wrote:
+> On 2018-01-29 10:41, Sricharan R wrote:
+>> The board has a spi-nand interface on spi0 bus chipselect1.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  arch/arm/boot/dts/Makefile                      |  1 +
+>>  arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts | 25
+>> +++++++++++++++++++++++++
+>>  2 files changed, 26 insertions(+)
+>>  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts
+>>
+>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>> index d0381e9..21ed56d 100644
+>> --- a/arch/arm/boot/dts/Makefile
+>> +++ b/arch/arm/boot/dts/Makefile
+>> @@ -724,6 +724,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+>>      qcom-apq8084-ifc6540.dtb \
+>>      qcom-apq8084-mtp.dtb \
+>>      qcom-ipq4019-ap.dk01.1-c1.dtb \
+>> +    qcom-ipq4019-ap.dk01.1-c2.dtb \
+>>      qcom-ipq8064-ap148.dtb \
+>>      qcom-msm8660-surf.dtb \
+>>      qcom-msm8960-cdp.dtb \
+>> diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts
+>> b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts
+>> new file mode 100644
+>> index 0000000..e3442da
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c2.dts
+>> @@ -0,0 +1,25 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Copyright (c) 2017, The Linux Foundation. All rights reserved.
+>> +
+>> +#include "qcom-ipq4019-ap.dk01.1.dtsi"
+>> +
+>> +/ {
+>> +    model = "Qualcomm Technologies, Inc. IPQ40xx/AP-DK01.1-C2";
+> 
+>  s/IPQ40xx/IPQ4019
+> 
+ ok
 
-That's not working for me (i386_defconfig):
+>> +
+>> +    soc {
+>> +        spi_0: spi@78b5000 { /* BLSP1 QUP1 */
+>> +            status = "ok";
+>> +            cs-gpios = <&tlmm 54 0>, <&tlmm 59 0>;
+> 
+>  the base dk01 file has pinmux for 54 only.
+>  for 59 pin, we need to add pinmux entry also.
+> 
 
-  In file included from ../include/linux/pkeys.h:6:0,
-                   from ../arch/x86/kernel/fpu/xstate.c:9:
-  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
-  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
-    return __pkru_allows_pkey(vma_pkey(vma), write);
-                              ^~~~~~~~
-  In file included from ../include/linux/pkeys.h:6:0,
-                   from ../fs/proc/task_mmu.c:21:
-  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
-  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
-    return __pkru_allows_pkey(vma_pkey(vma), write);
-                              ^~~~~~~~
-  In file included from ../include/linux/pkeys.h:6:0,
-                   from ../mm/mmap.c:46:
-  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
-  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
-    return __pkru_allows_pkey(vma_pkey(vma), write);
-                              ^~~~~~~~
-  In file included from ../include/linux/pkeys.h:6:0,
-                   from ../mm/mprotect.c:27:
-  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
-  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
-    return __pkru_allows_pkey(vma_pkey(vma), write);
-                              ^~~~~~~~
-  In file included from ../include/linux/pkeys.h:6:0,
-                   from ../arch/x86/kernel/fpu/core.c:15:
-  ../arch/x86/include/asm/mmu_context.h: In function ‘arch_vma_access_permitted’:
-  ../arch/x86/include/asm/mmu_context.h:276:28: error: implicit declaration of function ‘vma_pkey’ [-Werror=implicit-function-declaration]
-    return __pkru_allows_pkey(vma_pkey(vma), write);
-                              ^~~~~~~~
+ ok. btw, infact think that 59 should be removed.
 
-cheers
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
