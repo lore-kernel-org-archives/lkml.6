@@ -1,118 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752590AbeBFCpD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:45:03 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:21519 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752264AbeBFCoy (ORCPT
+        id S1752527AbeBFCqB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:46:01 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:32935 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752187AbeBFCpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:44:54 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180206024451epoutp0348a338a646d4ae1e179c0bf185a6298b~QnHLcVLx61630816308epoutp03C
-X-AuditID: b6c32a35-879ff70000001031-06-5a7916a0f0f0
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A7916A2.7010307@samsung.com>
-Date: Tue, 06 Feb 2018 11:44:50 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-In-reply-to: <20180205142230.9755-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkk+LIzCtJLcpLzFFi42LZdlhTX3eBWGWUwZVj2hYbZ6xntdj0+Bqr
-        xceee6wWl3fNYbOYcX4fk8XaI3fZLS6ecrU4/Kad1eLHmW4WB06P9zda2T0u9/UyeWxeUu/R
-        t2UVo8fnTXIBrFGpNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+
-        AbpumTlA5ygplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJWiDQ2N9AwNzPWMjIz0TIxjrYxM
-        gUoSUjO+/b3GXvCZt+LrnZ9MDYxzuLsYOTkkBEwkfryYyQhiCwnsYJR4vt2hi5ELyP7OKPHx
-        6lI2mKLL/2ewQCQ2MEo035nABJLgFRCU+DH5HlCCg4NZQF7iyKVskDCzgKbE1t3r2SGG3mOU
-        OHSOF6SEV0BL4vAxRZAwi4CqxPn311lBbDag8P4XN8BW8QsoSlz98RjsHlGBCImd87+xg7SK
-        CHhJzGvQBbmAWeASo8Tt9+1gNcIC8RL7Hp4EW8UpYC2xu+URO0iRhMB9NonHS1axQNzvIrF4
-        1iaoX4QlXh3fAjZUQkBa4tJRW4j6dkaJ9r3zmCGcKYwS567fY4JoMJZ4trCLCeIxPol3X3tY
-        IZp5JTrahCBKPCS+nJvOCmE7Srz/twAaVn2MEqffnmSZwCg3Cym4ZiGCaxZScC1gZF7FKJZa
-        UJybnlpsWGCoV5yYW1yal66XnJ+7iRGc/LRMdzBOOedziFGAg1GJh1cgoyJKiDWxrLgy9xCj
-        BAezkgiv0/XyKCHelMTKqtSi/Pii0pzU4kOMpsDwnsgsJZqcD0zMeSXxhiaWBiZmRsDEZWlo
-        qCTOGxDgEiUkkJ5YkpqdmlqQWgTTx8TBKdXAuCDaZrNiJLf+mTWKskosX0U5zy3secaxRuVO
-        k+HG5PenlzYpRE5SOCHIkbzCm5N7k+s2RR6f668Sus+6TmaJ7cwPXZf5858M8/WHh1dW227k
-        PuW2T5qZ2aMp+r2KbPjM6z9t0ze/ED06OdDgZIvt6oQ2c/vNxn5n/1+69PrsHM6fhsCMkK6s
-        xFKckWioxVxUnAgAC8cTp5QDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsVy+t9jQd0FYpVRBrf/SFpsnLGe1WLT42us
-        Fh977rFaXN41h81ixvl9TBZrj9xlt7h4ytXi8Jt2VosfZ7pZHDg93t9oZfe43NfL5LF5Sb1H
-        35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZXz7e4294DNvxdc7P5kaGOdwdzFyckgImEhc/j+D
-        pYuRi0NIYB2jxJZrHxlBErwCghI/Jt8DSnBwMAvISxy5lA0SZhZQl5g0bxEzRP0DRokFB/uZ
-        QWp4BbQkDh9TBKlhEVCVOP/+OiuIzQYU3v/iBhuIzS+gKHH1x2NGkHJRgQiJ7hOVIKaIgJfE
-        vAZdkInMApcYJU5v3AfWKiwQL7Hv4Ul2iFUTGCX6by8CO41TwFpid8sj9gmMArOQXDoL4dJZ
-        SC5dwMi8ilEytaA4Nz232KjAMC+1XK84Mbe4NC9dLzk/dxMjMPC3Hdbq28F4f0n8IUYBDkYl
-        Ht6MrIooIdbEsuLK3EOMEhzMSiK8TtfLo4R4UxIrq1KL8uOLSnNSiw8xSnOwKInz3s47Fikk
-        kJ5YkpqdmlqQWgSTZeLglGpgNPpUmrHQ6PMBHrEb1Rfl5z3WUlXgFmdP33Dm232tG/qXXxoF
-        Sx13izzSMT+ck1v596zVZgJfK/55qqmkvJZm/GrQonIsX0X7ssyf6W/LpnRvaJ6+ymJT3Q1F
-        40b9RuMauxJmd81fXdIrL7iWswo0terFsm8s7Mk4I3Fravfl5/4cyiwmFXeVWIozEg21mIuK
-        EwGRLibVeAIAAA==
-X-CMS-MailID: 20180206024448epcas1p39e7de92af12365f06840f17610d31754
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
-X-RootMTR: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
-References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
-        <20180205142230.9755-1-s.nawrocki@samsung.com>
+        Mon, 5 Feb 2018 21:45:51 -0500
+X-Google-Smtp-Source: AH8x226DWxPnkAI7296EZei9k06P1fOU9jRSLLCH0vfzxdnCSz2hf3FgGx1vcOKvTuB0NNjNnDtKGvWEifAPG44oAxA=
+MIME-Version: 1.0
+In-Reply-To: <1510584031-36240-3-git-send-email-pbonzini@redhat.com>
+References: <1510584031-36240-1-git-send-email-pbonzini@redhat.com> <1510584031-36240-3-git-send-email-pbonzini@redhat.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Tue, 6 Feb 2018 10:45:50 +0800
+Message-ID: <CANRm+CwnyTiZFD9D0JEhaBbmEPX91EHMTRQ4Z5ZFUZ3fzjVj9A@mail.gmail.com>
+Subject: Re: [PATCH 2/5] KVM: x86: add support for UMIP
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Radim Krcmar <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sylwester,
-
-When I developed the clk-exynos5433.c I referred to the following description.
-TRM specified that "Samsung recommends only the values
-between 252MH ~ 400MHz in the PMS2460X PMS value" for aud_pll.
-
-It looks like that you refer to clk-exynos5420.c driver.
-But, I'm wondering exynos5433 might not guarantee the additional clock
-of this patch as the stable clock.
-
-On 2018년 02월 05일 23:22, Sylwester Nawrocki wrote:
-> Add more definitions to the exynos5433_aud_pll_rates table so the
-> AUD_PLL can be used as a root clock source for the I2S1 and the HDMI
-> interface.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+2017-11-13 22:40 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
+> Add the CPUID bits, make the CR4.UMIP bit not reserved anymore, and
+> add UMIP support for instructions that are already emulated by KVM.
+>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 > ---
->  drivers/clk/samsung/clk-exynos5433.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index db270908037a..74b70ddab4d6 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -765,6 +765,14 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
->  	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
->  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
->  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
-> +	PLL_36XX_RATE(200000000U, 200, 3, 3,      0),
-> +	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
-> +	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
-> +	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
-> +	PLL_36XX_RATE(100000000U, 200, 3, 4,      0),
-> +	PLL_36XX_RATE(65536003U,  131, 3, 4,   4719),
-> +	PLL_36XX_RATE(49152000U,  197, 3, 5, -25690),
-> +	PLL_36XX_RATE(32768001U,  131, 3, 5,   4719),
->  	{ /* sentinel */ }
->  };
-> 
-> --
-> 2.14.2
-> 
-> 
-> 
+>  arch/x86/include/asm/kvm_host.h | 2 +-
+>  arch/x86/kvm/cpuid.c            | 4 ++--
+>  arch/x86/kvm/emulate.c          | 8 ++++++++
+>  arch/x86/kvm/x86.c              | 3 +++
+>  4 files changed, 14 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index c73e493adf07..1b005ccf4d0b 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -86,7 +86,7 @@
+>                           | X86_CR4_PGE | X86_CR4_PCE | X86_CR4_OSFXSR | X86_CR4_PCIDE \
+>                           | X86_CR4_OSXSAVE | X86_CR4_SMEP | X86_CR4_FSGSBASE \
+>                           | X86_CR4_OSXMMEXCPT | X86_CR4_LA57 | X86_CR4_VMXE \
+> -                         | X86_CR4_SMAP | X86_CR4_PKE))
+> +                         | X86_CR4_SMAP | X86_CR4_PKE | X86_CR4_UMIP))
+>
+>  #define CR8_RESERVED_BITS (~(unsigned long)X86_CR8_TPR)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 0099e10eb045..77fb8732b47b 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -387,8 +387,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+>
+>         /* cpuid 7.0.ecx*/
+>         const u32 kvm_cpuid_7_0_ecx_x86_features =
+> -               F(AVX512VBMI) | F(LA57) | F(PKU) |
+> -               0 /*OSPKE*/ | F(AVX512_VPOPCNTDQ);
+> +               F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
+> +               F(AVX512_VPOPCNTDQ) | F(UMIP);
+>
+>         /* cpuid 7.0.edx*/
+>         const u32 kvm_cpuid_7_0_edx_x86_features =
+> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+> index d90cdc77e077..d27339332ac8 100644
+> --- a/arch/x86/kvm/emulate.c
+> +++ b/arch/x86/kvm/emulate.c
+> @@ -3725,6 +3725,10 @@ static int emulate_store_desc_ptr(struct x86_emulate_ctxt *ctxt,
+>  {
+>         struct desc_ptr desc_ptr;
+>
+> +       if ((ctxt->ops->get_cr(ctxt, 4) & X86_CR4_UMIP) &&
+> +           ctxt->ops->cpl(ctxt) > 0)
+> +               return emulate_gp(ctxt, 0);
+> +
+>         if (ctxt->mode == X86EMUL_MODE_PROT64)
+>                 ctxt->op_bytes = 8;
+>         get(ctxt, &desc_ptr);
+> @@ -3784,6 +3788,10 @@ static int em_lidt(struct x86_emulate_ctxt *ctxt)
+>
+>  static int em_smsw(struct x86_emulate_ctxt *ctxt)
+>  {
+> +       if ((ctxt->ops->get_cr(ctxt, 4) & X86_CR4_UMIP) &&
+> +           ctxt->ops->cpl(ctxt) > 0)
+> +               return emulate_gp(ctxt, 0);
+> +
+>         if (ctxt->dst.type == OP_MEM)
+>                 ctxt->dst.bytes = 2;
+>         ctxt->dst.val = ctxt->ops->get_cr(ctxt, 0);
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 03869eb7fcd6..cda567aadd28 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -791,6 +791,9 @@ int kvm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>         if (!guest_cpuid_has(vcpu, X86_FEATURE_LA57) && (cr4 & X86_CR4_LA57))
+>                 return 1;
+>
+> +       if (!guest_cpuid_has(vcpu, X86_FEATURE_UMIP) && (cr4 & X86_CR4_UMIP))
+> +               return 1;
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+There is a scenario here, UMIP CPUID is not exposed to the guest since
+it depends on SECONDARY_EXEC_DESC is set, however, SECONDARY_EXEC_DESC
+depends on guest sets the X86_CR4_UMIP bit, the function kvm_set_cr4()
+will inject a #GP and fails to set X86_CR4_UMIP bit since UMIP CPUID
+is not exposed to the guest. This scenario can be observed when
+running kvm-unit-tests/umip.flat in the L1.
+
+Regards,
+Wanpeng Li
