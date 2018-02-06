@@ -1,189 +1,155 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-223968-1518020908-2-16779639592449358058
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518020907; b=bL9YulMKgsJ9B45CDxjGptgYoUtN5ZJh8xkg9kUkOxkuRF/
-    lFTnvXmZXZnT5hdG7CKczD88U28Z3juQHxqmQ2Edtc7qnEo6azS/kRznhWWVNz63
-    5qsSDjvAOmUw4BsRzG25+5KCIhoTSACPMzi+w1yzpkQcYq6MBPpbW4G48qeOwrVv
-    PJCHVfE/ar6nV3OJQj9PrXAQmS5AQI2PXiBAGV4HlJw401zhcjQ7U/rMepBx6vAe
-    3qmHEkfhXiuzFHC2YzXoc6Yab2dcZY6fwcDsMiH46KFpwPBJ+2hbhtNsYcTY2Kty
-    iabC3A2BW8ysRM/bu0+gbjEXxoblVceMuhKUYMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1518020907; bh=4aQJm6/HJ+N7evqIdD9BVgDprQ
-    tJROl1yMUpbL5uTHY=; b=omqef0vjVSolWAoN6zfVzG3jxtE5WP2eemCKTCOnme
-    hSLjk/SyKEi+gADWnJ3sioNTiPvJWYFTUsZC+x2ZYm7cDPophN6sCMSOEohJv5iw
-    9YUHBaC6OGB5KmrC7q42ThheFe1aZfv7a7f/fm0MIJagvMg5aS+2mExBjLKIreKz
-    7NtzuxgW6GoTOxovXjqWvY6wKubHbmgTk8hOzCjN9QDBRGY3nQ9r4xfhn6pBUrPz
-    sNaThfLsK1Yd/nxLKAeIuvSA/GhyjyRQr7DkuuMST9wdAgZvy5O8hDTZ7gcoYgZw
-    CPqbjkzd1pOZ2qEROG2u0qSCuQvTHG4sIDzwe9sT10hA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=ND8LqhNo x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=ND8LqhNo x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932130AbeBGQ2Y (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Feb 2018 11:28:24 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:39936 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932119AbeBGQ2X (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Feb 2018 11:28:23 -0500
-Date: Wed, 7 Feb 2018 11:27:50 -0500
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Huang Ying <huang.ying.caritas@gmail.com>,
-        Dan Streetman <ddstreet@ieee.org>,
-        Seth Jennings <sjenning@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Shaohua Li <shli@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Shakeel Butt <shakeelb@google.com>, stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH -mm -v2] mm, swap, frontswap: Fix THP swap if frontswap
- enabled
-Message-ID: <20180207162750.GB26849@char.us.oracle.com>
-References: <20180207070035.30302-1-ying.huang@intel.com>
+Return-Path: <kernel-hardening-return-11630-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x227p3uvgSjzXEr6nRYJbP1whKEQ75zI/O7Y7P358ZVaPVdxcxVMb39cEOhSbpZdREi2jBQKZ
+ARC-Seal: i=1; a=rsa-sha256; t=1517920768; cv=none;
+        d=google.com; s=arc-20160816;
+        b=IxAJj9igA5+JCL+CDinD0Frt/GrlukA9phaRPj4RH60xxab6JfvB3gSc0DZRXtIi/s
+         Nxzc1Hu0tZieTrDRfo+O/R7VV2IDLwj1fcSQJ4XicSbYpcJacedZC+x2Kkw4bzM1nziR
+         5r6BZ6mTBOe6FW3ub7TluVtsG3aJs86wEjrPsJBR3O51o1ml+EXUT5cKnn2qLEEiIv0H
+         KeeZIvwH/D/cQZ4+NX850Icgl2YJ3DbWcz2AWzYDb3MzPJyBJp65FURH5vbChRLebbSQ
+         3zoO/8NeD/HfDSuMMJ6WpRag8h4iMsKBRB058/Xg7imhwtgk1hJRbGSarTwnEKUAWPBz
+         WzGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=rc19oopFJIik+1snDEYNnfWQF/OYwCUgZfk1UwTEb8w=;
+        b=UdMiDYPWMm6RpEwy0vVW0b0uFYBqwVhMz2oucdxwW+Q9kV1zMZd6R2l068i3vsGY6q
+         eKC5DjT5hMJALmYYpU5ZlQos059mzabArSoZ2png0jA1/q3AceesuAG4u6MavlHwUr15
+         e1zpMzQnZ9TSAIfIARNlm4/1wIrI9UUYSmCOE5xj2cpH5r+IHDjc26ttlMQR5w5gBxLs
+         jeYX6ljnot+vzCAI5cN55c1ummn11SAaEvGCOXUkuVc8QISVDXsOwBpnRILv3l+mPRF7
+         GatuQmtG7BSY/rXSXh4n9fnyAn81Wx1eSc1BfnTZWqa3GoCJJLQFrhVv/mRmUYapPuIl
+         WClg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=RlMrVAsB;
+       spf=pass (google.com: domain of kernel-hardening-return-11630-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11630-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=RlMrVAsB;
+       spf=pass (google.com: domain of kernel-hardening-return-11630-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11630-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Date: Tue, 6 Feb 2018 13:39:06 +0100
+From: Christoffer Dall <christoffer.dall@linaro.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
+	catalin.marinas@arm.com, cdall@linaro.org,
+	kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
+	marc.zyngier@arm.com, suzuki.poulose@arm.com, will.deacon@arm.com,
+	yao.qi@arm.com, kernel-hardening@lists.openwall.com,
+	linux-kernel@vger.kernel.org, awallis@codeaurora.org
+Subject: Re: [PATCHv2 05/12] arm64: Don't trap host pointer auth use to EL2
+Message-ID: <20180206123906.GZ21802@cbox>
+References: <20171127163806.31435-1-mark.rutland@arm.com>
+ <20171127163806.31435-6-mark.rutland@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180207070035.30302-1-ying.huang@intel.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8798 signatures=668663
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802070207
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <20171127163806.31435-6-mark.rutland@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1585238009734058312?=
+X-GMAIL-MSGID: =?utf-8?q?1591655287596324599?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 07, 2018 at 03:00:35PM +0800, Huang, Ying wrote:
-> From: Huang Ying <huang.ying.caritas@gmail.com>
-> 
-> It was reported by Sergey Senozhatsky that if THP (Transparent Huge
-> Page) and frontswap (via zswap) are both enabled, when memory goes low
-> so that swap is triggered, segfault and memory corruption will occur
-> in random user space applications as follow,
-> 
-> kernel: urxvt[338]: segfault at 20 ip 00007fc08889ae0d sp 00007ffc73a7fc40 error 6 in libc-2.26.so[7fc08881a000+1ae000]
->  #0  0x00007fc08889ae0d _int_malloc (libc.so.6)
->  #1  0x00007fc08889c2f3 malloc (libc.so.6)
->  #2  0x0000560e6004bff7 _Z14rxvt_wcstoutf8PKwi (urxvt)
->  #3  0x0000560e6005e75c n/a (urxvt)
->  #4  0x0000560e6007d9f1 _ZN16rxvt_perl_interp6invokeEP9rxvt_term9hook_typez (urxvt)
->  #5  0x0000560e6003d988 _ZN9rxvt_term9cmd_parseEv (urxvt)
->  #6  0x0000560e60042804 _ZN9rxvt_term6pty_cbERN2ev2ioEi (urxvt)
->  #7  0x0000560e6005c10f _Z17ev_invoke_pendingv (urxvt)
->  #8  0x0000560e6005cb55 ev_run (urxvt)
->  #9  0x0000560e6003b9b9 main (urxvt)
->  #10 0x00007fc08883af4a __libc_start_main (libc.so.6)
->  #11 0x0000560e6003f9da _start (urxvt)
-> 
-> After bisection, it was found the first bad commit is
-> bd4c82c22c367e068 ("mm, THP, swap: delay splitting THP after swapped
-> out").
-> 
-> The root cause is as follow.
-> 
-> When the pages are written to swap device during swapping out in
-> swap_writepage(), zswap (fontswap) is tried to compress the pages
-> instead to improve the performance.  But zswap (frontswap) will treat
-> THP as normal page, so only the head page is saved.  After swapping
-> in, tail pages will not be restored to its original contents, so cause
-> the memory corruption in the applications.
-> 
-> This is fixed via splitting THP before writing the page to swap device
-> if frontswap is enabled.  To deal with the situation where frontswap
-> is enabled at runtime, whether the page is THP is checked before using
-> frontswap during swapping out too.
-> 
-> Reported-and-tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Hi Mark,
 
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+On Mon, Nov 27, 2017 at 04:37:59PM +0000, Mark Rutland wrote:
+> To allow EL0 (and/or EL1) to use pointer authentication functionality,
+> we must ensure that pointer authentication instructions and accesses to
+> pointer authentication keys are not trapped to EL2 (where we will not be
+> able to handle them).
 
-> Cc: Dan Streetman <ddstreet@ieee.org>
-> Cc: Seth Jennings <sjenning@redhat.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: stable@vger.kernel.org # 4.14
-> Fixes: bd4c82c22c367e068 ("mm, THP, swap: delay splitting THP after swapped out")
+...on non-VHE systems, presumably?
+
 > 
-> Changelog:
+> This patch ensures that HCR_EL2 is configured appropriately when the
+> kernel is booted at EL2. For non-VHE kernels we set HCR_EL2.{API,APK},
+> ensuring that EL1 can access keys and permit EL0 use of instructions.
+> For VHE kernels, EL2 access is controlled by EL3, and we need not set
+> anything.
+
+
+for VHE kernels host EL0 (TGE && E2H) is unaffected by these settings,
+and it doesn't matter how we configure HCR_EL2.{API,APK}.
+
+(Because you do actually set these bits when the features are present if
+I read the code correctly).
+
+
 > 
-> v2:
+> This does not enable support for KVM guests, since KVM manages HCR_EL2
+> itself.
+
+        (...when running VMs.)
+
+
+Besides the nits:
+
+Acked-by: Christoffer Dall <christoffer.dall@linaro.org>
+
 > 
-> - Move frontswap check into swapfile.c to avoid to make vmscan.c
->   depends on frontswap.
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Christoffer Dall <cdall@linaro.org>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: kvmarm@lists.cs.columbia.edu
 > ---
->  mm/page_io.c  | 2 +-
->  mm/swapfile.c | 3 +++
->  2 files changed, 4 insertions(+), 1 deletion(-)
+>  arch/arm64/include/asm/kvm_arm.h |  2 ++
+>  arch/arm64/kernel/head.S         | 19 +++++++++++++++++--
+>  2 files changed, 19 insertions(+), 2 deletions(-)
 > 
-> diff --git a/mm/page_io.c b/mm/page_io.c
-> index b41cf9644585..6dca817ae7a0 100644
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -250,7 +250,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
->  		unlock_page(page);
->  		goto out;
->  	}
-> -	if (frontswap_store(page) == 0) {
-> +	if (!PageTransHuge(page) && frontswap_store(page) == 0) {
->  		set_page_writeback(page);
->  		unlock_page(page);
->  		end_page_writeback(page);
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 006047b16814..0b7c7883ce64 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -934,6 +934,9 @@ int get_swap_pages(int n_goal, bool cluster, swp_entry_t swp_entries[])
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index 7f069ff37f06..62854d5d1d3b 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -23,6 +23,8 @@
+>  #include <asm/types.h>
 >  
->  	/* Only single cluster request supported */
->  	WARN_ON_ONCE(n_goal > 1 && cluster);
-> +	/* Frontswap doesn't support THP */
-> +	if (frontswap_enabled() && cluster)
-> +		goto noswap;
+>  /* Hyp Configuration Register (HCR) bits */
+> +#define HCR_API		(UL(1) << 41)
+> +#define HCR_APK		(UL(1) << 40)
+>  #define HCR_E2H		(UL(1) << 34)
+>  #define HCR_ID		(UL(1) << 33)
+>  #define HCR_CD		(UL(1) << 32)
+> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> index 67e86a0f57ac..06a96e9af26b 100644
+> --- a/arch/arm64/kernel/head.S
+> +++ b/arch/arm64/kernel/head.S
+> @@ -415,10 +415,25 @@ CPU_LE(	bic	x0, x0, #(1 << 25)	)	// Clear the EE bit for EL2
 >  
->  	avail_pgs = atomic_long_read(&nr_swap_pages) / nr_pages;
->  	if (avail_pgs <= 0)
+>  	/* Hyp configuration. */
+>  	mov	x0, #HCR_RW			// 64-bit EL1
+> -	cbz	x2, set_hcr
+> +	cbz	x2, 1f
+>  	orr	x0, x0, #HCR_TGE		// Enable Host Extensions
+>  	orr	x0, x0, #HCR_E2H
+> -set_hcr:
+> +1:
+> +#ifdef CONFIG_ARM64_POINTER_AUTHENTICATION
+> +	/*
+> +	 * Disable pointer authentication traps to EL2. The HCR_EL2.{APK,API}
+> +	 * bits exist iff at least one authentication mechanism is implemented.
+> +	 */
+> +	mrs	x1, id_aa64isar1_el1
+> +	mov_q	x3, ((0xf << ID_AA64ISAR1_GPI_SHIFT) | \
+> +		     (0xf << ID_AA64ISAR1_GPA_SHIFT) | \
+> +		     (0xf << ID_AA64ISAR1_API_SHIFT) | \
+> +		     (0xf << ID_AA64ISAR1_APA_SHIFT))
+> +	and	x1, x1, x3
+> +	cbz	x1, 1f
+> +	orr	x0, x0, #(HCR_APK | HCR_API)
+> +1:
+> +#endif
+>  	msr	hcr_el2, x0
+>  	isb
+>  
 > -- 
-> 2.15.1
+> 2.11.0
 > 
