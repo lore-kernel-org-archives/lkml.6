@@ -1,232 +1,378 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-499681-1518798832-2-13641521277136721176
+X-Cyrus-Session-Id: sloti22d1t05-1654186-1517938216-2-1380168561596525626
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
-X-Attached: smime.p7s
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: to='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518798832; b=XBh1sa800bvcGELADBpZXxgxS6C3jwcgnm3YxS9M7O+BytK
-    zNf8EeniD2F+CA4ryYUL1itmG6oFHYHhHRaBJkQAk1tVz0H753uiH2TRm8OcOjVD
-    ojIopHTxBMBfSJPnwKedW/Ho9Kp3Rxve73kKcSoPMKEVLKhajwOYAtaeZopqm0di
-    eo96lGIJw6PknNzp1jKucsIDoxOBrn3iIx8NDr/dGtpKGMpPpAoIlH679VKTizxq
-    1TveWyCd3EdihZKAfcfch3nyIFX+F9wbaQVx2i8yq2YhHVzTacNfjGOEMAjqF0KM
-    Ou7DHe9GIIRpDymRBzgaszdf1qOaTrI1Ulwj/kQ==
+    t=1517938215; b=ppXGOVvjIid7/WN6nS9xKIr/wY+moreyp5MAiTSQ4TI0tNJ
+    iPM5Ir6yEheW+JOjDV+D9soVKY6+7i2lJmFuEUxBIVFAjhJ5aqklGFy3x9hgQjso
+    FgMg6IphbOcF+wBlisC+LdP3PPsRZqOySo9SfCSaOzu66ULBSPkUHLibMcvD7K0t
+    hTP7lVjO2eAOd1BxSDWrbZQ3qnU0OnKG1UcGfghut1YElFBdTXkajzDHq++LKh5f
+    tOyaLxeTfeipcIAB5JP1q7gFEgJbSo0BeynUesQ1/Jgc5VfPuF6NQjolk2YtJStU
+    Wf2N0w2zd5wBslYXvLsmKn4r3iTy0nOVxbeYbbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:in-reply-to
-    :references:content-type:date:mime-version:sender:list-id; s=
-    arctest; t=1518798832; bh=AwslVdLTsk6u4jfS+zA7JzoDVNRWsfcjKUtGXu
-    heH/4=; b=S3y3rk2l3eSO1+BzLIlyJi6cjUGLiVJCtbOUlOdwsKoPE7xFHqpCQQ
-    26mrHlQCTLTVUgU3wBE9945khQkVVNI4y7xCROuaX5LkJconermzZxsES3Pl8CLY
-    CoLuMiUUwPbIA7KS+/3Eq2lKyZ0Vs8lp2ZcN9OzanoWn2cvUKZJvyENxhg8gK7pm
-    r+8cVLVZOgBxObZo7HeDEsd7WRjIaqtNVSveXjwezDFs8F//eNZkD0VCtCB6W5Pd
-    w51v5ivdNQUwKnjHdXvWDzoXGKwjnOPwZweJLXcYu50Qv4YmhRD/Nq3vVZowFUEy
-    7mCzJeoFrgVdFXX6BiFs6JH6q7MqMduQ==
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1517938215;
+    bh=mg6BETbkYb5Al2JbA5g8RquLUMdz1FcOWspDDJe+jqA=; b=DN0VFNYBlmTh
+    tt6VOyFeDeDAop1M0P9ybryk8zneHST6UltWdvP0J1xgPfUzyPor+AvHWfctN2sd
+    v6VNLQ5xiAecYseWd6YZePe4WsPQogsFCNxEfyyl2nXw99y30yBgA8OrRl89tMDx
+    T+bRwOPMUCV0949rQJF+/9uvVGvuc4+nXm83RMeRIlzDDDdVQSLCW+OIi59P1Dt/
+    mt3Np12P6HAZdwOjCRw/Z7rDB70nMhnrzwaR40alYvi/oTsa6T1psqhxvSSlYpwD
+    6iWRDE96c7FqR4GGHsjTEyc0ERLbCUmkSnsVOYIR3S4f0NyeQ6b3wr/L/TmJ0MgQ
+    7rYA29rUfg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=X8NFmn1X x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=twosheds.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    dkim-adsp=pass (ADSP policy from amazon.co.uk);
+    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=ebxnvY9O x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    smime=pass
-    body.smime-identifier=dwmw2@infradead.org()
-    body.smime-part=TEXT
-    body.smime-serial=4d46113293f1d9ee768e7931d6af3b80
-    body.smime-issuer="C=GB,CN=COMODO RSA Client Authentication and Secure Email CA,L=Salford,O=COMODO CA Limited,S=Greater Manchester"
-    x-smime-valid-from="2017-12-20 19:00:00"
-    x-smime-valid-to="2018-12-21 18:59:59";
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes;
-    x-smime-chain=info
-    body.smime-part=TEXT
-    x-smime-chain-identifier=null (COMODO RSA Client Authentication and Secure Email CA)
-    x-smime-chain-serial=6a9be1383bff2b6b9f01d5d9b8a75256
-    x-smime-chain-issuer="C=GB,CN=COMODO RSA Certification Authority,L=Salford,O=COMODO CA Limited,S=Greater Manchester"
-    x-smime-chain-valid-from="2013-01-09 19:00:00"
-    x-smime-chain-valid-to="2028-01-09 18:59:59"
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=X8NFmn1X x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=twosheds.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    dkim-adsp=pass (ADSP policy from amazon.co.uk);
+    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=ebxnvY9O x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    smime=pass
-        body.smime-identifier=dwmw2@infradead.org()
-        body.smime-part=TEXT
-        body.smime-serial=4d46113293f1d9ee768e7931d6af3b80
-        body.smime-issuer="C=GB,CN=COMODO RSA Client Authentication and Secure Email CA,L=Salford,O=COMODO CA Limited,S=Greater Manchester"
-        x-smime-valid-from="2017-12-20 19:00:00"
-        x-smime-valid-to="2018-12-21 18:59:59";
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes;
-    x-smime-chain=info
-        body.smime-part=TEXT
-        x-smime-chain-identifier=null (COMODO RSA Client Authentication and Secure Email CA)
-        x-smime-chain-serial=6a9be1383bff2b6b9f01d5d9b8a75256
-        x-smime-chain-issuer="C=GB,CN=COMODO RSA Certification Authority,L=Salford,O=COMODO CA Limited,S=Greater Manchester"
-        x-smime-chain-valid-from="2013-01-09 19:00:00"
-        x-smime-chain-valid-to="2028-01-09 18:59:59"
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032194AbeBPQdt (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Feb 2018 11:33:49 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:38944 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751090AbeBPQdr (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 11:33:47 -0500
-Message-ID: <1518798820.7876.45.camel@infradead.org>
-Subject: Re: [PATCH 7/9] KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES
-From: David Woodhouse <dwmw2@infradead.org>
-To: Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
+        id S1752779AbeBFRaL (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 12:30:11 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:17342 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752732AbeBFR34 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 12:29:56 -0500
+X-IronPort-AV: E=Sophos;i="5.46,469,1511827200";
+   d="scan'208";a="707123309"
+From: David Woodhouse <dwmw@amazon.co.uk>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         KarimAllah Ahmed <karahmed@amazon.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-In-Reply-To: <CALMp9eQQ-94g=fNanvwpr6b2pmH87RPGr6s9gOv43dUDABFuhw@mail.gmail.com>
+        gregkh@linuxfoundation.org, stable@vger.kernel.org
+Subject: [PATCH 8/9] KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
+Date: Tue,  6 Feb 2018 17:29:40 +0000
+Message-Id: <1517938181-15317-9-git-send-email-dwmw@amazon.co.uk>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517938181-15317-1-git-send-email-dwmw@amazon.co.uk>
 References: <1517938181-15317-1-git-send-email-dwmw@amazon.co.uk>
-         <1517938181-15317-8-git-send-email-dwmw@amazon.co.uk>
-         <4be4e462-61be-53a9-b0e1-3508466d1645@redhat.com>
-         <CALMp9eQQ-94g=fNanvwpr6b2pmH87RPGr6s9gOv43dUDABFuhw@mail.gmail.com>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-o7XMKFSUgGN5WgNMZ51e"
-Date: Fri, 16 Feb 2018 16:33:40 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: KarimAllah Ahmed <karahmed@amazon.de>
 
---=-o7XMKFSUgGN5WgNMZ51e
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+[ Based on a patch from Ashok Raj <ashok.raj@intel.com> ]
 
+Add direct access to MSR_IA32_SPEC_CTRL for guests. This is needed for
+guests that will only mitigate Spectre V2 through IBRS+IBPB and will not
+be using a retpoline+IBPB based approach.
 
+To avoid the overhead of saving and restoring the MSR_IA32_SPEC_CTRL for
+guests that do not actually use the MSR, only start saving and restoring
+when a non-zero is written to it.
 
-On Fri, 2018-02-16 at 08:29 -0800, Jim Mattson wrote:
-> On Fri, Feb 16, 2018 at 6:18 AM, Paolo Bonzini <pbonzini@redhat.com> wrot=
-e:
->=20
-> > Uhm, taking contents from the hardware is wrong (guess why---live
-> > migration).=C2=A0 I'll send a revert of those two lines.
->=20
-> Hardware seems like a reasonable place to get the default value (cf.
-> the VMX capability MSRs). Should these two lines just be moved to
-> vmx_create_cpu?
+No attempt is made to handle STIBP here, intentionally. Filtering STIBP
+may be added in a future patch, which may require trapping all writes
+if we don't want to pass it through directly to the guest.
 
-They're already in vmx_create_cpu(). (Well, in vmx_cpu_setup() which is
-a static function called only once, from vmx_create_cpu().)
---=-o7XMKFSUgGN5WgNMZ51e
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+[dwmw2: Clean up CPUID bits, save/restore manually, handle reset]
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMTYxNjMzNDBaMC8GCSqG
-SIb3DQEJBDEiBCDgn9pXjypVEw2WDECtii7ospSN8LjM5XtIl6A2eAUFejCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAAlNkCEnoD8b
-mr5adlle7ohGqomQ8MGkGPbl2iwoAkEq2pGrdYS+fTr7+Rn4lFQmK5SesXQjHQVUeUJ6TxdgHX/5
-Oioe0IrIaNmXQlEkgYvS49fGErdE66S9qWHLHNJ0qmDkI7OgfS0iHeNHcDTFvRlkh1MG1TAH9LT/
-qX9DPnnCOtdU8o/qnRSR45NYChuhnlC8ccl5mWkIzyLXnpN4EuVl0CKTHw0TXUFT5KL/0ibSpbWY
-vCye0FSC+shI+2ZWKemiaq0+6azVzTvE7ekG43ZCU05RQXyLJDOz4AArvGbgtdn9pGW0e5+9Zi2G
-6OfZeT8Al1/aoNXMOtMex135mK4AAAAAAAA=
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: kvm@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Link: https://lkml.kernel.org/r/1517522386-18410-5-git-send-email-karahmed@amazon.de
 
+(cherry picked from commit d28b387fb74da95d69d2615732f50cceb38e9a4d)
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ arch/x86/kvm/cpuid.c |   8 ++--
+ arch/x86/kvm/cpuid.h |  11 ++++++
+ arch/x86/kvm/vmx.c   | 103 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c   |   2 +-
+ 4 files changed, 118 insertions(+), 6 deletions(-)
 
---=-o7XMKFSUgGN5WgNMZ51e--
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 9c6493f..93f924d 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -357,7 +357,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(IBPB);
++		F(IBPB) | F(IBRS);
+ 
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
+@@ -382,7 +382,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 
+ 	/* cpuid 7.0.edx*/
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+-		F(ARCH_CAPABILITIES);
++		F(SPEC_CTRL) | F(ARCH_CAPABILITIES);
+ 
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
+@@ -618,9 +618,11 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 			g_phys_as = phys_as;
+ 		entry->eax = g_phys_as | (virt_as << 8);
+ 		entry->edx = 0;
+-		/* IBPB isn't necessarily present in hardware cpuid */
++		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
+ 		if (boot_cpu_has(X86_FEATURE_IBPB))
+ 			entry->ebx |= F(IBPB);
++		if (boot_cpu_has(X86_FEATURE_IBRS))
++			entry->ebx |= F(IBRS);
+ 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+ 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
+ 		break;
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index 8719997..d1beb71 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -171,6 +171,17 @@ static inline bool guest_cpuid_has_ibpb(struct kvm_vcpu *vcpu)
+ 	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
+ }
+ 
++static inline bool guest_cpuid_has_ibrs(struct kvm_vcpu *vcpu)
++{
++	struct kvm_cpuid_entry2 *best;
++
++	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
++	if (best && (best->ebx & bit(X86_FEATURE_IBRS)))
++		return true;
++	best = kvm_find_cpuid_entry(vcpu, 7, 0);
++	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
++}
++
+ static inline bool guest_cpuid_has_arch_capabilities(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_cpuid_entry2 *best;
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 92bf61f..764cb7c 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -552,6 +552,7 @@ struct vcpu_vmx {
+ #endif
+ 
+ 	u64 		      arch_capabilities;
++	u64 		      spec_ctrl;
+ 
+ 	u32 vm_entry_controls_shadow;
+ 	u32 vm_exit_controls_shadow;
+@@ -1852,6 +1853,29 @@ static void update_exception_bitmap(struct kvm_vcpu *vcpu)
+ }
+ 
+ /*
++ * Check if MSR is intercepted for currently loaded MSR bitmap.
++ */
++static bool msr_write_intercepted(struct kvm_vcpu *vcpu, u32 msr)
++{
++	unsigned long *msr_bitmap;
++	int f = sizeof(unsigned long);
++
++	if (!cpu_has_vmx_msr_bitmap())
++		return true;
++
++	msr_bitmap = to_vmx(vcpu)->loaded_vmcs->msr_bitmap;
++
++	if (msr <= 0x1fff) {
++		return !!test_bit(msr, msr_bitmap + 0x800 / f);
++	} else if ((msr >= 0xc0000000) && (msr <= 0xc0001fff)) {
++		msr &= 0x1fff;
++		return !!test_bit(msr, msr_bitmap + 0xc00 / f);
++	}
++
++	return true;
++}
++
++/*
+  * Check if MSR is intercepted for L01 MSR bitmap.
+  */
+ static bool msr_write_intercepted_l01(struct kvm_vcpu *vcpu, u32 msr)
+@@ -2981,6 +3005,13 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_IA32_TSC:
+ 		msr_info->data = guest_read_tsc(vcpu);
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_ibrs(vcpu))
++			return 1;
++
++		msr_info->data = to_vmx(vcpu)->spec_ctrl;
++		break;
+ 	case MSR_IA32_ARCH_CAPABILITIES:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has_arch_capabilities(vcpu))
+@@ -3091,6 +3122,36 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_IA32_TSC:
+ 		kvm_write_tsc(vcpu, msr_info);
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_ibrs(vcpu))
++			return 1;
++
++		/* The STIBP bit doesn't fault even if it's not advertised */
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
++			return 1;
++
++		vmx->spec_ctrl = data;
++
++		if (!data)
++			break;
++
++		/*
++		 * For non-nested:
++		 * When it's written (to non-zero) for the first time, pass
++		 * it through.
++		 *
++		 * For nested:
++		 * The handling of the MSR bitmap for L2 guests is done in
++		 * nested_vmx_merge_msr_bitmap. We should not touch the
++		 * vmcs02.msr_bitmap here since it gets completely overwritten
++		 * in the merging. We update the vmcs01 here for L1 as well
++		 * since it will end up touching the MSR anyway now.
++		 */
++		vmx_disable_intercept_for_msr(vmx->vmcs01.msr_bitmap,
++					      MSR_IA32_SPEC_CTRL,
++					      MSR_TYPE_RW);
++		break;
+ 	case MSR_IA32_PRED_CMD:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has_ibpb(vcpu))
+@@ -5243,6 +5304,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	u64 cr0;
+ 
+ 	vmx->rmode.vm86_active = 0;
++	vmx->spec_ctrl = 0;
+ 
+ 	vmx->soft_vnmi_blocked = 0;
+ 
+@@ -8828,6 +8890,15 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 
+ 	vmx_arm_hv_timer(vcpu);
+ 
++	/*
++	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
++	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
++	 * is no need to worry about the conditional branch over the wrmsr
++	 * being speculatively taken.
++	 */
++	if (vmx->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
+ 	asm(
+ 		/* Store host registers */
+@@ -8946,6 +9017,27 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ #endif
+ 	      );
+ 
++	/*
++	 * We do not use IBRS in the kernel. If this vCPU has used the
++	 * SPEC_CTRL MSR it may have left it on; save the value and
++	 * turn it off. This is much more efficient than blindly adding
++	 * it to the atomic save/restore list. Especially as the former
++	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
++	 *
++	 * For non-nested case:
++	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 *
++	 * For nested case:
++	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 */
++	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++
++	if (vmx->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+ 
+@@ -9505,7 +9597,7 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
+ 	unsigned long *msr_bitmap_l1;
+ 	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
+ 	/*
+-	 * pred_cmd is trying to verify two things:
++	 * pred_cmd & spec_ctrl are trying to verify two things:
+ 	 *
+ 	 * 1. L0 gave a permission to L1 to actually passthrough the MSR. This
+ 	 *    ensures that we do not accidentally generate an L02 MSR bitmap
+@@ -9518,9 +9610,10 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
+ 	 *    the MSR.
+ 	 */
+ 	bool pred_cmd = msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
++	bool spec_ctrl = msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
+ 
+ 	if (!nested_cpu_has_virt_x2apic_mode(vmcs12) &&
+-	    !pred_cmd)
++	    !pred_cmd && !spec_ctrl)
+ 		return false;
+ 
+ 	page = nested_get_page(vcpu, vmcs12->msr_bitmap);
+@@ -9559,6 +9652,12 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
+ 		}
+ 	}
+ 
++	if (spec_ctrl)
++		nested_vmx_disable_intercept_for_msr(
++					msr_bitmap_l1, msr_bitmap_l0,
++					MSR_IA32_SPEC_CTRL,
++					MSR_TYPE_R | MSR_TYPE_W);
++
+ 	if (pred_cmd)
+ 		nested_vmx_disable_intercept_for_msr(
+ 					msr_bitmap_l1, msr_bitmap_l0,
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 94d1573..75f756e 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -975,7 +975,7 @@ static u32 msrs_to_save[] = {
+ #endif
+ 	MSR_IA32_TSC, MSR_IA32_CR_PAT, MSR_VM_HSAVE_PA,
+ 	MSR_IA32_FEATURE_CONTROL, MSR_IA32_BNDCFGS, MSR_TSC_AUX,
+-	MSR_IA32_ARCH_CAPABILITIES
++	MSR_IA32_SPEC_CTRL, MSR_IA32_ARCH_CAPABILITIES
+ };
+ 
+ static unsigned num_msrs_to_save;
+-- 
+2.7.4
