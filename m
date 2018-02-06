@@ -1,64 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752554AbeBFE3E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 23:29:04 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:41725 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752132AbeBFE2z (ORCPT
+        id S1752472AbeBFEb1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 23:31:27 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:49123 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752132AbeBFEbS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 23:28:55 -0500
-X-Google-Smtp-Source: AH8x226DHaVVFBCYlVSVB2M9lR0yMcjfhGGyfJqxSkputyzI/Ucw1kWDrMjupY0LVdkRnUf4fyw8oA==
-Date: Tue, 6 Feb 2018 09:58:53 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        daniel.thompson@linaro.org
-Subject: Re: [PATCH 8/8] thermal/drivers/cpu_cooling: Add the combo cpu
- cooling device
-Message-ID: <20180206042853.GI28462@vireshk-i7>
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-9-git-send-email-daniel.lezcano@linaro.org>
- <20180202104259.GA28462@vireshk-i7>
- <8dadd854-25ac-68aa-aa9f-33ba76a137a4@linaro.org>
- <20180205041734.GD28462@vireshk-i7>
- <911804cd-2f1d-a1f7-61a2-6c8b95a88d6b@linaro.org>
+        Mon, 5 Feb 2018 23:31:18 -0500
+X-UUID: 963e207655334e778e305d170991c098-20180206
+Message-ID: <1517891471.20869.6.camel@mtkswgap22>
+Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
+ device tree parsing
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+CC: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Date: Tue, 6 Feb 2018 12:31:11 +0800
+In-Reply-To: <1517889903.2312.151.camel@kernel.crashing.org>
+References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
+         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
+         <1517563970.24622.9.camel@mtkswgap22>
+         <1517866584.2312.140.camel@kernel.crashing.org>
+         <1517884738.16010.27.camel@mtkswgap22>
+         <1517889903.2312.151.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <911804cd-2f1d-a1f7-61a2-6c8b95a88d6b@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-02-18, 11:32, Daniel Lezcano wrote:
-> On 05/02/2018 05:17, Viresh Kumar wrote:
-> > Right, but I thought the cooling-maps can help us specify different cooling
-> > states for different cooling devices for the same trip point. Maybe my
-> > understanding of that is incorrect.
-
-Any inputs on this? I am still wondering if this can be done.
-
-> At the first glance, it sounds interesting but I'm afraid that raises
-> more corner-cases than it solves because we have to take into account
-> all the combinations: cpuidle=0 && cpufreq=1, cpuidle=1 && cpufreq=0,
-> cpuidle=1 && cpufreq=1 with dynamic code changes when the cpufreq driver
-> is loaded/unloaded.
+On Tue, 2018-02-06 at 15:05 +1100, Benjamin Herrenschmidt wrote:
+> On Tue, 2018-02-06 at 10:38 +0800, Ryder Lee wrote:
+> > 
+> > I think the code should look at the bridge address <0x0800 ...> we list
+> > in bindings for resolving interrupts in this case, but it seems like it
+> > use the 'pdev->defvn << 8' which is not really we want and will lead to
+> > mismatch.
+> > 
+> > 		interrupt-map-mask = <0xf800 0 0 7>;
+> > 		interrupt-map = <0x0000 0 0 1 ...>,
+> > 				<0x0000 0 0 2 ...>,
+> > 				<0x0000 0 0 3 ...>,
+> > 				<0x0000 0 0 4 ...>,
+> > 
+> > 				 0x0800 0 0 1 ...>,
+> > 				 0x0800 0 0 2 ...>,
+> > 				 0x0800 0 0 3 ...>,
+> > 				 0x0800 0 0 4 ...>;
+> > 		...
+> > 		pcie@1,0 {
+> > 			reg = <0x0800 0 0 0 0>;
+> > 			...
+> > 		};
+> > 
+> > 
+> > Or, alternatively, we could add a interrupt-map property in both child
+> > and root node to solve this. The below example is my original version as
+> > I don't want to change that function either.
 > 
-> I'm not against this approach as well as merging all the cpu cooling
-> devices into a single one but that won't be trivial and will need
-> several iterations before reaching this level of features.
+> The code looks at devfn because it's meant to work for PCI including
+> when the devices dont have a device node in the DT.
 > 
-> IMO, we should keep the current approach (but handle the cpufreq
-> loading/unloading) and then iteratively merge all the cooling device
-> into a single one with policy change at runtime which will automatically
-> handle the cpufreq load/unload.
+> What I'm trying to figure out is what is it that your parent and
+> children are representing here. Which is/are the root complex ?
 
-Surely we can do one thing at a time if that's the way we choose to do it.
+This is a single root complex with 2 root port (children in DT).
 
--- 
-viresh
+> What is the actual topology as visible on the PCIe bus (is lspci output
+> basically) and how does that map to your representation ?
+
+# lspci
+00:00.0 Class 0604: 14c3:0801 //1st slot - pcie@0,0
+00:01.0 Class 0604: 14c3:0801 //2nd slot - pcie@1,0
+
+01:00.0 Class 0280: 14c3:7603 //A device which is connected to 1st slot
+02:00.0 Class 0200: 8086:1521 //A 4 func device which is connected to
+2nd slot
+02:00.1 Class 0200: 8086:1521
+02:00.2 Class 0200: 8086:1521
+02:00.3 Class 0200: 8086:1521
+
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
