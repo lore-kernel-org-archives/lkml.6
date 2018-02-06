@@ -1,80 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752726AbeBFQrY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:47:24 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.129]:24538 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752671AbeBFQrM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:47:12 -0500
-Date: Tue, 6 Feb 2018 10:47:09 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH v3 2/8] dvb-frontends: ves1820: use 64-bit arithmetic instead
- of 32-bit
-Message-ID: <6e8742889d7c7f087e1b698409370bb5da5cd7ff.1517929336.git.gustavo@embeddedor.com>
-References: <cover.1517929336.git.gustavo@embeddedor.com>
+        id S1752761AbeBFQrn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:47:43 -0500
+Received: from mout.web.de ([212.227.15.14]:57886 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752370AbeBFQrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:47:21 -0500
+To: linux-input@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] HID: core: Delete an error message for a failed memory
+ allocation in open_collection()
+Message-ID: <92b58eb4-e68b-f7eb-d99e-5d0993ad18b6@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 17:47:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1517929336.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1ej6Ok-000kgA-5c
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.4.238]:46624
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 21
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:/bnFmdwn6grJDi49/6+5I1JpzvAXCsmXqCVE16ZNXe1PwGv+mMY
+ 5av1hZ+SZrte330v3jIyJfILHYjbuZwnRivNs7JzwnB26qEsf3XpC8UKZ7ShD7KHJvCgnya
+ Vbtv1zzxJN3O5W3QNMlbEM0fx875e7zBRRSnavIGJwffsNtYhL+I8i4KdZgCZXCG4VnwgIl
+ 8rhTb4TMw1MNbvpCmmBlg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ggFKpirjmBM=:9oDnknvedcUK/Ws4I7LIUw
+ vd0pz0wtqghkXZNCgL8+RVLe4wGDhWYgy/tnJJNRiXZeuaHTBxisR0XQyXh4b+ChW+G6NdkiI
+ D6Z4gERKmqAPsk7zRotvEgoQ8CGk9BqxQD5C3Yolwavb8Z+0wHbz1clPq9qABzEl0AarsFxhz
+ ccweaXcZqJSNC/ksouXj0y9RPbe+/+Z243MxcPgiL9SGThO6yYnDPKQnXxxgbQJ+ne0MC+Y53
+ WrFWLAzcyDLscJURpmv6gFzSGfWkJbLPuGgAMqzAkkGlYpF0q2mEUdJc5R3089ChmO+wmF/PL
+ UHGwFFNNt5VzxxqmUnoMpiaHQidgRHOBTxRoQ3DMPG1T44fsd7acYefdZ3fwlWXXMbxUqU7qO
+ Ge/VnNI2dwVgyQIsQbIgqaNxddgJKXgZVtGiUxFAPKIdoIFZVbJERFAAUOnEX13lsmqwncWDD
+ vLNKSTaR+B3Gx6VqcRcZxLMIwptDBlIu2lzNwdzcOdHsngDn5daemArGM9BoxFmN/EJsnOBkC
+ 5bBdSrSxFq5oB5dJ6GzOg9amaHhAaktbE+p96agMTOI3PMcZpL7XpXTy42jQVetsS2I3UjhlI
+ PhQuKT6E1dgn0Vhcbb5sfDxCbEnPb7BvV8C0siaNbJtgTsb3NK8iypF3rW2mhLrWIagJ+5R9b
+ FjsQ+5530mihmvrgkEerkLJI2I3oMwpQ9Ua6e3ZxLPFY5QQj0YhZ3wwl+BCWvf0ZegOnbldNV
+ UOgzHgDsNzSIBmDpBCKicxterdyWy3YpqRHjs9tkB8fIh6zPsmakKfTZmvp5EUbLPS6PXKbrF
+ 15KKCfs/QZg23ON5XoGJ4ov1M+tx4fC0c1xRC9F8obIokUM1Ug=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix ULL to constant 10 in order to give the compiler complete
-information about the proper arithmetic to use. Notice that this
-constant is used in a context that expects an expression of type
-u64 (64 bits, unsigned).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 17:40:51 +0100
 
-The expression fpxin = state->config->xin * 10 is currently being
-evaluated using 32-bit arithmetic.
+Omit an extra message for a memory allocation failure in this function.
 
-Addresses-Coverity-ID: 200604 ("Unintentional integer overflow")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Changes in v2:
- - Update subject and changelog to better reflect the proposed code changes.
- - Add suffix ULL to constant instead of casting a variable.
+ drivers/hid/hid-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Changes in v3:
- - Mention the specific Coverity report in the commit message.
-
- drivers/media/dvb-frontends/ves1820.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/dvb-frontends/ves1820.c b/drivers/media/dvb-frontends/ves1820.c
-index 1d89792..1760098 100644
---- a/drivers/media/dvb-frontends/ves1820.c
-+++ b/drivers/media/dvb-frontends/ves1820.c
-@@ -137,7 +137,7 @@ static int ves1820_set_symbolrate(struct ves1820_state *state, u32 symbolrate)
- 		NDEC = 3;
- 
- 	/* yeuch! */
--	fpxin = state->config->xin * 10;
-+	fpxin = state->config->xin * 10ULL;
- 	fptmp = fpxin; do_div(fptmp, 123);
- 	if (symbolrate < fptmp)
- 		SFIL = 1;
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index c2560aae5542..5ad5f52f6f9b 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -133,10 +133,9 @@ static int open_collection(struct hid_parser *parser, unsigned type)
+ 	if (parser->device->maxcollection == parser->device->collection_size) {
+ 		collection = kmalloc(sizeof(struct hid_collection) *
+ 				parser->device->collection_size * 2, GFP_KERNEL);
+-		if (collection == NULL) {
+-			hid_err(parser->device, "failed to reallocate collection array\n");
++		if (!collection)
+ 			return -ENOMEM;
+-		}
++
+ 		memcpy(collection, parser->device->collection,
+ 			sizeof(struct hid_collection) *
+ 			parser->device->collection_size);
 -- 
-2.7.4
+2.16.1
