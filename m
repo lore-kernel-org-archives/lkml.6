@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752870AbeBFJyq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:54:46 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:44470 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752690AbeBFJx2 (ORCPT
+        id S1752886AbeBFJyv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:54:51 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:40453 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752686AbeBFJx2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Feb 2018 04:53:28 -0500
-X-UUID: 3f16ffc9967b4ed0838d917aa78601ab-20180206
+X-UUID: fa0dae9231264495a3043c8fc257524c-20180206
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Ryder Lee <ryder.lee@mediatek.com>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 11/16] arm64: dts: mt7622: add PCIe device nodes
-Date: Tue, 6 Feb 2018 17:53:00 +0800
-Message-ID: <ec39a952833c759f98ffdae9560b3c5ad2ad88f6.1517910489.git.sean.wang@mediatek.com>
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 13/16] arm64: dts: mt7622: add usb device nodes
+Date: Tue, 6 Feb 2018 17:53:02 +0800
+Message-ID: <da3734bfd71d041ccb9dce2d99303421ddc1653e.1517910489.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1517910489.git.sean.wang@mediatek.com>
 References: <cover.1517910489.git.sean.wang@mediatek.com>
@@ -26,122 +27,125 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ryder Lee <ryder.lee@mediatek.com>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-This patch adds PCIe support fot MT7622.
+add xhci node and usb3 phy nodes
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Tested-by: Jumin Li <jumin.li@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 10 ++++
- arch/arm64/boot/dts/mediatek/mt7622.dtsi     | 74 ++++++++++++++++++++++++++++
- 2 files changed, 84 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 28 +++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi     | 51 ++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-index b80e8c7..1007932 100644
+index 87b6080..5746cb3 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-@@ -54,6 +54,16 @@
+@@ -52,6 +52,24 @@
+ 	memory {
+ 		reg = <0 0x40000000 0 0x3F000000>;
  	};
++
++	reg_3p3v: regulator-3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	reg_5v: regulator-5v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
  };
  
-+&pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie0_pins>;
+ &pcie {
+@@ -343,6 +361,16 @@
+ 	status = "okay";
+ };
+ 
++&ssusb {
++	vusb33-supply = <&reg_3p3v>;
++	vbus-supply = <&reg_5v>;
 +	status = "okay";
-+
-+	pcie@0,0 {
-+		status = "okay";
-+	};
 +};
 +
- &pio {
- 	/* eMMC is shared pin with parallel NAND */
- 	emmc_pins_default: emmc-pins-default {
++&u3phy {
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins>;
 diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-index a3a409b..f0f18b3 100644
+index d5ca0a8..e6dd4f6 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-@@ -469,6 +469,80 @@
+@@ -462,6 +462,57 @@
  		#reset-cells = <1>;
  	};
  
-+	pcie: pcie@1a140000 {
-+		compatible = "mediatek,mt7622-pcie";
-+		device_type = "pci";
-+		reg = <0 0x1a140000 0 0x1000>,
-+		      <0 0x1a143000 0 0x1000>,
-+		      <0 0x1a145000 0 0x1000>;
-+		reg-names = "subsys", "port0", "port1";
-+		#address-cells = <3>;
++	ssusb: usb@1a0c0000 {
++		compatible = "mediatek,mt7622-xhci",
++			     "mediatek,mtk-xhci";
++		reg = <0 0x1a0c0000 0 0x01000>,
++		      <0 0x1a0c4700 0 0x0100>;
++		reg-names = "mac", "ippc";
++		interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_LOW>;
++		power-domains = <&scpsys MT7622_POWER_DOMAIN_HIF1>;
++		clocks = <&ssusbsys CLK_SSUSB_SYS_EN>,
++			 <&ssusbsys CLK_SSUSB_REF_EN>,
++			 <&ssusbsys CLK_SSUSB_MCU_EN>,
++			 <&ssusbsys CLK_SSUSB_DMA_EN>;
++		clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck";
++		phys = <&u2port0 PHY_TYPE_USB2>,
++		       <&u3port0 PHY_TYPE_USB3>,
++		       <&u2port1 PHY_TYPE_USB2>;
++
++		status = "disabled";
++	};
++
++	u3phy: usb-phy@1a0c4000 {
++		compatible = "mediatek,mt7622-u3phy",
++			     "mediatek,generic-tphy-v1";
++		reg = <0 0x1a0c4000 0 0x700>;
++		#address-cells = <2>;
 +		#size-cells = <2>;
-+		interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 229 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&pciesys CLK_PCIE_P0_MAC_EN>,
-+			 <&pciesys CLK_PCIE_P1_MAC_EN>,
-+			 <&pciesys CLK_PCIE_P0_AHB_EN>,
-+			 <&pciesys CLK_PCIE_P0_AHB_EN>,
-+			 <&pciesys CLK_PCIE_P0_AUX_EN>,
-+			 <&pciesys CLK_PCIE_P1_AUX_EN>,
-+			 <&pciesys CLK_PCIE_P0_AXI_EN>,
-+			 <&pciesys CLK_PCIE_P1_AXI_EN>,
-+			 <&pciesys CLK_PCIE_P0_OBFF_EN>,
-+			 <&pciesys CLK_PCIE_P1_OBFF_EN>,
-+			 <&pciesys CLK_PCIE_P0_PIPE_EN>,
-+			 <&pciesys CLK_PCIE_P1_PIPE_EN>;
-+		clock-names = "sys_ck0", "sys_ck1", "ahb_ck0", "ahb_ck1",
-+			      "aux_ck0", "aux_ck1", "axi_ck0", "axi_ck1",
-+			      "obff_ck0", "obff_ck1", "pipe_ck0", "pipe_ck1";
-+		power-domains = <&scpsys MT7622_POWER_DOMAIN_HIF0>;
-+		bus-range = <0x00 0xff>;
-+		ranges = <0x82000000 0 0x20000000 0x0 0x20000000 0 0x10000000>;
++		ranges;
 +		status = "disabled";
 +
-+		pcie0: pcie@0,0 {
-+			reg = <0x0000 0 0 0 0>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			ranges;
-+			status = "disabled";
-+
-+			num-lanes = <1>;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0 0 0 1 &pcie_intc0 0>,
-+					<0 0 0 2 &pcie_intc0 1>,
-+					<0 0 0 3 &pcie_intc0 2>,
-+					<0 0 0 4 &pcie_intc0 3>;
-+			pcie_intc0: interrupt-controller {
-+				interrupt-controller;
-+				#address-cells = <0>;
-+				#interrupt-cells = <1>;
-+			};
++		u2port0: usb-phy@1a0c4800 {
++			reg = <0 0x1a0c4800 0 0x0100>;
++			#phy-cells = <1>;
++			clocks = <&ssusbsys CLK_SSUSB_U2_PHY_EN>;
++			clock-names = "ref";
 +		};
 +
-+		pcie1: pcie@1,0 {
-+			reg = <0x0800 0 0 0 0>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			ranges;
-+			status = "disabled";
++		u3port0: usb-phy@1a0c4900 {
++			reg = <0 0x1a0c4900 0 0x0700>;
++			#phy-cells = <1>;
++			clocks = <&clk25m>;
++			clock-names = "ref";
++		};
 +
-+			num-lanes = <1>;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0 0 0 1 &pcie_intc1 0>,
-+					<0 0 0 2 &pcie_intc1 1>,
-+					<0 0 0 3 &pcie_intc1 2>,
-+					<0 0 0 4 &pcie_intc1 3>;
-+			pcie_intc1: interrupt-controller {
-+				interrupt-controller;
-+				#address-cells = <0>;
-+				#interrupt-cells = <1>;
-+			};
++		u2port1: usb-phy@1a0c5000 {
++			reg = <0 0x1a0c5000 0 0x0100>;
++			#phy-cells = <1>;
++			clocks = <&ssusbsys CLK_SSUSB_U2_PHY_1P_EN>;
++			clock-names = "ref";
 +		};
 +	};
 +
- 	ethsys: syscon@1b000000 {
- 		compatible = "mediatek,mt7622-ethsys",
+ 	pciesys: pciesys@1a100800 {
+ 		compatible = "mediatek,mt7622-pciesys",
  			     "syscon";
 -- 
 2.7.4
