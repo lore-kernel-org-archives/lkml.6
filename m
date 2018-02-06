@@ -1,73 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752659AbeBFEwf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 23:52:35 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:50349 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752699AbeBFEvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 23:51:18 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 07/10] ARM: sun8i: h3: add SY8113B regulator used by Orange Pi One board
-Date: Tue,  6 Feb 2018 12:49:02 +0800
-Message-Id: <20180206044905.30508-8-icenowy@aosc.io>
-In-Reply-To: <20180206044905.30508-1-icenowy@aosc.io>
-References: <20180206044905.30508-1-icenowy@aosc.io>
+        id S1752132AbeBFFZ2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 00:25:28 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:44074 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750782AbeBFFZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 00:25:21 -0500
+X-Google-Smtp-Source: AH8x2273b7SoErI6aZf+V7oK9x3YjXiyzbvV9YiDWPbrl2HyBrS4C14T2lh0bFXIGJtY3T0+OePzTxBOytkGQGYAVrE=
+MIME-Version: 1.0
+In-Reply-To: <20180205105838.GZ31354@dragon>
+References: <1517766571-409-1-git-send-email-jagan@amarulasolutions.com> <20180205105838.GZ31354@dragon>
+From: Jagan Teki <jagannadh.teki@gmail.com>
+Date: Tue, 6 Feb 2018 10:55:20 +0530
+Message-ID: <CAD6G_RSp_8xWWRfvu_58rdvkE-V16otnE9ifxQkiNry76-TMXQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] ARM: dts: imx6q: engicam LVDS panel changes
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+        devicetree <devicetree@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Orange Pi One board has a SY8113B regulator, which is controlled via
-GPIO and capable of outputing 1.1V when the PL6 GPIO is set to output 0
-or 1.3V when the PL6 GPIO is set to input or output 1, and the output is
-the power supply of the ARM cores in H3 SoC.
+On Mon, Feb 5, 2018 at 4:28 PM, Shawn Guo <shawnguo@kernel.org> wrote:
+> On Sun, Feb 04, 2018 at 11:19:24PM +0530, Jagan Teki wrote:
+>> Series adda LVDS panel attributes on panel drivers instead of defining
+>> them in dts nodes, and also added new icorem6 engicam boards.
+>>
+>> Jagan Teki (7):
+>>   drm/panel: simple: add support for Ampire AM-800480AYTZQW-00H
+>>   ARM: dts: imx6q-icore: Switch LVDS timings from panel-simple
+>>   ARM: dts: imx6dl-icore: Add LVDS node
+>>   drm/panel: simple: Add support for KEO TX31D200VM0BAA
+>>   ARM: dts: imx6q-icore-ofcap12: Switch LVDS timings from panel-simple
+>>   ARM: dts: imx6q: Add Engicam i.CoreM6 Quad/Dual OpenFrame Cap 7
+>>     initial support
+>>   ARM: dts: imx6q: Add Engicam i.CoreM6 1.5 Quad/Dual MIPI starter kit
+>>     support
+>>
+>>  .../display/panel/ampire,am-800480aytzqw-00h.txt   | 25 +++++++++
+>>  .../bindings/display/panel/koe,tx31d200vm0baa.txt  | 25 +++++++++
+> ...
+>>  drivers/gpu/drm/panel/panel-simple.c               | 54 ++++++++++++++++++
+>
+> The dts files should really be sent only after above bindings doc and
+> driver changes get merged first.
 
-Add the device tree node of this regulator and set the cpu's cpu-supply
-property to it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-New patch in v2.
-
- arch/arm/boot/dts/sun8i-h3-orangepi-one.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
-index 82e5d28cd698..d8250aacfda1 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
-@@ -88,6 +88,27 @@
- 			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>;
- 		};
- 	};
-+
-+	reg_sy8113b: gpio-regulator {
-+		compatible = "regulator-gpio";
-+		regulator-name = "vdd-cpux";
-+		regulator-type = "voltage";
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-min-microvolt = <1100000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-ramp-delay = <50>; /* 4ms */
-+
-+		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
-+		enable-active-high;
-+		gpios-states = <0x1>;
-+		states = <1100000 0x0
-+			  1300000 0x1>;
-+	};
-+};
-+
-+&cpu0 {
-+	cpu-supply = <&reg_sy8113b>;
- };
- 
- &ehci0 {
--- 
-2.15.1
+OK, I will send drm/panel changes first.
