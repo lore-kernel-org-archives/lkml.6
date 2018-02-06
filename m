@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752938AbeBFKf6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 05:35:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59984 "EHLO mx2.suse.de"
+        id S1752974AbeBFKgM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 05:36:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59976 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752810AbeBFKew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 05:34:52 -0500
+        id S1752807AbeBFKev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 05:34:51 -0500
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
@@ -14,9 +14,9 @@ Cc: Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v7 5/7] livepatch: Support separate list for replaced patches.
-Date: Tue,  6 Feb 2018 11:34:22 +0100
-Message-Id: <20180206103424.10829-6-pmladek@suse.com>
+Subject: [PATCH v7 4/7] livepatch: Allow to unpatch only functions of the given type
+Date: Tue,  6 Feb 2018 11:34:21 +0100
+Message-Id: <20180206103424.10829-5-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180206103424.10829-1-pmladek@suse.com>
 References: <20180206103424.10829-1-pmladek@suse.com>
@@ -28,121 +28,134 @@ From: Jason Baron <jbaron@akamai.com>
 
 We are going to add a feature called atomic replace. It will allow to
 create a patch that would replace all already registered patches.
+For this, we will need to dynamically create funcs and objects
+for functions that are not longer patched.
 
-The replaced patches will stay registered because they are typically
-unregistered by some package uninstall scripts. But we will remove
-these patches from @klp_patches list to keep the enabled patch
-on the bottom of the stack. Otherwise, we would need to implement
-rather complex logic for moving the patches on the stack. Also
-it would complicate implementation of the atomic replace feature.
-It is not worth it.
+The dynamically allocated objects will not longer be needed once
+the patch is applied.
 
-As a result, we will have patches that are registered but that
-are not longer usable. Let's get prepared for this and use
-a better descriptive name for klp_is_patch_registered() function.
-
-Also create separate list for the replaced patches and allow to
-unregister them. Alternative solution would be to add a flag
-into struct klp_patch. Note that patch->kobj.state_initialized
-is not safe because it can be cleared outside klp_mutex.
-
-This patch does not change the existing behavior.
+This patch allows to unpatch functions of the given type. It might
+cause that the obj->patched flag is true even when some listed
+functions are not longer patched. This is fine as long as the
+unpatched funcs' structures are removed right after. It will
+be the case. Anyway, it is safe. In the worst case, it will
+not be possible to enable the disabled functions.
 
 Signed-off-by: Jason Baron <jbaron@akamai.com>
-[pmladek@suse.com: Split and renamed klp_is_patch_usable()]
+[pmladek@suse.com: Split and modified to use the generic ftype]
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Jessica Yu <jeyu@kernel.org>
 Cc: Jiri Kosina <jikos@kernel.org>
 Cc: Miroslav Benes <mbenes@suse.cz>
 ---
- kernel/livepatch/core.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ kernel/livepatch/core.c       |  2 +-
+ kernel/livepatch/patch.c      | 29 ++++++++++++++++++++++-------
+ kernel/livepatch/patch.h      |  4 ++--
+ kernel/livepatch/transition.c |  2 +-
+ 4 files changed, 26 insertions(+), 11 deletions(-)
 
 diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index fccb603942f1..11632fe8716a 100644
+index ab3e13b71bfd..fccb603942f1 100644
 --- a/kernel/livepatch/core.c
 +++ b/kernel/livepatch/core.c
-@@ -47,6 +47,13 @@ DEFINE_MUTEX(klp_mutex);
+@@ -1060,7 +1060,7 @@ static void klp_cleanup_module_patches_limited(struct module *mod,
  
- static LIST_HEAD(klp_patches);
+ 				pr_notice("reverting patch '%s' on unloading module '%s'\n",
+ 					  patch->mod->name, obj->mod->name);
+-				klp_unpatch_object(obj);
++				klp_unpatch_object(obj, KLP_FUNC_ANY);
  
+ 				klp_post_unpatch_callback(obj);
+ 			}
+diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+index 82d584225dc6..e5f2117e07b6 100644
+--- a/kernel/livepatch/patch.c
++++ b/kernel/livepatch/patch.c
+@@ -236,15 +236,29 @@ static int klp_patch_func(struct klp_func *func)
+ 	return ret;
+ }
+ 
+-void klp_unpatch_object(struct klp_object *obj)
 +/*
-+ * List of 'replaced' patches that have been replaced by a patch that has the
-+ * 'replace' bit set. When they are added to this list, they are disabled and
-+ * can not be re-enabled, but they can be unregistered().
++ * Remove ftrace handler for the given object and function type.
++ *
++ * It keeps obj->patched flag true when any listed function is still patched.
++ * The caller is responsible for removing the unpatched functions to
++ * make the flag clean again.
 + */
-+LIST_HEAD(klp_replaced_patches);
-+
- static struct kobject *klp_root_kobj;
++void klp_unpatch_object(struct klp_object *obj, enum klp_func_type ftype)
+ {
+ 	struct klp_func *func;
++	bool patched = false;
  
- static void klp_init_func_list(struct klp_object *obj, struct klp_func *func)
-@@ -108,17 +115,28 @@ static void klp_find_object_module(struct klp_object *obj)
- 	mutex_unlock(&module_mutex);
+-	klp_for_each_func(obj, func)
+-		if (func->patched)
++	klp_for_each_func(obj, func) {
++		if (!func->patched)
++			continue;
++
++		if (klp_is_func_type(func, ftype))
+ 			klp_unpatch_func(func);
++		else
++			patched = true;
++	}
+ 
+-	obj->patched = false;
++	obj->patched = patched;
  }
  
--static bool klp_is_patch_registered(struct klp_patch *patch)
-+static bool klp_is_patch_in_list(struct klp_patch *patch,
-+				 struct list_head *head)
- {
- 	struct klp_patch *mypatch;
- 
--	list_for_each_entry(mypatch, &klp_patches, list)
-+	list_for_each_entry(mypatch, head, list)
- 		if (mypatch == patch)
- 			return true;
- 
- 	return false;
+ int klp_patch_object(struct klp_object *obj)
+@@ -258,7 +272,7 @@ int klp_patch_object(struct klp_object *obj)
+ 	klp_for_each_func(obj, func) {
+ 		ret = klp_patch_func(func);
+ 		if (ret) {
+-			klp_unpatch_object(obj);
++			klp_unpatch_object(obj, KLP_FUNC_ANY);
+ 			return ret;
+ 		}
+ 	}
+@@ -267,11 +281,12 @@ int klp_patch_object(struct klp_object *obj)
+ 	return 0;
  }
  
-+static bool klp_is_patch_usable(struct klp_patch *patch)
-+{
-+	return klp_is_patch_in_list(patch, &klp_patches);
-+}
-+
-+static bool klp_is_patch_replaced(struct klp_patch *patch)
-+{
-+	return klp_is_patch_in_list(patch, &klp_replaced_patches);
-+}
-+
- static bool klp_initialized(void)
+-void klp_unpatch_objects(struct klp_patch *patch)
++/* Removes ftrace handler in all objects for the given function type. */
++void klp_unpatch_objects(struct klp_patch *patch, enum klp_func_type ftype)
  {
- 	return !!klp_root_kobj;
-@@ -375,7 +393,7 @@ int klp_disable_patch(struct klp_patch *patch)
+ 	struct klp_object *obj;
  
- 	mutex_lock(&klp_mutex);
+ 	klp_for_each_object(patch, obj)
+ 		if (obj->patched)
+-			klp_unpatch_object(obj);
++			klp_unpatch_object(obj, ftype);
+ }
+diff --git a/kernel/livepatch/patch.h b/kernel/livepatch/patch.h
+index e72d8250d04b..885f644add4c 100644
+--- a/kernel/livepatch/patch.h
++++ b/kernel/livepatch/patch.h
+@@ -28,7 +28,7 @@ struct klp_ops {
+ struct klp_ops *klp_find_ops(unsigned long old_addr);
  
--	if (!klp_is_patch_registered(patch)) {
-+	if (!klp_is_patch_usable(patch)) {
- 		ret = -EINVAL;
- 		goto err;
- 	}
-@@ -475,7 +493,7 @@ int klp_enable_patch(struct klp_patch *patch)
+ int klp_patch_object(struct klp_object *obj);
+-void klp_unpatch_object(struct klp_object *obj);
+-void klp_unpatch_objects(struct klp_patch *patch);
++void klp_unpatch_object(struct klp_object *obj, enum klp_func_type ftype);
++void klp_unpatch_objects(struct klp_patch *patch, enum klp_func_type ftype);
  
- 	mutex_lock(&klp_mutex);
+ #endif /* _LIVEPATCH_PATCH_H */
+diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+index 7c6631e693bc..6917100fbe79 100644
+--- a/kernel/livepatch/transition.c
++++ b/kernel/livepatch/transition.c
+@@ -92,7 +92,7 @@ static void klp_complete_transition(void)
+ 		 * All tasks have transitioned to KLP_UNPATCHED so we can now
+ 		 * remove the new functions from the func_stack.
+ 		 */
+-		klp_unpatch_objects(klp_transition_patch);
++		klp_unpatch_objects(klp_transition_patch, KLP_FUNC_ANY);
  
--	if (!klp_is_patch_registered(patch)) {
-+	if (!klp_is_patch_usable(patch)) {
- 		ret = -EINVAL;
- 		goto err;
- 	}
-@@ -516,7 +534,7 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
- 
- 	mutex_lock(&klp_mutex);
- 
--	if (!klp_is_patch_registered(patch)) {
-+	if (!klp_is_patch_usable(patch)) {
  		/*
- 		 * Module with the patch could either disappear meanwhile or is
- 		 * not properly initialized yet.
-@@ -971,7 +989,7 @@ int klp_unregister_patch(struct klp_patch *patch)
- 
- 	mutex_lock(&klp_mutex);
- 
--	if (!klp_is_patch_registered(patch)) {
-+	if (!klp_is_patch_usable(patch) && !klp_is_patch_replaced(patch)) {
- 		ret = -EINVAL;
- 		goto err;
- 	}
+ 		 * Make sure klp_ftrace_handler() can no longer see functions
 -- 
 2.13.6
