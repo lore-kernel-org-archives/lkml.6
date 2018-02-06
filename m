@@ -1,111 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753003AbeBFMvX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 07:51:23 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:41026 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752743AbeBFMu7 (ORCPT
+        id S1753052AbeBFMv5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 07:51:57 -0500
+Received: from mail.efficios.com ([167.114.142.141]:37903 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbeBFMvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 07:50:59 -0500
-X-Auth-Info: pA6AcG3QIexrHFGImXBB0HRZ84G1nDdfNR+UGkzkuMg=
-Subject: Re: [PATCH 2/2] net, can, ifi: loopback Tx message in IFI block
-To: Heiko Schocher <hs@denx.de>, linux-can@vger.kernel.org
-Cc: Markus Marb <markus@marb.org>, netdev@vger.kernel.org,
-        Marc Kleine-Budde <mkl@pengutronix.de>, linux-kernel@vger.kernel.org,
-        Wolfgang Grandegger <wg@grandegger.com>
-References: <20180206120235.15167-1-hs@denx.de>
- <20180206120235.15167-2-hs@denx.de>
-From: Marek Vasut <marex@denx.de>
-Message-ID: <0b802cb7-c972-a0fe-dde9-24cb399ccb95@denx.de>
-Date: Tue, 6 Feb 2018 13:50:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 6 Feb 2018 07:51:50 -0500
+Date: Tue, 6 Feb 2018 12:52:34 +0000 (UTC)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>
+Message-ID: <750091485.16756.1517921554396.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180206114048.6c8ced1c@canb.auug.org.au>
+References: <20180206114048.6c8ced1c@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
 MIME-Version: 1.0
-In-Reply-To: <20180206120235.15167-2-hs@denx.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.141]
+X-Mailer: Zimbra 8.7.11_GA_1854 (ZimbraWebClient - FF52 (Linux)/8.7.11_GA_1854)
+Thread-Topic: linux-next: manual merge of the tip tree with Linus' tree
+Thread-Index: Us+55UfwtCoUzff5sHKZ9fM03qX8wA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/06/2018 01:02 PM, Heiko Schocher wrote:
-> Current ifi driver reads first Rx messages, than loopback
-> the Tx message, if the IFI_CANFD_INTERRUPT_TXFIFO_REMOVE
-> bit is set. This can lead into the case, that Rx messages
-> overhelm Tx messages!
-> 
-> Fixed this in the following way:
-> 
-> Set in the IFI_CANFD_TXFIFO_DLC register the FN value to
-> 1, so the IFI block loopsback itself the Tx message when
-> sended correctly on the canfd bus. Only the IFI block can
-> insert the Tx message in the correct place.
-> 
-> The linux driver now needs only to free the skb, when
-> the Tx message was sended correctly.
-> 
-> Signed-off-by: Heiko Schocher <hs@denx.de>
-> ---
-> 
->  drivers/net/can/ifi_canfd/ifi_canfd.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/can/ifi_canfd/ifi_canfd.c b/drivers/net/can/ifi_canfd/ifi_canfd.c
-> index 05feb8177936..0d36cb8659ae 100644
-> --- a/drivers/net/can/ifi_canfd/ifi_canfd.c
-> +++ b/drivers/net/can/ifi_canfd/ifi_canfd.c
-> @@ -211,6 +211,7 @@ struct ifi_canfd_priv {
->  	struct napi_struct	napi;
->  	struct net_device	*ndev;
->  	void __iomem		*base;
-> +	unsigned int		tx_len;
->  };
->  
->  static void ifi_canfd_irq_enable(struct net_device *ndev, bool enable)
-> @@ -617,8 +618,10 @@ static irqreturn_t ifi_canfd_isr(int irq, void *dev_id)
->  
->  	/* TX IRQ */
->  	if (isr & IFI_CANFD_INTERRUPT_TXFIFO_REMOVE) {
-> -		stats->tx_bytes += can_get_echo_skb(ndev, 0);
-> +		can_free_echo_skb(ndev, 0);
-> +		stats->tx_bytes += priv->tx_len;
->  		stats->tx_packets++;
-> +		priv->tx_len = 0;
->  		can_led_event(ndev, CAN_LED_EVENT_TX);
->  	}
->  
-> @@ -889,6 +892,7 @@ static netdev_tx_t ifi_canfd_start_xmit(struct sk_buff *skb,
->  	}
->  
->  	txdlc = can_len2dlc(cf->len);
-> +	priv->tx_len = txdlc;
->  	if ((priv->can.ctrlmode & CAN_CTRLMODE_FD) && can_is_canfd_skb(skb)) {
->  		txdlc |= IFI_CANFD_TXFIFO_DLC_EDL;
->  		if (cf->flags & CANFD_BRS)
-> @@ -898,6 +902,12 @@ static netdev_tx_t ifi_canfd_start_xmit(struct sk_buff *skb,
->  	if (cf->can_id & CAN_RTR_FLAG)
->  		txdlc |= IFI_CANFD_TXFIFO_DLC_RTR;
->  
-> +	/*
-> +	 * set FNR to 1, so we get our Tx Message looped back
-> +	 * into RxFIFO
-> +	 */
+----- On Feb 5, 2018, at 7:40 PM, Stephen Rothwell sfr@canb.auug.org.au wrote:
 
-Nit, you can make this into a single-line comment ;-)
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in:
+> 
+>  arch/arm64/kernel/entry.S
+> 
+> between commit:
+> 
+>  4bf3286d29f3 ("arm64: entry: Hook up entry trampoline to exception vectors")
+> 
+> from Linus' tree and commit:
+> 
+>  f1e3a12b6543 ("membarrier/arm64: Provide core serializing command")
+> 
+> from the tip tree.
+> 
+> I fixed it up (probably not completely - see below) and can carry the
+> fix as necessary. This is now fixed as far as linux-next is concerned,
+> but any non trivial conflicts should be mentioned to your upstream
+> maintainer when your tree is submitted for merging.  You may also want
+> to consider cooperating with the maintainer of the conflicting tree to
+> minimise any particularly complex conflicts.
 
-Otherwise,
+The change introduced by 4bf3286d29 "arm64: entry: Hook up entry trampoline
+to exception vectors" adds a trampoline as mechanism for return:
 
-Reviewed-by: Marek Vasut <marex@denx.de>
+-       eret                                    // return to kernel
++
++#ifndef CONFIG_UNMAP_KERNEL_AT_EL0
++       eret
++#else
++       .if     \el == 0
++       bne     4f
++       msr     far_el1, x30
++       tramp_alias     x30, tramp_exit_native
++       br      x30
++4:
++       tramp_alias     x30, tramp_exit_compat
++       br      x30
++       .else
++       eret
++       .endif
++#endif
 
-> +	txdlc += (1 << IFI_CANFD_TXFIFO_DLC_FNR_OFFSET);
+Which means that with CONFIG_UNMAP_KERNEL_AT_EL0, for return to EL0,
+the eret is in the trampoline:
+
+        .macro tramp_exit, regsize = 64
+        adr     x30, tramp_vectors
+        msr     vbar_el1, x30
+        tramp_unmap_kernel      x30
+        .if     \regsize == 64
+        mrs     x30, far_el1
+        .endif
+        eret
+        .endm
+
+ENTRY(tramp_exit_native)
+        tramp_exit
+END(tramp_exit_native)
+
+ENTRY(tramp_exit_compat)
+        tramp_exit      32
+END(tramp_exit_compat)
+
+
+One approach I would consider for this is to duplicate this
+comment and add it just above the "eret" instruction within the
+macro:
+
+	/*
+	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on eret context synchronization
+	 * when returning from IPI handler, and when returning to user-space.
+	 */
+
+Or perhaps Will has something else in mind ?
+
+Thanks,
+
+Mathieu
+
+> 
+> --
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc arch/arm64/kernel/entry.S
+> index b34e717d7597,5edde1c2e93e..000000000000
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@@ -324,21 -302,11 +324,25 @@@ alternative_else_nop_endi
+>  	ldp	x28, x29, [sp, #16 * 14]
+>  	ldr	lr, [sp, #S_LR]
+>  	add	sp, sp, #S_FRAME_SIZE		// restore sp
 > +
->  	/* message ram configuration */
->  	writel(txid, priv->base + IFI_CANFD_TXFIFO_ID);
->  	writel(txdlc, priv->base + IFI_CANFD_TXFIFO_DLC);
-> 
-
+> +	.if	\el == 0
+> +alternative_insn eret, nop, ARM64_UNMAP_KERNEL_AT_EL0
+> +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> +	bne	4f
+> +	msr	far_el1, x30
+> +	tramp_alias	x30, tramp_exit_native
+> +	br	x30
+> +4:
+> +	tramp_alias	x30, tramp_exit_compat
+> +	br	x30
+> +#endif
+> +	.else
+> + 	/*
+> + 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on eret context synchronization
+> + 	 * when returning from IPI handler, and when returning to user-space.
+> + 	 */
+> -	eret					// return to kernel
+> +	eret
+> +	.endif
+>  	.endm
+>  
+>   	.macro	irq_stack_entry
 
 -- 
-Best regards,
-Marek Vasut
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
