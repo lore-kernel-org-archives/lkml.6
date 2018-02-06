@@ -1,86 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752572AbeBFP6e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 10:58:34 -0500
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:25476 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752222AbeBFP60 (ORCPT
+        id S1752589AbeBFP70 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 10:59:26 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:55508 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752222AbeBFP7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 10:58:26 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2F0AQBuz3lah2Ka6ERcGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQnEHAoCoNbmFWCAokTjkqCAwojhRgCGoJCWBQBAQEBAQEBAQI?=
- =?us-ascii?q?BAhABAQEKCwkIKC+COCIRS1kBAQEBAQEjAg1dAQEBBCMROgsMBAIBCBEEAQEDA?=
- =?us-ascii?q?iMDAgICHyUBCAgCBAENBQiKFQMVELYRgieHPw2BMYF4AQEBAQEBAQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQEBGAWBD4NbghWGbYJrRASBNz8zgl2CZQWjcD6IGohThH6CJ4Yni3eNc?=
- =?us-ascii?q?UiJR4E8NoFzcFKCRoJlghJ4jgOBFwEBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2F0AQBuz3lah2Ka6ERcGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?nEHAoCoNbmFWCAokTjkqCAwojhRgCGoJCWBQBAQEBAQEBAQIBAhABAQEKCwkIK?=
- =?us-ascii?q?C+COCIRS1kBAQEBAQEjAg1dAQEBBCMROgsMBAIBCBEEAQEDAiMDAgICHyUBCAg?=
- =?us-ascii?q?CBAENBQiKFQMVELYRgieHPw2BMYF4AQEBAQEBAQEBAQEBAQEBAQEBAQEBGAWBD?=
- =?us-ascii?q?4NbghWGbYJrRASBNz8zgl2CZQWjcD6IGohThH6CJ4Yni3eNcUiJR4E8NoFzcFK?=
- =?us-ascii?q?CRoJlghJ4jgOBFwEBAQ?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.195
-X-IronPort-AV: E=Sophos;i="5.46,469,1511848800";
-   d="scan'208";a="1046809081"
-X-DLP: DLP_GlobalPCIDSS
-To: <pmenzel+platform-driver-x86@molgen.mpg.de>, <pali.rohar@gmail.com>,
-        <it+platform-driver-x86@molgen.mpg.de>
-CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: dell-smbios makes wireless card unusable on Dell XPS 13 9360
-Thread-Topic: dell-smbios makes wireless card unusable on Dell XPS 13 9360
-Thread-Index: AQHTn2JDQNvMUU6uc0OEu0w66Mk5pKOXhwfw
-Date: Tue, 6 Feb 2018 15:58:23 +0000
-Message-ID: <3e2d3a0bb0f8495b8b77d282a371b28c@ausx13mpc120.AMER.DELL.COM>
-References: <7a59dd8f-c6a1-e412-931f-629ac5aa2800@molgen.mpg.de>
-In-Reply-To: <7a59dd8f-c6a1-e412-931f-629ac5aa2800@molgen.mpg.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Tue, 6 Feb 2018 10:59:21 -0500
+From: Lukas Senger <lukas@fridolin.com>
+To: giometti@enneenne.com
+Cc: linux-kernel@vger.kernel.org, Lukas Senger <lukas@fridolin.com>
+Subject: [PATCH] pps-gpio: implement echo pulses
+Date: Tue,  6 Feb 2018 16:58:56 +0100
+Message-Id: <20180206155856.14562-1-lukas@fridolin.com>
+X-Mailer: git-send-email 2.16.1
+X-Provags-ID: V03:K0:GSUO27Ublka2lsrhW9GQUb2XOFUg1ogSIQ5mtTDWyh3ycGdCfib
+ Zx6H/FiWGABRS1yHQW1zNN3DYoVGXvvK0qh/iiFI459bNs5vkaJlLeqNJ/XByDHScxQGQLc
+ dZc6ahjUUCGIcDcmlw7vztgBrmITYT339mHkyAdNgj13BF4hTJyS+ihLbAJdjwVMOLmsqt0
+ yL818/Hag3DGKMr7edb5A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:RuSXAGvCHvo=:nauSzygZ5F/xewJdE9rqIL
+ OFKcN+6Iebb9q5SwKXyplxDJV7B0Zy73oD/ZnJIDLGrLqDNEqUlNxxEuso6KRmiISNn6/SdeI
+ HbY0jLKRR2JN+YmKW5jVi24pCY6Nj/OaaRgMvcrTlswpwxcnVyH3IQZuU9fKQ/bkCho4R9xY/
+ IImYIVJUfxSCwzx25MzFLlZgN0Sv3J7h1rsZhf32IKEpywSNwpuxDYQzWAFcHCxCEYcK+iK8S
+ edo7GHucgwcPtAviSux72w/Cx13kAiwyFi72hXzRiA5y2A3fttpcGOZq4/jhf0WVzqWgGJm1C
+ 4xlwsF/1Wdng6v98bncuwjDnDHNcnCJrPc8fYy+sNwsjmU01ixAKemBQ8i2tP5YqMB9sdT64j
+ Ee6d3QXJQV/qjBArvxPqJoAMYSOlpYb2x1L7xG6jTU+EEE/V+q1y6BTPTfEqfm42ZEGv2POwj
+ HGTBiMWJK6iCKHEnGyUo/ZUR0OIsin8H2aiB0G1Oyn39nluWVPq8NyUyaRYpmWMM3ojr88tFI
+ XVEjnEtzdoBcKi4WQVeq8p/R10h5W9GYLBXrmWHin1NfiRJz+VI7V26H/73z/WqMTPaa53uvy
+ hFnJ4G/2uE+bSt42/FwHg52p5uYFcAB9JbhWqmw42OXh/hteBeTqkXOKzfuTZCaKuoduPVvZn
+ oScTM7FJ9XypDP8NDf27OKqhADzi7vw8W60w75HcQU3MQZOJuKk5GO6UXPuAjjBcF6d3dGPrw
+ j8Bvrf3i7j7+F3Yu1R9bT56uxAlHwkfVJW4Dag==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w16Fwdk6001865
 
-Hi Paul,
+pps-gpio reports as having echo capability via sysfs, which is not
+actually the case. This patch implements it.
 
-> -----Original Message-----
-> From: Paul Menzel [mailto:pmenzel+platform-driver-x86@molgen.mpg.de]
-> Sent: Tuesday, February 6, 2018 9:50 AM
-> To: Pali Rohár <pali.rohar@gmail.com>; Limonciello, Mario
-> <Mario_Limonciello@Dell.com>; it+platform-driver-x86@molgen.mpg.de
-> Cc: platform-driver-x86@vger.kernel.org; Linux Kernel Mailing List <linux-
-> kernel@vger.kernel.org>
-> Subject: dell-smbios makes wireless card unusable on Dell XPS 13 9360
-> 
-> Dear Linux folks,
-> 
-> 
-> Adding `dell-smbios` to `/etc/modules` on the Dell XPS 13 9360, it seems
-> to badly effect the Wireless LAN device, causing it to be absent or to
-> not work.
-> 
-> In one case, the whole system lagged, that means, the log in screen
-> stayed grayed out for 15 seconds, and the mouse pointer stopped moving
-> every 20(?) seconds for some seconds.
-> 
+The output pin is hardcoded as 17. This should probably be configurable
+via the dtoverlay in the same way as the input pin.
+---
+ drivers/pps/clients/pps-gpio.c | 55 ++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 50 insertions(+), 5 deletions(-)
 
-Can you please confirm if you're indicating this is a regression in 4.15?
-Or was this present in earlier kernels too?
-
-If it's specific to 4.15, I've got a few steps I'd like you to try to better
-characterize.
-
-1) can you please apply https://patchwork.kernel.org/patch/10194287/
-and let us know if it helps?
-
-2) If you blacklist dell-smbios-wmi does it help?
-
-Thanks,
+diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
+index 333ad7d5..dd7624f1 100644
+--- a/drivers/pps/clients/pps-gpio.c
++++ b/drivers/pps/clients/pps-gpio.c
+@@ -35,6 +35,12 @@
+ #include <linux/list.h>
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
++#include <linux/delay.h>
++
++/* TODO: this should work like gpio_pin below but I don't know how to work with
++ * devicetree overlays.
++ */
++#define PPS_GPIO_ECHO_PIN 17
+ 
+ /* Info for each registered platform device */
+ struct pps_gpio_device_data {
+@@ -63,16 +69,41 @@ static irqreturn_t pps_gpio_irq_handler(int irq, void *data)
+ 
+ 	rising_edge = gpio_get_value(info->gpio_pin);
+ 	if ((rising_edge && !info->assert_falling_edge) ||
+-			(!rising_edge && info->assert_falling_edge))
++			(!rising_edge && info->assert_falling_edge)) {
++		if (info->pps->params.mode & PPS_ECHOASSERT) {
++			gpio_set_value(PPS_GPIO_ECHO_PIN, 1);
++		}
+ 		pps_event(info->pps, &ts, PPS_CAPTUREASSERT, NULL);
+-	else if (info->capture_clear &&
++	} else if (info->capture_clear &&
+ 			((rising_edge && info->assert_falling_edge) ||
+-			 (!rising_edge && !info->assert_falling_edge)))
++			 (!rising_edge && !info->assert_falling_edge))) {
++		if (info->pps->params.mode & PPS_ECHOCLEAR) {
++			gpio_set_value(PPS_GPIO_ECHO_PIN, 1);
++		}
+ 		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, NULL);
++	}
+ 
++	if (info->pps->params.mode & (PPS_ECHOASSERT | PPS_ECHOCLEAR))
++		return IRQ_WAKE_THREAD;
+ 	return IRQ_HANDLED;
+ }
+ 
++/* If we sent an echo pulse, we set the output pin back to low. This results in
++ * an echo pulse of roughly 100ms length.
++ */
++static irqreturn_t pps_gpio_irq_threaded(int irq, void *data)
++{
++	const struct pps_gpio_device_data *info;
++
++	info = data;
++
++	msleep(100);
++	gpio_set_value(PPS_GPIO_ECHO_PIN, 0);
++
++	return IRQ_HANDLED;
++}
++
++
+ static unsigned long
+ get_irqf_trigger_flags(const struct pps_gpio_device_data *data)
+ {
+@@ -131,7 +162,20 @@ static int pps_gpio_probe(struct platform_device *pdev)
+ 
+ 	ret = gpio_direction_input(data->gpio_pin);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "failed to set pin direction\n");
++		dev_err(&pdev->dev, "failed to set pin as input\n");
++		return -EINVAL;
++	}
++
++	ret = devm_gpio_request(&pdev->dev, PPS_GPIO_ECHO_PIN, gpio_label);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to request GPIO %u\n",
++			PPS_GPIO_ECHO_PIN);
++		return ret;
++	}
++
++	ret = gpio_direction_output(PPS_GPIO_ECHO_PIN, 0);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to set pin as output\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -165,7 +209,8 @@ static int pps_gpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* register IRQ interrupt handler */
+-	ret = devm_request_irq(&pdev->dev, data->irq, pps_gpio_irq_handler,
++	ret = devm_request_threaded_irq(&pdev->dev, data->irq,
++			pps_gpio_irq_handler, pps_gpio_irq_threaded,
+ 			get_irqf_trigger_flags(data), data->info.name, data);
+ 	if (ret) {
+ 		pps_unregister_source(data->pps);
+-- 
+2.16.1
