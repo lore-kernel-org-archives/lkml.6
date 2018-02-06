@@ -1,126 +1,241 @@
-Return-Path: <tkjos@android.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518035951; cv=none;
-        d=google.com; s=arc-20160816;
-        b=SdiJB35vv2DpCGOiBj/RzquO1PrBnNb4YZytoWfRSivMKE0ZtDnD6b2HOkticmFC7B
-         tufwTsdC1lJpEmxKvkiW5BW5GiIhCni7x8ne4d1CXyySfyCWPgyYIPyJWD1OEHd2R64h
-         Qe2plIm5jpFscnl1eWjglxM086wJwHwmIXhS1rqoiBEInWxJ5g2Zy2QgOndDvGd/T6wW
-         90fIoiRk+CiaKU7umx27a4DYWP7Xc/zQBoA4tr4MGU3X7U3qN62l46MDDW55vrxoPEDG
-         YGUMbGZvtUkTwqgYFLxspyBmtirDKu02aj2nuaxocjAW9gidfpE7RdXaa6SzQcbCkKYl
-         Hkbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=o8IMEkSxoVlAaqDsuDtm14jdTZuAXhxVj0xEjWRW1Ps=;
-        b=jrE67DP7lZxpJHvdFGkYY9Kj0y4nqy3gJKonbVsl/ERnEdL6cMu2jetvwONuB9PAb+
-         unA+KStfd3IjaZERTaeYHsgOQq7rxgMC4JKdCrRJcJsuUPtKtbzSeS5u/mbjDA4s8sbx
-         K6IkHdsMeApiF16pA8PsMMRFZj3zMbwebQ5EgTfvlHL1q/+KmpY4ANba+BoGrNYT9SMv
-         lQhyr3GGW7yHhY+qZQUme+ubZIrcBoH09oD+95+CszgNaXL7idqOMYpXBdcmknfW9QKW
-         p+UZHowuiE7ai553R0fHg6JPzNCdjcAQfvO0JYer4jA6keY3TADfgPXsAGmq5br41dg9
-         eDtA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@android.com header.s=20161025 header.b=hLKblo3H;
-       spf=pass (google.com: domain of tkjos@android.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tkjos@android.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=android.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@android.com header.s=20161025 header.b=hLKblo3H;
-       spf=pass (google.com: domain of tkjos@android.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tkjos@android.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=android.com
-X-Google-Smtp-Source: AH8x226AQ96YgsualCyhefdLhWK+u7plm5MKJ1Ns0PJdVqSB2VTjn1pTtAl6UO9zXSf90KDq4Ca0ug==
-From: Todd Kjos <tkjos@android.com>
-X-Google-Original-From: Todd Kjos <tkjos@google.com>
-To: tkjos@google.com,
-	gregkh@linuxfoundation.org,
-	arve@android.com,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	maco@google.com
-Cc: android-kernel-team@google.com,
-	Todd Kjos <tkjos@android.com>
-Subject: [PATCH] ANDROID: binder: remove WARN() for redundant txn error
-Date: Wed,  7 Feb 2018 12:38:47 -0800
-Message-Id: <20180207203847.228298-1-tkjos@google.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2459548-1517961275-2-4839611933882175787
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES rosk.us-asciien, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517961275; b=mM28SkmP3BSycp0SW4/URn6JhJp1uT7tOCnsrBiLKHyGioo
+    pxyaoOGNvtAB5uLoznpP/qBj5POnv7Wbp2KmZPVy7d2cq0ahy1CsaLbGROQJYPsA
+    4TxAjGNM6Rk1Y9t9gbOLHx2ucHOGTHeAjeW8tpr3EtuyJtL9qS/V4LYwWaU4P1Rj
+    iTPIKZ5K7iKLrtrw6k1Gw93XZTKXAKF4XOG8cC2FUlJLq98zJfGM5jOYJcNxgxRj
+    prS6i0X6ic7uhYvobkhnSNG9z8f2zCZir6jTtAF0mRDdkzVG5Xkv6/wwuAo1Vheu
+    R1CHw5OvdR9TggpLMeSrmxHnsNfP/JU4aqFqd6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1517961275; bh=729lUuyFgk51mhgNKycHQylmyQ
+    Gq74T667TSmIy6xUE=; b=q33RizJ78Cp2CaJcGkFPYdu9O27n7cJygv4Bs05+mJ
+    WGG4cGbNXk+PLSHVhWAXW7mYhYE5ZQkv6bnxOo+4GFxlgZQs8XUUaQL8+eXvfNmY
+    W6E6oB2RKiMSbFmOHKKpTJYH7KfdCxVTXLNq72KR8wCb1r//AZSZkSIvkUpRRj6H
+    5fJO1JkF1yDWVjcXwKXSJYHLXgRM7nHYyhhinzeDmiRU9bUU1xGF8Tlv4pt3UCtE
+    RaAlB6IzkOemyJ8FIwCUQQINP0DNqChjq9bkQqfm8/W14b6U99AQ3NvnDRBp8gIz
+    tJpvnLcui4gcUpuZTggtGFAWfKS/tsCKTq+MrOPRVN+g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=d1Mv1Avy x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=android.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EZefjOWi;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=android.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=d1Mv1Avy x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=android.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EZefjOWi;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=android.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754224AbeBFXyc (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 18:54:32 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:33667 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754220AbeBFXya (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 18:54:30 -0500
+X-Google-Smtp-Source: AH8x227c4B6/9yeeDPgyIcMpJjlXSzpdOPafE6BL3b2vyL2cKc6UVfljBDMsWvSWBVGqPbHh4wZ3YA==
+From: Jin Qian <jinqian@android.com>
+To: "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Changman Lee <cm224.lee@samsung.com>,
+        Chao Yu <chao2.yu@samsung.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org
+Cc: Jin Qian <jinqian@google.com>,
+        linux-stable <stable@vger.kernel.org>,
+        Jin Qian <jinqian@android.com>
+Subject: [PATCHv2 1/1] ext4/f2fs: don't put symlink in pagecache into highmem
+Date: Tue,  6 Feb 2018 15:53:53 -0800
+Message-Id: <20180206235354.79591-1-jinqian@android.com>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591776066478683214?=
-X-GMAIL-MSGID: =?utf-8?q?1591776066478683214?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-binder_send_failed_reply() is called when a synchronous
-transaction fails. It reports an error to the thread that
-is waiting for the completion. Given that the transaction
-is synchronous, there should never be more than 1 error
-response to that thread -- this was being asserted with
-a WARN().
+From: Jin Qian <jinqian@google.com>
 
-However, when exercising the driver with syzbot tests, cases
-were observed where multiple "synchronous" requests were
-sent without waiting for responses, so it is possible that
-multiple errors would be reported to the thread. This testing
-was conducted with panic_on_warn set which forced the crash.
+partial backport from 21fc61c73c3903c4c312d0802da01ec2b323d174 upstream
+to v4.4 to prevent virt_to_page on highmem.
 
-This is easily reproduced by sending back-to-back
-"synchronous" transactions without checking for any
-response (eg, set read_size to 0):
+ext4_encrypted_follow_link uses kmap() for cpage
+  caddr = kmap(cpage);
 
-    bwr.write_buffer = (uintptr_t)&bc1;
-    bwr.write_size = sizeof(bc1);
-    bwr.read_buffer = (uintptr_t)&br;
-    bwr.read_size = 0;
-    ioctl(fd, BINDER_WRITE_READ, &bwr);
-    sleep(1);
-    bwr2.write_buffer = (uintptr_t)&bc2;
-    bwr2.write_size = sizeof(bc2);
-    bwr2.read_buffer = (uintptr_t)&br;
-    bwr2.read_size = 0;
-    ioctl(fd, BINDER_WRITE_READ, &bwr2);
-    sleep(1);
+_ext4_fname_disk_to_usr calls virt_to_page on the kmapped address.
+  _ext4_fname_disk_to_usr()
+    ext4_fname_decrypt()
+      sg_init_one()
+        sg_init_one(&src_sg, iname->name, iname->len);
+          sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
 
-The first transaction is sent to the servicemanager and the reply
-fails because no VMA is set up by this client. After
-binder_send_failed_reply() is called, the BINDER_WORK_RETURN_ERROR
-is sitting on the thread's todo list since the read_size was 0 and
-the client is not waiting for a response.
-
-The 2nd transaction is sent and the BINDER_WORK_RETURN_ERROR has not
-been consumed, so the thread's reply_error.cmd is still set (normally
-cleared when the BINDER_WORK_RETURN_ERROR is handled). Therefore
-when the servicemanager attempts to reply to the 2nd failed
-transaction, the error is already set and it triggers this warning.
-
-This is a user error since it is not waiting for the synchronous
-transaction to complete. If it ever does check, it will see an
-error.
-
-Changed the WARN() to a pr_warn().
-
-Signed-off-by: Todd Kjos <tkjos@android.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: stable <stable@vger.kernel.org>
+Cc: linux-stable <stable@vger.kernel.org> # 4.4.y
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Jin Qian <jinqian@google.com>
+Signed-off-by: Jin Qian <jinqian@android.com>
 ---
- drivers/android/binder.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/ext4/inode.c    |  1 +
+ fs/ext4/namei.c    |  1 +
+ fs/ext4/symlink.c  | 10 +++-------
+ fs/f2fs/inode.c    |  1 +
+ fs/f2fs/namei.c    |  5 ++---
+ fs/inode.c         |  6 ++++++
+ include/linux/fs.h |  1 +
+ 7 files changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index a7ecfde66b7b..37289683939c 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -1933,8 +1933,14 @@ static void binder_send_failed_reply(struct binder_transaction *t,
- 					&target_thread->todo);
- 				wake_up_interruptible(&target_thread->wait);
- 			} else {
--				WARN(1, "Unexpected reply error: %u\n",
--						target_thread->reply_error.cmd);
-+				/*
-+				 * Cannot get here for normal operation, but
-+				 * we can if multiple synchronous transactions
-+				 * are sent without blocking for responses.
-+				 * Just ignore the 2nd error in this case.
-+				 */
-+				pr_warn("Unexpected reply error: %u\n",
-+					target_thread->reply_error.cmd);
- 			}
- 			binder_inner_proc_unlock(target_thread->proc);
- 			binder_thread_dec_tmpref(target_thread);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 4df1cb19a243..f0cabc8c96cb 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4417,6 +4417,7 @@ struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
+ 			inode->i_op = &ext4_symlink_inode_operations;
+ 			ext4_set_aops(inode);
+ 		}
++		inode_nohighmem(inode);
+ 	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+ 	      S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+ 		inode->i_op = &ext4_special_inode_operations;
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 4c36dca486cc..32960b3ecd4f 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -3151,6 +3151,7 @@ static int ext4_symlink(struct inode *dir,
+ 	if ((disk_link.len > EXT4_N_BLOCKS * 4)) {
+ 		if (!encryption_required)
+ 			inode->i_op = &ext4_symlink_inode_operations;
++		inode_nohighmem(inode);
+ 		ext4_set_aops(inode);
+ 		/*
+ 		 * We cannot call page_symlink() with transaction started
+diff --git a/fs/ext4/symlink.c b/fs/ext4/symlink.c
+index e8e7af62ac95..287c3980fa0b 100644
+--- a/fs/ext4/symlink.c
++++ b/fs/ext4/symlink.c
+@@ -45,7 +45,7 @@ static const char *ext4_encrypted_follow_link(struct dentry *dentry, void **cook
+ 		cpage = read_mapping_page(inode->i_mapping, 0, NULL);
+ 		if (IS_ERR(cpage))
+ 			return ERR_CAST(cpage);
+-		caddr = kmap(cpage);
++		caddr = page_address(cpage);
+ 		caddr[size] = 0;
+ 	}
+ 
+@@ -75,16 +75,12 @@ static const char *ext4_encrypted_follow_link(struct dentry *dentry, void **cook
+ 	/* Null-terminate the name */
+ 	if (res <= plen)
+ 		paddr[res] = '\0';
+-	if (cpage) {
+-		kunmap(cpage);
++	if (cpage)
+ 		page_cache_release(cpage);
+-	}
+ 	return *cookie = paddr;
+ errout:
+-	if (cpage) {
+-		kunmap(cpage);
++	if (cpage)
+ 		page_cache_release(cpage);
+-	}
+ 	kfree(paddr);
+ 	return ERR_PTR(res);
+ }
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 97e20decacb4..5528801a5baf 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -202,6 +202,7 @@ make_now:
+ 			inode->i_op = &f2fs_encrypted_symlink_inode_operations;
+ 		else
+ 			inode->i_op = &f2fs_symlink_inode_operations;
++		inode_nohighmem(inode);
+ 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+ 			S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 2c32110f9fc0..484df6850747 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -351,6 +351,7 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 		inode->i_op = &f2fs_encrypted_symlink_inode_operations;
+ 	else
+ 		inode->i_op = &f2fs_symlink_inode_operations;
++	inode_nohighmem(inode);
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 
+ 	f2fs_lock_op(sbi);
+@@ -942,7 +943,7 @@ static const char *f2fs_encrypted_follow_link(struct dentry *dentry, void **cook
+ 	cpage = read_mapping_page(inode->i_mapping, 0, NULL);
+ 	if (IS_ERR(cpage))
+ 		return ERR_CAST(cpage);
+-	caddr = kmap(cpage);
++	caddr = page_address(cpage);
+ 	caddr[size] = 0;
+ 
+ 	/* Symlink is encrypted */
+@@ -982,13 +983,11 @@ static const char *f2fs_encrypted_follow_link(struct dentry *dentry, void **cook
+ 	/* Null-terminate the name */
+ 	paddr[res] = '\0';
+ 
+-	kunmap(cpage);
+ 	page_cache_release(cpage);
+ 	return *cookie = paddr;
+ errout:
+ 	kfree(cstr.name);
+ 	f2fs_fname_crypto_free_buffer(&pstr);
+-	kunmap(cpage);
+ 	page_cache_release(cpage);
+ 	return ERR_PTR(res);
+ }
+diff --git a/fs/inode.c b/fs/inode.c
+index b0edef500590..b95615f3fc50 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2028,3 +2028,9 @@ void inode_set_flags(struct inode *inode, unsigned int flags,
+ 				  new_flags) != old_flags));
+ }
+ EXPORT_SYMBOL(inode_set_flags);
++
++void inode_nohighmem(struct inode *inode)
++{
++	mapping_set_gfp_mask(inode->i_mapping, GFP_USER);
++}
++EXPORT_SYMBOL(inode_nohighmem);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c8decb7075d6..f746a59fcc88 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3066,5 +3066,6 @@ static inline bool dir_relax(struct inode *inode)
+ }
+ 
+ extern bool path_noexec(const struct path *path);
++extern void inode_nohighmem(struct inode *inode);
+ 
+ #endif /* _LINUX_FS_H */
 -- 
 2.16.0.rc1.238.g530d649a79-goog
