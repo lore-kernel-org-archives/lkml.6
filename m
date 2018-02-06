@@ -1,130 +1,145 @@
-Return-Path: <peterz@infradead.org>
-X-Google-Smtp-Source: AH8x227cVHBRBYApy3PySi+pi1986LSPUZWWUecJnpup9Us2uwzTA9rdKn0elgCwDhUh2ixHlSVf
-ARC-Seal: i=1; a=rsa-sha256; t=1517496543; cv=none;
-        d=google.com; s=arc-20160816;
-        b=oIuzdtxY51JbEizjJI1ouMNJXSSm20Ld7K6NPw0LEl+ol9Md/sA4nEtYppUgP47ucx
-         PN7NRIdqjtBhDT7IMBrvPh5LIm3RPjysEXVD0pYWo9JIBMPGLBrakMqhyVHML0amKC87
-         OTDBUAEj1iu7VGK5qSweFdwuOGAb4jdLOTKcFrqrDDAkBR7WmY4oPaRMCLB0UVndLmKd
-         I8qwLDgy/aIIgGFuZqpvFDb8+P8qgZIPzAcLjkKYtvXbBRTv0m7MQ1Oytl7HCfRqN9uG
-         TudJWm6c9liH1J0ZyRAKawhroDPHS47iLOS/Kvvucu6kOsc+F6l4Wz/BE8Zx6NofR9uK
-         EzFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:references:subject:cc:to:from:date
-         :user-agent:message-id:dkim-signature:arc-authentication-results;
-        bh=AIBWkI4LdpU7mTzjnYWYXaOmS33+h62F+RkOERNcBj4=;
-        b=JxqfZU0nNrsAfd4rr6lTsulH9hbMRm39it1wsV2xAzS/4Jomgb7G9i5UwbCXql3+dK
-         riyxO5LSh7Lsfs651zl050h/rh0nuQLxc46SkBFlMAxWgWpbwH9X6IId8JotD7LocFJF
-         yknHfMYzOu33IRTG97zBijJ3GiQo7+UVCj8zAr/wHJtMS+CPGG8KFPmwcEj91uw/L66I
-         SofeC231kQUuH4NznCZ5XS+m7QO/FU3VwEybsugCN8PjKw5kVf6xOOKeikc/OObEllqV
-         yLoW/y5QhQ5aWK4LZbReXjBBMMKllJK5+UkOCwNGG6Vs/0qRQqcQ16qS6XOJKuOgDwfb
-         oRjw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=BH3ilVhX;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 65.50.211.133 as permitted sender) smtp.mailfrom=peterz@infradead.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=BH3ilVhX;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 65.50.211.133 as permitted sender) smtp.mailfrom=peterz@infradead.org
-Message-Id: <20180201143821.907988792@infradead.org>
-User-Agent: quilt/0.63-1
-Date: Thu, 01 Feb 2018 15:34:24 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Woodhouse <dwmw2@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
- Dave Hansen <dave.hansen@intel.com>,
- Ashok Raj <ashok.raj@intel.com>,
- Tim Chen <tim.c.chen@linux.intel.com>,
- Andy Lutomirski <luto@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Greg KH <gregkh@linuxfoundation.org>,
- Andrea Arcangeli <aarcange@redhat.com>,
- Andi Kleen <ak@linux.intel.com>,
- Arjan Van De Ven <arjan.van.de.ven@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Jun Nakajima <jun.nakajima@intel.com>,
- Asit Mallick <asit.k.mallick@intel.com>,
- Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 3/7] objtool: Add module specific retpoline rules
-References: <20180201143421.088202488@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-objtool-module-rules.patch
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2173738-1517952164-2-15107602399718293670
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517952163; b=fYnIZ6qzPtLYrw/V4dYeahubhdXJOIH/kJ6p3GFzIWmPGtD
+    Fn4YNPehbEr8UrnuLIh24ylE3/2PXpd2rtBgV8Hai9P1/tUKIsmosOxeoLmjxxQO
+    1kTfK6sNCqo6hysrdynxDRjiQLgSbtdX/wzxI1SzREWGFS9tfw2YwmWaY3Glyo9x
+    5CzY+CYGGqwoelZsNtaSWimxtD1ZmaC7QGMTsO92Zu6sqXBYFAOZ2Gr/2Y1+RZd9
+    +xF8oEUL46C9nBRqQaZ47UwJGul9Xr6C3B14uF9U3yV38GjqBo5tETWxKeN8nhHK
+    5i/IwKOnevrDaiHLCmL/vSgohwVXyxxz/hMmalQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1517952163; bh=I3EKxUCaqbWslawdgHp111fpss
+    kG1Wh+H9bu79LclxM=; b=r/k7ynj9ZwJDGsUORhCE683SA28kpoLNnd9w8JoDeN
+    A4CH1xbzqgU2g9gB+BluzFYLt2zutN5fUmC2zxpWnWdd2ka0P+JA6Mb7N2p86Q6m
+    AYbYw7Rwydncv7+wCSUUlxplXToka8mDuFUeHhje7y7JHYesQsJuUnnMt6FpwsJl
+    tsg4Kfa9ZyIs9H92pHtLhxuv0DhM1GZn2qR5TZDDrpafiECkcbDD7sKXm1475zz4
+    jUNiLQ64qkwrh0FsGSdGJojQPOSXYQe1yxbG4IVUVl5DV1BT039cHs6+lkPNaOrS
+    XIa4umI/A2uv+WkypLOHlB//DwFVP+HuG/SN9JmhaTXA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=f+sux1Lm x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=android.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MM4EPjPs;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=android.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=f+sux1Lm x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=android.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MM4EPjPs;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=android.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754005AbeBFVWk (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 16:22:40 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33303 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753523AbeBFVWi (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 16:22:38 -0500
+X-Google-Smtp-Source: AH8x225I81oOc8hGYAXkHhfx083hw5FL35G5RiKUtoq5h+iqgLE/Qt11y06O5/0xYlst+g2yN/0KSg==
+From: Jin Qian <jinqian@android.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Safford <safford@us.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Eric Biggers <ebiggers@google.com>,
+        linux-stable <stable@vger.kernel.org>,
+        Jin Qian <jinqian@google.com>, Jin Qian <jinqian@android.com>
+Subject: [PATCH 1/1] KEYS: encrypted: fix buffer overread in valid_master_desc()
+Date: Tue,  6 Feb 2018 13:22:15 -0800
+Message-Id: <20180206212216.4845-1-jinqian@android.com>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591210455032946473?=
-X-GMAIL-MSGID: =?utf-8?q?1591210455032946473?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-David wanted to not use retpolines in .init.text but that will trip up
-objtool retpoline validation, fix that.
+From: Eric Biggers <ebiggers@google.com>
 
-Requested-by: David Woodhouse <dwmw2@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+commit 794b4bc292f5d31739d89c0202c54e7dc9bc3add upstream
+
+With the 'encrypted' key type it was possible for userspace to provide a
+data blob ending with a master key description shorter than expected,
+e.g. 'keyctl add encrypted desc "new x" @s'.  When validating such a
+master key description, validate_master_desc() could read beyond the end
+of the buffer.  Fix this by using strncmp() instead of memcmp().  [Also
+clean up the code to deduplicate some logic.]
+
+Cc: linux-stable <stable@vger.kernel.org> # 4.4.y
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
+Signed-off-by: Jin Qian <jinqian@google.com>
+Signed-off-by: Jin Qian <jinqian@android.com>
 ---
- scripts/Makefile.build        |    2 ++
- tools/objtool/builtin-check.c |    3 ++-
- tools/objtool/builtin.h       |    2 +-
- tools/objtool/check.c         |    9 +++++++++
- 4 files changed, 14 insertions(+), 2 deletions(-)
+ security/keys/encrypted-keys/encrypted.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -256,6 +256,8 @@ __objtool_obj := $(objtree)/tools/objtoo
- 
- objtool_args = $(if $(CONFIG_UNWINDER_ORC),orc generate,check)
- 
-+objtool_args += $(if $(part-of-module), --module,)
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index ce295c0c1da0..e44e844c8ec4 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -141,23 +141,22 @@ static int valid_ecryptfs_desc(const char *ecryptfs_desc)
+  */
+ static int valid_master_desc(const char *new_desc, const char *orig_desc)
+ {
+-	if (!memcmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_TRUSTED_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_TRUSTED_PREFIX_LEN))
+-				goto out;
+-	} else if (!memcmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_USER_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_USER_PREFIX_LEN))
+-				goto out;
+-	} else
+-		goto out;
++	int prefix_len;
 +
- ifndef CONFIG_FRAME_POINTER
- objtool_args += --no-fp
- endif
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -29,7 +29,7 @@
- #include "builtin.h"
- #include "check.h"
- 
--bool no_fp, no_unreachable, retpoline;
-+bool no_fp, no_unreachable, retpoline, module;
- 
- static const char * const check_usage[] = {
- 	"objtool check [<options>] file.o",
-@@ -40,6 +40,7 @@ const struct option check_options[] = {
- 	OPT_BOOLEAN('f', "no-fp", &no_fp, "Skip frame pointer validation"),
- 	OPT_BOOLEAN('u', "no-unreachable", &no_unreachable, "Skip 'unreachable instruction' warnings"),
- 	OPT_BOOLEAN('r', "retpoline", &retpoline, "Validate retpoline assumptions"),
-+	OPT_BOOLEAN('m', "module", &module, "Indicates the object will be part of a kernel module"),
- 	OPT_END(),
- };
- 
---- a/tools/objtool/builtin.h
-+++ b/tools/objtool/builtin.h
-@@ -20,7 +20,7 @@
- #include <subcmd/parse-options.h>
- 
- extern const struct option check_options[];
--extern bool no_fp, no_unreachable, retpoline;
-+extern bool no_fp, no_unreachable, retpoline, module;
- 
- extern int cmd_check(int argc, const char **argv);
- extern int cmd_orc(int argc, const char **argv);
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1920,6 +1920,15 @@ static int validate_retpoline(struct obj
- 		if (insn->retpoline_safe)
- 			continue;
- 
-+		/*
-+		 * .init.text code is ran before userspace and thus doesn't
-+		 * strictly need retpolines, except for modules which are
-+		 * loaded late, they very much do need retpoline in their
-+		 * .init.text
-+		 */
-+		if (!strcmp(insn->sec->name, ".init.text") && !module)
-+			continue;
++	if (!strncmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN))
++		prefix_len = KEY_TRUSTED_PREFIX_LEN;
++	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
++		prefix_len = KEY_USER_PREFIX_LEN;
++	else
++		return -EINVAL;
 +
- 		WARN_FUNC("indirect %s found in RETPOLINE build",
- 			  insn->sec, insn->offset,
- 			  insn->type == INSN_JUMP_DYNAMIC ? "jump" : "call");
++	if (!new_desc[prefix_len])
++		return -EINVAL;
++
++	if (orig_desc && strncmp(new_desc, orig_desc, prefix_len))
++		return -EINVAL;
++
+ 	return 0;
+-out:
+-	return -EINVAL;
+ }
+ 
+ /*
+-- 
+2.16.0.rc1.238.g530d649a79-goog
