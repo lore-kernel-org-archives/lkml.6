@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-991961-1517918787-2-4568474109794468332
+X-Cyrus-Session-Id: sloti22d1t05-991961-1517918764-2-16017382361567868147
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517918786; b=qHfLTkS5zWC9USRg9QRSYrOdweVcREXqONxKo7rZtDYzHmW
-    sET0IwP7GeSZMF2yLl/SHULYe1yuh6SkE5nJ//Cj4JajEBveN7TWWjW2RMWDUbFz
-    PPFX8DXcGHoEcOJHX2tukFH4tPfrATtDIxl6j5MQQZWWRajJPsLApqbrlEwA7YgC
-    /ZA7E1qXcB3bXQ38UJd6LRKMDpHsApDTOtsCt9TL3PAwlfxXrqAVfyj6w9LUBNqK
-    f2uNV52gv6gHC7B4H9nO3Zmic4fjTkDaI95LUYKUqZ0b30uACd4hq22eog9VeaSm
-    RLPPbdlCLCaay3Dvy0pHn5o3++FBMdAdFLV6/MQ==
+    t=1517918764; b=h7qiAHg9zKmKyqhWcTGbCY3bfJ30kCIydGvpeNiQbccC543
+    3MLXVKCHeJ7tGV2nutQXMPiZrE5oyp9O5tnCPPMIjq11H1frgv6hAH+JcPF2aNsv
+    21CeccSSbvikRrfowpJxZTf79Y5vuQA+zpkw1XtKP8Fpfv2Z2k+V9Xd9d3mZeW4H
+    YZhVwhImnuFJF+7KipFrTWWIo+QozWdEgqwnYE0SOONeyJVTt81HYrB6doDIaB9l
+    j9sp/wL1qABFWeaM81pXql0ehVX4GFaf6TbrPHwtVSXicYfpZNt0cub86MJGsRmE
+    PkZtHaDxCVqMByDT3kzPj/MnZP8DUBrKvq/OG+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:message-id:cc:reply-to
     :in-reply-to:references:to:subject:mime-version
     :content-transfer-encoding:content-type:sender:list-id; s=
-    arctest; t=1517918786; bh=/zAP53b8uxCN88Motbxo8XcnjZg2+lEXN3UTYz
-    wUv9E=; b=JL7k8CM0+AG8URiuU7cNXM4tCRBK8kfDctExP+HUzeri75m9BAqYdC
-    4Sym4WKkRBdgJsQYel8vqua0ufF+ipvsjtIDIhsy3Riq3BfRizfI51K3AhYcmhOI
-    vqfR64FJjONm606CGSsYAB+6abq4DW7QF3aUz6NH/KuPFZJIeKf4cJghIa/c8541
-    bfQo8IDtzchIuC/6GvE6yaVfqvDM4MWfHu79NDF+WuraIjS1VfxD7nhVFJZa6SDA
-    RKBqeHgKeBdI0cpnE+ytJSnvTF5fIqijlKvuvjyY+GBT4Txni3equX6MP8qRBpQJ
-    7wa9d/2/8fceh1E8bsEeVmgLBMIo8jPA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    arctest; t=1517918764; bh=Wasfs2ETUShvj6UCDjqp9X0RD9O75cug17v1If
+    VUZRY=; b=IgV3IFFjcho0AF8PSfUI2tsGxfv9S9zx0JXFnrbF/X8o6LiuCDbYro
+    dYgdS1KEscwfylpRgI+nCe+H8BMSg+w7M1ZwwX8Mk2+xLvZJMyL+yvn0p+59x0DX
+    AuIsuuCqHLRDaUKgykuEjZcaTFKnr0ODcHmFREcwZveXPiDzxkam2BPtuYgRT6Kp
+    Rw89VTHpSHI+0K0PtydT04D0VoiHXXcnq3lzDLSugyesL3NYZIcuA1cPoIbuP+AF
+    m6zemjvxslayNf9Z/LMSr9BCYfJFN8ppZok3xisN6UDCeRfyGYeowcBGzPXo23fW
+    MKhdvPJmxETi/Xu+lI+H+WgXzl0zaVpg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=zytor.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=zytor.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=zytor.com;
@@ -48,32 +48,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=zytor.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752840AbeBFMGY (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 07:06:24 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:57981 "EHLO
+        id S1752743AbeBFMGB (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 07:06:01 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:49769 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752388AbeBFMGX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 07:06:23 -0500
-Date: Tue, 6 Feb 2018 04:00:34 -0800
+        with ESMTP id S1752420AbeBFMF6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 07:05:58 -0500
+Date: Tue, 6 Feb 2018 04:00:07 -0800
 From: tip-bot for Dan Williams <tipbot@zytor.com>
-Message-ID: <tip-6b8cf5cc9965673951f1ab3f0e3cf23d06e3e2ee@git.kernel.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-        jpoimboe@redhat.com, torvalds@linux-foundation.org,
-        brgerst@gmail.com, dan.j.williams@intel.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        luto@kernel.org, peterz@infradead.org, stable@vger.kernel.org
-Reply-To: dvlasenk@redhat.com, stable@vger.kernel.org, luto@kernel.org,
-          peterz@infradead.org, dan.j.williams@intel.com,
-          linux-kernel@vger.kernel.org, bp@alien8.de,
-          torvalds@linux-foundation.org, brgerst@gmail.com,
-          mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          jpoimboe@redhat.com
-In-Reply-To: <151787989697.7847.4083702787288600552.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151787989697.7847.4083702787288600552.stgit@dwillia2-desk3.amr.corp.intel.com>
+Message-ID: <tip-3ac6d8c787b835b997eb23e43e09aa0895ef7d58@git.kernel.org>
+Cc: torvalds@linux-foundation.org, bp@alien8.de, brgerst@gmail.com,
+        stable@vger.kernel.org, dan.j.williams@intel.com,
+        linux-kernel@vger.kernel.org, jpoimboe@redhat.com, hpa@zytor.com,
+        mingo@kernel.org, dvlasenk@redhat.com, peterz@infradead.org,
+        luto@kernel.org, tglx@linutronix.de
+Reply-To: bp@alien8.de, torvalds@linux-foundation.org, brgerst@gmail.com,
+          stable@vger.kernel.org, dan.j.williams@intel.com,
+          linux-kernel@vger.kernel.org, jpoimboe@redhat.com, hpa@zytor.com,
+          mingo@kernel.org, dvlasenk@redhat.com, peterz@infradead.org,
+          luto@kernel.org, tglx@linutronix.de
+In-Reply-To: <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64/compat: Clear registers for compat
- syscalls, to reduce speculation attack surface
-Git-Commit-ID: 6b8cf5cc9965673951f1ab3f0e3cf23d06e3e2ee
+Subject: [tip:x86/pti] x86/entry/64: Clear registers for
+ exceptions/interrupts, to reduce speculation attack surface
+Git-Commit-ID: 3ac6d8c787b835b997eb23e43e09aa0895ef7d58
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -91,18 +90,19 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  6b8cf5cc9965673951f1ab3f0e3cf23d06e3e2ee
-Gitweb:     https://git.kernel.org/tip/6b8cf5cc9965673951f1ab3f0e3cf23d06e3e2ee
+Commit-ID:  3ac6d8c787b835b997eb23e43e09aa0895ef7d58
+Gitweb:     https://git.kernel.org/tip/3ac6d8c787b835b997eb23e43e09aa0895ef7d58
 Author:     Dan Williams <dan.j.williams@intel.com>
-AuthorDate: Mon, 5 Feb 2018 17:18:17 -0800
+AuthorDate: Mon, 5 Feb 2018 17:18:11 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 6 Feb 2018 11:47:57 +0100
+CommitDate: Tue, 6 Feb 2018 11:47:44 +0100
 
-x86/entry/64/compat: Clear registers for compat syscalls, to reduce speculation attack surface
+x86/entry/64: Clear registers for exceptions/interrupts, to reduce speculation attack surface
 
-At entry userspace may have populated registers with values that could
-otherwise be useful in a speculative execution attack. Clear them to
-minimize the kernel's attack surface.
+Clear the 'extra' registers on entering the 64-bit kernel for exceptions
+and interrupts. The common registers are not cleared since they are
+likely clobbered well before they can be exploited in a speculative
+execution attack.
 
 Originally-From: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
@@ -116,92 +116,87 @@ Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/151787989697.7847.4083702787288600552.stgit@dwillia2-desk3.amr.corp.intel.com
-[ Made small improvements to the changelog. ]
+Link: http://lkml.kernel.org/r/151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com
+[ Made small improvements to the changelog and the code comments. ]
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/entry_64_compat.S | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/x86/entry/calling.h  | 19 +++++++++++++++++++
+ arch/x86/entry/entry_64.S |  6 +++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index 98d5358..fd65e01 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -85,15 +85,25 @@ ENTRY(entry_SYSENTER_compat)
- 	pushq	%rcx			/* pt_regs->cx */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
- 	pushq   $0			/* pt_regs->r8  = 0 */
-+	xorq	%r8, %r8		/* nospec   r8 */
- 	pushq   $0			/* pt_regs->r9  = 0 */
-+	xorq	%r9, %r9		/* nospec   r9 */
- 	pushq   $0			/* pt_regs->r10 = 0 */
-+	xorq	%r10, %r10		/* nospec   r10 */
- 	pushq   $0			/* pt_regs->r11 = 0 */
-+	xorq	%r11, %r11		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
-+	xorl	%ebx, %ebx		/* nospec   rbx */
- 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
-+	xorl	%ebp, %ebp		/* nospec   rbp */
- 	pushq   $0			/* pt_regs->r12 = 0 */
-+	xorq	%r12, %r12		/* nospec   r12 */
- 	pushq   $0			/* pt_regs->r13 = 0 */
-+	xorq	%r13, %r13		/* nospec   r13 */
- 	pushq   $0			/* pt_regs->r14 = 0 */
-+	xorq	%r14, %r14		/* nospec   r14 */
- 	pushq   $0			/* pt_regs->r15 = 0 */
-+	xorq	%r15, %r15		/* nospec   r15 */
- 	cld
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index 3f48f69..f4b129d 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -147,6 +147,25 @@ For 32-bit we have the following conventions - kernel is built with
+ 	UNWIND_HINT_REGS offset=\offset
+ 	.endm
  
- 	/*
-@@ -214,15 +224,25 @@ GLOBAL(entry_SYSCALL_compat_after_hwframe)
- 	pushq	%rbp			/* pt_regs->cx (stashed in bp) */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
- 	pushq   $0			/* pt_regs->r8  = 0 */
-+	xorq	%r8, %r8		/* nospec   r8 */
- 	pushq   $0			/* pt_regs->r9  = 0 */
-+	xorq	%r9, %r9		/* nospec   r9 */
- 	pushq   $0			/* pt_regs->r10 = 0 */
-+	xorq	%r10, %r10		/* nospec   r10 */
- 	pushq   $0			/* pt_regs->r11 = 0 */
-+	xorq	%r11, %r11		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
-+	xorl	%ebx, %ebx		/* nospec   rbx */
- 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
-+	xorl	%ebp, %ebp		/* nospec   rbp */
- 	pushq   $0			/* pt_regs->r12 = 0 */
-+	xorq	%r12, %r12		/* nospec   r12 */
- 	pushq   $0			/* pt_regs->r13 = 0 */
-+	xorq	%r13, %r13		/* nospec   r13 */
- 	pushq   $0			/* pt_regs->r14 = 0 */
-+	xorq	%r14, %r14		/* nospec   r14 */
- 	pushq   $0			/* pt_regs->r15 = 0 */
-+	xorq	%r15, %r15		/* nospec   r15 */
++	/*
++	 * Sanitize registers of values that a speculation attack
++	 * might otherwise want to exploit. The lower registers are
++	 * likely clobbered well before they could be put to use in
++	 * a speculative execution gadget:
++	 */
++	.macro CLEAR_REGS_NOSPEC
++	xorl %ebp, %ebp
++	xorl %ebx, %ebx
++	xorq %r8, %r8
++	xorq %r9, %r9
++	xorq %r10, %r10
++	xorq %r11, %r11
++	xorq %r12, %r12
++	xorq %r13, %r13
++	xorq %r14, %r14
++	xorq %r15, %r15
++	.endm
++
+ 	.macro POP_EXTRA_REGS
+ 	popq %r15
+ 	popq %r14
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 065a71b..9e48002 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -575,6 +575,7 @@ END(irq_entries_start)
+ 	ALLOC_PT_GPREGS_ON_STACK
+ 	SAVE_C_REGS
+ 	SAVE_EXTRA_REGS
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
  
- 	/*
- 	 * User mode is traced as though IRQs are on, and SYSENTER
-@@ -338,15 +358,25 @@ ENTRY(entry_INT80_compat)
- 	pushq	%rcx			/* pt_regs->cx */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
- 	pushq   $0			/* pt_regs->r8  = 0 */
-+	xorq	%r8, %r8		/* nospec   r8 */
- 	pushq   $0			/* pt_regs->r9  = 0 */
-+	xorq	%r9, %r9		/* nospec   r9 */
- 	pushq   $0			/* pt_regs->r10 = 0 */
-+	xorq	%r10, %r10		/* nospec   r10 */
- 	pushq   $0			/* pt_regs->r11 = 0 */
-+	xorq	%r11, %r11		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
-+	xorl	%ebx, %ebx		/* nospec   rbx */
- 	pushq   %rbp                    /* pt_regs->rbp */
-+	xorl	%ebp, %ebp		/* nospec   rbp */
- 	pushq   %r12                    /* pt_regs->r12 */
-+	xorq	%r12, %r12		/* nospec   r12 */
- 	pushq   %r13                    /* pt_regs->r13 */
-+	xorq	%r13, %r13		/* nospec   r13 */
- 	pushq   %r14                    /* pt_regs->r14 */
-+	xorq	%r14, %r14		/* nospec   r14 */
- 	pushq   %r15                    /* pt_regs->r15 */
-+	xorq	%r15, %r15		/* nospec   r15 */
+ 	testb	$3, CS(%rsp)
+@@ -1133,6 +1134,7 @@ ENTRY(xen_failsafe_callback)
+ 	ALLOC_PT_GPREGS_ON_STACK
+ 	SAVE_C_REGS
+ 	SAVE_EXTRA_REGS
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+ END(xen_failsafe_callback)
+@@ -1178,6 +1180,7 @@ ENTRY(paranoid_entry)
  	cld
+ 	SAVE_C_REGS 8
+ 	SAVE_EXTRA_REGS 8
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER 8
+ 	movl	$1, %ebx
+ 	movl	$MSR_GS_BASE, %ecx
+@@ -1230,8 +1233,8 @@ ENTRY(error_entry)
+ 	cld
+ 	SAVE_C_REGS 8
+ 	SAVE_EXTRA_REGS 8
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER 8
+-	xorl	%ebx, %ebx
+ 	testb	$3, CS+8(%rsp)
+ 	jz	.Lerror_kernelspace
+ 
+@@ -1428,6 +1431,7 @@ ENTRY(nmi)
+ 	pushq	%r14		/* pt_regs->r14 */
+ 	pushq	%r15		/* pt_regs->r15 */
+ 	UNWIND_HINT_REGS
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
  
  	/*
