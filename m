@@ -1,43 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753347AbeBFSyv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:54:51 -0500
-Received: from mail-pf0-f170.google.com ([209.85.192.170]:37011 "EHLO
-        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753047AbeBFSyo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:54:44 -0500
-X-Google-Smtp-Source: AH8x226R22FN581Uh71IyfJkHsLyda2ykmfOwB1ZXyD4tbPYCPdc9rd1wV2lpTWRYfeGpDXgFjRMCg==
-Date: Tue, 6 Feb 2018 10:54:40 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: andy.gross@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: sdm845: Add minimal dts/dtsi files for
- sdm845 SoC and MTP
-Message-ID: <20180206185440.GJ9465@builder>
-References: <20180125163216.29018-1-rnayak@codeaurora.org>
- <20180125163216.29018-2-rnayak@codeaurora.org>
+        id S1752823AbeBFS6F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:58:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50351 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752529AbeBFS56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 13:57:58 -0500
+Date: Tue, 6 Feb 2018 10:48:44 -0800
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: Davidlohr Bueso <dbueso@suse.de>, akpm@linux-foundation.org,
+        mingo@kernel.org, peterz@infradead.org, jack@suse.cz,
+        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/64] mm: towards parallel address space operations
+Message-ID: <20180206184844.olcd34engojudsxt@linux-n805>
+Mail-Followup-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        Davidlohr Bueso <dbueso@suse.de>, akpm@linux-foundation.org,
+        mingo@kernel.org, peterz@infradead.org, jack@suse.cz,
+        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20180205012754.23615-1-dbueso@wotan.suse.de>
+ <df29e9eb-22ad-7e96-6ea4-2fd0ad2509a9@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180125163216.29018-2-rnayak@codeaurora.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <df29e9eb-22ad-7e96-6ea4-2fd0ad2509a9@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 25 Jan 08:32 PST 2018, Rajendra Nayak wrote:
-> +		spmi_bus: qcom,spmi@c440000 {
-[..]
-> +		};
-> +
+On Mon, 05 Feb 2018, Laurent Dufour wrote:
 
-While we have the chance, please remove this empty line.
+>On 05/02/2018 02:26, Davidlohr Bueso wrote:
+>> From: Davidlohr Bueso <dave@stgolabs.net>
+>>
+>> Hi,
+>>
+>> This patchset is a new version of both the range locking machinery as well
+>> as a full mmap_sem conversion that makes use of it -- as the worst case
+>> scenario as all mmap_sem calls are converted to a full range mmap_lock
+>> equivalent. As such, while there is no improvement of concurrency perse,
+>> these changes aim at adding the machinery to permit this in the future.
+>
+>Despite the massive rebase, what are the changes in this series compared to
+>the one I sent in last May - you silently based on, by the way :
+>https://lkml.org/lkml/2017/5/24/409
 
-> +	};
-> +};
+Hardly, but yes I meant to reference that. It ended up being easier to just
+do a from scratch version. I haven't done a comparison, but at first I thought
+you missed gup users (now not so much), this patchset allows testing on more
+archs (see below), we remove the trylock in vm_insert_page(), etc.
 
-Regards,
-Bjorn
+>>
+>> Direct users of the mm->mmap_sem can be classified as those that (1) acquire
+>> and release the lock within the same context, and (2) those who directly
+>> manipulate the mmap_sem down the callchain. For example:
+>>
+>> (1)  down_read(&mm->mmap_sem);
+>>      /* do something */
+>>      /* nobody down the chain uses mmap_sem directly */
+>>      up_read(&mm->mmap_sem);
+>>
+>> (2a)  down_read(&mm->mmap_sem);
+>>       /* do something that retuns mmap_sem unlocked */
+>>       fn(mm, &locked);
+>>       if (locked)
+>>         up_read(&mm->mmap_sem);
+>>
+>> (2b)  down_read(&mm->mmap_sem);
+>>       /* do something that in between released and reacquired mmap_sem */
+>>       fn(mm);
+>>       up_read(&mm->mmap_sem);
+>
+>Unfortunately, there are also indirect users which rely on the mmap_sem
+>locking to protect their data. For the first step using a full range this
+>doesn't matter, but when refining the range, these one would be the most
+>critical ones as they would have to be reworked to take the range in account.
+
+Of course. The value I see in this patchset is that we can determine whether or
+not we move forward based on the worst case scenario numbers.
+
+>> Testing: I have setup an mmtests config file with all the workloads described:
+>> http://linux-scalability.org/mmtests-config
+>
+>Is this link still valid, I can't reach it ?
+
+Sorry, that should have been:
+
+https://linux-scalability.org/range-mmap_lock/mmtests-config
+
+Thanks,
+Davidlohr
