@@ -1,76 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeBFA5n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 19:57:43 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:45429 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751837AbeBFA5g (ORCPT
+        id S1752384AbeBFA55 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 19:57:57 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:44373 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752089AbeBFA5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 19:57:36 -0500
-Date: Mon, 5 Feb 2018 16:57:33 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Mario.Limonciello@dell.com
-Cc: andy.shevchenko@gmail.com, pali.rohar@gmail.com,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap
- rather than globally
-Message-ID: <20180206005733.GA11119@fury>
-References: <1517420855-19374-1-git-send-email-mario.limonciello@dell.com>
- <20180204120922.fds52i22griw2h6e@pali>
- <CAHp75VcnDKP=kNPh7pU1v_f0+oP64ByKAOmkZzXNUVaXg=wDSg@mail.gmail.com>
- <9b01161fb81043b79cf9ade8ec348fff@ausx13mpc120.AMER.DELL.COM>
+        Mon, 5 Feb 2018 19:57:39 -0500
+X-Google-Smtp-Source: AH8x226DVtLvGognYg1a+AzyfJP1NBJFpStHWpZB9RnQumyIZI96IFMpmI4GZ3igaDGr5mWslMwi0seLFXRfvQEy6WA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9b01161fb81043b79cf9ade8ec348fff@ausx13mpc120.AMER.DELL.COM>
-User-Agent: Mutt/1.8.0 (2017-02-23)
+In-Reply-To: <CALMp9eSXvMmRj15q26_=VpJhYfUL_gHP-ce4h9bCv0N55JtT1w@mail.gmail.com>
+References: <1517828686-29070-1-git-send-email-wanpengli@tencent.com>
+ <CALMp9eQNB+2KLAR2Tv+By2oTthRLvAQMmJiEs61kFNrZDct3_g@mail.gmail.com> <CALMp9eSXvMmRj15q26_=VpJhYfUL_gHP-ce4h9bCv0N55JtT1w@mail.gmail.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Tue, 6 Feb 2018 08:57:37 +0800
+Message-ID: <CANRm+Cx_KVftOfeGWjqn_1P=j8R-NsNcH7w+pA9gCouM_4FDRw@mail.gmail.com>
+Subject: Re: [PATCH] KVM: nVMX: Fix CR4 after VMLAUNCH/VMRESUME failure
+To: Jim Mattson <jmattson@google.com>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w160w1IT023079
 
-On Mon, Feb 05, 2018 at 04:49:35PM +0000, Mario.Limonciello@dell.com wrote:
-> > -----Original Message-----
-> > From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
-> > Sent: Sunday, February 4, 2018 8:28 AM
-> > To: Pali Roh·r <pali.rohar@gmail.com>
-> > Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; Darren Hart
-> > <dvhart@infradead.org>; LKML <linux-kernel@vger.kernel.org>; Platform Driver
-> > <platform-driver-x86@vger.kernel.org>
-> > Subject: Re: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap rather
-> > than globally
-> > 
-> > On Sun, Feb 4, 2018 at 2:09 PM, Pali Roh·r <pali.rohar@gmail.com> wrote:
-> > > On Wednesday 31 January 2018 11:47:35 Mario Limonciello wrote:
-> > >> There is no longer a need for the buffer to be defined in
-> > >> first 4GB physical address space.
-> > >>
-> > >> Furthermore there may be race conditions with multiple different functions
-> > >> working on a module wide buffer causing incorrect results.
-> > >>
-> > >> Fixes: 549b4930f057658dc50d8010e66219233119a4d8
-> > 
-> > He-h, I had to notice this earlier...
-> > 
-> > > Ok, you can add my:
-> > > Reviewed-by: Pali Roh·r <pali.rohar@gmail.com>
-> > 
-> > Thanks and sorry, Pali, it's in for-next already, can't rebase.
-> 
-> Andy,
-> Since it's already in for-next it's probably too late to add the stable CC too right?
-> 
-> So what's the proper time now to send this to @stable?  And should I just forward existing
-> patch?
+2018-02-06 2:24 GMT+08:00 Jim Mattson <jmattson@google.com>:
+> [Resending as plain text]
+>
+> On Mon, Feb 5, 2018 at 10:21 AM Jim Mattson <jmattson@google.com> wrote:
+>
+>> This is incorrect. In the event of an early VM-entry failure (e.g. a
+>> VM-entry failure for "VM entry with invalid control field(s)"), no host
+>> state should be loaded from the VMCS12. Of course, no guest state should
+>> have been loaded from the VMCS12 either, but that's a problem we have with
+>> deferring some VMCS12 control field checks to the hardware.
+>
+>> CR4 should be unchanged from the time of the VMLAUNCH/VMRESUME. There is
 
-As a general rule, Andy and I should be adding Cc stable to most anything that
-includes a Fixes tag that isn't from this review cycle. I've forgotten in the
-past as well - sorry about that. Something we should add some tooling around I
-think, so we don't miss it when checking things in to our review branches.
+This is effective one, what I restore in this patch is
+achitectural/guest visible.
 
-As to timing. As soon as this is merged to Linus' master, it can go to stable.
-Instructions for doing this are in Documentation/process/stable-kernel-rules.rst
+Regards,
+Wanpeng Li
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+>> no guarantee that vmcs12->host_cr4 holds the correct value.
+>
+>
+>> On Mon, Feb 5, 2018 at 3:05 AM Wanpeng Li <kernellwp@gmail.com> wrote:
+>
+>>> From: Wanpeng Li <wanpengli@tencent.com>
+>
+>>> In L0, Haswell client host:
+>
+>>>   nested_vmx_exit_reflected failed vm entry 7
+>>>   WARNING: CPU: 6 PID: 6797 at kvm/arch/x86/kvm//vmx.c:6206
+>>> handle_desc+0x2d/0x40 [kvm_intel]
+>>>   CPU: 6 PID: 6797 Comm: qemu-system-x86 Tainted: G        W  OE
+>>> 4.15.0+ #4
+>>>   RIP: 0010:handle_desc+0x2d/0x40 [kvm_intel]
+>>>   Call Trace:
+>>>    vmx_handle_exit+0xbd/0xe20 [kvm_intel]
+>>>    ? kvm_arch_vcpu_ioctl_run+0xcde/0x1c00 [kvm]
+>>>    kvm_arch_vcpu_ioctl_run+0xd5a/0x1c00 [kvm]
+>>>    kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
+>>>    ? kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
+>>>    ? __fget+0xfc/0x210
+>>>    ? __fget+0xfc/0x210
+>>>    do_vfs_ioctl+0xa4/0x6a0
+>>>    ? __fget+0x11d/0x210
+>>>    SyS_ioctl+0x79/0x90
+>>>    entry_SYSCALL_64_fastpath+0x25/0x9c
+>
+>>> This can be reproduced by running kvm-unit-tests/run_tests.sh
+>>> vmx_controls in
+>>> L1. UMIP CPUID bit is exposed to the L1 UMIP aware guest since it is
+>>> emulated
+>>> by enabling descriptor-table exits on L0. There is a vmentry fail when
+>>> L0 tries to run L2 directly, the L1 guest architectural CR4 is not
+>>> restored
+>>> after this failure since commit 4f350c6dbcb (kvm: nVMX: Handle deferred
+>>> early
+>>> VMLAUNCH/VMRESUME failure properly). The L2 is kvm-unit-tests which will
+>>> not
+>>> write CR4 w/ X86_CR4_UMIP bit. After another L1 access descriptor vmexit,
+>>> we
+>>> check L2's architectural CR4 instead of L1's architectural CR4. This
+>>> patch
+>>> fixes it by restoring L1's architectural CR4 after L0's VMLAUNCH/VMRESUME
+>>> failure.
+>
+>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>>> Cc: Radim Krƒçm√°≈ô <rkrcmar@redhat.com>
+>>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>>> ---
+>>>   arch/x86/kvm/vmx.c | 1 +
+>>>   1 file changed, 1 insertion(+)
+>
+>>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>>> index 23789c9..9fc0492 100644
+>>> --- a/arch/x86/kvm/vmx.c
+>>> +++ b/arch/x86/kvm/vmx.c
+>>> @@ -11633,6 +11633,7 @@ static void nested_vmx_vmexit(struct kvm_vcpu
+>>> *vcpu, u32 exit_reason,
+>>>           */
+>>>          nested_vmx_failValid(vcpu, VMXERR_ENTRY_INVALID_CONTROL_FIELD);
+>
+>>> +       vcpu->arch.cr4 = vmcs12->host_cr4;
+>>>          load_vmcs12_mmu_host_state(vcpu, vmcs12);
+>
+>>>          /*
+>>> --
+>>> 2.7.4
