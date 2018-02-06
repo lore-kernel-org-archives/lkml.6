@@ -1,139 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752798AbeBFLVw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 06:21:52 -0500
-Received: from foss.arm.com ([217.140.101.70]:35490 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752760AbeBFLVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 06:21:43 -0500
-Date: Tue, 6 Feb 2018 11:21:34 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] sched/core: avoid spurious spinlock recursion splats
-Message-ID: <20180206112133.6gs4kt7qawa6ud3t@lakrids.cambridge.arm.com>
-References: <20180205155118.23657-1-mark.rutland@arm.com>
- <20180206100307.GD2269@hirez.programming.kicks-ass.net>
+        id S1752760AbeBFL2w (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 06:28:52 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:43985 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752278AbeBFL2p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 06:28:45 -0500
+X-Google-Smtp-Source: AH8x2262b81/uiOkEEDdhmgKzN613s8DIAGlNFoE0mLg65m3PfYOHYUlx+JFPG8qKcgSTQiRuybrC4TQO1SeADiB3Q4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180206100307.GD2269@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <3aaf482e-0f4f-9001-8df1-1ccd2004ce02@lightnvm.io>
+References: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
+ <1517364411-22386-4-git-send-email-javier@cnexlabs.com> <bf06b0c0-b188-68ba-737b-f42d33c0d5dc@lightnvm.io>
+ <CANr-nt1+=ikX6XUh3FKG_vgcBWzVkzdrWei82YRdHPTVPpxwuw@mail.gmail.com> <3aaf482e-0f4f-9001-8df1-1ccd2004ce02@lightnvm.io>
+From: Hans Holmberg <hans@owltronix.com>
+Date: Tue, 6 Feb 2018 12:28:44 +0100
+Message-ID: <CANr-nt3gLZ5Ly_BKEuvF-3OZG8EGJm8oRtkaj0dMc1-_yMfXZw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] lightnvm: pblk: add padding distribution sysfs attribute
+To: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+Cc: =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>,
+        linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w16BSuhU027475
 
-On Tue, Feb 06, 2018 at 11:03:07AM +0100, Peter Zijlstra wrote:
-> On Mon, Feb 05, 2018 at 03:51:18PM +0000, Mark Rutland wrote:
-> > However, this happens *after* prev->on_cpu is cleared, which allows prev
-> > to be scheduled on another CPU. If prev then attempts to acquire the
-> > same rq lock, before the updated rq->lock.owner is made visible, it will
-> > see itself as the owner.
-> 
-> Cute.
-> 
-> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> > index b19552a212de..4f0d2e3701c3 100644
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -1342,6 +1342,10 @@ static inline void prepare_lock_switch(struct rq *rq, struct task_struct *next)
-> >  
-> >  static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
-> >  {
-> > +#ifdef CONFIG_DEBUG_SPINLOCK
-> > +	/* this is a valid case when another task releases the spinlock */
-> > +	rq->lock.owner = current;
-> > +#endif
-> >  #ifdef CONFIG_SMP
-> >  	/*
-> >  	 * After ->on_cpu is cleared, the task can be moved to a different CPU.
-> > @@ -1355,10 +1359,6 @@ static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
-> >  	 */
-> >  	smp_store_release(&prev->on_cpu, 0);
-> >  #endif
-> > -#ifdef CONFIG_DEBUG_SPINLOCK
-> > -	/* this is a valid case when another task releases the spinlock */
-> > -	rq->lock.owner = current;
-> > -#endif
-> >  	/*
-> >  	 * If we are tracking spinlock dependencies then we have to
-> >  	 * fix up the runqueue lock - which gets 'carried over' from
-> 
-> Right, so patch:
-> 
->   31cb1bc0dc94 ("sched/core: Rework and clarify prepare_lock_switch()")
-> 
-> munched all that code and the above no longer fits.
+On Tue, Feb 6, 2018 at 11:50 AM, Matias Bjørling <mb@lightnvm.io> wrote:
+> On 02/06/2018 10:27 AM, Hans Holmberg wrote:
+>>
+>> Hi Matias,
+>>
+>> On Wed, Jan 31, 2018 at 9:44 AM, Matias Bjørling <mb@lightnvm.io> wrote:
+>>>
+>>> On 01/31/2018 03:06 AM, Javier González wrote:
+>>>>
+>>>>
+>>>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>>>
+>>>> When pblk receives a sync, all data up to that point in the write buffer
+>>>> must be comitted to persistent storage, and as flash memory comes with a
+>>>> minimal write size there is a significant cost involved both in terms
+>>>> of time for completing the sync and in terms of write amplification
+>>>> padded sectors for filling up to the minimal write size.
+>>>>
+>>>> In order to get a better understanding of the costs involved for syncs,
+>>>> Add a sysfs attribute to pblk: padded_dist, showing a normalized
+>>>> distribution of sectors padded. In order to facilitate measurements of
+>>>> specific workloads during the lifetime of the pblk instance, the
+>>>> distribution can be reset by writing 0 to the attribute.
+>>>>
+>>>> Do this by introducing counters for each possible padding:
+>>>> {0..(minimal write size - 1)} and calculate the normalized distribution
+>>>> when showing the attribute.
+>>>>
+>>>> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>>> Signed-off-by: Javier González <javier@cnexlabs.com>
+>>>> ---
+>>>>    drivers/lightnvm/pblk-init.c  | 16 ++++++++--
+>>>>    drivers/lightnvm/pblk-rb.c    | 15 +++++-----
+>>>>    drivers/lightnvm/pblk-sysfs.c | 68
+>>>> +++++++++++++++++++++++++++++++++++++++++++
+>>>>    drivers/lightnvm/pblk.h       |  6 +++-
+>>>>    4 files changed, 95 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+>>>> index 7eedc5daebc8..a5e3510c0f38 100644
+>>>> --- a/drivers/lightnvm/pblk-init.c
+>>>> +++ b/drivers/lightnvm/pblk-init.c
+>>>> @@ -921,6 +921,7 @@ static void pblk_free(struct pblk *pblk)
+>>>>    {
+>>>>          pblk_luns_free(pblk);
+>>>>          pblk_lines_free(pblk);
+>>>> +       kfree(pblk->pad_dist);
+>>>>          pblk_line_meta_free(pblk);
+>>>>          pblk_core_free(pblk);
+>>>>          pblk_l2p_free(pblk);
+>>>> @@ -998,11 +999,13 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
+>>>> struct gendisk *tdisk,
+>>>>          pblk->pad_rst_wa = 0;
+>>>>          pblk->gc_rst_wa = 0;
+>>>>    +     atomic_long_set(&pblk->nr_flush, 0);
+>>>> +       pblk->nr_flush_rst = 0;
+>>>> +
+>>>>    #ifdef CONFIG_NVM_DEBUG
+>>>>          atomic_long_set(&pblk->inflight_writes, 0);
+>>>>          atomic_long_set(&pblk->padded_writes, 0);
+>>>>          atomic_long_set(&pblk->padded_wb, 0);
+>>>> -       atomic_long_set(&pblk->nr_flush, 0);
+>>>>          atomic_long_set(&pblk->req_writes, 0);
+>>>>          atomic_long_set(&pblk->sub_writes, 0);
+>>>>          atomic_long_set(&pblk->sync_writes, 0);
+>>>> @@ -1034,10 +1037,17 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
+>>>> struct gendisk *tdisk,
+>>>>                  goto fail_free_luns;
+>>>>          }
+>>>>    +     pblk->pad_dist = kzalloc((pblk->min_write_pgs - 1) *
+>>>> sizeof(atomic64_t),
+>>>> +                                GFP_KERNEL);
+>>>> +       if (!pblk->pad_dist) {
+>>>> +               ret = -ENOMEM;
+>>>> +               goto fail_free_line_meta;
+>>>> +       }
+>>>> +
+>>>>          ret = pblk_core_init(pblk);
+>>>>          if (ret) {
+>>>>                  pr_err("pblk: could not initialize core\n");
+>>>> -               goto fail_free_line_meta;
+>>>> +               goto fail_free_pad_dist;
+>>>>          }
+>>>>          ret = pblk_l2p_init(pblk);
+>>>> @@ -1097,6 +1107,8 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
+>>>> struct gendisk *tdisk,
+>>>>          pblk_l2p_free(pblk);
+>>>>    fail_free_core:
+>>>>          pblk_core_free(pblk);
+>>>> +fail_free_pad_dist:
+>>>> +       kfree(pblk->pad_dist);
+>>>>    fail_free_line_meta:
+>>>>          pblk_line_meta_free(pblk);
+>>>>    fail_free_luns:
+>>>> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
+>>>> index 7044b5599cc4..264372d7b537 100644
+>>>> --- a/drivers/lightnvm/pblk-rb.c
+>>>> +++ b/drivers/lightnvm/pblk-rb.c
+>>>> @@ -437,9 +437,7 @@ static int pblk_rb_may_write_flush(struct pblk_rb
+>>>> *rb,
+>>>> unsigned int nr_entries,
+>>>>          if (bio->bi_opf & REQ_PREFLUSH) {
+>>>>                  struct pblk *pblk = container_of(rb, struct pblk, rwb);
+>>>>    -#ifdef CONFIG_NVM_DEBUG
+>>>>                  atomic_long_inc(&pblk->nr_flush);
+>>>> -#endif
+>>>>                  if (pblk_rb_flush_point_set(&pblk->rwb, bio, mem))
+>>>>                          *io_ret = NVM_IO_OK;
+>>>>          }
+>>>> @@ -620,14 +618,17 @@ unsigned int pblk_rb_read_to_bio(struct pblk_rb
+>>>> *rb,
+>>>> struct nvm_rq *rqd,
+>>>>                          pr_err("pblk: could not pad page in write
+>>>> bio\n");
+>>>>                          return NVM_IO_ERR;
+>>>>                  }
+>>>> +
+>>>> +               if (pad < pblk->min_write_pgs)
+>>>> +                       atomic64_inc(&pblk->pad_dist[pad - 1]);
+>>>> +               else
+>>>> +                       pr_warn("pblk: padding more than min.
+>>>> sectors\n");
+>>>
+>>>
+>>>
+>>> Curious, when would this happen? Would it be an implementation error or
+>>> something a user did wrong?
+>>
+>>
+>> This would be an implementation error - and this check is just a
+>> safeguard to make sure we won't go out of bounds when updating the
+>> statistics.
+>>
+>
+> Ah, does it make sense to have such defensive programming, when the value is
+> never persisted? An 64 bit integer is quite large, and if only used for
+> workloads for a single instance, it would practically never trigger, and if
+> it did, do one care?
 
-Ah, sorry. I based this on tip/sched-urgent-for-linus as of yesterday,
-and I guess that was out-of-date.
+Ah, sorry for being unclear,  it's not for checking if the pad
+counters overflow  - I wanted to make sure that we won't index
+pad_dist with negative numbers if we mess up the padding calculations
+in the future.
 
-> Does the below change also work for you? (tip/master)
+>
+> <snip>
+>
+>>>
+>>> Looks good to me. Let me know if you want to send a new patch, or if I
+>>> may
+>>> make the change when I pick it up.
+>>
+>>
+>> Thanks for the review, i saw that you already reworked the patch a bit
+>> on your core branch.
+>> However, i found a build issue when building for i386, so i'll fix
+>> that and submit a V2(that includes your update)
+>
+>
+> Ok. I assume this is the kbuild mail I asked about a couple of days ago.
+> I'll wait for v2.
 
-So far it seems to in testing, and looks obviously correct to me.
-
-If you're going to drop that on a branch, feel free to add my ack!
+I did see that particular mail, but it's most likely the same issue
+that the V2 will fix.
 
 Thanks,
-Mark.
-
-> 
-> ---
->  kernel/sched/core.c | 27 ++++++++++++++++-----------
->  1 file changed, 16 insertions(+), 11 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index ee420d78e674..abfd10692022 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2600,19 +2600,31 @@ static inline void finish_task(struct task_struct *prev)
->  #endif
->  }
->  
-> -static inline void finish_lock_switch(struct rq *rq)
-> +static inline void
-> +prepare_lock_switch(struct rq *rq, struct task_struct *next, struct rq_flags *rf)
->  {
-> +	/*
-> +	 * Since the runqueue lock will be released by the next
-> +	 * task (which is an invalid locking op but in the case
-> +	 * of the scheduler it's an obvious special-case), so we
-> +	 * do an early lockdep release here:
-> +	 */
-> +	rq_unpin_lock(rq, rf);
-> +	spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
->  #ifdef CONFIG_DEBUG_SPINLOCK
->  	/* this is a valid case when another task releases the spinlock */
-> -	rq->lock.owner = current;
-> +	rq->lock.owner = next;
->  #endif
-> +}
-> +
-> +static inline void finish_lock_switch(struct rq *rq)
-> +{
->  	/*
->  	 * If we are tracking spinlock dependencies then we have to
->  	 * fix up the runqueue lock - which gets 'carried over' from
->  	 * prev into current:
->  	 */
->  	spin_acquire(&rq->lock.dep_map, 0, 0, _THIS_IP_);
-> -
->  	raw_spin_unlock_irq(&rq->lock);
->  }
->  
-> @@ -2843,14 +2855,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
->  
->  	rq->clock_update_flags &= ~(RQCF_ACT_SKIP|RQCF_REQ_SKIP);
->  
-> -	/*
-> -	 * Since the runqueue lock will be released by the next
-> -	 * task (which is an invalid locking op but in the case
-> -	 * of the scheduler it's an obvious special-case), so we
-> -	 * do an early lockdep release here:
-> -	 */
-> -	rq_unpin_lock(rq, rf);
-> -	spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
-> +	prepare_lock_switch(rq, next, rf);
->  
->  	/* Here we just switch the register state and the stack. */
->  	switch_to(prev, next, prev);
+Hans
