@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753042AbeBFNUZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 08:20:25 -0500
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:43875 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751778AbeBFNTs (ORCPT
+        id S1752921AbeBFNV1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 08:21:27 -0500
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:35074 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751756AbeBFNVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:19:48 -0500
+        Tue, 6 Feb 2018 08:21:18 -0500
 Subject: Re: [PATCH v5 04/16] media: rkisp1: add Rockchip MIPI Synopsys DPHY
  driver
 To: Shunqian Zheng <zhengsq@rock-chips.com>,
@@ -23,8 +23,8 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 References: <1514533978-20408-1-git-send-email-zhengsq@rock-chips.com>
  <1514533978-20408-5-git-send-email-zhengsq@rock-chips.com>
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <82b45a09-c29b-d0ce-d38f-50d30a344b5d@xs4all.nl>
-Date: Tue, 6 Feb 2018 14:19:42 +0100
+Message-ID: <13ff39e5-242d-2307-d429-60cd0a0a18e5@xs4all.nl>
+Date: Tue, 6 Feb 2018 14:21:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
@@ -32,15 +32,15 @@ In-Reply-To: <1514533978-20408-5-git-send-email-zhengsq@rock-chips.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfEuKt7Z+MVmrdai6bQmjdUn/UxhmvK1ZcXBH/Pv9qNdPWjnrXspHZ+rSictv7vrkowk1wJTfLpuRIT+a1MBDXiVVeGxByyNCLUZE05E0uujmgIBHOaCO
- NRHuNnUFKhCLRfE1t3sWdzXo/2ldClN1cRgeLVHctFhgshtbKKlYRFQWPcR+RelHypypGqiPpBr1u22ivyvHbHsSquTKIxvJeQKhKgzQJz3QkP8IK4ixxSAt
- QMuIVZP0ya9WF1c9LIoaWUCDHb+sX8TgRZZdQXyQgkmJo0rKxWNdA8vnqr/yMeDl9N+OfrmXmeAavpwg+mRqJLrCtlX1/8xwe4d0HY5NgkZq2G799+R6xqnC
- DmXfGvGOniM4IglCCbB79aus+ro8qDokyMYCUwSCRT7rpU23gdAAubZg9zvLTovHdNTPogYtxYUcAWn0NoRmr5amjsxlGWOMakmiE1F5gmW8EE5WHX3Ostgv
- dYN8yIqUu2FcX9e46V3RukfvdRnNBJXYHnoqIOr7njRplcDqAuWNTdO9fbSoKrXXcilnae/6pT9RoI8Ra11WNfI5JOZWrFjucHTOoch0PXyLyqufGQHHthco
- cVoPFoSM/mM/Nu+C4+lYJbKjmcQVuxDuBxQoRbrp7y/YPHW+yFfzKfZq9NWqYMqozyalLKTTU/hbWquY0i/bcLwEJz23fTUzCexVP5TzkdyyPjpI0MX8h9Y+
- lEicLivfS3EZ0RaQJtCLXcCZ8YYEO7CRAEa6bB990/a4mOmZ/QlRf0k/33q1yhC7NXrHHnp+w7dEXp1935kdDO9Lh5ISyo+zFhYgc83xsTHxoNmClRfGwGSe
- yHwyTPtCsubUJlyVEQ5YKZ8RMotI0kzMkJhfQTMZ+xq+1J3vv3AFIH6wp1HnxliSbHcTIcIOVqCICOaojqLVsM8Xt+ThhpeLBVkN6tr4WBYwe0YD4Ru8eKn+
- /h11tfcyMIU5kps9C+WVtb8vT2w=
+X-CMAE-Envelope: MS4wfEhXnwqW4Xv6jg04xWJc3EKYcF7iFU+AVtPuciJg8z1vBe7SQW/gNE/ehgvBe8g+VXQr4xrGiqBg4vp9jQpQx/G6Q4l2jcDgLt0YS5itGfjLD0lHm+8c
+ 9obGeVjHqfoV3QtmU5F5MOobwZWqB9rcBttIwNVrD2sBNZwlFM++viLd7qEq7clDFIOHRtep3YmMBm3OUB4U8nehYKC0KoDAvn3z4tlN9xA57b7wuUqLTxUk
+ cP5vJF17an103GdUScMToFjD/QMJIBWT/iYHmq5ch01GaCpMchcIRIne4u4GJPQwC2+S58saBIp134DvJq8q2tDLI5PQqjhi70OsxujFSSWGpqqOCGYAM8nW
+ uk7CvU3S+uACc5fF+usEsA+bYG+IkNiBTppsExd8goZUu4y43iYDw2lPTc+yUiTtwlAUWyxaR42aNH9Q3eCqlq5EQu5i6YJ6ezb6ipO3/sdH1LL5Ijjflj3V
+ 6OqtTpkK4CR8HmAsfmRd6+cekZFuM8YAThGu8qpatMlg9K53mSDFrTD67NR0k9hjhTsmpVa/uYpneINitRODiy1CyVuA2jRJj0viJIxv1xmyOVC9NcD4Xm91
+ 6Tt9U53xNi974jK7sbWWL5NUmkQ6DKKDlkrcfP65ZGJlSyrdoAFRiMdfVY6nq7QYOOA13HdeSEE5+XG+5s+eivq3+Vzzw0DLfPQnOAAdK3oXuMKmIsmR2cbF
+ OuAnNAPOHOGYIv31eBflvUJ3NiNLfYH73q5CfzpKNL42/fXZBOOiEN890j7dmt72Nr/S+Hveo7Q18bLL81sVxapANNghPRi2jqpQhEGIgyBMa1B9VQBwlHUY
+ +UU3N6rOAPlsdVeLBYoj6tvyrj16TGjRqd/Xa2fPMYmGUTvN0/k9/lDeLRK7FRbjFlFW1K6LblipUbd5NM39gv8MbuOoeQeBLyuO6hA7w+WKb5kgWFKImAtB
+ MGeHQKekCPdqZhDFR8JqYXXHR6Y=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -96,10 +96,6 @@ On 12/29/17 08:52, Shunqian Zheng wrote:
 > + * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 > + * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 > + * SOFTWARE.
-
-If possible, please use the new SPDX license tags. Hmm, you used it elsewhere,
-so why not here?
-
 > + */
 > +
 > +#include <linux/clk.h>
@@ -451,7 +447,7 @@ so why not here?
 > +	if (!priv->is_streaming)
 > +		return 0;
 
-You can drop this if. The end result is always the same :-)
+'if' can be dropped.
 
 > +
 > +	priv->is_streaming = false;
@@ -479,9 +475,8 @@ You can drop this if. The end result is always the same :-)
 > +	return 0;
 > +}
 
-Please drop this. g_mbus_config is deprecated and should not be used
-in new drivers. It dates from a pre-device-tree era and these days we
-use the device tree instead.
+As with the previous patch: please remove g_mbus_config, it shouldn't
+be used in new drivers.
 
 > +
 > +static int mipidphy_s_power(struct v4l2_subdev *sd, int on)
