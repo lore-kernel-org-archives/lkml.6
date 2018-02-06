@@ -1,189 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752665AbeBFQsy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:48:54 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:36091 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752259AbeBFQsr (ORCPT
+        id S1752826AbeBFQtQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:49:16 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.113]:36477 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752259AbeBFQtH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:48:47 -0500
-X-Google-Smtp-Source: AH8x225al0sSCkR7fGHsuCufRnq/fZBmXsCYmeL4bQXwbWhFe+BTJ66Wp5e1HyMM8Fwc2JuvxV2tmyZ9ORYSVQbIF0Q=
+        Tue, 6 Feb 2018 11:49:07 -0500
+Date: Tue, 6 Feb 2018 10:49:04 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH v3 5/8] pci: cx88-input: use 64-bit arithmetic instead of
+ 32-bit
+Message-ID: <9db3fe5d4564caf97acb5bee69e92727ada4a633.1517929336.git.gustavo@embeddedor.com>
+References: <cover.1517929336.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <224788c7-426b-d3a9-d0a6-412d2b8afb75@partner.samsung.com>
-References: <CGME20180205174022eucas1p101e8339284c1f0ac8f40f70c24de1c1f@eucas1p1.samsung.com>
- <224788c7-426b-d3a9-d0a6-412d2b8afb75@partner.samsung.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 6 Feb 2018 22:18:26 +0530
-Message-ID: <CANAwSgTO5_mL9GEYrXDJyKakY3JTeF+VxbCTuHczAvfVY0zUsg@mail.gmail.com>
-Subject: Re: [PATCH] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1517929336.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1ej6Qb-000mjz-AF
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.4.238]:46702
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 31
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kamil,
+Add suffix LL to constant 1000000 in order to give the compiler
+complete information about the proper arithmetic to use. Notice
+that this constant is used in a context that expects an expression
+of type ktime_t (64 bits, signed).
 
-Thanks for providing the fix to this issue.
+The expression ir->polling * 1000000 is currently being evaluated
+using 32-bit arithmetic.
 
-On 5 February 2018 at 23:10, Kamil Konieczny
-<k.konieczny@partner.samsung.com> wrote:
->
-> In AES-ECB mode crypt is done with key only, so any use of IV
-> can cause kernel Oops, as reported by Anand Moon.
+Addresses-Coverity-ID: 1392628 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1392630 ("Unintentional integer overflow")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Update subject and changelog to better reflect the proposed code changes.
+ - Add suffix LL to constant instead of casting a variable.
 
-If possible could you avoid the name in commit message.
+Changes in v3:
+ - Mention the specific Coverity reports in the commit message.
 
-> Fixed it by using IV only in AES-CBC and AES-CTR.
->
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> Reported-by: Anand Moon <linux.amoon@gmail.com>
+ drivers/media/pci/cx88/cx88-input.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[snip]
-
-Please add my. Tested on Odroid HC2
-
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-
-Below are the result at my end.
-
-aes-cbc-essiv:sha256 (128 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 11.7225 s, 71.6 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 22.112 s, 37.9 MB/s
-
-aes-cbc-essiv:sha256 (256 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 13.096 s, 64.1 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 24.4165 s, 34.4 MB/s
-
-aes-ctr-plain (128 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 11.2246 s, 74.7 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 20.426 s, 41.1 MB/s
-
-aes-xts-plain64 (256 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 11.1533 s, 75.2 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 20.8821 s, 40.2 MB/s
-
-aes-xts-plain64 (512 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 12.0614 s, 69.5 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 23.0717 s, 36.4 MB/s
-
-twofish-cbc-essiv:sha256 (128 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 13.031 s, 64.4 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 20.7202 s, 40.5 MB/s
-
-twofish-cbc-essiv:sha256 (256 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 12.9995 s, 64.5 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 24.2369 s, 34.6 MB/s
-
-twofish-xts-plain64 (256 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 14.607 s, 57.4 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 26.2963 s, 31.9 MB/s
-
-twofish-xts-plain64 (512 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 14.5783 s, 57.5 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 25.3593 s, 33.1 MB/s
-
-serpent-cbc-essiv:sha256 (128 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 15.5157 s, 54.1 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 37.0526 s, 22.6 MB/s
-
-serpent-cbc-essiv:sha256 (256 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 16.1138 s, 52.1 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 36.922 s, 22.7 MB/s
-
-serpent-xts-plain64 (256 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 17.287 s, 48.5 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 39.279 s, 21.4 MB/s
-
-serpent-xts-plain64 (512 bit key)
-WRITE:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 16.9464 s, 49.5 MB/s
-READ:
-100+0 records in
-100+0 records out
-838860800 bytes (839 MB, 800 MiB) copied, 38.3389 s, 21.9 MB/s
-
-Best Regards
--Anand
+diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
+index 4e9953e..6f4e692 100644
+--- a/drivers/media/pci/cx88/cx88-input.c
++++ b/drivers/media/pci/cx88/cx88-input.c
+@@ -180,7 +180,7 @@ static enum hrtimer_restart cx88_ir_work(struct hrtimer *timer)
+ 	struct cx88_IR *ir = container_of(timer, struct cx88_IR, timer);
+ 
+ 	cx88_ir_handle_key(ir);
+-	missed = hrtimer_forward_now(&ir->timer, ir->polling * 1000000);
++	missed = hrtimer_forward_now(&ir->timer, ir->polling * 1000000LL);
+ 	if (missed > 1)
+ 		ir_dprintk("Missed ticks %ld\n", missed - 1);
+ 
+@@ -200,7 +200,7 @@ static int __cx88_ir_start(void *priv)
+ 	if (ir->polling) {
+ 		hrtimer_init(&ir->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ 		ir->timer.function = cx88_ir_work;
+-		hrtimer_start(&ir->timer, ir->polling * 1000000,
++		hrtimer_start(&ir->timer, ir->polling * 1000000LL,
+ 			      HRTIMER_MODE_REL);
+ 	}
+ 	if (ir->sampling) {
+-- 
+2.7.4
