@@ -1,38 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752737AbeBFQZk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:25:40 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:45526 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752630AbeBFQZZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:25:25 -0500
-Date: Tue, 06 Feb 2018 11:25:23 -0500 (EST)
-Message-Id: <20180206.112523.173878106111040737.davem@davemloft.net>
-To: wsa+renesas@sang-engineering.com
-Cc: linux-kernel@vger.kernel.org, dan.carpenter@oracle.com,
-        linux-renesas-soc@vger.kernel.org, thomas.lendacky@amd.com,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 4/4] net: amd-xgbe: fix comparison to bitshift when
- dealing with a mask
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180205201002.23621-5-wsa+renesas@sang-engineering.com>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
-        <20180205201002.23621-5-wsa+renesas@sang-engineering.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1752599AbeBFQbo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:31:44 -0500
+Received: from mga05.intel.com ([192.55.52.43]:55185 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752364AbeBFQbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:31:39 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,469,1511856000";
+   d="scan'208";a="16303412"
+Date: Tue, 6 Feb 2018 18:31:34 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] Revert "cpuidle: Make drivers initialize polling state"
+Message-ID: <20180206163134.GO5453@intel.com>
+References: <20180122162747.19103-1-ville.syrjala@linux.intel.com>
+ <CAJZ5v0jKQh-YyjNjCuVqnj_oiPZ+HLLSftd4ECRJ1ZgPiroxSA@mail.gmail.com>
+ <20180205140445.GH5453@intel.com>
+ <36158666.hf5grRdGNf@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <36158666.hf5grRdGNf@aspire.rjw.lan>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Mon,  5 Feb 2018 21:10:01 +0100
-
-> Due to a typo, the mask was destroyed by a comparison instead of a bit
-> shift.
+On Mon, Feb 05, 2018 at 06:56:31PM +0100, Rafael J. Wysocki wrote:
+> On Monday, February 5, 2018 3:04:45 PM CET Ville Syrjälä wrote:
+> > On Sun, Feb 04, 2018 at 10:18:07AM +0100, Rafael J. Wysocki wrote:
+> > > On Sun, Feb 4, 2018 at 10:12 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > On Mon, Jan 22, 2018 at 5:27 PM, Ville Syrjala
+> > > > <ville.syrjala@linux.intel.com> wrote:
+> > > >> From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> > > >>
+> > > >> This reverts commit 1b39e3f813b4685c7a30ae964d5529a1b0e3a286.
+> > > >>
+> > > >> Makes my P3 machine oops somewhere in cpuidle. I suspect
+> > > >> CONFIG_ACPI=n may have something to do with this.
+> > > >
+> > > > And if you don't do CONFIG_ACPI=n, does it still oops?
+> > 
+> > Don't think I actually tried that. I can give it a whirl tonight.
+> > 
+> > I think this machine should actually have ACPI, but it inherited
+> > the .config from a P2 machine that did not. Apparently I was too
+> > lazy to change .config when I swapped in the "new" machine.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> I guess it would work, but never mind.
+> 
+> > > >
+> > > > Anyway, there are later changes depending on this one, so reverting it
+> > > > won't work in general.
+> > > >
+> > > > Let me look deeper at this.
+> > > 
+> > > What's there in /sys/devices/system/cpu/cpuidle/current_driver on your
+> > > system with the problematic commit reverted?
+> > 
+> > # cat /sys/devices/system/cpu/cpuidle/current_driver
+> > apm_idle
+> 
+> That is the key bit: I overlooked this little fellow.
+> 
+> Does the below (untested here) help?
+> 
+> ---
+>  arch/x86/kernel/apm_32.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> Index: linux-pm/arch/x86/kernel/apm_32.c
+> ===================================================================
+> --- linux-pm.orig/arch/x86/kernel/apm_32.c
+> +++ linux-pm/arch/x86/kernel/apm_32.c
+> @@ -2389,6 +2389,7 @@ static int __init apm_init(void)
+>  	if (HZ != 100)
+>  		idle_period = (idle_period * HZ) / 100;
+>  	if (idle_threshold < 100) {
+> +		cpuidle_poll_state_init(&apm_idle_driver);
+>  		if (!cpuidle_register_driver(&apm_idle_driver))
+>  			if (cpuidle_register_device(&apm_cpuidle_device))
+>  				cpuidle_unregister_driver(&apm_idle_driver);
 
-Applied and queued up for -stable, thanks.
+Yep, this works. Thanks.
+
+Tested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+
+-- 
+Ville Syrjälä
+Intel OTC
