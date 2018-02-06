@@ -1,58 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752469AbeBFBoC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 20:44:02 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45441 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751514AbeBFBn4 (ORCPT
+        id S1752468AbeBFBrE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 20:47:04 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:58080 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752069AbeBFBq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 20:43:56 -0500
-X-Google-Smtp-Source: AH8x224g9SLl09t/0zZUVAcxrscywmllmJDbK/W9OZDFyy/qZnaFiG9UCeYhLTtmvPLGbSFOPbIiyA==
-Date: Mon, 5 Feb 2018 17:43:52 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Philippe CORNU <philippe.cornu@st.com>
-Cc: Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>, Heiko Stubner <heiko@sntech.de>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rockchip@lists.infradead.org"
-        <linux-rockchip@lists.infradead.org>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Ludovic BARRE <ludovic.barre@st.com>,
-        Mickael REULIER <mickael.reulier@st.com>
-Subject: Re: [PATCH] drm/bridge/synopsys: dsi: Add 1.31 version support
-Message-ID: <20180206014351.GA110153@ban.mtv.corp.google.com>
-References: <20180122150819.22066-1-philippe.cornu@st.com>
- <37f38992-0ad3-317f-5337-fbe018bf5f45@st.com>
+        Mon, 5 Feb 2018 20:46:58 -0500
+Subject: Re: [PATCH 2/6] nvme-pci: fix the freeze and quiesce for shutdown and
+ reset case
+To: Keith Busch <keith.busch@intel.com>
+Cc: axboe@fb.com, linux-kernel@vger.kernel.org, hch@lst.de,
+        linux-nvme@lists.infradead.org, sagi@grimberg.me
+References: <1517554849-7802-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1517554849-7802-3-git-send-email-jianchao.w.wang@oracle.com>
+ <20180202182413.GH24417@localhost.localdomain>
+ <d93d115b-bdb1-24c0-71be-72f1b7563e5a@oracle.com>
+ <20180205151314.GP24417@localhost.localdomain>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <d218f5f5-45f7-6036-00a5-48769101080f@oracle.com>
+Date: Tue, 6 Feb 2018 09:46:36 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37f38992-0ad3-317f-5337-fbe018bf5f45@st.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180205151314.GP24417@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8796 signatures=668662
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802060018
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 10:19:15PM +0000, Philippe CORNU wrote:
-> Hi Archit, Andrzej, Laurent & Brian,
-> 
-> What is your opinion regarding this patch? Do you have any advice for 
-> handling hw versions?
-> 
-> Do not hesitate to comment.
+Hi Keith
 
-I'll admit, I don't really have the bandwidth to handle this. I also
-haven't looked into any version diffs to know the extent of changes
-between HW versions.
+Thanks for your kindly response.
 
-Brian
+On 02/05/2018 11:13 PM, Keith Busch wrote:
+>  but how many requests are you letting enter to their demise by
+> freezing on the wrong side of the reset?
+
+There are only two difference with this patch from the original one.
+1. Don't freeze the queue for the reset case. At the moment, the outstanding requests will be requeued back to blk-mq queues.
+   The new entered requests during reset will also stay in blk-mq queues. All this requests will not enter into nvme driver layer
+   due to quiescent request_queues. And they will be issued after the reset is completed successfully.
+2. Drain the request queue before nvme_dev_disable. This is nearly same with the previous rule which will also unquiesce the queue
+   and let the requests be able to be drained. The only difference is this patch will invoke wait_freeze in nvme_dev_disable instead
+   of nvme_reset_work.
+
+We don't sacrifice any request. This patch do the same thing with the previous one and make things clearer.
+:)
+
+
+Thanks
+Jianchao
