@@ -1,187 +1,106 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1871329-1517944230-2-2874725226097603547
+X-Cyrus-Session-Id: sloti22d1t05-2091355-1517949598-2-3246800205189435783
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517944230; b=w2JU93UESS9alDyucfWHbOKSm4H/v7Fr/zYEqULCi2KbAXn
-    P25grQSHaIDHGmFNTxnvLikEvXgRm3IgA+eymCVYXR1UrCTm+fXDUodzeEcYh9bL
-    gn/siXLFn+1M4MzEXDx+0njasunHa1bRbg53NFZ+7j04A6ElKvA54yIneRv9BA5A
-    GdSL8xCWPwOTsVb3PnKLs8rEwPPDmZAY3rKlL4gsRiwZJ8/cN3nu7O3EVvfAFTPH
-    zrrET5uvTbuUowFdfdNNcxgSvgXWB8HXMNMpju379J6BXnUaybeTKdAE3aCGUDW9
-    nsicqu9Rl4BP+E6yUBGHLxeUVftXu2MwBTNBUHA==
+    t=1517949598; b=wARd75GR4setrqslButxMnMKKRXwneXu8/ssbWV+C1y1irT
+    10SMkgXl2QMJ0QFdfGfo7a5+PbEfDG2IA9kiMrtRaAxg2j2PCxsuQDfjlwCI/mRF
+    zBy2wtwpRa24ICsU+qeaogw6iSn4VWiZeigHlfWsIf6ZUaJ5nsQq6YtuMIld9zTK
+    OOpcl2smZMvFgWsptGYObp3Bd+vMv1S3j8H2wnCispQi0s4VKyr3bCPUJwOEDjo3
+    RnAHdBKbqii4K063hk0n9UYZJoZ5Q4NYpMRwkebS21teVrRzWG/J8qZ22sB2P1Zt
+    oYDDowGvjEcPZWRbcgcDxoha6eAgYwG1KcMg5HQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1517944230; bh=/caUWH55Y+w54z4PzZ4UVlaVAp
-    xGqdUQM/AOh34qZmQ=; b=tSYHnW598Ts7JloW837l9MgwkcPvqzcJMZTcq4t3/r
-    7xHBvQVfjNtT6HZqKHkcCeaoF8jU1E8gPbSAzbTcGbtobJutt9UK+ALjPFl90Nez
-    cJ3l9YXBZu6jjyLJ4XrV8AcZ8Bzjjl4LrZxuaDtuXXqH3ID/i2hjKp/F4C8j3Ip0
-    bI6Ws4sZ4iGv/lH+W/NgCne3U7yGdXnGamBZl/8Xe1wKw8d6NMIveYWXyp531RK6
-    KqrnVxqIdCfAGxY+L1P/F8iNF3+9FgFwSJXFs8E+yvEskjCRkpxiOEgOjDk7WAnU
-    jm02eqRtwbuAC0vELOQxmbMRc6SFOMLRR43u1R4VvM3w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=kuE/4/OL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=android.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1517949598; bh=keLuI1jc24SCAvYMVyFkCVMjuf
+    B9xe3mhDR/wpjkIVo=; b=LYnlcyzWbmid5u2yWb76aUIN4XNEs2P489vzfDIgJp
+    TZozKIASR5LHhgTB7GG3GYZJdiYi5b5fdjPI3fvUGm6lOmyKPT073spPeVbB5kSS
+    O4pr9vPnqgEYwkxWpDpyG8QnvK+h6Cx4adU07C9sN+4XN2h53rlxLozs9vvkCb+o
+    FQtL3Yz0l0YjwwMYI+c5sI3fS1R8TvGEnS9NYuSbp0pJmUEJrpsYSBaB3fU6kyVf
+    i8yaeKlS+9wtE4lM2VdKd9Adn1nwwXsVyPFhfoLOVUrVtJv3iSa+vJD2rmsQrDaM
+    ilvLflxaeDKs38pxi8ZO/YhxBO0nDvJPFV6sk8C0iDng==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ZgbLXvzW;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=android.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=kuE/4/OL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=android.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ZgbLXvzW;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=android.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753300AbeBFTKT (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 14:10:19 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:46551 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753193AbeBFTKK (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 14:10:10 -0500
-X-Google-Smtp-Source: AH8x225IjWBMXHm6HfehB0lmwhViANsWQI0xqeZiRMDFO38TEbCeXOdNBtSZ01d0EHh7H8hBIyD4hQ==
-From: Jin Qian <jinqian@android.com>
-To: "Theodore Ts'o" <tytso@mit.edu>,
+        id S1752885AbeBFUjz (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 15:39:55 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46640 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752720AbeBFUjy (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 15:39:54 -0500
+Date: Tue, 6 Feb 2018 12:39:53 -0800
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Jin Qian <jinqian@android.com>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@poochiereds.net>,
         "J. Bruce Fields" <bfields@fieldses.org>,
         linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc: Jin Qian <jinqian@google.com>, stable@vger.kernel.org,
-        Jin Qian <jinqian@android.com>
-Subject: [PATCHv2 1/1] ext4: don't put symlink in pagecache into highmem
-Date: Tue,  6 Feb 2018 11:09:37 -0800
-Message-Id: <20180206190938.172792-1-jinqian@android.com>
-X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
+        linux-fsdevel@vger.kernel.org, Jin Qian <jinqian@google.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCHv2 1/1] ext4: don't put symlink in pagecache into highmem
+Message-ID: <20180206203953.GC18045@kroah.com>
+References: <20180206190938.172792-1-jinqian@android.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180206190938.172792-1-jinqian@android.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jin Qian <jinqian@google.com>
+On Tue, Feb 06, 2018 at 11:09:37AM -0800, Jin Qian wrote:
+> From: Jin Qian <jinqian@google.com>
+> 
+> partial backport from 21fc61c73c3903c4c312d0802da01ec2b323d174 upstream
+> to v4.4 to prevent virt_to_page on highmem.
+> 
+> ext4_encrypted_follow_link uses kmap() for cpage
+>   caddr = kmap(cpage);
+> 
+> _ext4_fname_disk_to_usr calls virt_to_page on the kmapped address.
+>   _ext4_fname_disk_to_usr()
+>     ext4_fname_decrypt()
+>       sg_init_one()
+>         sg_init_one(&src_sg, iname->name, iname->len);
+>           sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Jin Qian <jinqian@google.com>
+> Signed-off-by: Jin Qian <jinqian@android.com>
 
-partial backport from 21fc61c73c3903c4c312d0802da01ec2b323d174 upstream
-to v4.4 to prevent virt_to_page on highmem.
+Ted, any objection to this patch?
 
-ext4_encrypted_follow_link uses kmap() for cpage
-  caddr = kmap(cpage);
+thanks,
 
-_ext4_fname_disk_to_usr calls virt_to_page on the kmapped address.
-  _ext4_fname_disk_to_usr()
-    ext4_fname_decrypt()
-      sg_init_one()
-        sg_init_one(&src_sg, iname->name, iname->len);
-          sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Jin Qian <jinqian@google.com>
-Signed-off-by: Jin Qian <jinqian@android.com>
----
- fs/ext4/inode.c    |  1 +
- fs/ext4/namei.c    |  1 +
- fs/ext4/symlink.c  | 10 +++-------
- fs/inode.c         |  6 ++++++
- include/linux/fs.h |  1 +
- 5 files changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 4df1cb19a243..f0cabc8c96cb 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4417,6 +4417,7 @@ struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
- 			inode->i_op = &ext4_symlink_inode_operations;
- 			ext4_set_aops(inode);
- 		}
-+		inode_nohighmem(inode);
- 	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
- 	      S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
- 		inode->i_op = &ext4_special_inode_operations;
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 4c36dca486cc..32960b3ecd4f 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -3151,6 +3151,7 @@ static int ext4_symlink(struct inode *dir,
- 	if ((disk_link.len > EXT4_N_BLOCKS * 4)) {
- 		if (!encryption_required)
- 			inode->i_op = &ext4_symlink_inode_operations;
-+		inode_nohighmem(inode);
- 		ext4_set_aops(inode);
- 		/*
- 		 * We cannot call page_symlink() with transaction started
-diff --git a/fs/ext4/symlink.c b/fs/ext4/symlink.c
-index e8e7af62ac95..287c3980fa0b 100644
---- a/fs/ext4/symlink.c
-+++ b/fs/ext4/symlink.c
-@@ -45,7 +45,7 @@ static const char *ext4_encrypted_follow_link(struct dentry *dentry, void **cook
- 		cpage = read_mapping_page(inode->i_mapping, 0, NULL);
- 		if (IS_ERR(cpage))
- 			return ERR_CAST(cpage);
--		caddr = kmap(cpage);
-+		caddr = page_address(cpage);
- 		caddr[size] = 0;
- 	}
- 
-@@ -75,16 +75,12 @@ static const char *ext4_encrypted_follow_link(struct dentry *dentry, void **cook
- 	/* Null-terminate the name */
- 	if (res <= plen)
- 		paddr[res] = '\0';
--	if (cpage) {
--		kunmap(cpage);
-+	if (cpage)
- 		page_cache_release(cpage);
--	}
- 	return *cookie = paddr;
- errout:
--	if (cpage) {
--		kunmap(cpage);
-+	if (cpage)
- 		page_cache_release(cpage);
--	}
- 	kfree(paddr);
- 	return ERR_PTR(res);
- }
-diff --git a/fs/inode.c b/fs/inode.c
-index b0edef500590..b95615f3fc50 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2028,3 +2028,9 @@ void inode_set_flags(struct inode *inode, unsigned int flags,
- 				  new_flags) != old_flags));
- }
- EXPORT_SYMBOL(inode_set_flags);
-+
-+void inode_nohighmem(struct inode *inode)
-+{
-+	mapping_set_gfp_mask(inode->i_mapping, GFP_USER);
-+}
-+EXPORT_SYMBOL(inode_nohighmem);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c8decb7075d6..f746a59fcc88 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3066,5 +3066,6 @@ static inline bool dir_relax(struct inode *inode)
- }
- 
- extern bool path_noexec(const struct path *path);
-+extern void inode_nohighmem(struct inode *inode);
- 
- #endif /* _LINUX_FS_H */
--- 
-2.16.0.rc1.238.g530d649a79-goog
+greg k-h
